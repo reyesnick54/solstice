@@ -25,8 +25,11 @@ export interface EvidenceRecord {
  */
 export class EvidenceVault {
   private readonly records: EvidenceRecord[] = [];
+  private readonly clock: Clock;
 
-  constructor(private readonly clock: Clock) {}
+  constructor(clock: Clock) {
+    this.clock = clock;
+  }
 
   seal(kind: string, payload: unknown): EvidenceRecord {
     const seq = BigInt(this.records.length) + 1n;

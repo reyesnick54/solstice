@@ -39,13 +39,22 @@ export class AccountsService {
   private readonly accounts = new Map<string, Account>();
   private readonly resultsByIntent = new Map<string, OpenAccountResult>();
   private readonly events: AccountOpenedV1[] = [];
+  private readonly kernel: ComplianceKernelPort;
+  private readonly issuer: AuthorityIssuer;
+  private readonly evidence: EvidenceVault;
+  private readonly clock: Clock;
 
   constructor(
-    private readonly kernel: ComplianceKernelPort,
-    private readonly issuer: AuthorityIssuer,
-    private readonly evidence: EvidenceVault,
-    private readonly clock: Clock,
-  ) {}
+    kernel: ComplianceKernelPort,
+    issuer: AuthorityIssuer,
+    evidence: EvidenceVault,
+    clock: Clock,
+  ) {
+    this.kernel = kernel;
+    this.issuer = issuer;
+    this.evidence = evidence;
+    this.clock = clock;
+  }
 
   /**
    * Single entry point. Accepts an OPEN_ACCOUNT ActionIntent.

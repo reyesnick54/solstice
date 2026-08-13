@@ -45,13 +45,19 @@ export interface ComplianceKernelPort {
 export class ComplianceKernel implements ComplianceKernelPort {
   readonly subjects: SubjectStore;
   private readonly decisionsByIntent = new Map<string, AuthorizationDecision>();
+  private readonly issuer: AuthorityIssuer;
+  private readonly evidence: EvidenceVault;
+  private readonly clock: Clock;
 
   constructor(
-    private readonly issuer: AuthorityIssuer,
-    private readonly evidence: EvidenceVault,
-    private readonly clock: Clock,
+    issuer: AuthorityIssuer,
+    evidence: EvidenceVault,
+    clock: Clock,
     subjects?: SubjectStore,
   ) {
+    this.issuer = issuer;
+    this.evidence = evidence;
+    this.clock = clock;
     this.subjects = subjects ?? createSubjectStore();
   }
 

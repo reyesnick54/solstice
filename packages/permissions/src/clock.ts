@@ -7,7 +7,11 @@ export const systemClock: Clock = {
 };
 
 export class FrozenClock implements Clock {
-  constructor(private instant: Date) {}
+  private instant: Date;
+
+  constructor(instant: Date) {
+    this.instant = instant;
+  }
 
   now(): Date {
     return this.instant;

@@ -30,10 +30,13 @@ export const AUTHORITY_TTL_MS = 15 * 60 * 1000;
  * and it is scoped to the exact action and account the caller intends.
  */
 export class AuthorityIssuer {
-  constructor(private readonly secret: string) {
+  private readonly secret: string;
+
+  constructor(secret: string) {
     if (secret.length === 0) {
       throw new Error('AuthorityIssuer requires a non-empty signing secret');
     }
+    this.secret = secret;
   }
 
   issue(input: IssueAuthorityInput): ExecutionAuthority {

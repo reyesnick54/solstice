@@ -53,7 +53,7 @@ describe('Account construction requires a validated Execution Authority', () => 
 
   it('no exported helper constructs an Account from raw fields', () => {
     const index = read('index.ts');
-    assert.doesNotMatch(index, /createAccount|openAccountUnchecked|newAccount/);
+    assert.doesNotMatch(index, /createAccount\b|openAccountUnchecked|new Account\(/);
     const account = read('account.ts');
     assert.doesNotMatch(account, /export function createAccount/);
     assert.doesNotMatch(account, /export function openAccount/);
