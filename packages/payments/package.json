@@ -1,20 +1,20 @@
 {
-  "name": "@solstice/domain",
+  "name": "@solstice/payments",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts"
   },
-  "files": [
-    "src"
-  ],
+  "files": ["src"],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
-    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "typecheck": "tsc --noEmit"
   },
-  "engines": {
-    "node": ">=22"
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@solstice/domain": "0.1.0",
+    "@solstice/kernel": "0.1.0",
+    "@solstice/ledger": "0.1.0"
   }
 }

@@ -41,3 +41,74 @@ export {
   notStartedVerification,
   transitionCustomerStatus,
 } from './customer.ts';
+
+export type { CurrencyCode, SupportedCurrency } from './currency.ts';
+export {
+  asCurrencyCode,
+  currencyDecimals,
+  isCurrencyCode,
+  isSupportedCurrency,
+  minorUnitsScale,
+  SUPPORTED_CURRENCIES,
+} from './currency.ts';
+
+export type { Rational } from './rational.ts';
+export {
+  addRational,
+  applyRational,
+  asRational,
+  formatRational,
+  gcd,
+  integerRational,
+  invertRational,
+  multiplyRational,
+  rationalsEqual,
+  roundHalfAwayFromZero,
+} from './rational.ts';
+
+export type { FxRateQuote } from './money.ts';
+export { applyFxRate, formatMoney, invertFxRate, Money } from './money.ts';
+
+export type {
+  AccountId,
+  ActionIntentId,
+  ActorId,
+  BeneficiaryId,
+  EvidenceId,
+  IdempotencyKey,
+  JournalId,
+  JournalLineId,
+  PaymentId,
+  QuoteId,
+  RouteId,
+} from './ids.ts';
+export {
+  asAccountId,
+  asActionIntentId,
+  asActorId,
+  asBeneficiaryId,
+  asEvidenceId,
+  asIdempotencyKey,
+  asJournalId,
+  asJournalLineId,
+  asPaymentId,
+  asQuoteId,
+  asRouteId,
+} from './ids.ts';
+
+export type { Account, AccountClass } from './account.ts';
+export { ACCOUNT_CLASSES, createAccount } from './account.ts';
+
+export type {
+  Beneficiary,
+  BeneficiaryDraft,
+  BeneficiaryVerificationState,
+  InstitutionIdentifiers,
+} from './beneficiary.ts';
+export {
+  BENEFICIARY_VERIFICATION_STATES,
+  freezeBeneficiary,
+} from './beneficiary.ts';
+
+export type { Actor, ActorType } from './actor.ts';
+export { ACTOR_TYPES, freezeActor } from './actor.ts';

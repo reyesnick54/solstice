@@ -1,0 +1,11 @@
+# Default owners for Solstice.
+
+* @reyesnick54
+
+/packages/kernel/ @reyesnick54
+/packages/ledger/ @reyesnick54
+/packages/payments/ @reyesnick54
+/packages/domain/ @reyesnick54
+/scripts/check-kernel-gating.mjs @reyesnick54
+/.github/workflows/ci.yml @reyesnick54
+/docs/architecture/ @reyesnick54

@@ -1,0 +1,31 @@
+{
+  "version": "1",
+  "jurisdiction": "SA",
+  "title": "Saudi Arabia simulation pack — not confirmed by counsel",
+  "rules": [
+    {
+      "id": "SA-SIM-OPEN-ACCOUNT",
+      "title": "Simulation exception: open house account",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "OPEN_ACCOUNT",
+        "when": { "product": "OPEN_ACCOUNT" }
+      },
+      "plainLanguageReason": "House accounts may be opened in simulation. Customer products for SA remain unrestated."
+    },
+    {
+      "id": "SA-CROSS-BORDER-RESEARCH",
+      "title": "Saudi corridor legal determination is not available",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CROSS_BORDER_PAYMENT",
+        "when": { "product": "CROSS_BORDER_PAYMENT", "sourceCountry": "SA" }
+      },
+      "plainLanguageReason": "No counsel determination is on file. Cross-border SA corridors stay disabled."
+    }
+  ]
+}
