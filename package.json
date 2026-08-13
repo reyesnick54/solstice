@@ -1,0 +1,22 @@
+{
+  "name": "solstice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solstice Phase 0 banking simulation — ledger-authoritative, simulation only",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo": "tsx src/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
