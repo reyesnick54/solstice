@@ -1,0 +1,12 @@
+{
+  "name": "solstice",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm test --prefix packages/permissions && npm test --prefix packages/domain",
+    "demo": "npm run demo --prefix packages/domain"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
