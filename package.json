@@ -1,0 +1,18 @@
+{
+  "name": "solstice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solstice — AI proposes, Compliance Kernel authorizes, signed Execution Authority executes, Evidence Vault seals",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "services/*"
+  ],
+  "scripts": {
+    "test": "npm test --workspaces --if-present",
+    "demo": "npm run demo --workspace=@solstice/accounts --if-present && npm run demo --workspace=@solstice/domain --if-present"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
