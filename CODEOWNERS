@@ -27,6 +27,7 @@
 /packages/config/ @reyesnick54
 /packages/events/ @reyesnick54
 /packages/persistence/ @reyesnick54
+/packages/security/ @reyesnick54
 /db/ @reyesnick54
 /infra/postgres/ @reyesnick54
 /tools/architectural-linter/ @reyesnick54

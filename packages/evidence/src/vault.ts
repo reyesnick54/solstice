@@ -1,6 +1,7 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 
 import type { Clock } from '../../config/src/clock.ts';
+import { sha256Hex } from '../../security/src/hash.ts';
 
 export const GENESIS_PREV_SHA256 = '0'.repeat(64);
 
@@ -124,9 +125,7 @@ export class EvidenceVault {
   }
 }
 
-export function sha256Hex(value: string): string {
-  return createHash('sha256').update(value).digest('hex');
-}
+export { sha256Hex } from '../../security/src/hash.ts';
 
 export function canonicalJson(value: unknown): string {
   return JSON.stringify(sortKeys(value));

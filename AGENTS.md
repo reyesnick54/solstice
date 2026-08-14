@@ -83,6 +83,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/domain` — Customer, Account, Brand, LegalEntity, Result, time
 - `packages/money` — bigint minor units
 - `packages/permissions` — ActionIntent, HMAC Execution Authority
+- `packages/security` — KeyProvider, secret references, envelope encryption
 - `packages/kernel` — six proofs, monotonic combine, Kernel submit
 - `packages/ledger` — append-only journals, authority-required
 - `packages/evidence` — hash-chained Evidence Vault

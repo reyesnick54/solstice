@@ -22,6 +22,7 @@ are not reused or silently changed.
 | 0007 | Identity and authentication stack (earlier draft) | PROPOSED | not a legal opinion; no counsel review | IDENTITY | none | NOT_IMPLEMENTED | [ADR-0007-identity-stack.md](./ADR-0007-identity-stack.md) |
 | 0007 | Identity and Authentication Stack (later revision) | PROPOSED | not a legal opinion; no counsel review | IDENTITY | ADR-0006, ADR-0008 | NOT_IMPLEMENTED | [ADR-0007-identity-and-authentication-stack.md](./ADR-0007-identity-and-authentication-stack.md) |
 | 0008 | Persistence Layer for Phase 1 | PROPOSED (Addendum A: engineering-accepted Option A; not counsel) | not a legal opinion | persistence / BANKING / Evidence durability | ADR-0006, ADR-0007 | PARTIAL | [ADR-0008-persistence-layer.md](./ADR-0008-persistence-layer.md) |
+| 0009 | Canonical cryptographic infrastructure | ACCEPTED | not a legal opinion; no counsel review | SECURITY | none | IMPLEMENTED | [ADR-0009-cryptographic-infrastructure.md](./ADR-0009-cryptographic-infrastructure.md) |
 
 ## Notes on ADR-0007
 

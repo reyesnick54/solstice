@@ -60,7 +60,7 @@ async function waitForPostgres(env: PersistenceEnv): Promise<void> {
 }
 
 /**
- * Create the three bounded-domain databases and runtime roles.
+ * Create the four bounded-domain databases and runtime roles.
  * Idempotent. Uses the local/simulated bootstrap role only.
  */
 /**
@@ -95,6 +95,10 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
       database: DATABASES.evidence,
       sql: 'TRUNCATE TABLE evidence.evidence_record',
     },
+    {
+      database: DATABASES.security,
+      sql: 'TRUNCATE TABLE security.key_metadata, security.service_identity',
+    },
   ];
   for (const statement of statements) {
     const client = await bootstrapClient(env, statement.database);
@@ -121,6 +125,7 @@ export async function bootstrapPersistence(env: PersistenceEnv): Promise<void> {
     await ensureRole(client, env.ledgerUser, env.ledgerPassword);
     await ensureRole(client, 'ledger_reader', env.ledgerPassword);
     await ensureRole(client, env.evidenceUser, env.evidencePassword);
+    await ensureRole(client, env.securityUser, env.securityPassword);
 
     for (const database of Object.values(DATABASES)) {
       if (!(await databaseExists(client, database))) {
@@ -149,8 +154,10 @@ export async function bootstrapPersistence(env: PersistenceEnv): Promise<void> {
       } else if (domain === 'ledger') {
         await db.query(`GRANT CONNECT ON DATABASE ${database} TO ${env.ledgerUser}`);
         await db.query(`GRANT CONNECT ON DATABASE ${database} TO ledger_reader`);
-      } else {
+      } else if (domain === 'evidence') {
         await db.query(`GRANT CONNECT ON DATABASE ${database} TO ${env.evidenceUser}`);
+      } else {
+        await db.query(`GRANT CONNECT ON DATABASE ${database} TO ${env.securityUser}`);
       }
       await db.query(`GRANT CREATE ON SCHEMA public TO ${env.migratorUser}`);
     } finally {

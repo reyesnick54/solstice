@@ -24,6 +24,7 @@ export type {
 export { combineProofs, DECISION_RANK, DECISION_STATUSES, PROOF_NAMES } from './decision.ts';
 
 export type {
+  AuthorityIssuerSource,
   AuthorityScope,
   AuthorityVerificationFailure,
   ExecutionAuthority,

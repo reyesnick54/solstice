@@ -42,7 +42,9 @@ jobs:
         run: npm run typecheck
 
       - name: Secret scan
-        run: python3 scripts/secret-scan.py
+        run: |
+          python3 scripts/secret-scan.py
+          python3 scripts/secret-scan.py --self-test
 
   persistence:
     name: postgres → migrate → persistence-integration

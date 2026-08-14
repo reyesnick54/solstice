@@ -29,6 +29,14 @@ This document describes only what is implemented and tested in this tree.
   `VersionedEvent` model, taxonomy, PostgreSQL transactional outbox in the
   same ledger unit as journals, consumer inbox, dead letters, explicit
   replay, and an in-process dispatcher. Events are not financial execution.
+- Canonical security / cryptographic infrastructure (Chunk 4):
+  `packages/security` KeyProvider, typed key purposes, lifecycle and
+  rotation, AES-256-GCM envelope encryption, SecretReference /
+  SecretProvider, DEVELOPMENT/SIMULATION local provider, service-identity
+  foundations, redacted sensitive types, and key-metadata persistence.
+  Execution Authority signs and verifies through the KeyProvider.
+  Evidence Vault hashing uses the shared SHA-256 helper and stays
+  deterministic. No live KMS/HSM.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 

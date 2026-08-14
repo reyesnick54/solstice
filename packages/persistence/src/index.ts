@@ -42,6 +42,7 @@ export {
   persistLedgerUnit,
   type PersistenceSession,
 } from './session.ts';
+export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
   PostgresDeadLetterStore,
   PostgresEventCatalog,

@@ -16,6 +16,8 @@ export type PersistenceEnv = {
   readonly ledgerPassword: string;
   readonly evidenceUser: string;
   readonly evidencePassword: string;
+  readonly securityUser: string;
+  readonly securityPassword: string;
 };
 
 export const LOCAL_SIMULATION_PERSISTENCE_ENV: PersistenceEnv = Object.freeze({
@@ -31,12 +33,15 @@ export const LOCAL_SIMULATION_PERSISTENCE_ENV: PersistenceEnv = Object.freeze({
   ledgerPassword: 'solstice_dev_only_ledger',
   evidenceUser: 'evidence_app',
   evidencePassword: 'solstice_dev_only_evidence',
+  securityUser: 'security_app',
+  securityPassword: 'solstice_dev_only_security',
 });
 
 export const DATABASES = Object.freeze({
   customer: 'solstice_customer',
   ledger: 'solstice_ledger',
   evidence: 'solstice_evidence',
+  security: 'solstice_security',
 });
 
 export function persistenceEnvFromProcess(
@@ -64,6 +69,9 @@ export function persistenceEnvFromProcess(
     evidenceUser: env.SOLSTICE_PG_EVIDENCE_USER ?? LOCAL_SIMULATION_PERSISTENCE_ENV.evidenceUser,
     evidencePassword:
       env.SOLSTICE_PG_EVIDENCE_PASSWORD ?? LOCAL_SIMULATION_PERSISTENCE_ENV.evidencePassword,
+    securityUser: env.SOLSTICE_PG_SECURITY_USER ?? LOCAL_SIMULATION_PERSISTENCE_ENV.securityUser,
+    securityPassword:
+      env.SOLSTICE_PG_SECURITY_PASSWORD ?? LOCAL_SIMULATION_PERSISTENCE_ENV.securityPassword,
   });
 }
 

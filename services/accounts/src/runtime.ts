@@ -6,7 +6,13 @@ import { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import { GrowthAttributionLedger } from '../../../packages/ledger/src/growth.ts';
 import { Ledger, type JournalPersistSink } from '../../../packages/ledger/src/journal.ts';
 import { AuthorityIssuer } from '../../../packages/permissions/src/execution-authority.ts';
+import type { KeyProvider } from '../../../packages/security/src/provider.ts';
+import {
+  createSimulationKeyProvider,
+  SimulationKeyProvider,
+} from '../../../packages/security/src/simulation.ts';
 import { seedSimulationCatalog } from './catalog.ts';
+import { securityEventSink, securityEvidenceSink } from './security-audit.ts';
 import { MoneyMovementService } from './money-movement.ts';
 import { AccountsService } from './open-account.ts';
 import {
@@ -16,12 +22,11 @@ import {
   ProductStore,
 } from './stores.ts';
 
-const SIMULATION_AUTHORITY_SECRET = 'solstice-simulation-ea-hmac-v1';
-
 export type SimulationRuntime = {
   readonly capabilities: typeof CAPABILITIES;
   readonly clock: Clock;
   readonly issuer: AuthorityIssuer;
+  readonly keyProvider: KeyProvider;
   readonly kernel: ComplianceKernel;
   readonly ledger: Ledger;
   readonly evidence: EvidenceVault;
@@ -35,7 +40,7 @@ export type SimulationRuntime = {
 
 export type SimulationRuntimeOptions = {
   readonly clock?: Clock;
-  readonly authoritySecret?: string;
+  readonly keyProvider?: KeyProvider;
   readonly persist?: {
     readonly journal?: JournalPersistSink;
     readonly evidence?: EvidencePersistSink;
@@ -51,10 +56,21 @@ export function createSimulationRuntime(
   options: SimulationRuntimeOptions = {},
 ): SimulationRuntime {
   const clock = options.clock ?? systemClock;
-  const issuer = new AuthorityIssuer(options.authoritySecret ?? SIMULATION_AUTHORITY_SECRET);
-  const ledger = new Ledger(issuer, clock, undefined, options.persist?.journal);
   const evidence = new EvidenceVault(clock, options.persist?.evidence);
   const events = new DomainEventLog(options.persist?.events);
+  const keyProvider =
+    options.keyProvider ??
+    createSimulationKeyProvider({
+      clock: { now: () => clock.now() },
+    });
+  if (keyProvider instanceof SimulationKeyProvider) {
+    keyProvider.attachAuditSinks({
+      events: securityEventSink(events, () => clock.now()),
+      evidence: securityEvidenceSink(evidence),
+    });
+  }
+  const issuer = new AuthorityIssuer(keyProvider);
+  const ledger = new Ledger(issuer, clock, undefined, options.persist?.journal);
   const growth = new GrowthAttributionLedger();
   const kernel = new ComplianceKernel(issuer, evidence, clock);
   const customers = options.customers ?? new CustomerStore();
@@ -91,6 +107,7 @@ export function createSimulationRuntime(
     capabilities: CAPABILITIES,
     clock,
     issuer,
+    keyProvider,
     kernel,
     ledger,
     evidence,

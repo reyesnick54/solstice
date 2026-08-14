@@ -47,6 +47,10 @@ Implemented (functionality that exists today):
 - `ledger.withdrawal_posted` → `WithdrawalPosted`
 - `ledger.internal_transfer_posted` → `InternalTransferPosted`
 - `kernel.decision_recorded` → `KernelDecisionRecorded`
+- `security.key_created` → `KeyCreated`
+- `security.key_rotated` → `KeyRotated`
+- `security.key_retired` → `KeyRetired`
+- `security.key_revoked` → `KeyRevoked`
 
 Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
