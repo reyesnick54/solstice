@@ -294,7 +294,9 @@ export class Ledger {
         request.actionType === 'INITIATE_PAYMENT' || request.actionType === 'CANCEL_PAYMENT';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
-        (account) => catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
+        (account) =>
+          account.ownerId === undefined ||
+          catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
       if (!(paymentAction && allNonCustomer)) {
         throw new LedgerInvariantError(

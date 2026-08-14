@@ -356,11 +356,12 @@ export class PaymentsService {
       amount: quote?.amountDebited ?? intent.payload.sourceAmount,
     });
     if (gated.outcome !== 'ALLOWED') {
-      if (gated.decision.status === 'REQUIRE_MANUAL_REVIEW' && hit?.fraudHold) {
+      const refused = gated.result.decision;
+      if (refused?.status === 'REQUIRE_MANUAL_REVIEW' && hit?.fraudHold) {
         const held = this.draftPayment(intent, account, customer, quote, corridor, 'HELD');
         if (held) {
           this.store.savePayment(held);
-          this.emit('PaymentHeld', 'payment', held.paymentId, intent.id, gated.decision, {
+          this.emit('PaymentHeld', 'payment', held.paymentId, intent.id, refused, {
             paymentId: held.paymentId,
             reason: 'FRAUD_HOLD',
           });

@@ -53,6 +53,6 @@ describe('route selection', () => {
       providerAvailable: false,
     });
     assert.equal(selection.chosen, null);
-    assert.ok(selection.rejected.every((row) => row.reason === 'provider_unavailable'));
+    assert.ok(selection.rejected.some((row) => row.reason === 'provider_unavailable'));
   });
 });

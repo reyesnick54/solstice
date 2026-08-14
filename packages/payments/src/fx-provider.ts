@@ -76,7 +76,11 @@ const FEE_MINOR: Readonly<Record<string, bigint>> = {
 };
 
 export class SimulationFxProvider implements FxLiquidityProvider {
-  constructor(private readonly clock: Clock) {}
+  private readonly clock: Clock;
+
+  constructor(clock: Clock) {
+    this.clock = clock;
+  }
 
   quote(request: QuoteRequest): FxQuote {
     assertSimulationOnly();

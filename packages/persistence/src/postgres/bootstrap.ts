@@ -80,9 +80,6 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               customer.legal_entity_capability,
               customer.policy_source,
               customer.policy_pack,
-              customer.customer,
-              customer.legal_entity
-            RESTART IDENTITY CASCADE`,
               identity.recovery_request,
               identity.capability_grant,
               identity.kyc_record,
@@ -92,8 +89,13 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               identity.business_identity,
               identity.customer_link,
               identity.person_identity,
+              payments.reconciliation,
+              payments.payment_order,
+              payments.fx_quote,
+              payments.beneficiary,
               customer.customer,
-              customer.legal_entity`,
+              customer.legal_entity
+            RESTART IDENTITY CASCADE`,
     },
     {
       database: DATABASES.ledger,

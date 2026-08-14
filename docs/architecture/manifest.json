@@ -974,6 +974,13 @@
       "owner": "packages/payments",
       "protected": true,
       "notes": "Rational FX quotes and simulation pricing. Not live market data."
+    },
+    {
+      "id": "cards",
+      "status": "PLANNED",
+      "owner": "packages/cards",
+      "protected": true,
+      "notes": "Reserved. Not implemented in this chunk."
     }
   ],
   "boundedContexts": [

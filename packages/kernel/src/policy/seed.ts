@@ -59,8 +59,6 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
     capabilityId: 'cap-sa-sim-cross-border-payment',
     legalEntityId: 'le_solstice_sa_entity',
     actionTypes: [
-      'OPEN_ACCOUNT',
-      'POST_DEPOSIT',
       'CREATE_BENEFICIARY',
       'CREATE_FX_QUOTE',
       'ACCEPT_FX_QUOTE',
