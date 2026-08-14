@@ -52,6 +52,17 @@ Implemented (functionality that exists today):
 - `security.key_retired` → `KeyRetired`
 - `security.key_revoked` → `KeyRevoked`
 
+Implemented identity events (opaque ids only; no raw PII):
+
+- `identity.created` → `IdentityCreated`
+- `identity.activated` → `IdentityActivated`
+- `identity.suspended` → `IdentitySuspended`
+- `identity.kyc.updated` → `IdentityKycUpdated`
+- `identity.session.created` → `IdentitySessionCreated`
+- `identity.session.revoked` → `IdentitySessionRevoked`
+- `identity.device.registered` → `IdentityDeviceRegistered`
+- `identity.recovery.requested` → `IdentityRecoveryRequested`
+
 Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.

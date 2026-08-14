@@ -4,6 +4,7 @@ import type { Jurisdiction } from '../../domain/src/jurisdiction.ts';
 import type { LegalEntity } from '../../domain/src/legal-entity.ts';
 import type { Product } from '../../domain/src/product.ts';
 import type { Money } from '../../money/src/money.ts';
+import type { IdentityFacts } from '../../identity/src/facts.ts';
 import type { ActionIntent, PurposeCode } from '../../permissions/src/action-intent.ts';
 import type { DecisionStatus, ProofEvaluation, ProofName } from '../../permissions/src/decision.ts';
 
@@ -21,6 +22,7 @@ export type KernelFacts = {
   readonly amount?: Money;
   readonly sourceAccount?: Account;
   readonly destinationAccount?: Account;
+  readonly identity?: IdentityFacts;
 };
 
 export type ProofEvaluator = {
@@ -53,7 +55,33 @@ export const identityProof: ProofEvaluator = {
     if (!facts.customer) {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
-    return evalProof('IDENTITY', 'ALLOW', 'actor and customer identities are present');
+    const identity = facts.identity;
+    if (!identity) {
+      return evalProof('IDENTITY', 'BLOCK', 'authoritative identity facts are missing');
+    }
+    if (!identity.identityExists || identity.identityStatus === null) {
+      return evalProof('IDENTITY', 'BLOCK', 'solstice identity does not exist');
+    }
+    if (identity.identityStatus === 'SUSPENDED' || identity.identityStatus === 'LOCKED' || identity.identityStatus === 'CLOSED') {
+      return evalProof('IDENTITY', 'BLOCK', `identity status ${identity.identityStatus} is not usable`);
+    }
+    if (identity.identityStatus === 'PENDING') {
+      return evalProof('IDENTITY', 'BLOCK', 'identity is pending activation');
+    }
+    if (!identity.authenticated || !identity.sessionValid) {
+      return evalProof('IDENTITY', 'BLOCK', 'actor session is missing or invalid');
+    }
+    if (!identity.actorSubjectMatch) {
+      return evalProof('IDENTITY', 'BLOCK', 'actor is not bound to the identity subject');
+    }
+    const kycNote = identity.kycFresh
+      ? `kyc ${identity.kycState} v${String(identity.kycVersion)} fresh`
+      : `kyc ${identity.kycState ?? 'absent'} not fresh`;
+    return evalProof(
+      'IDENTITY',
+      'ALLOW',
+      `identity ${identity.identityStatus}; session ${identity.authenticationAssurance}; ${kycNote}`,
+    );
   },
 };
 

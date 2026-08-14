@@ -9,6 +9,17 @@ import { listMigrationFiles, migrationsRoot, sha256Hex } from './migrate.ts';
 const REPO_ROOT = join(import.meta.dirname, '..', '..', '..');
 
 describe('versioned SQL migrations', () => {
+  it('customer V002 adds identity schema without private credentials', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v002 = files.find((file) => file.version === 2);
+    assert.ok(v002);
+    assert.match(v002.sql, /CREATE SCHEMA IF NOT EXISTS identity/);
+    assert.match(v002.sql, /CREATE TABLE identity.person_identity/);
+    assert.match(v002.sql, /CREATE TABLE identity.webauthn_credential/);
+    assert.match(v002.sql, /webauthn_no_private_material/);
+    assert.equal(/\b(private_key|password_hash|session_secret)\b/i.test(v002.sql), false);
+  });
+
   it('lists contiguous immutable checksummed files for each domain', () => {
     for (const domain of ['customer', 'ledger', 'evidence', 'security'] as const) {
       const files = listMigrationFiles(migrationsRoot(REPO_ROOT, domain));

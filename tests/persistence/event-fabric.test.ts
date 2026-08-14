@@ -282,7 +282,13 @@ describePersistence('Chunk 3 — durable event fabric', () => {
     const ports = {
       submitIntent: (intent: Parameters<typeof durable.runtime.kernel.submit>[0]) =>
         durable.runtime.kernel.submit(intent, {
-          actor: { id: intent.actorId, capabilities: [intent.actionType] },
+          actor: {
+            id: intent.actorId,
+            capabilities: durable.runtime.identity.service.resolveActorContext(intent.actorId).ok
+              ? [intent.actionType]
+              : [],
+          },
+          identity: durable.runtime.identity.service.identityFactsFor(intent.actorId),
           customer,
           jurisdiction: opened.account.jurisdiction,
           amount: Money.fromMinorUnits(1_000n, 'USD'),

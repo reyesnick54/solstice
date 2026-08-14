@@ -1,5 +1,6 @@
 import { asAccountId, type Account } from '../../../packages/domain/src/account.ts';
 import type { Customer } from '../../../packages/domain/src/customer.ts';
+import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import type { EvidencePersistSink } from '../../../packages/evidence/src/vault.ts';
 import type { EventPersistSink } from '../../../packages/events/src/events.ts';
@@ -9,9 +10,11 @@ import type { ExecutionAuthority } from '../../../packages/permissions/src/execu
 import type { OpenAccountIntent } from '../../../packages/permissions/src/action-types.ts';
 import {
   loadEvidenceRecords,
+  loadIdentitySnapshot,
   openPersistenceSession,
   persistCustomerUnit,
   persistEvidenceOnClient,
+  persistIdentitySnapshot,
   persistLedgerUnit,
   type PersistenceEnv,
   type PersistenceSession,
@@ -92,12 +95,27 @@ export async function createPostgresSimulationRuntime(
     accounts,
     products,
     legalEntities,
+    provisionSimulatedActor: false,
     persist: {
       journal: session.journalSink,
       evidence: evidenceSink,
       events: eventSink,
     },
   });
+  const identitySnapshot = await loadIdentitySnapshot(session.pools.customer);
+  if (identitySnapshot) {
+    runtime.identity.service.hydrate(identitySnapshot);
+  } else {
+    const provisioned = runtime.identity.provisionSimulatedActor({
+      actorId: 'operator_1',
+      identityId: 'idn_sim_operator_1',
+      jurisdiction: asJurisdiction('GB'),
+    });
+    if (!provisioned.ok) {
+      throw new Error(`simulated identity adapter failed: ${provisioned.error.message}`);
+    }
+    await persistIdentitySnapshot(session.pools.customer, runtime.identity.service.snapshot());
+  }
 
   runtime.ledger.hydrateFromPersisted(loaded.journals);
   runtime.evidence.hydrateFromPersisted(loaded.evidence);

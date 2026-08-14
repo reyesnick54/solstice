@@ -1,7 +1,9 @@
 import { FrozenClock, systemClock, type Clock } from '../../../packages/config/src/clock.ts';
 import { CAPABILITIES } from '../../../packages/config/src/flags.ts';
+import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
 import { EvidenceVault, type EvidencePersistSink } from '../../../packages/evidence/src/vault.ts';
 import { DomainEventLog, type EventPersistSink } from '../../../packages/events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../../../packages/identity/src/simulation.ts';
 import { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import { GrowthAttributionLedger } from '../../../packages/ledger/src/growth.ts';
 import { Ledger, type JournalPersistSink } from '../../../packages/ledger/src/journal.ts';
@@ -36,6 +38,7 @@ export type SimulationRuntime = {
   readonly accounts: AccountStore;
   readonly accountsService: AccountsService;
   readonly money: MoneyMovementService;
+  readonly identity: SimulatedIdentityAdapter;
 };
 
 export type SimulationRuntimeOptions = {
@@ -50,6 +53,7 @@ export type SimulationRuntimeOptions = {
   readonly accounts?: AccountStore;
   readonly products?: ProductStore;
   readonly legalEntities?: LegalEntityStore;
+  readonly provisionSimulatedActor?: boolean;
 };
 
 export function createSimulationRuntime(
@@ -78,6 +82,22 @@ export function createSimulationRuntime(
   const seeded = seedSimulationCatalog();
   const legalEntities = options.legalEntities ?? seeded.legalEntities;
   const products = options.products ?? seeded.products;
+  const identity = new SimulatedIdentityAdapter({
+    clock,
+    keys: keyProvider,
+    evidence,
+    events,
+  });
+  if (options.provisionSimulatedActor !== false) {
+    const provisioned = identity.provisionSimulatedActor({
+      actorId: 'operator_1',
+      identityId: 'idn_sim_operator_1',
+      jurisdiction: asJurisdiction('GB'),
+    });
+    if (!provisioned.ok) {
+      throw new Error(`simulated identity adapter failed: ${provisioned.error.message}`);
+    }
+  }
   const accountsService = new AccountsService(
     kernel,
     issuer,
@@ -89,6 +109,7 @@ export function createSimulationRuntime(
     accounts,
     products,
     legalEntities,
+    identity.service,
   );
   const money = new MoneyMovementService(
     kernel,
@@ -102,6 +123,7 @@ export function createSimulationRuntime(
     accounts,
     products,
     legalEntities,
+    identity.service,
   );
   return {
     capabilities: CAPABILITIES,
@@ -117,6 +139,7 @@ export function createSimulationRuntime(
     accounts,
     accountsService,
     money,
+    identity,
   };
 }
 

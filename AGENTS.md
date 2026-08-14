@@ -84,6 +84,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/money` — bigint minor units
 - `packages/permissions` — ActionIntent, HMAC Execution Authority
 - `packages/security` — KeyProvider, secret references, envelope encryption
+- `packages/identity` — Solstice Identity, sessions, KYC metadata, ActorContext
 - `packages/kernel` — six proofs, monotonic combine, Kernel submit
 - `packages/ledger` — append-only journals, authority-required
 - `packages/evidence` — hash-chained Evidence Vault
@@ -92,6 +93,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
+- `services/identity` — identity application facade; not a second identity model
 - `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
 - `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
 

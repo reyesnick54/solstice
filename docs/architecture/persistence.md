@@ -13,7 +13,7 @@ SQL joins, no `postgres_fdw`:
 
 | Database | Runtime role | Durable contents |
 | --- | --- | --- |
-| `solstice_customer` | `customer_app` | customers, legal entities |
+| `solstice_customer` | `customer_app` | customers, legal entities, identity schema (not a second customer) |
 | `solstice_ledger` | `ledger_writer` / `ledger_reader` | accounts (no balance), journals, postings, intent/authority audit, domain events |
 | `solstice_evidence` | `evidence_app` | evidence hash chain |
 | `solstice_security` | `security_app` | key metadata and service-identity references only |
