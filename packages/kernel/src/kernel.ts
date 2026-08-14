@@ -121,6 +121,9 @@ function scopedAccountId(intent: ActionIntent): string {
   if (typeof payload.accountId === 'string') {
     return payload.accountId;
   }
+  if (typeof payload.pendingAccountId === 'string') {
+    return payload.pendingAccountId;
+  }
   if (typeof payload.sourceAccountId === 'string') {
     return payload.sourceAccountId;
   }

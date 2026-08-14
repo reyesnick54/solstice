@@ -66,6 +66,21 @@ export type PostJournalRequest = {
 
 export const SIMULATION_FUNDING_SOURCE_ID = 'SIMULATION.FUNDING_SOURCE' as AccountId;
 
+export function simulationFundingSourceId(currency: string): AccountId {
+  if (currency === 'USD') {
+    return SIMULATION_FUNDING_SOURCE_ID;
+  }
+  return `SIMULATION.FUNDING_SOURCE.${currency}` as AccountId;
+}
+
+export function simulationFeeCollectorId(currency: string): AccountId {
+  return `SIMULATION.FEE_COLLECTOR.${currency}` as AccountId;
+}
+
+export function simulationInterestSourceId(currency: string): AccountId {
+  return `SIMULATION.INTEREST_SOURCE.${currency}` as AccountId;
+}
+
 export const SIMULATED_FUNDING_TO_DEMAND_DEPOSIT: ClassBridge = Object.freeze({
   name: 'SIMULATED_FUNDING_TO_DEMAND_DEPOSIT',
   fromClass: 'SIMULATED_FUNDING_SOURCE',
@@ -123,6 +138,23 @@ export const DEMAND_DEPOSIT_TO_SIMULATED_FUNDING: ClassBridge = Object.freeze({
   purpose: 'Return captured payment principal from simulation treasury to the customer demand-deposit.',
 });
 
+export const DEMAND_TO_PENDING_SETTLEMENT: ClassBridge = Object.freeze({
+  name: 'DEMAND_TO_PENDING_SETTLEMENT',
+  fromClass: 'DEMAND_DEPOSIT',
+  toClass: 'PENDING_SETTLEMENT',
+  disclosed: true,
+  purpose:
+    'Move customer funds into PENDING_SETTLEMENT. Pending is not mixed into settled deposit balance.',
+});
+
+export const SIMULATED_FUNDING_TO_PENDING_SETTLEMENT: ClassBridge = Object.freeze({
+  name: 'SIMULATED_FUNDING_TO_PENDING_SETTLEMENT',
+  fromClass: 'SIMULATED_FUNDING_SOURCE',
+  toClass: 'PENDING_SETTLEMENT',
+  disclosed: true,
+  purpose: 'Simulation-only settlement or return of pending funds against the named funding source.',
+});
+
 export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
@@ -131,6 +163,8 @@ export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   PENDING_SETTLEMENT_TO_SIMULATED_FUNDING,
   SIMULATED_FUNDING_TO_CORPORATE_OPERATING,
   DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
+  DEMAND_TO_PENDING_SETTLEMENT,
+  SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
 ];
 
 export function findClassBridge(

@@ -1,6 +1,10 @@
 import type { Account } from '../../domain/src/account.ts';
+import { CANONICAL_SIMULATION_CURRENCIES } from '../../domain/src/currency.ts';
 import {
   SIMULATION_FUNDING_SOURCE_ID,
+  simulationFeeCollectorId,
+  simulationFundingSourceId,
+  simulationInterestSourceId,
   type LedgerAccount,
 } from './types.ts';
 
@@ -24,6 +28,35 @@ export class AccountRegister {
         currency: 'USD',
       }),
     );
+    for (const currency of CANONICAL_SIMULATION_CURRENCIES) {
+      const fundingId = simulationFundingSourceId(currency);
+      if (!this.accounts.has(fundingId)) {
+        this.put(
+          Object.freeze({
+            id: fundingId,
+            name: `Simulated ${currency} funding source (simulation only; not corporate)`,
+            accountClass: 'SIMULATED_FUNDING_SOURCE',
+            currency,
+          }),
+        );
+      }
+      this.put(
+        Object.freeze({
+          id: simulationFeeCollectorId(currency),
+          name: `Simulated ${currency} fee collector (simulation only; not corporate)`,
+          accountClass: 'SIMULATED_FUNDING_SOURCE',
+          currency,
+        }),
+      );
+      this.put(
+        Object.freeze({
+          id: simulationInterestSourceId(currency),
+          name: `Simulated ${currency} interest source (simulation only; not a promised rate)`,
+          accountClass: 'SIMULATED_FUNDING_SOURCE',
+          currency,
+        }),
+      );
+    }
   }
 
   get(accountId: string): LedgerAccount {

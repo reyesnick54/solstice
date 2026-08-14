@@ -6,7 +6,14 @@ import type { Product } from '../../domain/src/product.ts';
 import type { Money } from '../../money/src/money.ts';
 import type { IdentityFacts } from '../../identity/src/facts.ts';
 import type { ActionIntent, PurposeCode } from '../../permissions/src/action-intent.ts';
-import type { DecisionStatus, ProofEvaluation, ProofName } from '../../permissions/src/decision.ts';
+import {
+  DECISION_RANK,
+  type DecisionStatus,
+  type ProofEvaluation,
+  type ProofName,
+} from '../../permissions/src/decision.ts';
+import type { ComplianceFacts } from './compliance/facts.ts';
+import { escalateFromComplianceFacts, escalateFromFraudFacts } from './compliance/facts.ts';
 import type { PolicyIdentityFacts } from './policy/facts.ts';
 import type { PolicyEvaluationResult, PolicyPackId } from './policy/types.ts';
 
@@ -15,6 +22,12 @@ export type KernelActor = {
   readonly capabilities: readonly string[];
 };
 
+/**
+ * Facts the Kernel may consume. `identity` is either authoritative
+ * IdentityFacts or the slimmer policy KYC projection used by pack tests.
+ * `compliance` is produced by the screening/monitoring fabric — never by
+ * a provider score and never by an AI agent.
+ */
 export type KernelFacts = {
   readonly actor: KernelActor;
   readonly customer?: Customer;
@@ -24,7 +37,7 @@ export type KernelFacts = {
   readonly amount?: Money;
   readonly sourceAccount?: Account;
   readonly destinationAccount?: Account;
-  readonly identity?: IdentityFacts;
+  readonly identity?: IdentityFacts | PolicyIdentityFacts;
   readonly policyIdentity?: PolicyIdentityFacts;
   readonly serviceLocation?: Jurisdiction;
   readonly transactionOrigin?: Jurisdiction;
@@ -34,6 +47,7 @@ export type KernelFacts = {
     readonly versionId: string;
   };
   readonly policyResult?: PolicyEvaluationResult;
+  readonly compliance?: ComplianceFacts;
   readonly screening?: {
     readonly sanctionsHit: boolean;
     readonly pepHit: boolean;
@@ -58,6 +72,10 @@ function evalProof(
   return Object.freeze({ proof, status, reason });
 }
 
+export function isIdentityFacts(value: KernelFacts['identity']): value is IdentityFacts {
+  return value !== undefined && 'identityExists' in value;
+}
+
 const RISK_REVIEW_MINOR = 10_000_000n;
 const RISK_BLOCK_MINOR = 100_000_000n;
 
@@ -73,32 +91,44 @@ export const identityProof: ProofEvaluator = {
     if (!facts.customer) {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
-    const identity = facts.identity;
-    if (!identity) {
-      return evalProof('IDENTITY', 'BLOCK', 'authoritative identity facts are missing');
+    const identity = isIdentityFacts(facts.identity) ? facts.identity : undefined;
+    if (identity) {
+      if (!identity.identityExists || identity.identityStatus === null) {
+        return evalProof('IDENTITY', 'BLOCK', 'solstice identity does not exist');
+      }
+      if (
+        identity.identityStatus === 'SUSPENDED' ||
+        identity.identityStatus === 'LOCKED' ||
+        identity.identityStatus === 'CLOSED'
+      ) {
+        return evalProof('IDENTITY', 'BLOCK', `identity status ${identity.identityStatus} is not usable`);
+      }
+      if (identity.identityStatus === 'PENDING') {
+        return evalProof('IDENTITY', 'BLOCK', 'identity is pending activation');
+      }
+      if (!identity.authenticated || !identity.sessionValid) {
+        return evalProof('IDENTITY', 'BLOCK', 'actor session is missing or invalid');
+      }
+      if (!identity.actorSubjectMatch) {
+        return evalProof('IDENTITY', 'BLOCK', 'actor is not bound to the identity subject');
+      }
+      const kycNote = identity.kycFresh
+        ? `kyc ${identity.kycState} v${String(identity.kycVersion)} fresh`
+        : `kyc ${identity.kycState ?? 'absent'} not fresh`;
+      return evalProof(
+        'IDENTITY',
+        'ALLOW',
+        `identity ${identity.identityStatus}; session ${identity.authenticationAssurance}; ${kycNote}`,
+      );
     }
-    if (!identity.identityExists || identity.identityStatus === null) {
-      return evalProof('IDENTITY', 'BLOCK', 'solstice identity does not exist');
-    }
-    if (identity.identityStatus === 'SUSPENDED' || identity.identityStatus === 'LOCKED' || identity.identityStatus === 'CLOSED') {
-      return evalProof('IDENTITY', 'BLOCK', `identity status ${identity.identityStatus} is not usable`);
-    }
-    if (identity.identityStatus === 'PENDING') {
-      return evalProof('IDENTITY', 'BLOCK', 'identity is pending activation');
-    }
-    if (!identity.authenticated || !identity.sessionValid) {
-      return evalProof('IDENTITY', 'BLOCK', 'actor session is missing or invalid');
-    }
-    if (!identity.actorSubjectMatch) {
-      return evalProof('IDENTITY', 'BLOCK', 'actor is not bound to the identity subject');
-    }
-    const kycNote = identity.kycFresh
-      ? `kyc ${identity.kycState} v${String(identity.kycVersion)} fresh`
-      : `kyc ${identity.kycState ?? 'absent'} not fresh`;
+    const kyc =
+      facts.identity && 'kycState' in facts.identity
+        ? facts.identity.kycState
+        : facts.customer.verification.kycState;
     return evalProof(
       'IDENTITY',
       'ALLOW',
-      `identity ${identity.identityStatus}; session ${identity.authenticationAssurance}; ${kycNote}`,
+      `actor and customer identities are present; KYC fact ${kyc} entered policy`,
     );
   },
 };
@@ -151,38 +181,55 @@ export const complianceProof: ProofEvaluator = {
   proof: 'COMPLIANCE',
   evaluate(_intent: ActionIntent, facts: KernelFacts): ProofEvaluation {
     const policy = facts.policyResult;
-    if (policy) {
-      return evalProof(
-        'COMPLIANCE',
-        policy.decision,
-        policy.reasonCodes.join(',') || 'policy engine decision',
-      );
+    let status: DecisionStatus = policy?.decision ?? 'DEFER';
+    let reason = policy?.reasonCodes.join(',') || 'policy engine result is required';
+    if (!policy) {
+      if (!facts.customer) {
+        return evalProof('COMPLIANCE', 'BLOCK', 'customer is required for compliance proof');
+      }
+      status = 'DEFER';
+      reason = 'policy engine result is required';
     }
-    const customer = facts.customer;
-    if (!customer) {
-      return evalProof('COMPLIANCE', 'BLOCK', 'customer is required for compliance proof');
+    if (facts.compliance) {
+      const escalated = escalateFromComplianceFacts(status, facts.compliance);
+      if (DECISION_RANK[escalated.status] > DECISION_RANK[status]) {
+        status = escalated.status;
+      }
+      reason = [reason, escalated.reason].filter((part) => part.length > 0).join('; ');
     }
-    return evalProof('COMPLIANCE', 'DEFER', 'policy engine result is required');
+    return evalProof('COMPLIANCE', status, reason);
   },
 };
 
 export const riskProof: ProofEvaluator = {
   proof: 'RISK',
   evaluate(_intent: ActionIntent, facts: KernelFacts): ProofEvaluation {
-    if (!facts.amount) {
-      return evalProof('RISK', 'ALLOW', 'no amount on this intent');
+    let status: DecisionStatus = 'ALLOW';
+    let reason = 'no amount on this intent';
+    if (facts.amount) {
+      const units = facts.amount.minorUnits;
+      if (units < 0n) {
+        return evalProof('RISK', 'BLOCK', 'negative amounts are forbidden');
+      }
+      if (units > RISK_BLOCK_MINOR) {
+        status = 'BLOCK';
+        reason = 'amount exceeds simulation hard limit';
+      } else if (units > RISK_REVIEW_MINOR) {
+        status = 'REQUIRE_MANUAL_REVIEW';
+        reason = 'amount requires manual review';
+      } else {
+        status = 'ALLOW';
+        reason = 'amount is within simulation limits';
+      }
     }
-    const units = facts.amount.minorUnits;
-    if (units < 0n) {
-      return evalProof('RISK', 'BLOCK', 'negative amounts are forbidden');
+    if (facts.compliance) {
+      const escalated = escalateFromFraudFacts(status, facts.compliance);
+      if (DECISION_RANK[escalated.status] > DECISION_RANK[status]) {
+        status = escalated.status;
+      }
+      reason = [reason, escalated.reason].filter((part) => part.length > 0).join('; ');
     }
-    if (units > RISK_BLOCK_MINOR) {
-      return evalProof('RISK', 'BLOCK', 'amount exceeds simulation hard limit');
-    }
-    if (units > RISK_REVIEW_MINOR) {
-      return evalProof('RISK', 'REQUIRE_MANUAL_REVIEW', 'amount requires manual review');
-    }
-    return evalProof('RISK', 'ALLOW', 'amount is within simulation limits');
+    return evalProof('RISK', status, reason);
   },
 };
 
@@ -191,6 +238,11 @@ const ALLOWED_PURPOSES = new Set<PurposeCode>([
   'CUSTOMER_FUNDING',
   'CUSTOMER_WITHDRAWAL',
   'CUSTOMER_TRANSFER',
+  'CUSTOMER_HOLD',
+  'CUSTOMER_FEE',
+  'CUSTOMER_REVERSAL',
+  'CUSTOMER_INTEREST',
+  'CUSTOMER_SETTLEMENT',
   'CUSTOMER_CROSS_BORDER_PAYMENT',
   'CUSTOMER_FX',
 ]);

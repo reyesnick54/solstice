@@ -6,8 +6,14 @@ import type { Product } from '../../../domain/src/product.ts';
 import type { Money } from '../../../money/src/money.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import { ENVIRONMENT } from '../../../config/src/flags.ts';
+import type { IdentityFacts } from '../../../identity/src/facts.ts';
+import type { ComplianceFacts } from '../compliance/facts.ts';
 import type { KernelActor, KernelFacts } from '../proofs.ts';
 import { hashCanonical } from './hash.ts';
+
+function isIdentityFacts(value: KernelFacts['identity']): value is IdentityFacts {
+  return value !== undefined && 'identityExists' in value;
+}
 import type { FactMap } from './predicates.ts';
 import type { CapabilityEnvironment, PolicyPackId } from './types.ts';
 
@@ -52,6 +58,7 @@ export type PolicyFactInput = {
   readonly corridorId?: string;
   readonly corridorSimulationEnabled?: boolean;
   readonly beneficiaryStatus?: string;
+  readonly compliance?: ComplianceFacts;
 };
 
 /**
@@ -88,16 +95,22 @@ export function policyFactsFromKernel(
   intent: ActionIntent,
   facts: KernelFacts,
 ): PolicyFactInput {
+  const identityFacts = isIdentityFacts(facts.identity) ? facts.identity : undefined;
+  const slimIdentity =
+    !identityFacts && facts.identity ? (facts.identity as PolicyIdentityFacts) : undefined;
   const kycState =
     facts.policyIdentity?.kycState ??
-    facts.identity?.kycState ??
+    identityFacts?.kycState ??
+    slimIdentity?.kycState ??
     facts.customer?.verification.kycState;
   const kycRecordVersion =
     facts.policyIdentity?.kycRecordVersion ??
-    facts.identity?.kycVersion ??
+    identityFacts?.kycVersion ??
+    slimIdentity?.kycRecordVersion ??
     facts.customer?.verification.kycRecordVersion;
-  const residency = facts.policyIdentity?.residency ?? facts.customer?.residency;
-  const citizenship = facts.policyIdentity?.citizenship;
+  const residency =
+    facts.policyIdentity?.residency ?? slimIdentity?.residency ?? facts.customer?.residency;
+  const citizenship = facts.policyIdentity?.citizenship ?? slimIdentity?.citizenship;
   const identity: PolicyIdentityFacts = {
     ...(kycState != null ? { kycState } : {}),
     ...(kycRecordVersion != null ? { kycRecordVersion } : {}),
@@ -127,6 +140,7 @@ export function policyFactsFromKernel(
       ? { corridorSimulationEnabled: facts.corridorSimulationEnabled }
       : {}),
     ...(facts.beneficiaryStatus ? { beneficiaryStatus: facts.beneficiaryStatus } : {}),
+    ...(facts.compliance ? { compliance: facts.compliance } : {}),
   };
 }
 
@@ -170,6 +184,19 @@ export function toFactMap(input: PolicyFactInput): FactMap {
     'corridor.id': input.corridorId,
     'corridor.simulationEnabled': input.corridorSimulationEnabled,
     'beneficiary.status': input.beneficiaryStatus,
+    'screening.sanctionsOutcome': input.compliance?.sanctionsOutcome ?? undefined,
+    'screening.pepOutcome': input.compliance?.pepOutcome ?? undefined,
+    'screening.adverseMediaOutcome': input.compliance?.adverseMediaOutcome ?? undefined,
+    'screening.fresh':
+      input.compliance === undefined
+        ? undefined
+        : input.compliance.sanctionsFresh &&
+          input.compliance.pepFresh &&
+          input.compliance.adverseMediaFresh,
+    'screening.providerAvailable': input.compliance?.providerAvailable,
+    'aml.riskCategory': input.compliance?.amlCategory ?? undefined,
+    'fraud.outcome': input.compliance?.fraudOutcome ?? undefined,
+    'velocity.triggered': input.compliance?.velocityTriggered,
   };
 }
 
@@ -207,5 +234,10 @@ export function hashPolicyFacts(input: PolicyFactInput): string {
     corridorId: input.corridorId ?? null,
     corridorSimulationEnabled: input.corridorSimulationEnabled ?? null,
     beneficiaryStatus: input.beneficiaryStatus ?? null,
+    sanctionsOutcome: input.compliance?.sanctionsOutcome ?? null,
+    pepOutcome: input.compliance?.pepOutcome ?? null,
+    amlCategory: input.compliance?.amlCategory ?? null,
+    fraudOutcome: input.compliance?.fraudOutcome ?? null,
+    providerAvailable: input.compliance?.providerAvailable ?? null,
   });
 }

@@ -34,6 +34,16 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'initiatePayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'cancelPayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'postPaymentJournal', file: 'packages/payments/src/journals.ts' },
+  { symbol: 'createHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'releaseHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'captureHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'cancelHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postFee', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postReversal', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postInterest', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'initiatePending', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'settlePending', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'returnPending', file: 'services/accounts/src/banking-operations.ts' },
 ];
 
 const failures = [];
@@ -66,11 +76,11 @@ for (const path of STATE_CHANGING_PATHS) {
   const lines = source.split('\n');
   let foundLine = 0;
   for (let i = 0; i < lines.length; i += 1) {
-    if (lines[i].includes(`${path.symbol}(`) && /function|^\s+\w+\(/.test(lines[i])) {
+    if (lines[i].includes(`${path.symbol}(`) && /function|^\s+(?:async\s+)?\w+\(/.test(lines[i])) {
       foundLine = i + 1;
       break;
     }
-    if (new RegExp(`^\\s+${path.symbol}\\(`).test(lines[i])) {
+    if (new RegExp(`^\\s+(?:async\\s+)?${path.symbol}\\(`).test(lines[i])) {
       foundLine = i + 1;
       break;
     }
@@ -87,7 +97,8 @@ for (const path of STATE_CHANGING_PATHS) {
     body.includes('kernel.submit') ||
     body.includes('this.kernel.submit') ||
     body.includes('this.gate(') ||
-    body.includes('this.move(');
+    body.includes('this.move(') ||
+    body.includes('authorizeIntent(');
   if (!gated) {
     addFailure(
       path.file,

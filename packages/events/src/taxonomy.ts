@@ -17,6 +17,10 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'identity',
   'payment',
   'fx',
+  'banking',
+  'compliance',
+  'fraud',
+
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -69,6 +73,26 @@ export const EVENT_TYPE_NAMES = [
   'FxQuoteCreated',
   'FxQuoteAccepted',
   'FxQuoteExpired',
+  'HoldCreated',
+  'HoldReleased',
+  'HoldCaptured',
+  'HoldCancelled',
+  'StatementGenerated',
+  'ReconciliationMismatch',
+  'AccountPositionChanged',
+  'FeePosted',
+  'InterestPosted',
+  'ReversalPosted',
+  'PendingSettlementInitiated',
+  'PendingSettlementSettled',
+  'PendingSettlementReturned',
+  'ComplianceScreeningCompleted',
+  'ComplianceScreeningReviewRequired',
+  'ComplianceCaseOpened',
+  'ComplianceCaseDecided',
+  'ComplianceAlertCreated',
+  'FraudRiskEvaluated',
+
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -107,6 +131,26 @@ export const EVENT_SCHEMA_REFS = {
   FxQuoteCreated: 'solstice.fx.quote.created/1',
   FxQuoteAccepted: 'solstice.fx.quote.accepted/1',
   FxQuoteExpired: 'solstice.fx.quote.expired/1',
+  HoldCreated: 'solstice.banking.hold.created/1',
+  HoldReleased: 'solstice.banking.hold.released/1',
+  HoldCaptured: 'solstice.banking.hold.captured/1',
+  HoldCancelled: 'solstice.banking.hold.cancelled/1',
+  StatementGenerated: 'solstice.banking.statement.generated/1',
+  ReconciliationMismatch: 'solstice.banking.reconciliation.mismatch/1',
+  AccountPositionChanged: 'solstice.account.position.changed/1',
+  FeePosted: 'solstice.banking.fee.posted/1',
+  InterestPosted: 'solstice.banking.interest.posted/1',
+  ReversalPosted: 'solstice.banking.reversal.posted/1',
+  PendingSettlementInitiated: 'solstice.banking.pending.initiated/1',
+  PendingSettlementSettled: 'solstice.banking.pending.settled/1',
+  PendingSettlementReturned: 'solstice.banking.pending.returned/1',
+  ComplianceScreeningCompleted: 'solstice.compliance.screening.completed/1',
+  ComplianceScreeningReviewRequired: 'solstice.compliance.screening.review_required/1',
+  ComplianceCaseOpened: 'solstice.compliance.case.opened/1',
+  ComplianceCaseDecided: 'solstice.compliance.case.decided/1',
+  ComplianceAlertCreated: 'solstice.compliance.alert.created/1',
+  FraudRiskEvaluated: 'solstice.fraud.risk.evaluated/1',
+
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -145,6 +189,26 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   FxQuoteCreated: 'fx',
   FxQuoteAccepted: 'fx',
   FxQuoteExpired: 'fx',
+  HoldCreated: 'banking',
+  HoldReleased: 'banking',
+  HoldCaptured: 'banking',
+  HoldCancelled: 'banking',
+  StatementGenerated: 'banking',
+  ReconciliationMismatch: 'banking',
+  AccountPositionChanged: 'account',
+  FeePosted: 'banking',
+  InterestPosted: 'banking',
+  ReversalPosted: 'banking',
+  PendingSettlementInitiated: 'banking',
+  PendingSettlementSettled: 'banking',
+  PendingSettlementReturned: 'banking',
+  ComplianceScreeningCompleted: 'compliance',
+  ComplianceScreeningReviewRequired: 'compliance',
+  ComplianceCaseOpened: 'compliance',
+  ComplianceCaseDecided: 'compliance',
+  ComplianceAlertCreated: 'compliance',
+  FraudRiskEvaluated: 'fraud',
+
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

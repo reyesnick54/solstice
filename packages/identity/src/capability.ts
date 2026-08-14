@@ -21,13 +21,16 @@ export const IDENTITY_CAPABILITIES = [
   'POST_WITHDRAWAL_REQUEST',
   'PAYMENT_REQUEST',
   'FX_QUOTE_REQUEST',
+  'HOLD_REQUEST',
+  'FEE_ASSESS_REQUEST',
+  'REVERSAL_REQUEST',
+  'INTEREST_POST_REQUEST',
+  'SETTLEMENT_REQUEST',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
 
-export const ACTION_TYPES_FOR_CAPABILITY: Readonly<
-  Record<IdentityCapability, readonly string[]>
-> = {
+export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, readonly string[]>> = {
   ACCOUNT_OPEN_REQUEST: ['OPEN_ACCOUNT'],
   TRANSFER_REQUEST: ['INTERNAL_TRANSFER'],
   VIEW_ACCOUNT: [],
@@ -37,19 +40,14 @@ export const ACTION_TYPES_FOR_CAPABILITY: Readonly<
   POST_WITHDRAWAL_REQUEST: ['POST_WITHDRAWAL'],
   PAYMENT_REQUEST: ['INITIATE_PAYMENT', 'CANCEL_PAYMENT'],
   FX_QUOTE_REQUEST: ['CREATE_FX_QUOTE', 'ACCEPT_FX_QUOTE'],
+  HOLD_REQUEST: ['CREATE_HOLD', 'RELEASE_HOLD', 'CAPTURE_HOLD', 'CANCEL_HOLD'],
+  FEE_ASSESS_REQUEST: ['POST_FEE'],
+  REVERSAL_REQUEST: ['POST_REVERSAL'],
+  INTEREST_POST_REQUEST: ['POST_INTEREST'],
+  SETTLEMENT_REQUEST: ['INITIATE_PENDING_SETTLEMENT', 'SETTLE_PENDING', 'RETURN_PENDING'],
 };
 
-export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, string | null>> = {
-  ACCOUNT_OPEN_REQUEST: 'OPEN_ACCOUNT',
-  TRANSFER_REQUEST: 'INTERNAL_TRANSFER',
-  VIEW_ACCOUNT: null,
-  MANAGE_PROFILE: null,
-  MANAGE_BENEFICIARY: 'CREATE_BENEFICIARY',
-  POST_DEPOSIT_REQUEST: 'POST_DEPOSIT',
-  POST_WITHDRAWAL_REQUEST: 'POST_WITHDRAWAL',
-  PAYMENT_REQUEST: 'INITIATE_PAYMENT',
-  FX_QUOTE_REQUEST: 'CREATE_FX_QUOTE',
-};
+export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
 
 export type CapabilityGrant = {
   readonly grantId: CapabilityGrantId;
@@ -70,7 +68,7 @@ export function actionTypesFromCapabilities(
 ): readonly string[] {
   const types = new Set<string>();
   for (const capability of capabilities) {
-    for (const actionType of ACTION_TYPES_FOR_CAPABILITY[capability]) {
+    for (const actionType of ACTION_TYPE_FOR_CAPABILITY[capability]) {
       types.add(actionType);
     }
   }
@@ -92,6 +90,11 @@ const FINANCIAL_CAPABILITIES: readonly IdentityCapability[] = [
   'POST_WITHDRAWAL_REQUEST',
   'PAYMENT_REQUEST',
   'FX_QUOTE_REQUEST',
+  'HOLD_REQUEST',
+  'FEE_ASSESS_REQUEST',
+  'REVERSAL_REQUEST',
+  'INTEREST_POST_REQUEST',
+  'SETTLEMENT_REQUEST',
 ];
 
 /**

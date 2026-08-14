@@ -72,6 +72,7 @@ AUTHORIZED_JOURNAL_FILENAMES = {
     "journal.js",
     "ledger.ts",
     "ledger.js",
+    "banking-operations.ts",
 }
 
 LIVE_FLAG_NAMES = (

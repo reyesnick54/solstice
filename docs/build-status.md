@@ -38,6 +38,24 @@ This document describes only what is implemented and tested in this tree.
   Execution Authority signs and verifies through the KeyProvider.
   Evidence Vault hashing uses the shared SHA-256 helper and stays
   deterministic. No live KMS/HSM.
+- Multi-currency banking core (Chunk 8): USD/EUR/GBP/SAR/AED registry,
+  currency-separated CustomerPosition, available/held/pending/settled
+  semantics, Kernel-gated holds, explicit fees, compensating reversals,
+  interest event framework (no product APY), statements from journals,
+  reconciliation items that never auto-correct, and synthetic account
+  coordinates. No FX execution and no external rails.
+- Solstice Identity (`packages/identity`, `services/identity`): person/business
+  identity, simulated passkey registration/authentication, sessions, device
+  trust, versioned KYC metadata, capability grants, signed ActorContext.
+  Accounts consume authoritative capabilities. Kernel identity proof reads
+  IdentityFacts. ADR-0007 remains PROPOSED; no KYC vendor is selected.
+- Compliance screening fabric (Chunk 7, `packages/kernel/src/compliance`,
+  `services/compliance`): provider-neutral sanctions/PEP/adverse-media/AML/
+  fraud/velocity/case control plane with deterministic simulation adapters.
+  Policy packs declare required screenings. Kernel Compliance and Risk proofs
+  consume the facts. No live vendor. No OFAC/UN/EU/HMT claim.
+  Transaction-monitoring thresholds are engineering test rules labeled
+  RESEARCH_REQUIRED.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -45,15 +63,11 @@ This document describes only what is implemented and tested in this tree.
   Chunk 3 fabric uses a simulated in-process transport behind a portable
   dispatcher port.
 - Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
-- Identity stack / real KYC (ADR-0007 remains PROPOSED).
-- Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
-- Solstice Identity (`packages/identity`, `services/identity`): person/business
-  identity, simulated passkey registration/authentication, sessions, device
-  trust, versioned KYC metadata, capability grants, signed ActorContext.
-  Accounts consume authoritative capabilities. Kernel identity proof reads
-  IdentityFacts. ADR-0007 remains PROPOSED; no KYC vendor is selected.
-- Real KYC vendor integration, sanctions/PEP, and jurisdiction policy.
-- Simulation FX quotes, beneficiaries, US↔SA corridors, route selection, holds via PENDING_SETTLEMENT journals, simulated settlement, per-currency FX journals, returns as compensating entries, and reconciliation (`packages/payments`). Not live rails.
+- Live AML/sanctions/PEP vendors, real SAR filing, and counsel-confirmed
+  screening thresholds. The Chunk 7 fabric is simulation control architecture.
+- Simulation FX quotes, beneficiaries, US↔SA corridors, route selection,
+  simulated settlement, per-currency FX journals, and returns as compensating
+  entries (`packages/payments`). Not live rails.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.

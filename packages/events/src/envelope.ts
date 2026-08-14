@@ -108,6 +108,13 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'accountNumber',
   'routingNumber',
   'accountCoordinateValue',
+  'providerPayload',
+  'rawProvider',
+  'articleBody',
+  'articleContent',
+  'fullName',
+  'dateOfBirth',
+  'legalName',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
@@ -161,21 +168,28 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   ) {
     return { type: 'key', id: String(body.keyId ?? 'unknown') };
   }
+  if (
+    eventType === 'ComplianceScreeningCompleted' ||
+    eventType === 'ComplianceScreeningReviewRequired'
+  ) {
+    return { type: 'compliance_screening', id: String(body.screeningId ?? 'unknown') };
+  }
+  if (eventType === 'ComplianceCaseOpened' || eventType === 'ComplianceCaseDecided') {
+    return { type: 'compliance_case', id: String(body.caseId ?? 'unknown') };
+  }
+  if (eventType === 'ComplianceAlertCreated') {
+    return { type: 'compliance_alert', id: String(body.alertId ?? 'unknown') };
+  }
+  if (eventType === 'FraudRiskEvaluated') {
+    return { type: 'fraud_evaluation', id: String(body.evaluationId ?? 'unknown') };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 
 export function sealEnvelope<T extends string, V extends number, P>(
   input: SealedEventInput<T, V, P>,
   sequence: number,
-): DurableEventEnvelope<T, V, P>;
-export function sealEnvelope(
-  input: SealedEventInput<string, number, unknown>,
-  sequence: number,
-): DurableEventEnvelope;
-export function sealEnvelope(
-  input: SealedEventInput<string, number, unknown>,
-  sequence: number,
-): DurableEventEnvelope {
+): DurableEventEnvelope<T, V, P> {
   assertSafeEventPayload(input.payload);
   const inferred = inferAggregate(input.eventType, input.payload);
   const eventId = asEventId(input.eventId ?? randomUUID());

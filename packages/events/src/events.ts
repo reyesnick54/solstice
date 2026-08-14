@@ -295,6 +295,63 @@ export type FxQuoteExpiredV1 = VersionedEvent<
     readonly expiresAt: string;
   }
 >;
+export type BankingAmountPayload = {
+  readonly accountId: AccountId;
+  readonly amountMinorUnits: string;
+  readonly currency: string;
+  readonly holdId?: string;
+  readonly journalId?: string;
+  readonly statementId?: string;
+  readonly reconciliationId?: string;
+  readonly feeId?: string;
+  readonly reversalId?: string;
+  readonly pendingId?: string;
+};
+
+export type HoldCreatedV1 = VersionedEvent<'HoldCreated', 1, BankingAmountPayload>;
+export type HoldReleasedV1 = VersionedEvent<'HoldReleased', 1, BankingAmountPayload>;
+export type HoldCapturedV1 = VersionedEvent<'HoldCaptured', 1, BankingAmountPayload>;
+export type HoldCancelledV1 = VersionedEvent<'HoldCancelled', 1, BankingAmountPayload>;
+export type StatementGeneratedV1 = VersionedEvent<'StatementGenerated', 1, BankingAmountPayload>;
+export type ReconciliationMismatchV1 = VersionedEvent<'ReconciliationMismatch', 1, BankingAmountPayload>;
+export type AccountPositionChangedV1 = VersionedEvent<'AccountPositionChanged', 1, BankingAmountPayload>;
+export type FeePostedV1 = VersionedEvent<'FeePosted', 1, BankingAmountPayload>;
+export type InterestPostedV1 = VersionedEvent<'InterestPosted', 1, BankingAmountPayload>;
+export type ReversalPostedV1 = VersionedEvent<'ReversalPosted', 1, BankingAmountPayload>;
+export type PendingSettlementInitiatedV1 = VersionedEvent<'PendingSettlementInitiated', 1, BankingAmountPayload>;
+export type PendingSettlementSettledV1 = VersionedEvent<'PendingSettlementSettled', 1, BankingAmountPayload>;
+export type PendingSettlementReturnedV1 = VersionedEvent<'PendingSettlementReturned', 1, BankingAmountPayload>;
+export type ComplianceAuditPayload = {
+  readonly screeningId?: string;
+  readonly caseId?: string;
+  readonly alertId?: string;
+  readonly evaluationId?: string;
+  readonly screeningType?: string;
+  readonly caseType?: string;
+  readonly outcome?: string;
+  readonly decision?: string;
+  readonly reasonCodes?: readonly string[];
+  readonly subjectRef?: string;
+  readonly providerRef?: string;
+  readonly providerHash?: string;
+  readonly policyVersionId?: string;
+  readonly jurisdiction?: string;
+};
+
+export type ComplianceScreeningCompletedV1 = VersionedEvent<
+  'ComplianceScreeningCompleted',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceScreeningReviewRequiredV1 = VersionedEvent<
+  'ComplianceScreeningReviewRequired',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceCaseOpenedV1 = VersionedEvent<'ComplianceCaseOpened', 1, ComplianceAuditPayload>;
+export type ComplianceCaseDecidedV1 = VersionedEvent<'ComplianceCaseDecided', 1, ComplianceAuditPayload>;
+export type ComplianceAlertCreatedV1 = VersionedEvent<'ComplianceAlertCreated', 1, ComplianceAuditPayload>;
+export type FraudRiskEvaluatedV1 = VersionedEvent<'FraudRiskEvaluated', 1, ComplianceAuditPayload>;
 
 export type DomainEvent =
   | AccountOpenedV1
@@ -329,7 +386,26 @@ export type DomainEvent =
   | PaymentCancelledV1
   | FxQuoteCreatedV1
   | FxQuoteAcceptedV1
-  | FxQuoteExpiredV1;
+  | FxQuoteExpiredV1
+  | HoldCreatedV1
+  | HoldReleasedV1
+  | HoldCapturedV1
+  | HoldCancelledV1
+  | StatementGeneratedV1
+  | ReconciliationMismatchV1
+  | AccountPositionChangedV1
+  | FeePostedV1
+  | InterestPostedV1
+  | ReversalPostedV1
+  | PendingSettlementInitiatedV1
+  | PendingSettlementSettledV1
+  | PendingSettlementReturnedV1
+  | ComplianceScreeningCompletedV1
+  | ComplianceScreeningReviewRequiredV1
+  | ComplianceCaseOpenedV1
+  | ComplianceCaseDecidedV1
+  | ComplianceAlertCreatedV1
+  | FraudRiskEvaluatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

@@ -1,4 +1,4 @@
--- V004 payments / FX simulation records.
+-- V005 payments / FX simulation records.
 -- Account coordinates are stored as a hash plus a display hint only.
 -- Raw IBAN, ABA, or account numbers must never appear in these tables.
 

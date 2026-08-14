@@ -9,14 +9,26 @@ import {
   ACTION_TYPES,
   type AcceptFxQuoteIntent,
   type CancelPaymentIntent,
+  type CaptureHoldIntent,
+  type CancelHoldIntent,
   type CreateBeneficiaryIntent,
   type CreateFxQuoteIntent,
+  type CreateHoldIntent,
   type InitiatePaymentIntent,
+  type InitiatePendingSettlementIntent,
   type InternalTransferIntent,
   type OpenAccountIntent,
+  type PendingSettlementLifecyclePayload,
   type PostDepositIntent,
+  type PostFeeIntent,
+  type PostInterestIntent,
+  type PostReversalIntent,
   type PostWithdrawalIntent,
+  type ReleaseHoldIntent,
+  type ReturnPendingIntent,
+  type SettlePendingIntent,
 } from './action-types.ts';
+import { isHoldPurpose } from '../../domain/src/hold.ts';
 
 /**
  * Structural (well-formedness) validation only.
@@ -71,6 +83,40 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.CANCEL_PAYMENT) {
     return validateAccountOnly((intent as CancelPaymentIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CREATE_HOLD) {
+    return validateCreateHold(intent as CreateHoldIntent, catalog);
+  }
+  if (
+    intent.actionType === ACTION_TYPES.RELEASE_HOLD ||
+    intent.actionType === ACTION_TYPES.CAPTURE_HOLD ||
+    intent.actionType === ACTION_TYPES.CANCEL_HOLD
+  ) {
+    return validateHoldLifecycle(
+      intent as ReleaseHoldIntent | CaptureHoldIntent | CancelHoldIntent,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.POST_FEE) {
+    return validatePostFee(intent as PostFeeIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.POST_REVERSAL) {
+    return validatePostReversal(intent as PostReversalIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.POST_INTEREST) {
+    return validatePostInterest(intent as PostInterestIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.INITIATE_PENDING_SETTLEMENT) {
+    return validateInitiatePending(intent as InitiatePendingSettlementIntent, catalog);
+  }
+  if (
+    intent.actionType === ACTION_TYPES.SETTLE_PENDING ||
+    intent.actionType === ACTION_TYPES.RETURN_PENDING
+  ) {
+    return validatePendingLifecycle(
+      intent as SettlePendingIntent | ReturnPendingIntent,
+      catalog,
+    );
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }
@@ -188,6 +234,116 @@ function validateInternalTransfer(
   return ok(true);
 }
 
+function validateCreateHold(
+  intent: CreateHoldIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (!isHoldPurpose(intent.payload.holdPurpose)) {
+    return reject('holdPurpose', 'hold purpose is not recognized');
+  }
+  return validateOutgoingAccountMoney(intent.payload.accountId, intent.payload.amount, catalog);
+}
+
+function validateHoldLifecycle(
+  intent: ReleaseHoldIntent | CaptureHoldIntent | CancelHoldIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const account = catalog.accounts.get(intent.payload.accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.status === 'CLOSED') {
+    return reject('status', 'account is CLOSED');
+  }
+  return ok(true);
+}
+
+function validatePostFee(
+  intent: PostFeeIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (intent.payload.feeType === 'BASIS_POINTS') {
+    if (
+      typeof intent.payload.basisPointsNumerator !== 'bigint' ||
+      typeof intent.payload.basisPointsDenominator !== 'bigint'
+    ) {
+      return reject('basisPoints', 'basis-point fee requires bigint numerator and denominator');
+    }
+    if (intent.payload.basisPointsDenominator === 0n) {
+      return reject('basisPoints', 'basis-point denominator must be non-zero');
+    }
+  }
+  return validateOutgoingAccountMoney(intent.payload.accountId, intent.payload.amount, catalog);
+}
+
+function validatePostReversal(
+  intent: PostReversalIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (typeof intent.payload.originalJournalId !== 'string' || intent.payload.originalJournalId.length === 0) {
+    return reject('originalJournalId', 'original journal id is required');
+  }
+  const account = catalog.accounts.get(intent.payload.accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.status === 'CLOSED') {
+    return reject('status', 'account is CLOSED');
+  }
+  return ok(true);
+}
+
+function validatePostInterest(
+  intent: PostInterestIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  return validateSingleAccountMoney(intent.payload.accountId, intent.payload.amount, catalog);
+}
+
+function validateInitiatePending(
+  intent: InitiatePendingSettlementIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const source = validateOutgoingAccountMoney(
+    intent.payload.sourceAccountId,
+    intent.payload.amount,
+    catalog,
+  );
+  if (!source.ok) {
+    return source;
+  }
+  const pending = catalog.accounts.get(intent.payload.pendingAccountId);
+  if (!pending) {
+    return reject('pendingAccountId', 'pending settlement account does not exist');
+  }
+  if (pending.accountClass !== 'PENDING_SETTLEMENT') {
+    return reject('pendingAccountId', 'pending account must be PENDING_SETTLEMENT class');
+  }
+  if (pending.status !== 'OPEN') {
+    return reject('status', 'pending settlement account is not OPEN');
+  }
+  if (pending.currency !== intent.payload.amount.currency) {
+    return reject('currency', 'pending account currency does not match amount');
+  }
+  return ok(true);
+}
+
+function validatePendingLifecycle(
+  intent: SettlePendingIntent | ReturnPendingIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const payload: PendingSettlementLifecyclePayload = intent.payload;
+  const source = catalog.accounts.get(payload.sourceAccountId);
+  const pending = catalog.accounts.get(payload.pendingAccountId);
+  if (!source || !pending) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (pending.accountClass !== 'PENDING_SETTLEMENT') {
+    return reject('pendingAccountId', 'pending account must be PENDING_SETTLEMENT class');
+  }
+  return ok(true);
+}
+
 function validateAccountOnly(
   accountId: Account['id'],
   catalog: StructuralCatalog,
@@ -285,6 +441,25 @@ function validateInitiatePayment(
   }
   if (!isCustomerFundedClass(account.accountClass)) {
     return reject('accountClass', 'money movement requires a customer-funded account class');
+  }
+  return ok(true);
+}
+
+function validateOutgoingAccountMoney(
+  accountId: Account['id'],
+  amount: Money,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const check = validateSingleAccountMoney(accountId, amount, catalog);
+  if (!check.ok) {
+    return check;
+  }
+  const account = catalog.accounts.get(accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.status === 'FROZEN') {
+    return reject('status', 'FROZEN account cannot initiate outgoing movement');
   }
   return ok(true);
 }

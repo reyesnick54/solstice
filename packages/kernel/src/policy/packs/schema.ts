@@ -1,6 +1,8 @@
 import { asUtcInstant, isUtcInstant } from '../../../../domain/src/time.ts';
 import { hashCanonical } from '../hash.ts';
 import { isFactPath, type PolicyPredicate } from '../predicates.ts';
+import type { ScreeningRequirements } from '../../compliance/types.ts';
+import { DEFAULT_SIMULATION_SCREENING_REQUIREMENTS } from '../../compliance/types.ts';
 import type {
   LegalReviewStatus,
   OverrideClass,
@@ -106,6 +108,7 @@ function loadVersion(packId: PolicyPackId, raw: unknown): PolicyVersionRecord {
     throw new Error(`policy pack ${packId} version ${raw.versionId} rules must be an array`);
   }
   const rules = raw.rules.map((rule) => loadRule(packId, rule));
+  const screeningRequirements = loadScreeningRequirements(raw.screeningRequirements);
   const draft: Omit<PolicyVersionRecord, 'contentHash'> = {
     versionId: raw.versionId,
     packId,
@@ -115,6 +118,7 @@ function loadVersion(packId: PolicyPackId, raw: unknown): PolicyVersionRecord {
     effectiveFrom: asUtcInstant(raw.effectiveFrom),
     ...(raw.effectiveUntil ? { effectiveUntil: asUtcInstant(raw.effectiveUntil) } : {}),
     rules,
+    screeningRequirements,
   };
   return Object.freeze({
     ...draft,
@@ -126,7 +130,44 @@ function loadVersion(packId: PolicyPackId, raw: unknown): PolicyVersionRecord {
       effectiveFrom: draft.effectiveFrom,
       effectiveUntil: draft.effectiveUntil ?? null,
       rules: draft.rules,
+      screeningRequirements: draft.screeningRequirements,
     }),
+  });
+}
+
+function loadScreeningRequirements(raw: unknown): ScreeningRequirements {
+  if (!isRecord(raw)) {
+    return DEFAULT_SIMULATION_SCREENING_REQUIREMENTS;
+  }
+  return Object.freeze({
+    sanctions: loadRequirement(raw.sanctions, DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.sanctions),
+    pep: loadRequirement(raw.pep, DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.pep),
+    adverseMedia: loadRequirement(raw.adverseMedia, DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.adverseMedia),
+    transactionMonitoring: loadRequirement(
+      raw.transactionMonitoring,
+      DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.transactionMonitoring,
+    ),
+    fraud: loadRequirement(raw.fraud, DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.fraud),
+    deviceRisk: loadRequirement(raw.deviceRisk, DEFAULT_SIMULATION_SCREENING_REQUIREMENTS.deviceRisk),
+  });
+}
+
+function loadRequirement(
+  raw: unknown,
+  fallback: ScreeningRequirements['sanctions'],
+): ScreeningRequirements['sanctions'] {
+  if (!isRecord(raw)) {
+    return fallback;
+  }
+  return Object.freeze({
+    required: typeof raw.required === 'boolean' ? raw.required : fallback.required,
+    maxAgeHours: typeof raw.maxAgeHours === 'number' ? raw.maxAgeHours : fallback.maxAgeHours,
+    onUnavailable:
+      raw.onUnavailable === 'DEFER' ||
+      raw.onUnavailable === 'REQUIRE_MANUAL_REVIEW' ||
+      raw.onUnavailable === 'BLOCK'
+        ? raw.onUnavailable
+        : fallback.onUnavailable,
   });
 }
 

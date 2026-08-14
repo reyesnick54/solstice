@@ -85,16 +85,28 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /CREATE TABLE customer\.policy_rule/);
     assert.match(v003.sql, /CREATE TABLE customer\.legal_entity_capability/);
     assert.match(v003.sql, /CREATE TABLE customer\.manual_review_case/);
+    assert.match(v003.sql, /screening_requirements/);
     assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v003.sql), false);
   });
 
-  it('customer V004 stores payment records without raw account coordinates', () => {
+  it('customer V004 persists compliance fabric without raw PII', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v004 = files.find((file) => file.version === 4);
     assert.ok(v004);
-    assert.match(v004.sql, /CREATE SCHEMA IF NOT EXISTS payments/);
-    assert.match(v004.sql, /coordinate_ref/);
-    assert.equal(/\b(iban|account_number|routing_number)\b/i.test(v004.sql.replace(/--[^\n]*/g, '')), false);
+    assert.match(v004.sql, /CREATE SCHEMA IF NOT EXISTS compliance/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.screening_result/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.case_record/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.human_decision/);
+    assert.equal(/article_body|full_name|date_of_birth|ssn|legal_name_plain/i.test(v004.sql), false);
+  });
+
+  it('customer V005 stores payment records without raw account coordinates', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v005 = files.find((file) => file.version === 5);
+    assert.ok(v005);
+    assert.match(v005.sql, /CREATE SCHEMA IF NOT EXISTS payments/);
+    assert.match(v005.sql, /coordinate_ref/);
+    assert.equal(/\b(iban|account_number|routing_number)\b/i.test(v005.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {
@@ -111,5 +123,17 @@ describe('versioned SQL migrations', () => {
     const v003 = files.find((file) => file.version === 3);
     assert.ok(v003);
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
+  });
+
+  it('ledger V004 persists banking-core metadata without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v004 = files.find((file) => file.version === 4);
+    assert.ok(v004);
+    assert.match(v004.sql, /CREATE TABLE ledger\.funds_hold/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.pending_settlement/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.fee_assessment/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.reconciliation_item/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.account_coordinate/);
+    assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v004.sql), false);
   });
 });
