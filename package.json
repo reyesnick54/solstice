@@ -1,0 +1,21 @@
+{
+  "name": "solstice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solstice digital banking — class-segregated balances derived from ledger postings",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "tsx --test tests/**/*.test.ts",
+    "demo": "tsx demo/demo.ts",
+    "typecheck": "tsc --noEmit",
+    "suite": "tsx --test tests/**/*.test.ts && tsx demo/demo.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}
