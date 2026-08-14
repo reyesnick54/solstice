@@ -53,8 +53,11 @@ describe('Phase 8 exit criterion', () => {
     const request = economy.publishRequest(sponsor);
     const buyerView = economy.match(request);
     assert.equal(buyerView.eligibleCount, 2n);
-    assert.equal(JSON.stringify(buyerView).includes('cust_jane'), false);
-    assert.equal(JSON.stringify(buyerView).includes('cust_maya'), false);
+    const buyerJson = JSON.stringify(buyerView, (_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value,
+    );
+    assert.equal(buyerJson.includes('cust_jane'), false);
+    assert.equal(buyerJson.includes('cust_maya'), false);
 
     const janeOpp = economy.opportunitiesForCustomer(jane);
     const mayaOpp = economy.opportunitiesForCustomer(maya);

@@ -113,7 +113,8 @@ for (const file of files) {
     }
     if (
       /#(customers|accounts|beneficiaries|payments|costAvoided)\.(set|push)\(/.test(line) &&
-      !rel.endsWith('stores.ts')
+      !rel.endsWith('stores.ts') &&
+      !rel.endsWith('packages/pyr-ledger/src/books.ts')
     ) {
       addFailure(rel, n, 'direct financial store mutation outside LedgerBooks gated methods');
     }

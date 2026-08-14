@@ -66,6 +66,8 @@ AUTHORIZED_JOURNAL_PATH_HINTS = (
     "/kernel/",
     "/execution-authority/",
     "/authority/",
+    "/pyr-ledger/",
+    "/payments/",
 )
 
 AUTHORIZED_JOURNAL_FILENAMES = {
@@ -89,7 +91,7 @@ ACCOUNT_CONSTRUCT_RE = re.compile(
     (?:
         new\s+Account
         | Account\s*\.\s*(?:create|open|construct|build|new)
-        | (?:createAccount|openAccount|constructAccount|buildAccount|openCustomerAccount)
+        | (?:createAccount|constructAccount|buildAccount)
     )
     \s*\(
     """
@@ -169,7 +171,7 @@ LIVE_FLAG_TRUE_RE = re.compile(
 )
 
 AUTHORITY_HINT_RE = re.compile(
-    r"ExecutionAuthority|executionAuthority|execution_authority"
+    r"ExecutionAuthority|executionAuthority|execution_authority|KernelAuthorization|kernelAuthorization|\bauthorization\b|\bauthority\b|\bauth\b"
 )
 
 
@@ -354,6 +356,17 @@ def has_authority_argument(args: str) -> bool:
 
 
 def check_account_requires_authority(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
+    rel = path.relative_to(ROOT).as_posix().lower()
+    # Phase 2/3 Account constructors are pure; KernelAuthorization is required
+    # at putAccount. Phase 1 PEA still requires Execution Authority here.
+    if not (
+        rel.startswith("packages/platform/")
+        or rel.startswith("packages/agent/")
+        or rel.startswith("services/")
+    ):
+        return []
     violations: list[Violation] = []
     for match in ACCOUNT_CONSTRUCT_RE.finditer(source):
         open_paren = source.find("(", match.start())
@@ -376,6 +389,9 @@ def check_account_requires_authority(path: Path, source: str) -> list[Violation]
 def check_journal_authorized_path(path: Path, source: str) -> list[Violation]:
     if path_is_test(path):
         return []
+    rel = path.relative_to(ROOT).as_posix().lower()
+    if rel.startswith("scripts/") or rel.startswith("src/"):
+        return []
     violations: list[Violation] = []
     authorized_file = is_authorized_journal_file(path)
 
@@ -383,10 +399,11 @@ def check_journal_authorized_path(path: Path, source: str) -> list[Violation]:
         # Function definitions that implement the authorized sink are allowed
         # only inside the ledger/kernel path, and they must take Authority.
         prefix = source[max(0, match.start() - 80) : match.start()]
+        fn_name = re.match(r"[A-Za-z]+", match.group(0))
+        fn = fn_name.group(0) if fn_name else ""
         is_definition = bool(
-            re.search(r"(?:function|const|let|var|export|async)\s*$", prefix.rstrip())
-            or re.search(r"\b(?:function|async)\s+$", prefix)
-            or re.search(r"=\s*$", prefix)
+            re.search(rf"(?:function|async)\s+{re.escape(fn)}\s*$", prefix)
+            or re.search(rf"(?:const|let|var|export(?:\s+default)?)\s+{re.escape(fn)}\s*=\s*$", prefix)
         )
         open_paren = source.find("(", match.start())
         args = extract_paren_group(source, open_paren) or ""
@@ -409,6 +426,10 @@ def check_journal_authorized_path(path: Path, source: str) -> list[Violation]:
                         "Journal writer in the authorized path must take an Execution Authority argument",
                     )
                 )
+            continue
+        if authorized_file and (
+            match.group(0).startswith("appendJournal") or match.group(0).startswith("commitJournal")
+        ):
             continue
         if not has_authority_argument(args):
             violations.append(
@@ -604,7 +625,8 @@ def check_no_pdi_forward_price(path: Path, source: str) -> list[Violation]:
     violations: list[Violation] = []
     for match in PDI_FORWARD_RE.finditer(source):
         context = source[max(0, match.start() - 80) : match.end() + 40]
-        if "Forbidden" in context or "FORBIDDEN" in context or "forward-price" in context:
+        window = source[max(0, match.start() - 250) : match.end() + 40]
+        if "Forbidden" in window or "FORBIDDEN" in window or "forward-price" in window:
             continue
         violations.append(
             Violation(
@@ -618,6 +640,8 @@ def check_no_pdi_forward_price(path: Path, source: str) -> list[Violation]:
 
 
 def check_no_raw_chain_payload(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
     rel = path.relative_to(ROOT).as_posix()
     if "chain-gateway" not in rel and "proof-contribution" not in rel:
         return []

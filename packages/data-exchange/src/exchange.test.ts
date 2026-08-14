@@ -47,8 +47,11 @@ describe('data exchange matching', () => {
     const { buyerView, opportunities } = matchWithoutIdentities(request, vault);
     assert.equal(buyerView.eligibleCount, 2n);
     assert.equal('customerId' in buyerView, false);
-    assert.equal(JSON.stringify(buyerView).includes('cust_jane'), false);
-    assert.equal(JSON.stringify(buyerView).includes('cust_maya'), false);
+    const buyerJson = JSON.stringify(buyerView, (_key, value) =>
+      typeof value === 'bigint' ? value.toString() : value,
+    );
+    assert.equal(buyerJson.includes('cust_jane'), false);
+    assert.equal(buyerJson.includes('cust_maya'), false);
     assert.equal(opportunities.length, 2);
   });
 
