@@ -4,8 +4,8 @@
 - **Date:** 2026-08-13
 - **Deciders:** Architecture (this record); not yet accepted
 - **Phase:** Phase 1 — Banking Simulation
-- **Supersedes:** none
-- **Related:** Phase 0 in-process runtime; Sovereign Cells; Evidence Vault hash chain; append-only ledger rule
+- **Supersedes:** none. This file revises the earlier draft of ADR-0008 on `main` so the Context cites the Customer domain that now exists. The recommended option is unchanged.
+- **Related:** ADR-0006 (Policy Engine language); ADR-0007 (identity stack); Phase 0 in-process runtime; Sovereign Cells; Evidence Vault hash chain; append-only ledger rule
 
 ---
 
@@ -17,13 +17,19 @@ customers, accounts, ledger postings, and evidence records.
 
 Two Solstice rules constrain persistence absolutely:
 
-1. **Ledger postings are append-only.** Corrections are compensating entries.
-   There are no edits and no deletes of posted history.
-2. **Each bounded domain owns its own storage.** No service may join directly
-   across another regulated domain's tables.
+1. **Ledger postings are append-only.** A posting is a row in the books:
+   money in, money out, always balanced. Corrections are compensating
+   entries (new rows that reverse or complete an earlier posting). There
+   are no edits and no deletes of posted history.
+2. **Each bounded domain owns its own storage.** A bounded domain is a
+   slice of the business with a clear owner (Customer, Ledger, Evidence).
+   No service may join directly across another regulated domain's tables.
+   A **join** is a database query that stitches two tables together as if
+   they were one.
 
-The documented production baseline is PostgreSQL. Local development must remain
-simple and runnable with no cloud account, managed database, or vendor SaaS.
+The documented production baseline is PostgreSQL (a widely used database
+server). Local development must remain simple and runnable with no cloud
+account, managed database, or vendor SaaS.
 
 This record chooses how Phase 1 stores that state, how the two rules are
 enforced *in the database* (not only in application code), how the Evidence
@@ -31,33 +37,44 @@ Vault hash chain survives a process restart, and how the choice fits Sovereign
 Cells (one database per cell, separate encryption keys, no global tables
 holding raw customer data).
 
+A **hash chain** is a sequence of records where each record stores a
+fingerprint of the previous one. If anyone alters an old record, later
+fingerprints no longer match. The **Evidence Vault** is the sealed log of
+every authorization decision (approval or refusal).
+
 ### Inspection of the current codebase
 
-This repository was inspected before options were compared. Findings:
+This repository was inspected before options were compared. Findings at
+commit `de3c633` on `main`:
 
 | Question | Finding |
 | --- | --- |
-| Does a storage abstraction already exist? | **No.** There are no repository interfaces, unit-of-work ports, mappers, or database drivers. |
-| Is domain logic coupled to in-memory structures? | **Not yet — because there is no domain logic.** There are no ledger, account, customer, or evidence types to couple. |
-| How hard is swapping in a real database? | **There is nothing to swap.** Persistence must be introduced with the first Phase 1 domain code. If that code is written against process-local maps, a later swap becomes a rewrite of every write path, every invariant check, and the hash-chain verifier. |
+| Does a storage abstraction already exist? | **No.** There are no repository interfaces, unit-of-work ports, mappers, SQL, ORMs, or database drivers. `packages/domain/package.json` has zero runtime dependencies. |
+| Is domain logic coupled to in-memory structures? | **Yes, for Customer, and only for Customer.** `createProspect` and `transitionCustomerStatus` return frozen objects. There is no save, no load, no ledger, no evidence store. |
+| How hard is swapping in a real database? | **The Customer types are still portable** — they are plain frozen records. There is no persistence to swap. If Phase 1 writes a `Map<CustomerId, Customer>` "just for now," a later swap becomes a rewrite of every write path, every invariant check, and (when it exists) the hash-chain verifier. |
 
 **Files read**
 
-- [`README.md`](../../../README.md) — the only tracked application file; contents are the heading `# solstice`.
-- Repository tree at `033b9ef` — no `src/`, `internal/`, `pkg/`, `app/`, `lib/`, tests, Compose files, SQL, or ORM config.
+- [`README.md`](../../../README.md) — heading `# solstice`.
+- [`packages/domain/src/customer.ts`](../../../packages/domain/src/customer.ts) — `Customer` (lines 46–55), `VerificationState` (lines 40–44), status machine (lines 70–76, 160–193). Persistence: none. Immutability: `Object.freeze` in process memory (lines 89–116, 176–185). Freeze is not a database grant.
+- [`packages/domain/src/customer.test.ts`](../../../packages/domain/src/customer.test.ts) — in-process tests; no database.
+- [`packages/domain/src/jurisdiction.ts`](../../../packages/domain/src/jurisdiction.ts), [`legal-entity.ts`](../../../packages/domain/src/legal-entity.ts), [`brand.ts`](../../../packages/domain/src/brand.ts), [`result.ts`](../../../packages/domain/src/result.ts), [`time.ts`](../../../packages/domain/src/time.ts), [`index.ts`](../../../packages/domain/src/index.ts), [`demo.ts`](../../../packages/domain/src/demo.ts) — no I/O.
+- [`docs/architecture/adr/ADR-0006-policy-engine-language.md`](./ADR-0006-policy-engine-language.md) — no storage decision.
+- [`docs/architecture/adr/ADR-0007-identity-and-authentication-stack.md`](./ADR-0007-identity-and-authentication-stack.md) — identity runtime will need cell-local storage; this ADR decides the engine.
 
 **Files that do not exist (and were therefore not readable)**
 
 - Ledger posting model, posting service, or append-only collection
 - Evidence Vault, hash-chain node, or verifier
 - Repository / storage ports or adapters
-- Prior ADRs under `docs/architecture/` (this file is the first)
+- Sovereign Cell design document (cells are named in this ADR and in ADR-0007; there is no topology file)
+- SQL migrations, Docker Compose, Flyway/Atlas config
 
-There is no in-memory store to preserve and no interface to implement. The
+There is no in-memory *store* to preserve — only in-memory *values*. The
 cost of choosing a real database now is the cost of introducing persistence
-once. The cost of deferring it is coupling the first banking simulation to
-structures that vanish on restart and cannot enforce the two rules at the
-storage layer.
+once, starting with Customer. The cost of deferring it is coupling the first
+banking simulation to structures that vanish on restart and cannot enforce
+the two rules at the storage layer.
 
 ---
 
@@ -66,11 +83,14 @@ storage layer.
 - Append-only immutability of ledger postings must hold even if application
   code is buggy, a debugger is attached, or a compromised service account
   issues SQL.
-- Cross-domain SQL joins must be *impossible*, not a lint rule.
+- Cross-domain SQL joins must be *impossible*, not a lint rule. Customer
+  rows (`packages/domain/src/customer.ts`) must not live in the same catalog
+  as future ledger postings.
 - Evidence Vault hash chain must be bit-identical after a crash, stop, or
   machine reboot, and must be re-verifiable from durable bytes.
 - Sovereign Cells require cell-local data, cell-local keys, and no global
-  customer dump.
+  customer dump. ADR-0007's identity runtime, if accepted, also needs a
+  cell-local database.
 - Local developers must run Phase 1 without a cloud account.
 - The documented baseline is PostgreSQL; local/prod dialect drift is a
   first-class risk.
@@ -85,12 +105,15 @@ Stand up PostgreSQL 16+ in Docker Compose for every developer and CI job.
 Phase 1 application services talk to that engine with the same SQL, roles,
 and databases that later cells will use. No cloud. No managed offering.
 
-This is a real PostgreSQL server, not an emulation.
+This is a real PostgreSQL server, not an emulation. **Docker** is a way to
+run that server in a box on a laptop; it is not a cloud account.
 
 #### Database-level ledger immutability
 
 Enforcement is stacked. Application code still refuses `UPDATE`/`DELETE` on
-postings; the database must refuse them too.
+postings; the database must refuse them too. `Object.freeze` on `Customer`
+(customer.ts lines 105–116) is **not** this control. Freeze dies with the
+process and does not apply to SQL.
 
 1. **Role separation.** Table owner is a migrator role
    (`solstice_migrator`), used only by the migration runner. Runtime services
@@ -106,8 +129,10 @@ postings; the database must refuse them too.
    ```
 
    PostgreSQL will reject `UPDATE`/`DELETE`/`TRUNCATE` from `ledger_writer`
-   with a permission error. That is the primary control.
-3. **Mutation-rejecting triggers.** Owned by the migrator, not the app:
+   with a permission error. That is the primary control. A **grant** is a
+   database permission; **revoke** takes it away.
+3. **Mutation-rejecting triggers.** Owned by the migrator, not the app.
+   A **trigger** is a database rule that runs when someone tries a write:
 
    ```sql
    CREATE FUNCTION ledger.forbid_posting_mutation()
@@ -138,6 +163,11 @@ postings; the database must refuse them too.
 Compensating entries are ordinary `INSERT`s. They are the only legal
 correction mechanism.
 
+Customer rows are **not** append-only in the same sense: status and KYC
+version change. They still belong in a separate database with their own
+roles. History of those changes is an event/evidence problem, not an
+`UPDATE` on a posting.
+
 #### Per-domain storage ownership (joins impossible)
 
 Schemas in one database are **not** sufficient. PostgreSQL allows
@@ -148,11 +178,11 @@ stitch databases together if they are installed and reachable.
 Phase 1 therefore uses **separate PostgreSQL databases per bounded domain,
 on a cell-local instance**, with no FDW:
 
-| Database (illustrative) | Owner domain | Runtime role |
-| --- | --- | --- |
-| `solstice_customer` | Customer | `customer_app` |
-| `solstice_ledger` | Accounts / ledger | `ledger_writer` / `ledger_reader` |
-| `solstice_evidence` | Evidence Vault | `evidence_app` |
+| Database (illustrative) | Owner domain | Runtime role | First rows that would land there |
+| --- | --- | --- | --- |
+| `solstice_customer` | Customer | `customer_app` | `Customer` / `VerificationState` from `customer.ts` |
+| `solstice_ledger` | Accounts / ledger | `ledger_writer` / `ledger_reader` | Does not exist in code yet |
+| `solstice_evidence` | Evidence Vault | `evidence_app` | Does not exist in code yet |
 
 - Each service's connection string points at **one** database. Credentials
   for that role exist only on that database (`GRANT CONNECT` is not issued
@@ -160,12 +190,17 @@ on a cell-local instance**, with no FDW:
 - `postgres_fdw` and `dblink` are not installed. `CREATE EXTENSION` is
   revoked from runtime roles. `ATTACH`-style stitching does not exist.
 - Cross-domain facts move as **domain events or explicit API calls** carrying
-  opaque identifiers (account id, customer ref, evidence id). No SQL view
+  opaque identifiers (account id, `CustomerId`, evidence id). No SQL view
   spans two regulated databases.
 
 A developer who writes `SELECT ... FROM customer.party JOIN ledger.posting`
 cannot run it: those relations are not in the same catalog, and the session
-cannot see the other catalog.
+cannot see the other catalog. That is how ownership is *impossible to
+violate*, not *discouraged*.
+
+Today, `Customer` and a hypothetical posting would be two objects in the
+same Node process. That is already a join waiting to happen. Separate
+databases are the boundary the process does not have.
 
 #### Evidence Vault hash chain across restart
 
@@ -177,8 +212,12 @@ Each evidence record is an append-only row in `solstice_evidence`:
 - `record_sha256 = SHA-256(seq || payload_sha256 || prev_record_sha256 || canonical metadata)`
 - optional signer / key id (cell-local)
 
-PostgreSQL `INSERT` plus WAL makes the chain durable. On process start, and
-on a periodic verifier job, the Evidence Vault:
+**SHA-256** is a standard fingerprint function: the same bytes always
+produce the same fingerprint; a one-bit change does not.
+
+PostgreSQL `INSERT` plus WAL (the write-ahead log — the database's durable
+diary of writes) makes the chain durable. On process start, and on a
+periodic verifier job, the Evidence Vault:
 
 1. Reads rows in `seq` order (the only allowed access pattern besides
    point lookup by id).
@@ -192,7 +231,8 @@ gives a fast integrity pin without changing the full-chain verify path.
 
 Same insert-only grants and mutation triggers as the ledger apply to
 evidence rows. The hash chain is only as trustworthy as the inability to
-rewrite a prior row.
+rewrite a prior row. There is no verifier in the repository today; this
+option is how one could exist after a reboot.
 
 #### Sovereign Cells
 
@@ -204,13 +244,18 @@ rewrite a prior row.
   (dev: file-backed; later: KMS-wrapped data keys). In column: pgcrypto /
   application envelope encryption for raw customer attributes, using a key
   that does not leave the cell. No cell can decrypt another cell's volume
-  or customer columns.
+  or customer columns. Name, address, tax id, and KYC documents (when they
+  exist) never sit in a cluster-global table.
 - **No global tables of raw customer data.** A routing / directory component,
   if needed, stores only `cell_id` plus a non-reversible customer reference
-  (hash of a cell-issued identifier). Name, address, tax id, and account
-  balances do not exist outside the owning cell's databases.
+  (hash of a cell-issued identifier). `CustomerId` in `customer.ts` is
+  cell-scoped in intent; persistence must not quietly make it global.
 - Shared *code* and shared *migration files* are allowed. Shared *data* is
   not.
+
+ADR-0007's proposed per-cell identity runtime, if accepted, uses this same
+cell-local instance (or a sibling instance in the same cell) — not a global
+user directory.
 
 #### Local development
 
@@ -219,7 +264,8 @@ docker compose up postgres   # one cell, three databases, migrator + app roles
 ```
 
 No cloud project, no SaaS database, no vendor CLI. CI uses the same Compose
-file.
+file. `packages/domain` unit tests stay in-process and do not need Docker;
+invariant probes against grants do.
 
 #### Costs
 
@@ -234,9 +280,9 @@ are the same mechanisms in development that they will be in a cell.
 
 ### Option B — SQLite locally with a Postgres-compatible interface; PostgreSQL later
 
-Use SQLite (one file per domain, or one file per cell) for Phase 1. Hide it
-behind a repository port or a "Postgres-compatible" driver/ORM. Switch the
-adapter to PostgreSQL when durability and isolation "become real."
+Use SQLite (a database in a file on disk) for Phase 1. Hide it behind a
+repository port or a "Postgres-compatible" driver/ORM. Switch the adapter to
+PostgreSQL when durability and isolation "become real."
 
 #### Database-level ledger immutability
 
@@ -270,7 +316,7 @@ A "Postgres-compatible interface" does not create Postgres-compatible
 *authorization*. ORMs that emit both dialects still leave SQLite enforcing
 a weaker policy than production. The grant/trigger pair of Option A would
 be tested only after the switch — i.e. after Phase 1 has already written
-the ledger.
+the ledger (and, soon, Customer).
 
 #### Per-domain storage ownership
 
@@ -313,6 +359,8 @@ bug (types, `JSONB`, `LISTEN`, transactional DDL, concurrent writers).
 - Immutability and isolation tests exercise the wrong engine.
 - "Compatible interface" is an application fiction; authorization is not
   portable.
+- Customer would be persisted twice: once in SQLite, again in Postgres,
+  with KYC versions that must not fork.
 
 ---
 
@@ -321,46 +369,56 @@ bug (types, `JSONB`, `LISTEN`, transactional DDL, concurrent writers).
 Retain Phase 0's in-process maps for customers, accounts, postings, and
 evidence. Add a database in a later phase.
 
+This is the path of least resistance given today's tree: `Customer` is
+already a frozen heap object, tests never hit a disk, and `demo.ts` prints
+JSON to stdout.
+
 #### Database-level ledger immutability
 
 **There is no database.** Immutability can only be an application
 convention: frozen records, no setters, copy-on-write lists, code review.
 
-A debugger, a reflection call, a missed clone, or a test helper that
-mutates a posting in place will succeed. Compensating entries are a
+`Object.freeze` in `freezeCustomer` (customer.ts lines 105–116) proves
+nothing to a SQL client that does not exist yet, and nothing to a debugger
+that can still mutate via reflection. A missed clone, or a test helper that
+mutates a posting in place, will succeed. Compensating entries are a
 policy, not a storage law. This option **cannot** meet the requirement that
 immutability be enforced at the database level.
 
 #### Per-domain storage ownership
 
 Separate in-memory maps per package discourage joins; they do not prevent
-them. Any code in the same process can hold two references and correlate
-rows. There is no catalog boundary and no credential boundary.
+them. Any code in the same process can hold a `Customer` and a posting and
+correlate them. There is no catalog boundary and no credential boundary.
+`packages/domain/src/index.ts` already exports Customer to whoever imports
+it.
 
 #### Evidence Vault hash chain across restart
 
 The chain lives in heap. A restart yields an empty vault. Verification
 after reboot is vacuously true and operationally useless. Phase 1 cannot
 demonstrate crash-safe evidence, audit replay, or "stop the process and
-prove the books still balance."
+prove the books still balance." `demo.ts` already vanishes on exit.
 
 #### Sovereign Cells
 
 A single process heap is one cell by accident, not by construction. There
 are no per-cell encryption keys, no per-cell catalogs, and nothing to stop
-a "global" `HashMap` of customers. Introducing cells later means introducing
-persistence *and* tenancy at the same time.
+a "global" `Map` of customers. Introducing cells later means introducing
+persistence *and* tenancy at the same time. ADR-0007 cannot keep identity
+data in-region if identity data is a process that dies.
 
 #### Local development
 
-`go test` / `npm test` with no Docker. Fast, and it does not satisfy Phase 1
-durable-state scope.
+`npm test` in `packages/domain` with no Docker. Fast, and it does not
+satisfy Phase 1 durable-state scope.
 
 #### Costs
 
 Phase 1 becomes a disposable prototype. The two Solstice rules are
 unenforceable where they matter. The hash chain cannot be a Phase 1
-acceptance criterion.
+acceptance criterion. Customer KYC versions (`kycRecordVersion`) cannot
+be the source of truth for an Identity proof across restart.
 
 ---
 
@@ -368,12 +426,13 @@ acceptance criterion.
 
 | Concern | A — PostgreSQL + Docker | B — SQLite now, Postgres later | C — In-memory |
 | --- | --- | --- | --- |
-| Ledger `UPDATE`/`DELETE` refused by storage | Roles + `REVOKE` + triggers | Triggers only; no insert-only roles | No |
+| Ledger `UPDATE`/`DELETE` refused by storage | Roles + `REVOKE` + triggers | Triggers only; no insert-only roles | No (`Object.freeze` only) |
 | Cross-domain joins impossible | Separate DBs, no FDW, no `CONNECT` | Separate files + deny `ATTACH` (different later) | No |
 | Hash chain survives restart and re-verifies | Yes, WAL-backed | Yes, file-backed (weaker integrity story) | No |
 | One DB instance per cell, distinct keys | Yes, from the first Compose file | File mimic; engine change later | No |
 | Local, no cloud | Docker Compose | Files on disk | Process only |
 | Matches documented Postgres baseline | Yes | Not until the switch | No |
+| Customer (`customer.ts`) can persist without a rewrite | Yes, first bounded DB | Twice (SQLite then Postgres) | Until the process dies |
 | Risk of persistence rewrite | Low | High | Certain |
 
 ---
@@ -386,6 +445,11 @@ Phase 1 is a banking simulation with an append-only ledger and an evidence
 hash chain. Those are storage properties. They are not application
 conventions to be "made real" after the simulation has already posted
 history into maps or SQLite.
+
+The Customer domain is the warning. It is already the first regulated
+record, it already versions KYC, and it already lives only in heap.
+Deferring persistence (Option C) or parking it in SQLite (Option B) means
+the first durable customer is built on the wrong enforcement story.
 
 Option B looks simpler and fails the grant-level immutability test and the
 "same engine as the cell" test. Option C fails durability, immutability,
@@ -438,6 +502,9 @@ db/
 
 Each bounded domain has its own migration stream against its own database.
 No migration in `ledger/` may create objects in `solstice_customer`.
+Customer migrations persist the fields already named in `customer.ts`
+(`id`, `legalEntityId`, `jurisdiction`, `residency`, `status`, KYC snapshot,
+`createdAt`, `version`) without collapsing them into a global party table.
 
 **Review**
 
@@ -468,10 +535,13 @@ This ADR does not add those migrations or CI jobs.
   verifiability are the same mechanisms that Sovereign Cells will run.
 - Local development stays offline: Docker, not a cloud database.
 - Swapping engines later is unnecessary.
+- Customer, the only domain that exists today, has a home that is not a
+  process-local `Map`.
 
 ### Negative
 
-- Docker is required to run the simulation.
+- Docker is required to run the simulation (not required for current
+  `packages/domain` unit tests).
 - Three databases and several roles are more bootstrap than a single file.
 - Engineers must write SQL migrations instead of dumping an object graph.
 
@@ -479,7 +549,7 @@ This ADR does not add those migrations or CI jobs.
 
 - Application repositories should still exist as ports so domain tests can
   use a fake. The fake is not the system of record. The Docker PostgreSQL
-  is.
+  is. `customer.test.ts` can stay pure.
 
 ---
 
@@ -493,6 +563,7 @@ This ADR does not add those migrations or CI jobs.
   is not the cell or domain boundary.
 - **Application-only immutability** (Option C, or Option A without
   `REVOKE`). Insufficient against bugs and compromised app credentials.
+  Today's `Object.freeze` is this alternative in miniature.
 - **ORM as source of schema.** Hides grants and triggers; incompatible with
   migration review as specified.
 
@@ -505,6 +576,16 @@ ACCEPTED). If accepted, the next change is a **documentation-only** Compose
 and role/database topology note — still no application driver — or, once
 implementation is authorised, the first Flyway SQL for `solstice_ledger`
 that creates `posting` already insert-only, plus a CI probe that `UPDATE`
-fails. Do not write domain services against in-memory maps in the meantime;
-that path is Option C by stealth.
-)
+fails, and a `solstice_customer` migration that can hold a `Customer`
+without sharing a catalog with the ledger. Do not write domain services
+against in-memory maps in the meantime; that path is Option C by stealth.
+
+---
+
+## Inspection notes (for the record)
+
+- Commit inspected: `de3c633` (`main`)
+- Ledger / Evidence Vault / repository abstractions: none
+- Persistence-related code in `packages/domain`: none (frozen values only)
+- No database, driver, SDK, or migration tool was installed. No schema was
+  created. No file outside `docs/` was modified by this record.

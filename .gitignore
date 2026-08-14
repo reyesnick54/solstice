@@ -2,3 +2,7 @@ node_modules/
 __pycache__/
 *.py[cod]
 
+.npm/
+dist/
+*.log
+.DS_Store
