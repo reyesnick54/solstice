@@ -96,13 +96,32 @@ export type KernelDecisionRecordedV1 = VersionedEvent<
   }
 >;
 
+export type SecurityKeyAuditPayload = {
+  readonly keyId: string;
+  readonly purpose: string;
+  readonly version: number;
+  readonly previousVersion: number | null;
+  readonly status: string;
+  readonly provider: string;
+  readonly providerRef: string;
+};
+
+export type KeyCreatedV1 = VersionedEvent<'KeyCreated', 1, SecurityKeyAuditPayload>;
+export type KeyRotatedV1 = VersionedEvent<'KeyRotated', 1, SecurityKeyAuditPayload>;
+export type KeyRetiredV1 = VersionedEvent<'KeyRetired', 1, SecurityKeyAuditPayload>;
+export type KeyRevokedV1 = VersionedEvent<'KeyRevoked', 1, SecurityKeyAuditPayload>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | DepositPostedV1
   | WithdrawalPostedV1
   | InternalTransferPostedV1
   | CustomerStatusChangedV1
-  | KernelDecisionRecordedV1;
+  | KernelDecisionRecordedV1
+  | KeyCreatedV1
+  | KeyRotatedV1
+  | KeyRetiredV1
+  | KeyRevokedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

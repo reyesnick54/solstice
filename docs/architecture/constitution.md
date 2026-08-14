@@ -47,14 +47,15 @@ never be two implementations of these systems.
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
+| Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
 
 ### Current workspace inventory
 
-**Packages:** `money`, `domain`, `permissions`, `kernel`, `ledger`,
-`evidence`, `events`, `config`, `persistence`.
+**Packages:** `money`, `domain`, `permissions`, `security`, `kernel`,
+`ledger`, `evidence`, `events`, `config`, `persistence`.
 
 **Services:** `accounts`.
 
@@ -107,6 +108,9 @@ The only production caller is `services/accounts/src/money-movement.ts`.
 - **Verify:** `AuthorityIssuer.verify` in
   `packages/permissions/src/execution-authority.ts`. Callers are the
   Kernel-gated accounts service and `Ledger.postJournal`.
+- **Signing material:** `AuthorityIssuer` obtains HMAC-SHA256 through
+  `packages/security` `KeyProvider`. Business services do not hold the
+  raw signing secret.
 
 ### Evidence Vault
 
@@ -178,9 +182,11 @@ In-memory maps remain the default for unit tests:
 - `CustomerStore`, `AccountStore`, `LegalEntityStore`, `ProductStore`
 - `AccountsService` intent-id idempotency map
 
-Durable rows live in three bounded databases (`solstice_customer`,
-`solstice_ledger`, `solstice_evidence`). Restart hydrates the in-memory
-objects from those rows. Read models (`balanceOfAccount`,
+Durable rows live in four bounded databases (`solstice_customer`,
+`solstice_ledger`, `solstice_evidence`, `solstice_security`). Restart
+hydrates the in-memory objects from those rows. `solstice_security`
+stores key metadata and service-identity references only — never
+private key material. Read models (`balanceOfAccount`,
 `projectCustomerPosition`) stay derived from journals and are not
 authoritative financial state.
 
@@ -258,15 +264,16 @@ must be added to `manifest.json` before they appear on disk.
 | Package / service | May depend on |
 | --- | --- |
 | `packages/money` | nothing |
+| `packages/security` | nothing |
 | `packages/config` | `packages/domain` (clock / `UtcInstant` exception) |
 | `packages/domain` | `packages/permissions` (`openAccount` seal exception) |
 | `packages/events` | `packages/domain`, `packages/permissions` (ActionIntent port for event-handler gating) |
-| `packages/evidence` | `packages/config` |
-| `packages/permissions` | `packages/domain`, `packages/money`, `packages/config` |
+| `packages/evidence` | `packages/config`, `packages/security` (SHA-256 helper only) |
+| `packages/permissions` | `packages/domain`, `packages/money`, `packages/config`, `packages/security` |
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money` |
-| `services/accounts` | the packages above, including `packages/persistence` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security` |
+| `services/accounts` | the packages above, including `packages/persistence` and `packages/security` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -304,6 +311,7 @@ illegal. Do not expand the existing cycles.
 ```mermaid
 flowchart BT
   money["packages/money"]
+  security["packages/security"]
   config["packages/config"]
   domain["packages/domain"]
   events["packages/events"]
@@ -318,6 +326,7 @@ flowchart BT
   permissions --> domain
   permissions --> money
   permissions --> config
+  permissions --> security
   events --> domain
   events --> permissions
   persistence["packages/persistence"]
@@ -327,8 +336,11 @@ flowchart BT
   persistence --> ledger
   persistence --> permissions
   persistence --> money
+  persistence --> security
   accounts --> persistence
+  accounts --> security
   evidence --> config
+  evidence --> security
   kernel --> config
   kernel --> evidence
   kernel --> permissions
@@ -365,6 +377,7 @@ protected dependency because a later phase is absent.
 
 | Context | Status | Reserved paths |
 | --- | --- | --- |
+| SECURITY | IMPLEMENTED | `packages/security` |
 | IDENTITY | PLANNED | `packages/identity`, `services/identity` |
 | COMPLIANCE | PARTIAL | `packages/kernel`, `packages/permissions`, `packages/evidence` |
 | BANKING | PARTIAL | `packages/domain`, `packages/ledger`, `services/accounts` |

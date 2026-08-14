@@ -25,5 +25,6 @@ npm run typecheck
 
 echo "==> secret scan"
 python3 scripts/secret-scan.py
+python3 scripts/secret-scan.py --self-test
 
 echo "CI pipeline: ok"

@@ -10,7 +10,7 @@ const REPO_ROOT = join(import.meta.dirname, '..', '..', '..');
 
 describe('versioned SQL migrations', () => {
   it('lists contiguous immutable checksummed files for each domain', () => {
-    for (const domain of ['customer', 'ledger', 'evidence'] as const) {
+    for (const domain of ['customer', 'ledger', 'evidence', 'security'] as const) {
       const files = listMigrationFiles(migrationsRoot(REPO_ROOT, domain));
       assert.ok(files.length >= 1, domain);
       assert.equal(files[0]!.version, 1);
@@ -63,6 +63,15 @@ describe('versioned SQL migrations', () => {
     assert.match(v002.sql, /CREATE TABLE ledger\.inbox/);
     assert.match(v002.sql, /CREATE TABLE ledger\.dead_letter/);
     assert.match(v002.sql, /PRIMARY KEY \(consumer_id, event_id\)/);
+  });
+
+  it('security V001 stores metadata only and forbids private key material', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
+    const v001 = files.find((file) => file.version === 1);
+    assert.ok(v001);
+    assert.match(v001.sql, /CREATE TABLE security\.key_metadata/);
+    assert.match(v001.sql, /key_metadata_no_private_material/);
+    assert.equal(/private_key|kms_plaintext|seed_phrase|recovery_phrase/i.test(v001.sql), false);
   });
 
   it('ledger V003 treats inbox as delivery state without a domain_event FK', () => {

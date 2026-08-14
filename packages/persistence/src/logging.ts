@@ -6,7 +6,7 @@
 export type PersistenceDiagnostic = {
   readonly level: 'info' | 'error';
   readonly code: string;
-  readonly domain: 'customer' | 'ledger' | 'evidence' | 'migrator' | 'bootstrap';
+  readonly domain: 'customer' | 'ledger' | 'evidence' | 'security' | 'migrator' | 'bootstrap';
   readonly message: string;
   readonly correlationId?: string;
   readonly journalId?: string;

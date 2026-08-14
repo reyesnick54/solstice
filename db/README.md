@@ -1,12 +1,13 @@
 # Solstice database migrations
 
-Versioned SQL for the three bounded-domain PostgreSQL databases.
+Versioned SQL for the four bounded-domain PostgreSQL databases.
 
 | Directory | Database | Owner domain |
 | --- | --- | --- |
 | `customer/migrations/` | `solstice_customer` | Customer |
 | `ledger/migrations/` | `solstice_ledger` | Accounts, journals, postings, intent/authority audit, domain events |
 | `evidence/migrations/` | `solstice_evidence` | Evidence Vault hash chain |
+| `security/migrations/` | `solstice_security` | Key metadata and service-identity references (never private keys) |
 
 ## Rules
 

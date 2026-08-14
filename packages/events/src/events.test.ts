@@ -45,6 +45,27 @@ describe('durable event envelope', () => {
     assert.equal(event.causationId, 'K-200');
   });
 
+  it('seals a security key rotation event with metadata only', () => {
+    const log = new DomainEventLog();
+    const event = log.append({
+      eventType: 'KeyRotated',
+      schemaVersion: 1,
+      occurredAt: NOW,
+      payload: {
+        keyId: 'sim:execution_authority_signing',
+        purpose: 'EXECUTION_AUTHORITY_SIGNING',
+        version: 2,
+        previousVersion: 1,
+        status: 'ACTIVE',
+        provider: 'simulation',
+        providerRef: 'secret://simulation/keys/execution_authority_signing/v2',
+      },
+    });
+    assert.equal(event.schemaRef, 'solstice.security.key_rotated/1');
+    assert.equal(event.aggregateType, 'key');
+    assert.equal(event.payload.previousVersion, 1);
+  });
+
   it('rejects sensitive payload keys', () => {
     assert.throws(
       () =>

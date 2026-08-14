@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-4",
+  "title": "Canonical Security, Secrets, Key Management, Signing, and Cryptographic Infrastructure",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "config",
+    "accounts-service",
+    "architecture-linting",
+    "persistence",
+    "security"
+  ]
+}

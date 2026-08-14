@@ -6,6 +6,7 @@ export type PersistencePools = {
   readonly customer: Pool;
   readonly ledger: Pool;
   readonly evidence: Pool;
+  readonly security: Pool;
 };
 
 export function createPersistencePools(env: PersistenceEnv): PersistencePools {
@@ -34,11 +35,24 @@ export function createPersistencePools(env: PersistenceEnv): PersistencePools {
       database: DATABASES.evidence,
       max: 8,
     }),
+    security: new Pool({
+      host: env.host,
+      port: env.port,
+      user: env.securityUser,
+      password: env.securityPassword,
+      database: DATABASES.security,
+      max: 4,
+    }),
   };
 }
 
 export async function closePersistencePools(pools: PersistencePools): Promise<void> {
-  await Promise.all([pools.customer.end(), pools.ledger.end(), pools.evidence.end()]);
+  await Promise.all([
+    pools.customer.end(),
+    pools.ledger.end(),
+    pools.evidence.end(),
+    pools.security.end(),
+  ]);
 }
 
 export async function withClient<T>(

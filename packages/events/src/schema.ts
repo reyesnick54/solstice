@@ -17,6 +17,10 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'InternalTransferPosted', version: 1, status: 'current' },
   { eventType: 'CustomerStatusChanged', version: 1, status: 'current' },
   { eventType: 'KernelDecisionRecorded', version: 1, status: 'current' },
+  { eventType: 'KeyCreated', version: 1, status: 'current' },
+  { eventType: 'KeyRotated', version: 1, status: 'current' },
+  { eventType: 'KeyRetired', version: 1, status: 'current' },
+  { eventType: 'KeyRevoked', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

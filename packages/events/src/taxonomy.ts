@@ -12,6 +12,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'ledger',
   'kernel',
   'evidence',
+  'security',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -39,6 +40,10 @@ export const EVENT_TYPE_NAMES = [
   'InternalTransferPosted',
   'CustomerStatusChanged',
   'KernelDecisionRecorded',
+  'KeyCreated',
+  'KeyRotated',
+  'KeyRetired',
+  'KeyRevoked',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -50,6 +55,10 @@ export const EVENT_SCHEMA_REFS = {
   InternalTransferPosted: 'solstice.ledger.internal_transfer_posted/1',
   CustomerStatusChanged: 'solstice.customer.status_changed/1',
   KernelDecisionRecorded: 'solstice.kernel.decision_recorded/1',
+  KeyCreated: 'solstice.security.key_created/1',
+  KeyRotated: 'solstice.security.key_rotated/1',
+  KeyRetired: 'solstice.security.key_retired/1',
+  KeyRevoked: 'solstice.security.key_revoked/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -61,6 +70,10 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   InternalTransferPosted: 'ledger',
   CustomerStatusChanged: 'customer',
   KernelDecisionRecorded: 'kernel',
+  KeyCreated: 'security',
+  KeyRotated: 'security',
+  KeyRetired: 'security',
+  KeyRevoked: 'security',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {
