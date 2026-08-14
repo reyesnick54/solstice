@@ -6,15 +6,22 @@ cd "$(dirname "$0")/.."
 echo "==> architectural invariants"
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
+npm run lint:architecture
 
 echo "==> deployment posture"
 python3 scripts/check-deployment-posture.py
+
+echo "==> kernel gating"
+npm run gate
 
 echo "==> tests"
 npm test
 
 echo "==> end-to-end demo"
 npm run demo
+
+echo "==> typecheck"
+npm run typecheck
 
 echo "==> secret scan"
 python3 scripts/secret-scan.py

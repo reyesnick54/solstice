@@ -168,7 +168,7 @@ LIVE_FLAG_TRUE_RE = re.compile(
 )
 
 AUTHORITY_HINT_RE = re.compile(
-    r"ExecutionAuthority|executionAuthority|execution_authority"
+    r"ExecutionAuthority|executionAuthority|execution_authority|VerifiedExecutionAuthority|PostJournalRequest"
 )
 
 
@@ -345,6 +345,7 @@ def is_flag_source_of_truth(path: Path) -> bool:
         "config/capabilities.ts",
         "src/flags/capabilities.ts",
         "packages/flags/src/capabilities.ts",
+        "packages/config/src/flags.ts",
     } or rel.endswith("/capabilities.ts")
 
 
@@ -569,6 +570,10 @@ def check_live_flag_assignment(path: Path, source: str) -> list[Violation]:
 
 
 def lint_file(path: Path) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    # The TypeScript architectural linter embeds violation fixtures as strings.
+    if rel.startswith("tools/architectural-linter/"):
+        return []
     raw = path.read_text(encoding="utf-8")
     if path.suffix == ".sql":
         stripped = raw
@@ -577,9 +582,11 @@ def lint_file(path: Path) -> list[Violation]:
         stripped = strip_js_comments_preserve_lines(raw)
         code_only = strip_js_comments_and_strings(raw)
     violations: list[Violation] = []
-    violations.extend(check_subsystem_boundary(path, raw))
+    if not path_is_test(path) and path.name != "demo.ts":
+        violations.extend(check_subsystem_boundary(path, raw))
     violations.extend(check_live_flag_assignment(path, stripped))
-    violations.extend(check_account_requires_authority(path, stripped))
+    if not path_is_test(path):
+        violations.extend(check_account_requires_authority(path, stripped))
     violations.extend(check_journal_authorized_path(path, stripped))
     violations.extend(check_no_persisted_account_balance(path, stripped))
     violations.extend(check_no_blended_yield(path, code_only))

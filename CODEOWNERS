@@ -1,32 +1,41 @@
-# Default owners for Solstice.
+# Human review is required on control-plane and money-movement paths.
+# GitHub usernames, not bots.
 
 * @reyesnick54
 
-/packages/kernel/ @reyesnick54
-/packages/ledger/ @reyesnick54
-/packages/payments/ @reyesnick54
-/packages/domain/ @reyesnick54
-/scripts/check-kernel-gating.mjs @reyesnick54
+# Governance and the mechanical checks themselves.
+/.github/ @reyesnick54
+/CODEOWNERS @reyesnick54
+/.github/CODEOWNERS @reyesnick54
+/AGENTS.md @reyesnick54
+/scripts/ @reyesnick54
 /.github/workflows/ci.yml @reyesnick54
 /docs/architecture/ @reyesnick54
-# Default. Domain owners review their trees.
 
-* @reyesnick54
+# Phase 1 accounts service — the Kernel decides; this service must not grow a bypass.
+/services/accounts/ @reyesnick54
 
-packages/domain/ @reyesnick54
-packages/contracts/ @reyesnick54
-packages/agent/ @reyesnick54
-packages/platform/ @reyesnick54
+# Authorization spine.
+/packages/kernel/ @reyesnick54
+/packages/ledger/ @reyesnick54
+/packages/domain/ @reyesnick54
+/packages/permissions/ @reyesnick54
+/packages/evidence/ @reyesnick54
+/packages/money/ @reyesnick54
+/packages/config/ @reyesnick54
+/packages/events/ @reyesnick54
+/tools/architectural-linter/ @reyesnick54
 
-# Capability tokens, Kernel, and Execution Authority are control-plane.
-packages/platform/src/capability/ @reyesnick54
-packages/platform/src/kernel/ @reyesnick54
-packages/platform/src/authority/ @reyesnick54
-packages/platform/src/gate/ @reyesnick54
-packages/platform/src/flags/ @reyesnick54
-
-# Agent runtime must remain propose-only.
-packages/agent/ @reyesnick54
-
-docs/architecture/ @reyesnick54
-AGENTS.md @reyesnick54
+# Protected even when the directory is absent — do not reintroduce ungated copies.
+/packages/payments/ @reyesnick54
+/packages/platform/ @reyesnick54
+/packages/agent/ @reyesnick54
+/packages/contracts/ @reyesnick54
+/packages/compliance-kernel/ @reyesnick54
+/packages/evidence-vault/ @reyesnick54
+/src/kernel/ @reyesnick54
+/src/ledger/ @reyesnick54
+/src/evidence/ @reyesnick54
+/src/authority/ @reyesnick54
+/src/flags/ @reyesnick54
+/config/ @reyesnick54

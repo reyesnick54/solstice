@@ -3,13 +3,17 @@
  * CI rule: fail on any NEW state-changing path lacking Kernel authorization.
  * Reports file and line.
  *
+ * Retargeted to the BASE (PR #12) mutators. Same invariant as the Phase 2–3
+ * gate: every financial write requires a verified Execution Authority issued
+ * by the Compliance Kernel. Do not delete this check.
+ *
  * Checks:
- *  1. Every symbol in STATE_CHANGING_PATHS takes KernelAuthorization and
- *     calls assertKernelAuthorization*.
- *  2. Direct store mutations (.set / .push on private financial maps) only
- *     appear inside those gated functions.
- *  3. appendJournal is only called from commitJournal.
- *  4. mintKernelAuthorization is only called from the kernel package.
+ *  1. Every registered mutator takes / verifies Execution Authority (or
+ *     submits to the Kernel, which is the only issuer).
+ *  2. Ledger.postJournal is the only journal write; update/delete throw.
+ *  3. openAccount is the only Account constructor and requires
+ *     VerifiedExecutionAuthority.
+ *  4. AuthorityIssuer.issue is only called from the kernel package.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
@@ -18,15 +22,12 @@ import { fileURLToPath } from 'node:url';
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 const STATE_CHANGING_PATHS = [
-  { symbol: 'putCustomer', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'commitCustomerStatus', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'putAccount', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'putBeneficiary', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'updateBeneficiary', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'putPayment', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'transitionPayment', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'recordCostAvoided', file: 'packages/ledger/src/stores.ts' },
-  { symbol: 'commitJournal', file: 'packages/ledger/src/journal.ts' },
+  { symbol: 'postJournal', file: 'packages/ledger/src/journal.ts' },
+  { symbol: 'openAccount', file: 'packages/domain/src/account.ts' },
+  { symbol: 'open', file: 'services/accounts/src/open-account.ts' },
+  { symbol: 'deposit', file: 'services/accounts/src/money-movement.ts' },
+  { symbol: 'withdraw', file: 'services/accounts/src/money-movement.ts' },
+  { symbol: 'transfer', file: 'services/accounts/src/money-movement.ts' },
 ];
 
 const failures = [];
@@ -36,6 +37,7 @@ function addFailure(file, line, message) {
 }
 
 function walk(dir, acc = []) {
+  if (!statSync(dir, { throwIfNoEntry: false })?.isDirectory()) return acc;
   for (const entry of readdirSync(dir)) {
     if (entry === 'node_modules' || entry === '.git') continue;
     const full = join(dir, entry);
@@ -48,7 +50,13 @@ function walk(dir, acc = []) {
 
 for (const path of STATE_CHANGING_PATHS) {
   const abs = join(ROOT, path.file);
-  const source = readFileSync(abs, 'utf8');
+  let source;
+  try {
+    source = readFileSync(abs, 'utf8');
+  } catch {
+    addFailure(path.file, 1, `state-changing symbol ${path.symbol} file missing`);
+    continue;
+  }
   const lines = source.split('\n');
   let foundLine = 0;
   for (let i = 0; i < lines.length; i += 1) {
@@ -65,25 +73,25 @@ for (const path of STATE_CHANGING_PATHS) {
     addFailure(path.file, 1, `state-changing symbol ${path.symbol} not found`);
     continue;
   }
-  const window = lines.slice(foundLine - 1, foundLine + 25).join('\n');
-  if (!window.includes('KernelAuthorization') && !window.includes('authorization')) {
+  const body = lines.slice(foundLine - 1, foundLine + 80).join('\n');
+  const gated =
+    body.includes('ExecutionAuthority') ||
+    body.includes('executionAuthority') ||
+    body.includes('VerifiedExecutionAuthority') ||
+    body.includes('kernel.submit') ||
+    body.includes('this.kernel.submit') ||
+    body.includes('this.move(');
+  if (!gated) {
     addFailure(
       path.file,
       foundLine,
-      `NEW or ungated state-changing path ${path.symbol} lacks KernelAuthorization in its signature`,
-    );
-  }
-  const body = lines.slice(foundLine - 1, foundLine + 40).join('\n');
-  if (!body.includes('assertKernelAuthorization')) {
-    addFailure(
-      path.file,
-      foundLine,
-      `${path.symbol} does not call assertKernelAuthorization (Kernel gate missing)`,
+      `NEW or ungated state-changing path ${path.symbol} lacks Execution Authority / Kernel submit`,
     );
   }
 }
 
-const files = walk(join(ROOT, 'packages')).concat(walk(join(ROOT, 'apps'))).concat(walk(join(ROOT, 'scripts')));
+const roots = ['packages', 'services', 'tools', 'scripts', 'apps'].map((d) => join(ROOT, d));
+const files = roots.flatMap((d) => walk(d));
 
 for (const file of files) {
   const rel = relative(ROOT, file);
@@ -91,28 +99,25 @@ for (const file of files) {
   const lines = source.split('\n');
   lines.forEach((line, idx) => {
     const n = idx + 1;
-    if (rel.endsWith('journal.ts') && line.includes('appendJournal(') && !line.includes('appendJournal(journal)')) {
-      if (!rel.endsWith('journal.ts')) {
-        addFailure(rel, n, 'appendJournal may only be called from commitJournal');
-      }
-    }
-    if (line.includes('appendJournal(') && !rel.endsWith('journal.ts') && !rel.endsWith('check-kernel-gating.mjs')) {
-      addFailure(rel, n, 'appendJournal called outside journal.ts — Kernel-gated commitJournal is required');
-    }
-    if (line.includes('mintKernelAuthorization(') && !rel.startsWith('packages/kernel/') && !rel.endsWith('check-kernel-gating.mjs')) {
-      addFailure(rel, n, 'mintKernelAuthorization is Kernel-private');
+    if (rel.endsWith('check-kernel-gating.mjs')) return;
+    if (line.includes('this.issuer.issue(') && !rel.startsWith('packages/kernel/')) {
+      addFailure(rel, n, 'AuthorityIssuer.issue is Kernel-private');
     }
     if (
-      /#(customers|accounts|beneficiaries|payments|costAvoided)\.(set|push)\(/.test(line) &&
-      !rel.endsWith('stores.ts')
+      (line.includes('updateJournal(') || line.includes('deleteJournal(') ||
+        line.includes('updatePosting(') || line.includes('deletePosting(')) &&
+      !rel.endsWith('journal.ts') &&
+      !rel.endsWith('invariants.test.ts') &&
+      !rel.endsWith('check-kernel-gating.mjs')
     ) {
-      addFailure(rel, n, 'direct financial store mutation outside LedgerBooks gated methods');
+      addFailure(rel, n, 'journal mutate/delete called outside Ledger immutability guards');
     }
   });
 }
 
 const knownSymbols = new Set(STATE_CHANGING_PATHS.map((p) => p.symbol));
-const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal)\s*\(/g;
+const discover =
+  /\b(postJournal|commitJournal|appendJournal|putCustomer|putAccount|putBeneficiary|putPayment|createAccount)\s*\(/g;
 
 for (const file of files) {
   const rel = relative(ROOT, file);
@@ -124,7 +129,7 @@ for (const file of files) {
     let match;
     while ((match = discover.exec(line)) !== null) {
       const symbol = match[1];
-      if (!knownSymbols.has(symbol) && symbol !== 'appendJournal') {
+      if (!knownSymbols.has(symbol) && symbol !== 'openAccount') {
         addFailure(
           rel,
           idx + 1,

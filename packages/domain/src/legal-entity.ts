@@ -14,23 +14,26 @@ export function asLegalEntityId(value: string): LegalEntityId {
   return brandAs<string, 'LegalEntityId'>(value);
 }
 
+export const LEGAL_ENTITY_STATUSES = ['ACTIVE', 'INACTIVE'] as const;
+
+export type LegalEntityStatus = (typeof LEGAL_ENTITY_STATUSES)[number];
+
 /**
- * Named legal actor in a single jurisdiction. Customers and accounts bind
- * to this entity; Solstice is never the legal actor.
+ * Named legal entity that owns customer relationships in a jurisdiction.
+ * Added without changing LegalEntityId.
  */
 export type LegalEntity = {
   readonly id: LegalEntityId;
+  readonly name: string;
   readonly jurisdiction: Jurisdiction;
+  readonly status: LegalEntityStatus;
 };
 
-export type CreateLegalEntityInput = {
-  readonly id: LegalEntityId;
-  readonly jurisdiction: Jurisdiction;
-};
-
-export function createLegalEntity(input: CreateLegalEntityInput): LegalEntity {
+export function freezeLegalEntity(entity: LegalEntity): LegalEntity {
   return Object.freeze({
-    id: input.id,
-    jurisdiction: input.jurisdiction,
+    id: entity.id,
+    name: entity.name,
+    jurisdiction: entity.jurisdiction,
+    status: entity.status,
   });
 }
