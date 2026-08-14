@@ -23,7 +23,9 @@ import {
   notStartedVerification,
 } from '@solstice/domain';
 import { ENVIRONMENT, LIVE_FLAGS } from '@solstice/kernel';
+import { LIVE_EXCHANGE_ENABLED } from '@solstice/flags';
 import { SolsticeSystem } from '@solstice/payments';
+import { PyramidExchangeSystem } from '@solstice/pyramid-exchange';
 
 const NOW = asUtcInstant('2026-08-13T15:00:00.000Z');
 const SYSTEM = { type: 'SYSTEM' as const, id: asActorId('system') };
@@ -264,5 +266,162 @@ log('invariants', {
   journalsAfterSanctionsBlockUnchangedCheck: journalsAfterBlock,
   liveFlagsFalse: Object.values(LIVE_FLAGS).every((flag) => flag === false),
 });
+
+console.log('\n=== Solstice Phase 9 — Pyramid Exchange simulation ===');
+
+console.log(JSON.stringify({ LIVE_EXCHANGE_ENABLED, note: 'exchange remains simulation-only' }));
+
+const px = new PyramidExchangeSystem('demo-phase9');
+px.bootstrapHouse();
+const usTrader = px.registerTrader({
+  customerId: 'cust_us_trader',
+  name: 'Dana US',
+  jurisdiction: 'US',
+  usd: 500_000n,
+  pyr: 0n,
+});
+const gbSeller = px.registerTrader({
+  customerId: 'cust_gb_seller',
+  name: 'Eli GB',
+  jurisdiction: 'GB',
+  usd: 50_000n,
+  pyr: 20_000n,
+});
+const gbBuyer = px.registerTrader({
+  customerId: 'cust_gb_buyer',
+  name: 'Fay GB',
+  jurisdiction: 'GB',
+  usd: 400_000n,
+  pyr: 0n,
+});
+
+const disabledBook = px.place({
+  id: 'demo_us_order',
+  customerId: usTrader.customerId,
+  side: 'BUY',
+  type: 'LIMIT',
+  quantity: 100n,
+  price: 20000n,
+  sequence: 1,
+});
+log('exchange.us_disabled', {
+  refused: !disabledBook.ok,
+  reasons: disabledBook.ok ? [] : disabledBook.error.reasons,
+  bookTouched: px.engine.getOrder('demo_us_order') !== undefined,
+});
+
+const listing = px.approveListing({
+  jurisdiction: 'GB',
+  capabilities: ['SPOT_TRADE', 'CROSS_BORDER_TRANSFER'],
+  reason: 'recorded simulation listing approval — not confirmed by counsel',
+});
+log('exchange.listing_approved', {
+  jurisdiction: listing.jurisdiction,
+  status: listing.listingStatus,
+  legalReviewState: listing.legalReviewState,
+  spot: listing.capabilities.SPOT_TRADE,
+});
+
+const sell = must(
+  px.place({
+    id: 'demo_sell',
+    customerId: gbSeller.customerId,
+    side: 'SELL',
+    type: 'LIMIT',
+    quantity: 100n,
+    price: 20000n,
+    sequence: 2,
+  }),
+  'gb sell',
+);
+const buy = must(
+  px.place({
+    id: 'demo_buy',
+    customerId: gbBuyer.customerId,
+    side: 'BUY',
+    type: 'LIMIT',
+    quantity: 60n,
+    price: 20000n,
+    sequence: 3,
+  }),
+  'gb buy',
+);
+log('exchange.price_time_partial', {
+  fills: buy.fills.map((fill) => ({
+    id: fill.id,
+    qty: fill.quantity.toString(),
+    price: fill.price.toString(),
+    maker: fill.makerOrderId,
+  })),
+  sellerRemaining: px.engine.getOrder('demo_sell')?.remaining.toString(),
+  sellerState: px.engine.getOrder('demo_sell')?.state,
+  snapshot: px.marketData.snapshot('PYR/USD'),
+});
+
+const blockedName = px.registerTrader({
+  customerId: 'cust_gb_blocked',
+  name: 'Blocked Person',
+  jurisdiction: 'GB',
+  usd: 10_000n,
+});
+const complianceRefuse = px.place({
+  id: 'demo_blocked',
+  customerId: blockedName.customerId,
+  side: 'BUY',
+  type: 'LIMIT',
+  quantity: 10n,
+  price: 20000n,
+  sequence: 4,
+});
+log('exchange.compliance_refused_never_on_book', {
+  refused: !complianceRefuse.ok,
+  onBook: px.engine.getOrder('demo_blocked') !== undefined,
+  evidence: !complianceRefuse.ok ? complianceRefuse.error.evidenceId : undefined,
+});
+
+const replay = px.replay();
+log(
+  'exchange.manipulation_replay',
+  replay.map((row) => ({
+    scenario: row.scenario,
+    detected: row.detected,
+    type: row.alerts[0]?.type,
+    evidence: row.alerts[0]?.evidence,
+    explanation: row.alerts[0]?.explanation,
+  })),
+);
+
+px.custody.injectUncorrectedDivergence(gbBuyer.customerId, 'PYR', 7n);
+const divergence = px.reconcile();
+log('exchange.reconciliation_halt', divergence);
+
+px.toggleKillSwitch('WITHDRAWALS', true, 'operator halt of withdrawals — no AI involved');
+px.toggleKillSwitch('FIAT_GATEWAY', true, 'operator halt of fiat gateway');
+log('exchange.kill_switches', px.kills.snapshot());
+
+const travel = px.transfer({
+  id: 'demo_travel',
+  actor: px.operator,
+  occurredAt: NOW,
+  assetId: 'PYR',
+  quantity: 5n,
+  originatorCustomerId: gbSeller.customerId,
+  beneficiaryCustomerId: gbBuyer.customerId,
+  originatorJurisdiction: 'GB',
+  beneficiaryJurisdiction: 'US',
+  originatorFields: { legalName: 'Eli GB' },
+  beneficiaryFields: { legalName: 'Fay GB' },
+});
+log('exchange.travel_rule_refused', {
+  refused: !travel.ok,
+  queued: travel.ok ? undefined : travel.error.queued,
+  reasons: travel.ok ? [] : travel.error.reasons,
+});
+
+const fiat = px.fiatConvert(gbBuyer.customerId, 'GB', Money.fromDecimalString('10.00', 'USD'));
+log('exchange.fiat_gateway_disabled', { refused: !fiat.ok, error: fiat.ok ? undefined : fiat.error });
+
+log('exchange.evidence_chain', px.evidenceVerified());
+log('exchange.flags', { LIVE_EXCHANGE_ENABLED, ENVIRONMENT });
 
 console.log('demo: ok');

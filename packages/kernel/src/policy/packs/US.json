@@ -151,6 +151,28 @@
         }
       },
       "plainLanguageReason": "No counsel determination is on file. This corridor stays disabled."
+    },
+    {
+      "id": "US-EXCHANGE-RESEARCH",
+      "title": "Pyramid Exchange is not counsel-confirmed in the United States",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PYRAMID_EXCHANGE",
+        "when": { "product": "PYRAMID_EXCHANGE", "sourceCountry": "US" }
+      },
+      "plainLanguageReason": "No counsel determination is on file. Exchange capability stays disabled until a recorded listing approval exists in the registry."
     }
-  ]
+  ],
+  "travelRule": {
+    "legalReviewState": "DRAFT",
+    "enabled": true,
+    "crossBorderDigitalAssetTransfer": {
+      "requiredOriginatorFields": ["legalName", "accountId", "jurisdiction", "physicalAddress"],
+      "requiredBeneficiaryFields": ["legalName", "accountId", "jurisdiction"],
+      "thresholdMinorUnits": "0",
+      "thresholdCurrency": "USD"
+    }
+  }
 }

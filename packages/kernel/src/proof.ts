@@ -8,6 +8,8 @@ export const PROOF_KINDS = [
   'SANCTIONS',
   'AML',
   'EXECUTION_AUTHORITY',
+  'EXCHANGE_REGISTRY',
+  'TRAVEL_RULE',
 ] as const;
 
 export type ProofKind = (typeof PROOF_KINDS)[number];

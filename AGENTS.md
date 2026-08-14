@@ -178,3 +178,40 @@ Refusing an action still produces a record. Approving one does too.
 5. A secret scan
 
 Do not skip, reorder, or weaken these stages.
+
+# Phase 9 — Pyramid Exchange (simulation)
+
+The Pyramid Exchange is a simulated venue. `LIVE_EXCHANGE_ENABLED` stays
+`false`. No real assets, venues, chains, or analytics providers are contacted.
+
+## Layout (Phase 9)
+
+- `packages/pyramid-exchange` — registry, compliance gateway, matching,
+  market data, reconciliation, surveillance, Travel Rule, fiat bridge,
+  kill switches
+- `packages/pyramid-exchange/src/cleared-order.ts` — branded `ClearedOrder`
+  minted only by the Compliance Gateway
+- `packages/pyramid-exchange/src/matching.ts` — accepts `ClearedOrder` only
+- `packages/pyramid-exchange/src/surveillance.ts` — deterministic detectors
+- `packages/pyramid-exchange/src/travel-rule.ts` — pack-driven requirements
+- `scripts/check-phase9-exchange.mjs` — CI linters for clearance, fees,
+  halt-only reconciliation, and human enforcement
+
+## Exchange hard rules
+
+- Every order is compliance-cleared before the book. The matching engine
+  cannot accept a raw `Order`; it requires a `ClearedOrder` the gateway
+  alone can mint.
+- Listing is never automatic. An unlisted or suspended asset is untradeable
+  at order entry. No registry entry is `CONFIRMED_BY_COUNSEL`.
+- Every capability is default-disabled until a recorded listing approval.
+- Fill journals balance. Fees post only to the `house_fee` ledger.
+- Reconciliation divergence engages the EXCHANGE kill switch and seals
+  evidence. It is never auto-corrected.
+- AI may draft an investigation note. Irreversible enforcement requires a
+  recorded human decision with a reason code.
+- Travel Rule failures refuse the transfer; they are not queued. Required
+  fields come from jurisdiction packs.
+- Kill switches (exchange, pair, customer, jurisdiction, withdrawals, fiat
+  gateway) operate with no agent runtime.
+- Do not use floating-point for prices, quantities, or fees.

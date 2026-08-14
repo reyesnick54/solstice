@@ -1,4 +1,15 @@
-export type { ActionIntent, ActionKind, SendPaymentPayload } from './action-intent.ts';
+export type {
+  ActionIntent,
+  ActionKind,
+  ApproveListingPayload,
+  CancelOrderPayload,
+  DigitalAssetTransferPayload,
+  FiatConvertPayload,
+  PlaceOrderPayload,
+  RecordSurveillanceEnforcementPayload,
+  SendPaymentPayload,
+  ToggleKillSwitchPayload,
+} from './action-intent.ts';
 export { ACTION_KINDS, freezeIntent, STATE_CHANGING_KINDS } from './action-intent.ts';
 
 export type { KernelAuthorization } from './authorization.ts';
@@ -22,8 +33,19 @@ export { canonicalJson, EvidenceVault, sha256Hex } from './evidence.ts';
 export { ENVIRONMENT, LIVE_FLAGS, assertSimulationOnly, isLiveFlag } from './flags.ts';
 export type { LiveFlagName } from './flags.ts';
 
-export type { KernelDecision, KernelPermit, KernelRefusal, KernelScreened } from './kernel.ts';
-export { ComplianceKernel, PostureRelaxationError, requireAuthorization } from './kernel.ts';
+export type {
+  ExchangeRegistryPort,
+  KernelDecision,
+  KernelPermit,
+  KernelRefusal,
+  KernelScreened,
+} from './kernel.ts';
+export {
+  ComplianceKernel,
+  EXCHANGE_ACTION_KINDS,
+  PostureRelaxationError,
+  requireAuthorization,
+} from './kernel.ts';
 
 export type { AuthorizingPosture, Posture } from './posture.ts';
 export {
@@ -45,6 +67,8 @@ export type {
   ProductName,
   ProductRule,
   PolicyQuestion,
+  TravelRuleFieldRequirements,
+  TravelRulePackSection,
 } from './policy/schema.ts';
 export { LEGAL_REVIEW_STATES } from './policy/schema.ts';
 

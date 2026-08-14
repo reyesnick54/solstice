@@ -65,6 +65,7 @@ AUTHORIZED_JOURNAL_PATH_HINTS = (
     "/kernel/",
     "/execution-authority/",
     "/authority/",
+    "/pyramid-exchange/",
 )
 
 AUTHORIZED_JOURNAL_FILENAMES = {

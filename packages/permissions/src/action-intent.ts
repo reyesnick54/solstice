@@ -6,7 +6,7 @@
  * `intentId` is the idempotency key. The same intent id submitted twice
  * must produce exactly one consequential state change.
  */
-export interface ActionIntent<TPayload = unknown> {
+export interface LegacyActionIntent<TPayload = unknown> {
   readonly actionType: string;
   readonly payload: TPayload;
   readonly intentId: string;
@@ -42,7 +42,7 @@ export interface OpenAccountPayload {
   readonly purpose: string;
 }
 
-export type OpenAccountIntent = ActionIntent<OpenAccountPayload>;
+export type OpenAccountIntent = LegacyActionIntent<OpenAccountPayload>;
 
 export function openAccountIntent(
   input: Omit<OpenAccountIntent, 'actionType' | 'idempotencyKey'> & {

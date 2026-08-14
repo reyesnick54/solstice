@@ -1,8 +1,10 @@
 import { type Brand, brandAs } from './brand.ts';
 
 export type CurrencyCode = Brand<string, 'CurrencyCode'>;
+/** ISO 4217 alphabetic currency code. Alias of CurrencyCode. */
+export type Currency = CurrencyCode;
 
-export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'JPY'] as const;
+export const SUPPORTED_CURRENCIES = ['USD', 'EUR', 'GBP', 'SAR', 'AED', 'JPY', 'PYR'] as const;
 
 export type SupportedCurrency = (typeof SUPPORTED_CURRENCIES)[number];
 
@@ -15,6 +17,7 @@ const DECIMALS: Readonly<Record<SupportedCurrency, number>> = {
   SAR: 2,
   AED: 2,
   JPY: 0,
+  PYR: 2,
 };
 
 export function asCurrencyCode(value: string): CurrencyCode {
@@ -24,8 +27,16 @@ export function asCurrencyCode(value: string): CurrencyCode {
   return brandAs<string, 'CurrencyCode'>(value);
 }
 
+export function asCurrency(code: string): Currency {
+  return asCurrencyCode(code);
+}
+
 export function isCurrencyCode(value: unknown): value is CurrencyCode {
   return typeof value === 'string' && ISO_4217.test(value);
+}
+
+export function isCurrency(value: unknown): value is Currency {
+  return isCurrencyCode(value);
 }
 
 export function isSupportedCurrency(value: string): value is SupportedCurrency {
@@ -34,8 +45,8 @@ export function isSupportedCurrency(value: string): value is SupportedCurrency {
 
 export function currencyDecimals(currency: CurrencyCode): number {
   const code = String(currency);
-  if (code === 'USD' || code === 'EUR' || code === 'GBP' || code === 'SAR' || code === 'AED' || code === 'JPY') {
-    return DECIMALS[code];
+  if (code in DECIMALS) {
+    return DECIMALS[code as SupportedCurrency];
   }
   return 2;
 }
@@ -47,19 +58,4 @@ export function minorUnitsScale(currency: CurrencyCode): bigint {
     scale *= 10n;
   }
   return scale;
-}
-/** ISO 4217 alphabetic currency code. */
-export type Currency = Brand<string, 'Currency'>;
-
-const ISO_4217 = /^[A-Z]{3}$/;
-
-export function asCurrency(code: string): Currency {
-  if (!ISO_4217.test(code)) {
-    throw new TypeError(`Invalid currency code: ${code}`);
-  }
-  return brandAs<string, 'Currency'>(code);
-}
-
-export function isCurrency(value: unknown): value is Currency {
-  return typeof value === 'string' && ISO_4217.test(value);
 }

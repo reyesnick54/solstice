@@ -13,6 +13,8 @@
     "@solstice/domain": "0.1.0",
     "@solstice/kernel": "0.1.0",
     "@solstice/ledger": "0.1.0",
-    "@solstice/payments": "0.1.0"
+    "@solstice/payments": "0.1.0",
+    "@solstice/pyramid-exchange": "0.1.0",
+    "@solstice/flags": "0.1.0"
   }
 }

@@ -80,6 +80,28 @@
         "when": { "action": "SEND_PAYMENT" }
       },
       "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
+    },
+    {
+      "id": "GB-EXCHANGE-RESEARCH",
+      "title": "Pyramid Exchange is not counsel-confirmed in the United Kingdom",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PYRAMID_EXCHANGE",
+        "when": { "product": "PYRAMID_EXCHANGE", "sourceCountry": "GB" }
+      },
+      "plainLanguageReason": "No counsel determination is on file. Exchange capability stays disabled until a recorded listing approval exists in the registry."
     }
-  ]
+  ],
+  "travelRule": {
+    "legalReviewState": "DRAFT",
+    "enabled": true,
+    "crossBorderDigitalAssetTransfer": {
+      "requiredOriginatorFields": ["legalName", "accountId", "jurisdiction"],
+      "requiredBeneficiaryFields": ["legalName", "accountId", "jurisdiction", "walletAddress"],
+      "thresholdMinorUnits": "0",
+      "thresholdCurrency": "GBP"
+    }
+  }
 }

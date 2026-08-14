@@ -24,3 +24,9 @@
 /src/evidence/ @reyesnick54
 /src/kernel/ @reyesnick54
 /policies/ @reyesnick54
+
+# Phase 9 Pyramid Exchange, market surveillance, and Travel Rule.
+/packages/pyramid-exchange/ @reyesnick54
+/packages/pyramid-exchange/src/surveillance.ts @reyesnick54
+/packages/pyramid-exchange/src/travel-rule.ts @reyesnick54
+/scripts/check-phase9-exchange.mjs @reyesnick54

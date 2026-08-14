@@ -3,7 +3,7 @@
 This file describes what is in `main` and what has been tested.
 It does not describe planned work as if it were done.
 
-**As of 2026-08-13 (commit `de3c633` on `main`): Phase 1 — Banking Simulation is not complete. The Phase 1 exit criterion is not met.**
+**As of 2026-08-14: Phase 9 Pyramid Exchange simulation is implemented on this branch. `LIVE_EXCHANGE_ENABLED` remains false. Phase 1 notes below describe historical `main` at `de3c633` and are not a claim that later phases are absent from this tree.**
 
 ---
 

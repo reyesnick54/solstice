@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "noEmit": true,
+    "rootDir": "src",
     "allowImportingTsExtensions": true
   },
   "include": ["src/**/*.ts"]
