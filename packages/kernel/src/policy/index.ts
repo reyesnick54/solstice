@@ -8,7 +8,15 @@ export { diffPolicyVersions, formatPolicyDiff, type PolicyVersionDiff } from './
 export { runPolicyScenarios, type PolicyScenario, type PolicyScenarioResult } from './harness.ts';
 export { loadBundledPacks, loadBundledPack } from './packs/load.ts';
 export { loadPackFile } from './packs/schema.ts';
-export { hashPolicyFacts, policyFactsFromKernel, toFactMap, type PolicyFactInput, type PolicyIdentityFacts } from './facts.ts';
+export {
+  hashPolicyFacts,
+  policyFactsFromKernel,
+  resolveOfferingRefs,
+  toFactMap,
+  type OfferingRefs,
+  type PolicyFactInput,
+  type PolicyIdentityFacts,
+} from './facts.ts';
 export { evaluatePredicate, type PolicyPredicate, type FactPath } from './predicates.ts';
 export {
   POLICY_PRODUCT_BINDINGS,

@@ -45,6 +45,36 @@ export type PolicyFactInput = {
   readonly offeringMode?: string;
 };
 
+/**
+ * Product and legal-entity identifiers may arrive as Kernel fact objects
+ * or only as IDs on the source/destination account. Structural gates use
+ * these resolved refs so an event-driven follow-on intent is not deferred
+ * solely because the caller omitted the catalog objects.
+ */
+export type OfferingRefs = {
+  readonly productId?: string;
+  readonly legalEntityId?: string;
+  readonly accountClass?: string;
+  readonly productJurisdiction?: string;
+  readonly currency?: string;
+};
+
+export function resolveOfferingRefs(input: PolicyFactInput): OfferingRefs {
+  const account = input.sourceAccount ?? input.destinationAccount;
+  const productId = input.product?.id ?? account?.productId;
+  const legalEntityId = input.legalEntity?.id ?? account?.legalEntityId;
+  const accountClass = input.product?.accountClass ?? account?.accountClass;
+  const productJurisdiction = input.product?.jurisdiction ?? account?.jurisdiction;
+  const currency = input.product?.currency ?? account?.currency;
+  return {
+    ...(productId ? { productId } : {}),
+    ...(legalEntityId ? { legalEntityId } : {}),
+    ...(accountClass ? { accountClass } : {}),
+    ...(productJurisdiction ? { productJurisdiction } : {}),
+    ...(currency ? { currency } : {}),
+  };
+}
+
 export function policyFactsFromKernel(
   intent: ActionIntent,
   facts: KernelFacts,
@@ -80,6 +110,7 @@ export function policyFactsFromKernel(
 }
 
 export function toFactMap(input: PolicyFactInput): FactMap {
+  const refs = resolveOfferingRefs(input);
   return {
     'actor.id': input.actor.id,
     actionType: input.actionType,
@@ -95,15 +126,15 @@ export function toFactMap(input: PolicyFactInput): FactMap {
       input.identity?.kycRecordVersion ?? input.customer?.verification.kycRecordVersion,
     'identity.citizenship': input.identity?.citizenship,
     'identity.residency': input.identity?.residency ?? input.customer?.residency,
-    'legalEntity.id': input.legalEntity?.id,
+    'legalEntity.id': refs.legalEntityId,
     'legalEntity.status': input.legalEntity?.status,
-    'legalEntity.jurisdiction': input.legalEntity?.jurisdiction,
-    'product.id': input.product?.id,
+    'legalEntity.jurisdiction': input.legalEntity?.jurisdiction ?? refs.productJurisdiction,
+    'product.id': refs.productId,
     'product.status': input.product?.status,
-    'product.accountClass': input.product?.accountClass,
-    'product.jurisdiction': input.product?.jurisdiction,
-    'product.currency': input.product?.currency,
-    'product.legalEntityId': input.product?.legalEntityId,
+    'product.accountClass': refs.accountClass,
+    'product.jurisdiction': refs.productJurisdiction,
+    'product.currency': refs.currency,
+    'product.legalEntityId': input.product?.legalEntityId ?? refs.legalEntityId,
     'amount.minorUnits': input.amount ? input.amount.minorUnits.toString() : undefined,
     'amount.currency': input.amount?.currency,
     serviceLocation: input.serviceLocation,
@@ -120,6 +151,7 @@ export function toFactMap(input: PolicyFactInput): FactMap {
  * reproduced without storing raw identity documents.
  */
 export function hashPolicyFacts(input: PolicyFactInput): string {
+  const refs = resolveOfferingRefs(input);
   return hashCanonical({
     actorId: input.actor.id,
     actionType: input.actionType,
@@ -131,8 +163,8 @@ export function hashPolicyFacts(input: PolicyFactInput): string {
       input.identity?.kycRecordVersion ?? input.customer?.verification.kycRecordVersion ?? null,
     residency: input.identity?.residency ?? input.customer?.residency ?? null,
     citizenshipPresent: input.identity?.citizenship !== undefined,
-    legalEntityId: input.legalEntity?.id ?? null,
-    productId: input.product?.id ?? null,
+    legalEntityId: refs.legalEntityId ?? null,
+    productId: refs.productId ?? null,
     jurisdiction: input.jurisdiction ?? null,
     amountMinorUnits: input.amount ? input.amount.minorUnits.toString() : null,
     amountCurrency: input.amount?.currency ?? null,

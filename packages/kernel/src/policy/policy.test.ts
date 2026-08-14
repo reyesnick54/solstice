@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asAccountId } from '../../../domain/src/account.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import {
   asCustomerId,
@@ -598,6 +599,47 @@ describe('jurisdiction policy engine', () => {
     assert.equal(second.registry.getVersion('us-sim-v1')?.contentHash, first.registry.getVersion('us-sim-v1')?.contentHash);
     assert.equal(second.registry.getCapability('cap-us-sim-deposit-banking')?.enabled, true);
     assert.equal(second.registry.getCapability('cap-sa-sim-deposit-banking')?.enabled, false);
+  });
+
+  it('resolves product and legal-entity refs from the source account', () => {
+    const engine = createSimulationPolicyEngine();
+    const customer = verifiedCustomer('cust_acct_refs', 'GB', GB_ENTITY.id);
+    const result = engine.evaluate(
+      {
+        id: asIntentId('dep_refs'),
+        actionType: ACTION_TYPES.POST_DEPOSIT,
+        idempotencyKey: 'dep_refs',
+        actorId: 'operator_1',
+        requestedAt: NOW,
+        purpose: 'CUSTOMER_FUNDING',
+        payload: { accountId: 'acct_refs', amount: Money.fromMinorUnits(1_000n, 'USD') },
+      },
+      {
+        actor: { id: 'operator_1', capabilities: [ACTION_TYPES.POST_DEPOSIT] },
+        customer,
+        jurisdiction: asJurisdiction('GB'),
+        amount: Money.fromMinorUnits(1_000n, 'USD'),
+        sourceAccount: {
+          id: asAccountId('acct_refs'),
+          ownerId: customer.id,
+          accountClass: 'DEMAND_DEPOSIT',
+          productId: GB_PRODUCT.id,
+          legalEntityId: GB_ENTITY.id,
+          jurisdiction: asJurisdiction('GB'),
+          currency: asCurrencyCode('USD'),
+          status: 'OPEN',
+          openedAt: NOW,
+          version: 0,
+        },
+        identity: {
+          kycState: customer.verification.kycState,
+          kycRecordVersion: customer.verification.kycRecordVersion,
+          residency: customer.residency,
+        },
+      },
+      NOW,
+    );
+    assert.equal(result.decision, 'ALLOW');
   });
 
   it('does not treat a deposit amount as growth and still evaluates policy', () => {

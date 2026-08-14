@@ -5,7 +5,13 @@ import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import { DECISION_RANK, type DecisionStatus } from '../../../permissions/src/decision.ts';
 import type { KernelFacts } from '../proofs.ts';
-import { hashPolicyFacts, policyFactsFromKernel, toFactMap, type PolicyFactInput } from './facts.ts';
+import {
+  hashPolicyFacts,
+  policyFactsFromKernel,
+  resolveOfferingRefs,
+  toFactMap,
+  type PolicyFactInput,
+} from './facts.ts';
 import { resolveJurisdiction } from './jurisdiction.ts';
 import { evaluatePredicate } from './predicates.ts';
 import { PolicyRegistry, type PolicyEventSink } from './registry.ts';
@@ -153,7 +159,9 @@ export class PolicyEngine {
       });
     }
 
-    const offeringMode = this.registry.getProductBinding(input.product?.id ?? '')?.offeringMode;
+    const offeringMode = this.registry.getProductBinding(
+      resolveOfferingRefs(input).productId ?? '',
+    )?.offeringMode;
     const factMap = toFactMap({
       ...input,
       capabilityEnabled: true,
@@ -265,14 +273,16 @@ export class PolicyEngine {
         overrideClass: 'REVIEWABLE',
       };
     }
-    if (!input.legalEntity) {
+
+    const offering = resolveOfferingRefs(input);
+    if (!offering.legalEntityId) {
       return {
         decision: 'DEFER',
         reasonCodes: ['REQUIRED_FACT_MISSING'],
         overrideClass: 'REVIEWABLE',
       };
     }
-    if (!input.product) {
+    if (!offering.productId) {
       return {
         decision: 'DEFER',
         reasonCodes: ['PRODUCT_UNSUPPORTED', 'REQUIRED_FACT_MISSING'],
@@ -280,7 +290,7 @@ export class PolicyEngine {
       };
     }
 
-    const binding = this.registry.getProductBinding(input.product.id);
+    const binding = this.registry.getProductBinding(offering.productId);
     if (!binding) {
       return {
         decision: 'DEFER',
@@ -299,7 +309,8 @@ export class PolicyEngine {
       binding.supportedJurisdictions.length > 0 &&
       input.jurisdiction &&
       !binding.supportedJurisdictions.includes(input.jurisdiction) &&
-      !binding.supportedJurisdictions.includes(input.product.jurisdiction)
+      !(offering.productJurisdiction &&
+        binding.supportedJurisdictions.includes(offering.productJurisdiction))
     ) {
       return {
         decision: 'DEFER',
@@ -311,10 +322,10 @@ export class PolicyEngine {
     const capability =
       this.registry.getCapability(binding.requiredCapabilityId) ??
       this.registry.findCapability({
-        legalEntityId: input.legalEntity.id,
+        legalEntityId: offering.legalEntityId,
         actionType: input.actionType,
-        productId: input.product.id,
-        productType: input.product.accountClass,
+        productId: offering.productId,
+        ...(offering.accountClass ? { productType: offering.accountClass } : {}),
         environment: 'simulation',
       });
     if (!capability) {
@@ -333,10 +344,10 @@ export class PolicyEngine {
     }
 
     const live = this.registry.findCapability({
-      legalEntityId: input.legalEntity.id,
+      legalEntityId: offering.legalEntityId,
       actionType: input.actionType,
-      productId: input.product.id,
-      productType: input.product.accountClass,
+      productId: offering.productId,
+      ...(offering.accountClass ? { productType: offering.accountClass } : {}),
       environment: 'live',
     });
     if (live?.enabled) {
@@ -497,14 +508,15 @@ function ruleApplies(rule: PolicyRule, input: PolicyFactInput, at: UtcInstant): 
   if (rule.actionTypes.length > 0 && !rule.actionTypes.includes(input.actionType)) {
     return false;
   }
+  const offering = resolveOfferingRefs(input);
   if (
     rule.productTypes.length > 0 &&
-    input.product &&
-    !rule.productTypes.includes(input.product.accountClass)
+    offering.accountClass &&
+    !rule.productTypes.includes(offering.accountClass)
   ) {
     return false;
   }
-  if (rule.legalEntity && input.legalEntity && rule.legalEntity !== input.legalEntity.id) {
+  if (rule.legalEntity && offering.legalEntityId && rule.legalEntity !== offering.legalEntityId) {
     return false;
   }
   if (at < rule.effectiveFrom) {

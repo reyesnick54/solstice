@@ -24,6 +24,7 @@ import {
   PostgresInboxStore,
   PostgresOutboxStore,
 } from '../../packages/persistence/src/index.ts';
+import { PRODUCT_DEMAND_USD_GB, SOLSTICE_UK } from '../../services/accounts/src/catalog.ts';
 import { activateCustomer, openIntent } from '../../services/accounts/src/test-helpers.ts';
 import { createDurableRuntime, persistenceAvailable, preparePersistence } from './helpers.ts';
 
@@ -284,6 +285,8 @@ describePersistence('Chunk 3 — durable event fabric', () => {
         durable.runtime.kernel.submit(intent, {
           actor: { id: intent.actorId, capabilities: [intent.actionType] },
           customer,
+          product: PRODUCT_DEMAND_USD_GB,
+          legalEntity: SOLSTICE_UK,
           jurisdiction: opened.account.jurisdiction,
           amount: Money.fromMinorUnits(1_000n, 'USD'),
           sourceAccount: opened.account,
