@@ -1,5 +1,21 @@
 {
   "name": "solstice",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "lint:invariants": "python3 scripts/lint-architectural-invariants.py",
+    "check:extraction": "python3 scripts/extraction-dryrun.py",
+    "check:posture": "python3 scripts/check-deployment-posture.py",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test $(find packages tests -name '*.test.ts' 2>/dev/null | sort)",
+    "demo": "npm run demo --workspace=@solstice/domain",
+    "scan:secrets": "python3 scripts/secret-scan.py",
+    "ci": "bash scripts/ci.sh"
+  },
+  "engines": {
+    "node": ">=22"
   "version": "0.1.0",
   "private": true,
   "description": "Solstice — AI proposes, Compliance Kernel authorizes, signed Execution Authority executes, Evidence Vault seals",

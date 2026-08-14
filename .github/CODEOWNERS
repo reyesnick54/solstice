@@ -1,0 +1,26 @@
+# Human review is required on these paths. GitHub usernames, not bots.
+
+# Governance and the mechanical checks themselves.
+/.github/ @reyesnick54
+/CODEOWNERS @reyesnick54
+/.github/CODEOWNERS @reyesnick54
+/AGENTS.md @reyesnick54
+/scripts/ @reyesnick54
+/config/ @reyesnick54
+
+# Phase 1 accounts service.
+/services/accounts/ @reyesnick54
+
+# Phase 1 control-plane paths (kernel, ledger, evidence, permissions, flags).
+/services/compliance-kernel/ @reyesnick54
+/services/ledger/ @reyesnick54
+/services/evidence-vault/ @reyesnick54
+/packages/permissions/ @reyesnick54
+/packages/evidence-vault/ @reyesnick54
+/packages/policy-engine/ @reyesnick54
+/src/flags/ @reyesnick54
+/src/authority/ @reyesnick54
+/src/ledger/ @reyesnick54
+/src/evidence/ @reyesnick54
+/src/kernel/ @reyesnick54
+/policies/ @reyesnick54
