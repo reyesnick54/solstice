@@ -18,3 +18,4 @@ export {
   setMandateThroughKernel,
 } from './runtime.ts';
 export type { SolsticeAgentRuntime } from './runtime.ts';
+export { SolsticeAlpha, createAlphaServices } from './alpha/SolsticeAlpha.ts';

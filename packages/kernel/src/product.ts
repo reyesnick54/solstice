@@ -23,6 +23,12 @@ export function productForKind(
       return 'SEED_CREDIT';
     case 'RECORD_COST_AVOIDED':
       return 'COST_AVOIDED';
+    case 'OPEN_INVESTMENT_ACCOUNT':
+      return 'INVESTMENT_ACCOUNT';
+    case 'SWEEP_DEPOSIT_TO_INVESTMENT':
+      return 'INVESTMENT_SWEEP';
+    case 'WEEKLY_HARVEST':
+      return 'WEEKLY_HARVEST';
     case 'COMPENSATE_PAYMENT':
     case 'SEND_PAYMENT': {
       const dest = destinationCountry ?? sourceCountry;

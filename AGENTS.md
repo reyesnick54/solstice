@@ -113,10 +113,35 @@ is the correct outcome.
 
 ## Growth attribution
 
-13 sources × 4 realization classes (`SETTLED_CASH`, `UNREALIZED`,
+14 sources × 4 realization classes (`SETTLED_CASH`, `UNREALIZED`,
 `COST_AVOIDED`, `PENDING`). Cost-avoided is never income. Unrealized is
 never withdrawable. There is **no** percentage-return, blended-yield, or
 growth-rate path. `tests/no-percentage-return.test.ts` greps production TS.
+
+## Phase 6 — Solstice Alpha (simulation)
+
+- Investment accounts use legal class `INVESTMENT_ASSET`. Opening is an
+  ActionIntent and requires agreement, current risk profile, current
+  disclosure, and customer transfer authorization. Kernel refusal is correct.
+- Deposit → investment cash uses the named disclosed class bridge
+  `DEPOSIT_TO_INVESTMENT_CASH_SWEEP`. Undefined pairs are refused entirely.
+  Investment cash and securities are distinct ledger positions.
+- The Risk Engine is deterministic and outranks every model and agent.
+  A `REFUSE` verdict is FINAL (`final: true`). There is no override path.
+- Kill switches (all trading, one strategy, agent runtime, broker
+  connectivity) operate with no AI component running.
+- A model not in `RELEASED` validation state cannot receive allocation.
+- Strategies produce typed proposals only, never orders. They hold no
+  execution credentials and no ledger reference.
+- Paper fills post only to the paper ledger. Shadow mode records proposals
+  without fills. `LIVE_TRADING_ENABLED` stays false.
+- Weekly Harvest sweeps `REALIZED_SETTLED` profit only. Unrealized P&L is
+  a distinct type and is structurally unsweepable.
+- Corporate actions are out of scope.
+- Portfolio metrics are labelled `INVESTMENT_ACCOUNT_ONLY`. Do not compute
+  a blended return across total wealth. Do not represent any strategy as
+  guaranteed, expected, or projected.
+- Strategy lifecycle promotion requires an explicit recorded approval.
 
 ## LIVE_* flags
 
@@ -173,8 +198,16 @@ Refusing an action still produces a record. Approving one does too.
 
 1. Architectural invariants (the rules above) and an extraction dry-run
 2. Deployment posture (simulation flags)
-3. Tests, including the Phase 1 exit-criterion test
-4. The end-to-end demo
-5. A secret scan
+3. Kernel gating (`scripts/check-kernel-gating.mjs`)
+4. Tests, including Phase 1 and Phase 6 exit-criterion tests
+5. The end-to-end demo (Phase 4–5 plus `demo/phase6.ts`)
+6. A secret scan
+
+Phase 6 invariant linter rules (fail CI):
+
+- `ORDER_REQUIRES_EXECUTION_AUTHORITY`
+- `NO_RISK_ENGINE_OVERRIDE`
+- `NO_UNREALIZED_WITHDRAWABLE`
+- `NO_UNRELEASED_MODEL_ALLOCATION`
 
 Do not skip, reorder, or weaken these stages.

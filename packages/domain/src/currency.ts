@@ -51,8 +51,6 @@ export function minorUnitsScale(currency: CurrencyCode): bigint {
 /** ISO 4217 alphabetic currency code. */
 export type Currency = Brand<string, 'Currency'>;
 
-const ISO_4217 = /^[A-Z]{3}$/;
-
 export function asCurrency(code: string): Currency {
   if (!ISO_4217.test(code)) {
     throw new TypeError(`Invalid currency code: ${code}`);

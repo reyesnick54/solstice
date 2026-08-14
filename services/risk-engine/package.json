@@ -1,0 +1,10 @@
+{
+  "name": "@solstice/service-risk-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "files": ["src"],
+  "dependencies": { "@solstice/risk-engine": "0.1.0" },
+  "engines": { "node": ">=22" }
+}

@@ -80,6 +80,42 @@
         "when": { "action": "SEND_PAYMENT" }
       },
       "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
+    },
+    {
+      "id": "GB-SIM-INVESTMENT-ACCOUNT",
+      "title": "Simulation exception: open investment account",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "INVESTMENT_ACCOUNT",
+        "when": { "product": "INVESTMENT_ACCOUNT" }
+      },
+      "plainLanguageReason": "Investment product rule for the in-process simulation. Not a legal opinion. No strategy is guaranteed."
+    },
+    {
+      "id": "GB-SIM-INVESTMENT-SWEEP",
+      "title": "Simulation exception: deposit to investment cash sweep",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "INVESTMENT_SWEEP",
+        "when": { "product": "INVESTMENT_SWEEP" }
+      },
+      "plainLanguageReason": "Sweep must use the named disclosed class bridge. Not a legal opinion."
+    },
+    {
+      "id": "GB-SIM-WEEKLY-HARVEST",
+      "title": "Simulation exception: weekly harvest of realized settled profit",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "WEEKLY_HARVEST",
+        "when": { "product": "WEEKLY_HARVEST" }
+      },
+      "plainLanguageReason": "Harvest is realized settled profit only. Not a legal opinion."
     }
   ]
 }

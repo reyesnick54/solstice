@@ -13,7 +13,7 @@ import {
   freezeBeneficiary,
   formatRational,
   ok,
-  type Account,
+  type LedgerAccount,
   type AccountId,
   type Actor,
   type Beneficiary,
@@ -49,6 +49,8 @@ import type { DomesticRail } from './rails/domestic.ts';
 import type { SepaLikeRail } from './rails/sepa.ts';
 import type { SwiftLikeRail } from './rails/swift.ts';
 import type { InstantRail } from './rails/instant.ts';
+
+type Account = LedgerAccount;
 
 export type SubmissionOk = {
   readonly decision: KernelDecision;
@@ -107,6 +109,7 @@ export class SolsticeSystem {
         currency,
         accountClass: 'house_nostro',
         actor,
+        executionAuthority: { signature: 'kernel-bootstrap' },
       });
       if (!nostro.ok) {
         throw new Error(`bootstrap nostro ${currency} failed`);
@@ -118,6 +121,7 @@ export class SolsticeSystem {
           currency,
           accountClass: 'rail_clearing',
           actor,
+          executionAuthority: { signature: 'kernel-bootstrap' },
         });
         if (!rail.ok) {
           throw new Error(`bootstrap rail ${railId} ${currency} failed`);
@@ -153,6 +157,7 @@ export class SolsticeSystem {
     currency: string;
     accountClass: string;
     actor: Actor;
+    executionAuthority?: { readonly signature?: string };
   }): Result<SubmissionOk, SubmissionErr> {
     const intent = freezeKernelIntent({
       id: asActionIntentId(this.nextId('int')),
@@ -178,10 +183,11 @@ export class SolsticeSystem {
       createAccount({
         id: input.accountId,
         ownerCustomerId: input.ownerCustomerId,
-        accountClass: input.accountClass as Account['accountClass'],
+        accountClass: input.accountClass as LedgerAccount['accountClass'],
         currency: asCurrencyCode(input.currency),
         openedAt: this.now,
-      }),
+      },
+      evaluated.value.authorization),
     );
     return ok({ decision: evaluated.value, account, journals: [] });
   }
@@ -379,7 +385,7 @@ export class SolsticeSystem {
     if (!execution.ok || !('outcome' in execution.value) || execution.value.outcome !== 'AUTHORIZED') {
       return err({ code: 'KERNEL_ERROR', message: 'execution authority refused' });
     }
-    const auth = execution.value.authorization;
+    const kernelAuthorization = execution.value.authorization;
 
     const position = this.books.positionForAccount(sourceAccount.id);
     if (!position.ok || position.value.minorUnits < sourceAmount.minorUnits) {
@@ -387,7 +393,7 @@ export class SolsticeSystem {
     }
 
     const paymentId = `pay_${intent.id}`;
-    let payment = this.books.putPayment(auth, {
+    let payment = this.books.putPayment(kernelAuthorization, {
       id: paymentId,
       intentId: intent.id,
       customerId: input.customerId,
@@ -412,7 +418,7 @@ export class SolsticeSystem {
     });
 
     const screenEv = this.kernel.vault.seal({ kind: 'payment.screening', paymentId, posture: evaluated.value.posture }, this.now);
-    const screened = this.books.transitionPayment(auth, payment.id, 'SCREENING', this.now, screenEv.id);
+    const screened = this.books.transitionPayment(kernelAuthorization, payment.id, 'SCREENING', this.now, screenEv.id);
     if (!screened.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
     payment = screened.value;
 
@@ -420,7 +426,7 @@ export class SolsticeSystem {
       { kind: 'payment.routed', paymentId, routing, chosen: routing.chosen.railId },
       this.now,
     );
-    const routed = this.books.transitionPayment(auth, payment.id, 'ROUTED', this.now, routeEv.id);
+    const routed = this.books.transitionPayment(kernelAuthorization, payment.id, 'ROUTED', this.now, routeEv.id);
     if (!routed.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
     payment = routed.value;
 
@@ -429,7 +435,7 @@ export class SolsticeSystem {
     const railFeeSource = routing.chosen.totalFeeSource.subtract(fxFee);
 
     if (!sameCurrency && bestFx) {
-      const fxPosted = commitJournal(this.books.journals, auth, {
+      const fxPosted = commitJournal(this.books.journals, kernelAuthorization, {
         intentId: intent.id,
         memo: `FX ${sourceAccount.currency}→${destCurrency} at ${formatRational(bestFx.rate)}`,
         postedAt: this.now,
@@ -453,7 +459,7 @@ export class SolsticeSystem {
     const payAmount = sameCurrency ? sourceAmount : destinationAmount;
     const payAccount = sameCurrency ? sourceAccount : destAccount;
     const railAccount = this.houseAccount(payAmount.currency, 'rail', routing.chosen.railId);
-    const payPosted = commitJournal(this.books.journals, auth, {
+    const payPosted = commitJournal(this.books.journals, kernelAuthorization, {
       intentId: intent.id,
       memo: `SEND_PAYMENT ${routing.chosen.railId}`,
       postedAt: this.now,
@@ -466,7 +472,7 @@ export class SolsticeSystem {
     journals.push(payPosted.value);
 
     if (!fxFee.isZero) {
-      const feePosted = commitJournal(this.books.journals, auth, {
+      const feePosted = commitJournal(this.books.journals, kernelAuthorization, {
         intentId: intent.id,
         memo: 'FX fee',
         postedAt: this.now,
@@ -480,14 +486,14 @@ export class SolsticeSystem {
     }
 
     const settlingEv = this.kernel.vault.seal({ kind: 'payment.settling', paymentId }, this.now);
-    const settling = this.books.transitionPayment(auth, payment.id, 'SETTLING', this.now, settlingEv.id);
+    const settling = this.books.transitionPayment(kernelAuthorization, payment.id, 'SETTLING', this.now, settlingEv.id);
     if (!settling.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
     payment = settling.value;
 
     const rail = this.rails[routing.chosen.railId];
     const executed = rail.execute(railInstruction);
     if (!executed.accepted || input.failSettlement) {
-      return this.failAndReturn(auth, intent, payment, journals, payAccount, railAccount, payAmount, sourceAccount, destAccount, sourceAmount, destinationAmount, sameCurrency, bestFx);
+      return this.failAndReturn(kernelAuthorization, intent, payment, journals, payAccount, railAccount, payAmount, sourceAccount, destAccount, sourceAmount, destinationAmount, sameCurrency, bestFx);
     }
 
     if ('settle' in rail && typeof (rail as DomesticRail).settle === 'function') {
@@ -498,7 +504,7 @@ export class SolsticeSystem {
       { kind: 'payment.settled', paymentId, railReference: executed.railReference },
       this.now,
     );
-    const settled = this.books.transitionPayment(auth, payment.id, 'SETTLED', this.now, settledEv.id);
+    const settled = this.books.transitionPayment(kernelAuthorization, payment.id, 'SETTLED', this.now, settledEv.id);
     if (!settled.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
     payment = settled.value;
 
@@ -515,7 +521,7 @@ export class SolsticeSystem {
   }
 
   private failAndReturn(
-    auth: KernelAuthorization,
+    kernelAuthorization: KernelAuthorization,
     intent: KernelIntent,
     payment: PaymentRecord,
     journals: Journal[],
@@ -530,7 +536,7 @@ export class SolsticeSystem {
     bestFx: SimulatedFxQuote | undefined,
   ): Result<SubmissionOk, SubmissionErr> {
     const failEv = this.kernel.vault.seal({ kind: 'payment.failed', paymentId: payment.id }, this.now);
-    const failed = this.books.transitionPayment(auth, payment.id, 'FAILED', this.now, failEv.id);
+    const failed = this.books.transitionPayment(kernelAuthorization, payment.id, 'FAILED', this.now, failEv.id);
     if (!failed.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
 
     const compensateIntent = freezeKernelIntent({
@@ -553,10 +559,10 @@ export class SolsticeSystem {
     if (!granted.ok || granted.value.outcome !== 'AUTHORIZED') {
       return err({ code: 'KERNEL_ERROR', message: 'compensate authority failed' });
     }
-    const compAuth = granted.value.authorization;
+    const compensateAuthorization = granted.value.authorization;
 
     const originalPay = journals.find((journal) => journal.memo.startsWith('SEND_PAYMENT'));
-    const reversePay = commitJournal(this.books.journals, compAuth, {
+    const reversePay = commitJournal(this.books.journals, compensateAuthorization, {
       intentId: compensateIntent.id,
       memo: 'compensate SEND_PAYMENT',
       postedAt: this.now,
@@ -571,7 +577,7 @@ export class SolsticeSystem {
 
     if (!sameCurrency && bestFx) {
       const originalFx = journals.find((journal) => journal.fx !== undefined);
-      const reverseFx = commitJournal(this.books.journals, compAuth, {
+      const reverseFx = commitJournal(this.books.journals, compensateAuthorization, {
         intentId: compensateIntent.id,
         memo: 'compensate FX',
         postedAt: this.now,
@@ -588,7 +594,7 @@ export class SolsticeSystem {
       journals.push(reverseFx.value);
       if (!bestFx.fee.isZero) {
         const originalFee = journals.find((journal) => journal.memo === 'FX fee');
-        const reverseFee = commitJournal(this.books.journals, compAuth, {
+        const reverseFee = commitJournal(this.books.journals, compensateAuthorization, {
           intentId: compensateIntent.id,
           memo: 'compensate FX fee',
           postedAt: this.now,
@@ -608,7 +614,7 @@ export class SolsticeSystem {
     }
 
     const retEv = this.kernel.vault.seal({ kind: 'payment.returned', paymentId: payment.id }, this.now);
-    const returned = this.books.transitionPayment(compAuth, payment.id, 'RETURNED', this.now, retEv.id);
+    const returned = this.books.transitionPayment(compensateAuthorization, payment.id, 'RETURNED', this.now, retEv.id);
     if (!returned.ok) return err({ code: 'KERNEL_ERROR', message: 'illegal payment transition' });
 
     return ok({

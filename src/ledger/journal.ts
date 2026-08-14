@@ -63,7 +63,7 @@ export class Ledger {
     this.accounts = accounts ?? new AccountRegister();
   }
 
-  postJournal(request: PostJournalRequest): Journal {
+  postJournal(request: PostJournalRequest & { readonly executionAuthority: import("./types.ts").ExecutionAuthorityView }): Journal {
     assertIdempotencyKey(request.idempotencyKey);
     assertPostingsNonEmpty(request.postings);
     assertNoFloatAmounts(request.postings);

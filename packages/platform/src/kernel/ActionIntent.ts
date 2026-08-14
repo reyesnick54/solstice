@@ -13,6 +13,9 @@ export const ActionType = {
   POST_DEPOSIT: 'POST_DEPOSIT',
   SET_MANDATE: 'SET_MANDATE',
   AGENT_PROPOSAL: 'AGENT_PROPOSAL',
+  OPEN_INVESTMENT_ACCOUNT: 'OPEN_INVESTMENT_ACCOUNT',
+  SWEEP_DEPOSIT_TO_INVESTMENT: 'SWEEP_DEPOSIT_TO_INVESTMENT',
+  WEEKLY_HARVEST: 'WEEKLY_HARVEST',
 } as const;
 
 export type ActionTypeName = (typeof ActionType)[keyof typeof ActionType];
@@ -38,4 +41,27 @@ export type AgentProposalPayload = {
 export type PostDepositPayload = {
   readonly customerAccountId: string;
   readonly amount: Money;
+};
+
+export type OpenInvestmentAccountPayload = {
+  readonly accountId: string;
+  readonly ownerId: string;
+  readonly cashAccountId: string;
+  readonly securitiesAccountId: string;
+  readonly agreementVersion?: string;
+  readonly riskProfileCurrent?: boolean;
+  readonly disclosureVersion?: string;
+  readonly transferAuthorized?: boolean;
+};
+
+export type SweepDepositPayload = {
+  readonly depositAccountId: string;
+  readonly investmentAccountId: string;
+  readonly amount: Money;
+};
+
+export type WeeklyHarvestPayload = {
+  readonly depositAccountId: string;
+  readonly investmentAccountId: string;
+  readonly share: 0 | 25 | 50 | 75 | 100;
 };

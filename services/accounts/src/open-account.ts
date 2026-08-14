@@ -59,7 +59,7 @@ export class AccountsService {
   /**
    * Single entry point. Accepts an OPEN_ACCOUNT ActionIntent.
    */
-  openAccount(intent: ActionIntent): OpenAccountResult {
+  openAccount(intent: ActionIntent & { readonly executionAuthority?: never }): OpenAccountResult {
     assertSimulationOnly();
 
     const existing = this.resultsByIntent.get(intent.intentId);

@@ -111,6 +111,42 @@
       "plainLanguageReason": "Growth attribution is a product ledger, not income. Not a legal opinion."
     },
     {
+      "id": "US-SIM-INVESTMENT-ACCOUNT",
+      "title": "Simulation exception: open investment account",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "INVESTMENT_ACCOUNT",
+        "when": { "product": "INVESTMENT_ACCOUNT" }
+      },
+      "plainLanguageReason": "Investment accounts in simulation require agreement, risk profile, disclosure, and transfer authorization. Not a legal opinion. No strategy is guaranteed."
+    },
+    {
+      "id": "US-SIM-INVESTMENT-SWEEP",
+      "title": "Simulation exception: deposit to investment cash sweep",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "INVESTMENT_SWEEP",
+        "when": { "product": "INVESTMENT_SWEEP" }
+      },
+      "plainLanguageReason": "Sweep must use the named disclosed class bridge. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-WEEKLY-HARVEST",
+      "title": "Simulation exception: weekly harvest of realized settled profit",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "WEEKLY_HARVEST",
+        "when": { "product": "WEEKLY_HARVEST" }
+      },
+      "plainLanguageReason": "Harvest is realized settled profit only. Unrealized is unsweepable. Not a legal opinion."
+    },
+    {
       "id": "US-FORBID-SANCTIONED-DEST",
       "title": "Forbid payments to comprehensively sanctioned destinations (simulated list)",
       "legalReviewState": "DRAFT",

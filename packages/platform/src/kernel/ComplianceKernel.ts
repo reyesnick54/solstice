@@ -11,6 +11,7 @@ import {
   type AgentProposalPayload,
   type SetMandatePayload,
 } from './ActionIntent.ts';
+import type { SolsticeAlpha } from '../alpha/SolsticeAlpha.ts';
 import type { AgentProposal } from '../../../contracts/src/proposal.ts';
 import type { CompiledMandate } from '../../../contracts/src/mandate-types.ts';
 import type { FinancialContextSnapshot } from '../../../contracts/src/financial-context.ts';
@@ -51,6 +52,7 @@ export class ComplianceKernel {
   readonly #events: DomainEventLog;
   readonly #growth: GrowthAttributionLedger;
   readonly #clock: Clock;
+  #alpha: SolsticeAlpha | undefined;
 
   constructor(
     ledger: SimulatedLedger,
@@ -68,6 +70,10 @@ export class ComplianceKernel {
     this.#clock = clock;
   }
 
+  attachAlpha(alpha: SolsticeAlpha): void {
+    this.#alpha = alpha;
+  }
+
   submit(intent: ActionIntent): KernelDecision {
     assertSimulationOnly();
     this.#events.append('kernel.intent.submitted', this.#clock.now(), {
@@ -81,6 +87,14 @@ export class ComplianceKernel {
     }
     if (intent.actionType === ActionType.AGENT_PROPOSAL) {
       return this.handleAgentProposal(intent as ActionIntent<AgentProposalPayload>);
+    }
+    if (
+      this.#alpha &&
+      (intent.actionType === ActionType.OPEN_INVESTMENT_ACCOUNT ||
+        intent.actionType === ActionType.SWEEP_DEPOSIT_TO_INVESTMENT ||
+        intent.actionType === ActionType.WEEKLY_HARVEST)
+    ) {
+      return this.#alpha.submit(intent);
     }
 
     const evidence = this.#evidence.seal('INTENT_REFUSED', {

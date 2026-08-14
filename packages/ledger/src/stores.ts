@@ -1,7 +1,7 @@
 import {
   err,
   ok,
-  type Account,
+  type LedgerAccount,
   type AccountId,
   type Beneficiary,
   type BeneficiaryId,
@@ -88,7 +88,7 @@ const PAYMENT_TRANSITIONS: { readonly [S in PaymentState]: readonly PaymentState
 export class LedgerBooks {
   readonly journals: JournalStore;
   readonly #customers = new Map<CustomerId, Customer>();
-  readonly #accounts = new Map<AccountId, Account>();
+  readonly #accounts = new Map<AccountId, LedgerAccount>();
   readonly #beneficiaries = new Map<BeneficiaryId, Beneficiary>();
   readonly #payments = new Map<string, PaymentRecord>();
   readonly #costAvoided: CostAvoidedRecord[] = [];
@@ -102,7 +102,7 @@ export class LedgerBooks {
     return this.#customers.get(id);
   }
 
-  getAccount(id: AccountId): Account | undefined {
+  getAccount(id: AccountId): LedgerAccount | undefined {
     return this.#accounts.get(id);
   }
 
@@ -163,7 +163,7 @@ export class LedgerBooks {
   }
 
   /** @kernelGated */
-  putAccount(authorization: KernelAuthorization, account: Account): Account {
+  putAccount(authorization: KernelAuthorization, account: LedgerAccount): LedgerAccount {
     assertKernelAuthorization(authorization, 'OPEN_ACCOUNT');
     this.#accounts.set(account.id, account);
     return account;
