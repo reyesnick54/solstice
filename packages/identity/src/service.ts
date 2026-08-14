@@ -606,11 +606,38 @@ export class IdentityService implements IdentityAuthorityPort {
   }
 
   resolveActorContext(actorId: string): Result<VerifiedActorContext, IdentityFailure> {
-    const session = this.activeSessionForActor(actorId);
-    if (!session) {
+    const subjectId = this.store.identityByActor.get(actorId);
+    if (subjectId) {
+      const identity = this.store.identities.get(subjectId);
+      if (!identity) {
+        return fail('IDENTITY_NOT_FOUND', 'actor is bound to a missing identity');
+      }
+      if (isBlockedIdentityStatus(identity.status) || identity.status === 'PENDING') {
+        return fail('IDENTITY_BLOCKED', `identity status ${identity.status} forbids the session`);
+      }
+    }
+    const ids = this.store.sessionsByActor.get(actorId) ?? [];
+    if (ids.length === 0) {
       return fail('SESSION_NOT_FOUND', 'no active session for actor');
     }
-    return this.issueContext(session);
+    let lastFailure: IdentityFailure | null = null;
+    for (const id of [...ids].reverse()) {
+      const session = this.store.sessions.get(id);
+      if (!session) {
+        continue;
+      }
+      const usable = this.usableSession(session);
+      if (usable.ok) {
+        const touched = Object.freeze({ ...usable.value, lastUsedAt: this.clock.now() });
+        this.store.sessions.set(touched.sessionId, touched);
+        return this.issueContext(touched);
+      }
+      lastFailure = usable.error;
+    }
+    return fail(
+      lastFailure?.code ?? 'SESSION_NOT_FOUND',
+      lastFailure?.message ?? 'no active session for actor',
+    );
   }
 
   identityFactsFor(actorId: string): IdentityFacts {
