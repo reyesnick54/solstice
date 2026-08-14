@@ -11,3 +11,4 @@ __pycache__/
 *.log
 .env
 infra/postgres/.env
+.solstice-dev-keys/

@@ -28,6 +28,10 @@ import type {
 import type { AuthorizationDecision } from '../../../packages/permissions/src/decision.ts';
 import type { AuthorityIssuer } from '../../../packages/permissions/src/execution-authority.ts';
 import { validateIntentStructure } from '../../../packages/permissions/src/structural.ts';
+import {
+  actionTypesFromCapabilities,
+  type IdentityAuthorityPort,
+} from '../../../packages/identity/src/index.ts';
 import { balanceOfAccount } from './balances.ts';
 import { recordKernelDecisionEvent } from './event-trace.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
@@ -68,6 +72,7 @@ export class MoneyMovementService {
   private readonly accounts: AccountStore;
   private readonly products: ProductStore;
   private readonly legalEntities: LegalEntityStore;
+  private readonly identity: IdentityAuthorityPort;
 
   constructor(
     kernel: ComplianceKernel,
@@ -81,6 +86,7 @@ export class MoneyMovementService {
     accounts: AccountStore,
     products: ProductStore,
     legalEntities: LegalEntityStore,
+    identity: IdentityAuthorityPort,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -93,6 +99,7 @@ export class MoneyMovementService {
     this.accounts = accounts;
     this.products = products;
     this.legalEntities = legalEntities;
+    this.identity = identity;
   }
 
   deposit(intent: PostDepositIntent): MoneyMovementOutcome {
@@ -359,11 +366,15 @@ export class MoneyMovementService {
       : undefined;
     const product = customerAccount ? this.products.get(customerAccount.productId) : undefined;
 
+    const resolved = this.identity.resolveActorContext(input.intent.actorId);
     const facts: KernelFacts = {
       actor: {
         id: input.intent.actorId,
-        capabilities: [input.intent.actionType],
+        capabilities: resolved.ok
+          ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities)
+          : [],
       },
+      identity: this.identity.identityFactsFor(input.intent.actorId),
       ...(customer ? { customer } : {}),
       ...(legalEntity ? { legalEntity } : {}),
       ...(product ? { product } : {}),

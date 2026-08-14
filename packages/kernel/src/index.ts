@@ -12,3 +12,4 @@ export {
   type ProofEvaluator,
 } from './proofs.ts';
 export * from './policy/index.ts';
+export type { IdentityFacts } from '../../identity/src/facts.ts';

@@ -35,6 +35,10 @@ export type {
 } from './postgres/types.ts';
 export { isReadOnlyViolation, isUniqueViolation } from './postgres/write.ts';
 export {
+  loadIdentitySnapshot,
+  persistIdentitySnapshot,
+} from './identity/pg-identity-store.ts';
+export {
   openPersistenceSession,
   persistCustomerUnit,
   persistEvidenceOnClient,
@@ -43,6 +47,7 @@ export {
   type PersistenceSession,
 } from './session.ts';
 export { loadPolicyState, persistPolicyState, type PersistedPolicyState } from './policy/store.ts';
+export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
   PostgresDeadLetterStore,
   PostgresEventCatalog,

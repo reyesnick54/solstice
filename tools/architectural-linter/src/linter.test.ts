@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, writeFileSync, rmSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 import { lintSource } from './linter.ts';
+import { lintSecurityBoundary } from './security-guards.ts';
 
 describe('architectural linter rules', () => {
   it('catches Account constructed without ExecutionAuthority', () => {
@@ -70,5 +71,32 @@ describe('architectural linter rules', () => {
     const hit = findings.find((f) => f.rule === 'no-blended-return-percentage');
     assert.ok(hit);
     assert.equal(hit.line, 2);
+  });
+});
+
+describe('security boundary guards', () => {
+  it('rejects a competing crypto package path', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-sec-linter-'));
+    writeFileSync(join(dir, 'placeholder'), '');
+    const cryptoDir = join(dir, 'packages/crypto');
+    mkdirSync(cryptoDir, { recursive: true });
+    writeFileSync(join(cryptoDir, 'index.ts'), 'export const x = 1;\n');
+    const findings = lintSecurityBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'competing-crypto-provider');
+    assert.ok(hit);
+  });
+
+  it('rejects a business service importing the simulation key provider', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-sec-biz-'));
+    mkdirSync(join(dir, 'services/accounts/src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'services/accounts/src/money-movement.ts'),
+      "import { SimulationKeyProvider } from '../../../packages/security/src/simulation.ts';\n",
+    );
+    const result = lintSecurityBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const found = result.find((f) => f.rule === 'business-imports-dev-key-provider');
+    assert.ok(found);
   });
 });

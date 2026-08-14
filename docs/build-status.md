@@ -30,6 +30,14 @@ This document describes only what is implemented and tested in this tree.
   `VersionedEvent` model, taxonomy, PostgreSQL transactional outbox in the
   same ledger unit as journals, consumer inbox, dead letters, explicit
   replay, and an in-process dispatcher. Events are not financial execution.
+- Canonical security / cryptographic infrastructure (Chunk 4):
+  `packages/security` KeyProvider, typed key purposes, lifecycle and
+  rotation, AES-256-GCM envelope encryption, SecretReference /
+  SecretProvider, DEVELOPMENT/SIMULATION local provider, service-identity
+  foundations, redacted sensitive types, and key-metadata persistence.
+  Execution Authority signs and verifies through the KeyProvider.
+  Evidence Vault hashing uses the shared SHA-256 helper and stays
+  deterministic. No live KMS/HSM.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -38,6 +46,13 @@ This document describes only what is implemented and tested in this tree.
   dispatcher port.
 - Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
 - Identity stack / real KYC (ADR-0007 remains PROPOSED).
+- Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
+- Solstice Identity (`packages/identity`, `services/identity`): person/business
+  identity, simulated passkey registration/authentication, sessions, device
+  trust, versioned KYC metadata, capability grants, signed ActorContext.
+  Accounts consume authoritative capabilities. Kernel identity proof reads
+  IdentityFacts. ADR-0007 remains PROPOSED; no KYC vendor is selected.
+- Real KYC vendor integration, sanctions/PEP, and jurisdiction policy.
 - Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (PAYMENTS, FX, CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). They are PLANNED only.

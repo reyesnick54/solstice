@@ -13,6 +13,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'kernel',
   'evidence',
   'policy',
+  'security',
+  'identity',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -44,6 +46,18 @@ export const EVENT_TYPE_NAMES = [
   'PolicyPackRetired',
   'PolicyReviewRequested',
   'PolicyReviewDecided',
+  'KeyCreated',
+  'KeyRotated',
+  'KeyRetired',
+  'KeyRevoked',
+  'IdentityCreated',
+  'IdentityActivated',
+  'IdentitySuspended',
+  'IdentityKycUpdated',
+  'IdentitySessionCreated',
+  'IdentitySessionRevoked',
+  'IdentityDeviceRegistered',
+  'IdentityRecoveryRequested',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -59,6 +73,18 @@ export const EVENT_SCHEMA_REFS = {
   PolicyPackRetired: 'solstice.policy.pack_retired/1',
   PolicyReviewRequested: 'solstice.policy.review_requested/1',
   PolicyReviewDecided: 'solstice.policy.review_decided/1',
+  KeyCreated: 'solstice.security.key_created/1',
+  KeyRotated: 'solstice.security.key_rotated/1',
+  KeyRetired: 'solstice.security.key_retired/1',
+  KeyRevoked: 'solstice.security.key_revoked/1',
+  IdentityCreated: 'solstice.identity.created/1',
+  IdentityActivated: 'solstice.identity.activated/1',
+  IdentitySuspended: 'solstice.identity.suspended/1',
+  IdentityKycUpdated: 'solstice.identity.kyc.updated/1',
+  IdentitySessionCreated: 'solstice.identity.session.created/1',
+  IdentitySessionRevoked: 'solstice.identity.session.revoked/1',
+  IdentityDeviceRegistered: 'solstice.identity.device.registered/1',
+  IdentityRecoveryRequested: 'solstice.identity.recovery.requested/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -74,6 +100,18 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   PolicyPackRetired: 'policy',
   PolicyReviewRequested: 'policy',
   PolicyReviewDecided: 'policy',
+  KeyCreated: 'security',
+  KeyRotated: 'security',
+  KeyRetired: 'security',
+  KeyRevoked: 'security',
+  IdentityCreated: 'identity',
+  IdentityActivated: 'identity',
+  IdentitySuspended: 'identity',
+  IdentityKycUpdated: 'identity',
+  IdentitySessionCreated: 'identity',
+  IdentitySessionRevoked: 'identity',
+  IdentityDeviceRegistered: 'identity',
+  IdentityRecoveryRequested: 'identity',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

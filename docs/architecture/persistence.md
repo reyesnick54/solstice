@@ -8,14 +8,16 @@ Engineering use of PostgreSQL is **not** regulatory or legal approval.
 
 ## Bounded databases
 
-One PostgreSQL instance per simulation cell. Three databases, no cross-database
+One PostgreSQL instance per simulation cell. Four databases, no cross-database
 SQL joins, no `postgres_fdw`:
 
 | Database | Runtime role | Durable contents |
 | --- | --- | --- |
 | `solstice_customer` | `customer_app` | customers, legal entities, policy packs/versions/rules, capabilities, source references, manual-review cases |
+| `solstice_customer` | `customer_app` | customers, legal entities, identity schema (not a second customer) |
 | `solstice_ledger` | `ledger_writer` / `ledger_reader` | accounts (no balance), journals, postings, intent/authority audit, domain events |
 | `solstice_evidence` | `evidence_app` | evidence hash chain |
+| `solstice_security` | `security_app` | key metadata and service-identity references only |
 
 Cross-domain facts move as opaque identifiers (customer id, account id,
 evidence id). A ledger session cannot `SELECT` a customer row.

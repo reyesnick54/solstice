@@ -141,6 +141,42 @@ export type PolicyReviewDecidedV1 = VersionedEvent<
     readonly factsHash: string;
   }
 >;
+export type SecurityKeyAuditPayload = {
+  readonly keyId: string;
+  readonly purpose: string;
+  readonly version: number;
+  readonly previousVersion: number | null;
+  readonly status: string;
+  readonly provider: string;
+  readonly providerRef: string;
+};
+
+export type KeyCreatedV1 = VersionedEvent<'KeyCreated', 1, SecurityKeyAuditPayload>;
+export type KeyRotatedV1 = VersionedEvent<'KeyRotated', 1, SecurityKeyAuditPayload>;
+export type KeyRetiredV1 = VersionedEvent<'KeyRetired', 1, SecurityKeyAuditPayload>;
+export type KeyRevokedV1 = VersionedEvent<'KeyRevoked', 1, SecurityKeyAuditPayload>;
+
+export type IdentityAuditPayload = {
+  readonly identityId: string;
+  readonly sessionId?: string;
+  readonly deviceId?: string;
+  readonly kycRecordId?: string;
+  readonly recoveryRequestId?: string;
+  readonly verificationState?: string;
+  readonly version?: number;
+  readonly status?: string;
+  readonly kind?: string;
+  readonly reason?: string;
+};
+
+export type IdentityCreatedV1 = VersionedEvent<'IdentityCreated', 1, IdentityAuditPayload>;
+export type IdentityActivatedV1 = VersionedEvent<'IdentityActivated', 1, IdentityAuditPayload>;
+export type IdentitySuspendedV1 = VersionedEvent<'IdentitySuspended', 1, IdentityAuditPayload>;
+export type IdentityKycUpdatedV1 = VersionedEvent<'IdentityKycUpdated', 1, IdentityAuditPayload>;
+export type IdentitySessionCreatedV1 = VersionedEvent<'IdentitySessionCreated', 1, IdentityAuditPayload>;
+export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 1, IdentityAuditPayload>;
+export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
+export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
 
 export type DomainEvent =
   | AccountOpenedV1
@@ -153,6 +189,18 @@ export type DomainEvent =
   | PolicyPackRetiredV1
   | PolicyReviewRequestedV1
   | PolicyReviewDecidedV1;
+  | KeyCreatedV1
+  | KeyRotatedV1
+  | KeyRetiredV1
+  | KeyRevokedV1
+  | IdentityCreatedV1
+  | IdentityActivatedV1
+  | IdentitySuspendedV1
+  | IdentityKycUpdatedV1
+  | IdentitySessionCreatedV1
+  | IdentitySessionRevokedV1
+  | IdentityDeviceRegisteredV1
+  | IdentityRecoveryRequestedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

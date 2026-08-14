@@ -21,7 +21,11 @@ are not reused or silently changed.
 | 0006 | Policy Engine Language | PROPOSED (Addendum A: engineering Option C implemented in simulation; not human ACCEPTED) | RESEARCH_REQUIRED — no counsel review; no pack is confirmed | COMPLIANCE / policy engine | none | IMPLEMENTED (engineering / simulation only) | [ADR-0006-policy-engine-language.md](./ADR-0006-policy-engine-language.md) |
 | 0007 | Identity and authentication stack (earlier draft) | PROPOSED | not a legal opinion; no counsel review | IDENTITY | none | NOT_IMPLEMENTED | [ADR-0007-identity-stack.md](./ADR-0007-identity-stack.md) |
 | 0007 | Identity and Authentication Stack (later revision) | PROPOSED | not a legal opinion; no counsel review | IDENTITY | ADR-0006, ADR-0008 | NOT_IMPLEMENTED | [ADR-0007-identity-and-authentication-stack.md](./ADR-0007-identity-and-authentication-stack.md) |
+| 0006 | Policy Engine Language | PROPOSED | RESEARCH_REQUIRED — no counsel review; no pack is confirmed | COMPLIANCE / policy engine | none | NOT_IMPLEMENTED | [ADR-0006-policy-engine-language.md](./ADR-0006-policy-engine-language.md) |
+| 0007 | Identity and authentication stack (earlier draft) | PROPOSED | not a legal opinion; no counsel review | IDENTITY | none | PARTIAL | [ADR-0007-identity-stack.md](./ADR-0007-identity-stack.md) |
+| 0007 | Identity and Authentication Stack (later revision) | PROPOSED (Addendum A: in-house domain engineered; vendor not selected; not counsel) | not a legal opinion; no counsel review | IDENTITY | ADR-0006, ADR-0008 | PARTIAL | [ADR-0007-identity-and-authentication-stack.md](./ADR-0007-identity-and-authentication-stack.md) |
 | 0008 | Persistence Layer for Phase 1 | PROPOSED (Addendum A: engineering-accepted Option A; not counsel) | not a legal opinion | persistence / BANKING / Evidence durability | ADR-0006, ADR-0007 | PARTIAL | [ADR-0008-persistence-layer.md](./ADR-0008-persistence-layer.md) |
+| 0009 | Canonical cryptographic infrastructure | ACCEPTED | not a legal opinion; no counsel review | SECURITY | none | IMPLEMENTED | [ADR-0009-cryptographic-infrastructure.md](./ADR-0009-cryptographic-infrastructure.md) |
 
 ## Notes on ADR-0007
 

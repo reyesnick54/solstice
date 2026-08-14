@@ -51,6 +51,21 @@ Implemented (functionality that exists today):
 - `policy.pack_retired` → `PolicyPackRetired`
 - `policy.review_requested` → `PolicyReviewRequested`
 - `policy.review_decided` → `PolicyReviewDecided`
+- `security.key_created` → `KeyCreated`
+- `security.key_rotated` → `KeyRotated`
+- `security.key_retired` → `KeyRetired`
+- `security.key_revoked` → `KeyRevoked`
+
+Implemented identity events (opaque ids only; no raw PII):
+
+- `identity.created` → `IdentityCreated`
+- `identity.activated` → `IdentityActivated`
+- `identity.suspended` → `IdentitySuspended`
+- `identity.kyc.updated` → `IdentityKycUpdated`
+- `identity.session.created` → `IdentitySessionCreated`
+- `identity.session.revoked` → `IdentitySessionRevoked`
+- `identity.device.registered` → `IdentityDeviceRegistered`
+- `identity.recovery.requested` → `IdentityRecoveryRequested`
 
 Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,

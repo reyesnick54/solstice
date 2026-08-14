@@ -58,9 +58,59 @@
       "allowedDependencies": [
         "packages/domain",
         "packages/money",
-        "packages/config"
+        "packages/config",
+        "packages/security"
       ],
       "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/security",
+      "npmName": "@solstice/security",
+      "path": "packages/security",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Canonical cryptographic control plane. No vendor KMS SDK. Key metadata is not key material."
+    },
+    {
+      "id": "packages/identity",
+      "npmName": "@solstice/identity",
+      "path": "packages/identity",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/security",
+        "packages/permissions",
+        "packages/config",
+        "packages/evidence",
+        "packages/events"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Canonical Solstice Identity domain. Authoritative actor capabilities and ActorContext. No live KYC vendor."
+    },
+    {
+      "id": "services/identity",
+      "npmName": "@solstice/identity-service",
+      "path": "services/identity",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/identity"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Application facade for packages/identity. Not a second identity model."
     },
     {
       "id": "packages/kernel",
@@ -77,7 +127,8 @@
         "packages/evidence",
         "packages/permissions",
         "packages/domain",
-        "packages/money"
+        "packages/money",
+        "packages/identity"
       ],
       "codeowners": ["@reyesnick54"]
     },
@@ -109,7 +160,7 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/config"],
+      "allowedDependencies": ["packages/config", "packages/security"],
       "codeowners": ["@reyesnick54"]
     },
     {
@@ -145,7 +196,9 @@
         "packages/permissions",
         "packages/config",
         "packages/money",
-        "packages/persistence"
+        "packages/persistence",
+        "packages/security",
+        "packages/identity"
       ],
       "codeowners": ["@reyesnick54"]
     },
@@ -166,10 +219,12 @@
         "packages/kernel",
         "packages/ledger",
         "packages/permissions",
-        "packages/money"
+        "packages/money",
+        "packages/security",
+        "packages/identity"
       ],
       "codeowners": ["@reyesnick54"],
-      "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger."
+      "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger. Persists security key metadata only."
     },
     {
       "id": "tools/architectural-linter",
@@ -455,6 +510,27 @@
       "codeowners": ["@reyesnick54"]
     },
     {
+      "id": "security-crypto",
+      "name": "Canonical cryptographic infrastructure",
+      "canonicalOwner": "packages/security",
+      "canonicalPath": "packages/security/src/provider.ts",
+      "publicInterface": "packages/security/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "KeyProvider", "kind": "type" }
+      ],
+      "forbiddenAliases": [
+        "packages/crypto",
+        "packages/kms",
+        "packages/secrets"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
       "id": "domain-events",
       "name": "Domain events",
       "canonicalOwner": "packages/events",
@@ -618,6 +694,29 @@
       "forbiddenAliases": ["packages/postgres", "packages/database"],
       "codeowners": ["@reyesnick54"],
       "notes": "Durable adapter only. Journals still post through Ledger.postJournal. Evidence still seals through EvidenceVault."
+    },
+    {
+      "id": "solstice-identity",
+      "name": "Solstice Identity",
+      "canonicalOwner": "packages/identity",
+      "canonicalPath": "packages/identity/src/service.ts",
+      "publicInterface": "packages/identity/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "IdentityService", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/auth",
+        "packages/kyc",
+        "packages/user-auth",
+        "services/auth"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Authoritative actor capabilities and ActorContext. Simulation WebAuthn adapter only."
     }
   ],
   "authorizedMutationPaths": [
@@ -669,7 +768,10 @@
     "src/authority",
     "src/flags",
     "packages/compliance-kernel",
-    "packages/evidence-vault"
+    "packages/evidence-vault",
+    "packages/crypto",
+    "packages/kms",
+    "packages/secrets"
   ],
   "capabilities": [
     {
@@ -747,9 +849,15 @@
       "adr": "ADR-0008"
     },
     {
+      "id": "security",
+      "status": "IMPLEMENTED",
+      "owner": "packages/security",
+      "protected": true
+    },
+    {
       "id": "identity",
-      "status": "PLANNED",
-      "owner": null,
+      "status": "IMPLEMENTED",
+      "owner": "packages/identity",
       "protected": true,
       "adr": "ADR-0007"
     },
@@ -763,11 +871,19 @@
   ],
   "boundedContexts": [
     {
+      "id": "SECURITY",
+      "status": "IMPLEMENTED",
+      "reservedPaths": ["packages/security"],
+      "protected": true,
+      "notes": "Canonical key provider, secret references, envelope encryption, and simulation provider. No live KMS."
+    },
+    {
       "id": "IDENTITY",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": ["packages/identity", "services/identity"],
       "protected": true,
-      "adr": "ADR-0007"
+      "adr": "ADR-0007",
+      "notes": "In-house Solstice ID domain, sessions, device trust, KYC metadata, ActorContext. No live IdP or KYC vendor."
     },
     {
       "id": "COMPLIANCE",

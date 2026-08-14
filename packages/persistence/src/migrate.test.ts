@@ -9,8 +9,19 @@ import { listMigrationFiles, migrationsRoot, sha256Hex } from './migrate.ts';
 const REPO_ROOT = join(import.meta.dirname, '..', '..', '..');
 
 describe('versioned SQL migrations', () => {
+  it('customer V002 adds identity schema without private credentials', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v002 = files.find((file) => file.version === 2);
+    assert.ok(v002);
+    assert.match(v002.sql, /CREATE SCHEMA IF NOT EXISTS identity/);
+    assert.match(v002.sql, /CREATE TABLE identity.person_identity/);
+    assert.match(v002.sql, /CREATE TABLE identity.webauthn_credential/);
+    assert.match(v002.sql, /webauthn_no_private_material/);
+    assert.equal(/\b(private_key|password_hash|session_secret)\b/i.test(v002.sql), false);
+  });
+
   it('lists contiguous immutable checksummed files for each domain', () => {
-    for (const domain of ['customer', 'ledger', 'evidence'] as const) {
+    for (const domain of ['customer', 'ledger', 'evidence', 'security'] as const) {
       const files = listMigrationFiles(migrationsRoot(REPO_ROOT, domain));
       assert.ok(files.length >= 1, domain);
       assert.equal(files[0]!.version, 1);
@@ -75,6 +86,13 @@ describe('versioned SQL migrations', () => {
     assert.match(v002.sql, /CREATE TABLE customer\.legal_entity_capability/);
     assert.match(v002.sql, /CREATE TABLE customer\.manual_review_case/);
     assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v002.sql), false);
+  it('security V001 stores metadata only and forbids private key material', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
+    const v001 = files.find((file) => file.version === 1);
+    assert.ok(v001);
+    assert.match(v001.sql, /CREATE TABLE security\.key_metadata/);
+    assert.match(v001.sql, /key_metadata_no_private_material/);
+    assert.equal(/private_key|kms_plaintext|seed_phrase|recovery_phrase/i.test(v001.sql), false);
   });
 
   it('ledger V003 treats inbox as delivery state without a domain_event FK', () => {

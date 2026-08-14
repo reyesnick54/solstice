@@ -15,7 +15,7 @@ export type MigrationFile = {
   readonly sql: string;
 };
 
-export type DomainName = 'customer' | 'ledger' | 'evidence';
+export type DomainName = 'customer' | 'ledger' | 'evidence' | 'security';
 
 const FILE_RE = /^V(\d+)__([A-Za-z0-9_]+)\.sql$/;
 
@@ -163,7 +163,7 @@ export async function migrateDomain(input: {
 }
 
 export async function migrateAll(env: PersistenceEnv, repoRoot: string): Promise<void> {
-  for (const domain of ['customer', 'ledger', 'evidence'] as const) {
+  for (const domain of ['customer', 'ledger', 'evidence', 'security'] as const) {
     await migrateDomain({ env, repoRoot, domain });
   }
 }

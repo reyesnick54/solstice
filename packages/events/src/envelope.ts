@@ -98,6 +98,12 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'signature',
   'kycDocument',
   'rawPii',
+  'privateKey',
+  'privateKeyMaterial',
+  'plaintext',
+  'secretValue',
+  'accessToken',
+  'sessionSecret',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
@@ -130,6 +136,16 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType === 'PolicyReviewRequested' || eventType === 'PolicyReviewDecided') {
     return { type: 'policy_review', id: String(body.reviewId ?? 'unknown') };
+  if (eventType.startsWith('Identity')) {
+    return { type: 'identity', id: String(body.identityId ?? 'unknown') };
+  }
+  if (
+    eventType === 'KeyCreated' ||
+    eventType === 'KeyRotated' ||
+    eventType === 'KeyRetired' ||
+    eventType === 'KeyRevoked'
+  ) {
+    return { type: 'key', id: String(body.keyId ?? 'unknown') };
   }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }

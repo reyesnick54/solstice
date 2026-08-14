@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-5",
+  "title": "Solstice Identity, Authentication, Device Trust, KYC Records, and Capability Authority",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "config",
+    "accounts-service",
+    "architecture-linting",
+    "persistence",
+    "security",
+    "identity"
+  ]
+}
