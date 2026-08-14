@@ -46,6 +46,12 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'PendingSettlementInitiated', version: 1, status: 'current' },
   { eventType: 'PendingSettlementSettled', version: 1, status: 'current' },
   { eventType: 'PendingSettlementReturned', version: 1, status: 'current' },
+  { eventType: 'ComplianceScreeningCompleted', version: 1, status: 'current' },
+  { eventType: 'ComplianceScreeningReviewRequired', version: 1, status: 'current' },
+  { eventType: 'ComplianceCaseOpened', version: 1, status: 'current' },
+  { eventType: 'ComplianceCaseDecided', version: 1, status: 'current' },
+  { eventType: 'ComplianceAlertCreated', version: 1, status: 'current' },
+  { eventType: 'FraudRiskEvaluated', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

@@ -204,6 +204,37 @@ export type ReversalPostedV1 = VersionedEvent<'ReversalPosted', 1, BankingAmount
 export type PendingSettlementInitiatedV1 = VersionedEvent<'PendingSettlementInitiated', 1, BankingAmountPayload>;
 export type PendingSettlementSettledV1 = VersionedEvent<'PendingSettlementSettled', 1, BankingAmountPayload>;
 export type PendingSettlementReturnedV1 = VersionedEvent<'PendingSettlementReturned', 1, BankingAmountPayload>;
+export type ComplianceAuditPayload = {
+  readonly screeningId?: string;
+  readonly caseId?: string;
+  readonly alertId?: string;
+  readonly evaluationId?: string;
+  readonly screeningType?: string;
+  readonly caseType?: string;
+  readonly outcome?: string;
+  readonly decision?: string;
+  readonly reasonCodes?: readonly string[];
+  readonly subjectRef?: string;
+  readonly providerRef?: string;
+  readonly providerHash?: string;
+  readonly policyVersionId?: string;
+  readonly jurisdiction?: string;
+};
+
+export type ComplianceScreeningCompletedV1 = VersionedEvent<
+  'ComplianceScreeningCompleted',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceScreeningReviewRequiredV1 = VersionedEvent<
+  'ComplianceScreeningReviewRequired',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceCaseOpenedV1 = VersionedEvent<'ComplianceCaseOpened', 1, ComplianceAuditPayload>;
+export type ComplianceCaseDecidedV1 = VersionedEvent<'ComplianceCaseDecided', 1, ComplianceAuditPayload>;
+export type ComplianceAlertCreatedV1 = VersionedEvent<'ComplianceAlertCreated', 1, ComplianceAuditPayload>;
+export type FraudRiskEvaluatedV1 = VersionedEvent<'FraudRiskEvaluated', 1, ComplianceAuditPayload>;
 
 export type DomainEvent =
   | AccountOpenedV1
@@ -241,6 +272,12 @@ export type DomainEvent =
   | PendingSettlementInitiatedV1
   | PendingSettlementSettledV1
   | PendingSettlementReturnedV1;
+  | ComplianceScreeningCompletedV1
+  | ComplianceScreeningReviewRequiredV1
+  | ComplianceCaseOpenedV1
+  | ComplianceCaseDecidedV1
+  | ComplianceAlertCreatedV1
+  | FraudRiskEvaluatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

@@ -1,5 +1,6 @@
 import { lintConstitution } from './constitution.ts';
 import { lintEventFabric } from './event-guards.ts';
+import { lintComplianceBoundary } from './compliance-guards.ts';
 import { lintSecurityBoundary } from './security-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
@@ -9,6 +10,7 @@ const findings = [
   ...lintConstitution(root),
   ...lintEventFabric(root),
   ...lintSecurityBoundary(root),
+  ...lintComplianceBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

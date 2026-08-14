@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-7",
+  "title": "Canonical AML, Sanctions, PEP, Transaction Monitoring, Fraud Risk, and Compliance Case Fabric",
+  "requires": [
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "domain",
+    "permissions",
+    "config",
+    "accounts-service"
+  ]
+}

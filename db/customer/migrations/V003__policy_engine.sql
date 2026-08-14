@@ -1,6 +1,7 @@
 -- V003 policy engine: versioned packs, rules, sources, capabilities, review cases.
 -- Policy meaning is immutable after a version is used. This is not a second Kernel.
 -- No rule in this schema is CONFIRMED_BY_COUNSEL.
+-- Screening requirements are policy facts, not a second screening engine.
 
 CREATE TABLE customer.policy_source (
   source_id TEXT PRIMARY KEY,
@@ -36,6 +37,7 @@ CREATE TABLE customer.policy_version (
   effective_until TIMESTAMPTZ,
   content_hash TEXT NOT NULL,
   used_in_decision BOOLEAN NOT NULL DEFAULT FALSE,
+  screening_requirements JSONB NOT NULL DEFAULT '{}'::jsonb,
   UNIQUE (pack_id, version)
 );
 

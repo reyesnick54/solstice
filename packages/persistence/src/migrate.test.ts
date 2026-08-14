@@ -88,6 +88,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v003.sql), false);
   });
 
+    assert.match(v003.sql, /screening_requirements/);
+    assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v003.sql), false);
+  });
+
+  it('customer V004 persists compliance fabric without raw PII', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v004 = files.find((file) => file.version === 4);
+    assert.ok(v004);
+    assert.match(v004.sql, /CREATE SCHEMA IF NOT EXISTS compliance/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.screening_result/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.case_record/);
+    assert.match(v004.sql, /CREATE TABLE compliance\.human_decision/);
+    assert.equal(/article_body|full_name|date_of_birth|ssn|legal_name_plain/i.test(v004.sql), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

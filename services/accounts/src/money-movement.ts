@@ -2,6 +2,7 @@ import { isErr, isOk } from '../../../packages/domain/src/result.ts';
 import type { Clock } from '../../../packages/config/src/clock.ts';
 import type { EvidenceVault } from '../../../packages/evidence/src/vault.ts';
 import type { DomainEventLog } from '../../../packages/events/src/events.ts';
+import type { ComplianceFabric } from '../../../packages/kernel/src/compliance/fabric.ts';
 import type { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import type { KernelFacts } from '../../../packages/kernel/src/proofs.ts';
 import type { GrowthAttributionLedger } from '../../../packages/ledger/src/growth.ts';
@@ -75,6 +76,7 @@ export class MoneyMovementService {
   private readonly legalEntities: LegalEntityStore;
   private readonly identity: IdentityAuthorityPort;
   private readonly holds: HoldStore;
+  private readonly compliance: ComplianceFabric | undefined;
 
   constructor(
     kernel: ComplianceKernel,
@@ -90,6 +92,7 @@ export class MoneyMovementService {
     legalEntities: LegalEntityStore,
     identity: IdentityAuthorityPort,
     holds: HoldStore = new HoldStore(),
+    compliance?: ComplianceFabric,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -104,6 +107,7 @@ export class MoneyMovementService {
     this.legalEntities = legalEntities;
     this.identity = identity;
     this.holds = holds;
+    this.compliance = compliance;
   }
 
   deposit(intent: PostDepositIntent): MoneyMovementOutcome {
@@ -383,6 +387,19 @@ export class MoneyMovementService {
     const product = customerAccount ? this.products.get(customerAccount.productId) : undefined;
 
     const resolved = this.identity.resolveActorContext(input.intent.actorId);
+    const identityFacts = this.identity.identityFactsFor(input.intent.actorId);
+    const jurisdiction = customerAccount?.jurisdiction ?? customer?.jurisdiction;
+    const compliance = jurisdiction
+      ? this.compliance?.collectFacts({
+          subjectRef: customer?.id ?? input.intent.actorId,
+          jurisdiction,
+          actorId: input.intent.actorId,
+          sessionAssurance: identityFacts.authenticationAssurance,
+          identityUsable: identityFacts.identityExists && identityFacts.sessionValid,
+          amountMinor: input.amount.minorUnits,
+          ...(customer ? { kycState: customer.verification.kycState } : {}),
+        })
+      : undefined;
     const facts: KernelFacts = {
       actor: {
         id: input.intent.actorId,
@@ -390,7 +407,7 @@ export class MoneyMovementService {
           ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities)
           : [],
       },
-      identity: this.identity.identityFactsFor(input.intent.actorId),
+      identity: identityFacts,
       ...(customer ? { customer } : {}),
       ...(legalEntity ? { legalEntity } : {}),
       ...(product ? { product } : {}),
@@ -401,6 +418,7 @@ export class MoneyMovementService {
           : {}),
       amount: input.amount,
       ...(customerAccount ? { sourceAccount: customerAccount } : {}),
+      ...(compliance ? { compliance } : {}),
     };
 
     const decision = this.kernel.submit(input.intent, facts);

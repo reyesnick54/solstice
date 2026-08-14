@@ -6,7 +6,13 @@ import type { Product } from '../../../domain/src/product.ts';
 import type { Money } from '../../../money/src/money.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import { ENVIRONMENT } from '../../../config/src/flags.ts';
+import type { IdentityFacts } from '../../../identity/src/facts.ts';
+import type { ComplianceFacts } from '../compliance/facts.ts';
 import type { KernelActor, KernelFacts } from '../proofs.ts';
+
+function isIdentityFacts(value: KernelFacts['identity']): value is IdentityFacts {
+  return value !== undefined && 'identityExists' in value;
+}
 import { hashCanonical } from './hash.ts';
 import type { FactMap } from './predicates.ts';
 import type { CapabilityEnvironment, PolicyPackId } from './types.ts';
@@ -43,6 +49,7 @@ export type PolicyFactInput = {
   readonly capabilityEnabled?: boolean;
   readonly capabilityEnvironment?: CapabilityEnvironment;
   readonly offeringMode?: string;
+  readonly compliance?: ComplianceFacts;
 };
 
 /**
@@ -95,6 +102,25 @@ export function policyFactsFromKernel(
     ...(facts.policyIdentity?.citizenship !== undefined
       ? { citizenship: facts.policyIdentity.citizenship }
       : {}),
+  const identityFacts = isIdentityFacts(facts.identity) ? facts.identity : undefined;
+  const policyIdentity = !identityFacts && facts.identity ? (facts.identity as PolicyIdentityFacts) : undefined;
+  const kycState =
+    identityFacts?.kycState ??
+    policyIdentity?.kycState ??
+    facts.customer?.verification.kycState;
+  const kycRecordVersion =
+    identityFacts?.kycVersion ??
+    policyIdentity?.kycRecordVersion ??
+    facts.customer?.verification.kycRecordVersion;
+  const identity: PolicyIdentityFacts = {
+    ...(kycState ? { kycState } : {}),
+    ...(kycRecordVersion !== undefined ? { kycRecordVersion } : {}),
+    ...(policyIdentity?.residency
+      ? { residency: policyIdentity.residency }
+      : facts.customer
+        ? { residency: facts.customer.residency }
+        : {}),
+    ...(policyIdentity?.citizenship ? { citizenship: policyIdentity.citizenship } : {}),
   };
   return {
     actor: facts.actor,
@@ -113,6 +139,7 @@ export function policyFactsFromKernel(
       ? { transactionDestination: facts.transactionDestination }
       : {}),
     ...(facts.policyPin ? { policyPin: facts.policyPin } : {}),
+    ...(facts.compliance ? { compliance: facts.compliance } : {}),
   };
 }
 
@@ -150,6 +177,17 @@ export function toFactMap(input: PolicyFactInput): FactMap {
     'capability.enabled': input.capabilityEnabled,
     'capability.environment': input.capabilityEnvironment,
     offeringMode: input.offeringMode,
+    'screening.sanctionsOutcome': input.compliance?.sanctionsOutcome ?? undefined,
+    'screening.pepOutcome': input.compliance?.pepOutcome ?? undefined,
+    'screening.adverseMediaOutcome': input.compliance?.adverseMediaOutcome ?? undefined,
+    'screening.fresh':
+      input.compliance === undefined
+        ? undefined
+        : input.compliance.sanctionsFresh && input.compliance.pepFresh && input.compliance.adverseMediaFresh,
+    'screening.providerAvailable': input.compliance?.providerAvailable,
+    'aml.riskCategory': input.compliance?.amlCategory ?? undefined,
+    'fraud.outcome': input.compliance?.fraudOutcome ?? undefined,
+    'velocity.triggered': input.compliance?.velocityTriggered,
   };
 }
 
@@ -181,5 +219,10 @@ export function hashPolicyFacts(input: PolicyFactInput): string {
     transactionOrigin: input.transactionOrigin ?? null,
     transactionDestination: input.transactionDestination ?? null,
     policyPin: input.policyPin ?? null,
+    sanctionsOutcome: input.compliance?.sanctionsOutcome ?? null,
+    pepOutcome: input.compliance?.pepOutcome ?? null,
+    amlCategory: input.compliance?.amlCategory ?? null,
+    fraudOutcome: input.compliance?.fraudOutcome ?? null,
+    providerAvailable: input.compliance?.providerAvailable ?? null,
   });
 }
