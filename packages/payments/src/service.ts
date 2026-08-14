@@ -350,9 +350,9 @@ export class PaymentsService {
             screeningRef: hit.screeningRef,
           }
         : { sanctionsHit: false, pepHit: false, fraudHold: false, screeningRef: 'scr_none' },
-      corridorId: corridor?.corridorId,
+      ...(corridor ? { corridorId: corridor.corridorId } : {}),
       corridorSimulationEnabled: corridor ? corridorIsSimulationEnabled(corridor) : false,
-      beneficiaryStatus: beneficiary?.status,
+      ...(beneficiary ? { beneficiaryStatus: beneficiary.status } : {}),
       amount: quote?.amountDebited ?? intent.payload.sourceAmount,
     });
     if (gated.outcome !== 'ALLOWED') {

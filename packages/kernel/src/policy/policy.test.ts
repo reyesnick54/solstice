@@ -501,7 +501,7 @@ describe('jurisdiction policy engine', () => {
       openIntent('open_id', customer.id, US_PRODUCT.id, 'US', US_ENTITY.id),
       {
         ...factsFor(customer, US_PRODUCT, US_ENTITY),
-        identity: {
+        policyIdentity: {
           kycState: 'VERIFIED',
           kycRecordVersion: 1,
           residency: asResidency('US'),
@@ -647,7 +647,7 @@ describe('jurisdiction policy engine', () => {
           openedAt: NOW,
           version: 0,
         },
-        identity: {
+        policyIdentity: {
           kycState: customer.verification.kycState,
           kycRecordVersion: customer.verification.kycRecordVersion,
           residency: customer.residency,

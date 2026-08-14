@@ -181,6 +181,6 @@ export function simulationRoutesFor(corridorId: string, fee: Money): readonly Pa
   return Object.freeze([]);
 }
 
-function route(input: PaymentRoute): PaymentRoute {
+function route(input: Omit<PaymentRoute, 'routeId'> & { readonly routeId: string }): PaymentRoute {
   return Object.freeze({ ...input, routeId: asRouteId(input.routeId) });
 }

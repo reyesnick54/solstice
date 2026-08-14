@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asAccountId } from '../../domain/src/account.ts';
+import { asCurrencyCode } from '../../domain/src/currency.ts';
 import { asCustomerId } from '../../domain/src/customer.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { isErr, isOk } from '../../domain/src/result.ts';
@@ -17,8 +18,8 @@ function payment(status: PaymentStatus) {
     customerId: asCustomerId('cust'),
     sourceAccountId: asAccountId('acct'),
     beneficiaryId: asBeneficiaryId('ben'),
-    sourceCurrency: 'USD',
-    destinationCurrency: 'SAR',
+    sourceCurrency: asCurrencyCode('USD'),
+    destinationCurrency: asCurrencyCode('SAR'),
     sourceAmount: Money.fromMinorUnits(100_000n, 'USD'),
     quotedDestinationAmount: Money.fromMinorUnits(374_500n, 'SAR'),
     fee: Money.fromMinorUnits(1_500n, 'USD'),

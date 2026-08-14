@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asCurrencyCode } from '../../domain/src/currency.ts';
 import { asCustomerId } from '../../domain/src/customer.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { Money } from '../../money/src/money.ts';
@@ -19,7 +20,7 @@ describe('route selection', () => {
     ownerId: asCustomerId('cust'),
     kind: 'PERSON',
     destinationCountry: 'SA',
-    currency: 'SAR',
+    currency: asCurrencyCode('SAR'),
     legalName: 'Ahmed Ali',
     accountCoordinate: { scheme: 'SA_IBAN', coordinateRef: 'abc', displayHint: '7519' },
     screeningStatus: 'CLEAR',

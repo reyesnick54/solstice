@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../../config/src/clock.ts';
+import { asCurrencyCode } from '../../domain/src/currency.ts';
+import { asLegalEntityId } from '../../domain/src/legal-entity.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { Money, RoundingMode } from '../../money/src/money.ts';
 import { convertExact } from './fx-rate.ts';
@@ -31,11 +33,11 @@ describe('FX exact rational math', () => {
     const provider = new SimulationFxProvider(clock);
     const quote = provider.quote({
       quoteId: asQuoteId('q_math'),
-      baseCurrency: 'USD',
-      quoteCurrency: 'SAR',
+      baseCurrency: asCurrencyCode('USD'),
+      quoteCurrency: asCurrencyCode('SAR'),
       sourceAmount: Money.fromMinorUnits(100_000n, 'USD'),
       corridorId: asCorridorId('US-SA-USD-SAR'),
-      legalEntityId: 'le_solstice_us_inc',
+      legalEntityId: asLegalEntityId('le_solstice_us_inc'),
       now: NOW,
     });
     assert.equal(quote.customerRate.numerator, 3745n);
@@ -53,11 +55,11 @@ describe('FX exact rational math', () => {
     const provider = new SimulationFxProvider(clock);
     const quote = provider.quote({
       quoteId: asQuoteId('q_exp'),
-      baseCurrency: 'USD',
-      quoteCurrency: 'SAR',
+      baseCurrency: asCurrencyCode('USD'),
+      quoteCurrency: asCurrencyCode('SAR'),
       sourceAmount: Money.fromMinorUnits(100_000n, 'USD'),
       corridorId: asCorridorId('US-SA-USD-SAR'),
-      legalEntityId: 'le_solstice_us_inc',
+      legalEntityId: asLegalEntityId('le_solstice_us_inc'),
       now: NOW,
     });
     assert.equal(QUOTE_TTL_MS, 60_000n);
