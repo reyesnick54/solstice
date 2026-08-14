@@ -1,5 +1,8 @@
 {
   "name": "solstice",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Solstice — Personal Economy Agent and Growth OS (propose-only)",
   "private": true,
   "type": "module",
   "workspaces": [
@@ -62,6 +65,10 @@
     "node": ">=22"
   },
   "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test packages/domain/src/**/*.test.ts tests/**/*.test.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/demo.ts",
+    "typecheck": "tsc --noEmit -p packages/domain/tsconfig.json && tsc --noEmit -p packages/contracts/tsconfig.json",
+    "ci": "npm test && npm run demo"
     "test": "tsx --test tests/**/*.test.ts",
     "demo": "tsx demo/demo.ts",
     "typecheck": "tsc --noEmit",

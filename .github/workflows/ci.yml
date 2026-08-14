@@ -2,6 +2,21 @@ name: CI
 
 on:
   push:
+    branches: [main, 'cursor/**', 'feat/**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test
+        run: npm test
+      - name: Demo
+        run: npm run demo
   pull_request:
 
 jobs:
