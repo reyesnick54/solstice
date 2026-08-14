@@ -76,7 +76,7 @@ function fail<T>(code: string, message: string): Result<T, IdentityFailure> {
 export class IdentityService implements IdentityAuthorityPort {
   readonly store: IdentityStore;
   private readonly clock: Clock;
-  private readonly issuer: ActorContextIssuer;
+  private readonly actorContextIssuer: ActorContextIssuer;
   private readonly webauthn: WebAuthnRelyingParty;
   private readonly evidence: EvidenceVault | undefined;
   private readonly events: DomainEventLog | undefined;
@@ -92,7 +92,7 @@ export class IdentityService implements IdentityAuthorityPort {
     readonly store?: IdentityStore;
   }) {
     this.clock = input.clock;
-    this.issuer = new ActorContextIssuer(input.keys);
+    this.actorContextIssuer = new ActorContextIssuer(input.keys);
     this.webauthn = input.webauthn;
     this.evidence = input.evidence;
     this.events = input.events;
@@ -586,7 +586,7 @@ export class IdentityService implements IdentityAuthorityPort {
       grants: [...this.store.grants.values()].filter((grant) => grant.identityId === identity.id),
       now,
     });
-    const issued = this.issuer.issue({
+    const issued = this.actorContextIssuer.issue({
       actorId: session.actorId,
       subjectId: session.subjectId,
       sessionId: session.sessionId,
@@ -602,7 +602,7 @@ export class IdentityService implements IdentityAuthorityPort {
   }
 
   verifyActorContext(context: ActorContext): Result<VerifiedActorContext, ActorContextFailure> {
-    return this.issuer.verify(context, this.clock);
+    return this.actorContextIssuer.verify(context, this.clock);
   }
 
   resolveActorContext(actorId: string): Result<VerifiedActorContext, IdentityFailure> {

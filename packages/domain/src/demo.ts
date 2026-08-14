@@ -97,6 +97,20 @@ function main(): void {
   runtime.customers.put(customer.id, customer);
   console.log('  Customer is ACTIVE and ready to open an account.');
 
+  heading('STEP 1a', 'Authenticate the operator — Solstice Identity issues ActorContext');
+  const authenticated = runtime.identity.provisionSimulatedActor({
+    actorId: 'demo_operator',
+    jurisdiction: asJurisdiction('GB'),
+    customerId: customer.id,
+  });
+  if (!authenticated.ok) {
+    throw new Error(`demo expected a signed ActorContext, got ${authenticated.error.code}`);
+  }
+  const identityFacts = runtime.identity.service.identityFactsFor('demo_operator');
+  console.log(`  Actor ${authenticated.value.actorId} authenticated at ${authenticated.value.authenticationAssurance}.`);
+  console.log(`  Identity ${identityFacts.subjectId} is ${identityFacts.identityStatus}; KYC fresh=${String(identityFacts.kycFresh)}.`);
+  console.log('  Accounts will take capabilities from this ActorContext. They cannot self-grant ActionTypes.');
+
   heading('STEP 2', 'Open an account — the Compliance Kernel decides');
   const opened = runtime.accountsService.open({
     id: asIntentId('demo_open_demand'),
