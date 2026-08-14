@@ -17,3 +17,34 @@ jobs:
         run: npm test
       - name: Demo
         run: npm run demo
+  pull_request:
+
+jobs:
+  ci:
+    name: architectural-invariants → deployment-posture → tests → e2e-demo → secret-scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Architectural invariants
+        run: |
+          python3 scripts/lint-architectural-invariants.py
+          python3 scripts/extraction-dryrun.py
+
+      - name: Deployment posture
+        run: python3 scripts/check-deployment-posture.py
+
+      - name: Tests
+        run: npm test
+
+      - name: End-to-end demo
+        run: npm run demo
+
+      - name: Secret scan
+        run: python3 scripts/secret-scan.py
