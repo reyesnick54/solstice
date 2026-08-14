@@ -1,7 +1,7 @@
-import type { Account, AccountId } from '../../packages/domain/src/account.ts';
-import type { Customer, CustomerId } from '../../packages/domain/src/customer.ts';
-import type { LegalEntity, LegalEntityId } from '../../packages/domain/src/legal-entity.ts';
-import type { Product, ProductId } from '../../packages/domain/src/product.ts';
+import type { Account, AccountId } from '../../../packages/domain/src/account.ts';
+import type { Customer, CustomerId } from '../../../packages/domain/src/customer.ts';
+import type { LegalEntity, LegalEntityId } from '../../../packages/domain/src/legal-entity.ts';
+import type { Product, ProductId } from '../../../packages/domain/src/product.ts';
 
 export class InMemoryMap<K extends string, V> {
   private readonly items = new Map<string, V>();

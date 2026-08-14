@@ -71,7 +71,7 @@ export class DomainEventLog {
   private readonly events: DomainEvent[] = [];
 
   append<E extends DomainEvent>(event: E): E {
-    this.events.push(Object.freeze(event));
+    this.events.push(Object.freeze(event) as DomainEvent);
     return event;
   }
 

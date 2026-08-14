@@ -6,7 +6,7 @@ import {
   type RealizationClassification,
 } from '../../../packages/domain/src/account-class.ts';
 import type { CustomerId } from '../../../packages/domain/src/customer.ts';
-import { err, ok, type Result } from '../../../packages/domain/src/result.ts';
+import { err, isErr, ok, type Result } from '../../../packages/domain/src/result.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
 import { applyFxConversion, Money, type FxConversion } from '../../../packages/money/src/money.ts';
 
@@ -150,7 +150,7 @@ export function projectCustomerPosition(
       continue;
     }
     const raw = balanceOfAccount(ledger, account);
-    if (isErrResult(raw)) {
+    if (isErr(raw)) {
       return raw;
     }
     let amount = raw.value;
@@ -198,6 +198,3 @@ function classified<B extends PositionBucket>(
   });
 }
 
-function isErrResult<T, E>(result: Result<T, E>): result is { ok: false; error: E } {
-  return result.ok === false;
-}
