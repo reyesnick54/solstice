@@ -33,9 +33,9 @@ export type DurableSimulationRuntime = {
   readonly runtime: SimulationRuntime;
   saveCustomer(customer: Customer): Promise<void>;
   open(intent: OpenAccountIntent): Promise<OpenAccountOutcome>;
-  deposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
-  withdraw(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome>;
-  transfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome>;
+  postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
+  postWithdrawal(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome>;
+  postTransfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome>;
   close(): Promise<void>;
   restart(): Promise<DurableSimulationRuntime>;
 };
@@ -148,19 +148,19 @@ class DurableRuntime implements DurableSimulationRuntime {
     return this.runLocked(intent, undefined, true, () => this.runtime.accountsService.open(intent));
   }
 
-  async deposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome> {
+  async postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome> {
     return this.runLocked(intent, intent.payload.accountId, false, () =>
       this.runtime.money.deposit(intent),
     );
   }
 
-  async withdraw(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome> {
+  async postWithdrawal(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome> {
     return this.runLocked(intent, intent.payload.accountId, false, () =>
       this.runtime.money.withdraw(intent),
     );
   }
 
-  async transfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome> {
+  async postTransfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome> {
     return this.runLocked(intent, intent.payload.sourceAccountId, false, () =>
       this.runtime.money.transfer(intent),
     );

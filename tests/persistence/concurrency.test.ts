@@ -27,7 +27,7 @@ describePersistence('PostgreSQL concurrency and evidence reconstruction', () => 
 
     const second = await createDurableRuntime(env);
     const deposits = await Promise.all([
-      first.deposit({
+      first.postDeposit({
         id: asIntentId('pg_conc_dep_a'),
         actionType: ACTION_TYPES.POST_DEPOSIT,
         idempotencyKey: 'pg_conc_dep_a',
@@ -36,7 +36,7 @@ describePersistence('PostgreSQL concurrency and evidence reconstruction', () => 
         purpose: 'CUSTOMER_FUNDING',
         payload: { accountId: opened.account.id, amount: Money.fromMinorUnits(4_000n, 'USD') },
       }),
-      second.deposit({
+      second.postDeposit({
         id: asIntentId('pg_conc_dep_b'),
         actionType: ACTION_TYPES.POST_DEPOSIT,
         idempotencyKey: 'pg_conc_dep_b',
@@ -76,7 +76,7 @@ describePersistence('PostgreSQL concurrency and evidence reconstruction', () => 
     if (opened.outcome !== 'OPENED') {
       return;
     }
-    const funded = await first.deposit({
+    const funded = await first.postDeposit({
       id: asIntentId('pg_wd_dep'),
       actionType: ACTION_TYPES.POST_DEPOSIT,
       idempotencyKey: 'pg_wd_dep',
@@ -89,7 +89,7 @@ describePersistence('PostgreSQL concurrency and evidence reconstruction', () => 
 
     const second = await createDurableRuntime(env);
     const withdrawals = await Promise.all([
-      first.withdraw({
+      first.postWithdrawal({
         id: asIntentId('pg_wd_a'),
         actionType: ACTION_TYPES.POST_WITHDRAWAL,
         idempotencyKey: 'pg_wd_a',
@@ -98,7 +98,7 @@ describePersistence('PostgreSQL concurrency and evidence reconstruction', () => 
         purpose: 'CUSTOMER_WITHDRAWAL',
         payload: { accountId: opened.account.id, amount: Money.fromMinorUnits(8_000n, 'USD') },
       }),
-      second.withdraw({
+      second.postWithdrawal({
         id: asIntentId('pg_wd_b'),
         actionType: ACTION_TYPES.POST_WITHDRAWAL,
         idempotencyKey: 'pg_wd_b',

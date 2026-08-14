@@ -49,7 +49,7 @@ describePersistence('Chunk 2 exit criterion — PostgreSQL persistence fabric', 
         amount: Money.fromMinorUnits(10_000n, 'USD'),
       },
     };
-    const posted = await durable.deposit(depositIntent);
+    const posted = await durable.postDeposit(depositIntent);
     assert.equal(posted.outcome, 'POSTED');
     if (posted.outcome !== 'POSTED') {
       return;
@@ -97,7 +97,7 @@ describePersistence('Chunk 2 exit criterion — PostgreSQL persistence fabric', 
       assert.equal('percentageReturn' in position.value, false);
     }
 
-    const replay = await durable.deposit(depositIntent);
+    const replay = await durable.postDeposit(depositIntent);
     assert.equal(replay.outcome, 'POSTED');
     if (replay.outcome === 'POSTED') {
       assert.equal(replay.replay, true);
@@ -113,7 +113,7 @@ describePersistence('Chunk 2 exit criterion — PostgreSQL persistence fabric', 
         amount: Money.fromMinorUnits(1n, 'USD'),
       },
     };
-    await assert.rejects(() => durable.deposit(conflict), /IDEMPOTENCY/);
+    await assert.rejects(() => durable.postDeposit(conflict), /IDEMPOTENCY/);
     assert.equal(durable.runtime.ledger.journalCount(), journalsBefore);
 
     assert.throws(() => durable.runtime.ledger.updateJournal(posted.journal.id), /IMMUTABILITY/);

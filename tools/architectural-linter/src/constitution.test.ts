@@ -301,7 +301,7 @@ describe('architecture constitution', () => {
   it('evaluates chunk requirements and requires stop when a protected dependency is not IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'money').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'persistence').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'persistence').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'no-such-capability').status, 'ABSENT');
 
     const implemented = evaluateChunkRequirements(manifest, ['money', 'kernel'], 'CHUNK-1');
@@ -310,7 +310,7 @@ describe('architecture constitution', () => {
 
     const planned = evaluateChunkRequirements(manifest, ['persistence', 'identity'], 'CHUNK-9');
     assert.equal(planned.mustStop, true);
-    assert.ok(planned.missing.includes('persistence'));
+    assert.equal(planned.missing.includes('persistence'), false);
     assert.ok(planned.missing.includes('identity'));
   });
 });
