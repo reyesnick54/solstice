@@ -140,8 +140,27 @@ class DurableRuntime implements DurableSimulationRuntime {
   }
 
   async saveCustomer(customer: Customer): Promise<void> {
+    const previous = this.runtime.customers.get(customer.id);
     this.runtime.customers.put(customer.id, customer);
     await persistCustomerUnit(this.session, { customers: [customer] });
+    if (previous && previous.status !== customer.status) {
+      const event = this.runtime.events.append({
+        eventType: 'CustomerStatusChanged',
+        schemaVersion: 1,
+        occurredAt: this.runtime.clock.now(),
+        correlationId: customer.id,
+        jurisdiction: customer.jurisdiction,
+        aggregateType: 'customer',
+        aggregateId: customer.id,
+        payload: {
+          customerId: customer.id,
+          fromStatus: previous.status,
+          toStatus: customer.status,
+          customerVersion: customer.version,
+        },
+      });
+      await persistLedgerUnit(this.session, { events: [event] });
+    }
   }
 
   async open(intent: OpenAccountIntent): Promise<OpenAccountOutcome> {

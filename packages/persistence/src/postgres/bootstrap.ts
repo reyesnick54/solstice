@@ -77,6 +77,9 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
     {
       database: DATABASES.ledger,
       sql: `TRUNCATE TABLE
+              ledger.dead_letter,
+              ledger.inbox,
+              ledger.outbox,
               ledger.posting,
               ledger.journal,
               ledger.action_intent,

@@ -29,6 +29,7 @@ import type { AuthorizationDecision } from '../../../packages/permissions/src/de
 import type { AuthorityIssuer } from '../../../packages/permissions/src/execution-authority.ts';
 import { validateIntentStructure } from '../../../packages/permissions/src/structural.ts';
 import { balanceOfAccount } from './balances.ts';
+import { recordKernelDecisionEvent } from './event-trace.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
 export type MoneyMovementOutcome =
@@ -119,13 +120,19 @@ export class MoneyMovementService {
           classBridge: bridge,
         };
       },
-      onPosted: (journal, amount) => {
+      onPosted: (journal, amount, decision) => {
         // Principal deposit is not economic improvement. Do not write growth.
         this.growth.skipPrincipalMovement('PRINCIPAL_DEPOSIT_IS_NOT_ECONOMIC_IMPROVEMENT');
         this.events.append({
           eventType: 'DepositPosted',
           schemaVersion: 1,
           occurredAt: journal.createdAt as typeof intent.requestedAt,
+          intentId: intent.id,
+          correlationId: intent.id,
+          causationId: decision.evidenceRecordId,
+          evidenceId: decision.evidenceRecordId,
+          aggregateType: 'account',
+          aggregateId: intent.payload.accountId,
           payload: {
             journalId: journal.id,
             accountId: intent.payload.accountId,
@@ -179,12 +186,18 @@ export class MoneyMovementService {
           classBridge: bridge,
         };
       },
-      onPosted: (journal, amount) => {
+      onPosted: (journal, amount, decision) => {
         this.growth.skipPrincipalMovement('PRINCIPAL_WITHDRAWAL_IS_NOT_ECONOMIC_IMPROVEMENT');
         this.events.append({
           eventType: 'WithdrawalPosted',
           schemaVersion: 1,
           occurredAt: journal.createdAt as typeof intent.requestedAt,
+          intentId: intent.id,
+          correlationId: intent.id,
+          causationId: decision.evidenceRecordId,
+          evidenceId: decision.evidenceRecordId,
+          aggregateType: 'account',
+          aggregateId: intent.payload.accountId,
           payload: {
             journalId: journal.id,
             accountId: intent.payload.accountId,
@@ -255,7 +268,7 @@ export class MoneyMovementService {
           classBridge: bridge,
         };
       },
-      onPosted: (journal, amount) => {
+      onPosted: (journal, amount, decision) => {
         this.growth.skipPrincipalMovement('PRINCIPAL_TRANSFER_IS_NOT_ECONOMIC_IMPROVEMENT');
         const source = this.accounts.get(intent.payload.sourceAccountId)!;
         const dest = this.accounts.get(intent.payload.destinationAccountId)!;
@@ -267,6 +280,12 @@ export class MoneyMovementService {
           eventType: 'InternalTransferPosted',
           schemaVersion: 1,
           occurredAt: journal.createdAt as typeof intent.requestedAt,
+          intentId: intent.id,
+          correlationId: intent.id,
+          causationId: decision.evidenceRecordId,
+          evidenceId: decision.evidenceRecordId,
+          aggregateType: 'account',
+          aggregateId: intent.payload.sourceAccountId,
           payload: {
             journalId: journal.id,
             sourceAccountId: intent.payload.sourceAccountId,
@@ -294,7 +313,7 @@ export class MoneyMovementService {
       }[];
       classBridge: ClassBridge | undefined;
     };
-    onPosted: (journal: Journal, amount: Money) => void;
+    onPosted: (journal: Journal, amount: Money, decision: AuthorizationDecision) => void;
   }): MoneyMovementOutcome {
     const existing = this.ledger.getJournalByIdempotencyKey(input.intent.idempotencyKey);
     if (existing) {
@@ -356,6 +375,12 @@ export class MoneyMovementService {
     };
 
     const decision = this.kernel.submit(input.intent, facts);
+    recordKernelDecisionEvent(
+      this.events,
+      input.intent,
+      decision,
+      customerAccount?.jurisdiction ?? customer?.jurisdiction,
+    );
     if (decision.status !== 'ALLOW') {
       this.evidence.seal(`${input.kind}_KERNEL_REFUSED`, {
         intentId: input.intent.id,
@@ -451,7 +476,7 @@ export class MoneyMovementService {
       ...(built.classBridge ? { classBridge: built.classBridge } : {}),
     });
 
-    input.onPosted(journal, input.amount);
+    input.onPosted(journal, input.amount, decision);
 
     this.evidence.seal(`${input.kind}_POSTED`, {
       intentId: input.intent.id,

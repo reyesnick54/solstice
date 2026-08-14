@@ -37,6 +37,7 @@ never be two implementations of these systems.
 | Proof evaluation | `packages/kernel` | `packages/kernel/src/proofs.ts` | IMPLEMENTED |
 | Evidence Vault | `packages/evidence` | `packages/evidence/src/vault.ts` | IMPLEMENTED |
 | Domain events | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
+| Event fabric (outbox / inbox / replay) | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
 | Ledger | `packages/ledger` | `packages/ledger/src/journal.ts` | IMPLEMENTED |
 | Journals / postings | `packages/ledger` | `packages/ledger/src/journal.ts` | IMPLEMENTED |
 | Class bridges | `packages/ledger` | `packages/ledger/src/types.ts` | IMPLEMENTED |
@@ -259,7 +260,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/money` | nothing |
 | `packages/config` | `packages/domain` (clock / `UtcInstant` exception) |
 | `packages/domain` | `packages/permissions` (`openAccount` seal exception) |
-| `packages/events` | `packages/domain` |
+| `packages/events` | `packages/domain`, `packages/permissions` (ActionIntent port for event-handler gating) |
 | `packages/evidence` | `packages/config` |
 | `packages/permissions` | `packages/domain`, `packages/money`, `packages/config` |
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money` |
@@ -318,6 +319,15 @@ flowchart BT
   permissions --> money
   permissions --> config
   events --> domain
+  events --> permissions
+  persistence["packages/persistence"]
+  persistence --> domain
+  persistence --> evidence
+  persistence --> events
+  persistence --> ledger
+  persistence --> permissions
+  persistence --> money
+  accounts --> persistence
   evidence --> config
   kernel --> config
   kernel --> evidence

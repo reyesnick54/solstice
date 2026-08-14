@@ -42,3 +42,10 @@ export {
   persistLedgerUnit,
   type PersistenceSession,
 } from './session.ts';
+export {
+  PostgresDeadLetterStore,
+  PostgresEventCatalog,
+  PostgresInboxStore,
+  PostgresOutboxStore,
+  insertSealedDomainEvent,
+} from './ledger/event-fabric.ts';
