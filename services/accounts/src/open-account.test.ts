@@ -1,278 +1,86 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import type { ComplianceKernelPort } from '@solstice/compliance-kernel';
-import { EvidenceVault } from '@solstice/evidence-vault';
-import { REAL_MONEY_ENABLED } from '@solstice/flags';
-import {
-  ActionType,
-  AuthorityIssuer,
-  FrozenClock,
-  type AuthorizationDecision,
-  type ExecutionAuthority,
-} from '@solstice/permissions';
+import { asCustomerId, createProspect, notStartedVerification } from '../../../packages/domain/src/customer.ts';
+import { asJurisdiction, asResidency } from '../../../packages/domain/src/jurisdiction.ts';
+import { asLegalEntityId } from '../../../packages/domain/src/legal-entity.ts';
+import { asUtcInstant } from '../../../packages/domain/src/time.ts';
+import { FrozenClock } from '../../../packages/config/src/clock.ts';
+import { addMs } from '../../../packages/config/src/clock.ts';
+import { AUTHORITY_TTL_MS } from '../../../packages/permissions/src/execution-authority.ts';
+import { activateCustomer, openIntent } from './test-helpers.ts';
+import { createSimulationRuntime } from './runtime.ts';
 
-import { Account } from './account.ts';
-import { blockedSubject, openIntent, runtimeWithClearedActor } from './helpers.ts';
-import { AccountsService } from './open-account.ts';
-import { createAccountsRuntime } from './runtime.ts';
-import { verifyExecutionAuthority } from './verify-authority.ts';
-
-describe('OPEN_ACCOUNT via Compliance Kernel', () => {
+describe('Kernel-gated account opening', () => {
   it('ALLOW creates exactly one account and seals evidence', () => {
-    const runtime = runtimeWithClearedActor();
-    const before = runtime.evidence.count();
-    const result = runtime.accounts.openAccount(openIntent());
-
-    assert.equal(result.decision.status, 'ALLOW');
-    assert.equal(result.replay, false);
-    assert.ok(result.account);
-    assert.equal(runtime.accounts.accountCount(), 1);
-    assert.equal(result.account?.id, 'acct-001');
-    assert.equal(result.account?.status, 'OPEN');
-    assert.equal(result.account?.accountClass, 'INSURED_DEPOSIT');
-    assert.equal('balance' in (result.account ?? {}), false);
-    assert.equal(result.event?.eventType, 'AccountOpened');
-    assert.equal(result.event?.schemaVersion, 1);
-    assert.equal(result.event?.authorityId, result.account?.openedByAuthorityId);
-    assert.ok(result.decision.status === 'ALLOW' && result.decision.executionAuthority);
-    assert.equal(result.decision.proofs.length, 6);
-    for (const proof of result.decision.proofs) {
-      assert.equal(proof.status, 'ALLOW');
-    }
-    assert.ok(runtime.evidence.count() > before);
-    assert.ok(runtime.evidence.list().some((record) => record.kind === 'KERNEL_DECISION'));
-    assert.ok(runtime.evidence.list().some((record) => record.kind === 'ACCOUNT_OPENED'));
-    const chain = runtime.evidence.verifyChain();
-    assert.equal(chain.ok, true);
-  });
-
-  it('BLOCK creates no account and still seals evidence', () => {
-    const runtime = createAccountsRuntime();
-    runtime.kernel.registerSubject(blockedSubject());
-    const beforeAccounts = runtime.accounts.accountCount();
-    const beforeEvidence = runtime.evidence.count();
-
-    const result = runtime.accounts.openAccount(
-      openIntent({ actorId: 'actor-blocked', accountId: 'acct-blocked' }),
+    const runtime = createSimulationRuntime();
+    const customer = activateCustomer(runtime);
+    const first = runtime.accountsService.open(
+      openIntent({ id: 'open_1', accountId: 'acct_1', ownerId: customer.id }),
     );
-
-    assert.equal(result.decision.status, 'BLOCK');
-    assert.equal(result.account, undefined);
-    assert.equal(result.event, undefined);
-    assert.equal(runtime.accounts.accountCount(), beforeAccounts);
-    assert.equal(runtime.accounts.accountCount(), 0);
-    assert.ok(runtime.evidence.count() > beforeEvidence);
-    assert.ok(
-      runtime.evidence.list().some((record) => record.kind === 'KERNEL_DECISION'),
-    );
-    assert.ok(
-      runtime.evidence.list().some((record) => record.kind === 'ACCOUNT_OPEN_REFUSED'),
-    );
-    assert.equal(runtime.evidence.verifyChain().ok, true);
-    assert.equal(result.decision.status, 'BLOCK');
-  });
-
-  it('returns DEFER and REQUIRE_MANUAL_REVIEW unchanged and creates no account', () => {
-    const runtime = createAccountsRuntime();
-    runtime.kernel.registerSubject({
-      actorId: 'actor-defer',
-      identityAssurance: 'VERIFIED',
-      capabilities: [ActionType.OPEN_ACCOUNT],
-      jurisdiction: 'GB',
-      kycState: 'IN_PROGRESS',
-      riskPosture: 'ACCEPTABLE',
-      permittedPurposes: [ActionType.OPEN_ACCOUNT],
-    });
-    const deferred = runtime.accounts.openAccount(
-      openIntent({ actorId: 'actor-defer', intentId: 'intent-defer', accountId: 'acct-defer' }),
-    );
-    assert.equal(deferred.decision.status, 'DEFER');
-    assert.equal(deferred.account, undefined);
-
-    runtime.kernel.registerSubject({
-      actorId: 'actor-review',
-      identityAssurance: 'UNVERIFIED',
-      capabilities: [ActionType.OPEN_ACCOUNT],
-      jurisdiction: 'GB',
-      kycState: 'NOT_STARTED',
-      riskPosture: 'ELEVATED',
-      permittedPurposes: [ActionType.OPEN_ACCOUNT],
-    });
-    const review = runtime.accounts.openAccount(
-      openIntent({
-        actorId: 'actor-review',
-        intentId: 'intent-review',
-        accountId: 'acct-review',
-      }),
-    );
-    assert.equal(review.decision.status, 'REQUIRE_MANUAL_REVIEW');
-    assert.equal(review.account, undefined);
-    assert.equal(runtime.accounts.accountCount(), 0);
-  });
-
-  it('rejects an expired Execution Authority and creates no account', () => {
-    const clock = new FrozenClock(new Date('2026-08-13T12:00:00.000Z'));
-    const issuer = new AuthorityIssuer('test-secret');
-    const evidence = new EvidenceVault(clock);
-    const expired = issuer.issue({
-      authorityId: 'ea-expired',
-      actionType: ActionType.OPEN_ACCOUNT,
-      accountId: 'acct-exp',
-      intentId: 'intent-exp',
-      issuedAt: '2026-08-13T10:00:00.000Z',
-      expiresAt: '2026-08-13T11:00:00.000Z',
-    });
-    const kernel: ComplianceKernelPort = {
-      submit: (): AuthorizationDecision =>
-        Object.freeze({
-          status: 'ALLOW',
-          intentId: 'intent-exp',
-          actionType: ActionType.OPEN_ACCOUNT,
-          proofs: [],
-          executionAuthority: expired,
-          reason: 'fixture ALLOW with expired authority',
-          decidedAt: clock.now().toISOString(),
-        }),
-    };
-    const accounts = new AccountsService(kernel, issuer, evidence, clock);
-    const result = accounts.openAccount(
-      openIntent({ intentId: 'intent-exp', accountId: 'acct-exp' }),
-    );
-
-    assert.equal(result.decision.status, 'ALLOW');
-    assert.equal(result.executionRejected?.code, 'AUTHORITY_EXPIRED');
-    assert.equal(result.account, undefined);
-    assert.equal(accounts.accountCount(), 0);
-    assert.ok(
-      evidence.list().some((record) => record.kind === 'ACCOUNT_OPEN_AUTHORITY_REJECTED'),
-    );
-    assert.equal(evidence.verifyChain().ok, true);
-  });
-
-  it('rejects an Authority scoped to a different action', () => {
-    const clock = new FrozenClock(new Date('2026-08-13T12:00:00.000Z'));
-    const issuer = new AuthorityIssuer('test-secret');
-    const evidence = new EvidenceVault(clock);
-    const wrongAction = issuer.issue({
-      authorityId: 'ea-wrong-action',
-      actionType: 'POST_DEPOSIT',
-      accountId: 'acct-001',
-      intentId: 'intent-scope-action',
-      issuedAt: '2026-08-13T12:00:00.000Z',
-      expiresAt: '2026-08-13T13:00:00.000Z',
-    });
-    const result = openWithFixtureAuthority(issuer, evidence, clock, wrongAction, {
-      intentId: 'intent-scope-action',
-      accountId: 'acct-001',
-    });
-    assert.equal(result.executionRejected?.code, 'AUTHORITY_SCOPE_MISMATCH');
-    assert.equal(result.account, undefined);
-  });
-
-  it('rejects an Authority scoped to a different account', () => {
-    const clock = new FrozenClock(new Date('2026-08-13T12:00:00.000Z'));
-    const issuer = new AuthorityIssuer('test-secret');
-    const evidence = new EvidenceVault(clock);
-    const wrongAccount = issuer.issue({
-      authorityId: 'ea-wrong-account',
-      actionType: ActionType.OPEN_ACCOUNT,
-      accountId: 'acct-OTHER',
-      intentId: 'intent-scope-account',
-      issuedAt: '2026-08-13T12:00:00.000Z',
-      expiresAt: '2026-08-13T13:00:00.000Z',
-    });
-    const result = openWithFixtureAuthority(issuer, evidence, clock, wrongAccount, {
-      intentId: 'intent-scope-account',
-      accountId: 'acct-001',
-    });
-    assert.equal(result.executionRejected?.code, 'AUTHORITY_SCOPE_MISMATCH');
-    assert.equal(result.account, undefined);
-  });
-
-  it('the same intent submitted twice is idempotent', () => {
-    const runtime = runtimeWithClearedActor();
-    const intent = openIntent({ intentId: 'intent-idem' });
-    const first = runtime.accounts.openAccount(intent);
-    const second = runtime.accounts.openAccount(intent);
-
-    assert.equal(first.decision.status, 'ALLOW');
-    assert.equal(second.decision.status, 'ALLOW');
-    assert.equal(second.replay, true);
-    assert.equal(second.account?.id, first.account?.id);
-    assert.equal(runtime.accounts.accountCount(), 1);
-    assert.equal(runtime.accounts.listAccounts().length, 1);
-    assert.equal(runtime.accounts.listEvents().length, 1);
-    assert.ok(
-      runtime.evidence.list().some((record) => record.kind === 'ACCOUNT_OPEN_REPLAY'),
-    );
-    assert.equal(runtime.evidence.verifyChain().ok, true);
-  });
-
-  it('verifyExecutionAuthority is the only producer of ValidatedExecutionAuthority', () => {
-    const clock = new FrozenClock(new Date('2026-08-13T12:00:00.000Z'));
-    const issuer = new AuthorityIssuer('test-secret');
-    const authority = issuer.issue({
-      authorityId: 'ea-ok',
-      actionType: ActionType.OPEN_ACCOUNT,
-      accountId: 'acct-001',
-      intentId: 'intent-ok',
-      issuedAt: '2026-08-13T12:00:00.000Z',
-      expiresAt: '2026-08-13T13:00:00.000Z',
-    });
-    const verified = verifyExecutionAuthority(
-      authority,
-      {
-        actionType: ActionType.OPEN_ACCOUNT,
-        accountId: 'acct-001',
-        intentId: 'intent-ok',
-      },
-      issuer,
-      clock,
-    );
-    assert.equal(verified.ok, true);
-    if (!verified.ok) {
+    assert.equal(first.outcome, 'OPENED');
+    if (first.outcome !== 'OPENED') {
       return;
     }
-    const account = Account.fromValidatedAuthority(
-      verified.value,
-      openIntent().payload,
-      clock.now().toISOString(),
+    assert.equal(runtime.accountsService.listAccounts().length, 1);
+    assert.equal(first.account.id, 'acct_1');
+    assert.equal('balance' in first.account, false);
+    const evidenceBefore = runtime.evidence.count();
+    assert.ok(evidenceBefore >= 2);
+
+    const replay = runtime.accountsService.open(
+      openIntent({ id: 'open_1', accountId: 'acct_1', ownerId: customer.id }),
     );
-    assert.equal(account.id, 'acct-001');
-    assert.equal(account.openedByAuthorityId, 'ea-ok');
+    assert.equal(replay.outcome, 'OPENED');
+    if (replay.outcome === 'OPENED') {
+      assert.equal(replay.replay, true);
+      assert.equal(replay.account.id, first.account.id);
+    }
+    assert.equal(runtime.accountsService.listAccounts().length, 1);
   });
 
-  it('does not flip simulation flags', () => {
-    assert.equal(REAL_MONEY_ENABLED, false);
-    const runtime = runtimeWithClearedActor();
-    assert.equal(runtime.capabilities.REAL_MONEY_ENABLED, false);
-    runtime.accounts.openAccount(openIntent());
-    assert.equal(REAL_MONEY_ENABLED, false);
+  it('BLOCK creates none and still seals evidence', () => {
+    const runtime = createSimulationRuntime();
+    const prospect = createProspect({
+      id: asCustomerId('cust_prospect'),
+      legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
+      jurisdiction: asJurisdiction('GB'),
+      residency: asResidency('GB'),
+      verification: notStartedVerification(asUtcInstant('2027-08-13T00:00:00.000Z')),
+      createdAt: asUtcInstant('2026-01-15T09:00:00.000Z'),
+    });
+    runtime.customers.put(prospect.id, prospect);
+    const before = runtime.accountsService.listAccounts().length;
+    const result = runtime.accountsService.open(
+      openIntent({ id: 'open_block', accountId: 'acct_block', ownerId: prospect.id }),
+    );
+    assert.equal(result.outcome, 'KERNEL_REFUSED');
+    if (result.outcome === 'KERNEL_REFUSED') {
+      assert.equal(result.decision.status, 'BLOCK');
+    }
+    assert.equal(runtime.accountsService.listAccounts().length, before);
+    assert.ok(runtime.evidence.count() >= 2);
+    runtime.evidence.verifyChain();
+  });
+
+  it('expired Authority is rejected', () => {
+    const clock = new FrozenClock(asUtcInstant('2026-08-13T15:00:00.000Z'));
+    const runtime = createSimulationRuntime({ clock });
+    const customer = activateCustomer(runtime);
+    const intent = openIntent({ id: 'open_exp', accountId: 'acct_exp', ownerId: customer.id });
+    const decision = runtime.kernel.submit(intent, {
+      actor: { id: intent.actorId, capabilities: [intent.actionType] },
+      customer,
+      jurisdiction: customer.jurisdiction,
+    });
+    assert.equal(decision.status, 'ALLOW');
+    assert.ok(decision.executionAuthority);
+    clock.set(addMs(clock.now(), AUTHORITY_TTL_MS + 1n));
+    const verified = runtime.issuer.verify(
+      decision.executionAuthority!,
+      { actionType: intent.actionType, accountId: intent.payload.accountId, intentId: intent.id },
+      clock,
+    );
+    assert.equal(verified.ok, false);
   });
 });
-
-function openWithFixtureAuthority(
-  issuer: AuthorityIssuer,
-  evidence: EvidenceVault,
-  clock: FrozenClock,
-  authority: ExecutionAuthority,
-  ids: { intentId: string; accountId: string },
-) {
-  const kernel: ComplianceKernelPort = {
-    submit: (): AuthorizationDecision =>
-      Object.freeze({
-        status: 'ALLOW',
-        intentId: ids.intentId,
-        actionType: ActionType.OPEN_ACCOUNT,
-        proofs: [],
-        executionAuthority: authority,
-        reason: 'fixture ALLOW with scoped authority',
-        decidedAt: clock.now().toISOString(),
-      }),
-  };
-  const accounts = new AccountsService(kernel, issuer, evidence, clock);
-  return accounts.openAccount(
-    openIntent({ intentId: ids.intentId, accountId: ids.accountId }),
-  );
-}

@@ -1,11 +1,25 @@
+import type { UtcInstant } from '../../domain/src/time.ts';
+import type { ExecutionAuthority } from './execution-authority.ts';
+
 export const DECISION_STATUSES = [
   'ALLOW',
-  'DEFER',
   'REQUIRE_MANUAL_REVIEW',
+  'DEFER',
   'BLOCK',
 ] as const;
 
 export type DecisionStatus = (typeof DECISION_STATUSES)[number];
+
+/**
+ * Monotonic rank. A later proof may only escalate (raise) the combined
+ * status. It must never downgrade a more severe result.
+ */
+export const DECISION_RANK: { readonly [S in DecisionStatus]: number } = {
+  ALLOW: 0,
+  REQUIRE_MANUAL_REVIEW: 1,
+  DEFER: 2,
+  BLOCK: 3,
+};
 
 export const PROOF_NAMES = [
   'IDENTITY',
@@ -25,27 +39,26 @@ export type ProofEvaluation = {
 };
 
 /**
- * Monotonic escalation: posture can only tighten.
- * ALLOW < DEFER < REQUIRE_MANUAL_REVIEW < BLOCK
+ * Kernel decision. On ALLOW, a signed Execution Authority is attached.
+ * On any other status the authority is null. Callers must return this
+ * object unchanged when they do not proceed — never downgrade or reinterpret.
  */
-export const DECISION_RANK: { readonly [S in DecisionStatus]: number } = {
-  ALLOW: 0,
-  DEFER: 1,
-  REQUIRE_MANUAL_REVIEW: 2,
-  BLOCK: 3,
+export type AuthorizationDecision = {
+  readonly status: DecisionStatus;
+  readonly intentId: string;
+  readonly actionType: string;
+  readonly proofs: readonly ProofEvaluation[];
+  readonly executionAuthority: ExecutionAuthority | null;
+  readonly evidenceRecordId: string;
+  readonly decidedAt: UtcInstant;
 };
 
-export function escalate(
-  current: DecisionStatus,
-  next: DecisionStatus,
-): DecisionStatus {
-  return DECISION_RANK[next] > DECISION_RANK[current] ? next : current;
-}
-
-export function escalateAll(statuses: readonly DecisionStatus[]): DecisionStatus {
-  let posture: DecisionStatus = 'ALLOW';
-  for (const status of statuses) {
-    posture = escalate(posture, status);
+export function combineProofs(proofs: readonly ProofEvaluation[]): DecisionStatus {
+  let combined: DecisionStatus = 'ALLOW';
+  for (const proof of proofs) {
+    if (DECISION_RANK[proof.status] > DECISION_RANK[combined]) {
+      combined = proof.status;
+    }
   }
-  return posture;
+  return combined;
 }

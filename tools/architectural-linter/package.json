@@ -1,0 +1,15 @@
+{
+  "name": "@solstice/architectural-linter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/linter.ts"
+  },
+  "bin": {
+    "solstice-architectural-linter": "./src/cli.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

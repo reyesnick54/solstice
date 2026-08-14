@@ -7,20 +7,29 @@
 /AGENTS.md @reyesnick54
 /scripts/ @reyesnick54
 /config/ @reyesnick54
+/.github/workflows/ci.yml @reyesnick54
 
 # Phase 1 accounts service.
 /services/accounts/ @reyesnick54
 
-# Phase 1 control-plane paths (kernel, ledger, evidence, permissions, flags).
-/services/compliance-kernel/ @reyesnick54
-/services/ledger/ @reyesnick54
-/services/evidence-vault/ @reyesnick54
+# Authorization spine (kernel, ledger, evidence, permissions, flags).
+/packages/kernel/ @reyesnick54
+/packages/ledger/ @reyesnick54
 /packages/permissions/ @reyesnick54
+/packages/evidence/ @reyesnick54
 /packages/evidence-vault/ @reyesnick54
+/packages/compliance-kernel/ @reyesnick54
 /packages/policy-engine/ @reyesnick54
+/packages/platform/src/capability/ @reyesnick54
+/packages/platform/src/kernel/ @reyesnick54
+/packages/platform/src/authority/ @reyesnick54
+/packages/platform/src/gate/ @reyesnick54
+/packages/platform/src/flags/ @reyesnick54
+/packages/agent/ @reyesnick54
 /src/flags/ @reyesnick54
 /src/authority/ @reyesnick54
 /src/ledger/ @reyesnick54
 /src/evidence/ @reyesnick54
 /src/kernel/ @reyesnick54
 /policies/ @reyesnick54
+/docs/architecture/ @reyesnick54

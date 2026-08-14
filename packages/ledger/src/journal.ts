@@ -1,186 +1,252 @@
+import { randomUUID } from 'node:crypto';
+
+import type { Clock } from '../../config/src/clock.ts';
+import type { AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
+import { isOk } from '../../domain/src/result.ts';
+import { AccountRegister } from './accounts.ts';
 import {
-  asJournalId,
-  asJournalLineId,
-  err,
-  ok,
-  type AccountId,
-  type ActionIntentId,
-  type CurrencyCode,
-  type JournalId,
-  type Result,
-  type UtcInstant,
-  Money,
-  type Rational,
-} from '@solstice/domain';
+  assertBalanced,
+  assertClassBridge,
+  assertIdempotencyKey,
+  assertNoCommingling,
+  assertNoFloatAmounts,
+  assertPostingsNonEmpty,
+  existingJournalFingerprint,
+  freezeJournal,
+  journalFingerprint,
+} from './invariants.ts';
 import {
-  assertKernelAuthorizationAny,
-  type KernelAuthorization,
-} from '@solstice/kernel';
-
-export type DebitCredit = 'DEBIT' | 'CREDIT';
-
-export type JournalLine = {
-  readonly id: string;
-  readonly accountId: AccountId;
-  readonly direction: DebitCredit;
-  readonly amount: Money;
-};
-
-export type FxJournalMeta = {
-  readonly from: CurrencyCode;
-  readonly to: CurrencyCode;
-  readonly rate: Rational;
-  readonly timestamp: UtcInstant;
-};
-
-export type Journal = {
-  readonly id: JournalId;
-  readonly intentId: ActionIntentId;
-  readonly lines: readonly JournalLine[];
-  readonly memo: string;
-  readonly postedAt: UtcInstant;
-  readonly fx?: FxJournalMeta;
-  readonly compensatesJournalId?: JournalId;
-  readonly authorizationHash: string;
-};
-
-export type UnbalancedJournal = {
-  readonly code: 'UNBALANCED_JOURNAL';
-  readonly byCurrency: Readonly<Record<string, { debit: string; credit: string }>>;
-};
-
-export type JournalDraft = {
-  readonly id?: JournalId;
-  readonly intentId: ActionIntentId;
-  readonly lines: readonly Omit<JournalLine, 'id'>[];
-  readonly memo: string;
-  readonly postedAt: UtcInstant;
-  readonly fx?: FxJournalMeta;
-  readonly compensatesJournalId?: JournalId;
-};
-
-const JOURNAL_KINDS = [
-  'POST_JOURNAL',
-  'SEED_CREDIT',
-  'FX_CONVERT',
-  'SEND_PAYMENT',
-  'COMPENSATE_PAYMENT',
-] as const;
-
-export function journalBalances(lines: readonly Omit<JournalLine, 'id'>[]): {
-  readonly ok: boolean;
-  readonly byCurrency: Record<string, { debit: bigint; credit: bigint }>;
-} {
-  const byCurrency: Record<string, { debit: bigint; credit: bigint }> = {};
-  for (const line of lines) {
-    const currency = line.amount.currency;
-    const bucket = byCurrency[currency] ?? { debit: 0n, credit: 0n };
-    if (line.direction === 'DEBIT') {
-      bucket.debit += line.amount.minorUnits;
-    } else {
-      bucket.credit += line.amount.minorUnits;
-    }
-    byCurrency[currency] = bucket;
-  }
-  const okBalanced = Object.values(byCurrency).every((bucket) => bucket.debit === bucket.credit);
-  return { ok: okBalanced, byCurrency };
-}
+  LedgerInvariantError,
+  type Journal,
+  type LedgerAccount,
+  type Posting,
+  type PostJournalRequest,
+} from './types.ts';
 
 /**
- * @kernelGated
- * Append-only journal commit. Requires KernelAuthorization.
- * Posted journals are never edited; reversals are new compensating journals.
+ * Exact journal-posting API
+ *
+ *   Ledger.postJournal(request: PostJournalRequest): Journal
+ *
+ * This is the only write path. executionAuthority is required. There is no
+ * update or delete. Corrections are compensating entries (a new journal).
+ *
+ * Six invariants, none waivable:
+ *   BALANCE         sum(DEBIT) == sum(CREDIT) per asset
+ *   IMMUTABILITY    append-only
+ *   AUTHORITY       every journal needs a valid signed EA bound to this action
+ *   CLASS_BRIDGE    named disclosed bridge to cross classes
+ *   NO_COMMINGLING  CUSTOMER and CORPORATE never share a journal
+ *   IDEMPOTENCY     one journal per key
  */
-export function commitJournal(
-  store: JournalStore,
-  authorization: KernelAuthorization,
-  draft: JournalDraft,
-): Result<Journal, UnbalancedJournal> {
-  assertKernelAuthorizationAny(authorization, JOURNAL_KINDS);
-  const balanced = journalBalances(draft.lines);
-  if (!balanced.ok) {
-    const byCurrency: Record<string, { debit: string; credit: string }> = {};
-    for (const [currency, bucket] of Object.entries(balanced.byCurrency)) {
-      byCurrency[currency] = {
-        debit: bucket.debit.toString(),
-        credit: bucket.credit.toString(),
-      };
+export class Ledger {
+  private readonly journals: Journal[] = [];
+  private readonly byIdempotency = new Map<string, Journal>();
+  readonly accounts: AccountRegister;
+  private readonly authorityIssuer: AuthorityIssuer;
+  private readonly clock: Clock;
+
+  constructor(
+    authorityIssuer: AuthorityIssuer,
+    clock: Clock,
+    accounts?: AccountRegister,
+  ) {
+    this.authorityIssuer = authorityIssuer;
+    this.clock = clock;
+    this.accounts = accounts ?? new AccountRegister();
+  }
+
+  postJournal(request: PostJournalRequest): Journal {
+    assertIdempotencyKey(request.idempotencyKey);
+    assertPostingsNonEmpty(request.postings);
+    assertNoFloatAmounts(request.postings);
+
+    const existing = this.byIdempotency.get(request.idempotencyKey);
+    if (existing) {
+      const next = journalFingerprint(request);
+      const prev = existingJournalFingerprint(existing);
+      if (next !== prev) {
+        throw new LedgerInvariantError(
+          'IDEMPOTENCY',
+          'idempotency key already bound to a different journal',
+        );
+      }
+      return existing;
     }
-    return err({ code: 'UNBALANCED_JOURNAL', byCurrency });
+
+    if (!request.executionAuthority) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'every journal requires a signed Execution Authority',
+      );
+    }
+
+    const resolved: LedgerAccount[] = request.postings.map((p) =>
+      this.accounts.get(p.accountId),
+    );
+    for (let i = 0; i < resolved.length; i += 1) {
+      const account = resolved[i]!;
+      const posting = request.postings[i]!;
+      if (account.currency !== posting.amount.currency) {
+        throw new LedgerInvariantError(
+          'BALANCE',
+          `account ${account.id} is ${account.currency}, posting is ${posting.amount.currency}`,
+        );
+      }
+    }
+
+    assertNoCommingling(resolved);
+    const { asset } = assertBalanced(request.postings);
+    const classBridgeName = assertClassBridge(resolved, request.classBridge);
+
+    this.assertAuthority(request);
+
+    const journalId = randomUUID();
+    const postings: Posting[] = request.postings.map((p) =>
+      Object.freeze({
+        id: randomUUID(),
+        accountId: p.accountId,
+        direction: p.direction,
+        amount: p.amount,
+      }),
+    );
+
+    const journal = freezeJournal({
+      id: journalId,
+      idempotencyKey: request.idempotencyKey,
+      executionAuthorityId: request.executionAuthority.authorityId,
+      actionType: request.actionType,
+      asset,
+      postings,
+      ...(classBridgeName !== undefined ? { classBridgeName } : {}),
+      ...(request.memo !== undefined ? { memo: request.memo } : {}),
+      createdAt: this.clock.now(),
+    });
+
+    this.journals.push(journal);
+    this.byIdempotency.set(request.idempotencyKey, journal);
+    return journal;
   }
 
-  const journal: Journal = Object.freeze({
-    id: draft.id ?? asJournalId(`jnl_${authorization.intentId}_${store.list().length + 1}`),
-    intentId: draft.intentId,
-    lines: Object.freeze(
-      draft.lines.map((line, index) =>
-        Object.freeze({
-          id: asJournalLineId(`${authorization.intentId}_L${index + 1}`),
-          accountId: line.accountId,
-          direction: line.direction,
-          amount: line.amount,
-        }),
-      ),
-    ),
-    memo: draft.memo,
-    postedAt: draft.postedAt,
-    ...(draft.fx === undefined
-      ? {}
-      : {
-          fx: Object.freeze({
-            from: draft.fx.from,
-            to: draft.fx.to,
-            rate: draft.fx.rate,
-            timestamp: draft.fx.timestamp,
-          }),
-        }),
-    ...(draft.compensatesJournalId === undefined
-      ? {}
-      : { compensatesJournalId: draft.compensatesJournalId }),
-    authorizationHash: authorization.permitHash,
-  });
-
-  store.appendJournal(journal);
-  return ok(journal);
-}
-
-/**
- * Internal append surface. Only commitJournal may call this.
- * CI forbids other callers of appendJournal.
- */
-export class JournalStore {
-  readonly #journals: Journal[] = [];
-
-  /** @kernelGatedInternal */
-  appendJournal(journal: Journal): void {
-    this.#journals.push(journal);
+  getJournal(id: string): Journal | undefined {
+    return this.journals.find((j) => j.id === id);
   }
 
-  list(): readonly Journal[] {
-    return this.#journals.slice();
+  getJournalByIdempotencyKey(key: string): Journal | undefined {
+    return this.byIdempotency.get(key);
   }
 
-  getById(id: JournalId): Journal | undefined {
-    return this.#journals.find((journal) => journal.id === id);
+  listJournals(): readonly Journal[] {
+    return this.journals.slice();
   }
 
-  linesForAccount(accountId: AccountId): readonly JournalLine[] {
-    const lines: JournalLine[] = [];
-    for (const journal of this.#journals) {
-      for (const line of journal.lines) {
-        if (line.accountId === accountId) {
-          lines.push(line);
+  journalCount(): number {
+    return this.journals.length;
+  }
+
+  listPostingsForAccount(accountId: string): readonly Posting[] {
+    const out: Posting[] = [];
+    for (const journal of this.journals) {
+      for (const posting of journal.postings) {
+        if (posting.accountId === accountId) {
+          out.push(posting);
         }
       }
     }
-    return lines;
+    return out;
   }
-}
 
-export function signedEffect(line: JournalLine): Money {
-  // Debit increases asset-class accounts; credit decreases them.
-  if (line.direction === 'DEBIT') {
-    return line.amount;
+  totalsByAsset(): ReadonlyMap<string, { debits: bigint; credits: bigint }> {
+    const totals = new Map<string, { debits: bigint; credits: bigint }>();
+    for (const journal of this.journals) {
+      for (const posting of journal.postings) {
+        const row = totals.get(posting.amount.currency) ?? {
+          debits: 0n,
+          credits: 0n,
+        };
+        if (posting.direction === 'DEBIT') {
+          row.debits += posting.amount.minorUnits;
+        } else {
+          row.credits += posting.amount.minorUnits;
+        }
+        totals.set(posting.amount.currency, row);
+      }
+    }
+    return totals;
   }
-  return line.amount.negate();
+
+  updateJournal(_id: string): never {
+    throw new LedgerInvariantError(
+      'IMMUTABILITY',
+      'journals are append-only; corrections are compensating entries',
+    );
+  }
+
+  deleteJournal(_id: string): never {
+    throw new LedgerInvariantError(
+      'IMMUTABILITY',
+      'journals are append-only; corrections are compensating entries',
+    );
+  }
+
+  updatePosting(_id: string): never {
+    throw new LedgerInvariantError(
+      'IMMUTABILITY',
+      'postings are append-only; corrections are compensating entries',
+    );
+  }
+
+  deletePosting(_id: string): never {
+    throw new LedgerInvariantError(
+      'IMMUTABILITY',
+      'postings are append-only; corrections are compensating entries',
+    );
+  }
+
+  private assertAuthority(request: PostJournalRequest): void {
+    const ea = request.executionAuthority;
+    const scopedAccount = request.postings[0]!.accountId;
+    const customerPosting = request.postings.find((p) => {
+      const account = this.accounts.get(p.accountId);
+      return account.ownerId !== undefined;
+    });
+    const accountId = customerPosting?.accountId ?? scopedAccount;
+    const verified = this.authorityIssuer.verify(
+      ea,
+      {
+        actionType: request.actionType,
+        accountId: ea.accountId,
+        intentId: ea.intentId,
+      },
+      this.clock,
+    );
+    if (!isOk(verified)) {
+      throw new LedgerInvariantError('AUTHORITY', verified.error.message);
+    }
+    if (ea.actionType !== request.actionType) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'Execution Authority actionType does not bind this journal',
+      );
+    }
+    if (ea.idempotencyKey !== request.idempotencyKey) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'Execution Authority idempotency key does not bind this journal',
+      );
+    }
+    if (customerPosting && ea.accountId !== accountId && ea.accountId !== customerPosting.accountId) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'Execution Authority accountId does not bind a posting on this journal',
+      );
+    }
+    const bound = request.postings.some((p) => p.accountId === ea.accountId);
+    if (!bound) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'Execution Authority accountId does not bind any posting on this journal',
+      );
+    }
+  }
 }

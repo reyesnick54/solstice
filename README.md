@@ -1,50 +1,20 @@
 # solstice
 
-Simulated digital banking: Compliance Kernel + Global Money Fabric.
+Simulation-only digital banking. The Compliance Kernel decides. A signed
+Execution Authority executes. The Evidence Vault seals every yes and no.
 
-Nothing that changes financial state executes outside the Kernel.
-Payments are simulated end to end (domestic and cross-border). There
-are no live rails.
+See `docs/build-status.md` and `AGENTS.md`.
 
 ```
 npm install
-npm run ci
-npm run demo
-```
-
-See `AGENTS.md` and `docs/build-status.md`.
-See [docs/BUILD-STATUS.md](docs/BUILD-STATUS.md) for what is implemented and tested.
-
-Phase 1 — Banking Simulation is **not** complete.
-
-## Run what exists
-
-```bash
-cd packages/domain && npm test
-cd packages/domain && npm run demo
-```
-New fintech, digital banking solution.
-
-Phase 4–5: the Personal Economy Agent can **propose**, be **refused**, and
-**explain**. It cannot execute. Capability tokens are enforced in
-infrastructure. The weekly economic delta is sourced and honest about
-realization class. There is no percentage-return path.
-
-See `AGENTS.md` for the isolation contract.
-
-```
 npm test
 npm run demo
-```
-Phase 1 is a banking simulation. Real money stays off.
-
-## CI
-
-From the repository root:
-
-```bash
-bash scripts/ci.sh
+npm run ci
 ```
 
-Stages run in this order and none may be skipped: architectural invariants, deployment posture, tests, end-to-end demo, secret scan.
+Phase 1 in this tree: customers, Kernel-gated account opening, simulated
+deposits / withdrawals / internal transfers, class-segregated balances,
+and a verified evidence hash chain.
 
+Real-money rails stay off. `ENVIRONMENT=simulation`. Every `LIVE_*` flag is false.
+ADRs 0006 / 0007 / 0008 remain PROPOSED — not ACCEPTED, not CONFIRMED_BY_COUNSEL.
