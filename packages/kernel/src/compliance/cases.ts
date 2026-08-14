@@ -91,18 +91,19 @@ export function decideCase(
     readonly decidedAt: UtcInstant;
   },
 ): CaseDecisionResult {
-  if (current.finality === 'FINAL_HARD_BLOCK' || current.finality === 'FINAL_CLEARED') {
-    return { ok: false, reasonCode: 'CASE_ALREADY_FINAL' };
-  }
   if (input.actorKind !== 'HUMAN_OPERATOR') {
     return { ok: false, reasonCode: 'AI_CANNOT_FINALIZE_CASE' };
   }
   if (
-    current.caseType === 'SANCTIONS_REVIEW' &&
-    current.reasonCodes.includes('SIMULATED_SANCTIONS_MATCH') &&
-    input.decision === 'CLEAR'
+    input.decision === 'CLEAR' &&
+    (current.finality === 'FINAL_HARD_BLOCK' ||
+      (current.caseType === 'SANCTIONS_REVIEW' &&
+        current.reasonCodes.includes('SIMULATED_SANCTIONS_MATCH')))
   ) {
     return { ok: false, reasonCode: 'HARD_BLOCK_NOT_OVERRIDABLE' };
+  }
+  if (current.finality === 'FINAL_HARD_BLOCK' || current.finality === 'FINAL_CLEARED') {
+    return { ok: false, reasonCode: 'CASE_ALREADY_FINAL' };
   }
 
   const decision: HumanDecision = Object.freeze({
