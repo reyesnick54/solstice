@@ -14,6 +14,7 @@ import {
   openPersistenceSession,
   persistCustomerUnit,
   persistEvidenceOnClient,
+  persistEvidenceUnit,
   persistIdentitySnapshot,
   persistLedgerUnit,
   type PersistenceEnv,
@@ -102,10 +103,19 @@ export async function createPostgresSimulationRuntime(
       events: eventSink,
     },
   });
+  runtime.ledger.hydrateFromPersisted(loaded.journals);
+  runtime.evidence.hydrateFromPersisted(loaded.evidence);
+  runtime.events.hydrateFromPersisted(loaded.events);
+  for (const account of loaded.accounts) {
+    runtime.ledger.accounts.registerOpenedAccount(account);
+  }
+
   const identitySnapshot = await loadIdentitySnapshot(session.pools.customer);
   if (identitySnapshot) {
     runtime.identity.service.hydrate(identitySnapshot);
   } else {
+    const beforeEvidence = runtime.evidence.count();
+    const beforeEvents = runtime.events.list().length;
     const provisioned = runtime.identity.provisionSimulatedActor({
       actorId: 'operator_1',
       identityId: 'idn_sim_operator_1',
@@ -115,13 +125,14 @@ export async function createPostgresSimulationRuntime(
       throw new Error(`simulated identity adapter failed: ${provisioned.error.message}`);
     }
     await persistIdentitySnapshot(session.pools.customer, runtime.identity.service.snapshot());
-  }
-
-  runtime.ledger.hydrateFromPersisted(loaded.journals);
-  runtime.evidence.hydrateFromPersisted(loaded.evidence);
-  runtime.events.hydrateFromPersisted(loaded.events);
-  for (const account of loaded.accounts) {
-    runtime.ledger.accounts.registerOpenedAccount(account);
+    const newEvidence = runtime.evidence.list().slice(beforeEvidence);
+    const newEvents = runtime.events.list().slice(beforeEvents);
+    if (newEvidence.length > 0) {
+      await persistEvidenceUnit(session, newEvidence);
+    }
+    if (newEvents.length > 0) {
+      await persistLedgerUnit(session, { events: newEvents });
+    }
   }
 
   const openOutcomes: Array<readonly [string, OpenAccountOutcome]> = [];
