@@ -11,3 +11,4 @@ export {
   type KernelFacts,
   type ProofEvaluator,
 } from './proofs.ts';
+export type { IdentityFacts } from '../../identity/src/facts.ts';

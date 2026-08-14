@@ -69,7 +69,13 @@ describe('Kernel-gated account opening', () => {
     const customer = activateCustomer(runtime);
     const intent = openIntent({ id: 'open_exp', accountId: 'acct_exp', ownerId: customer.id });
     const decision = runtime.kernel.submit(intent, {
-      actor: { id: intent.actorId, capabilities: [intent.actionType] },
+      actor: {
+        id: intent.actorId,
+        capabilities: runtime.identity.service.resolveActorContext(intent.actorId).ok
+          ? ['OPEN_ACCOUNT']
+          : [],
+      },
+      identity: runtime.identity.service.identityFactsFor(intent.actorId),
       customer,
       jurisdiction: customer.jurisdiction,
     });

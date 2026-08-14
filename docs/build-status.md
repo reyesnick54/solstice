@@ -44,7 +44,12 @@ This document describes only what is implemented and tested in this tree.
   Chunk 3 fabric uses a simulated in-process transport behind a portable
   dispatcher port.
 - Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
-- Identity stack / real KYC (ADR-0007 remains PROPOSED).
+- Solstice Identity (`packages/identity`, `services/identity`): person/business
+  identity, simulated passkey registration/authentication, sessions, device
+  trust, versioned KYC metadata, capability grants, signed ActorContext.
+  Accounts consume authoritative capabilities. Kernel identity proof reads
+  IdentityFacts. ADR-0007 remains PROPOSED; no KYC vendor is selected.
+- Real KYC vendor integration, sanctions/PEP, and jurisdiction policy.
 - Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (PAYMENTS, FX, CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). They are PLANNED only.

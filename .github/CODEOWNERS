@@ -11,6 +11,8 @@
 
 # Phase 1 accounts service.
 /services/accounts/ @reyesnick54
+/services/identity/ @reyesnick54
+/packages/identity/ @reyesnick54
 
 # Persistence fabric (PostgreSQL adapter and migrations).
 /packages/persistence/ @reyesnick54

@@ -131,6 +131,9 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   if (eventType === 'KernelDecisionRecorded') {
     return { type: 'intent', id: String(body.intentId ?? 'unknown') };
   }
+  if (eventType.startsWith('Identity')) {
+    return { type: 'identity', id: String(body.identityId ?? 'unknown') };
+  }
   if (
     eventType === 'KeyCreated' ||
     eventType === 'KeyRotated' ||

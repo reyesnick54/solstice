@@ -364,6 +364,37 @@ This ADR is confirmed as *implemented* only when a per-cell self-hosted IdP (or 
 
 ---
 
+## Addendum A — Chunk 5 engineering implementation (2026-08-14)
+
+Engineering implemented the **in-house Solstice ID domain** on this tree:
+
+- Canonical owner: `packages/identity` (`IdentityService`, `ActorContextIssuer`)
+- Application facade: `services/identity`
+- Simulation WebAuthn adapter and simulated KYC/device-risk/business providers
+- Sessions, device trust, versioned KYC metadata, business identity foundations
+- Authoritative capabilities and signed ActorContext using Chunk 4 `SESSION_SIGNING`
+- Kernel identity proof consumes `IdentityFacts`
+- Accounts service no longer self-grants `capabilities: [intent.actionType]`
+
+This addendum records **engineering implementation of the identity architecture**. It does **not**:
+
+- Accept this ADR (status remains **PROPOSED**)
+- Select a production identity vendor (Ory Kratos+Hydra remains the lead *candidate* only)
+- Connect Persona, Onfido, Trulioo, or any live KYC provider
+- Mark any rule `CONFIRMED_BY_COUNSEL`
+
+Distinguish three axes:
+
+| Axis | Status after Chunk 5 |
+| --- | --- |
+| Identity architecture engineered | yes — in-house domain + simulation adapters |
+| Vendor selected | no |
+| Legal/regulatory requirements confirmed | no |
+
+Security-specialist review in the flagged section is still required before any production use.
+
+---
+
 ## Inspection notes (for the record)
 
 - Repository: `github.com/reyesnick54/solstice`

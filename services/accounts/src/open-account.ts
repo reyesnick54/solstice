@@ -10,6 +10,10 @@ import type { OpenAccountIntent } from '../../../packages/permissions/src/action
 import type { AuthorityIssuer } from '../../../packages/permissions/src/execution-authority.ts';
 import { validateIntentStructure } from '../../../packages/permissions/src/structural.ts';
 import type { Clock } from '../../../packages/config/src/clock.ts';
+import {
+  actionTypesFromCapabilities,
+  type IdentityAuthorityPort,
+} from '../../../packages/identity/src/index.ts';
 import { recordKernelDecisionEvent } from './event-trace.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
@@ -56,6 +60,7 @@ export class AccountsService {
   private readonly accounts: AccountStore;
   private readonly products: ProductStore;
   private readonly legalEntities: LegalEntityStore;
+  private readonly identity: IdentityAuthorityPort;
 
   constructor(
     kernel: ComplianceKernel,
@@ -68,6 +73,7 @@ export class AccountsService {
     accounts: AccountStore,
     products: ProductStore,
     legalEntities: LegalEntityStore,
+    identity: IdentityAuthorityPort,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -79,6 +85,7 @@ export class AccountsService {
     this.accounts = accounts;
     this.products = products;
     this.legalEntities = legalEntities;
+    this.identity = identity;
   }
 
   /**
@@ -108,11 +115,15 @@ export class AccountsService {
     const product = this.products.get(intent.payload.productId);
     const legalEntity = this.legalEntities.get(intent.payload.legalEntityId);
 
+    const resolved = this.identity.resolveActorContext(intent.actorId);
     const facts: KernelFacts = {
       actor: {
         id: intent.actorId,
-        capabilities: [intent.actionType],
+        capabilities: resolved.ok
+          ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities)
+          : [],
       },
+      identity: this.identity.identityFactsFor(intent.actorId),
       ...(customer ? { customer } : {}),
       ...(product ? { product } : {}),
       ...(legalEntity ? { legalEntity } : {}),

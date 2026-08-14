@@ -21,6 +21,14 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'KeyRotated', version: 1, status: 'current' },
   { eventType: 'KeyRetired', version: 1, status: 'current' },
   { eventType: 'KeyRevoked', version: 1, status: 'current' },
+  { eventType: 'IdentityCreated', version: 1, status: 'current' },
+  { eventType: 'IdentityActivated', version: 1, status: 'current' },
+  { eventType: 'IdentitySuspended', version: 1, status: 'current' },
+  { eventType: 'IdentityKycUpdated', version: 1, status: 'current' },
+  { eventType: 'IdentitySessionCreated', version: 1, status: 'current' },
+  { eventType: 'IdentitySessionRevoked', version: 1, status: 'current' },
+  { eventType: 'IdentityDeviceRegistered', version: 1, status: 'current' },
+  { eventType: 'IdentityRecoveryRequested', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

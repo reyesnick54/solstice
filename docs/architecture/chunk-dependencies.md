@@ -68,7 +68,7 @@ Agents and later CI jobs use that result. They do not guess.
 | architecture-linting | IMPLEMENTED | tools/architectural-linter |
 | persistence | IMPLEMENTED | packages/persistence |
 | security | IMPLEMENTED | packages/security |
-| identity | PLANNED | ADR-0007 |
+| identity | IMPLEMENTED | packages/identity |
 | policy-engine | PLANNED | ADR-0006 |
 
 Chunk 1 requires only capabilities that are already `IMPLEMENTED`.

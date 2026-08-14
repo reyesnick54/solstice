@@ -28,6 +28,8 @@
 /packages/events/ @reyesnick54
 /packages/persistence/ @reyesnick54
 /packages/security/ @reyesnick54
+/packages/identity/ @reyesnick54
+/services/identity/ @reyesnick54
 /db/ @reyesnick54
 /infra/postgres/ @reyesnick54
 /tools/architectural-linter/ @reyesnick54
