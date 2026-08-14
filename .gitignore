@@ -5,3 +5,10 @@ coverage/
 dist/
 .idea/
 .vscode/
+__pycache__/
+*.py[cod]
+
+.npm/
+dist/
+*.log
+.DS_Store
