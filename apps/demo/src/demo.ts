@@ -265,4 +265,73 @@ log('invariants', {
   liveFlagsFalse: Object.values(LIVE_FLAGS).every((flag) => flag === false),
 });
 
+console.log('\n=== Phase 7 — Personal Data Fabric ===');
+const { PersonalDataFabric } = await import('@solstice/data-fabric');
+const fabric = new PersonalDataFabric(system.kernel);
+const subjects = fabric.subjectRefs(8);
+fabric.populateSynthetic({
+  subjectCount: 8,
+  actor: SYSTEM,
+  occurredAt: NOW,
+  jurisdiction: 'US',
+});
+for (const [index, subjectRef] of subjects.entries()) {
+  fabric.grantConsent({
+    actor: JANE,
+    occurredAt: NOW,
+    grant: {
+      consentId: `cns_demo_${String(index + 1).padStart(2, '0')}`,
+      subjectRef,
+      requesterId: 'buyer_wellness_lab',
+      purpose: 'WELLNESS_RESEARCH',
+      dataCategories: ['HEALTH'],
+      identityExposureLevel: 'anonymous',
+      start: NOW,
+      expiry: '2026-12-31T00:00:00.000Z',
+      resalePermission: false,
+      aiTrainingPermission: false,
+      compensation: {
+        indicativeMinorUnits: 1200n,
+        currency: 'USD',
+        presentation: 'INDICATIVE_COMPENSATION_NOT_A_PRICE',
+      },
+      revocability: true,
+      jurisdiction: 'US',
+      policyVersion: 'privacy-sim-v1',
+      legalBasis: 'CONSENT',
+    },
+  });
+}
+const wellness = {
+  requester: { id: 'buyer_wellness_lab', kind: 'BUYER' as const, sessionId: 'sess_demo' },
+  dataCategories: ['HEALTH'] as const,
+  purpose: 'WELLNESS_RESEARCH' as const,
+  jurisdiction: 'US',
+  duration: { start: NOW, end: '2026-12-31T00:00:00.000Z' },
+  legalBasis: 'CONSENT' as const,
+};
+const buyer = { type: 'OPERATOR' as const, id: asActorId('buyer_wellness_lab') };
+const agg = fabric.runCleanRoom({
+  actor: buyer,
+  occurredAt: NOW,
+  request: wellness,
+  query: { queryId: 'demo_health_count', metric: 'COUNT' },
+  subjectRefs: subjects,
+  sessionValid: true,
+});
+log('phase7.aggregate', agg.ok ? { ...agg.value, rawRecordsReleased: agg.value.rawRecordsReleased } : agg.error);
+const ads = fabric.runCleanRoom({
+  actor: buyer,
+  occurredAt: NOW,
+  request: { ...wellness, purpose: 'ADVERTISING' },
+  query: { queryId: 'demo_health_ads', metric: 'COUNT' },
+  subjectRefs: subjects,
+  sessionValid: true,
+});
+log('phase7.advertising_refused', ads.ok ? 'UNEXPECTED_ALLOW' : ads.error);
+log('phase7.evidence_tip', {
+  records: fabric.kernel.vault.size,
+  verified: fabric.kernel.vault.verifyChain(),
+});
+
 console.log('demo: ok');

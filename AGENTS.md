@@ -20,6 +20,12 @@ sealed evidence. All rails are simulated.
 - Do not use floating-point for rates, fees, or amounts. Use `bigint`
   minor units and `Rational`.
 - Do not give agents a capability to add or modify a beneficiary.
+- Do not give agents a capability to grant, modify, or revoke consent.
+- Do not return raw vault records outside the Vault / clean-room boundary.
+- Do not allow a single request to span data categories.
+- Do not default, infer, or auto-populate any field of an access request.
+- Do not write raw personal data into logs, events, or evidence records.
+- Do not change `LIVE_DATA_MARKET_ENABLED`. It stays `false`.
 - Do not weaken CI, Kernel gating, or ledger balance invariants.
 
 ## How to change financial state
@@ -38,7 +44,8 @@ without Kernel authorization (reports file and line).
 - `packages/kernel` — proofs, posture, packs, sanctions/AML stubs, evidence
 - `packages/ledger` — append-only journals, Kernel-gated stores
 - `packages/payments` — FX router, rails, routing engine, execution
-- `apps/demo` — domestic, USD→EUR, sanctions block, failed settlement
+- `packages/data-fabric` — Segmented Personal Data Vault, Purpose Firewall, Consent Ledger, Clean Room
+- `apps/demo` — domestic, USD→EUR, sanctions block, failed settlement, Phase 7 clean-room aggregate
 
 ## Commands
 
@@ -125,6 +132,23 @@ All false. Do not change them. Enforcement does not call an external LLM.
 ## Tests
 
 `npm test` then `npm run demo`. Do not decrease the passing count.
+
+## Personal Data Fabric (Phase 7)
+
+Possession of data never implies permission to use it. Every access
+declares requester, purpose, jurisdiction, and duration. Consent is
+granular, time-limited, revocable, and auditable. Computation goes to
+the data. The Purpose Firewall enforces purpose on the backend access
+path — not by prompt. Health data authorized for wellness is unreachable
+for advertising, credit, investment eligibility, or employment.
+
+Granting, modifying, and revoking consent are ActionIntents through the
+Kernel. Consent is append-only and versioned. Expiry is evaluated at
+access time. ADR-0008 is still PROPOSED: the Vault sits behind a storage
+interface. Key handling sits behind an interface with a simulated local
+provider; real HSM/KMS integration is out of scope and flagged for
+security review. Differential privacy is an interface with a documented
+simple mechanism and no formal guarantee.
 # Solstice agent rules
 
 These rules are enforced by computers in CI, not by memory. If a change

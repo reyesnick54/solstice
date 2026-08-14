@@ -15,7 +15,8 @@ export type LiveFlagName =
   | 'LIVE_SEPA'
   | 'LIVE_INSTANT'
   | 'LIVE_DOMESTIC'
-  | 'LIVE_NETWORK';
+  | 'LIVE_NETWORK'
+  | 'LIVE_DATA_MARKET_ENABLED';
 
 export const LIVE_FLAGS: Readonly<Record<LiveFlagName, false>> = Object.freeze({
   LIVE_PAYMENTS: false,
@@ -28,6 +29,7 @@ export const LIVE_FLAGS: Readonly<Record<LiveFlagName, false>> = Object.freeze({
   LIVE_INSTANT: false,
   LIVE_DOMESTIC: false,
   LIVE_NETWORK: false,
+  LIVE_DATA_MARKET_ENABLED: false,
 });
 
 export function assertSimulationOnly(): void {

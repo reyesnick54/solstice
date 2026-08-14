@@ -27,6 +27,11 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'transitionPayment', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'recordCostAvoided', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'commitJournal', file: 'packages/ledger/src/journal.ts' },
+  { symbol: 'appendConsentGrant', file: 'packages/data-fabric/src/consent/ledger.ts' },
+  { symbol: 'appendConsentModification', file: 'packages/data-fabric/src/consent/ledger.ts' },
+  { symbol: 'appendConsentRevocation', file: 'packages/data-fabric/src/consent/ledger.ts' },
+  { symbol: 'storeClassifiedRecord', file: 'packages/data-fabric/src/vault/segmented-vault.ts' },
+  { symbol: 'executeAuthorizedQuery', file: 'packages/data-fabric/src/clean-room/engine.ts' },
 ];
 
 const failures = [];
@@ -112,7 +117,7 @@ for (const file of files) {
 }
 
 const knownSymbols = new Set(STATE_CHANGING_PATHS.map((p) => p.symbol));
-const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal)\s*\(/g;
+const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal|appendConsentGrant|appendConsentModification|appendConsentRevocation|storeClassifiedRecord|executeAuthorizedQuery)\s*\(/g;
 
 for (const file of files) {
   const rel = relative(ROOT, file);

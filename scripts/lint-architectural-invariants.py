@@ -167,6 +167,57 @@ LIVE_FLAG_TRUE_RE = re.compile(
     r"\b(" + "|".join(LIVE_FLAG_NAMES) + r")\b\s*=\s*true\b"
 )
 
+RAW_VAULT_ESCAPE_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        returnRawVaultRecords | listRawVaultRecords | exportRawRecords
+        | decryptAndReturn | unwrapAndReturn
+    )
+    \s*\(
+    """
+)
+
+CROSS_CATEGORY_QUERY_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        queryAcrossCategories | readCategories | joinCategories
+        | crossCategoryQuery | spanCategories
+    )
+    \s*\(
+    """
+)
+
+CONSENT_IN_PLACE_EDIT_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        consent\w*\.status\s*=
+        | consentRecord\.status\s*=
+        | Object\.assign\s*\(\s*consent
+    )
+    """
+)
+
+RAW_PII_LOG_RE = re.compile(
+    r"""(?x)
+    console\.(?:log|info|debug|error|warn)\s*\(
+    [\s\S]{0,200}
+    (?:
+        restingHeartBand | displayName | SYNTH-SUBJECT-
+        | plaintextRecords | rawRecord | attributes\.
+    )
+    """
+)
+
+DATA_ACCESS_WITHOUT_PURPOSE_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    computeInCategory\s*\(
+    """
+)
+
 AUTHORITY_HINT_RE = re.compile(
     r"ExecutionAuthority|executionAuthority|execution_authority"
 )
@@ -552,6 +603,61 @@ def check_subsystem_boundary(path: Path, raw_source: str) -> list[Violation]:
     return violations
 
 
+def check_data_fabric_invariants(path: Path, source: str) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    violations: list[Violation] = []
+    if path_is_test(path):
+        return []
+
+    for match in RAW_VAULT_ESCAPE_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_RAW_VAULT_RECORD_ESCAPE",
+                "Code path returns raw vault records outside the Vault boundary",
+            )
+        )
+    for match in CROSS_CATEGORY_QUERY_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_CROSS_CATEGORY_QUERY",
+                "Cross-category query path is forbidden; each category requires its own authorized request",
+            )
+        )
+    for match in CONSENT_IN_PLACE_EDIT_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_CONSENT_IN_PLACE_EDIT",
+                "Consent must be versioned-append; in-place edits are forbidden",
+            )
+        )
+    for match in RAW_PII_LOG_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_RAW_PERSONAL_DATA_IN_LOG",
+                "Raw personal data must not be written to logs, events, or evidence",
+            )
+        )
+    if "packages/data-fabric/" in rel and not rel.endswith("clean-room/engine.ts"):
+        for match in DATA_ACCESS_WITHOUT_PURPOSE_RE.finditer(source):
+            violations.append(
+                Violation(
+                    path,
+                    line_number_at(source, match.start()),
+                    "NO_DATA_ACCESS_WITHOUT_PURPOSE",
+                    "Vault compute must go through the clean room after a declared purpose",
+                )
+            )
+    return violations
+
+
 def check_live_flag_assignment(path: Path, source: str) -> list[Violation]:
     if is_flag_source_of_truth(path):
         return []
@@ -584,6 +690,7 @@ def lint_file(path: Path) -> list[Violation]:
     violations.extend(check_no_persisted_account_balance(path, stripped))
     violations.extend(check_no_blended_yield(path, code_only))
     violations.extend(check_no_float_in_money_path(path, code_only))
+    violations.extend(check_data_fabric_invariants(path, stripped))
     return violations
 
 

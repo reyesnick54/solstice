@@ -41,6 +41,9 @@ export const FORBIDDEN_ACTIONS = [
   'WIDEN_OWN_AUTHORITY',
   'READ_FORBIDDEN_DATA',
   'CALL_EXTERNAL_LLM_FOR_ENFORCEMENT',
+  'GRANT_CONSENT',
+  'MODIFY_CONSENT',
+  'REVOKE_CONSENT',
 ] as const;
 
 export type ForbiddenAction = (typeof FORBIDDEN_ACTIONS)[number];
@@ -56,6 +59,17 @@ export const DATA_CATEGORIES = [
   'RAW_CARD_PAN',
   'HEALTH',
   'PRECISE_GEOLOCATION',
+  'IDENTITY',
+  'FINANCIAL',
+  'WELLNESS',
+  'CONSUMPTION',
+  'ENTERTAINMENT',
+  'WORK',
+  'LIFESTYLE',
+  'GOALS',
+  'PSYCHOLOGICAL',
+  'PREFERENCES',
+  'PURCHASE_INTENT',
 ] as const;
 
 export type DataCategory = (typeof DATA_CATEGORIES)[number];

@@ -25,6 +25,11 @@ export const ACTION_KINDS = [
   'SEND_PAYMENT',
   'COMPENSATE_PAYMENT',
   'RECORD_COST_AVOIDED',
+  'GRANT_CONSENT',
+  'MODIFY_CONSENT',
+  'REVOKE_CONSENT',
+  'STORE_PERSONAL_DATA',
+  'RUN_CLEAN_ROOM',
 ] as const;
 
 export type ActionKind = (typeof ACTION_KINDS)[number];
@@ -84,6 +89,27 @@ export type RecordCostAvoidedPayload = {
   readonly paymentId: PaymentId;
 };
 
+export type ConsentIntentPayload = {
+  readonly consentId: string;
+  readonly purpose: string;
+  readonly categories: readonly string[];
+  readonly subjectRef?: string;
+};
+
+export type StorePersonalDataPayload = {
+  readonly category: string;
+  readonly provenance: 'SYNTHETIC';
+  readonly recordHash: string;
+  readonly purpose: string;
+};
+
+export type RunCleanRoomPayload = {
+  readonly purpose: string;
+  readonly categories: readonly string[];
+  readonly requesterId: string;
+  readonly queryId: string;
+};
+
 export type TransitionCustomerPayload = {
   readonly customerId: CustomerId;
   readonly to: CustomerStatus;
@@ -101,6 +127,11 @@ export type ActionPayloadByKind = {
   readonly SEND_PAYMENT: SendPaymentPayload;
   readonly COMPENSATE_PAYMENT: CompensatePaymentPayload;
   readonly RECORD_COST_AVOIDED: RecordCostAvoidedPayload;
+  readonly GRANT_CONSENT: ConsentIntentPayload;
+  readonly MODIFY_CONSENT: ConsentIntentPayload;
+  readonly REVOKE_CONSENT: ConsentIntentPayload;
+  readonly STORE_PERSONAL_DATA: StorePersonalDataPayload;
+  readonly RUN_CLEAN_ROOM: RunCleanRoomPayload;
 };
 
 export type ActionIntent<K extends ActionKind = ActionKind> = {

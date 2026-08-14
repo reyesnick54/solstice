@@ -5,6 +5,7 @@ import type { Posture } from './posture.ts';
 export const PROOF_KINDS = [
   'IDENTITY',
   'POLICY',
+  'PURPOSE',
   'SANCTIONS',
   'AML',
   'EXECUTION_AUTHORITY',

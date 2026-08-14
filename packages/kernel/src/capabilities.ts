@@ -25,6 +25,11 @@ export const HIGH_RISK_KINDS: readonly ActionKind[] = [
   'COMPENSATE_PAYMENT',
   'SEED_CREDIT',
   'RECORD_COST_AVOIDED',
+  'GRANT_CONSENT',
+  'MODIFY_CONSENT',
+  'REVOKE_CONSENT',
+  'STORE_PERSONAL_DATA',
+  'RUN_CLEAN_ROOM',
 ];
 
 const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = {
@@ -34,6 +39,9 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'SEND_PAYMENT',
     'FX_CONVERT',
     'TRANSITION_CUSTOMER_STATUS',
+    'GRANT_CONSENT',
+    'MODIFY_CONSENT',
+    'REVOKE_CONSENT',
   ],
   OPERATOR: [
     'CREATE_CUSTOMER',
@@ -46,6 +54,11 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'POST_JOURNAL',
     'COMPENSATE_PAYMENT',
     'RECORD_COST_AVOIDED',
+    'GRANT_CONSENT',
+    'MODIFY_CONSENT',
+    'REVOKE_CONSENT',
+    'STORE_PERSONAL_DATA',
+    'RUN_CLEAN_ROOM',
   ],
   SYSTEM: [
     'CREATE_CUSTOMER',
@@ -59,6 +72,11 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'POST_JOURNAL',
     'COMPENSATE_PAYMENT',
     'RECORD_COST_AVOIDED',
+    'GRANT_CONSENT',
+    'MODIFY_CONSENT',
+    'REVOKE_CONSENT',
+    'STORE_PERSONAL_DATA',
+    'RUN_CLEAN_ROOM',
   ],
   INTERNAL_TOOL: [
     'CREATE_CUSTOMER',

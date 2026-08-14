@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Solstice digital banking — Compliance Kernel and simulated Global Money Fabric",
+  "description": "Solstice digital banking — Compliance Kernel, Personal Economy Agent, and Personal Data Fabric",
   "workspaces": [
     "packages/*",
     "apps/*"
@@ -12,89 +12,18 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "npm test --workspaces --if-present",
-    "demo": "npm run demo -w @solstice/demo",
-    "gate": "node scripts/check-kernel-gating.mjs",
-    "typecheck": "npm run typecheck --workspaces --if-present",
-    "ci": "npm run gate && npm test && npm run demo && npm run typecheck"
-  },
-  "devDependencies": {
-    "@types/node": "^24.2.1",
-  "description": "Solstice — Personal Economy Agent and Growth OS (propose-only)",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",
     "check:extraction": "python3 scripts/extraction-dryrun.py",
     "check:posture": "python3 scripts/check-deployment-posture.py",
+    "gate": "node scripts/check-kernel-gating.mjs",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test $(find packages tests -name '*.test.ts' 2>/dev/null | sort)",
-    "demo": "npm run demo --workspace=@solstice/domain",
+    "demo": "npm run demo -w @solstice/demo && npm run demo -w @solstice/data-fabric --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
     "scan:secrets": "python3 scripts/secret-scan.py",
     "ci": "bash scripts/ci.sh"
   },
-  "engines": {
-    "node": ">=22"
-  "version": "0.1.0",
-  "private": true,
-  "description": "Solstice — AI proposes, Compliance Kernel authorizes, signed Execution Authority executes, Evidence Vault seals",
-  "type": "module",
-  "workspaces": [
-    "packages/*",
-    "services/*"
-  ],
-  "scripts": {
-    "test": "npm test --workspaces --if-present",
-    "demo": "npm run demo --workspace=@solstice/accounts --if-present && npm run demo --workspace=@solstice/domain --if-present"
-  },
-  "engines": {
-    "node": ">=22"
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "npm test --prefix packages/permissions && npm test --prefix packages/domain",
-    "demo": "npm run demo --prefix packages/domain"
-  },
-  "engines": {
-    "node": ">=22"
-  "version": "0.1.0",
-  "private": true,
-  "description": "Solstice Phase 0 banking simulation — ledger-authoritative, simulation only",
-  "type": "module",
-  "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "demo": "tsx src/demo.ts",
-    "typecheck": "tsc --noEmit"
-  },
-  "engines": {
-    "node": ">=20"
-  },
-  "devDependencies": {
-    "@types/node": "^22.13.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
-  "description": "Solstice digital banking — class-segregated balances derived from ledger postings",
-  "type": "module",
-  "engines": {
-    "node": ">=22"
-  },
-  "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test packages/domain/src/**/*.test.ts tests/**/*.test.ts",
-    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/demo.ts",
-    "typecheck": "tsc --noEmit -p packages/domain/tsconfig.json && tsc --noEmit -p packages/contracts/tsconfig.json",
-    "ci": "npm test && npm run demo"
-    "test": "tsx --test tests/**/*.test.ts",
-    "demo": "tsx demo/demo.ts",
-    "typecheck": "tsc --noEmit",
-    "suite": "tsx --test tests/**/*.test.ts && tsx demo/demo.ts"
-  },
   "devDependencies": {
     "@types/node": "^24.2.1",
-    "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   }
 }

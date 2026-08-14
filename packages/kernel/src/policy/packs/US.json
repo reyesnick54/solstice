@@ -137,6 +137,42 @@
       "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
     },
     {
+      "id": "US-SIM-CONSENT",
+      "title": "Simulation exception: consent ledger",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CONSENT",
+        "when": { "product": "CONSENT" }
+      },
+      "plainLanguageReason": "Consent grant, modify, and revoke are simulated product rules. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-PERSONAL-DATA",
+      "title": "Simulation exception: synthetic personal data store",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PERSONAL_DATA_STORE",
+        "when": { "product": "PERSONAL_DATA_STORE" }
+      },
+      "plainLanguageReason": "Synthetic vault writes only. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-CLEAN-ROOM",
+      "title": "Simulation exception: clean-room aggregation",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CLEAN_ROOM",
+        "when": { "product": "CLEAN_ROOM" }
+      },
+      "plainLanguageReason": "Clean-room aggregates are simulated. Not a legal opinion."
+    },
+    {
       "id": "US-IR-CORRIDOR-RESEARCH",
       "title": "US–Iran corridor legal determination is not available",
       "legalReviewState": "RESEARCH_REQUIRED",
@@ -151,6 +187,47 @@
         }
       },
       "plainLanguageReason": "No counsel determination is on file. This corridor stays disabled."
+    }
+  ],
+  "privacyRules": [
+    {
+      "id": "US-PRIV-HEALTH-NO-SECONDARY",
+      "title": "Health data cannot be used for advertising, credit, investment eligibility, or employment",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "FORBID_PURPOSE",
+        "when": {
+          "category": "HEALTH",
+          "purposeIn": ["ADVERTISING", "CREDIT", "INVESTMENT_ELIGIBILITY", "EMPLOYMENT"]
+        }
+      },
+      "plainLanguageReason": "Simulated purpose constraint. Not confirmed by counsel."
+    },
+    {
+      "id": "US-PRIV-PSYCH-NO-SECONDARY",
+      "title": "Psychological data cannot be used for advertising, credit, investment eligibility, or employment",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "FORBID_PURPOSE",
+        "when": {
+          "category": "PSYCHOLOGICAL",
+          "purposeIn": ["ADVERTISING", "CREDIT", "INVESTMENT_ELIGIBILITY", "EMPLOYMENT"]
+        }
+      },
+      "plainLanguageReason": "Simulated purpose constraint. Not confirmed by counsel."
+    },
+    {
+      "id": "US-PRIV-UNKNOWN-CORRIDOR",
+      "title": "Unknown personal-data corridor remains research-required",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "FORBID_PURPOSE",
+        "when": { "purpose": "ADVERTISING" }
+      },
+      "plainLanguageReason": "No counsel determination is on file for a live data market. This rule stays disabled."
     }
   ]
 }

@@ -7,6 +7,9 @@ echo "==> architectural invariants"
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 
+echo "==> kernel gating"
+node scripts/check-kernel-gating.mjs
+
 echo "==> deployment posture"
 python3 scripts/check-deployment-posture.py
 
