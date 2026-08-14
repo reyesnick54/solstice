@@ -1,5 +1,13 @@
 {
   "name": "solstice",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "npm test --prefix packages/permissions && npm test --prefix packages/domain",
+    "demo": "npm run demo --prefix packages/domain"
+  },
+  "engines": {
+    "node": ">=22"
   "version": "0.1.0",
   "private": true,
   "description": "Solstice Phase 0 banking simulation — ledger-authoritative, simulation only",
