@@ -140,8 +140,27 @@ class DurableRuntime implements DurableSimulationRuntime {
   }
 
   async saveCustomer(customer: Customer): Promise<void> {
+    const previous = this.runtime.customers.get(customer.id);
     this.runtime.customers.put(customer.id, customer);
     await persistCustomerUnit(this.session, { customers: [customer] });
+    if (previous && previous.status !== customer.status) {
+      const event = this.runtime.events.append({
+        eventType: 'CustomerStatusChanged',
+        schemaVersion: 1,
+        occurredAt: this.runtime.clock.now(),
+        correlationId: customer.id,
+        jurisdiction: customer.jurisdiction,
+        aggregateType: 'customer',
+        aggregateId: customer.id,
+        payload: {
+          customerId: customer.id,
+          fromStatus: previous.status,
+          toStatus: customer.status,
+          customerVersion: customer.version,
+        },
+      });
+      await persistLedgerUnit(this.session, { events: [event] });
+    }
   }
 
   async open(intent: OpenAccountIntent): Promise<OpenAccountOutcome> {
@@ -184,7 +203,6 @@ class DurableRuntime implements DurableSimulationRuntime {
     let lastError: unknown;
     for (let attempt = 0; attempt < 5; attempt += 1) {
       const evidenceClient = await this.session.pools.evidence.connect();
-      const beforeEvents = this.runtime.events.list().length;
       try {
         await evidenceClient.query('BEGIN');
         await evidenceClient.query('SELECT pg_advisory_xact_lock(872514001)');
@@ -198,6 +216,7 @@ class DurableRuntime implements DurableSimulationRuntime {
           this.runtime.ledger.accounts.registerOpenedAccount(account);
         }
         const beforeEvidence = this.runtime.evidence.count();
+        const beforeEvents = this.runtime.events.list().length;
         const result = fn();
         const authority = extractAuthority(result);
         const newEvidence = this.runtime.evidence.list().slice(beforeEvidence);

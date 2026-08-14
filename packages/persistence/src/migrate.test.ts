@@ -54,4 +54,21 @@ describe('versioned SQL migrations', () => {
     assert.match(v001.sql, /assert_journal_balanced/);
     assert.match(v001.sql, /NUMERIC\(38, 0\)/);
   });
+
+  it('ledger V002 adds outbox, inbox, and dead-letter tables', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v002 = files.find((file) => file.version === 2);
+    assert.ok(v002);
+    assert.match(v002.sql, /CREATE TABLE ledger\.outbox/);
+    assert.match(v002.sql, /CREATE TABLE ledger\.inbox/);
+    assert.match(v002.sql, /CREATE TABLE ledger\.dead_letter/);
+    assert.match(v002.sql, /PRIMARY KEY \(consumer_id, event_id\)/);
+  });
+
+  it('ledger V003 treats inbox as delivery state without a domain_event FK', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v003 = files.find((file) => file.version === 3);
+    assert.ok(v003);
+    assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
+  });
 });

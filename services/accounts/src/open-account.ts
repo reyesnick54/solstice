@@ -10,6 +10,7 @@ import type { OpenAccountIntent } from '../../../packages/permissions/src/action
 import type { AuthorityIssuer } from '../../../packages/permissions/src/execution-authority.ts';
 import { validateIntentStructure } from '../../../packages/permissions/src/structural.ts';
 import type { Clock } from '../../../packages/config/src/clock.ts';
+import { recordKernelDecisionEvent } from './event-trace.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
 export type OpenAccountOutcome =
@@ -119,6 +120,7 @@ export class AccountsService {
     };
 
     const decision = this.kernel.submit(intent, facts);
+    recordKernelDecisionEvent(this.events, intent, decision, intent.payload.jurisdiction);
 
     if (decision.status !== 'ALLOW') {
       const refused: OpenAccountOutcome = Object.freeze({
@@ -255,6 +257,13 @@ export class AccountsService {
       eventType: 'AccountOpened',
       schemaVersion: 1,
       occurredAt: constructed.value.openedAt,
+      intentId: intent.id,
+      correlationId: intent.id,
+      causationId: decision.evidenceRecordId,
+      evidenceId: decision.evidenceRecordId,
+      jurisdiction: constructed.value.jurisdiction,
+      aggregateType: 'account',
+      aggregateId: constructed.value.id,
       payload: {
         accountId: constructed.value.id,
         ownerId: constructed.value.ownerId,

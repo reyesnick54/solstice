@@ -86,7 +86,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/kernel` — six proofs, monotonic combine, Kernel submit
 - `packages/ledger` — append-only journals, authority-required
 - `packages/evidence` — hash-chained Evidence Vault
-- `packages/events` — versioned domain events
+- `packages/events` — versioned domain events, durable envelope, outbox/inbox/replay abstractions
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `db/` — versioned SQL migrations per bounded database

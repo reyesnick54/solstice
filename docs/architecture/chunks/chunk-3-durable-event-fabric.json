@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-3",
+  "title": "Durable Event Fabric, Transactional Outbox, Inbox, Replay, and Middleware Backbone",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "config",
+    "accounts-service",
+    "architecture-linting",
+    "persistence"
+  ]
+}

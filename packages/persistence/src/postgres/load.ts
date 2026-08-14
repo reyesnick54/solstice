@@ -15,6 +15,7 @@ import { asProductId, type Product } from '../../../domain/src/product.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { EvidenceRecord } from '../../../evidence/src/vault.ts';
 import type { DomainEvent } from '../../../events/src/events.ts';
+import { parseEnvelope } from '../../../events/src/envelope.ts';
 import { Money } from '../../../money/src/money.ts';
 import type { Journal, LedgerAccount, Posting } from '../../../ledger/src/types.ts';
 import { asIntentId, type ActionIntent } from '../../../permissions/src/action-intent.ts';
@@ -171,8 +172,9 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         schema_version: number;
         occurred_at: Date;
         payload_canonical: unknown;
+        envelope_canonical: unknown;
       }>(
-        `SELECT event_type, schema_version, occurred_at, payload_canonical
+        `SELECT event_type, schema_version, occurred_at, payload_canonical, envelope_canonical
            FROM ledger.domain_event
           ORDER BY id`,
       ),
@@ -282,14 +284,7 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
       };
       return Object.freeze(journal);
     }),
-    events: events.rows.map((row) =>
-      Object.freeze({
-        eventType: row.event_type,
-        schemaVersion: row.schema_version,
-        occurredAt: asUtcInstant(row.occurred_at.toISOString()),
-        payload: row.payload_canonical,
-      }) as DomainEvent,
-    ),
+    events: events.rows.map((row) => reviveDomainEvent(row)),
     intents: intents.rows.map((row) =>
       Object.freeze({
         id: asIntentId(row.id),
@@ -380,6 +375,28 @@ function reviveIntentPayload(value: unknown): unknown {
     };
   }
   return value;
+}
+
+function reviveDomainEvent(row: {
+  event_type: string;
+  schema_version: number;
+  occurred_at: Date;
+  payload_canonical: unknown;
+  envelope_canonical: unknown;
+}): DomainEvent {
+  if (row.envelope_canonical) {
+    const serialized =
+      typeof row.envelope_canonical === 'string'
+        ? row.envelope_canonical
+        : JSON.stringify(row.envelope_canonical);
+    return parseEnvelope(serialized) as DomainEvent;
+  }
+  return Object.freeze({
+    eventType: row.event_type,
+    schemaVersion: row.schema_version,
+    occurredAt: asUtcInstant(row.occurred_at.toISOString()),
+    payload: row.payload_canonical,
+  }) as DomainEvent;
 }
 
 export function intentFingerprint(intent: ActionIntent): string {

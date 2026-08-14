@@ -6,5 +6,6 @@
 - [Chunk dependencies](./chunk-dependencies.md) — stop if a protected requirement is not IMPLEMENTED
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
+- [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

@@ -11,8 +11,14 @@
     "tools/*"
   ],
   "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/persistence/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/events/src/*.test.ts packages/persistence/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
     "test:persistence": "SOLSTICE_PERSISTENCE_TEST=1 node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/persistence/*.test.ts",
+    "test:events": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/events/src/*.test.ts",
+    "events:outbox": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/events-inspect.mjs outbox",
+    "events:inbox": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/events-inspect.mjs inbox",
+    "events:dead-letters": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/events-inspect.mjs dead-letters",
+    "events:dispatch": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/events-dispatch.mjs",
+    "events:replay": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/events-replay.mjs",
     "db:up": "bash scripts/postgres-up.sh",
     "db:bootstrap": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/postgres-bootstrap.mjs",
     "db:migrate": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/postgres-migrate.mjs",

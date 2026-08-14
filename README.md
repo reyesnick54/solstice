@@ -18,8 +18,12 @@ PostgreSQL is the durable adapter (local/simulated credentials only):
 npm run db:up
 npm run db:migrate
 npm run test:persistence
+npm run events:outbox
+npm run events:dispatch
 npm run db:down
 ```
+
+Event fabric (outbox / inbox / replay): `docs/architecture/events.md`.
 
 Phase 1 in this tree: customers, Kernel-gated account opening, simulated
 deposits / withdrawals / internal transfers, class-segregated balances,

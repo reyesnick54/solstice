@@ -25,10 +25,16 @@ This document describes only what is implemented and tested in this tree.
   audit, execution-authority audit (no signing secret), evidence chain, and
   domain events survive process restart. In-memory adapters remain for unit
   tests. ADR-0008 Addendum A records engineering acceptance of Option A.
+- Durable event fabric (Chunk 3): canonical envelope on the existing
+  `VersionedEvent` model, taxonomy, PostgreSQL transactional outbox in the
+  same ledger unit as journals, consumer inbox, dead letters, explicit
+  replay, and an in-process dispatcher. Events are not financial execution.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
-- Event outbox/inbox, Kafka, or a streaming fabric (Chunk 3).
+- Kafka, Kinesis, Pub/Sub, SNS/SQS, or another production broker. The
+  Chunk 3 fabric uses a simulated in-process transport behind a portable
+  dispatcher port.
 - Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
 - Identity stack / real KYC (ADR-0007 remains PROPOSED).
 - Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
@@ -67,5 +73,10 @@ npm run ci
 npm run db:up
 npm run db:migrate
 npm run test:persistence
+npm run test:events
+npm run events:outbox
+npm run events:inbox
+npm run events:dead-letters
+npm run events:dispatch
 npm run db:down
 ```

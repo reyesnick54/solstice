@@ -6,6 +6,7 @@ import type { Account } from '../../../domain/src/account.ts';
 import { catalogFor } from '../../../domain/src/account-class.ts';
 import type { Product } from '../../../domain/src/product.ts';
 import type { DomainEvent } from '../../../events/src/events.ts';
+import { insertSealedDomainEvent } from './event-fabric.ts';
 import type { LedgerAccount } from '../../../ledger/src/types.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import type { ExecutionAuthority } from '../../../permissions/src/execution-authority.ts';
@@ -173,11 +174,7 @@ export async function insertOpenOutcome(
 }
 
 export async function insertDomainEvent(client: PoolClient, event: DomainEvent): Promise<void> {
-  await client.query(
-    `INSERT INTO ledger.domain_event (event_type, schema_version, occurred_at, payload_canonical)
-     VALUES ($1, $2, $3, $4::jsonb)`,
-    [event.eventType, event.schemaVersion, event.occurredAt, canonicalJson(event.payload)],
-  );
+  await insertSealedDomainEvent(client, event);
 }
 
 export async function lockAccountForUpdate(client: PoolClient, accountId: string): Promise<void> {

@@ -62,6 +62,7 @@ Agents and later CI jobs use that result. They do not guess.
 | ledger | IMPLEMENTED | packages/ledger |
 | evidence | IMPLEMENTED | packages/evidence |
 | events | IMPLEMENTED | packages/events |
+| event-fabric | IMPLEMENTED | packages/events |
 | config | IMPLEMENTED | packages/config |
 | accounts-service | IMPLEMENTED | services/accounts |
 | architecture-linting | IMPLEMENTED | tools/architectural-linter |

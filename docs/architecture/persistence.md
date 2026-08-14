@@ -31,7 +31,9 @@ application unit of work:
 4. Commit the **customer** database (customer upserts).
 5. Commit the **ledger** database in one transaction: accounts, ledger
    accounts, intents, authority audit (signature fingerprint only), journals,
-   postings, open-account outcomes, domain events.
+   postings, open-account outcomes, domain events, **and outbox rows**.
+   State and the publishable event commit together. The dispatcher is
+   outside that transaction.
 6. Commit the **evidence** database (new chain records, in seq order).
 7. Release the lock.
 

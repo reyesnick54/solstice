@@ -118,12 +118,13 @@
       "path": "packages/events",
       "kind": "package",
       "status": "IMPLEMENTED",
-      "protected": false,
+      "protected": true,
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/domain"],
-      "codeowners": ["@reyesnick54"]
+      "allowedDependencies": ["packages/domain", "packages/permissions"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Canonical VersionedEvent envelope, taxonomy, outbox/inbox abstractions. Not a second event model."
     },
     {
       "id": "services/accounts",
@@ -437,12 +438,20 @@
       "canonicalPath": "packages/events/src/events.ts",
       "publicInterface": "packages/events/src/index.ts",
       "status": "IMPLEMENTED",
-      "protected": false,
+      "protected": true,
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "protectedSymbols": [],
-      "forbiddenAliases": ["packages/domain-events"],
+      "protectedSymbols": [
+        { "name": "VersionedEvent", "kind": "type" },
+        { "name": "DomainEventLog", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/domain-events",
+        "packages/event-bus",
+        "packages/outbox",
+        "packages/messaging"
+      ],
       "codeowners": ["@reyesnick54"]
     },
     {
@@ -680,7 +689,14 @@
       "id": "events",
       "status": "IMPLEMENTED",
       "owner": "packages/events",
-      "protected": false
+      "protected": true
+    },
+    {
+      "id": "event-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/events",
+      "protected": true,
+      "notes": "Transactional outbox, inbox, dead letter, and replay. PostgreSQL adapter in packages/persistence."
     },
     {
       "id": "config",
