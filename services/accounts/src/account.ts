@@ -27,7 +27,7 @@ export class Account {
   readonly openedByIntentId: string;
 
   private constructor(
-    authority: ValidatedExecutionAuthority,
+    executionAuthority: ValidatedExecutionAuthority,
     payload: OpenAccountPayload,
     openedAt: string,
   ) {
@@ -41,8 +41,8 @@ export class Account {
     this.status = 'OPEN';
     this.openedAt = openedAt;
     this.version = 0;
-    this.openedByAuthorityId = authority.authorityId;
-    this.openedByIntentId = authority.intentId;
+    this.openedByAuthorityId = executionAuthority.authorityId;
+    this.openedByIntentId = executionAuthority.intentId;
     Object.freeze(this);
   }
 
@@ -56,7 +56,7 @@ export class Account {
     payload: OpenAccountPayload,
     openedAt: string,
   ): Account {
-    return new Account(authority, payload, openedAt);
+    return new Account(authority as ValidatedExecutionAuthority, payload, openedAt);
   }
 }
 

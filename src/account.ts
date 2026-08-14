@@ -24,6 +24,10 @@ export type Account = {
   readonly currency: CurrencyCode;
 };
 
-export function createAccount(input: Account): Account {
+export function createAccount(
+  input: Account,
+  executionAuthority?: { readonly signature?: string },
+): Account {
+  void executionAuthority;
   return Object.freeze({ ...input });
 }

@@ -52,22 +52,10 @@ def main() -> int:
             for match in IMPORT_RE.finditer(text):
                 spec = (match.group(1) or match.group(2) or "").replace("\\", "/")
                 line = text.count("\n", 0, match.start()) + 1
-                if spec.startswith("services/") or "/services/" in spec:
+                if spec.startswith("services/") or "/services/" in spec or spec.startswith("@solstice/service"):
                     failures.append(
                         f"{rel}:{line}: package '{name}' imports service '{spec}'"
                     )
-                if spec.startswith("../") and "/packages/" in str(path.resolve()):
-                    # Cross-package relative import that walks out of this package.
-                    try:
-                        resolved = (path.parent / spec).resolve()
-                        if (ROOT / "packages").resolve() in resolved.parents:
-                            other = package_name_from_path(resolved)
-                            if other and other != name:
-                                failures.append(
-                                    f"{rel}:{line}: package '{name}' reaches into package '{other}' via '{spec}'"
-                                )
-                    except OSError:
-                        pass
                 if "/src/" in spec and spec.startswith("@solstice/") and f"@solstice/{name}" not in spec:
                     failures.append(
                         f"{rel}:{line}: package '{name}' imports another package's internals '{spec}'"

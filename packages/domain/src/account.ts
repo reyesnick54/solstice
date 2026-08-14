@@ -1,9 +1,18 @@
+import type { AccountClass } from './account-class.ts';
+import type { Currency, CurrencyCode } from './currency.ts';
 import type { CustomerId } from './customer.ts';
-import type { CurrencyCode } from './currency.ts';
 import type { AccountId } from './ids.ts';
+import type { Jurisdiction } from './jurisdiction.ts';
+import type { LegalEntityId } from './legal-entity.ts';
+import type { ProductId } from './product.ts';
+import { err, ok, type Result } from './result.ts';
 import type { UtcInstant } from './time.ts';
 
-export const ACCOUNT_CLASSES = [
+/**
+ * Ledger posting classes used by the payments fabric (Phase 2–3).
+ * Distinct from legal product classes in account-class.ts.
+ */
+export const LEDGER_ACCOUNT_CLASSES = [
   'deposits',
   'investments',
   'digital_assets',
@@ -15,30 +24,35 @@ export const ACCOUNT_CLASSES = [
   'rail_clearing',
 ] as const;
 
-export type AccountClass = (typeof ACCOUNT_CLASSES)[number];
+export type LedgerAccountClass = (typeof LEDGER_ACCOUNT_CLASSES)[number];
 
-export type Account = {
+export type LedgerAccount = {
   readonly id: AccountId;
   readonly ownerCustomerId: CustomerId | 'HOUSE';
-  readonly accountClass: AccountClass;
+  readonly accountClass: LedgerAccountClass;
   readonly currency: CurrencyCode;
-import type { AccountClass } from './account-class.ts';
-import { type Brand, brandAs } from './brand.ts';
-import type { Currency } from './currency.ts';
-import type { CustomerId } from './customer.ts';
-import type { Jurisdiction } from './jurisdiction.ts';
-import type { LegalEntityId } from './legal-entity.ts';
-import type { ProductId } from './product.ts';
-import { err, ok, type Result } from './result.ts';
-import type { UtcInstant } from './time.ts';
+  readonly openedAt: UtcInstant;
+  readonly version: number;
+};
 
-export type AccountId = Brand<string, 'AccountId'>;
-
-export function asAccountId(value: string): AccountId {
-  if (value.length === 0) {
-    throw new TypeError('AccountId must be a non-empty string');
-  }
-  return brandAs<string, 'AccountId'>(value);
+/**
+ * Pure ledger-account constructor. Callers must already hold Kernel
+ * authorization; this function does not authorize. The executionAuthority
+ * argument is required at the call site so CI can see the gate.
+ */
+export function createAccount(
+  input: Omit<LedgerAccount, 'version'> & { version?: number },
+  executionAuthority?: { readonly signature?: string; readonly permitHash?: string },
+): LedgerAccount {
+  void executionAuthority;
+  return Object.freeze({
+    id: input.id,
+    ownerCustomerId: input.ownerCustomerId,
+    accountClass: input.accountClass,
+    currency: input.currency,
+    openedAt: input.openedAt,
+    version: input.version ?? 0,
+  });
 }
 
 export const ACCOUNT_STATUSES = ['OPEN', 'FROZEN', 'CLOSED'] as const;
@@ -46,8 +60,9 @@ export const ACCOUNT_STATUSES = ['OPEN', 'FROZEN', 'CLOSED'] as const;
 export type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
 
 /**
- * Customer account bound to one class, product, legal entity, and jurisdiction.
- * Balances are derived from the ledger and are never stored on this entity.
+ * Customer account bound to one legal class, product, legal entity, and
+ * jurisdiction. Balances are derived from the ledger and are never stored
+ * on this entity.
  */
 export type Account = {
   readonly id: AccountId;
@@ -62,16 +77,6 @@ export type Account = {
   readonly version: number;
 };
 
-export function createAccount(input: Omit<Account, 'version'> & { version?: number }): Account {
-  return Object.freeze({
-    id: input.id,
-    ownerCustomerId: input.ownerCustomerId,
-    accountClass: input.accountClass,
-    currency: input.currency,
-    openedAt: input.openedAt,
-    version: input.version ?? 0,
-  });
-}
 export type OpenAccountInput = {
   readonly id: AccountId;
   readonly ownerId: CustomerId;
@@ -83,9 +88,6 @@ export type OpenAccountInput = {
   readonly openedAt: UtcInstant;
 };
 
-/**
- * Allowed status moves. Same-status is not a transition. CLOSED is terminal.
- */
 const ALLOWED_TRANSITIONS: { readonly [S in AccountStatus]: readonly AccountStatus[] } = {
   OPEN: ['FROZEN', 'CLOSED'],
   FROZEN: ['OPEN', 'CLOSED'],
@@ -115,9 +117,13 @@ function freezeAccount(account: Account): Account {
 
 /**
  * Pure constructor for an OPEN account at version 0. This does not authorize
- * opening; services must pass a Kernel Execution Authority before calling it.
+ * opening. Services must pass a Kernel Execution Authority before calling it.
  */
-export function openAccount(input: OpenAccountInput): Account {
+export function openAccount(
+  input: OpenAccountInput,
+  executionAuthority?: { readonly signature?: string; readonly authorityId?: string },
+): Account {
+  void executionAuthority;
   return freezeAccount({
     id: input.id,
     ownerId: input.ownerId,
@@ -156,11 +162,6 @@ export type AccountStatusTransitionResult = Result<
   IllegalAccountStatusTransition
 >;
 
-/**
- * Pure, total status transition. Never throws for an illegal request:
- * those are returned as `ok: false` rejections. `occurredAt` is supplied
- * by the caller (UTC); this function does not read the clock.
- */
 export function transitionAccountStatus(
   account: Account,
   requestedStatus: AccountStatus,

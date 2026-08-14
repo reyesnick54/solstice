@@ -127,8 +127,25 @@ export {
   asRouteId,
 } from './ids.ts';
 
-export type { Account, AccountClass } from './account.ts';
-export { ACCOUNT_CLASSES, createAccount } from './account.ts';
+export type {
+  Account,
+  AccountStatus,
+  AccountStatusTransition,
+  AccountStatusTransitionResult,
+  IllegalAccountStatusTransition,
+  LedgerAccount,
+  LedgerAccountClass,
+  OpenAccountInput,
+} from './account.ts';
+export {
+  ACCOUNT_STATUSES,
+  canTransitionAccountStatus,
+  createAccount,
+  isAccountStatus,
+  LEDGER_ACCOUNT_CLASSES,
+  openAccount,
+  transitionAccountStatus,
+} from './account.ts';
 
 export type {
   Beneficiary,
@@ -143,23 +160,6 @@ export {
 
 export type { Actor, ActorType } from './actor.ts';
 export { ACTOR_TYPES, freezeActor } from './actor.ts';
-export type {
-  Account,
-  AccountId,
-  AccountStatus,
-  AccountStatusTransition,
-  AccountStatusTransitionResult,
-  IllegalAccountStatusTransition,
-  OpenAccountInput,
-} from './account.ts';
-export {
-  ACCOUNT_STATUSES,
-  asAccountId,
-  canTransitionAccountStatus,
-  isAccountStatus,
-  openAccount,
-  transitionAccountStatus,
-} from './account.ts';
 
 export type {
   CreateOpenAccountIntentInput,

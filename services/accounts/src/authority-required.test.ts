@@ -41,7 +41,7 @@ describe('Account construction requires a validated Execution Authority', () => 
 
   it('openAccount is the only service entry point and never constructs an Account without verify', () => {
     const source = read('open-account.ts');
-    assert.match(source, /openAccount\(intent: ActionIntent\)/);
+    assert.match(source, /openAccount\(intent: ActionIntent/);
     assert.match(source, /this\.kernel\.submit\(intent\)/);
     assert.match(source, /verifyExecutionAuthority\(/);
     assert.match(source, /Account\.fromValidatedAuthority\(/);

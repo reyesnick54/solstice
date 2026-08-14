@@ -15,6 +15,7 @@ import { ActionType, type ActionIntent, type SetMandatePayload } from './kernel/
 import { ComplianceKernel } from './kernel/ComplianceKernel.ts';
 import { SimulatedLedger } from './ledger/SimulatedLedger.ts';
 import { assembleFinancialContext, type RawFinancialFacts } from './assembler/FinancialContextAssembler.ts';
+import { createAlphaServices, SolsticeAlpha } from './alpha/SolsticeAlpha.ts';
 
 const TOKEN_SECRET = 'solstice-simulation-act-hmac-v1';
 const AUTHORITY_SECRET = 'solstice-simulation-ea-hmac-v1';
@@ -30,6 +31,7 @@ export type SolsticeAgentRuntime = {
   readonly growth: GrowthAttributionLedger;
   readonly events: DomainEventLog;
   readonly evidence: EvidenceVault;
+  readonly alpha: SolsticeAlpha;
 };
 
 export function createControlPlane(options: { clock?: Clock } = {}): SolsticeAgentRuntime {
@@ -41,6 +43,8 @@ export function createControlPlane(options: { clock?: Clock } = {}): SolsticeAge
   const events = new DomainEventLog();
   const growth = new GrowthAttributionLedger();
   const kernel = new ComplianceKernel(ledger, authorityIssuer, evidence, events, growth, clock);
+  const alpha = new SolsticeAlpha(createAlphaServices(), authorityIssuer, evidence, events, clock);
+  kernel.attachAlpha(alpha);
   const gate = new ProposalGate(tokens, kernel, events);
   return {
     flags: LIVE_FLAGS,
@@ -53,6 +57,7 @@ export function createControlPlane(options: { clock?: Clock } = {}): SolsticeAge
     growth,
     events,
     evidence,
+    alpha,
   };
 }
 

@@ -36,7 +36,10 @@ export type ProductName =
   | 'OPEN_ACCOUNT'
   | 'SEED_CREDIT'
   | 'CUSTOMER_LIFECYCLE'
-  | 'COST_AVOIDED';
+  | 'COST_AVOIDED'
+  | 'INVESTMENT_ACCOUNT'
+  | 'INVESTMENT_SWEEP'
+  | 'WEEKLY_HARVEST';
 
 export type RuleWhen = {
   readonly action?: string;

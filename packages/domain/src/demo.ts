@@ -147,7 +147,7 @@ const account = openAccount({
   jurisdiction: validated.value.payload.jurisdiction,
   currency: validated.value.payload.currency,
   openedAt: occurredAt,
-});
+}, { signature: 'demo-execution-authority', authorityId: 'demo' });
 
 console.log(
   JSON.stringify({

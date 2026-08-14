@@ -1,84 +1,46 @@
 # Solstice build status
 
-This file describes what is in `main` and what has been tested.
+This file describes what is in the tree and what has been tested.
 It does not describe planned work as if it were done.
 
-**As of 2026-08-13 (commit `de3c633` on `main`): Phase 1 — Banking Simulation is not complete. The Phase 1 exit criterion is not met.**
+**As of 2026-08-14: Phase 6 — Solstice Alpha (simulation) is implemented.**
+Strategies run in shadow and paper trading. No customer capital is at risk.
+`LIVE_TRADING_ENABLED` remains false. No broker, exchange, or market-data
+provider is contacted.
 
 ---
 
 ## How to run what exists
 
-There is one end-to-end demo. It lives at `packages/domain/src/demo.ts`.
-It is invoked from that package:
-
 ```bash
-cd packages/domain && npm test
-cd packages/domain && npm run demo
+npm test
+npm run demo
+npm run ci
 ```
 
-There is no root `package.json` test script on `main`. Output from the demo
-goes to **standard output** (the terminal). The demo does not write files.
-
-The demo prints one JSON object per step, then the line `demo: ok`.
-It shows a customer being opened as a prospect, legal status changes, and
-one illegal change (`CLOSED` → `ACTIVE`) being rejected as a typed error.
-It does not open an account, post deposits, show a balance, or verify an
-evidence hash chain.
+`npm run demo` runs the Phase 4–5 platform demo, then `demo/phase6.ts`.
+Both print `demo: ok` / `phase-6 demo: ok`.
 
 ---
 
-## What is implemented and tested on `main`
+## Phase 6
 
 | Item | Status |
 | --- | --- |
-| Customer domain (`packages/domain`) | Implemented. 30 tests pass. |
-| Customer demo (`packages/domain/src/demo.ts`) | Implemented. Runs to `demo: ok`. |
-| ADR-0006 policy engine language | Proposed document only. No engine, no packs. |
-| ADR-0008 persistence layer | Proposed document only. No database, no repositories. |
-| Compliance Kernel | Not in `main`. |
-| Execution Authority (signed, short-lived) | Not in `main`. |
-| Account opening through the Kernel | Not in `main`. |
-| Evidence Vault and hash-chain verifier | Not in `main`. |
-| Ledger / simulated deposits | Not in `main`. |
-| Class-segregated balance read model | Not in `main`. |
-| Capability / live-money flags | Not in `main`. |
-| Phase 1 exit-criterion test | Not in `main`. |
+| Investment account opening (Kernel ActionIntent) | Implemented. Refuses if agreement, risk profile, disclosure, or transfer authorization is absent. |
+| Sweep Bridge `DEPOSIT_TO_INVESTMENT_CASH_SWEEP` | Implemented. Balanced journals on both sides. Undefined pairs refused. |
+| Distinct investment cash vs securities positions | Implemented. |
+| Portfolio engine (cost basis, qty, valuation) | Implemented. Corporate actions out of scope. Valuation is never cash. |
+| Realized vs unrealized P&L | Distinct types. Cannot be summed. Unrealized is unsweepable. |
+| Risk Engine | Deterministic. ALLOW / REDUCE / REFUSE. REFUSE is FINAL. |
+| Kill switches | ALL_TRADING, STRATEGY, AGENT_RUNTIME, BROKER_CONNECTIVITY. No AI required. |
+| Model registry | RELEASED validation gate is structural. Covers trading, AML, fraud, personalization, data-valuation, recommendation. |
+| Strategies | Mean reversion, momentum, market-neutral pair. Seeded. Proposals only. |
+| Shadow / paper execution | Paper ledger only. ExecutionAuthority required. |
+| Weekly Harvest | Realized settled only. 0/25/50/75/100%. Class bridge back to deposits. |
+| Phase 6 exit-criterion test | `tests/phase-6-solstice-alpha.test.ts` |
+| Local CI | `npm run ci` — ok (2026-08-14). 170 tests pass, 0 fail. |
 
-Test count on `main`: **30 passed, 0 failed** (`packages/domain`).
+## LIVE_* flags
 
----
-
-## Phase 1 exit criterion
-
-The exit criterion is true only when all of the following can be shown in
-one place, against running code, with no assertion relaxed:
-
-1. A person can open an account, and that opening happens only with a valid Execution Authority from the Compliance Kernel.
-2. A balance can be read and is segregated by class (insured deposits are not mixed with other classes).
-3. Every state change in that flow produced an evidence record.
-4. The evidence hash chain verifies end to end.
-5. Deposit journals balance (debits equal credits).
-6. A refused account opening produced evidence and created no account.
-
-**None of those six points hold on `main`.** There is no Kernel, no
-Execution Authority, no account service, no ledger, no deposits, and no
-Evidence Vault in this tree.
-
-Work on those pieces exists on unmerged branches. Those branches are not
-one product: they use different layouts (`packages/` vs repository-root
-`src/`), different demos, and different account-class names. They are not
-treated as delivered.
-
-A separate open pull request named a “Phase 1 exit-criterion” test that
-returns success when account, balance, or evidence files are missing.
-That is not this criterion. This repository does not accept a pass that
-skips a missing path.
-
----
-
-## What this means
-
-A person cannot open an account in this repository and see a class-segregated
-balance with every state change evidenced. Phase 1 is therefore not done.
-Closing issues or merging unrelated documents does not change that.
+All remain `false`. `ENVIRONMENT` remains `simulation`.

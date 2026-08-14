@@ -1,5 +1,5 @@
 /**
- * Growth Attribution Ledger — 13 typed sources and 4 realization classes.
+ * Growth Attribution Ledger — 14 typed sources and 4 realization classes.
  *
  * Cost-avoided items are NEVER income.
  * Unrealized is NEVER withdrawable cash.
@@ -10,6 +10,7 @@ export const GROWTH_SOURCES = [
   'INTEREST_INCOME',
   'DIVIDEND_INCOME',
   'REALIZED_INVESTMENT_GAIN',
+  'REALIZED_INVESTMENT_LOSS',
   'UNREALIZED_MARK_TO_MARKET',
   'CASHBACK',
   'CARD_REWARD_PENDING',
@@ -33,7 +34,7 @@ export const REALIZATION_CLASSES = [
 
 export type RealizationClass = (typeof REALIZATION_CLASSES)[number];
 
-export const GROWTH_SOURCE_COUNT = 13 as const;
+export const GROWTH_SOURCE_COUNT = 14 as const;
 export const REALIZATION_CLASS_COUNT = 4 as const;
 
 /**
@@ -46,6 +47,7 @@ export const CANONICAL_REALIZATION: {
   INTEREST_INCOME: 'SETTLED_CASH',
   DIVIDEND_INCOME: 'SETTLED_CASH',
   REALIZED_INVESTMENT_GAIN: 'SETTLED_CASH',
+  REALIZED_INVESTMENT_LOSS: 'SETTLED_CASH',
   UNREALIZED_MARK_TO_MARKET: 'UNREALIZED',
   CASHBACK: 'SETTLED_CASH',
   CARD_REWARD_PENDING: 'PENDING',
@@ -62,6 +64,7 @@ export const SETTLED_CASH_SOURCES: readonly GrowthSource[] = [
   'INTEREST_INCOME',
   'DIVIDEND_INCOME',
   'REALIZED_INVESTMENT_GAIN',
+  'REALIZED_INVESTMENT_LOSS',
   'CASHBACK',
 ];
 

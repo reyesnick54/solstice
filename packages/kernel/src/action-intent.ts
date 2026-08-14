@@ -25,6 +25,9 @@ export const ACTION_KINDS = [
   'SEND_PAYMENT',
   'COMPENSATE_PAYMENT',
   'RECORD_COST_AVOIDED',
+  'OPEN_INVESTMENT_ACCOUNT',
+  'SWEEP_DEPOSIT_TO_INVESTMENT',
+  'WEEKLY_HARVEST',
 ] as const;
 
 export type ActionKind = (typeof ACTION_KINDS)[number];

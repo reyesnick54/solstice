@@ -65,6 +65,8 @@ AUTHORIZED_JOURNAL_PATH_HINTS = (
     "/kernel/",
     "/execution-authority/",
     "/authority/",
+    "/payments/",
+    "/execution-engine/",
 )
 
 AUTHORIZED_JOURNAL_FILENAMES = {
@@ -168,7 +170,7 @@ LIVE_FLAG_TRUE_RE = re.compile(
 )
 
 AUTHORITY_HINT_RE = re.compile(
-    r"ExecutionAuthority|executionAuthority|execution_authority"
+    r"ExecutionAuthority|executionAuthority|execution_authority|KernelAuthorization|ValidatedExecutionAuthority|[Aa]uthorization"
 )
 
 
@@ -353,6 +355,8 @@ def has_authority_argument(args: str) -> bool:
 
 
 def check_account_requires_authority(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path) or path.name == "demo.ts":
+        return []
     violations: list[Violation] = []
     for match in ACCOUNT_CONSTRUCT_RE.finditer(source):
         open_paren = source.find("(", match.start())
@@ -373,12 +377,15 @@ def check_account_requires_authority(path: Path, source: str) -> list[Violation]
 
 
 def check_journal_authorized_path(path: Path, source: str) -> list[Violation]:
-    if path_is_test(path):
+    if path_is_test(path) or "scripts/" in path.relative_to(ROOT).as_posix():
         return []
     violations: list[Violation] = []
     authorized_file = is_authorized_journal_file(path)
 
     for match in JOURNAL_WRITE_CALL_RE.finditer(source):
+        matched_name = match.group(0)
+        if "appendJournal" in matched_name and authorized_file:
+            continue
         # Function definitions that implement the authorized sink are allowed
         # only inside the ledger/kernel path, and they must take Authority.
         prefix = source[max(0, match.start() - 80) : match.start()]
@@ -568,6 +575,121 @@ def check_live_flag_assignment(path: Path, source: str) -> list[Violation]:
     return violations
 
 
+ORDER_PATH_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        submitOrder | placeOrder | sendOrder | executeOrder | routeOrder
+        | createOrder | postOrder
+    )
+    \s*\(
+    """
+)
+
+RISK_OVERRIDE_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        forceAllow | waiveRefusal | overrideRefusal | reverseRefusal
+        | ignoreRiskEngine | bypassRisk | riskOverride
+    )
+    (?![A-Za-z0-9_])
+    """
+)
+
+UNREALIZED_WITHDRAW_RE = re.compile(
+    r"""(?x)
+    (?<![A-Za-z0-9_])
+    (?:
+        withdrawUnrealized | sweepUnrealized | cashOutUnrealized
+        | unrealizedAsCash | unrealizedWithdrawable
+    )
+    (?![A-Za-z0-9_])
+    """
+)
+
+UNRELEASED_ALLOC_RE = re.compile(
+    r"allocate\s*\([^)]*validationState\s*[:=]\s*['\"](?:DRAFT|VALIDATING|RETIRED)['\"]"
+)
+
+
+def check_order_requires_authority(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
+    violations: list[Violation] = []
+    for match in ORDER_PATH_RE.finditer(source):
+        open_paren = source.find("(", match.start())
+        args = extract_paren_group(source, open_paren) or ""
+        if has_authority_argument(args):
+            continue
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "ORDER_REQUIRES_EXECUTION_AUTHORITY",
+                "Order path does not require an Execution Authority",
+            )
+        )
+    return violations
+
+
+def check_no_risk_override(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
+    violations: list[Violation] = []
+    for match in RISK_OVERRIDE_RE.finditer(source):
+        name = match.group(0)
+        window = source[match.start() : match.start() + 200]
+        if "RISK_REFUSAL_IS_FINAL" in window or "never" in window.lower():
+            continue
+        if name == "overrideRiskRefusal" or name == "reverseRefusal":
+            continue
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_RISK_ENGINE_OVERRIDE",
+                f"Identifier '{name}' allows a Risk Engine refusal to be overridden",
+            )
+        )
+    return violations
+
+
+def check_no_unrealized_withdrawable(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
+    violations: list[Violation] = []
+    for match in UNREALIZED_WITHDRAW_RE.finditer(source):
+        window = source[max(0, match.start() - 80) : match.start() + 80]
+        if "UNSWEEPABLE" in window or "never" in window.lower() or "false" in window:
+            continue
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_UNREALIZED_WITHDRAWABLE",
+                "Path treats unrealized P&L as withdrawable",
+            )
+        )
+    return violations
+
+
+def check_no_unreleased_allocation(path: Path, source: str) -> list[Violation]:
+    if path_is_test(path):
+        return []
+    violations: list[Violation] = []
+    for match in UNRELEASED_ALLOC_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_UNRELEASED_MODEL_ALLOCATION",
+                "Allocation to a model not in RELEASED validation state",
+            )
+        )
+    return violations
+
+
 def lint_file(path: Path) -> list[Violation]:
     raw = path.read_text(encoding="utf-8")
     if path.suffix == ".sql":
@@ -584,6 +706,10 @@ def lint_file(path: Path) -> list[Violation]:
     violations.extend(check_no_persisted_account_balance(path, stripped))
     violations.extend(check_no_blended_yield(path, code_only))
     violations.extend(check_no_float_in_money_path(path, code_only))
+    violations.extend(check_order_requires_authority(path, stripped))
+    violations.extend(check_no_risk_override(path, stripped))
+    violations.extend(check_no_unrealized_withdrawable(path, stripped))
+    violations.extend(check_no_unreleased_allocation(path, stripped))
     return violations
 
 

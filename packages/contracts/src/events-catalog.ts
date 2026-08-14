@@ -31,6 +31,23 @@ export const EVENT_CATALOG = [
   'kernel.intent.refused',
   'execution_authority.issued',
   'ledger.journal.posted',
+  'investment.account.opened',
+  'investment.account.refused',
+  'investment.sweep.posted',
+  'investment.sweep.refused',
+  'risk.verdict.allow',
+  'risk.verdict.reduce',
+  'risk.verdict.refuse',
+  'risk.kill_switch.engaged',
+  'model.registered',
+  'model.allocation.refused',
+  'strategy.proposal.emitted',
+  'execution.shadow.recorded',
+  'execution.paper.fill',
+  'harvest.posted',
+  'harvest.refused',
+  'tournament.metrics.recorded',
+  'strategy.lifecycle.approved',
 ] as const;
 
 export type CatalogEventName = (typeof EVENT_CATALOG)[number];

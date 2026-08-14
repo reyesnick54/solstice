@@ -30,3 +30,13 @@ packages/agent/ @reyesnick54
 
 docs/architecture/ @reyesnick54
 AGENTS.md @reyesnick54
+
+# Phase 6 — Solstice Alpha
+services/risk-engine/ @reyesnick54
+services/execution-engine/ @reyesnick54
+services/model-registry/ @reyesnick54
+packages/risk-engine/ @reyesnick54
+packages/execution-engine/ @reyesnick54
+packages/model-registry/ @reyesnick54
+packages/investments/ @reyesnick54
+packages/strategies/ @reyesnick54

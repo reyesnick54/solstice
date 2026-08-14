@@ -129,3 +129,83 @@ export type {
 export type { RecordedFactor } from './recorded-factor.ts';
 
 export type { AgentProposal, AgentProposalHasNoAuthority } from './proposal.ts';
+
+export type {
+  CustomerRiskProfile,
+  CustomerTransferAuthorization,
+  HarvestableProfit,
+  HarvestSharePercent,
+  InvestmentAccountAgreement,
+  InvestmentAccountPreconditions,
+  InvestmentDisclosure,
+  InvestmentLegalClass,
+  InvestmentPosition,
+  InvestmentPositionClass,
+  MissingInvestmentPrecondition,
+  PortfolioValuation,
+  QuantityMicros,
+  RealizedInvestmentLoss,
+  RealizedSettledProfit,
+  RejectUnrealized,
+  SimulatedPrice,
+  UnrealizedPnL,
+} from './investment-types.ts';
+export {
+  HARVEST_SHARES,
+  INVESTMENT_LEGAL_CLASSES,
+  INVESTMENT_POSITION_CLASSES,
+  isHarvestShare,
+  SHARE_MICROS,
+} from './investment-types.ts';
+
+export type {
+  AdmissibleVerdict,
+  KillSwitchScope,
+  KillSwitchScopeKind,
+  RiskAllow,
+  RiskLimits,
+  RiskOverridePath,
+  RiskReduce,
+  RiskRefuse,
+  RiskRequest,
+  RiskVerdict,
+  RiskLimitType,
+} from './risk-types.ts';
+export {
+  isAdmissible,
+  isFinalRefusal,
+  RISK_LIMIT_TYPES,
+} from './risk-types.ts';
+
+export type {
+  AllocationGrant,
+  AllocationRefusal,
+  DeploymentState,
+  ModelApprovalSignature,
+  ModelPurpose,
+  ModelRecord,
+  ModelRiskClass,
+  MonitoringState,
+  ReleasedModel,
+  ReleaseState,
+  ValidationState,
+} from './model-types.ts';
+export {
+  DEPLOYMENT_STATES,
+  isReleasedModel,
+  MODEL_PURPOSES,
+  MODEL_RISK_CLASSES,
+  MONITORING_STATES,
+  RELEASE_STATES,
+  VALIDATION_STATES,
+} from './model-types.ts';
+
+export type {
+  LifecycleApproval,
+  StrategyClass,
+  StrategyLifecycleStage,
+  StrategyProposal,
+  TournamentMetrics,
+  WeightRecommendation,
+} from './strategy-types.ts';
+export { STRATEGY_CLASSES, STRATEGY_LIFECYCLE } from './strategy-types.ts';
