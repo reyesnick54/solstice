@@ -5,14 +5,19 @@ import type { DomainEventLog } from '../../../packages/events/src/events.ts';
 import type { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import type { KernelFacts } from '../../../packages/kernel/src/proofs.ts';
 import type { GrowthAttributionLedger } from '../../../packages/ledger/src/growth.ts';
+import {
+  existingJournalFingerprint,
+  journalFingerprint,
+} from '../../../packages/ledger/src/invariants.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
-import type { Journal } from '../../../packages/ledger/src/types.ts';
 import {
   findClassBridge,
+  LedgerInvariantError,
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
   SIMULATION_FUNDING_SOURCE_ID,
   type ClassBridge,
+  type Journal,
 } from '../../../packages/ledger/src/types.ts';
 import { Money } from '../../../packages/money/src/money.ts';
 import type {
@@ -293,6 +298,17 @@ export class MoneyMovementService {
   }): MoneyMovementOutcome {
     const existing = this.ledger.getJournalByIdempotencyKey(input.intent.idempotencyKey);
     if (existing) {
+      const replayPostings = input.buildPostings(input.amount).postings;
+      const next = journalFingerprint({
+        actionType: input.intent.actionType,
+        postings: replayPostings,
+      });
+      if (next !== existingJournalFingerprint(existing)) {
+        throw new LedgerInvariantError(
+          'IDEMPOTENCY',
+          'idempotency key already bound to a different journal',
+        );
+      }
       this.evidence.seal(`${input.kind}_IDEMPOTENT_REPLAY`, {
         intentId: input.intent.id,
         journalId: existing.id,

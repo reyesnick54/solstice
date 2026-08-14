@@ -88,6 +88,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/evidence` — hash-chained Evidence Vault
 - `packages/events` — versioned domain events
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags
+- `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
+- `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
 - `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
 - `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
@@ -99,6 +101,10 @@ npm install
 npm test
 npm run demo
 npm run ci
+npm run db:up
+npm run db:migrate
+npm run test:persistence
+npm run db:down
 ```
 
 ## What CI checks, in order
@@ -111,4 +117,6 @@ npm run ci
 6. Typecheck
 7. Secret scan
 
-Do not skip, reorder, or weaken these stages.
+A separate GitHub Actions job starts empty PostgreSQL, applies migrations, and
+runs persistence integration tests. Do not fold that job into the unit-test
+stage. Do not skip, reorder, or weaken the seven stages above.

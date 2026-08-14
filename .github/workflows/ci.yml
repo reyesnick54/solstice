@@ -43,3 +43,42 @@ jobs:
 
       - name: Secret scan
         run: python3 scripts/secret-scan.py
+
+  persistence:
+    name: postgres → migrate → persistence-integration
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: solstice_bootstrap
+          POSTGRES_PASSWORD: solstice_dev_only_not_for_production
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U solstice_bootstrap -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      SOLSTICE_PG_HOST: 127.0.0.1
+      SOLSTICE_PG_PORT: "5432"
+      SOLSTICE_PERSISTENCE_TEST: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install
+
+      - name: Bootstrap and migrate empty databases
+        run: npm run db:migrate
+
+      - name: Persistence integration tests
+        run: npm run test:persistence

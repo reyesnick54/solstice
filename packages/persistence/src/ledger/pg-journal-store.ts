@@ -1,0 +1,108 @@
+import type { PoolClient } from 'pg';
+
+import type { JournalPersistSink } from '../../../ledger/src/journal.ts';
+import { LedgerInvariantError, type Journal } from '../../../ledger/src/types.ts';
+import type { ExecutionAuthority } from '../../../permissions/src/execution-authority.ts';
+import { logPersistenceEvent } from '../logging.ts';
+import { isUniqueViolation } from '../postgres/write.ts';
+
+/**
+ * PostgreSQL adapter behind Ledger.postJournal.
+ * This is not a second ledger. It persists journals the Ledger already accepted.
+ */
+export class PostgresJournalStore implements JournalPersistSink {
+  private readonly pending: Array<{
+    readonly journal: Journal;
+    readonly executionAuthority: ExecutionAuthority;
+  }> = [];
+
+  queueAcceptedJournal(journal: Journal, executionAuthority: ExecutionAuthority): void {
+    if (!executionAuthority || executionAuthority.authorityId !== journal.executionAuthorityId) {
+      throw new LedgerInvariantError(
+        'AUTHORITY',
+        'durable journal append requires the Execution Authority that authorized the journal',
+      );
+    }
+    this.pending.push({ journal, executionAuthority });
+  }
+
+  takePending(): readonly { journal: Journal; executionAuthority: ExecutionAuthority }[] {
+    return this.pending.splice(0, this.pending.length);
+  }
+
+  async flush(client: PoolClient): Promise<void> {
+    for (const item of this.takePending()) {
+      await insertAuthorizedJournal(client, item.journal, item.executionAuthority);
+    }
+  }
+}
+
+async function insertAuthorizedJournal(
+  client: PoolClient,
+  journal: Journal,
+  executionAuthority: ExecutionAuthority,
+): Promise<void> {
+  if (executionAuthority.authorityId !== journal.executionAuthorityId) {
+    throw new LedgerInvariantError(
+      'AUTHORITY',
+      'Execution Authority does not bind this journal',
+    );
+  }
+  try {
+    await client.query(
+      `INSERT INTO ledger.journal (
+         id, idempotency_key, execution_authority_id, action_type, asset,
+         class_bridge_name, memo, created_at
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+      [
+        journal.id,
+        journal.idempotencyKey,
+        journal.executionAuthorityId,
+        journal.actionType,
+        journal.asset,
+        journal.classBridgeName ?? null,
+        journal.memo ?? null,
+        journal.createdAt,
+      ],
+    );
+    for (let ordinal = 0; ordinal < journal.postings.length; ordinal += 1) {
+      const posting = journal.postings[ordinal]!;
+      await client.query(
+        `INSERT INTO ledger.posting (
+           id, journal_id, account_id, direction, currency, minor_units, ordinal
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+        [
+          posting.id,
+          journal.id,
+          posting.accountId,
+          posting.direction,
+          posting.amount.currency,
+          posting.amount.minorUnits.toString(),
+          ordinal,
+        ],
+      );
+    }
+  } catch (error) {
+    if (isUniqueViolation(error)) {
+      logPersistenceEvent({
+        level: 'error',
+        code: 'JOURNAL_IDEMPOTENCY_CONFLICT',
+        domain: 'ledger',
+        message: 'journal idempotency key already persisted',
+        journalId: journal.id,
+      });
+      throw new LedgerInvariantError(
+        'IDEMPOTENCY',
+        'idempotency key already bound to a different journal',
+      );
+    }
+    logPersistenceEvent({
+      level: 'error',
+      code: 'JOURNAL_PERSIST_FAILED',
+      domain: 'ledger',
+      message: 'failed to persist an authorized journal',
+      journalId: journal.id,
+    });
+    throw error;
+  }
+}

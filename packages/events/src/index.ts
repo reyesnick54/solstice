@@ -1,5 +1,6 @@
 export {
   DomainEventLog,
+  type EventPersistSink,
   type AccountOpenedV1,
   type DepositPostedV1,
   type DomainEvent,

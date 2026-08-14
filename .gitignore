@@ -9,3 +9,5 @@ __pycache__/
 *.py[cod]
 .npm/
 *.log
+.env
+infra/postgres/.env

@@ -15,6 +15,10 @@ export type EvidenceRecord = {
   readonly sealedAt: string;
 };
 
+export type EvidencePersistSink = {
+  appendEvidence(record: EvidenceRecord): void;
+};
+
 /**
  * Append-only evidence hash chain. Every kernel decision — approval and
  * refusal — seals a record. A broken chain is a hard failure.
@@ -22,9 +26,35 @@ export type EvidenceRecord = {
 export class EvidenceVault {
   private readonly records: EvidenceRecord[] = [];
   private readonly clock: Clock;
+  private readonly persist: EvidencePersistSink | undefined;
 
-  constructor(clock: Clock) {
+  constructor(clock: Clock, persist?: EvidencePersistSink) {
     this.clock = clock;
+    this.persist = persist;
+  }
+
+  /**
+   * Reconstruct the chain from durable rows after restart.
+   * Empty-vault only. Does not re-seal and does not write.
+   */
+  hydrateFromPersisted(records: readonly EvidenceRecord[]): void {
+    if (this.records.length !== 0) {
+      throw new Error('cannot hydrate an evidence vault that already has records');
+    }
+    for (const record of records) {
+      this.records.push(Object.freeze({ ...record, payload: deepFreeze(record.payload) }));
+    }
+  }
+
+  /**
+   * Replace in-memory records from durable bytes under a chain lock.
+   * Used so concurrent appenders see the committed tip before sealing.
+   */
+  reloadFromPersisted(records: readonly EvidenceRecord[]): void {
+    this.records.length = 0;
+    for (const record of records) {
+      this.records.push(Object.freeze({ ...record, payload: deepFreeze(record.payload) }));
+    }
   }
 
   seal(kind: string, payload: unknown): EvidenceRecord {
@@ -49,6 +79,7 @@ export class EvidenceVault {
       sealedAt,
     });
     this.records.push(record);
+    this.persist?.appendEvidence(record);
     return record;
   }
 

@@ -12,9 +12,20 @@ npm run demo
 npm run ci
 ```
 
+PostgreSQL is the durable adapter (local/simulated credentials only):
+
+```
+npm run db:up
+npm run db:migrate
+npm run test:persistence
+npm run db:down
+```
+
 Phase 1 in this tree: customers, Kernel-gated account opening, simulated
 deposits / withdrawals / internal transfers, class-segregated balances,
-and a verified evidence hash chain.
+a verified evidence hash chain, and PostgreSQL persistence behind those
+interfaces. In-memory adapters remain for unit tests.
 
 Real-money rails stay off. `ENVIRONMENT=simulation`. Every `LIVE_*` flag is false.
-ADRs 0006 / 0007 / 0008 remain PROPOSED — not ACCEPTED, not CONFIRMED_BY_COUNSEL.
+ADRs 0006 / 0007 remain PROPOSED. ADR-0008 is engineering-accepted for
+PostgreSQL — not CONFIRMED_BY_COUNSEL. See `docs/architecture/persistence.md`.

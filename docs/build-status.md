@@ -20,10 +20,15 @@ This document describes only what is implemented and tested in this tree.
 - Chunk/capability evaluator so a later task can see whether a required capability is IMPLEMENTED, PARTIAL, PLANNED, or ABSENT. A protected requirement that is not IMPLEMENTED is a stop, not a license to reimplement.
 - ADR index at `docs/architecture/adr/README.md`. ADR-0006 / 0007 / 0008 remain PROPOSED. No legal position is CONFIRMED_BY_COUNSEL.
 - End-to-end demo at `packages/domain/src/demo.ts`.
+- PostgreSQL persistence fabric (`packages/persistence`, `db/` migrations):
+  customers, accounts (no balance column), journals, postings, action-intent
+  audit, execution-authority audit (no signing secret), evidence chain, and
+  domain events survive process restart. In-memory adapters remain for unit
+  tests. ADR-0008 Addendum A records engineering acceptance of Option A.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
-- Persistence / PostgreSQL (ADR-0008 remains PROPOSED).
+- Event outbox/inbox, Kafka, or a streaming fabric (Chunk 3).
 - Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
 - Identity stack / real KYC (ADR-0007 remains PROPOSED).
 - Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
@@ -59,4 +64,8 @@ npm run demo
 npm run typecheck
 npm run scan:secrets
 npm run ci
+npm run db:up
+npm run db:migrate
+npm run test:persistence
+npm run db:down
 ```

@@ -22,6 +22,15 @@ import {
   type Posting,
   type PostJournalRequest,
 } from './types.ts';
+import type { ExecutionAuthority } from '../../permissions/src/execution-authority.ts';
+
+/**
+ * Optional durable sink. PostgreSQL implements this; in-memory tests omit it.
+ * The sink is invoked only after invariants pass. It must not mutate the journal.
+ */
+export type JournalPersistSink = {
+  queueAcceptedJournal(journal: Journal, executionAuthority: ExecutionAuthority): void;
+};
 
 /**
  * Exact journal-posting API
@@ -45,15 +54,51 @@ export class Ledger {
   readonly accounts: AccountRegister;
   private readonly authorityIssuer: AuthorityIssuer;
   private readonly clock: Clock;
+  private readonly persist: JournalPersistSink | undefined;
 
   constructor(
     authorityIssuer: AuthorityIssuer,
     clock: Clock,
     accounts?: AccountRegister,
+    persist?: JournalPersistSink,
   ) {
     this.authorityIssuer = authorityIssuer;
     this.clock = clock;
     this.accounts = accounts ?? new AccountRegister();
+    this.persist = persist;
+  }
+
+  /**
+   * Reconstruct journals from durable storage after process restart.
+   * Does not re-issue authority and does not write. Empty-ledger only.
+   */
+  hydrateFromPersisted(journals: readonly Journal[]): void {
+    if (this.journals.length !== 0 || this.byIdempotency.size !== 0) {
+      throw new LedgerInvariantError(
+        'IMMUTABILITY',
+        'cannot hydrate a ledger that already has journals',
+      );
+    }
+    this.replacePersistedJournals(journals);
+  }
+
+  /**
+   * Replace in-memory journals from durable rows under a concurrency lock.
+   * Used so concurrent money movement sees committed books before NSF checks.
+   * Does not write and does not re-issue authority.
+   */
+  reloadFromPersisted(journals: readonly Journal[]): void {
+    this.journals.length = 0;
+    this.byIdempotency.clear();
+    this.replacePersistedJournals(journals);
+  }
+
+  private replacePersistedJournals(journals: readonly Journal[]): void {
+    for (const journal of journals) {
+      const frozen = freezeJournal(journal);
+      this.journals.push(frozen);
+      this.byIdempotency.set(frozen.idempotencyKey, frozen);
+    }
   }
 
   postJournal(request: PostJournalRequest): Journal {
@@ -125,6 +170,7 @@ export class Ledger {
 
     this.journals.push(journal);
     this.byIdempotency.set(request.idempotencyKey, journal);
+    this.persist?.queueAcceptedJournal(journal, request.executionAuthority);
     return journal;
   }
 

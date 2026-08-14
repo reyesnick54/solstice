@@ -6,4 +6,4 @@ The current implemented/tested inventory lives in `docs/build-status.md`.
 
 This recovery branch consolidates PR #12 (the Phase 1 authorization spine) onto that main. See `docs/build-status.md` for what is in this tree now.
 
-ADRs 0006 / 0007 / 0008 remain PROPOSED documents only.
+ADRs 0006 / 0007 remain PROPOSED. ADR-0008 has an engineering-acceptance addendum; it is not CONFIRMED_BY_COUNSEL.
