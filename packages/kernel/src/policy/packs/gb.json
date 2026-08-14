@@ -1,0 +1,32 @@
+{
+  "packId": "GB",
+  "name": "United Kingdom simulation pack",
+  "description": "Engineering shell for GB simulation. Not a legal opinion. Substantive UK requirements remain RESEARCH_REQUIRED and are not encoded as confirmed law.",
+  "versions": [
+    {
+      "versionId": "gb-sim-v1",
+      "version": "1",
+      "lifecycle": "ACTIVE_SIMULATION",
+      "legalReviewStatus": "RESEARCH_REQUIRED",
+      "effectiveFrom": "2020-01-01T00:00:00.000Z",
+      "rules": [
+        {
+          "ruleId": "gb-sim-shell",
+          "version": "1",
+          "jurisdiction": "GB",
+          "scope": "simulation-shell",
+          "actionTypes": [],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "environment", "value": "simulation" },
+          "effect": "ALLOW",
+          "reasonCode": "SIMULATION_STRUCTURAL_PERMIT",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "REVIEWABLE"
+        }
+      ]
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # ADR-0006: Policy Engine Language
 
-- **Status:** PROPOSED
+- **Status:** PROPOSED (Addendum A: engineering architecture implemented in simulation; not counsel acceptance)
 - **Date:** 2026-08-13
 - **Deciders:** Founders and architecture review. A human must accept or reject this record. This document is not an accepted decision.
 - **Consulted:** None on file. No counsel review of this ADR has happened.
@@ -309,7 +309,31 @@ This ADR is confirmed as *written* when this file exists at `docs/architecture/a
 
 This ADR is confirmed as *accepted* only when a human changes the status. Agents must not do that.
 
-This ADR is confirmed as *implemented* only when all of the following exist: a pack schema, a default-deny evaluator, a production gate on `legalReviewState`, a decision record that includes pack hash, a startup refusal on hash mismatch, and no country rules in application services. None of those exist at the time of writing.
+This ADR is confirmed as *implemented* only when all of the following exist: a pack schema, a default-deny evaluator, a production gate on `legalReviewState`, a decision record that includes pack hash, a startup refusal on hash mismatch, and no country rules in application services. Addendum A records the engineering implementation of those artifacts in simulation. That is not counsel review and is not `CONFIRMED_BY_COUNSEL`.
+
+---
+
+## Addendum A — Engineering implementation (simulation)
+
+**Date:** 2026-08-14
+
+**Engineering disposition:** Option C is implemented inside the existing Compliance Kernel at `packages/kernel/src/policy/`. This addendum does **not** change the ADR to ACCEPTED. A human still accepts or rejects the record. It does **not** mark any legal rule `CONFIRMED_BY_COUNSEL`.
+
+What exists after Chunk 6:
+
+- Versioned JSON jurisdiction packs for US, GB, EU, SA, and AE. They are engineering shells and safe simulation rules.
+- A typed in-process evaluator (`PolicyEngine`) that default-denies, is restrict-only for unconfirmed grants, and is deterministic for the same facts + version.
+- Legal-confidence field `legalReviewStatus` on every rule and version (`DRAFT`, `RESEARCH_REQUIRED`, `COUNSEL_REVIEWED`, `CONFIRMED_BY_COUNSEL`). The loader refuses `CONFIRMED_BY_COUNSEL` because this repository has no documented counsel confirmation.
+- Simulation-only legal-entity capabilities. Live capabilities exist as explicit disabled records. Solstice does not claim licenses.
+- Policy snapshots (pack id, version, content hash, facts hash, evaluated rule ids, reason codes) sealed on every Kernel decision.
+- Manual-review cases that an AI/agent cannot approve. HARD_BLOCK cannot be overridden.
+- PostgreSQL persistence of packs, versions, rules, sources, capabilities, and review cases.
+
+What this does **not** mean:
+
+- Solstice is not legally approved in any jurisdiction.
+- Unconfirmed rules are not legal fact.
+- Production/live evaluation remains fail-closed (`ENVIRONMENT=simulation`, every `LIVE_*` flag false).
 
 ---
 

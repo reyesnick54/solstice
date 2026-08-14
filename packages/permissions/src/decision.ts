@@ -43,6 +43,20 @@ export type ProofEvaluation = {
  * On any other status the authority is null. Callers must return this
  * object unchanged when they do not proceed — never downgrade or reinterpret.
  */
+export type PolicyDecisionRef = {
+  readonly packId: string | null;
+  readonly packVersion: string | null;
+  readonly versionId: string | null;
+  readonly packHash: string | null;
+  readonly factsHash: string;
+  readonly evaluatedRuleIds: readonly string[];
+  readonly decision: DecisionStatus;
+  readonly reasonCodes: readonly string[];
+  readonly jurisdiction: string | null;
+  readonly legalConfidence: string;
+  readonly reviewId: string | null;
+};
+
 export type AuthorizationDecision = {
   readonly status: DecisionStatus;
   readonly intentId: string;
@@ -51,6 +65,7 @@ export type AuthorizationDecision = {
   readonly executionAuthority: ExecutionAuthority | null;
   readonly evidenceRecordId: string;
   readonly decidedAt: UtcInstant;
+  readonly policySnapshot?: PolicyDecisionRef;
 };
 
 export function combineProofs(proofs: readonly ProofEvaluation[]): DecisionStatus {

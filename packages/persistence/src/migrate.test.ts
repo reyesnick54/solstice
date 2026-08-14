@@ -65,6 +65,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v002.sql, /PRIMARY KEY \(consumer_id, event_id\)/);
   });
 
+  it('customer V002 persists policy packs without executable rule code', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v002 = files.find((file) => file.version === 2);
+    assert.ok(v002);
+    assert.match(v002.sql, /CREATE TABLE customer\.policy_pack/);
+    assert.match(v002.sql, /CREATE TABLE customer\.policy_version/);
+    assert.match(v002.sql, /CREATE TABLE customer\.policy_rule/);
+    assert.match(v002.sql, /CREATE TABLE customer\.legal_entity_capability/);
+    assert.match(v002.sql, /CREATE TABLE customer\.manual_review_case/);
+    assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v002.sql), false);
+  });
+
   it('ledger V003 treats inbox as delivery state without a domain_event FK', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v003 = files.find((file) => file.version === 3);

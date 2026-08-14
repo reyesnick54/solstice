@@ -102,6 +102,10 @@ export async function createPostgresSimulationRuntime(
   runtime.ledger.hydrateFromPersisted(loaded.journals);
   runtime.evidence.hydrateFromPersisted(loaded.evidence);
   runtime.events.hydrateFromPersisted(loaded.events);
+  if (loaded.policy.versions.length > 0) {
+    runtime.kernel.policy.registry.hydrate(loaded.policy);
+    runtime.kernel.policy.reviews.hydrate(loaded.policy.reviews);
+  }
   for (const account of loaded.accounts) {
     runtime.ledger.accounts.registerOpenedAccount(account);
   }
@@ -112,7 +116,13 @@ export async function createPostgresSimulationRuntime(
   }
   runtime.accountsService.hydrateOpenOutcomes(openOutcomes);
 
-  await persistCustomerUnit(session, { legalEntities: legalEntities.list() });
+  await persistCustomerUnit(session, {
+    legalEntities: legalEntities.list(),
+    policy: {
+      ...runtime.kernel.policy.registry.snapshot(),
+      reviews: runtime.kernel.policy.reviews.list(),
+    },
+  });
   await persistLedgerUnit(session, {
     products: products.list(),
     ledgerAccounts: runtime.ledger.accounts.list(),
@@ -228,6 +238,10 @@ class DurableRuntime implements DurableSimulationRuntime {
 
         await persistCustomerUnit(this.session, {
           customers: this.runtime.customers.list(),
+          policy: {
+            ...this.runtime.kernel.policy.registry.snapshot(),
+            reviews: this.runtime.kernel.policy.reviews.list(),
+          },
         });
         await persistLedgerUnit(this.session, {
           ...(lockAccountId ? { lockAccountId } : {}),

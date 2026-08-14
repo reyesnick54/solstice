@@ -72,7 +72,17 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
   const statements: Array<{ database: string; sql: string }> = [
     {
       database: DATABASES.customer,
-      sql: 'TRUNCATE TABLE customer.customer, customer.legal_entity',
+      sql: `TRUNCATE TABLE
+              customer.manual_review_case,
+              customer.policy_rule,
+              customer.policy_version,
+              customer.policy_product_binding,
+              customer.legal_entity_capability,
+              customer.policy_source,
+              customer.policy_pack,
+              customer.customer,
+              customer.legal_entity
+            RESTART IDENTITY CASCADE`,
     },
     {
       database: DATABASES.ledger,

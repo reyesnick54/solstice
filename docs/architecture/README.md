@@ -7,5 +7,6 @@
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 - [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics
+- Policy engine — `packages/kernel/src/policy/` (ADR-0006 Option C, simulation only)
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

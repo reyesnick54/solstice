@@ -8,6 +8,7 @@ import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { FrozenClock } from '../../../packages/config/src/clock.ts';
 import { addMs } from '../../../packages/config/src/clock.ts';
 import { AUTHORITY_TTL_MS } from '../../../packages/permissions/src/execution-authority.ts';
+import { PRODUCT_DEMAND_USD_GB, SOLSTICE_UK } from './catalog.ts';
 import { activateCustomer, openIntent } from './test-helpers.ts';
 import { createSimulationRuntime } from './runtime.ts';
 
@@ -72,6 +73,8 @@ describe('Kernel-gated account opening', () => {
       actor: { id: intent.actorId, capabilities: [intent.actionType] },
       customer,
       jurisdiction: customer.jurisdiction,
+      product: PRODUCT_DEMAND_USD_GB,
+      legalEntity: SOLSTICE_UK,
     });
     assert.equal(decision.status, 'ALLOW');
     assert.ok(decision.executionAuthority);

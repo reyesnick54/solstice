@@ -17,6 +17,10 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'InternalTransferPosted', version: 1, status: 'current' },
   { eventType: 'CustomerStatusChanged', version: 1, status: 'current' },
   { eventType: 'KernelDecisionRecorded', version: 1, status: 'current' },
+  { eventType: 'PolicyPackActivated', version: 1, status: 'current' },
+  { eventType: 'PolicyPackRetired', version: 1, status: 'current' },
+  { eventType: 'PolicyReviewRequested', version: 1, status: 'current' },
+  { eventType: 'PolicyReviewDecided', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

@@ -357,6 +357,7 @@ export class MoneyMovementService {
     const legalEntity = customerAccount
       ? this.legalEntities.get(customerAccount.legalEntityId)
       : undefined;
+    const product = customerAccount ? this.products.get(customerAccount.productId) : undefined;
 
     const facts: KernelFacts = {
       actor: {
@@ -365,6 +366,7 @@ export class MoneyMovementService {
       },
       ...(customer ? { customer } : {}),
       ...(legalEntity ? { legalEntity } : {}),
+      ...(product ? { product } : {}),
       ...(customerAccount
         ? { jurisdiction: customerAccount.jurisdiction }
         : customer

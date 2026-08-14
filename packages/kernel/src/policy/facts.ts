@@ -1,0 +1,146 @@
+import type { Account } from '../../../domain/src/account.ts';
+import type { Customer } from '../../../domain/src/customer.ts';
+import type { Jurisdiction, Residency } from '../../../domain/src/jurisdiction.ts';
+import type { LegalEntity } from '../../../domain/src/legal-entity.ts';
+import type { Product } from '../../../domain/src/product.ts';
+import type { Money } from '../../../money/src/money.ts';
+import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
+import { ENVIRONMENT } from '../../../config/src/flags.ts';
+import type { KernelActor, KernelFacts } from '../proofs.ts';
+import { hashCanonical } from './hash.ts';
+import type { FactMap } from './predicates.ts';
+import type { CapabilityEnvironment, PolicyPackId } from './types.ts';
+
+/**
+ * Typed policy facts. Identity fields are hashes/status codes, not raw PII.
+ * Citizenship is optional and is never inferred.
+ */
+export type PolicyIdentityFacts = {
+  readonly kycState?: string;
+  readonly kycRecordVersion?: number;
+  readonly citizenship?: Jurisdiction;
+  readonly residency?: Residency;
+};
+
+export type PolicyFactInput = {
+  readonly actor: KernelActor;
+  readonly actionType: string;
+  readonly customer?: Customer;
+  readonly legalEntity?: LegalEntity;
+  readonly product?: Product;
+  readonly jurisdiction?: Jurisdiction;
+  readonly amount?: Money;
+  readonly sourceAccount?: Account;
+  readonly destinationAccount?: Account;
+  readonly identity?: PolicyIdentityFacts;
+  readonly serviceLocation?: Jurisdiction;
+  readonly transactionOrigin?: Jurisdiction;
+  readonly transactionDestination?: Jurisdiction;
+  readonly policyPin?: {
+    readonly packId: PolicyPackId;
+    readonly versionId: string;
+  };
+  readonly capabilityEnabled?: boolean;
+  readonly capabilityEnvironment?: CapabilityEnvironment;
+  readonly offeringMode?: string;
+};
+
+export function policyFactsFromKernel(
+  intent: ActionIntent,
+  facts: KernelFacts,
+): PolicyFactInput {
+  const identity: PolicyIdentityFacts = {
+    ...(facts.customer
+      ? {
+          kycState: facts.customer.verification.kycState,
+          kycRecordVersion: facts.customer.verification.kycRecordVersion,
+          residency: facts.customer.residency,
+        }
+      : {}),
+    ...(facts.identity ?? {}),
+  };
+  return {
+    actor: facts.actor,
+    actionType: intent.actionType,
+    ...(facts.customer ? { customer: facts.customer } : {}),
+    ...(facts.legalEntity ? { legalEntity: facts.legalEntity } : {}),
+    ...(facts.product ? { product: facts.product } : {}),
+    ...(facts.jurisdiction ? { jurisdiction: facts.jurisdiction } : {}),
+    ...(facts.amount ? { amount: facts.amount } : {}),
+    ...(facts.sourceAccount ? { sourceAccount: facts.sourceAccount } : {}),
+    ...(facts.destinationAccount ? { destinationAccount: facts.destinationAccount } : {}),
+    identity,
+    ...(facts.serviceLocation ? { serviceLocation: facts.serviceLocation } : {}),
+    ...(facts.transactionOrigin ? { transactionOrigin: facts.transactionOrigin } : {}),
+    ...(facts.transactionDestination
+      ? { transactionDestination: facts.transactionDestination }
+      : {}),
+    ...(facts.policyPin ? { policyPin: facts.policyPin } : {}),
+  };
+}
+
+export function toFactMap(input: PolicyFactInput): FactMap {
+  return {
+    'actor.id': input.actor.id,
+    actionType: input.actionType,
+    environment: ENVIRONMENT,
+    'customer.status': input.customer?.status,
+    'customer.kycState': input.customer?.verification.kycState,
+    'customer.kycRecordVersion': input.customer?.verification.kycRecordVersion,
+    'customer.jurisdiction': input.customer?.jurisdiction,
+    'customer.residency': input.customer?.residency,
+    'customer.legalEntityId': input.customer?.legalEntityId,
+    'identity.kycState': input.identity?.kycState ?? input.customer?.verification.kycState,
+    'identity.kycRecordVersion':
+      input.identity?.kycRecordVersion ?? input.customer?.verification.kycRecordVersion,
+    'identity.citizenship': input.identity?.citizenship,
+    'identity.residency': input.identity?.residency ?? input.customer?.residency,
+    'legalEntity.id': input.legalEntity?.id,
+    'legalEntity.status': input.legalEntity?.status,
+    'legalEntity.jurisdiction': input.legalEntity?.jurisdiction,
+    'product.id': input.product?.id,
+    'product.status': input.product?.status,
+    'product.accountClass': input.product?.accountClass,
+    'product.jurisdiction': input.product?.jurisdiction,
+    'product.currency': input.product?.currency,
+    'product.legalEntityId': input.product?.legalEntityId,
+    'amount.minorUnits': input.amount ? input.amount.minorUnits.toString() : undefined,
+    'amount.currency': input.amount?.currency,
+    serviceLocation: input.serviceLocation,
+    transactionOrigin: input.transactionOrigin,
+    transactionDestination: input.transactionDestination,
+    'capability.enabled': input.capabilityEnabled,
+    'capability.environment': input.capabilityEnvironment,
+    offeringMode: input.offeringMode,
+  };
+}
+
+/**
+ * Hash only non-PII identifiers and status codes so a decision can be
+ * reproduced without storing raw identity documents.
+ */
+export function hashPolicyFacts(input: PolicyFactInput): string {
+  return hashCanonical({
+    actorId: input.actor.id,
+    actionType: input.actionType,
+    environment: ENVIRONMENT,
+    customerId: input.customer?.id ?? null,
+    customerStatus: input.customer?.status ?? null,
+    kycState: input.identity?.kycState ?? input.customer?.verification.kycState ?? null,
+    kycRecordVersion:
+      input.identity?.kycRecordVersion ?? input.customer?.verification.kycRecordVersion ?? null,
+    residency: input.identity?.residency ?? input.customer?.residency ?? null,
+    citizenshipPresent: input.identity?.citizenship !== undefined,
+    legalEntityId: input.legalEntity?.id ?? null,
+    productId: input.product?.id ?? null,
+    jurisdiction: input.jurisdiction ?? null,
+    amountMinorUnits: input.amount ? input.amount.minorUnits.toString() : null,
+    amountCurrency: input.amount?.currency ?? null,
+    sourceAccountId: input.sourceAccount?.id ?? null,
+    destinationAccountId: input.destinationAccount?.id ?? null,
+    serviceLocation: input.serviceLocation ?? null,
+    transactionOrigin: input.transactionOrigin ?? null,
+    transactionDestination: input.transactionDestination ?? null,
+    policyPin: input.policyPin ?? null,
+  });
+}

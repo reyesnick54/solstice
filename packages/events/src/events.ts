@@ -96,13 +96,63 @@ export type KernelDecisionRecordedV1 = VersionedEvent<
   }
 >;
 
+export type PolicyPackActivatedV1 = VersionedEvent<
+  'PolicyPackActivated',
+  1,
+  {
+    readonly packId: string;
+    readonly versionId: string;
+    readonly packHash: string;
+    readonly lifecycle: string;
+  }
+>;
+
+export type PolicyPackRetiredV1 = VersionedEvent<
+  'PolicyPackRetired',
+  1,
+  {
+    readonly packId: string;
+    readonly versionId: string;
+    readonly packHash: string;
+    readonly lifecycle: string;
+  }
+>;
+
+export type PolicyReviewRequestedV1 = VersionedEvent<
+  'PolicyReviewRequested',
+  1,
+  {
+    readonly reviewId: string;
+    readonly decision: string;
+    readonly packId: string | null;
+    readonly versionId: string | null;
+    readonly factsHash: string;
+  }
+>;
+
+export type PolicyReviewDecidedV1 = VersionedEvent<
+  'PolicyReviewDecided',
+  1,
+  {
+    readonly reviewId: string;
+    readonly status: string;
+    readonly decidedByKind: string;
+    readonly packId: string | null;
+    readonly factsHash: string;
+  }
+>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | DepositPostedV1
   | WithdrawalPostedV1
   | InternalTransferPostedV1
   | CustomerStatusChangedV1
-  | KernelDecisionRecordedV1;
+  | KernelDecisionRecordedV1
+  | PolicyPackActivatedV1
+  | PolicyPackRetiredV1
+  | PolicyReviewRequestedV1
+  | PolicyReviewDecidedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

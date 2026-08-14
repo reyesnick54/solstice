@@ -35,6 +35,7 @@ never be two implementations of these systems.
 | Execution Authority | `packages/permissions` | `packages/permissions/src/execution-authority.ts` | IMPLEMENTED |
 | Compliance Kernel | `packages/kernel` | `packages/kernel/src/kernel.ts` | IMPLEMENTED |
 | Proof evaluation | `packages/kernel` | `packages/kernel/src/proofs.ts` | IMPLEMENTED |
+| Policy engine | `packages/kernel` | `packages/kernel/src/policy/engine.ts` | IMPLEMENTED |
 | Evidence Vault | `packages/evidence` | `packages/evidence/src/vault.ts` | IMPLEMENTED |
 | Domain events | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
 | Event fabric (outbox / inbox / replay) | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
@@ -146,7 +147,9 @@ This constitution extends (3). It does not replace (1)–(9).
 ### ADRs
 
 See the [ADR index](./adr/README.md). ADR-0006, both ADR-0007 files, and
-ADR-0008 are **PROPOSED**. None is `CONFIRMED_BY_COUNSEL`.
+ADR-0008 remain **PROPOSED** for human acceptance. ADR-0006 Addendum A
+records engineering implementation of Option C in simulation. None is
+`CONFIRMED_BY_COUNSEL`.
 
 ### LIVE_* flags
 
@@ -265,7 +268,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/permissions` | `packages/domain`, `packages/money`, `packages/config` |
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money` |
 | `services/accounts` | the packages above, including `packages/persistence` |
 | `tools/architectural-linter` | nothing |
 
@@ -327,6 +330,7 @@ flowchart BT
   persistence --> ledger
   persistence --> permissions
   persistence --> money
+  persistence --> kernel
   accounts --> persistence
   evidence --> config
   kernel --> config

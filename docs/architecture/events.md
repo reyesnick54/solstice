@@ -47,6 +47,10 @@ Implemented (functionality that exists today):
 - `ledger.withdrawal_posted` → `WithdrawalPosted`
 - `ledger.internal_transfer_posted` → `InternalTransferPosted`
 - `kernel.decision_recorded` → `KernelDecisionRecorded`
+- `policy.pack_activated` → `PolicyPackActivated`
+- `policy.pack_retired` → `PolicyPackRetired`
+- `policy.review_requested` → `PolicyReviewRequested`
+- `policy.review_decided` → `PolicyReviewDecided`
 
 Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,

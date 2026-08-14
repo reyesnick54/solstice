@@ -163,6 +163,7 @@
         "packages/domain",
         "packages/evidence",
         "packages/events",
+        "packages/kernel",
         "packages/ledger",
         "packages/permissions",
         "packages/money"
@@ -410,6 +411,28 @@
       "protectedSymbols": [],
       "forbiddenAliases": [],
       "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "policy-engine",
+      "name": "Jurisdiction policy engine",
+      "canonicalOwner": "packages/kernel",
+      "canonicalPath": "packages/kernel/src/policy/engine.ts",
+      "publicInterface": "packages/kernel/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "PolicyEngine", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/compliance-kernel",
+        "packages/policy",
+        "packages/policy-engine"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Extends the existing Compliance Kernel. Data packs plus a typed evaluator. Not a second Kernel."
     },
     {
       "id": "evidence-vault",
@@ -732,8 +755,8 @@
     },
     {
       "id": "policy-engine",
-      "status": "PLANNED",
-      "owner": null,
+      "status": "IMPLEMENTED",
+      "owner": "packages/kernel",
       "protected": true,
       "adr": "ADR-0006"
     }
@@ -751,7 +774,7 @@
       "status": "PARTIAL",
       "reservedPaths": ["packages/kernel", "packages/permissions", "packages/evidence"],
       "protected": true,
-      "notes": "Kernel, ActionIntent, Execution Authority, and Evidence Vault are implemented. Policy engine and jurisdiction packs are not."
+      "notes": "Kernel, ActionIntent, Execution Authority, Evidence Vault, and the simulation policy engine are implemented. No jurisdiction pack is legally confirmed."
     },
     {
       "id": "BANKING",
