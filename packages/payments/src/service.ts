@@ -1,0 +1,913 @@
+import type { Clock } from '../../config/src/clock.ts';
+import type { Account } from '../../domain/src/account.ts';
+import type { Customer } from '../../domain/src/customer.ts';
+import { isErr, isOk } from '../../domain/src/result.ts';
+import type { EvidenceVault } from '../../evidence/src/vault.ts';
+import type { DomainEventLog } from '../../events/src/events.ts';
+import { actionTypesFromCapabilities, type IdentityAuthorityPort } from '../../identity/src/index.ts';
+import type { ComplianceKernel } from '../../kernel/src/kernel.ts';
+import type { KernelFacts } from '../../kernel/src/proofs.ts';
+import type { Ledger } from '../../ledger/src/journal.ts';
+import type { Journal } from '../../ledger/src/types.ts';
+import { Money } from '../../money/src/money.ts';
+import type {
+  AcceptFxQuoteIntent,
+  CancelPaymentIntent,
+  CreateBeneficiaryIntent,
+  CreateFxQuoteIntent,
+  InitiatePaymentIntent,
+} from '../../permissions/src/action-types.ts';
+import type { AuthorizationDecision } from '../../permissions/src/decision.ts';
+import type { AuthorityIssuer, ExecutionAuthority } from '../../permissions/src/execution-authority.ts';
+import { validateIntentStructure, type StructuralCatalog } from '../../permissions/src/structural.ts';
+import {
+  captureFeePlan,
+  capturePrincipalPlan,
+  destinationFxPlan,
+  feeIncomePlan,
+  releasePlan,
+  reservePlan,
+  returnDestinationFxPlan,
+  returnDestinationSettlePlan,
+  returnPrincipalPlan,
+  returnSourceFxPlan,
+  settlePlan,
+  SIMULATION_RETURN_POLICY,
+  sourceFxPlan,
+  type PaymentJournalPlan,
+} from './accounting.ts';
+import { freezeBeneficiary, isUsableBeneficiary, type Beneficiary } from './beneficiary.ts';
+import {
+  SimulationBeneficiaryValidator,
+  type BeneficiaryValidationPort,
+} from './beneficiary-validation.ts';
+import {
+  corridorIsSimulationEnabled,
+  findCorridor,
+  findCorridorByPair,
+  type PaymentCorridor,
+} from './corridor.ts';
+import { quoteCanExecute, quoteIsExpired, withQuoteStatus, type FxQuote } from './fx-quote.ts';
+import { SimulationFxProvider, type FxLiquidityProvider } from './fx-provider.ts';
+import { asHoldId, asPaymentId, type PaymentId } from './ids.ts';
+import { postPaymentJournal } from './journals.ts';
+import { freezePayment, transitionPayment, type PaymentOrder } from './payment.ts';
+import { reconcilePayment, type ProviderSettlementReport, type ReconciliationResult } from './reconciliation.ts';
+import { disclosureFromQuote, type PaymentDisclosure } from './responses.ts';
+import { selectRoute, simulationRoutesFor, type PaymentRoute } from './route.ts';
+import { beneficiaryStatusFromScreening, SimulationScreeningAdapter, type ScreeningPort } from './screening.ts';
+import {
+  InProcessSettlementRail,
+  type SettlementOutcome,
+  type SimulatedSettlementRail,
+} from './settlement.ts';
+import { PaymentStore } from './store.ts';
+import { registerPaymentTreasuryBooks } from './treasury.ts';
+
+export type PaymentCatalogPorts = {
+  readonly customers: { get(id: Customer['id']): Customer | undefined };
+  readonly accounts: {
+    get(id: Account['id']): Account | undefined;
+    list(): readonly Account[];
+  };
+  readonly products: StructuralCatalog['products'];
+  readonly legalEntities: StructuralCatalog['legalEntities'];
+};
+
+export type PaymentsServiceOutcome<T> =
+  | { readonly outcome: 'OK'; readonly value: T; readonly decision: AuthorizationDecision; readonly replay?: boolean }
+  | { readonly outcome: 'KERNEL_REFUSED'; readonly decision: AuthorizationDecision }
+  | {
+      readonly outcome: 'REJECTED';
+      readonly code: string;
+      readonly message: string;
+      readonly decision: AuthorizationDecision | null;
+      readonly evidenceId?: string;
+    };
+
+export class PaymentsService {
+  private readonly kernel: ComplianceKernel;
+  private readonly issuer: AuthorityIssuer;
+  private readonly ledger: Ledger;
+  private readonly evidence: EvidenceVault;
+  private readonly events: DomainEventLog;
+  private readonly clock: Clock;
+  private readonly catalog: PaymentCatalogPorts;
+  private readonly identity: IdentityAuthorityPort;
+  private readonly store: PaymentStore;
+  private readonly validator: BeneficiaryValidationPort;
+  private readonly screening: ScreeningPort;
+  private readonly fx: FxLiquidityProvider;
+  readonly rail: SimulatedSettlementRail & Partial<InProcessSettlementRail>;
+  private readonly authorities = new Map<string, ExecutionAuthority>();
+  private providerAvailable = true;
+  private routesForceUnavailable = false;
+
+  constructor(
+    kernel: ComplianceKernel,
+    issuer: AuthorityIssuer,
+    ledger: Ledger,
+    evidence: EvidenceVault,
+    events: DomainEventLog,
+    clock: Clock,
+    catalog: PaymentCatalogPorts,
+    identity: IdentityAuthorityPort,
+    options: {
+      readonly store?: PaymentStore;
+      readonly validator?: BeneficiaryValidationPort;
+      readonly screening?: ScreeningPort;
+      readonly fx?: FxLiquidityProvider;
+      readonly rail?: SimulatedSettlementRail;
+    } = {},
+  ) {
+    this.kernel = kernel;
+    this.issuer = issuer;
+    this.ledger = ledger;
+    this.evidence = evidence;
+    this.events = events;
+    this.clock = clock;
+    this.catalog = catalog;
+    this.identity = identity;
+    this.store = options.store ?? new PaymentStore();
+    this.validator = options.validator ?? new SimulationBeneficiaryValidator();
+    this.screening = options.screening ?? new SimulationScreeningAdapter();
+    this.fx = options.fx ?? new SimulationFxProvider(clock);
+    this.rail = options.rail ?? new InProcessSettlementRail();
+    registerPaymentTreasuryBooks(ledger.accounts);
+  }
+
+  getStore(): PaymentStore {
+    return this.store;
+  }
+
+  setProviderAvailable(value: boolean): void {
+    this.providerAvailable = value;
+  }
+
+  setRoutesForceUnavailable(value: boolean): void {
+    this.routesForceUnavailable = value;
+  }
+
+  disclosure(quoteId: string, paymentId?: string): PaymentDisclosure | undefined {
+    const quote = this.store.getQuote(quoteId);
+    if (!quote) {
+      return undefined;
+    }
+    const payment = paymentId ? this.store.getPayment(paymentId) : undefined;
+    const route = payment?.routeId
+      ? simulationRoutesFor(quote.corridorId, quote.fee).find((row) => row.routeId === payment.routeId)
+      : undefined;
+    return disclosureFromQuote(quote, payment, route);
+  }
+
+  createBeneficiary(intent: CreateBeneficiaryIntent): PaymentsServiceOutcome<Beneficiary> {
+    const existing = this.store.getBeneficiary(intent.payload.beneficiaryId);
+    if (existing) {
+      return this.replayOk(existing, intent.actionType, intent.id);
+    }
+    const account = this.catalog.accounts.get(intent.payload.accountId);
+    const customer = this.catalog.customers.get(intent.payload.ownerId);
+    const validated = this.validator.validate(intent.payload, intent.payload.ownerId);
+    if (isErr(validated)) {
+      return this.reject(intent.actionType, intent.id, null, validated.error.code, validated.error.message);
+    }
+    const hit = this.screening.screen({
+      legalName: intent.payload.legalName,
+      destinationCountry: intent.payload.destinationCountry,
+      coordinateRef: validated.value.coordinateRef,
+      kind: intent.payload.kind,
+    });
+    const gated = this.gate(intent, account, customer, {
+      screening: {
+        sanctionsHit: hit.sanctionsHit,
+        pepHit: hit.pepHit,
+        fraudHold: hit.fraudHold,
+        screeningRef: hit.screeningRef,
+      },
+    });
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const status = beneficiaryStatusFromScreening(hit);
+    const beneficiary = freezeBeneficiary({
+      beneficiaryId: intent.payload.beneficiaryId as Beneficiary['beneficiaryId'],
+      ownerId: intent.payload.ownerId,
+      kind: intent.payload.kind,
+      destinationCountry: intent.payload.destinationCountry,
+      currency: intent.payload.currency,
+      legalName: intent.payload.legalName,
+      accountCoordinate: validated.value,
+      screeningStatus: hit.status,
+      screeningRef: hit.screeningRef,
+      status,
+      createdAt: this.clock.now(),
+    });
+    this.store.saveBeneficiary(beneficiary);
+    this.emit('BeneficiaryCreated', 'beneficiary', beneficiary.beneficiaryId, intent.id, gated.decision, {
+      beneficiaryId: beneficiary.beneficiaryId,
+      ownerId: beneficiary.ownerId,
+      destinationCountry: beneficiary.destinationCountry,
+      currency: beneficiary.currency,
+      status: beneficiary.status,
+      screeningRef: beneficiary.screeningRef,
+      coordinateHint: beneficiary.accountCoordinate.displayHint,
+    });
+    this.evidence.seal('BENEFICIARY_CREATED', {
+      intentId: intent.id,
+      beneficiaryId: beneficiary.beneficiaryId,
+      screeningRef: beneficiary.screeningRef,
+      status: beneficiary.status,
+      coordinateRef: beneficiary.accountCoordinate.coordinateRef,
+    });
+    return { outcome: 'OK', value: beneficiary, decision: gated.decision };
+  }
+
+  createQuote(intent: CreateFxQuoteIntent): PaymentsServiceOutcome<FxQuote> {
+    const existing = this.store.getQuote(intent.payload.quoteId);
+    if (existing) {
+      return this.replayOk(existing, intent.actionType, intent.id);
+    }
+    const account = this.catalog.accounts.get(intent.payload.accountId);
+    const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const corridor = findCorridor(intent.payload.corridorId);
+    const gated = this.gate(intent, account, customer, {
+      corridorId: intent.payload.corridorId,
+      corridorSimulationEnabled: corridor ? corridorIsSimulationEnabled(corridor) : false,
+    });
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    if (!corridor || !corridorIsSimulationEnabled(corridor)) {
+      return this.reject(
+        intent.actionType,
+        intent.id,
+        gated.decision,
+        'UNSUPPORTED_CORRIDOR',
+        'corridor is not simulation-enabled',
+      );
+    }
+    if (
+      corridor.sourceCurrency !== intent.payload.baseCurrency ||
+      corridor.destinationCurrency !== intent.payload.quoteCurrency
+    ) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'quote currencies do not match corridor');
+    }
+    const quote = this.fx.quote({
+      quoteId: intent.payload.quoteId as FxQuote['quoteId'],
+      baseCurrency: intent.payload.baseCurrency,
+      quoteCurrency: intent.payload.quoteCurrency,
+      ...(intent.payload.sourceAmount ? { sourceAmount: intent.payload.sourceAmount } : {}),
+      ...(intent.payload.destinationAmount ? { destinationAmount: intent.payload.destinationAmount } : {}),
+      corridorId: corridor.corridorId,
+      legalEntityId: corridor.servingLegalEntityId,
+      now: this.clock.now(),
+    });
+    this.store.saveQuote(quote);
+    this.emit('FxQuoteCreated', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
+      quoteId: quote.quoteId,
+      baseCurrency: quote.baseCurrency,
+      quoteCurrency: quote.quoteCurrency,
+      sourceMinorUnits: quote.sourceAmount.minorUnits.toString(),
+      destinationMinorUnits: quote.destinationAmount.minorUnits.toString(),
+      feeMinorUnits: quote.fee.minorUnits.toString(),
+      customerRate: `${quote.customerRate.numerator.toString()}/${quote.customerRate.denominator.toString()}`,
+      rateSource: quote.rateSource,
+      expiresAt: quote.expiresAt,
+    });
+    this.evidence.seal('FX_QUOTE_CREATED', {
+      intentId: intent.id,
+      quoteId: quote.quoteId,
+      pricingVersion: quote.pricingVersion,
+      rateSource: quote.rateSource,
+    });
+    return { outcome: 'OK', value: quote, decision: gated.decision };
+  }
+
+  acceptQuote(intent: AcceptFxQuoteIntent): PaymentsServiceOutcome<FxQuote> {
+    const quote = this.store.getQuote(intent.payload.quoteId);
+    const account = this.catalog.accounts.get(intent.payload.accountId);
+    const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const gated = this.gate(intent, account, customer);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    if (!quote) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_NOT_FOUND', 'quote does not exist');
+    }
+    if (this.store.acceptedIntentFor(quote.quoteId)) {
+      return { outcome: 'OK', value: quote, decision: gated.decision, replay: true };
+    }
+    if (quoteIsExpired(quote, this.clock.now())) {
+      this.store.saveQuote(withQuoteStatus(quote, 'EXPIRED'));
+      this.emit('FxQuoteExpired', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
+        quoteId: quote.quoteId,
+        expiresAt: quote.expiresAt,
+      });
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_EXPIRED', 'expired quote cannot execute');
+    }
+    const accepted = withQuoteStatus(quote, 'ACCEPTED');
+    this.store.saveQuote(accepted);
+    this.store.markQuoteAccepted(accepted.quoteId, intent.id);
+    this.emit('FxQuoteAccepted', 'fx_quote', accepted.quoteId, intent.id, gated.decision, {
+      quoteId: accepted.quoteId,
+      customerRate: `${accepted.customerRate.numerator.toString()}/${accepted.customerRate.denominator.toString()}`,
+    });
+    this.evidence.seal('FX_QUOTE_ACCEPTED', { intentId: intent.id, quoteId: accepted.quoteId });
+    return { outcome: 'OK', value: accepted, decision: gated.decision };
+  }
+
+  initiatePayment(intent: InitiatePaymentIntent): PaymentsServiceOutcome<PaymentOrder> {
+    const replayed = this.store.getPaymentByIdempotency(intent.idempotencyKey);
+    if (replayed) {
+      return { outcome: 'OK', value: replayed, decision: this.emptyDecision(intent.actionType, intent.id), replay: true };
+    }
+    const account = this.catalog.accounts.get(intent.payload.sourceAccountId);
+    const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const beneficiary = this.store.getBeneficiary(intent.payload.beneficiaryId);
+    const quote = this.store.getQuote(intent.payload.quoteId);
+    const corridor = quote
+      ? findCorridor(quote.corridorId)
+      : findCorridorByPair(
+          account?.jurisdiction ?? '',
+          beneficiary?.destinationCountry ?? '',
+          intent.payload.sourceAmount.currency,
+          beneficiary?.currency ?? '',
+        );
+    const hit = beneficiary
+      ? this.screening.screen({
+          legalName: beneficiary.legalName,
+          destinationCountry: beneficiary.destinationCountry,
+          coordinateRef: beneficiary.accountCoordinate.coordinateRef,
+          kind: beneficiary.kind,
+        })
+      : undefined;
+    const gated = this.gate(intent, account, customer, {
+      screening: hit
+        ? {
+            sanctionsHit: hit.sanctionsHit,
+            pepHit: hit.pepHit,
+            fraudHold: hit.fraudHold,
+            screeningRef: hit.screeningRef,
+          }
+        : { sanctionsHit: false, pepHit: false, fraudHold: false, screeningRef: 'scr_none' },
+      corridorId: corridor?.corridorId,
+      corridorSimulationEnabled: corridor ? corridorIsSimulationEnabled(corridor) : false,
+      beneficiaryStatus: beneficiary?.status,
+      amount: quote?.amountDebited ?? intent.payload.sourceAmount,
+    });
+    if (gated.outcome !== 'ALLOWED') {
+      if (gated.decision.status === 'REQUIRE_MANUAL_REVIEW' && hit?.fraudHold) {
+        const held = this.draftPayment(intent, account, customer, quote, corridor, 'HELD');
+        if (held) {
+          this.store.savePayment(held);
+          this.emit('PaymentHeld', 'payment', held.paymentId, intent.id, gated.decision, {
+            paymentId: held.paymentId,
+            reason: 'FRAUD_HOLD',
+          });
+        }
+      }
+      return gated.result;
+    }
+    const pre = this.precheckInitiate(intent, account, customer, beneficiary, quote, corridor, hit?.sanctionsHit === true);
+    if (pre) {
+      return this.reject(intent.actionType, intent.id, gated.decision, pre.code, pre.message);
+    }
+    const authority = gated.authority!;
+    this.authorities.set(intent.payload.paymentId, authority);
+    const payment = this.draftPayment(intent, account, customer, quote, corridor, 'READY')!;
+    this.store.savePayment(payment);
+    this.emit('PaymentInitiated', 'payment', payment.paymentId, intent.id, gated.decision, {
+      paymentId: payment.paymentId,
+      quoteId: payment.quoteId,
+      beneficiaryId: payment.beneficiaryId,
+      sourceMinorUnits: payment.sourceAmount.minorUnits.toString(),
+      destinationMinorUnits: payment.quotedDestinationAmount.minorUnits.toString(),
+    });
+
+    const reserved = this.reserve(payment, authority, account!);
+    if (reserved.outcome !== 'OK') {
+      return reserved;
+    }
+    let current = reserved.value;
+
+    const routes = this.routesForceUnavailable
+      ? []
+      : simulationRoutesFor(current.corridorId, current.fee);
+    const selection = selectRoute(routes, {
+      corridor: corridor!,
+      beneficiary: beneficiary!,
+      sanctionsHit: hit?.sanctionsHit === true,
+      amount: current.sourceAmount,
+      maxAmount: Money.fromMinorUnits(100_000_000n, current.sourceCurrency),
+      providerAvailable: this.providerAvailable,
+    });
+    if (!selection.chosen) {
+      current = this.releaseAndFail(current, authority, account!, 'ROUTE_UNAVAILABLE', gated.decision);
+      return { outcome: 'REJECTED', code: 'ROUTE_UNAVAILABLE', message: 'no compliant route', decision: gated.decision };
+    }
+    current = this.mustTransition(current, 'SUBMITTED', { routeId: selection.chosen.routeId });
+    this.store.savePayment(current);
+    this.emit('PaymentSubmitted', 'payment', current.paymentId, intent.id, gated.decision, {
+      paymentId: current.paymentId,
+      routeId: selection.chosen.routeId,
+    });
+
+    const settlement = this.rail.submit({
+      paymentId: current.paymentId,
+      idempotencyKey: intent.idempotencyKey,
+      destinationCountry: beneficiary!.destinationCountry,
+      destinationCurrency: current.destinationCurrency,
+      destinationAmountMinorUnits: current.quotedDestinationAmount.minorUnits.toString(),
+      routeId: selection.chosen.routeId,
+    });
+    return this.applySettlement(current, authority, account!, quote!, settlement, gated.decision, selection.chosen);
+  }
+
+  cancelPayment(intent: CancelPaymentIntent): PaymentsServiceOutcome<PaymentOrder> {
+    const payment = this.store.getPayment(intent.payload.paymentId);
+    const account = this.catalog.accounts.get(intent.payload.accountId);
+    const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const gated = this.gate(intent, account, customer);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    if (!payment) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'PAYMENT_NOT_FOUND', 'payment does not exist');
+    }
+    if (payment.status === 'CANCELLED') {
+      return { outcome: 'OK', value: payment, decision: gated.decision, replay: true };
+    }
+    if (payment.status === 'SETTLED' || payment.status === 'RETURNED') {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'PAYMENT_NOT_CANCELLABLE', 'settled payment cannot cancel');
+    }
+    const authority = gated.authority!;
+    let current = payment;
+    if (payment.status === 'FUNDS_RESERVED' || payment.status === 'SUBMITTED' || payment.status === 'READY') {
+      if (payment.holdId && account) {
+        const journal = postPaymentJournal(
+          this.ledger,
+          authority,
+          intent.actionType,
+          releasePlan(account.id, payment.amountDebited),
+        );
+        current = this.mustTransition(payment, 'CANCELLED', {
+          journalIds: [...payment.journalIds, journal.id],
+          holdId: null,
+        });
+      } else {
+        current = this.mustTransition(payment, 'CANCELLED', {});
+      }
+    } else {
+      current = this.mustTransition(payment, 'CANCELLED', {});
+    }
+    this.store.savePayment(current);
+    this.emit('PaymentCancelled', 'payment', current.paymentId, intent.id, gated.decision, {
+      paymentId: current.paymentId,
+    });
+    return { outcome: 'OK', value: current, decision: gated.decision };
+  }
+
+  completeSettlement(paymentId: PaymentId): PaymentsServiceOutcome<PaymentOrder> {
+    const payment = this.store.getPayment(paymentId);
+    if (!payment) {
+      return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+    }
+    const authority = this.authorities.get(paymentId);
+    const account = this.catalog.accounts.get(payment.sourceAccountId);
+    const quote = this.store.getQuote(payment.quoteId);
+    if (!authority || !account || !quote) {
+      return { outcome: 'REJECTED', code: 'MISSING_AUTHORITY', message: 'cannot complete without stored authority', decision: null };
+    }
+    const settlement = this.rail.complete(paymentId);
+    return this.applySettlement(payment, authority, account, quote, settlement, this.emptyDecision('INITIATE_PAYMENT', payment.paymentId), null);
+  }
+
+  simulateReturn(paymentId: PaymentId): PaymentsServiceOutcome<PaymentOrder> {
+    const payment = this.store.getPayment(paymentId);
+    if (!payment || payment.status !== 'SETTLED') {
+      return { outcome: 'REJECTED', code: 'PAYMENT_NOT_RETURNABLE', message: 'only settled payments can return', decision: null };
+    }
+    const authority = this.authorities.get(paymentId);
+    const account = this.catalog.accounts.get(payment.sourceAccountId);
+    if (!authority || !account) {
+      return { outcome: 'REJECTED', code: 'MISSING_AUTHORITY', message: 'cannot return without stored authority', decision: null };
+    }
+    const journals = this.postPlans(authority, 'INITIATE_PAYMENT', [
+      returnDestinationSettlePlan(payment.quotedDestinationAmount),
+      returnDestinationFxPlan(payment.quotedDestinationAmount),
+      returnSourceFxPlan(payment.sourceAmount),
+      returnPrincipalPlan(account.id, payment.sourceAmount),
+    ]);
+    const returned = this.mustTransition(payment, 'RETURNED', {
+      journalIds: [...payment.journalIds, ...journals.map((j) => j.id)],
+    });
+    this.store.savePayment(returned);
+    this.evidence.seal('PAYMENT_RETURNED', {
+      paymentId,
+      policy: SIMULATION_RETURN_POLICY,
+      journalIds: returned.journalIds,
+    });
+    this.emit('PaymentReturned', 'payment', paymentId, payment.paymentId, this.emptyDecision('INITIATE_PAYMENT', payment.paymentId), {
+      paymentId,
+      policy: SIMULATION_RETURN_POLICY,
+    });
+    return { outcome: 'OK', value: returned, decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId) };
+  }
+
+  injectMismatchedReport(paymentId: string, report: ProviderSettlementReport): ReconciliationResult {
+    const payment = this.store.getPayment(paymentId);
+    if (!payment) {
+      throw new Error('payment not found');
+    }
+    const result = reconcilePayment(payment, this.ledger.listJournals(), report);
+    this.store.saveReconciliation(result);
+    return result;
+  }
+
+  private applySettlement(
+    payment: PaymentOrder,
+    authority: ExecutionAuthority,
+    account: Account,
+    quote: FxQuote,
+    settlement: SettlementOutcome,
+    decision: AuthorizationDecision,
+    route: PaymentRoute | null,
+  ): PaymentsServiceOutcome<PaymentOrder> {
+    if (settlement.kind === 'FAIL_BEFORE_SUBMIT') {
+      const failed = this.releaseAndFail(payment, authority, account, settlement.reason, decision);
+      return { outcome: 'REJECTED', code: 'SETTLEMENT_FAILED', message: settlement.reason, decision };
+    }
+    if (settlement.kind === 'FAIL_AFTER_SUBMIT') {
+      const failed = this.releaseAndFail(payment, authority, account, settlement.reason, decision);
+      this.emit('PaymentFailed', 'payment', failed.paymentId, decision.intentId, decision, {
+        paymentId: failed.paymentId,
+        reason: settlement.reason,
+        phase: 'AFTER_SUBMIT',
+      });
+      return { outcome: 'REJECTED', code: 'SETTLEMENT_FAILED', message: settlement.reason, decision };
+    }
+    if (settlement.kind === 'PENDING') {
+      const pending = this.mustTransition(payment, 'PROCESSING', { settlementRef: settlement.settlementRef });
+      this.store.savePayment(pending);
+      return { outcome: 'OK', value: pending, decision };
+    }
+    const journals = this.postPlans(authority, 'INITIATE_PAYMENT', [
+      capturePrincipalPlan(quote.sourceAmount),
+      captureFeePlan(quote.fee),
+      feeIncomePlan(quote.fee),
+      sourceFxPlan(quote.sourceAmount),
+      destinationFxPlan(quote.destinationAmount),
+      settlePlan(quote.destinationAmount),
+    ]);
+    const settled = this.mustTransition(payment, settlement.kind === 'RETURNED' ? 'SETTLED' : 'SETTLED', {
+      settlementRef: settlement.settlementRef,
+      journalIds: [...payment.journalIds, ...journals.map((j) => j.id)],
+      routeId: route?.routeId ?? payment.routeId,
+    });
+    this.store.savePayment(settled);
+    const report: ProviderSettlementReport = {
+      paymentId: settled.paymentId,
+      settlementRef: settlement.settlementRef,
+      destinationAmountMinorUnits:
+        settlement.kind === 'SUCCESS' || settlement.kind === 'RETURNED'
+          ? settlement.providerAmountMinorUnits
+          : settled.quotedDestinationAmount.minorUnits.toString(),
+      destinationCurrency: settled.destinationCurrency,
+      sourceAmountMinorUnits: settled.sourceAmount.minorUnits.toString(),
+      sourceCurrency: settled.sourceCurrency,
+    };
+    const recon = reconcilePayment(settled, this.ledger.listJournals(), report);
+    this.store.saveReconciliation(recon);
+    this.emit('PaymentSettled', 'payment', settled.paymentId, decision.intentId, decision, {
+      paymentId: settled.paymentId,
+      settlementRef: settled.settlementRef,
+      destinationMinorUnits: settled.quotedDestinationAmount.minorUnits.toString(),
+      reconciliation: recon.status,
+    });
+    this.evidence.seal('PAYMENT_SETTLED', {
+      intentId: decision.intentId,
+      paymentId: settled.paymentId,
+      quoteId: settled.quoteId,
+      routeId: settled.routeId,
+      authorityId: authority.authorityId,
+      journalIds: settled.journalIds,
+      settlementRef: settled.settlementRef,
+      reconciliation: recon.status,
+    });
+    if (settlement.kind === 'RETURNED') {
+      return this.simulateReturn(settled.paymentId);
+    }
+    return { outcome: 'OK', value: settled, decision };
+  }
+
+  private reserve(
+    payment: PaymentOrder,
+    authority: ExecutionAuthority,
+    account: Account,
+  ): PaymentsServiceOutcome<PaymentOrder> {
+    const journal = postPaymentJournal(
+      this.ledger,
+      authority,
+      'INITIATE_PAYMENT',
+      reservePlan(account.id, payment.amountDebited),
+    );
+    const reserved = this.mustTransition(payment, 'FUNDS_RESERVED', {
+      holdId: asHoldId(`hold_${payment.paymentId}`),
+      journalIds: [...payment.journalIds, journal.id],
+    });
+    this.store.savePayment(reserved);
+    this.emit('PaymentHeld', 'payment', reserved.paymentId, authority.intentId, this.emptyDecision('INITIATE_PAYMENT', authority.intentId), {
+      paymentId: reserved.paymentId,
+      holdId: reserved.holdId,
+      phase: 'FUNDS_RESERVED',
+    });
+    return { outcome: 'OK', value: reserved, decision: this.emptyDecision('INITIATE_PAYMENT', authority.intentId) };
+  }
+
+  private releaseAndFail(
+    payment: PaymentOrder,
+    authority: ExecutionAuthority,
+    account: Account,
+    reason: string,
+    decision: AuthorizationDecision,
+  ): PaymentOrder {
+    const journal = postPaymentJournal(
+      this.ledger,
+      authority,
+      'INITIATE_PAYMENT',
+      releasePlan(account.id, payment.amountDebited),
+    );
+    const failed = this.mustTransition(payment, 'FAILED', {
+      journalIds: [...payment.journalIds, journal.id],
+      holdId: null,
+    });
+    this.store.savePayment(failed);
+    this.emit('PaymentFailed', 'payment', failed.paymentId, decision.intentId, decision, {
+      paymentId: failed.paymentId,
+      reason,
+    });
+    return failed;
+  }
+
+  private postPlans(
+    authority: ExecutionAuthority,
+    actionType: string,
+    plans: readonly PaymentJournalPlan[],
+  ): Journal[] {
+    return plans.map((plan) => postPaymentJournal(this.ledger, authority, actionType, plan));
+  }
+
+  private precheckInitiate(
+    intent: InitiatePaymentIntent,
+    account: Account | undefined,
+    customer: Customer | undefined,
+    beneficiary: Beneficiary | undefined,
+    quote: FxQuote | undefined,
+    corridor: PaymentCorridor | undefined,
+    sanctionsHit: boolean,
+  ): { code: string; message: string } | null {
+    if (!account) {
+      return { code: 'ACCOUNT_NOT_FOUND', message: 'source account does not exist' };
+    }
+    if (account.status === 'FROZEN') {
+      return { code: 'ACCOUNT_FROZEN', message: 'source account is frozen' };
+    }
+    if (account.status !== 'OPEN') {
+      return { code: 'ACCOUNT_NOT_OPEN', message: 'source account is not OPEN' };
+    }
+    if (!customer) {
+      return { code: 'CUSTOMER_NOT_FOUND', message: 'customer does not exist' };
+    }
+    if (!beneficiary) {
+      return { code: 'BENEFICIARY_NOT_FOUND', message: 'beneficiary does not exist' };
+    }
+    if (beneficiary.ownerId !== customer.id) {
+      return { code: 'BENEFICIARY_OWNERSHIP_MISMATCH', message: 'beneficiary is not owned by this customer' };
+    }
+    if (!isUsableBeneficiary(beneficiary)) {
+      return { code: 'BENEFICIARY_NOT_USABLE', message: `beneficiary status ${beneficiary.status} is not usable` };
+    }
+    if (sanctionsHit) {
+      return { code: 'SANCTIONED_BENEFICIARY', message: 'beneficiary screening is sanctioned' };
+    }
+    if (!quote) {
+      return { code: 'QUOTE_NOT_FOUND', message: 'quote does not exist' };
+    }
+    if (quoteIsExpired(quote, this.clock.now()) || !quoteCanExecute(quote, this.clock.now())) {
+      return { code: 'QUOTE_EXPIRED', message: 'expired or unaccepted quote cannot execute' };
+    }
+    if (!quote.sourceAmount.equals(intent.payload.sourceAmount)) {
+      return { code: 'QUOTE_AMOUNT_MISMATCH', message: 'payment amount does not match accepted quote' };
+    }
+    if (!corridor || !corridorIsSimulationEnabled(corridor)) {
+      return { code: 'UNSUPPORTED_CORRIDOR', message: 'corridor is not simulation-enabled' };
+    }
+    if (account.currency !== quote.baseCurrency) {
+      return { code: 'UNSUPPORTED_CURRENCY', message: 'source account currency does not match quote' };
+    }
+    const available = this.availableFunds(account);
+    if (available.cmp(quote.amountDebited) < 0) {
+      return { code: 'INSUFFICIENT_FUNDS', message: 'available funds are below amount debited' };
+    }
+    return null;
+  }
+
+  private availableFunds(account: Account): Money {
+    const postings = this.ledger.listPostingsForAccount(account.id);
+    let credits = Money.zero(account.currency);
+    let debits = Money.zero(account.currency);
+    for (const posting of postings) {
+      if (posting.amount.currency !== account.currency) {
+        continue;
+      }
+      if (posting.direction === 'CREDIT') {
+        credits = credits.plus(posting.amount);
+      } else {
+        debits = debits.plus(posting.amount);
+      }
+    }
+    return credits.minus(debits);
+  }
+
+  private draftPayment(
+    intent: InitiatePaymentIntent,
+    account: Account | undefined,
+    customer: Customer | undefined,
+    quote: FxQuote | undefined,
+    corridor: PaymentCorridor | undefined,
+    status: PaymentOrder['status'],
+  ): PaymentOrder | null {
+    if (!account || !customer || !quote || !corridor) {
+      return null;
+    }
+    const now = this.clock.now();
+    return freezePayment({
+      paymentId: asPaymentId(intent.payload.paymentId),
+      customerId: customer.id,
+      sourceAccountId: account.id,
+      beneficiaryId: intent.payload.beneficiaryId as PaymentOrder['beneficiaryId'],
+      sourceCurrency: quote.baseCurrency,
+      destinationCurrency: quote.quoteCurrency,
+      sourceAmount: quote.sourceAmount,
+      quotedDestinationAmount: quote.destinationAmount,
+      fee: quote.fee,
+      amountDebited: quote.amountDebited,
+      quoteId: quote.quoteId,
+      purposeReference: intent.payload.purposeReference,
+      corridorId: corridor.corridorId,
+      routeId: null,
+      holdId: null,
+      settlementRef: null,
+      status,
+      idempotencyKey: intent.idempotencyKey,
+      createdAt: now,
+      updatedAt: now,
+      journalIds: [],
+      evidenceIds: [],
+    });
+  }
+
+  private mustTransition(
+    payment: PaymentOrder,
+    to: PaymentOrder['status'],
+    patch: Parameters<typeof transitionPayment>[3],
+  ): PaymentOrder {
+    const next = transitionPayment(payment, to, this.clock.now(), patch);
+    if (isErr(next)) {
+      throw new Error(`${next.error.code}: ${next.error.from} -> ${next.error.to}`);
+    }
+    return next.value;
+  }
+
+  private gate(
+    intent: CreateBeneficiaryIntent | CreateFxQuoteIntent | AcceptFxQuoteIntent | InitiatePaymentIntent | CancelPaymentIntent,
+    account: Account | undefined,
+    customer: Customer | undefined,
+    extra: Partial<KernelFacts> = {},
+  ):
+    | { readonly outcome: 'ALLOWED'; readonly decision: AuthorizationDecision; readonly authority: ExecutionAuthority }
+    | { readonly outcome: 'REFUSED'; readonly result: PaymentsServiceOutcome<never> } {
+    const resolved = this.identity.resolveActorContext(intent.actorId);
+    const product = account ? this.catalog.products.get(account.productId) : undefined;
+    const legalEntity = account ? this.catalog.legalEntities.get(account.legalEntityId) : undefined;
+    const facts: KernelFacts = {
+      actor: {
+        id: intent.actorId,
+        capabilities: resolved.ok ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities) : [],
+      },
+      identity: this.identity.identityFactsFor(intent.actorId),
+      ...(customer ? { customer } : {}),
+      ...(legalEntity ? { legalEntity } : {}),
+      ...(product ? { product } : {}),
+      ...(account ? { sourceAccount: account, jurisdiction: account.jurisdiction } : customer ? { jurisdiction: customer.jurisdiction } : {}),
+      ...(extra.amount ? { amount: extra.amount } : 'sourceAmount' in intent.payload && intent.payload.sourceAmount
+        ? { amount: intent.payload.sourceAmount }
+        : {}),
+      ...(extra.screening ? { screening: extra.screening } : {}),
+      ...(extra.corridorId ? { corridorId: extra.corridorId } : {}),
+      ...(extra.corridorSimulationEnabled !== undefined
+        ? { corridorSimulationEnabled: extra.corridorSimulationEnabled }
+        : {}),
+      ...(extra.beneficiaryStatus ? { beneficiaryStatus: extra.beneficiaryStatus } : {}),
+    };
+    const decision = this.kernel.submit(intent, facts);
+    this.emit('KernelDecisionRecorded', 'kernel', intent.id, intent.id, decision, {
+      intentId: intent.id,
+      actionType: intent.actionType,
+      status: decision.status,
+      evidenceRecordId: decision.evidenceRecordId,
+      executionAuthorityId: decision.executionAuthority?.authorityId ?? null,
+    });
+    if (decision.status !== 'ALLOW') {
+      this.evidence.seal(`${intent.actionType}_KERNEL_REFUSED`, {
+        intentId: intent.id,
+        status: decision.status,
+        posted: false,
+      });
+      return { outcome: 'REFUSED', result: { outcome: 'KERNEL_REFUSED', decision } };
+    }
+    const structural = validateIntentStructure(intent, {
+      products: this.catalog.products,
+      legalEntities: this.catalog.legalEntities,
+      accounts: this.catalog.accounts,
+    });
+    if (isErr(structural)) {
+      return {
+        outcome: 'REFUSED',
+        result: this.reject(intent.actionType, intent.id, decision, structural.error.code, structural.error.message),
+      };
+    }
+    if (!decision.executionAuthority) {
+      return {
+        outcome: 'REFUSED',
+        result: this.reject(intent.actionType, intent.id, decision, 'MISSING_EXECUTION_AUTHORITY', 'ALLOW without authority'),
+      };
+    }
+    const verified = this.issuer.verify(
+      decision.executionAuthority,
+      {
+        actionType: intent.actionType,
+        accountId: 'accountId' in intent.payload ? intent.payload.accountId : intent.id,
+        intentId: intent.id,
+      },
+      this.clock,
+    );
+    if (!isOk(verified)) {
+      return {
+        outcome: 'REFUSED',
+        result: this.reject(intent.actionType, intent.id, decision, verified.error.code, verified.error.message),
+      };
+    }
+    return { outcome: 'ALLOWED', decision, authority: verified.value };
+  }
+
+  private reject(
+    actionType: string,
+    intentId: string,
+    decision: AuthorizationDecision | null,
+    code: string,
+    message: string,
+  ): PaymentsServiceOutcome<never> {
+    const evidence = this.evidence.seal(`${actionType}_REJECTED`, { intentId, code, message, posted: false });
+    return { outcome: 'REJECTED', code, message, decision, evidenceId: evidence.evidenceId };
+  }
+
+  private replayOk<T>(value: T, actionType: string, intentId: string): PaymentsServiceOutcome<T> {
+    this.evidence.seal(`${actionType}_IDEMPOTENT_REPLAY`, { intentId });
+    return { outcome: 'OK', value, decision: this.emptyDecision(actionType, intentId), replay: true };
+  }
+
+  private emptyDecision(actionType: string, intentId: string): AuthorizationDecision {
+    return {
+      status: 'ALLOW',
+      intentId,
+      actionType,
+      proofs: [],
+      executionAuthority: null,
+      evidenceRecordId: '',
+      decidedAt: this.clock.now(),
+    };
+  }
+
+  private emit(
+    eventType: string,
+    aggregateType: string,
+    aggregateId: string,
+    intentId: string,
+    decision: AuthorizationDecision,
+    payload: Record<string, unknown>,
+  ): void {
+    this.events.append({
+      eventType: eventType as never,
+      schemaVersion: 1,
+      occurredAt: this.clock.now(),
+      intentId,
+      correlationId: intentId,
+      causationId: decision.evidenceRecordId,
+      evidenceId: decision.evidenceRecordId,
+      aggregateType,
+      aggregateId,
+      payload,
+    } as never);
+  }
+}

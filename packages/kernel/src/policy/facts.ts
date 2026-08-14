@@ -43,6 +43,15 @@ export type PolicyFactInput = {
   readonly capabilityEnabled?: boolean;
   readonly capabilityEnvironment?: CapabilityEnvironment;
   readonly offeringMode?: string;
+  readonly screening?: {
+    readonly sanctionsHit: boolean;
+    readonly pepHit: boolean;
+    readonly fraudHold: boolean;
+    readonly screeningRef: string;
+  };
+  readonly corridorId?: string;
+  readonly corridorSimulationEnabled?: boolean;
+  readonly beneficiaryStatus?: string;
 };
 
 /**
@@ -87,7 +96,14 @@ export function policyFactsFromKernel(
           residency: facts.customer.residency,
         }
       : {}),
-    ...(facts.identity ?? {}),
+    ...(facts.identity
+      ? {
+          kycState: facts.identity.kycState ?? facts.customer?.verification.kycState,
+          kycRecordVersion:
+            facts.identity.kycVersion ?? facts.customer?.verification.kycRecordVersion,
+        }
+      : {}),
+    ...(facts.policyIdentity ?? {}),
   };
   return {
     actor: facts.actor,
@@ -106,6 +122,12 @@ export function policyFactsFromKernel(
       ? { transactionDestination: facts.transactionDestination }
       : {}),
     ...(facts.policyPin ? { policyPin: facts.policyPin } : {}),
+    ...(facts.screening ? { screening: facts.screening } : {}),
+    ...(facts.corridorId ? { corridorId: facts.corridorId } : {}),
+    ...(facts.corridorSimulationEnabled !== undefined
+      ? { corridorSimulationEnabled: facts.corridorSimulationEnabled }
+      : {}),
+    ...(facts.beneficiaryStatus ? { beneficiaryStatus: facts.beneficiaryStatus } : {}),
   };
 }
 
@@ -143,6 +165,12 @@ export function toFactMap(input: PolicyFactInput): FactMap {
     'capability.enabled': input.capabilityEnabled,
     'capability.environment': input.capabilityEnvironment,
     offeringMode: input.offeringMode,
+    'screening.sanctionsHit': input.screening?.sanctionsHit,
+    'screening.pepHit': input.screening?.pepHit,
+    'screening.fraudHold': input.screening?.fraudHold,
+    'corridor.id': input.corridorId,
+    'corridor.simulationEnabled': input.corridorSimulationEnabled,
+    'beneficiary.status': input.beneficiaryStatus,
   };
 }
 
@@ -174,5 +202,11 @@ export function hashPolicyFacts(input: PolicyFactInput): string {
     transactionOrigin: input.transactionOrigin ?? null,
     transactionDestination: input.transactionDestination ?? null,
     policyPin: input.policyPin ?? null,
+    sanctionsHit: input.screening?.sanctionsHit ?? null,
+    pepHit: input.screening?.pepHit ?? null,
+    fraudHold: input.screening?.fraudHold ?? null,
+    corridorId: input.corridorId ?? null,
+    corridorSimulationEnabled: input.corridorSimulationEnabled ?? null,
+    beneficiaryStatus: input.beneficiaryStatus ?? null,
   });
 }

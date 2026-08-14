@@ -33,6 +33,17 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'IdentitySessionRevoked', version: 1, status: 'current' },
   { eventType: 'IdentityDeviceRegistered', version: 1, status: 'current' },
   { eventType: 'IdentityRecoveryRequested', version: 1, status: 'current' },
+  { eventType: 'BeneficiaryCreated', version: 1, status: 'current' },
+  { eventType: 'PaymentInitiated', version: 1, status: 'current' },
+  { eventType: 'PaymentHeld', version: 1, status: 'current' },
+  { eventType: 'PaymentSubmitted', version: 1, status: 'current' },
+  { eventType: 'PaymentSettled', version: 1, status: 'current' },
+  { eventType: 'PaymentFailed', version: 1, status: 'current' },
+  { eventType: 'PaymentReturned', version: 1, status: 'current' },
+  { eventType: 'PaymentCancelled', version: 1, status: 'current' },
+  { eventType: 'FxQuoteCreated', version: 1, status: 'current' },
+  { eventType: 'FxQuoteAccepted', version: 1, status: 'current' },
+  { eventType: 'FxQuoteExpired', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

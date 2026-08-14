@@ -19,18 +19,36 @@ export const IDENTITY_CAPABILITIES = [
   'MANAGE_BENEFICIARY',
   'POST_DEPOSIT_REQUEST',
   'POST_WITHDRAWAL_REQUEST',
+  'PAYMENT_REQUEST',
+  'FX_QUOTE_REQUEST',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
+
+export const ACTION_TYPES_FOR_CAPABILITY: Readonly<
+  Record<IdentityCapability, readonly string[]>
+> = {
+  ACCOUNT_OPEN_REQUEST: ['OPEN_ACCOUNT'],
+  TRANSFER_REQUEST: ['INTERNAL_TRANSFER'],
+  VIEW_ACCOUNT: [],
+  MANAGE_PROFILE: [],
+  MANAGE_BENEFICIARY: ['CREATE_BENEFICIARY'],
+  POST_DEPOSIT_REQUEST: ['POST_DEPOSIT'],
+  POST_WITHDRAWAL_REQUEST: ['POST_WITHDRAWAL'],
+  PAYMENT_REQUEST: ['INITIATE_PAYMENT', 'CANCEL_PAYMENT'],
+  FX_QUOTE_REQUEST: ['CREATE_FX_QUOTE', 'ACCEPT_FX_QUOTE'],
+};
 
 export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, string | null>> = {
   ACCOUNT_OPEN_REQUEST: 'OPEN_ACCOUNT',
   TRANSFER_REQUEST: 'INTERNAL_TRANSFER',
   VIEW_ACCOUNT: null,
   MANAGE_PROFILE: null,
-  MANAGE_BENEFICIARY: null,
+  MANAGE_BENEFICIARY: 'CREATE_BENEFICIARY',
   POST_DEPOSIT_REQUEST: 'POST_DEPOSIT',
   POST_WITHDRAWAL_REQUEST: 'POST_WITHDRAWAL',
+  PAYMENT_REQUEST: 'INITIATE_PAYMENT',
+  FX_QUOTE_REQUEST: 'CREATE_FX_QUOTE',
 };
 
 export type CapabilityGrant = {
@@ -52,8 +70,7 @@ export function actionTypesFromCapabilities(
 ): readonly string[] {
   const types = new Set<string>();
   for (const capability of capabilities) {
-    const actionType = ACTION_TYPE_FOR_CAPABILITY[capability];
-    if (actionType) {
+    for (const actionType of ACTION_TYPES_FOR_CAPABILITY[capability]) {
       types.add(actionType);
     }
   }
@@ -73,6 +90,8 @@ const FINANCIAL_CAPABILITIES: readonly IdentityCapability[] = [
   'TRANSFER_REQUEST',
   'POST_DEPOSIT_REQUEST',
   'POST_WITHDRAWAL_REQUEST',
+  'PAYMENT_REQUEST',
+  'FX_QUOTE_REQUEST',
 ];
 
 /**

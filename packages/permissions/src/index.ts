@@ -2,12 +2,23 @@ export type { ActionIntent, IntentId, PurposeCode } from './action-intent.ts';
 export { asIntentId, isPurposeCode, PURPOSE_CODES } from './action-intent.ts';
 
 export type {
+  AcceptFxQuoteIntent,
+  AcceptFxQuotePayload,
   ActionType,
   BankingIntent,
+  CancelPaymentIntent,
+  CancelPaymentPayload,
+  CreateBeneficiaryIntent,
+  CreateBeneficiaryPayload,
+  CreateFxQuoteIntent,
+  CreateFxQuotePayload,
+  InitiatePaymentIntent,
+  InitiatePaymentPayload,
   InternalTransferIntent,
   InternalTransferPayload,
   OpenAccountIntent,
   OpenAccountPayload,
+  PaymentIntent,
   PostDepositIntent,
   PostDepositPayload,
   PostWithdrawalIntent,

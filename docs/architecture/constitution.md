@@ -50,6 +50,8 @@ never be two implementations of these systems.
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
+| Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
+| FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -57,7 +59,8 @@ the same architecture-linting system, not a second linter.
 ### Current workspace inventory
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
-`kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`.
+`kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
+`payments`.
 
 **Services:** `accounts`, `identity`.
 
@@ -78,6 +81,11 @@ The only action types on this tree are declared in
 - `POST_DEPOSIT`
 - `POST_WITHDRAWAL`
 - `INTERNAL_TRANSFER`
+- `CREATE_BENEFICIARY`
+- `CREATE_FX_QUOTE`
+- `ACCEPT_FX_QUOTE`
+- `INITIATE_PAYMENT`
+- `CANCEL_PAYMENT`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -90,6 +98,8 @@ They do not invent a parallel envelope.
 | `packages/domain/src/account.ts` `openAccount` | Account construction | Verified Execution Authority |
 | `services/accounts/src/open-account.ts` `AccountsService.open` | Account store + ledger register | Kernel `submit` then verified authority |
 | `services/accounts/src/money-movement.ts` `deposit` / `withdraw` / `transfer` | Ledger journals | Kernel `submit` then `Ledger.postJournal` |
+| `packages/payments/src/service.ts` beneficiary / quote / payment mutators | Payment store + journals | Kernel `submit` then verified authority |
+| `packages/payments/src/journals.ts` `postPaymentJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -101,7 +111,8 @@ They do not write a store by themselves.
 ### Locations that may post a ledger journal
 
 Only `Ledger.postJournal` in `packages/ledger/src/journal.ts`.
-The only production caller is `services/accounts/src/money-movement.ts`.
+Production callers are `services/accounts/src/money-movement.ts` and
+`packages/payments/src/journals.ts`.
 
 ### Locations that may issue or verify Execution Authority
 
@@ -109,7 +120,8 @@ The only production caller is `services/accounts/src/money-movement.ts`.
   production caller is `packages/kernel/src/kernel.ts`.
 - **Verify:** `AuthorityIssuer.verify` in
   `packages/permissions/src/execution-authority.ts`. Callers are the
-  Kernel-gated accounts service and `Ledger.postJournal`.
+  Kernel-gated accounts service, the payments orchestrator, and
+  `Ledger.postJournal`.
 - **Signing material:** `AuthorityIssuer` obtains HMAC-SHA256 through
   `packages/security` `KeyProvider`. Business services do not hold the
   raw signing secret.
@@ -165,9 +177,9 @@ Canonical source: `packages/config/src/flags.ts`.
 
 ### External integration abstractions
 
-None are implemented. There is no bank adapter, FX provider port, KYC
-provider, payment-rail adapter, or IdP adapter on this tree. The clock
-is injectable. That is the only substitution seam.
+Simulation-only ports exist for FX liquidity, beneficiary validation,
+screening, and settlement. There is no live bank, FX, KYC, or payment-rail
+adapter on this tree. The clock is injectable.
 
 ### Persistence
 
@@ -282,6 +294,7 @@ must be added to `manifest.json` before they appear on disk.
 | `services/accounts` | the packages above, including `packages/persistence` |
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
+| `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -328,6 +341,7 @@ flowchart BT
   identity["packages/identity"]
   kernel["packages/kernel"]
   ledger["packages/ledger"]
+  payments["packages/payments"]
   accounts["services/accounts"]
   identitySvc["services/identity"]
 
@@ -369,6 +383,16 @@ flowchart BT
   ledger --> permissions
   ledger --> domain
   ledger --> money
+  payments --> domain
+  payments --> money
+  payments --> permissions
+  payments --> config
+  payments --> kernel
+  payments --> ledger
+  payments --> evidence
+  payments --> events
+  payments --> identity
+  payments --> security
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -401,8 +425,8 @@ protected dependency because a later phase is absent.
 | IDENTITY | IMPLEMENTED | `packages/identity`, `services/identity` |
 | COMPLIANCE | PARTIAL | `packages/kernel`, `packages/permissions`, `packages/evidence` |
 | BANKING | PARTIAL | `packages/domain`, `packages/ledger`, `services/accounts` |
-| PAYMENTS | PLANNED | `packages/payments` |
-| FX | PLANNED | `packages/payments` |
+| PAYMENTS | PARTIAL | `packages/payments` |
+| FX | PARTIAL | `packages/payments` |
 | CARDS | PLANNED | `packages/cards`, `services/cards` |
 | TREASURY | PLANNED | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | PLANNED | `packages/personal-economic-graph` |

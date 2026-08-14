@@ -37,7 +37,9 @@ export function lintSource(file: string, source: string): Finding[] {
   const lines = source.split(/\r?\n/);
   const isAccountDomain = /packages\/domain\/src\/account\.ts$/.test(rel);
   const isLedgerJournal = /packages\/ledger\/src\/journal\.ts$/.test(rel);
-  const isMoneyMovement = /services\/accounts\/src\/money-movement\.ts$/.test(rel);
+  const isMoneyMovement =
+    /services\/accounts\/src\/money-movement\.ts$/.test(rel) ||
+    /packages\/payments\/src\/journals\.ts$/.test(rel);
   const isBalanceOrGrowth =
     /balances\.ts$/.test(rel) || /growth\.ts$/.test(rel) || /position/.test(rel);
   const isMoneyPath =

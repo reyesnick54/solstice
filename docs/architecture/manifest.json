@@ -151,6 +151,31 @@
       "codeowners": ["@reyesnick54"]
     },
     {
+      "id": "packages/payments",
+      "npmName": "@solstice/payments",
+      "path": "packages/payments",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+    },
+    {
       "id": "packages/evidence",
       "npmName": "@solstice/evidence",
       "path": "packages/evidence",
@@ -717,6 +742,38 @@
       ],
       "codeowners": ["@reyesnick54"],
       "notes": "Authoritative actor capabilities and ActorContext. Simulation WebAuthn adapter only."
+    },
+    {
+      "id": "payments-orchestration",
+      "name": "Cross-border payment orchestration",
+      "canonicalOwner": "packages/payments",
+      "canonicalPath": "packages/payments/src/service.ts",
+      "publicInterface": "packages/payments/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/fx-router", "services/payments"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Kernel-gated beneficiaries, quotes, and simulated settlement. Live rails are Chunk 10."
+    },
+    {
+      "id": "fx-quote-engine",
+      "name": "FX quote engine",
+      "canonicalOwner": "packages/payments",
+      "canonicalPath": "packages/payments/src/fx-quote.ts",
+      "publicInterface": "packages/payments/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/fx"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Immutable rational quotes. Simulation pricing is not live market data."
     }
   ],
   "authorizedMutationPaths": [
@@ -753,6 +810,42 @@
     {
       "symbol": "transfer",
       "file": "services/accounts/src/money-movement.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "createBeneficiary",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "createQuote",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "acceptQuote",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "initiatePayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "cancelPayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postPaymentJournal",
+      "file": "packages/payments/src/journals.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
     }
@@ -867,6 +960,20 @@
       "owner": "packages/kernel",
       "protected": true,
       "adr": "ADR-0006"
+    },
+    {
+      "id": "payments",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Simulation beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+    },
+    {
+      "id": "fx",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Rational FX quotes and simulation pricing. Not live market data."
     }
   ],
   "boundedContexts": [
@@ -901,16 +1008,17 @@
     },
     {
       "id": "PAYMENTS",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": ["packages/payments"],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, and reconciliation. Live rails are not implemented."
     },
     {
       "id": "FX",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": ["packages/payments"],
       "protected": true,
-      "notes": "Rational FX helpers exist on Money. A payments FX router does not."
+      "notes": "Simulation FX quotes use exact rational rates. No live liquidity provider."
     },
     {
       "id": "CARDS",

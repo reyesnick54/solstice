@@ -47,6 +47,15 @@ export class AccountRegister {
    * Authority. The domain Account is the proof it already went through
    * openAccount(authority, ...).
    */
+  registerSystemAccount(account: LedgerAccount): LedgerAccount {
+    if (this.accounts.has(account.id)) {
+      return this.get(account.id);
+    }
+    const frozen = Object.freeze({ ...account });
+    this.put(frozen);
+    return frozen;
+  }
+
   registerOpenedAccount(account: Account): LedgerAccount {
     if (this.accounts.has(account.id)) {
       return this.get(account.id);

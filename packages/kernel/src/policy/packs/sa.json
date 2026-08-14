@@ -25,6 +25,54 @@
           "sourceReference": "src-engineering-pack-shell",
           "legalReviewStatus": "RESEARCH_REQUIRED",
           "overrideClass": "REVIEWABLE"
+        },
+        {
+          "ruleId": "sa-sim-sanctions-block",
+          "version": "1",
+          "jurisdiction": "SA",
+          "scope": "cross-border-payment",
+          "actionTypes": ["CREATE_BENEFICIARY", "INITIATE_PAYMENT"],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "screening.sanctionsHit", "value": true },
+          "effect": "BLOCK",
+          "reasonCode": "SANCTIONS_HIT",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "HARD_BLOCK"
+        },
+        {
+          "ruleId": "sa-sim-pep-review",
+          "version": "1",
+          "jurisdiction": "SA",
+          "scope": "cross-border-payment",
+          "actionTypes": ["CREATE_BENEFICIARY", "INITIATE_PAYMENT"],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "screening.pepHit", "value": true },
+          "effect": "REQUIRE_MANUAL_REVIEW",
+          "reasonCode": "PEP_REVIEW_REQUIRED",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "REVIEWABLE"
+        },
+        {
+          "ruleId": "sa-sim-corridor-disabled",
+          "version": "1",
+          "jurisdiction": "SA",
+          "scope": "cross-border-payment",
+          "actionTypes": ["INITIATE_PAYMENT", "CREATE_FX_QUOTE"],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "corridor.simulationEnabled", "value": false },
+          "effect": "BLOCK",
+          "reasonCode": "CORRIDOR_NOT_SIMULATION_ENABLED",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "HARD_BLOCK"
         }
       ]
     }

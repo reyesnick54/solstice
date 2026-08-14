@@ -35,6 +35,12 @@ export const FACT_PATHS = [
   'capability.enabled',
   'capability.environment',
   'offeringMode',
+  'screening.sanctionsHit',
+  'screening.pepHit',
+  'screening.fraudHold',
+  'corridor.id',
+  'corridor.simulationEnabled',
+  'beneficiary.status',
 ] as const;
 
 export type FactPath = (typeof FACT_PATHS)[number];

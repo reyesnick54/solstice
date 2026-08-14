@@ -1,6 +1,7 @@
--- V002 policy engine: versioned packs, rules, sources, capabilities, review cases.
+-- V003 policy engine: versioned packs, rules, sources, capabilities, review cases.
 -- Policy meaning is immutable after a version is used. This is not a second Kernel.
 -- No rule in this schema is CONFIRMED_BY_COUNSEL.
+-- Renamed from a colliding V002 so customer migrations stay contiguous.
 
 CREATE TABLE customer.policy_source (
   source_id TEXT PRIMARY KEY,

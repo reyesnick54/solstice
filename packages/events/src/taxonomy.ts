@@ -15,11 +15,11 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'policy',
   'security',
   'identity',
+  'payment',
+  'fx',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
-  'payment',
-  'fx',
   'card',
   'investment',
   'agent',
@@ -58,6 +58,17 @@ export const EVENT_TYPE_NAMES = [
   'IdentitySessionRevoked',
   'IdentityDeviceRegistered',
   'IdentityRecoveryRequested',
+  'BeneficiaryCreated',
+  'PaymentInitiated',
+  'PaymentHeld',
+  'PaymentSubmitted',
+  'PaymentSettled',
+  'PaymentFailed',
+  'PaymentReturned',
+  'PaymentCancelled',
+  'FxQuoteCreated',
+  'FxQuoteAccepted',
+  'FxQuoteExpired',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -85,6 +96,17 @@ export const EVENT_SCHEMA_REFS = {
   IdentitySessionRevoked: 'solstice.identity.session.revoked/1',
   IdentityDeviceRegistered: 'solstice.identity.device.registered/1',
   IdentityRecoveryRequested: 'solstice.identity.recovery.requested/1',
+  BeneficiaryCreated: 'solstice.payment.beneficiary.created/1',
+  PaymentInitiated: 'solstice.payment.initiated/1',
+  PaymentHeld: 'solstice.payment.held/1',
+  PaymentSubmitted: 'solstice.payment.submitted/1',
+  PaymentSettled: 'solstice.payment.settled/1',
+  PaymentFailed: 'solstice.payment.failed/1',
+  PaymentReturned: 'solstice.payment.returned/1',
+  PaymentCancelled: 'solstice.payment.cancelled/1',
+  FxQuoteCreated: 'solstice.fx.quote.created/1',
+  FxQuoteAccepted: 'solstice.fx.quote.accepted/1',
+  FxQuoteExpired: 'solstice.fx.quote.expired/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -112,6 +134,17 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   IdentitySessionRevoked: 'identity',
   IdentityDeviceRegistered: 'identity',
   IdentityRecoveryRequested: 'identity',
+  BeneficiaryCreated: 'payment',
+  PaymentInitiated: 'payment',
+  PaymentHeld: 'payment',
+  PaymentSubmitted: 'payment',
+  PaymentSettled: 'payment',
+  PaymentFailed: 'payment',
+  PaymentReturned: 'payment',
+  PaymentCancelled: 'payment',
+  FxQuoteCreated: 'fx',
+  FxQuoteAccepted: 'fx',
+  FxQuoteExpired: 'fx',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

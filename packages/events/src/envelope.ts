@@ -104,6 +104,10 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'secretValue',
   'accessToken',
   'sessionSecret',
+  'iban',
+  'accountNumber',
+  'routingNumber',
+  'accountCoordinateValue',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
@@ -136,8 +140,18 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType === 'PolicyReviewRequested' || eventType === 'PolicyReviewDecided') {
     return { type: 'policy_review', id: String(body.reviewId ?? 'unknown') };
+  }
   if (eventType.startsWith('Identity')) {
     return { type: 'identity', id: String(body.identityId ?? 'unknown') };
+  }
+  if (eventType.startsWith('Payment') || eventType === 'BeneficiaryCreated') {
+    return {
+      type: 'payment',
+      id: String(body.paymentId ?? body.beneficiaryId ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('FxQuote')) {
+    return { type: 'fx_quote', id: String(body.quoteId ?? 'unknown') };
   }
   if (
     eventType === 'KeyCreated' ||

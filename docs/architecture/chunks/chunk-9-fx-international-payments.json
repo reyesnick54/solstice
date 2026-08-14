@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-9",
+  "title": "FX Quote Engine, Cross-Border Payment Orchestrator, Beneficiaries, Routing, Settlement, and Reconciliation",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service"
+  ]
+}

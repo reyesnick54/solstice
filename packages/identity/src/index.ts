@@ -41,6 +41,7 @@ export {
 } from './auth.ts';
 export {
   ACTION_TYPE_FOR_CAPABILITY,
+  ACTION_TYPES_FOR_CAPABILITY,
   IDENTITY_CAPABILITIES,
   actionTypesFromCapabilities,
   deriveCapabilities,
