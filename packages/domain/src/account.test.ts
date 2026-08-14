@@ -130,6 +130,7 @@ function snapshot(account: Account): Account {
   return {
     id: account.id,
     ownerId: account.ownerId,
+    ownerCustomerId: account.ownerCustomerId,
     accountClass: account.accountClass,
     productId: account.productId,
     legalEntityId: account.legalEntityId,

@@ -1,5 +1,5 @@
 import { err, ok, type Result } from '@solstice/domain';
-import type { ActionIntent } from './action-intent.ts';
+import type { ActionIntent, ActionKind } from './action-intent.ts';
 import {
   assertKernelAuthorization,
   mintKernelAuthorization,
@@ -10,7 +10,7 @@ import { screenAml } from './compliance/aml.ts';
 import { screenSanctions, type SanctionsSubject } from './compliance/sanctions.ts';
 import { canonicalJson, EvidenceVault, sha256Hex, type SealedEvidence } from './evidence.ts';
 import { assertSimulationOnly } from './flags.ts';
-import { evaluatePolicy } from './policy/evaluate.ts';
+import { evaluatePolicy, packFor } from './policy/evaluate.ts';
 import {
   escalate,
   isAuthorizingPosture,
@@ -19,6 +19,24 @@ import {
 } from './posture.ts';
 import { freezeProof, type Proof } from './proof.ts';
 import { currencyHintForKind, productForKind } from './product.ts';
+
+export const EXCHANGE_ACTION_KINDS: readonly ActionKind[] = [
+  'PLACE_ORDER',
+  'CANCEL_ORDER',
+  'APPROVE_LISTING',
+  'DIGITAL_ASSET_TRANSFER',
+  'FIAT_CONVERT',
+  'RECORD_SURVEILLANCE_ENFORCEMENT',
+  'TOGGLE_KILL_SWITCH',
+];
+
+export type ExchangeRegistryPort = {
+  evaluateExchangeIntent(intent: ActionIntent): {
+    readonly allow: boolean;
+    readonly reasons: readonly string[];
+    readonly details?: Readonly<Record<string, unknown>>;
+  };
+};
 
 export type KernelRefusal = {
   readonly outcome: 'REFUSED';
@@ -71,9 +89,14 @@ export class PostureRelaxationError extends Error {
 
 export class ComplianceKernel {
   readonly vault: EvidenceVault;
+  readonly #exchangeRegistry: ExchangeRegistryPort | undefined;
 
-  constructor(vault: EvidenceVault = new EvidenceVault()) {
+  constructor(
+    vault: EvidenceVault = new EvidenceVault(),
+    options?: { readonly exchangeRegistry?: ExchangeRegistryPort },
+  ) {
     this.vault = vault;
+    this.#exchangeRegistry = options?.exchangeRegistry;
   }
 
   evaluate(intent: ActionIntent): Result<KernelDecision, PostureRelaxationError> {
@@ -103,9 +126,15 @@ export class ComplianceKernel {
     const identityApplied = apply(identity);
     if (!identityApplied.ok) return identityApplied;
 
-    const policy = policyProof(intent);
+    const policy = policyProof(intent, this.#exchangeRegistry);
     const policyApplied = apply(policy);
     if (!policyApplied.ok) return policyApplied;
+
+    if (intent.kind === 'DIGITAL_ASSET_TRANSFER') {
+      const travel = travelRuleProof(intent);
+      const travelApplied = apply(travel);
+      if (!travelApplied.ok) return travelApplied;
+    }
 
     const sanctions = sanctionsProof(intent);
     const sanctionsApplied = apply(sanctions);
@@ -315,7 +344,42 @@ function identityProof(intent: ActionIntent): Proof {
   });
 }
 
-function policyProof(intent: ActionIntent): Proof {
+function isExchangeKind(kind: ActionKind): boolean {
+  return (EXCHANGE_ACTION_KINDS as readonly string[]).includes(kind);
+}
+
+function policyProof(intent: ActionIntent, registry?: ExchangeRegistryPort): Proof {
+  if (isExchangeKind(intent.kind)) {
+    if (intent.kind === 'APPROVE_LISTING' || intent.kind === 'TOGGLE_KILL_SWITCH' || intent.kind === 'RECORD_SURVEILLANCE_ENFORCEMENT') {
+      return freezeProof({
+        kind: 'EXCHANGE_REGISTRY',
+        posture: 'CLEAR',
+        reasons: Object.freeze([
+          `governance action ${intent.kind} is registry-recorded, not a default-enabled capability`,
+        ]),
+        evaluatedAt: intent.occurredAt,
+      });
+    }
+    if (!registry) {
+      return freezeProof({
+        kind: 'EXCHANGE_REGISTRY',
+        posture: 'BLOCK',
+        reasons: Object.freeze([
+          'exchange registry is not bound; every exchange capability is default-deny',
+        ]),
+        evaluatedAt: intent.occurredAt,
+      });
+    }
+    const decision = registry.evaluateExchangeIntent(intent);
+    return freezeProof({
+      kind: 'EXCHANGE_REGISTRY',
+      posture: decision.allow ? 'CLEAR' : 'BLOCK',
+      reasons: decision.reasons,
+      evaluatedAt: intent.occurredAt,
+      ...(decision.details === undefined ? {} : { details: decision.details }),
+    });
+  }
+
   const dest = intent.destinationJurisdiction ?? intent.sourceJurisdiction;
   const product = productForKind(intent.kind, intent.sourceJurisdiction, dest);
   const decision = evaluatePolicy({
@@ -339,8 +403,60 @@ function policyProof(intent: ActionIntent): Proof {
   });
 }
 
+function travelRuleProof(intent: ActionIntent): Proof {
+  const payload = intent.payload as {
+    originatorJurisdiction: string;
+    beneficiaryJurisdiction: string;
+    originatorFields: Readonly<Record<string, string>>;
+    beneficiaryFields: Readonly<Record<string, string>>;
+    quantity: bigint;
+  };
+  const dest = payload.beneficiaryJurisdiction;
+  const pack = packFor(dest) ?? packFor(payload.originatorJurisdiction);
+  const section = pack?.travelRule;
+  if (!section || !section.enabled) {
+    return freezeProof({
+      kind: 'TRAVEL_RULE',
+      posture: 'BLOCK',
+      reasons: Object.freeze([
+        `Travel Rule is not enabled in jurisdiction pack ${pack?.jurisdiction ?? dest}; transfer refused, not queued`,
+      ]),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+  const req = section.crossBorderDigitalAssetTransfer;
+  const missingOriginator = req.requiredOriginatorFields.filter(
+    (field) => !payload.originatorFields[field] || payload.originatorFields[field]!.trim() === '',
+  );
+  const missingBeneficiary = req.requiredBeneficiaryFields.filter(
+    (field) => !payload.beneficiaryFields[field] || payload.beneficiaryFields[field]!.trim() === '',
+  );
+  if (missingOriginator.length > 0 || missingBeneficiary.length > 0) {
+    return freezeProof({
+      kind: 'TRAVEL_RULE',
+      posture: 'BLOCK',
+      reasons: Object.freeze([
+        `Travel Rule refused: missing originator fields [${missingOriginator.join(', ')}] beneficiary fields [${missingBeneficiary.join(', ')}] from pack ${pack.jurisdiction}`,
+      ]),
+      evaluatedAt: intent.occurredAt,
+      details: { missingOriginator, missingBeneficiary, packJurisdiction: pack.jurisdiction },
+    });
+  }
+  return freezeProof({
+    kind: 'TRAVEL_RULE',
+    posture: 'CLEAR',
+    reasons: Object.freeze([`Travel Rule fields satisfied from pack ${pack.jurisdiction}`]),
+    evaluatedAt: intent.occurredAt,
+  });
+}
+
 function sanctionsProof(intent: ActionIntent): Proof {
-  if (intent.kind !== 'SEND_PAYMENT' && intent.kind !== 'ADD_BENEFICIARY') {
+  if (
+    intent.kind !== 'SEND_PAYMENT' &&
+    intent.kind !== 'ADD_BENEFICIARY' &&
+    intent.kind !== 'PLACE_ORDER' &&
+    intent.kind !== 'DIGITAL_ASSET_TRANSFER'
+  ) {
     return freezeProof({
       kind: 'SANCTIONS',
       posture: 'CLEAR',
@@ -378,6 +494,36 @@ function sanctionsProof(intent: ActionIntent): Proof {
     subjects.push({
       role: 'DESTINATION_COUNTRY',
       country: dest,
+    });
+  }
+  if (intent.kind === 'PLACE_ORDER') {
+    const payload = intent.payload as { customerName: string; jurisdiction: string };
+    subjects.push({
+      role: 'SENDER',
+      name: payload.customerName,
+      country: payload.jurisdiction,
+    });
+  }
+  if (intent.kind === 'DIGITAL_ASSET_TRANSFER') {
+    const payload = intent.payload as {
+      originatorFields: Readonly<Record<string, string>>;
+      beneficiaryFields: Readonly<Record<string, string>>;
+      originatorJurisdiction: string;
+      beneficiaryJurisdiction: string;
+    };
+    subjects.push({
+      role: 'SENDER',
+      name: payload.originatorFields.legalName ?? '',
+      country: payload.originatorJurisdiction,
+    });
+    subjects.push({
+      role: 'RECEIVER',
+      name: payload.beneficiaryFields.legalName ?? '',
+      country: payload.beneficiaryJurisdiction,
+    });
+    subjects.push({
+      role: 'DESTINATION_COUNTRY',
+      country: payload.beneficiaryJurisdiction,
     });
   }
   if (intent.kind === 'ADD_BENEFICIARY') {

@@ -7,7 +7,7 @@ import {
   AUTHORITY_TTL_MS,
   AuthorityIssuer,
   escalateAll,
-  type ActionIntent,
+  type LegacyActionIntent as ActionIntent,
   type AuthorizationDecision,
   type Clock,
   type OpenAccountPayload,

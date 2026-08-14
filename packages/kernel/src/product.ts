@@ -28,6 +28,16 @@ export function productForKind(
       const dest = destinationCountry ?? sourceCountry;
       return dest === sourceCountry ? 'DOMESTIC_PAYMENT' : 'CROSS_BORDER_PAYMENT';
     }
+    case 'PLACE_ORDER':
+    case 'CANCEL_ORDER':
+    case 'APPROVE_LISTING':
+    case 'RECORD_SURVEILLANCE_ENFORCEMENT':
+    case 'TOGGLE_KILL_SWITCH':
+      return 'PYRAMID_EXCHANGE';
+    case 'DIGITAL_ASSET_TRANSFER':
+      return 'DIGITAL_ASSET_TRANSFER';
+    case 'FIAT_CONVERT':
+      return 'FIAT_GATEWAY';
     default: {
       const _never: never = kind;
       return _never;

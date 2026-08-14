@@ -36,7 +36,10 @@ export type ProductName =
   | 'OPEN_ACCOUNT'
   | 'SEED_CREDIT'
   | 'CUSTOMER_LIFECYCLE'
-  | 'COST_AVOIDED';
+  | 'COST_AVOIDED'
+  | 'PYRAMID_EXCHANGE'
+  | 'DIGITAL_ASSET_TRANSFER'
+  | 'FIAT_GATEWAY';
 
 export type RuleWhen = {
   readonly action?: string;
@@ -57,11 +60,25 @@ export type ProductRule = {
   readonly plainLanguageReason: string;
 };
 
+export type TravelRuleFieldRequirements = {
+  readonly requiredOriginatorFields: readonly string[];
+  readonly requiredBeneficiaryFields: readonly string[];
+  readonly thresholdMinorUnits: string;
+  readonly thresholdCurrency: string;
+};
+
+export type TravelRulePackSection = {
+  readonly legalReviewState: LegalReviewState;
+  readonly enabled: boolean;
+  readonly crossBorderDigitalAssetTransfer: TravelRuleFieldRequirements;
+};
+
 export type JurisdictionPack = {
   readonly version: string;
   readonly jurisdiction: string;
   readonly title: string;
   readonly rules: readonly ProductRule[];
+  readonly travelRule?: TravelRulePackSection;
 };
 
 export type PolicyQuestion = {

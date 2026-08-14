@@ -5,7 +5,7 @@ import { isCurrency, type Currency } from './currency.ts';
 import type { CustomerId } from './customer.ts';
 import { isJurisdiction, type Jurisdiction } from './jurisdiction.ts';
 import type { LegalEntity, LegalEntityId } from './legal-entity.ts';
-import { lookupProduct, type Product, type ProductCatalog } from './product.ts';
+import { lookupProduct, type Product, type ProductCatalog, type ProductId } from './product.ts';
 import { err, ok, type Result } from './result.ts';
 import { isUtcInstant, type UtcInstant } from './time.ts';
 

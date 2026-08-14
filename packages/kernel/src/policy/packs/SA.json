@@ -26,6 +26,28 @@
         "when": { "product": "CROSS_BORDER_PAYMENT", "sourceCountry": "SA" }
       },
       "plainLanguageReason": "No counsel determination is on file. Cross-border SA corridors stay disabled."
+    },
+    {
+      "id": "SA-EXCHANGE-RESEARCH",
+      "title": "Pyramid Exchange is not counsel-confirmed in Saudi Arabia",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PYRAMID_EXCHANGE",
+        "when": { "product": "PYRAMID_EXCHANGE", "sourceCountry": "SA" }
+      },
+      "plainLanguageReason": "No counsel determination is on file. Exchange capability stays disabled."
     }
-  ]
+  ],
+  "travelRule": {
+    "legalReviewState": "RESEARCH_REQUIRED",
+    "enabled": false,
+    "crossBorderDigitalAssetTransfer": {
+      "requiredOriginatorFields": ["legalName", "accountId", "jurisdiction"],
+      "requiredBeneficiaryFields": ["legalName", "accountId", "jurisdiction"],
+      "thresholdMinorUnits": "0",
+      "thresholdCurrency": "SAR"
+    }
+  }
 }

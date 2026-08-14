@@ -26,6 +26,28 @@
         "when": { "product": "CROSS_BORDER_PAYMENT", "sourceCountry": "AE" }
       },
       "plainLanguageReason": "No counsel determination is on file. Cross-border AE corridors stay disabled."
+    },
+    {
+      "id": "AE-EXCHANGE-RESEARCH",
+      "title": "Pyramid Exchange is not counsel-confirmed in the UAE",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PYRAMID_EXCHANGE",
+        "when": { "product": "PYRAMID_EXCHANGE", "sourceCountry": "AE" }
+      },
+      "plainLanguageReason": "No counsel determination is on file. Exchange capability stays disabled."
     }
-  ]
+  ],
+  "travelRule": {
+    "legalReviewState": "RESEARCH_REQUIRED",
+    "enabled": false,
+    "crossBorderDigitalAssetTransfer": {
+      "requiredOriginatorFields": ["legalName", "accountId", "jurisdiction"],
+      "requiredBeneficiaryFields": ["legalName", "accountId", "jurisdiction"],
+      "thresholdMinorUnits": "0",
+      "thresholdCurrency": "AED"
+    }
+  }
 }

@@ -29,11 +29,11 @@ export {
   isResidency,
 } from './jurisdiction.ts';
 
-export type { Currency } from './currency.ts';
-export { asCurrency, isCurrency } from './currency.ts';
-
 export type { AccountClass } from './account-class.ts';
-export { ACCOUNT_CLASSES, isAccountClass } from './account-class.ts';
+export {
+  ACCOUNT_CLASSES,
+  isAccountClass,
+} from './account-class.ts';
 
 export type { CreateLegalEntityInput, LegalEntity, LegalEntityId } from './legal-entity.ts';
 export { asLegalEntityId, createLegalEntity } from './legal-entity.ts';
@@ -73,10 +73,12 @@ export {
   transitionCustomerStatus,
 } from './customer.ts';
 
-export type { CurrencyCode, SupportedCurrency } from './currency.ts';
+export type { Currency, CurrencyCode, SupportedCurrency } from './currency.ts';
 export {
+  asCurrency,
   asCurrencyCode,
   currencyDecimals,
+  isCurrency,
   isCurrencyCode,
   isSupportedCurrency,
   minorUnitsScale,
@@ -127,8 +129,25 @@ export {
   asRouteId,
 } from './ids.ts';
 
-export type { Account, AccountClass } from './account.ts';
-export { ACCOUNT_CLASSES, createAccount } from './account.ts';
+export type {
+  Account,
+  AccountStatus,
+  AccountStatusTransition,
+  AccountStatusTransitionResult,
+  CreateLedgerAccountInput,
+  IllegalAccountStatusTransition,
+  LedgerAccountClass,
+  OpenAccountInput,
+} from './account.ts';
+export {
+  ACCOUNT_STATUSES,
+  canTransitionAccountStatus,
+  createAccount,
+  isAccountStatus,
+  LEDGER_ACCOUNT_CLASSES,
+  openAccount,
+  transitionAccountStatus,
+} from './account.ts';
 
 export type {
   Beneficiary,
@@ -143,23 +162,6 @@ export {
 
 export type { Actor, ActorType } from './actor.ts';
 export { ACTOR_TYPES, freezeActor } from './actor.ts';
-export type {
-  Account,
-  AccountId,
-  AccountStatus,
-  AccountStatusTransition,
-  AccountStatusTransitionResult,
-  IllegalAccountStatusTransition,
-  OpenAccountInput,
-} from './account.ts';
-export {
-  ACCOUNT_STATUSES,
-  asAccountId,
-  canTransitionAccountStatus,
-  isAccountStatus,
-  openAccount,
-  transitionAccountStatus,
-} from './account.ts';
 
 export type {
   CreateOpenAccountIntentInput,

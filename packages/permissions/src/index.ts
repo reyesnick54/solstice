@@ -4,10 +4,23 @@ export { FrozenClock, systemClock } from './clock.ts';
 export type {
   AccountClass,
   ActionIntent,
+  ActorKind,
+  ActorRef,
+  CreateActionIntentInput,
+  IntentId,
+  LegacyActionIntent,
   OpenAccountIntent,
   OpenAccountPayload,
 } from './action-intent.ts';
-export { ACCOUNT_CLASSES, ActionType, openAccountIntent } from './action-intent.ts';
+export {
+  ACCOUNT_CLASSES,
+  ACTOR_KINDS,
+  ActionType,
+  asIntentId,
+  createActionIntent,
+  isActorKind,
+  openAccountIntent,
+} from './action-intent.ts';
 
 export type { DecisionStatus, ProofEvaluation, ProofName } from './decision.ts';
 export {
@@ -27,27 +40,14 @@ export {
 
 export type { AuthorizationDecision } from './authorization-decision.ts';
 export { isAllow } from './authorization-decision.ts';
+
 export type { Brand } from './brand.ts';
 export { brandAs } from './brand.ts';
 
 export type {
-  ActionIntent,
-  ActorKind,
-  ActorRef,
-  CreateActionIntentInput,
-  IntentId,
-} from './action-intent.ts';
-export {
-  ACTOR_KINDS,
-  asIntentId,
-  createActionIntent,
-  isActorKind,
-} from './action-intent.ts';
-
-export type {
-  AuthorizationDecision,
+  AuthorizationDecision as EnvelopeAuthorizationDecision,
   AuthorizationDecisionStatus,
-  ExecutionAuthority,
+  ExecutionAuthority as EnvelopeExecutionAuthority,
   ProofClass,
 } from './authorization.ts';
 export {

@@ -27,6 +27,9 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'transitionPayment', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'recordCostAvoided', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'commitJournal', file: 'packages/ledger/src/journal.ts' },
+  { symbol: 'recordListingApproval', file: 'packages/pyramid-exchange/src/registry.ts' },
+  { symbol: 'recordEnforcementDecision', file: 'packages/pyramid-exchange/src/surveillance.ts' },
+  { symbol: 'engageKillSwitch', file: 'packages/pyramid-exchange/src/kill-switch.ts' },
 ];
 
 const failures = [];
@@ -112,7 +115,7 @@ for (const file of files) {
 }
 
 const knownSymbols = new Set(STATE_CHANGING_PATHS.map((p) => p.symbol));
-const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal)\s*\(/g;
+const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal|recordListingApproval|recordEnforcementDecision|engageKillSwitch)\s*\(/g;
 
 for (const file of files) {
   const rel = relative(ROOT, file);

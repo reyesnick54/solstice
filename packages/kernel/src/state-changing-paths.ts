@@ -78,4 +78,25 @@ export const STATE_CHANGING_PATHS: readonly StateChangingPath[] = Object.freeze(
     gated: true,
     kernelKind: 'RECORD_COST_AVOIDED',
   },
+  {
+    id: 'exchange.recordListingApproval',
+    symbol: 'recordListingApproval',
+    file: 'packages/pyramid-exchange/src/registry.ts',
+    gated: true,
+    kernelKind: 'APPROVE_LISTING',
+  },
+  {
+    id: 'exchange.recordEnforcementDecision',
+    symbol: 'recordEnforcementDecision',
+    file: 'packages/pyramid-exchange/src/surveillance.ts',
+    gated: true,
+    kernelKind: 'RECORD_SURVEILLANCE_ENFORCEMENT',
+  },
+  {
+    id: 'exchange.engageKillSwitch',
+    symbol: 'engageKillSwitch',
+    file: 'packages/pyramid-exchange/src/kill-switch.ts',
+    gated: true,
+    kernelKind: 'TOGGLE_KILL_SWITCH',
+  },
 ]);
