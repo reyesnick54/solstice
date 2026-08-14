@@ -277,12 +277,10 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/permissions` | `packages/domain`, `packages/money`, `packages/config`, `packages/security` |
 | `packages/identity` | `packages/domain`, `packages/security`, `packages/permissions`, `packages/config`, `packages/evidence`, `packages/events` |
 | `services/identity` | `packages/identity` |
-| `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity` |
+| `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money` |
-| `services/accounts` | the packages above, including `packages/persistence` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `tools/architectural-linter` | nothing |
 
@@ -369,6 +367,7 @@ flowchart BT
   kernel --> domain
   kernel --> money
   kernel --> identity
+  kernel --> security
   ledger --> config
   ledger --> permissions
   ledger --> domain

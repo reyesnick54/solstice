@@ -34,7 +34,11 @@ function keyOf(subjectRef: string, metric: VelocityMetric, windowMs: number): st
  * increment; durable adapters persist the snapshot under a unique key.
  */
 export class VelocityEngine {
-  constructor(private readonly counters: Map<string, VelocitySnapshot>) {}
+  private readonly counters: Map<string, VelocitySnapshot>;
+
+  constructor(counters: Map<string, VelocitySnapshot>) {
+    this.counters = counters;
+  }
 
   increment(input: VelocityIncrement): VelocitySnapshot {
     const counterKey = keyOf(input.subjectRef, input.metric, input.windowMs);

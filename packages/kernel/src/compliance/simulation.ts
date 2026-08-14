@@ -103,21 +103,30 @@ function response(
 }
 
 export class SimulatedSanctionsProvider implements SanctionsProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   screen(request: ScreeningRequest): ProviderScreenResponse {
     return response(request, 'sim-sanctions', 'sanctions', this.unavailable);
   }
 }
 
 export class SimulatedPepProvider implements PepProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   screen(request: ScreeningRequest): ProviderScreenResponse {
     return response(request, 'sim-pep', 'pep', this.unavailable);
   }
 }
 
 export class SimulatedAdverseMediaProvider implements AdverseMediaProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   screen(request: ScreeningRequest): ProviderScreenResponse & {
     readonly references: readonly AdverseMediaReference[];
   } {
@@ -140,7 +149,10 @@ export class SimulatedAdverseMediaProvider implements AdverseMediaProvider {
 }
 
 export class SimulatedTransactionMonitoringProvider implements TransactionMonitoringProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   evaluate(request: ScreeningRequest): ProviderScreenResponse {
     if (this.unavailable.has('sim-tm')) {
       return toUnavailable('sim-tm', request.now);
@@ -160,14 +172,20 @@ export class SimulatedTransactionMonitoringProvider implements TransactionMonito
 }
 
 export class SimulatedFraudRiskProvider implements FraudRiskProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   evaluate(request: ScreeningRequest): ProviderScreenResponse {
     return response(request, 'sim-fraud', 'fraud', this.unavailable);
   }
 }
 
 export class SimulatedDeviceRiskProvider implements DeviceRiskProvider {
-  constructor(private readonly unavailable: ReadonlySet<string>) {}
+  private readonly unavailable: ReadonlySet<string>;
+  constructor(unavailable: ReadonlySet<string>) {
+    this.unavailable = unavailable;
+  }
   screen(request: ScreeningRequest): ProviderScreenResponse {
     return response(request, 'sim-device', 'device', this.unavailable);
   }

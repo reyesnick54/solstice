@@ -128,7 +128,8 @@
         "packages/permissions",
         "packages/domain",
         "packages/money",
-        "packages/identity"
+        "packages/identity",
+        "packages/security"
       ],
       "codeowners": ["@reyesnick54"]
     },
