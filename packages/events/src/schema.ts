@@ -33,6 +33,19 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'IdentitySessionRevoked', version: 1, status: 'current' },
   { eventType: 'IdentityDeviceRegistered', version: 1, status: 'current' },
   { eventType: 'IdentityRecoveryRequested', version: 1, status: 'current' },
+  { eventType: 'HoldCreated', version: 1, status: 'current' },
+  { eventType: 'HoldReleased', version: 1, status: 'current' },
+  { eventType: 'HoldCaptured', version: 1, status: 'current' },
+  { eventType: 'HoldCancelled', version: 1, status: 'current' },
+  { eventType: 'StatementGenerated', version: 1, status: 'current' },
+  { eventType: 'ReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'AccountPositionChanged', version: 1, status: 'current' },
+  { eventType: 'FeePosted', version: 1, status: 'current' },
+  { eventType: 'InterestPosted', version: 1, status: 'current' },
+  { eventType: 'ReversalPosted', version: 1, status: 'current' },
+  { eventType: 'PendingSettlementInitiated', version: 1, status: 'current' },
+  { eventType: 'PendingSettlementSettled', version: 1, status: 'current' },
+  { eventType: 'PendingSettlementReturned', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

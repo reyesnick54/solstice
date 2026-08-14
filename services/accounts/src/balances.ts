@@ -182,6 +182,151 @@ export function projectCustomerPosition(
   return ok(CustomerPosition.assemble(customerId, breakdown));
 }
 
+/**
+ * Currency-indexed customer position. Each currency is a separate
+ * CustomerPosition. There is no blended grand total on this object.
+ */
+export type CurrencyIndexedCustomerPosition = {
+  readonly customerId: CustomerId;
+  readonly currencies: readonly string[];
+  readonly byCurrency: Readonly<Record<string, CustomerPosition>>;
+};
+
+export function projectCurrencyIndexedPosition(
+  ledger: Ledger,
+  customerId: CustomerId,
+  accounts: readonly Account[],
+): Result<CurrencyIndexedCustomerPosition, MixedCurrencyWithoutConversion> {
+  const owned = accounts.filter((account) => account.ownerId === customerId);
+  const grouped = new Map<string, Account[]>();
+  for (const account of owned) {
+    const list = grouped.get(account.currency) ?? [];
+    list.push(account);
+    grouped.set(account.currency, list);
+  }
+  const byCurrency: Record<string, CustomerPosition> = {};
+  const currencies: string[] = [];
+  for (const [currency, group] of grouped) {
+    const projected = projectCustomerPosition(ledger, customerId, group, []);
+    if (isErr(projected)) {
+      return projected;
+    }
+    byCurrency[currency] = projected.value;
+    currencies.push(currency);
+  }
+  currencies.sort();
+  return ok(
+    Object.freeze({
+      customerId,
+      currencies: Object.freeze(currencies),
+      byCurrency: Object.freeze(byCurrency),
+    }),
+  );
+}
+
+/**
+ * Consolidated valuation requires explicit FX rates with timestamp/source.
+ * A blended total without that context is refused.
+ */
+export function blendCustomerPosition(
+  indexed: CurrencyIndexedCustomerPosition,
+  conversions: readonly FxConversion[],
+  targetCurrency: string,
+): Result<CustomerPosition, MixedCurrencyWithoutConversion> {
+  if (indexed.currencies.length === 0) {
+    return ok(CustomerPosition.assemble(indexed.customerId, emptyBreakdown(targetCurrency)));
+  }
+  if (indexed.currencies.length > 1 && conversions.length === 0) {
+    return err({
+      code: 'MIXED_CURRENCY_WITHOUT_CONVERSION',
+      currencies: indexed.currencies,
+      message:
+        'mixed currencies with no rate supplied; refusing to return a wrong number',
+    });
+  }
+  const buckets: PositionBreakdown = emptyBreakdown(targetCurrency);
+  for (const currency of indexed.currencies) {
+    const position = indexed.byCurrency[currency];
+    if (!position) {
+      continue;
+    }
+    const converted = convertBreakdown(position.breakdown, currency, targetCurrency, conversions);
+    if (isErr(converted)) {
+      return converted;
+    }
+    buckets.deposits = classified(
+      'deposits',
+      buckets.deposits.total.plus(converted.value.deposits.total),
+    );
+    buckets.investments = classified(
+      'investments',
+      buckets.investments.total.plus(converted.value.investments.total),
+    );
+    buckets.digital_assets = classified(
+      'digital_assets',
+      buckets.digital_assets.total.plus(converted.value.digital_assets.total),
+    );
+    buckets.rewards = classified(
+      'rewards',
+      buckets.rewards.total.plus(converted.value.rewards.total),
+    );
+    buckets.pending = classified(
+      'pending',
+      buckets.pending.total.plus(converted.value.pending.total),
+    );
+  }
+  return ok(CustomerPosition.assemble(indexed.customerId, buckets));
+}
+
+function emptyBreakdown(currency: string): PositionBreakdown {
+  return {
+    deposits: classified('deposits', Money.zero(currency)),
+    investments: classified('investments', Money.zero(currency)),
+    digital_assets: classified('digital_assets', Money.zero(currency)),
+    rewards: classified('rewards', Money.zero(currency)),
+    pending: classified('pending', Money.zero(currency)),
+  };
+}
+
+function convertBreakdown(
+  breakdown: PositionBreakdown,
+  from: string,
+  to: string,
+  conversions: readonly FxConversion[],
+): Result<PositionBreakdown, MixedCurrencyWithoutConversion> {
+  const convert = (amount: Money): Result<Money, MixedCurrencyWithoutConversion> => {
+    if (amount.currency === to) {
+      return ok(amount);
+    }
+    const conversion = conversions.find((c) => c.from === amount.currency && c.to === to);
+    if (!conversion) {
+      return err({
+        code: 'MIXED_CURRENCY_WITHOUT_CONVERSION',
+        currencies: [from, to],
+        message: `no FX conversion supplied for ${from} → ${to}`,
+      });
+    }
+    return ok(applyFxConversion(amount, conversion));
+  };
+  const deposits = convert(breakdown.deposits.total);
+  const investments = convert(breakdown.investments.total);
+  const digital = convert(breakdown.digital_assets.total);
+  const rewards = convert(breakdown.rewards.total);
+  const pending = convert(breakdown.pending.total);
+  if (isErr(deposits)) return deposits;
+  if (isErr(investments)) return investments;
+  if (isErr(digital)) return digital;
+  if (isErr(rewards)) return rewards;
+  if (isErr(pending)) return pending;
+  return ok({
+    deposits: classified('deposits', deposits.value),
+    investments: classified('investments', investments.value),
+    digital_assets: classified('digital_assets', digital.value),
+    rewards: classified('rewards', rewards.value),
+    pending: classified('pending', pending.value),
+  });
+}
+
 function classified<B extends PositionBucket>(
   bucket: B,
   total: Money,

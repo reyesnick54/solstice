@@ -87,7 +87,14 @@ export function policyFactsFromKernel(
           residency: facts.customer.residency,
         }
       : {}),
-    ...(facts.identity ?? {}),
+    ...(facts.policyIdentity ?? {}),
+    ...(facts.identity
+      ? {
+          kycState: facts.identity.kycState ?? facts.customer?.verification.kycState,
+          kycRecordVersion:
+            facts.identity.kycVersion ?? facts.customer?.verification.kycRecordVersion,
+        }
+      : {}),
   };
   return {
     actor: facts.actor,

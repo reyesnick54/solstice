@@ -17,7 +17,9 @@ import {
   createSimulationKeyProvider,
   SimulationKeyProvider,
 } from '../../../packages/security/src/simulation.ts';
+import { BankingOperationsService } from './banking-operations.ts';
 import { seedSimulationCatalog } from './catalog.ts';
+import { HoldStore } from './hold-store.ts';
 import { securityEventSink, securityEvidenceSink } from './security-audit.ts';
 import { MoneyMovementService } from './money-movement.ts';
 import { AccountsService } from './open-account.ts';
@@ -42,6 +44,8 @@ export type SimulationRuntime = {
   readonly accounts: AccountStore;
   readonly accountsService: AccountsService;
   readonly money: MoneyMovementService;
+  readonly banking: BankingOperationsService;
+  readonly holds: HoldStore;
   readonly identity: SimulatedIdentityAdapter;
 };
 
@@ -120,6 +124,7 @@ export function createSimulationRuntime(
     legalEntities,
     identity.service,
   );
+  const holds = new HoldStore();
   const money = new MoneyMovementService(
     kernel,
     issuer,
@@ -133,6 +138,22 @@ export function createSimulationRuntime(
     products,
     legalEntities,
     identity.service,
+    holds,
+  );
+  const banking = new BankingOperationsService(
+    kernel,
+    issuer,
+    ledger,
+    evidence,
+    events,
+    growth,
+    clock,
+    customers,
+    accounts,
+    products,
+    legalEntities,
+    identity.service,
+    holds,
   );
   return {
     capabilities: CAPABILITIES,
@@ -148,6 +169,8 @@ export function createSimulationRuntime(
     accounts,
     accountsService,
     money,
+    banking,
+    holds,
     identity,
   };
 }

@@ -23,6 +23,7 @@ import {
   type CustomerStatus,
 } from './index.ts';
 import { asAccountId } from './account.ts';
+import { asHoldId } from './hold.ts';
 import { asProductId } from './product.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
@@ -37,7 +38,13 @@ import {
   LIVE_MONEY_ENABLED,
   LIVE_PAYMENTS_ENABLED,
 } from '../../config/src/flags.ts';
-import { balanceOfAccount, projectCustomerPosition } from '../../../services/accounts/src/balances.ts';
+import { projectBankingPosition } from '../../../services/accounts/src/available-funds.ts';
+import {
+  balanceOfAccount,
+  blendCustomerPosition,
+  projectCurrencyIndexedPosition,
+  projectCustomerPosition,
+} from '../../../services/accounts/src/balances.ts';
 import { SIMULATION_FUNDING_SOURCE_ID } from '../../ledger/src/types.ts';
 
 const occurredAt = asUtcInstant('2026-08-13T15:00:00.000Z');
@@ -60,7 +67,7 @@ function mustTransition(customer: Customer, to: CustomerStatus): Customer {
   return result.value.customer;
 }
 
-function main(): void {
+async function main(): Promise<void> {
   heading('STEP 0', 'Confirm this is a simulation — no live money');
   console.log(`  ENVIRONMENT = ${ENVIRONMENT}`);
   console.log(`  LIVE_MONEY_ENABLED = ${LIVE_MONEY_ENABLED}`);
@@ -314,6 +321,116 @@ function main(): void {
     }
   }
 
+  heading('STEP 11', 'Chunk 8 — reserve, release, multi-currency position, statement, reconciliation');
+  const extra = runtime.money.deposit({
+    id: asIntentId('demo_dep_hold_fund'),
+    actionType: ACTION_TYPES.POST_DEPOSIT,
+    idempotencyKey: 'demo_dep_hold_fund',
+    actorId: 'demo_operator',
+    requestedAt: occurredAt,
+    purpose: 'CUSTOMER_FUNDING',
+    payload: { accountId: opened.account.id, amount: Money.fromMinorUnits(40_000n, 'USD') },
+  });
+  if (extra.outcome !== 'POSTED') {
+    throw new Error('demo expected extra USD deposit POSTED');
+  }
+  const hold = await runtime.banking.createHold({
+    id: asIntentId('demo_hold_250'),
+    actionType: ACTION_TYPES.CREATE_HOLD,
+    idempotencyKey: 'demo_hold_250',
+    actorId: 'demo_operator',
+    requestedAt: occurredAt,
+    purpose: 'CUSTOMER_HOLD',
+    payload: {
+      holdId: asHoldId('demo_hold_250'),
+      accountId: opened.account.id,
+      amount: Money.fromMinorUnits(25_000n, 'USD'),
+      holdPurpose: 'OUTGOING_TRANSFER',
+    },
+  });
+  if (hold.outcome !== 'COMPLETED') {
+    throw new Error(`demo expected hold COMPLETED, got ${hold.outcome}`);
+  }
+  const heldPos = projectBankingPosition(runtime.ledger, opened.account, runtime.holds, occurredAt);
+  if (!isOk(heldPos)) {
+    throw new Error('demo expected a banking position while held');
+  }
+  console.log(
+    `  After $250 hold: ledger=${heldPos.value.ledgerBalance.minorUnits.toString()} available=${heldPos.value.available.minorUnits.toString()} held=${heldPos.value.held.minorUnits.toString()}`,
+  );
+  const released = runtime.banking.releaseHold({
+    id: asIntentId('demo_hold_rel'),
+    actionType: ACTION_TYPES.RELEASE_HOLD,
+    idempotencyKey: 'demo_hold_rel',
+    actorId: 'demo_operator',
+    requestedAt: occurredAt,
+    purpose: 'CUSTOMER_HOLD',
+    payload: { holdId: asHoldId('demo_hold_250'), accountId: opened.account.id },
+  });
+  if (released.outcome !== 'COMPLETED') {
+    throw new Error('demo expected hold RELEASED');
+  }
+  const sarOpened = runtime.accountsService.open({
+    id: asIntentId('demo_open_sar'),
+    actionType: ACTION_TYPES.OPEN_ACCOUNT,
+    idempotencyKey: 'demo_open_sar',
+    actorId: 'demo_operator',
+    requestedAt: occurredAt,
+    purpose: 'CUSTOMER_ONBOARDING',
+    payload: {
+      accountId: asAccountId('acct_demo_sar'),
+      ownerId: customer.id,
+      productId: asProductId('prod_demand_sar_gb'),
+      accountClass: 'DEMAND_DEPOSIT',
+      legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
+      jurisdiction: asJurisdiction('GB'),
+      currency: asCurrencyCode('SAR'),
+    },
+  });
+  if (sarOpened.outcome !== 'OPENED') {
+    throw new Error(`demo expected SAR account OPENED, got ${sarOpened.outcome}`);
+  }
+  const sarDeposit = runtime.money.deposit({
+    id: asIntentId('demo_sar_dep'),
+    actionType: ACTION_TYPES.POST_DEPOSIT,
+    idempotencyKey: 'demo_sar_dep',
+    actorId: 'demo_operator',
+    requestedAt: occurredAt,
+    purpose: 'CUSTOMER_FUNDING',
+    payload: { accountId: sarOpened.account.id, amount: Money.fromMinorUnits(8_000n, 'SAR') },
+  });
+  if (sarDeposit.outcome !== 'POSTED') {
+    throw new Error('demo expected SAR deposit POSTED');
+  }
+  const indexed = projectCurrencyIndexedPosition(
+    runtime.ledger,
+    customer.id,
+    runtime.accountsService.listAccounts(),
+  );
+  if (!isOk(indexed)) {
+    throw new Error('demo expected currency-indexed customer position');
+  }
+  console.log(`  Currencies: ${indexed.value.currencies.join(', ')}`);
+  const blended = blendCustomerPosition(indexed.value, [], 'USD');
+  if (isOk(blended)) {
+    throw new Error('demo expected blended total without FX context to fail');
+  }
+  console.log(`  Blended total without FX refused: ${blended.error.code}`);
+  const statement = runtime.banking.generateStatement(
+    opened.account,
+    asUtcInstant('2026-08-01T00:00:00.000Z'),
+    asUtcInstant('2026-08-31T23:59:59.000Z'),
+  );
+  console.log(
+    `  Statement ${statement.id} opening=${statement.openingMinorUnits.toString()} closing=${statement.closingMinorUnits.toString()} ${statement.currency}`,
+  );
+  const mismatch = runtime.banking.recordReconciliation({
+    account: opened.account,
+    externalMinorUnits: 1n,
+    externalStatementRef: 'SIM-EXT-DEMO',
+  });
+  console.log(`  Reconciliation ${mismatch.id} status=${mismatch.status} (not auto-corrected)`);
+
   const illegal = transitionCustomerStatus(customer, 'CLOSED', occurredAt);
   if (isOk(illegal)) {
     const closed = illegal.value.customer;
@@ -328,4 +445,4 @@ function main(): void {
   console.log('demo: ok');
 }
 
-main();
+void main();

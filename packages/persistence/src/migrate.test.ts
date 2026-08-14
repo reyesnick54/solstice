@@ -86,6 +86,8 @@ describe('versioned SQL migrations', () => {
     assert.match(v002.sql, /CREATE TABLE customer\.legal_entity_capability/);
     assert.match(v002.sql, /CREATE TABLE customer\.manual_review_case/);
     assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v002.sql), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);
@@ -100,5 +102,17 @@ describe('versioned SQL migrations', () => {
     const v003 = files.find((file) => file.version === 3);
     assert.ok(v003);
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
+  });
+
+  it('ledger V004 persists banking-core metadata without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v004 = files.find((file) => file.version === 4);
+    assert.ok(v004);
+    assert.match(v004.sql, /CREATE TABLE ledger\.funds_hold/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.pending_settlement/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.fee_assessment/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.reconciliation_item/);
+    assert.match(v004.sql, /CREATE TABLE ledger\.account_coordinate/);
+    assert.equal(/\baccount\.balance\b/i.test(v004.sql), false);
   });
 });

@@ -15,7 +15,7 @@ import {
   LedgerInvariantError,
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
-  SIMULATION_FUNDING_SOURCE_ID,
+  simulationFundingSourceId,
   type ClassBridge,
   type Journal,
 } from '../../../packages/ledger/src/types.ts';
@@ -32,8 +32,9 @@ import {
   actionTypesFromCapabilities,
   type IdentityAuthorityPort,
 } from '../../../packages/identity/src/index.ts';
-import { balanceOfAccount } from './balances.ts';
+import { assertSufficientAvailable, projectBankingPosition } from './available-funds.ts';
 import { recordKernelDecisionEvent } from './event-trace.ts';
+import { HoldStore } from './hold-store.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
 export type MoneyMovementOutcome =
@@ -73,6 +74,7 @@ export class MoneyMovementService {
   private readonly products: ProductStore;
   private readonly legalEntities: LegalEntityStore;
   private readonly identity: IdentityAuthorityPort;
+  private readonly holds: HoldStore;
 
   constructor(
     kernel: ComplianceKernel,
@@ -87,6 +89,7 @@ export class MoneyMovementService {
     products: ProductStore,
     legalEntities: LegalEntityStore,
     identity: IdentityAuthorityPort,
+    holds: HoldStore = new HoldStore(),
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -100,6 +103,7 @@ export class MoneyMovementService {
     this.products = products;
     this.legalEntities = legalEntities;
     this.identity = identity;
+    this.holds = holds;
   }
 
   deposit(intent: PostDepositIntent): MoneyMovementOutcome {
@@ -114,7 +118,7 @@ export class MoneyMovementService {
         return {
           postings: [
             {
-              accountId: SIMULATION_FUNDING_SOURCE_ID,
+              accountId: simulationFundingSourceId(amount.currency),
               direction: 'DEBIT' as const,
               amount,
             },
@@ -162,13 +166,19 @@ export class MoneyMovementService {
         if (!account) {
           return { code: 'ACCOUNT_NOT_FOUND', message: 'account does not exist' };
         }
-        const balance = balanceOfAccount(this.ledger, account);
-        if (isErr(balance)) {
-          return { code: balance.error.code, message: 'cannot read balance' };
+        const position = projectBankingPosition(
+          this.ledger,
+          account,
+          this.holds,
+          this.clock.now(),
+        );
+        if (isErr(position)) {
+          return { code: position.error.code, message: 'cannot read available funds' };
         }
-        if (balance.value.cmp(intent.payload.amount) < 0) {
+        const enough = assertSufficientAvailable(position.value, intent.payload.amount);
+        if (isErr(enough)) {
           return {
-            code: 'INSUFFICIENT_FUNDS',
+            code: enough.error.code,
             message: 'withdrawal exceeds available balance; nothing posted',
           };
         }
@@ -185,7 +195,7 @@ export class MoneyMovementService {
               amount,
             },
             {
-              accountId: SIMULATION_FUNDING_SOURCE_ID,
+              accountId: simulationFundingSourceId(amount.currency),
               direction: 'CREDIT' as const,
               amount,
             },
@@ -240,13 +250,19 @@ export class MoneyMovementService {
             };
           }
         }
-        const balance = balanceOfAccount(this.ledger, source);
-        if (isErr(balance)) {
-          return { code: balance.error.code, message: 'cannot read source balance' };
+        const position = projectBankingPosition(
+          this.ledger,
+          source,
+          this.holds,
+          this.clock.now(),
+        );
+        if (isErr(position)) {
+          return { code: position.error.code, message: 'cannot read source available funds' };
         }
-        if (balance.value.cmp(intent.payload.amount) < 0) {
+        const enough = assertSufficientAvailable(position.value, intent.payload.amount);
+        if (isErr(enough)) {
           return {
-            code: 'INSUFFICIENT_FUNDS',
+            code: enough.error.code,
             message: 'transfer exceeds available source balance; nothing posted',
           };
         }

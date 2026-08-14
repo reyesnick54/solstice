@@ -153,15 +153,7 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
 export function sealEnvelope<T extends string, V extends number, P>(
   input: SealedEventInput<T, V, P>,
   sequence: number,
-): DurableEventEnvelope<T, V, P>;
-export function sealEnvelope(
-  input: SealedEventInput<string, number, unknown>,
-  sequence: number,
-): DurableEventEnvelope;
-export function sealEnvelope(
-  input: SealedEventInput<string, number, unknown>,
-  sequence: number,
-): DurableEventEnvelope {
+): DurableEventEnvelope<T, V, P> {
   assertSafeEventPayload(input.payload);
   const inferred = inferAggregate(input.eventType, input.payload);
   const eventId = asEventId(input.eventId ?? randomUUID());

@@ -28,6 +28,16 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'deposit', file: 'services/accounts/src/money-movement.ts' },
   { symbol: 'withdraw', file: 'services/accounts/src/money-movement.ts' },
   { symbol: 'transfer', file: 'services/accounts/src/money-movement.ts' },
+  { symbol: 'createHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'releaseHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'captureHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'cancelHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postFee', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postReversal', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'postInterest', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'initiatePending', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'settlePending', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'returnPending', file: 'services/accounts/src/banking-operations.ts' },
 ];
 
 const failures = [];
@@ -80,7 +90,8 @@ for (const path of STATE_CHANGING_PATHS) {
     body.includes('VerifiedExecutionAuthority') ||
     body.includes('kernel.submit') ||
     body.includes('this.kernel.submit') ||
-    body.includes('this.move(');
+    body.includes('this.move(') ||
+    body.includes('authorizeIntent(');
   if (!gated) {
     addFailure(
       path.file,

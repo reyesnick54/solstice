@@ -15,6 +15,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'policy',
   'security',
   'identity',
+  'banking',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -58,6 +59,19 @@ export const EVENT_TYPE_NAMES = [
   'IdentitySessionRevoked',
   'IdentityDeviceRegistered',
   'IdentityRecoveryRequested',
+  'HoldCreated',
+  'HoldReleased',
+  'HoldCaptured',
+  'HoldCancelled',
+  'StatementGenerated',
+  'ReconciliationMismatch',
+  'AccountPositionChanged',
+  'FeePosted',
+  'InterestPosted',
+  'ReversalPosted',
+  'PendingSettlementInitiated',
+  'PendingSettlementSettled',
+  'PendingSettlementReturned',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -85,6 +99,19 @@ export const EVENT_SCHEMA_REFS = {
   IdentitySessionRevoked: 'solstice.identity.session.revoked/1',
   IdentityDeviceRegistered: 'solstice.identity.device.registered/1',
   IdentityRecoveryRequested: 'solstice.identity.recovery.requested/1',
+  HoldCreated: 'solstice.banking.hold.created/1',
+  HoldReleased: 'solstice.banking.hold.released/1',
+  HoldCaptured: 'solstice.banking.hold.captured/1',
+  HoldCancelled: 'solstice.banking.hold.cancelled/1',
+  StatementGenerated: 'solstice.banking.statement.generated/1',
+  ReconciliationMismatch: 'solstice.banking.reconciliation.mismatch/1',
+  AccountPositionChanged: 'solstice.account.position.changed/1',
+  FeePosted: 'solstice.banking.fee.posted/1',
+  InterestPosted: 'solstice.banking.interest.posted/1',
+  ReversalPosted: 'solstice.banking.reversal.posted/1',
+  PendingSettlementInitiated: 'solstice.banking.pending.initiated/1',
+  PendingSettlementSettled: 'solstice.banking.pending.settled/1',
+  PendingSettlementReturned: 'solstice.banking.pending.returned/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -112,6 +139,19 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   IdentitySessionRevoked: 'identity',
   IdentityDeviceRegistered: 'identity',
   IdentityRecoveryRequested: 'identity',
+  HoldCreated: 'banking',
+  HoldReleased: 'banking',
+  HoldCaptured: 'banking',
+  HoldCancelled: 'banking',
+  StatementGenerated: 'banking',
+  ReconciliationMismatch: 'banking',
+  AccountPositionChanged: 'account',
+  FeePosted: 'banking',
+  InterestPosted: 'banking',
+  ReversalPosted: 'banking',
+  PendingSettlementInitiated: 'banking',
+  PendingSettlementSettled: 'banking',
+  PendingSettlementReturned: 'banking',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

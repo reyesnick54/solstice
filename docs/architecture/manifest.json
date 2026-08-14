@@ -755,6 +755,66 @@
       "file": "services/accounts/src/money-movement.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "createHold",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "releaseHold",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "captureHold",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "cancelHold",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postFee",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postReversal",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postInterest",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "initiatePending",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "settlePending",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "returnPending",
+      "file": "services/accounts/src/banking-operations.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -867,6 +927,13 @@
       "owner": "packages/kernel",
       "protected": true,
       "adr": "ADR-0006"
+    },
+    {
+      "id": "banking-core",
+      "status": "IMPLEMENTED",
+      "owner": "services/accounts",
+      "protected": true,
+      "notes": "Multi-currency positions, holds, available funds, statements, fees, reversals, and reconciliation. Not FX execution or external rails."
     }
   ],
   "boundedContexts": [

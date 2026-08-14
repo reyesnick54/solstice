@@ -24,7 +24,8 @@ export type KernelFacts = {
   readonly amount?: Money;
   readonly sourceAccount?: Account;
   readonly destinationAccount?: Account;
-  readonly identity?: PolicyIdentityFacts;
+  readonly identity?: IdentityFacts;
+  readonly policyIdentity?: PolicyIdentityFacts;
   readonly serviceLocation?: Jurisdiction;
   readonly transactionOrigin?: Jurisdiction;
   readonly transactionDestination?: Jurisdiction;
@@ -33,7 +34,6 @@ export type KernelFacts = {
     readonly versionId: string;
   };
   readonly policyResult?: PolicyEvaluationResult;
-  readonly identity?: IdentityFacts;
 };
 
 export type ProofEvaluator = {
@@ -64,14 +64,14 @@ export const identityProof: ProofEvaluator = {
     if (!facts.customer) {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
-    const kyc = facts.identity?.kycState ?? facts.customer.verification.kycState;
-    return evalProof(
-      'IDENTITY',
-      'ALLOW',
-      `actor and customer identities are present; KYC fact ${kyc} entered policy`,
     const identity = facts.identity;
     if (!identity) {
-      return evalProof('IDENTITY', 'BLOCK', 'authoritative identity facts are missing');
+      const kyc = facts.customer.verification.kycState;
+      return evalProof(
+        'IDENTITY',
+        'ALLOW',
+        `actor and customer identities are present; KYC fact ${kyc} entered policy`,
+      );
     }
     if (!identity.identityExists || identity.identityStatus === null) {
       return evalProof('IDENTITY', 'BLOCK', 'solstice identity does not exist');
@@ -187,6 +187,11 @@ const ALLOWED_PURPOSES = new Set<PurposeCode>([
   'CUSTOMER_FUNDING',
   'CUSTOMER_WITHDRAWAL',
   'CUSTOMER_TRANSFER',
+  'CUSTOMER_HOLD',
+  'CUSTOMER_FEE',
+  'CUSTOMER_REVERSAL',
+  'CUSTOMER_INTEREST',
+  'CUSTOMER_SETTLEMENT',
 ]);
 
 export const purposeProof: ProofEvaluator = {

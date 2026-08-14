@@ -49,6 +49,15 @@ export {
 export { loadPolicyState, persistPolicyState, type PersistedPolicyState } from './policy/store.ts';
 export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
+  insertCoordinate,
+  insertFeeAssessment,
+  insertReversal,
+  insertStatement,
+  upsertHold,
+  upsertPendingSettlement,
+  upsertReconciliation,
+} from './ledger/banking-writes.ts';
+export {
   PostgresDeadLetterStore,
   PostgresEventCatalog,
   PostgresInboxStore,
