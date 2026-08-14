@@ -70,11 +70,11 @@ for (const path of STATE_CHANGING_PATHS) {
   const lines = source.split('\n');
   let foundLine = 0;
   for (let i = 0; i < lines.length; i += 1) {
-    if (lines[i].includes(`${path.symbol}(`) && /function|^\s+\w+\(/.test(lines[i])) {
+    if (lines[i].includes(`${path.symbol}(`) && /function|^\s+(?:async\s+)?\w+\(/.test(lines[i])) {
       foundLine = i + 1;
       break;
     }
-    if (new RegExp(`^\\s+${path.symbol}\\(`).test(lines[i])) {
+    if (new RegExp(`^\\s+(?:async\\s+)?${path.symbol}\\(`).test(lines[i])) {
       foundLine = i + 1;
       break;
     }

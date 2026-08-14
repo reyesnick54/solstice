@@ -244,7 +244,11 @@ export function blendCustomerPosition(
         'mixed currencies with no rate supplied; refusing to return a wrong number',
     });
   }
-  const buckets: PositionBreakdown = emptyBreakdown(targetCurrency);
+  let deposits = classified('deposits', Money.zero(targetCurrency));
+  let investments = classified('investments', Money.zero(targetCurrency));
+  let digitalAssets = classified('digital_assets', Money.zero(targetCurrency));
+  let rewards = classified('rewards', Money.zero(targetCurrency));
+  let pending = classified('pending', Money.zero(targetCurrency));
   for (const currency of indexed.currencies) {
     const position = indexed.byCurrency[currency];
     if (!position) {
@@ -254,28 +258,27 @@ export function blendCustomerPosition(
     if (isErr(converted)) {
       return converted;
     }
-    buckets.deposits = classified(
-      'deposits',
-      buckets.deposits.total.plus(converted.value.deposits.total),
-    );
-    buckets.investments = classified(
+    deposits = classified('deposits', deposits.total.plus(converted.value.deposits.total));
+    investments = classified(
       'investments',
-      buckets.investments.total.plus(converted.value.investments.total),
+      investments.total.plus(converted.value.investments.total),
     );
-    buckets.digital_assets = classified(
+    digitalAssets = classified(
       'digital_assets',
-      buckets.digital_assets.total.plus(converted.value.digital_assets.total),
+      digitalAssets.total.plus(converted.value.digital_assets.total),
     );
-    buckets.rewards = classified(
-      'rewards',
-      buckets.rewards.total.plus(converted.value.rewards.total),
-    );
-    buckets.pending = classified(
-      'pending',
-      buckets.pending.total.plus(converted.value.pending.total),
-    );
+    rewards = classified('rewards', rewards.total.plus(converted.value.rewards.total));
+    pending = classified('pending', pending.total.plus(converted.value.pending.total));
   }
-  return ok(CustomerPosition.assemble(indexed.customerId, buckets));
+  return ok(
+    CustomerPosition.assemble(indexed.customerId, {
+      deposits,
+      investments,
+      digital_assets: digitalAssets,
+      rewards,
+      pending,
+    }),
+  );
 }
 
 function emptyBreakdown(currency: string): PositionBreakdown {

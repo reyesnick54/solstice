@@ -79,21 +79,21 @@ export function policyFactsFromKernel(
   intent: ActionIntent,
   facts: KernelFacts,
 ): PolicyFactInput {
+  const kycState =
+    facts.identity?.kycState ??
+    facts.policyIdentity?.kycState ??
+    facts.customer?.verification.kycState;
+  const kycRecordVersion =
+    facts.identity?.kycVersion ??
+    facts.policyIdentity?.kycRecordVersion ??
+    facts.customer?.verification.kycRecordVersion;
+  const residency = facts.policyIdentity?.residency ?? facts.customer?.residency;
   const identity: PolicyIdentityFacts = {
-    ...(facts.customer
-      ? {
-          kycState: facts.customer.verification.kycState,
-          kycRecordVersion: facts.customer.verification.kycRecordVersion,
-          residency: facts.customer.residency,
-        }
-      : {}),
-    ...(facts.policyIdentity ?? {}),
-    ...(facts.identity
-      ? {
-          kycState: facts.identity.kycState ?? facts.customer?.verification.kycState,
-          kycRecordVersion:
-            facts.identity.kycVersion ?? facts.customer?.verification.kycRecordVersion,
-        }
+    ...(kycState !== undefined ? { kycState } : {}),
+    ...(kycRecordVersion !== undefined ? { kycRecordVersion } : {}),
+    ...(residency !== undefined ? { residency } : {}),
+    ...(facts.policyIdentity?.citizenship !== undefined
+      ? { citizenship: facts.policyIdentity.citizenship }
       : {}),
   };
   return {

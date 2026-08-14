@@ -136,6 +136,7 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType === 'PolicyReviewRequested' || eventType === 'PolicyReviewDecided') {
     return { type: 'policy_review', id: String(body.reviewId ?? 'unknown') };
+  }
   if (eventType.startsWith('Identity')) {
     return { type: 'identity', id: String(body.identityId ?? 'unknown') };
   }

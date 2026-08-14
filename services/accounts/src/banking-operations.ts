@@ -412,15 +412,16 @@ export class BankingOperationsService {
       direction: posting.direction === 'DEBIT' ? ('CREDIT' as const) : ('DEBIT' as const),
       amount: posting.amount,
     }));
+    const classBridge = original.classBridgeName
+      ? DEFINED_CLASS_BRIDGES.find((bridge) => bridge.name === original.classBridgeName)
+      : undefined;
     const journal = this.postAuthorizedJournal({
       intentId: intent.id,
       idempotencyKey: intent.idempotencyKey,
       actionType: intent.actionType,
       authority: authorized.verified,
       postings: inverted,
-      classBridge: original.classBridgeName
-        ? DEFINED_CLASS_BRIDGES.find((bridge) => bridge.name === original.classBridgeName)
-        : undefined,
+      ...(classBridge ? { classBridge } : {}),
       memo: `reversal of ${original.id}: ${intent.payload.reason}`,
     });
     const record = freezeReversal({
@@ -541,8 +542,8 @@ export class BankingOperationsService {
       actionType: intent.actionType,
       authority: authorized.verified,
       postings: [
-        { accountId: source.id, direction: 'DEBIT', amount: intent.payload.amount },
         { accountId: pendingAccount.id, direction: 'CREDIT', amount: intent.payload.amount },
+        { accountId: source.id, direction: 'DEBIT', amount: intent.payload.amount },
       ],
       classBridge: DEMAND_TO_PENDING_SETTLEMENT,
       memo: `initiate pending ${intent.payload.pendingId}`,
@@ -961,11 +962,11 @@ export class BankingOperationsService {
         accountId: accountId as Account['id'],
         amountMinorUnits: payload.amountMinorUnits ?? '0',
         currency: payload.currency ?? '',
-        holdId: payload.holdId,
-        journalId: payload.journalId,
-        feeId: payload.feeId,
-        reversalId: payload.reversalId,
-        pendingId: payload.pendingId,
+        ...(payload.holdId ? { holdId: payload.holdId } : {}),
+        ...(payload.journalId ? { journalId: payload.journalId } : {}),
+        ...(payload.feeId ? { feeId: payload.feeId } : {}),
+        ...(payload.reversalId ? { reversalId: payload.reversalId } : {}),
+        ...(payload.pendingId ? { pendingId: payload.pendingId } : {}),
       },
     });
   }

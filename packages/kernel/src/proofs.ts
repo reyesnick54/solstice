@@ -65,7 +65,7 @@ export const identityProof: ProofEvaluator = {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
     const identity = facts.identity;
-    if (!identity) {
+    if (!identity || typeof identity.identityExists !== 'boolean') {
       const kyc = facts.customer.verification.kycState;
       return evalProof(
         'IDENTITY',
