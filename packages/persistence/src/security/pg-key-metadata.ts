@@ -7,7 +7,11 @@ import type { KeyMetadataStore } from '../../../security/src/store.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export class PostgresKeyMetadataStore implements KeyMetadataStore {
-  constructor(private readonly pool: Pool) {}
+  private readonly pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
 
   async upsert(metadata: KeyMetadata): Promise<void> {
     await withClient(this.pool, (client) =>
