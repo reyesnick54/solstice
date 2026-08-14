@@ -7,6 +7,8 @@ import type { Money } from '../../money/src/money.ts';
 import type { IdentityFacts } from '../../identity/src/facts.ts';
 import type { ActionIntent, PurposeCode } from '../../permissions/src/action-intent.ts';
 import type { DecisionStatus, ProofEvaluation, ProofName } from '../../permissions/src/decision.ts';
+import type { PolicyIdentityFacts } from './policy/facts.ts';
+import type { PolicyEvaluationResult, PolicyPackId } from './policy/types.ts';
 
 export type KernelActor = {
   readonly id: string;
@@ -22,6 +24,15 @@ export type KernelFacts = {
   readonly amount?: Money;
   readonly sourceAccount?: Account;
   readonly destinationAccount?: Account;
+  readonly identity?: PolicyIdentityFacts;
+  readonly serviceLocation?: Jurisdiction;
+  readonly transactionOrigin?: Jurisdiction;
+  readonly transactionDestination?: Jurisdiction;
+  readonly policyPin?: {
+    readonly packId: PolicyPackId;
+    readonly versionId: string;
+  };
+  readonly policyResult?: PolicyEvaluationResult;
   readonly identity?: IdentityFacts;
 };
 
@@ -38,8 +49,6 @@ function evalProof(
   return Object.freeze({ proof, status, reason });
 }
 
-const SIMULATION_JURISDICTIONS = new Set(['US', 'GB', 'DE', 'FR', 'IE', 'AE', 'SA', 'AU', 'CA']);
-
 const RISK_REVIEW_MINOR = 10_000_000n;
 const RISK_BLOCK_MINOR = 100_000_000n;
 
@@ -55,6 +64,11 @@ export const identityProof: ProofEvaluator = {
     if (!facts.customer) {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
+    const kyc = facts.identity?.kycState ?? facts.customer.verification.kycState;
+    return evalProof(
+      'IDENTITY',
+      'ALLOW',
+      `actor and customer identities are present; KYC fact ${kyc} entered policy`,
     const identity = facts.identity;
     if (!identity) {
       return evalProof('IDENTITY', 'BLOCK', 'authoritative identity facts are missing');
@@ -102,64 +116,49 @@ export const authorityProof: ProofEvaluator = {
 export const jurisdictionProof: ProofEvaluator = {
   proof: 'JURISDICTION',
   evaluate(_intent: ActionIntent, facts: KernelFacts): ProofEvaluation {
+    const policy = facts.policyResult;
+    if (policy) {
+      const jurisdictionCodes = [
+        'JURISDICTION_UNRESOLVED',
+        'JURISDICTION_AMBIGUOUS',
+        'POLICY_PACK_MISSING',
+        'POLICY_VERSION_MISSING',
+        'POLICY_VERSION_NOT_EFFECTIVE',
+        'POLICY_VERSION_RETIRED',
+      ];
+      const hit = policy.reasonCodes.find((code) => jurisdictionCodes.includes(code));
+      if (hit) {
+        return evalProof('JURISDICTION', policy.decision, hit);
+      }
+      return evalProof(
+        'JURISDICTION',
+        'ALLOW',
+        `jurisdiction pack ${policy.snapshot.packId ?? 'none'} version ${policy.snapshot.packVersion ?? 'none'}`,
+      );
+    }
     if (!facts.jurisdiction) {
-      return evalProof('JURISDICTION', 'BLOCK', 'jurisdiction is missing');
+      return evalProof('JURISDICTION', 'DEFER', 'jurisdiction is missing');
     }
-    if (!SIMULATION_JURISDICTIONS.has(facts.jurisdiction)) {
-      return evalProof('JURISDICTION', 'BLOCK', `jurisdiction ${facts.jurisdiction} is not enabled`);
-    }
-    if (facts.legalEntity && facts.legalEntity.jurisdiction !== facts.jurisdiction) {
-      return evalProof(
-        'JURISDICTION',
-        'BLOCK',
-        'intent jurisdiction does not match legal entity',
-      );
-    }
-    if (facts.customer && facts.customer.jurisdiction !== facts.jurisdiction) {
-      return evalProof(
-        'JURISDICTION',
-        'BLOCK',
-        'intent jurisdiction does not match customer',
-      );
-    }
-    if (facts.product && facts.product.jurisdiction !== facts.jurisdiction) {
-      return evalProof(
-        'JURISDICTION',
-        'BLOCK',
-        'intent jurisdiction does not match product',
-      );
-    }
-    return evalProof('JURISDICTION', 'ALLOW', `jurisdiction ${facts.jurisdiction} is permitted`);
+    return evalProof('JURISDICTION', 'DEFER', 'policy engine result is required');
   },
 };
 
 export const complianceProof: ProofEvaluator = {
   proof: 'COMPLIANCE',
   evaluate(_intent: ActionIntent, facts: KernelFacts): ProofEvaluation {
+    const policy = facts.policyResult;
+    if (policy) {
+      return evalProof(
+        'COMPLIANCE',
+        policy.decision,
+        policy.reasonCodes.join(',') || 'policy engine decision',
+      );
+    }
     const customer = facts.customer;
     if (!customer) {
       return evalProof('COMPLIANCE', 'BLOCK', 'customer is required for compliance proof');
     }
-    if (customer.status === 'CLOSED' || customer.status === 'SUSPENDED') {
-      return evalProof('COMPLIANCE', 'BLOCK', `customer status ${customer.status} forbids the action`);
-    }
-    if (customer.status === 'PROSPECT') {
-      return evalProof('COMPLIANCE', 'BLOCK', 'prospect customers may not open accounts or move money');
-    }
-    if (customer.status === 'PENDING_VERIFICATION') {
-      return evalProof(
-        'COMPLIANCE',
-        'REQUIRE_MANUAL_REVIEW',
-        'customer verification is still pending',
-      );
-    }
-    if (customer.verification.kycState === 'FAILED' || customer.verification.kycState === 'EXPIRED') {
-      return evalProof('COMPLIANCE', 'BLOCK', `KYC state ${customer.verification.kycState}`);
-    }
-    if (customer.status !== 'ACTIVE') {
-      return evalProof('COMPLIANCE', 'BLOCK', `customer status ${customer.status} is not ACTIVE`);
-    }
-    return evalProof('COMPLIANCE', 'ALLOW', 'customer is ACTIVE');
+    return evalProof('COMPLIANCE', 'DEFER', 'policy engine result is required');
   },
 };
 

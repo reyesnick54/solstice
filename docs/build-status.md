@@ -9,7 +9,8 @@ This document describes only what is implemented and tested in this tree.
 - Account entity with no balance field. Opening requires a verified Execution Authority.
 - Money primitive (`bigint` minor units) with FLOOR / CEILING / HALF_EVEN rounding in `packages/money`.
 - Action intents `OPEN_ACCOUNT`, `POST_DEPOSIT`, `POST_WITHDRAWAL`, `INTERNAL_TRANSFER` on the single `ActionIntent` envelope, plus structural well-formedness checks in `packages/permissions`.
-- Compliance Kernel: six proofs, monotonic escalation, signed Execution Authority, evidence sealed on every decision. In-memory simulation policy only. No jurisdiction packs.
+- Compliance Kernel: six proofs, monotonic escalation, signed Execution Authority, evidence sealed on every decision.
+- Deterministic policy engine and versioned jurisdiction-pack framework implemented in simulation (`packages/kernel/src/policy/`). US/GB/EU/SA/AE pack shells exist. No rule is `CONFIRMED_BY_COUNSEL`. This is not legal approval in any jurisdiction.
 - In-memory ledger: balanced journals, append-only, authority-required, named class bridges, no commingling, idempotency keys.
 - Simulated funding source `SIMULATION.FUNDING_SOURCE` (named simulation source; not corporate).
 - Evidence Vault hash chain; versioned domain events.
@@ -43,6 +44,8 @@ This document describes only what is implemented and tested in this tree.
 - Kafka, Kinesis, Pub/Sub, SNS/SQS, or another production broker. The
   Chunk 3 fabric uses a simulated in-process transport behind a portable
   dispatcher port.
+- Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
+- Identity stack / real KYC (ADR-0007 remains PROPOSED).
 - Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
 - Solstice Identity (`packages/identity`, `services/identity`): person/business
   identity, simulated passkey registration/authentication, sessions, device

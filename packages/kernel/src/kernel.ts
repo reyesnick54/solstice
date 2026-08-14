@@ -7,12 +7,14 @@ import type { ActionIntent } from '../../permissions/src/action-intent.ts';
 import {
   combineProofs,
   type AuthorizationDecision,
+  type PolicyDecisionRef,
 } from '../../permissions/src/decision.ts';
 import {
   AUTHORITY_TTL_MS,
   AuthorityIssuer,
   type ExecutionAuthority,
 } from '../../permissions/src/execution-authority.ts';
+import { createSimulationPolicyEngine, type PolicyEngine } from './policy/index.ts';
 import { DEFAULT_PROOFS, type KernelFacts, type ProofEvaluator } from './proofs.ts';
 
 /**
@@ -26,32 +28,40 @@ import { DEFAULT_PROOFS, type KernelFacts, type ProofEvaluator } from './proofs.
  *
  * The kernel does not open accounts, post journals, or evaluate structural
  * well-formedness. Callers must not skip it and must not reinterpret its
- * decision.
+ * decision. The policy engine extends this kernel; it is not a second kernel.
  */
 export class ComplianceKernel {
   private readonly issuer: AuthorityIssuer;
   private readonly evidence: EvidenceVault;
   private readonly clock: Clock;
   private readonly proofs: readonly ProofEvaluator[];
+  readonly policy: PolicyEngine;
 
   constructor(
     issuer: AuthorityIssuer,
     evidence: EvidenceVault,
     clock: Clock,
     proofs: readonly ProofEvaluator[] = DEFAULT_PROOFS,
+    policy: PolicyEngine = createSimulationPolicyEngine(),
   ) {
     this.issuer = issuer;
     this.evidence = evidence;
     this.clock = clock;
     this.proofs = proofs;
+    this.policy = policy;
   }
 
   submit(intent: ActionIntent, facts: KernelFacts): AuthorizationDecision {
     assertSimulationOnly();
 
-    const evaluations = this.proofs.map((proof) => proof.evaluate(intent, facts));
-    const status = combineProofs(evaluations);
     const decidedAt = this.clock.now();
+    const policyResult = this.policy.evaluate(intent, facts, decidedAt);
+    const factsWithPolicy: KernelFacts = Object.freeze({
+      ...facts,
+      policyResult,
+    });
+    const evaluations = this.proofs.map((proof) => proof.evaluate(intent, factsWithPolicy));
+    const status = combineProofs(evaluations);
 
     let executionAuthority: ExecutionAuthority | null = null;
     if (status === 'ALLOW') {
@@ -69,6 +79,7 @@ export class ComplianceKernel {
       });
     }
 
+    const policySnapshot = toPolicyRef(policyResult.snapshot);
     const record = this.evidence.seal('KERNEL_DECISION', {
       intentId: intent.id,
       actionType: intent.actionType,
@@ -77,6 +88,19 @@ export class ComplianceKernel {
       proofs: evaluations,
       executionAuthorityId: executionAuthority?.authorityId ?? null,
       decidedAt,
+      policy: {
+        packId: policySnapshot.packId,
+        packVersion: policySnapshot.packVersion,
+        versionId: policySnapshot.versionId,
+        packHash: policySnapshot.packHash,
+        factsHash: policySnapshot.factsHash,
+        evaluatedRuleIds: policySnapshot.evaluatedRuleIds,
+        decision: policySnapshot.decision,
+        reasonCodes: policySnapshot.reasonCodes,
+        jurisdiction: policySnapshot.jurisdiction,
+        legalConfidence: policySnapshot.legalConfidence,
+        reviewId: policySnapshot.reviewId,
+      },
     });
 
     return Object.freeze({
@@ -87,6 +111,7 @@ export class ComplianceKernel {
       executionAuthority,
       evidenceRecordId: record.evidenceId,
       decidedAt,
+      policySnapshot,
     });
   }
 }
@@ -100,4 +125,32 @@ function scopedAccountId(intent: ActionIntent): string {
     return payload.sourceAccountId;
   }
   return intent.id;
+}
+
+function toPolicyRef(snapshot: {
+  readonly packId: string | null;
+  readonly packVersion: string | null;
+  readonly versionId: string | null;
+  readonly packHash: string | null;
+  readonly factsHash: string;
+  readonly evaluatedRuleIds: readonly string[];
+  readonly decision: PolicyDecisionRef['decision'];
+  readonly reasonCodes: readonly string[];
+  readonly jurisdiction: string | null;
+  readonly legalConfidence: string;
+  readonly reviewId: string | null;
+}): PolicyDecisionRef {
+  return Object.freeze({
+    packId: snapshot.packId,
+    packVersion: snapshot.packVersion,
+    versionId: snapshot.versionId,
+    packHash: snapshot.packHash,
+    factsHash: snapshot.factsHash,
+    evaluatedRuleIds: snapshot.evaluatedRuleIds,
+    decision: snapshot.decision,
+    reasonCodes: snapshot.reasonCodes,
+    jurisdiction: snapshot.jurisdiction,
+    legalConfidence: snapshot.legalConfidence,
+    reviewId: snapshot.reviewId,
+  });
 }

@@ -18,6 +18,27 @@ export const SOLSTICE_US = freezeLegalEntity({
   status: 'ACTIVE',
 });
 
+export const SOLSTICE_EU = freezeLegalEntity({
+  id: asLegalEntityId('le_solstice_eu_entity'),
+  name: 'Solstice EU Entity (simulation)',
+  jurisdiction: asJurisdiction('DE'),
+  status: 'ACTIVE',
+});
+
+export const SOLSTICE_SA = freezeLegalEntity({
+  id: asLegalEntityId('le_solstice_sa_entity'),
+  name: 'Solstice SA Entity (simulation)',
+  jurisdiction: asJurisdiction('SA'),
+  status: 'ACTIVE',
+});
+
+export const SOLSTICE_AE = freezeLegalEntity({
+  id: asLegalEntityId('le_solstice_ae_entity'),
+  name: 'Solstice AE Entity (simulation)',
+  jurisdiction: asJurisdiction('AE'),
+  status: 'ACTIVE',
+});
+
 export const PRODUCT_DEMAND_USD_GB: Product = freezeProduct({
   id: asProductId('prod_demand_usd_gb'),
   name: 'Simulated GBP-entity USD demand deposit',
@@ -48,6 +69,46 @@ export const PRODUCT_DIGITAL_USD_GB: Product = freezeProduct({
   status: 'ACTIVE',
 });
 
+export const PRODUCT_DEMAND_USD_US: Product = freezeProduct({
+  id: asProductId('prod_demand_usd_us'),
+  name: 'Simulated US-entity USD demand deposit',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('USD'),
+  legalEntityId: SOLSTICE_US.id,
+  jurisdiction: asJurisdiction('US'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_EUR_EU: Product = freezeProduct({
+  id: asProductId('prod_demand_eur_eu'),
+  name: 'Simulated EU-entity EUR demand deposit (capability disabled)',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('EUR'),
+  legalEntityId: SOLSTICE_EU.id,
+  jurisdiction: asJurisdiction('DE'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_SAR_SA: Product = freezeProduct({
+  id: asProductId('prod_demand_sar_sa'),
+  name: 'Simulated SA-entity SAR demand deposit (capability disabled)',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('SAR'),
+  legalEntityId: SOLSTICE_SA.id,
+  jurisdiction: asJurisdiction('SA'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_AED_AE: Product = freezeProduct({
+  id: asProductId('prod_demand_aed_ae'),
+  name: 'Simulated AE-entity AED demand deposit (capability disabled)',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('AED'),
+  legalEntityId: SOLSTICE_AE.id,
+  jurisdiction: asJurisdiction('AE'),
+  status: 'ACTIVE',
+});
+
 export function seedSimulationCatalog(): {
   legalEntities: LegalEntityStore;
   products: ProductStore;
@@ -56,9 +117,20 @@ export function seedSimulationCatalog(): {
   const legalEntities = new LegalEntityStore();
   legalEntities.put(SOLSTICE_UK.id, SOLSTICE_UK);
   legalEntities.put(SOLSTICE_US.id, SOLSTICE_US);
+  legalEntities.put(SOLSTICE_EU.id, SOLSTICE_EU);
+  legalEntities.put(SOLSTICE_SA.id, SOLSTICE_SA);
+  legalEntities.put(SOLSTICE_AE.id, SOLSTICE_AE);
   const products = new ProductStore();
   products.put(PRODUCT_DEMAND_USD_GB.id, PRODUCT_DEMAND_USD_GB);
   products.put(PRODUCT_SAVINGS_USD_GB.id, PRODUCT_SAVINGS_USD_GB);
   products.put(PRODUCT_DIGITAL_USD_GB.id, PRODUCT_DIGITAL_USD_GB);
-  return { legalEntities, products, entities: [SOLSTICE_UK, SOLSTICE_US] };
+  products.put(PRODUCT_DEMAND_USD_US.id, PRODUCT_DEMAND_USD_US);
+  products.put(PRODUCT_DEMAND_EUR_EU.id, PRODUCT_DEMAND_EUR_EU);
+  products.put(PRODUCT_DEMAND_SAR_SA.id, PRODUCT_DEMAND_SAR_SA);
+  products.put(PRODUCT_DEMAND_AED_AE.id, PRODUCT_DEMAND_AED_AE);
+  return {
+    legalEntities,
+    products,
+    entities: [SOLSTICE_UK, SOLSTICE_US, SOLSTICE_EU, SOLSTICE_SA, SOLSTICE_AE],
+  };
 }

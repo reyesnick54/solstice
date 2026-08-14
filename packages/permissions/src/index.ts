@@ -18,6 +18,7 @@ export { ACTION_TYPES } from './action-types.ts';
 export type {
   AuthorizationDecision,
   DecisionStatus,
+  PolicyDecisionRef,
   ProofEvaluation,
   ProofName,
 } from './decision.ts';

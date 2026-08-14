@@ -1,0 +1,32 @@
+{
+  "packId": "SA",
+  "name": "Saudi Arabia simulation pack",
+  "description": "Engineering shell for SA simulation. Not a legal opinion. Solstice does not claim a SAMA or other Saudi license. Substantive requirements remain RESEARCH_REQUIRED.",
+  "versions": [
+    {
+      "versionId": "sa-sim-v1",
+      "version": "1",
+      "lifecycle": "ACTIVE_SIMULATION",
+      "legalReviewStatus": "RESEARCH_REQUIRED",
+      "effectiveFrom": "2020-01-01T00:00:00.000Z",
+      "rules": [
+        {
+          "ruleId": "sa-sim-shell",
+          "version": "1",
+          "jurisdiction": "SA",
+          "scope": "simulation-shell",
+          "actionTypes": [],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "environment", "value": "simulation" },
+          "effect": "ALLOW",
+          "reasonCode": "SIMULATION_STRUCTURAL_PERMIT",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "REVIEWABLE"
+        }
+      ]
+    }
+  ]
+}

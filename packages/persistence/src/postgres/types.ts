@@ -5,6 +5,7 @@ import type { Product } from '../../../domain/src/product.ts';
 import type { EvidenceRecord } from '../../../evidence/src/vault.ts';
 import type { DomainEvent } from '../../../events/src/events.ts';
 import type { Journal, LedgerAccount } from '../../../ledger/src/types.ts';
+import type { PersistedPolicyState } from '../policy/store.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
 import type { ExecutionAuthority } from '../../../permissions/src/execution-authority.ts';
 
@@ -43,4 +44,5 @@ export type LoadedPersistence = {
   readonly intents: readonly ActionIntent[];
   readonly authorities: readonly AuthorityAudit[];
   readonly openOutcomes: readonly PersistedOpenOutcome[];
+  readonly policy: PersistedPolicyState;
 };

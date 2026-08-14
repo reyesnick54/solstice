@@ -11,6 +11,8 @@
     "tools/*"
   ],
   "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/events/src/*.test.ts packages/persistence/src/*.test.ts packages/kernel/src/**/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
+    "policy:diff": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/policy-diff.mjs",
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/security/src/*.test.ts packages/identity/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/events/src/*.test.ts packages/persistence/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
     "test:persistence": "SOLSTICE_PERSISTENCE_TEST=1 node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/persistence/*.test.ts",
     "test:events": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/events/src/*.test.ts",

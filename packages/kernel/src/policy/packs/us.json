@@ -1,0 +1,32 @@
+{
+  "packId": "US",
+  "name": "United States simulation pack",
+  "description": "Engineering shell for US simulation. Not a legal opinion. Substantive US requirements remain RESEARCH_REQUIRED and are not encoded as confirmed law.",
+  "versions": [
+    {
+      "versionId": "us-sim-v1",
+      "version": "1",
+      "lifecycle": "ACTIVE_SIMULATION",
+      "legalReviewStatus": "RESEARCH_REQUIRED",
+      "effectiveFrom": "2020-01-01T00:00:00.000Z",
+      "rules": [
+        {
+          "ruleId": "us-sim-shell",
+          "version": "1",
+          "jurisdiction": "US",
+          "scope": "simulation-shell",
+          "actionTypes": [],
+          "productTypes": [],
+          "customerTypes": [],
+          "predicate": { "op": "eq", "fact": "environment", "value": "simulation" },
+          "effect": "ALLOW",
+          "reasonCode": "SIMULATION_STRUCTURAL_PERMIT",
+          "effectiveFrom": "2020-01-01T00:00:00.000Z",
+          "sourceReference": "src-engineering-pack-shell",
+          "legalReviewStatus": "RESEARCH_REQUIRED",
+          "overrideClass": "REVIEWABLE"
+        }
+      ]
+    }
+  ]
+}

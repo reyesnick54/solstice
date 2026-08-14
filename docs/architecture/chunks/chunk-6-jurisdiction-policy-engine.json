@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-6",
+  "title": "Canonical Jurisdiction Policy Engine and Regulatory Rule Pack Framework",
+  "requires": [
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "persistence",
+    "domain",
+    "permissions",
+    "config",
+    "accounts-service"
+  ]
+}

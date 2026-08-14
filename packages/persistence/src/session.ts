@@ -28,6 +28,8 @@ import {
   lockAccountForUpdate,
   upsertProduct,
 } from './ledger/writes.ts';
+import { persistPolicyState } from './policy/store.ts';
+import type { PersistedPolicyState } from './policy/store.ts';
 import {
   insertEvidenceRecord,
   upsertCustomer,
@@ -49,6 +51,7 @@ export type PersistenceSession = {
   persistOpenOutcome(outcome: PersistedOpenOutcome): Promise<void>;
   persistEvent(event: DomainEvent): Promise<void>;
   persistEvidence(record: EvidenceRecord): Promise<void>;
+  persistPolicy(state: PersistedPolicyState): Promise<void>;
   flushJournals(): Promise<readonly Journal[]>;
   lockAccount(accountId: string): Promise<void>;
   close(): Promise<void>;
@@ -105,6 +108,10 @@ class Session implements PersistenceSession {
 
   async persistEvent(event: DomainEvent): Promise<void> {
     await withTransaction(this.pools.ledger, (client) => insertDomainEvent(client, event));
+  }
+
+  async persistPolicy(state: PersistedPolicyState): Promise<void> {
+    await withTransaction(this.pools.customer, (client) => persistPolicyState(client, state));
   }
 
   async persistEvidence(record: EvidenceRecord): Promise<void> {
@@ -202,6 +209,7 @@ export async function persistCustomerUnit(
   input: {
     readonly legalEntities?: readonly LegalEntity[];
     readonly customers?: readonly Customer[];
+    readonly policy?: PersistedPolicyState;
   },
 ): Promise<void> {
   const inner = session as Session;
@@ -211,6 +219,9 @@ export async function persistCustomerUnit(
     }
     for (const customer of input.customers ?? []) {
       await upsertCustomer(client, customer);
+    }
+    if (input.policy) {
+      await persistPolicyState(client, input.policy);
     }
   });
 }

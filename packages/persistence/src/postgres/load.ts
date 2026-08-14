@@ -20,19 +20,22 @@ import { Money } from '../../../money/src/money.ts';
 import type { Journal, LedgerAccount, Posting } from '../../../ledger/src/types.ts';
 import { asIntentId, type ActionIntent } from '../../../permissions/src/action-intent.ts';
 import { canonicalJson } from '../canonical.ts';
+import { loadPolicyState } from '../policy/store.ts';
 import type { PersistencePools } from './pools.ts';
 import type { AuthorityAudit, LoadedPersistence, PersistedOpenOutcome } from './types.ts';
 
 export async function loadPersistedState(pools: PersistencePools): Promise<LoadedPersistence> {
-  const [customerSide, ledgerSide, evidence] = await Promise.all([
+  const [customerSide, ledgerSide, evidence, policy] = await Promise.all([
     loadCustomerDatabase(pools.customer),
     loadLedgerDatabase(pools.ledger),
     loadEvidenceRecords(pools.evidence),
+    loadPolicyState(pools.customer),
   ]);
   return {
     ...customerSide,
     ...ledgerSide,
     evidence,
+    policy,
   };
 }
 

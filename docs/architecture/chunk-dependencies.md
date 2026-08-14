@@ -67,9 +67,13 @@ Agents and later CI jobs use that result. They do not guess.
 | accounts-service | IMPLEMENTED | services/accounts |
 | architecture-linting | IMPLEMENTED | tools/architectural-linter |
 | persistence | IMPLEMENTED | packages/persistence |
+| identity | PLANNED | ADR-0007 |
+| policy-engine | IMPLEMENTED | packages/kernel |
 | security | IMPLEMENTED | packages/security |
 | identity | IMPLEMENTED | packages/identity |
 | policy-engine | PLANNED | ADR-0006 |
 
-Chunk 1 requires only capabilities that are already `IMPLEMENTED`.
-It does not start PostgreSQL, identity, or a policy engine.
+Chunk 6 implements the policy engine inside `packages/kernel`. It does
+not reimplement identity. Customer KYC status and residency remain the
+identity facts the engine consumes. Identity as a bounded context stays
+PLANNED (ADR-0007).

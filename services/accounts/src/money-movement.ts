@@ -364,6 +364,7 @@ export class MoneyMovementService {
     const legalEntity = customerAccount
       ? this.legalEntities.get(customerAccount.legalEntityId)
       : undefined;
+    const product = customerAccount ? this.products.get(customerAccount.productId) : undefined;
 
     const resolved = this.identity.resolveActorContext(input.intent.actorId);
     const facts: KernelFacts = {
@@ -376,6 +377,7 @@ export class MoneyMovementService {
       identity: this.identity.identityFactsFor(input.intent.actorId),
       ...(customer ? { customer } : {}),
       ...(legalEntity ? { legalEntity } : {}),
+      ...(product ? { product } : {}),
       ...(customerAccount
         ? { jurisdiction: customerAccount.jurisdiction }
         : customer

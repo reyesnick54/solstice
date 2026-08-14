@@ -46,6 +46,7 @@ export {
   persistLedgerUnit,
   type PersistenceSession,
 } from './session.ts';
+export { loadPolicyState, persistPolicyState, type PersistedPolicyState } from './policy/store.ts';
 export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
   PostgresDeadLetterStore,

@@ -131,6 +131,11 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   if (eventType === 'KernelDecisionRecorded') {
     return { type: 'intent', id: String(body.intentId ?? 'unknown') };
   }
+  if (eventType === 'PolicyPackActivated' || eventType === 'PolicyPackRetired') {
+    return { type: 'policy_pack', id: String(body.packId ?? 'unknown') };
+  }
+  if (eventType === 'PolicyReviewRequested' || eventType === 'PolicyReviewDecided') {
+    return { type: 'policy_review', id: String(body.reviewId ?? 'unknown') };
   if (eventType.startsWith('Identity')) {
     return { type: 'identity', id: String(body.identityId ?? 'unknown') };
   }
