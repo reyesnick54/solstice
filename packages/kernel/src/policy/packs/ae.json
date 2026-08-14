@@ -9,6 +9,14 @@
       "lifecycle": "ACTIVE_SIMULATION",
       "legalReviewStatus": "RESEARCH_REQUIRED",
       "effectiveFrom": "2020-01-01T00:00:00.000Z",
+      "screeningRequirements": {
+        "sanctions": { "required": true, "maxAgeHours": 24, "onUnavailable": "BLOCK" },
+        "pep": { "required": true, "maxAgeHours": 168, "onUnavailable": "DEFER" },
+        "adverseMedia": { "required": true, "maxAgeHours": 168, "onUnavailable": "DEFER" },
+        "transactionMonitoring": { "required": false, "maxAgeHours": 24, "onUnavailable": "DEFER" },
+        "fraud": { "required": true, "maxAgeHours": 1, "onUnavailable": "BLOCK" },
+        "deviceRisk": { "required": false, "maxAgeHours": 24, "onUnavailable": "DEFER" }
+      },
       "rules": [
         {
           "ruleId": "ae-sim-shell",

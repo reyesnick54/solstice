@@ -1,5 +1,6 @@
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { DecisionStatus } from '../../../permissions/src/decision.ts';
+import type { ScreeningRequirements } from '../compliance/types.ts';
 
 /**
  * Engineering lifecycle of a policy version. Separate from legal review.
@@ -121,6 +122,7 @@ export type PolicyVersionRecord = {
   readonly effectiveUntil?: UtcInstant;
   readonly contentHash: string;
   readonly rules: readonly PolicyRule[];
+  readonly screeningRequirements?: ScreeningRequirements;
 };
 
 export type PolicyPack = {

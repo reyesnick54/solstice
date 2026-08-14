@@ -73,6 +73,15 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
     {
       database: DATABASES.customer,
       sql: `TRUNCATE TABLE
+              compliance.human_decision,
+              compliance.case_record,
+              compliance.alert,
+              compliance.fraud_result,
+              compliance.aml_profile,
+              compliance.velocity_counter,
+              compliance.screening_result,
+              compliance.provider_health,
+              compliance.counterparty_fact,
               customer.manual_review_case,
               customer.policy_rule,
               customer.policy_version,
@@ -80,9 +89,6 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               customer.legal_entity_capability,
               customer.policy_source,
               customer.policy_pack,
-              customer.customer,
-              customer.legal_entity
-            RESTART IDENTITY CASCADE`,
               identity.recovery_request,
               identity.capability_grant,
               identity.kyc_record,
@@ -93,7 +99,8 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               identity.customer_link,
               identity.person_identity,
               customer.customer,
-              customer.legal_entity`,
+              customer.legal_entity
+            RESTART IDENTITY CASCADE`,
     },
     {
       database: DATABASES.ledger,
