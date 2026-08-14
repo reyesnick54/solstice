@@ -19,6 +19,14 @@ import {
 } from './posture.ts';
 import { freezeProof, type Proof } from './proof.ts';
 import { currencyHintForKind, productForKind } from './product.ts';
+import {
+  evaluatePurposeCompatibility,
+  isDataPurpose,
+  isPersonalDataCategory,
+  type DataPurpose,
+  type PersonalDataCategory,
+} from './purpose.ts';
+import { evaluatePrivacyRules } from './policy/privacy.ts';
 
 export type KernelRefusal = {
   readonly outcome: 'REFUSED';
@@ -106,6 +114,10 @@ export class ComplianceKernel {
     const policy = policyProof(intent);
     const policyApplied = apply(policy);
     if (!policyApplied.ok) return policyApplied;
+
+    const purpose = purposeProof(intent);
+    const purposeApplied = apply(purpose);
+    if (!purposeApplied.ok) return purposeApplied;
 
     const sanctions = sanctionsProof(intent);
     const sanctionsApplied = apply(sanctions);
@@ -336,6 +348,136 @@ function policyProof(intent: ActionIntent): Proof {
       matchedRuleIds: decision.matchedRuleIds,
       product,
     },
+  });
+}
+
+const PURPOSE_KINDS: ReadonlySet<ActionIntent['kind']> = new Set([
+  'GRANT_CONSENT',
+  'MODIFY_CONSENT',
+  'REVOKE_CONSENT',
+  'STORE_PERSONAL_DATA',
+  'RUN_CLEAN_ROOM',
+]);
+
+function purposeProof(intent: ActionIntent): Proof {
+  if (!PURPOSE_KINDS.has(intent.kind)) {
+    if (intent.kind === 'SEND_PAYMENT') {
+      const purpose = (intent.payload as { purpose?: string }).purpose;
+      if (typeof purpose !== 'string' || purpose.length === 0) {
+        return freezeProof({
+          kind: 'PURPOSE',
+          posture: 'BLOCK',
+          reasons: Object.freeze(['payment purpose must be declared; it is never defaulted']),
+          evaluatedAt: intent.occurredAt,
+        });
+      }
+    }
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'CLEAR',
+      reasons: Object.freeze(['purpose proof not required for this action']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+
+  const payload = intent.payload as {
+    purpose?: string;
+    categories?: readonly string[];
+    category?: string;
+    provenance?: string;
+  };
+  if (typeof payload.purpose !== 'string' || payload.purpose.length === 0) {
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'BLOCK',
+      reasons: Object.freeze(['purpose must be declared on personal-data intents; it is never defaulted']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+  if (!isDataPurpose(payload.purpose)) {
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'BLOCK',
+      reasons: Object.freeze([`unknown purpose ${payload.purpose}`]),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+
+  const categories: string[] =
+    intent.kind === 'STORE_PERSONAL_DATA'
+      ? payload.category
+        ? [payload.category]
+        : []
+      : [...(payload.categories ?? [])];
+  if (categories.length === 0) {
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'BLOCK',
+      reasons: Object.freeze(['data category must be declared; it is never defaulted']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+  if (intent.kind === 'RUN_CLEAN_ROOM' && categories.length !== 1) {
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'BLOCK',
+      reasons: Object.freeze(['a clean-room request cannot span data categories']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+  if (intent.kind === 'STORE_PERSONAL_DATA' && payload.provenance !== 'SYNTHETIC') {
+    return freezeProof({
+      kind: 'PURPOSE',
+      posture: 'BLOCK',
+      reasons: Object.freeze(['only SYNTHETIC personal data may be stored in this phase']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+
+  const reasons: string[] = [];
+  for (const category of categories) {
+    if (!isPersonalDataCategory(category)) {
+      return freezeProof({
+        kind: 'PURPOSE',
+        posture: 'BLOCK',
+        reasons: Object.freeze([`unknown personal data category ${category}`]),
+        evaluatedAt: intent.occurredAt,
+      });
+    }
+    const compatibility = evaluatePurposeCompatibility(category, payload.purpose as DataPurpose);
+    if (!compatibility.allowed) {
+      return freezeProof({
+        kind: 'PURPOSE',
+        posture: 'BLOCK',
+        reasons: compatibility.reasons,
+        evaluatedAt: intent.occurredAt,
+        details: { category, purpose: payload.purpose },
+      });
+    }
+    reasons.push(...compatibility.reasons);
+    const privacy = evaluatePrivacyRules({
+      jurisdiction: intent.sourceJurisdiction,
+      category: category as PersonalDataCategory,
+      purpose: payload.purpose as DataPurpose,
+    });
+    if (!privacy.allow) {
+      return freezeProof({
+        kind: 'PURPOSE',
+        posture: 'BLOCK',
+        reasons: privacy.reasons,
+        evaluatedAt: intent.occurredAt,
+        details: { matchedRuleIds: privacy.matchedRuleIds },
+      });
+    }
+    reasons.push(...privacy.reasons);
+  }
+
+  return freezeProof({
+    kind: 'PURPOSE',
+    posture: 'CLEAR',
+    reasons: Object.freeze(reasons),
+    evaluatedAt: intent.occurredAt,
+    details: { purpose: payload.purpose, categories },
   });
 }
 

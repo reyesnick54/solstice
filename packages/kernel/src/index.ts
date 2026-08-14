@@ -53,5 +53,21 @@ export { freezeProof, PROOF_KINDS } from './proof.ts';
 
 export { productForKind } from './product.ts';
 
+export type { DataPurpose, LegalBasis, PersonalDataCategory, PurposeCompatibility } from './purpose.ts';
+export {
+  DATA_PURPOSES,
+  LEGAL_BASES,
+  PERSONAL_DATA_CATEGORIES,
+  PURPOSES_FORBIDDEN_FOR_SENSITIVE,
+  SENSITIVE_CATEGORIES,
+  evaluatePurposeCompatibility,
+  isDataPurpose,
+  isLegalBasis,
+  isPersonalDataCategory,
+} from './purpose.ts';
+
+export type { PrivacyDecision, PrivacyRule } from './policy/privacy.ts';
+export { evaluatePrivacyRules } from './policy/privacy.ts';
+
 export type { StateChangingPath } from './state-changing-paths.ts';
 export { STATE_CHANGING_PATHS } from './state-changing-paths.ts';

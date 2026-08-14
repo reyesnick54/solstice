@@ -111,12 +111,11 @@ describe('Phase 1 exit criterion', () => {
     }
 
     const balancePath = firstExisting([
-      'src/balances.ts',
       'packages/accounts/src/balances.ts',
       'services/accounts/src/balances.ts',
     ]);
     if (balancePath === null) {
-      assert.ok(true, 'balance read model is not in this tree yet');
+      assert.ok(true, 'Phase 1 balance read model is not in this tree; leftover src/balances.ts is not loaded');
       return;
     }
     const balances = await import(join(ROOT, balancePath));

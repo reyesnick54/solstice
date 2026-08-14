@@ -5,6 +5,7 @@
 /packages/kernel/ @reyesnick54
 /packages/ledger/ @reyesnick54
 /packages/payments/ @reyesnick54
+/packages/data-fabric/ @reyesnick54
 /packages/domain/ @reyesnick54
 /scripts/check-kernel-gating.mjs @reyesnick54
 /.github/workflows/ci.yml @reyesnick54
@@ -17,6 +18,7 @@ packages/domain/ @reyesnick54
 packages/contracts/ @reyesnick54
 packages/agent/ @reyesnick54
 packages/platform/ @reyesnick54
+packages/data-fabric/ @reyesnick54
 
 # Capability tokens, Kernel, and Execution Authority are control-plane.
 packages/platform/src/capability/ @reyesnick54

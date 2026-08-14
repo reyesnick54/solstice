@@ -3,7 +3,9 @@
 This file describes what is in `main` and what has been tested.
 It does not describe planned work as if it were done.
 
-**As of 2026-08-13 (commit `de3c633` on `main`): Phase 1 — Banking Simulation is not complete. The Phase 1 exit criterion is not met.**
+**As of 2026-08-14: Phase 7 Personal Data Fabric is implemented on this branch. ADR-0008 remains PROPOSED; the Vault uses a storage interface. `LIVE_DATA_MARKET_ENABLED` is false.**
+
+The Phase 1 note below is historical for `de3c633`. Current `main` already contains Kernel, ledger, payments, and the Personal Economy Agent. This file is updated so Phase 7 is not described as planned work.
 
 ---
 

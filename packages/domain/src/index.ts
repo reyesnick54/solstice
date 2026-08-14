@@ -29,8 +29,17 @@ export {
   isResidency,
 } from './jurisdiction.ts';
 
-export type { Currency } from './currency.ts';
-export { asCurrency, isCurrency } from './currency.ts';
+export type { Currency, CurrencyCode, SupportedCurrency } from './currency.ts';
+export {
+  asCurrency,
+  asCurrencyCode,
+  currencyDecimals,
+  isCurrency,
+  isCurrencyCode,
+  isSupportedCurrency,
+  minorUnitsScale,
+  SUPPORTED_CURRENCIES,
+} from './currency.ts';
 
 export type { AccountClass } from './account-class.ts';
 export { ACCOUNT_CLASSES, isAccountClass } from './account-class.ts';
@@ -73,16 +82,6 @@ export {
   transitionCustomerStatus,
 } from './customer.ts';
 
-export type { CurrencyCode, SupportedCurrency } from './currency.ts';
-export {
-  asCurrencyCode,
-  currencyDecimals,
-  isCurrencyCode,
-  isSupportedCurrency,
-  minorUnitsScale,
-  SUPPORTED_CURRENCIES,
-} from './currency.ts';
-
 export type { Rational } from './rational.ts';
 export {
   addRational,
@@ -101,7 +100,6 @@ export type { FxRateQuote } from './money.ts';
 export { applyFxRate, formatMoney, invertFxRate, Money } from './money.ts';
 
 export type {
-  AccountId,
   ActionIntentId,
   ActorId,
   BeneficiaryId,
@@ -114,7 +112,6 @@ export type {
   RouteId,
 } from './ids.ts';
 export {
-  asAccountId,
   asActionIntentId,
   asActorId,
   asBeneficiaryId,
@@ -127,8 +124,26 @@ export {
   asRouteId,
 } from './ids.ts';
 
-export type { Account, AccountClass } from './account.ts';
-export { ACCOUNT_CLASSES, createAccount } from './account.ts';
+export type {
+  Account,
+  AccountId,
+  AccountStatus,
+  AccountStatusTransition,
+  AccountStatusTransitionResult,
+  BankingAccountClass,
+  IllegalAccountStatusTransition,
+  OpenAccountInput,
+} from './account.ts';
+export {
+  ACCOUNT_STATUSES,
+  asAccountId,
+  BANKING_ACCOUNT_CLASSES,
+  canTransitionAccountStatus,
+  createAccount,
+  isAccountStatus,
+  openAccount,
+  transitionAccountStatus,
+} from './account.ts';
 
 export type {
   Beneficiary,
@@ -143,23 +158,6 @@ export {
 
 export type { Actor, ActorType } from './actor.ts';
 export { ACTOR_TYPES, freezeActor } from './actor.ts';
-export type {
-  Account,
-  AccountId,
-  AccountStatus,
-  AccountStatusTransition,
-  AccountStatusTransitionResult,
-  IllegalAccountStatusTransition,
-  OpenAccountInput,
-} from './account.ts';
-export {
-  ACCOUNT_STATUSES,
-  asAccountId,
-  canTransitionAccountStatus,
-  isAccountStatus,
-  openAccount,
-  transitionAccountStatus,
-} from './account.ts';
 
 export type {
   CreateOpenAccountIntentInput,

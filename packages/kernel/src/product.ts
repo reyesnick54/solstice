@@ -23,6 +23,14 @@ export function productForKind(
       return 'SEED_CREDIT';
     case 'RECORD_COST_AVOIDED':
       return 'COST_AVOIDED';
+    case 'GRANT_CONSENT':
+    case 'MODIFY_CONSENT':
+    case 'REVOKE_CONSENT':
+      return 'CONSENT';
+    case 'STORE_PERSONAL_DATA':
+      return 'PERSONAL_DATA_STORE';
+    case 'RUN_CLEAN_ROOM':
+      return 'CLEAN_ROOM';
     case 'COMPENSATE_PAYMENT':
     case 'SEND_PAYMENT': {
       const dest = destinationCountry ?? sourceCountry;

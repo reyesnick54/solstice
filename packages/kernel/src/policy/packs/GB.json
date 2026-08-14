@@ -80,6 +80,42 @@
         "when": { "action": "SEND_PAYMENT" }
       },
       "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
+    },
+    {
+      "id": "GB-SIM-CONSENT",
+      "title": "Simulation exception: consent ledger",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CONSENT",
+        "when": { "product": "CONSENT" }
+      },
+      "plainLanguageReason": "Consent mutations are simulated. Not a legal opinion."
+    },
+    {
+      "id": "GB-SIM-PERSONAL-DATA",
+      "title": "Simulation exception: synthetic personal data store",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "PERSONAL_DATA_STORE",
+        "when": { "product": "PERSONAL_DATA_STORE" }
+      },
+      "plainLanguageReason": "Synthetic vault writes only."
+    },
+    {
+      "id": "GB-SIM-CLEAN-ROOM",
+      "title": "Simulation exception: clean-room aggregation",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CLEAN_ROOM",
+        "when": { "product": "CLEAN_ROOM" }
+      },
+      "plainLanguageReason": "Clean-room aggregates are simulated."
     }
   ]
 }

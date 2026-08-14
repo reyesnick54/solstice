@@ -36,7 +36,10 @@ export type ProductName =
   | 'OPEN_ACCOUNT'
   | 'SEED_CREDIT'
   | 'CUSTOMER_LIFECYCLE'
-  | 'COST_AVOIDED';
+  | 'COST_AVOIDED'
+  | 'CONSENT'
+  | 'PERSONAL_DATA_STORE'
+  | 'CLEAN_ROOM';
 
 export type RuleWhen = {
   readonly action?: string;
@@ -57,11 +60,30 @@ export type ProductRule = {
   readonly plainLanguageReason: string;
 };
 
+export type PrivacyRuleEffect = {
+  readonly type: 'FORBID_PURPOSE';
+  readonly when: {
+    readonly category?: string;
+    readonly purpose?: string;
+    readonly purposeIn?: readonly string[];
+  };
+};
+
+export type PrivacyRule = {
+  readonly id: string;
+  readonly title: string;
+  readonly legalReviewState: LegalReviewState;
+  readonly enabled: boolean;
+  readonly effect: PrivacyRuleEffect;
+  readonly plainLanguageReason: string;
+};
+
 export type JurisdictionPack = {
   readonly version: string;
   readonly jurisdiction: string;
   readonly title: string;
   readonly rules: readonly ProductRule[];
+  readonly privacyRules?: readonly PrivacyRule[];
 };
 
 export type PolicyQuestion = {

@@ -192,5 +192,12 @@ export function assertNoCounselConfirmed(packs: readonly JurisdictionPack[] = PA
         );
       }
     }
+    for (const rule of pack.privacyRules ?? []) {
+      if (rule.legalReviewState === 'CONFIRMED_BY_COUNSEL') {
+        throw new Error(
+          `Privacy rule ${rule.id} in pack ${pack.jurisdiction} is marked CONFIRMED_BY_COUNSEL, which this build forbids`,
+        );
+      }
+    }
   }
 }

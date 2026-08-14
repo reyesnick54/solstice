@@ -41,12 +41,15 @@ describe('jurisdiction packs', () => {
       for (const rule of pack.rules) {
         assert.notEqual(rule.legalReviewState, 'CONFIRMED_BY_COUNSEL');
       }
+      for (const rule of pack.privacyRules ?? []) {
+        assert.notEqual(rule.legalReviewState, 'CONFIRMED_BY_COUNSEL');
+      }
     }
   });
 
   it('RESEARCH_REQUIRED rules are disabled', () => {
     const research = loadPacks()
-      .flatMap((pack) => pack.rules)
+      .flatMap((pack) => [...pack.rules, ...(pack.privacyRules ?? [])])
       .filter((rule) => rule.legalReviewState === 'RESEARCH_REQUIRED');
     assert.ok(research.length > 0);
     for (const rule of research) {
@@ -60,6 +63,41 @@ describe('agent capabilities', () => {
     assert.equal(actorMaySubmit('AGENT', 'ADD_BENEFICIARY'), false);
     assert.equal(actorMaySubmit('AGENT', 'UPDATE_BENEFICIARY'), false);
     assert.equal(actorMaySubmit('AGENT', 'SEND_PAYMENT'), false);
+  });
+
+  it('agents cannot grant, modify, or revoke consent', () => {
+    assert.equal(actorMaySubmit('AGENT', 'GRANT_CONSENT'), false);
+    assert.equal(actorMaySubmit('AGENT', 'MODIFY_CONSENT'), false);
+    assert.equal(actorMaySubmit('AGENT', 'REVOKE_CONSENT'), false);
+  });
+});
+
+describe('PURPOSE proof', () => {
+  it('blocks a health-for-advertising consent intent', () => {
+    const kernel = new ComplianceKernel();
+    const result = kernel.evaluate(
+      freezeIntent({
+        id: asActionIntentId('int_purpose_ads'),
+        kind: 'GRANT_CONSENT',
+        actor: { type: 'CUSTOMER', id: asActorId('jane'), customerId: asCustomerId('cust_k') },
+        payload: {
+          consentId: 'cns_bad',
+          purpose: 'ADVERTISING',
+          categories: ['HEALTH'],
+          subjectRef: 'SYNTH-SUBJECT-0001',
+        },
+        idempotencyKey: asIdempotencyKey('idem_purpose_ads'),
+        occurredAt: NOW,
+        sourceJurisdiction: 'US',
+      }),
+    );
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+    assert.equal(result.value.outcome, 'REFUSED');
+    if (result.value.outcome === 'REFUSED') {
+      assert.ok(result.value.proofs.some((proof) => proof.kind === 'PURPOSE'));
+      assert.ok(result.value.reasons.some((reason) => reason.includes('PURPOSE_INCOMPATIBLE')));
+    }
   });
 });
 
@@ -98,6 +136,7 @@ describe('ComplianceKernel', () => {
     if (result.value.outcome === 'AUTHORIZED') {
       assert.equal(result.value.authorization.kind, 'CREATE_CUSTOMER');
       assert.equal(result.value.evidence.seq, 1);
+      assert.ok(result.value.proofs.some((proof) => proof.kind === 'PURPOSE'));
     }
   });
 
