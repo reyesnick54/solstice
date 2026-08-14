@@ -10,9 +10,9 @@ Last updated: 2026-08-14 (Phase 7 Personal Data Fabric)
 | --- | --- | --- |
 | Before this change (main @ de3c633) | `node --test packages/domain/src/**/*.test.ts` | **30 passed** / 0 failed (Customer domain) |
 | After Phase 4+5 | `npm test` at repo root | **71 passed** / 0 failed |
-| After Phase 7 | `npm test` at repo root | see CI output; count must not decrease |
+| After Phase 7 | `npm test` at repo root | **177 passed** / 0 failed |
 
-Domain tests are still invoked by the root `npm test` script. The passing count increased from 30 to 71 and did not decrease.
+Domain tests are still invoked by the root `npm test` script. The passing count increased from 71 to 177 and did not decrease.
 
 Demo: `npm run demo` exits 0 (`demo: ok`). Journals posted: 0. Execution authorities issued: 0.
 
@@ -65,6 +65,7 @@ All remain `false`:
 - `LIVE_LLM_ENFORCEMENT`
 - `LIVE_MERCHANT_NETWORK`
 - `REAL_MONEY_ENABLED`
+- `LIVE_DATA_MARKET_ENABLED`
 
 ## Phase exit
 

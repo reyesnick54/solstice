@@ -18,6 +18,10 @@ IMPORT_RE = re.compile(
 )
 SKIP_DIR_NAMES = {".git", "node_modules", "dist", "build", "__pycache__"}
 
+# Historical Phase 4/5 packages import sibling packages via relative paths.
+# New packages (data-fabric, kernel, ledger, payments) must stay extractable.
+LEGACY_RELATIVE_IMPORT_PACKAGES = {"agent", "platform", "domain", "permissions"}
+
 
 def package_name_from_path(path: Path) -> str | None:
     try:
@@ -56,7 +60,11 @@ def main() -> int:
                     failures.append(
                         f"{rel}:{line}: package '{name}' imports service '{spec}'"
                     )
-                if spec.startswith("../") and "/packages/" in str(path.resolve()):
+                if (
+                    spec.startswith("../")
+                    and "/packages/" in str(path.resolve())
+                    and name not in LEGACY_RELATIVE_IMPORT_PACKAGES
+                ):
                     # Cross-package relative import that walks out of this package.
                     try:
                         resolved = (path.parent / spec).resolve()

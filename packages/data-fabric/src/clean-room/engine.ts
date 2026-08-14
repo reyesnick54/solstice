@@ -233,7 +233,7 @@ function targetingIsolation(rows: readonly DecryptedRow[], query: CleanRoomQuery
   for (const key of Object.keys(query.filterEquals)) {
     const values = rows.map((row) => String(row.attributes[key] ?? ''));
     if (values.length > 0 && new Set(values).size === values.length) {
-      return `filter on unique-valued attribute ${key} could isolate an individual`;
+        return 'filter on a unique-valued attribute could isolate an individual';
     }
   }
   return null;

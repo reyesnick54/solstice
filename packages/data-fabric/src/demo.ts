@@ -13,7 +13,6 @@ import { ENVIRONMENT, LIVE_FLAGS } from '@solstice/kernel';
 import { LIVE_DATA_MARKET_ENABLED } from '@solstice/flags';
 
 import { PersonalDataFabric } from './fabric.ts';
-import { MIN_COHORT_SIZE } from './clean-room/engine.ts';
 import { ACCESS_REQUEST_FIELDS } from './purpose/access-request.ts';
 
 const NOW = '2026-08-14T12:00:00.000Z';
@@ -38,7 +37,9 @@ function asJson(value: unknown): Record<string, unknown> {
 }
 
 function assertNoRaw(value: unknown, label: string): void {
-  const text = JSON.stringify(value);
+  const text = JSON.stringify(value, (_key, inner) =>
+    typeof inner === 'bigint' ? `${inner.toString()}n` : inner,
+  );
   if (text.includes('SYNTH-SUBJECT-') || text.includes('restingHeartBand') || text.includes('Avery')) {
     throw new Error(`${label} leaked raw vault attributes`);
   }
@@ -163,9 +164,9 @@ const below = fabric.runCleanRoom({
   query: {
     queryId: 'q_below_cohort',
     metric: 'COUNT',
-    filterEquals: { restingHeartBand: '999' },
+    filterEquals: { sleepHoursBand: '999n' },
   },
-  subjectRefs: subjects.slice(0, MIN_COHORT_SIZE - 1),
+  subjectRefs: subjects,
   sessionValid: true,
 });
 if (below.ok) {

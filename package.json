@@ -16,7 +16,7 @@
     "check:extraction": "python3 scripts/extraction-dryrun.py",
     "check:posture": "python3 scripts/check-deployment-posture.py",
     "gate": "node scripts/check-kernel-gating.mjs",
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test $(find packages tests -name '*.test.ts' 2>/dev/null | sort)",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test $(bash scripts/list-tests.sh)",
     "demo": "npm run demo -w @solstice/demo && npm run demo -w @solstice/data-fabric --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "scan:secrets": "python3 scripts/secret-scan.py",
