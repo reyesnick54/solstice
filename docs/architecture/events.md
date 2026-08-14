@@ -83,7 +83,21 @@ Implemented banking events (safe references only):
 - `banking.pending.settled` → `PendingSettlementSettled`
 - `banking.pending.returned` → `PendingSettlementReturned`
 
-Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
+Implemented payment / FX events (hashes and ids only; no raw bank details):
+
+- `payment.beneficiary.created` → `BeneficiaryCreated`
+- `payment.initiated` → `PaymentInitiated`
+- `payment.held` → `PaymentHeld`
+- `payment.submitted` → `PaymentSubmitted`
+- `payment.settled` → `PaymentSettled`
+- `payment.failed` → `PaymentFailed`
+- `payment.returned` → `PaymentReturned`
+- `payment.cancelled` → `PaymentCancelled`
+- `fx.quote.created` → `FxQuoteCreated`
+- `fx.quote.accepted` → `FxQuoteAccepted`
+- `fx.quote.expired` → `FxQuoteExpired`
+
+Reserved (not implemented): `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.
 

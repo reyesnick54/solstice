@@ -9,11 +9,11 @@ import { ENVIRONMENT } from '../../../config/src/flags.ts';
 import type { IdentityFacts } from '../../../identity/src/facts.ts';
 import type { ComplianceFacts } from '../compliance/facts.ts';
 import type { KernelActor, KernelFacts } from '../proofs.ts';
+import { hashCanonical } from './hash.ts';
 
 function isIdentityFacts(value: KernelFacts['identity']): value is IdentityFacts {
   return value !== undefined && 'identityExists' in value;
 }
-import { hashCanonical } from './hash.ts';
 import type { FactMap } from './predicates.ts';
 import type { CapabilityEnvironment, PolicyPackId } from './types.ts';
 
@@ -49,6 +49,15 @@ export type PolicyFactInput = {
   readonly capabilityEnabled?: boolean;
   readonly capabilityEnvironment?: CapabilityEnvironment;
   readonly offeringMode?: string;
+  readonly screening?: {
+    readonly sanctionsHit: boolean;
+    readonly pepHit: boolean;
+    readonly fraudHold: boolean;
+    readonly screeningRef: string;
+  };
+  readonly corridorId?: string;
+  readonly corridorSimulationEnabled?: boolean;
+  readonly beneficiaryStatus?: string;
   readonly compliance?: ComplianceFacts;
 };
 
@@ -86,41 +95,27 @@ export function policyFactsFromKernel(
   intent: ActionIntent,
   facts: KernelFacts,
 ): PolicyFactInput {
-  const kycState =
-    facts.identity?.kycState ??
-    facts.policyIdentity?.kycState ??
-    facts.customer?.verification.kycState;
-  const kycRecordVersion =
-    facts.identity?.kycVersion ??
-    facts.policyIdentity?.kycRecordVersion ??
-    facts.customer?.verification.kycRecordVersion;
-  const residency = facts.policyIdentity?.residency ?? facts.customer?.residency;
-  const identity: PolicyIdentityFacts = {
-    ...(kycState !== undefined ? { kycState } : {}),
-    ...(kycRecordVersion !== undefined ? { kycRecordVersion } : {}),
-    ...(residency !== undefined ? { residency } : {}),
-    ...(facts.policyIdentity?.citizenship !== undefined
-      ? { citizenship: facts.policyIdentity.citizenship }
-      : {}),
   const identityFacts = isIdentityFacts(facts.identity) ? facts.identity : undefined;
-  const policyIdentity = !identityFacts && facts.identity ? (facts.identity as PolicyIdentityFacts) : undefined;
+  const slimIdentity =
+    !identityFacts && facts.identity ? (facts.identity as PolicyIdentityFacts) : undefined;
   const kycState =
+    facts.policyIdentity?.kycState ??
     identityFacts?.kycState ??
-    policyIdentity?.kycState ??
+    slimIdentity?.kycState ??
     facts.customer?.verification.kycState;
   const kycRecordVersion =
+    facts.policyIdentity?.kycRecordVersion ??
     identityFacts?.kycVersion ??
-    policyIdentity?.kycRecordVersion ??
+    slimIdentity?.kycRecordVersion ??
     facts.customer?.verification.kycRecordVersion;
+  const residency =
+    facts.policyIdentity?.residency ?? slimIdentity?.residency ?? facts.customer?.residency;
+  const citizenship = facts.policyIdentity?.citizenship ?? slimIdentity?.citizenship;
   const identity: PolicyIdentityFacts = {
-    ...(kycState ? { kycState } : {}),
-    ...(kycRecordVersion !== undefined ? { kycRecordVersion } : {}),
-    ...(policyIdentity?.residency
-      ? { residency: policyIdentity.residency }
-      : facts.customer
-        ? { residency: facts.customer.residency }
-        : {}),
-    ...(policyIdentity?.citizenship ? { citizenship: policyIdentity.citizenship } : {}),
+    ...(kycState != null ? { kycState } : {}),
+    ...(kycRecordVersion != null ? { kycRecordVersion } : {}),
+    ...(residency !== undefined ? { residency } : {}),
+    ...(citizenship !== undefined ? { citizenship } : {}),
   };
   return {
     actor: facts.actor,
@@ -139,6 +134,12 @@ export function policyFactsFromKernel(
       ? { transactionDestination: facts.transactionDestination }
       : {}),
     ...(facts.policyPin ? { policyPin: facts.policyPin } : {}),
+    ...(facts.screening ? { screening: facts.screening } : {}),
+    ...(facts.corridorId ? { corridorId: facts.corridorId } : {}),
+    ...(facts.corridorSimulationEnabled !== undefined
+      ? { corridorSimulationEnabled: facts.corridorSimulationEnabled }
+      : {}),
+    ...(facts.beneficiaryStatus ? { beneficiaryStatus: facts.beneficiaryStatus } : {}),
     ...(facts.compliance ? { compliance: facts.compliance } : {}),
   };
 }
@@ -177,13 +178,21 @@ export function toFactMap(input: PolicyFactInput): FactMap {
     'capability.enabled': input.capabilityEnabled,
     'capability.environment': input.capabilityEnvironment,
     offeringMode: input.offeringMode,
+    'screening.sanctionsHit': input.screening?.sanctionsHit,
+    'screening.pepHit': input.screening?.pepHit,
+    'screening.fraudHold': input.screening?.fraudHold,
+    'corridor.id': input.corridorId,
+    'corridor.simulationEnabled': input.corridorSimulationEnabled,
+    'beneficiary.status': input.beneficiaryStatus,
     'screening.sanctionsOutcome': input.compliance?.sanctionsOutcome ?? undefined,
     'screening.pepOutcome': input.compliance?.pepOutcome ?? undefined,
     'screening.adverseMediaOutcome': input.compliance?.adverseMediaOutcome ?? undefined,
     'screening.fresh':
       input.compliance === undefined
         ? undefined
-        : input.compliance.sanctionsFresh && input.compliance.pepFresh && input.compliance.adverseMediaFresh,
+        : input.compliance.sanctionsFresh &&
+          input.compliance.pepFresh &&
+          input.compliance.adverseMediaFresh,
     'screening.providerAvailable': input.compliance?.providerAvailable,
     'aml.riskCategory': input.compliance?.amlCategory ?? undefined,
     'fraud.outcome': input.compliance?.fraudOutcome ?? undefined,
@@ -219,6 +228,12 @@ export function hashPolicyFacts(input: PolicyFactInput): string {
     transactionOrigin: input.transactionOrigin ?? null,
     transactionDestination: input.transactionDestination ?? null,
     policyPin: input.policyPin ?? null,
+    sanctionsHit: input.screening?.sanctionsHit ?? null,
+    pepHit: input.screening?.pepHit ?? null,
+    fraudHold: input.screening?.fraudHold ?? null,
+    corridorId: input.corridorId ?? null,
+    corridorSimulationEnabled: input.corridorSimulationEnabled ?? null,
+    beneficiaryStatus: input.beneficiaryStatus ?? null,
     sanctionsOutcome: input.compliance?.sanctionsOutcome ?? null,
     pepOutcome: input.compliance?.pepOutcome ?? null,
     amlCategory: input.compliance?.amlCategory ?? null,

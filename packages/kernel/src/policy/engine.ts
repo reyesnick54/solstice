@@ -320,14 +320,13 @@ export class PolicyEngine {
     }
 
     const capability =
-      this.registry.getCapability(binding.requiredCapabilityId) ??
       this.registry.findCapability({
         legalEntityId: offering.legalEntityId,
         actionType: input.actionType,
         productId: offering.productId,
         ...(offering.accountClass ? { productType: offering.accountClass } : {}),
         environment: 'simulation',
-      });
+      }) ?? this.registry.getCapability(binding.requiredCapabilityId);
     if (!capability) {
       return {
         decision: 'DEFER',

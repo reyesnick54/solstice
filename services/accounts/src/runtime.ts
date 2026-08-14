@@ -169,7 +169,6 @@ export function createSimulationRuntime(
     legalEntities,
     identity.service,
     holds,
-    compliance,
   );
   return {
     capabilities: CAPABILITIES,

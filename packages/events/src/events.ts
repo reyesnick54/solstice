@@ -178,6 +178,123 @@ export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 
 export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
 export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
 
+export type BeneficiaryCreatedV1 = VersionedEvent<
+  'BeneficiaryCreated',
+  1,
+  {
+    readonly beneficiaryId: string;
+    readonly ownerId: string;
+    readonly destinationCountry: string;
+    readonly currency: string;
+    readonly status: string;
+    readonly screeningRef: string | null;
+    readonly coordinateHint: string;
+  }
+>;
+
+export type PaymentInitiatedV1 = VersionedEvent<
+  'PaymentInitiated',
+  1,
+  {
+    readonly paymentId: string;
+    readonly quoteId: string;
+    readonly beneficiaryId: string;
+    readonly sourceMinorUnits: string;
+    readonly destinationMinorUnits: string;
+  }
+>;
+
+export type PaymentHeldV1 = VersionedEvent<
+  'PaymentHeld',
+  1,
+  {
+    readonly paymentId: string;
+    readonly reason?: string;
+    readonly holdId?: string | null;
+    readonly phase?: string;
+  }
+>;
+
+export type PaymentSubmittedV1 = VersionedEvent<
+  'PaymentSubmitted',
+  1,
+  {
+    readonly paymentId: string;
+    readonly routeId: string;
+  }
+>;
+
+export type PaymentSettledV1 = VersionedEvent<
+  'PaymentSettled',
+  1,
+  {
+    readonly paymentId: string;
+    readonly settlementRef: string | null;
+    readonly destinationMinorUnits: string;
+    readonly reconciliation: string;
+  }
+>;
+
+export type PaymentFailedV1 = VersionedEvent<
+  'PaymentFailed',
+  1,
+  {
+    readonly paymentId: string;
+    readonly reason: string;
+    readonly phase?: string;
+  }
+>;
+
+export type PaymentReturnedV1 = VersionedEvent<
+  'PaymentReturned',
+  1,
+  {
+    readonly paymentId: string;
+    readonly policy: string;
+  }
+>;
+
+export type PaymentCancelledV1 = VersionedEvent<
+  'PaymentCancelled',
+  1,
+  {
+    readonly paymentId: string;
+  }
+>;
+
+export type FxQuoteCreatedV1 = VersionedEvent<
+  'FxQuoteCreated',
+  1,
+  {
+    readonly quoteId: string;
+    readonly baseCurrency: string;
+    readonly quoteCurrency: string;
+    readonly sourceMinorUnits: string;
+    readonly destinationMinorUnits: string;
+    readonly feeMinorUnits: string;
+    readonly customerRate: string;
+    readonly rateSource: string;
+    readonly expiresAt: string;
+  }
+>;
+
+export type FxQuoteAcceptedV1 = VersionedEvent<
+  'FxQuoteAccepted',
+  1,
+  {
+    readonly quoteId: string;
+    readonly customerRate: string;
+  }
+>;
+
+export type FxQuoteExpiredV1 = VersionedEvent<
+  'FxQuoteExpired',
+  1,
+  {
+    readonly quoteId: string;
+    readonly expiresAt: string;
+  }
+>;
 export type BankingAmountPayload = {
   readonly accountId: AccountId;
   readonly amountMinorUnits: string;
@@ -259,6 +376,17 @@ export type DomainEvent =
   | IdentitySessionRevokedV1
   | IdentityDeviceRegisteredV1
   | IdentityRecoveryRequestedV1
+  | BeneficiaryCreatedV1
+  | PaymentInitiatedV1
+  | PaymentHeldV1
+  | PaymentSubmittedV1
+  | PaymentSettledV1
+  | PaymentFailedV1
+  | PaymentReturnedV1
+  | PaymentCancelledV1
+  | FxQuoteCreatedV1
+  | FxQuoteAcceptedV1
+  | FxQuoteExpiredV1
   | HoldCreatedV1
   | HoldReleasedV1
   | HoldCapturedV1
@@ -271,7 +399,7 @@ export type DomainEvent =
   | ReversalPostedV1
   | PendingSettlementInitiatedV1
   | PendingSettlementSettledV1
-  | PendingSettlementReturnedV1;
+  | PendingSettlementReturnedV1
   | ComplianceScreeningCompletedV1
   | ComplianceScreeningReviewRequiredV1
   | ComplianceCaseOpenedV1

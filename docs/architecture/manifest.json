@@ -15,7 +15,9 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/config",
@@ -27,8 +29,12 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/domain"],
-      "codeowners": ["@reyesnick54"],
+      "allowedDependencies": [
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Clock types currently import UtcInstant from packages/domain. That edge is a known layering exception."
     },
     {
@@ -41,8 +47,12 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/permissions"],
-      "codeowners": ["@reyesnick54"],
+      "allowedDependencies": [
+        "packages/permissions"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "openAccount requires VerifiedExecutionAuthority from packages/permissions. That creates a known cycle."
     },
     {
@@ -61,7 +71,9 @@
         "packages/config",
         "packages/security"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/security",
@@ -74,7 +86,9 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Canonical cryptographic control plane. No vendor KMS SDK. Key metadata is not key material."
     },
     {
@@ -95,7 +109,9 @@
         "packages/evidence",
         "packages/events"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Canonical Solstice Identity domain. Authoritative actor capabilities and ActorContext. No live KYC vendor."
     },
     {
@@ -108,8 +124,12 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/identity"],
-      "codeowners": ["@reyesnick54"],
+      "allowedDependencies": [
+        "packages/identity"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Application facade for packages/identity. Not a second identity model."
     },
     {
@@ -131,7 +151,9 @@
         "packages/identity",
         "packages/security"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/ledger",
@@ -149,7 +171,9 @@
         "packages/domain",
         "packages/money"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/evidence",
@@ -161,8 +185,13 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/config", "packages/security"],
-      "codeowners": ["@reyesnick54"]
+      "allowedDependencies": [
+        "packages/config",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/events",
@@ -174,8 +203,13 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/domain", "packages/permissions"],
-      "codeowners": ["@reyesnick54"],
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/permissions"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Canonical VersionedEvent envelope, taxonomy, outbox/inbox abstractions. Not a second event model."
     },
     {
@@ -201,7 +235,9 @@
         "packages/security",
         "packages/identity"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "packages/persistence",
@@ -224,7 +260,9 @@
         "packages/security",
         "packages/identity"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger. Persists security key metadata only."
     },
     {
@@ -237,8 +275,12 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "allowedDependencies": ["packages/kernel"],
-      "codeowners": ["@reyesnick54"],
+      "allowedDependencies": [
+        "packages/kernel"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Application facade for the kernel compliance screening fabric. Not a second Kernel, policy engine, or Evidence Vault."
     },
     {
@@ -252,7 +294,36 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
+    },
+    {
+      "id": "packages/payments",
+      "npmName": "@solstice/payments",
+      "path": "packages/payments",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
     }
   ],
   "components": [
@@ -268,14 +339,19 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "Money", "kind": "class" }
+        {
+          "name": "Money",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/money-v2",
         "packages/currency",
         "src/money"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "currencies",
@@ -290,7 +366,9 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "customer-domain",
@@ -304,8 +382,12 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/customer"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "packages/customer"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "account-domain",
@@ -319,8 +401,12 @@
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/account"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "packages/account"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "account-classes",
@@ -334,13 +420,18 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "ACCOUNT_CLASSES", "kind": "const" }
+        {
+          "name": "ACCOUNT_CLASSES",
+          "kind": "const"
+        }
       ],
       "forbiddenAliases": [
         "packages/account-class",
         "packages/account-classes"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "products",
@@ -354,8 +445,12 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/products"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "packages/products"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "legal-entities",
@@ -369,8 +464,12 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/legal-entity"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "packages/legal-entity"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "action-intent",
@@ -384,13 +483,18 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "ActionIntent", "kind": "interface" }
+        {
+          "name": "ActionIntent",
+          "kind": "interface"
+        }
       ],
       "forbiddenAliases": [
         "packages/intents",
         "packages/action-intent"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "action-types",
@@ -404,10 +508,15 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "ACTION_TYPES", "kind": "const" }
+        {
+          "name": "ACTION_TYPES",
+          "kind": "const"
+        }
       ],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "structural-validation",
@@ -422,7 +531,9 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "execution-authority",
@@ -436,15 +547,23 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "AuthorityIssuer", "kind": "class" },
-        { "name": "ExecutionAuthority", "kind": "type" }
+        {
+          "name": "AuthorityIssuer",
+          "kind": "class"
+        },
+        {
+          "name": "ExecutionAuthority",
+          "kind": "type"
+        }
       ],
       "forbiddenAliases": [
         "packages/authority",
         "src/authority",
         "packages/platform/src/authority"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "compliance-kernel",
@@ -458,14 +577,19 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "ComplianceKernel", "kind": "class" }
+        {
+          "name": "ComplianceKernel",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/compliance-kernel",
         "src/kernel",
         "packages/platform/src/kernel"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "proof-evaluation",
@@ -480,7 +604,9 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "policy-engine",
@@ -494,14 +620,19 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "PolicyEngine", "kind": "class" }
+        {
+          "name": "PolicyEngine",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/compliance-kernel",
         "packages/policy",
         "packages/policy-engine"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Extends the existing Compliance Kernel. Data packs plus a typed evaluator. Not a second Kernel."
     },
     {
@@ -516,7 +647,10 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "ComplianceFabric", "kind": "class" }
+        {
+          "name": "ComplianceFabric",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/compliance",
@@ -525,7 +659,9 @@
         "packages/sanctions",
         "packages/risk-compliance"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Provider-neutral screening, AML profiles, transaction monitoring, fraud, velocity, and cases. Simulation adapters only."
     },
     {
@@ -540,13 +676,18 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "EvidenceVault", "kind": "class" }
+        {
+          "name": "EvidenceVault",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/evidence-vault",
         "src/evidence"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "security-crypto",
@@ -560,14 +701,19 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "KeyProvider", "kind": "type" }
+        {
+          "name": "KeyProvider",
+          "kind": "type"
+        }
       ],
       "forbiddenAliases": [
         "packages/crypto",
         "packages/kms",
         "packages/secrets"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "domain-events",
@@ -581,8 +727,14 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "VersionedEvent", "kind": "type" },
-        { "name": "DomainEventLog", "kind": "class" }
+        {
+          "name": "VersionedEvent",
+          "kind": "type"
+        },
+        {
+          "name": "DomainEventLog",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/domain-events",
@@ -590,7 +742,9 @@
         "packages/outbox",
         "packages/messaging"
       ],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "ledger",
@@ -604,10 +758,18 @@
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": true,
       "protectedSymbols": [
-        { "name": "Ledger", "kind": "class" }
+        {
+          "name": "Ledger",
+          "kind": "class"
+        }
       ],
-      "forbiddenAliases": ["src/ledger", "packages/journal"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "src/ledger",
+        "packages/journal"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "journals-postings",
@@ -622,7 +784,9 @@
       "kernelAuthorizationRequired": true,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "class-bridges",
@@ -637,7 +801,9 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "account-opening",
@@ -652,7 +818,9 @@
       "kernelAuthorizationRequired": true,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "money-movement",
@@ -667,7 +835,9 @@
       "kernelAuthorizationRequired": true,
       "protectedSymbols": [],
       "forbiddenAliases": [],
-      "codeowners": ["@reyesnick54"]
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "balance-projections",
@@ -681,8 +851,12 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/balances"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "packages/balances"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "configuration",
@@ -696,8 +870,13 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["src/flags", "config/capabilities.ts"],
-      "codeowners": ["@reyesnick54"]
+      "forbiddenAliases": [
+        "src/flags",
+        "config/capabilities.ts"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ]
     },
     {
       "id": "architecture-linting",
@@ -715,7 +894,9 @@
         "tools/architecture-linter",
         "packages/architecture-linter"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Companion invariant scripts live under scripts/. Do not add a second linter system."
     },
     {
@@ -730,8 +911,13 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
-      "forbiddenAliases": ["packages/postgres", "packages/database"],
-      "codeowners": ["@reyesnick54"],
+      "forbiddenAliases": [
+        "packages/postgres",
+        "packages/database"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Durable adapter only. Journals still post through Ledger.postJournal. Evidence still seals through EvidenceVault."
     },
     {
@@ -746,7 +932,10 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        { "name": "IdentityService", "kind": "class" }
+        {
+          "name": "IdentityService",
+          "kind": "class"
+        }
       ],
       "forbiddenAliases": [
         "packages/auth",
@@ -754,7 +943,9 @@
         "packages/user-auth",
         "services/auth"
       ],
-      "codeowners": ["@reyesnick54"],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Authoritative actor capabilities and ActorContext. Simulation WebAuthn adapter only."
     }
   ],
@@ -854,11 +1045,54 @@
       "file": "services/accounts/src/banking-operations.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "createBeneficiary",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "createQuote",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "acceptQuote",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "initiatePayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "cancelPayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postPaymentJournal",
+      "file": "packages/payments/src/journals.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
-    ["packages/domain", "packages/permissions"],
-    ["packages/domain", "packages/permissions", "packages/config"]
+    [
+      "packages/domain",
+      "packages/permissions"
+    ],
+    [
+      "packages/domain",
+      "packages/permissions",
+      "packages/config"
+    ]
   ],
   "forbiddenWorkspaceRoots": [
     "src/kernel",
@@ -978,25 +1212,53 @@
       "owner": "services/accounts",
       "protected": true,
       "notes": "Multi-currency positions, holds, available funds, statements, fees, reversals, and reconciliation. Not FX execution or external rails."
+    },
+    {
       "id": "compliance-screening",
       "status": "IMPLEMENTED",
       "owner": "packages/kernel",
       "protected": true,
       "adr": "ADR-0010"
+    },
+    {
+      "id": "payments",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Simulation beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+    },
+    {
+      "id": "fx",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Rational FX quotes and simulation pricing. Not live market data."
+    },
+    {
+      "id": "cards",
+      "status": "PLANNED",
+      "owner": "packages/cards",
+      "protected": true,
+      "notes": "Reserved. Not implemented in this chunk."
     }
   ],
   "boundedContexts": [
     {
       "id": "SECURITY",
       "status": "IMPLEMENTED",
-      "reservedPaths": ["packages/security"],
+      "reservedPaths": [
+        "packages/security"
+      ],
       "protected": true,
       "notes": "Canonical key provider, secret references, envelope encryption, and simulation provider. No live KMS."
     },
     {
       "id": "IDENTITY",
       "status": "IMPLEMENTED",
-      "reservedPaths": ["packages/identity", "services/identity"],
+      "reservedPaths": [
+        "packages/identity",
+        "services/identity"
+      ],
       "protected": true,
       "adr": "ADR-0007",
       "notes": "In-house Solstice ID domain, sessions, device trust, KYC metadata, ActorContext. No live IdP or KYC vendor."
@@ -1004,170 +1266,268 @@
     {
       "id": "COMPLIANCE",
       "status": "PARTIAL",
-      "reservedPaths": ["packages/kernel", "packages/permissions", "packages/evidence", "services/compliance"],
+      "reservedPaths": [
+        "packages/kernel",
+        "packages/permissions",
+        "packages/evidence",
+        "services/compliance"
+      ],
       "protected": true,
       "notes": "Kernel, ActionIntent, Execution Authority, Evidence Vault, the simulation policy engine, and the screening/monitoring fabric are implemented. No live AML/sanctions vendor. No jurisdiction pack is legally confirmed."
     },
     {
       "id": "BANKING",
       "status": "PARTIAL",
-      "reservedPaths": ["packages/domain", "packages/ledger", "services/accounts"],
+      "reservedPaths": [
+        "packages/domain",
+        "packages/ledger",
+        "services/accounts"
+      ],
       "protected": true,
       "notes": "Phase 1 simulation accounts, ledger, and balances are implemented. PostgreSQL is the durable adapter behind those ports. In-memory adapters remain for unit tests."
     },
     {
       "id": "PAYMENTS",
-      "status": "PLANNED",
-      "reservedPaths": ["packages/payments"],
-      "protected": true
+      "status": "PARTIAL",
+      "reservedPaths": [
+        "packages/payments"
+      ],
+      "protected": true,
+      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, and reconciliation. Live rails are not implemented."
     },
     {
       "id": "FX",
-      "status": "PLANNED",
-      "reservedPaths": ["packages/payments"],
+      "status": "PARTIAL",
+      "reservedPaths": [
+        "packages/payments"
+      ],
       "protected": true,
-      "notes": "Rational FX helpers exist on Money. A payments FX router does not."
+      "notes": "Simulation FX quotes use exact rational rates. No live liquidity provider."
     },
     {
       "id": "CARDS",
       "status": "PLANNED",
-      "reservedPaths": ["packages/cards", "services/cards"],
+      "reservedPaths": [
+        "packages/cards",
+        "services/cards"
+      ],
       "protected": true
     },
     {
       "id": "TREASURY",
       "status": "PLANNED",
-      "reservedPaths": ["packages/treasury", "services/treasury"],
+      "reservedPaths": [
+        "packages/treasury",
+        "services/treasury"
+      ],
       "protected": true
     },
     {
       "id": "PERSONAL_ECONOMIC_GRAPH",
       "status": "PLANNED",
-      "reservedPaths": ["packages/personal-economic-graph"],
+      "reservedPaths": [
+        "packages/personal-economic-graph"
+      ],
       "protected": true
     },
     {
       "id": "PERSONAL_ECONOMY_AGENT",
       "status": "PLANNED",
-      "reservedPaths": ["packages/agent"],
+      "reservedPaths": [
+        "packages/agent"
+      ],
       "protected": true
     },
     {
       "id": "GROWTH_ORCHESTRATOR",
       "status": "PLANNED",
-      "reservedPaths": ["packages/platform"],
+      "reservedPaths": [
+        "packages/platform"
+      ],
       "protected": true
     },
     {
       "id": "PERSONAL_ECONOMIC_VALUE_ENGINE",
       "status": "PLANNED",
-      "reservedPaths": ["packages/platform"],
+      "reservedPaths": [
+        "packages/platform"
+      ],
       "protected": true
     },
     {
       "id": "REGULATORY_DIGITAL_TWIN",
       "status": "PLANNED",
-      "reservedPaths": ["packages/regulatory-twin"],
+      "reservedPaths": [
+        "packages/regulatory-twin"
+      ],
       "protected": true
     },
     {
       "id": "INVESTMENTS",
       "status": "PLANNED",
-      "reservedPaths": ["packages/investments", "services/investments"],
+      "reservedPaths": [
+        "packages/investments",
+        "services/investments"
+      ],
       "protected": true
     },
     {
       "id": "RISK",
       "status": "PLANNED",
-      "reservedPaths": ["packages/risk"],
+      "reservedPaths": [
+        "packages/risk"
+      ],
       "protected": true,
       "notes": "A simulation risk proof exists inside the Kernel. A Risk bounded context does not."
     },
     {
       "id": "MODEL_REGISTRY",
       "status": "PLANNED",
-      "reservedPaths": ["packages/model-registry"],
+      "reservedPaths": [
+        "packages/model-registry"
+      ],
       "protected": true
     },
     {
       "id": "AGENTIC_CAPITAL_MESH",
       "status": "PLANNED",
-      "reservedPaths": ["packages/agentic-capital-mesh"],
+      "reservedPaths": [
+        "packages/agentic-capital-mesh"
+      ],
       "protected": true
     },
     {
       "id": "PERSONAL_DATA_VAULT",
       "status": "PLANNED",
-      "reservedPaths": ["packages/personal-data-vault"],
+      "reservedPaths": [
+        "packages/personal-data-vault"
+      ],
       "protected": true
     },
     {
       "id": "CONSENT",
       "status": "PLANNED",
-      "reservedPaths": ["packages/consent"],
+      "reservedPaths": [
+        "packages/consent"
+      ],
       "protected": true
     },
     {
       "id": "CLEAN_ROOM",
       "status": "PLANNED",
-      "reservedPaths": ["packages/clean-room"],
+      "reservedPaths": [
+        "packages/clean-room"
+      ],
       "protected": true
     },
     {
       "id": "PYR",
       "status": "PLANNED",
-      "reservedPaths": ["packages/pyr", "packages/pyramid"],
+      "reservedPaths": [
+        "packages/pyr",
+        "packages/pyramid"
+      ],
       "protected": true
     },
     {
       "id": "PYRAMID",
       "status": "PLANNED",
-      "reservedPaths": ["packages/pyramid"],
+      "reservedPaths": [
+        "packages/pyramid"
+      ],
       "protected": true
     },
     {
       "id": "PYRAMID_DATA_EXCHANGE",
       "status": "PLANNED",
-      "reservedPaths": ["packages/pyramid-data-exchange"],
+      "reservedPaths": [
+        "packages/pyramid-data-exchange"
+      ],
       "protected": true
     },
     {
       "id": "PYRAMID_EXCHANGE",
       "status": "PLANNED",
-      "reservedPaths": ["packages/pyramid-exchange"],
+      "reservedPaths": [
+        "packages/pyramid-exchange"
+      ],
       "protected": true
     },
     {
       "id": "MARKET_SURVEILLANCE",
       "status": "PLANNED",
-      "reservedPaths": ["packages/market-surveillance"],
+      "reservedPaths": [
+        "packages/market-surveillance"
+      ],
       "protected": true
     },
     {
       "id": "API_INTEGRATION",
       "status": "PLANNED",
-      "reservedPaths": ["apps/api", "services/api"],
+      "reservedPaths": [
+        "apps/api",
+        "services/api"
+      ],
       "protected": true
     },
     {
       "id": "SOVEREIGN_CELLS",
       "status": "PLANNED",
-      "reservedPaths": ["packages/cells"],
+      "reservedPaths": [
+        "packages/cells"
+      ],
       "protected": true
     }
   ],
   "liveFlags": [
-    { "name": "ENVIRONMENT", "requiredValue": "simulation" },
-    { "name": "SIMULATION_MODE", "requiredValue": true },
-    { "name": "LIVE_MONEY_ENABLED", "requiredValue": false },
-    { "name": "LIVE_PAYMENTS_ENABLED", "requiredValue": false },
-    { "name": "LIVE_BANKING_RAILS", "requiredValue": false },
-    { "name": "LIVE_EXTERNAL_KYC", "requiredValue": false },
-    { "name": "LIVE_EXTERNAL_BANK_CONNECTION", "requiredValue": false },
-    { "name": "REAL_MONEY_ENABLED", "requiredValue": false },
-    { "name": "LIVE_TRADING_ENABLED", "requiredValue": false },
-    { "name": "LIVE_CRYPTO_ENABLED", "requiredValue": false },
-    { "name": "LIVE_EXCHANGE_ENABLED", "requiredValue": false },
-    { "name": "LIVE_DATA_MARKET_ENABLED", "requiredValue": false }
-  ]
+    {
+      "name": "ENVIRONMENT",
+      "requiredValue": "simulation"
+    },
+    {
+      "name": "SIMULATION_MODE",
+      "requiredValue": true
+    },
+    {
+      "name": "LIVE_MONEY_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_PAYMENTS_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_BANKING_RAILS",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_EXTERNAL_KYC",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_EXTERNAL_BANK_CONNECTION",
+      "requiredValue": false
+    },
+    {
+      "name": "REAL_MONEY_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_TRADING_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_CRYPTO_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_EXCHANGE_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_DATA_MARKET_ENABLED",
+      "requiredValue": false
+    }
+  ],
+  "protectedComponents": []
 }

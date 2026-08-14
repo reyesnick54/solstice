@@ -70,9 +70,11 @@ Agents and later CI jobs use that result. They do not guess.
 | security | IMPLEMENTED | packages/security |
 | identity | IMPLEMENTED | packages/identity |
 | policy-engine | PLANNED | ADR-0006 |
-| banking-core | IMPLEMENTED | services/accounts |
 | policy-engine | IMPLEMENTED | packages/kernel |
+| banking-core | IMPLEMENTED | services/accounts |
 | compliance-screening | IMPLEMENTED | packages/kernel |
+| payments | IMPLEMENTED | packages/payments |
+| fx | IMPLEMENTED | packages/payments |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the

@@ -8,7 +8,7 @@ This document describes only what is implemented and tested in this tree.
 - Thirteen typed account classes, product catalog, and legal-entity records in `packages/domain`.
 - Account entity with no balance field. Opening requires a verified Execution Authority.
 - Money primitive (`bigint` minor units) with FLOOR / CEILING / HALF_EVEN rounding in `packages/money`.
-- Action intents `OPEN_ACCOUNT`, `POST_DEPOSIT`, `POST_WITHDRAWAL`, `INTERNAL_TRANSFER` on the single `ActionIntent` envelope, plus structural well-formedness checks in `packages/permissions`.
+- Action intents `OPEN_ACCOUNT`, `POST_DEPOSIT`, `POST_WITHDRAWAL`, `INTERNAL_TRANSFER`, `CREATE_BENEFICIARY`, `CREATE_FX_QUOTE`, `ACCEPT_FX_QUOTE`, `INITIATE_PAYMENT`, `CANCEL_PAYMENT` on the single `ActionIntent` envelope, plus structural well-formedness checks in `packages/permissions`.
 - Compliance Kernel: six proofs, monotonic escalation, signed Execution Authority, evidence sealed on every decision.
 - Deterministic policy engine and versioned jurisdiction-pack framework implemented in simulation (`packages/kernel/src/policy/`). US/GB/EU/SA/AE pack shells exist. No rule is `CONFIRMED_BY_COUNSEL`. This is not legal approval in any jurisdiction.
 - In-memory ledger: balanced journals, append-only, authority-required, named class bridges, no commingling, idempotency keys.
@@ -65,9 +65,12 @@ This document describes only what is implemented and tested in this tree.
 - Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
 - Live AML/sanctions/PEP vendors, real SAR filing, and counsel-confirmed
   screening thresholds. The Chunk 7 fabric is simulation control architecture.
-- Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
+- Simulation FX quotes, beneficiaries, US↔SA corridors, route selection,
+  simulated settlement, per-currency FX journals, and returns as compensating
+  entries (`packages/payments`). Not live rails.
+- Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
-- Reserved later bounded contexts (PAYMENTS, FX, CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). They are PLANNED only.
+- Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

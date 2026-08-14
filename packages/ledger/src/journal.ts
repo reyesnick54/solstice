@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import type { Clock } from '../../config/src/clock.ts';
 import type { AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
+import { catalogFor } from '../../domain/src/account-class.ts';
 import { isOk } from '../../domain/src/result.ts';
 import { AccountRegister } from './accounts.ts';
 import {
@@ -275,7 +276,7 @@ export class Ledger {
         'Execution Authority actionType does not bind this journal',
       );
     }
-    if (ea.idempotencyKey !== request.idempotencyKey) {
+    if (!paymentIdempotencyMatches(ea.idempotencyKey, request.idempotencyKey)) {
       throw new LedgerInvariantError(
         'AUTHORITY',
         'Execution Authority idempotency key does not bind this journal',
@@ -289,10 +290,46 @@ export class Ledger {
     }
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
-      throw new LedgerInvariantError(
-        'AUTHORITY',
-        'Execution Authority accountId does not bind any posting on this journal',
+      const paymentAction =
+        request.actionType === 'INITIATE_PAYMENT' || request.actionType === 'CANCEL_PAYMENT';
+      const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
+      const allNonCustomer = journalAccounts.every(
+        (account) =>
+          account.ownerId === undefined ||
+          catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
+      if (!(paymentAction && allNonCustomer)) {
+        throw new LedgerInvariantError(
+          'AUTHORITY',
+          'Execution Authority accountId does not bind any posting on this journal',
+        );
+      }
     }
   }
+}
+
+const PAYMENT_JOURNAL_SUFFIXES = new Set([
+  'reserve',
+  'capture-principal',
+  'capture-fee',
+  'fee-income',
+  'fx-debit',
+  'fx-credit',
+  'settle',
+  'release',
+  'return-principal',
+  'return-fx-debit',
+  'return-fx-credit',
+  'return-settle',
+  'return-fee',
+]);
+
+function paymentIdempotencyMatches(eaKey: string, journalKey: string): boolean {
+  if (eaKey === journalKey) {
+    return true;
+  }
+  if (!journalKey.startsWith(`${eaKey}:`)) {
+    return false;
+  }
+  return PAYMENT_JOURNAL_SUFFIXES.has(journalKey.slice(eaKey.length + 1));
 }

@@ -106,6 +106,38 @@ export const DEPOSIT_INTERNAL_BRIDGE: ClassBridge = Object.freeze({
   purpose: 'Internal transfer between a customer demand-deposit and savings-deposit account.',
 });
 
+export const DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT: ClassBridge = Object.freeze({
+  name: 'DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT',
+  fromClass: 'DEMAND_DEPOSIT',
+  toClass: 'PENDING_SETTLEMENT',
+  disclosed: true,
+  purpose: 'Reserve customer demand-deposit funds into pending settlement for an authorized payment.',
+});
+
+export const PENDING_SETTLEMENT_TO_SIMULATED_FUNDING: ClassBridge = Object.freeze({
+  name: 'PENDING_SETTLEMENT_TO_SIMULATED_FUNDING',
+  fromClass: 'PENDING_SETTLEMENT',
+  toClass: 'SIMULATED_FUNDING_SOURCE',
+  disclosed: true,
+  purpose: 'Capture reserved customer funds into simulation treasury or fee-clearing books.',
+});
+
+export const SIMULATED_FUNDING_TO_CORPORATE_OPERATING: ClassBridge = Object.freeze({
+  name: 'SIMULATED_FUNDING_TO_CORPORATE_OPERATING',
+  fromClass: 'SIMULATED_FUNDING_SOURCE',
+  toClass: 'CORPORATE_OPERATING',
+  disclosed: true,
+  purpose: 'Move an explicit simulation fee from system fee-clearing into corporate operating income.',
+});
+
+export const DEMAND_DEPOSIT_TO_SIMULATED_FUNDING: ClassBridge = Object.freeze({
+  name: 'DEMAND_DEPOSIT_TO_SIMULATED_FUNDING',
+  fromClass: 'DEMAND_DEPOSIT',
+  toClass: 'SIMULATED_FUNDING_SOURCE',
+  disclosed: true,
+  purpose: 'Return captured payment principal from simulation treasury to the customer demand-deposit.',
+});
+
 export const DEMAND_TO_PENDING_SETTLEMENT: ClassBridge = Object.freeze({
   name: 'DEMAND_TO_PENDING_SETTLEMENT',
   fromClass: 'DEMAND_DEPOSIT',
@@ -127,6 +159,10 @@ export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
   DEPOSIT_INTERNAL_BRIDGE,
+  DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT,
+  PENDING_SETTLEMENT_TO_SIMULATED_FUNDING,
+  SIMULATED_FUNDING_TO_CORPORATE_OPERATING,
+  DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
   DEMAND_TO_PENDING_SETTLEMENT,
   SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
 ];

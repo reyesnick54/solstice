@@ -22,6 +22,11 @@ export const ACTION_TYPES = {
   POST_DEPOSIT: 'POST_DEPOSIT',
   POST_WITHDRAWAL: 'POST_WITHDRAWAL',
   INTERNAL_TRANSFER: 'INTERNAL_TRANSFER',
+  CREATE_BENEFICIARY: 'CREATE_BENEFICIARY',
+  CREATE_FX_QUOTE: 'CREATE_FX_QUOTE',
+  ACCEPT_FX_QUOTE: 'ACCEPT_FX_QUOTE',
+  INITIATE_PAYMENT: 'INITIATE_PAYMENT',
+  CANCEL_PAYMENT: 'CANCEL_PAYMENT',
   CREATE_HOLD: 'CREATE_HOLD',
   RELEASE_HOLD: 'RELEASE_HOLD',
   CAPTURE_HOLD: 'CAPTURE_HOLD',
@@ -76,6 +81,70 @@ export type PostWithdrawalIntent = ActionIntent<PostWithdrawalPayload> & {
 
 export type InternalTransferIntent = ActionIntent<InternalTransferPayload> & {
   readonly actionType: typeof ACTION_TYPES.INTERNAL_TRANSFER;
+};
+
+export type CreateBeneficiaryPayload = {
+  readonly beneficiaryId: string;
+  readonly ownerId: CustomerId;
+  readonly accountId: AccountId;
+  readonly kind: 'PERSON' | 'BUSINESS';
+  readonly destinationCountry: string;
+  readonly currency: CurrencyCode;
+  readonly legalName: string;
+  readonly accountCoordinate: {
+    readonly scheme: string;
+    readonly value: string;
+  };
+};
+
+export type CreateFxQuotePayload = {
+  readonly quoteId: string;
+  readonly accountId: AccountId;
+  readonly baseCurrency: CurrencyCode;
+  readonly quoteCurrency: CurrencyCode;
+  readonly sourceAmount?: Money;
+  readonly destinationAmount?: Money;
+  readonly corridorId: string;
+};
+
+export type AcceptFxQuotePayload = {
+  readonly quoteId: string;
+  readonly accountId: AccountId;
+};
+
+export type InitiatePaymentPayload = {
+  readonly paymentId: string;
+  readonly accountId: AccountId;
+  readonly sourceAccountId: AccountId;
+  readonly beneficiaryId: string;
+  readonly quoteId: string;
+  readonly sourceAmount: Money;
+  readonly purposeReference: string;
+};
+
+export type CancelPaymentPayload = {
+  readonly paymentId: string;
+  readonly accountId: AccountId;
+};
+
+export type CreateBeneficiaryIntent = ActionIntent<CreateBeneficiaryPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CREATE_BENEFICIARY;
+};
+
+export type CreateFxQuoteIntent = ActionIntent<CreateFxQuotePayload> & {
+  readonly actionType: typeof ACTION_TYPES.CREATE_FX_QUOTE;
+};
+
+export type AcceptFxQuoteIntent = ActionIntent<AcceptFxQuotePayload> & {
+  readonly actionType: typeof ACTION_TYPES.ACCEPT_FX_QUOTE;
+};
+
+export type InitiatePaymentIntent = ActionIntent<InitiatePaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.INITIATE_PAYMENT;
+};
+
+export type CancelPaymentIntent = ActionIntent<CancelPaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CANCEL_PAYMENT;
 };
 
 export type CreateHoldPayload = {
@@ -181,3 +250,10 @@ export type BankingIntent =
   | InitiatePendingSettlementIntent
   | SettlePendingIntent
   | ReturnPendingIntent;
+
+export type PaymentIntent =
+  | CreateBeneficiaryIntent
+  | CreateFxQuoteIntent
+  | AcceptFxQuoteIntent
+  | InitiatePaymentIntent
+  | CancelPaymentIntent;

@@ -94,6 +94,10 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               identity.business_identity,
               identity.customer_link,
               identity.person_identity,
+              payments.reconciliation,
+              payments.payment_order,
+              payments.fx_quote,
+              payments.beneficiary,
               customer.customer,
               customer.legal_entity
             RESTART IDENTITY CASCADE`,

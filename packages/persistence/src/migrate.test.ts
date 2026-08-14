@@ -85,9 +85,6 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /CREATE TABLE customer\.policy_rule/);
     assert.match(v003.sql, /CREATE TABLE customer\.legal_entity_capability/);
     assert.match(v003.sql, /CREATE TABLE customer\.manual_review_case/);
-    assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v003.sql), false);
-  });
-
     assert.match(v003.sql, /screening_requirements/);
     assert.equal(/plpgsql|EXECUTE FUNCTION|eval\(/i.test(v003.sql), false);
   });
@@ -101,6 +98,15 @@ describe('versioned SQL migrations', () => {
     assert.match(v004.sql, /CREATE TABLE compliance\.case_record/);
     assert.match(v004.sql, /CREATE TABLE compliance\.human_decision/);
     assert.equal(/article_body|full_name|date_of_birth|ssn|legal_name_plain/i.test(v004.sql), false);
+  });
+
+  it('customer V005 stores payment records without raw account coordinates', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v005 = files.find((file) => file.version === 5);
+    assert.ok(v005);
+    assert.match(v005.sql, /CREATE SCHEMA IF NOT EXISTS payments/);
+    assert.match(v005.sql, /coordinate_ref/);
+    assert.equal(/\b(iban|account_number|routing_number)\b/i.test(v005.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

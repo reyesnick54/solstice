@@ -28,6 +28,12 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'deposit', file: 'services/accounts/src/money-movement.ts' },
   { symbol: 'withdraw', file: 'services/accounts/src/money-movement.ts' },
   { symbol: 'transfer', file: 'services/accounts/src/money-movement.ts' },
+  { symbol: 'createBeneficiary', file: 'packages/payments/src/service.ts' },
+  { symbol: 'createQuote', file: 'packages/payments/src/service.ts' },
+  { symbol: 'acceptQuote', file: 'packages/payments/src/service.ts' },
+  { symbol: 'initiatePayment', file: 'packages/payments/src/service.ts' },
+  { symbol: 'cancelPayment', file: 'packages/payments/src/service.ts' },
+  { symbol: 'postPaymentJournal', file: 'packages/payments/src/journals.ts' },
   { symbol: 'createHold', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'releaseHold', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'captureHold', file: 'services/accounts/src/banking-operations.ts' },
@@ -90,6 +96,7 @@ for (const path of STATE_CHANGING_PATHS) {
     body.includes('VerifiedExecutionAuthority') ||
     body.includes('kernel.submit') ||
     body.includes('this.kernel.submit') ||
+    body.includes('this.gate(') ||
     body.includes('this.move(') ||
     body.includes('authorizeIntent(');
   if (!gated) {

@@ -37,9 +37,8 @@ export type KernelFacts = {
   readonly amount?: Money;
   readonly sourceAccount?: Account;
   readonly destinationAccount?: Account;
-  readonly identity?: IdentityFacts;
-  readonly policyIdentity?: PolicyIdentityFacts;
   readonly identity?: IdentityFacts | PolicyIdentityFacts;
+  readonly policyIdentity?: PolicyIdentityFacts;
   readonly serviceLocation?: Jurisdiction;
   readonly transactionOrigin?: Jurisdiction;
   readonly transactionDestination?: Jurisdiction;
@@ -49,6 +48,15 @@ export type KernelFacts = {
   };
   readonly policyResult?: PolicyEvaluationResult;
   readonly compliance?: ComplianceFacts;
+  readonly screening?: {
+    readonly sanctionsHit: boolean;
+    readonly pepHit: boolean;
+    readonly fraudHold: boolean;
+    readonly screeningRef: string;
+  };
+  readonly corridorId?: string;
+  readonly corridorSimulationEnabled?: boolean;
+  readonly beneficiaryStatus?: string;
 };
 
 export type ProofEvaluator = {
@@ -83,29 +91,6 @@ export const identityProof: ProofEvaluator = {
     if (!facts.customer) {
       return evalProof('IDENTITY', 'BLOCK', 'customer identity is missing');
     }
-    const identity = facts.identity;
-    if (!identity || typeof identity.identityExists !== 'boolean') {
-      const kyc = facts.customer.verification.kycState;
-      return evalProof(
-        'IDENTITY',
-        'ALLOW',
-        `actor and customer identities are present; KYC fact ${kyc} entered policy`,
-      );
-    }
-    if (!identity.identityExists || identity.identityStatus === null) {
-      return evalProof('IDENTITY', 'BLOCK', 'solstice identity does not exist');
-    }
-    if (identity.identityStatus === 'SUSPENDED' || identity.identityStatus === 'LOCKED' || identity.identityStatus === 'CLOSED') {
-      return evalProof('IDENTITY', 'BLOCK', `identity status ${identity.identityStatus} is not usable`);
-    }
-    if (identity.identityStatus === 'PENDING') {
-      return evalProof('IDENTITY', 'BLOCK', 'identity is pending activation');
-    }
-    if (!identity.authenticated || !identity.sessionValid) {
-      return evalProof('IDENTITY', 'BLOCK', 'actor session is missing or invalid');
-    }
-    if (!identity.actorSubjectMatch) {
-      return evalProof('IDENTITY', 'BLOCK', 'actor is not bound to the identity subject');
     const identity = isIdentityFacts(facts.identity) ? facts.identity : undefined;
     if (identity) {
       if (!identity.identityExists || identity.identityStatus === null) {
@@ -258,6 +243,8 @@ const ALLOWED_PURPOSES = new Set<PurposeCode>([
   'CUSTOMER_REVERSAL',
   'CUSTOMER_INTEREST',
   'CUSTOMER_SETTLEMENT',
+  'CUSTOMER_CROSS_BORDER_PAYMENT',
+  'CUSTOMER_FX',
 ]);
 
 export const purposeProof: ProofEvaluator = {

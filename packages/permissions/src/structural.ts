@@ -7,9 +7,14 @@ import { Money } from '../../money/src/money.ts';
 import type { ActionIntent } from './action-intent.ts';
 import {
   ACTION_TYPES,
+  type AcceptFxQuoteIntent,
+  type CancelPaymentIntent,
   type CaptureHoldIntent,
   type CancelHoldIntent,
+  type CreateBeneficiaryIntent,
+  type CreateFxQuoteIntent,
   type CreateHoldIntent,
+  type InitiatePaymentIntent,
   type InitiatePendingSettlementIntent,
   type InternalTransferIntent,
   type OpenAccountIntent,
@@ -63,6 +68,21 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.INTERNAL_TRANSFER) {
     return validateInternalTransfer(intent as InternalTransferIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CREATE_BENEFICIARY) {
+    return validateCreateBeneficiary(intent as CreateBeneficiaryIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CREATE_FX_QUOTE) {
+    return validateCreateFxQuote(intent as CreateFxQuoteIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.ACCEPT_FX_QUOTE) {
+    return validateAccountOnly((intent as AcceptFxQuoteIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.INITIATE_PAYMENT) {
+    return validateInitiatePayment(intent as InitiatePaymentIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CANCEL_PAYMENT) {
+    return validateAccountOnly((intent as CancelPaymentIntent).payload.accountId, catalog);
   }
   if (intent.actionType === ACTION_TYPES.CREATE_HOLD) {
     return validateCreateHold(intent as CreateHoldIntent, catalog);
@@ -320,6 +340,107 @@ function validatePendingLifecycle(
   }
   if (pending.accountClass !== 'PENDING_SETTLEMENT') {
     return reject('pendingAccountId', 'pending account must be PENDING_SETTLEMENT class');
+  }
+  return ok(true);
+}
+
+function validateAccountOnly(
+  accountId: Account['id'],
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const account = catalog.accounts.get(accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.status === 'CLOSED') {
+    return reject('status', 'account is CLOSED');
+  }
+  return ok(true);
+}
+
+function validateCreateBeneficiary(
+  intent: CreateBeneficiaryIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const accountCheck = validateAccountOnly(intent.payload.accountId, catalog);
+  if (!accountCheck.ok) {
+    return accountCheck;
+  }
+  const account = catalog.accounts.get(intent.payload.accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.ownerId !== intent.payload.ownerId) {
+    return reject('ownerId', 'beneficiary owner must match the source account owner');
+  }
+  if (intent.payload.kind !== 'PERSON' && intent.payload.kind !== 'BUSINESS') {
+    return reject('kind', 'beneficiary kind must be PERSON or BUSINESS');
+  }
+  if (typeof intent.payload.legalName !== 'string' || intent.payload.legalName.trim().length === 0) {
+    return reject('legalName', 'legal name is required');
+  }
+  if (typeof intent.payload.destinationCountry !== 'string' || intent.payload.destinationCountry.length !== 2) {
+    return reject('destinationCountry', 'destination country must be ISO 3166-1 alpha-2');
+  }
+  if (typeof intent.payload.currency !== 'string' || intent.payload.currency.length !== 3) {
+    return reject('currency', 'currency must be an ISO 4217 code');
+  }
+  return ok(true);
+}
+
+function validateCreateFxQuote(
+  intent: CreateFxQuoteIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const accountCheck = validateAccountOnly(intent.payload.accountId, catalog);
+  if (!accountCheck.ok) {
+    return accountCheck;
+  }
+  const hasSource = intent.payload.sourceAmount instanceof Money;
+  const hasDest = intent.payload.destinationAmount instanceof Money;
+  if (hasSource === hasDest) {
+    return reject('amount', 'quote must specify exactly one of sourceAmount or destinationAmount');
+  }
+  const amount = hasSource ? intent.payload.sourceAmount : intent.payload.destinationAmount;
+  if (!amount || !amount.isPositive()) {
+    return reject('amount', 'quote amount must be a positive Money value');
+  }
+  if (typeof amount.minorUnits !== 'bigint') {
+    return reject('amount', 'amount minor units must be bigint; floating-point is forbidden');
+  }
+  return ok(true);
+}
+
+function validateInitiatePayment(
+  intent: InitiatePaymentIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (intent.payload.accountId !== intent.payload.sourceAccountId) {
+    return reject('accountId', 'accountId must equal sourceAccountId');
+  }
+  const amount = intent.payload.sourceAmount;
+  if (!(amount instanceof Money)) {
+    return reject('amount', 'amount must be Money (bigint minor units)');
+  }
+  if (typeof amount.minorUnits !== 'bigint') {
+    return reject('amount', 'amount minor units must be bigint; floating-point is forbidden');
+  }
+  if (!amount.isPositive()) {
+    return reject('amount', 'amount must be a positive integer of minor units');
+  }
+  const accountCheck = validateAccountOnly(intent.payload.sourceAccountId, catalog);
+  if (!accountCheck.ok) {
+    return accountCheck;
+  }
+  const account = catalog.accounts.get(intent.payload.sourceAccountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.currency !== amount.currency) {
+    return reject('currency', 'amount currency does not match account');
+  }
+  if (!isCustomerFundedClass(account.accountClass)) {
+    return reject('accountClass', 'money movement requires a customer-funded account class');
   }
   return ok(true);
 }
