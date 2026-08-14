@@ -67,11 +67,39 @@ export type DomainEvent =
   | WithdrawalPostedV1
   | InternalTransferPostedV1;
 
+export type EventPersistSink = {
+  appendEvent(event: DomainEvent): void;
+};
+
 export class DomainEventLog {
   private readonly events: DomainEvent[] = [];
+  private readonly persist: EventPersistSink | undefined;
+
+  constructor(persist?: EventPersistSink) {
+    this.persist = persist;
+  }
+
+  hydrateFromPersisted(events: readonly DomainEvent[]): void {
+    if (this.events.length !== 0) {
+      throw new Error('cannot hydrate a domain event log that already has events');
+    }
+    this.replacePersistedEvents(events);
+  }
+
+  reloadFromPersisted(events: readonly DomainEvent[]): void {
+    this.events.length = 0;
+    this.replacePersistedEvents(events);
+  }
+
+  private replacePersistedEvents(events: readonly DomainEvent[]): void {
+    for (const event of events) {
+      this.events.push(Object.freeze(event) as DomainEvent);
+    }
+  }
 
   append<E extends DomainEvent>(event: E): E {
     this.events.push(Object.freeze(event) as DomainEvent);
+    this.persist?.appendEvent(event);
     return event;
   }
 

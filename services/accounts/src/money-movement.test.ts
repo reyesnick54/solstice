@@ -60,6 +60,32 @@ describe('money movement', () => {
     assert.equal(runtime.growth.count(), 0);
   });
 
+  it('conflicting reuse of a deposit idempotency key is refused', () => {
+    const runtime = createSimulationRuntime();
+    const { account } = openedDemand(runtime, 'acct_dep_conflict');
+    const intent = {
+      id: asIntentId('dep_conflict'),
+      actionType: ACTION_TYPES.POST_DEPOSIT,
+      idempotencyKey: 'dep_conflict',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_FUNDING' as const,
+      payload: { accountId: account.id, amount: Money.fromMinorUnits(10_000n, 'USD') },
+    };
+    const first = runtime.money.deposit(intent);
+    assert.equal(first.outcome, 'POSTED');
+    assert.throws(
+      () =>
+        runtime.money.deposit({
+          ...intent,
+          id: asIntentId('dep_conflict_other'),
+          payload: { accountId: account.id, amount: Money.fromMinorUnits(1n, 'USD') },
+        }),
+      /IDEMPOTENCY/,
+    );
+    assert.equal(runtime.ledger.journalCount(), 1);
+  });
+
   it('withdrawal of more than the balance posts nothing but seals evidence', () => {
     const runtime = createSimulationRuntime();
     const { account } = openedDemand(runtime, 'acct_wd');

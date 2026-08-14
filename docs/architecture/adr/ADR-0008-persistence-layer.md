@@ -1,6 +1,7 @@
 # ADR-0008: Persistence Layer for Phase 1
 
 - **Status:** PROPOSED
+- **Engineering status (2026-08-14):** ACCEPTED for implementation. See Addendum A. This is not counsel review and not regulatory approval.
 - **Date:** 2026-08-13
 - **Deciders:** Architecture (this record); not yet accepted
 - **Phase:** Phase 1 — Banking Simulation
@@ -589,3 +590,87 @@ against in-memory maps in the meantime; that path is Option C by stealth.
 - Persistence-related code in `packages/domain`: none (frozen values only)
 - No database, driver, SDK, or migration tool was installed. No schema was
   created. No file outside `docs/` was modified by this record.
+
+---
+
+## Addendum A — Engineering acceptance of Option A (2026-08-14)
+
+This addendum does not rewrite the options, comparison, or inspection notes
+above. Those remain the historical record written against commit `de3c633`.
+
+**Decision.** Option A (PostgreSQL 16+, local Docker, separate databases per
+bounded domain) is accepted as the engineering persistence fabric for the
+current Phase 1 control model. In-memory adapters remain for unit tests.
+
+**This is not regulatory or legal approval.** No rule is `CONFIRMED_BY_COUNSEL`.
+Selecting PostgreSQL does not authorize live money, live rails, or a change
+to `ENVIRONMENT`.
+
+### Why PostgreSQL
+
+- Same engine in development, CI, and a future sovereign cell.
+- Role/GRANT insert-only enforcement that SQLite cannot match.
+- WAL-backed durability for the evidence hash chain across process restart.
+- `NUMERIC(38, 0)` for bigint minor units without floating-point.
+
+### Transaction requirements
+
+A consequential operation must not commit a journal without a path to recover
+evidence, or an account open without its outcome row. Writes to one database
+are one transaction. Cross-database commit order is documented in
+[`docs/architecture/persistence.md`](../persistence.md). Chunk 3 (outbox) is
+the planned coordinator for a stricter crash window.
+
+### Append-only financial records
+
+Journals, postings, and evidence rows are insert-only at both the application
+API (`Ledger.updateJournal` throws) and the database (revoked `UPDATE`/`DELETE`
+plus mutation-rejecting triggers). Corrections are compensating `INSERT`s.
+
+### Migration strategy
+
+Versioned SQL in `db/<domain>/migrations/V00n__*.sql`. Checksummed. Immutable
+once applied. Applied by the `solstice_migrator` role. No ORM auto-sync.
+
+### Idempotency strategy
+
+`ledger.journal.idempotency_key` is unique. Replay of the same key returns the
+existing journal. Conflicting reuse is a deterministic failure. Account opening
+is keyed by intent id in `ledger.account_open_outcome`. Keys survive restart.
+
+### Concurrency strategy
+
+Evidence append takes an advisory lock and reloads the tip. Money movement
+locks the account row for the ledger transaction. Unique constraints, not
+last-write-wins, resolve duplicate keys.
+
+### Recovery strategy
+
+Restart hydrates customers, accounts, journals, evidence, events, and open
+outcomes from PostgreSQL, then re-verifies the evidence chain and reconstructs
+balances from postings. Orphan in-memory state is discarded.
+
+### Database boundaries
+
+Three databases on one cell-local instance: `solstice_customer`,
+`solstice_ledger`, `solstice_evidence`. No FDW. No cross-domain `JOIN`.
+Runtime roles `CONNECT` to exactly one database.
+
+### Why balances are derived
+
+An `Account` is identity and class, not a cash register. A stored
+`account.balance` would diverge from the books, invite last-write-wins, and
+hide class segregation. The customer position is always breakdown + total
+from postings.
+
+### Future partitioning / sovereign cells
+
+One PostgreSQL instance and volume per cell. Shared migration files, not
+shared data. Cell-local keys. This addendum does not implement cells.
+
+### Implementation mapping
+
+SQL lives in `db/`. The adapter lives in `packages/persistence`. The existing
+`Ledger`, `EvidenceVault`, and accounts service APIs are unchanged. PostgreSQL
+is behind them.
+

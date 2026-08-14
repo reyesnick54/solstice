@@ -80,6 +80,16 @@ export class AccountsService {
     this.legalEntities = legalEntities;
   }
 
+  /**
+   * Reconstruct account-opening idempotency after process restart.
+   * Outcomes are durable facts; this does not open an account.
+   */
+  hydrateOpenOutcomes(entries: Iterable<readonly [string, OpenAccountOutcome]>): void {
+    for (const [intentId, outcome] of entries) {
+      this.byIntentId.set(intentId, outcome);
+    }
+  }
+
   open(intent: OpenAccountIntent): OpenAccountOutcome {
     const replay = this.byIntentId.get(intent.id);
     if (replay) {

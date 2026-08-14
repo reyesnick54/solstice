@@ -65,7 +65,7 @@ Agents and later CI jobs use that result. They do not guess.
 | config | IMPLEMENTED | packages/config |
 | accounts-service | IMPLEMENTED | services/accounts |
 | architecture-linting | IMPLEMENTED | tools/architectural-linter |
-| persistence | PLANNED | ADR-0008 |
+| persistence | IMPLEMENTED | packages/persistence |
 | identity | PLANNED | ADR-0007 |
 | policy-engine | PLANNED | ADR-0006 |
 

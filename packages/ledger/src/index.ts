@@ -1,6 +1,6 @@
 export { AccountRegister } from './accounts.ts';
 export { GrowthAttributionLedger } from './growth.ts';
-export { Ledger } from './journal.ts';
+export { Ledger, type JournalPersistSink } from './journal.ts';
 export {
   DEPOSIT_INTERNAL_BRIDGE,
   DEFINED_CLASS_BRIDGES,

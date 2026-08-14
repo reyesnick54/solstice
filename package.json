@@ -11,7 +11,12 @@
     "tools/*"
   ],
   "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/persistence/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
+    "test:persistence": "SOLSTICE_PERSISTENCE_TEST=1 node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/persistence/*.test.ts",
+    "db:up": "bash scripts/postgres-up.sh",
+    "db:bootstrap": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/postgres-bootstrap.mjs",
+    "db:migrate": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/postgres-migrate.mjs",
+    "db:down": "bash scripts/postgres-down.sh",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/domain/src/demo.ts",
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",

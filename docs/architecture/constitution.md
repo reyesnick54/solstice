@@ -45,6 +45,7 @@ never be two implementations of these systems.
 | Balance projections | `services/accounts` | `services/accounts/src/balances.ts` | IMPLEMENTED |
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
+| PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -52,7 +53,7 @@ the same architecture-linting system, not a second linter.
 ### Current workspace inventory
 
 **Packages:** `money`, `domain`, `permissions`, `kernel`, `ledger`,
-`evidence`, `events`, `config`.
+`evidence`, `events`, `config`, `persistence`.
 
 **Services:** `accounts`.
 
@@ -159,11 +160,14 @@ None are implemented. There is no bank adapter, FX provider port, KYC
 provider, payment-rail adapter, or IdP adapter on this tree. The clock
 is injectable. That is the only substitution seam.
 
-### In-memory persistence
+### Persistence
 
-There is no PostgreSQL and no durable store. ADR-0008 remains PROPOSED.
+PostgreSQL is the canonical durable adapter behind the existing ports.
+It is not a second Ledger or a second Evidence Vault. ADR-0008 remains
+historically PROPOSED; Addendum A records engineering acceptance of
+Option A. That is not counsel review.
 
-In-process maps and arrays:
+In-memory maps remain the default for unit tests:
 
 - `Ledger` journals and idempotency map
 - `EvidenceVault` records
@@ -173,7 +177,10 @@ In-process maps and arrays:
 - `CustomerStore`, `AccountStore`, `LegalEntityStore`, `ProductStore`
 - `AccountsService` intent-id idempotency map
 
-Read models (`balanceOfAccount`, `projectCustomerPosition`) are not
+Durable rows live in three bounded databases (`solstice_customer`,
+`solstice_ledger`, `solstice_evidence`). Restart hydrates the in-memory
+objects from those rows. Read models (`balanceOfAccount`,
+`projectCustomerPosition`) stay derived from journals and are not
 authoritative financial state.
 
 ---
@@ -257,7 +264,8 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/permissions` | `packages/domain`, `packages/money`, `packages/config` |
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `services/accounts` | the packages above |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/ledger`, `packages/permissions`, `packages/money` |
+| `services/accounts` | the packages above, including `packages/persistence` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules

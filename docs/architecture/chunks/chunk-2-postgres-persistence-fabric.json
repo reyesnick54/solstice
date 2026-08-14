@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-2",
+  "title": "Production-Grade PostgreSQL Persistence Fabric",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "config",
+    "accounts-service",
+    "architecture-linting",
+    "persistence"
+  ]
+}

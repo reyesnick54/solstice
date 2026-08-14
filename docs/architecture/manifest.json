@@ -143,9 +143,31 @@
         "packages/ledger",
         "packages/permissions",
         "packages/config",
-        "packages/money"
+        "packages/money",
+        "packages/persistence"
       ],
       "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/persistence",
+      "npmName": "@solstice/persistence",
+      "path": "packages/persistence",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/evidence",
+        "packages/events",
+        "packages/ledger",
+        "packages/permissions",
+        "packages/money"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger."
     },
     {
       "id": "tools/architectural-linter",
@@ -548,6 +570,22 @@
       ],
       "codeowners": ["@reyesnick54"],
       "notes": "Companion invariant scripts live under scripts/. Do not add a second linter system."
+    },
+    {
+      "id": "persistence-adapter",
+      "name": "PostgreSQL persistence adapter",
+      "canonicalOwner": "packages/persistence",
+      "canonicalPath": "packages/persistence/src/index.ts",
+      "publicInterface": "packages/persistence/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/postgres", "packages/database"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Durable adapter only. Journals still post through Ledger.postJournal. Evidence still seals through EvidenceVault."
     }
   ],
   "authorizedMutationPaths": [
@@ -664,8 +702,8 @@
     },
     {
       "id": "persistence",
-      "status": "PLANNED",
-      "owner": null,
+      "status": "IMPLEMENTED",
+      "owner": "packages/persistence",
       "protected": true,
       "adr": "ADR-0008"
     },
@@ -704,7 +742,7 @@
       "status": "PARTIAL",
       "reservedPaths": ["packages/domain", "packages/ledger", "services/accounts"],
       "protected": true,
-      "notes": "Phase 1 simulation accounts, ledger, and balances are implemented. Persistence is not."
+      "notes": "Phase 1 simulation accounts, ledger, and balances are implemented. PostgreSQL is the durable adapter behind those ports. In-memory adapters remain for unit tests."
     },
     {
       "id": "PAYMENTS",

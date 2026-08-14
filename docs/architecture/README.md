@@ -5,5 +5,6 @@
 - [ADR index](./adr/README.md) — decision records (not renumbered)
 - [Chunk dependencies](./chunk-dependencies.md) — stop if a protected requirement is not IMPLEMENTED
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
+- [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

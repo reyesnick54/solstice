@@ -1,0 +1,25 @@
+# Local/simulated PostgreSQL for Solstice development and CI.
+# Credentials are development-only. Never use them for live money.
+name: solstice-persistence
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: solstice_bootstrap
+      POSTGRES_PASSWORD: solstice_dev_only_not_for_production
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    command: ["postgres", "-c", "max_prepared_transactions=64"]
+    volumes:
+      - solstice_pg_data:/var/lib/postgresql/data
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U solstice_bootstrap -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  solstice_pg_data:
