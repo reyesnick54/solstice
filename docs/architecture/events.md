@@ -61,7 +61,10 @@ This fabric provides **at-least-once** transport. It does **not** claim
 exactly-once distributed delivery.
 
 Business effects become effectively-once through the consumer inbox
-(`PRIMARY KEY (consumer_id, event_id)`).
+(`PRIMARY KEY (consumer_id, event_id)`). Inbox rows are delivery state
+and do not require a `domain_event` foreign key — consumers may record
+replayed or not-yet-catalogued ids. Outbox and dead-letter rows still
+reference a committed envelope.
 
 | Concern | Guarantee |
 | --- | --- |

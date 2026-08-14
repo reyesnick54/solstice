@@ -141,7 +141,9 @@ describePersistence('Chunk 3 — durable event fabric', () => {
     const failing = new OutboxDispatcher(outbox, deadLetters, transport, {
       workerId: 'failing',
       clock,
-      policy: { maxAttempts: 2, baseDelayMs: 1, maxDelayMs: 1 },
+      // FrozenClock never advances; a positive delay would leave next_attempt_at
+      // in the future and the second claim would see no work.
+      policy: { maxAttempts: 2, baseDelayMs: 0, maxDelayMs: 0 },
     });
     await failing.dispatchOnce();
     await failing.dispatchOnce();

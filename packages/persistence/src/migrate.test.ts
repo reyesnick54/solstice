@@ -64,4 +64,11 @@ describe('versioned SQL migrations', () => {
     assert.match(v002.sql, /CREATE TABLE ledger\.dead_letter/);
     assert.match(v002.sql, /PRIMARY KEY \(consumer_id, event_id\)/);
   });
+
+  it('ledger V003 treats inbox as delivery state without a domain_event FK', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v003 = files.find((file) => file.version === 3);
+    assert.ok(v003);
+    assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
+  });
 });

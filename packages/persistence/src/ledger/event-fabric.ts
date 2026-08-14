@@ -34,7 +34,8 @@ export async function insertSealedDomainEvent(
        $5, $6, $7, $8, $9,
        $10, $11, $12, $13, $14, $15,
        $16, $17::jsonb, $18::jsonb
-     )`,
+     )
+     ON CONFLICT (event_id) DO NOTHING`,
     [
       event.eventType,
       event.schemaVersion,
@@ -101,7 +102,11 @@ function mapOutbox(row: {
 }
 
 export class PostgresOutboxStore implements OutboxStore {
-  constructor(private readonly pool: Pool) {}
+  private readonly pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
 
   async enqueue(record: OutboxRecord): Promise<void> {
     await this.pool.query(
@@ -230,7 +235,11 @@ export class PostgresOutboxStore implements OutboxStore {
 }
 
 export class PostgresInboxStore implements InboxStore {
-  constructor(private readonly pool: Pool) {}
+  private readonly pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
 
   async get(consumerId: string, eventId: EventId): Promise<InboxRecord | undefined> {
     const result = await this.pool.query(
@@ -316,7 +325,11 @@ function mapInbox(row: {
 }
 
 export class PostgresDeadLetterStore implements DeadLetterStore {
-  constructor(private readonly pool: Pool) {}
+  private readonly pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
 
   async record(row: Omit<DeadLetterRecord, 'id'>): Promise<DeadLetterRecord> {
     const result = await this.pool.query<{ id: string }>(
@@ -393,7 +406,11 @@ function mapDeadLetter(row: {
 }
 
 export class PostgresEventCatalog implements EventCatalog {
-  constructor(private readonly pool: Pool) {}
+  private readonly pool: Pool;
+
+  constructor(pool: Pool) {
+    this.pool = pool;
+  }
 
   async get(eventId: string): Promise<DurableEventEnvelope | undefined> {
     const result = await this.pool.query(
