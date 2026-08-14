@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-8",
+  "title": "Multi-Currency Banking Core, Available/Settled Funds, Holds, Statements, and Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "ledger",
+    "persistence",
+    "events",
+    "event-fabric",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "evidence"
+  ],
+  "notes": "A dedicated AML/sanctions/fraud fabric is not an IMPLEMENTED protected capability. Screening continues through Kernel COMPLIANCE and RISK proofs and the policy engine. This chunk does not reimplement RISK."
+}

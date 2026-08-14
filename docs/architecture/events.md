@@ -67,6 +67,22 @@ Implemented identity events (opaque ids only; no raw PII):
 - `identity.device.registered` → `IdentityDeviceRegistered`
 - `identity.recovery.requested` → `IdentityRecoveryRequested`
 
+Implemented banking events (safe references only):
+
+- `banking.hold.created` → `HoldCreated`
+- `banking.hold.released` → `HoldReleased`
+- `banking.hold.captured` → `HoldCaptured`
+- `banking.hold.cancelled` → `HoldCancelled`
+- `banking.statement.generated` → `StatementGenerated`
+- `banking.reconciliation.mismatch` → `ReconciliationMismatch`
+- `account.position.changed` → `AccountPositionChanged`
+- `banking.fee.posted` → `FeePosted`
+- `banking.interest.posted` → `InterestPosted`
+- `banking.reversal.posted` → `ReversalPosted`
+- `banking.pending.initiated` → `PendingSettlementInitiated`
+- `banking.pending.settled` → `PendingSettlementSettled`
+- `banking.pending.returned` → `PendingSettlementReturned`
+
 Reserved (not implemented): `payment.*`, `fx.*`, `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.

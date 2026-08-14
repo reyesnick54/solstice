@@ -38,6 +38,12 @@ This document describes only what is implemented and tested in this tree.
   Execution Authority signs and verifies through the KeyProvider.
   Evidence Vault hashing uses the shared SHA-256 helper and stays
   deterministic. No live KMS/HSM.
+- Multi-currency banking core (Chunk 8): USD/EUR/GBP/SAR/AED registry,
+  currency-separated CustomerPosition, available/held/pending/settled
+  semantics, Kernel-gated holds, explicit fees, compensating reversals,
+  interest event framework (no product APY), statements from journals,
+  reconciliation items that never auto-correct, and synthetic account
+  coordinates. No FX execution and no external rails.
 - Solstice Identity (`packages/identity`, `services/identity`): person/business
   identity, simulated passkey registration/authentication, sessions, device
   trust, versioned KYC metadata, capability grants, signed ActorContext.

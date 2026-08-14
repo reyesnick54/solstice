@@ -86,6 +86,22 @@ export function policyFactsFromKernel(
   intent: ActionIntent,
   facts: KernelFacts,
 ): PolicyFactInput {
+  const kycState =
+    facts.identity?.kycState ??
+    facts.policyIdentity?.kycState ??
+    facts.customer?.verification.kycState;
+  const kycRecordVersion =
+    facts.identity?.kycVersion ??
+    facts.policyIdentity?.kycRecordVersion ??
+    facts.customer?.verification.kycRecordVersion;
+  const residency = facts.policyIdentity?.residency ?? facts.customer?.residency;
+  const identity: PolicyIdentityFacts = {
+    ...(kycState !== undefined ? { kycState } : {}),
+    ...(kycRecordVersion !== undefined ? { kycRecordVersion } : {}),
+    ...(residency !== undefined ? { residency } : {}),
+    ...(facts.policyIdentity?.citizenship !== undefined
+      ? { citizenship: facts.policyIdentity.citizenship }
+      : {}),
   const identityFacts = isIdentityFacts(facts.identity) ? facts.identity : undefined;
   const policyIdentity = !identityFacts && facts.identity ? (facts.identity as PolicyIdentityFacts) : undefined;
   const kycState =

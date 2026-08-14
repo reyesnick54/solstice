@@ -178,6 +178,32 @@ export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 
 export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
 export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
 
+export type BankingAmountPayload = {
+  readonly accountId: AccountId;
+  readonly amountMinorUnits: string;
+  readonly currency: string;
+  readonly holdId?: string;
+  readonly journalId?: string;
+  readonly statementId?: string;
+  readonly reconciliationId?: string;
+  readonly feeId?: string;
+  readonly reversalId?: string;
+  readonly pendingId?: string;
+};
+
+export type HoldCreatedV1 = VersionedEvent<'HoldCreated', 1, BankingAmountPayload>;
+export type HoldReleasedV1 = VersionedEvent<'HoldReleased', 1, BankingAmountPayload>;
+export type HoldCapturedV1 = VersionedEvent<'HoldCaptured', 1, BankingAmountPayload>;
+export type HoldCancelledV1 = VersionedEvent<'HoldCancelled', 1, BankingAmountPayload>;
+export type StatementGeneratedV1 = VersionedEvent<'StatementGenerated', 1, BankingAmountPayload>;
+export type ReconciliationMismatchV1 = VersionedEvent<'ReconciliationMismatch', 1, BankingAmountPayload>;
+export type AccountPositionChangedV1 = VersionedEvent<'AccountPositionChanged', 1, BankingAmountPayload>;
+export type FeePostedV1 = VersionedEvent<'FeePosted', 1, BankingAmountPayload>;
+export type InterestPostedV1 = VersionedEvent<'InterestPosted', 1, BankingAmountPayload>;
+export type ReversalPostedV1 = VersionedEvent<'ReversalPosted', 1, BankingAmountPayload>;
+export type PendingSettlementInitiatedV1 = VersionedEvent<'PendingSettlementInitiated', 1, BankingAmountPayload>;
+export type PendingSettlementSettledV1 = VersionedEvent<'PendingSettlementSettled', 1, BankingAmountPayload>;
+export type PendingSettlementReturnedV1 = VersionedEvent<'PendingSettlementReturned', 1, BankingAmountPayload>;
 export type ComplianceAuditPayload = {
   readonly screeningId?: string;
   readonly caseId?: string;
@@ -233,6 +259,19 @@ export type DomainEvent =
   | IdentitySessionRevokedV1
   | IdentityDeviceRegisteredV1
   | IdentityRecoveryRequestedV1
+  | HoldCreatedV1
+  | HoldReleasedV1
+  | HoldCapturedV1
+  | HoldCancelledV1
+  | StatementGeneratedV1
+  | ReconciliationMismatchV1
+  | AccountPositionChangedV1
+  | FeePostedV1
+  | InterestPostedV1
+  | ReversalPostedV1
+  | PendingSettlementInitiatedV1
+  | PendingSettlementSettledV1
+  | PendingSettlementReturnedV1;
   | ComplianceScreeningCompletedV1
   | ComplianceScreeningReviewRequiredV1
   | ComplianceCaseOpenedV1

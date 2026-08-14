@@ -81,7 +81,7 @@ export const PRODUCT_DEMAND_USD_US: Product = freezeProduct({
 
 export const PRODUCT_DEMAND_EUR_EU: Product = freezeProduct({
   id: asProductId('prod_demand_eur_eu'),
-  name: 'Simulated EU-entity EUR demand deposit (capability disabled)',
+  name: 'Simulated EU-entity EUR demand deposit — no insurance claim',
   accountClass: 'DEMAND_DEPOSIT',
   currency: asCurrencyCode('EUR'),
   legalEntityId: SOLSTICE_EU.id,
@@ -91,7 +91,7 @@ export const PRODUCT_DEMAND_EUR_EU: Product = freezeProduct({
 
 export const PRODUCT_DEMAND_SAR_SA: Product = freezeProduct({
   id: asProductId('prod_demand_sar_sa'),
-  name: 'Simulated SA-entity SAR demand deposit (capability disabled)',
+  name: 'Simulated SA-entity SAR demand deposit — no insurance claim',
   accountClass: 'DEMAND_DEPOSIT',
   currency: asCurrencyCode('SAR'),
   legalEntityId: SOLSTICE_SA.id,
@@ -101,11 +101,61 @@ export const PRODUCT_DEMAND_SAR_SA: Product = freezeProduct({
 
 export const PRODUCT_DEMAND_AED_AE: Product = freezeProduct({
   id: asProductId('prod_demand_aed_ae'),
-  name: 'Simulated AE-entity AED demand deposit (capability disabled)',
+  name: 'Simulated AE-entity AED demand deposit — no insurance claim',
   accountClass: 'DEMAND_DEPOSIT',
   currency: asCurrencyCode('AED'),
   legalEntityId: SOLSTICE_AE.id,
   jurisdiction: asJurisdiction('AE'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_GBP_GB: Product = freezeProduct({
+  id: asProductId('prod_demand_gbp_gb'),
+  name: 'Simulated GBP-entity GBP demand deposit — no insurance claim',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('GBP'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_EUR_GB: Product = freezeProduct({
+  id: asProductId('prod_demand_eur_gb'),
+  name: 'Simulated GBP-entity EUR demand deposit — no insurance claim',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('EUR'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_SAR_GB: Product = freezeProduct({
+  id: asProductId('prod_demand_sar_gb'),
+  name: 'Simulated GBP-entity SAR demand deposit — no insurance claim',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('SAR'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_DEMAND_AED_GB: Product = freezeProduct({
+  id: asProductId('prod_demand_aed_gb'),
+  name: 'Simulated GBP-entity AED demand deposit — no insurance claim',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('AED'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_PENDING_USD_GB: Product = freezeProduct({
+  id: asProductId('prod_pending_usd_gb'),
+  name: 'Simulated GBP-entity USD pending settlement — no insurance claim',
+  accountClass: 'PENDING_SETTLEMENT',
+  currency: asCurrencyCode('USD'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
   status: 'ACTIVE',
 });
 
@@ -128,6 +178,11 @@ export function seedSimulationCatalog(): {
   products.put(PRODUCT_DEMAND_EUR_EU.id, PRODUCT_DEMAND_EUR_EU);
   products.put(PRODUCT_DEMAND_SAR_SA.id, PRODUCT_DEMAND_SAR_SA);
   products.put(PRODUCT_DEMAND_AED_AE.id, PRODUCT_DEMAND_AED_AE);
+  products.put(PRODUCT_DEMAND_GBP_GB.id, PRODUCT_DEMAND_GBP_GB);
+  products.put(PRODUCT_DEMAND_EUR_GB.id, PRODUCT_DEMAND_EUR_GB);
+  products.put(PRODUCT_DEMAND_SAR_GB.id, PRODUCT_DEMAND_SAR_GB);
+  products.put(PRODUCT_DEMAND_AED_GB.id, PRODUCT_DEMAND_AED_GB);
+  products.put(PRODUCT_PENDING_USD_GB.id, PRODUCT_PENDING_USD_GB);
   return {
     legalEntities,
     products,

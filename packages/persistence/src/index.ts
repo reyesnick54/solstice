@@ -53,6 +53,15 @@ export {
 } from './compliance/pg-compliance-store.ts';
 export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
+  insertCoordinate,
+  insertFeeAssessment,
+  insertReversal,
+  insertStatement,
+  upsertHold,
+  upsertPendingSettlement,
+  upsertReconciliation,
+} from './ledger/banking-writes.ts';
+export {
   PostgresDeadLetterStore,
   PostgresEventCatalog,
   PostgresInboxStore,

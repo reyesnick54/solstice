@@ -79,6 +79,16 @@ The only action types on this tree are declared in
 - `POST_DEPOSIT`
 - `POST_WITHDRAWAL`
 - `INTERNAL_TRANSFER`
+- `CREATE_HOLD`
+- `RELEASE_HOLD`
+- `CAPTURE_HOLD`
+- `CANCEL_HOLD`
+- `POST_FEE`
+- `POST_REVERSAL`
+- `POST_INTEREST`
+- `INITIATE_PENDING_SETTLEMENT`
+- `SETTLE_PENDING`
+- `RETURN_PENDING`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -91,6 +101,7 @@ They do not invent a parallel envelope.
 | `packages/domain/src/account.ts` `openAccount` | Account construction | Verified Execution Authority |
 | `services/accounts/src/open-account.ts` `AccountsService.open` | Account store + ledger register | Kernel `submit` then verified authority |
 | `services/accounts/src/money-movement.ts` `deposit` / `withdraw` / `transfer` | Ledger journals | Kernel `submit` then `Ledger.postJournal` |
+| `services/accounts/src/banking-operations.ts` holds / fees / reversals / interest / pending | Hold records and ledger journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -102,7 +113,8 @@ They do not write a store by themselves.
 ### Locations that may post a ledger journal
 
 Only `Ledger.postJournal` in `packages/ledger/src/journal.ts`.
-The only production caller is `services/accounts/src/money-movement.ts`.
+Production callers are `services/accounts/src/money-movement.ts` and
+`services/accounts/src/banking-operations.ts`.
 
 ### Locations that may issue or verify Execution Authority
 

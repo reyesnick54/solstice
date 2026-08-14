@@ -60,10 +60,6 @@ async function waitForPostgres(env: PersistenceEnv): Promise<void> {
 }
 
 /**
- * Create the four bounded-domain databases and runtime roles.
- * Idempotent. Uses the local/simulated bootstrap role only.
- */
-/**
  * Empty application tables while leaving schema_migration in place.
  * Used by integration tests so each case starts from applied migrations
  * and no leftover financial rows. Not a production wipe tool.
@@ -105,6 +101,15 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
     {
       database: DATABASES.ledger,
       sql: `TRUNCATE TABLE
+              ledger.funds_hold,
+              ledger.pending_settlement,
+              ledger.fee_assessment,
+              ledger.reversal_record,
+              ledger.interest_accrual,
+              ledger.customer_statement,
+              ledger.reconciliation_item,
+              ledger.account_coordinate,
+              ledger.product_metadata,
               ledger.dead_letter,
               ledger.inbox,
               ledger.outbox,
@@ -144,6 +149,10 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
   });
 }
 
+/**
+ * Create the four bounded-domain databases and runtime roles.
+ * Idempotent. Uses the local/simulated bootstrap role only.
+ */
 export async function bootstrapPersistence(env: PersistenceEnv): Promise<void> {
   await waitForPostgres(env);
   const client = await bootstrapClient(env);

@@ -308,6 +308,29 @@ describe('architecture constitution', () => {
     assert.equal(implemented.mustStop, false);
     assert.deepEqual(implemented.missing, []);
 
+    const policyReady = evaluateChunkRequirements(manifest, ['persistence', 'policy-engine'], 'CHUNK-8');
+    assert.equal(policyReady.mustStop, false);
+    assert.deepEqual(policyReady.missing, []);
+
+    const planned = evaluateChunkRequirements(
+      {
+        ...manifest,
+        capabilities: [
+          ...manifest.capabilities,
+          {
+            id: 'future-protected-rail',
+            status: 'PLANNED',
+            protected: true,
+            owner: 'test-fixture',
+          },
+        ],
+      },
+      ['persistence', 'future-protected-rail'],
+      'CHUNK-TEST',
+    );
+    assert.equal(planned.mustStop, true);
+    assert.equal(planned.missing.includes('persistence'), false);
+    assert.ok(planned.missing.includes('future-protected-rail'));
     const plannedManifest = {
       ...manifest,
       capabilities: [
