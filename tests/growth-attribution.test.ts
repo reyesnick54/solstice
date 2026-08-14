@@ -14,9 +14,9 @@ import { asUtcInstant } from '../packages/contracts/src/time.ts';
 import { Money } from '../packages/contracts/src/money.ts';
 
 describe('Growth Attribution Ledger', () => {
-  it('defines exactly 13 sources and 4 realization classes', () => {
-    assert.equal(GROWTH_SOURCES.length, 13);
-    assert.equal(GROWTH_SOURCE_COUNT, 13);
+  it('defines exactly 15 sources and 4 realization classes', () => {
+    assert.equal(GROWTH_SOURCES.length, 15);
+    assert.equal(GROWTH_SOURCE_COUNT, 15);
     assert.equal(REALIZATION_CLASSES.length, 4);
     assert.equal(REALIZATION_CLASS_COUNT, 4);
     assert.deepEqual([...REALIZATION_CLASSES], [
@@ -51,7 +51,7 @@ describe('Growth Attribution Ledger', () => {
         assert.equal(entry.presentedAsWithdrawable, false);
       }
     }
-    assert.equal(gal.count(), 13);
+    assert.equal(gal.count(), 15);
 
     const weekly = gal.summarize({
       customerId,

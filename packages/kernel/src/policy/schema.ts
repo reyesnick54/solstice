@@ -36,7 +36,14 @@ export type ProductName =
   | 'OPEN_ACCOUNT'
   | 'SEED_CREDIT'
   | 'CUSTOMER_LIFECYCLE'
-  | 'COST_AVOIDED';
+  | 'COST_AVOIDED'
+  | 'OPEN_PYR_WALLET'
+  | 'PYR_SETTLEMENT'
+  | 'PYR_TRANSFER'
+  | 'CONSENT'
+  | 'DATA_EXCHANGE'
+  | 'CLEAN_ROOM'
+  | 'PROOF_OF_CONTRIBUTION';
 
 export type RuleWhen = {
   readonly action?: string;

@@ -26,6 +26,62 @@
         "when": { "product": "CROSS_BORDER_PAYMENT", "sourceCountry": "AE" }
       },
       "plainLanguageReason": "No counsel determination is on file. Cross-border AE corridors stay disabled."
+    },
+    {
+      "id": "AE-SIM-OPEN-PYR-WALLET",
+      "title": "Simulation exception: open PYR wallet",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "OPEN_PYR_WALLET", "when": { "product": "OPEN_PYR_WALLET" } },
+      "plainLanguageReason": "Internal PYR book accounts in simulation. Not a legal opinion."
+    },
+    {
+      "id": "AE-SIM-PYR-SETTLEMENT",
+      "title": "Simulation exception: PYR settlement journals",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "PYR_SETTLEMENT", "when": { "product": "PYR_SETTLEMENT" } },
+      "plainLanguageReason": "Internal simulated PYR books. Not a live transfer capability."
+    },
+    {
+      "id": "AE-SIM-PYR-TRANSFER",
+      "title": "Simulation exception: PYR transfer product (still registry-gated)",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "PYR_TRANSFER", "when": { "product": "PYR_TRANSFER" } },
+      "plainLanguageReason": "Policy may simulate the product; the PYR registry still disables TRANSFER without CONFIRMED_BY_COUNSEL."
+    },
+    {
+      "id": "AE-SIM-CONSENT",
+      "title": "Simulation exception: consent ledger",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "CONSENT", "when": { "product": "CONSENT" } },
+      "plainLanguageReason": "Consent grant and revoke in simulation. Not a legal opinion."
+    },
+    {
+      "id": "AE-SIM-DATA-EXCHANGE",
+      "title": "Simulation exception: data exchange publish",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "DATA_EXCHANGE", "when": { "product": "DATA_EXCHANGE" } },
+      "plainLanguageReason": "Verified-sponsor request publish in simulation. Not a live data market."
+    },
+    {
+      "id": "AE-SIM-CLEAN-ROOM",
+      "title": "Simulation exception: clean room",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "CLEAN_ROOM", "when": { "product": "CLEAN_ROOM" } },
+      "plainLanguageReason": "In-process clean-room simulation. Not a legal opinion."
+    },
+    {
+      "id": "AE-SIM-PROOF",
+      "title": "Simulation exception: proof of contribution",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": { "type": "SIMULATION_EXCEPTION", "product": "PROOF_OF_CONTRIBUTION", "when": { "product": "PROOF_OF_CONTRIBUTION" } },
+      "plainLanguageReason": "Sealed contribution proof in simulation. Not a legal opinion."
     }
   ]
 }

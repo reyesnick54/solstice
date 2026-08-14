@@ -21,6 +21,7 @@ import { freezeIntent } from './action-intent.ts';
 import { ENVIRONMENT, LIVE_FLAGS } from './flags.ts';
 import { ComplianceKernel } from './kernel.ts';
 import { assertNoCounselConfirmed, loadPacks } from './policy/evaluate.ts';
+import { assertNoPyrCounselConfirmed, isPyrCapabilityEnabled, PYR_CAPABILITIES } from './policy/pyr-registry.ts';
 import { actorMaySubmit } from './capabilities.ts';
 
 const NOW = asUtcInstant('2026-08-13T15:00:00.000Z');
@@ -51,6 +52,17 @@ describe('jurisdiction packs', () => {
     assert.ok(research.length > 0);
     for (const rule of research) {
       assert.equal(rule.enabled, false);
+    }
+  });
+});
+
+describe('PYR registry', () => {
+  it('confirms no counsel-confirmed entry and every capability disabled', () => {
+    assert.doesNotThrow(() => assertNoPyrCounselConfirmed());
+    for (const country of ['US', 'EU', 'GB', 'SA', 'AE']) {
+      for (const capability of PYR_CAPABILITIES) {
+        assert.equal(isPyrCapabilityEnabled(country, capability), false);
+      }
     }
   });
 });

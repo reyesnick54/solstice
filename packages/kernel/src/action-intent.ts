@@ -25,6 +25,15 @@ export const ACTION_KINDS = [
   'SEND_PAYMENT',
   'COMPENSATE_PAYMENT',
   'RECORD_COST_AVOIDED',
+  'OPEN_PYR_WALLET',
+  'SEED_PYR',
+  'SETTLE_PYR_COMPENSATION',
+  'TRANSFER_PYR',
+  'GRANT_CONSENT',
+  'REVOKE_CONSENT',
+  'PUBLISH_DATA_REQUEST',
+  'RUN_CLEAN_ROOM',
+  'ISSUE_PROOF_OF_CONTRIBUTION',
 ] as const;
 
 export type ActionKind = (typeof ACTION_KINDS)[number];
@@ -84,6 +93,47 @@ export type RecordCostAvoidedPayload = {
   readonly paymentId: PaymentId;
 };
 
+export type OpenPyrWalletPayload = {
+  readonly accountId: AccountId;
+  readonly ownerId: CustomerId | 'SOLSTICE_CORPORATE';
+  readonly holderClass: 'CUSTOMER' | 'CORPORATE';
+};
+
+export type SeedPyrPayload = {
+  readonly accountId: AccountId;
+  readonly amountMinorUnits: bigint;
+};
+
+export type SettlePyrCompensationPayload = {
+  readonly customerId: CustomerId;
+  readonly amountMinorUnits: bigint;
+  readonly settlementRef: string;
+};
+
+export type TransferPyrPayload = {
+  readonly fromWalletId: AccountId;
+  readonly toWalletId: AccountId;
+  readonly amountMinorUnits: bigint;
+};
+
+export type ConsentPayload = {
+  readonly consentId: string;
+  readonly decision?: 'GRANT' | 'DECLINE';
+};
+
+export type PublishDataRequestPayload = {
+  readonly requestId: string;
+  readonly sponsorId: string;
+};
+
+export type RunCleanRoomPayload = {
+  readonly requestId: string;
+};
+
+export type IssueProofPayload = {
+  readonly contributionId: string;
+};
+
 export type TransitionCustomerPayload = {
   readonly customerId: CustomerId;
   readonly to: CustomerStatus;
@@ -101,6 +151,15 @@ export type ActionPayloadByKind = {
   readonly SEND_PAYMENT: SendPaymentPayload;
   readonly COMPENSATE_PAYMENT: CompensatePaymentPayload;
   readonly RECORD_COST_AVOIDED: RecordCostAvoidedPayload;
+  readonly OPEN_PYR_WALLET: OpenPyrWalletPayload;
+  readonly SEED_PYR: SeedPyrPayload;
+  readonly SETTLE_PYR_COMPENSATION: SettlePyrCompensationPayload;
+  readonly TRANSFER_PYR: TransferPyrPayload;
+  readonly GRANT_CONSENT: ConsentPayload;
+  readonly REVOKE_CONSENT: ConsentPayload;
+  readonly PUBLISH_DATA_REQUEST: PublishDataRequestPayload;
+  readonly RUN_CLEAN_ROOM: RunCleanRoomPayload;
+  readonly ISSUE_PROOF_OF_CONTRIBUTION: IssueProofPayload;
 };
 
 export type ActionIntent<K extends ActionKind = ActionKind> = {

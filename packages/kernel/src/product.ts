@@ -23,6 +23,22 @@ export function productForKind(
       return 'SEED_CREDIT';
     case 'RECORD_COST_AVOIDED':
       return 'COST_AVOIDED';
+    case 'OPEN_PYR_WALLET':
+      return 'OPEN_PYR_WALLET';
+    case 'SEED_PYR':
+    case 'SETTLE_PYR_COMPENSATION':
+      return 'PYR_SETTLEMENT';
+    case 'TRANSFER_PYR':
+      return 'PYR_TRANSFER';
+    case 'GRANT_CONSENT':
+    case 'REVOKE_CONSENT':
+      return 'CONSENT';
+    case 'PUBLISH_DATA_REQUEST':
+      return 'DATA_EXCHANGE';
+    case 'RUN_CLEAN_ROOM':
+      return 'CLEAN_ROOM';
+    case 'ISSUE_PROOF_OF_CONTRIBUTION':
+      return 'PROOF_OF_CONTRIBUTION';
     case 'COMPENSATE_PAYMENT':
     case 'SEND_PAYMENT': {
       const dest = destinationCountry ?? sourceCountry;

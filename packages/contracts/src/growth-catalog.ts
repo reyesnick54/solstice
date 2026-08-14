@@ -1,5 +1,5 @@
 /**
- * Growth Attribution Ledger — 13 typed sources and 4 realization classes.
+ * Growth Attribution Ledger — 15 typed sources and 4 realization classes.
  *
  * Cost-avoided items are NEVER income.
  * Unrealized is NEVER withdrawable cash.
@@ -20,6 +20,8 @@ export const GROWTH_SOURCES = [
   'OPPORTUNITY_COMPENSATION',
   'RESEARCH_COMPENSATION',
   'BILL_PRICE_INCREASE_AVOIDED',
+  'PYR_REWARD',
+  'DATA_EARNINGS',
 ] as const;
 
 export type GrowthSource = (typeof GROWTH_SOURCES)[number];
@@ -33,7 +35,7 @@ export const REALIZATION_CLASSES = [
 
 export type RealizationClass = (typeof REALIZATION_CLASSES)[number];
 
-export const GROWTH_SOURCE_COUNT = 13 as const;
+export const GROWTH_SOURCE_COUNT = 15 as const;
 export const REALIZATION_CLASS_COUNT = 4 as const;
 
 /**
@@ -56,6 +58,8 @@ export const CANONICAL_REALIZATION: {
   OPPORTUNITY_COMPENSATION: 'PENDING',
   RESEARCH_COMPENSATION: 'PENDING',
   BILL_PRICE_INCREASE_AVOIDED: 'COST_AVOIDED',
+  PYR_REWARD: 'SETTLED_CASH',
+  DATA_EARNINGS: 'SETTLED_CASH',
 };
 
 export const SETTLED_CASH_SOURCES: readonly GrowthSource[] = [
@@ -63,6 +67,8 @@ export const SETTLED_CASH_SOURCES: readonly GrowthSource[] = [
   'DIVIDEND_INCOME',
   'REALIZED_INVESTMENT_GAIN',
   'CASHBACK',
+  'PYR_REWARD',
+  'DATA_EARNINGS',
 ];
 
 export const COST_AVOIDED_SOURCES: readonly GrowthSource[] = [

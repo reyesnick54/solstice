@@ -3,7 +3,7 @@
  * walk legal status changes, validate an OPEN_ACCOUNT intent, construct
  * an Account, and show typed rejections. No balances are stored.
  */
-import { asIntentId } from '../../permissions/src/index.ts';
+import { asIntentId } from '@solstice/permissions';
 import {
   asAccountId,
   asCurrency,

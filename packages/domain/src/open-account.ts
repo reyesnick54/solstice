@@ -1,11 +1,11 @@
-import type { ActionIntent, ActorRef, IntentId } from '../../permissions/src/index.ts';
-import { createActionIntent } from '../../permissions/src/index.ts';
+import type { ActionIntent, ActorRef, IntentId } from '@solstice/permissions';
+import { createActionIntent } from '@solstice/permissions';
 import { isAccountClass, type AccountClass } from './account-class.ts';
 import { isCurrency, type Currency } from './currency.ts';
 import type { CustomerId } from './customer.ts';
 import { isJurisdiction, type Jurisdiction } from './jurisdiction.ts';
 import type { LegalEntity, LegalEntityId } from './legal-entity.ts';
-import { lookupProduct, type Product, type ProductCatalog } from './product.ts';
+import { lookupProduct, type Product, type ProductCatalog, type ProductId } from './product.ts';
 import { err, ok, type Result } from './result.ts';
 import { isUtcInstant, type UtcInstant } from './time.ts';
 

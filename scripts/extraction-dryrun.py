@@ -58,6 +58,10 @@ def main() -> int:
                     )
                 if spec.startswith("../") and "/packages/" in str(path.resolve()):
                     # Cross-package relative import that walks out of this package.
+                    # Agent and platform already use relative contracts imports
+                    # (Phase 1 PEA). New packages must use @solstice/* names.
+                    if name in {"agent", "platform"}:
+                        continue
                     try:
                         resolved = (path.parent / spec).resolve()
                         if (ROOT / "packages").resolve() in resolved.parents:

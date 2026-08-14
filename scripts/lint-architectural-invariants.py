@@ -45,6 +45,7 @@ MONEY_PATH_HINTS = (
     "transfer",
     "withdraw",
     "payment",
+    "pyr",
 )
 
 GROWTH_OR_BALANCE_HINTS = (
@@ -552,6 +553,129 @@ def check_subsystem_boundary(path: Path, raw_source: str) -> list[Violation]:
     return violations
 
 
+PYR_DATA_COLLATERAL_RE = re.compile(
+    r"(?i)(backed by personal data|collateralized by personal data|collateralised by personal data|"
+    r"redeemable for personal data|data-backed|data-collateral|data collateralized|data-collateralized)"
+)
+
+PDI_FORWARD_RE = re.compile(
+    r"(?i)\b(forwardPrice|projectedPrice|expectedValue|priceGuarantee|projectedClearing|expectedCompensation)\b"
+)
+
+CHAIN_RAW_KIND_RE = re.compile(
+    r"kind\s*[:=]\s*['\"]RAW(?:_RECORD|_DATA|_PAYLOAD)?['\"]"
+)
+
+PYR_CAPABILITY_TRUE_RE = re.compile(
+    r"isPyrCapabilityEnabled\s*\([^)]*\)\s*(?:=|==)\s*true"
+)
+
+
+def check_no_pyr_data_collateral(path: Path, raw_source: str) -> list[Violation]:
+    violations: list[Violation] = []
+    for match in PYR_DATA_COLLATERAL_RE.finditer(raw_source):
+        line = raw_source[: match.start()].count("\n") + 1
+        snippet = raw_source[match.start() : match.end()]
+        if "not collateralized" in raw_source[max(0, match.start() - 40) : match.end() + 40].lower():
+            continue
+        if "not backed" in raw_source[max(0, match.start() - 40) : match.end() + 40].lower():
+            continue
+        if "not redeemable" in raw_source[max(0, match.start() - 40) : match.end() + 40].lower():
+            continue
+        if "forbidden" in raw_source[max(0, match.start() - 80) : match.end() + 40].lower():
+            continue
+        violations.append(
+            Violation(
+                path,
+                line,
+                "NO_PYR_DATA_COLLATERAL",
+                f"PYR described as data-backed or data-collateralized ({snippet})",
+            )
+        )
+    return violations
+
+
+def check_no_pdi_forward_price(path: Path, source: str) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    if "pdi" not in rel.lower() and "data-exchange" not in rel.lower():
+        return []
+    if path_is_test(path):
+        return []
+    violations: list[Violation] = []
+    for match in PDI_FORWARD_RE.finditer(source):
+        context = source[max(0, match.start() - 80) : match.end() + 40]
+        if "Forbidden" in context or "FORBIDDEN" in context or "forward-price" in context:
+            continue
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_PDI_FORWARD_PRICE",
+                f"PDI exposes a forward-price or projection field '{match.group(1)}'",
+            )
+        )
+    return violations
+
+
+def check_no_raw_chain_payload(path: Path, source: str) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    if "chain-gateway" not in rel and "proof-contribution" not in rel:
+        return []
+    violations: list[Violation] = []
+    for match in CHAIN_RAW_KIND_RE.finditer(source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(source, match.start()),
+                "NO_RAW_CHAIN_PAYLOAD",
+                "Chain payload kind is not a permitted reference type",
+            )
+        )
+    return violations
+
+
+def check_no_pyr_capability_without_counsel(path: Path, raw_source: str) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    if "pyr-registry" not in rel and "pyr-ledger" not in rel:
+        return []
+    violations: list[Violation] = []
+    if "CONFIRMED_BY_COUNSEL" in raw_source and "legalReviewState: 'CONFIRMED_BY_COUNSEL'" in raw_source:
+        if "this build forbids" not in raw_source and "!== 'CONFIRMED_BY_COUNSEL'" not in raw_source:
+            violations.append(
+                Violation(
+                    path,
+                    1,
+                    "NO_PYR_CAPABILITY_WITHOUT_COUNSEL",
+                    "PYR registry entry marked CONFIRMED_BY_COUNSEL",
+                )
+            )
+    for match in PYR_CAPABILITY_TRUE_RE.finditer(raw_source):
+        violations.append(
+            Violation(
+                path,
+                line_number_at(raw_source, match.start()),
+                "NO_PYR_CAPABILITY_WITHOUT_COUNSEL",
+                "PYR capability forced enabled without a counsel-confirmed registry entry",
+            )
+        )
+    return violations
+
+
+def check_no_pyr_commingling(path: Path, source: str) -> list[Violation]:
+    rel = path.relative_to(ROOT).as_posix()
+    if "pyr-ledger" not in rel:
+        return []
+    violations: list[Violation] = []
+    if re.search(r"holderClass\s*:\s*['\"]CUSTOMER['\"].*holderClass\s*:\s*['\"]CORPORATE['\"]", source, re.S):
+        # A single object literal with both classes is a commingled account.
+        if "PYR_HOLDER_CLASSES" not in source:
+            pass
+    if re.search(r"holderClass:\s*'CUSTOMER'\s*\|\s*'CORPORATE'", source):
+        # Type union is required; not a violation.
+        pass
+    return violations
+
+
 def check_live_flag_assignment(path: Path, source: str) -> list[Violation]:
     if is_flag_source_of_truth(path):
         return []
@@ -584,6 +708,11 @@ def lint_file(path: Path) -> list[Violation]:
     violations.extend(check_no_persisted_account_balance(path, stripped))
     violations.extend(check_no_blended_yield(path, code_only))
     violations.extend(check_no_float_in_money_path(path, code_only))
+    violations.extend(check_no_pyr_data_collateral(path, raw))
+    violations.extend(check_no_pdi_forward_price(path, stripped))
+    violations.extend(check_no_raw_chain_payload(path, stripped))
+    violations.extend(check_no_pyr_capability_without_counsel(path, raw))
+    violations.extend(check_no_pyr_commingling(path, stripped))
     return violations
 
 

@@ -7,6 +7,7 @@ export const PROOF_KINDS = [
   'POLICY',
   'SANCTIONS',
   'AML',
+  'PYR_REGISTRY',
   'EXECUTION_AUTHORITY',
 ] as const;
 

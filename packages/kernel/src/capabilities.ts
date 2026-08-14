@@ -25,6 +25,10 @@ export const HIGH_RISK_KINDS: readonly ActionKind[] = [
   'COMPENSATE_PAYMENT',
   'SEED_CREDIT',
   'RECORD_COST_AVOIDED',
+  'TRANSFER_PYR',
+  'SETTLE_PYR_COMPENSATION',
+  'SEED_PYR',
+  'PUBLISH_DATA_REQUEST',
 ];
 
 const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = {
@@ -34,6 +38,9 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'SEND_PAYMENT',
     'FX_CONVERT',
     'TRANSITION_CUSTOMER_STATUS',
+    'GRANT_CONSENT',
+    'REVOKE_CONSENT',
+    'TRANSFER_PYR',
   ],
   OPERATOR: [
     'CREATE_CUSTOMER',
@@ -46,6 +53,11 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'POST_JOURNAL',
     'COMPENSATE_PAYMENT',
     'RECORD_COST_AVOIDED',
+    'OPEN_PYR_WALLET',
+    'SETTLE_PYR_COMPENSATION',
+    'PUBLISH_DATA_REQUEST',
+    'RUN_CLEAN_ROOM',
+    'ISSUE_PROOF_OF_CONTRIBUTION',
   ],
   SYSTEM: [
     'CREATE_CUSTOMER',
@@ -59,6 +71,15 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'POST_JOURNAL',
     'COMPENSATE_PAYMENT',
     'RECORD_COST_AVOIDED',
+    'OPEN_PYR_WALLET',
+    'SEED_PYR',
+    'SETTLE_PYR_COMPENSATION',
+    'TRANSFER_PYR',
+    'GRANT_CONSENT',
+    'REVOKE_CONSENT',
+    'PUBLISH_DATA_REQUEST',
+    'RUN_CLEAN_ROOM',
+    'ISSUE_PROOF_OF_CONTRIBUTION',
   ],
   INTERNAL_TOOL: [
     'CREATE_CUSTOMER',
@@ -68,6 +89,8 @@ const ACTOR_ALLOWED_KINDS: Readonly<Record<ActorType, readonly ActionKind[]>> = 
     'ADD_BENEFICIARY',
     'POST_JOURNAL',
     'RECORD_COST_AVOIDED',
+    'OPEN_PYR_WALLET',
+    'SEED_PYR',
   ],
   AGENT: [],
 };

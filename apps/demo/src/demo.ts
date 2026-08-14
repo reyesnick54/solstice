@@ -24,6 +24,11 @@ import {
 } from '@solstice/domain';
 import { ENVIRONMENT, LIVE_FLAGS } from '@solstice/kernel';
 import { SolsticeSystem } from '@solstice/payments';
+import { LIVE_CRYPTO_ENABLED, LIVE_DATA_MARKET_ENABLED } from '@solstice/flags';
+import { PyramidEconomy } from '@solstice/data-exchange';
+import { PyrAmount, customerAccountId } from '@solstice/pyr-ledger';
+import { GrowthAttributionLedger } from '@solstice/platform';
+import { asEventId, Money as AttributionMoney } from '@solstice/contracts';
 
 const NOW = asUtcInstant('2026-08-13T15:00:00.000Z');
 const SYSTEM = { type: 'SYSTEM' as const, id: asActorId('system') };
@@ -263,6 +268,192 @@ log('growth.cost_avoided', system.books.listCostAvoided().map((row) => ({
 log('invariants', {
   journalsAfterSanctionsBlockUnchangedCheck: journalsAfterBlock,
   liveFlagsFalse: Object.values(LIVE_FLAGS).every((flag) => flag === false),
+});
+
+console.log('\n=== Solstice Phase 8 — Pyramid Economy (simulation) ===');
+log('phase8.flags', {
+  LIVE_CRYPTO_ENABLED,
+  LIVE_DATA_MARKET_ENABLED,
+  note: 'unchanged; both false',
+});
+
+const pyramid = new PyramidEconomy();
+const janeId = asCustomerId('cust_jane');
+const mayaId = asCustomerId('cust_maya');
+pyramid.openCorporateBooks();
+pyramid.openCustomerWallet(janeId, 'US');
+pyramid.openCustomerWallet(mayaId, 'US');
+pyramid.vault.put({
+  customerId: janeId,
+  jurisdiction: 'US',
+  eligibleCategories: ['WELLNESS'],
+  cohortTokens: ['adult'],
+});
+pyramid.vault.put({
+  customerId: mayaId,
+  jurisdiction: 'US',
+  eligibleCategories: ['WELLNESS'],
+  cohortTokens: ['adult'],
+});
+
+const sponsor = pyramid.registerVerifiedSponsor();
+log('phase8.sponsor', {
+  id: sponsor.id,
+  verified: sponsor.verified,
+  note: 'in-process simulation fixture; not a fabricated market participant',
+});
+
+const request = pyramid.publishRequest(sponsor);
+log('phase8.request', {
+  id: request.id,
+  categories: request.dataCategories,
+  purpose: request.purpose,
+  jurisdiction: request.jurisdiction,
+  compensationMinorUnits: request.compensationMinorUnits.toString(),
+  identityExposureLevel: request.identityExposureLevel,
+});
+
+const buyerView = pyramid.match(request);
+log('phase8.match.buyer_view', {
+  ...buyerView,
+  eligibleCount: buyerView.eligibleCount.toString(),
+  identitiesRevealed: false,
+});
+log('phase8.opportunities', {
+  jane: pyramid.opportunitiesForCustomer(janeId).length,
+  maya: pyramid.opportunitiesForCustomer(mayaId).length,
+});
+
+const janeConsent = pyramid.offerConsent(janeId, request);
+const mayaConsent = pyramid.offerConsent(mayaId, request);
+const granted = pyramid.grant(janeConsent.id, janeId);
+const declined = pyramid.decline(mayaConsent.id, mayaId);
+log('phase8.consent', {
+  jane: granted.status,
+  maya: declined.status,
+  mayaDataAccess: pyramid.consents.isActive(mayaConsent.id),
+});
+
+const job = pyramid.runCleanRoom(request, [janeConsent.id]);
+log('phase8.clean_room', {
+  jobId: job.jobId,
+  status: job.status,
+  recordsConsidered: job.recordsConsidered.toString(),
+  resultHash: job.resultHash,
+});
+
+const settlementRef = 'settle_jane_wellness';
+const settlement = pyramid.settle(request, janeId, settlementRef);
+log('phase8.settlement', {
+  customerJournalBalanced: true,
+  corporateJournalBalanced: true,
+  customerJournalId: settlement.customer.id,
+  corporateJournalId: settlement.corporate.id,
+  janePyr: pyramid.pyr.customerTotal(janeId).minorUnits.toString(),
+  mayaPyr: pyramid.pyr.customerTotal(mayaId).minorUnits.toString(),
+  corporateTreasury: pyramid.pyr.corporateTreasuryTotal().minorUnits.toString(),
+  commingled: false,
+});
+
+const proof = pyramid.issueProof({
+  contributionId: 'contrib_jane_wellness',
+  consentReference: janeConsent.id,
+  buyer: sponsor.id,
+  purpose: request.purpose,
+  dataCategories: request.dataCategories,
+  computeJobReference: job.jobId,
+  settlementRef,
+  compensationMinorUnits: request.compensationMinorUnits,
+});
+const evidenceIds = new Set(pyramid.kernel.vault.list().map((row) => row.id));
+const proofCheck = pyramid.proofs.verify(proof, pyramid.chain, evidenceIds);
+const chainTx = pyramid.chain.query(proof.chainTxId);
+log('phase8.proof', {
+  contributionId: proof.contributionId,
+  consentReference: proof.consentReference,
+  buyer: proof.buyer,
+  purpose: proof.purpose,
+  dataCategories: proof.dataCategories,
+  computeJobReference: proof.computeJobReference,
+  completionState: proof.completionState,
+  compensationMinorUnits: proof.compensationMinorUnits.toString(),
+  compensationAsset: proof.compensationAsset,
+  pyrSettlementReference: proof.pyrSettlementReference,
+  cryptographicHash: proof.cryptographicHash,
+  independentlyVerified: proofCheck.ok,
+  chainKind: chainTx?.reference.kind,
+  chainValue: chainTx?.reference.value,
+  chainIsHashOnly: chainTx?.reference.kind === 'HASH',
+});
+
+const pdi = pyramid.index();
+log('phase8.pdi', {
+  kind: pdi.kind,
+  buyerDemandRequestCount: pdi.buyerDemandRequestCount.toString(),
+  availableContributorCount: pdi.availableContributorCount.toString(),
+  averageCompensationMinorUnits: pdi.averageCompensationMinorUnits.toString(),
+  averageCompensationNote: pdi.averageCompensationNote,
+  geographicDemand: pdi.geographicDemand.map((row) => ({
+    ...row,
+    requestCount: row.requestCount.toString(),
+  })),
+  categoryDemand: pdi.categoryDemand.map((row) => ({
+    ...row,
+    requestCount: row.requestCount.toString(),
+  })),
+  historicalClearingPrices: pdi.historicalClearingPrices.map((row) => ({
+    ...row,
+    compensationMinorUnits: row.compensationMinorUnits.toString(),
+  })),
+});
+
+const gal = new GrowthAttributionLedger();
+gal.record({
+  customerId: janeId,
+  source: 'PYR_REWARD',
+  amount: AttributionMoney.fromMinorUnits(0n, 'PYR'),
+  originatingEventId: asEventId('evt_pyr_reward'),
+  recordedAt: pyramid.now,
+});
+gal.record({
+  customerId: janeId,
+  source: 'DATA_EARNINGS',
+  amount: AttributionMoney.fromMinorUnits(5000n, 'PYR'),
+  originatingEventId: asEventId('evt_data_earnings'),
+  recordedAt: pyramid.now,
+});
+const delta = gal.summarize({
+  customerId: janeId,
+  period: 'LIFETIME',
+  from: pyramid.now,
+  to: pyramid.now,
+  currency: 'PYR',
+});
+log('phase8.growth', {
+  PYR_REWARD: delta.bySource.PYR_REWARD.minorUnits.toString(),
+  DATA_EARNINGS: delta.bySource.DATA_EARNINGS.minorUnits.toString(),
+  distinctSources: true,
+});
+
+const refused = pyramid.attemptTransfer(
+  customerAccountId(janeId, 'wallet'),
+  customerAccountId(mayaId, 'wallet'),
+  PyrAmount.fromMinorUnits(10n),
+  'SA',
+);
+log('phase8.transfer_refused', {
+  jurisdiction: 'SA',
+  outcome: refused.outcome,
+  reasons: refused.outcome === 'REFUSED' ? refused.reasons : [],
+});
+
+log('phase8.evidence', {
+  records: pyramid.kernel.vault.size,
+  verified: pyramid.kernel.vault.verifyChain(),
+});
+log('phase8.flags_unchanged', {
+  LIVE_CRYPTO_ENABLED,
+  LIVE_DATA_MARKET_ENABLED,
 });
 
 console.log('demo: ok');

@@ -1,0 +1,23 @@
+{
+  "name": "@solstice/data-exchange",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "files": ["src"],
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": { "node": ">=22" },
+  "dependencies": {
+    "@solstice/chain-gateway": "0.1.0",
+    "@solstice/clean-room": "0.1.0",
+    "@solstice/consent": "0.1.0",
+    "@solstice/contracts": "0.1.0",
+    "@solstice/domain": "0.1.0",
+    "@solstice/kernel": "0.1.0",
+    "@solstice/proof-contribution": "0.1.0",
+    "@solstice/pyr-ledger": "0.1.0"
+  }
+}

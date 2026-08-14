@@ -1,19 +1,27 @@
+import { type Brand, brandAs } from './brand.ts';
+
 /**
  * ActionIntent envelope. Every consequential action enters the Compliance
  * Kernel as one of these. New action types add a payload that conforms to
  * this envelope; they do not bypass the envelope.
- *
- * `intentId` is the idempotency key. The same intent id submitted twice
- * must produce exactly one consequential state change.
  */
-export interface ActionIntent<TPayload = unknown> {
-  readonly actionType: string;
-  readonly payload: TPayload;
-  readonly intentId: string;
-  readonly idempotencyKey: string;
-  readonly actorId: string;
-  readonly requestedAt: string;
+export type IntentId = Brand<string, 'IntentId'>;
+
+export function asIntentId(value: string): IntentId {
+  if (value.length === 0) {
+    throw new TypeError('IntentId must be a non-empty string');
+  }
+  return brandAs<string, 'IntentId'>(value);
 }
+
+export const ACTOR_KINDS = ['CUSTOMER', 'AGENT', 'OPERATOR', 'SYSTEM'] as const;
+
+export type ActorKind = (typeof ACTOR_KINDS)[number];
+
+export type ActorRef = {
+  readonly kind: ActorKind;
+  readonly id: string;
+};
 
 export const ActionType = {
   OPEN_ACCOUNT: 'OPEN_ACCOUNT',
@@ -42,11 +50,29 @@ export interface OpenAccountPayload {
   readonly purpose: string;
 }
 
-export type OpenAccountIntent = ActionIntent<OpenAccountPayload>;
+/**
+ * Two-parameter envelope used by domain open-account.
+ * `actorId` is populated by openAccountIntent for the compliance-kernel path.
+ */
+export type ActionIntent<TActionType extends string = string, TPayload = unknown> = {
+  readonly intentId: IntentId | string;
+  readonly actionType: TActionType;
+  readonly payload: TPayload;
+  readonly actor?: ActorRef;
+  readonly actorId?: string;
+  readonly proposedAt?: string;
+  readonly requestedAt?: string;
+  readonly idempotencyKey?: string;
+};
+
+export type OpenAccountIntent = ActionIntent<typeof ActionType.OPEN_ACCOUNT, OpenAccountPayload>;
 
 export function openAccountIntent(
-  input: Omit<OpenAccountIntent, 'actionType' | 'idempotencyKey'> & {
+  input: {
     readonly intentId: string;
+    readonly actorId: string;
+    readonly requestedAt: string;
+    readonly payload: OpenAccountPayload;
   },
 ): OpenAccountIntent {
   return Object.freeze({
@@ -58,45 +84,8 @@ export function openAccountIntent(
     requestedAt: input.requestedAt,
   });
 }
-import { type Brand, brandAs } from './brand.ts';
 
-/**
- * Unique id of a proposed action. Later services use this for idempotency.
- * Declaring a new action does not change this type.
- */
-export type IntentId = Brand<string, 'IntentId'>;
-
-export function asIntentId(value: string): IntentId {
-  if (value.length === 0) {
-    throw new TypeError('IntentId must be a non-empty string');
-  }
-  return brandAs<string, 'IntentId'>(value);
-}
-
-export const ACTOR_KINDS = ['CUSTOMER', 'AGENT', 'OPERATOR', 'SYSTEM'] as const;
-
-export type ActorKind = (typeof ACTOR_KINDS)[number];
-
-/**
- * Who proposed the intent. Agents may only propose; they never authorize.
- */
-export type ActorRef = {
-  readonly kind: ActorKind;
-  readonly id: string;
-};
-
-/**
- * An action type is a string-literal const. Domain packages declare their own
- * literals (for example `export const OPEN_ACCOUNT = 'OPEN_ACCOUNT' as const`)
- * and pass them as `TActionType`. Do not widen the permissions envelope to
- * learn a payload — add a typed alias in the declaring package instead:
- *
- *   type OpenAccountIntent = ActionIntent<typeof OPEN_ACCOUNT, OpenAccountPayload>
- */
-export type ActionIntent<
-  TActionType extends string = string,
-  TPayload = unknown,
-> = {
+export type CreateActionIntentInput<TActionType extends string, TPayload> = {
   readonly intentId: IntentId;
   readonly actionType: TActionType;
   readonly payload: TPayload;
@@ -104,20 +93,6 @@ export type ActionIntent<
   readonly proposedAt: string;
 };
 
-export type CreateActionIntentInput<
-  TActionType extends string,
-  TPayload,
-> = {
-  readonly intentId: IntentId;
-  readonly actionType: TActionType;
-  readonly payload: TPayload;
-  readonly actor: ActorRef;
-  readonly proposedAt: string;
-};
-
-/**
- * Pure constructor for the ActionIntent envelope. Frozen. Does not authorize.
- */
 export function createActionIntent<TActionType extends string, TPayload>(
   input: CreateActionIntentInput<TActionType, TPayload>,
 ): ActionIntent<TActionType, TPayload> {

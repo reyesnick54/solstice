@@ -27,6 +27,15 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'transitionPayment', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'recordCostAvoided', file: 'packages/ledger/src/stores.ts' },
   { symbol: 'commitJournal', file: 'packages/ledger/src/journal.ts' },
+  { symbol: 'openWallet', file: 'packages/pyr-ledger/src/books.ts' },
+  { symbol: 'seedCorporate', file: 'packages/pyr-ledger/src/books.ts' },
+  { symbol: 'settleCompensation', file: 'packages/pyr-ledger/src/books.ts' },
+  { symbol: 'transfer', file: 'packages/pyr-ledger/src/books.ts' },
+  { symbol: 'grantConsent', file: 'packages/consent/src/ledger.ts' },
+  { symbol: 'revokeConsent', file: 'packages/consent/src/ledger.ts' },
+  { symbol: 'publish', file: 'packages/data-exchange/src/request.ts' },
+  { symbol: 'run', file: 'packages/clean-room/src/clean-room.ts' },
+  { symbol: 'issue', file: 'packages/proof-contribution/src/proof.ts' },
 ];
 
 const failures = [];
@@ -112,7 +121,7 @@ for (const file of files) {
 }
 
 const knownSymbols = new Set(STATE_CHANGING_PATHS.map((p) => p.symbol));
-const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal)\s*\(/g;
+const discover = /\b(putCustomer|commitCustomerStatus|putAccount|putBeneficiary|updateBeneficiary|putPayment|transitionPayment|recordCostAvoided|commitJournal|appendJournal|openWallet|seedCorporate|settleCompensation|grantConsent|revokeConsent)\s*\(/g;
 
 for (const file of files) {
   const rel = relative(ROOT, file);

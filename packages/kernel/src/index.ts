@@ -40,6 +40,22 @@ export type { PolicyDecision } from './policy/evaluate.ts';
 export { assertNoCounselConfirmed, evaluatePolicy, loadPacks, packFor } from './policy/evaluate.ts';
 
 export type {
+  PyrCapability,
+  PyrCountry,
+  PyrJurisdictionEntry,
+  Reviewed,
+} from './policy/pyr-registry.ts';
+export {
+  PYR_CAPABILITIES,
+  PYR_COUNTRIES,
+  PYR_JURISDICTION_REGISTRY,
+  assertNoPyrCounselConfirmed,
+  isPyrCapabilityEnabled,
+  pyrCapabilitiesFor,
+  pyrEntryFor,
+} from './policy/pyr-registry.ts';
+
+export type {
   JurisdictionPack,
   LegalReviewState,
   ProductName,

@@ -65,6 +65,10 @@ const JOURNAL_KINDS = [
   'FX_CONVERT',
   'SEND_PAYMENT',
   'COMPENSATE_PAYMENT',
+  'OPEN_PYR_WALLET',
+  'SEED_PYR',
+  'SETTLE_PYR_COMPENSATION',
+  'TRANSFER_PYR',
 ] as const;
 
 export function journalBalances(lines: readonly Omit<JournalLine, 'id'>[]): {

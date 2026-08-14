@@ -3,7 +3,9 @@
 This file describes what is in `main` and what has been tested.
 It does not describe planned work as if it were done.
 
-**As of 2026-08-13 (commit `de3c633` on `main`): Phase 1 — Banking Simulation is not complete. The Phase 1 exit criterion is not met.**
+**As of 2026-08-14: Phase 8 — Pyramid Economy simulation is implemented on
+this branch. ADR-0009 is PROPOSED (no chain selected). Phase 1–5 artefacts
+from earlier merges remain in the tree.**
 
 ---
 

@@ -2,7 +2,7 @@
 
 Last local verification for Phase 2 (Kernel hardening) and Phase 3
 (Global Money Fabric simulation).
-Last updated: 2026-08-13 (Phase 4 + 5 Personal Economy Agent and Growth OS)
+Last updated: 2026-08-14 (Phase 8 Pyramid Economy simulation)
 
 ## Test counts
 
@@ -69,3 +69,8 @@ All remain `false`:
 
 - Phase 4: agent can propose, be refused, and explain, and cannot execute.
 - Phase 5: weekly economic delta is real, sourced, and honest about realization class. No percentage-return path.
+- Phase 8: a data contribution flows request → consent → clean room → PYR
+  compensation → Proof of Contribution, entirely in simulation. ADR-0009
+  is PROPOSED. No chain is selected. `LIVE_CRYPTO_ENABLED` and
+  `LIVE_DATA_MARKET_ENABLED` stay false. PYR capabilities stay
+  registry-gated and default-disabled.

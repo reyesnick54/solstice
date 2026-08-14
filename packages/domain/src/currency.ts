@@ -48,10 +48,9 @@ export function minorUnitsScale(currency: CurrencyCode): bigint {
   }
   return scale;
 }
-/** ISO 4217 alphabetic currency code. */
-export type Currency = Brand<string, 'Currency'>;
 
-const ISO_4217 = /^[A-Z]{3}$/;
+/** ISO 4217 alphabetic currency code. PYR is a 3-letter asset code, not fiat. */
+export type Currency = Brand<string, 'Currency'>;
 
 export function asCurrency(code: string): Currency {
   if (!ISO_4217.test(code)) {

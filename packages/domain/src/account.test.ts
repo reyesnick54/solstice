@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { asIntentId, createActionIntent } from '../../permissions/src/index.ts';
+import { asIntentId, createActionIntent } from '@solstice/permissions';
 import {
   ACCOUNT_CLASSES,
   ACCOUNT_STATUSES,

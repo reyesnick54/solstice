@@ -11,6 +11,7 @@ import { screenSanctions, type SanctionsSubject } from './compliance/sanctions.t
 import { canonicalJson, EvidenceVault, sha256Hex, type SealedEvidence } from './evidence.ts';
 import { assertSimulationOnly } from './flags.ts';
 import { evaluatePolicy } from './policy/evaluate.ts';
+import { isPyrCapabilityEnabled } from './policy/pyr-registry.ts';
 import {
   escalate,
   isAuthorizingPosture,
@@ -114,6 +115,10 @@ export class ComplianceKernel {
     const aml = amlProof(intent);
     const amlApplied = apply(aml);
     if (!amlApplied.ok) return amlApplied;
+
+    const pyr = pyrRegistryProof(intent);
+    const pyrApplied = apply(pyr);
+    if (!pyrApplied.ok) return pyrApplied;
 
     if (!isAuthorizingPosture(posture)) {
       const evidence = this.vault.seal(
@@ -404,6 +409,36 @@ function sanctionsProof(intent: ActionIntent): Proof {
     reasons: Object.freeze(reasons),
     evaluatedAt: intent.occurredAt,
     details: { hits: outcome.hits, screened: outcome.screened },
+  });
+}
+
+function pyrRegistryProof(intent: ActionIntent): Proof {
+  if (intent.kind !== 'TRANSFER_PYR') {
+    return freezeProof({
+      kind: 'PYR_REGISTRY',
+      posture: 'CLEAR',
+      reasons: Object.freeze(['PYR registry does not gate this action as a customer transfer capability']),
+      evaluatedAt: intent.occurredAt,
+    });
+  }
+  const country = intent.sourceJurisdiction;
+  const enabled = isPyrCapabilityEnabled(country, 'TRANSFER');
+  if (!enabled) {
+    return freezeProof({
+      kind: 'PYR_REGISTRY',
+      posture: 'BLOCK',
+      reasons: Object.freeze([
+        `PYR TRANSFER is disabled in ${country}: registry field is not CONFIRMED_BY_COUNSEL and PERMITTED`,
+      ]),
+      evaluatedAt: intent.occurredAt,
+      details: { country, capability: 'TRANSFER', enabled: false },
+    });
+  }
+  return freezeProof({
+    kind: 'PYR_REGISTRY',
+    posture: 'CLEAR',
+    reasons: Object.freeze([`PYR TRANSFER is enabled in ${country} by a counsel-confirmed registry entry`]),
+    evaluatedAt: intent.occurredAt,
   });
 }
 

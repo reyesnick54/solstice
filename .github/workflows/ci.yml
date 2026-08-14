@@ -1,39 +1,8 @@
-name: ci
-
-on:
-  push:
-  pull_request:
-
-jobs:
-  ci:
 name: CI
 
 on:
   push:
     branches: [main, 'cursor/**', 'feat/**']
-  pull_request:
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-      - run: npm install
-      - name: Kernel gating (fail on ungated state-changing paths)
-        run: npm run gate
-      - name: Tests
-        run: npm test
-      - name: Demo
-        run: npm run demo
-      - name: Typecheck
-        run: npm run typecheck
-      - name: Test
-        run: npm test
-      - name: Demo
-        run: npm run demo
   pull_request:
 
 jobs:
@@ -49,10 +18,16 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Install
+        run: npm install
+
       - name: Architectural invariants
         run: |
           python3 scripts/lint-architectural-invariants.py
           python3 scripts/extraction-dryrun.py
+
+      - name: Kernel gating
+        run: node scripts/check-kernel-gating.mjs
 
       - name: Deployment posture
         run: python3 scripts/check-deployment-posture.py

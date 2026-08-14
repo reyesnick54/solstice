@@ -24,3 +24,13 @@
 /src/evidence/ @reyesnick54
 /src/kernel/ @reyesnick54
 /policies/ @reyesnick54
+
+# Phase 8 Pyramid Economy
+/packages/pyr-ledger/ @reyesnick54
+/packages/crypto-custody/ @reyesnick54
+/packages/data-exchange/ @reyesnick54
+/packages/proof-contribution/ @reyesnick54
+/packages/consent/ @reyesnick54
+/packages/clean-room/ @reyesnick54
+/packages/chain-gateway/ @reyesnick54
+/packages/kernel/src/policy/pyr-registry.ts @reyesnick54

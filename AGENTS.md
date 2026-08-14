@@ -113,9 +113,10 @@ is the correct outcome.
 
 ## Growth attribution
 
-13 sources × 4 realization classes (`SETTLED_CASH`, `UNREALIZED`,
-`COST_AVOIDED`, `PENDING`). Cost-avoided is never income. Unrealized is
-never withdrawable. There is **no** percentage-return, blended-yield, or
+15 sources × 4 realization classes (`SETTLED_CASH`, `UNREALIZED`,
+`COST_AVOIDED`, `PENDING`). `PYR_REWARD` and `DATA_EARNINGS` are distinct
+typed sources. Cost-avoided is never income. Unrealized is never
+withdrawable. There is **no** percentage-return, blended-yield, or
 growth-rate path. `tests/no-percentage-return.test.ts` greps production TS.
 
 ## LIVE_* flags
@@ -125,6 +126,51 @@ All false. Do not change them. Enforcement does not call an external LLM.
 ## Tests
 
 `npm test` then `npm run demo`. Do not decrease the passing count.
+
+# Phase 8 — Pyramid Economy (simulation)
+
+PYR is "The Currency of You": an economic settlement and participation
+asset powered by activity in the Solstice Personal Data Economy. It is
+**not** collateralized by personal data, not backed by personal data,
+and not redeemable for personal data. Do not describe it that way.
+
+## What exists (Phase 8)
+
+- `docs/architecture/adr/ADR-0009-pyr-blockchain-approach.md` — PROPOSED.
+  No chain is selected. Do not mark ACCEPTED. Do not implement a chain.
+- `packages/consent` — Consent Ledger (Phase 7 was absent; introduced here).
+- `packages/clean-room` — Clean Room (Phase 7 was absent; introduced here).
+- `packages/pyr-ledger` — PYR asset class, wallets, journals, registry re-export.
+- `packages/crypto-custody` — simulated custody only. Real MPC/HSM key
+  material triggers extraction (see `docs/architecture/subsystem-manifest.md`)
+  and requires security-specialist review before any implementation.
+- `packages/chain-gateway` — adapter + in-memory simulated chain.
+  `ChainReference` is constructible only as hash, proof identifier,
+  consent reference, settlement event, or provenance identifier.
+- `packages/data-exchange` — buyer requests, identity-free matching, PDI.
+- `packages/proof-contribution` — sealed Proof of Contribution.
+- `packages/kernel/src/policy/pyr-registry.ts` — per-country PYR registry.
+  Capabilities enable only from this registry. Nothing is
+  `CONFIRMED_BY_COUNSEL`. Everything stays disabled.
+
+## Hard rules (Phase 8)
+
+- Do not contact any chain, node, testnet, RPC, or wallet provider.
+- Do not generate, store, or handle real key material or seed phrases.
+- Do not change `LIVE_CRYPTO_ENABLED` or `LIVE_DATA_MARKET_ENABLED`.
+- Do not place raw personal data on a proof, chain payload, event, or log.
+- Do not mark any PYR jurisdictional entry `CONFIRMED_BY_COUNSEL`.
+- Do not enable any PYR capability by default or by a global toggle.
+- Do not commingle customer and corporate PYR.
+- Do not fabricate buyers, sponsors, demand figures, or clearing prices.
+- Do not add a forward-price, forecast, or projection field to the PDI.
+- Do not mark ADR-0009 ACCEPTED.
+
+## Growth attribution
+
+15 sources × 4 realization classes. `PYR_REWARD` and `DATA_EARNINGS` are
+distinct typed sources. Cost-avoided is never income. Unrealized is
+never withdrawable. There is still no percentage-return path.
 # Solstice agent rules
 
 These rules are enforced by computers in CI, not by memory. If a change
