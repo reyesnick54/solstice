@@ -227,6 +227,20 @@
       "notes": "PostgreSQL adapter behind existing Ledger, Evidence Vault, and store ports. Not a second ledger. Persists security key metadata only."
     },
     {
+      "id": "services/compliance",
+      "npmName": "@solstice/compliance-service",
+      "path": "services/compliance",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/kernel"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Application facade for the kernel compliance screening fabric. Not a second Kernel, policy engine, or Evidence Vault."
+    },
+    {
       "id": "tools/architectural-linter",
       "npmName": "@solstice/architectural-linter",
       "path": "tools/architectural-linter",
@@ -488,6 +502,30 @@
       ],
       "codeowners": ["@reyesnick54"],
       "notes": "Extends the existing Compliance Kernel. Data packs plus a typed evaluator. Not a second Kernel."
+    },
+    {
+      "id": "compliance-screening-fabric",
+      "name": "AML sanctions and fraud control fabric",
+      "canonicalOwner": "packages/kernel",
+      "canonicalPath": "packages/kernel/src/compliance/fabric.ts",
+      "publicInterface": "packages/kernel/src/compliance/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "ComplianceFabric", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/compliance",
+        "packages/aml",
+        "packages/fraud",
+        "packages/sanctions",
+        "packages/risk-compliance"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Provider-neutral screening, AML profiles, transaction monitoring, fraud, velocity, and cases. Simulation adapters only."
     },
     {
       "id": "evidence-vault",
@@ -768,6 +806,11 @@
     "src/authority",
     "src/flags",
     "packages/compliance-kernel",
+    "packages/compliance",
+    "packages/aml",
+    "packages/fraud",
+    "packages/sanctions",
+    "packages/risk-compliance",
     "packages/evidence-vault",
     "packages/crypto",
     "packages/kms",
@@ -867,6 +910,13 @@
       "owner": "packages/kernel",
       "protected": true,
       "adr": "ADR-0006"
+    },
+    {
+      "id": "compliance-screening",
+      "status": "IMPLEMENTED",
+      "owner": "packages/kernel",
+      "protected": true,
+      "adr": "ADR-0010"
     }
   ],
   "boundedContexts": [
@@ -888,9 +938,9 @@
     {
       "id": "COMPLIANCE",
       "status": "PARTIAL",
-      "reservedPaths": ["packages/kernel", "packages/permissions", "packages/evidence"],
+      "reservedPaths": ["packages/kernel", "packages/permissions", "packages/evidence", "services/compliance"],
       "protected": true,
-      "notes": "Kernel, ActionIntent, Execution Authority, Evidence Vault, and the simulation policy engine are implemented. No jurisdiction pack is legally confirmed."
+      "notes": "Kernel, ActionIntent, Execution Authority, Evidence Vault, the simulation policy engine, and the screening/monitoring fabric are implemented. No live AML/sanctions vendor. No jurisdiction pack is legally confirmed."
     },
     {
       "id": "BANKING",

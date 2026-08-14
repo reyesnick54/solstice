@@ -69,6 +69,7 @@ Agents and later CI jobs use that result. They do not guess.
 | persistence | IMPLEMENTED | packages/persistence |
 | identity | PLANNED | ADR-0007 |
 | policy-engine | IMPLEMENTED | packages/kernel |
+| compliance-screening | IMPLEMENTED | packages/kernel |
 | security | IMPLEMENTED | packages/security |
 | identity | IMPLEMENTED | packages/identity |
 | policy-engine | PLANNED | ADR-0006 |

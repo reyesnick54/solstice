@@ -104,6 +104,13 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'secretValue',
   'accessToken',
   'sessionSecret',
+  'providerPayload',
+  'rawProvider',
+  'articleBody',
+  'articleContent',
+  'fullName',
+  'dateOfBirth',
+  'legalName',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
@@ -136,6 +143,7 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType === 'PolicyReviewRequested' || eventType === 'PolicyReviewDecided') {
     return { type: 'policy_review', id: String(body.reviewId ?? 'unknown') };
+  }
   if (eventType.startsWith('Identity')) {
     return { type: 'identity', id: String(body.identityId ?? 'unknown') };
   }
@@ -146,6 +154,21 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
     eventType === 'KeyRevoked'
   ) {
     return { type: 'key', id: String(body.keyId ?? 'unknown') };
+  }
+  if (
+    eventType === 'ComplianceScreeningCompleted' ||
+    eventType === 'ComplianceScreeningReviewRequired'
+  ) {
+    return { type: 'compliance_screening', id: String(body.screeningId ?? 'unknown') };
+  }
+  if (eventType === 'ComplianceCaseOpened' || eventType === 'ComplianceCaseDecided') {
+    return { type: 'compliance_case', id: String(body.caseId ?? 'unknown') };
+  }
+  if (eventType === 'ComplianceAlertCreated') {
+    return { type: 'compliance_alert', id: String(body.alertId ?? 'unknown') };
+  }
+  if (eventType === 'FraudRiskEvaluated') {
+    return { type: 'fraud_evaluation', id: String(body.evaluationId ?? 'unknown') };
   }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }

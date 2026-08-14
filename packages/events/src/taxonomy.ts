@@ -15,6 +15,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'policy',
   'security',
   'identity',
+  'compliance',
+  'fraud',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -58,6 +60,12 @@ export const EVENT_TYPE_NAMES = [
   'IdentitySessionRevoked',
   'IdentityDeviceRegistered',
   'IdentityRecoveryRequested',
+  'ComplianceScreeningCompleted',
+  'ComplianceScreeningReviewRequired',
+  'ComplianceCaseOpened',
+  'ComplianceCaseDecided',
+  'ComplianceAlertCreated',
+  'FraudRiskEvaluated',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -85,6 +93,12 @@ export const EVENT_SCHEMA_REFS = {
   IdentitySessionRevoked: 'solstice.identity.session.revoked/1',
   IdentityDeviceRegistered: 'solstice.identity.device.registered/1',
   IdentityRecoveryRequested: 'solstice.identity.recovery.requested/1',
+  ComplianceScreeningCompleted: 'solstice.compliance.screening.completed/1',
+  ComplianceScreeningReviewRequired: 'solstice.compliance.screening.review_required/1',
+  ComplianceCaseOpened: 'solstice.compliance.case.opened/1',
+  ComplianceCaseDecided: 'solstice.compliance.case.decided/1',
+  ComplianceAlertCreated: 'solstice.compliance.alert.created/1',
+  FraudRiskEvaluated: 'solstice.fraud.risk.evaluated/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -112,6 +126,12 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   IdentitySessionRevoked: 'identity',
   IdentityDeviceRegistered: 'identity',
   IdentityRecoveryRequested: 'identity',
+  ComplianceScreeningCompleted: 'compliance',
+  ComplianceScreeningReviewRequired: 'compliance',
+  ComplianceCaseOpened: 'compliance',
+  ComplianceCaseDecided: 'compliance',
+  ComplianceAlertCreated: 'compliance',
+  FraudRiskEvaluated: 'fraud',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

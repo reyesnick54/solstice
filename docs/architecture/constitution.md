@@ -50,6 +50,7 @@ never be two implementations of these systems.
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
+| Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -59,7 +60,7 @@ the same architecture-linting system, not a second linter.
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`.
 
-**Services:** `accounts`, `identity`.
+**Services:** `accounts`, `identity`, `compliance`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -277,6 +278,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/identity` | `packages/domain`, `packages/security`, `packages/permissions`, `packages/config`, `packages/evidence`, `packages/events` |
 | `services/identity` | `packages/identity` |
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity` |
+| `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money` |
 | `services/accounts` | the packages above, including `packages/persistence` |
@@ -330,6 +332,7 @@ flowchart BT
   ledger["packages/ledger"]
   accounts["services/accounts"]
   identitySvc["services/identity"]
+  complianceSvc["services/compliance"]
 
   config --> domain
   domain --> permissions
@@ -359,6 +362,7 @@ flowchart BT
   identity --> evidence
   identity --> events
   identitySvc --> identity
+  complianceSvc --> kernel
   kernel --> config
   kernel --> evidence
   kernel --> permissions
@@ -399,7 +403,7 @@ protected dependency because a later phase is absent.
 | --- | --- | --- |
 | SECURITY | IMPLEMENTED | `packages/security` |
 | IDENTITY | IMPLEMENTED | `packages/identity`, `services/identity` |
-| COMPLIANCE | PARTIAL | `packages/kernel`, `packages/permissions`, `packages/evidence` |
+| COMPLIANCE | PARTIAL | `packages/kernel`, `packages/permissions`, `packages/evidence`, `services/compliance` |
 | BANKING | PARTIAL | `packages/domain`, `packages/ledger`, `services/accounts` |
 | PAYMENTS | PLANNED | `packages/payments` |
 | FX | PLANNED | `packages/payments` |

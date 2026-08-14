@@ -178,6 +178,38 @@ export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 
 export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
 export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
 
+export type ComplianceAuditPayload = {
+  readonly screeningId?: string;
+  readonly caseId?: string;
+  readonly alertId?: string;
+  readonly evaluationId?: string;
+  readonly screeningType?: string;
+  readonly caseType?: string;
+  readonly outcome?: string;
+  readonly decision?: string;
+  readonly reasonCodes?: readonly string[];
+  readonly subjectRef?: string;
+  readonly providerRef?: string;
+  readonly providerHash?: string;
+  readonly policyVersionId?: string;
+  readonly jurisdiction?: string;
+};
+
+export type ComplianceScreeningCompletedV1 = VersionedEvent<
+  'ComplianceScreeningCompleted',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceScreeningReviewRequiredV1 = VersionedEvent<
+  'ComplianceScreeningReviewRequired',
+  1,
+  ComplianceAuditPayload
+>;
+export type ComplianceCaseOpenedV1 = VersionedEvent<'ComplianceCaseOpened', 1, ComplianceAuditPayload>;
+export type ComplianceCaseDecidedV1 = VersionedEvent<'ComplianceCaseDecided', 1, ComplianceAuditPayload>;
+export type ComplianceAlertCreatedV1 = VersionedEvent<'ComplianceAlertCreated', 1, ComplianceAuditPayload>;
+export type FraudRiskEvaluatedV1 = VersionedEvent<'FraudRiskEvaluated', 1, ComplianceAuditPayload>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | DepositPostedV1
@@ -188,7 +220,7 @@ export type DomainEvent =
   | PolicyPackActivatedV1
   | PolicyPackRetiredV1
   | PolicyReviewRequestedV1
-  | PolicyReviewDecidedV1;
+  | PolicyReviewDecidedV1
   | KeyCreatedV1
   | KeyRotatedV1
   | KeyRetiredV1
@@ -200,7 +232,13 @@ export type DomainEvent =
   | IdentitySessionCreatedV1
   | IdentitySessionRevokedV1
   | IdentityDeviceRegisteredV1
-  | IdentityRecoveryRequestedV1;
+  | IdentityRecoveryRequestedV1
+  | ComplianceScreeningCompletedV1
+  | ComplianceScreeningReviewRequiredV1
+  | ComplianceCaseOpenedV1
+  | ComplianceCaseDecidedV1
+  | ComplianceAlertCreatedV1
+  | FraudRiskEvaluatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

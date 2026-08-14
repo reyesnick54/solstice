@@ -47,12 +47,19 @@ This document describes only what is implemented and tested in this tree.
 - Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
 - Identity stack / real KYC (ADR-0007 remains PROPOSED).
 - Policy engine and jurisdiction packs (ADR-0006 remains PROPOSED). No rule is `CONFIRMED_BY_COUNSEL`.
+- Compliance screening fabric (`packages/kernel/src/compliance`, `services/compliance`):
+  provider-neutral sanctions/PEP/adverse-media/AML/fraud/velocity/case control
+  plane with deterministic simulation adapters. Policy packs declare required
+  screenings. Kernel Compliance and Risk proofs consume the facts. No live
+  vendor. No OFAC/UN/EU/HMT claim. Transaction-monitoring thresholds are
+  engineering test rules labeled RESEARCH_REQUIRED.
 - Solstice Identity (`packages/identity`, `services/identity`): person/business
   identity, simulated passkey registration/authentication, sessions, device
   trust, versioned KYC metadata, capability grants, signed ActorContext.
   Accounts consume authoritative capabilities. Kernel identity proof reads
   IdentityFacts. ADR-0007 remains PROPOSED; no KYC vendor is selected.
-- Real KYC vendor integration, sanctions/PEP, and jurisdiction policy.
+- Live AML/sanctions/PEP vendors, real SAR filing, and counsel-confirmed
+  screening thresholds. The Chunk 7 fabric is simulation control architecture.
 - Phase 2–3 FX router, payment rails, routing engine, `grantExecutionAuthority`, sanctions/AML stubs (`packages/payments`).
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (PAYMENTS, FX, CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). They are PLANNED only.

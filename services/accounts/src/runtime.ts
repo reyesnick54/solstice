@@ -5,6 +5,10 @@ import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
 import { EvidenceVault, type EvidencePersistSink } from '../../../packages/evidence/src/vault.ts';
 import { DomainEventLog, type EventPersistSink } from '../../../packages/events/src/events.ts';
 import { SimulatedIdentityAdapter } from '../../../packages/identity/src/simulation.ts';
+import {
+  ComplianceFabric,
+  type ComplianceEventRecord,
+} from '../../../packages/kernel/src/compliance/fabric.ts';
 import { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import { createSimulationPolicyEngine } from '../../../packages/kernel/src/policy/create.ts';
 import type { PolicyEventRecord } from '../../../packages/kernel/src/policy/registry.ts';
@@ -43,6 +47,7 @@ export type SimulationRuntime = {
   readonly accountsService: AccountsService;
   readonly money: MoneyMovementService;
   readonly identity: SimulatedIdentityAdapter;
+  readonly compliance: ComplianceFabric;
 };
 
 export type SimulationRuntimeOptions = {
@@ -86,6 +91,15 @@ export function createSimulationRuntime(
     },
   });
   const kernel = new ComplianceKernel(issuer, evidence, clock, DEFAULT_PROOFS, policy);
+  const compliance = new ComplianceFabric({
+    clock,
+    evidence,
+    events: {
+      record(event) {
+        appendComplianceEvent(events, event);
+      },
+    },
+  });
   const customers = options.customers ?? new CustomerStore();
   const accounts = options.accounts ?? new AccountStore();
   const seeded = seedSimulationCatalog();
@@ -119,6 +133,7 @@ export function createSimulationRuntime(
     products,
     legalEntities,
     identity.service,
+    compliance,
   );
   const money = new MoneyMovementService(
     kernel,
@@ -133,6 +148,7 @@ export function createSimulationRuntime(
     products,
     legalEntities,
     identity.service,
+    compliance,
   );
   return {
     capabilities: CAPABILITIES,
@@ -149,6 +165,7 @@ export function createSimulationRuntime(
     accountsService,
     money,
     identity,
+    compliance,
   };
 }
 
@@ -193,6 +210,98 @@ function appendPolicyEvent(events: DomainEventLog, event: PolicyEventRecord): vo
       decidedByKind: event.payload.decidedByKind ?? '',
       packId: event.payload.packId ?? null,
       factsHash: event.payload.factsHash ?? '',
+    },
+  });
+}
+
+function appendComplianceEvent(events: DomainEventLog, event: ComplianceEventRecord): void {
+  const occurredAt = asUtcInstant(event.occurredAt);
+  const payload = event.payload;
+  if (event.eventType === 'ComplianceScreeningCompleted') {
+    events.append({
+      eventType: 'ComplianceScreeningCompleted',
+      schemaVersion: 1,
+      occurredAt,
+      payload: {
+        screeningId: String(payload.screeningId ?? ''),
+        screeningType: String(payload.screeningType ?? ''),
+        outcome: String(payload.outcome ?? ''),
+        subjectRef: String(payload.subjectRef ?? ''),
+        providerRef: String(payload.providerRef ?? ''),
+        providerHash: String(payload.providerHash ?? ''),
+        reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
+        ...(payload.policyVersionId ? { policyVersionId: String(payload.policyVersionId) } : {}),
+        ...(payload.jurisdiction ? { jurisdiction: String(payload.jurisdiction) } : {}),
+      },
+    });
+    return;
+  }
+  if (event.eventType === 'ComplianceScreeningReviewRequired') {
+    events.append({
+      eventType: 'ComplianceScreeningReviewRequired',
+      schemaVersion: 1,
+      occurredAt,
+      payload: {
+        screeningId: String(payload.screeningId ?? ''),
+        screeningType: String(payload.screeningType ?? ''),
+        outcome: String(payload.outcome ?? ''),
+        subjectRef: String(payload.subjectRef ?? ''),
+        reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
+      },
+    });
+    return;
+  }
+  if (event.eventType === 'ComplianceCaseOpened') {
+    events.append({
+      eventType: 'ComplianceCaseOpened',
+      schemaVersion: 1,
+      occurredAt,
+      payload: {
+        caseId: String(payload.caseId ?? ''),
+        caseType: String(payload.caseType ?? ''),
+        subjectRef: String(payload.subjectRef ?? ''),
+        reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
+        ...(payload.screeningId ? { screeningId: String(payload.screeningId) } : {}),
+      },
+    });
+    return;
+  }
+  if (event.eventType === 'ComplianceCaseDecided') {
+    events.append({
+      eventType: 'ComplianceCaseDecided',
+      schemaVersion: 1,
+      occurredAt,
+      payload: {
+        caseId: String(payload.caseId ?? ''),
+        decision: String(payload.decision ?? ''),
+        reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
+      },
+    });
+    return;
+  }
+  if (event.eventType === 'ComplianceAlertCreated') {
+    events.append({
+      eventType: 'ComplianceAlertCreated',
+      schemaVersion: 1,
+      occurredAt,
+      payload: {
+        alertId: String(payload.alertId ?? ''),
+        outcome: String(payload.outcome ?? ''),
+        subjectRef: String(payload.subjectRef ?? ''),
+        reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
+      },
+    });
+    return;
+  }
+  events.append({
+    eventType: 'FraudRiskEvaluated',
+    schemaVersion: 1,
+    occurredAt,
+    payload: {
+      evaluationId: String(payload.evaluationId ?? ''),
+      outcome: String(payload.outcome ?? ''),
+      subjectRef: String(payload.subjectRef ?? ''),
+      reasonCodes: Array.isArray(payload.reasonCodes) ? payload.reasonCodes : [],
     },
   });
 }

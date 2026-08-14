@@ -158,8 +158,8 @@ async function upsertVersion(
   await client.query(
     `INSERT INTO customer.policy_version (
        version_id, pack_id, version, lifecycle, legal_review_status,
-       effective_from, effective_until, content_hash, used_in_decision
-     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       effective_from, effective_until, content_hash, used_in_decision, screening_requirements
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10::jsonb)
      ON CONFLICT (version_id) DO UPDATE SET
        lifecycle = EXCLUDED.lifecycle,
        used_in_decision = customer.policy_version.used_in_decision OR EXCLUDED.used_in_decision
@@ -174,6 +174,7 @@ async function upsertVersion(
       version.effectiveUntil ?? null,
       version.contentHash,
       used,
+      JSON.stringify(version.screeningRequirements ?? {}),
     ],
   );
   for (const rule of version.rules) {

@@ -34,7 +34,7 @@ export class FrozenClock implements Clock {
   }
 }
 
-export function addMs(instant: UtcInstant, ms: bigint): UtcInstant {
+export function addMs(instant: UtcInstant, ms: bigint | number): UtcInstant {
   return new Date(Date.parse(instant) + Number(ms)).toISOString() as UtcInstant;
 }
 

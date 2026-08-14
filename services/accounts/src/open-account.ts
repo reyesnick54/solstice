@@ -2,6 +2,7 @@ import { openAccount, type Account } from '../../../packages/domain/src/account.
 import { isErr, isOk } from '../../../packages/domain/src/result.ts';
 import type { EvidenceVault } from '../../../packages/evidence/src/vault.ts';
 import type { DomainEventLog } from '../../../packages/events/src/events.ts';
+import type { ComplianceFabric } from '../../../packages/kernel/src/compliance/fabric.ts';
 import type { ComplianceKernel } from '../../../packages/kernel/src/kernel.ts';
 import type { KernelFacts } from '../../../packages/kernel/src/proofs.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
@@ -61,6 +62,7 @@ export class AccountsService {
   private readonly products: ProductStore;
   private readonly legalEntities: LegalEntityStore;
   private readonly identity: IdentityAuthorityPort;
+  private readonly compliance: ComplianceFabric | undefined;
 
   constructor(
     kernel: ComplianceKernel,
@@ -74,6 +76,7 @@ export class AccountsService {
     products: ProductStore,
     legalEntities: LegalEntityStore,
     identity: IdentityAuthorityPort,
+    compliance?: ComplianceFabric,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -86,6 +89,7 @@ export class AccountsService {
     this.products = products;
     this.legalEntities = legalEntities;
     this.identity = identity;
+    this.compliance = compliance;
   }
 
   /**
@@ -116,6 +120,15 @@ export class AccountsService {
     const legalEntity = this.legalEntities.get(intent.payload.legalEntityId);
 
     const resolved = this.identity.resolveActorContext(intent.actorId);
+    const identityFacts = this.identity.identityFactsFor(intent.actorId);
+    const compliance = this.compliance?.collectFacts({
+      subjectRef: customer?.id ?? intent.actorId,
+      jurisdiction: intent.payload.jurisdiction,
+      actorId: intent.actorId,
+      sessionAssurance: identityFacts.authenticationAssurance,
+      identityUsable: identityFacts.identityExists && identityFacts.sessionValid,
+      ...(customer ? { kycState: customer.verification.kycState } : {}),
+    });
     const facts: KernelFacts = {
       actor: {
         id: intent.actorId,
@@ -123,11 +136,12 @@ export class AccountsService {
           ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities)
           : [],
       },
-      identity: this.identity.identityFactsFor(intent.actorId),
+      identity: identityFacts,
       ...(customer ? { customer } : {}),
       ...(product ? { product } : {}),
       ...(legalEntity ? { legalEntity } : {}),
       jurisdiction: intent.payload.jurisdiction,
+      ...(compliance ? { compliance } : {}),
     };
 
     const decision = this.kernel.submit(intent, facts);
