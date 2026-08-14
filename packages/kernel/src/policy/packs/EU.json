@@ -1,0 +1,94 @@
+{
+  "version": "1",
+  "jurisdiction": "EU",
+  "title": "European Union simulation pack — not confirmed by counsel",
+  "rules": [
+    {
+      "id": "EU-SIM-CUSTOMER",
+      "title": "Simulation exception: customer lifecycle",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CUSTOMER_LIFECYCLE",
+        "when": { "product": "CUSTOMER_LIFECYCLE" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation. Not a legal opinion."
+    },
+    {
+      "id": "EU-SIM-OPEN-ACCOUNT",
+      "title": "Simulation exception: open account",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "OPEN_ACCOUNT",
+        "when": { "product": "OPEN_ACCOUNT" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation."
+    },
+    {
+      "id": "EU-SIM-SEED",
+      "title": "Simulation exception: seed credit",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "SEED_CREDIT",
+        "when": { "product": "SEED_CREDIT" }
+      },
+      "plainLanguageReason": "Internal simulation funding only."
+    },
+    {
+      "id": "EU-SIM-BENEFICIARY",
+      "title": "Simulation exception: add beneficiary",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "ADD_BENEFICIARY",
+        "when": { "product": "ADD_BENEFICIARY" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation."
+    },
+    {
+      "id": "EU-SIM-SEPA",
+      "title": "Simulation exception: EUR domestic/SEPA-like payment",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "DOMESTIC_PAYMENT",
+        "when": {
+          "product": "DOMESTIC_PAYMENT",
+          "currency": "EUR"
+        }
+      },
+      "plainLanguageReason": "Product rule enabling simulated EUR payments. Not confirmed by counsel."
+    },
+    {
+      "id": "EU-SIM-FX",
+      "title": "Simulation exception: FX conversion",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "FX_CONVERSION",
+        "when": { "product": "FX_CONVERSION" }
+      },
+      "plainLanguageReason": "Product rule for simulated FX."
+    },
+    {
+      "id": "EU-REQUIRE-SANCTIONS",
+      "title": "Require sanctions screening on payments",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "REQUIRE_CHECK",
+        "check": "SANCTIONS",
+        "when": { "action": "SEND_PAYMENT" }
+      },
+      "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
+    }
+  ]
+}

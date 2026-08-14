@@ -1,0 +1,156 @@
+{
+  "version": "1",
+  "jurisdiction": "US",
+  "title": "United States simulation pack — not confirmed by counsel",
+  "rules": [
+    {
+      "id": "US-SIM-CUSTOMER",
+      "title": "Simulation exception: customer lifecycle",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CUSTOMER_LIFECYCLE",
+        "when": { "product": "CUSTOMER_LIFECYCLE", "sourceCountry": "US" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-OPEN-ACCOUNT",
+      "title": "Simulation exception: open account",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "OPEN_ACCOUNT",
+        "when": { "product": "OPEN_ACCOUNT" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-SEED",
+      "title": "Simulation exception: seed credit",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "SEED_CREDIT",
+        "when": { "product": "SEED_CREDIT" }
+      },
+      "plainLanguageReason": "Internal simulation funding only. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-BENEFICIARY",
+      "title": "Simulation exception: add beneficiary",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "ADD_BENEFICIARY",
+        "when": { "product": "ADD_BENEFICIARY", "sourceCountry": "US" }
+      },
+      "plainLanguageReason": "Product rule for the in-process simulation. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-DOMESTIC",
+      "title": "Simulation exception: domestic USD payment",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "DOMESTIC_PAYMENT",
+        "when": {
+          "product": "DOMESTIC_PAYMENT",
+          "sourceCountry": "US",
+          "destinationCountry": "US",
+          "currency": "USD",
+          "sameCountry": true
+        }
+      },
+      "plainLanguageReason": "Product rule enabling simulated domestic USD payments. Not confirmed by counsel."
+    },
+    {
+      "id": "US-SIM-FX",
+      "title": "Simulation exception: FX conversion",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "FX_CONVERSION",
+        "when": { "product": "FX_CONVERSION", "sourceCountry": "US" }
+      },
+      "plainLanguageReason": "Product rule for simulated FX. Not a legal opinion."
+    },
+    {
+      "id": "US-SIM-USD-EUR",
+      "title": "Simulation exception: USD to EUR cross-border payment",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CROSS_BORDER_PAYMENT",
+        "when": {
+          "product": "CROSS_BORDER_PAYMENT",
+          "sourceCountry": "US",
+          "destinationCountry": "DE",
+          "currency": "EUR"
+        }
+      },
+      "plainLanguageReason": "Product rule enabling the simulated US→DE corridor. Not confirmed by counsel."
+    },
+    {
+      "id": "US-SIM-COST-AVOIDED",
+      "title": "Simulation exception: record cost avoided",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "COST_AVOIDED",
+        "when": { "product": "COST_AVOIDED" }
+      },
+      "plainLanguageReason": "Growth attribution is a product ledger, not income. Not a legal opinion."
+    },
+    {
+      "id": "US-FORBID-SANCTIONED-DEST",
+      "title": "Forbid payments to comprehensively sanctioned destinations (simulated list)",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "FORBID",
+        "when": {
+          "action": "SEND_PAYMENT",
+          "destinationCountryIn": ["IR", "KP", "SY", "CU"]
+        }
+      },
+      "plainLanguageReason": "Simulated destination restriction. Not confirmed by counsel."
+    },
+    {
+      "id": "US-REQUIRE-SANCTIONS",
+      "title": "Require sanctions screening on payments",
+      "legalReviewState": "DRAFT",
+      "enabled": true,
+      "effect": {
+        "type": "REQUIRE_CHECK",
+        "check": "SANCTIONS",
+        "when": { "action": "SEND_PAYMENT" }
+      },
+      "plainLanguageReason": "Simulated screening duty. Not confirmed by counsel."
+    },
+    {
+      "id": "US-IR-CORRIDOR-RESEARCH",
+      "title": "US–Iran corridor legal determination is not available",
+      "legalReviewState": "RESEARCH_REQUIRED",
+      "enabled": false,
+      "effect": {
+        "type": "SIMULATION_EXCEPTION",
+        "product": "CROSS_BORDER_PAYMENT",
+        "when": {
+          "product": "CROSS_BORDER_PAYMENT",
+          "sourceCountry": "US",
+          "destinationCountry": "IR"
+        }
+      },
+      "plainLanguageReason": "No counsel determination is on file. This corridor stays disabled."
+    }
+  ]
+}

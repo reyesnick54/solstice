@@ -1,4 +1,10 @@
 node_modules/
+*.tsbuildinfo
+.DS_Store
+coverage/
+dist/
+.idea/
+.vscode/
 __pycache__/
 *.py[cod]
 

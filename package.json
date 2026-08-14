@@ -2,6 +2,24 @@
   "name": "solstice",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "description": "Solstice digital banking — Compliance Kernel and simulated Global Money Fabric",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "npm test --workspaces --if-present",
+    "demo": "npm run demo -w @solstice/demo",
+    "gate": "node scripts/check-kernel-gating.mjs",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "ci": "npm run gate && npm test && npm run demo && npm run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
   "description": "Solstice — Personal Economy Agent and Growth OS (propose-only)",
   "private": true,
   "type": "module",
