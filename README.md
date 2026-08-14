@@ -3,7 +3,7 @@
 Simulation-only digital banking. The Compliance Kernel decides. A signed
 Execution Authority executes. The Evidence Vault seals every yes and no.
 
-See `docs/build-status.md` and `AGENTS.md`.
+See `docs/build-status.md`, `docs/architecture/constitution.md`, and `AGENTS.md`.
 
 ```
 npm install

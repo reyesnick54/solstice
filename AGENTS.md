@@ -67,6 +67,17 @@ Protected deposits do not move into investments without an explicit account agre
 
 Cost-avoided is never income. Unrealized is never withdrawable. There is no percentage-return, blended-yield, or growth-rate path.
 
+## Canonical architecture
+
+The machine-enforceable constitution is `docs/architecture/constitution.md`
+and `docs/architecture/manifest.json`. Each protected component has exactly
+one owner. Older PRs are not automatically canonical.
+
+If a task requires a **protected** capability that is not `IMPLEMENTED` on
+`main` (see `docs/architecture/chunk-dependencies.md`), stop. Do not
+reimplement Money, ActionIntent, the Compliance Kernel, Execution Authority,
+the Evidence Vault, the ledger, or the account-class taxonomy.
+
 ## Layout (this consolidated tree)
 
 - `packages/domain` — Customer, Account, Brand, LegalEntity, Result, time
@@ -78,7 +89,8 @@ Cost-avoided is never income. Unrealized is never withdrawable. There is no perc
 - `packages/events` — versioned domain events
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
-- `tools/architectural-linter` — Phase 1 invariant linter
+- `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
+- `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
 
 ## Commands
 

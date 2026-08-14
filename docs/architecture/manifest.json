@@ -1,0 +1,864 @@
+{
+  "schemaVersion": 1,
+  "name": "solstice-architecture-manifest",
+  "purpose": "Machine-enforceable canonical architecture. This is not a build-status document.",
+  "codeownerDefault": "@reyesnick54",
+  "packages": [
+    {
+      "id": "packages/money",
+      "npmName": "@solstice/money",
+      "path": "packages/money",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/config",
+      "npmName": "@solstice/config",
+      "path": "packages/config",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/domain"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Clock types currently import UtcInstant from packages/domain. That edge is a known layering exception."
+    },
+    {
+      "id": "packages/domain",
+      "npmName": "@solstice/domain",
+      "path": "packages/domain",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/permissions"],
+      "codeowners": ["@reyesnick54"],
+      "notes": "openAccount requires VerifiedExecutionAuthority from packages/permissions. That creates a known cycle."
+    },
+    {
+      "id": "packages/permissions",
+      "npmName": "@solstice/permissions",
+      "path": "packages/permissions",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/kernel",
+      "npmName": "@solstice/kernel",
+      "path": "packages/kernel",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/config",
+        "packages/evidence",
+        "packages/permissions",
+        "packages/domain",
+        "packages/money"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/ledger",
+      "npmName": "@solstice/ledger",
+      "path": "packages/ledger",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/config",
+        "packages/permissions",
+        "packages/domain",
+        "packages/money"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/evidence",
+      "npmName": "@solstice/evidence",
+      "path": "packages/evidence",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/config"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "packages/events",
+      "npmName": "@solstice/events",
+      "path": "packages/events",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": false,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": ["packages/domain"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "services/accounts",
+      "npmName": "@solstice/accounts",
+      "path": "services/accounts",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/evidence",
+        "packages/events",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/permissions",
+        "packages/config",
+        "packages/money"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "tools/architectural-linter",
+      "npmName": "@solstice/architectural-linter",
+      "path": "tools/architectural-linter",
+      "kind": "tool",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [],
+      "codeowners": ["@reyesnick54"]
+    }
+  ],
+  "components": [
+    {
+      "id": "money",
+      "name": "Money primitive",
+      "canonicalOwner": "packages/money",
+      "canonicalPath": "packages/money/src/money.ts",
+      "publicInterface": "packages/money/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "Money", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/money-v2",
+        "packages/currency",
+        "src/money"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "currencies",
+      "name": "Currency codes",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/currency.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "customer-domain",
+      "name": "Customer domain",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/customer.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/customer"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "account-domain",
+      "name": "Account domain",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/account.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/account"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "account-classes",
+      "name": "Account class taxonomy",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/account-class.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "ACCOUNT_CLASSES", "kind": "const" }
+      ],
+      "forbiddenAliases": [
+        "packages/account-class",
+        "packages/account-classes"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "products",
+      "name": "Product catalog types",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/product.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/products"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "legal-entities",
+      "name": "Legal entities",
+      "canonicalOwner": "packages/domain",
+      "canonicalPath": "packages/domain/src/legal-entity.ts",
+      "publicInterface": "packages/domain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/legal-entity"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "action-intent",
+      "name": "ActionIntent envelope",
+      "canonicalOwner": "packages/permissions",
+      "canonicalPath": "packages/permissions/src/action-intent.ts",
+      "publicInterface": "packages/permissions/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "ActionIntent", "kind": "interface" }
+      ],
+      "forbiddenAliases": [
+        "packages/intents",
+        "packages/action-intent"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "action-types",
+      "name": "Action types",
+      "canonicalOwner": "packages/permissions",
+      "canonicalPath": "packages/permissions/src/action-types.ts",
+      "publicInterface": "packages/permissions/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "ACTION_TYPES", "kind": "const" }
+      ],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "structural-validation",
+      "name": "Structural intent validation",
+      "canonicalOwner": "packages/permissions",
+      "canonicalPath": "packages/permissions/src/structural.ts",
+      "publicInterface": "packages/permissions/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "execution-authority",
+      "name": "Execution Authority",
+      "canonicalOwner": "packages/permissions",
+      "canonicalPath": "packages/permissions/src/execution-authority.ts",
+      "publicInterface": "packages/permissions/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "AuthorityIssuer", "kind": "class" },
+        { "name": "ExecutionAuthority", "kind": "type" }
+      ],
+      "forbiddenAliases": [
+        "packages/authority",
+        "src/authority",
+        "packages/platform/src/authority"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "compliance-kernel",
+      "name": "Compliance Kernel",
+      "canonicalOwner": "packages/kernel",
+      "canonicalPath": "packages/kernel/src/kernel.ts",
+      "publicInterface": "packages/kernel/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "ComplianceKernel", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/compliance-kernel",
+        "src/kernel",
+        "packages/platform/src/kernel"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "proof-evaluation",
+      "name": "Proof evaluation",
+      "canonicalOwner": "packages/kernel",
+      "canonicalPath": "packages/kernel/src/proofs.ts",
+      "publicInterface": "packages/kernel/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "evidence-vault",
+      "name": "Evidence Vault",
+      "canonicalOwner": "packages/evidence",
+      "canonicalPath": "packages/evidence/src/vault.ts",
+      "publicInterface": "packages/evidence/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        { "name": "EvidenceVault", "kind": "class" }
+      ],
+      "forbiddenAliases": [
+        "packages/evidence-vault",
+        "src/evidence"
+      ],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "domain-events",
+      "name": "Domain events",
+      "canonicalOwner": "packages/events",
+      "canonicalPath": "packages/events/src/events.ts",
+      "publicInterface": "packages/events/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": false,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/domain-events"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "ledger",
+      "name": "Ledger",
+      "canonicalOwner": "packages/ledger",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "publicInterface": "packages/ledger/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        { "name": "Ledger", "kind": "class" }
+      ],
+      "forbiddenAliases": ["src/ledger", "packages/journal"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "journals-postings",
+      "name": "Journals and postings",
+      "canonicalOwner": "packages/ledger",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "publicInterface": "packages/ledger/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "class-bridges",
+      "name": "Named class bridges",
+      "canonicalOwner": "packages/ledger",
+      "canonicalPath": "packages/ledger/src/types.ts",
+      "publicInterface": "packages/ledger/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "account-opening",
+      "name": "Account opening",
+      "canonicalOwner": "services/accounts",
+      "canonicalPath": "services/accounts/src/open-account.ts",
+      "publicInterface": "services/accounts/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "money-movement",
+      "name": "Money movement",
+      "canonicalOwner": "services/accounts",
+      "canonicalPath": "services/accounts/src/money-movement.ts",
+      "publicInterface": "services/accounts/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [],
+      "forbiddenAliases": [],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "balance-projections",
+      "name": "Balance projections",
+      "canonicalOwner": "services/accounts",
+      "canonicalPath": "services/accounts/src/balances.ts",
+      "publicInterface": "services/accounts/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["packages/balances"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "configuration",
+      "name": "Configuration and capability flags",
+      "canonicalOwner": "packages/config",
+      "canonicalPath": "packages/config/src/flags.ts",
+      "publicInterface": "packages/config/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": ["src/flags", "config/capabilities.ts"],
+      "codeowners": ["@reyesnick54"]
+    },
+    {
+      "id": "architecture-linting",
+      "name": "Architecture linting",
+      "canonicalOwner": "tools/architectural-linter",
+      "canonicalPath": "tools/architectural-linter/src/linter.ts",
+      "publicInterface": "tools/architectural-linter/src/linter.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "tools/architecture-linter",
+        "packages/architecture-linter"
+      ],
+      "codeowners": ["@reyesnick54"],
+      "notes": "Companion invariant scripts live under scripts/. Do not add a second linter system."
+    }
+  ],
+  "authorizedMutationPaths": [
+    {
+      "symbol": "postJournal",
+      "file": "packages/ledger/src/journal.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "openAccount",
+      "file": "packages/domain/src/account.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": false
+    },
+    {
+      "symbol": "open",
+      "file": "services/accounts/src/open-account.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "deposit",
+      "file": "services/accounts/src/money-movement.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "withdraw",
+      "file": "services/accounts/src/money-movement.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "transfer",
+      "file": "services/accounts/src/money-movement.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    }
+  ],
+  "allowedCycles": [
+    ["packages/domain", "packages/permissions"],
+    ["packages/domain", "packages/permissions", "packages/config"]
+  ],
+  "forbiddenWorkspaceRoots": [
+    "src/kernel",
+    "src/ledger",
+    "src/evidence",
+    "src/authority",
+    "src/flags",
+    "packages/compliance-kernel",
+    "packages/evidence-vault"
+  ],
+  "capabilities": [
+    {
+      "id": "money",
+      "status": "IMPLEMENTED",
+      "owner": "packages/money",
+      "protected": true
+    },
+    {
+      "id": "domain",
+      "status": "IMPLEMENTED",
+      "owner": "packages/domain",
+      "protected": true
+    },
+    {
+      "id": "permissions",
+      "status": "IMPLEMENTED",
+      "owner": "packages/permissions",
+      "protected": true
+    },
+    {
+      "id": "kernel",
+      "status": "IMPLEMENTED",
+      "owner": "packages/kernel",
+      "protected": true
+    },
+    {
+      "id": "ledger",
+      "status": "IMPLEMENTED",
+      "owner": "packages/ledger",
+      "protected": true
+    },
+    {
+      "id": "evidence",
+      "status": "IMPLEMENTED",
+      "owner": "packages/evidence",
+      "protected": true
+    },
+    {
+      "id": "events",
+      "status": "IMPLEMENTED",
+      "owner": "packages/events",
+      "protected": false
+    },
+    {
+      "id": "config",
+      "status": "IMPLEMENTED",
+      "owner": "packages/config",
+      "protected": true
+    },
+    {
+      "id": "accounts-service",
+      "status": "IMPLEMENTED",
+      "owner": "services/accounts",
+      "protected": true
+    },
+    {
+      "id": "architecture-linting",
+      "status": "IMPLEMENTED",
+      "owner": "tools/architectural-linter",
+      "protected": true
+    },
+    {
+      "id": "persistence",
+      "status": "PLANNED",
+      "owner": null,
+      "protected": true,
+      "adr": "ADR-0008"
+    },
+    {
+      "id": "identity",
+      "status": "PLANNED",
+      "owner": null,
+      "protected": true,
+      "adr": "ADR-0007"
+    },
+    {
+      "id": "policy-engine",
+      "status": "PLANNED",
+      "owner": null,
+      "protected": true,
+      "adr": "ADR-0006"
+    }
+  ],
+  "boundedContexts": [
+    {
+      "id": "IDENTITY",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/identity", "services/identity"],
+      "protected": true,
+      "adr": "ADR-0007"
+    },
+    {
+      "id": "COMPLIANCE",
+      "status": "PARTIAL",
+      "reservedPaths": ["packages/kernel", "packages/permissions", "packages/evidence"],
+      "protected": true,
+      "notes": "Kernel, ActionIntent, Execution Authority, and Evidence Vault are implemented. Policy engine and jurisdiction packs are not."
+    },
+    {
+      "id": "BANKING",
+      "status": "PARTIAL",
+      "reservedPaths": ["packages/domain", "packages/ledger", "services/accounts"],
+      "protected": true,
+      "notes": "Phase 1 simulation accounts, ledger, and balances are implemented. Persistence is not."
+    },
+    {
+      "id": "PAYMENTS",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/payments"],
+      "protected": true
+    },
+    {
+      "id": "FX",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/payments"],
+      "protected": true,
+      "notes": "Rational FX helpers exist on Money. A payments FX router does not."
+    },
+    {
+      "id": "CARDS",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/cards", "services/cards"],
+      "protected": true
+    },
+    {
+      "id": "TREASURY",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/treasury", "services/treasury"],
+      "protected": true
+    },
+    {
+      "id": "PERSONAL_ECONOMIC_GRAPH",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/personal-economic-graph"],
+      "protected": true
+    },
+    {
+      "id": "PERSONAL_ECONOMY_AGENT",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/agent"],
+      "protected": true
+    },
+    {
+      "id": "GROWTH_ORCHESTRATOR",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/platform"],
+      "protected": true
+    },
+    {
+      "id": "PERSONAL_ECONOMIC_VALUE_ENGINE",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/platform"],
+      "protected": true
+    },
+    {
+      "id": "REGULATORY_DIGITAL_TWIN",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/regulatory-twin"],
+      "protected": true
+    },
+    {
+      "id": "INVESTMENTS",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/investments", "services/investments"],
+      "protected": true
+    },
+    {
+      "id": "RISK",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/risk"],
+      "protected": true,
+      "notes": "A simulation risk proof exists inside the Kernel. A Risk bounded context does not."
+    },
+    {
+      "id": "MODEL_REGISTRY",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/model-registry"],
+      "protected": true
+    },
+    {
+      "id": "AGENTIC_CAPITAL_MESH",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/agentic-capital-mesh"],
+      "protected": true
+    },
+    {
+      "id": "PERSONAL_DATA_VAULT",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/personal-data-vault"],
+      "protected": true
+    },
+    {
+      "id": "CONSENT",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/consent"],
+      "protected": true
+    },
+    {
+      "id": "CLEAN_ROOM",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/clean-room"],
+      "protected": true
+    },
+    {
+      "id": "PYR",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/pyr", "packages/pyramid"],
+      "protected": true
+    },
+    {
+      "id": "PYRAMID",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/pyramid"],
+      "protected": true
+    },
+    {
+      "id": "PYRAMID_DATA_EXCHANGE",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/pyramid-data-exchange"],
+      "protected": true
+    },
+    {
+      "id": "PYRAMID_EXCHANGE",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/pyramid-exchange"],
+      "protected": true
+    },
+    {
+      "id": "MARKET_SURVEILLANCE",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/market-surveillance"],
+      "protected": true
+    },
+    {
+      "id": "API_INTEGRATION",
+      "status": "PLANNED",
+      "reservedPaths": ["apps/api", "services/api"],
+      "protected": true
+    },
+    {
+      "id": "SOVEREIGN_CELLS",
+      "status": "PLANNED",
+      "reservedPaths": ["packages/cells"],
+      "protected": true
+    }
+  ],
+  "liveFlags": [
+    { "name": "ENVIRONMENT", "requiredValue": "simulation" },
+    { "name": "SIMULATION_MODE", "requiredValue": true },
+    { "name": "LIVE_MONEY_ENABLED", "requiredValue": false },
+    { "name": "LIVE_PAYMENTS_ENABLED", "requiredValue": false },
+    { "name": "LIVE_BANKING_RAILS", "requiredValue": false },
+    { "name": "LIVE_EXTERNAL_KYC", "requiredValue": false },
+    { "name": "LIVE_EXTERNAL_BANK_CONNECTION", "requiredValue": false },
+    { "name": "REAL_MONEY_ENABLED", "requiredValue": false },
+    { "name": "LIVE_TRADING_ENABLED", "requiredValue": false },
+    { "name": "LIVE_CRYPTO_ENABLED", "requiredValue": false },
+    { "name": "LIVE_EXCHANGE_ENABLED", "requiredValue": false },
+    { "name": "LIVE_DATA_MARKET_ENABLED", "requiredValue": false }
+  ]
+}

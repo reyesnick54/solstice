@@ -11,6 +11,8 @@
 /scripts/ @reyesnick54
 /.github/workflows/ci.yml @reyesnick54
 /docs/architecture/ @reyesnick54
+/docs/architecture/manifest.json @reyesnick54
+/docs/architecture/constitution.md @reyesnick54
 
 # Phase 1 accounts service — the Kernel decides; this service must not grow a bypass.
 /services/accounts/ @reyesnick54

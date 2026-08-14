@@ -1,6 +1,8 @@
+import { lintConstitution } from './constitution.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
-const findings = lintTree(process.cwd());
+const root = process.cwd();
+const findings = [...lintTree(root), ...lintConstitution(root)];
 if (findings.length > 0) {
   console.error(formatFindings(findings));
   console.error(`architectural-linter: ${findings.length} violation(s)`);

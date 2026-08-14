@@ -1,0 +1,16 @@
+{
+  "chunk": "CHUNK-1",
+  "title": "Canonical Architecture Constitution, Dependency Map, and Architecture Guardrails",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "config",
+    "accounts-service",
+    "architecture-linting"
+  ]
+}
