@@ -1,5 +1,6 @@
 import { addMs, type Clock } from '../../config/src/clock.ts';
 import type { Account } from '../../domain/src/account.ts';
+import { asCurrencyCode } from '../../domain/src/currency.ts';
 import type { Customer } from '../../domain/src/customer.ts';
 import { asHoldId, type FundsHold } from '../../domain/src/hold.ts';
 import { isErr, isOk } from '../../domain/src/result.ts';
@@ -487,9 +488,7 @@ export class CardsService {
         payload: { holdId: existing.holdId, accountId: card!.fundingAccountId },
       });
       if (released.outcome !== 'COMPLETED' && !(released.outcome === 'REJECTED' && released.code === 'HOLD_NOT_ACTIVE')) {
-        if (released.outcome !== 'COMPLETED') {
-          return this.reject(intent.actionType, intent.id, gated.decision, 'HOLD_RELEASE_FAILED', 'could not release authorization hold');
-        }
+        return this.reject(intent.actionType, intent.id, gated.decision, 'HOLD_RELEASE_FAILED', 'could not release authorization hold');
       }
     }
     const reversed = freezeAuthorizationRecord({
@@ -640,10 +639,10 @@ export class CardsService {
       clearing: settled,
       report: {
         clearingId,
-        authorizationId: auth?.authorizationId,
+        ...(auth ? { authorizationId: auth.authorizationId } : {}),
         amountMinorUnits: amount.minorUnits.toString(),
         currency: amount.currency,
-        holdId: auth?.holdId,
+        ...(auth?.holdId ? { holdId: auth.holdId } : {}),
         journalId: journal.id,
       },
       journals: this.ledger.listJournals(),
@@ -1027,7 +1026,7 @@ export class CardsService {
       merchantRef: asMerchantReference(String(payload.merchantRef ?? 'sim_merchant')),
       merchantCategory: String(payload.merchantCategory ?? '5411'),
       amount,
-      currency: amount.currency,
+      currency: asCurrencyCode(amount.currency),
       country: String(payload.country ?? 'US'),
       requestedAt: this.clock.now(),
       cardPresent: payload.cardPresent === true,
