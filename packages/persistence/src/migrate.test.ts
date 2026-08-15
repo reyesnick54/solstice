@@ -126,6 +126,7 @@ describe('versioned SQL migrations', () => {
     assert.ok(v009);
     assert.match(v009.sql, /CREATE SCHEMA IF NOT EXISTS economic_graph/);
     assert.match(v009.sql, /CREATE TABLE economic_graph.graph/);
+    assert.match(v009.sql, /GRANT USAGE ON SCHEMA economic_graph TO customer_app/);
     assert.equal(/authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/.test(v009.sql), true);
   });
 

@@ -114,3 +114,10 @@ CREATE TABLE economic_graph.snapshot (
 CREATE TABLE economic_graph.processed_event (
   event_id TEXT PRIMARY KEY
 );
+
+REVOKE ALL ON SCHEMA economic_graph FROM PUBLIC;
+REVOKE ALL ON ALL TABLES IN SCHEMA economic_graph FROM PUBLIC;
+
+GRANT USAGE ON SCHEMA economic_graph TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA economic_graph TO customer_app;
+REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA economic_graph FROM customer_app;
