@@ -9,6 +9,9 @@
 - [Chunk 13 stop (historical)](./chunk-13-stop.md) — original process-gate stop before treasury existed
 - [Chunk 13 resume](./chunk-13-resume.md) — treasury / liquidity / routing intelligence implemented
 - [Chunk 15 stop (historical)](./chunk-15-stop.md) — original stop while Treasury was still PLANNED; agent later landed as proposal-only
+- [Chunk 25 stop (historical)](./chunk-25-stop.md) — original stop while Consent was PLANNED; Clean Room remains reserved
+- [Chunk 26 stop (historical)](./chunk-26-stop.md) — original stop while Consent and Clean Room were PLANNED; intermediate REYN_* names are obsolete
+- [Chunk 26R stop](./chunk-26r-stop.md) — SunRey Coin still stopped because Clean Room is not IMPLEMENTED
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 - [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics

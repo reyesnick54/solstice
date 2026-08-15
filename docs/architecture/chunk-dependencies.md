@@ -88,11 +88,9 @@ Agents and later CI jobs use that result. They do not guess.
 | model-registry | IMPLEMENTED | packages/model-registry |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
-| consent | PLANNED | packages/consent |
-| purpose-firewall | PLANNED | packages/consent |
-| clean-room | PLANNED | packages/clean-room |
-| clean-room | PLANNED | packages/clean-room |
 | consent | IMPLEMENTED | packages/consent |
+| purpose-firewall | IMPLEMENTED | packages/consent |
+| clean-room | PLANNED | packages/clean-room |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -196,46 +194,42 @@ context `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). The evaluator
 returns `mustStop: false`. Do not create `packages/backtest`,
 `packages/trading-lab`, `packages/quant`, or `packages/strategy-v2`.
 
-Chunk 25 (Privacy Clean Room) stops because protected capability
-`consent` is `PLANNED`. Consent Ledger / Purpose Firewall is Chunk 24
-and is not on `main`. `CLEAN_ROOM` remains reserved at
-`packages/clean-room`. The evaluator returns `mustStop: true`.
-Historical stop: [`chunk-25-stop.md`](./chunk-25-stop.md). Do not
-create `packages/privacy-compute`, `packages/data-clean-room`,
-`packages/secure-data-room`, `packages/research-room`, or
-`packages/clean-room-v2`.
-Chunk 22R implements the reserved STRATEGY LAB bounded context at
-`packages/strategy-lab` and `services/strategy-lab`. Capability
-`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
-`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
-Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
-historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
-[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
-`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
-`packages/strategy-v2`.
-
 Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
 at `packages/personal-data-vault`. Capability `personal-data-vault`
 is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
-Firewall, Clean Room, marketplace, or Reyn Coin. The evaluator
+Firewall, Clean Room, marketplace, or SunRey Coin. The evaluator
 returns `mustStop: false` for the implemented prerequisites.
 
-Chunk 26 (Reyn Coin economic ledger) is **stopped**. The task requires
-Consent Ledger, Purpose Firewall, and Privacy Clean Room. Those
-protected capabilities remain `PLANNED`. The evaluator returns
-`mustStop: true` and `missing: ['consent', 'purpose-firewall',
-'clean-room']`. Historical `PYRAMID` / `PYRAMID_EXCHANGE` reservations
-are migrated to `REYN_COIN` / `REYN_EXCHANGE` without implementing
-either package. See [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
-create `packages/reyn-ledger`, `packages/token-ledger`,
-`packages/crypto-ledger-v2`, or invent a public ticker.
-is `IMPLEMENTED`. It does not implement Clean Room, marketplace, or
-Reyn Coin. Consent is owned by Chunk 24 at `packages/consent`. The
-evaluator returns `mustStop: false`.
-
 Chunk 24 implements the reserved CONSENT bounded context at
-`packages/consent`. Capability `consent` is `IMPLEMENTED`. It
-replaces the Personal Data Vault fail-closed consent placeholder
-with a Purpose Firewall and short-lived DataUsePermits. It does
-not implement Clean Room, marketplace, or Reyn Coin. The evaluator
+`packages/consent`. Capability `consent` is `IMPLEMENTED`. Capability
+`purpose-firewall` is `IMPLEMENTED` at the same owner. It replaces
+the Personal Data Vault fail-closed consent placeholder with a
+Purpose Firewall and short-lived DataUsePermits. It does not
+implement Clean Room, marketplace, or SunRey Coin. The evaluator
 returns `mustStop: false`.
+
+Chunk 25 (Privacy Clean Room) originally stopped because protected
+capability `consent` was `PLANNED`. That stop is historical:
+[`chunk-25-stop.md`](./chunk-25-stop.md). Consent is now
+`IMPLEMENTED`. The CHUNK-25 declaration therefore returns
+`mustStop: false`. `CLEAN_ROOM` remains reserved at
+`packages/clean-room`. Chunk 25R may implement it. Do not create
+`packages/privacy-compute`, `packages/data-clean-room`,
+`packages/secure-data-room`, `packages/research-room`, or
+`packages/clean-room-v2`.
+
+Chunk 26R (SunRey Coin economic ledger) is **stopped**. Personal Data
+Vault, Consent Ledger, and Purpose Firewall are `IMPLEMENTED`.
+Protected capability `clean-room` remains `PLANNED`. The evaluator
+returns `mustStop: true` and `missing: ['clean-room']`. Historical
+`PYRAMID` / `REYN_COIN` reservations are now `SUNREY_COIN` at
+`packages/sunrey-coin`. Historical `PYRAMID_EXCHANGE` /
+`REYN_EXCHANGE` reservations are now `SUNREY_EXCHANGE` at
+`packages/sunrey-exchange`. `SUNREY_CHAIN` is reserved `PLANNED` at
+`packages/sunrey-chain`. See [`chunk-26r-stop.md`](./chunk-26r-stop.md).
+The original Chunk 26 stop is historical:
+[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
+`packages/sunrey-ledger`, `packages/reyn-ledger`,
+`packages/token-ledger`, or `packages/crypto-ledger-v2`. Do not
+invent a public ticker. Do not implement SunRey Exchange or SunRey
+Chain.

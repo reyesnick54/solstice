@@ -212,19 +212,25 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Consent Ledger, Purpose Firewall, and Privacy Clean Room. Reserved at
-  `packages/consent` and `packages/clean-room`. Chunk 23 fails closed
-  for third-party / consent-requiring use. Historical PR `#17` is not
-  canonical.
-- Reyn Coin and Reyn Exchange. Historical `PYRAMID` / `PYRAMID_EXCHANGE`
-  reservations are now `REYN_COIN` (`packages/reyn-coin`) and
-  `REYN_EXCHANGE` (`packages/reyn-exchange`). Neither package exists.
-  Chunk 26 stopped because Consent and Clean Room are not
-  `IMPLEMENTED`. See `docs/architecture/chunk-26-stop.md`. Do not
-  invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
-  unresolved. Historical PRs `#18` and `#19` are not canonical.
-- Reserved later bounded contexts that remain PLANNED (CONSENT,
-  CLEAN ROOM, REYN COIN, REYN EXCHANGE, PYRAMID DATA EXCHANGE,
+- Privacy Clean Room. Reserved at `packages/clean-room`. Chunk 25
+  originally stopped while Consent was `PLANNED`; that stop is
+  historical (`docs/architecture/chunk-25-stop.md`). Consent is now
+  `IMPLEMENTED`. Chunk 25R may implement Clean Room. Historical PR
+  `#17` is not canonical.
+- SunRey Coin, SunRey Exchange, and SunRey Chain. Historical
+  `PYRAMID` / `REYN_COIN` reservations are now `SUNREY_COIN`
+  (`packages/sunrey-coin`). Historical `PYRAMID_EXCHANGE` /
+  `REYN_EXCHANGE` reservations are now `SUNREY_EXCHANGE`
+  (`packages/sunrey-exchange`). `SUNREY_CHAIN` is reserved at
+  `packages/sunrey-chain`. None of those packages exist. Chunk 26R
+  stopped because Clean Room is not `IMPLEMENTED`. See
+  `docs/architecture/chunk-26r-stop.md`. The original Chunk 26 stop
+  is historical (`docs/architecture/chunk-26-stop.md`). Do not
+  invent a public ticker. Ticker remains TBD.
+  `PYRAMID_DATA_EXCHANGE` naming remains unresolved. Historical PRs
+  `#18` and `#19` are not canonical.
+- Reserved later bounded contexts that remain PLANNED (CLEAN ROOM,
+  SUNREY COIN, SUNREY EXCHANGE, SUNREY CHAIN, PYRAMID DATA EXCHANGE,
   SOVEREIGN CELLS, and the rest listed in the constitution).
   PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
   PARTIAL simulation owners. The Personal Economic Graph, Personal
