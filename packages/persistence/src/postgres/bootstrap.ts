@@ -148,6 +148,7 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               regulatory_twin.assumption,
               regulatory_twin.candidate_set,
               regulatory_twin.suite,
+              regulatory_twin.scenario_run,
               regulatory_twin.scenario,
               regulatory_twin.snapshot,
               regulatory_twin.twin,

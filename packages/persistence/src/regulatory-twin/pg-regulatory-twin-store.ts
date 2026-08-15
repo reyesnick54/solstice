@@ -53,6 +53,22 @@ export async function persistRegulatoryTwinState(
           ],
         );
       }
+      for (const run of state.runs) {
+        await client.query(
+          `INSERT INTO regulatory_twin.scenario_run
+             (run_id, scenario_id, baseline_snapshot_id, candidate_set_id, evaluated_at, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6)
+           ON CONFLICT (run_id) DO NOTHING`,
+          [
+            run.runId,
+            run.scenarioId,
+            run.baselineSnapshotId,
+            run.candidateSetId,
+            run.evaluatedAt,
+            JSON.stringify(run),
+          ],
+        );
+      }
       for (const suite of state.suites) {
         await client.query(
           `INSERT INTO regulatory_twin.suite
@@ -164,6 +180,7 @@ export async function loadRegulatoryTwinState(pool: Pool): Promise<RegulatoryTwi
   const twins = await pool.query(`SELECT twin_id, created_at, label FROM regulatory_twin.twin`);
   const snapshots = await pool.query(`SELECT body_canonical FROM regulatory_twin.snapshot`);
   const scenarios = await pool.query(`SELECT body_canonical FROM regulatory_twin.scenario`);
+  const runs = await pool.query(`SELECT body_canonical FROM regulatory_twin.scenario_run`);
   const suites = await pool.query(`SELECT body_canonical FROM regulatory_twin.suite`);
   const candidates = await pool.query(`SELECT body_canonical FROM regulatory_twin.candidate_set`);
   const assumptions = await pool.query(`SELECT body_canonical FROM regulatory_twin.assumption`);
@@ -185,6 +202,7 @@ export async function loadRegulatoryTwinState(pool: Pool): Promise<RegulatoryTwi
     ),
     snapshots: Object.freeze(snapshots.rows.map((row) => JSON.parse(row.body_canonical))),
     scenarios: Object.freeze(scenarios.rows.map((row) => JSON.parse(row.body_canonical))),
+    runs: Object.freeze(runs.rows.map((row) => JSON.parse(row.body_canonical))),
     suites: Object.freeze(suites.rows.map((row) => JSON.parse(row.body_canonical))),
     candidates: Object.freeze(candidates.rows.map((row) => JSON.parse(row.body_canonical))),
     assumptions: Object.freeze(assumptions.rows.map((row) => JSON.parse(row.body_canonical))),

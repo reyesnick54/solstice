@@ -1,5 +1,6 @@
 import type {
   CandidatePolicySet,
+  CurrentVsCandidateResult,
   ReadinessReviewRecord,
   RegulatoryAssumption,
   RegulatoryImpactReport,
@@ -18,12 +19,14 @@ import type {
   RegulatoryScenarioSuiteId,
   RegulatorySnapshotId,
   RegulatoryTwinId,
+  ScenarioRunId,
 } from './ids.ts';
 
 export type RegulatoryTwinStoreSnapshot = {
   readonly twins: readonly RegulatoryTwinRecord[];
   readonly snapshots: readonly RegulatorySnapshot[];
   readonly scenarios: readonly RegulatoryScenario[];
+  readonly runs: readonly CurrentVsCandidateResult[];
   readonly suites: readonly RegulatoryScenarioSuite[];
   readonly candidates: readonly CandidatePolicySet[];
   readonly assumptions: readonly RegulatoryAssumption[];
@@ -36,6 +39,7 @@ export class RegulatoryTwinStore {
   private readonly twins = new Map<RegulatoryTwinId, RegulatoryTwinRecord>();
   private readonly snapshots = new Map<RegulatorySnapshotId, RegulatorySnapshot>();
   private readonly scenarios = new Map<RegulatoryScenarioId, RegulatoryScenario>();
+  private readonly runs = new Map<ScenarioRunId, CurrentVsCandidateResult>();
   private readonly suites = new Map<RegulatoryScenarioSuiteId, RegulatoryScenarioSuite>();
   private readonly candidates = new Map<CandidatePolicySetId, CandidatePolicySet>();
   private readonly assumptions = new Map<RegulatoryAssumptionId, RegulatoryAssumption>();
@@ -56,6 +60,10 @@ export class RegulatoryTwinStore {
 
   putScenario(row: RegulatoryScenario): void {
     this.scenarios.set(row.scenarioId, row);
+  }
+
+  putRun(row: CurrentVsCandidateResult): void {
+    this.runs.set(row.runId, row);
   }
 
   putSuite(row: RegulatoryScenarioSuite): void {
@@ -120,6 +128,7 @@ export class RegulatoryTwinStore {
       twins: Object.freeze([...this.twins.values()]),
       snapshots: Object.freeze([...this.snapshots.values()]),
       scenarios: Object.freeze([...this.scenarios.values()]),
+      runs: Object.freeze([...this.runs.values()]),
       suites: Object.freeze([...this.suites.values()]),
       candidates: Object.freeze([...this.candidates.values()]),
       assumptions: Object.freeze([...this.assumptions.values()]),
@@ -133,6 +142,7 @@ export class RegulatoryTwinStore {
     for (const row of state.twins) this.putTwin(row);
     for (const row of state.snapshots) this.putSnapshot(row);
     for (const row of state.scenarios) this.putScenario(row);
+    for (const row of state.runs ?? []) this.putRun(row);
     for (const row of state.suites) this.putSuite(row);
     for (const row of state.candidates) this.putCandidate(row);
     for (const row of state.assumptions) this.putAssumption(row);

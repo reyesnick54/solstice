@@ -18,6 +18,9 @@ import {
   createPersistencePools,
 } from '../../packages/persistence/src/postgres/pools.ts';
 import { createSimulationKeyProvider } from '../../packages/security/src/simulation.ts';
+import { candidateUsOpenAccountReview } from '../../packages/regulatory-twin/src/candidates.ts';
+import { classified } from '../../packages/regulatory-twin/src/facts.ts';
+import { asRegulatoryScenarioId } from '../../packages/regulatory-twin/src/ids.ts';
 import { RegulatoryDigitalTwin } from '../../packages/regulatory-twin/src/service.ts';
 import { persistenceAvailable, preparePersistence } from './helpers.ts';
 
@@ -57,11 +60,58 @@ describe('Regulatory Digital Twin persistence', () => {
     });
     const snapshot = twin.captureSnapshot(actor.value);
     assert.equal(snapshot.ok, true);
+    if (!snapshot.ok) throw new Error('snapshot');
+    const baseline = twin.productionRegistry
+      .listVersions('US')
+      .find((row) => row.lifecycle === 'ACTIVE_SIMULATION');
+    assert.ok(baseline);
+    const candidate = candidateUsOpenAccountReview(baseline);
+    const registered = twin.registerCandidateSet(actor.value, {
+      label: 'pg-persist-v2',
+      createdAt: NOW,
+      versions: [candidate],
+      sourceRefs: ['src-engineering-pack-shell'],
+      legalReviewStatus: 'RESEARCH_REQUIRED',
+      notes: 'persistence integration fixture',
+    });
+    assert.equal(registered.ok, true);
+    if (!registered.ok) throw new Error('candidate');
+    const scenario = {
+      scenarioId: asRegulatoryScenarioId('rsc_pg_open_account'),
+      name: 'pg-open-account',
+      category: 'US_RETAIL_ACCOUNT' as const,
+      createdAt: NOW,
+      facts: {
+        jurisdiction: classified('US', 'SYNTHETIC_FACT'),
+        actorId: classified('rdt_pg_actor', 'SYNTHETIC_FACT'),
+        customerId: classified('cus_rdt_pg', 'SYNTHETIC_FACT'),
+        customerStatus: classified('ACTIVE', 'SYNTHETIC_FACT'),
+        kycState: classified('VERIFIED', 'SYNTHETIC_FACT'),
+        kycRecordVersion: classified(1, 'SYNTHETIC_FACT'),
+        productId: classified('prod_demand_usd_us', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_us_inc', 'SYNTHETIC_FACT'),
+        actionType: classified('OPEN_ACCOUNT', 'SYNTHETIC_FACT'),
+      },
+      hypotheticalOverrides: Object.freeze([]),
+      invariant: false,
+    };
+    assert.equal(twin.createScenario(actor.value, scenario).ok, true);
+    const compared = twin.compare(actor.value, {
+      scenario,
+      candidateVersions: [candidate],
+      baselineSnapshotId: snapshot.value.snapshotId,
+      candidateSetId: registered.value.candidateSetId,
+    });
+    assert.equal(compared.ok, true);
     await persistRegulatoryTwinState(pools.customer, twin.store.snapshot());
     const loaded = await loadRegulatoryTwinState(pools.customer);
     await closePersistencePools(pools);
     assert.ok(loaded.twins.length >= 1);
     assert.ok(loaded.snapshots.length >= 1);
     assert.equal(loaded.snapshots[0]?.simulationOnly, true);
+    assert.ok(loaded.scenarios.length >= 1);
+    assert.ok(loaded.runs.length >= 1);
+    assert.ok(loaded.candidates.length >= 1);
+    assert.equal(loaded.candidates[0]?.legalReviewStatus, 'RESEARCH_REQUIRED');
   });
 });

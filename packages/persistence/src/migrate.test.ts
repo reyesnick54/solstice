@@ -183,9 +183,12 @@ describe('versioned SQL migrations', () => {
     assert.ok(v012);
     assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS regulatory_twin/);
     assert.match(v012.sql, /CREATE TABLE regulatory_twin.snapshot/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.scenario_run/);
     assert.match(v012.sql, /CREATE TABLE regulatory_twin.candidate_set/);
     assert.match(v012.sql, /rdt_candidate_no_counsel/);
     assert.match(v012.sql, /GRANT USAGE ON SCHEMA regulatory_twin TO customer_app/);
+    assert.match(v012.sql, /twin_id LIKE 'rtw_%'/);
+    assert.match(v012.sql, /snapshot_id LIKE 'rsn_%'/);
     assert.equal(/CREATE TABLE customer\.policy_pack/.test(v012.sql), false);
   });
 

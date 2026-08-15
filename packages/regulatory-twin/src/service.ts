@@ -202,6 +202,7 @@ export class RegulatoryDigitalTwin {
       candidateSetId: input.candidateSetId,
       at: this.clock.now(),
     });
+    this.store.putRun(result);
     this.emit('RegulatoryTwinRunCompleted', result.runId, {
       runId: result.runId,
       scenarioId: result.scenarioId,
@@ -255,6 +256,7 @@ export class RegulatoryDigitalTwin {
       }),
     );
     const counts = countBatch(transitions);
+    for (const row of transitions) this.store.putRun(row);
     const result: BatchImpactResult = Object.freeze({
       runId: transitions[0]?.runId ?? asScenarioRunId(`rrn_${randomUUID().replaceAll('-', '')}`),
       suiteId: input.suiteId,
