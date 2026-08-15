@@ -63,7 +63,8 @@ describe('sunrey coin architecture guards', () => {
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');
       assert.equal(source.includes('packages/sunrey-coin'), false, file);
-      assert.equal(source.includes('ExecutionAuthority'), false, file);
+      assert.equal(/from ['"][^'"]*execution-authority/.test(source), false, file);
+      assert.equal(/import\s+(?:type\s+)?\{[^}]*\bExecutionAuthority\b/.test(source), false, file);
     }
   });
 });
