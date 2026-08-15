@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Solstice digital banking simulation — Compliance Kernel, signed Execution Authority, Evidence Vault",
+  "description": "Solstice digital banking simulation \u2014 Compliance Kernel, signed Execution Authority, Evidence Vault",
   "workspaces": [
     "packages/*",
     "services/*",

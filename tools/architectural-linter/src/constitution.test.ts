@@ -640,4 +640,61 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/research-room')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room-v2')), false);
   });
+
+  it('CHUNK-26 stops because Consent Ledger and Clean Room are not IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'consent').protected, true);
+    assert.equal(evaluateCapability(manifest, 'consent').owner, 'packages/consent');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').protected, true);
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').protected, true);
+    assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-26',
+    );
+    assert.ok(declared, 'CHUNK-26 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.ok(declared.missing.includes('consent'));
+    assert.ok(declared.missing.includes('purpose-firewall'));
+    assert.ok(declared.missing.includes('clean-room'));
+    assert.equal(declared.missing.includes('personal-data-vault'), false);
+
+    const coin = manifest.boundedContexts.find((context) => context.id === 'REYN_COIN');
+    assert.ok(coin);
+    assert.equal(coin.status, 'PLANNED');
+    assert.deepEqual(coin.reservedPaths, ['packages/reyn-coin']);
+
+    const exchange = manifest.boundedContexts.find((context) => context.id === 'REYN_EXCHANGE');
+    assert.ok(exchange);
+    assert.equal(exchange.status, 'PLANNED');
+    assert.deepEqual(exchange.reservedPaths, ['packages/reyn-exchange']);
+
+    const historicalExchange = manifest.boundedContexts.find(
+      (context) => context.id === 'PYRAMID_DATA_EXCHANGE',
+    );
+    assert.ok(historicalExchange);
+    assert.equal(historicalExchange.status, 'PLANNED');
+    assert.match(historicalExchange.notes ?? '', /naming remains unresolved/i);
+
+    assert.equal(
+      manifest.boundedContexts.some((context) => context.id === 'PYRAMID'),
+      false,
+    );
+    assert.equal(
+      manifest.boundedContexts.some((context) => context.id === 'PYRAMID_EXCHANGE'),
+      false,
+    );
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-coin')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/token-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-ledger-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+  });
 });

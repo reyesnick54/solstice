@@ -89,6 +89,8 @@ Agents and later CI jobs use that result. They do not guess.
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
 | consent | PLANNED | packages/consent |
+| purpose-firewall | PLANNED | packages/consent |
+| clean-room | PLANNED | packages/clean-room |
 | clean-room | PLANNED | packages/clean-room |
 | consent | IMPLEMENTED | packages/consent |
 
@@ -155,6 +157,15 @@ reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
+Chunk 22R implements the reserved STRATEGY LAB bounded context at
+`packages/strategy-lab` and `services/strategy-lab`. Capability
+`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
+`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
+Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
+historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
+[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability
 `risk` and `model-registry` are `IMPLEMENTED`. Risk supplies
@@ -177,6 +188,9 @@ Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
 Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
 and Agentic Capital Mesh were absent. That stop is historical:
 [`chunk-22-stop.md`](./chunk-22-stop.md). Chunk 22R implements the
+reserved owners `packages/strategy-lab` and `services/strategy-lab`.
+Capability `strategy-lab` is `IMPLEMENTED`. Bounded context
+`STRATEGY_LAB` is `PARTIAL` (no LIVE stage). Resume:
 reserved owners. Capability `strategy-lab` is `IMPLEMENTED`. Bounded
 context `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). The evaluator
 returns `mustStop: false`. Do not create `packages/backtest`,
@@ -202,6 +216,19 @@ historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
 
 Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
 at `packages/personal-data-vault`. Capability `personal-data-vault`
+is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
+Firewall, Clean Room, marketplace, or Reyn Coin. The evaluator
+returns `mustStop: false` for the implemented prerequisites.
+
+Chunk 26 (Reyn Coin economic ledger) is **stopped**. The task requires
+Consent Ledger, Purpose Firewall, and Privacy Clean Room. Those
+protected capabilities remain `PLANNED`. The evaluator returns
+`mustStop: true` and `missing: ['consent', 'purpose-firewall',
+'clean-room']`. Historical `PYRAMID` / `PYRAMID_EXCHANGE` reservations
+are migrated to `REYN_COIN` / `REYN_EXCHANGE` without implementing
+either package. See [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
+create `packages/reyn-ledger`, `packages/token-ledger`,
+`packages/crypto-ledger-v2`, or invent a public ticker.
 is `IMPLEMENTED`. It does not implement Clean Room, marketplace, or
 Reyn Coin. Consent is owned by Chunk 24 at `packages/consent`. The
 evaluator returns `mustStop: false`.

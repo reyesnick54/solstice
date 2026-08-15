@@ -177,6 +177,8 @@ CREATE TABLE strategy_lab.kill_switch (
   body_canonical TEXT NOT NULL
 );
 
+GRANT USAGE ON SCHEMA strategy_lab TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA strategy_lab TO customer_app;
 REVOKE ALL ON SCHEMA strategy_lab FROM PUBLIC;
 REVOKE ALL ON ALL TABLES IN SCHEMA strategy_lab FROM PUBLIC;
 
