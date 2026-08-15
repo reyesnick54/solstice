@@ -247,6 +247,8 @@ const ALLOWED_PURPOSES = new Set<PurposeCode>([
   'CUSTOMER_FX',
   'CUSTOMER_CARD',
   'CARD_NETWORK',
+  'CUSTOMER_WALLET',
+  'MERCHANT_ACCEPTANCE',
 ]);
 
 export const purposeProof: ProofEvaluator = {

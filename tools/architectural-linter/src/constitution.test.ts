@@ -334,6 +334,7 @@ describe('architecture constitution', () => {
   });
 
   it('CHUNK-12 capability gate is clear now that cards is IMPLEMENTED', () => {
+  it('CHUNK-12 may proceed now that the protected cards capability is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'cards').owner, 'packages/cards');

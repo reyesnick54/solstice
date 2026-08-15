@@ -65,9 +65,18 @@ This document describes only what is implemented and tested in this tree.
 - Simulated card platform (Chunk 11, `packages/cards`, `services/cards`):
   one canonical card model, processor-token references only, Kernel-gated
   authorization that reserves funds through existing banking holds,
-  clearing/settlement journals, refunds, disputes, network-token metadata
-  for later wallet provisioning, and HMAC processor-callback security.
+  clearing/settlement journals, refunds, disputes, network-token metadata,
+  and HMAC processor-callback security.
   No real PAN/CVV, live network, or issuer SDK.
+- Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
+  (Chunk 12, still inside `packages/cards`): provider-neutral wallet
+  port with Apple-style and Google-style simulation adapters,
+  DevicePaymentToken lifecycle bound to Identity devices, Kernel-gated
+  `PROVISION_CARD_TO_WALLET`, step-up via existing Identity assurance,
+  authenticated token callbacks, and a separate merchant-acceptance
+  module (device, session, simulated contactless result, pending
+  settlement, explicit fees, ledger credit, reconciliation).
+  No Apple/Google certification, EMV/NFC kernel, or acquiring license.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -95,6 +104,11 @@ This document describes only what is implemented and tested in this tree.
   treasury implementation. Reserved TREASURY owners remain
   `packages/treasury` and `services/treasury` (`PLANNED`).
 - Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live treasury remain later.
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live wallet/SoftPOS certification remain later.
+- Chunk 12 originally stopped because Cards was absent; that historical
+  stop is in `docs/architecture/chunk-12-stop.md`. Cards is implemented
+  and Chunk 12 was subsequently resumed. See
+  `docs/architecture/chunk-12-resume.md`.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -123,6 +137,8 @@ npm run check:posture
 npm run gate
 npm run demo
 npm run demo:cards
+npm run demo:wallet
+npm run demo:acceptance
 npm run typecheck
 npm run scan:secrets
 npm run ci

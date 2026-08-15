@@ -101,3 +101,8 @@ gate (Chunk 12 not genuinely implemented, build-status still recorded
 the Chunk 12 stop, `main` CI red). See
 [`chunk-13-stop.md`](./chunk-13-stop.md). Do not create
 `packages/treasury` until that gate is green.
+`IMPLEMENTED` on `main`. The evaluator returns `mustStop: false`.
+Wallet and SoftPOS extend `packages/cards`; they do not invent a
+second cards domain. The original stop (Cards was then `PLANNED`) is
+preserved in [`chunk-12-stop.md`](./chunk-12-stop.md). The resumed
+implementation is recorded in [`chunk-12-resume.md`](./chunk-12-resume.md).
