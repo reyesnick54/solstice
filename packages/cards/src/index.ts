@@ -121,3 +121,46 @@ export {
   type CardsServiceOutcome,
   type HoldGatewayOutcome,
 } from './service.ts';
+export {
+  DEVICE_PAYMENT_TOKEN_STATUSES,
+  WALLET_PROVIDERS,
+  canTransitionDevicePaymentToken,
+  freezeDevicePaymentToken,
+  tokenBoundToDevice,
+  transitionDevicePaymentToken,
+  type DevicePaymentToken,
+  type DevicePaymentTokenStatus,
+  type WalletProvider,
+} from './wallet/token.ts';
+export { evaluateWalletEligibility, type WalletEligibilityResult } from './wallet/eligibility.ts';
+export { SimulatedAppleWalletAdapter, SimulatedGoogleWalletAdapter, walletAdapterFor } from './wallet/adapters.ts';
+export {
+  InMemoryWalletCallbackReplayStore,
+  signWalletCallback,
+  verifyWalletCallback,
+  type WalletCallbackEnvelope,
+} from './wallet/callback.ts';
+export { WalletService, type WalletServiceOutcome } from './wallet/service.ts';
+export { WalletStore } from './wallet/store.ts';
+export { freezeMerchant, type MerchantAcceptance } from './acceptance/merchant.ts';
+export {
+  ACCEPTANCE_DEVICE_STATUSES,
+  deviceCanTransact,
+  freezeAcceptanceDevice,
+  type AcceptanceDevice,
+} from './acceptance/device.ts';
+export { freezeAcceptanceSession, sessionIsUsable, type AcceptanceSession } from './acceptance/session.ts';
+export { SimulatedTapToPayAdapter } from './acceptance/simulated.ts';
+export {
+  InMemoryAcceptanceCallbackReplayStore,
+  signAcceptanceCallback,
+  verifyAcceptanceCallback,
+  type AcceptanceCallbackEnvelope,
+} from './acceptance/callback.ts';
+export { AcceptanceService, type AcceptanceServiceOutcome } from './acceptance/service.ts';
+export { AcceptanceStore } from './acceptance/store.ts';
+export { registerAcceptanceTreasuryBooks, ACCEPTANCE_TREASURY_ACCOUNT_IDS } from './acceptance/treasury.ts';
+export {
+  reconcileAcceptancePayment,
+  type AcceptanceReconciliationResult,
+} from './acceptance/reconciliation.ts';

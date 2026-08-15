@@ -51,6 +51,12 @@ export const ACTION_TYPES = {
   OPEN_CARD_DISPUTE: 'OPEN_CARD_DISPUTE',
   DECIDE_CARD_DISPUTE: 'DECIDE_CARD_DISPUTE',
   ASSESS_CARD_FEE: 'ASSESS_CARD_FEE',
+  PROVISION_CARD_TO_WALLET: 'PROVISION_CARD_TO_WALLET',
+  SUSPEND_WALLET_TOKEN: 'SUSPEND_WALLET_TOKEN',
+  REGISTER_ACCEPTANCE_DEVICE: 'REGISTER_ACCEPTANCE_DEVICE',
+  CREATE_ACCEPTANCE_SESSION: 'CREATE_ACCEPTANCE_SESSION',
+  START_ACCEPTANCE_PAYMENT: 'START_ACCEPTANCE_PAYMENT',
+  SETTLE_ACCEPTANCE_PAYMENT: 'SETTLE_ACCEPTANCE_PAYMENT',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -428,6 +434,74 @@ export type AssessCardFeeIntent = ActionIntent<AssessCardFeePayload> & {
   readonly actionType: typeof ACTION_TYPES.ASSESS_CARD_FEE;
 };
 
+export type ProvisionCardToWalletPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly deviceId: string;
+  readonly walletProvider: 'APPLE_WALLET' | 'GOOGLE_WALLET';
+  readonly tokenId: string;
+};
+
+export type SuspendWalletTokenPayload = {
+  readonly tokenId: string;
+  readonly accountId: AccountId;
+  readonly deviceId: string;
+  readonly reason: string;
+};
+
+export type RegisterAcceptanceDevicePayload = {
+  readonly merchantId: string;
+  readonly accountId: AccountId;
+  readonly deviceId: string;
+  readonly providerDeviceReference: string;
+};
+
+export type CreateAcceptanceSessionPayload = {
+  readonly merchantId: string;
+  readonly accountId: AccountId;
+  readonly deviceId: string;
+  readonly sessionId: string;
+  readonly currency: CurrencyCode;
+};
+
+export type StartAcceptancePaymentPayload = {
+  readonly sessionId: string;
+  readonly accountId: AccountId;
+  readonly paymentId: string;
+  readonly amount: Money;
+  readonly merchantReference: string;
+};
+
+export type SettleAcceptancePaymentPayload = {
+  readonly paymentId: string;
+  readonly accountId: AccountId;
+  readonly providerTransactionRef: string;
+};
+
+export type ProvisionCardToWalletIntent = ActionIntent<ProvisionCardToWalletPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PROVISION_CARD_TO_WALLET;
+};
+
+export type SuspendWalletTokenIntent = ActionIntent<SuspendWalletTokenPayload> & {
+  readonly actionType: typeof ACTION_TYPES.SUSPEND_WALLET_TOKEN;
+};
+
+export type RegisterAcceptanceDeviceIntent = ActionIntent<RegisterAcceptanceDevicePayload> & {
+  readonly actionType: typeof ACTION_TYPES.REGISTER_ACCEPTANCE_DEVICE;
+};
+
+export type CreateAcceptanceSessionIntent = ActionIntent<CreateAcceptanceSessionPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CREATE_ACCEPTANCE_SESSION;
+};
+
+export type StartAcceptancePaymentIntent = ActionIntent<StartAcceptancePaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.START_ACCEPTANCE_PAYMENT;
+};
+
+export type SettleAcceptancePaymentIntent = ActionIntent<SettleAcceptancePaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.SETTLE_ACCEPTANCE_PAYMENT;
+};
+
 export type CardIntent =
   | RequestCardIntent
   | ActivateCardIntent
@@ -441,4 +515,10 @@ export type CardIntent =
   | RefundCardTransactionIntent
   | OpenCardDisputeIntent
   | DecideCardDisputeIntent
-  | AssessCardFeeIntent;
+  | AssessCardFeeIntent
+  | ProvisionCardToWalletIntent
+  | SuspendWalletTokenIntent
+  | RegisterAcceptanceDeviceIntent
+  | CreateAcceptanceSessionIntent
+  | StartAcceptancePaymentIntent
+  | SettleAcceptancePaymentIntent;

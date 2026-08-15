@@ -37,3 +37,19 @@ post journals or issue Execution Authority.
 Unsupported card-currency vs transaction-currency authorizations are
 refused (`CURRENCY_NOT_SUPPORTED`). This chunk does not invent
 card-network FX.
+
+## Wallet provisioning (Chunk 12)
+
+Consumer wallet provisioning lives in the Cards wallet module. It
+reuses `CardNetworkToken` metadata and does not create a second card
+or token registry. Provider adapters are simulation-only.
+
+Card status remains authoritative. An `ACTIVE` device-payment token
+cannot authorize a `FROZEN` card.
+
+## Merchant SoftPOS / Tap-to-Pay (Chunk 12)
+
+Merchant contactless acceptance is a separate module. Solstice owns
+orchestration, merchant identity references, settlement, and
+reconciliation. It does not implement EMV, NFC kernels, or contactless
+cryptography.

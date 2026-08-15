@@ -4,7 +4,14 @@ import { join, relative } from 'node:path';
 import type { Finding } from './linter.ts';
 
 const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'coverage']);
-const COMPETING_CARD_PATHS = ['packages/card-processing', 'packages/issuer', 'packages/card-core'];
+const COMPETING_CARD_PATHS = [
+  'packages/card-processing',
+  'packages/issuer',
+  'packages/card-core',
+  'packages/wallet',
+  'packages/tokenization',
+  'packages/softpos',
+];
 
 function walk(dir: string, out: string[] = []): string[] {
   if (!existsSync(dir) || !statSync(dir).isDirectory()) {
@@ -56,6 +63,8 @@ export function lintCardBoundary(root: string): Finding[] {
     const inCards = rel.startsWith('packages/cards/') || rel.startsWith('services/cards/');
     const isProcessor = /simulated-processor\.ts$/.test(rel) || /processor\.ts$/.test(rel);
     const isCallback = /callback\.ts$/.test(rel);
+    const isWalletAdapter = /wallet\/adapters\.ts$/.test(rel);
+    const isAcceptanceAdapter = /acceptance\/simulated\.ts$/.test(rel) || /acceptance\/port\.ts$/.test(rel);
 
     for (let i = 0; i < lines.length; i += 1) {
       const line = lines[i] ?? '';
@@ -127,6 +136,81 @@ export function lintCardBoundary(root: string): Finding[] {
       ) {
         findings.push(
           finding('raw-pan-cvv', rel, lineNo, 'raw PAN/CVV must not appear in card domain state'),
+        );
+      }
+
+      if (
+        isWalletAdapter &&
+        !isTest &&
+        /issuer\.issue\s*\(|AuthorityIssuer/.test(line) &&
+        !/import type/.test(line)
+      ) {
+        findings.push(
+          finding(
+            'wallet-adapter-issues-authority',
+            rel,
+            lineNo,
+            'wallet adapter must not issue Execution Authority',
+          ),
+        );
+      }
+
+      if (
+        isAcceptanceAdapter &&
+        !isTest &&
+        /postJournal\s*\(|postCardJournal\s*\(/.test(line)
+      ) {
+        findings.push(
+          finding(
+            'acceptance-adapter-posts-ledger',
+            rel,
+            lineNo,
+            'acceptance adapter must not post journals',
+          ),
+        );
+      }
+
+      if (
+        inCards &&
+        !isTest &&
+        /emvKernel|nfcKernel|contactlessCryptograph|implementEmv|computeARQC|computeTC\b/i.test(line)
+      ) {
+        findings.push(
+          finding(
+            'custom-emv-cryptography',
+            rel,
+            lineNo,
+            'Solstice must not implement EMV/contactless cryptography',
+          ),
+        );
+      }
+
+      if (
+        !isTest &&
+        /providerBackendSecret|APPLE_WALLET_PRIVATE_KEY|GOOGLE_WALLET_PRIVATE_KEY/.test(line) &&
+        /mobile|app config|clientConfig/i.test(line)
+      ) {
+        findings.push(
+          finding(
+            'mobile-receives-provider-secret',
+            rel,
+            lineNo,
+            'mobile application must not receive a provider backend secret',
+          ),
+        );
+      }
+
+      if (
+        rel.includes('constitution.test.ts') &&
+        /CHUNK-12 must stop until the protected cards capability is IMPLEMENTED/.test(line)
+      ) {
+        findings.push(
+          finding(
+            'stale-chunk-12-must-stop',
+            rel,
+            lineNo,
+            'stale CHUNK-12 mustStop assertion must not return after Cards is IMPLEMENTED',
+          ),
         );
       }
     }

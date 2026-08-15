@@ -32,6 +32,7 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'IdentitySessionCreated', version: 1, status: 'current' },
   { eventType: 'IdentitySessionRevoked', version: 1, status: 'current' },
   { eventType: 'IdentityDeviceRegistered', version: 1, status: 'current' },
+  { eventType: 'IdentityDeviceTrustChanged', version: 1, status: 'current' },
   { eventType: 'IdentityRecoveryRequested', version: 1, status: 'current' },
   { eventType: 'BeneficiaryCreated', version: 1, status: 'current' },
   { eventType: 'PaymentInitiated', version: 1, status: 'current' },
@@ -85,6 +86,17 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'CardRefundReceived', version: 1, status: 'current' },
   { eventType: 'CardDisputeOpened', version: 1, status: 'current' },
   { eventType: 'CardDisputeDecided', version: 1, status: 'current' },
+  { eventType: 'WalletProvisioningRequested', version: 1, status: 'current' },
+  { eventType: 'WalletProvisioningStepUpRequired', version: 1, status: 'current' },
+  { eventType: 'WalletTokenActivated', version: 1, status: 'current' },
+  { eventType: 'WalletTokenSuspended', version: 1, status: 'current' },
+  { eventType: 'WalletTokenDeleted', version: 1, status: 'current' },
+  { eventType: 'AcceptanceDeviceRegistered', version: 1, status: 'current' },
+  { eventType: 'AcceptanceSessionCreated', version: 1, status: 'current' },
+  { eventType: 'AcceptancePaymentApproved', version: 1, status: 'current' },
+  { eventType: 'AcceptancePaymentDeclined', version: 1, status: 'current' },
+  { eventType: 'AcceptancePaymentSettled', version: 1, status: 'current' },
+  { eventType: 'AcceptanceReconciliationMismatch', version: 1, status: 'current' },
 
 ];
 

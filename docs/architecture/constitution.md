@@ -113,6 +113,12 @@ The only action types on this tree are declared in
 - `OPEN_CARD_DISPUTE`
 - `DECIDE_CARD_DISPUTE`
 - `ASSESS_CARD_FEE`
+- `PROVISION_CARD_TO_WALLET`
+- `SUSPEND_WALLET_TOKEN`
+- `REGISTER_ACCEPTANCE_DEVICE`
+- `CREATE_ACCEPTANCE_SESSION`
+- `START_ACCEPTANCE_PAYMENT`
+- `SETTLE_ACCEPTANCE_PAYMENT`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -129,6 +135,8 @@ They do not invent a parallel envelope.
 | `packages/payments/src/service.ts` beneficiary / quote / payment / inbound mutators | Payment store + journals | Kernel `submit` then verified authority |
 | `packages/payments/src/journals.ts` `postPaymentJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 | `packages/cards/src/service.ts` card lifecycle / processor callbacks | Card records, holds via banking, journals | Kernel `submit` then verified authority; holds only through `BankingOperationsService`; journals only via `Ledger.postJournal` |
+| `packages/cards/src/wallet/service.ts` wallet provisioning / token lifecycle | Device-payment tokens, provider references | Kernel `submit` then verified authority; adapters cannot issue authority |
+| `packages/cards/src/acceptance/service.ts` SoftPOS device / session / settlement | Acceptance devices, sessions, merchant payments, journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,

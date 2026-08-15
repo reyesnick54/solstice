@@ -26,6 +26,8 @@
     "db:down": "bash scripts/postgres-down.sh",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/domain/src/demo.ts",
     "demo:cards": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo.ts",
+    "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-wallet.ts",
+    "demo:acceptance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-acceptance.ts",
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",
     "check:extraction": "python3 scripts/extraction-dryrun.py",

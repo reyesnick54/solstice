@@ -75,6 +75,8 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
       'POST_DEPOSIT_REQUEST',
       'HOLD_REQUEST',
       'CARD_MANAGE_REQUEST',
+      'WALLET_PROVISION_REQUEST',
+      'ACCEPTANCE_MANAGE_REQUEST',
       'VIEW_ACCOUNT',
       'MANAGE_PROFILE',
     ],
@@ -93,7 +95,7 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
   const operationsActor = runtime.identity.provisionSimulatedActor({
     actorId: operationsActorId,
     jurisdiction: asJurisdiction('US'),
-    capabilities: ['HOLD_REQUEST'],
+    capabilities: ['HOLD_REQUEST', 'WALLET_PROVISION_REQUEST', 'ACCEPTANCE_MANAGE_REQUEST', 'CARD_MANAGE_REQUEST'],
   });
   if (!operationsActor.ok) {
     throw new Error(operationsActor.error.message);
@@ -139,6 +141,8 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
 
   const secrets = new InMemorySecretProvider('simulation', {
     'card-processor-callback': CARD_PROCESSOR_SECRET,
+    'wallet-provider-callback': CARD_PROCESSOR_SECRET,
+    'acceptance-provider-callback': CARD_PROCESSOR_SECRET,
   });
   const seeded = seedSimulationCatalog();
   const cards = new CardsService(
