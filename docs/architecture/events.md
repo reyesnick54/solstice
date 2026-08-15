@@ -150,7 +150,7 @@ Implemented Regulatory Digital Twin events (hashes and ids only; no raw customer
 - `regulatory.invariant.failed` → `RegulatoryTwinInvariantFailed`
 - `regulatory.readiness.assessed` → `RegulatoryTwinReadinessAssessed`
 
-Reserved (not implemented): `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
+Reserved (not implemented): `consent.*`, `clean_room.*`, `pyr.*`, `exchange.*`,
 `notification.*`, `analytics.*`.
 
 `evidence.*` is reserved as a namespace so evidence records are not

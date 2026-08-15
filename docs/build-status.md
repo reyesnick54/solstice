@@ -172,6 +172,23 @@ This document describes only what is implemented and tested in this tree.
   before Chunk 20 merged; that stop is historical
   (`docs/architecture/chunk-21-stop.md`). Resume:
   `docs/architecture/chunk-21-resume.md`.
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port integration, access audit,
+  export manifest, technical deletion / crypto-shred, derivation
+  lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance.
+- Consent Ledger and Purpose Firewall (Chunk 24, `packages/consent`):
+  append-only consent history, versioned Purpose Registry, granular
+  scope, subject confirmation, immutable receipts, revocation,
+  expiration, deterministic Purpose Firewall (default DENY),
+  short-lived signed DataUsePermits, and PDV
+  `DataUseAuthorizationPort` integration. Internal services cannot
+  bypass consent. Data-contribution consent does not execute
+  external sharing because Clean Room is not implemented. Not
+  GDPR/CCPA/PDPL legal approval.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -217,6 +234,71 @@ This document describes only what is implemented and tested in this tree.
   non-executing or simulation-gated layers. Live rails, live issuing,
   live wallet/SoftPOS certification, live treasury, and live
   securities trading remain later.
+- Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
+  and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
+  See `docs/architecture/chunk-22-stop.md`.
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port fail-closed default,
+  access audit, export manifest, technical deletion / crypto-shred,
+  derivation lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
+- Privacy Clean Room (Chunk 25) is **stopped**. Protected capability
+  `consent` is `PLANNED`. Chunk 24 has not merged. `CLEAN_ROOM`
+  remains reserved at `packages/clean-room`. See
+  `docs/architecture/chunk-25-stop.md`.
+- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
+  MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
+  and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
+  simulation owners. The Personal Economic Graph, Personal Economy
+  Agent, Growth Orchestrator, Personal Economic Value Engine, and
+  Regulatory Digital Twin are IMPLEMENTED as non-executing
+  intelligence layers. Live rails, live issuing, live
+  wallet/SoftPOS certification, live treasury, and live securities
+  trading remain later. The investment Risk Engine is Chunk 20.
+- Investment Risk Engine (`packages/risk`) and Model Registry
+  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
+  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
+- Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
+  `PLANNED`. Competing `trading-agents` / `investment-agents` /
+  `hedge-agent` / `capital-ai` packages must not be created.
+- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
+  MESH, PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest
+  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
+  INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners. RISK
+  and MODEL REGISTRY are IMPLEMENTED. The Personal Economic Graph,
+  Personal Economy Agent, Growth Orchestrator, Personal Economic Value
+  Engine, and Regulatory Digital Twin are IMPLEMENTED as
+  non-executing intelligence layers. Live rails, live issuing, live
+  wallet/SoftPOS certification, live treasury, and live securities
+  trading remain later.
+- Strategy Lab (Chunk 22) remains **PLANNED**. The original stop is
+  historical (`docs/architecture/chunk-22-stop.md`): it ran when Risk,
+  Model Registry, and Agentic Capital Mesh were still absent. Those
+  three are now IMPLEMENTED. Do not start Strategy Lab until Chunk 22R.
+- Reserved later bounded contexts that remain PLANNED (STRATEGY LAB,
+  PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest listed
+  in the constitution). PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS
+  are PARTIAL simulation owners. The Personal Economic Graph, Personal
+  Economy Agent, Growth Orchestrator, Personal Economic Value Engine,
+  Regulatory Digital Twin, Risk Engine, Model Registry, and Agentic
+  Capital Mesh are IMPLEMENTED as non-executing or simulation-gated
+  layers. Live rails, live issuing, live wallet/SoftPOS certification,
+  live treasury, and live securities trading remain later.
+- Reserved later bounded contexts that remain PLANNED (CLEAN ROOM,
+  PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
+  PARTIAL simulation owners. RISK, MODEL REGISTRY, AGENTIC CAPITAL
+  MESH, PERSONAL DATA VAULT, and CONSENT are IMPLEMENTED. The
+  Personal Economic Graph, Personal Economy Agent, Growth
+  Orchestrator, Personal Economic Value Engine, and Regulatory
+  Digital Twin are IMPLEMENTED as non-executing intelligence layers.
+  Live rails, live issuing, live wallet/SoftPOS certification, live
+  treasury, live securities trading, and Privacy Clean Room remain
+  later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -256,6 +338,7 @@ npm run demo:pdv
 npm run demo:risk
 npm run demo:strategy-lab
 npm run demo:mesh
+npm run demo:consent
 npm run typecheck
 npm run scan:secrets
 npm run ci

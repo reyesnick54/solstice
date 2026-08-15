@@ -91,6 +91,8 @@ Agents and later CI jobs use that result. They do not guess.
 | consent | PLANNED | packages/consent |
 | purpose-firewall | PLANNED | packages/consent |
 | clean-room | PLANNED | packages/clean-room |
+| clean-room | PLANNED | packages/clean-room |
+| consent | IMPLEMENTED | packages/consent |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -138,16 +140,14 @@ investments and does not start the Personal Economic Value Engine.
 Chunk 17 implements the Personal Economic Value Engine at
 `packages/platform/src/value`. It extends platform ownership rather
 than creating `packages/value-engine`. Capability
-`personal-economic-value-engine` is `IMPLEMENTED`.
-than creating `packages/value-engine`. It does not start the
-Regulatory Digital Twin. The evaluator returns `mustStop: false`.
+`personal-economic-value-engine` is `IMPLEMENTED`. It does not start
+the Regulatory Digital Twin. The evaluator returns `mustStop: false`.
 
 Chunk 18 implements the Regulatory Digital Twin at
 `packages/regulatory-twin`. It reuses the existing policy engine and
 Kernel. It does not issue Execution Authority, post journals, or
 activate candidate packs. Capability `regulatory-digital-twin` is
-`IMPLEMENTED`.
-activate candidate packs. The evaluator returns `mustStop: false`.
+`IMPLEMENTED`. The evaluator returns `mustStop: false`.
 
 Chunk 19 implements the reserved INVESTMENTS bounded context at
 `packages/investments` and `services/investments`. Capability
@@ -191,6 +191,25 @@ and Agentic Capital Mesh were absent. That stop is historical:
 reserved owners `packages/strategy-lab` and `services/strategy-lab`.
 Capability `strategy-lab` is `IMPLEMENTED`. Bounded context
 `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). Resume:
+reserved owners. Capability `strategy-lab` is `IMPLEMENTED`. Bounded
+context `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). The evaluator
+returns `mustStop: false`. Do not create `packages/backtest`,
+`packages/trading-lab`, `packages/quant`, or `packages/strategy-v2`.
+
+Chunk 25 (Privacy Clean Room) stops because protected capability
+`consent` is `PLANNED`. Consent Ledger / Purpose Firewall is Chunk 24
+and is not on `main`. `CLEAN_ROOM` remains reserved at
+`packages/clean-room`. The evaluator returns `mustStop: true`.
+Historical stop: [`chunk-25-stop.md`](./chunk-25-stop.md). Do not
+create `packages/privacy-compute`, `packages/data-clean-room`,
+`packages/secure-data-room`, `packages/research-room`, or
+`packages/clean-room-v2`.
+Chunk 22R implements the reserved STRATEGY LAB bounded context at
+`packages/strategy-lab` and `services/strategy-lab`. Capability
+`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
+`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
+Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
+historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
 [`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
 `packages/backtest`, `packages/trading-lab`, `packages/quant`, or
 `packages/strategy-v2`.
@@ -210,3 +229,13 @@ are migrated to `REYN_COIN` / `REYN_EXCHANGE` without implementing
 either package. See [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
 create `packages/reyn-ledger`, `packages/token-ledger`,
 `packages/crypto-ledger-v2`, or invent a public ticker.
+is `IMPLEMENTED`. It does not implement Clean Room, marketplace, or
+Reyn Coin. Consent is owned by Chunk 24 at `packages/consent`. The
+evaluator returns `mustStop: false`.
+
+Chunk 24 implements the reserved CONSENT bounded context at
+`packages/consent`. Capability `consent` is `IMPLEMENTED`. It
+replaces the Personal Data Vault fail-closed consent placeholder
+with a Purpose Firewall and short-lived DataUsePermits. It does
+not implement Clean Room, marketplace, or Reyn Coin. The evaluator
+returns `mustStop: false`.

@@ -1,4 +1,5 @@
 -- V018 Canonical Strategy Lab.
+-- V017 Canonical Strategy Lab.
 -- Immutable strategy versions, datasets, experiments, backtests, shadow,
 -- paper runs, and promotion reviews. No live trading. Experiment history
 -- cannot be deleted.
@@ -178,3 +179,9 @@ CREATE TABLE strategy_lab.kill_switch (
 
 GRANT USAGE ON SCHEMA strategy_lab TO customer_app;
 GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA strategy_lab TO customer_app;
+REVOKE ALL ON SCHEMA strategy_lab FROM PUBLIC;
+REVOKE ALL ON ALL TABLES IN SCHEMA strategy_lab FROM PUBLIC;
+
+GRANT USAGE ON SCHEMA strategy_lab TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA strategy_lab TO customer_app;
+REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA strategy_lab FROM customer_app;

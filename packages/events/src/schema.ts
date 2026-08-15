@@ -179,6 +179,14 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'CapitalMeshVetoApplied', version: 1, status: 'current' },
   { eventType: 'CapitalMeshProposalCreated', version: 1, status: 'current' },
   { eventType: 'CapitalMeshProposalStale', version: 1, status: 'current' },
+  { eventType: 'ConsentDraftCreated', version: 1, status: 'current' },
+  { eventType: 'ConsentGranted', version: 1, status: 'current' },
+  { eventType: 'ConsentRevoked', version: 1, status: 'current' },
+  { eventType: 'ConsentExpired', version: 1, status: 'current' },
+  { eventType: 'ConsentSuperseded', version: 1, status: 'current' },
+  { eventType: 'ConsentPermitIssued', version: 1, status: 'current' },
+  { eventType: 'ConsentAccessDenied', version: 1, status: 'current' },
+  { eventType: 'ConsentPurposeVersioned', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

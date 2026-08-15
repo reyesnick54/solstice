@@ -51,6 +51,9 @@
 /packages/model-registry/ @reyesnick54
 /packages/strategy-lab/ @reyesnick54
 /services/strategy-lab/ @reyesnick54
+/packages/agentic-capital-mesh/ @reyesnick54
+/packages/personal-data-vault/ @reyesnick54
+/packages/consent/ @reyesnick54
 /packages/contracts/ @reyesnick54
 /packages/compliance-kernel/ @reyesnick54
 /packages/evidence-vault/ @reyesnick54
