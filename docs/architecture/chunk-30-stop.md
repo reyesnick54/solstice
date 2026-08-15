@@ -287,7 +287,21 @@ surveillance packages.
 
 ## Z. Exact CI
 
-Recorded after this stop lands locally. See the PR body.
+Local `npm run ci` on this stop branch: **ok**.
+
+```
+architectural invariants: ok
+extraction dry-run: ok (26 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (58 registered paths, all Kernel-authorized)
+tests: 441 pass, 0 fail
+  including: CHUNK-30 stops because SunRey Exchange core is not IMPLEMENTED
+demo: ok (including consent, clean-room)
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
 
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
 `false`.
