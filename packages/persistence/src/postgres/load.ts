@@ -16,6 +16,8 @@ import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { EvidenceRecord } from '../../../evidence/src/vault.ts';
 import type { DomainEvent } from '../../../events/src/events.ts';
 import { parseEnvelope } from '../../../events/src/envelope.ts';
+import { AssetQuantity } from '../../../money/src/asset-quantity.ts';
+import type { LedgerAmount } from '../../../money/src/ledger-amount.ts';
 import { Money } from '../../../money/src/money.ts';
 import type { Journal, LedgerAccount, Posting } from '../../../ledger/src/types.ts';
 import { asIntentId, type ActionIntent } from '../../../permissions/src/action-intent.ts';
@@ -231,7 +233,7 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         id: row.id,
         accountId: row.account_id,
         direction: row.direction,
-        amount: Money.fromMinorUnits(BigInt(row.minor_units), row.currency.trim()),
+        amount: amountFromPersisted(row.currency.trim(), row.minor_units),
       }),
     );
     postingsByJournal.set(row.journal_id, list);
@@ -359,6 +361,13 @@ export async function loadEvidenceRecords(
   );
 }
 
+function amountFromPersisted(asset: string, units: string): LedgerAmount {
+  if (asset.startsWith('asset:')) {
+    return AssetQuantity.fromScaledUnits(BigInt(units), asset);
+  }
+  return Money.fromMinorUnits(BigInt(units), asset);
+}
+
 function reviveIntentPayload(value: unknown): unknown {
   if (value === null || typeof value !== 'object') {
     return value;
@@ -375,6 +384,19 @@ function reviveIntentPayload(value: unknown): unknown {
     return {
       ...obj,
       amount: Money.fromMinorUnitsString(String(amount.minorUnits), amount.currency),
+    };
+  }
+  if (
+    obj.amount &&
+    typeof obj.amount === 'object' &&
+    obj.amount !== null &&
+    'scaledUnits' in obj.amount &&
+    'assetId' in obj.amount
+  ) {
+    const amount = obj.amount as { scaledUnits: string; assetId: string };
+    return {
+      ...obj,
+      amount: AssetQuantity.fromScaledUnitsString(String(amount.scaledUnits), amount.assetId),
     };
   }
   return value;

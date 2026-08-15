@@ -10,6 +10,7 @@ import { asLegalEntityId } from '../../domain/src/legal-entity.ts';
 import { asProductId } from '../../domain/src/product.ts';
 import { isOk } from '../../domain/src/result.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { ACTION_TYPES, type CreatePaperOrderIntent } from '../../permissions/src/action-types.ts';
@@ -227,7 +228,7 @@ describe('paper portfolio core', () => {
     assert.equal(position.remainingCost.minorUnits, 100_000n);
     const cashAfterBuy = world.runtime.ledger
       .listPostingsForAccount(world.brokerage.id)
-      .reduce((sum, posting) => (posting.direction === 'CREDIT' ? sum + posting.amount.minorUnits : sum - posting.amount.minorUnits), 0n);
+      .reduce((sum, posting) => (posting.direction === 'CREDIT' ? sum + ledgerScaledUnits(posting.amount) : sum - ledgerScaledUnits(posting.amount)), 0n);
     assert.equal(cashAfterBuy, 400_000n);
     world.investments.setSimulatedPrice(asInstrumentId('SIM-ETF-1'), 11_000n, 'USD');
     const valuation = world.investments.valuePortfolio(asInvestmentAccountId('inv_demo'));
@@ -236,7 +237,7 @@ describe('paper portfolio core', () => {
     assert.equal(valuation.cash.minorUnits, 400_000n);
     const cashUnchanged = world.runtime.ledger
       .listPostingsForAccount(world.brokerage.id)
-      .reduce((sum, posting) => (posting.direction === 'CREDIT' ? sum + posting.amount.minorUnits : sum - posting.amount.minorUnits), 0n);
+      .reduce((sum, posting) => (posting.direction === 'CREDIT' ? sum + ledgerScaledUnits(posting.amount) : sum - ledgerScaledUnits(posting.amount)), 0n);
     assert.equal(cashUnchanged, 400_000n);
     const sell = order(world, 'demo_sell', { side: 'SELL', quantityUnits: FOUR_SHARES, orderId: 'ord_demo_sell' });
     assert.equal(sell.outcome, 'OK');

@@ -3,6 +3,7 @@ import { catalogFor, isCustomerFundedClass } from '../../domain/src/account-clas
 import type { LegalEntity } from '../../domain/src/legal-entity.ts';
 import type { Product, ProductCatalog } from '../../domain/src/product.ts';
 import { err, ok, type Result } from '../../domain/src/result.ts';
+import { AssetQuantity } from '../../money/src/asset-quantity.ts';
 import { Money } from '../../money/src/money.ts';
 import type { ActionIntent } from './action-intent.ts';
 import {
@@ -57,6 +58,9 @@ import {
   type CancelPaperOrderIntent,
   type SettleInvestmentIntent,
   type ProcessCorporateActionIntent,
+  type IssueSunReyCoinIntent,
+  type TransferSunReyCoinIntent,
+  type BurnSunReyCoinIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -269,6 +273,19 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.PROCESS_CORPORATE_ACTION) {
     return validateAccountOnly((intent as ProcessCorporateActionIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.ISSUE_SUNREY_COIN) {
+    return validateSunReyCoinAmount((intent as IssueSunReyCoinIntent).payload.amount);
+  }
+  if (intent.actionType === ACTION_TYPES.TRANSFER_SUNREY_COIN) {
+    const payload = (intent as TransferSunReyCoinIntent).payload;
+    if (payload.accountId === payload.destinationAccountId) {
+      return reject('destinationAccountId', 'source and destination must differ');
+    }
+    return validateSunReyCoinAmount(payload.amount);
+  }
+  if (intent.actionType === ACTION_TYPES.BURN_SUNREY_COIN) {
+    return validateSunReyCoinAmount((intent as BurnSunReyCoinIntent).payload.amount);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }
@@ -657,6 +674,22 @@ function validateOutgoingAccountMoney(
   }
   if (account.status === 'FROZEN') {
     return reject('status', 'FROZEN account cannot initiate outgoing movement');
+  }
+  return ok(true);
+}
+
+function validateSunReyCoinAmount(amount: AssetQuantity): StructuralValidationResult {
+  if (!(amount instanceof AssetQuantity)) {
+    return reject('amount', 'amount must be AssetQuantity (bigint scaled units)');
+  }
+  if (typeof amount.scaledUnits !== 'bigint') {
+    return reject('amount', 'scaled units must be bigint; floating-point is forbidden');
+  }
+  if (!amount.isPositive()) {
+    return reject('amount', 'amount must be a positive integer of scaled units');
+  }
+  if (typeof amount.assetId !== 'string' || amount.assetId.length === 0) {
+    return reject('assetId', 'asset id is required');
   }
   return ok(true);
 }

@@ -27,6 +27,7 @@ import { asHoldId } from './hold.ts';
 import { asProductId } from './product.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { createSimulationRuntime } from '../../../services/accounts/src/runtime.ts';
 import {
@@ -192,7 +193,7 @@ async function main(): Promise<void> {
     console.log(`  Journal ${journal.id}`);
     for (const posting of journal.postings) {
       console.log(
-        `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${posting.amount.minorUnits.toString()} ${posting.amount.currency}`,
+        `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${ledgerScaledUnits(posting.amount).toString()} ${ledgerAssetKey(posting.amount)}`,
       );
     }
     console.log(`    contra = ${SIMULATION_FUNDING_SOURCE_ID} (named simulation source; not corporate)`);
@@ -214,7 +215,7 @@ async function main(): Promise<void> {
   }
   for (const posting of withdrawal.journal.postings) {
     console.log(
-      `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${posting.amount.minorUnits.toString()} ${posting.amount.currency}`,
+      `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${ledgerScaledUnits(posting.amount).toString()} ${ledgerAssetKey(posting.amount)}`,
     );
   }
 
@@ -238,7 +239,7 @@ async function main(): Promise<void> {
   console.log(`  Class bridge: ${transfer.journal.classBridgeName}`);
   for (const posting of transfer.journal.postings) {
     console.log(
-      `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${posting.amount.minorUnits.toString()} ${posting.amount.currency}`,
+      `    ${posting.direction.padEnd(6)} ${posting.accountId}  ${ledgerScaledUnits(posting.amount).toString()} ${ledgerAssetKey(posting.amount)}`,
     );
   }
 

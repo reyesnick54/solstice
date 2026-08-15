@@ -10,6 +10,7 @@ import type { ComplianceKernel } from '../../kernel/src/kernel.ts';
 import type { KernelFacts } from '../../kernel/src/proofs.ts';
 import { GrowthAttributionLedger } from '../../ledger/src/growth.ts';
 import type { Ledger } from '../../ledger/src/journal.ts';
+import { asMoney } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import type { ActionIntent } from '../../permissions/src/action-intent.ts';
 import type {
@@ -1031,9 +1032,9 @@ export class InvestmentsService {
     let debits = Money.zero(currency);
     for (const posting of postings) {
       if (posting.direction === 'CREDIT') {
-        credits = credits.plus(posting.amount);
+        credits = credits.plus(asMoney(posting.amount));
       } else {
-        debits = debits.plus(posting.amount);
+        debits = debits.plus(asMoney(posting.amount));
       }
     }
     return credits.minus(debits);

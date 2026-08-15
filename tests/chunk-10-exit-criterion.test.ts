@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { ACTION_TYPES } from '../packages/permissions/src/action-types.ts';
 import { asIntentId } from '../packages/permissions/src/action-intent.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../packages/money/src/ledger-amount.ts';
 import { Money } from '../packages/money/src/money.ts';
 import { asPaymentId } from '../packages/payments/src/ids.ts';
 import { CALLBACK_SCHEMA_VERSION, hashCallbackBody } from '../packages/payments/src/rail-webhook.ts';
@@ -92,15 +93,15 @@ describe('Chunk 10 exit criterion', () => {
     );
 
     for (const journal of runtime.ledger.listJournals()) {
-      const currencies = new Set(journal.postings.map((row) => row.amount.currency));
+      const currencies = new Set(journal.postings.map((row) => ledgerAssetKey(row.amount)));
       assert.equal(currencies.size, 1);
       let debits = 0n;
       let credits = 0n;
       for (const posting of journal.postings) {
         if (posting.direction === 'DEBIT') {
-          debits += posting.amount.minorUnits;
+          debits += ledgerScaledUnits(posting.amount);
         } else {
-          credits += posting.amount.minorUnits;
+          credits += ledgerScaledUnits(posting.amount);
         }
       }
       assert.equal(debits, credits);

@@ -8,6 +8,7 @@ import {
 import type { CustomerId } from '../../../packages/domain/src/customer.ts';
 import { err, isErr, ok, type Result } from '../../../packages/domain/src/result.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
+import { asMoney, ledgerAssetKey } from '../../../packages/money/src/ledger-amount.ts';
 import { applyFxConversion, Money, type FxConversion } from '../../../packages/money/src/money.ts';
 
 export type MixedCurrencyWithoutConversion = {
@@ -100,8 +101,8 @@ export function balanceOfAccount(
   let debits = Money.zero(account.currency);
   const currencies = new Set<string>([account.currency]);
   for (const posting of postings) {
-    currencies.add(posting.amount.currency);
-    if (posting.amount.currency !== account.currency) {
+    currencies.add(ledgerAssetKey(posting.amount));
+    if (ledgerAssetKey(posting.amount) !== account.currency) {
       return err({
         code: 'MIXED_CURRENCY_WITHOUT_CONVERSION',
         currencies: [...currencies],
@@ -109,9 +110,9 @@ export function balanceOfAccount(
       });
     }
     if (posting.direction === 'CREDIT') {
-      credits = credits.plus(posting.amount);
+      credits = credits.plus(asMoney(posting.amount));
     } else {
-      debits = debits.plus(posting.amount);
+      debits = debits.plus(asMoney(posting.amount));
     }
   }
   return ok(credits.minus(debits));

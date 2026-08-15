@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { ledgerAssetKey, ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import {
   captureFeePlan,
@@ -19,15 +20,15 @@ import {
 } from './accounting.ts';
 
 function assertSingleCurrencyBalanced(plan: PaymentJournalPlan): void {
-  const currencies = new Set(plan.postings.map((row) => row.amount.currency));
+  const currencies = new Set(plan.postings.map((row) => ledgerAssetKey(row.amount)));
   assert.equal(currencies.size, 1, `${plan.suffix} mixed currencies`);
   let debits = 0n;
   let credits = 0n;
   for (const posting of plan.postings) {
     if (posting.direction === 'DEBIT') {
-      debits += posting.amount.minorUnits;
+      debits += ledgerScaledUnits(posting.amount);
     } else {
-      credits += posting.amount.minorUnits;
+      credits += ledgerScaledUnits(posting.amount);
     }
   }
   assert.equal(debits, credits, `${plan.suffix} unbalanced`);
@@ -60,8 +61,8 @@ describe('FX accounting journals', () => {
   });
 
   it('never posts USD and SAR on the same journal', () => {
-    const usdSides = sourceFxPlan(usd).postings.map((row) => row.amount.currency);
-    const sarSides = destinationFxPlan(sar).postings.map((row) => row.amount.currency);
+    const usdSides = sourceFxPlan(usd).postings.map((row) => ledgerAssetKey(row.amount));
+    const sarSides = destinationFxPlan(sar).postings.map((row) => ledgerAssetKey(row.amount));
     assert.deepEqual([...new Set(usdSides)], ['USD']);
     assert.deepEqual([...new Set(sarSides)], ['SAR']);
   });

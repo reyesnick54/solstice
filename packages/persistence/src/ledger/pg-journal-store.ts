@@ -2,6 +2,7 @@ import type { PoolClient } from 'pg';
 
 import type { JournalPersistSink } from '../../../ledger/src/journal.ts';
 import { LedgerInvariantError, type Journal } from '../../../ledger/src/types.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../../../money/src/ledger-amount.ts';
 import type { ExecutionAuthority } from '../../../permissions/src/execution-authority.ts';
 import { logPersistenceEvent } from '../logging.ts';
 import { isUniqueViolation } from '../postgres/write.ts';
@@ -76,8 +77,8 @@ async function insertAuthorizedJournal(
           journal.id,
           posting.accountId,
           posting.direction,
-          posting.amount.currency,
-          posting.amount.minorUnits.toString(),
+          ledgerAssetKey(posting.amount),
+          ledgerScaledUnits(posting.amount).toString(),
           ordinal,
         ],
       );

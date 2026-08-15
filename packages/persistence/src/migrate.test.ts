@@ -352,6 +352,31 @@ describe('versioned SQL migrations', () => {
     assert.equal(/coin_issued BOOLEAN NOT NULL CHECK \(coin_issued = FALSE\)/.test(v021.sql), true);
   });
 
+  it('customer V022 persists SunRey Coin metadata without a second ledger or ticker', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v022 = files.find((file) => file.version === 22);
+    assert.ok(v022);
+    assert.equal(v022.filename, 'V022__sunrey_coin.sql');
+    assert.match(v022.sql, /CREATE SCHEMA IF NOT EXISTS sunrey_coin/);
+    assert.match(v022.sql, /CREATE TABLE sunrey_coin.asset/);
+    assert.match(v022.sql, /CREATE TABLE sunrey_coin.supply_policy/);
+    assert.match(v022.sql, /ticker_status TEXT NOT NULL CHECK \(ticker_status = 'NOT_ASSIGNED'\)/);
+    assert.match(v022.sql, /GRANT USAGE ON SCHEMA sunrey_coin TO customer_app/);
+    assert.equal(/CREATE TABLE sunrey_coin\.journal/i.test(v022.sql), false);
+    assert.equal(/APY|APR|market_price|ticker_symbol/i.test(v022.sql), false);
+  });
+
+  it('ledger V005 widens journal asset columns for digital-asset identifiers', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v005 = files.find((file) => file.version === 5);
+    assert.ok(v005);
+    assert.equal(v005.filename, 'V005__digital_asset_journals.sql');
+    assert.match(v005.sql, /ALTER TABLE ledger\.ledger_account/);
+    assert.match(v005.sql, /ALTER TABLE ledger\.journal/);
+    assert.match(v005.sql, /ALTER TABLE ledger\.posting/);
+    assert.match(v005.sql, /TYPE TEXT/);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

@@ -199,6 +199,16 @@ This document describes only what is implemented and tested in this tree.
   issuance. Historical stop: `docs/architecture/chunk-25-stop.md`.
   Resume: `docs/architecture/chunk-25-resume.md`. Not GDPR/CCPA/
   PDPL/HIPAA/DP/TEE compliance.
+- SunRey Coin (Chunk 26R, `packages/sunrey-coin`): simulation
+  economic ledger for authorized Clean Room contributions.
+  `AssetQuantity` on the canonical Ledger, Kernel-gated issue /
+  transfer / burn, FLOOR formula v1, derived custody positions,
+  supply reconciliation without auto-correction, metadata schema
+  `sunrey_coin`, and a read-only agent tool. Public ticker is
+  `NOT_ASSIGNED`. Historical stop: `docs/architecture/chunk-26-stop.md`.
+  Resume: `docs/architecture/chunk-26-resume.md`. Not a security,
+  commodity, deposit, e-money, or priced token. SunRey Exchange and
+  SunRey Chain remain PLANNED.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -222,20 +232,22 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Reyn Coin and Reyn Exchange. Historical `PYRAMID` / `PYRAMID_EXCHANGE`
-  reservations are now `REYN_COIN` (`packages/reyn-coin`) and
-  `REYN_EXCHANGE` (`packages/reyn-exchange`). Neither package exists.
-  Consent and Clean Room are now `IMPLEMENTED`; do not begin coin
-  issuance from this chunk. See `docs/architecture/chunk-26-stop.md`.
-  Do not invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
-  unresolved. Historical PRs `#18` and `#19` are not canonical.
-- Reserved later bounded contexts that remain PLANNED (REYN COIN,
-  REYN EXCHANGE, PYRAMID DATA EXCHANGE, SOVEREIGN CELLS, and the rest
-  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
+- SunRey Exchange and SunRey Chain. Historical `PYRAMID` /
+  `PYRAMID_EXCHANGE` / `REYN_COIN` / `REYN_EXCHANGE` reservations are
+  now `SUNREY_COIN` (`packages/sunrey-coin`, IMPLEMENTED simulation),
+  `SUNREY_EXCHANGE` (`packages/sunrey-exchange`, PLANNED), and
+  `SUNREY_CHAIN` (`packages/sunrey-chain`, PLANNED). Do not invent a
+  public ticker. `PYRAMID_DATA_EXCHANGE` naming remains unresolved.
+  Historical PRs `#18` and `#19` are not canonical. See
+  `docs/architecture/chunk-26-resume.md`.
+- Reserved later bounded contexts that remain PLANNED (SUNREY
+  EXCHANGE, SUNREY CHAIN, PYRAMID DATA EXCHANGE, SOVEREIGN CELLS, and
+  the rest listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
   INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners.
-  Consent and Privacy Clean Room are IMPLEMENTED. Live rails, live
-  issuing, live wallet/SoftPOS certification, live treasury, and live
-  securities trading remain later.
+  Consent, Privacy Clean Room, and SunRey Coin are IMPLEMENTED
+  simulation. Live rails, live issuing, live wallet/SoftPOS
+  certification, live treasury, live securities trading, and a public
+  ticker remain later.
 - Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
   and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
   See `docs/architecture/chunk-22-stop.md`.

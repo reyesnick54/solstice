@@ -52,6 +52,12 @@ const SIMULATION_TREASURY_ACTIONS = [
   'SET_TREASURY_KILL_SWITCH',
 ] as const;
 
+const SIMULATION_SUNREY_COIN_ACTIONS = [
+  'ISSUE_SUNREY_COIN',
+  'TRANSFER_SUNREY_COIN',
+  'BURN_SUNREY_COIN',
+] as const;
+
 const SIMULATION_INVESTMENT_ACTIONS = [
   'OPEN_INVESTMENT_ACCOUNT',
   'FUND_BROKERAGE_CASH',
@@ -148,7 +154,7 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
   capability({
     capabilityId: 'cap-gb-sim-digital-custody',
     legalEntityId: 'le_solstice_uk_ltd',
-    actionTypes: [...SIMULATION_BANKING_ACTIONS],
+    actionTypes: [...SIMULATION_BANKING_ACTIONS, ...SIMULATION_SUNREY_COIN_ACTIONS],
     productIds: ['prod_digital_usd_gb'],
     productTypes: ['DIGITAL_ASSET_CUSTODY'],
     environment: 'simulation',

@@ -38,6 +38,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'capital_mesh',
   'consent',
   'clean_room',
+  'sunrey_coin',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -238,6 +239,13 @@ export const EVENT_TYPE_NAMES = [
   'CleanRoomEgressSuppressed',
   'CleanRoomEgressDenied',
   'CleanRoomContributionRecorded',
+  'SunReyCoinContributionEvaluated',
+  'SunReyCoinIssuanceProposed',
+  'SunReyCoinIssued',
+  'SunReyCoinTransferCompleted',
+  'SunReyCoinBurned',
+  'SunReyCoinSupplyReconciled',
+  'SunReyCoinReconciliationMismatch',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -429,6 +437,13 @@ export const EVENT_SCHEMA_REFS = {
   CleanRoomEgressSuppressed: 'solstice.clean_room.egress.suppressed/1',
   CleanRoomEgressDenied: 'solstice.clean_room.egress.denied/1',
   CleanRoomContributionRecorded: 'solstice.clean_room.contribution.recorded/1',
+  SunReyCoinContributionEvaluated: 'solstice.sunrey_coin.contribution.evaluated/1',
+  SunReyCoinIssuanceProposed: 'solstice.sunrey_coin.issuance.proposed/1',
+  SunReyCoinIssued: 'solstice.sunrey_coin.issued/1',
+  SunReyCoinTransferCompleted: 'solstice.sunrey_coin.transfer.completed/1',
+  SunReyCoinBurned: 'solstice.sunrey_coin.burned/1',
+  SunReyCoinSupplyReconciled: 'solstice.sunrey_coin.supply.reconciled/1',
+  SunReyCoinReconciliationMismatch: 'solstice.sunrey_coin.reconciliation.mismatch/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -620,6 +635,13 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   CleanRoomEgressSuppressed: 'clean_room',
   CleanRoomEgressDenied: 'clean_room',
   CleanRoomContributionRecorded: 'clean_room',
+  SunReyCoinContributionEvaluated: 'sunrey_coin',
+  SunReyCoinIssuanceProposed: 'sunrey_coin',
+  SunReyCoinIssued: 'sunrey_coin',
+  SunReyCoinTransferCompleted: 'sunrey_coin',
+  SunReyCoinBurned: 'sunrey_coin',
+  SunReyCoinSupplyReconciled: 'sunrey_coin',
+  SunReyCoinReconciliationMismatch: 'sunrey_coin',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

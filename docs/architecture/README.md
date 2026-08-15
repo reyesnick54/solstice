@@ -25,5 +25,10 @@
   `packages/clean-room`. Historical stop:
   [`chunk-25-stop.md`](./chunk-25-stop.md). Resume:
   [`chunk-25-resume.md`](./chunk-25-resume.md).
+- [SunRey Coin](./sunrey-coin.md) — simulation economic ledger at
+  `packages/sunrey-coin`. Historical stop:
+  [`chunk-26-stop.md`](./chunk-26-stop.md). Resume:
+  [`chunk-26-resume.md`](./chunk-26-resume.md). Public ticker is
+  UNDECIDED. SunRey Exchange and SunRey Chain remain PLANNED.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
