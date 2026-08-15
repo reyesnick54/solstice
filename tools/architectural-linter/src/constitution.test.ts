@@ -344,9 +344,6 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-12 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
-    assert.equal(declared.missing.includes('identity'), false);
-    assert.equal(declared.missing.includes('payments'), false);
-    assert.equal(declared.missing.includes('security'), false);
   });
 
   it('CHUNK-13 capability gate is clear and the reserved treasury owner is still absent', () => {
