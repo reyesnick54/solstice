@@ -46,15 +46,15 @@ export type PaperOrderStatus = (typeof PAPER_ORDER_STATUSES)[number];
 
 export const LEGAL_ORDER_TRANSITIONS: Readonly<Record<PaperOrderStatus, readonly PaperOrderStatus[]>> =
   Object.freeze({
-    DRAFT: Object.freeze(['PENDING_AUTHORIZATION', 'CANCELLED', 'REJECTED']),
-    PENDING_AUTHORIZATION: Object.freeze(['ACCEPTED', 'REJECTED', 'CANCELLED']),
-    ACCEPTED: Object.freeze(['OPEN', 'FILLED', 'REJECTED', 'CANCELLED', 'EXPIRED']),
-    OPEN: Object.freeze(['PARTIALLY_FILLED', 'FILLED', 'CANCELLED', 'EXPIRED']),
-    PARTIALLY_FILLED: Object.freeze(['FILLED', 'CANCELLED', 'EXPIRED']),
-    FILLED: Object.freeze([]),
-    CANCELLED: Object.freeze([]),
-    REJECTED: Object.freeze([]),
-    EXPIRED: Object.freeze([]),
+    DRAFT: Object.freeze(['PENDING_AUTHORIZATION', 'CANCELLED', 'REJECTED'] as const),
+    PENDING_AUTHORIZATION: Object.freeze(['ACCEPTED', 'REJECTED', 'CANCELLED'] as const),
+    ACCEPTED: Object.freeze(['OPEN', 'FILLED', 'REJECTED', 'CANCELLED', 'EXPIRED'] as const),
+    OPEN: Object.freeze(['PARTIALLY_FILLED', 'FILLED', 'CANCELLED', 'EXPIRED'] as const),
+    PARTIALLY_FILLED: Object.freeze(['FILLED', 'CANCELLED', 'EXPIRED'] as const),
+    FILLED: Object.freeze([] as const),
+    CANCELLED: Object.freeze([] as const),
+    REJECTED: Object.freeze([] as const),
+    EXPIRED: Object.freeze([] as const),
   });
 
 export const SETTLEMENT_STATES = ['TRADE_DATE', 'PENDING_SETTLEMENT', 'SETTLED'] as const;

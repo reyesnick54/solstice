@@ -177,7 +177,8 @@ describe('versioned SQL migrations', () => {
     assert.match(v012.sql, /live_state BOOLEAN NOT NULL CHECK \(live_state = FALSE\)/);
     assert.match(v012.sql, /investment_profile_no_balance/);
     assert.match(v012.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
-    assert.equal(/\bapy\b|\bapr\b/i.test(v012.sql.replace(/--[^\n]*/g, '')), false);
+    assert.match(v012.sql, /investment_valuation_no_yield/);
+    assert.equal(/\b(apy|apr)\b/i.test(v012.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
   });
 
   it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {

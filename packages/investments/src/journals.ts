@@ -64,7 +64,7 @@ export function postInvestmentJournal(
     executionAuthority: input.executionAuthority,
     actionType: input.actionType,
     memo: input.memo,
-    classBridge: input.classBridge,
+    ...(input.classBridge ? { classBridge: input.classBridge } : {}),
     postings,
   });
 }
