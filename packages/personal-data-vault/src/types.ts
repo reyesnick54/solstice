@@ -123,6 +123,10 @@ export type DataAccessRecord = {
   readonly decision: AccessDecision;
   readonly reason: string;
   readonly occurredAt: UtcInstant;
+  readonly consentDecisionId?: string;
+  readonly purposeId?: string;
+  readonly consentVersion?: string;
+  readonly permitId?: string;
 };
 
 export type DataDerivation = {

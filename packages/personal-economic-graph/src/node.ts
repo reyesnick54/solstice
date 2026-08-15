@@ -133,6 +133,9 @@ export type DataAssetAttributes = {
   readonly vaultAssetId?: string;
   readonly contentHash?: string;
   readonly category?: string;
+  readonly consentVersion?: string;
+  readonly purposeVersion?: string;
+  readonly derivationVersion?: string;
 };
 
 export type OpportunityAttributes = {

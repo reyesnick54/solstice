@@ -219,6 +219,14 @@ export const EVENT_TYPE_NAMES = [
   'CapitalMeshVetoApplied',
   'CapitalMeshProposalCreated',
   'CapitalMeshProposalStale',
+  'ConsentDraftCreated',
+  'ConsentGranted',
+  'ConsentRevoked',
+  'ConsentExpired',
+  'ConsentSuperseded',
+  'ConsentPermitIssued',
+  'ConsentAccessDenied',
+  'ConsentPurposeVersioned',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -392,6 +400,14 @@ export const EVENT_SCHEMA_REFS = {
   CapitalMeshVetoApplied: 'solstice.capital_mesh.veto.applied/1',
   CapitalMeshProposalCreated: 'solstice.capital_mesh.proposal.created/1',
   CapitalMeshProposalStale: 'solstice.capital_mesh.proposal.stale/1',
+  ConsentDraftCreated: 'solstice.consent.draft.created/1',
+  ConsentGranted: 'solstice.consent.granted/1',
+  ConsentRevoked: 'solstice.consent.revoked/1',
+  ConsentExpired: 'solstice.consent.expired/1',
+  ConsentSuperseded: 'solstice.consent.superseded/1',
+  ConsentPermitIssued: 'solstice.consent.permit.issued/1',
+  ConsentAccessDenied: 'solstice.consent.access.denied/1',
+  ConsentPurposeVersioned: 'solstice.consent.purpose.versioned/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -565,6 +581,14 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   CapitalMeshVetoApplied: 'capital_mesh',
   CapitalMeshProposalCreated: 'capital_mesh',
   CapitalMeshProposalStale: 'capital_mesh',
+  ConsentDraftCreated: 'consent',
+  ConsentGranted: 'consent',
+  ConsentRevoked: 'consent',
+  ConsentExpired: 'consent',
+  ConsentSuperseded: 'consent',
+  ConsentPermitIssued: 'consent',
+  ConsentAccessDenied: 'consent',
+  ConsentPurposeVersioned: 'consent',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

@@ -48,6 +48,9 @@ export const IDENTITY_CAPABILITIES = [
   'VAULT_DELETE_OWN',
   'VAULT_INGEST_OWN',
   'OPERATE_PERSONAL_DATA_VAULT',
+  'CONSENT_GRANT_OWN',
+  'CONSENT_REVOKE_OWN',
+  'CONSENT_VIEW_OWN',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -120,6 +123,9 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   VAULT_DELETE_OWN: [],
   VAULT_INGEST_OWN: [],
   OPERATE_PERSONAL_DATA_VAULT: [],
+  CONSENT_GRANT_OWN: [],
+  CONSENT_REVOKE_OWN: [],
+  CONSENT_VIEW_OWN: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -217,6 +223,9 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
     granted.add('VIEW_GROWTH_PLAN');
     granted.add('VIEW_ECONOMIC_VALUE');
     granted.add('CONFIRM_ECONOMIC_MANDATE');
+    granted.add('CONSENT_VIEW_OWN');
+    granted.add('CONSENT_GRANT_OWN');
+    granted.add('CONSENT_REVOKE_OWN');
   }
 
   const kycFresh = facts.kyc !== null && kycIsFresh(facts.kyc, facts.now);

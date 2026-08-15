@@ -860,8 +860,8 @@ export class PersonalDataVault {
       return allowed as Result<never, VaultServiceFailure>;
     }
     return err({
-      code: 'CONSENT_SYSTEM_NOT_IMPLEMENTED',
-      message: 'third-party contribution/use is denied until Chunk 24 consent controls exist',
+      code: 'DEPENDENCY_NOT_IMPLEMENTED',
+      message: 'third-party contribution execution remains denied until Clean Room exists',
     });
   }
 
@@ -967,6 +967,50 @@ export class PersonalDataVault {
     };
   }
 
+  readForAuthorizedUse(
+    actor: unknown,
+    request: {
+      readonly subjectId: string;
+      readonly assetId: DataAssetId;
+      readonly purposeRef: string;
+      readonly useClass: DataUseClass;
+      readonly operation: VaultOperation;
+      readonly requestedScope: string;
+      readonly fields?: readonly string[];
+      readonly category?: import('./taxonomy.ts').DataCategory;
+    },
+  ): Result<unknown, VaultServiceFailure> {
+    const allowed = this.gate(actor, {
+      subjectId: request.subjectId,
+      resourceId: request.assetId,
+      operation: request.operation,
+      useClass: request.useClass,
+      purposeRef: request.purposeRef,
+      requestedScope: request.requestedScope,
+      capability: VAULT_VIEW_CAPABILITY,
+      ...(request.fields ? { fields: request.fields } : {}),
+      ...(request.category ? { category: request.category } : {}),
+    });
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const payload = this.decryptOwned(request.subjectId, request.assetId);
+    if (!payload.ok) {
+      return payload;
+    }
+    if (!request.fields || request.fields.length === 0) {
+      return payload;
+    }
+    const body = payload.value as Record<string, unknown>;
+    const minimized: Record<string, unknown> = {};
+    for (const field of request.fields) {
+      if (field in body) {
+        minimized[field] = body[field];
+      }
+    }
+    return ok(minimized);
+  }
+
   private gate(
     actor: unknown,
     request: {
@@ -977,6 +1021,8 @@ export class PersonalDataVault {
       readonly purposeRef: string;
       readonly requestedScope: string;
       readonly capability: IdentityCapability;
+      readonly fields?: readonly string[];
+      readonly category?: import('./taxonomy.ts').DataCategory;
     },
   ): Result<import('../../identity/src/actor-context.ts').VerifiedActorContext, VaultServiceFailure> {
     const result = this.broker.authorize({ actor, ...request });

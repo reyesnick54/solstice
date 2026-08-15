@@ -63,6 +63,7 @@ never be two implementations of these systems.
 | Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
 | Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
 | Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
+| Consent Ledger / Purpose Firewall | `packages/consent` | `packages/consent/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -73,11 +74,10 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`personal-data-vault`.
-`agentic-capital-mesh`.
+`strategy-lab`, `agentic-capital-mesh`, `personal-data-vault`, `consent`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
-`treasury`, `investments`.
+`treasury`, `investments`, `strategy-lab`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -92,17 +92,12 @@ implemented in `packages/platform/src/value` on that same reserved path.
 `packages/investments` is the canonical investment account and paper
 portfolio owner. `packages/risk` is the canonical investment Risk
 Engine. `packages/model-registry` is the canonical Model Registry.
+`packages/agentic-capital-mesh` is the canonical Agentic Capital Mesh.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
-`services/strategy-lab` (no LIVE stage). Agentic Capital Mesh remains
-reserved and unimplemented at `packages/agentic-capital-mesh`.
-portfolio owner. Strategy Lab is reserved and not implemented:
-`STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
-`packages/investments` is the canonical investment account / portfolio
-core. The investment Risk Engine is `packages/risk`. The Model Registry
-is `packages/model-registry`. The Agentic Capital Mesh is
-`packages/agentic-capital-mesh`. Strategy Lab remains reserved and
-unimplemented at `packages/strategy-lab`.
+`services/strategy-lab` (no LIVE stage). Personal Data Vault is
+`IMPLEMENTED` at `packages/personal-data-vault`. Consent is
+`IMPLEMENTED` at `packages/consent`.
 
 ### Action types
 
@@ -400,8 +395,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/regulatory-twin` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
@@ -417,6 +411,10 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/risk` | `packages/domain`, `packages/money`, `packages/config`, `packages/evidence`, `packages/events`, `packages/model-registry`, `packages/permissions` |
 | `packages/model-registry` | `packages/domain`, `packages/identity` |
 | `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
+| `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
+| `services/strategy-lab` | `packages/strategy-lab` |
+| `packages/personal-data-vault` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events` |
+| `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
@@ -645,12 +643,10 @@ phase is absent.
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | IMPLEMENTED | `packages/risk` |
 | MODEL REGISTRY | IMPLEMENTED | `packages/model-registry` |
-| AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
+| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
-| CONSENT | PLANNED | `packages/consent` |
+| CONSENT | IMPLEMENTED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
 | PYRAMID | PLANNED | `packages/pyramid` |

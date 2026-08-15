@@ -18,7 +18,18 @@ export type VaultAccessFailure = {
     | 'OPERATOR_DEFAULT_DENY'
     | 'AGENT_WILDCARD_FORBIDDEN'
     | 'PURPOSE_REQUIRED'
-    | 'CROSS_SUBJECT_DENIED';
+    | 'CROSS_SUBJECT_DENIED'
+    | 'NO_ACTIVE_CONSENT'
+    | 'PURPOSE_MISMATCH'
+    | 'RESOURCE_OUT_OF_SCOPE'
+    | 'OPERATION_OUT_OF_SCOPE'
+    | 'RECIPIENT_OUT_OF_SCOPE'
+    | 'CONSENT_EXPIRED'
+    | 'CONSENT_REVOKED'
+    | 'RETENTION_EXCEEDS_PERMISSION'
+    | 'ONWARD_SHARING_DENIED'
+    | 'ASSURANCE_INSUFFICIENT'
+    | 'DEPENDENCY_NOT_IMPLEMENTED';
   readonly message: string;
 };
 
@@ -36,13 +47,22 @@ export type DataUseAuthorizationRequest = {
   readonly useClass: DataUseClass;
   readonly purposeRef: string;
   readonly requestedScope: string;
+  readonly recipientId?: string;
+  readonly category?: import('./taxonomy.ts').DataCategory;
+  readonly fields?: readonly string[];
+  readonly onwardSharing?: boolean;
+  readonly requestedRetentionDays?: number;
 };
 
 export type DataUseAuthorizationDecision = {
-  readonly decision: 'ALLOWED' | 'DENIED';
+  readonly decision: 'ALLOWED' | 'DENIED' | 'REVIEW_REQUIRED';
   readonly reason: string;
   readonly reasonCode: string;
-  readonly consentSystemImplemented: false;
+  readonly consentSystemImplemented: boolean;
+  readonly consentDecisionId?: string;
+  readonly purposeId?: string;
+  readonly consentVersion?: string;
+  readonly permitId?: string;
 };
 
 export type DataUseAuthorizationPort = {
@@ -50,9 +70,9 @@ export type DataUseAuthorizationPort = {
 };
 
 /**
- * Chunk 24 will replace this port with the Consent Ledger / Purpose Firewall.
- * Until then: subject self-access may proceed after identity/capability checks;
- * every consent-requiring use fails closed.
+ * Fail-closed placeholder used when packages/consent is not wired.
+ * Subject self-access may proceed after identity/capability checks.
+ * Consent-requiring use is denied until ConsentDataUseAuthorization is injected.
  */
 export function defaultDataUseAuthorization(request: DataUseAuthorizationRequest): DataUseAuthorizationDecision {
   if (request.useClass === 'SUBJECT_SELF_ACCESS' && request.actor.subjectId === request.subjectId) {
@@ -65,7 +85,7 @@ export function defaultDataUseAuthorization(request: DataUseAuthorizationRequest
   }
   return {
     decision: 'DENIED',
-    reason: 'third-party or system use requiring user consent is denied until Chunk 24',
+    reason: 'third-party or system use requiring user consent is denied until the Consent Ledger is wired',
     reasonCode: 'CONSENT_SYSTEM_NOT_IMPLEMENTED',
     consentSystemImplemented: false,
   };
@@ -80,6 +100,11 @@ export type VaultAccessRequest = {
   readonly purposeRef: string;
   readonly requestedScope: string;
   readonly capability: IdentityCapability;
+  readonly recipientId?: string;
+  readonly category?: import('./taxonomy.ts').DataCategory;
+  readonly fields?: readonly string[];
+  readonly onwardSharing?: boolean;
+  readonly requestedRetentionDays?: number;
 };
 
 export type AuthorizedVaultAccess = {
@@ -93,6 +118,34 @@ export type AuthorizedVaultAccess = {
 
 function hasCapability(actor: VerifiedActorContext, capability: IdentityCapability): boolean {
   return actor.authorizedCapabilities.includes(capability);
+}
+
+function mapAuthorizationCode(reasonCode: string): VaultAccessFailure['code'] {
+  const known: readonly VaultAccessFailure['code'][] = [
+    'ACTOR_CONTEXT_REQUIRED',
+    'CAPABILITY_DENIED',
+    'SUBJECT_MISMATCH',
+    'ASSURANCE_DENIED',
+    'CONSENT_SYSTEM_NOT_IMPLEMENTED',
+    'OPERATOR_DEFAULT_DENY',
+    'AGENT_WILDCARD_FORBIDDEN',
+    'PURPOSE_REQUIRED',
+    'CROSS_SUBJECT_DENIED',
+    'NO_ACTIVE_CONSENT',
+    'PURPOSE_MISMATCH',
+    'RESOURCE_OUT_OF_SCOPE',
+    'OPERATION_OUT_OF_SCOPE',
+    'RECIPIENT_OUT_OF_SCOPE',
+    'CONSENT_EXPIRED',
+    'CONSENT_REVOKED',
+    'RETENTION_EXCEEDS_PERMISSION',
+    'ONWARD_SHARING_DENIED',
+    'ASSURANCE_INSUFFICIENT',
+    'DEPENDENCY_NOT_IMPLEMENTED',
+  ];
+  return known.includes(reasonCode as VaultAccessFailure['code'])
+    ? (reasonCode as VaultAccessFailure['code'])
+    : 'CAPABILITY_DENIED';
 }
 
 export class VaultAccessBroker {
@@ -137,7 +190,7 @@ export class VaultAccessBroker {
       }
       return err({
         code: 'OPERATOR_DEFAULT_DENY',
-        message: 'operator raw vault access is default-deny and requires Chunk 24 consent',
+        message: 'operator raw vault access is default-deny and requires a purpose-bound consent permit',
       });
     }
     const decision = this.authorization.authorize({
@@ -148,12 +201,18 @@ export class VaultAccessBroker {
       useClass: request.useClass,
       purposeRef: request.purposeRef,
       requestedScope: request.requestedScope,
+      ...(request.recipientId ? { recipientId: request.recipientId } : {}),
+      ...(request.category ? { category: request.category } : {}),
+      ...(request.fields ? { fields: request.fields } : {}),
+      ...(request.onwardSharing !== undefined ? { onwardSharing: request.onwardSharing } : {}),
+      ...(request.requestedRetentionDays !== undefined
+        ? { requestedRetentionDays: request.requestedRetentionDays }
+        : {}),
     });
     if (decision.decision !== 'ALLOWED') {
+      const mapped = mapAuthorizationCode(decision.reasonCode);
       return err({
-        code: decision.reasonCode === 'CONSENT_SYSTEM_NOT_IMPLEMENTED'
-          ? 'CONSENT_SYSTEM_NOT_IMPLEMENTED'
-          : 'CAPABILITY_DENIED',
+        code: mapped,
         message: decision.reason,
       });
     }
