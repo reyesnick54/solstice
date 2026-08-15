@@ -1,4 +1,5 @@
 import type { Journal } from '../../ledger/src/types.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import type { PaymentOrder } from './payment.ts';
 
 export const RECONCILIATION_STATUSES = ['MATCHED', 'INVESTIGATION_REQUIRED'] as const;
@@ -62,9 +63,9 @@ export function reconcilePayment(
     let credits = 0n;
     for (const posting of journal.postings) {
       if (posting.direction === 'DEBIT') {
-        debits += posting.amount.minorUnits;
+        debits += ledgerScaledUnits(posting.amount);
       } else {
-        credits += posting.amount.minorUnits;
+        credits += ledgerScaledUnits(posting.amount);
       }
     }
     if (debits !== credits) {

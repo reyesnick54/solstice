@@ -22,3 +22,11 @@ export function ledgerScaledUnits(amount: LedgerAmount): bigint {
 export function ledgerAmountKind(amount: LedgerAmount): 'MONEY' | 'ASSET' {
   return amount instanceof AssetQuantity ? 'ASSET' : 'MONEY';
 }
+
+/** Fiat readers must not treat AssetQuantity as Money. */
+export function asMoney(amount: LedgerAmount): Money {
+  if (!(amount instanceof Money)) {
+    throw new TypeError('expected Money; AssetQuantity cannot be used as fiat');
+  }
+  return amount;
+}

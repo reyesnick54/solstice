@@ -32,7 +32,7 @@ function customer(id: string): Customer {
     residency: asResidency('GB'),
     status: 'ACTIVE',
     verification: {
-      kycState: 'VERIFIED',
+      kycState: 'VERIFIED' as const,
       kycRecordVersion: 1,
       refreshBy: asUtcInstant('2027-08-15T16:00:00.000Z'),
     },

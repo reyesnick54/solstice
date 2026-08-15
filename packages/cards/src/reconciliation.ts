@@ -1,4 +1,5 @@
 import type { Journal } from '../../ledger/src/types.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import type { CardAuthorizationRecord } from './authorization.ts';
 import type { CardClearingRecord } from './clearing.ts';
 
@@ -72,9 +73,9 @@ export function reconcileCardTransaction(input: {
     let credits = 0n;
     for (const posting of journal.postings) {
       if (posting.direction === 'DEBIT') {
-        debits += posting.amount.minorUnits;
+        debits += ledgerScaledUnits(posting.amount);
       } else {
-        credits += posting.amount.minorUnits;
+        credits += ledgerScaledUnits(posting.amount);
       }
     }
     if (debits !== credits) {

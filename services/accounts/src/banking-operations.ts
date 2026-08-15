@@ -48,6 +48,7 @@ import {
   type ClassBridge,
   type Journal,
 } from '../../../packages/ledger/src/types.ts';
+import { asMoney } from '../../../packages/money/src/ledger-amount.ts';
 import { Money, RoundingMode } from '../../../packages/money/src/money.ts';
 import type {
   CaptureHoldIntent,
@@ -410,7 +411,7 @@ export class BankingOperationsService {
     const inverted = original.postings.map((posting) => ({
       accountId: posting.accountId,
       direction: posting.direction === 'DEBIT' ? ('CREDIT' as const) : ('DEBIT' as const),
-      amount: posting.amount,
+      amount: asMoney(posting.amount),
     }));
     const classBridge = original.classBridgeName
       ? DEFINED_CLASS_BRIDGES.find((bridge) => bridge.name === original.classBridgeName)

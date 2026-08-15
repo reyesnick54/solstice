@@ -12,6 +12,7 @@ import {
   payIntent,
   quoteIntent,
 } from './payment-world.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../packages/money/src/ledger-amount.ts';
 import { TREASURY_ACCOUNT_IDS } from '../packages/payments/src/treasury.ts';
 
 describe('Chunk 9 exit criterion', () => {
@@ -72,19 +73,19 @@ describe('Chunk 9 exit criterion', () => {
     const payable = runtime.ledger.listPostingsForAccount(TREASURY_ACCOUNT_IDS.beneficiaryPayableSar);
     const payableCredits = payable
       .filter((row) => row.direction === 'CREDIT')
-      .reduce((sum, row) => sum + row.amount.minorUnits, 0n);
+      .reduce((sum, row) => sum + ledgerScaledUnits(row.amount), 0n);
     assert.equal(payableCredits, DEST_MINOR);
 
     for (const journal of runtime.ledger.listJournals()) {
-      const currencies = new Set(journal.postings.map((row) => row.amount.currency));
+      const currencies = new Set(journal.postings.map((row) => ledgerAssetKey(row.amount)));
       assert.equal(currencies.size, 1, `mixed-currency journal ${journal.memo ?? journal.id}`);
       let debits = 0n;
       let credits = 0n;
       for (const posting of journal.postings) {
         if (posting.direction === 'DEBIT') {
-          debits += posting.amount.minorUnits;
+          debits += ledgerScaledUnits(posting.amount);
         } else {
-          credits += posting.amount.minorUnits;
+          credits += ledgerScaledUnits(posting.amount);
         }
       }
       assert.equal(debits, credits, `unbalanced ${journal.memo ?? journal.id}`);

@@ -87,7 +87,7 @@ export type EvaluateInput = {
   readonly customerId: Customer['id'];
   readonly receipt: CleanRoomComputationReceipt;
   readonly contribution: ContributionComputationReference;
-  readonly actor: { readonly id: string };
+  readonly actor: { readonly id?: string; readonly actorId?: string };
   readonly peveFormulaRef?: string;
   readonly irrelevantIdentityTraits?: Readonly<Record<string, string>>;
 };
@@ -250,7 +250,7 @@ export class SunReyCoinService {
   }
 
   proposeIssuance(
-    actor: { readonly id: string },
+    actor: { readonly id?: string; readonly actorId?: string },
     vectorId: string,
   ): Result<SunReyCoinIssuanceProposal, SunReyCoinFailure> {
     const vector = this.store.vectors.get(vectorId);
@@ -283,7 +283,7 @@ export class SunReyCoinService {
     this.seal('issuance.proposed', {
       proposalId: proposal.proposalId,
       posted: false,
-      actorId: actor.id,
+      actorId: actor.actorId ?? actor.id,
     });
     return ok(proposal);
   }
@@ -732,7 +732,10 @@ export class SunReyCoinService {
       return { outcome: 'REFUSED', result: { outcome: 'KERNEL_REFUSED', decision } };
     }
     const structural = validateIntentStructure(intent, {
-      products: this.catalog.products,
+      products: {
+        get: (id) => this.catalog.products.get(id),
+        list: () => [],
+      },
       legalEntities: this.catalog.legalEntities,
       accounts: { get: () => undefined },
     });

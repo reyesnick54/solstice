@@ -1,5 +1,6 @@
 export { AssetQuantity, isAssetQuantity } from './asset-quantity.ts';
 export {
+  asMoney,
   isLedgerAmount,
   ledgerAmountKind,
   ledgerAssetKey,

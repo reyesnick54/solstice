@@ -8,6 +8,7 @@ import {
 } from '../../../packages/domain/src/statement.ts';
 import type { UtcInstant } from '../../../packages/domain/src/time.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
+import { asMoney, ledgerAssetKey, ledgerScaledUnits } from '../../../packages/money/src/ledger-amount.ts';
 import { Money } from '../../../packages/money/src/money.ts';
 
 export function generateAccountStatement(input: {
@@ -27,14 +28,14 @@ export function generateAccountStatement(input: {
       if (posting.accountId !== input.account.id) {
         continue;
       }
-      if (posting.amount.currency !== input.account.currency) {
+      if (ledgerAssetKey(posting.amount) !== input.account.currency) {
         throw new TypeError('statement refused: journal posting currency does not match account');
       }
       if (journal.createdAt < input.periodStart) {
         if (posting.direction === 'CREDIT') {
-          opening = opening.plus(posting.amount);
+          opening = opening.plus(asMoney(posting.amount));
         } else {
-          opening = opening.minus(posting.amount);
+          opening = opening.minus(asMoney(posting.amount));
         }
         continue;
       }
@@ -42,17 +43,17 @@ export function generateAccountStatement(input: {
         continue;
       }
       if (posting.direction === 'CREDIT') {
-        credits = credits.plus(posting.amount);
+        credits = credits.plus(asMoney(posting.amount));
       } else {
-        debits = debits.plus(posting.amount);
+        debits = debits.plus(asMoney(posting.amount));
       }
       lines.push(
         Object.freeze({
           journalId: journal.id,
           postedAt: journal.createdAt as UtcInstant,
           direction: posting.direction,
-          amountMinorUnits: posting.amount.minorUnits,
-          currency: asCurrencyCode(posting.amount.currency),
+          amountMinorUnits: ledgerScaledUnits(posting.amount),
+          currency: asCurrencyCode(ledgerAssetKey(posting.amount)),
           description: describeJournal(journal.actionType, posting.direction),
           transactionReference: journal.id,
         }),

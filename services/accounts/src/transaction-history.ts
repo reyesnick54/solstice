@@ -9,6 +9,7 @@ import {
 } from '../../../packages/domain/src/transaction-history.ts';
 import type { UtcInstant } from '../../../packages/domain/src/time.ts';
 import type { Ledger } from '../../../packages/ledger/src/journal.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../../../packages/money/src/ledger-amount.ts';
 
 export function projectTransactionHistory(input: {
   readonly ledger: Ledger;
@@ -36,8 +37,8 @@ export function projectTransactionHistory(input: {
           customerId: input.customerId,
           status: reversed ? 'REVERSED' : returned ? 'RETURNED' : 'COMPLETED',
           direction: posting.direction,
-          amountMinorUnits: posting.amount.minorUnits,
-          currency: asCurrencyCode(posting.amount.currency),
+          amountMinorUnits: ledgerScaledUnits(posting.amount),
+          currency: asCurrencyCode(ledgerAssetKey(posting.amount)),
           description: `${journal.actionType} ${posting.direction.toLowerCase()}`,
           journalId: journal.id,
           holdId: null,

@@ -1,3 +1,4 @@
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { SIMULATION_US_VIRTUAL_PROGRAM } from './program.ts';
@@ -126,10 +127,10 @@ async function main(): Promise<void> {
   }
   const debit = journal.postings
     .filter((posting) => posting.direction === 'DEBIT')
-    .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+    .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
   const credit = journal.postings
     .filter((posting) => posting.direction === 'CREDIT')
-    .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+    .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
   console.log(`    debit=${debit.toString()} credit=${credit.toString()}`);
   if (debit !== credit) {
     throw new Error('settlement journal is unbalanced');
