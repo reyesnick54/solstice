@@ -81,14 +81,20 @@ This document describes only what is implemented and tested in this tree.
   UAE network connections. Chunk 10 is simulation connectivity only.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
-- Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
-- Chunk 12 (mobile wallet / Tap-to-Pay) is **stopped**. It requires
-  card issuing/processing middleware and a network-token metadata
-  model. Those belong to the reserved CARDS context
-  (`packages/cards`, `services/cards`), which is `PLANNED` and absent
-  from this tree. See `docs/architecture/chunk-12-stop.md`. Do not
-  treat this note as an implementation.
-- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails and live issuing remain later.
+- Chunk 12 (mobile wallet / Tap-to-Pay) was **not implemented**.
+  The cards owner now exists (`packages/cards`, `services/cards`,
+  capability `IMPLEMENTED`). Wallet provisioning, DevicePaymentToken
+  lifecycle, and SoftPOS / Tap-to-Pay were not built. See
+  `docs/architecture/chunk-12-stop.md`. Do not treat that file as a
+  wallet implementation.
+- Chunk 13 (treasury / liquidity / routing intelligence) is
+  **stopped** on the task process gate: Chunk 12 is not genuinely
+  implemented, this file still recorded the Chunk 12 stop at the
+  time of the gate, and `main` CI at `f304ef8` was red. See
+  `docs/architecture/chunk-13-stop.md`. Do not treat that file as a
+  treasury implementation. Reserved TREASURY owners remain
+  `packages/treasury` and `services/treasury` (`PLANNED`).
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live treasury remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

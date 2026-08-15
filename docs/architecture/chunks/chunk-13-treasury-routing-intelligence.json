@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-13",
+  "title": "Treasury, Liquidity, Corridor Funding, Payment Routing Intelligence, and Settlement Risk Engine",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "banking-core",
+    "compliance-screening",
+    "payments",
+    "fx",
+    "rail-adapters",
+    "cards"
+  ],
+  "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. All listed protected capabilities are IMPLEMENTED. Chunk 13 still stopped on the task process gate: Chunk 12 wallet/SoftPOS is not implemented, build-status still recorded the Chunk 12 stop, and main CI at the gate was red. Do not implement treasury until that gate is green. See docs/architecture/chunk-13-stop.md."
+}

@@ -69,13 +69,11 @@ Agents and later CI jobs use that result. They do not guess.
 | persistence | IMPLEMENTED | packages/persistence |
 | security | IMPLEMENTED | packages/security |
 | identity | IMPLEMENTED | packages/identity |
-| policy-engine | PLANNED | ADR-0006 |
 | policy-engine | IMPLEMENTED | packages/kernel |
 | banking-core | IMPLEMENTED | services/accounts |
 | compliance-screening | IMPLEMENTED | packages/kernel |
 | payments | IMPLEMENTED | packages/payments |
 | fx | IMPLEMENTED | packages/payments |
-| cards | PLANNED | packages/cards |
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 
@@ -88,7 +86,18 @@ Chunk 7 owns screening, AML, fraud, velocity, and cases inside
 or a second Kernel. Simulation adapters only.
 
 Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
-requires the protected `cards` capability. That capability is `PLANNED`
-on `main`. The evaluator returns `mustStop: true`. Do not invent a
-second cards domain, processor adapter, or network-token metadata
-model. See [`chunk-12-stop.md`](./chunk-12-stop.md).
+requires the protected `cards` capability. That capability is
+`IMPLEMENTED` on `main` (Chunk 11). The evaluator now returns
+`mustStop: false`. Wallet / SoftPOS features were still not built;
+see [`chunk-12-stop.md`](./chunk-12-stop.md). Do not invent a second
+cards domain.
+
+Chunk 13 (treasury / liquidity / routing intelligence) requires the
+protected capabilities listed in
+[`chunks/chunk-13-treasury-routing-intelligence.json`](./chunks/chunk-13-treasury-routing-intelligence.json).
+Those capabilities are `IMPLEMENTED`, so the evaluator returns
+`mustStop: false`. The Chunk 13 **task** still stopped on a process
+gate (Chunk 12 not genuinely implemented, build-status still recorded
+the Chunk 12 stop, `main` CI red). See
+[`chunk-13-stop.md`](./chunk-13-stop.md). Do not create
+`packages/treasury` until that gate is green.
