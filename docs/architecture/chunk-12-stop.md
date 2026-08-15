@@ -268,7 +268,21 @@ secret scan: ok
 CI pipeline: ok
 ```
 
-Post-change CI is recorded on the PR after this file lands.
+Post-change CI on this branch (`npm run ci`):
+
+```
+architectural invariants: ok
+extraction dry-run: ok (12 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (22 registered paths, all Kernel-authorized)
+tests: 237 pass, 0 fail
+  including: CHUNK-12 must stop until the protected cards capability is IMPLEMENTED
+demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
 
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
 `false`.
