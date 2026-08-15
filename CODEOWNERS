@@ -38,6 +38,8 @@
 /packages/payments/ @reyesnick54
 /packages/cards/ @reyesnick54
 /services/cards/ @reyesnick54
+/packages/personal-economic-graph/ @reyesnick54
+/services/economic-graph/ @reyesnick54
 /packages/platform/ @reyesnick54
 /packages/agent/ @reyesnick54
 /packages/contracts/ @reyesnick54

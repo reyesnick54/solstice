@@ -411,6 +411,44 @@ export type AcceptancePaymentDeclinedV1 = VersionedEvent<'AcceptancePaymentDecli
 export type AcceptancePaymentSettledV1 = VersionedEvent<'AcceptancePaymentSettled', 1, CardAuditPayload>;
 export type AcceptanceReconciliationMismatchV1 = VersionedEvent<'AcceptanceReconciliationMismatch', 1, CardAuditPayload>;
 
+export type EconomicGraphAuditPayload = {
+  readonly graphId?: string;
+  readonly nodeId?: string;
+  readonly kind?: string;
+  readonly from?: string;
+  readonly to?: string;
+  readonly key?: string;
+  readonly snapshotId?: string;
+  readonly opportunityId?: string;
+  readonly executable?: boolean;
+};
+
+export type EconomicGraphNodeCreatedV1 = VersionedEvent<
+  'EconomicGraphNodeCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphFactUpdatedV1 = VersionedEvent<
+  'EconomicGraphFactUpdated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphRelationshipCreatedV1 = VersionedEvent<
+  'EconomicGraphRelationshipCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphSnapshotCreatedV1 = VersionedEvent<
+  'EconomicGraphSnapshotCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphOpportunityCreatedV1 = VersionedEvent<
+  'EconomicGraphOpportunityCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+
 export type RailAuditPayload = {
   readonly paymentId?: string;
   readonly railSubmissionId?: string;
@@ -512,6 +550,11 @@ export type DomainEvent =
   | CardRefundReceivedV1
   | CardDisputeOpenedV1
   | CardDisputeDecidedV1
+  | EconomicGraphNodeCreatedV1
+  | EconomicGraphFactUpdatedV1
+  | EconomicGraphRelationshipCreatedV1
+  | EconomicGraphSnapshotCreatedV1
+  | EconomicGraphOpportunityCreatedV1;
   | WalletProvisioningRequestedV1
   | WalletProvisioningStepUpRequiredV1
   | WalletTokenActivatedV1

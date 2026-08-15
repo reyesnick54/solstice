@@ -125,6 +125,14 @@ Implemented card events (processor/token references only; no PAN/CVV):
 - `card.dispute.opened` → `CardDisputeOpened`
 - `card.dispute.decided` → `CardDisputeDecided`
 
+Implemented Personal Economic Graph events (ids and kinds only):
+
+- `economic_graph.node.created` → `EconomicGraphNodeCreated`
+- `economic_graph.fact.updated` → `EconomicGraphFactUpdated`
+- `economic_graph.relationship.created` → `EconomicGraphRelationshipCreated`
+- `economic_graph.snapshot.created` → `EconomicGraphSnapshotCreated`
+- `economic_graph.opportunity.created` → `EconomicGraphOpportunityCreated`
+
 Reserved (not implemented): `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.
 

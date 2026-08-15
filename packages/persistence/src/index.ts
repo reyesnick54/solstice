@@ -53,6 +53,10 @@ export {
 } from './compliance/pg-compliance-store.ts';
 export { PostgresKeyMetadataStore } from './security/pg-key-metadata.ts';
 export {
+  loadEconomicGraphState,
+  persistEconomicGraphState,
+} from './economic-graph/pg-economic-graph-store.ts';
+export {
   insertCoordinate,
   insertFeeAssessment,
   insertReversal,

@@ -55,6 +55,7 @@ never be two implementations of these systems.
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
 | Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
+| Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -63,9 +64,9 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`, `cards`.
+`payments`, `cards`, `personal-economic-graph`.
 
-**Services:** `accounts`, `identity`, `compliance`, `cards`.
+**Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -293,6 +294,27 @@ flowchart TD
 
 No service may bypass this pattern for a consequential financial action.
 
+SFF 2.0 intelligence layers sit **after** canonical financial systems and
+**before** any future agent. They do not execute:
+
+```text
+Canonical Financial Systems
+        ↓
+Personal Economic Graph
+        ↓
+Personal Economy Agent (not implemented)
+        ↓
+Growth Orchestrator (not implemented)
+        ↓
+Agentic Capital Mesh (not implemented)
+        ↓
+Execution Control Plane
+```
+
+The Personal Economic Graph is a non-authoritative projection. If PEG
+says a balance is X and the ledger says Y, the ledger wins. PEG cannot
+post journals or issue Execution Authority.
+
 Rules that follow from the flow:
 
 - An `ActionIntent` is the only envelope that enters the Kernel.
@@ -332,11 +354,13 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `services/cards` | `packages/cards`, `services/accounts`, and the cards package dependencies needed to wire holds |
+| `packages/personal-economic-graph` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/config` |
+| `services/economic-graph` | `packages/personal-economic-graph` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -385,10 +409,12 @@ flowchart BT
   ledger["packages/ledger"]
   payments["packages/payments"]
   cards["packages/cards"]
+  peg["packages/personal-economic-graph"]
   accounts["services/accounts"]
   identitySvc["services/identity"]
   complianceSvc["services/compliance"]
   cardsSvc["services/cards"]
+  pegSvc["services/economic-graph"]
 
   config --> domain
   domain --> permissions
@@ -407,6 +433,8 @@ flowchart BT
   persistence --> money
   persistence --> kernel
   persistence --> security
+  persistence --> identity
+  persistence --> peg
   accounts --> persistence
   accounts --> security
   evidence --> config
@@ -452,6 +480,12 @@ flowchart BT
   cards --> security
   cardsSvc --> cards
   cardsSvc --> accounts
+  peg --> domain
+  peg --> money
+  peg --> identity
+  peg --> events
+  peg --> config
+  pegSvc --> peg
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -488,7 +522,7 @@ protected dependency because a later phase is absent.
 | FX | PARTIAL | `packages/payments` |
 | CARDS | PARTIAL | `packages/cards`, `services/cards` |
 | TREASURY | PLANNED | `packages/treasury`, `services/treasury` |
-| PERSONAL ECONOMIC GRAPH | PLANNED | `packages/personal-economic-graph` |
+| PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | PLANNED | `packages/agent` |
 | GROWTH ORCHESTRATOR | PLANNED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | PLANNED | `packages/platform` |

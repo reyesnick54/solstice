@@ -68,6 +68,12 @@ This document describes only what is implemented and tested in this tree.
   clearing/settlement journals, refunds, disputes, network-token metadata,
   and HMAC processor-callback security.
   No real PAN/CVV, live network, or issuer SDK.
+- Personal Economic Graph (Chunk 14, `packages/personal-economic-graph`,
+  `services/economic-graph`): typed nodes/edges, provenance, confidence,
+  temporal facts, event-driven projection, recurring detection, goals,
+  proposal-only opportunities, snapshot API, rebuildable derived
+  projection, and ActorContext access control. Non-authoritative. Does
+  not execute. The Personal Economy Agent is not started.
 - Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
   (Chunk 12, still inside `packages/cards`): provider-neutral wallet
   port with Apple-style and Google-style simulation adapters,
@@ -90,6 +96,14 @@ This document describes only what is implemented and tested in this tree.
   UAE network connections. Chunk 10 is simulation connectivity only.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. The Personal Economic Graph is IMPLEMENTED as a non-authoritative intelligence layer. Live rails remain later.
+- Chunk 12 (mobile wallet / Tap-to-Pay) is **stopped**. It requires
+  card issuing/processing middleware and a network-token metadata
+  model. Those belong to the reserved CARDS context
+  (`packages/cards`, `services/cards`), which is `PLANNED` and absent
+  from this tree. See `docs/architecture/chunk-12-stop.md`. Do not
+  treat this note as an implementation.
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails and live issuing remain later.
 - Chunk 12 (mobile wallet / Tap-to-Pay) was **not implemented**.
   The cards owner now exists (`packages/cards`, `services/cards`,
   capability `IMPLEMENTED`). Wallet provisioning, DevicePaymentToken
@@ -137,6 +151,7 @@ npm run check:posture
 npm run gate
 npm run demo
 npm run demo:cards
+npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
 npm run typecheck

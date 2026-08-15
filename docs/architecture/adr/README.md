@@ -27,6 +27,7 @@ are not reused or silently changed.
 | 0008 | Persistence Layer for Phase 1 | PROPOSED (Addendum A: engineering-accepted Option A; not counsel) | not a legal opinion | persistence / BANKING / Evidence durability | ADR-0006, ADR-0007 | PARTIAL | [ADR-0008-persistence-layer.md](./ADR-0008-persistence-layer.md) |
 | 0009 | Canonical cryptographic infrastructure | ACCEPTED | not a legal opinion; no counsel review | SECURITY | none | IMPLEMENTED | [ADR-0009-cryptographic-infrastructure.md](./ADR-0009-cryptographic-infrastructure.md) |
 | 0010 | Canonical compliance screening fabric | PROPOSED | RESEARCH_REQUIRED — simulation only; no counsel review | COMPLIANCE / screening | ADR-0006 | PARTIAL | [ADR-0010-compliance-screening-fabric.md](./ADR-0010-compliance-screening-fabric.md) |
+| 0011 | Personal Economic Graph | PROPOSED | not a legal opinion; no counsel review | PERSONAL_ECONOMIC_GRAPH | identity, events, persistence | PARTIAL | [ADR-0011-personal-economic-graph.md](./ADR-0011-personal-economic-graph.md) |
 
 ## Notes on ADR-0007
 

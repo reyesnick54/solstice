@@ -76,6 +76,7 @@ Agents and later CI jobs use that result. They do not guess.
 | fx | IMPLEMENTED | packages/payments |
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
+| personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -86,6 +87,13 @@ Chunk 7 owns screening, AML, fraud, velocity, and cases inside
 or a second Kernel. Simulation adapters only.
 
 Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
+requires the protected `cards` capability. That capability is `PLANNED`
+on `main`. The evaluator returns `mustStop: true`. Do not invent a
+second cards domain, processor adapter, or network-token metadata
+model. See [`chunk-12-stop.md`](./chunk-12-stop.md).
+
+Chunk 14 implements the Personal Economic Graph as the first SFF 2.0
+intelligence layer. It does not start the Personal Economy Agent.
 requires the protected `cards` capability. That capability is
 `IMPLEMENTED` on `main` (Chunk 11). The evaluator now returns
 `mustStop: false`. Wallet / SoftPOS features were still not built;
