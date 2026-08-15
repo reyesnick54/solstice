@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-10",
+  "title": "Canonical Bank Rail Adapter Framework, Provider Connectivity Layer, Settlement Messages, Returns, Webhooks, and Rail Reconciliation",
+  "requires": [
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "compliance-screening",
+    "payments",
+    "fx"
+  ]
+}

@@ -107,8 +107,8 @@ export function simulationRoutesFor(corridorId: string, fee: Money): readonly Pa
       route({
         routeId: 'sim-gcc-usd-sar',
         corridorId,
-        rail: 'SIMULATED_GCC',
-        provider: 'SIMULATION_GCC_RAIL',
+        rail: 'INTERNATIONAL_CORRESPONDENT',
+        provider: 'SIMULATED_PROVIDER_GCC',
         sourceLegalEntityId: 'le_solstice_us_inc',
         destinationPartner: 'SIMULATION_SA_NOSTRO',
         settlementCurrency: 'SAR',
@@ -124,8 +124,8 @@ export function simulationRoutesFor(corridorId: string, fee: Money): readonly Pa
       route({
         routeId: 'sim-swift-usd-sar',
         corridorId,
-        rail: 'SIMULATED_SWIFT',
-        provider: 'SIMULATION_SWIFT_RAIL',
+        rail: 'INTERNATIONAL_CORRESPONDENT',
+        provider: 'SIMULATED_PROVIDER_CORRESPONDENT',
         sourceLegalEntityId: 'le_solstice_us_inc',
         destinationPartner: 'SIMULATION_SA_NOSTRO',
         settlementCurrency: 'SAR',
@@ -141,8 +141,8 @@ export function simulationRoutesFor(corridorId: string, fee: Money): readonly Pa
       route({
         routeId: 'sim-noncompliant-usd-sar',
         corridorId,
-        rail: 'SIMULATED_BLOCKED',
-        provider: 'SIMULATION_BLOCKED_RAIL',
+        rail: 'INTERNATIONAL_CORRESPONDENT',
+        provider: 'SIMULATED_PROVIDER_BLOCKED',
         sourceLegalEntityId: 'le_solstice_us_inc',
         destinationPartner: 'SIMULATION_SA_NOSTRO',
         settlementCurrency: 'SAR',
@@ -162,8 +162,8 @@ export function simulationRoutesFor(corridorId: string, fee: Money): readonly Pa
       route({
         routeId: 'sim-gcc-sar-usd',
         corridorId,
-        rail: 'SIMULATED_GCC',
-        provider: 'SIMULATION_GCC_RAIL',
+        rail: 'INTERNATIONAL_CORRESPONDENT',
+        provider: 'SIMULATED_PROVIDER_GCC',
         sourceLegalEntityId: 'le_solstice_sa_entity',
         destinationPartner: 'SIMULATION_US_NOSTRO',
         settlementCurrency: 'USD',

@@ -97,6 +97,18 @@ Implemented payment / FX events (hashes and ids only; no raw bank details):
 - `fx.quote.accepted` → `FxQuoteAccepted`
 - `fx.quote.expired` → `FxQuoteExpired`
 
+Implemented rail events (opaque references and payload hashes only):
+
+- `rail.submission.created` → `RailSubmissionCreated`
+- `rail.submission.accepted` → `RailSubmissionAccepted`
+- `rail.submission.unknown` → `RailSubmissionUnknown`
+- `rail.payment.processing` → `RailPaymentProcessing`
+- `rail.payment.settled` → `RailPaymentSettled`
+- `rail.payment.rejected` → `RailPaymentRejected`
+- `rail.payment.returned` → `RailPaymentReturned`
+- `rail.provider.degraded` → `RailProviderDegraded`
+- `rail.reconciliation.mismatch` → `RailReconciliationMismatch`
+
 Reserved (not implemented): `card.*`,
 `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.

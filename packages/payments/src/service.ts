@@ -1,5 +1,6 @@
 import type { Clock } from '../../config/src/clock.ts';
 import type { Account } from '../../domain/src/account.ts';
+import { asCurrencyCode } from '../../domain/src/currency.ts';
 import type { Customer } from '../../domain/src/customer.ts';
 import { isErr, isOk } from '../../domain/src/result.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
@@ -12,6 +13,7 @@ import type { Journal } from '../../ledger/src/types.ts';
 import { Money } from '../../money/src/money.ts';
 import type {
   AcceptFxQuoteIntent,
+  AcceptInboundPaymentIntent,
   CancelPaymentIntent,
   CreateBeneficiaryIntent,
   CreateFxQuoteIntent,
@@ -25,6 +27,8 @@ import {
   capturePrincipalPlan,
   destinationFxPlan,
   feeIncomePlan,
+  inboundPendingPlan,
+  inboundSettlePlan,
   releasePlan,
   reservePlan,
   returnDestinationFxPlan,
@@ -49,20 +53,26 @@ import {
 } from './corridor.ts';
 import { quoteCanExecute, quoteIsExpired, withQuoteStatus, type FxQuote } from './fx-quote.ts';
 import { SimulationFxProvider, type FxLiquidityProvider } from './fx-provider.ts';
-import { asHoldId, asPaymentId, type PaymentId } from './ids.ts';
+import { asHoldId, asPaymentId, asSettlementRef, type PaymentId } from './ids.ts';
 import { postPaymentJournal } from './journals.ts';
 import { freezePayment, transitionPayment, type PaymentOrder } from './payment.ts';
 import { reconcilePayment, type ProviderSettlementReport, type ReconciliationResult } from './reconciliation.ts';
 import { disclosureFromQuote, type PaymentDisclosure } from './responses.ts';
 import { selectRoute, simulationRoutesFor, type PaymentRoute } from './route.ts';
 import { beneficiaryStatusFromScreening, SimulationScreeningAdapter, type ScreeningPort } from './screening.ts';
-import {
-  InProcessSettlementRail,
-  type SettlementOutcome,
-  type SimulatedSettlementRail,
-} from './settlement.ts';
+import { type SettlementOutcome, type SimulatedSettlementRail } from './settlement.ts';
 import { PaymentStore } from './store.ts';
 import { registerPaymentTreasuryBooks } from './treasury.ts';
+import { createSimulationRailNetwork, type RailNetwork } from './rail-network.ts';
+import { createRailSubmission, providerIdempotencyKeyFor, withSubmissionStatus } from './rail-submission.ts';
+import { decideRetry } from './rail-retry.ts';
+import { reconcileRail } from './rail-reconciliation.ts';
+import { buildSettlementReport } from './rail-settlement-report.ts';
+import { freezeInbound, type InboundRailPayment } from './rail-inbound.ts';
+import { freezeReturn } from './rail-returns.ts';
+import { hashCallbackBody, type IncomingProviderCallback } from './rail-webhook.ts';
+import { asInboundPaymentId, asOpaqueAccountRef, asProviderId, emptyRailReferences } from './rail-ids.ts';
+import type { RailClass } from './rail-types.ts';
 
 export type PaymentCatalogPorts = {
   readonly customers: { get(id: Customer['id']): Customer | undefined };
@@ -98,7 +108,10 @@ export class PaymentsService {
   private readonly validator: BeneficiaryValidationPort;
   private readonly screening: ScreeningPort;
   private readonly fx: FxLiquidityProvider;
-  readonly rail: SimulatedSettlementRail & Partial<InProcessSettlementRail>;
+  readonly rail: SimulatedSettlementRail & {
+    setMode?(paymentId: string, mode: import('./rail-adapters.ts').SimulatedAdapterMode | import('./settlement.ts').RailMode): void;
+  };
+  readonly railNetwork: RailNetwork;
   private readonly authorities = new Map<string, ExecutionAuthority>();
   private providerAvailable = true;
   private routesForceUnavailable = false;
@@ -118,6 +131,7 @@ export class PaymentsService {
       readonly screening?: ScreeningPort;
       readonly fx?: FxLiquidityProvider;
       readonly rail?: SimulatedSettlementRail;
+      readonly railNetwork?: RailNetwork;
     } = {},
   ) {
     this.kernel = kernel;
@@ -132,7 +146,8 @@ export class PaymentsService {
     this.validator = options.validator ?? new SimulationBeneficiaryValidator();
     this.screening = options.screening ?? new SimulationScreeningAdapter();
     this.fx = options.fx ?? new SimulationFxProvider(clock);
-    this.rail = options.rail ?? new InProcessSettlementRail();
+    this.railNetwork = options.railNetwork ?? createSimulationRailNetwork(() => this.clock.now());
+    this.rail = options.rail ?? this.railNetwork.asSettlementRail();
     registerPaymentTreasuryBooks(ledger.accounts);
   }
 
@@ -391,9 +406,15 @@ export class PaymentsService {
     }
     let current = reserved.value;
 
+    const stale = this.revalidateBeforeSubmit(intent, account, customer, beneficiary, quote, corridor, hit?.sanctionsHit === true, { fundsAlreadyReserved: true });
+    if (stale) {
+      current = this.releaseAndFail(current, authority, account!, stale.code, gated.decision);
+      return this.reject(intent.actionType, intent.id, gated.decision, stale.code, stale.message);
+    }
+
     const routes = this.routesForceUnavailable
       ? []
-      : simulationRoutesFor(current.corridorId, current.fee);
+      : this.railNetwork.routesFor(current.corridorId, current.fee);
     const selection = selectRoute(routes, {
       corridor: corridor!,
       beneficiary: beneficiary!,
@@ -413,9 +434,59 @@ export class PaymentsService {
       routeId: selection.chosen.routeId,
     });
 
-    const settlement = this.rail.submit({
+    const submission = createRailSubmission(
+      {
+        paymentId: current.paymentId,
+        provider: selection.chosen.provider as never,
+        rail: selection.chosen.rail as RailClass,
+        amount: current.quotedDestinationAmount,
+        currency: current.destinationCurrency,
+        sourceReference: account!.id,
+        destinationReference: beneficiary!.accountCoordinate.coordinateRef,
+        beneficiaryReference: beneficiary!.beneficiaryId,
+        purposeReference: current.purposeReference,
+        idempotencyKey: providerIdempotencyKeyFor(current.paymentId, intent.idempotencyKey),
+        correlationId: intent.id,
+        requestedSettlement: { settlementClass: 'CORRESPONDENT', requestedAt: null },
+      },
+      this.clock.now(),
+    );
+    this.railNetwork.store.saveSubmission(submission);
+    this.emit('RailSubmissionCreated', 'rail', submission.railSubmissionId, intent.id, gated.decision, {
       paymentId: current.paymentId,
-      idempotencyKey: intent.idempotencyKey,
+      railSubmissionId: submission.railSubmissionId,
+      provider: submission.provider,
+      rail: submission.rail,
+    });
+
+    const submitResult = this.railNetwork.submit({
+      authorityId: authority.authorityId,
+      actionType: 'INITIATE_PAYMENT',
+      submission,
+    });
+    this.railNetwork.store.saveSubmission(
+      withSubmissionStatus(submission, submitResult.status, {
+        executionUnknown: submitResult.status === 'SUBMISSION_UNKNOWN',
+        references: submitResult.references,
+        rejectionClass: submitResult.rejectionClass,
+      }),
+    );
+    if (
+      submitResult.status === 'ACCEPTED' ||
+      submitResult.status === 'PENDING' ||
+      submitResult.status === 'PROCESSING' ||
+      submitResult.status === 'SETTLED'
+    ) {
+      this.emit('RailSubmissionAccepted', 'rail', submission.railSubmissionId, intent.id, gated.decision, {
+        paymentId: current.paymentId,
+        railSubmissionId: submission.railSubmissionId,
+        provider: submission.provider,
+        rail: submission.rail,
+      });
+    }
+    const settlement = this.railNetwork.toSettlementOutcome(submitResult, {
+      paymentId: current.paymentId,
+      idempotencyKey: submission.idempotencyKey,
       destinationCountry: beneficiary!.destinationCountry,
       destinationCurrency: current.destinationCurrency,
       destinationAmountMinorUnits: current.quotedDestinationAmount.minorUnits.toString(),
@@ -440,6 +511,28 @@ export class PaymentsService {
     }
     if (payment.status === 'SETTLED' || payment.status === 'RETURNED') {
       return this.reject(intent.actionType, intent.id, gated.decision, 'PAYMENT_NOT_CANCELLABLE', 'settled payment cannot cancel');
+    }
+    if (payment.status === 'SUBMISSION_UNKNOWN') {
+      return this.reject(
+        intent.actionType,
+        intent.id,
+        gated.decision,
+        'CANCELLATION_NOT_SUPPORTED',
+        'unknown submission must be queried before cancellation',
+      );
+    }
+    const submission = this.railNetwork.store.getByPayment(payment.paymentId);
+    const capability = submission
+      ? this.railNetwork.registry.findFor(submission.rail, submission.provider)
+      : undefined;
+    if (capability && !capability.cancellationSupported && (payment.status === 'SUBMITTED' || payment.status === 'PROCESSING')) {
+      return this.reject(
+        intent.actionType,
+        intent.id,
+        gated.decision,
+        'CANCELLATION_NOT_SUPPORTED',
+        'rail capability does not support cancellation',
+      );
     }
     const authority = gated.authority!;
     let current = payment;
@@ -479,7 +572,15 @@ export class PaymentsService {
     if (!authority || !account || !quote) {
       return { outcome: 'REJECTED', code: 'MISSING_AUTHORITY', message: 'cannot complete without stored authority', decision: null };
     }
-    const settlement = this.rail.complete(paymentId);
+    const raw = this.rail.complete(paymentId);
+    const settlement =
+      raw.kind === 'SUCCESS' && raw.providerAmountMinorUnits === '0'
+        ? {
+            ...raw,
+            providerAmountMinorUnits: payment.quotedDestinationAmount.minorUnits.toString(),
+            providerCurrency: payment.destinationCurrency,
+          }
+        : raw;
     return this.applySettlement(payment, authority, account, quote, settlement, this.emptyDecision('INITIATE_PAYMENT', payment.paymentId), null);
   }
 
@@ -503,6 +604,17 @@ export class PaymentsService {
       journalIds: [...payment.journalIds, ...journals.map((j) => j.id)],
     });
     this.store.savePayment(returned);
+    const submission = this.railNetwork.store.getByPayment(paymentId);
+    this.railNetwork.store.saveReturn(
+      freezeReturn({
+        paymentId,
+        originalSubmissionId: submission?.railSubmissionId ?? (`rsub_${paymentId}` as never),
+        reason: 'PROVIDER_UNSPECIFIED',
+        amount: payment.quotedDestinationAmount,
+        references: submission?.references ?? emptyRailReferences(),
+        occurredAt: this.clock.now(),
+      }),
+    );
     this.evidence.seal('PAYMENT_RETURNED', {
       paymentId,
       policy: SIMULATION_RETURN_POLICY,
@@ -512,6 +624,11 @@ export class PaymentsService {
       paymentId,
       policy: SIMULATION_RETURN_POLICY,
     });
+    this.emit('RailPaymentReturned', 'rail', paymentId, payment.paymentId, this.emptyDecision('INITIATE_PAYMENT', payment.paymentId), {
+      paymentId,
+      policy: SIMULATION_RETURN_POLICY,
+    });
+    this.railNetwork.metrics.recordReturned();
     return { outcome: 'OK', value: returned, decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId) };
   }
 
@@ -525,6 +642,181 @@ export class PaymentsService {
     return result;
   }
 
+  retryUnknownSubmission(paymentId: PaymentId): PaymentsServiceOutcome<PaymentOrder> {
+    const payment = this.store.getPayment(paymentId);
+    if (!payment) {
+      return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+    }
+    const submission = this.railNetwork.store.getByPayment(paymentId);
+    const decision = decideRetry('SUBMIT', submission?.status ?? null, {
+      executionUnknown: payment.status === 'SUBMISSION_UNKNOWN' || submission?.executionUnknown === true,
+    });
+    if (!decision.allowed) {
+      return {
+        outcome: 'REJECTED',
+        code: 'DO_NOT_RETRY_WITHOUT_QUERY',
+        message: decision.reason,
+        decision: null,
+      };
+    }
+    return { outcome: 'REJECTED', code: 'RETRY_NOT_REQUIRED', message: 'submission is safe only after query', decision: null };
+  }
+
+  queryUnknownSubmission(paymentId: PaymentId): PaymentsServiceOutcome<PaymentOrder> {
+    const payment = this.store.getPayment(paymentId);
+    if (!payment) {
+      return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+    }
+    const submission = this.railNetwork.store.getByPayment(paymentId);
+    if (!submission) {
+      return { outcome: 'REJECTED', code: 'SUBMISSION_NOT_FOUND', message: 'no rail submission to query', decision: null };
+    }
+    const queried = this.railNetwork.query({
+      paymentId,
+      idempotencyKey: submission.idempotencyKey,
+      providerPaymentId: submission.references.providerPaymentId,
+    });
+    if (!queried.found) {
+      return { outcome: 'OK', value: payment, decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId) };
+    }
+    if (queried.status === 'SETTLED' || queried.status === 'PENDING' || queried.status === 'PROCESSING' || queried.status === 'ACCEPTED') {
+      return this.completeSettlement(paymentId);
+    }
+    if (queried.status === 'REJECTED') {
+      const authority = this.authorities.get(paymentId);
+      const account = this.catalog.accounts.get(payment.sourceAccountId);
+      if (!authority || !account) {
+        return { outcome: 'REJECTED', code: 'MISSING_AUTHORITY', message: 'cannot fail without stored authority', decision: null };
+      }
+      const failed = this.releaseAndFail(payment, authority, account, 'provider_rejection_after_query', this.emptyDecision('INITIATE_PAYMENT', payment.paymentId));
+      void failed;
+      return { outcome: 'REJECTED', code: 'PROVIDER_REJECTION', message: 'provider rejected after query', decision: null };
+    }
+    return { outcome: 'OK', value: payment, decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId) };
+  }
+
+  applyProviderCallback(callback: IncomingProviderCallback): PaymentsServiceOutcome<PaymentOrder> {
+    const ingested = this.railNetwork.callbacks.ingest(callback);
+    if (ingested.outcome !== 'ACCEPTED') {
+      return { outcome: 'REJECTED', code: ingested.code, message: ingested.message, decision: null };
+    }
+    if (ingested.duplicate) {
+      const existing = this.store.getPayment(ingested.update.paymentId);
+      if (!existing) {
+        return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+      }
+      return { outcome: 'OK', value: existing, decision: this.emptyDecision('INITIATE_PAYMENT', existing.paymentId), replay: true };
+    }
+    const payment = this.store.getPayment(ingested.update.paymentId);
+    if (!payment) {
+      return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+    }
+    if (ingested.update.status === 'SETTLED' || ingested.update.status === 'PROCESSING' || ingested.update.status === 'ACCEPTED') {
+      if (payment.status === 'PROCESSING' || payment.status === 'SUBMISSION_UNKNOWN' || payment.status === 'SUBMITTED') {
+        return this.completeSettlement(payment.paymentId);
+      }
+    }
+    if (ingested.update.status === 'RETURNED' && payment.status === 'SETTLED') {
+      return this.simulateReturn(payment.paymentId);
+    }
+    return { outcome: 'OK', value: payment, decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId) };
+  }
+
+  reconcileAgainstRail(paymentId: string, report: ProviderSettlementReport | null = null): ReturnType<typeof reconcileRail> {
+    const payment = this.store.getPayment(paymentId) ?? null;
+    const submission = this.railNetwork.store.getByPayment(paymentId) ?? null;
+    const result = reconcileRail(payment, submission, this.ledger.listJournals(), report);
+    this.railNetwork.store.saveReconciliation(result);
+    if (result.status !== 'MATCHED' && result.status !== 'PENDING') {
+      this.railNetwork.metrics.recordReconciliationMismatch();
+      this.emit('RailReconciliationMismatch', 'rail', paymentId, paymentId, this.emptyDecision('INITIATE_PAYMENT', paymentId), {
+        paymentId,
+        status: result.status,
+        mismatches: result.mismatches,
+      });
+    }
+    return result;
+  }
+
+  acceptInboundPayment(intent: AcceptInboundPaymentIntent): PaymentsServiceOutcome<InboundRailPayment> {
+    const existing = this.railNetwork.store.getInbound(intent.payload.inboundId);
+    if (existing && existing.status === 'SETTLED') {
+      return this.replayOk(existing, intent.actionType, intent.id);
+    }
+    const account = this.catalog.accounts.get(intent.payload.accountId);
+    const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const hit = this.screening.screen({
+      legalName: intent.payload.sourceDisplayName,
+      destinationCountry: account?.jurisdiction ?? '',
+      coordinateRef: intent.payload.destinationReference,
+      kind: 'PERSON',
+    });
+    const gated = this.gate(intent, account, customer, {
+      screening: {
+        sanctionsHit: hit.sanctionsHit,
+        pepHit: hit.pepHit,
+        fraudHold: hit.fraudHold,
+        screeningRef: hit.screeningRef,
+      },
+      amount: intent.payload.amount,
+    });
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    if (!account || account.status !== 'OPEN') {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'ACCOUNT_NOT_OPEN', 'inbound destination is not an open account');
+    }
+    if (hit.sanctionsHit) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'SANCTIONED_COUNTERPARTY', 'inbound source failed screening');
+    }
+    const pending = freezeInbound({
+      inboundId: asInboundPaymentId(intent.payload.inboundId),
+      provider: asProviderId(intent.payload.provider),
+      rail: intent.payload.rail as RailClass,
+      amount: intent.payload.amount,
+      currency: asCurrencyCode(intent.payload.amount.currency),
+      destinationAccountId: account.id,
+      destinationCustomerId: customer?.id ?? null,
+      destinationReference: asOpaqueAccountRef(intent.payload.destinationReference),
+      sourceReference: asOpaqueAccountRef(intent.payload.sourceReference),
+      purposeReference: intent.payload.purposeReference,
+      references: emptyRailReferences(),
+      status: 'PENDING_SETTLEMENT',
+      screeningRef: hit.screeningRef,
+      journalIds: [],
+      receivedAt: this.clock.now(),
+      payloadHash: hashCallbackBody(intent.payload.inboundId),
+    });
+    const journals = this.postPlans(gated.authority!, intent.actionType, [
+      inboundPendingPlan(intent.payload.amount),
+      inboundSettlePlan(account.id, intent.payload.amount),
+    ]);
+    const settled = freezeInbound({
+      ...pending,
+      status: 'SETTLED',
+      journalIds: journals.map((row) => row.id),
+    });
+    this.railNetwork.store.saveInbound(settled);
+    this.evidence.seal('INBOUND_PAYMENT_SETTLED', {
+      inboundId: settled.inboundId,
+      accountId: account.id,
+      authorityId: gated.authority!.authorityId,
+      journalIds: settled.journalIds,
+      provider: settled.provider,
+      rail: settled.rail,
+    });
+    this.emit('RailPaymentSettled', 'rail', settled.inboundId, intent.id, gated.decision, {
+      inboundId: settled.inboundId,
+      paymentId: settled.inboundId,
+      direction: 'INBOUND',
+    });
+    return { outcome: 'OK', value: settled, decision: gated.decision };
+  }
+
+  signProviderCallback(callback: Omit<IncomingProviderCallback, 'signature'>): IncomingProviderCallback {
+    return this.railNetwork.signCallback(callback);
+  }
+
   private applySettlement(
     payment: PaymentOrder,
     authority: ExecutionAuthority,
@@ -536,6 +828,10 @@ export class PaymentsService {
   ): PaymentsServiceOutcome<PaymentOrder> {
     if (settlement.kind === 'FAIL_BEFORE_SUBMIT') {
       const failed = this.releaseAndFail(payment, authority, account, settlement.reason, decision);
+      this.emit('RailPaymentRejected', 'rail', failed.paymentId, decision.intentId, decision, {
+        paymentId: failed.paymentId,
+        rejectionClass: 'PRE_SUBMISSION_REJECTION',
+      });
       return { outcome: 'REJECTED', code: 'SETTLEMENT_FAILED', message: settlement.reason, decision };
     }
     if (settlement.kind === 'FAIL_AFTER_SUBMIT') {
@@ -545,11 +841,46 @@ export class PaymentsService {
         reason: settlement.reason,
         phase: 'AFTER_SUBMIT',
       });
+      this.emit('RailPaymentRejected', 'rail', failed.paymentId, decision.intentId, decision, {
+        paymentId: failed.paymentId,
+        rejectionClass: 'PROVIDER_REJECTION',
+      });
       return { outcome: 'REJECTED', code: 'SETTLEMENT_FAILED', message: settlement.reason, decision };
+    }
+    if (settlement.kind === 'SUBMISSION_UNKNOWN') {
+      const unknown = this.mustTransition(payment, 'SUBMISSION_UNKNOWN', { settlementRef: settlement.settlementRef });
+      this.store.savePayment(unknown);
+      const existing = this.railNetwork.store.getByPayment(unknown.paymentId);
+      if (existing) {
+        this.railNetwork.store.saveSubmission(withSubmissionStatus(existing, 'SUBMISSION_UNKNOWN', { executionUnknown: true }));
+      }
+      this.emit('RailSubmissionUnknown', 'rail', unknown.paymentId, decision.intentId, decision, {
+        paymentId: unknown.paymentId,
+        settlementRef: unknown.settlementRef,
+      });
+      this.evidence.seal('RAIL_SUBMISSION_UNKNOWN', {
+        paymentId: unknown.paymentId,
+        routeId: unknown.routeId,
+        provider: route?.provider ?? null,
+        authorityId: authority.authorityId,
+        settlementRef: unknown.settlementRef,
+      });
+      this.railNetwork.metrics.recordUnknown();
+      return { outcome: 'OK', value: unknown, decision };
     }
     if (settlement.kind === 'PENDING') {
       const pending = this.mustTransition(payment, 'PROCESSING', { settlementRef: settlement.settlementRef });
       this.store.savePayment(pending);
+      const existing = this.railNetwork.store.getByPayment(pending.paymentId);
+      if (existing) {
+        this.railNetwork.store.saveSubmission(withSubmissionStatus(existing, 'PENDING', {
+          references: { ...existing.references, settlementReference: settlement.settlementRef as never },
+        }));
+      }
+      this.emit('RailPaymentProcessing', 'rail', pending.paymentId, decision.intentId, decision, {
+        paymentId: pending.paymentId,
+        settlementRef: pending.settlementRef,
+      });
       return { outcome: 'OK', value: pending, decision };
     }
     const journals = this.postPlans(authority, 'INITIATE_PAYMENT', [
@@ -590,11 +921,38 @@ export class PaymentsService {
       paymentId: settled.paymentId,
       quoteId: settled.quoteId,
       routeId: settled.routeId,
+      provider: route?.provider ?? null,
+      rail: route?.rail ?? null,
       authorityId: authority.authorityId,
       journalIds: settled.journalIds,
       settlementRef: settled.settlementRef,
       reconciliation: recon.status,
     });
+    this.emit('RailPaymentSettled', 'rail', settled.paymentId, decision.intentId, decision, {
+      paymentId: settled.paymentId,
+      settlementRef: settled.settlementRef,
+      reconciliation: recon.status,
+    });
+    const existing = this.railNetwork.store.getByPayment(settled.paymentId);
+    if (existing) {
+      this.railNetwork.store.saveSubmission(withSubmissionStatus(existing, 'SETTLED', {
+        references: { ...existing.references, settlementReference: settled.settlementRef as never },
+      }));
+    }
+    const settlementReport = buildSettlementReport({
+      provider: route?.provider ?? existing?.provider ?? 'SIMULATED_PROVIDER_GCC',
+      settledAt: this.clock.now(),
+      currency: settled.destinationCurrency,
+      payments: [
+        {
+          paymentId: settled.paymentId,
+          settlementReference: settled.settlementRef as never,
+          amount: settled.quotedDestinationAmount,
+          fee: Money.zero(settled.destinationCurrency),
+        },
+      ],
+    });
+    this.railNetwork.store.saveReport(settlementReport);
     if (settlement.kind === 'RETURNED') {
       return this.simulateReturn(settled.paymentId);
     }
@@ -658,6 +1016,19 @@ export class PaymentsService {
     return plans.map((plan) => postPaymentJournal(this.ledger, authority, actionType, plan));
   }
 
+  private revalidateBeforeSubmit(
+    intent: InitiatePaymentIntent,
+    account: Account | undefined,
+    customer: Customer | undefined,
+    beneficiary: Beneficiary | undefined,
+    quote: FxQuote | undefined,
+    corridor: PaymentCorridor | undefined,
+    sanctionsHit: boolean,
+    options: { readonly fundsAlreadyReserved?: boolean } = {},
+  ): { code: string; message: string } | null {
+    return this.precheckInitiate(intent, account, customer, beneficiary, quote, corridor, sanctionsHit, options);
+  }
+
   private precheckInitiate(
     intent: InitiatePaymentIntent,
     account: Account | undefined,
@@ -666,6 +1037,7 @@ export class PaymentsService {
     quote: FxQuote | undefined,
     corridor: PaymentCorridor | undefined,
     sanctionsHit: boolean,
+    options: { readonly fundsAlreadyReserved?: boolean } = {},
   ): { code: string; message: string } | null {
     if (!account) {
       return { code: 'ACCOUNT_NOT_FOUND', message: 'source account does not exist' };
@@ -706,9 +1078,11 @@ export class PaymentsService {
     if (account.currency !== quote.baseCurrency) {
       return { code: 'UNSUPPORTED_CURRENCY', message: 'source account currency does not match quote' };
     }
-    const available = this.availableFunds(account);
-    if (available.cmp(quote.amountDebited) < 0) {
-      return { code: 'INSUFFICIENT_FUNDS', message: 'available funds are below amount debited' };
+    if (!options.fundsAlreadyReserved) {
+      const available = this.availableFunds(account);
+      if (available.cmp(quote.amountDebited) < 0) {
+        return { code: 'INSUFFICIENT_FUNDS', message: 'available funds are below amount debited' };
+      }
     }
     return null;
   }
@@ -781,7 +1155,7 @@ export class PaymentsService {
   }
 
   private gate(
-    intent: CreateBeneficiaryIntent | CreateFxQuoteIntent | AcceptFxQuoteIntent | InitiatePaymentIntent | CancelPaymentIntent,
+    intent: CreateBeneficiaryIntent | CreateFxQuoteIntent | AcceptFxQuoteIntent | InitiatePaymentIntent | CancelPaymentIntent | AcceptInboundPaymentIntent,
     account: Account | undefined,
     customer: Customer | undefined,
     extra: Partial<KernelFacts> = {},

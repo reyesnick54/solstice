@@ -63,6 +63,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ComplianceCaseDecided', version: 1, status: 'current' },
   { eventType: 'ComplianceAlertCreated', version: 1, status: 'current' },
   { eventType: 'FraudRiskEvaluated', version: 1, status: 'current' },
+  { eventType: 'RailSubmissionCreated', version: 1, status: 'current' },
+  { eventType: 'RailSubmissionAccepted', version: 1, status: 'current' },
+  { eventType: 'RailSubmissionUnknown', version: 1, status: 'current' },
+  { eventType: 'RailPaymentProcessing', version: 1, status: 'current' },
+  { eventType: 'RailPaymentSettled', version: 1, status: 'current' },
+  { eventType: 'RailPaymentRejected', version: 1, status: 'current' },
+  { eventType: 'RailPaymentReturned', version: 1, status: 'current' },
+  { eventType: 'RailProviderDegraded', version: 1, status: 'current' },
+  { eventType: 'RailReconciliationMismatch', version: 1, status: 'current' },
 
 ];
 
