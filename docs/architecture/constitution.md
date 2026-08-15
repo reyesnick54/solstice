@@ -57,6 +57,7 @@ never be two implementations of these systems.
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
+| Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -65,7 +66,8 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`, `cards`, `personal-economic-graph`, `agent`, `platform`.
+`payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
+`treasury`, `regulatory-twin`.
 `payments`, `cards`, `personal-economic-graph`, `treasury`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
@@ -80,6 +82,7 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 `packages/contracts` on this tree. `packages/platform` is the canonical
 Growth Orchestrator owner. The Personal Economic Value Engine is not
 implemented; it shares that reserved path as PARTIAL.
+`packages/regulatory-twin` is the canonical Regulatory Digital Twin.
 
 ### Action types
 
@@ -367,7 +370,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/regulatory-twin` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
@@ -378,6 +381,7 @@ must be added to `manifest.json` before they appear on disk.
 | `services/economic-graph` | `packages/personal-economic-graph` |
 | `packages/treasury` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security`, `packages/payments` |
 | `services/treasury` | `packages/treasury` |
+| `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -522,6 +526,7 @@ flowchart BT
   platform --> security
   treasury["packages/treasury"]
   treasurySvc["services/treasury"]
+  rdt["packages/regulatory-twin"]
   treasury --> domain
   treasury --> money
   treasury --> permissions
@@ -535,6 +540,16 @@ flowchart BT
   treasury --> payments
   treasurySvc --> treasury
   persistence --> treasury
+  persistence --> rdt
+  rdt --> domain
+  rdt --> money
+  rdt --> permissions
+  rdt --> config
+  rdt --> kernel
+  rdt --> evidence
+  rdt --> events
+  rdt --> identity
+  rdt --> security
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -576,7 +591,7 @@ phase is absent.
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
-| REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
+| REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
 | INVESTMENTS | PLANNED | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |
 | MODEL REGISTRY | PLANNED | `packages/model-registry` |

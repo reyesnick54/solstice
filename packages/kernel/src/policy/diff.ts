@@ -9,6 +9,7 @@ export type PolicyVersionDiff = {
   readonly scopesChanged: readonly string[];
   readonly reviewStatusChanged: readonly string[];
   readonly effectiveDatesChanged: readonly string[];
+  readonly sourcesChanged: readonly string[];
 };
 
 export function diffPolicyVersions(
@@ -23,6 +24,7 @@ export function diffPolicyVersions(
   const scopesChanged: string[] = [];
   const reviewStatusChanged: string[] = [];
   const effectiveDatesChanged: string[] = [];
+  const sourcesChanged: string[] = [];
 
   for (const [id, rule] of toRules) {
     if (!fromRules.has(id)) {
@@ -34,6 +36,7 @@ export function diffPolicyVersions(
         scopesChanged,
         reviewStatusChanged,
         effectiveDatesChanged,
+        sourcesChanged,
       });
     }
   }
@@ -52,6 +55,7 @@ export function diffPolicyVersions(
     scopesChanged: Object.freeze(scopesChanged.sort()),
     reviewStatusChanged: Object.freeze(reviewStatusChanged.sort()),
     effectiveDatesChanged: Object.freeze(effectiveDatesChanged.sort()),
+    sourcesChanged: Object.freeze(sourcesChanged.sort()),
   });
 }
 
@@ -63,6 +67,7 @@ function noteChanges(
     scopesChanged: string[];
     reviewStatusChanged: string[];
     effectiveDatesChanged: string[];
+    sourcesChanged: string[];
   },
 ): void {
   if (from.effect !== to.effect) {
@@ -82,6 +87,9 @@ function noteChanges(
   if (from.effectiveFrom !== to.effectiveFrom || from.effectiveUntil !== to.effectiveUntil) {
     buckets.effectiveDatesChanged.push(to.ruleId);
   }
+  if (from.sourceReference !== to.sourceReference) {
+    buckets.sourcesChanged.push(to.ruleId);
+  }
 }
 
 export function formatPolicyDiff(diff: PolicyVersionDiff): string {
@@ -93,6 +101,7 @@ export function formatPolicyDiff(diff: PolicyVersionDiff): string {
     `scopes changed: ${diff.scopesChanged.join(', ') || '(none)'}`,
     `review status changed: ${diff.reviewStatusChanged.join(', ') || '(none)'}`,
     `effective dates changed: ${diff.effectiveDatesChanged.join(', ') || '(none)'}`,
+    `sources changed: ${diff.sourcesChanged.join(', ') || '(none)'}`,
   ];
   return lines.join('\n');
 }

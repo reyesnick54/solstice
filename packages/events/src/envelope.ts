@@ -229,6 +229,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.reservationId ?? body.paymentId ?? body.proposalId ?? body.killSwitchId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('RegulatoryTwin')) {
+    return {
+      type: 'regulatory',
+      id: String(body.scenarioId ?? body.runId ?? body.assessmentId ?? body.candidateSetId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

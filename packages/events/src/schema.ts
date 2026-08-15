@@ -121,6 +121,11 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'TreasuryExposureElevated', version: 1, status: 'current' },
   { eventType: 'TreasuryRebalanceProposed', version: 1, status: 'current' },
   { eventType: 'TreasuryReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'RegulatoryTwinScenarioCreated', version: 1, status: 'current' },
+  { eventType: 'RegulatoryTwinRunCompleted', version: 1, status: 'current' },
+  { eventType: 'RegulatoryTwinImpactDetected', version: 1, status: 'current' },
+  { eventType: 'RegulatoryTwinInvariantFailed', version: 1, status: 'current' },
+  { eventType: 'RegulatoryTwinReadinessAssessed', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

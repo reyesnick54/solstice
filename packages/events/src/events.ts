@@ -444,6 +444,55 @@ export type TreasuryExposureElevatedV1 = VersionedEvent<'TreasuryExposureElevate
 export type TreasuryRebalanceProposedV1 = VersionedEvent<'TreasuryRebalanceProposed', 1, TreasuryAuditPayload>;
 export type TreasuryReconciliationMismatchV1 = VersionedEvent<'TreasuryReconciliationMismatch', 1, TreasuryAuditPayload>;
 
+export type RegulatoryTwinAuditPayload = {
+  readonly scenarioId?: string;
+  readonly runId?: string;
+  readonly category?: string;
+  readonly invariant?: boolean;
+  readonly factSourceKinds?: readonly string[];
+  readonly changed?: boolean;
+  readonly transition?: string;
+  readonly restrictiveness?: string;
+  readonly executionAuthorityIssued?: false;
+  readonly suiteId?: string;
+  readonly totalEvaluated?: number;
+  readonly unchanged?: number;
+  readonly newReview?: number;
+  readonly newBlock?: number;
+  readonly insufficientFacts?: number;
+  readonly candidateSetId?: string;
+  readonly failureCount?: number;
+  readonly assessmentId?: string;
+  readonly kind?: string;
+  readonly state?: string;
+};
+
+export type RegulatoryTwinScenarioCreatedV1 = VersionedEvent<
+  'RegulatoryTwinScenarioCreated',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinRunCompletedV1 = VersionedEvent<
+  'RegulatoryTwinRunCompleted',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinImpactDetectedV1 = VersionedEvent<
+  'RegulatoryTwinImpactDetected',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinInvariantFailedV1 = VersionedEvent<
+  'RegulatoryTwinInvariantFailed',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinReadinessAssessedV1 = VersionedEvent<
+  'RegulatoryTwinReadinessAssessed',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -648,7 +697,12 @@ export type DomainEvent =
   | TreasuryCorridorHaltedV1
   | TreasuryExposureElevatedV1
   | TreasuryRebalanceProposedV1
-  | TreasuryReconciliationMismatchV1;
+  | TreasuryReconciliationMismatchV1
+  | RegulatoryTwinScenarioCreatedV1
+  | RegulatoryTwinRunCompletedV1
+  | RegulatoryTwinImpactDetectedV1
+  | RegulatoryTwinInvariantFailedV1
+  | RegulatoryTwinReadinessAssessedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

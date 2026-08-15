@@ -177,6 +177,18 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(apy|apr)\b/i.test(v011.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V012 persists Regulatory Digital Twin artifacts without a second policy store', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v012 = files.find((file) => file.version === 12);
+    assert.ok(v012);
+    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS regulatory_twin/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.snapshot/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.candidate_set/);
+    assert.match(v012.sql, /rdt_candidate_no_counsel/);
+    assert.match(v012.sql, /GRANT USAGE ON SCHEMA regulatory_twin TO customer_app/);
+    assert.equal(/CREATE TABLE customer\.policy_pack/.test(v012.sql), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

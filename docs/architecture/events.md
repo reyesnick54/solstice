@@ -142,8 +142,16 @@ Implemented Personal Economic Graph events (ids and kinds only):
 - `growth.plan.stale` → `GrowthPlanStale`
 - `growth.action.proposed` → `GrowthActionProposed`
 
+Implemented Regulatory Digital Twin events (hashes and ids only; no raw customer facts):
+
+- `regulatory.scenario.created` → `RegulatoryTwinScenarioCreated`
+- `regulatory.run.completed` → `RegulatoryTwinRunCompleted`
+- `regulatory.impact.detected` → `RegulatoryTwinImpactDetected`
+- `regulatory.invariant.failed` → `RegulatoryTwinInvariantFailed`
+- `regulatory.readiness.assessed` → `RegulatoryTwinReadinessAssessed`
+
 Reserved (not implemented): `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
-`regulatory.*`, `notification.*`, `analytics.*`.
+`notification.*`, `analytics.*`.
 
 `evidence.*` is reserved as a namespace so evidence records are not
 mistaken for domain events.
