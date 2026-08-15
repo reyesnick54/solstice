@@ -31,6 +31,12 @@ export type CardWorld = {
   readonly actorId: string;
   readonly processorActorId: string;
   readonly operationsActorId: string;
+  readonly catalog: {
+    readonly customers: SimulationRuntime['customers'];
+    readonly accounts: SimulationRuntime['accounts'];
+    readonly products: ReturnType<ReturnType<typeof seedSimulationCatalog>['products']['asCatalog']>;
+    readonly legalEntities: ReturnType<typeof seedSimulationCatalog>['legalEntities'];
+  };
 };
 
 export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWorld {
@@ -75,6 +81,8 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
       'POST_DEPOSIT_REQUEST',
       'HOLD_REQUEST',
       'CARD_MANAGE_REQUEST',
+      'WALLET_PROVISION_REQUEST',
+      'ACCEPTANCE_MANAGE_REQUEST',
       'VIEW_ACCOUNT',
       'MANAGE_PROFILE',
     ],
@@ -93,7 +101,7 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
   const operationsActor = runtime.identity.provisionSimulatedActor({
     actorId: operationsActorId,
     jurisdiction: asJurisdiction('US'),
-    capabilities: ['HOLD_REQUEST'],
+    capabilities: ['HOLD_REQUEST', 'WALLET_PROVISION_REQUEST', 'ACCEPTANCE_MANAGE_REQUEST', 'CARD_MANAGE_REQUEST'],
   });
   if (!operationsActor.ok) {
     throw new Error(operationsActor.error.message);
@@ -139,6 +147,8 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
 
   const secrets = new InMemorySecretProvider('simulation', {
     'card-processor-callback': CARD_PROCESSOR_SECRET,
+    'wallet-provider-callback': CARD_PROCESSOR_SECRET,
+    'acceptance-provider-callback': CARD_PROCESSOR_SECRET,
   });
   const seeded = seedSimulationCatalog();
   const cards = new CardsService(
@@ -169,6 +179,12 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
     actorId,
     processorActorId,
     operationsActorId,
+    catalog: {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
   };
 }
 

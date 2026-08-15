@@ -39,6 +39,10 @@ jobs:
         run: npm run demo
       - name: Card simulation demo
         run: npm run demo:cards
+      - name: Wallet simulation demo
+        run: npm run demo:wallet
+      - name: Tap-to-pay simulation demo
+        run: npm run demo:acceptance
 
       - name: Typecheck
         run: npm run typecheck

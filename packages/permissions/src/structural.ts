@@ -38,6 +38,12 @@ import {
   type OpenCardDisputeIntent,
   type DecideCardDisputeIntent,
   type AssessCardFeeIntent,
+  type ProvisionCardToWalletIntent,
+  type SuspendWalletTokenIntent,
+  type RegisterAcceptanceDeviceIntent,
+  type CreateAcceptanceSessionIntent,
+  type StartAcceptancePaymentIntent,
+  type SettleAcceptancePaymentIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -166,6 +172,28 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.ASSESS_CARD_FEE) {
     return validateCardAmount((intent as AssessCardFeeIntent).payload.accountId, (intent as AssessCardFeeIntent).payload.amount, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.PROVISION_CARD_TO_WALLET) {
+    return validateAccountOnly((intent as ProvisionCardToWalletIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.SUSPEND_WALLET_TOKEN) {
+    return validateAccountOnly((intent as SuspendWalletTokenIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.REGISTER_ACCEPTANCE_DEVICE) {
+    return validateAccountOnly((intent as RegisterAcceptanceDeviceIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CREATE_ACCEPTANCE_SESSION) {
+    return validateAccountOnly((intent as CreateAcceptanceSessionIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.START_ACCEPTANCE_PAYMENT) {
+    return validateCardAmount(
+      (intent as StartAcceptancePaymentIntent).payload.accountId,
+      (intent as StartAcceptancePaymentIntent).payload.amount,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.SETTLE_ACCEPTANCE_PAYMENT) {
+    return validateAccountOnly((intent as SettleAcceptancePaymentIntent).payload.accountId, catalog);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }

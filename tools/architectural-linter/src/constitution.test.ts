@@ -333,19 +333,16 @@ describe('architecture constitution', () => {
     assert.ok(planned.missing.includes('future-protected-rail'));
   });
 
-  it('CHUNK-12 must stop until the protected cards capability is IMPLEMENTED', () => {
+  it('CHUNK-12 may proceed now that the protected cards capability is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'cards').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'cards').owner, 'packages/cards');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-12',
     );
     assert.ok(declared, 'CHUNK-12 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('cards'));
-    assert.equal(declared.missing.includes('identity'), false);
-    assert.equal(declared.missing.includes('payments'), false);
-    assert.equal(declared.missing.includes('security'), false);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
   });
 });

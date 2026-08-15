@@ -381,9 +381,48 @@ export class IdentityService implements IdentityAuthorityPort {
     }
     const next = Object.freeze({ ...device, trustState, lastSeenAt: this.clock.now() });
     this.store.devices.set(deviceId, next);
+    this.emit('IdentityDeviceTrustChanged', device.identityId, {
+      identityId: device.identityId,
+      deviceId,
+      trustState,
+      status: trustState,
+    });
+    this.seal('IDENTITY_DEVICE_TRUST_CHANGED', {
+      identityId: device.identityId,
+      deviceId,
+      trustState,
+    });
     if (trustState === 'BLOCKED') {
       this.revokeDeviceSessions(deviceId);
     }
+    return ok(next);
+  }
+
+  getDevice(deviceId: DeviceId): RegisteredDevice | undefined {
+    return this.store.devices.get(deviceId);
+  }
+
+  getBusiness(businessId: string): BusinessIdentity | undefined {
+    return this.store.businesses.get(businessId);
+  }
+
+  activateBusinessIdentity(businessId: string): Result<BusinessIdentity, IdentityFailure> {
+    const current = this.store.businesses.get(businessId);
+    if (!current) {
+      return fail('BUSINESS_NOT_FOUND', 'business identity does not exist');
+    }
+    const next = Object.freeze({
+      ...current,
+      businessStatus: 'ACTIVE' as const,
+      verificationState: 'PROVIDER_VERIFIED' as const,
+      version: current.version + 1,
+    });
+    this.store.businesses.set(next.id, next);
+    this.seal('IDENTITY_BUSINESS_ACTIVATED', {
+      businessId: next.id,
+      subjectId: next.subjectId,
+      verificationState: next.verificationState,
+    });
     return ok(next);
   }
 
@@ -750,6 +789,7 @@ export class IdentityService implements IdentityAuthorityPort {
       | 'IdentitySessionCreated'
       | 'IdentitySessionRevoked'
       | 'IdentityDeviceRegistered'
+      | 'IdentityDeviceTrustChanged'
       | 'IdentityRecoveryRequested',
     identityId: SolsticeIdentityId,
     payload: Record<string, unknown>,
