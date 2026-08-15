@@ -85,7 +85,11 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'CardRefundReceived', version: 1, status: 'current' },
   { eventType: 'CardDisputeOpened', version: 1, status: 'current' },
   { eventType: 'CardDisputeDecided', version: 1, status: 'current' },
-
+  { eventType: 'EconomicGraphNodeCreated', version: 1, status: 'current' },
+  { eventType: 'EconomicGraphFactUpdated', version: 1, status: 'current' },
+  { eventType: 'EconomicGraphRelationshipCreated', version: 1, status: 'current' },
+  { eventType: 'EconomicGraphSnapshotCreated', version: 1, status: 'current' },
+  { eventType: 'EconomicGraphOpportunityCreated', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

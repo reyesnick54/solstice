@@ -258,7 +258,8 @@
         "packages/permissions",
         "packages/money",
         "packages/security",
-        "packages/identity"
+        "packages/identity",
+        "packages/personal-economic-graph"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -376,6 +377,46 @@
         "@reyesnick54"
       ],
       "notes": "Application facade that wires cards to canonical banking holds. Not a second card model."
+    },
+    {
+      "id": "packages/personal-economic-graph",
+      "npmName": "@solstice/personal-economic-graph",
+      "path": "packages/personal-economic-graph",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/identity",
+        "packages/events",
+        "packages/config"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Personal Economic Graph. Non-authoritative read-intelligence layer. Does not post journals or issue Execution Authority."
+    },
+    {
+      "id": "services/economic-graph",
+      "npmName": "@solstice/economic-graph-service",
+      "path": "services/economic-graph",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/personal-economic-graph"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Application facade for the Personal Economic Graph. Not a second graph model."
     }
   ],
   "components": [
@@ -1054,6 +1095,35 @@
         "@reyesnick54"
       ],
       "notes": "One canonical card model. Processor adapters cannot post journals or issue Execution Authority."
+    },
+    {
+      "id": "personal-economic-graph",
+      "name": "Personal Economic Graph",
+      "canonicalOwner": "packages/personal-economic-graph",
+      "canonicalPath": "packages/personal-economic-graph/src/service.ts",
+      "publicInterface": "packages/personal-economic-graph/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "EconomicGraphService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/economic-graph",
+        "packages/financial-graph",
+        "packages/user-graph",
+        "packages/economic-memory",
+        "packages/personal-finance-graph"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "First SFF 2.0 intelligence layer. Non-authoritative. Does not execute."
     }
   ],
   "authorizedMutationPaths": [
@@ -1309,7 +1379,12 @@
     "packages/secrets",
     "packages/card-processing",
     "packages/issuer",
-    "packages/card-core"
+    "packages/card-core",
+    "packages/economic-graph",
+    "packages/financial-graph",
+    "packages/user-graph",
+    "packages/economic-memory",
+    "packages/personal-finance-graph"
   ],
   "capabilities": [
     {
@@ -1447,6 +1522,13 @@
       "owner": "packages/cards",
       "protected": true,
       "notes": "Simulation card issuing, authorization, clearing, settlement, controls, refunds, and disputes. No live network or PAN vault."
+    },
+    {
+      "id": "personal-economic-graph",
+      "status": "IMPLEMENTED",
+      "owner": "packages/personal-economic-graph",
+      "protected": true,
+      "notes": "Personal Economic Graph. Non-authoritative projection. Does not execute financial changes."
     }
   ],
   "boundedContexts": [
@@ -1532,11 +1614,13 @@
     },
     {
       "id": "PERSONAL_ECONOMIC_GRAPH",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
-        "packages/personal-economic-graph"
+        "packages/personal-economic-graph",
+        "services/economic-graph"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "First SFF 2.0 intelligence layer. Graph/read projection only. Does not execute."
     },
     {
       "id": "PERSONAL_ECONOMY_AGENT",

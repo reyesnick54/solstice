@@ -67,6 +67,12 @@ export {
   type CardRefundReceivedV1,
   type CardDisputeOpenedV1,
   type CardDisputeDecidedV1,
+  type EconomicGraphAuditPayload,
+  type EconomicGraphNodeCreatedV1,
+  type EconomicGraphFactUpdatedV1,
+  type EconomicGraphRelationshipCreatedV1,
+  type EconomicGraphSnapshotCreatedV1,
+  type EconomicGraphOpportunityCreatedV1,
 
   type SecurityKeyAuditPayload,
   type SealedDomainEvent,

@@ -214,6 +214,9 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.railSubmissionId ?? body.paymentId ?? body.inboundId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('EconomicGraph')) {
+    return { type: 'economic_graph', id: String(body.graphId ?? 'unknown') };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

@@ -39,6 +39,8 @@ jobs:
         run: npm run demo
       - name: Card simulation demo
         run: npm run demo:cards
+      - name: Personal Economic Graph demo
+        run: npm run demo:peg
 
       - name: Typecheck
         run: npm run typecheck

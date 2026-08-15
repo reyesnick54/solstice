@@ -78,6 +78,7 @@ Agents and later CI jobs use that result. They do not guess.
 | cards | PLANNED | packages/cards |
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
+| personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -92,3 +93,6 @@ requires the protected `cards` capability. That capability is `PLANNED`
 on `main`. The evaluator returns `mustStop: true`. Do not invent a
 second cards domain, processor adapter, or network-token metadata
 model. See [`chunk-12-stop.md`](./chunk-12-stop.md).
+
+Chunk 14 implements the Personal Economic Graph as the first SFF 2.0
+intelligence layer. It does not start the Personal Economy Agent.

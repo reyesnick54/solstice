@@ -68,6 +68,12 @@ This document describes only what is implemented and tested in this tree.
   clearing/settlement journals, refunds, disputes, network-token metadata
   for later wallet provisioning, and HMAC processor-callback security.
   No real PAN/CVV, live network, or issuer SDK.
+- Personal Economic Graph (Chunk 14, `packages/personal-economic-graph`,
+  `services/economic-graph`): typed nodes/edges, provenance, confidence,
+  temporal facts, event-driven projection, recurring detection, goals,
+  proposal-only opportunities, snapshot API, rebuildable derived
+  projection, and ActorContext access control. Non-authoritative. Does
+  not execute. The Personal Economy Agent is not started.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -81,7 +87,7 @@ This document describes only what is implemented and tested in this tree.
   UAE network connections. Chunk 10 is simulation connectivity only.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
-- Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. The Personal Economic Graph is IMPLEMENTED as a non-authoritative intelligence layer. Live rails remain later.
 - Chunk 12 (mobile wallet / Tap-to-Pay) is **stopped**. It requires
   card issuing/processing middleware and a network-token metadata
   model. Those belong to the reserved CARDS context
@@ -117,6 +123,7 @@ npm run check:posture
 npm run gate
 npm run demo
 npm run demo:cards
+npm run demo:peg
 npm run typecheck
 npm run scan:secrets
 npm run ci

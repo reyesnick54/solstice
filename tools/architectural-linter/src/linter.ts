@@ -47,7 +47,8 @@ export function lintSource(file: string, source: string): Finding[] {
     /packages\/money\//.test(rel) ||
     /packages\/ledger\//.test(rel) ||
     /services\/accounts\/src\/(money-movement|banking-operations|balances|available-funds)\.ts$/.test(rel) ||
-    /packages\/cards\/src\/(accounting|journals|service)\.ts$/.test(rel);
+    /packages\/cards\/src\/(accounting|journals|service)\.ts$/.test(rel) ||
+    /packages\/personal-economic-graph\/src\/(cash-flow|recurring|snapshot|service)\.ts$/.test(rel);
   const isTest = /\.test\.ts$/.test(rel) || /\/tests\//.test(rel);
 
   for (let i = 0; i < lines.length; i += 1) {

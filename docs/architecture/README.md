@@ -12,5 +12,6 @@
 - [Compliance screening fabric](./compliance.md) — AML, sanctions, PEP, TM, fraud, cases (ADR-0010)
 - [Security and cryptography](./security.md) — KeyProvider, secrets, envelopes, key lifecycle
 - Identity lives in `packages/identity` (Chunk 5). ADR-0007 remains PROPOSED.
+- [Personal Economic Graph](./economic-graph.md) — first SFF 2.0 intelligence layer. Does not execute.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

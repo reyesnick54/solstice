@@ -29,6 +29,9 @@ export const IDENTITY_CAPABILITIES = [
   'CARD_MANAGE_REQUEST',
   'CARD_AUTHORIZE_REQUEST',
   'CARD_CLEAR_REQUEST',
+  'VIEW_ECONOMIC_GRAPH',
+  'DECLARE_ECONOMIC_FACT',
+  'OPERATE_ECONOMIC_GRAPH',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -60,6 +63,9 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   ],
   CARD_AUTHORIZE_REQUEST: ['AUTHORIZE_CARD_PURCHASE', 'REVERSE_CARD_AUTHORIZATION'],
   CARD_CLEAR_REQUEST: ['CLEAR_CARD_TRANSACTION', 'REFUND_CARD_TRANSACTION', 'ASSESS_CARD_FEE'],
+  VIEW_ECONOMIC_GRAPH: [],
+  DECLARE_ECONOMIC_FACT: [],
+  OPERATE_ECONOMIC_GRAPH: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -148,6 +154,8 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
   if (assuranceAtLeast(facts.session.authenticationStrength, 'STANDARD')) {
     granted.add('VIEW_ACCOUNT');
     granted.add('MANAGE_PROFILE');
+    granted.add('VIEW_ECONOMIC_GRAPH');
+    granted.add('DECLARE_ECONOMIC_FACT');
   }
 
   const kycFresh = facts.kyc !== null && kycIsFresh(facts.kyc, facts.now);

@@ -391,6 +391,44 @@ export type CardRefundReceivedV1 = VersionedEvent<'CardRefundReceived', 1, CardA
 export type CardDisputeOpenedV1 = VersionedEvent<'CardDisputeOpened', 1, CardAuditPayload>;
 export type CardDisputeDecidedV1 = VersionedEvent<'CardDisputeDecided', 1, CardAuditPayload>;
 
+export type EconomicGraphAuditPayload = {
+  readonly graphId?: string;
+  readonly nodeId?: string;
+  readonly kind?: string;
+  readonly from?: string;
+  readonly to?: string;
+  readonly key?: string;
+  readonly snapshotId?: string;
+  readonly opportunityId?: string;
+  readonly executable?: boolean;
+};
+
+export type EconomicGraphNodeCreatedV1 = VersionedEvent<
+  'EconomicGraphNodeCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphFactUpdatedV1 = VersionedEvent<
+  'EconomicGraphFactUpdated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphRelationshipCreatedV1 = VersionedEvent<
+  'EconomicGraphRelationshipCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphSnapshotCreatedV1 = VersionedEvent<
+  'EconomicGraphSnapshotCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+export type EconomicGraphOpportunityCreatedV1 = VersionedEvent<
+  'EconomicGraphOpportunityCreated',
+  1,
+  EconomicGraphAuditPayload
+>;
+
 export type RailAuditPayload = {
   readonly paymentId?: string;
   readonly railSubmissionId?: string;
@@ -490,7 +528,12 @@ export type DomainEvent =
   | CardTransactionSettledV1
   | CardRefundReceivedV1
   | CardDisputeOpenedV1
-  | CardDisputeDecidedV1;
+  | CardDisputeDecidedV1
+  | EconomicGraphNodeCreatedV1
+  | EconomicGraphFactUpdatedV1
+  | EconomicGraphRelationshipCreatedV1
+  | EconomicGraphSnapshotCreatedV1
+  | EconomicGraphOpportunityCreatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

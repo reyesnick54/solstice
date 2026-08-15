@@ -23,5 +23,5 @@
     "fx",
     "cards"
   ],
-  "notes": "Protected cards capability is PLANNED on main. Chunk 12 must stop rather than invent a second cards domain, processor adapter, or network-token metadata model. Do not implement wallet or SoftPOS until packages/cards is IMPLEMENTED."
+  "notes": "Protected cards capability is IMPLEMENTED. Wallet / Tap-to-Pay product work remains later and must use packages/cards rather than inventing a second cards domain."
 }

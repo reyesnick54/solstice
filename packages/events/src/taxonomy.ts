@@ -22,7 +22,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'fraud',
   'rail',
   'card',
-
+  'economic_graph',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -115,7 +115,11 @@ export const EVENT_TYPE_NAMES = [
   'CardRefundReceived',
   'CardDisputeOpened',
   'CardDisputeDecided',
-
+  'EconomicGraphNodeCreated',
+  'EconomicGraphFactUpdated',
+  'EconomicGraphRelationshipCreated',
+  'EconomicGraphSnapshotCreated',
+  'EconomicGraphOpportunityCreated',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -195,7 +199,11 @@ export const EVENT_SCHEMA_REFS = {
   CardRefundReceived: 'solstice.card.refund.received/1',
   CardDisputeOpened: 'solstice.card.dispute.opened/1',
   CardDisputeDecided: 'solstice.card.dispute.decided/1',
-
+  EconomicGraphNodeCreated: 'solstice.economic_graph.node.created/1',
+  EconomicGraphFactUpdated: 'solstice.economic_graph.fact.updated/1',
+  EconomicGraphRelationshipCreated: 'solstice.economic_graph.relationship.created/1',
+  EconomicGraphSnapshotCreated: 'solstice.economic_graph.snapshot.created/1',
+  EconomicGraphOpportunityCreated: 'solstice.economic_graph.opportunity.created/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -275,7 +283,11 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   CardRefundReceived: 'card',
   CardDisputeOpened: 'card',
   CardDisputeDecided: 'card',
-
+  EconomicGraphNodeCreated: 'economic_graph',
+  EconomicGraphFactUpdated: 'economic_graph',
+  EconomicGraphRelationshipCreated: 'economic_graph',
+  EconomicGraphSnapshotCreated: 'economic_graph',
+  EconomicGraphOpportunityCreated: 'economic_graph',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

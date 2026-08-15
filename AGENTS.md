@@ -91,9 +91,11 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/events` — versioned domain events, durable envelope, outbox/inbox/replay abstractions
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
+- `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
 - `services/identity` — identity application facade; not a second identity model
+- `services/economic-graph` — PEG application facade; not a second graph model
 - `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
 - `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
 

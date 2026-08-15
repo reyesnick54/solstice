@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-14",
+  "title": "Personal Economic Graph — Canonical Economic Data Model, Relationships, Provenance, Temporal State, and Economic Context API",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "identity",
+    "accounts-service",
+    "banking-core",
+    "payments",
+    "cards"
+  ],
+  "notes": "First SFF 2.0 intelligence layer. Non-authoritative projection. Does not start the Personal Economy Agent. Does not post journals or issue Execution Authority."
+}
