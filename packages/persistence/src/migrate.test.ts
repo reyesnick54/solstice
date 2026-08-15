@@ -270,6 +270,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/LIVE_APPROVED/.test(lifecycleIn[1] ?? ''), false);
   });
 
+  it('customer V017 persists Agentic Capital Mesh structured records without chain-of-thought', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v017 = files.find((file) => file.version === 17);
+    assert.ok(v017);
+    assert.match(v017.sql, /CREATE SCHEMA IF NOT EXISTS capital_mesh/);
+    assert.match(v017.sql, /CREATE TABLE capital_mesh.run/);
+    assert.match(v017.sql, /CREATE TABLE capital_mesh.proposal/);
+    assert.match(v017.sql, /strategy_validation <> 'VALIDATED'/);
+    assert.match(v017.sql, /agent_votes_authorize BOOLEAN NOT NULL CHECK \(agent_votes_authorize = FALSE\)/);
+    assert.match(v017.sql, /executable BOOLEAN NOT NULL CHECK \(executable = FALSE\)/);
+    assert.match(v017.sql, /GRANT USAGE ON SCHEMA capital_mesh TO customer_app/);
+    assert.equal(/chain.of.thought|BEGIN_PROMPT/i.test(v017.sql), false);
+    assert.equal(/CREATE TABLE capital_mesh\.journal/i.test(v017.sql), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

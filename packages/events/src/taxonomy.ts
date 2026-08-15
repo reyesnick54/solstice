@@ -33,6 +33,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'regulatory',
   'risk',
   'model',
+  'capital_mesh',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -190,6 +191,13 @@ export const EVENT_TYPE_NAMES = [
   'ModelValidated',
   'ModelApprovedForSimulation',
   'ModelRetired',
+  'CapitalMeshRunStarted',
+  'CapitalMeshThesisCreated',
+  'CapitalMeshCandidateCreated',
+  'CapitalMeshReviewCompleted',
+  'CapitalMeshVetoApplied',
+  'CapitalMeshProposalCreated',
+  'CapitalMeshProposalStale',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -336,6 +344,13 @@ export const EVENT_SCHEMA_REFS = {
   ModelValidated: 'solstice.model.validated/1',
   ModelApprovedForSimulation: 'solstice.model.approved_for_simulation/1',
   ModelRetired: 'solstice.model.retired/1',
+  CapitalMeshRunStarted: 'solstice.capital_mesh.run.started/1',
+  CapitalMeshThesisCreated: 'solstice.capital_mesh.thesis.created/1',
+  CapitalMeshCandidateCreated: 'solstice.capital_mesh.candidate.created/1',
+  CapitalMeshReviewCompleted: 'solstice.capital_mesh.review.completed/1',
+  CapitalMeshVetoApplied: 'solstice.capital_mesh.veto.applied/1',
+  CapitalMeshProposalCreated: 'solstice.capital_mesh.proposal.created/1',
+  CapitalMeshProposalStale: 'solstice.capital_mesh.proposal.stale/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -482,6 +497,13 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ModelValidated: 'model',
   ModelApprovedForSimulation: 'model',
   ModelRetired: 'model',
+  CapitalMeshRunStarted: 'capital_mesh',
+  CapitalMeshThesisCreated: 'capital_mesh',
+  CapitalMeshCandidateCreated: 'capital_mesh',
+  CapitalMeshReviewCompleted: 'capital_mesh',
+  CapitalMeshVetoApplied: 'capital_mesh',
+  CapitalMeshProposalCreated: 'capital_mesh',
+  CapitalMeshProposalStale: 'capital_mesh',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

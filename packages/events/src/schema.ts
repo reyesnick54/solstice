@@ -152,6 +152,13 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ModelValidated', version: 1, status: 'current' },
   { eventType: 'ModelApprovedForSimulation', version: 1, status: 'current' },
   { eventType: 'ModelRetired', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshRunStarted', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshThesisCreated', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshCandidateCreated', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshReviewCompleted', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshVetoApplied', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshProposalCreated', version: 1, status: 'current' },
+  { eventType: 'CapitalMeshProposalStale', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

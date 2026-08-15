@@ -562,6 +562,25 @@ export type ModelValidatedV1 = VersionedEvent<'ModelValidated', 1, ModelAuditPay
 export type ModelApprovedForSimulationV1 = VersionedEvent<'ModelApprovedForSimulation', 1, ModelAuditPayload>;
 export type ModelRetiredV1 = VersionedEvent<'ModelRetired', 1, ModelAuditPayload>;
 
+export type CapitalMeshAuditPayload = {
+  readonly runId?: string;
+  readonly subjectId?: string;
+  readonly thesisId?: string;
+  readonly candidateId?: string;
+  readonly reviewId?: string;
+  readonly proposalId?: string;
+  readonly reasons?: readonly string[];
+  readonly mutatesFinancialState?: false;
+};
+
+export type CapitalMeshRunStartedV1 = VersionedEvent<'CapitalMeshRunStarted', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshThesisCreatedV1 = VersionedEvent<'CapitalMeshThesisCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshCandidateCreatedV1 = VersionedEvent<'CapitalMeshCandidateCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshReviewCompletedV1 = VersionedEvent<'CapitalMeshReviewCompleted', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshVetoAppliedV1 = VersionedEvent<'CapitalMeshVetoApplied', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshProposalCreatedV1 = VersionedEvent<'CapitalMeshProposalCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshProposalStaleV1 = VersionedEvent<'CapitalMeshProposalStale', 1, CapitalMeshAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -846,7 +865,14 @@ export type DomainEvent =
   | ModelVersionCreatedV1
   | ModelValidatedV1
   | ModelApprovedForSimulationV1
-  | ModelRetiredV1;
+  | ModelRetiredV1
+  | CapitalMeshRunStartedV1
+  | CapitalMeshThesisCreatedV1
+  | CapitalMeshCandidateCreatedV1
+  | CapitalMeshReviewCompletedV1
+  | CapitalMeshVetoAppliedV1
+  | CapitalMeshProposalCreatedV1
+  | CapitalMeshProposalStaleV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
