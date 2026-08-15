@@ -44,6 +44,12 @@ import {
   type CreateAcceptanceSessionIntent,
   type StartAcceptancePaymentIntent,
   type SettleAcceptancePaymentIntent,
+  type ReserveTreasuryLiquidityIntent,
+  type ReleaseTreasuryLiquidityIntent,
+  type CommitTreasuryLiquidityIntent,
+  type ProposeTreasuryRebalanceIntent,
+  type ExecuteTreasuryRebalanceIntent,
+  type SetTreasuryKillSwitchIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -194,6 +200,32 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.SETTLE_ACCEPTANCE_PAYMENT) {
     return validateAccountOnly((intent as SettleAcceptancePaymentIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.RESERVE_TREASURY_LIQUIDITY) {
+    return validateCardAmount(
+      (intent as ReserveTreasuryLiquidityIntent).payload.accountId,
+      (intent as ReserveTreasuryLiquidityIntent).payload.amount,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.RELEASE_TREASURY_LIQUIDITY) {
+    return validateAccountOnly((intent as ReleaseTreasuryLiquidityIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.COMMIT_TREASURY_LIQUIDITY) {
+    return validateAccountOnly((intent as CommitTreasuryLiquidityIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.PROPOSE_TREASURY_REBALANCE) {
+    return validateCardAmount(
+      (intent as ProposeTreasuryRebalanceIntent).payload.accountId,
+      (intent as ProposeTreasuryRebalanceIntent).payload.amount,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.EXECUTE_TREASURY_REBALANCE) {
+    return validateAccountOnly((intent as ExecuteTreasuryRebalanceIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.SET_TREASURY_KILL_SWITCH) {
+    return validateAccountOnly((intent as SetTreasuryKillSwitchIntent).payload.accountId, catalog);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }

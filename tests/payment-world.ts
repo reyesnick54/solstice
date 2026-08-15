@@ -88,6 +88,7 @@ export function createPaymentWorld(
       'FX_QUOTE_REQUEST',
       'VIEW_ACCOUNT',
       'MANAGE_PROFILE',
+      'TREASURY_OPERATE_REQUEST',
     ],
   });
   if (!provisioned.ok) {

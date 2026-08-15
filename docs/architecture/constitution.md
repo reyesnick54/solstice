@@ -56,6 +56,7 @@ never be two implementations of these systems.
 | Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
+| Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -64,9 +65,10 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`, `cards`, `personal-economic-graph`.
+`payments`, `cards`, `personal-economic-graph`, `treasury`.
 
-**Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`.
+**Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
+`treasury`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -120,6 +122,12 @@ The only action types on this tree are declared in
 - `CREATE_ACCEPTANCE_SESSION`
 - `START_ACCEPTANCE_PAYMENT`
 - `SETTLE_ACCEPTANCE_PAYMENT`
+- `RESERVE_TREASURY_LIQUIDITY`
+- `RELEASE_TREASURY_LIQUIDITY`
+- `COMMIT_TREASURY_LIQUIDITY`
+- `PROPOSE_TREASURY_REBALANCE`
+- `EXECUTE_TREASURY_REBALANCE`
+- `SET_TREASURY_KILL_SWITCH`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -139,6 +147,7 @@ They do not invent a parallel envelope.
 | `packages/cards/src/wallet/service.ts` wallet provisioning / token lifecycle | Device-payment tokens, provider references | Kernel `submit` then verified authority; adapters cannot issue authority |
 | `packages/cards/src/acceptance/service.ts` SoftPOS device / session / settlement | Acceptance devices, sessions, merchant payments, journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
+| `packages/treasury/src/service.ts` reserve / release / commit / rebalance / kill switch | Treasury reservations, proposals, operational controls; rebalance journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -153,7 +162,8 @@ Only `Ledger.postJournal` in `packages/ledger/src/journal.ts`.
 Production callers are `services/accounts/src/money-movement.ts` and
 `services/accounts/src/banking-operations.ts` and
 `packages/payments/src/journals.ts` and
-`packages/cards/src/journals.ts`.
+`packages/cards/src/journals.ts` and
+`packages/treasury/src/service.ts` (rebalance only).
 
 ### Locations that may issue or verify Execution Authority
 
@@ -354,13 +364,15 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/treasury` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `services/cards` | `packages/cards`, `services/accounts`, and the cards package dependencies needed to wire holds |
 | `packages/personal-economic-graph` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/config` |
 | `services/economic-graph` | `packages/personal-economic-graph` |
+| `packages/treasury` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security`, `packages/payments` |
+| `services/treasury` | `packages/treasury` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -486,6 +498,21 @@ flowchart BT
   peg --> events
   peg --> config
   pegSvc --> peg
+  treasury["packages/treasury"]
+  treasurySvc["services/treasury"]
+  treasury --> domain
+  treasury --> money
+  treasury --> permissions
+  treasury --> config
+  treasury --> kernel
+  treasury --> ledger
+  treasury --> evidence
+  treasury --> events
+  treasury --> identity
+  treasury --> security
+  treasury --> payments
+  treasurySvc --> treasury
+  persistence --> treasury
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -507,10 +534,11 @@ an allowed dependency — not "must use `index.ts` only."
 
 ## D. Bounded context roadmap
 
-The following contexts are **reserved**. They are not implemented on
-this tree. Later agents must not invent a second owner for a context
-that is already reserved, and must not reimplement an IMPLEMENTED
-protected dependency because a later phase is absent.
+The following contexts are **reserved**. Status is the current
+implementation state on this tree. Later agents must not invent a
+second owner for a context that is already reserved, and must not
+reimplement an IMPLEMENTED protected dependency because a later
+phase is absent.
 
 | Context | Status | Reserved paths |
 | --- | --- | --- |
@@ -521,7 +549,7 @@ protected dependency because a later phase is absent.
 | PAYMENTS | PARTIAL | `packages/payments` |
 | FX | PARTIAL | `packages/payments` |
 | CARDS | PARTIAL | `packages/cards`, `services/cards` |
-| TREASURY | PLANNED | `packages/treasury`, `services/treasury` |
+| TREASURY | PARTIAL | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | PLANNED | `packages/agent` |
 | GROWTH ORCHESTRATOR | PLANNED | `packages/platform` |

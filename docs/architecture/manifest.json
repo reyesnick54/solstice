@@ -259,7 +259,8 @@
         "packages/money",
         "packages/security",
         "packages/identity",
-        "packages/personal-economic-graph"
+        "packages/personal-economic-graph",
+        "packages/treasury"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -417,6 +418,52 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for the Personal Economic Graph. Not a second graph model."
+    },
+    {
+      "id": "packages/treasury",
+      "npmName": "@solstice/treasury",
+      "path": "packages/treasury",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/payments"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical treasury, liquidity, corridor prefunding, deterministic routing intelligence, and settlement-risk engine. Simulation only. Not a second ledger."
+    },
+    {
+      "id": "services/treasury",
+      "npmName": "@solstice/treasury-service",
+      "path": "services/treasury",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/treasury"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Application facade for packages/treasury. Not a second treasury model."
     }
   ],
   "components": [
@@ -1124,6 +1171,34 @@
         "@reyesnick54"
       ],
       "notes": "First SFF 2.0 intelligence layer. Non-authoritative. Does not execute."
+    },
+    {
+      "id": "treasury-platform",
+      "name": "Canonical treasury platform",
+      "canonicalOwner": "packages/treasury",
+      "canonicalPath": "packages/treasury/src/service.ts",
+      "publicInterface": "packages/treasury/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "TreasuryService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/liquidity",
+        "packages/routing-intelligence",
+        "packages/treasury-core",
+        "packages/settlement-risk"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Treasury model. Customer balances stay on the canonical ledger."
     }
   ],
   "authorizedMutationPaths": [
@@ -1348,6 +1423,42 @@
       "file": "packages/cards/src/journals.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "reserveLiquidity",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "releaseReservation",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "commitReservation",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "proposeRebalance",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "executeRebalance",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "setKillSwitch",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -1389,6 +1500,10 @@
     "packages/financial-agent",
     "packages/economy-ai",
     "packages/growth-agent"
+    "packages/liquidity",
+    "packages/routing-intelligence",
+    "packages/treasury-core",
+    "packages/settlement-risk"
   ],
   "capabilities": [
     {
@@ -1540,6 +1655,10 @@
       "owner": "packages/treasury",
       "protected": true,
       "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. Chunk 13 stopped. Chunk 13R was not merged. Do not treat payment/card simulation books as this capability."
+      "status": "IMPLEMENTED",
+      "owner": "packages/treasury",
+      "protected": true,
+      "notes": "Simulation treasury liquidity, prefunding, deterministic routing, concentration, settlement exposure, and Kernel-gated rebalance proposals. Not live banks or regulatory capital."
     }
   ],
   "boundedContexts": [
@@ -1616,12 +1735,13 @@
     },
     {
       "id": "TREASURY",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/treasury",
         "services/treasury"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation treasury and routing intelligence. No live bank, correspondent, or payment-provider connection. Concentration thresholds are RESEARCH_REQUIRED engineering values."
     },
     {
       "id": "PERSONAL_ECONOMIC_GRAPH",

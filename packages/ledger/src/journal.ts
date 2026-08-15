@@ -298,7 +298,8 @@ export class Ledger {
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
         request.actionType === 'DECIDE_CARD_DISPUTE' ||
-        request.actionType === 'SETTLE_ACCEPTANCE_PAYMENT';
+        request.actionType === 'SETTLE_ACCEPTANCE_PAYMENT' ||
+        request.actionType === 'EXECUTE_TREASURY_REBALANCE';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>

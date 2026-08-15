@@ -121,6 +121,7 @@ describe('versioned SQL migrations', () => {
   });
 
   it('customer V009 stores Personal Economic Graph projection without an authoritative balance', () => {
+  it('customer V009 persists Personal Economic Graph projection without authoritative balances', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v009 = files.find((file) => file.version === 9);
     assert.ok(v009);
@@ -130,6 +131,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v009.sql, /authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/);
     assert.match(v009.sql, /mutates_financial_state BOOLEAN NOT NULL DEFAULT FALSE/);
     assert.equal(/\b(pan|cvv|private_key|api_key)\b/i.test(v009.sql.replace(/--[^\n]*/g, '')), false);
+    assert.equal(/authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/.test(v009.sql), true);
+  });
+
+  it('customer V010 persists treasury liquidity without a second ledger or customer ownership', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v010 = files.find((file) => file.version === 10);
+    assert.ok(v010);
+    assert.match(v010.sql, /CREATE SCHEMA IF NOT EXISTS treasury/);
+    assert.match(v010.sql, /CREATE TABLE treasury.account/);
+    assert.match(v010.sql, /CREATE TABLE treasury.reservation/);
+    assert.match(v010.sql, /treasury_no_customer_ownership/);
+    assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v010.sql), false);
   });
 
   it('customer V008 stores wallet and SoftPOS records without PAN, CVV, or EMV data', () => {

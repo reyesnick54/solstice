@@ -78,6 +78,7 @@ Agents and later CI jobs use that result. They do not guess.
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 | treasury | PLANNED | packages/treasury |
+| treasury | IMPLEMENTED | packages/treasury |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -111,3 +112,25 @@ capability. That capability is `PLANNED`. The evaluator returns
 [`chunk-15-stop.md`](./chunk-15-stop.md). Do not create
 `packages/agent` until Treasury is `IMPLEMENTED` and clean `main` CI
 is green.
+Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
+initially stopped because the protected `cards` capability was
+`PLANNED`. Cards is now `IMPLEMENTED`. Chunk 12 was subsequently
+resumed inside `packages/cards` / `services/cards`. The evaluator
+returns `mustStop: false`. Historical stop:
+[`chunk-12-stop.md`](./chunk-12-stop.md). Resume:
+[`chunk-12-resume.md`](./chunk-12-resume.md).
+
+Chunk 13 (treasury / liquidity / routing intelligence) initially
+stopped on a process gate while Chunk 12 was not yet genuinely
+implemented and `main` CI was red. That stop is historical:
+[`chunk-13-stop.md`](./chunk-13-stop.md). Chunk 13 is now resumed at
+the reserved owners `packages/treasury` and `services/treasury`.
+Capability `treasury` is `IMPLEMENTED`. Bounded context TREASURY is
+`PARTIAL` simulation. Resume:
+[`chunk-13-resume.md`](./chunk-13-resume.md). Do not create
+`packages/liquidity`, `packages/routing-intelligence`,
+`packages/treasury-core`, or `packages/settlement-risk`.
+
+Chunk 14 implements the Personal Economic Graph as the first SFF 2.0
+intelligence layer. It does not start the Personal Economy Agent.
+The evaluator returns `mustStop: false`.

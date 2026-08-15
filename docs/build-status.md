@@ -83,6 +83,24 @@ This document describes only what is implemented and tested in this tree.
   module (device, session, simulated contactless result, pending
   settlement, explicit fees, ledger credit, reconciliation).
   No Apple/Google certification, EMV/NFC kernel, or acquiring license.
+  Chunk 12 initially stopped while Cards was absent; it was subsequently
+  resumed and is IMPLEMENTED in simulation. See
+  `docs/architecture/chunk-12-stop.md` (historical) and
+  `docs/architecture/chunk-12-resume.md`.
+- Simulated treasury, corridor liquidity, and payment routing
+  intelligence (Chunk 13, `packages/treasury`, `services/treasury`):
+  system-owned treasury books (never CUSTOMER ownership),
+  currency-separated positions, destination prefunding, treasury
+  liquidity reservations distinct from customer holds, two-stage
+  routing (compliance hard filter then deterministic scoring),
+  explainable route decisions, concentration snapshots labeled
+  RESEARCH_REQUIRED, settlement-exposure states, operational kill
+  switches, FX inventory, Kernel-gated rebalance proposals, cash
+  forecast, read-only routing simulator, and treasury reconciliation.
+  Chunk 13 initially stopped on a process gate; it is now resumed.
+  See `docs/architecture/chunk-13-stop.md` (historical) and
+  `docs/architecture/chunk-13-resume.md`. Capability `treasury` is
+  IMPLEMENTED. Bounded context TREASURY is PARTIAL simulation.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -132,6 +150,14 @@ This document describes only what is implemented and tested in this tree.
   stop is in `docs/architecture/chunk-12-stop.md`. Cards is implemented
   and Chunk 12 was subsequently resumed. See
   `docs/architecture/chunk-12-resume.md`.
+- Reserved later bounded contexts that remain PLANNED (PERSONAL ECONOMY
+  AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the
+  constitution). PAYMENTS, FX, CARDS, and TREASURY are PARTIAL
+  simulation owners. The Personal Economic Graph is IMPLEMENTED as a
+  non-authoritative intelligence layer. Live rails, live issuing, live
+  wallet/SoftPOS certification, and live treasury remain later.
+- Personal Economy Agent, mandate compiler, Compounder, and Growth OS.
+  Chunk 13 does not start that work.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -163,6 +189,7 @@ npm run demo:cards
 npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
+npm run demo:treasury
 npm run typecheck
 npm run scan:secrets
 npm run ci

@@ -67,6 +67,12 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'initiatePending', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'settlePending', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'returnPending', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'reserveLiquidity', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'releaseReservation', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'commitReservation', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'proposeRebalance', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'executeRebalance', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'setKillSwitch', file: 'packages/treasury/src/service.ts' },
 ];
 
 const failures = [];

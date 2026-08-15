@@ -14,9 +14,11 @@
 /services/identity/ @reyesnick54
 /services/cards/ @reyesnick54
 /services/economic-graph/ @reyesnick54
+/services/treasury/ @reyesnick54
 /packages/identity/ @reyesnick54
 /packages/cards/ @reyesnick54
 /packages/personal-economic-graph/ @reyesnick54
+/packages/treasury/ @reyesnick54
 
 # Persistence fabric (PostgreSQL adapter and migrations).
 /packages/persistence/ @reyesnick54
