@@ -84,6 +84,9 @@ resume) and `#34` (Personal Economic Graph):
    breaks `npm run db:migrate` and every test that imports events.
 3. `tools/architectural-linter/src/constitution.test.ts` stacked three
    `it(` titles for the Chunk 12 capability gate (merge leftover).
+4. `docs/architecture/chunks/chunk-12-mobile-wallet-and-tap-to-pay.json`
+   stacked three `"notes"` keys without commas, so
+   `evaluateDeclaredChunks` could not parse the directory.
 
 The immediately previous green `main` push was PR `#33`
 (run `31872405706`). The red tip is the PEG merge onto that tip, not
@@ -291,11 +294,32 @@ postgres migrate: FAILURE (same events.ts syntax error)
 CI pipeline: FAILURE
 ```
 
-Post-change CI on this stop branch is recorded after the local
-`npm run ci` run in the same sections of the pull request. The
-repairs above are limited to merge artifacts plus the stop record.
+Post-change CI on this branch (`npm run ci`):
+
+```
+architectural invariants: ok
+extraction dry-run: ok (14 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (45 registered paths, all Kernel-authorized)
+tests: 302 pass, 0 fail
+  including: CHUNK-15 must stop while the protected treasury capability is PLANNED
+  including: CHUNK-15 does not create the reserved agent owner or competing agent packages
+  including: customer V009 stores Personal Economic Graph projection
+demo: ok
+cards demo: ok
+peg demo: ok
+wallet demo: ok
+acceptance demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
-`false`.
+`false`. Persistence integration (`npm run test:persistence`) is a
+separate GitHub Actions job and was not folded into this unit-test
+pipeline.
 
 ---
 

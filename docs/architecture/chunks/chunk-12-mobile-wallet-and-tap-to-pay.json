@@ -23,7 +23,5 @@
     "fx",
     "cards"
   ],
-  "notes": "Protected cards capability is IMPLEMENTED. Wallet / Tap-to-Pay product work remains later and must use packages/cards rather than inventing a second cards domain."
-  "notes": "Protected cards capability is IMPLEMENTED (Chunk 11). The original capability-evaluator stop is cleared. Wallet provisioning, DevicePaymentToken lifecycle, and Tap-to-Pay / SoftPOS were not built; see chunk-12-stop.md. Implement those features inside packages/cards / services/cards. Do not invent a second cards domain."
   "notes": "Protected cards capability is IMPLEMENTED on main. Chunk 12 originally stopped because Cards was absent/PLANNED; Cards has since been implemented and Chunk 12 was subsequently resumed inside the canonical Cards boundary. Wallet provisioning and merchant SoftPOS are simulation architecture only. No Apple, Google, network, acquirer, or PCI certification is claimed."
 }
