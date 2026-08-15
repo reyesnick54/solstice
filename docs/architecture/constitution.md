@@ -660,24 +660,30 @@ phase is absent.
 | CONSENT | IMPLEMENTED | `packages/consent` |
 | CLEAN ROOM | IMPLEMENTED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
-| REYN COIN | PLANNED | `packages/reyn-coin` |
+| SUNREY COIN | PLANNED | `packages/sunrey-coin` |
 | PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |
-| REYN EXCHANGE | PLANNED | `packages/reyn-exchange` |
+| SUNREY EXCHANGE | PLANNED | `packages/sunrey-exchange` |
+| SUNREY CHAIN | PLANNED | `packages/sunrey-chain` |
+| CUSTODY | PLANNED | `packages/custody` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
 
-Product branding for the reserved digital-asset context is **Reyn** /
-**Reyn Coin** / **Reyn Exchange**. The public ticker is UNDECIDED.
-Do not invent `REYN`, `RYN`, or `RCOIN`. Historical architecture names
-`PYRAMID` and `PYRAMID_EXCHANGE` are replaced by the reservations
-above. `PYRAMID_DATA_EXCHANGE` naming remains unresolved.
-`PYR` is a historical ticker/alias reservation only.
+Product branding for the reserved digital-asset context is **SunRey** /
+**SunRey Coin** / **SunRey Exchange**. The public ticker is UNDECIDED.
+Do not invent `REYN`, `RYN`, `RCOIN`, or a live ticker. Historical
+architecture names `PYRAMID`, `PYRAMID_EXCHANGE`, `REYN_COIN`, and
+`REYN_EXCHANGE` are replaced by the reservations above.
+`PYRAMID_DATA_EXCHANGE` naming remains unresolved. `PYR` is a
+historical ticker/alias reservation only.
 
-Chunk 26 stopped rather than implementing Reyn Coin:
-[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
-`packages/reyn-ledger`, `packages/token-ledger`, or
-`packages/crypto-ledger-v2`.
+Chunk 26 stopped rather than implementing the coin:
+[`chunk-26-stop.md`](./chunk-26-stop.md). Chunk 30 stopped because
+exchange core is absent: [`chunk-30-stop.md`](./chunk-30-stop.md).
+Do not create `packages/reyn-ledger`, `packages/token-ledger`,
+`packages/crypto-ledger-v2`, `packages/exchange-compliance-v2`,
+`packages/travel-rule-v2`, `packages/crypto-aml`,
+`packages/surveillance-v2`, or `packages/custody-ledger`.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

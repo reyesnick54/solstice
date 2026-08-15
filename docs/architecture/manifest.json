@@ -2232,7 +2232,19 @@
     "packages/data-clean-room",
     "packages/secure-data-room",
     "packages/research-room",
-    "packages/clean-room-v2"
+    "packages/clean-room-v2",
+    "packages/reyn-coin",
+    "packages/reyn-exchange",
+    "packages/pyramid-exchange",
+    "packages/exchange-compliance-v2",
+    "packages/travel-rule-v2",
+    "packages/crypto-aml",
+    "packages/surveillance-v2",
+    "packages/custody-ledger",
+    "packages/sunrey-exchange-v2",
+    "packages/sunrey-coin-v2",
+    "packages/crypto-custody",
+    "packages/wallet-risk-v2"
   ],
   "capabilities": [
     {
@@ -2475,6 +2487,41 @@
       "owner": "packages/clean-room",
       "protected": true,
       "notes": "Canonical Privacy Clean Room. Chunk 25R. Simulation only. Not legal privacy-law approval, differential privacy, or confidential compute."
+    },
+    {
+      "id": "sunrey-coin",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-coin",
+      "protected": true,
+      "notes": "Reserved SunRey Coin digital-asset capability. Historical reservation was REYN_COIN / PYRAMID. Not implemented. Chunk 30 must stop until this is IMPLEMENTED. Do not invent a public ticker."
+    },
+    {
+      "id": "sunrey-exchange",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Reserved SunRey Exchange core. Historical reservation was REYN_EXCHANGE / PYRAMID_EXCHANGE. Not implemented. Chunk 29 must land before Chunk 30. Do not create exchange-compliance-v2."
+    },
+    {
+      "id": "sunrey-chain",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Reserved SunRey Chain / blockchain-adapter simulation. Not implemented. No live chain connection."
+    },
+    {
+      "id": "custody",
+      "status": "PLANNED",
+      "owner": "packages/custody",
+      "protected": true,
+      "notes": "Reserved provider-neutral digital-asset custody control plane. Historical extractable Custody subsystem. Simulation adapters only. Not customer-accounting truth. Canonical Ledger remains the ledger."
+    },
+    {
+      "id": "market-surveillance",
+      "status": "PLANNED",
+      "owner": "packages/market-surveillance",
+      "protected": true,
+      "notes": "Reserved market-surveillance layer. Alerts and proposals only. Cannot freeze balances or issue Execution Authority. Reuse canonical compliance cases. Do not create surveillance-v2."
     }
   ],
   "boundedContexts": [
@@ -2687,25 +2734,43 @@
         "packages/pyramid"
       ],
       "protected": true,
-      "notes": "Historical ticker / coin-alias reservation (packages/pyr, packages/pyramid). The public ticker for SunRey Coin is UNDECIDED. Do not invent a ticker. Canonical coin context is REYN_COIN at packages/reyn-coin (historical reservation name)."
+      "notes": "Historical ticker / coin-alias reservation (packages/pyr, packages/pyramid). The public ticker for SunRey Coin is UNDECIDED. Do not invent a ticker. Canonical coin context is SUNREY_COIN at packages/sunrey-coin."
     },
     {
-      "id": "REYN_COIN",
+      "id": "SUNREY_COIN",
       "status": "PLANNED",
       "reservedPaths": [
-        "packages/reyn-coin"
+        "packages/sunrey-coin"
       ],
       "protected": true,
-      "notes": "Reserved digital-asset bounded context. Historical reservation was PYRAMID / packages/pyramid. Product brand is SunRey Coin. Public ticker is UNDECIDED. Do not implement in Chunk 25R. Do not create a second financial ledger."
+      "notes": "Canonical SunRey Coin digital-asset bounded context. Historical reservations: PYRAMID / packages/pyramid, then REYN_COIN / packages/reyn-coin. Not implemented. Public ticker is UNDECIDED. Do not create a second financial ledger. Do not implement SunRey Exchange here."
     },
     {
-      "id": "REYN_EXCHANGE",
+      "id": "SUNREY_EXCHANGE",
       "status": "PLANNED",
       "reservedPaths": [
-        "packages/reyn-exchange"
+        "packages/sunrey-exchange"
       ],
       "protected": true,
-      "notes": "Reserved future SunRey Exchange. Historical reservation was PYRAMID_EXCHANGE. Do not implement order books, AMM, wallets, or market price in Chunk 25R."
+      "notes": "Canonical SunRey Exchange. Historical reservations: PYRAMID_EXCHANGE / packages/pyramid-exchange, then REYN_EXCHANGE / packages/reyn-exchange. Not implemented. Chunk 29 owns the exchange core. Chunk 30 extends it with custody/compliance/surveillance and must stop until the core is IMPLEMENTED. Do not create exchange-compliance-v2 or a second matching engine."
+    },
+    {
+      "id": "SUNREY_CHAIN",
+      "status": "PLANNED",
+      "reservedPaths": [
+        "packages/sunrey-chain"
+      ],
+      "protected": true,
+      "notes": "Reserved SunRey Chain / simulation blockchain adapter. Not implemented. No live network, no production keys, no public-chain writes."
+    },
+    {
+      "id": "CUSTODY",
+      "status": "PLANNED",
+      "reservedPaths": [
+        "packages/custody"
+      ],
+      "protected": true,
+      "notes": "Reserved provider-neutral digital-asset custody architecture (historical extractable Custody subsystem). Simulation only. Custody provider state is operational, not customer-accounting truth. Do not create custody-ledger or treat a provider API as the Ledger."
     },
     {
       "id": "PYRAMID_DATA_EXCHANGE",
@@ -2722,7 +2787,8 @@
       "reservedPaths": [
         "packages/market-surveillance"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Reserved extractable market-surveillance subsystem. Chunk 30R should use this reservation rather than surveillance-v2. Alerts are not legal conclusions. Cannot mutate the ledger. Reuse packages/kernel/src/compliance cases."
     },
     {
       "id": "API_INTEGRATION",

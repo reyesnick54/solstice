@@ -25,5 +25,8 @@
   `packages/clean-room`. Historical stop:
   [`chunk-25-stop.md`](./chunk-25-stop.md). Resume:
   [`chunk-25-resume.md`](./chunk-25-resume.md).
+- [Chunk 30 stop](./chunk-30-stop.md) — exchange custody / Travel Rule /
+  surveillance control plane stops until Chunk 29 (SunRey Exchange
+  core) is `IMPLEMENTED`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

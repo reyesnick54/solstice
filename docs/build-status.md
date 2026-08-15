@@ -222,20 +222,27 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Reyn Coin and Reyn Exchange. Historical `PYRAMID` / `PYRAMID_EXCHANGE`
-  reservations are now `REYN_COIN` (`packages/reyn-coin`) and
-  `REYN_EXCHANGE` (`packages/reyn-exchange`). Neither package exists.
-  Consent and Clean Room are now `IMPLEMENTED`; do not begin coin
-  issuance from this chunk. See `docs/architecture/chunk-26-stop.md`.
-  Do not invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
-  unresolved. Historical PRs `#18` and `#19` are not canonical.
-- Reserved later bounded contexts that remain PLANNED (REYN COIN,
-  REYN EXCHANGE, PYRAMID DATA EXCHANGE, SOVEREIGN CELLS, and the rest
-  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
-  INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners.
-  Consent and Privacy Clean Room are IMPLEMENTED. Live rails, live
-  issuing, live wallet/SoftPOS certification, live treasury, and live
-  securities trading remain later.
+- SunRey Coin, SunRey Exchange, SunRey Chain, and digital-asset
+  custody. Historical `PYRAMID` / `REYN_COIN` reservations are now
+  `SUNREY_COIN` (`packages/sunrey-coin`). Historical
+  `PYRAMID_EXCHANGE` / `REYN_EXCHANGE` reservations are now
+  `SUNREY_EXCHANGE` (`packages/sunrey-exchange`). `SUNREY_CHAIN`
+  and `CUSTODY` are reserved at `packages/sunrey-chain` and
+  `packages/custody`. None of those packages exist. Consent and
+  Clean Room are `IMPLEMENTED`; do not begin coin issuance or an
+  exchange control plane from this tree. Chunk 30 stopped because
+  exchange core is absent. See `docs/architecture/chunk-26-stop.md`
+  and `docs/architecture/chunk-30-stop.md`. Do not invent a public
+  ticker. `PYRAMID_DATA_EXCHANGE` naming remains unresolved.
+  Historical PRs `#18` and `#19` are not canonical.
+- Reserved later bounded contexts that remain PLANNED (SUNREY COIN,
+  SUNREY EXCHANGE, SUNREY CHAIN, CUSTODY, MARKET SURVEILLANCE,
+  PYRAMID DATA EXCHANGE, SOVEREIGN CELLS, and the rest listed in
+  the constitution). PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS,
+  and STRATEGY LAB are PARTIAL simulation owners. Consent and
+  Privacy Clean Room are IMPLEMENTED. Live rails, live issuing,
+  live wallet/SoftPOS certification, live treasury, live
+  securities trading, live custody, and live exchange remain later.
 - Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
   and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
   See `docs/architecture/chunk-22-stop.md`.

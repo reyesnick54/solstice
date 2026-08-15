@@ -1,0 +1,32 @@
+{
+  "chunk": "CHUNK-30",
+  "title": "SunRey Exchange Control Plane — Digital-Asset Custody Architecture, Exchange AML/Sanctions Controls, Wallet Risk Foundation, Travel Rule Workflow, Withdrawal Controls, Asset Listing Governance, Market Surveillance, Cases, Kill Switches, and Exchange Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "compliance-screening",
+    "regulatory-digital-twin",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin",
+    "sunrey-exchange",
+    "sunrey-chain",
+    "custody",
+    "market-surveillance"
+  ],
+  "notes": "STOPPED. Exchange core is absent. Protected capabilities sunrey-coin, sunrey-exchange, sunrey-chain, custody, and market-surveillance remain PLANNED. evaluateChunkRequirements returns mustStop: true. Chunk 29 has not merged. Do not implement a competing exchange, custody-ledger, travel-rule-v2, crypto-aml, or surveillance-v2. Historical PYRAMID_EXCHANGE / REYN_EXCHANGE reservations are now SUNREY_EXCHANGE at packages/sunrey-exchange. See docs/architecture/chunk-30-stop.md."
+}

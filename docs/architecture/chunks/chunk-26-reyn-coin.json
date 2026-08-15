@@ -27,5 +27,5 @@
     "purpose-firewall",
     "clean-room"
   ],
-  "notes": "NOT IMPLEMENTED. Personal Data Vault, Consent Ledger, Purpose Firewall, and Privacy Clean Room are now IMPLEMENTED, so evaluateChunkRequirements returns mustStop: false. Do not implement Reyn Coin, a second ledger, Reyn Exchange, or a public ticker in this tree. Historical PYRAMID reservation is REYN_COIN at packages/reyn-coin. Historical PYRAMID_EXCHANGE reservation is REYN_EXCHANGE at packages/reyn-exchange. PYRAMID_DATA_EXCHANGE naming remains unresolved. See docs/architecture/chunk-26-stop.md."
+  "notes": "NOT IMPLEMENTED. Personal Data Vault, Consent Ledger, Purpose Firewall, and Privacy Clean Room are now IMPLEMENTED, so evaluateChunkRequirements returns mustStop: false. Do not implement SunRey Coin, a second ledger, SunRey Exchange, or a public ticker in this tree. Historical PYRAMID / REYN_COIN reservation is now SUNREY_COIN at packages/sunrey-coin. Historical PYRAMID_EXCHANGE / REYN_EXCHANGE reservation is now SUNREY_EXCHANGE at packages/sunrey-exchange. PYRAMID_DATA_EXCHANGE naming remains unresolved. See docs/architecture/chunk-26-stop.md and docs/architecture/chunk-30-stop.md."
 }
