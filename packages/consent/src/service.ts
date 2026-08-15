@@ -51,6 +51,7 @@ import type {
 export const CONSENT_GRANT_CAPABILITY: IdentityCapability = 'CONSENT_GRANT_OWN';
 export const CONSENT_REVOKE_CAPABILITY: IdentityCapability = 'CONSENT_REVOKE_OWN';
 export const CONSENT_VIEW_CAPABILITY: IdentityCapability = 'CONSENT_VIEW_OWN';
+export const CLEAN_ROOM_REQUEST_CAPABILITY: IdentityCapability = 'CLEAN_ROOM_REQUEST';
 
 export type ConsentServiceOptions = {
   readonly clock: Clock;
@@ -543,8 +544,123 @@ export class ConsentService {
     }
     return err({
       code: 'DEPENDENCY_NOT_IMPLEMENTED',
-      message: 'Clean Room is not implemented; consent cannot cause raw external data transfer',
+      message: 'consent cannot cause raw external data transfer; use the Privacy Clean Room for authorized aggregate computation',
     });
+  }
+
+  issuePermitForRecipient(
+    actor: unknown,
+    request: PermitRequest,
+  ): Result<{ readonly permit: DataUsePermit; readonly decision: ConsentDecision }, ConsentFailure> {
+    const verified = this.requireRequester(actor);
+    if (!verified.ok) {
+      return this.deny(actor, request, verified.error.code, verified.error.message, null);
+    }
+    const purpose = this.purposes.resolve(request.purposeRef);
+    if (!purpose) {
+      return this.deny(actor, request, 'PURPOSE_UNKNOWN', 'requested purpose is not registered', null);
+    }
+    const recipient = this.recipients.get(request.recipientId);
+    if (!recipient) {
+      return this.deny(actor, request, 'RECIPIENT_OUT_OF_SCOPE', 'recipient is not registered', null);
+    }
+    const now = this.clock.now();
+    const candidates = this.store.allForSubject(request.subjectId).map((row) => this.expireIfNeeded(row, now));
+    for (const row of candidates) {
+      this.store.acquire(row.consentId);
+    }
+    const firewallRequest: FirewallRequest = {
+      subjectId: request.subjectId,
+      actorSubjectId: request.subjectId,
+      actorAssurance: verified.value.authenticationAssurance,
+      recipient,
+      purpose,
+      resourceId: request.resourceId,
+      category: request.category ?? null,
+      fields: request.fields ?? [],
+      windowFrom: request.windowFrom ?? null,
+      windowTo: request.windowTo ?? null,
+      operation: request.operation,
+      derivationType: request.derivationType,
+      onwardSharing: request.onwardSharing === true,
+      requestedRetentionDays: request.requestedRetentionDays ?? null,
+      sensitivity: request.sensitivity ?? null,
+      now,
+      evaluationMode: 'RECIPIENT_CLEAN_ROOM',
+    };
+    const result = this.firewall.evaluate(firewallRequest, candidates);
+    if (result.decision !== 'ALLOW' || !result.consent) {
+      return this.deny(actor, request, result.reasonCode, result.reason, result.consent);
+    }
+    const permit = issueDataUsePermit({
+      keys: this.keys,
+      consent: result.consent,
+      operation: request.operation,
+      now,
+    });
+    if (!permit.ok) {
+      return this.deny(actor, request, permit.error.code, permit.error.message, result.consent);
+    }
+    this.store.putPermit(permit.value);
+    const decision = this.recordDecision({
+      decision: 'ALLOW',
+      reasonCode: 'ALLOWED',
+      reason: result.reason,
+      subjectId: request.subjectId,
+      purpose,
+      consent: result.consent,
+      permitId: permit.value.permitId,
+      actorId: verified.value.actorId,
+      recipientId: recipient.recipientId,
+      resourceId: request.resourceId,
+      operation: request.operation,
+    });
+    this.ledger.append({
+      consentId: result.consent.consentId,
+      version: result.consent.version,
+      kind: 'PERMIT_ISSUED',
+      occurredAt: now,
+      payload: { permitId: permit.value.permitId, operation: request.operation, recipientIssued: true },
+    });
+    this.emit('ConsentPermitIssued', result.consent.consentId, {
+      consentId: result.consent.consentId,
+      permitId: permit.value.permitId,
+      purposeCode: purpose.code,
+    });
+    this.seal('permit.issued.recipient', {
+      consentId: result.consent.consentId,
+      permitId: permit.value.permitId,
+      purposeVersion: purpose.purposeVersion,
+      subjectId: request.subjectId,
+    });
+    return ok({ permit: permit.value, decision });
+  }
+
+  listActiveForRecipient(
+    actor: unknown,
+    recipientId: string,
+    purposeRef: string,
+  ): Result<readonly ConsentRecord[], ConsentFailure> {
+    const verified = this.requireRequester(actor);
+    if (!verified.ok) {
+      return verified;
+    }
+    const purpose = this.purposes.resolve(purposeRef);
+    if (!purpose) {
+      return err({ code: 'PURPOSE_UNKNOWN', message: 'purpose is not registered' });
+    }
+    const now = this.clock.now();
+    const active = this.store
+      .listAllCurrent()
+      .map((row) => this.expireIfNeeded(row, now))
+      .filter(
+        (row) =>
+          row.state === 'ACTIVE' &&
+          row.recipientId === recipientId &&
+          row.purposeId === purpose.purposeId &&
+          row.purposeVersion === purpose.purposeVersion,
+      );
+    return ok(Object.freeze(active));
   }
 
   listMyConsents(actor: unknown, subjectId: string): Result<readonly ConsentRecord[], ConsentFailure> {
@@ -683,6 +799,19 @@ export class ConsentService {
       throw new Error(`illegal consent transition ${record.state} -> ${state}`);
     }
     return Object.freeze({ ...record, state });
+  }
+
+  private requireRequester(actor: unknown): Result<VerifiedActorContext, ConsentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({ code: 'ACTOR_CONTEXT_REQUIRED', message: 'recipient evaluation requires a verified ActorContext' });
+    }
+    if (!hasCapability(actor, CLEAN_ROOM_REQUEST_CAPABILITY)) {
+      return err({ code: 'CAPABILITY_DENIED', message: 'CLEAN_ROOM_REQUEST is required for recipient-scoped evaluation' });
+    }
+    if (!assuranceAtLeast(actor.authenticationAssurance, requiredAssuranceFor(CLEAN_ROOM_REQUEST_CAPABILITY))) {
+      return err({ code: 'ASSURANCE_INSUFFICIENT', message: 'CLEAN_ROOM_REQUEST requires stronger authentication' });
+    }
+    return ok(actor);
   }
 
   private requireActor(

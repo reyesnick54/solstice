@@ -48,6 +48,7 @@ describe('consent architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/permissions-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/purpose-firewall')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consent-v2')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/privacy-compute')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/data-clean-room')), false);
   });
 });

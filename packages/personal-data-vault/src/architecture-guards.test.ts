@@ -51,6 +51,6 @@ describe('personal data vault architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/privacy-vault')), false);
     assert.equal(existsSync(join(ROOT, 'packages/personal-data-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/data-vault')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/privacy-compute')), false);
   });
 });

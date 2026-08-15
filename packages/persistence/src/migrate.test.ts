@@ -290,29 +290,17 @@ describe('versioned SQL migrations', () => {
   });
 
   it('customer V018 persists Strategy Lab experiment records without live trading', () => {
-  it('customer V018 persists Strategy Lab artifacts without live trading state', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v018 = files.find((file) => file.version === 18);
-    assert.ok(v018);
-    assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
-    assert.match(v018.filename, /V018__strategy_lab\.sql/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.experiment/);
-    assert.match(v018.sql, /live_approved = FALSE/);
-    assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
-    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
-    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
-  it('customer V018 persists Strategy Lab experiment history without a LIVE stage', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v018 = files.find((file) => file.version === 18);
     assert.ok(v018);
     assert.equal(v018.filename, 'V018__strategy_lab.sql');
     assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
     assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.experiment/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
     assert.match(v018.sql, /live_approved BOOLEAN NOT NULL CHECK \(live_approved = FALSE\)/);
     assert.match(v018.sql, /simulation_only BOOLEAN NOT NULL CHECK \(simulation_only = TRUE\)/);
+    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
     assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
     assert.equal(/CREATE TABLE strategy_lab\.journal/i.test(v018.sql), false);
   });
@@ -347,6 +335,21 @@ describe('versioned SQL migrations', () => {
     assert.match(v020.sql, /GRANT USAGE ON SCHEMA consent TO customer_app/);
     assert.equal(/CREATE TABLE consent\.journal/i.test(v020.sql), false);
     assert.equal(/plaintext/i.test(v020.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%plaintext%'/gi, '')), false);
+  });
+
+  it('customer V021 persists Clean Room metadata without decrypted payloads or coin issuance', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v021 = files.find((file) => file.version === 21);
+    assert.ok(v021);
+    assert.equal(v021.filename, 'V021__clean_room.sql');
+    assert.match(v021.sql, /CREATE SCHEMA IF NOT EXISTS clean_room/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.session/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.receipt/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.contribution_ref/);
+    assert.match(v021.sql, /DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED/);
+    assert.match(v021.sql, /GRANT USAGE ON SCHEMA clean_room TO customer_app/);
+    assert.equal(/CREATE TABLE clean_room\.journal/i.test(v021.sql), false);
+    assert.equal(/coin_issued BOOLEAN NOT NULL CHECK \(coin_issued = FALSE\)/.test(v021.sql), true);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

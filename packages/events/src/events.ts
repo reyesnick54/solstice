@@ -666,6 +666,31 @@ export type ConsentPermitIssuedV1 = VersionedEvent<'ConsentPermitIssued', 1, Con
 export type ConsentAccessDeniedV1 = VersionedEvent<'ConsentAccessDenied', 1, ConsentAuditPayload>;
 export type ConsentPurposeVersionedV1 = VersionedEvent<'ConsentPurposeVersioned', 1, ConsentAuditPayload>;
 
+export type CleanRoomAuditPayload = {
+  readonly sessionId?: string;
+  readonly jobId?: string;
+  readonly requesterId?: string;
+  readonly purposeRef?: string;
+  readonly purposeVersion?: string;
+  readonly cohortCount?: number;
+  readonly templateId?: string;
+  readonly egressDecision?: string;
+  readonly receiptId?: string;
+  readonly reasonCode?: string;
+  readonly contributionId?: string;
+};
+
+export type CleanRoomSessionCreatedV1 = VersionedEvent<'CleanRoomSessionCreated', 1, CleanRoomAuditPayload>;
+export type CleanRoomSessionAuthorizedV1 = VersionedEvent<'CleanRoomSessionAuthorized', 1, CleanRoomAuditPayload>;
+export type CleanRoomSessionDeniedV1 = VersionedEvent<'CleanRoomSessionDenied', 1, CleanRoomAuditPayload>;
+export type CleanRoomJobStartedV1 = VersionedEvent<'CleanRoomJobStarted', 1, CleanRoomAuditPayload>;
+export type CleanRoomJobCompletedV1 = VersionedEvent<'CleanRoomJobCompleted', 1, CleanRoomAuditPayload>;
+export type CleanRoomJobFailedV1 = VersionedEvent<'CleanRoomJobFailed', 1, CleanRoomAuditPayload>;
+export type CleanRoomEgressReleasedV1 = VersionedEvent<'CleanRoomEgressReleased', 1, CleanRoomAuditPayload>;
+export type CleanRoomEgressSuppressedV1 = VersionedEvent<'CleanRoomEgressSuppressed', 1, CleanRoomAuditPayload>;
+export type CleanRoomEgressDeniedV1 = VersionedEvent<'CleanRoomEgressDenied', 1, CleanRoomAuditPayload>;
+export type CleanRoomContributionRecordedV1 = VersionedEvent<'CleanRoomContributionRecorded', 1, CleanRoomAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -985,7 +1010,17 @@ export type DomainEvent =
   | ConsentSupersededV1
   | ConsentPermitIssuedV1
   | ConsentAccessDeniedV1
-  | ConsentPurposeVersionedV1;
+  | ConsentPurposeVersionedV1
+  | CleanRoomSessionCreatedV1
+  | CleanRoomSessionAuthorizedV1
+  | CleanRoomSessionDeniedV1
+  | CleanRoomJobStartedV1
+  | CleanRoomJobCompletedV1
+  | CleanRoomJobFailedV1
+  | CleanRoomEgressReleasedV1
+  | CleanRoomEgressSuppressedV1
+  | CleanRoomEgressDeniedV1
+  | CleanRoomContributionRecordedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

@@ -186,9 +186,19 @@ This document describes only what is implemented and tested in this tree.
   expiration, deterministic Purpose Firewall (default DENY),
   short-lived signed DataUsePermits, and PDV
   `DataUseAuthorizationPort` integration. Internal services cannot
-  bypass consent. Data-contribution consent does not execute
-  external sharing because Clean Room is not implemented. Not
-  GDPR/CCPA/PDPL legal approval.
+  bypass consent. Raw data-contribution transfer remains denied;
+  authorized aggregate computation is the Privacy Clean Room.
+  Not GDPR/CCPA/PDPL legal approval.
+- Privacy Clean Room (Chunk 25R, `packages/clean-room`):
+  consent-gated sessions, per-subject cohort authorization,
+  minimized ephemeral PDV views, versioned query templates,
+  no arbitrary SQL/code, Egress Firewall, RAW_ROW_EXPORT default
+  DENY, engineering cohort/cell/dimension/budget controls,
+  recipient+purpose HMAC join tokens, immutable computation
+  receipts, and contribution-computation metadata without coin
+  issuance. Historical stop: `docs/architecture/chunk-25-stop.md`.
+  Resume: `docs/architecture/chunk-25-resume.md`. Not GDPR/CCPA/
+  PDPL/HIPAA/DP/TEE compliance.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -212,27 +222,19 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Consent Ledger, Purpose Firewall, and Privacy Clean Room. Reserved at
-  `packages/consent` and `packages/clean-room`. Chunk 23 fails closed
-  for third-party / consent-requiring use. Historical PR `#17` is not
-  canonical.
 - Reyn Coin and Reyn Exchange. Historical `PYRAMID` / `PYRAMID_EXCHANGE`
   reservations are now `REYN_COIN` (`packages/reyn-coin`) and
   `REYN_EXCHANGE` (`packages/reyn-exchange`). Neither package exists.
-  Chunk 26 stopped because Consent and Clean Room are not
-  `IMPLEMENTED`. See `docs/architecture/chunk-26-stop.md`. Do not
-  invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
+  Consent and Clean Room are now `IMPLEMENTED`; do not begin coin
+  issuance from this chunk. See `docs/architecture/chunk-26-stop.md`.
+  Do not invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
   unresolved. Historical PRs `#18` and `#19` are not canonical.
-- Reserved later bounded contexts that remain PLANNED (CONSENT,
-  CLEAN ROOM, REYN COIN, REYN EXCHANGE, PYRAMID DATA EXCHANGE,
-  SOVEREIGN CELLS, and the rest listed in the constitution).
-  PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
-  PARTIAL simulation owners. The Personal Economic Graph, Personal
-  Economy Agent, Growth Orchestrator, Personal Economic Value Engine,
-  Regulatory Digital Twin, Risk Engine, Model Registry, Agentic
-  Capital Mesh, and Personal Data Vault are IMPLEMENTED as
-  non-executing or simulation-gated layers. Live rails, live issuing,
-  live wallet/SoftPOS certification, live treasury, and live
+- Reserved later bounded contexts that remain PLANNED (REYN COIN,
+  REYN EXCHANGE, PYRAMID DATA EXCHANGE, SOVEREIGN CELLS, and the rest
+  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
+  INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners.
+  Consent and Privacy Clean Room are IMPLEMENTED. Live rails, live
+  issuing, live wallet/SoftPOS certification, live treasury, and live
   securities trading remain later.
 - Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
   and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
@@ -245,12 +247,11 @@ This document describes only what is implemented and tested in this tree.
   derivation lineage, PEG references without raw payload, and
   contribution-review metadata without marketplace or tokens.
   Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
-- Privacy Clean Room (Chunk 25) is **stopped**. Protected capability
-  `consent` is `PLANNED`. Chunk 24 has not merged. `CLEAN_ROOM`
-  remains reserved at `packages/clean-room`. See
-  `docs/architecture/chunk-25-stop.md`.
+- Privacy Clean Room (Chunk 25) originally **stopped** while Consent
+  was `PLANNED`. That stop is historical
+  (`docs/architecture/chunk-25-stop.md`). Chunk 25R is IMPLEMENTED.
 - Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
-  MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
+  MESH, STRATEGY LAB, PYRAMID, SOVEREIGN CELLS,
   and the rest listed in the constitution).
   PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
   simulation owners. The Personal Economic Graph, Personal Economy
@@ -288,7 +289,7 @@ This document describes only what is implemented and tested in this tree.
   Capital Mesh are IMPLEMENTED as non-executing or simulation-gated
   layers. Live rails, live issuing, live wallet/SoftPOS certification,
   live treasury, and live securities trading remain later.
-- Reserved later bounded contexts that remain PLANNED (CLEAN ROOM,
+- Reserved later bounded contexts that remain PLANNED (REYN COIN,
   PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
   PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
   PARTIAL simulation owners. RISK, MODEL REGISTRY, AGENTIC CAPITAL
@@ -297,8 +298,7 @@ This document describes only what is implemented and tested in this tree.
   Orchestrator, Personal Economic Value Engine, and Regulatory
   Digital Twin are IMPLEMENTED as non-executing intelligence layers.
   Live rails, live issuing, live wallet/SoftPOS certification, live
-  treasury, live securities trading, and Privacy Clean Room remain
-  later.
+  treasury, and live securities trading remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -339,6 +339,7 @@ npm run demo:risk
 npm run demo:strategy-lab
 npm run demo:mesh
 npm run demo:consent
+npm run demo:clean-room
 npm run typecheck
 npm run scan:secrets
 npm run ci

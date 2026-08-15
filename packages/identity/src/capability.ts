@@ -51,6 +51,8 @@ export const IDENTITY_CAPABILITIES = [
   'CONSENT_GRANT_OWN',
   'CONSENT_REVOKE_OWN',
   'CONSENT_VIEW_OWN',
+  'CLEAN_ROOM_REQUEST',
+  'CLEAN_ROOM_OPERATE',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -126,6 +128,8 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   CONSENT_GRANT_OWN: [],
   CONSENT_REVOKE_OWN: [],
   CONSENT_VIEW_OWN: [],
+  CLEAN_ROOM_REQUEST: [],
+  CLEAN_ROOM_OPERATE: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;

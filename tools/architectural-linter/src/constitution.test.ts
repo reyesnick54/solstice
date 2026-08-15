@@ -576,7 +576,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-data-vault')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/user-data')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/data-wallet')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/privacy-compute')), false);
   });
 
   it('CHUNK-24 Consent Ledger is IMPLEMENTED at the reserved path', () => {
@@ -597,10 +597,10 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/user-consent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/purpose-firewall')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consent-v2')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/privacy-compute')), false);
   });
 
-  it('CHUNK-25 must stop while the protected consent capability is PLANNED', () => {
+  it('CHUNK-25R Privacy Clean Room is IMPLEMENTED at the reserved path', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'identity').status, 'IMPLEMENTED');
@@ -608,32 +608,32 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'persistence').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'events').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'evidence').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'consent').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'consent').protected, true);
     assert.equal(evaluateCapability(manifest, 'consent').owner, 'packages/consent');
-    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-25',
     );
     assert.ok(declared, 'CHUNK-25 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('consent'));
-    assert.equal(declared.missing.includes('personal-data-vault'), false);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     const consent = manifest.boundedContexts.find((context) => context.id === 'CONSENT');
     assert.ok(consent);
-    assert.equal(consent.status, 'PLANNED');
+    assert.equal(consent.status, 'IMPLEMENTED');
     assert.deepEqual(consent.reservedPaths, ['packages/consent']);
 
     const cleanRoom = manifest.boundedContexts.find((context) => context.id === 'CLEAN_ROOM');
     assert.ok(cleanRoom);
-    assert.equal(cleanRoom.status, 'PLANNED');
+    assert.equal(cleanRoom.status, 'IMPLEMENTED');
     assert.deepEqual(cleanRoom.reservedPaths, ['packages/clean-room']);
 
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/privacy-compute')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/data-clean-room')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/secure-data-room')), false);
@@ -641,15 +641,15 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room-v2')), false);
   });
 
-  it('CHUNK-26 stops because Consent Ledger and Clean Room are not IMPLEMENTED', () => {
+  it('CHUNK-26 remains unbuilt: coin package absent after Consent and Clean Room', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'consent').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'consent').protected, true);
     assert.equal(evaluateCapability(manifest, 'consent').owner, 'packages/consent');
-    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'purpose-firewall').protected, true);
-    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'clean-room').protected, true);
     assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
 
@@ -657,11 +657,8 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-26',
     );
     assert.ok(declared, 'CHUNK-26 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('consent'));
-    assert.ok(declared.missing.includes('purpose-firewall'));
-    assert.ok(declared.missing.includes('clean-room'));
-    assert.equal(declared.missing.includes('personal-data-vault'), false);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     const coin = manifest.boundedContexts.find((context) => context.id === 'REYN_COIN');
     assert.ok(coin);
@@ -694,7 +691,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/token-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-ledger-v2')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), true);
   });
 });

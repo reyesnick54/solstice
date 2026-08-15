@@ -68,6 +68,7 @@ never be two implementations of these systems.
 | Strategy Lab | `packages/strategy-lab` | `packages/strategy-lab/src/service.ts` | IMPLEMENTED |
 | Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
 | Consent Ledger / Purpose Firewall | `packages/consent` | `packages/consent/src/service.ts` | IMPLEMENTED |
+| Privacy Clean Room | `packages/clean-room` | `packages/clean-room/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -78,8 +79,8 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`.
-`strategy-lab`, `agentic-capital-mesh`, `personal-data-vault`, `consent`.
+`agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`,
+`consent`, `clean-room`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`, `strategy-lab`.
@@ -100,14 +101,13 @@ Engine. `packages/model-registry` is the canonical Model Registry.
 `packages/agentic-capital-mesh` is the canonical Agentic Capital Mesh.
 Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage). Personal Data Vault is
-`IMPLEMENTED` at `packages/personal-data-vault`. Consent Ledger,
-Purpose Firewall, Clean Room, Reyn Coin, and Reyn Exchange remain
-reserved and unimplemented.
+`IMPLEMENTED` at `packages/personal-data-vault`. Consent is
+`IMPLEMENTED` at `packages/consent`. Privacy Clean Room is
+`IMPLEMENTED` at `packages/clean-room`. Reyn Coin and Reyn Exchange
+remain reserved and unimplemented.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
-`services/strategy-lab` (no LIVE stage). Personal Data Vault is
-`IMPLEMENTED` at `packages/personal-data-vault`. Consent is
-`IMPLEMENTED` at `packages/consent`.
+`services/strategy-lab` (no LIVE stage).
 
 ### Action types
 
@@ -405,7 +405,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent`, `packages/clean-room` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
@@ -425,6 +425,7 @@ must be added to `manifest.json` before they appear on disk.
 | `services/strategy-lab` | `packages/strategy-lab` |
 | `packages/personal-data-vault` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events` |
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
+| `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
@@ -657,7 +658,7 @@ phase is absent.
 | STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
 | CONSENT | IMPLEMENTED | `packages/consent` |
-| CLEAN ROOM | PLANNED | `packages/clean-room` |
+| CLEAN ROOM | IMPLEMENTED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
 | REYN COIN | PLANNED | `packages/reyn-coin` |
 | PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |

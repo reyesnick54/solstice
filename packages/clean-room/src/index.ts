@@ -1,0 +1,108 @@
+export { SubjectScopedCleanRoomTool, assertNoCoinIssuance } from './agent-tool.ts';
+export { consumeBudget, emptyBudget } from './budget.ts';
+export { runApprovedComputation, type EphemeralRow } from './compute.ts';
+export { recordContribution, toPegSafeReference, toPeveContributionInput } from './contribution.ts';
+export { buildLineage, isForbiddenAutoField, minimizePayload } from './dataset.ts';
+export { evaluateEgress } from './egress.ts';
+export { EphemeralWorkspace } from './ephemeral.ts';
+export {
+  CLEAN_ROOM_ID_PREFIXES,
+  asAuthorizationSnapshotId,
+  asCleanRoomId,
+  asCleanRoomDatasetId,
+  asCleanRoomJobId,
+  asCleanRoomQueryId,
+  asCleanRoomRequesterId,
+  asCleanRoomSessionId,
+  asComputationReceiptId,
+  asContributionComputationId,
+  asEgressDecisionId,
+  asPrivacyPolicyVersion,
+  asPseudonymousJoinKeyId,
+  asQueryTemplateId,
+  asQueryTemplateVersion,
+  joinKeyIdFor,
+  newAuthorizationSnapshotId,
+  newCleanRoomId,
+  newCleanRoomJobId,
+  newCleanRoomQueryId,
+  newCleanRoomSessionId,
+  newComputationReceiptId,
+  newContributionComputationId,
+  newEgressDecisionId,
+  privacyPolicyVersionFor,
+  queryTemplateIdFor,
+  queryTemplateVersionFor,
+  requesterIdFor,
+  type AuthorizationSnapshotId,
+  type CleanRoomId,
+  type CleanRoomDatasetId,
+  type CleanRoomJobId,
+  type CleanRoomQueryId,
+  type CleanRoomRequesterId,
+  type CleanRoomSessionId,
+  type ComputationReceiptId,
+  type ContributionComputationId,
+  type EgressDecisionId,
+  type PrivacyPolicyVersion,
+  type PseudonymousJoinKeyId,
+  type QueryTemplateId,
+  type QueryTemplateVersion,
+} from './ids.ts';
+export { issueJoinToken } from './joins.ts';
+export { DEFAULT_POLICY, simulateCandidatePolicy } from './ports.ts';
+export {
+  QUERY_TEMPLATES,
+  QueryTemplateRegistry,
+  groupingDimensions,
+  queryComplexity,
+  queryFingerprint,
+  rejectArbitraryQuery,
+} from './query.ts';
+export { REQUESTER_RESEARCH_ALPHA, REQUESTER_RESEARCH_BETA, RequesterRegistry } from './requesters.ts';
+export {
+  CLEAN_ROOM_REQUEST_CAPABILITY,
+  CleanRoomService,
+  type CleanRoomServiceOptions,
+  type CreateSessionInput,
+} from './service.ts';
+export { CleanRoomStore } from './store.ts';
+export {
+  CLEAN_ROOM_LEGAL_STATUS,
+  CLEAN_ROOM_REASON_CODES,
+  CLEAN_ROOM_SESSION_STATES,
+  COMPUTATION_IMPLEMENTATION,
+  DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED,
+  EGRESS_DECISIONS,
+  EPHEMERAL_PLAINTEXT_GUARANTEE,
+  EVIDENCE_KIND_CLEAN_ROOM,
+  QUERY_OPERATIONS,
+  SIMULATION_PRIVACY_POLICY_VERSION,
+  SIMULATION_THRESHOLDS,
+  canTransitionJob,
+  canTransitionSession,
+  type CleanRoomReasonCode,
+  type CleanRoomSessionState,
+  type EgressDecision,
+  type QueryOperation,
+} from './taxonomy.ts';
+export type {
+  AuthorizationSnapshot,
+  CandidatePolicySimulation,
+  CleanRoomComputationReceipt,
+  CleanRoomFailure,
+  CleanRoomJob,
+  CleanRoomRequester,
+  CleanRoomSession,
+  CleanRoomStoreSnapshot,
+  ContributionComputationReference,
+  DatasetLineage,
+  EgressRecord,
+  JobOutcome,
+  PrivacyThresholds,
+  QueryAst,
+  QueryBudget,
+  QueryTemplate,
+  ReleasedResult,
+  SubjectAuthorization,
+} from './types.ts';

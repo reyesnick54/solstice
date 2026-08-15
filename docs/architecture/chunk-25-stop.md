@@ -1,4 +1,15 @@
-# Chunk 25 stop record
+# Chunk 25 stop record — HISTORICAL
+
+**Status: HISTORICAL.** This file is a constitutional STOP record only
+(PR #49). It did **not** implement the Privacy Clean Room.
+
+Chunk 25R resumes and implements the reserved owner at
+`packages/clean-room`. See [`chunk-25-resume.md`](./chunk-25-resume.md).
+Do not treat the existence of this file as implementation.
+
+---
+
+# Original stop record
 
 This file records a **constitutional missing-capability stop**, not a
 Privacy Clean Room implementation.

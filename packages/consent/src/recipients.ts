@@ -5,6 +5,7 @@ export const RECIPIENT_PERSONAL_AGENT = recipientIdFor('personal_economy_agent')
 export const RECIPIENT_PEG = recipientIdFor('personal_economic_graph');
 export const RECIPIENT_PRODUCT_RESEARCH = recipientIdFor('product_research');
 export const RECIPIENT_EXTERNAL_RESEARCH = recipientIdFor('external_research_sim');
+export const RECIPIENT_EXTERNAL_RESEARCH_BETA = recipientIdFor('external_research_sim_beta');
 export const RECIPIENT_PEVE = recipientIdFor('personal_economic_value');
 
 const FIXTURES: readonly RecipientRecord[] = Object.freeze([
@@ -37,6 +38,14 @@ const FIXTURES: readonly RecipientRecord[] = Object.freeze([
     kind: 'EXTERNAL_RESEARCH_PARTNER',
     serviceId: 'simulation.external_research_partner',
     label: 'Simulation external research partner',
+    simulationFixture: true,
+    liveBuyer: false,
+  }),
+  Object.freeze({
+    recipientId: RECIPIENT_EXTERNAL_RESEARCH_BETA,
+    kind: 'EXTERNAL_RESEARCH_PARTNER',
+    serviceId: 'simulation.external_research_partner_beta',
+    label: 'Simulation external research partner beta',
     simulationFixture: true,
     liveBuyer: false,
   }),

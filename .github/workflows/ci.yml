@@ -65,6 +65,8 @@ jobs:
         run: npm run demo:mesh
       - name: Consent ledger and purpose firewall demo
         run: npm run demo:consent
+      - name: Privacy Clean Room demo
+        run: npm run demo:clean-room
 
       - name: Typecheck
         run: npm run typecheck

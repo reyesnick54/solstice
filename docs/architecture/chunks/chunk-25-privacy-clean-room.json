@@ -16,5 +16,5 @@
     "regulatory-digital-twin",
     "consent"
   ],
-  "notes": "STOPPED. Protected capability consent is PLANNED (Consent Ledger / Purpose Firewall, Chunk 24). CLEAN_ROOM remains reserved at packages/clean-room. evaluateChunkRequirements returns mustStop: true. Do not create packages/privacy-compute, packages/data-clean-room, packages/secure-data-room, packages/research-room, or packages/clean-room-v2. Historical stop: chunk-25-stop.md."
+  "notes": "IMPLEMENTED at packages/clean-room by Chunk 25R. Historical stop: chunk-25-stop.md. Resume: chunk-25-resume.md. Reuses Consent Ledger, Purpose Firewall, DataUsePermit, and Personal Data Vault. Do not create packages/privacy-compute, packages/data-clean-room, packages/secure-data-room, packages/research-room, or packages/clean-room-v2."
 }

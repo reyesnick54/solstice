@@ -57,6 +57,17 @@ export class ConsentStore {
     return Object.freeze([...this.records.values()].filter((row) => row.subjectId === subjectId));
   }
 
+  listAllCurrent(): readonly ConsentRecord[] {
+    const latest = new Map<string, ConsentRecord>();
+    for (const record of this.records.values()) {
+      const existing = latest.get(record.consentId);
+      if (!existing || record.versionSequence > existing.versionSequence) {
+        latest.set(record.consentId, record);
+      }
+    }
+    return Object.freeze([...latest.values()]);
+  }
+
   putReceipt(receipt: ConsentReceipt): void {
     this.receipts.set(receipt.receiptId, receipt);
   }

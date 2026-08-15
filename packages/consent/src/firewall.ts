@@ -22,6 +22,7 @@ export type FirewallRequest = {
   readonly requestedRetentionDays: number | null;
   readonly sensitivity: SensitivityClass | null;
   readonly now: UtcInstant;
+  readonly evaluationMode?: 'SUBJECT_SELF' | 'RECIPIENT_CLEAN_ROOM';
 };
 
 export type FirewallResult = {
@@ -71,7 +72,7 @@ function resourceInScope(consent: ConsentRecord, request: FirewallRequest): bool
 
 export class PurposeFirewall {
   evaluate(request: FirewallRequest, candidates: readonly ConsentRecord[]): FirewallResult {
-    if (request.actorSubjectId !== request.subjectId) {
+    if (request.evaluationMode !== 'RECIPIENT_CLEAN_ROOM' && request.actorSubjectId !== request.subjectId) {
       return deny('CROSS_SUBJECT_DENIED', 'actor is not bound to the subject', null);
     }
     const matchingPurpose = candidates.filter(
@@ -153,7 +154,7 @@ export class PurposeFirewall {
     if (request.purpose.code === 'DATA_CONTRIBUTION_RESEARCH' && request.operation === 'CONTRIBUTE') {
       return deny(
         'DEPENDENCY_NOT_IMPLEMENTED',
-        'data-contribution consent cannot execute external sharing until Clean Room exists',
+        'data-contribution consent cannot execute raw external sharing; use the Privacy Clean Room for authorized aggregate computation',
         consent,
       );
     }
