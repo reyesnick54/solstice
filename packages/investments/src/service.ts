@@ -454,6 +454,14 @@ export class InvestmentsService {
         return this.reject(null, 'SELL_EXCEEDS_POSITION', 'sell quantity exceeds owned settled position');
       }
     }
+    const actor = this.identity.resolveActorContext(intent.actorId);
+    if (!actor.ok) {
+      const gatedUnauthorized = this.gate(intent, { amount: notional.value });
+      if (gatedUnauthorized.outcome !== 'ALLOWED') {
+        return gatedUnauthorized.result;
+      }
+      return this.reject(gatedUnauthorized.decision, 'RISK_ENGINE_UNAVAILABLE', 'pre-trade risk engine could not be initialized');
+    }
     const engine = this.ensureRiskEngine(intent.actorId);
     if (!engine) {
       return this.reject(null, 'RISK_ENGINE_UNAVAILABLE', 'pre-trade risk engine could not be initialized');

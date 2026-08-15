@@ -608,7 +608,8 @@
         "packages/config",
         "packages/evidence",
         "packages/events",
-        "packages/model-registry"
+        "packages/model-registry",
+        "packages/permissions"
       ],
       "codeowners": [
         "@reyesnick54"

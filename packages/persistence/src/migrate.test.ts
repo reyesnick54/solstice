@@ -247,8 +247,11 @@ describe('versioned SQL migrations', () => {
     assert.match(v016.sql, /CREATE TABLE model_registry.approval/);
     assert.match(v016.sql, /model_no_executable/);
     assert.match(v016.sql, /model_no_live_approved/);
+    assert.match(v016.sql, /lifecycle <> 'LIVE_APPROVED'/);
     assert.match(v016.sql, /GRANT USAGE ON SCHEMA model_registry TO customer_app/);
-    assert.equal(/LIVE_APPROVED/.test(v016.sql.replace(/lifecycle <> 'LIVE_APPROVED'/, '')), false);
+    const lifecycleIn = v016.sql.match(/lifecycle TEXT NOT NULL CHECK \(lifecycle IN \(([\s\S]*?)\)\)/);
+    assert.ok(lifecycleIn);
+    assert.equal(/LIVE_APPROVED/.test(lifecycleIn[1] ?? ''), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

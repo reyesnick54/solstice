@@ -528,15 +528,18 @@ export class RiskEngine {
     modelId = String(CANONICAL_RISK_MODEL_ID),
     modelVersion = String(CANONICAL_RISK_MODEL_VERSION),
   ): RiskDecision {
-    const material = JSON.stringify({
-      snapshotId: input.snapshot.snapshotId,
-      proposed: input.proposed,
-      budgetVersion: input.budget.version,
-      modelId,
-      modelVersion,
-      outcome,
-      triggered: triggered.map((row) => row.limitId),
-    });
+    const material = JSON.stringify(
+      {
+        snapshotId: input.snapshot.snapshotId,
+        proposed: input.proposed,
+        budgetVersion: input.budget.version,
+        modelId,
+        modelVersion,
+        outcome,
+        triggered: triggered.map((row) => row.limitId),
+      },
+      (_key, value) => (typeof value === 'bigint' ? value.toString() : value),
+    );
     return Object.freeze({
       assessmentId: asRiskAssessmentId(hashId('ras_', material)),
       decisionId: asPreTradeRiskDecisionId(hashId('prd_', material)),
