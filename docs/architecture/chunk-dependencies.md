@@ -85,6 +85,8 @@ Agents and later CI jobs use that result. They do not guess.
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
+| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
+| strategy-lab | IMPLEMENTED | packages/strategy-lab |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -152,6 +154,23 @@ reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
+Chunk 22R implements the reserved STRATEGY LAB bounded context at
+`packages/strategy-lab` and `services/strategy-lab`. Capability
+`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
+`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
+Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
+historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
+[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.
+Chunk 21 (Agentic Capital Mesh) remains reserved at
+`packages/agentic-capital-mesh`. Protected capabilities `risk` and
+`model-registry` are now `IMPLEMENTED`, so the evaluator returns
+`mustStop: false` for CHUNK-21's declared requires. The Mesh package
+itself is still absent. Historical stop:
+[`chunk-21-stop.md`](./chunk-21-stop.md). Do not create competing
+`trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
+packages.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability
 `risk` and `model-registry` are `IMPLEMENTED`. Risk supplies

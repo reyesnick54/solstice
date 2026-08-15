@@ -493,6 +493,20 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
   });
 
+  it('CHUNK-21 prerequisites are IMPLEMENTED; Mesh remains the reserved Chunk 21R owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'risk').protected, true);
+    assert.equal(evaluateCapability(manifest, 'risk').owner, 'packages/risk');
+    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'model-registry').protected, true);
+    assert.equal(evaluateCapability(manifest, 'model-registry').owner, 'packages/model-registry');
+    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'regulatory-digital-twin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'personal-economic-value-engine').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').owner, 'packages/agentic-capital-mesh');
+
   it('CHUNK-21 Agentic Capital Mesh is IMPLEMENTED after the historical stop', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
@@ -506,6 +520,26 @@ describe('architecture constitution', () => {
     );
     assert.ok(declared, 'CHUNK-21 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const risk = manifest.boundedContexts.find((context) => context.id === 'RISK');
+    assert.ok(risk);
+    assert.equal(risk.status, 'IMPLEMENTED');
+    assert.deepEqual(risk.reservedPaths, ['packages/risk']);
+
+    const registry = manifest.boundedContexts.find((context) => context.id === 'MODEL_REGISTRY');
+    assert.ok(registry);
+    assert.equal(registry.status, 'IMPLEMENTED');
+    assert.deepEqual(registry.reservedPaths, ['packages/model-registry']);
+
+    const mesh = manifest.boundedContexts.find((context) => context.id === 'AGENTIC_CAPITAL_MESH');
+    assert.ok(mesh);
+    assert.equal(mesh.status, 'PLANNED');
+    assert.deepEqual(mesh.reservedPaths, ['packages/agentic-capital-mesh']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/risk')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-registry')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/agentic-capital-mesh')), false);
     const mesh = manifest.boundedContexts.find((context) => context.id === 'AGENTIC_CAPITAL_MESH');
     assert.ok(mesh);
     assert.equal(mesh.status, 'IMPLEMENTED');
@@ -539,5 +573,34 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/trading-lab')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/quant')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-v2')), false);
+  });
+
+  it('CHUNK-22 Strategy Lab is IMPLEMENTED at the reserved owners', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'strategy-lab').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'strategy-lab').owner, 'packages/strategy-lab');
+    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-22',
+    );
+    assert.ok(declared, 'CHUNK-22 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const lab = manifest.boundedContexts.find((context) => context.id === 'STRATEGY_LAB');
+    assert.ok(lab);
+    assert.equal(lab.status, 'PARTIAL');
+    assert.deepEqual(lab.reservedPaths, ['packages/strategy-lab', 'services/strategy-lab']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-lab')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/strategy-lab')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/backtest')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/trading-lab')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/quant')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/algo-trading')), false);
   });
 });

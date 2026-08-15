@@ -29,6 +29,7 @@ npm run demo:treasury
 npm run demo:investments
 npm run demo:rdt
 npm run demo:risk
+npm run demo:strategy-lab
 npm run demo:mesh
 
 echo "==> typecheck"

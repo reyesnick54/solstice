@@ -30,5 +30,6 @@
     "model-registry",
     "agentic-capital-mesh"
   ],
+  "notes": "Reserved for Chunk 21R at packages/agentic-capital-mesh. Protected capabilities risk and model-registry are now IMPLEMENTED, so evaluateChunkRequirements returns mustStop: false. The Mesh package itself remains absent/PLANNED. Historical stop: chunk-21-stop.md. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
   "notes": "IMPLEMENTED at packages/agentic-capital-mesh by Chunk 21R. Historical stop while Risk and Model Registry were still PLANNED: chunk-21-stop.md. Resume: chunk-21-resume.md. evaluateChunkRequirements returns mustStop: false. Strategy Lab remains Chunk 22R."
 }

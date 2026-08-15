@@ -88,6 +88,12 @@ Growth Orchestrator owner. The Personal Economic Value Engine is
 implemented in `packages/platform/src/value` on that same reserved path.
 `packages/regulatory-twin` is the canonical Regulatory Digital Twin.
 `packages/investments` is the canonical investment account and paper
+portfolio owner. `packages/risk` is the canonical investment Risk
+Engine. `packages/model-registry` is the canonical Model Registry.
+Strategy Lab is implemented at the reserved owners:
+`STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
+`services/strategy-lab` (no LIVE stage). Agentic Capital Mesh remains
+reserved and unimplemented at `packages/agentic-capital-mesh`.
 portfolio owner. Strategy Lab is reserved and not implemented:
 `STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
 `packages/investments` is the canonical investment account / portfolio
@@ -637,6 +643,8 @@ phase is absent.
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | IMPLEMENTED | `packages/risk` |
 | MODEL REGISTRY | IMPLEMENTED | `packages/model-registry` |
+| AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
+| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
 | STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | PLANNED | `packages/personal-data-vault` |

@@ -19,6 +19,9 @@
     "accounts-service",
     "investments",
     "risk",
+    "model-registry"
+  ],
+  "notes": "Resumed and implemented at packages/strategy-lab and services/strategy-lab. Capability strategy-lab is IMPLEMENTED; bounded context STRATEGY_LAB is PARTIAL (no LIVE stage). Risk and Model Registry are IMPLEMENTED. Agentic Capital Mesh remains a reserved Chunk 21R owner; Strategy Lab integrates through a typed CapitalProposal port and refuses Mesh self-validation. Historical stop: chunk-22-stop.md. Resume: chunk-22-resume.md. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     "model-registry",
     "agentic-capital-mesh",
     "growth-orchestrator",

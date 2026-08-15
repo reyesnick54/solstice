@@ -70,6 +70,7 @@ export {
 export { persistInvestmentSnapshot } from './investments/pg-investments-store.ts';
 export { persistRiskState } from './risk/pg-risk-store.ts';
 export { persistModelRegistryState } from './model-registry/pg-model-registry-store.ts';
+export { persistStrategyLabState } from './strategy-lab/pg-strategy-lab-store.ts';
 export { persistCapitalMeshState } from './capital-mesh/pg-capital-mesh-store.ts';
 export {
   insertCoordinate,

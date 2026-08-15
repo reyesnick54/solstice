@@ -261,6 +261,10 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.modelId ?? body.validationId ?? body.artifactRef ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('Strategy')) {
+    return {
+      type: 'strategy',
+      id: String(body.strategyId ?? body.runId ?? body.validationId ?? 'unknown'),
   if (eventType.startsWith('CapitalMesh')) {
     return {
       type: 'capital_mesh',
