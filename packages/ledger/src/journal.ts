@@ -291,7 +291,9 @@ export class Ledger {
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
       const paymentAction =
-        request.actionType === 'INITIATE_PAYMENT' || request.actionType === 'CANCEL_PAYMENT';
+        request.actionType === 'INITIATE_PAYMENT' ||
+        request.actionType === 'CANCEL_PAYMENT' ||
+        request.actionType === 'ACCEPT_INBOUND_PAYMENT';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>
@@ -322,6 +324,8 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fx-credit',
   'return-settle',
   'return-fee',
+  'inbound-pending',
+  'inbound-settle',
 ]);
 
 function paymentIdempotencyMatches(eaKey: string, journalKey: string): boolean {

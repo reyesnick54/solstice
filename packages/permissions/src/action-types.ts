@@ -27,6 +27,7 @@ export const ACTION_TYPES = {
   ACCEPT_FX_QUOTE: 'ACCEPT_FX_QUOTE',
   INITIATE_PAYMENT: 'INITIATE_PAYMENT',
   CANCEL_PAYMENT: 'CANCEL_PAYMENT',
+  ACCEPT_INBOUND_PAYMENT: 'ACCEPT_INBOUND_PAYMENT',
   CREATE_HOLD: 'CREATE_HOLD',
   RELEASE_HOLD: 'RELEASE_HOLD',
   CAPTURE_HOLD: 'CAPTURE_HOLD',
@@ -127,6 +128,18 @@ export type CancelPaymentPayload = {
   readonly accountId: AccountId;
 };
 
+export type AcceptInboundPaymentPayload = {
+  readonly inboundId: string;
+  readonly accountId: AccountId;
+  readonly amount: Money;
+  readonly provider: string;
+  readonly rail: string;
+  readonly sourceReference: string;
+  readonly destinationReference: string;
+  readonly sourceDisplayName: string;
+  readonly purposeReference: string;
+};
+
 export type CreateBeneficiaryIntent = ActionIntent<CreateBeneficiaryPayload> & {
   readonly actionType: typeof ACTION_TYPES.CREATE_BENEFICIARY;
 };
@@ -145,6 +158,10 @@ export type InitiatePaymentIntent = ActionIntent<InitiatePaymentPayload> & {
 
 export type CancelPaymentIntent = ActionIntent<CancelPaymentPayload> & {
   readonly actionType: typeof ACTION_TYPES.CANCEL_PAYMENT;
+};
+
+export type AcceptInboundPaymentIntent = ActionIntent<AcceptInboundPaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ACCEPT_INBOUND_PAYMENT;
 };
 
 export type CreateHoldPayload = {
@@ -256,4 +273,5 @@ export type PaymentIntent =
   | CreateFxQuoteIntent
   | AcceptFxQuoteIntent
   | InitiatePaymentIntent
-  | CancelPaymentIntent;
+  | CancelPaymentIntent
+  | AcceptInboundPaymentIntent;

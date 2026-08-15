@@ -20,6 +20,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'banking',
   'compliance',
   'fraud',
+  'rail',
 
 ] as const;
 
@@ -92,6 +93,15 @@ export const EVENT_TYPE_NAMES = [
   'ComplianceCaseDecided',
   'ComplianceAlertCreated',
   'FraudRiskEvaluated',
+  'RailSubmissionCreated',
+  'RailSubmissionAccepted',
+  'RailSubmissionUnknown',
+  'RailPaymentProcessing',
+  'RailPaymentSettled',
+  'RailPaymentRejected',
+  'RailPaymentReturned',
+  'RailProviderDegraded',
+  'RailReconciliationMismatch',
 
 ] as const;
 
@@ -150,6 +160,15 @@ export const EVENT_SCHEMA_REFS = {
   ComplianceCaseDecided: 'solstice.compliance.case.decided/1',
   ComplianceAlertCreated: 'solstice.compliance.alert.created/1',
   FraudRiskEvaluated: 'solstice.fraud.risk.evaluated/1',
+  RailSubmissionCreated: 'solstice.rail.submission.created/1',
+  RailSubmissionAccepted: 'solstice.rail.submission.accepted/1',
+  RailSubmissionUnknown: 'solstice.rail.submission.unknown/1',
+  RailPaymentProcessing: 'solstice.rail.payment.processing/1',
+  RailPaymentSettled: 'solstice.rail.payment.settled/1',
+  RailPaymentRejected: 'solstice.rail.payment.rejected/1',
+  RailPaymentReturned: 'solstice.rail.payment.returned/1',
+  RailProviderDegraded: 'solstice.rail.provider.degraded/1',
+  RailReconciliationMismatch: 'solstice.rail.reconciliation.mismatch/1',
 
 } as const;
 
@@ -208,6 +227,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ComplianceCaseDecided: 'compliance',
   ComplianceAlertCreated: 'compliance',
   FraudRiskEvaluated: 'fraud',
+  RailSubmissionCreated: 'rail',
+  RailSubmissionAccepted: 'rail',
+  RailSubmissionUnknown: 'rail',
+  RailPaymentProcessing: 'rail',
+  RailPaymentSettled: 'rail',
+  RailPaymentRejected: 'rail',
+  RailPaymentReturned: 'rail',
+  RailProviderDegraded: 'rail',
+  RailReconciliationMismatch: 'rail',
 
 };
 
