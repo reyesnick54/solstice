@@ -51,7 +51,7 @@ import {
   savingsToBrokerageBridge,
 } from './journals.ts';
 import { consumeLotsFifo, openLot, splitAdjustLots, type PositionLot } from './lot.ts';
-import { SimulatedMarketDataProvider, type MarketDataProvider } from './market-data.ts';
+import { SimulatedMarketDataProvider, type MarketDataProvider, type MarketQuote } from './market-data.ts';
 import { freezePaperOrder, transitionPaperOrder } from './order.ts';
 import { realizedFromSale, unrealizedFromValuation } from './pnl.ts';
 import {
@@ -71,8 +71,13 @@ import {
   subtractQuantity,
   wholeShares,
   zeroQuantity,
+  type InvestmentQuantity,
 } from './quantity.ts';
 import { freezeReconciliation, type InvestmentReconciliation } from './reconciliation.ts';
+import { ModelRegistry, seedCanonicalRiskModel } from '../../model-registry/src/registry.ts';
+import { defaultSimulationBudget, RiskEngine } from '../../risk/src/engine.ts';
+import { asPortfolioRiskSnapshotId } from '../../risk/src/ids.ts';
+import type { ProposedPaperTrade, RiskDecision } from '../../risk/src/types.ts';
 import { paperOnlyRiskControl, type InvestmentRiskControlPort } from './risk-port.ts';
 import { seedSimulationInstruments } from './seed.ts';
 import { freezeSettlement } from './settlement.ts';
@@ -118,6 +123,8 @@ export class InvestmentsService {
   readonly market: MarketDataProvider;
   readonly broker: BrokerExecutionProvider;
   readonly risk: InvestmentRiskControlPort;
+  riskEngine: RiskEngine | undefined;
+  lastRiskDecision: RiskDecision | null = null;
   readonly rdt: InvestmentRegulatoryPort;
   readonly peve: PeveInvestmentConsumer;
   private readonly peg: InvestmentPegPublisher | undefined;
@@ -137,6 +144,7 @@ export class InvestmentsService {
       readonly market?: MarketDataProvider;
       readonly broker?: BrokerExecutionProvider;
       readonly risk?: InvestmentRiskControlPort;
+      readonly riskEngine?: RiskEngine;
       readonly rdt?: InvestmentRegulatoryPort;
       readonly peve?: PeveInvestmentConsumer;
       readonly peg?: InvestmentPegPublisher;
@@ -179,6 +187,7 @@ export class InvestmentsService {
     this.market = options.market ?? this.simulatedMarket;
     this.broker = options.broker ?? new PaperBrokerProvider();
     this.risk = options.risk ?? paperOnlyRiskControl;
+    this.riskEngine = options.riskEngine;
     this.rdt = options.rdt ?? simulationRdtPort;
     this.peve = options.peve ?? simulationPeveConsumer;
     this.peg = options.peg;
@@ -374,96 +383,78 @@ export class InvestmentsService {
         replay: true,
       };
     }
-    const gated = this.gate(intent);
+    const prepared = this.preparePaperOrder(intent);
+    if ('outcome' in prepared) {
+      return prepared;
+    }
+    const { profile, instrument, quantity, quote, fee, notional, limitPrice } = prepared;
+    const actor = this.identity.resolveActorContext(intent.actorId);
+    if (!actor.ok) {
+      const gatedUnauthorized = this.gate(intent, { amount: notional });
+      if (gatedUnauthorized.outcome !== 'ALLOWED') {
+        return gatedUnauthorized.result;
+      }
+      return this.reject(gatedUnauthorized.decision, 'RISK_ENGINE_UNAVAILABLE', 'pre-trade risk engine could not be initialized');
+    }
+    const engine = this.ensureRiskEngine(intent.actorId);
+    if (!engine) {
+      return this.reject(null, 'RISK_ENGINE_UNAVAILABLE', 'pre-trade risk engine could not be initialized');
+    }
+    const proposed = this.proposedTrade(
+      intent.payload.orderId,
+      instrument,
+      quantity.units,
+      intent.payload.side,
+      notional.minorUnits,
+      fee.minorUnits,
+      quote.price.minorUnits,
+    );
+    const risk = this.risk.evaluatePaperOrder({
+      order: {
+        side: intent.payload.side,
+        orderType: intent.payload.orderType,
+        simulation: true,
+      },
+      proposed,
+      assess: () =>
+        engine.assessPreTrade({
+          snapshot: this.portfolioRiskSnapshot(profile.investmentAccountId),
+          proposed,
+          budget:
+            engine.store.listBudgets().find((row) => row.portfolioId === profile.investmentAccountId) ??
+            defaultSimulationBudget({
+              subjectId: profile.customerId,
+              portfolioId: profile.investmentAccountId,
+              reviewBy: this.clock.now(),
+            }),
+        }),
+    });
+    this.lastRiskDecision = risk.assessment ?? null;
+    if (!risk.permitted) {
+      this.evidence.seal('RISK_PRETRADE_BLOCK', {
+        intentId: intent.id,
+        orderId: intent.payload.orderId,
+        status: risk.status,
+        reason: risk.reason,
+        assessmentId: risk.assessment?.assessmentId ?? null,
+        triggered: risk.assessment?.triggeredLimits ?? [],
+        posted: false,
+      });
+      return this.reject(null, risk.status, risk.reason);
+    }
+    const gated = this.gate(intent, {
+      amount: notional,
+      ...(risk.kernelFacts ? { investmentRisk: risk.kernelFacts } : {}),
+    });
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
-    }
-    if (LIVE_INVESTMENT_EXECUTION !== false || LIVE_TRADING_ENABLED !== false || ENVIRONMENT !== 'simulation') {
-      return this.reject(gated.decision, 'LIVE_FORBIDDEN', 'live investment execution is forbidden');
-    }
-    const profile = this.store.getProfile(asInvestmentAccountId(intent.payload.investmentAccountId));
-    if (!profile || profile.status !== 'ACTIVE') {
-      return this.reject(gated.decision, 'PROFILE_INACTIVE', 'investment account is not ACTIVE');
-    }
-    const instrument = this.store.getInstrument(intent.payload.instrumentId);
-    if (!instrument) {
-      return this.reject(gated.decision, 'UNKNOWN_INSTRUMENT', 'instrument is not in the simulation registry');
-    }
-    const quantity = quantityFromScaledString(intent.payload.quantityUnits);
-    if (!quantity.ok) {
-      return this.reject(gated.decision, quantity.error.code, quantity.error.message);
-    }
-    if (quantity.value.units <= 0n) {
-      return this.reject(gated.decision, 'INVALID_QUANTITY', 'quantity must be greater than zero');
-    }
-    if (!instrument.fractionalSupported) {
-      const whole = wholeShares(quantity.value.units / 100_000_000n);
-      if (!whole.ok || whole.value.units !== quantity.value.units) {
-        return this.reject(gated.decision, 'INVALID_QUANTITY', 'fractional shares are not permitted for this instrument');
-      }
-    }
-    if (intent.payload.side !== 'BUY' && intent.payload.side !== 'SELL') {
-      return this.reject(gated.decision, 'SHORT_FORBIDDEN', 'only BUY and SELL are permitted');
-    }
-    const risk = this.risk.evaluatePaperOrder({
-      side: intent.payload.side,
-      orderType: intent.payload.orderType,
-      simulation: true,
-    });
-    if (!risk.permitted) {
-      return this.reject(gated.decision, risk.status, risk.reason);
-    }
-    const quote = this.market.getQuote(instrument.instrumentId, this.clock.now());
-    if (!quote.ok) {
-      return this.reject(gated.decision, quote.error.code, quote.error.message);
-    }
-    if (this.market instanceof SimulatedMarketDataProvider && this.market.isStale(quote.value, this.clock.now())) {
-      return this.reject(gated.decision, 'STALE_QUOTE', 'market quote is stale');
-    }
-    if (this.market.getMarketStatus(instrument.marketId, this.clock.now()) !== 'OPEN') {
-      return this.reject(gated.decision, 'MARKET_CLOSED', 'simulated market is not open');
-    }
-    let limitPrice = null;
-    if (intent.payload.orderType === 'LIMIT_SIMULATION') {
-      if (!intent.payload.limitPriceMinorUnits) {
-        return this.reject(gated.decision, 'INVALID_PRICE', 'limit orders require a limit price');
-      }
-      const limit = {
-        minorUnits: BigInt(intent.payload.limitPriceMinorUnits),
-        currency: quote.value.price.currency,
-      };
-      if (intent.payload.side === 'BUY' && quote.value.price.minorUnits > limit.minorUnits) {
-        return this.reject(gated.decision, 'LIMIT_NOT_MARKETABLE', 'buy limit is below the simulated last price');
-      }
-      if (intent.payload.side === 'SELL' && quote.value.price.minorUnits < limit.minorUnits) {
-        return this.reject(gated.decision, 'LIMIT_NOT_MARKETABLE', 'sell limit is above the simulated last price');
-      }
-      limitPrice = limit;
-    }
-    const fee = Money.fromMinorUnits(BigInt(intent.payload.feeMinorUnits ?? '0'), instrument.currency);
-    const notional = notionalMoney(quantity.value, quote.value.price);
-    if (!notional.ok) {
-      return this.reject(gated.decision, notional.error.code, notional.error.message);
-    }
-    if (intent.payload.side === 'BUY') {
-      const cash = this.availableBrokerageCash(profile.brokerageCashAccountId, profile.baseCurrency);
-      const needed = notional.value.plus(fee);
-      if (cash.cmp(needed) < 0) {
-        return this.reject(gated.decision, 'INSUFFICIENT_BROKERAGE_CASH', 'insufficient brokerage cash for buy plus fee');
-      }
-    } else {
-      const position = this.store.getPosition(profile.investmentAccountId, instrument.instrumentId);
-      const available = position?.availableQuantity ?? zeroQuantity();
-      if (available.units < quantity.value.units) {
-        return this.reject(gated.decision, 'SELL_EXCEEDS_POSITION', 'sell quantity exceeds owned settled position');
-      }
     }
     const draft = freezePaperOrder({
       orderId: asPaperOrderId(intent.payload.orderId),
       investmentAccountId: profile.investmentAccountId,
       instrumentId: instrument.instrumentId,
       side: intent.payload.side,
-      quantity: quantity.value,
+      quantity,
       filledQuantity: zeroQuantity(),
       orderType: intent.payload.orderType,
       limitPrice,
@@ -485,7 +476,7 @@ export class InvestmentsService {
     this.emit('InvestmentOrderAccepted', accepted.orderId, { orderId: accepted.orderId });
     const fillResult = this.broker.produceDeterministicFill({
       order: accepted,
-      price: quote.value.price,
+      price: quote.price,
       fee,
       filledAt: this.clock.now(),
     });
@@ -502,7 +493,9 @@ export class InvestmentsService {
       orderId: accepted.orderId,
       fillId: fillResult.value.fillId,
       journalId: applied.value.cashJournalId,
+      riskAssessmentId: this.lastRiskDecision?.assessmentId ?? null,
     });
+    engine.captureSnapshot(this.portfolioRiskSnapshot(profile.investmentAccountId));
     return {
       outcome: 'OK',
       value: { orderId: accepted.orderId, fillId: fillResult.value.fillId },
@@ -1077,7 +1070,20 @@ export class InvestmentsService {
     });
   }
 
-  private gate(intent: ActionIntent):
+  private gate(
+    intent: ActionIntent,
+    extras: {
+      readonly amount?: Money;
+      readonly investmentRisk?: {
+        readonly assessmentId: string;
+        readonly outcome: 'ALLOW_SIMULATION' | 'REQUIRE_REVIEW' | 'BLOCK' | 'INSUFFICIENT_DATA';
+        readonly triggeredLimitIds: readonly string[];
+        readonly modelId: string;
+        readonly modelVersion: string;
+        readonly generatedAt: string;
+      };
+    } = {},
+  ):
     | { readonly outcome: 'ALLOWED'; readonly decision: AuthorizationDecision; readonly authority: ExecutionAuthority }
     | { readonly outcome: 'REFUSED'; readonly result: InvestmentsServiceOutcome<never> } {
     const account = this.catalog.accounts.get((intent.payload as { accountId?: Account['id'] }).accountId as Account['id']);
@@ -1096,6 +1102,8 @@ export class InvestmentsService {
       ...(product ? { product } : {}),
       ...(account ? { sourceAccount: account, jurisdiction: account.jurisdiction } : {}),
       ...((intent.payload as { amount?: Money }).amount ? { amount: (intent.payload as { amount: Money }).amount } : {}),
+      ...(extras.amount ? { amount: extras.amount } : {}),
+      ...(extras.investmentRisk ? { investmentRisk: extras.investmentRisk } : {}),
     };
     const decision = this.kernel.submit(intent, facts);
     this.emit('KernelDecisionRecorded', intent.id, {
@@ -1148,6 +1156,100 @@ export class InvestmentsService {
     return { outcome: 'ALLOWED', decision, authority: verified.value };
   }
 
+  private preparePaperOrder(intent: CreatePaperOrderIntent):
+    | InvestmentsServiceOutcome<never>
+    | {
+        readonly profile: InvestmentAccountProfile;
+        readonly instrument: Instrument;
+        readonly quantity: InvestmentQuantity;
+        readonly quote: MarketQuote;
+        readonly fee: Money;
+        readonly notional: Money;
+        readonly limitPrice: { readonly minorUnits: bigint; readonly currency: string } | null;
+      } {
+    if (LIVE_INVESTMENT_EXECUTION !== false || LIVE_TRADING_ENABLED !== false || ENVIRONMENT !== 'simulation') {
+      return this.reject(null, 'LIVE_FORBIDDEN', 'live investment execution is forbidden');
+    }
+    const profile = this.store.getProfile(asInvestmentAccountId(intent.payload.investmentAccountId));
+    if (!profile || profile.status !== 'ACTIVE') {
+      return this.reject(null, 'PROFILE_INACTIVE', 'investment account is not ACTIVE');
+    }
+    const instrument = this.store.getInstrument(intent.payload.instrumentId);
+    if (!instrument) {
+      return this.reject(null, 'UNKNOWN_INSTRUMENT', 'instrument is not in the simulation registry');
+    }
+    const quantity = quantityFromScaledString(intent.payload.quantityUnits);
+    if (!quantity.ok) {
+      return this.reject(null, quantity.error.code, quantity.error.message);
+    }
+    if (quantity.value.units <= 0n) {
+      return this.reject(null, 'INVALID_QUANTITY', 'quantity must be greater than zero');
+    }
+    if (!instrument.fractionalSupported) {
+      const whole = wholeShares(quantity.value.units / 100_000_000n);
+      if (!whole.ok || whole.value.units !== quantity.value.units) {
+        return this.reject(null, 'INVALID_QUANTITY', 'fractional shares are not permitted for this instrument');
+      }
+    }
+    if (intent.payload.side !== 'BUY' && intent.payload.side !== 'SELL') {
+      return this.reject(null, 'SHORT_FORBIDDEN', 'only BUY and SELL are permitted');
+    }
+    const quote = this.market.getQuote(instrument.instrumentId, this.clock.now());
+    if (!quote.ok) {
+      return this.reject(null, quote.error.code, quote.error.message);
+    }
+    if (this.market instanceof SimulatedMarketDataProvider && this.market.isStale(quote.value, this.clock.now())) {
+      return this.reject(null, 'STALE_QUOTE', 'market quote is stale');
+    }
+    if (this.market.getMarketStatus(instrument.marketId, this.clock.now()) !== 'OPEN') {
+      return this.reject(null, 'MARKET_CLOSED', 'simulated market is not open');
+    }
+    let limitPrice = null;
+    if (intent.payload.orderType === 'LIMIT_SIMULATION') {
+      if (!intent.payload.limitPriceMinorUnits) {
+        return this.reject(null, 'INVALID_PRICE', 'limit orders require a limit price');
+      }
+      const limit = {
+        minorUnits: BigInt(intent.payload.limitPriceMinorUnits),
+        currency: quote.value.price.currency,
+      };
+      if (intent.payload.side === 'BUY' && quote.value.price.minorUnits > limit.minorUnits) {
+        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'buy limit is below the simulated last price');
+      }
+      if (intent.payload.side === 'SELL' && quote.value.price.minorUnits < limit.minorUnits) {
+        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'sell limit is above the simulated last price');
+      }
+      limitPrice = limit;
+    }
+    const fee = Money.fromMinorUnits(BigInt(intent.payload.feeMinorUnits ?? '0'), instrument.currency);
+    const notional = notionalMoney(quantity.value, quote.value.price);
+    if (!notional.ok) {
+      return this.reject(null, notional.error.code, notional.error.message);
+    }
+    if (intent.payload.side === 'BUY') {
+      const cash = this.availableBrokerageCash(profile.brokerageCashAccountId, profile.baseCurrency);
+      const needed = notional.value.plus(fee);
+      if (cash.cmp(needed) < 0) {
+        return this.reject(null, 'INSUFFICIENT_BROKERAGE_CASH', 'insufficient brokerage cash for buy plus fee');
+      }
+    } else {
+      const position = this.store.getPosition(profile.investmentAccountId, instrument.instrumentId);
+      const available = position?.availableQuantity ?? zeroQuantity();
+      if (available.units < quantity.value.units) {
+        return this.reject(null, 'SELL_EXCEEDS_POSITION', 'sell quantity exceeds owned settled position');
+      }
+    }
+    return {
+      profile,
+      instrument,
+      quantity: quantity.value,
+      quote: quote.value,
+      fee,
+      notional: notional.value,
+      limitPrice,
+    };
+  }
+
   private reject(
     decision: AuthorizationDecision | null,
     code: string,
@@ -1166,6 +1268,141 @@ export class InvestmentsService {
       evidenceRecordId: 'replay',
       executionAuthority: null,
     }) as AuthorizationDecision;
+  }
+
+  private ensureRiskEngine(actorId: string): RiskEngine | undefined {
+    if (this.riskEngine) {
+      return this.riskEngine;
+    }
+    const resolved = this.identity.resolveActorContext(actorId);
+    if (!resolved.ok) {
+      return undefined;
+    }
+    const registry = new ModelRegistry();
+    const seeded = seedCanonicalRiskModel(registry, resolved.value, this.clock.now());
+    if (!seeded.ok) {
+      return undefined;
+    }
+    this.riskEngine = new RiskEngine({
+      clock: this.clock,
+      registry,
+      events: this.events,
+      evidence: this.evidence,
+    });
+    this.events.append({
+      eventType: 'ModelRegistered',
+      schemaVersion: 1,
+      occurredAt: this.clock.now(),
+      payload: {
+        modelId: seeded.value.modelId,
+        version: seeded.value.version,
+        type: seeded.value.type,
+        lifecycle: seeded.value.lifecycle,
+        simulationOnly: true,
+        liveApproved: false,
+      },
+      aggregateType: 'model',
+      aggregateId: seeded.value.modelId,
+    } as never);
+    this.events.append({
+      eventType: 'ModelApprovedForSimulation',
+      schemaVersion: 1,
+      occurredAt: this.clock.now(),
+      payload: {
+        modelId: seeded.value.modelId,
+        version: seeded.value.version,
+        actorId,
+        simulationOnly: true,
+        liveApproved: false,
+      },
+      aggregateType: 'model',
+      aggregateId: seeded.value.modelId,
+    } as never);
+    return this.riskEngine;
+  }
+
+  private proposedTrade(
+    orderId: string,
+    instrument: Instrument,
+    quantityUnits: bigint,
+    side: 'BUY' | 'SELL',
+    notionalMinor: bigint,
+    feeMinor: bigint,
+    priceMinor: bigint,
+  ): ProposedPaperTrade {
+    return Object.freeze({
+      proposalRef: orderId,
+      instrumentId: instrument.instrumentId,
+      instrumentType: instrument.instrumentType,
+      currency: instrument.currency,
+      side,
+      quantityUnits,
+      quantityScale: 8,
+      priceMinor,
+      notionalMinor,
+      feeMinor,
+      liquidityClass: 'HIGH',
+    });
+  }
+
+  portfolioRiskSnapshot(investmentAccountId: InvestmentAccountId) {
+    const profile = this.store.getProfile(investmentAccountId);
+    if (!profile) {
+      throw new Error('investment account is missing');
+    }
+    const cash = this.availableBrokerageCash(profile.brokerageCashAccountId, profile.baseCurrency);
+    const positions = this.store.listPositions(investmentAccountId).flatMap((row) => {
+      const quote = this.market.getValuationPrice(row.instrumentId, this.clock.now());
+      const instrument = this.store.getInstrument(row.instrumentId);
+      if (!quote.ok || !instrument || row.quantity.units === 0n) {
+        return [];
+      }
+      const notional = notionalMoney(row.quantity, quote.value.price);
+      if (!notional.ok) {
+        return [];
+      }
+      const stale =
+        this.market instanceof SimulatedMarketDataProvider && this.market.isStale(quote.value, this.clock.now());
+      return [
+        Object.freeze({
+          instrumentId: row.instrumentId,
+          instrumentType: instrument.instrumentType,
+          currency: instrument.currency,
+          quantityUnits: row.quantity.units,
+          marketValueMinor: notional.value.minorUnits,
+          priceMinor: quote.value.price.minorUnits,
+          priceTimestamp: quote.value.quotedAt,
+          priceQuality: stale ? ('STALE' as const) : ('CURRENT' as const),
+          liquidityClass: 'HIGH' as const,
+          sourceRef: `investment:${row.instrumentId}`,
+        }),
+      ];
+    });
+    const valuations = this.store.listValuations().filter((row) => row.investmentAccountId === investmentAccountId);
+    return Object.freeze({
+      snapshotId: asPortfolioRiskSnapshotId(`prs_${investmentAccountId}`.replace(/[^a-z0-9_]/gi, '').slice(0, 28) || 'prs_portfolio'),
+      portfolioId: profile.investmentAccountId,
+      subjectId: profile.customerId,
+      asOf: this.clock.now(),
+      currency: profile.baseCurrency,
+      positions: Object.freeze(positions),
+      brokerageCashMinor: cash.minorUnits,
+      unsettledCashMinor: 0n,
+      pendingOrderNotionalMinor: 0n,
+      realizedPnlMinor: this.store.listRealized().reduce((sum, row) => sum + row.realized.minorUnits, 0n),
+      unrealizedPnlMinor: 0n,
+      observations: Object.freeze(
+        valuations.map((row) =>
+          Object.freeze({
+            at: row.asOf,
+            portfolioMarketValueMinor: row.marketValue.plus(row.cash).minorUnits,
+            currency: row.currency,
+          }),
+        ),
+      ),
+      sourceRefs: Object.freeze(['investments.store', profile.investmentAccountId]),
+      simulationOnly: true as const,
+    });
   }
 
   private emit(eventType: string, aggregateId: string, payload: Record<string, unknown>): void {

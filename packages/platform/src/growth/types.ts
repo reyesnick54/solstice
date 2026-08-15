@@ -139,9 +139,17 @@ export type PevePlanningSignals = {
   readonly mayExecute: false;
 };
 
+export type PlanningRiskAnnotation = {
+  readonly candidateRef: string;
+  readonly compatible: boolean;
+  readonly outcome: string;
+  readonly reason: string;
+};
+
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
   readonly investmentExecutionImplemented: false;
   readonly peve?: PevePlanningSignals;
+  readonly riskAnnotations?: readonly PlanningRiskAnnotation[];
 };

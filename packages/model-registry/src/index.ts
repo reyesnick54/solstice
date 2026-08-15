@@ -1,0 +1,36 @@
+export {
+  asModelArtifactReference,
+  asModelId,
+  asModelValidationId,
+  asModelVersion,
+  type ModelArtifactReference,
+  type ModelId,
+  type ModelValidationId,
+  type ModelVersion,
+} from './ids.ts';
+export {
+  MODEL_DETERMINISM,
+  MODEL_LIFECYCLE_STATES,
+  MODEL_TYPES,
+  MODEL_VALIDATION_STATUSES,
+  type ModelApproval,
+  type ModelArtifact,
+  type ModelDeterminism,
+  type ModelLifecycleState,
+  type ModelRegistrySnapshot,
+  type ModelType,
+  type ModelValidationReport,
+  type ModelValidationStatus,
+  type RegisteredModelVersion,
+} from './types.ts';
+export {
+  CANONICAL_RISK_MODEL_CONFIGURATION,
+  CANONICAL_RISK_MODEL_ID,
+  CANONICAL_RISK_MODEL_VERSION,
+  ModelRegistry,
+  artifactReferenceFor,
+  freezeArtifact,
+  seedCanonicalRiskModel,
+  sha256Canonical,
+  type RegistryFailure,
+} from './registry.ts';

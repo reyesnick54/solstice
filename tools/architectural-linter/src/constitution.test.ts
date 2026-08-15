@@ -418,6 +418,24 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/growth-agent')), false);
   });
 
+  it('CHUNK-20 investment risk and model registry capabilities are IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-20',
+    );
+    assert.ok(declared, 'CHUNK-20 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/risk')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-registry')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/investment-risk')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/risk-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/portfolio-risk')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/models')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-governance-v2')), false);
+  });
+
   it('CHUNK-19 investment portfolio core capabilities are IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');

@@ -556,3 +556,95 @@ describe('ActionIntent bridge', () => {
     assert.equal(unsupported.ok, false);
   });
 });
+
+describe('pre-trade risk annotations', () => {
+  it('rejects a Growth candidate that Risk marked incompatible', () => {
+    const interpretation = interpretMandateLanguage({
+      subjectId: 'id_risk_limit',
+      sourceText: 'Keep at least $8,000 liquid.',
+      now: NOW,
+    });
+    assert.equal(interpretation.ok, true);
+    if (!interpretation.ok) {
+      return;
+    }
+    const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
+    const compiled = compileEconomicMandate({ draft, now: NOW });
+    assert.equal(compiled.ok, true);
+    if (!compiled.ok) {
+      return;
+    }
+    const candidate = {
+      actionId: asGrowthActionId('gac_risk_block'),
+      action: 'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE' as const,
+      source: 'AGENT_PROPOSAL' as const,
+      title: 'Buy more of one ETF',
+      expectedEffect: {
+        kind: 'UNCERTAIN_MARKET_OUTCOME' as const,
+        scenario: 'none',
+        low: { minorUnits: '0', currency: 'USD' },
+        high: { minorUnits: '0', currency: 'USD' },
+        assumptions: Object.freeze([] as const),
+        confidenceScore: 0,
+        horizonDays: 0,
+        riskClass: 'UNCERTAIN_MARKET' as const,
+        achievementPromised: false as const,
+      },
+      confidenceScore: 0,
+      assumptions: Object.freeze([] as const),
+      liquidityImpact: { minorUnits: '0', currency: 'USD' },
+      riskClass: 'UNCERTAIN_MARKET' as const,
+      mandateEvaluation: { satisfied: true, violatedConstraintKinds: Object.freeze([] as const), notes: Object.freeze([] as const) },
+      userConfirmationRequired: true,
+      policyRequirement: 'none',
+      complianceRequirement: 'none',
+      executionCapability: 'PROPOSAL_ONLY' as const,
+      supportingFactRefs: Object.freeze([] as const),
+      supportingGoalIds: Object.freeze([] as const),
+      agentProposalIds: Object.freeze([] as const),
+      pegOpportunityIds: Object.freeze([] as const),
+    };
+    const result = evaluateCandidateFeasibility({
+      candidate,
+      mandate: compiled.value,
+      snapshot: asSnapshot({
+        snapshotId: 'pegs_risk',
+        graphId: 'pegg_risk',
+        subjectId: 'id_risk_limit',
+        generatedAt: NOW,
+        liquidAssetsByCurrency: Object.freeze([
+          {
+            amount: { minorUnits: '2000000', currency: 'USD' },
+            sourceRefs: Object.freeze(['acct_usd_checking']),
+            confidence: 'DERIVED' as const,
+          },
+        ]),
+        income: Object.freeze([]),
+        knownRecurringObligations: Object.freeze([]),
+        debt: Object.freeze([]),
+        investments: Object.freeze([]),
+        monthlyCashFlow: Object.freeze([]),
+        goals: Object.freeze([]),
+        economicOpportunities: Object.freeze([]),
+        valuationContext: null,
+        authoritativeBalance: false,
+        ledgerWins: true,
+        crossCurrencyTotal: null,
+      }),
+      policy: simulationPolicyPort,
+      planning: {
+        investmentExecutionImplemented: false,
+        riskAnnotations: Object.freeze([
+          {
+            candidateRef: 'gac_risk_block',
+            compatible: false,
+            outcome: 'BLOCK',
+            reason: 'violates concentration',
+          },
+        ]),
+      },
+    });
+    assert.equal(result.accepted, false);
+    assert.equal(result.reasons.includes('RISK_LIMIT'), true);
+  });
+});

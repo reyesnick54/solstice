@@ -4,6 +4,7 @@ export {
   explainPerformance,
   explainPlan,
   explainPortfolio,
+  explainRisk,
 } from './explain.ts';
 export {
   asAgentInterpretationId,
