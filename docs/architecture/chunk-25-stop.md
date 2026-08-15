@@ -206,9 +206,10 @@ not live policy.
 **Not built.** No Clean Room session / job / receipt tables. No new
 migration.
 
-Customer/strategy/PDV merge-artifact repairs on this branch restore
-a parseable architecture tree. Those repairs are not Clean Room
-persistence.
+Customer migrations that arrived as three parallel `V017` files
+(Mesh, Strategy Lab, Personal Data Vault) are renumbered to
+contiguous `V017` / `V018` / `V019`. That is a merge-artifact
+repair, not Clean Room persistence.
 
 ---
 

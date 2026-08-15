@@ -1,4 +1,4 @@
--- V017 Canonical Strategy Lab.
+-- V018 Canonical Strategy Lab.
 -- Immutable strategy versions, datasets, experiments, backtests, shadow,
 -- paper runs, and promotion reviews. No live trading. Experiment history
 -- cannot be deleted.

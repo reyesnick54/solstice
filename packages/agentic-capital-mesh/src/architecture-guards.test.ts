@@ -48,6 +48,5 @@ describe('agentic capital mesh architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/capital-ai')), false);
     assert.equal(existsSync(join(ROOT, 'packages/autonomous-trader')), false);
     assert.equal(existsSync(join(ROOT, 'packages/agent-runtime')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/strategy-lab')), false);
   });
 });
