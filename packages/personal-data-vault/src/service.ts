@@ -861,7 +861,7 @@ export class PersonalDataVault {
     }
     return err({
       code: 'DEPENDENCY_NOT_IMPLEMENTED',
-      message: 'third-party contribution execution remains denied until Clean Room exists',
+      message: 'raw third-party vault dump remains denied; use the Privacy Clean Room for authorized aggregate computation',
     });
   }
 
@@ -967,6 +967,43 @@ export class PersonalDataVault {
     };
   }
 
+  listAssetsForAuthorizedUse(
+    actor: unknown,
+    request: {
+      readonly subjectId: string;
+      readonly purposeRef: string;
+      readonly useClass: DataUseClass;
+      readonly recipientId?: string;
+      readonly category?: import('./taxonomy.ts').DataCategory;
+      readonly capability?: IdentityCapability;
+    },
+  ): Result<readonly DataAsset[], VaultServiceFailure> {
+    const allowed = this.gate(actor, {
+      subjectId: request.subjectId,
+      resourceId: request.subjectId,
+      operation: 'READ_METADATA',
+      useClass: request.useClass,
+      purposeRef: request.purposeRef,
+      requestedScope: 'clean_room_asset_list',
+      capability: request.capability ?? VAULT_VIEW_CAPABILITY,
+      ...(request.category ? { category: request.category } : {}),
+      ...(request.recipientId ? { recipientId: request.recipientId } : {}),
+    });
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const assets = this.store.assetsForSubject(request.subjectId).filter((asset) => {
+      if (asset.lifecycle !== 'ACTIVE') {
+        return false;
+      }
+      if (request.category && asset.category !== request.category) {
+        return false;
+      }
+      return true;
+    });
+    return ok(Object.freeze(assets));
+  }
+
   readForAuthorizedUse(
     actor: unknown,
     request: {
@@ -978,6 +1015,8 @@ export class PersonalDataVault {
       readonly requestedScope: string;
       readonly fields?: readonly string[];
       readonly category?: import('./taxonomy.ts').DataCategory;
+      readonly capability?: IdentityCapability;
+      readonly recipientId?: string;
     },
   ): Result<unknown, VaultServiceFailure> {
     const allowed = this.gate(actor, {
@@ -987,9 +1026,10 @@ export class PersonalDataVault {
       useClass: request.useClass,
       purposeRef: request.purposeRef,
       requestedScope: request.requestedScope,
-      capability: VAULT_VIEW_CAPABILITY,
+      capability: request.capability ?? VAULT_VIEW_CAPABILITY,
       ...(request.fields ? { fields: request.fields } : {}),
       ...(request.category ? { category: request.category } : {}),
+      ...(request.recipientId ? { recipientId: request.recipientId } : {}),
     });
     if (!allowed.ok) {
       return allowed;
@@ -1023,6 +1063,7 @@ export class PersonalDataVault {
       readonly capability: IdentityCapability;
       readonly fields?: readonly string[];
       readonly category?: import('./taxonomy.ts').DataCategory;
+      readonly recipientId?: string;
     },
   ): Result<import('../../identity/src/actor-context.ts').VerifiedActorContext, VaultServiceFailure> {
     const result = this.broker.authorize({ actor, ...request });

@@ -187,6 +187,16 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ConsentPermitIssued', version: 1, status: 'current' },
   { eventType: 'ConsentAccessDenied', version: 1, status: 'current' },
   { eventType: 'ConsentPurposeVersioned', version: 1, status: 'current' },
+  { eventType: 'CleanRoomSessionCreated', version: 1, status: 'current' },
+  { eventType: 'CleanRoomSessionAuthorized', version: 1, status: 'current' },
+  { eventType: 'CleanRoomSessionDenied', version: 1, status: 'current' },
+  { eventType: 'CleanRoomJobStarted', version: 1, status: 'current' },
+  { eventType: 'CleanRoomJobCompleted', version: 1, status: 'current' },
+  { eventType: 'CleanRoomJobFailed', version: 1, status: 'current' },
+  { eventType: 'CleanRoomEgressReleased', version: 1, status: 'current' },
+  { eventType: 'CleanRoomEgressSuppressed', version: 1, status: 'current' },
+  { eventType: 'CleanRoomEgressDenied', version: 1, status: 'current' },
+  { eventType: 'CleanRoomContributionRecorded', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

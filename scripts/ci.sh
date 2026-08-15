@@ -33,6 +33,7 @@ npm run demo:pdv
 npm run demo:strategy-lab
 npm run demo:mesh
 npm run demo:consent
+npm run demo:clean-room
 
 echo "==> typecheck"
 npm run typecheck

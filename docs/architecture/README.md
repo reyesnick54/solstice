@@ -21,4 +21,9 @@
 - Regulatory Digital Twin lives in `packages/regulatory-twin` (Chunk 18). Simulation/counterfactual only. Not a second Kernel or policy engine.
 - Personal Economic Value Engine lives in `packages/platform/src/value` (Chunk 17). Measurement only. ADR-0013 remains PROPOSED.
 
+- [Privacy Clean Room](./clean-room.md) — consent-gated computation at
+  `packages/clean-room`. Historical stop:
+  [`chunk-25-stop.md`](./chunk-25-stop.md). Resume:
+  [`chunk-25-resume.md`](./chunk-25-resume.md).
+
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

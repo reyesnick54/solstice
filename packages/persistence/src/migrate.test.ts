@@ -349,6 +349,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/plaintext/i.test(v020.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%plaintext%'/gi, '')), false);
   });
 
+  it('customer V021 persists Clean Room metadata without decrypted payloads or coin issuance', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v021 = files.find((file) => file.version === 21);
+    assert.ok(v021);
+    assert.equal(v021.filename, 'V021__clean_room.sql');
+    assert.match(v021.sql, /CREATE SCHEMA IF NOT EXISTS clean_room/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.session/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.receipt/);
+    assert.match(v021.sql, /CREATE TABLE clean_room.contribution_ref/);
+    assert.match(v021.sql, /DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED/);
+    assert.match(v021.sql, /GRANT USAGE ON SCHEMA clean_room TO customer_app/);
+    assert.equal(/CREATE TABLE clean_room\.journal/i.test(v021.sql), false);
+    assert.equal(/coin_issued BOOLEAN NOT NULL CHECK \(coin_issued = FALSE\)/.test(v021.sql), true);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

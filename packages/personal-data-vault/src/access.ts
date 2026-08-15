@@ -182,16 +182,19 @@ export class VaultAccessBroker {
       });
     }
     if (actor.subjectId !== request.subjectId) {
-      if (!hasCapability(actor, VAULT_OPERATE_CAPABILITY)) {
+      const recipientUse = request.useClass === 'THIRD_PARTY' || request.useClass === 'CONTRIBUTION';
+      if (!recipientUse) {
+        if (!hasCapability(actor, VAULT_OPERATE_CAPABILITY)) {
+          return err({
+            code: 'CROSS_SUBJECT_DENIED',
+            message: 'cross-subject vault access fails closed',
+          });
+        }
         return err({
-          code: 'CROSS_SUBJECT_DENIED',
-          message: 'cross-subject vault access fails closed',
+          code: 'OPERATOR_DEFAULT_DENY',
+          message: 'operator raw vault access is default-deny and requires a purpose-bound consent permit',
         });
       }
-      return err({
-        code: 'OPERATOR_DEFAULT_DENY',
-        message: 'operator raw vault access is default-deny and requires a purpose-bound consent permit',
-      });
     }
     const decision = this.authorization.authorize({
       actor,

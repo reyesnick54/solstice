@@ -37,6 +37,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'strategy',
   'capital_mesh',
   'consent',
+  'clean_room',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -227,6 +228,16 @@ export const EVENT_TYPE_NAMES = [
   'ConsentPermitIssued',
   'ConsentAccessDenied',
   'ConsentPurposeVersioned',
+  'CleanRoomSessionCreated',
+  'CleanRoomSessionAuthorized',
+  'CleanRoomSessionDenied',
+  'CleanRoomJobStarted',
+  'CleanRoomJobCompleted',
+  'CleanRoomJobFailed',
+  'CleanRoomEgressReleased',
+  'CleanRoomEgressSuppressed',
+  'CleanRoomEgressDenied',
+  'CleanRoomContributionRecorded',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -408,6 +419,16 @@ export const EVENT_SCHEMA_REFS = {
   ConsentPermitIssued: 'solstice.consent.permit.issued/1',
   ConsentAccessDenied: 'solstice.consent.access.denied/1',
   ConsentPurposeVersioned: 'solstice.consent.purpose.versioned/1',
+  CleanRoomSessionCreated: 'solstice.clean_room.session.created/1',
+  CleanRoomSessionAuthorized: 'solstice.clean_room.session.authorized/1',
+  CleanRoomSessionDenied: 'solstice.clean_room.session.denied/1',
+  CleanRoomJobStarted: 'solstice.clean_room.job.started/1',
+  CleanRoomJobCompleted: 'solstice.clean_room.job.completed/1',
+  CleanRoomJobFailed: 'solstice.clean_room.job.failed/1',
+  CleanRoomEgressReleased: 'solstice.clean_room.egress.released/1',
+  CleanRoomEgressSuppressed: 'solstice.clean_room.egress.suppressed/1',
+  CleanRoomEgressDenied: 'solstice.clean_room.egress.denied/1',
+  CleanRoomContributionRecorded: 'solstice.clean_room.contribution.recorded/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -589,6 +610,16 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ConsentPermitIssued: 'consent',
   ConsentAccessDenied: 'consent',
   ConsentPurposeVersioned: 'consent',
+  CleanRoomSessionCreated: 'clean_room',
+  CleanRoomSessionAuthorized: 'clean_room',
+  CleanRoomSessionDenied: 'clean_room',
+  CleanRoomJobStarted: 'clean_room',
+  CleanRoomJobCompleted: 'clean_room',
+  CleanRoomJobFailed: 'clean_room',
+  CleanRoomEgressReleased: 'clean_room',
+  CleanRoomEgressSuppressed: 'clean_room',
+  CleanRoomEgressDenied: 'clean_room',
+  CleanRoomContributionRecorded: 'clean_room',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

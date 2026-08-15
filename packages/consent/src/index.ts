@@ -44,6 +44,7 @@ export { issueDataUsePermit, permitPayload, verifyDataUsePermit } from './permit
 export { PurposeRegistry, simulationPurposes } from './purpose-registry.ts';
 export {
   RECIPIENT_EXTERNAL_RESEARCH,
+  RECIPIENT_EXTERNAL_RESEARCH_BETA,
   RECIPIENT_PEG,
   RECIPIENT_PERSONAL_AGENT,
   RECIPIENT_PEVE,
@@ -51,6 +52,7 @@ export {
   RecipientRegistry,
 } from './recipients.ts';
 export {
+  CLEAN_ROOM_REQUEST_CAPABILITY,
   CONSENT_GRANT_CAPABILITY,
   CONSENT_REVOKE_CAPABILITY,
   CONSENT_VIEW_CAPABILITY,

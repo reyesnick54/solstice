@@ -8,7 +8,10 @@ import { RECIPIENT_PERSONAL_AGENT, RECIPIENT_PEG, RECIPIENT_PRODUCT_RESEARCH } f
 import type { ConsentService } from './service.ts';
 import type { ConsentOperation, DerivationType } from './taxonomy.ts';
 
-function mapOperation(operation: VaultOperation): ConsentOperation {
+function mapOperation(operation: VaultOperation, scope: string): ConsentOperation {
+  if (scope.includes('aggregate') || scope.includes('clean_room')) {
+    return 'AGGREGATE';
+  }
   if (operation === 'DERIVE') {
     return 'DERIVE';
   }
@@ -25,7 +28,7 @@ function mapOperation(operation: VaultOperation): ConsentOperation {
 }
 
 function mapDerivation(scope: string): DerivationType {
-  if (scope.includes('aggregate')) {
+  if (scope.includes('aggregate') || scope.includes('clean_room')) {
     return 'AGGREGATE_ONLY';
   }
   if (scope.includes('derive') || scope.includes('derived') || scope.includes('summary')) {
@@ -71,14 +74,30 @@ export class ConsentDataUseAuthorization implements DataUseAuthorizationPort {
         consentSystemImplemented: true,
       };
     }
-    const issued = this.consent.issuePermit(request.actor, {
+    const issued =
+      request.actor.subjectId === request.subjectId
+        ? this.consent.issuePermit(request.actor, {
       subjectId: request.subjectId,
       recipientId: recipientFor(request),
       purposeRef: request.purposeRef,
       resourceId: request.resourceId,
       ...(request.category ? { category: request.category } : {}),
       ...(request.fields ? { fields: request.fields } : {}),
-      operation: mapOperation(request.operation),
+      operation: mapOperation(request.operation, request.requestedScope),
+      derivationType: mapDerivation(request.requestedScope),
+      onwardSharing: request.onwardSharing === true,
+      ...(request.requestedRetentionDays !== undefined
+        ? { requestedRetentionDays: request.requestedRetentionDays }
+        : {}),
+    })
+        : this.consent.issuePermitForRecipient(request.actor, {
+      subjectId: request.subjectId,
+      recipientId: recipientFor(request),
+      purposeRef: request.purposeRef,
+      resourceId: request.resourceId,
+      ...(request.category ? { category: request.category } : {}),
+      ...(request.fields ? { fields: request.fields } : {}),
+      operation: mapOperation(request.operation, request.requestedScope),
       derivationType: mapDerivation(request.requestedScope),
       onwardSharing: request.onwardSharing === true,
       ...(request.requestedRetentionDays !== undefined
