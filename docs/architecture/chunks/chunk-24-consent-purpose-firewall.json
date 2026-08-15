@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-24",
+  "title": "Canonical Consent Ledger, Purpose Registry, Purpose Firewall, Data-Use Permits, Revocation, Access Enforcement, and Personal Data Vault Integration",
+  "requires": [
+    "architecture-linting",
+    "security",
+    "identity",
+    "persistence",
+    "events",
+    "event-fabric",
+    "evidence",
+    "personal-data-vault",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "personal-economic-value-engine"
+  ],
+  "notes": "Implements CONSENT at packages/consent. Replaces the Personal Data Vault fail-closed consent placeholder. Does not implement Clean Room, marketplace, or Reyn Coin. Consent is not legal approval."
+}

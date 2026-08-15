@@ -269,6 +269,8 @@
         "packages/agentic-capital-mesh",
         "packages/strategy-lab",
         "packages/personal-data-vault"
+        "packages/personal-data-vault",
+        "packages/consent"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -677,11 +679,15 @@
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
         "packages/strategy-lab"
+        "packages/risk",
+        "packages/model-registry",
+        "packages/regulatory-twin"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/strategy-lab. Not a second backtester, broker, or live trading engine."
+      "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper strategy execution. No live trading. Does not call PaperBroker or post journals."
     },
     {
       "id": "packages/personal-data-vault",
@@ -705,6 +711,7 @@
         "@reyesnick54"
       ],
       "notes": "Canonical Personal Data Vault. Subject-bound encrypted store. Simulation only. Not a Consent Ledger, Clean Room, marketplace, or Sol Coin."
+      "notes": "Application facade for packages/strategy-lab. Not a second backtester, broker, or live trading engine."
     },
     {
       "id": "packages/agentic-capital-mesh",
@@ -732,6 +739,53 @@
         "@reyesnick54"
       ],
       "notes": "Agentic Capital Mesh. Capital-intelligence and proposal system. Reuses the Personal Economy Agent runtime boundary. Cannot issue Execution Authority, post journals, or submit broker orders."
+    },
+    {
+      "id": "packages/personal-data-vault",
+      "npmName": "@solstice/personal-data-vault",
+      "path": "packages/personal-data-vault",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Personal Data Vault. Subject-bound encrypted store. Simulation only. Consent decisions come from packages/consent via DataUseAuthorizationPort. Not a Clean Room, marketplace, or Reyn Coin."
+    },
+    {
+      "id": "packages/consent",
+      "npmName": "@solstice/consent",
+      "path": "packages/consent",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/personal-data-vault"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Consent Ledger, Purpose Registry, Purpose Firewall, and short-lived DataUsePermits. Not a financial ledger and not Execution Authority. Simulation only. Not GDPR/CCPA/PDPL legal approval."
     }
   ],
   "components": [
@@ -1609,6 +1663,41 @@
       "canonicalOwner": "packages/agentic-capital-mesh",
       "canonicalPath": "packages/agentic-capital-mesh/src/service.ts",
       "publicInterface": "packages/agentic-capital-mesh/src/index.ts",
+      "id": "strategy-lab",
+      "name": "Strategy Lab",
+      "canonicalOwner": "packages/strategy-lab",
+      "canonicalPath": "packages/strategy-lab/src/service.ts",
+      "publicInterface": "packages/strategy-lab/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "CapitalMeshService",
+          "name": "StrategyLab",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/backtest",
+        "packages/trading-lab",
+        "packages/quant",
+        "packages/strategy-v2",
+        "packages/algo-trading"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Strategy Lab. Safe DSL and reproducible simulation only. No live trading authority."
+    },
+    {
+      "id": "agentic-capital-mesh",
+      "name": "Agentic Capital Mesh",
+      "canonicalOwner": "packages/agentic-capital-mesh",
+      "canonicalPath": "packages/agentic-capital-mesh/src/service.ts",
+      "publicInterface": "packages/agentic-capital-mesh/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -1698,6 +1787,14 @@
       "canonicalOwner": "packages/regulatory-twin",
       "canonicalPath": "packages/regulatory-twin/src/service.ts",
       "publicInterface": "packages/regulatory-twin/src/index.ts",
+      "notes": "Subject-bound encrypted personal data store. Not a financial asset, Clean Room, marketplace, or Reyn Coin. Consent is owned by packages/consent."
+    },
+    {
+      "id": "consent",
+      "name": "Consent Ledger and Purpose Firewall",
+      "canonicalOwner": "packages/consent",
+      "canonicalPath": "packages/consent/src/service.ts",
+      "publicInterface": "packages/consent/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -1706,6 +1803,7 @@
       "protectedSymbols": [
         {
           "name": "RegulatoryDigitalTwin",
+          "name": "ConsentService",
           "kind": "class"
         }
       ],
@@ -1714,11 +1812,17 @@
         "packages/policy-engine-v2",
         "packages/compliance-simulator-v2",
         "packages/kernel-sandbox"
+        "packages/privacy-consent",
+        "packages/user-consent",
+        "packages/permissions-v2",
+        "packages/purpose-firewall",
+        "packages/consent-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
+      "notes": "One Consent bounded context. Append-only authorization history. Purpose Firewall defaults DENY. Not a financial ledger."
     }
   ],
   "authorizedMutationPaths": [
@@ -2106,6 +2210,11 @@
     "packages/secure-data-room",
     "packages/research-room",
     "packages/clean-room-v2"
+    "packages/privacy-consent",
+    "packages/user-consent",
+    "packages/permissions-v2",
+    "packages/purpose-firewall",
+    "packages/consent-v2"
   ],
   "capabilities": [
     {
@@ -2320,6 +2429,8 @@
       "owner": "packages/personal-data-vault",
       "protected": true,
       "notes": "Canonical encrypted Personal Data Vault. Subject-bound. Simulation only. Consent Ledger is Chunk 24."
+      "protected": true,
+      "notes": "Capital-intelligence and proposal mesh. Chunk 21R. Cannot execute, issue Execution Authority, or submit orders."
     },
     {
       "id": "strategy-lab",
@@ -2341,6 +2452,18 @@
       "owner": "packages/clean-room",
       "protected": true,
       "notes": "Reserved Privacy Clean Room. Chunk 25. Do not implement until consent is IMPLEMENTED. Do not create competing privacy-compute / data-clean-room / secure-data-room / research-room / clean-room-v2 packages."
+      "id": "personal-data-vault",
+      "status": "IMPLEMENTED",
+      "owner": "packages/personal-data-vault",
+      "protected": true,
+      "notes": "Canonical encrypted Personal Data Vault. Subject-bound. Simulation only. Consent Ledger is packages/consent."
+    },
+    {
+      "id": "consent",
+      "status": "IMPLEMENTED",
+      "owner": "packages/consent",
+      "protected": true,
+      "notes": "Canonical Consent Ledger, Purpose Registry, Purpose Firewall, and DataUsePermits. Simulation only. Not legal approval."
     }
   ],
   "boundedContexts": [
@@ -2525,16 +2648,17 @@
         "packages/personal-data-vault"
       ],
       "protected": true,
-      "notes": "Subject-bound encrypted Personal Data Vault. Simulation connectors only. Not legal ownership, GDPR/CCPA compliance, Consent Ledger, Clean Room, marketplace, or Sol Coin."
+      "notes": "Subject-bound encrypted Personal Data Vault. Simulation connectors only. Not legal ownership, GDPR/CCPA compliance, Clean Room, marketplace, or Reyn Coin. Consent is packages/consent."
     },
     {
       "id": "CONSENT",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/consent"
       ],
       "protected": true,
       "notes": "Reserved Consent Ledger and Purpose Firewall. Chunk 24. Not implemented. Chunk 25 stops until this is IMPLEMENTED."
+      "notes": "Canonical Consent Ledger and Purpose Firewall at packages/consent. Append-only authorization history. Not a financial ledger. Not GDPR/CCPA/PDPL legal approval. Clean Room remains PLANNED."
     },
     {
       "id": "CLEAN_ROOM",

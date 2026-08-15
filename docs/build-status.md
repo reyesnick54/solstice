@@ -164,14 +164,6 @@ This document describes only what is implemented and tested in this tree.
   PARTIAL (no live trading). Historical stop:
   `docs/architecture/chunk-22-stop.md`. Resume:
   `docs/architecture/chunk-22-resume.md`.
-- Agentic Capital Mesh (Chunk 21) remains reserved at
-  `packages/agentic-capital-mesh` and is still `PLANNED`. Risk and
-  Model Registry are IMPLEMENTED. See
-  `docs/architecture/chunk-21-stop.md`.
-- Investment Risk Engine and Model Registry (Chunk 20,
-  `packages/risk`, `packages/model-registry`): deterministic
-  pre-trade Risk, RiskBudget, stress fixtures, and a simulation-only
-  Model Registry. No `LIVE_APPROVED`. Models cannot self-approve.
 - Agentic Capital Mesh (Chunk 21R, `packages/agentic-capital-mesh`):
   capital-intelligence and proposal system. Specialist nodes, subject-bound
   CapitalContext, structured theses, deterministic allocation compiler,
@@ -180,6 +172,23 @@ This document describes only what is implemented and tested in this tree.
   before Chunk 20 merged; that stop is historical
   (`docs/architecture/chunk-21-stop.md`). Resume:
   `docs/architecture/chunk-21-resume.md`.
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port integration, access audit,
+  export manifest, technical deletion / crypto-shred, derivation
+  lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance.
+- Consent Ledger and Purpose Firewall (Chunk 24, `packages/consent`):
+  append-only consent history, versioned Purpose Registry, granular
+  scope, subject confirmation, immutable receipts, revocation,
+  expiration, deterministic Purpose Firewall (default DENY),
+  short-lived signed DataUsePermits, and PDV
+  `DataUseAuthorizationPort` integration. Internal services cannot
+  bypass consent. Data-contribution consent does not execute
+  external sharing because Clean Room is not implemented. Not
+  GDPR/CCPA/PDPL legal approval.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -248,6 +257,17 @@ This document describes only what is implemented and tested in this tree.
   Capital Mesh are IMPLEMENTED as non-executing or simulation-gated
   layers. Live rails, live issuing, live wallet/SoftPOS certification,
   live treasury, and live securities trading remain later.
+- Reserved later bounded contexts that remain PLANNED (CLEAN ROOM,
+  PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
+  PARTIAL simulation owners. RISK, MODEL REGISTRY, AGENTIC CAPITAL
+  MESH, PERSONAL DATA VAULT, and CONSENT are IMPLEMENTED. The
+  Personal Economic Graph, Personal Economy Agent, Growth
+  Orchestrator, Personal Economic Value Engine, and Regulatory
+  Digital Twin are IMPLEMENTED as non-executing intelligence layers.
+  Live rails, live issuing, live wallet/SoftPOS certification, live
+  treasury, live securities trading, and Privacy Clean Room remain
+  later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -287,6 +307,7 @@ npm run demo:pdv
 npm run demo:risk
 npm run demo:strategy-lab
 npm run demo:mesh
+npm run demo:consent
 npm run typecheck
 npm run scan:secrets
 npm run ci

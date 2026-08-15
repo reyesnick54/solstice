@@ -32,6 +32,7 @@ npm run demo:risk
 npm run demo:pdv
 npm run demo:strategy-lab
 npm run demo:mesh
+npm run demo:consent
 
 echo "==> typecheck"
 npm run typecheck

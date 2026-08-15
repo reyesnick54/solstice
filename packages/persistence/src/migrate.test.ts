@@ -274,6 +274,7 @@ describe('versioned SQL migrations', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v017 = files.find((file) => file.version === 17);
     assert.ok(v017);
+    assert.equal(v017.filename, 'V017__agentic_capital_mesh.sql');
     assert.match(v017.sql, /CREATE SCHEMA IF NOT EXISTS capital_mesh/);
     assert.match(v017.sql, /CREATE TABLE capital_mesh.run/);
     assert.match(v017.sql, /CREATE TABLE capital_mesh.proposal/);
@@ -296,6 +297,16 @@ describe('versioned SQL migrations', () => {
     assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
     assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
     assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
+  it('customer V018 persists Strategy Lab experiment history without a LIVE stage', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v018 = files.find((file) => file.version === 18);
+    assert.ok(v018);
+    assert.equal(v018.filename, 'V018__strategy_lab.sql');
+    assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
+    assert.match(v018.sql, /live_approved BOOLEAN NOT NULL CHECK \(live_approved = FALSE\)/);
+    assert.match(v018.sql, /simulation_only BOOLEAN NOT NULL CHECK \(simulation_only = TRUE\)/);
+    assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
     assert.equal(/CREATE TABLE strategy_lab\.journal/i.test(v018.sql), false);
   });
 
@@ -303,6 +314,7 @@ describe('versioned SQL migrations', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v019 = files.find((file) => file.version === 19);
     assert.ok(v019);
+    assert.equal(v019.filename, 'V019__personal_data_vault.sql');
     assert.match(v019.sql, /CREATE SCHEMA IF NOT EXISTS personal_data_vault/);
     assert.match(v019.sql, /CREATE TABLE personal_data_vault.vault/);
     assert.match(v019.sql, /CREATE TABLE personal_data_vault.asset/);
@@ -313,6 +325,21 @@ describe('versioned SQL migrations', () => {
     assert.match(v019.sql, /pdv_payload_envelope_not_plaintext/);
     assert.match(v019.sql, /GRANT USAGE ON SCHEMA personal_data_vault TO customer_app/);
     assert.equal(/plaintext_payload/i.test(v019.sql), false);
+  });
+
+  it('customer V020 persists Consent Ledger history without a financial ledger or raw payload', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v020 = files.find((file) => file.version === 20);
+    assert.ok(v020);
+    assert.equal(v020.filename, 'V020__consent.sql');
+    assert.match(v020.sql, /CREATE SCHEMA IF NOT EXISTS consent/);
+    assert.match(v020.sql, /CREATE TABLE consent.record/);
+    assert.match(v020.sql, /CREATE TABLE consent.purpose/);
+    assert.match(v020.sql, /CREATE TABLE consent.permit/);
+    assert.match(v020.sql, /CREATE TABLE consent.ledger_entry/);
+    assert.match(v020.sql, /GRANT USAGE ON SCHEMA consent TO customer_app/);
+    assert.equal(/CREATE TABLE consent\.journal/i.test(v020.sql), false);
+    assert.equal(/plaintext/i.test(v020.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%plaintext%'/gi, '')), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

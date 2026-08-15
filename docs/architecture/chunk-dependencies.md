@@ -90,6 +90,7 @@ Agents and later CI jobs use that result. They do not guess.
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
 | consent | PLANNED | packages/consent |
 | clean-room | PLANNED | packages/clean-room |
+| consent | IMPLEMENTED | packages/consent |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -137,16 +138,14 @@ investments and does not start the Personal Economic Value Engine.
 Chunk 17 implements the Personal Economic Value Engine at
 `packages/platform/src/value`. It extends platform ownership rather
 than creating `packages/value-engine`. Capability
-`personal-economic-value-engine` is `IMPLEMENTED`.
-than creating `packages/value-engine`. It does not start the
-Regulatory Digital Twin. The evaluator returns `mustStop: false`.
+`personal-economic-value-engine` is `IMPLEMENTED`. It does not start
+the Regulatory Digital Twin. The evaluator returns `mustStop: false`.
 
 Chunk 18 implements the Regulatory Digital Twin at
 `packages/regulatory-twin`. It reuses the existing policy engine and
 Kernel. It does not issue Execution Authority, post journals, or
 activate candidate packs. Capability `regulatory-digital-twin` is
-`IMPLEMENTED`.
-activate candidate packs. The evaluator returns `mustStop: false`.
+`IMPLEMENTED`. The evaluator returns `mustStop: false`.
 
 Chunk 19 implements the reserved INVESTMENTS bounded context at
 `packages/investments` and `services/investments`. Capability
@@ -156,31 +155,6 @@ reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
-Chunk 22R implements the reserved STRATEGY LAB bounded context at
-`packages/strategy-lab` and `services/strategy-lab`. Capability
-`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
-`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
-Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
-historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
-[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
-`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
-`packages/strategy-v2`.
-Chunk 21 (Agentic Capital Mesh) remains reserved at
-`packages/agentic-capital-mesh`. Protected capabilities `risk` and
-`model-registry` are now `IMPLEMENTED`, so the evaluator returns
-`mustStop: false` for CHUNK-21's declared requires. The Mesh package
-itself is still absent. Historical stop:
-[`chunk-21-stop.md`](./chunk-21-stop.md). Do not create competing
-`trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
-packages until Chunk 20 lands those owners as `IMPLEMENTED`.
-Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
-at `packages/personal-data-vault`. Capability `personal-data-vault`
-is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
-Firewall, Clean Room, marketplace, or Sol Coin. The evaluator
-returns `mustStop: false` for the implemented prerequisites.
-Strategy Lab remains `PLANNED` and is not a PDV code dependency.
-
-packages.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability
 `risk` and `model-registry` are `IMPLEMENTED`. Risk supplies
@@ -216,3 +190,25 @@ Historical stop: [`chunk-25-stop.md`](./chunk-25-stop.md). Do not
 create `packages/privacy-compute`, `packages/data-clean-room`,
 `packages/secure-data-room`, `packages/research-room`, or
 `packages/clean-room-v2`.
+Chunk 22R implements the reserved STRATEGY LAB bounded context at
+`packages/strategy-lab` and `services/strategy-lab`. Capability
+`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
+`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
+Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
+historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
+[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.
+
+Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
+at `packages/personal-data-vault`. Capability `personal-data-vault`
+is `IMPLEMENTED`. It does not implement Clean Room, marketplace, or
+Reyn Coin. Consent is owned by Chunk 24 at `packages/consent`. The
+evaluator returns `mustStop: false`.
+
+Chunk 24 implements the reserved CONSENT bounded context at
+`packages/consent`. Capability `consent` is `IMPLEMENTED`. It
+replaces the Personal Data Vault fail-closed consent placeholder
+with a Purpose Firewall and short-lived DataUsePermits. It does
+not implement Clean Room, marketplace, or Reyn Coin. The evaluator
+returns `mustStop: false`.

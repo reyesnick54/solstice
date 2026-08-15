@@ -644,6 +644,28 @@ export type CapitalMeshVetoAppliedV1 = VersionedEvent<'CapitalMeshVetoApplied', 
 export type CapitalMeshProposalCreatedV1 = VersionedEvent<'CapitalMeshProposalCreated', 1, CapitalMeshAuditPayload>;
 export type CapitalMeshProposalStaleV1 = VersionedEvent<'CapitalMeshProposalStale', 1, CapitalMeshAuditPayload>;
 
+export type ConsentAuditPayload = {
+  readonly consentId?: string;
+  readonly version?: string;
+  readonly subjectId?: string;
+  readonly purposeCode?: string;
+  readonly purposeId?: string;
+  readonly purposeVersion?: string;
+  readonly permitId?: string;
+  readonly reasonCode?: string;
+  readonly purposeRef?: string;
+  readonly notification?: string;
+};
+
+export type ConsentDraftCreatedV1 = VersionedEvent<'ConsentDraftCreated', 1, ConsentAuditPayload>;
+export type ConsentGrantedV1 = VersionedEvent<'ConsentGranted', 1, ConsentAuditPayload>;
+export type ConsentRevokedV1 = VersionedEvent<'ConsentRevoked', 1, ConsentAuditPayload>;
+export type ConsentExpiredV1 = VersionedEvent<'ConsentExpired', 1, ConsentAuditPayload>;
+export type ConsentSupersededV1 = VersionedEvent<'ConsentSuperseded', 1, ConsentAuditPayload>;
+export type ConsentPermitIssuedV1 = VersionedEvent<'ConsentPermitIssued', 1, ConsentAuditPayload>;
+export type ConsentAccessDeniedV1 = VersionedEvent<'ConsentAccessDenied', 1, ConsentAuditPayload>;
+export type ConsentPurposeVersionedV1 = VersionedEvent<'ConsentPurposeVersioned', 1, ConsentAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -955,7 +977,15 @@ export type DomainEvent =
   | CapitalMeshReviewCompletedV1
   | CapitalMeshVetoAppliedV1
   | CapitalMeshProposalCreatedV1
-  | CapitalMeshProposalStaleV1;
+  | CapitalMeshProposalStaleV1
+  | ConsentDraftCreatedV1
+  | ConsentGrantedV1
+  | ConsentRevokedV1
+  | ConsentExpiredV1
+  | ConsentSupersededV1
+  | ConsentPermitIssuedV1
+  | ConsentAccessDeniedV1
+  | ConsentPurposeVersionedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
