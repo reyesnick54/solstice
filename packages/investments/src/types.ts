@@ -2,7 +2,7 @@ import { LIVE_TRADING_ENABLED } from '../../config/src/flags.ts';
 
 /**
  * Simulation-only investment execution flag.
- * Live securities trading is not implemented. Chunk 20 owns the Risk Engine.
+ * Live securities trading is not implemented. The Risk Engine gates paper orders.
  * This flag stays false; it is not a product experiment toggle.
  */
 export const LIVE_INVESTMENT_EXECUTION = false as const;
@@ -83,6 +83,7 @@ export type MarketStatus = (typeof MARKET_STATUSES)[number];
 export const RISK_CONTROL_STATUSES = [
   'PAPER_SIMULATION_ONLY',
   'RISK_ENGINE_NOT_IMPLEMENTED',
+  'RISK_ENGINE_BLOCKED',
   'BLOCKED_LIVE_EXECUTION',
 ] as const;
 export type RiskControlStatus = (typeof RISK_CONTROL_STATUSES)[number];
@@ -104,7 +105,7 @@ export type RdtLegalStatus = (typeof RDT_LEGAL_STATUSES)[number];
 
 export function assertPaperOnly(): void {
   if (LIVE_INVESTMENT_EXECUTION !== false || LIVE_TRADING_ENABLED !== false) {
-    throw new Error('live investment execution is forbidden; Risk Engine is Chunk 20');
+    throw new Error('live investment execution is forbidden');
   }
 }
 

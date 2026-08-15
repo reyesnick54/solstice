@@ -150,6 +150,10 @@ export class InvestmentStore {
     return [...this.valuations].reverse().find((row) => row.investmentAccountId === investmentAccountId);
   }
 
+  listValuations(): readonly PortfolioValuationSnapshot[] {
+    return [...this.valuations];
+  }
+
   putCorporateAction(action: CorporateAction): void {
     this.corporateActions.set(action.corporateActionId, action);
   }

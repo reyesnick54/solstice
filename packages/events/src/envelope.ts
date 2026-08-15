@@ -241,10 +241,24 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(
         body.investmentAccountId ?? body.orderId ?? body.fillId ?? body.settlementId ?? body.reconciliationId ?? 'unknown',
       ),
+    };
+  }
   if (eventType.startsWith('RegulatoryTwin')) {
     return {
       type: 'regulatory',
       id: String(body.scenarioId ?? body.runId ?? body.assessmentId ?? body.candidateSetId ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('Risk')) {
+    return {
+      type: 'risk',
+      id: String(body.assessmentId ?? body.snapshotId ?? body.runId ?? body.portfolioId ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('Model')) {
+    return {
+      type: 'model',
+      id: String(body.modelId ?? body.validationId ?? body.artifactRef ?? 'unknown'),
     };
   }
   return { type: 'unknown', id: String(body.id ?? eventType) };

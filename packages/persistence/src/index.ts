@@ -68,6 +68,8 @@ export {
   reserveTreasuryLiquidityPg,
 } from './treasury/pg-treasury-store.ts';
 export { persistInvestmentSnapshot } from './investments/pg-investments-store.ts';
+export { persistRiskState } from './risk/pg-risk-store.ts';
+export { persistModelRegistryState } from './model-registry/pg-model-registry-store.ts';
 export {
   insertCoordinate,
   insertFeeAssessment,

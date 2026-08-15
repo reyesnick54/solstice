@@ -93,3 +93,20 @@ export function explainEconomicValue(input: {
     createdAt: input.now,
   });
 }
+
+export function explainRisk(input: {
+  readonly subjectId: string;
+  readonly riskSummary: string;
+  readonly now: UtcInstant;
+}): AgentProposal {
+  return freezeProposal({
+    proposalId: deterministicProposalId('EXPLAIN_RISK', input.subjectId),
+    kind: 'RISK_EXPLANATION',
+    subjectId: input.subjectId,
+    title: 'Risk explanation',
+    rationale: `${input.riskSummary} The agent explains a Risk decision; it cannot change the outcome, relax a hard limit, or execute.`,
+    relatedRefs: Object.freeze([]),
+    executable: false,
+    createdAt: input.now,
+  });
+}

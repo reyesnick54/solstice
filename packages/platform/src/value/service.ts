@@ -58,6 +58,12 @@ export type GenerateSnapshotInput = {
   readonly modelVersion?: EconomicValueModelVersion;
   readonly restated?: boolean;
   readonly restatementOfSnapshotId?: EconomicValueSnapshotId;
+  readonly riskContext?: {
+    readonly assessmentId: string;
+    readonly outcome: string;
+    readonly higherRiskIsNotHigherValue: true;
+    readonly unrealizedUpsideIsNotRealizedValue: true;
+  };
 };
 
 export class PersonalEconomicValueEngine {
@@ -158,6 +164,12 @@ export class PersonalEconomicValueEngine {
         PEVE_NOT_EXECUTION,
         'PEG facts are non-authoritative; the ledger wins for balances.',
         'Projected attribution is excluded from realized totals.',
+        ...(input.riskContext
+          ? [
+              'Higher investment risk is not higher human value.',
+              'Unrealized portfolio upside is not realized economic value.',
+            ]
+          : []),
       ]),
       warnings: computed.value.warnings,
       sourceReferences: Object.freeze([
@@ -166,6 +178,7 @@ export class PersonalEconomicValueEngine {
         formula.value.modelVersion,
         ...this.attribution.list(input.subjectId).map((item) => item.entryId),
         ...(input.plan ? [input.plan.planId] : []),
+        ...(input.riskContext ? [input.riskContext.assessmentId] : []),
       ]),
       restated: input.restated === true,
       ...(input.restatementOfSnapshotId ? { restatementOfSnapshotId: input.restatementOfSnapshotId } : {}),

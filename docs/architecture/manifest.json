@@ -262,8 +262,10 @@
         "packages/personal-economic-graph",
         "packages/treasury",
         "packages/platform",
-        "packages/investments"
-        "packages/regulatory-twin"
+        "packages/investments",
+        "packages/regulatory-twin",
+        "packages/risk",
+        "packages/model-registry"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -526,6 +528,26 @@
       "financialStateMutation": true,
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/risk",
+        "packages/model-registry"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical investment account profile, paper orders, positions, lots, valuation, and reconciliation. Simulation only. Reuses canonical Account classes. Not a second ledger. Pre-trade Risk is required before paper execution."
+    },
+    {
       "id": "packages/regulatory-twin",
       "npmName": "@solstice/regulatory-twin",
       "path": "packages/regulatory-twin",
@@ -550,7 +572,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical investment account profile, paper orders, positions, lots, valuation, and reconciliation. Simulation only. Reuses canonical Account classes. Not a second ledger."
+      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     },
     {
       "id": "services/investments",
@@ -569,7 +591,49 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
-      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
+    },
+    {
+      "id": "packages/risk",
+      "npmName": "@solstice/risk",
+      "path": "packages/risk",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/evidence",
+        "packages/events",
+        "packages/model-registry",
+        "packages/permissions"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
+    },
+    {
+      "id": "packages/model-registry",
+      "npmName": "@solstice/model-registry",
+      "path": "packages/model-registry",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/identity"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical model registry for deterministic/quantitative/AI models. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve."
     }
   ],
   "components": [
@@ -1401,6 +1465,75 @@
       "protectedSymbols": [
         {
           "name": "InvestmentsService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/brokerage",
+        "packages/portfolio",
+        "packages/trading",
+        "packages/wealth",
+        "packages/securities-core"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Pre-trade Risk is required."
+    },
+    {
+      "id": "risk-engine",
+      "name": "Canonical investment risk engine",
+      "canonicalOwner": "packages/risk",
+      "canonicalPath": "packages/risk/src/engine.ts",
+      "publicInterface": "packages/risk/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RiskEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/investment-risk",
+        "packages/risk-v2",
+        "packages/portfolio-risk"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Risk Engine. Does not replace the Kernel Risk proof. Simulation/engineering limits only."
+    },
+    {
+      "id": "model-registry",
+      "name": "Canonical model registry",
+      "canonicalOwner": "packages/model-registry",
+      "canonicalPath": "packages/model-registry/src/registry.ts",
+      "publicInterface": "packages/model-registry/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ModelRegistry",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/models",
+        "packages/model-governance-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Model Registry. Hash-addressable artifacts. No in-place overwrite. No LIVE_APPROVED."
+    },
+    {
       "id": "regulatory-digital-twin",
       "name": "Regulatory Digital Twin",
       "canonicalOwner": "packages/regulatory-twin",
@@ -1418,11 +1551,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/brokerage",
-        "packages/portfolio",
-        "packages/trading",
-        "packages/wealth",
-        "packages/securities-core"
         "packages/regulatory-digital-twin",
         "packages/policy-engine-v2",
         "packages/compliance-simulator-v2",
@@ -1431,7 +1559,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
@@ -1788,11 +1915,16 @@
     "packages/portfolio",
     "packages/trading",
     "packages/wealth",
-    "packages/securities-core"
+    "packages/securities-core",
     "packages/regulatory-digital-twin",
     "packages/policy-engine-v2",
     "packages/compliance-simulator-v2",
-    "packages/kernel-sandbox"
+    "packages/kernel-sandbox",
+    "packages/investment-risk",
+    "packages/risk-v2",
+    "packages/portfolio-risk",
+    "packages/models",
+    "packages/model-governance-v2"
   ],
   "capabilities": [
     {
@@ -1971,7 +2103,23 @@
       "status": "IMPLEMENTED",
       "owner": "packages/investments",
       "protected": true,
-      "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
+      "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Pre-trade Risk is required."
+    },
+    {
+      "id": "risk",
+      "status": "IMPLEMENTED",
+      "owner": "packages/risk",
+      "protected": true,
+      "notes": "Deterministic paper-portfolio Risk Engine. Facts for the existing Kernel Risk proof. Not a second Kernel."
+    },
+    {
+      "id": "model-registry",
+      "status": "IMPLEMENTED",
+      "owner": "packages/model-registry",
+      "protected": true,
+      "notes": "Canonical registry for deterministic/quantitative/AI models. Simulation approval only."
+    },
+    {
       "id": "regulatory-digital-twin",
       "status": "IMPLEMENTED",
       "owner": "packages/regulatory-twin",
@@ -2115,24 +2263,25 @@
         "services/investments"
       ],
       "protected": true,
-      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Risk Engine remains PLANNED."
+      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Pre-trade Risk is required."
     },
     {
       "id": "RISK",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/risk"
       ],
       "protected": true,
-      "notes": "A simulation risk proof exists inside the Kernel. A Risk bounded context does not."
+      "notes": "Investment/portfolio Risk Engine. Supplies deterministic facts to the existing Kernel Risk proof. Does not replace the Kernel, issue Execution Authority, or post journals."
     },
     {
       "id": "MODEL_REGISTRY",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/model-registry"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Canonical model registry. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve or overwrite artifacts in place."
     },
     {
       "id": "AGENTIC_CAPITAL_MESH",

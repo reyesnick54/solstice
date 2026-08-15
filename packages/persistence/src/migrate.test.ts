@@ -165,20 +165,6 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
-  it('customer V012 persists investment profiles without a balance column or live broker state', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v012 = files.find((file) => file.version === 12);
-    assert.ok(v012);
-    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS investment/);
-    assert.match(v012.sql, /CREATE TABLE investment.profile/);
-    assert.match(v012.sql, /CREATE TABLE investment.instrument/);
-    assert.match(v012.sql, /CREATE TABLE investment.paper_order/);
-    assert.match(v012.sql, /CREATE TABLE investment.lot/);
-    assert.match(v012.sql, /live_state BOOLEAN NOT NULL CHECK \(live_state = FALSE\)/);
-    assert.match(v012.sql, /investment_profile_no_balance/);
-    assert.match(v012.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
-    assert.match(v012.sql, /investment_valuation_no_yield/);
-    assert.equal(/\b(apy|apr)\b/i.test(v012.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
   it('customer V012 persists PEVE snapshots and attribution without a financial ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v012 = files.find((file) => file.version === 12);
@@ -205,19 +191,67 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(apy|apr)\b/i.test(v011.sql.replace(/--[^\n]*/g, '')), false);
   });
 
-  it('customer V012 persists Regulatory Digital Twin artifacts without a second policy store', () => {
+  it('customer V013 persists Regulatory Digital Twin artifacts without a second policy store', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v012 = files.find((file) => file.version === 12);
-    assert.ok(v012);
-    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS regulatory_twin/);
-    assert.match(v012.sql, /CREATE TABLE regulatory_twin.snapshot/);
-    assert.match(v012.sql, /CREATE TABLE regulatory_twin.scenario_run/);
-    assert.match(v012.sql, /CREATE TABLE regulatory_twin.candidate_set/);
-    assert.match(v012.sql, /rdt_candidate_no_counsel/);
-    assert.match(v012.sql, /GRANT USAGE ON SCHEMA regulatory_twin TO customer_app/);
-    assert.match(v012.sql, /twin_id LIKE 'rtw_%'/);
-    assert.match(v012.sql, /snapshot_id LIKE 'rsn_%'/);
-    assert.equal(/CREATE TABLE customer\.policy_pack/.test(v012.sql), false);
+    const v013 = files.find((file) => file.version === 13);
+    assert.ok(v013);
+    assert.match(v013.sql, /CREATE SCHEMA IF NOT EXISTS regulatory_twin/);
+    assert.match(v013.sql, /CREATE TABLE regulatory_twin.snapshot/);
+    assert.match(v013.sql, /CREATE TABLE regulatory_twin.scenario_run/);
+    assert.match(v013.sql, /CREATE TABLE regulatory_twin.candidate_set/);
+    assert.match(v013.sql, /rdt_candidate_no_counsel/);
+    assert.match(v013.sql, /GRANT USAGE ON SCHEMA regulatory_twin TO customer_app/);
+    assert.match(v013.sql, /twin_id LIKE 'rtw_%'/);
+    assert.match(v013.sql, /snapshot_id LIKE 'rsn_%'/);
+    assert.equal(/CREATE TABLE customer\.policy_pack/.test(v013.sql), false);
+  });
+
+  it('customer V014 persists investment profiles without a balance column or live broker state', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v014 = files.find((file) => file.version === 14);
+    assert.ok(v014);
+    assert.match(v014.sql, /CREATE SCHEMA IF NOT EXISTS investment/);
+    assert.match(v014.sql, /CREATE TABLE investment.profile/);
+    assert.match(v014.sql, /CREATE TABLE investment.instrument/);
+    assert.match(v014.sql, /CREATE TABLE investment.paper_order/);
+    assert.match(v014.sql, /CREATE TABLE investment.lot/);
+    assert.match(v014.sql, /live_state BOOLEAN NOT NULL CHECK \(live_state = FALSE\)/);
+    assert.match(v014.sql, /investment_profile_no_balance/);
+    assert.match(v014.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
+    assert.match(v014.sql, /investment_valuation_no_yield/);
+    assert.equal(/\b(apy|apr)\b/i.test(v014.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
+  });
+
+  it('customer V015 persists risk budgets and assessments without a second ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v015 = files.find((file) => file.version === 15);
+    assert.ok(v015);
+    assert.match(v015.sql, /CREATE SCHEMA IF NOT EXISTS risk/);
+    assert.match(v015.sql, /CREATE TABLE risk.budget/);
+    assert.match(v015.sql, /CREATE TABLE risk.assessment/);
+    assert.match(v015.sql, /CREATE TABLE risk.portfolio_snapshot/);
+    assert.match(v015.sql, /CREATE TABLE risk.stress_run/);
+    assert.match(v015.sql, /GRANT USAGE ON SCHEMA risk TO customer_app/);
+    assert.match(v015.sql, /risk_budget_id_prefix/);
+    assert.equal(/CREATE TABLE risk\.journal/i.test(v015.sql), false);
+    assert.equal(/\b(apy|apr)\b/i.test(v015.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
+  });
+
+  it('customer V016 persists model registry metadata without executable code or LIVE_APPROVED', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v016 = files.find((file) => file.version === 16);
+    assert.ok(v016);
+    assert.match(v016.sql, /CREATE SCHEMA IF NOT EXISTS model_registry/);
+    assert.match(v016.sql, /CREATE TABLE model_registry.model_version/);
+    assert.match(v016.sql, /CREATE TABLE model_registry.validation/);
+    assert.match(v016.sql, /CREATE TABLE model_registry.approval/);
+    assert.match(v016.sql, /model_no_executable/);
+    assert.match(v016.sql, /model_no_live_approved/);
+    assert.match(v016.sql, /lifecycle <> 'LIVE_APPROVED'/);
+    assert.match(v016.sql, /GRANT USAGE ON SCHEMA model_registry TO customer_app/);
+    const lifecycleIn = v016.sql.match(/lifecycle TEXT NOT NULL CHECK \(lifecycle IN \(([\s\S]*?)\)\)/);
+    assert.ok(lifecycleIn);
+    assert.equal(/LIVE_APPROVED/.test(lifecycleIn[1] ?? ''), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

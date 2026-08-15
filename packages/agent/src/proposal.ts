@@ -7,6 +7,7 @@ export const AGENT_PROPOSAL_KINDS = [
   'PLAN_EXPLANATION',
   'GOAL_EXPLANATION',
   'VALUE_EXPLANATION',
+  'RISK_EXPLANATION',
 ] as const;
 
 export type AgentProposalKind = (typeof AGENT_PROPOSAL_KINDS)[number];

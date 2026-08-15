@@ -57,6 +57,14 @@ export type KernelFacts = {
   readonly corridorId?: string;
   readonly corridorSimulationEnabled?: boolean;
   readonly beneficiaryStatus?: string;
+  readonly investmentRisk?: {
+    readonly assessmentId: string;
+    readonly outcome: 'ALLOW_SIMULATION' | 'REQUIRE_REVIEW' | 'BLOCK' | 'INSUFFICIENT_DATA';
+    readonly triggeredLimitIds: readonly string[];
+    readonly modelId: string;
+    readonly modelVersion: string;
+    readonly generatedAt: string;
+  };
 };
 
 export type ProofEvaluator = {
@@ -228,6 +236,25 @@ export const riskProof: ProofEvaluator = {
         status = escalated.status;
       }
       reason = [reason, escalated.reason].filter((part) => part.length > 0).join('; ');
+    }
+    if (facts.investmentRisk) {
+      const mapped =
+        facts.investmentRisk.outcome === 'BLOCK'
+          ? 'BLOCK'
+          : facts.investmentRisk.outcome === 'INSUFFICIENT_DATA'
+            ? 'DEFER'
+            : facts.investmentRisk.outcome === 'REQUIRE_REVIEW'
+              ? 'REQUIRE_MANUAL_REVIEW'
+              : 'ALLOW';
+      if (DECISION_RANK[mapped] > DECISION_RANK[status]) {
+        status = mapped;
+      }
+      reason = [
+        reason,
+        `investment risk ${facts.investmentRisk.outcome} assessment ${facts.investmentRisk.assessmentId}`,
+      ]
+        .filter((part) => part.length > 0)
+        .join('; ');
     }
     return evalProof('RISK', status, reason);
   },

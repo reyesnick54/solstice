@@ -1,0 +1,29 @@
+{
+  "chunk": "CHUNK-20",
+  "title": "Canonical Investment Risk Engine, Portfolio Risk Controls, Pre-Trade Risk, Stress Testing, Risk Budgets, and Model Registry",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "investments",
+    "growth-orchestrator",
+    "personal-economy-agent",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "risk",
+    "model-registry"
+  ],
+  "notes": "Implements the reserved RISK and MODEL_REGISTRY bounded contexts. Risk supplies deterministic paper-portfolio facts to the existing Kernel Risk proof. It does not issue Execution Authority, post journals, or replace the Kernel. Model Registry is simulation-approval only; no LIVE_APPROVED."
+}
