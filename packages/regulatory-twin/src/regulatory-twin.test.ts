@@ -429,6 +429,12 @@ describe('Regulatory Digital Twin', () => {
   it('refuses policy activation and customer-scenario access without capability', () => {
     const { twin, stranger, viewer } = world();
     assert.equal(twin.activateCandidatePolicy().code, 'RDT_CANNOT_ACTIVATE_POLICY');
+    const preview = twin.previewInvestmentRiskPolicy({
+      currentMaxInstrumentConcentration: '60000000',
+      candidateMaxInstrumentConcentration: '90000000',
+    });
+    assert.equal(preview.applied, false);
+    assert.equal(preview.wouldLoosenCurrentLimits, true);
     assert.throws(() => twin.productionActivationGuard().activatePack('US', 'us-sim-v2-rdt-open-review'));
     const denied = twin.captureSnapshot(stranger);
     assert.equal(denied.ok, false);

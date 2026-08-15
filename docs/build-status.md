@@ -140,6 +140,12 @@ This document describes only what is implemented and tested in this tree.
   Never issues Execution Authority, posts journals, or activates
   candidate packs. PEVE impact is hypothetical only. Investments are
   implemented as paper simulation (Chunk 19).
+  candidate packs. PEVE impact is hypothetical only. Capability
+  `regulatory-digital-twin` is IMPLEMENTED.
+- Agentic Capital Mesh (Chunk 21): **stopped**. Chunk 20 (investment
+  Risk Engine at `packages/risk` and Model Registry at
+  `packages/model-registry`) has not merged. Both capabilities remain
+  `PLANNED`. See `docs/architecture/chunk-21-stop.md`.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -167,6 +173,21 @@ This document describes only what is implemented and tested in this tree.
   intelligence layers. Live rails, live issuing, live
   wallet/SoftPOS certification, live treasury, and live securities
   trading remain later. The investment Risk Engine is Chunk 20.
+- Investment Risk Engine (`packages/risk`) and Model Registry
+  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
+  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
+- Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
+  `PLANNED`. Competing `trading-agents` / `investment-agents` /
+  `hedge-agent` / `capital-ai` packages must not be created.
+- Reserved later bounded contexts that remain PLANNED (PYRAMID,
+  SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
+  FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners.
+  The Personal Economic Graph, Personal Economy Agent, Growth
+  Orchestrator, Personal Economic Value Engine, and Regulatory Digital
+  Twin are IMPLEMENTED as non-executing intelligence layers. Live rails,
+  live issuing, live wallet/SoftPOS certification, live treasury, and
+  live securities trading remain later. The investment Risk Engine is
+  Chunk 20.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

@@ -86,6 +86,8 @@ Agents and later CI jobs use that result. They do not guess.
 | risk | PLANNED | packages/risk |
 | model-registry | PLANNED | packages/model-registry |
 | agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
+| risk | IMPLEMENTED | packages/risk |
+| model-registry | IMPLEMENTED | packages/model-registry |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -134,18 +136,21 @@ Chunk 17 implements the Personal Economic Value Engine at
 `packages/platform/src/value`. It extends platform ownership rather
 than creating `packages/value-engine`. Capability
 `personal-economic-value-engine` is `IMPLEMENTED`.
+than creating `packages/value-engine`. It does not start the
+Regulatory Digital Twin. The evaluator returns `mustStop: false`.
 
 Chunk 18 implements the Regulatory Digital Twin at
 `packages/regulatory-twin`. It reuses the existing policy engine and
 Kernel. It does not issue Execution Authority, post journals, or
 activate candidate packs. Capability `regulatory-digital-twin` is
 `IMPLEMENTED`.
+activate candidate packs. The evaluator returns `mustStop: false`.
 
 Chunk 19 implements the reserved INVESTMENTS bounded context at
 `packages/investments` and `services/investments`. Capability
 `investments` is `IMPLEMENTED`. Bounded context INVESTMENTS is
 `PARTIAL` simulation: paper orders, positions, lots, valuation, and
-reconciliation only. No live broker. The Risk Engine remains Chunk 20.
+reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
@@ -157,3 +162,18 @@ Chunk 21 is not merged. The evaluator returns `mustStop: true`.
 [`chunk-22-stop.md`](./chunk-22-stop.md). Do not create
 `packages/backtest`, `packages/trading-lab`, `packages/quant`, or
 `packages/strategy-v2`.
+Chunk 21 (Agentic Capital Mesh) is **stopped**. Protected capabilities
+`risk` and `model-registry` are `PLANNED`. The evaluator returns
+`mustStop: true`. See [`chunk-21-stop.md`](./chunk-21-stop.md).
+Do not create `packages/agentic-capital-mesh` or competing
+`trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
+packages until Chunk 20 lands those owners as `IMPLEMENTED`.
+Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
+contexts at `packages/risk` and `packages/model-registry`. Capability
+`risk` and `model-registry` are `IMPLEMENTED`. Risk supplies
+deterministic paper-portfolio facts to the existing Kernel Risk proof.
+It does not issue Execution Authority or post journals. Model Registry
+is simulation-approval only; there is no `LIVE_APPROVED`. Do not create
+`packages/investment-risk`, `packages/risk-v2`,
+`packages/portfolio-risk`, `packages/models`, or
+`packages/model-governance-v2`. The evaluator returns `mustStop: false`.

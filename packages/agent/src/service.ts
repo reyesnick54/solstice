@@ -10,6 +10,7 @@ import {
   explainPerformance,
   explainPlan,
   explainPortfolio,
+  explainRisk,
 } from './explain.ts';
 import { freezeProposal, type AgentProposal } from './proposal.ts';
 import { deterministicProposalId } from './ids.ts';
@@ -133,6 +134,25 @@ export class PersonalEconomyAgent {
       explainEconomicValue({
         subjectId: input.subjectId,
         valueSummary: input.valueSummary,
+        now: this.clock.now(),
+      }),
+    );
+  }
+
+  explainRisk(
+    actor: unknown,
+    input: { readonly subjectId: string; readonly riskSummary: string },
+  ): Result<AgentProposal, AgentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({
+        code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'risk explanation requires a verified ActorContext',
+      });
+    }
+    return ok(
+      explainRisk({
+        subjectId: input.subjectId,
+        riskSummary: input.riskSummary,
         now: this.clock.now(),
       }),
     );

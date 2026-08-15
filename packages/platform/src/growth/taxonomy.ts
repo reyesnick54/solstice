@@ -77,6 +77,7 @@ export const FEASIBILITY_REJECTION_REASONS = [
   'AMOUNT_LIMIT',
   'REQUIRED_DEPENDENCY',
   'CONTRADICTORY_MANDATE',
+  'RISK_LIMIT',
 ] as const;
 
 export type FeasibilityRejectionReason = (typeof FEASIBILITY_REJECTION_REASONS)[number];

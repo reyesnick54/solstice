@@ -473,6 +473,26 @@ export class RegulatoryDigitalTwin {
     return evaluateScenario(createSandboxEngine(this.productionRegistry), scenario, this.clock.now());
   }
 
+  previewInvestmentRiskPolicy(input: {
+    readonly currentMaxInstrumentConcentration: string;
+    readonly candidateMaxInstrumentConcentration: string;
+  }): {
+    readonly applied: false;
+    readonly wouldLoosenCurrentLimits: boolean;
+    readonly notes: readonly string[];
+  } {
+    const current = BigInt(input.currentMaxInstrumentConcentration);
+    const candidate = BigInt(input.candidateMaxInstrumentConcentration);
+    return Object.freeze({
+      applied: false as const,
+      wouldLoosenCurrentLimits: candidate > current,
+      notes: Object.freeze([
+        'RDT may simulate how a candidate investment policy would affect Risk requirements',
+        'RDT cannot change current Risk limits or activate models',
+      ]),
+    });
+  }
+
   activateCandidatePolicy(): PolicyActivationRefusal {
     return Object.freeze({
       ok: false,

@@ -31,6 +31,7 @@ are not reused or silently changed.
 | 0012 | Machine-verifiable mandates and Growth Orchestrator | PROPOSED | not a legal opinion; no counsel review | GROWTH_ORCHESTRATOR / PERSONAL_ECONOMY_AGENT | identity, PEG, events, evidence | PARTIAL | [ADR-0012-mandates-and-growth-orchestrator.md](./ADR-0012-mandates-and-growth-orchestrator.md) |
 | 0013 | Regulatory Digital Twin | PROPOSED | RESEARCH_REQUIRED — simulation only; no counsel review | REGULATORY_DIGITAL_TWIN | ADR-0006, identity, events, evidence | IMPLEMENTED (engineering / simulation only) | [ADR-0013-regulatory-digital-twin.md](./ADR-0013-regulatory-digital-twin.md) |
 | 0013 | Personal Economic Value Engine | PROPOSED | not a legal opinion; no counsel review | PERSONAL_ECONOMIC_VALUE_ENGINE | identity, PEG, agent, growth, events, evidence | PARTIAL | [ADR-0013-personal-economic-value-engine.md](./ADR-0013-personal-economic-value-engine.md) |
+| 0014 | Investment Risk Engine and Model Registry | PROPOSED | RESEARCH_REQUIRED — simulation/engineering limits only; no counsel review | RISK / MODEL_REGISTRY | ADR-0006, investments, kernel, events, evidence | IMPLEMENTED (engineering / simulation only) | [ADR-0014-investment-risk-and-model-registry.md](./ADR-0014-investment-risk-and-model-registry.md) |
 
 ## Notes on ADR-0007
 

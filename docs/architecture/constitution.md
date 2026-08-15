@@ -56,6 +56,9 @@ never be two implementations of these systems.
 | Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
+| Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |
+| Growth Orchestrator | `packages/platform` | `packages/platform/src/service.ts` | IMPLEMENTED |
+| Personal Economic Value Engine | `packages/platform` | `packages/platform/src/value/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
 | Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
 | Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
@@ -86,6 +89,9 @@ implemented in `packages/platform/src/value` on that same reserved path.
 `packages/investments` is the canonical investment account and paper
 portfolio owner. Strategy Lab is reserved and not implemented:
 `STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
+`packages/investments` is the canonical investment account / portfolio
+core. The investment Risk Engine, Model Registry, and Agentic Capital
+Mesh remain reserved and unimplemented.
 
 ### Action types
 

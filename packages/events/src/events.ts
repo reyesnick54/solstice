@@ -525,6 +525,43 @@ export type RegulatoryTwinReadinessAssessedV1 = VersionedEvent<
   RegulatoryTwinAuditPayload
 >;
 
+export type RiskAuditPayload = {
+  readonly assessmentId?: string;
+  readonly snapshotId?: string;
+  readonly portfolioId?: string;
+  readonly proposedActionRef?: string;
+  readonly outcome?: string;
+  readonly runId?: string;
+  readonly scenarioId?: string;
+  readonly estimatedLossMinor?: string;
+  readonly triggered?: readonly string[];
+  readonly mutatesFinancialState?: false;
+};
+
+export type RiskAssessmentCompletedV1 = VersionedEvent<'RiskAssessmentCompleted', 1, RiskAuditPayload>;
+export type RiskLimitBreachedV1 = VersionedEvent<'RiskLimitBreached', 1, RiskAuditPayload>;
+export type RiskPortfolioSnapshotCreatedV1 = VersionedEvent<'RiskPortfolioSnapshotCreated', 1, RiskAuditPayload>;
+export type RiskStressCompletedV1 = VersionedEvent<'RiskStressCompleted', 1, RiskAuditPayload>;
+
+export type ModelAuditPayload = {
+  readonly modelId?: string;
+  readonly version?: string;
+  readonly type?: string;
+  readonly lifecycle?: string;
+  readonly validationId?: string;
+  readonly artifactRef?: string;
+  readonly sha256?: string;
+  readonly actorId?: string;
+  readonly simulationOnly?: true;
+  readonly liveApproved?: false;
+};
+
+export type ModelRegisteredV1 = VersionedEvent<'ModelRegistered', 1, ModelAuditPayload>;
+export type ModelVersionCreatedV1 = VersionedEvent<'ModelVersionCreated', 1, ModelAuditPayload>;
+export type ModelValidatedV1 = VersionedEvent<'ModelValidated', 1, ModelAuditPayload>;
+export type ModelApprovedForSimulationV1 = VersionedEvent<'ModelApprovedForSimulation', 1, ModelAuditPayload>;
+export type ModelRetiredV1 = VersionedEvent<'ModelRetired', 1, ModelAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -800,7 +837,16 @@ export type DomainEvent =
   | RegulatoryTwinRunCompletedV1
   | RegulatoryTwinImpactDetectedV1
   | RegulatoryTwinInvariantFailedV1
-  | RegulatoryTwinReadinessAssessedV1;
+  | RegulatoryTwinReadinessAssessedV1
+  | RiskAssessmentCompletedV1
+  | RiskLimitBreachedV1
+  | RiskPortfolioSnapshotCreatedV1
+  | RiskStressCompletedV1
+  | ModelRegisteredV1
+  | ModelVersionCreatedV1
+  | ModelValidatedV1
+  | ModelApprovedForSimulationV1
+  | ModelRetiredV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

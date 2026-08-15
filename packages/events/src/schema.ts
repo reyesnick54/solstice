@@ -143,6 +143,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'RegulatoryTwinImpactDetected', version: 1, status: 'current' },
   { eventType: 'RegulatoryTwinInvariantFailed', version: 1, status: 'current' },
   { eventType: 'RegulatoryTwinReadinessAssessed', version: 1, status: 'current' },
+  { eventType: 'RiskAssessmentCompleted', version: 1, status: 'current' },
+  { eventType: 'RiskLimitBreached', version: 1, status: 'current' },
+  { eventType: 'RiskPortfolioSnapshotCreated', version: 1, status: 'current' },
+  { eventType: 'RiskStressCompleted', version: 1, status: 'current' },
+  { eventType: 'ModelRegistered', version: 1, status: 'current' },
+  { eventType: 'ModelVersionCreated', version: 1, status: 'current' },
+  { eventType: 'ModelValidated', version: 1, status: 'current' },
+  { eventType: 'ModelApprovedForSimulation', version: 1, status: 'current' },
+  { eventType: 'ModelRetired', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

@@ -5,6 +5,7 @@ import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { interpretMandateLanguage } from './interpretation.ts';
 import { generateCandidateIdeas } from './ideas.ts';
+import { explainRisk } from './explain.ts';
 import { freezeAgentPorts } from './ports.ts';
 
 const NOW = asUtcInstant('2026-08-15T12:00:00.000Z');
@@ -77,5 +78,16 @@ describe('Personal Economy Agent interpretation', () => {
     assert.ok(ideas.every((idea) => idea.executable === false));
     assert.ok(ideas.some((idea) => idea.ideaAction === 'REVIEW_SUBSCRIPTION'));
     assert.ok(ideas.some((idea) => idea.ideaAction === 'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE'));
+  });
+
+  it('explains risk without changing the decision or becoming executable', () => {
+    const proposal = explainRisk({
+      subjectId: 'id_maya',
+      riskSummary: 'Concentration BLOCK on SIM-ETF-1 at 80 percent.',
+      now: NOW,
+    });
+    assert.equal(proposal.kind, 'RISK_EXPLANATION');
+    assert.equal(proposal.executable, false);
+    assert.match(proposal.rationale, /cannot change the outcome/);
   });
 });

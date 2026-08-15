@@ -28,6 +28,7 @@ export { evaluateInvestmentEligibility } from './eligibility.ts';
 export { PaperBrokerProvider } from './broker-port.ts';
 export type { BrokerExecutionProvider } from './broker-port.ts';
 export { paperOnlyRiskControl } from './risk-port.ts';
+export type { InvestmentRiskControlPort, RiskControlDecision } from './risk-port.ts';
 export { simulationPeveConsumer, simulationRdtPort } from './ports.ts';
 export type { PeveInvestmentView, RdtInvestmentReadiness, InvestmentPegPublisher } from './ports.ts';
 export { InvestmentStore } from './store.ts';
