@@ -4,6 +4,8 @@
 - [Manifest](./manifest.json) — machine-readable enforcement input
 - [ADR index](./adr/README.md) — decision records (not renumbered)
 - [Chunk dependencies](./chunk-dependencies.md) — stop if a protected requirement is not IMPLEMENTED
+- [Chunk 12 stop](./chunk-12-stop.md) — wallet / Tap-to-Pay not built; cards owner now exists
+- [Chunk 13 stop](./chunk-13-stop.md) — treasury not started; Chunk 12 process gate failed
 - [Chunk 12 stop (historical)](./chunk-12-stop.md) — original stop while Cards was PLANNED
 - [Chunk 12 resume](./chunk-12-resume.md) — wallet / Tap-to-Pay implemented after Cards merged
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical

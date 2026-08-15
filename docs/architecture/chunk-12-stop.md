@@ -67,4 +67,26 @@ Once `cards` is `IMPLEMENTED` on `main`:
    reuses Identity, Kernel, ledger, events, and evidence.
 4. Consumer wallet provisioning and merchant acceptance stay
    architecturally separate.
+6. Keep `ENVIRONMENT=simulation` and every `LIVE_*` flag `false`.
+7. Do not claim Apple, Google, network, acquirer, PCI, or
+   regulatory approval.
+
+Chunk 13 should not be scoped until Chunk 12 can start from an
+`IMPLEMENTED` Cards owner.
+
+## AB. Addendum after Chunk 11 merged (2026-08-15)
+
+PR `#31` landed the canonical cards owner. On `main` at `f304ef8`:
+
+- capability `cards` is `IMPLEMENTED`
+- bounded context CARDS is `PARTIAL`
+- `evaluateChunkRequirements` for CHUNK-12 returns `mustStop: false`
+
+Recommendation steps 1–3 above are done. Steps 4–7 (wallet /
+SoftPOS inside Cards) were not executed. The Chunk 12 stop PR
+(`#29`) merged after cards and left a stale test asserting
+`cards === PLANNED`, which is why `main` CI went red.
+
+Chunk 13 inspected that tip, found the three process gates still
+failed, and stopped. See [`chunk-13-stop.md`](./chunk-13-stop.md).
 5. `ENVIRONMENT=simulation` and every `LIVE_*` flag stay `false`.
