@@ -382,7 +382,7 @@ export class TreasuryService implements TreasuryAdvisor {
       const destAccount = this.store.getAccount(proposal.destinationTreasuryAccountId);
       if (sourceAccount?.ledgerAccountId && destAccount?.ledgerAccountId) {
         this.ledger.postJournal({
-          idempotencyKey: `${gated.authority.idempotencyKey}:rebalance`,
+          idempotencyKey: gated.authority.idempotencyKey,
           executionAuthority: gated.authority,
           actionType: intent.actionType,
           memo: 'TREASURY_REBALANCE',
@@ -676,7 +676,7 @@ export class TreasuryService implements TreasuryAdvisor {
       decision.executionAuthority,
       {
         actionType: intent.actionType,
-        accountId: 'accountId' in intent.payload ? String((intent.payload as { accountId: string }).accountId) : intent.id,
+        accountId: String((intent.payload as { accountId?: string }).accountId ?? intent.id),
         intentId: intent.id,
       },
       this.clock,

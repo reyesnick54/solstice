@@ -148,7 +148,6 @@ export {
   type PaymentCatalogPorts,
   type PaymentsServiceOutcome,
 } from "./service.ts";
-export type { TreasuryAdvisor, TreasuryAdvisorReserveInput, TreasuryRouteAdvice } from "./treasury-port.ts";
 export { postPaymentJournal } from "./journals.ts";
 export {
   RAIL_CLASSES,

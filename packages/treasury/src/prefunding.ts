@@ -1,7 +1,4 @@
 import { Money } from '../../money/src/money.ts';
-import type { TreasuryAccount } from './account.ts';
-import type { TreasuryPosition } from './position.ts';
-import { totalUsableLiquidity } from './position.ts';
 
 export type PrefundingRequirement = {
   readonly corridorId: string;
@@ -22,8 +19,8 @@ export type PrefundingDecision =
 
 export function evaluatePrefunding(
   requirement: PrefundingRequirement,
-  book: TreasuryAccount | undefined,
-  position: TreasuryPosition | undefined,
+  book: { readonly currency: string } | undefined,
+  position: { readonly currency: string; readonly available: Money } | undefined,
 ): PrefundingDecision {
   if (!book || !position) {
     return {
@@ -41,7 +38,7 @@ export function evaluatePrefunding(
       available: position.available,
     };
   }
-  const available = totalUsableLiquidity(position);
+  const available = position.available;
   if (available.cmp(requirement.required) < 0) {
     return {
       executable: false,

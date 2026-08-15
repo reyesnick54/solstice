@@ -1,10 +1,10 @@
 import type { Pool } from 'pg';
 
-import { Money } from '../../money/src/money.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { freezeTreasuryAccount, type TreasuryAccount } from '../../treasury/src/account.ts';
-import { freezeKillSwitch, type KillSwitch, type SettlementExposure } from '../../treasury/src/controls.ts';
-import { freezeFxInventory, type FxInventoryPosition } from '../../treasury/src/inventory.ts';
+import { Money } from '../../../money/src/money.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
+import { freezeTreasuryAccount, type TreasuryAccount } from '../../../treasury/src/account.ts';
+import { freezeKillSwitch, type KillSwitch, type SettlementExposure } from '../../../treasury/src/controls.ts';
+import { freezeFxInventory, type FxInventoryPosition } from '../../../treasury/src/inventory.ts';
 import {
   asConcentrationSnapshotId,
   asForecastId,
@@ -16,13 +16,13 @@ import {
   asSettlementExposureId,
   asTreasuryAccountId,
   asTreasuryPositionId,
-} from '../../treasury/src/ids.ts';
-import { freezePosition, type TreasuryPosition } from '../../treasury/src/position.ts';
-import { freezeForecast, freezeProposal } from '../../treasury/src/proposals.ts';
-import { freezeReservation, type TreasuryLiquidityReservation } from '../../treasury/src/reservation.ts';
-import type { RouteExplanation } from '../../treasury/src/routing.ts';
-import type { TreasurySnapshot } from '../../treasury/src/store.ts';
-import { CONCENTRATION_THRESHOLD_NOTE } from '../../treasury/src/types.ts';
+} from '../../../treasury/src/ids.ts';
+import { freezePosition, type TreasuryPosition } from '../../../treasury/src/position.ts';
+import { freezeForecast, freezeProposal } from '../../../treasury/src/proposals.ts';
+import { freezeReservation, type TreasuryLiquidityReservation } from '../../../treasury/src/reservation.ts';
+import type { RouteExplanation } from '../../../treasury/src/routing.ts';
+import type { TreasurySnapshot } from '../../../treasury/src/store.ts';
+import { CONCENTRATION_THRESHOLD_NOTE } from '../../../treasury/src/types.ts';
 import { withClient } from '../postgres/pools.ts';
 
 type Queryable = {
@@ -128,7 +128,11 @@ export async function persistTreasurySnapshot(pool: Pool, snapshot: TreasurySnap
           [row.killSwitchId, row.scope, row.target, row.enabled, row.reason, row.createdAt, row.updatedAt],
         );
       }
-      for (const [paymentId, explanation] of Object.entries(snapshot.routeDecisions)) {
+      for (const paymentId of Object.keys(snapshot.routeDecisions)) {
+        const explanation = snapshot.routeDecisions[paymentId];
+        if (!explanation) {
+          continue;
+        }
         await client.query(
           `INSERT INTO treasury.route_decision
              (payment_id, routing_version, selected_route_id, explanation_canonical, created_at)

@@ -10,4 +10,4 @@ export {
   TREASURY_SEED_IDS,
   ROUTING_VERSION,
   type TreasuryServiceOutcome,
-} from '../../packages/treasury/src/index.ts';
+} from '../../../packages/treasury/src/index.ts';

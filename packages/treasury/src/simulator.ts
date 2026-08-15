@@ -42,35 +42,39 @@ export function simulateRoutingScenario(input: {
     );
   }
   if (input.scenario.kind === 'DESTINATION_LIQUIDITY_REDUCED') {
+    const treasuryAccountId = input.scenario.treasuryAccountId;
+    const availableMinor = input.scenario.availableMinor;
     candidates = candidates.map((row) => {
-      if (row.treasuryAccountId !== input.scenario.treasuryAccountId || !row.availableLiquidity) {
+      if (row.treasuryAccountId !== treasuryAccountId || !row.availableLiquidity) {
         return row;
       }
       return Object.freeze({
         ...row,
-        availableLiquidity: Money.fromMinorUnits(input.scenario.availableMinor, row.availableLiquidity.currency),
+        availableLiquidity: Money.fromMinorUnits(availableMinor, row.availableLiquidity.currency),
       });
     });
   }
   if (input.scenario.kind === 'PROVIDER_FEE_CHANGED') {
+    const routeId = input.scenario.routeId;
+    const feeMinor = input.scenario.feeMinor;
     candidates = candidates.map((row) => {
-      if (row.routeId !== input.scenario.routeId) {
+      if (row.routeId !== routeId) {
         return row;
       }
-      const fee = Money.fromMinorUnits(input.scenario.feeMinor, row.fee.currency);
+      const fee = Money.fromMinorUnits(feeMinor, row.fee.currency);
       return Object.freeze({
         ...row,
         fee,
         estimatedProviderCost: fee,
-        costScore: input.scenario.feeMinor,
+        costScore: feeMinor,
       });
     });
   }
   if (input.scenario.kind === 'RAIL_LATENCY_INCREASED') {
+    const routeId = input.scenario.routeId;
+    const settlementMs = input.scenario.settlementMs;
     candidates = candidates.map((row) =>
-      row.routeId === input.scenario.routeId
-        ? Object.freeze({ ...row, estimatedSettlementMs: input.scenario.settlementMs })
-        : row,
+      row.routeId === routeId ? Object.freeze({ ...row, estimatedSettlementMs: settlementMs }) : row,
     );
   }
   return selectTreasuryRoute(

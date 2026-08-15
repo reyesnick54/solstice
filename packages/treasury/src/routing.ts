@@ -136,16 +136,10 @@ export function treasuryHardReject(
       required: facts.requiredLiquidity,
     },
     route.treasuryAccountId
-      ? ({
-          treasuryAccountId: route.treasuryAccountId as never,
-          currency: facts.destinationCurrency,
-        } as TreasuryAccount)
+      ? { currency: facts.destinationCurrency }
       : undefined,
     route.availableLiquidity
-      ? ({
-          currency: facts.destinationCurrency,
-          available: route.availableLiquidity,
-        } as TreasuryPosition)
+      ? { currency: facts.destinationCurrency, available: route.availableLiquidity }
       : undefined,
   );
   if (!prefund.executable) {

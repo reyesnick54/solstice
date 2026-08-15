@@ -37,7 +37,7 @@ export class TreasuryStore {
   private readonly routeDecisions = new Map<string, RouteExplanation>();
   private readonly locks = new Set<string>();
 
-  putAccount(account: TreasuryAccount): void {
+  putTreasuryAccount(account: TreasuryAccount): void {
     this.accounts.set(account.treasuryAccountId, account);
   }
 
@@ -219,7 +219,7 @@ export class TreasuryStore {
     this.reconciliations.clear();
     this.routeDecisions.clear();
     for (const row of snapshot.accounts) {
-      this.putAccount(row);
+      this.putTreasuryAccount(row);
     }
     for (const row of snapshot.positions) {
       this.putPosition(row);

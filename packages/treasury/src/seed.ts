@@ -158,7 +158,7 @@ export function seedTreasuryStore(
   const routeA = options.routeASarMinor ?? 100_000n;
   const routeB = options.routeBSarMinor ?? 10_000_000n;
   for (const account of simulationTreasuryAccounts()) {
-    store.putAccount(account);
+    store.putTreasuryAccount(account);
     if (account.treasuryAccountId === TREASURY_SEED_IDS.providerASar) {
       store.putPosition(position(account, routeA));
     } else if (account.treasuryAccountId === TREASURY_SEED_IDS.providerBSar) {

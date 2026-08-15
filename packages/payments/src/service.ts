@@ -59,7 +59,7 @@ import { freezePayment, transitionPayment, type PaymentOrder } from './payment.t
 import { reconcilePayment, type ProviderSettlementReport, type ReconciliationResult } from './reconciliation.ts';
 import { disclosureFromQuote, type PaymentDisclosure } from './responses.ts';
 import { selectRoute, simulationRoutesFor, type PaymentRoute } from './route.ts';
-import type { TreasuryAdvisor } from './treasury-port.ts';
+import type { TreasuryAdvisor, TreasuryRouteAdvice } from './treasury-port.ts';
 import { beneficiaryStatusFromScreening, SimulationScreeningAdapter, type ScreeningPort } from './screening.ts';
 import { type SettlementOutcome, type SimulatedSettlementRail } from './settlement.ts';
 import { PaymentStore } from './store.ts';
@@ -441,8 +441,8 @@ export class PaymentsService {
           securityHold: false,
         })
       : selectRoute(routes, constraints);
-    if (this.treasury && 'explanation' in selection) {
-      this.treasury.rememberDecision(current.paymentId, selection.explanation);
+    if (this.treasury) {
+      this.treasury.rememberDecision(current.paymentId, (selection as TreasuryRouteAdvice).explanation);
     }
     if (!selection.chosen) {
       current = this.releaseAndFail(current, authority, account!, 'ROUTE_UNAVAILABLE', gated.decision);

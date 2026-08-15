@@ -14,7 +14,7 @@ import {
   payIntent,
   quoteIntent,
 } from '../../../tests/payment-world.ts';
-import { seedSimulationCatalog } from '../../services/accounts/src/catalog.ts';
+import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { applyReserve, applyReplenish } from './position.ts';
 import { evaluatePrefunding } from './prefunding.ts';
 import { scoreRoute, selectTreasuryRoute } from './routing.ts';

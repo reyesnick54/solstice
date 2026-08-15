@@ -9,7 +9,7 @@ import {
   payIntent,
   quoteIntent,
 } from '../../../tests/payment-world.ts';
-import { seedSimulationCatalog } from '../../services/accounts/src/catalog.ts';
+import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { TREASURY_SEED_IDS } from './seed.ts';
 import { TreasuryService } from './service.ts';
 
