@@ -138,8 +138,12 @@ This document describes only what is implemented and tested in this tree.
   product/corridor/card readiness, legal assumption register, and
   simulation evidence/events. Reuses the existing policy engine.
   Never issues Execution Authority, posts journals, or activates
-  candidate packs. PEVE impact is hypothetical only. Investments are
-  not implemented.
+  candidate packs. PEVE impact is hypothetical only. Capability
+  `regulatory-digital-twin` is IMPLEMENTED.
+- Agentic Capital Mesh (Chunk 21): **stopped**. Chunk 20 (investment
+  Risk Engine at `packages/risk` and Model Registry at
+  `packages/model-registry`) has not merged. Both capabilities remain
+  `PLANNED`. See `docs/architecture/chunk-21-stop.md`.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -154,24 +158,21 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Personal Economic Value Engine. `packages/platform` is shared and
-  marked PARTIAL for that reserved context only. Chunk 18 may estimate
-  hypothetical PEVE impact; it does not implement PEVE.
-- Regulatory Digital Twin and later reserved contexts that remain
-  PLANNED. PEVE is IMPLEMENTED on the shared `packages/platform` path.
+- Investment Risk Engine (`packages/risk`) and Model Registry
+  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
+  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
+- Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
+  `PLANNED`. Competing `trading-agents` / `investment-agents` /
+  `hedge-agent` / `capital-ai` packages must not be created.
 - Reserved later bounded contexts that remain PLANNED (PYRAMID,
   SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
-  FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners. The Personal
-  Economic Graph, Personal Economy Agent, and Growth Orchestrator are
-  IMPLEMENTED as non-executing intelligence layers. Live rails, live
-  issuing, live wallet/SoftPOS certification, live treasury, and live
-  securities trading remain later. The investment Risk Engine is Chunk 20.
-  FX, CARDS, and TREASURY are PARTIAL simulation owners. The Personal
-  Economic Graph, Personal Economy Agent, Growth Orchestrator, and
-  Personal Economic Value Engine are IMPLEMENTED as non-executing
-  intelligence layers. Live rails, live
-  issuing, live wallet/SoftPOS certification, and live treasury remain
-  later.
+  FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners.
+  The Personal Economic Graph, Personal Economy Agent, Growth
+  Orchestrator, Personal Economic Value Engine, and Regulatory Digital
+  Twin are IMPLEMENTED as non-executing intelligence layers. Live rails,
+  live issuing, live wallet/SoftPOS certification, live treasury, and
+  live securities trading remain later. The investment Risk Engine is
+  Chunk 20.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

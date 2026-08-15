@@ -165,6 +165,22 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V014 persists investment profiles without a balance column or live broker state', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v014 = files.find((file) => file.version === 14);
+    assert.ok(v014);
+    assert.match(v014.sql, /CREATE SCHEMA IF NOT EXISTS investment/);
+    assert.match(v014.sql, /CREATE TABLE investment.profile/);
+    assert.match(v014.sql, /CREATE TABLE investment.instrument/);
+    assert.match(v014.sql, /CREATE TABLE investment.paper_order/);
+    assert.match(v014.sql, /CREATE TABLE investment.lot/);
+    assert.match(v014.sql, /live_state BOOLEAN NOT NULL CHECK \(live_state = FALSE\)/);
+    assert.match(v014.sql, /investment_profile_no_balance/);
+    assert.match(v014.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
+    assert.match(v014.sql, /investment_valuation_no_yield/);
+    assert.equal(/\b(apy|apr)\b/i.test(v014.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
+  });
+
   it('customer V012 persists PEVE snapshots and attribution without a financial ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v012 = files.find((file) => file.version === 12);

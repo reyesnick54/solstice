@@ -492,4 +492,50 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-17 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
   });
+
+  it('CHUNK-21 must stop while the protected risk and model-registry capabilities are PLANNED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'risk').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'risk').protected, true);
+    assert.equal(evaluateCapability(manifest, 'risk').owner, 'packages/risk');
+    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'model-registry').protected, true);
+    assert.equal(evaluateCapability(manifest, 'model-registry').owner, 'packages/model-registry');
+    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'regulatory-digital-twin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'personal-economic-value-engine').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-21',
+    );
+    assert.ok(declared, 'CHUNK-21 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.ok(declared.missing.includes('risk'));
+    assert.ok(declared.missing.includes('model-registry'));
+    assert.equal(declared.missing.includes('investments'), false);
+    assert.equal(declared.missing.includes('kernel'), false);
+
+    const risk = manifest.boundedContexts.find((context) => context.id === 'RISK');
+    assert.ok(risk);
+    assert.equal(risk.status, 'PLANNED');
+    assert.deepEqual(risk.reservedPaths, ['packages/risk']);
+
+    const registry = manifest.boundedContexts.find((context) => context.id === 'MODEL_REGISTRY');
+    assert.ok(registry);
+    assert.equal(registry.status, 'PLANNED');
+    assert.deepEqual(registry.reservedPaths, ['packages/model-registry']);
+
+    const mesh = manifest.boundedContexts.find((context) => context.id === 'AGENTIC_CAPITAL_MESH');
+    assert.ok(mesh);
+    assert.equal(mesh.status, 'PLANNED');
+    assert.deepEqual(mesh.reservedPaths, ['packages/agentic-capital-mesh']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/risk')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-registry')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/agentic-capital-mesh')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/trading-agents')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/investment-agents')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/hedge-agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/capital-ai')), false);
+  });
 });
