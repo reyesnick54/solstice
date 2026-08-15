@@ -59,6 +59,8 @@ jobs:
         run: npm run demo:risk
       - name: Strategy Lab demo
         run: npm run demo:strategy-lab
+      - name: Agentic Capital Mesh demo
+        run: npm run demo:mesh
 
       - name: Typecheck
         run: npm run typecheck

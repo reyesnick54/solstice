@@ -1,5 +1,11 @@
 # Chunk 21 stop record
 
+> **HISTORICAL / SUPERSEDED.** This document records the original Chunk 21
+> stop that ran before Chunk 20 merged. Chunk 20 subsequently implemented
+> Risk and Model Registry. Chunk 21R resumes and implements the Mesh at
+> `packages/agentic-capital-mesh`. See [`chunk-21-resume.md`](./chunk-21-resume.md).
+> Do not treat the PLANNED assertions below as current state.
+
 This file records a **constitutional missing-capability stop**, not an
 Agentic Capital Mesh implementation.
 

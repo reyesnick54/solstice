@@ -1,4 +1,5 @@
 export {
+  explainCapitalProposal,
   explainEconomicValue,
   explainGoals,
   explainPerformance,

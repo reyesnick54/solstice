@@ -1,6 +1,13 @@
 # Chunk 22 — Strategy Lab STOP (HISTORICAL / SUPERSEDED)
 
 **Status:** SUPERSEDED by Chunk 22R (`docs/architecture/chunk-22-resume.md`).
+> **HISTORICAL / SUPERSEDED as a current-state document.** This records the
+> original Chunk 22 stop. Chunk 20 later implemented Risk and Model Registry.
+> Chunk 21R implements Agentic Capital Mesh. Strategy Lab remains `PLANNED`
+> until Chunk 22R. Do not start Strategy Lab from this stop record.
+
+This file records a **missing-capability stop**, not a Strategy Lab
+implementation.
 
 This document is retained as historical evidence of the first Chunk 22
 agent's stop-only outcome. It is **not** the current Strategy Lab status.

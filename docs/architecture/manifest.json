@@ -267,6 +267,7 @@
         "packages/risk",
         "packages/model-registry",
         "packages/strategy-lab"
+        "packages/agentic-capital-mesh"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -642,6 +643,9 @@
       "id": "packages/strategy-lab",
       "npmName": "@solstice/strategy-lab",
       "path": "packages/strategy-lab",
+      "id": "packages/risk",
+      "npmName": "@solstice/risk",
+      "path": "packages/risk",
       "kind": "package",
       "status": "IMPLEMENTED",
       "protected": true,
@@ -658,6 +662,9 @@
         "packages/events",
         "packages/identity",
         "packages/risk",
+        "packages/config",
+        "packages/evidence",
+        "packages/events",
         "packages/model-registry",
         "packages/regulatory-twin"
       ],
@@ -665,6 +672,7 @@
         "@reyesnick54"
       ],
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper strategy execution. No live trading. Does not call PaperBroker or post journals."
+      "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
     },
     {
       "id": "services/strategy-lab",
@@ -683,6 +691,34 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/strategy-lab. Not a second backtester, broker, or live trading engine."
+      "notes": "Canonical model registry for deterministic/quantitative/AI models. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve."
+    },
+    {
+      "id": "packages/agentic-capital-mesh",
+      "npmName": "@solstice/agentic-capital-mesh",
+      "path": "packages/agentic-capital-mesh",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/identity",
+        "packages/config",
+        "packages/events",
+        "packages/evidence",
+        "packages/agent",
+        "packages/risk",
+        "packages/model-registry",
+        "packages/investments"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Agentic Capital Mesh. Capital-intelligence and proposal system. Reuses the Personal Economy Agent runtime boundary. Cannot issue Execution Authority, post journals, or submit broker orders."
     }
   ],
   "components": [
@@ -1560,6 +1596,11 @@
       "canonicalOwner": "packages/strategy-lab",
       "canonicalPath": "packages/strategy-lab/src/service.ts",
       "publicInterface": "packages/strategy-lab/src/index.ts",
+      "id": "agentic-capital-mesh",
+      "name": "Agentic Capital Mesh",
+      "canonicalOwner": "packages/agentic-capital-mesh",
+      "canonicalPath": "packages/agentic-capital-mesh/src/service.ts",
+      "publicInterface": "packages/agentic-capital-mesh/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -1568,6 +1609,7 @@
       "protectedSymbols": [
         {
           "name": "StrategyLab",
+          "name": "CapitalMeshService",
           "kind": "class"
         }
       ],
@@ -1577,11 +1619,17 @@
         "packages/quant",
         "packages/strategy-v2",
         "packages/algo-trading"
+        "packages/trading-agents",
+        "packages/investment-agents",
+        "packages/hedge-agent",
+        "packages/capital-ai",
+        "packages/autonomous-trader"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "One Strategy Lab. Safe DSL and reproducible simulation only. No live trading authority."
+      "notes": "One Agentic Capital Mesh. Proposes and critiques capital allocations. Deterministic control systems gate everything consequential."
     },
     {
       "id": "regulatory-digital-twin",
@@ -1983,7 +2031,8 @@
     "packages/risk-v2",
     "packages/portfolio-risk",
     "packages/models",
-    "packages/model-governance-v2"
+    "packages/model-governance-v2",
+    "packages/autonomous-trader"
   ],
   "capabilities": [
     {
@@ -2198,6 +2247,10 @@
       "owner": "packages/strategy-lab",
       "protected": true,
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage."
+      "status": "IMPLEMENTED",
+      "owner": "packages/agentic-capital-mesh",
+      "protected": true,
+      "notes": "Capital-intelligence and proposal mesh. Chunk 21R. Cannot execute, issue Execution Authority, or submit orders. Strategy Lab remains Chunk 22R."
     }
   ],
   "boundedContexts": [
@@ -2358,12 +2411,13 @@
     },
     {
       "id": "AGENTIC_CAPITAL_MESH",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/agentic-capital-mesh"
       ],
       "protected": true,
       "notes": "Reserved for Chunk 21R at packages/agentic-capital-mesh. Risk and Model Registry are IMPLEMENTED. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
+      "notes": "Implemented at packages/agentic-capital-mesh by Chunk 21R. Proposal-and-critique only. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai / autonomous-trader packages. Historical stop: chunk-21-stop.md."
     },
     {
       "id": "STRATEGY_LAB",
@@ -2374,6 +2428,7 @@
       ],
       "protected": true,
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
+      "notes": "Reserved Strategy Lab. Historical Chunk 22 stop: chunk-22-stop.md. Chunk 22R may resume after Agentic Capital Mesh is IMPLEMENTED. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     },
     {
       "id": "PERSONAL_DATA_VAULT",

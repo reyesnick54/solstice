@@ -87,6 +87,7 @@ Agents and later CI jobs use that result. They do not guess.
 | model-registry | IMPLEMENTED | packages/model-registry |
 | agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -179,3 +180,22 @@ is simulation-approval only; there is no `LIVE_APPROVED`. Do not create
 `packages/investment-risk`, `packages/risk-v2`,
 `packages/portfolio-risk`, `packages/models`, or
 `packages/model-governance-v2`. The evaluator returns `mustStop: false`.
+
+Chunk 21 (Agentic Capital Mesh) originally stopped while `risk` and
+`model-registry` were `PLANNED`. That stop is historical:
+[`chunk-21-stop.md`](./chunk-21-stop.md). Chunk 21R implements the
+reserved owner `packages/agentic-capital-mesh`. Capability
+`agentic-capital-mesh` is `IMPLEMENTED`. The evaluator returns
+`mustStop: false`. Resume: [`chunk-21-resume.md`](./chunk-21-resume.md).
+Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
+`capital-ai` / `autonomous-trader`.
+
+Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
+and Agentic Capital Mesh were absent. That stop is historical:
+[`chunk-22-stop.md`](./chunk-22-stop.md). Those three capabilities are
+now `IMPLEMENTED`. `STRATEGY_LAB` remains `PLANNED` at
+`packages/strategy-lab` and `services/strategy-lab` until Chunk 22R.
+The evaluator returns `mustStop: false` because required capabilities
+exist; the reserved Strategy Lab owner is still absent. Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.

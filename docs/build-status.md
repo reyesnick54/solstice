@@ -132,6 +132,7 @@ This document describes only what is implemented and tested in this tree.
   No live broker, margin, leverage, shorting, or derivatives.
   Capability `investments` is IMPLEMENTED. Bounded context INVESTMENTS
   is PARTIAL simulation.
+  is PARTIAL simulation. Pre-trade Risk is required (Chunk 20).
 - Regulatory Digital Twin (Chunk 18, `packages/regulatory-twin`):
   frozen regulatory snapshots, current-vs-candidate policy evaluation,
   decision-transition matrix, batch impact analysis, invariant suites,
@@ -167,6 +168,18 @@ This document describes only what is implemented and tested in this tree.
   `packages/agentic-capital-mesh` and is still `PLANNED`. Risk and
   Model Registry are IMPLEMENTED. See
   `docs/architecture/chunk-21-stop.md`.
+- Investment Risk Engine and Model Registry (Chunk 20,
+  `packages/risk`, `packages/model-registry`): deterministic
+  pre-trade Risk, RiskBudget, stress fixtures, and a simulation-only
+  Model Registry. No `LIVE_APPROVED`. Models cannot self-approve.
+- Agentic Capital Mesh (Chunk 21R, `packages/agentic-capital-mesh`):
+  capital-intelligence and proposal system. Specialist nodes, subject-bound
+  CapitalContext, structured theses, deterministic allocation compiler,
+  adversarial review, and a deterministic arbiter. Cannot issue Execution
+  Authority, post journals, or submit orders. Chunk 21 originally stopped
+  before Chunk 20 merged; that stop is historical
+  (`docs/architecture/chunk-21-stop.md`). Resume:
+  `docs/architecture/chunk-21-resume.md`.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -194,6 +207,19 @@ This document describes only what is implemented and tested in this tree.
   non-executing intelligence layers. Live rails, live issuing, live
   wallet/SoftPOS certification, live treasury, and live securities
   trading remain later.
+- Strategy Lab (Chunk 22) remains **PLANNED**. The original stop is
+  historical (`docs/architecture/chunk-22-stop.md`): it ran when Risk,
+  Model Registry, and Agentic Capital Mesh were still absent. Those
+  three are now IMPLEMENTED. Do not start Strategy Lab until Chunk 22R.
+- Reserved later bounded contexts that remain PLANNED (STRATEGY LAB,
+  PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest listed
+  in the constitution). PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS
+  are PARTIAL simulation owners. The Personal Economic Graph, Personal
+  Economy Agent, Growth Orchestrator, Personal Economic Value Engine,
+  Regulatory Digital Twin, Risk Engine, Model Registry, and Agentic
+  Capital Mesh are IMPLEMENTED as non-executing or simulation-gated
+  layers. Live rails, live issuing, live wallet/SoftPOS certification,
+  live treasury, and live securities trading remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -231,6 +257,7 @@ npm run demo:treasury
 npm run demo:rdt
 npm run demo:risk
 npm run demo:strategy-lab
+npm run demo:mesh
 npm run typecheck
 npm run scan:secrets
 npm run ci

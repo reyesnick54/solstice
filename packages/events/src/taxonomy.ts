@@ -34,6 +34,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'risk',
   'model',
   'strategy',
+  'capital_mesh',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -202,6 +203,13 @@ export const EVENT_TYPE_NAMES = [
   'StrategyPaperStarted',
   'StrategyPaperHalted',
   'StrategyRetired',
+  'CapitalMeshRunStarted',
+  'CapitalMeshThesisCreated',
+  'CapitalMeshCandidateCreated',
+  'CapitalMeshReviewCompleted',
+  'CapitalMeshVetoApplied',
+  'CapitalMeshProposalCreated',
+  'CapitalMeshProposalStale',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -359,6 +367,13 @@ export const EVENT_SCHEMA_REFS = {
   StrategyPaperStarted: 'solstice.strategy.paper.started/1',
   StrategyPaperHalted: 'solstice.strategy.paper.halted/1',
   StrategyRetired: 'solstice.strategy.retired/1',
+  CapitalMeshRunStarted: 'solstice.capital_mesh.run.started/1',
+  CapitalMeshThesisCreated: 'solstice.capital_mesh.thesis.created/1',
+  CapitalMeshCandidateCreated: 'solstice.capital_mesh.candidate.created/1',
+  CapitalMeshReviewCompleted: 'solstice.capital_mesh.review.completed/1',
+  CapitalMeshVetoApplied: 'solstice.capital_mesh.veto.applied/1',
+  CapitalMeshProposalCreated: 'solstice.capital_mesh.proposal.created/1',
+  CapitalMeshProposalStale: 'solstice.capital_mesh.proposal.stale/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -516,6 +531,13 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   StrategyPaperStarted: 'strategy',
   StrategyPaperHalted: 'strategy',
   StrategyRetired: 'strategy',
+  CapitalMeshRunStarted: 'capital_mesh',
+  CapitalMeshThesisCreated: 'capital_mesh',
+  CapitalMeshCandidateCreated: 'capital_mesh',
+  CapitalMeshReviewCompleted: 'capital_mesh',
+  CapitalMeshVetoApplied: 'capital_mesh',
+  CapitalMeshProposalCreated: 'capital_mesh',
+  CapitalMeshProposalStale: 'capital_mesh',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {
