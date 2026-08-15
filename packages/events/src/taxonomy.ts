@@ -23,6 +23,9 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'rail',
   'card',
   'economic_graph',
+  'wallet',
+  'acceptance',
+
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -62,6 +65,7 @@ export const EVENT_TYPE_NAMES = [
   'IdentitySessionCreated',
   'IdentitySessionRevoked',
   'IdentityDeviceRegistered',
+  'IdentityDeviceTrustChanged',
   'IdentityRecoveryRequested',
   'BeneficiaryCreated',
   'PaymentInitiated',
@@ -120,6 +124,18 @@ export const EVENT_TYPE_NAMES = [
   'EconomicGraphRelationshipCreated',
   'EconomicGraphSnapshotCreated',
   'EconomicGraphOpportunityCreated',
+  'WalletProvisioningRequested',
+  'WalletProvisioningStepUpRequired',
+  'WalletTokenActivated',
+  'WalletTokenSuspended',
+  'WalletTokenDeleted',
+  'AcceptanceDeviceRegistered',
+  'AcceptanceSessionCreated',
+  'AcceptancePaymentApproved',
+  'AcceptancePaymentDeclined',
+  'AcceptancePaymentSettled',
+  'AcceptanceReconciliationMismatch',
+
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -146,6 +162,7 @@ export const EVENT_SCHEMA_REFS = {
   IdentitySessionCreated: 'solstice.identity.session.created/1',
   IdentitySessionRevoked: 'solstice.identity.session.revoked/1',
   IdentityDeviceRegistered: 'solstice.identity.device.registered/1',
+  IdentityDeviceTrustChanged: 'solstice.identity.device.trust_changed/1',
   IdentityRecoveryRequested: 'solstice.identity.recovery.requested/1',
   BeneficiaryCreated: 'solstice.payment.beneficiary.created/1',
   PaymentInitiated: 'solstice.payment.initiated/1',
@@ -204,6 +221,18 @@ export const EVENT_SCHEMA_REFS = {
   EconomicGraphRelationshipCreated: 'solstice.economic_graph.relationship.created/1',
   EconomicGraphSnapshotCreated: 'solstice.economic_graph.snapshot.created/1',
   EconomicGraphOpportunityCreated: 'solstice.economic_graph.opportunity.created/1',
+  WalletProvisioningRequested: 'solstice.wallet.provisioning.requested/1',
+  WalletProvisioningStepUpRequired: 'solstice.wallet.provisioning.step_up_required/1',
+  WalletTokenActivated: 'solstice.wallet.token.activated/1',
+  WalletTokenSuspended: 'solstice.wallet.token.suspended/1',
+  WalletTokenDeleted: 'solstice.wallet.token.deleted/1',
+  AcceptanceDeviceRegistered: 'solstice.acceptance.device.registered/1',
+  AcceptanceSessionCreated: 'solstice.acceptance.session.created/1',
+  AcceptancePaymentApproved: 'solstice.acceptance.payment.approved/1',
+  AcceptancePaymentDeclined: 'solstice.acceptance.payment.declined/1',
+  AcceptancePaymentSettled: 'solstice.acceptance.payment.settled/1',
+  AcceptanceReconciliationMismatch: 'solstice.acceptance.reconciliation.mismatch/1',
+
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -230,6 +259,7 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   IdentitySessionCreated: 'identity',
   IdentitySessionRevoked: 'identity',
   IdentityDeviceRegistered: 'identity',
+  IdentityDeviceTrustChanged: 'identity',
   IdentityRecoveryRequested: 'identity',
   BeneficiaryCreated: 'payment',
   PaymentInitiated: 'payment',
@@ -288,6 +318,18 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   EconomicGraphRelationshipCreated: 'economic_graph',
   EconomicGraphSnapshotCreated: 'economic_graph',
   EconomicGraphOpportunityCreated: 'economic_graph',
+  WalletProvisioningRequested: 'wallet',
+  WalletProvisioningStepUpRequired: 'wallet',
+  WalletTokenActivated: 'wallet',
+  WalletTokenSuspended: 'wallet',
+  WalletTokenDeleted: 'wallet',
+  AcceptanceDeviceRegistered: 'acceptance',
+  AcceptanceSessionCreated: 'acceptance',
+  AcceptancePaymentApproved: 'acceptance',
+  AcceptancePaymentDeclined: 'acceptance',
+  AcceptancePaymentSettled: 'acceptance',
+  AcceptanceReconciliationMismatch: 'acceptance',
+
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

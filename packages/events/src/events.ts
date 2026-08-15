@@ -167,6 +167,7 @@ export type IdentityAuditPayload = {
   readonly status?: string;
   readonly kind?: string;
   readonly reason?: string;
+  readonly trustState?: string;
 };
 
 export type IdentityCreatedV1 = VersionedEvent<'IdentityCreated', 1, IdentityAuditPayload>;
@@ -176,6 +177,7 @@ export type IdentityKycUpdatedV1 = VersionedEvent<'IdentityKycUpdated', 1, Ident
 export type IdentitySessionCreatedV1 = VersionedEvent<'IdentitySessionCreated', 1, IdentityAuditPayload>;
 export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 1, IdentityAuditPayload>;
 export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
+export type IdentityDeviceTrustChangedV1 = VersionedEvent<'IdentityDeviceTrustChanged', 1, IdentityAuditPayload>;
 export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
 
 export type BeneficiaryCreatedV1 = VersionedEvent<
@@ -375,6 +377,13 @@ export type CardAuditPayload = {
   readonly disputeId?: string;
   readonly transactionRef?: string;
   readonly outcome?: string;
+  readonly tokenId?: string;
+  readonly deviceId?: string;
+  readonly walletProvider?: string;
+  readonly merchantId?: string;
+  readonly sessionId?: string;
+  readonly providerTransactionRef?: string;
+  readonly reconciliationStatus?: string;
 };
 
 export type CardCreatedV1 = VersionedEvent<'CardCreated', 1, CardAuditPayload>;
@@ -390,6 +399,17 @@ export type CardTransactionSettledV1 = VersionedEvent<'CardTransactionSettled', 
 export type CardRefundReceivedV1 = VersionedEvent<'CardRefundReceived', 1, CardAuditPayload>;
 export type CardDisputeOpenedV1 = VersionedEvent<'CardDisputeOpened', 1, CardAuditPayload>;
 export type CardDisputeDecidedV1 = VersionedEvent<'CardDisputeDecided', 1, CardAuditPayload>;
+export type WalletProvisioningRequestedV1 = VersionedEvent<'WalletProvisioningRequested', 1, CardAuditPayload>;
+export type WalletProvisioningStepUpRequiredV1 = VersionedEvent<'WalletProvisioningStepUpRequired', 1, CardAuditPayload>;
+export type WalletTokenActivatedV1 = VersionedEvent<'WalletTokenActivated', 1, CardAuditPayload>;
+export type WalletTokenSuspendedV1 = VersionedEvent<'WalletTokenSuspended', 1, CardAuditPayload>;
+export type WalletTokenDeletedV1 = VersionedEvent<'WalletTokenDeleted', 1, CardAuditPayload>;
+export type AcceptanceDeviceRegisteredV1 = VersionedEvent<'AcceptanceDeviceRegistered', 1, CardAuditPayload>;
+export type AcceptanceSessionCreatedV1 = VersionedEvent<'AcceptanceSessionCreated', 1, CardAuditPayload>;
+export type AcceptancePaymentApprovedV1 = VersionedEvent<'AcceptancePaymentApproved', 1, CardAuditPayload>;
+export type AcceptancePaymentDeclinedV1 = VersionedEvent<'AcceptancePaymentDeclined', 1, CardAuditPayload>;
+export type AcceptancePaymentSettledV1 = VersionedEvent<'AcceptancePaymentSettled', 1, CardAuditPayload>;
+export type AcceptanceReconciliationMismatchV1 = VersionedEvent<'AcceptanceReconciliationMismatch', 1, CardAuditPayload>;
 
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
@@ -476,6 +496,7 @@ export type DomainEvent =
   | IdentitySessionCreatedV1
   | IdentitySessionRevokedV1
   | IdentityDeviceRegisteredV1
+  | IdentityDeviceTrustChangedV1
   | IdentityRecoveryRequestedV1
   | BeneficiaryCreatedV1
   | PaymentInitiatedV1
@@ -534,6 +555,17 @@ export type DomainEvent =
   | EconomicGraphRelationshipCreatedV1
   | EconomicGraphSnapshotCreatedV1
   | EconomicGraphOpportunityCreatedV1;
+  | WalletProvisioningRequestedV1
+  | WalletProvisioningStepUpRequiredV1
+  | WalletTokenActivatedV1
+  | WalletTokenSuspendedV1
+  | WalletTokenDeletedV1
+  | AcceptanceDeviceRegisteredV1
+  | AcceptanceSessionCreatedV1
+  | AcceptancePaymentApprovedV1
+  | AcceptancePaymentDeclinedV1
+  | AcceptancePaymentSettledV1
+  | AcceptanceReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

@@ -4,8 +4,17 @@ export {
   CardStore,
   signProcessorCallback,
   verifyProcessorCallback,
+  WalletService,
+  AcceptanceService,
+  SimulatedAppleWalletAdapter,
+  SimulatedGoogleWalletAdapter,
+  SimulatedTapToPayAdapter,
+  signWalletCallback,
+  signAcceptanceCallback,
   type CardHoldGateway,
   type CardsServiceOutcome,
   type ProcessorCallbackEnvelope,
+  type WalletServiceOutcome,
+  type AcceptanceServiceOutcome,
 } from '../../../packages/cards/src/index.ts';
 export { createCardHoldGateway } from './hold-gateway.ts';

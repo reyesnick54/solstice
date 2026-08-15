@@ -21,6 +21,8 @@ echo "==> end-to-end demo"
 npm run demo
 npm run demo:cards
 npm run demo:peg
+npm run demo:wallet
+npm run demo:acceptance
 
 echo "==> typecheck"
 npm run typecheck

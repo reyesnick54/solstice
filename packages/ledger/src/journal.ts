@@ -297,7 +297,8 @@ export class Ledger {
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
-        request.actionType === 'DECIDE_CARD_DISPUTE';
+        request.actionType === 'DECIDE_CARD_DISPUTE' ||
+        request.actionType === 'SETTLE_ACCEPTANCE_PAYMENT';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>
@@ -338,6 +339,8 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'dispute-provisional',
   'dispute-provisional-reverse',
   'dispute-final',
+  'acceptance-credit',
+  'acceptance-fee',
 ]);
 
 function paymentIdempotencyMatches(eaKey: string, journalKey: string): boolean {

@@ -1601,7 +1601,7 @@
         "services/cards"
       ],
       "protected": true,
-      "notes": "Simulation card platform. No real issuing, PAN vault, 3DS, or wallet provisioning."
+      "notes": "Simulation card platform including wallet provisioning and SoftPOS orchestration. No real issuing, PAN vault, 3DS, Apple/Google certification, or acquiring license."
     },
     {
       "id": "TREASURY",

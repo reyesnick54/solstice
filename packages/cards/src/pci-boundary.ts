@@ -32,6 +32,16 @@ export const PCI_SENSITIVE_KEYS = [
   'track2',
   'magstripe',
   'magneticStripe',
+  'tokenizedPan',
+  'tokenizedPAN',
+  'tokenPAN',
+  'emvData',
+  'emvPayload',
+  'contactlessTrack',
+  'nfcPayload',
+  'walletPrivateKey',
+  'providerSecret',
+  'providerBackendSecret',
 ] as const;
 
 export const SYNTHETIC_CARD_DISPLAY = 'SIM-CARD';

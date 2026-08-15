@@ -15,6 +15,7 @@ export const CARD_PROGRAM_CAPABILITIES = [
   'DISPUTE',
   'VIRTUAL_ISSUE',
   'PHYSICAL_METADATA',
+  'WALLET_PROVISION',
 ] as const;
 
 export type CardProgramCapability = (typeof CARD_PROGRAM_CAPABILITIES)[number];
@@ -70,6 +71,7 @@ export const SIMULATION_US_VIRTUAL_PROGRAM: CardProgram = freezeCardProgram({
     'DISPUTE',
     'VIRTUAL_ISSUE',
     'PHYSICAL_METADATA',
+    'WALLET_PROVISION',
   ],
   simulationEnabled: true,
   liveCapability: false,

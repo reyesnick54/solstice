@@ -120,6 +120,17 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(api_key|client_secret|iban|account_number)\b/i.test(v006.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V008 stores wallet and SoftPOS records without PAN, CVV, or EMV data', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v008 = files.find((file) => file.version === 8);
+    assert.ok(v008);
+    assert.match(v008.sql, /CREATE TABLE cards\.device_payment_token/);
+    assert.match(v008.sql, /CREATE TABLE cards\.acceptance_device/);
+    assert.match(v008.sql, /CREATE TABLE cards\.acceptance_session/);
+    assert.match(v008.sql, /CREATE TABLE cards\.merchant_payment/);
+    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe|emv_data|tokenized_pan)\b/i.test(v008.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('customer V007 stores card records without PAN or CVV', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v007 = files.find((file) => file.version === 7);
