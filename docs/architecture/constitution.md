@@ -367,10 +367,9 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/treasury` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |

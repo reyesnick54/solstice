@@ -120,7 +120,6 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(api_key|client_secret|iban|account_number)\b/i.test(v006.sql.replace(/--[^\n]*/g, '')), false);
   });
 
-  it('customer V009 stores Personal Economic Graph projection without an authoritative balance', () => {
   it('customer V009 persists Personal Economic Graph projection without authoritative balances', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v009 = files.find((file) => file.version === 9);
@@ -130,6 +129,7 @@ describe('versioned SQL migrations', () => {
     assert.match(v009.sql, /CREATE TABLE economic_graph.fact/);
     assert.match(v009.sql, /authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/);
     assert.match(v009.sql, /mutates_financial_state BOOLEAN NOT NULL DEFAULT FALSE/);
+    assert.match(v009.sql, /GRANT USAGE ON SCHEMA economic_graph TO customer_app/);
     assert.equal(/\b(pan|cvv|private_key|api_key)\b/i.test(v009.sql.replace(/--[^\n]*/g, '')), false);
     assert.equal(/authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/.test(v009.sql), true);
   });
@@ -165,24 +165,16 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
-  it('customer V009 stores the Personal Economic Graph projection without a balance column', () => {
+  it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v009 = files.find((file) => file.version === 9);
-    assert.ok(v009);
-    assert.match(v009.sql, /CREATE SCHEMA IF NOT EXISTS economic_graph/);
-    assert.match(v009.sql, /CREATE TABLE economic_graph.graph/);
-    assert.match(v009.sql, /authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE CHECK \(authoritative_balance = FALSE\)/);
-  });
-
-  it('customer V010 persists mandate versions and growth plans without guaranteed-return fields', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v010 = files.find((file) => file.version === 10);
-    assert.ok(v010);
-    assert.match(v010.sql, /CREATE SCHEMA IF NOT EXISTS growth/);
-    assert.match(v010.sql, /CREATE TABLE growth.mandate_version/);
-    assert.match(v010.sql, /CREATE TABLE growth.plan/);
-    assert.match(v010.sql, /growth_plan_no_guaranteed_return/);
-    assert.equal(/\b(apy|apr)\b/i.test(v010.sql.replace(/--[^\n]*/g, '')), false);
+    const v011 = files.find((file) => file.version === 11);
+    assert.ok(v011);
+    assert.match(v011.sql, /CREATE SCHEMA IF NOT EXISTS growth/);
+    assert.match(v011.sql, /CREATE TABLE growth.mandate_version/);
+    assert.match(v011.sql, /CREATE TABLE growth.plan/);
+    assert.match(v011.sql, /growth_plan_no_guaranteed_return/);
+    assert.match(v011.sql, /GRANT USAGE ON SCHEMA growth TO customer_app/);
+    assert.equal(/\b(apy|apr)\b/i.test(v011.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

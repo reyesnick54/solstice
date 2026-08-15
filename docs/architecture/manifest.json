@@ -260,8 +260,8 @@
         "packages/security",
         "packages/identity",
         "packages/personal-economic-graph",
+        "packages/treasury",
         "packages/platform"
-        "packages/treasury"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -435,27 +435,6 @@
         "packages/money",
         "packages/identity",
         "packages/config"
-      "id": "packages/treasury",
-      "npmName": "@solstice/treasury",
-      "path": "packages/treasury",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": true,
-      "executionAuthorityRequired": true,
-      "kernelAuthorizationRequired": true,
-      "allowedDependencies": [
-        "packages/domain",
-        "packages/money",
-        "packages/permissions",
-        "packages/config",
-        "packages/kernel",
-        "packages/ledger",
-        "packages/evidence",
-        "packages/events",
-        "packages/identity",
-        "packages/security",
-        "packages/payments"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -483,6 +462,38 @@
         "packages/agent",
         "packages/permissions",
         "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
+    },
+    {
+      "id": "packages/treasury",
+      "npmName": "@solstice/treasury",
+      "path": "packages/treasury",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/payments"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Canonical treasury, liquidity, corridor prefunding, deterministic routing intelligence, and settlement-risk engine. Simulation only. Not a second ledger."
     },
     {
@@ -501,7 +512,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
       "notes": "Application facade for packages/treasury. Not a second treasury model."
     }
   ],
@@ -1225,29 +1235,12 @@
       "protectedSymbols": [
         {
           "name": "PersonalEconomyAgent",
-      "id": "treasury-platform",
-      "name": "Canonical treasury platform",
-      "canonicalOwner": "packages/treasury",
-      "canonicalPath": "packages/treasury/src/service.ts",
-      "publicInterface": "packages/treasury/src/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": true,
-      "executionAuthorityRequired": true,
-      "kernelAuthorizationRequired": true,
-      "protectedSymbols": [
-        {
-          "name": "TreasuryService",
           "kind": "class"
         }
       ],
       "forbiddenAliases": [
         "packages/wealth-agent",
         "packages/agent-runtime"
-        "packages/liquidity",
-        "packages/routing-intelligence",
-        "packages/treasury-core",
-        "packages/settlement-risk"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1280,6 +1273,33 @@
         "@reyesnick54"
       ],
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
+    },
+    {
+      "id": "treasury-platform",
+      "name": "Canonical treasury platform",
+      "canonicalOwner": "packages/treasury",
+      "canonicalPath": "packages/treasury/src/service.ts",
+      "publicInterface": "packages/treasury/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "TreasuryService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/liquidity",
+        "packages/routing-intelligence",
+        "packages/treasury-core",
+        "packages/settlement-risk"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "One Treasury model. Customer balances stay on the canonical ledger."
     }
   ],
@@ -1578,14 +1598,10 @@
     "packages/user-graph",
     "packages/economic-memory",
     "packages/personal-finance-graph",
-    "packages/growth-os",
-    "packages/compounder",
-    "packages/wealth-agent",
-    "packages/mandates-v2"
     "packages/personal-agent",
     "packages/financial-agent",
     "packages/economy-ai",
-    "packages/growth-agent"
+    "packages/growth-agent",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1748,11 +1764,9 @@
       "owner": "packages/platform",
       "protected": true,
       "notes": "Mandate compiler and Growth Orchestrator. Does not execute money movement."
+    },
+    {
       "id": "treasury",
-      "status": "PLANNED",
-      "owner": "packages/treasury",
-      "protected": true,
-      "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. Chunk 13 stopped. Chunk 13R was not merged. Do not treat payment/card simulation books as this capability."
       "status": "IMPLEMENTED",
       "owner": "packages/treasury",
       "protected": true,
@@ -1858,8 +1872,7 @@
         "packages/agent"
       ],
       "protected": true,
-      "notes": "Proposal-only agent. Cannot execute or depend on packages/platform."
-      "notes": "Chunk 15 stopped: treasury is PLANNED and main CI was red. See docs/architecture/chunk-15-stop.md. Do not create packages/agent until that gate is green."
+      "notes": "Proposal-only agent. Cannot execute or depend on packages/platform. Chunk 15 originally stopped while treasury was PLANNED; that stop is historical (chunk-15-stop.md). Treasury is now IMPLEMENTED."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",
@@ -2054,5 +2067,6 @@
       "requiredValue": false
     }
   ],
-  "protectedComponents": []
+  "protectedComponents": [],
+  "forbiddenAliases": []
 }

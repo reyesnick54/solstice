@@ -24,5 +24,5 @@
     "personal-economic-graph",
     "treasury"
   ],
-  "notes": "Reserved PERSONAL ECONOMY AGENT owner is packages/agent. The protected treasury capability is PLANNED (Chunk 13 stop-only; Chunk 13R was never merged). evaluateChunkRequirements therefore returns mustStop: true. Main CI on the pre-change tip was also red. Do not implement the agent until Treasury is IMPLEMENTED and clean main CI is green. See docs/architecture/chunk-15-stop.md."
+  "notes": "Personal Economy Agent is IMPLEMENTED at packages/agent as a proposal-only interpreter. The protected treasury capability is IMPLEMENTED (Chunk 13R). evaluateChunkRequirements returns mustStop: false. Historical stop: chunk-15-stop.md."
 }

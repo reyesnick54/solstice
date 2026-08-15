@@ -639,7 +639,7 @@ export type DomainEvent =
   | GrowthCycleStartedV1
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
-  | GrowthActionProposedV1;
+  | GrowthActionProposedV1
   | TreasuryLiquidityReservedV1
   | TreasuryLiquidityReleasedV1
   | TreasuryLiquidityCommittedV1

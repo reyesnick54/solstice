@@ -222,6 +222,7 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType.startsWith('Growth')) {
     return { type: 'growth', id: String(body.planId ?? body.cycleId ?? body.actionId ?? 'unknown') };
+  }
   if (eventType.startsWith('Treasury')) {
     return {
       type: 'treasury',

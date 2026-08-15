@@ -1,8 +1,18 @@
-# Chunk 15 stop record
+# Chunk 15 stop record (historical)
 
-This file is the Chunk 15 completion report. It records a
-**process-gate and missing-capability stop**, not a Personal Economy
-Agent implementation.
+This file preserves the **historical process-gate stop** from the
+first Chunk 15 attempt. It is not the current completion report.
+
+**Current status:** Chunk 13R treasury is implemented at
+`packages/treasury` and `services/treasury`. Capability `treasury` is
+`IMPLEMENTED`. The Personal Economy Agent was subsequently implemented
+at `packages/agent` as a proposal-only interpreter. This file remains
+historical.
+
+---
+
+This file recorded a **process-gate and missing-capability stop**, not
+a Personal Economy Agent implementation, at the time it was written.
 
 Task: Personal Economy Agent Runtime, Financial Context, Scoped Tool
 Broker, Capability Tokens, Proposal System, and AI Safety Boundary.

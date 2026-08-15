@@ -1,4 +1,5 @@
--- V010 Growth Orchestrator / machine-verifiable economic mandates.
+-- V011 Growth Orchestrator / machine-verifiable economic mandates.
+-- Renumbered from V010 after treasury claimed customer V010 on main.
 -- Planning state only. Does not post journals or store balances.
 
 CREATE SCHEMA IF NOT EXISTS growth;
@@ -90,3 +91,10 @@ CREATE TABLE growth.invalidation (
   invalidated_at TIMESTAMPTZ NOT NULL,
   PRIMARY KEY (plan_id, plan_version)
 );
+
+REVOKE ALL ON SCHEMA growth FROM PUBLIC;
+REVOKE ALL ON ALL TABLES IN SCHEMA growth FROM PUBLIC;
+
+GRANT USAGE ON SCHEMA growth TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA growth TO customer_app;
+REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA growth FROM customer_app;
