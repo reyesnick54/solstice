@@ -29,5 +29,5 @@
     "risk",
     "model-registry"
   ],
-  "notes": "STOPPED. Protected capabilities risk and model-registry are PLANNED. Chunk 20 has not merged. evaluateChunkRequirements returns mustStop: true. Do not create packages/agentic-capital-mesh or competing trading-agents / investment-agents / hedge-agent / capital-ai packages. See chunk-21-stop.md."
+  "notes": "Reserved for Chunk 21R at packages/agentic-capital-mesh. Protected capabilities risk and model-registry are now IMPLEMENTED, so evaluateChunkRequirements returns mustStop: false. The Mesh package itself remains absent/PLANNED. Historical stop: chunk-21-stop.md. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
 }

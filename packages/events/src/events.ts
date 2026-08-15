@@ -562,6 +562,34 @@ export type ModelValidatedV1 = VersionedEvent<'ModelValidated', 1, ModelAuditPay
 export type ModelApprovedForSimulationV1 = VersionedEvent<'ModelApprovedForSimulation', 1, ModelAuditPayload>;
 export type ModelRetiredV1 = VersionedEvent<'ModelRetired', 1, ModelAuditPayload>;
 
+export type StrategyAuditPayload = {
+  readonly strategyId?: string;
+  readonly version?: string;
+  readonly compiledHash?: string;
+  readonly compilerVersion?: string;
+  readonly runId?: string;
+  readonly outputHash?: string;
+  readonly datasetId?: string;
+  readonly validationId?: string;
+  readonly actorId?: string;
+  readonly reason?: string;
+  readonly sendsOrders?: false;
+  readonly liveBroker?: false;
+  readonly partition?: string;
+};
+
+export type StrategyCreatedV1 = VersionedEvent<'StrategyCreated', 1, StrategyAuditPayload>;
+export type StrategyCompiledV1 = VersionedEvent<'StrategyCompiled', 1, StrategyAuditPayload>;
+export type StrategyBacktestStartedV1 = VersionedEvent<'StrategyBacktestStarted', 1, StrategyAuditPayload>;
+export type StrategyBacktestCompletedV1 = VersionedEvent<'StrategyBacktestCompleted', 1, StrategyAuditPayload>;
+export type StrategyValidationFailedV1 = VersionedEvent<'StrategyValidationFailed', 1, StrategyAuditPayload>;
+export type StrategyShadowApprovedV1 = VersionedEvent<'StrategyShadowApproved', 1, StrategyAuditPayload>;
+export type StrategyShadowStartedV1 = VersionedEvent<'StrategyShadowStarted', 1, StrategyAuditPayload>;
+export type StrategyPaperApprovedV1 = VersionedEvent<'StrategyPaperApproved', 1, StrategyAuditPayload>;
+export type StrategyPaperStartedV1 = VersionedEvent<'StrategyPaperStarted', 1, StrategyAuditPayload>;
+export type StrategyPaperHaltedV1 = VersionedEvent<'StrategyPaperHalted', 1, StrategyAuditPayload>;
+export type StrategyRetiredV1 = VersionedEvent<'StrategyRetired', 1, StrategyAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -846,7 +874,18 @@ export type DomainEvent =
   | ModelVersionCreatedV1
   | ModelValidatedV1
   | ModelApprovedForSimulationV1
-  | ModelRetiredV1;
+  | ModelRetiredV1
+  | StrategyCreatedV1
+  | StrategyCompiledV1
+  | StrategyBacktestStartedV1
+  | StrategyBacktestCompletedV1
+  | StrategyValidationFailedV1
+  | StrategyShadowApprovedV1
+  | StrategyShadowStartedV1
+  | StrategyPaperApprovedV1
+  | StrategyPaperStartedV1
+  | StrategyPaperHaltedV1
+  | StrategyRetiredV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

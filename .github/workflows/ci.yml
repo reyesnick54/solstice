@@ -57,6 +57,8 @@ jobs:
         run: npm run demo:rdt
       - name: Investment risk and model registry demo
         run: npm run demo:risk
+      - name: Strategy Lab demo
+        run: npm run demo:strategy-lab
 
       - name: Typecheck
         run: npm run typecheck

@@ -33,6 +33,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'regulatory',
   'risk',
   'model',
+  'strategy',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -190,6 +191,17 @@ export const EVENT_TYPE_NAMES = [
   'ModelValidated',
   'ModelApprovedForSimulation',
   'ModelRetired',
+  'StrategyCreated',
+  'StrategyCompiled',
+  'StrategyBacktestStarted',
+  'StrategyBacktestCompleted',
+  'StrategyValidationFailed',
+  'StrategyShadowApproved',
+  'StrategyShadowStarted',
+  'StrategyPaperApproved',
+  'StrategyPaperStarted',
+  'StrategyPaperHalted',
+  'StrategyRetired',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -336,6 +348,17 @@ export const EVENT_SCHEMA_REFS = {
   ModelValidated: 'solstice.model.validated/1',
   ModelApprovedForSimulation: 'solstice.model.approved_for_simulation/1',
   ModelRetired: 'solstice.model.retired/1',
+  StrategyCreated: 'solstice.strategy.created/1',
+  StrategyCompiled: 'solstice.strategy.compiled/1',
+  StrategyBacktestStarted: 'solstice.strategy.backtest.started/1',
+  StrategyBacktestCompleted: 'solstice.strategy.backtest.completed/1',
+  StrategyValidationFailed: 'solstice.strategy.validation.failed/1',
+  StrategyShadowApproved: 'solstice.strategy.shadow.approved/1',
+  StrategyShadowStarted: 'solstice.strategy.shadow.started/1',
+  StrategyPaperApproved: 'solstice.strategy.paper.approved/1',
+  StrategyPaperStarted: 'solstice.strategy.paper.started/1',
+  StrategyPaperHalted: 'solstice.strategy.paper.halted/1',
+  StrategyRetired: 'solstice.strategy.retired/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -482,6 +505,17 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ModelValidated: 'model',
   ModelApprovedForSimulation: 'model',
   ModelRetired: 'model',
+  StrategyCreated: 'strategy',
+  StrategyCompiled: 'strategy',
+  StrategyBacktestStarted: 'strategy',
+  StrategyBacktestCompleted: 'strategy',
+  StrategyValidationFailed: 'strategy',
+  StrategyShadowApproved: 'strategy',
+  StrategyShadowStarted: 'strategy',
+  StrategyPaperApproved: 'strategy',
+  StrategyPaperStarted: 'strategy',
+  StrategyPaperHalted: 'strategy',
+  StrategyRetired: 'strategy',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

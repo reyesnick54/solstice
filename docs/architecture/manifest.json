@@ -263,10 +263,10 @@
         "packages/treasury",
         "packages/platform",
         "packages/investments",
-        "packages/regulatory-twin"
         "packages/regulatory-twin",
         "packages/risk",
-        "packages/model-registry"
+        "packages/model-registry",
+        "packages/strategy-lab"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -575,33 +575,6 @@
       "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     },
     {
-      "id": "packages/investments",
-      "npmName": "@solstice/investments",
-      "path": "packages/investments",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": true,
-      "executionAuthorityRequired": true,
-      "kernelAuthorizationRequired": true,
-      "allowedDependencies": [
-        "packages/domain",
-        "packages/money",
-        "packages/permissions",
-        "packages/config",
-        "packages/kernel",
-        "packages/ledger",
-        "packages/evidence",
-        "packages/events",
-        "packages/identity",
-        "packages/security"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
-    },
-    {
       "id": "services/investments",
       "npmName": "@solstice/investments-service",
       "path": "services/investments",
@@ -620,9 +593,6 @@
       "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
     },
     {
-      "id": "packages/regulatory-twin",
-      "npmName": "@solstice/regulatory-twin",
-      "path": "packages/regulatory-twin",
       "id": "packages/risk",
       "npmName": "@solstice/risk",
       "path": "packages/risk",
@@ -641,17 +611,12 @@
         "packages/evidence",
         "packages/events",
         "packages/identity",
-        "packages/security"
-        "packages/config",
-        "packages/evidence",
-        "packages/events",
-        "packages/model-registry",
-        "packages/permissions"
+        "packages/security",
+        "packages/model-registry"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
       "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
     },
     {
@@ -672,6 +637,52 @@
         "@reyesnick54"
       ],
       "notes": "Canonical model registry for deterministic/quantitative/AI models. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve."
+    },
+    {
+      "id": "packages/strategy-lab",
+      "npmName": "@solstice/strategy-lab",
+      "path": "packages/strategy-lab",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/risk",
+        "packages/model-registry",
+        "packages/regulatory-twin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper strategy execution. No live trading. Does not call PaperBroker or post journals."
+    },
+    {
+      "id": "services/strategy-lab",
+      "npmName": "@solstice/strategy-lab-service",
+      "path": "services/strategy-lab",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/strategy-lab"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Application facade for packages/strategy-lab. Not a second backtester, broker, or live trading engine."
     }
   ],
   "components": [
@@ -1488,7 +1499,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
       "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Pre-trade Risk is required."
     },
     {
@@ -1543,6 +1553,35 @@
         "@reyesnick54"
       ],
       "notes": "One Model Registry. Hash-addressable artifacts. No in-place overwrite. No LIVE_APPROVED."
+    },
+    {
+      "id": "strategy-lab",
+      "name": "Strategy Lab",
+      "canonicalOwner": "packages/strategy-lab",
+      "canonicalPath": "packages/strategy-lab/src/service.ts",
+      "publicInterface": "packages/strategy-lab/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "StrategyLab",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/backtest",
+        "packages/trading-lab",
+        "packages/quant",
+        "packages/strategy-v2",
+        "packages/algo-trading"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Strategy Lab. Safe DSL and reproducible simulation only. No live trading authority."
     },
     {
       "id": "regulatory-digital-twin",
@@ -1930,7 +1969,8 @@
     "packages/backtest",
     "packages/trading-lab",
     "packages/quant",
-    "packages/strategy-v2"
+    "packages/strategy-v2",
+    "packages/algo-trading",
     "packages/value-engine",
     "packages/peve",
     "packages/economic-score",
@@ -1938,7 +1978,7 @@
     "packages/trading-agents",
     "packages/investment-agents",
     "packages/hedge-agent",
-    "packages/capital-ai"
+    "packages/capital-ai",
     "packages/investment-risk",
     "packages/risk-v2",
     "packages/portfolio-risk",
@@ -2122,7 +2162,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/investments",
       "protected": true,
-      "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
       "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Pre-trade Risk is required."
     },
     {
@@ -2147,27 +2186,18 @@
       "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
     },
     {
-      "id": "risk",
-      "status": "PLANNED",
-      "owner": "packages/risk",
-      "protected": true,
-      "notes": "Reserved Risk Engine. A simulation risk proof exists inside the Kernel. The Risk bounded context does not. Chunk 20."
-      "notes": "Investment Risk Engine. Reserved for Chunk 20. Not implemented. A Kernel RISK proof is not this bounded context."
-    },
-    {
-      "id": "model-registry",
-      "status": "PLANNED",
-      "owner": "packages/model-registry",
-      "protected": true,
-      "notes": "Reserved model registry. Not implemented. Chunk 21."
-    },
-    {
       "id": "agentic-capital-mesh",
       "status": "PLANNED",
       "owner": "packages/agentic-capital-mesh",
       "protected": true,
-      "notes": "Reserved Agentic Capital Mesh. Not implemented. Chunk 21."
-      "notes": "Model Registry. Reserved for Chunk 20. Not implemented. Material models cannot be approved or invoked by later chunks until this owner exists."
+      "notes": "Reserved Agentic Capital Mesh. Chunk 21R is the owner. Strategy Lab consumes a typed CapitalProposal port and cannot treat Mesh as self-validating."
+    },
+    {
+      "id": "strategy-lab",
+      "status": "IMPLEMENTED",
+      "owner": "packages/strategy-lab",
+      "protected": true,
+      "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage."
     }
   ],
   "boundedContexts": [
@@ -2306,7 +2336,6 @@
         "services/investments"
       ],
       "protected": true,
-      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Risk Engine remains PLANNED (Chunk 20)."
       "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Pre-trade Risk is required."
     },
     {
@@ -2316,7 +2345,6 @@
         "packages/risk"
       ],
       "protected": true,
-      "notes": "A simulation risk proof exists inside the Kernel. The investment Risk Engine bounded context does not. Chunk 20 owns packages/risk."
       "notes": "Investment/portfolio Risk Engine. Supplies deterministic facts to the existing Kernel Risk proof. Does not replace the Kernel, issue Execution Authority, or post journals."
     },
     {
@@ -2326,7 +2354,6 @@
         "packages/model-registry"
       ],
       "protected": true,
-      "notes": "Reserved for Chunk 20. No model registry owner exists on this tree."
       "notes": "Canonical model registry. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve or overwrite artifacts in place."
     },
     {
@@ -2336,17 +2363,17 @@
         "packages/agentic-capital-mesh"
       ],
       "protected": true,
-      "notes": "Reserved for Chunk 21 at packages/agentic-capital-mesh. Requires IMPLEMENTED risk and model-registry. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
+      "notes": "Reserved for Chunk 21R at packages/agentic-capital-mesh. Risk and Model Registry are IMPLEMENTED. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
     },
     {
       "id": "STRATEGY_LAB",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/strategy-lab",
         "services/strategy-lab"
       ],
       "protected": true,
-      "notes": "Reserved Strategy Lab. Chunk 22 is stopped until Risk, Model Registry, and Agentic Capital Mesh are IMPLEMENTED. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
+      "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     },
     {
       "id": "PERSONAL_DATA_VAULT",

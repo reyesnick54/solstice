@@ -47,6 +47,10 @@
 /packages/platform/ @reyesnick54
 /packages/agent/ @reyesnick54
 /packages/regulatory-twin/ @reyesnick54
+/packages/risk/ @reyesnick54
+/packages/model-registry/ @reyesnick54
+/packages/strategy-lab/ @reyesnick54
+/services/strategy-lab/ @reyesnick54
 /packages/contracts/ @reyesnick54
 /packages/compliance-kernel/ @reyesnick54
 /packages/evidence-vault/ @reyesnick54

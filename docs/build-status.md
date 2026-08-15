@@ -131,7 +131,7 @@ This document describes only what is implemented and tested in this tree.
   Agent and Growth cannot trade. PEG/PEVE/RDT consume read ports only.
   No live broker, margin, leverage, shorting, or derivatives.
   Capability `investments` is IMPLEMENTED. Bounded context INVESTMENTS
-  is PARTIAL simulation. Risk Engine remains Chunk 20.
+  is PARTIAL simulation.
 - Regulatory Digital Twin (Chunk 18, `packages/regulatory-twin`):
   frozen regulatory snapshots, current-vs-candidate policy evaluation,
   decision-transition matrix, batch impact analysis, invariant suites,
@@ -142,10 +142,31 @@ This document describes only what is implemented and tested in this tree.
   implemented as paper simulation (Chunk 19).
   candidate packs. PEVE impact is hypothetical only. Capability
   `regulatory-digital-twin` is IMPLEMENTED.
-- Agentic Capital Mesh (Chunk 21): **stopped**. Chunk 20 (investment
-  Risk Engine at `packages/risk` and Model Registry at
-  `packages/model-registry`) has not merged. Both capabilities remain
-  `PLANNED`. See `docs/architecture/chunk-21-stop.md`.
+- Investment Risk Engine (Chunk 20, `packages/risk`): deterministic
+  paper-portfolio concentration, RiskBudget, stress, cash-reserve, and
+  pre-trade facts for the existing Kernel Risk proof. Does not issue
+  Execution Authority or post journals. Capability `risk` is
+  IMPLEMENTED.
+- Model Registry (Chunk 20, `packages/model-registry`): versioned
+  simulation-approval registry. No `LIVE_APPROVED`. Models cannot
+  self-approve. Capability `model-registry` is IMPLEMENTED.
+- Strategy Lab (Chunk 22R, `packages/strategy-lab`,
+  `services/strategy-lab`): constrained strategy DSL, deterministic
+  compiler, immutable market-dataset registry, reproducible backtests
+  with explicit costs, train/validation/out-of-sample partitions,
+  walk-forward validation, bounded experiments, overfitting warnings,
+  Risk stress reuse, human-gated shadow and paper, paper kill switch,
+  and no LIVE path. Mesh integration is a typed CapitalProposal port;
+  Mesh cannot set the validation result. PEVE does not treat
+  backtest/shadow/projected gain as realized user value. Capability
+  `strategy-lab` is IMPLEMENTED. Bounded context STRATEGY_LAB is
+  PARTIAL (no live trading). Historical stop:
+  `docs/architecture/chunk-22-stop.md`. Resume:
+  `docs/architecture/chunk-22-resume.md`.
+- Agentic Capital Mesh (Chunk 21) remains reserved at
+  `packages/agentic-capital-mesh` and is still `PLANNED`. Risk and
+  Model Registry are IMPLEMENTED. See
+  `docs/architecture/chunk-21-stop.md`.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -160,34 +181,19 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
-  and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
-  See `docs/architecture/chunk-22-stop.md`.
-- Reserved later bounded contexts that remain PLANNED (RISK, MODEL
-  REGISTRY, AGENTIC CAPITAL MESH, STRATEGY LAB, PERSONAL DATA VAULT,
-  PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
-  PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
-  simulation owners. The Personal Economic Graph, Personal Economy
-  Agent, Growth Orchestrator, Personal Economic Value Engine, and
-  Regulatory Digital Twin are IMPLEMENTED as non-executing
-  intelligence layers. Live rails, live issuing, live
-  wallet/SoftPOS certification, live treasury, and live securities
-  trading remain later. The investment Risk Engine is Chunk 20.
-- Investment Risk Engine (`packages/risk`) and Model Registry
-  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
-  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
 - Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
   `PLANNED`. Competing `trading-agents` / `investment-agents` /
   `hedge-agent` / `capital-ai` packages must not be created.
-- Reserved later bounded contexts that remain PLANNED (PYRAMID,
-  SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
-  FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners.
-  The Personal Economic Graph, Personal Economy Agent, Growth
-  Orchestrator, Personal Economic Value Engine, and Regulatory Digital
-  Twin are IMPLEMENTED as non-executing intelligence layers. Live rails,
-  live issuing, live wallet/SoftPOS certification, live treasury, and
-  live securities trading remain later. The investment Risk Engine is
-  Chunk 20.
+- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
+  MESH, PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest
+  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
+  INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners. RISK
+  and MODEL REGISTRY are IMPLEMENTED. The Personal Economic Graph,
+  Personal Economy Agent, Growth Orchestrator, Personal Economic Value
+  Engine, and Regulatory Digital Twin are IMPLEMENTED as
+  non-executing intelligence layers. Live rails, live issuing, live
+  wallet/SoftPOS certification, live treasury, and live securities
+  trading remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -223,6 +229,8 @@ npm run demo:growth
 npm run demo:peve
 npm run demo:treasury
 npm run demo:rdt
+npm run demo:risk
+npm run demo:strategy-lab
 npm run typecheck
 npm run scan:secrets
 npm run ci
