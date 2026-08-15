@@ -262,7 +262,7 @@
         "packages/personal-economic-graph",
         "packages/treasury",
         "packages/platform",
-        "packages/investments"
+        "packages/investments",
         "packages/regulatory-twin"
       ],
       "codeowners": [
@@ -468,7 +468,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Growth Orchestrator, mandate compiler, and Personal Economic Value Engine. Does not execute money movement or issue Execution Authority."
+      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
     },
     {
       "id": "packages/treasury",
@@ -517,15 +517,6 @@
       "notes": "Application facade for packages/treasury. Not a second treasury model."
     },
     {
-      "id": "packages/investments",
-      "npmName": "@solstice/investments",
-      "path": "packages/investments",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": true,
-      "executionAuthorityRequired": true,
-      "kernelAuthorizationRequired": true,
       "id": "packages/regulatory-twin",
       "npmName": "@solstice/regulatory-twin",
       "path": "packages/regulatory-twin",
@@ -535,6 +526,32 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
+    },
+    {
+      "id": "packages/investments",
+      "npmName": "@solstice/investments",
+      "path": "packages/investments",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
       "allowedDependencies": [
         "packages/domain",
         "packages/money",
@@ -569,7 +586,6 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
-      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     }
   ],
   "components": [
@@ -1332,34 +1348,6 @@
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
     },
     {
-      "id": "personal-economic-value-engine",
-      "name": "Personal Economic Value Engine",
-      "canonicalOwner": "packages/platform",
-      "canonicalPath": "packages/platform/src/value/service.ts",
-      "publicInterface": "packages/platform/src/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "PersonalEconomicValueEngine",
-          "kind": "class"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/value-engine",
-        "packages/peve",
-        "packages/economic-score",
-        "packages/personal-value"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Explainable economic measurement and attribution. Not a human-worth score, credit score, or execution authority."
-    },
-    {
       "id": "treasury-platform",
       "name": "Canonical treasury platform",
       "canonicalOwner": "packages/treasury",
@@ -1401,6 +1389,22 @@
       "protectedSymbols": [
         {
           "name": "InvestmentsService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/brokerage",
+        "packages/portfolio",
+        "packages/trading",
+        "packages/wealth",
+        "packages/securities-core"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
+    },
+    {
       "id": "regulatory-digital-twin",
       "name": "Regulatory Digital Twin",
       "canonicalOwner": "packages/regulatory-twin",
@@ -1418,11 +1422,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/brokerage",
-        "packages/portfolio",
-        "packages/trading",
-        "packages/wealth",
-        "packages/securities-core"
         "packages/regulatory-digital-twin",
         "packages/policy-engine-v2",
         "packages/compliance-simulator-v2",
@@ -1431,7 +1430,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
@@ -1776,10 +1774,6 @@
     "packages/financial-agent",
     "packages/economy-ai",
     "packages/growth-agent",
-    "packages/value-engine",
-    "packages/peve",
-    "packages/economic-score",
-    "packages/personal-value",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1788,11 +1782,15 @@
     "packages/portfolio",
     "packages/trading",
     "packages/wealth",
-    "packages/securities-core"
+    "packages/securities-core",
     "packages/regulatory-digital-twin",
     "packages/policy-engine-v2",
     "packages/compliance-simulator-v2",
-    "packages/kernel-sandbox"
+    "packages/kernel-sandbox",
+    "packages/backtest",
+    "packages/trading-lab",
+    "packages/quant",
+    "packages/strategy-v2"
   ],
   "capabilities": [
     {
@@ -1972,11 +1970,34 @@
       "owner": "packages/investments",
       "protected": true,
       "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
+    },
+    {
       "id": "regulatory-digital-twin",
       "status": "IMPLEMENTED",
       "owner": "packages/regulatory-twin",
       "protected": true,
       "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
+    },
+    {
+      "id": "risk",
+      "status": "PLANNED",
+      "owner": "packages/risk",
+      "protected": true,
+      "notes": "Reserved Risk Engine. A simulation risk proof exists inside the Kernel. The Risk bounded context does not. Chunk 20."
+    },
+    {
+      "id": "model-registry",
+      "status": "PLANNED",
+      "owner": "packages/model-registry",
+      "protected": true,
+      "notes": "Reserved model registry. Not implemented. Chunk 21."
+    },
+    {
+      "id": "agentic-capital-mesh",
+      "status": "PLANNED",
+      "owner": "packages/agentic-capital-mesh",
+      "protected": true,
+      "notes": "Reserved Agentic Capital Mesh. Not implemented. Chunk 21."
     }
   ],
   "boundedContexts": [
@@ -2141,6 +2162,16 @@
         "packages/agentic-capital-mesh"
       ],
       "protected": true
+    },
+    {
+      "id": "STRATEGY_LAB",
+      "status": "PLANNED",
+      "reservedPaths": [
+        "packages/strategy-lab",
+        "services/strategy-lab"
+      ],
+      "protected": true,
+      "notes": "Reserved Strategy Lab. Chunk 22 is stopped until Risk, Model Registry, and Agentic Capital Mesh are IMPLEMENTED. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     },
     {
       "id": "PERSONAL_DATA_VAULT",

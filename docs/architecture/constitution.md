@@ -68,9 +68,7 @@ the same architecture-linting system, not a second linter.
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
-`treasury`, `investments`.
-`treasury`, `regulatory-twin`.
-`payments`, `cards`, `personal-economic-graph`, `treasury`.
+`treasury`, `investments`, `regulatory-twin`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`.
@@ -82,11 +80,12 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 
 **Shared libraries:** the packages listed above. There is no separate
 `packages/contracts` on this tree. `packages/platform` is the canonical
-Growth Orchestrator owner. The Personal Economic Value Engine is not
-implemented; it shares that reserved path as PARTIAL.
-`packages/regulatory-twin` is the canonical Regulatory Digital Twin.
 Growth Orchestrator owner. The Personal Economic Value Engine is
 implemented in `packages/platform/src/value` on that same reserved path.
+`packages/regulatory-twin` is the canonical Regulatory Digital Twin.
+`packages/investments` is the canonical investment account and paper
+portfolio owner. Strategy Lab is reserved and not implemented:
+`STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
 
 ### Action types
 
@@ -621,14 +620,13 @@ phase is absent.
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
-| PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
-| REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
 | PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
-| REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
+| REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |
 | MODEL REGISTRY | PLANNED | `packages/model-registry` |
 | AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
+| STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | PLANNED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |

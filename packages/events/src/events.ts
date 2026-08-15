@@ -795,7 +795,7 @@ export type DomainEvent =
   | InvestmentPositionChangedV1
   | InvestmentSettlementCompletedV1
   | InvestmentDividendReceivedV1
-  | InvestmentReconciliationMismatchV1;
+  | InvestmentReconciliationMismatchV1
   | RegulatoryTwinScenarioCreatedV1
   | RegulatoryTwinRunCompletedV1
   | RegulatoryTwinImpactDetectedV1
