@@ -554,7 +554,7 @@ export type DomainEvent =
   | EconomicGraphFactUpdatedV1
   | EconomicGraphRelationshipCreatedV1
   | EconomicGraphSnapshotCreatedV1
-  | EconomicGraphOpportunityCreatedV1;
+  | EconomicGraphOpportunityCreatedV1
   | WalletProvisioningRequestedV1
   | WalletProvisioningStepUpRequiredV1
   | WalletTokenActivatedV1

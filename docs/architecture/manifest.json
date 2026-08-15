@@ -1384,7 +1384,11 @@
     "packages/financial-graph",
     "packages/user-graph",
     "packages/economic-memory",
-    "packages/personal-finance-graph"
+    "packages/personal-finance-graph",
+    "packages/personal-agent",
+    "packages/financial-agent",
+    "packages/economy-ai",
+    "packages/growth-agent"
   ],
   "capabilities": [
     {
@@ -1529,6 +1533,13 @@
       "owner": "packages/personal-economic-graph",
       "protected": true,
       "notes": "Personal Economic Graph. Non-authoritative projection. Does not execute financial changes."
+    },
+    {
+      "id": "treasury",
+      "status": "PLANNED",
+      "owner": "packages/treasury",
+      "protected": true,
+      "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. Chunk 13 stopped. Chunk 13R was not merged. Do not treat payment/card simulation books as this capability."
     }
   ],
   "boundedContexts": [
@@ -1628,7 +1639,8 @@
       "reservedPaths": [
         "packages/agent"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Chunk 15 stopped: treasury is PLANNED and main CI was red. See docs/architecture/chunk-15-stop.md. Do not create packages/agent until that gate is green."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

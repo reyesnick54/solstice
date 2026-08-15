@@ -333,9 +333,7 @@ describe('architecture constitution', () => {
     assert.ok(planned.missing.includes('future-protected-rail'));
   });
 
-  it('CHUNK-12 no longer stops on cards because the protected cards capability is IMPLEMENTED', () => {
   it('CHUNK-12 capability gate is clear now that cards is IMPLEMENTED', () => {
-  it('CHUNK-12 may proceed now that the protected cards capability is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'cards').owner, 'packages/cards');
@@ -381,5 +379,39 @@ describe('architecture constitution', () => {
     );
     assert.ok(declared, 'CHUNK-14 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
+  });
+
+  it('CHUNK-15 must stop while the protected treasury capability is PLANNED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'treasury').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'treasury').protected, true);
+    assert.equal(evaluateCapability(manifest, 'treasury').owner, 'packages/treasury');
+    assert.equal(evaluateCapability(manifest, 'personal-economic-graph').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-15',
+    );
+    assert.ok(declared, 'CHUNK-15 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.deepEqual(declared.missing, ['treasury']);
+
+    const treasury = manifest.boundedContexts.find((context) => context.id === 'TREASURY');
+    assert.ok(treasury);
+    assert.equal(treasury.status, 'PLANNED');
+    assert.deepEqual(treasury.reservedPaths, ['packages/treasury', 'services/treasury']);
+
+    const agent = manifest.boundedContexts.find((context) => context.id === 'PERSONAL_ECONOMY_AGENT');
+    assert.ok(agent);
+    assert.equal(agent.status, 'PLANNED');
+    assert.deepEqual(agent.reservedPaths, ['packages/agent']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/financial-agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economy-ai')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/growth-agent')), false);
   });
 });

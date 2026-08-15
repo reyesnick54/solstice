@@ -116,7 +116,16 @@ This document describes only what is implemented and tested in this tree.
   time of the gate, and `main` CI at `f304ef8` was red. See
   `docs/architecture/chunk-13-stop.md`. Do not treat that file as a
   treasury implementation. Reserved TREASURY owners remain
-  `packages/treasury` and `services/treasury` (`PLANNED`).
+  `packages/treasury` and `services/treasury` (`PLANNED`). Chunk 13R
+  was never merged.
+- Chunk 15 (Personal Economy Agent) is **stopped**. The task required
+  Treasury and a green `main` CI. Treasury is still `PLANNED` /
+  stop-only, Chunk 13R does not exist, and `main` at `ac7a270` was
+  red (duplicate customer `V008` plus a broken `DomainEvent` union
+  after PRs `#33` and `#34`). See
+  `docs/architecture/chunk-15-stop.md`. Do not treat that file as an
+  agent implementation. Reserved owner remains `packages/agent`
+  (`PLANNED`).
 - Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live treasury remain later.
 - Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live wallet/SoftPOS certification remain later.
 - Chunk 12 originally stopped because Cards was absent; that historical

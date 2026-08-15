@@ -120,6 +120,18 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(api_key|client_secret|iban|account_number)\b/i.test(v006.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V009 stores Personal Economic Graph projection without an authoritative balance', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v009 = files.find((file) => file.version === 9);
+    assert.ok(v009);
+    assert.match(v009.sql, /CREATE SCHEMA IF NOT EXISTS economic_graph/);
+    assert.match(v009.sql, /CREATE TABLE economic_graph.graph/);
+    assert.match(v009.sql, /CREATE TABLE economic_graph.fact/);
+    assert.match(v009.sql, /authoritative_balance BOOLEAN NOT NULL DEFAULT FALSE/);
+    assert.match(v009.sql, /mutates_financial_state BOOLEAN NOT NULL DEFAULT FALSE/);
+    assert.equal(/\b(pan|cvv|private_key|api_key)\b/i.test(v009.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('customer V008 stores wallet and SoftPOS records without PAN, CVV, or EMV data', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v008 = files.find((file) => file.version === 8);
