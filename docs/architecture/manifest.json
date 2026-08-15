@@ -1015,10 +1015,6 @@
         {
           "name": "CardsService",
           "kind": "class"
-        },
-        {
-          "name": "CardProcessor",
-          "kind": "type"
         }
       ],
       "forbiddenAliases": [
