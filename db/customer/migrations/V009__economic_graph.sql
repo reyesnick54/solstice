@@ -1,4 +1,4 @@
--- V008 Personal Economic Graph projection.
+-- V009 Personal Economic Graph projection.
 -- Non-authoritative. Not a ledger. User-declared rows survive rebuild.
 
 CREATE SCHEMA IF NOT EXISTS economic_graph;

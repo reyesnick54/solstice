@@ -102,7 +102,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'AcceptancePaymentDeclined', version: 1, status: 'current' },
   { eventType: 'AcceptancePaymentSettled', version: 1, status: 'current' },
   { eventType: 'AcceptanceReconciliationMismatch', version: 1, status: 'current' },
-
+  { eventType: 'TreasuryLiquidityReserved', version: 1, status: 'current' },
+  { eventType: 'TreasuryLiquidityReleased', version: 1, status: 'current' },
+  { eventType: 'TreasuryLiquidityCommitted', version: 1, status: 'current' },
+  { eventType: 'TreasuryRouteSelected', version: 1, status: 'current' },
+  { eventType: 'TreasuryProviderRestricted', version: 1, status: 'current' },
+  { eventType: 'TreasuryCorridorHalted', version: 1, status: 'current' },
+  { eventType: 'TreasuryExposureElevated', version: 1, status: 'current' },
+  { eventType: 'TreasuryRebalanceProposed', version: 1, status: 'current' },
+  { eventType: 'TreasuryReconciliationMismatch', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

@@ -77,6 +77,7 @@ Agents and later CI jobs use that result. They do not guess.
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
+| treasury | IMPLEMENTED | packages/treasury |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -87,30 +88,24 @@ Chunk 7 owns screening, AML, fraud, velocity, and cases inside
 or a second Kernel. Simulation adapters only.
 
 Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
-requires the protected `cards` capability. That capability is `PLANNED`
-on `main`. The evaluator returns `mustStop: true`. Do not invent a
-second cards domain, processor adapter, or network-token metadata
-model. See [`chunk-12-stop.md`](./chunk-12-stop.md).
+initially stopped because the protected `cards` capability was
+`PLANNED`. Cards is now `IMPLEMENTED`. Chunk 12 was subsequently
+resumed inside `packages/cards` / `services/cards`. The evaluator
+returns `mustStop: false`. Historical stop:
+[`chunk-12-stop.md`](./chunk-12-stop.md). Resume:
+[`chunk-12-resume.md`](./chunk-12-resume.md).
+
+Chunk 13 (treasury / liquidity / routing intelligence) initially
+stopped on a process gate while Chunk 12 was not yet genuinely
+implemented and `main` CI was red. That stop is historical:
+[`chunk-13-stop.md`](./chunk-13-stop.md). Chunk 13 is now resumed at
+the reserved owners `packages/treasury` and `services/treasury`.
+Capability `treasury` is `IMPLEMENTED`. Bounded context TREASURY is
+`PARTIAL` simulation. Resume:
+[`chunk-13-resume.md`](./chunk-13-resume.md). Do not create
+`packages/liquidity`, `packages/routing-intelligence`,
+`packages/treasury-core`, or `packages/settlement-risk`.
 
 Chunk 14 implements the Personal Economic Graph as the first SFF 2.0
 intelligence layer. It does not start the Personal Economy Agent.
-requires the protected `cards` capability. That capability is
-`IMPLEMENTED` on `main` (Chunk 11). The evaluator now returns
-`mustStop: false`. Wallet / SoftPOS features were still not built;
-see [`chunk-12-stop.md`](./chunk-12-stop.md). Do not invent a second
-cards domain.
-
-Chunk 13 (treasury / liquidity / routing intelligence) requires the
-protected capabilities listed in
-[`chunks/chunk-13-treasury-routing-intelligence.json`](./chunks/chunk-13-treasury-routing-intelligence.json).
-Those capabilities are `IMPLEMENTED`, so the evaluator returns
-`mustStop: false`. The Chunk 13 **task** still stopped on a process
-gate (Chunk 12 not genuinely implemented, build-status still recorded
-the Chunk 12 stop, `main` CI red). See
-[`chunk-13-stop.md`](./chunk-13-stop.md). Do not create
-`packages/treasury` until that gate is green.
-`IMPLEMENTED` on `main`. The evaluator returns `mustStop: false`.
-Wallet and SoftPOS extend `packages/cards`; they do not invent a
-second cards domain. The original stop (Cards was then `PLANNED`) is
-preserved in [`chunk-12-stop.md`](./chunk-12-stop.md). The resumed
-implementation is recorded in [`chunk-12-resume.md`](./chunk-12-resume.md).
+The evaluator returns `mustStop: false`.

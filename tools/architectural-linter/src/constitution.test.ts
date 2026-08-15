@@ -333,9 +333,7 @@ describe('architecture constitution', () => {
     assert.ok(planned.missing.includes('future-protected-rail'));
   });
 
-  it('CHUNK-12 no longer stops on cards because the protected cards capability is IMPLEMENTED', () => {
   it('CHUNK-12 capability gate is clear now that cards is IMPLEMENTED', () => {
-  it('CHUNK-12 may proceed now that the protected cards capability is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'cards').owner, 'packages/cards');
@@ -352,7 +350,7 @@ describe('architecture constitution', () => {
     assert.deepEqual(declared.missing, []);
   });
 
-  it('CHUNK-13 capability gate is clear and the reserved treasury owner is still absent', () => {
+  it('CHUNK-13 treasury owner is implemented at the reserved paths', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-13',
@@ -360,17 +358,19 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-13 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
+    assert.equal(evaluateCapability(manifest, 'treasury').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'payments').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'fx').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'rail-adapters').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'personal-economic-graph').status, 'IMPLEMENTED');
 
     const treasury = manifest.boundedContexts.find((context) => context.id === 'TREASURY');
     assert.ok(treasury);
-    assert.equal(treasury.status, 'PLANNED');
+    assert.equal(treasury.status, 'PARTIAL');
     assert.deepEqual(treasury.reservedPaths, ['packages/treasury', 'services/treasury']);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), true);
   });
 
   it('CHUNK-14 Personal Economic Graph requirements are IMPLEMENTED', () => {
