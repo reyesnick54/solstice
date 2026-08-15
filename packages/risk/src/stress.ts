@@ -1,3 +1,4 @@
+import type { UtcInstant } from '../../domain/src/time.ts';
 import { applyRatio, ratioPercent } from './arithmetic.ts';
 import {
   asStressRunId,
@@ -93,7 +94,7 @@ function shockedValue(snapshot: PortfolioRiskSnapshot, scenario: StressScenario)
 export function runStressScenario(input: {
   readonly snapshot: PortfolioRiskSnapshot;
   readonly scenario: StressScenario;
-  readonly generatedAt: string;
+  readonly generatedAt: UtcInstant;
   readonly maxLossMinor?: bigint;
   readonly runId?: StressRunId;
 }): StressRun {

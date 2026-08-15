@@ -211,8 +211,9 @@ const blocked = investments.createPaperOrder({
     orderType: 'MARKET_SIMULATION',
   },
 });
-if (blocked.outcome !== 'REJECTED' || investments.lastRiskDecision?.outcome !== 'BLOCK') {
-  fail(`expected concentration BLOCK, got ${blocked.outcome} ${investments.lastRiskDecision?.outcome ?? ''}`);
+const blockedDecision = investments.lastRiskDecision;
+if (blocked.outcome !== 'REJECTED' || blockedDecision?.outcome !== 'BLOCK') {
+  fail(`expected concentration BLOCK, got ${blocked.outcome} ${blockedDecision?.outcome ?? ''}`);
 }
 if (investments.store.getOrder('ord_risk_block')) {
   fail('blocked paper order must not persist');
@@ -235,7 +236,8 @@ const allowed = investments.createPaperOrder({
     orderType: 'MARKET_SIMULATION',
   },
 });
-if (allowed.outcome !== 'OK' || investments.lastRiskDecision?.outcome !== 'ALLOW_SIMULATION') {
+const allowedDecision = investments.lastRiskDecision;
+if (allowed.outcome !== 'OK' || allowedDecision?.outcome !== 'ALLOW_SIMULATION') {
   fail(`expected ALLOW_SIMULATION execution, got ${allowed.outcome}`);
 }
 
@@ -280,7 +282,7 @@ if (extreme.impliedGrowth.units !== 30_000_000n || extreme.guaranteed !== false 
 
 console.log('Risk demo: ok');
 console.log(`  seed=10 ETF @ 10000 concentration=50% budget=60%`);
-console.log(`  blockBuy=6 shares outcome=${investments.lastRiskDecision?.outcome} executed=false`);
+console.log(`  blockBuy=6 shares outcome=${blockedDecision?.outcome} executed=false`);
 console.log(`  allowBuy=1 share remaining=11 snapshot=${snap.snapshotId}`);
 console.log(`  stress=-20% estimatedLoss=${run.estimatedLossMinor} cashUnchanged=${cashBeforeStress}`);
 console.log(`  evidenceRecords=${chain.length} extremeImpliedGrowth=${extreme.impliedGrowth.units}`);

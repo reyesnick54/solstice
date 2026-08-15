@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import type { Clock } from '../../config/src/clock.ts';
+import type { UtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { DomainEventLog } from '../../events/src/events.ts';
 import {
@@ -47,7 +48,7 @@ export const DEFAULT_RISK_POLICY_VERSION = asRiskPolicyVersion('risk-policy-v1')
 export function defaultSimulationBudget(input: {
   readonly subjectId: string;
   readonly portfolioId: string;
-  readonly reviewBy: string;
+  readonly reviewBy: UtcInstant;
   readonly maxInstrumentConcentration?: Ratio;
 }): RiskBudget {
   return Object.freeze({

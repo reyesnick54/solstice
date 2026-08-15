@@ -51,7 +51,7 @@ import {
   savingsToBrokerageBridge,
 } from './journals.ts';
 import { consumeLotsFifo, openLot, splitAdjustLots, type PositionLot } from './lot.ts';
-import { SimulatedMarketDataProvider, type MarketDataProvider } from './market-data.ts';
+import { SimulatedMarketDataProvider, type MarketDataProvider, type MarketQuote } from './market-data.ts';
 import { freezePaperOrder, transitionPaperOrder } from './order.ts';
 import { realizedFromSale, unrealizedFromValuation } from './pnl.ts';
 import {
@@ -71,6 +71,7 @@ import {
   subtractQuantity,
   wholeShares,
   zeroQuantity,
+  type InvestmentQuantity,
 } from './quantity.ts';
 import { freezeReconciliation, type InvestmentReconciliation } from './reconciliation.ts';
 import { ModelRegistry, seedCanonicalRiskModel } from '../../model-registry/src/registry.ts';
@@ -382,81 +383,14 @@ export class InvestmentsService {
         replay: true,
       };
     }
-    if (LIVE_INVESTMENT_EXECUTION !== false || LIVE_TRADING_ENABLED !== false || ENVIRONMENT !== 'simulation') {
-      return this.reject(null, 'LIVE_FORBIDDEN', 'live investment execution is forbidden');
+    const prepared = this.preparePaperOrder(intent);
+    if ('outcome' in prepared) {
+      return prepared;
     }
-    const profile = this.store.getProfile(asInvestmentAccountId(intent.payload.investmentAccountId));
-    if (!profile || profile.status !== 'ACTIVE') {
-      return this.reject(null, 'PROFILE_INACTIVE', 'investment account is not ACTIVE');
-    }
-    const instrument = this.store.getInstrument(intent.payload.instrumentId);
-    if (!instrument) {
-      return this.reject(null, 'UNKNOWN_INSTRUMENT', 'instrument is not in the simulation registry');
-    }
-    const quantity = quantityFromScaledString(intent.payload.quantityUnits);
-    if (!quantity.ok) {
-      return this.reject(null, quantity.error.code, quantity.error.message);
-    }
-    if (quantity.value.units <= 0n) {
-      return this.reject(null, 'INVALID_QUANTITY', 'quantity must be greater than zero');
-    }
-    if (!instrument.fractionalSupported) {
-      const whole = wholeShares(quantity.value.units / 100_000_000n);
-      if (!whole.ok || whole.value.units !== quantity.value.units) {
-        return this.reject(null, 'INVALID_QUANTITY', 'fractional shares are not permitted for this instrument');
-      }
-    }
-    if (intent.payload.side !== 'BUY' && intent.payload.side !== 'SELL') {
-      return this.reject(null, 'SHORT_FORBIDDEN', 'only BUY and SELL are permitted');
-    }
-    const quote = this.market.getQuote(instrument.instrumentId, this.clock.now());
-    if (!quote.ok) {
-      return this.reject(null, quote.error.code, quote.error.message);
-    }
-    if (this.market instanceof SimulatedMarketDataProvider && this.market.isStale(quote.value, this.clock.now())) {
-      return this.reject(null, 'STALE_QUOTE', 'market quote is stale');
-    }
-    if (this.market.getMarketStatus(instrument.marketId, this.clock.now()) !== 'OPEN') {
-      return this.reject(null, 'MARKET_CLOSED', 'simulated market is not open');
-    }
-    let limitPrice = null;
-    if (intent.payload.orderType === 'LIMIT_SIMULATION') {
-      if (!intent.payload.limitPriceMinorUnits) {
-        return this.reject(null, 'INVALID_PRICE', 'limit orders require a limit price');
-      }
-      const limit = {
-        minorUnits: BigInt(intent.payload.limitPriceMinorUnits),
-        currency: quote.value.price.currency,
-      };
-      if (intent.payload.side === 'BUY' && quote.value.price.minorUnits > limit.minorUnits) {
-        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'buy limit is below the simulated last price');
-      }
-      if (intent.payload.side === 'SELL' && quote.value.price.minorUnits < limit.minorUnits) {
-        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'sell limit is above the simulated last price');
-      }
-      limitPrice = limit;
-    }
-    const fee = Money.fromMinorUnits(BigInt(intent.payload.feeMinorUnits ?? '0'), instrument.currency);
-    const notional = notionalMoney(quantity.value, quote.value.price);
-    if (!notional.ok) {
-      return this.reject(null, notional.error.code, notional.error.message);
-    }
-    if (intent.payload.side === 'BUY') {
-      const cash = this.availableBrokerageCash(profile.brokerageCashAccountId, profile.baseCurrency);
-      const needed = notional.value.plus(fee);
-      if (cash.cmp(needed) < 0) {
-        return this.reject(null, 'INSUFFICIENT_BROKERAGE_CASH', 'insufficient brokerage cash for buy plus fee');
-      }
-    } else {
-      const position = this.store.getPosition(profile.investmentAccountId, instrument.instrumentId);
-      const available = position?.availableQuantity ?? zeroQuantity();
-      if (available.units < quantity.value.units) {
-        return this.reject(null, 'SELL_EXCEEDS_POSITION', 'sell quantity exceeds owned settled position');
-      }
-    }
+    const { profile, instrument, quantity, quote, fee, notional, limitPrice } = prepared;
     const actor = this.identity.resolveActorContext(intent.actorId);
     if (!actor.ok) {
-      const gatedUnauthorized = this.gate(intent, { amount: notional.value });
+      const gatedUnauthorized = this.gate(intent, { amount: notional });
       if (gatedUnauthorized.outcome !== 'ALLOWED') {
         return gatedUnauthorized.result;
       }
@@ -469,11 +403,11 @@ export class InvestmentsService {
     const proposed = this.proposedTrade(
       intent.payload.orderId,
       instrument,
-      quantity.value.units,
+      quantity.units,
       intent.payload.side,
-      notional.value.minorUnits,
+      notional.minorUnits,
       fee.minorUnits,
-      quote.value.price.minorUnits,
+      quote.price.minorUnits,
     );
     const risk = this.risk.evaluatePaperOrder({
       order: {
@@ -509,7 +443,7 @@ export class InvestmentsService {
       return this.reject(null, risk.status, risk.reason);
     }
     const gated = this.gate(intent, {
-      amount: notional.value,
+      amount: notional,
       ...(risk.kernelFacts ? { investmentRisk: risk.kernelFacts } : {}),
     });
     if (gated.outcome !== 'ALLOWED') {
@@ -520,7 +454,7 @@ export class InvestmentsService {
       investmentAccountId: profile.investmentAccountId,
       instrumentId: instrument.instrumentId,
       side: intent.payload.side,
-      quantity: quantity.value,
+      quantity,
       filledQuantity: zeroQuantity(),
       orderType: intent.payload.orderType,
       limitPrice,
@@ -542,7 +476,7 @@ export class InvestmentsService {
     this.emit('InvestmentOrderAccepted', accepted.orderId, { orderId: accepted.orderId });
     const fillResult = this.broker.produceDeterministicFill({
       order: accepted,
-      price: quote.value.price,
+      price: quote.price,
       fee,
       filledAt: this.clock.now(),
     });
@@ -1220,6 +1154,100 @@ export class InvestmentsService {
       };
     }
     return { outcome: 'ALLOWED', decision, authority: verified.value };
+  }
+
+  private preparePaperOrder(intent: CreatePaperOrderIntent):
+    | InvestmentsServiceOutcome<never>
+    | {
+        readonly profile: InvestmentAccountProfile;
+        readonly instrument: Instrument;
+        readonly quantity: InvestmentQuantity;
+        readonly quote: MarketQuote;
+        readonly fee: Money;
+        readonly notional: Money;
+        readonly limitPrice: { readonly minorUnits: bigint; readonly currency: string } | null;
+      } {
+    if (LIVE_INVESTMENT_EXECUTION !== false || LIVE_TRADING_ENABLED !== false || ENVIRONMENT !== 'simulation') {
+      return this.reject(null, 'LIVE_FORBIDDEN', 'live investment execution is forbidden');
+    }
+    const profile = this.store.getProfile(asInvestmentAccountId(intent.payload.investmentAccountId));
+    if (!profile || profile.status !== 'ACTIVE') {
+      return this.reject(null, 'PROFILE_INACTIVE', 'investment account is not ACTIVE');
+    }
+    const instrument = this.store.getInstrument(intent.payload.instrumentId);
+    if (!instrument) {
+      return this.reject(null, 'UNKNOWN_INSTRUMENT', 'instrument is not in the simulation registry');
+    }
+    const quantity = quantityFromScaledString(intent.payload.quantityUnits);
+    if (!quantity.ok) {
+      return this.reject(null, quantity.error.code, quantity.error.message);
+    }
+    if (quantity.value.units <= 0n) {
+      return this.reject(null, 'INVALID_QUANTITY', 'quantity must be greater than zero');
+    }
+    if (!instrument.fractionalSupported) {
+      const whole = wholeShares(quantity.value.units / 100_000_000n);
+      if (!whole.ok || whole.value.units !== quantity.value.units) {
+        return this.reject(null, 'INVALID_QUANTITY', 'fractional shares are not permitted for this instrument');
+      }
+    }
+    if (intent.payload.side !== 'BUY' && intent.payload.side !== 'SELL') {
+      return this.reject(null, 'SHORT_FORBIDDEN', 'only BUY and SELL are permitted');
+    }
+    const quote = this.market.getQuote(instrument.instrumentId, this.clock.now());
+    if (!quote.ok) {
+      return this.reject(null, quote.error.code, quote.error.message);
+    }
+    if (this.market instanceof SimulatedMarketDataProvider && this.market.isStale(quote.value, this.clock.now())) {
+      return this.reject(null, 'STALE_QUOTE', 'market quote is stale');
+    }
+    if (this.market.getMarketStatus(instrument.marketId, this.clock.now()) !== 'OPEN') {
+      return this.reject(null, 'MARKET_CLOSED', 'simulated market is not open');
+    }
+    let limitPrice = null;
+    if (intent.payload.orderType === 'LIMIT_SIMULATION') {
+      if (!intent.payload.limitPriceMinorUnits) {
+        return this.reject(null, 'INVALID_PRICE', 'limit orders require a limit price');
+      }
+      const limit = {
+        minorUnits: BigInt(intent.payload.limitPriceMinorUnits),
+        currency: quote.value.price.currency,
+      };
+      if (intent.payload.side === 'BUY' && quote.value.price.minorUnits > limit.minorUnits) {
+        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'buy limit is below the simulated last price');
+      }
+      if (intent.payload.side === 'SELL' && quote.value.price.minorUnits < limit.minorUnits) {
+        return this.reject(null, 'LIMIT_NOT_MARKETABLE', 'sell limit is above the simulated last price');
+      }
+      limitPrice = limit;
+    }
+    const fee = Money.fromMinorUnits(BigInt(intent.payload.feeMinorUnits ?? '0'), instrument.currency);
+    const notional = notionalMoney(quantity.value, quote.value.price);
+    if (!notional.ok) {
+      return this.reject(null, notional.error.code, notional.error.message);
+    }
+    if (intent.payload.side === 'BUY') {
+      const cash = this.availableBrokerageCash(profile.brokerageCashAccountId, profile.baseCurrency);
+      const needed = notional.value.plus(fee);
+      if (cash.cmp(needed) < 0) {
+        return this.reject(null, 'INSUFFICIENT_BROKERAGE_CASH', 'insufficient brokerage cash for buy plus fee');
+      }
+    } else {
+      const position = this.store.getPosition(profile.investmentAccountId, instrument.instrumentId);
+      const available = position?.availableQuantity ?? zeroQuantity();
+      if (available.units < quantity.value.units) {
+        return this.reject(null, 'SELL_EXCEEDS_POSITION', 'sell quantity exceeds owned settled position');
+      }
+    }
+    return {
+      profile,
+      instrument,
+      quantity: quantity.value,
+      quote: quote.value,
+      fee,
+      notional: notional.value,
+      limitPrice,
+    };
   }
 
   private reject(
