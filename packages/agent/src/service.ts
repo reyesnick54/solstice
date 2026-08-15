@@ -4,7 +4,7 @@ import { isVerifiedActorContext } from '../../identity/src/actor-context.ts';
 import { freezeAgentPorts, type AgentRuntimePorts } from './ports.ts';
 import { interpretMandateLanguage, type AgentMandateInterpretation, type InterpretationFailure } from './interpretation.ts';
 import { generateCandidateIdeas } from './ideas.ts';
-import { explainGoals, explainPlan } from './explain.ts';
+import { explainEconomicValue, explainGoals, explainPlan } from './explain.ts';
 import { freezeProposal, type AgentProposal } from './proposal.ts';
 import { deterministicProposalId } from './ids.ts';
 
@@ -78,6 +78,25 @@ export class PersonalEconomyAgent {
       });
     }
     return ok(explainPlan({ subjectId: input.subjectId, planSummary: input.planSummary, now: this.clock.now() }));
+  }
+
+  explainEconomicValue(
+    actor: unknown,
+    input: { readonly subjectId: string; readonly valueSummary: string },
+  ): Result<AgentProposal, AgentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({
+        code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'value explanation requires a verified ActorContext',
+      });
+    }
+    return ok(
+      explainEconomicValue({
+        subjectId: input.subjectId,
+        valueSummary: input.valueSummary,
+        now: this.clock.now(),
+      }),
+    );
   }
 
   interpretationProposal(interpretation: AgentMandateInterpretation): AgentProposal {

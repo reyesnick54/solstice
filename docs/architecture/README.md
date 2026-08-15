@@ -19,5 +19,6 @@
 - [Personal Economic Graph](./economic-graph.md) — first SFF 2.0 intelligence layer. Does not execute.
 - Growth Orchestrator and mandates live in `packages/platform` (Chunk 16). The Personal Economy Agent lives in `packages/agent`. Neither executes. ADR-0012 remains PROPOSED.
 - Regulatory Digital Twin lives in `packages/regulatory-twin` (Chunk 18). Simulation/counterfactual only. Not a second Kernel or policy engine.
+- Personal Economic Value Engine lives in `packages/platform/src/value` (Chunk 17). Measurement only. ADR-0013 remains PROPOSED.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

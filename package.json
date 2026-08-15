@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/security/src/*.test.ts packages/identity/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/events/src/*.test.ts packages/persistence/src/*.test.ts packages/kernel/src/**/*.test.ts packages/payments/src/*.test.ts packages/cards/src/*.test.ts packages/personal-economic-graph/src/*.test.ts packages/agent/src/*.test.ts packages/platform/src/*.test.ts packages/treasury/src/*.test.ts packages/regulatory-twin/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/domain/src/*.test.ts packages/money/src/*.test.ts packages/permissions/src/*.test.ts packages/security/src/*.test.ts packages/identity/src/*.test.ts packages/evidence/src/*.test.ts packages/ledger/src/*.test.ts packages/events/src/*.test.ts packages/persistence/src/*.test.ts packages/kernel/src/**/*.test.ts packages/payments/src/*.test.ts packages/cards/src/*.test.ts packages/personal-economic-graph/src/*.test.ts packages/agent/src/*.test.ts packages/platform/src/**/*.test.ts packages/treasury/src/*.test.ts services/accounts/src/*.test.ts tools/architectural-linter/src/*.test.ts tests/*.test.ts",
     "policy:diff": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/policy-diff.mjs",
     "test:persistence": "SOLSTICE_PERSISTENCE_TEST=1 node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-concurrency=1 --test-reporter=spec tests/persistence/*.test.ts",
     "test:events": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/events/src/*.test.ts",
@@ -30,6 +31,7 @@
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-wallet.ts",
     "demo:acceptance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/cards/src/demo-acceptance.ts",
     "demo:growth": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/demo.ts",
+    "demo:peve": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/platform/src/value/demo.ts",
     "demo:treasury": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/treasury/src/demo.ts",
     "demo:rdt": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/regulatory-twin/src/demo.ts",
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",

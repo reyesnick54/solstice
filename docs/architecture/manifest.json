@@ -467,7 +467,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
+      "notes": "Canonical Growth Orchestrator, mandate compiler, and Personal Economic Value Engine. Does not execute money movement or issue Execution Authority."
     },
     {
       "id": "packages/treasury",
@@ -1302,6 +1302,34 @@
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
     },
     {
+      "id": "personal-economic-value-engine",
+      "name": "Personal Economic Value Engine",
+      "canonicalOwner": "packages/platform",
+      "canonicalPath": "packages/platform/src/value/service.ts",
+      "publicInterface": "packages/platform/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PersonalEconomicValueEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/value-engine",
+        "packages/peve",
+        "packages/economic-score",
+        "packages/personal-value"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Explainable economic measurement and attribution. Not a human-worth score, credit score, or execution authority."
+    },
+    {
       "id": "treasury-platform",
       "name": "Canonical treasury platform",
       "canonicalOwner": "packages/treasury",
@@ -1657,6 +1685,10 @@
     "packages/financial-agent",
     "packages/economy-ai",
     "packages/growth-agent",
+    "packages/value-engine",
+    "packages/peve",
+    "packages/economic-score",
+    "packages/personal-value",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1825,6 +1857,13 @@
       "notes": "Mandate compiler and Growth Orchestrator. Does not execute money movement."
     },
     {
+      "id": "personal-economic-value-engine",
+      "status": "IMPLEMENTED",
+      "owner": "packages/platform",
+      "protected": true,
+      "notes": "Personal Economic Value Engine. Explainable measurement and attribution. Does not execute."
+    },
+    {
       "id": "treasury",
       "status": "IMPLEMENTED",
       "owner": "packages/treasury",
@@ -1951,12 +1990,12 @@
     },
     {
       "id": "PERSONAL_ECONOMIC_VALUE_ENGINE",
-      "status": "PARTIAL",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/platform"
       ],
       "protected": true,
-      "notes": "Shares packages/platform with Growth Orchestrator. PEV is not implemented in this chunk."
+      "notes": "Shares packages/platform with Growth Orchestrator. Explainable measurement only. Not a human-worth or credit score."
     },
     {
       "id": "REGULATORY_DIGITAL_TWIN",

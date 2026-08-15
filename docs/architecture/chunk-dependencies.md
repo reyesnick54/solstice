@@ -79,6 +79,7 @@ Agents and later CI jobs use that result. They do not guess.
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 | personal-economy-agent | IMPLEMENTED | packages/agent |
 | growth-orchestrator | IMPLEMENTED | packages/platform |
+| personal-economic-value-engine | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 
@@ -130,3 +131,7 @@ Chunk 18 implements the Regulatory Digital Twin at
 Kernel. It does not issue Execution Authority, post journals, or
 activate candidate packs. The Personal Economic Value Engine remains
 PARTIAL. Investments remain PLANNED.
+Chunk 17 implements the Personal Economic Value Engine at
+`packages/platform/src/value`. It extends platform ownership rather
+than creating `packages/value-engine`. It does not start the
+Regulatory Digital Twin. The evaluator returns `mustStop: false`.

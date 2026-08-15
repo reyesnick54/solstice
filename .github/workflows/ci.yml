@@ -47,6 +47,8 @@ jobs:
         run: npm run demo:acceptance
       - name: Growth Orchestrator demo
         run: npm run demo:growth
+      - name: Personal Economic Value Engine demo
+        run: npm run demo:peve
       - name: Treasury routing demo
         run: npm run demo:treasury
       - name: Regulatory Digital Twin demo

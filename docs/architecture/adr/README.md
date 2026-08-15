@@ -30,6 +30,7 @@ are not reused or silently changed.
 | 0011 | Personal Economic Graph | PROPOSED | not a legal opinion; no counsel review | PERSONAL_ECONOMIC_GRAPH | identity, events, persistence | PARTIAL | [ADR-0011-personal-economic-graph.md](./ADR-0011-personal-economic-graph.md) |
 | 0012 | Machine-verifiable mandates and Growth Orchestrator | PROPOSED | not a legal opinion; no counsel review | GROWTH_ORCHESTRATOR / PERSONAL_ECONOMY_AGENT | identity, PEG, events, evidence | PARTIAL | [ADR-0012-mandates-and-growth-orchestrator.md](./ADR-0012-mandates-and-growth-orchestrator.md) |
 | 0013 | Regulatory Digital Twin | PROPOSED | RESEARCH_REQUIRED — simulation only; no counsel review | REGULATORY_DIGITAL_TWIN | ADR-0006, identity, events, evidence | IMPLEMENTED (engineering / simulation only) | [ADR-0013-regulatory-digital-twin.md](./ADR-0013-regulatory-digital-twin.md) |
+| 0013 | Personal Economic Value Engine | PROPOSED | not a legal opinion; no counsel review | PERSONAL_ECONOMIC_VALUE_ENGINE | identity, PEG, agent, growth, events, evidence | PARTIAL | [ADR-0013-personal-economic-value-engine.md](./ADR-0013-personal-economic-value-engine.md) |
 
 ## Notes on ADR-0007
 
