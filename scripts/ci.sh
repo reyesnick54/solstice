@@ -23,6 +23,7 @@ npm run demo:cards
 npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
+npm run demo:growth
 
 echo "==> typecheck"
 npm run typecheck

@@ -102,6 +102,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'AcceptancePaymentDeclined', version: 1, status: 'current' },
   { eventType: 'AcceptancePaymentSettled', version: 1, status: 'current' },
   { eventType: 'AcceptanceReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'MandateDraftCreated', version: 1, status: 'current' },
+  { eventType: 'MandateConfirmed', version: 1, status: 'current' },
+  { eventType: 'MandateActivated', version: 1, status: 'current' },
+  { eventType: 'MandatePaused', version: 1, status: 'current' },
+  { eventType: 'MandateRevoked', version: 1, status: 'current' },
+  { eventType: 'GrowthCycleStarted', version: 1, status: 'current' },
+  { eventType: 'GrowthPlanCreated', version: 1, status: 'current' },
+  { eventType: 'GrowthPlanStale', version: 1, status: 'current' },
+  { eventType: 'GrowthActionProposed', version: 1, status: 'current' },
 
 ];
 

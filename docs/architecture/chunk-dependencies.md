@@ -77,6 +77,8 @@ Agents and later CI jobs use that result. They do not guess.
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
+| personal-economy-agent | IMPLEMENTED | packages/agent |
+| growth-orchestrator | IMPLEMENTED | packages/platform |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -114,3 +116,8 @@ Wallet and SoftPOS extend `packages/cards`; they do not invent a
 second cards domain. The original stop (Cards was then `PLANNED`) is
 preserved in [`chunk-12-stop.md`](./chunk-12-stop.md). The resumed
 implementation is recorded in [`chunk-12-resume.md`](./chunk-12-resume.md).
+
+Chunk 16 implements machine-verifiable economic mandates and the
+Growth Orchestrator at `packages/platform`, with the Personal Economy
+Agent at `packages/agent`. It does not execute investments and does
+not start the Personal Economic Value Engine.

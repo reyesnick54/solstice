@@ -333,8 +333,6 @@ describe('architecture constitution', () => {
     assert.ok(planned.missing.includes('future-protected-rail'));
   });
 
-  it('CHUNK-12 no longer stops on cards because the protected cards capability is IMPLEMENTED', () => {
-  it('CHUNK-12 capability gate is clear now that cards is IMPLEMENTED', () => {
   it('CHUNK-12 may proceed now that the protected cards capability is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'cards').status, 'IMPLEMENTED');
@@ -380,6 +378,17 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-14',
     );
     assert.ok(declared, 'CHUNK-14 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+  });
+
+  it('CHUNK-16 mandate and Growth Orchestrator capabilities are IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-economy-agent').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'growth-orchestrator').status, 'IMPLEMENTED');
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-16',
+    );
+    assert.ok(declared, 'CHUNK-16 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
   });
 });

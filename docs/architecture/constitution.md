@@ -64,7 +64,7 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`, `cards`, `personal-economic-graph`.
+`payments`, `cards`, `personal-economic-graph`, `agent`, `platform`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`.
 
@@ -74,7 +74,9 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 **Tools:** `architectural-linter`.
 
 **Shared libraries:** the packages listed above. There is no separate
-`packages/contracts` or `packages/platform` on this tree.
+`packages/contracts` on this tree. `packages/platform` is the canonical
+Growth Orchestrator owner. The Personal Economic Value Engine is not
+implemented; it shares that reserved path as PARTIAL.
 
 ### Action types
 
@@ -302,9 +304,9 @@ Canonical Financial Systems
         ↓
 Personal Economic Graph
         ↓
-Personal Economy Agent (not implemented)
+Personal Economy Agent (proposal-only)
         ↓
-Growth Orchestrator (not implemented)
+Growth Orchestrator (plans only; does not execute)
         ↓
 Agentic Capital Mesh (not implemented)
         ↓
@@ -354,7 +356,9 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform` |
+| `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
+| `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
@@ -410,6 +414,8 @@ flowchart BT
   payments["packages/payments"]
   cards["packages/cards"]
   peg["packages/personal-economic-graph"]
+  agent["packages/agent"]
+  platform["packages/platform"]
   accounts["services/accounts"]
   identitySvc["services/identity"]
   complianceSvc["services/compliance"]
@@ -435,6 +441,7 @@ flowchart BT
   persistence --> security
   persistence --> identity
   persistence --> peg
+  persistence --> platform
   accounts --> persistence
   accounts --> security
   evidence --> config
@@ -486,6 +493,20 @@ flowchart BT
   peg --> events
   peg --> config
   pegSvc --> peg
+  agent --> domain
+  agent --> money
+  agent --> identity
+  agent --> config
+  platform --> domain
+  platform --> money
+  platform --> identity
+  platform --> events
+  platform --> evidence
+  platform --> config
+  platform --> peg
+  platform --> agent
+  platform --> permissions
+  platform --> security
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -523,9 +544,9 @@ protected dependency because a later phase is absent.
 | CARDS | PARTIAL | `packages/cards`, `services/cards` |
 | TREASURY | PLANNED | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
-| PERSONAL ECONOMY AGENT | PLANNED | `packages/agent` |
-| GROWTH ORCHESTRATOR | PLANNED | `packages/platform` |
-| PERSONAL ECONOMIC VALUE ENGINE | PLANNED | `packages/platform` |
+| PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
+| GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
+| PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
 | REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
 | INVESTMENTS | PLANNED | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |

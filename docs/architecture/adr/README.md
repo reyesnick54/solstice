@@ -28,6 +28,7 @@ are not reused or silently changed.
 | 0009 | Canonical cryptographic infrastructure | ACCEPTED | not a legal opinion; no counsel review | SECURITY | none | IMPLEMENTED | [ADR-0009-cryptographic-infrastructure.md](./ADR-0009-cryptographic-infrastructure.md) |
 | 0010 | Canonical compliance screening fabric | PROPOSED | RESEARCH_REQUIRED — simulation only; no counsel review | COMPLIANCE / screening | ADR-0006 | PARTIAL | [ADR-0010-compliance-screening-fabric.md](./ADR-0010-compliance-screening-fabric.md) |
 | 0011 | Personal Economic Graph | PROPOSED | not a legal opinion; no counsel review | PERSONAL_ECONOMIC_GRAPH | identity, events, persistence | PARTIAL | [ADR-0011-personal-economic-graph.md](./ADR-0011-personal-economic-graph.md) |
+| 0012 | Machine-verifiable mandates and Growth Orchestrator | PROPOSED | not a legal opinion; no counsel review | GROWTH_ORCHESTRATOR / PERSONAL_ECONOMY_AGENT | identity, PEG, events, evidence | PARTIAL | [ADR-0012-mandates-and-growth-orchestrator.md](./ADR-0012-mandates-and-growth-orchestrator.md) |
 
 ## Notes on ADR-0007
 

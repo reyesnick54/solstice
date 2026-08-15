@@ -25,6 +25,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'economic_graph',
   'wallet',
   'acceptance',
+  'mandate',
+  'growth',
 
 ] as const;
 
@@ -135,6 +137,15 @@ export const EVENT_TYPE_NAMES = [
   'AcceptancePaymentDeclined',
   'AcceptancePaymentSettled',
   'AcceptanceReconciliationMismatch',
+  'MandateDraftCreated',
+  'MandateConfirmed',
+  'MandateActivated',
+  'MandatePaused',
+  'MandateRevoked',
+  'GrowthCycleStarted',
+  'GrowthPlanCreated',
+  'GrowthPlanStale',
+  'GrowthActionProposed',
 
 ] as const;
 
@@ -232,6 +243,15 @@ export const EVENT_SCHEMA_REFS = {
   AcceptancePaymentDeclined: 'solstice.acceptance.payment.declined/1',
   AcceptancePaymentSettled: 'solstice.acceptance.payment.settled/1',
   AcceptanceReconciliationMismatch: 'solstice.acceptance.reconciliation.mismatch/1',
+  MandateDraftCreated: 'solstice.mandate.draft_created/1',
+  MandateConfirmed: 'solstice.mandate.confirmed/1',
+  MandateActivated: 'solstice.mandate.activated/1',
+  MandatePaused: 'solstice.mandate.paused/1',
+  MandateRevoked: 'solstice.mandate.revoked/1',
+  GrowthCycleStarted: 'solstice.growth.cycle_started/1',
+  GrowthPlanCreated: 'solstice.growth.plan_created/1',
+  GrowthPlanStale: 'solstice.growth.plan_stale/1',
+  GrowthActionProposed: 'solstice.growth.action_proposed/1',
 
 } as const;
 
@@ -329,6 +349,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   AcceptancePaymentDeclined: 'acceptance',
   AcceptancePaymentSettled: 'acceptance',
   AcceptanceReconciliationMismatch: 'acceptance',
+  MandateDraftCreated: 'mandate',
+  MandateConfirmed: 'mandate',
+  MandateActivated: 'mandate',
+  MandatePaused: 'mandate',
+  MandateRevoked: 'mandate',
+  GrowthCycleStarted: 'growth',
+  GrowthPlanCreated: 'growth',
+  GrowthPlanStale: 'growth',
+  GrowthActionProposed: 'growth',
 
 };
 
