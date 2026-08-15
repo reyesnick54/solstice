@@ -121,6 +121,18 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'TreasuryExposureElevated', version: 1, status: 'current' },
   { eventType: 'TreasuryRebalanceProposed', version: 1, status: 'current' },
   { eventType: 'TreasuryReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'InvestmentAccountOpened', version: 1, status: 'current' },
+  { eventType: 'InvestmentCashFunded', version: 1, status: 'current' },
+  { eventType: 'InvestmentCashWithdrawn', version: 1, status: 'current' },
+  { eventType: 'InvestmentOrderCreated', version: 1, status: 'current' },
+  { eventType: 'InvestmentOrderAccepted', version: 1, status: 'current' },
+  { eventType: 'InvestmentOrderPartiallyFilled', version: 1, status: 'current' },
+  { eventType: 'InvestmentOrderFilled', version: 1, status: 'current' },
+  { eventType: 'InvestmentOrderCancelled', version: 1, status: 'current' },
+  { eventType: 'InvestmentPositionChanged', version: 1, status: 'current' },
+  { eventType: 'InvestmentSettlementCompleted', version: 1, status: 'current' },
+  { eventType: 'InvestmentDividendReceived', version: 1, status: 'current' },
+  { eventType: 'InvestmentReconciliationMismatch', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

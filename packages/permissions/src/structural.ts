@@ -50,6 +50,13 @@ import {
   type ProposeTreasuryRebalanceIntent,
   type ExecuteTreasuryRebalanceIntent,
   type SetTreasuryKillSwitchIntent,
+  type OpenInvestmentAccountIntent,
+  type FundBrokerageCashIntent,
+  type WithdrawBrokerageCashIntent,
+  type CreatePaperOrderIntent,
+  type CancelPaperOrderIntent,
+  type SettleInvestmentIntent,
+  type ProcessCorporateActionIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -226,6 +233,42 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.SET_TREASURY_KILL_SWITCH) {
     return validateAccountOnly((intent as SetTreasuryKillSwitchIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.OPEN_INVESTMENT_ACCOUNT) {
+    return validateAccountOnly((intent as OpenInvestmentAccountIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.FUND_BROKERAGE_CASH) {
+    return validateCardAmount(
+      (intent as FundBrokerageCashIntent).payload.accountId,
+      (intent as FundBrokerageCashIntent).payload.amount,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.WITHDRAW_BROKERAGE_CASH) {
+    return validateCardAmount(
+      (intent as WithdrawBrokerageCashIntent).payload.accountId,
+      (intent as WithdrawBrokerageCashIntent).payload.amount,
+      catalog,
+    );
+  }
+  if (intent.actionType === ACTION_TYPES.CREATE_PAPER_ORDER) {
+    const payload = (intent as CreatePaperOrderIntent).payload;
+    if (!/^-?\d+$/.test(payload.quantityUnits)) {
+      return reject('quantityUnits', 'quantity must be an integer scaled-units string; floating-point is rejected');
+    }
+    if (payload.side !== 'BUY' && payload.side !== 'SELL') {
+      return reject('side', 'only BUY and SELL are permitted; shorting is forbidden');
+    }
+    return validateAccountOnly(payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CANCEL_PAPER_ORDER) {
+    return validateAccountOnly((intent as CancelPaperOrderIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.SETTLE_INVESTMENT) {
+    return validateAccountOnly((intent as SettleInvestmentIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.PROCESS_CORPORATE_ACTION) {
+    return validateAccountOnly((intent as ProcessCorporateActionIntent).payload.accountId, catalog);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }

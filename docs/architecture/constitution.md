@@ -57,6 +57,7 @@ never be two implementations of these systems.
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
+| Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -65,11 +66,11 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`, `cards`, `personal-economic-graph`, `agent`, `platform`.
-`payments`, `cards`, `personal-economic-graph`, `treasury`.
+`payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
+`treasury`, `investments`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
-`treasury`.
+`treasury`, `investments`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -131,6 +132,13 @@ The only action types on this tree are declared in
 - `PROPOSE_TREASURY_REBALANCE`
 - `EXECUTE_TREASURY_REBALANCE`
 - `SET_TREASURY_KILL_SWITCH`
+- `OPEN_INVESTMENT_ACCOUNT`
+- `FUND_BROKERAGE_CASH`
+- `WITHDRAW_BROKERAGE_CASH`
+- `CREATE_PAPER_ORDER`
+- `CANCEL_PAPER_ORDER`
+- `SETTLE_INVESTMENT`
+- `PROCESS_CORPORATE_ACTION`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -151,6 +159,7 @@ They do not invent a parallel envelope.
 | `packages/cards/src/acceptance/service.ts` SoftPOS device / session / settlement | Acceptance devices, sessions, merchant payments, journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 | `packages/treasury/src/service.ts` reserve / release / commit / rebalance / kill switch | Treasury reservations, proposals, operational controls; rebalance journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
+| `packages/investments/src/service.ts` open / fund / withdraw / paper order / settle / corporate action | Investment profiles, paper orders, positions, lots; brokerage-cash journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -166,7 +175,8 @@ Production callers are `services/accounts/src/money-movement.ts` and
 `services/accounts/src/banking-operations.ts` and
 `packages/payments/src/journals.ts` and
 `packages/cards/src/journals.ts` and
-`packages/treasury/src/service.ts` (rebalance only).
+`packages/treasury/src/service.ts` (rebalance only) and
+`packages/investments/src/journals.ts`.
 
 ### Locations that may issue or verify Execution Authority
 
@@ -367,7 +377,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
@@ -378,6 +388,8 @@ must be added to `manifest.json` before they appear on disk.
 | `services/economic-graph` | `packages/personal-economic-graph` |
 | `packages/treasury` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security`, `packages/payments` |
 | `services/treasury` | `packages/treasury` |
+| `packages/investments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
+| `services/investments` | `packages/investments` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -535,6 +547,20 @@ flowchart BT
   treasury --> payments
   treasurySvc --> treasury
   persistence --> treasury
+  investments["packages/investments"]
+  investmentsSvc["services/investments"]
+  investments --> domain
+  investments --> money
+  investments --> permissions
+  investments --> config
+  investments --> kernel
+  investments --> ledger
+  investments --> evidence
+  investments --> events
+  investments --> identity
+  investments --> security
+  investmentsSvc --> investments
+  persistence --> investments
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -577,7 +603,7 @@ phase is absent.
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
 | REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
-| INVESTMENTS | PLANNED | `packages/investments`, `services/investments` |
+| INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |
 | MODEL REGISTRY | PLANNED | `packages/model-registry` |
 | AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |

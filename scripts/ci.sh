@@ -25,6 +25,7 @@ npm run demo:wallet
 npm run demo:acceptance
 npm run demo:growth
 npm run demo:treasury
+npm run demo:investments
 
 echo "==> typecheck"
 npm run typecheck

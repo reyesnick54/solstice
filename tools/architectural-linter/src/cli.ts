@@ -6,6 +6,7 @@ import { lintCardBoundary } from './card-guards.ts';
 import { lintRailBoundary } from './rail-guards.ts';
 import { lintEconomicGraphBoundary } from './economic-graph-guards.ts';
 import { lintGrowthBoundary } from './growth-guards.ts';
+import { lintInvestmentBoundary } from './investments-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -19,6 +20,7 @@ const findings = [
   ...lintRailBoundary(root),
   ...lintEconomicGraphBoundary(root),
   ...lintGrowthBoundary(root),
+  ...lintInvestmentBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

@@ -250,6 +250,7 @@ const ALLOWED_PURPOSES = new Set<PurposeCode>([
   'CUSTOMER_WALLET',
   'MERCHANT_ACCEPTANCE',
   'TREASURY_OPERATIONS',
+  'CUSTOMER_INVESTMENT',
 ]);
 
 export const purposeProof: ProofEvaluator = {

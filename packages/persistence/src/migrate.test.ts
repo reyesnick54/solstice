@@ -165,6 +165,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V012 persists investment profiles without a balance column or live broker state', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v012 = files.find((file) => file.version === 12);
+    assert.ok(v012);
+    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS investment/);
+    assert.match(v012.sql, /CREATE TABLE investment.profile/);
+    assert.match(v012.sql, /CREATE TABLE investment.instrument/);
+    assert.match(v012.sql, /CREATE TABLE investment.paper_order/);
+    assert.match(v012.sql, /CREATE TABLE investment.lot/);
+    assert.match(v012.sql, /live_state BOOLEAN NOT NULL CHECK \(live_state = FALSE\)/);
+    assert.match(v012.sql, /investment_profile_no_balance/);
+    assert.match(v012.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
+    assert.equal(/\bapy\b|\bapr\b/i.test(v012.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v011 = files.find((file) => file.version === 11);

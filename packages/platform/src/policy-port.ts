@@ -35,11 +35,20 @@ export const simulationPolicyPort: PolicyControlPort = {
   queryControlFact(input) {
     if (input.capability === "INVESTMENT_EXECUTION") {
       return {
-        factId: "pcf_investment_absent",
+        factId: "pcf_investment_live_blocked",
         capability: input.capability,
         permitted: false,
-        evaluable: false,
-        reason: "investment_subsystem_not_implemented",
+        evaluable: true,
+        reason: "live_investment_execution_false_risk_engine_chunk_20",
+      };
+    }
+    if (input.capability === "PAPER_INVESTMENT_REVIEW") {
+      return {
+        factId: "pcf_paper_investment_review",
+        capability: input.capability,
+        permitted: true,
+        evaluable: true,
+        reason: "paper_simulation_review_available_not_auto_executing",
       };
     }
     return {

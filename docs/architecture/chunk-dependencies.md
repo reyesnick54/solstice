@@ -80,6 +80,7 @@ Agents and later CI jobs use that result. They do not guess.
 | personal-economy-agent | IMPLEMENTED | packages/agent |
 | growth-orchestrator | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
+| investments | IMPLEMENTED | packages/investments |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -123,3 +124,11 @@ as a proposal-only interpreter. The evaluator returns
 Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
+
+Chunk 19 implements the reserved INVESTMENTS bounded context at
+`packages/investments` and `services/investments`. Capability
+`investments` is `IMPLEMENTED`. Bounded context INVESTMENTS is
+`PARTIAL` simulation: paper orders, positions, lots, valuation, and
+reconciliation only. No live broker. The Risk Engine remains Chunk 20.
+Do not create `packages/brokerage`, `packages/portfolio`,
+`packages/trading`, `packages/wealth`, or `packages/securities-core`.

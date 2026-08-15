@@ -73,6 +73,13 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'proposeRebalance', file: 'packages/treasury/src/service.ts' },
   { symbol: 'executeRebalance', file: 'packages/treasury/src/service.ts' },
   { symbol: 'setKillSwitch', file: 'packages/treasury/src/service.ts' },
+  { symbol: 'openInvestmentAccount', file: 'packages/investments/src/service.ts' },
+  { symbol: 'fundBrokerageCash', file: 'packages/investments/src/service.ts' },
+  { symbol: 'withdrawBrokerageCash', file: 'packages/investments/src/service.ts' },
+  { symbol: 'createPaperOrder', file: 'packages/investments/src/service.ts' },
+  { symbol: 'cancelPaperOrder', file: 'packages/investments/src/service.ts' },
+  { symbol: 'settleInvestment', file: 'packages/investments/src/service.ts' },
+  { symbol: 'processCorporateAction', file: 'packages/investments/src/service.ts' },
 ];
 
 const failures = [];

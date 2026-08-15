@@ -49,6 +49,8 @@ jobs:
         run: npm run demo:growth
       - name: Treasury routing demo
         run: npm run demo:treasury
+      - name: Investments paper portfolio demo
+        run: npm run demo:investments
 
       - name: Typecheck
         run: npm run typecheck

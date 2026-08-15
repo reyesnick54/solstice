@@ -67,7 +67,7 @@ export type GoalFeasibility = {
   readonly limitations: readonly string[];
   readonly uncertaintyNotes: readonly string[];
   readonly achievementPromised: false;
-  readonly investmentExecutionAvailable: false;
+  readonly investmentExecutionAvailable: boolean;
 };
 
 export type ActionExplanation = {
@@ -134,5 +134,5 @@ export type EligibleAccount = {
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
-  readonly investmentExecutionImplemented: false;
+  readonly investmentExecutionImplemented: boolean;
 };

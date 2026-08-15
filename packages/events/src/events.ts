@@ -444,6 +444,39 @@ export type TreasuryExposureElevatedV1 = VersionedEvent<'TreasuryExposureElevate
 export type TreasuryRebalanceProposedV1 = VersionedEvent<'TreasuryRebalanceProposed', 1, TreasuryAuditPayload>;
 export type TreasuryReconciliationMismatchV1 = VersionedEvent<'TreasuryReconciliationMismatch', 1, TreasuryAuditPayload>;
 
+export type InvestmentAuditPayload = {
+  readonly investmentAccountId?: string;
+  readonly customerId?: string;
+  readonly brokerageCashAccountId?: string;
+  readonly securitiesAccountId?: string;
+  readonly orderId?: string;
+  readonly fillId?: string;
+  readonly journalId?: string;
+  readonly instrumentId?: string;
+  readonly side?: string;
+  readonly quantityUnits?: string;
+  readonly amountMinorUnits?: string;
+  readonly currency?: string;
+  readonly settlementId?: string;
+  readonly corporateActionId?: string;
+  readonly reconciliationId?: string;
+  readonly result?: string;
+  readonly findings?: readonly string[];
+};
+
+export type InvestmentAccountOpenedV1 = VersionedEvent<'InvestmentAccountOpened', 1, InvestmentAuditPayload>;
+export type InvestmentCashFundedV1 = VersionedEvent<'InvestmentCashFunded', 1, InvestmentAuditPayload>;
+export type InvestmentCashWithdrawnV1 = VersionedEvent<'InvestmentCashWithdrawn', 1, InvestmentAuditPayload>;
+export type InvestmentOrderCreatedV1 = VersionedEvent<'InvestmentOrderCreated', 1, InvestmentAuditPayload>;
+export type InvestmentOrderAcceptedV1 = VersionedEvent<'InvestmentOrderAccepted', 1, InvestmentAuditPayload>;
+export type InvestmentOrderPartiallyFilledV1 = VersionedEvent<'InvestmentOrderPartiallyFilled', 1, InvestmentAuditPayload>;
+export type InvestmentOrderFilledV1 = VersionedEvent<'InvestmentOrderFilled', 1, InvestmentAuditPayload>;
+export type InvestmentOrderCancelledV1 = VersionedEvent<'InvestmentOrderCancelled', 1, InvestmentAuditPayload>;
+export type InvestmentPositionChangedV1 = VersionedEvent<'InvestmentPositionChanged', 1, InvestmentAuditPayload>;
+export type InvestmentSettlementCompletedV1 = VersionedEvent<'InvestmentSettlementCompleted', 1, InvestmentAuditPayload>;
+export type InvestmentDividendReceivedV1 = VersionedEvent<'InvestmentDividendReceived', 1, InvestmentAuditPayload>;
+export type InvestmentReconciliationMismatchV1 = VersionedEvent<'InvestmentReconciliationMismatch', 1, InvestmentAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -648,7 +681,19 @@ export type DomainEvent =
   | TreasuryCorridorHaltedV1
   | TreasuryExposureElevatedV1
   | TreasuryRebalanceProposedV1
-  | TreasuryReconciliationMismatchV1;
+  | TreasuryReconciliationMismatchV1
+  | InvestmentAccountOpenedV1
+  | InvestmentCashFundedV1
+  | InvestmentCashWithdrawnV1
+  | InvestmentOrderCreatedV1
+  | InvestmentOrderAcceptedV1
+  | InvestmentOrderPartiallyFilledV1
+  | InvestmentOrderFilledV1
+  | InvestmentOrderCancelledV1
+  | InvestmentPositionChangedV1
+  | InvestmentSettlementCompletedV1
+  | InvestmentDividendReceivedV1
+  | InvestmentReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

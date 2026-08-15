@@ -159,6 +159,26 @@ export const PRODUCT_PENDING_USD_GB: Product = freezeProduct({
   status: 'ACTIVE',
 });
 
+export const PRODUCT_BROKERAGE_CASH_USD_GB: Product = freezeProduct({
+  id: asProductId('prod_brokerage_cash_usd_gb'),
+  name: 'Simulated GBP-entity USD brokerage cash — not an insured-deposit claim',
+  accountClass: 'BROKERAGE_CASH',
+  currency: asCurrencyCode('USD'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
+export const PRODUCT_SECURITIES_USD_GB: Product = freezeProduct({
+  id: asProductId('prod_securities_usd_gb'),
+  name: 'Simulated GBP-entity USD securities relationship — paper only',
+  accountClass: 'SECURITIES',
+  currency: asCurrencyCode('USD'),
+  legalEntityId: SOLSTICE_UK.id,
+  jurisdiction: asJurisdiction('GB'),
+  status: 'ACTIVE',
+});
+
 export function seedSimulationCatalog(): {
   legalEntities: LegalEntityStore;
   products: ProductStore;
@@ -183,6 +203,8 @@ export function seedSimulationCatalog(): {
   products.put(PRODUCT_DEMAND_SAR_GB.id, PRODUCT_DEMAND_SAR_GB);
   products.put(PRODUCT_DEMAND_AED_GB.id, PRODUCT_DEMAND_AED_GB);
   products.put(PRODUCT_PENDING_USD_GB.id, PRODUCT_PENDING_USD_GB);
+  products.put(PRODUCT_BROKERAGE_CASH_USD_GB.id, PRODUCT_BROKERAGE_CASH_USD_GB);
+  products.put(PRODUCT_SECURITIES_USD_GB.id, PRODUCT_SECURITIES_USD_GB);
   return {
     legalEntities,
     products,

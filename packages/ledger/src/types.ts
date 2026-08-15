@@ -155,6 +155,39 @@ export const SIMULATED_FUNDING_TO_PENDING_SETTLEMENT: ClassBridge = Object.freez
   purpose: 'Simulation-only settlement or return of pending funds against the named funding source.',
 });
 
+export const DEMAND_DEPOSIT_TO_BROKERAGE_CASH: ClassBridge = Object.freeze({
+  name: 'DEMAND_DEPOSIT_TO_BROKERAGE_CASH',
+  fromClass: 'DEMAND_DEPOSIT',
+  toClass: 'BROKERAGE_CASH',
+  disclosed: true,
+  purpose:
+    'Authorized class bridge from a demand deposit into segregated brokerage cash. Brokerage cash is not treated as an insured deposit.',
+});
+
+export const SAVINGS_DEPOSIT_TO_BROKERAGE_CASH: ClassBridge = Object.freeze({
+  name: 'SAVINGS_DEPOSIT_TO_BROKERAGE_CASH',
+  fromClass: 'SAVINGS_DEPOSIT',
+  toClass: 'BROKERAGE_CASH',
+  disclosed: true,
+  purpose: 'Authorized class bridge from a savings deposit into segregated brokerage cash.',
+});
+
+export const BROKERAGE_CASH_TO_PENDING_SETTLEMENT: ClassBridge = Object.freeze({
+  name: 'BROKERAGE_CASH_TO_PENDING_SETTLEMENT',
+  fromClass: 'BROKERAGE_CASH',
+  toClass: 'PENDING_SETTLEMENT',
+  disclosed: true,
+  purpose: 'Move brokerage cash into pending investment settlement for a paper fill.',
+});
+
+export const BROKERAGE_CASH_TO_SIMULATED_FUNDING: ClassBridge = Object.freeze({
+  name: 'BROKERAGE_CASH_TO_SIMULATED_FUNDING',
+  fromClass: 'BROKERAGE_CASH',
+  toClass: 'SIMULATED_FUNDING_SOURCE',
+  disclosed: true,
+  purpose: 'Consume or restore simulation clearing cash for paper securities acquisition, fees, or proceeds.',
+});
+
 export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
@@ -165,6 +198,10 @@ export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
   DEMAND_TO_PENDING_SETTLEMENT,
   SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
+  DEMAND_DEPOSIT_TO_BROKERAGE_CASH,
+  SAVINGS_DEPOSIT_TO_BROKERAGE_CASH,
+  BROKERAGE_CASH_TO_PENDING_SETTLEMENT,
+  BROKERAGE_CASH_TO_SIMULATED_FUNDING,
 ];
 
 export function findClassBridge(

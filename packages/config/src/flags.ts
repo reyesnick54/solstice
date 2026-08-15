@@ -20,6 +20,7 @@ export const LIVE_TRADING_ENABLED = false as const;
 export const LIVE_CRYPTO_ENABLED = false as const;
 export const LIVE_EXCHANGE_ENABLED = false as const;
 export const LIVE_DATA_MARKET_ENABLED = false as const;
+export const LIVE_INVESTMENT_EXECUTION = false as const;
 
 export const CAPABILITIES = Object.freeze({
   ENVIRONMENT,
@@ -34,6 +35,7 @@ export const CAPABILITIES = Object.freeze({
   LIVE_CRYPTO_ENABLED,
   LIVE_EXCHANGE_ENABLED,
   LIVE_DATA_MARKET_ENABLED,
+  LIVE_INVESTMENT_EXECUTION,
 });
 
 export function assertSimulationOnly(): void {
@@ -50,7 +52,8 @@ export function assertSimulationOnly(): void {
     LIVE_TRADING_ENABLED !== false ||
     LIVE_CRYPTO_ENABLED !== false ||
     LIVE_EXCHANGE_ENABLED !== false ||
-    LIVE_DATA_MARKET_ENABLED !== false
+    LIVE_DATA_MARKET_ENABLED !== false ||
+    LIVE_INVESTMENT_EXECUTION !== false
   ) {
     throw new Error('every LIVE_* flag must remain false; real-world movement is not authorised');
   }

@@ -355,6 +355,79 @@ export function generateGrowthCandidates(input: {
     ),
   });
 
+  const paperFact = input.policy.queryControlFact({
+    capability: 'PAPER_INVESTMENT_REVIEW',
+    subjectId: input.mandate.subjectId,
+  });
+  candidates.push({
+    actionId: actionIdFor('INVESTMENT_ACCOUNT_AVAILABLE', input.mandate.mandateId),
+    action: 'INVESTMENT_ACCOUNT_AVAILABLE',
+    source: 'PEG',
+    title: 'Investment account is available for simulation review',
+    expectedEffect: {
+      kind: 'UNCERTAIN_MARKET_OUTCOME',
+      scenario: 'PAPER_INVESTMENT_ACCOUNT_REVIEW',
+      low: zero(currency),
+      high: zero(currency),
+      assumptions: Object.freeze(['Opening still requires user confirmation and Kernel authorization.']),
+      confidenceScore: 40,
+      horizonDays: 0,
+      riskClass: 'UNCERTAIN_MARKET',
+      achievementPromised: false,
+    },
+    confidenceScore: 40,
+    assumptions: Object.freeze(['Growth does not auto-open or auto-trade.']),
+    liquidityImpact: zero(currency),
+    riskClass: 'UNCERTAIN_MARKET',
+    mandateEvaluation: {
+      satisfied: true,
+      violatedConstraintKinds: Object.freeze([]),
+      notes: Object.freeze(['Simulation investment account opening remains Kernel-gated.']),
+    },
+    userConfirmationRequired: true,
+    policyRequirement: paperFact.reason,
+    complianceRequirement: 'KERNEL_AUTHORIZATION_REQUIRED',
+    executionCapability: 'USER_CONFIRMATION_REQUIRED',
+    supportingFactRefs: Object.freeze([]),
+    supportingGoalIds: Object.freeze(goalIds(input.mandate, ['INVEST_ELIGIBLE_LONG_TERM_SURPLUS_LATER'])),
+    agentProposalIds: Object.freeze([]),
+    pegOpportunityIds: Object.freeze([]),
+  });
+  candidates.push({
+    actionId: actionIdFor('PAPER_INVESTMENT_REVIEW', input.mandate.mandateId),
+    action: 'PAPER_INVESTMENT_REVIEW_AVAILABLE',
+    source: 'AGENT_PROPOSAL',
+    title: 'Paper investment review is available',
+    expectedEffect: {
+      kind: 'UNCERTAIN_MARKET_OUTCOME',
+      scenario: 'PAPER_ORDER_REQUIRES_USER_AND_KERNEL',
+      low: zero(currency),
+      high: zero(currency),
+      assumptions: Object.freeze(['Growth cannot submit the paper order.']),
+      confidenceScore: 40,
+      horizonDays: 0,
+      riskClass: 'UNCERTAIN_MARKET',
+      achievementPromised: false,
+    },
+    confidenceScore: 40,
+    assumptions: Object.freeze(['No autonomous trading.']),
+    liquidityImpact: zero(currency),
+    riskClass: 'UNCERTAIN_MARKET',
+    mandateEvaluation: {
+      satisfied: true,
+      violatedConstraintKinds: Object.freeze([]),
+      notes: Object.freeze(['Paper order materialization still requires explicit approval.']),
+    },
+    userConfirmationRequired: true,
+    policyRequirement: paperFact.reason,
+    complianceRequirement: 'KERNEL_AUTHORIZATION_REQUIRED',
+    executionCapability: 'USER_CONFIRMATION_REQUIRED',
+    supportingFactRefs: Object.freeze([]),
+    supportingGoalIds: Object.freeze(goalIds(input.mandate, ['INVEST_ELIGIBLE_LONG_TERM_SURPLUS_LATER'])),
+    agentProposalIds: Object.freeze(investIdea ? [investIdea.proposalId] : []),
+    pegOpportunityIds: Object.freeze([]),
+  });
+
   const violatingAmount = liquid.minus(Money.fromMinorUnits(1n, currency));
   if (violatingAmount.isPositive()) {
     candidates.push({
