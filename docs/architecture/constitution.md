@@ -74,6 +74,7 @@ the same architecture-linting system, not a second linter.
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `personal-data-vault`.
+`agentic-capital-mesh`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`.
@@ -89,11 +90,19 @@ Growth Orchestrator owner. The Personal Economic Value Engine is
 implemented in `packages/platform/src/value` on that same reserved path.
 `packages/regulatory-twin` is the canonical Regulatory Digital Twin.
 `packages/investments` is the canonical investment account and paper
+portfolio owner. `packages/risk` is the canonical investment Risk
+Engine. `packages/model-registry` is the canonical Model Registry.
+Strategy Lab is implemented at the reserved owners:
+`STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
+`services/strategy-lab` (no LIVE stage). Agentic Capital Mesh remains
+reserved and unimplemented at `packages/agentic-capital-mesh`.
 portfolio owner. Strategy Lab is reserved and not implemented:
 `STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
 `packages/investments` is the canonical investment account / portfolio
-core. The investment Risk Engine, Model Registry, and Agentic Capital
-Mesh remain reserved and unimplemented.
+core. The investment Risk Engine is `packages/risk`. The Model Registry
+is `packages/model-registry`. The Agentic Capital Mesh is
+`packages/agentic-capital-mesh`. Strategy Lab remains reserved and
+unimplemented at `packages/strategy-lab`.
 
 ### Action types
 
@@ -343,7 +352,7 @@ Personal Economy Agent (proposal-only)
         ↓
 Growth Orchestrator (plans only; does not execute)
         ↓
-Agentic Capital Mesh (not implemented)
+Agentic Capital Mesh (proposal-only)
         ↓
 Execution Control Plane
 ```
@@ -405,6 +414,9 @@ must be added to `manifest.json` before they appear on disk.
 | `services/treasury` | `packages/treasury` |
 | `packages/investments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `services/investments` | `packages/investments` |
+| `packages/risk` | `packages/domain`, `packages/money`, `packages/config`, `packages/evidence`, `packages/events`, `packages/model-registry`, `packages/permissions` |
+| `packages/model-registry` | `packages/domain`, `packages/identity` |
+| `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
@@ -631,9 +643,11 @@ phase is absent.
 | PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
 | REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
-| RISK | PLANNED | `packages/risk` |
-| MODEL REGISTRY | PLANNED | `packages/model-registry` |
+| RISK | IMPLEMENTED | `packages/risk` |
+| MODEL REGISTRY | IMPLEMENTED | `packages/model-registry` |
 | AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
+| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
+| AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
 | STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |

@@ -10,6 +10,7 @@ import {
   explainPerformance,
   explainPlan,
   explainPortfolio,
+  explainCapitalProposal,
   explainRisk,
 } from './explain.ts';
 import { freezeProposal, type AgentProposal } from './proposal.ts';
@@ -134,6 +135,25 @@ export class PersonalEconomyAgent {
       explainEconomicValue({
         subjectId: input.subjectId,
         valueSummary: input.valueSummary,
+        now: this.clock.now(),
+      }),
+    );
+  }
+
+  explainCapitalProposal(
+    actor: unknown,
+    input: { readonly subjectId: string; readonly proposalSummary: string },
+  ): Result<AgentProposal, AgentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({
+        code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'capital proposal explanation requires a verified ActorContext',
+      });
+    }
+    return ok(
+      explainCapitalProposal({
+        subjectId: input.subjectId,
+        proposalSummary: input.proposalSummary,
         now: this.clock.now(),
       }),
     );

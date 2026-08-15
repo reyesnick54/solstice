@@ -598,6 +598,51 @@ export type DataVaultAccessDeniedV1 = VersionedEvent<'DataVaultAccessDenied', 1,
 export type DataVaultExportCreatedV1 = VersionedEvent<'DataVaultExportCreated', 1, DataVaultAuditPayload>;
 export type DataVaultDerivationCreatedV1 = VersionedEvent<'DataVaultDerivationCreated', 1, DataVaultAuditPayload>;
 export type DataVaultKeyRotatedV1 = VersionedEvent<'DataVaultKeyRotated', 1, DataVaultAuditPayload>;
+export type StrategyAuditPayload = {
+  readonly strategyId?: string;
+  readonly version?: string;
+  readonly compiledHash?: string;
+  readonly compilerVersion?: string;
+  readonly runId?: string;
+  readonly outputHash?: string;
+  readonly datasetId?: string;
+  readonly validationId?: string;
+  readonly actorId?: string;
+  readonly reason?: string;
+  readonly sendsOrders?: false;
+  readonly liveBroker?: false;
+  readonly partition?: string;
+};
+
+export type StrategyCreatedV1 = VersionedEvent<'StrategyCreated', 1, StrategyAuditPayload>;
+export type StrategyCompiledV1 = VersionedEvent<'StrategyCompiled', 1, StrategyAuditPayload>;
+export type StrategyBacktestStartedV1 = VersionedEvent<'StrategyBacktestStarted', 1, StrategyAuditPayload>;
+export type StrategyBacktestCompletedV1 = VersionedEvent<'StrategyBacktestCompleted', 1, StrategyAuditPayload>;
+export type StrategyValidationFailedV1 = VersionedEvent<'StrategyValidationFailed', 1, StrategyAuditPayload>;
+export type StrategyShadowApprovedV1 = VersionedEvent<'StrategyShadowApproved', 1, StrategyAuditPayload>;
+export type StrategyShadowStartedV1 = VersionedEvent<'StrategyShadowStarted', 1, StrategyAuditPayload>;
+export type StrategyPaperApprovedV1 = VersionedEvent<'StrategyPaperApproved', 1, StrategyAuditPayload>;
+export type StrategyPaperStartedV1 = VersionedEvent<'StrategyPaperStarted', 1, StrategyAuditPayload>;
+export type StrategyPaperHaltedV1 = VersionedEvent<'StrategyPaperHalted', 1, StrategyAuditPayload>;
+export type StrategyRetiredV1 = VersionedEvent<'StrategyRetired', 1, StrategyAuditPayload>;
+export type CapitalMeshAuditPayload = {
+  readonly runId?: string;
+  readonly subjectId?: string;
+  readonly thesisId?: string;
+  readonly candidateId?: string;
+  readonly reviewId?: string;
+  readonly proposalId?: string;
+  readonly reasons?: readonly string[];
+  readonly mutatesFinancialState?: false;
+};
+
+export type CapitalMeshRunStartedV1 = VersionedEvent<'CapitalMeshRunStarted', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshThesisCreatedV1 = VersionedEvent<'CapitalMeshThesisCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshCandidateCreatedV1 = VersionedEvent<'CapitalMeshCandidateCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshReviewCompletedV1 = VersionedEvent<'CapitalMeshReviewCompleted', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshVetoAppliedV1 = VersionedEvent<'CapitalMeshVetoApplied', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshProposalCreatedV1 = VersionedEvent<'CapitalMeshProposalCreated', 1, CapitalMeshAuditPayload>;
+export type CapitalMeshProposalStaleV1 = VersionedEvent<'CapitalMeshProposalStale', 1, CapitalMeshAuditPayload>;
 
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
@@ -893,6 +938,24 @@ export type DomainEvent =
   | DataVaultExportCreatedV1
   | DataVaultDerivationCreatedV1
   | DataVaultKeyRotatedV1;
+  | StrategyCreatedV1
+  | StrategyCompiledV1
+  | StrategyBacktestStartedV1
+  | StrategyBacktestCompletedV1
+  | StrategyValidationFailedV1
+  | StrategyShadowApprovedV1
+  | StrategyShadowStartedV1
+  | StrategyPaperApprovedV1
+  | StrategyPaperStartedV1
+  | StrategyPaperHaltedV1
+  | StrategyRetiredV1;
+  | CapitalMeshRunStartedV1
+  | CapitalMeshThesisCreatedV1
+  | CapitalMeshCandidateCreatedV1
+  | CapitalMeshReviewCompletedV1
+  | CapitalMeshVetoAppliedV1
+  | CapitalMeshProposalCreatedV1
+  | CapitalMeshProposalStaleV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

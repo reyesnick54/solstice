@@ -89,6 +89,9 @@ Agents and later CI jobs use that result. They do not guess.
 | agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
+| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
+| strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -155,18 +158,21 @@ reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
-Chunk 22 (Strategy Lab) is **stopped**. Protected capabilities
-`risk`, `model-registry`, and `agentic-capital-mesh` are `PLANNED`.
-Chunk 21 is not merged. The evaluator returns `mustStop: true`.
-`STRATEGY_LAB` is reserved at `packages/strategy-lab` and
-`services/strategy-lab`. Historical stop:
-[`chunk-22-stop.md`](./chunk-22-stop.md). Do not create
+Chunk 22R implements the reserved STRATEGY LAB bounded context at
+`packages/strategy-lab` and `services/strategy-lab`. Capability
+`strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is
+`PARTIAL` simulation: compile, backtest, walk-forward, shadow, and
+Risk-gated paper only. No LIVE stage. The original Chunk 22 stop is
+historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
+[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
 `packages/backtest`, `packages/trading-lab`, `packages/quant`, or
 `packages/strategy-v2`.
-Chunk 21 (Agentic Capital Mesh) is **stopped**. Protected capabilities
-`risk` and `model-registry` are `PLANNED`. The evaluator returns
-`mustStop: true`. See [`chunk-21-stop.md`](./chunk-21-stop.md).
-Do not create `packages/agentic-capital-mesh` or competing
+Chunk 21 (Agentic Capital Mesh) remains reserved at
+`packages/agentic-capital-mesh`. Protected capabilities `risk` and
+`model-registry` are now `IMPLEMENTED`, so the evaluator returns
+`mustStop: false` for CHUNK-21's declared requires. The Mesh package
+itself is still absent. Historical stop:
+[`chunk-21-stop.md`](./chunk-21-stop.md). Do not create competing
 `trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
 packages until Chunk 20 lands those owners as `IMPLEMENTED`.
 Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
@@ -176,6 +182,7 @@ Firewall, Clean Room, marketplace, or Sol Coin. The evaluator
 returns `mustStop: false` for the implemented prerequisites.
 Strategy Lab remains `PLANNED` and is not a PDV code dependency.
 
+packages.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability
 `risk` and `model-registry` are `IMPLEMENTED`. Risk supplies
@@ -185,3 +192,22 @@ is simulation-approval only; there is no `LIVE_APPROVED`. Do not create
 `packages/investment-risk`, `packages/risk-v2`,
 `packages/portfolio-risk`, `packages/models`, or
 `packages/model-governance-v2`. The evaluator returns `mustStop: false`.
+
+Chunk 21 (Agentic Capital Mesh) originally stopped while `risk` and
+`model-registry` were `PLANNED`. That stop is historical:
+[`chunk-21-stop.md`](./chunk-21-stop.md). Chunk 21R implements the
+reserved owner `packages/agentic-capital-mesh`. Capability
+`agentic-capital-mesh` is `IMPLEMENTED`. The evaluator returns
+`mustStop: false`. Resume: [`chunk-21-resume.md`](./chunk-21-resume.md).
+Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
+`capital-ai` / `autonomous-trader`.
+
+Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
+and Agentic Capital Mesh were absent. That stop is historical:
+[`chunk-22-stop.md`](./chunk-22-stop.md). Those three capabilities are
+now `IMPLEMENTED`. `STRATEGY_LAB` remains `PLANNED` at
+`packages/strategy-lab` and `services/strategy-lab` until Chunk 22R.
+The evaluator returns `mustStop: false` because required capabilities
+exist; the reserved Strategy Lab owner is still absent. Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.

@@ -34,6 +34,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'risk',
   'model',
   'data',
+  'strategy',
+  'capital_mesh',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -199,6 +201,24 @@ export const EVENT_TYPE_NAMES = [
   'DataVaultExportCreated',
   'DataVaultDerivationCreated',
   'DataVaultKeyRotated',
+  'StrategyCreated',
+  'StrategyCompiled',
+  'StrategyBacktestStarted',
+  'StrategyBacktestCompleted',
+  'StrategyValidationFailed',
+  'StrategyShadowApproved',
+  'StrategyShadowStarted',
+  'StrategyPaperApproved',
+  'StrategyPaperStarted',
+  'StrategyPaperHalted',
+  'StrategyRetired',
+  'CapitalMeshRunStarted',
+  'CapitalMeshThesisCreated',
+  'CapitalMeshCandidateCreated',
+  'CapitalMeshReviewCompleted',
+  'CapitalMeshVetoApplied',
+  'CapitalMeshProposalCreated',
+  'CapitalMeshProposalStale',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -354,6 +374,24 @@ export const EVENT_SCHEMA_REFS = {
   DataVaultExportCreated: 'solstice.data.export.created/1',
   DataVaultDerivationCreated: 'solstice.data.derivation.created/1',
   DataVaultKeyRotated: 'solstice.data.key.rotated/1',
+  StrategyCreated: 'solstice.strategy.created/1',
+  StrategyCompiled: 'solstice.strategy.compiled/1',
+  StrategyBacktestStarted: 'solstice.strategy.backtest.started/1',
+  StrategyBacktestCompleted: 'solstice.strategy.backtest.completed/1',
+  StrategyValidationFailed: 'solstice.strategy.validation.failed/1',
+  StrategyShadowApproved: 'solstice.strategy.shadow.approved/1',
+  StrategyShadowStarted: 'solstice.strategy.shadow.started/1',
+  StrategyPaperApproved: 'solstice.strategy.paper.approved/1',
+  StrategyPaperStarted: 'solstice.strategy.paper.started/1',
+  StrategyPaperHalted: 'solstice.strategy.paper.halted/1',
+  StrategyRetired: 'solstice.strategy.retired/1',
+  CapitalMeshRunStarted: 'solstice.capital_mesh.run.started/1',
+  CapitalMeshThesisCreated: 'solstice.capital_mesh.thesis.created/1',
+  CapitalMeshCandidateCreated: 'solstice.capital_mesh.candidate.created/1',
+  CapitalMeshReviewCompleted: 'solstice.capital_mesh.review.completed/1',
+  CapitalMeshVetoApplied: 'solstice.capital_mesh.veto.applied/1',
+  CapitalMeshProposalCreated: 'solstice.capital_mesh.proposal.created/1',
+  CapitalMeshProposalStale: 'solstice.capital_mesh.proposal.stale/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -509,6 +547,24 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   DataVaultExportCreated: 'data',
   DataVaultDerivationCreated: 'data',
   DataVaultKeyRotated: 'data',
+  StrategyCreated: 'strategy',
+  StrategyCompiled: 'strategy',
+  StrategyBacktestStarted: 'strategy',
+  StrategyBacktestCompleted: 'strategy',
+  StrategyValidationFailed: 'strategy',
+  StrategyShadowApproved: 'strategy',
+  StrategyShadowStarted: 'strategy',
+  StrategyPaperApproved: 'strategy',
+  StrategyPaperStarted: 'strategy',
+  StrategyPaperHalted: 'strategy',
+  StrategyRetired: 'strategy',
+  CapitalMeshRunStarted: 'capital_mesh',
+  CapitalMeshThesisCreated: 'capital_mesh',
+  CapitalMeshCandidateCreated: 'capital_mesh',
+  CapitalMeshReviewCompleted: 'capital_mesh',
+  CapitalMeshVetoApplied: 'capital_mesh',
+  CapitalMeshProposalCreated: 'capital_mesh',
+  CapitalMeshProposalStale: 'capital_mesh',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {
