@@ -266,7 +266,9 @@
         "packages/regulatory-twin",
         "packages/risk",
         "packages/model-registry",
-        "packages/agentic-capital-mesh"
+        "packages/agentic-capital-mesh",
+        "packages/strategy-lab",
+        "packages/personal-data-vault"
       ],
       "codeowners": [
         "@reyesnick54"

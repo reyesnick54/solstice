@@ -329,16 +329,20 @@ current truth (Mesh, Strategy Lab, and PDV are implemented).
 
 Reyn Coin domain tests: **not written** (stop).
 
-Local architecture / unit verification is recorded in the PR after
-`npm test` / `npm run ci` on this branch.
+Local `npm test`: **415 pass, 0 fail**.
+
+Constitution test `CHUNK-26 stops because Consent Ledger and Clean Room
+are not IMPLEMENTED` passed.
 
 ---
 
 ## Z. Exact CI
 
-`main` at `fe31f56` was red (run `31889517354`). This branch repairs
-the parseable architecture baseline and records the stop. GitHub
-Actions on the PR is the CI result for this change.
+`main` at `fe31f56` was red (run `31889517354`).
+
+Local `npm run ci`: **ok** (architectural invariants, extraction
+dry-run, architecture lint, deployment posture, kernel gating, 415
+tests, all registered demos, typecheck, secret scan).
 
 ---
 

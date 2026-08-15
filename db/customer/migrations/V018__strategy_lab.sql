@@ -175,3 +175,6 @@ CREATE TABLE strategy_lab.kill_switch (
   history_immutable BOOLEAN NOT NULL CHECK (history_immutable = TRUE),
   body_canonical TEXT NOT NULL
 );
+
+GRANT USAGE ON SCHEMA strategy_lab TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA strategy_lab TO customer_app;
