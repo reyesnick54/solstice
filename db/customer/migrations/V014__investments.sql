@@ -1,4 +1,4 @@
--- V012 Canonical investment account and portfolio core.
+-- V014 Canonical investment account and portfolio core.
 -- Not a second ledger. Cash remains in canonical journals.
 -- Security quantity is not Money. No broker credentials.
 

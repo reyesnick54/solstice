@@ -1,0 +1,33 @@
+{
+  "chunk": "CHUNK-21",
+  "title": "Agentic Capital Mesh — Multi-Agent Investment Intelligence, Capital Proposal Synthesis, Adversarial Review, Risk/Compliance Vetoes, and Controlled Capital Planning",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "banking-core",
+    "compliance-screening",
+    "treasury",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "investments",
+    "risk",
+    "model-registry"
+  ],
+  "notes": "STOPPED. Protected capabilities risk and model-registry are PLANNED. Chunk 20 has not merged. evaluateChunkRequirements returns mustStop: true. Do not create packages/agentic-capital-mesh or competing trading-agents / investment-agents / hedge-agent / capital-ai packages. See chunk-21-stop.md."
+}

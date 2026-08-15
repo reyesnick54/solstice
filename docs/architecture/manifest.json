@@ -262,7 +262,7 @@
         "packages/personal-economic-graph",
         "packages/treasury",
         "packages/platform",
-        "packages/investments"
+        "packages/investments",
         "packages/regulatory-twin"
       ],
       "codeowners": [
@@ -468,7 +468,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Growth Orchestrator, mandate compiler, and Personal Economic Value Engine. Does not execute money movement or issue Execution Authority."
+      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
     },
     {
       "id": "packages/treasury",
@@ -526,15 +526,6 @@
       "financialStateMutation": true,
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": true,
-      "id": "packages/regulatory-twin",
-      "npmName": "@solstice/regulatory-twin",
-      "path": "packages/regulatory-twin",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
       "allowedDependencies": [
         "packages/domain",
         "packages/money",
@@ -569,6 +560,31 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
+    },
+    {
+      "id": "packages/regulatory-twin",
+      "npmName": "@solstice/regulatory-twin",
+      "path": "packages/regulatory-twin",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     }
   ],
@@ -1401,6 +1417,22 @@
       "protectedSymbols": [
         {
           "name": "InvestmentsService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/brokerage",
+        "packages/portfolio",
+        "packages/trading",
+        "packages/wealth",
+        "packages/securities-core"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
+    },
+    {
       "id": "regulatory-digital-twin",
       "name": "Regulatory Digital Twin",
       "canonicalOwner": "packages/regulatory-twin",
@@ -1418,11 +1450,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/brokerage",
-        "packages/portfolio",
-        "packages/trading",
-        "packages/wealth",
-        "packages/securities-core"
         "packages/regulatory-digital-twin",
         "packages/policy-engine-v2",
         "packages/compliance-simulator-v2",
@@ -1431,7 +1458,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
@@ -1776,10 +1802,6 @@
     "packages/financial-agent",
     "packages/economy-ai",
     "packages/growth-agent",
-    "packages/value-engine",
-    "packages/peve",
-    "packages/economic-score",
-    "packages/personal-value",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1788,11 +1810,19 @@
     "packages/portfolio",
     "packages/trading",
     "packages/wealth",
-    "packages/securities-core"
+    "packages/securities-core",
     "packages/regulatory-digital-twin",
     "packages/policy-engine-v2",
     "packages/compliance-simulator-v2",
-    "packages/kernel-sandbox"
+    "packages/kernel-sandbox",
+    "packages/value-engine",
+    "packages/peve",
+    "packages/economic-score",
+    "packages/personal-value",
+    "packages/trading-agents",
+    "packages/investment-agents",
+    "packages/hedge-agent",
+    "packages/capital-ai"
   ],
   "capabilities": [
     {
@@ -1972,11 +2002,27 @@
       "owner": "packages/investments",
       "protected": true,
       "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
+    },
+    {
       "id": "regulatory-digital-twin",
       "status": "IMPLEMENTED",
       "owner": "packages/regulatory-twin",
       "protected": true,
       "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
+    },
+    {
+      "id": "risk",
+      "status": "PLANNED",
+      "owner": "packages/risk",
+      "protected": true,
+      "notes": "Investment Risk Engine. Reserved for Chunk 20. Not implemented. A Kernel RISK proof is not this bounded context."
+    },
+    {
+      "id": "model-registry",
+      "status": "PLANNED",
+      "owner": "packages/model-registry",
+      "protected": true,
+      "notes": "Model Registry. Reserved for Chunk 20. Not implemented. Material models cannot be approved or invoked by later chunks until this owner exists."
     }
   ],
   "boundedContexts": [
@@ -2115,7 +2161,7 @@
         "services/investments"
       ],
       "protected": true,
-      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Risk Engine remains PLANNED."
+      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Risk Engine remains PLANNED (Chunk 20)."
     },
     {
       "id": "RISK",
@@ -2124,7 +2170,7 @@
         "packages/risk"
       ],
       "protected": true,
-      "notes": "A simulation risk proof exists inside the Kernel. A Risk bounded context does not."
+      "notes": "A simulation risk proof exists inside the Kernel. The investment Risk Engine bounded context does not. Chunk 20 owns packages/risk."
     },
     {
       "id": "MODEL_REGISTRY",
@@ -2132,7 +2178,8 @@
       "reservedPaths": [
         "packages/model-registry"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Reserved for Chunk 20. No model registry owner exists on this tree."
     },
     {
       "id": "AGENTIC_CAPITAL_MESH",
@@ -2140,7 +2187,8 @@
       "reservedPaths": [
         "packages/agentic-capital-mesh"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Reserved for Chunk 21 at packages/agentic-capital-mesh. Requires IMPLEMENTED risk and model-registry. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
     },
     {
       "id": "PERSONAL_DATA_VAULT",

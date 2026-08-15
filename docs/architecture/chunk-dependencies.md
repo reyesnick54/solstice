@@ -83,6 +83,8 @@ Agents and later CI jobs use that result. They do not guess.
 | treasury | IMPLEMENTED | packages/treasury |
 | investments | IMPLEMENTED | packages/investments |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
+| risk | PLANNED | packages/risk |
+| model-registry | PLANNED | packages/model-registry |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -127,6 +129,17 @@ Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
 
+Chunk 17 implements the Personal Economic Value Engine at
+`packages/platform/src/value`. It extends platform ownership rather
+than creating `packages/value-engine`. Capability
+`personal-economic-value-engine` is `IMPLEMENTED`.
+
+Chunk 18 implements the Regulatory Digital Twin at
+`packages/regulatory-twin`. It reuses the existing policy engine and
+Kernel. It does not issue Execution Authority, post journals, or
+activate candidate packs. Capability `regulatory-digital-twin` is
+`IMPLEMENTED`.
+
 Chunk 19 implements the reserved INVESTMENTS bounded context at
 `packages/investments` and `services/investments`. Capability
 `investments` is `IMPLEMENTED`. Bounded context INVESTMENTS is
@@ -134,12 +147,10 @@ Chunk 19 implements the reserved INVESTMENTS bounded context at
 reconciliation only. No live broker. The Risk Engine remains Chunk 20.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
-Chunk 18 implements the Regulatory Digital Twin at
-`packages/regulatory-twin`. It reuses the existing policy engine and
-Kernel. It does not issue Execution Authority, post journals, or
-activate candidate packs. The Personal Economic Value Engine remains
-PARTIAL. Investments remain PLANNED.
-Chunk 17 implements the Personal Economic Value Engine at
-`packages/platform/src/value`. It extends platform ownership rather
-than creating `packages/value-engine`. It does not start the
-Regulatory Digital Twin. The evaluator returns `mustStop: false`.
+
+Chunk 21 (Agentic Capital Mesh) is **stopped**. Protected capabilities
+`risk` and `model-registry` are `PLANNED`. The evaluator returns
+`mustStop: true`. See [`chunk-21-stop.md`](./chunk-21-stop.md).
+Do not create `packages/agentic-capital-mesh` or competing
+`trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
+packages until Chunk 20 lands those owners as `IMPLEMENTED`.
