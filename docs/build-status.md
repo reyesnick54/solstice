@@ -118,6 +118,14 @@ This document describes only what is implemented and tested in this tree.
   See `docs/architecture/chunk-13-stop.md` (historical) and
   `docs/architecture/chunk-13-resume.md`. Capability `treasury` is
   IMPLEMENTED. Bounded context TREASURY is PARTIAL simulation.
+- Regulatory Digital Twin (Chunk 18, `packages/regulatory-twin`):
+  frozen regulatory snapshots, current-vs-candidate policy evaluation,
+  decision-transition matrix, batch impact analysis, invariant suites,
+  product/corridor/card readiness, legal assumption register, and
+  simulation evidence/events. Reuses the existing policy engine.
+  Never issues Execution Authority, posts journals, or activates
+  candidate packs. PEVE impact is hypothetical only. Investments are
+  not implemented.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -132,6 +140,9 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
+- Personal Economic Value Engine. `packages/platform` is shared and
+  marked PARTIAL for that reserved context only. Chunk 18 may estimate
+  hypothetical PEVE impact; it does not implement PEVE.
 - Regulatory Digital Twin and later reserved contexts that remain
   PLANNED. PEVE is IMPLEMENTED on the shared `packages/platform` path.
 - Reserved later bounded contexts that remain PLANNED (PYRAMID,
@@ -176,6 +187,7 @@ npm run demo:acceptance
 npm run demo:growth
 npm run demo:peve
 npm run demo:treasury
+npm run demo:rdt
 npm run typecheck
 npm run scan:secrets
 npm run ci

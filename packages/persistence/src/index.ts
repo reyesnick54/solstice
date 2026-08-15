@@ -59,6 +59,10 @@ export {
 export { loadGrowthState, persistGrowthState } from './growth/pg-growth-store.ts';
 export { loadPeveState, persistPeveState } from './value/pg-peve-store.ts';
 export {
+  loadRegulatoryTwinState,
+  persistRegulatoryTwinState,
+} from './regulatory-twin/pg-regulatory-twin-store.ts';
+export {
   loadTreasurySnapshot,
   persistTreasurySnapshot,
   reserveTreasuryLiquidityPg,

@@ -81,6 +81,7 @@ Agents and later CI jobs use that result. They do not guess.
 | growth-orchestrator | IMPLEMENTED | packages/platform |
 | personal-economic-value-engine | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
+| regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -125,6 +126,11 @@ Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
 
+Chunk 18 implements the Regulatory Digital Twin at
+`packages/regulatory-twin`. It reuses the existing policy engine and
+Kernel. It does not issue Execution Authority, post journals, or
+activate candidate packs. The Personal Economic Value Engine remains
+PARTIAL. Investments remain PLANNED.
 Chunk 17 implements the Personal Economic Value Engine at
 `packages/platform/src/value`. It extends platform ownership rather
 than creating `packages/value-engine`. It does not start the

@@ -29,6 +29,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'growth',
   'economic_value',
   'treasury',
+  'regulatory',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -38,7 +39,6 @@ export const RESERVED_EVENT_NAMESPACES = [
   'data',
   'pyr',
   'exchange',
-  'regulatory',
   'notification',
   'analytics',
 ] as const;
@@ -162,6 +162,11 @@ export const EVENT_TYPE_NAMES = [
   'TreasuryExposureElevated',
   'TreasuryRebalanceProposed',
   'TreasuryReconciliationMismatch',
+  'RegulatoryTwinScenarioCreated',
+  'RegulatoryTwinRunCompleted',
+  'RegulatoryTwinImpactDetected',
+  'RegulatoryTwinInvariantFailed',
+  'RegulatoryTwinReadinessAssessed',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -282,6 +287,11 @@ export const EVENT_SCHEMA_REFS = {
   TreasuryExposureElevated: 'solstice.treasury.exposure.elevated/1',
   TreasuryRebalanceProposed: 'solstice.treasury.rebalance.proposed/1',
   TreasuryReconciliationMismatch: 'solstice.treasury.reconciliation.mismatch/1',
+  RegulatoryTwinScenarioCreated: 'solstice.regulatory.scenario_created/1',
+  RegulatoryTwinRunCompleted: 'solstice.regulatory.run_completed/1',
+  RegulatoryTwinImpactDetected: 'solstice.regulatory.impact_detected/1',
+  RegulatoryTwinInvariantFailed: 'solstice.regulatory.invariant_failed/1',
+  RegulatoryTwinReadinessAssessed: 'solstice.regulatory.readiness_assessed/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -402,6 +412,11 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   TreasuryExposureElevated: 'treasury',
   TreasuryRebalanceProposed: 'treasury',
   TreasuryReconciliationMismatch: 'treasury',
+  RegulatoryTwinScenarioCreated: 'regulatory',
+  RegulatoryTwinRunCompleted: 'regulatory',
+  RegulatoryTwinImpactDetected: 'regulatory',
+  RegulatoryTwinInvariantFailed: 'regulatory',
+  RegulatoryTwinReadinessAssessed: 'regulatory',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

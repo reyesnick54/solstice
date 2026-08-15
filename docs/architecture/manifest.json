@@ -261,7 +261,8 @@
         "packages/identity",
         "packages/personal-economic-graph",
         "packages/treasury",
-        "packages/platform"
+        "packages/platform",
+        "packages/regulatory-twin"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -513,6 +514,32 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/treasury. Not a second treasury model."
+    },
+    {
+      "id": "packages/regulatory-twin",
+      "npmName": "@solstice/regulatory-twin",
+      "path": "packages/regulatory-twin",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     }
   ],
   "components": [
@@ -1329,6 +1356,34 @@
         "@reyesnick54"
       ],
       "notes": "One Treasury model. Customer balances stay on the canonical ledger."
+    },
+    {
+      "id": "regulatory-digital-twin",
+      "name": "Regulatory Digital Twin",
+      "canonicalOwner": "packages/regulatory-twin",
+      "canonicalPath": "packages/regulatory-twin/src/service.ts",
+      "publicInterface": "packages/regulatory-twin/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RegulatoryDigitalTwin",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/regulatory-digital-twin",
+        "packages/policy-engine-v2",
+        "packages/compliance-simulator-v2",
+        "packages/kernel-sandbox"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -1637,7 +1692,11 @@
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
-    "packages/settlement-risk"
+    "packages/settlement-risk",
+    "packages/regulatory-digital-twin",
+    "packages/policy-engine-v2",
+    "packages/compliance-simulator-v2",
+    "packages/kernel-sandbox"
   ],
   "capabilities": [
     {
@@ -1810,6 +1869,13 @@
       "owner": "packages/treasury",
       "protected": true,
       "notes": "Simulation treasury liquidity, prefunding, deterministic routing, concentration, settlement exposure, and Kernel-gated rebalance proposals. Not live banks or regulatory capital."
+    },
+    {
+      "id": "regulatory-digital-twin",
+      "status": "IMPLEMENTED",
+      "owner": "packages/regulatory-twin",
+      "protected": true,
+      "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
     }
   ],
   "boundedContexts": [
@@ -1933,11 +1999,12 @@
     },
     {
       "id": "REGULATORY_DIGITAL_TWIN",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/regulatory-twin"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation/counterfactual layer. Not a second Kernel, policy engine, or jurisdiction-pack store. Never issues Execution Authority or posts journals."
     },
     {
       "id": "INVESTMENTS",

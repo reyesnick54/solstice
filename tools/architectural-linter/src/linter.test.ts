@@ -8,6 +8,7 @@ import { lintSource } from './linter.ts';
 import { lintSecurityBoundary } from './security-guards.ts';
 import { lintRailBoundary } from './rail-guards.ts';
 import { lintGrowthBoundary } from './growth-guards.ts';
+import { lintRegulatoryTwinBoundary } from './regulatory-twin-guards.ts';
 
 describe('architectural linter rules', () => {
   it('catches Account constructed without ExecutionAuthority', () => {
@@ -149,6 +150,31 @@ describe('growth boundary guards', () => {
     const findings = lintGrowthBoundary(dir);
     rmSync(dir, { recursive: true, force: true });
     const hit = findings.find((f) => f.rule === 'growth-posts-ledger');
+    assert.ok(hit);
+  });
+});
+
+describe('regulatory twin boundary guards', () => {
+  it('rejects a competing policy-engine-v2 package', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-rdt-linter-'));
+    mkdirSync(join(dir, 'packages/policy-engine-v2'), { recursive: true });
+    writeFileSync(join(dir, 'packages/policy-engine-v2/index.ts'), 'export const x = 1;\n');
+    const findings = lintRegulatoryTwinBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'competing-regulatory-twin');
+    assert.ok(hit);
+  });
+
+  it('rejects RDT posting a journal', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-rdt-ledger-'));
+    mkdirSync(join(dir, 'packages/regulatory-twin/src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'packages/regulatory-twin/src/evil.ts'),
+      'export function run() {\n  ledger.postJournal(request);\n}\n',
+    );
+    const findings = lintRegulatoryTwinBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'rdt-posts-ledger');
     assert.ok(hit);
   });
 });
