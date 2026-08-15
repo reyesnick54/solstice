@@ -352,10 +352,14 @@ describe('Personal Economic Graph', () => {
     assert.equal(snapshot.value.authoritativeBalance, false);
     assert.equal(snapshot.value.ledgerWins, true);
     assert.ok(snapshot.value.liquidAssetsByCurrency.length >= 1);
+    assert.ok(snapshot.value.monthlyCashFlow.length >= 1);
     for (const flow of snapshot.value.monthlyCashFlow) {
       assert.equal(flow.income.confidence, 'DERIVED');
       assert.ok(flow.netFlow.sourceRefs.length > 0);
     }
+    const usd = snapshot.value.monthlyCashFlow.find((flow) => flow.currency === 'USD');
+    assert.ok(usd);
+    assert.equal(usd.income.amount.minorUnits, '1000000');
   });
 
   it('requires verified ActorContext and subject match', () => {
