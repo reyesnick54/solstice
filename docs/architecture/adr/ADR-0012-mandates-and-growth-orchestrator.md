@@ -33,6 +33,6 @@ may execute money movement.
 ## Consequences
 
 - Do not recreate Compounder, Growth OS, wealth-agent, or mandates-v2.
-- Personal Economic Value Engine remains unimplemented on the shared
-  `packages/platform` path (PARTIAL reserved context).
+- Personal Economic Value Engine is implemented on the shared
+  `packages/platform` path (`packages/platform/src/value`). See ADR-0013.
 - This ADR is not `CONFIRMED_BY_COUNSEL`.

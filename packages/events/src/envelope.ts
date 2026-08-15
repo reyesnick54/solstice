@@ -223,6 +223,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   if (eventType.startsWith('Growth')) {
     return { type: 'growth', id: String(body.planId ?? body.cycleId ?? body.actionId ?? 'unknown') };
   }
+  if (eventType.startsWith('EconomicValue')) {
+    return {
+      type: 'economic_value',
+      id: String(body.snapshotId ?? body.entryId ?? body.dimensionId ?? body.formulaVersion ?? 'unknown'),
+    };
+  }
   if (eventType.startsWith('Treasury')) {
     return {
       type: 'treasury',
@@ -235,6 +241,10 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(
         body.investmentAccountId ?? body.orderId ?? body.fillId ?? body.settlementId ?? body.reconciliationId ?? 'unknown',
       ),
+  if (eventType.startsWith('RegulatoryTwin')) {
+    return {
+      type: 'regulatory',
+      id: String(body.scenarioId ?? body.runId ?? body.assessmentId ?? body.candidateSetId ?? 'unknown'),
     };
   }
   return { type: 'unknown', id: String(body.id ?? eventType) };

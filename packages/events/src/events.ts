@@ -476,6 +476,54 @@ export type InvestmentPositionChangedV1 = VersionedEvent<'InvestmentPositionChan
 export type InvestmentSettlementCompletedV1 = VersionedEvent<'InvestmentSettlementCompleted', 1, InvestmentAuditPayload>;
 export type InvestmentDividendReceivedV1 = VersionedEvent<'InvestmentDividendReceived', 1, InvestmentAuditPayload>;
 export type InvestmentReconciliationMismatchV1 = VersionedEvent<'InvestmentReconciliationMismatch', 1, InvestmentAuditPayload>;
+export type RegulatoryTwinAuditPayload = {
+  readonly scenarioId?: string;
+  readonly runId?: string;
+  readonly category?: string;
+  readonly invariant?: boolean;
+  readonly factSourceKinds?: readonly string[];
+  readonly changed?: boolean;
+  readonly transition?: string;
+  readonly restrictiveness?: string;
+  readonly executionAuthorityIssued?: false;
+  readonly suiteId?: string;
+  readonly totalEvaluated?: number;
+  readonly unchanged?: number;
+  readonly newReview?: number;
+  readonly newBlock?: number;
+  readonly insufficientFacts?: number;
+  readonly candidateSetId?: string;
+  readonly failureCount?: number;
+  readonly assessmentId?: string;
+  readonly kind?: string;
+  readonly state?: string;
+};
+
+export type RegulatoryTwinScenarioCreatedV1 = VersionedEvent<
+  'RegulatoryTwinScenarioCreated',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinRunCompletedV1 = VersionedEvent<
+  'RegulatoryTwinRunCompleted',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinImpactDetectedV1 = VersionedEvent<
+  'RegulatoryTwinImpactDetected',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinInvariantFailedV1 = VersionedEvent<
+  'RegulatoryTwinInvariantFailed',
+  1,
+  RegulatoryTwinAuditPayload
+>;
+export type RegulatoryTwinReadinessAssessedV1 = VersionedEvent<
+  'RegulatoryTwinReadinessAssessed',
+  1,
+  RegulatoryTwinAuditPayload
+>;
 
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
@@ -546,6 +594,55 @@ export type GrowthCycleStartedV1 = VersionedEvent<'GrowthCycleStarted', 1, Growt
 export type GrowthPlanCreatedV1 = VersionedEvent<'GrowthPlanCreated', 1, GrowthAuditPayload>;
 export type GrowthPlanStaleV1 = VersionedEvent<'GrowthPlanStale', 1, GrowthAuditPayload>;
 export type GrowthActionProposedV1 = VersionedEvent<'GrowthActionProposed', 1, GrowthAuditPayload>;
+
+export type EconomicValueAuditPayload = {
+  readonly snapshotId?: string;
+  readonly subjectId?: string;
+  readonly formulaVersion?: string;
+  readonly modelVersion?: string;
+  readonly pegSnapshotId?: string;
+  readonly completeness?: string;
+  readonly compositePoints?: string;
+  readonly dimensionId?: string;
+  readonly kind?: string;
+  readonly points?: string;
+  readonly priorPoints?: string;
+  readonly entryId?: string;
+  readonly sourceEventId?: string;
+  readonly realization?: string;
+  readonly attributionType?: string;
+  readonly minorUnits?: string;
+  readonly currency?: string;
+  readonly groupId?: string;
+  readonly goalCount?: number;
+  readonly lifecycle?: string;
+};
+
+export type EconomicValueSnapshotCreatedV1 = VersionedEvent<
+  'EconomicValueSnapshotCreated',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueDimensionChangedV1 = VersionedEvent<
+  'EconomicValueDimensionChanged',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueAttributionRecordedV1 = VersionedEvent<
+  'EconomicValueAttributionRecorded',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueGoalProgressUpdatedV1 = VersionedEvent<
+  'EconomicValueGoalProgressUpdated',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueModelActivatedV1 = VersionedEvent<
+  'EconomicValueModelActivated',
+  1,
+  EconomicValueAuditPayload
+>;
 
 export type RailAuditPayload = {
   readonly paymentId?: string;
@@ -673,6 +770,11 @@ export type DomainEvent =
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
   | GrowthActionProposedV1
+  | EconomicValueSnapshotCreatedV1
+  | EconomicValueDimensionChangedV1
+  | EconomicValueAttributionRecordedV1
+  | EconomicValueGoalProgressUpdatedV1
+  | EconomicValueModelActivatedV1
   | TreasuryLiquidityReservedV1
   | TreasuryLiquidityReleasedV1
   | TreasuryLiquidityCommittedV1
@@ -694,6 +796,11 @@ export type DomainEvent =
   | InvestmentSettlementCompletedV1
   | InvestmentDividendReceivedV1
   | InvestmentReconciliationMismatchV1;
+  | RegulatoryTwinScenarioCreatedV1
+  | RegulatoryTwinRunCompletedV1
+  | RegulatoryTwinImpactDetectedV1
+  | RegulatoryTwinInvariantFailedV1
+  | RegulatoryTwinReadinessAssessedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

@@ -131,8 +131,18 @@ export type EligibleAccount = {
   readonly accountClass?: string;
 };
 
+export type PevePlanningSignals = {
+  readonly resiliencePoints?: string;
+  readonly opportunityMinorUnits?: string;
+  readonly currency?: string;
+  readonly completeness?: string;
+  readonly mayExecute: false;
+};
+
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
   readonly investmentExecutionImplemented: boolean;
+  readonly investmentExecutionImplemented: false;
+  readonly peve?: PevePlanningSignals;
 };

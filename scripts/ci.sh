@@ -24,8 +24,10 @@ npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
 npm run demo:growth
+npm run demo:peve
 npm run demo:treasury
 npm run demo:investments
+npm run demo:rdt
 
 echo "==> typecheck"
 npm run typecheck

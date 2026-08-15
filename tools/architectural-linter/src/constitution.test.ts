@@ -443,4 +443,33 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-16 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
   });
+
+  it('CHUNK-18 Regulatory Digital Twin capabilities are IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'regulatory-digital-twin').status, 'IMPLEMENTED');
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-18',
+    );
+    assert.ok(declared, 'CHUNK-18 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/policy-engine-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/compliance-simulator-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/kernel-sandbox')), false);
+  it('CHUNK-17 Personal Economic Value Engine is IMPLEMENTED on packages/platform', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-economic-value-engine').status, 'IMPLEMENTED');
+    const peve = manifest.boundedContexts.find((context) => context.id === 'PERSONAL_ECONOMIC_VALUE_ENGINE');
+    assert.ok(peve);
+    assert.equal(peve.status, 'IMPLEMENTED');
+    assert.deepEqual(peve.reservedPaths, ['packages/platform']);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/value-engine')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/peve')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-score')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-value')), false);
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-17',
+    );
+    assert.ok(declared, 'CHUNK-17 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+  });
 });

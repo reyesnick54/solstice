@@ -44,14 +44,14 @@ export function lintSource(file: string, source: string): Finding[] {
     /packages\/treasury\/src\/service\.ts$/.test(rel) ||
     /packages\/investments\/src\/(journals|service)\.ts$/.test(rel);
   const isBalanceOrGrowth =
-    /balances\.ts$/.test(rel) || /growth\.ts$/.test(rel) || /position/.test(rel);
+    /balances\.ts$/.test(rel) || /growth\.ts$/.test(rel) || /position/.test(rel) || /\/value\//.test(rel);
   const isMoneyPath =
     /packages\/money\//.test(rel) ||
     /packages\/ledger\//.test(rel) ||
     /services\/accounts\/src\/(money-movement|banking-operations|balances|available-funds)\.ts$/.test(rel) ||
     /packages\/cards\/src\/(accounting|journals|service)\.ts$/.test(rel) ||
     /packages\/personal-economic-graph\/src\/(cash-flow|recurring|snapshot|service)\.ts$/.test(rel) ||
-    /packages\/platform\/src\/(growth\/(feasibility|candidates|goal-feasibility|ranking)|mandate\/compiler)\.ts$/.test(
+    /packages\/platform\/src\/(growth\/(feasibility|candidates|goal-feasibility|ranking)|mandate\/compiler|value\/(compute|attribution|formula|service))\.ts$/.test(
       rel,
     ) ||
     /packages\/investments\//.test(rel);

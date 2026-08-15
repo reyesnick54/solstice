@@ -263,6 +263,7 @@
         "packages/treasury",
         "packages/platform",
         "packages/investments"
+        "packages/regulatory-twin"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -467,7 +468,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
+      "notes": "Canonical Growth Orchestrator, mandate compiler, and Personal Economic Value Engine. Does not execute money movement or issue Execution Authority."
     },
     {
       "id": "packages/treasury",
@@ -525,6 +526,15 @@
       "financialStateMutation": true,
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": true,
+      "id": "packages/regulatory-twin",
+      "npmName": "@solstice/regulatory-twin",
+      "path": "packages/regulatory-twin",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
       "allowedDependencies": [
         "packages/domain",
         "packages/money",
@@ -559,6 +569,7 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
+      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     }
   ],
   "components": [
@@ -1321,6 +1332,34 @@
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
     },
     {
+      "id": "personal-economic-value-engine",
+      "name": "Personal Economic Value Engine",
+      "canonicalOwner": "packages/platform",
+      "canonicalPath": "packages/platform/src/value/service.ts",
+      "publicInterface": "packages/platform/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PersonalEconomicValueEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/value-engine",
+        "packages/peve",
+        "packages/economic-score",
+        "packages/personal-value"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Explainable economic measurement and attribution. Not a human-worth score, credit score, or execution authority."
+    },
+    {
       "id": "treasury-platform",
       "name": "Canonical treasury platform",
       "canonicalOwner": "packages/treasury",
@@ -1362,6 +1401,19 @@
       "protectedSymbols": [
         {
           "name": "InvestmentsService",
+      "id": "regulatory-digital-twin",
+      "name": "Regulatory Digital Twin",
+      "canonicalOwner": "packages/regulatory-twin",
+      "canonicalPath": "packages/regulatory-twin/src/service.ts",
+      "publicInterface": "packages/regulatory-twin/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RegulatoryDigitalTwin",
           "kind": "class"
         }
       ],
@@ -1371,11 +1423,16 @@
         "packages/trading",
         "packages/wealth",
         "packages/securities-core"
+        "packages/regulatory-digital-twin",
+        "packages/policy-engine-v2",
+        "packages/compliance-simulator-v2",
+        "packages/kernel-sandbox"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
+      "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -1719,6 +1776,10 @@
     "packages/financial-agent",
     "packages/economy-ai",
     "packages/growth-agent",
+    "packages/value-engine",
+    "packages/peve",
+    "packages/economic-score",
+    "packages/personal-value",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1728,6 +1789,10 @@
     "packages/trading",
     "packages/wealth",
     "packages/securities-core"
+    "packages/regulatory-digital-twin",
+    "packages/policy-engine-v2",
+    "packages/compliance-simulator-v2",
+    "packages/kernel-sandbox"
   ],
   "capabilities": [
     {
@@ -1888,6 +1953,13 @@
       "notes": "Mandate compiler and Growth Orchestrator. Does not execute money movement."
     },
     {
+      "id": "personal-economic-value-engine",
+      "status": "IMPLEMENTED",
+      "owner": "packages/platform",
+      "protected": true,
+      "notes": "Personal Economic Value Engine. Explainable measurement and attribution. Does not execute."
+    },
+    {
       "id": "treasury",
       "status": "IMPLEMENTED",
       "owner": "packages/treasury",
@@ -1900,6 +1972,11 @@
       "owner": "packages/investments",
       "protected": true,
       "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
+      "id": "regulatory-digital-twin",
+      "status": "IMPLEMENTED",
+      "owner": "packages/regulatory-twin",
+      "protected": true,
+      "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
     }
   ],
   "boundedContexts": [
@@ -2014,20 +2091,21 @@
     },
     {
       "id": "PERSONAL_ECONOMIC_VALUE_ENGINE",
-      "status": "PARTIAL",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/platform"
       ],
       "protected": true,
-      "notes": "Shares packages/platform with Growth Orchestrator. PEV is not implemented in this chunk."
+      "notes": "Shares packages/platform with Growth Orchestrator. Explainable measurement only. Not a human-worth or credit score."
     },
     {
       "id": "REGULATORY_DIGITAL_TWIN",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/regulatory-twin"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation/counterfactual layer. Not a second Kernel, policy engine, or jurisdiction-pack store. Never issues Execution Authority or posts journals."
     },
     {
       "id": "INVESTMENTS",

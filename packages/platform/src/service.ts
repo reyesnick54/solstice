@@ -44,6 +44,7 @@ import { simulationPolicyPort } from './policy-port.ts';
 import { InMemoryGrowthStore } from './store.ts';
 import type { TreasuryContextPort } from './treasury-port.ts';
 import { absentTreasuryContextPort } from './treasury-port.ts';
+import type { PersonalEconomicValueEngine } from './value/service.ts';
 
 export type GrowthFailure =
   | MandateCompileFailure
@@ -65,6 +66,7 @@ export class GrowthOrchestrator {
   private readonly peg: EconomicGraphService;
   private readonly policy: PolicyControlPort;
   private readonly treasury: TreasuryContextPort;
+  private readonly peve?: PersonalEconomicValueEngine;
   readonly store: InMemoryGrowthStore;
 
   constructor(input: {
@@ -76,6 +78,7 @@ export class GrowthOrchestrator {
     readonly policy?: PolicyControlPort;
     readonly treasury?: TreasuryContextPort;
     readonly store?: InMemoryGrowthStore;
+    readonly peve?: PersonalEconomicValueEngine;
   }) {
     this.clock = input.clock;
     this.events = input.events;
@@ -87,6 +90,9 @@ export class GrowthOrchestrator {
     this.policy = input.policy ?? simulationPolicyPort;
     this.treasury = input.treasury ?? absentTreasuryContextPort;
     this.store = input.store ?? new InMemoryGrowthStore();
+    if (input.peve) {
+      this.peve = input.peve;
+    }
   }
 
   interpretAndCompile(
@@ -328,7 +334,14 @@ export class GrowthOrchestrator {
         rejected.push({ candidate, reasons: result.reasons, detail: result.detail });
       }
     }
-    const ordered = rankCandidates(accepted, mandate);
+    const peveSignals = this.peve?.planningSignals(subjectId);
+    const ordered = rankCandidates(
+      accepted,
+      mandate,
+      peveSignals
+        ? { resiliencePoints: peveSignals.resiliencePoints, mayExecute: false }
+        : undefined,
+    );
     for (const candidate of ordered) {
       this.emit('GrowthActionProposed', {
         actionId: candidate.actionId,
@@ -559,6 +572,18 @@ export class GrowthOrchestrator {
         debtLabels: snapshot.debt.map((item) => item.label),
         goalLabels: snapshot.goals.map((item) => item.label),
         opportunityLabels: snapshot.economicOpportunities.map((item) => item.title),
+        ...(this.peve
+          ? {
+              economicValueDimensionLabels: this.peve
+                .planningSignals(mandate.subjectId)
+                .completeness
+                ? Object.freeze([`completeness:${this.peve.planningSignals(mandate.subjectId).completeness ?? 'unknown'}`])
+                : Object.freeze([]),
+              attributionLabels: Object.freeze(
+                this.peve.attribution.list(mandate.subjectId).map((item) => item.attributionType),
+              ),
+            }
+          : {}),
       },
       claims: {
         actorId,

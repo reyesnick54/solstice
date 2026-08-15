@@ -179,6 +179,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v012.sql, /GRANT USAGE ON SCHEMA investment TO customer_app/);
     assert.match(v012.sql, /investment_valuation_no_yield/);
     assert.equal(/\b(apy|apr)\b/i.test(v012.sql.replace(/--[^\n]*/g, '').replace(/NOT LIKE '%apy%'/gi, '').replace(/NOT LIKE '%APR%'/g, '')), false);
+  it('customer V012 persists PEVE snapshots and attribution without a financial ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v012 = files.find((file) => file.version === 12);
+    assert.ok(v012);
+    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS peve/);
+    assert.match(v012.sql, /CREATE TABLE peve.snapshot/);
+    assert.match(v012.sql, /CREATE TABLE peve.attribution_entry/);
+    assert.match(v012.sql, /peve_attribution_no_principal/);
+    assert.match(v012.sql, /peve_snapshot_no_human_worth/);
+    assert.match(v012.sql, /GRANT USAGE ON SCHEMA peve TO customer_app/);
+    assert.equal(/\b(apy|apr)\b/i.test(v012.sql.replace(/--[^\n]*/g, '')), false);
+    assert.equal(/CREATE TABLE peve\.journal/i.test(v012.sql), false);
   });
 
   it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {
@@ -191,6 +203,21 @@ describe('versioned SQL migrations', () => {
     assert.match(v011.sql, /growth_plan_no_guaranteed_return/);
     assert.match(v011.sql, /GRANT USAGE ON SCHEMA growth TO customer_app/);
     assert.equal(/\b(apy|apr)\b/i.test(v011.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
+  it('customer V012 persists Regulatory Digital Twin artifacts without a second policy store', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v012 = files.find((file) => file.version === 12);
+    assert.ok(v012);
+    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS regulatory_twin/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.snapshot/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.scenario_run/);
+    assert.match(v012.sql, /CREATE TABLE regulatory_twin.candidate_set/);
+    assert.match(v012.sql, /rdt_candidate_no_counsel/);
+    assert.match(v012.sql, /GRANT USAGE ON SCHEMA regulatory_twin TO customer_app/);
+    assert.match(v012.sql, /twin_id LIKE 'rtw_%'/);
+    assert.match(v012.sql, /snapshot_id LIKE 'rsn_%'/);
+    assert.equal(/CREATE TABLE customer\.policy_pack/.test(v012.sql), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

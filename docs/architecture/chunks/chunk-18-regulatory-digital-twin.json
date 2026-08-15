@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-18",
+  "title": "Regulatory Digital Twin — Counterfactual Regulatory Simulation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "compliance-screening",
+    "payments",
+    "fx",
+    "cards",
+    "treasury",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator"
+  ],
+  "notes": "Implements the Regulatory Digital Twin at packages/regulatory-twin. Reuses the existing policy engine. Does not issue Execution Authority, post journals, or activate policy packs. Personal Economic Value Engine remains PARTIAL and is not reimplemented. Investments are not started."
+}

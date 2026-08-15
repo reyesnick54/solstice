@@ -58,6 +58,7 @@ never be two implementations of these systems.
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
 | Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
+| Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -68,6 +69,8 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`.
+`treasury`, `regulatory-twin`.
+`payments`, `cards`, `personal-economic-graph`, `treasury`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`.
@@ -81,6 +84,9 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 `packages/contracts` on this tree. `packages/platform` is the canonical
 Growth Orchestrator owner. The Personal Economic Value Engine is not
 implemented; it shares that reserved path as PARTIAL.
+`packages/regulatory-twin` is the canonical Regulatory Digital Twin.
+Growth Orchestrator owner. The Personal Economic Value Engine is
+implemented in `packages/platform/src/value` on that same reserved path.
 
 ### Action types
 
@@ -259,7 +265,8 @@ In-memory maps remain the default for unit tests:
 - `EvidenceVault` records
 - `DomainEventLog` events
 - `AccountRegister`
-- `GrowthAttributionLedger` entries (principal movements must not write)
+- `GrowthAttributionLedger` entries (principal movements must not write;
+  PEVE economic-benefit attribution lives in `packages/platform/src/value`)
 - `CustomerStore`, `AccountStore`, `LegalEntityStore`, `ProductStore`
 - `AccountsService` intent-id idempotency map
 
@@ -378,6 +385,7 @@ must be added to `manifest.json` before they appear on disk.
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/regulatory-twin` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
@@ -390,6 +398,7 @@ must be added to `manifest.json` before they appear on disk.
 | `services/treasury` | `packages/treasury` |
 | `packages/investments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `services/investments` | `packages/investments` |
+| `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -534,6 +543,7 @@ flowchart BT
   platform --> security
   treasury["packages/treasury"]
   treasurySvc["services/treasury"]
+  rdt["packages/regulatory-twin"]
   treasury --> domain
   treasury --> money
   treasury --> permissions
@@ -561,6 +571,16 @@ flowchart BT
   investments --> security
   investmentsSvc --> investments
   persistence --> investments
+  persistence --> rdt
+  rdt --> domain
+  rdt --> money
+  rdt --> permissions
+  rdt --> config
+  rdt --> kernel
+  rdt --> evidence
+  rdt --> events
+  rdt --> identity
+  rdt --> security
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -602,6 +622,8 @@ phase is absent.
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
+| REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
+| PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
 | REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |

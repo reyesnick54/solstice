@@ -76,3 +76,20 @@ export function explainPlan(input: {
     createdAt: input.now,
   });
 }
+
+export function explainEconomicValue(input: {
+  readonly subjectId: string;
+  readonly valueSummary: string;
+  readonly now: UtcInstant;
+}): AgentProposal {
+  return freezeProposal({
+    proposalId: deterministicProposalId('EXPLAIN_VALUE', input.subjectId),
+    kind: 'VALUE_EXPLANATION',
+    subjectId: input.subjectId,
+    title: 'Economic value explanation',
+    rationale: `${input.valueSummary} The agent translates PEVE output; it does not calculate authoritative values or set scores.`,
+    relatedRefs: Object.freeze([]),
+    executable: false,
+    createdAt: input.now,
+  });
+}

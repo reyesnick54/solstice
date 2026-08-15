@@ -88,6 +88,7 @@ function policyRank(candidate: GrowthActionCandidate): number {
 export function rankCandidates(
   candidates: readonly GrowthActionCandidate[],
   mandate: CompiledEconomicMandate,
+  peve?: { readonly resiliencePoints?: string; readonly mayExecute: false },
 ): readonly GrowthActionCandidate[] {
   const preferFees = mandate.softPreferences.some((item) => item.kind === 'PREFER_LOWER_FEES');
   const preferDebt = mandate.softPreferences.some((item) => item.kind === 'PREFER_DEBT_REDUCTION');
@@ -100,6 +101,14 @@ export function rankCandidates(
     const liquidity = liquidityFirst(left) - liquidityFirst(right);
     if (liquidity !== 0) {
       return liquidity;
+    }
+    const resilience = BigInt(peve?.resiliencePoints ?? '10000');
+    if (resilience < 4000n) {
+      const leftReserve = left.action === 'ALLOCATE_TO_EMERGENCY_RESERVE' ? 1 : 0;
+      const rightReserve = right.action === 'ALLOCATE_TO_EMERGENCY_RESERVE' ? 1 : 0;
+      if (leftReserve !== rightReserve) {
+        return rightReserve - leftReserve;
+      }
     }
     const priority = userPriority(left, mandate) - userPriority(right, mandate);
     if (priority !== 0) {

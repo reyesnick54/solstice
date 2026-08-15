@@ -85,6 +85,14 @@ This document describes only what is implemented and tested in this tree.
   ActionIntent bridge. Does not post journals or issue Execution
   Authority. Investment candidates may now identify a simulation
   investment account or paper review; they still cannot auto-trade.
+  Authority. Investment execution remains unimplemented.
+- Personal Economic Value Engine (Chunk 17, `packages/platform/src/value`):
+  multi-dimensional EconomicValueVector, immutable snapshots, versioned
+  formulas, Growth Attribution Ledger (non-financial), realized vs
+  projected separation, counterfactual baselines, double-count
+  prevention, resilience/capacity/goal-progress views, and read-only
+  agent/Growth access. Not a human-worth score, credit score, or
+  execution authority. No money movement.
 - Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
   (Chunk 12, still inside `packages/cards`): provider-neutral wallet
   port with Apple-style and Google-style simulation adapters,
@@ -124,6 +132,14 @@ This document describes only what is implemented and tested in this tree.
   No live broker, margin, leverage, shorting, or derivatives.
   Capability `investments` is IMPLEMENTED. Bounded context INVESTMENTS
   is PARTIAL simulation. Risk Engine remains Chunk 20.
+- Regulatory Digital Twin (Chunk 18, `packages/regulatory-twin`):
+  frozen regulatory snapshots, current-vs-candidate policy evaluation,
+  decision-transition matrix, batch impact analysis, invariant suites,
+  product/corridor/card readiness, legal assumption register, and
+  simulation evidence/events. Reuses the existing policy engine.
+  Never issues Execution Authority, posts journals, or activates
+  candidate packs. PEVE impact is hypothetical only. Investments are
+  not implemented.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -139,7 +155,10 @@ This document describes only what is implemented and tested in this tree.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
 - Personal Economic Value Engine. `packages/platform` is shared and
-  marked PARTIAL for that reserved context only.
+  marked PARTIAL for that reserved context only. Chunk 18 may estimate
+  hypothetical PEVE impact; it does not implement PEVE.
+- Regulatory Digital Twin and later reserved contexts that remain
+  PLANNED. PEVE is IMPLEMENTED on the shared `packages/platform` path.
 - Reserved later bounded contexts that remain PLANNED (PYRAMID,
   SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
   FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners. The Personal
@@ -147,6 +166,12 @@ This document describes only what is implemented and tested in this tree.
   IMPLEMENTED as non-executing intelligence layers. Live rails, live
   issuing, live wallet/SoftPOS certification, live treasury, and live
   securities trading remain later. The investment Risk Engine is Chunk 20.
+  FX, CARDS, and TREASURY are PARTIAL simulation owners. The Personal
+  Economic Graph, Personal Economy Agent, Growth Orchestrator, and
+  Personal Economic Value Engine are IMPLEMENTED as non-executing
+  intelligence layers. Live rails, live
+  issuing, live wallet/SoftPOS certification, and live treasury remain
+  later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -179,7 +204,9 @@ npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
 npm run demo:growth
+npm run demo:peve
 npm run demo:treasury
+npm run demo:rdt
 npm run typecheck
 npm run scan:secrets
 npm run ci

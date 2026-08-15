@@ -1,0 +1,30 @@
+{
+  "chunk": "CHUNK-17",
+  "title": "Personal Economic Value Engine — Economic Value Vector, Growth Attribution, Counterfactual Value, Economic Resilience, Opportunity Capacity, and Explainable Valuation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "compliance-screening",
+    "banking-core",
+    "payments",
+    "fx",
+    "cards",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "treasury",
+    "personal-economic-value-engine"
+  ],
+  "notes": "Implements PEVE inside packages/platform. Does not start the Regulatory Digital Twin. Does not execute money movement."
+}
