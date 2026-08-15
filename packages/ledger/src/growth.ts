@@ -9,17 +9,15 @@ export type GrowthAttributionEntry = {
 };
 
 /**
- * Growth Attribution Ledger.
+ * Banking Growth Attribution Ledger — principal-movement guard.
  *
  * Records genuine economic improvement only: interest, yield, or mark-to-market.
+ * Principal deposit, withdrawal, and transfer must not write here.
  *
- * A principal deposit is inbound customer funds. It increases a customer
- * liability and a simulation source asset by the same amount. That is NOT
- * economic improvement and must not be recorded here.
- *
- * A withdrawal is a principal return, not a loss attribution.
- * An internal transfer moves principal between the same owner's accounts;
- * that is not growth either.
+ * Measurable economic-benefit attribution (fee avoided, subscription
+ * eliminated, realized vs projected) is owned by the Personal Economic
+ * Value Engine in `packages/platform/src/value`. That PEVE ledger is not
+ * a financial journal and cannot move principal.
  */
 export class GrowthAttributionLedger {
   private readonly entries: GrowthAttributionEntry[] = [];

@@ -27,7 +27,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'acceptance',
   'mandate',
   'growth',
-
+  'economic_value',
   'treasury',
 ] as const;
 
@@ -147,6 +147,11 @@ export const EVENT_TYPE_NAMES = [
   'GrowthPlanCreated',
   'GrowthPlanStale',
   'GrowthActionProposed',
+  'EconomicValueSnapshotCreated',
+  'EconomicValueDimensionChanged',
+  'EconomicValueAttributionRecorded',
+  'EconomicValueGoalProgressUpdated',
+  'EconomicValueModelActivated',
 
   'TreasuryLiquidityReserved',
   'TreasuryLiquidityReleased',
@@ -262,6 +267,11 @@ export const EVENT_SCHEMA_REFS = {
   GrowthPlanCreated: 'solstice.growth.plan_created/1',
   GrowthPlanStale: 'solstice.growth.plan_stale/1',
   GrowthActionProposed: 'solstice.growth.action_proposed/1',
+  EconomicValueSnapshotCreated: 'solstice.economic_value.snapshot_created/1',
+  EconomicValueDimensionChanged: 'solstice.economic_value.dimension_changed/1',
+  EconomicValueAttributionRecorded: 'solstice.economic_value.attribution_recorded/1',
+  EconomicValueGoalProgressUpdated: 'solstice.economic_value.goal_progress_updated/1',
+  EconomicValueModelActivated: 'solstice.economic_value.model_activated/1',
 
   TreasuryLiquidityReserved: 'solstice.treasury.liquidity.reserved/1',
   TreasuryLiquidityReleased: 'solstice.treasury.liquidity.released/1',
@@ -377,6 +387,11 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   GrowthPlanCreated: 'growth',
   GrowthPlanStale: 'growth',
   GrowthActionProposed: 'growth',
+  EconomicValueSnapshotCreated: 'economic_value',
+  EconomicValueDimensionChanged: 'economic_value',
+  EconomicValueAttributionRecorded: 'economic_value',
+  EconomicValueGoalProgressUpdated: 'economic_value',
+  EconomicValueModelActivated: 'economic_value',
 
   TreasuryLiquidityReserved: 'treasury',
   TreasuryLiquidityReleased: 'treasury',

@@ -108,3 +108,75 @@ export {
   absentTreasuryContextPort,
   type TreasuryContextPort,
 } from './treasury-port.ts';
+export {
+  authorizeViewEconomicValue,
+  type PeveAccessFailure,
+} from './value/access.ts';
+export { GrowthAttributionLedger, freezeBaseline } from './value/attribution.ts';
+export {
+  FORMULA_V1,
+  FORMULA_V2,
+  FormulaRegistry,
+  MODEL_V1,
+  MODEL_V2,
+} from './value/formula.ts';
+export {
+  asAttributionEntryId,
+  asAttributionGroupId,
+  asAttributionPeriodId,
+  asCounterfactualBaselineId,
+  asDataContributionReferenceId,
+  asEconomicValueDimensionId,
+  asEconomicValueModelVersion,
+  asEconomicValueProfileId,
+  asEconomicValueSnapshotId,
+  asIndexPoints,
+  asValuationFormulaVersion,
+  type AttributionEntryId,
+  type AttributionGroupId,
+  type AttributionPeriodId,
+  type CounterfactualBaselineId,
+  type DataContributionReferenceId,
+  type EconomicValueDimensionId,
+  type EconomicValueModelVersion,
+  type EconomicValueProfileId,
+  type EconomicValueSnapshotId,
+  type IndexPoints,
+  type ValuationFormulaVersion,
+} from './value/ids.ts';
+export { PEVE_ISOLATION } from './value/isolation.ts';
+export { PersonalEconomicValueEngine, type PeveFailure } from './value/service.ts';
+export { InMemoryPeveStore, type PeveStoreSnapshot } from './value/store.ts';
+export {
+  ATTRIBUTION_TYPES,
+  DATA_COMPLETENESS_STATES,
+  ECONOMIC_VALUE_DIMENSIONS,
+  FORMULA_LIFECYCLES,
+  PEVE_NOT_CREDIT_SCORE,
+  PEVE_NOT_EXECUTION,
+  PEVE_NOT_HUMAN_WORTH,
+  PROTECTED_TRAIT_KEYS,
+  VALUE_REALIZATION_STATES,
+  type AttributionType,
+  type DataCompletenessState,
+  type EconomicValueDimensionKind,
+  type FormulaLifecycle,
+  type ValueRealizationState,
+} from './value/taxonomy.ts';
+export type {
+  AttributionEntry,
+  CompositeIndicator,
+  CounterfactualBaseline,
+  DataContributionReference,
+  DimensionExplanation,
+  DimensionResult,
+  EconomicValueSnapshot,
+  EconomicValueVector,
+  FormulaModel,
+  FxValuationContext,
+  IndexMeasure,
+  ModelComparison,
+  MoneyMeasure,
+  OpportunityCapacityView,
+} from './value/types.ts';
+export type { PevePlanningSignals } from './growth/types.ts';

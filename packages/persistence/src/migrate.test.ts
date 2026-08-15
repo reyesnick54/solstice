@@ -165,6 +165,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V012 persists PEVE snapshots and attribution without a financial ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v012 = files.find((file) => file.version === 12);
+    assert.ok(v012);
+    assert.match(v012.sql, /CREATE SCHEMA IF NOT EXISTS peve/);
+    assert.match(v012.sql, /CREATE TABLE peve.snapshot/);
+    assert.match(v012.sql, /CREATE TABLE peve.attribution_entry/);
+    assert.match(v012.sql, /peve_attribution_no_principal/);
+    assert.match(v012.sql, /peve_snapshot_no_human_worth/);
+    assert.match(v012.sql, /GRANT USAGE ON SCHEMA peve TO customer_app/);
+    assert.equal(/\b(apy|apr)\b/i.test(v012.sql.replace(/--[^\n]*/g, '')), false);
+    assert.equal(/CREATE TABLE peve\.journal/i.test(v012.sql), false);
+  });
+
   it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v011 = files.find((file) => file.version === 11);

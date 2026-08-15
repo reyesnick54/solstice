@@ -14,6 +14,8 @@ export type AgentEconomicContext = {
   readonly debtLabels: readonly string[];
   readonly goalLabels: readonly string[];
   readonly opportunityLabels: readonly string[];
+  readonly economicValueDimensionLabels?: readonly string[];
+  readonly attributionLabels?: readonly string[];
 };
 
 export type AgentCapabilityClaims = {

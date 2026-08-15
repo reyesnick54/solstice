@@ -84,6 +84,13 @@ This document describes only what is implemented and tested in this tree.
   GrowthPlans, event-driven staleness, and a non-auto-executing
   ActionIntent bridge. Does not post journals or issue Execution
   Authority. Investment execution remains unimplemented.
+- Personal Economic Value Engine (Chunk 17, `packages/platform/src/value`):
+  multi-dimensional EconomicValueVector, immutable snapshots, versioned
+  formulas, Growth Attribution Ledger (non-financial), realized vs
+  projected separation, counterfactual baselines, double-count
+  prevention, resilience/capacity/goal-progress views, and read-only
+  agent/Growth access. Not a human-worth score, credit score, or
+  execution authority. No money movement.
 - Simulated mobile wallet provisioning and merchant SoftPOS / Tap-to-Pay
   (Chunk 12, still inside `packages/cards`): provider-neutral wallet
   port with Apple-style and Google-style simulation adapters,
@@ -125,13 +132,14 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Personal Economic Value Engine. `packages/platform` is shared and
-  marked PARTIAL for that reserved context only.
+- Regulatory Digital Twin and later reserved contexts that remain
+  PLANNED. PEVE is IMPLEMENTED on the shared `packages/platform` path.
 - Reserved later bounded contexts that remain PLANNED (PYRAMID,
   SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
   FX, CARDS, and TREASURY are PARTIAL simulation owners. The Personal
-  Economic Graph, Personal Economy Agent, and Growth Orchestrator are
-  IMPLEMENTED as non-executing intelligence layers. Live rails, live
+  Economic Graph, Personal Economy Agent, Growth Orchestrator, and
+  Personal Economic Value Engine are IMPLEMENTED as non-executing
+  intelligence layers. Live rails, live
   issuing, live wallet/SoftPOS certification, and live treasury remain
   later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
@@ -166,6 +174,7 @@ npm run demo:peg
 npm run demo:wallet
 npm run demo:acceptance
 npm run demo:growth
+npm run demo:peve
 npm run demo:treasury
 npm run typecheck
 npm run scan:secrets
