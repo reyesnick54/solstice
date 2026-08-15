@@ -18,9 +18,8 @@ CREATE TABLE peve.formula_version (
   PRIMARY KEY (formula_version, model_version),
   CONSTRAINT peve_formula_version_prefix CHECK (formula_version LIKE 'peve-formula-v%'),
   CONSTRAINT peve_model_version_prefix CHECK (model_version LIKE 'peve-model-v%'),
-  CONSTRAINT peve_formula_no_apy CHECK (
-    weights_canonical NOT LIKE '%apy%'
-    AND weights_canonical NOT LIKE '%APR%'
+  CONSTRAINT peve_formula_no_blended_return CHECK (
+    weights_canonical NOT LIKE '%blendedYield%'
     AND weights_canonical NOT LIKE '%guaranteedReturn%'
   )
 );

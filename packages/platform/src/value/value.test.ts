@@ -173,7 +173,7 @@ describe('Personal Economic Value Engine', () => {
       attributionType: 'FEE_AVOIDED',
       realization: 'PROJECTED',
       calculationMethod: 'realized_month * 12',
-      confidence: 'ESTIMATED',
+      confidence: 'INFERRED',
       formulaVersion: FORMULA_V1,
       recordedAt: NOW,
     });
@@ -340,7 +340,7 @@ describe('Personal Economic Value Engine', () => {
       purpose: 'authorized usage analytics',
       estimatedValue: { minorUnits: '500', currency: 'USD' },
       estimatedLabeled: true,
-      provenance: 'ESTIMATED',
+      provenance: 'INFERRED',
       guaranteedCompensation: true,
     });
     assert.equal(bad.ok, false);
@@ -349,7 +349,7 @@ describe('Personal Economic Value Engine', () => {
       purpose: 'authorized usage analytics',
       estimatedValue: { minorUnits: '500', currency: 'USD' },
       estimatedLabeled: true,
-      provenance: 'ESTIMATED',
+      provenance: 'INFERRED',
     });
     assert.equal(okContribution.ok, true);
     if (okContribution.ok) {

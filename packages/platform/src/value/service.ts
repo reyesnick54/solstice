@@ -458,10 +458,14 @@ export class PersonalEconomicValueEngine {
     const summary = explanations.value
       .map((item) => `${item.dimension.kind}=${item.value.points}${item.change ? ` change=${item.change}` : ''}`)
       .join('; ');
-    return this.agent.explainEconomicValue(actor, {
+    const explained = this.agent.explainEconomicValue(actor, {
       subjectId,
       valueSummary: `${PEVE_NOT_HUMAN_WORTH} Completeness=${snapshot.value.completeness}. ${summary}`,
     });
+    if (!explained.ok) {
+      return err({ code: 'AI_CANNOT_SET_SCORE', message: explained.error.message });
+    }
+    return explained;
   }
 
   refuseAiScore(_actor: unknown, _points: string): Result<never, PeveFailure> {

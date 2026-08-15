@@ -128,7 +128,14 @@ export class FormulaRegistry {
     if (this.activeKey && this.activeKey !== key) {
       const previous = this.models.get(this.activeKey);
       if (previous && previous.lifecycle === 'ACTIVE') {
-        this.models.set(this.activeKey, Object.freeze({ ...previous, lifecycle: 'RETIRED', retiredAt: at }));
+        this.models.set(
+          this.activeKey,
+          Object.freeze({
+            ...previous,
+            lifecycle: 'RETIRED' as FormulaLifecycle,
+            ...(at ? { retiredAt: at } : {}),
+          }),
+        );
       }
     }
     const next: FormulaModel = Object.freeze({
@@ -151,7 +158,7 @@ export class FormulaRegistry {
     if (!model) {
       return err({ code: 'FORMULA_NOT_FOUND', message: `unknown formula ${key}` });
     }
-    const next = Object.freeze({ ...model, lifecycle: 'RETIRED' as FormulaLifecycle, retiredAt: at });
+    const next = Object.freeze({ ...model, lifecycle: 'RETIRED' as FormulaLifecycle, ...(at ? { retiredAt: at } : {}) });
     this.models.set(key, next);
     if (this.activeKey === key) {
       this.activeKey = undefined;

@@ -320,7 +320,7 @@ async function main(): Promise<void> {
     attributionType: 'FEE_AVOIDED',
     realization: 'PROJECTED',
     calculationMethod: 'realized_month * 12',
-    confidence: 'ESTIMATED',
+    confidence: 'INFERRED',
     formulaVersion: FORMULA_V1,
     recordedAt: NOW,
   });
