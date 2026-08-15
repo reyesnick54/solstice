@@ -31,6 +31,12 @@ export type CardWorld = {
   readonly actorId: string;
   readonly processorActorId: string;
   readonly operationsActorId: string;
+  readonly catalog: {
+    readonly customers: SimulationRuntime['customers'];
+    readonly accounts: SimulationRuntime['accounts'];
+    readonly products: ReturnType<ReturnType<typeof seedSimulationCatalog>['products']['asCatalog']>;
+    readonly legalEntities: ReturnType<typeof seedSimulationCatalog>['legalEntities'];
+  };
 };
 
 export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWorld {
@@ -173,6 +179,12 @@ export function createCardWorld(suffix: string, depositMinor = 100_000n): CardWo
     actorId,
     processorActorId,
     operationsActorId,
+    catalog: {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
   };
 }
 

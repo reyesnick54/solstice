@@ -1,25 +1,18 @@
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { createCardWorld, requestCardIntent, signedCallback } from '../../../tests/card-world.ts';
-import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { WalletService } from './wallet/service.ts';
 import { signWalletCallback } from './wallet/callback.ts';
 import type { WalletProvider } from './wallet/token.ts';
 
 function walletFor(world: ReturnType<typeof createCardWorld>) {
-  const seeded = seedSimulationCatalog();
   return new WalletService({
     kernel: world.runtime.kernel,
     issuer: world.runtime.issuer,
     evidence: world.runtime.evidence,
     events: world.runtime.events,
     clock: world.clock,
-    catalog: {
-      customers: world.runtime.customers,
-      accounts: world.runtime.accounts,
-      products: seeded.products.asCatalog(),
-      legalEntities: seeded.legalEntities,
-    },
+    catalog: world.catalog,
     identity: world.runtime.identity.service,
     secrets: world.secrets,
     cards: world.cards.store,
@@ -213,10 +206,10 @@ async function runProvider(provider: WalletProvider): Promise<void> {
       processorReference: `auth_${suffix}`,
     }),
   );
-  if (auth.outcome !== 'OK' || auth.value.decision !== 'DECLINE' || auth.value.reasonCode !== 'CARD_FROZEN') {
+  if (auth.outcome !== 'REJECTED' || auth.code !== 'CARD_FROZEN') {
     throw new Error('frozen card did not block authorization');
   }
-  console.log(`    decision=${auth.value.decision} reason=${auth.value.reasonCode}`);
+  console.log(`    decision=${auth.outcome} reason=${auth.code}`);
 
   console.log('12. Device loss suspends token.');
   world.runtime.identity.service.setDeviceTrust(device.deviceId, 'BLOCKED');

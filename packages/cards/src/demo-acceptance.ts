@@ -3,13 +3,11 @@ import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
 import { Money } from '../../money/src/money.ts';
 import { createCardWorld } from '../../../tests/card-world.ts';
-import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { AcceptanceService } from './acceptance/service.ts';
 import { signAcceptanceCallback } from './acceptance/callback.ts';
 
 async function main(): Promise<void> {
   const world = createCardWorld('demo_softpos', 0n);
-  const seeded = seedSimulationCatalog();
   const acceptance = new AcceptanceService({
     kernel: world.runtime.kernel,
     issuer: world.runtime.issuer,
@@ -17,12 +15,7 @@ async function main(): Promise<void> {
     evidence: world.runtime.evidence,
     events: world.runtime.events,
     clock: world.clock,
-    catalog: {
-      customers: world.runtime.customers,
-      accounts: world.runtime.accounts,
-      products: seeded.products.asCatalog(),
-      legalEntities: seeded.legalEntities,
-    },
+    catalog: world.catalog,
     identity: world.runtime.identity.service,
     secrets: world.secrets,
     operationsActorId: world.operationsActorId,

@@ -5,14 +5,12 @@ import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { Money } from '../../money/src/money.ts';
 import { createCardWorld } from '../../../tests/card-world.ts';
-import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { AcceptanceService } from './acceptance/service.ts';
 import { signAcceptanceCallback, type AcceptanceCallbackEnvelope } from './acceptance/callback.ts';
 import { evaluateMerchantEligibility } from './acceptance/eligibility.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
 
 function acceptanceService(world: ReturnType<typeof createCardWorld>, feeMinor = 150n) {
-  const seeded = seedSimulationCatalog();
   return new AcceptanceService({
     kernel: world.runtime.kernel,
     issuer: world.runtime.issuer,
@@ -20,12 +18,7 @@ function acceptanceService(world: ReturnType<typeof createCardWorld>, feeMinor =
     evidence: world.runtime.evidence,
     events: world.runtime.events,
     clock: world.clock,
-    catalog: {
-      customers: world.runtime.customers,
-      accounts: world.runtime.accounts,
-      products: seeded.products.asCatalog(),
-      legalEntities: seeded.legalEntities,
-    },
+    catalog: world.catalog,
     identity: world.runtime.identity.service,
     secrets: world.secrets,
     operationsActorId: world.operationsActorId,

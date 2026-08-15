@@ -10,7 +10,6 @@ import { canTransitionDevicePaymentToken } from './wallet/token.ts';
 import { evaluateWalletEligibility } from './wallet/eligibility.ts';
 import { asDeviceId } from '../../identity/src/ids.ts';
 import type { ProvisionCardToWalletIntent } from '../../permissions/src/action-types.ts';
-import { seedSimulationCatalog } from '../../../services/accounts/src/catalog.ts';
 import { assertNoSensitiveCardData } from './pci-boundary.ts';
 
 function trustedDevice(world: ReturnType<typeof createCardWorld>) {
@@ -23,19 +22,13 @@ function trustedDevice(world: ReturnType<typeof createCardWorld>) {
 }
 
 function walletService(world: ReturnType<typeof createCardWorld>) {
-  const seeded = seedSimulationCatalog();
   return new WalletService({
     kernel: world.runtime.kernel,
     issuer: world.runtime.issuer,
     evidence: world.runtime.evidence,
     events: world.runtime.events,
     clock: world.clock,
-    catalog: {
-      customers: world.runtime.customers,
-      accounts: world.runtime.accounts,
-      products: seeded.products.asCatalog(),
-      legalEntities: seeded.legalEntities,
-    },
+    catalog: world.catalog,
     identity: world.runtime.identity.service,
     secrets: world.secrets,
     cards: world.cards.store,
@@ -274,10 +267,9 @@ describe('wallet provisioning', () => {
         processorReference: 'auth_frozen_wallet',
       }),
     );
-    assert.equal(auth.outcome, 'OK');
-    if (auth.outcome === 'OK') {
-      assert.equal(auth.value.decision, 'DECLINE');
-      assert.equal(auth.value.reasonCode, 'CARD_FROZEN');
+    assert.equal(auth.outcome, 'REJECTED');
+    if (auth.outcome === 'REJECTED') {
+      assert.equal(auth.code, 'CARD_FROZEN');
     }
   });
 
