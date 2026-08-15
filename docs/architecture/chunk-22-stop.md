@@ -114,6 +114,10 @@ Root causes are merge artifacts from parallel PRs `#39` (PEVE),
    (`V012__peve.sql`, `V012__regulatory_twin.sql`,
    `V012__investments.sql`). `listMigrationFiles` requires
    contiguous versions.
+7. `packages/agent/src/service.ts` mashed `explainPortfolio` and
+   `explainEconomicValue` into one invalid method.
+8. `packages/platform/src/growth/types.ts` declared
+   `investmentExecutionImplemented` twice (`boolean` and `false`).
 
 Those repairs are merge-artifact restoration, not Strategy Lab.
 
@@ -376,11 +380,30 @@ postgres migrate: FAILURE
 CI pipeline: FAILURE
 ```
 
-Post-change CI on this branch is recorded after `npm run ci` in
-the pull request. `ENVIRONMENT` remains `simulation`. Every
-`LIVE_*` flag remains `false`. Persistence integration
-(`npm run test:persistence`) is a separate GitHub Actions job and
-was not folded into the unit-test pipeline.
+Post-change CI on this branch (`npm run ci`):
+
+```
+architectural invariants: ok
+extraction dry-run: ok (19 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (58 registered paths, all Kernel-authorized)
+tests: 364 pass, 0 fail
+  including: CHUNK-22 must stop while Risk, Model Registry, and Agentic Capital Mesh are PLANNED
+  including: CHUNK-19 investment portfolio core capabilities are IMPLEMENTED
+  including: customer V012 PEVE / V013 RDT / V014 investments are contiguous
+demo: ok
+cards / peg / wallet / acceptance / growth / peve / treasury /
+investments / rdt demos: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
+`false`. Persistence integration (`npm run test:persistence`) is a
+separate GitHub Actions job and was not folded into the unit-test
+pipeline.
 
 ---
 

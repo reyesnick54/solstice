@@ -142,7 +142,6 @@ export type PevePlanningSignals = {
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
-  readonly investmentExecutionImplemented: boolean;
   readonly investmentExecutionImplemented: false;
   readonly peve?: PevePlanningSignals;
 };

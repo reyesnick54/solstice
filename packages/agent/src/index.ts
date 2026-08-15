@@ -1,4 +1,4 @@
-export { explainEconomicValue, explainGoals, explainPlan } from './explain.ts';
+export { explainEconomicValue, explainGoals, explainPerformance, explainPlan, explainPortfolio } from './explain.ts';
 export {
   asAgentInterpretationId,
   asAgentProposalId,
