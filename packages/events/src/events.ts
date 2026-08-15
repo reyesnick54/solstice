@@ -353,6 +353,44 @@ export type ComplianceCaseDecidedV1 = VersionedEvent<'ComplianceCaseDecided', 1,
 export type ComplianceAlertCreatedV1 = VersionedEvent<'ComplianceAlertCreated', 1, ComplianceAuditPayload>;
 export type FraudRiskEvaluatedV1 = VersionedEvent<'FraudRiskEvaluated', 1, ComplianceAuditPayload>;
 
+export type CardAuditPayload = {
+  readonly cardId?: string;
+  readonly customerId?: string;
+  readonly programId?: string;
+  readonly processorCardRef?: string;
+  readonly formFactor?: string;
+  readonly status?: string;
+  readonly authorizationId?: string;
+  readonly holdId?: string | null;
+  readonly amountMinorUnits?: string;
+  readonly currency?: string;
+  readonly reasonCode?: string;
+  readonly externalReason?: string;
+  readonly clearingId?: string;
+  readonly scenario?: string;
+  readonly journalId?: string;
+  readonly settlementId?: string | null;
+  readonly reconciliation?: string;
+  readonly refundId?: string;
+  readonly disputeId?: string;
+  readonly transactionRef?: string;
+  readonly outcome?: string;
+};
+
+export type CardCreatedV1 = VersionedEvent<'CardCreated', 1, CardAuditPayload>;
+export type CardActivatedV1 = VersionedEvent<'CardActivated', 1, CardAuditPayload>;
+export type CardFrozenV1 = VersionedEvent<'CardFrozen', 1, CardAuditPayload>;
+export type CardUnfrozenV1 = VersionedEvent<'CardUnfrozen', 1, CardAuditPayload>;
+export type CardClosedV1 = VersionedEvent<'CardClosed', 1, CardAuditPayload>;
+export type CardAuthorizationApprovedV1 = VersionedEvent<'CardAuthorizationApproved', 1, CardAuditPayload>;
+export type CardAuthorizationDeclinedV1 = VersionedEvent<'CardAuthorizationDeclined', 1, CardAuditPayload>;
+export type CardAuthorizationReversedV1 = VersionedEvent<'CardAuthorizationReversed', 1, CardAuditPayload>;
+export type CardClearingReceivedV1 = VersionedEvent<'CardClearingReceived', 1, CardAuditPayload>;
+export type CardTransactionSettledV1 = VersionedEvent<'CardTransactionSettled', 1, CardAuditPayload>;
+export type CardRefundReceivedV1 = VersionedEvent<'CardRefundReceived', 1, CardAuditPayload>;
+export type CardDisputeOpenedV1 = VersionedEvent<'CardDisputeOpened', 1, CardAuditPayload>;
+export type CardDisputeDecidedV1 = VersionedEvent<'CardDisputeDecided', 1, CardAuditPayload>;
+
 export type RailAuditPayload = {
   readonly paymentId?: string;
   readonly railSubmissionId?: string;
@@ -439,7 +477,20 @@ export type DomainEvent =
   | RailPaymentRejectedV1
   | RailPaymentReturnedV1
   | RailProviderDegradedV1
-  | RailReconciliationMismatchV1;
+  | RailReconciliationMismatchV1
+  | CardCreatedV1
+  | CardActivatedV1
+  | CardFrozenV1
+  | CardUnfrozenV1
+  | CardClosedV1
+  | CardAuthorizationApprovedV1
+  | CardAuthorizationDeclinedV1
+  | CardAuthorizationReversedV1
+  | CardClearingReceivedV1
+  | CardTransactionSettledV1
+  | CardRefundReceivedV1
+  | CardDisputeOpenedV1
+  | CardDisputeDecidedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

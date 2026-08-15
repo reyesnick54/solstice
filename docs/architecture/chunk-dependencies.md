@@ -76,6 +76,7 @@ Agents and later CI jobs use that result. They do not guess.
 | payments | IMPLEMENTED | packages/payments |
 | fx | IMPLEMENTED | packages/payments |
 | rail-adapters | IMPLEMENTED | packages/payments |
+| cards | IMPLEMENTED | packages/cards |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the

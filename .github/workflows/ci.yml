@@ -37,6 +37,8 @@ jobs:
 
       - name: End-to-end demo
         run: npm run demo
+      - name: Card simulation demo
+        run: npm run demo:cards
 
       - name: Typecheck
         run: npm run typecheck

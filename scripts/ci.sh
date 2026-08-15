@@ -19,6 +19,7 @@ npm test
 
 echo "==> end-to-end demo"
 npm run demo
+npm run demo:cards
 
 echo "==> typecheck"
 npm run typecheck
