@@ -187,7 +187,7 @@ export class CapitalMeshService {
     const riskCritic = nodeForRole('RISK_CRITIC');
     const mandateCritic = nodeForRole('MANDATE_CRITIC');
     const construction = nodeForRole('PORTFOLIO_CONSTRUCTION');
-    const modelRefs: ModelRef[] = Object.freeze([
+    const modelRefs: readonly ModelRef[] = Object.freeze([
       marketNode.model,
       riskCritic.model,
       mandateCritic.model,
@@ -394,7 +394,7 @@ export class CapitalMeshService {
           compiled: item.compiled,
           thesis,
           arbitration,
-          decision,
+          ...(decision ? { decision } : {}),
           disagreements: collectDisagreements(outputs),
           modelRefs,
         });
