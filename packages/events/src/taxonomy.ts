@@ -33,12 +33,12 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'regulatory',
   'risk',
   'model',
+  'data',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
   'agent',
   'consent',
-  'data',
   'pyr',
   'exchange',
   'notification',
@@ -190,6 +190,15 @@ export const EVENT_TYPE_NAMES = [
   'ModelValidated',
   'ModelApprovedForSimulation',
   'ModelRetired',
+  'DataVaultCreated',
+  'DataVaultAssetIngested',
+  'DataVaultAssetVersioned',
+  'DataVaultAssetDeleted',
+  'DataVaultAccessAllowed',
+  'DataVaultAccessDenied',
+  'DataVaultExportCreated',
+  'DataVaultDerivationCreated',
+  'DataVaultKeyRotated',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -336,6 +345,15 @@ export const EVENT_SCHEMA_REFS = {
   ModelValidated: 'solstice.model.validated/1',
   ModelApprovedForSimulation: 'solstice.model.approved_for_simulation/1',
   ModelRetired: 'solstice.model.retired/1',
+  DataVaultCreated: 'solstice.data.vault.created/1',
+  DataVaultAssetIngested: 'solstice.data.asset.ingested/1',
+  DataVaultAssetVersioned: 'solstice.data.asset.versioned/1',
+  DataVaultAssetDeleted: 'solstice.data.asset.deleted/1',
+  DataVaultAccessAllowed: 'solstice.data.access.allowed/1',
+  DataVaultAccessDenied: 'solstice.data.access.denied/1',
+  DataVaultExportCreated: 'solstice.data.export.created/1',
+  DataVaultDerivationCreated: 'solstice.data.derivation.created/1',
+  DataVaultKeyRotated: 'solstice.data.key.rotated/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -482,6 +500,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ModelValidated: 'model',
   ModelApprovedForSimulation: 'model',
   ModelRetired: 'model',
+  DataVaultCreated: 'data',
+  DataVaultAssetIngested: 'data',
+  DataVaultAssetVersioned: 'data',
+  DataVaultAssetDeleted: 'data',
+  DataVaultAccessAllowed: 'data',
+  DataVaultAccessDenied: 'data',
+  DataVaultExportCreated: 'data',
+  DataVaultDerivationCreated: 'data',
+  DataVaultKeyRotated: 'data',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

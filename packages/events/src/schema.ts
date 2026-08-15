@@ -152,6 +152,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ModelValidated', version: 1, status: 'current' },
   { eventType: 'ModelApprovedForSimulation', version: 1, status: 'current' },
   { eventType: 'ModelRetired', version: 1, status: 'current' },
+  { eventType: 'DataVaultCreated', version: 1, status: 'current' },
+  { eventType: 'DataVaultAssetIngested', version: 1, status: 'current' },
+  { eventType: 'DataVaultAssetVersioned', version: 1, status: 'current' },
+  { eventType: 'DataVaultAssetDeleted', version: 1, status: 'current' },
+  { eventType: 'DataVaultAccessAllowed', version: 1, status: 'current' },
+  { eventType: 'DataVaultAccessDenied', version: 1, status: 'current' },
+  { eventType: 'DataVaultExportCreated', version: 1, status: 'current' },
+  { eventType: 'DataVaultDerivationCreated', version: 1, status: 'current' },
+  { eventType: 'DataVaultKeyRotated', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

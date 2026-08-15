@@ -93,6 +93,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
+- `packages/personal-data-vault` — Personal Data Vault; subject-bound encrypted store
 - `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
 - `services/identity` — identity application facade; not a second identity model

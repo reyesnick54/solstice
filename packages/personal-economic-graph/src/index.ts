@@ -58,6 +58,7 @@ export { detectRecurringPatterns, type RecurringPattern } from './recurring.ts';
 export {
   EconomicGraphService,
   type DeclaredAssetInput,
+  type DeclaredDataAssetInput,
   type DeclaredDebtInput,
   type DeclaredGoalInput,
   type DeclaredIncomeInput,

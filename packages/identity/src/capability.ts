@@ -43,6 +43,11 @@ export const IDENTITY_CAPABILITIES = [
   'VIEW_REGULATORY_TWIN',
   'OPERATE_REGULATORY_TWIN',
   'RUN_HISTORICAL_CUSTOMER_SCENARIO',
+  'VAULT_VIEW_OWN',
+  'VAULT_EXPORT_OWN',
+  'VAULT_DELETE_OWN',
+  'VAULT_INGEST_OWN',
+  'OPERATE_PERSONAL_DATA_VAULT',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -110,6 +115,11 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   VIEW_REGULATORY_TWIN: [],
   OPERATE_REGULATORY_TWIN: [],
   RUN_HISTORICAL_CUSTOMER_SCENARIO: [],
+  VAULT_VIEW_OWN: [],
+  VAULT_EXPORT_OWN: [],
+  VAULT_DELETE_OWN: [],
+  VAULT_INGEST_OWN: [],
+  OPERATE_PERSONAL_DATA_VAULT: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -220,7 +230,13 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
 }
 
 export function requiredAssuranceFor(capability: IdentityCapability): AuthenticationAssurance {
-  if (FINANCIAL_CAPABILITIES.includes(capability) || capability === 'MANAGE_BENEFICIARY') {
+  if (
+    FINANCIAL_CAPABILITIES.includes(capability) ||
+    capability === 'MANAGE_BENEFICIARY' ||
+    capability === 'VAULT_EXPORT_OWN' ||
+    capability === 'VAULT_DELETE_OWN' ||
+    capability === 'OPERATE_PERSONAL_DATA_VAULT'
+  ) {
     return 'STRONG';
   }
   return 'STANDARD';

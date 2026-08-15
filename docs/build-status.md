@@ -163,9 +163,17 @@ This document describes only what is implemented and tested in this tree.
 - Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
   and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
   See `docs/architecture/chunk-22-stop.md`.
-- Reserved later bounded contexts that remain PLANNED (RISK, MODEL
-  REGISTRY, AGENTIC CAPITAL MESH, STRATEGY LAB, PERSONAL DATA VAULT,
-  PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port fail-closed default,
+  access audit, export manifest, technical deletion / crypto-shred,
+  derivation lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
+- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
+  MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
+  and the rest listed in the constitution).
   PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
   simulation owners. The Personal Economic Graph, Personal Economy
   Agent, Growth Orchestrator, Personal Economic Value Engine, and
@@ -223,6 +231,7 @@ npm run demo:growth
 npm run demo:peve
 npm run demo:treasury
 npm run demo:rdt
+npm run demo:pdv
 npm run typecheck
 npm run scan:secrets
 npm run ci

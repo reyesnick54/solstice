@@ -8,6 +8,7 @@ import { lintEconomicGraphBoundary } from './economic-graph-guards.ts';
 import { lintGrowthBoundary } from './growth-guards.ts';
 import { lintInvestmentBoundary } from './investments-guards.ts';
 import { lintRegulatoryTwinBoundary } from './regulatory-twin-guards.ts';
+import { lintPersonalDataVaultBoundary } from './personal-data-vault-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -23,6 +24,7 @@ const findings = [
   ...lintGrowthBoundary(root),
   ...lintInvestmentBoundary(root),
   ...lintRegulatoryTwinBoundary(root),
+  ...lintPersonalDataVaultBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

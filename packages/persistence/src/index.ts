@@ -71,6 +71,10 @@ export { persistInvestmentSnapshot } from './investments/pg-investments-store.ts
 export { persistRiskState } from './risk/pg-risk-store.ts';
 export { persistModelRegistryState } from './model-registry/pg-model-registry-store.ts';
 export {
+  loadPersonalDataVaultState,
+  persistPersonalDataVaultState,
+} from './personal-data-vault/pg-personal-data-vault-store.ts';
+export {
   insertCoordinate,
   insertFeeAssessment,
   insertReversal,

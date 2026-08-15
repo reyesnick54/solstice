@@ -562,6 +562,43 @@ export type ModelValidatedV1 = VersionedEvent<'ModelValidated', 1, ModelAuditPay
 export type ModelApprovedForSimulationV1 = VersionedEvent<'ModelApprovedForSimulation', 1, ModelAuditPayload>;
 export type ModelRetiredV1 = VersionedEvent<'ModelRetired', 1, ModelAuditPayload>;
 
+export type DataVaultAuditPayload = {
+  readonly vaultId?: string;
+  readonly assetId?: string;
+  readonly subjectId?: string;
+  readonly schemaId?: string;
+  readonly schemaVersion?: string;
+  readonly contentSha256?: string;
+  readonly category?: string;
+  readonly provenanceKind?: string;
+  readonly versionId?: string;
+  readonly derivationId?: string;
+  readonly sourceAssetIds?: readonly string[];
+  readonly method?: string;
+  readonly methodVersion?: string;
+  readonly exportId?: string;
+  readonly assetCount?: number;
+  readonly manifestSha256?: string;
+  readonly operation?: string;
+  readonly purposeRef?: string;
+  readonly decision?: string;
+  readonly reason?: string;
+  readonly kekVersion?: number;
+  readonly deletionRequestId?: string;
+  readonly technicalGuarantee?: string;
+  readonly customerLinked?: boolean;
+};
+
+export type DataVaultCreatedV1 = VersionedEvent<'DataVaultCreated', 1, DataVaultAuditPayload>;
+export type DataVaultAssetIngestedV1 = VersionedEvent<'DataVaultAssetIngested', 1, DataVaultAuditPayload>;
+export type DataVaultAssetVersionedV1 = VersionedEvent<'DataVaultAssetVersioned', 1, DataVaultAuditPayload>;
+export type DataVaultAssetDeletedV1 = VersionedEvent<'DataVaultAssetDeleted', 1, DataVaultAuditPayload>;
+export type DataVaultAccessAllowedV1 = VersionedEvent<'DataVaultAccessAllowed', 1, DataVaultAuditPayload>;
+export type DataVaultAccessDeniedV1 = VersionedEvent<'DataVaultAccessDenied', 1, DataVaultAuditPayload>;
+export type DataVaultExportCreatedV1 = VersionedEvent<'DataVaultExportCreated', 1, DataVaultAuditPayload>;
+export type DataVaultDerivationCreatedV1 = VersionedEvent<'DataVaultDerivationCreated', 1, DataVaultAuditPayload>;
+export type DataVaultKeyRotatedV1 = VersionedEvent<'DataVaultKeyRotated', 1, DataVaultAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -846,7 +883,16 @@ export type DomainEvent =
   | ModelVersionCreatedV1
   | ModelValidatedV1
   | ModelApprovedForSimulationV1
-  | ModelRetiredV1;
+  | ModelRetiredV1
+  | DataVaultCreatedV1
+  | DataVaultAssetIngestedV1
+  | DataVaultAssetVersionedV1
+  | DataVaultAssetDeletedV1
+  | DataVaultAccessAllowedV1
+  | DataVaultAccessDeniedV1
+  | DataVaultExportCreatedV1
+  | DataVaultDerivationCreatedV1
+  | DataVaultKeyRotatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
