@@ -86,6 +86,9 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 Growth Orchestrator owner. The Personal Economic Value Engine is
 implemented in `packages/platform/src/value` on that same reserved path.
 `packages/regulatory-twin` is the canonical Regulatory Digital Twin.
+`packages/investments` is the canonical investment account and paper
+portfolio owner. Strategy Lab is reserved and not implemented:
+`STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
 `packages/investments` is the canonical investment account / portfolio
 core. The investment Risk Engine, Model Registry, and Agentic Capital
 Mesh remain reserved and unimplemented.
@@ -629,6 +632,7 @@ phase is absent.
 | RISK | PLANNED | `packages/risk` |
 | MODEL REGISTRY | PLANNED | `packages/model-registry` |
 | AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
+| STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | PLANNED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |

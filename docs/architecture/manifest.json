@@ -564,6 +564,32 @@
         "packages/permissions",
         "packages/config",
         "packages/kernel",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
+    },
+    {
+      "id": "packages/investments",
+      "npmName": "@solstice/investments",
+      "path": "packages/investments",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
         "packages/ledger",
         "packages/evidence",
         "packages/events",
@@ -1408,34 +1434,6 @@
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
     },
     {
-      "id": "personal-economic-value-engine",
-      "name": "Personal Economic Value Engine",
-      "canonicalOwner": "packages/platform",
-      "canonicalPath": "packages/platform/src/value/service.ts",
-      "publicInterface": "packages/platform/src/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "PersonalEconomicValueEngine",
-          "kind": "class"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/value-engine",
-        "packages/peve",
-        "packages/economic-score",
-        "packages/personal-value"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Explainable economic measurement and attribution. Not a human-worth score, credit score, or execution authority."
-    },
-    {
       "id": "treasury-platform",
       "name": "Canonical treasury platform",
       "canonicalOwner": "packages/treasury",
@@ -1929,6 +1927,10 @@
     "packages/policy-engine-v2",
     "packages/compliance-simulator-v2",
     "packages/kernel-sandbox",
+    "packages/backtest",
+    "packages/trading-lab",
+    "packages/quant",
+    "packages/strategy-v2"
     "packages/value-engine",
     "packages/peve",
     "packages/economic-score",
@@ -2149,6 +2151,7 @@
       "status": "PLANNED",
       "owner": "packages/risk",
       "protected": true,
+      "notes": "Reserved Risk Engine. A simulation risk proof exists inside the Kernel. The Risk bounded context does not. Chunk 20."
       "notes": "Investment Risk Engine. Reserved for Chunk 20. Not implemented. A Kernel RISK proof is not this bounded context."
     },
     {
@@ -2156,6 +2159,14 @@
       "status": "PLANNED",
       "owner": "packages/model-registry",
       "protected": true,
+      "notes": "Reserved model registry. Not implemented. Chunk 21."
+    },
+    {
+      "id": "agentic-capital-mesh",
+      "status": "PLANNED",
+      "owner": "packages/agentic-capital-mesh",
+      "protected": true,
+      "notes": "Reserved Agentic Capital Mesh. Not implemented. Chunk 21."
       "notes": "Model Registry. Reserved for Chunk 20. Not implemented. Material models cannot be approved or invoked by later chunks until this owner exists."
     }
   ],
@@ -2326,6 +2337,16 @@
       ],
       "protected": true,
       "notes": "Reserved for Chunk 21 at packages/agentic-capital-mesh. Requires IMPLEMENTED risk and model-registry. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
+    },
+    {
+      "id": "STRATEGY_LAB",
+      "status": "PLANNED",
+      "reservedPaths": [
+        "packages/strategy-lab",
+        "services/strategy-lab"
+      ],
+      "protected": true,
+      "notes": "Reserved Strategy Lab. Chunk 22 is stopped until Risk, Model Registry, and Agentic Capital Mesh are IMPLEMENTED. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     },
     {
       "id": "PERSONAL_DATA_VAULT",

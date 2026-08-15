@@ -85,6 +85,7 @@ Agents and later CI jobs use that result. They do not guess.
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 | risk | PLANNED | packages/risk |
 | model-registry | PLANNED | packages/model-registry |
+| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
 
@@ -153,6 +154,14 @@ reconciliation only. No live broker. Pre-trade Risk is required.
 Do not create `packages/brokerage`, `packages/portfolio`,
 `packages/trading`, `packages/wealth`, or `packages/securities-core`.
 
+Chunk 22 (Strategy Lab) is **stopped**. Protected capabilities
+`risk`, `model-registry`, and `agentic-capital-mesh` are `PLANNED`.
+Chunk 21 is not merged. The evaluator returns `mustStop: true`.
+`STRATEGY_LAB` is reserved at `packages/strategy-lab` and
+`services/strategy-lab`. Historical stop:
+[`chunk-22-stop.md`](./chunk-22-stop.md). Do not create
+`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
+`packages/strategy-v2`.
 Chunk 21 (Agentic Capital Mesh) is **stopped**. Protected capabilities
 `risk` and `model-registry` are `PLANNED`. The evaluator returns
 `mustStop: true`. See [`chunk-21-stop.md`](./chunk-21-stop.md).

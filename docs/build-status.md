@@ -138,6 +138,8 @@ This document describes only what is implemented and tested in this tree.
   product/corridor/card readiness, legal assumption register, and
   simulation evidence/events. Reuses the existing policy engine.
   Never issues Execution Authority, posts journals, or activates
+  candidate packs. PEVE impact is hypothetical only. Investments are
+  implemented as paper simulation (Chunk 19).
   candidate packs. PEVE impact is hypothetical only. Capability
   `regulatory-digital-twin` is IMPLEMENTED.
 - Agentic Capital Mesh (Chunk 21): **stopped**. Chunk 20 (investment
@@ -158,6 +160,19 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
+- Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
+  and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
+  See `docs/architecture/chunk-22-stop.md`.
+- Reserved later bounded contexts that remain PLANNED (RISK, MODEL
+  REGISTRY, AGENTIC CAPITAL MESH, STRATEGY LAB, PERSONAL DATA VAULT,
+  PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
+  simulation owners. The Personal Economic Graph, Personal Economy
+  Agent, Growth Orchestrator, Personal Economic Value Engine, and
+  Regulatory Digital Twin are IMPLEMENTED as non-executing
+  intelligence layers. Live rails, live issuing, live
+  wallet/SoftPOS certification, live treasury, and live securities
+  trading remain later. The investment Risk Engine is Chunk 20.
 - Investment Risk Engine (`packages/risk`) and Model Registry
   (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
   rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
