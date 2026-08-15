@@ -266,6 +266,7 @@
         "packages/regulatory-twin",
         "packages/risk",
         "packages/model-registry",
+        "packages/personal-data-vault"
         "packages/strategy-lab"
         "packages/agentic-capital-mesh"
       ],
@@ -661,9 +662,32 @@
         "packages/evidence",
         "packages/events",
         "packages/identity",
+        "packages/security",
+        "packages/model-registry"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
+    },
+    {
+      "id": "packages/personal-data-vault",
+      "npmName": "@solstice/personal-data-vault",
+      "path": "packages/personal-data-vault",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
         "packages/risk",
         "packages/config",
+        "packages/security",
+        "packages/identity",
         "packages/evidence",
+        "packages/events"
         "packages/events",
         "packages/model-registry",
         "packages/regulatory-twin"
@@ -671,6 +695,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Canonical Personal Data Vault. Subject-bound encrypted store. Simulation only. Not a Consent Ledger, Clean Room, marketplace, or Sol Coin."
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper strategy execution. No live trading. Does not call PaperBroker or post journals."
       "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
     },
@@ -1658,6 +1683,37 @@
         "@reyesnick54"
       ],
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
+    },
+    {
+      "id": "personal-data-vault",
+      "name": "Personal Data Vault",
+      "canonicalOwner": "packages/personal-data-vault",
+      "canonicalPath": "packages/personal-data-vault/src/service.ts",
+      "publicInterface": "packages/personal-data-vault/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PersonalDataVault",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/user-data",
+        "packages/data-wallet",
+        "packages/data-ownership",
+        "packages/privacy-vault",
+        "packages/personal-data-v2",
+        "packages/data-vault",
+        "packages/pii-store"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Subject-bound encrypted personal data store. Not a financial asset, Consent Ledger, Clean Room, marketplace, or Sol Coin."
     }
   ],
   "authorizedMutationPaths": [
@@ -2032,6 +2088,13 @@
     "packages/portfolio-risk",
     "packages/models",
     "packages/model-governance-v2",
+    "packages/user-data",
+    "packages/data-wallet",
+    "packages/data-ownership",
+    "packages/privacy-vault",
+    "packages/personal-data-v2",
+    "packages/data-vault",
+    "packages/pii-store"
     "packages/autonomous-trader"
   ],
   "capabilities": [
@@ -2235,6 +2298,18 @@
       "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
     },
     {
+      "id": "personal-data-vault",
+      "status": "IMPLEMENTED",
+      "owner": "packages/personal-data-vault",
+      "protected": true,
+      "notes": "Canonical encrypted Personal Data Vault. Subject-bound. Simulation only. Consent Ledger is Chunk 24."
+    },
+    {
+      "id": "agentic-capital-mesh",
+      "status": "PLANNED",
+      "owner": "packages/agentic-capital-mesh",
+      "protected": true,
+      "notes": "Reserved Agentic Capital Mesh. Not implemented. Chunk 21."
       "id": "agentic-capital-mesh",
       "status": "PLANNED",
       "owner": "packages/agentic-capital-mesh",
@@ -2432,11 +2507,12 @@
     },
     {
       "id": "PERSONAL_DATA_VAULT",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/personal-data-vault"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Subject-bound encrypted Personal Data Vault. Simulation connectors only. Not legal ownership, GDPR/CCPA compliance, Consent Ledger, Clean Room, marketplace, or Sol Coin."
     },
     {
       "id": "CONSENT",

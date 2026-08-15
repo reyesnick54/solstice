@@ -62,6 +62,7 @@ never be two implementations of these systems.
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
 | Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
 | Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
+| Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -72,6 +73,7 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
+`personal-data-vault`.
 `agentic-capital-mesh`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
@@ -647,7 +649,7 @@ phase is absent.
 | STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
 | STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
-| PERSONAL DATA VAULT | PLANNED | `packages/personal-data-vault` |
+| PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |

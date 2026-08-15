@@ -78,6 +78,14 @@ export type DeclaredIncomeInput = {
   readonly estimatedAmount?: SerializedMoney;
 };
 
+export type DeclaredDataAssetInput = {
+  readonly label: string;
+  readonly vaultAssetId: string;
+  readonly contentHash?: string | null;
+  readonly category?: string;
+  readonly derivedFromVaultAssetId?: string;
+};
+
 export type GraphView = {
   readonly graph: EconomicGraph;
   readonly nodes: readonly EconomicNode[];
@@ -243,6 +251,66 @@ export class EconomicGraphService {
     });
     this.linkPerson(graphId, subjectId, nodeId, 'OWNS', at);
     this.projector.emitPublic('EconomicGraphNodeCreated', graphId, at, { nodeId, kind: 'ASSET' });
+    return ok(node);
+  }
+
+  declareDataAsset(
+    actor: unknown,
+    subjectId: string,
+    input: DeclaredDataAssetInput,
+  ): Result<EconomicNode, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const graphId = this.projector.ensureGraph(subjectId, undefined, this.clock.now());
+    const key = `vault_${input.vaultAssetId}`.toLowerCase();
+    const nodeId = deterministicNodeId('DATA_ASSET', key);
+    const at = this.clock.now();
+    const node = this.store.putNode({
+      nodeId,
+      graphId,
+      kind: 'DATA_ASSET',
+      attributes: {
+        kind: 'DATA_ASSET',
+        label: input.label,
+        vaultAssetId: input.vaultAssetId,
+        ...(input.contentHash ? { contentHash: input.contentHash } : {}),
+        ...(input.category ? { category: input.category } : {}),
+      },
+      canonicalRef: { system: 'PERSONAL_DATA_VAULT', id: input.vaultAssetId },
+      quality: 'CURRENT',
+      confidence: 'USER_DECLARED',
+      provenance: this.userProvenance(subjectId, at),
+      createdAt: at,
+      survivesRebuild: true,
+    });
+    this.linkPerson(graphId, subjectId, nodeId, 'OWNS', at);
+    if (input.derivedFromVaultAssetId) {
+      const sourceNodeId = deterministicNodeId('DATA_ASSET', `vault_${input.derivedFromVaultAssetId}`.toLowerCase());
+      if (this.store.getNode(sourceNodeId)) {
+        this.store.putEdge({
+          edgeId: deterministicEdgeId('DERIVED_FROM', nodeId, sourceNodeId),
+          graphId,
+          kind: 'DERIVED_FROM',
+          fromNodeId: nodeId,
+          toNodeId: sourceNodeId,
+          validFrom: at,
+          validTo: null,
+          quality: 'CURRENT',
+          confidence: 'DERIVED',
+          provenance: this.derivedProvenance(input.vaultAssetId, at),
+          createdAt: at,
+          survivesRebuild: true,
+        });
+        this.projector.emitPublic('EconomicGraphRelationshipCreated', graphId, at, {
+          fromNodeId: nodeId,
+          toNodeId: sourceNodeId,
+          kind: 'DERIVED_FROM',
+        });
+      }
+    }
+    this.projector.emitPublic('EconomicGraphNodeCreated', graphId, at, { nodeId, kind: 'DATA_ASSET' });
     return ok(node);
   }
 

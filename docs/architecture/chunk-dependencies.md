@@ -83,6 +83,10 @@ Agents and later CI jobs use that result. They do not guess.
 | treasury | IMPLEMENTED | packages/treasury |
 | investments | IMPLEMENTED | packages/investments |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
+| personal-data-vault | IMPLEMENTED | packages/personal-data-vault |
+| risk | PLANNED | packages/risk |
+| model-registry | PLANNED | packages/model-registry |
+| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
 | agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
@@ -170,6 +174,14 @@ Chunk 21 (Agentic Capital Mesh) remains reserved at
 itself is still absent. Historical stop:
 [`chunk-21-stop.md`](./chunk-21-stop.md). Do not create competing
 `trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
+packages until Chunk 20 lands those owners as `IMPLEMENTED`.
+Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
+at `packages/personal-data-vault`. Capability `personal-data-vault`
+is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
+Firewall, Clean Room, marketplace, or Sol Coin. The evaluator
+returns `mustStop: false` for the implemented prerequisites.
+Strategy Lab remains `PLANNED` and is not a PDV code dependency.
+
 packages.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability

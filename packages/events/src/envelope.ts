@@ -261,6 +261,10 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.modelId ?? body.validationId ?? body.artifactRef ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('DataVault')) {
+    return {
+      type: 'data_vault',
+      id: String(body.vaultId ?? body.assetId ?? body.exportId ?? body.derivationId ?? 'unknown'),
   if (eventType.startsWith('Strategy')) {
     return {
       type: 'strategy',

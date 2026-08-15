@@ -194,6 +194,30 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
+- Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
+  and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
+  See `docs/architecture/chunk-22-stop.md`.
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port fail-closed default,
+  access audit, export manifest, technical deletion / crypto-shred,
+  derivation lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
+- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
+  MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
+  and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
+  simulation owners. The Personal Economic Graph, Personal Economy
+  Agent, Growth Orchestrator, Personal Economic Value Engine, and
+  Regulatory Digital Twin are IMPLEMENTED as non-executing
+  intelligence layers. Live rails, live issuing, live
+  wallet/SoftPOS certification, live treasury, and live securities
+  trading remain later. The investment Risk Engine is Chunk 20.
+- Investment Risk Engine (`packages/risk`) and Model Registry
+  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
+  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
 - Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
   `PLANNED`. Competing `trading-agents` / `investment-agents` /
   `hedge-agent` / `capital-ai` packages must not be created.
@@ -255,6 +279,7 @@ npm run demo:growth
 npm run demo:peve
 npm run demo:treasury
 npm run demo:rdt
+npm run demo:pdv
 npm run demo:risk
 npm run demo:strategy-lab
 npm run demo:mesh

@@ -130,6 +130,9 @@ export type CashFlowAttributes = {
 export type DataAssetAttributes = {
   readonly kind: 'DATA_ASSET';
   readonly label: string;
+  readonly vaultAssetId?: string;
+  readonly contentHash?: string;
+  readonly category?: string;
 };
 
 export type OpportunityAttributes = {

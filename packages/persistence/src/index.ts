@@ -73,6 +73,10 @@ export { persistModelRegistryState } from './model-registry/pg-model-registry-st
 export { persistStrategyLabState } from './strategy-lab/pg-strategy-lab-store.ts';
 export { persistCapitalMeshState } from './capital-mesh/pg-capital-mesh-store.ts';
 export {
+  loadPersonalDataVaultState,
+  persistPersonalDataVaultState,
+} from './personal-data-vault/pg-personal-data-vault-store.ts';
+export {
   insertCoordinate,
   insertFeeAssessment,
   insertReversal,

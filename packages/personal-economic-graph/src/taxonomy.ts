@@ -124,6 +124,7 @@ export const CANONICAL_REF_SYSTEMS = [
   'BENEFICIARY',
   'CUSTOMER',
   'USER_DECLARATION',
+  'PERSONAL_DATA_VAULT',
 ] as const;
 
 export type CanonicalRefSystem = (typeof CANONICAL_REF_SYSTEMS)[number];

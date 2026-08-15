@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-23",
+  "title": "Personal Data Vault — Encrypted User-Controlled Data Store, Provenance, Classification, Ingestion, Isolation, Audit, Export, Lifecycle, and Data-Asset Foundation",
+  "requires": [
+    "architecture-linting",
+    "security",
+    "identity",
+    "persistence",
+    "events",
+    "event-fabric",
+    "evidence",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "personal-economic-value-engine",
+    "growth-orchestrator",
+    "regulatory-digital-twin"
+  ],
+  "notes": "Implements PERSONAL_DATA_VAULT at packages/personal-data-vault. Strategy Lab remains PLANNED (Chunk 22 stop merged; 22R not implemented) and is not a code dependency. Do not implement Consent Ledger, Purpose Firewall, Clean Room, marketplace, or Sol Coin."
+}
