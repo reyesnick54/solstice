@@ -45,7 +45,7 @@ export const SESSION_TRANSITIONS: Readonly<Record<CleanRoomSessionState, readonl
 
 export const JOB_TRANSITIONS: Readonly<Record<CleanRoomJobState, readonly CleanRoomJobState[]>> = {
   QUEUED: ['AUTHORIZING', 'DENIED', 'FAILED', 'EXPIRED'],
-  AUTHORIZING: ['RUNNING', 'DENIED', 'FAILED'],
+  AUTHORIZING: ['RUNNING', 'EGRESS_PENDING', 'DENIED', 'FAILED'],
   RUNNING: ['EGRESS_PENDING', 'DENIED', 'FAILED'],
   EGRESS_PENDING: ['COMPLETED', 'DENIED', 'FAILED'],
   COMPLETED: [],

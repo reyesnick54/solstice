@@ -185,7 +185,9 @@ async function main(): Promise<void> {
       vaultAssetId: released.value.receipt.receiptId,
       contentHash: released.value.receipt.resultHash,
       category: 'TRANSACTION_DATA',
-      consentVersion: released.value.receipt.consentRefs[0]?.version,
+      ...(released.value.receipt.consentRefs[0]
+        ? { consentVersion: released.value.receipt.consentRefs[0].version }
+        : {}),
       purposeVersion: released.value.receipt.purposeVersion,
       derivationVersion: released.value.receipt.computationVersion,
     });
@@ -210,7 +212,7 @@ async function main(): Promise<void> {
         pegHasNoPayrollPlaintext: peg !== null && !JSON.stringify(peg).includes('Simulated Employer'),
         agentMultiUserDenied: !agentDenied.ok,
         rdtDidNotActivateLivePolicy: policy.livePolicyActivated === false,
-        evidenceChain: evidence.verifyChain(),
+        evidenceChain: evidence.verifyChain().ok,
         differentialPrivacy: DIFFERENTIAL_PRIVACY_NOT_IMPLEMENTED,
         ephemeralGuarantee: EPHEMERAL_PLAINTEXT_GUARANTEE,
         legalStatus: CLEAN_ROOM_LEGAL_STATUS,

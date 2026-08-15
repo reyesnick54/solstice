@@ -2713,7 +2713,8 @@
       "reservedPaths": [
         "packages/pyramid-data-exchange"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Historical reservation. Naming remains unresolved. Do not implement a marketplace or invent a public ticker."
     },
     {
       "id": "MARKET_SURVEILLANCE",

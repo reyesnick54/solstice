@@ -22,7 +22,7 @@ export class SubjectScopedCleanRoomTool {
       return err({ code: 'ACTOR_CONTEXT_REQUIRED', message: 'agent tool requires a verified ActorContext' });
     }
     if (actor.subjectId !== input.subjectId) {
-      return err({ code: 'CROSS_SUBJECT_DENIED', message: 'the agent may not query another subject's Clean Room cohort' });
+      return err({ code: 'CROSS_SUBJECT_DENIED', message: 'the agent may not query another subject Clean Room cohort' });
     }
     return this.cleanRoom.submitAndExecute(actor, input.sessionId, input.templateRef);
   }

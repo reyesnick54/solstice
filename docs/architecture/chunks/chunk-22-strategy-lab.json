@@ -27,18 +27,9 @@
     "growth-orchestrator",
     "personal-economic-graph",
     "personal-economy-agent",
-    "growth-orchestrator",
     "personal-economic-value-engine",
     "regulatory-digital-twin",
-    "investments",
-    "risk",
-    "model-registry",
-    "agentic-capital-mesh"
-  ],
-  "notes": "Resumed and implemented at packages/strategy-lab and services/strategy-lab. Capability strategy-lab is IMPLEMENTED; bounded context STRATEGY_LAB is PARTIAL (no LIVE stage). Risk, Model Registry, and Agentic Capital Mesh are IMPLEMENTED. Historical stop: chunk-22-stop.md. Resume: chunk-22-resume.md. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
-    "treasury",
     "strategy-lab"
   ],
-  "notes": "Resumed and implemented at packages/strategy-lab and services/strategy-lab. Capability strategy-lab is IMPLEMENTED; bounded context STRATEGY_LAB is PARTIAL (no LIVE stage). Historical stop: chunk-22-stop.md. Resume: chunk-22-resume.md. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
   "notes": "Resumed and implemented at packages/strategy-lab and services/strategy-lab. Capability strategy-lab is IMPLEMENTED; bounded context STRATEGY_LAB is PARTIAL (no LIVE stage). Risk, Model Registry, and Agentic Capital Mesh are IMPLEMENTED. Strategy Lab integrates Mesh through a typed CapitalProposal port and refuses Mesh self-validation. Historical stop: chunk-22-stop.md. Resume: chunk-22-resume.md. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
 }

@@ -297,8 +297,8 @@ export class CleanRoomService {
     return this.executeJob(verified.value, job.jobId);
   }
 
-  requestRawRows(actor: unknown, sessionId: string): Result<never, CleanRoomFailure> {
-    return this.submitAndExecute(actor, sessionId, 'raw_row_export') as Result<never, CleanRoomFailure>;
+  requestRawRows(actor: unknown, sessionId: string): Result<JobOutcome, CleanRoomFailure> {
+    return this.submitAndExecute(actor, sessionId, 'raw_row_export');
   }
 
   joinToken(actor: unknown, subjectId: string, purposeId: string, requesterId: string): Result<string, CleanRoomFailure> {
@@ -385,7 +385,7 @@ export class CleanRoomService {
     }
     this.store.putJob(this.transitionJob(this.store.getJob(job.jobId) ?? job, 'RUNNING'));
     const workspace = new EphemeralWorkspace();
-    const assets: DatasetLineage['assetRefs'] = [];
+    const assets: Array<DatasetLineage['assetRefs'][number]> = [];
     try {
       for (const subject of qualified) {
         const loaded = this.loadMinimized(actor, session, subject);
@@ -465,7 +465,7 @@ export class CleanRoomService {
         reasonCode: egress.reasonCode,
         ...(datasetId ? { datasetId: datasetId as never } : {}),
       });
-      this.store.putSession(this.transitionSession(session, 'DENIED', egress.reasonCode));
+      this.store.putSession(this.transitionSession(session, 'AUTHORIZED', egress.reasonCode));
       this.emit('CleanRoomJobFailed', deniedJob.jobId, {
         jobId: deniedJob.jobId,
         reasonCode: egress.reasonCode,
@@ -671,7 +671,7 @@ export class CleanRoomService {
       return err({ code: 'RESOURCE_OUT_OF_SCOPE', message: listed.error.message });
     }
     const rows: EphemeralRow[] = [];
-    const assets: DatasetLineage['assetRefs'] = [];
+    const assets: Array<DatasetLineage['assetRefs'][number]> = [];
     for (const asset of listed.value) {
       if (isForbiddenAutoField(asset.category)) {
         continue;

@@ -100,13 +100,14 @@ function ingestGrocery(
   actor: VerifiedActorContext,
   index: number,
   amount?: number,
+  prefix = 'cr',
 ) {
-  vault.openVault(actor, actor.subjectId, `cust_cr_${index}`);
+  vault.openVault(actor, actor.subjectId, `cust_${prefix}_${index}`);
   const ingested = vault.ingest(actor, {
     subjectId: actor.subjectId,
     sourceId: 'pds_sim_transactions',
-    sourceRecordRef: `grocery_${index}`,
-    idempotencyKey: `grocery_${index}`,
+    sourceRecordRef: `grocery_${prefix}_${index}`,
+    idempotencyKey: `grocery_${prefix}_${index}`,
     schemaId: 'pdsch_transactions',
     schemaVersion: '1',
     category: 'TRANSACTION_DATA',
@@ -148,7 +149,7 @@ function cohort(identity: SimulatedIdentityAdapter, vault: PersonalDataVault, co
   const subjects: VerifiedActorContext[] = [];
   for (let i = 0; i < count; i += 1) {
     const actor = provision(identity, `actor_${prefix}_${i}`, `idn_${prefix}_${i}`, `cust_${prefix}_${i}`, SUBJECT_CAPS);
-    ingestGrocery(vault, actor, i);
+    ingestGrocery(vault, actor, i, undefined, prefix);
     if (i < authorizeFirst) {
       grantResearch(consent, actor);
     }
@@ -184,18 +185,15 @@ describe('privacy clean room', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'session.grocery',
     });
-    assert.equal(session.ok, true);
     if (!session.ok) {
       throw new Error(session.error.message);
     }
     const authorized = cleanRoom.authorizeSession(researcher, session.value.sessionId);
-    assert.equal(authorized.ok, true);
     if (!authorized.ok) {
       throw new Error(authorized.error.message);
     }
     assert.equal(authorized.value.permitIds.length, 15);
     const job = cleanRoom.submitAndExecute(researcher, session.value.sessionId, 'grocery_average');
-    assert.equal(job.ok, true);
     if (!job.ok) {
       throw new Error(job.error.message);
     }
@@ -212,7 +210,7 @@ describe('privacy clean room', () => {
       assert.equal(raw.value.egress.reasonCode, 'RAW_ROW_EXPORT_DENIED');
       assert.equal(raw.value.result, null);
     }
-    assert.equal(evidence.verifyChain(), true);
+    assert.equal(evidence.verifyChain().ok, true);
     assert.equal(job.value.receipt?.computationImplementation.includes('clean-room'), true);
   });
 
@@ -319,12 +317,13 @@ describe('privacy clean room', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'revoke-run',
     });
-    assert.equal(session.ok, true);
     if (!session.ok) {
       throw new Error(session.error.message);
     }
     const authorized = cleanRoom.authorizeSession(researcher, session.value.sessionId);
-    assert.equal(authorized.ok, true);
+    if (!authorized.ok) {
+      throw new Error(authorized.error.message);
+    }
     const first = cleanRoom.submitAndExecute(researcher, session.value.sessionId, 'grocery_count');
     assert.equal(first.ok, true);
     if (first.ok) {
@@ -397,7 +396,7 @@ describe('privacy clean room', () => {
       const run = cleanRoom.submitAndExecute(researcher2, session2.value.sessionId, template);
       assert.equal(run.ok, true, run.ok ? '' : run.error.message);
       if (run.ok) {
-        assert.equal(run.value.egress.decision, 'RELEASE');
+        assert.equal(run.value.egress.decision, 'RELEASE', `${template} ${run.value.egress.reasonCode}`);
       }
     }
     const exhausted = cleanRoom.submitAndExecute(researcher2, session2.value.sessionId, 'grocery_count');
@@ -464,7 +463,6 @@ describe('privacy clean room', () => {
     cleanRoom.bindRequester(REQUESTER_RESEARCH_ALPHA, alpha.subjectId);
     cleanRoom.bindRequester(REQUESTER_RESEARCH_BETA, beta.subjectId);
     const purpose = consent.getPurposeDescription('DATA_CONTRIBUTION_RESEARCH');
-    assert.equal(purpose.ok, true);
     if (!purpose.ok) {
       throw new Error(purpose.error.message);
     }

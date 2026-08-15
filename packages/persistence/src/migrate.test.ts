@@ -290,29 +290,17 @@ describe('versioned SQL migrations', () => {
   });
 
   it('customer V018 persists Strategy Lab experiment records without live trading', () => {
-  it('customer V018 persists Strategy Lab artifacts without live trading state', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v018 = files.find((file) => file.version === 18);
-    assert.ok(v018);
-    assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
-    assert.match(v018.filename, /V018__strategy_lab\.sql/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.experiment/);
-    assert.match(v018.sql, /live_approved = FALSE/);
-    assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
-    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
-    assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
-    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
-  it('customer V018 persists Strategy Lab experiment history without a LIVE stage', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v018 = files.find((file) => file.version === 18);
     assert.ok(v018);
     assert.equal(v018.filename, 'V018__strategy_lab.sql');
     assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
     assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.experiment/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
     assert.match(v018.sql, /live_approved BOOLEAN NOT NULL CHECK \(live_approved = FALSE\)/);
     assert.match(v018.sql, /simulation_only BOOLEAN NOT NULL CHECK \(simulation_only = TRUE\)/);
+    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
     assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
     assert.equal(/CREATE TABLE strategy_lab\.journal/i.test(v018.sql), false);
   });

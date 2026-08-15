@@ -659,7 +659,6 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-26 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
-    assert.equal(declared.missing.includes('personal-data-vault'), false);
 
     const coin = manifest.boundedContexts.find((context) => context.id === 'REYN_COIN');
     assert.ok(coin);
