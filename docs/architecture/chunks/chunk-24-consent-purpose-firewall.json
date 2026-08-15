@@ -14,5 +14,5 @@
     "personal-economy-agent",
     "personal-economic-value-engine"
   ],
-  "notes": "Implements CONSENT at packages/consent. Replaces the Personal Data Vault fail-closed consent placeholder. Does not implement Clean Room, marketplace, or Reyn Coin. Consent is not legal approval."
+  "notes": "Implements CONSENT at packages/consent. Replaces the Personal Data Vault fail-closed consent placeholder. Does not implement Clean Room, marketplace, or SunRey Coin. Consent is not legal approval."
 }

@@ -1,4 +1,26 @@
-# Chunk 26 stop record
+# Chunk 26 stop record (historical)
+
+This file preserves the **historical constitutional stop** from the first
+Chunk 26 attempt. It is not the current completion report.
+
+The first Chunk 26 agent inspected `main` while Consent Ledger and
+Privacy Clean Room were still `PLANNED`. It correctly stopped rather
+than implementing a coin ledger. That stop recorded an intermediate
+brand reservation (`REYN_COIN` / `REYN_EXCHANGE`) that is now obsolete.
+
+**Current status:** Personal Data Vault, Consent Ledger, and Purpose
+Firewall are `IMPLEMENTED`. Privacy Clean Room remains `PLANNED`.
+Chunk 26R therefore still stops. Product names are now **SunRey** /
+**SunRey Coin** / **SunRey Exchange** / **SunRey Chain**. Canonical
+reservations are `SUNREY_COIN`, `SUNREY_EXCHANGE`, and `SUNREY_CHAIN`.
+See [`chunk-26r-stop.md`](./chunk-26r-stop.md).
+
+Historical terminology below (Reyn Coin, `REYN_COIN`, `REYN_EXCHANGE`)
+is retained as a record of that stop only.
+
+---
+
+# Original Chunk 26 stop record
 
 This file records a **constitutional missing-capability stop**, not a
 Reyn Coin implementation.

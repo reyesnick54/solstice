@@ -100,14 +100,10 @@ Engine. `packages/model-registry` is the canonical Model Registry.
 `packages/agentic-capital-mesh` is the canonical Agentic Capital Mesh.
 Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage). Personal Data Vault is
-`IMPLEMENTED` at `packages/personal-data-vault`. Consent Ledger,
-Purpose Firewall, Clean Room, Reyn Coin, and Reyn Exchange remain
-reserved and unimplemented.
-Strategy Lab is implemented at the reserved owners:
-`STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
-`services/strategy-lab` (no LIVE stage). Personal Data Vault is
-`IMPLEMENTED` at `packages/personal-data-vault`. Consent is
-`IMPLEMENTED` at `packages/consent`.
+`IMPLEMENTED` at `packages/personal-data-vault`. Consent Ledger and
+Purpose Firewall are `IMPLEMENTED` at `packages/consent`. Clean Room,
+SunRey Coin, SunRey Exchange, and SunRey Chain remain reserved and
+unimplemented.
 
 ### Action types
 
@@ -659,24 +655,29 @@ phase is absent.
 | CONSENT | IMPLEMENTED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
-| REYN COIN | PLANNED | `packages/reyn-coin` |
+| SUNREY COIN | PLANNED | `packages/sunrey-coin` |
 | PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |
-| REYN EXCHANGE | PLANNED | `packages/reyn-exchange` |
+| SUNREY EXCHANGE | PLANNED | `packages/sunrey-exchange` |
+| SUNREY CHAIN | PLANNED | `packages/sunrey-chain` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
 
-Product branding for the reserved digital-asset context is **Reyn** /
-**Reyn Coin** / **Reyn Exchange**. The public ticker is UNDECIDED.
-Do not invent `REYN`, `RYN`, or `RCOIN`. Historical architecture names
-`PYRAMID` and `PYRAMID_EXCHANGE` are replaced by the reservations
+Product branding for the reserved digital-asset context is **SunRey** /
+**SunRey Coin** / **SunRey Exchange** / **SunRey Chain**. The public
+ticker is **TBD**. Do not invent `SUNREY`, `SRN`, `SRY`, `REYN`, `RYN`,
+or `RCOIN`. Historical architecture names `PYRAMID`, `PYRAMID_EXCHANGE`,
+`REYN_COIN`, and `REYN_EXCHANGE` are replaced by the reservations
 above. `PYRAMID_DATA_EXCHANGE` naming remains unresolved.
 `PYR` is a historical ticker/alias reservation only.
 
-Chunk 26 stopped rather than implementing Reyn Coin:
-[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
-`packages/reyn-ledger`, `packages/token-ledger`, or
-`packages/crypto-ledger-v2`.
+Chunk 26R stopped rather than implementing SunRey Coin because
+Privacy Clean Room is not `IMPLEMENTED`:
+[`chunk-26r-stop.md`](./chunk-26r-stop.md). The original Chunk 26
+stop is historical: [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
+create `packages/sunrey-ledger`, `packages/reyn-ledger`,
+`packages/token-ledger`, or `packages/crypto-ledger-v2`. Do not
+implement SunRey Exchange or SunRey Chain here.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

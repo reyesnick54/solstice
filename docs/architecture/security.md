@@ -49,7 +49,7 @@ Typed only. Arbitrary strings are not cryptographic authority.
 | `DATA_ENCRYPTION` | AES-256-GCM | Envelope encryption |
 | `SERVICE_AUTHENTICATION` | HMAC-SHA256 | Service credentials |
 | `WEBHOOK_SIGNING` | HMAC-SHA256 | Outbound webhook MAC |
-| `PYRAMID_CUSTODY_FUTURE` | HMAC-SHA256 | Historical reserved purpose; no custody keys here. Reyn Coin custody keys are not implemented. |
+| `PYRAMID_CUSTODY_FUTURE` | HMAC-SHA256 | Historical reserved purpose; no custody keys here. SunRey Coin custody keys are not implemented. |
 
 ## Algorithms
 

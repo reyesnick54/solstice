@@ -1,0 +1,31 @@
+{
+  "chunk": "CHUNK-26",
+  "title": "SunRey Coin Economic Ledger, Authorized Contribution Rewards, Supply Accounting, Custody Positions, Transfers, and Digital-Asset Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room"
+  ],
+  "notes": "STOPPED. PERSONAL_DATA_VAULT, CONSENT, and purpose-firewall are IMPLEMENTED. Protected capability clean-room remains PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['clean-room']. Historical PYRAMID / REYN_COIN reservations are now SUNREY_COIN at packages/sunrey-coin. Historical PYRAMID_EXCHANGE / REYN_EXCHANGE reservations are now SUNREY_EXCHANGE at packages/sunrey-exchange. SUNREY_CHAIN is reserved PLANNED at packages/sunrey-chain. Ticker is TBD. See docs/architecture/chunk-26r-stop.md. Do not implement SunRey Coin, SunRey Exchange, or SunRey Chain. Do not create a second financial ledger."
+}

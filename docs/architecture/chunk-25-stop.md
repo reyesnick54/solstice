@@ -1,4 +1,23 @@
-# Chunk 25 stop record
+# Chunk 25 stop record (historical)
+
+This file preserves the **historical constitutional stop** from the first
+Chunk 25 attempt. It is not the current completion report.
+
+The first Chunk 25 agent inspected `main` while Consent Ledger was still
+`PLANNED` / absent. Under the architecture dependency rule it correctly
+stopped rather than inventing a second consent or clean-room domain.
+That stop-only change later merged **after** Chunk 24 Consent had already
+become `IMPLEMENTED`, which left `main` internally inconsistent.
+
+**Current status:** Consent Ledger and Purpose Firewall are `IMPLEMENTED`
+at `packages/consent`. Capability `consent` is `IMPLEMENTED`. Capability
+`purpose-firewall` is `IMPLEMENTED` at the same owner. `CLEAN_ROOM`
+remains `PLANNED` at `packages/clean-room`. Chunk 25R may implement the
+reserved Clean Room. Chunk 26R must not implement it.
+
+---
+
+# Original Chunk 25 stop record
 
 This file records a **constitutional missing-capability stop**, not a
 Privacy Clean Room implementation.
