@@ -9,6 +9,7 @@ import { AcceptanceService } from './acceptance/service.ts';
 import { signAcceptanceCallback, type AcceptanceCallbackEnvelope } from './acceptance/callback.ts';
 import { evaluateMerchantEligibility } from './acceptance/eligibility.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
+import { asSolsticeIdentityId } from '../../identity/src/ids.ts';
 
 function acceptanceService(world: ReturnType<typeof createCardWorld>, feeMinor = 150n) {
   return new AcceptanceService({
@@ -30,11 +31,10 @@ function verifiedMerchant(world: ReturnType<typeof createCardWorld>, acceptance:
   const facts = world.runtime.identity.service.identityFactsFor(world.actorId);
   assert.ok(facts.subjectId);
   const business = world.runtime.identity.service.createBusinessIdentity({
-    subjectId: facts.subjectId,
+    subjectId: asSolsticeIdentityId(facts.subjectId),
     legalNameRef: `sim-merchant-${suffix}`,
     jurisdiction: world.customer.jurisdiction,
   });
-  assert.equal(business.ok, true);
   if (!business.ok) {
     throw new Error(business.error.message);
   }
@@ -94,9 +94,8 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         providerDeviceReference: 'sim_adev_adev_softpos',
       },
     });
-    assert.equal(device.outcome, 'OK');
     if (device.outcome !== 'OK') {
-      throw new Error(device.outcome);
+      throw new Error(`device register failed: ${device.outcome}`);
     }
     const session = acceptance.createSession({
       id: asIntentId('sess_sp'),

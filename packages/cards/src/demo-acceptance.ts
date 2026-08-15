@@ -1,6 +1,7 @@
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
+import { asSolsticeIdentityId } from '../../identity/src/ids.ts';
 import { Money } from '../../money/src/money.ts';
 import { createCardWorld } from '../../../tests/card-world.ts';
 import { AcceptanceService } from './acceptance/service.ts';
@@ -28,7 +29,7 @@ async function main(): Promise<void> {
     throw new Error('missing identity');
   }
   const business = world.runtime.identity.service.createBusinessIdentity({
-    subjectId: facts.subjectId,
+    subjectId: asSolsticeIdentityId(facts.subjectId),
     legalNameRef: 'sim-merchant-demo',
     jurisdiction: world.customer.jurisdiction,
   });
@@ -204,10 +205,11 @@ async function main(): Promise<void> {
       payload: { paymentId: settled.value.paymentId, actorId: world.actorId },
     }),
   );
-  if (secondCb.outcome !== 'REJECTED' && secondCb.replay !== true) {
+  const duplicateReplay = 'replay' in secondCb && secondCb.replay === true;
+  if (secondCb.outcome !== 'REJECTED' && !duplicateReplay) {
     throw new Error('duplicate callback credited again');
   }
-  console.log(`    duplicate=${secondCb.outcome} replay=${secondCb.replay ?? false}`);
+  console.log(`    duplicate=${secondCb.outcome} replay=${duplicateReplay}`);
 
   console.log('14. Suspended device cannot transact.');
   const suspended = acceptance.suspendDevice(device.value.deviceId);

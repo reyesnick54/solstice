@@ -1,5 +1,6 @@
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
+import { asSolsticeIdentityId } from '../../identity/src/ids.ts';
 import { createCardWorld, requestCardIntent, signedCallback } from '../../../tests/card-world.ts';
 import { WalletService } from './wallet/service.ts';
 import { signWalletCallback } from './wallet/callback.ts';
@@ -91,7 +92,12 @@ async function runProvider(provider: WalletProvider): Promise<void> {
   if (!subject) {
     throw new Error('missing subject');
   }
-  const stepped = world.runtime.identity.enrollAndAuthenticate(subject, world.actorId, 'sim-device-1', true);
+  const stepped = world.runtime.identity.enrollAndAuthenticate(
+    asSolsticeIdentityId(subject),
+    world.actorId,
+    'sim-device-1',
+    true,
+  );
   if (!stepped.ok) {
     throw new Error('step-up failed');
   }

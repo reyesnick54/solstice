@@ -8,7 +8,7 @@ import { WalletService } from './wallet/service.ts';
 import { signWalletCallback, type WalletCallbackEnvelope } from './wallet/callback.ts';
 import { canTransitionDevicePaymentToken } from './wallet/token.ts';
 import { evaluateWalletEligibility } from './wallet/eligibility.ts';
-import { asDeviceId } from '../../identity/src/ids.ts';
+import { asDeviceId, asSolsticeIdentityId } from '../../identity/src/ids.ts';
 import type { ProvisionCardToWalletIntent } from '../../permissions/src/action-types.ts';
 import { assertNoSensitiveCardData } from './pci-boundary.ts';
 
@@ -114,7 +114,12 @@ function signedWalletCallback(
 function stepUp(world: ReturnType<typeof createCardWorld>) {
   const facts = world.runtime.identity.service.identityFactsFor(world.actorId);
   assert.ok(facts.subjectId);
-  const stepped = world.runtime.identity.enrollAndAuthenticate(facts.subjectId, world.actorId, 'sim-device-1', true);
+  const stepped = world.runtime.identity.enrollAndAuthenticate(
+    asSolsticeIdentityId(facts.subjectId),
+    world.actorId,
+    'sim-device-1',
+    true,
+  );
   assert.equal(stepped.ok, true);
 }
 
@@ -186,7 +191,12 @@ describe('wallet provisioning', () => {
           providerId,
         ),
       );
-      assert.equal(duplicate.outcome === 'REJECTED' || duplicate.replay === true || duplicate.outcome === 'OK', true);
+      assert.equal(
+        duplicate.outcome === 'REJECTED' ||
+          duplicate.outcome === 'OK' ||
+          ('replay' in duplicate && duplicate.replay === true),
+        true,
+      );
 
       const moved = wallet.ingestWalletCallback(
         signedWalletCallback(

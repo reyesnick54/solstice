@@ -354,7 +354,9 @@ export class AcceptanceService {
     this.store.markPaymentIdempotency(intent.idempotencyKey, settled);
     const report: AcceptanceProviderReport = {
       paymentId: settled.paymentId,
-      providerTransactionRef: settled.providerTransactionRef ?? undefined,
+      ...(settled.providerTransactionRef
+        ? { providerTransactionRef: settled.providerTransactionRef }
+        : {}),
       settlementRef: this.provider.retrieveSettlement(settled.providerTransactionRef!).settlementRef,
       amountMinorUnits: settled.amount.minorUnits.toString(),
       currency: settled.amount.currency,
@@ -483,9 +485,10 @@ export class AcceptanceService {
   }
 
   reconcile(subjectId: string, report: AcceptanceProviderReport | null): AcceptanceReconciliationResult {
+    const payment = this.store.getPayment(subjectId);
     const result = reconcileAcceptancePayment({
       subjectId,
-      payment: this.store.getPayment(subjectId),
+      ...(payment ? { payment } : {}),
       report,
       journals: this.ledger.listJournals(),
     });
