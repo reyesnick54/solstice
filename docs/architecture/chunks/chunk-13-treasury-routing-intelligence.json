@@ -24,5 +24,5 @@
     "rail-adapters",
     "cards"
   ],
-  "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. All listed protected capabilities are IMPLEMENTED. Chunk 13 still stopped on the task process gate: Chunk 12 wallet/SoftPOS is not implemented, build-status still recorded the Chunk 12 stop, and main CI at the gate was red. Do not implement treasury until that gate is green. See docs/architecture/chunk-13-stop.md."
+  "notes": "Chunk 13 initially stopped on a process gate (Chunk 12 not yet genuinely implemented, stale build-status, red main CI). That stop is historical: chunk-13-stop.md. Chunk 13 is now resumed and implemented at the reserved owners packages/treasury and services/treasury. Capability treasury is IMPLEMENTED; bounded context TREASURY is PARTIAL simulation. See chunk-13-resume.md."
 }

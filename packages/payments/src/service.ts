@@ -59,6 +59,7 @@ import { freezePayment, transitionPayment, type PaymentOrder } from './payment.t
 import { reconcilePayment, type ProviderSettlementReport, type ReconciliationResult } from './reconciliation.ts';
 import { disclosureFromQuote, type PaymentDisclosure } from './responses.ts';
 import { selectRoute, simulationRoutesFor, type PaymentRoute } from './route.ts';
+import type { TreasuryAdvisor } from './treasury-port.ts';
 import { beneficiaryStatusFromScreening, SimulationScreeningAdapter, type ScreeningPort } from './screening.ts';
 import { type SettlementOutcome, type SimulatedSettlementRail } from './settlement.ts';
 import { PaymentStore } from './store.ts';
@@ -112,6 +113,7 @@ export class PaymentsService {
     setMode?(paymentId: string, mode: import('./rail-adapters.ts').SimulatedAdapterMode | import('./settlement.ts').RailMode): void;
   };
   readonly railNetwork: RailNetwork;
+  private readonly treasury: TreasuryAdvisor | undefined;
   private readonly authorities = new Map<string, ExecutionAuthority>();
   private providerAvailable = true;
   private routesForceUnavailable = false;
@@ -132,6 +134,7 @@ export class PaymentsService {
       readonly fx?: FxLiquidityProvider;
       readonly rail?: SimulatedSettlementRail;
       readonly railNetwork?: RailNetwork;
+      readonly treasury?: TreasuryAdvisor;
     } = {},
   ) {
     this.kernel = kernel;
@@ -148,6 +151,7 @@ export class PaymentsService {
     this.fx = options.fx ?? new SimulationFxProvider(clock);
     this.railNetwork = options.railNetwork ?? createSimulationRailNetwork(() => this.clock.now());
     this.rail = options.rail ?? this.railNetwork.asSettlementRail();
+    this.treasury = options.treasury;
     registerPaymentTreasuryBooks(ledger.accounts);
   }
 
@@ -415,17 +419,53 @@ export class PaymentsService {
     const routes = this.routesForceUnavailable
       ? []
       : this.railNetwork.routesFor(current.corridorId, current.fee);
-    const selection = selectRoute(routes, {
+    const constraints = {
       corridor: corridor!,
       beneficiary: beneficiary!,
       sanctionsHit: hit?.sanctionsHit === true,
       amount: current.sourceAmount,
       maxAmount: Money.fromMinorUnits(100_000_000n, current.sourceCurrency),
       providerAvailable: this.providerAvailable,
-    });
+    };
+    const selection = this.treasury
+      ? this.treasury.selectForPayment(routes, constraints, {
+          requiredLiquidity: current.quotedDestinationAmount,
+          destinationCountry: beneficiary!.destinationCountry,
+          sourceJurisdiction: account!.jurisdiction,
+          destinationJurisdiction: beneficiary!.destinationCountry,
+          sourceCurrency: current.sourceCurrency,
+          destinationCurrency: current.destinationCurrency,
+          acceptedQuoteRequired: true,
+          quoteAccepted: quote?.status === 'ACCEPTED',
+          customerAccountActive: account!.status === 'OPEN',
+          securityHold: false,
+        })
+      : selectRoute(routes, constraints);
+    if (this.treasury && 'explanation' in selection) {
+      this.treasury.rememberDecision(current.paymentId, selection.explanation);
+    }
     if (!selection.chosen) {
       current = this.releaseAndFail(current, authority, account!, 'ROUTE_UNAVAILABLE', gated.decision);
       return { outcome: 'REJECTED', code: 'ROUTE_UNAVAILABLE', message: 'no compliant route', decision: gated.decision };
+    }
+    if (this.treasury) {
+      const reservedLiquidity = this.treasury.reserveForPayment({
+        paymentId: current.paymentId,
+        corridorId: current.corridorId,
+        provider: selection.chosen.provider,
+        requiredLiquidity: current.quotedDestinationAmount,
+        authority,
+        idempotencyKey: `tres_${intent.idempotencyKey}`,
+      });
+      if (!reservedLiquidity.ok) {
+        current = this.releaseAndFail(current, authority, account!, reservedLiquidity.code, gated.decision);
+        return {
+          outcome: 'REJECTED',
+          code: reservedLiquidity.code,
+          message: reservedLiquidity.message,
+          decision: gated.decision,
+        };
+      }
     }
     current = this.mustTransition(current, 'SUBMITTED', { routeId: selection.chosen.routeId });
     this.store.savePayment(current);
@@ -555,6 +595,7 @@ export class PaymentsService {
       current = this.mustTransition(payment, 'CANCELLED', {});
     }
     this.store.savePayment(current);
+    this.treasury?.onPaymentFailed(current.paymentId, authority, 'CANCELLED');
     this.emit('PaymentCancelled', 'payment', current.paymentId, intent.id, gated.decision, {
       paymentId: current.paymentId,
     });
@@ -848,6 +889,7 @@ export class PaymentsService {
       return { outcome: 'REJECTED', code: 'SETTLEMENT_FAILED', message: settlement.reason, decision };
     }
     if (settlement.kind === 'SUBMISSION_UNKNOWN') {
+      this.treasury?.onSubmissionUnknown(payment.paymentId);
       const unknown = this.mustTransition(payment, 'SUBMISSION_UNKNOWN', { settlementRef: settlement.settlementRef });
       this.store.savePayment(unknown);
       const existing = this.railNetwork.store.getByPayment(unknown.paymentId);
@@ -953,6 +995,7 @@ export class PaymentsService {
       ],
     });
     this.railNetwork.store.saveReport(settlementReport);
+    this.treasury?.onPaymentSettled(settled.paymentId, authority);
     if (settlement.kind === 'RETURNED') {
       return this.simulateReturn(settled.paymentId);
     }
@@ -1001,6 +1044,7 @@ export class PaymentsService {
       holdId: null,
     });
     this.store.savePayment(failed);
+    this.treasury?.onPaymentFailed(failed.paymentId, authority, reason);
     this.emit('PaymentFailed', 'payment', failed.paymentId, decision.intentId, decision, {
       paymentId: failed.paymentId,
       reason,

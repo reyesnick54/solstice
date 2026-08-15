@@ -43,6 +43,15 @@ const SIMULATION_CARD_ACTIONS = [
   'SETTLE_ACCEPTANCE_PAYMENT',
 ] as const;
 
+const SIMULATION_TREASURY_ACTIONS = [
+  'RESERVE_TREASURY_LIQUIDITY',
+  'RELEASE_TREASURY_LIQUIDITY',
+  'COMMIT_TREASURY_LIQUIDITY',
+  'PROPOSE_TREASURY_REBALANCE',
+  'EXECUTE_TREASURY_REBALANCE',
+  'SET_TREASURY_KILL_SWITCH',
+] as const;
+
 const SIMULATION_BANKING_ACTIONS = [
   'OPEN_ACCOUNT',
   'POST_DEPOSIT',
@@ -59,6 +68,7 @@ const SIMULATION_BANKING_ACTIONS = [
   'SETTLE_PENDING',
   'RETURN_PENDING',
   ...SIMULATION_CARD_ACTIONS,
+  ...SIMULATION_TREASURY_ACTIONS,
 ] as const;
 
 export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
@@ -98,6 +108,7 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
       'INITIATE_PAYMENT',
       'CANCEL_PAYMENT',
       'ACCEPT_INBOUND_PAYMENT',
+      ...SIMULATION_TREASURY_ACTIONS,
     ],
     productIds: ['prod_demand_usd_us'],
     productTypes: ['DEMAND_DEPOSIT'],
@@ -114,6 +125,7 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
       'INITIATE_PAYMENT',
       'CANCEL_PAYMENT',
       'ACCEPT_INBOUND_PAYMENT',
+      ...SIMULATION_TREASURY_ACTIONS,
     ],
     productIds: ['prod_demand_sar_sa'],
     productTypes: ['DEMAND_DEPOSIT'],
