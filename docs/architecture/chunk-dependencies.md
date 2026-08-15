@@ -77,6 +77,8 @@ Agents and later CI jobs use that result. They do not guess.
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
+| personal-economy-agent | IMPLEMENTED | packages/agent |
+| growth-orchestrator | IMPLEMENTED | packages/platform |
 | treasury | PLANNED | packages/treasury |
 | treasury | IMPLEMENTED | packages/treasury |
 
@@ -97,6 +99,22 @@ cards domain.
 Chunk 13 (treasury / liquidity / routing intelligence) requires the
 protected capabilities listed in
 [`chunks/chunk-13-treasury-routing-intelligence.json`](./chunks/chunk-13-treasury-routing-intelligence.json).
+Those capabilities are `IMPLEMENTED`, so the evaluator returns
+`mustStop: false`. The Chunk 13 **task** still stopped on a process
+gate (Chunk 12 not genuinely implemented, build-status still recorded
+the Chunk 12 stop, `main` CI red). See
+[`chunk-13-stop.md`](./chunk-13-stop.md). Do not create
+`packages/treasury` until that gate is green.
+`IMPLEMENTED` on `main`. The evaluator returns `mustStop: false`.
+Wallet and SoftPOS extend `packages/cards`; they do not invent a
+second cards domain. The original stop (Cards was then `PLANNED`) is
+preserved in [`chunk-12-stop.md`](./chunk-12-stop.md). The resumed
+implementation is recorded in [`chunk-12-resume.md`](./chunk-12-resume.md).
+
+Chunk 16 implements machine-verifiable economic mandates and the
+Growth Orchestrator at `packages/platform`, with the Personal Economy
+Agent at `packages/agent`. It does not execute investments and does
+not start the Personal Economic Value Engine.
 Those listed capabilities are `IMPLEMENTED`, so that declaration's
 evaluator result is `mustStop: false`. The Chunk 13 **task** still
 stopped on a process gate. See [`chunk-13-stop.md`](./chunk-13-stop.md).

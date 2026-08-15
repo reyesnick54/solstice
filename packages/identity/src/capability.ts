@@ -32,6 +32,9 @@ export const IDENTITY_CAPABILITIES = [
   'VIEW_ECONOMIC_GRAPH',
   'DECLARE_ECONOMIC_FACT',
   'OPERATE_ECONOMIC_GRAPH',
+  'CONFIRM_ECONOMIC_MANDATE',
+  'VIEW_GROWTH_PLAN',
+  'OPERATE_GROWTH_ORCHESTRATOR',
   'WALLET_PROVISION_REQUEST',
   'ACCEPTANCE_MANAGE_REQUEST',
   'TREASURY_OPERATE_REQUEST',
@@ -71,6 +74,9 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   VIEW_ECONOMIC_GRAPH: [],
   DECLARE_ECONOMIC_FACT: [],
   OPERATE_ECONOMIC_GRAPH: [],
+  CONFIRM_ECONOMIC_MANDATE: [],
+  VIEW_GROWTH_PLAN: [],
+  OPERATE_GROWTH_ORCHESTRATOR: [],
   WALLET_PROVISION_REQUEST: ['PROVISION_CARD_TO_WALLET', 'SUSPEND_WALLET_TOKEN'],
   ACCEPTANCE_MANAGE_REQUEST: [
     'REGISTER_ACCEPTANCE_DEVICE',
@@ -179,6 +185,8 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
     granted.add('MANAGE_PROFILE');
     granted.add('VIEW_ECONOMIC_GRAPH');
     granted.add('DECLARE_ECONOMIC_FACT');
+    granted.add('VIEW_GROWTH_PLAN');
+    granted.add('CONFIRM_ECONOMIC_MANDATE');
   }
 
   const kycFresh = facts.kyc !== null && kycIsFresh(facts.kyc, facts.now);

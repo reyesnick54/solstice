@@ -260,6 +260,7 @@
         "packages/security",
         "packages/identity",
         "packages/personal-economic-graph",
+        "packages/platform"
         "packages/treasury"
       ],
       "codeowners": [
@@ -420,6 +421,20 @@
       "notes": "Application facade for the Personal Economic Graph. Not a second graph model."
     },
     {
+      "id": "packages/agent",
+      "npmName": "@solstice/agent",
+      "path": "packages/agent",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/identity",
+        "packages/config"
       "id": "packages/treasury",
       "npmName": "@solstice/treasury",
       "path": "packages/treasury",
@@ -445,6 +460,29 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Personal Economy Agent. Proposal-only. Must not depend on packages/platform, ledger, or Kernel issuance."
+    },
+    {
+      "id": "packages/platform",
+      "npmName": "@solstice/platform",
+      "path": "packages/platform",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/identity",
+        "packages/events",
+        "packages/evidence",
+        "packages/config",
+        "packages/personal-economic-graph",
+        "packages/agent",
+        "packages/permissions",
+        "packages/security"
       "notes": "Canonical treasury, liquidity, corridor prefunding, deterministic routing intelligence, and settlement-risk engine. Simulation only. Not a second ledger."
     },
     {
@@ -463,6 +501,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
       "notes": "Application facade for packages/treasury. Not a second treasury model."
     }
   ],
@@ -1173,6 +1212,19 @@
       "notes": "First SFF 2.0 intelligence layer. Non-authoritative. Does not execute."
     },
     {
+      "id": "personal-economy-agent",
+      "name": "Personal Economy Agent",
+      "canonicalOwner": "packages/agent",
+      "canonicalPath": "packages/agent/src/service.ts",
+      "publicInterface": "packages/agent/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PersonalEconomyAgent",
       "id": "treasury-platform",
       "name": "Canonical treasury platform",
       "canonicalOwner": "packages/treasury",
@@ -1190,6 +1242,8 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/wealth-agent",
+        "packages/agent-runtime"
         "packages/liquidity",
         "packages/routing-intelligence",
         "packages/treasury-core",
@@ -1198,6 +1252,34 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Interprets language and explains plans. Not an ActionIntent. Cannot execute."
+    },
+    {
+      "id": "growth-orchestrator",
+      "name": "Growth Orchestrator",
+      "canonicalOwner": "packages/platform",
+      "canonicalPath": "packages/platform/src/service.ts",
+      "publicInterface": "packages/platform/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "GrowthOrchestrator",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/growth-os",
+        "packages/compounder",
+        "packages/mandates-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
       "notes": "One Treasury model. Customer balances stay on the canonical ledger."
     }
   ],
@@ -1496,6 +1578,10 @@
     "packages/user-graph",
     "packages/economic-memory",
     "packages/personal-finance-graph",
+    "packages/growth-os",
+    "packages/compounder",
+    "packages/wealth-agent",
+    "packages/mandates-v2"
     "packages/personal-agent",
     "packages/financial-agent",
     "packages/economy-ai",
@@ -1650,6 +1736,18 @@
       "notes": "Personal Economic Graph. Non-authoritative projection. Does not execute financial changes."
     },
     {
+      "id": "personal-economy-agent",
+      "status": "IMPLEMENTED",
+      "owner": "packages/agent",
+      "protected": true,
+      "notes": "Personal Economy Agent. Proposal-only interpretation and explanation. Cannot execute."
+    },
+    {
+      "id": "growth-orchestrator",
+      "status": "IMPLEMENTED",
+      "owner": "packages/platform",
+      "protected": true,
+      "notes": "Mandate compiler and Growth Orchestrator. Does not execute money movement."
       "id": "treasury",
       "status": "PLANNED",
       "owner": "packages/treasury",
@@ -1755,28 +1853,31 @@
     },
     {
       "id": "PERSONAL_ECONOMY_AGENT",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/agent"
       ],
       "protected": true,
+      "notes": "Proposal-only agent. Cannot execute or depend on packages/platform."
       "notes": "Chunk 15 stopped: treasury is PLANNED and main CI was red. See docs/architecture/chunk-15-stop.md. Do not create packages/agent until that gate is green."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/platform"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Canonical mandate compiler and Growth Orchestrator owner."
     },
     {
       "id": "PERSONAL_ECONOMIC_VALUE_ENGINE",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/platform"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Shares packages/platform with Growth Orchestrator. PEV is not implemented in this chunk."
     },
     {
       "id": "REGULATORY_DIGITAL_TWIN",

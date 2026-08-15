@@ -56,6 +56,7 @@ export {
   loadEconomicGraphState,
   persistEconomicGraphState,
 } from './economic-graph/pg-economic-graph-store.ts';
+export { loadGrowthState, persistGrowthState } from './growth/pg-growth-store.ts';
 export {
   loadTreasurySnapshot,
   persistTreasurySnapshot,

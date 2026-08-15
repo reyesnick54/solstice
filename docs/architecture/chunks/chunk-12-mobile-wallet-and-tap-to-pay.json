@@ -23,6 +23,7 @@
     "fx",
     "cards"
   ],
+  "notes": "Protected cards capability is IMPLEMENTED on main. Wallet provisioning and merchant SoftPOS are simulation architecture only. No Apple, Google, network, acquirer, or PCI certification is claimed. Do not invent a second cards domain."
   "notes": "Protected cards capability is IMPLEMENTED on main. Chunk 12 originally stopped because Cards was absent/PLANNED; Cards has since been implemented and Chunk 12 was subsequently resumed inside the canonical Cards boundary. Wallet provisioning and merchant SoftPOS are simulation architecture only. No Apple, Google, network, acquirer, or PCI certification is claimed."
   "notes": "Chunk 12 initially stopped because Cards was PLANNED/absent. Cards is now IMPLEMENTED and Chunk 12 was subsequently resumed inside packages/cards. Wallet provisioning and merchant SoftPOS are simulation architecture only. Historical stop: chunk-12-stop.md. Resume: chunk-12-resume.md."
 }

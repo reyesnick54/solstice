@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { lintSource } from './linter.ts';
 import { lintSecurityBoundary } from './security-guards.ts';
 import { lintRailBoundary } from './rail-guards.ts';
+import { lintGrowthBoundary } from './growth-guards.ts';
 
 describe('architectural linter rules', () => {
   it('catches Account constructed without ExecutionAuthority', () => {
@@ -123,6 +124,31 @@ describe('rail boundary guards', () => {
     const findings = lintRailBoundary(dir);
     rmSync(dir, { recursive: true, force: true });
     const hit = findings.find((f) => f.rule === 'rail-adapter-ledger-bypass');
+    assert.ok(hit);
+  });
+});
+
+describe('growth boundary guards', () => {
+  it('rejects a competing compounder package', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-growth-linter-'));
+    mkdirSync(join(dir, 'packages/compounder'), { recursive: true });
+    writeFileSync(join(dir, 'packages/compounder/index.ts'), 'export const x = 1;\n');
+    const findings = lintGrowthBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'competing-growth-system');
+    assert.ok(hit);
+  });
+
+  it('rejects Growth Orchestrator posting a journal', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-growth-ledger-'));
+    mkdirSync(join(dir, 'packages/platform/src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'packages/platform/src/evil.ts'),
+      'export function run() {\n  ledger.postJournal(request);\n}\n',
+    );
+    const findings = lintGrowthBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'growth-posts-ledger');
     assert.ok(hit);
   });
 });

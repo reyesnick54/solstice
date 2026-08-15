@@ -31,6 +31,8 @@ Implement one Personal Economic Graph bounded context at
 - PEG is not a balance source of truth. The ledger wins.
 - PEG must not post journals or issue Execution Authority.
 - No competing financial-graph / user-graph package may be added.
-- The Personal Economy Agent remains unimplemented.
+- The Personal Economy Agent was unimplemented when this ADR was written.
+  Chunk 16 implements it at `packages/agent` (see ADR-0012). That clause
+  is historical for this ADR only.
 
 This ADR is not `CONFIRMED_BY_COUNSEL`.

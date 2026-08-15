@@ -19,5 +19,6 @@
 - [Security and cryptography](./security.md) — KeyProvider, secrets, envelopes, key lifecycle
 - Identity lives in `packages/identity` (Chunk 5). ADR-0007 remains PROPOSED.
 - [Personal Economic Graph](./economic-graph.md) — first SFF 2.0 intelligence layer. Does not execute.
+- Growth Orchestrator and mandates live in `packages/platform` (Chunk 16). The Personal Economy Agent lives in `packages/agent`. Neither executes. ADR-0012 remains PROPOSED.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
