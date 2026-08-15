@@ -4,13 +4,11 @@
 - [Manifest](./manifest.json) — machine-readable enforcement input
 - [ADR index](./adr/README.md) — decision records (not renumbered)
 - [Chunk dependencies](./chunk-dependencies.md) — stop if a protected requirement is not IMPLEMENTED
-- [Chunk 12 stop](./chunk-12-stop.md) — wallet / Tap-to-Pay not built; cards owner now exists
-- [Chunk 13 stop](./chunk-13-stop.md) — treasury not started; Chunk 12 process gate failed
-- [Chunk 15 stop](./chunk-15-stop.md) — Personal Economy Agent not started; Treasury still PLANNED and main CI was red
 - [Chunk 12 stop (historical)](./chunk-12-stop.md) — original stop while Cards was PLANNED
 - [Chunk 12 resume](./chunk-12-resume.md) — wallet / Tap-to-Pay implemented after Cards merged
 - [Chunk 13 stop (historical)](./chunk-13-stop.md) — original process-gate stop before treasury existed
 - [Chunk 13 resume](./chunk-13-resume.md) — treasury / liquidity / routing intelligence implemented
+- [Chunk 15 stop (historical)](./chunk-15-stop.md) — original stop while Treasury was still PLANNED; agent remains unstarted
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 - [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics

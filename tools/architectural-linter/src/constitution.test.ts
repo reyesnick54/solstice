@@ -383,9 +383,9 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
   });
 
-  it('CHUNK-15 must stop while the protected treasury capability is PLANNED', () => {
+  it('CHUNK-15 capability gate is clear now that treasury is IMPLEMENTED; agent remains unstarted', () => {
     const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'treasury').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'treasury').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'treasury').protected, true);
     assert.equal(evaluateCapability(manifest, 'treasury').owner, 'packages/treasury');
     assert.equal(evaluateCapability(manifest, 'personal-economic-graph').status, 'IMPLEMENTED');
@@ -394,12 +394,12 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-15',
     );
     assert.ok(declared, 'CHUNK-15 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['treasury']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     const treasury = manifest.boundedContexts.find((context) => context.id === 'TREASURY');
     assert.ok(treasury);
-    assert.equal(treasury.status, 'PLANNED');
+    assert.equal(treasury.status, 'PARTIAL');
     assert.deepEqual(treasury.reservedPaths, ['packages/treasury', 'services/treasury']);
 
     const agent = manifest.boundedContexts.find((context) => context.id === 'PERSONAL_ECONOMY_AGENT');
@@ -407,8 +407,8 @@ describe('architecture constitution', () => {
     assert.equal(agent.status, 'PLANNED');
     assert.deepEqual(agent.reservedPaths, ['packages/agent']);
 
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'services/agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-agent')), false);

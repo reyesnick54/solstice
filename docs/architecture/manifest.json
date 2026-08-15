@@ -1499,7 +1499,7 @@
     "packages/personal-agent",
     "packages/financial-agent",
     "packages/economy-ai",
-    "packages/growth-agent"
+    "packages/growth-agent",
     "packages/liquidity",
     "packages/routing-intelligence",
     "packages/treasury-core",
@@ -1651,10 +1651,6 @@
     },
     {
       "id": "treasury",
-      "status": "PLANNED",
-      "owner": "packages/treasury",
-      "protected": true,
-      "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. Chunk 13 stopped. Chunk 13R was not merged. Do not treat payment/card simulation books as this capability."
       "status": "IMPLEMENTED",
       "owner": "packages/treasury",
       "protected": true,
@@ -1760,7 +1756,7 @@
         "packages/agent"
       ],
       "protected": true,
-      "notes": "Chunk 15 stopped: treasury is PLANNED and main CI was red. See docs/architecture/chunk-15-stop.md. Do not create packages/agent until that gate is green."
+      "notes": "Chunk 15 originally stopped while treasury was not yet on main. Treasury is now IMPLEMENTED (Chunk 13R). Personal Economy Agent remains unstarted. See docs/architecture/chunk-15-stop.md."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

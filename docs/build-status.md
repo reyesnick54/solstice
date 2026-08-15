@@ -114,50 +114,16 @@ This document describes only what is implemented and tested in this tree.
   UAE network connections. Chunk 10 is simulation connectivity only.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
-- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. The Personal Economic Graph is IMPLEMENTED as a non-authoritative intelligence layer. Live rails remain later.
-- Chunk 12 (mobile wallet / Tap-to-Pay) is **stopped**. It requires
-  card issuing/processing middleware and a network-token metadata
-  model. Those belong to the reserved CARDS context
-  (`packages/cards`, `services/cards`), which is `PLANNED` and absent
-  from this tree. See `docs/architecture/chunk-12-stop.md`. Do not
-  treat this note as an implementation.
-- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails and live issuing remain later.
-- Chunk 12 (mobile wallet / Tap-to-Pay) was **not implemented**.
-  The cards owner now exists (`packages/cards`, `services/cards`,
-  capability `IMPLEMENTED`). Wallet provisioning, DevicePaymentToken
-  lifecycle, and SoftPOS / Tap-to-Pay were not built. See
-  `docs/architecture/chunk-12-stop.md`. Do not treat that file as a
-  wallet implementation.
-- Chunk 13 (treasury / liquidity / routing intelligence) is
-  **stopped** on the task process gate: Chunk 12 is not genuinely
-  implemented, this file still recorded the Chunk 12 stop at the
-  time of the gate, and `main` CI at `f304ef8` was red. See
-  `docs/architecture/chunk-13-stop.md`. Do not treat that file as a
-  treasury implementation. Reserved TREASURY owners remain
-  `packages/treasury` and `services/treasury` (`PLANNED`). Chunk 13R
-  was never merged.
-- Chunk 15 (Personal Economy Agent) is **stopped**. The task required
-  Treasury and a green `main` CI. Treasury is still `PLANNED` /
-  stop-only, Chunk 13R does not exist, and `main` at `ac7a270` was
-  red (duplicate customer `V008` plus a broken `DomainEvent` union
-  after PRs `#33` and `#34`). See
-  `docs/architecture/chunk-15-stop.md`. Do not treat that file as an
-  agent implementation. Reserved owner remains `packages/agent`
-  (`PLANNED`).
-- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live treasury remain later.
-- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails, live issuing, and live wallet/SoftPOS certification remain later.
-- Chunk 12 originally stopped because Cards was absent; that historical
-  stop is in `docs/architecture/chunk-12-stop.md`. Cards is implemented
-  and Chunk 12 was subsequently resumed. See
-  `docs/architecture/chunk-12-resume.md`.
 - Reserved later bounded contexts that remain PLANNED (PERSONAL ECONOMY
   AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the
   constitution). PAYMENTS, FX, CARDS, and TREASURY are PARTIAL
   simulation owners. The Personal Economic Graph is IMPLEMENTED as a
   non-authoritative intelligence layer. Live rails, live issuing, live
   wallet/SoftPOS certification, and live treasury remain later.
-- Personal Economy Agent, mandate compiler, Compounder, and Growth OS.
-  Chunk 13 does not start that work.
+- Personal Economy Agent remains unstarted. Chunk 15 originally stopped
+  while Treasury was `PLANNED` and `main` CI was red; that stop is
+  historical (`docs/architecture/chunk-15-stop.md`). Treasury is now
+  `IMPLEMENTED`. Reserved owner `packages/agent` is still absent.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
