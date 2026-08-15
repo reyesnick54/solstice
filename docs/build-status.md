@@ -71,6 +71,12 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
+- Chunk 12 (mobile wallet / Tap-to-Pay) is **stopped**. It requires
+  card issuing/processing middleware and a network-token metadata
+  model. Those belong to the reserved CARDS context
+  (`packages/cards`, `services/cards`), which is `PLANNED` and absent
+  from this tree. See `docs/architecture/chunk-12-stop.md`. Do not
+  treat this note as an implementation.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

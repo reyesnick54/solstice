@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { lintConstitution } from './constitution.ts';
+import { evaluateDeclaredChunks, lintConstitution } from './constitution.ts';
 import {
   evaluateChunkRequirements,
   evaluateCapability,
@@ -331,5 +331,21 @@ describe('architecture constitution', () => {
     assert.equal(planned.mustStop, true);
     assert.equal(planned.missing.includes('persistence'), false);
     assert.ok(planned.missing.includes('future-protected-rail'));
+  });
+
+  it('CHUNK-12 must stop until the protected cards capability is IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'cards').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'cards').owner, 'packages/cards');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-12',
+    );
+    assert.ok(declared, 'CHUNK-12 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.ok(declared.missing.includes('cards'));
+    assert.equal(declared.missing.includes('identity'), false);
+    assert.equal(declared.missing.includes('payments'), false);
+    assert.equal(declared.missing.includes('security'), false);
   });
 });
