@@ -84,14 +84,12 @@ Agents and later CI jobs use that result. They do not guess.
 | investments | IMPLEMENTED | packages/investments |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 | personal-data-vault | IMPLEMENTED | packages/personal-data-vault |
-| risk | PLANNED | packages/risk |
-| model-registry | PLANNED | packages/model-registry |
-| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
-| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
-| strategy-lab | IMPLEMENTED | packages/strategy-lab |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
+| strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| consent | PLANNED | packages/consent |
+| clean-room | PLANNED | packages/clean-room |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -204,10 +202,17 @@ Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
 
 Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
 and Agentic Capital Mesh were absent. That stop is historical:
-[`chunk-22-stop.md`](./chunk-22-stop.md). Those three capabilities are
-now `IMPLEMENTED`. `STRATEGY_LAB` remains `PLANNED` at
-`packages/strategy-lab` and `services/strategy-lab` until Chunk 22R.
-The evaluator returns `mustStop: false` because required capabilities
-exist; the reserved Strategy Lab owner is still absent. Do not create
-`packages/backtest`, `packages/trading-lab`, `packages/quant`, or
-`packages/strategy-v2`.
+[`chunk-22-stop.md`](./chunk-22-stop.md). Chunk 22R implements the
+reserved owners. Capability `strategy-lab` is `IMPLEMENTED`. Bounded
+context `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). The evaluator
+returns `mustStop: false`. Do not create `packages/backtest`,
+`packages/trading-lab`, `packages/quant`, or `packages/strategy-v2`.
+
+Chunk 25 (Privacy Clean Room) stops because protected capability
+`consent` is `PLANNED`. Consent Ledger / Purpose Firewall is Chunk 24
+and is not on `main`. `CLEAN_ROOM` remains reserved at
+`packages/clean-room`. The evaluator returns `mustStop: true`.
+Historical stop: [`chunk-25-stop.md`](./chunk-25-stop.md). Do not
+create `packages/privacy-compute`, `packages/data-clean-room`,
+`packages/secure-data-room`, `packages/research-room`, or
+`packages/clean-room-v2`.

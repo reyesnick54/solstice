@@ -645,10 +645,8 @@ phase is absent.
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | IMPLEMENTED | `packages/risk` |
 | MODEL REGISTRY | IMPLEMENTED | `packages/model-registry` |
-| AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
+| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |

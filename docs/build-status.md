@@ -205,6 +205,10 @@ This document describes only what is implemented and tested in this tree.
   derivation lineage, PEG references without raw payload, and
   contribution-review metadata without marketplace or tokens.
   Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
+- Privacy Clean Room (Chunk 25) is **stopped**. Protected capability
+  `consent` is `PLANNED`. Chunk 24 has not merged. `CLEAN_ROOM`
+  remains reserved at `packages/clean-room`. See
+  `docs/architecture/chunk-25-stop.md`.
 - Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
   MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
   and the rest listed in the constitution).

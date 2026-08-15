@@ -937,7 +937,7 @@ export type DomainEvent =
   | DataVaultAccessDeniedV1
   | DataVaultExportCreatedV1
   | DataVaultDerivationCreatedV1
-  | DataVaultKeyRotatedV1;
+  | DataVaultKeyRotatedV1
   | StrategyCreatedV1
   | StrategyCompiledV1
   | StrategyBacktestStartedV1
@@ -948,7 +948,7 @@ export type DomainEvent =
   | StrategyPaperApprovedV1
   | StrategyPaperStartedV1
   | StrategyPaperHaltedV1
-  | StrategyRetiredV1;
+  | StrategyRetiredV1
   | CapitalMeshRunStartedV1
   | CapitalMeshThesisCreatedV1
   | CapitalMeshCandidateCreatedV1

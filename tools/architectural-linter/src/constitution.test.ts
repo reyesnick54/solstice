@@ -493,43 +493,6 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
   });
 
-  it('CHUNK-22 remains reserved while Agentic Capital Mesh is PLANNED', () => {
-    const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').status, 'PLANNED');
-    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
-      (evaluation) => evaluation.chunk === 'CHUNK-22',
-    );
-    assert.ok(declared, 'CHUNK-22 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('agentic-capital-mesh'));
-    const lab = manifest.boundedContexts.find((context) => context.id === 'STRATEGY_LAB');
-    assert.ok(lab);
-    assert.equal(lab.status, 'PLANNED');
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-lab')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/backtest')), false);
-  });
-
-  it('CHUNK-21 risk and model-registry prerequisites are IMPLEMENTED; mesh owner remains absent', () => {
-    const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
-  it('CHUNK-21 prerequisites are IMPLEMENTED; Mesh remains the reserved Chunk 21R owner', () => {
-    const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'risk').protected, true);
-    assert.equal(evaluateCapability(manifest, 'risk').owner, 'packages/risk');
-    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'model-registry').protected, true);
-    assert.equal(evaluateCapability(manifest, 'model-registry').owner, 'packages/model-registry');
-    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'regulatory-digital-twin').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'personal-economic-value-engine').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').owner, 'packages/agentic-capital-mesh');
-
   it('CHUNK-21 Agentic Capital Mesh is IMPLEMENTED after the historical stop', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
@@ -543,26 +506,6 @@ describe('architecture constitution', () => {
     );
     assert.ok(declared, 'CHUNK-21 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
-    assert.deepEqual(declared.missing, []);
-
-    const risk = manifest.boundedContexts.find((context) => context.id === 'RISK');
-    assert.ok(risk);
-    assert.equal(risk.status, 'IMPLEMENTED');
-    assert.deepEqual(risk.reservedPaths, ['packages/risk']);
-
-    const registry = manifest.boundedContexts.find((context) => context.id === 'MODEL_REGISTRY');
-    assert.ok(registry);
-    assert.equal(registry.status, 'IMPLEMENTED');
-    assert.deepEqual(registry.reservedPaths, ['packages/model-registry']);
-
-    const mesh = manifest.boundedContexts.find((context) => context.id === 'AGENTIC_CAPITAL_MESH');
-    assert.ok(mesh);
-    assert.equal(mesh.status, 'PLANNED');
-    assert.deepEqual(mesh.reservedPaths, ['packages/agentic-capital-mesh']);
-
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/risk')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-registry')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/agentic-capital-mesh')), false);
     const mesh = manifest.boundedContexts.find((context) => context.id === 'AGENTIC_CAPITAL_MESH');
     assert.ok(mesh);
     assert.equal(mesh.status, 'IMPLEMENTED');
@@ -573,29 +516,6 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/hedge-agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/capital-ai')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/autonomous-trader')), false);
-  });
-
-  it('CHUNK-22 Strategy Lab remains PLANNED until Chunk 22R', () => {
-    const manifest = loadManifest(REPO_ROOT);
-    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'risk').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'model-registry').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'agentic-capital-mesh').status, 'IMPLEMENTED');
-    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
-      (evaluation) => evaluation.chunk === 'CHUNK-22',
-    );
-    assert.ok(declared, 'CHUNK-22 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, false);
-    const lab = manifest.boundedContexts.find((context) => context.id === 'STRATEGY_LAB');
-    assert.ok(lab);
-    assert.equal(lab.status, 'PLANNED');
-    assert.deepEqual(lab.reservedPaths, ['packages/strategy-lab', 'services/strategy-lab']);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-lab')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'services/strategy-lab')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/backtest')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/trading-lab')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/quant')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/strategy-v2')), false);
   });
 
   it('CHUNK-22 Strategy Lab is IMPLEMENTED at the reserved owners', () => {
@@ -644,5 +564,46 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/data-wallet')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+  });
+
+  it('CHUNK-25 must stop while the protected consent capability is PLANNED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'identity').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'persistence').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'events').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'evidence').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'consent').protected, true);
+    assert.equal(evaluateCapability(manifest, 'consent').owner, 'packages/consent');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-25',
+    );
+    assert.ok(declared, 'CHUNK-25 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.ok(declared.missing.includes('consent'));
+    assert.equal(declared.missing.includes('personal-data-vault'), false);
+
+    const consent = manifest.boundedContexts.find((context) => context.id === 'CONSENT');
+    assert.ok(consent);
+    assert.equal(consent.status, 'PLANNED');
+    assert.deepEqual(consent.reservedPaths, ['packages/consent']);
+
+    const cleanRoom = manifest.boundedContexts.find((context) => context.id === 'CLEAN_ROOM');
+    assert.ok(cleanRoom);
+    assert.equal(cleanRoom.status, 'PLANNED');
+    assert.deepEqual(cleanRoom.reservedPaths, ['packages/clean-room']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/privacy-compute')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/data-clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/secure-data-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/research-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room-v2')), false);
   });
 });
