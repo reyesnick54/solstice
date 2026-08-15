@@ -31,6 +31,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'treasury',
   'investment',
   'regulatory',
+  'risk',
+  'model',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -179,6 +181,15 @@ export const EVENT_TYPE_NAMES = [
   'RegulatoryTwinImpactDetected',
   'RegulatoryTwinInvariantFailed',
   'RegulatoryTwinReadinessAssessed',
+  'RiskAssessmentCompleted',
+  'RiskLimitBreached',
+  'RiskPortfolioSnapshotCreated',
+  'RiskStressCompleted',
+  'ModelRegistered',
+  'ModelVersionCreated',
+  'ModelValidated',
+  'ModelApprovedForSimulation',
+  'ModelRetired',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -316,6 +327,15 @@ export const EVENT_SCHEMA_REFS = {
   RegulatoryTwinImpactDetected: 'solstice.regulatory.impact_detected/1',
   RegulatoryTwinInvariantFailed: 'solstice.regulatory.invariant_failed/1',
   RegulatoryTwinReadinessAssessed: 'solstice.regulatory.readiness_assessed/1',
+  RiskAssessmentCompleted: 'solstice.risk.assessment.completed/1',
+  RiskLimitBreached: 'solstice.risk.limit.breached/1',
+  RiskPortfolioSnapshotCreated: 'solstice.risk.portfolio.snapshot.created/1',
+  RiskStressCompleted: 'solstice.risk.stress.completed/1',
+  ModelRegistered: 'solstice.model.registered/1',
+  ModelVersionCreated: 'solstice.model.version.created/1',
+  ModelValidated: 'solstice.model.validated/1',
+  ModelApprovedForSimulation: 'solstice.model.approved_for_simulation/1',
+  ModelRetired: 'solstice.model.retired/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -453,6 +473,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   RegulatoryTwinImpactDetected: 'regulatory',
   RegulatoryTwinInvariantFailed: 'regulatory',
   RegulatoryTwinReadinessAssessed: 'regulatory',
+  RiskAssessmentCompleted: 'risk',
+  RiskLimitBreached: 'risk',
+  RiskPortfolioSnapshotCreated: 'risk',
+  RiskStressCompleted: 'risk',
+  ModelRegistered: 'model',
+  ModelVersionCreated: 'model',
+  ModelValidated: 'model',
+  ModelApprovedForSimulation: 'model',
+  ModelRetired: 'model',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

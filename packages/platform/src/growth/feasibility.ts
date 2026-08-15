@@ -117,6 +117,14 @@ export function evaluateCandidateFeasibility(input: {
     notes.push(...candidate.mandateEvaluation.notes);
   }
 
+  const annotation = input.planning.riskAnnotations?.find(
+    (row) => row.candidateRef === candidate.actionId || row.candidateRef === candidate.title,
+  );
+  if (annotation && !annotation.compatible) {
+    reasons.push('RISK_LIMIT');
+    notes.push(annotation.reason);
+  }
+
   const unique = [...new Set(reasons)];
   const accepted = unique.length === 0;
   return {

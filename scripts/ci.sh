@@ -28,6 +28,7 @@ npm run demo:peve
 npm run demo:treasury
 npm run demo:investments
 npm run demo:rdt
+npm run demo:risk
 
 echo "==> typecheck"
 npm run typecheck

@@ -55,6 +55,8 @@ jobs:
         run: npm run demo:investments
       - name: Regulatory Digital Twin demo
         run: npm run demo:rdt
+      - name: Investment risk and model registry demo
+        run: npm run demo:risk
 
       - name: Typecheck
         run: npm run typecheck
