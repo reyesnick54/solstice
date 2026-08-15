@@ -90,6 +90,11 @@ export {
   type RouteRejection,
   type RouteSelection,
 } from "./route.ts";
+export type {
+  TreasuryAdvisor,
+  TreasuryAdvisorReserveInput,
+  TreasuryRouteAdvice,
+} from "./treasury-port.ts";
 export {
   TREASURY_ACCOUNT_IDS,
   beneficiaryPayableAccountId,

@@ -28,6 +28,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'mandate',
   'growth',
 
+  'treasury',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -147,6 +148,15 @@ export const EVENT_TYPE_NAMES = [
   'GrowthPlanStale',
   'GrowthActionProposed',
 
+  'TreasuryLiquidityReserved',
+  'TreasuryLiquidityReleased',
+  'TreasuryLiquidityCommitted',
+  'TreasuryRouteSelected',
+  'TreasuryProviderRestricted',
+  'TreasuryCorridorHalted',
+  'TreasuryExposureElevated',
+  'TreasuryRebalanceProposed',
+  'TreasuryReconciliationMismatch',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -253,6 +263,15 @@ export const EVENT_SCHEMA_REFS = {
   GrowthPlanStale: 'solstice.growth.plan_stale/1',
   GrowthActionProposed: 'solstice.growth.action_proposed/1',
 
+  TreasuryLiquidityReserved: 'solstice.treasury.liquidity.reserved/1',
+  TreasuryLiquidityReleased: 'solstice.treasury.liquidity.released/1',
+  TreasuryLiquidityCommitted: 'solstice.treasury.liquidity.committed/1',
+  TreasuryRouteSelected: 'solstice.treasury.route.selected/1',
+  TreasuryProviderRestricted: 'solstice.treasury.provider.restricted/1',
+  TreasuryCorridorHalted: 'solstice.treasury.corridor.halted/1',
+  TreasuryExposureElevated: 'solstice.treasury.exposure.elevated/1',
+  TreasuryRebalanceProposed: 'solstice.treasury.rebalance.proposed/1',
+  TreasuryReconciliationMismatch: 'solstice.treasury.reconciliation.mismatch/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -359,6 +378,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   GrowthPlanStale: 'growth',
   GrowthActionProposed: 'growth',
 
+  TreasuryLiquidityReserved: 'treasury',
+  TreasuryLiquidityReleased: 'treasury',
+  TreasuryLiquidityCommitted: 'treasury',
+  TreasuryRouteSelected: 'treasury',
+  TreasuryProviderRestricted: 'treasury',
+  TreasuryCorridorHalted: 'treasury',
+  TreasuryExposureElevated: 'treasury',
+  TreasuryRebalanceProposed: 'treasury',
+  TreasuryReconciliationMismatch: 'treasury',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

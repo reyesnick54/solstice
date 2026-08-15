@@ -411,6 +411,39 @@ export type AcceptancePaymentDeclinedV1 = VersionedEvent<'AcceptancePaymentDecli
 export type AcceptancePaymentSettledV1 = VersionedEvent<'AcceptancePaymentSettled', 1, CardAuditPayload>;
 export type AcceptanceReconciliationMismatchV1 = VersionedEvent<'AcceptanceReconciliationMismatch', 1, CardAuditPayload>;
 
+export type TreasuryAuditPayload = {
+  readonly reservationId?: string;
+  readonly paymentId?: string;
+  readonly treasuryAccountId?: string;
+  readonly amountMinorUnits?: string;
+  readonly currency?: string;
+  readonly selectedRouteId?: string | null;
+  readonly routingVersion?: string;
+  readonly whySelected?: string;
+  readonly killSwitchId?: string;
+  readonly scope?: string;
+  readonly target?: string;
+  readonly enabled?: boolean;
+  readonly state?: string;
+  readonly kind?: string;
+  readonly proposalId?: string;
+  readonly sourceTreasuryAccountId?: string;
+  readonly destinationTreasuryAccountId?: string;
+  readonly reconciliationId?: string;
+  readonly status?: string;
+  readonly mismatches?: readonly string[];
+};
+
+export type TreasuryLiquidityReservedV1 = VersionedEvent<'TreasuryLiquidityReserved', 1, TreasuryAuditPayload>;
+export type TreasuryLiquidityReleasedV1 = VersionedEvent<'TreasuryLiquidityReleased', 1, TreasuryAuditPayload>;
+export type TreasuryLiquidityCommittedV1 = VersionedEvent<'TreasuryLiquidityCommitted', 1, TreasuryAuditPayload>;
+export type TreasuryRouteSelectedV1 = VersionedEvent<'TreasuryRouteSelected', 1, TreasuryAuditPayload>;
+export type TreasuryProviderRestrictedV1 = VersionedEvent<'TreasuryProviderRestricted', 1, TreasuryAuditPayload>;
+export type TreasuryCorridorHaltedV1 = VersionedEvent<'TreasuryCorridorHalted', 1, TreasuryAuditPayload>;
+export type TreasuryExposureElevatedV1 = VersionedEvent<'TreasuryExposureElevated', 1, TreasuryAuditPayload>;
+export type TreasuryRebalanceProposedV1 = VersionedEvent<'TreasuryRebalanceProposed', 1, TreasuryAuditPayload>;
+export type TreasuryReconciliationMismatchV1 = VersionedEvent<'TreasuryReconciliationMismatch', 1, TreasuryAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -607,6 +640,15 @@ export type DomainEvent =
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
   | GrowthActionProposedV1;
+  | TreasuryLiquidityReservedV1
+  | TreasuryLiquidityReleasedV1
+  | TreasuryLiquidityCommittedV1
+  | TreasuryRouteSelectedV1
+  | TreasuryProviderRestrictedV1
+  | TreasuryCorridorHaltedV1
+  | TreasuryExposureElevatedV1
+  | TreasuryRebalanceProposedV1
+  | TreasuryReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

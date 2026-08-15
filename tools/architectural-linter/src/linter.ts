@@ -40,7 +40,8 @@ export function lintSource(file: string, source: string): Finding[] {
   const isMoneyMovement =
     /services\/accounts\/src\/(money-movement|banking-operations)\.ts$/.test(rel) ||
     /packages\/payments\/src\/journals\.ts$/.test(rel) ||
-    /packages\/cards\/src\/journals\.ts$/.test(rel);
+    /packages\/cards\/src\/journals\.ts$/.test(rel) ||
+    /packages\/treasury\/src\/service\.ts$/.test(rel);
   const isBalanceOrGrowth =
     /balances\.ts$/.test(rel) || /growth\.ts$/.test(rel) || /position/.test(rel);
   const isMoneyPath =

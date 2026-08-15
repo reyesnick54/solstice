@@ -1,7 +1,16 @@
-# Chunk 13 stop record
+# Chunk 13 stop record (historical)
 
-This file is the Chunk 13 completion report. It records a
-**process-gate stop**, not a treasury implementation.
+This file preserves the **historical process-gate stop** from the
+first Chunk 13 attempt. It is not the current completion report.
+
+**Current status:** Chunk 12 wallet / SoftPOS is implemented in
+simulation. Chunk 13 was subsequently resumed at `packages/treasury`
+and `services/treasury`. See [`chunk-13-resume.md`](./chunk-13-resume.md).
+
+---
+
+This file recorded a **process-gate stop**, not a treasury
+implementation, at the time it was written.
 
 Task: Treasury, Liquidity, Corridor Funding, Payment Routing
 Intelligence, and Settlement Risk Engine.

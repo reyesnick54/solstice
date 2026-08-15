@@ -261,6 +261,7 @@
         "packages/identity",
         "packages/personal-economic-graph",
         "packages/platform"
+        "packages/treasury"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -434,6 +435,27 @@
         "packages/money",
         "packages/identity",
         "packages/config"
+      "id": "packages/treasury",
+      "npmName": "@solstice/treasury",
+      "path": "packages/treasury",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security",
+        "packages/payments"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -461,11 +483,26 @@
         "packages/agent",
         "packages/permissions",
         "packages/security"
+      "notes": "Canonical treasury, liquidity, corridor prefunding, deterministic routing intelligence, and settlement-risk engine. Simulation only. Not a second ledger."
+    },
+    {
+      "id": "services/treasury",
+      "npmName": "@solstice/treasury-service",
+      "path": "services/treasury",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/treasury"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Canonical Growth Orchestrator and mandate compiler. Does not execute money movement or issue Execution Authority."
+      "notes": "Application facade for packages/treasury. Not a second treasury model."
     }
   ],
   "components": [
@@ -1188,12 +1225,29 @@
       "protectedSymbols": [
         {
           "name": "PersonalEconomyAgent",
+      "id": "treasury-platform",
+      "name": "Canonical treasury platform",
+      "canonicalOwner": "packages/treasury",
+      "canonicalPath": "packages/treasury/src/service.ts",
+      "publicInterface": "packages/treasury/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "TreasuryService",
           "kind": "class"
         }
       ],
       "forbiddenAliases": [
         "packages/wealth-agent",
         "packages/agent-runtime"
+        "packages/liquidity",
+        "packages/routing-intelligence",
+        "packages/treasury-core",
+        "packages/settlement-risk"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1226,6 +1280,7 @@
         "@reyesnick54"
       ],
       "notes": "Machine-verifiable mandates and explainable GrowthPlans. Does not execute."
+      "notes": "One Treasury model. Customer balances stay on the canonical ledger."
     }
   ],
   "authorizedMutationPaths": [
@@ -1450,6 +1505,42 @@
       "file": "packages/cards/src/journals.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "reserveLiquidity",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "releaseReservation",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "commitReservation",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "proposeRebalance",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "executeRebalance",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "setKillSwitch",
+      "file": "packages/treasury/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -1491,6 +1582,14 @@
     "packages/compounder",
     "packages/wealth-agent",
     "packages/mandates-v2"
+    "packages/personal-agent",
+    "packages/financial-agent",
+    "packages/economy-ai",
+    "packages/growth-agent"
+    "packages/liquidity",
+    "packages/routing-intelligence",
+    "packages/treasury-core",
+    "packages/settlement-risk"
   ],
   "capabilities": [
     {
@@ -1649,6 +1748,15 @@
       "owner": "packages/platform",
       "protected": true,
       "notes": "Mandate compiler and Growth Orchestrator. Does not execute money movement."
+      "id": "treasury",
+      "status": "PLANNED",
+      "owner": "packages/treasury",
+      "protected": true,
+      "notes": "Reserved TREASURY owners are packages/treasury and services/treasury. Chunk 13 stopped. Chunk 13R was not merged. Do not treat payment/card simulation books as this capability."
+      "status": "IMPLEMENTED",
+      "owner": "packages/treasury",
+      "protected": true,
+      "notes": "Simulation treasury liquidity, prefunding, deterministic routing, concentration, settlement exposure, and Kernel-gated rebalance proposals. Not live banks or regulatory capital."
     }
   ],
   "boundedContexts": [
@@ -1725,12 +1833,13 @@
     },
     {
       "id": "TREASURY",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/treasury",
         "services/treasury"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation treasury and routing intelligence. No live bank, correspondent, or payment-provider connection. Concentration thresholds are RESEARCH_REQUIRED engineering values."
     },
     {
       "id": "PERSONAL_ECONOMIC_GRAPH",
@@ -1750,6 +1859,7 @@
       ],
       "protected": true,
       "notes": "Proposal-only agent. Cannot execute or depend on packages/platform."
+      "notes": "Chunk 15 stopped: treasury is PLANNED and main CI was red. See docs/architecture/chunk-15-stop.md. Do not create packages/agent until that gate is green."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

@@ -57,6 +57,12 @@ export const ACTION_TYPES = {
   CREATE_ACCEPTANCE_SESSION: 'CREATE_ACCEPTANCE_SESSION',
   START_ACCEPTANCE_PAYMENT: 'START_ACCEPTANCE_PAYMENT',
   SETTLE_ACCEPTANCE_PAYMENT: 'SETTLE_ACCEPTANCE_PAYMENT',
+  RESERVE_TREASURY_LIQUIDITY: 'RESERVE_TREASURY_LIQUIDITY',
+  RELEASE_TREASURY_LIQUIDITY: 'RELEASE_TREASURY_LIQUIDITY',
+  COMMIT_TREASURY_LIQUIDITY: 'COMMIT_TREASURY_LIQUIDITY',
+  PROPOSE_TREASURY_REBALANCE: 'PROPOSE_TREASURY_REBALANCE',
+  EXECUTE_TREASURY_REBALANCE: 'EXECUTE_TREASURY_REBALANCE',
+  SET_TREASURY_KILL_SWITCH: 'SET_TREASURY_KILL_SWITCH',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -522,3 +528,78 @@ export type CardIntent =
   | CreateAcceptanceSessionIntent
   | StartAcceptancePaymentIntent
   | SettleAcceptancePaymentIntent;
+
+export type ReserveTreasuryLiquidityPayload = {
+  readonly accountId: AccountId;
+  readonly paymentId: string;
+  readonly corridorId: string;
+  readonly provider: string;
+  readonly amount: Money;
+};
+
+export type TreasuryReservationLifecyclePayload = {
+  readonly accountId: AccountId;
+  readonly reservationId: string;
+};
+
+export type ProposeTreasuryRebalancePayload = {
+  readonly accountId: AccountId;
+  readonly proposalId: string;
+  readonly sourceTreasuryAccountId: string;
+  readonly destinationTreasuryAccountId: string;
+  readonly amount: Money;
+  readonly narrative: string;
+};
+
+export type ExecuteTreasuryRebalancePayload = {
+  readonly accountId: AccountId;
+  readonly proposalId: string;
+};
+
+export type SetTreasuryKillSwitchPayload = {
+  readonly accountId: AccountId;
+  readonly killSwitchId: string;
+  readonly scope:
+    | 'PROVIDER'
+    | 'RAIL'
+    | 'CORRIDOR'
+    | 'SETTLEMENT_ACCOUNT'
+    | 'CURRENCY_ROUTE'
+    | 'HALT_RESERVATIONS'
+    | 'RECONCILIATION_ONLY';
+  readonly target: string;
+  readonly enabled: boolean;
+  readonly reason: string;
+};
+
+export type ReserveTreasuryLiquidityIntent = ActionIntent<ReserveTreasuryLiquidityPayload> & {
+  readonly actionType: typeof ACTION_TYPES.RESERVE_TREASURY_LIQUIDITY;
+};
+
+export type ReleaseTreasuryLiquidityIntent = ActionIntent<TreasuryReservationLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.RELEASE_TREASURY_LIQUIDITY;
+};
+
+export type CommitTreasuryLiquidityIntent = ActionIntent<TreasuryReservationLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.COMMIT_TREASURY_LIQUIDITY;
+};
+
+export type ProposeTreasuryRebalanceIntent = ActionIntent<ProposeTreasuryRebalancePayload> & {
+  readonly actionType: typeof ACTION_TYPES.PROPOSE_TREASURY_REBALANCE;
+};
+
+export type ExecuteTreasuryRebalanceIntent = ActionIntent<ExecuteTreasuryRebalancePayload> & {
+  readonly actionType: typeof ACTION_TYPES.EXECUTE_TREASURY_REBALANCE;
+};
+
+export type SetTreasuryKillSwitchIntent = ActionIntent<SetTreasuryKillSwitchPayload> & {
+  readonly actionType: typeof ACTION_TYPES.SET_TREASURY_KILL_SWITCH;
+};
+
+export type TreasuryIntent =
+  | ReserveTreasuryLiquidityIntent
+  | ReleaseTreasuryLiquidityIntent
+  | CommitTreasuryLiquidityIntent
+  | ProposeTreasuryRebalanceIntent
+  | ExecuteTreasuryRebalanceIntent
+  | SetTreasuryKillSwitchIntent;
