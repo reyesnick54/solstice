@@ -75,6 +75,7 @@ Agents and later CI jobs use that result. They do not guess.
 | compliance-screening | IMPLEMENTED | packages/kernel |
 | payments | IMPLEMENTED | packages/payments |
 | fx | IMPLEMENTED | packages/payments |
+| cards | PLANNED | packages/cards |
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 
@@ -85,3 +86,9 @@ identity facts the engine consumes.
 Chunk 7 owns screening, AML, fraud, velocity, and cases inside
 `packages/kernel/src/compliance`. It does not create `packages/compliance`
 or a second Kernel. Simulation adapters only.
+
+Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
+requires the protected `cards` capability. That capability is `PLANNED`
+on `main`. The evaluator returns `mustStop: true`. Do not invent a
+second cards domain, processor adapter, or network-token metadata
+model. See [`chunk-12-stop.md`](./chunk-12-stop.md).

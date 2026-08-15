@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-12",
+  "title": "Mobile Wallet Provisioning, Network Token Lifecycle, Apple Pay / Google Wallet Adapter Architecture, and Tap-to-Pay / SoftPOS Acceptance Foundation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "banking-core",
+    "compliance-screening",
+    "payments",
+    "fx",
+    "cards"
+  ],
+  "notes": "Protected cards capability is PLANNED on main. Chunk 12 must stop rather than invent a second cards domain, processor adapter, or network-token metadata model. Do not implement wallet or SoftPOS until packages/cards is IMPLEMENTED."
+}

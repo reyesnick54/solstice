@@ -4,6 +4,7 @@
 - [Manifest](./manifest.json) — machine-readable enforcement input
 - [ADR index](./adr/README.md) — decision records (not renumbered)
 - [Chunk dependencies](./chunk-dependencies.md) — stop if a protected requirement is not IMPLEMENTED
+- [Chunk 12 stop](./chunk-12-stop.md) — wallet / Tap-to-Pay blocked until Cards is IMPLEMENTED
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 - [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics
