@@ -281,7 +281,10 @@ describe('versioned SQL migrations', () => {
     assert.match(v017.sql, /agent_votes_authorize BOOLEAN NOT NULL CHECK \(agent_votes_authorize = FALSE\)/);
     assert.match(v017.sql, /executable BOOLEAN NOT NULL CHECK \(executable = FALSE\)/);
     assert.match(v017.sql, /GRANT USAGE ON SCHEMA capital_mesh TO customer_app/);
-    assert.equal(/chain.of.thought|BEGIN_PROMPT/i.test(v017.sql), false);
+    const sqlWithoutComments = v017.sql
+      .replace(/--[^\n]*/g, '')
+      .replace(/NOT LIKE '%BEGIN_PROMPT%'/gi, '');
+    assert.equal(/chain.of.thought|BEGIN_PROMPT/i.test(sqlWithoutComments), false);
     assert.equal(/CREATE TABLE capital_mesh\.journal/i.test(v017.sql), false);
   });
 

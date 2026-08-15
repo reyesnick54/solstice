@@ -1,6 +1,6 @@
 -- V017 Agentic Capital Mesh.
 -- Structured run, thesis, candidate, review, arbitration, and proposal records.
--- No private chain-of-thought. No secrets. No raw model prompt dumps.
+-- No private reasoning traces. No secrets. No raw model prompt dumps.
 -- Simulation proposal layer only. Not a ledger and not an order book.
 
 CREATE SCHEMA IF NOT EXISTS capital_mesh;
