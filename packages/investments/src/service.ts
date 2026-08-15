@@ -903,7 +903,7 @@ export class InvestmentsService {
     const cashJournal = this.postTradeCash(profile, fill, authority, actionType);
     if (fill.explicitFee.minorUnits > 0n) {
       postInvestmentJournal(this.ledger, {
-        idempotencyKey: `${fill.fillId}:fee`,
+        idempotencyKey: `${authority.idempotencyKey}:fee`,
         executionAuthority: authority,
         actionType,
         memo: 'INVESTMENT_EXPLICIT_FEE',
@@ -954,7 +954,7 @@ export class InvestmentsService {
   ) {
     if (fill.side === 'BUY') {
       return postInvestmentJournal(this.ledger, {
-        idempotencyKey: `${fill.fillId}:cash`,
+        idempotencyKey: `${authority.idempotencyKey}:cash`,
         executionAuthority: authority,
         actionType,
         memo: 'PAPER_BUY_CASH',
@@ -965,7 +965,7 @@ export class InvestmentsService {
       });
     }
     return postInvestmentJournal(this.ledger, {
-      idempotencyKey: `${fill.fillId}:cash`,
+      idempotencyKey: `${authority.idempotencyKey}:cash`,
       executionAuthority: authority,
       actionType,
       memo: 'PAPER_SELL_PROCEEDS',

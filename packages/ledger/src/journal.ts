@@ -342,6 +342,7 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'dispute-final',
   'acceptance-credit',
   'acceptance-fee',
+  'cash',
 ]);
 
 function paymentIdempotencyMatches(eaKey: string, journalKey: string): boolean {

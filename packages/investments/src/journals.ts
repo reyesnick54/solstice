@@ -55,16 +55,17 @@ export function postInvestmentJournal(
     readonly classBridge?: ClassBridge;
   },
 ): Journal {
+  const debit = { accountId: String(input.debitAccountId), direction: 'DEBIT' as const, amount: input.amount };
+  const credit = { accountId: String(input.creditAccountId), direction: 'CREDIT' as const, amount: input.amount };
+  const bound = String(input.executionAuthority.accountId);
+  const postings = bound === credit.accountId ? [credit, debit] : [debit, credit];
   return ledger.postJournal({
     idempotencyKey: input.idempotencyKey,
     executionAuthority: input.executionAuthority,
     actionType: input.actionType,
     memo: input.memo,
     classBridge: input.classBridge,
-    postings: [
-      { accountId: String(input.debitAccountId), direction: 'DEBIT', amount: input.amount },
-      { accountId: String(input.creditAccountId), direction: 'CREDIT', amount: input.amount },
-    ],
+    postings,
   });
 }
 

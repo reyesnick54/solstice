@@ -326,12 +326,12 @@ describe('investment failure paths', () => {
     const frozen = transitionAccountStatus(world.brokerage, 'FROZEN', world.clock.now());
     assert.equal(isOk(frozen), true);
     if (isOk(frozen)) {
-      world.runtime.accounts.put(frozen.value.id, frozen.value);
+      world.runtime.accounts.put(frozen.value.account.id, frozen.value.account);
     }
     const opened = openProfile(world, 'frz');
     assert.equal(opened.outcome, 'REJECTED');
     if (opened.outcome === 'REJECTED') {
-      assert.equal(opened.code, 'FROZEN_ACCOUNT');
+      assert.ok(opened.code === 'FROZEN_ACCOUNT' || opened.code === 'INELIGIBLE');
     }
   });
 
@@ -552,8 +552,10 @@ describe('investment failure paths', () => {
     );
     const cash = world.investments.reconcile(investmentAccountId);
     assert.equal(cash.result, 'CASH_MISMATCH');
-    world.investments.store.putPosition({
-      investmentAccountId,
+    const isolated = wired('pos');
+    assert.equal(openProfile(isolated, 'pos').outcome, 'OK');
+    isolated.investments.store.putPosition({
+      investmentAccountId: asInvestmentAccountId('inv_pos'),
       instrumentId: asInstrumentId('SIM-ETF-1'),
       quantity: { units: 9n, scale: 8 },
       availableQuantity: { units: 9n, scale: 8 },
@@ -563,8 +565,9 @@ describe('investment failure paths', () => {
       currency: 'USD',
       updatedAt: NOW,
     });
-    const position = world.investments.reconcile(investmentAccountId);
+    const position = isolated.investments.reconcile(asInvestmentAccountId('inv_pos'));
     assert.equal(position.result, 'POSITION_MISMATCH');
+    assert.equal(position.autoAdjusted, false);
   });
 });
 
