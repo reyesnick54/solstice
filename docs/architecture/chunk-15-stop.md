@@ -5,8 +5,9 @@ first Chunk 15 attempt. It is not the current completion report.
 
 **Current status:** Chunk 13R treasury is implemented at
 `packages/treasury` and `services/treasury`. Capability `treasury` is
-`IMPLEMENTED`. The Personal Economy Agent remains unstarted. Reserved
-owner `packages/agent` is still absent.
+`IMPLEMENTED`. The Personal Economy Agent was subsequently implemented
+at `packages/agent` as a proposal-only interpreter. This file remains
+historical.
 
 ---
 

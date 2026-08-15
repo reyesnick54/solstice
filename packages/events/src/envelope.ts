@@ -217,6 +217,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   if (eventType.startsWith('EconomicGraph')) {
     return { type: 'economic_graph', id: String(body.graphId ?? 'unknown') };
   }
+  if (eventType.startsWith('Mandate')) {
+    return { type: 'mandate', id: String(body.mandateId ?? 'unknown') };
+  }
+  if (eventType.startsWith('Growth')) {
+    return { type: 'growth', id: String(body.planId ?? body.cycleId ?? body.actionId ?? 'unknown') };
+  }
   if (eventType.startsWith('Treasury')) {
     return {
       type: 'treasury',

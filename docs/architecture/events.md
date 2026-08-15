@@ -132,6 +132,15 @@ Implemented Personal Economic Graph events (ids and kinds only):
 - `economic_graph.relationship.created` → `EconomicGraphRelationshipCreated`
 - `economic_graph.snapshot.created` → `EconomicGraphSnapshotCreated`
 - `economic_graph.opportunity.created` → `EconomicGraphOpportunityCreated`
+- `mandate.draft.created` → `MandateDraftCreated`
+- `mandate.confirmed` → `MandateConfirmed`
+- `mandate.activated` → `MandateActivated`
+- `mandate.paused` → `MandatePaused`
+- `mandate.revoked` → `MandateRevoked`
+- `growth.cycle.started` → `GrowthCycleStarted`
+- `growth.plan.created` → `GrowthPlanCreated`
+- `growth.plan.stale` → `GrowthPlanStale`
+- `growth.action.proposed` → `GrowthActionProposed`
 
 Reserved (not implemented): `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.

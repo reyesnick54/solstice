@@ -77,6 +77,8 @@ Agents and later CI jobs use that result. They do not guess.
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
+| personal-economy-agent | IMPLEMENTED | packages/agent |
+| growth-orchestrator | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -114,6 +116,10 @@ The evaluator returns `mustStop: false`.
 Chunk 15 (Personal Economy Agent) originally stopped while `treasury`
 was `PLANNED` and `main` CI was red. That stop is historical:
 [`chunk-15-stop.md`](./chunk-15-stop.md). Treasury is now
-`IMPLEMENTED`, so the capability evaluator returns `mustStop: false`.
-The reserved owner `packages/agent` remains absent. This tree does
-not start the Personal Economy Agent.
+`IMPLEMENTED`. The Personal Economy Agent lives at `packages/agent`
+as a proposal-only interpreter. The evaluator returns
+`mustStop: false`.
+
+Chunk 16 implements machine-verifiable economic mandates and the
+Growth Orchestrator at `packages/platform`. It does not execute
+investments and does not start the Personal Economic Value Engine.

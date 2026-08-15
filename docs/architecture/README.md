@@ -8,7 +8,7 @@
 - [Chunk 12 resume](./chunk-12-resume.md) — wallet / Tap-to-Pay implemented after Cards merged
 - [Chunk 13 stop (historical)](./chunk-13-stop.md) — original process-gate stop before treasury existed
 - [Chunk 13 resume](./chunk-13-resume.md) — treasury / liquidity / routing intelligence implemented
-- [Chunk 15 stop (historical)](./chunk-15-stop.md) — original stop while Treasury was still PLANNED; agent remains unstarted
+- [Chunk 15 stop (historical)](./chunk-15-stop.md) — original stop while Treasury was still PLANNED; agent later landed as proposal-only
 - [Historical PR guidance](./historical-implementation.md) — older PRs are not automatically canonical
 - [PostgreSQL persistence fabric](./persistence.md) — durable adapter behind existing ports
 - [Durable event fabric](./events.md) — envelope, outbox, inbox, replay, delivery semantics
@@ -17,5 +17,6 @@
 - [Security and cryptography](./security.md) — KeyProvider, secrets, envelopes, key lifecycle
 - Identity lives in `packages/identity` (Chunk 5). ADR-0007 remains PROPOSED.
 - [Personal Economic Graph](./economic-graph.md) — first SFF 2.0 intelligence layer. Does not execute.
+- Growth Orchestrator and mandates live in `packages/platform` (Chunk 16). The Personal Economy Agent lives in `packages/agent`. Neither executes. ADR-0012 remains PROPOSED.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

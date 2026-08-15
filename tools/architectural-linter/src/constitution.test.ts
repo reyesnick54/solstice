@@ -383,12 +383,13 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
   });
 
-  it('CHUNK-15 capability gate is clear now that treasury is IMPLEMENTED; agent remains unstarted', () => {
+  it('CHUNK-15 capability gate is clear now that treasury and the agent are IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'treasury').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'treasury').protected, true);
     assert.equal(evaluateCapability(manifest, 'treasury').owner, 'packages/treasury');
     assert.equal(evaluateCapability(manifest, 'personal-economic-graph').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'personal-economy-agent').status, 'IMPLEMENTED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-15',
@@ -404,16 +405,27 @@ describe('architecture constitution', () => {
 
     const agent = manifest.boundedContexts.find((context) => context.id === 'PERSONAL_ECONOMY_AGENT');
     assert.ok(agent);
-    assert.equal(agent.status, 'PLANNED');
+    assert.equal(agent.status, 'IMPLEMENTED');
     assert.deepEqual(agent.reservedPaths, ['packages/agent']);
 
     assert.equal(existsSync(join(REPO_ROOT, 'packages/treasury')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'services/treasury')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'services/agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/financial-agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/economy-ai')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/growth-agent')), false);
+  });
+
+  it('CHUNK-16 mandate and Growth Orchestrator capabilities are IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-economy-agent').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'growth-orchestrator').status, 'IMPLEMENTED');
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-16',
+    );
+    assert.ok(declared, 'CHUNK-16 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
   });
 });

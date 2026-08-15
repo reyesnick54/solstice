@@ -165,6 +165,18 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V011 persists mandate versions and growth plans without guaranteed-return fields', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v011 = files.find((file) => file.version === 11);
+    assert.ok(v011);
+    assert.match(v011.sql, /CREATE SCHEMA IF NOT EXISTS growth/);
+    assert.match(v011.sql, /CREATE TABLE growth.mandate_version/);
+    assert.match(v011.sql, /CREATE TABLE growth.plan/);
+    assert.match(v011.sql, /growth_plan_no_guaranteed_return/);
+    assert.match(v011.sql, /GRANT USAGE ON SCHEMA growth TO customer_app/);
+    assert.equal(/\b(apy|apr)\b/i.test(v011.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

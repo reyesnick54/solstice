@@ -1,0 +1,80 @@
+export const GROWTH_ACTION_KINDS = [
+  'REVIEW_SUBSCRIPTION',
+  'REDUCE_FEE',
+  'ALLOCATE_TO_EMERGENCY_RESERVE',
+  'REDUCE_DEBT',
+  'OPTIMIZE_PAYMENT_TIMING',
+  'CAPTURE_REWARD',
+  'MOVE_IDLE_CASH_BETWEEN_EXISTING_ELIGIBLE_ACCOUNTS',
+  'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE',
+] as const;
+
+export type GrowthActionKind = (typeof GROWTH_ACTION_KINDS)[number];
+
+export const EXECUTION_CAPABILITY_STATES = [
+  'INFORMATION_ONLY',
+  'PROPOSAL_ONLY',
+  'USER_CONFIRMATION_REQUIRED',
+  'KERNEL_AUTHORIZATION_REQUIRED',
+  'HUMAN_REVIEW_REQUIRED',
+  'DEPENDENCY_NOT_IMPLEMENTED',
+  'PROHIBITED',
+] as const;
+
+export type ExecutionCapabilityState = (typeof EXECUTION_CAPABILITY_STATES)[number];
+
+export const GROWTH_CYCLE_STATES = [
+  'CREATED',
+  'ASSESSING',
+  'PLANNING',
+  'AWAITING_USER',
+  'COMPLETED',
+  'STALE',
+  'CANCELLED',
+] as const;
+
+export type GrowthCycleState = (typeof GROWTH_CYCLE_STATES)[number];
+
+export const GROWTH_PLAN_STATES = ['CURRENT', 'STALE', 'SUPERSEDED'] as const;
+export type GrowthPlanState = (typeof GROWTH_PLAN_STATES)[number];
+
+export const GOAL_FEASIBILITY_STATES = [
+  'ON_TRACK',
+  'AT_RISK',
+  'INFEASIBLE_WITH_CURRENT_FACTS',
+  'INSUFFICIENT_DATA',
+] as const;
+
+export type GoalFeasibilityState = (typeof GOAL_FEASIBILITY_STATES)[number];
+
+export const RISK_CLASSES = ['LOW', 'MODERATE', 'HIGH', 'UNCERTAIN_MARKET'] as const;
+export type RiskClass = (typeof RISK_CLASSES)[number];
+
+export const CANDIDATE_SOURCES = ['PEG', 'AGENT_PROPOSAL', 'MANDATE_GOAL', 'SYNTHETIC_GUARD'] as const;
+export type CandidateSource = (typeof CANDIDATE_SOURCES)[number];
+
+export const EFFECT_KINDS = [
+  'DETERMINISTIC_EFFECT',
+  'ESTIMATED_EFFECT',
+  'UNCERTAIN_MARKET_OUTCOME',
+] as const;
+
+export type EffectKind = (typeof EFFECT_KINDS)[number];
+
+export const PLANNING_PRIORITY_VERSION = 'PLANNING_PRIORITY_V1' as const;
+
+export const FEASIBILITY_REJECTION_REASONS = [
+  'LIQUIDITY_FLOOR',
+  'PROTECTED_FUNDS',
+  'CURRENCY_CONSTRAINT',
+  'SCHEDULED_OBLIGATION',
+  'ACCOUNT_STATE',
+  'PRODUCT_CAPABILITY',
+  'POLICY',
+  'USER_MANDATE',
+  'AMOUNT_LIMIT',
+  'REQUIRED_DEPENDENCY',
+  'CONTRADICTORY_MANDATE',
+] as const;
+
+export type FeasibilityRejectionReason = (typeof FEASIBILITY_REJECTION_REASONS)[number];

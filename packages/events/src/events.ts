@@ -482,6 +482,38 @@ export type EconomicGraphOpportunityCreatedV1 = VersionedEvent<
   EconomicGraphAuditPayload
 >;
 
+export type MandateAuditPayload = {
+  readonly mandateId?: string;
+  readonly subjectId?: string;
+  readonly version?: number;
+  readonly actorId?: string;
+  readonly confirmationHash?: string;
+};
+
+export type MandateDraftCreatedV1 = VersionedEvent<'MandateDraftCreated', 1, MandateAuditPayload>;
+export type MandateConfirmedV1 = VersionedEvent<'MandateConfirmed', 1, MandateAuditPayload>;
+export type MandateActivatedV1 = VersionedEvent<'MandateActivated', 1, MandateAuditPayload>;
+export type MandatePausedV1 = VersionedEvent<'MandatePaused', 1, MandateAuditPayload>;
+export type MandateRevokedV1 = VersionedEvent<'MandateRevoked', 1, MandateAuditPayload>;
+
+export type GrowthAuditPayload = {
+  readonly cycleId?: string;
+  readonly planId?: string;
+  readonly version?: number;
+  readonly subjectId?: string;
+  readonly mandateId?: string;
+  readonly actionId?: string;
+  readonly action?: string;
+  readonly executionCapability?: string;
+  readonly proposedCount?: number;
+  readonly reason?: string;
+};
+
+export type GrowthCycleStartedV1 = VersionedEvent<'GrowthCycleStarted', 1, GrowthAuditPayload>;
+export type GrowthPlanCreatedV1 = VersionedEvent<'GrowthPlanCreated', 1, GrowthAuditPayload>;
+export type GrowthPlanStaleV1 = VersionedEvent<'GrowthPlanStale', 1, GrowthAuditPayload>;
+export type GrowthActionProposedV1 = VersionedEvent<'GrowthActionProposed', 1, GrowthAuditPayload>;
+
 export type RailAuditPayload = {
   readonly paymentId?: string;
   readonly railSubmissionId?: string;
@@ -599,6 +631,15 @@ export type DomainEvent =
   | AcceptancePaymentDeclinedV1
   | AcceptancePaymentSettledV1
   | AcceptanceReconciliationMismatchV1
+  | MandateDraftCreatedV1
+  | MandateConfirmedV1
+  | MandateActivatedV1
+  | MandatePausedV1
+  | MandateRevokedV1
+  | GrowthCycleStartedV1
+  | GrowthPlanCreatedV1
+  | GrowthPlanStaleV1
+  | GrowthActionProposedV1
   | TreasuryLiquidityReservedV1
   | TreasuryLiquidityReleasedV1
   | TreasuryLiquidityCommittedV1

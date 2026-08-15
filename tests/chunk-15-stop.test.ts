@@ -8,9 +8,9 @@ import { evaluateCapability, loadManifest } from '../tools/architectural-linter/
 
 const REPO_ROOT = join(import.meta.dirname, '..');
 
-describe('CHUNK-15 Personal Economy Agent remains unstarted', () => {
-  it('does not create the reserved agent owner or competing agent packages', () => {
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), false);
+describe('CHUNK-15 Personal Economy Agent isolation after treasury', () => {
+  it('keeps the reserved agent owner and does not create competing agent packages', () => {
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/agent')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'services/agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-agent')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/financial-agent')), false);
@@ -23,6 +23,7 @@ describe('CHUNK-15 Personal Economy Agent remains unstarted', () => {
   it('no longer stops on treasury after Chunk 13R', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'treasury').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'personal-economy-agent').status, 'IMPLEMENTED');
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-15',
     );

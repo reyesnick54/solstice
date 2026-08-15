@@ -1,5 +1,6 @@
 -- V009 Personal Economic Graph projection.
 -- Non-authoritative. Not a ledger. User-declared rows survive rebuild.
+-- Renumbered from a colliding V008 so wallet/SoftPOS remains customer V008.
 -- Renumbered from V008 after the Chunk 12 wallet migration claimed V008.
 
 CREATE SCHEMA IF NOT EXISTS economic_graph;

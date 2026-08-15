@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-16",
+  "title": "Machine-Verifiable Economic Mandates, User Goal Constraints, Growth Orchestrator, Feasibility Engine, and Proposal Planning",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "compliance-screening",
+    "banking-core",
+    "payments",
+    "cards",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator"
+  ],
+  "notes": "Implements mandates and Growth Orchestrator. Does not execute investments or start the Personal Economic Value Engine."
+}
