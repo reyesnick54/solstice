@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-15",
+  "title": "Personal Economy Agent Runtime, Financial Context, Scoped Tool Broker, Capability Tokens, Proposal System, and AI Safety Boundary",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "banking-core",
+    "compliance-screening",
+    "payments",
+    "cards",
+    "personal-economic-graph",
+    "treasury"
+  ],
+  "notes": "Reserved PERSONAL ECONOMY AGENT owner is packages/agent. The protected treasury capability is PLANNED (Chunk 13 stop-only; Chunk 13R was never merged). evaluateChunkRequirements therefore returns mustStop: true. Main CI on the pre-change tip was also red. Do not implement the agent until Treasury is IMPLEMENTED and clean main CI is green. See docs/architecture/chunk-15-stop.md."
+}

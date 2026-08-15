@@ -77,6 +77,7 @@ Agents and later CI jobs use that result. They do not guess.
 | rail-adapters | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
+| treasury | PLANNED | packages/treasury |
 | treasury | IMPLEMENTED | packages/treasury |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -87,6 +88,30 @@ Chunk 7 owns screening, AML, fraud, velocity, and cases inside
 `packages/kernel/src/compliance`. It does not create `packages/compliance`
 or a second Kernel. Simulation adapters only.
 
+Chunk 12 originally stopped because `cards` was `PLANNED`. Cards is now
+`IMPLEMENTED`. Wallet / SoftPOS were resumed inside `packages/cards`.
+See [`chunk-12-stop.md`](./chunk-12-stop.md) and
+[`chunk-12-resume.md`](./chunk-12-resume.md). Do not invent a second
+cards domain.
+
+Chunk 13 (treasury / liquidity / routing intelligence) requires the
+protected capabilities listed in
+[`chunks/chunk-13-treasury-routing-intelligence.json`](./chunks/chunk-13-treasury-routing-intelligence.json).
+Those listed capabilities are `IMPLEMENTED`, so that declaration's
+evaluator result is `mustStop: false`. The Chunk 13 **task** still
+stopped on a process gate. See [`chunk-13-stop.md`](./chunk-13-stop.md).
+Do not create `packages/treasury` until Chunk 13R lands. The reserved
+`treasury` capability remains `PLANNED`.
+
+Chunk 14 implements the Personal Economic Graph as the first SFF 2.0
+intelligence layer. It does not start the Personal Economy Agent.
+
+Chunk 15 (Personal Economy Agent) requires the protected `treasury`
+capability. That capability is `PLANNED`. The evaluator returns
+`mustStop: true`. The task also stops when `main` CI is red. See
+[`chunk-15-stop.md`](./chunk-15-stop.md). Do not create
+`packages/agent` until Treasury is `IMPLEMENTED` and clean `main` CI
+is green.
 Chunk 12 (mobile wallet provisioning and merchant Tap-to-Pay / SoftPOS)
 initially stopped because the protected `cards` capability was
 `PLANNED`. Cards is now `IMPLEMENTED`. Chunk 12 was subsequently
