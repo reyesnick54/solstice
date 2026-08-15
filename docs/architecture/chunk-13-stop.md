@@ -172,7 +172,41 @@ not a treasury bounded context.
 
 ## D. Exact CI on this stop branch
 
-Recorded after the documentation/test repairs. See the PR checks.
+Baseline on clean `main` at `f304ef8` (`npm run ci` via GitHub
+Actions run `31870629641`):
+
+```
+architectural invariants: ok
+extraction dry-run: ok
+architectural-linter: ok
+deployment posture: ok
+kernel gating: passed
+tests: 268 pass, 1 fail
+  failing: CHUNK-12 must stop until the protected cards capability is IMPLEMENTED
+           (asserted cards === PLANNED; actual IMPLEMENTED)
+demo: not reached
+typecheck: not reached
+secret scan: not reached
+CI pipeline: FAILURE
+```
+
+Post-change CI on this branch (`npm run ci`):
+
+```
+architectural invariants: ok
+extraction dry-run: ok (13 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (37 registered paths, all Kernel-authorized)
+tests: 270 pass, 0 fail
+  including: CHUNK-12 capability gate is clear now that cards is IMPLEMENTED
+  including: CHUNK-13 capability gate is clear and the reserved treasury owner is still absent
+demo: ok
+cards demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
 
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
 `false`.
