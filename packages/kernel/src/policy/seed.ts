@@ -21,6 +21,22 @@ export const POLICY_SOURCES: readonly SourceReference[] = [
   }),
 ];
 
+const SIMULATION_CARD_ACTIONS = [
+  'REQUEST_CARD',
+  'ACTIVATE_CARD',
+  'FREEZE_CARD',
+  'UNFREEZE_CARD',
+  'CLOSE_CARD',
+  'UPDATE_CARD_CONTROLS',
+  'AUTHORIZE_CARD_PURCHASE',
+  'REVERSE_CARD_AUTHORIZATION',
+  'CLEAR_CARD_TRANSACTION',
+  'REFUND_CARD_TRANSACTION',
+  'OPEN_CARD_DISPUTE',
+  'DECIDE_CARD_DISPUTE',
+  'ASSESS_CARD_FEE',
+] as const;
+
 const SIMULATION_BANKING_ACTIONS = [
   'OPEN_ACCOUNT',
   'POST_DEPOSIT',
@@ -36,6 +52,7 @@ const SIMULATION_BANKING_ACTIONS = [
   'INITIATE_PENDING_SETTLEMENT',
   'SETTLE_PENDING',
   'RETURN_PENDING',
+  ...SIMULATION_CARD_ACTIONS,
 ] as const;
 
 export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
@@ -74,6 +91,7 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
       'ACCEPT_FX_QUOTE',
       'INITIATE_PAYMENT',
       'CANCEL_PAYMENT',
+      'ACCEPT_INBOUND_PAYMENT',
     ],
     productIds: ['prod_demand_usd_us'],
     productTypes: ['DEMAND_DEPOSIT'],
@@ -89,6 +107,7 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
       'ACCEPT_FX_QUOTE',
       'INITIATE_PAYMENT',
       'CANCEL_PAYMENT',
+      'ACCEPT_INBOUND_PAYMENT',
     ],
     productIds: ['prod_demand_sar_sa'],
     productTypes: ['DEMAND_DEPOSIT'],
@@ -152,6 +171,37 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
     capabilityId: 'cap-us-live-deposit-banking',
     legalEntityId: 'le_solstice_us_inc',
     actionTypes: [...SIMULATION_BANKING_ACTIONS],
+    productIds: ['prod_demand_usd_us'],
+    productTypes: ['DEMAND_DEPOSIT'],
+    environment: 'live',
+    enabled: false,
+  }),
+  capability({
+    capabilityId: 'cap-us-sim-card-program',
+    legalEntityId: 'le_solstice_us_inc',
+    actionTypes: [...SIMULATION_CARD_ACTIONS],
+    productIds: ['prod_demand_usd_us'],
+    productTypes: ['DEMAND_DEPOSIT'],
+    environment: 'simulation',
+    enabled: true,
+  }),
+  capability({
+    capabilityId: 'cap-gb-sim-card-program',
+    legalEntityId: 'le_solstice_uk_ltd',
+    actionTypes: [...SIMULATION_CARD_ACTIONS],
+    productIds: [
+      'prod_demand_usd_gb',
+      'prod_demand_gbp_gb',
+      'prod_demand_eur_gb',
+    ],
+    productTypes: ['DEMAND_DEPOSIT'],
+    environment: 'simulation',
+    enabled: true,
+  }),
+  capability({
+    capabilityId: 'cap-us-live-card-program',
+    legalEntityId: 'le_solstice_us_inc',
+    actionTypes: [...SIMULATION_CARD_ACTIONS],
     productIds: ['prod_demand_usd_us'],
     productTypes: ['DEMAND_DEPOSIT'],
     environment: 'live',

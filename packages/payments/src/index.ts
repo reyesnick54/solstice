@@ -109,6 +109,8 @@ export {
   feeIncomePlan,
   releasePlan,
   reservePlan,
+  inboundPendingPlan,
+  inboundSettlePlan,
   returnDestinationFxPlan,
   returnDestinationSettlePlan,
   returnPrincipalPlan,
@@ -142,3 +144,70 @@ export {
   type PaymentsServiceOutcome,
 } from "./service.ts";
 export { postPaymentJournal } from "./journals.ts";
+export {
+  RAIL_CLASSES,
+  CANONICAL_RAIL_STATUSES,
+  RAIL_HEALTH_STATES,
+  RAIL_RETRY_CLASSES,
+  REJECTION_CLASSES,
+  normalizeProviderStatus,
+  retryClassFor,
+  type CanonicalRailStatus,
+  type RailClass,
+  type RailHealthState,
+  type RailRetryClass,
+  type RejectionClass,
+} from "./rail-types.ts";
+export {
+  asRailSubmissionId,
+  asProviderId,
+  asProviderPaymentId,
+  asRailReference,
+  asSettlementReference,
+  asReturnReference,
+  asTraceReference,
+  asProviderIdempotencyKey,
+  type RailMessageReferences,
+  type RailSubmissionId,
+  type ProviderId,
+} from "./rail-ids.ts";
+export {
+  RailCapabilityRegistry,
+  freezeRailCapability,
+  simulationCapabilities,
+  RAIL_CAPABILITY_REGISTRY_VERSION,
+  type RailCapability,
+} from "./rail-capability.ts";
+export {
+  createRailSubmission,
+  providerIdempotencyKeyFor,
+  withSubmissionStatus,
+  type RailSubmission,
+} from "./rail-submission.ts";
+export type {
+  AuthorizedRailCommand,
+  RailAdapter,
+  RailSubmitResult,
+  RailStatusUpdate,
+} from "./rail-port.ts";
+export {
+  SimulationProviderAuthenticator,
+  simulationAuthConfig,
+  type ProviderAuthConfig,
+  type ProviderAuthMechanism,
+} from "./rail-auth.ts";
+export { RailCircuitBreaker, healthBlocksRouting } from "./rail-health.ts";
+export { decideRetry } from "./rail-retry.ts";
+export {
+  ProviderCallbackIngestor,
+  signSimulationCallback,
+  hashCallbackBody,
+  type IncomingProviderCallback,
+} from "./rail-webhook.ts";
+export { SimulatedRailAdapter, adapterForCapability } from "./rail-adapters.ts";
+export { RailNetwork, createSimulationRailNetwork } from "./rail-network.ts";
+export { reconcileRail, RAIL_RECONCILIATION_STATUSES } from "./rail-reconciliation.ts";
+export { buildSettlementReport, type SettlementReport } from "./rail-settlement-report.ts";
+export { RailStore } from "./rail-store.ts";
+export { RailMetrics } from "./rail-metrics.ts";
+export { freezeInbound, type InboundRailPayment } from "./rail-inbound.ts";

@@ -290,15 +290,21 @@ export class Ledger {
     }
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
-      const paymentAction =
-        request.actionType === 'INITIATE_PAYMENT' || request.actionType === 'CANCEL_PAYMENT';
+      const systemBookAction =
+        request.actionType === 'INITIATE_PAYMENT' ||
+        request.actionType === 'CANCEL_PAYMENT' ||
+        request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
+        request.actionType === 'CLEAR_CARD_TRANSACTION' ||
+        request.actionType === 'REFUND_CARD_TRANSACTION' ||
+        request.actionType === 'ASSESS_CARD_FEE' ||
+        request.actionType === 'DECIDE_CARD_DISPUTE';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>
           account.ownerId === undefined ||
           catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
-      if (!(paymentAction && allNonCustomer)) {
+      if (!(systemBookAction && allNonCustomer)) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind any posting on this journal',
@@ -322,6 +328,16 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fx-credit',
   'return-settle',
   'return-fee',
+  'inbound-pending',
+  'inbound-settle',
+  'settle-reclass',
+  'settle-direct',
+  'refund',
+  'fee',
+  'customer-fee',
+  'dispute-provisional',
+  'dispute-provisional-reverse',
+  'dispute-final',
 ]);
 
 function paymentIdempotencyMatches(eaKey: string, journalKey: string): boolean {

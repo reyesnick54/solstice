@@ -109,6 +109,26 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(iban|account_number|routing_number)\b/i.test(v005.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V006 persists rail adapter records without credentials or raw coordinates', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v006 = files.find((file) => file.version === 6);
+    assert.ok(v006);
+    assert.match(v006.sql, /CREATE TABLE payments\.rail_submission/);
+    assert.match(v006.sql, /CREATE TABLE payments\.provider_callback/);
+    assert.match(v006.sql, /CREATE TABLE payments\.settlement_report/);
+    assert.match(v006.sql, /CREATE TABLE payments\.inbound_rail_payment/);
+    assert.equal(/\b(api_key|client_secret|iban|account_number)\b/i.test(v006.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
+  it('customer V007 stores card records without PAN or CVV', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v007 = files.find((file) => file.version === 7);
+    assert.ok(v007);
+    assert.match(v007.sql, /CREATE SCHEMA IF NOT EXISTS cards/);
+    assert.match(v007.sql, /processor_card_ref/);
+    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v007.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

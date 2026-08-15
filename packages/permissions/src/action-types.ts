@@ -27,6 +27,7 @@ export const ACTION_TYPES = {
   ACCEPT_FX_QUOTE: 'ACCEPT_FX_QUOTE',
   INITIATE_PAYMENT: 'INITIATE_PAYMENT',
   CANCEL_PAYMENT: 'CANCEL_PAYMENT',
+  ACCEPT_INBOUND_PAYMENT: 'ACCEPT_INBOUND_PAYMENT',
   CREATE_HOLD: 'CREATE_HOLD',
   RELEASE_HOLD: 'RELEASE_HOLD',
   CAPTURE_HOLD: 'CAPTURE_HOLD',
@@ -37,6 +38,19 @@ export const ACTION_TYPES = {
   INITIATE_PENDING_SETTLEMENT: 'INITIATE_PENDING_SETTLEMENT',
   SETTLE_PENDING: 'SETTLE_PENDING',
   RETURN_PENDING: 'RETURN_PENDING',
+  REQUEST_CARD: 'REQUEST_CARD',
+  ACTIVATE_CARD: 'ACTIVATE_CARD',
+  FREEZE_CARD: 'FREEZE_CARD',
+  UNFREEZE_CARD: 'UNFREEZE_CARD',
+  CLOSE_CARD: 'CLOSE_CARD',
+  UPDATE_CARD_CONTROLS: 'UPDATE_CARD_CONTROLS',
+  AUTHORIZE_CARD_PURCHASE: 'AUTHORIZE_CARD_PURCHASE',
+  REVERSE_CARD_AUTHORIZATION: 'REVERSE_CARD_AUTHORIZATION',
+  CLEAR_CARD_TRANSACTION: 'CLEAR_CARD_TRANSACTION',
+  REFUND_CARD_TRANSACTION: 'REFUND_CARD_TRANSACTION',
+  OPEN_CARD_DISPUTE: 'OPEN_CARD_DISPUTE',
+  DECIDE_CARD_DISPUTE: 'DECIDE_CARD_DISPUTE',
+  ASSESS_CARD_FEE: 'ASSESS_CARD_FEE',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -127,6 +141,18 @@ export type CancelPaymentPayload = {
   readonly accountId: AccountId;
 };
 
+export type AcceptInboundPaymentPayload = {
+  readonly inboundId: string;
+  readonly accountId: AccountId;
+  readonly amount: Money;
+  readonly provider: string;
+  readonly rail: string;
+  readonly sourceReference: string;
+  readonly destinationReference: string;
+  readonly sourceDisplayName: string;
+  readonly purposeReference: string;
+};
+
 export type CreateBeneficiaryIntent = ActionIntent<CreateBeneficiaryPayload> & {
   readonly actionType: typeof ACTION_TYPES.CREATE_BENEFICIARY;
 };
@@ -145,6 +171,10 @@ export type InitiatePaymentIntent = ActionIntent<InitiatePaymentPayload> & {
 
 export type CancelPaymentIntent = ActionIntent<CancelPaymentPayload> & {
   readonly actionType: typeof ACTION_TYPES.CANCEL_PAYMENT;
+};
+
+export type AcceptInboundPaymentIntent = ActionIntent<AcceptInboundPaymentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ACCEPT_INBOUND_PAYMENT;
 };
 
 export type CreateHoldPayload = {
@@ -256,4 +286,159 @@ export type PaymentIntent =
   | CreateFxQuoteIntent
   | AcceptFxQuoteIntent
   | InitiatePaymentIntent
-  | CancelPaymentIntent;
+  | CancelPaymentIntent
+  | AcceptInboundPaymentIntent;
+
+export type RequestCardPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly ownerId: CustomerId;
+  readonly programId: string;
+  readonly formFactor: 'VIRTUAL' | 'PHYSICAL';
+};
+
+export type CardLifecyclePayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+};
+
+export type UpdateCardControlsPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly controls: {
+    readonly frozen?: boolean;
+    readonly transactionAmountLimitMinor?: bigint | null;
+    readonly dailyAmountLimitMinor?: bigint | null;
+    readonly blockedMerchantCategories?: readonly string[];
+    readonly allowedMerchantCategories?: readonly string[] | null;
+    readonly blockedCountries?: readonly string[];
+    readonly allowedCountries?: readonly string[] | null;
+    readonly ecommerceEnabled?: boolean;
+    readonly cashAtmEnabled?: boolean;
+    readonly contactlessEnabled?: boolean;
+  };
+};
+
+export type AuthorizeCardPurchasePayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly authorizationId: string;
+  readonly amount: Money;
+  readonly merchantCategory: string;
+  readonly country: string;
+  readonly processorReference: string;
+};
+
+export type ReverseCardAuthorizationPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly authorizationId: string;
+};
+
+export type ClearCardTransactionPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly clearingId: string;
+  readonly authorizationId?: string;
+  readonly amount: Money;
+  readonly processorReference: string;
+};
+
+export type RefundCardTransactionPayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly refundId: string;
+  readonly originalClearingId?: string;
+  readonly amount: Money;
+  readonly processorReference: string;
+};
+
+export type OpenCardDisputePayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly disputeId: string;
+  readonly transactionRef: string;
+  readonly reasonCategory: string;
+  readonly amount: Money;
+};
+
+export type DecideCardDisputePayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly disputeId: string;
+  readonly outcome: 'WON' | 'LOST' | 'CLOSED';
+};
+
+export type AssessCardFeePayload = {
+  readonly cardId: string;
+  readonly accountId: AccountId;
+  readonly feeType: 'PROGRAM_FEE' | 'FOREIGN_TRANSACTION_FEE' | 'ATM_FEE' | 'REPLACEMENT_FEE';
+  readonly amount: Money;
+};
+
+export type RequestCardIntent = ActionIntent<RequestCardPayload> & {
+  readonly actionType: typeof ACTION_TYPES.REQUEST_CARD;
+};
+
+export type ActivateCardIntent = ActionIntent<CardLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.ACTIVATE_CARD;
+};
+
+export type FreezeCardIntent = ActionIntent<CardLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.FREEZE_CARD;
+};
+
+export type UnfreezeCardIntent = ActionIntent<CardLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.UNFREEZE_CARD;
+};
+
+export type CloseCardIntent = ActionIntent<CardLifecyclePayload> & {
+  readonly actionType: typeof ACTION_TYPES.CLOSE_CARD;
+};
+
+export type UpdateCardControlsIntent = ActionIntent<UpdateCardControlsPayload> & {
+  readonly actionType: typeof ACTION_TYPES.UPDATE_CARD_CONTROLS;
+};
+
+export type AuthorizeCardPurchaseIntent = ActionIntent<AuthorizeCardPurchasePayload> & {
+  readonly actionType: typeof ACTION_TYPES.AUTHORIZE_CARD_PURCHASE;
+};
+
+export type ReverseCardAuthorizationIntent = ActionIntent<ReverseCardAuthorizationPayload> & {
+  readonly actionType: typeof ACTION_TYPES.REVERSE_CARD_AUTHORIZATION;
+};
+
+export type ClearCardTransactionIntent = ActionIntent<ClearCardTransactionPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CLEAR_CARD_TRANSACTION;
+};
+
+export type RefundCardTransactionIntent = ActionIntent<RefundCardTransactionPayload> & {
+  readonly actionType: typeof ACTION_TYPES.REFUND_CARD_TRANSACTION;
+};
+
+export type OpenCardDisputeIntent = ActionIntent<OpenCardDisputePayload> & {
+  readonly actionType: typeof ACTION_TYPES.OPEN_CARD_DISPUTE;
+};
+
+export type DecideCardDisputeIntent = ActionIntent<DecideCardDisputePayload> & {
+  readonly actionType: typeof ACTION_TYPES.DECIDE_CARD_DISPUTE;
+};
+
+export type AssessCardFeeIntent = ActionIntent<AssessCardFeePayload> & {
+  readonly actionType: typeof ACTION_TYPES.ASSESS_CARD_FEE;
+};
+
+export type CardIntent =
+  | RequestCardIntent
+  | ActivateCardIntent
+  | FreezeCardIntent
+  | UnfreezeCardIntent
+  | CloseCardIntent
+  | UpdateCardControlsIntent
+  | AuthorizeCardPurchaseIntent
+  | ReverseCardAuthorizationIntent
+  | ClearCardTransactionIntent
+  | RefundCardTransactionIntent
+  | OpenCardDisputeIntent
+  | DecideCardDisputeIntent
+  | AssessCardFeeIntent;

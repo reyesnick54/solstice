@@ -56,6 +56,18 @@ This document describes only what is implemented and tested in this tree.
   consume the facts. No live vendor. No OFAC/UN/EU/HMT claim.
   Transaction-monitoring thresholds are engineering test rules labeled
   RESEARCH_REQUIRED.
+- Canonical bank-rail adapter framework (Chunk 10, `packages/payments`):
+  one `RailAdapter` port, simulated rail-class adapters, capability
+  registry, provider idempotency, `SUBMISSION_UNKNOWN`, authenticated
+  webhooks, inbound foundation, settlement reports, returns as
+  compensating journals, and rail reconciliation. Simulation/sandbox
+  architecture only. No live network membership.
+- Simulated card platform (Chunk 11, `packages/cards`, `services/cards`):
+  one canonical card model, processor-token references only, Kernel-gated
+  authorization that reserves funds through existing banking holds,
+  clearing/settlement journals, refunds, disputes, network-token metadata
+  for later wallet provisioning, and HMAC processor-callback security.
+  No real PAN/CVV, live network, or issuer SDK.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -65,9 +77,8 @@ This document describes only what is implemented and tested in this tree.
 - Live / production policy loading of counsel-confirmed packs. ADR-0006 remains PROPOSED for human acceptance. No rule is `CONFIRMED_BY_COUNSEL`.
 - Live AML/sanctions/PEP vendors, real SAR filing, and counsel-confirmed
   screening thresholds. The Chunk 7 fabric is simulation control architecture.
-- Simulation FX quotes, beneficiaries, US↔SA corridors, route selection,
-  simulated settlement, per-currency FX journals, and returns as compensating
-  entries (`packages/payments`). Not live rails.
+- Live payment rails or production ACH / instant / SWIFT / SEPA / Saudi /
+  UAE network connections. Chunk 10 is simulation connectivity only.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
 - Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
@@ -77,6 +88,7 @@ This document describes only what is implemented and tested in this tree.
   (`packages/cards`, `services/cards`), which is `PLANNED` and absent
   from this tree. See `docs/architecture/chunk-12-stop.md`. Do not
   treat this note as an implementation.
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails and live issuing remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -104,6 +116,7 @@ npm run check:extraction
 npm run check:posture
 npm run gate
 npm run demo
+npm run demo:cards
 npm run typecheck
 npm run scan:secrets
 npm run ci

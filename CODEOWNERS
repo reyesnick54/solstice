@@ -36,6 +36,8 @@
 
 # Protected even when the directory is absent — do not reintroduce ungated copies.
 /packages/payments/ @reyesnick54
+/packages/cards/ @reyesnick54
+/services/cards/ @reyesnick54
 /packages/platform/ @reyesnick54
 /packages/agent/ @reyesnick54
 /packages/contracts/ @reyesnick54

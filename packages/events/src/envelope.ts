@@ -115,6 +115,18 @@ const SENSITIVE_PAYLOAD_KEYS = [
   'fullName',
   'dateOfBirth',
   'legalName',
+  'pan',
+  'PAN',
+  'cvv',
+  'CVV',
+  'cvc',
+  'CVC',
+  'pin',
+  'PIN',
+  'trackData',
+  'track1',
+  'track2',
+  'magstripe',
 ];
 
 export function assertSafeEventPayload(payload: unknown): void {
@@ -182,6 +194,25 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
   }
   if (eventType === 'FraudRiskEvaluated') {
     return { type: 'fraud_evaluation', id: String(body.evaluationId ?? 'unknown') };
+  }
+  if (eventType.startsWith('Card')) {
+    return {
+      type: 'card',
+      id: String(
+        body.cardId ??
+          body.authorizationId ??
+          body.clearingId ??
+          body.refundId ??
+          body.disputeId ??
+          'unknown',
+      ),
+    };
+  }
+  if (eventType.startsWith('Rail')) {
+    return {
+      type: 'rail',
+      id: String(body.railSubmissionId ?? body.paymentId ?? body.inboundId ?? 'unknown'),
+    };
   }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }

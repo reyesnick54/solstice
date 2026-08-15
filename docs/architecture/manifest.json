@@ -323,7 +323,59 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. No live rails."
+    },
+    {
+      "id": "packages/cards",
+      "npmName": "@solstice/cards",
+      "path": "packages/cards",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/evidence",
+        "packages/events",
+        "packages/identity",
+        "packages/security"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical simulated card issuing and processing. No live PAN vault, network, or issuer SDK."
+    },
+    {
+      "id": "services/cards",
+      "npmName": "@solstice/cards-service",
+      "path": "services/cards",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/cards",
+        "services/accounts",
+        "packages/domain",
+        "packages/money",
+        "packages/permissions",
+        "packages/config",
+        "packages/ledger",
+        "packages/identity"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Application facade that wires cards to canonical banking holds. Not a second card model."
     }
   ],
   "components": [
@@ -947,6 +999,61 @@
         "@reyesnick54"
       ],
       "notes": "Authoritative actor capabilities and ActorContext. Simulation WebAuthn adapter only."
+    },
+    {
+      "id": "rail-adapter",
+      "name": "Canonical bank rail adapter framework",
+      "canonicalOwner": "packages/payments",
+      "canonicalPath": "packages/payments/src/rail-port.ts",
+      "publicInterface": "packages/payments/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RailAdapter",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/rails",
+        "packages/bank-rails",
+        "packages/swift",
+        "packages/ach"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Simulation connectivity only. Adapters must not post journals or issue Execution Authority."
+    },
+    {
+      "id": "card-platform",
+      "name": "Canonical card platform",
+      "canonicalOwner": "packages/cards",
+      "canonicalPath": "packages/cards/src/service.ts",
+      "publicInterface": "packages/cards/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "CardsService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/card-processing",
+        "packages/issuer",
+        "packages/card-core"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One canonical card model. Processor adapters cannot post journals or issue Execution Authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -1077,8 +1184,98 @@
       "requiresKernel": true
     },
     {
+      "symbol": "acceptInboundPayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
       "symbol": "postPaymentJournal",
       "file": "packages/payments/src/journals.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "requestCard",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "activateCard",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "freezeCard",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "unfreezeCard",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "closeCard",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "updateControls",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "ingestAuthorizationCallback",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "ingestReversalCallback",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "ingestClearingCallback",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "ingestRefundCallback",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "openDispute",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "decideDispute",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "assessFee",
+      "file": "packages/cards/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "postCardJournal",
+      "file": "packages/cards/src/journals.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
     }
@@ -1109,7 +1306,10 @@
     "packages/evidence-vault",
     "packages/crypto",
     "packages/kms",
-    "packages/secrets"
+    "packages/secrets",
+    "packages/card-processing",
+    "packages/issuer",
+    "packages/card-core"
   ],
   "capabilities": [
     {
@@ -1225,7 +1425,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/payments",
       "protected": true,
-      "notes": "Simulation beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+      "notes": "Simulation beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. No live rails."
     },
     {
       "id": "fx",
@@ -1235,11 +1435,18 @@
       "notes": "Rational FX quotes and simulation pricing. Not live market data."
     },
     {
+      "id": "rail-adapters",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Canonical RailAdapter port and simulated adapters only. No live network membership."
+    },
+    {
       "id": "cards",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/cards",
       "protected": true,
-      "notes": "Reserved. Not implemented in this chunk."
+      "notes": "Simulation card issuing, authorization, clearing, settlement, controls, refunds, and disputes. No live network or PAN vault."
     }
   ],
   "boundedContexts": [
@@ -1293,7 +1500,7 @@
         "packages/payments"
       ],
       "protected": true,
-      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, and reconciliation. Live rails are not implemented."
+      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. Live rails are not implemented."
     },
     {
       "id": "FX",
@@ -1306,12 +1513,13 @@
     },
     {
       "id": "CARDS",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/cards",
         "services/cards"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation card platform. No real issuing, PAN vault, 3DS, or wallet provisioning."
     },
     {
       "id": "TREASURY",

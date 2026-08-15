@@ -6,6 +6,7 @@ import { join } from 'node:path';
 
 import { lintSource } from './linter.ts';
 import { lintSecurityBoundary } from './security-guards.ts';
+import { lintRailBoundary } from './rail-guards.ts';
 
 describe('architectural linter rules', () => {
   it('catches Account constructed without ExecutionAuthority', () => {
@@ -98,5 +99,30 @@ describe('security boundary guards', () => {
     rmSync(dir, { recursive: true, force: true });
     const found = result.find((f) => f.rule === 'business-imports-dev-key-provider');
     assert.ok(found);
+  });
+});
+
+describe('rail boundary guards', () => {
+  it('rejects a competing rail package path', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-rail-linter-'));
+    mkdirSync(join(dir, 'packages/swift'), { recursive: true });
+    writeFileSync(join(dir, 'packages/swift/index.ts'), 'export const x = 1;\n');
+    const findings = lintRailBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'second-rail-package');
+    assert.ok(hit);
+  });
+
+  it('rejects a rail adapter that posts journals', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'solstice-rail-ledger-'));
+    mkdirSync(join(dir, 'packages/payments/src'), { recursive: true });
+    writeFileSync(
+      join(dir, 'packages/payments/src/rail-adapters.ts'),
+      'export function submit() {\n  ledger.postJournal(request);\n}\n',
+    );
+    const findings = lintRailBoundary(dir);
+    rmSync(dir, { recursive: true, force: true });
+    const hit = findings.find((f) => f.rule === 'rail-adapter-ledger-bypass');
+    assert.ok(hit);
   });
 });

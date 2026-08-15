@@ -53,6 +53,8 @@ never be two implementations of these systems.
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
+| Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
+| Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -61,9 +63,9 @@ the same architecture-linting system, not a second linter.
 
 **Packages:** `money`, `domain`, `permissions`, `security`, `identity`,
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
-`payments`.
+`payments`, `cards`.
 
-**Services:** `accounts`, `identity`, `compliance`.
+**Services:** `accounts`, `identity`, `compliance`, `cards`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -87,6 +89,7 @@ The only action types on this tree are declared in
 - `ACCEPT_FX_QUOTE`
 - `INITIATE_PAYMENT`
 - `CANCEL_PAYMENT`
+- `ACCEPT_INBOUND_PAYMENT`
 - `CREATE_HOLD`
 - `RELEASE_HOLD`
 - `CAPTURE_HOLD`
@@ -97,6 +100,19 @@ The only action types on this tree are declared in
 - `INITIATE_PENDING_SETTLEMENT`
 - `SETTLE_PENDING`
 - `RETURN_PENDING`
+- `REQUEST_CARD`
+- `ACTIVATE_CARD`
+- `FREEZE_CARD`
+- `UNFREEZE_CARD`
+- `CLOSE_CARD`
+- `UPDATE_CARD_CONTROLS`
+- `AUTHORIZE_CARD_PURCHASE`
+- `REVERSE_CARD_AUTHORIZATION`
+- `CLEAR_CARD_TRANSACTION`
+- `REFUND_CARD_TRANSACTION`
+- `OPEN_CARD_DISPUTE`
+- `DECIDE_CARD_DISPUTE`
+- `ASSESS_CARD_FEE`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -110,8 +126,10 @@ They do not invent a parallel envelope.
 | `services/accounts/src/open-account.ts` `AccountsService.open` | Account store + ledger register | Kernel `submit` then verified authority |
 | `services/accounts/src/money-movement.ts` `deposit` / `withdraw` / `transfer` | Ledger journals | Kernel `submit` then `Ledger.postJournal` |
 | `services/accounts/src/banking-operations.ts` holds / fees / reversals / interest / pending | Hold records and ledger journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
-| `packages/payments/src/service.ts` beneficiary / quote / payment mutators | Payment store + journals | Kernel `submit` then verified authority |
+| `packages/payments/src/service.ts` beneficiary / quote / payment / inbound mutators | Payment store + journals | Kernel `submit` then verified authority |
 | `packages/payments/src/journals.ts` `postPaymentJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
+| `packages/cards/src/service.ts` card lifecycle / processor callbacks | Card records, holds via banking, journals | Kernel `submit` then verified authority; holds only through `BankingOperationsService`; journals only via `Ledger.postJournal` |
+| `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -125,7 +143,8 @@ They do not write a store by themselves.
 Only `Ledger.postJournal` in `packages/ledger/src/journal.ts`.
 Production callers are `services/accounts/src/money-movement.ts` and
 `services/accounts/src/banking-operations.ts` and
-`packages/payments/src/journals.ts`.
+`packages/payments/src/journals.ts` and
+`packages/cards/src/journals.ts`.
 
 ### Locations that may issue or verify Execution Authority
 
@@ -191,8 +210,9 @@ Canonical source: `packages/config/src/flags.ts`.
 ### External integration abstractions
 
 Simulation-only ports exist for FX liquidity, beneficiary validation,
-screening, and settlement. There is no live bank, FX, KYC, or payment-rail
-adapter on this tree. The clock is injectable.
+screening, settlement, and the canonical `RailAdapter` connectivity layer.
+There is no live bank, FX, KYC, or payment-rail membership on this tree.
+The clock is injectable.
 
 ### Persistence
 
@@ -307,6 +327,8 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
+| `packages/cards` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
+| `services/cards` | `packages/cards`, `services/accounts`, and the cards package dependencies needed to wire holds |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -354,9 +376,11 @@ flowchart BT
   kernel["packages/kernel"]
   ledger["packages/ledger"]
   payments["packages/payments"]
+  cards["packages/cards"]
   accounts["services/accounts"]
   identitySvc["services/identity"]
   complianceSvc["services/compliance"]
+  cardsSvc["services/cards"]
 
   config --> domain
   domain --> permissions
@@ -408,6 +432,18 @@ flowchart BT
   payments --> events
   payments --> identity
   payments --> security
+  cards --> domain
+  cards --> money
+  cards --> permissions
+  cards --> config
+  cards --> kernel
+  cards --> ledger
+  cards --> evidence
+  cards --> events
+  cards --> identity
+  cards --> security
+  cardsSvc --> cards
+  cardsSvc --> accounts
   accounts --> domain
   accounts --> evidence
   accounts --> events
@@ -442,7 +478,7 @@ protected dependency because a later phase is absent.
 | BANKING | PARTIAL | `packages/domain`, `packages/ledger`, `services/accounts` |
 | PAYMENTS | PARTIAL | `packages/payments` |
 | FX | PARTIAL | `packages/payments` |
-| CARDS | PLANNED | `packages/cards`, `services/cards` |
+| CARDS | PARTIAL | `packages/cards`, `services/cards` |
 | TREASURY | PLANNED | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | PLANNED | `packages/personal-economic-graph` |
 | PERSONAL ECONOMY AGENT | PLANNED | `packages/agent` |
