@@ -10,7 +10,11 @@ import type { ConsentStore } from './store.ts';
  * posts journals, or issues Execution Authority.
  */
 export class ConsentLedger {
-  constructor(private readonly store: ConsentStore) {}
+  private readonly store: ConsentStore;
+
+  constructor(store: ConsentStore) {
+    this.store = store;
+  }
 
   append(input: {
     readonly consentId: ConsentId;

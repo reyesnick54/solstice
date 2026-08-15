@@ -56,7 +56,11 @@ function recipientFor(request: DataUseAuthorizationRequest): string {
  * require purpose-scoped consent. Default remains fail-closed.
  */
 export class ConsentDataUseAuthorization implements DataUseAuthorizationPort {
-  constructor(private readonly consent: ConsentService) {}
+  private readonly consent: ConsentService;
+
+  constructor(consent: ConsentService) {
+    this.consent = consent;
+  }
 
   authorize(request: DataUseAuthorizationRequest): DataUseAuthorizationDecision {
     if (request.useClass === 'SUBJECT_SELF_ACCESS' && request.actor.subjectId === request.subjectId) {

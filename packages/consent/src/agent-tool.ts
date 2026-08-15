@@ -23,10 +23,13 @@ export type DerivedIncomeSummary = {
  * the exact consent version names them.
  */
 export class PurposeScopedVaultTool {
-  constructor(
-    private readonly consent: ConsentService,
-    private readonly vault: PersonalDataVault,
-  ) {}
+  private readonly consent: ConsentService;
+  private readonly vault: PersonalDataVault;
+
+  constructor(consent: ConsentService, vault: PersonalDataVault) {
+    this.consent = consent;
+    this.vault = vault;
+  }
 
   readDerivedMonthlyIncome(
     actor: unknown,

@@ -197,7 +197,7 @@ export class ConsentService {
       operations: Object.freeze([...input.operations]),
       derivationTypes: Object.freeze([...input.derivationTypes]),
     });
-    const record: ConsentRecord = Object.freeze({
+    const record = Object.freeze({
       consentId,
       grantId: newConsentGrantId(),
       subjectId: input.subjectId,
@@ -217,7 +217,7 @@ export class ConsentService {
       retention: {
         requestedRetentionDays: input.requestedRetentionDays ?? purpose.retentionExpectationDays,
         reference: 'consent.declared_retention',
-        statutoryClaim: false,
+        statutoryClaim: false as const,
       },
       onwardSharing: {
         state: 'NOT_ALLOWED',
@@ -236,7 +236,7 @@ export class ConsentService {
       evidenceRef: '',
       legalHook: purpose.legalHook,
       revision: 1,
-    });
+    } satisfies ConsentRecord);
     this.store.putRecord(record);
     this.store.rememberGrant(input.idempotencyKey, consentId);
     this.ledger.append({

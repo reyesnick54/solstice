@@ -36,11 +36,11 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'data',
   'strategy',
   'capital_mesh',
+  'consent',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
   'agent',
-  'consent',
   'pyr',
   'exchange',
   'notification',

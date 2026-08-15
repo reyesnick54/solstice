@@ -1763,10 +1763,6 @@
         {
           "name": "ConsentService",
           "kind": "class"
-        },
-        {
-          "name": "PurposeFirewall",
-          "kind": "class"
         }
       ],
       "forbiddenAliases": [
