@@ -197,6 +197,13 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'CleanRoomEgressSuppressed', version: 1, status: 'current' },
   { eventType: 'CleanRoomEgressDenied', version: 1, status: 'current' },
   { eventType: 'CleanRoomContributionRecorded', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinContributionEvaluated', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinIssuanceProposed', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinIssued', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinTransferCompleted', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinBurned', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinSupplyReconciled', version: 1, status: 'current' },
+  { eventType: 'SunReyCoinReconciliationMismatch', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

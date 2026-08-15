@@ -80,6 +80,9 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'cancelPaperOrder', file: 'packages/investments/src/service.ts' },
   { symbol: 'settleInvestment', file: 'packages/investments/src/service.ts' },
   { symbol: 'processCorporateAction', file: 'packages/investments/src/service.ts' },
+  { symbol: 'issue', file: 'packages/sunrey-coin/src/service.ts' },
+  { symbol: 'transfer', file: 'packages/sunrey-coin/src/service.ts' },
+  { symbol: 'burn', file: 'packages/sunrey-coin/src/service.ts' },
 ];
 
 const failures = [];

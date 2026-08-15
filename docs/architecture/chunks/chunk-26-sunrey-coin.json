@@ -1,0 +1,31 @@
+{
+  "chunk": "CHUNK-26",
+  "title": "SunRey Coin Economic Ledger, Currency of You Contribution Engine, Authorized Data-Contribution Weighting, Controlled Simulation Issuance, Supply Accounting, and Digital-Asset Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-coin by Chunk 26R. Historical stops: chunk-26-stop.md and PR #52. Resume: chunk-26-resume.md. Extends the canonical Ledger with AssetQuantity. Public ticker is NOT_ASSIGNED. Do not create packages/reyn-coin, packages/sunrey-ledger, packages/reyn-ledger, packages/coin-ledger, packages/crypto-ledger-v2, packages/token-ledger, packages/coin-engine-v2, packages/sunrey-exchange, or packages/sunrey-chain. SunRey Exchange and SunRey Chain remain PLANNED."
+}

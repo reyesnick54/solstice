@@ -1,4 +1,17 @@
-# Chunk 26 stop record
+# Chunk 26 stop record — HISTORICAL
+
+**Status: HISTORICAL.** This file is a constitutional STOP record only.
+It did **not** implement SunRey Coin (then reserved as Reyn Coin).
+
+Chunk 26R resumes and implements the reserved owner at
+`packages/sunrey-coin`. See [`chunk-26-resume.md`](./chunk-26-resume.md).
+Do not treat the existence of this file as implementation. Historical
+reservation names `REYN_COIN` / `REYN_EXCHANGE` are replaced by
+`SUNREY_COIN` / `SUNREY_EXCHANGE` / `SUNREY_CHAIN`.
+
+---
+
+# Original stop record
 
 This file records a **constitutional missing-capability stop**, not a
 Reyn Coin implementation.

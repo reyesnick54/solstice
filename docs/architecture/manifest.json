@@ -787,6 +787,35 @@
         "@reyesnick54"
       ],
       "notes": "Canonical Privacy Clean Room. Computation-to-data. Reuses Consent, Purpose Firewall, DataUsePermit, Personal Data Vault. No arbitrary SQL/code, no raw-row export, no Execution Authority, no financial journals, no SunRey Coin issuance. Simulation only. Not GDPR/CCPA/PDPL/HIPAA/DP/TEE compliance."
+    },
+    {
+      "id": "packages/sunrey-coin",
+      "npmName": "@solstice/sunrey-coin",
+      "path": "packages/sunrey-coin",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/permissions",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/consent",
+        "packages/clean-room"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical SunRey Coin simulation economic ledger. Extends the existing Ledger with AssetQuantity. No second ledger. No public ticker. No SunRey Exchange or SunRey Chain. Agents cannot mint. Simulation only."
     }
   ],
   "components": [
@@ -1832,6 +1861,39 @@
         "@reyesnick54"
       ],
       "notes": "One Privacy Clean Room. Consent-gated constrained computation. Raw rows default DENY. Not a second Consent, PDV, Evidence Vault, or crypto system."
+    },
+    {
+      "id": "sunrey-coin",
+      "name": "SunRey Coin simulation economic ledger",
+      "canonicalOwner": "packages/sunrey-coin",
+      "canonicalPath": "packages/sunrey-coin/src/service.ts",
+      "publicInterface": "packages/sunrey-coin/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "SunReyCoinService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/reyn-coin",
+        "packages/sunrey-ledger",
+        "packages/reyn-ledger",
+        "packages/coin-ledger",
+        "packages/crypto-ledger-v2",
+        "packages/token-ledger",
+        "packages/coin-engine-v2",
+        "packages/sunrey-exchange",
+        "packages/sunrey-chain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One SunRey Coin owner. Journals stay on the canonical Ledger. AssetQuantity lives in packages/money. Do not invent a ticker. Do not implement Exchange or Chain here."
     }
   ],
   "authorizedMutationPaths": [
@@ -2134,6 +2196,24 @@
       "file": "packages/investments/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "issue",
+      "file": "packages/sunrey-coin/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "transfer",
+      "file": "packages/sunrey-coin/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "burn",
+      "file": "packages/sunrey-coin/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -2232,7 +2312,16 @@
     "packages/data-clean-room",
     "packages/secure-data-room",
     "packages/research-room",
-    "packages/clean-room-v2"
+    "packages/clean-room-v2",
+    "packages/reyn-coin",
+    "packages/sunrey-ledger",
+    "packages/reyn-ledger",
+    "packages/coin-ledger",
+    "packages/crypto-ledger-v2",
+    "packages/token-ledger",
+    "packages/coin-engine-v2",
+    "packages/sunrey-exchange",
+    "packages/sunrey-chain"
   ],
   "capabilities": [
     {
@@ -2475,6 +2564,13 @@
       "owner": "packages/clean-room",
       "protected": true,
       "notes": "Canonical Privacy Clean Room. Chunk 25R. Simulation only. Not legal privacy-law approval, differential privacy, or confidential compute."
+    },
+    {
+      "id": "sunrey-coin",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-coin",
+      "protected": true,
+      "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange and SunRey Chain remain PLANNED."
     }
   ],
   "boundedContexts": [
@@ -2687,25 +2783,34 @@
         "packages/pyramid"
       ],
       "protected": true,
-      "notes": "Historical ticker / coin-alias reservation (packages/pyr, packages/pyramid). The public ticker for SunRey Coin is UNDECIDED. Do not invent a ticker. Canonical coin context is REYN_COIN at packages/reyn-coin (historical reservation name)."
+      "notes": "Historical ticker / coin-alias reservation (packages/pyr, packages/pyramid). The public ticker for SunRey Coin is UNDECIDED. Do not invent a ticker. Canonical coin context is SUNREY_COIN at packages/sunrey-coin."
     },
     {
-      "id": "REYN_COIN",
-      "status": "PLANNED",
+      "id": "SUNREY_COIN",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
-        "packages/reyn-coin"
+        "packages/sunrey-coin"
       ],
       "protected": true,
-      "notes": "Reserved digital-asset bounded context. Historical reservation was PYRAMID / packages/pyramid. Product brand is SunRey Coin. Public ticker is UNDECIDED. Do not implement in Chunk 25R. Do not create a second financial ledger."
+      "notes": "Canonical SunRey Coin simulation economic ledger at packages/sunrey-coin. Historical reservations were PYRAMID then REYN_COIN. Public ticker is UNDECIDED / NOT_ASSIGNED. Do not create a second financial ledger. Do not implement SunRey Exchange or SunRey Chain here."
     },
     {
-      "id": "REYN_EXCHANGE",
+      "id": "SUNREY_EXCHANGE",
       "status": "PLANNED",
       "reservedPaths": [
-        "packages/reyn-exchange"
+        "packages/sunrey-exchange"
       ],
       "protected": true,
-      "notes": "Reserved future SunRey Exchange. Historical reservation was PYRAMID_EXCHANGE. Do not implement order books, AMM, wallets, or market price in Chunk 25R."
+      "notes": "Reserved future SunRey Exchange. Historical reservations were PYRAMID_EXCHANGE then REYN_EXCHANGE. Do not implement order books, AMM, wallets, or market price in Chunk 26R."
+    },
+    {
+      "id": "SUNREY_CHAIN",
+      "status": "PLANNED",
+      "reservedPaths": [
+        "packages/sunrey-chain"
+      ],
+      "protected": true,
+      "notes": "Reserved future SunRey Chain. Type-only unimplemented adapter may exist on the coin package. Do not implement wallets, addresses, keys, or a live chain in Chunk 26R."
     },
     {
       "id": "PYRAMID_DATA_EXCHANGE",

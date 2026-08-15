@@ -37,6 +37,7 @@ export const ECONOMIC_EDGE_KINDS = [
   'GENERATES_INCOME',
   'INCURS_COST',
   'DERIVED_FROM',
+  'RESULTED_IN',
 ] as const;
 
 export type EconomicEdgeKind = (typeof ECONOMIC_EDGE_KINDS)[number];

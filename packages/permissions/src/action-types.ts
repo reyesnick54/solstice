@@ -9,6 +9,7 @@ import type { LegalEntityId } from '../../domain/src/legal-entity.ts';
 import type { PendingSettlementId } from '../../domain/src/pending-settlement.ts';
 import type { ProductId } from '../../domain/src/product.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
+import type { AssetQuantity } from '../../money/src/asset-quantity.ts';
 import type { Money } from '../../money/src/money.ts';
 import type { ActionIntent } from './action-intent.ts';
 
@@ -70,6 +71,9 @@ export const ACTION_TYPES = {
   CANCEL_PAPER_ORDER: 'CANCEL_PAPER_ORDER',
   SETTLE_INVESTMENT: 'SETTLE_INVESTMENT',
   PROCESS_CORPORATE_ACTION: 'PROCESS_CORPORATE_ACTION',
+  ISSUE_SUNREY_COIN: 'ISSUE_SUNREY_COIN',
+  TRANSFER_SUNREY_COIN: 'TRANSFER_SUNREY_COIN',
+  BURN_SUNREY_COIN: 'BURN_SUNREY_COIN',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -706,3 +710,36 @@ export type InvestmentIntent =
   | CancelPaperOrderIntent
   | SettleInvestmentIntent
   | ProcessCorporateActionIntent;
+
+export type IssueSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly proposalId: string;
+  readonly receiptId: string;
+  readonly contributionId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type TransferSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly destinationAccountId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type BurnSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type IssueSunReyCoinIntent = ActionIntent<IssueSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ISSUE_SUNREY_COIN;
+};
+
+export type TransferSunReyCoinIntent = ActionIntent<TransferSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.TRANSFER_SUNREY_COIN;
+};
+
+export type BurnSunReyCoinIntent = ActionIntent<BurnSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.BURN_SUNREY_COIN;
+};
+
+export type SunReyCoinIntent = IssueSunReyCoinIntent | TransferSunReyCoinIntent | BurnSunReyCoinIntent;

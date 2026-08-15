@@ -4,6 +4,7 @@ import type { Clock } from '../../config/src/clock.ts';
 import type { AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
 import { catalogFor } from '../../domain/src/account-class.ts';
 import { isOk } from '../../domain/src/result.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { AccountRegister } from './accounts.ts';
 import {
   assertBalanced,
@@ -133,10 +134,10 @@ export class Ledger {
     for (let i = 0; i < resolved.length; i += 1) {
       const account = resolved[i]!;
       const posting = request.postings[i]!;
-      if (account.currency !== posting.amount.currency) {
+      if (account.currency !== ledgerAssetKey(posting.amount)) {
         throw new LedgerInvariantError(
           'BALANCE',
-          `account ${account.id} is ${account.currency}, posting is ${posting.amount.currency}`,
+          `account ${account.id} is ${account.currency}, posting is ${ledgerAssetKey(posting.amount)}`,
         );
       }
     }
@@ -207,16 +208,17 @@ export class Ledger {
     const totals = new Map<string, { debits: bigint; credits: bigint }>();
     for (const journal of this.journals) {
       for (const posting of journal.postings) {
-        const row = totals.get(posting.amount.currency) ?? {
+        const asset = ledgerAssetKey(posting.amount);
+        const row = totals.get(asset) ?? {
           debits: 0n,
           credits: 0n,
         };
         if (posting.direction === 'DEBIT') {
-          row.debits += posting.amount.minorUnits;
+          row.debits += ledgerScaledUnits(posting.amount);
         } else {
-          row.credits += posting.amount.minorUnits;
+          row.credits += ledgerScaledUnits(posting.amount);
         }
-        totals.set(posting.amount.currency, row);
+        totals.set(asset, row);
       }
     }
     return totals;
@@ -299,7 +301,10 @@ export class Ledger {
         request.actionType === 'ASSESS_CARD_FEE' ||
         request.actionType === 'DECIDE_CARD_DISPUTE' ||
         request.actionType === 'SETTLE_ACCEPTANCE_PAYMENT' ||
-        request.actionType === 'EXECUTE_TREASURY_REBALANCE';
+        request.actionType === 'EXECUTE_TREASURY_REBALANCE' ||
+        request.actionType === 'ISSUE_SUNREY_COIN' ||
+        request.actionType === 'TRANSFER_SUNREY_COIN' ||
+        request.actionType === 'BURN_SUNREY_COIN';
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>

@@ -1,6 +1,6 @@
 import type { AccountClass } from '../../domain/src/account-class.ts';
 import type { AccountId } from '../../domain/src/account.ts';
-import type { Money } from '../../money/src/money.ts';
+import type { LedgerAmount } from '../../money/src/ledger-amount.ts';
 import type { ExecutionAuthority } from '../../permissions/src/execution-authority.ts';
 
 export type DebitCredit = 'DEBIT' | 'CREDIT';
@@ -17,7 +17,7 @@ export type Posting = {
   readonly id: string;
   readonly accountId: string;
   readonly direction: DebitCredit;
-  readonly amount: Money;
+  readonly amount: LedgerAmount;
 };
 
 export type Journal = {
@@ -47,7 +47,7 @@ export type ClassBridge = {
 export type ProposedPosting = {
   readonly accountId: string;
   readonly direction: DebitCredit;
-  readonly amount: Money;
+  readonly amount: LedgerAmount;
 };
 
 /**
@@ -188,6 +188,15 @@ export const BROKERAGE_CASH_TO_SIMULATED_FUNDING: ClassBridge = Object.freeze({
   purpose: 'Consume or restore simulation clearing cash for paper securities acquisition, fees, or proceeds.',
 });
 
+export const SIMULATED_FUNDING_TO_DIGITAL_ASSET_CUSTODY: ClassBridge = Object.freeze({
+  name: 'SIMULATED_FUNDING_TO_DIGITAL_ASSET_CUSTODY',
+  fromClass: 'SIMULATED_FUNDING_SOURCE',
+  toClass: 'DIGITAL_ASSET_CUSTODY',
+  disclosed: true,
+  purpose:
+    'Simulation-only issuance or burn of a non-fiat digital asset against named system books. Never mix with fiat Money in the same journal.',
+});
+
 export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_SAVINGS_DEPOSIT,
@@ -202,6 +211,7 @@ export const DEFINED_CLASS_BRIDGES: readonly ClassBridge[] = [
   SAVINGS_DEPOSIT_TO_BROKERAGE_CASH,
   BROKERAGE_CASH_TO_PENDING_SETTLEMENT,
   BROKERAGE_CASH_TO_SIMULATED_FUNDING,
+  SIMULATED_FUNDING_TO_DIGITAL_ASSET_CUSTODY,
 ];
 
 export function findClassBridge(

@@ -104,6 +104,8 @@ export type TaxObligationAttributes = {
 export type RewardAttributes = {
   readonly kind: 'REWARD';
   readonly label: string;
+  readonly positionRef?: string;
+  readonly marketPrice?: 'UNAVAILABLE';
 };
 
 export type GoalAttributes = {
@@ -136,6 +138,7 @@ export type DataAssetAttributes = {
   readonly consentVersion?: string;
   readonly purposeVersion?: string;
   readonly derivationVersion?: string;
+  readonly contributionId?: string;
 };
 
 export type OpportunityAttributes = {

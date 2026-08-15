@@ -219,14 +219,17 @@ is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
 Firewall, Clean Room, marketplace, or Reyn Coin. The evaluator
 returns `mustStop: false` for the implemented prerequisites.
 
-Chunk 26 (Reyn Coin economic ledger) remains **unbuilt**. Consent,
-Purpose Firewall, and Privacy Clean Room are now `IMPLEMENTED`, so
-the evaluator returns `mustStop: false`. Do not implement Reyn Coin,
-a second ledger, Reyn Exchange, or a public ticker. Historical
-`PYRAMID` / `PYRAMID_EXCHANGE` reservations remain `REYN_COIN` /
-`REYN_EXCHANGE`. See [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
-create `packages/reyn-ledger`, `packages/token-ledger`,
-`packages/crypto-ledger-v2`, or invent a public ticker.
+Chunk 26R implements the reserved SUNREY_COIN bounded context at
+`packages/sunrey-coin`. Capability `sunrey-coin` is `IMPLEMENTED`.
+Bounded context SUNREY_COIN is `IMPLEMENTED` simulation. The original
+Chunk 26 stop is historical: [`chunk-26-stop.md`](./chunk-26-stop.md).
+Resume: [`chunk-26-resume.md`](./chunk-26-resume.md). Historical
+`PYRAMID` / `REYN_COIN` and `PYRAMID_EXCHANGE` / `REYN_EXCHANGE`
+reservations are now `SUNREY_COIN`, `SUNREY_EXCHANGE`, and
+`SUNREY_CHAIN`. Do not create `packages/reyn-coin`,
+`packages/sunrey-ledger`, `packages/reyn-ledger`,
+`packages/token-ledger`, `packages/crypto-ledger-v2`, or invent a
+public ticker. Do not implement SunRey Exchange or SunRey Chain.
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

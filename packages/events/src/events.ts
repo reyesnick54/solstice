@@ -691,6 +691,42 @@ export type CleanRoomEgressSuppressedV1 = VersionedEvent<'CleanRoomEgressSuppres
 export type CleanRoomEgressDeniedV1 = VersionedEvent<'CleanRoomEgressDenied', 1, CleanRoomAuditPayload>;
 export type CleanRoomContributionRecordedV1 = VersionedEvent<'CleanRoomContributionRecorded', 1, CleanRoomAuditPayload>;
 
+export type SunReyCoinAuditPayload = {
+  readonly vectorId?: string;
+  readonly proposalId?: string;
+  readonly issuanceId?: string;
+  readonly transferId?: string;
+  readonly burnId?: string;
+  readonly snapshotId?: string;
+  readonly journalId?: string;
+  readonly subjectId?: string;
+  readonly receiptId?: string;
+  readonly eligibility?: string;
+  readonly scaledUnits?: string;
+  readonly financialEffect?: boolean;
+  readonly outcome?: string;
+  readonly issued?: string;
+  readonly burned?: string;
+  readonly holdings?: string;
+  readonly replayKey?: string;
+};
+
+export type SunReyCoinContributionEvaluatedV1 = VersionedEvent<
+  'SunReyCoinContributionEvaluated',
+  1,
+  SunReyCoinAuditPayload
+>;
+export type SunReyCoinIssuanceProposedV1 = VersionedEvent<'SunReyCoinIssuanceProposed', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinIssuedV1 = VersionedEvent<'SunReyCoinIssued', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinTransferCompletedV1 = VersionedEvent<'SunReyCoinTransferCompleted', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinBurnedV1 = VersionedEvent<'SunReyCoinBurned', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinSupplyReconciledV1 = VersionedEvent<'SunReyCoinSupplyReconciled', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinReconciliationMismatchV1 = VersionedEvent<
+  'SunReyCoinReconciliationMismatch',
+  1,
+  SunReyCoinAuditPayload
+>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1020,7 +1056,14 @@ export type DomainEvent =
   | CleanRoomEgressReleasedV1
   | CleanRoomEgressSuppressedV1
   | CleanRoomEgressDeniedV1
-  | CleanRoomContributionRecordedV1;
+  | CleanRoomContributionRecordedV1
+  | SunReyCoinContributionEvaluatedV1
+  | SunReyCoinIssuanceProposedV1
+  | SunReyCoinIssuedV1
+  | SunReyCoinTransferCompletedV1
+  | SunReyCoinBurnedV1
+  | SunReyCoinSupplyReconciledV1
+  | SunReyCoinReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

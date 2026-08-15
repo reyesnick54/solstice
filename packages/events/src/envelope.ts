@@ -285,6 +285,20 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.consentId ?? body.permitId ?? body.purposeId ?? body.decisionId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('SunReyCoin')) {
+    return {
+      type: 'sunrey_coin',
+      id: String(
+        body.issuanceId ??
+          body.transferId ??
+          body.burnId ??
+          body.proposalId ??
+          body.vectorId ??
+          body.snapshotId ??
+          'unknown',
+      ),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 
