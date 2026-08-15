@@ -514,6 +514,55 @@ export type GrowthPlanCreatedV1 = VersionedEvent<'GrowthPlanCreated', 1, GrowthA
 export type GrowthPlanStaleV1 = VersionedEvent<'GrowthPlanStale', 1, GrowthAuditPayload>;
 export type GrowthActionProposedV1 = VersionedEvent<'GrowthActionProposed', 1, GrowthAuditPayload>;
 
+export type EconomicValueAuditPayload = {
+  readonly snapshotId?: string;
+  readonly subjectId?: string;
+  readonly formulaVersion?: string;
+  readonly modelVersion?: string;
+  readonly pegSnapshotId?: string;
+  readonly completeness?: string;
+  readonly compositePoints?: string;
+  readonly dimensionId?: string;
+  readonly kind?: string;
+  readonly points?: string;
+  readonly priorPoints?: string;
+  readonly entryId?: string;
+  readonly sourceEventId?: string;
+  readonly realization?: string;
+  readonly attributionType?: string;
+  readonly minorUnits?: string;
+  readonly currency?: string;
+  readonly groupId?: string;
+  readonly goalCount?: number;
+  readonly lifecycle?: string;
+};
+
+export type EconomicValueSnapshotCreatedV1 = VersionedEvent<
+  'EconomicValueSnapshotCreated',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueDimensionChangedV1 = VersionedEvent<
+  'EconomicValueDimensionChanged',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueAttributionRecordedV1 = VersionedEvent<
+  'EconomicValueAttributionRecorded',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueGoalProgressUpdatedV1 = VersionedEvent<
+  'EconomicValueGoalProgressUpdated',
+  1,
+  EconomicValueAuditPayload
+>;
+export type EconomicValueModelActivatedV1 = VersionedEvent<
+  'EconomicValueModelActivated',
+  1,
+  EconomicValueAuditPayload
+>;
+
 export type RailAuditPayload = {
   readonly paymentId?: string;
   readonly railSubmissionId?: string;
@@ -640,6 +689,11 @@ export type DomainEvent =
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
   | GrowthActionProposedV1
+  | EconomicValueSnapshotCreatedV1
+  | EconomicValueDimensionChangedV1
+  | EconomicValueAttributionRecordedV1
+  | EconomicValueGoalProgressUpdatedV1
+  | EconomicValueModelActivatedV1
   | TreasuryLiquidityReservedV1
   | TreasuryLiquidityReleasedV1
   | TreasuryLiquidityCommittedV1

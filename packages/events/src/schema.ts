@@ -111,6 +111,11 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'GrowthPlanCreated', version: 1, status: 'current' },
   { eventType: 'GrowthPlanStale', version: 1, status: 'current' },
   { eventType: 'GrowthActionProposed', version: 1, status: 'current' },
+  { eventType: 'EconomicValueSnapshotCreated', version: 1, status: 'current' },
+  { eventType: 'EconomicValueDimensionChanged', version: 1, status: 'current' },
+  { eventType: 'EconomicValueAttributionRecorded', version: 1, status: 'current' },
+  { eventType: 'EconomicValueGoalProgressUpdated', version: 1, status: 'current' },
+  { eventType: 'EconomicValueModelActivated', version: 1, status: 'current' },
 
   { eventType: 'TreasuryLiquidityReserved', version: 1, status: 'current' },
   { eventType: 'TreasuryLiquidityReleased', version: 1, status: 'current' },

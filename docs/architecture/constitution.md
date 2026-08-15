@@ -78,8 +78,8 @@ does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
 
 **Shared libraries:** the packages listed above. There is no separate
 `packages/contracts` on this tree. `packages/platform` is the canonical
-Growth Orchestrator owner. The Personal Economic Value Engine is not
-implemented; it shares that reserved path as PARTIAL.
+Growth Orchestrator owner. The Personal Economic Value Engine is
+implemented in `packages/platform/src/value` on that same reserved path.
 
 ### Action types
 
@@ -249,7 +249,8 @@ In-memory maps remain the default for unit tests:
 - `EvidenceVault` records
 - `DomainEventLog` events
 - `AccountRegister`
-- `GrowthAttributionLedger` entries (principal movements must not write)
+- `GrowthAttributionLedger` entries (principal movements must not write;
+  PEVE economic-benefit attribution lives in `packages/platform/src/value`)
 - `CustomerStore`, `AccountStore`, `LegalEntityStore`, `ProductStore`
 - `AccountsService` intent-id idempotency map
 
@@ -575,7 +576,7 @@ phase is absent.
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
-| PERSONAL ECONOMIC VALUE ENGINE | PARTIAL | `packages/platform` |
+| PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
 | REGULATORY DIGITAL TWIN | PLANNED | `packages/regulatory-twin` |
 | INVESTMENTS | PLANNED | `packages/investments`, `services/investments` |
 | RISK | PLANNED | `packages/risk` |

@@ -79,6 +79,7 @@ Agents and later CI jobs use that result. They do not guess.
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 | personal-economy-agent | IMPLEMENTED | packages/agent |
 | growth-orchestrator | IMPLEMENTED | packages/platform |
+| personal-economic-value-engine | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -123,3 +124,8 @@ as a proposal-only interpreter. The evaluator returns
 Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
+
+Chunk 17 implements the Personal Economic Value Engine at
+`packages/platform/src/value`. It extends platform ownership rather
+than creating `packages/value-engine`. It does not start the
+Regulatory Digital Twin. The evaluator returns `mustStop: false`.
