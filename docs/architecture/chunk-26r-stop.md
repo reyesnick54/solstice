@@ -330,8 +330,10 @@ asserts the historical Chunk 25 stop reason is obsolete.
 
 SunRey Coin domain tests: **not written** (stop).
 
-Local `npm test` / `npm run ci`: recorded in the PR after the
-architecture-repair commit.
+Constitution tests for CHUNK-25 (unblocked) and CHUNK-26R (must stop)
+pass. Persistence migration tests were restored from the last valid
+Consent tip after stacked stop merges left `migrate.test.ts`
+unparseable.
 
 ---
 
