@@ -23,9 +23,9 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe('personal data vault architecture guards', () => {
-  it('rejects competing vaults, custom crypto, marketplace, and raw-payload leakage paths', () => {
-    const files = walk(join(ROOT, 'packages/personal-data-vault/src'));
+describe('consent architecture guards', () => {
+  it('rejects financial journals, Execution Authority, wildcards, and competing owners', () => {
+    const files = walk(join(ROOT, 'packages/consent/src'));
     for (const file of files) {
       if (file.endsWith('.test.ts') || file.endsWith('demo.ts')) {
         continue;
@@ -33,24 +33,21 @@ describe('personal data vault architecture guards', () => {
       const source = readFileSync(file, 'utf8');
       assert.equal(/postJournal\s*\(/.test(source), false, file);
       assert.equal(/AuthorityIssuer/.test(source), false, file);
-      assert.equal(/LIVE_DATA_MARKET_ENABLED\s*=\s*true/.test(source), false, file);
-      assert.equal(/createCipheriv|createDecipheriv/.test(source), false, file);
-      assert.equal(/Sol Coin|Pyramid Coin|PYR\b/.test(source), false, file);
-      assert.equal(/data auction|token reward|sol coin mint/i.test(source), false, file);
-      assert.equal(/financialBalance:\s*[1-9]/.test(source), false, file);
+      assert.equal(/ExecutionAuthority/.test(source), false, file);
+      assert.equal(/Reyn Coin|Pyramid Coin|Sol Coin/.test(source), false, file);
+      assert.equal(/ALL_DATA|ALL_PURPOSES|FOREVER/.test(source) && !file.endsWith('taxonomy.ts'), false, file);
     }
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');
       assert.equal(source.includes('personal-data-vault'), false, file);
-      assert.equal(/VAULT_\*|wildcard vault/i.test(source), false, file);
+      assert.equal(/pg\.|CREATE TABLE/.test(source), false, file);
     }
-    assert.equal(existsSync(join(ROOT, 'packages/user-data')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/data-wallet')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/data-ownership')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/privacy-vault')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/personal-data-v2')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/data-vault')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/privacy-consent')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/user-consent')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/permissions-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/purpose-firewall')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/consent-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/clean-room')), false);
   });
 });

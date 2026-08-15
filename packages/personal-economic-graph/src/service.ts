@@ -84,6 +84,9 @@ export type DeclaredDataAssetInput = {
   readonly contentHash?: string | null;
   readonly category?: string;
   readonly derivedFromVaultAssetId?: string;
+  readonly consentVersion?: string;
+  readonly purposeVersion?: string;
+  readonly derivationVersion?: string;
 };
 
 export type GraphView = {
@@ -277,6 +280,9 @@ export class EconomicGraphService {
         vaultAssetId: input.vaultAssetId,
         ...(input.contentHash ? { contentHash: input.contentHash } : {}),
         ...(input.category ? { category: input.category } : {}),
+        ...(input.consentVersion ? { consentVersion: input.consentVersion } : {}),
+        ...(input.purposeVersion ? { purposeVersion: input.purposeVersion } : {}),
+        ...(input.derivationVersion ? { derivationVersion: input.derivationVersion } : {}),
       },
       canonicalRef: { system: 'PERSONAL_DATA_VAULT', id: input.vaultAssetId },
       quality: 'CURRENT',

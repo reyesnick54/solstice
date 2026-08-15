@@ -63,6 +63,8 @@ jobs:
         run: npm run demo:strategy-lab
       - name: Agentic Capital Mesh demo
         run: npm run demo:mesh
+      - name: Consent ledger and purpose firewall demo
+        run: npm run demo:consent
 
       - name: Typecheck
         run: npm run typecheck

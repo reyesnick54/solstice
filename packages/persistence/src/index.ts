@@ -76,6 +76,7 @@ export {
   loadPersonalDataVaultState,
   persistPersonalDataVaultState,
 } from './personal-data-vault/pg-personal-data-vault-store.ts';
+export { persistConsentState } from './consent/pg-consent-store.ts';
 export {
   insertCoordinate,
   insertFeeAssessment,

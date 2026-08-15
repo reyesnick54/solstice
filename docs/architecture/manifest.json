@@ -266,9 +266,10 @@
         "packages/regulatory-twin",
         "packages/risk",
         "packages/model-registry",
-        "packages/personal-data-vault"
-        "packages/strategy-lab"
-        "packages/agentic-capital-mesh"
+        "packages/agentic-capital-mesh",
+        "packages/strategy-lab",
+        "packages/personal-data-vault",
+        "packages/consent"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -644,9 +645,6 @@
       "id": "packages/strategy-lab",
       "npmName": "@solstice/strategy-lab",
       "path": "packages/strategy-lab",
-      "id": "packages/risk",
-      "npmName": "@solstice/risk",
-      "path": "packages/risk",
       "kind": "package",
       "status": "IMPLEMENTED",
       "protected": true,
@@ -662,42 +660,14 @@
         "packages/evidence",
         "packages/events",
         "packages/identity",
-        "packages/security",
-        "packages/model-registry"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
-    },
-    {
-      "id": "packages/personal-data-vault",
-      "npmName": "@solstice/personal-data-vault",
-      "path": "packages/personal-data-vault",
-      "kind": "package",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "allowedDependencies": [
-        "packages/domain",
         "packages/risk",
-        "packages/config",
-        "packages/security",
-        "packages/identity",
-        "packages/evidence",
-        "packages/events"
-        "packages/events",
         "packages/model-registry",
         "packages/regulatory-twin"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Personal Data Vault. Subject-bound encrypted store. Simulation only. Not a Consent Ledger, Clean Room, marketplace, or Sol Coin."
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper strategy execution. No live trading. Does not call PaperBroker or post journals."
-      "notes": "Deterministic investment/portfolio Risk Engine. Supplies facts to the existing Kernel Risk proof. Never issues Execution Authority or posts journals."
     },
     {
       "id": "services/strategy-lab",
@@ -716,7 +686,6 @@
         "@reyesnick54"
       ],
       "notes": "Application facade for packages/strategy-lab. Not a second backtester, broker, or live trading engine."
-      "notes": "Canonical model registry for deterministic/quantitative/AI models. Simulation approval only. No LIVE_APPROVED. Models cannot self-approve."
     },
     {
       "id": "packages/agentic-capital-mesh",
@@ -744,6 +713,53 @@
         "@reyesnick54"
       ],
       "notes": "Agentic Capital Mesh. Capital-intelligence and proposal system. Reuses the Personal Economy Agent runtime boundary. Cannot issue Execution Authority, post journals, or submit broker orders."
+    },
+    {
+      "id": "packages/personal-data-vault",
+      "npmName": "@solstice/personal-data-vault",
+      "path": "packages/personal-data-vault",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Personal Data Vault. Subject-bound encrypted store. Simulation only. Consent decisions come from packages/consent via DataUseAuthorizationPort. Not a Clean Room, marketplace, or Reyn Coin."
+    },
+    {
+      "id": "packages/consent",
+      "npmName": "@solstice/consent",
+      "path": "packages/consent",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/personal-data-vault"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Consent Ledger, Purpose Registry, Purpose Firewall, and short-lived DataUsePermits. Not a financial ledger and not Execution Authority. Simulation only. Not GDPR/CCPA/PDPL legal approval."
     }
   ],
   "components": [
@@ -1621,6 +1637,30 @@
       "canonicalOwner": "packages/strategy-lab",
       "canonicalPath": "packages/strategy-lab/src/service.ts",
       "publicInterface": "packages/strategy-lab/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "StrategyLab",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/backtest",
+        "packages/trading-lab",
+        "packages/quant",
+        "packages/strategy-v2",
+        "packages/algo-trading"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Strategy Lab. Safe DSL and reproducible simulation only. No live trading authority."
+    },
+    {
       "id": "agentic-capital-mesh",
       "name": "Agentic Capital Mesh",
       "canonicalOwner": "packages/agentic-capital-mesh",
@@ -1633,17 +1673,11 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "StrategyLab",
           "name": "CapitalMeshService",
           "kind": "class"
         }
       ],
       "forbiddenAliases": [
-        "packages/backtest",
-        "packages/trading-lab",
-        "packages/quant",
-        "packages/strategy-v2",
-        "packages/algo-trading"
         "packages/trading-agents",
         "packages/investment-agents",
         "packages/hedge-agent",
@@ -1653,7 +1687,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One Strategy Lab. Safe DSL and reproducible simulation only. No live trading authority."
       "notes": "One Agentic Capital Mesh. Proposes and critiques capital allocations. Deterministic control systems gate everything consequential."
     },
     {
@@ -1713,7 +1746,36 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Subject-bound encrypted personal data store. Not a financial asset, Consent Ledger, Clean Room, marketplace, or Sol Coin."
+      "notes": "Subject-bound encrypted personal data store. Not a financial asset, Clean Room, marketplace, or Reyn Coin. Consent is owned by packages/consent."
+    },
+    {
+      "id": "consent",
+      "name": "Consent Ledger and Purpose Firewall",
+      "canonicalOwner": "packages/consent",
+      "canonicalPath": "packages/consent/src/service.ts",
+      "publicInterface": "packages/consent/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ConsentService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/privacy-consent",
+        "packages/user-consent",
+        "packages/permissions-v2",
+        "packages/purpose-firewall",
+        "packages/consent-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One Consent bounded context. Append-only authorization history. Purpose Firewall defaults DENY. Not a financial ledger."
     }
   ],
   "authorizedMutationPaths": [
@@ -2074,7 +2136,6 @@
     "packages/trading-lab",
     "packages/quant",
     "packages/strategy-v2",
-    "packages/algo-trading",
     "packages/value-engine",
     "packages/peve",
     "packages/economic-score",
@@ -2088,14 +2149,20 @@
     "packages/portfolio-risk",
     "packages/models",
     "packages/model-governance-v2",
+    "packages/autonomous-trader",
+    "packages/algo-trading",
     "packages/user-data",
     "packages/data-wallet",
     "packages/data-ownership",
     "packages/privacy-vault",
     "packages/personal-data-v2",
     "packages/data-vault",
-    "packages/pii-store"
-    "packages/autonomous-trader"
+    "packages/pii-store",
+    "packages/privacy-consent",
+    "packages/user-consent",
+    "packages/permissions-v2",
+    "packages/purpose-firewall",
+    "packages/consent-v2"
   ],
   "capabilities": [
     {
@@ -2298,23 +2365,11 @@
       "notes": "Simulation/counterfactual regulatory decision testing. Reuses the canonical policy engine. Does not execute."
     },
     {
-      "id": "personal-data-vault",
+      "id": "agentic-capital-mesh",
       "status": "IMPLEMENTED",
-      "owner": "packages/personal-data-vault",
-      "protected": true,
-      "notes": "Canonical encrypted Personal Data Vault. Subject-bound. Simulation only. Consent Ledger is Chunk 24."
-    },
-    {
-      "id": "agentic-capital-mesh",
-      "status": "PLANNED",
       "owner": "packages/agentic-capital-mesh",
       "protected": true,
-      "notes": "Reserved Agentic Capital Mesh. Not implemented. Chunk 21."
-      "id": "agentic-capital-mesh",
-      "status": "PLANNED",
-      "owner": "packages/agentic-capital-mesh",
-      "protected": true,
-      "notes": "Reserved Agentic Capital Mesh. Chunk 21R is the owner. Strategy Lab consumes a typed CapitalProposal port and cannot treat Mesh as self-validating."
+      "notes": "Capital-intelligence and proposal mesh. Chunk 21R. Cannot execute, issue Execution Authority, or submit orders."
     },
     {
       "id": "strategy-lab",
@@ -2322,10 +2377,20 @@
       "owner": "packages/strategy-lab",
       "protected": true,
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage."
+    },
+    {
+      "id": "personal-data-vault",
       "status": "IMPLEMENTED",
-      "owner": "packages/agentic-capital-mesh",
+      "owner": "packages/personal-data-vault",
       "protected": true,
-      "notes": "Capital-intelligence and proposal mesh. Chunk 21R. Cannot execute, issue Execution Authority, or submit orders. Strategy Lab remains Chunk 22R."
+      "notes": "Canonical encrypted Personal Data Vault. Subject-bound. Simulation only. Consent Ledger is packages/consent."
+    },
+    {
+      "id": "consent",
+      "status": "IMPLEMENTED",
+      "owner": "packages/consent",
+      "protected": true,
+      "notes": "Canonical Consent Ledger, Purpose Registry, Purpose Firewall, and DataUsePermits. Simulation only. Not legal approval."
     }
   ],
   "boundedContexts": [
@@ -2491,7 +2556,6 @@
         "packages/agentic-capital-mesh"
       ],
       "protected": true,
-      "notes": "Reserved for Chunk 21R at packages/agentic-capital-mesh. Risk and Model Registry are IMPLEMENTED. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai packages."
       "notes": "Implemented at packages/agentic-capital-mesh by Chunk 21R. Proposal-and-critique only. Do not create competing trading-agents / investment-agents / hedge-agent / capital-ai / autonomous-trader packages. Historical stop: chunk-21-stop.md."
     },
     {
@@ -2503,7 +2567,6 @@
       ],
       "protected": true,
       "notes": "Canonical Strategy Lab. Safe DSL, reproducible backtests, walk-forward, shadow, and Risk-gated paper execution. No LIVE stage. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
-      "notes": "Reserved Strategy Lab. Historical Chunk 22 stop: chunk-22-stop.md. Chunk 22R may resume after Agentic Capital Mesh is IMPLEMENTED. Do not create packages/backtest, packages/trading-lab, packages/quant, or packages/strategy-v2."
     },
     {
       "id": "PERSONAL_DATA_VAULT",
@@ -2512,15 +2575,16 @@
         "packages/personal-data-vault"
       ],
       "protected": true,
-      "notes": "Subject-bound encrypted Personal Data Vault. Simulation connectors only. Not legal ownership, GDPR/CCPA compliance, Consent Ledger, Clean Room, marketplace, or Sol Coin."
+      "notes": "Subject-bound encrypted Personal Data Vault. Simulation connectors only. Not legal ownership, GDPR/CCPA compliance, Clean Room, marketplace, or Reyn Coin. Consent is packages/consent."
     },
     {
       "id": "CONSENT",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/consent"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Canonical Consent Ledger and Purpose Firewall at packages/consent. Append-only authorization history. Not a financial ledger. Not GDPR/CCPA/PDPL legal approval. Clean Room remains PLANNED."
     },
     {
       "id": "CLEAN_ROOM",
