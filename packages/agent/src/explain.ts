@@ -94,6 +94,23 @@ export function explainEconomicValue(input: {
   });
 }
 
+export function explainCapitalProposal(input: {
+  readonly subjectId: string;
+  readonly proposalSummary: string;
+  readonly now: UtcInstant;
+}): AgentProposal {
+  return freezeProposal({
+    proposalId: deterministicProposalId('EXPLAIN_CAPITAL', input.subjectId),
+    kind: 'CAPITAL_PROPOSAL_EXPLANATION',
+    subjectId: input.subjectId,
+    title: 'Capital proposal explanation',
+    rationale: `${input.proposalSummary} The agent explains a Mesh proposal; it cannot change the deterministic result, relax Risk, or execute.`,
+    relatedRefs: Object.freeze([]),
+    executable: false,
+    createdAt: input.now,
+  });
+}
+
 export function explainRisk(input: {
   readonly subjectId: string;
   readonly riskSummary: string;

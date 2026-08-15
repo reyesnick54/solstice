@@ -261,6 +261,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.modelId ?? body.validationId ?? body.artifactRef ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('CapitalMesh')) {
+    return {
+      type: 'capital_mesh',
+      id: String(body.runId ?? body.proposalId ?? body.thesisId ?? body.candidateId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

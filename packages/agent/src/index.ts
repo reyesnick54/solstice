@@ -1,5 +1,5 @@
-export { explainEconomicValue, explainGoals, explainPerformance, explainPlan, explainPortfolio } from './explain.ts';
 export {
+  explainCapitalProposal,
   explainEconomicValue,
   explainGoals,
   explainPerformance,

@@ -1,5 +1,10 @@
 # Chunk 22 stop record
 
+> **HISTORICAL / SUPERSEDED as a current-state document.** This records the
+> original Chunk 22 stop. Chunk 20 later implemented Risk and Model Registry.
+> Chunk 21R implements Agentic Capital Mesh. Strategy Lab remains `PLANNED`
+> until Chunk 22R. Do not start Strategy Lab from this stop record.
+
 This file records a **missing-capability stop**, not a Strategy Lab
 implementation.
 
