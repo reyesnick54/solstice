@@ -62,6 +62,10 @@ never be two implementations of these systems.
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
 | Investments | `packages/investments` | `packages/investments/src/service.ts` | IMPLEMENTED |
 | Regulatory Digital Twin | `packages/regulatory-twin` | `packages/regulatory-twin/src/service.ts` | IMPLEMENTED |
+| Investment Risk Engine | `packages/risk` | `packages/risk/src/engine.ts` | IMPLEMENTED |
+| Model Registry | `packages/model-registry` | `packages/model-registry/src/registry.ts` | IMPLEMENTED |
+| Agentic Capital Mesh | `packages/agentic-capital-mesh` | `packages/agentic-capital-mesh/src/service.ts` | IMPLEMENTED |
+| Strategy Lab | `packages/strategy-lab` | `packages/strategy-lab/src/service.ts` | IMPLEMENTED |
 | Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -73,11 +77,10 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`personal-data-vault`.
-`agentic-capital-mesh`.
+`agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
-`treasury`, `investments`.
+`treasury`, `investments`, `strategy-lab`.
 
 **Applications:** none. `apps/` is reserved in the workspace glob and
 does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
@@ -92,17 +95,12 @@ implemented in `packages/platform/src/value` on that same reserved path.
 `packages/investments` is the canonical investment account and paper
 portfolio owner. `packages/risk` is the canonical investment Risk
 Engine. `packages/model-registry` is the canonical Model Registry.
-Strategy Lab is implemented at the reserved owners:
-`STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
-`services/strategy-lab` (no LIVE stage). Agentic Capital Mesh remains
-reserved and unimplemented at `packages/agentic-capital-mesh`.
-portfolio owner. Strategy Lab is reserved and not implemented:
-`STRATEGY_LAB` remains `PLANNED` at `packages/strategy-lab`.
-`packages/investments` is the canonical investment account / portfolio
-core. The investment Risk Engine is `packages/risk`. The Model Registry
-is `packages/model-registry`. The Agentic Capital Mesh is
-`packages/agentic-capital-mesh`. Strategy Lab remains reserved and
-unimplemented at `packages/strategy-lab`.
+`packages/agentic-capital-mesh` is the canonical Agentic Capital Mesh.
+Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
+`services/strategy-lab` (no LIVE stage). Personal Data Vault is
+`IMPLEMENTED` at `packages/personal-data-vault`. Consent Ledger,
+Purpose Firewall, Clean Room, Reyn Coin, and Reyn Exchange remain
+reserved and unimplemented.
 
 ### Action types
 
@@ -645,20 +643,30 @@ phase is absent.
 | INVESTMENTS | PARTIAL | `packages/investments`, `services/investments` |
 | RISK | IMPLEMENTED | `packages/risk` |
 | MODEL REGISTRY | IMPLEMENTED | `packages/model-registry` |
-| AGENTIC CAPITAL MESH | PLANNED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | AGENTIC CAPITAL MESH | IMPLEMENTED | `packages/agentic-capital-mesh` |
-| STRATEGY LAB | PLANNED | `packages/strategy-lab`, `services/strategy-lab` |
+| STRATEGY LAB | PARTIAL | `packages/strategy-lab`, `services/strategy-lab` |
 | PERSONAL DATA VAULT | IMPLEMENTED | `packages/personal-data-vault` |
 | CONSENT | PLANNED | `packages/consent` |
 | CLEAN ROOM | PLANNED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
-| PYRAMID | PLANNED | `packages/pyramid` |
+| REYN COIN | PLANNED | `packages/reyn-coin` |
 | PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |
-| PYRAMID EXCHANGE | PLANNED | `packages/pyramid-exchange` |
+| REYN EXCHANGE | PLANNED | `packages/reyn-exchange` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
+
+Product branding for the reserved digital-asset context is **Reyn** /
+**Reyn Coin** / **Reyn Exchange**. The public ticker is UNDECIDED.
+Do not invent `REYN`, `RYN`, or `RCOIN`. Historical architecture names
+`PYRAMID` and `PYRAMID_EXCHANGE` are replaced by the reservations
+above. `PYRAMID_DATA_EXCHANGE` naming remains unresolved.
+`PYR` is a historical ticker/alias reservation only.
+
+Chunk 26 stopped rather than implementing Reyn Coin:
+[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
+`packages/reyn-ledger`, `packages/token-ledger`, or
+`packages/crypto-ledger-v2`.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

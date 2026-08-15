@@ -270,20 +270,6 @@ describe('versioned SQL migrations', () => {
     assert.equal(/LIVE_APPROVED/.test(lifecycleIn[1] ?? ''), false);
   });
 
-  it('customer V017 persists Personal Data Vault metadata and ciphertext without plaintext payload columns', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v017 = files.find((file) => file.version === 17);
-    assert.ok(v017);
-    assert.match(v017.sql, /CREATE SCHEMA IF NOT EXISTS personal_data_vault/);
-    assert.match(v017.sql, /CREATE TABLE personal_data_vault.vault/);
-    assert.match(v017.sql, /CREATE TABLE personal_data_vault.asset/);
-    assert.match(v017.sql, /CREATE TABLE personal_data_vault.payload/);
-    assert.match(v017.sql, /CREATE TABLE personal_data_vault.access_audit/);
-    assert.match(v017.sql, /authoritative_for_financial_state = FALSE/);
-    assert.match(v017.sql, /pdv_asset_no_financial_balance/);
-    assert.match(v017.sql, /pdv_payload_envelope_not_plaintext/);
-    assert.match(v017.sql, /GRANT USAGE ON SCHEMA personal_data_vault TO customer_app/);
-    assert.equal(/plaintext_payload/i.test(v017.sql), false);
   it('customer V017 persists Agentic Capital Mesh structured records without chain-of-thought', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v017 = files.find((file) => file.version === 17);
@@ -300,6 +286,35 @@ describe('versioned SQL migrations', () => {
       .replace(/NOT LIKE '%BEGIN_PROMPT%'/gi, '');
     assert.equal(/chain.of.thought|BEGIN_PROMPT/i.test(sqlWithoutComments), false);
     assert.equal(/CREATE TABLE capital_mesh\.journal/i.test(v017.sql), false);
+  });
+
+  it('customer V018 persists Strategy Lab experiment records without live trading', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v018 = files.find((file) => file.version === 18);
+    assert.ok(v018);
+    assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
+    assert.match(v018.filename, /V018__strategy_lab\.sql/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.experiment/);
+    assert.match(v018.sql, /live_approved = FALSE/);
+    assert.match(v018.sql, /GRANT USAGE ON SCHEMA strategy_lab TO customer_app/);
+    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
+  });
+
+  it('customer V019 persists Personal Data Vault metadata and ciphertext without plaintext payload columns', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v019 = files.find((file) => file.version === 19);
+    assert.ok(v019);
+    assert.match(v019.sql, /CREATE SCHEMA IF NOT EXISTS personal_data_vault/);
+    assert.match(v019.sql, /CREATE TABLE personal_data_vault.vault/);
+    assert.match(v019.sql, /CREATE TABLE personal_data_vault.asset/);
+    assert.match(v019.sql, /CREATE TABLE personal_data_vault.payload/);
+    assert.match(v019.sql, /CREATE TABLE personal_data_vault.access_audit/);
+    assert.match(v019.sql, /authoritative_for_financial_state = FALSE/);
+    assert.match(v019.sql, /pdv_asset_no_financial_balance/);
+    assert.match(v019.sql, /pdv_payload_envelope_not_plaintext/);
+    assert.match(v019.sql, /GRANT USAGE ON SCHEMA personal_data_vault TO customer_app/);
+    assert.equal(/plaintext_payload/i.test(v019.sql), false);
   });
 
   it('security V001 stores metadata only and forbids private key material', () => {

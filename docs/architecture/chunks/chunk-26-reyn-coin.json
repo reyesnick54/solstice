@@ -1,0 +1,31 @@
+{
+  "chunk": "CHUNK-26",
+  "title": "Reyn Coin Economic Ledger, Currency of You Contribution Engine, Authorized Data-Contribution Weighting, Controlled Simulation Issuance, Supply Accounting, and Digital-Asset Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room"
+  ],
+  "notes": "STOPPED. Personal Data Vault is IMPLEMENTED. Consent Ledger, Purpose Firewall, and Privacy Clean Room remain PLANNED. evaluateChunkRequirements returns mustStop: true. Do not implement Reyn Coin, a second ledger, Reyn Exchange, or a public ticker. Historical PYRAMID reservation is now REYN_COIN at packages/reyn-coin. Historical PYRAMID_EXCHANGE reservation is now REYN_EXCHANGE at packages/reyn-exchange. PYRAMID_DATA_EXCHANGE naming remains unresolved. See docs/architecture/chunk-26-stop.md."
+}

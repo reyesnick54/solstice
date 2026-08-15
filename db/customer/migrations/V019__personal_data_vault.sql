@@ -1,4 +1,4 @@
--- V017 Personal Data Vault.
+-- V019 Personal Data Vault.
 -- Encrypted envelopes and minimized metadata only.
 -- No plaintext personal payload columns. Not a second identity or ledger.
 

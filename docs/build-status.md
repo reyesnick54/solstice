@@ -164,14 +164,6 @@ This document describes only what is implemented and tested in this tree.
   PARTIAL (no live trading). Historical stop:
   `docs/architecture/chunk-22-stop.md`. Resume:
   `docs/architecture/chunk-22-resume.md`.
-- Agentic Capital Mesh (Chunk 21) remains reserved at
-  `packages/agentic-capital-mesh` and is still `PLANNED`. Risk and
-  Model Registry are IMPLEMENTED. See
-  `docs/architecture/chunk-21-stop.md`.
-- Investment Risk Engine and Model Registry (Chunk 20,
-  `packages/risk`, `packages/model-registry`): deterministic
-  pre-trade Risk, RiskBudget, stress fixtures, and a simulation-only
-  Model Registry. No `LIVE_APPROVED`. Models cannot self-approve.
 - Agentic Capital Mesh (Chunk 21R, `packages/agentic-capital-mesh`):
   capital-intelligence and proposal system. Specialist nodes, subject-bound
   CapitalContext, structured theses, deterministic allocation compiler,
@@ -180,6 +172,15 @@ This document describes only what is implemented and tested in this tree.
   before Chunk 20 merged; that stop is historical
   (`docs/architecture/chunk-21-stop.md`). Resume:
   `docs/architecture/chunk-21-resume.md`.
+
+- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
+  subject-bound vaults, versioned DataAssets, schema registry,
+  envelope-encrypted payloads via canonical `KeyProvider`,
+  provenance, access broker, consent-port fail-closed default,
+  access audit, export manifest, technical deletion / crypto-shred,
+  derivation lineage, PEG references without raw payload, and
+  contribution-review metadata without marketplace or tokens.
+  Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -194,56 +195,28 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- Strategy Lab (Chunk 22) is **stopped**. Risk Engine, Model Registry,
-  and Agentic Capital Mesh remain `PLANNED`. Chunk 21 is not merged.
-  See `docs/architecture/chunk-22-stop.md`.
-- Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
-  subject-bound vaults, versioned DataAssets, schema registry,
-  envelope-encrypted payloads via canonical `KeyProvider`,
-  provenance, access broker, consent-port fail-closed default,
-  access audit, export manifest, technical deletion / crypto-shred,
-  derivation lineage, PEG references without raw payload, and
-  contribution-review metadata without marketplace or tokens.
-  Not GDPR/CCPA/PDPL/HIPAA compliance. Consent Ledger is Chunk 24.
-- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
-  MESH, STRATEGY LAB, CONSENT, CLEAN ROOM, PYRAMID, SOVEREIGN CELLS,
-  and the rest listed in the constitution).
-  PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL
-  simulation owners. The Personal Economic Graph, Personal Economy
-  Agent, Growth Orchestrator, Personal Economic Value Engine, and
-  Regulatory Digital Twin are IMPLEMENTED as non-executing
-  intelligence layers. Live rails, live issuing, live
-  wallet/SoftPOS certification, live treasury, and live securities
-  trading remain later. The investment Risk Engine is Chunk 20.
-- Investment Risk Engine (`packages/risk`) and Model Registry
-  (`packages/model-registry`). Both remain `PLANNED`. Chunk 21 stopped
-  rather than inventing them. See `docs/architecture/chunk-21-stop.md`.
-- Agentic Capital Mesh (`packages/agentic-capital-mesh`). Reserved and
-  `PLANNED`. Competing `trading-agents` / `investment-agents` /
-  `hedge-agent` / `capital-ai` packages must not be created.
-- Reserved later bounded contexts that remain PLANNED (AGENTIC CAPITAL
-  MESH, PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest
-  listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
-  INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners. RISK
-  and MODEL REGISTRY are IMPLEMENTED. The Personal Economic Graph,
-  Personal Economy Agent, Growth Orchestrator, Personal Economic Value
-  Engine, and Regulatory Digital Twin are IMPLEMENTED as
-  non-executing intelligence layers. Live rails, live issuing, live
-  wallet/SoftPOS certification, live treasury, and live securities
-  trading remain later.
-- Strategy Lab (Chunk 22) remains **PLANNED**. The original stop is
-  historical (`docs/architecture/chunk-22-stop.md`): it ran when Risk,
-  Model Registry, and Agentic Capital Mesh were still absent. Those
-  three are now IMPLEMENTED. Do not start Strategy Lab until Chunk 22R.
-- Reserved later bounded contexts that remain PLANNED (STRATEGY LAB,
-  PERSONAL DATA VAULT, PYRAMID, SOVEREIGN CELLS, and the rest listed
-  in the constitution). PAYMENTS, FX, CARDS, TREASURY, and INVESTMENTS
-  are PARTIAL simulation owners. The Personal Economic Graph, Personal
+- Consent Ledger, Purpose Firewall, and Privacy Clean Room. Reserved at
+  `packages/consent` and `packages/clean-room`. Chunk 23 fails closed
+  for third-party / consent-requiring use. Historical PR `#17` is not
+  canonical.
+- Reyn Coin and Reyn Exchange. Historical `PYRAMID` / `PYRAMID_EXCHANGE`
+  reservations are now `REYN_COIN` (`packages/reyn-coin`) and
+  `REYN_EXCHANGE` (`packages/reyn-exchange`). Neither package exists.
+  Chunk 26 stopped because Consent and Clean Room are not
+  `IMPLEMENTED`. See `docs/architecture/chunk-26-stop.md`. Do not
+  invent a public ticker. `PYRAMID_DATA_EXCHANGE` naming remains
+  unresolved. Historical PRs `#18` and `#19` are not canonical.
+- Reserved later bounded contexts that remain PLANNED (CONSENT,
+  CLEAN ROOM, REYN COIN, REYN EXCHANGE, PYRAMID DATA EXCHANGE,
+  SOVEREIGN CELLS, and the rest listed in the constitution).
+  PAYMENTS, FX, CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are
+  PARTIAL simulation owners. The Personal Economic Graph, Personal
   Economy Agent, Growth Orchestrator, Personal Economic Value Engine,
-  Regulatory Digital Twin, Risk Engine, Model Registry, and Agentic
-  Capital Mesh are IMPLEMENTED as non-executing or simulation-gated
-  layers. Live rails, live issuing, live wallet/SoftPOS certification,
-  live treasury, and live securities trading remain later.
+  Regulatory Digital Twin, Risk Engine, Model Registry, Agentic
+  Capital Mesh, and Personal Data Vault are IMPLEMENTED as
+  non-executing or simulation-gated layers. Live rails, live issuing,
+  live wallet/SoftPOS certification, live treasury, and live
+  securities trading remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

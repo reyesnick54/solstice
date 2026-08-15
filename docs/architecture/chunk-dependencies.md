@@ -84,14 +84,13 @@ Agents and later CI jobs use that result. They do not guess.
 | investments | IMPLEMENTED | packages/investments |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 | personal-data-vault | IMPLEMENTED | packages/personal-data-vault |
-| risk | PLANNED | packages/risk |
-| model-registry | PLANNED | packages/model-registry |
-| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
-| agentic-capital-mesh | PLANNED | packages/agentic-capital-mesh |
-| strategy-lab | IMPLEMENTED | packages/strategy-lab |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
+| strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| consent | PLANNED | packages/consent |
+| purpose-firewall | PLANNED | packages/consent |
+| clean-room | PLANNED | packages/clean-room |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -167,22 +166,6 @@ historical: [`chunk-22-stop.md`](./chunk-22-stop.md). Resume:
 [`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
 `packages/backtest`, `packages/trading-lab`, `packages/quant`, or
 `packages/strategy-v2`.
-Chunk 21 (Agentic Capital Mesh) remains reserved at
-`packages/agentic-capital-mesh`. Protected capabilities `risk` and
-`model-registry` are now `IMPLEMENTED`, so the evaluator returns
-`mustStop: false` for CHUNK-21's declared requires. The Mesh package
-itself is still absent. Historical stop:
-[`chunk-21-stop.md`](./chunk-21-stop.md). Do not create competing
-`trading-agents` / `investment-agents` / `hedge-agent` / `capital-ai`
-packages until Chunk 20 lands those owners as `IMPLEMENTED`.
-Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
-at `packages/personal-data-vault`. Capability `personal-data-vault`
-is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
-Firewall, Clean Room, marketplace, or Sol Coin. The evaluator
-returns `mustStop: false` for the implemented prerequisites.
-Strategy Lab remains `PLANNED` and is not a PDV code dependency.
-
-packages.
 Chunk 20 implements the reserved RISK and MODEL_REGISTRY bounded
 contexts at `packages/risk` and `packages/model-registry`. Capability
 `risk` and `model-registry` are `IMPLEMENTED`. Risk supplies
@@ -204,10 +187,26 @@ Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
 
 Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
 and Agentic Capital Mesh were absent. That stop is historical:
-[`chunk-22-stop.md`](./chunk-22-stop.md). Those three capabilities are
-now `IMPLEMENTED`. `STRATEGY_LAB` remains `PLANNED` at
-`packages/strategy-lab` and `services/strategy-lab` until Chunk 22R.
-The evaluator returns `mustStop: false` because required capabilities
-exist; the reserved Strategy Lab owner is still absent. Do not create
+[`chunk-22-stop.md`](./chunk-22-stop.md). Chunk 22R implements the
+reserved owners `packages/strategy-lab` and `services/strategy-lab`.
+Capability `strategy-lab` is `IMPLEMENTED`. Bounded context
+`STRATEGY_LAB` is `PARTIAL` (no LIVE stage). Resume:
+[`chunk-22-resume.md`](./chunk-22-resume.md). Do not create
 `packages/backtest`, `packages/trading-lab`, `packages/quant`, or
 `packages/strategy-v2`.
+
+Chunk 23 implements the reserved PERSONAL_DATA_VAULT bounded context
+at `packages/personal-data-vault`. Capability `personal-data-vault`
+is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
+Firewall, Clean Room, marketplace, or Reyn Coin. The evaluator
+returns `mustStop: false` for the implemented prerequisites.
+
+Chunk 26 (Reyn Coin economic ledger) is **stopped**. The task requires
+Consent Ledger, Purpose Firewall, and Privacy Clean Room. Those
+protected capabilities remain `PLANNED`. The evaluator returns
+`mustStop: true` and `missing: ['consent', 'purpose-firewall',
+'clean-room']`. Historical `PYRAMID` / `PYRAMID_EXCHANGE` reservations
+are migrated to `REYN_COIN` / `REYN_EXCHANGE` without implementing
+either package. See [`chunk-26-stop.md`](./chunk-26-stop.md). Do not
+create `packages/reyn-ledger`, `packages/token-ledger`,
+`packages/crypto-ledger-v2`, or invent a public ticker.

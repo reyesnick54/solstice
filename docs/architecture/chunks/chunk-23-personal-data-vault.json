@@ -15,5 +15,5 @@
     "growth-orchestrator",
     "regulatory-digital-twin"
   ],
-  "notes": "Implements PERSONAL_DATA_VAULT at packages/personal-data-vault. Strategy Lab remains PLANNED (Chunk 22 stop merged; 22R not implemented) and is not a code dependency. Do not implement Consent Ledger, Purpose Firewall, Clean Room, marketplace, or Sol Coin."
+  "notes": "Implements PERSONAL_DATA_VAULT at packages/personal-data-vault. Strategy Lab is IMPLEMENTED and is not a PDV code dependency. Do not implement Consent Ledger, Purpose Firewall, Clean Room, marketplace, or Reyn Coin."
 }
