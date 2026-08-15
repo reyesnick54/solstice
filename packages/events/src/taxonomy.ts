@@ -20,11 +20,11 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'banking',
   'compliance',
   'fraud',
+  'card',
 
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
-  'card',
   'investment',
   'agent',
   'consent',
@@ -92,6 +92,19 @@ export const EVENT_TYPE_NAMES = [
   'ComplianceCaseDecided',
   'ComplianceAlertCreated',
   'FraudRiskEvaluated',
+  'CardCreated',
+  'CardActivated',
+  'CardFrozen',
+  'CardUnfrozen',
+  'CardClosed',
+  'CardAuthorizationApproved',
+  'CardAuthorizationDeclined',
+  'CardAuthorizationReversed',
+  'CardClearingReceived',
+  'CardTransactionSettled',
+  'CardRefundReceived',
+  'CardDisputeOpened',
+  'CardDisputeDecided',
 
 ] as const;
 
@@ -150,6 +163,19 @@ export const EVENT_SCHEMA_REFS = {
   ComplianceCaseDecided: 'solstice.compliance.case.decided/1',
   ComplianceAlertCreated: 'solstice.compliance.alert.created/1',
   FraudRiskEvaluated: 'solstice.fraud.risk.evaluated/1',
+  CardCreated: 'solstice.card.created/1',
+  CardActivated: 'solstice.card.activated/1',
+  CardFrozen: 'solstice.card.frozen/1',
+  CardUnfrozen: 'solstice.card.unfrozen/1',
+  CardClosed: 'solstice.card.closed/1',
+  CardAuthorizationApproved: 'solstice.card.authorization.approved/1',
+  CardAuthorizationDeclined: 'solstice.card.authorization.declined/1',
+  CardAuthorizationReversed: 'solstice.card.authorization.reversed/1',
+  CardClearingReceived: 'solstice.card.clearing.received/1',
+  CardTransactionSettled: 'solstice.card.transaction.settled/1',
+  CardRefundReceived: 'solstice.card.refund.received/1',
+  CardDisputeOpened: 'solstice.card.dispute.opened/1',
+  CardDisputeDecided: 'solstice.card.dispute.decided/1',
 
 } as const;
 
@@ -208,6 +234,19 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ComplianceCaseDecided: 'compliance',
   ComplianceAlertCreated: 'compliance',
   FraudRiskEvaluated: 'fraud',
+  CardCreated: 'card',
+  CardActivated: 'card',
+  CardFrozen: 'card',
+  CardUnfrozen: 'card',
+  CardClosed: 'card',
+  CardAuthorizationApproved: 'card',
+  CardAuthorizationDeclined: 'card',
+  CardAuthorizationReversed: 'card',
+  CardClearingReceived: 'card',
+  CardTransactionSettled: 'card',
+  CardRefundReceived: 'card',
+  CardDisputeOpened: 'card',
+  CardDisputeDecided: 'card',
 
 };
 

@@ -63,6 +63,19 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ComplianceCaseDecided', version: 1, status: 'current' },
   { eventType: 'ComplianceAlertCreated', version: 1, status: 'current' },
   { eventType: 'FraudRiskEvaluated', version: 1, status: 'current' },
+  { eventType: 'CardCreated', version: 1, status: 'current' },
+  { eventType: 'CardActivated', version: 1, status: 'current' },
+  { eventType: 'CardFrozen', version: 1, status: 'current' },
+  { eventType: 'CardUnfrozen', version: 1, status: 'current' },
+  { eventType: 'CardClosed', version: 1, status: 'current' },
+  { eventType: 'CardAuthorizationApproved', version: 1, status: 'current' },
+  { eventType: 'CardAuthorizationDeclined', version: 1, status: 'current' },
+  { eventType: 'CardAuthorizationReversed', version: 1, status: 'current' },
+  { eventType: 'CardClearingReceived', version: 1, status: 'current' },
+  { eventType: 'CardTransactionSettled', version: 1, status: 'current' },
+  { eventType: 'CardRefundReceived', version: 1, status: 'current' },
+  { eventType: 'CardDisputeOpened', version: 1, status: 'current' },
+  { eventType: 'CardDisputeDecided', version: 1, status: 'current' },
 
 ];
 

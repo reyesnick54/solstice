@@ -56,6 +56,12 @@ This document describes only what is implemented and tested in this tree.
   consume the facts. No live vendor. No OFAC/UN/EU/HMT claim.
   Transaction-monitoring thresholds are engineering test rules labeled
   RESEARCH_REQUIRED.
+- Simulated card platform (Chunk 11, `packages/cards`, `services/cards`):
+  one canonical card model, processor-token references only, Kernel-gated
+  authorization that reserves funds through existing banking holds,
+  clearing/settlement journals, refunds, disputes, network-token metadata
+  for later wallet provisioning, and HMAC processor-callback security.
+  No real PAN/CVV, live network, or issuer SDK.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
@@ -70,7 +76,7 @@ This document describes only what is implemented and tested in this tree.
   entries (`packages/payments`). Not live rails.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Phase 4–5 Personal Economy Agent, mandate compiler, Compounder, Growth OS, capability tokens (`packages/agent`, `packages/platform`).
-- Reserved later bounded contexts (CARDS, TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS and FX are PARTIAL simulation owners in `packages/payments`. Live rails remain later.
+- Reserved later bounded contexts (TREASURY, PERSONAL ECONOMY AGENT, PYRAMID, SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS, FX, and CARDS are PARTIAL simulation owners. Live rails and live issuing remain later.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion
@@ -98,6 +104,7 @@ npm run check:extraction
 npm run check:posture
 npm run gate
 npm run demo
+npm run demo:cards
 npm run typecheck
 npm run scan:secrets
 npm run ci

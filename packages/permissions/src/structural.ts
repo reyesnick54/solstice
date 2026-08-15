@@ -27,6 +27,16 @@ import {
   type ReleaseHoldIntent,
   type ReturnPendingIntent,
   type SettlePendingIntent,
+  type RequestCardIntent,
+  type CardLifecyclePayload,
+  type UpdateCardControlsIntent,
+  type AuthorizeCardPurchaseIntent,
+  type ReverseCardAuthorizationIntent,
+  type ClearCardTransactionIntent,
+  type RefundCardTransactionIntent,
+  type OpenCardDisputeIntent,
+  type DecideCardDisputeIntent,
+  type AssessCardFeeIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -117,6 +127,41 @@ export function validateIntentStructure(
       intent as SettlePendingIntent | ReturnPendingIntent,
       catalog,
     );
+  }
+  if (intent.actionType === ACTION_TYPES.REQUEST_CARD) {
+    return validateRequestCard(intent as RequestCardIntent, catalog);
+  }
+  if (
+    intent.actionType === ACTION_TYPES.ACTIVATE_CARD ||
+    intent.actionType === ACTION_TYPES.FREEZE_CARD ||
+    intent.actionType === ACTION_TYPES.UNFREEZE_CARD ||
+    intent.actionType === ACTION_TYPES.CLOSE_CARD
+  ) {
+    return validateAccountOnly((intent.payload as CardLifecyclePayload).accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.UPDATE_CARD_CONTROLS) {
+    return validateAccountOnly((intent as UpdateCardControlsIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.AUTHORIZE_CARD_PURCHASE) {
+    return validateAuthorizeCard(intent as AuthorizeCardPurchaseIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.REVERSE_CARD_AUTHORIZATION) {
+    return validateAccountOnly((intent as ReverseCardAuthorizationIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.CLEAR_CARD_TRANSACTION) {
+    return validateCardAmount((intent as ClearCardTransactionIntent).payload.accountId, (intent as ClearCardTransactionIntent).payload.amount, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.REFUND_CARD_TRANSACTION) {
+    return validateCardAmount((intent as RefundCardTransactionIntent).payload.accountId, (intent as RefundCardTransactionIntent).payload.amount, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.OPEN_CARD_DISPUTE) {
+    return validateCardAmount((intent as OpenCardDisputeIntent).payload.accountId, (intent as OpenCardDisputeIntent).payload.amount, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.DECIDE_CARD_DISPUTE) {
+    return validateAccountOnly((intent as DecideCardDisputeIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.ASSESS_CARD_FEE) {
+    return validateCardAmount((intent as AssessCardFeeIntent).payload.accountId, (intent as AssessCardFeeIntent).payload.amount, catalog);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }
@@ -443,6 +488,51 @@ function validateInitiatePayment(
     return reject('accountClass', 'money movement requires a customer-funded account class');
   }
   return ok(true);
+}
+
+function validateRequestCard(
+  intent: RequestCardIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const accountCheck = validateAccountOnly(intent.payload.accountId, catalog);
+  if (!accountCheck.ok) {
+    return accountCheck;
+  }
+  const account = catalog.accounts.get(intent.payload.accountId);
+  if (!account) {
+    return reject('accountId', 'account does not exist');
+  }
+  if (account.ownerId !== intent.payload.ownerId) {
+    return reject('ownerId', 'card owner must match the funding account owner');
+  }
+  if (intent.payload.formFactor !== 'VIRTUAL' && intent.payload.formFactor !== 'PHYSICAL') {
+    return reject('formFactor', 'form factor must be VIRTUAL or PHYSICAL');
+  }
+  if (typeof intent.payload.programId !== 'string' || intent.payload.programId.length === 0) {
+    return reject('programId', 'card program id is required');
+  }
+  return ok(true);
+}
+
+function validateAuthorizeCard(
+  intent: AuthorizeCardPurchaseIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  return validateCardAmount(intent.payload.accountId, intent.payload.amount, catalog);
+}
+
+function validateCardAmount(
+  accountId: Account['id'],
+  amount: Money,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (!(amount instanceof Money) || typeof amount.minorUnits !== 'bigint') {
+    return reject('amount', 'amount must be Money bigint minor units');
+  }
+  if (!amount.isPositive()) {
+    return reject('amount', 'amount must be a positive integer of minor units');
+  }
+  return validateAccountOnly(accountId, catalog);
 }
 
 function validateOutgoingAccountMoney(

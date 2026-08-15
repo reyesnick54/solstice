@@ -97,8 +97,23 @@ Implemented payment / FX events (hashes and ids only; no raw bank details):
 - `fx.quote.accepted` → `FxQuoteAccepted`
 - `fx.quote.expired` → `FxQuoteExpired`
 
-Reserved (not implemented): `card.*`,
-`investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
+Implemented card events (processor/token references only; no PAN/CVV):
+
+- `card.created` → `CardCreated`
+- `card.activated` → `CardActivated`
+- `card.frozen` → `CardFrozen`
+- `card.unfrozen` → `CardUnfrozen`
+- `card.closed` → `CardClosed`
+- `card.authorization.approved` → `CardAuthorizationApproved`
+- `card.authorization.declined` → `CardAuthorizationDeclined`
+- `card.authorization.reversed` → `CardAuthorizationReversed`
+- `card.clearing.received` → `CardClearingReceived`
+- `card.transaction.settled` → `CardTransactionSettled`
+- `card.refund.received` → `CardRefundReceived`
+- `card.dispute.opened` → `CardDisputeOpened`
+- `card.dispute.decided` → `CardDisputeDecided`
+
+Reserved (not implemented): `investment.*`, `agent.*`, `consent.*`, `data.*`, `pyr.*`, `exchange.*`,
 `regulatory.*`, `notification.*`, `analytics.*`.
 
 `evidence.*` is reserved as a namespace so evidence records are not
