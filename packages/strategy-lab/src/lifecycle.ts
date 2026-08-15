@@ -10,19 +10,19 @@ import {
 export const LEGAL_STRATEGY_TRANSITIONS: Readonly<
   Record<StrategyLifecycleState, readonly StrategyLifecycleState[]>
 > = Object.freeze({
-  DRAFT: Object.freeze(['COMPILED', 'RETIRED']),
-  COMPILED: Object.freeze(['BACKTESTING', 'RETIRED']),
-  BACKTESTING: Object.freeze(['BACKTESTED', 'VALIDATION_FAILED', 'RETIRED']),
-  BACKTESTED: Object.freeze(['BACKTESTING', 'REVIEW_REQUIRED', 'VALIDATION_FAILED', 'RETIRED']),
-  VALIDATION_FAILED: Object.freeze(['BACKTESTING', 'REVIEW_REQUIRED', 'RETIRED']),
-  REVIEW_REQUIRED: Object.freeze(['SHADOW_APPROVED', 'VALIDATION_FAILED', 'RETIRED']),
-  SHADOW_APPROVED: Object.freeze(['SHADOW_RUNNING', 'RETIRED']),
-  SHADOW_RUNNING: Object.freeze(['SHADOW_COMPLETED', 'RETIRED']),
-  SHADOW_COMPLETED: Object.freeze(['REVIEW_REQUIRED', 'PAPER_APPROVED', 'RETIRED']),
-  PAPER_APPROVED: Object.freeze(['PAPER_RUNNING', 'RETIRED']),
-  PAPER_RUNNING: Object.freeze(['PAPER_HALTED', 'RETIRED']),
-  PAPER_HALTED: Object.freeze(['RETIRED']),
-  RETIRED: Object.freeze([]),
+  DRAFT: Object.freeze(['COMPILED', 'RETIRED'] as const),
+  COMPILED: Object.freeze(['BACKTESTING', 'RETIRED'] as const),
+  BACKTESTING: Object.freeze(['BACKTESTED', 'VALIDATION_FAILED', 'RETIRED'] as const),
+  BACKTESTED: Object.freeze(['BACKTESTING', 'REVIEW_REQUIRED', 'VALIDATION_FAILED', 'RETIRED'] as const),
+  VALIDATION_FAILED: Object.freeze(['BACKTESTING', 'REVIEW_REQUIRED', 'RETIRED'] as const),
+  REVIEW_REQUIRED: Object.freeze(['SHADOW_APPROVED', 'VALIDATION_FAILED', 'RETIRED'] as const),
+  SHADOW_APPROVED: Object.freeze(['SHADOW_RUNNING', 'RETIRED'] as const),
+  SHADOW_RUNNING: Object.freeze(['SHADOW_COMPLETED', 'RETIRED'] as const),
+  SHADOW_COMPLETED: Object.freeze(['REVIEW_REQUIRED', 'PAPER_APPROVED', 'RETIRED'] as const),
+  PAPER_APPROVED: Object.freeze(['PAPER_RUNNING', 'RETIRED'] as const),
+  PAPER_RUNNING: Object.freeze(['PAPER_HALTED', 'RETIRED'] as const),
+  PAPER_HALTED: Object.freeze(['RETIRED'] as const),
+  RETIRED: Object.freeze([] as const),
 });
 
 export function isForbiddenLiveState(value: string): value is ForbiddenStrategyState {

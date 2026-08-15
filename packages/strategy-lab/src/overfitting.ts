@@ -5,10 +5,10 @@ import type { OverfittingWarning } from './types.ts';
 export function overfittingWarnings(input: {
   readonly parameterCount: number;
   readonly observationCount: number;
-  readonly train?: BacktestRun;
-  readonly outOfSample?: BacktestRun;
-  readonly experiment?: Experiment;
-  readonly turnoverBps?: bigint;
+  readonly train?: BacktestRun | undefined;
+  readonly outOfSample?: BacktestRun | undefined;
+  readonly experiment?: Experiment | undefined;
+  readonly turnoverBps?: bigint | undefined;
 }): readonly OverfittingWarning[] {
   const warnings: OverfittingWarning[] = [];
   const note = { provesOverfitting: false as const, disprovesOverfitting: false as const };

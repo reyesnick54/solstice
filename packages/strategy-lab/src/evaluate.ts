@@ -109,7 +109,10 @@ function evalBoolean(expr: StrategyExpr, dataset: MarketDataset, at: UtcInstant,
     return latest >= stat;
   }
   if (expr.op === 'RISK_CONDITION') {
-    return cashBps >= expr.bps;
+    if (expr.kind === 'CASH_BELOW_BPS') {
+      return cashBps < expr.bps;
+    }
+    return false;
   }
   if (expr.op === 'CASH_RULE') {
     return cashBps >= expr.minCashBps;

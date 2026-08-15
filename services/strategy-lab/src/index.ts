@@ -9,4 +9,4 @@ export {
   LIVE_STRATEGY_EXECUTION,
   FORBIDDEN_STRATEGY_STATES,
   STRATEGY_LIFECYCLE_STATES,
-} from '../../packages/strategy-lab/src/index.ts';
+} from '../../../packages/strategy-lab/src/index.ts';

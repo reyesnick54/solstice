@@ -3,7 +3,7 @@ import { asModelId, asModelVersion } from '../../model-registry/src/ids.ts';
 import { asRiskBudgetId } from '../../risk/src/ids.ts';
 import { freezeMarketDataset, type MarketDataset, type MarketObservation } from './dataset.ts';
 import type { StrategyExpr } from './dsl.ts';
-import { asParameterSetId, asStrategyId, asStrategyVersion } from './ids.ts';
+import { asMarketDatasetVersion, asParameterSetId, asStrategyId, asStrategyVersion } from './ids.ts';
 import type { StrategySpecification } from './specification.ts';
 import type { TransactionCostAssumptions } from './types.ts';
 
@@ -69,7 +69,7 @@ export function syntheticTwoEtfDataset(): MarketDataset {
     }),
   );
   const frozen = freezeMarketDataset({
-    version: 'mds-two-etf-v1',
+    version: asMarketDatasetVersion('mds-two-etf-v1'),
     instruments: Object.freeze([SIM_ETF_1, SIM_ETF_2, SIM_ETF_LEAVER]),
     membership: Object.freeze([
       { instrumentId: SIM_ETF_1, enteredAt: day(0), leftAt: null },
@@ -117,7 +117,7 @@ export function syntheticBenchmarkDataset(): MarketDataset {
     observations.push(bar('SIM-BENCH', i, 10_000n + BigInt(i) * 8n));
   }
   const frozen = freezeMarketDataset({
-    version: 'mds-bench-v1',
+    version: asMarketDatasetVersion('mds-bench-v1'),
     instruments: Object.freeze(['SIM-BENCH']),
     membership: Object.freeze([{ instrumentId: 'SIM-BENCH', enteredAt: day(0), leftAt: null }]),
     timeRange: { start: day(0), end: day(27) },

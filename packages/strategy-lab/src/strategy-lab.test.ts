@@ -35,7 +35,7 @@ function harness() {
   const clock = new FrozenClock(NOW);
   const keys = createSimulationKeyProvider({ clock: { now: () => clock.now() } });
   const events = new DomainEventLog();
-  const evidence = new EvidenceVault({ clock });
+  const evidence = new EvidenceVault(clock);
   const identity = new SimulatedIdentityAdapter({ clock, keys, events });
   assert.equal(
     identity.provisionSimulatedActor({

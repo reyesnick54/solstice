@@ -179,8 +179,8 @@ const oos = lab.backtest({
 if (!train.ok || !oos.ok) {
   fail('backtest');
 }
-if (train.value.transactionCosts.mode !== 'EXPLICIT_COSTS' || train.value.results.feesMinor < 0n) {
-  fail('fees/slippage must be explicit');
+if (train.value.transactionCosts.mode !== 'EXPLICIT_COSTS' || train.value.results.feesMinor <= 0n) {
+  fail('fees/slippage must be explicit and applied');
 }
 const future = lab.futurePriceInaccessible(dataset, SIM_ETF_1, asUtcInstant('2026-02-15T00:00:00.000Z'));
 if (future.ok) {
@@ -299,7 +299,23 @@ if (!lab.startPaper({ strategyId: 'str_two_etf_cash', version: 'v1', investmentA
 investments.setSimulatedPrice(asInstrumentId(SIM_ETF_1), 10_000n, 'USD');
 const paper = lab.proposePaperOrder({
   port: {
-    createPaperOrder: (intent) => investments.createPaperOrder(intent),
+    createPaperOrder: (intent) => {
+      const result = investments.createPaperOrder(intent);
+      if (result.outcome === 'OK') {
+        return {
+          outcome: 'OK' as const,
+          value: {
+            orderId: result.value.orderId,
+            ...(result.value.fillId ? { fillId: result.value.fillId } : {}),
+          },
+        };
+      }
+      return {
+        outcome: result.outcome,
+        code: result.outcome === 'REJECTED' ? result.code : result.outcome,
+        message: result.outcome === 'REJECTED' ? result.message : result.outcome,
+      };
+    },
   },
   intent: {
     intentId: 'lab_demo_paper',

@@ -4,7 +4,8 @@ import type { UtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import type { DomainEventLog } from '../../events/src/events.ts';
 import type { ModelRegistry } from '../../model-registry/src/registry.ts';
-import { DEFAULT_STRESS_SCENARIOS, RiskEngine } from '../../risk/src/engine.ts';
+import { RiskEngine } from '../../risk/src/engine.ts';
+import { DEFAULT_STRESS_SCENARIOS } from '../../risk/src/stress.ts';
 import { asPortfolioRiskSnapshotId } from '../../risk/src/ids.ts';
 import type { PortfolioRiskSnapshot, ProposedPaperTrade, RiskBudget, StressRun } from '../../risk/src/types.ts';
 import { runBacktest, type BacktestRun, type ParameterSet } from './backtest.ts';
@@ -319,14 +320,14 @@ export class StrategyLab {
   validate(input: {
     readonly strategyId: string;
     readonly version: string;
-    readonly train?: BacktestRun;
-    readonly validation?: BacktestRun;
-    readonly outOfSample?: BacktestRun;
-    readonly walkForward?: WalkForwardRun;
-    readonly experiment?: Experiment;
-    readonly snapshot?: PortfolioRiskSnapshot;
-    readonly benchmark?: { readonly datasetId: string; readonly version: string; readonly hash: string };
-    readonly rdtState?: Parameters<typeof rdtLaunchReadiness>[0];
+    readonly train?: BacktestRun | undefined;
+    readonly validation?: BacktestRun | undefined;
+    readonly outOfSample?: BacktestRun | undefined;
+    readonly walkForward?: WalkForwardRun | undefined;
+    readonly experiment?: Experiment | undefined;
+    readonly snapshot?: PortfolioRiskSnapshot | undefined;
+    readonly benchmark?: { readonly datasetId: string; readonly version: string; readonly hash: string } | undefined;
+    readonly rdtState?: Parameters<typeof rdtLaunchReadiness>[0] | undefined;
   }): Result<StrategyValidationReport, StrategyFailure> {
     const plan = this.store.getPlan(input.strategyId, input.version);
     const current = this.store.getStrategy(input.strategyId, input.version);
@@ -524,7 +525,7 @@ export class StrategyLab {
     readonly snapshot: PortfolioRiskSnapshot;
     readonly proposed: ProposedPaperTrade;
     readonly budget: RiskBudget;
-  }): Result<{ readonly orderId: string; readonly fillId?: string; readonly risk: import('../../risk/src/types.ts').RiskDecision }, StrategyFailure> {
+  }): Result<{ readonly orderId: string; readonly fillId?: string | undefined; readonly risk: import('../../risk/src/types.ts').RiskDecision }, StrategyFailure> {
     if (this.store.killSwitch.active) {
       return err({
         code: 'KILL_SWITCH_ACTIVE',

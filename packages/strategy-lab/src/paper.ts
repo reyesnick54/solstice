@@ -34,9 +34,9 @@ export type PaperActionProposal = {
 export type PaperExecutionPort = {
   readonly createPaperOrder: (intent: CreatePaperOrderIntent) => {
     readonly outcome: 'OK' | 'KERNEL_REFUSED' | 'REJECTED';
-    readonly value?: { readonly orderId: string; readonly fillId?: string };
-    readonly code?: string;
-    readonly message?: string;
+    readonly value?: { readonly orderId: string; readonly fillId?: string | undefined };
+    readonly code?: string | undefined;
+    readonly message?: string | undefined;
   };
 };
 
@@ -108,7 +108,7 @@ export function submitPaperAction(input: {
   readonly intent: CreatePaperOrderIntent;
   readonly risk: RiskDecision;
   readonly halted: boolean;
-}): Result<{ readonly orderId: string; readonly fillId?: string }, StrategyFailure> {
+}): Result<{ readonly orderId: string; readonly fillId?: string | undefined }, StrategyFailure> {
   if (input.halted) {
     return err({
       code: 'KILL_SWITCH_ACTIVE',

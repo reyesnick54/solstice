@@ -45,15 +45,15 @@ export function buildValidationReport(input: {
   readonly strategyId: StrategyId;
   readonly strategyVersion: StrategyVersion;
   readonly plan: SimulationPlan;
-  readonly train?: BacktestRun;
-  readonly validation?: BacktestRun;
-  readonly outOfSample?: BacktestRun;
-  readonly walkForward?: WalkForwardRun;
-  readonly experiment?: Experiment;
-  readonly benchmark?: { readonly datasetId: string; readonly version: string; readonly hash: string };
-  readonly stress?: readonly StressRun[];
-  readonly warnings?: readonly OverfittingWarning[];
-  readonly limitations?: readonly string[];
+  readonly train?: BacktestRun | undefined;
+  readonly validation?: BacktestRun | undefined;
+  readonly outOfSample?: BacktestRun | undefined;
+  readonly walkForward?: WalkForwardRun | undefined;
+  readonly experiment?: Experiment | undefined;
+  readonly benchmark?: { readonly datasetId: string; readonly version: string; readonly hash: string } | undefined;
+  readonly stress?: readonly StressRun[] | undefined;
+  readonly warnings?: readonly OverfittingWarning[] | undefined;
+  readonly limitations?: readonly string[] | undefined;
   readonly generatedAt: UtcInstant;
 }): StrategyValidationReport {
   const datasets = [
