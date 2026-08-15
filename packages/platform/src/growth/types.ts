@@ -67,7 +67,7 @@ export type GoalFeasibility = {
   readonly limitations: readonly string[];
   readonly uncertaintyNotes: readonly string[];
   readonly achievementPromised: false;
-  readonly investmentExecutionAvailable: false;
+  readonly investmentExecutionAvailable: boolean;
 };
 
 export type ActionExplanation = {
@@ -142,6 +142,7 @@ export type PevePlanningSignals = {
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
+  readonly investmentExecutionImplemented: boolean;
   readonly investmentExecutionImplemented: false;
   readonly peve?: PevePlanningSignals;
 };

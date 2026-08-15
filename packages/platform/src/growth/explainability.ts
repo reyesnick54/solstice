@@ -24,9 +24,13 @@ export function explainCandidate(
       ? 'Market outcomes are uncertain and not promised.'
       : 'Facts may change; a stale plan must be recomputed.',
     requiresConfirmation: candidate.userConfirmationRequired,
-    canExecuteToday: canExecuteToday && candidate.action !== 'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE'
-      ? true
-      : false,
+    canExecuteToday:
+      canExecuteToday &&
+      candidate.action !== 'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE' &&
+      candidate.action !== 'INVESTMENT_ACCOUNT_AVAILABLE' &&
+      candidate.action !== 'PAPER_INVESTMENT_REVIEW_AVAILABLE'
+        ? true
+        : false,
   };
 }
 

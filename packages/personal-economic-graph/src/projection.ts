@@ -210,6 +210,14 @@ export class EconomicGraphProjector {
         this.projectPosition(event, subjectId);
         return;
       }
+      case 'InvestmentAccountOpened': {
+        this.projectInvestmentAccount(event, subjectId);
+        return;
+      }
+      case 'InvestmentPositionChanged': {
+        this.projectInvestmentHolding(event, subjectId);
+        return;
+      }
       case 'BeneficiaryCreated': {
         const ownerId = str(payloadOf(event).ownerId);
         const beneficiaryId = str(payloadOf(event).beneficiaryId);
@@ -333,6 +341,107 @@ export class EconomicGraphProjector {
       sourceRef: journalId,
       sourceEventType: event.eventType,
       sourceEventId: eventIdOf(event),
+    });
+  }
+
+  private projectInvestmentAccount(event: DomainEvent, subjectHint?: string): void {
+    const body = payloadOf(event);
+    const customerId = str(body.customerId);
+    const investmentAccountId = str(body.investmentAccountId);
+    const subject = subjectHint ?? customerId;
+    if (!subject || !investmentAccountId) {
+      return;
+    }
+    const graphId = this.ensureGraph(subject, customerId, event.occurredAt);
+    const personId = deterministicNodeId('PERSON', subject);
+    const nodeId = deterministicNodeId('INVESTMENT', investmentAccountId);
+    this.upsertNode({
+      nodeId,
+      graphId,
+      kind: 'INVESTMENT',
+      attributes: {
+        kind: 'INVESTMENT',
+        holdingKind: 'SOLSTICE_HOLDING',
+        label: investmentAccountId,
+      },
+      canonicalRef: { system: 'ACCOUNT', id: investmentAccountId },
+      quality: 'CURRENT',
+      confidence: 'DERIVED',
+      provenance: provenance('CANONICAL_LEDGER', investmentAccountId, event.occurredAt, 'DERIVED'),
+      createdAt: event.occurredAt,
+      survivesRebuild: false,
+    });
+    this.upsertEdge(graphId, 'OWNS', personId, nodeId, event.occurredAt, 'CANONICAL_LEDGER', investmentAccountId, 'DERIVED');
+    this.emit('EconomicGraphNodeCreated', graphId, event.occurredAt, { nodeId, kind: 'INVESTMENT' });
+    this.emit('EconomicGraphRelationshipCreated', graphId, event.occurredAt, {
+      kind: 'OWNS',
+      from: personId,
+      to: nodeId,
+    });
+  }
+
+  private projectInvestmentHolding(event: DomainEvent, subjectHint?: string): void {
+    const body = payloadOf(event);
+    const instrumentId = str(body.instrumentId);
+    const quantityUnits = str(body.quantityUnits);
+    const overlay = this.overlays.get(eventIdOf(event));
+    const subject = overlay?.subjectId ?? subjectHint ?? str(body.customerId);
+    if (!instrumentId || !subject) {
+      return;
+    }
+    const graphId = this.ensureGraph(subject, undefined, event.occurredAt);
+    const accountNode = deterministicNodeId('INVESTMENT', str(body.investmentAccountId) ?? subject);
+    const instrumentNode = deterministicNodeId('INVESTMENT', `instrument_${instrumentId}`);
+    this.upsertNode({
+      nodeId: instrumentNode,
+      graphId,
+      kind: 'INVESTMENT',
+      attributes: {
+        kind: 'INVESTMENT',
+        holdingKind: 'SOLSTICE_HOLDING',
+        label: instrumentId,
+      },
+      canonicalRef: { system: 'USER_DECLARATION', id: instrumentId },
+      quality: 'CURRENT',
+      confidence: 'DERIVED',
+      provenance: provenance('CANONICAL_LEDGER', instrumentId, event.occurredAt, 'DERIVED'),
+      createdAt: event.occurredAt,
+      survivesRebuild: false,
+    });
+    this.upsertEdge(
+      graphId,
+      'INVESTED_IN',
+      accountNode,
+      instrumentNode,
+      event.occurredAt,
+      'CANONICAL_LEDGER',
+      instrumentId,
+      'DERIVED',
+    );
+    if (quantityUnits) {
+      const factId = deterministicFactId(instrumentNode, 'position_quantity_units', 1);
+      this.store.putFact({
+        factId,
+        graphId,
+        nodeId: instrumentNode,
+        key: 'position_quantity_units',
+        value: { type: 'INT', value: quantityUnits },
+        confidence: 'DERIVED',
+        quality: 'CURRENT',
+        provenance: provenance('CANONICAL_LEDGER', eventIdOf(event), event.occurredAt, 'DERIVED'),
+        validFrom: event.occurredAt,
+        validTo: null,
+        observedAt: event.occurredAt,
+        effectiveAt: event.occurredAt,
+        supersededBy: null,
+        version: 1,
+        survivesRebuild: false,
+      });
+    }
+    this.emit('EconomicGraphRelationshipCreated', graphId, event.occurredAt, {
+      kind: 'INVESTED_IN',
+      from: accountNode,
+      to: instrumentNode,
     });
   }
 

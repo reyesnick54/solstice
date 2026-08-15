@@ -4,6 +4,7 @@ import { isVerifiedActorContext } from '../../identity/src/actor-context.ts';
 import { freezeAgentPorts, type AgentRuntimePorts } from './ports.ts';
 import { interpretMandateLanguage, type AgentMandateInterpretation, type InterpretationFailure } from './interpretation.ts';
 import { generateCandidateIdeas } from './ideas.ts';
+import { explainGoals, explainPerformance, explainPlan, explainPortfolio } from './explain.ts';
 import { explainEconomicValue, explainGoals, explainPlan } from './explain.ts';
 import { freezeProposal, type AgentProposal } from './proposal.ts';
 import { deterministicProposalId } from './ids.ts';
@@ -80,6 +81,9 @@ export class PersonalEconomyAgent {
     return ok(explainPlan({ subjectId: input.subjectId, planSummary: input.planSummary, now: this.clock.now() }));
   }
 
+  explainPortfolio(
+    actor: unknown,
+    input: { readonly subjectId: string; readonly holdings: readonly string[] },
   explainEconomicValue(
     actor: unknown,
     input: { readonly subjectId: string; readonly valueSummary: string },
@@ -87,6 +91,27 @@ export class PersonalEconomyAgent {
     if (!isVerifiedActorContext(actor)) {
       return err({
         code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'portfolio explanation requires a verified ActorContext',
+      });
+    }
+    return ok(explainPortfolio({ subjectId: input.subjectId, holdings: input.holdings, now: this.clock.now() }));
+  }
+
+  explainPerformance(
+    actor: unknown,
+    input: { readonly subjectId: string; readonly realizedNote: string; readonly unrealizedNote: string },
+  ): Result<AgentProposal, AgentFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({
+        code: 'ACTOR_CONTEXT_REQUIRED',
+        message: 'performance explanation requires a verified ActorContext',
+      });
+    }
+    return ok(
+      explainPerformance({
+        subjectId: input.subjectId,
+        realizedNote: input.realizedNote,
+        unrealizedNote: input.unrealizedNote,
         message: 'value explanation requires a verified ActorContext',
       });
     }

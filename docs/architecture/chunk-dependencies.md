@@ -81,6 +81,7 @@ Agents and later CI jobs use that result. They do not guess.
 | growth-orchestrator | IMPLEMENTED | packages/platform |
 | personal-economic-value-engine | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
+| investments | IMPLEMENTED | packages/investments |
 | regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -126,6 +127,13 @@ Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
 
+Chunk 19 implements the reserved INVESTMENTS bounded context at
+`packages/investments` and `services/investments`. Capability
+`investments` is `IMPLEMENTED`. Bounded context INVESTMENTS is
+`PARTIAL` simulation: paper orders, positions, lots, valuation, and
+reconciliation only. No live broker. The Risk Engine remains Chunk 20.
+Do not create `packages/brokerage`, `packages/portfolio`,
+`packages/trading`, `packages/wealth`, or `packages/securities-core`.
 Chunk 18 implements the Regulatory Digital Twin at
 `packages/regulatory-twin`. It reuses the existing policy engine and
 Kernel. It does not issue Execution Authority, post journals, or

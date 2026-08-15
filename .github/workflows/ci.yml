@@ -51,6 +51,8 @@ jobs:
         run: npm run demo:peve
       - name: Treasury routing demo
         run: npm run demo:treasury
+      - name: Investments paper portfolio demo
+        run: npm run demo:investments
       - name: Regulatory Digital Twin demo
         run: npm run demo:rdt
 

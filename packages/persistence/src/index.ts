@@ -67,6 +67,7 @@ export {
   persistTreasurySnapshot,
   reserveTreasuryLiquidityPg,
 } from './treasury/pg-treasury-store.ts';
+export { persistInvestmentSnapshot } from './investments/pg-investments-store.ts';
 export {
   insertCoordinate,
   insertFeeAssessment,

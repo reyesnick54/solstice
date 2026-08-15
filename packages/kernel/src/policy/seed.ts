@@ -52,6 +52,16 @@ const SIMULATION_TREASURY_ACTIONS = [
   'SET_TREASURY_KILL_SWITCH',
 ] as const;
 
+const SIMULATION_INVESTMENT_ACTIONS = [
+  'OPEN_INVESTMENT_ACCOUNT',
+  'FUND_BROKERAGE_CASH',
+  'WITHDRAW_BROKERAGE_CASH',
+  'CREATE_PAPER_ORDER',
+  'CANCEL_PAPER_ORDER',
+  'SETTLE_INVESTMENT',
+  'PROCESS_CORPORATE_ACTION',
+] as const;
+
 const SIMULATION_BANKING_ACTIONS = [
   'OPEN_ACCOUNT',
   'POST_DEPOSIT',
@@ -69,6 +79,7 @@ const SIMULATION_BANKING_ACTIONS = [
   'RETURN_PENDING',
   ...SIMULATION_CARD_ACTIONS,
   ...SIMULATION_TREASURY_ACTIONS,
+  ...SIMULATION_INVESTMENT_ACTIONS,
 ] as const;
 
 export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
@@ -84,8 +95,10 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
       'prod_demand_sar_gb',
       'prod_demand_aed_gb',
       'prod_pending_usd_gb',
+      'prod_brokerage_cash_usd_gb',
+      'prod_securities_usd_gb',
     ],
-    productTypes: ['DEMAND_DEPOSIT', 'SAVINGS_DEPOSIT', 'PENDING_SETTLEMENT'],
+    productTypes: ['DEMAND_DEPOSIT', 'SAVINGS_DEPOSIT', 'PENDING_SETTLEMENT', 'BROKERAGE_CASH', 'SECURITIES'],
     environment: 'simulation',
     enabled: true,
   }),
@@ -225,6 +238,24 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
     environment: 'live',
     enabled: false,
   }),
+  capability({
+    capabilityId: 'cap-gb-sim-paper-investments',
+    legalEntityId: 'le_solstice_uk_ltd',
+    actionTypes: [...SIMULATION_INVESTMENT_ACTIONS],
+    productIds: ['prod_brokerage_cash_usd_gb', 'prod_securities_usd_gb', 'prod_pending_usd_gb', 'prod_demand_usd_gb'],
+    productTypes: ['BROKERAGE_CASH', 'SECURITIES', 'PENDING_SETTLEMENT', 'DEMAND_DEPOSIT'],
+    environment: 'simulation',
+    enabled: true,
+  }),
+  capability({
+    capabilityId: 'cap-gb-live-investments',
+    legalEntityId: 'le_solstice_uk_ltd',
+    actionTypes: [...SIMULATION_INVESTMENT_ACTIONS],
+    productIds: ['prod_brokerage_cash_usd_gb', 'prod_securities_usd_gb'],
+    productTypes: ['BROKERAGE_CASH', 'SECURITIES'],
+    environment: 'live',
+    enabled: false,
+  }),
 ];
 
 export const POLICY_PRODUCT_BINDINGS: readonly PolicyProductBinding[] = [
@@ -323,6 +354,22 @@ export const POLICY_PRODUCT_BINDINGS: readonly PolicyProductBinding[] = [
     currency: 'USD',
     accountClass: 'PENDING_SETTLEMENT',
     requiredCapabilityId: 'cap-gb-sim-deposit-banking',
+  }),
+  binding({
+    productId: 'prod_brokerage_cash_usd_gb',
+    servingLegalEntityId: 'le_solstice_uk_ltd',
+    supportedJurisdictions: ['GB'],
+    currency: 'USD',
+    accountClass: 'BROKERAGE_CASH',
+    requiredCapabilityId: 'cap-gb-sim-paper-investments',
+  }),
+  binding({
+    productId: 'prod_securities_usd_gb',
+    servingLegalEntityId: 'le_solstice_uk_ltd',
+    supportedJurisdictions: ['GB'],
+    currency: 'USD',
+    accountClass: 'SECURITIES',
+    requiredCapabilityId: 'cap-gb-sim-paper-investments',
   }),
 ];
 

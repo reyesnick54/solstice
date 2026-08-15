@@ -1,0 +1,30 @@
+{
+  "chunk": "CHUNK-19",
+  "title": "Canonical Investment Account, Brokerage Cash, Securities Positions, Lots, Cost Basis, Portfolio Valuation, Paper Execution, and Investment Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "accounts-service",
+    "banking-core",
+    "compliance-screening",
+    "payments",
+    "treasury",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "investments"
+  ],
+  "notes": "Implements the reserved INVESTMENTS bounded context as simulation paper-portfolio core. Reuses canonical Account classes BROKERAGE_CASH and SECURITIES. No live broker. Risk Engine remains Chunk 20. PEVE and RDT are consumed only through placeholder ports; those contexts are not reimplemented here."
+}

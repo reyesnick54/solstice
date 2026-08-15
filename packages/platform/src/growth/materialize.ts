@@ -1,10 +1,17 @@
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import { asAccountId } from '../../../domain/src/account.ts';
+import { asCurrencyCode } from '../../../domain/src/currency.ts';
+import { asCustomerId } from '../../../domain/src/customer.ts';
+import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
+import { asLegalEntityId } from '../../../domain/src/legal-entity.ts';
+import { asProductId } from '../../../domain/src/product.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { Money } from '../../../money/src/money.ts';
 import {
   ACTION_TYPES,
+  type CreatePaperOrderIntent,
   type InternalTransferIntent,
+  type OpenInvestmentAccountIntent,
 } from '../../../permissions/src/action-types.ts';
 import { asIntentId, PURPOSE_CODES, type ActionIntent } from '../../../permissions/src/action-intent.ts';
 import type { GrowthActionCandidate } from './types.ts';
@@ -44,6 +51,49 @@ export function materializeGrowthAction(input: {
       code: 'INVESTMENT_NOT_IMPLEMENTED',
       message: 'unsupported investment action cannot materialize an ActionIntent',
     });
+  }
+  if (candidate.action === 'INVESTMENT_ACCOUNT_AVAILABLE') {
+    const openIntent: OpenInvestmentAccountIntent = {
+      id: asIntentId(`I-growth-${candidate.actionId}`),
+      actionType: ACTION_TYPES.OPEN_INVESTMENT_ACCOUNT,
+      payload: {
+        accountId: asAccountId(candidate.destinationAccountId ?? candidate.sourceAccountId ?? 'acct_missing'),
+        investmentAccountId: `inv_${candidate.actionId}`,
+        customerId: asCustomerId(candidate.sourceAccountId ?? 'cust_missing'),
+        brokerageCashAccountId: asAccountId(candidate.destinationAccountId ?? 'acct_missing'),
+        securitiesAccountId: asAccountId(candidate.destinationAccountId ?? 'acct_missing'),
+        pendingSettlementAccountId: asAccountId(candidate.destinationAccountId ?? 'acct_missing'),
+        productId: asProductId('prod_brokerage_cash_usd_gb'),
+        legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
+        jurisdiction: asJurisdiction('GB'),
+        currency: asCurrencyCode('USD'),
+      },
+      idempotencyKey: `growth:${candidate.actionId}`,
+      actorId: input.actorId,
+      requestedAt: asUtcInstant(input.requestedAt),
+      purpose: 'CUSTOMER_INVESTMENT',
+    };
+    return ok(openIntent);
+  }
+  if (candidate.action === 'PAPER_INVESTMENT_REVIEW_AVAILABLE') {
+    const orderIntent: CreatePaperOrderIntent = {
+      id: asIntentId(`I-growth-${candidate.actionId}`),
+      actionType: ACTION_TYPES.CREATE_PAPER_ORDER,
+      payload: {
+        accountId: asAccountId(candidate.sourceAccountId ?? 'acct_missing'),
+        investmentAccountId: `inv_${candidate.actionId}`,
+        orderId: `ord_${candidate.actionId}`,
+        instrumentId: 'SIM-ETF-1',
+        side: 'BUY',
+        quantityUnits: '0',
+        orderType: 'MARKET_SIMULATION',
+      },
+      idempotencyKey: `growth:${candidate.actionId}`,
+      actorId: input.actorId,
+      requestedAt: asUtcInstant(input.requestedAt),
+      purpose: 'CUSTOMER_INVESTMENT',
+    };
+    return ok(orderIntent);
   }
   if (
     candidate.executionCapability === 'DEPENDENCY_NOT_IMPLEMENTED' ||

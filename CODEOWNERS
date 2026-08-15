@@ -42,6 +42,8 @@
 /services/economic-graph/ @reyesnick54
 /packages/treasury/ @reyesnick54
 /services/treasury/ @reyesnick54
+/packages/investments/ @reyesnick54
+/services/investments/ @reyesnick54
 /packages/platform/ @reyesnick54
 /packages/agent/ @reyesnick54
 /packages/regulatory-twin/ @reyesnick54

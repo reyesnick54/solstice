@@ -262,6 +262,7 @@
         "packages/personal-economic-graph",
         "packages/treasury",
         "packages/platform",
+        "packages/investments"
         "packages/regulatory-twin"
       ],
       "codeowners": [
@@ -516,6 +517,15 @@
       "notes": "Application facade for packages/treasury. Not a second treasury model."
     },
     {
+      "id": "packages/investments",
+      "npmName": "@solstice/investments",
+      "path": "packages/investments",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
       "id": "packages/regulatory-twin",
       "npmName": "@solstice/regulatory-twin",
       "path": "packages/regulatory-twin",
@@ -531,6 +541,7 @@
         "packages/permissions",
         "packages/config",
         "packages/kernel",
+        "packages/ledger",
         "packages/evidence",
         "packages/events",
         "packages/identity",
@@ -539,6 +550,25 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Canonical investment account profile, paper orders, positions, lots, valuation, and reconciliation. Simulation only. Reuses canonical Account classes. Not a second ledger."
+    },
+    {
+      "id": "services/investments",
+      "npmName": "@solstice/investments-service",
+      "path": "services/investments",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/investments"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Application facade for packages/investments. Not a second portfolio, brokerage, or trading model."
       "notes": "Regulatory Digital Twin. Simulation/counterfactual layer over the existing policy engine. Never issues Execution Authority or posts journals. Not a second Kernel or policy store."
     }
   ],
@@ -1358,6 +1388,19 @@
       "notes": "One Treasury model. Customer balances stay on the canonical ledger."
     },
     {
+      "id": "investments-platform",
+      "name": "Canonical investment account and portfolio core",
+      "canonicalOwner": "packages/investments",
+      "canonicalPath": "packages/investments/src/service.ts",
+      "publicInterface": "packages/investments/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "InvestmentsService",
       "id": "regulatory-digital-twin",
       "name": "Regulatory Digital Twin",
       "canonicalOwner": "packages/regulatory-twin",
@@ -1375,6 +1418,11 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/brokerage",
+        "packages/portfolio",
+        "packages/trading",
+        "packages/wealth",
+        "packages/securities-core"
         "packages/regulatory-digital-twin",
         "packages/policy-engine-v2",
         "packages/compliance-simulator-v2",
@@ -1383,6 +1431,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "One Investments model. Brokerage cash and securities reuse canonical Account classes. Paper/simulation only. Risk Engine is Chunk 20."
       "notes": "Counterfactual simulation over the existing Kernel/policy engine. Never issues Execution Authority."
     }
   ],
@@ -1644,6 +1693,48 @@
       "file": "packages/treasury/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "openInvestmentAccount",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "fundBrokerageCash",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "withdrawBrokerageCash",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "createPaperOrder",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "cancelPaperOrder",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "settleInvestment",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "processCorporateAction",
+      "file": "packages/investments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -1693,6 +1784,11 @@
     "packages/routing-intelligence",
     "packages/treasury-core",
     "packages/settlement-risk",
+    "packages/brokerage",
+    "packages/portfolio",
+    "packages/trading",
+    "packages/wealth",
+    "packages/securities-core"
     "packages/regulatory-digital-twin",
     "packages/policy-engine-v2",
     "packages/compliance-simulator-v2",
@@ -1871,6 +1967,11 @@
       "notes": "Simulation treasury liquidity, prefunding, deterministic routing, concentration, settlement exposure, and Kernel-gated rebalance proposals. Not live banks or regulatory capital."
     },
     {
+      "id": "investments",
+      "status": "IMPLEMENTED",
+      "owner": "packages/investments",
+      "protected": true,
+      "notes": "Simulation investment account profiles, brokerage-cash funding, paper orders, positions, lots, valuation, and reconciliation. No live broker. Risk Engine is Chunk 20."
       "id": "regulatory-digital-twin",
       "status": "IMPLEMENTED",
       "owner": "packages/regulatory-twin",
@@ -2008,12 +2109,13 @@
     },
     {
       "id": "INVESTMENTS",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "packages/investments",
         "services/investments"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Simulation investment account and portfolio core. Paper execution only. No live broker, margin, leverage, shorting, or derivatives. Risk Engine remains PLANNED."
     },
     {
       "id": "RISK",
@@ -2170,6 +2272,10 @@
     },
     {
       "name": "LIVE_DATA_MARKET_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_INVESTMENT_EXECUTION",
       "requiredValue": false
     }
   ],

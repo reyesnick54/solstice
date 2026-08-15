@@ -418,6 +418,21 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/growth-agent')), false);
   });
 
+  it('CHUNK-19 investment portfolio core capabilities are IMPLEMENTED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'investments').status, 'IMPLEMENTED');
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-19',
+    );
+    assert.ok(declared, 'CHUNK-19 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/investments')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/investments')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/brokerage')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/portfolio')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/trading')), false);
+  });
+
   it('CHUNK-16 mandate and Growth Orchestrator capabilities are IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'personal-economy-agent').status, 'IMPLEMENTED');

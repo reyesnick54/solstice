@@ -14,6 +14,8 @@ const COMPLEXITY: Record<GrowthActionCandidate['action'], number> = {
   REDUCE_DEBT: 5,
   MOVE_IDLE_CASH_BETWEEN_EXISTING_ELIGIBLE_ACCOUNTS: 6,
   REVIEW_INVESTMENT_OPPORTUNITY_FUTURE: 9,
+  INVESTMENT_ACCOUNT_AVAILABLE: 8,
+  PAPER_INVESTMENT_REVIEW_AVAILABLE: 8,
 };
 
 function userPriority(candidate: GrowthActionCandidate, mandate: CompiledEconomicMandate): number {

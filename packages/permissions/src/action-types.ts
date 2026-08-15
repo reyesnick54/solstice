@@ -63,6 +63,13 @@ export const ACTION_TYPES = {
   PROPOSE_TREASURY_REBALANCE: 'PROPOSE_TREASURY_REBALANCE',
   EXECUTE_TREASURY_REBALANCE: 'EXECUTE_TREASURY_REBALANCE',
   SET_TREASURY_KILL_SWITCH: 'SET_TREASURY_KILL_SWITCH',
+  OPEN_INVESTMENT_ACCOUNT: 'OPEN_INVESTMENT_ACCOUNT',
+  FUND_BROKERAGE_CASH: 'FUND_BROKERAGE_CASH',
+  WITHDRAW_BROKERAGE_CASH: 'WITHDRAW_BROKERAGE_CASH',
+  CREATE_PAPER_ORDER: 'CREATE_PAPER_ORDER',
+  CANCEL_PAPER_ORDER: 'CANCEL_PAPER_ORDER',
+  SETTLE_INVESTMENT: 'SETTLE_INVESTMENT',
+  PROCESS_CORPORATE_ACTION: 'PROCESS_CORPORATE_ACTION',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -603,3 +610,99 @@ export type TreasuryIntent =
   | ProposeTreasuryRebalanceIntent
   | ExecuteTreasuryRebalanceIntent
   | SetTreasuryKillSwitchIntent;
+
+export type OpenInvestmentAccountPayload = {
+  readonly accountId: AccountId;
+  readonly investmentAccountId: string;
+  readonly customerId: CustomerId;
+  readonly brokerageCashAccountId: AccountId;
+  readonly securitiesAccountId: AccountId;
+  readonly pendingSettlementAccountId: AccountId;
+  readonly productId: ProductId;
+  readonly legalEntityId: LegalEntityId;
+  readonly jurisdiction: Jurisdiction;
+  readonly currency: CurrencyCode;
+};
+
+export type FundBrokerageCashPayload = {
+  readonly accountId: AccountId;
+  readonly sourceAccountId: AccountId;
+  readonly amount: Money;
+};
+
+export type WithdrawBrokerageCashPayload = {
+  readonly accountId: AccountId;
+  readonly destinationAccountId: AccountId;
+  readonly amount: Money;
+};
+
+export type CreatePaperOrderPayload = {
+  readonly accountId: AccountId;
+  readonly investmentAccountId: string;
+  readonly orderId: string;
+  readonly instrumentId: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantityUnits: string;
+  readonly orderType: 'MARKET_SIMULATION' | 'LIMIT_SIMULATION';
+  readonly limitPriceMinorUnits?: string;
+  readonly feeMinorUnits?: string;
+};
+
+export type CancelPaperOrderPayload = {
+  readonly accountId: AccountId;
+  readonly orderId: string;
+};
+
+export type SettleInvestmentPayload = {
+  readonly accountId: AccountId;
+  readonly settlementId: string;
+};
+
+export type ProcessCorporateActionPayload = {
+  readonly accountId: AccountId;
+  readonly investmentAccountId: string;
+  readonly corporateActionId: string;
+  readonly instrumentId: string;
+  readonly kind: 'DIVIDEND' | 'SPLIT';
+  readonly recordRef: string;
+  readonly cashMinorUnits?: string;
+  readonly splitNumerator?: string;
+  readonly splitDenominator?: string;
+};
+
+export type OpenInvestmentAccountIntent = ActionIntent<OpenInvestmentAccountPayload> & {
+  readonly actionType: typeof ACTION_TYPES.OPEN_INVESTMENT_ACCOUNT;
+};
+
+export type FundBrokerageCashIntent = ActionIntent<FundBrokerageCashPayload> & {
+  readonly actionType: typeof ACTION_TYPES.FUND_BROKERAGE_CASH;
+};
+
+export type WithdrawBrokerageCashIntent = ActionIntent<WithdrawBrokerageCashPayload> & {
+  readonly actionType: typeof ACTION_TYPES.WITHDRAW_BROKERAGE_CASH;
+};
+
+export type CreatePaperOrderIntent = ActionIntent<CreatePaperOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CREATE_PAPER_ORDER;
+};
+
+export type CancelPaperOrderIntent = ActionIntent<CancelPaperOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CANCEL_PAPER_ORDER;
+};
+
+export type SettleInvestmentIntent = ActionIntent<SettleInvestmentPayload> & {
+  readonly actionType: typeof ACTION_TYPES.SETTLE_INVESTMENT;
+};
+
+export type ProcessCorporateActionIntent = ActionIntent<ProcessCorporateActionPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PROCESS_CORPORATE_ACTION;
+};
+
+export type InvestmentIntent =
+  | OpenInvestmentAccountIntent
+  | FundBrokerageCashIntent
+  | WithdrawBrokerageCashIntent
+  | CreatePaperOrderIntent
+  | CancelPaperOrderIntent
+  | SettleInvestmentIntent
+  | ProcessCorporateActionIntent;

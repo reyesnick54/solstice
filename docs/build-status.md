@@ -83,6 +83,8 @@ This document describes only what is implemented and tested in this tree.
   ActorContext, deterministic feasibility and ranking, explainable
   GrowthPlans, event-driven staleness, and a non-auto-executing
   ActionIntent bridge. Does not post journals or issue Execution
+  Authority. Investment candidates may now identify a simulation
+  investment account or paper review; they still cannot auto-trade.
   Authority. Investment execution remains unimplemented.
 - Personal Economic Value Engine (Chunk 17, `packages/platform/src/value`):
   multi-dimensional EconomicValueVector, immutable snapshots, versioned
@@ -118,6 +120,18 @@ This document describes only what is implemented and tested in this tree.
   See `docs/architecture/chunk-13-stop.md` (historical) and
   `docs/architecture/chunk-13-resume.md`. Capability `treasury` is
   IMPLEMENTED. Bounded context TREASURY is PARTIAL simulation.
+- Canonical investment account and portfolio core (Chunk 19,
+  `packages/investments`, `services/investments`): Kernel-gated
+  investment profiles linked to canonical `BROKERAGE_CASH` and
+  `SECURITIES` accounts, authorized class-bridge funding, deterministic
+  instrument fixtures, fixed-point quantity/price arithmetic, paper
+  orders, simulated fills, FIFO simulation lots, realized P&L,
+  valuation-only unrealized P&L, settlement records, explicit fees,
+  dividend/split framework, and reconciliation that never auto-adjusts.
+  Agent and Growth cannot trade. PEG/PEVE/RDT consume read ports only.
+  No live broker, margin, leverage, shorting, or derivatives.
+  Capability `investments` is IMPLEMENTED. Bounded context INVESTMENTS
+  is PARTIAL simulation. Risk Engine remains Chunk 20.
 - Regulatory Digital Twin (Chunk 18, `packages/regulatory-twin`):
   frozen regulatory snapshots, current-vs-candidate policy evaluation,
   decision-transition matrix, batch impact analysis, invariant suites,
@@ -147,6 +161,11 @@ This document describes only what is implemented and tested in this tree.
   PLANNED. PEVE is IMPLEMENTED on the shared `packages/platform` path.
 - Reserved later bounded contexts that remain PLANNED (PYRAMID,
   SOVEREIGN CELLS, and the rest listed in the constitution). PAYMENTS,
+  FX, CARDS, TREASURY, and INVESTMENTS are PARTIAL simulation owners. The Personal
+  Economic Graph, Personal Economy Agent, and Growth Orchestrator are
+  IMPLEMENTED as non-executing intelligence layers. Live rails, live
+  issuing, live wallet/SoftPOS certification, live treasury, and live
+  securities trading remain later. The investment Risk Engine is Chunk 20.
   FX, CARDS, and TREASURY are PARTIAL simulation owners. The Personal
   Economic Graph, Personal Economy Agent, Growth Orchestrator, and
   Personal Economic Value Engine are IMPLEMENTED as non-executing

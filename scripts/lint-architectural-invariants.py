@@ -70,6 +70,7 @@ AUTHORIZED_JOURNAL_PATH_HINTS = (
 AUTHORIZED_JOURNAL_FILENAMES = {
     "journal.ts",
     "journal.js",
+    "journals.ts",
     "ledger.ts",
     "ledger.js",
     "banking-operations.ts",

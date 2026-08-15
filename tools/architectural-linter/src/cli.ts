@@ -6,6 +6,7 @@ import { lintCardBoundary } from './card-guards.ts';
 import { lintRailBoundary } from './rail-guards.ts';
 import { lintEconomicGraphBoundary } from './economic-graph-guards.ts';
 import { lintGrowthBoundary } from './growth-guards.ts';
+import { lintInvestmentBoundary } from './investments-guards.ts';
 import { lintRegulatoryTwinBoundary } from './regulatory-twin-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
@@ -20,6 +21,7 @@ const findings = [
   ...lintRailBoundary(root),
   ...lintEconomicGraphBoundary(root),
   ...lintGrowthBoundary(root),
+  ...lintInvestmentBoundary(root),
   ...lintRegulatoryTwinBoundary(root),
 ];
 if (findings.length > 0) {
