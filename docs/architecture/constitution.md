@@ -53,6 +53,7 @@ never be two implementations of these systems.
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
+| Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -88,6 +89,7 @@ The only action types on this tree are declared in
 - `ACCEPT_FX_QUOTE`
 - `INITIATE_PAYMENT`
 - `CANCEL_PAYMENT`
+- `ACCEPT_INBOUND_PAYMENT`
 - `CREATE_HOLD`
 - `RELEASE_HOLD`
 - `CAPTURE_HOLD`
@@ -124,7 +126,7 @@ They do not invent a parallel envelope.
 | `services/accounts/src/open-account.ts` `AccountsService.open` | Account store + ledger register | Kernel `submit` then verified authority |
 | `services/accounts/src/money-movement.ts` `deposit` / `withdraw` / `transfer` | Ledger journals | Kernel `submit` then `Ledger.postJournal` |
 | `services/accounts/src/banking-operations.ts` holds / fees / reversals / interest / pending | Hold records and ledger journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
-| `packages/payments/src/service.ts` beneficiary / quote / payment mutators | Payment store + journals | Kernel `submit` then verified authority |
+| `packages/payments/src/service.ts` beneficiary / quote / payment / inbound mutators | Payment store + journals | Kernel `submit` then verified authority |
 | `packages/payments/src/journals.ts` `postPaymentJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 | `packages/cards/src/service.ts` card lifecycle / processor callbacks | Card records, holds via banking, journals | Kernel `submit` then verified authority; holds only through `BankingOperationsService`; journals only via `Ledger.postJournal` |
 | `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
@@ -208,8 +210,9 @@ Canonical source: `packages/config/src/flags.ts`.
 ### External integration abstractions
 
 Simulation-only ports exist for FX liquidity, beneficiary validation,
-screening, and settlement. There is no live bank, FX, KYC, or payment-rail
-adapter on this tree. The clock is injectable.
+screening, settlement, and the canonical `RailAdapter` connectivity layer.
+There is no live bank, FX, KYC, or payment-rail membership on this tree.
+The clock is injectable.
 
 ### Persistence
 

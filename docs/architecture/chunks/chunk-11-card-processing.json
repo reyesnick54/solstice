@@ -20,7 +20,8 @@
     "accounts-service",
     "banking-core",
     "payments",
-    "fx"
+    "fx",
+    "rail-adapters"
   ],
   "notes": "Uses the payments simulated rail/callback principles and canonical banking holds. Does not reimplement Money, Kernel, ledger, or holds. No live issuer."
 }

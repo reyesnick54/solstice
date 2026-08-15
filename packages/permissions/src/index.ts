@@ -4,6 +4,8 @@ export { asIntentId, isPurposeCode, PURPOSE_CODES } from './action-intent.ts';
 export type {
   AcceptFxQuoteIntent,
   AcceptFxQuotePayload,
+  AcceptInboundPaymentIntent,
+  AcceptInboundPaymentPayload,
   ActionType,
   BankingIntent,
   CancelPaymentIntent,

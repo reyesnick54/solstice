@@ -65,6 +65,17 @@ describe('payment state machine', () => {
     }
   });
 
+  it('allows SUBMITTED -> SUBMISSION_UNKNOWN and then SETTLED after query', () => {
+    const unknown = transitionPayment(payment('SUBMITTED'), 'SUBMISSION_UNKNOWN', NOW);
+    assert.equal(isOk(unknown), true);
+    if (!isOk(unknown)) {
+      return;
+    }
+    const settled = transitionPayment(unknown.value, 'SETTLED', NOW);
+    assert.equal(isOk(settled), true);
+    assert.equal(isErr(transitionPayment(unknown.value, 'CANCELLED', NOW)), true);
+  });
+
   it('does not allow transitions out of FAILED or RETURNED', () => {
     assert.deepEqual(ALLOWED_TRANSITIONS.FAILED, []);
     assert.deepEqual(ALLOWED_TRANSITIONS.RETURNED, []);

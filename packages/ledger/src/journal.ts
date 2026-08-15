@@ -293,6 +293,7 @@ export class Ledger {
       const systemBookAction =
         request.actionType === 'INITIATE_PAYMENT' ||
         request.actionType === 'CANCEL_PAYMENT' ||
+        request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
@@ -327,6 +328,8 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fx-credit',
   'return-settle',
   'return-fee',
+  'inbound-pending',
+  'inbound-settle',
   'settle-reclass',
   'settle-direct',
   'refund',

@@ -208,6 +208,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       ),
     };
   }
+  if (eventType.startsWith('Rail')) {
+    return {
+      type: 'rail',
+      id: String(body.railSubmissionId ?? body.paymentId ?? body.inboundId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

@@ -3,6 +3,7 @@ import {
   DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
   PENDING_SETTLEMENT_TO_SIMULATED_FUNDING,
   SIMULATED_FUNDING_TO_CORPORATE_OPERATING,
+  SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
   type ClassBridge,
   type ProposedPosting,
 } from '../../ledger/src/types.ts';
@@ -208,3 +209,27 @@ export function returnSourceFxPlan(sourceAmount: Money): PaymentJournalPlan {
  * principal is returned at the original source amount; the explicit fee is retained.
  */
 export const SIMULATION_RETURN_POLICY = 'RETAIN_FEE_RETURN_PRINCIPAL_AT_ORIGINAL_SOURCE_AMOUNT';
+
+export function inboundPendingPlan(amount: Money): PaymentJournalPlan {
+  return {
+    suffix: 'inbound-pending',
+    memo: 'INBOUND_PENDING_SETTLEMENT',
+    classBridge: SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
+    postings: [
+      { accountId: treasuryAccountId(amount.currency), direction: 'DEBIT', amount },
+      { accountId: pendingAccountId(amount.currency), direction: 'CREDIT', amount },
+    ],
+  };
+}
+
+export function inboundSettlePlan(destinationAccountId: string, amount: Money): PaymentJournalPlan {
+  return {
+    suffix: 'inbound-settle',
+    memo: 'INBOUND_SETTLE_CUSTOMER',
+    classBridge: DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT,
+    postings: [
+      { accountId: pendingAccountId(amount.currency), direction: 'DEBIT', amount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount },
+    ],
+  };
+}

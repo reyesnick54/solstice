@@ -323,7 +323,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+      "notes": "Simulation FX quotes, beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. No live rails."
     },
     {
       "id": "packages/cards",
@@ -1001,6 +1001,34 @@
       "notes": "Authoritative actor capabilities and ActorContext. Simulation WebAuthn adapter only."
     },
     {
+      "id": "rail-adapter",
+      "name": "Canonical bank rail adapter framework",
+      "canonicalOwner": "packages/payments",
+      "canonicalPath": "packages/payments/src/rail-port.ts",
+      "publicInterface": "packages/payments/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RailAdapter",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/rails",
+        "packages/bank-rails",
+        "packages/swift",
+        "packages/ach"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Simulation connectivity only. Adapters must not post journals or issue Execution Authority."
+    },
+    {
       "id": "card-platform",
       "name": "Canonical card platform",
       "canonicalOwner": "packages/cards",
@@ -1151,6 +1179,12 @@
     },
     {
       "symbol": "cancelPayment",
+      "file": "packages/payments/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "acceptInboundPayment",
       "file": "packages/payments/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
@@ -1391,7 +1425,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/payments",
       "protected": true,
-      "notes": "Simulation beneficiaries, corridors, routing, settlement, and reconciliation. No live rails."
+      "notes": "Simulation beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. No live rails."
     },
     {
       "id": "fx",
@@ -1399,6 +1433,13 @@
       "owner": "packages/payments",
       "protected": true,
       "notes": "Rational FX quotes and simulation pricing. Not live market data."
+    },
+    {
+      "id": "rail-adapters",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Canonical RailAdapter port and simulated adapters only. No live network membership."
     },
     {
       "id": "cards",
@@ -1459,7 +1500,7 @@
         "packages/payments"
       ],
       "protected": true,
-      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, and reconciliation. Live rails are not implemented."
+      "notes": "Simulation orchestration, beneficiaries, corridors, routing, settlement, reconciliation, and simulated rail adapters. Live rails are not implemented."
     },
     {
       "id": "FX",

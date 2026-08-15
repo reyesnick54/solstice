@@ -8,6 +8,7 @@ import type { ActionIntent } from './action-intent.ts';
 import {
   ACTION_TYPES,
   type AcceptFxQuoteIntent,
+  type AcceptInboundPaymentIntent,
   type CancelPaymentIntent,
   type CaptureHoldIntent,
   type CancelHoldIntent,
@@ -93,6 +94,9 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.CANCEL_PAYMENT) {
     return validateAccountOnly((intent as CancelPaymentIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.ACCEPT_INBOUND_PAYMENT) {
+    return validateAcceptInbound(intent as AcceptInboundPaymentIntent, catalog);
   }
   if (intent.actionType === ACTION_TYPES.CREATE_HOLD) {
     return validateCreateHold(intent as CreateHoldIntent, catalog);
@@ -552,4 +556,15 @@ function validateOutgoingAccountMoney(
     return reject('status', 'FROZEN account cannot initiate outgoing movement');
   }
   return ok(true);
+}
+
+function validateAcceptInbound(
+  intent: AcceptInboundPaymentIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  const amount = intent.payload.amount;
+  if (!(amount instanceof Money) || typeof amount.minorUnits !== 'bigint' || !amount.isPositive()) {
+    return reject('amount', 'inbound amount must be a positive Money value');
+  }
+  return validateAccountOnly(intent.payload.accountId, catalog);
 }

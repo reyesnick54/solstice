@@ -1,4 +1,4 @@
--- V006 simulated card platform.
+-- V007 simulated card platform.
 -- Processor/token references only. Raw PAN, CVV, PIN, and track data
 -- must never appear in these tables. This is not a PCI compliance claim.
 

@@ -11,6 +11,11 @@ export type SettlementOutcome =
   | { readonly kind: 'FAIL_AFTER_SUBMIT'; readonly reason: string; readonly settlementRef: SettlementRef }
   | { readonly kind: 'PENDING'; readonly settlementRef: SettlementRef }
   | {
+      readonly kind: 'SUBMISSION_UNKNOWN';
+      readonly settlementRef: SettlementRef;
+      readonly reason: string;
+    }
+  | {
       readonly kind: 'RETURNED';
       readonly settlementRef: SettlementRef;
       readonly providerAmountMinorUnits: string;

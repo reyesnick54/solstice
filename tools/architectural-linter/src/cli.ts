@@ -3,6 +3,7 @@ import { lintEventFabric } from './event-guards.ts';
 import { lintComplianceBoundary } from './compliance-guards.ts';
 import { lintSecurityBoundary } from './security-guards.ts';
 import { lintCardBoundary } from './card-guards.ts';
+import { lintRailBoundary } from './rail-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -13,6 +14,7 @@ const findings = [
   ...lintSecurityBoundary(root),
   ...lintComplianceBoundary(root),
   ...lintCardBoundary(root),
+  ...lintRailBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

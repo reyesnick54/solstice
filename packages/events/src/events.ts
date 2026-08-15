@@ -391,6 +391,31 @@ export type CardRefundReceivedV1 = VersionedEvent<'CardRefundReceived', 1, CardA
 export type CardDisputeOpenedV1 = VersionedEvent<'CardDisputeOpened', 1, CardAuditPayload>;
 export type CardDisputeDecidedV1 = VersionedEvent<'CardDisputeDecided', 1, CardAuditPayload>;
 
+export type RailAuditPayload = {
+  readonly paymentId?: string;
+  readonly railSubmissionId?: string;
+  readonly inboundId?: string;
+  readonly provider?: string;
+  readonly rail?: string;
+  readonly settlementRef?: string | null;
+  readonly status?: string;
+  readonly rejectionClass?: string;
+  readonly reconciliation?: string;
+  readonly mismatches?: readonly string[];
+  readonly direction?: string;
+  readonly policy?: string;
+};
+
+export type RailSubmissionCreatedV1 = VersionedEvent<'RailSubmissionCreated', 1, RailAuditPayload>;
+export type RailSubmissionAcceptedV1 = VersionedEvent<'RailSubmissionAccepted', 1, RailAuditPayload>;
+export type RailSubmissionUnknownV1 = VersionedEvent<'RailSubmissionUnknown', 1, RailAuditPayload>;
+export type RailPaymentProcessingV1 = VersionedEvent<'RailPaymentProcessing', 1, RailAuditPayload>;
+export type RailPaymentSettledV1 = VersionedEvent<'RailPaymentSettled', 1, RailAuditPayload>;
+export type RailPaymentRejectedV1 = VersionedEvent<'RailPaymentRejected', 1, RailAuditPayload>;
+export type RailPaymentReturnedV1 = VersionedEvent<'RailPaymentReturned', 1, RailAuditPayload>;
+export type RailProviderDegradedV1 = VersionedEvent<'RailProviderDegraded', 1, RailAuditPayload>;
+export type RailReconciliationMismatchV1 = VersionedEvent<'RailReconciliationMismatch', 1, RailAuditPayload>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | DepositPostedV1
@@ -444,6 +469,15 @@ export type DomainEvent =
   | ComplianceCaseDecidedV1
   | ComplianceAlertCreatedV1
   | FraudRiskEvaluatedV1
+  | RailSubmissionCreatedV1
+  | RailSubmissionAcceptedV1
+  | RailSubmissionUnknownV1
+  | RailPaymentProcessingV1
+  | RailPaymentSettledV1
+  | RailPaymentRejectedV1
+  | RailPaymentReturnedV1
+  | RailProviderDegradedV1
+  | RailReconciliationMismatchV1
   | CardCreatedV1
   | CardActivatedV1
   | CardFrozenV1
