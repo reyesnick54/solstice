@@ -88,6 +88,8 @@ Agents and later CI jobs use that result. They do not guess.
 | model-registry | IMPLEMENTED | packages/model-registry |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| consent | PLANNED | packages/consent |
+| clean-room | PLANNED | packages/clean-room |
 | consent | IMPLEMENTED | packages/consent |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -172,6 +174,22 @@ reserved owner `packages/agentic-capital-mesh`. Capability
 Do not create `trading-agents` / `investment-agents` / `hedge-agent` /
 `capital-ai` / `autonomous-trader`.
 
+Chunk 22 (Strategy Lab) historically stopped while Risk, Model Registry,
+and Agentic Capital Mesh were absent. That stop is historical:
+[`chunk-22-stop.md`](./chunk-22-stop.md). Chunk 22R implements the
+reserved owners. Capability `strategy-lab` is `IMPLEMENTED`. Bounded
+context `STRATEGY_LAB` is `PARTIAL` (no LIVE stage). The evaluator
+returns `mustStop: false`. Do not create `packages/backtest`,
+`packages/trading-lab`, `packages/quant`, or `packages/strategy-v2`.
+
+Chunk 25 (Privacy Clean Room) stops because protected capability
+`consent` is `PLANNED`. Consent Ledger / Purpose Firewall is Chunk 24
+and is not on `main`. `CLEAN_ROOM` remains reserved at
+`packages/clean-room`. The evaluator returns `mustStop: true`.
+Historical stop: [`chunk-25-stop.md`](./chunk-25-stop.md). Do not
+create `packages/privacy-compute`, `packages/data-clean-room`,
+`packages/secure-data-room`, `packages/research-room`, or
+`packages/clean-room-v2`.
 Chunk 22R implements the reserved STRATEGY LAB bounded context at
 `packages/strategy-lab` and `services/strategy-lab`. Capability
 `strategy-lab` is `IMPLEMENTED`. Bounded context STRATEGY_LAB is

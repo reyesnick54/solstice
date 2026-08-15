@@ -599,4 +599,45 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consent-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
   });
+
+  it('CHUNK-25 must stop while the protected consent capability is PLANNED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'identity').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'persistence').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'events').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'evidence').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'consent').protected, true);
+    assert.equal(evaluateCapability(manifest, 'consent').owner, 'packages/consent');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-25',
+    );
+    assert.ok(declared, 'CHUNK-25 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.ok(declared.missing.includes('consent'));
+    assert.equal(declared.missing.includes('personal-data-vault'), false);
+
+    const consent = manifest.boundedContexts.find((context) => context.id === 'CONSENT');
+    assert.ok(consent);
+    assert.equal(consent.status, 'PLANNED');
+    assert.deepEqual(consent.reservedPaths, ['packages/consent']);
+
+    const cleanRoom = manifest.boundedContexts.find((context) => context.id === 'CLEAN_ROOM');
+    assert.ok(cleanRoom);
+    assert.equal(cleanRoom.status, 'PLANNED');
+    assert.deepEqual(cleanRoom.reservedPaths, ['packages/clean-room']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/privacy-compute')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/data-clean-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/secure-data-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/research-room')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room-v2')), false);
+  });
 });

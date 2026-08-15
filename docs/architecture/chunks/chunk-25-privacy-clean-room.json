@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-25",
+  "title": "Privacy Clean Room — Consent-Gated Controlled Computation, Aggregate Queries, Egress Controls, Privacy Thresholds, Pseudonymous Joins, and Contribution Computation Receipts",
+  "requires": [
+    "architecture-linting",
+    "security",
+    "identity",
+    "persistence",
+    "events",
+    "event-fabric",
+    "evidence",
+    "personal-data-vault",
+    "personal-economic-graph",
+    "personal-economy-agent",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "consent"
+  ],
+  "notes": "STOPPED. Protected capability consent is PLANNED (Consent Ledger / Purpose Firewall, Chunk 24). CLEAN_ROOM remains reserved at packages/clean-room. evaluateChunkRequirements returns mustStop: true. Do not create packages/privacy-compute, packages/data-clean-room, packages/secure-data-room, packages/research-room, or packages/clean-room-v2. Historical stop: chunk-25-stop.md."
+}

@@ -289,6 +289,14 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE capital_mesh\.journal/i.test(v017.sql), false);
   });
 
+  it('customer V018 persists Strategy Lab artifacts without live trading state', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v018 = files.find((file) => file.version === 18);
+    assert.ok(v018);
+    assert.match(v018.sql, /CREATE SCHEMA IF NOT EXISTS strategy_lab/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.strategy/);
+    assert.match(v018.sql, /CREATE TABLE strategy_lab.backtest_run/);
+    assert.match(v018.sql, /lifecycle NOT IN \('LIVE_APPROVED', 'LIVE_RUNNING', 'LIVE'\)/);
   it('customer V018 persists Strategy Lab experiment history without a LIVE stage', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v018 = files.find((file) => file.version === 18);
