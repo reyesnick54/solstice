@@ -15,8 +15,9 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
     match args[0].as_str() {
         "evidence" => evidence_command(&args[1..]),
         "validator" => validator_command(&args[1..]),
+        "machine" => crate::machine::run_machine_command(&args[1..]),
         _ => Err(NodeError::Validation(
-            "unknown command; expected evidence or validator".into(),
+            "unknown command; expected evidence, validator, or machine".into(),
         )),
     }
 }

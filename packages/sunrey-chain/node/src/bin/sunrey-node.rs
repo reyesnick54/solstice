@@ -16,6 +16,16 @@ async fn main() {
 
     let args: Vec<String> = std::env::args().collect();
     match args.get(1).map(String::as_str) {
+        Some("machine") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+            Ok(out) => {
+                println!("{out}");
+                return;
+            }
+            Err(err) => {
+                eprintln!("{err}");
+                std::process::exit(1);
+            }
+        },
         Some("evidence") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
             Ok(out) => {
                 println!("{out}");

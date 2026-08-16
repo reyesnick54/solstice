@@ -39,7 +39,8 @@ export type CryptoActorType =
   | 'OPERATOR'
   | 'WALLET'
   | 'P2P_PEER'
-  | 'APPLICATION';
+  | 'APPLICATION'
+  | 'MACHINE';
 
 export type CryptoPolicyInput = {
   readonly protocolVersion: string;

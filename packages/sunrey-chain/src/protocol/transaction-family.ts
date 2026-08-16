@@ -12,6 +12,7 @@ export const TRANSACTION_FAMILIES = [
   'GOVERNANCE',
   'VALIDATOR',
   'EVIDENCE_ANCHOR',
+  'MACHINE_COMMERCE',
 ] as const;
 export type TransactionFamily = (typeof TRANSACTION_FAMILIES)[number];
 
@@ -29,6 +30,7 @@ export const TRANSACTION_FAMILY_IDS: { readonly [K in TransactionFamily]: number
   GOVERNANCE: 11,
   VALIDATOR: 12,
   EVIDENCE_ANCHOR: 13,
+  MACHINE_COMMERCE: 14,
 };
 
 export const TRANSACTION_FAMILY_ACTIVATION = {
@@ -45,6 +47,7 @@ export const TRANSACTION_FAMILY_ACTIVATION = {
   GOVERNANCE: 'RESERVED',
   VALIDATOR: 'RESERVED',
   EVIDENCE_ANCHOR: 'ACTIVE',
+  MACHINE_COMMERCE: 'ACTIVE',
 } as const;
 
 export type FamilyActivation = 'ACTIVE' | 'RESERVED' | 'NOT_ACTIVATED';

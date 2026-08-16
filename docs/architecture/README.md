@@ -56,6 +56,10 @@
   — equivocation evidence, jail, tombstone, simulation penalties
 - [Chunk 40 protocol governance](./chunk-40-protocol-governance.md) —
   height-activated UpgradePlan. No governance token.
+- [Chunk 45 machine economy](./chunk-45-machine-economy.md) —
+  controller-bound machine identity and commerce.
+  [Identity model](./machine-economic-identity.md).
+  [Commerce protocol](./machine-commerce-protocol.md).
 - [Chunk 35 stop (historical)](./chunk-35-stop.md) — original
   documentation-only gate before the local node existed
 - [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync

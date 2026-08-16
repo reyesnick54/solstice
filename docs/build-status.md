@@ -402,6 +402,11 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-protocol-governance` is `IMPLEMENTED`. Height-activated
   `UpgradePlan`. No governance token. Production governance is
   not implemented. ADR-0028 is implemented for development.
+- SunRey machine economic identity and commerce (Chunk 45) is
+  **development-only** at `packages/sunrey-chain/src/machine-economy`.
+  Capability `sunrey-machine-economy` is `IMPLEMENTED`. Machines
+  are controller-bound and capability-limited. They cannot
+  validate, govern, or issue MoonRey.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

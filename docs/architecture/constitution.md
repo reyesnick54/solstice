@@ -743,6 +743,15 @@ height-activated upgrades at `packages/sunrey-chain` and
 governance token. Do not create `packages/governance` or
 `packages/sunrey-governance`. Production governance is not
 implemented.
+Chunk 45 implements machine economic identity and
+machine-to-machine commerce at
+`packages/sunrey-chain/src/machine-economy`. Capability
+`sunrey-machine-economy` is `IMPLEMENTED`. Machines are
+controller-bound, capability-limited economic actors. They cannot
+validate, govern, issue Execution Authority, or issue MoonRey.
+Do not create `packages/machine-economy` or
+`packages/machine-identity`. See
+[`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
 
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite

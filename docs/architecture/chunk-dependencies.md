@@ -104,6 +104,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-machine-economy | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -300,6 +301,11 @@ Chunk 40 implements development protocol governance at
 `packages/sunrey-chain`. Capability `sunrey-protocol-governance`
 is `IMPLEMENTED`. See
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Chunk 45 implements machine economic identity and commerce at
+`packages/sunrey-chain/src/machine-economy`. Capability
+`sunrey-machine-economy` is `IMPLEMENTED`. See
+[`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
+Do not create `packages/machine-economy` or a second exchange.
 Do not create `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
 Chunk 37 implements the development Tendermint-class BFT engine at
