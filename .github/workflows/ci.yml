@@ -73,6 +73,14 @@ jobs:
         run: npm run demo:information-market
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: SunRey Exchange simulation demo
+        run: npm run demo:sunrey-exchange
+      - name: Custody deposit and withdrawal demo
+        run: npm run demo:custody
+      - name: Market surveillance demo
+        run: npm run demo:market-surveillance
+      - name: Listing governance demo
+        run: npm run demo:listing-governance
 
       - name: Typecheck
         run: npm run typecheck

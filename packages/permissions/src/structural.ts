@@ -66,6 +66,12 @@ import {
   type CancelExchangeOrderIntent,
   type SettleExchangeTradeIntent,
   type HaltExchangeIntent,
+  type CreditExternalDepositIntent,
+  type AddWithdrawalDestinationIntent,
+  type InitiateAssetWithdrawalIntent,
+  type DecideAssetListingIntent,
+  type RestrictExchangeParticipantIntent,
+  type SetExchangeControlIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -330,6 +336,51 @@ export function validateIntentStructure(
     const payload = (intent as HaltExchangeIntent).payload;
     if (typeof payload.scope !== 'string' || payload.scope.length === 0) {
       return reject('scope', 'halt scope is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.CREDIT_EXTERNAL_DEPOSIT) {
+    const payload = (intent as CreditExternalDepositIntent).payload;
+    if (typeof payload.depositId !== 'string' || payload.depositId.length === 0) {
+      return reject('depositId', 'deposit id is required');
+    }
+    return validateSunReyCoinAmount(payload.amount);
+  }
+  if (intent.actionType === ACTION_TYPES.ADD_WITHDRAWAL_DESTINATION) {
+    const payload = (intent as AddWithdrawalDestinationIntent).payload;
+    if (typeof payload.addressHash !== 'string' || payload.addressHash.length === 0) {
+      return reject('addressHash', 'address hash is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.INITIATE_ASSET_WITHDRAWAL) {
+    const payload = (intent as InitiateAssetWithdrawalIntent).payload;
+    if (typeof payload.destinationId !== 'string' || payload.destinationId.length === 0) {
+      return reject('destinationId', 'destination id is required');
+    }
+    return validateSunReyCoinAmount(payload.amount);
+  }
+  if (intent.actionType === ACTION_TYPES.DECIDE_ASSET_LISTING) {
+    const payload = (intent as DecideAssetListingIntent).payload;
+    if (typeof payload.listingId !== 'string' || payload.listingId.length === 0) {
+      return reject('listingId', 'listing id is required');
+    }
+    if (payload.status === 'LIVE_APPROVED') {
+      return reject('status', 'LIVE_APPROVED is forbidden');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.RESTRICT_EXCHANGE_PARTICIPANT) {
+    const payload = (intent as RestrictExchangeParticipantIntent).payload;
+    if (typeof payload.accountId !== 'string' || payload.accountId.length === 0) {
+      return reject('accountId', 'account id is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.SET_EXCHANGE_CONTROL) {
+    const payload = (intent as SetExchangeControlIntent).payload;
+    if (typeof payload.scope !== 'string' || payload.scope.length === 0) {
+      return reject('scope', 'control scope is required');
     }
     return ok(true);
   }

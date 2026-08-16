@@ -8,6 +8,7 @@ import type {
   ExchangeMarket,
   HaltRecord,
   ImmutableTrade,
+  ListingDecision,
   MarketDataSnapshot,
   ReconciliationReport,
   SettlementRecord,
@@ -29,6 +30,7 @@ export class ExchangeStore {
   readonly marketData = new Map<string, MarketDataSnapshot>();
   readonly halts: HaltRecord[] = [];
   readonly reconciliations: ReconciliationReport[] = [];
+  readonly listingDecisions: ListingDecision[] = [];
   sequenceByMarket = new Map<string, number>();
   orderSequence = 0;
 

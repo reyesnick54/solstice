@@ -677,8 +677,8 @@ phase is absent.
 | SUNREY INFORMATION MARKET | IMPLEMENTED | `packages/information-market` |
 | SUNREY EXCHANGE | IMPLEMENTED | `packages/sunrey-exchange` |
 | SUNREY CHAIN | IMPLEMENTED | `packages/sunrey-chain` |
-| CUSTODY | PLANNED | `packages/custody` |
-| MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
+| CUSTODY | IMPLEMENTED | `packages/custody` |
+| MARKET SURVEILLANCE | IMPLEMENTED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
 
@@ -720,9 +720,13 @@ Do not invent a ticker. Do not create `packages/exchange-v2`,
 `packages/orderbook`, `packages/matching-engine-v2`,
 `packages/crypto-exchange`, or `packages/reyn-exchange`.
 
-Chunk 30 (custody / Travel Rule / surveillance control plane) is
-stopped while `custody` and `market-surveillance` remain `PLANNED`:
-[`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
+Chunk 30R implements the exchange control plane at
+`packages/custody` and `packages/market-surveillance`, extending
+listing governance and kill switches on `packages/sunrey-exchange`.
+Simulation only. Custody provider state is not ledger truth. Alerts
+are candidates, not legal conclusions. Historical stop:
+[`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
+[`chunk-30-resume.md`](./chunk-30-resume.md). Do not create
 `packages/exchange-compliance-v2`, `packages/travel-rule-v2`,
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.

@@ -59,6 +59,8 @@ export const IDENTITY_CAPABILITIES = [
   'INFORMATION_MARKET_OPERATE',
   'EXCHANGE_VIEW',
   'EXCHANGE_OPERATE_REQUEST',
+  'CUSTODY_OPERATE_REQUEST',
+  'ADD_WITHDRAWAL_DESTINATION',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -147,7 +149,15 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
     'CANCEL_EXCHANGE_ORDER',
     'SETTLE_EXCHANGE_TRADE',
     'HALT_EXCHANGE',
+    'DECIDE_ASSET_LISTING',
+    'RESTRICT_EXCHANGE_PARTICIPANT',
+    'SET_EXCHANGE_CONTROL',
   ],
+  CUSTODY_OPERATE_REQUEST: [
+    'CREDIT_EXTERNAL_DEPOSIT',
+    'INITIATE_ASSET_WITHDRAWAL',
+  ],
+  ADD_WITHDRAWAL_DESTINATION: ['ADD_WITHDRAWAL_DESTINATION'],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -207,6 +217,7 @@ const FINANCIAL_CAPABILITIES: readonly IdentityCapability[] = [
   'INVESTMENT_OPERATE_REQUEST',
   'SUNREY_COIN_OPERATE_REQUEST',
   'EXCHANGE_OPERATE_REQUEST',
+  'CUSTODY_OPERATE_REQUEST',
 ];
 
 /**
@@ -232,8 +243,8 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
     if (!isGrantActive(grant, facts.now)) {
       continue;
     }
-    if (grant.capability === 'MANAGE_BENEFICIARY') {
-      granted.add('MANAGE_BENEFICIARY');
+    if (grant.capability === 'MANAGE_BENEFICIARY' || grant.capability === 'ADD_WITHDRAWAL_DESTINATION') {
+      granted.add(grant.capability);
       continue;
     }
     granted.add(grant.capability);
@@ -266,6 +277,9 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
 }
 
 export function requiredAssuranceFor(capability: IdentityCapability): AuthenticationAssurance {
+  if (capability === 'ADD_WITHDRAWAL_DESTINATION') {
+    return 'HIGH_ASSURANCE';
+  }
   if (
     FINANCIAL_CAPABILITIES.includes(capability) ||
     capability === 'MANAGE_BENEFICIARY' ||

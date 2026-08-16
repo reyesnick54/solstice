@@ -234,6 +234,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ExchangeMarketHalted', version: 1, status: 'current' },
   { eventType: 'ExchangeMarketResumed', version: 1, status: 'current' },
   { eventType: 'ExchangeReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'ExchangeListingDecided', version: 1, status: 'current' },
+  { eventType: 'CustodyDepositNoticeReceived', version: 1, status: 'current' },
+  { eventType: 'CustodyDepositCredited', version: 1, status: 'current' },
+  { eventType: 'CustodyDestinationAdded', version: 1, status: 'current' },
+  { eventType: 'CustodyWithdrawalBlocked', version: 1, status: 'current' },
+  { eventType: 'CustodyWithdrawalUnknown', version: 1, status: 'current' },
+  { eventType: 'CustodyWithdrawalSettled', version: 1, status: 'current' },
+  { eventType: 'SurveillanceAlertRaised', version: 1, status: 'current' },
+  { eventType: 'SurveillanceCaseOpened', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

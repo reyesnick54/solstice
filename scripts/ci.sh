@@ -38,6 +38,9 @@ npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-chain
 npm run demo:sunrey-exchange
+npm run demo:custody
+npm run demo:market-surveillance
+npm run demo:listing-governance
 
 echo "==> typecheck"
 npm run typecheck

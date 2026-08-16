@@ -322,6 +322,7 @@ export class SimulatedIdentityAdapter {
     readonly customerId?: CustomerId;
     readonly identityId?: string;
     readonly capabilities?: readonly IdentityCapability[];
+    readonly stepUp?: boolean;
   }): Result<VerifiedActorContext, IdentityFailure> {
     const existing = this.service.resolveActorContext(input.actorId);
     if (existing.ok) {
@@ -354,7 +355,7 @@ export class SimulatedIdentityAdapter {
         return granted;
       }
     }
-    const enrolled = this.enrollAndAuthenticate(identity.id, input.actorId);
+    const enrolled = this.enrollAndAuthenticate(identity.id, input.actorId, 'sim-device-1', input.stepUp === true);
     if (!enrolled.ok) {
       return enrolled;
     }

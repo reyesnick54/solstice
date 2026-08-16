@@ -64,6 +64,15 @@ const SIMULATION_EXCHANGE_ACTIONS = [
   'CANCEL_EXCHANGE_ORDER',
   'SETTLE_EXCHANGE_TRADE',
   'HALT_EXCHANGE',
+  'DECIDE_ASSET_LISTING',
+  'RESTRICT_EXCHANGE_PARTICIPANT',
+  'SET_EXCHANGE_CONTROL',
+] as const;
+
+const SIMULATION_CUSTODY_ACTIONS = [
+  'CREDIT_EXTERNAL_DEPOSIT',
+  'ADD_WITHDRAWAL_DESTINATION',
+  'INITIATE_ASSET_WITHDRAWAL',
 ] as const;
 
 const SIMULATION_INVESTMENT_ACTIONS = [
@@ -162,7 +171,12 @@ export const SIMULATION_CAPABILITIES: readonly LegalEntityCapability[] = [
   capability({
     capabilityId: 'cap-gb-sim-digital-custody',
     legalEntityId: 'le_solstice_uk_ltd',
-    actionTypes: [...SIMULATION_BANKING_ACTIONS, ...SIMULATION_SUNREY_COIN_ACTIONS, ...SIMULATION_EXCHANGE_ACTIONS],
+    actionTypes: [
+      ...SIMULATION_BANKING_ACTIONS,
+      ...SIMULATION_SUNREY_COIN_ACTIONS,
+      ...SIMULATION_EXCHANGE_ACTIONS,
+      ...SIMULATION_CUSTODY_ACTIONS,
+    ],
     productIds: ['prod_digital_usd_gb'],
     productTypes: ['DIGITAL_ASSET_CUSTODY'],
     environment: 'simulation',

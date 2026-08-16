@@ -91,12 +91,12 @@ Agents and later CI jobs use that result. They do not guess.
 | consent | IMPLEMENTED | packages/consent |
 | purpose-firewall | IMPLEMENTED | packages/consent |
 | clean-room | IMPLEMENTED | packages/clean-room |
+| custody | IMPLEMENTED | packages/custody |
+| market-surveillance | IMPLEMENTED | packages/market-surveillance |
 | sunrey-coin | IMPLEMENTED | packages/sunrey-coin |
 | information-market | IMPLEMENTED | packages/information-market |
 | sunrey-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
-| custody | PLANNED | packages/custody |
-| market-surveillance | PLANNED | packages/market-surveillance |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -263,15 +263,15 @@ create `packages/exchange-v2`, `packages/orderbook`,
 `packages/reyn-exchange`. Do not invent a ticker. Do not enable
 `LIVE_EXCHANGE_ENABLED`. The evaluator returns `mustStop: false`.
 
-Chunk 30 (SunRey Exchange control plane) remains **stopped**. Chunk 29
-is now merged, so `sunrey-coin`, `sunrey-exchange`, and `sunrey-chain`
-are `IMPLEMENTED`. Protected capabilities `custody` and
-`market-surveillance` remain `PLANNED`. The evaluator returns
-`mustStop: true` and `missing: ['custody', 'market-surveillance']`.
-See [`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
-`packages/exchange-compliance-v2`, `packages/travel-rule-v2`,
-`packages/crypto-aml`, `packages/surveillance-v2`, or
-`packages/custody-ledger`.
+Chunk 30R implements the reserved CUSTODY and MARKET_SURVEILLANCE
+bounded contexts at `packages/custody` and
+`packages/market-surveillance`. Capabilities `custody` and
+`market-surveillance` are `IMPLEMENTED`. The original Chunk 30 stop
+is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
+[`chunk-30-resume.md`](./chunk-30-resume.md). The evaluator returns
+`mustStop: false`. Do not create `packages/exchange-compliance-v2`,
+`packages/travel-rule-v2`, `packages/crypto-aml`,
+`packages/surveillance-v2`, or `packages/custody-ledger`.
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

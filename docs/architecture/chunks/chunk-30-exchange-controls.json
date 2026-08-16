@@ -28,5 +28,5 @@
     "custody",
     "market-surveillance"
   ],
-  "notes": "STOPPED. Chunks 26R-29 are now IMPLEMENTED on main (sunrey-coin, information-market, sunrey-chain, sunrey-exchange). Protected capabilities custody and market-surveillance remain PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['custody', 'market-surveillance']. Do not implement a competing exchange, custody-ledger, travel-rule-v2, crypto-aml, or surveillance-v2. See docs/architecture/chunk-30-stop.md."
+  "notes": "IMPLEMENTED. Chunk 30R resumes the exchange control plane at packages/custody and packages/market-surveillance, extending SUNREY_EXCHANGE listing/kill-switch controls and canonical Kernel compliance cases. Simulation only. evaluateChunkRequirements returns mustStop: false. See docs/architecture/chunk-30-resume.md."
 }
