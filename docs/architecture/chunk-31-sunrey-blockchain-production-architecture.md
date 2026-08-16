@@ -336,14 +336,39 @@ pack indexed, manifest and constitution valid.
 
 ## M. Exact CI results
 
-Recorded after the Chunk 31 change set. See the pull request for
-the command transcript. Required commands:
+Recorded on `cursor/sunrey-blockchain-architecture-22c4` after
+`npm install` (local `tsc` / `pg` were absent until then).
+
+| Command | Result |
+| --- | --- |
+| `npm run lint:architecture` | `architectural-linter: ok` |
+| `npm test` | 494 tests, 0 fail |
+| `npm run typecheck` | `tsc --noEmit` exit 0 |
+| `npm run ci` | `CI pipeline: ok` |
+
+`npm run ci` stage transcript:
 
 ```text
-npm test
-npm run typecheck
-npm run lint:architecture
-npm run ci
+==> architectural invariants
+Architectural invariants: ok
+Extraction dry-run: ok (32 package(s))
+architectural-linter: ok
+==> deployment posture
+Deployment posture: ok (simulation-only, live flags off)
+==> kernel gating
+Kernel gating CI passed (71 registered paths, all Kernel-authorized).
+==> tests
+ℹ tests 494
+ℹ pass 494
+ℹ fail 0
+==> end-to-end demo
+(all registered demos ok, including sunrey-chain / coin / exchange / custody)
+==> typecheck
+tsc --noEmit -p tsconfig.json
+==> secret scan
+Secret scan: ok
+Secret scan self-test: ok
+CI pipeline: ok
 ```
 
 ---
