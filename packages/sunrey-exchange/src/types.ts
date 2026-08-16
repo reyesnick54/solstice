@@ -206,7 +206,25 @@ export type Candle = {
   readonly label: 'SIMULATION_MARKET_PRICE';
 };
 
-export type HaltScope = 'GLOBAL' | 'MARKET' | 'ASSET' | 'PARTICIPANT';
+export type HaltScope =
+  | 'GLOBAL'
+  | 'MARKET'
+  | 'ASSET'
+  | 'PARTICIPANT'
+  | 'NEW_ORDERS'
+  | 'CANCEL_ONLY'
+  | 'WITHDRAWAL_HALT'
+  | 'DEPOSIT_CREDIT_HALT';
+
+export type ListingDecision = {
+  readonly listingId: ListingId;
+  readonly listingVersion: ListingVersion;
+  readonly status: ListingStatus;
+  readonly legalReviewState: LegalReviewState;
+  readonly rdtDisposition: 'RESEARCH_REQUIRED' | 'COUNSEL_REVIEW_REQUIRED';
+  readonly actorKind: 'HUMAN_OPERATOR';
+  readonly liveApproved: false;
+};
 
 export type HaltRecord = {
   readonly scope: HaltScope;

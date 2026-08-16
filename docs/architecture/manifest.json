@@ -899,6 +899,56 @@
         "@reyesnick54"
       ],
       "notes": "Canonical SunRey Exchange simulation matching, holds, clearing, and settlement. Journals stay on the canonical Ledger via CoinPort/FiatPort. No live exchange. No second ledger. Agents cannot execute."
+    },
+    {
+      "id": "packages/custody",
+      "npmName": "@solstice/custody",
+      "path": "packages/custody",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/permissions",
+        "packages/kernel",
+        "packages/sunrey-coin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Provider-neutral digital-asset custody control plane. Simulation adapters only. Provider state is operational, not customer-accounting truth. Canonical Ledger remains the ledger. No private keys."
+    },
+    {
+      "id": "packages/market-surveillance",
+      "npmName": "@solstice/market-surveillance",
+      "path": "packages/market-surveillance",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/kernel"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Deterministic market-surveillance alerts and restriction proposals. Cannot freeze balances, issue Execution Authority, or mutate the ledger. Reuses canonical compliance cases."
     }
   ],
   "components": [
@@ -2409,6 +2459,42 @@
       "file": "packages/sunrey-exchange/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "setExchangeControl",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "decideListing",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "applyAuthorizedRestriction",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "creditExternalDeposit",
+      "file": "packages/custody/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "addDestination",
+      "file": "packages/custody/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "initiateWithdrawal",
+      "file": "packages/custody/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -2811,17 +2897,17 @@
     },
     {
       "id": "custody",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
-      "notes": "Reserved provider-neutral digital-asset custody control plane. Historical extractable Custody subsystem. Simulation adapters only. Not customer-accounting truth. Canonical Ledger remains the ledger."
+      "notes": "Canonical provider-neutral digital-asset custody control plane. Chunk 30R. Simulation adapters only. Not customer-accounting truth. Canonical Ledger remains the ledger."
     },
     {
       "id": "market-surveillance",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/market-surveillance",
       "protected": true,
-      "notes": "Reserved market-surveillance layer. Alerts and proposals only. Cannot freeze balances or issue Execution Authority. Reuse canonical compliance cases. Do not create surveillance-v2."
+      "notes": "Canonical market-surveillance layer. Chunk 30R. Alerts and proposals only. Cannot freeze balances or issue Execution Authority. Reuse canonical compliance cases. Do not create surveillance-v2."
     }
   ],
   "boundedContexts": [
@@ -3056,12 +3142,12 @@
     },
     {
       "id": "CUSTODY",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/custody"
       ],
       "protected": true,
-      "notes": "Reserved provider-neutral digital-asset custody architecture (historical extractable Custody subsystem). Simulation only. Custody provider state is operational, not customer-accounting truth. Do not create custody-ledger or treat a provider API as the Ledger."
+      "notes": "Canonical provider-neutral digital-asset custody architecture at packages/custody. Simulation only. Custody provider state is operational, not customer-accounting truth. Do not create custody-ledger or treat a provider API as the Ledger."
     },
     {
       "id": "SUNREY_CHAIN",
@@ -3083,12 +3169,12 @@
     },
     {
       "id": "MARKET_SURVEILLANCE",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/market-surveillance"
       ],
       "protected": true,
-      "notes": "Reserved extractable market-surveillance subsystem. Chunk 30R should use this reservation rather than surveillance-v2. Alerts are not legal conclusions. Cannot mutate the ledger. Reuse packages/kernel/src/compliance cases."
+      "notes": "Canonical market-surveillance subsystem at packages/market-surveillance. Alerts are not legal conclusions. Cannot mutate the ledger. Reuse packages/kernel/src/compliance cases. Do not create surveillance-v2."
     },
     {
       "id": "API_INTEGRATION",

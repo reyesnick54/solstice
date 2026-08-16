@@ -33,9 +33,10 @@
 - [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
   `packages/sunrey-chain`. Not the financial source of truth.
   ADR-0015 remains PROPOSED.
-- [Chunk 30 stop](./chunk-30-stop.md) — exchange custody / Travel Rule /
-  surveillance control plane. Chunk 29 exchange core is now
-  `IMPLEMENTED`. Remaining protected gaps are `custody` and
-  `market-surveillance`.
+- [Chunk 30 stop (historical)](./chunk-30-stop.md) — original stop while
+  custody and market-surveillance were PLANNED
+- [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
+  listing governance, surveillance, and kill switches after Exchange
+  core merged
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

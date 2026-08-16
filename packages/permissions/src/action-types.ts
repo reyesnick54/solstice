@@ -79,6 +79,12 @@ export const ACTION_TYPES = {
   CANCEL_EXCHANGE_ORDER: 'CANCEL_EXCHANGE_ORDER',
   SETTLE_EXCHANGE_TRADE: 'SETTLE_EXCHANGE_TRADE',
   HALT_EXCHANGE: 'HALT_EXCHANGE',
+  CREDIT_EXTERNAL_DEPOSIT: 'CREDIT_EXTERNAL_DEPOSIT',
+  ADD_WITHDRAWAL_DESTINATION: 'ADD_WITHDRAWAL_DESTINATION',
+  INITIATE_ASSET_WITHDRAWAL: 'INITIATE_ASSET_WITHDRAWAL',
+  DECIDE_ASSET_LISTING: 'DECIDE_ASSET_LISTING',
+  RESTRICT_EXCHANGE_PARTICIPANT: 'RESTRICT_EXCHANGE_PARTICIPANT',
+  SET_EXCHANGE_CONTROL: 'SET_EXCHANGE_CONTROL',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -796,9 +802,77 @@ export type HaltExchangeIntent = ActionIntent<HaltExchangePayload> & {
   readonly actionType: typeof ACTION_TYPES.HALT_EXCHANGE;
 };
 
+export type CreditExternalDepositPayload = {
+  readonly accountId: string;
+  readonly customerId: CustomerId;
+  readonly depositId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type AddWithdrawalDestinationPayload = {
+  readonly accountId: string;
+  readonly customerId: CustomerId;
+  readonly addressHash: string;
+};
+
+export type InitiateAssetWithdrawalPayload = {
+  readonly accountId: string;
+  readonly customerId: CustomerId;
+  readonly destinationId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type DecideAssetListingPayload = {
+  readonly accountId: string;
+  readonly listingId: string;
+  readonly status: string;
+};
+
+export type RestrictExchangeParticipantPayload = {
+  readonly accountId: string;
+  readonly status: string;
+};
+
+export type SetExchangeControlPayload = {
+  readonly accountId: string;
+  readonly scope: string;
+};
+
+export type CreditExternalDepositIntent = ActionIntent<CreditExternalDepositPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CREDIT_EXTERNAL_DEPOSIT;
+};
+
+export type AddWithdrawalDestinationIntent = ActionIntent<AddWithdrawalDestinationPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ADD_WITHDRAWAL_DESTINATION;
+};
+
+export type InitiateAssetWithdrawalIntent = ActionIntent<InitiateAssetWithdrawalPayload> & {
+  readonly actionType: typeof ACTION_TYPES.INITIATE_ASSET_WITHDRAWAL;
+};
+
+export type DecideAssetListingIntent = ActionIntent<DecideAssetListingPayload> & {
+  readonly actionType: typeof ACTION_TYPES.DECIDE_ASSET_LISTING;
+};
+
+export type RestrictExchangeParticipantIntent = ActionIntent<RestrictExchangeParticipantPayload> & {
+  readonly actionType: typeof ACTION_TYPES.RESTRICT_EXCHANGE_PARTICIPANT;
+};
+
+export type SetExchangeControlIntent = ActionIntent<SetExchangeControlPayload> & {
+  readonly actionType: typeof ACTION_TYPES.SET_EXCHANGE_CONTROL;
+};
+
 export type SunReyExchangeIntent =
   | OpenExchangeAccountIntent
   | PlaceExchangeOrderIntent
   | CancelExchangeOrderIntent
   | SettleExchangeTradeIntent
-  | HaltExchangeIntent;
+  | HaltExchangeIntent
+  | DecideAssetListingIntent
+  | RestrictExchangeParticipantIntent
+  | SetExchangeControlIntent;
+
+export type CustodyIntent =
+  | CreditExternalDepositIntent
+  | AddWithdrawalDestinationIntent
+  | InitiateAssetWithdrawalIntent;

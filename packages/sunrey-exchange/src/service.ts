@@ -63,6 +63,7 @@ import type {
   FeeSchedule,
   HaltRecord,
   ImmutableTrade,
+  ListingDecision,
   MarketDataSnapshot,
   ReconciliationReport,
   SettlementRecord,
@@ -195,11 +196,14 @@ export class SunReyExchangeService {
     if (this.isHalted(input.marketId, account.accountId, input.quantity.assetId)) {
       return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: 'halt is active' };
     }
+    if (this.controlActive('NEW_ORDERS', input.marketId) || this.controlActive('NEW_ORDERS', 'GLOBAL')) {
+      return { outcome: 'REJECTED', code: 'NEW_ORDERS_DISABLED', message: 'new-order kill switch is active' };
+    }
     const market = this.store.markets.get(input.marketId);
     if (!market || market.family !== 'DIGITAL_ASSET') {
       return { outcome: 'REJECTED', code: 'FAMILY_MISMATCH', message: 'digital-asset orders require a DIGITAL_ASSET market' };
     }
-    if (market.state !== 'OPEN') {
+    if (market.state !== 'OPEN' || this.controlActive('CANCEL_ONLY', market.marketId)) {
       return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: `market state ${market.state}` };
     }
     const listing = this.store.listings.get(market.baseListingId);
@@ -355,9 +359,148 @@ export class SunReyExchangeService {
         this.store.putMarket({ ...market, state: 'HALTED' });
       }
     }
+    if (input.scope === 'CANCEL_ONLY') {
+      const market = this.store.markets.get(input.targetId);
+      if (market) {
+        this.store.putMarket({ ...market, state: 'CANCEL_ONLY' });
+      }
+    }
     this.emit('ExchangeMarketHalted', input.targetId, { scope: input.scope, targetId: input.targetId });
     this.seal('market.halted', { ...record, intentId: intent.id });
     return { outcome: 'OK', value: record, decision: gated.decision };
+  }
+
+  setExchangeControl(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly scope: HaltRecord['scope'];
+    readonly targetId: string;
+    readonly reason: string;
+    readonly actorKind: 'HUMAN_OPERATOR' | 'AGENT' | 'AI';
+    readonly active: boolean;
+  }): ExchangeOutcome<HaltRecord> {
+    if (input.actorKind !== 'HUMAN_OPERATOR') {
+      return { outcome: 'REJECTED', code: 'AI_CANNOT_DISABLE_CONTROLS', message: 'AI cannot change exchange kill switches' };
+    }
+    if (input.active) {
+      return this.halt({
+        actorId: input.actorId,
+        customerId: input.customerId,
+        scope: input.scope,
+        targetId: input.targetId,
+        reason: input.reason,
+      });
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.SET_EXCHANGE_CONTROL, {
+      accountId: input.targetId,
+      scope: input.scope,
+    });
+    const gated = this.authorizeIntent(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    for (let i = 0; i < this.store.halts.length; i += 1) {
+      const halt = this.store.halts[i]!;
+      if (halt.active && halt.scope === input.scope && halt.targetId === input.targetId) {
+        this.store.halts[i] = Object.freeze({ ...halt, active: false, reason: input.reason });
+      }
+    }
+    if (input.scope === 'MARKET' || input.scope === 'CANCEL_ONLY') {
+      const market = this.store.markets.get(input.targetId);
+      if (market) {
+        this.store.putMarket({ ...market, state: 'OPEN' });
+      }
+    }
+    const record: HaltRecord = Object.freeze({
+      scope: input.scope,
+      targetId: input.targetId,
+      active: false,
+      reason: input.reason,
+    });
+    this.emit('ExchangeMarketResumed', input.targetId, { scope: input.scope, targetId: input.targetId });
+    return { outcome: 'OK', value: record, decision: gated.decision };
+  }
+
+  decideListing(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly listingId: string;
+    readonly status: ExchangeListing['status'];
+    readonly actorKind: 'HUMAN_OPERATOR' | 'AGENT' | 'AI';
+  }): ExchangeOutcome<ListingDecision> {
+    if (input.actorKind !== 'HUMAN_OPERATOR') {
+      return { outcome: 'REJECTED', code: 'AI_CANNOT_APPROVE_LISTING', message: 'AI cannot approve listings' };
+    }
+    if ((input.status as string) === 'LIVE_APPROVED') {
+      return { outcome: 'REJECTED', code: 'LIVE_APPROVED_FORBIDDEN', message: 'LIVE_APPROVED is not a permitted listing state' };
+    }
+    const listing = this.store.listings.get(input.listingId);
+    if (!listing) {
+      return { outcome: 'REJECTED', code: 'UNKNOWN_LISTING', message: 'listing not found' };
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.DECIDE_ASSET_LISTING, {
+      accountId: input.listingId,
+      listingId: input.listingId,
+      status: input.status,
+    });
+    const gated = this.authorizeIntent(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const nextVersion = (listing.listingVersion + 1) as ExchangeListing['listingVersion'];
+    const next: ExchangeListing = Object.freeze({
+      ...listing,
+      listingVersion: nextVersion,
+      status: input.status,
+      legalReviewState: input.status === 'SIMULATION_LISTED' ? 'RESEARCH_REQUIRED' : listing.legalReviewState,
+    });
+    this.store.putListing(next);
+    const decision: ListingDecision = Object.freeze({
+      listingId: next.listingId,
+      listingVersion: next.listingVersion,
+      status: next.status,
+      legalReviewState: next.legalReviewState,
+      rdtDisposition: 'RESEARCH_REQUIRED',
+      actorKind: 'HUMAN_OPERATOR',
+      liveApproved: false,
+    });
+    this.store.listingDecisions.push(decision);
+    this.emit('ExchangeListingDecided', next.listingId, {
+      listingId: next.listingId,
+      listingVersion: String(next.listingVersion),
+      status: next.status,
+    });
+    this.seal('listing.decided', { listingId: next.listingId, version: next.listingVersion, liveApproved: false });
+    return { outcome: 'OK', value: decision, decision: gated.decision };
+  }
+
+  applyAuthorizedRestriction(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly accountId: ExchangeAccountId;
+    readonly status: ExchangeAccount['status'];
+    readonly actorKind: 'HUMAN_OPERATOR' | 'AGENT' | 'AI';
+    readonly caseId: string;
+  }): ExchangeOutcome<ExchangeAccount> {
+    if (input.actorKind !== 'HUMAN_OPERATOR') {
+      return { outcome: 'REJECTED', code: 'AI_CANNOT_PUNISH', message: 'AI cannot restrict a participant' };
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.RESTRICT_EXCHANGE_PARTICIPANT, {
+      accountId: input.accountId,
+      status: input.status,
+    });
+    const gated = this.authorizeIntent(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const account = this.store.account(input.accountId);
+    if (!account) {
+      return { outcome: 'REJECTED', code: 'UNKNOWN_ACCOUNT', message: 'exchange account not found' };
+    }
+    const next = Object.freeze({ ...account, status: input.status });
+    this.store.putExchangeAccount(next);
+    this.seal('participant.restricted', { accountId: input.accountId, caseId: input.caseId, intentId: intent.id });
+    return { outcome: 'OK', value: next, decision: gated.decision };
   }
 
   resumeMarket(marketId: ExchangeMarketId, state: MarketState = 'OPEN'): void {
@@ -514,6 +657,12 @@ export class SunReyExchangeService {
   }
   listings(): readonly ExchangeListing[] {
     return [...this.store.listings.values()];
+  }
+  listingDecisions(): readonly ListingDecision[] {
+    return [...this.store.listingDecisions];
+  }
+  activeControls(): readonly HaltRecord[] {
+    return this.store.halts.filter((halt) => halt.active);
   }
   bookEvents(): readonly BookEvent[] {
     return [...this.store.bookEvents];
@@ -873,6 +1022,10 @@ export class SunReyExchangeService {
           (halt.scope === 'PARTICIPANT' && halt.targetId === accountId) ||
           (halt.scope === 'ASSET' && halt.targetId === assetId)),
     );
+  }
+
+  private controlActive(scope: HaltRecord['scope'], targetId: string): boolean {
+    return this.store.halts.some((halt) => halt.active && halt.scope === scope && (halt.targetId === targetId || halt.targetId === 'GLOBAL'));
   }
 
   private refreshMarketData(marketId: ExchangeMarketId): MarketDataSnapshot {

@@ -80,6 +80,7 @@ export type {
   FeeSchedule,
   HaltRecord,
   ImmutableTrade,
+  ListingDecision,
   MarketDataSnapshot,
   ReconciliationReport,
   SettlementRecord,

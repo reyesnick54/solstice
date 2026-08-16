@@ -843,7 +843,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-exchange')), false);
   });
 
-  it('CHUNK-30 stops because custody and market-surveillance are not IMPLEMENTED', () => {
+  it('CHUNK-30 implements custody and market-surveillance on reserved owners', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'identity').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
@@ -858,10 +858,10 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'sunrey-exchange').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
 
-    assert.equal(evaluateCapability(manifest, 'custody').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'custody').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'custody').protected, true);
     assert.equal(evaluateCapability(manifest, 'custody').owner, 'packages/custody');
-    assert.equal(evaluateCapability(manifest, 'market-surveillance').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'market-surveillance').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'market-surveillance').protected, true);
     assert.equal(
       evaluateCapability(manifest, 'market-surveillance').owner,
@@ -872,9 +872,8 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-30',
     );
     assert.ok(declared, 'CHUNK-30 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('custody'));
-    assert.ok(declared.missing.includes('market-surveillance'));
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
     assert.equal(declared.missing.includes('sunrey-coin'), false);
     assert.equal(declared.missing.includes('sunrey-exchange'), false);
     assert.equal(declared.missing.includes('sunrey-chain'), false);
@@ -883,21 +882,26 @@ describe('architecture constitution', () => {
 
     const custody = manifest.boundedContexts.find((context) => context.id === 'CUSTODY');
     assert.ok(custody);
-    assert.equal(custody.status, 'PLANNED');
+    assert.equal(custody.status, 'IMPLEMENTED');
     assert.deepEqual(custody.reservedPaths, ['packages/custody']);
 
     const surveillance = manifest.boundedContexts.find(
       (context) => context.id === 'MARKET_SURVEILLANCE',
     );
     assert.ok(surveillance);
-    assert.equal(surveillance.status, 'PLANNED');
+    assert.equal(surveillance.status, 'IMPLEMENTED');
     assert.deepEqual(surveillance.reservedPaths, ['packages/market-surveillance']);
+
+    const custodyPackage = manifest.packages.find((pkg) => pkg.id === 'packages/custody');
+    assert.ok(custodyPackage);
+    assert.equal(custodyPackage.financialStateMutation, true);
+    assert.equal(custodyPackage.executionAuthorityRequired, true);
 
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-coin')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/market-surveillance')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/market-surveillance')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-compliance-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/travel-rule-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-aml')), false);

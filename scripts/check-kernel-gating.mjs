@@ -87,6 +87,12 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'placeDigitalOrder', file: 'packages/sunrey-exchange/src/service.ts' },
   { symbol: 'cancelDigitalOrder', file: 'packages/sunrey-exchange/src/service.ts' },
   { symbol: 'halt', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'setExchangeControl', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'decideListing', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'applyAuthorizedRestriction', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'creditExternalDeposit', file: 'packages/custody/src/service.ts' },
+  { symbol: 'addDestination', file: 'packages/custody/src/service.ts' },
+  { symbol: 'initiateWithdrawal', file: 'packages/custody/src/service.ts' },
 ];
 
 const failures = [];

@@ -850,6 +850,37 @@ export type ExchangeReconciliationMismatchV1 = VersionedEvent<
   1,
   ExchangeAuditPayload
 >;
+export type ExchangeListingDecidedV1 = VersionedEvent<
+  'ExchangeListingDecided',
+  1,
+  ExchangeAuditPayload & { readonly listingId?: string; readonly listingVersion?: string }
+>;
+export type CustodyAuditPayload = {
+  readonly depositId?: string;
+  readonly noticeId?: string;
+  readonly journalId?: string;
+  readonly destinationId?: string;
+  readonly addressHash?: string;
+  readonly withdrawalId?: string;
+  readonly state?: string;
+  readonly recovered?: boolean;
+  readonly reason?: string;
+};
+export type CustodyDepositNoticeReceivedV1 = VersionedEvent<'CustodyDepositNoticeReceived', 1, CustodyAuditPayload>;
+export type CustodyDepositCreditedV1 = VersionedEvent<'CustodyDepositCredited', 1, CustodyAuditPayload>;
+export type CustodyDestinationAddedV1 = VersionedEvent<'CustodyDestinationAdded', 1, CustodyAuditPayload>;
+export type CustodyWithdrawalBlockedV1 = VersionedEvent<'CustodyWithdrawalBlocked', 1, CustodyAuditPayload>;
+export type CustodyWithdrawalUnknownV1 = VersionedEvent<'CustodyWithdrawalUnknown', 1, CustodyAuditPayload>;
+export type CustodyWithdrawalSettledV1 = VersionedEvent<'CustodyWithdrawalSettled', 1, CustodyAuditPayload>;
+export type SurveillanceAuditPayload = {
+  readonly alertId?: string;
+  readonly kind?: string;
+  readonly marketId?: string;
+  readonly caseId?: string;
+  readonly legalConclusion?: false;
+};
+export type SurveillanceAlertRaisedV1 = VersionedEvent<'SurveillanceAlertRaised', 1, SurveillanceAuditPayload>;
+export type SurveillanceCaseOpenedV1 = VersionedEvent<'SurveillanceCaseOpened', 1, SurveillanceAuditPayload>;
 
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
@@ -1217,7 +1248,16 @@ export type DomainEvent =
   | ExchangeTradeSettledV1
   | ExchangeMarketHaltedV1
   | ExchangeMarketResumedV1
-  | ExchangeReconciliationMismatchV1;
+  | ExchangeReconciliationMismatchV1
+  | ExchangeListingDecidedV1
+  | CustodyDepositNoticeReceivedV1
+  | CustodyDepositCreditedV1
+  | CustodyDestinationAddedV1
+  | CustodyWithdrawalBlockedV1
+  | CustodyWithdrawalUnknownV1
+  | CustodyWithdrawalSettledV1
+  | SurveillanceAlertRaisedV1
+  | SurveillanceCaseOpenedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

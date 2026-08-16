@@ -43,6 +43,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'oracle',
   'sunrey_chain',
   'exchange',
+  'custody',
+  'surveillance',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -279,6 +281,15 @@ export const EVENT_TYPE_NAMES = [
   'ExchangeMarketHalted',
   'ExchangeMarketResumed',
   'ExchangeReconciliationMismatch',
+  'ExchangeListingDecided',
+  'CustodyDepositNoticeReceived',
+  'CustodyDepositCredited',
+  'CustodyDestinationAdded',
+  'CustodyWithdrawalBlocked',
+  'CustodyWithdrawalUnknown',
+  'CustodyWithdrawalSettled',
+  'SurveillanceAlertRaised',
+  'SurveillanceCaseOpened',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -507,6 +518,15 @@ export const EVENT_SCHEMA_REFS = {
   ExchangeMarketHalted: 'solstice.exchange.market.halted/1',
   ExchangeMarketResumed: 'solstice.exchange.market.resumed/1',
   ExchangeReconciliationMismatch: 'solstice.exchange.reconciliation.mismatch/1',
+  ExchangeListingDecided: 'solstice.exchange.listing.decided/1',
+  CustodyDepositNoticeReceived: 'solstice.custody.deposit.notice_received/1',
+  CustodyDepositCredited: 'solstice.custody.deposit.credited/1',
+  CustodyDestinationAdded: 'solstice.custody.destination.added/1',
+  CustodyWithdrawalBlocked: 'solstice.custody.withdrawal.blocked/1',
+  CustodyWithdrawalUnknown: 'solstice.custody.withdrawal.unknown/1',
+  CustodyWithdrawalSettled: 'solstice.custody.withdrawal.settled/1',
+  SurveillanceAlertRaised: 'solstice.surveillance.alert.raised/1',
+  SurveillanceCaseOpened: 'solstice.surveillance.case.opened/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -735,6 +755,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ExchangeMarketHalted: 'exchange',
   ExchangeMarketResumed: 'exchange',
   ExchangeReconciliationMismatch: 'exchange',
+  ExchangeListingDecided: 'exchange',
+  CustodyDepositNoticeReceived: 'custody',
+  CustodyDepositCredited: 'custody',
+  CustodyDestinationAdded: 'custody',
+  CustodyWithdrawalBlocked: 'custody',
+  CustodyWithdrawalUnknown: 'custody',
+  CustodyWithdrawalSettled: 'custody',
+  SurveillanceAlertRaised: 'surveillance',
+  SurveillanceCaseOpened: 'surveillance',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

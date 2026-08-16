@@ -384,6 +384,24 @@ describe('versioned SQL migrations', () => {
     assert.equal(/APY|APR|market_cap|ticker_symbol/i.test(v025.sql), false);
   });
 
+  it('customer V026 persists custody and surveillance metadata without a second ledger or keys', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v026 = files.find((file) => file.version === 26);
+    assert.ok(v026);
+    assert.equal(v026.filename, 'V026__exchange_controls.sql');
+    assert.match(v026.sql, /CREATE SCHEMA IF NOT EXISTS custody/);
+    assert.match(v026.sql, /CREATE SCHEMA IF NOT EXISTS market_surveillance/);
+    assert.match(v026.sql, /CREATE TABLE custody.deposit/);
+    assert.match(v026.sql, /CREATE TABLE custody.withdrawal/);
+    assert.match(v026.sql, /CREATE TABLE custody.travel_rule_message/);
+    assert.match(v026.sql, /CREATE TABLE market_surveillance.alert/);
+    assert.match(v026.sql, /provider_balance_is_truth BOOLEAN NOT NULL CHECK \(provider_balance_is_truth = FALSE\)/);
+    assert.match(v026.sql, /legal_conclusion BOOLEAN NOT NULL CHECK \(legal_conclusion = FALSE\)/);
+    assert.equal(/private_key|mnemonic|seed_phrase/i.test(v026.sql), false);
+    assert.equal(/CREATE TABLE custody\.journal/i.test(v026.sql), false);
+    assert.equal(/\bbalance\b/i.test(v026.sql.replace(/provider_balance_is_truth/g, '')), false);
+  });
+
   it('customer V024 persists SunRey Chain metadata without a second ledger or live network', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v024 = files.find((file) => file.version === 24);

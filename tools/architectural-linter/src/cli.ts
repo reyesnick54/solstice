@@ -13,6 +13,8 @@ import { lintConsentBoundary } from './consent-guards.ts';
 import { lintCleanRoomBoundary } from './clean-room-guards.ts';
 import { lintInformationMarketBoundary } from './information-market-guards.ts';
 import { lintSunReyChainBoundary } from './sunrey-chain-guards.ts';
+import { lintCustodyBoundary } from './custody-guards.ts';
+import { lintSurveillanceBoundary } from './surveillance-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -33,6 +35,8 @@ const findings = [
   ...lintCleanRoomBoundary(root),
   ...lintInformationMarketBoundary(root),
   ...lintSunReyChainBoundary(root),
+  ...lintCustodyBoundary(root),
+  ...lintSurveillanceBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));
