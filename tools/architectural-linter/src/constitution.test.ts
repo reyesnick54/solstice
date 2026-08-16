@@ -930,6 +930,32 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus')), false);
   });
 
+  it('CHUNK-36 stops while sunrey-validators remains PLANNED', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-36',
+    );
+    assert.ok(declared, 'CHUNK-36 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, true);
+    assert.deepEqual(declared.missing, ['sunrey-validators']);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-stop.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-validator-lifecycle.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/validators')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus-engine')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/tendermint')), false);
+  });
+
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);

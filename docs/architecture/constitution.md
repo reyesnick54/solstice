@@ -736,15 +736,22 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
+Chunk 36 (validator identity, registry, bonding, and validator-set
+lifecycle) remains **stopped** / `PLANNED`. Capability
+`sunrey-validators` is `PLANNED` at owner `packages/sunrey-chain`.
+`evaluateChunkRequirements` returns `mustStop: true` and
+`missing: ['sunrey-validators']`. Stop record:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+`packages/validators`, `packages/staking`, or
+`packages/validator-v2`. Do not begin BFT voting.
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that
 owner. Historical stop: [`chunk-35-stop.md`](./chunk-35-stop.md).
 Resume: [`chunk-35-resume.md`](./chunk-35-resume.md). Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
-`packages/mempool`, or a second chain. Do not begin Chunk 36.
-Production consensus, public testnet, and mainnet remain not
-implemented.
+`packages/mempool`, or a second chain. Production consensus,
+public testnet, and mainnet remain not implemented.
 Chunk 34R implements the local development node inside
 `packages/sunrey-chain/rust`. The earlier documentation-only stop is
 historical: [`chunk-34-stop.md`](./chunk-34-stop.md). Resume:

@@ -222,8 +222,9 @@ This document describes only what is implemented and tested in this tree.
   `packages/sunrey-chain/rust`. P2P, mempool, and state sync are
   implemented at `packages/sunrey-chain/node` (Chunk 35R).
   Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
-  `docs/architecture/chunk-35-resume.md`. Production BFT is not
-  implemented.
+  `docs/architecture/chunk-35-resume.md`. Validator lifecycle
+  (Chunk 36) remains `PLANNED`: `docs/architecture/chunk-36-stop.md`.
+  Production BFT is not implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
@@ -372,6 +373,13 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-35-stop.md`. Resume:
   `docs/architecture/chunk-35-resume.md`. This is not a public
   testnet, mainnet, or production consensus.
+- SunRey validator identity, registry, bonding, and validator-set
+  lifecycle (Chunk 36). **Stopped** / `PLANNED`. Chunks 32R–35R
+  are on `main`. Capability `sunrey-validators` remains `PLANNED`.
+  See `docs/architecture/chunk-36-stop.md`. No four-node
+  development validator set, no consensus signer, no slashing, no
+  public staking, no MoonRey issuance. ADR-0018 remains
+  `NOT_IMPLEMENTED`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

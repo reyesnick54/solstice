@@ -49,6 +49,9 @@ const COMPETING_PATHS = [
   'packages/consensus-engine',
   'packages/tendermint',
   'packages/hotstuff',
+  'packages/validators',
+  'packages/staking',
+  'packages/validator-v2',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

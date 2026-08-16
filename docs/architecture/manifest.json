@@ -872,7 +872,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer, plus the Chunk 32R transaction protocol. Simulation only. Not the financial source of truth. Canonical ledger remains authoritative. No live RPC or production network."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer, plus the Chunk 32R transaction protocol. Simulation only. Not the financial source of truth. Canonical ledger remains authoritative. No live RPC or production network. Validator lifecycle remains PLANNED. See chunk-36-stop.md."
     },
     {
       "id": "packages/sunrey-exchange",
@@ -2105,12 +2105,17 @@
         "packages/blockchain-runtime",
         "packages/sunrey-node",
         "packages/sunrey-blockchain",
-        "packages/moonrey-chain"
+        "packages/moonrey-chain",
+        "packages/validators",
+        "packages/staking",
+        "packages/validator-v2",
+        "packages/consensus-engine",
+        "packages/tendermint"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Future consensus/runtime/storage/P2P are internal modules, not competing packages."
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Future consensus/runtime/storage/P2P/validators are internal modules, not competing packages. Chunk 36 validator lifecycle is PLANNED. See chunk-36-stop.md."
     },
     {
       "id": "sunrey-exchange",
@@ -2672,7 +2677,10 @@
     "packages/sunrey-protocol",
     "packages/sunrey-tx",
     "packages/moonrey",
-    "packages/moonrey-coin"
+    "packages/moonrey-coin",
+    "packages/validators",
+    "packages/staking",
+    "packages/validator-v2"
   ],
   "capabilities": [
     {
@@ -3029,7 +3037,14 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 35R P2P development network, mempool, and state sync at packages/sunrey-chain/node. Historical stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Production consensus is Chunk 36+."
+      "notes": "Chunk 35R P2P development network, mempool, and state sync at packages/sunrey-chain/node. Historical stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Validator lifecycle is Chunk 36 and remains PLANNED. See chunk-36-stop.md."
+    },
+    {
+      "id": "sunrey-validators",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 36 validator identity, registry, bonding, and validator-set lifecycle. PLANNED. Owner remains packages/sunrey-chain. Do not create packages/validators, packages/staking, packages/validator-v2, packages/consensus-engine, or packages/tendermint. No public staking. No slashing. No MoonRey issuance."
     }
   ],
   "boundedContexts": [
@@ -3278,7 +3293,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Production blockchain is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Validator lifecycle (Chunk 36) remains PLANNED. See chunk-36-stop.md. Production blockchain is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",

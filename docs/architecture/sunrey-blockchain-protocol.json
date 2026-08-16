@@ -90,6 +90,9 @@
     "interfaceFrozen": true,
     "algorithmImplemented": false,
     "productionConsensusImplemented": false,
+    "validatorLifecycleImplemented": false,
+    "developmentValidatorSetImplemented": false,
+    "productionValidatorSetImplemented": false,
     "finality": "deterministic",
     "byzantineTolerance": "f-less-than-n-over-3",
     "remainingExperiment": "library-versus-constrained-rust-tendermint-class-engine; timeout and block parameters; optional later DAG mempool behind the same interface"
@@ -121,7 +124,10 @@
     "packages/moonrey-chain",
     "packages/consensus-engine",
     "packages/tendermint",
-    "packages/hotstuff"
+    "packages/hotstuff",
+    "packages/validators",
+    "packages/staking",
+    "packages/validator-v2"
   ],
   "futureInternalModules": [
     "api-rpc",

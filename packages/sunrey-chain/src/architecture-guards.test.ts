@@ -60,6 +60,11 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-protocol')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-tx')), false);
     assert.equal(existsSync(join(ROOT, 'packages/moonrey')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/validators')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/staking')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/validator-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const protocol = JSON.parse(
       readFileSync(join(ROOT, 'docs/architecture/sunrey-blockchain-protocol.json'), 'utf8'),
