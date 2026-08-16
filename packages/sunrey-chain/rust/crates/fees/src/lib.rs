@@ -374,15 +374,12 @@ impl FeeIntent {
             return Err(RejectReason::SchemaInvalid);
         }
         let max_fee = decode_u128(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
-        let max_execution_units = decode_u128(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
-        let fee_asset = FeeAsset::parse(
-            &decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?,
-        )?;
+        let max_execution_units =
+            decode_u128(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
+        let fee_asset =
+            FeeAsset::parse(&decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?)?;
         let fee_payer = decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
-        Ok((
-            Self { max_fee, max_execution_units, fee_asset, fee_payer },
-            input,
-        ))
+        Ok((Self { max_fee, max_execution_units, fee_asset, fee_payer }, input))
     }
 
     pub fn into_budget(self, exemption: FeeExemption) -> ExecutionBudget {

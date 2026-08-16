@@ -100,6 +100,8 @@ jobs:
         run: npm run demo:sunrey-accountability
       - name: SunRey native asset four-validator demo
         run: npm run demo:sunrey-native-assets
+      - name: SunRey native fees demo
+        run: npm run demo:sunrey-fees
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo

@@ -518,10 +518,11 @@ impl LocalNode {
             );
             if usage.total() > budget.max_execution_units {
                 self.charge_fees(budget, usage, tx_id, "OUT_OF_EXECUTION_UNITS")?;
-                self.debit_native_fee(view, budget, self.fees.receipts
-                    .get(&hash_to_hex(&tx_id))
-                    .map(|r| r.actual_fee)
-                    .unwrap_or(0))?;
+                self.debit_native_fee(
+                    view,
+                    budget,
+                    self.fees.receipts.get(&hash_to_hex(&tx_id)).map(|r| r.actual_fee).unwrap_or(0),
+                )?;
                 commit_fee_view(view, &self.fees);
                 return Ok(());
             }
@@ -533,12 +534,8 @@ impl LocalNode {
             }
             self.sync_fee_accounts(payload);
             self.charge_fees(budget, usage, tx_id, "APPLIED")?;
-            let actual = self
-                .fees
-                .receipts
-                .get(&hash_to_hex(&tx_id))
-                .map(|r| r.actual_fee)
-                .unwrap_or(0);
+            let actual =
+                self.fees.receipts.get(&hash_to_hex(&tx_id)).map(|r| r.actual_fee).unwrap_or(0);
             self.debit_native_fee(view, budget, actual)?;
             commit_fee_view(view, &self.fees);
             return Ok(());
@@ -566,7 +563,8 @@ impl LocalNode {
             sunrey_native_assets::NativeAssetOp::Transfer
                 if payload.asset_id == sunrey_native_assets::NativeAssetId::SunReyCoin =>
             {
-                let _ = self.fees.transfer(&payload.actor_id, &payload.counterparty, payload.quantity);
+                let _ =
+                    self.fees.transfer(&payload.actor_id, &payload.counterparty, payload.quantity);
             }
             _ => {}
         }

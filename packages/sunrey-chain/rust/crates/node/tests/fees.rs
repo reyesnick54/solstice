@@ -105,9 +105,7 @@ fn faucet_transfer_receipt_and_over_budget() {
     node.submit_signed(faucet).unwrap();
     node.produce_block().unwrap();
     assert!(node.fees.position("alice", FeeAsset::SunreyCoin).available >= 50_000);
-    assert!(
-        node.native_assets().unwrap().available("alice", NativeAssetId::SunReyCoin) >= 50_000
-    );
+    assert!(node.native_assets().unwrap().available("alice", NativeAssetId::SunReyCoin) >= 50_000);
 
     let transfer = node
         .sign_dev_tx(
