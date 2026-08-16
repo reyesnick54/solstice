@@ -739,7 +739,7 @@ impl ConsensusEngine {
                 votes.push(vote);
             }
         }
-        votes.sort_by(|a, b| a.validator_id.0.cmp(&b.validator_id.0));
+        votes.sort_by_key(|a| a.validator_id.0);
         if let Ok(merged) = CommitCertificate::from_votes(
             existing.network_id,
             existing.chain_id,
