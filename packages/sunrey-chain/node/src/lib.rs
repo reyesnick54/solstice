@@ -22,6 +22,7 @@ pub mod identity;
 pub mod mempool;
 pub mod messages;
 pub mod metrics;
+pub mod native_assets;
 pub mod node;
 pub mod operator;
 pub mod peer;
@@ -39,7 +40,10 @@ pub use demo::{
 pub use error::{HandshakeRejectReason, NodeError};
 pub use identity::{NodeId, PeerAddress, PeerIdentity, PeerPublicKey, PeerSession};
 pub use node::{ConsensusNodeConfig, DevelopmentNode, NodeConfig, NodeEvent};
-pub use validator_demo::{run_four_validator_devnet, FourValidatorReport};
+pub use validator_demo::{
+    run_four_validator_devnet, run_native_asset_devnet, FourValidatorReport,
+    NativeAssetDevnetReport,
+};
 
 #[cfg(test)]
 mod boundary_tests {

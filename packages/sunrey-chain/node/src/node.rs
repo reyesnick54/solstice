@@ -361,6 +361,10 @@ impl DevelopmentNode {
         self.chain.lock().state_root()
     }
 
+    pub fn native_assets(&self) -> sunrey_native_assets::NativeAssetLedger {
+        self.chain.lock().assets.clone()
+    }
+
     pub fn finalized_height(&self) -> u64 {
         if let Some(consensus) = &self.consensus {
             consensus.lock().engine.finalized_height()

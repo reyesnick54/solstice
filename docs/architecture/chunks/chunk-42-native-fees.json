@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-42",
+  "title": "SunRey Blockchain Native Fees, Execution Metering and Resource Economics",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-validators",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets",
+    "sunrey-native-fees"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript fee engine) and packages/sunrey-chain/rust/crates/fees (local-node metering). Deterministic resource units, integer fee schedule, reservation/charge/release, disposition, validator reward accrual, height-activated fee parameters. No fiat ledger debit. No public staking-yield. MoonRey fee asset is policy-ready and disabled. evaluateChunkRequirements returns mustStop: false. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
+}

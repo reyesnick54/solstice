@@ -83,7 +83,12 @@ export function lintSunReyBlockchainArchitecture(root: string): Finding[] {
     tickers?: { sunreyCoin?: string; moonreyCoin?: string };
     nativeAssets?: {
       sunreyCoin?: { distinctFromMoonRey?: boolean; tickerStatus?: string };
-      moonreyCoin?: { distinctFromSunReyCoin?: boolean; tickerStatus?: string; implemented?: boolean };
+      moonreyCoin?: {
+        distinctFromSunReyCoin?: boolean;
+        tickerStatus?: string;
+        implemented?: boolean;
+        productionIssuanceImplemented?: boolean;
+      };
     };
     legalStatusAutoPromote?: boolean;
     counselStatus?: string;
@@ -118,9 +123,15 @@ export function lintSunReyBlockchainArchitecture(root: string): Finding[] {
   if (
     protocol.nativeAssets?.sunreyCoin?.distinctFromMoonRey !== true ||
     protocol.nativeAssets?.moonreyCoin?.distinctFromSunReyCoin !== true ||
-    protocol.nativeAssets?.moonreyCoin?.implemented !== false
+    protocol.nativeAssets?.moonreyCoin?.productionIssuanceImplemented !== false
   ) {
-    findings.push(finding('duplicate-protected-system', PROTOCOL_REL, 'MoonRey must remain distinct and unimplemented'));
+    findings.push(
+      finding(
+        'duplicate-protected-system',
+        PROTOCOL_REL,
+        'MoonRey must remain distinct; production issuance remains unimplemented',
+      ),
+    );
   }
   if (protocol.legalStatusAutoPromote !== false || protocol.counselStatus === 'CONFIRMED_BY_COUNSEL') {
     findings.push(finding('unauthorized-mutator', PROTOCOL_REL, 'legal statuses must not auto-promote to CONFIRMED_BY_COUNSEL'));

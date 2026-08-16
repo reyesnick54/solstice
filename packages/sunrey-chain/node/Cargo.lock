@@ -944,6 +944,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "sunrey-productive",
+ "sunrey-native-assets",
  "thiserror 2.0.20",
  "tokio",
  "tracing",
@@ -952,12 +953,23 @@ dependencies = [
 
 [[package]]
 name = "sunrey-productive"
+name = "sunrey-native-assets"
 version = "0.1.0"
 dependencies = [
  "hex",
  "serde",
  "serde_json",
  "sha2",
+ "sunrey-protocol",
+ "thiserror 1.0.69",
+]
+
+[[package]]
+name = "sunrey-protocol"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
  "thiserror 1.0.69",
 ]
 

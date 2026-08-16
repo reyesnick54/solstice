@@ -8,9 +8,20 @@ use sunrey_consensus::{
     development_secret, four_validator_set, ConsensusEngine, ConsensusParams, EngineConfig,
     EnginePaths, FourValidatorHarness, MemoryApp,
 };
+use sunrey_crypto::{development_fixture_secret, CryptoSuite, DevEd25519Sha256Suite};
 use sunrey_crypto::{development_fixture_secret, DevEd25519Sha256Suite};
+use sunrey_execution::encode_issue_bytes;
 use sunrey_governance::VoteChoice;
+use sunrey_native_assets::{
+    faucet_notice, AssetQuantity, IssuanceAuthorization, NativeAssetId, NativeAssetOp,
+    NativeAssetPayload, DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER,
+};
 use sunrey_node::{LocalNode, DEV_BLOCK_PRODUCER, NODE_ROLE};
+use sunrey_oracle::{
+    development_compute_feed, development_energy_feed, seed_secret, sign_observation,
+    snapshot_hash, FactType, OracleObservation, OracleProviderRecord, OracleType, ProviderStatus,
+    UnitCode,
+};
 use sunrey_protocol::{
     encode_evidence_anchor_payload, encode_system_payload, hash_to_hex, transaction_id,
     EvidenceAnchorPayload, SystemPayload, TransactionFamily, UnsignedTransaction,
@@ -103,6 +114,16 @@ enum Command {
     Moonrey {
         #[command(subcommand)]
         command: MoonreyCommand,
+    Oracle {
+        #[command(subcommand)]
+        command: OracleCommand,
+    Asset {
+        #[command(subcommand)]
+        command: AssetCommand,
+    },
+    Fees {
+        #[command(subcommand)]
+        command: FeesCommand,
     },
 }
 
@@ -203,6 +224,90 @@ enum ProductiveCommand {
         id: String,
     },
     Graph {
+enum OracleCommand {
+    Providers {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Feeds {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Observation {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    Fact {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    Facts {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        feed: Option<String>,
+    },
+    Disputes {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Quality {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Demo {
+enum AssetCommand {
+    List {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Show {
+        #[arg(long)]
+        data_dir: PathBuf,
+        asset: String,
+    },
+    Supply {
+        #[arg(long)]
+        data_dir: PathBuf,
+        asset: String,
+    },
+    Holdings {
+        #[arg(long)]
+        data_dir: PathBuf,
+        actor: String,
+    },
+    Locks {
+        #[arg(long)]
+        data_dir: PathBuf,
+        actor: String,
+    },
+    Transfer {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        from: String,
+        #[arg(long)]
+        to: String,
+        #[arg(long)]
+        asset: String,
+        #[arg(long)]
+        quantity: String,
+    },
+    Faucet {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        asset: String,
+        #[arg(long)]
+        recipient: String,
+        #[arg(long)]
+        quantity: String,
+        #[arg(long)]
+        auth_id: String,
+    },
+    Reconciliation {
         #[arg(long)]
         data_dir: PathBuf,
     },
@@ -221,6 +326,35 @@ enum MoonreyCommand {
         id: Option<String>,
     },
     Attribution {
+enum FeesCommand {
+    Schedule {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Estimate {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value_t = 240)]
+        bytes: u128,
+        #[arg(long, default_value_t = 1)]
+        signatures: u128,
+    },
+    Receipt {
+        #[arg(long)]
+        data_dir: PathBuf,
+        tx: String,
+    },
+    Resources {
+        #[arg(long)]
+        data_dir: PathBuf,
+        tx: String,
+    },
+    Rewards {
+        #[arg(long)]
+        data_dir: PathBuf,
+        validator: String,
+    },
+    Policy {
         #[arg(long)]
         data_dir: PathBuf,
     },
@@ -377,6 +511,9 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         Command::Protocol { command } => return run_protocol(command),
         Command::Productive { command } => return run_productive(command),
         Command::Moonrey { command } => return run_moonrey(command),
+        Command::Oracle { command } => return run_oracle(command),
+        Command::Asset { command } => return run_asset(command),
+        Command::Fees { command } => return run_fees(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -486,6 +623,295 @@ fn run_governance(command: GovernanceCommand) -> Result<(), Box<dyn std::error::
         GovernanceCommand::History { data_dir } => {
             let node = LocalNode::open(&data_dir)?;
             println!("{}", serde_json::to_string_pretty(&node.governance.audit)?);
+        }
+    }
+    Ok(())
+}
+
+fn run_oracle(command: OracleCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        OracleCommand::Providers { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.providers)?);
+        }
+        OracleCommand::Feeds { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.feeds)?);
+        }
+        OracleCommand::Observation { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let row = node.oracle.observations.get(&id).ok_or("observation not found")?;
+            println!("{}", serde_json::to_string_pretty(row)?);
+        }
+        OracleCommand::Fact { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let row = node.oracle.facts.get(&id).ok_or("fact not found")?;
+            println!("{}", serde_json::to_string_pretty(row)?);
+        }
+        OracleCommand::Facts { data_dir, feed } => {
+            let node = LocalNode::open(&data_dir)?;
+            let rows: Vec<_> = node
+                .oracle
+                .facts
+                .values()
+                .filter(|fact| feed.as_ref().map(|id| fact.feed_id == *id).unwrap_or(true))
+                .collect();
+            println!("{}", serde_json::to_string_pretty(&rows)?);
+        }
+        OracleCommand::Disputes { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.disputes)?);
+        }
+        OracleCommand::Quality { data_dir } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.quality_report())?);
+        }
+        OracleCommand::Demo { data_dir } => {
+            let mut node = if data_dir.join("genesis.bin").exists() {
+                LocalNode::open(&data_dir)?
+            } else {
+                LocalNode::init(&data_dir)?
+            };
+            run_oracle_demo(&mut node)?;
+            node.oracle.persist(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.metrics_json())?);
+fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        AssetCommand::List { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.registry.list_public())?);
+        }
+        AssetCommand::Show { data_dir, asset } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let id = NativeAssetId::parse(&asset)?;
+            let def = assets.registry.get(id)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "asset_id": def.asset_id.as_str(),
+                    "display_name": def.display_name,
+                    "ticker_status": def.ticker_status,
+                    "precision": def.precision,
+                    "status": def.status.as_str(),
+                    "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+                    "application_supply_imported": false,
+                }))?
+            );
+        }
+        AssetCommand::Supply { data_dir, asset } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let id = NativeAssetId::parse(&asset)?;
+            println!("{}", serde_json::to_string_pretty(&assets.public_supply(id))?);
+        }
+        AssetCommand::Holdings { data_dir, actor } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.holdings_for(&actor))?);
+        }
+        AssetCommand::Locks { data_dir, actor } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.locks_for(&actor))?);
+        }
+        AssetCommand::Transfer { data_dir, from, to, asset, quantity } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            let id = NativeAssetId::parse(&asset)?;
+            let qty: u128 = quantity.parse()?;
+            let payload = NativeAssetPayload::transfer(&from, to, AssetQuantity::new(id, qty)?);
+            let nonce = node.store.view.next_nonce(&development_fixture_secret().public_key());
+            let unsigned = UnsignedTransaction {
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+                codec_id: SRCB_CODEC_ID.to_string(),
+                schema_version: SCHEMA_VERSION,
+                family: TransactionFamily::NativeAsset,
+                nonce,
+                idempotency_key: format!("xfer-{from}-{nonce}"),
+                payload: payload.encode(),
+            };
+            let tx = node.sign_dev_tx(unsigned, &development_fixture_secret())?;
+            let tx_id = node.submit_signed(tx)?;
+            let block = node.produce_block()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "tx_id": tx_id,
+                    "block": block,
+                }))?
+            );
+        }
+        AssetCommand::Faucet { data_dir, asset, recipient, quantity, auth_id } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            if node.genesis().production_network_enabled {
+                return Err("faucet forbidden: production network".into());
+            }
+            println!("{}", serde_json::to_string_pretty(&faucet_notice())?);
+            let id = NativeAssetId::parse(&asset)?;
+            let qty: u128 = quantity.parse()?;
+            let payload = NativeAssetPayload {
+                version: 1,
+                op: NativeAssetOp::Issue,
+                actor_id: "dev.faucet".to_string(),
+                asset_id: id,
+                quantity: qty,
+                counterparty: recipient.clone(),
+                lock_id: String::new(),
+                lock_purpose: None,
+                expiration_height: None,
+                authorized_releaser: String::new(),
+                authorization_id: auth_id.clone(),
+                issuance_policy: DEVELOPMENT_FAUCET_POLICY.to_string(),
+                proof_reference: format!("faucet:{auth_id}"),
+                economic_unit_label: "DEVELOPMENT_ECONOMIC_UNIT".to_string(),
+            };
+            let auth = IssuanceAuthorization {
+                authorization_id: auth_id,
+                asset_id: id,
+                recipient,
+                quantity: qty,
+                issuance_policy: DEVELOPMENT_FAUCET_POLICY.to_string(),
+                proof_reference: payload.proof_reference.clone(),
+                governance_policy_reference: "gov.native.dev.v1".to_string(),
+                expiration_height: 10_000,
+                issuer: DEV_FAUCET_ISSUER.to_string(),
+                suite_id: String::new(),
+                algorithm_id: String::new(),
+                public_key: vec![],
+                signature: vec![],
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+            };
+            let bytes = encode_issue_bytes(&payload, auth, &development_fixture_secret())?;
+            let nonce = node.store.view.next_nonce(&development_fixture_secret().public_key());
+            let unsigned = UnsignedTransaction {
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+                codec_id: SRCB_CODEC_ID.to_string(),
+                schema_version: SCHEMA_VERSION,
+                family: TransactionFamily::NativeAsset,
+                nonce,
+                idempotency_key: format!("faucet-{nonce}"),
+                payload: bytes,
+            };
+            let tx = node.sign_dev_tx(unsigned, &development_fixture_secret())?;
+            let tx_id = node.submit_signed(tx)?;
+            let block = node.produce_block()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "environment": "development/simulation",
+                    "tx_id": tx_id,
+                    "block": block,
+                    "economic_unit_label": "DEVELOPMENT_ECONOMIC_UNIT",
+                }))?
+            );
+        }
+        AssetCommand::Reconciliation { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            assets.reconcile_all()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "matched": true,
+                    "sunrey": assets.public_supply(NativeAssetId::SunReyCoin),
+                    "moonrey": assets.public_supply(NativeAssetId::MoonReyCoin),
+                    "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+                }))?
+            );
+        }
+    }
+    Ok(())
+}
+
+fn run_oracle_demo(node: &mut LocalNode) -> Result<(), Box<dyn std::error::Error>> {
+    let suite = DevEd25519Sha256Suite;
+    for (label, class) in [
+        ("energy-a", OracleType::InstitutionalDataProvider),
+        ("energy-b", OracleType::RegulatedProvider),
+        ("energy-c", OracleType::PublicDataProvider),
+    ] {
+        let secret = seed_secret(label);
+        node.oracle.register_provider(OracleProviderRecord {
+            oracle_id: format!("oracle_{label}"),
+            controller_actor: format!("actor_{label}"),
+            oracle_type: class,
+            public_key: secret.public_key(),
+            crypto_suite: suite.suite_id().to_string(),
+            authorized_feed_types: vec![FactType::EnergyProduction, FactType::ComputeUsage],
+            status: ProviderStatus::Active,
+            activation_height: 1,
+        })?;
+    }
+    node.oracle.register_feed(development_energy_feed())?;
+    node.oracle.register_feed(development_compute_feed())?;
+    for (label, value) in ["energy-a", "energy-b", "energy-c"].iter().zip([100u64, 102, 104]) {
+        let observation = sign_observation(
+            &suite,
+            &seed_secret(label),
+            OracleObservation {
+                observation_id: String::new(),
+                oracle_id: format!("oracle_{label}"),
+                feed_id: "feed_energy_production_sim".into(),
+                subject: "plant_sim_1".into(),
+                mantissa: value,
+                unit: UnitCode::Mwh,
+                measurement_start: node.oracle.now_unix,
+                measurement_end: node.oracle.now_unix + 60,
+                observation_time: node.oracle.now_unix + 30,
+                valid_until: node.oracle.now_unix + 3_600,
+                sequence: 1,
+                weight: 1,
+                network_id: node.oracle.network_id.clone(),
+                chain_id: node.oracle.chain_id.clone(),
+                crypto_suite: String::new(),
+                signature: Vec::new(),
+            },
+        )?;
+        node.oracle.submit_observation(&suite, observation)?;
+    }
+    let fact = node.oracle.finalize_window(
+        "feed_energy_production_sim",
+        "plant_sim_1",
+        node.oracle.now_unix,
+        node.oracle.now_unix + 60,
+    )?;
+    println!(
+        "energy_fact_id={} value={} snapshot={}",
+        fact.fact_id,
+        fact.aggregated_value,
+        snapshot_hash(&node.oracle)
+    );
+fn run_fees(command: FeesCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        FeesCommand::Schedule { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_schedule_json())?);
+        }
+        FeesCommand::Estimate { data_dir, bytes, signatures } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_estimate(bytes, signatures))?);
+        }
+        FeesCommand::Receipt { data_dir, tx } => {
+            let node = LocalNode::open(&data_dir)?;
+            let receipt = node.fees_receipt(&tx).ok_or("fee receipt not found")?;
+            println!("{}", serde_json::to_string_pretty(&receipt)?);
+        }
+        FeesCommand::Resources { data_dir, tx } => {
+            let node = LocalNode::open(&data_dir)?;
+            let resources = node.fees_resources(&tx).ok_or("resource usage not found")?;
+            println!("{}", serde_json::to_string_pretty(&resources)?);
+        }
+        FeesCommand::Rewards { data_dir, validator } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_rewards(&validator))?);
+        }
+        FeesCommand::Policy { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_policy_json())?);
         }
     }
     Ok(())

@@ -16,6 +16,7 @@ pub enum TransactionFamily {
     EvidenceAnchor,
     NativeAsset,
     Identity,
+    Oracle,
 }
 
 impl TransactionFamily {
@@ -25,6 +26,7 @@ impl TransactionFamily {
             Self::EvidenceAnchor => "EVIDENCE_ANCHOR",
             Self::NativeAsset => "NATIVE_ASSET",
             Self::Identity => "IDENTITY",
+            Self::Oracle => "ORACLE",
         }
     }
 
@@ -34,6 +36,7 @@ impl TransactionFamily {
             "EVIDENCE_ANCHOR" => Ok(Self::EvidenceAnchor),
             "NATIVE_ASSET" => Ok(Self::NativeAsset),
             "IDENTITY" => Ok(Self::Identity),
+            "ORACLE" => Ok(Self::Oracle),
             _ => Err(RejectReason::SchemaInvalid),
         }
     }

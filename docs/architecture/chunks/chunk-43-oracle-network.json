@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-43",
+  "title": "SunRey Sovereign Oracle Network and Verified Economic Fact Protocol",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "crypto-suite-registry",
+    "sunrey-validators",
+    "sunrey-protocol-governance",
+    "sunrey-oracle-network"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript oracle engine) and packages/sunrey-chain/rust/crates/oracle (local-node oracle module). Signed OracleObservation transactions. Deterministic multi-source aggregation. VerifiedEconomicFact is not money and does not authorize MoonRey issuance. Consensus never calls HTTP or external APIs. Chunk 42 general resource metering is not a standalone capability on main; oracle submissions consume the integer resource-meter port in this owner. evaluateChunkRequirements returns mustStop: false. Do not create packages/oracle, packages/sunrey-oracle, or packages/oracle-network."
+}

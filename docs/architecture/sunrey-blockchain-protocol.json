@@ -44,8 +44,12 @@
       "tickerStatus": "NOT_ASSIGNED",
       "distinctFromMoonRey": true,
       "currentAuthority": "canonical-ledger",
-      "futureNativeChainAuthority": "requires-explicit-later-adr",
+      "applicationAuthority": "CURRENT_APPLICATION_AUTHORITY",
+      "nativeBlockchainAuthority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+      "futureNativeChainAuthority": "development-native-units-distinct-from-application",
+      "applicationSupplyImported": false,
       "implemented": true,
+      "nativeChainImplemented": true,
       "owner": "packages/sunrey-coin"
     },
     "moonreyCoin": {
@@ -58,6 +62,13 @@
       "developmentIssuanceImplemented": true,
       "developmentIssuanceOwner": "packages/sunrey-chain",
       "developmentIssuanceSource": "verified-productive-contribution",
+      "currentAuthority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+      "applicationAuthority": null,
+      "nativeBlockchainAuthority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+      "futureNativeChainAuthority": "sunrey-blockchain-development-units",
+      "implemented": true,
+      "nativeChainImplemented": true,
+      "productionIssuanceImplemented": false,
       "owner": "packages/sunrey-chain",
       "competingPackageForbiddenInThisChunk": true
     }
@@ -104,7 +115,12 @@
     "primary": "protocol-native-modules-and-application-specific-handlers",
     "laterExtension": "constrained-deterministic-wasm",
     "genericSmartContractsBypassPolicy": false,
-    "evmSemantics": false
+    "evmSemantics": false,
+    "resourceMeteringImplemented": true,
+    "nativeFeesImplemented": true,
+    "feeArithmetic": "unsigned-integer-only",
+    "defaultFeeAsset": "SUNREY_COIN",
+    "moonreyFeeAssetEnabled": false
   },
   "forbiddenFlags": [
     "MAINNET_ENABLED=true",
@@ -130,7 +146,10 @@
     "packages/hotstuff",
     "packages/validators",
     "packages/staking",
-    "packages/validator-v2"
+    "packages/validator-v2",
+    "packages/fees",
+    "packages/sunrey-fees",
+    "packages/gas"
   ],
   "futureInternalModules": [
     "api-rpc",

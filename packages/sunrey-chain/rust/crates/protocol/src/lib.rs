@@ -16,8 +16,8 @@ pub use block::{
     BLOCK_VERSION_V1,
 };
 pub use codec::{
-    decode_bool, decode_bytes, decode_string, decode_u32, decode_u64, encode_bool, encode_bytes,
-    encode_string, encode_u32, encode_u64, CodecError,
+    decode_bool, decode_bytes, decode_string, decode_u128, decode_u32, decode_u64, encode_bool,
+    encode_bytes, encode_string, encode_u128, encode_u32, encode_u64, CodecError,
 };
 pub use commitments::{
     block_id, domain_payload, genesis_hash, merkle_root, state_root, transaction_id,
@@ -49,6 +49,8 @@ pub const DOMAIN_CRYPTO_POLICY: &str = "sunrey.cryptopolicy.v1";
 pub const DOMAIN_MODULES: &str = "sunrey.modules.v1";
 pub const DOMAIN_CODECS: &str = "sunrey.codecs.v1";
 pub const DOMAIN_GOVERNANCE: &str = "sunrey.gov.plan.v1";
+pub const DOMAIN_ORACLE: &str = "sunrey.oracle.v1";
+pub const DOMAIN_NATIVE_ASSET: &str = "sunrey.nativeasset.v1";
 
 pub type Hash32 = [u8; HASH_SIZE];
 

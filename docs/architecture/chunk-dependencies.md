@@ -106,6 +106,9 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-issuance-engine | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -302,8 +305,24 @@ Chunk 40 implements development protocol governance at
 `packages/sunrey-chain`. Capability `sunrey-protocol-governance`
 is `IMPLEMENTED`. See
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Chunk 43 implements the sovereign oracle network at
+`packages/sunrey-chain`. Capability `sunrey-oracle-network` is
+`IMPLEMENTED`. See
+[`chunk-43-oracle-network.md`](./chunk-43-oracle-network.md).
+Consensus never calls external systems. VerifiedEconomicFacts are
+not money and do not authorize MoonRey issuance.
 Do not create `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
+Chunk 41 implements dual native assets at
+`packages/sunrey-chain`. Capability `sunrey-native-assets` is
+`IMPLEMENTED`. See
+[`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
+Chunk 42 implements native fees and resource metering at
+`packages/sunrey-chain`. Capability `sunrey-native-fees` is
+`IMPLEMENTED`. See
+[`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Do not create `packages/validators`, `packages/staking`,
+`packages/validator-v2`, or `packages/moonrey-coin`.
 Chunk 37 implements the development Tendermint-class BFT engine at
 `packages/sunrey-chain/rust/crates/consensus`. Capability
 `blockchain-consensus` is `IMPLEMENTED`.

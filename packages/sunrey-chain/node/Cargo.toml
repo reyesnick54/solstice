@@ -30,8 +30,13 @@ path = "src/bin/sunrey-validator-devnet.rs"
 name = "sunrey-validator-node"
 path = "src/bin/sunrey-validator-node.rs"
 
+[[bin]]
+name = "sunrey-native-asset-demo"
+path = "src/bin/sunrey-native-asset-demo.rs"
+
 [dependencies]
 clap = { version = "=4.5.23", features = ["derive"] }
+sunrey-native-assets = { path = "../rust/crates/native-assets" }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"
 parking_lot = "0.12"

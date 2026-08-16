@@ -19,12 +19,30 @@
     "sunrey.valset.v1",
     "sunrey.consparams.v1",
     "sunrey.schema.v1",
-    "sunrey.cryptopolicy.v1"
+    "sunrey.cryptopolicy.v1",
+    "sunrey.fees.schedule.v1",
+    "sunrey.fees.asset-policy.v1",
+    "sunrey.fees.disposition.v1",
+    "sunrey.fees.block-limits.v1",
+    "sunrey.fees.receipt.v1"
   ],
   "transactionFamilies": {
-    "activated": ["SYSTEM", "EVIDENCE_ANCHOR"],
-    "structuralOnly": ["NATIVE_ASSET"],
+    "activated": ["SYSTEM", "EVIDENCE_ANCHOR", "NATIVE_ASSET"],
+    "structuralOnly": [],
     "notActivated": ["IDENTITY"]
+  },
+  "fees": {
+    "resourceClasses": [
+      "COMPUTE_UNITS",
+      "STATE_READ_UNITS",
+      "STATE_WRITE_UNITS",
+      "TRANSACTION_BYTE_UNITS",
+      "SIGNATURE_VERIFY_UNITS",
+      "CRYPTOGRAPHIC_PROOF_UNITS"
+    ],
+    "defaultFeeAsset": "SUNREY_COIN",
+    "moonreyFeeAssetEnabled": false,
+    "arithmetic": "unsigned-integer-only"
   },
   "envelope": [
     "tag",
@@ -54,6 +72,6 @@
   ],
   "nativeAssets": {
     "SUNREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0 },
-    "MOONREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0, "implemented": false }
+    "MOONREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0, "implemented": true }
   }
 }

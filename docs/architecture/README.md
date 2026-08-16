@@ -56,6 +56,12 @@
   — equivocation evidence, jail, tombstone, simulation penalties
 - [Chunk 40 protocol governance](./chunk-40-protocol-governance.md) —
   height-activated UpgradePlan. No governance token.
+- [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
+  signed observations and VerifiedEconomicFacts. Not money.
+- [Oracle economic fact spec](./oracle-economic-fact-spec.md)
+- [Chunk 42 native fees](./chunk-42-native-fees.md) —
+  resource metering, integer fee schedule, reservation/charge/release
+- [SunRey resource metering](./sunrey-resource-metering.md)
 - [Chunk 35 stop (historical)](./chunk-35-stop.md) — original
   documentation-only gate before the local node existed
 - [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync

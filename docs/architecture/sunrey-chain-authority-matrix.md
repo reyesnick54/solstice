@@ -38,6 +38,10 @@ that row. The second is an anchor, operational copy, or projection.
 | SunRey Coin (current simulation units) | Canonical Ledger (`packages/sunrey-coin`) | Chain as a second coin ledger; invented ticker |
 | SunRey Coin (future native chain units) | Not migrated. Requires a later ADR. Until then Canonical Ledger | Silent dual-authority |
 | MoonRey Coin | Development issuance on SunRey Blockchain from a finalized `VerifiedProductiveContribution` (Chunk 44). Public ticker `NOT_ASSIGNED`. Production MoonRey Coin product remains unimplemented. | Alias of SunRey Coin; invented ticker; fiat substitute; arbitrary mint |
+| SunRey Coin (current simulation units) | Canonical Ledger (`packages/sunrey-coin`) — `CURRENT_APPLICATION_AUTHORITY` | Chain as a second coin ledger; invented ticker; silent import onto the chain |
+| SunRey Coin (development native chain units) | SunRey Blockchain development state — `NATIVE_BLOCKCHAIN_AUTHORITY`. Distinct from application supply. Not a completed migration. | Treating development units as migrated application balances; invented ticker |
+| SunRey Coin (future production native chain units) | Not migrated. Requires a later ADR and Kernel-gated manifest. Until then Canonical Ledger | Silent dual-authority |
+| MoonRey Coin (development native chain units) | SunRey Blockchain development state — `NATIVE_BLOCKCHAIN_AUTHORITY`. Ticker `NOT_ASSIGNED`. Production economic issuance is later. | Alias of SunRey Coin; invented ticker; fiat substitute; `packages/moonrey-coin` |
 | Identity (legal identity, KYC metadata, ActorContext) | Solstice Identity (`packages/identity`) | Chain as KYC store; PDV as identity authority |
 | Identity references on-chain | SunRey Blockchain (scoped commitments) after write; Identity remains the person/business authority | Universal public person id |
 | Consent (grant, revoke, purpose, permits) | Consent Ledger | Chain as the consent database; PDV as consent |

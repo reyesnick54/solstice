@@ -5,8 +5,10 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN / SUNREY_COIN
 - Depends on: ADR-0019, ADR-0020, ADR-0031
-- Implementation status: NOT_IMPLEMENTED for chain-native units;
-  SunRey Coin simulation on the canonical Ledger remains IMPLEMENTED
+- Implementation status: IMPLEMENTED for development chain-native
+  units at `packages/sunrey-chain` (Chunk 41). Application SunRey
+  Coin on the canonical Ledger remains IMPLEMENTED and is not
+  migrated. Public tickers remain `NOT_ASSIGNED`.
 
 ## Context
 
@@ -100,6 +102,7 @@ mainnet premine.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for distinct assets, integer units, and
-Ledger-first SunRey Coin authority. Chain-native units: **not
-implemented**. Tickers: **not assigned**. Legal confidence:
-`RESEARCH_REQUIRED`.
+Ledger-first application SunRey Coin authority. Development
+chain-native units: **implemented** (Chunk 41) under
+`NATIVE_BLOCKCHAIN_AUTHORITY` without importing application supply.
+Tickers: **not assigned**. Legal confidence: `RESEARCH_REQUIRED`.
