@@ -73,6 +73,26 @@ Every `LIVE_*` flag remains `false`.
 - Passkeys / WebAuthn
 - Any quantum-proof or certification claim
 
+## Exact CI
+
+Local `npm run ci` on this branch: **ok**.
+
+```
+architectural invariants: ok
+extraction dry-run: ok (32 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 526 pass, 0 fail
+demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
+`false`.
+
 ## Claims that are not made
 
 - The system is not quantum-proof.
