@@ -1,7 +1,11 @@
-# Chunk 34 stop record
+# Chunk 34 stop record (historical)
 
-This file records a **process-gate stop**, not a SunRey sovereign
-blockchain node implementation.
+This file is a **historical process-gate stop**. Chunk 34R implements
+the local development node; see
+[`chunk-34-resume.md`](./chunk-34-resume.md).
+
+This file originally recorded a **process-gate stop**, not a SunRey
+sovereign blockchain node implementation.
 
 Task: SunRey Sovereign Blockchain Node Core and Deterministic State
 Machine — local development/simulation node that receives canonical

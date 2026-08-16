@@ -16,18 +16,10 @@ function chunkFiles(prefix: string): string[] {
     .sort();
 }
 
-function architectureDocs(prefix: string): string[] {
-  return readdirSync(ARCH_DIR)
-    .filter((name) => name.startsWith(prefix) && name.endsWith('.md'))
-    .sort();
-}
 
-describe('CHUNK-33 process-gate stop until Chunks 31 and 32 merge', () => {
-  it('stops because CHUNK-31 and CHUNK-32 are not merged', () => {
-    assert.deepEqual(chunkFiles('chunk-31-'), []);
-    assert.deepEqual(chunkFiles('chunk-32-'), []);
-    assert.deepEqual(architectureDocs('chunk-31-'), []);
-    assert.deepEqual(architectureDocs('chunk-32-'), []);
+describe('CHUNK-33 process-gate stop record remains historical', () => {
+  it('keeps the stop record and does not claim a PQ implementation', () => {
+    assert.equal(chunkFiles('chunk-31-').length > 0, true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-stop.md')), true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-post-quantum-security.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security')), false);

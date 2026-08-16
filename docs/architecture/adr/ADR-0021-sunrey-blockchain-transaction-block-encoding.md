@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0019, ADR-0024
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: PARTIAL (SRCB v1 local codec; production codec certification not claimed)
 
 ## Context
 

@@ -99,7 +99,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-blockchain-architecture | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-coin | PLANNED | none |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
-| sunrey-local-node | PLANNED | packages/sunrey-chain |
+| sunrey-local-node | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-p2p | PLANNED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -278,26 +278,24 @@ is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
 `packages/surveillance-v2`, or `packages/custody-ledger`.
 
 Chunk 35 (P2P development network, mempool, and state sync)
-stopped because Chunk 34 is not merged and the local deterministic
-node is not `IMPLEMENTED`. Capabilities `sunrey-local-node` and
-`sunrey-p2p` are reserved `PLANNED` at owner `packages/sunrey-chain`.
-`evaluateChunkRequirements` returns `mustStop: true`. Stop record:
+stopped because `sunrey-p2p` is still `PLANNED`. Capability
+`sunrey-local-node` is `IMPLEMENTED` (Chunk 34R).
+`evaluateChunkRequirements` returns `mustStop: true` with
+`missing: ['sunrey-p2p']`. Stop record:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/libp2p`, `packages/mempool`, `packages/devnet`,
 `packages/gossip`, `packages/consensus`, or
 `packages/sunrey-consensus`. Do not begin Chunk 36.
-Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
-Chunks 31–33 are not declared and have not merged. Latest green
-`main` is Chunk 30R. The CHUNK-34 declaration lists only existing
-`IMPLEMENTED` capabilities, so `evaluateChunkRequirements` returns
-`mustStop: false`. That is not permission to invent a node owner,
-language, storage ADR, block schema, or CryptoSuite registry.
-Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
+Chunk 34R implements the local deterministic node at
+`packages/sunrey-chain/rust`. Capability `sunrey-local-node` is
+`IMPLEMENTED`. The original documentation-only stop is historical:
+[`chunk-34-stop.md`](./chunk-34-stop.md). Resume:
+[`chunk-34-resume.md`](./chunk-34-resume.md). Do not create
 `packages/sunrey-blockchain`, `packages/sunrey-node`,
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
 `packages/ledger-chain`, or `packages/web3-chain`. Do not replace
-`packages/sunrey-chain`.
+`packages/sunrey-chain`. Production BFT remains unimplemented.
 Chunk 31 freezes the SunRey Blockchain production architecture at
 the existing owner `packages/sunrey-chain`. Capability
 `sunrey-blockchain-architecture` is `IMPLEMENTED` (specification

@@ -734,23 +734,22 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
-Chunk 35 (P2P / mempool / sync) is **stopped**. Chunk 34 is not
-merged and the local deterministic node is not `IMPLEMENTED`.
-Capabilities `sunrey-local-node` and `sunrey-p2p` remain `PLANNED`
-at owner `packages/sunrey-chain`. Stop record:
+Chunk 35 (P2P / mempool / sync) is **stopped**. Capability
+`sunrey-local-node` is `IMPLEMENTED` (Chunk 34R). `sunrey-p2p`
+remains `PLANNED` at owner `packages/sunrey-chain`. Stop record:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/mempool`, or a second chain. Do not begin Chunk 36.
 P2P DEVELOPMENT NETWORK, PRODUCTION CONSENSUS, PUBLIC TESTNET,
 and MAINNET remain not implemented.
-Chunk 34 (sovereign node core) is **stopped** until Chunks 31–33
-merge. Those chunks select the node owner, language, storage ADR,
-block schema, and CryptoSuite registry. This constitution does not
-pre-reserve `packages/sunrey-blockchain` or `packages/sunrey-node`.
-Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
+Chunk 34R implements the local development node inside
+`packages/sunrey-chain/rust`. The earlier documentation-only stop is
+historical: [`chunk-34-stop.md`](./chunk-34-stop.md). Resume:
+[`chunk-34-resume.md`](./chunk-34-resume.md). Do not create
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
-`packages/ledger-chain`, or `packages/web3-chain`. Do not replace
-`packages/sunrey-chain`.
+`packages/ledger-chain`, `packages/sunrey-node`, or
+`packages/web3-chain`. Do not replace `packages/sunrey-chain`.
+Production BFT is not implemented.
 Chunk 32 (canonical SunRey transaction and economic-state protocol)
 is **stopped**. The task requires latest `main` after Chunk 31 is
 merged. Chunk 31 is not declared, not merged, and has no encoding

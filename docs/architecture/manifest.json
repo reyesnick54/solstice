@@ -2089,7 +2089,7 @@
         "packages/devnet",
         "packages/gossip",
         "packages/consensus",
-        "packages/sunrey-consensus"
+        "packages/sunrey-consensus",
         "packages/blockchain-node",
         "packages/blockchain-protocol",
         "packages/blockchain-network",
@@ -2649,7 +2649,7 @@
     "packages/devnet",
     "packages/gossip",
     "packages/consensus",
-    "packages/sunrey-consensus"
+    "packages/sunrey-consensus",
     "packages/blockchain-node",
     "packages/blockchain-protocol",
     "packages/blockchain-network",
@@ -2998,10 +2998,10 @@
     },
     {
       "id": "sunrey-local-node",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 34 local deterministic development node and development block producer. Not implemented. Owner remains packages/sunrey-chain. Do not create packages/sunrey-node or packages/blockchain."
+      "notes": "Chunk 34R local deterministic development node and DEV_BLOCK_PRODUCER at packages/sunrey-chain/rust. Simulation only. Not production BFT. Do not create packages/sunrey-node or packages/blockchain."
     },
     {
       "id": "sunrey-p2p",
@@ -3257,8 +3257,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Local deterministic node (Chunk 34) and P2P/mempool/sync (Chunk 35) remain PLANNED. See chunk-35-stop.md."
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Production node is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 34R implements the local development node (sunrey-local-node). Production blockchain and P2P remain unimplemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",

@@ -18,5 +18,5 @@
     "sunrey-coin",
     "sunrey-chain"
   ],
-  "notes": "STOPPED. Process gate: Chunks 31–33 are not declared or merged on main. evaluateChunkRequirements returns mustStop: false because listed capabilities are IMPLEMENTED; that is not permission to invent a node owner, language, storage ADR, block schema, or CryptoSuite registry. Do not create packages/sunrey-blockchain, packages/sunrey-node, packages/blockchain-v2, packages/new-chain, packages/l1, packages/ledger-chain, or packages/web3-chain. Do not replace packages/sunrey-chain. See docs/architecture/chunk-34-stop.md."
+  "notes": "IMPLEMENTED as Chunk 34R local development node inside packages/sunrey-chain/rust. Historical stop: docs/architecture/chunk-34-stop.md. Resume: docs/architecture/chunk-34-resume.md. Capability sunrey-local-node is IMPLEMENTED. Production BFT, P2P, and mainnet remain unimplemented. Do not create packages/sunrey-node or packages/sunrey-blockchain."
 }

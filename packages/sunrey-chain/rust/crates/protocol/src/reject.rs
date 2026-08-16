@@ -1,0 +1,69 @@
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum RejectReason {
+    DecodeFailed,
+    WrongNetwork,
+    WrongChain,
+    SchemaInvalid,
+    SizeExceeded,
+    InvalidCryptoSuite,
+    InvalidSignatureDescriptor,
+    InvalidSignature,
+    Replay,
+    StatelessInvalid,
+    StatefulInvalid,
+    QueueFull,
+    TransactionNotActivated,
+    UnsupportedVersion,
+    IncorrectParent,
+    IncorrectHeight,
+    WrongTransactionRoot,
+    WrongStateRoot,
+    DuplicateTransaction,
+    InvalidStateTransition,
+    CorruptStore,
+    PersistenceFailure,
+    NotFound,
+    NotReady,
+}
+
+impl RejectReason {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::DecodeFailed => "DECODE_FAILED",
+            Self::WrongNetwork => "WRONG_NETWORK",
+            Self::WrongChain => "WRONG_CHAIN",
+            Self::SchemaInvalid => "SCHEMA_INVALID",
+            Self::SizeExceeded => "SIZE_EXCEEDED",
+            Self::InvalidCryptoSuite => "INVALID_CRYPTO_SUITE",
+            Self::InvalidSignatureDescriptor => "INVALID_SIGNATURE_DESCRIPTOR",
+            Self::InvalidSignature => "INVALID_SIGNATURE",
+            Self::Replay => "REPLAY",
+            Self::StatelessInvalid => "STATELESS_INVALID",
+            Self::StatefulInvalid => "STATEFUL_INVALID",
+            Self::QueueFull => "QUEUE_FULL",
+            Self::TransactionNotActivated => "TRANSACTION_NOT_ACTIVATED",
+            Self::UnsupportedVersion => "UNSUPPORTED_VERSION",
+            Self::IncorrectParent => "INCORRECT_PARENT",
+            Self::IncorrectHeight => "INCORRECT_HEIGHT",
+            Self::WrongTransactionRoot => "WRONG_TRANSACTION_ROOT",
+            Self::WrongStateRoot => "WRONG_STATE_ROOT",
+            Self::DuplicateTransaction => "DUPLICATE_TRANSACTION",
+            Self::InvalidStateTransition => "INVALID_STATE_TRANSITION",
+            Self::CorruptStore => "CORRUPT_STORE",
+            Self::PersistenceFailure => "PERSISTENCE_FAILURE",
+            Self::NotFound => "NOT_FOUND",
+            Self::NotReady => "NOT_READY",
+        }
+    }
+}
+
+impl std::fmt::Display for RejectReason {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.as_str())
+    }
+}
+
+impl std::error::Error for RejectReason {}

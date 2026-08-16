@@ -5,8 +5,8 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN / SECURITY
 - Depends on: ADR-0009, ADR-0016, ADR-0025
-- Implementation status: NOT_IMPLEMENTED for chain algorithms;
-  application KeyProvider remains IMPLEMENTED
+- Implementation status: PARTIAL (local CryptoSuite port + simulation Ed25519/SHA-256 provider);
+  application KeyProvider remains IMPLEMENTED; production chain algorithms not certified
 
 ## Context
 
