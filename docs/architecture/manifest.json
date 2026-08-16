@@ -2994,10 +2994,10 @@
     },
     {
       "id": "blockchain-runtime",
-      "status": "PARTIAL",
+      "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 41 implements protocol-native asset handlers inside packages/sunrey-chain. WASM user programs and EVM remain unimplemented. Not a workspace package."
+      "notes": "Future internal execution module. Native handlers first. No EVM. Not a workspace package. Chunk 41 native asset handlers live under capability sunrey-native-assets, not this production-runtime capability."
     },
     {
       "id": "moonrey-coin",
