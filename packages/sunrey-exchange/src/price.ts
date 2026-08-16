@@ -79,7 +79,7 @@ export function quoteMoney(price: ExchangePrice, quantity: AssetQuantity, curren
   if (price.quoteKind !== 'FIAT_MONEY') {
     throw new TypeError('quoteMoney requires FIAT_MONEY quote');
   }
-  return Money.of(quoteForQuantity(price, quantity), currency);
+  return Money.fromMinorUnits(quoteForQuantity(price, quantity), currency);
 }
 
 function assertCompatible(a: ExchangePrice, b: ExchangePrice): void {

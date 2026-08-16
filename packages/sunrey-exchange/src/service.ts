@@ -365,6 +365,12 @@ export class SunReyExchangeService {
     if (market) {
       this.store.putMarket({ ...market, state });
     }
+    for (let i = 0; i < this.store.halts.length; i += 1) {
+      const halt = this.store.halts[i]!;
+      if (halt.active && halt.scope === 'MARKET' && halt.targetId === marketId) {
+        this.store.halts[i] = Object.freeze({ ...halt, active: false, reason: 'resume' });
+      }
+    }
     this.store.halts.push(Object.freeze({ scope: 'MARKET', targetId: marketId, active: false, reason: 'resume' }));
     this.emit('ExchangeMarketResumed', marketId, { marketId });
   }
@@ -653,7 +659,7 @@ export class SunReyExchangeService {
     }
     let feeJournalId: string | null = null;
     const feeTotal = trade.makerFee.plus(trade.takerFee);
-    if (feeTotal.minorUnits() > 0n) {
+    if (feeTotal.minorUnits > 0n) {
       const fee = this.fiat.postFee(
         actorId,
         buyerAccount.cashAccountId,
@@ -733,10 +739,10 @@ export class SunReyExchangeService {
       return err({ code: 'INVALID_PRICE', message: 'buy reservation requires a limit or protection price' });
     }
     const quote = quoteMoney(limitPrice, quantity, 'USD');
-    const feeBuffer = Money.of(this.feeSchedule.takerFeeMinor, 'USD');
+    const feeBuffer = Money.fromMinorUnits(this.feeSchedule.takerFeeMinor, 'USD');
     const reserved = quote.plus(feeBuffer);
     const available = this.fiat.available(account.cashAccountId);
-    if (available.minorUnits() < reserved.minorUnits()) {
+    if (available.minorUnits < reserved.minorUnits) {
       return err({ code: 'INSUFFICIENT_FUNDS', message: 'buy exceeds available cash plus fee buffer' });
     }
     const hold = this.fiat.reserve(account.cashAccountId, reserved, `exchange.hold.${orderId}`);
@@ -795,7 +801,7 @@ export class SunReyExchangeService {
       return err({ code: 'ORDER_HOLD_MISMATCH', message: 'fiat hold missing' });
     }
     const remaining = hold.remainingFiat.minus(amount);
-    if (remaining.minorUnits() < 0n) {
+    if (remaining.minorUnits < 0n) {
       return err({ code: 'ORDER_HOLD_MISMATCH', message: 'capture exceeds fiat hold' });
     }
     const captured = this.fiat.capture(hold.coinHoldId, amount);
@@ -805,7 +811,7 @@ export class SunReyExchangeService {
     const next: ExchangeHold = Object.freeze({
       ...hold,
       remainingFiat: remaining,
-      state: remaining.minorUnits() === 0n ? 'CAPTURED' : 'PARTIAL',
+      state: remaining.minorUnits === 0n ? 'CAPTURED' : 'PARTIAL',
     });
     this.store.putHold(next);
     return ok(next);
@@ -826,7 +832,7 @@ export class SunReyExchangeService {
         this.fiat.release(hold.coinHoldId);
       }
     }
-    this.store.putHold({ ...hold, state: 'RELEASED', remainingAsset: hold.assetAmount ? AssetQuantity.zero(hold.assetAmount.assetId) : null, remainingFiat: hold.fiatAmount ? Money.of(0n, hold.fiatAmount.currency) : null });
+    this.store.putHold({ ...hold, state: 'RELEASED', remainingAsset: hold.assetAmount ? AssetQuantity.zero(hold.assetAmount.assetId) : null, remainingFiat: hold.fiatAmount ? Money.fromMinorUnits(0n, hold.fiatAmount.currency) : null });
   }
 
   private protectMarketOrder(
@@ -850,7 +856,7 @@ export class SunReyExchangeService {
       return err({ code: 'MARKET_ORDER_UNSAFE', message: 'MARKET requires a protection price' });
     }
     if (market.maxNotionalMinor !== null && protectionPrice) {
-      const notional = quoteMoney(protectionPrice, quantity, 'USD').minorUnits();
+      const notional = quoteMoney(protectionPrice, quantity, 'USD').minorUnits;
       if (notional > market.maxNotionalMinor) {
         return err({ code: 'SLIPPAGE_BREACH', message: 'MARKET order exceeds maximum notional' });
       }

@@ -126,7 +126,7 @@ async function main(): Promise<void> {
   const buyer = provision(identity, 'actor_exchange_b', 'idn_exchange_b', buyerCust.id);
 
   coin.seed(sellerCust.id, coins(10n), 'custody_a');
-  fiat.seed('cash_b', Money.of(50_00n, 'USD'));
+  fiat.seed('cash_b', Money.fromMinorUnits(50_00n, 'USD'));
 
   const sellerAccount = requireOk<{ accountId: string }>(
     exchange.openAccount({
@@ -214,14 +214,14 @@ async function main(): Promise<void> {
   console.log(`  buyer opened ${buyerAccount.accountId}`);
   console.log(`  sell 10 @ 2.00 -> ${sell.status}`);
   console.log(`  buy 6 @ 2.10 -> ${buy.status}`);
-  console.log(`  trade quantity ${trade.quantity.scaledUnits} at maker ${trade.price.priceUnits} cents = ${trade.quoteAmount.minorUnits()} USD cents`);
+  console.log(`  trade quantity ${trade.quantity.scaledUnits} at maker ${trade.price.priceUnits} cents = ${trade.quoteAmount.minorUnits} USD cents`);
   console.log(`  price label: ${PRICE_LABEL}`);
   console.log(`  seller remainder before cancel: ${remainder?.remaining.scaledUnits ?? 'missing'}`);
   console.log(`  remainder cancel: ${cancelled.status}`);
   console.log(`  coin supply before/after: ${supplyBefore} / ${coin.supply().circulating.scaledUnits}`);
   console.log(`  buyer coin available: ${coin.position(buyerCust.id).available.scaledUnits}`);
   console.log(`  seller coin available after cancel: ${coin.position(sellerCust.id).available.scaledUnits}`);
-  console.log(`  seller cash: ${fiat.available('cash_a').minorUnits()} cents`);
+  console.log(`  seller cash: ${fiat.available('cash_a').minorUnits} cents`);
   console.log(`  fees: maker ${exchange.feeSchedule.makerFeeMinor} taker ${exchange.feeSchedule.takerFeeMinor} (${exchange.feeSchedule.commercialPermanence})`);
   console.log(`  last price label: ${data.lastPriceLabel}`);
   console.log(`  chain anchor authoritative: ${chain.anchors[0]?.authoritative ?? 'none'}`);

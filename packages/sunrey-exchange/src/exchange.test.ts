@@ -149,7 +149,7 @@ describe('SunRey Exchange price and matching', () => {
     const price = usdPerCoin(200n);
     const quantity = coins(6n);
     assert.equal(quoteForQuantity(price, quantity), 1200n);
-    assert.equal(quoteMoney(price, quantity, 'USD').minorUnits(), 1200n);
+    assert.equal(quoteMoney(price, quantity, 'USD').minorUnits, 1200n);
     assert.throws(() => exchangePrice({ ...price, priceUnits: 1 as unknown as bigint }), /bigint/);
     assert.throws(
       () => quoteForQuantity(usdPerCoin(3n), AssetQuantity.fromScaledUnits(1n, SUNREY_COIN_ASSET_ID)),
@@ -223,7 +223,7 @@ describe('SunRey Exchange service', () => {
     const seller = provision(h, 'actor_seller', 'idn_seller', 'cust_seller');
     const buyer = provision(h, 'actor_buyer', 'idn_buyer', 'cust_buyer');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_seller');
-    h.fiat.seed('cash_buyer', Money.of(50_00n, 'USD'));
+    h.fiat.seed('cash_buyer', Money.fromMinorUnits(50_00n, 'USD'));
     const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_seller', 'cash_seller');
     const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_buyer', 'cash_buyer');
     assert.equal(Object.hasOwn(sellerAccount, 'balance'), false);
@@ -264,11 +264,11 @@ describe('SunRey Exchange service', () => {
     const trades = h.exchange.trades(SUNREY_COIN_USD_MARKET_ID);
     assert.equal(trades.length, 1);
     assert.equal(trades[0]!.price.priceUnits, 200n);
-    assert.equal(trades[0]!.quoteAmount.minorUnits(), 1200n);
+    assert.equal(trades[0]!.quoteAmount.minorUnits, 1200n);
     assert.equal(h.exchange.feeSchedule.commercialPermanence, 'SIMULATION_CONFIGURATION');
     assert.equal(h.coin.supply().circulating.scaledUnits, supplyBefore);
     assert.equal(h.coin.position(buyer.customer.id).available.scaledUnits, 6_000_000n);
-    assert.equal(h.fiat.available('cash_seller').minorUnits(), 1200n);
+    assert.equal(h.fiat.available('cash_seller').minorUnits, 1200n);
 
     const cancelled = h.exchange.cancelDigitalOrder({
       actorId: seller.actor.actorId,
@@ -349,7 +349,7 @@ describe('SunRey Exchange service', () => {
     const seller = provision(h, 'actor_fail_s', 'idn_fail_s', 'cust_fail_s');
     const buyer = provision(h, 'actor_fail_b', 'idn_fail_b', 'cust_fail_b');
     h.coin.seed(seller.customer.id, coins(1n), 'custody_fail_s');
-    h.fiat.seed('cash_fail_b', Money.of(100n, 'USD'));
+    h.fiat.seed('cash_fail_b', Money.fromMinorUnits(100n, 'USD'));
     const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_fail_s', 'cash_fail_s');
     const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_fail_b', 'cash_fail_b');
 
@@ -600,7 +600,7 @@ describe('SunRey Exchange service', () => {
     const seller = provision(h, 'actor_mis', 'idn_mis', 'cust_mis');
     const buyer = provision(h, 'actor_mis_b', 'idn_mis_b', 'cust_mis_b');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_mis');
-    h.fiat.seed('cash_mis_b', Money.of(50_00n, 'USD'));
+    h.fiat.seed('cash_mis_b', Money.fromMinorUnits(50_00n, 'USD'));
     const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_mis', 'cash_mis_s');
     const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_mis_b', 'cash_mis_b');
     const originalTransfer = h.fiat.transfer.bind(h.fiat);

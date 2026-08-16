@@ -98,19 +98,19 @@ export class InMemoryFiatPort implements FiatPort {
 
   seed(accountId: string, amount: Money): void {
     const book = this.books.get(accountId) ?? { available: 0n, captured: 0n };
-    book.available += amount.minorUnits();
+    book.available += amount.minorUnits;
     this.books.set(accountId, book);
   }
 
   reserve(accountId: string, amount: Money, _idempotencyKey: string): Result<{ holdId: string }, ExchangeFailure> {
     const book = this.books.get(accountId) ?? { available: 0n, captured: 0n };
-    if (book.available < amount.minorUnits()) {
+    if (book.available < amount.minorUnits) {
       return err({ code: 'INSUFFICIENT_FUNDS', message: 'buy exceeds available cash plus fee buffer' });
     }
-    book.available -= amount.minorUnits();
+    book.available -= amount.minorUnits;
     this.books.set(accountId, book);
     const holdId = `fhold_${randomUUID().replace(/-/g, '')}`;
-    this.holds.set(holdId, { accountId, remaining: amount.minorUnits(), currency: amount.currency });
+    this.holds.set(holdId, { accountId, remaining: amount.minorUnits, currency: amount.currency });
     return ok({ holdId });
   }
 
@@ -128,12 +128,12 @@ export class InMemoryFiatPort implements FiatPort {
 
   capture(holdId: string, amount: Money): Result<unknown, ExchangeFailure> {
     const hold = this.holds.get(holdId);
-    if (!hold || hold.remaining < amount.minorUnits()) {
+    if (!hold || hold.remaining < amount.minorUnits) {
       return err({ code: 'ORDER_HOLD_MISMATCH', message: 'fiat capture exceeds hold' });
     }
-    hold.remaining -= amount.minorUnits();
+    hold.remaining -= amount.minorUnits;
     const book = this.books.get(hold.accountId) ?? { available: 0n, captured: 0n };
-    book.captured += amount.minorUnits();
+    book.captured += amount.minorUnits;
     this.books.set(hold.accountId, book);
     return ok(true);
   }
@@ -145,12 +145,12 @@ export class InMemoryFiatPort implements FiatPort {
     amount: Money,
     _idempotencyKey: string,
   ): Result<{ journalId: string }, ExchangeFailure> {
-    const moved = this.spend(sourceAccountId, amount.minorUnits());
+    const moved = this.spend(sourceAccountId, amount.minorUnits);
     if (!moved.ok) {
       return moved;
     }
     const destination = this.books.get(destinationAccountId) ?? { available: 0n, captured: 0n };
-    destination.available += amount.minorUnits();
+    destination.available += amount.minorUnits;
     this.books.set(destinationAccountId, destination);
     return ok({ journalId: `fjn_${randomUUID().replace(/-/g, '')}` });
   }
@@ -162,18 +162,18 @@ export class InMemoryFiatPort implements FiatPort {
     amount: Money,
     _idempotencyKey: string,
   ): Result<{ journalId: string }, ExchangeFailure> {
-    const moved = this.spend(sourceAccountId, amount.minorUnits());
+    const moved = this.spend(sourceAccountId, amount.minorUnits);
     if (!moved.ok) {
       return moved;
     }
     const fees = this.books.get(feeBookId) ?? { available: 0n, captured: 0n };
-    fees.available += amount.minorUnits();
+    fees.available += amount.minorUnits;
     this.books.set(feeBookId, fees);
     return ok({ journalId: `fee_${randomUUID().replace(/-/g, '')}` });
   }
 
   available(accountId: string): Money {
-    return Money.of(this.books.get(accountId)?.available ?? 0n, 'USD');
+    return Money.fromMinorUnits(this.books.get(accountId)?.available ?? 0n, 'USD');
   }
 
   private spend(accountId: string, amount: bigint): Result<true, ExchangeFailure> {
@@ -208,8 +208,19 @@ export class RecordingChainAnchorPort implements ChainAnchorPort {
 }
 
 export class StubInformationMarketPort implements InformationMarketPort {
+  private readonly result: Result<
+    {
+      readonly contractKind: 'COMPUTE';
+      readonly rawRows: false;
+      readonly receiptId: string;
+      readonly contributionId: string;
+      readonly settled: boolean;
+    },
+    ExchangeFailure
+  >;
+
   constructor(
-    private readonly result: Result<
+    result: Result<
       {
         readonly contractKind: 'COMPUTE';
         readonly rawRows: false;
@@ -225,7 +236,9 @@ export class StubInformationMarketPort implements InformationMarketPort {
       contributionId: 'imkt_contrib_sim',
       settled: true,
     }),
-  ) {}
+  ) {
+    this.result = result;
+  }
 
   executeApprovedCompute(_input: {
     readonly listingId: string;
