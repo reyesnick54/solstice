@@ -57,6 +57,8 @@ export const IDENTITY_CAPABILITIES = [
   'SUNREY_COIN_OPERATE_REQUEST',
   'INFORMATION_MARKET_VIEW',
   'INFORMATION_MARKET_OPERATE',
+  'EXCHANGE_VIEW',
+  'EXCHANGE_OPERATE_REQUEST',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -138,6 +140,14 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   SUNREY_COIN_OPERATE_REQUEST: ['ISSUE_SUNREY_COIN', 'TRANSFER_SUNREY_COIN', 'BURN_SUNREY_COIN'],
   INFORMATION_MARKET_VIEW: [],
   INFORMATION_MARKET_OPERATE: [],
+  EXCHANGE_VIEW: [],
+  EXCHANGE_OPERATE_REQUEST: [
+    'OPEN_EXCHANGE_ACCOUNT',
+    'PLACE_EXCHANGE_ORDER',
+    'CANCEL_EXCHANGE_ORDER',
+    'SETTLE_EXCHANGE_TRADE',
+    'HALT_EXCHANGE',
+  ],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -196,6 +206,7 @@ const FINANCIAL_CAPABILITIES: readonly IdentityCapability[] = [
   'TREASURY_OPERATE_REQUEST',
   'INVESTMENT_OPERATE_REQUEST',
   'SUNREY_COIN_OPERATE_REQUEST',
+  'EXCHANGE_OPERATE_REQUEST',
 ];
 
 /**
@@ -241,6 +252,7 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
     granted.add('CONSENT_REVOKE_OWN');
     granted.add('SUNREY_COIN_VIEW');
     granted.add('INFORMATION_MARKET_VIEW');
+    granted.add('EXCHANGE_VIEW');
   }
 
   const kycFresh = facts.kyc !== null && kycIsFresh(facts.kyc, facts.now);

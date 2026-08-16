@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-29",
+  "title": "SunRey Exchange Core — Accounts, Registry, Markets, Orders, Matching, Holds, Trades, Clearing, Settlement, and Market Data",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin",
+    "information-market",
+    "sunrey-chain"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange. Simulation matching and DVP settlement only. Canonical ledger remains the financial source of truth. Do not invent a ticker. Do not enable LIVE_EXCHANGE_ENABLED. Do not create packages/exchange-v2, packages/orderbook, packages/matching-engine-v2, packages/crypto-exchange, or packages/reyn-exchange."
+}

@@ -818,6 +818,39 @@ export type SunReyChainReconciliationMismatchV1 = VersionedEvent<
 >;
 export type SunReyChainHealthDegradedV1 = VersionedEvent<'SunReyChainHealthDegraded', 1, SunReyChainAuditPayload>;
 
+export type ExchangeAuditPayload = {
+  readonly accountId?: string;
+  readonly orderId?: string;
+  readonly tradeId?: string;
+  readonly settlementId?: string;
+  readonly marketId?: string;
+  readonly status?: string;
+  readonly scope?: string;
+  readonly targetId?: string;
+  readonly priceLabel?: string;
+  readonly quantity?: string;
+  readonly remaining?: string;
+  readonly outcome?: string;
+  readonly notes?: readonly string[];
+  readonly reason?: string;
+};
+
+export type ExchangeAccountCreatedV1 = VersionedEvent<'ExchangeAccountCreated', 1, ExchangeAuditPayload>;
+export type ExchangeOrderAcceptedV1 = VersionedEvent<'ExchangeOrderAccepted', 1, ExchangeAuditPayload>;
+export type ExchangeOrderOpenedV1 = VersionedEvent<'ExchangeOrderOpened', 1, ExchangeAuditPayload>;
+export type ExchangeOrderPartiallyFilledV1 = VersionedEvent<'ExchangeOrderPartiallyFilled', 1, ExchangeAuditPayload>;
+export type ExchangeOrderFilledV1 = VersionedEvent<'ExchangeOrderFilled', 1, ExchangeAuditPayload>;
+export type ExchangeOrderCancelledV1 = VersionedEvent<'ExchangeOrderCancelled', 1, ExchangeAuditPayload>;
+export type ExchangeTradeMatchedV1 = VersionedEvent<'ExchangeTradeMatched', 1, ExchangeAuditPayload>;
+export type ExchangeTradeSettledV1 = VersionedEvent<'ExchangeTradeSettled', 1, ExchangeAuditPayload>;
+export type ExchangeMarketHaltedV1 = VersionedEvent<'ExchangeMarketHalted', 1, ExchangeAuditPayload>;
+export type ExchangeMarketResumedV1 = VersionedEvent<'ExchangeMarketResumed', 1, ExchangeAuditPayload>;
+export type ExchangeReconciliationMismatchV1 = VersionedEvent<
+  'ExchangeReconciliationMismatch',
+  1,
+  ExchangeAuditPayload
+>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1173,7 +1206,18 @@ export type DomainEvent =
   | SunReyChainAnchorRecordedV1
   | SunReyChainAnchorReorgObservedV1
   | SunReyChainReconciliationMismatchV1
-  | SunReyChainHealthDegradedV1;
+  | SunReyChainHealthDegradedV1
+  | ExchangeAccountCreatedV1
+  | ExchangeOrderAcceptedV1
+  | ExchangeOrderOpenedV1
+  | ExchangeOrderPartiallyFilledV1
+  | ExchangeOrderFilledV1
+  | ExchangeOrderCancelledV1
+  | ExchangeTradeMatchedV1
+  | ExchangeTradeSettledV1
+  | ExchangeMarketHaltedV1
+  | ExchangeMarketResumedV1
+  | ExchangeReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

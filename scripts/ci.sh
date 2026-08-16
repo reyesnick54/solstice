@@ -37,6 +37,7 @@ npm run demo:clean-room
 npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-chain
+npm run demo:sunrey-exchange
 
 echo "==> typecheck"
 npm run typecheck

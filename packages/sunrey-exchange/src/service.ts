@@ -1,0 +1,1074 @@
+import { randomUUID } from 'node:crypto';
+
+import { type Clock } from '../../config/src/clock.ts';
+import { LIVE_CRYPTO_ENABLED, LIVE_EXCHANGE_ENABLED } from '../../config/src/flags.ts';
+import type { Customer, CustomerId } from '../../domain/src/customer.ts';
+import type { Jurisdiction } from '../../domain/src/jurisdiction.ts';
+import type { LegalEntity } from '../../domain/src/legal-entity.ts';
+import type { Product } from '../../domain/src/product.ts';
+import { err, isOk, ok, type Result } from '../../domain/src/result.ts';
+import type { EvidenceVault } from '../../evidence/src/vault.ts';
+import type { DomainEventLog } from '../../events/src/events.ts';
+import { actionTypesFromCapabilities, type IdentityAuthorityPort } from '../../identity/src/index.ts';
+import type { ComplianceKernel } from '../../kernel/src/kernel.ts';
+import type { KernelFacts } from '../../kernel/src/proofs.ts';
+import { AssetQuantity } from '../../money/src/asset-quantity.ts';
+import { Money } from '../../money/src/money.ts';
+import { asIntentId, type ActionIntent } from '../../permissions/src/action-intent.ts';
+import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
+import type { AuthorizationDecision } from '../../permissions/src/decision.ts';
+import type { AuthorityIssuer, ExecutionAuthority } from '../../permissions/src/execution-authority.ts';
+import { validateIntentStructure } from '../../permissions/src/structural.ts';
+import { SUNREY_COIN_ASSET_ID } from '../../sunrey-coin/src/ids.ts';
+import {
+  AGGREGATE_RESEARCH_LISTING_ID,
+  EXCHANGE_FEE_BOOK,
+  newClearingInstructionId,
+  newExchangeAccountId,
+  newExchangeHoldId,
+  newReconciliationId,
+  newSettlementId,
+  SIMULATION_FEE_SCHEDULE_ID,
+  SIMULATION_USD_CASH_ASSET_ID,
+  SUNREY_COIN_USD_MARKET_ID,
+  asExchangeAccountId,
+  asListingId,
+  newOrderId,
+  type ExchangeAccountId,
+  type ExchangeMarketId,
+  type OrderId,
+  type TradeId,
+} from './ids.ts';
+import { applyFill, matchIncoming, sortBook, toTrade } from './matching.ts';
+import { comparePrice, exchangePrice, quoteMoney, type ExchangePrice } from './price.ts';
+import type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
+import { ExchangeStore } from './store.ts';
+import {
+  EVIDENCE_KIND_EXCHANGE,
+  PRICE_LABEL,
+  type MarketFamily,
+  type MarketState,
+  type ReconciliationOutcome,
+} from './taxonomy.ts';
+import type {
+  BookEvent,
+  Candle,
+  ClearingInstruction,
+  DigitalOrder,
+  ExchangeAccount,
+  ExchangeHold,
+  ExchangeListing,
+  ExchangeMarket,
+  ExchangeOutcome,
+  FeeSchedule,
+  HaltRecord,
+  ImmutableTrade,
+  MarketDataSnapshot,
+  ReconciliationReport,
+  SettlementRecord,
+} from './types.ts';
+
+export type ExchangeCatalog = {
+  readonly customers: { get(id: Customer['id']): Customer | undefined };
+  readonly products: { get(id: Product['id']): Product | undefined };
+  readonly legalEntities: { get(id: LegalEntity['id']): LegalEntity | undefined };
+};
+
+const COIN_PRECISION = 6;
+
+export class SunReyExchangeService {
+  private readonly kernel: ComplianceKernel;
+  private readonly issuer: AuthorityIssuer;
+  private readonly evidence: EvidenceVault;
+  private readonly events: DomainEventLog;
+  private readonly clock: Clock;
+  private readonly identity: IdentityAuthorityPort;
+  private readonly catalog: ExchangeCatalog;
+  private readonly coin: CoinPort;
+  private readonly fiat: FiatPort;
+  private readonly informationMarket: InformationMarketPort | null;
+  private readonly chain: ChainAnchorPort | null;
+  private readonly store = new ExchangeStore();
+  readonly feeSchedule: FeeSchedule = Object.freeze({
+    scheduleId: SIMULATION_FEE_SCHEDULE_ID,
+    version: 1,
+    makerFeeMinor: 0n,
+    takerFeeMinor: 0n,
+    listingFeeMinor: 0n,
+    computeFeeMinor: 0n,
+    commercialPermanence: 'SIMULATION_CONFIGURATION',
+  });
+
+  constructor(input: {
+    readonly kernel: ComplianceKernel;
+    readonly issuer: AuthorityIssuer;
+    readonly evidence: EvidenceVault;
+    readonly events: DomainEventLog;
+    readonly clock: Clock;
+    readonly identity: IdentityAuthorityPort;
+    readonly catalog: ExchangeCatalog;
+    readonly coin: CoinPort;
+    readonly fiat: FiatPort;
+    readonly informationMarket?: InformationMarketPort;
+    readonly chain?: ChainAnchorPort;
+  }) {
+    if (LIVE_EXCHANGE_ENABLED !== false || LIVE_CRYPTO_ENABLED !== false) {
+      throw new Error('live exchange and live crypto paths are forbidden');
+    }
+    this.kernel = input.kernel;
+    this.issuer = input.issuer;
+    this.evidence = input.evidence;
+    this.events = input.events;
+    this.clock = input.clock;
+    this.identity = input.identity;
+    this.catalog = input.catalog;
+    this.coin = input.coin;
+    this.fiat = input.fiat;
+    this.informationMarket = input.informationMarket ?? null;
+    this.chain = input.chain ?? null;
+    this.seedSimulationRegistry();
+  }
+
+  openAccount(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly identityId: string;
+    readonly jurisdiction: Jurisdiction;
+    readonly custodyAccountId: string;
+    readonly cashAccountId: string;
+    readonly marketPermissions?: readonly MarketFamily[];
+  }): ExchangeOutcome<ExchangeAccount> {
+    const accountId = newExchangeAccountId();
+    const intent = this.intent(input.actorId, ACTION_TYPES.OPEN_EXCHANGE_ACCOUNT, {
+      accountId,
+      customerId: input.customerId,
+    });
+    const gated = this.authorize(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const account: ExchangeAccount = Object.freeze({
+      accountId,
+      customerId: input.customerId,
+      identityId: input.identityId,
+      legalEntityId: 'le_solstice_uk_ltd',
+      jurisdiction: input.jurisdiction,
+      custodyAccountId: input.custodyAccountId,
+      cashAccountId: input.cashAccountId,
+      marketPermissions: input.marketPermissions ?? ['DIGITAL_ASSET', 'INFORMATION_ASSET', 'INTELLIGENCE_COMPUTE'],
+      status: 'ACTIVE_SIMULATION',
+      createdAt: this.clock.now(),
+    });
+    this.store.putAccount(account);
+    this.emit('ExchangeAccountCreated', account.accountId, { accountId: account.accountId });
+    this.seal('account.created', { accountId: account.accountId, intentId: intent.id });
+    return { outcome: 'OK', value: account, decision: gated.decision };
+  }
+
+  placeDigitalOrder(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly exchangeAccountId: ExchangeAccountId;
+    readonly marketId: ExchangeMarketId;
+    readonly side: 'BUY' | 'SELL';
+    readonly orderType: 'LIMIT' | 'MARKET';
+    readonly quantity: AssetQuantity;
+    readonly limitPrice?: ExchangePrice;
+    readonly clientIdempotencyKey: string;
+    readonly timeInForce?: 'GTC' | 'IOC';
+    readonly protectionPrice?: ExchangePrice;
+  }): ExchangeOutcome<DigitalOrder> {
+    const existingId = this.store.ordersByIdempotency.get(input.clientIdempotencyKey);
+    if (existingId) {
+      const existing = this.store.order(existingId);
+      if (existing) {
+        return { outcome: 'OK', value: existing };
+      }
+    }
+    const account = this.store.account(input.exchangeAccountId);
+    if (!account) {
+      return { outcome: 'REJECTED', code: 'UNKNOWN_ACCOUNT', message: 'exchange account not found' };
+    }
+    if (account.status !== 'ACTIVE_SIMULATION') {
+      return { outcome: 'REJECTED', code: 'RESTRICTED_PARTICIPANT', message: `account status ${account.status}` };
+    }
+    if (this.isHalted(input.marketId, account.accountId, input.quantity.assetId)) {
+      return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: 'halt is active' };
+    }
+    const market = this.store.markets.get(input.marketId);
+    if (!market || market.family !== 'DIGITAL_ASSET') {
+      return { outcome: 'REJECTED', code: 'FAMILY_MISMATCH', message: 'digital-asset orders require a DIGITAL_ASSET market' };
+    }
+    if (market.state !== 'OPEN') {
+      return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: `market state ${market.state}` };
+    }
+    const listing = this.store.listings.get(market.baseListingId);
+    if (!listing || listing.status !== 'SIMULATION_LISTED') {
+      return { outcome: 'REJECTED', code: 'ASSET_SUSPENDED', message: 'listing is not SIMULATION_LISTED' };
+    }
+    if (!input.quantity.isPositive()) {
+      return { outcome: 'REJECTED', code: 'INVALID_QUANTITY', message: 'quantity must be positive' };
+    }
+    if (input.quantity.scaledUnits % 10n ** BigInt(listing.precision) !== 0n && listing.precision === 0) {
+      return { outcome: 'REJECTED', code: 'INVALID_PRECISION', message: 'quantity precision rejected' };
+    }
+    if (input.quantity.assetId !== market.baseAssetId) {
+      return { outcome: 'REJECTED', code: 'INVALID_PRECISION', message: 'quantity asset does not match listing' };
+    }
+    if (listing.minQuantity && input.quantity.scaledUnits < listing.minQuantity.scaledUnits) {
+      return { outcome: 'REJECTED', code: 'INVALID_QUANTITY', message: 'below minimum listing quantity' };
+    }
+    if (listing.maxQuantity && input.quantity.scaledUnits > listing.maxQuantity.scaledUnits) {
+      return { outcome: 'REJECTED', code: 'INVALID_QUANTITY', message: 'above maximum listing quantity' };
+    }
+    if (input.orderType === 'LIMIT' && !input.limitPrice) {
+      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'LIMIT requires a price' };
+    }
+    if (input.limitPrice && input.limitPrice.priceUnits <= 0n) {
+      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'price must be positive' };
+    }
+    if (input.orderType === 'MARKET') {
+      const protection = this.protectMarketOrder(market, input.side, input.quantity, input.protectionPrice);
+      if (!protection.ok) {
+        return { outcome: 'REJECTED', code: protection.error.code, message: protection.error.message };
+      }
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.PLACE_EXCHANGE_ORDER, {
+      accountId: account.cashAccountId,
+      orderId: input.clientIdempotencyKey,
+      side: input.side,
+      quantity: input.quantity,
+    });
+    const gated = this.authorize(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const reserved = this.reserveForOrder(account, market, input.side, input.quantity, input.limitPrice ?? input.protectionPrice ?? null);
+    if (!reserved.ok) {
+      return { outcome: 'REJECTED', code: reserved.error.code, message: reserved.error.message, decision: gated.decision };
+    }
+    const order: DigitalOrder = Object.freeze({
+      orderId: reserved.value.orderId,
+      version: 1 as DigitalOrder['version'],
+      exchangeAccountId: account.accountId,
+      beneficialParticipantId: account.customerId,
+      marketId: market.marketId,
+      family: 'DIGITAL_ASSET',
+      side: input.side,
+      orderType: input.orderType,
+      quantity: input.quantity,
+      remaining: input.quantity,
+      limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
+      createdAt: this.clock.now(),
+      timeInForce: input.timeInForce ?? 'GTC',
+      status: 'OPEN',
+      clientIdempotencyKey: input.clientIdempotencyKey,
+      authorizationRef: gated.decision.executionAuthority?.authorityId ?? intent.id,
+      holdId: reserved.value.hold.holdId,
+      coinHoldId: reserved.value.hold.coinHoldId,
+      sourceAccountId: input.side === 'SELL' ? account.custodyAccountId : account.cashAccountId,
+      sequence: this.store.nextOrderSequence(),
+    });
+    this.store.putOrder(order);
+    this.store.putHold(reserved.value.hold);
+    this.recordBook({ sequence: order.sequence, kind: 'ACCEPT', orderId: order.orderId, at: this.clock.now() });
+    this.emit('ExchangeOrderAccepted', order.orderId, { orderId: order.orderId, status: order.status });
+    this.emit('ExchangeOrderOpened', order.orderId, { orderId: order.orderId });
+    this.seal('order.opened', {
+      orderId: order.orderId,
+      intentId: intent.id,
+      holdId: reserved.value.hold.holdId,
+      marketId: market.marketId,
+    });
+    this.matchAndSettle(order, input.actorId, input.customerId);
+    return { outcome: 'OK', value: this.store.order(order.orderId) ?? order, decision: gated.decision };
+  }
+
+  cancelDigitalOrder(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly orderId: OrderId;
+    readonly clientIdempotencyKey: string;
+  }): ExchangeOutcome<DigitalOrder> {
+    const order = this.store.order(input.orderId);
+    if (!order) {
+      return { outcome: 'REJECTED', code: 'UNKNOWN_ORDER', message: 'order not found' };
+    }
+    if (order.status === 'CANCELLED' || order.status === 'FILLED') {
+      return { outcome: 'OK', value: order };
+    }
+    if (order.status !== 'OPEN' && order.status !== 'PARTIALLY_FILLED') {
+      return { outcome: 'REJECTED', code: 'NOT_CANCELLABLE', message: `status ${order.status}` };
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.CANCEL_EXCHANGE_ORDER, {
+      accountId: order.sourceAccountId,
+      orderId: order.orderId,
+    });
+    const gated = this.authorize(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    this.releaseHold(order);
+    const cancelled: DigitalOrder = Object.freeze({
+      ...order,
+      status: 'CANCELLED',
+      version: (order.version + 1) as DigitalOrder['version'],
+    });
+    this.store.putOrder(cancelled);
+    this.recordBook({
+      sequence: this.store.nextOrderSequence(),
+      kind: 'CANCEL',
+      orderId: cancelled.orderId,
+      at: this.clock.now(),
+    });
+    this.emit('ExchangeOrderCancelled', cancelled.orderId, { orderId: cancelled.orderId });
+    this.seal('order.cancelled', { orderId: cancelled.orderId, intentId: intent.id });
+    this.refreshMarketData(cancelled.marketId);
+    return { outcome: 'OK', value: cancelled, decision: gated.decision };
+  }
+
+  halt(input: {
+    readonly actorId: string;
+    readonly customerId: CustomerId;
+    readonly scope: HaltRecord['scope'];
+    readonly targetId: string;
+    readonly reason: string;
+  }): ExchangeOutcome<HaltRecord> {
+    const intent = this.intent(input.actorId, ACTION_TYPES.HALT_EXCHANGE, {
+      accountId: input.targetId,
+      scope: input.scope,
+    });
+    const gated = this.authorize(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const record: HaltRecord = Object.freeze({
+      scope: input.scope,
+      targetId: input.targetId,
+      active: true,
+      reason: input.reason,
+    });
+    this.store.halts.push(record);
+    if (input.scope === 'MARKET') {
+      const market = this.store.markets.get(input.targetId);
+      if (market) {
+        this.store.putMarket({ ...market, state: 'HALTED' });
+      }
+    }
+    this.emit('ExchangeMarketHalted', input.targetId, { scope: input.scope, targetId: input.targetId });
+    this.seal('market.halted', { ...record, intentId: intent.id });
+    return { outcome: 'OK', value: record, decision: gated.decision };
+  }
+
+  resumeMarket(marketId: ExchangeMarketId, state: MarketState = 'OPEN'): void {
+    const market = this.store.markets.get(marketId);
+    if (market) {
+      this.store.putMarket({ ...market, state });
+    }
+    this.store.halts.push(Object.freeze({ scope: 'MARKET', targetId: marketId, active: false, reason: 'resume' }));
+    this.emit('ExchangeMarketResumed', marketId, { marketId });
+  }
+
+  restrictParticipant(accountId: ExchangeAccountId, status: ExchangeAccount['status']): void {
+    const account = this.store.account(accountId);
+    if (account) {
+      this.store.putAccount({ ...account, status });
+    }
+  }
+
+  suspendListing(listingId: string): void {
+    const listing = this.store.listings.get(listingId);
+    if (listing) {
+      this.store.putListing({ ...listing, status: 'SUSPENDED' });
+    }
+  }
+
+  marketData(marketId: ExchangeMarketId): MarketDataSnapshot {
+    return this.store.marketData.get(marketId) ?? this.refreshMarketData(marketId);
+  }
+
+  candles(marketId: ExchangeMarketId): Candle | null {
+    const trades = [...this.store.trades.values()].filter((trade) => trade.marketId === marketId);
+    if (trades.length === 0) {
+      return null;
+    }
+    const first = trades[0]!;
+    let high = first.price;
+    let low = first.price;
+    let volume = AssetQuantity.zero(first.quantity.assetId);
+    for (const trade of trades) {
+      if (comparePrice(trade.price, high) > 0) {
+        high = trade.price;
+      }
+      if (comparePrice(trade.price, low) < 0) {
+        low = trade.price;
+      }
+      volume = volume.plus(trade.quantity);
+    }
+    return Object.freeze({
+      marketId,
+      open: first.price,
+      high,
+      low,
+      close: trades[trades.length - 1]!.price,
+      volume,
+      label: PRICE_LABEL,
+    });
+  }
+
+  replayBook(marketId: ExchangeMarketId): { readonly bids: DigitalOrder[]; readonly asks: DigitalOrder[] } {
+    return sortBook(this.store.openOrders(marketId));
+  }
+
+  trades(marketId: ExchangeMarketId): readonly ImmutableTrade[] {
+    return [...this.store.trades.values()].filter((trade) => trade.marketId === marketId);
+  }
+
+  reconcile(): ReconciliationReport {
+    const notes: string[] = [];
+    let outcome: ReconciliationOutcome = 'MATCHED';
+    const sequences = [...this.store.sequenceByMarket.values()];
+    const events = this.store.bookEvents.map((event) => event.sequence).sort((a, b) => a - b);
+    if (events.length > 0 && events[0] !== 1) {
+      outcome = 'MARKET_DATA_SEQUENCE_GAP';
+      notes.push('book event sequence does not start at 1');
+    }
+    for (let i = 1; i < events.length; i += 1) {
+      if (events[i]! !== events[i - 1]! + 1 && events[i] === events[i - 1]) {
+        continue;
+      }
+    }
+    for (const trade of this.store.trades.values()) {
+      if (!this.store.settlementsByTrade.has(trade.tradeId)) {
+        outcome = 'TRADE_SETTLEMENT_MISMATCH';
+        notes.push(`trade ${trade.tradeId} has no settlement`);
+      }
+    }
+    for (const order of this.store.orders.values()) {
+      if ((order.status === 'OPEN' || order.status === 'PARTIALLY_FILLED') && !order.holdId) {
+        outcome = 'ORDER_HOLD_MISMATCH';
+        notes.push(`open order ${order.orderId} has no hold`);
+      }
+    }
+    void sequences;
+    const report: ReconciliationReport = Object.freeze({
+      reconciliationId: newReconciliationId(),
+      outcome,
+      notes,
+      createdAt: this.clock.now(),
+      autoCorrected: false,
+    });
+    this.store.reconciliations.push(report);
+    if (outcome !== 'MATCHED') {
+      this.emit('ExchangeReconciliationMismatch', report.reconciliationId, { outcome, notes });
+    }
+    this.seal('reconciliation', { outcome, autoCorrected: false });
+    return report;
+  }
+
+  acceptComputeContract(input: {
+    readonly actorId: string;
+    readonly listingId: string;
+    readonly sponsorCustomerId: string;
+  }): ExchangeOutcome<{ rawRows: false; receiptId: string; contributionId: string; settled: boolean }> {
+    const listing = this.store.listings.get(input.listingId);
+    if (!listing || listing.family === 'DIGITAL_ASSET') {
+      return { outcome: 'REJECTED', code: 'FAMILY_MISMATCH', message: 'compute contracts are not digital-asset orders' };
+    }
+    if (!this.informationMarket) {
+      return { outcome: 'REJECTED', code: 'INFORMATION_MARKET_REQUIRED', message: 'information market port is required' };
+    }
+    const executed = this.informationMarket.executeApprovedCompute({
+      listingId: input.listingId,
+      requesterActorId: input.actorId,
+      sponsorCustomerId: input.sponsorCustomerId,
+    });
+    if (!executed.ok) {
+      return { outcome: 'REJECTED', code: executed.error.code, message: executed.error.message };
+    }
+    this.seal('compute.contract', {
+      listingId: input.listingId,
+      receiptId: executed.value.receiptId,
+      rawRows: false,
+    });
+    return { outcome: 'OK', value: executed.value };
+  }
+
+  getAccount(id: ExchangeAccountId): ExchangeAccount | undefined {
+    return this.store.account(id);
+  }
+  getOrder(id: OrderId): DigitalOrder | undefined {
+    return this.store.order(id);
+  }
+  getTrade(id: TradeId): ImmutableTrade | undefined {
+    return this.store.trade(id);
+  }
+  getMarket(id: ExchangeMarketId): ExchangeMarket | undefined {
+    return this.store.markets.get(id);
+  }
+  listings(): readonly ExchangeListing[] {
+    return [...this.store.listings.values()];
+  }
+  bookEvents(): readonly BookEvent[] {
+    return [...this.store.bookEvents];
+  }
+
+  private matchAndSettle(incoming: DigitalOrder, actorId: string, customerId: CustomerId): void {
+    const market = this.store.markets.get(incoming.marketId);
+    if (!market || market.state !== 'OPEN') {
+      return;
+    }
+    const resting = this.store.openOrders(incoming.marketId).filter((order) => order.orderId !== incoming.orderId);
+    const result = matchIncoming(incoming, resting, { selfTrade: market.selfTradePolicy });
+    if (result.rejectIncoming) {
+      this.releaseHold(incoming);
+      this.store.putOrder({ ...incoming, status: 'REJECTED', version: (incoming.version + 1) as DigitalOrder['version'] });
+      return;
+    }
+    let taker = incoming;
+    for (const match of result.matches) {
+      const trade = toTrade(
+        match,
+        this.store.nextMarketSequence(incoming.marketId),
+        this.clock.now(),
+        this.feeSchedule,
+        'USD',
+      );
+      this.store.putTrade(trade);
+      this.emit('ExchangeTradeMatched', trade.tradeId, {
+        tradeId: trade.tradeId,
+        priceLabel: PRICE_LABEL,
+        quantity: trade.quantity.scaledUnits.toString(),
+      });
+      const settled = this.settleTrade(trade, match.maker, taker, actorId, customerId);
+      if (settled.outcome !== 'OK') {
+        this.emit('ExchangeReconciliationMismatch', trade.tradeId, { reason: settled.outcome === 'REJECTED' ? settled.code : 'KERNEL' });
+        continue;
+      }
+      const makerFilled = applyFill(this.store.order(match.maker.orderId) ?? match.maker, match.quantity);
+      taker = applyFill(this.store.order(taker.orderId) ?? taker, match.quantity);
+      this.store.putOrder(makerFilled);
+      this.store.putOrder(taker);
+      this.emitStatus(makerFilled);
+      this.emitStatus(taker);
+      this.recordBook({
+        sequence: this.store.nextOrderSequence(),
+        kind: 'TRADE',
+        tradeId: trade.tradeId,
+        at: this.clock.now(),
+      });
+    }
+    const latest = this.store.order(incoming.orderId);
+    if (latest) {
+      if (latest.timeInForce === 'IOC' && latest.status !== 'FILLED') {
+        this.releaseHold(latest);
+        const cancelled: DigitalOrder = Object.freeze({
+          ...latest,
+          status: 'CANCELLED',
+          version: (latest.version + 1) as DigitalOrder['version'],
+        });
+        this.store.putOrder(cancelled);
+        this.recordBook({
+          sequence: this.store.nextOrderSequence(),
+          kind: 'CANCEL',
+          orderId: cancelled.orderId,
+          at: this.clock.now(),
+        });
+        this.emit('ExchangeOrderCancelled', cancelled.orderId, { orderId: cancelled.orderId, reason: 'IOC' });
+      } else if (latest.status === 'FILLED') {
+        this.releaseHold(latest);
+      }
+    }
+    this.refreshMarketData(incoming.marketId);
+  }
+
+  private settleTrade(
+    trade: ImmutableTrade,
+    maker: DigitalOrder,
+    taker: DigitalOrder,
+    actorId: string,
+    customerId: CustomerId,
+  ): ExchangeOutcome<SettlementRecord> {
+    if (this.store.settlementsByTrade.has(trade.tradeId)) {
+      const existing = this.store.settlements.get(this.store.settlementsByTrade.get(trade.tradeId)!);
+      if (existing) {
+        return { outcome: 'OK', value: existing };
+      }
+    }
+    const seller = maker.side === 'SELL' ? maker : taker;
+    const buyer = maker.side === 'BUY' ? maker : taker;
+    const sellerAccount = this.store.account(seller.exchangeAccountId);
+    const buyerAccount = this.store.account(buyer.exchangeAccountId);
+    if (!sellerAccount || !buyerAccount) {
+      return { outcome: 'REJECTED', code: 'UNKNOWN_ACCOUNT', message: 'missing exchange account' };
+    }
+    const sellerHold = seller.holdId ? this.store.holds.get(seller.holdId) : undefined;
+    const buyerHold = buyer.holdId ? this.store.holds.get(buyer.holdId) : undefined;
+    if (!sellerHold || !buyerHold) {
+      return { outcome: 'REJECTED', code: 'ORDER_HOLD_MISMATCH', message: 'holds missing' };
+    }
+    const intent = this.intent(actorId, ACTION_TYPES.SETTLE_EXCHANGE_TRADE, {
+      accountId: buyerAccount.cashAccountId,
+      tradeId: trade.tradeId,
+    });
+    const gated = this.authorize(intent, customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const clearing: ClearingInstruction = Object.freeze({
+      clearingId: newClearingInstructionId(),
+      tradeId: trade.tradeId,
+      baseDelivery: trade.quantity,
+      quoteDelivery: trade.quoteAmount,
+      makerFee: trade.makerFee,
+      takerFee: trade.takerFee,
+      makerHoldId: maker.holdId!,
+      takerHoldId: taker.holdId!,
+    });
+    this.store.putClearing(clearing);
+    const capturedSeller = this.captureAssetHold(sellerHold, trade.quantity);
+    const capturedBuyer = this.captureFiatHold(buyerHold, trade.quoteAmount);
+    if (!capturedSeller.ok || !capturedBuyer.ok) {
+      return { outcome: 'REJECTED', code: 'ORDER_HOLD_MISMATCH', message: 'hold capture failed' };
+    }
+    const coinMove = this.coin.transfer(
+      actorId,
+      sellerAccount.customerId,
+      sellerAccount.customerId,
+      buyerAccount.customerId,
+      trade.quantity,
+    );
+    if (!coinMove.ok) {
+      return { outcome: 'REJECTED', code: coinMove.error.code, message: coinMove.error.message };
+    }
+    const cashMove = this.fiat.transfer(
+      actorId,
+      buyerAccount.cashAccountId,
+      sellerAccount.cashAccountId,
+      trade.quoteAmount,
+      `exchange.settle.cash.${trade.tradeId}`,
+    );
+    if (!cashMove.ok) {
+      return { outcome: 'REJECTED', code: cashMove.error.code, message: cashMove.error.message };
+    }
+    let feeJournalId: string | null = null;
+    const feeTotal = trade.makerFee.plus(trade.takerFee);
+    if (feeTotal.minorUnits() > 0n) {
+      const fee = this.fiat.postFee(
+        actorId,
+        buyerAccount.cashAccountId,
+        EXCHANGE_FEE_BOOK,
+        feeTotal,
+        `exchange.settle.fee.${trade.tradeId}`,
+      );
+      if (fee.ok) {
+        feeJournalId = fee.value.journalId;
+      }
+    }
+    const record: SettlementRecord = Object.freeze({
+      settlementId: newSettlementId(),
+      tradeId: trade.tradeId,
+      clearingId: clearing.clearingId,
+      coinJournalId: coinMove.value.journalId,
+      cashJournalId: cashMove.value.journalId,
+      feeJournalId,
+      settledAt: this.clock.now(),
+      atomic: true,
+    });
+    this.store.putSettlement(record);
+    this.chain?.requestSettlementAnchor({
+      tradeId: trade.tradeId,
+      settlementId: record.settlementId,
+      listingVersion: '1',
+    });
+    this.emit('ExchangeTradeSettled', record.settlementId, {
+      settlementId: record.settlementId,
+      tradeId: trade.tradeId,
+    });
+    this.seal('trade.settled', {
+      tradeId: trade.tradeId,
+      settlementId: record.settlementId,
+      coinJournalId: record.coinJournalId,
+      cashJournalId: record.cashJournalId,
+      listingVersion: 1,
+    });
+    return { outcome: 'OK', value: record, decision: gated.decision };
+  }
+
+  private reserveForOrder(
+    account: ExchangeAccount,
+    market: ExchangeMarket,
+    side: 'BUY' | 'SELL',
+    quantity: AssetQuantity,
+    limitPrice: ExchangePrice | null,
+  ): Result<{ orderId: DigitalOrder['orderId']; hold: ExchangeHold }, { code: string; message: string }> {
+    const orderId = newOrderId();
+    const holdId = newExchangeHoldId();
+    if (side === 'SELL') {
+      const available = this.coin.position(account.customerId).available;
+      if (available.scaledUnits < quantity.scaledUnits) {
+        return err({ code: 'INSUFFICIENT_ASSET', message: 'sell exceeds owned available coin' });
+      }
+      const placed = this.coin.placeHold(account.custodyAccountId, quantity);
+      if (!placed.ok) {
+        return err(placed.error);
+      }
+      return ok({
+        orderId,
+        hold: Object.freeze({
+          holdId,
+          orderId,
+          exchangeAccountId: account.accountId,
+          assetKind: 'BASE_ASSET',
+          fiatAmount: null,
+          remainingFiat: null,
+          assetAmount: quantity,
+          remainingAsset: quantity,
+          coinHoldId: placed.value.holdId,
+          state: 'ACTIVE',
+        }),
+      });
+    }
+    if (!limitPrice) {
+      return err({ code: 'INVALID_PRICE', message: 'buy reservation requires a limit or protection price' });
+    }
+    const quote = quoteMoney(limitPrice, quantity, 'USD');
+    const feeBuffer = Money.of(this.feeSchedule.takerFeeMinor, 'USD');
+    const reserved = quote.plus(feeBuffer);
+    const available = this.fiat.available(account.cashAccountId);
+    if (available.minorUnits() < reserved.minorUnits()) {
+      return err({ code: 'INSUFFICIENT_FUNDS', message: 'buy exceeds available cash plus fee buffer' });
+    }
+    const hold = this.fiat.reserve(account.cashAccountId, reserved, `exchange.hold.${orderId}`);
+    if (!hold.ok) {
+      return err(hold.error);
+    }
+    void market;
+    return ok({
+      orderId,
+      hold: Object.freeze({
+        holdId,
+        orderId,
+        exchangeAccountId: account.accountId,
+        assetKind: 'QUOTE_FIAT',
+        fiatAmount: reserved,
+        remainingFiat: reserved,
+        assetAmount: null,
+        remainingAsset: null,
+        coinHoldId: hold.value.holdId,
+        state: 'ACTIVE',
+      }),
+    });
+  }
+
+  private captureAssetHold(hold: ExchangeHold, quantity: AssetQuantity): Result<ExchangeHold, { code: string; message: string }> {
+    if (!hold.remainingAsset || !hold.coinHoldId) {
+      return err({ code: 'ORDER_HOLD_MISMATCH', message: 'asset hold missing' });
+    }
+    const remaining = hold.remainingAsset.minus(quantity);
+    if (remaining.isNegative()) {
+      return err({ code: 'ORDER_HOLD_MISMATCH', message: 'capture exceeds asset hold' });
+    }
+    this.coin.releaseHold(hold.coinHoldId);
+    let nextCoinHold: string | null = null;
+    if (remaining.isPositive()) {
+      const account = this.store.account(hold.exchangeAccountId);
+      if (account) {
+        const replaced = this.coin.placeHold(account.custodyAccountId, remaining);
+        if (replaced.ok) {
+          nextCoinHold = replaced.value.holdId;
+        }
+      }
+    }
+    const next: ExchangeHold = Object.freeze({
+      ...hold,
+      remainingAsset: remaining,
+      coinHoldId: nextCoinHold,
+      state: remaining.isZero() ? 'CAPTURED' : 'PARTIAL',
+    });
+    this.store.putHold(next);
+    return ok(next);
+  }
+
+  private captureFiatHold(hold: ExchangeHold, amount: Money): Result<ExchangeHold, { code: string; message: string }> {
+    if (!hold.remainingFiat || !hold.coinHoldId) {
+      return err({ code: 'ORDER_HOLD_MISMATCH', message: 'fiat hold missing' });
+    }
+    const remaining = hold.remainingFiat.minus(amount);
+    if (remaining.minorUnits() < 0n) {
+      return err({ code: 'ORDER_HOLD_MISMATCH', message: 'capture exceeds fiat hold' });
+    }
+    const captured = this.fiat.capture(hold.coinHoldId, amount);
+    if (!captured.ok) {
+      return err(captured.error);
+    }
+    const next: ExchangeHold = Object.freeze({
+      ...hold,
+      remainingFiat: remaining,
+      state: remaining.minorUnits() === 0n ? 'CAPTURED' : 'PARTIAL',
+    });
+    this.store.putHold(next);
+    return ok(next);
+  }
+
+  private releaseHold(order: DigitalOrder): void {
+    if (!order.holdId) {
+      return;
+    }
+    const hold = this.store.holds.get(order.holdId);
+    if (!hold || hold.state === 'RELEASED' || hold.state === 'CAPTURED') {
+      return;
+    }
+    if (hold.coinHoldId) {
+      if (hold.assetKind === 'BASE_ASSET') {
+        this.coin.releaseHold(hold.coinHoldId);
+      } else {
+        this.fiat.release(hold.coinHoldId);
+      }
+    }
+    this.store.putHold({ ...hold, state: 'RELEASED', remainingAsset: hold.assetAmount ? AssetQuantity.zero(hold.assetAmount.assetId) : null, remainingFiat: hold.fiatAmount ? Money.of(0n, hold.fiatAmount.currency) : null });
+  }
+
+  private protectMarketOrder(
+    market: ExchangeMarket,
+    side: 'BUY' | 'SELL',
+    quantity: AssetQuantity,
+    protectionPrice: ExchangePrice | undefined,
+  ): Result<true, { code: string; message: string }> {
+    const book = sortBook(this.store.openOrders(market.marketId));
+    const opposite = side === 'BUY' ? book.asks : book.bids;
+    if (opposite.length === 0) {
+      return err({ code: 'MARKET_ORDER_UNSAFE', message: 'no book liquidity for MARKET order' });
+    }
+    const best = opposite[0]!.limitPrice!;
+    if (market.maxSlippageUnits !== null && protectionPrice) {
+      const slip = side === 'BUY' ? protectionPrice.priceUnits - best.priceUnits : best.priceUnits - protectionPrice.priceUnits;
+      if (slip > market.maxSlippageUnits) {
+        return err({ code: 'SLIPPAGE_BREACH', message: 'MARKET order exceeds slippage collar' });
+      }
+    } else if (!protectionPrice) {
+      return err({ code: 'MARKET_ORDER_UNSAFE', message: 'MARKET requires a protection price' });
+    }
+    if (market.maxNotionalMinor !== null && protectionPrice) {
+      const notional = quoteMoney(protectionPrice, quantity, 'USD').minorUnits();
+      if (notional > market.maxNotionalMinor) {
+        return err({ code: 'SLIPPAGE_BREACH', message: 'MARKET order exceeds maximum notional' });
+      }
+    }
+    return ok(true);
+  }
+
+  private isHalted(marketId: ExchangeMarketId, accountId: ExchangeAccountId, assetId: string): boolean {
+    return this.store.halts.some(
+      (halt) =>
+        halt.active &&
+        (halt.scope === 'GLOBAL' ||
+          (halt.scope === 'MARKET' && halt.targetId === marketId) ||
+          (halt.scope === 'PARTICIPANT' && halt.targetId === accountId) ||
+          (halt.scope === 'ASSET' && halt.targetId === assetId)),
+    );
+  }
+
+  private refreshMarketData(marketId: ExchangeMarketId): MarketDataSnapshot {
+    const book = sortBook(this.store.openOrders(marketId));
+    const trades = [...this.store.trades.values()].filter((trade) => trade.marketId === marketId);
+    const last = trades[trades.length - 1] ?? null;
+    let volume = AssetQuantity.zero(SUNREY_COIN_ASSET_ID);
+    for (const trade of trades) {
+      volume = volume.plus(trade.quantity);
+    }
+    const snapshot: MarketDataSnapshot = Object.freeze({
+      marketId,
+      sequence: (this.store.sequenceByMarket.get(marketId) ?? 0) as MarketDataSnapshot['sequence'],
+      bestBid: book.bids[0]?.limitPrice ?? null,
+      bestAsk: book.asks[0]?.limitPrice ?? null,
+      lastTrade: last,
+      lastPriceLabel: last ? PRICE_LABEL : 'UNAVAILABLE',
+      volume,
+      depth: {
+        bids: book.bids.slice(0, 10).map((order) => ({ price: order.limitPrice!, quantity: order.remaining })),
+        asks: book.asks.slice(0, 10).map((order) => ({ price: order.limitPrice!, quantity: order.remaining })),
+      },
+    });
+    this.store.marketData.set(marketId, snapshot);
+    return snapshot;
+  }
+
+  private emitStatus(order: DigitalOrder): void {
+    if (order.status === 'PARTIALLY_FILLED') {
+      this.emit('ExchangeOrderPartiallyFilled', order.orderId, { orderId: order.orderId, remaining: order.remaining.scaledUnits.toString() });
+    }
+    if (order.status === 'FILLED') {
+      this.emit('ExchangeOrderFilled', order.orderId, { orderId: order.orderId });
+    }
+  }
+
+  private recordBook(event: BookEvent): void {
+    this.store.bookEvents.push(Object.freeze(event));
+  }
+
+  private seedSimulationRegistry(): void {
+    const coinListing: ExchangeListing = Object.freeze({
+      listingId: asListingId('listing:sunrey-coin'),
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'DIGITAL_ASSET',
+      underlyingRef: SUNREY_COIN_ASSET_ID,
+      settlementModel: 'DIGITAL_ASSET_DVP',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['LIMIT', 'MARKET', 'CANCEL'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: AssetQuantity.fromScaledUnits(1_000_000n, SUNREY_COIN_ASSET_ID),
+      maxQuantity: AssetQuantity.fromScaledUnits(1_000_000_000_000n, SUNREY_COIN_ASSET_ID),
+      precision: COIN_PRECISION,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
+    const cashListing: ExchangeListing = Object.freeze({
+      listingId: asListingId('listing:simulation-usd-cash'),
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'DIGITAL_ASSET',
+      underlyingRef: SIMULATION_USD_CASH_ASSET_ID,
+      settlementModel: 'DIGITAL_ASSET_DVP',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['SETTLE_FIAT'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: null,
+      maxQuantity: null,
+      precision: 2,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
+    const computeListing: ExchangeListing = Object.freeze({
+      listingId: AGGREGATE_RESEARCH_LISTING_ID,
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'INTELLIGENCE_COMPUTE',
+      underlyingRef: 'information-market:aggregate-consumer-research-cohort',
+      settlementModel: 'COMPUTE_CONTRACT',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['REQUEST', 'OFFER', 'ACCEPTANCE', 'CONTRACT'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: null,
+      maxQuantity: null,
+      precision: 0,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
+    this.store.putListing(coinListing);
+    this.store.putListing(cashListing);
+    this.store.putListing(computeListing);
+    this.store.putMarket(
+      Object.freeze({
+        marketId: SUNREY_COIN_USD_MARKET_ID,
+        family: 'DIGITAL_ASSET',
+        bookId: 'book:sunrey-coin-usd' as ExchangeMarket['bookId'],
+        baseListingId: coinListing.listingId,
+        quoteListingId: cashListing.listingId,
+        baseAssetId: SUNREY_COIN_ASSET_ID,
+        quoteAssetId: 'USD',
+        quoteKind: 'FIAT_MONEY',
+        state: 'OPEN',
+        selfTradePolicy: 'CANCEL_INCOMING',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: 50n,
+        maxNotionalMinor: 1_000_000n,
+      }),
+    );
+  }
+
+  private intent(actorId: string, actionType: string, payload: Record<string, unknown>): ActionIntent {
+    return {
+      id: asIntentId(`intent_${randomUUID()}`),
+      actionType,
+      payload,
+      idempotencyKey: `exchange.${actionType}.${payload.orderId ?? payload.tradeId ?? payload.accountId ?? randomUUID()}`,
+      actorId,
+      requestedAt: this.clock.now(),
+      purpose: 'CUSTOMER_DIGITAL_ASSET',
+    };
+  }
+
+  private authorize(
+    intent: ActionIntent,
+    customerId: Customer['id'],
+  ):
+    | { readonly outcome: 'ALLOWED'; readonly decision: AuthorizationDecision; readonly authority: ExecutionAuthority }
+    | { readonly outcome: 'REFUSED'; readonly result: ExchangeOutcome<never> } {
+    const customer = this.catalog.customers.get(customerId);
+    const product = this.catalog.products.get('prod_digital_usd_gb' as Product['id']);
+    const legalEntity = product ? this.catalog.legalEntities.get(product.legalEntityId) : undefined;
+    const resolved = this.identity.resolveActorContext(intent.actorId);
+    const facts: KernelFacts = {
+      actor: {
+        id: intent.actorId,
+        capabilities: resolved.ok ? actionTypesFromCapabilities(resolved.value.authorizedCapabilities) : [],
+      },
+      identity: this.identity.identityFactsFor(intent.actorId),
+      ...(customer ? { customer } : {}),
+      ...(legalEntity ? { legalEntity } : {}),
+      ...(product ? { product, jurisdiction: product.jurisdiction } : {}),
+    };
+    const decision = this.kernel.submit(intent, facts);
+    this.emit('KernelDecisionRecorded', intent.id, {
+      intentId: intent.id,
+      actionType: intent.actionType,
+      status: decision.status,
+    });
+    if (decision.status !== 'ALLOW') {
+      this.seal(`${intent.actionType}_KERNEL_REFUSED`, { intentId: intent.id, status: decision.status });
+      return { outcome: 'REFUSED', result: { outcome: 'KERNEL_REFUSED', decision } };
+    }
+    const structural = validateIntentStructure(intent, {
+      products: { get: (id) => this.catalog.products.get(id), list: () => [] },
+      legalEntities: this.catalog.legalEntities,
+      accounts: { get: () => undefined },
+    });
+    if (!isOk(structural)) {
+      return {
+        outcome: 'REFUSED',
+        result: { outcome: 'REJECTED', code: structural.error.code, message: structural.error.message, decision },
+      };
+    }
+    if (!decision.executionAuthority) {
+      return {
+        outcome: 'REFUSED',
+        result: { outcome: 'REJECTED', code: 'MISSING_EXECUTION_AUTHORITY', message: 'ALLOW without authority', decision },
+      };
+    }
+    const verified = this.issuer.verify(
+      decision.executionAuthority,
+      {
+        actionType: intent.actionType,
+        accountId: String((intent.payload as { accountId?: string }).accountId ?? intent.id),
+        intentId: intent.id,
+      },
+      this.clock,
+    );
+    if (!isOk(verified)) {
+      return {
+        outcome: 'REFUSED',
+        result: { outcome: 'REJECTED', code: verified.error.code, message: verified.error.message, decision },
+      };
+    }
+    return { outcome: 'ALLOWED', decision, authority: verified.value };
+  }
+
+  private emit(eventType: string, aggregateId: string, payload: Record<string, unknown>): void {
+    this.events.append({
+      eventType: eventType as never,
+      schemaVersion: 1,
+      occurredAt: this.clock.now(),
+      payload,
+    } as never);
+    void aggregateId;
+  }
+
+  private seal(kind: string, payload: Record<string, unknown>): void {
+    this.evidence.seal(`${EVIDENCE_KIND_EXCHANGE}:${kind}`, payload);
+  }
+}
+
+export { exchangePrice };
+export { asExchangeAccountId };

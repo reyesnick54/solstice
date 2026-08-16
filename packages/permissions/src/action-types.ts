@@ -74,6 +74,11 @@ export const ACTION_TYPES = {
   ISSUE_SUNREY_COIN: 'ISSUE_SUNREY_COIN',
   TRANSFER_SUNREY_COIN: 'TRANSFER_SUNREY_COIN',
   BURN_SUNREY_COIN: 'BURN_SUNREY_COIN',
+  OPEN_EXCHANGE_ACCOUNT: 'OPEN_EXCHANGE_ACCOUNT',
+  PLACE_EXCHANGE_ORDER: 'PLACE_EXCHANGE_ORDER',
+  CANCEL_EXCHANGE_ORDER: 'CANCEL_EXCHANGE_ORDER',
+  SETTLE_EXCHANGE_TRADE: 'SETTLE_EXCHANGE_TRADE',
+  HALT_EXCHANGE: 'HALT_EXCHANGE',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -743,3 +748,57 @@ export type BurnSunReyCoinIntent = ActionIntent<BurnSunReyCoinPayload> & {
 };
 
 export type SunReyCoinIntent = IssueSunReyCoinIntent | TransferSunReyCoinIntent | BurnSunReyCoinIntent;
+
+export type OpenExchangeAccountPayload = {
+  readonly accountId: string;
+  readonly customerId: CustomerId;
+};
+
+export type PlaceExchangeOrderPayload = {
+  readonly accountId: string;
+  readonly orderId: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantity: AssetQuantity;
+};
+
+export type CancelExchangeOrderPayload = {
+  readonly accountId: string;
+  readonly orderId: string;
+};
+
+export type SettleExchangeTradePayload = {
+  readonly accountId: string;
+  readonly tradeId: string;
+};
+
+export type HaltExchangePayload = {
+  readonly accountId: string;
+  readonly scope: string;
+};
+
+export type OpenExchangeAccountIntent = ActionIntent<OpenExchangeAccountPayload> & {
+  readonly actionType: typeof ACTION_TYPES.OPEN_EXCHANGE_ACCOUNT;
+};
+
+export type PlaceExchangeOrderIntent = ActionIntent<PlaceExchangeOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PLACE_EXCHANGE_ORDER;
+};
+
+export type CancelExchangeOrderIntent = ActionIntent<CancelExchangeOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CANCEL_EXCHANGE_ORDER;
+};
+
+export type SettleExchangeTradeIntent = ActionIntent<SettleExchangeTradePayload> & {
+  readonly actionType: typeof ACTION_TYPES.SETTLE_EXCHANGE_TRADE;
+};
+
+export type HaltExchangeIntent = ActionIntent<HaltExchangePayload> & {
+  readonly actionType: typeof ACTION_TYPES.HALT_EXCHANGE;
+};
+
+export type SunReyExchangeIntent =
+  | OpenExchangeAccountIntent
+  | PlaceExchangeOrderIntent
+  | CancelExchangeOrderIntent
+  | SettleExchangeTradeIntent
+  | HaltExchangeIntent;

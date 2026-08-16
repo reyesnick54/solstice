@@ -223,6 +223,17 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'SunReyChainAnchorReorgObserved', version: 1, status: 'current' },
   { eventType: 'SunReyChainReconciliationMismatch', version: 1, status: 'current' },
   { eventType: 'SunReyChainHealthDegraded', version: 1, status: 'current' },
+  { eventType: 'ExchangeAccountCreated', version: 1, status: 'current' },
+  { eventType: 'ExchangeOrderAccepted', version: 1, status: 'current' },
+  { eventType: 'ExchangeOrderOpened', version: 1, status: 'current' },
+  { eventType: 'ExchangeOrderPartiallyFilled', version: 1, status: 'current' },
+  { eventType: 'ExchangeOrderFilled', version: 1, status: 'current' },
+  { eventType: 'ExchangeOrderCancelled', version: 1, status: 'current' },
+  { eventType: 'ExchangeTradeMatched', version: 1, status: 'current' },
+  { eventType: 'ExchangeTradeSettled', version: 1, status: 'current' },
+  { eventType: 'ExchangeMarketHalted', version: 1, status: 'current' },
+  { eventType: 'ExchangeMarketResumed', version: 1, status: 'current' },
+  { eventType: 'ExchangeReconciliationMismatch', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {
