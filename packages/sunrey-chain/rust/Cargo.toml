@@ -7,10 +7,14 @@ members = [
   "crates/execution",
   "crates/storage",
   "crates/governance",
+  "crates/productive",
+  "crates/oracle",
+  "crates/fees",
   "crates/consensus",
   "crates/node",
   "crates/rpc",
   "crates/validators",
+  "crates/native-assets",
 ]
 
 [workspace.package]
@@ -29,7 +33,11 @@ sunrey-consensus = { path = "crates/consensus" }
 sunrey-node = { path = "crates/node" }
 sunrey-rpc = { path = "crates/rpc" }
 sunrey-governance = { path = "crates/governance" }
+sunrey-productive = { path = "crates/productive" }
+sunrey-oracle = { path = "crates/oracle" }
+sunrey-fees = { path = "crates/fees" }
 sunrey-validators = { path = "crates/validators" }
+sunrey-native-assets = { path = "crates/native-assets" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"

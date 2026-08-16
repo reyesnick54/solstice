@@ -62,10 +62,15 @@ Chunk 40 implements development protocol governance at
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
 Chunk 45 implements machine economic identity and commerce at
 [`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
+Chunk 43 implements the sovereign oracle network at
+[`chunk-43-oracle-network.md`](./chunk-43-oracle-network.md).
+Chunk 42 implements native fees and resource metering at
+[`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/governance`,
-or `packages/sunrey-governance`. Production BFT is
+`packages/sunrey-governance`, `packages/oracle`, or
+`packages/sunrey-oracle`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains
 `PROPOSED`.
 
@@ -74,8 +79,11 @@ ADR-0033) without implementing a production node. Canonical spec:
 [`sunrey-blockchain-protocol.json`](./sunrey-blockchain-protocol.json).
 Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md).
 MoonRey Coin is a distinct planned native asset. Its ticker is
-`NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
-production-ready, quantum-secure, decentralized, or mainnet-ready.
+`NOT_ASSIGNED`. Chunk 44 issues development MoonRey units only from
+policy-eligible `VerifiedProductiveContribution` records. Do not
+invent a ticker. Do not claim the chain is production-ready,
+quantum-secure, decentralized, or mainnet-ready. See
+[`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 
 Chunk 32R implements the canonical transaction protocol in this
 package: envelope v1, typed economic objects, rights, deterministic

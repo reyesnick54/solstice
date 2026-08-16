@@ -92,12 +92,18 @@ jobs:
         run: npm run demo:information-market
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: MoonRey productive capacity demo
+        run: npm run demo:moonrey-productive
       - name: SunRey local node demo
         run: npm run demo:sunrey-node
       - name: SunRey P2P development network demo
         run: npm run demo:sunrey-devnet
       - name: SunRey validator accountability demo
         run: npm run demo:sunrey-accountability
+      - name: SunRey native asset four-validator demo
+        run: npm run demo:sunrey-native-assets
+      - name: SunRey native fees demo
+        run: npm run demo:sunrey-fees
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo

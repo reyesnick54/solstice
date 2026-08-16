@@ -95,10 +95,12 @@ impl Mempool {
     pub fn select_for_block(&self) -> Vec<Transaction> {
         let mut txs: Vec<_> = self.by_id.values().map(|e| e.tx.clone()).collect();
         txs.sort_by(|a, b| {
-            a.actor_id
-                .cmp(&b.actor_id)
-                .then(a.nonce.cmp(&b.nonce))
+            fee_priority(a)
+                .cmp(&fee_priority(b))
+                .reverse()
                 .then(a.id().cmp(&b.id()))
+                .then(a.actor_id.cmp(&b.actor_id))
+                .then(a.nonce.cmp(&b.nonce))
         });
         txs
     }
@@ -126,5 +128,19 @@ impl Mempool {
                 }
             }
         }
+    }
+}
+
+/// Effective fee priority: (max_fee * 1_000_000) / max(max_execution_units, 1)
+/// when the payload carries a FEE1 declaration. Otherwise priority is 0 and
+/// selection falls through to canonical transaction id ordering.
+fn fee_priority(tx: &Transaction) -> u128 {
+    if tx.payload.len() >= 20 && tx.payload.starts_with(b"FEE1") {
+        let max_fee = u64::from_be_bytes(tx.payload[4..12].try_into().unwrap_or([0; 8])) as u128;
+        let units = u64::from_be_bytes(tx.payload[12..20].try_into().unwrap_or([0; 8])) as u128;
+        let denom = if units == 0 { 1 } else { units };
+        max_fee.saturating_mul(1_000_000) / denom
+    } else {
+        0
     }
 }

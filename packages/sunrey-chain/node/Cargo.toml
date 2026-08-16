@@ -30,8 +30,13 @@ path = "src/bin/sunrey-validator-devnet.rs"
 name = "sunrey-validator-node"
 path = "src/bin/sunrey-validator-node.rs"
 
+[[bin]]
+name = "sunrey-native-asset-demo"
+path = "src/bin/sunrey-native-asset-demo.rs"
+
 [dependencies]
 clap = { version = "=4.5.23", features = ["derive"] }
+sunrey-native-assets = { path = "../rust/crates/native-assets" }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"
 parking_lot = "0.12"
@@ -42,6 +47,7 @@ rustls = { version = "0.23", default-features = false, features = ["ring", "std"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
+sunrey-productive = { path = "../rust/crates/productive" }
 thiserror = "2"
 tokio = { version = "1", features = ["io-util", "macros", "net", "rt-multi-thread", "sync", "time"] }
 tracing = "0.1"

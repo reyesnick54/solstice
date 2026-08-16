@@ -12,6 +12,9 @@ Language-neutral contract for later Rust node code.
 | Public tickers | `NOT_ASSIGNED` |
 | MoonRey issuance | unavailable |
 | Machine commerce family | `TRANSACTION_FAMILY_MACHINE_COMMERCE` = 14 |
+| MoonRey issuance | unavailable via arbitrary `NATIVE_ASSET ISSUE`; Chunk 44 development issuance from verified productive contributions only |
+| MoonRey issuance | development faucet / authorized proof only; production economics later |
+| Native fees | Chunk 42 integer resource metering. Default fee asset `SUNREY_COIN`. MoonRey fee asset disabled. |
 
 Consensus hashes are computed from the deterministic protobuf bytes
 defined in ADR-0021 Addendum A. The JSON files under

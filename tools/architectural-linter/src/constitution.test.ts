@@ -1003,6 +1003,71 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-economy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-identity')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+  it('CHUNK-44 implements productive capacity and MoonRey issuance on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'moonrey-issuance-engine').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'moonrey-issuance-engine').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-44',
+    );
+    assert.ok(declared, 'CHUNK-44 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-44-productive-capacity-moonrey.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/global-productive-capacity-graph.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/moonrey-issuance-model.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/moonrey-economic-verification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/productive/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/productive/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+  it('CHUNK-43 implements the oracle network on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-oracle-network').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-oracle-network').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-oracle-network').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-43',
+    );
+    assert.ok(declared, 'CHUNK-43 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-43-oracle-network.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/oracle-economic-fact-spec.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/oracle/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/oracle/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-oracle')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-network')), false);
+  it('CHUNK-42 implements native fees on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-governance').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-42',
+    );
+    assert.ok(declared, 'CHUNK-42 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-42-native-fees.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-resource-metering.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/fee-policy-development.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/fees/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/fees/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/fees')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-fees')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/gas')), false);
   });
 
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
@@ -1121,7 +1186,7 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-node').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PARTIAL');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-31',

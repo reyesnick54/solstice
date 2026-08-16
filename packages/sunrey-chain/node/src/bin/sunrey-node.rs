@@ -27,6 +27,17 @@ async fn main() {
             }
         },
         Some("evidence") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+        Some("evidence" | "productive" | "moonrey") => {
+            match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+                Ok(out) => {
+                    println!("{out}");
+                    return;
+                }
+                Err(err) => {
+                    eprintln!("{err}");
+                    std::process::exit(1);
+                }
+        Some("fees") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
             Ok(out) => {
                 println!("{out}");
                 return;
@@ -36,6 +47,16 @@ async fn main() {
                 std::process::exit(1);
             }
         },
+        Some("evidence") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+            Ok(out) => {
+                println!("{out}");
+                return;
+            }
+            Err(err) => {
+                eprintln!("{err}");
+                std::process::exit(1);
+            }
+        }
         Some("validator")
             if matches!(
                 args.get(2).map(String::as_str),

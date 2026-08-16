@@ -26,6 +26,7 @@ export const HYBRID_REQUIRED_ROLES = Object.freeze([
   'VALIDATOR_CONSENSUS_SIGNING',
   'BLOCK_PROPOSAL_SIGNING',
   'GOVERNANCE_SIGNING',
+  'ORACLE_SIGNING',
 ] as const);
 
 export const MIGRATION_TRANSITION_OWNER = 'protocol-upgrade-machinery' as const;

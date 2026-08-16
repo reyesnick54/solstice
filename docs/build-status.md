@@ -228,13 +228,21 @@ This document describes only what is implemented and tested in this tree.
   `packages/sunrey-chain/rust/crates/consensus`. Networked
   four-validator finality is Chunk 38 at
   `packages/sunrey-chain/node`. Production BFT is not implemented.
+  Chunk 44 implements the derived Global Productive Capacity Graph
+  and development MoonRey issuance from verified productive
+  contributions at `packages/sunrey-chain/src/productive` and
+  `packages/sunrey-chain/rust/crates/productive`. Capabilities
+  `sunrey-productive-capacity` and `moonrey-issuance-engine` are
+  `IMPLEMENTED`. Public ticker remains `NOT_ASSIGNED`.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
   rejection codes, and `validateStateless` / `validateStateful` /
   `apply`. Language-neutral schema and test vectors live under
-  `packages/sunrey-chain/protocol/`. MoonRey issuance is unavailable.
-  Public tickers remain `NOT_ASSIGNED`. Historical stop:
+  `packages/sunrey-chain/protocol/`. Arbitrary MoonRey `ISSUE`
+  remains unavailable. Chunk 44 issues development MoonRey only
+  from verified productive contributions. Public tickers remain
+  `NOT_ASSIGNED`. Historical stop:
   `docs/architecture/chunk-32-stop.md`. Resume:
   `docs/architecture/chunk-32-resume.md`.
 - SunRey Blockchain production architecture freeze (Chunk 31):
@@ -407,10 +415,40 @@ This document describes only what is implemented and tested in this tree.
   Capability `sunrey-machine-economy` is `IMPLEMENTED`. Machines
   are controller-bound and capability-limited. They cannot
   validate, govern, or issue MoonRey.
+- SunRey oracle network (Chunk 43) is **development-only** at
+  `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
+  `IMPLEMENTED`. Signed observations become time-bounded
+  `VerifiedEconomicFact`s. Consensus never calls external APIs.
+  Facts are not money. ADR-0027 is implemented for development.
+- SunRey dual native assets (Chunk 41) at
+  `packages/sunrey-chain/rust/crates/native-assets` and
+  `packages/sunrey-chain/node`. Capability `sunrey-native-assets`
+  is `IMPLEMENTED`. `SUNREY_COIN` and `MOONREY_COIN` are distinct
+  protocol-native assets (precision 6). Tickers remain
+  `NOT_ASSIGNED`. Development faucet issues
+  `DEVELOPMENT_ECONOMIC_UNIT` only. Application SunRey Coin
+  supply is not imported. ADR-0026 is implemented for
+  development chain-native units. Production migration is not
+  performed.
+- SunRey native fees and resource metering (Chunk 42) are
+  **development-only** at `packages/sunrey-chain`. Capability
+  `sunrey-native-fees` is `IMPLEMENTED`. Integer resource units,
+  reserved/charged/released native-asset fees, governed fee
+  parameters. FeeIntent attaches beside the Chunk 41 payload.
+  No fiat ledger debit. MoonRey remains disabled as
+  a fee asset until a height-activated policy change.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
-- MoonRey Coin runtime, ticker, or package.
+- Public MoonRey Coin ticker or competing `packages/moonrey-coin`.
+  Chunk 44 implements development MoonRey issuance from verified
+  productive contributions at `packages/sunrey-chain`. Capability
+  `moonrey-issuance-engine` is `IMPLEMENTED`. Ticker remains
+  `NOT_ASSIGNED`. See
+  `docs/architecture/chunk-44-productive-capacity-moonrey.md`.
+- MoonRey Coin application package, public ticker, or production
+  economic issuance. Chunk 41 registers MoonRey as a
+  protocol-native development asset only.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
   Do not create `MAINNET_ENABLED=true`, `PRODUCTION_BLOCKCHAIN=true`,
   or `LIVE_CHAIN_ENABLED=true`.

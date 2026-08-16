@@ -70,6 +70,7 @@ never be two implementations of these systems.
 | Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
 | Consent Ledger / Purpose Firewall | `packages/consent` | `packages/consent/src/service.ts` | IMPLEMENTED |
 | Privacy Clean Room | `packages/clean-room` | `packages/clean-room/src/service.ts` | IMPLEMENTED |
+| SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -752,6 +753,28 @@ validate, govern, issue Execution Authority, or issue MoonRey.
 Do not create `packages/machine-economy` or
 `packages/machine-identity`. See
 [`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
+Chunk 43 implements the sovereign oracle network and verified
+economic-fact protocol at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/oracle`. Capability
+`sunrey-oracle-network` is `IMPLEMENTED`. Consensus never calls
+external APIs. Facts are not money and do not authorize MoonRey
+issuance. Do not create `packages/oracle`, `packages/sunrey-oracle`,
+or `packages/oracle-network`. Production market-data networks are
+not connected.
+Chunk 41 implements the dual native asset protocol for SunRey Coin
+and MoonRey Coin at `packages/sunrey-chain/rust/crates/native-assets`.
+Capability `sunrey-native-assets` is `IMPLEMENTED`. Public tickers
+remain `NOT_ASSIGNED`. Application SunRey Coin supply is not
+imported. Do not create `packages/moonrey-coin` or a competing
+chain. See
+[`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
+
+Chunk 42 implements deterministic native fees and resource
+metering at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/fees`. Capability
+`sunrey-native-fees` is `IMPLEMENTED`. Fees are native-asset
+minor units, not fiat ledger debits. Do not create
+`packages/fees`, `packages/sunrey-fees`, or `packages/gas`.
 
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
@@ -799,17 +822,22 @@ economic-state protocol at `packages/sunrey-chain`. Historical
 stop: [`chunk-32-stop.md`](./chunk-32-stop.md). Resume:
 [`chunk-32-resume.md`](./chunk-32-resume.md). Capability
 `blockchain-protocol` is `IMPLEMENTED`. Do not invent a second
-codec package, MoonRey issuance, ticker, second Money type, or
-second SunRey Coin ledger. Do not create
+codec package, ticker, second Money type, or second SunRey Coin
+ledger. Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
+Chunk 44 implements development MoonRey issuance from verified
+productive contributions inside `packages/sunrey-chain`. Arbitrary
+`NATIVE_ASSET ISSUE` remains inactive. The public MoonRey Coin
+product remains unimplemented. See
+[`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Chunk 31 freezes the **production architecture** for SunRey
 Blockchain. It does not implement a production node. The canonical
 owner remains `packages/sunrey-chain` as a modular monolith.
 Consensus, runtime, storage, and P2P are future internal modules,
 not five microservices. Public tickers for SunRey Coin and MoonRey
-Coin remain `NOT_ASSIGNED`. MoonRey Coin is distinct and not
-implemented. The canonical Ledger remains authoritative for fiat
+Coin remain `NOT_ASSIGNED`. MoonRey Coin is distinct and not a
+public product. The canonical Ledger remains authoritative for fiat
 and current SunRey Coin journals. See
 [`chunk-31-sunrey-blockchain-production-architecture.md`](./chunk-31-sunrey-blockchain-production-architecture.md),
 [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md),
