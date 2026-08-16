@@ -257,6 +257,13 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
+- SunRey crypto-agility and post-quantum foundation (Chunk 33) is
+  **stopped**. Chunks 31 and 32 are not merged. No crypto-suite
+  registry, hybrid envelope, PQ provider, threat model, or
+  cryptographic inventory was added. Canonical cryptography remains
+  Chunk 4 `packages/security`. This is not a quantum-proof or
+  production-certification claim. See
+  `docs/architecture/chunk-33-stop.md`.
 - Chunk 32 (canonical SunRey transaction and economic-state
   protocol) is **stopped**. Chunk 31 is not merged and its
   protocol / encoding architecture is not canonical on `main`.

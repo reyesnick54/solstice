@@ -138,6 +138,16 @@ Key rotation does not invalidate historical evidence records.
 - Custom ciphers, MACs, password hashes, KDFs, or signature schemes
 - Production secrets or private keys in Git or PostgreSQL
 - Second crypto packages (`packages/crypto`, `packages/kms`, `packages/secrets`)
+- Competing post-quantum roots (`packages/quantum-security`,
+  `packages/crypto-v2`, `packages/pqc-core`, `packages/crypto-agility`,
+  `packages/post-quantum`)
 - Business services importing `SimulationKeyProvider`
 - Catching a provider failure and allowing the action
 - Putting key material, secrets, or plaintext in events or evidence
+- Claiming quantum-proof, quantum-secure, or production-certified
+  cryptography from this tree
+
+Chunk 33 (crypto-agility / post-quantum foundation) is **stopped**
+until Chunks 31 and 32 merge. See
+[`chunk-33-stop.md`](./chunk-33-stop.md). Resume only by extending
+this package.
