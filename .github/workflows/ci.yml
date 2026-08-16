@@ -32,6 +32,18 @@ jobs:
       - name: Kernel gating
         run: npm run gate
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@1.83.0
+        with:
+          components: rustfmt, clippy
+
+      - name: Rust fmt / clippy / test
+        working-directory: packages/sunrey-chain/rust
+        run: |
+          cargo fmt --check
+          cargo clippy --all-targets -- -D warnings
+          cargo test --workspace
+
       - name: Tests
         run: npm test
 
@@ -73,6 +85,8 @@ jobs:
         run: npm run demo:information-market
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: SunRey local node demo
+        run: npm run demo:sunrey-node
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo

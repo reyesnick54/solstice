@@ -27,10 +27,10 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 describe('CHUNK-35 P2P / mempool / sync stop', () => {
-  it('stops while the local deterministic node and P2P capabilities are PLANNED', () => {
+  it('stops while P2P remains PLANNED after the local node is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
@@ -42,7 +42,7 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
     );
     assert.ok(declared, 'CHUNK-35 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-local-node', 'sunrey-p2p']);
+    assert.deepEqual(declared.missing, ['sunrey-p2p']);
   });
 
   it('does not invent a second chain, node, P2P, mempool, or consensus package', () => {
@@ -60,7 +60,7 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-consensus')), false);
   });
 
-  it('has no P2P implementation in sunrey-chain after later protocol chunks', () => {
+  it('does not implement P2P, mempool, or gossip in the TypeScript trust layer', () => {
     const chunkDir = join(REPO_ROOT, 'docs/architecture/chunks');
     const names = readdirSync(chunkDir);
     assert.equal(names.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')), true);

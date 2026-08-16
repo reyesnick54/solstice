@@ -1,0 +1,37 @@
+[workspace]
+resolver = "2"
+members = [
+  "crates/protocol",
+  "crates/crypto",
+  "crates/state",
+  "crates/execution",
+  "crates/storage",
+  "crates/node",
+  "crates/rpc",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "UNLICENSED"
+publish = false
+
+[workspace.dependencies]
+sunrey-protocol = { path = "crates/protocol" }
+sunrey-crypto = { path = "crates/crypto" }
+sunrey-state = { path = "crates/state" }
+sunrey-execution = { path = "crates/execution" }
+sunrey-storage = { path = "crates/storage" }
+sunrey-node = { path = "crates/node" }
+sunrey-rpc = { path = "crates/rpc" }
+hex = "0.4.3"
+serde = { version = "1.0.217", features = ["derive"] }
+serde_json = "1.0.135"
+sha2 = "=0.10.8"
+ed25519-dalek = "=2.1.1"
+thiserror = "1.0.69"
+clap = { version = "=4.5.23", features = ["derive"] }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["env-filter", "json"] }
+base64ct = "=1.6.0"
+zeroize = "=1.8.1"

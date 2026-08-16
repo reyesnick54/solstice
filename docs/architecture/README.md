@@ -44,10 +44,11 @@
   listing governance, surveillance, and kill switches after Exchange
   core merged
 - [Chunk 35 stop](./chunk-35-stop.md) — P2P / mempool / sync stopped
-  until Chunk 34 local deterministic node is IMPLEMENTED
-- [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
-  until Chunks 31–33 (architecture, protocol types, CryptoSuite
-  registry) merge. Do not invent a node package.
+  until `sunrey-p2p` is IMPLEMENTED
+- [Chunk 34 stop (historical)](./chunk-34-stop.md) — original
+  documentation-only gate
+- [Chunk 34 resume](./chunk-34-resume.md) — local development node
+  implemented inside `packages/sunrey-chain/rust`
 - [Chunk 33 stop (historical)](./chunk-33-stop.md) — original
   process-gate stop before the CryptoSuite implementation.
 - [Chunk 33R crypto-agility](./chunk-33-crypto-agility.md) —

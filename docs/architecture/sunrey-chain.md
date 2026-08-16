@@ -41,11 +41,13 @@ finality policy.
 
 See ADR-0015. The chain-technology choice remains `PROPOSED`.
 
-A local deterministic development node (Chunk 34) and a P2P
-development network / mempool / state sync (Chunk 35) are **not**
-implemented. Those capabilities are reserved `PLANNED` on this
-package. See [`chunk-35-stop.md`](./chunk-35-stop.md). Do not
-create `packages/sunrey-node` or `packages/sunrey-p2p`.
+A local deterministic development node (Chunk 34R) is implemented
+inside this owner at `packages/sunrey-chain/rust`. A P2P
+development network / mempool / state sync (Chunk 35) is **not**
+implemented. Capability `sunrey-p2p` remains `PLANNED`. See
+[`chunk-34-resume.md`](./chunk-34-resume.md) and
+[`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
+`packages/sunrey-node` or `packages/sunrey-p2p`.
 See ADR-0015. The simulation foundation remains `PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through

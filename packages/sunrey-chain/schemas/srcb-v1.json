@@ -1,0 +1,59 @@
+{
+  "codecId": "srcb.v1",
+  "schemaVersion": 1,
+  "name": "SunRey Canonical Binary",
+  "chunk": "CHUNK-34",
+  "consensusEncoding": true,
+  "debugProjection": "json-is-not-consensus-encoding",
+  "integers": "big-endian",
+  "unknownFields": "reject",
+  "domains": [
+    "sunrey.txid.v1",
+    "sunrey.sig.v1",
+    "sunrey.blockid.v1",
+    "sunrey.genesis.v1",
+    "sunrey.txroot.v1",
+    "sunrey.stateroot.v1",
+    "sunrey.merkle.v1",
+    "sunrey.leaf.v1",
+    "sunrey.valset.v1",
+    "sunrey.consparams.v1",
+    "sunrey.schema.v1",
+    "sunrey.cryptopolicy.v1"
+  ],
+  "transactionFamilies": {
+    "activated": ["SYSTEM", "EVIDENCE_ANCHOR"],
+    "structuralOnly": ["NATIVE_ASSET"],
+    "notActivated": ["IDENTITY"]
+  },
+  "envelope": [
+    "tag",
+    "network_id",
+    "chain_id",
+    "codec_id",
+    "schema_version",
+    "family",
+    "nonce",
+    "idempotency_key",
+    "payload",
+    "auth"
+  ],
+  "blockHeader": [
+    "version",
+    "network_id",
+    "chain_id",
+    "height",
+    "parent_block_id",
+    "transaction_root",
+    "app_hash",
+    "validator_set_hash",
+    "consensus_parameter_hash",
+    "timestamp_unix_ms",
+    "proposer",
+    "crypto_suite_id"
+  ],
+  "nativeAssets": {
+    "SUNREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0 },
+    "MOONREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0, "implemented": false }
+  }
+}

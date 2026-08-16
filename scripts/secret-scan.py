@@ -14,6 +14,7 @@ SKIP_DIR_NAMES = {
     "node_modules",
     "dist",
     "build",
+    "target",
     "__pycache__",
     "secret-scan-fixtures",
 }

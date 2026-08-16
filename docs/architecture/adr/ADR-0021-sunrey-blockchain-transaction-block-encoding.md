@@ -5,8 +5,9 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0019, ADR-0024
-- Implementation status: PARTIAL (transaction envelope, protobuf codec,
-  and hash domains implemented in Chunk 32R; block production later)
+- Implementation status: PARTIAL (Chunk 32R envelope, protobuf codec,
+  and hash domains; Chunk 34R local block production. Production
+  codec certification is not claimed)
 
 ## Context
 

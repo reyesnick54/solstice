@@ -904,10 +904,10 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
   });
 
-  it('CHUNK-35 stops until the local deterministic node is IMPLEMENTED', () => {
+  it('CHUNK-35 stops until P2P is IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
@@ -919,7 +919,7 @@ describe('architecture constitution', () => {
     );
     assert.ok(declared, 'CHUNK-35 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-local-node', 'sunrey-p2p']);
+    assert.deepEqual(declared.missing, ['sunrey-p2p']);
 
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-node')), false);
@@ -929,7 +929,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus')), false);
   });
 
-  it('CHUNK-34 remains stopped until the local node is implemented', () => {
+  it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);
     assert.equal(declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-31'), true);
@@ -940,16 +940,16 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-stop.md')), true);
-    assert.equal(
-      existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-sovereign-node-core.md')),
-      false,
-      'implementation doc must not exist on a stop',
-    );
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-node.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-resume.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-sovereign-node-core.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-node.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/Cargo.toml')), true);
 
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'crypto-suite-registry').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-protocol').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'ledger').status, 'IMPLEMENTED');
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
 

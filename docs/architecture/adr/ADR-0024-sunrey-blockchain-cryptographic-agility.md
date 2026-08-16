@@ -7,9 +7,9 @@
 - Depends on: ADR-0009, ADR-0016, ADR-0025
 - Implementation status: IMPLEMENTED (Chunk 33R foundation:
   CryptoSuite registry, Ed25519 via node:crypto, provider ports,
-  hybrid envelope, policy). Production node still uses these
-  interfaces; no production PQC library. Application KeyProvider
-  remains IMPLEMENTED.
+  hybrid envelope, policy). Local node consumes the same suite
+  family in simulation. Production PQC library is not selected.
+  Application KeyProvider remains IMPLEMENTED.
 
 ## Context
 
