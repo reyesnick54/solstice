@@ -154,23 +154,20 @@ describe('SunRey sovereign wallets', () => {
       return;
     }
     const signed = engine.sign({ walletId: 'alice', built: first, keyIds: ['alice.key.1'] });
-    assert.equal(signed.ok, true);
-    if (signed.ok === false) {
-      return;
+    if (signed.ok !== true) {
+      assert.fail(signed.detail);
     }
     const submitted = engine.submit({ walletId: 'alice', built: first, signatures: signed.signatures });
-    assert.equal(submitted.ok, true);
-    if (submitted.ok === false) {
-      return;
+    if (submitted.ok !== true) {
+      assert.fail(submitted.detail);
     }
     const rotated = engine.rotateKey({
       walletId: 'alice',
       currentKeyId: 'alice.key.1',
       nextLabel: 'alice.next',
     });
-    assert.equal(rotated.ok, true);
-    if (rotated.ok === false) {
-      return;
+    if (rotated.ok !== true) {
+      assert.fail(rotated.detail);
     }
     const next = engine.buildTransfer({
       walletId: 'alice',
@@ -188,7 +185,9 @@ describe('SunRey sovereign wallets', () => {
     if (old.ok === false) {
       assert.equal(old.code, 'OLD_ROTATED_KEY');
     }
-    assert.equal(engine.verifyHistoric(submitted.txId, alice.keys[0].publicKeyHex), true);
+    const historicKey = alice.keys[0];
+    assert.ok(historicKey);
+    assert.equal(engine.verifyHistoric(submitted.txId, historicKey.publicKeyHex), true);
   });
 
   it('enforces recovery delay and activates the new key at height', () => {
@@ -222,9 +221,8 @@ describe('SunRey sovereign wallets', () => {
         feeCeiling: 2_000n,
       },
     });
-    assert.equal(delegated.ok, true);
-    if (delegated.ok === false) {
-      return;
+    if (delegated.ok !== true) {
+      assert.fail(delegated.detail);
     }
     const tooMuch = engine.buildTransfer({
       walletId: 'alice',

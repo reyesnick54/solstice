@@ -53,7 +53,11 @@ function fourEngines(): WalletEngine[] {
 
 export function runTransferDemo(): TransferDemoReport {
   const engines = fourEngines();
-  const [primary, ...replicas] = engines;
+  const primary = engines[0];
+  const replicas = engines.slice(1);
+  if (!primary) {
+    throw new Error('primary engine missing');
+  }
   primary.createWallet({ walletId: 'alice', ownerActorId: 'actor.alice', walletType: 'HUMAN', signerLabels: ['alice.primary'] });
   primary.createWallet({ walletId: 'bob', ownerActorId: 'actor.bob', walletType: 'HUMAN', signerLabels: ['bob.primary'] });
   const alice = primary.getAccount('bca.alice');
@@ -230,6 +234,9 @@ export function runRecoveryDemo(): RecoveryDemoReport {
     throw new Error(submitted.detail);
   }
   const historicKey = alice.keys[0];
+  if (!historicKey) {
+    throw new Error('historic key missing');
+  }
   const started = engine.beginRecovery({
     walletId: 'alice',
     policyId: 'rec.alice',
@@ -355,7 +362,11 @@ export function runPqMigrationDemo(): PqMigrationDemoReport {
   if (hybrid.ok === false) {
     throw new Error(hybrid.detail);
   }
-  const historic = engine.verifyHistoric(submitted.txId, alice.keys[0].publicKeyHex);
+  const historicKey = alice.keys[0];
+  if (!historicKey) {
+    throw new Error('historic key missing');
+  }
+  const historic = engine.verifyHistoric(submitted.txId, historicKey.publicKeyHex);
   if (!historic) {
     throw new Error('historical signatures must survive rotation');
   }

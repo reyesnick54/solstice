@@ -274,6 +274,9 @@ export function parseAddress(
   const algId = decoded[2];
   const payload = decoded.subarray(3, 35);
   const checksum = decoded.subarray(35, 39);
+  if (version === undefined || classId === undefined || algId === undefined) {
+    return { ok: false, code: 'MALFORMED_ADDRESS', detail: 'base32 payload is incomplete' };
+  }
   if (version !== ADDRESS_FORMAT_VERSION) {
     return { ok: false, code: 'UNKNOWN_VERSION', detail: `unsupported address version ${version}` };
   }

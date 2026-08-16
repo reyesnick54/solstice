@@ -50,6 +50,7 @@ import type {
   WalletDescriptor,
   WalletRejection,
   WalletSignature,
+  WalletTransactionRecord,
   WalletType,
 } from './types.ts';
 import { WALLET_SCHEMA_VERSION } from './types.ts';
@@ -325,9 +326,9 @@ export class WalletEngine {
         amount: input.amount,
         maxFee: input.maxFee,
         nonce,
-        purpose: input.purpose,
         networkId: this.networkId,
         chainId: this.chainId,
+        ...(input.purpose !== undefined ? { purpose: input.purpose } : {}),
       });
     }
     if (account.accountType === 'MACHINE_ACCOUNT') {
@@ -353,9 +354,9 @@ export class WalletEngine {
       amount: input.amount,
       maxFee: input.maxFee,
       nonce,
-      purpose: input.purpose,
       networkId: this.networkId,
       chainId: this.chainId,
+      ...(input.purpose !== undefined ? { purpose: input.purpose } : {}),
     });
   }
 
@@ -455,6 +456,15 @@ export class WalletEngine {
   ): { readonly ok: true; readonly txId: string; readonly height: number } | WalletRejection {
     this.height += 1;
     const actualFee = built.fee.estimatedFee;
+    const transfer =
+      built.amount !== null && built.counterpartyAccountId && built.assetId
+        ? {
+            from: account.accountId,
+            to: built.counterpartyAccountId,
+            asset: built.assetId,
+            amount: built.amount,
+          }
+        : undefined;
     const executable = {
       transactionId: txId,
       payerAuthenticated: true,
@@ -470,15 +480,7 @@ export class WalletEngine {
         maxExecutionUnits: 10_000n,
         exemption: 'NONE' as const,
       },
-      transfer:
-        built.amount !== null && built.counterpartyAccountId && built.assetId
-          ? {
-              from: account.accountId,
-              to: built.counterpartyAccountId,
-              asset: built.assetId,
-              amount: built.amount,
-            }
-          : undefined,
+      ...(transfer ? { transfer } : {}),
     };
     const result = this.fees.execute({
       tx: executable,
@@ -756,7 +758,7 @@ export class WalletEngine {
     return createHash('sha256').update(holdings).digest('hex');
   }
 
-  reconstructHistory(): readonly ReturnType<WalletHistory['list']>[number] {
+  reconstructHistory(): readonly WalletTransactionRecord[] {
     return this.history.rebuildFromChain(this.history.list().filter((row) => row.state === 'FINALIZED'));
   }
 
