@@ -736,6 +736,14 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
+Chunk 40 implements development protocol governance and
+height-activated upgrades at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/governance`. Capability
+`sunrey-protocol-governance` is `IMPLEMENTED`. There is no
+governance token. Do not create `packages/governance` or
+`packages/sunrey-governance`. Production governance is not
+implemented.
+
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
 consensus signer, and durable signer safety at

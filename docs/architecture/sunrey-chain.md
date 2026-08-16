@@ -58,9 +58,12 @@ Chunk 38 networks that engine. See
 [`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
 Chunk 39 implements simulation accountability. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Chunk 40 implements development protocol governance at
+[`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
-`packages/validators`, or `packages/staking`. Production BFT is
+`packages/validators`, `packages/staking`, `packages/governance`,
+or `packages/sunrey-governance`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains
 `PROPOSED`.
 

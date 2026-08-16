@@ -27,6 +27,8 @@ pub enum RejectReason {
     PersistenceFailure,
     NotFound,
     NotReady,
+    IncompatibleProtocol,
+    GovernanceRejected,
 }
 
 impl RejectReason {
@@ -56,6 +58,8 @@ impl RejectReason {
             Self::PersistenceFailure => "PERSISTENCE_FAILURE",
             Self::NotFound => "NOT_FOUND",
             Self::NotReady => "NOT_READY",
+            Self::IncompatibleProtocol => "INCOMPATIBLE_PROTOCOL",
+            Self::GovernanceRejected => "GOVERNANCE_REJECTED",
         }
     }
 }

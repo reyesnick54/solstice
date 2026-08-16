@@ -44,6 +44,7 @@
     "demo:information-market": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/demo.ts",
     "demo:sunrey-chain": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/demo.ts",
     "demo:sunrey-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/local-node/demo.ts",
+    "demo:sunrey-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/governance/demo.ts",
     "demo:sunrey-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-devnet'",
     "demo:sunrey-validator-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-validator-devnet'",
     "demo:sunrey-accountability": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-accountability-demo'",

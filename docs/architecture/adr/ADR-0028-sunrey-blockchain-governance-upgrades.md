@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0021
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: IMPLEMENTED (development UpgradePlan / height activation; production governance not implemented)
 
 ## Context
 
@@ -76,11 +76,17 @@ mainnet.
 
 ## Unresolved questions
 
-- Exact human governance body versus validator threshold.
-- Emergency halt procedure versus continued BFT liveness.
+- Production human governance body versus the development
+  `VALIDATOR_SUPERMAJORITY` (3 of 4 integer voting power).
+- Production emergency halt versus continued BFT liveness. The
+  development mechanism coordinates authenticated non-participation
+  only; it does not rewrite history.
 
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for height-activated, human-gated
-upgrades. Production governance: **not implemented**. Legal
-confidence: `RESEARCH_REQUIRED`.
+upgrades. Development implementation: Chunk 40 at
+`packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/governance`. Production
+governance: **not implemented**. Legal confidence:
+`RESEARCH_REQUIRED`.

@@ -397,6 +397,11 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-39-validator-accountability.md`.
   Production validators, public staking, and mainnet remain not
   implemented.
+- SunRey protocol governance (Chunk 40) is **development-only**
+  at `packages/sunrey-chain`. Capability
+  `sunrey-protocol-governance` is `IMPLEMENTED`. Height-activated
+  `UpgradePlan`. No governance token. Production governance is
+  not implemented. ADR-0028 is implemented for development.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

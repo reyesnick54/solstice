@@ -22,7 +22,18 @@ sunrey-node produce-block --data-dir /tmp/sunrey-dev
 sunrey-node block --data-dir /tmp/sunrey-dev --height 1
 sunrey-node tx --data-dir /tmp/sunrey-dev --id <txid>
 sunrey-node verify --data-dir /tmp/sunrey-dev
+sunrey-node protocol version --data-dir /tmp/sunrey-dev
+sunrey-node governance show --data-dir /tmp/sunrey-dev
+sunrey-node governance propose --data-dir /tmp/sunrey-dev --id upg_1 --kind CONSENSUS_PARAMETER_CHANGE --activation-height 16 --max-transactions 64
+sunrey-node governance vote --data-dir /tmp/sunrey-dev --id upg_1 --voter gov_validator_1 --choice APPROVE
+sunrey-node governance schedule --data-dir /tmp/sunrey-dev --id upg_1
+sunrey-node governance readiness --data-dir /tmp/sunrey-dev
+sunrey-node governance history --data-dir /tmp/sunrey-dev
+sunrey-node governance cancel --data-dir /tmp/sunrey-dev --id upg_1 --actor gov_operator_1
 ```
+
+Governance commands never print signing secrets. See
+[`protocol-upgrade.md`](./protocol-upgrade.md).
 
 `run` binds loopback by default. `/admin/produce-block` is a
 development admin action.

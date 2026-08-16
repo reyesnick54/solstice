@@ -54,6 +54,8 @@
 - [Chunk 36 validator lifecycle](./chunk-36-validator-lifecycle.md)
 - [Chunk 39 validator accountability](./chunk-39-validator-accountability.md)
   — equivocation evidence, jail, tombstone, simulation penalties
+- [Chunk 40 protocol governance](./chunk-40-protocol-governance.md) —
+  height-activated UpgradePlan. No governance token.
 - [Chunk 35 stop (historical)](./chunk-35-stop.md) — original
   documentation-only gate before the local node existed
 - [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync
