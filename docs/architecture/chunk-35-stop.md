@@ -236,9 +236,36 @@ Added:
 - `packages/sunrey-chain` still has no peer, mempool, gossip, or
   sync implementation
 
+Local `npm run ci` on this stop (matches `scripts/ci.sh` / GitHub
+Actions unit-test stage order):
+
+```
+architectural invariants: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 494 pass, 0 fail
+  including: CHUNK-35 stops because the local deterministic node is not IMPLEMENTED
+demo: ok (including sunrey-chain trust-layer demo; no P2P devnet)
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
+`false`. Persistence integration is a separate GitHub Actions job
+and was not folded into this unit-test stage.
+
 ---
 
-## K. Legal / product limitations
+## K. CI note
+
+This stop does not add a multi-node integration test, because
+there is no node to integrate. The new tests are deterministic
+architecture gates, not gossip/sync timing tests.
+
+---
+
+## L. Legal / product limitations
 
 Nothing here is a public testnet, mainnet, production consensus,
 validator set, or licensed network. Software reservations are not
@@ -246,7 +273,7 @@ network launches. No rule is `CONFIRMED_BY_COUNSEL`.
 
 ---
 
-## L. Exit criterion
+## M. Exit criterion
 
 Chunk 35 implementation exit criteria are **not met**. That is
 the correct outcome.
@@ -259,7 +286,7 @@ There is still **no** production validator consensus.
 
 ---
 
-## M. Recommendation for next chunk
+## N. Recommendation for next chunk
 
 Do **not** start P2P, mempool, or consensus next.
 
