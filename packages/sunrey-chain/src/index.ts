@@ -96,3 +96,4 @@ export { SimulationChainAdapter } from './simulation.ts';
 export { signChainIntent } from './signer.ts';
 export { InMemorySunReyChainStore } from './store.ts';
 export { SunReyChainService, type CreateIntentInput } from './service.ts';
+export * as protocol from './protocol/index.ts';

@@ -220,6 +220,15 @@ This document describes only what is implemented and tested in this tree.
   authoritative. ADR-0015 remains PROPOSED.
   Local deterministic node, P2P, mempool, and state sync are not
   implemented. Chunk 35 stopped: `docs/architecture/chunk-35-stop.md`.
+- SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
+  canonical actor / object / rights model, envelope v1, deterministic
+  protobuf codec, domain-separated SHA-256, replay protection,
+  rejection codes, and `validateStateless` / `validateStateful` /
+  `apply`. Language-neutral schema and test vectors live under
+  `packages/sunrey-chain/protocol/`. MoonRey issuance is unavailable.
+  Public tickers remain `NOT_ASSIGNED`. Historical stop:
+  `docs/architecture/chunk-32-stop.md`. Resume:
+  `docs/architecture/chunk-32-resume.md`.
 - SunRey Blockchain production architecture freeze (Chunk 31):
   protocol ADR pack ADR-0016–ADR-0033, authority matrix, and
   machine-readable spec at
@@ -277,12 +286,9 @@ This document describes only what is implemented and tested in this tree.
   Chunk 4 `packages/security`. This is not a quantum-proof or
   production-certification claim. See
   `docs/architecture/chunk-33-stop.md`.
-- Chunk 32 (canonical SunRey transaction and economic-state
-  protocol) is **stopped**. Chunk 31 is not merged and its
-  protocol / encoding architecture is not canonical on `main`.
-  See `docs/architecture/chunk-32-stop.md`. No transaction
-  envelope, consensus codec, MoonRey issuance, ticker, or
-  production chain database was added.
+- Chunk 32 originally **stopped** on a process gate while Chunk 31
+  architecture was absent. That stop is historical
+  (`docs/architecture/chunk-32-stop.md`). Chunk 32R is IMPLEMENTED.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN
   CELLS and the rest listed in the constitution). PAYMENTS, FX,
   CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are PARTIAL
