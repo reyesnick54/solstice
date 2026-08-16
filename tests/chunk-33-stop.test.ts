@@ -22,15 +22,13 @@ function architectureDocs(prefix: string): string[] {
     .sort();
 }
 
-describe('CHUNK-33 process-gate stop until Chunks 31 and 32 merge', () => {
-  it('stops because CHUNK-31 and CHUNK-32 are not merged', () => {
-    assert.deepEqual(chunkFiles('chunk-31-'), []);
-    assert.deepEqual(chunkFiles('chunk-32-'), []);
-    assert.deepEqual(architectureDocs('chunk-31-'), []);
-    assert.deepEqual(architectureDocs('chunk-32-'), []);
+describe('CHUNK-33 historical process-gate stop', () => {
+  it('keeps the historical stop record and competing crypto roots absent', () => {
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-stop.md')), true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-post-quantum-security.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security')), false);
+    assert.ok(chunkFiles('chunk-31-').includes('chunk-31-sunrey-blockchain.json'));
+    assert.ok(architectureDocs('chunk-31-').includes('chunk-31-sunrey-blockchain-production-architecture.md'));
   });
 
   it('does not create a competing cryptographic root', () => {
