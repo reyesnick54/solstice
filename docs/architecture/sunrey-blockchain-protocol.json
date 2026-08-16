@@ -60,10 +60,10 @@
       "applicationAuthority": null,
       "nativeBlockchainAuthority": "NATIVE_BLOCKCHAIN_AUTHORITY",
       "futureNativeChainAuthority": "sunrey-blockchain-development-units",
-      "implemented": true,
+      "implemented": false,
       "nativeChainImplemented": true,
       "productionIssuanceImplemented": false,
-      "owner": "packages/sunrey-chain",
+      "owner": null,
       "competingPackageForbiddenInThisChunk": true
     }
   },
