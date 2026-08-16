@@ -43,6 +43,8 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 35 stop](./chunk-35-stop.md) — P2P / mempool / sync stopped
+  until Chunk 34 local deterministic node is IMPLEMENTED
 - [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
   until Chunks 31–33 (architecture, protocol types, CryptoSuite
   registry) merge. Do not invent a node package.

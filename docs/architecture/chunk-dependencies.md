@@ -99,6 +99,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-blockchain-architecture | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-coin | PLANNED | none |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-local-node | PLANNED | packages/sunrey-chain |
+| sunrey-p2p | PLANNED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -275,6 +277,16 @@ is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
 `packages/travel-rule-v2`, `packages/crypto-aml`,
 `packages/surveillance-v2`, or `packages/custody-ledger`.
 
+Chunk 35 (P2P development network, mempool, and state sync)
+stopped because Chunk 34 is not merged and the local deterministic
+node is not `IMPLEMENTED`. Capabilities `sunrey-local-node` and
+`sunrey-p2p` are reserved `PLANNED` at owner `packages/sunrey-chain`.
+`evaluateChunkRequirements` returns `mustStop: true`. Stop record:
+[`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
+`packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
+`packages/libp2p`, `packages/mempool`, `packages/devnet`,
+`packages/gossip`, `packages/consensus`, or
+`packages/sunrey-consensus`. Do not begin Chunk 36.
 Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
 Chunks 31–33 are not declared and have not merged. Latest green
 `main` is Chunk 30R. The CHUNK-34 declaration lists only existing
