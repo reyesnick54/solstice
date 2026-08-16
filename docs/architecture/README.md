@@ -33,6 +33,11 @@
 - [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
   `packages/sunrey-chain`. Not the financial source of truth.
   ADR-0015 remains PROPOSED.
+- [Chunk 31 production architecture freeze](./chunk-31-sunrey-blockchain-production-architecture.md)
+  — protocol ADR pack, authority matrix, and machine-readable spec.
+  Production blockchain is not implemented.
+- [SunRey chain authority matrix](./sunrey-chain-authority-matrix.md)
+- [SunRey Blockchain protocol spec](./sunrey-blockchain-protocol.json)
 - [Chunk 30 stop (historical)](./chunk-30-stop.md) — original stop while
   custody and market-surveillance were PLANNED
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,

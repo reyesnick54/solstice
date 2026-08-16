@@ -1,0 +1,32 @@
+{
+  "chunk": "CHUNK-31",
+  "title": "SunRey Blockchain Production Architecture Freeze and Protocol ADR Pack",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin",
+    "information-market",
+    "sunrey-chain",
+    "sunrey-exchange",
+    "custody",
+    "market-surveillance",
+    "sunrey-blockchain-architecture"
+  ],
+  "notes": "ARCHITECTURE ONLY. Production blockchain is not implemented. Mainnet remains disabled. No ticker invented. No live assets activated. Canonical owner remains packages/sunrey-chain. Do not create packages/blockchain-node, packages/blockchain-protocol, packages/blockchain-network, packages/blockchain-consensus, packages/blockchain-runtime, packages/sunrey-chain-v2, or packages/moonrey-coin. See docs/architecture/chunk-31-sunrey-blockchain-production-architecture.md and docs/architecture/sunrey-blockchain-protocol.json."
+}
