@@ -32,3 +32,9 @@ implement the same port without vendor SDKs in this chunk.
 - Key metadata may be persisted; key material may not.
 - Competing packages `packages/crypto`, `packages/kms`, and
   `packages/secrets` are forbidden.
+- Competing post-quantum roots `packages/quantum-security`,
+  `packages/crypto-v2`, `packages/pqc-core`, `packages/crypto-agility`,
+  and `packages/post-quantum` are forbidden. Chunk 33 is a process-gate
+  stop until Chunks 31 and 32 merge; see
+  [`chunk-33-stop.md`](../chunk-33-stop.md). This ADR does not authorize
+  a quantum-proof or production-certified claim.

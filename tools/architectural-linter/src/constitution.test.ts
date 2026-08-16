@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -902,5 +902,37 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-aml')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/surveillance-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
+  });
+
+  it('CHUNK-33 stops because Chunks 31 and 32 are not merged', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-33',
+    );
+    assert.ok(declared, 'CHUNK-33 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const chunkFiles = readdirSync(join(REPO_ROOT, 'docs/architecture/chunks'));
+    assert.equal(
+      chunkFiles.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')),
+      false,
+    );
+    assert.equal(
+      chunkFiles.some((name) => name.startsWith('chunk-32-') && name.endsWith('.json')),
+      false,
+    );
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-stop.md')), true);
+    assert.equal(
+      existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-post-quantum-security.md')),
+      false,
+    );
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/quantum-security')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/pqc-core')), false);
   });
 });

@@ -277,3 +277,13 @@ Chunk 24 implements the reserved CONSENT bounded context at
 replaces the Personal Data Vault fail-closed consent placeholder
 with a Purpose Firewall and short-lived DataUsePermits. Clean Room
 is owned by Chunk 25R. The evaluator returns `mustStop: false`.
+
+Chunk 33 (SunRey crypto-agility and post-quantum foundation) is
+**stopped**. The task requires starting from clean `main` after
+Chunk 32. CHUNK-31 and CHUNK-32 are not declared or merged. The
+evaluator returns `mustStop: false` because `security` and
+`sunrey-chain` are `IMPLEMENTED`; that is not a license to skip
+the sequential merge gate. Do not create `packages/quantum-security`,
+`packages/crypto-v2`, or `packages/pqc-core`. Resume only as
+Chunk 33R after Chunks 31 and 32 land. See
+[`chunk-33-stop.md`](./chunk-33-stop.md).

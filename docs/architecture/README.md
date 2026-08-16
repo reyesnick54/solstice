@@ -38,5 +38,9 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 33 stop](./chunk-33-stop.md) — process-gate stop until
+  Chunks 31 and 32 are merged. Crypto-agility and post-quantum
+  foundation are not implemented. Canonical owner remains
+  `packages/security`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
