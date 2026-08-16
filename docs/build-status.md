@@ -220,6 +220,15 @@ This document describes only what is implemented and tested in this tree.
   authoritative. ADR-0015 remains PROPOSED.
   Local deterministic node, P2P, mempool, and state sync are not
   implemented. Chunk 35 stopped: `docs/architecture/chunk-35-stop.md`.
+- SunRey Blockchain production architecture freeze (Chunk 31):
+  protocol ADR pack ADR-0016–ADR-0033, authority matrix, and
+  machine-readable spec at
+  `docs/architecture/sunrey-blockchain-protocol.json`.
+  Architecture only. Production node, consensus, P2P, and native
+  execution are **not implemented**. Mainnet remains disabled.
+  SunRey Coin and MoonRey Coin tickers remain `NOT_ASSIGNED`.
+  MoonRey Coin is distinct and not implemented. Canonical Ledger
+  remains authoritative for fiat and current Coin journals.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -232,6 +241,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
+- Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
+  Latest green `main` is Chunk 30R (`#58`). Chunks 31–33 — sovereign
+  chain architecture, canonical protocol/block schema, and the
+  CryptoSuite registry — are not declared or merged. There is no
+  local development node, no block producer, no chain state store,
+  and no node CLI. See `docs/architecture/chunk-34-stop.md`.
+  Do not invent `packages/sunrey-blockchain`, `packages/sunrey-node`,
+  `packages/blockchain-v2`, `packages/l1`, or a competing chain.
+  Do not replace `packages/sunrey-chain`. No BFT consensus, public
+  network, mainnet, or MoonRey issuance. Canonical Ledger remains
+  the financial source of truth.
 - Kafka, Kinesis, Pub/Sub, SNS/SQS, or another production broker. The
   Chunk 3 fabric uses a simulated in-process transport behind a portable
   dispatcher port.
@@ -250,6 +270,19 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
+- SunRey crypto-agility and post-quantum foundation (Chunk 33) is
+  **stopped**. Chunks 31 and 32 are not merged. No crypto-suite
+  registry, hybrid envelope, PQ provider, threat model, or
+  cryptographic inventory was added. Canonical cryptography remains
+  Chunk 4 `packages/security`. This is not a quantum-proof or
+  production-certification claim. See
+  `docs/architecture/chunk-33-stop.md`.
+- Chunk 32 (canonical SunRey transaction and economic-state
+  protocol) is **stopped**. Chunk 31 is not merged and its
+  protocol / encoding architecture is not canonical on `main`.
+  See `docs/architecture/chunk-32-stop.md`. No transaction
+  envelope, consensus codec, MoonRey issuance, ticker, or
+  production chain database was added.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN
   CELLS and the rest listed in the constitution). PAYMENTS, FX,
   CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are PARTIAL
@@ -328,7 +361,13 @@ This document describes only what is implemented and tested in this tree.
   and `sunrey-p2p` are `PLANNED`. See
   `docs/architecture/chunk-35-stop.md`. This is not a public
   testnet, mainnet, or production consensus.
+- Production SunRey Blockchain node, consensus, P2P, storage, or
+  native execution. Chunk 31 is an architecture freeze only.
+  `packages/sunrey-chain` remains a simulation trust layer.
+- MoonRey Coin runtime, ticker, or package.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
+  Do not create `MAINNET_ENABLED=true`, `PRODUCTION_BLOCKCHAIN=true`,
+  or `LIVE_CHAIN_ENABLED=true`.
 
 ## Phase 1 exit criterion
 

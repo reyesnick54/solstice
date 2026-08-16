@@ -46,3 +46,12 @@ development network / mempool / state sync (Chunk 35) are **not**
 implemented. Those capabilities are reserved `PLANNED` on this
 package. See [`chunk-35-stop.md`](./chunk-35-stop.md). Do not
 create `packages/sunrey-node` or `packages/sunrey-p2p`.
+See ADR-0015. The simulation foundation remains `PROPOSED`.
+
+Chunk 31 freezes the **production** architecture (ADR-0016 through
+ADR-0033) without implementing a production node. Canonical spec:
+[`sunrey-blockchain-protocol.json`](./sunrey-blockchain-protocol.json).
+Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md).
+MoonRey Coin is a distinct planned native asset. Its ticker is
+`NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
+production-ready, quantum-secure, decentralized, or mainnet-ready.

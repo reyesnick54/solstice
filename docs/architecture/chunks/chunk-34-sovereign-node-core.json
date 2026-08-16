@@ -1,0 +1,22 @@
+{
+  "chunk": "CHUNK-34",
+  "title": "SunRey Sovereign Blockchain Node Core and Deterministic State Machine",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "sunrey-coin",
+    "sunrey-chain"
+  ],
+  "notes": "STOPPED. Process gate: Chunks 31–33 are not declared or merged on main. evaluateChunkRequirements returns mustStop: false because listed capabilities are IMPLEMENTED; that is not permission to invent a node owner, language, storage ADR, block schema, or CryptoSuite registry. Do not create packages/sunrey-blockchain, packages/sunrey-node, packages/blockchain-v2, packages/new-chain, packages/l1, packages/ledger-chain, or packages/web3-chain. Do not replace packages/sunrey-chain. See docs/architecture/chunk-34-stop.md."
+}

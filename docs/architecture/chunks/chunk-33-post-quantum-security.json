@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-33",
+  "title": "SunRey Post-Quantum Security, Crypto-Agility, and Blockchain Threat Model Foundation",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "policy-engine",
+    "sunrey-chain",
+    "custody"
+  ],
+  "notes": "STOPPED. Process gate: Chunk 31 and Chunk 32 are not merged on main. Do not implement the crypto-suite registry, hybrid envelopes, PQ providers, threat model, or inventory until those chunks land. evaluateChunkRequirements returns mustStop: false because security and sunrey-chain are IMPLEMENTED; that is not a license to skip the sequential merge gate. Canonical owner remains packages/security. Do not create packages/quantum-security, packages/crypto-v2, packages/pqc-core, packages/crypto-agility, or packages/post-quantum. Do not claim quantum-proof cryptography or production certification. Do not start Chunk 34. See docs/architecture/chunk-33-stop.md."
+}
