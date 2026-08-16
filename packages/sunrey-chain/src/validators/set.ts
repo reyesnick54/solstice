@@ -5,6 +5,7 @@ import { assertPermittedValidatorController } from './controller.ts';
 import {
   type Epoch,
   type QueuedChange,
+  type QueuedChangeKind,
   type TransitionReceipt,
   type ValidatorRecord,
   type ValidatorResult,
@@ -191,7 +192,7 @@ export function applyEpochBoundary(
     return validatorErr('EPOCH_NOT_STARTED', 'validator changes apply only at the next epoch boundary');
   }
   let validators = [...current.validators];
-  const applied: TransitionReceipt['applied'] = [];
+  const applied: QueuedChangeKind[] = [];
   const rejected: { readonly change: QueuedChange; readonly reason: string }[] = [];
   const due = queued.filter((change) => change.activationEpoch === nextEpoch.number);
   for (const change of due) {
