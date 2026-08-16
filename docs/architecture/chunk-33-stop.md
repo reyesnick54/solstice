@@ -1,3 +1,16 @@
+# Chunk 33 stop record (historical)
+
+**Historical.** This file records the documentation-only process-gate
+stop written before Chunk 31 architecture and this resume existed.
+Do not treat it as the current Chunk 33 status.
+
+Chunk 33R implementation:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+
+The remainder of this file is the original stop record.
+
+---
+
 # Chunk 33 stop record
 
 This file records a **process-gate stop**, not a SunRey crypto-agility

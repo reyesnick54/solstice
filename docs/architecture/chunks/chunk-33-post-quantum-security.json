@@ -17,7 +17,8 @@
     "identity",
     "policy-engine",
     "sunrey-chain",
-    "custody"
+    "custody",
+    "crypto-suite-registry"
   ],
-  "notes": "STOPPED. Process gate: Chunk 31 and Chunk 32 are not merged on main. Do not implement the crypto-suite registry, hybrid envelopes, PQ providers, threat model, or inventory until those chunks land. evaluateChunkRequirements returns mustStop: false because security and sunrey-chain are IMPLEMENTED; that is not a license to skip the sequential merge gate. Canonical owner remains packages/security. Do not create packages/quantum-security, packages/crypto-v2, packages/pqc-core, packages/crypto-agility, or packages/post-quantum. Do not claim quantum-proof cryptography or production certification. Do not start Chunk 34. See docs/architecture/chunk-33-stop.md."
+  "notes": "IMPLEMENTED as Chunk 33R. Canonical owners remain packages/security and packages/sunrey-chain. CryptoSuite registry, Ed25519 via node:crypto, PQ provider ports, TEST_ONLY simulation PQ provider, hybrid CLASSICAL_AND_PQ envelopes, crypto policy, inventory, and threat model. Production PQC library is not selected. Not quantum-proof. Not certified. Historical stop: docs/architecture/chunk-33-stop.md. Implementation: docs/architecture/chunk-33-crypto-agility.md. Do not create packages/quantum-security, packages/crypto-v2, packages/pqc-core, packages/crypto-agility, or packages/post-quantum. Do not start Chunk 34 in this change set."
 }

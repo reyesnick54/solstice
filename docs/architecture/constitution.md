@@ -49,6 +49,7 @@ never be two implementations of these systems.
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
+| CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
 | Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
@@ -443,6 +444,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
+| `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -750,16 +752,15 @@ historical: [`chunk-34-stop.md`](./chunk-34-stop.md). Resume:
 `packages/ledger-chain`, `packages/sunrey-node`, or
 `packages/web3-chain`. Do not replace `packages/sunrey-chain`.
 Production BFT is not implemented.
-Chunk 32 (canonical SunRey transaction and economic-state protocol)
-is **stopped**. The task requires latest `main` after Chunk 31 is
-merged. Chunk 31 is not declared, not merged, and has no encoding
-or protocol ADRs on `main`. ADR-0015 remains the Chunk 28
-simulation trust-layer record only. Do not invent a consensus
-codec, transaction envelope, MoonRey issuance, ticker, second
-Money type, or second SunRey Coin ledger. Do not create
+Chunk 32R implements the canonical SunRey transaction and
+economic-state protocol at `packages/sunrey-chain`. Historical
+stop: [`chunk-32-stop.md`](./chunk-32-stop.md). Resume:
+[`chunk-32-resume.md`](./chunk-32-resume.md). Capability
+`blockchain-protocol` is `IMPLEMENTED`. Do not invent a second
+codec package, MoonRey issuance, ticker, second Money type, or
+second SunRey Coin ledger. Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
-See [`chunk-32-stop.md`](./chunk-32-stop.md).
 Chunk 31 freezes the **production architecture** for SunRey
 Blockchain. It does not implement a production node. The canonical
 owner remains `packages/sunrey-chain` as a modular monolith.
@@ -776,6 +777,14 @@ Do not create `packages/blockchain-node`,
 `packages/blockchain-consensus`, `packages/blockchain-runtime`,
 `packages/sunrey-node`, `packages/sunrey-blockchain`, or
 `packages/moonrey-coin` in this chunk.
+Chunk 33R implements the CryptoSuite registry, Ed25519 provider,
+PQ ports, hybrid envelope, and crypto policy at
+`packages/security`, with validator key separation at
+`packages/sunrey-chain`. Historical stop:
+[`chunk-33-stop.md`](./chunk-33-stop.md). Implementation:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+Do not create `packages/quantum-security`, `packages/crypto-v2`,
+or `packages/pqc-core`. Do not claim quantum-proof cryptography.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

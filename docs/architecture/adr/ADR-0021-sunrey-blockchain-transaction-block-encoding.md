@@ -5,7 +5,9 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0019, ADR-0024
-- Implementation status: PARTIAL (SRCB v1 local codec; production codec certification not claimed)
+- Implementation status: PARTIAL (Chunk 32R envelope, protobuf codec,
+  and hash domains; Chunk 34R local block production. Production
+  codec certification is not claimed)
 
 ## Context
 
@@ -95,5 +97,30 @@ tool, not a mainnet migrator.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for versioned envelopes and canonical
-binary consensus encoding. Production codecs: **not implemented**.
+binary consensus encoding. Transaction envelope v1 and the protobuf
+codec are implemented in Chunk 32R. Block production remains later.
 Legal confidence: `RESEARCH_REQUIRED`.
+
+## Addendum A — Protocol Buffers codec (Chunk 32R)
+
+Engineering selection at implementation time: **Protocol Buffers
+proto3** with a constrained deterministic encoder.
+
+| Rule | Decision |
+| --- | --- |
+| IDL | `packages/sunrey-chain/protocol/v1/sunrey_tx_v1.proto` |
+| Codec ID | `sunrey.protobuf.canonical.v1` |
+| Schema version | `1` |
+| Field order | ascending tag number |
+| Maps | forbidden in consensus objects |
+| Floating point | forbidden |
+| Unknown fields | rejected for schema v1 |
+| Strings | UTF-8 NFC; non-NFC rejected |
+| Integers | explicit uint32 / uint64 / integer-string quantities |
+| Maximum sizes | envelope 16384 bytes; body 8192; string 256; repeated 16 |
+| JSON | debug/API projection only; never a consensus hash input |
+| Hash | SHA-256 from `packages/security`, domain-separated |
+
+This addendum does not activate a production network, assign a
+ticker, or issue MoonRey Coin. It does not replace the canonical
+Ledger as the authority for current SunRey Coin journals.

@@ -18,5 +18,5 @@
     "sunrey-coin",
     "sunrey-chain"
   ],
-  "notes": "IMPLEMENTED as Chunk 34R local development node inside packages/sunrey-chain/rust. Historical stop: docs/architecture/chunk-34-stop.md. Resume: docs/architecture/chunk-34-resume.md. Capability sunrey-local-node is IMPLEMENTED. Production BFT, P2P, and mainnet remain unimplemented. Do not create packages/sunrey-node or packages/sunrey-blockchain."
+  "notes": "IMPLEMENTED as Chunk 34R local development node inside packages/sunrey-chain/rust after Chunks 31, 32R, and 33R. Historical stop: docs/architecture/chunk-34-stop.md. Resume: docs/architecture/chunk-34-resume.md. Capability sunrey-local-node is IMPLEMENTED. Production BFT, P2P, and mainnet remain unimplemented. Do not create packages/sunrey-node or packages/sunrey-blockchain."
 }

@@ -61,6 +61,12 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
   });
 
   it('does not implement P2P, mempool, or gossip in the TypeScript trust layer', () => {
+    const chunkDir = join(REPO_ROOT, 'docs/architecture/chunks');
+    const names = readdirSync(chunkDir);
+    assert.equal(names.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')), true);
+    assert.equal(names.some((name) => name.startsWith('chunk-32-') && name.endsWith('.json')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-local-node.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-transport.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-devnet.md')), false);
 
     const chainFiles = walk(join(REPO_ROOT, 'packages/sunrey-chain/src'));
