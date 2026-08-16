@@ -147,3 +147,26 @@ securities offering, or counsel-confirmed rule. No rule is
 devnet, constructs a controlled double-prevote, gossips evidence,
 finalizes it, jails the offender, records the simulation penalty,
 rejects replay, and continues with remaining voting power.
+
+## CI
+
+Local `npm run ci` on this revision (matches `scripts/ci.sh` /
+GitHub Actions unit-test stage order):
+
+```
+architectural invariants: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+rust local node: ok
+tests: 558 pass, 0 fail
+  including: CHUNK-39 accountability, evidence verification,
+  jail/tombstone, simulation penalty, false-accusation, replay
+demo: ok (including sunrey-accountability four-validator demo)
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
+`false`. Persistence integration is a separate GitHub Actions job
+and was not folded into this unit-test stage.
