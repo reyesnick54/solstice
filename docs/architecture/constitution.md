@@ -751,6 +751,13 @@ imported. Do not create `packages/moonrey-coin` or a competing
 chain. See
 [`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
 
+Chunk 42 implements deterministic native fees and resource
+metering at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/fees`. Capability
+`sunrey-native-fees` is `IMPLEMENTED`. Fees are native-asset
+minor units, not fiat ledger debits. Do not create
+`packages/fees`, `packages/sunrey-fees`, or `packages/gas`.
+
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
 consensus signer, and durable signer safety at

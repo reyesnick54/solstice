@@ -578,9 +578,22 @@ name = "sunrey-execution"
 version = "0.1.0"
 dependencies = [
  "sunrey-crypto",
+ "sunrey-fees",
  "sunrey-native-assets",
  "sunrey-protocol",
  "sunrey-state",
+ "thiserror",
+]
+
+[[package]]
+name = "sunrey-fees"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sunrey-protocol",
  "thiserror",
 ]
 
@@ -617,6 +630,7 @@ dependencies = [
  "serde_json",
  "sunrey-crypto",
  "sunrey-execution",
+ "sunrey-fees",
  "sunrey-governance",
  "sunrey-native-assets",
  "sunrey-protocol",
@@ -647,6 +661,7 @@ dependencies = [
  "sunrey-consensus",
  "sunrey-crypto",
  "sunrey-execution",
+ "sunrey-fees",
  "sunrey-governance",
  "sunrey-native-assets",
  "sunrey-node",

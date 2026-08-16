@@ -105,6 +105,10 @@ enum Command {
         #[command(subcommand)]
         command: AssetCommand,
     },
+    Fees {
+        #[command(subcommand)]
+        command: FeesCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -224,6 +228,41 @@ enum AssetCommand {
         auth_id: String,
     },
     Reconciliation {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum FeesCommand {
+    Schedule {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Estimate {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value_t = 240)]
+        bytes: u128,
+        #[arg(long, default_value_t = 1)]
+        signatures: u128,
+    },
+    Receipt {
+        #[arg(long)]
+        data_dir: PathBuf,
+        tx: String,
+    },
+    Resources {
+        #[arg(long)]
+        data_dir: PathBuf,
+        tx: String,
+    },
+    Rewards {
+        #[arg(long)]
+        data_dir: PathBuf,
+        validator: String,
+    },
+    Policy {
         #[arg(long)]
         data_dir: PathBuf,
     },
@@ -379,6 +418,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         Command::Governance { command } => return run_governance(command),
         Command::Protocol { command } => return run_protocol(command),
         Command::Asset { command } => return run_asset(command),
+        Command::Fees { command } => return run_fees(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -640,6 +680,38 @@ fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
                     "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
                 }))?
             );
+        }
+    }
+    Ok(())
+}
+
+fn run_fees(command: FeesCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        FeesCommand::Schedule { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_schedule_json())?);
+        }
+        FeesCommand::Estimate { data_dir, bytes, signatures } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_estimate(bytes, signatures))?);
+        }
+        FeesCommand::Receipt { data_dir, tx } => {
+            let node = LocalNode::open(&data_dir)?;
+            let receipt = node.fees_receipt(&tx).ok_or("fee receipt not found")?;
+            println!("{}", serde_json::to_string_pretty(&receipt)?);
+        }
+        FeesCommand::Resources { data_dir, tx } => {
+            let node = LocalNode::open(&data_dir)?;
+            let resources = node.fees_resources(&tx).ok_or("resource usage not found")?;
+            println!("{}", serde_json::to_string_pretty(&resources)?);
+        }
+        FeesCommand::Rewards { data_dir, validator } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_rewards(&validator))?);
+        }
+        FeesCommand::Policy { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.fees_policy_json())?);
         }
     }
     Ok(())

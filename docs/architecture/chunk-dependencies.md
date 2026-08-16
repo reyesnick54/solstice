@@ -105,6 +105,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -305,6 +306,10 @@ Chunk 41 implements dual native assets at
 `packages/sunrey-chain`. Capability `sunrey-native-assets` is
 `IMPLEMENTED`. See
 [`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
+Chunk 42 implements native fees and resource metering at
+`packages/sunrey-chain`. Capability `sunrey-native-fees` is
+`IMPLEMENTED`. See
+[`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
 Do not create `packages/validators`, `packages/staking`,
 `packages/validator-v2`, or `packages/moonrey-coin`.
 Chunk 37 implements the development Tendermint-class BFT engine at

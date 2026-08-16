@@ -7,6 +7,7 @@ members = [
   "crates/execution",
   "crates/storage",
   "crates/governance",
+  "crates/fees",
   "crates/consensus",
   "crates/node",
   "crates/rpc",
@@ -30,6 +31,7 @@ sunrey-consensus = { path = "crates/consensus" }
 sunrey-node = { path = "crates/node" }
 sunrey-rpc = { path = "crates/rpc" }
 sunrey-governance = { path = "crates/governance" }
+sunrey-fees = { path = "crates/fees" }
 sunrey-validators = { path = "crates/validators" }
 sunrey-native-assets = { path = "crates/native-assets" }
 hex = "0.4.3"

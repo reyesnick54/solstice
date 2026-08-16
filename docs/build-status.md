@@ -412,6 +412,13 @@ This document describes only what is implemented and tested in this tree.
   supply is not imported. ADR-0026 is implemented for
   development chain-native units. Production migration is not
   performed.
+- SunRey native fees and resource metering (Chunk 42) are
+  **development-only** at `packages/sunrey-chain`. Capability
+  `sunrey-native-fees` is `IMPLEMENTED`. Integer resource units,
+  reserved/charged/released native-asset fees, governed fee
+  parameters. FeeIntent attaches beside the Chunk 41 payload.
+  No fiat ledger debit. MoonRey remains disabled as
+  a fee asset until a height-activated policy change.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

@@ -19,6 +19,7 @@ pub enum PolicyReason {
     BurnAllowed,
     BurnDenied,
     FeeNotYetIntegrated,
+    FeeIntegrated,
     FeeNotEligible,
     OperationAvailable,
     OperationUnavailable,
@@ -39,6 +40,7 @@ impl PolicyReason {
             Self::BurnAllowed => "BURN_ALLOWED",
             Self::BurnDenied => "BURN_DENIED",
             Self::FeeNotYetIntegrated => "FEE_NOT_YET_INTEGRATED",
+            Self::FeeIntegrated => "FEE_INTEGRATED",
             Self::FeeNotEligible => "FEE_NOT_ELIGIBLE",
             Self::OperationAvailable => "OPERATION_AVAILABLE",
             Self::OperationUnavailable => "OPERATION_UNAVAILABLE",
@@ -55,6 +57,7 @@ impl PolicyReason {
                 | Self::LockAllowed
                 | Self::BurnAllowed
                 | Self::FeeNotYetIntegrated
+                | Self::FeeIntegrated
                 | Self::OperationAvailable
         )
     }
@@ -166,7 +169,7 @@ impl AssetPolicy {
         match ledger.registry.get(asset) {
             Ok(def) => match def.fee_eligibility {
                 FeeEligibility::EligibleAfterChunk42 => {
-                    PolicyDecision::allow(PolicyReason::FeeNotYetIntegrated)
+                    PolicyDecision::allow(PolicyReason::FeeIntegrated)
                 }
                 FeeEligibility::NotEligible => PolicyDecision::deny(PolicyReason::FeeNotEligible),
             },
