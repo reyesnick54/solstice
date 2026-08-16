@@ -20,6 +20,7 @@ pub mod node;
 pub mod operator;
 pub mod peer;
 pub mod transport;
+pub mod validator;
 
 pub use chain::{Genesis, Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};
 pub use crypto::{KeyDomain, CRYPTO_SUITE_ID};

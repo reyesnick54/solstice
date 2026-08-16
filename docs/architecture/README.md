@@ -43,8 +43,11 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
-- [Chunk 36 stop](./chunk-36-stop.md) — validator registry / lifecycle
-  remains `PLANNED`. Do not create `packages/validators`.
+- [Chunk 36 stop (historical)](./chunk-36-stop.md) — original
+  reservation while the local node and P2P plane were absent
+- [Chunk 36 resume](./chunk-36-resume.md) — validator registry,
+  lifecycle, and signer safety at `packages/sunrey-chain`
+- [Chunk 36 validator lifecycle](./chunk-36-validator-lifecycle.md)
 - [Chunk 35 stop (historical)](./chunk-35-stop.md) — original
   documentation-only gate before the local node existed
 - [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync
