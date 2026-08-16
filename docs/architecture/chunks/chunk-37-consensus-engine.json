@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-37",
+  "title": "Tendermint-family ConsensusEngine",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-validators",
+    "blockchain-consensus"
+  ],
+  "notes": "IMPLEMENTED with Chunk 38 at packages/sunrey-chain/node. Propose / prevote / precommit / commit, WAL, signer safety, and CommitCertificate verification. Not a workspace package. Production mainnet remains disabled."
+}

@@ -25,6 +25,7 @@ pub struct Genesis {
     pub codec_version: u16,
     pub crypto_suite: String,
     pub created_at_ms: u64,
+    pub validator_set_hash: [u8; 32],
     pub hash: [u8; 32],
 }
 
@@ -37,6 +38,7 @@ impl Genesis {
             codec_version: crate::crypto::CODEC_VERSION,
             crypto_suite: crate::crypto::CRYPTO_SUITE_ID.into(),
             created_at_ms: 1,
+            validator_set_hash: [0u8; 32],
             hash: [0u8; 32],
         };
         genesis.hash = genesis.compute_hash();
@@ -51,6 +53,7 @@ impl Genesis {
         w.u16(self.codec_version);
         w.string(&self.crypto_suite).expect("genesis suite");
         w.u64(self.created_at_ms);
+        w.bytes32(&self.validator_set_hash);
         sha256(&w.finish())
     }
 }

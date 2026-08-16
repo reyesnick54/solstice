@@ -222,9 +222,11 @@ This document describes only what is implemented and tested in this tree.
   `packages/sunrey-chain/rust`. P2P, mempool, and state sync are
   implemented at `packages/sunrey-chain/node` (Chunk 35R).
   Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
-  `docs/architecture/chunk-35-resume.md`. Validator lifecycle
-  (Chunk 36) remains `PLANNED`: `docs/architecture/chunk-36-stop.md`.
-  Production BFT is not implemented.
+  `docs/architecture/chunk-35-resume.md`. Development BFT and the
+  four-validator devnet are Chunk 38 at
+  `packages/sunrey-chain/node`. Historical validator stop:
+  `docs/architecture/chunk-36-stop.md`. Production mainnet is not
+  implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
@@ -369,17 +371,12 @@ This document describes only what is implemented and tested in this tree.
   treasury, and live securities trading remain later.
 - Production SunRey Blockchain consensus, public testnet, or
   mainnet. Chunk 35R implements a **development** P2P / mempool /
-  sync plane at `packages/sunrey-chain/node`. Historical stop:
-  `docs/architecture/chunk-35-stop.md`. Resume:
-  `docs/architecture/chunk-35-resume.md`. This is not a public
-  testnet, mainnet, or production consensus.
-- SunRey validator identity, registry, bonding, and validator-set
-  lifecycle (Chunk 36). **Stopped** / `PLANNED`. Chunks 32R–35R
-  are on `main`. Capability `sunrey-validators` remains `PLANNED`.
-  See `docs/architecture/chunk-36-stop.md`. No four-node
-  development validator set, no consensus signer, no slashing, no
-  public staking, no MoonRey issuance. ADR-0018 remains
-  `NOT_IMPLEMENTED`.
+  sync plane and Chunk 38 implements **development** networked BFT
+  at `packages/sunrey-chain/node`. See
+  `docs/architecture/chunk-38-networked-consensus.md`. This is not
+  a public testnet, mainnet, staking product, or slashing runtime.
+- Public staking / slashing / MoonRey issuance. The development
+  validator set is simulation-only.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

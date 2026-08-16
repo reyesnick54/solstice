@@ -18,6 +18,14 @@ path = "src/bin/sunrey-node.rs"
 name = "sunrey-devnet"
 path = "src/bin/sunrey-devnet.rs"
 
+[[bin]]
+name = "sunrey-validator-devnet"
+path = "src/bin/sunrey-validator-devnet.rs"
+
+[[bin]]
+name = "sunrey-validator-node"
+path = "src/bin/sunrey-validator-node.rs"
+
 [dependencies]
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"

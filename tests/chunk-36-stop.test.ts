@@ -19,14 +19,14 @@ const FORBIDDEN_VALIDATOR_ROOTS = [
   'packages/sunrey-consensus',
 ] as const;
 
-describe('CHUNK-36 validator registry / lifecycle stop', () => {
-  it('stops while sunrey-validators remains PLANNED', () => {
+describe('CHUNK-36 validator registry / lifecycle', () => {
+  it('is implemented at the sunrey-chain owner after the historical stop', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').owner, 'packages/sunrey-chain');
 
@@ -34,8 +34,8 @@ describe('CHUNK-36 validator registry / lifecycle stop', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-36',
     );
     assert.ok(declared, 'CHUNK-36 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-validators']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
   });
 
   it('does not invent a validator, staking, or consensus-engine package', () => {
@@ -44,22 +44,15 @@ describe('CHUNK-36 validator registry / lifecycle stop', () => {
       assert.equal(existsSync(join(REPO_ROOT, rel)), false, rel);
     }
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-stop.md')), true);
-    assert.equal(
-      existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-validator-lifecycle.md')),
-      false,
-      'implementation doc must not exist on a stop',
-    );
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/validator-development.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/validator-key-compromise.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/validator-double-sign-prevention.md')), false);
   });
 
-  it('does not implement validator registry, signer, or epoch modules', () => {
+  it('keeps TypeScript trust-layer sources free of a second consensus package', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/validator.ts')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/validators')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/consensus')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/validator-set.ts')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/signer-safety.ts')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'Cargo.toml')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/consensus/mod.rs')), true);
   });
 });
