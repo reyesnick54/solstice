@@ -83,6 +83,10 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'issue', file: 'packages/sunrey-coin/src/service.ts' },
   { symbol: 'transfer', file: 'packages/sunrey-coin/src/service.ts' },
   { symbol: 'burn', file: 'packages/sunrey-coin/src/service.ts' },
+  { symbol: 'openExchangeAccount', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'placeDigitalOrder', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'cancelDigitalOrder', file: 'packages/sunrey-exchange/src/service.ts' },
+  { symbol: 'halt', file: 'packages/sunrey-exchange/src/service.ts' },
 ];
 
 const failures = [];

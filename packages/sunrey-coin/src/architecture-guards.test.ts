@@ -57,7 +57,7 @@ describe('sunrey coin architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/crypto-ledger-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/token-ledger')), false);
     assert.equal(existsSync(join(ROOT, 'packages/coin-engine-v2')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');

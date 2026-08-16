@@ -872,6 +872,33 @@
         "@reyesnick54"
       ],
       "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer. Simulation only. Not the financial source of truth. Canonical ledger remains authoritative. No live RPC, mainnet, or testnet."
+    },
+    {
+      "id": "packages/sunrey-exchange",
+      "npmName": "@solstice/sunrey-exchange",
+      "path": "packages/sunrey-exchange",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/permissions",
+        "packages/kernel",
+        "packages/sunrey-coin"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical SunRey Exchange simulation matching, holds, clearing, and settlement. Journals stay on the canonical Ledger via CoinPort/FiatPort. No live exchange. No second ledger. Agents cannot execute."
     }
   ],
   "components": [
@@ -1942,8 +1969,7 @@
         "packages/coin-ledger",
         "packages/crypto-ledger-v2",
         "packages/token-ledger",
-        "packages/coin-engine-v2",
-        "packages/sunrey-exchange"
+        "packages/coin-engine-v2"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -2010,6 +2036,35 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers."
+    },
+    {
+      "id": "sunrey-exchange",
+      "name": "SunRey Exchange simulation core",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/service.ts",
+      "publicInterface": "packages/sunrey-exchange/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "SunReyExchangeService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/exchange-v2",
+        "packages/orderbook",
+        "packages/matching-engine-v2",
+        "packages/crypto-exchange",
+        "packages/reyn-exchange"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     }
   ],
   "authorizedMutationPaths": [
@@ -2330,6 +2385,30 @@
       "file": "packages/sunrey-coin/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "openExchangeAccount",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "placeDigitalOrder",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "cancelDigitalOrder",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
+      "symbol": "halt",
+      "file": "packages/sunrey-exchange/src/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -2436,8 +2515,12 @@
     "packages/crypto-ledger-v2",
     "packages/token-ledger",
     "packages/coin-engine-v2",
-    "packages/sunrey-exchange",
     "packages/sunrey-chain-v2",
+    "packages/exchange-v2",
+    "packages/orderbook",
+    "packages/matching-engine-v2",
+    "packages/crypto-exchange",
+    "packages/reyn-exchange",
     "packages/blockchain",
     "packages/reyn-chain",
     "packages/on-chain-ledger",
@@ -2698,7 +2781,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-coin",
       "protected": true,
-      "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange remains PLANNED. SunRey Chain is owned by packages/sunrey-chain."
+      "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange is owned by packages/sunrey-exchange. SunRey Chain is owned by packages/sunrey-chain."
     },
     {
       "id": "information-market",
@@ -2713,6 +2796,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Canonical SunRey Chain trust-layer foundation. Chunk 28. Simulation only. Not the financial source of truth."
+    },
+    {
+      "id": "sunrey-exchange",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Canonical SunRey Exchange simulation core. Chunk 29. Matching, holds, DVP settlement, and market data. No live exchange. No official valuation."
     }
   ],
   "boundedContexts": [
@@ -2938,12 +3028,12 @@
     },
     {
       "id": "SUNREY_EXCHANGE",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/sunrey-exchange"
       ],
       "protected": true,
-      "notes": "Reserved future SunRey Exchange. Historical reservations were PYRAMID_EXCHANGE then REYN_EXCHANGE. Do not implement order books, AMM, wallets, or market price in Chunk 26R."
+      "notes": "Canonical SunRey Exchange simulation core at packages/sunrey-exchange. Historical reservations were PYRAMID_EXCHANGE then REYN_EXCHANGE. Simulation matching and DVP only. Public ticker is NOT_ASSIGNED. No live exchange."
     },
     {
       "id": "SUNREY_CHAIN",

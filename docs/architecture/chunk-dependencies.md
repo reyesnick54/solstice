@@ -250,6 +250,14 @@ is not the financial source of truth. Do not create
 `packages/crypto-chain`. Do not invent a ticker. Do not connect a
 live RPC, mainnet, or testnet. Do not implement SunRey Exchange
 matching. The evaluator returns `mustStop: false`.
+
+Chunk 29 implements the reserved SUNREY_EXCHANGE bounded context at
+`packages/sunrey-exchange`. Capability `sunrey-exchange` is
+`IMPLEMENTED`. Simulation matching and DVP settlement only. Do not
+create `packages/exchange-v2`, `packages/orderbook`,
+`packages/matching-engine-v2`, `packages/crypto-exchange`, or
+`packages/reyn-exchange`. Do not invent a ticker. Do not enable
+`LIVE_EXCHANGE_ENABLED`. The evaluator returns `mustStop: false`.
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

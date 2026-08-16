@@ -42,12 +42,12 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'information_market',
   'oracle',
   'sunrey_chain',
+  'exchange',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
   'agent',
   'pyr',
-  'exchange',
   'notification',
   'analytics',
 ] as const;
@@ -268,6 +268,17 @@ export const EVENT_TYPE_NAMES = [
   'SunReyChainAnchorReorgObserved',
   'SunReyChainReconciliationMismatch',
   'SunReyChainHealthDegraded',
+  'ExchangeAccountCreated',
+  'ExchangeOrderAccepted',
+  'ExchangeOrderOpened',
+  'ExchangeOrderPartiallyFilled',
+  'ExchangeOrderFilled',
+  'ExchangeOrderCancelled',
+  'ExchangeTradeMatched',
+  'ExchangeTradeSettled',
+  'ExchangeMarketHalted',
+  'ExchangeMarketResumed',
+  'ExchangeReconciliationMismatch',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -485,6 +496,17 @@ export const EVENT_SCHEMA_REFS = {
   OracleAttestationIssued: 'solstice.oracle.attestation.issued/1',
   OracleAttestationExpired: 'solstice.oracle.attestation.expired/1',
   ProofOfContributionCreated: 'solstice.information_market.proof_of_contribution.created/1',
+  ExchangeAccountCreated: 'solstice.exchange.account.created/1',
+  ExchangeOrderAccepted: 'solstice.exchange.order.accepted/1',
+  ExchangeOrderOpened: 'solstice.exchange.order.opened/1',
+  ExchangeOrderPartiallyFilled: 'solstice.exchange.order.partially_filled/1',
+  ExchangeOrderFilled: 'solstice.exchange.order.filled/1',
+  ExchangeOrderCancelled: 'solstice.exchange.order.cancelled/1',
+  ExchangeTradeMatched: 'solstice.exchange.trade.matched/1',
+  ExchangeTradeSettled: 'solstice.exchange.trade.settled/1',
+  ExchangeMarketHalted: 'solstice.exchange.market.halted/1',
+  ExchangeMarketResumed: 'solstice.exchange.market.resumed/1',
+  ExchangeReconciliationMismatch: 'solstice.exchange.reconciliation.mismatch/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -702,6 +724,17 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   SunReyChainAnchorReorgObserved: 'sunrey_chain',
   SunReyChainReconciliationMismatch: 'sunrey_chain',
   SunReyChainHealthDegraded: 'sunrey_chain',
+  ExchangeAccountCreated: 'exchange',
+  ExchangeOrderAccepted: 'exchange',
+  ExchangeOrderOpened: 'exchange',
+  ExchangeOrderPartiallyFilled: 'exchange',
+  ExchangeOrderFilled: 'exchange',
+  ExchangeOrderCancelled: 'exchange',
+  ExchangeTradeMatched: 'exchange',
+  ExchangeTradeSettled: 'exchange',
+  ExchangeMarketHalted: 'exchange',
+  ExchangeMarketResumed: 'exchange',
+  ExchangeReconciliationMismatch: 'exchange',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

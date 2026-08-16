@@ -366,6 +366,24 @@ describe('versioned SQL migrations', () => {
     assert.equal(/APY|APR|market_price|ticker_symbol/i.test(v022.sql), false);
   });
 
+  it('customer V025 persists SunRey Exchange metadata without a balance column or second ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v025 = files.find((file) => file.version === 25);
+    assert.ok(v025);
+    assert.equal(v025.filename, 'V025__sunrey_exchange.sql');
+    assert.match(v025.sql, /CREATE SCHEMA IF NOT EXISTS sunrey_exchange/);
+    assert.match(v025.sql, /CREATE TABLE sunrey_exchange.account/);
+    assert.match(v025.sql, /CREATE TABLE sunrey_exchange.exchange_order/);
+    assert.match(v025.sql, /CREATE TABLE sunrey_exchange.trade/);
+    assert.match(v025.sql, /CREATE TABLE sunrey_exchange.settlement/);
+    assert.match(v025.sql, /price_label TEXT NOT NULL CHECK \(price_label = 'SIMULATION_MARKET_PRICE'\)/);
+    assert.match(v025.sql, /GRANT USAGE ON SCHEMA sunrey_exchange TO customer_app/);
+    assert.equal(/CREATE TABLE sunrey_exchange\.journal/i.test(v025.sql), false);
+    assert.equal(/CREATE TABLE sunrey_exchange\.\w*balance/i.test(v025.sql), false);
+    assert.equal(/\bbalance\b/i.test(v025.sql), false);
+    assert.equal(/APY|APR|market_cap|ticker_symbol/i.test(v025.sql), false);
+  });
+
   it('customer V024 persists SunRey Chain metadata without a second ledger or live network', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v024 = files.find((file) => file.version === 24);

@@ -61,6 +61,11 @@ import {
   type IssueSunReyCoinIntent,
   type TransferSunReyCoinIntent,
   type BurnSunReyCoinIntent,
+  type OpenExchangeAccountIntent,
+  type PlaceExchangeOrderIntent,
+  type CancelExchangeOrderIntent,
+  type SettleExchangeTradeIntent,
+  type HaltExchangeIntent,
 } from './action-types.ts';
 import { isHoldPurpose } from '../../domain/src/hold.ts';
 
@@ -286,6 +291,47 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.BURN_SUNREY_COIN) {
     return validateSunReyCoinAmount((intent as BurnSunReyCoinIntent).payload.amount);
+  }
+  if (intent.actionType === ACTION_TYPES.OPEN_EXCHANGE_ACCOUNT) {
+    const payload = (intent as OpenExchangeAccountIntent).payload;
+    if (typeof payload.accountId !== 'string' || payload.accountId.length === 0) {
+      return reject('accountId', 'exchange account id is required');
+    }
+    if (typeof payload.customerId !== 'string' || payload.customerId.length === 0) {
+      return reject('customerId', 'customer id is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.PLACE_EXCHANGE_ORDER) {
+    const payload = (intent as PlaceExchangeOrderIntent).payload;
+    if (typeof payload.accountId !== 'string' || payload.accountId.length === 0) {
+      return reject('accountId', 'account id is required');
+    }
+    if (payload.side !== 'BUY' && payload.side !== 'SELL') {
+      return reject('side', 'side must be BUY or SELL');
+    }
+    return validateSunReyCoinAmount(payload.quantity);
+  }
+  if (intent.actionType === ACTION_TYPES.CANCEL_EXCHANGE_ORDER) {
+    const payload = (intent as CancelExchangeOrderIntent).payload;
+    if (typeof payload.orderId !== 'string' || payload.orderId.length === 0) {
+      return reject('orderId', 'order id is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.SETTLE_EXCHANGE_TRADE) {
+    const payload = (intent as SettleExchangeTradeIntent).payload;
+    if (typeof payload.tradeId !== 'string' || payload.tradeId.length === 0) {
+      return reject('tradeId', 'trade id is required');
+    }
+    return ok(true);
+  }
+  if (intent.actionType === ACTION_TYPES.HALT_EXCHANGE) {
+    const payload = (intent as HaltExchangeIntent).payload;
+    if (typeof payload.scope !== 'string' || payload.scope.length === 0) {
+      return reject('scope', 'halt scope is required');
+    }
+    return ok(true);
   }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }

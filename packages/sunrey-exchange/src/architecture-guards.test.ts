@@ -23,36 +23,36 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
-describe('sunrey chain architecture guards', () => {
-  it('rejects a second ledger, invented tickers, raw keys, and agent execution', () => {
-    const files = walk(join(ROOT, 'packages/sunrey-chain/src'));
+describe('sunrey exchange architecture guards', () => {
+  it('rejects competing owners, invented tickers, live paths, and agent execution', () => {
+    const files = walk(join(ROOT, 'packages/sunrey-exchange/src'));
     for (const file of files) {
       if (file.endsWith('.test.ts') || file.endsWith('demo.ts')) {
         continue;
       }
       const source = readFileSync(file, 'utf8');
       assert.equal(/AuthorityIssuer\.issue|this\.issuer\.issue\(/.test(source), false, file);
-      assert.equal(/postJournal\s*\(/.test(source), false, file);
-      assert.equal(/from ['"].*packages\/ledger/.test(source), false, file);
-      assert.equal(/from ['"].*packages\/permissions/.test(source), false, file);
-      assert.equal(/from ['"].*packages\/kernel/.test(source), false, file);
-      assert.equal(/from ['"].*packages\/sunrey-coin/.test(source), false, file);
       assert.equal(/ticker\s*[:=]\s*['"]?(SUNREY|SRN|SRY|REYN|RYN|RCOIN)/.test(source), false, file);
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
       assert.equal(/APY|APR|blended return|yield rate|market cap/i.test(source), false, file);
       assert.equal(/from ['"].*services\//.test(source), false, file);
-      assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);
+      assert.equal(/official valuation|floor price/i.test(source), false, file);
+      if (file.endsWith('types.ts')) {
+        assert.equal(/balance\s*[?:]/.test(source), false, `${file} must not store a balance on ExchangeAccount`);
+      }
     }
-    assert.equal(existsSync(join(ROOT, 'packages/sunrey-chain-v2')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/blockchain')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/reyn-chain')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/on-chain-ledger')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/crypto-chain')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/exchange-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/orderbook')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/matching-engine-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/crypto-exchange')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/reyn-exchange')), false);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');
-      assert.equal(source.includes('packages/sunrey-chain'), false, file);
+      assert.equal(source.includes('packages/sunrey-exchange'), false, file);
+      assert.equal(/from ['"][^'"]*execution-authority/.test(source), false, file);
+      assert.equal(/import\s+(?:type\s+)?\{[^}]*\bExecutionAuthority\b/.test(source), false, file);
     }
   });
 });
