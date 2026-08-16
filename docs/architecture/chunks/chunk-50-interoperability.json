@@ -1,0 +1,24 @@
+{
+  "chunk": "CHUNK-50",
+  "title": "SunRey sovereign interoperability gateway, light-client verification, and secure interchain messaging",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "crypto-suite-registry",
+    "sunrey-validators",
+    "blockchain-consensus",
+    "sunrey-protocol-governance",
+    "sunrey-oracle-network",
+    "sunrey-native-assets",
+    "sunrey-interop"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript interop engine) and packages/sunrey-chain/rust/crates/interop (light-client / IBC-class gateway). Relayers are untrusted. No trusted-multisig bridge. No wrapped fiat. Production SunRey Coin and MoonRey interoperability remain unavailable. evaluateChunkRequirements returns mustStop: false. Do not create packages/ibc, packages/bridge, packages/interop, or a competing chain."
+}

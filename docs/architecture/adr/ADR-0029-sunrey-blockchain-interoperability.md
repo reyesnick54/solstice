@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0026, ADR-0031, ADR-0033
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: IMPLEMENTED (development light-client gateway; production interoperability not implemented)
 
 ## Context
 
@@ -15,12 +15,12 @@ foreign chain.
 
 ## Decision
 
-1. Interoperability is **not** enabled. No live bridge, IBC client,
-   light-client relayer, or wrapped-fiat token exists.
-2. Engineering direction for a *later* research phase: explicit
-   light-client or IBC-class clients with fail-closed timeouts,
-   never an implicit trusted multisig "lock and mint" as the only
-   model.
+1. Production interoperability is **not** enabled. No live bridge or
+   wrapped-fiat token exists. Chunk 50 implements a *development*
+   light-client / IBC-class gateway inside `packages/sunrey-chain`.
+2. Engineering direction remains: explicit light-client or IBC-class
+   clients with fail-closed timeouts, never an implicit trusted
+   multisig "lock and mint" as the root trust model.
 3. Fiat, payments, and securities never become wrapped chain assets
    without a later authority-matrix change and counsel review.
 4. Foreign chain events are oracle-class facts (ADR-0027) until a
@@ -71,6 +71,7 @@ None.
 
 ## Status
 
-`ACCEPTED_FOR_ENGINEERING` for "interop off; no wrapped fiat."
+`ACCEPTED_FOR_ENGINEERING` for "no wrapped fiat; no trusted-multisig
+bridge." Development interoperability: **implemented** (Chunk 50).
 Production interoperability: **not implemented**. Legal confidence:
 `RESEARCH_REQUIRED`.

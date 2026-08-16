@@ -52,6 +52,11 @@ const COMPETING_PATHS = [
   'packages/validators',
   'packages/staking',
   'packages/validator-v2',
+  'packages/ibc',
+  'packages/bridge',
+  'packages/interop',
+  'packages/light-client',
+  'packages/relayer',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

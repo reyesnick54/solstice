@@ -381,7 +381,8 @@ CI pipeline: ok
 - No native chain asset runtime.
 - No MoonRey implementation.
 - No PQC implementation.
-- No interop.
+- No production interop. Chunk 50 adds a development light-client
+  gateway; live bridges and wrapped fiat remain unavailable.
 - Build-status historical sections remain messy; this chunk does
   not rewrite unrelated inventory prose except to add Chunk 31.
 

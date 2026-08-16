@@ -224,6 +224,7 @@ checksum = "4a3daa8e81a3963a60642bcc1f90a670680bd4a77535faa384e9d1c79d620871"
 dependencies = [
  "curve25519-dalek",
  "ed25519",
+ "rand_core",
  "serde",
  "sha2",
  "subtle",
@@ -611,6 +612,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-interop"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "ed25519-dalek",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sunrey-crypto",
+ "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
 name = "sunrey-native-assets"
 version = "0.1.0"
 dependencies = [
@@ -632,8 +648,8 @@ dependencies = [
  "sunrey-execution",
  "sunrey-fees",
  "sunrey-governance",
- "sunrey-oracle",
  "sunrey-native-assets",
+ "sunrey-oracle",
  "sunrey-protocol",
  "sunrey-state",
  "sunrey-storage",
@@ -642,7 +658,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sunrey-productive"
 name = "sunrey-oracle"
 version = "0.1.0"
 dependencies = [
@@ -652,6 +667,17 @@ dependencies = [
  "sha2",
  "sunrey-crypto",
  "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
+name = "sunrey-productive"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
  "thiserror",
 ]
 
@@ -678,10 +704,11 @@ dependencies = [
  "sunrey-execution",
  "sunrey-fees",
  "sunrey-governance",
+ "sunrey-interop",
  "sunrey-native-assets",
  "sunrey-node",
- "sunrey-productive",
  "sunrey-oracle",
+ "sunrey-productive",
  "sunrey-protocol",
  "sunrey-storage",
  "sunrey-validators",

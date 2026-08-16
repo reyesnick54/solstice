@@ -110,6 +110,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-interop | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -397,3 +398,9 @@ contributions at `packages/sunrey-chain`. Capabilities
 [`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Do not create `packages/moonrey` or `packages/moonrey-coin`.
 The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.
+Chunk 50 implements the development interoperability gateway at
+`packages/sunrey-chain`. Capability `sunrey-interop` is
+`IMPLEMENTED`. See
+[`chunk-50-interoperability.md`](./chunk-50-interoperability.md).
+Do not create `packages/ibc`, `packages/bridge`, or
+`packages/interop`. Production interoperability remains unimplemented.

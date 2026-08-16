@@ -1052,6 +1052,35 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-network')), false);
   });
 
+  it('CHUNK-50 implements the interoperability gateway on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-interop').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-interop').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-interop').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-50',
+    );
+    assert.ok(declared, 'CHUNK-50 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-50-interoperability.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-light-client-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/interchain-packet-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/interoperability-security-model.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/interoperability-development.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/light-client-freeze.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/relayer-operations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/interop/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/interop/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/ibc')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/bridge')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/interop')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/light-client')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/relayer')), false);
+  });
+
   it('CHUNK-42 implements native fees on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').status, 'IMPLEMENTED');

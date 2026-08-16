@@ -9,7 +9,6 @@ use sunrey_consensus::{
     EnginePaths, FourValidatorHarness, MemoryApp,
 };
 use sunrey_crypto::{development_fixture_secret, CryptoSuite, DevEd25519Sha256Suite};
-use sunrey_crypto::{development_fixture_secret, DevEd25519Sha256Suite};
 use sunrey_execution::encode_issue_bytes;
 use sunrey_governance::VoteChoice;
 use sunrey_native_assets::{
@@ -114,9 +113,11 @@ enum Command {
     Moonrey {
         #[command(subcommand)]
         command: MoonreyCommand,
+    },
     Oracle {
         #[command(subcommand)]
         command: OracleCommand,
+    },
     Asset {
         #[command(subcommand)]
         command: AssetCommand,
@@ -124,6 +125,46 @@ enum Command {
     Fees {
         #[command(subcommand)]
         command: FeesCommand,
+    },
+    Interop {
+        #[command(subcommand)]
+        command: InteropCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum InteropCommand {
+    Chains {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Client {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Header {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Connection {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Channel {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Packets {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Proof {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Security {
+        #[arg(long)]
+        data_dir: PathBuf,
     },
 }
 
@@ -224,6 +265,12 @@ enum ProductiveCommand {
         id: String,
     },
     Graph {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
 enum OracleCommand {
     Providers {
         #[arg(long)]
@@ -258,6 +305,12 @@ enum OracleCommand {
         data_dir: PathBuf,
     },
     Demo {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
 enum AssetCommand {
     List {
         #[arg(long)]
@@ -326,6 +379,12 @@ enum MoonreyCommand {
         id: Option<String>,
     },
     Attribution {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
 enum FeesCommand {
     Schedule {
         #[arg(long)]
@@ -514,6 +573,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         Command::Oracle { command } => return run_oracle(command),
         Command::Asset { command } => return run_asset(command),
         Command::Fees { command } => return run_fees(command),
+        Command::Interop { command } => return run_interop(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -675,6 +735,11 @@ fn run_oracle(command: OracleCommand) -> Result<(), Box<dyn std::error::Error>> 
             run_oracle_demo(&mut node)?;
             node.oracle.persist(&data_dir)?;
             println!("{}", serde_json::to_string_pretty(&node.oracle.metrics_json())?);
+        }
+    }
+    Ok(())
+}
+
 fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
     match command {
         AssetCommand::List { data_dir } => {
@@ -885,6 +950,9 @@ fn run_oracle_demo(node: &mut LocalNode) -> Result<(), Box<dyn std::error::Error
         fact.aggregated_value,
         snapshot_hash(&node.oracle)
     );
+    Ok(())
+}
+
 fn run_fees(command: FeesCommand) -> Result<(), Box<dyn std::error::Error>> {
     match command {
         FeesCommand::Schedule { data_dir } => {
@@ -914,6 +982,32 @@ fn run_fees(command: FeesCommand) -> Result<(), Box<dyn std::error::Error>> {
             println!("{}", serde_json::to_string_pretty(&node.fees_policy_json())?);
         }
     }
+    Ok(())
+}
+
+fn run_interop(command: InteropCommand) -> Result<(), Box<dyn std::error::Error>> {
+    let data_dir = match &command {
+        InteropCommand::Chains { data_dir }
+        | InteropCommand::Client { data_dir }
+        | InteropCommand::Header { data_dir }
+        | InteropCommand::Connection { data_dir }
+        | InteropCommand::Channel { data_dir }
+        | InteropCommand::Packets { data_dir }
+        | InteropCommand::Proof { data_dir }
+        | InteropCommand::Security { data_dir } => data_dir,
+    };
+    let verb = match command {
+        InteropCommand::Chains { .. } => "chains",
+        InteropCommand::Client { .. } => "client",
+        InteropCommand::Header { .. } => "header",
+        InteropCommand::Connection { .. } => "connection",
+        InteropCommand::Channel { .. } => "channel",
+        InteropCommand::Packets { .. } => "packets",
+        InteropCommand::Proof { .. } => "proof",
+        InteropCommand::Security { .. } => "security",
+    };
+    let args = vec![verb.to_string(), "--data-dir".to_string(), data_dir.display().to_string()];
+    println!("{}", sunrey_interop::cli::run_interop_command(&args)?);
     Ok(())
 }
 

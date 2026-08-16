@@ -22,6 +22,7 @@ sunrey-node.workspace = true
 sunrey-protocol.workspace = true
 sunrey-storage.workspace = true
 sunrey-validators.workspace = true
+sunrey-interop.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 tracing-subscriber.workspace = true
