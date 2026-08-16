@@ -691,6 +691,166 @@ export type CleanRoomEgressSuppressedV1 = VersionedEvent<'CleanRoomEgressSuppres
 export type CleanRoomEgressDeniedV1 = VersionedEvent<'CleanRoomEgressDenied', 1, CleanRoomAuditPayload>;
 export type CleanRoomContributionRecordedV1 = VersionedEvent<'CleanRoomContributionRecorded', 1, CleanRoomAuditPayload>;
 
+export type SunReyCoinAuditPayload = {
+  readonly vectorId?: string;
+  readonly proposalId?: string;
+  readonly issuanceId?: string;
+  readonly transferId?: string;
+  readonly burnId?: string;
+  readonly snapshotId?: string;
+  readonly journalId?: string;
+  readonly subjectId?: string;
+  readonly receiptId?: string;
+  readonly eligibility?: string;
+  readonly scaledUnits?: string;
+  readonly financialEffect?: boolean;
+  readonly outcome?: string;
+  readonly issued?: string;
+  readonly burned?: string;
+  readonly holdings?: string;
+  readonly replayKey?: string;
+};
+
+export type SunReyCoinContributionEvaluatedV1 = VersionedEvent<
+  'SunReyCoinContributionEvaluated',
+  1,
+  SunReyCoinAuditPayload
+>;
+export type SunReyCoinIssuanceProposedV1 = VersionedEvent<'SunReyCoinIssuanceProposed', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinIssuedV1 = VersionedEvent<'SunReyCoinIssued', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinTransferCompletedV1 = VersionedEvent<'SunReyCoinTransferCompleted', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinBurnedV1 = VersionedEvent<'SunReyCoinBurned', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinSupplyReconciledV1 = VersionedEvent<'SunReyCoinSupplyReconciled', 1, SunReyCoinAuditPayload>;
+export type SunReyCoinReconciliationMismatchV1 = VersionedEvent<
+  'SunReyCoinReconciliationMismatch',
+  1,
+  SunReyCoinAuditPayload
+>;
+
+export type InformationMarketAuditPayload = {
+  readonly requestId?: string;
+  readonly requesterId?: string;
+  readonly opportunityId?: string;
+  readonly contributionId?: string;
+  readonly consentId?: string;
+  readonly receiptId?: string;
+  readonly attestationId?: string;
+  readonly claimType?: string;
+  readonly subjectRef?: string;
+  readonly purposeRef?: string;
+  readonly productType?: string;
+  readonly realization?: string;
+  readonly rawDataIncluded?: boolean;
+};
+
+export type InformationMarketRequestPublishedV1 = VersionedEvent<
+  'InformationMarketRequestPublished',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketOpportunityOfferedV1 = VersionedEvent<
+  'InformationMarketOpportunityOffered',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketOpportunityAcceptedV1 = VersionedEvent<
+  'InformationMarketOpportunityAccepted',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketContributionAuthorizedV1 = VersionedEvent<
+  'InformationMarketContributionAuthorized',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketContributionCompletedV1 = VersionedEvent<
+  'InformationMarketContributionCompleted',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketCompensationPendingV1 = VersionedEvent<
+  'InformationMarketCompensationPending',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketCompensationSettledV1 = VersionedEvent<
+  'InformationMarketCompensationSettled',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketRequestClosedV1 = VersionedEvent<
+  'InformationMarketRequestClosed',
+  1,
+  InformationMarketAuditPayload
+>;
+export type OracleAttestationIssuedV1 = VersionedEvent<'OracleAttestationIssued', 1, InformationMarketAuditPayload>;
+export type OracleAttestationExpiredV1 = VersionedEvent<'OracleAttestationExpired', 1, InformationMarketAuditPayload>;
+export type ProofOfContributionCreatedV1 = VersionedEvent<'ProofOfContributionCreated', 1, InformationMarketAuditPayload>;
+
+export type SunReyChainAuditPayload = {
+  readonly intentId?: string;
+  readonly operationId?: string;
+  readonly recordType?: string;
+  readonly correlationId?: string;
+  readonly outcome?: string;
+  readonly status?: string;
+  readonly reason?: string;
+};
+
+export type SunReyChainIntentCreatedV1 = VersionedEvent<'SunReyChainIntentCreated', 1, SunReyChainAuditPayload>;
+export type SunReyChainOperationSubmittedV1 = VersionedEvent<
+  'SunReyChainOperationSubmitted',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainOperationUnknownV1 = VersionedEvent<'SunReyChainOperationUnknown', 1, SunReyChainAuditPayload>;
+export type SunReyChainOperationFinalizedV1 = VersionedEvent<'SunReyChainOperationFinalized', 1, SunReyChainAuditPayload>;
+export type SunReyChainAnchorRecordedV1 = VersionedEvent<'SunReyChainAnchorRecorded', 1, SunReyChainAuditPayload>;
+export type SunReyChainAnchorReorgObservedV1 = VersionedEvent<
+  'SunReyChainAnchorReorgObserved',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainReconciliationMismatchV1 = VersionedEvent<
+  'SunReyChainReconciliationMismatch',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainHealthDegradedV1 = VersionedEvent<'SunReyChainHealthDegraded', 1, SunReyChainAuditPayload>;
+
+export type ExchangeAuditPayload = {
+  readonly accountId?: string;
+  readonly orderId?: string;
+  readonly tradeId?: string;
+  readonly settlementId?: string;
+  readonly marketId?: string;
+  readonly status?: string;
+  readonly scope?: string;
+  readonly targetId?: string;
+  readonly priceLabel?: string;
+  readonly quantity?: string;
+  readonly remaining?: string;
+  readonly outcome?: string;
+  readonly notes?: readonly string[];
+  readonly reason?: string;
+};
+
+export type ExchangeAccountCreatedV1 = VersionedEvent<'ExchangeAccountCreated', 1, ExchangeAuditPayload>;
+export type ExchangeOrderAcceptedV1 = VersionedEvent<'ExchangeOrderAccepted', 1, ExchangeAuditPayload>;
+export type ExchangeOrderOpenedV1 = VersionedEvent<'ExchangeOrderOpened', 1, ExchangeAuditPayload>;
+export type ExchangeOrderPartiallyFilledV1 = VersionedEvent<'ExchangeOrderPartiallyFilled', 1, ExchangeAuditPayload>;
+export type ExchangeOrderFilledV1 = VersionedEvent<'ExchangeOrderFilled', 1, ExchangeAuditPayload>;
+export type ExchangeOrderCancelledV1 = VersionedEvent<'ExchangeOrderCancelled', 1, ExchangeAuditPayload>;
+export type ExchangeTradeMatchedV1 = VersionedEvent<'ExchangeTradeMatched', 1, ExchangeAuditPayload>;
+export type ExchangeTradeSettledV1 = VersionedEvent<'ExchangeTradeSettled', 1, ExchangeAuditPayload>;
+export type ExchangeMarketHaltedV1 = VersionedEvent<'ExchangeMarketHalted', 1, ExchangeAuditPayload>;
+export type ExchangeMarketResumedV1 = VersionedEvent<'ExchangeMarketResumed', 1, ExchangeAuditPayload>;
+export type ExchangeReconciliationMismatchV1 = VersionedEvent<
+  'ExchangeReconciliationMismatch',
+  1,
+  ExchangeAuditPayload
+>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1020,7 +1180,44 @@ export type DomainEvent =
   | CleanRoomEgressReleasedV1
   | CleanRoomEgressSuppressedV1
   | CleanRoomEgressDeniedV1
-  | CleanRoomContributionRecordedV1;
+  | CleanRoomContributionRecordedV1
+  | SunReyCoinContributionEvaluatedV1
+  | SunReyCoinIssuanceProposedV1
+  | SunReyCoinIssuedV1
+  | SunReyCoinTransferCompletedV1
+  | SunReyCoinBurnedV1
+  | SunReyCoinSupplyReconciledV1
+  | SunReyCoinReconciliationMismatchV1
+  | InformationMarketRequestPublishedV1
+  | InformationMarketOpportunityOfferedV1
+  | InformationMarketOpportunityAcceptedV1
+  | InformationMarketContributionAuthorizedV1
+  | InformationMarketContributionCompletedV1
+  | InformationMarketCompensationPendingV1
+  | InformationMarketCompensationSettledV1
+  | InformationMarketRequestClosedV1
+  | OracleAttestationIssuedV1
+  | OracleAttestationExpiredV1
+  | ProofOfContributionCreatedV1
+  | SunReyChainIntentCreatedV1
+  | SunReyChainOperationSubmittedV1
+  | SunReyChainOperationUnknownV1
+  | SunReyChainOperationFinalizedV1
+  | SunReyChainAnchorRecordedV1
+  | SunReyChainAnchorReorgObservedV1
+  | SunReyChainReconciliationMismatchV1
+  | SunReyChainHealthDegradedV1
+  | ExchangeAccountCreatedV1
+  | ExchangeOrderAcceptedV1
+  | ExchangeOrderOpenedV1
+  | ExchangeOrderPartiallyFilledV1
+  | ExchangeOrderFilledV1
+  | ExchangeOrderCancelledV1
+  | ExchangeTradeMatchedV1
+  | ExchangeTradeSettledV1
+  | ExchangeMarketHaltedV1
+  | ExchangeMarketResumedV1
+  | ExchangeReconciliationMismatchV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

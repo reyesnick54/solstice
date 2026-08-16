@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { asUtcInstant } from '../../domain/src/time.ts';
+import { ledgerAssetKey, ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { asPaymentId } from './ids.ts';
 import { SimulatedRailAdapter } from './rail-adapters.ts';
@@ -168,10 +169,10 @@ describe('canonical rail adapters', () => {
   it('keeps inbound journal plans single-currency and balanced', () => {
     const amount = Money.fromMinorUnits(10_000n, 'USD');
     for (const plan of [inboundPendingPlan(amount), inboundSettlePlan('acct_us', amount)]) {
-      const currencies = new Set(plan.postings.map((row) => row.amount.currency));
+      const currencies = new Set(plan.postings.map((row) => ledgerAssetKey(row.amount)));
       assert.equal(currencies.size, 1);
-      const debits = plan.postings.filter((row) => row.direction === 'DEBIT').reduce((sum, row) => sum + row.amount.minorUnits, 0n);
-      const credits = plan.postings.filter((row) => row.direction === 'CREDIT').reduce((sum, row) => sum + row.amount.minorUnits, 0n);
+      const debits = plan.postings.filter((row) => row.direction === 'DEBIT').reduce((sum, row) => sum + ledgerScaledUnits(row.amount), 0n);
+      const credits = plan.postings.filter((row) => row.direction === 'CREDIT').reduce((sum, row) => sum + ledgerScaledUnits(row.amount), 0n);
       assert.equal(debits, credits);
     }
   });

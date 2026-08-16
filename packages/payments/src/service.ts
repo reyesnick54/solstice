@@ -10,6 +10,7 @@ import type { ComplianceKernel } from '../../kernel/src/kernel.ts';
 import type { KernelFacts } from '../../kernel/src/proofs.ts';
 import type { Ledger } from '../../ledger/src/journal.ts';
 import type { Journal } from '../../ledger/src/types.ts';
+import { asMoney, ledgerAssetKey } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import type {
   AcceptFxQuoteIntent,
@@ -1136,13 +1137,13 @@ export class PaymentsService {
     let credits = Money.zero(account.currency);
     let debits = Money.zero(account.currency);
     for (const posting of postings) {
-      if (posting.amount.currency !== account.currency) {
+      if (ledgerAssetKey(posting.amount) !== account.currency) {
         continue;
       }
       if (posting.direction === 'CREDIT') {
-        credits = credits.plus(posting.amount);
+        credits = credits.plus(asMoney(posting.amount));
       } else {
-        debits = debits.plus(posting.amount);
+        debits = debits.plus(asMoney(posting.amount));
       }
     }
     return credits.minus(debits);

@@ -831,11 +831,81 @@ export class EconomicGraphService {
     return ok(this.store.nodesFor(graph.graphId).filter((node) => node.kind === kind));
   }
 
+  recordSunReyCoinRefs(
+    actor: unknown,
+    subjectId: string,
+    input: { readonly positionRef: string; readonly contributionId?: string },
+  ): Result<{ readonly holdingNodeId: EconomicNodeId }, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const graphId = this.projector.ensureGraph(subjectId, undefined, this.clock.now());
+    const at = this.clock.now();
+    const holdingNodeId = deterministicNodeId('REWARD', `sunrey_coin_${input.positionRef}`.toLowerCase());
+    this.store.putNode({
+      nodeId: holdingNodeId,
+      graphId,
+      kind: 'REWARD',
+      attributes: {
+        kind: 'REWARD',
+        label: 'SunRey Coin position',
+        positionRef: input.positionRef,
+        marketPrice: 'UNAVAILABLE',
+      },
+      quality: 'CURRENT',
+      confidence: 'DERIVED',
+      provenance: this.derivedProvenance(holdingNodeId, at),
+      createdAt: at,
+      survivesRebuild: false,
+    });
+    this.linkPerson(graphId, subjectId, holdingNodeId, 'HOLDS', at, 'DERIVED');
+    if (input.contributionId) {
+      const contributionNodeId = deterministicNodeId(
+        'DATA_ASSET',
+        `contribution_${input.contributionId}`.toLowerCase(),
+      );
+      if (!this.store.getNode(contributionNodeId)) {
+        this.store.putNode({
+          nodeId: contributionNodeId,
+          graphId,
+          kind: 'DATA_ASSET',
+          attributes: {
+            kind: 'DATA_ASSET',
+            label: 'authorized contribution',
+            contributionId: input.contributionId,
+          },
+          quality: 'CURRENT',
+          confidence: 'DERIVED',
+          provenance: this.derivedProvenance(contributionNodeId, at),
+          createdAt: at,
+          survivesRebuild: false,
+        });
+      }
+      this.store.putEdge({
+        edgeId: deterministicEdgeId('RESULTED_IN', contributionNodeId, holdingNodeId),
+        graphId,
+        kind: 'RESULTED_IN',
+        fromNodeId: contributionNodeId,
+        toNodeId: holdingNodeId,
+        validFrom: at,
+        validTo: null,
+        quality: 'CURRENT',
+        confidence: 'DERIVED',
+        provenance: this.derivedProvenance(holdingNodeId, at),
+        createdAt: at,
+        survivesRebuild: false,
+      });
+    }
+    this.projector.emitPublic('EconomicGraphNodeCreated', graphId, at, { nodeId: holdingNodeId, kind: 'REWARD' });
+    return ok({ holdingNodeId });
+  }
+
   private linkPerson(
     graphId: EconomicGraphId,
     subjectId: string,
     to: EconomicNodeId,
-    kind: 'OWNS' | 'OWES' | 'RECEIVES_FROM' | 'PAYS_TO' | 'SUPPORTS_GOAL' | 'GENERATES_INCOME' | 'INCURS_COST',
+    kind: 'OWNS' | 'OWES' | 'RECEIVES_FROM' | 'PAYS_TO' | 'SUPPORTS_GOAL' | 'GENERATES_INCOME' | 'INCURS_COST' | 'HOLDS',
     at: UtcInstant,
     sourceType: SourceType = 'USER_DECLARED',
   ): void {

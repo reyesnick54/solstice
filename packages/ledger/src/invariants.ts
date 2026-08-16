@@ -1,4 +1,10 @@
 import { catalogFor } from '../../domain/src/account-class.ts';
+import { AssetQuantity } from '../../money/src/asset-quantity.ts';
+import {
+  ledgerAmountKind,
+  ledgerAssetKey,
+  ledgerScaledUnits,
+} from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import {
   LedgerInvariantError,
@@ -23,19 +29,28 @@ export function assertPostingsNonEmpty(postings: readonly ProposedPosting[]): vo
 
 export function assertNoFloatAmounts(postings: readonly ProposedPosting[]): void {
   for (const posting of postings) {
-    if (!(posting.amount instanceof Money)) {
-      throw new LedgerInvariantError('BALANCE', 'every posting amount must be a Money instance');
-    }
-    if (typeof posting.amount.minorUnits !== 'bigint') {
+    if (!(posting.amount instanceof Money) && !(posting.amount instanceof AssetQuantity)) {
       throw new LedgerInvariantError(
         'BALANCE',
-        'Money minor units must be bigint; floating-point is forbidden',
+        'every posting amount must be a Money or AssetQuantity instance',
       );
     }
-    if (!posting.amount.isPositive()) {
+    if (typeof ledgerScaledUnits(posting.amount) !== 'bigint') {
+      throw new LedgerInvariantError(
+        'BALANCE',
+        'ledger amounts must be bigint scaled units; floating-point is forbidden',
+      );
+    }
+    if (posting.amount instanceof Money && !posting.amount.isPositive()) {
       throw new LedgerInvariantError(
         'BALANCE',
         'posting amounts must be strictly positive minor units',
+      );
+    }
+    if (posting.amount instanceof AssetQuantity && !posting.amount.isPositive()) {
+      throw new LedgerInvariantError(
+        'BALANCE',
+        'posting amounts must be strictly positive scaled units',
       );
     }
   }
@@ -43,11 +58,20 @@ export function assertNoFloatAmounts(postings: readonly ProposedPosting[]): void
 
 /**
  * BALANCE: total debits equal total credits per asset.
+ * A journal is single-asset and single-kind. Money and AssetQuantity
+ * must never share a journal.
  */
 export function assertBalanced(
   postings: readonly ProposedPosting[],
-): { asset: string; total: Money } {
-  const assets = new Set(postings.map((p) => p.amount.currency));
+): { asset: string; totalScaled: bigint } {
+  const kinds = new Set(postings.map((p) => ledgerAmountKind(p.amount)));
+  if (kinds.size !== 1) {
+    throw new LedgerInvariantError(
+      'BALANCE',
+      'a journal must not mix Money and AssetQuantity; mixed-kind journals are not permitted',
+    );
+  }
+  const assets = new Set(postings.map((p) => ledgerAssetKey(p.amount)));
   if (assets.size !== 1) {
     throw new LedgerInvariantError(
       'BALANCE',
@@ -55,13 +79,14 @@ export function assertBalanced(
     );
   }
   const asset = [...assets][0]!;
-  let debits = Money.fromMinorUnits(0n, asset);
-  let credits = Money.fromMinorUnits(0n, asset);
+  let debits = 0n;
+  let credits = 0n;
   for (const posting of postings) {
+    const units = ledgerScaledUnits(posting.amount);
     if (posting.direction === 'DEBIT') {
-      debits = debits.plus(posting.amount);
+      debits += units;
     } else if (posting.direction === 'CREDIT') {
-      credits = credits.plus(posting.amount);
+      credits += units;
     } else {
       throw new LedgerInvariantError(
         'BALANCE',
@@ -69,13 +94,13 @@ export function assertBalanced(
       );
     }
   }
-  if (!debits.equals(credits)) {
+  if (debits !== credits) {
     throw new LedgerInvariantError(
       'BALANCE',
-      `debits ${debits.minorUnits} != credits ${credits.minorUnits} ${asset}`,
+      `debits ${debits} != credits ${credits} ${asset}`,
     );
   }
-  return { asset, total: debits };
+  return { asset, totalScaled: debits };
 }
 
 /**
@@ -143,7 +168,7 @@ export function journalFingerprint(input: {
   const parts = input.postings
     .map(
       (p) =>
-        `${p.accountId}:${p.direction}:${p.amount.currency}:${p.amount.minorUnits.toString()}`,
+        `${p.accountId}:${p.direction}:${ledgerAssetKey(p.amount)}:${ledgerScaledUnits(p.amount).toString()}`,
     )
     .sort();
   return `${input.actionType}|${parts.join('|')}`;

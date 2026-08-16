@@ -641,7 +641,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room-v2')), false);
   });
 
-  it('CHUNK-26 remains unbuilt: coin package absent after Consent and Clean Room', () => {
+  it('CHUNK-26 implements SunRey Coin after Consent and Clean Room', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
@@ -652,6 +652,9 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'clean-room').protected, true);
     assert.equal(evaluateCapability(manifest, 'clean-room').owner, 'packages/clean-room');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').owner, 'packages/sunrey-coin');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-26',
@@ -662,20 +665,29 @@ describe('architecture constitution', () => {
 
     const coin = manifest.boundedContexts.find((context) => context.id === 'SUNREY_COIN');
     assert.ok(coin);
-    assert.equal(coin.status, 'PLANNED');
+    assert.equal(coin.status, 'IMPLEMENTED');
     assert.deepEqual(coin.reservedPaths, ['packages/sunrey-coin']);
 
     const exchange = manifest.boundedContexts.find((context) => context.id === 'SUNREY_EXCHANGE');
     assert.ok(exchange);
-    assert.equal(exchange.status, 'PLANNED');
+    assert.equal(exchange.status, 'IMPLEMENTED');
     assert.deepEqual(exchange.reservedPaths, ['packages/sunrey-exchange']);
 
-    const historicalExchange = manifest.boundedContexts.find(
-      (context) => context.id === 'PYRAMID_DATA_EXCHANGE',
+    const chain = manifest.boundedContexts.find((context) => context.id === 'SUNREY_CHAIN');
+    assert.ok(chain);
+    assert.equal(chain.status, 'IMPLEMENTED');
+    assert.deepEqual(chain.reservedPaths, ['packages/sunrey-chain']);
+
+    assert.equal(
+      manifest.boundedContexts.some((context) => context.id === 'PYRAMID_DATA_EXCHANGE'),
+      false,
     );
-    assert.ok(historicalExchange);
-    assert.equal(historicalExchange.status, 'PLANNED');
-    assert.match(historicalExchange.notes ?? '', /naming remains unresolved/i);
+    const informationMarket = manifest.boundedContexts.find(
+      (context) => context.id === 'SUNREY_INFORMATION_MARKET',
+    );
+    assert.ok(informationMarket);
+    assert.equal(informationMarket.status, 'IMPLEMENTED');
+    assert.deepEqual(informationMarket.reservedPaths, ['packages/information-market']);
 
     assert.equal(
       manifest.boundedContexts.some((context) => context.id === 'PYRAMID'),
@@ -685,7 +697,6 @@ describe('architecture constitution', () => {
       manifest.boundedContexts.some((context) => context.id === 'PYRAMID_EXCHANGE'),
       false,
     );
-
     assert.equal(
       manifest.boundedContexts.some((context) => context.id === 'REYN_COIN'),
       false,
@@ -695,18 +706,144 @@ describe('architecture constitution', () => {
       false,
     );
 
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-coin')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-coin')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-coin')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/token-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-ledger-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consent')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/clean-room')), true);
   });
 
-  it('CHUNK-30 stops because SunRey Exchange core is not IMPLEMENTED', () => {
+  it('CHUNK-27 implements the Human Information Network marketplace after Clean Room and SunRey Coin', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'information-market').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'information-market').protected, true);
+    assert.equal(evaluateCapability(manifest, 'information-market').owner, 'packages/information-market');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-27',
+    );
+    assert.ok(declared, 'CHUNK-27 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const market = manifest.boundedContexts.find(
+      (context) => context.id === 'SUNREY_INFORMATION_MARKET',
+    );
+    assert.ok(market);
+    assert.equal(market.status, 'IMPLEMENTED');
+    assert.deepEqual(market.reservedPaths, ['packages/information-market']);
+    assert.equal(
+      manifest.boundedContexts.some((context) => context.id === 'PYRAMID_DATA_EXCHANGE'),
+      false,
+    );
+
+    const exchange = manifest.boundedContexts.find((context) => context.id === 'SUNREY_EXCHANGE');
+    assert.ok(exchange);
+    assert.equal(exchange.status, 'IMPLEMENTED');
+    const chain = manifest.boundedContexts.find((context) => context.id === 'SUNREY_CHAIN');
+    assert.ok(chain);
+    assert.equal(chain.status, 'IMPLEMENTED');
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/information-market')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/pyramid-data-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/data-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-data-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/personal-oracle')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/information-market-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/proof-of-contribution')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+  });
+
+  it('CHUNK-28 implements SunRey Chain after Clean Room, Coin, and the information market', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'purpose-firewall').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'information-market').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-28',
+    );
+    assert.ok(declared, 'CHUNK-28 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const chain = manifest.boundedContexts.find((context) => context.id === 'SUNREY_CHAIN');
+    assert.ok(chain);
+    assert.equal(chain.status, 'IMPLEMENTED');
+    assert.deepEqual(chain.reservedPaths, ['packages/sunrey-chain']);
+
+    const exchange = manifest.boundedContexts.find((context) => context.id === 'SUNREY_EXCHANGE');
+    assert.ok(exchange);
+    assert.equal(exchange.status, 'IMPLEMENTED');
+
+    const chainPackage = manifest.packages.find((pkg) => pkg.id === 'packages/sunrey-chain');
+    assert.ok(chainPackage);
+    assert.equal(chainPackage.financialStateMutation, false);
+    assert.equal(chainPackage.executionAuthorityRequired, false);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/on-chain-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
+  });
+
+  it('CHUNK-29 implements SunRey Exchange after Clean Room, Coin, information market, and Chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'information-market').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').owner, 'packages/sunrey-exchange');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-29',
+    );
+    assert.ok(declared, 'CHUNK-29 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const exchange = manifest.boundedContexts.find((context) => context.id === 'SUNREY_EXCHANGE');
+    assert.ok(exchange);
+    assert.equal(exchange.status, 'IMPLEMENTED');
+    assert.deepEqual(exchange.reservedPaths, ['packages/sunrey-exchange']);
+
+    const exchangePackage = manifest.packages.find((pkg) => pkg.id === 'packages/sunrey-exchange');
+    assert.ok(exchangePackage);
+    assert.equal(exchangePackage.financialStateMutation, true);
+    assert.equal(exchangePackage.executionAuthorityRequired, true);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/orderbook')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/matching-engine-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-exchange')), false);
+  });
+
+  it('CHUNK-30 stops because custody and market-surveillance are not IMPLEMENTED', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'identity').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
@@ -717,15 +854,10 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'evidence').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'consent').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'clean-room').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
 
-    assert.equal(evaluateCapability(manifest, 'sunrey-coin').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-coin').protected, true);
-    assert.equal(evaluateCapability(manifest, 'sunrey-coin').owner, 'packages/sunrey-coin');
-    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').protected, true);
-    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').owner, 'packages/sunrey-exchange');
-    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-chain').protected, true);
     assert.equal(evaluateCapability(manifest, 'custody').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'custody').protected, true);
     assert.equal(evaluateCapability(manifest, 'custody').owner, 'packages/custody');
@@ -741,29 +873,13 @@ describe('architecture constitution', () => {
     );
     assert.ok(declared, 'CHUNK-30 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, true);
-    assert.ok(declared.missing.includes('sunrey-coin'));
-    assert.ok(declared.missing.includes('sunrey-exchange'));
-    assert.ok(declared.missing.includes('sunrey-chain'));
     assert.ok(declared.missing.includes('custody'));
     assert.ok(declared.missing.includes('market-surveillance'));
+    assert.equal(declared.missing.includes('sunrey-coin'), false);
+    assert.equal(declared.missing.includes('sunrey-exchange'), false);
+    assert.equal(declared.missing.includes('sunrey-chain'), false);
     assert.equal(declared.missing.includes('identity'), false);
     assert.equal(declared.missing.includes('compliance-screening'), false);
-    assert.equal(declared.missing.includes('clean-room'), false);
-
-    const coin = manifest.boundedContexts.find((context) => context.id === 'SUNREY_COIN');
-    assert.ok(coin);
-    assert.equal(coin.status, 'PLANNED');
-    assert.deepEqual(coin.reservedPaths, ['packages/sunrey-coin']);
-
-    const exchange = manifest.boundedContexts.find((context) => context.id === 'SUNREY_EXCHANGE');
-    assert.ok(exchange);
-    assert.equal(exchange.status, 'PLANNED');
-    assert.deepEqual(exchange.reservedPaths, ['packages/sunrey-exchange']);
-
-    const chain = manifest.boundedContexts.find((context) => context.id === 'SUNREY_CHAIN');
-    assert.ok(chain);
-    assert.equal(chain.status, 'PLANNED');
-    assert.deepEqual(chain.reservedPaths, ['packages/sunrey-chain']);
 
     const custody = manifest.boundedContexts.find((context) => context.id === 'CUSTODY');
     assert.ok(custody);
@@ -777,22 +893,9 @@ describe('architecture constitution', () => {
     assert.equal(surveillance.status, 'PLANNED');
     assert.deepEqual(surveillance.reservedPaths, ['packages/market-surveillance']);
 
-    assert.equal(
-      manifest.boundedContexts.some((context) => context.id === 'REYN_COIN'),
-      false,
-    );
-    assert.equal(
-      manifest.boundedContexts.some((context) => context.id === 'REYN_EXCHANGE'),
-      false,
-    );
-    assert.equal(
-      manifest.boundedContexts.some((context) => context.id === 'PYRAMID_EXCHANGE'),
-      false,
-    );
-
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-coin')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-coin')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/market-surveillance')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-compliance-v2')), false);
@@ -800,7 +903,5 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-aml')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/surveillance-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-exchange')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/pyramid-exchange')), false);
   });
 });

@@ -67,6 +67,12 @@ jobs:
         run: npm run demo:consent
       - name: Privacy Clean Room demo
         run: npm run demo:clean-room
+      - name: SunRey Coin simulation ledger demo
+        run: npm run demo:sunrey-coin
+      - name: Human Information Network marketplace demo
+        run: npm run demo:information-market
+      - name: Demo sunrey-chain
+        run: npm run demo:sunrey-chain
 
       - name: Typecheck
         run: npm run typecheck

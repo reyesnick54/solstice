@@ -9,6 +9,7 @@ import type { LegalEntityId } from '../../domain/src/legal-entity.ts';
 import type { PendingSettlementId } from '../../domain/src/pending-settlement.ts';
 import type { ProductId } from '../../domain/src/product.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
+import type { AssetQuantity } from '../../money/src/asset-quantity.ts';
 import type { Money } from '../../money/src/money.ts';
 import type { ActionIntent } from './action-intent.ts';
 
@@ -70,6 +71,14 @@ export const ACTION_TYPES = {
   CANCEL_PAPER_ORDER: 'CANCEL_PAPER_ORDER',
   SETTLE_INVESTMENT: 'SETTLE_INVESTMENT',
   PROCESS_CORPORATE_ACTION: 'PROCESS_CORPORATE_ACTION',
+  ISSUE_SUNREY_COIN: 'ISSUE_SUNREY_COIN',
+  TRANSFER_SUNREY_COIN: 'TRANSFER_SUNREY_COIN',
+  BURN_SUNREY_COIN: 'BURN_SUNREY_COIN',
+  OPEN_EXCHANGE_ACCOUNT: 'OPEN_EXCHANGE_ACCOUNT',
+  PLACE_EXCHANGE_ORDER: 'PLACE_EXCHANGE_ORDER',
+  CANCEL_EXCHANGE_ORDER: 'CANCEL_EXCHANGE_ORDER',
+  SETTLE_EXCHANGE_TRADE: 'SETTLE_EXCHANGE_TRADE',
+  HALT_EXCHANGE: 'HALT_EXCHANGE',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -706,3 +715,90 @@ export type InvestmentIntent =
   | CancelPaperOrderIntent
   | SettleInvestmentIntent
   | ProcessCorporateActionIntent;
+
+export type IssueSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly proposalId: string;
+  readonly receiptId: string;
+  readonly contributionId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type TransferSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly destinationAccountId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type BurnSunReyCoinPayload = {
+  readonly accountId: string;
+  readonly amount: AssetQuantity;
+};
+
+export type IssueSunReyCoinIntent = ActionIntent<IssueSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ISSUE_SUNREY_COIN;
+};
+
+export type TransferSunReyCoinIntent = ActionIntent<TransferSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.TRANSFER_SUNREY_COIN;
+};
+
+export type BurnSunReyCoinIntent = ActionIntent<BurnSunReyCoinPayload> & {
+  readonly actionType: typeof ACTION_TYPES.BURN_SUNREY_COIN;
+};
+
+export type SunReyCoinIntent = IssueSunReyCoinIntent | TransferSunReyCoinIntent | BurnSunReyCoinIntent;
+
+export type OpenExchangeAccountPayload = {
+  readonly accountId: string;
+  readonly customerId: CustomerId;
+};
+
+export type PlaceExchangeOrderPayload = {
+  readonly accountId: string;
+  readonly orderId: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantity: AssetQuantity;
+};
+
+export type CancelExchangeOrderPayload = {
+  readonly accountId: string;
+  readonly orderId: string;
+};
+
+export type SettleExchangeTradePayload = {
+  readonly accountId: string;
+  readonly tradeId: string;
+};
+
+export type HaltExchangePayload = {
+  readonly accountId: string;
+  readonly scope: string;
+};
+
+export type OpenExchangeAccountIntent = ActionIntent<OpenExchangeAccountPayload> & {
+  readonly actionType: typeof ACTION_TYPES.OPEN_EXCHANGE_ACCOUNT;
+};
+
+export type PlaceExchangeOrderIntent = ActionIntent<PlaceExchangeOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.PLACE_EXCHANGE_ORDER;
+};
+
+export type CancelExchangeOrderIntent = ActionIntent<CancelExchangeOrderPayload> & {
+  readonly actionType: typeof ACTION_TYPES.CANCEL_EXCHANGE_ORDER;
+};
+
+export type SettleExchangeTradeIntent = ActionIntent<SettleExchangeTradePayload> & {
+  readonly actionType: typeof ACTION_TYPES.SETTLE_EXCHANGE_TRADE;
+};
+
+export type HaltExchangeIntent = ActionIntent<HaltExchangePayload> & {
+  readonly actionType: typeof ACTION_TYPES.HALT_EXCHANGE;
+};
+
+export type SunReyExchangeIntent =
+  | OpenExchangeAccountIntent
+  | PlaceExchangeOrderIntent
+  | CancelExchangeOrderIntent
+  | SettleExchangeTradeIntent
+  | HaltExchangeIntent;

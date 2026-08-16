@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { createCardWorld } from '../../../tests/card-world.ts';
 import { AcceptanceService } from './acceptance/service.ts';
@@ -162,10 +163,10 @@ describe('merchant SoftPOS / tap-to-pay', () => {
     assert.ok(journal);
     const debit = journal.postings
       .filter((posting) => posting.direction === 'DEBIT')
-      .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+      .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
     const credit = journal.postings
       .filter((posting) => posting.direction === 'CREDIT')
-      .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+      .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
     assert.equal(debit, credit);
     const reconciliation = acceptance.store.getReconciliation(settled.value.paymentId);
     assert.equal(reconciliation?.status, 'MATCHED');

@@ -11,6 +11,8 @@ import { lintRegulatoryTwinBoundary } from './regulatory-twin-guards.ts';
 import { lintPersonalDataVaultBoundary } from './personal-data-vault-guards.ts';
 import { lintConsentBoundary } from './consent-guards.ts';
 import { lintCleanRoomBoundary } from './clean-room-guards.ts';
+import { lintInformationMarketBoundary } from './information-market-guards.ts';
+import { lintSunReyChainBoundary } from './sunrey-chain-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -29,6 +31,8 @@ const findings = [
   ...lintPersonalDataVaultBoundary(root),
   ...lintConsentBoundary(root),
   ...lintCleanRoomBoundary(root),
+  ...lintInformationMarketBoundary(root),
+  ...lintSunReyChainBoundary(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

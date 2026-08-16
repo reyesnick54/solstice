@@ -2,6 +2,7 @@ import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
 import { asSolsticeIdentityId } from '../../identity/src/ids.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { createCardWorld } from '../../../tests/card-world.ts';
 import { AcceptanceService } from './acceptance/service.ts';
@@ -148,10 +149,10 @@ async function main(): Promise<void> {
   }
   const debit = journal.postings
     .filter((posting) => posting.direction === 'DEBIT')
-    .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+    .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
   const credit = journal.postings
     .filter((posting) => posting.direction === 'CREDIT')
-    .reduce((sum, posting) => sum + posting.amount.minorUnits, 0n);
+    .reduce((sum, posting) => sum + ledgerScaledUnits(posting.amount), 0n);
   if (debit !== credit) {
     throw new Error('unbalanced settlement journal');
   }

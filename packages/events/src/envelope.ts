@@ -285,6 +285,50 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.consentId ?? body.permitId ?? body.purposeId ?? body.decisionId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('SunReyCoin')) {
+    return {
+      type: 'sunrey_coin',
+      id: String(
+        body.issuanceId ??
+          body.transferId ??
+          body.burnId ??
+          body.proposalId ??
+          body.vectorId ??
+          body.snapshotId ??
+          'unknown',
+      ),
+    };
+  }
+  if (eventType.startsWith('CleanRoom')) {
+    return {
+      type: 'clean_room',
+      id: String(body.sessionId ?? body.jobId ?? body.receiptId ?? body.contributionId ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('Oracle')) {
+    return {
+      type: 'oracle',
+      id: String(body.attestationId ?? body.subjectRef ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('InformationMarket') || eventType === 'ProofOfContributionCreated') {
+    return {
+      type: 'information_market',
+      id: String(
+        body.requestId ??
+          body.opportunityId ??
+          body.contributionId ??
+          body.consentId ??
+          'unknown',
+      ),
+    };
+  }
+  if (eventType.startsWith('SunReyChain')) {
+    return {
+      type: 'sunrey_chain',
+      id: String(body.operationId ?? body.intentId ?? body.correlationId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

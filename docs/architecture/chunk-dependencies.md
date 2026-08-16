@@ -91,9 +91,10 @@ Agents and later CI jobs use that result. They do not guess.
 | consent | IMPLEMENTED | packages/consent |
 | purpose-firewall | IMPLEMENTED | packages/consent |
 | clean-room | IMPLEMENTED | packages/clean-room |
-| sunrey-coin | PLANNED | packages/sunrey-coin |
-| sunrey-exchange | PLANNED | packages/sunrey-exchange |
-| sunrey-chain | PLANNED | packages/sunrey-chain |
+| sunrey-coin | IMPLEMENTED | packages/sunrey-coin |
+| information-market | IMPLEMENTED | packages/information-market |
+| sunrey-chain | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 | custody | PLANNED | packages/custody |
 | market-surveillance | PLANNED | packages/market-surveillance |
 
@@ -224,30 +225,53 @@ is `IMPLEMENTED`. It does not implement Consent Ledger, Purpose
 Firewall, Clean Room, marketplace, or Reyn Coin. The evaluator
 returns `mustStop: false` for the implemented prerequisites.
 
-Chunk 26 (SunRey Coin economic ledger) remains **unbuilt**. Consent,
-Purpose Firewall, and Privacy Clean Room are now `IMPLEMENTED`, so
-the evaluator returns `mustStop: false` for those prerequisites. Do
-not implement SunRey Coin, a second ledger, SunRey Exchange, or a
-public ticker from Chunk 26. Historical `PYRAMID` / `REYN_COIN`
-reservations are now `SUNREY_COIN` at `packages/sunrey-coin`.
-Historical `PYRAMID_EXCHANGE` / `REYN_EXCHANGE` reservations are now
-`SUNREY_EXCHANGE` at `packages/sunrey-exchange`. See
-[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
-`packages/reyn-ledger`, `packages/token-ledger`,
-`packages/crypto-ledger-v2`, or invent a public ticker.
+Chunk 26R implements the reserved SUNREY_COIN bounded context at
+`packages/sunrey-coin`. Capability `sunrey-coin` is `IMPLEMENTED`.
+Bounded context SUNREY_COIN is `IMPLEMENTED` simulation. The original
+Chunk 26 stop is historical: [`chunk-26-stop.md`](./chunk-26-stop.md).
+Resume: [`chunk-26-resume.md`](./chunk-26-resume.md). Historical
+`PYRAMID` / `REYN_COIN` and `PYRAMID_EXCHANGE` / `REYN_EXCHANGE`
+reservations are now `SUNREY_COIN`, `SUNREY_EXCHANGE`, and
+`SUNREY_CHAIN`. Do not create `packages/reyn-coin`,
+`packages/sunrey-ledger`, `packages/reyn-ledger`,
+`packages/token-ledger`, `packages/crypto-ledger-v2`, or invent a
+public ticker.
 
-Chunk 30 (SunRey Exchange control plane) is **stopped**. The task
-requires starting only after Chunk 29 is merged. Exchange core is
-absent. Protected capabilities `sunrey-coin`, `sunrey-exchange`,
-`sunrey-chain`, `custody`, and `market-surveillance` remain
-`PLANNED`. The evaluator returns `mustStop: true` and
-`missing: ['sunrey-coin', 'sunrey-exchange', 'sunrey-chain',
-'custody', 'market-surveillance']`. Historical stop:
-[`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
+Chunk 27 implements the reserved SUNREY_INFORMATION_MARKET bounded
+context at `packages/information-market`. Capability
+`information-market` is `IMPLEMENTED`. Historical reservation
+`PYRAMID_DATA_EXCHANGE` is migrated here. Public brand is SunRey
+Exchange. Personal Oracle is a module in this package. Do not
+create `packages/pyramid-data-exchange`, `packages/data-exchange`,
+`packages/sunrey-data-exchange`, `packages/personal-oracle`,
+`packages/information-market-v2`, or `packages/proof-of-contribution`.
+
+Chunk 28 implements the reserved SUNREY_CHAIN bounded context at
+`packages/sunrey-chain`. Capability `sunrey-chain` is `IMPLEMENTED`.
+Bounded context SUNREY_CHAIN is `IMPLEMENTED` simulation. The chain
+is not the financial source of truth. Do not create
+`packages/sunrey-chain-v2`, `packages/blockchain`,
+`packages/reyn-chain`, `packages/on-chain-ledger`, or
+`packages/crypto-chain`. Do not invent a ticker. Do not connect a
+live RPC, mainnet, or testnet. The evaluator returns `mustStop: false`.
+
+Chunk 29 implements the reserved SUNREY_EXCHANGE bounded context at
+`packages/sunrey-exchange`. Capability `sunrey-exchange` is
+`IMPLEMENTED`. Simulation matching and DVP settlement only. Do not
+create `packages/exchange-v2`, `packages/orderbook`,
+`packages/matching-engine-v2`, `packages/crypto-exchange`, or
+`packages/reyn-exchange`. Do not invent a ticker. Do not enable
+`LIVE_EXCHANGE_ENABLED`. The evaluator returns `mustStop: false`.
+
+Chunk 30 (SunRey Exchange control plane) remains **stopped**. Chunk 29
+is now merged, so `sunrey-coin`, `sunrey-exchange`, and `sunrey-chain`
+are `IMPLEMENTED`. Protected capabilities `custody` and
+`market-surveillance` remain `PLANNED`. The evaluator returns
+`mustStop: true` and `missing: ['custody', 'market-surveillance']`.
+See [`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
 `packages/exchange-compliance-v2`, `packages/travel-rule-v2`,
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
-
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

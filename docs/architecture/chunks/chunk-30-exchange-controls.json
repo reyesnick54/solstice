@@ -28,5 +28,5 @@
     "custody",
     "market-surveillance"
   ],
-  "notes": "STOPPED. Exchange core is absent. Protected capabilities sunrey-coin, sunrey-exchange, sunrey-chain, custody, and market-surveillance remain PLANNED. evaluateChunkRequirements returns mustStop: true. Chunk 29 has not merged. Do not implement a competing exchange, custody-ledger, travel-rule-v2, crypto-aml, or surveillance-v2. Historical PYRAMID_EXCHANGE / REYN_EXCHANGE reservations are now SUNREY_EXCHANGE at packages/sunrey-exchange. See docs/architecture/chunk-30-stop.md."
+  "notes": "STOPPED. Chunks 26R-29 are now IMPLEMENTED on main (sunrey-coin, information-market, sunrey-chain, sunrey-exchange). Protected capabilities custody and market-surveillance remain PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['custody', 'market-surveillance']. Do not implement a competing exchange, custody-ledger, travel-rule-v2, crypto-aml, or surveillance-v2. See docs/architecture/chunk-30-stop.md."
 }

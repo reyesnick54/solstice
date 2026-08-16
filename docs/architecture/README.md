@@ -25,8 +25,17 @@
   `packages/clean-room`. Historical stop:
   [`chunk-25-stop.md`](./chunk-25-stop.md). Resume:
   [`chunk-25-resume.md`](./chunk-25-resume.md).
+- [SunRey Coin](./sunrey-coin.md) — simulation economic ledger at
+  `packages/sunrey-coin`. Historical stop:
+  [`chunk-26-stop.md`](./chunk-26-stop.md). Resume:
+  [`chunk-26-resume.md`](./chunk-26-resume.md). Public ticker is
+  UNDECIDED.
+- [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
+  `packages/sunrey-chain`. Not the financial source of truth.
+  ADR-0015 remains PROPOSED.
 - [Chunk 30 stop](./chunk-30-stop.md) — exchange custody / Travel Rule /
-  surveillance control plane stops until Chunk 29 (SunRey Exchange
-  core) is `IMPLEMENTED`.
+  surveillance control plane. Chunk 29 exchange core is now
+  `IMPLEMENTED`. Remaining protected gaps are `custody` and
+  `market-surveillance`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

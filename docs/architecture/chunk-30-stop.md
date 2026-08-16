@@ -1,5 +1,13 @@
 # Chunk 30 stop record
 
+> Updated after `main` absorbed Chunks 26R–29 (`#57`, `#51`, `#54`,
+> `#56`). SunRey Coin, information market, SunRey Chain, and SunRey
+> Exchange core are now `IMPLEMENTED`. The original “exchange core
+> absent” gate is cleared. This file remains a **stop**, not a
+> control-plane implementation: `custody` and `market-surveillance`
+> are still `PLANNED`. Whether to resume Chunk 30R now is a product
+> decision, not resolved by the merge.
+
 This file records a **constitutional missing-capability stop**, not a
 SunRey Exchange control-plane implementation.
 
@@ -19,10 +27,11 @@ absent: **stop**.
 
 ## A. Baseline
 
-Inspected HEAD: `6a63434` —
+Original inspection HEAD: `6a63434` —
 `feat(data): resume privacy clean room (#53)`.
 
-Latest `origin/main` is the same commit.
+After merge, `origin/main` is `20a45cc` —
+`feat(exchange): add SunRey Exchange simulation core (#56)`.
 
 Workspace inventory on this tip:
 
@@ -38,15 +47,16 @@ Workspace inventory on this tip:
 | EVIDENCE | `IMPLEMENTED` at `packages/evidence` |
 | CONSENT / Purpose Firewall | `IMPLEMENTED` at `packages/consent` |
 | CLEAN ROOM | `IMPLEMENTED` at `packages/clean-room` (Chunk 25R, PR `#53`) |
-| SUNREY_COIN | **absent** (reservation only after this stop) |
-| SUNREY_EXCHANGE | **absent** |
-| SUNREY_CHAIN | **absent** |
-| CUSTODY | **absent** (no prior bounded-context reservation) |
+| SUNREY_COIN | `IMPLEMENTED` at `packages/sunrey-coin` (PR `#57`) |
+| SUNREY_EXCHANGE | `IMPLEMENTED` at `packages/sunrey-exchange` (PR `#56`) |
+| SUNREY_CHAIN | `IMPLEMENTED` at `packages/sunrey-chain` (PR `#54`) |
+| Information market | `IMPLEMENTED` at `packages/information-market` (PR `#51`) |
+| CUSTODY | **absent** — reserved `PLANNED` at `packages/custody` |
 | MARKET_SURVEILLANCE | reserved `PLANNED` at `packages/market-surveillance`; no package |
 
-There is no `packages/sunrey-exchange`, no exchange market/order/trade
-core, no asset-listing registry, and no Chunk 27 / 28 / 29 declaration
-on `main`.
+Chunks 27 / 28 / 29 are now declared and implemented on `main`.
+There is still no provider-neutral custody package, Travel Rule
+plane, listing-governance workflow, or market-surveillance package.
 
 Open sibling work that is **not** canonical until merged:
 
@@ -66,34 +76,28 @@ starts from that repaired tip.
 
 ### Gate 1 — Chunk 29 is merged
 
-**Failed.**
-
-There is no CHUNK-29 declaration, no SunRey Exchange PR, and no
-exchange package on `main`.
+**Passed after later merges.** CHUNK-29 is declared and
+`packages/sunrey-exchange` exists (PR `#56`).
 
 ### Gate 2 — Exchange core is present
 
-**Failed.**
-
-`packages/sunrey-exchange` does not exist. Historical
-`REYN_EXCHANGE` / `PYRAMID_EXCHANGE` reservations were never
-implemented.
+**Passed after later merges.** Simulation matching / DVP core is
+`IMPLEMENTED`. This is not the Chunk 30 custody / Travel Rule /
+surveillance control plane.
 
 ### Gate 3 — SUNREY_COIN and SUNREY_CHAIN are IMPLEMENTED
 
-**Failed.**
-
-No coin package. No chain adapter. No digital-asset subledger.
+**Passed after later merges** (PRs `#57` and `#54`).
 
 ### Required-capability evaluation for Chunk 30
 
-This stop PR declares CHUNK-30 with the task's required capabilities,
-including protected `sunrey-coin`, `sunrey-exchange`, `sunrey-chain`,
-`custody`, and `market-surveillance` recorded as `PLANNED`.
+This stop PR declares CHUNK-30 with the task's required capabilities.
+After Chunks 26R–29, `sunrey-coin`, `sunrey-exchange`, and
+`sunrey-chain` are `IMPLEMENTED`. Protected `custody` and
+`market-surveillance` remain `PLANNED`.
 
-`evaluateChunkRequirements` therefore returns `mustStop: true` and
-`missing: ['sunrey-coin', 'sunrey-exchange', 'sunrey-chain',
-'custody', 'market-surveillance']`.
+`evaluateChunkRequirements` therefore still returns `mustStop: true`
+and `missing: ['custody', 'market-surveillance']`.
 
 The stop is both:
 

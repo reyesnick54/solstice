@@ -7,6 +7,7 @@ import { asJurisdiction, asResidency } from '../../packages/domain/src/jurisdict
 import { asLegalEntityId } from '../../packages/domain/src/legal-entity.ts';
 import { asUtcInstant } from '../../packages/domain/src/time.ts';
 import { isOk } from '../../packages/domain/src/result.ts';
+import { ledgerScaledUnits } from '../../packages/money/src/ledger-amount.ts';
 import { Money } from '../../packages/money/src/money.ts';
 import { asIntentId } from '../../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../packages/permissions/src/action-types.ts';
@@ -57,10 +58,10 @@ describePersistence('Chunk 2 exit criterion — PostgreSQL persistence fabric', 
     assert.equal(posted.journal.postings.length >= 2, true);
     const journalDebits = posted.journal.postings
       .filter((p) => p.direction === 'DEBIT')
-      .reduce((sum, p) => sum + p.amount.minorUnits, 0n);
+      .reduce((sum, p) => sum + ledgerScaledUnits(p.amount), 0n);
     const journalCredits = posted.journal.postings
       .filter((p) => p.direction === 'CREDIT')
-      .reduce((sum, p) => sum + p.amount.minorUnits, 0n);
+      .reduce((sum, p) => sum + ledgerScaledUnits(p.amount), 0n);
     assert.equal(journalDebits, journalCredits);
     assert.ok(durable.runtime.evidence.count() > 0);
     assert.equal(durable.runtime.evidence.verifyChain().ok, true);

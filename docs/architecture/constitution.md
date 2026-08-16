@@ -103,8 +103,10 @@ Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage). Personal Data Vault is
 `IMPLEMENTED` at `packages/personal-data-vault`. Consent is
 `IMPLEMENTED` at `packages/consent`. Privacy Clean Room is
-`IMPLEMENTED` at `packages/clean-room`. Reyn Coin and Reyn Exchange
-remain reserved and unimplemented.
+`IMPLEMENTED` at `packages/clean-room`. SunRey Coin is `IMPLEMENTED`
+at `packages/sunrey-coin`. SunRey Chain is `IMPLEMENTED` at
+`packages/sunrey-chain`. SunRey Exchange is `IMPLEMENTED` at
+`packages/sunrey-exchange`.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage).
@@ -166,6 +168,14 @@ The only action types on this tree are declared in
 - `CANCEL_PAPER_ORDER`
 - `SETTLE_INVESTMENT`
 - `PROCESS_CORPORATE_ACTION`
+- `ISSUE_SUNREY_COIN`
+- `TRANSFER_SUNREY_COIN`
+- `BURN_SUNREY_COIN`
+- `OPEN_EXCHANGE_ACCOUNT`
+- `PLACE_EXCHANGE_ORDER`
+- `CANCEL_EXCHANGE_ORDER`
+- `SETTLE_EXCHANGE_TRADE`
+- `HALT_EXCHANGE`
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -187,6 +197,8 @@ They do not invent a parallel envelope.
 | `packages/cards/src/journals.ts` `postCardJournal` | Ledger journals | Verified Execution Authority then `Ledger.postJournal` |
 | `packages/treasury/src/service.ts` reserve / release / commit / rebalance / kill switch | Treasury reservations, proposals, operational controls; rebalance journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/investments/src/service.ts` open / fund / withdraw / paper order / settle / corporate action | Investment profiles, paper orders, positions, lots; brokerage-cash journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
+| `packages/sunrey-coin/src/service.ts` `issue` / `transfer` / `burn` | SunRey Coin simulation journals on the canonical Ledger | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
+| `packages/sunrey-exchange/src/service.ts` `openExchangeAccount` / `placeDigitalOrder` / `cancelDigitalOrder` / `halt` | Exchange accounts, orders, holds, trades, simulation settlement | Kernel `submit` then verified authority; journals only via CoinPort/FiatPort onto the canonical Ledger |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.
@@ -203,7 +215,8 @@ Production callers are `services/accounts/src/money-movement.ts` and
 `packages/payments/src/journals.ts` and
 `packages/cards/src/journals.ts` and
 `packages/treasury/src/service.ts` (rebalance only) and
-`packages/investments/src/journals.ts`.
+`packages/investments/src/journals.ts` and
+`packages/sunrey-coin/src/service.ts`.
 
 ### Locations that may issue or verify Execution Authority
 
@@ -211,8 +224,8 @@ Production callers are `services/accounts/src/money-movement.ts` and
   production caller is `packages/kernel/src/kernel.ts`.
 - **Verify:** `AuthorityIssuer.verify` in
   `packages/permissions/src/execution-authority.ts`. Callers are the
-  Kernel-gated accounts service, the payments orchestrator, and
-  `Ledger.postJournal`.
+  Kernel-gated accounts service, the payments orchestrator,
+  `packages/sunrey-coin`, and `Ledger.postJournal`.
 - **Signing material:** `AuthorityIssuer` obtains HMAC-SHA256 through
   `packages/security` `KeyProvider`. Business services do not hold the
   raw signing secret.
@@ -660,30 +673,59 @@ phase is absent.
 | CONSENT | IMPLEMENTED | `packages/consent` |
 | CLEAN ROOM | IMPLEMENTED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
-| SUNREY COIN | PLANNED | `packages/sunrey-coin` |
-| PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |
-| SUNREY EXCHANGE | PLANNED | `packages/sunrey-exchange` |
-| SUNREY CHAIN | PLANNED | `packages/sunrey-chain` |
+| SUNREY COIN | IMPLEMENTED | `packages/sunrey-coin` |
+| SUNREY INFORMATION MARKET | IMPLEMENTED | `packages/information-market` |
+| SUNREY EXCHANGE | IMPLEMENTED | `packages/sunrey-exchange` |
+| SUNREY CHAIN | IMPLEMENTED | `packages/sunrey-chain` |
 | CUSTODY | PLANNED | `packages/custody` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
 
-Product branding for the reserved digital-asset context is **SunRey** /
-**SunRey Coin** / **SunRey Exchange**. The public ticker is UNDECIDED.
-Do not invent `REYN`, `RYN`, `RCOIN`, or a live ticker. Historical
-architecture names `PYRAMID`, `PYRAMID_EXCHANGE`, `REYN_COIN`, and
-`REYN_EXCHANGE` are replaced by the reservations above.
-`PYRAMID_DATA_EXCHANGE` naming remains unresolved. `PYR` is a
-historical ticker/alias reservation only.
+Product branding for the digital-asset context is **SunRey** /
+**SunRey Coin** / **SunRey Exchange** / **SunRey Chain**. The public
+ticker is UNDECIDED / `NOT_ASSIGNED`. Do not invent `SUNREY`, `SRN`,
+`SRY`, `REYN`, `RYN`, or `RCOIN`. Historical architecture names
+`PYRAMID`, `PYRAMID_EXCHANGE`, `REYN_COIN`, and `REYN_EXCHANGE` are
+replaced by the reservations above. `PYRAMID_DATA_EXCHANGE` is
+migrated to `SUNREY_INFORMATION_MARKET` at
+`packages/information-market`. `PYR` is a historical ticker/alias
+reservation only.
 
-Chunk 26 stopped rather than implementing the coin:
-[`chunk-26-stop.md`](./chunk-26-stop.md). Chunk 30 stopped because
-exchange core is absent: [`chunk-30-stop.md`](./chunk-30-stop.md).
-Do not create `packages/reyn-ledger`, `packages/token-ledger`,
-`packages/crypto-ledger-v2`, `packages/exchange-compliance-v2`,
-`packages/travel-rule-v2`, `packages/crypto-aml`,
-`packages/surveillance-v2`, or `packages/custody-ledger`.
+Chunk 26R implements SunRey Coin at `packages/sunrey-coin`:
+[`chunk-26-resume.md`](./chunk-26-resume.md). Historical stop:
+[`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
+`packages/reyn-coin`, `packages/sunrey-ledger`, `packages/reyn-ledger`,
+`packages/token-ledger`, or `packages/crypto-ledger-v2`.
+
+Chunk 27 implements the Human Information Network marketplace
+foundation at `packages/information-market`. Public brand is
+**SunRey Exchange**. Do not create `packages/pyramid-data-exchange`,
+`packages/data-exchange`, `packages/sunrey-data-exchange`,
+`packages/personal-oracle`, or a second data-market package.
+
+Chunk 28 implements the SunRey Chain foundation at
+`packages/sunrey-chain`. Simulation trust layer only. The canonical
+ledger remains the financial source of truth. Do not invent a ticker.
+Do not connect a live RPC, mainnet, or testnet. Do not create
+`packages/sunrey-chain-v2`, `packages/blockchain`,
+`packages/reyn-chain`, `packages/on-chain-ledger`, or
+`packages/crypto-chain`.
+
+Chunk 29 implements the SunRey Exchange core at
+`packages/sunrey-exchange`. Simulation matching, holds, DVP
+settlement, and market data only. Last trade is labeled
+`SIMULATION_MARKET_PRICE`. Do not enable `LIVE_EXCHANGE_ENABLED`.
+Do not invent a ticker. Do not create `packages/exchange-v2`,
+`packages/orderbook`, `packages/matching-engine-v2`,
+`packages/crypto-exchange`, or `packages/reyn-exchange`.
+
+Chunk 30 (custody / Travel Rule / surveillance control plane) is
+stopped while `custody` and `market-surveillance` remain `PLANNED`:
+[`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
+`packages/exchange-compliance-v2`, `packages/travel-rule-v2`,
+`packages/crypto-aml`, `packages/surveillance-v2`, or
+`packages/custody-ledger`.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the
