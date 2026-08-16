@@ -736,14 +736,18 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
-Chunk 36 (validator identity, registry, bonding, and validator-set
-lifecycle) remains **stopped** / `PLANNED`. Capability
-`sunrey-validators` is `PLANNED` at owner `packages/sunrey-chain`.
-`evaluateChunkRequirements` returns `mustStop: true` and
-`missing: ['sunrey-validators']`. Stop record:
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
-`packages/validators`, `packages/staking`, or
-`packages/validator-v2`. Do not begin BFT voting.
+Chunk 36R/39 implements the development validator registry, epoch
+set, equivocation evidence, jail, tombstone, and simulation-bond
+penalties at `packages/sunrey-chain/node`. Capabilities
+`sunrey-validators` and `sunrey-validator-accountability` are
+`IMPLEMENTED`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Accountability:
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Do not create `packages/validators`, `packages/staking`, or
+`packages/validator-v2`. Production BFT and public staking remain
+unimplemented. Penalties never debit customer fiat, SunRey Coin, or
+MoonRey.
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that

@@ -18,6 +18,10 @@ path = "src/bin/sunrey-node.rs"
 name = "sunrey-devnet"
 path = "src/bin/sunrey-devnet.rs"
 
+[[bin]]
+name = "sunrey-accountability-demo"
+path = "src/bin/sunrey-accountability-demo.rs"
+
 [dependencies]
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"

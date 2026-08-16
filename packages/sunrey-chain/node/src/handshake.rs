@@ -10,6 +10,7 @@ pub const FEATURE_DEV_PRODUCER: u64 = 1 << 0;
 pub const FEATURE_TX_GOSSIP: u64 = 1 << 1;
 pub const FEATURE_BLOCK_GOSSIP: u64 = 1 << 2;
 pub const FEATURE_STATE_SYNC: u64 = 1 << 3;
+pub const FEATURE_EVIDENCE_GOSSIP: u64 = 1 << 4;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct HandshakeHello {

@@ -930,25 +930,26 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus')), false);
   });
 
-  it('CHUNK-36 stops while sunrey-validators remains PLANNED', () => {
+  it('CHUNK-36R/39 implements the development validator control plane on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-accountability').status, 'IMPLEMENTED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-36',
     );
     assert.ok(declared, 'CHUNK-36 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-validators']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-stop.md')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-validator-lifecycle.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-resume.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validators')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-v2')), false);

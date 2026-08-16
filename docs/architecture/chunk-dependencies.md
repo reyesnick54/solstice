@@ -101,7 +101,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-local-node | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-validators | PLANNED | packages/sunrey-chain |
+| sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -287,8 +288,12 @@ stop: [`chunk-35-stop.md`](./chunk-35-stop.md). Resume:
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/libp2p`, `packages/mempool`, `packages/devnet`,
 `packages/gossip`, `packages/consensus`, or
-`packages/sunrey-consensus`. Chunk 36 validator lifecycle remains
-`PLANNED`. Stop record: [`chunk-36-stop.md`](./chunk-36-stop.md).
+`packages/sunrey-consensus`. Chunk 36R/39 implements the development
+validator control plane and accountability at
+`packages/sunrey-chain/node`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Accountability:
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Do not create `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
 Chunk 34R implements the local deterministic node at

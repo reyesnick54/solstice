@@ -96,6 +96,8 @@ jobs:
         run: npm run demo:sunrey-node
       - name: SunRey P2P development network demo
         run: npm run demo:sunrey-devnet
+      - name: SunRey validator accountability demo
+        run: npm run demo:sunrey-accountability
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo

@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0024
-- Implementation status: NOT_IMPLEMENTED (Chunk 36 stopped; see docs/architecture/chunk-36-stop.md)
+- Implementation status: IMPLEMENTED (development/simulation validator set and Chunk 39 accountability at packages/sunrey-chain/node; production validator market not implemented)
 
 ## Context
 
@@ -100,9 +100,7 @@ production voting power.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for bonded identifiable validators and key
-separation. Production validators: **not implemented**. Chunk 36
-attempted the development validator control plane and **stopped**
-because Chunk 35R is not merged and `sunrey-local-node` /
-`sunrey-p2p` remain `PLANNED`. Stop record:
-`docs/architecture/chunk-36-stop.md`. Resume only as Chunk 36R
-after that plane exists. Legal confidence: `RESEARCH_REQUIRED`.
+separation. Development validator set and simulation-bond
+accountability: **implemented** at `packages/sunrey-chain/node`
+(Chunks 36R/39). Production validators and a public staking market:
+**not implemented**. Legal confidence: `RESEARCH_REQUIRED`.

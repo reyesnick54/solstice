@@ -48,8 +48,12 @@ implemented as an internal module at `packages/sunrey-chain/node`.
 See [`chunk-34-resume.md`](./chunk-34-resume.md) and
 [`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
-bonding / epoch lifecycle (Chunk 36) remains `PLANNED`. See
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+bonding / epoch lifecycle and Chunk 39 accountability are
+implemented at `packages/sunrey-chain/node`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Accountability:
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, or `packages/staking`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains

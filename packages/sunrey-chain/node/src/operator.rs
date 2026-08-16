@@ -86,6 +86,34 @@ fn handle(node: &DevelopmentNode, req: &str) -> (&'static str, String) {
             ),
         };
     }
+    if line.starts_with("GET /evidence") {
+        if line.contains("show") {
+            let id = query_param(req, "id").unwrap_or_default();
+            return (
+                "200 OK",
+                serde_json::to_string(&node.evidence_show(&id)).unwrap_or_else(|_| "null".into()),
+            );
+        }
+        return (
+            "200 OK",
+            serde_json::to_string(&node.evidence_list()).unwrap_or_else(|_| "[]".into()),
+        );
+    }
+    if line.starts_with("GET /validator/offenses") {
+        let id = query_param(req, "id").unwrap_or_default();
+        return (
+            "200 OK",
+            serde_json::to_string(&node.validator_offenses(&id)).unwrap_or_else(|_| "[]".into()),
+        );
+    }
+    if line.starts_with("GET /validator/accountability") {
+        let id = query_param(req, "id").unwrap_or_default();
+        return (
+            "200 OK",
+            serde_json::to_string(&node.validator_accountability(&id))
+                .unwrap_or_else(|_| "{}".into()),
+        );
+    }
     if line.starts_with("POST /tx") {
         let Some(body) = req.split("\r\n\r\n").nth(1) else {
             return ("400 Bad Request", "{\"error\":\"missing body\"}".into());
@@ -114,4 +142,18 @@ fn handle(node: &DevelopmentNode, req: &str) -> (&'static str, String) {
         };
     }
     ("404 Not Found", "{\"error\":\"not found\"}".into())
+}
+
+fn query_param(req: &str, key: &str) -> Option<String> {
+    let line = req.lines().next()?;
+    let start = line.find('?')?;
+    let query = line[start + 1..].split_whitespace().next()?;
+    for pair in query.split('&') {
+        if let Some((k, v)) = pair.split_once('=') {
+            if k == key {
+                return Some(v.to_string());
+            }
+        }
+    }
+    None
 }

@@ -12,6 +12,20 @@ async fn main() {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
 
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    if !args.is_empty() && matches!(args[0].as_str(), "evidence" | "validator") {
+        match sunrey_chain_node::cli::run_operator_command(&args) {
+            Ok(out) => {
+                println!("{out}");
+                return;
+            }
+            Err(err) => {
+                eprintln!("{err}");
+                std::process::exit(1);
+            }
+        }
+    }
+
     let name = std::env::var("SUNREY_NODE_NAME").unwrap_or_else(|_| "node".into());
     let data_dir = PathBuf::from(
         std::env::var("SUNREY_DATA_DIR").unwrap_or_else(|_| format!("/tmp/sunrey-{name}")),
@@ -43,7 +57,12 @@ async fn main() {
     let mut config = NodeConfig::development(&name, data_dir, listen, operator);
     config.producer = producer;
     config.seeds = seeds;
-    config.genesis = Genesis::development();
+    config.genesis = if std::env::var("SUNREY_VALIDATOR_GENESIS").ok().as_deref() == Some("four") {
+        let (set, _) = sunrey_chain_node::validators::four_validator_devnet();
+        Genesis::development().with_validator_set(set)
+    } else {
+        Genesis::development()
+    };
 
     let node = Arc::new(DevelopmentNode::open(config).expect("open node"));
     let p2p = node.start().await.expect("start p2p");

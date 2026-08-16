@@ -8,42 +8,34 @@ import { evaluateCapability, loadManifest } from '../tools/architectural-linter/
 
 const REPO_ROOT = join(import.meta.dirname, '..');
 
-const FORBIDDEN_VALIDATOR_ROOTS = [
-  'packages/validators',
-  'packages/staking',
-  'packages/validator-v2',
-  'packages/consensus-engine',
-  'packages/tendermint',
-  'packages/sunrey-node',
-  'packages/sunrey-p2p',
-  'packages/sunrey-consensus',
-] as const;
-
-describe('CHUNK-36 validator registry / lifecycle', () => {
-  it('is implemented on packages/sunrey-chain after the historical stop', () => {
+describe('CHUNK-39 validator evidence and accountability', () => {
+  it('implements accountability on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').owner, 'packages/sunrey-chain');
+    assert.equal(
+      evaluateCapability(manifest, 'sunrey-validator-accountability').status,
+      'IMPLEMENTED',
+    );
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
-      (evaluation) => evaluation.chunk === 'CHUNK-36',
+      (evaluation) => evaluation.chunk === 'CHUNK-39',
     );
-    assert.ok(declared, 'CHUNK-36 declaration must exist under docs/architecture/chunks/');
+    assert.ok(declared, 'CHUNK-39 declaration must exist');
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
-  });
 
-  it('does not invent a validator, staking, or consensus-engine package', () => {
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
-    for (const rel of FORBIDDEN_VALIDATOR_ROOTS) {
-      assert.equal(existsSync(join(REPO_ROOT, rel)), false, rel);
-    }
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-stop.md')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-resume.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/evidence.rs')), true);
+    assert.equal(
+      existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/accountability.rs')),
+      true,
+    );
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/validators')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus-engine')), false);
   });
 });
