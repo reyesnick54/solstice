@@ -257,6 +257,12 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
+- Chunk 32 (canonical SunRey transaction and economic-state
+  protocol) is **stopped**. Chunk 31 is not merged and its
+  protocol / encoding architecture is not canonical on `main`.
+  See `docs/architecture/chunk-32-stop.md`. No transaction
+  envelope, consensus codec, MoonRey issuance, ticker, or
+  production chain database was added.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN
   CELLS and the rest listed in the constitution). PAYMENTS, FX,
   CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are PARTIAL

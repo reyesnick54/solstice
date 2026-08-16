@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-32",
+  "title": "SunRey Canonical Economic State Machine and Transaction Protocol",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin",
+    "information-market",
+    "sunrey-chain"
+  ],
+  "notes": "STOPPED. Process gate: start only after Chunk 31 is merged and its protocol/encoding architecture is canonical on main. Chunk 31 is absent. evaluateChunkRequirements returns mustStop: false because listed capabilities are IMPLEMENTED; that is not permission to invent Chunk 31 ADRs or protocol semantics. Do not implement consensus, mainnet, MoonRey issuance, a ticker, a second Money type, or a second SunRey Coin ledger. See docs/architecture/chunk-32-stop.md."
+}
