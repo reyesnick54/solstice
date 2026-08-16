@@ -206,13 +206,22 @@ describe('sunrey interop gateway', () => {
     const header = finalizeForeignHeader(foreign);
     const proof = membershipProof(foreign, packetStateKey(packet));
     for (const [index, engine] of engines.entries()) {
-      engine.submitHeader(clients[index], header, isolatedRelayer('a'));
-      engine.submitHeader(clients[index], header, isolatedRelayer('b'));
-      engine.recvPacket(clients[index], packet, proof, header);
+      const clientId = clients[index];
+      if (!clientId) {
+        throw new Error('missing client');
+      }
+      engine.submitHeader(clientId, header, isolatedRelayer('a'));
+      engine.submitHeader(clientId, header, isolatedRelayer('b'));
+      engine.recvPacket(clientId, packet, proof, header);
     }
     const roots = engines.map((engine) => engine.stateRoot());
-    assert.equal(roots.every((root) => root === roots[0]), true);
-    assert.equal(engines[0].metrics.interopPacketsReceived, 1);
+    const firstRoot = roots[0];
+    assert.equal(roots.every((root) => root === firstRoot), true);
+    const firstEngine = engines[0];
+    if (!firstEngine) {
+      throw new Error('missing engine');
+    }
+    assert.equal(firstEngine.metrics.interopPacketsReceived, 1);
   });
 
   it('exposes the PQ / weakest-domain security boundary without an absolute claim', () => {
