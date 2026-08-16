@@ -155,7 +155,7 @@ export class SunReyExchangeService {
       jurisdiction: input.jurisdiction,
       custodyAccountId: input.custodyAccountId,
       cashAccountId: input.cashAccountId,
-      marketPermissions: input.marketPermissions ?? ['DIGITAL_ASSET', 'INFORMATION_ASSET', 'INTELLIGENCE_COMPUTE'],
+      marketPermissions: input.marketPermissions ?? (['DIGITAL_ASSET', 'INFORMATION_ASSET', 'INTELLIGENCE_COMPUTE'] as const),
       status: 'ACTIVE_SIMULATION',
       createdAt: this.clock.now(),
     });

@@ -152,7 +152,7 @@ async function main(): Promise<void> {
   );
 
   const supplyBefore = coin.supply().circulating.scaledUnits;
-  const sell = requireOk<{ orderId: string; remaining: AssetQuantity; status: string }>(
+  const sell = requireOk<{ orderId: import('./ids.ts').OrderId; remaining: AssetQuantity; status: string }>(
     exchange.placeDigitalOrder({
       actorId: seller.actorId,
       customerId: sellerCust.id,
@@ -190,7 +190,7 @@ async function main(): Promise<void> {
     exchange.cancelDigitalOrder({
       actorId: seller.actorId,
       customerId: sellerCust.id,
-      orderId: sell.orderId as never,
+      orderId: sell.orderId,
       clientIdempotencyKey: 'demo-cancel-remainder',
     }),
     'cancel remainder',
