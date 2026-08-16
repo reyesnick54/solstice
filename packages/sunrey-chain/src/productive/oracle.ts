@@ -42,6 +42,9 @@ export function detectConflicts(facts: readonly OracleFact[]): readonly string[]
       continue;
     }
     const first = group[0];
+    if (!first) {
+      continue;
+    }
     if (group.some((fact) => fact.quantity !== first.quantity || fact.unit !== first.unit)) {
       for (const fact of group) {
         conflicted.push(fact.factId);

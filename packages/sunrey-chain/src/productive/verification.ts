@@ -176,9 +176,14 @@ function evaluateRights(
 
 function medianQuality(facts: readonly OracleFact[]): bigint {
   const qualities = facts.map((fact) => fact.quality).sort((left, right) => (left < right ? -1 : 1));
-  const mid = Math.floor(qualities.length / 2);
-  if (qualities.length % 2 === 1) {
-    return qualities[mid];
+  if (qualities.length === 0) {
+    return 0n;
   }
-  return (qualities[mid - 1] + qualities[mid]) / 2n;
+  const mid = Math.floor(qualities.length / 2);
+  const upper = qualities[mid] ?? 0n;
+  if (qualities.length % 2 === 1) {
+    return upper;
+  }
+  const lower = qualities[mid - 1] ?? upper;
+  return (lower + upper) / 2n;
 }
