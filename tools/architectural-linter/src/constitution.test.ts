@@ -939,5 +939,39 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-chain')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/on-chain-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-chain')), false);
+  it('CHUNK-31 freezes one SunRey Blockchain architecture without a production node', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-node').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PLANNED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-31',
+    );
+    assert.ok(declared, 'CHUNK-31 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    const chain = manifest.boundedContexts.find((context) => context.id === 'SUNREY_CHAIN');
+    assert.ok(chain);
+    assert.equal(chain.status, 'IMPLEMENTED');
+    assert.deepEqual(chain.reservedPaths, ['packages/sunrey-chain']);
+
+    const chainPackage = manifest.packages.find((pkg) => pkg.id === 'packages/sunrey-chain');
+    assert.ok(chainPackage);
+    assert.equal(chainPackage.financialStateMutation, false);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-blockchain-protocol.json')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-chain-authority-matrix.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-node')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-blockchain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-consensus')), false);
   });
 });

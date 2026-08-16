@@ -39,4 +39,12 @@ Engineering finality thresholds are an `ENGINEERING_FIXTURE` with
 `RESEARCH_REQUIRED` counsel status. They are not a selected production
 finality policy.
 
-See ADR-0015. The chain-technology choice remains `PROPOSED`.
+See ADR-0015. The simulation foundation remains `PROPOSED`.
+
+Chunk 31 freezes the **production** architecture (ADR-0016 through
+ADR-0033) without implementing a production node. Canonical spec:
+[`sunrey-blockchain-protocol.json`](./sunrey-blockchain-protocol.json).
+Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md).
+MoonRey Coin is a distinct planned native asset. Its ticker is
+`NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
+production-ready, quantum-secure, decentralized, or mainnet-ready.

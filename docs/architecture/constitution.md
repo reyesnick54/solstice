@@ -269,7 +269,10 @@ This constitution extends (3). It does not replace (1)–(9).
 
 See the [ADR index](./adr/README.md). ADR-0006, both ADR-0007 files, and
 ADR-0008 remain **PROPOSED** for human acceptance. ADR-0006 Addendum A
-records engineering implementation of Option C in simulation. None is
+records engineering implementation of Option C in simulation. ADR-0015
+remains **PROPOSED** for the simulation chain foundation. ADR-0016
+through ADR-0033 are **ACCEPTED_FOR_ENGINEERING** architecture freezes
+for a future production node; they do not implement that node. None is
 `CONFIRMED_BY_COUNSEL`.
 
 ### LIVE_* flags
@@ -741,6 +744,22 @@ Money type, or second SunRey Coin ledger. Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
 See [`chunk-32-stop.md`](./chunk-32-stop.md).
+Chunk 31 freezes the **production architecture** for SunRey
+Blockchain. It does not implement a production node. The canonical
+owner remains `packages/sunrey-chain` as a modular monolith.
+Consensus, runtime, storage, and P2P are future internal modules,
+not five microservices. Public tickers for SunRey Coin and MoonRey
+Coin remain `NOT_ASSIGNED`. MoonRey Coin is distinct and not
+implemented. The canonical Ledger remains authoritative for fiat
+and current SunRey Coin journals. See
+[`chunk-31-sunrey-blockchain-production-architecture.md`](./chunk-31-sunrey-blockchain-production-architecture.md),
+[`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md),
+and [`sunrey-blockchain-protocol.json`](./sunrey-blockchain-protocol.json).
+Do not create `packages/blockchain-node`,
+`packages/blockchain-protocol`, `packages/blockchain-network`,
+`packages/blockchain-consensus`, `packages/blockchain-runtime`,
+`packages/sunrey-node`, `packages/sunrey-blockchain`, or
+`packages/moonrey-coin` in this chunk.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

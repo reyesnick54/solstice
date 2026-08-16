@@ -96,6 +96,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-coin | IMPLEMENTED | packages/sunrey-coin |
 | information-market | IMPLEMENTED | packages/information-market |
 | sunrey-chain | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-blockchain-architecture | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-coin | PLANNED | none |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -272,6 +274,18 @@ is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
 `mustStop: false`. Do not create `packages/exchange-compliance-v2`,
 `packages/travel-rule-v2`, `packages/crypto-aml`,
 `packages/surveillance-v2`, or `packages/custody-ledger`.
+
+Chunk 31 freezes the SunRey Blockchain production architecture at
+the existing owner `packages/sunrey-chain`. Capability
+`sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
+only). Production node capabilities `blockchain-node`,
+`blockchain-consensus`, and `blockchain-runtime` remain `PLANNED`
+internal modules. MoonRey Coin remains `PLANNED` and distinct.
+The evaluator returns `mustStop: false` for CHUNK-31. Do not
+create `packages/blockchain-node`, `packages/sunrey-blockchain`,
+or `packages/moonrey-coin`. Do not start Chunk 32 in the Chunk 31
+change set.
+
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder
