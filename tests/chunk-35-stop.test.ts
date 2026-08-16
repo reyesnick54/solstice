@@ -66,7 +66,6 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
     assert.equal(names.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')), true);
     assert.equal(names.some((name) => name.startsWith('chunk-32-') && name.endsWith('.json')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-local-node.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-crypto-suite.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-transport.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-devnet.md')), false);
 

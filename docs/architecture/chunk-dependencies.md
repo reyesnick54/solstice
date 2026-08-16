@@ -288,11 +288,13 @@ node is not `IMPLEMENTED`. Capabilities `sunrey-local-node` and
 `packages/gossip`, `packages/consensus`, or
 `packages/sunrey-consensus`. Do not begin Chunk 36.
 Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
-Chunks 31–33 are not declared and have not merged. Latest green
-`main` is Chunk 30R. The CHUNK-34 declaration lists only existing
-`IMPLEMENTED` capabilities, so `evaluateChunkRequirements` returns
-`mustStop: false`. That is not permission to invent a node owner,
-language, storage ADR, block schema, or CryptoSuite registry.
+Chunks 31, 32R, and 33R are now on this tree (architecture freeze,
+canonical transaction protocol, CryptoSuite registry). The local
+deterministic node is still not `IMPLEMENTED`. The CHUNK-34
+declaration lists only existing `IMPLEMENTED` capabilities, so
+`evaluateChunkRequirements` returns `mustStop: false`. That is not
+permission to invent a node owner, language, storage ADR, or a
+second CryptoSuite registry.
 Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
 `packages/sunrey-blockchain`, `packages/sunrey-node`,
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
@@ -315,15 +317,16 @@ replaces the Personal Data Vault fail-closed consent placeholder
 with a Purpose Firewall and short-lived DataUsePermits. Clean Room
 is owned by Chunk 25R. The evaluator returns `mustStop: false`.
 
-Chunk 33 (SunRey crypto-agility and post-quantum foundation) is
-**stopped**. The task requires starting from clean `main` after
-Chunk 32. CHUNK-31 and CHUNK-32 are not declared or merged. The
-evaluator returns `mustStop: false` because `security` and
-`sunrey-chain` are `IMPLEMENTED`; that is not a license to skip
-the sequential merge gate. Do not create `packages/quantum-security`,
-`packages/crypto-v2`, or `packages/pqc-core`. Resume only as
-Chunk 33R after Chunks 31 and 32 land. See
-[`chunk-33-stop.md`](./chunk-33-stop.md).
+Chunk 33R implements SunRey crypto-agility and the post-quantum
+foundation at `packages/security` (CryptoSuite registry, Ed25519,
+PQ ports, hybrid envelope, policy) and validator key separation
+at `packages/sunrey-chain`. Capability `crypto-suite-registry` is
+`IMPLEMENTED`. The original stop is historical:
+[`chunk-33-stop.md`](./chunk-33-stop.md). Resume:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+The evaluator returns `mustStop: false`. Do not create
+`packages/quantum-security`, `packages/crypto-v2`, or
+`packages/pqc-core`. Do not claim quantum-proof cryptography.
 Chunk 32R implements the canonical SunRey transaction and
 economic-state protocol at `packages/sunrey-chain`. Capability
 `blockchain-protocol` is `IMPLEMENTED`. Historical stop:

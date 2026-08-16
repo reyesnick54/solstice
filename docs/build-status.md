@@ -251,11 +251,11 @@ This document describes only what is implemented and tested in this tree.
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
 - Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
-  Latest green `main` is Chunk 30R (`#58`). Chunks 31–33 — sovereign
-  chain architecture, canonical protocol/block schema, and the
-  CryptoSuite registry — are not declared or merged. There is no
-  local development node, no block producer, no chain state store,
-  and no node CLI. See `docs/architecture/chunk-34-stop.md`.
+  Chunks 31, 32R, and 33R are implemented (architecture freeze,
+  canonical transaction protocol, CryptoSuite registry). There is
+  still no local development node, no block producer, no chain
+  state store, and no node CLI. See
+  `docs/architecture/chunk-34-stop.md`.
   Do not invent `packages/sunrey-blockchain`, `packages/sunrey-node`,
   `packages/blockchain-v2`, `packages/l1`, or a competing chain.
   Do not replace `packages/sunrey-chain`. No BFT consensus, public
@@ -279,14 +279,13 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
-- SunRey crypto-agility and post-quantum foundation (Chunk 33) is
-  **stopped**. Chunks 31 and 32 are not merged. No crypto-suite
-  registry, hybrid envelope, PQ provider, threat model, or
-  cryptographic inventory was added. Canonical cryptography remains
-  Chunk 4 `packages/security`. This is not a quantum-proof or
-  production-certification claim. See
-  `docs/architecture/chunk-33-stop.md`.
-- Chunk 32 originally **stopped** on a process gate while Chunk 31
+- Production PQC library, production chain node, MoonRey issuance,
+  a public ticker, and a production chain database remain later.
+  Chunk 33R implements the CryptoSuite foundation at
+  `packages/security` (not quantum-proof; not certified). Historical
+  stop: `docs/architecture/chunk-33-stop.md`. Implementation:
+  `docs/architecture/chunk-33-crypto-agility.md`.
+  Chunk 32 originally **stopped** on a process gate while Chunk 31
   architecture was absent. That stop is historical
   (`docs/architecture/chunk-32-stop.md`). Chunk 32R is IMPLEMENTED.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN

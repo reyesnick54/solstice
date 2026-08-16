@@ -21,7 +21,13 @@ import {
 } from './lifecycle.ts';
 import { freezeKeyMetadata, type KeyMetadata, type KeyVersionRef } from './metadata.ts';
 import type { DataKeyHandle, KeyProvider, PublicKeyMaterial, Signature } from './provider.ts';
-import { KEY_PURPOSES, PURPOSE_ALGORITHMS, type KeyPurpose } from './purposes.ts';
+import {
+  APPLICATION_KEY_PURPOSES,
+  PURPOSE_ALGORITHMS,
+  isApplicationKeyPurpose,
+  isChainKeyPurpose,
+  type KeyPurpose,
+} from './purposes.ts';
 import { secureRandomBytes } from './random.ts';
 import { SecretValue } from './redaction.ts';
 
@@ -79,7 +85,7 @@ export class SimulationKeyProvider implements KeyProvider {
 
   static createDefault(options: SimulationKeyProviderOptions = {}): SimulationKeyProvider {
     const provider = new SimulationKeyProvider(options);
-    for (const purpose of KEY_PURPOSES) {
+    for (const purpose of APPLICATION_KEY_PURPOSES) {
       const seeded = options.hmacSecrets?.[purpose];
       provider.ensurePurpose(purpose, seeded);
     }
@@ -87,6 +93,11 @@ export class SimulationKeyProvider implements KeyProvider {
   }
 
   ensurePurpose(purpose: KeyPurpose, hmacSecret?: string): KeyMetadata {
+    if (!isApplicationKeyPurpose(purpose)) {
+      throw new Error(
+        `SimulationKeyProvider cannot hold ${purpose}; chain public-key purposes use SignatureProvider`,
+      );
+    }
     const existing = this.#keys.get(purpose);
     if (existing && existing.length > 0) {
       const active = existing.find((row) => row.metadata.status === 'ACTIVE');
@@ -96,6 +107,12 @@ export class SimulationKeyProvider implements KeyProvider {
   }
 
   sign(purpose: KeyPurpose, payload: string | Buffer, version?: number): SecurityResult<Signature> {
+    if (isChainKeyPurpose(purpose)) {
+      return securityErr(
+        'PURPOSE_MISMATCH',
+        `HMAC KeyProvider cannot sign ${purpose}; use a CryptoSuite SignatureProvider. HMAC is not consensus signing.`,
+      );
+    }
     const resolved = this.#resolveForUse(purpose, version, 'sign');
     if (!resolved.ok) {
       return resolved;
@@ -115,6 +132,12 @@ export class SimulationKeyProvider implements KeyProvider {
     signature: string,
     version?: number,
   ): SecurityResult<KeyVersionRef> {
+    if (isChainKeyPurpose(purpose)) {
+      return securityErr(
+        'PURPOSE_MISMATCH',
+        `HMAC KeyProvider cannot verify ${purpose}; use a CryptoSuite SignatureProvider`,
+      );
+    }
     const candidates = this.#verifiable(purpose, version);
     if (!candidates.ok) {
       return candidates;
@@ -132,8 +155,8 @@ export class SimulationKeyProvider implements KeyProvider {
   }
 
   encrypt(purpose: KeyPurpose, plaintext: Buffer): SecurityResult<EncryptedEnvelope> {
-    if (purpose !== 'DATA_ENCRYPTION') {
-      return securityErr('PURPOSE_MISMATCH', 'encrypt requires DATA_ENCRYPTION purpose');
+    if (purpose !== 'DATA_ENCRYPTION' && purpose !== 'BACKUP_ENCRYPTION') {
+      return securityErr('PURPOSE_MISMATCH', 'encrypt requires DATA_ENCRYPTION or BACKUP_ENCRYPTION');
     }
     const resolved = this.#resolveForUse(purpose, undefined, 'encrypt');
     if (!resolved.ok) {
@@ -160,8 +183,11 @@ export class SimulationKeyProvider implements KeyProvider {
   }
 
   generateDataKey(purpose: KeyPurpose): SecurityResult<DataKeyHandle> {
-    if (purpose !== 'DATA_ENCRYPTION') {
-      return securityErr('PURPOSE_MISMATCH', 'generateDataKey requires DATA_ENCRYPTION purpose');
+    if (purpose !== 'DATA_ENCRYPTION' && purpose !== 'BACKUP_ENCRYPTION') {
+      return securityErr(
+        'PURPOSE_MISMATCH',
+        'generateDataKey requires DATA_ENCRYPTION or BACKUP_ENCRYPTION',
+      );
     }
     const resolved = this.#resolveForUse(purpose, undefined, 'encrypt');
     if (!resolved.ok) {
@@ -307,6 +333,9 @@ export class SimulationKeyProvider implements KeyProvider {
   ): KeyMetadata {
     const now = this.#clock.now();
     const keyId = `sim:${purpose.toLowerCase()}`;
+    if (!isApplicationKeyPurpose(purpose)) {
+      throw new Error(`cannot create HMAC material for chain purpose ${purpose}`);
+    }
     const algorithm = PURPOSE_ALGORITHMS[purpose];
     const material =
       hmacSecret !== undefined
@@ -475,6 +504,9 @@ export class SimulationKeyProvider implements KeyProvider {
 }
 
 function materialBytes(purpose: KeyPurpose): number {
+  if (!isApplicationKeyPurpose(purpose)) {
+    return HMAC_KEY_BYTES;
+  }
   return PURPOSE_ALGORITHMS[purpose] === 'AES-256-GCM' ? 32 : HMAC_KEY_BYTES;
 }
 

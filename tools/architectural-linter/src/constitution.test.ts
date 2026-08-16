@@ -934,7 +934,7 @@ describe('architecture constitution', () => {
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);
     assert.equal(declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-31'), true);
     assert.equal(declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-32'), true);
-
+    assert.equal(declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-33'), true);
     const declared = declaredChunks.find((evaluation) => evaluation.chunk === 'CHUNK-34');
     assert.ok(declared, 'CHUNK-34 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
@@ -949,6 +949,7 @@ describe('architecture constitution', () => {
 
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'crypto-suite-registry').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'ledger').status, 'IMPLEMENTED');
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
 
@@ -961,10 +962,12 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/web3-chain')), false);
   });
 
-  it('CHUNK-33 remains stopped; crypto-agility is not implemented here', () => {
+  it('CHUNK-33R implements the CryptoSuite registry without a competing crypto root', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'crypto-suite-registry').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'crypto-suite-registry').owner, 'packages/security');
     assert.equal(evaluateCapability(manifest, 'blockchain-protocol').status, 'IMPLEMENTED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
@@ -985,10 +988,12 @@ describe('architecture constitution', () => {
     );
 
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-stop.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-crypto-agility.md')), true);
     assert.equal(
       existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-post-quantum-security.md')),
       false,
     );
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/cryptographic-inventory.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/quantum-security')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/pqc-core')), false);
