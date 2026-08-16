@@ -775,6 +775,13 @@ metering at `packages/sunrey-chain` and
 `sunrey-native-fees` is `IMPLEMENTED`. Fees are native-asset
 minor units, not fiat ledger debits. Do not create
 `packages/fees`, `packages/sunrey-fees`, or `packages/gas`.
+Chunk 46 implements sovereign wallets, versioned addresses,
+and account recovery at `packages/sunrey-chain/src/wallet` and
+`packages/sunrey-chain/rust/crates/wallet`. Capability
+`sunrey-sovereign-wallets` is `IMPLEMENTED`. A BlockchainAccount
+is not a fiat Account. Wallet metadata is not a second ledger.
+Do not create `packages/wallet-v2` or `packages/blockchain-wallet`.
+See [`chunk-46-sovereign-wallets.md`](./chunk-46-sovereign-wallets.md).
 
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite

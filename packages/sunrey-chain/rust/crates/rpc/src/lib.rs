@@ -90,6 +90,22 @@ fn dispatch(
         ("GET", "/protocol/version") => protocol_json(node),
         ("POST", "/tx") => submit(node, body),
         ("POST", "/admin/produce-block") => produce(node),
+        ("GET", "/wallet/finality") => wallet_finality(node),
+        ("GET", "/wallet/crypto-policy") => wallet_crypto_policy(node),
+        _ if path.starts_with("/wallet/fee-estimate") => wallet_fee_estimate(node, path),
+        _ if path.starts_with("/wallet/account/") => {
+            wallet_account(node, &path["/wallet/account/".len()..])
+        }
+        _ if path.starts_with("/wallet/nonce/") => {
+            wallet_nonce(node, &path["/wallet/nonce/".len()..])
+        }
+        _ if path.starts_with("/wallet/holdings/") => {
+            wallet_holdings(node, &path["/wallet/holdings/".len()..])
+        }
+        _ if path.starts_with("/wallet/locks/") => {
+            wallet_locks(node, &path["/wallet/locks/".len()..])
+        }
+        _ if path.starts_with("/wallet/tx/") => tx_lookup(node, &path["/wallet/tx/".len()..]),
         _ if path.starts_with("/block/height/") => {
             block_by_height(node, &path["/block/height/".len()..])
         }
@@ -298,6 +314,143 @@ fn tx_lookup(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
                 }),
             ),
             Err(reason) => ("404 Not Found", json!({"error": reason.as_str()})),
+        },
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_finality(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => {
+            let status = guard.status();
+            (
+                "200 OK",
+                json!({
+                    "height": status.height,
+                    "latest_block_id": status.latest_block_id,
+                    "app_hash": status.app_hash,
+                    "environment": "simulation",
+                    "note": "finality is development BFT; production is not implemented"
+                }),
+            )
+        }
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_crypto_policy(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => (
+            "200 OK",
+            json!({
+                "crypto_policy_hash": guard.crypto_policy_commitment(),
+                "private_keys_exposed": false,
+            }),
+        ),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_fee_estimate(node: &Mutex<LocalNode>, path: &str) -> (&'static str, Value) {
+    let bytes = path
+        .split("bytes=")
+        .nth(1)
+        .and_then(|raw| raw.split('&').next())
+        .and_then(|raw| raw.parse::<u128>().ok())
+        .unwrap_or(256);
+    let sigs = path
+        .split("sigs=")
+        .nth(1)
+        .and_then(|raw| raw.split('&').next())
+        .and_then(|raw| raw.parse::<u128>().ok())
+        .unwrap_or(1);
+    match node.lock() {
+        Ok(guard) => {
+            let mut estimate = guard.fees_estimate(bytes, sigs);
+            if let Some(obj) = estimate.as_object_mut() {
+                obj.insert(
+                    "distinguishes".into(),
+                    json!(["estimated_fee", "maximum_authorized_fee", "actual_finalized_fee"]),
+                );
+            }
+            ("200 OK", estimate)
+        }
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_account(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    let parsed = sunrey_wallet::parse_address(id, None).ok();
+    match node.lock() {
+        Ok(guard) => match guard.native_assets() {
+            Ok(assets) => {
+                let sun = assets.holding(id, sunrey_native_assets::NativeAssetId::SunReyCoin);
+                (
+                    "200 OK",
+                    json!({
+                        "account_id": id,
+                        "address": parsed.as_ref().map(|addr| addr.text.clone()),
+                        "address_class": parsed.as_ref().map(|addr| format!("{:?}", addr.address_class)),
+                        "nonce": 0,
+                        "status": "ACTIVE",
+                        "holdings_note": "native balances are canonical chain state",
+                        "sunrey_available": sun.available.to_string(),
+                        "ticker_status": "NOT_ASSIGNED",
+                    }),
+                )
+            }
+            Err(_) => ("404 Not Found", json!({"error": "NOT_FOUND"})),
+        },
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_nonce(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    let _ = id;
+    match node.lock() {
+        Ok(guard) => {
+            ("200 OK", json!({"account_id": id, "nonce": 0, "height": guard.status().height}))
+        }
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_holdings(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => match guard.native_assets() {
+            Ok(assets) => {
+                let sun = assets.holding(id, sunrey_native_assets::NativeAssetId::SunReyCoin);
+                let moon = assets.holding(id, sunrey_native_assets::NativeAssetId::MoonReyCoin);
+                (
+                    "200 OK",
+                    json!({
+                        "account_id": id,
+                        "SUNREY_COIN": {"available": sun.available.to_string(), "locked": sun.locked.to_string()},
+                        "MOONREY_COIN": {"available": moon.available.to_string(), "locked": moon.locked.to_string()},
+                        "ticker_status": "NOT_ASSIGNED",
+                    }),
+                )
+            }
+            Err(_) => ("404 Not Found", json!({"error": "NOT_FOUND"})),
+        },
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn wallet_locks(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => match guard.native_assets() {
+            Ok(assets) => {
+                let locks = assets.locks_for(id);
+                (
+                    "200 OK",
+                    json!({
+                        "account_id": id,
+                        "locks": locks,
+                    }),
+                )
+            }
+            Err(_) => ("404 Not Found", json!({"error": "NOT_FOUND"})),
         },
         Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
     }

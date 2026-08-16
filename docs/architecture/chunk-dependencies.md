@@ -110,6 +110,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -397,3 +398,11 @@ contributions at `packages/sunrey-chain`. Capabilities
 [`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Do not create `packages/moonrey` or `packages/moonrey-coin`.
 The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.
+Chunk 46 implements sovereign wallets, versioned addresses,
+BlockchainAccount authorization, multi-auth, recovery, delegated keys,
+and a local encrypted development keystore at `packages/sunrey-chain`.
+Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
+[`chunk-46-sovereign-wallets.md`](./chunk-46-sovereign-wallets.md).
+Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
+`packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
+Wallet metadata is not a second native-asset ledger.

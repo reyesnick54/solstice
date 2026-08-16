@@ -50,6 +50,9 @@ npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:moonrey-productive
 npm run demo:sunrey-oracle
+npm run demo:sunrey-fees
+npm run demo:sunrey-machine-economy
+npm run demo:sunrey-wallet
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet
 npm run demo:sunrey-accountability

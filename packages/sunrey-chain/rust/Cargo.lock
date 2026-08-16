@@ -632,8 +632,8 @@ dependencies = [
  "sunrey-execution",
  "sunrey-fees",
  "sunrey-governance",
- "sunrey-oracle",
  "sunrey-native-assets",
+ "sunrey-oracle",
  "sunrey-protocol",
  "sunrey-state",
  "sunrey-storage",
@@ -642,7 +642,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "sunrey-productive"
 name = "sunrey-oracle"
 version = "0.1.0"
 dependencies = [
@@ -652,6 +651,17 @@ dependencies = [
  "sha2",
  "sunrey-crypto",
  "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
+name = "sunrey-productive"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
  "thiserror",
 ]
 
@@ -680,11 +690,12 @@ dependencies = [
  "sunrey-governance",
  "sunrey-native-assets",
  "sunrey-node",
- "sunrey-productive",
  "sunrey-oracle",
+ "sunrey-productive",
  "sunrey-protocol",
  "sunrey-storage",
  "sunrey-validators",
+ "sunrey-wallet",
  "thiserror",
  "tracing",
  "tracing-subscriber",
@@ -722,6 +733,18 @@ dependencies = [
  "sha2",
  "sunrey-crypto",
  "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
+name = "sunrey-wallet"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
  "thiserror",
 ]
 
