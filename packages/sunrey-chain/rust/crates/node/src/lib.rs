@@ -9,7 +9,13 @@ use sunrey_crypto::{
     crypto_policy_hash, development_fixture_secret, schema_registry_hash, suite_by_id, CryptoSuite,
     DevEd25519Sha256Suite, SigningSecret, DEV_ALGORITHM_ID, DEV_KEY_ID, DEV_SUITE_ID,
 };
-use sunrey_execution::{apply_transaction, install_genesis_assets};
+use sunrey_execution::{
+    apply_transaction, install_genesis_assets, load_assets, store_assets, ExecutionContext,
+};
+use sunrey_fees::{
+    split_fee_intent, usage_for, ChargeInput, ExecutionBudget, FeeAsset, FeeEngine, FeeExemption,
+    FeeIntent, ProtocolOp,
+};
 use sunrey_governance::UpgradeManager;
 use sunrey_oracle::OracleEngine;
 use sunrey_protocol::{
@@ -62,6 +68,7 @@ pub struct LocalNode {
     pub metrics: NodeMetrics,
     pub governance: UpgradeManager,
     pub oracle: OracleEngine,
+    pub fees: FeeEngine,
 }
 
 struct QueuedTx {
@@ -99,6 +106,8 @@ impl LocalNode {
         governance.persist(data_dir)?;
         let oracle = OracleEngine::load_or_init(data_dir)?;
         oracle.persist(data_dir)?;
+        let fees = load_or_init_fees(data_dir);
+        persist_fees(data_dir, &fees)?;
         let node = Self {
             store,
             suite,
@@ -107,6 +116,7 @@ impl LocalNode {
             metrics: NodeMetrics::default(),
             governance,
             oracle,
+            fees,
         };
         node.persist_queue()?;
         Ok(node)
@@ -127,6 +137,7 @@ impl LocalNode {
         );
         let governance = UpgradeManager::load_or_init(&data_dir)?;
         let oracle = OracleEngine::load_or_init(&data_dir)?;
+        let fees = load_or_init_fees(&data_dir);
         Ok(Self {
             store,
             suite,
@@ -135,6 +146,7 @@ impl LocalNode {
             metrics: NodeMetrics::default(),
             governance,
             oracle,
+            fees,
         })
     }
 
@@ -296,8 +308,54 @@ impl LocalNode {
                 }
             }
             _ => return Err(RejectReason::TransactionNotActivated),
+            TransactionFamily::NativeAsset => {
+                let (payload, rest) =
+                    sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)
+                        .map_err(RejectReason::from)?;
+                if payload.quantity == 0
+                    && payload.op != sunrey_native_assets::NativeAssetOp::Unlock
+                {
+                    return Err(RejectReason::StatelessInvalid);
+                }
+                let (fee_intent, rest) = split_fee_intent(rest)?;
+                if !rest.is_empty() {
+                    sunrey_native_assets::IssuanceAuthorization::decode(rest)
+                        .map_err(RejectReason::from)?;
+                }
+                if let Some(intent) = fee_intent {
+                    self.validate_native_fees(&payload, &intent, unsigned.payload.len() + 64, 1)?;
+                }
+            }
+            TransactionFamily::Identity => return Err(RejectReason::TransactionNotActivated),
         }
         Ok(())
+    }
+
+    fn validate_native_fees(
+        &self,
+        payload: &sunrey_native_assets::NativeAssetPayload,
+        intent: &FeeIntent,
+        encoded_len: usize,
+        sigs: u128,
+    ) -> Result<(), RejectReason> {
+        if payload.issuance_policy == sunrey_native_assets::DEVELOPMENT_FAUCET_POLICY {
+            if self.store.genesis.environment != "simulation" {
+                return Err(RejectReason::FaucetForbidden);
+            }
+            return Ok(());
+        }
+        if !self.fees.asset_policy.enabled(intent.fee_asset) {
+            return Err(RejectReason::UnsupportedFeeAsset);
+        }
+        let budget = intent.clone().into_budget(FeeExemption::None);
+        let mut probe = self.fees.clone();
+        probe.validate_admission(
+            &budget,
+            ProtocolOp::NativeTransfer,
+            encoded_len as u128,
+            sigs,
+            true,
+        )
     }
 
     pub fn produce_block(&mut self) -> Result<BlockResult, RejectReason> {
@@ -388,7 +446,9 @@ impl LocalNode {
         );
         self.persist_queue()?;
         match self.store.commit_block(&header, bid, &transactions, &tx_ids, next_view) {
-            Ok(()) => {}
+            Ok(()) => {
+                persist_fees(self.store.data_dir(), &self.fees)?;
+            }
             Err(reason) => {
                 self.metrics.db_errors.fetch_add(1, Ordering::Relaxed);
                 error!(event = "database_error", reason = reason.as_str(), "block commit failed");
@@ -417,7 +477,7 @@ impl LocalNode {
     }
 
     fn apply_one(
-        &self,
+        &mut self,
         view: &mut ChainView,
         tx: SignedTransaction,
     ) -> Result<(SignedTransaction, Hash32), (Hash32, RejectReason)> {
@@ -435,10 +495,144 @@ impl LocalNode {
         if let Err(reason) = view.record_idempotency(&tx.unsigned.idempotency_key) {
             return Err((tx_id, reason));
         }
-        if let Err(reason) = apply_transaction(view, &tx) {
+        if let Err(reason) = self.apply_with_fees(view, &tx, tx_id) {
             return Err((tx_id, reason));
         }
         Ok((tx, tx_id))
+    }
+
+    fn apply_with_fees(
+        &mut self,
+        view: &mut ChainView,
+        tx: &SignedTransaction,
+        tx_id: Hash32,
+    ) -> Result<(), RejectReason> {
+        let height = self.store.meta.height + 1;
+        let network_id = self.store.genesis.network_id.clone();
+        let chain_id = self.store.genesis.chain_id.clone();
+        let environment = self.store.genesis.environment.clone();
+        let production_network_enabled = self.store.genesis.production_network_enabled;
+        let authorization = extract_authorization(tx);
+        let exec = ExecutionContext {
+            height,
+            network_id: &network_id,
+            chain_id: &chain_id,
+            environment: &environment,
+            production_network_enabled,
+            authorization,
+        };
+        let fee_plan = native_fee_plan(tx)?;
+        if let Some((payload, budget)) = &fee_plan {
+            self.fees.validate_admission(
+                budget,
+                ProtocolOp::NativeTransfer,
+                tx.encode().len() as u128,
+                tx.auth.len() as u128,
+                true,
+            )?;
+            self.fees.reserve(budget)?;
+            let usage = usage_for(
+                ProtocolOp::NativeTransfer,
+                tx.encode().len() as u128,
+                tx.auth.len() as u128,
+            );
+            if usage.total() > budget.max_execution_units {
+                self.charge_fees(budget, usage, tx_id, "OUT_OF_EXECUTION_UNITS")?;
+                self.debit_native_fee(
+                    view,
+                    budget,
+                    self.fees.receipts.get(&hash_to_hex(&tx_id)).map(|r| r.actual_fee).unwrap_or(0),
+                )?;
+                commit_fee_view(view, &self.fees);
+                return Ok(());
+            }
+            let snapshot = view.clone();
+            if let Err(reason) = apply_transaction(view, tx, &exec) {
+                *view = snapshot;
+                self.fees.release(budget)?;
+                return Err(reason);
+            }
+            self.sync_fee_accounts(payload);
+            self.charge_fees(budget, usage, tx_id, "APPLIED")?;
+            let actual =
+                self.fees.receipts.get(&hash_to_hex(&tx_id)).map(|r| r.actual_fee).unwrap_or(0);
+            self.debit_native_fee(view, budget, actual)?;
+            commit_fee_view(view, &self.fees);
+            return Ok(());
+        }
+        apply_transaction(view, tx, &exec)?;
+        if tx.unsigned.family == TransactionFamily::NativeAsset {
+            if let Ok((payload, _)) =
+                sunrey_native_assets::NativeAssetPayload::decode_prefix(&tx.unsigned.payload)
+            {
+                self.sync_fee_accounts(&payload);
+            }
+        }
+        commit_fee_view(view, &self.fees);
+        Ok(())
+    }
+
+    fn sync_fee_accounts(&mut self, payload: &sunrey_native_assets::NativeAssetPayload) {
+        match payload.op {
+            sunrey_native_assets::NativeAssetOp::Issue
+                if payload.issuance_policy == sunrey_native_assets::DEVELOPMENT_FAUCET_POLICY
+                    && payload.asset_id == sunrey_native_assets::NativeAssetId::SunReyCoin =>
+            {
+                self.fees.faucet(&payload.counterparty, payload.quantity);
+            }
+            sunrey_native_assets::NativeAssetOp::Transfer
+                if payload.asset_id == sunrey_native_assets::NativeAssetId::SunReyCoin =>
+            {
+                let _ =
+                    self.fees.transfer(&payload.actor_id, &payload.counterparty, payload.quantity);
+            }
+            _ => {}
+        }
+    }
+
+    fn debit_native_fee(
+        &self,
+        view: &mut ChainView,
+        budget: &ExecutionBudget,
+        actual: u128,
+    ) -> Result<(), RejectReason> {
+        if actual == 0 || !matches!(budget.exemption, FeeExemption::None) {
+            return Ok(());
+        }
+        if budget.fee_asset != FeeAsset::SunreyCoin {
+            return Err(RejectReason::UnsupportedFeeAsset);
+        }
+        let mut ledger = load_assets(view)?;
+        ledger
+            .debit_available(
+                &budget.fee_payer,
+                sunrey_native_assets::NativeAssetId::SunReyCoin,
+                actual,
+            )
+            .map_err(RejectReason::from)?;
+        store_assets(view, &ledger);
+        Ok(())
+    }
+
+    fn charge_fees(
+        &mut self,
+        budget: &ExecutionBudget,
+        usage: sunrey_fees::ResourceUsage,
+        tx_id: Hash32,
+        outcome: &str,
+    ) -> Result<(), RejectReason> {
+        let hex = hash_to_hex(&tx_id);
+        self.fees.charge(ChargeInput {
+            budget,
+            usage,
+            tx_id: &hex,
+            height: self.store.meta.height + 1,
+            block_id: "pending",
+            outcome,
+            proposer: DEV_BLOCK_PRODUCER,
+            validators: &[(DEV_BLOCK_PRODUCER, 1)],
+        })?;
+        Ok(())
     }
 
     pub fn validate_stored_block(&self, stored: &StoredBlock) -> Result<(), RejectReason> {
@@ -567,6 +761,90 @@ impl LocalNode {
     pub fn crypto_policy_commitment(&self) -> String {
         hash_to_hex(&crypto_policy_hash(&self.suite))
     }
+
+    pub fn native_assets(&self) -> Result<sunrey_native_assets::NativeAssetLedger, RejectReason> {
+        load_assets(&self.store.view)
+    }
+
+    pub fn fees_schedule_json(&self) -> serde_json::Value {
+        serde_json::json!({
+            "schedule": self.fees.schedule,
+            "hash": self.fees.schedule.hash(),
+        })
+    }
+
+    pub fn fees_policy_json(&self) -> serde_json::Value {
+        self.fees.policy_json()
+    }
+
+    pub fn fees_estimate(&self, encoded_bytes: u128, signatures: u128) -> serde_json::Value {
+        let usage = usage_for(ProtocolOp::NativeTransfer, encoded_bytes, signatures);
+        let fee = self.fees.schedule.calculate(usage).unwrap_or(0);
+        serde_json::json!({
+            "operation": "NATIVE_TRANSFER",
+            "usage": usage,
+            "estimated_fee": fee.to_string(),
+            "fee_asset": "SUNREY_COIN",
+            "minimum_fee": self.fees.schedule.minimum_fee.to_string(),
+        })
+    }
+
+    pub fn fees_receipt(&self, tx_id: &str) -> Option<serde_json::Value> {
+        self.fees
+            .receipts
+            .get(tx_id)
+            .map(|receipt| serde_json::to_value(receipt).unwrap_or_default())
+    }
+
+    pub fn fees_resources(&self, tx_id: &str) -> Option<serde_json::Value> {
+        self.fees.receipts.get(tx_id).map(|receipt| {
+            serde_json::json!({
+                "transaction_id": receipt.transaction_id,
+                "resource_usage": receipt.resource_usage,
+                "outcome": receipt.outcome,
+            })
+        })
+    }
+
+    pub fn fees_rewards(&self, validator: &str) -> serde_json::Value {
+        serde_json::json!({
+            "validator": validator,
+            "accrued": self.fees.rewards.get(validator).copied().unwrap_or(0).to_string(),
+            "spendable": self.fees.position(validator, FeeAsset::SunreyCoin).available.to_string(),
+            "note": "accrual is not a public staking promise and is not a fiat credit",
+        })
+    }
+}
+
+fn extract_authorization(
+    tx: &SignedTransaction,
+) -> Option<sunrey_native_assets::IssuanceAuthorization> {
+    let (_, rest) =
+        sunrey_native_assets::NativeAssetPayload::decode_prefix(&tx.unsigned.payload).ok()?;
+    let (_, rest) = split_fee_intent(rest).ok()?;
+    if rest.is_empty() {
+        return None;
+    }
+    sunrey_native_assets::IssuanceAuthorization::decode(rest).ok()
+}
+
+fn native_fee_plan(
+    tx: &SignedTransaction,
+) -> Result<Option<(sunrey_native_assets::NativeAssetPayload, ExecutionBudget)>, RejectReason> {
+    if tx.unsigned.family != TransactionFamily::NativeAsset {
+        return Ok(None);
+    }
+    let (payload, rest) =
+        sunrey_native_assets::NativeAssetPayload::decode_prefix(&tx.unsigned.payload)
+            .map_err(RejectReason::from)?;
+    let (intent, _) = split_fee_intent(rest)?;
+    let Some(intent) = intent else {
+        return Ok(None);
+    };
+    if payload.issuance_policy == sunrey_native_assets::DEVELOPMENT_FAUCET_POLICY {
+        return Ok(None);
+    }
+    Ok(Some((payload, intent.into_budget(FeeExemption::None))))
 }
 
 pub fn parent_genesis_hash(node: &LocalNode) -> Hash32 {
@@ -604,4 +882,39 @@ fn load_queue(dir: &Path) -> Result<VecDeque<QueuedTx>, RejectReason> {
         queue.push_back(QueuedTx { tx, tx_id });
     }
     Ok(queue)
+}
+
+fn load_or_init_fees(dir: impl AsRef<Path>) -> FeeEngine {
+    let path = dir.as_ref().join("fees.json");
+    if let Ok(bytes) = std::fs::read(&path) {
+        if let Ok(engine) = serde_json::from_slice::<FeeEngine>(&bytes) {
+            return engine;
+        }
+    }
+    FeeEngine::development()
+}
+
+fn persist_fees(dir: impl AsRef<Path>, fees: &FeeEngine) -> Result<(), RejectReason> {
+    let path = dir.as_ref().join("fees.json");
+    let tmp = dir.as_ref().join("fees.tmp");
+    let bytes = serde_json::to_vec(fees).map_err(|_| RejectReason::PersistenceFailure)?;
+    std::fs::write(&tmp, bytes).map_err(|_| RejectReason::PersistenceFailure)?;
+    std::fs::rename(tmp, path).map_err(|_| RejectReason::PersistenceFailure)?;
+    Ok(())
+}
+
+fn commit_fee_view(view: &mut ChainView, fees: &FeeEngine) {
+    let key = sunrey_state::ObjectStore::namespaced(sunrey_state::NS_FEE, b"commitments");
+    let payload = format!(
+        "{}:{}:{}",
+        fees.schedule.hash(),
+        fees.asset_policy.hash(),
+        fees.disposition.hash()
+    );
+    view.store.put(key, payload.into_bytes());
+    for (account, position) in &fees.accounts {
+        let key = sunrey_state::ObjectStore::namespaced(sunrey_state::NS_FEE, account.as_bytes());
+        let value = format!("{}:{}:{}", position.available, position.reserved, position.locked);
+        view.store.put(key, value.into_bytes());
+    }
 }

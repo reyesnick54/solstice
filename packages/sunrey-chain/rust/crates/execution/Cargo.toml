@@ -6,6 +6,9 @@ license.workspace = true
 publish.workspace = true
 
 [dependencies]
+sunrey-crypto.workspace = true
+sunrey-fees.workspace = true
+sunrey-native-assets.workspace = true
 sunrey-protocol.workspace = true
 sunrey-state.workspace = true
 thiserror.workspace = true

@@ -55,13 +55,21 @@ fn rejects_wrong_network_replay_and_unactivated_family() {
         .unwrap();
     assert_eq!(node.submit_signed(wrong_chain).unwrap_err(), RejectReason::WrongChain);
 
-    let native = node
+    let identity = node
+        .sign_dev_tx(
+            unsigned(TransactionFamily::Identity, 0, LOCAL_DEV_NETWORK_ID, LOCAL_DEV_CHAIN_ID),
+            &secret,
+        )
+        .unwrap();
+    assert_eq!(node.submit_signed(identity).unwrap_err(), RejectReason::TransactionNotActivated);
+
+    let native_bad = node
         .sign_dev_tx(
             unsigned(TransactionFamily::NativeAsset, 0, LOCAL_DEV_NETWORK_ID, LOCAL_DEV_CHAIN_ID),
             &secret,
         )
         .unwrap();
-    assert_eq!(node.submit_signed(native).unwrap_err(), RejectReason::TransactionNotActivated);
+    assert_eq!(node.submit_signed(native_bad).unwrap_err(), RejectReason::SchemaInvalid);
 
     let ok = node
         .sign_dev_tx(

@@ -20,6 +20,10 @@ pub fn encode_u64(out: &mut Vec<u8>, value: u64) {
     out.extend_from_slice(&value.to_be_bytes());
 }
 
+pub fn encode_u128(out: &mut Vec<u8>, value: u128) {
+    out.extend_from_slice(&value.to_be_bytes());
+}
+
 pub fn encode_bool(out: &mut Vec<u8>, value: bool) {
     out.push(if value { 1 } else { 0 });
 }
@@ -49,6 +53,15 @@ pub fn decode_u64(input: &mut &[u8]) -> Result<u64, CodecError> {
     let (head, rest) = input.split_at(8);
     *input = rest;
     Ok(u64::from_be_bytes(head.try_into().expect("8 bytes")))
+}
+
+pub fn decode_u128(input: &mut &[u8]) -> Result<u128, CodecError> {
+    if input.len() < 16 {
+        return Err(CodecError::UnexpectedEof);
+    }
+    let (head, rest) = input.split_at(16);
+    *input = rest;
+    Ok(u128::from_be_bytes(head.try_into().expect("16 bytes")))
 }
 
 pub fn decode_bool(input: &mut &[u8]) -> Result<bool, CodecError> {
@@ -88,12 +101,14 @@ mod tests {
         let mut buf = Vec::new();
         encode_u32(&mut buf, 7);
         encode_u64(&mut buf, 99);
+        encode_u128(&mut buf, 123);
         encode_bool(&mut buf, true);
         encode_string(&mut buf, "sunrey");
         encode_bytes(&mut buf, &[1, 2, 3]);
         let mut view = buf.as_slice();
         assert_eq!(decode_u32(&mut view).unwrap(), 7);
         assert_eq!(decode_u64(&mut view).unwrap(), 99);
+        assert_eq!(decode_u128(&mut view).unwrap(), 123);
         assert!(decode_bool(&mut view).unwrap());
         assert_eq!(decode_string(&mut view).unwrap(), "sunrey");
         assert_eq!(decode_bytes(&mut view).unwrap(), vec![1, 2, 3]);

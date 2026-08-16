@@ -752,6 +752,20 @@ external APIs. Facts are not money and do not authorize MoonRey
 issuance. Do not create `packages/oracle`, `packages/sunrey-oracle`,
 or `packages/oracle-network`. Production market-data networks are
 not connected.
+Chunk 41 implements the dual native asset protocol for SunRey Coin
+and MoonRey Coin at `packages/sunrey-chain/rust/crates/native-assets`.
+Capability `sunrey-native-assets` is `IMPLEMENTED`. Public tickers
+remain `NOT_ASSIGNED`. Application SunRey Coin supply is not
+imported. Do not create `packages/moonrey-coin` or a competing
+chain. See
+[`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
+
+Chunk 42 implements deterministic native fees and resource
+metering at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/fees`. Capability
+`sunrey-native-fees` is `IMPLEMENTED`. Fees are native-asset
+minor units, not fiat ledger debits. Do not create
+`packages/fees`, `packages/sunrey-fees`, or `packages/gas`.
 
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
