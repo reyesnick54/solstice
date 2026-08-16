@@ -373,7 +373,7 @@ export class CustodyService {
       withdrawalId,
       destination: destination.address,
       amount: input.quantity,
-      timeout: input.timeoutAfterBroadcast,
+      ...(input.timeoutAfterBroadcast === true ? { timeout: true } : {}),
     });
     if (submitted.kind === 'SUBMISSION_UNKNOWN') {
       const unknown: AssetWithdrawal = Object.freeze({

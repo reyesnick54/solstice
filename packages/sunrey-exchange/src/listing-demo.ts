@@ -28,7 +28,7 @@ const customer: Customer = Object.freeze({
   residency: asResidency('GB'),
   status: 'ACTIVE',
   verification: {
-    kycState: 'VERIFIED',
+    kycState: 'VERIFIED' as const,
     kycRecordVersion: 1,
     refreshBy: asUtcInstant('2027-08-16T08:40:00.000Z'),
   },

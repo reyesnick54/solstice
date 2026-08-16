@@ -874,11 +874,6 @@ describe('architecture constitution', () => {
     assert.ok(declared, 'CHUNK-30 declaration must exist under docs/architecture/chunks/');
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
-    assert.equal(declared.missing.includes('sunrey-coin'), false);
-    assert.equal(declared.missing.includes('sunrey-exchange'), false);
-    assert.equal(declared.missing.includes('sunrey-chain'), false);
-    assert.equal(declared.missing.includes('identity'), false);
-    assert.equal(declared.missing.includes('compliance-screening'), false);
 
     const custody = manifest.boundedContexts.find((context) => context.id === 'CUSTODY');
     assert.ok(custody);

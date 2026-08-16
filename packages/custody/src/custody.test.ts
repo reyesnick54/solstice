@@ -141,10 +141,10 @@ describe('SunRey custody control plane', () => {
     assert.equal(ingested.value.state, 'NOTICE_RECEIVED');
     assert.equal(ingested.value.journalId, null);
     const credited = h.custody.creditExternalDeposit({ actorId: actor.actorId, depositId: ingested.value.depositId });
-    assert.equal(credited.outcome, 'OK');
     if (credited.outcome !== 'OK') {
       throw new Error(credited.outcome === 'REJECTED' ? credited.message : credited.decision.status);
     }
+    assert.equal(credited.outcome, 'OK');
     assert.equal(credited.value.state, 'CREDITED');
     assert.ok(credited.value.journalId);
     assert.equal(credited.value.providerBalanceIsTruth, false);
@@ -187,10 +187,10 @@ describe('SunRey custody control plane', () => {
       address: 'simaddr_vasp_clear',
       label: 'simulation vasp',
     });
-    assert.equal(destination.outcome, 'OK');
     if (destination.outcome !== 'OK') {
       throw new Error(destination.outcome === 'REJECTED' ? destination.message : destination.decision.status);
     }
+    assert.equal(destination.outcome, 'OK');
     const withdrawn = h.custody.initiateWithdrawal({
       actor,
       customerId: cust.id,
@@ -198,10 +198,10 @@ describe('SunRey custody control plane', () => {
       destinationId: destination.value.destinationId,
       quantity: coins(2n),
     });
-    assert.equal(withdrawn.outcome, 'OK');
     if (withdrawn.outcome !== 'OK') {
       throw new Error(withdrawn.outcome === 'REJECTED' ? withdrawn.message : withdrawn.decision.status);
     }
+    assert.equal(withdrawn.outcome, 'OK');
     assert.equal(withdrawn.value.state, 'SETTLED');
     assert.equal(withdrawn.value.screeningOutcome, 'CLEAR');
     assert.equal(withdrawn.value.travelRule?.applicability, 'REQUIRED_BY_PACK');

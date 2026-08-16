@@ -1,5 +1,5 @@
 -- V026 Chunk 30R exchange control-plane metadata.
--- Not a second ledger. No wallet.balance. No private keys or seed phrases.
+-- Not a second ledger. No wallet position column. No private keys or seed phrases.
 -- Travel Rule payloads, if persisted later, must be ciphertext only.
 
 CREATE SCHEMA IF NOT EXISTS custody;

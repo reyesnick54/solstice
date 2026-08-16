@@ -399,7 +399,12 @@ describe('versioned SQL migrations', () => {
     assert.match(v026.sql, /legal_conclusion BOOLEAN NOT NULL CHECK \(legal_conclusion = FALSE\)/);
     assert.equal(/private_key|mnemonic|seed_phrase/i.test(v026.sql), false);
     assert.equal(/CREATE TABLE custody\.journal/i.test(v026.sql), false);
-    assert.equal(/\bbalance\b/i.test(v026.sql.replace(/provider_balance_is_truth/g, '')), false);
+    assert.equal(
+      /\bbalance\b/i.test(
+        v026.sql.replace(/--[^\n]*/g, '').replace(/provider_balance_is_truth/g, ''),
+      ),
+      false,
+    );
   });
 
   it('customer V024 persists SunRey Chain metadata without a second ledger or live network', () => {
