@@ -58,3 +58,22 @@ Protocol Buffers proto3 with a constrained deterministic encoder:
 
 JSON exists only as a debug/API projection and is never hashed for
 consensus.
+
+## Exact CI
+
+Local `npm run ci` on the implementation branch: **ok**.
+
+```
+architectural invariants: ok
+extraction dry-run: ok (32 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 526 pass, 0 fail
+demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains `false`.
