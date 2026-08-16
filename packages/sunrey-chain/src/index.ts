@@ -132,3 +132,4 @@ export { SunReyChainService, type CreateIntentInput } from './service.ts';
 export * as protocol from './protocol/index.ts';
 export * as governance from './governance/index.ts';
 export * as validators from './validators/index.ts';
+export * as productive from './productive/index.ts';

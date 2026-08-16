@@ -7,6 +7,7 @@ members = [
   "crates/execution",
   "crates/storage",
   "crates/governance",
+  "crates/productive",
   "crates/consensus",
   "crates/node",
   "crates/rpc",
@@ -29,6 +30,7 @@ sunrey-consensus = { path = "crates/consensus" }
 sunrey-node = { path = "crates/node" }
 sunrey-rpc = { path = "crates/rpc" }
 sunrey-governance = { path = "crates/governance" }
+sunrey-productive = { path = "crates/productive" }
 sunrey-validators = { path = "crates/validators" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }

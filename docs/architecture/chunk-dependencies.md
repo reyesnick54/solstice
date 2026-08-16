@@ -104,6 +104,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-issuance-engine | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -360,5 +362,13 @@ economic-state protocol at `packages/sunrey-chain`. Capability
 [`chunk-32-resume.md`](./chunk-32-resume.md). Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
-MoonRey issuance remains unavailable. Public tickers remain
-`NOT_ASSIGNED`.
+Arbitrary `NATIVE_ASSET ISSUE` of MoonRey remains unavailable.
+Public tickers remain `NOT_ASSIGNED`.
+Chunk 44 implements the derived Global Productive Capacity Graph
+and development MoonRey issuance from verified productive
+contributions at `packages/sunrey-chain`. Capabilities
+`sunrey-productive-capacity` and `moonrey-issuance-engine` are
+`IMPLEMENTED`. See
+[`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
+Do not create `packages/moonrey` or `packages/moonrey-coin`.
+The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.

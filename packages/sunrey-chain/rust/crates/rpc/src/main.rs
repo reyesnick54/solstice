@@ -96,6 +96,14 @@ enum Command {
         #[command(subcommand)]
         command: ProtocolCommand,
     },
+    Productive {
+        #[command(subcommand)]
+        command: ProductiveCommand,
+    },
+    Moonrey {
+        #[command(subcommand)]
+        command: MoonreyCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -159,6 +167,60 @@ enum GovernanceCommand {
 #[derive(Subcommand)]
 enum ProtocolCommand {
     Version {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum ProductiveCommand {
+    Object {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Claim {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Verify {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Contribution {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Lineage {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: String,
+    },
+    Graph {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum MoonreyCommand {
+    Policy {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Issuance {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Attribution {
         #[arg(long)]
         data_dir: PathBuf,
     },
@@ -313,6 +375,8 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         }
         Command::Governance { command } => return run_governance(command),
         Command::Protocol { command } => return run_protocol(command),
+        Command::Productive { command } => return run_productive(command),
+        Command::Moonrey { command } => return run_moonrey(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -445,6 +509,69 @@ fn run_protocol(command: ProtocolCommand) -> Result<(), Box<dyn std::error::Erro
             );
         }
     }
+    Ok(())
+}
+
+fn load_productive(
+    data_dir: &PathBuf,
+) -> Result<sunrey_productive::ProductiveStore, Box<dyn std::error::Error>> {
+    Ok(sunrey_productive::ProductiveStore::load(data_dir)?)
+}
+
+fn run_productive(command: ProductiveCommand) -> Result<(), Box<dyn std::error::Error>> {
+    let (data_dir, args) = match command {
+        ProductiveCommand::Object { data_dir, id } => {
+            let mut args = vec!["productive".into(), "object".into()];
+            if let Some(id) = id {
+                args.push(id);
+            }
+            (data_dir, args)
+        }
+        ProductiveCommand::Claim { data_dir } => {
+            (data_dir, vec!["productive".into(), "claim".into()])
+        }
+        ProductiveCommand::Verify { data_dir, id } => {
+            let mut args = vec!["productive".into(), "verify".into()];
+            if let Some(id) = id {
+                args.push(id);
+            }
+            (data_dir, args)
+        }
+        ProductiveCommand::Contribution { data_dir, id } => {
+            let mut args = vec!["productive".into(), "contribution".into()];
+            if let Some(id) = id {
+                args.push(id);
+            }
+            (data_dir, args)
+        }
+        ProductiveCommand::Lineage { data_dir, id } => {
+            (data_dir, vec!["productive".into(), "lineage".into(), id])
+        }
+        ProductiveCommand::Graph { data_dir } => {
+            (data_dir, vec!["productive".into(), "graph".into()])
+        }
+    };
+    let store = load_productive(&data_dir)?;
+    println!("{}", sunrey_productive::run_command(&args, &store)?);
+    Ok(())
+}
+
+fn run_moonrey(command: MoonreyCommand) -> Result<(), Box<dyn std::error::Error>> {
+    let (data_dir, args) = match command {
+        MoonreyCommand::Policy { data_dir } => (data_dir, vec!["moonrey".into(), "policy".into()]),
+        MoonreyCommand::Issuance { data_dir, id } => {
+            let mut args = vec!["moonrey".into(), "issuance".into()];
+            if let Some(id) = id {
+                args.push(id);
+            }
+            (data_dir, args)
+        }
+        MoonreyCommand::Attribution { data_dir } => {
+            (data_dir, vec!["moonrey".into(), "attribution".into()])
+        }
+    };
+    let store = load_productive(&data_dir)?;
+    println!("{}", sunrey_productive::run_command(&args, &store)?);
     Ok(())
 }
 

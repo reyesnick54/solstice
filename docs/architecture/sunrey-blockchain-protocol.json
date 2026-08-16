@@ -55,7 +55,10 @@
       "currentAuthority": "not-implemented",
       "futureNativeChainAuthority": "sunrey-blockchain-when-implemented",
       "implemented": false,
-      "owner": null,
+      "developmentIssuanceImplemented": true,
+      "developmentIssuanceOwner": "packages/sunrey-chain",
+      "developmentIssuanceSource": "verified-productive-contribution",
+      "owner": "packages/sunrey-chain",
       "competingPackageForbiddenInThisChunk": true
     }
   },

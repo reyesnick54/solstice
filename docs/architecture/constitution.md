@@ -790,17 +790,22 @@ economic-state protocol at `packages/sunrey-chain`. Historical
 stop: [`chunk-32-stop.md`](./chunk-32-stop.md). Resume:
 [`chunk-32-resume.md`](./chunk-32-resume.md). Capability
 `blockchain-protocol` is `IMPLEMENTED`. Do not invent a second
-codec package, MoonRey issuance, ticker, second Money type, or
-second SunRey Coin ledger. Do not create
+codec package, ticker, second Money type, or second SunRey Coin
+ledger. Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
+Chunk 44 implements development MoonRey issuance from verified
+productive contributions inside `packages/sunrey-chain`. Arbitrary
+`NATIVE_ASSET ISSUE` remains inactive. The public MoonRey Coin
+product remains unimplemented. See
+[`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Chunk 31 freezes the **production architecture** for SunRey
 Blockchain. It does not implement a production node. The canonical
 owner remains `packages/sunrey-chain` as a modular monolith.
 Consensus, runtime, storage, and P2P are future internal modules,
 not five microservices. Public tickers for SunRey Coin and MoonRey
-Coin remain `NOT_ASSIGNED`. MoonRey Coin is distinct and not
-implemented. The canonical Ledger remains authoritative for fiat
+Coin remain `NOT_ASSIGNED`. MoonRey Coin is distinct and not a
+public product. The canonical Ledger remains authoritative for fiat
 and current SunRey Coin journals. See
 [`chunk-31-sunrey-blockchain-production-architecture.md`](./chunk-31-sunrey-blockchain-production-architecture.md),
 [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md),

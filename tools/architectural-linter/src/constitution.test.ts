@@ -981,6 +981,31 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
   });
 
+  it('CHUNK-44 implements productive capacity and MoonRey issuance on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'moonrey-issuance-engine').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'moonrey-issuance-engine').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-44',
+    );
+    assert.ok(declared, 'CHUNK-44 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-44-productive-capacity-moonrey.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/global-productive-capacity-graph.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/moonrey-issuance-model.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/moonrey-economic-verification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/productive/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/productive/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+  });
+
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);
