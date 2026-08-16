@@ -288,11 +288,13 @@ node is not `IMPLEMENTED`. Capabilities `sunrey-local-node` and
 `packages/gossip`, `packages/consensus`, or
 `packages/sunrey-consensus`. Do not begin Chunk 36.
 Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
-Chunks 31–33 are not declared and have not merged. Latest green
-`main` is Chunk 30R. The CHUNK-34 declaration lists only existing
-`IMPLEMENTED` capabilities, so `evaluateChunkRequirements` returns
-`mustStop: false`. That is not permission to invent a node owner,
-language, storage ADR, block schema, or CryptoSuite registry.
+Chunks 31, 32R, and 33R are now on this tree (architecture freeze,
+canonical transaction protocol, CryptoSuite registry). The local
+deterministic node is still not `IMPLEMENTED`. The CHUNK-34
+declaration lists only existing `IMPLEMENTED` capabilities, so
+`evaluateChunkRequirements` returns `mustStop: false`. That is not
+permission to invent a node owner, language, storage ADR, or a
+second CryptoSuite registry.
 Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
 `packages/sunrey-blockchain`, `packages/sunrey-node`,
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
@@ -325,14 +327,12 @@ at `packages/sunrey-chain`. Capability `crypto-suite-registry` is
 The evaluator returns `mustStop: false`. Do not create
 `packages/quantum-security`, `packages/crypto-v2`, or
 `packages/pqc-core`. Do not claim quantum-proof cryptography.
-Chunk 32 (canonical SunRey transaction and economic-state protocol)
-stops on a process gate: Chunk 31 is not merged and its encoding /
-protocol architecture is not canonical on `main`. Listed
-capabilities including `sunrey-chain` are `IMPLEMENTED`, so
-`evaluateChunkRequirements` returns `mustStop: false`. That is not
-permission to invent Chunk 31 ADRs, a consensus codec, or protocol
-semantics. Stop record:
-[`chunk-32-stop.md`](./chunk-32-stop.md). Do not create
+Chunk 32R implements the canonical SunRey transaction and
+economic-state protocol at `packages/sunrey-chain`. Capability
+`blockchain-protocol` is `IMPLEMENTED`. Historical stop:
+[`chunk-32-stop.md`](./chunk-32-stop.md). Resume:
+[`chunk-32-resume.md`](./chunk-32-resume.md). Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
-Do not begin Chunk 33 or Chunk 34 from this stop.
+MoonRey issuance remains unavailable. Public tickers remain
+`NOT_ASSIGNED`.

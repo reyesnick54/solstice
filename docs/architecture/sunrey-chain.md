@@ -55,3 +55,10 @@ Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-m
 MoonRey Coin is a distinct planned native asset. Its ticker is
 `NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
 production-ready, quantum-secure, decentralized, or mainnet-ready.
+
+Chunk 32R implements the canonical transaction protocol in this
+package: envelope v1, typed economic objects, rights, deterministic
+protobuf codec, domain-separated hashes, and the state-transition
+port. Schema and vectors:
+`packages/sunrey-chain/protocol/`. See
+[`chunk-32-resume.md`](./chunk-32-resume.md).

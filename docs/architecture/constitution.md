@@ -444,6 +444,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
+| `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -745,24 +746,22 @@ at owner `packages/sunrey-chain`. Stop record:
 P2P DEVELOPMENT NETWORK, PRODUCTION CONSENSUS, PUBLIC TESTNET,
 and MAINNET remain not implemented.
 Chunk 34 (sovereign node core) is **stopped** until the local
-deterministic node work is authorized. Chunk 31 architecture and
-Chunk 33R CryptoSuite registry exist on this tree. Chunk 32
-protocol types remain a historical stop. This constitution does not
+deterministic node work is authorized. Chunk 31 architecture, Chunk 32R protocol types, and
+Chunk 33R CryptoSuite registry exist on this tree. This constitution does not
 pre-reserve `packages/sunrey-blockchain` or `packages/sunrey-node`.
 Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
 `packages/ledger-chain`, or `packages/web3-chain`. Do not replace
 `packages/sunrey-chain`.
-Chunk 32 (canonical SunRey transaction and economic-state protocol)
-is **stopped**. The task requires latest `main` after Chunk 31 is
-merged. Chunk 31 is not declared, not merged, and has no encoding
-or protocol ADRs on `main`. ADR-0015 remains the Chunk 28
-simulation trust-layer record only. Do not invent a consensus
-codec, transaction envelope, MoonRey issuance, ticker, second
-Money type, or second SunRey Coin ledger. Do not create
+Chunk 32R implements the canonical SunRey transaction and
+economic-state protocol at `packages/sunrey-chain`. Historical
+stop: [`chunk-32-stop.md`](./chunk-32-stop.md). Resume:
+[`chunk-32-resume.md`](./chunk-32-resume.md). Capability
+`blockchain-protocol` is `IMPLEMENTED`. Do not invent a second
+codec package, MoonRey issuance, ticker, second Money type, or
+second SunRey Coin ledger. Do not create
 `packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
 `packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
-See [`chunk-32-stop.md`](./chunk-32-stop.md).
 Chunk 31 freezes the **production architecture** for SunRey
 Blockchain. It does not implement a production node. The canonical
 owner remains `packages/sunrey-chain` as a modular monolith.

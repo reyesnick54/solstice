@@ -16,8 +16,11 @@ function chunkFiles(prefix: string): string[] {
 }
 
 describe('CHUNK-33R crypto-agility implementation', () => {
-  it('implements the CryptoSuite foundation on the canonical owners', () => {
+  it('implements the CryptoSuite foundation after Chunks 31 and 32R', () => {
     assert.ok(chunkFiles('chunk-33-').includes('chunk-33-post-quantum-security.json'));
+    assert.equal(chunkFiles('chunk-31-').length > 0, true);
+    assert.equal(chunkFiles('chunk-32-').length > 0, true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-32-resume.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-stop.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-crypto-agility.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security/cryptographic-inventory.md')), true);

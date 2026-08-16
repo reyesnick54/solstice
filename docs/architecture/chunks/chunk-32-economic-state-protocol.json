@@ -21,7 +21,9 @@
     "clean-room",
     "sunrey-coin",
     "information-market",
-    "sunrey-chain"
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol"
   ],
-  "notes": "STOPPED. Process gate: start only after Chunk 31 is merged and its protocol/encoding architecture is canonical on main. Chunk 31 is absent. evaluateChunkRequirements returns mustStop: false because listed capabilities are IMPLEMENTED; that is not permission to invent Chunk 31 ADRs or protocol semantics. Do not implement consensus, mainnet, MoonRey issuance, a ticker, a second Money type, or a second SunRey Coin ledger. See docs/architecture/chunk-32-stop.md."
+  "notes": "IMPLEMENTED by Chunk 32R at packages/sunrey-chain. Historical stop: chunk-32-stop.md. Resume: chunk-32-resume.md. Canonical protobuf transaction protocol, economic objects, rights, envelope v1, and test vectors. MoonRey issuance remains unavailable. Public tickers remain NOT_ASSIGNED. No competing ledger or production-network activation. See ADR-0021 Addendum A."
 }
