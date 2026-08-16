@@ -11,6 +11,7 @@ serde.workspace = true
 serde_json.workspace = true
 sunrey-crypto.workspace = true
 sunrey-execution.workspace = true
+sunrey-governance.workspace = true
 sunrey-protocol.workspace = true
 sunrey-state.workspace = true
 sunrey-storage.workspace = true

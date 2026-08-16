@@ -10,12 +10,12 @@ use sunrey_crypto::{
     DevEd25519Sha256Suite, SigningSecret, DEV_ALGORITHM_ID, DEV_KEY_ID, DEV_SUITE_ID,
 };
 use sunrey_execution::{apply_transaction, install_genesis_assets};
+use sunrey_governance::UpgradeManager;
 use sunrey_protocol::{
     block_id, genesis_hash, hash_to_hex, transaction_id, transaction_root,
     unsigned_signature_payload, validate_block_header, BlockHeader, BlockResult, DomainHasher,
     GenesisV1, Hash32, RejectReason, SignatureDescriptor, SignedTransaction, TransactionFamily,
-    UnsignedTransaction, BLOCK_VERSION_V1, DOMAIN_CONSENSUS_PARAMS, DOMAIN_VALSET,
-    LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID,
+    UnsignedTransaction, BLOCK_VERSION_V1, DOMAIN_VALSET, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID,
 };
 use sunrey_state::ChainView;
 use sunrey_storage::{ChainStore, FailPoint, StoredBlock};
@@ -48,6 +48,8 @@ pub struct NodeStatus {
     pub transaction_root: String,
     pub queue_len: usize,
     pub ready: bool,
+    pub protocol_version: u32,
+    pub governance: serde_json::Value,
 }
 
 pub struct LocalNode {
@@ -56,6 +58,7 @@ pub struct LocalNode {
     pub genesis_hash: Hash32,
     queue: VecDeque<QueuedTx>,
     pub metrics: NodeMetrics,
+    pub governance: UpgradeManager,
 }
 
 struct QueuedTx {
@@ -89,12 +92,15 @@ impl LocalNode {
         let mut store = ChainStore::init(data_dir, genesis, ghash, app_hash)?;
         store.view = view;
         store.persist_state_and_meta()?;
+        let governance = UpgradeManager::load_or_init(data_dir)?;
+        governance.persist(data_dir)?;
         let node = Self {
             store,
             suite,
             genesis_hash: ghash,
             queue: VecDeque::new(),
             metrics: NodeMetrics::default(),
+            governance,
         };
         node.persist_queue()?;
         Ok(node)
@@ -113,7 +119,15 @@ impl LocalNode {
             genesis_hash = hash_to_hex(&ghash),
             "opened local development node"
         );
-        Ok(Self { store, suite, genesis_hash: ghash, queue, metrics: NodeMetrics::default() })
+        let governance = UpgradeManager::load_or_init(&data_dir)?;
+        Ok(Self {
+            store,
+            suite,
+            genesis_hash: ghash,
+            queue,
+            metrics: NodeMetrics::default(),
+            governance,
+        })
     }
 
     fn persist_queue(&self) -> Result<(), RejectReason> {
@@ -138,6 +152,8 @@ impl LocalNode {
             transaction_root: self.store.meta.transaction_root.clone(),
             queue_len: self.queue.len(),
             ready: true,
+            protocol_version: self.governance.protocol_version,
+            governance: self.governance.metrics_json(),
         }
     }
 
@@ -310,6 +326,9 @@ impl LocalNode {
         } else {
             sunrey_protocol::hash_from_hex(&self.store.meta.tip_block_id)?
         };
+        let cap = self.governance.capability();
+        let commits = self.governance.activate_at(height, &cap)?;
+        self.governance.persist(self.store.data_dir())?;
         let header = BlockHeader {
             version: BLOCK_VERSION_V1,
             network_id: self.store.genesis.network_id.clone(),
@@ -321,9 +340,11 @@ impl LocalNode {
             validator_set_hash: self
                 .suite
                 .hash(DOMAIN_VALSET, self.store.genesis.validator_placeholder.as_bytes()),
-            consensus_parameter_hash: self
-                .suite
-                .hash(DOMAIN_CONSENSUS_PARAMS, &self.store.genesis.block_interval_ms.to_be_bytes()),
+            consensus_parameter_hash: commits.consensus_params_hash,
+            protocol_version: commits.protocol_version.to_string(),
+            module_registry_hash: commits.module_registry_hash,
+            codec_registry_hash: commits.codec_registry_hash,
+            crypto_policy_hash: commits.crypto_policy_hash,
             timestamp_unix_ms: self.store.genesis.genesis_time_unix_ms
                 + height * self.store.genesis.block_interval_ms,
             proposer: DEV_BLOCK_PRODUCER.to_string(),

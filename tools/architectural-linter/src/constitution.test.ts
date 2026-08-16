@@ -956,6 +956,27 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/tendermint')), false);
   });
 
+  it('CHUNK-40 implements protocol governance on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-governance').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-governance').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-governance').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'PLANNED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-40',
+    );
+    assert.ok(declared, 'CHUNK-40 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-40-protocol-governance.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/governance/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/governance/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/governance')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
+  });
+
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);

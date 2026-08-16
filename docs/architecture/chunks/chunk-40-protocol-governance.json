@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-40",
+  "title": "SunRey Epoch Governance, Protocol Upgrade Manager and Height-Activated Network Changes",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "crypto-suite-registry",
+    "sunrey-protocol-governance"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript governance engine) and packages/sunrey-chain/rust/crates/governance (local-node upgrade manager). Height-activated UpgradePlan. No governance token. SunRey Coin and MoonRey do not grant voting power. Chunk 36 validator lifecycle remains PLANNED. evaluateChunkRequirements returns mustStop: false."
+}

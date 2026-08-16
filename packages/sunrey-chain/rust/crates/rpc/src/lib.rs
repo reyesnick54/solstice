@@ -82,6 +82,8 @@ fn dispatch(
             ("200 OK", json!({"ok": true, "environment": "simulation", "role": NODE_ROLE}))
         }
         ("GET", "/status") | ("GET", "/chain") => status_json(node),
+        ("GET", "/governance") => governance_json(node),
+        ("GET", "/protocol/version") => protocol_json(node),
         ("POST", "/tx") => submit(node, body),
         ("POST", "/admin/produce-block") => produce(node),
         _ if path.starts_with("/block/height/") => {
@@ -98,6 +100,32 @@ fn status_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     match node.lock() {
         Ok(guard) => {
             ("200 OK", serde_json::to_value(guard.status()).unwrap_or(json!({"error": "ENCODE"})))
+        }
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn governance_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => ("200 OK", guard.governance.metrics_json()),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn protocol_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => {
+            let commits = guard.governance.commitments();
+            (
+                "200 OK",
+                json!({
+                    "protocol_version": commits.protocol_version,
+                    "consensus_params_hash": hash_to_hex(&commits.consensus_params_hash),
+                    "module_registry_hash": hash_to_hex(&commits.module_registry_hash),
+                    "codec_registry_hash": hash_to_hex(&commits.codec_registry_hash),
+                    "crypto_policy_hash": hash_to_hex(&commits.crypto_policy_hash),
+                }),
+            )
         }
         Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
     }

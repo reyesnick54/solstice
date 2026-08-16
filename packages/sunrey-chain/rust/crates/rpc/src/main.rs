@@ -5,6 +5,7 @@ use std::time::{Duration, Instant};
 
 use clap::{Parser, Subcommand};
 use sunrey_crypto::development_fixture_secret;
+use sunrey_governance::VoteChoice;
 use sunrey_node::{LocalNode, DEV_BLOCK_PRODUCER, NODE_ROLE};
 use sunrey_protocol::{
     encode_evidence_anchor_payload, encode_system_payload, hash_to_hex, transaction_id,
@@ -74,6 +75,80 @@ enum Command {
     EncodeFixture {
         #[arg(long, default_value = "system-note")]
         name: String,
+    },
+    Governance {
+        #[command(subcommand)]
+        command: GovernanceCommand,
+    },
+    Protocol {
+        #[command(subcommand)]
+        command: ProtocolCommand,
+    },
+}
+
+#[derive(Subcommand)]
+enum GovernanceCommand {
+    Propose {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: String,
+        #[arg(long)]
+        kind: String,
+        #[arg(long)]
+        activation_height: u64,
+        #[arg(long)]
+        max_transactions: Option<u32>,
+        #[arg(long)]
+        max_block_bytes: Option<u32>,
+    },
+    Show {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Vote {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: String,
+        #[arg(long)]
+        voter: String,
+        #[arg(long)]
+        choice: String,
+    },
+    Schedule {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: String,
+    },
+    Readiness {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: Option<String>,
+    },
+    Cancel {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        id: String,
+        #[arg(long)]
+        actor: String,
+    },
+    History {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum ProtocolCommand {
+    Version {
+        #[arg(long)]
+        data_dir: PathBuf,
     },
 }
 
@@ -180,6 +255,8 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
                 node.store.meta.height, node.store.meta.app_hash
             );
         }
+        Command::Governance { command } => return run_governance(command),
+        Command::Protocol { command } => return run_protocol(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -188,6 +265,128 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
                 _ => return Err("unknown fixture".into()),
             };
             println!("{}", sunrey_protocol::hex_encode(&bytes));
+        }
+    }
+    Ok(())
+}
+
+fn run_governance(command: GovernanceCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        GovernanceCommand::Propose {
+            data_dir,
+            id,
+            kind,
+            activation_height,
+            max_transactions,
+            max_block_bytes,
+        } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            let _ = sunrey_governance::UpgradeKind::parse(&kind)?;
+            let mut params = node.governance.params.clone();
+            if let Some(value) = max_transactions {
+                params.max_transactions = value;
+            }
+            if let Some(value) = max_block_bytes {
+                params.max_block_bytes = value;
+            }
+            let plan = node.governance.draft_parameter_change(&id, activation_height, params)?;
+            node.governance.propose(plan, "gov_operator_1")?;
+            node.governance.validate(&id)?;
+            node.governance.persist(&data_dir)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "upgrade_id": id,
+                    "status": node.governance.plans[&id].status.as_str(),
+                    "activation_height": activation_height,
+                    "kind": kind,
+                }))?
+            );
+        }
+        GovernanceCommand::Show { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            if let Some(id) = id {
+                let plan = node.governance.plans.get(&id).ok_or("unknown upgrade")?;
+                println!("{}", serde_json::to_string_pretty(plan)?);
+            } else {
+                println!("{}", serde_json::to_string_pretty(&node.governance.metrics_json())?);
+            }
+        }
+        GovernanceCommand::Vote { data_dir, id, voter, choice } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            let parsed = match choice.as_str() {
+                "APPROVE" => VoteChoice::Approve,
+                "REJECT" => VoteChoice::Reject,
+                _ => return Err("choice must be APPROVE or REJECT".into()),
+            };
+            node.governance.vote(&id, &voter, parsed)?;
+            node.governance.persist(&data_dir)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "upgrade_id": id,
+                    "voter": voter,
+                    "choice": choice,
+                    "approve_power": node.governance.approve_power(&id),
+                    "required_power": node.governance.policy.required_power,
+                    "status": node.governance.plans[&id].status.as_str(),
+                }))?
+            );
+        }
+        GovernanceCommand::Schedule { data_dir, id } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            node.governance.schedule(&id, "gov_operator_1")?;
+            node.governance.persist(&data_dir)?;
+            println!("scheduled {} at height {}", id, node.governance.plans[&id].activation_height);
+        }
+        GovernanceCommand::Readiness { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let id = match id.or_else(|| node.governance.pending().map(|p| p.upgrade_id.clone())) {
+                Some(id) => id,
+                None => {
+                    println!("{{\"upgrade_readiness\":\"NONE\"}}");
+                    return Ok(());
+                }
+            };
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "upgrade_id": id,
+                    "upgrade_readiness": node.governance.readiness(&id)?.as_str(),
+                    "metrics": node.governance.metrics_json(),
+                }))?
+            );
+        }
+        GovernanceCommand::Cancel { data_dir, id, actor } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            node.governance.cancel(&id, &actor)?;
+            node.governance.persist(&data_dir)?;
+            println!("cancelled {id}");
+        }
+        GovernanceCommand::History { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.governance.audit)?);
+        }
+    }
+    Ok(())
+}
+
+fn run_protocol(command: ProtocolCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        ProtocolCommand::Version { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            let commits = node.governance.commitments();
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "protocol_version": commits.protocol_version,
+                    "consensus_params_hash": sunrey_protocol::hash_to_hex(&commits.consensus_params_hash),
+                    "module_registry_hash": sunrey_protocol::hash_to_hex(&commits.module_registry_hash),
+                    "codec_registry_hash": sunrey_protocol::hash_to_hex(&commits.codec_registry_hash),
+                    "crypto_policy_hash": sunrey_protocol::hash_to_hex(&commits.crypto_policy_hash),
+                    "environment": "simulation",
+                }))?
+            );
         }
     }
     Ok(())

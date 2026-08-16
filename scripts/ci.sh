@@ -47,6 +47,7 @@ npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-chain
 npm run demo:sunrey-node
+npm run demo:sunrey-governance
 npm run demo:sunrey-devnet
 npm run demo:sunrey-exchange
 npm run demo:custody

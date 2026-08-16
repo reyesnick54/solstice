@@ -49,9 +49,12 @@ See [`chunk-34-resume.md`](./chunk-34-resume.md) and
 [`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
 bonding / epoch lifecycle (Chunk 36) remains `PLANNED`. See
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
-`packages/sunrey-node`, `packages/sunrey-p2p`,
-`packages/validators`, or `packages/staking`. Production BFT is
+[`chunk-36-stop.md`](./chunk-36-stop.md). Chunk 40 implements
+development protocol governance at
+[`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Do not create `packages/sunrey-node`, `packages/sunrey-p2p`,
+`packages/validators`, `packages/staking`, `packages/governance`,
+or `packages/sunrey-governance`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains
 `PROPOSED`.
 

@@ -21,6 +21,10 @@ pub struct BlockHeader {
     pub app_hash: Hash32,
     pub validator_set_hash: Hash32,
     pub consensus_parameter_hash: Hash32,
+    pub protocol_version: String,
+    pub module_registry_hash: Hash32,
+    pub codec_registry_hash: Hash32,
+    pub crypto_policy_hash: Hash32,
     pub timestamp_unix_ms: u64,
     pub proposer: String,
     pub crypto_suite_id: String,
@@ -39,6 +43,10 @@ impl BlockHeader {
         encode_bytes(&mut out, &self.app_hash);
         encode_bytes(&mut out, &self.validator_set_hash);
         encode_bytes(&mut out, &self.consensus_parameter_hash);
+        encode_string(&mut out, &self.protocol_version);
+        encode_bytes(&mut out, &self.module_registry_hash);
+        encode_bytes(&mut out, &self.codec_registry_hash);
+        encode_bytes(&mut out, &self.crypto_policy_hash);
         encode_u64(&mut out, self.timestamp_unix_ms);
         encode_string(&mut out, &self.proposer);
         encode_string(&mut out, &self.crypto_suite_id);
@@ -60,6 +68,10 @@ impl BlockHeader {
         let app_hash = decode_hash(&mut input)?;
         let validator_set_hash = decode_hash(&mut input)?;
         let consensus_parameter_hash = decode_hash(&mut input)?;
+        let protocol_version = decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
+        let module_registry_hash = decode_hash(&mut input)?;
+        let codec_registry_hash = decode_hash(&mut input)?;
+        let crypto_policy_hash = decode_hash(&mut input)?;
         let timestamp_unix_ms = decode_u64(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
         let proposer = decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
         let crypto_suite_id = decode_string(&mut input).map_err(|_| RejectReason::DecodeFailed)?;
@@ -76,6 +88,10 @@ impl BlockHeader {
             app_hash,
             validator_set_hash,
             consensus_parameter_hash,
+            protocol_version,
+            module_registry_hash,
+            codec_registry_hash,
+            crypto_policy_hash,
             timestamp_unix_ms,
             proposer,
             crypto_suite_id,
