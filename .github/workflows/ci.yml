@@ -108,6 +108,12 @@ jobs:
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo
         run: npm run demo:custody
+      - name: Institutional native-asset custody demo
+        run: npm run demo:institutional-custody
+      - name: Custody submission-unknown demo
+        run: npm run demo:custody-unknown
+      - name: Custody cold-signing demo
+        run: npm run demo:custody-cold
       - name: Market surveillance demo
         run: npm run demo:market-surveillance
       - name: Listing governance demo

@@ -87,4 +87,8 @@
   envelope, economic objects, protobuf codec, and test vectors at
   `packages/sunrey-chain`
 
+- [Chunk 47 institutional custody](./chunk-47-institutional-custody.md)
+  — native-asset vaults, remote/HSM signing, finalized deposits.
+  [Signing architecture](./native-custody-signing.md).
+
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

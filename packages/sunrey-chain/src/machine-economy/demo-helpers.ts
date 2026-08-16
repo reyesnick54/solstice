@@ -160,6 +160,9 @@ export function runComputeDemo(): ComputeDemoReport {
   const roots = engines.map((engine) => engine.stateRoot());
   const first = engines[0];
   const settlement = settlements[0];
+  if (!first || !settlement) {
+    throw new Error('compute demo missing settlement');
+  }
   return {
     buyerId: 'ai_buyer',
     providerId: 'gpu_provider',

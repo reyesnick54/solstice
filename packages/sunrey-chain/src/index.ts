@@ -147,3 +147,10 @@ export {
 } from './native-assets/migration.ts';
 export type { AssetMigrationManifest } from './native-assets/migration.ts';
 export type { AssetAuthority, NativeAssetAuthorityBoundary } from './native-assets/authority.ts';
+export * as nativeCustody from './native-custody/index.ts';
+export {
+  DEVELOPMENT_FAUCET_ADDRESS,
+  SimulationNativeCustodyChain,
+  custodyAddressFromPublicKey,
+} from './native-custody/index.ts';
+export type { NativeCustodyChainPort } from './native-custody/index.ts';

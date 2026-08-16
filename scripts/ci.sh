@@ -56,6 +56,9 @@ npm run demo:sunrey-accountability
 npm run demo:sunrey-native-assets
 npm run demo:sunrey-exchange
 npm run demo:custody
+npm run demo:institutional-custody
+npm run demo:custody-unknown
+npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
 

@@ -855,6 +855,15 @@ PQ ports, hybrid envelope, and crypto policy at
 [`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
 Do not create `packages/quantum-security`, `packages/crypto-v2`,
 or `packages/pqc-core`. Do not claim quantum-proof cryptography.
+Chunk 47 implements institutional native-asset custody at
+`packages/custody`, HSM/KMS contracts at `packages/security`, and
+the native-chain custody port at `packages/sunrey-chain`.
+Capability `sunrey-institutional-custody` is `IMPLEMENTED`.
+Canonical native quantity remains on SunRey Blockchain. Do not
+create `packages/custody-v2`, `packages/blockchain-custody`,
+`packages/institutional-custody-v2`, or `packages/hsm-security-v2`.
+See
+[`chunk-47-institutional-custody.md`](./chunk-47-institutional-custody.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

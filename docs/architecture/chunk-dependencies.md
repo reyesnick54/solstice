@@ -110,6 +110,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -397,3 +398,11 @@ contributions at `packages/sunrey-chain`. Capabilities
 [`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Do not create `packages/moonrey` or `packages/moonrey-coin`.
 The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.
+Chunk 47 implements institutional native-asset custody at
+`packages/custody`. Capability `sunrey-institutional-custody` is
+`IMPLEMENTED`. HSM/KMS contracts extend `packages/security`. The
+native-chain port extends `packages/sunrey-chain`. See
+[`chunk-47-institutional-custody.md`](./chunk-47-institutional-custody.md).
+Do not create `packages/custody-v2`, `packages/blockchain-custody`,
+`packages/institutional-custody-v2`, or `packages/hsm-security-v2`.
+The evaluator returns `mustStop: false`.
