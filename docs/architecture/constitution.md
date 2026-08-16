@@ -104,8 +104,9 @@ Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
 `IMPLEMENTED` at `packages/personal-data-vault`. Consent is
 `IMPLEMENTED` at `packages/consent`. Privacy Clean Room is
 `IMPLEMENTED` at `packages/clean-room`. SunRey Coin is `IMPLEMENTED`
-at `packages/sunrey-coin`. SunRey Exchange and SunRey Chain remain
-reserved and unimplemented.
+at `packages/sunrey-coin`. SunRey Chain is `IMPLEMENTED` at
+`packages/sunrey-chain`. SunRey Exchange remains reserved and
+unimplemented.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage).
@@ -669,7 +670,7 @@ phase is absent.
 | SUNREY COIN | IMPLEMENTED | `packages/sunrey-coin` |
 | SUNREY INFORMATION MARKET | IMPLEMENTED | `packages/information-market` |
 | SUNREY EXCHANGE | PLANNED | `packages/sunrey-exchange` |
-| SUNREY CHAIN | PLANNED | `packages/sunrey-chain` |
+| SUNREY CHAIN | IMPLEMENTED | `packages/sunrey-chain` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
@@ -697,6 +698,14 @@ foundation at `packages/information-market`. Public brand is
 or SunRey Chain here. Do not create `packages/pyramid-data-exchange`,
 `packages/data-exchange`, `packages/sunrey-data-exchange`,
 `packages/personal-oracle`, or a second data-market package.
+
+Chunk 28 implements the SunRey Chain foundation at
+`packages/sunrey-chain`. Simulation trust layer only. The canonical
+ledger remains the financial source of truth. Do not invent a ticker.
+Do not connect a live RPC, mainnet, or testnet. Do not implement
+SunRey Exchange matching. Do not create `packages/sunrey-chain-v2`,
+`packages/blockchain`, `packages/reyn-chain`,
+`packages/on-chain-ledger`, or `packages/crypto-chain`.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

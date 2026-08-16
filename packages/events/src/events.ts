@@ -787,6 +787,37 @@ export type OracleAttestationIssuedV1 = VersionedEvent<'OracleAttestationIssued'
 export type OracleAttestationExpiredV1 = VersionedEvent<'OracleAttestationExpired', 1, InformationMarketAuditPayload>;
 export type ProofOfContributionCreatedV1 = VersionedEvent<'ProofOfContributionCreated', 1, InformationMarketAuditPayload>;
 
+export type SunReyChainAuditPayload = {
+  readonly intentId?: string;
+  readonly operationId?: string;
+  readonly recordType?: string;
+  readonly correlationId?: string;
+  readonly outcome?: string;
+  readonly status?: string;
+  readonly reason?: string;
+};
+
+export type SunReyChainIntentCreatedV1 = VersionedEvent<'SunReyChainIntentCreated', 1, SunReyChainAuditPayload>;
+export type SunReyChainOperationSubmittedV1 = VersionedEvent<
+  'SunReyChainOperationSubmitted',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainOperationUnknownV1 = VersionedEvent<'SunReyChainOperationUnknown', 1, SunReyChainAuditPayload>;
+export type SunReyChainOperationFinalizedV1 = VersionedEvent<'SunReyChainOperationFinalized', 1, SunReyChainAuditPayload>;
+export type SunReyChainAnchorRecordedV1 = VersionedEvent<'SunReyChainAnchorRecorded', 1, SunReyChainAuditPayload>;
+export type SunReyChainAnchorReorgObservedV1 = VersionedEvent<
+  'SunReyChainAnchorReorgObserved',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainReconciliationMismatchV1 = VersionedEvent<
+  'SunReyChainReconciliationMismatch',
+  1,
+  SunReyChainAuditPayload
+>;
+export type SunReyChainHealthDegradedV1 = VersionedEvent<'SunReyChainHealthDegraded', 1, SunReyChainAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1134,7 +1165,15 @@ export type DomainEvent =
   | InformationMarketRequestClosedV1
   | OracleAttestationIssuedV1
   | OracleAttestationExpiredV1
-  | ProofOfContributionCreatedV1;
+  | ProofOfContributionCreatedV1
+  | SunReyChainIntentCreatedV1
+  | SunReyChainOperationSubmittedV1
+  | SunReyChainOperationUnknownV1
+  | SunReyChainOperationFinalizedV1
+  | SunReyChainAnchorRecordedV1
+  | SunReyChainAnchorReorgObservedV1
+  | SunReyChainReconciliationMismatchV1
+  | SunReyChainHealthDegradedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

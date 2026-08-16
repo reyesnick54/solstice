@@ -41,6 +41,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'sunrey_coin',
   'information_market',
   'oracle',
+  'sunrey_chain',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -259,6 +260,14 @@ export const EVENT_TYPE_NAMES = [
   'OracleAttestationIssued',
   'OracleAttestationExpired',
   'ProofOfContributionCreated',
+  'SunReyChainIntentCreated',
+  'SunReyChainOperationSubmitted',
+  'SunReyChainOperationUnknown',
+  'SunReyChainOperationFinalized',
+  'SunReyChainAnchorRecorded',
+  'SunReyChainAnchorReorgObserved',
+  'SunReyChainReconciliationMismatch',
+  'SunReyChainHealthDegraded',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -465,6 +474,14 @@ export const EVENT_SCHEMA_REFS = {
   InformationMarketCompensationPending: 'solstice.information_market.compensation.pending/1',
   InformationMarketCompensationSettled: 'solstice.information_market.compensation.settled/1',
   InformationMarketRequestClosed: 'solstice.information_market.request.closed/1',
+  SunReyChainIntentCreated: 'solstice.sunrey_chain.intent.created/1',
+  SunReyChainOperationSubmitted: 'solstice.sunrey_chain.operation.submitted/1',
+  SunReyChainOperationUnknown: 'solstice.sunrey_chain.operation.unknown/1',
+  SunReyChainOperationFinalized: 'solstice.sunrey_chain.operation.finalized/1',
+  SunReyChainAnchorRecorded: 'solstice.sunrey_chain.anchor.recorded/1',
+  SunReyChainAnchorReorgObserved: 'solstice.sunrey_chain.anchor.reorg_observed/1',
+  SunReyChainReconciliationMismatch: 'solstice.sunrey_chain.reconciliation.mismatch/1',
+  SunReyChainHealthDegraded: 'solstice.sunrey_chain.health.degraded/1',
   OracleAttestationIssued: 'solstice.oracle.attestation.issued/1',
   OracleAttestationExpired: 'solstice.oracle.attestation.expired/1',
   ProofOfContributionCreated: 'solstice.information_market.proof_of_contribution.created/1',
@@ -677,6 +694,14 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   OracleAttestationIssued: 'oracle',
   OracleAttestationExpired: 'oracle',
   ProofOfContributionCreated: 'information_market',
+  SunReyChainIntentCreated: 'sunrey_chain',
+  SunReyChainOperationSubmitted: 'sunrey_chain',
+  SunReyChainOperationUnknown: 'sunrey_chain',
+  SunReyChainOperationFinalized: 'sunrey_chain',
+  SunReyChainAnchorRecorded: 'sunrey_chain',
+  SunReyChainAnchorReorgObserved: 'sunrey_chain',
+  SunReyChainReconciliationMismatch: 'sunrey_chain',
+  SunReyChainHealthDegraded: 'sunrey_chain',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

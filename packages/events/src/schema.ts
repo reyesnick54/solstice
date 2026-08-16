@@ -215,6 +215,14 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'OracleAttestationIssued', version: 1, status: 'current' },
   { eventType: 'OracleAttestationExpired', version: 1, status: 'current' },
   { eventType: 'ProofOfContributionCreated', version: 1, status: 'current' },
+  { eventType: 'SunReyChainIntentCreated', version: 1, status: 'current' },
+  { eventType: 'SunReyChainOperationSubmitted', version: 1, status: 'current' },
+  { eventType: 'SunReyChainOperationUnknown', version: 1, status: 'current' },
+  { eventType: 'SunReyChainOperationFinalized', version: 1, status: 'current' },
+  { eventType: 'SunReyChainAnchorRecorded', version: 1, status: 'current' },
+  { eventType: 'SunReyChainAnchorReorgObserved', version: 1, status: 'current' },
+  { eventType: 'SunReyChainReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'SunReyChainHealthDegraded', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

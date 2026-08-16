@@ -1,0 +1,26 @@
+{
+  "chunk": "CHUNK-28",
+  "title": "SunRey Chain Foundation — Trust, Provenance, Permission, Attestation, Policy, and Settlement Anchors",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin",
+    "information-market"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain. Simulation trust layer only. Canonical ledger remains the financial source of truth. Do not invent a ticker. Do not connect a live RPC, mainnet, or testnet. Do not implement SunRey Exchange matching. Do not create packages/sunrey-chain-v2, packages/blockchain, packages/reyn-chain, packages/on-chain-ledger, or packages/crypto-chain."
+}

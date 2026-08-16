@@ -50,6 +50,7 @@ Typed only. Arbitrary strings are not cryptographic authority.
 | `SERVICE_AUTHENTICATION` | HMAC-SHA256 | Service credentials |
 | `WEBHOOK_SIGNING` | HMAC-SHA256 | Outbound webhook MAC |
 | `PYRAMID_CUSTODY_FUTURE` | HMAC-SHA256 | Historical reserved purpose; no custody keys here. Reyn Coin custody keys are not implemented. |
+| `CHAIN_OPERATION_SIGNING` | HMAC-SHA256 | SunRey Chain simulation operation MAC. No raw chain keys in source or customer tables. |
 
 ## Algorithms
 

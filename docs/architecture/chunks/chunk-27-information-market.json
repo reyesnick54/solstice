@@ -24,5 +24,5 @@
     "clean-room",
     "sunrey-coin"
   ],
-  "notes": "IMPLEMENTED at packages/information-market. Public brand is SunRey Exchange. Historical reservation PYRAMID_DATA_EXCHANGE is migrated here. Personal Oracle is a module in this package. Sells permission, proof, and computation — not raw people-data. Do not implement the Exchange matching engine or SunRey Chain. Do not create packages/pyramid-data-exchange, packages/data-exchange, packages/sunrey-data-exchange, packages/personal-oracle, packages/information-market-v2, or packages/proof-of-contribution."
+  "notes": "IMPLEMENTED at packages/information-market. Public brand is SunRey Exchange. Historical reservation PYRAMID_DATA_EXCHANGE is migrated here. Personal Oracle is a module in this package. Sells permission, proof, and computation — not raw people-data. Do not implement the Exchange matching engine. SunRey Chain is owned by packages/sunrey-chain (CHUNK-28). Do not create packages/pyramid-data-exchange, packages/data-exchange, packages/sunrey-data-exchange, packages/personal-oracle, packages/information-market-v2, or packages/proof-of-contribution."
 }

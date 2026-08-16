@@ -366,6 +366,22 @@ describe('versioned SQL migrations', () => {
     assert.equal(/APY|APR|market_price|ticker_symbol/i.test(v022.sql), false);
   });
 
+  it('customer V024 persists SunRey Chain metadata without a second ledger or live network', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v024 = files.find((file) => file.version === 24);
+    assert.ok(v024);
+    assert.equal(v024.filename, 'V024__sunrey_chain.sql');
+    assert.match(v024.sql, /CREATE SCHEMA IF NOT EXISTS sunrey_chain/);
+    assert.match(v024.sql, /CREATE TABLE sunrey_chain.write_intent/);
+    assert.match(v024.sql, /CREATE TABLE sunrey_chain.operation/);
+    assert.match(v024.sql, /CREATE TABLE sunrey_chain.receipt/);
+    assert.match(v024.sql, /CREATE TABLE sunrey_chain.reconciliation/);
+    assert.match(v024.sql, /network_mode TEXT NOT NULL CHECK \(network_mode = 'SIMULATION'\)/);
+    assert.match(v024.sql, /GRANT USAGE ON SCHEMA sunrey_chain TO customer_app/);
+    assert.equal(/CREATE TABLE sunrey_chain\.journal/i.test(v024.sql), false);
+    assert.equal(/private_key TEXT|raw_pdv|plaintext_payload/i.test(v024.sql), false);
+  });
+
   it('customer V023 persists information-market metadata without raw PDV or a second ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v023 = files.find((file) => file.version === 23);

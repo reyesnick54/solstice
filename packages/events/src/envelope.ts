@@ -323,6 +323,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       ),
     };
   }
+  if (eventType.startsWith('SunReyChain')) {
+    return {
+      type: 'sunrey_chain',
+      id: String(body.operationId ?? body.intentId ?? body.correlationId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

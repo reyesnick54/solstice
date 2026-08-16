@@ -271,7 +271,8 @@
         "packages/personal-data-vault",
         "packages/consent",
         "packages/clean-room",
-        "packages/information-market"
+        "packages/information-market",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -848,6 +849,29 @@
         "@reyesnick54"
       ],
       "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation — not raw people-data. Personal Oracle is a module here. Do not implement the Exchange matching engine or SunRey Chain."
+    },
+    {
+      "id": "packages/sunrey-chain",
+      "npmName": "@solstice/sunrey-chain",
+      "path": "packages/sunrey-chain",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer. Simulation only. Not the financial source of truth. Canonical ledger remains authoritative. No live RPC, mainnet, or testnet."
     }
   ],
   "components": [
@@ -1919,8 +1943,7 @@
         "packages/crypto-ledger-v2",
         "packages/token-ledger",
         "packages/coin-engine-v2",
-        "packages/sunrey-exchange",
-        "packages/sunrey-chain"
+        "packages/sunrey-exchange"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1958,6 +1981,35 @@
         "@reyesnick54"
       ],
       "notes": "One information-market owner. Historical reservation was PYRAMID_DATA_EXCHANGE. Public brand is SunRey Exchange. Personal Oracle lives in this package. Not a matching engine, CLOB, or chain."
+    },
+    {
+      "id": "sunrey-chain",
+      "name": "SunRey Chain trust-layer foundation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/service.ts",
+      "publicInterface": "packages/sunrey-chain/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "SunReyChainService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-chain-v2",
+        "packages/blockchain",
+        "packages/reyn-chain",
+        "packages/on-chain-ledger",
+        "packages/crypto-chain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers."
     }
   ],
   "authorizedMutationPaths": [
@@ -2385,7 +2437,11 @@
     "packages/token-ledger",
     "packages/coin-engine-v2",
     "packages/sunrey-exchange",
-    "packages/sunrey-chain",
+    "packages/sunrey-chain-v2",
+    "packages/blockchain",
+    "packages/reyn-chain",
+    "packages/on-chain-ledger",
+    "packages/crypto-chain",
     "packages/pyramid-data-exchange",
     "packages/data-exchange",
     "packages/sunrey-data-exchange",
@@ -2642,7 +2698,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-coin",
       "protected": true,
-      "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange and SunRey Chain remain PLANNED."
+      "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange remains PLANNED. SunRey Chain is owned by packages/sunrey-chain."
     },
     {
       "id": "information-market",
@@ -2650,6 +2706,13 @@
       "owner": "packages/information-market",
       "protected": true,
       "notes": "Canonical Human Information Network marketplace foundation. Chunk 27. Public brand SunRey Exchange. Historical reservation PYRAMID_DATA_EXCHANGE."
+    },
+    {
+      "id": "sunrey-chain",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Canonical SunRey Chain trust-layer foundation. Chunk 28. Simulation only. Not the financial source of truth."
     }
   ],
   "boundedContexts": [
@@ -2884,12 +2947,12 @@
     },
     {
       "id": "SUNREY_CHAIN",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Reserved future SunRey Chain. Type-only unimplemented adapter may exist on the coin package. Do not implement wallets, addresses, keys, or a live chain in Chunk 26R."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",
