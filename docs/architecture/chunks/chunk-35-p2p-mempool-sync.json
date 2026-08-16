@@ -13,5 +13,5 @@
     "sunrey-local-node",
     "sunrey-p2p"
   ],
-  "notes": "STOPPED. Chunk 34 local deterministic node is not merged and sunrey-local-node is PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['sunrey-local-node', 'sunrey-p2p']. Do not implement P2P, mempool, or sync until the local node is IMPLEMENTED at packages/sunrey-chain. Do not begin Chunk 36. See docs/architecture/chunk-35-stop.md."
+  "notes": "STOPPED. Chunk 34 local deterministic node is not merged and sunrey-local-node is PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['sunrey-local-node', 'sunrey-p2p']. Do not implement P2P, mempool, or sync until the local node is IMPLEMENTED at packages/sunrey-chain. Chunk 36 is also stopped; see docs/architecture/chunk-36-stop.md."
 }

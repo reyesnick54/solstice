@@ -734,13 +734,25 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
+Chunk 36 (validator identity, registry, bonding, and validator-set
+lifecycle) is **stopped**. Chunk 35R is not merged. Capabilities
+`sunrey-local-node`, `sunrey-p2p`, and `sunrey-validators` remain
+`PLANNED` at owner `packages/sunrey-chain`.
+`evaluateChunkRequirements` returns `mustStop: true`. Stop record:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+`packages/validators`, `packages/staking`, `packages/validator-v2`,
+`packages/consensus-engine`, or `packages/tendermint`. Do not begin
+BFT voting. VALIDATOR REGISTRY, DEVELOPMENT VALIDATOR SET,
+PRODUCTION CONSENSUS, PUBLIC STAKING, and MAINNET remain not
+implemented.
 Chunk 35 (P2P / mempool / sync) is **stopped**. Chunk 34 is not
 merged and the local deterministic node is not `IMPLEMENTED`.
 Capabilities `sunrey-local-node` and `sunrey-p2p` remain `PLANNED`
 at owner `packages/sunrey-chain`. Stop record:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
-`packages/mempool`, or a second chain. Do not begin Chunk 36.
+`packages/mempool`, or a second chain. Do not begin Chunk 36
+implementation until Chunk 35R merges.
 P2P DEVELOPMENT NETWORK, PRODUCTION CONSENSUS, PUBLIC TESTNET,
 and MAINNET remain not implemented.
 Chunk 34 (sovereign node core) is **stopped** until Chunks 31–33

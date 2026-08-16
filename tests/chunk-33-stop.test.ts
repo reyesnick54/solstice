@@ -23,14 +23,17 @@ function architectureDocs(prefix: string): string[] {
 }
 
 describe('CHUNK-33 process-gate stop until Chunks 31 and 32 merge', () => {
-  it('stops because CHUNK-31 and CHUNK-32 are not merged', () => {
-    assert.deepEqual(chunkFiles('chunk-31-'), []);
-    assert.deepEqual(chunkFiles('chunk-32-'), []);
-    assert.deepEqual(architectureDocs('chunk-31-'), []);
-    assert.deepEqual(architectureDocs('chunk-32-'), []);
+  it('stops because the CryptoSuite implementation is not present', () => {
+    assert.deepEqual(chunkFiles('chunk-31-'), ['chunk-31-sunrey-blockchain.json']);
+    assert.deepEqual(chunkFiles('chunk-32-'), ['chunk-32-economic-state-protocol.json']);
+    assert.equal(existsSync(join(ARCH_DIR, 'chunk-31-sunrey-blockchain-production-architecture.md')), true);
+    assert.equal(existsSync(join(ARCH_DIR, 'chunk-32-stop.md')), true);
+    assert.equal(existsSync(join(ARCH_DIR, 'chunk-32-economic-state-protocol.md')), false);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-stop.md')), true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-post-quantum-security.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security')), false);
+    assert.ok(architectureDocs('chunk-31-').includes('chunk-31-sunrey-blockchain-production-architecture.md'));
+    assert.ok(architectureDocs('chunk-32-').includes('chunk-32-stop.md'));
   });
 
   it('does not create a competing cryptographic root', () => {

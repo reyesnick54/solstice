@@ -218,8 +218,10 @@ This document describes only what is implemented and tested in this tree.
   rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
   wallet, exchange, or live network. Canonical ledger remains
   authoritative. ADR-0015 remains PROPOSED.
-  Local deterministic node, P2P, mempool, and state sync are not
-  implemented. Chunk 35 stopped: `docs/architecture/chunk-35-stop.md`.
+  Local deterministic node, P2P, mempool, state sync, and
+  validator lifecycle are not implemented. Chunk 35 stopped:
+  `docs/architecture/chunk-35-stop.md`. Chunk 36 stopped:
+  `docs/architecture/chunk-36-stop.md`.
 - SunRey Blockchain production architecture freeze (Chunk 31):
   protocol ADR pack ADR-0016–ADR-0033, authority matrix, and
   machine-readable spec at
@@ -361,6 +363,14 @@ This document describes only what is implemented and tested in this tree.
   and `sunrey-p2p` are `PLANNED`. See
   `docs/architecture/chunk-35-stop.md`. This is not a public
   testnet, mainnet, or production consensus.
+- SunRey validator identity, registry, bonding, and validator-set
+  lifecycle (Chunk 36). **Stopped** because Chunk 35R is not
+  merged and `sunrey-local-node` / `sunrey-p2p` /
+  `sunrey-validators` remain `PLANNED`. See
+  `docs/architecture/chunk-36-stop.md`. No four-node development
+  validator set, no consensus signer, no slashing, no public
+  staking, no MoonRey issuance. ADR-0018 remains
+  `NOT_IMPLEMENTED`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

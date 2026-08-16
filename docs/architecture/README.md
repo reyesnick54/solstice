@@ -43,6 +43,9 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 36 stop](./chunk-36-stop.md) — validator registry / lifecycle
+  stopped until Chunk 35R and the local deterministic node are
+  IMPLEMENTED. Do not create `packages/validators`.
 - [Chunk 35 stop](./chunk-35-stop.md) — P2P / mempool / sync stopped
   until Chunk 34 local deterministic node is IMPLEMENTED
 - [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped

@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-36",
+  "title": "SunRey Validator Identity, Registry, Bonding Model and Validator-Set Lifecycle",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "sunrey-validators"
+  ],
+  "notes": "STOPPED. Chunk 35R is not merged. sunrey-local-node, sunrey-p2p, and sunrey-validators are PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['sunrey-local-node', 'sunrey-p2p', 'sunrey-validators']. Do not implement validator registry, bonding, signer-safety, or BFT voting until the local node and Chunk 35R P2P plane are IMPLEMENTED at packages/sunrey-chain. Do not create packages/validators, packages/staking, packages/validator-v2, packages/consensus-engine, or packages/tendermint. See docs/architecture/chunk-36-stop.md."
+}

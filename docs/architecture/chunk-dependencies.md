@@ -101,6 +101,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-local-node | PLANNED | packages/sunrey-chain |
 | sunrey-p2p | PLANNED | packages/sunrey-chain |
+| sunrey-validators | PLANNED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -286,7 +287,17 @@ node is not `IMPLEMENTED`. Capabilities `sunrey-local-node` and
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/libp2p`, `packages/mempool`, `packages/devnet`,
 `packages/gossip`, `packages/consensus`, or
-`packages/sunrey-consensus`. Do not begin Chunk 36.
+`packages/sunrey-consensus`. Do not begin Chunk 36
+implementation until Chunk 35R merges.
+Chunk 36 (validator identity, registry, bonding, and validator-set
+lifecycle) stopped because Chunk 35R is not merged and
+`sunrey-local-node` / `sunrey-p2p` / `sunrey-validators` are
+`PLANNED`. `evaluateChunkRequirements` returns `mustStop: true`.
+Stop record: [`chunk-36-stop.md`](./chunk-36-stop.md). Do not
+create `packages/validators`, `packages/staking`,
+`packages/validator-v2`, `packages/consensus-engine`, or
+`packages/tendermint`. Do not debit fiat journals, stake SunRey
+Coin, or issue MoonRey.
 Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
 Chunks 31–33 are not declared and have not merged. Latest green
 `main` is Chunk 30R. The CHUNK-34 declaration lists only existing
