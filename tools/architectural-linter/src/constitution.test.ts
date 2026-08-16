@@ -1071,7 +1071,7 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').owner, 'packages/sunrey-chain');
     assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-node').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PLANNED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(

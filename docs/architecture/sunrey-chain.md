@@ -49,11 +49,14 @@ See [`chunk-34-resume.md`](./chunk-34-resume.md) and
 [`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
 bonding / epoch lifecycle (Chunk 36) remains `PLANNED`. See
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
-`packages/sunrey-node`, `packages/sunrey-p2p`,
-`packages/validators`, or `packages/staking`. Production BFT is
-not implemented. See ADR-0015. The simulation foundation remains
-`PROPOSED`.
+[`chunk-36-stop.md`](./chunk-36-stop.md). A development
+Tendermint-class BFT engine (Chunk 37) lives at
+`packages/sunrey-chain/rust/crates/consensus`. See
+[`chunk-37-bft-consensus-core.md`](./chunk-37-bft-consensus-core.md).
+Do not create `packages/sunrey-node`, `packages/sunrey-p2p`,
+`packages/validators`, `packages/staking`, `packages/tendermint`,
+or `packages/consensus-engine`. Production BFT is not implemented.
+See ADR-0015. The simulation foundation remains `PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through
 ADR-0033) without implementing a production node. Canonical spec:
