@@ -247,6 +247,8 @@ Execution Authority rejection, signer-safety restart, epoch
 rotation/exit, integer BFT threshold) are **not** implemented.
 They belong to Chunk 36R after the node exists.
 
+Local unit CI on this stop: **508 pass, 0 fail**.
+
 ---
 
 ## I. CI note
@@ -255,8 +257,24 @@ There is no Rust tree and no Rust CI job. This stop does not add
 one. Full repository CI remains the existing seven-stage unit
 pipeline plus the separate persistence job.
 
+Local `npm run ci` on this stop (matches `scripts/ci.sh` / GitHub
+Actions unit-test stage order):
+
+```
+architectural invariants: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 508 pass, 0 fail
+  including: CHUNK-36 stops until Chunk 35R and the local node are IMPLEMENTED
+demo: ok (including sunrey-chain trust-layer demo; no validator CLI)
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
-`false`.
+`false`. Persistence integration is a separate GitHub Actions job
+and was not folded into this unit-test stage.
 
 ---
 
