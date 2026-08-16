@@ -185,9 +185,24 @@ asserts:
 
 ## F. Exact CI
 
-Local `npm run ci` on this stop branch is recorded after the
-branch is pushed. Baseline on clean `main` at `1f5da9a`
-(GitHub Actions run `31934926677`): **SUCCESS**.
+Local `npm run ci` on this stop branch: **ok**.
+
+```
+architectural invariants: ok
+extraction dry-run: ok (32 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 491 pass, 0 fail
+  including: CHUNK-32 stops because Chunk 31 protocol architecture is not canonical on main
+demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+Baseline on clean `main` at `1f5da9a` (GitHub Actions run
+`31934926677`): **SUCCESS**.
 
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
 `false`.
