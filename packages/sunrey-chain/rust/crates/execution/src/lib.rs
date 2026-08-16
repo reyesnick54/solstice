@@ -12,6 +12,7 @@ pub fn apply_transaction(view: &mut ChainView, tx: &SignedTransaction) -> Result
         TransactionFamily::EvidenceAnchor => apply_evidence_anchor(view, tx)?,
         TransactionFamily::NativeAsset => return Err(RejectReason::TransactionNotActivated),
         TransactionFamily::Identity => return Err(RejectReason::TransactionNotActivated),
+        TransactionFamily::Oracle => apply_oracle_anchor(view, tx)?,
     }
     Ok(())
 }
@@ -27,6 +28,17 @@ fn apply_system(view: &mut ChainView, tx: &SignedTransaction) -> Result<(), Reje
     let prefix = if payload.op == "NOTE" { NS_SYSTEM } else { NS_OBJECT };
     let key = ObjectStore::namespaced(prefix, payload.object_key.as_bytes());
     view.store.put(key, payload.object_value);
+    Ok(())
+}
+
+fn apply_oracle_anchor(view: &mut ChainView, tx: &SignedTransaction) -> Result<(), RejectReason> {
+    if tx.unsigned.payload.is_empty() || tx.unsigned.payload.len() > 4096 {
+        return Err(RejectReason::SizeExceeded);
+    }
+    let key = ObjectStore::namespaced(NS_OBJECT, b"oracle.observation");
+    let mut value = Vec::new();
+    value.extend_from_slice(&tx.unsigned.payload);
+    view.store.put(key, value);
     Ok(())
 }
 

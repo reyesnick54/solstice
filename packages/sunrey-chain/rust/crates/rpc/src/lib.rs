@@ -83,6 +83,10 @@ fn dispatch(
         }
         ("GET", "/status") | ("GET", "/chain") => status_json(node),
         ("GET", "/governance") => governance_json(node),
+        ("GET", "/oracle/providers") => oracle_providers(node),
+        ("GET", "/oracle/feeds") => oracle_feeds(node),
+        ("GET", "/oracle/disputes") => oracle_disputes(node),
+        ("GET", "/oracle/quality") => oracle_quality(node),
         ("GET", "/protocol/version") => protocol_json(node),
         ("POST", "/tx") => submit(node, body),
         ("POST", "/admin/produce-block") => produce(node),
@@ -92,6 +96,11 @@ fn dispatch(
         _ if path.starts_with("/block/id/") => block_by_id(node, &path["/block/id/".len()..]),
         _ if path.starts_with("/tx/") => tx_lookup(node, &path["/tx/".len()..]),
         _ if path.starts_with("/state/") => state_query(node, &path["/state/".len()..]),
+        _ if path.starts_with("/oracle/observation/") => {
+            oracle_observation(node, &path["/oracle/observation/".len()..])
+        }
+        _ if path.starts_with("/oracle/fact/") => oracle_fact(node, &path["/oracle/fact/".len()..]),
+        _ if path.starts_with("/oracle/facts") => oracle_facts(node, path),
         _ => ("404 Not Found", json!({"error": "NOT_FOUND"})),
     }
 }
@@ -100,6 +109,84 @@ fn status_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     match node.lock() {
         Ok(guard) => {
             ("200 OK", serde_json::to_value(guard.status()).unwrap_or(json!({"error": "ENCODE"})))
+        }
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_providers(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => (
+            "200 OK",
+            serde_json::to_value(&guard.oracle.providers).unwrap_or(json!({"error": "ENCODE"})),
+        ),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_feeds(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => (
+            "200 OK",
+            serde_json::to_value(&guard.oracle.feeds).unwrap_or(json!({"error": "ENCODE"})),
+        ),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_disputes(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => (
+            "200 OK",
+            serde_json::to_value(&guard.oracle.disputes).unwrap_or(json!({"error": "ENCODE"})),
+        ),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_quality(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(mut guard) => ("200 OK", serde_json::json!(guard.oracle.quality_report())),
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_observation(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => match guard.oracle.observations.get(id) {
+            Some(row) => {
+                ("200 OK", serde_json::to_value(row).unwrap_or(json!({"error": "ENCODE"})))
+            }
+            None => ("404 Not Found", json!({"error": "NOT_FOUND"})),
+        },
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_fact(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+    match node.lock() {
+        Ok(guard) => match guard.oracle.facts.get(id) {
+            Some(row) => {
+                ("200 OK", serde_json::to_value(row).unwrap_or(json!({"error": "ENCODE"})))
+            }
+            None => ("404 Not Found", json!({"error": "NOT_FOUND"})),
+        },
+        Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
+    }
+}
+
+fn oracle_facts(node: &Mutex<LocalNode>, path: &str) -> (&'static str, Value) {
+    let feed = path.split("feed=").nth(1).map(|raw| raw.split('&').next().unwrap_or(raw));
+    match node.lock() {
+        Ok(guard) => {
+            let rows: Vec<_> = guard
+                .oracle
+                .facts
+                .values()
+                .filter(|fact| feed.map(|id| fact.feed_id == id).unwrap_or(true))
+                .cloned()
+                .collect();
+            ("200 OK", serde_json::to_value(rows).unwrap_or(json!({"error": "ENCODE"})))
         }
         Err(_) => ("500 Internal Server Error", json!({"error": "NOT_READY"})),
     }

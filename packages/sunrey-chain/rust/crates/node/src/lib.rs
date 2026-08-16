@@ -11,6 +11,7 @@ use sunrey_crypto::{
 };
 use sunrey_execution::{apply_transaction, install_genesis_assets};
 use sunrey_governance::UpgradeManager;
+use sunrey_oracle::OracleEngine;
 use sunrey_protocol::{
     block_id, genesis_hash, hash_to_hex, transaction_id, transaction_root,
     unsigned_signature_payload, validate_block_header, BlockHeader, BlockResult, DomainHasher,
@@ -50,6 +51,7 @@ pub struct NodeStatus {
     pub ready: bool,
     pub protocol_version: u32,
     pub governance: serde_json::Value,
+    pub oracle: serde_json::Value,
 }
 
 pub struct LocalNode {
@@ -59,6 +61,7 @@ pub struct LocalNode {
     queue: VecDeque<QueuedTx>,
     pub metrics: NodeMetrics,
     pub governance: UpgradeManager,
+    pub oracle: OracleEngine,
 }
 
 struct QueuedTx {
@@ -94,6 +97,8 @@ impl LocalNode {
         store.persist_state_and_meta()?;
         let governance = UpgradeManager::load_or_init(data_dir)?;
         governance.persist(data_dir)?;
+        let oracle = OracleEngine::load_or_init(data_dir)?;
+        oracle.persist(data_dir)?;
         let node = Self {
             store,
             suite,
@@ -101,6 +106,7 @@ impl LocalNode {
             queue: VecDeque::new(),
             metrics: NodeMetrics::default(),
             governance,
+            oracle,
         };
         node.persist_queue()?;
         Ok(node)
@@ -120,6 +126,7 @@ impl LocalNode {
             "opened local development node"
         );
         let governance = UpgradeManager::load_or_init(&data_dir)?;
+        let oracle = OracleEngine::load_or_init(&data_dir)?;
         Ok(Self {
             store,
             suite,
@@ -127,6 +134,7 @@ impl LocalNode {
             queue,
             metrics: NodeMetrics::default(),
             governance,
+            oracle,
         })
     }
 
@@ -154,6 +162,7 @@ impl LocalNode {
             ready: true,
             protocol_version: self.governance.protocol_version,
             governance: self.governance.metrics_json(),
+            oracle: self.oracle.metrics_json(),
         }
     }
 
@@ -281,6 +290,11 @@ impl LocalNode {
                     return Err(RejectReason::StatelessInvalid);
                 }
             }
+            TransactionFamily::Oracle => {
+                if unsigned.payload.is_empty() || unsigned.payload.len() > 4096 {
+                    return Err(RejectReason::SizeExceeded);
+                }
+            }
             _ => return Err(RejectReason::TransactionNotActivated),
         }
         Ok(())
@@ -329,6 +343,11 @@ impl LocalNode {
         let cap = self.governance.capability();
         let commits = self.governance.activate_at(height, &cap)?;
         self.governance.persist(self.store.data_dir())?;
+        self.oracle.height = height;
+        self.oracle.now_unix = self.store.genesis.genesis_time_unix_ms / 1000
+            + height * self.store.genesis.block_interval_ms / 1000;
+        self.oracle.refresh_staleness();
+        self.oracle.persist(self.store.data_dir())?;
         let header = BlockHeader {
             version: BLOCK_VERSION_V1,
             network_id: self.store.genesis.network_id.clone(),

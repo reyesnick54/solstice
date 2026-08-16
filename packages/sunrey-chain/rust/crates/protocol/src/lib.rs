@@ -49,6 +49,7 @@ pub const DOMAIN_CRYPTO_POLICY: &str = "sunrey.cryptopolicy.v1";
 pub const DOMAIN_MODULES: &str = "sunrey.modules.v1";
 pub const DOMAIN_CODECS: &str = "sunrey.codecs.v1";
 pub const DOMAIN_GOVERNANCE: &str = "sunrey.gov.plan.v1";
+pub const DOMAIN_ORACLE: &str = "sunrey.oracle.v1";
 
 pub type Hash32 = [u8; HASH_SIZE];
 

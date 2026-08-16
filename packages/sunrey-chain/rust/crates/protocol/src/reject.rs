@@ -29,6 +29,7 @@ pub enum RejectReason {
     NotReady,
     IncompatibleProtocol,
     GovernanceRejected,
+    OracleRejected,
 }
 
 impl RejectReason {
@@ -60,6 +61,7 @@ impl RejectReason {
             Self::NotReady => "NOT_READY",
             Self::IncompatibleProtocol => "INCOMPATIBLE_PROTOCOL",
             Self::GovernanceRejected => "GOVERNANCE_REJECTED",
+            Self::OracleRejected => "ORACLE_REJECTED",
         }
     }
 }

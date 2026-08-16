@@ -60,10 +60,13 @@ Chunk 39 implements simulation accountability. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Chunk 40 implements development protocol governance at
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Chunk 43 implements the sovereign oracle network at
+[`chunk-43-oracle-network.md`](./chunk-43-oracle-network.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/governance`,
-or `packages/sunrey-governance`. Production BFT is
+`packages/sunrey-governance`, `packages/oracle`, or
+`packages/sunrey-oracle`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains
 `PROPOSED`.
 
