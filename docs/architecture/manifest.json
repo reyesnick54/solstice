@@ -2080,12 +2080,20 @@
         "packages/blockchain",
         "packages/reyn-chain",
         "packages/on-chain-ledger",
-        "packages/crypto-chain"
+        "packages/crypto-chain",
+        "packages/blockchain-node",
+        "packages/blockchain-protocol",
+        "packages/blockchain-network",
+        "packages/blockchain-consensus",
+        "packages/blockchain-runtime",
+        "packages/sunrey-node",
+        "packages/sunrey-blockchain",
+        "packages/moonrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers."
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Future consensus/runtime/storage/P2P are internal modules, not competing packages."
     },
     {
       "id": "sunrey-exchange",
@@ -2623,7 +2631,18 @@
     "packages/sunrey-exchange-v2",
     "packages/sunrey-coin-v2",
     "packages/crypto-custody",
-    "packages/wallet-risk-v2"
+    "packages/wallet-risk-v2",
+    "packages/blockchain-node",
+    "packages/blockchain-protocol",
+    "packages/blockchain-network",
+    "packages/blockchain-consensus",
+    "packages/blockchain-runtime",
+    "packages/sunrey-node",
+    "packages/sunrey-blockchain",
+    "packages/moonrey-chain",
+    "packages/consensus-engine",
+    "packages/tendermint",
+    "packages/hotstuff"
   ],
   "capabilities": [
     {
@@ -2886,7 +2905,57 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Canonical SunRey Chain trust-layer foundation. Chunk 28. Simulation only. Not the financial source of truth."
+      "notes": "Canonical SunRey Chain trust-layer foundation. Chunk 28. Simulation only. Not the financial source of truth. Chunk 31 production architecture is capability sunrey-blockchain-architecture."
+    },
+    {
+      "id": "sunrey-blockchain-architecture",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "adr": "ADR-0016",
+      "notes": "Chunk 31 production architecture freeze. Specification, ADRs, authority matrix, and tests only. Production node is not implemented. Mainnet remains disabled."
+    },
+    {
+      "id": "blockchain-node",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Future internal node module of packages/sunrey-chain. Not a workspace package or microservice."
+    },
+    {
+      "id": "blockchain-protocol",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Future internal protocol-codec module of packages/sunrey-chain. Not a workspace package."
+    },
+    {
+      "id": "blockchain-network",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Future internal P2P module of packages/sunrey-chain. Not a workspace package."
+    },
+    {
+      "id": "blockchain-consensus",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Future internal ConsensusEngine module. Tendermint-family direction. Not implemented. Not a workspace package."
+    },
+    {
+      "id": "blockchain-runtime",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Future internal execution module. Native handlers first. No EVM. Not a workspace package."
+    },
+    {
+      "id": "moonrey-coin",
+      "status": "PLANNED",
+      "owner": null,
+      "protected": true,
+      "notes": "Distinct native asset from SunRey Coin. Public ticker NOT_ASSIGNED. No package in Chunk 31. Not a second fiat ledger."
     },
     {
       "id": "sunrey-exchange",
@@ -3156,7 +3225,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Production node is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",

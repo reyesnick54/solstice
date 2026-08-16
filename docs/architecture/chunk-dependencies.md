@@ -96,6 +96,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-coin | IMPLEMENTED | packages/sunrey-coin |
 | information-market | IMPLEMENTED | packages/information-market |
 | sunrey-chain | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-blockchain-architecture | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-coin | PLANNED | none |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -272,6 +274,18 @@ is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
 `mustStop: false`. Do not create `packages/exchange-compliance-v2`,
 `packages/travel-rule-v2`, `packages/crypto-aml`,
 `packages/surveillance-v2`, or `packages/custody-ledger`.
+
+Chunk 31 freezes the SunRey Blockchain production architecture at
+the existing owner `packages/sunrey-chain`. Capability
+`sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
+only). Production node capabilities `blockchain-node`,
+`blockchain-consensus`, and `blockchain-runtime` remain `PLANNED`
+internal modules. MoonRey Coin remains `PLANNED` and distinct.
+The evaluator returns `mustStop: false` for CHUNK-31. Do not
+create `packages/blockchain-node`, `packages/sunrey-blockchain`,
+or `packages/moonrey-coin`. Do not start Chunk 32 in the Chunk 31
+change set.
+
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder
@@ -287,3 +301,14 @@ the sequential merge gate. Do not create `packages/quantum-security`,
 `packages/crypto-v2`, or `packages/pqc-core`. Resume only as
 Chunk 33R after Chunks 31 and 32 land. See
 [`chunk-33-stop.md`](./chunk-33-stop.md).
+Chunk 32 (canonical SunRey transaction and economic-state protocol)
+stops on a process gate: Chunk 31 is not merged and its encoding /
+protocol architecture is not canonical on `main`. Listed
+capabilities including `sunrey-chain` are `IMPLEMENTED`, so
+`evaluateChunkRequirements` returns `mustStop: false`. That is not
+permission to invent Chunk 31 ADRs, a consensus codec, or protocol
+semantics. Stop record:
+[`chunk-32-stop.md`](./chunk-32-stop.md). Do not create
+`packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
+`packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
+Do not begin Chunk 33 or Chunk 34 from this stop.
