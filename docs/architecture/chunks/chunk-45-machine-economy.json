@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-45",
+  "title": "SunRey Machine Economic Identity and Machine-to-Machine Commerce",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "crypto-suite-registry",
+    "sunrey-validators",
+    "sunrey-protocol-governance",
+    "sunrey-machine-economy"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/machine-economy. Controller-bound MachineEconomicIdentity, explicit capabilities, integer spending/resource mandates, bilateral matching port (not a second exchange), native-asset escrow via lock port, oracle-backed delivery proofs, deterministic settlement, revocation, and CryptoSuite key rotation. Machines cannot validate, govern, issue Execution Authority, or issue MoonRey. evaluateChunkRequirements returns mustStop: false. Do not create packages/machine-economy, packages/machine-identity, or packages/moonrey-coin."
+}

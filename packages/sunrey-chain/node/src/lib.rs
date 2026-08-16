@@ -19,6 +19,7 @@ pub mod evidence_pool;
 pub mod fork;
 pub mod handshake;
 pub mod identity;
+pub mod machine;
 pub mod mempool;
 pub mod messages;
 pub mod metrics;

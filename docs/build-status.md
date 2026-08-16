@@ -410,6 +410,11 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-protocol-governance` is `IMPLEMENTED`. Height-activated
   `UpgradePlan`. No governance token. Production governance is
   not implemented. ADR-0028 is implemented for development.
+- SunRey machine economic identity and commerce (Chunk 45) is
+  **development-only** at `packages/sunrey-chain/src/machine-economy`.
+  Capability `sunrey-machine-economy` is `IMPLEMENTED`. Machines
+  are controller-bound and capability-limited. They cannot
+  validate, govern, or issue MoonRey.
 - SunRey oracle network (Chunk 43) is **development-only** at
   `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
   `IMPLEMENTED`. Signed observations become time-bounded

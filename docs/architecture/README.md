@@ -56,6 +56,10 @@
   — equivocation evidence, jail, tombstone, simulation penalties
 - [Chunk 40 protocol governance](./chunk-40-protocol-governance.md) —
   height-activated UpgradePlan. No governance token.
+- [Chunk 45 machine economy](./chunk-45-machine-economy.md) —
+  controller-bound machine identity and commerce.
+  [Identity model](./machine-economic-identity.md).
+  [Commerce protocol](./machine-commerce-protocol.md).
 - [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
   signed observations and VerifiedEconomicFacts. Not money.
 - [Oracle economic fact spec](./oracle-economic-fact-spec.md)

@@ -981,6 +981,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
   });
 
+  it('CHUNK-45 implements machine economic identity on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-machine-economy').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-machine-economy').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-machine-economy').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-45',
+    );
+    assert.ok(declared, 'CHUNK-45 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-45-machine-economy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/machine-economic-identity.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/machine-commerce-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/machine-key-compromise.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/machine-commerce-development.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/machine-economy/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-economy')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-identity')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
   it('CHUNK-44 implements productive capacity and MoonRey issuance on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').status, 'IMPLEMENTED');

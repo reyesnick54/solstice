@@ -104,6 +104,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-machine-economy | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-issuance-engine | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
@@ -305,6 +306,11 @@ Chunk 40 implements development protocol governance at
 `packages/sunrey-chain`. Capability `sunrey-protocol-governance`
 is `IMPLEMENTED`. See
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Chunk 45 implements machine economic identity and commerce at
+`packages/sunrey-chain/src/machine-economy`. Capability
+`sunrey-machine-economy` is `IMPLEMENTED`. See
+[`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
+Do not create `packages/machine-economy` or a second exchange.
 Chunk 43 implements the sovereign oracle network at
 `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
 `IMPLEMENTED`. See
