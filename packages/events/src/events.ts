@@ -727,6 +727,66 @@ export type SunReyCoinReconciliationMismatchV1 = VersionedEvent<
   SunReyCoinAuditPayload
 >;
 
+export type InformationMarketAuditPayload = {
+  readonly requestId?: string;
+  readonly requesterId?: string;
+  readonly opportunityId?: string;
+  readonly contributionId?: string;
+  readonly consentId?: string;
+  readonly receiptId?: string;
+  readonly attestationId?: string;
+  readonly claimType?: string;
+  readonly subjectRef?: string;
+  readonly purposeRef?: string;
+  readonly productType?: string;
+  readonly realization?: string;
+  readonly rawDataIncluded?: boolean;
+};
+
+export type InformationMarketRequestPublishedV1 = VersionedEvent<
+  'InformationMarketRequestPublished',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketOpportunityOfferedV1 = VersionedEvent<
+  'InformationMarketOpportunityOffered',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketOpportunityAcceptedV1 = VersionedEvent<
+  'InformationMarketOpportunityAccepted',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketContributionAuthorizedV1 = VersionedEvent<
+  'InformationMarketContributionAuthorized',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketContributionCompletedV1 = VersionedEvent<
+  'InformationMarketContributionCompleted',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketCompensationPendingV1 = VersionedEvent<
+  'InformationMarketCompensationPending',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketCompensationSettledV1 = VersionedEvent<
+  'InformationMarketCompensationSettled',
+  1,
+  InformationMarketAuditPayload
+>;
+export type InformationMarketRequestClosedV1 = VersionedEvent<
+  'InformationMarketRequestClosed',
+  1,
+  InformationMarketAuditPayload
+>;
+export type OracleAttestationIssuedV1 = VersionedEvent<'OracleAttestationIssued', 1, InformationMarketAuditPayload>;
+export type OracleAttestationExpiredV1 = VersionedEvent<'OracleAttestationExpired', 1, InformationMarketAuditPayload>;
+export type ProofOfContributionCreatedV1 = VersionedEvent<'ProofOfContributionCreated', 1, InformationMarketAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1063,7 +1123,18 @@ export type DomainEvent =
   | SunReyCoinTransferCompletedV1
   | SunReyCoinBurnedV1
   | SunReyCoinSupplyReconciledV1
-  | SunReyCoinReconciliationMismatchV1;
+  | SunReyCoinReconciliationMismatchV1
+  | InformationMarketRequestPublishedV1
+  | InformationMarketOpportunityOfferedV1
+  | InformationMarketOpportunityAcceptedV1
+  | InformationMarketContributionAuthorizedV1
+  | InformationMarketContributionCompletedV1
+  | InformationMarketCompensationPendingV1
+  | InformationMarketCompensationSettledV1
+  | InformationMarketRequestClosedV1
+  | OracleAttestationIssuedV1
+  | OracleAttestationExpiredV1
+  | ProofOfContributionCreatedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

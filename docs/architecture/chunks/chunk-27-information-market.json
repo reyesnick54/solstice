@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-27",
+  "title": "Human Information Network Marketplace Foundation — Opportunities, Metadata Matching, Canonical Consent, Purpose Firewall, Clean Room Compute, Proof of Contribution, and Kernel-Gated Settlement",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "ledger",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "persistence",
+    "security",
+    "identity",
+    "personal-economic-graph",
+    "personal-economic-value-engine",
+    "regulatory-digital-twin",
+    "personal-data-vault",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "sunrey-coin"
+  ],
+  "notes": "IMPLEMENTED at packages/information-market. Public brand is SunRey Exchange. Historical reservation PYRAMID_DATA_EXCHANGE is migrated here. Personal Oracle is a module in this package. Sells permission, proof, and computation — not raw people-data. Do not implement the Exchange matching engine or SunRey Chain. Do not create packages/pyramid-data-exchange, packages/data-exchange, packages/sunrey-data-exchange, packages/personal-oracle, packages/information-market-v2, or packages/proof-of-contribution."
+}

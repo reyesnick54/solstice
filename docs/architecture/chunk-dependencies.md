@@ -230,6 +230,16 @@ reservations are now `SUNREY_COIN`, `SUNREY_EXCHANGE`, and
 `packages/sunrey-ledger`, `packages/reyn-ledger`,
 `packages/token-ledger`, `packages/crypto-ledger-v2`, or invent a
 public ticker. Do not implement SunRey Exchange or SunRey Chain.
+
+Chunk 27 implements the reserved SUNREY_INFORMATION_MARKET bounded
+context at `packages/information-market`. Capability
+`information-market` is `IMPLEMENTED`. Historical reservation
+`PYRAMID_DATA_EXCHANGE` is migrated here. Public brand is SunRey
+Exchange. Personal Oracle is a module in this package. Do not
+create `packages/pyramid-data-exchange`, `packages/data-exchange`,
+`packages/sunrey-data-exchange`, `packages/personal-oracle`,
+`packages/information-market-v2`, or `packages/proof-of-contribution`.
+Do not implement the Exchange matching engine or SunRey Chain.
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

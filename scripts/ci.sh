@@ -35,6 +35,7 @@ npm run demo:mesh
 npm run demo:consent
 npm run demo:clean-room
 npm run demo:sunrey-coin
+npm run demo:information-market
 
 echo "==> typecheck"
 npm run typecheck

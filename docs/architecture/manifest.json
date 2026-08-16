@@ -270,7 +270,8 @@
         "packages/strategy-lab",
         "packages/personal-data-vault",
         "packages/consent",
-        "packages/clean-room"
+        "packages/clean-room",
+        "packages/information-market"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -816,6 +817,37 @@
         "@reyesnick54"
       ],
       "notes": "Canonical SunRey Coin simulation economic ledger. Extends the existing Ledger with AssetQuantity. No second ledger. No public ticker. No SunRey Exchange or SunRey Chain. Agents cannot mint. Simulation only."
+    },
+    {
+      "id": "packages/information-market",
+      "npmName": "@solstice/information-market",
+      "path": "packages/information-market",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/security",
+        "packages/identity",
+        "packages/evidence",
+        "packages/events",
+        "packages/permissions",
+        "packages/kernel",
+        "packages/ledger",
+        "packages/consent",
+        "packages/clean-room",
+        "packages/sunrey-coin",
+        "packages/platform"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation — not raw people-data. Personal Oracle is a module here. Do not implement the Exchange matching engine or SunRey Chain."
     }
   ],
   "components": [
@@ -1894,6 +1926,38 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Coin owner. Journals stay on the canonical Ledger. AssetQuantity lives in packages/money. Do not invent a ticker. Do not implement Exchange or Chain here."
+    },
+    {
+      "id": "information-market",
+      "name": "Human Information Network marketplace foundation",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/service.ts",
+      "publicInterface": "packages/information-market/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "InformationMarketService",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/pyramid-data-exchange",
+        "packages/data-exchange",
+        "packages/sunrey-data-exchange",
+        "packages/personal-oracle",
+        "packages/information-market-v2",
+        "packages/proof-of-contribution",
+        "packages/human-information-network",
+        "packages/data-marketplace"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One information-market owner. Historical reservation was PYRAMID_DATA_EXCHANGE. Public brand is SunRey Exchange. Personal Oracle lives in this package. Not a matching engine, CLOB, or chain."
     }
   ],
   "authorizedMutationPaths": [
@@ -2321,7 +2385,15 @@
     "packages/token-ledger",
     "packages/coin-engine-v2",
     "packages/sunrey-exchange",
-    "packages/sunrey-chain"
+    "packages/sunrey-chain",
+    "packages/pyramid-data-exchange",
+    "packages/data-exchange",
+    "packages/sunrey-data-exchange",
+    "packages/personal-oracle",
+    "packages/information-market-v2",
+    "packages/proof-of-contribution",
+    "packages/human-information-network",
+    "packages/data-marketplace"
   ],
   "capabilities": [
     {
@@ -2571,6 +2643,13 @@
       "owner": "packages/sunrey-coin",
       "protected": true,
       "notes": "Canonical SunRey Coin simulation economic ledger. Chunk 26R. Extends the existing Ledger. No public ticker. SunRey Exchange and SunRey Chain remain PLANNED."
+    },
+    {
+      "id": "information-market",
+      "status": "IMPLEMENTED",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Canonical Human Information Network marketplace foundation. Chunk 27. Public brand SunRey Exchange. Historical reservation PYRAMID_DATA_EXCHANGE."
     }
   ],
   "boundedContexts": [
@@ -2813,13 +2892,13 @@
       "notes": "Reserved future SunRey Chain. Type-only unimplemented adapter may exist on the coin package. Do not implement wallets, addresses, keys, or a live chain in Chunk 26R."
     },
     {
-      "id": "PYRAMID_DATA_EXCHANGE",
-      "status": "PLANNED",
+      "id": "SUNREY_INFORMATION_MARKET",
+      "status": "IMPLEMENTED",
       "reservedPaths": [
-        "packages/pyramid-data-exchange"
+        "packages/information-market"
       ],
       "protected": true,
-      "notes": "Historical reservation. Naming remains unresolved. Do not implement a marketplace or invent a public ticker."
+      "notes": "Canonical Human Information Network marketplace at packages/information-market. Historical reservation was PYRAMID_DATA_EXCHANGE. Public brand is SunRey Exchange. Personal Oracle is a module in this package. Do not create a second data-market package or a SunRey Data Exchange consumer product."
     },
     {
       "id": "MARKET_SURVEILLANCE",

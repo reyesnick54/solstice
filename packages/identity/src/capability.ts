@@ -55,6 +55,8 @@ export const IDENTITY_CAPABILITIES = [
   'CLEAN_ROOM_OPERATE',
   'SUNREY_COIN_VIEW',
   'SUNREY_COIN_OPERATE_REQUEST',
+  'INFORMATION_MARKET_VIEW',
+  'INFORMATION_MARKET_OPERATE',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -134,6 +136,8 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   CLEAN_ROOM_OPERATE: [],
   SUNREY_COIN_VIEW: [],
   SUNREY_COIN_OPERATE_REQUEST: ['ISSUE_SUNREY_COIN', 'TRANSFER_SUNREY_COIN', 'BURN_SUNREY_COIN'],
+  INFORMATION_MARKET_VIEW: [],
+  INFORMATION_MARKET_OPERATE: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -236,6 +240,7 @@ export function deriveCapabilities(facts: CapabilityDerivationFacts): readonly I
     granted.add('CONSENT_GRANT_OWN');
     granted.add('CONSENT_REVOKE_OWN');
     granted.add('SUNREY_COIN_VIEW');
+    granted.add('INFORMATION_MARKET_VIEW');
   }
 
   const kycFresh = facts.kyc !== null && kycIsFresh(facts.kyc, facts.now);
