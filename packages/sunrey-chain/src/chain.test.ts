@@ -109,7 +109,6 @@ describe('sunrey chain', () => {
       jurisdictionCell: 'GB:SIM',
       correlationId: 'corr-1',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.error.message);
     }
@@ -140,7 +139,6 @@ describe('sunrey chain', () => {
       jurisdictionCell: 'GB:SIM',
       correlationId: 'corr-unknown',
     });
-    assert.equal(unknownIntent.ok, true);
     if (!unknownIntent.ok) {
       throw new Error(unknownIntent.error.message);
     }
@@ -174,12 +172,10 @@ describe('sunrey chain', () => {
       jurisdictionCell: 'GB:SIM',
       correlationId: 'corr-settle',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.error.message);
     }
     const submitted = chain.submit(created.value.intentId);
-    assert.equal(submitted.ok, true);
     if (!submitted.ok) {
       throw new Error(submitted.error.message);
     }
