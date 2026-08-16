@@ -329,10 +329,6 @@ describe('Chunk 49 universal economic exchange', () => {
       delivered: 400n,
     });
     assert.equal(settled.outcome, 'OK');
-    const again = h.exchange.universal.productive
-      ? null
-      : h.exchange.contracts().capacity[0];
-    void again;
     const second = h.exchange.universal.settleCapacityDelivery({
       contractId: cleared.value.contract.contractId,
       delivered: 400n,

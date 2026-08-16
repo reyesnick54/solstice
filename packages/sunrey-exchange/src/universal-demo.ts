@@ -33,6 +33,7 @@ import {
 import { SimulationNativeDvpAdapter } from './native-settlement.ts';
 import { exchangePrice } from './price.ts';
 import { SunReyExchangeService } from './service.ts';
+import type { ExchangeAccount } from './types.ts';
 import { moonreyPrice } from './universal.ts';
 
 const NOW = asUtcInstant('2026-08-16T16:30:00.000Z');
@@ -119,7 +120,7 @@ async function main(): Promise<void> {
 
   coin.seed(sellerCust.id, AssetQuantity.fromScaledUnits(10_000_000n, SUNREY_COIN_ASSET_ID), 'custody_demo_s');
   fiat.seed('cash_demo_b', Money.fromMinorUnits(50_00n, 'USD'));
-  const sellerAccount = requireOk(
+  const sellerAccount = requireOk<ExchangeAccount>(
     exchange.openExchangeAccount({
       actorId: 'actor_demo_seller',
       customerId: sellerCust.id,
@@ -130,7 +131,7 @@ async function main(): Promise<void> {
     }),
     'open seller',
   );
-  const buyerAccount = requireOk(
+  const buyerAccount = requireOk<ExchangeAccount>(
     exchange.openExchangeAccount({
       actorId: 'actor_demo_buyer',
       customerId: buyerCust.id,

@@ -285,9 +285,10 @@ export class UniversalExchangeEngine {
 
     if (instrument.marketFamily === 'HUMAN_INFORMATION_RIGHT' && input.side === 'SELL') {
       const listed = this.consent.check({
-        consentRef: input.consentRef ?? instrument.extension.kind === 'HUMAN_INFORMATION_RIGHT'
-          ? instrument.extension.consentPolicyRef
-          : '',
+        consentRef: input.consentRef ??
+          (instrument.extension.kind === 'HUMAN_INFORMATION_RIGHT'
+            ? instrument.extension.consentPolicyRef
+            : ''),
         subjectOrCohortRef: instrument.underlyingReference,
         purpose: input.purpose ?? '',
         recipientClass: input.recipientClass ?? '',
@@ -1008,20 +1009,6 @@ export class UniversalExchangeEngine {
       {
         marketId,
         family: family === 'INFORMATION_ASSET' ? 'INFORMATION_ASSET' : family,
-        orders: [...this.store.universalOrders.values()]
-          .filter((order) => order.marketId === marketId)
-          .map((order) => ({
-            orderId: order.orderId,
-            accountId: order.exchangeAccountId,
-            beneficialParticipantId: order.exchangeAccountId,
-            marketId: order.marketId,
-            side: order.side,
-            quantity: order.quantity,
-            remaining: order.remaining,
-            status: order.status,
-            createdAt: now,
-          })),
-        trades: [],
         deniedAccessCount: this.store.deniedAccess.length,
         unauthorizedPurposeAttempts: this.store.unauthorizedPurpose,
         consentMismatches: this.store.consentMismatches,
@@ -1186,6 +1173,8 @@ export class UniversalExchangeEngine {
     );
     const bids = open.filter((order) => order.side === 'BUY' && order.limitPrice).sort((a, b) => comparePrice(b.limitPrice!, a.limitPrice!));
     const asks = open.filter((order) => order.side === 'SELL' && order.limitPrice).sort((a, b) => comparePrice(a.limitPrice!, b.limitPrice!));
+    const gpu = this.instrument('instrument:gpu-second');
+    const capacity = this.instrument('instrument:manufacturing-capacity');
     this.store.familyMarketData.set(
       marketId,
       familyMarketData({
@@ -1204,12 +1193,9 @@ export class UniversalExchangeEngine {
         contractAvailability: asks.reduce((sum, order) => sum + order.remaining, 0n),
         purposeCategory: family === 'HUMAN_INFORMATION_RIGHT' ? 'AGGREGATED_RESEARCH' : null,
         authorizedOutputType: family === 'HUMAN_INFORMATION_RIGHT' ? 'AGGREGATE_ONLY' : null,
-        deliveryWindow: this.instrument('instrument:gpu-second')?.extension.kind === 'INTELLIGENCE_COMPUTE'
-          ? this.instrument('instrument:gpu-second')!.extension.deliveryWindow
-          : null,
-        deliveryPeriod: this.instrument('instrument:manufacturing-capacity')?.extension.kind === 'PRODUCTIVE_CAPACITY'
-          ? this.instrument('instrument:manufacturing-capacity')!.extension.deliveryWindow
-          : null,
+        deliveryWindow: gpu?.extension.kind === 'INTELLIGENCE_COMPUTE' ? gpu.extension.deliveryWindow : null,
+        deliveryPeriod:
+          capacity?.extension.kind === 'PRODUCTIVE_CAPACITY' ? capacity.extension.deliveryWindow : null,
       }),
     );
   }

@@ -1,6 +1,7 @@
 import { sha256Hex } from '../../security/src/hash.ts';
 import { asInstrumentId, asRightId, type InstrumentId, type ListingVersion } from './ids.ts';
 import type {
+  EligibilityPolicy,
   ExchangeInstrument,
   FamilyExtension,
   InformationUseRightInstrument,
@@ -45,7 +46,7 @@ export function validateInstrumentSchema(instrument: ExchangeInstrument): readon
     reasons.push('MISSING_UNIT');
   }
   if (instrument.extension.kind === 'HUMAN_INFORMATION_RIGHT') {
-    if (instrument.extension.rawExportAllowed !== false && instrument.rightsPolicy.rawExportAllowed !== false) {
+    if (instrument.rightsPolicy.rawExportAllowed !== false) {
       reasons.push('RAW_EXPORT_MUST_BE_FALSE');
     }
     if (!instrument.extension.cleanRoomRequirement || !instrument.rightsPolicy.cleanRoomRequired) {
@@ -159,7 +160,7 @@ export function digitalAssetInstrument(input: {
   readonly settlementAssets: readonly string[];
   readonly listingVersion?: number;
 }): ExchangeInstrument {
-  return Object.freeze({
+  const instrument: ExchangeInstrument = {
     instrumentId: asInstrumentId(input.instrumentId),
     marketFamily: 'DIGITAL_ASSET',
     issuerOrProvider: input.issuer,
@@ -174,7 +175,7 @@ export function digitalAssetInstrument(input: {
       requireVerifiedAccount: false,
       machineAllowed: true,
       humanOnly: false,
-    },
+    } satisfies EligibilityPolicy,
     rightsPolicy: {
       requiresConsent: false,
       requiresPurpose: false,
@@ -205,7 +206,8 @@ export function digitalAssetInstrument(input: {
       listingGovernanceRequired: true,
       autoListForbidden: true,
     } satisfies FamilyExtension,
-  });
+  };
+  return Object.freeze(instrument);
 }
 
 export function informationRightInstrument(input: {
@@ -218,7 +220,7 @@ export function informationRightInstrument(input: {
   readonly consentPolicyRef: string;
   readonly settlementAsset: string;
 }): ExchangeInstrument {
-  return Object.freeze({
+  const instrument: ExchangeInstrument = {
     instrumentId: asInstrumentId(input.instrumentId),
     marketFamily: 'HUMAN_INFORMATION_RIGHT',
     issuerOrProvider: input.issuer,
@@ -233,7 +235,7 @@ export function informationRightInstrument(input: {
       requireVerifiedAccount: true,
       machineAllowed: false,
       humanOnly: true,
-    },
+    } satisfies EligibilityPolicy,
     rightsPolicy: {
       requiresConsent: true,
       requiresPurpose: true,
@@ -273,7 +275,8 @@ export function informationRightInstrument(input: {
       settlementAsset: input.settlementAsset,
       consentPolicyRef: input.consentPolicyRef,
     },
-  });
+  };
+  return Object.freeze(instrument);
 }
 
 export function computeInstrument(input: {
@@ -285,7 +288,7 @@ export function computeInstrument(input: {
   readonly settlementAsset: string;
   readonly region?: string;
 }): ExchangeInstrument {
-  return Object.freeze({
+  const instrument: ExchangeInstrument = {
     instrumentId: asInstrumentId(input.instrumentId),
     marketFamily: 'INTELLIGENCE_COMPUTE',
     issuerOrProvider: input.provider,
@@ -300,7 +303,7 @@ export function computeInstrument(input: {
       requireVerifiedAccount: false,
       machineAllowed: true,
       humanOnly: false,
-    },
+    } satisfies EligibilityPolicy,
     rightsPolicy: {
       requiresConsent: false,
       requiresPurpose: false,
@@ -343,7 +346,8 @@ export function computeInstrument(input: {
       },
       settlementAsset: input.settlementAsset,
     },
-  });
+  };
+  return Object.freeze(instrument);
 }
 
 export function capacityInstrument(input: {
@@ -356,7 +360,7 @@ export function capacityInstrument(input: {
   readonly settlementAsset: string;
   readonly location: string;
 }): ExchangeInstrument {
-  return Object.freeze({
+  const instrument: ExchangeInstrument = {
     instrumentId: asInstrumentId(input.instrumentId),
     marketFamily: 'PRODUCTIVE_CAPACITY',
     issuerOrProvider: input.provider,
@@ -371,7 +375,7 @@ export function capacityInstrument(input: {
       requireVerifiedAccount: true,
       machineAllowed: true,
       humanOnly: false,
-    },
+    } satisfies EligibilityPolicy,
     rightsPolicy: {
       requiresConsent: false,
       requiresPurpose: false,
@@ -407,5 +411,6 @@ export function capacityInstrument(input: {
       rightsReference: `rights:${input.productiveObject}`,
       tokenizesTitle: false,
     },
-  });
+  };
+  return Object.freeze(instrument);
 }
