@@ -250,8 +250,24 @@ Constitution and stop tests assert:
 
 ## T. Exact CI
 
-Recorded after the stop branch is committed. `ENVIRONMENT` remains
-`simulation`. Every `LIVE_*` flag remains `false`.
+Local `npm run ci` on this stop branch: **ok**.
+
+```
+architectural invariants: ok
+extraction dry-run: ok (32 package(s))
+architectural-linter: ok
+deployment posture: ok (simulation-only, live flags off)
+kernel gating: passed (71 registered paths, all Kernel-authorized)
+tests: 494 pass, 0 fail
+  including: CHUNK-33 stops because Chunks 31 and 32 are not merged
+demo: ok
+typecheck: ok
+secret scan: ok
+CI pipeline: ok
+```
+
+`ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains
+`false`.
 
 ---
 
