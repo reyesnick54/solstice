@@ -150,7 +150,7 @@
     "packages/staking",
     "packages/validator-v2",
     "packages/machine-economy",
-    "packages/machine-identity"
+    "packages/machine-identity",
     "packages/fees",
     "packages/sunrey-fees",
     "packages/gas"
