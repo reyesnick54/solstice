@@ -2080,7 +2080,16 @@
         "packages/blockchain",
         "packages/reyn-chain",
         "packages/on-chain-ledger",
-        "packages/crypto-chain"
+        "packages/crypto-chain",
+        "packages/sunrey-node",
+        "packages/sunrey-p2p",
+        "packages/p2p",
+        "packages/libp2p",
+        "packages/mempool",
+        "packages/devnet",
+        "packages/gossip",
+        "packages/consensus",
+        "packages/sunrey-consensus"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -2623,7 +2632,16 @@
     "packages/sunrey-exchange-v2",
     "packages/sunrey-coin-v2",
     "packages/crypto-custody",
-    "packages/wallet-risk-v2"
+    "packages/wallet-risk-v2",
+    "packages/sunrey-node",
+    "packages/sunrey-p2p",
+    "packages/p2p",
+    "packages/libp2p",
+    "packages/mempool",
+    "packages/devnet",
+    "packages/gossip",
+    "packages/consensus",
+    "packages/sunrey-consensus"
   ],
   "capabilities": [
     {
@@ -2908,6 +2926,20 @@
       "owner": "packages/market-surveillance",
       "protected": true,
       "notes": "Canonical market-surveillance layer. Chunk 30R. Alerts and proposals only. Cannot freeze balances or issue Execution Authority. Reuse canonical compliance cases. Do not create surveillance-v2."
+    },
+    {
+      "id": "sunrey-local-node",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 34 local deterministic development node and development block producer. Not implemented. Owner remains packages/sunrey-chain. Do not create packages/sunrey-node or packages/blockchain."
+    },
+    {
+      "id": "sunrey-p2p",
+      "status": "PLANNED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 35 P2P development network, mempool, and state sync. Stopped until sunrey-local-node is IMPLEMENTED. Owner remains packages/sunrey-chain. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Production consensus is Chunk 36+."
     }
   ],
   "boundedContexts": [
@@ -3156,7 +3188,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Local deterministic node (Chunk 34) and P2P/mempool/sync (Chunk 35) remain PLANNED. See chunk-35-stop.md."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",

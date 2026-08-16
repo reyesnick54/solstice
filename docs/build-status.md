@@ -218,6 +218,8 @@ This document describes only what is implemented and tested in this tree.
   rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
   wallet, exchange, or live network. Canonical ledger remains
   authoritative. ADR-0015 remains PROPOSED.
+  Local deterministic node, P2P, mempool, and state sync are not
+  implemented. Chunk 35 stopped: `docs/architecture/chunk-35-stop.md`.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -320,6 +322,12 @@ This document describes only what is implemented and tested in this tree.
   Digital Twin are IMPLEMENTED as non-executing intelligence layers.
   Live rails, live issuing, live wallet/SoftPOS certification, live
   treasury, and live securities trading remain later.
+- SunRey local deterministic node (Chunk 34) and P2P development
+  network / mempool / state sync (Chunk 35). Chunk 35 **stopped**
+  because Chunk 34 is not merged. Capabilities `sunrey-local-node`
+  and `sunrey-p2p` are `PLANNED`. See
+  `docs/architecture/chunk-35-stop.md`. This is not a public
+  testnet, mainnet, or production consensus.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
 
 ## Phase 1 exit criterion

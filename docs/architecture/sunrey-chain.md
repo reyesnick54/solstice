@@ -40,3 +40,9 @@ Engineering finality thresholds are an `ENGINEERING_FIXTURE` with
 finality policy.
 
 See ADR-0015. The chain-technology choice remains `PROPOSED`.
+
+A local deterministic development node (Chunk 34) and a P2P
+development network / mempool / state sync (Chunk 35) are **not**
+implemented. Those capabilities are reserved `PLANNED` on this
+package. See [`chunk-35-stop.md`](./chunk-35-stop.md). Do not
+create `packages/sunrey-node` or `packages/sunrey-p2p`.

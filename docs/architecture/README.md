@@ -38,5 +38,7 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 35 stop](./chunk-35-stop.md) — P2P / mempool / sync stopped
+  until Chunk 34 local deterministic node is IMPLEMENTED
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
