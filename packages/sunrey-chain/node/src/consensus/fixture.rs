@@ -51,7 +51,7 @@ impl FourValidatorFixture {
             validators,
             set,
             genesis,
-            params: ConsensusParams::fast_dev(),
+            params: ConsensusParams::four_validator_p2p(),
         }
     }
 

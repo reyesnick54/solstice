@@ -435,6 +435,18 @@ impl DevelopmentNode {
         self.metrics
             .sync_lag
             .store(max_peer.saturating_sub(height), Ordering::Relaxed);
+        if let Some(consensus) = &self.consensus {
+            let session_count = self.sessions.lock().len() as u64;
+            let reactor = consensus.lock();
+            reactor
+                .metrics
+                .consensus_peer_count
+                .store(session_count, Ordering::Relaxed);
+            reactor.metrics.validator_sync_lag.store(
+                max_peer.saturating_sub(reactor.engine.store.finalized_height()),
+                Ordering::Relaxed,
+            );
+        }
     }
 
     pub async fn start(self: &Arc<Self>) -> NodeResult<SocketAddr> {
@@ -488,12 +500,8 @@ impl DevelopmentNode {
                     }
                 }
             });
-            let actions = self
-                .consensus
-                .as_ref()
-                .map(|c| c.lock().start())
-                .unwrap_or_default();
-            NodeHandle::from_node(self).apply_actions(actions);
+            // Consensus starts after the first authenticated peer so the
+            // opening proposal is not broadcast into an empty mesh.
         }
         self.emit(NodeEvent::Ready {
             name: self.config.name.clone(),
@@ -843,6 +851,18 @@ impl NodeHandle {
                 notify: Arc::clone(&notify),
             },
         );
+        if let Some(consensus) = &self.consensus {
+            let actions = {
+                let mut reactor = consensus.lock();
+                if reactor.engine.started {
+                    Vec::new()
+                } else {
+                    reactor.start()
+                }
+            };
+            self.apply_actions(actions);
+        }
+        self.share_consensus_state(session.node_id);
 
         if session.height > self.chain.lock().height() {
             let from = self.chain.lock().height() + 1;
@@ -1139,6 +1159,66 @@ impl NodeHandle {
         Ok(())
     }
 
+    fn share_consensus_state(&self, to: NodeId) {
+        let Some(consensus) = &self.consensus else {
+            return;
+        };
+        let reactor = consensus.lock();
+        let engine = &reactor.engine;
+        self.send_to(
+            to,
+            Channel::Consensus,
+            NetMessage::Consensus(ConsensusMessage::RoundStateHint {
+                height: engine.height,
+                round: engine.round,
+                step: engine.step,
+            }),
+        );
+        if let Some(proposal) = engine.proposals.get(&(engine.height, engine.round)) {
+            if let Some(block) = engine.blocks.get(&proposal.block_id) {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::ProposalResponse {
+                        proposal: proposal.clone(),
+                        block: block.clone(),
+                    }),
+                );
+            }
+        }
+        if let Some(set) = engine.prevotes.get(&(engine.height, engine.round)) {
+            for vote in set.votes() {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::Prevote(vote.clone())),
+                );
+            }
+        }
+        if let Some(set) = engine.precommits.get(&(engine.height, engine.round)) {
+            for vote in set.votes() {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::Precommit(vote.clone())),
+                );
+            }
+        }
+        let height = engine.store.finalized_height();
+        if height > 0 {
+            if let (Some(certificate), Some(block)) = (
+                engine.store.commit_certificate(height).cloned(),
+                engine.store.finalized_block(height).cloned(),
+            ) {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::CommitResponse { certificate, block }),
+                );
+            }
+        }
+    }
+
     fn on_consensus_message(&self, from: NodeId, message: ConsensusMessage) {
         let Some(consensus) = &self.consensus else {
             return;
@@ -1157,10 +1237,17 @@ impl NodeHandle {
             peer_id: Some(from),
             peer_is_validator: set.validators.iter().any(|_| true),
         };
-        let actions = {
+        let (actions, gossip) = {
             let mut reactor = consensus.lock();
-            reactor.ingest(&ctx, message)
+            reactor.ingest(&ctx, message.clone())
         };
+        if gossip {
+            self.broadcast(
+                Channel::Consensus,
+                NetMessage::Consensus(message),
+                Some(from),
+            );
+        }
         self.apply_actions(actions);
         let more = {
             let mut reactor = consensus.lock();

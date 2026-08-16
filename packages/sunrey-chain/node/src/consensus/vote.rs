@@ -264,6 +264,8 @@ impl CommitCertificate {
         set: &ValidatorSet,
         votes: Vec<SignedVote>,
     ) -> Result<Self, RejectReason> {
+        let mut votes = votes;
+        votes.sort_by(|a, b| a.validator_id.0.cmp(&b.validator_id.0));
         let cert = Self {
             network_id,
             chain_id,
@@ -323,8 +325,10 @@ impl CommitCertificate {
         w.bytes32(&self.block_id);
         w.bytes32(&self.state_root);
         w.bytes32(&self.validator_set_hash);
-        w.u32(self.votes.len() as u32);
-        for vote in &self.votes {
+        let mut votes = self.votes.clone();
+        votes.sort_by(|a, b| a.validator_id.0.cmp(&b.validator_id.0));
+        w.u32(votes.len() as u32);
+        for vote in &votes {
             w.bytes(&vote.encode()?)?;
         }
         Ok(w.finish())

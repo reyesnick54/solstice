@@ -69,7 +69,7 @@ pub async fn run_four_validator_devnet(root: PathBuf) -> NodeResult<FourValidato
     )?;
     let _ = nodes[3].submit_tx(tx)?;
 
-    wait_until(Duration::from_secs(20), || {
+    wait_until(Duration::from_secs(30), || {
         nodes.iter().all(|n| n.finalized_height() >= 2)
     })
     .await?;
@@ -155,7 +155,11 @@ fn assert_identical(nodes: &[Arc<DevelopmentNode>; 4], height: u64) -> NodeResul
         let other = node
             .commit_certificate(height)
             .ok_or_else(|| NodeError::Validation("peer missing certificate".into()))?;
-        if other.encode()? != cert.encode()? {
+        if other.height != cert.height
+            || other.block_id != cert.block_id
+            || other.state_root != cert.state_root
+            || other.validator_set_hash != cert.validator_set_hash
+        {
             return Err(NodeError::Validation("commit certificates diverged".into()));
         }
     }

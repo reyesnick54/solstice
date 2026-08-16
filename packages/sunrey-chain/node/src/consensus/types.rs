@@ -135,6 +135,16 @@ impl ConsensusParams {
         }
     }
 
+    pub fn four_validator_p2p() -> Self {
+        Self {
+            timeout_propose_ms: 200,
+            timeout_prevote_ms: 200,
+            timeout_precommit_ms: 200,
+            timeout_delta_ms: 50,
+            ..Self::default()
+        }
+    }
+
     pub fn timeout(&self, kind: TimeoutKind, round: Round) -> Duration {
         let base = match kind {
             TimeoutKind::Propose => self.timeout_propose_ms,

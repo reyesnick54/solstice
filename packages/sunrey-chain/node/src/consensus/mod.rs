@@ -53,6 +53,9 @@ mod tests {
         let mut net = SimNet::four_honest(&fixture);
         net.start_all();
         net.step_until_height(3, 400).expect("healthy finality");
+        for _ in 0..20 {
+            net.step();
+        }
         assert!(net.identical_finality(1));
         assert!(net.identical_finality(2));
         assert!(net.identical_finality(3));

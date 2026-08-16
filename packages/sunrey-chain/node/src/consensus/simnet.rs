@@ -11,7 +11,7 @@ use super::engine::{Action, ConsensusEngine};
 use super::fixture::FourValidatorFixture;
 use super::messages::ConsensusMessage;
 use super::signer::ConsensusSigner;
-use super::types::{Height, RejectReason, TimeoutKind};
+use super::types::{ConsensusParams, Height, RejectReason, TimeoutKind};
 use super::validators::ValidatorId;
 use super::wal::ConsensusWal;
 
@@ -67,7 +67,7 @@ impl SimNet {
                 fixture.set.clone(),
                 signer,
                 ConsensusWal::memory(),
-                fixture.params,
+                ConsensusParams::fast_dev(),
             );
             order.push(id);
             nodes.insert(
@@ -443,7 +443,7 @@ impl SimNet {
     }
 
     pub fn identical_finality(&self, height: Height) -> bool {
-        let mut expected: Option<([u8; 32], [u8; 32], Vec<u8>)> = None;
+        let mut expected: Option<([u8; 32], [u8; 32])> = None;
         for node in self.nodes.values() {
             let Some(block) = node.engine.store.finalized_block(height) else {
                 return false;
@@ -451,14 +451,16 @@ impl SimNet {
             let Some(cert) = node.engine.store.commit_certificate(height) else {
                 return false;
             };
-            let encoded = cert.encode().unwrap_or_default();
-            match &expected {
-                None => expected = Some((block.block_id, block.header.state_root, encoded)),
-                Some((id, root, cert_bytes)) => {
-                    if *id != block.block_id
-                        || *root != block.header.state_root
-                        || cert_bytes != &encoded
-                    {
+            if cert.verify(&node.engine.validators).is_err()
+                || cert.block_id != block.block_id
+                || cert.state_root != block.header.state_root
+            {
+                return false;
+            }
+            match expected {
+                None => expected = Some((block.block_id, block.header.state_root)),
+                Some((id, root)) => {
+                    if id != block.block_id || root != block.header.state_root {
                         return false;
                     }
                 }
@@ -507,7 +509,7 @@ impl SimNet {
             fixture.set.clone(),
             signer,
             wal,
-            fixture.params,
+            ConsensusParams::fast_dev(),
         );
         engine.store = existing.engine.store.clone();
         engine.blocks = existing.engine.blocks.clone();

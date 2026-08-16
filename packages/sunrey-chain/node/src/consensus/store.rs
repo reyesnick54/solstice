@@ -29,7 +29,6 @@ impl FinalizedStore {
                     "conflicting finalized block at height".into(),
                 ));
             }
-            return Ok(());
         }
         self.records.insert(height, record);
         Ok(())

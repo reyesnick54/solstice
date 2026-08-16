@@ -691,7 +691,10 @@ impl ConsensusEngine {
     }
 
     fn finish_commit(&mut self, block: Block, cert: CommitCertificate) -> Vec<Action> {
-        if self.store.finalized_block(cert.height).is_some() {
+        if let Some(existing) = self.store.commit_certificate(cert.height).cloned() {
+            if existing.block_id == cert.block_id {
+                self.merge_certificate(cert);
+            }
             return Vec::new();
         }
         if let Err(err) = self.remember_final(block.clone(), cert.clone()) {
@@ -721,6 +724,36 @@ impl ConsensusEngine {
         ];
         actions.extend(self.enter_round(next, 0));
         actions
+    }
+
+    fn merge_certificate(&mut self, cert: CommitCertificate) {
+        let Some(existing) = self.store.commit_certificate(cert.height).cloned() else {
+            return;
+        };
+        if existing.block_id != cert.block_id {
+            return;
+        }
+        let mut votes = existing.votes;
+        for vote in cert.votes {
+            if !votes.iter().any(|v| v.validator_id == vote.validator_id) {
+                votes.push(vote);
+            }
+        }
+        votes.sort_by(|a, b| a.validator_id.0.cmp(&b.validator_id.0));
+        if let Ok(merged) = CommitCertificate::from_votes(
+            existing.network_id,
+            existing.chain_id,
+            existing.height,
+            existing.round.min(cert.round),
+            existing.block_id,
+            existing.state_root,
+            &self.validators,
+            votes,
+        ) {
+            if let Some(block) = self.store.finalized_block(merged.height).cloned() {
+                let _ = self.remember_final(block, merged);
+            }
+        }
     }
 
     fn remember_final(&mut self, block: Block, cert: CommitCertificate) -> NodeResult<()> {

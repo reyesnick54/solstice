@@ -33,22 +33,31 @@ impl ConsensusReactor {
     }
 
     pub fn start(&mut self) -> Vec<Action> {
-        self.engine.start()
+        let before = (self.engine.height, self.engine.round);
+        let actions = self.engine.start();
+        self.note_round(before);
+        actions
     }
 
     pub fn ingest(
         &mut self,
         ctx: &ConsensusAuthContext<'_>,
         message: ConsensusMessage,
-    ) -> Vec<Action> {
+    ) -> (Vec<Action>, bool) {
         if let Err(reason) = authenticate(ctx, &message) {
-            return self.reject(ctx.peer_id, reason);
+            return (self.reject(ctx.peer_id, reason), false);
         }
-        if let Some(vote) = vote_of(&message) {
-            let hash = vote.signed_hash();
-            if !self.seen.insert(hash) {
-                return Vec::new();
-            }
+        let hash = message
+            .encode()
+            .ok()
+            .map(|bytes| crate::crypto::sha256(&bytes))
+            .unwrap_or_else(|| {
+                vote_of(&message)
+                    .map(|v| v.signed_hash())
+                    .unwrap_or([0u8; 32])
+            });
+        if !self.seen.insert(hash) {
+            return (Vec::new(), false);
         }
         match self.buffer.push(
             self.engine.height,
@@ -56,9 +65,14 @@ impl ConsensusReactor {
             &self.engine.params,
             message,
         ) {
-            Ok(Some(message)) => self.engine.on_message(message),
-            Ok(None) => Vec::new(),
-            Err(reason) => self.reject(ctx.peer_id, reason),
+            Ok(Some(message)) => {
+                let before = (self.engine.height, self.engine.round);
+                let actions = self.engine.on_message(message);
+                self.note_round(before);
+                (actions, true)
+            }
+            Ok(None) => (Vec::new(), true),
+            Err(reason) => (self.reject(ctx.peer_id, reason), false),
         }
     }
 
@@ -68,7 +82,9 @@ impl ConsensusReactor {
             .drain_ready(self.engine.height, self.engine.round);
         let mut actions = Vec::new();
         for message in ready {
+            let before = (self.engine.height, self.engine.round);
             actions.extend(self.engine.on_message(message));
+            self.note_round(before);
         }
         actions
     }
@@ -79,11 +95,23 @@ impl ConsensusReactor {
         height: u64,
         round: u32,
     ) -> Vec<Action> {
-        self.engine.on_timeout(kind, height, round)
+        let before = (self.engine.height, self.engine.round);
+        let actions = self.engine.on_timeout(kind, height, round);
+        self.note_round(before);
+        actions
     }
 
     pub fn on_local_block(&mut self, block: Block) -> Vec<Action> {
-        self.engine.on_local_block(block)
+        let before = (self.engine.height, self.engine.round);
+        let actions = self.engine.on_local_block(block);
+        self.note_round(before);
+        actions
+    }
+
+    fn note_round(&self, before: (u64, u32)) {
+        if (self.engine.height, self.engine.round) != before {
+            self.metrics.round_changes.fetch_add(1, Ordering::Relaxed);
+        }
     }
 
     fn reject(&mut self, peer: Option<NodeId>, reason: RejectReason) -> Vec<Action> {
