@@ -45,6 +45,7 @@
     "demo:sunrey-chain": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/demo.ts",
     "demo:sunrey-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/local-node/demo.ts",
     "demo:sunrey-devnet": "cargo +stable run --manifest-path packages/sunrey-chain/node/Cargo.toml --bin sunrey-devnet",
+    "demo:sunrey-validator-devnet": "cargo +stable run --manifest-path packages/sunrey-chain/node/Cargo.toml --bin sunrey-validator-devnet",
     "test:sunrey-node": "cargo +stable fmt --check --manifest-path packages/sunrey-chain/node/Cargo.toml && cargo +stable clippy --manifest-path packages/sunrey-chain/node/Cargo.toml --all-targets -- -D warnings && cargo +stable test --manifest-path packages/sunrey-chain/node/Cargo.toml",
     "demo:sunrey-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/demo.ts",
     "demo:custody": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",

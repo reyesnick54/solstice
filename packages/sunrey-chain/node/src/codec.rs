@@ -12,7 +12,7 @@ pub const MAX_STRING_BYTES: usize = 4096;
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum Channel {
-    ConsensusReserved = 0,
+    Consensus = 0,
     BlockGossip = 1,
     TransactionGossip = 2,
     StateSync = 3,
@@ -22,7 +22,7 @@ pub enum Channel {
 impl Channel {
     pub fn from_u8(value: u8) -> NodeResult<Self> {
         match value {
-            0 => Ok(Self::ConsensusReserved),
+            0 => Ok(Self::Consensus),
             1 => Ok(Self::BlockGossip),
             2 => Ok(Self::TransactionGossip),
             3 => Ok(Self::StateSync),
@@ -33,10 +33,10 @@ impl Channel {
 
     pub fn priority(self) -> u8 {
         match self {
-            Self::ConsensusReserved => 0,
+            Self::Consensus => 0,
             Self::PeerControl => 1,
-            Self::BlockGossip => 2,
-            Self::StateSync => 3,
+            Self::StateSync => 2,
+            Self::BlockGossip => 3,
             Self::TransactionGossip => 4,
         }
     }

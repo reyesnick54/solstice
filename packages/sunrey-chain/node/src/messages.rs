@@ -1,5 +1,6 @@
 use crate::chain::{Block, Transaction};
 use crate::codec::{Reader, Writer};
+use crate::consensus::messages::ConsensusMessage;
 use crate::error::{NodeError, NodeResult};
 
 #[repr(u8)]
@@ -17,6 +18,7 @@ pub enum MessageType {
     BlockResponse = 22,
     SyncRequest = 30,
     SyncResponse = 31,
+    Consensus = 40,
 }
 
 impl MessageType {
@@ -34,11 +36,13 @@ impl MessageType {
             22 => Ok(Self::BlockResponse),
             30 => Ok(Self::SyncRequest),
             31 => Ok(Self::SyncResponse),
+            40 => Ok(Self::Consensus),
             _ => Err(NodeError::Codec(format!("unknown message type {value}"))),
         }
     }
 }
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NetMessage {
     Handshake(Vec<u8>),
@@ -53,6 +57,7 @@ pub enum NetMessage {
     BlockResponse { block: Block },
     SyncRequest { from_height: u64, to_height: u64 },
     SyncResponse { blocks: Vec<Block> },
+    Consensus(ConsensusMessage),
 }
 
 impl NetMessage {
@@ -70,6 +75,7 @@ impl NetMessage {
             Self::BlockResponse { .. } => MessageType::BlockResponse,
             Self::SyncRequest { .. } => MessageType::SyncRequest,
             Self::SyncResponse { .. } => MessageType::SyncResponse,
+            Self::Consensus(_) => MessageType::Consensus,
         }
     }
 
@@ -102,6 +108,7 @@ impl NetMessage {
                     w.bytes(&block.encode()?)?;
                 }
             }
+            Self::Consensus(message) => w.bytes(&message.encode()?)?,
         }
         Ok(w.finish())
     }
@@ -152,6 +159,7 @@ impl NetMessage {
                 }
                 Self::SyncResponse { blocks }
             }
+            MessageType::Consensus => Self::Consensus(ConsensusMessage::decode(&r.bytes()?)?),
         };
         r.finish()?;
         Ok(msg)

@@ -83,6 +83,10 @@ enum Command {
         #[command(subcommand)]
         command: ConsensusCommand,
     },
+    Validator {
+        #[command(subcommand)]
+        command: sunrey_validators::ValidatorCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -264,6 +268,9 @@ fn run_consensus(command: ConsensusCommand) -> Result<(), Box<dyn std::error::Er
                 }))?
             );
         }
+        ConsensusCommand::Validator { command } => {
+            println!("{}", sunrey_validators::run_validator_command(command)?);
+        }
         other => {
             let (data_dir, validator) = match &other {
                 ConsensusCommand::Status { data_dir, validator }
@@ -273,7 +280,7 @@ fn run_consensus(command: ConsensusCommand) -> Result<(), Box<dyn std::error::Er
                 | ConsensusCommand::WalStatus { data_dir, validator } => {
                     (data_dir.clone(), validator.clone())
                 }
-                ConsensusCommand::Harness => unreachable!(),
+                ConsensusCommand::Harness | ConsensusCommand::Validator { .. } => unreachable!(),
             };
             let engine = open_cli_engine(&data_dir, &validator)?;
             match other {
@@ -318,7 +325,7 @@ fn run_consensus(command: ConsensusCommand) -> Result<(), Box<dyn std::error::Er
                 ConsensusCommand::WalStatus { .. } => {
                     println!("{}", serde_json::to_string_pretty(&engine.wal_status())?);
                 }
-                ConsensusCommand::Harness => unreachable!(),
+                ConsensusCommand::Harness | ConsensusCommand::Validator { .. } => unreachable!(),
             }
         }
     }

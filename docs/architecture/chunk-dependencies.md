@@ -310,14 +310,19 @@ documentation-only stop is historical:
 `packages/sunrey-blockchain`, `packages/sunrey-node`,
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
 `packages/ledger-chain`, or `packages/web3-chain`. Do not replace
-`packages/sunrey-chain`. Production BFT remains unimplemented.
+`packages/sunrey-chain`. Production mainnet BFT remains unimplemented.
+Chunk 38 implements development networked BFT at
+`packages/sunrey-chain/node`. Capability `blockchain-consensus`
+is `IMPLEMENTED` for that development engine. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
 Chunk 31 freezes the SunRey Blockchain production architecture at
 the existing owner `packages/sunrey-chain`. Capability
 `sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
 only). Production node capabilities `blockchain-node` and
 `blockchain-runtime` remain `PLANNED` internal modules.
 `blockchain-consensus` is `IMPLEMENTED` as a development engine
-(Chunk 37); production consensus remains unimplemented. MoonRey Coin remains `PLANNED` and distinct.
+(Chunks 37–38); production consensus remains unimplemented. MoonRey
+Coin remains `PLANNED` and distinct.
 The evaluator returns `mustStop: false` for CHUNK-31. Do not
 create `packages/blockchain-node`, `packages/sunrey-blockchain`,
 or `packages/moonrey-coin`. Do not start Chunk 32 in the Chunk 31

@@ -35,7 +35,7 @@ describe('CHUNK-37 Tendermint-family BFT consensus core', () => {
     assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'blockchain-consensus').protected, true);
     assert.equal(evaluateCapability(manifest, 'blockchain-consensus').owner, 'packages/sunrey-chain');
-    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-37',
