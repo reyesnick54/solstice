@@ -99,6 +99,26 @@ export class Ed25519SignatureProvider implements SignatureProvider {
     });
   }
 
+  fromSeed(
+    seedHex: string,
+    purpose: KeyPurpose,
+    suiteId: CryptoSuiteId,
+    explicitKeyId: string,
+  ): SecurityResult<GeneratedKeyPair> {
+    const seed = Buffer.from(seedHex, 'hex');
+    if (seed.length !== ED25519_SECRET_KEY_BYTES) {
+      return securityErr('UNSUPPORTED_ALGORITHM', 'Ed25519 seed must be 32 bytes');
+    }
+    try {
+      const key = privateFromSeed(seed, seed);
+      const spki = createPublicKey(key).export({ type: 'spki', format: 'der' }) as Buffer;
+      const publicRaw = spki.subarray(spki.length - ED25519_PUBLIC_KEY_BYTES);
+      return this.importSeed(seedHex, publicRaw.toString('hex'), purpose, suiteId, explicitKeyId);
+    } catch {
+      return securityErr('PROVIDER_UNAVAILABLE', 'Ed25519 fromSeed failed');
+    }
+  }
+
   importSeed(
     seedHex: string,
     publicHex: string,

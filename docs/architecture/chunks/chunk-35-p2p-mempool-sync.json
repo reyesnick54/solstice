@@ -13,5 +13,5 @@
     "sunrey-local-node",
     "sunrey-p2p"
   ],
-  "notes": "IMPLEMENTED at packages/sunrey-chain/node by Chunk 35R after Chunk 34R local node. Historical documentation-only stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Quinn + rustls development transport. evaluateChunkRequirements returns mustStop: false. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Validator lifecycle is Chunk 36 and remains PLANNED. See chunk-36-stop.md."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/node by Chunk 35R after Chunk 34R local node. Historical documentation-only stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Quinn + rustls development transport. evaluateChunkRequirements returns mustStop: false. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Validator lifecycle is Chunk 36R and is IMPLEMENTED. See chunk-36-resume.md."
 }

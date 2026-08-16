@@ -75,6 +75,10 @@ enum Command {
         #[arg(long, default_value = "system-note")]
         name: String,
     },
+    Validator {
+        #[command(subcommand)]
+        command: sunrey_validators::ValidatorCommand,
+    },
 }
 
 fn main() {
@@ -179,6 +183,9 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
                 "verify=ok height={} app_hash={}",
                 node.store.meta.height, node.store.meta.app_hash
             );
+        }
+        Command::Validator { command } => {
+            println!("{}", sunrey_validators::run_validator_command(command)?);
         }
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;

@@ -223,7 +223,7 @@ This document describes only what is implemented and tested in this tree.
   implemented at `packages/sunrey-chain/node` (Chunk 35R).
   Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
   `docs/architecture/chunk-35-resume.md`. Validator lifecycle
-  (Chunk 36) remains `PLANNED`: `docs/architecture/chunk-36-stop.md`.
+  (Chunk 36R) is `IMPLEMENTED`: `docs/architecture/chunk-36-resume.md`.
   Production BFT is not implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
@@ -250,6 +250,16 @@ This document describes only what is implemented and tested in this tree.
   public network, and MoonRey issuance are not implemented.
   Historical stop: `docs/architecture/chunk-34-stop.md`. Resume:
   `docs/architecture/chunk-34-resume.md`.
+- SunRey validator control plane (Chunk 36R, `packages/sunrey-chain`):
+  versioned validator registry, deterministic lifecycle, integer
+  voting power, epoch-boundary set transitions, key-role
+  separation, CryptoSuite-routed consensus signer, durable
+  double-sign protection, equivocation evidence types, and a
+  four-validator development set. Capability `sunrey-validators`
+  is `IMPLEMENTED`. Historical stop:
+  `docs/architecture/chunk-36-stop.md`. Resume:
+  `docs/architecture/chunk-36-resume.md`. Not production BFT,
+  public staking, slashing, or MoonRey issuance.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -373,13 +383,16 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-35-stop.md`. Resume:
   `docs/architecture/chunk-35-resume.md`. This is not a public
   testnet, mainnet, or production consensus.
-- SunRey validator identity, registry, bonding, and validator-set
-  lifecycle (Chunk 36). **Stopped** / `PLANNED`. Chunks 32R–35R
-  are on `main`. Capability `sunrey-validators` remains `PLANNED`.
-  See `docs/architecture/chunk-36-stop.md`. No four-node
-  development validator set, no consensus signer, no slashing, no
-  public staking, no MoonRey issuance. ADR-0018 remains
-  `NOT_IMPLEMENTED`.
+- Production SunRey BFT consensus, public staking, slashing, or
+  MoonRey issuance. Chunk 36R implements the **development**
+  validator registry, lifecycle, integer voting power, epoch
+  transitions, CryptoSuite consensus signer port, and durable
+  signer safety at `packages/sunrey-chain`. Capability
+  `sunrey-validators` is `IMPLEMENTED`. Historical stop:
+  `docs/architecture/chunk-36-stop.md`. Resume:
+  `docs/architecture/chunk-36-resume.md`. ADR-0018 development
+  control plane is implemented; production validators and the
+  networked BFT engine remain not implemented.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

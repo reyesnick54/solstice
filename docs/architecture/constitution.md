@@ -736,14 +736,16 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
-Chunk 36 (validator identity, registry, bonding, and validator-set
-lifecycle) remains **stopped** / `PLANNED`. Capability
-`sunrey-validators` is `PLANNED` at owner `packages/sunrey-chain`.
-`evaluateChunkRequirements` returns `mustStop: true` and
-`missing: ['sunrey-validators']`. Stop record:
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+Chunk 36R implements the development validator registry, lifecycle,
+integer voting power, epoch-boundary set transitions, CryptoSuite
+consensus signer, and durable signer safety at
+`packages/sunrey-chain`. Capability `sunrey-validators` is
+`IMPLEMENTED` on that owner. `evaluateChunkRequirements` returns
+`mustStop: false`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Do not create
 `packages/validators`, `packages/staking`, or
-`packages/validator-v2`. Do not begin BFT voting.
+`packages/validator-v2`. Networked BFT voting is Chunk 37.
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that
