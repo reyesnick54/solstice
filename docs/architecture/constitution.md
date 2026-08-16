@@ -743,6 +743,13 @@ height-activated upgrades at `packages/sunrey-chain` and
 governance token. Do not create `packages/governance` or
 `packages/sunrey-governance`. Production governance is not
 implemented.
+Chunk 41 implements the dual native asset protocol for SunRey Coin
+and MoonRey Coin at `packages/sunrey-chain/rust/crates/native-assets`.
+Capability `sunrey-native-assets` is `IMPLEMENTED`. Public tickers
+remain `NOT_ASSIGNED`. Application SunRey Coin supply is not
+imported. Do not create `packages/moonrey-coin` or a competing
+chain. See
+[`chunk-41-dual-native-assets.md`](./chunk-41-dual-native-assets.md).
 
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite

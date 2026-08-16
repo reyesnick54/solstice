@@ -180,10 +180,14 @@ pub fn local_dev_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String
                 asset_id: "MOONREY_COIN".to_string(),
                 ticker_status: "NOT_ASSIGNED".to_string(),
                 genesis_supply: 0,
-                implemented: false,
+                implemented: true,
             },
         ],
-        activated_families: vec![TransactionFamily::System, TransactionFamily::EvidenceAnchor],
+        activated_families: vec![
+            TransactionFamily::System,
+            TransactionFamily::EvidenceAnchor,
+            TransactionFamily::NativeAsset,
+        ],
         production_network_enabled: false,
         environment: "simulation".to_string(),
     }

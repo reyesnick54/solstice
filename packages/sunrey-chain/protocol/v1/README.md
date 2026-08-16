@@ -10,7 +10,7 @@ Language-neutral contract for later Rust node code.
 | IDL | Protocol Buffers proto3 |
 | Hash | SHA-256 via `packages/security` (no new algorithm) |
 | Public tickers | `NOT_ASSIGNED` |
-| MoonRey issuance | unavailable |
+| MoonRey issuance | development faucet / authorized proof only; production economics later |
 
 Consensus hashes are computed from the deterministic protobuf bytes
 defined in ADR-0021 Addendum A. The JSON files under

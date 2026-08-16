@@ -22,8 +22,8 @@
     "sunrey.cryptopolicy.v1"
   ],
   "transactionFamilies": {
-    "activated": ["SYSTEM", "EVIDENCE_ANCHOR"],
-    "structuralOnly": ["NATIVE_ASSET"],
+    "activated": ["SYSTEM", "EVIDENCE_ANCHOR", "NATIVE_ASSET"],
+    "structuralOnly": [],
     "notActivated": ["IDENTITY"]
   },
   "envelope": [
@@ -54,6 +54,6 @@
   ],
   "nativeAssets": {
     "SUNREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0 },
-    "MOONREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0, "implemented": false }
+    "MOONREY_COIN": { "tickerStatus": "NOT_ASSIGNED", "genesisSupply": 0, "implemented": true }
   }
 }

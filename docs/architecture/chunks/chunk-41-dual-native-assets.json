@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-41",
+  "title": "SunRey Blockchain dual native asset protocol for SunRey Coin and MoonRey Coin",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "money",
+    "ledger",
+    "sunrey-coin",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "crypto-suite-registry",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "sunrey-validators",
+    "blockchain-consensus",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/rust/crates/native-assets and packages/sunrey-chain/node. SunRey Coin and MoonRey Coin are distinct protocol-native assets. Tickers remain NOT_ASSIGNED. Application supply is not imported. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-coin or a competing chain."
+}

@@ -132,3 +132,14 @@ export { SunReyChainService, type CreateIntentInput } from './service.ts';
 export * as protocol from './protocol/index.ts';
 export * as governance from './governance/index.ts';
 export * as validators from './validators/index.ts';
+export {
+  CURRENT_APPLICATION_AUTHORITY,
+  NATIVE_BLOCKCHAIN_AUTHORITY,
+  nativeAssetAuthorityBoundary,
+} from './native-assets/authority.ts';
+export {
+  assertMigrationNotExecuted,
+  developmentMigrationFixture,
+} from './native-assets/migration.ts';
+export type { AssetMigrationManifest } from './native-assets/migration.ts';
+export type { AssetAuthority, NativeAssetAuthorityBoundary } from './native-assets/authority.ts';

@@ -14,7 +14,9 @@ use crate::evidence::{
     evidence_root, verify_equivocation_evidence, EquivocationEvidence, EvidenceContext,
 };
 use crate::identity::unix_ms;
+use crate::native_assets::apply_payload;
 use crate::validators::{ValidatorRuntime, ValidatorSet};
+use sunrey_native_assets::NativeAssetLedger;
 
 pub const DEV_NETWORK_ID: &str = "net_sunrey_development";
 pub const DEV_CHAIN_ID: &str = "chn_sunrey_development";
@@ -338,6 +340,7 @@ pub struct ActorState {
 pub struct DevChain {
     pub genesis: Genesis,
     pub state: BTreeMap<String, ActorState>,
+    pub assets: NativeAssetLedger,
     pub blocks: Vec<Block>,
     pub validators: ValidatorRuntime,
     pub accountability: AccountabilityState,
@@ -353,6 +356,7 @@ impl DevChain {
         Self {
             genesis,
             state: BTreeMap::new(),
+            assets: NativeAssetLedger::development(),
             blocks: Vec::new(),
             validators,
             accountability: AccountabilityState::new(ValidatorAccountabilityPolicy::development()),
@@ -369,6 +373,7 @@ impl DevChain {
         let mut chain = Self {
             genesis,
             state: BTreeMap::new(),
+            assets: NativeAssetLedger::development(),
             blocks: Vec::new(),
             validators,
             accountability: AccountabilityState::new(ValidatorAccountabilityPolicy::development())
@@ -404,7 +409,7 @@ impl DevChain {
     }
 
     pub fn state_root(&self) -> [u8; 32] {
-        compute_state_root(&self.state)
+        compute_state_root(&self.state, &self.assets)
     }
 
     pub fn block_by_height(&self, height: u64) -> Option<&Block> {
@@ -456,11 +461,8 @@ impl DevChain {
 
     pub fn apply_tx(&mut self, tx: &Transaction) -> NodeResult<()> {
         self.validate_tx_stateful(tx)?;
-        let entry = self.state.entry(tx.actor_id.clone()).or_default();
-        entry.nonce = tx.nonce;
-        let mut acc = Vec::from(entry.data_root);
-        acc.extend_from_slice(&tx.payload);
-        entry.data_root = sha256(&acc);
+        let height = self.height() + 1;
+        apply_to_state(&mut self.state, &mut self.assets, tx, height, &self.genesis)?;
         Ok(())
     }
 
@@ -475,8 +477,10 @@ impl DevChain {
         time_ms: u64,
     ) -> NodeResult<Block> {
         let mut working = self.clone_state();
+        let mut working_assets = self.assets.clone();
         let mut accepted = Vec::new();
         let mut bytes = 0usize;
+        let next_height = self.height() + 1;
         for tx in txs {
             if accepted.len() >= MAX_BLOCK_TXS {
                 break;
@@ -485,7 +489,15 @@ impl DevChain {
             if bytes + encoded.len() > MAX_BLOCK_BYTES {
                 break;
             }
-            if apply_to_state(&mut working, &tx).is_ok() {
+            if apply_to_state(
+                &mut working,
+                &mut working_assets,
+                &tx,
+                next_height,
+                &self.genesis,
+            )
+            .is_ok()
+            {
                 bytes += encoded.len();
                 accepted.push(tx);
             }
@@ -514,7 +526,7 @@ impl DevChain {
             height,
             parent_id: self.tip_id(),
             tx_root: tx_root(&accepted),
-            state_root: compute_state_root(&working),
+            state_root: compute_state_root(&working, &working_assets),
             evidence_root: evidence_root(&accepted_evidence),
             validator_set_hash: self.validators.active.hash(),
             epoch: self.validators.epoch_of(height),
@@ -560,11 +572,18 @@ impl DevChain {
         }
         let now = unix_ms();
         let mut working = self.clone_state();
+        let mut working_assets = self.assets.clone();
         for tx in &block.transactions {
             self.validate_tx_stateless(tx, now)?;
-            apply_to_state(&mut working, tx)?;
+            apply_to_state(
+                &mut working,
+                &mut working_assets,
+                tx,
+                block.header.height,
+                &self.genesis,
+            )?;
         }
-        if compute_state_root(&working) != block.header.state_root {
+        if compute_state_root(&working, &working_assets) != block.header.state_root {
             return Err(NodeError::Validation("state root mismatch".into()));
         }
         if evidence_root(&block.evidence) != block.header.evidence_root {
@@ -654,11 +673,18 @@ impl DevChain {
     }
 }
 
-fn apply_to_state(state: &mut BTreeMap<String, ActorState>, tx: &Transaction) -> NodeResult<()> {
+fn apply_to_state(
+    state: &mut BTreeMap<String, ActorState>,
+    assets: &mut NativeAssetLedger,
+    tx: &Transaction,
+    height: u64,
+    genesis: &Genesis,
+) -> NodeResult<()> {
     let current = state.get(&tx.actor_id).map(|s| s.nonce).unwrap_or(0);
     if tx.nonce != current + 1 {
         return Err(NodeError::Validation("tx nonce replay or gap".into()));
     }
+    apply_payload(assets, tx, height, genesis)?;
     let entry = state.entry(tx.actor_id.clone()).or_default();
     entry.nonce = tx.nonce;
     let mut acc = Vec::from(entry.data_root);
@@ -667,7 +693,10 @@ fn apply_to_state(state: &mut BTreeMap<String, ActorState>, tx: &Transaction) ->
     Ok(())
 }
 
-pub fn compute_state_root(state: &BTreeMap<String, ActorState>) -> [u8; 32] {
+pub fn compute_state_root(
+    state: &BTreeMap<String, ActorState>,
+    assets: &NativeAssetLedger,
+) -> [u8; 32] {
     let mut w = Writer::new();
     w.u32(state.len() as u32);
     for (actor, actor_state) in state {
@@ -675,6 +704,7 @@ pub fn compute_state_root(state: &BTreeMap<String, ActorState>) -> [u8; 32] {
         w.u64(actor_state.nonce);
         w.bytes32(&actor_state.data_root);
     }
+    w.bytes32(&sha256(&assets.canonical_bytes()));
     sha256(&w.finish())
 }
 
