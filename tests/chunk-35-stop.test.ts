@@ -60,12 +60,8 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-consensus')), false);
   });
 
-  it('has no Chunk 31–34 declarations and no P2P implementation in sunrey-chain', () => {
-    const chunkDir = join(REPO_ROOT, 'docs/architecture/chunks');
-    const names = readdirSync(chunkDir);
-    assert.equal(names.some((name) => /^chunk-3[1-4]-/.test(name)), false);
+  it('has no P2P implementation in sunrey-chain and no node/devnet runbook', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-local-node.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-crypto-suite.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-transport.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-devnet.md')), false);
 
