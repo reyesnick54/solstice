@@ -102,6 +102,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-local-node | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -290,8 +291,11 @@ stop: [`chunk-35-stop.md`](./chunk-35-stop.md). Resume:
 `packages/sunrey-consensus`. Chunk 36R implements the validator
 control plane. Capability `sunrey-validators` is `IMPLEMENTED`.
 Historical stop: [`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
-[`chunk-36-resume.md`](./chunk-36-resume.md). Do not create
-`packages/validators`, `packages/staking`, or
+[`chunk-36-resume.md`](./chunk-36-resume.md). Chunk 39 implements
+simulation accountability. Capability
+`sunrey-validator-accountability` is `IMPLEMENTED`. See
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Do not create `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
 Chunk 37 implements the development Tendermint-class BFT engine at
 `packages/sunrey-chain/rust/crates/consensus`. Capability

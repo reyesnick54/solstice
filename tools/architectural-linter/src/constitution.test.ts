@@ -939,6 +939,7 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-validators').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-accountability').status, 'IMPLEMENTED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-36',

@@ -19,6 +19,10 @@ name = "sunrey-devnet"
 path = "src/bin/sunrey-devnet.rs"
 
 [[bin]]
+name = "sunrey-accountability-demo"
+path = "src/bin/sunrey-accountability-demo.rs"
+
+[[bin]]
 name = "sunrey-validator-devnet"
 path = "src/bin/sunrey-validator-devnet.rs"
 

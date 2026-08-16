@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0024
-- Implementation status: IMPLEMENTED (development control plane, Chunk 36R; see docs/architecture/chunk-36-resume.md). Production validator set and BFT voting remain NOT_IMPLEMENTED.
+- Implementation status: IMPLEMENTED (development control plane, Chunk 36R; simulation accountability, Chunk 39; see docs/architecture/chunk-36-resume.md and chunk-39-validator-accountability.md). Production validator market remains NOT_IMPLEMENTED.
 
 ## Context
 
@@ -103,8 +103,10 @@ production voting power.
 separation. Chunk 36R implements the **development** validator
 registry, lifecycle, integer voting power, epoch transitions,
 CryptoSuite-routed consensus signer port, and durable signer safety
-at `packages/sunrey-chain`. Production validators, public staking,
-slashing, and the networked BFT engine are **not implemented**.
-Historical stop: `docs/architecture/chunk-36-stop.md`. Resume:
-`docs/architecture/chunk-36-resume.md`. Legal confidence:
-`RESEARCH_REQUIRED`.
+at `packages/sunrey-chain`. Chunk 39 implements simulation
+equivocation evidence, jail, tombstone, and integer bond penalties.
+Production validators and a public staking market are **not
+implemented**. Historical stop: `docs/architecture/chunk-36-stop.md`.
+Resume: `docs/architecture/chunk-36-resume.md`. Accountability:
+`docs/architecture/chunk-39-validator-accountability.md`. Legal
+confidence: `RESEARCH_REQUIRED`.

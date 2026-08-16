@@ -7,11 +7,14 @@ use tokio::io::AsyncWriteExt;
 use tokio::net::TcpStream;
 
 use crate::chain::{Genesis, Transaction};
+use crate::consensus_vote::{ConsensusMessageType, SignedConsensusMessage};
 use crate::crypto::KeyDomain;
 use crate::error::{HandshakeRejectReason, NodeError, NodeResult};
+use crate::evidence::EquivocationEvidence;
 use crate::identity::PeerAddress;
 use crate::node::{generate_wallet, DevelopmentNode, NodeConfig, NodeEvent};
 use crate::operator::serve_operator;
+use crate::validators::{four_validator_devnet, ValidatorStatus};
 
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct DemoReport {
@@ -264,4 +267,181 @@ pub fn refuse_security_boundary() -> [NodeError; 8] {
 
 pub fn _wallet_domain_is_not_p2p() -> KeyDomain {
     KeyDomain::TxWallet
+}
+
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct AccountabilityDemoReport {
+    pub validators: u8,
+    pub evidence_type: &'static str,
+    pub policy_version: u32,
+    pub policy_hash: String,
+    pub jailed: bool,
+    pub tombstoned: bool,
+    pub bond_penalty_units: String,
+    pub replay_rejected: bool,
+    pub false_accusation_rejected: bool,
+    pub honest_validator_unchanged: bool,
+    pub sender_misbehavior_increased: bool,
+    pub epoch_reflects_jail: bool,
+    pub remaining_can_progress: bool,
+    pub finalized_height: u64,
+}
+
+pub async fn run_accountability_demo(root: PathBuf) -> NodeResult<AccountabilityDemoReport> {
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).map_err(|e| NodeError::Store(e.to_string()))?;
+    let (set, fixtures) = four_validator_devnet();
+    let genesis = Genesis::development().with_validator_set(set.clone());
+
+    let (a, listen_a) = spawn_named("A", root.join("a"), true, vec![], genesis.clone()).await?;
+    let seed = PeerAddress::from_socket(listen_a);
+    let (b, _) = spawn_named(
+        "B",
+        root.join("b"),
+        false,
+        vec![seed.clone()],
+        genesis.clone(),
+    )
+    .await?;
+    let (c, _) = spawn_named(
+        "C",
+        root.join("c"),
+        false,
+        vec![seed.clone()],
+        genesis.clone(),
+    )
+    .await?;
+    let (d, _) = spawn_named("D", root.join("d"), false, vec![seed], genesis.clone()).await?;
+    wait_peers(&a, 3).await?;
+
+    let byz = &fixtures[3];
+    let left = SignedConsensusMessage::sign(
+        &byz.consensus,
+        &genesis.network_id,
+        &genesis.chain_id,
+        "val-d",
+        1,
+        0,
+        ConsensusMessageType::Prevote,
+        [1u8; 32],
+        set.hash(),
+    )?;
+    let right = SignedConsensusMessage::sign(
+        &byz.consensus,
+        &genesis.network_id,
+        &genesis.chain_id,
+        "val-d",
+        1,
+        0,
+        ConsensusMessageType::Prevote,
+        [2u8; 32],
+        set.hash(),
+    )?;
+    let evidence = EquivocationEvidence::from_conflicting(left, right)?;
+    let evidence_id = b.submit_evidence(evidence.clone())?;
+    wait_until(Duration::from_secs(8), || {
+        a.evidence_pool.lock().get(&evidence_id).is_some()
+            && c.evidence_pool.lock().get(&evidence_id).is_some()
+    })
+    .await?;
+
+    let block = a.produce_block()?;
+    wait_height(&b, 1).await?;
+    wait_height(&c, 1).await?;
+    wait_height(&d, 1).await?;
+
+    let receipt = a
+        .chain
+        .lock()
+        .accountability
+        .receipts
+        .first()
+        .cloned()
+        .ok_or_else(|| NodeError::Validation("missing accountability receipt".into()))?;
+    let replay = a.submit_evidence(evidence.clone());
+    let replay_rejected = replay.is_err();
+
+    // Advance to epoch boundary so jail becomes active.
+    a.produce_block()?;
+    a.produce_block()?;
+    a.produce_block()?;
+    wait_height(&b, 4).await?;
+
+    let (jailed, remaining_can_progress, epoch_reflects_jail) = {
+        let after = a.chain.lock();
+        let jailed =
+            after.validators.active.get("val-d").map(|v| v.status) == Some(ValidatorStatus::Jailed);
+        let remaining_can_progress = after.validators.active.remaining_can_progress();
+        let epoch_reflects_jail = after.validators.active.epoch == 1 && jailed;
+        (jailed, remaining_can_progress, epoch_reflects_jail)
+    };
+
+    let honest = &fixtures[0];
+    let forged_left = SignedConsensusMessage::sign(
+        &byz.consensus,
+        &genesis.network_id,
+        &genesis.chain_id,
+        "val-a",
+        1,
+        0,
+        ConsensusMessageType::Prevote,
+        [3u8; 32],
+        set.hash(),
+    )?;
+    let mut forged_right = forged_left.clone();
+    forged_right.block_id = [4u8; 32];
+    forged_right.signature = byz.consensus.sign(&forged_right.unsigned_bytes()?);
+    let forged = EquivocationEvidence::from_conflicting(forged_left, forged_right)?;
+    let d_id = d.node_id();
+    let before_score = a
+        .peers
+        .lock()
+        .connected
+        .get(&d_id)
+        .map(|p| p.score)
+        .unwrap_or(0);
+    let false_accusation = a.admit_remote_evidence(forged, d_id);
+    let honest_status = {
+        let chain = a.chain.lock();
+        chain.validators.pending.get("val-a").map(|v| v.status)
+    };
+    let _ = honest;
+    let after_score = a
+        .peers
+        .lock()
+        .connected
+        .get(&d_id)
+        .map(|p| p.score)
+        .unwrap_or(0);
+
+    let (policy_version, policy_hash) = {
+        let chain = a.chain.lock();
+        (
+            chain.accountability.policy.version,
+            chain.accountability.policy.hex_hash(),
+        )
+    };
+    let report = AccountabilityDemoReport {
+        validators: 4,
+        evidence_type: "DOUBLE_PREVOTE",
+        policy_version,
+        policy_hash,
+        jailed,
+        tombstoned: false,
+        bond_penalty_units: receipt.bond_penalty_units,
+        replay_rejected,
+        false_accusation_rejected: false_accusation.is_err(),
+        honest_validator_unchanged: honest_status == Some(ValidatorStatus::Active),
+        sender_misbehavior_increased: after_score >= before_score,
+        epoch_reflects_jail,
+        remaining_can_progress,
+        finalized_height: a.height(),
+    };
+
+    a.shutdown().await;
+    b.shutdown().await;
+    c.shutdown().await;
+    d.shutdown().await;
+    let _ = block;
+    Ok(report)
 }

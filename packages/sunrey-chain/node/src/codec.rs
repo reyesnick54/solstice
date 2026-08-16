@@ -275,6 +275,10 @@ impl<'a> Reader<'a> {
         String::from_utf8(slice.to_vec()).map_err(|_| NodeError::Codec("non-utf8 string".into()))
     }
 
+    pub fn remaining(&self) -> usize {
+        self.buf.len().saturating_sub(self.pos)
+    }
+
     pub fn finish(self) -> NodeResult<()> {
         if self.pos != self.buf.len() {
             return Err(NodeError::Codec("trailing bytes".into()));

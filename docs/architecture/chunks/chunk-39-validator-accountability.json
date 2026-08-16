@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-39",
+  "title": "SunRey Consensus Evidence, Validator Accountability, Jailing and Simulation Slashing",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "sunrey-validators",
+    "sunrey-validator-accountability"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/node. Equivocation evidence, pool, gossip, jail, tombstone, and simulation-bond penalties. evaluateChunkRequirements returns mustStop: false. Penalties are development/simulation policy only. Do not confiscate customer fiat, SunRey Coin, or MoonRey. Do not create packages/validators, packages/staking, or packages/slashing."
+}

@@ -386,13 +386,17 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-35-stop.md`. Resume:
   `docs/architecture/chunk-35-resume.md`. This is not a public
   testnet, mainnet, or production consensus.
-- Production SunRey BFT consensus, public staking, slashing, or
-  MoonRey issuance. Chunk 36R implements the **development**
-  validator registry and signer safety. Chunk 37 implements the
-  **development** Tendermint-class engine. Chunk 38 networks that
-  engine across four validator processes. See
-  `docs/architecture/chunk-38-networked-consensus.md`. Production
-  validators, public staking, and mainnet remain not implemented.
+- Production SunRey BFT consensus, public staking, customer-asset
+  slashing, or MoonRey issuance. Chunk 36R implements the
+  **development** validator registry and signer safety. Chunk 37
+  implements the **development** Tendermint-class engine. Chunk 38
+  networks that engine across four validator processes. Chunk 39
+  implements simulation equivocation evidence, jail, tombstone, and
+  integer bond penalties. See
+  `docs/architecture/chunk-38-networked-consensus.md` and
+  `docs/architecture/chunk-39-validator-accountability.md`.
+  Production validators, public staking, and mainnet remain not
+  implemented.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

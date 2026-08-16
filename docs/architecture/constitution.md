@@ -756,6 +756,11 @@ Production consensus remains not implemented. Do not create
 Chunk 38 networks that engine across the four-validator P2P
 devnet at `packages/sunrey-chain/node`. See
 [`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
+Chunk 39 implements equivocation evidence, jail, tombstone, and
+simulation-bond penalties. Capability
+`sunrey-validator-accountability` is `IMPLEMENTED`. See
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Penalties never debit customer fiat, SunRey Coin, or MoonRey.
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that

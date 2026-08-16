@@ -28,7 +28,7 @@ Canonical owner remains `packages/sunrey-chain`. Do not create
 - Epoch-boundary transitions with an immutable in-epoch active set.
 - Future-epoch consensus-key rotation and voluntary exit.
 - Equivocation evidence objects for double proposal / prevote /
-  precommit. No economic penalties (Chunk 39).
+  precommit. Economic penalties are Chunk 39.
 - Consensus signer port (`sign_proposal` / `sign_prevote` /
   `sign_precommit`) with canonical domain separation.
 - Durable signer-safety store (atomic write) that survives restart.

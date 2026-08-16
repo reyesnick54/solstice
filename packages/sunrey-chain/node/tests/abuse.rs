@@ -1,8 +1,13 @@
+use sunrey_chain_node::accountability::AccountabilityState;
 use sunrey_chain_node::chain::{DevChain, Genesis, Transaction};
 use sunrey_chain_node::codec::{
     decode_frame, encode_frame, Channel, Frame, FrameDecoder, MAX_FRAME_BYTES,
 };
+use sunrey_chain_node::consensus_vote::{ConsensusMessageType, SignedConsensusMessage};
 use sunrey_chain_node::crypto::{DomainKey, KeyDomain};
+use sunrey_chain_node::evidence::{
+    verify_equivocation_evidence, EquivocationEvidence, EvidenceContext,
+};
 use sunrey_chain_node::handshake::{
     build_hello, evaluate_hello, HandshakeHello, HandshakeReplayCache, LocalHandshakeView,
 };
@@ -11,6 +16,7 @@ use sunrey_chain_node::mempool::{Mempool, MempoolConfig};
 use sunrey_chain_node::messages::NetMessage;
 use sunrey_chain_node::node::MAX_SYNC_RANGE;
 use sunrey_chain_node::peer::{PeerLimits, PeerManager};
+use sunrey_chain_node::validators::{four_validator_devnet, ValidatorRuntime, ValidatorStatus};
 
 #[test]
 fn oversized_and_malformed_frames_are_rejected() {
@@ -123,4 +129,58 @@ fn decoder_fuzz_corpus_does_not_panic() {
         let mut decoder = FrameDecoder::new(128);
         let _ = decoder.push(sample);
     }
+}
+
+#[test]
+fn forged_evidence_against_honest_validator_is_rejected() {
+    let (set, fixtures) = four_validator_devnet();
+    let processed = std::collections::BTreeSet::new();
+    let byz = &fixtures[3];
+    let left = SignedConsensusMessage::sign(
+        &byz.consensus,
+        "net_sunrey_development",
+        "chn_sunrey_development",
+        "val-a",
+        1,
+        0,
+        ConsensusMessageType::Prevote,
+        [1u8; 32],
+        set.hash(),
+    )
+    .unwrap();
+    let mut right = left.clone();
+    right.block_id = [2u8; 32];
+    right.signature = byz.consensus.sign(&right.unsigned_bytes().unwrap());
+    let forged = EquivocationEvidence::from_conflicting(left, right).unwrap();
+    let ctx = EvidenceContext {
+        network_id: "net_sunrey_development",
+        chain_id: "chn_sunrey_development",
+        current_height: 1,
+        historical_set: &set,
+        processed: &processed,
+    };
+    assert!(verify_equivocation_evidence(&forged, &ctx).is_err());
+    let mut runtime = ValidatorRuntime::new(set, 4);
+    let mut state = AccountabilityState::new(
+        sunrey_chain_node::accountability::ValidatorAccountabilityPolicy::development(),
+    );
+    assert!(state
+        .execute(
+            &forged,
+            &mut runtime,
+            "net_sunrey_development",
+            "chn_sunrey_development",
+            1,
+            [9u8; 32],
+        )
+        .is_err());
+    assert_eq!(
+        runtime.pending.get("val-a").unwrap().status,
+        ValidatorStatus::Active
+    );
+    assert_eq!(
+        runtime.pending.get("val-a").unwrap().bond.penalized_units,
+        0
+    );
+    assert_eq!(runtime.active.hash(), runtime.pending.hash());
 }
