@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0015, ADR-0009
-- Implementation status: NOT_IMPLEMENTED (architecture freeze only)
+- Implementation status: PARTIAL (Chunk 34R local development node in packages/sunrey-chain/rust; production node not implemented)
 
 ## Context
 

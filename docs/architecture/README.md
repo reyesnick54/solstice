@@ -47,15 +47,21 @@
   documentation-only gate before the local node existed
 - [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync
   development network at `packages/sunrey-chain/node`
-- [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
-  until Chunks 31–33 (architecture, protocol types, CryptoSuite
-  registry) merge. Do not invent a node package.
-- [Chunk 33 stop](./chunk-33-stop.md) — process-gate stop until
-  Chunks 31 and 32 are merged. Crypto-agility and post-quantum
-  foundation are not implemented. Canonical owner remains
-  `packages/security`.
-- [Chunk 32 stop](./chunk-32-stop.md) — process-gate stop until
-  Chunk 31 protocol / encoding architecture is merged and canonical
-  on `main`. Not a transaction-protocol implementation.
+- [Chunk 34 stop (historical)](./chunk-34-stop.md) — original
+  documentation-only gate
+- [Chunk 34 resume](./chunk-34-resume.md) — local development node
+  implemented inside `packages/sunrey-chain/rust`
+- [Chunk 33 stop (historical)](./chunk-33-stop.md) — original
+  process-gate stop before the CryptoSuite implementation.
+- [Chunk 33R crypto-agility](./chunk-33-crypto-agility.md) —
+  CryptoSuite registry, Ed25519, PQ ports, hybrid envelope, and
+  policy at `packages/security`. Not quantum-proof.
+- [Cryptographic inventory](../security/cryptographic-inventory.md)
+- [SunRey Blockchain threat model](../security/sunrey-blockchain-threat-model.md)
+- [Chunk 32 stop (historical)](./chunk-32-stop.md) — original
+  process-gate stop before Chunk 31 architecture was canonical
+- [Chunk 32 resume](./chunk-32-resume.md) — canonical transaction
+  envelope, economic objects, protobuf codec, and test vectors at
+  `packages/sunrey-chain`
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

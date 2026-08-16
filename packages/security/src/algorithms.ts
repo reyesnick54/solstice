@@ -11,9 +11,12 @@
  * | Authenticated data encryption   | AES-256-GCM    | NIST AEAD; confidentiality + integrity   |
  * | Data-encryption-key wrap        | AES-256-GCM    | Same AEAD; no custom wrap scheme         |
  * | Key / nonce / token generation  | CSPRNG         | `crypto.randomBytes` / `randomUUID`      |
+ * | Chain / validator signatures    | Ed25519        | RFC 8032 via node:crypto; not secp256k1  |
  *
  * Forbidden: custom ciphers, custom MACs, homemade password hashes,
- * ad-hoc KDFs, or invented signature schemes.
+ * ad-hoc KDFs, or invented signature schemes. Ed25519 and secp256k1
+ * are not interchangeable. HMAC is not a consensus public-key
+ * signature. This package does not claim quantum-proof cryptography.
  */
 
 export const HMAC_SHA256 = 'HMAC-SHA256' as const;
@@ -33,10 +36,14 @@ export const AES_GCM_KEY_BYTES = 32;
 export const HMAC_KEY_BYTES = 32;
 export const ENVELOPE_SCHEMA_VERSION = 1;
 
+export const ED25519 = 'Ed25519' as const;
+
 export const ALGORITHM_NOTES = Object.freeze({
   signing: 'HMAC-SHA256 via node:crypto createHmac. Preserves Execution Authority hex MAC.',
   hashing: 'SHA-256 via node:crypto createHash. Preserves Evidence Vault determinism.',
   encryption: 'AES-256-GCM via node:crypto createCipheriv/createDecipheriv. Standard AEAD.',
   wrap: 'DEK is wrapped with AES-256-GCM under the purpose master key. No custom wrap.',
   random: 'crypto.randomBytes / randomUUID. Not Math.random.',
+  chainSignatures:
+    'Ed25519 (RFC 8032) via node:crypto generateKeyPairSync/sign/verify. Canonical algorithm ID Ed25519. Not secp256k1. Not HMAC.',
 });

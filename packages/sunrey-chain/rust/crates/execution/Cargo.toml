@@ -1,0 +1,11 @@
+[package]
+name = "sunrey-execution"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sunrey-protocol.workspace = true
+sunrey-state.workspace = true
+thiserror.workspace = true

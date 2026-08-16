@@ -5,7 +5,9 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0020, ADR-0021, ADR-0031
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: PARTIAL (Chunk 32R typed objects and apply
+  port plus Chunk 34R local development state machine; production
+  not implemented)
 
 ## Context
 

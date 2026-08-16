@@ -1,0 +1,260 @@
+syntax = "proto3";
+
+package sunrey.protocol.v1;
+
+// Canonical SunRey Blockchain transaction and economic-object schema v1.
+// Codec ID: sunrey.protobuf.canonical.v1
+//
+// Deterministic encoding (ADR-0021 Addendum A):
+// - fields encoded in ascending tag order
+// - proto3 defaults omitted
+// - no maps
+// - no IEEE-754 numeric types
+// - unknown fields rejected
+// - strings are UTF-8 NFC; non-NFC is rejected
+// - consensus hashes use these bytes, never a JSON projection
+
+enum ActorType {
+  ACTOR_TYPE_UNSPECIFIED = 0;
+  ACTOR_TYPE_HUMAN = 1;
+  ACTOR_TYPE_PSEUDONYMOUS_HUMAN = 2;
+  ACTOR_TYPE_ENTERPRISE = 3;
+  ACTOR_TYPE_LEGAL_ENTITY = 4;
+  ACTOR_TYPE_AI_AGENT = 5;
+  ACTOR_TYPE_ROBOT = 6;
+  ACTOR_TYPE_DEVICE = 7;
+  ACTOR_TYPE_PRODUCTIVE_ASSET = 8;
+  ACTOR_TYPE_VALIDATOR = 9;
+  ACTOR_TYPE_ORACLE = 10;
+}
+
+enum EconomicObjectType {
+  ECONOMIC_OBJECT_TYPE_UNSPECIFIED = 0;
+  ECONOMIC_OBJECT_TYPE_FUNGIBLE_NATIVE_ASSET = 1;
+  ECONOMIC_OBJECT_TYPE_VERIFIED_ATTRIBUTE = 2;
+  ECONOMIC_OBJECT_TYPE_ATTESTATION = 3;
+  ECONOMIC_OBJECT_TYPE_CREDENTIAL = 4;
+  ECONOMIC_OBJECT_TYPE_PERMISSION_RIGHT = 5;
+  ECONOMIC_OBJECT_TYPE_COMPUTE_RIGHT = 6;
+  ECONOMIC_OBJECT_TYPE_PRODUCTIVE_CAPACITY_RIGHT = 7;
+  ECONOMIC_OBJECT_TYPE_OUTPUT_DELIVERY_CLAIM = 8;
+  ECONOMIC_OBJECT_TYPE_RESOURCE_USAGE_RIGHT = 9;
+  ECONOMIC_OBJECT_TYPE_SETTLEMENT_CLAIM = 10;
+  ECONOMIC_OBJECT_TYPE_EVIDENCE_ANCHOR = 11;
+  ECONOMIC_OBJECT_TYPE_COMPOSITE_ECONOMIC_WORKFLOW = 12;
+}
+
+enum RightType {
+  RIGHT_TYPE_UNSPECIFIED = 0;
+  RIGHT_TYPE_OWN = 1;
+  RIGHT_TYPE_CONTROL = 2;
+  RIGHT_TYPE_ACCESS = 3;
+  RIGHT_TYPE_USE = 4;
+  RIGHT_TYPE_COMPUTE = 5;
+  RIGHT_TYPE_LEASE = 6;
+  RIGHT_TYPE_DELIVER = 7;
+  RIGHT_TYPE_PARTICIPATE = 8;
+  RIGHT_TYPE_TRANSFER = 9;
+  RIGHT_TYPE_REVOKE = 10;
+}
+
+enum TransactionFamily {
+  TRANSACTION_FAMILY_UNSPECIFIED = 0;
+  TRANSACTION_FAMILY_SYSTEM = 1;
+  TRANSACTION_FAMILY_IDENTITY = 2;
+  TRANSACTION_FAMILY_ATTESTATION = 3;
+  TRANSACTION_FAMILY_NATIVE_ASSET = 4;
+  TRANSACTION_FAMILY_RIGHTS = 5;
+  TRANSACTION_FAMILY_CONSENT_REFERENCE = 6;
+  TRANSACTION_FAMILY_ORACLE = 7;
+  TRANSACTION_FAMILY_PRODUCTIVE_CAPACITY = 8;
+  TRANSACTION_FAMILY_DELIVERY = 9;
+  TRANSACTION_FAMILY_EXCHANGE_SETTLEMENT = 10;
+  TRANSACTION_FAMILY_GOVERNANCE = 11;
+  TRANSACTION_FAMILY_VALIDATOR = 12;
+  TRANSACTION_FAMILY_EVIDENCE_ANCHOR = 13;
+}
+
+enum NativeAssetId {
+  NATIVE_ASSET_ID_UNSPECIFIED = 0;
+  NATIVE_ASSET_ID_SUNREY_COIN = 1;
+  NATIVE_ASSET_ID_MOONREY_COIN = 2;
+}
+
+enum NativeAssetOperation {
+  NATIVE_ASSET_OPERATION_UNSPECIFIED = 0;
+  NATIVE_ASSET_OPERATION_TRANSFER = 1;
+  NATIVE_ASSET_OPERATION_ISSUE = 2;
+  NATIVE_ASSET_OPERATION_BURN = 3;
+}
+
+enum RevocationState {
+  REVOCATION_STATE_UNSPECIFIED = 0;
+  REVOCATION_STATE_ACTIVE = 1;
+  REVOCATION_STATE_REVOKED = 2;
+}
+
+enum SignatureAlgorithm {
+  SIGNATURE_ALGORITHM_UNSPECIFIED = 0;
+  SIGNATURE_ALGORITHM_ED25519 = 1;
+}
+
+message ActorDescriptor {
+  uint32 schema_version = 1;
+  string actor_id = 2;
+  ActorType actor_type = 3;
+  string owner_controller_id = 4;
+  repeated string credential_refs = 5;
+  repeated string capability_refs = 6;
+  string model_firmware_ref = 7;
+  string jurisdiction = 8;
+  RevocationState revocation_state = 9;
+  string identity_system_ref = 10;
+}
+
+message ProtocolQuantity {
+  uint32 schema_version = 1;
+  NativeAssetId asset_id = 2;
+  string scaled_units = 3;
+}
+
+message RightObject {
+  uint32 schema_version = 1;
+  string right_id = 2;
+  RightType right_type = 3;
+  string subject_id = 4;
+  string object_id = 5;
+  string holder_id = 6;
+  string issuer_id = 7;
+  string scope = 8;
+  string purpose = 9;
+  repeated string permitted_operations = 10;
+  string jurisdiction = 11;
+  uint64 start_unix_seconds = 12;
+  uint64 expiration_unix_seconds = 13;
+  RevocationState revocation_state = 14;
+  bool transferable = 15;
+  string compensation_ref = 16;
+  string provenance_ref = 17;
+}
+
+message EconomicObject {
+  uint32 schema_version = 1;
+  string object_id = 2;
+  EconomicObjectType object_type = 3;
+  string commitment_hex = 4;
+  string schema_ref = 5;
+  string issuer_ref = 6;
+  string subject_ref = 7;
+  RevocationState revocation_state = 8;
+  string jurisdiction = 9;
+  ProtocolQuantity quantity = 10;
+  string attestation_ref = 11;
+  string evidence_ref = 12;
+}
+
+message Authentication {
+  uint32 schema_version = 1;
+  SignatureAlgorithm algorithm_id = 2;
+  bytes public_key = 3;
+  bytes signature = 4;
+  uint32 key_version = 5;
+}
+
+message BodyHeader {
+  uint32 schema_version = 1;
+  string client_tx_id = 2;
+  ActorDescriptor actor = 3;
+  uint64 sequence = 4;
+  string idempotency_key = 5;
+  string purpose = 6;
+  string jurisdiction = 7;
+  uint64 expiration_unix_seconds = 8;
+  string legal_entity_ref = 9;
+  string policy_ref = 10;
+  string consent_ref = 11;
+  string capability_ref = 12;
+}
+
+message NativeAssetBody {
+  BodyHeader header = 1;
+  EconomicObject economic_object = 2;
+  repeated RightObject rights_exercised = 3;
+  ProtocolQuantity amount = 4;
+  ProtocolQuantity fee = 5;
+  NativeAssetOperation operation = 6;
+  string counterparty_actor_id = 7;
+  string execution_conditions = 8;
+  repeated string evidence_requirements = 9;
+}
+
+message IdentityBody {
+  BodyHeader header = 1;
+  ActorDescriptor subject = 2;
+  string credential_ref = 3;
+}
+
+message AttestationBody {
+  BodyHeader header = 1;
+  EconomicObject attestation = 2;
+  string issuer_ref = 3;
+}
+
+message RightsBody {
+  BodyHeader header = 1;
+  RightObject right = 2;
+  string grant_or_revoke = 3;
+}
+
+message ConsentReferenceBody {
+  BodyHeader header = 1;
+  string consent_receipt_commitment = 2;
+  string purpose_id = 3;
+}
+
+message ProductiveCapacityBody {
+  BodyHeader header = 1;
+  EconomicObject capacity = 2;
+  repeated RightObject rights_exercised = 3;
+  ProtocolQuantity quantity = 4;
+}
+
+message DeliveryBody {
+  BodyHeader header = 1;
+  EconomicObject delivery_claim = 2;
+  repeated RightObject rights_exercised = 3;
+}
+
+message EvidenceAnchorBody {
+  BodyHeader header = 1;
+  EconomicObject anchor = 2;
+  string vault_record_hash = 3;
+}
+
+message ReservedBody {
+  BodyHeader header = 1;
+}
+
+message EnvelopeV1 {
+  string network_id = 1;
+  string chain_id = 2;
+  string codec_id = 3;
+  uint32 schema_version = 4;
+  TransactionFamily transaction_type = 5;
+  bytes transaction_body = 6;
+  Authentication authentication = 7;
+}
+
+message BlockHeaderV1 {
+  string network_id = 1;
+  string chain_id = 2;
+  string codec_id = 3;
+  uint32 schema_version = 4;
+  uint64 height = 5;
+  bytes previous_block_hash = 6;
+  bytes app_hash = 7;
+  bytes transaction_root = 8;
+  bytes validator_set_hash = 9;
+  bytes consensus_parameters_hash = 10;
+  uint64 time_unix_seconds = 11;
+}
