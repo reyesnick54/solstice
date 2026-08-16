@@ -48,10 +48,13 @@
 - [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
   until Chunks 31–33 (architecture, protocol types, CryptoSuite
   registry) merge. Do not invent a node package.
-- [Chunk 33 stop](./chunk-33-stop.md) — process-gate stop until
-  Chunks 31 and 32 are merged. Crypto-agility and post-quantum
-  foundation are not implemented. Canonical owner remains
-  `packages/security`.
+- [Chunk 33 stop (historical)](./chunk-33-stop.md) — original
+  process-gate stop before the CryptoSuite implementation.
+- [Chunk 33R crypto-agility](./chunk-33-crypto-agility.md) —
+  CryptoSuite registry, Ed25519, PQ ports, hybrid envelope, and
+  policy at `packages/security`. Not quantum-proof.
+- [Cryptographic inventory](../security/cryptographic-inventory.md)
+- [SunRey Blockchain threat model](../security/sunrey-blockchain-threat-model.md)
 - [Chunk 32 stop](./chunk-32-stop.md) — process-gate stop until
   Chunk 31 protocol / encoding architecture is merged and canonical
   on `main`. Not a transaction-protocol implementation.

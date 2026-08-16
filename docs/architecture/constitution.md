@@ -49,6 +49,7 @@ never be two implementations of these systems.
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
+| CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
 | Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
@@ -743,9 +744,10 @@ at owner `packages/sunrey-chain`. Stop record:
 `packages/mempool`, or a second chain. Do not begin Chunk 36.
 P2P DEVELOPMENT NETWORK, PRODUCTION CONSENSUS, PUBLIC TESTNET,
 and MAINNET remain not implemented.
-Chunk 34 (sovereign node core) is **stopped** until Chunks 31–33
-merge. Those chunks select the node owner, language, storage ADR,
-block schema, and CryptoSuite registry. This constitution does not
+Chunk 34 (sovereign node core) is **stopped** until the local
+deterministic node work is authorized. Chunk 31 architecture and
+Chunk 33R CryptoSuite registry exist on this tree. Chunk 32
+protocol types remain a historical stop. This constitution does not
 pre-reserve `packages/sunrey-blockchain` or `packages/sunrey-node`.
 Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
@@ -777,6 +779,14 @@ Do not create `packages/blockchain-node`,
 `packages/blockchain-consensus`, `packages/blockchain-runtime`,
 `packages/sunrey-node`, `packages/sunrey-blockchain`, or
 `packages/moonrey-coin` in this chunk.
+Chunk 33R implements the CryptoSuite registry, Ed25519 provider,
+PQ ports, hybrid envelope, and crypto policy at
+`packages/security`, with validator key separation at
+`packages/sunrey-chain`. Historical stop:
+[`chunk-33-stop.md`](./chunk-33-stop.md). Implementation:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+Do not create `packages/quantum-security`, `packages/crypto-v2`,
+or `packages/pqc-core`. Do not claim quantum-proof cryptography.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

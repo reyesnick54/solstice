@@ -5,8 +5,11 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN / SECURITY
 - Depends on: ADR-0009, ADR-0016, ADR-0025
-- Implementation status: NOT_IMPLEMENTED for chain algorithms;
-  application KeyProvider remains IMPLEMENTED
+- Implementation status: IMPLEMENTED (Chunk 33R foundation:
+  CryptoSuite registry, Ed25519 via node:crypto, provider ports,
+  hybrid envelope, policy). Production node still uses these
+  interfaces; no production PQC library. Application KeyProvider
+  remains IMPLEMENTED.
 
 ## Context
 
@@ -74,11 +77,18 @@ trust layer. It is not the production consensus algorithm.
 
 ## Unresolved questions
 
-- Ed25519 versus secp256k1 for the first node.
-- Exact provider crate set.
+- Ed25519 versus secp256k1 for the first node — **resolved in
+  Chunk 33R:** Ed25519 (RFC 8032) via `node:crypto`. Canonical ID
+  `Ed25519`. Not an alias for secp256k1.
+- Exact provider crate set — TypeScript/Node foundation uses
+  `node:crypto`. A later Rust node may select a reviewed crate
+  that interoperates with the same algorithm ID.
+- Production PQC library — not selected. See
+  [`docs/security/pqc-library-selection.md`](../../security/pqc-library-selection.md).
 
 ## Status
 
-`ACCEPTED_FOR_ENGINEERING` for algorithm IDs and modular established
-providers. Production chain crypto: **not implemented**. Legal
-confidence: `RESEARCH_REQUIRED`.
+`ACCEPTED_FOR_ENGINEERING`. Chunk 33R implements the registry,
+Ed25519 provider, hybrid envelope, and policy engine in
+`packages/security`. Production node consensus signing is not
+live. Legal confidence: `RESEARCH_REQUIRED`. Not quantum-proof.

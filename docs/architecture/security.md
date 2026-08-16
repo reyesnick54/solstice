@@ -51,6 +51,17 @@ Typed only. Arbitrary strings are not cryptographic authority.
 | `WEBHOOK_SIGNING` | HMAC-SHA256 | Outbound webhook MAC |
 | `PYRAMID_CUSTODY_FUTURE` | HMAC-SHA256 | Historical reserved purpose; no custody keys here. Reyn Coin custody keys are not implemented. |
 | `CHAIN_OPERATION_SIGNING` | HMAC-SHA256 | SunRey Chain simulation operation MAC. No raw chain keys in source or customer tables. |
+| `BACKUP_ENCRYPTION` | AES-256-GCM | Backup envelopes. Same AEAD as data encryption. |
+| `TRANSACTION_SIGNING` | Ed25519 (CryptoSuite) | Chain transaction signatures. Not HMAC. |
+| `VALIDATOR_CONSENSUS_SIGNING` | Ed25519 (CryptoSuite) | Consensus votes. Distinct from Execution Authority. |
+| `BLOCK_PROPOSAL_SIGNING` | Ed25519 (CryptoSuite) | Block proposals. Distinct from voting keys. |
+| `P2P_IDENTITY` | Ed25519 (CryptoSuite) | Peer identity. |
+| `ORACLE_SIGNING` | Ed25519 (CryptoSuite) | Oracle attestations. |
+| `GOVERNANCE_SIGNING` | Ed25519 (CryptoSuite) | Governance. |
+| `ATTESTATION_SIGNING` | Ed25519 (CryptoSuite) | Attestations / recovery descriptors. |
+| `EVIDENCE_SIGNING` | Ed25519 (CryptoSuite) | Signed evidence anchors. Distinct from SHA-256 vault hashing. |
+| `WALLET_SIGNING` | Ed25519 (CryptoSuite) | Wallet / reward address signing. |
+| `INTEROPERABILITY_SIGNING` | Ed25519 (CryptoSuite) | Reserved bridge / interoperability signatures. |
 
 ## Algorithms
 
@@ -60,6 +71,8 @@ Solstice does not invent cryptography. See
 - **HMAC-SHA256** — existing Execution Authority contract; FIPS MAC.
 - **SHA-256** — existing Evidence Vault hash chain; must stay deterministic.
 - **AES-256-GCM** — NIST AEAD for envelopes and DEK wrap.
+- **Ed25519** — RFC 8032 via `node:crypto` for chain public-key
+  signatures. Canonical ID `Ed25519`. Not secp256k1. Not HMAC.
 - **CSPRNG** — `crypto.randomBytes` / `randomUUID` for tokens, IVs, DEKs.
 
 Domain IDs and idempotency keys are not replaced by random tokens.
@@ -147,7 +160,10 @@ Key rotation does not invalidate historical evidence records.
 - Claiming quantum-proof, quantum-secure, or production-certified
   cryptography from this tree
 
-Chunk 33 (crypto-agility / post-quantum foundation) is **stopped**
-until Chunks 31 and 32 merge. See
-[`chunk-33-stop.md`](./chunk-33-stop.md). Resume only by extending
-this package.
+Chunk 33R implements the CryptoSuite registry, Ed25519 provider,
+PQ ports, hybrid envelope, policy engine, inventory, and threat
+model by extending this package. Historical stop:
+[`chunk-33-stop.md`](./chunk-33-stop.md). Implementation:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+Inventory: [`docs/security/cryptographic-inventory.md`](../security/cryptographic-inventory.md).
+This is not a quantum-proof or production-certified claim.

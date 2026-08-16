@@ -315,15 +315,16 @@ replaces the Personal Data Vault fail-closed consent placeholder
 with a Purpose Firewall and short-lived DataUsePermits. Clean Room
 is owned by Chunk 25R. The evaluator returns `mustStop: false`.
 
-Chunk 33 (SunRey crypto-agility and post-quantum foundation) is
-**stopped**. The task requires starting from clean `main` after
-Chunk 32. CHUNK-31 and CHUNK-32 are not declared or merged. The
-evaluator returns `mustStop: false` because `security` and
-`sunrey-chain` are `IMPLEMENTED`; that is not a license to skip
-the sequential merge gate. Do not create `packages/quantum-security`,
-`packages/crypto-v2`, or `packages/pqc-core`. Resume only as
-Chunk 33R after Chunks 31 and 32 land. See
-[`chunk-33-stop.md`](./chunk-33-stop.md).
+Chunk 33R implements SunRey crypto-agility and the post-quantum
+foundation at `packages/security` (CryptoSuite registry, Ed25519,
+PQ ports, hybrid envelope, policy) and validator key separation
+at `packages/sunrey-chain`. Capability `crypto-suite-registry` is
+`IMPLEMENTED`. The original stop is historical:
+[`chunk-33-stop.md`](./chunk-33-stop.md). Resume:
+[`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
+The evaluator returns `mustStop: false`. Do not create
+`packages/quantum-security`, `packages/crypto-v2`, or
+`packages/pqc-core`. Do not claim quantum-proof cryptography.
 Chunk 32 (canonical SunRey transaction and economic-state protocol)
 stops on a process gate: Chunk 31 is not merged and its encoding /
 protocol architecture is not canonical on `main`. Listed

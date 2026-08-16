@@ -5,7 +5,10 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN / SECURITY
 - Depends on: ADR-0024, ADR-0028
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: PARTIAL (Chunk 33R: hybrid envelope,
+  migration states, PQ ports, simulation/test provider, inventory,
+  threat model). Production PQC algorithms are not implemented.
+  Not quantum-secure.
 
 ## Context
 
@@ -84,5 +87,7 @@ simulation.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for hybrid, algorithm-ID-based migration
-shape. PQC: **not implemented**, **not claimed**. Legal confidence:
-`RESEARCH_REQUIRED`. Chunk 33 expands this.
+shape. Chunk 33R implements the hybrid envelope, migration-state
+table, provider ports, and a TEST_ONLY simulation provider.
+Production PQC: **not selected**, **not claimed**. Legal confidence:
+`RESEARCH_REQUIRED`.

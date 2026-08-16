@@ -89,7 +89,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical cryptographic control plane. No vendor KMS SDK. Key metadata is not key material."
+      "notes": "Canonical cryptographic control plane. Chunk 33R adds CryptoSuite registry, Ed25519, PQ ports. No vendor KMS SDK. Key metadata is not key material. Not quantum-proof."
     },
     {
       "id": "packages/identity",
@@ -1334,7 +1334,14 @@
       "forbiddenAliases": [
         "packages/crypto",
         "packages/kms",
-        "packages/secrets"
+        "packages/secrets",
+        "packages/quantum-security",
+        "packages/crypto-v2",
+        "packages/pqc-core",
+        "packages/crypto-agility",
+        "packages/post-quantum",
+        "packages/blockchain-crypto",
+        "packages/security-v2"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -2089,7 +2096,7 @@
         "packages/devnet",
         "packages/gossip",
         "packages/consensus",
-        "packages/sunrey-consensus"
+        "packages/sunrey-consensus",
         "packages/blockchain-node",
         "packages/blockchain-protocol",
         "packages/blockchain-network",
@@ -2649,7 +2656,7 @@
     "packages/devnet",
     "packages/gossip",
     "packages/consensus",
-    "packages/sunrey-consensus"
+    "packages/sunrey-consensus",
     "packages/blockchain-node",
     "packages/blockchain-protocol",
     "packages/blockchain-network",
@@ -2742,6 +2749,14 @@
       "status": "IMPLEMENTED",
       "owner": "packages/security",
       "protected": true
+    },
+    {
+      "id": "crypto-suite-registry",
+      "status": "IMPLEMENTED",
+      "owner": "packages/security",
+      "protected": true,
+      "adr": "ADR-0024",
+      "notes": "Chunk 33R versioned CryptoSuite registry, Ed25519, PQ provider ports, hybrid envelope, and crypto policy. Production PQC library is not selected. Not quantum-proof."
     },
     {
       "id": "identity",
@@ -3257,8 +3272,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Local deterministic node (Chunk 34) and P2P/mempool/sync (Chunk 35) remain PLANNED. See chunk-35-stop.md."
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Production node is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Production node is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED. Local deterministic node (Chunk 34) and P2P/mempool/sync (Chunk 35) remain PLANNED. Chunk 33R adds the CryptoSuite registry on packages/security."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",
