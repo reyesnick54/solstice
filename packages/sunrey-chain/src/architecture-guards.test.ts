@@ -10,7 +10,7 @@ function walk(dir: string, out: string[] = []): string[] {
     return out;
   }
   for (const entry of readdirSync(dir)) {
-    if (entry === 'node_modules' || entry === '.git') {
+    if (entry === 'node_modules' || entry === '.git' || entry === 'target') {
       continue;
     }
     const full = join(dir, entry);

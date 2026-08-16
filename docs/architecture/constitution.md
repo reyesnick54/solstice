@@ -736,13 +736,26 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
-Chunk 36 historically stopped while P2P was `PLANNED`. That stop is
-historical: [`chunk-36-stop.md`](./chunk-36-stop.md). Capability
-`sunrey-validators` is `IMPLEMENTED` at owner `packages/sunrey-chain`
-as the development validator set used by Chunk 38. Do not create
+Chunk 36R implements the development validator registry, lifecycle,
+integer voting power, epoch-boundary set transitions, CryptoSuite
+consensus signer, and durable signer safety at
+`packages/sunrey-chain`. Capability `sunrey-validators` is
+`IMPLEMENTED` on that owner. `evaluateChunkRequirements` returns
+`mustStop: false`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Do not create
 `packages/validators`, `packages/staking`, or
-`packages/validator-v2`. Production mainnet and public staking
-remain not implemented.
+`packages/validator-v2`.
+Chunk 37 implements a development Tendermint-class BFT
+`ConsensusEngine` at `packages/sunrey-chain/rust/crates/consensus`.
+Capability `blockchain-consensus` is `IMPLEMENTED` on that owner.
+Production consensus remains not implemented. Do not create
+`packages/tendermint`, `packages/consensus-engine`, or
+`packages/blockchain-consensus`. See
+[`chunk-37-bft-consensus-core.md`](./chunk-37-bft-consensus-core.md).
+Chunk 38 networks that engine across the four-validator P2P
+devnet at `packages/sunrey-chain/node`. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that

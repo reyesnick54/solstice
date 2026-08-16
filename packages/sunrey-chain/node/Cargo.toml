@@ -27,6 +27,7 @@ name = "sunrey-validator-node"
 path = "src/bin/sunrey-validator-node.rs"
 
 [dependencies]
+clap = { version = "=4.5.23", features = ["derive"] }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"
 parking_lot = "0.12"

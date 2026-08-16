@@ -287,12 +287,20 @@ stop: [`chunk-35-stop.md`](./chunk-35-stop.md). Resume:
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/libp2p`, `packages/mempool`, `packages/devnet`,
 `packages/gossip`, `packages/consensus`, or
-`packages/sunrey-consensus`. Chunk 38 implements networked
-development BFT and the development validator set at
-`packages/sunrey-chain/node`. Historical Chunk 36 stop:
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+`packages/sunrey-consensus`. Chunk 36R implements the validator
+control plane. Capability `sunrey-validators` is `IMPLEMENTED`.
+Historical stop: [`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Do not create
 `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
+Chunk 37 implements the development Tendermint-class BFT engine at
+`packages/sunrey-chain/rust/crates/consensus`. Capability
+`blockchain-consensus` is `IMPLEMENTED`.
+`evaluateChunkRequirements` returns `mustStop: false` for CHUNK-37.
+Do not create `packages/tendermint`, `packages/cometbft`,
+`packages/consensus-engine`, `packages/bft`, or
+`packages/blockchain-consensus`. Production consensus remains
+unimplemented.
 Chunk 34R implements the local deterministic node at
 `packages/sunrey-chain/rust` after Chunks 31, 32R, and 33R.
 Capability `sunrey-local-node` is `IMPLEMENTED`. The original
@@ -311,7 +319,9 @@ Chunk 31 freezes the SunRey Blockchain production architecture at
 the existing owner `packages/sunrey-chain`. Capability
 `sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
 only). Production node capabilities `blockchain-node` and
-`blockchain-runtime` remain `PLANNED` internal modules. MoonRey
+`blockchain-runtime` remain `PLANNED` internal modules.
+`blockchain-consensus` is `IMPLEMENTED` as a development engine
+(Chunks 37–38); production consensus remains unimplemented. MoonRey
 Coin remains `PLANNED` and distinct.
 The evaluator returns `mustStop: false` for CHUNK-31. Do not
 create `packages/blockchain-node`, `packages/sunrey-blockchain`,

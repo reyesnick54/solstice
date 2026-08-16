@@ -222,11 +222,12 @@ This document describes only what is implemented and tested in this tree.
   `packages/sunrey-chain/rust`. P2P, mempool, and state sync are
   implemented at `packages/sunrey-chain/node` (Chunk 35R).
   Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
-  `docs/architecture/chunk-35-resume.md`. Development BFT and the
-  four-validator devnet are Chunk 38 at
-  `packages/sunrey-chain/node`. Historical validator stop:
-  `docs/architecture/chunk-36-stop.md`. Production mainnet is not
-  implemented.
+  `docs/architecture/chunk-35-resume.md`. Validator lifecycle
+  (Chunk 36R) is `IMPLEMENTED`: `docs/architecture/chunk-36-resume.md`.
+  Development Tendermint-class BFT (Chunk 37) is implemented at
+  `packages/sunrey-chain/rust/crates/consensus`. Networked
+  four-validator finality is Chunk 38 at
+  `packages/sunrey-chain/node`. Production BFT is not implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
@@ -252,6 +253,16 @@ This document describes only what is implemented and tested in this tree.
   public network, and MoonRey issuance are not implemented.
   Historical stop: `docs/architecture/chunk-34-stop.md`. Resume:
   `docs/architecture/chunk-34-resume.md`.
+- SunRey validator control plane (Chunk 36R, `packages/sunrey-chain`):
+  versioned validator registry, deterministic lifecycle, integer
+  voting power, epoch-boundary set transitions, key-role
+  separation, CryptoSuite-routed consensus signer, durable
+  double-sign protection, equivocation evidence types, and a
+  four-validator development set. Capability `sunrey-validators`
+  is `IMPLEMENTED`. Historical stop:
+  `docs/architecture/chunk-36-stop.md`. Resume:
+  `docs/architecture/chunk-36-resume.md`. Not production BFT,
+  public staking, slashing, or MoonRey issuance.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -371,12 +382,17 @@ This document describes only what is implemented and tested in this tree.
   treasury, and live securities trading remain later.
 - Production SunRey Blockchain consensus, public testnet, or
   mainnet. Chunk 35R implements a **development** P2P / mempool /
-  sync plane and Chunk 38 implements **development** networked BFT
-  at `packages/sunrey-chain/node`. See
-  `docs/architecture/chunk-38-networked-consensus.md`. This is not
-  a public testnet, mainnet, staking product, or slashing runtime.
-- Public staking / slashing / MoonRey issuance. The development
-  validator set is simulation-only.
+  sync plane at `packages/sunrey-chain/node`. Historical stop:
+  `docs/architecture/chunk-35-stop.md`. Resume:
+  `docs/architecture/chunk-35-resume.md`. This is not a public
+  testnet, mainnet, or production consensus.
+- Production SunRey BFT consensus, public staking, slashing, or
+  MoonRey issuance. Chunk 36R implements the **development**
+  validator registry and signer safety. Chunk 37 implements the
+  **development** Tendermint-class engine. Chunk 38 networks that
+  engine across four validator processes. See
+  `docs/architecture/chunk-38-networked-consensus.md`. Production
+  validators, public staking, and mainnet remain not implemented.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

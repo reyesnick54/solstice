@@ -21,6 +21,7 @@ pub mod node;
 pub mod operator;
 pub mod peer;
 pub mod transport;
+pub mod validator;
 pub mod validator_demo;
 
 pub use chain::{Genesis, Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};

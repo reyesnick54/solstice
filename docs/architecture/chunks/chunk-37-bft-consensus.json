@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-37",
+  "title": "SunRey Tendermint-family BFT consensus core",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "blockchain-consensus"
+  ],
+  "notes": "IMPLEMENTED as a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. evaluateChunkRequirements returns mustStop: false. Not a workspace package. Do not create packages/tendermint, packages/cometbft, packages/consensus-engine, packages/bft, or packages/blockchain-consensus. Production consensus, public staking, slashing, and mainnet remain not implemented. Chunk 36R validator registry is IMPLEMENTED. Networked four-validator finality is Chunk 38."
+}
