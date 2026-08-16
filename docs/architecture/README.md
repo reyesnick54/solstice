@@ -43,6 +43,9 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
+  until Chunks 31–33 (architecture, protocol types, CryptoSuite
+  registry) merge. Do not invent a node package.
 - [Chunk 33 stop](./chunk-33-stop.md) — process-gate stop until
   Chunks 31 and 32 are merged. Crypto-agility and post-quantum
   foundation are not implemented. Canonical owner remains

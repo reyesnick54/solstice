@@ -734,6 +734,14 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
+Chunk 34 (sovereign node core) is **stopped** until Chunks 31–33
+merge. Those chunks select the node owner, language, storage ADR,
+block schema, and CryptoSuite registry. This constitution does not
+pre-reserve `packages/sunrey-blockchain` or `packages/sunrey-node`.
+Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
+`packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
+`packages/ledger-chain`, or `packages/web3-chain`. Do not replace
+`packages/sunrey-chain`.
 Chunk 32 (canonical SunRey transaction and economic-state protocol)
 is **stopped**. The task requires latest `main` after Chunk 31 is
 merged. Chunk 31 is not declared, not merged, and has no encoding

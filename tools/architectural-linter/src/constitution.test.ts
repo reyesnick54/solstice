@@ -904,6 +904,49 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
   });
 
+  it('CHUNK-34 stops because Chunks 31-33 are not merged', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);
+    assert.equal(
+      declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-31'),
+      false,
+      'CHUNK-31 must not be declared until that architecture chunk merges',
+    );
+    assert.equal(
+      declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-32'),
+      false,
+      'CHUNK-32 must not be declared until that protocol chunk merges',
+    );
+    assert.equal(
+      declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-33'),
+      false,
+      'CHUNK-33 must not be declared until that CryptoSuite chunk merges',
+    );
+
+    const declared = declaredChunks.find((evaluation) => evaluation.chunk === 'CHUNK-34');
+    assert.ok(declared, 'CHUNK-34 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-stop.md')), true);
+    assert.equal(
+      existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-sovereign-node-core.md')),
+      false,
+      'implementation doc must not exist on a stop',
+    );
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-node.md')), false);
+
+    assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'ledger').status, 'IMPLEMENTED');
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-blockchain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-node')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/new-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/l1')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/ledger-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/web3-chain')), false);
   it('CHUNK-33 stops because Chunks 31 and 32 are not merged', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');

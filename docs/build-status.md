@@ -239,6 +239,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
+- Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
+  Latest green `main` is Chunk 30R (`#58`). Chunks 31–33 — sovereign
+  chain architecture, canonical protocol/block schema, and the
+  CryptoSuite registry — are not declared or merged. There is no
+  local development node, no block producer, no chain state store,
+  and no node CLI. See `docs/architecture/chunk-34-stop.md`.
+  Do not invent `packages/sunrey-blockchain`, `packages/sunrey-node`,
+  `packages/blockchain-v2`, `packages/l1`, or a competing chain.
+  Do not replace `packages/sunrey-chain`. No BFT consensus, public
+  network, mainnet, or MoonRey issuance. Canonical Ledger remains
+  the financial source of truth.
 - Kafka, Kinesis, Pub/Sub, SNS/SQS, or another production broker. The
   Chunk 3 fabric uses a simulated in-process transport behind a portable
   dispatcher port.

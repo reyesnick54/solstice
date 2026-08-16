@@ -275,6 +275,17 @@ is historical: [`chunk-30-stop.md`](./chunk-30-stop.md). Resume:
 `packages/travel-rule-v2`, `packages/crypto-aml`,
 `packages/surveillance-v2`, or `packages/custody-ledger`.
 
+Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
+Chunks 31–33 are not declared and have not merged. Latest green
+`main` is Chunk 30R. The CHUNK-34 declaration lists only existing
+`IMPLEMENTED` capabilities, so `evaluateChunkRequirements` returns
+`mustStop: false`. That is not permission to invent a node owner,
+language, storage ADR, block schema, or CryptoSuite registry.
+Stop record: [`chunk-34-stop.md`](./chunk-34-stop.md). Do not create
+`packages/sunrey-blockchain`, `packages/sunrey-node`,
+`packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
+`packages/ledger-chain`, or `packages/web3-chain`. Do not replace
+`packages/sunrey-chain`.
 Chunk 31 freezes the SunRey Blockchain production architecture at
 the existing owner `packages/sunrey-chain`. Capability
 `sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
