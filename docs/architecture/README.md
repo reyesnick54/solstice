@@ -43,6 +43,12 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
+- [Chunk 37 BFT consensus core](./chunk-37-bft-consensus-core.md) —
+  development Tendermint-class engine at
+  `packages/sunrey-chain/rust/crates/consensus`. Production consensus
+  is not implemented.
+- [Chunk 36 stop](./chunk-36-stop.md) — validator registry / lifecycle
+  remains `PLANNED`. Do not create `packages/validators`.
 - [Chunk 36 stop (historical)](./chunk-36-stop.md) — original
   reservation while the local node and P2P plane were absent
 - [Chunk 36 resume](./chunk-36-resume.md) — validator registry,

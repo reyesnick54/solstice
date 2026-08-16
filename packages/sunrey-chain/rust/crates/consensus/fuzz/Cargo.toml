@@ -1,0 +1,30 @@
+[package]
+name = "sunrey-consensus-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+sunrey-consensus = { path = ".." }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "proposal_decoder"
+path = "fuzz_targets/proposal_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "vote_decoder"
+path = "fuzz_targets/vote_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "commit_certificate_decoder"
+path = "fuzz_targets/commit_certificate_decoder.rs"
+test = false
+doc = false

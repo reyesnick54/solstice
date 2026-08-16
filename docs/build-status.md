@@ -223,6 +223,10 @@ This document describes only what is implemented and tested in this tree.
   implemented at `packages/sunrey-chain/node` (Chunk 35R).
   Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
   `docs/architecture/chunk-35-resume.md`. Validator lifecycle
+  (Chunk 36) remains `PLANNED`: `docs/architecture/chunk-36-stop.md`.
+  Development Tendermint-class BFT (Chunk 37) is implemented at
+  `packages/sunrey-chain/rust/crates/consensus`. Production BFT is
+  not implemented.
   (Chunk 36R) is `IMPLEMENTED`: `docs/architecture/chunk-36-resume.md`.
   Production BFT is not implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):

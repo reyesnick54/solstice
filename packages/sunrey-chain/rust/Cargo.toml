@@ -6,6 +6,7 @@ members = [
   "crates/state",
   "crates/execution",
   "crates/storage",
+  "crates/consensus",
   "crates/node",
   "crates/rpc",
   "crates/validators",
@@ -23,6 +24,7 @@ sunrey-crypto = { path = "crates/crypto" }
 sunrey-state = { path = "crates/state" }
 sunrey-execution = { path = "crates/execution" }
 sunrey-storage = { path = "crates/storage" }
+sunrey-consensus = { path = "crates/consensus" }
 sunrey-node = { path = "crates/node" }
 sunrey-rpc = { path = "crates/rpc" }
 sunrey-validators = { path = "crates/validators" }
