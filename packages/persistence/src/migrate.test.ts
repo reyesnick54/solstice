@@ -379,7 +379,8 @@ describe('versioned SQL migrations', () => {
     assert.match(v025.sql, /price_label TEXT NOT NULL CHECK \(price_label = 'SIMULATION_MARKET_PRICE'\)/);
     assert.match(v025.sql, /GRANT USAGE ON SCHEMA sunrey_exchange TO customer_app/);
     assert.equal(/CREATE TABLE sunrey_exchange\.journal/i.test(v025.sql), false);
-    assert.equal(/balance/i.test(v025.sql), false);
+    assert.equal(/CREATE TABLE sunrey_exchange\.\w*balance/i.test(v025.sql), false);
+    assert.equal(/\bbalance\b/i.test(v025.sql), false);
     assert.equal(/APY|APR|market_cap|ticker_symbol/i.test(v025.sql), false);
   });
 

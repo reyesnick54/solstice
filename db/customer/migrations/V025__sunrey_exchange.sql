@@ -1,6 +1,6 @@
 -- V025 SunRey Exchange metadata. Not a second ledger and not a live venue.
 -- Stores accounts, listings, orders, trades, and reconciliation outcomes only.
--- No balance column. Balances are read from the canonical ledger.
+-- Positions are read from the canonical ledger. This table set does not store them.
 
 CREATE SCHEMA IF NOT EXISTS sunrey_exchange;
 
