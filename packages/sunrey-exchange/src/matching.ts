@@ -86,6 +86,16 @@ export function matchIncoming(
     });
     remaining -= fill;
   }
+  if (incoming.orderType === 'POST_ONLY' || incoming.timeInForce === 'POST_ONLY') {
+    if (matches.length > 0) {
+      return { matches: [], rejectIncoming: true, reason: 'POST_ONLY_WOULD_TAKE' };
+    }
+  }
+  if (incoming.orderType === 'FOK' || incoming.timeInForce === 'FOK') {
+    if (remaining > 0n) {
+      return { matches: [], rejectIncoming: true, reason: 'FOK_UNFILLED' };
+    }
+  }
   return { matches, rejectIncoming: false };
 }
 

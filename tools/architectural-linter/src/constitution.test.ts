@@ -981,6 +981,29 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
   });
 
+  it('CHUNK-49 extends sunrey-exchange with four universal market families', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange').owner, 'packages/sunrey-exchange');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-49',
+    );
+    assert.ok(declared, 'CHUNK-49 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-49-universal-economic-exchange.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/exchange-market-families.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/information-right-market.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/compute-capacity-market.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/productive-capacity-market.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/universal-exchange-development.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange/src/universal.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/orderbook')), false);
+  });
+
   it('CHUNK-45 implements machine economic identity on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-machine-economy').status, 'IMPLEMENTED');

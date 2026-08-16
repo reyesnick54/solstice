@@ -13,6 +13,20 @@ import type {
   ReconciliationReport,
   SettlementRecord,
 } from './types.ts';
+import type {
+  AuctionBook,
+  ComputeContract,
+  DeliveryRecord,
+  EscrowRecord,
+  ExchangeDispute,
+  ExchangeInstrument,
+  FamilyMarketData,
+  InformationRightContract,
+  ProductiveCapacityContract,
+  RiskUsage,
+  UniversalOrder,
+} from './types-universal.ts';
+import type { AccountAccessProfile } from './access.ts';
 import type { ExchangeAccountId, ExchangeMarketId, OrderId, TradeId } from './ids.ts';
 
 export class ExchangeStore {
@@ -33,6 +47,22 @@ export class ExchangeStore {
   readonly listingDecisions: ListingDecision[] = [];
   sequenceByMarket = new Map<string, number>();
   orderSequence = 0;
+  readonly instruments = new Map<string, ExchangeInstrument>();
+  readonly universalOrders = new Map<string, UniversalOrder>();
+  readonly auctions = new Map<string, AuctionBook>();
+  readonly computeContracts = new Map<string, ComputeContract>();
+  readonly capacityContracts = new Map<string, ProductiveCapacityContract>();
+  readonly informationContracts = new Map<string, InformationRightContract>();
+  readonly escrows = new Map<string, EscrowRecord>();
+  readonly deliveries: DeliveryRecord[] = [];
+  readonly disputes: ExchangeDispute[] = [];
+  readonly riskUsage = new Map<string, RiskUsage>();
+  readonly accessProfiles = new Map<string, AccountAccessProfile>();
+  readonly familyMarketData = new Map<string, FamilyMarketData>();
+  readonly deniedAccess: string[] = [];
+  readonly unauthorizedPurpose: string[] = [];
+  readonly consentMismatches: string[] = [];
+  height = 0n;
 
   putExchangeAccount(account: ExchangeAccount): void {
     this.accounts.set(account.accountId, account);

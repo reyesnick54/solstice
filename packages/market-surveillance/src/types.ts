@@ -34,6 +34,15 @@ export type MarketSnapshot = {
   readonly orders: readonly ObservedOrder[];
   readonly trades: readonly ObservedTrade[];
   readonly linkedAccounts?: Readonly<Record<string, string>>;
+  readonly family?: 'DIGITAL_ASSET' | 'HUMAN_INFORMATION_RIGHT' | 'INTELLIGENCE_COMPUTE' | 'PRODUCTIVE_CAPACITY' | 'INFORMATION_ASSET';
+  readonly deniedAccessCount?: number;
+  readonly unauthorizedPurposeAttempts?: readonly string[];
+  readonly consentMismatches?: readonly string[];
+  readonly nonDeliveryCount?: number;
+  readonly listedCapacity?: bigint;
+  readonly deliveredCapacity?: bigint;
+  readonly oracleProviderShares?: Readonly<Record<string, bigint>>;
+  readonly circularPairs?: readonly { readonly a: string; readonly b: string }[];
 };
 
 export type SurveillanceAlert = {

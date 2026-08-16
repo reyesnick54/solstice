@@ -2144,7 +2144,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
+      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     }
   ],
   "authorizedMutationPaths": [
@@ -3014,7 +3014,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-exchange",
       "protected": true,
-      "notes": "Canonical SunRey Exchange simulation core. Chunk 29. Matching, holds, DVP settlement, and market data. No live exchange. No official valuation."
+      "notes": "Canonical SunRey Exchange simulation core. Chunk 29 matching, holds, DVP, and market data. Chunk 49 universal economic families at the same owner. No live exchange. No official valuation."
     },
     {
       "id": "custody",
@@ -3339,7 +3339,7 @@
         "packages/sunrey-exchange"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Exchange simulation core at packages/sunrey-exchange. Historical reservations were PYRAMID_EXCHANGE then REYN_EXCHANGE. Simulation matching and DVP only. Public ticker is NOT_ASSIGNED. No live exchange."
+      "notes": "Canonical SunRey Exchange simulation core at packages/sunrey-exchange. Historical reservations were PYRAMID_EXCHANGE then REYN_EXCHANGE. Chunk 49 extends this owner with four market families. Public ticker is NOT_ASSIGNED. No live exchange."
     },
     {
       "id": "CUSTODY",

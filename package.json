@@ -55,6 +55,7 @@
     "demo:sunrey-native-assets": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-native-asset-demo'",
     "test:sunrey-node": "bash -lc 'cd packages/sunrey-chain/node && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test --locked'",
     "demo:sunrey-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/demo.ts",
+    "demo:universal-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/universal-demo.ts",
     "demo:custody": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",
     "demo:travel-rule": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",
     "demo:withdrawal": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",

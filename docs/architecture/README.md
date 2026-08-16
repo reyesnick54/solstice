@@ -60,6 +60,12 @@
   controller-bound machine identity and commerce.
   [Identity model](./machine-economic-identity.md).
   [Commerce protocol](./machine-commerce-protocol.md).
+- [Chunk 49 universal economic exchange](./chunk-49-universal-economic-exchange.md) —
+  four market families at `packages/sunrey-exchange`.
+  [Market families](./exchange-market-families.md).
+  [Information-right market](./information-right-market.md).
+  [Compute market](./compute-capacity-market.md).
+  [Productive capacity market](./productive-capacity-market.md).
 - [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
   signed observations and VerifiedEconomicFacts. Not money.
 - [Oracle economic fact spec](./oracle-economic-fact-spec.md)

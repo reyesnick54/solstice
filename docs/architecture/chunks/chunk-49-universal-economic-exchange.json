@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-49",
+  "title": "SunRey Universal Economic Exchange multi-market engine",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-exchange",
+    "sunrey-chain",
+    "custody",
+    "market-surveillance",
+    "consent",
+    "purpose-firewall",
+    "clean-room",
+    "personal-data-vault",
+    "information-market",
+    "sunrey-machine-economy",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange. Extends the existing exchange with four canonical market families: DIGITAL_ASSET, HUMAN_INFORMATION_RIGHT, INTELLIGENCE_COMPUTE, and PRODUCTIVE_CAPACITY. Two-stage eligibility then economic matching, governed order types, batch auction, native DVP, delivery-versus-right, oracle partial settlement, listing governance, market access, cross-market risk, and family surveillance. evaluateChunkRequirements returns mustStop: false. Do not create a second exchange."
+}
