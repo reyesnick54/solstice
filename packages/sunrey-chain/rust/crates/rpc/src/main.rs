@@ -8,6 +8,7 @@ use sunrey_consensus::{
     development_secret, four_validator_set, ConsensusEngine, ConsensusParams, EngineConfig,
     EnginePaths, FourValidatorHarness, MemoryApp,
 };
+use sunrey_crypto::{development_fixture_secret, CryptoSuite, DevEd25519Sha256Suite};
 use sunrey_crypto::{development_fixture_secret, DevEd25519Sha256Suite};
 use sunrey_execution::encode_issue_bytes;
 use sunrey_governance::VoteChoice;
@@ -16,6 +17,11 @@ use sunrey_native_assets::{
     NativeAssetPayload, DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER,
 };
 use sunrey_node::{LocalNode, DEV_BLOCK_PRODUCER, NODE_ROLE};
+use sunrey_oracle::{
+    development_compute_feed, development_energy_feed, seed_secret, sign_observation,
+    snapshot_hash, FactType, OracleObservation, OracleProviderRecord, OracleType, ProviderStatus,
+    UnitCode,
+};
 use sunrey_protocol::{
     encode_evidence_anchor_payload, encode_system_payload, hash_to_hex, transaction_id,
     EvidenceAnchorPayload, SystemPayload, TransactionFamily, UnsignedTransaction,
@@ -101,6 +107,9 @@ enum Command {
         #[command(subcommand)]
         command: ProtocolCommand,
     },
+    Oracle {
+        #[command(subcommand)]
+        command: OracleCommand,
     Asset {
         #[command(subcommand)]
         command: AssetCommand,
@@ -178,6 +187,40 @@ enum ProtocolCommand {
 }
 
 #[derive(Subcommand)]
+enum OracleCommand {
+    Providers {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Feeds {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Observation {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    Fact {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    Facts {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        feed: Option<String>,
+    },
+    Disputes {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Quality {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Demo {
 enum AssetCommand {
     List {
         #[arg(long)]
@@ -417,6 +460,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         }
         Command::Governance { command } => return run_governance(command),
         Command::Protocol { command } => return run_protocol(command),
+        Command::Oracle { command } => return run_oracle(command),
         Command::Asset { command } => return run_asset(command),
         Command::Fees { command } => return run_fees(command),
         Command::EncodeFixture { name } => {
@@ -533,6 +577,53 @@ fn run_governance(command: GovernanceCommand) -> Result<(), Box<dyn std::error::
     Ok(())
 }
 
+fn run_oracle(command: OracleCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        OracleCommand::Providers { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.providers)?);
+        }
+        OracleCommand::Feeds { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.feeds)?);
+        }
+        OracleCommand::Observation { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let row = node.oracle.observations.get(&id).ok_or("observation not found")?;
+            println!("{}", serde_json::to_string_pretty(row)?);
+        }
+        OracleCommand::Fact { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let row = node.oracle.facts.get(&id).ok_or("fact not found")?;
+            println!("{}", serde_json::to_string_pretty(row)?);
+        }
+        OracleCommand::Facts { data_dir, feed } => {
+            let node = LocalNode::open(&data_dir)?;
+            let rows: Vec<_> = node
+                .oracle
+                .facts
+                .values()
+                .filter(|fact| feed.as_ref().map(|id| fact.feed_id == *id).unwrap_or(true))
+                .collect();
+            println!("{}", serde_json::to_string_pretty(&rows)?);
+        }
+        OracleCommand::Disputes { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.disputes)?);
+        }
+        OracleCommand::Quality { data_dir } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.quality_report())?);
+        }
+        OracleCommand::Demo { data_dir } => {
+            let mut node = if data_dir.join("genesis.bin").exists() {
+                LocalNode::open(&data_dir)?
+            } else {
+                LocalNode::init(&data_dir)?
+            };
+            run_oracle_demo(&mut node)?;
+            node.oracle.persist(&data_dir)?;
+            println!("{}", serde_json::to_string_pretty(&node.oracle.metrics_json())?);
 fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
     match command {
         AssetCommand::List { data_dir } => {
@@ -685,6 +776,64 @@ fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+fn run_oracle_demo(node: &mut LocalNode) -> Result<(), Box<dyn std::error::Error>> {
+    let suite = DevEd25519Sha256Suite;
+    for (label, class) in [
+        ("energy-a", OracleType::InstitutionalDataProvider),
+        ("energy-b", OracleType::RegulatedProvider),
+        ("energy-c", OracleType::PublicDataProvider),
+    ] {
+        let secret = seed_secret(label);
+        node.oracle.register_provider(OracleProviderRecord {
+            oracle_id: format!("oracle_{label}"),
+            controller_actor: format!("actor_{label}"),
+            oracle_type: class,
+            public_key: secret.public_key(),
+            crypto_suite: suite.suite_id().to_string(),
+            authorized_feed_types: vec![FactType::EnergyProduction, FactType::ComputeUsage],
+            status: ProviderStatus::Active,
+            activation_height: 1,
+        })?;
+    }
+    node.oracle.register_feed(development_energy_feed())?;
+    node.oracle.register_feed(development_compute_feed())?;
+    for (label, value) in ["energy-a", "energy-b", "energy-c"].iter().zip([100u64, 102, 104]) {
+        let observation = sign_observation(
+            &suite,
+            &seed_secret(label),
+            OracleObservation {
+                observation_id: String::new(),
+                oracle_id: format!("oracle_{label}"),
+                feed_id: "feed_energy_production_sim".into(),
+                subject: "plant_sim_1".into(),
+                mantissa: value,
+                unit: UnitCode::Mwh,
+                measurement_start: node.oracle.now_unix,
+                measurement_end: node.oracle.now_unix + 60,
+                observation_time: node.oracle.now_unix + 30,
+                valid_until: node.oracle.now_unix + 3_600,
+                sequence: 1,
+                weight: 1,
+                network_id: node.oracle.network_id.clone(),
+                chain_id: node.oracle.chain_id.clone(),
+                crypto_suite: String::new(),
+                signature: Vec::new(),
+            },
+        )?;
+        node.oracle.submit_observation(&suite, observation)?;
+    }
+    let fact = node.oracle.finalize_window(
+        "feed_energy_production_sim",
+        "plant_sim_1",
+        node.oracle.now_unix,
+        node.oracle.now_unix + 60,
+    )?;
+    println!(
+        "energy_fact_id={} value={} snapshot={}",
+        fact.fact_id,
+        fact.aggregated_value,
+        snapshot_hash(&node.oracle)
+    );
 fn run_fees(command: FeesCommand) -> Result<(), Box<dyn std::error::Error>> {
     match command {
         FeesCommand::Schedule { data_dir } => {

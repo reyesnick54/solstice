@@ -402,6 +402,11 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-protocol-governance` is `IMPLEMENTED`. Height-activated
   `UpgradePlan`. No governance token. Production governance is
   not implemented. ADR-0028 is implemented for development.
+- SunRey oracle network (Chunk 43) is **development-only** at
+  `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
+  `IMPLEMENTED`. Signed observations become time-bounded
+  `VerifiedEconomicFact`s. Consensus never calls external APIs.
+  Facts are not money. ADR-0027 is implemented for development.
 - SunRey dual native assets (Chunk 41) at
   `packages/sunrey-chain/rust/crates/native-assets` and
   `packages/sunrey-chain/node`. Capability `sunrey-native-assets`

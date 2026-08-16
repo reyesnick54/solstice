@@ -1,5 +1,5 @@
 [package]
-name = "sunrey-node"
+name = "sunrey-oracle"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -9,14 +9,7 @@ publish.workspace = true
 hex.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+sha2.workspace = true
 sunrey-crypto.workspace = true
-sunrey-execution.workspace = true
-sunrey-governance.workspace = true
-sunrey-oracle.workspace = true
-sunrey-fees.workspace = true
-sunrey-native-assets.workspace = true
 sunrey-protocol.workspace = true
-sunrey-state.workspace = true
-sunrey-storage.workspace = true
 thiserror.workspace = true
-tracing.workspace = true

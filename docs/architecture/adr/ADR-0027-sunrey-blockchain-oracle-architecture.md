@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0019, ADR-0020, ADR-0031
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: IMPLEMENTED (Chunk 43 development oracle network; no live market-data network)
 
 ## Context
 
@@ -68,11 +68,13 @@ None. No production oracle network exists.
 
 ## Unresolved questions
 
-- Quorum size and dispute window.
+- Production quorum size and dispute window.
 - Relationship to Regulatory Digital Twin snapshots (read-only).
 
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for signed, fail-closed oracle facts.
-Production oracles: **not implemented**. Legal confidence:
-`RESEARCH_REQUIRED`.
+Chunk 43 implements the development oracle network and
+`VerifiedEconomicFact` protocol at `packages/sunrey-chain`.
+Production market-data networks remain **not connected**. Legal
+confidence: `RESEARCH_REQUIRED`.

@@ -157,7 +157,7 @@ export const CRYPTOGRAPHIC_INVENTORY = Object.freeze([
     keyLifecycle: 'descriptor only',
     quantumExposure: 'oracle public keys',
     migrationPriority: 'medium',
-    targetArchitecture: 'CryptoSuite; oracle runtime later',
-    currentStatus: 'IMPLEMENTED (purpose + suite)',
+    targetArchitecture: 'CryptoSuite; Chunk 43 oracle runtime',
+    currentStatus: 'IMPLEMENTED (purpose + suite + oracle runtime)',
   },
 ] as const);

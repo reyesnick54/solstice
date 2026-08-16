@@ -632,12 +632,26 @@ dependencies = [
  "sunrey-execution",
  "sunrey-fees",
  "sunrey-governance",
+ "sunrey-oracle",
  "sunrey-native-assets",
  "sunrey-protocol",
  "sunrey-state",
  "sunrey-storage",
  "thiserror",
  "tracing",
+]
+
+[[package]]
+name = "sunrey-oracle"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
+ "sunrey-crypto",
+ "sunrey-protocol",
+ "thiserror",
 ]
 
 [[package]]
@@ -665,6 +679,7 @@ dependencies = [
  "sunrey-governance",
  "sunrey-native-assets",
  "sunrey-node",
+ "sunrey-oracle",
  "sunrey-protocol",
  "sunrey-storage",
  "sunrey-validators",

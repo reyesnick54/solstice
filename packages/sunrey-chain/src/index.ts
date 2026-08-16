@@ -132,6 +132,7 @@ export { SunReyChainService, type CreateIntentInput } from './service.ts';
 export * as protocol from './protocol/index.ts';
 export * as governance from './governance/index.ts';
 export * as validators from './validators/index.ts';
+export * as oracle from './oracle/index.ts';
 export * as fees from './fees/index.ts';
 export {
   CURRENT_APPLICATION_AUTHORITY,

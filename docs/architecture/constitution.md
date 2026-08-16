@@ -70,6 +70,7 @@ never be two implementations of these systems.
 | Personal Data Vault | `packages/personal-data-vault` | `packages/personal-data-vault/src/service.ts` | IMPLEMENTED |
 | Consent Ledger / Purpose Firewall | `packages/consent` | `packages/consent/src/service.ts` | IMPLEMENTED |
 | Privacy Clean Room | `packages/clean-room` | `packages/clean-room/src/service.ts` | IMPLEMENTED |
+| SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -743,6 +744,14 @@ height-activated upgrades at `packages/sunrey-chain` and
 governance token. Do not create `packages/governance` or
 `packages/sunrey-governance`. Production governance is not
 implemented.
+Chunk 43 implements the sovereign oracle network and verified
+economic-fact protocol at `packages/sunrey-chain` and
+`packages/sunrey-chain/rust/crates/oracle`. Capability
+`sunrey-oracle-network` is `IMPLEMENTED`. Consensus never calls
+external APIs. Facts are not money and do not authorize MoonRey
+issuance. Do not create `packages/oracle`, `packages/sunrey-oracle`,
+or `packages/oracle-network`. Production market-data networks are
+not connected.
 Chunk 41 implements the dual native asset protocol for SunRey Coin
 and MoonRey Coin at `packages/sunrey-chain/rust/crates/native-assets`.
 Capability `sunrey-native-assets` is `IMPLEMENTED`. Public tickers
