@@ -112,6 +112,8 @@ jobs:
         run: npm run demo:market-surveillance
       - name: Listing governance demo
         run: npm run demo:listing-governance
+      - name: Universal economic exchange demo
+        run: npm run demo:universal-exchange
 
       - name: Typecheck
         run: npm run typecheck
