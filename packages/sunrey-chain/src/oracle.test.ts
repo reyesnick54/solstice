@@ -63,8 +63,10 @@ function engineAt(now = 1_700_000_000n): OracleEngine {
 
 function qty(mantissa: bigint, unit: 'MWh' | 'gpu_s' | 'kWh' = 'MWh') {
   const built = quantity(mantissa, 0, unit);
-  assert.equal(built.ok, true);
-  return built.ok ? built.value : quantity(0n, 0, unit).ok && built;
+  if (!built.ok) {
+    throw new Error(built.error.detail);
+  }
+  return built.value;
 }
 
 function signedObservation(
@@ -73,7 +75,6 @@ function signedObservation(
   overrides: Partial<OracleObservation> & { readonly oracleId: string; readonly feedId: string },
 ): OracleObservation {
   const key = deriveOracleKey(engine.ports, overrides.cryptoSuite ?? defaultOracleSuiteId(), label);
-  assert.equal(key.ok, true);
   if (!key.ok) {
     throw new Error(key.error.detail);
   }
@@ -83,7 +84,7 @@ function signedObservation(
     oracleId: overrides.oracleId,
     feedId: overrides.feedId,
     subject: overrides.subject ?? 'plant_sim_1',
-    value: overrides.value ?? qty(100n)!,
+    value: overrides.value ?? qty(100n),
     measurementStartUnix: overrides.measurementStartUnix ?? now,
     measurementEndUnix: overrides.measurementEndUnix ?? now + 60n,
     observationTimeUnix: overrides.observationTimeUnix ?? now + 30n,
@@ -117,7 +118,6 @@ function signedObservation(
     key.value.publicKey,
     false,
   );
-  assert.equal(signed.ok, true);
   if (!signed.ok) {
     throw new Error(signed.error.detail);
   }
@@ -171,7 +171,7 @@ describe('SunRey sovereign oracle network', () => {
     const observation = signedObservation(engine, providers[0]!.label, {
       oracleId: providers[0]!.record.oracleId,
       feedId,
-      value: qty(100n, 'kWh')!,
+      value: qty(100n, 'kWh'),
     });
     const result = engine.submitObservation(observation);
     assert.equal(result.ok, false);
