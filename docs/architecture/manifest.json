@@ -2994,17 +2994,17 @@
     },
     {
       "id": "blockchain-runtime",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Future internal execution module. Native handlers first. No EVM. Not a workspace package."
+      "notes": "Chunk 41 implements protocol-native asset handlers inside packages/sunrey-chain. WASM user programs and EVM remain unimplemented. Not a workspace package."
     },
     {
       "id": "moonrey-coin",
       "status": "PLANNED",
       "owner": null,
       "protected": true,
-      "notes": "Distinct native asset from SunRey Coin. Public ticker NOT_ASSIGNED. No package in Chunk 31. Not a second fiat ledger."
+      "notes": "Distinct native asset from SunRey Coin. Public ticker NOT_ASSIGNED. Chunk 41 registers MOONREY_COIN as a protocol-native asset inside packages/sunrey-chain. Do not create packages/moonrey-coin. Production economic issuance is later. Not a second fiat ledger."
     },
     {
       "id": "sunrey-exchange",
@@ -3062,6 +3062,14 @@
       "protected": true,
       "adr": "ADR-0028",
       "notes": "Chunk 40 development protocol governance and height-activated UpgradePlan at packages/sunrey-chain and packages/sunrey-chain/rust/crates/governance. No governance token. SunRey Coin and MoonRey do not grant voting power. Consensus and P2P keys cannot sign governance. Production governance is not implemented. Do not create packages/governance or packages/sunrey-governance."
+    },
+    {
+      "id": "sunrey-native-assets",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "adr": "ADR-0026",
+      "notes": "Chunk 41 dual native asset protocol for SUNREY_COIN and MOONREY_COIN at packages/sunrey-chain/rust/crates/native-assets. Development/simulation only. Tickers remain NOT_ASSIGNED. Application SunRey Coin supply is not imported. Do not create packages/moonrey-coin or a competing chain."
     }
   ],
   "boundedContexts": [

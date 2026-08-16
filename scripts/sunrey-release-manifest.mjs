@@ -12,6 +12,7 @@ const PATHS = [
   'packages/sunrey-chain/src/governance',
   'packages/sunrey-chain/rust/crates/governance',
   'packages/sunrey-chain/rust/crates/protocol',
+  'packages/sunrey-chain/rust/crates/native-assets',
   'packages/sunrey-chain/schemas/srcb-v1.json',
 ];
 

@@ -577,6 +577,8 @@ dependencies = [
 name = "sunrey-execution"
 version = "0.1.0"
 dependencies = [
+ "sunrey-crypto",
+ "sunrey-native-assets",
  "sunrey-protocol",
  "sunrey-state",
  "thiserror",
@@ -596,6 +598,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-native-assets"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
 name = "sunrey-node"
 version = "0.1.0"
 dependencies = [
@@ -605,6 +618,7 @@ dependencies = [
  "sunrey-crypto",
  "sunrey-execution",
  "sunrey-governance",
+ "sunrey-native-assets",
  "sunrey-protocol",
  "sunrey-state",
  "sunrey-storage",
@@ -632,7 +646,9 @@ dependencies = [
  "serde_json",
  "sunrey-consensus",
  "sunrey-crypto",
+ "sunrey-execution",
  "sunrey-governance",
+ "sunrey-native-assets",
  "sunrey-node",
  "sunrey-protocol",
  "sunrey-storage",

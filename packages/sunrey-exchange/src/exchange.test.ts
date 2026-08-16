@@ -22,6 +22,7 @@ import {
   RecordingChainAnchorPort,
   StubInformationMarketPort,
 } from './adapters.ts';
+import { UnwiredNativeAssetSettlementAdapter, nativeSettlementBoundary } from './native-settlement.ts';
 import { SubjectScopedSunReyExchangeTool } from './agent-tool.ts';
 import { AGGREGATE_RESEARCH_LISTING_ID, SUNREY_COIN_USD_MARKET_ID, asExchangeAccountId } from './ids.ts';
 import { matchIncoming, sortBook } from './matching.ts';
@@ -631,5 +632,24 @@ describe('SunRey Exchange service', () => {
     const report = h.exchange.reconcile();
     assert.equal(report.outcome, 'TRADE_SETTLEMENT_MISMATCH');
     assert.equal(report.autoCorrected, false);
+  });
+});
+
+describe('native asset settlement port', () => {
+  it('does not replace the current exchange CoinPort', () => {
+    const adapter = new UnwiredNativeAssetSettlementAdapter();
+    const boundary = nativeSettlementBoundary();
+    assert.equal(adapter.replacesCurrentExchange, false);
+    assert.equal(boundary.replaced, false);
+    assert.equal(boundary.currentExchange, 'CURRENT_APPLICATION_AUTHORITY');
+    assert.equal(boundary.nativeChain, 'NATIVE_BLOCKCHAIN_AUTHORITY');
+    assert.equal(adapter.atomicDeliveryVersusPayment({
+      assetSender: 'a',
+      assetRecipient: 'b',
+      assetAmount: coins(1n),
+      contraSender: 'b',
+      contraRecipient: 'a',
+      contraAmount: coins(1n),
+    }).ok, false);
   });
 });

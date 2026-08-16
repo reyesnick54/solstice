@@ -15,8 +15,9 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
     match args[0].as_str() {
         "evidence" => evidence_command(&args[1..]),
         "validator" => validator_command(&args[1..]),
+        "asset" => asset_command(&args[1..]),
         _ => Err(NodeError::Validation(
-            "unknown command; expected evidence or validator".into(),
+            "unknown command; expected evidence, validator, or asset".into(),
         )),
     }
 }
@@ -112,6 +113,83 @@ fn verify_target(node: &DevelopmentNode, target: &str) -> NodeResult<String> {
             "evidence": evidence.public_view(),
         })
         .to_string()),
+    }
+}
+
+fn asset_command(args: &[String]) -> NodeResult<String> {
+    if args.is_empty() {
+        return Err(NodeError::Validation(
+            "usage: sunrey-node asset list|show|supply|holdings|locks|transfer|faucet|reconciliation"
+                .into(),
+        ));
+    }
+    let node = open_local_node()?;
+    let assets = node.native_assets();
+    match args[0].as_str() {
+        "list" => Ok(serde_json::to_string_pretty(&assets.registry.list_public()).unwrap_or_default()),
+        "show" => {
+            let id = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node asset show <SUNREY_COIN|MOONREY_COIN>".into())
+            })?;
+            let parsed = sunrey_native_assets::NativeAssetId::parse(id)
+                .map_err(|e| NodeError::Validation(e.to_string()))?;
+            let def = assets
+                .registry
+                .get(parsed)
+                .map_err(|e| NodeError::Validation(e.to_string()))?;
+            Ok(serde_json::to_string_pretty(&serde_json::json!({
+                "asset_id": def.asset_id.as_str(),
+                "display_name": def.display_name,
+                "ticker_status": def.ticker_status,
+                "precision": def.precision,
+                "status": def.status.as_str(),
+                "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+                "application_supply_imported": false,
+            }))
+            .unwrap_or_default())
+        }
+        "supply" => {
+            let id = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node asset supply <asset>".into())
+            })?;
+            let parsed = sunrey_native_assets::NativeAssetId::parse(id)
+                .map_err(|e| NodeError::Validation(e.to_string()))?;
+            Ok(serde_json::to_string_pretty(&assets.public_supply(parsed)).unwrap_or_default())
+        }
+        "holdings" => {
+            let actor = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node asset holdings <actor>".into())
+            })?;
+            Ok(serde_json::to_string_pretty(&assets.holdings_for(actor)).unwrap_or_default())
+        }
+        "locks" => {
+            let actor = args
+                .get(1)
+                .ok_or_else(|| NodeError::Validation("usage: sunrey-node asset locks <actor>".into()))?;
+            Ok(serde_json::to_string_pretty(&assets.locks_for(actor)).unwrap_or_default())
+        }
+        "reconciliation" => {
+            assets
+                .reconcile_all()
+                .map_err(|e| NodeError::Validation(e.to_string()))?;
+            Ok(serde_json::json!({
+                "matched": true,
+                "sunrey": assets.public_supply(sunrey_native_assets::NativeAssetId::SunReyCoin),
+                "moonrey": assets.public_supply(sunrey_native_assets::NativeAssetId::MoonReyCoin),
+                "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+            })
+            .to_string())
+        }
+        "faucet" => Ok(serde_json::to_string_pretty(&serde_json::json!({
+            "environment": "development/simulation",
+            "notice": sunrey_native_assets::faucet_notice(),
+            "hint": "Use the four-validator native-asset demo to issue DEVELOPMENT_ECONOMIC_UNIT through consensus. Production networks cannot invoke this faucet.",
+        }))
+        .unwrap_or_default()),
+        "transfer" => Err(NodeError::Validation(
+            "asset transfer is submitted through the development consensus demo; query commands are read-only on this operator CLI".into(),
+        )),
+        _ => Err(NodeError::Validation("unknown asset command".into())),
     }
 }
 

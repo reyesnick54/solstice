@@ -402,10 +402,22 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-protocol-governance` is `IMPLEMENTED`. Height-activated
   `UpgradePlan`. No governance token. Production governance is
   not implemented. ADR-0028 is implemented for development.
+- SunRey dual native assets (Chunk 41) at
+  `packages/sunrey-chain/rust/crates/native-assets` and
+  `packages/sunrey-chain/node`. Capability `sunrey-native-assets`
+  is `IMPLEMENTED`. `SUNREY_COIN` and `MOONREY_COIN` are distinct
+  protocol-native assets (precision 6). Tickers remain
+  `NOT_ASSIGNED`. Development faucet issues
+  `DEVELOPMENT_ECONOMIC_UNIT` only. Application SunRey Coin
+  supply is not imported. ADR-0026 is implemented for
+  development chain-native units. Production migration is not
+  performed.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
-- MoonRey Coin runtime, ticker, or package.
+- MoonRey Coin application package, public ticker, or production
+  economic issuance. Chunk 41 registers MoonRey as a
+  protocol-native development asset only.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
   Do not create `MAINNET_ENABLED=true`, `PRODUCTION_BLOCKCHAIN=true`,
   or `LIVE_CHAIN_ENABLED=true`.

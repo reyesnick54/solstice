@@ -9,7 +9,12 @@ use sunrey_consensus::{
     EnginePaths, FourValidatorHarness, MemoryApp,
 };
 use sunrey_crypto::{development_fixture_secret, DevEd25519Sha256Suite};
+use sunrey_execution::encode_issue_bytes;
 use sunrey_governance::VoteChoice;
+use sunrey_native_assets::{
+    faucet_notice, AssetQuantity, IssuanceAuthorization, NativeAssetId, NativeAssetOp,
+    NativeAssetPayload, DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER,
+};
 use sunrey_node::{LocalNode, DEV_BLOCK_PRODUCER, NODE_ROLE};
 use sunrey_protocol::{
     encode_evidence_anchor_payload, encode_system_payload, hash_to_hex, transaction_id,
@@ -96,6 +101,10 @@ enum Command {
         #[command(subcommand)]
         command: ProtocolCommand,
     },
+    Asset {
+        #[command(subcommand)]
+        command: AssetCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -159,6 +168,62 @@ enum GovernanceCommand {
 #[derive(Subcommand)]
 enum ProtocolCommand {
     Version {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum AssetCommand {
+    List {
+        #[arg(long)]
+        data_dir: PathBuf,
+    },
+    Show {
+        #[arg(long)]
+        data_dir: PathBuf,
+        asset: String,
+    },
+    Supply {
+        #[arg(long)]
+        data_dir: PathBuf,
+        asset: String,
+    },
+    Holdings {
+        #[arg(long)]
+        data_dir: PathBuf,
+        actor: String,
+    },
+    Locks {
+        #[arg(long)]
+        data_dir: PathBuf,
+        actor: String,
+    },
+    Transfer {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        from: String,
+        #[arg(long)]
+        to: String,
+        #[arg(long)]
+        asset: String,
+        #[arg(long)]
+        quantity: String,
+    },
+    Faucet {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long)]
+        asset: String,
+        #[arg(long)]
+        recipient: String,
+        #[arg(long)]
+        quantity: String,
+        #[arg(long)]
+        auth_id: String,
+    },
+    Reconciliation {
         #[arg(long)]
         data_dir: PathBuf,
     },
@@ -313,6 +378,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         }
         Command::Governance { command } => return run_governance(command),
         Command::Protocol { command } => return run_protocol(command),
+        Command::Asset { command } => return run_asset(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -422,6 +488,158 @@ fn run_governance(command: GovernanceCommand) -> Result<(), Box<dyn std::error::
         GovernanceCommand::History { data_dir } => {
             let node = LocalNode::open(&data_dir)?;
             println!("{}", serde_json::to_string_pretty(&node.governance.audit)?);
+        }
+    }
+    Ok(())
+}
+
+fn run_asset(command: AssetCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        AssetCommand::List { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.registry.list_public())?);
+        }
+        AssetCommand::Show { data_dir, asset } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let id = NativeAssetId::parse(&asset)?;
+            let def = assets.registry.get(id)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "asset_id": def.asset_id.as_str(),
+                    "display_name": def.display_name,
+                    "ticker_status": def.ticker_status,
+                    "precision": def.precision,
+                    "status": def.status.as_str(),
+                    "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+                    "application_supply_imported": false,
+                }))?
+            );
+        }
+        AssetCommand::Supply { data_dir, asset } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let id = NativeAssetId::parse(&asset)?;
+            println!("{}", serde_json::to_string_pretty(&assets.public_supply(id))?);
+        }
+        AssetCommand::Holdings { data_dir, actor } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.holdings_for(&actor))?);
+        }
+        AssetCommand::Locks { data_dir, actor } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            println!("{}", serde_json::to_string_pretty(&assets.locks_for(&actor))?);
+        }
+        AssetCommand::Transfer { data_dir, from, to, asset, quantity } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            let id = NativeAssetId::parse(&asset)?;
+            let qty: u128 = quantity.parse()?;
+            let payload = NativeAssetPayload::transfer(&from, to, AssetQuantity::new(id, qty)?);
+            let nonce = node.store.view.next_nonce(&development_fixture_secret().public_key());
+            let unsigned = UnsignedTransaction {
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+                codec_id: SRCB_CODEC_ID.to_string(),
+                schema_version: SCHEMA_VERSION,
+                family: TransactionFamily::NativeAsset,
+                nonce,
+                idempotency_key: format!("xfer-{from}-{nonce}"),
+                payload: payload.encode(),
+            };
+            let tx = node.sign_dev_tx(unsigned, &development_fixture_secret())?;
+            let tx_id = node.submit_signed(tx)?;
+            let block = node.produce_block()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "tx_id": tx_id,
+                    "block": block,
+                }))?
+            );
+        }
+        AssetCommand::Faucet { data_dir, asset, recipient, quantity, auth_id } => {
+            let mut node = LocalNode::open(&data_dir)?;
+            if node.genesis().production_network_enabled {
+                return Err("faucet forbidden: production network".into());
+            }
+            println!("{}", serde_json::to_string_pretty(&faucet_notice())?);
+            let id = NativeAssetId::parse(&asset)?;
+            let qty: u128 = quantity.parse()?;
+            let payload = NativeAssetPayload {
+                version: 1,
+                op: NativeAssetOp::Issue,
+                actor_id: "dev.faucet".to_string(),
+                asset_id: id,
+                quantity: qty,
+                counterparty: recipient.clone(),
+                lock_id: String::new(),
+                lock_purpose: None,
+                expiration_height: None,
+                authorized_releaser: String::new(),
+                authorization_id: auth_id.clone(),
+                issuance_policy: DEVELOPMENT_FAUCET_POLICY.to_string(),
+                proof_reference: format!("faucet:{auth_id}"),
+                economic_unit_label: "DEVELOPMENT_ECONOMIC_UNIT".to_string(),
+            };
+            let auth = IssuanceAuthorization {
+                authorization_id: auth_id,
+                asset_id: id,
+                recipient,
+                quantity: qty,
+                issuance_policy: DEVELOPMENT_FAUCET_POLICY.to_string(),
+                proof_reference: payload.proof_reference.clone(),
+                governance_policy_reference: "gov.native.dev.v1".to_string(),
+                expiration_height: 10_000,
+                issuer: DEV_FAUCET_ISSUER.to_string(),
+                suite_id: String::new(),
+                algorithm_id: String::new(),
+                public_key: vec![],
+                signature: vec![],
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+            };
+            let bytes = encode_issue_bytes(&payload, auth, &development_fixture_secret())?;
+            let nonce = node.store.view.next_nonce(&development_fixture_secret().public_key());
+            let unsigned = UnsignedTransaction {
+                network_id: LOCAL_DEV_NETWORK_ID.to_string(),
+                chain_id: LOCAL_DEV_CHAIN_ID.to_string(),
+                codec_id: SRCB_CODEC_ID.to_string(),
+                schema_version: SCHEMA_VERSION,
+                family: TransactionFamily::NativeAsset,
+                nonce,
+                idempotency_key: format!("faucet-{nonce}"),
+                payload: bytes,
+            };
+            let tx = node.sign_dev_tx(unsigned, &development_fixture_secret())?;
+            let tx_id = node.submit_signed(tx)?;
+            let block = node.produce_block()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "environment": "development/simulation",
+                    "tx_id": tx_id,
+                    "block": block,
+                    "economic_unit_label": "DEVELOPMENT_ECONOMIC_UNIT",
+                }))?
+            );
+        }
+        AssetCommand::Reconciliation { data_dir } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            assets.reconcile_all()?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "matched": true,
+                    "sunrey": assets.public_supply(NativeAssetId::SunReyCoin),
+                    "moonrey": assets.public_supply(NativeAssetId::MoonReyCoin),
+                    "authority": "NATIVE_BLOCKCHAIN_AUTHORITY",
+                }))?
+            );
         }
     }
     Ok(())

@@ -29,6 +29,15 @@ pub enum RejectReason {
     NotReady,
     IncompatibleProtocol,
     GovernanceRejected,
+    InsufficientAsset,
+    AssetLocked,
+    UnauthorizedIssuance,
+    IssuanceReplay,
+    Overflow,
+    SupplyInconsistency,
+    FaucetForbidden,
+    PolicyDenied,
+    CrossAssetArithmetic,
 }
 
 impl RejectReason {
@@ -60,6 +69,15 @@ impl RejectReason {
             Self::NotReady => "NOT_READY",
             Self::IncompatibleProtocol => "INCOMPATIBLE_PROTOCOL",
             Self::GovernanceRejected => "GOVERNANCE_REJECTED",
+            Self::InsufficientAsset => "INSUFFICIENT_ASSET",
+            Self::AssetLocked => "ASSET_LOCKED",
+            Self::UnauthorizedIssuance => "UNAUTHORIZED_ISSUANCE",
+            Self::IssuanceReplay => "ISSUANCE_REPLAY",
+            Self::Overflow => "OVERFLOW",
+            Self::SupplyInconsistency => "SUPPLY_INCONSISTENCY",
+            Self::FaucetForbidden => "FAUCET_FORBIDDEN",
+            Self::PolicyDenied => "POLICY_DENIED",
+            Self::CrossAssetArithmetic => "CROSS_ASSET_ARITHMETIC",
         }
     }
 }

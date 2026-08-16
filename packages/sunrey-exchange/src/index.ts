@@ -35,6 +35,19 @@ export {
 export { applyFill, matchIncoming, pricesCross, sortBook, toTrade } from './matching.ts';
 export { comparePrice, exchangePrice, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
 export type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
+export {
+  APPLICATION_SETTLEMENT_AUTHORITY,
+  NATIVE_SETTLEMENT_AUTHORITY,
+  UnwiredNativeAssetSettlementAdapter,
+  nativeSettlementBoundary,
+} from './native-settlement.ts';
+export type {
+  NativeAssetSettlementPort,
+  NativeDvpInput,
+  NativeHoldInput,
+  NativeSettlementFailure,
+  NativeTransferInput,
+} from './native-settlement.ts';
 export { SunReyExchangeService, type ExchangeCatalog } from './service.ts';
 export { ExchangeStore } from './store.ts';
 export {

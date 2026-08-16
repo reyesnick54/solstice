@@ -9,7 +9,7 @@ use sunrey_crypto::{
     crypto_policy_hash, development_fixture_secret, schema_registry_hash, suite_by_id, CryptoSuite,
     DevEd25519Sha256Suite, SigningSecret, DEV_ALGORITHM_ID, DEV_KEY_ID, DEV_SUITE_ID,
 };
-use sunrey_execution::{apply_transaction, install_genesis_assets};
+use sunrey_execution::{apply_transaction, install_genesis_assets, load_assets, ExecutionContext};
 use sunrey_governance::UpgradeManager;
 use sunrey_protocol::{
     block_id, genesis_hash, hash_to_hex, transaction_id, transaction_root,
@@ -281,7 +281,21 @@ impl LocalNode {
                     return Err(RejectReason::StatelessInvalid);
                 }
             }
-            _ => return Err(RejectReason::TransactionNotActivated),
+            TransactionFamily::NativeAsset => {
+                let (payload, rest) =
+                    sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)
+                        .map_err(RejectReason::from)?;
+                if payload.quantity == 0
+                    && payload.op != sunrey_native_assets::NativeAssetOp::Unlock
+                {
+                    return Err(RejectReason::StatelessInvalid);
+                }
+                if !rest.is_empty() {
+                    sunrey_native_assets::IssuanceAuthorization::decode(rest)
+                        .map_err(RejectReason::from)?;
+                }
+            }
+            TransactionFamily::Identity => return Err(RejectReason::TransactionNotActivated),
         }
         Ok(())
     }
@@ -416,7 +430,15 @@ impl LocalNode {
         if let Err(reason) = view.record_idempotency(&tx.unsigned.idempotency_key) {
             return Err((tx_id, reason));
         }
-        if let Err(reason) = apply_transaction(view, &tx) {
+        let exec = ExecutionContext {
+            height: self.store.meta.height + 1,
+            network_id: &self.store.genesis.network_id,
+            chain_id: &self.store.genesis.chain_id,
+            environment: &self.store.genesis.environment,
+            production_network_enabled: self.store.genesis.production_network_enabled,
+            authorization: extract_authorization(&tx),
+        };
+        if let Err(reason) = apply_transaction(view, &tx, &exec) {
             return Err((tx_id, reason));
         }
         Ok((tx, tx_id))
@@ -548,6 +570,21 @@ impl LocalNode {
     pub fn crypto_policy_commitment(&self) -> String {
         hash_to_hex(&crypto_policy_hash(&self.suite))
     }
+
+    pub fn native_assets(&self) -> Result<sunrey_native_assets::NativeAssetLedger, RejectReason> {
+        load_assets(&self.store.view)
+    }
+}
+
+fn extract_authorization(
+    tx: &SignedTransaction,
+) -> Option<sunrey_native_assets::IssuanceAuthorization> {
+    let (_, rest) =
+        sunrey_native_assets::NativeAssetPayload::decode_prefix(&tx.unsigned.payload).ok()?;
+    if rest.is_empty() {
+        return None;
+    }
+    sunrey_native_assets::IssuanceAuthorization::decode(rest).ok()
 }
 
 pub fn parent_genesis_hash(node: &LocalNode) -> Hash32 {
