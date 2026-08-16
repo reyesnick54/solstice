@@ -29,6 +29,9 @@
   `packages/sunrey-coin`. Historical stop:
   [`chunk-26-stop.md`](./chunk-26-stop.md). Resume:
   [`chunk-26-resume.md`](./chunk-26-resume.md). Public ticker is
-  UNDECIDED. SunRey Exchange and SunRey Chain remain PLANNED.
+  UNDECIDED. SunRey Exchange remains PLANNED.
+- [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
+  `packages/sunrey-chain`. Not the financial source of truth.
+  ADR-0015 remains PROPOSED.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

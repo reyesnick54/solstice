@@ -240,6 +240,16 @@ create `packages/pyramid-data-exchange`, `packages/data-exchange`,
 `packages/sunrey-data-exchange`, `packages/personal-oracle`,
 `packages/information-market-v2`, or `packages/proof-of-contribution`.
 Do not implement the Exchange matching engine or SunRey Chain.
+
+Chunk 28 implements the reserved SUNREY_CHAIN bounded context at
+`packages/sunrey-chain`. Capability `sunrey-chain` is `IMPLEMENTED`.
+Bounded context SUNREY_CHAIN is `IMPLEMENTED` simulation. The chain
+is not the financial source of truth. Do not create
+`packages/sunrey-chain-v2`, `packages/blockchain`,
+`packages/reyn-chain`, `packages/on-chain-ledger`, or
+`packages/crypto-chain`. Do not invent a ticker. Do not connect a
+live RPC, mainnet, or testnet. Do not implement SunRey Exchange
+matching. The evaluator returns `mustStop: false`.
 Chunk 24 implements the reserved CONSENT bounded context at
 `packages/consent`. Capability `consent` is `IMPLEMENTED`. It
 replaces the Personal Data Vault fail-closed consent placeholder

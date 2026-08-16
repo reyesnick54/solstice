@@ -207,8 +207,17 @@ This document describes only what is implemented and tested in this tree.
   `sunrey_coin`, and a read-only agent tool. Public ticker is
   `NOT_ASSIGNED`. Historical stop: `docs/architecture/chunk-26-stop.md`.
   Resume: `docs/architecture/chunk-26-resume.md`. Not a security,
-  commodity, deposit, e-money, or priced token. SunRey Exchange and
-  SunRey Chain remain PLANNED.
+  commodity, deposit, e-money, or priced token. SunRey Exchange
+  remains PLANNED. SunRey Chain is Chunk 28.
+- SunRey Chain (Chunk 28, `packages/sunrey-chain`): simulation
+  trust, provenance, permission, attestation, policy, and
+  settlement-anchor layer. `ChainWriteIntent` + default-deny policy
+  gate, scoped subject commitments, `CHAIN_OPERATION_SIGNING`,
+  in-process `SimulationChainAdapter`, async finality,
+  `CHAIN_SUBMISSION_UNKNOWN`, reorg observation without ledger
+  rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
+  wallet, exchange, or live network. Canonical ledger remains
+  authoritative. ADR-0015 remains PROPOSED.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -232,17 +241,18 @@ This document describes only what is implemented and tested in this tree.
 - Phase 2–3 live FX router, ACH/FedNow/SWIFT/Saudi rails, and production liquidity.
 - Compounder / Growth OS as a competing subsystem. Chunk 16 implements
   the canonical Growth Orchestrator instead.
-- SunRey Exchange and SunRey Chain. Historical `PYRAMID` /
+- SunRey Exchange matching. Historical `PYRAMID` /
   `PYRAMID_EXCHANGE` / `REYN_COIN` / `REYN_EXCHANGE` reservations are
   now `SUNREY_COIN` (`packages/sunrey-coin`, IMPLEMENTED simulation),
   `SUNREY_EXCHANGE` (`packages/sunrey-exchange`, PLANNED), and
-  `SUNREY_CHAIN` (`packages/sunrey-chain`, PLANNED). Do not invent a
-  public ticker. `PYRAMID_DATA_EXCHANGE` is migrated to
-  `SUNREY_INFORMATION_MARKET` at `packages/information-market`.
+  `SUNREY_CHAIN` (`packages/sunrey-chain`, IMPLEMENTED simulation).
+  Do not invent a public ticker. `PYRAMID_DATA_EXCHANGE` is migrated
+  to `SUNREY_INFORMATION_MARKET` at `packages/information-market`.
   Historical PRs `#18` and `#19` are not canonical. See
-  `docs/architecture/chunk-26-resume.md`.
+  `docs/architecture/chunk-26-resume.md` and
+  `docs/architecture/sunrey-chain.md`.
 - Reserved later bounded contexts that remain PLANNED (SUNREY
-  EXCHANGE, SUNREY CHAIN, SOVEREIGN CELLS, and
+  EXCHANGE, SOVEREIGN CELLS, and
   the rest listed in the constitution). PAYMENTS, FX, CARDS, TREASURY,
   INVESTMENTS, and STRATEGY LAB are PARTIAL simulation owners.
   Consent, Privacy Clean Room, and SunRey Coin are IMPLEMENTED

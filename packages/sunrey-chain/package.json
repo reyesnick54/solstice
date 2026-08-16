@@ -1,0 +1,19 @@
+{
+  "name": "@solstice/sunrey-chain",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

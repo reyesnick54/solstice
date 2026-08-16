@@ -46,7 +46,6 @@ describe('information market architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/human-information-network')), false);
     assert.equal(existsSync(join(ROOT, 'packages/data-marketplace')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), false);
-    assert.equal(existsSync(join(ROOT, 'packages/sunrey-chain')), false);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');
