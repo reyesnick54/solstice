@@ -1,16 +1,69 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use clap::Parser;
 use sunrey_chain_node::chain::Genesis;
 use sunrey_chain_node::identity::PeerAddress;
 use sunrey_chain_node::node::{DevelopmentNode, NodeConfig};
 use sunrey_chain_node::operator::serve_operator;
+use sunrey_chain_node::validator::{run_validator_command, NodeCli};
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt()
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
+
+    let args: Vec<String> = std::env::args().collect();
+    match args.get(1).map(String::as_str) {
+        Some("evidence") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+            Ok(out) => {
+                println!("{out}");
+                return;
+            }
+            Err(err) => {
+                eprintln!("{err}");
+                std::process::exit(1);
+            }
+        },
+        Some("validator")
+            if matches!(
+                args.get(2).map(String::as_str),
+                Some("offenses" | "accountability")
+            ) =>
+        {
+            match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+                Ok(out) => {
+                    println!("{out}");
+                    return;
+                }
+                Err(err) => {
+                    eprintln!("{err}");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Some("validator") => {
+            let cli = NodeCli::parse();
+            match cli.command {
+                Some(sunrey_chain_node::validator::NodeCommand::Validator { command }) => {
+                    match run_validator_command(command) {
+                        Ok(output) => println!("{output}"),
+                        Err(err) => {
+                            eprintln!("error: {err}");
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                None => {
+                    eprintln!("usage: sunrey-node validator <generate|register|show|set|schedule-key-rotation|schedule-exit|signer-status|verify-set|offenses|accountability>");
+                    std::process::exit(2);
+                }
+            }
+            return;
+        }
+        _ => {}
+    }
 
     let name = std::env::var("SUNREY_NODE_NAME").unwrap_or_else(|_| "node".into());
     let data_dir = PathBuf::from(
@@ -43,7 +96,12 @@ async fn main() {
     let mut config = NodeConfig::development(&name, data_dir, listen, operator);
     config.producer = producer;
     config.seeds = seeds;
-    config.genesis = Genesis::development();
+    config.genesis = if std::env::var("SUNREY_VALIDATOR_GENESIS").ok().as_deref() == Some("four") {
+        let (set, _) = sunrey_chain_node::validators::four_validator_devnet();
+        Genesis::development().with_validator_set(set)
+    } else {
+        Genesis::development()
+    };
 
     let node = Arc::new(DevelopmentNode::open(config).expect("open node"));
     let p2p = node.start().await.expect("start p2p");

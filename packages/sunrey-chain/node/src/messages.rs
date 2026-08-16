@@ -1,6 +1,8 @@
 use crate::chain::{Block, Transaction};
 use crate::codec::{Reader, Writer};
+use crate::consensus::messages::ConsensusMessage;
 use crate::error::{NodeError, NodeResult};
+use crate::evidence::EquivocationEvidence;
 
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -17,6 +19,10 @@ pub enum MessageType {
     BlockResponse = 22,
     SyncRequest = 30,
     SyncResponse = 31,
+    Consensus = 40,
+    EvidenceAnnounce = 50,
+    EvidenceRequest = 51,
+    EvidenceResponse = 52,
 }
 
 impl MessageType {
@@ -34,11 +40,16 @@ impl MessageType {
             22 => Ok(Self::BlockResponse),
             30 => Ok(Self::SyncRequest),
             31 => Ok(Self::SyncResponse),
+            40 => Ok(Self::Consensus),
+            50 => Ok(Self::EvidenceAnnounce),
+            51 => Ok(Self::EvidenceRequest),
+            52 => Ok(Self::EvidenceResponse),
             _ => Err(NodeError::Codec(format!("unknown message type {value}"))),
         }
     }
 }
 
+#[allow(clippy::large_enum_variant)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum NetMessage {
     Handshake(Vec<u8>),
@@ -53,6 +64,10 @@ pub enum NetMessage {
     BlockResponse { block: Block },
     SyncRequest { from_height: u64, to_height: u64 },
     SyncResponse { blocks: Vec<Block> },
+    Consensus(ConsensusMessage),
+    EvidenceAnnounce { evidence_id: [u8; 32] },
+    EvidenceRequest { evidence_id: [u8; 32] },
+    EvidenceResponse { evidence: EquivocationEvidence },
 }
 
 impl NetMessage {
@@ -70,6 +85,10 @@ impl NetMessage {
             Self::BlockResponse { .. } => MessageType::BlockResponse,
             Self::SyncRequest { .. } => MessageType::SyncRequest,
             Self::SyncResponse { .. } => MessageType::SyncResponse,
+            Self::Consensus(_) => MessageType::Consensus,
+            Self::EvidenceAnnounce { .. } => MessageType::EvidenceAnnounce,
+            Self::EvidenceRequest { .. } => MessageType::EvidenceRequest,
+            Self::EvidenceResponse { .. } => MessageType::EvidenceResponse,
         }
     }
 
@@ -102,6 +121,11 @@ impl NetMessage {
                     w.bytes(&block.encode()?)?;
                 }
             }
+            Self::Consensus(message) => w.bytes(&message.encode()?)?,
+            Self::EvidenceAnnounce { evidence_id } | Self::EvidenceRequest { evidence_id } => {
+                w.bytes32(evidence_id);
+            }
+            Self::EvidenceResponse { evidence } => w.bytes(&evidence.encode()?)?,
         }
         Ok(w.finish())
     }
@@ -152,6 +176,16 @@ impl NetMessage {
                 }
                 Self::SyncResponse { blocks }
             }
+            MessageType::Consensus => Self::Consensus(ConsensusMessage::decode(&r.bytes()?)?),
+            MessageType::EvidenceAnnounce => Self::EvidenceAnnounce {
+                evidence_id: r.bytes32()?,
+            },
+            MessageType::EvidenceRequest => Self::EvidenceRequest {
+                evidence_id: r.bytes32()?,
+            },
+            MessageType::EvidenceResponse => Self::EvidenceResponse {
+                evidence: EquivocationEvidence::decode(&r.bytes()?)?,
+            },
         };
         r.finish()?;
         Ok(msg)

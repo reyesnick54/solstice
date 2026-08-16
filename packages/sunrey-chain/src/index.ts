@@ -108,7 +108,27 @@ export {
   type ValidatorRecoveryKey,
   type ValidatorRewardAddress,
 } from './validator-keys.ts';
+export {
+  AUTOMATIC_PENALTY_EVIDENCE_TYPES,
+  EQUIVOCATION_EVIDENCE_TYPES,
+  RESERVED_EVIDENCE_TYPES,
+  allowsAutomaticPenalty,
+  type CanonicalConsensusMessage,
+  type EquivocationEvidence,
+  type EquivocationEvidenceType,
+  type EvidenceType,
+  type ReservedEvidenceType,
+} from './evidence-format.ts';
+export {
+  ACCOUNTABILITY_DECISIONS,
+  ACCOUNTABILITY_POLICY_VERSION,
+  FORBIDDEN_ACCOUNTABILITY_TARGETS,
+  type AccountabilityDecision,
+  type AccountabilityReceiptView,
+  type SimulationBondUnits,
+} from './accountability-policy.ts';
 export { InMemorySunReyChainStore } from './store.ts';
 export { SunReyChainService, type CreateIntentInput } from './service.ts';
 export * as protocol from './protocol/index.ts';
 export * as governance from './governance/index.ts';
+export * as validators from './validators/index.ts';

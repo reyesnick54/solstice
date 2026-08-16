@@ -1,9 +1,11 @@
 # Chunk 40 — SunRey protocol governance and upgrade manager
 
-Implemented on latest `main` after Chunks 32R–35R. Chunk 36 validator
-lifecycle remains `PLANNED`. This chunk does not implement bonding,
-slashing, or BFT voting. Development governance identities are
-explicit and distinct from consensus / P2P / Execution Authority keys.
+Implemented on latest `main` after Chunks 36R–39. Validator registry,
+integer voting power, BFT consensus, and simulation accountability
+are already `IMPLEMENTED` on `packages/sunrey-chain`. This chunk does
+not reimplement those planes. Development governance identities use
+distinct `GOVERNANCE_KEY` descriptors and must not reuse consensus,
+P2P, or Execution Authority keys.
 
 Canonical owner remains `packages/sunrey-chain`.
 
@@ -66,7 +68,8 @@ divergent state at activation (`INCOMPATIBLE_PROTOCOL`).
 
 - Production governance or a public network
 - A governance token or coin-weighted voting
-- Chunk 36 validator registry / bonding / BFT
+- Reimplementation of the Chunk 36R–39 validator, BFT, or
+  accountability planes
 - MoonRey issuance
 - Customer fiat authority changes
 - Counsel-confirmed policy (`RESEARCH_REQUIRED`)

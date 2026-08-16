@@ -86,6 +86,49 @@ export class SimulationPqSignatureProvider implements SignatureProvider {
     });
   }
 
+  fromSeed(
+    seedHex: string,
+    purpose: KeyPurpose,
+    suiteId: CryptoSuiteId,
+    explicitKeyId: string,
+  ): SecurityResult<GeneratedKeyPair> {
+    const seed = Buffer.from(seedHex, 'hex');
+    if (seed.length === 0) {
+      return securityErr('UNSUPPORTED_ALGORITHM', 'simulation PQ seed must be non-empty');
+    }
+    const publicRaw = hash(Buffer.concat([Buffer.from('sim-pq-pub', 'utf8'), seed]));
+    return securityOk({
+      publicKey: freezePublicKeyDescriptor({
+        keyId: keyId(explicitKeyId),
+        keyVersion: keyVersion(1),
+        algorithmId: this.algorithmId,
+        suiteId,
+        purpose,
+        publicKeyHex: publicRaw.toString('hex'),
+        lifecycleState: 'ACTIVE',
+        providerId: this.providerId,
+      }),
+      privateKey: new PrivateKeyMaterial(seed),
+    });
+  }
+
+  signRaw(secretHex: string, publicHex: string, message: Buffer): SecurityResult<Buffer> {
+    const expectedPub = hash(Buffer.concat([Buffer.from('sim-pq-pub', 'utf8'), Buffer.from(secretHex, 'hex')]));
+    if (!expectedPub.equals(Buffer.from(publicHex, 'hex'))) {
+      return securityErr('AUTHENTICATION_FAILED', 'simulation PQ public key does not match seed');
+    }
+    return securityOk(createHmac('sha256', Buffer.from(publicHex, 'hex')).update(message).digest());
+  }
+
+  verifyRaw(publicHex: string, message: Buffer, signatureHex: string): SecurityResult<true> {
+    const expected = createHmac('sha256', Buffer.from(publicHex, 'hex')).update(message).digest();
+    const provided = Buffer.from(signatureHex, 'hex');
+    if (expected.length !== provided.length || !expected.equals(provided)) {
+      return securityErr('SIGNATURE_INVALID', 'simulation PQ raw signature is invalid');
+    }
+    return securityOk(true);
+  }
+
   sign(
     privateKey: PrivateKeyMaterial,
     publicKey: PublicKeyDescriptor,

@@ -48,11 +48,20 @@ implemented as an internal module at `packages/sunrey-chain/node`.
 See [`chunk-34-resume.md`](./chunk-34-resume.md) and
 [`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
-bonding / epoch lifecycle (Chunk 36) remains `PLANNED`. See
-[`chunk-36-stop.md`](./chunk-36-stop.md). Chunk 40 implements
-development protocol governance at
+bonding / epoch lifecycle (Chunk 36R) are implemented. See
+[`chunk-36-resume.md`](./chunk-36-resume.md). Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). A development
+Tendermint-class BFT engine (Chunk 37) lives at
+`packages/sunrey-chain/rust/crates/consensus`. See
+[`chunk-37-bft-consensus-core.md`](./chunk-37-bft-consensus-core.md).
+Chunk 38 networks that engine. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
+Chunk 39 implements simulation accountability. See
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Chunk 40 implements development protocol governance at
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
-Do not create `packages/sunrey-node`, `packages/sunrey-p2p`,
+Do not create
+`packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/governance`,
 or `packages/sunrey-governance`. Production BFT is
 not implemented. See ADR-0015. The simulation foundation remains

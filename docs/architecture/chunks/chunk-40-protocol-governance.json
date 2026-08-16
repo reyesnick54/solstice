@@ -13,7 +13,8 @@
     "sunrey-blockchain-architecture",
     "sunrey-local-node",
     "crypto-suite-registry",
+    "sunrey-validators",
     "sunrey-protocol-governance"
   ],
-  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript governance engine) and packages/sunrey-chain/rust/crates/governance (local-node upgrade manager). Height-activated UpgradePlan. No governance token. SunRey Coin and MoonRey do not grant voting power. Chunk 36 validator lifecycle remains PLANNED. evaluateChunkRequirements returns mustStop: false."
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript governance engine) and packages/sunrey-chain/rust/crates/governance (local-node upgrade manager). Height-activated UpgradePlan. No governance token. SunRey Coin and MoonRey do not grant voting power. Distinct GOVERNANCE_KEY descriptors; consensus and P2P keys cannot sign governance. evaluateChunkRequirements returns mustStop: false."
 }

@@ -1,0 +1,18 @@
+[package]
+name = "sunrey-validators"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "SunRey validator registry, lifecycle, and signer safety"
+
+[dependencies]
+ed25519-dalek.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sunrey-crypto.workspace = true
+sunrey-protocol.workspace = true
+thiserror.workspace = true
+clap.workspace = true

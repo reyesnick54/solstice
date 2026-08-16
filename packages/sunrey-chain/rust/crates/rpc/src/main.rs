@@ -4,7 +4,11 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 use clap::{Parser, Subcommand};
-use sunrey_crypto::development_fixture_secret;
+use sunrey_consensus::{
+    development_secret, four_validator_set, ConsensusEngine, ConsensusParams, EngineConfig,
+    EnginePaths, FourValidatorHarness, MemoryApp,
+};
+use sunrey_crypto::{development_fixture_secret, DevEd25519Sha256Suite};
 use sunrey_governance::VoteChoice;
 use sunrey_node::{LocalNode, DEV_BLOCK_PRODUCER, NODE_ROLE};
 use sunrey_protocol::{
@@ -75,6 +79,14 @@ enum Command {
     EncodeFixture {
         #[arg(long, default_value = "system-note")]
         name: String,
+    },
+    Consensus {
+        #[command(subcommand)]
+        command: ConsensusCommand,
+    },
+    Validator {
+        #[command(subcommand)]
+        command: sunrey_validators::ValidatorCommand,
     },
     Governance {
         #[command(subcommand)]
@@ -149,6 +161,46 @@ enum ProtocolCommand {
     Version {
         #[arg(long)]
         data_dir: PathBuf,
+    },
+}
+
+#[derive(Subcommand)]
+enum ConsensusCommand {
+    Status {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value = "val_a")]
+        validator: String,
+    },
+    Validators {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value = "val_a")]
+        validator: String,
+    },
+    Params {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value = "val_a")]
+        validator: String,
+    },
+    Commit {
+        #[arg(long)]
+        data_dir: PathBuf,
+        height: u64,
+        #[arg(long, default_value = "val_a")]
+        validator: String,
+    },
+    WalStatus {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value = "val_a")]
+        validator: String,
+    },
+    Harness,
+    Validator {
+        #[command(subcommand)]
+        command: sunrey_validators::ValidatorCommand,
     },
 }
 
@@ -254,6 +306,10 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
                 "verify=ok height={} app_hash={}",
                 node.store.meta.height, node.store.meta.app_hash
             );
+        }
+        Command::Consensus { command } => run_consensus(command)?,
+        Command::Validator { command } => {
+            println!("{}", sunrey_validators::run_validator_command(command)?);
         }
         Command::Governance { command } => return run_governance(command),
         Command::Protocol { command } => return run_protocol(command),
@@ -390,6 +446,108 @@ fn run_protocol(command: ProtocolCommand) -> Result<(), Box<dyn std::error::Erro
         }
     }
     Ok(())
+}
+
+fn run_consensus(command: ConsensusCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        ConsensusCommand::Harness => {
+            let mut harness = FourValidatorHarness::open_ephemeral()?;
+            let finalized = harness.drive_until_commit(64)?;
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&serde_json::json!({
+                    "environment": "simulation",
+                    "production_ready": false,
+                    "validators": 4,
+                    "height": finalized.height.get(),
+                    "round": finalized.round.get(),
+                    "block_id": finalized.block_id.hex(),
+                    "certificate_votes": finalized.certificate.votes.len(),
+                    "note": "in-process four-validator Tendermint-family harness; not a public network",
+                }))?
+            );
+        }
+        ConsensusCommand::Validator { command } => {
+            println!("{}", sunrey_validators::run_validator_command(command)?);
+        }
+        other => {
+            let (data_dir, validator) = match &other {
+                ConsensusCommand::Status { data_dir, validator }
+                | ConsensusCommand::Validators { data_dir, validator }
+                | ConsensusCommand::Params { data_dir, validator }
+                | ConsensusCommand::Commit { data_dir, validator, .. }
+                | ConsensusCommand::WalStatus { data_dir, validator } => {
+                    (data_dir.clone(), validator.clone())
+                }
+                ConsensusCommand::Harness | ConsensusCommand::Validator { .. } => unreachable!(),
+            };
+            let engine = open_cli_engine(&data_dir, &validator)?;
+            match other {
+                ConsensusCommand::Status { .. } => {
+                    println!("{}", serde_json::to_string_pretty(&engine.status_json())?);
+                }
+                ConsensusCommand::Validators { .. } => {
+                    println!(
+                        "{}",
+                        serde_json::to_string_pretty(&serde_json::json!({
+                            "version": engine.validators.version,
+                            "total_active_power": engine.validators.total_active_power()?,
+                            "validators": engine.validators.validators.iter().map(|v| {
+                                serde_json::json!({
+                                    "id": v.validator_id.as_str(),
+                                    "voting_power": v.voting_power,
+                                    "proposer_priority": v.proposer_priority,
+                                })
+                            }).collect::<Vec<_>>(),
+                        }))?
+                    );
+                }
+                ConsensusCommand::Params { .. } => {
+                    println!("{}", serde_json::to_string_pretty(&engine.params)?);
+                }
+                ConsensusCommand::Commit { height, .. } => {
+                    if let Some(cert) = engine.commits.get(&height) {
+                        println!(
+                            "{}",
+                            serde_json::to_string_pretty(&serde_json::json!({
+                                "height": cert.height.get(),
+                                "round": cert.round.get(),
+                                "block_id": cert.block_id.hex(),
+                                "votes": cert.votes.len(),
+                                "validator_set_version": cert.validator_set_version,
+                            }))?
+                        );
+                    } else {
+                        return Err(format!("no commit certificate at height {height}").into());
+                    }
+                }
+                ConsensusCommand::WalStatus { .. } => {
+                    println!("{}", serde_json::to_string_pretty(&engine.wal_status())?);
+                }
+                ConsensusCommand::Harness | ConsensusCommand::Validator { .. } => unreachable!(),
+            }
+        }
+    }
+    Ok(())
+}
+
+fn open_cli_engine(
+    data_dir: &std::path::Path,
+    validator: &str,
+) -> Result<ConsensusEngine<MemoryApp, DevEd25519Sha256Suite>, sunrey_consensus::ConsensusError> {
+    let base = data_dir.join(validator);
+    ConsensusEngine::open(
+        EngineConfig::development(validator),
+        DevEd25519Sha256Suite,
+        MemoryApp::default(),
+        ConsensusParams::development(),
+        four_validator_set()?,
+        Some(development_secret(validator)),
+        EnginePaths {
+            wal: Some(&base.join("consensus.wal")),
+            signer: Some(&base.join("signer.bin")),
+        },
+    )
 }
 
 fn warn_interval(interval: u64) {

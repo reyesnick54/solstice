@@ -22,6 +22,7 @@ pub enum KeyDomain {
     P2pNode,
     TxWallet,
     ValidatorConsensus,
+    ValidatorProposal,
     Governance,
 }
 
@@ -31,6 +32,7 @@ impl KeyDomain {
             Self::P2pNode => b"SUNREY-KEY-P2P-NODE-V1",
             Self::TxWallet => b"SUNREY-KEY-TX-WALLET-V1",
             Self::ValidatorConsensus => b"SUNREY-KEY-VALIDATOR-CONSENSUS-V1",
+            Self::ValidatorProposal => b"SUNREY-KEY-VALIDATOR-PROPOSAL-V1",
             Self::Governance => b"SUNREY-KEY-GOVERNANCE-V1",
         }
     }

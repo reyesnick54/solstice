@@ -49,6 +49,8 @@ npm run demo:sunrey-chain
 npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:sunrey-devnet
+npm run demo:sunrey-validator-devnet
+npm run demo:sunrey-accountability
 npm run demo:sunrey-exchange
 npm run demo:custody
 npm run demo:market-surveillance

@@ -7,8 +7,10 @@ members = [
   "crates/execution",
   "crates/storage",
   "crates/governance",
+  "crates/consensus",
   "crates/node",
   "crates/rpc",
+  "crates/validators",
 ]
 
 [workspace.package]
@@ -23,9 +25,11 @@ sunrey-crypto = { path = "crates/crypto" }
 sunrey-state = { path = "crates/state" }
 sunrey-execution = { path = "crates/execution" }
 sunrey-storage = { path = "crates/storage" }
+sunrey-consensus = { path = "crates/consensus" }
 sunrey-node = { path = "crates/node" }
 sunrey-rpc = { path = "crates/rpc" }
 sunrey-governance = { path = "crates/governance" }
+sunrey-validators = { path = "crates/validators" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"

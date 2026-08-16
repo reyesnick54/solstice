@@ -6,10 +6,15 @@
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
+use crate::accountability::{AccountabilityState, ValidatorAccountabilityPolicy};
 use crate::codec::{Reader, Writer};
 use crate::crypto::{sha256, verify, DomainKey, KeyDomain};
 use crate::error::{NodeError, NodeResult};
+use crate::evidence::{
+    evidence_root, verify_equivocation_evidence, EquivocationEvidence, EvidenceContext,
+};
 use crate::identity::unix_ms;
+use crate::validators::{ValidatorRuntime, ValidatorSet};
 
 pub const DEV_NETWORK_ID: &str = "net_sunrey_development";
 pub const DEV_CHAIN_ID: &str = "chn_sunrey_development";
@@ -25,6 +30,8 @@ pub struct Genesis {
     pub codec_version: u16,
     pub crypto_suite: String,
     pub created_at_ms: u64,
+    pub validator_set_hash: [u8; 32],
+    pub validator_set: ValidatorSet,
     pub hash: [u8; 32],
 }
 
@@ -37,10 +44,19 @@ impl Genesis {
             codec_version: crate::crypto::CODEC_VERSION,
             crypto_suite: crate::crypto::CRYPTO_SUITE_ID.into(),
             created_at_ms: 1,
+            validator_set_hash: [0u8; 32],
+            validator_set: ValidatorSet::empty(),
             hash: [0u8; 32],
         };
         genesis.hash = genesis.compute_hash();
         genesis
+    }
+
+    pub fn with_validator_set(mut self, set: ValidatorSet) -> Self {
+        self.validator_set_hash = set.hash();
+        self.validator_set = set;
+        self.hash = self.compute_hash();
+        self
     }
 
     pub fn compute_hash(&self) -> [u8; 32] {
@@ -51,6 +67,7 @@ impl Genesis {
         w.u16(self.codec_version);
         w.string(&self.crypto_suite).expect("genesis suite");
         w.u64(self.created_at_ms);
+        w.bytes32(&self.validator_set_hash);
         sha256(&w.finish())
     }
 }
@@ -164,9 +181,14 @@ pub struct BlockHeader {
     pub parent_id: [u8; 32],
     pub tx_root: [u8; 32],
     pub state_root: [u8; 32],
+    pub evidence_root: [u8; 32],
+    pub validator_set_hash: [u8; 32],
+    pub epoch: u64,
     pub protocol_version: u16,
     pub crypto_suite: String,
     pub time_ms: u64,
+    /// Schema-1 headers omit accountability fields on the wire.
+    pub legacy_wire: bool,
 }
 
 impl BlockHeader {
@@ -178,6 +200,11 @@ impl BlockHeader {
         w.bytes32(&self.parent_id);
         w.bytes32(&self.tx_root);
         w.bytes32(&self.state_root);
+        if !self.legacy_wire {
+            w.bytes32(&self.evidence_root);
+            w.bytes32(&self.validator_set_hash);
+            w.u64(self.epoch);
+        }
         w.u16(self.protocol_version);
         w.string(&self.crypto_suite)?;
         w.u64(self.time_ms);
@@ -189,17 +216,22 @@ impl BlockHeader {
 pub struct Block {
     pub header: BlockHeader,
     pub transactions: Vec<Transaction>,
+    pub evidence: Vec<EquivocationEvidence>,
     pub block_id: [u8; 32],
 }
 
 impl Block {
     pub fn encode(&self) -> NodeResult<Vec<u8>> {
         let mut w = Writer::new();
-        w.u8(1);
+        w.u8(2);
         w.bytes(&self.header.encode()?)?;
         w.u32(self.transactions.len() as u32);
         for tx in &self.transactions {
             w.bytes(&tx.encode()?)?;
+        }
+        w.u32(self.evidence.len() as u32);
+        for item in &self.evidence {
+            w.bytes(&item.encode()?)?;
         }
         w.bytes32(&self.block_id);
         Ok(w.finish())
@@ -207,7 +239,8 @@ impl Block {
 
     pub fn decode(bytes: &[u8]) -> NodeResult<Self> {
         let mut r = Reader::new(bytes);
-        if r.u8()? != 1 {
+        let schema = r.u8()?;
+        if schema != 1 && schema != 2 {
             return Err(NodeError::Codec("unknown block schema".into()));
         }
         let header = decode_header(&r.bytes()?)?;
@@ -219,17 +252,62 @@ impl Block {
         for _ in 0..count {
             transactions.push(Transaction::decode(&r.bytes()?)?);
         }
+        let mut evidence = Vec::new();
+        if schema == 2 {
+            let ev_count = r.u32()? as usize;
+            if ev_count > crate::evidence::MAX_EVIDENCE_PER_BLOCK {
+                return Err(NodeError::Codec("too much evidence".into()));
+            }
+            for _ in 0..ev_count {
+                evidence.push(EquivocationEvidence::decode(&r.bytes()?)?);
+            }
+        }
         let block_id = r.bytes32()?;
         r.finish()?;
         Ok(Self {
             header,
             transactions,
+            evidence,
             block_id,
         })
     }
 }
 
 fn decode_header(bytes: &[u8]) -> NodeResult<BlockHeader> {
+    decode_header_v2(bytes).or_else(|_| decode_header_v1(bytes))
+}
+
+fn decode_header_v2(bytes: &[u8]) -> NodeResult<BlockHeader> {
+    let mut r = Reader::new(bytes);
+    let network_id = r.string()?;
+    let chain_id = r.string()?;
+    let height = r.u64()?;
+    let parent_id = r.bytes32()?;
+    let tx_root = r.bytes32()?;
+    let state_root = r.bytes32()?;
+    let evidence_root = r.bytes32()?;
+    let validator_set_hash = r.bytes32()?;
+    let epoch = r.u64()?;
+    let header = BlockHeader {
+        network_id,
+        chain_id,
+        height,
+        parent_id,
+        tx_root,
+        state_root,
+        evidence_root,
+        validator_set_hash,
+        epoch,
+        protocol_version: r.u16()?,
+        crypto_suite: r.string()?,
+        time_ms: r.u64()?,
+        legacy_wire: false,
+    };
+    r.finish()?;
+    Ok(header)
+}
+
+fn decode_header_v1(bytes: &[u8]) -> NodeResult<BlockHeader> {
     let mut r = Reader::new(bytes);
     let header = BlockHeader {
         network_id: r.string()?,
@@ -238,9 +316,13 @@ fn decode_header(bytes: &[u8]) -> NodeResult<BlockHeader> {
         parent_id: r.bytes32()?,
         tx_root: r.bytes32()?,
         state_root: r.bytes32()?,
+        evidence_root: [0u8; 32],
+        validator_set_hash: [0u8; 32],
+        epoch: 0,
         protocol_version: r.u16()?,
         crypto_suite: r.string()?,
         time_ms: r.u64()?,
+        legacy_wire: true,
     };
     r.finish()?;
     Ok(header)
@@ -257,25 +339,40 @@ pub struct DevChain {
     pub genesis: Genesis,
     pub state: BTreeMap<String, ActorState>,
     pub blocks: Vec<Block>,
+    pub validators: ValidatorRuntime,
+    pub accountability: AccountabilityState,
     data_dir: Option<PathBuf>,
 }
 
 impl DevChain {
     pub fn new(genesis: Genesis) -> Self {
+        let validators = ValidatorRuntime::new(
+            genesis.validator_set.clone(),
+            crate::validators::DEFAULT_EPOCH_LENGTH,
+        );
         Self {
             genesis,
             state: BTreeMap::new(),
             blocks: Vec::new(),
+            validators,
+            accountability: AccountabilityState::new(ValidatorAccountabilityPolicy::development()),
             data_dir: None,
         }
     }
 
     pub fn open(dir: &Path, genesis: Genesis) -> NodeResult<Self> {
         std::fs::create_dir_all(dir).map_err(|e| NodeError::Store(e.to_string()))?;
+        let validators = ValidatorRuntime::new(
+            genesis.validator_set.clone(),
+            crate::validators::DEFAULT_EPOCH_LENGTH,
+        );
         let mut chain = Self {
             genesis,
             state: BTreeMap::new(),
             blocks: Vec::new(),
+            validators,
+            accountability: AccountabilityState::new(ValidatorAccountabilityPolicy::development())
+                .with_persist_dir(dir),
             data_dir: Some(dir.to_path_buf()),
         };
         let blocks_dir = dir.join("blocks");
@@ -368,6 +465,15 @@ impl DevChain {
     }
 
     pub fn propose_block(&self, txs: Vec<Transaction>, time_ms: u64) -> NodeResult<Block> {
+        self.propose_block_with_evidence(txs, Vec::new(), time_ms)
+    }
+
+    pub fn propose_block_with_evidence(
+        &self,
+        txs: Vec<Transaction>,
+        evidence: Vec<EquivocationEvidence>,
+        time_ms: u64,
+    ) -> NodeResult<Block> {
         let mut working = self.clone_state();
         let mut accepted = Vec::new();
         let mut bytes = 0usize;
@@ -384,21 +490,44 @@ impl DevChain {
                 accepted.push(tx);
             }
         }
+        let mut accepted_evidence = Vec::new();
+        for item in evidence {
+            if accepted_evidence.len() >= crate::evidence::MAX_EVIDENCE_PER_BLOCK {
+                break;
+            }
+            let historical = self.validators.set_at_height(item.offense_height());
+            let ctx = EvidenceContext {
+                network_id: &self.genesis.network_id,
+                chain_id: &self.genesis.chain_id,
+                current_height: self.height() + 1,
+                historical_set: historical,
+                processed: &self.accountability.processed,
+            };
+            if verify_equivocation_evidence(&item, &ctx).is_ok() {
+                accepted_evidence.push(item);
+            }
+        }
+        let height = self.height() + 1;
         let header = BlockHeader {
             network_id: self.genesis.network_id.clone(),
             chain_id: self.genesis.chain_id.clone(),
-            height: self.height() + 1,
+            height,
             parent_id: self.tip_id(),
             tx_root: tx_root(&accepted),
             state_root: compute_state_root(&working),
+            evidence_root: evidence_root(&accepted_evidence),
+            validator_set_hash: self.validators.active.hash(),
+            epoch: self.validators.epoch_of(height),
             protocol_version: self.genesis.protocol_version,
             crypto_suite: self.genesis.crypto_suite.clone(),
             time_ms,
+            legacy_wire: false,
         };
         let block_id = sha256(&header.encode()?);
         Ok(Block {
             header,
             transactions: accepted,
+            evidence: accepted_evidence,
             block_id,
         })
     }
@@ -438,6 +567,31 @@ impl DevChain {
         if compute_state_root(&working) != block.header.state_root {
             return Err(NodeError::Validation("state root mismatch".into()));
         }
+        if evidence_root(&block.evidence) != block.header.evidence_root {
+            return Err(NodeError::Validation("evidence root mismatch".into()));
+        }
+        if block.header.validator_set_hash != self.validators.active.hash() {
+            return Err(NodeError::Validation(
+                "validator-set hash must match the active epoch set".into(),
+            ));
+        }
+        if block.header.epoch != self.validators.epoch_of(block.header.height) {
+            return Err(NodeError::Validation("block epoch mismatch".into()));
+        }
+        if block.evidence.len() > crate::evidence::MAX_EVIDENCE_PER_BLOCK {
+            return Err(NodeError::Validation("too much evidence".into()));
+        }
+        for item in &block.evidence {
+            let historical = self.validators.set_at_height(item.offense_height());
+            let ctx = EvidenceContext {
+                network_id: &self.genesis.network_id,
+                chain_id: &self.genesis.chain_id,
+                current_height: block.header.height,
+                historical_set: historical,
+                processed: &self.accountability.processed,
+            };
+            verify_equivocation_evidence(item, &ctx)?;
+        }
         Ok(())
     }
 
@@ -447,11 +601,42 @@ impl DevChain {
     }
 
     fn apply_validated(&mut self, block: Block) -> NodeResult<[u8; 32]> {
+        let prior_protocol = self.genesis.protocol_version;
+        let prior_active_hash = self.validators.active.hash();
+        let prior_history_len = self.validators.history.len();
         for tx in &block.transactions {
             self.apply_tx(tx)?;
         }
         if self.state_root() != block.header.state_root {
             return Err(NodeError::Validation("local state root diverged".into()));
+        }
+        for item in &block.evidence {
+            self.accountability.execute(
+                item,
+                &mut self.validators,
+                &self.genesis.network_id,
+                &self.genesis.chain_id,
+                block.header.height,
+                block.block_id,
+            )?;
+        }
+        self.validators.commit_epoch_if_needed(block.header.height);
+        if self.genesis.protocol_version != prior_protocol {
+            return Err(NodeError::Validation(
+                "evidence must not change protocol version".into(),
+            ));
+        }
+        if !self.validators.is_epoch_end(block.header.height)
+            && self.validators.active.hash() != prior_active_hash
+        {
+            return Err(NodeError::Validation(
+                "validator-set hash must not change mid-epoch".into(),
+            ));
+        }
+        if self.validators.history.len() < prior_history_len {
+            return Err(NodeError::Validation(
+                "validator history is append-only".into(),
+            ));
         }
         if let Some(dir) = &self.data_dir {
             let blocks_dir = dir.join("blocks");

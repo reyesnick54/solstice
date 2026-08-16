@@ -744,14 +744,31 @@ governance token. Do not create `packages/governance` or
 `packages/sunrey-governance`. Production governance is not
 implemented.
 
-Chunk 36 (validator identity, registry, bonding, and validator-set
-lifecycle) remains **stopped** / `PLANNED`. Capability
-`sunrey-validators` is `PLANNED` at owner `packages/sunrey-chain`.
-`evaluateChunkRequirements` returns `mustStop: true` and
-`missing: ['sunrey-validators']`. Stop record:
-[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+Chunk 36R implements the development validator registry, lifecycle,
+integer voting power, epoch-boundary set transitions, CryptoSuite
+consensus signer, and durable signer safety at
+`packages/sunrey-chain`. Capability `sunrey-validators` is
+`IMPLEMENTED` on that owner. `evaluateChunkRequirements` returns
+`mustStop: false`. Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Do not create
 `packages/validators`, `packages/staking`, or
-`packages/validator-v2`. Do not begin BFT voting.
+`packages/validator-v2`.
+Chunk 37 implements a development Tendermint-class BFT
+`ConsensusEngine` at `packages/sunrey-chain/rust/crates/consensus`.
+Capability `blockchain-consensus` is `IMPLEMENTED` on that owner.
+Production consensus remains not implemented. Do not create
+`packages/tendermint`, `packages/consensus-engine`, or
+`packages/blockchain-consensus`. See
+[`chunk-37-bft-consensus-core.md`](./chunk-37-bft-consensus-core.md).
+Chunk 38 networks that engine across the four-validator P2P
+devnet at `packages/sunrey-chain/node`. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
+Chunk 39 implements equivocation evidence, jail, tombstone, and
+simulation-bond penalties. Capability
+`sunrey-validator-accountability` is `IMPLEMENTED`. See
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
+Penalties never debit customer fiat, SunRey Coin, or MoonRey.
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that

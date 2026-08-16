@@ -62,9 +62,91 @@ fn handle(node: &DevelopmentNode, req: &str) -> (&'static str, String) {
                 "name": node.config.name,
                 "node_id": node.node_id().hex(),
                 "height": node.height(),
+                "finalized_height": node.finalized_height(),
                 "state_root": hex::encode(node.state_root()),
+                "validator_set_hash": hex::encode(node.validator_set_hash()),
                 "metrics": metrics,
+                "consensus_metrics": node.consensus_metrics(),
                 "forks": node.fork_evidence(),
+            })
+            .to_string(),
+        );
+    }
+    if line.starts_with("GET /finalized_height") {
+        return (
+            "200 OK",
+            serde_json::json!({ "finalized_height": node.finalized_height() }).to_string(),
+        );
+    }
+    if let Some(height) = query_height(line, "GET /finalized_block") {
+        return match node.finalized_block(height) {
+            Some(block) => (
+                "200 OK",
+                serde_json::json!({
+                    "height": block.header.height,
+                    "block_id": hex::encode(block.block_id),
+                    "state_root": hex::encode(block.header.state_root),
+                    "committed": true,
+                })
+                .to_string(),
+            ),
+            None => (
+                "404 Not Found",
+                serde_json::json!({"error":"no finalized block"}).to_string(),
+            ),
+        };
+    }
+    if let Some(height) = query_height(line, "GET /commit_certificate") {
+        return match node.commit_certificate(height) {
+            Some(cert) => (
+                "200 OK",
+                serde_json::json!({
+                    "height": cert.height,
+                    "round": cert.round,
+                    "block_id": hex::encode(cert.block_id),
+                    "state_root": hex::encode(cert.state_root),
+                    "validator_set_hash": hex::encode(cert.validator_set_hash),
+                })
+                .to_string(),
+            ),
+            None => (
+                "404 Not Found",
+                serde_json::json!({"error":"no commit certificate"}).to_string(),
+            ),
+        };
+    }
+    if let Some(height) = query_height(line, "GET /validator_set_at_height") {
+        return match node.validator_set_at_height(height) {
+            Some(set) => (
+                "200 OK",
+                serde_json::json!({
+                    "epoch": set.epoch,
+                    "hash": hex::encode(set.hash()),
+                    "total_power": set.total_power(),
+                    "validators": set.validators.iter().map(|v| v.name.clone()).collect::<Vec<_>>(),
+                })
+                .to_string(),
+            ),
+            None => (
+                "404 Not Found",
+                serde_json::json!({"error":"no validator set"}).to_string(),
+            ),
+        };
+    }
+    if let Some(height) = query_height(line, "GET /consensus_round_at_commit") {
+        return (
+            "200 OK",
+            serde_json::json!({
+                "round": node.consensus_round_at_commit(height),
+            })
+            .to_string(),
+        );
+    }
+    if let Some(height) = query_height(line, "GET /state_root_at_height") {
+        return (
+            "200 OK",
+            serde_json::json!({
+                "state_root": node.state_root_at_height(height).map(hex::encode),
             })
             .to_string(),
         );
@@ -85,6 +167,34 @@ fn handle(node: &DevelopmentNode, req: &str) -> (&'static str, String) {
                 serde_json::json!({"error": err.to_string()}).to_string(),
             ),
         };
+    }
+    if line.starts_with("GET /evidence") {
+        if line.contains("show") {
+            let id = query_param(req, "id").unwrap_or_default();
+            return (
+                "200 OK",
+                serde_json::to_string(&node.evidence_show(&id)).unwrap_or_else(|_| "null".into()),
+            );
+        }
+        return (
+            "200 OK",
+            serde_json::to_string(&node.evidence_list()).unwrap_or_else(|_| "[]".into()),
+        );
+    }
+    if line.starts_with("GET /validator/offenses") {
+        let id = query_param(req, "id").unwrap_or_default();
+        return (
+            "200 OK",
+            serde_json::to_string(&node.validator_offenses(&id)).unwrap_or_else(|_| "[]".into()),
+        );
+    }
+    if line.starts_with("GET /validator/accountability") {
+        let id = query_param(req, "id").unwrap_or_default();
+        return (
+            "200 OK",
+            serde_json::to_string(&node.validator_accountability(&id))
+                .unwrap_or_else(|_| "{}".into()),
+        );
     }
     if line.starts_with("POST /tx") {
         let Some(body) = req.split("\r\n\r\n").nth(1) else {
@@ -114,4 +224,32 @@ fn handle(node: &DevelopmentNode, req: &str) -> (&'static str, String) {
         };
     }
     ("404 Not Found", "{\"error\":\"not found\"}".into())
+}
+
+fn query_param(req: &str, key: &str) -> Option<String> {
+    let line = req.lines().next()?;
+    let start = line.find('?')?;
+    let query = line[start + 1..].split_whitespace().next()?;
+    for pair in query.split('&') {
+        if let Some((k, v)) = pair.split_once('=') {
+            if k == key {
+                return Some(v.to_string());
+            }
+        }
+    }
+    None
+}
+
+fn query_height(line: &str, prefix: &str) -> Option<u64> {
+    if !line.starts_with(prefix) {
+        return None;
+    }
+    let query = line.split('?').nth(1)?;
+    let query = query.split(' ').next()?;
+    for part in query.split('&') {
+        if let Some(value) = part.strip_prefix("height=") {
+            return value.parse().ok();
+        }
+    }
+    None
 }

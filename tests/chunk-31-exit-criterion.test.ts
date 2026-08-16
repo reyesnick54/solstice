@@ -105,7 +105,8 @@ describe('Chunk 31 SunRey Blockchain production architecture freeze', () => {
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').owner, 'packages/sunrey-chain');
 
     const declared = evaluateDeclaredChunks(ROOT, manifest).find((row) => row.chunk === 'CHUNK-31');
     assert.ok(declared, 'CHUNK-31 declaration must exist');

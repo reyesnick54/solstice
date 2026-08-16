@@ -101,7 +101,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-local-node | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-validators | PLANNED | packages/sunrey-chain |
+| sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -288,14 +289,27 @@ stop: [`chunk-35-stop.md`](./chunk-35-stop.md). Resume:
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/libp2p`, `packages/mempool`, `packages/devnet`,
 `packages/gossip`, `packages/consensus`, or
-`packages/sunrey-consensus`. Chunk 36 validator lifecycle remains
-`PLANNED`. Stop record: [`chunk-36-stop.md`](./chunk-36-stop.md).
+`packages/sunrey-consensus`. Chunk 36R implements the validator
+control plane. Capability `sunrey-validators` is `IMPLEMENTED`.
+Historical stop: [`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
+[`chunk-36-resume.md`](./chunk-36-resume.md). Chunk 39 implements
+simulation accountability. Capability
+`sunrey-validator-accountability` is `IMPLEMENTED`. See
+[`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Chunk 40 implements development protocol governance at
 `packages/sunrey-chain`. Capability `sunrey-protocol-governance`
 is `IMPLEMENTED`. See
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
 Do not create `packages/validators`, `packages/staking`, or
 `packages/validator-v2`.
+Chunk 37 implements the development Tendermint-class BFT engine at
+`packages/sunrey-chain/rust/crates/consensus`. Capability
+`blockchain-consensus` is `IMPLEMENTED`.
+`evaluateChunkRequirements` returns `mustStop: false` for CHUNK-37.
+Do not create `packages/tendermint`, `packages/cometbft`,
+`packages/consensus-engine`, `packages/bft`, or
+`packages/blockchain-consensus`. Production consensus remains
+unimplemented.
 Chunk 34R implements the local deterministic node at
 `packages/sunrey-chain/rust` after Chunks 31, 32R, and 33R.
 Capability `sunrey-local-node` is `IMPLEMENTED`. The original
@@ -305,13 +319,19 @@ documentation-only stop is historical:
 `packages/sunrey-blockchain`, `packages/sunrey-node`,
 `packages/blockchain-v2`, `packages/new-chain`, `packages/l1`,
 `packages/ledger-chain`, or `packages/web3-chain`. Do not replace
-`packages/sunrey-chain`. Production BFT remains unimplemented.
+`packages/sunrey-chain`. Production mainnet BFT remains unimplemented.
+Chunk 38 implements development networked BFT at
+`packages/sunrey-chain/node`. Capability `blockchain-consensus`
+is `IMPLEMENTED` for that development engine. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
 Chunk 31 freezes the SunRey Blockchain production architecture at
 the existing owner `packages/sunrey-chain`. Capability
 `sunrey-blockchain-architecture` is `IMPLEMENTED` (specification
-only). Production node capabilities `blockchain-node`,
-`blockchain-consensus`, and `blockchain-runtime` remain `PLANNED`
-internal modules. MoonRey Coin remains `PLANNED` and distinct.
+only). Production node capabilities `blockchain-node` and
+`blockchain-runtime` remain `PLANNED` internal modules.
+`blockchain-consensus` is `IMPLEMENTED` as a development engine
+(Chunks 37–38); production consensus remains unimplemented. MoonRey
+Coin remains `PLANNED` and distinct.
 The evaluator returns `mustStop: false` for CHUNK-31. Do not
 create `packages/blockchain-node`, `packages/sunrey-blockchain`,
 or `packages/moonrey-coin`. Do not start Chunk 32 in the Chunk 31

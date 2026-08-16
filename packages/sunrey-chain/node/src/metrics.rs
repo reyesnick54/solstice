@@ -19,6 +19,16 @@ pub struct Metrics {
     pub peer_bans: AtomicU64,
     pub rate_limit_events: AtomicU64,
     pub fork_detected: AtomicU64,
+    pub evidence_received: AtomicU64,
+    pub evidence_valid: AtomicU64,
+    pub evidence_invalid: AtomicU64,
+    pub evidence_duplicate: AtomicU64,
+    pub evidence_included: AtomicU64,
+    pub validator_jailed: AtomicU64,
+    pub validator_tombstoned: AtomicU64,
+    pub simulation_bond_penalized: AtomicU64,
+    pub evidence_processing_latency_ms: AtomicU64,
+    pub evidence_pool_size: AtomicU64,
     handshake_reject: parking_lot::Mutex<BTreeMap<String, u64>>,
 }
 
@@ -54,6 +64,18 @@ impl Metrics {
             peer_bans: self.peer_bans.load(Ordering::Relaxed),
             rate_limit_events: self.rate_limit_events.load(Ordering::Relaxed),
             fork_detected: self.fork_detected.load(Ordering::Relaxed),
+            evidence_received: self.evidence_received.load(Ordering::Relaxed),
+            evidence_valid: self.evidence_valid.load(Ordering::Relaxed),
+            evidence_invalid: self.evidence_invalid.load(Ordering::Relaxed),
+            evidence_duplicate: self.evidence_duplicate.load(Ordering::Relaxed),
+            evidence_included: self.evidence_included.load(Ordering::Relaxed),
+            validator_jailed: self.validator_jailed.load(Ordering::Relaxed),
+            validator_tombstoned: self.validator_tombstoned.load(Ordering::Relaxed),
+            simulation_bond_penalized: self.simulation_bond_penalized.load(Ordering::Relaxed),
+            evidence_processing_latency_ms: self
+                .evidence_processing_latency_ms
+                .load(Ordering::Relaxed),
+            evidence_pool_size: self.evidence_pool_size.load(Ordering::Relaxed),
         }
     }
 }
@@ -77,4 +99,14 @@ pub struct MetricsSnapshot {
     pub peer_bans: u64,
     pub rate_limit_events: u64,
     pub fork_detected: u64,
+    pub evidence_received: u64,
+    pub evidence_valid: u64,
+    pub evidence_invalid: u64,
+    pub evidence_duplicate: u64,
+    pub evidence_included: u64,
+    pub validator_jailed: u64,
+    pub validator_tombstoned: u64,
+    pub simulation_bond_penalized: u64,
+    pub evidence_processing_latency_ms: u64,
+    pub evidence_pool_size: u64,
 }
