@@ -16,15 +16,11 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
         "evidence" => evidence_command(&args[1..]),
         "validator" => validator_command(&args[1..]),
         "machine" => crate::machine::run_machine_command(&args[1..]),
-        _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, or machine".into(),
         "productive" | "moonrey" => productive_command(args),
-        _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, productive, or moonrey".into(),
         "asset" => asset_command(&args[1..]),
         "fees" => fees_command(&args[1..]),
         _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, asset, or fees".into(),
+            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, or fees".into(),
         )),
     }
 }
@@ -131,6 +127,8 @@ fn productive_command(args: &[String]) -> NodeResult<String> {
         .map_err(|err| NodeError::Validation(err.to_string()))?;
     sunrey_productive::run_command(args, &store)
         .map_err(|err| NodeError::Validation(err.to_string()))
+}
+
 fn asset_command(args: &[String]) -> NodeResult<String> {
     if args.is_empty() {
         return Err(NodeError::Validation(
