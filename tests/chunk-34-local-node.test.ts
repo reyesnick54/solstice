@@ -13,7 +13,7 @@ describe('Chunk 34R local SunRey node', () => {
     const manifest = loadManifest(ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
-    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
     const declared = evaluateDeclaredChunks(ROOT, manifest).find((row) => row.chunk === 'CHUNK-34');
     assert.ok(declared);
     assert.equal(declared.mustStop, false);
