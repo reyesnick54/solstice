@@ -112,7 +112,7 @@ export class InformationMarketService {
   private readonly cleanRoom: CleanRoomService;
   private readonly coin: SunReyCoinService;
   private readonly fiat: FiatCompensationPort;
-  private readonly peve?: PersonalEconomicValueEngine;
+  private readonly peve: PersonalEconomicValueEngine | undefined;
   readonly store: InformationMarketStore;
   private coinHoldId: string | null = null;
   private sessionId: string | null = null;
@@ -139,7 +139,7 @@ export class InformationMarketService {
     this.cleanRoom = options.cleanRoom;
     this.coin = options.coin;
     this.fiat = options.fiat;
-    this.peve = options.peve;
+    this.peve = options.peve ?? undefined;
     this.store = options.store ?? new InformationMarketStore();
   }
 
@@ -338,7 +338,7 @@ export class InformationMarketService {
         purposeRef: request.purposeRef,
         requiredDataUse: request.requestedDataCategories,
         expectedOutput: request.allowedOutputType,
-        compensation: { ...compensation, realization: 'OFFERED' },
+        compensation: { ...compensation, realization: 'OFFERED' as const },
         timeRequirement: 'one authorized aggregate session',
         retentionDays: request.retentionDays,
         privacyTerms: 'aggregate/attestation/proof only; raw vault records stay protected',
@@ -569,12 +569,12 @@ export class InformationMarketService {
   }
 
   billingFor(offer: CompensationOffer): BillingBreakdown {
-    const zero = Money.of(0n, 'USD');
+    const zero = Money.fromMinorUnits(0n, 'USD');
     return Object.freeze({
-      enterpriseAmountCharged: offer.fiat ?? Money.of(2500n, 'USD'),
+      enterpriseAmountCharged: offer.fiat ?? Money.fromMinorUnits(2500n, 'USD'),
       participantCompensation: offer,
-      platformFee: Money.of(250n, 'USD'),
-      computeFee: Money.of(150n, 'USD'),
+      platformFee: Money.fromMinorUnits(250n, 'USD'),
+      computeFee: Money.fromMinorUnits(150n, 'USD'),
       sunreyCoinIncentive: offer.coin ?? null,
       protocolNetworkFeePlaceholder: zero,
       blended: false,
@@ -584,12 +584,12 @@ export class InformationMarketService {
   chainReference(contributionId: string): FutureChainReference {
     const row = this.store.contributions.get(contributionId);
     return Object.freeze({
-      consentReceiptHash: row ? hashRef(row.consentRef) : undefined,
-      attestationHash: row?.oracleAttestationRefs[0] ? hashRef(row.oracleAttestationRefs[0]) : undefined,
-      provenanceHash: row?.provenanceHash,
-      proofOfContributionHash: row ? hashRef(row.contributionId) : undefined,
-      policyDecisionRef: row?.requestId,
-      settlementRef: row?.settlementRef ?? undefined,
+      ...(row ? { consentReceiptHash: hashRef(row.consentRef) } : {}),
+      ...(row?.oracleAttestationRefs[0] ? { attestationHash: hashRef(row.oracleAttestationRefs[0]) } : {}),
+      ...(row?.provenanceHash ? { provenanceHash: row.provenanceHash } : {}),
+      ...(row ? { proofOfContributionHash: hashRef(row.contributionId) } : {}),
+      ...(row ? { policyDecisionRef: row.requestId } : {}),
+      ...(row?.settlementRef ? { settlementRef: row.settlementRef } : {}),
       rawDataIncluded: false,
       chainImplemented: false,
     });
@@ -747,10 +747,10 @@ export class InformationMarketService {
         contributionId: row.contributionId,
         asset,
         intentId,
-        journalId,
-        transferId,
+        ...(journalId ? { journalId } : {}),
+        ...(transferId ? { transferId } : {}),
         realization: 'REALIZED',
-        peveRef,
+        ...(peveRef ? { peveRef } : {}),
       }),
     );
     const agreement = this.store.agreements.get(row.compensationAgreementId);
@@ -767,7 +767,8 @@ export class InformationMarketService {
       purpose: row.purposeRef,
       consentReference: row.consentRef,
       realizedCompensation: { minorUnits: amount.minorUnits.toString(), currency: amount.currency },
-      provenance: 'OBSERVED',
+      estimatedLabeled: false,
+      provenance: 'VERIFIED',
     });
     if (recorded.ok) {
       this.peve.recordAttribution(actor, {
@@ -778,7 +779,7 @@ export class InformationMarketService {
         attributionType: 'OTHER_MEASURABLE_IMPROVEMENT',
         realization: 'REALIZED',
         calculationMethod: 'settled_fiat_research_compensation',
-        confidence: 'OBSERVED',
+        confidence: 'VERIFIED',
         formulaVersion: FORMULA_V1,
         recordedAt: this.clock.now(),
       });

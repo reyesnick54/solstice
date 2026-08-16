@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import type { Clock } from '../../config/src/clock.ts';
-import { asAccountId, openAccount } from '../../domain/src/account.ts';
+import { asAccountId, openAccount, type Account } from '../../domain/src/account.ts';
 import { asCustomerId, type Customer } from '../../domain/src/customer.ts';
 import { asCurrencyCode } from '../../domain/src/currency.ts';
 import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
@@ -48,13 +48,14 @@ export type SimulationFiatPortOptions = {
 
 export function createSimulationFiatPort(options: SimulationFiatPortOptions): FiatCompensationPort {
   const products = new Map<string, Product>([[SIMULATION_DEMAND_USD_GB.id, SIMULATION_DEMAND_USD_GB]]);
+  const accounts = new Map<string, Account>();
   const catalog = {
     products: {
       get: (id: string) => products.get(id),
       list: () => [...products.values()],
     },
     legalEntities: { get: (id: string) => (id === SIMULATION_SOLSTICE_UK.id ? SIMULATION_SOLSTICE_UK : undefined) },
-    accounts: { get: () => undefined },
+    accounts: { get: (id: string) => accounts.get(id) },
   };
 
   function authorize(actorId: string, actionType: typeof ACTION_TYPES.OPEN_ACCOUNT | typeof ACTION_TYPES.POST_DEPOSIT, payload: Record<string, unknown>, customerId: string) {
@@ -124,7 +125,8 @@ export function createSimulationFiatPort(options: SimulationFiatPortOptions): Fi
         if (opened.outcome !== 'ALLOWED') {
           return { outcome: 'REJECTED', code: opened.code, message: opened.message };
         }
-        const account = openAccount(opened.authority, {
+        const executionAuthority = opened.authority;
+        const account = openAccount(executionAuthority, {
           id: accountId,
           ownerId: asCustomerId(input.customerId),
           accountClass: 'DEMAND_DEPOSIT',
@@ -138,6 +140,7 @@ export function createSimulationFiatPort(options: SimulationFiatPortOptions): Fi
           return { outcome: 'REJECTED', code: account.error.code, message: account.error.message };
         }
         options.ledger.accounts.registerOpenedAccount(account.value);
+        accounts.set(account.value.id, account.value);
       }
       const gated = authorize(
         input.actorId,

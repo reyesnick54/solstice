@@ -77,7 +77,7 @@ function provision(
 function fiatOffer(): CompensationOffer {
   return {
     asset: 'FIAT_MONEY',
-    fiat: Money.of(2500n, 'USD'),
+    fiat: Money.fromMinorUnits(2500n, 'USD'),
     realization: 'OFFERED',
     usdConversion: 'UNAVAILABLE',
   };
@@ -423,6 +423,10 @@ describe('information market', () => {
       },
     });
     other.restore(snap);
-    assert.equal(other.denyDuplicateReward('imq_1', 'sub').error.code, 'DUPLICATE_REWARD');
+    const denied = other.denyDuplicateReward('imq_1', 'sub');
+    assert.equal(denied.ok, false);
+    if (!denied.ok) {
+      assert.equal(denied.error.code, 'DUPLICATE_REWARD');
+    }
   });
 });

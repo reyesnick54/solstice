@@ -84,7 +84,7 @@ function provision(
 function fiatOffer(): CompensationOffer {
   return {
     asset: 'FIAT_MONEY',
-    fiat: Money.of(2500n, 'USD'),
+    fiat: Money.fromMinorUnits(2500n, 'USD'),
     realization: 'OFFERED',
     usdConversion: 'UNAVAILABLE',
   };

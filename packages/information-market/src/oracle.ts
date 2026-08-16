@@ -42,7 +42,7 @@ export function issueOracleAttestation(input: {
       ...(input.fact.vaultMetadataCategories ?? []).map((category) => `pdv-meta:${category}`),
     ]),
     purposeRef: input.purposeRef,
-    consentRef: input.consentRef,
+    ...(input.consentRef ? { consentRef: input.consentRef } : {}),
     issuedAt: input.now,
     expiresAt: addMs(input.now, 24 * 60 * 60 * 1000),
     issuer: ORACLE_ISSUER,
