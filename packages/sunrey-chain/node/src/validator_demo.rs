@@ -556,23 +556,24 @@ pub async fn run_exchange_settlement_devnet(
         })
     })
     .await?;
-    let reservations_validated = nodes[0].native_assets().locks.get("res-bob-sun").is_some()
+    let reservations_validated = nodes[0].native_assets().locks.contains_key("res-bob-sun")
         && nodes[0]
             .native_assets()
             .locks
-            .get("res-alice-moon")
-            .is_some();
+            .contains_key("res-alice-moon");
 
     let settlement = signed_exchange_settlement(
         &wallet,
-        1,
-        "xset-1",
-        "xtrd-1",
-        "res-bob-sun",
-        "res-alice-moon",
-        1,
-        1,
-        1,
+        ExchangeSettlementSpec {
+            nonce: 1,
+            settlement_id: "xset-1",
+            trade_id: "xtrd-1",
+            seller_lock: "res-bob-sun",
+            buyer_lock: "res-alice-moon",
+            auth_nonce: 1,
+            trading_fee: 1,
+            network_fee: 1,
+        },
     )?;
     let settlement_tx_id = hex::encode(nodes[1].submit_tx(settlement)?);
     wait_until(Duration::from_secs(30), || {
@@ -598,14 +599,16 @@ pub async fn run_exchange_settlement_devnet(
 
     let replay = signed_exchange_settlement(
         &wallet,
-        2,
-        "xset-1",
-        "xtrd-1",
-        "res-bob-sun",
-        "res-alice-moon",
-        2,
-        0,
-        0,
+        ExchangeSettlementSpec {
+            nonce: 2,
+            settlement_id: "xset-1",
+            trade_id: "xtrd-1",
+            seller_lock: "res-bob-sun",
+            buyer_lock: "res-alice-moon",
+            auth_nonce: 2,
+            trading_fee: 0,
+            network_fee: 0,
+        },
     )?;
     let _ = nodes[0].submit_tx(replay);
     tokio::time::sleep(Duration::from_millis(800)).await;
@@ -618,14 +621,16 @@ pub async fn run_exchange_settlement_devnet(
 
     let insufficient = signed_exchange_settlement(
         &wallet,
-        3,
-        "xset-fail",
-        "xtrd-fail",
-        "res-missing",
-        "res-alice-moon",
-        3,
-        0,
-        0,
+        ExchangeSettlementSpec {
+            nonce: 3,
+            settlement_id: "xset-fail",
+            trade_id: "xtrd-fail",
+            seller_lock: "res-missing",
+            buyer_lock: "res-alice-moon",
+            auth_nonce: 3,
+            trading_fee: 0,
+            network_fee: 0,
+        },
     )?;
     let _ = nodes[0].submit_tx(insufficient);
     tokio::time::sleep(Duration::from_millis(800)).await;
@@ -855,17 +860,31 @@ fn signed_burn(
     )
 }
 
-fn signed_exchange_settlement(
-    wallet: &crate::crypto::DomainKey,
+struct ExchangeSettlementSpec {
     nonce: u64,
-    settlement_id: &str,
-    trade_id: &str,
-    seller_lock: &str,
-    buyer_lock: &str,
+    settlement_id: &'static str,
+    trade_id: &'static str,
+    seller_lock: &'static str,
+    buyer_lock: &'static str,
     auth_nonce: u64,
     trading_fee: u128,
     network_fee: u128,
+}
+
+fn signed_exchange_settlement(
+    wallet: &crate::crypto::DomainKey,
+    spec: ExchangeSettlementSpec,
 ) -> NodeResult<Transaction> {
+    let ExchangeSettlementSpec {
+        nonce,
+        settlement_id,
+        trade_id,
+        seller_lock,
+        buyer_lock,
+        auth_nonce,
+        trading_fee,
+        network_fee,
+    } = spec;
     let mut legs = vec![
         SettlementLeg {
             asset_id: NativeAssetId::SunReyCoin,

@@ -16,8 +16,8 @@ const NOW = asUtcInstant('2026-08-16T16:00:00.000Z');
 
 function engine(fees = { tradingFeeQuote: 0n, networkFeeBase: 0n }) {
   const clearing = new NativeClearingEngine({ fees });
-  const alice = clearing.openAccount('alice');
-  const bob = clearing.openAccount('bob');
+  const alice = clearing.openExchangeAccount('alice');
+  const bob = clearing.openExchangeAccount('bob');
   return { clearing, alice, bob };
 }
 

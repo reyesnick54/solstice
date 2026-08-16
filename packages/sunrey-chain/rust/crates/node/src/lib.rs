@@ -307,23 +307,32 @@ impl LocalNode {
                     return Err(RejectReason::SizeExceeded);
                 }
             }
-            _ => return Err(RejectReason::TransactionNotActivated),
             TransactionFamily::NativeAsset => {
-                let (payload, rest) =
-                    sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)
+                if sunrey_native_assets::ExchangeSettlementPayload::looks_like(&unsigned.payload) {
+                    sunrey_native_assets::ExchangeSettlementPayload::decode(&unsigned.payload)
                         .map_err(RejectReason::from)?;
-                if payload.quantity == 0
-                    && payload.op != sunrey_native_assets::NativeAssetOp::Unlock
-                {
-                    return Err(RejectReason::StatelessInvalid);
-                }
-                let (fee_intent, rest) = split_fee_intent(rest)?;
-                if !rest.is_empty() {
-                    sunrey_native_assets::IssuanceAuthorization::decode(rest)
-                        .map_err(RejectReason::from)?;
-                }
-                if let Some(intent) = fee_intent {
-                    self.validate_native_fees(&payload, &intent, unsigned.payload.len() + 64, 1)?;
+                } else {
+                    let (payload, rest) =
+                        sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)
+                            .map_err(RejectReason::from)?;
+                    if payload.quantity == 0
+                        && payload.op != sunrey_native_assets::NativeAssetOp::Unlock
+                    {
+                        return Err(RejectReason::StatelessInvalid);
+                    }
+                    let (fee_intent, rest) = split_fee_intent(rest)?;
+                    if !rest.is_empty() {
+                        sunrey_native_assets::IssuanceAuthorization::decode(rest)
+                            .map_err(RejectReason::from)?;
+                    }
+                    if let Some(intent) = fee_intent {
+                        self.validate_native_fees(
+                            &payload,
+                            &intent,
+                            unsigned.payload.len() + 64,
+                            1,
+                        )?;
+                    }
                 }
             }
             TransactionFamily::Identity => return Err(RejectReason::TransactionNotActivated),

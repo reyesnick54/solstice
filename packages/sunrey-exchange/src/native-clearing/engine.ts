@@ -83,7 +83,7 @@ export class NativeClearingEngine {
     this.chain.registerExchangeKey(this.exchangeSignature);
   }
 
-  openAccount(customerId: string, custody = `cust_${customerId}`): ExchangeAccountId {
+  openExchangeAccount(customerId: string, custody = `cust_${customerId}`): ExchangeAccountId {
     const accountId = asExchangeAccountId(`xacct_native_${customerId}`);
     this.accounts.set(accountId, { accountId, custody, customerId });
     return accountId;

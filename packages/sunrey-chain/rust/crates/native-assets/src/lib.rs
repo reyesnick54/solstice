@@ -445,16 +445,27 @@ mod tests {
         auth
     }
 
-    fn dvp_payload(
-        settlement_id: &str,
-        trade_id: &str,
-        seller_lock: &str,
-        buyer_lock: &str,
+    struct DvpSpec {
+        settlement_id: &'static str,
+        trade_id: &'static str,
+        seller_lock: &'static str,
+        buyer_lock: &'static str,
         nonce: u64,
-        fee_to: &str,
         trading_fee: u128,
         network_fee: u128,
-    ) -> ExchangeSettlementPayload {
+    }
+
+    fn dvp_payload(spec: DvpSpec) -> ExchangeSettlementPayload {
+        let DvpSpec {
+            settlement_id,
+            trade_id,
+            seller_lock,
+            buyer_lock,
+            nonce,
+            trading_fee,
+            network_fee,
+        } = spec;
+        let fee_to = "fees";
         let mut legs = vec![
             SettlementLeg {
                 asset_id: NativeAssetId::SunReyCoin,
@@ -551,27 +562,28 @@ mod tests {
         let crypto = TestCrypto;
         let policy = policy();
         let apply_ctx = ctx(3, &crypto, &policy, None);
-        let mut adapter = NativeAssetSettlementAdapter { ledger: &mut ledger, ctx: &apply_ctx };
-        adapter
-            .atomic_delivery_versus_payment(SettlementDvp {
-                asset_sender: "alice".to_string(),
-                asset_recipient: "bob".to_string(),
-                asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
-                contra_asset: NativeAssetId::MoonReyCoin,
-                contra_quantity: 25,
-            })
-            .unwrap();
-        let err = adapter
-            .atomic_delivery_versus_payment(SettlementDvp {
-                asset_sender: "alice".to_string(),
-                asset_recipient: "bob".to_string(),
-                asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
-                contra_asset: NativeAssetId::MoonReyCoin,
-                contra_quantity: 25,
-            })
-            .unwrap_err();
-        assert_eq!(err, AssetError::InsufficientAsset);
-        drop(adapter);
+        {
+            let mut adapter = NativeAssetSettlementAdapter { ledger: &mut ledger, ctx: &apply_ctx };
+            adapter
+                .atomic_delivery_versus_payment(SettlementDvp {
+                    asset_sender: "alice".to_string(),
+                    asset_recipient: "bob".to_string(),
+                    asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
+                    contra_asset: NativeAssetId::MoonReyCoin,
+                    contra_quantity: 25,
+                })
+                .unwrap();
+            let err = adapter
+                .atomic_delivery_versus_payment(SettlementDvp {
+                    asset_sender: "alice".to_string(),
+                    asset_recipient: "bob".to_string(),
+                    asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
+                    contra_asset: NativeAssetId::MoonReyCoin,
+                    contra_quantity: 25,
+                })
+                .unwrap_err();
+            assert_eq!(err, AssetError::InsufficientAsset);
+        }
         assert_eq!(ledger.available("alice", NativeAssetId::SunReyCoin), 10);
         assert_eq!(ledger.available("bob", NativeAssetId::SunReyCoin), 10);
         assert_eq!(ledger.available("bob", NativeAssetId::MoonReyCoin), 5);
@@ -595,7 +607,15 @@ mod tests {
             crypto: &crypto,
             crypto_policy: &policy,
         };
-        let payload = dvp_payload("set-1", "trd-1", "lock-bob", "lock-alice", 1, "fees", 1, 1);
+        let payload = dvp_payload(DvpSpec {
+            settlement_id: "set-1",
+            trade_id: "trd-1",
+            seller_lock: "lock-bob",
+            buyer_lock: "lock-alice",
+            nonce: 1,
+            trading_fee: 1,
+            network_fee: 1,
+        });
         apply_exchange_settlement(&mut ledger, &payload, &settle_ctx).unwrap();
         assert_eq!(ledger.available("alice", NativeAssetId::SunReyCoin), 10);
         assert_eq!(ledger.available("bob", NativeAssetId::MoonReyCoin), 25);
@@ -605,8 +625,15 @@ mod tests {
             apply_exchange_settlement(&mut ledger, &payload, &settle_ctx).unwrap_err(),
             AssetError::SettlementReplay
         );
-        let mut replay_trade =
-            dvp_payload("set-2", "trd-1", "lock-bob", "lock-alice", 2, "fees", 0, 0);
+        let mut replay_trade = dvp_payload(DvpSpec {
+            settlement_id: "set-2",
+            trade_id: "trd-1",
+            seller_lock: "lock-bob",
+            buyer_lock: "lock-alice",
+            nonce: 2,
+            trading_fee: 0,
+            network_fee: 0,
+        });
         replay_trade.legs.truncate(2);
         assert_eq!(
             apply_exchange_settlement(&mut ledger, &replay_trade, &settle_ctx).unwrap_err(),
@@ -632,16 +659,30 @@ mod tests {
             crypto: &crypto,
             crypto_policy: &policy,
         };
-        let mut fabricated =
-            dvp_payload("set-f", "trd-f", "lock-bob-2", "lock-alice-2", 9, "fees", 0, 0);
+        let mut fabricated = dvp_payload(DvpSpec {
+            settlement_id: "set-f",
+            trade_id: "trd-f",
+            seller_lock: "lock-bob-2",
+            buyer_lock: "lock-alice-2",
+            nonce: 9,
+            trading_fee: 0,
+            network_fee: 0,
+        });
         fabricated.authority.issuer = "alice".to_string();
         fabricated.authority.signature = fabricated.authority.public_key.clone();
         assert_eq!(
             apply_exchange_settlement(&mut ledger, &fabricated, &settle_ctx).unwrap_err(),
             AssetError::WrongAuthority
         );
-        let mut wrong_net =
-            dvp_payload("set-n", "trd-n", "lock-bob-2", "lock-alice-2", 10, "fees", 0, 0);
+        let mut wrong_net = dvp_payload(DvpSpec {
+            settlement_id: "set-n",
+            trade_id: "trd-n",
+            seller_lock: "lock-bob-2",
+            buyer_lock: "lock-alice-2",
+            nonce: 10,
+            trading_fee: 0,
+            network_fee: 0,
+        });
         wrong_net.network_id = "net_other".to_string();
         wrong_net.authority.network_id = "net_other".to_string();
         wrong_net.authority.signature = wrong_net.authority.public_key.clone();
@@ -649,15 +690,29 @@ mod tests {
             apply_exchange_settlement(&mut ledger, &wrong_net, &settle_ctx).unwrap_err(),
             AssetError::WrongNetwork
         );
-        let mut wrong_asset =
-            dvp_payload("set-a", "trd-a", "lock-bob-2", "lock-alice-2", 11, "fees", 0, 0);
+        let mut wrong_asset = dvp_payload(DvpSpec {
+            settlement_id: "set-a",
+            trade_id: "trd-a",
+            seller_lock: "lock-bob-2",
+            buyer_lock: "lock-alice-2",
+            nonce: 11,
+            trading_fee: 0,
+            network_fee: 0,
+        });
         wrong_asset.legs[0].asset_id = NativeAssetId::MoonReyCoin;
         assert_eq!(
             apply_exchange_settlement(&mut ledger, &wrong_asset, &settle_ctx).unwrap_err(),
             AssetError::WrongAsset
         );
-        let mut short =
-            dvp_payload("set-s", "trd-s", "lock-missing", "lock-alice-2", 12, "fees", 0, 0);
+        let mut short = dvp_payload(DvpSpec {
+            settlement_id: "set-s",
+            trade_id: "trd-s",
+            seller_lock: "lock-missing",
+            buyer_lock: "lock-alice-2",
+            nonce: 12,
+            trading_fee: 0,
+            network_fee: 0,
+        });
         short.reservation_refs = vec!["lock-missing".to_string(), "lock-alice-2".to_string()];
         assert_eq!(
             apply_exchange_settlement(&mut ledger, &short, &settle_ctx).unwrap_err(),
@@ -686,7 +741,15 @@ mod tests {
         };
         apply_exchange_settlement(
             &mut a,
-            &dvp_payload("set-r", "trd-r", "lb", "la", 1, "fees", 0, 0),
+            &dvp_payload(DvpSpec {
+                settlement_id: "set-r",
+                trade_id: "trd-r",
+                seller_lock: "lb",
+                buyer_lock: "la",
+                nonce: 1,
+                trading_fee: 0,
+                network_fee: 0,
+            }),
             &settle_ctx,
         )
         .unwrap();

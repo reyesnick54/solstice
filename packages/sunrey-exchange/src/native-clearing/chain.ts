@@ -27,7 +27,7 @@ export type SimulatedTx = {
   readonly kind: 'TRANSFER' | 'LOCK' | 'UNLOCK' | 'ISSUE' | 'EXCHANGE_SETTLEMENT';
   readonly settlementId: string | null;
   status: 'PENDING_PROPOSAL' | 'BFT_FINALIZED' | 'REJECTED';
-  readonly payload: Record<string, unknown>;
+  payload: Record<string, unknown>;
 };
 
 export class InMemoryNativeChain {

@@ -6,8 +6,8 @@ import { NativeClearingEngine } from './native-clearing/engine.ts';
 const NOW = asUtcInstant('2026-08-16T16:00:00.000Z');
 
 const clearing = new NativeClearingEngine({ fees: { tradingFeeQuote: 1n, networkFeeBase: 1n } });
-const alice = clearing.openAccount('alice');
-const bob = clearing.openAccount('bob');
+const alice = clearing.openExchangeAccount('alice');
+const bob = clearing.openExchangeAccount('bob');
 clearing.faucetToCustody(alice, MOONREY_COIN_NATIVE_ASSET_ID, 26n);
 clearing.faucetToCustody(bob, SUNREY_COIN_NATIVE_ASSET_ID, 12n);
 clearing.placeOrder({ accountId: bob, side: 'SELL', quantity: 10n, priceUnits: 2_500_000n, now: NOW });
