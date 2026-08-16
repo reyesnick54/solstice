@@ -1121,7 +1121,7 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-node').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PARTIAL');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
       (evaluation) => evaluation.chunk === 'CHUNK-31',
