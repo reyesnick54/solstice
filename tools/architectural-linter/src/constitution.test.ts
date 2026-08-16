@@ -1003,6 +1003,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-economy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/machine-identity')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+  });
+
   it('CHUNK-44 implements productive capacity and MoonRey issuance on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').status, 'IMPLEMENTED');
@@ -1026,6 +1028,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/productive/src/lib.rs')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+  });
+
   it('CHUNK-43 implements the oracle network on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-oracle-network').status, 'IMPLEMENTED');
@@ -1046,6 +1050,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-oracle')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-network')), false);
+  });
+
   it('CHUNK-42 implements native fees on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').status, 'IMPLEMENTED');

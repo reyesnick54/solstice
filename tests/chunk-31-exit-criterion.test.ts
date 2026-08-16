@@ -45,7 +45,12 @@ describe('Chunk 31 SunRey Blockchain production architecture freeze', () => {
       tickers: { sunreyCoin: string; moonreyCoin: string };
       nativeAssets: {
         sunreyCoin: { displayName: string; distinctFromMoonRey: boolean };
-        moonreyCoin: { displayName: string; distinctFromSunReyCoin: boolean; implemented: boolean };
+        moonreyCoin: {
+          displayName: string;
+          distinctFromSunReyCoin: boolean;
+          implemented: boolean;
+          productionIssuanceImplemented: boolean;
+        };
       };
       aiMustNot: readonly string[];
       legalStatusAutoPromote: boolean;
@@ -64,7 +69,8 @@ describe('Chunk 31 SunRey Blockchain production architecture freeze', () => {
     assert.equal(protocol.nativeAssets.moonreyCoin.displayName, 'MoonRey Coin');
     assert.equal(protocol.nativeAssets.sunreyCoin.distinctFromMoonRey, true);
     assert.equal(protocol.nativeAssets.moonreyCoin.distinctFromSunReyCoin, true);
-    assert.equal(protocol.nativeAssets.moonreyCoin.implemented, false);
+    assert.equal(protocol.nativeAssets.moonreyCoin.implemented, true);
+    assert.equal(protocol.nativeAssets.moonreyCoin.productionIssuanceImplemented, false);
     assert.equal(protocol.legalStatusAutoPromote, false);
     assert.equal(protocol.counselStatus, 'RESEARCH_REQUIRED');
     assert.equal(protocol.aiMustNot.includes('activate mainnet'), true);
