@@ -204,6 +204,17 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'SunReyCoinBurned', version: 1, status: 'current' },
   { eventType: 'SunReyCoinSupplyReconciled', version: 1, status: 'current' },
   { eventType: 'SunReyCoinReconciliationMismatch', version: 1, status: 'current' },
+  { eventType: 'InformationMarketRequestPublished', version: 1, status: 'current' },
+  { eventType: 'InformationMarketOpportunityOffered', version: 1, status: 'current' },
+  { eventType: 'InformationMarketOpportunityAccepted', version: 1, status: 'current' },
+  { eventType: 'InformationMarketContributionAuthorized', version: 1, status: 'current' },
+  { eventType: 'InformationMarketContributionCompleted', version: 1, status: 'current' },
+  { eventType: 'InformationMarketCompensationPending', version: 1, status: 'current' },
+  { eventType: 'InformationMarketCompensationSettled', version: 1, status: 'current' },
+  { eventType: 'InformationMarketRequestClosed', version: 1, status: 'current' },
+  { eventType: 'OracleAttestationIssued', version: 1, status: 'current' },
+  { eventType: 'OracleAttestationExpired', version: 1, status: 'current' },
+  { eventType: 'ProofOfContributionCreated', version: 1, status: 'current' },
 ];
 
 export class UnsupportedEventVersionError extends Error {

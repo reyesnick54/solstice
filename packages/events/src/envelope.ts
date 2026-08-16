@@ -299,6 +299,30 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       ),
     };
   }
+  if (eventType.startsWith('CleanRoom')) {
+    return {
+      type: 'clean_room',
+      id: String(body.sessionId ?? body.jobId ?? body.receiptId ?? body.contributionId ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('Oracle')) {
+    return {
+      type: 'oracle',
+      id: String(body.attestationId ?? body.subjectRef ?? 'unknown'),
+    };
+  }
+  if (eventType.startsWith('InformationMarket') || eventType === 'ProofOfContributionCreated') {
+    return {
+      type: 'information_market',
+      id: String(
+        body.requestId ??
+          body.opportunityId ??
+          body.contributionId ??
+          body.consentId ??
+          'unknown',
+      ),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 

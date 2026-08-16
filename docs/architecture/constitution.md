@@ -667,7 +667,7 @@ phase is absent.
 | CLEAN ROOM | IMPLEMENTED | `packages/clean-room` |
 | PYR | PLANNED | `packages/pyr`, `packages/pyramid` |
 | SUNREY COIN | IMPLEMENTED | `packages/sunrey-coin` |
-| PYRAMID DATA EXCHANGE | PLANNED | `packages/pyramid-data-exchange` |
+| SUNREY INFORMATION MARKET | IMPLEMENTED | `packages/information-market` |
 | SUNREY EXCHANGE | PLANNED | `packages/sunrey-exchange` |
 | SUNREY CHAIN | PLANNED | `packages/sunrey-chain` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
@@ -679,8 +679,10 @@ Product branding for the digital-asset context is **SunRey** /
 ticker is UNDECIDED / `NOT_ASSIGNED`. Do not invent `SUNREY`, `SRN`,
 `SRY`, `REYN`, `RYN`, or `RCOIN`. Historical architecture names
 `PYRAMID`, `PYRAMID_EXCHANGE`, `REYN_COIN`, and `REYN_EXCHANGE` are
-replaced by the reservations above. `PYRAMID_DATA_EXCHANGE` naming
-remains unresolved. `PYR` is a historical ticker/alias reservation only.
+replaced by the reservations above. `PYRAMID_DATA_EXCHANGE` is
+migrated to `SUNREY_INFORMATION_MARKET` at
+`packages/information-market`. `PYR` is a historical ticker/alias
+reservation only.
 
 Chunk 26R implements SunRey Coin at `packages/sunrey-coin`:
 [`chunk-26-resume.md`](./chunk-26-resume.md). Historical stop:
@@ -688,6 +690,13 @@ Chunk 26R implements SunRey Coin at `packages/sunrey-coin`:
 `packages/reyn-coin`, `packages/sunrey-ledger`, `packages/reyn-ledger`,
 `packages/token-ledger`, or `packages/crypto-ledger-v2`. Do not
 implement SunRey Exchange or SunRey Chain in this chunk.
+
+Chunk 27 implements the Human Information Network marketplace
+foundation at `packages/information-market`. Public brand is
+**SunRey Exchange**. Do not implement the Exchange matching engine
+or SunRey Chain here. Do not create `packages/pyramid-data-exchange`,
+`packages/data-exchange`, `packages/sunrey-data-exchange`,
+`packages/personal-oracle`, or a second data-market package.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

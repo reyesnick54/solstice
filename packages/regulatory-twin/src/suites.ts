@@ -238,6 +238,71 @@ export function builtInSuites(at: UtcInstant): {
         jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
       },
     ),
+    scenario(
+      'rsc_information_market_request',
+      'Information-market research request — disabled, RESEARCH_REQUIRED',
+      'INFORMATION_MARKET_REQUEST',
+      at,
+      {
+        ...US_BASE,
+        actionType: classified('POST_DEPOSIT', 'SYNTHETIC_FACT'),
+        productId: classified('prod_demand_usd_gb', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_uk_ltd', 'SYNTHETIC_FACT'),
+        jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
+      },
+    ),
+    scenario(
+      'rsc_research_participation',
+      'Research participation product — disabled, RESEARCH_REQUIRED',
+      'RESEARCH_PARTICIPATION',
+      at,
+      {
+        ...US_BASE,
+        actionType: classified('POST_DEPOSIT', 'SYNTHETIC_FACT'),
+        productId: classified('prod_demand_usd_gb', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_uk_ltd', 'SYNTHETIC_FACT'),
+        jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
+      },
+    ),
+    scenario(
+      'rsc_compute_to_data',
+      'Compute-to-data marketplace product — disabled, RESEARCH_REQUIRED',
+      'COMPUTE_TO_DATA',
+      at,
+      {
+        ...US_BASE,
+        actionType: classified('POST_DEPOSIT', 'SYNTHETIC_FACT'),
+        productId: classified('prod_demand_usd_gb', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_uk_ltd', 'SYNTHETIC_FACT'),
+        jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
+      },
+    ),
+    scenario(
+      'rsc_attestation_product',
+      'Attestation product — disabled, RESEARCH_REQUIRED',
+      'ATTESTATION_PRODUCT',
+      at,
+      {
+        ...US_BASE,
+        actionType: classified('POST_DEPOSIT', 'SYNTHETIC_FACT'),
+        productId: classified('prod_demand_usd_gb', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_uk_ltd', 'SYNTHETIC_FACT'),
+        jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
+      },
+    ),
+    scenario(
+      'rsc_information_compensation',
+      'Information-market compensation — disabled, RESEARCH_REQUIRED',
+      'INFORMATION_COMPENSATION',
+      at,
+      {
+        ...US_BASE,
+        actionType: classified('TRANSFER_SUNREY_COIN', 'SYNTHETIC_FACT'),
+        productId: classified('prod_digital_usd_gb', 'SYNTHETIC_FACT'),
+        legalEntityId: classified('le_solstice_uk_ltd', 'SYNTHETIC_FACT'),
+        jurisdiction: classified('GB', 'SYNTHETIC_FACT'),
+      },
+    ),
   ];
 
   const byCategory = new Map<ScenarioCategory, string[]>();

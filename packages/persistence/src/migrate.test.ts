@@ -366,6 +366,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/APY|APR|market_price|ticker_symbol/i.test(v022.sql), false);
   });
 
+  it('customer V023 persists information-market metadata without raw PDV or a second ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v023 = files.find((file) => file.version === 23);
+    assert.ok(v023);
+    assert.equal(v023.filename, 'V023__information_market.sql');
+    assert.match(v023.sql, /CREATE SCHEMA IF NOT EXISTS information_market/);
+    assert.match(v023.sql, /CREATE TABLE information_market.request/);
+    assert.match(v023.sql, /CREATE TABLE information_market.contribution/);
+    assert.match(v023.sql, /raw_data_included BOOLEAN NOT NULL CHECK \(raw_data_included = FALSE\)/);
+    assert.match(v023.sql, /GRANT USAGE ON SCHEMA information_market TO customer_app/);
+    assert.equal(/CREATE TABLE information_market\.journal/i.test(v023.sql), false);
+    assert.equal(/plaintext|vault_payload|decrypted/i.test(v023.sql), false);
+  });
+
   it('ledger V005 widens journal asset columns for digital-asset identifiers', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v005 = files.find((file) => file.version === 5);

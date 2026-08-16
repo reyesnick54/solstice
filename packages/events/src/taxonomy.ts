@@ -39,6 +39,8 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'consent',
   'clean_room',
   'sunrey_coin',
+  'information_market',
+  'oracle',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -246,6 +248,17 @@ export const EVENT_TYPE_NAMES = [
   'SunReyCoinBurned',
   'SunReyCoinSupplyReconciled',
   'SunReyCoinReconciliationMismatch',
+  'InformationMarketRequestPublished',
+  'InformationMarketOpportunityOffered',
+  'InformationMarketOpportunityAccepted',
+  'InformationMarketContributionAuthorized',
+  'InformationMarketContributionCompleted',
+  'InformationMarketCompensationPending',
+  'InformationMarketCompensationSettled',
+  'InformationMarketRequestClosed',
+  'OracleAttestationIssued',
+  'OracleAttestationExpired',
+  'ProofOfContributionCreated',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -444,6 +457,17 @@ export const EVENT_SCHEMA_REFS = {
   SunReyCoinBurned: 'solstice.sunrey_coin.burned/1',
   SunReyCoinSupplyReconciled: 'solstice.sunrey_coin.supply.reconciled/1',
   SunReyCoinReconciliationMismatch: 'solstice.sunrey_coin.reconciliation.mismatch/1',
+  InformationMarketRequestPublished: 'solstice.information_market.request.published/1',
+  InformationMarketOpportunityOffered: 'solstice.information_market.opportunity.offered/1',
+  InformationMarketOpportunityAccepted: 'solstice.information_market.opportunity.accepted/1',
+  InformationMarketContributionAuthorized: 'solstice.information_market.contribution.authorized/1',
+  InformationMarketContributionCompleted: 'solstice.information_market.contribution.completed/1',
+  InformationMarketCompensationPending: 'solstice.information_market.compensation.pending/1',
+  InformationMarketCompensationSettled: 'solstice.information_market.compensation.settled/1',
+  InformationMarketRequestClosed: 'solstice.information_market.request.closed/1',
+  OracleAttestationIssued: 'solstice.oracle.attestation.issued/1',
+  OracleAttestationExpired: 'solstice.oracle.attestation.expired/1',
+  ProofOfContributionCreated: 'solstice.information_market.proof_of_contribution.created/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -642,6 +666,17 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   SunReyCoinBurned: 'sunrey_coin',
   SunReyCoinSupplyReconciled: 'sunrey_coin',
   SunReyCoinReconciliationMismatch: 'sunrey_coin',
+  InformationMarketRequestPublished: 'information_market',
+  InformationMarketOpportunityOffered: 'information_market',
+  InformationMarketOpportunityAccepted: 'information_market',
+  InformationMarketContributionAuthorized: 'information_market',
+  InformationMarketContributionCompleted: 'information_market',
+  InformationMarketCompensationPending: 'information_market',
+  InformationMarketCompensationSettled: 'information_market',
+  InformationMarketRequestClosed: 'information_market',
+  OracleAttestationIssued: 'oracle',
+  OracleAttestationExpired: 'oracle',
+  ProofOfContributionCreated: 'information_market',
 };
 
 export function schemaRefFor(eventType: string, version: number): string {

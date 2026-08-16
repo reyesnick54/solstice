@@ -69,6 +69,8 @@ jobs:
         run: npm run demo:clean-room
       - name: SunRey Coin simulation ledger demo
         run: npm run demo:sunrey-coin
+      - name: Human Information Network marketplace demo
+        run: npm run demo:information-market
 
       - name: Typecheck
         run: npm run typecheck
