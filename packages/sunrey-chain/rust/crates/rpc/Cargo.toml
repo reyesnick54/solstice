@@ -14,6 +14,7 @@ sunrey-consensus.workspace = true
 sunrey-crypto.workspace = true
 sunrey-execution.workspace = true
 sunrey-governance.workspace = true
+sunrey-productive.workspace = true
 sunrey-oracle.workspace = true
 sunrey-fees.workspace = true
 sunrey-native-assets.workspace = true

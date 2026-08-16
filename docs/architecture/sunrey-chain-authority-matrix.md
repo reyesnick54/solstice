@@ -35,6 +35,9 @@ that row. The second is an anchor, operational copy, or projection.
 | Payments (outbound/inbound instructions and settlement journals) | Canonical Ledger | Chain; rail adapter as books |
 | Investment / brokerage cash | Canonical Ledger | Chain; paper broker as books |
 | Securities positions (accounting) | Canonical Ledger + investments lots derived from authorized journals | Chain token wrappers; PEG |
+| SunRey Coin (current simulation units) | Canonical Ledger (`packages/sunrey-coin`) | Chain as a second coin ledger; invented ticker |
+| SunRey Coin (future native chain units) | Not migrated. Requires a later ADR. Until then Canonical Ledger | Silent dual-authority |
+| MoonRey Coin | Development issuance on SunRey Blockchain from a finalized `VerifiedProductiveContribution` (Chunk 44). Public ticker `NOT_ASSIGNED`. Production MoonRey Coin product remains unimplemented. | Alias of SunRey Coin; invented ticker; fiat substitute; arbitrary mint |
 | SunRey Coin (current simulation units) | Canonical Ledger (`packages/sunrey-coin`) — `CURRENT_APPLICATION_AUTHORITY` | Chain as a second coin ledger; invented ticker; silent import onto the chain |
 | SunRey Coin (development native chain units) | SunRey Blockchain development state — `NATIVE_BLOCKCHAIN_AUTHORITY`. Distinct from application supply. Not a completed migration. | Treating development units as migrated application balances; invented ticker |
 | SunRey Coin (future production native chain units) | Not migrated. Requires a later ADR and Kernel-gated manifest. Until then Canonical Ledger | Silent dual-authority |
@@ -46,7 +49,7 @@ that row. The second is an anchor, operational copy, or projection.
 | Raw personal data | Personal Data Vault | Chain; evidence payloads; PEG nodes |
 | Attestations (source records) | Issuer + PDV / identity as applicable | Chain as the only copy of raw claims |
 | Attestation commitments | SunRey Blockchain (hash, schema, revocation state) | Treating a commitment as KYC completion |
-| Productive capacity | Attested / derived; not a ledger balance. Future commitments on SunRey Blockchain | Minting Coin from capacity without Kernel |
+| Productive capacity | Authoritative objects/claims/contributions on SunRey Blockchain; Global Productive Capacity Graph is a derived rebuildable projection (Chunk 44) | Graph as blockchain source of truth; minting from unverified capacity |
 | Oracle observations | Oracle module (future); facts are not money | Price as official NAV; FX as execution |
 | Exchange orders | SunRey Exchange matching engine | Chain order book; ledger as an open-order store |
 | Exchange trades (match records) | SunRey Exchange | Chain as matching authority |

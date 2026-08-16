@@ -642,6 +642,7 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-productive"
 name = "sunrey-oracle"
 version = "0.1.0"
 dependencies = [
@@ -679,6 +680,7 @@ dependencies = [
  "sunrey-governance",
  "sunrey-native-assets",
  "sunrey-node",
+ "sunrey-productive",
  "sunrey-oracle",
  "sunrey-protocol",
  "sunrey-storage",

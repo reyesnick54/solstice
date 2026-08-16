@@ -77,8 +77,11 @@ ADR-0033) without implementing a production node. Canonical spec:
 [`sunrey-blockchain-protocol.json`](./sunrey-blockchain-protocol.json).
 Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-matrix.md).
 MoonRey Coin is a distinct planned native asset. Its ticker is
-`NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
-production-ready, quantum-secure, decentralized, or mainnet-ready.
+`NOT_ASSIGNED`. Chunk 44 issues development MoonRey units only from
+policy-eligible `VerifiedProductiveContribution` records. Do not
+invent a ticker. Do not claim the chain is production-ready,
+quantum-secure, decentralized, or mainnet-ready. See
+[`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 
 Chunk 32R implements the canonical transaction protocol in this
 package: envelope v1, typed economic objects, rights, deterministic

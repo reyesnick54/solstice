@@ -228,13 +228,21 @@ This document describes only what is implemented and tested in this tree.
   `packages/sunrey-chain/rust/crates/consensus`. Networked
   four-validator finality is Chunk 38 at
   `packages/sunrey-chain/node`. Production BFT is not implemented.
+  Chunk 44 implements the derived Global Productive Capacity Graph
+  and development MoonRey issuance from verified productive
+  contributions at `packages/sunrey-chain/src/productive` and
+  `packages/sunrey-chain/rust/crates/productive`. Capabilities
+  `sunrey-productive-capacity` and `moonrey-issuance-engine` are
+  `IMPLEMENTED`. Public ticker remains `NOT_ASSIGNED`.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
   rejection codes, and `validateStateless` / `validateStateful` /
   `apply`. Language-neutral schema and test vectors live under
-  `packages/sunrey-chain/protocol/`. MoonRey issuance is unavailable.
-  Public tickers remain `NOT_ASSIGNED`. Historical stop:
+  `packages/sunrey-chain/protocol/`. Arbitrary MoonRey `ISSUE`
+  remains unavailable. Chunk 44 issues development MoonRey only
+  from verified productive contributions. Public tickers remain
+  `NOT_ASSIGNED`. Historical stop:
   `docs/architecture/chunk-32-stop.md`. Resume:
   `docs/architecture/chunk-32-resume.md`.
 - SunRey Blockchain production architecture freeze (Chunk 31):
@@ -427,6 +435,12 @@ This document describes only what is implemented and tested in this tree.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
+- Public MoonRey Coin ticker or competing `packages/moonrey-coin`.
+  Chunk 44 implements development MoonRey issuance from verified
+  productive contributions at `packages/sunrey-chain`. Capability
+  `moonrey-issuance-engine` is `IMPLEMENTED`. Ticker remains
+  `NOT_ASSIGNED`. See
+  `docs/architecture/chunk-44-productive-capacity-moonrey.md`.
 - MoonRey Coin application package, public ticker, or production
   economic issuance. Chunk 41 registers MoonRey as a
   protocol-native development asset only.

@@ -48,6 +48,7 @@ npm run demo:information-market
 npm run demo:sunrey-chain
 npm run demo:sunrey-node
 npm run demo:sunrey-governance
+npm run demo:moonrey-productive
 npm run demo:sunrey-oracle
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet

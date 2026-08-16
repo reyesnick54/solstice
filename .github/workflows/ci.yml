@@ -92,6 +92,8 @@ jobs:
         run: npm run demo:information-market
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: MoonRey productive capacity demo
+        run: npm run demo:moonrey-productive
       - name: SunRey local node demo
         run: npm run demo:sunrey-node
       - name: SunRey P2P development network demo

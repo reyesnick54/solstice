@@ -3067,6 +3067,18 @@
       "notes": "Chunk 40 development protocol governance and height-activated UpgradePlan at packages/sunrey-chain and packages/sunrey-chain/rust/crates/governance. No governance token. SunRey Coin and MoonRey do not grant voting power. Consensus and P2P keys cannot sign governance. Production governance is not implemented. Do not create packages/governance or packages/sunrey-governance."
     },
     {
+      "id": "sunrey-productive-capacity",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 44 derived Global Productive Capacity Graph, productive object/claim registry, anti-double-counting fingerprints, and verified productive contributions at packages/sunrey-chain. Graph is rebuildable from finalized facts. Do not create packages/productive-capacity or packages/moonrey."
+    },
+    {
+      "id": "moonrey-issuance-engine",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 44 development MoonRey issuance from policy-eligible VerifiedProductiveContribution records. Formula moonrey.issuance.formula.v1. Ticker NOT_ASSIGNED. Public MoonRey Coin product remains PLANNED (moonrey-coin). Arbitrary NATIVE_ASSET ISSUE remains inactive. Do not create packages/moonrey or packages/moonrey-coin."
       "id": "sunrey-oracle-network",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -3334,6 +3346,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Chunk 36R implements the development validator registry and signer safety. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 38 networks that engine across the four-validator P2P devnet. Chunk 39 implements simulation validator accountability. Chunk 44 implements the derived Global Productive Capacity Graph and development MoonRey issuance from verified productive contributions. Production mainnet is not implemented. MoonRey Coin public ticker remains NOT_ASSIGNED."
       "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Chunk 36R implements the development validator registry and signer safety. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 38 networks that engine across the four-validator P2P devnet. Chunk 39 implements simulation validator accountability. Chunk 40 implements development protocol governance. Chunk 43 implements the sovereign oracle network. Production mainnet is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
       "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Chunk 36R implements the development validator registry and signer safety. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 38 networks that engine across the four-validator P2P devnet. Chunk 39 implements simulation validator accountability. Chunk 40 implements development protocol governance. Chunk 41 implements dual native assets. Chunk 42 implements native fees and resource metering. Production mainnet is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
     },

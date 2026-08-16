@@ -15,6 +15,9 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
     match args[0].as_str() {
         "evidence" => evidence_command(&args[1..]),
         "validator" => validator_command(&args[1..]),
+        "productive" | "moonrey" => productive_command(args),
+        _ => Err(NodeError::Validation(
+            "unknown command; expected evidence, validator, productive, or moonrey".into(),
         "asset" => asset_command(&args[1..]),
         "fees" => fees_command(&args[1..]),
         _ => Err(NodeError::Validation(
@@ -117,6 +120,14 @@ fn verify_target(node: &DevelopmentNode, target: &str) -> NodeResult<String> {
     }
 }
 
+fn productive_command(args: &[String]) -> NodeResult<String> {
+    let data_dir = PathBuf::from(
+        std::env::var("SUNREY_DATA_DIR").unwrap_or_else(|_| "/tmp/sunrey-node".into()),
+    );
+    let store = sunrey_productive::ProductiveStore::load(&data_dir)
+        .map_err(|err| NodeError::Validation(err.to_string()))?;
+    sunrey_productive::run_command(args, &store)
+        .map_err(|err| NodeError::Validation(err.to_string()))
 fn asset_command(args: &[String]) -> NodeResult<String> {
     if args.is_empty() {
         return Err(NodeError::Validation(

@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-44",
+  "title": "SunRey Global Productive Capacity Graph and MoonRey Economic Issuance Engine",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "sunrey-local-node",
+    "sunrey-protocol-governance"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain (TypeScript productive engine) and packages/sunrey-chain/rust/crates/productive. Derived Global Productive Capacity Graph. MoonRey development issuance only from VerifiedProductiveContribution. Ticker NOT_ASSIGNED. No packages/moonrey or packages/moonrey-coin. evaluateChunkRequirements returns mustStop: false."
+}
