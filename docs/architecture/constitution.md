@@ -731,6 +731,17 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
+Chunk 32 (canonical SunRey transaction and economic-state protocol)
+is **stopped**. The task requires latest `main` after Chunk 31 is
+merged. Chunk 31 is not declared, not merged, and has no encoding
+or protocol ADRs on `main`. ADR-0015 remains the Chunk 28
+simulation trust-layer record only. Do not invent a consensus
+codec, transaction envelope, MoonRey issuance, ticker, second
+Money type, or second SunRey Coin ledger. Do not create
+`packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
+`packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
+See [`chunk-32-stop.md`](./chunk-32-stop.md).
+
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the
 manifest to `PARTIAL` or `IMPLEMENTED` in the same change that adds

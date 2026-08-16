@@ -903,4 +903,41 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/surveillance-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
   });
+
+  it('CHUNK-32 stops because Chunk 31 protocol architecture is not canonical on main', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest);
+
+    const chunk31 = declared.find((evaluation) => evaluation.chunk === 'CHUNK-31');
+    assert.equal(chunk31, undefined, 'CHUNK-31 must not be declared until it is implemented on main');
+
+    const chunk32 = declared.find((evaluation) => evaluation.chunk === 'CHUNK-32');
+    assert.ok(chunk32, 'CHUNK-32 declaration must exist under docs/architecture/chunks/');
+    assert.equal(chunk32.mustStop, false);
+    assert.deepEqual(chunk32.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunks/chunk-31-sunrey-chain-protocol.json')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-stop.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-resume.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/adr/ADR-0016-sunrey-canonical-encoding.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/adr/ADR-0016-sunrey-protocol.md')), false);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-32-stop.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-32-economic-state-protocol.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-protocol-object-model.md')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-transaction-spec-v1.md')), false);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/protocol')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/transaction.ts')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/codec.ts')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-protocol')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-tx')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/on-chain-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-chain')), false);
+  });
 });

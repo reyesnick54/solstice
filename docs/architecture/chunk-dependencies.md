@@ -277,3 +277,15 @@ Chunk 24 implements the reserved CONSENT bounded context at
 replaces the Personal Data Vault fail-closed consent placeholder
 with a Purpose Firewall and short-lived DataUsePermits. Clean Room
 is owned by Chunk 25R. The evaluator returns `mustStop: false`.
+
+Chunk 32 (canonical SunRey transaction and economic-state protocol)
+stops on a process gate: Chunk 31 is not merged and its encoding /
+protocol architecture is not canonical on `main`. Listed
+capabilities including `sunrey-chain` are `IMPLEMENTED`, so
+`evaluateChunkRequirements` returns `mustStop: false`. That is not
+permission to invent Chunk 31 ADRs, a consensus codec, or protocol
+semantics. Stop record:
+[`chunk-32-stop.md`](./chunk-32-stop.md). Do not create
+`packages/sunrey-chain-v2`, `packages/sunrey-protocol`,
+`packages/sunrey-tx`, `packages/moonrey`, or `packages/moonrey-coin`.
+Do not begin Chunk 33 or Chunk 34 from this stop.
