@@ -41,12 +41,14 @@ finality policy.
 
 See ADR-0015. The chain-technology choice remains `PROPOSED`.
 
-A local deterministic development node (Chunk 34) and a P2P
-development network / mempool / state sync (Chunk 35) are **not**
-implemented. Those capabilities are reserved `PLANNED` on this
-package. See [`chunk-35-stop.md`](./chunk-35-stop.md). Do not
-create `packages/sunrey-node` or `packages/sunrey-p2p`.
-See ADR-0015. The simulation foundation remains `PROPOSED`.
+A local deterministic development host and a P2P development
+network / mempool / state sync are implemented as internal modules
+at `packages/sunrey-chain/node` (Chunk 35R). Historical stop:
+[`chunk-35-stop.md`](./chunk-35-stop.md). Resume:
+[`chunk-35-resume.md`](./chunk-35-resume.md). Do not create
+`packages/sunrey-node` or `packages/sunrey-p2p`. Production BFT is
+not implemented. See ADR-0015. The simulation foundation remains
+`PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through
 ADR-0033) without implementing a production node. Canonical spec:

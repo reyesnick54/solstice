@@ -12,3 +12,4 @@ __pycache__/
 .env
 infra/postgres/.env
 .solstice-dev-keys/
+packages/sunrey-chain/node/target/

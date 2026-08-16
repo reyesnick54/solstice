@@ -904,13 +904,13 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
   });
 
-  it('CHUNK-35 stops until the local deterministic node is IMPLEMENTED', () => {
+  it('CHUNK-35R implements P2P, mempool, and sync on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
-    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').owner, 'packages/sunrey-chain');
 
@@ -918,32 +918,25 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-35',
     );
     assert.ok(declared, 'CHUNK-35 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-local-node', 'sunrey-p2p']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/lib.rs')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-node')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-p2p')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/p2p')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mempool')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus')), false);
-  it('CHUNK-34 stops because Chunks 31-33 are not merged', () => {
+  });
+
+  it('CHUNK-34 historical stop remains recorded', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);
     assert.equal(
       declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-31'),
-      false,
-      'CHUNK-31 must not be declared until that architecture chunk merges',
-    );
-    assert.equal(
-      declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-32'),
-      false,
-      'CHUNK-32 must not be declared until that protocol chunk merges',
-    );
-    assert.equal(
-      declaredChunks.some((evaluation) => evaluation.chunk === 'CHUNK-33'),
-      false,
-      'CHUNK-33 must not be declared until that CryptoSuite chunk merges',
+      true,
+      'CHUNK-31 architecture freeze is declared on main',
     );
 
     const declared = declaredChunks.find((evaluation) => evaluation.chunk === 'CHUNK-34');
@@ -970,7 +963,9 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/l1')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/ledger-chain')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/web3-chain')), false);
-  it('CHUNK-33 stops because Chunks 31 and 32 are not merged', () => {
+  });
+
+  it('CHUNK-33 historical stop remains recorded', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'security').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
@@ -982,16 +977,6 @@ describe('architecture constitution', () => {
     assert.equal(declared.mustStop, false);
     assert.deepEqual(declared.missing, []);
 
-    const chunkFiles = readdirSync(join(REPO_ROOT, 'docs/architecture/chunks'));
-    assert.equal(
-      chunkFiles.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')),
-      false,
-    );
-    assert.equal(
-      chunkFiles.some((name) => name.startsWith('chunk-32-') && name.endsWith('.json')),
-      false,
-    );
-
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-stop.md')), true);
     assert.equal(
       existsSync(join(REPO_ROOT, 'docs/architecture/chunk-33-post-quantum-security.md')),
@@ -1000,12 +985,11 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/quantum-security')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/pqc-core')), false);
-  it('CHUNK-32 stops because Chunk 31 protocol architecture is not canonical on main', () => {
+  });
+
+  it('CHUNK-32 historical stop remains recorded', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest);
-
-    const chunk31 = declared.find((evaluation) => evaluation.chunk === 'CHUNK-31');
-    assert.equal(chunk31, undefined, 'CHUNK-31 must not be declared until it is implemented on main');
 
     const chunk32 = declared.find((evaluation) => evaluation.chunk === 'CHUNK-32');
     assert.ok(chunk32, 'CHUNK-32 declaration must exist under docs/architecture/chunks/');
@@ -1035,6 +1019,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reyn-chain')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/on-chain-ledger')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-chain')), false);
+  });
+
   it('CHUNK-31 freezes one SunRey Blockchain architecture without a production node', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');

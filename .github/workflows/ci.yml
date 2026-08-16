@@ -32,8 +32,15 @@ jobs:
       - name: Kernel gating
         run: npm run gate
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
       - name: Tests
-        run: npm test
+        run: |
+          npm run test:sunrey-node
+          npm test
 
       - name: End-to-end demo
         run: npm run demo
@@ -73,6 +80,8 @@ jobs:
         run: npm run demo:information-market
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
+      - name: SunRey P2P development network demo
+        run: npm run demo:sunrey-devnet
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: Custody deposit and withdrawal demo

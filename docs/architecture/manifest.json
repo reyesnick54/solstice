@@ -2089,7 +2089,7 @@
         "packages/devnet",
         "packages/gossip",
         "packages/consensus",
-        "packages/sunrey-consensus"
+        "packages/sunrey-consensus",
         "packages/blockchain-node",
         "packages/blockchain-protocol",
         "packages/blockchain-network",
@@ -2649,7 +2649,7 @@
     "packages/devnet",
     "packages/gossip",
     "packages/consensus",
-    "packages/sunrey-consensus"
+    "packages/sunrey-consensus",
     "packages/blockchain-node",
     "packages/blockchain-protocol",
     "packages/blockchain-network",
@@ -2998,17 +2998,17 @@
     },
     {
       "id": "sunrey-local-node",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 34 local deterministic development node and development block producer. Not implemented. Owner remains packages/sunrey-chain. Do not create packages/sunrey-node or packages/blockchain."
+      "notes": "Development node host at packages/sunrey-chain/node: genesis, sequential apply, recomputed state roots, and a development producer. Not production consensus. Owner remains packages/sunrey-chain. Do not create packages/sunrey-node or packages/blockchain."
     },
     {
       "id": "sunrey-p2p",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 35 P2P development network, mempool, and state sync. Stopped until sunrey-local-node is IMPLEMENTED. Owner remains packages/sunrey-chain. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Production consensus is Chunk 36+."
+      "notes": "Chunk 35R P2P development network, mempool, and state sync at packages/sunrey-chain/node. Historical stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Production consensus is Chunk 36+."
     }
   ],
   "boundedContexts": [
@@ -3257,8 +3257,7 @@
         "packages/sunrey-chain"
       ],
       "protected": true,
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Local deterministic node (Chunk 34) and P2P/mempool/sync (Chunk 35) remain PLANNED. See chunk-35-stop.md."
-      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Production node is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
+      "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 35R implements the development P2P/mempool/sync module at packages/sunrey-chain/node. Production BFT is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",
