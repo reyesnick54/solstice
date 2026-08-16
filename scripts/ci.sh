@@ -23,6 +23,7 @@ echo "==> rust (sunrey local node)"
 )
 
 echo "==> tests"
+npm run test:sunrey-node
 npm test
 
 echo "==> end-to-end demo"
@@ -46,6 +47,7 @@ npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-chain
 npm run demo:sunrey-node
+npm run demo:sunrey-devnet
 npm run demo:sunrey-exchange
 npm run demo:custody
 npm run demo:market-surveillance

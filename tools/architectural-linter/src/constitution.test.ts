@@ -904,13 +904,13 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-ledger')), false);
   });
 
-  it('CHUNK-35 stops until P2P is IMPLEMENTED', () => {
+  it('CHUNK-35R implements P2P, mempool, and sync on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
-    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').owner, 'packages/sunrey-chain');
 
@@ -918,10 +918,11 @@ describe('architecture constitution', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-35',
     );
     assert.ok(declared, 'CHUNK-35 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-p2p']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
 
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/lib.rs')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-node')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-p2p')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/p2p')), false);

@@ -13,5 +13,5 @@
     "sunrey-local-node",
     "sunrey-p2p"
   ],
-  "notes": "STOPPED. sunrey-local-node is IMPLEMENTED (Chunk 34R). sunrey-p2p remains PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['sunrey-p2p']. Do not implement P2P, mempool, or sync in this tree. Do not begin Chunk 36. See docs/architecture/chunk-35-stop.md."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/node by Chunk 35R after Chunk 34R local node. Historical documentation-only stop: chunk-35-stop.md. Resume: chunk-35-resume.md. Quinn + rustls development transport. evaluateChunkRequirements returns mustStop: false. Do not create packages/p2p, packages/mempool, or packages/sunrey-p2p. Production consensus is Chunk 36+."
 }

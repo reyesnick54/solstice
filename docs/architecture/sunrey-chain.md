@@ -43,12 +43,14 @@ See ADR-0015. The chain-technology choice remains `PROPOSED`.
 
 A local deterministic development node (Chunk 34R) is implemented
 inside this owner at `packages/sunrey-chain/rust`. A P2P
-development network / mempool / state sync (Chunk 35) is **not**
-implemented. Capability `sunrey-p2p` remains `PLANNED`. See
-[`chunk-34-resume.md`](./chunk-34-resume.md) and
+development network / mempool / state sync (Chunk 35R) is
+implemented as an internal module at `packages/sunrey-chain/node`.
+See [`chunk-34-resume.md`](./chunk-34-resume.md) and
+[`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
-`packages/sunrey-node` or `packages/sunrey-p2p`.
-See ADR-0015. The simulation foundation remains `PROPOSED`.
+`packages/sunrey-node` or `packages/sunrey-p2p`. Production BFT is
+not implemented. See ADR-0015. The simulation foundation remains
+`PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through
 ADR-0033) without implementing a production node. Canonical spec:

@@ -43,8 +43,10 @@
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
   listing governance, surveillance, and kill switches after Exchange
   core merged
-- [Chunk 35 stop](./chunk-35-stop.md) — P2P / mempool / sync stopped
-  until `sunrey-p2p` is IMPLEMENTED
+- [Chunk 35 stop (historical)](./chunk-35-stop.md) — original
+  documentation-only gate before the local node existed
+- [Chunk 35 resume](./chunk-35-resume.md) — P2P / mempool / sync
+  development network at `packages/sunrey-chain/node`
 - [Chunk 34 stop (historical)](./chunk-34-stop.md) — original
   documentation-only gate
 - [Chunk 34 resume](./chunk-34-resume.md) — local development node

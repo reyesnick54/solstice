@@ -736,14 +736,15 @@ are candidates, not legal conclusions. Historical stop:
 `packages/crypto-aml`, `packages/surveillance-v2`, or
 `packages/custody-ledger`.
 
-Chunk 35 (P2P / mempool / sync) is **stopped**. Capability
-`sunrey-local-node` is `IMPLEMENTED` (Chunk 34R). `sunrey-p2p`
-remains `PLANNED` at owner `packages/sunrey-chain`. Stop record:
-[`chunk-35-stop.md`](./chunk-35-stop.md). Do not create
+Chunk 35R implements the P2P development network, mempool, and
+state sync at `packages/sunrey-chain/node`. Capabilities
+`sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that
+owner. Historical stop: [`chunk-35-stop.md`](./chunk-35-stop.md).
+Resume: [`chunk-35-resume.md`](./chunk-35-resume.md). Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`, `packages/p2p`,
 `packages/mempool`, or a second chain. Do not begin Chunk 36.
-P2P DEVELOPMENT NETWORK, PRODUCTION CONSENSUS, PUBLIC TESTNET,
-and MAINNET remain not implemented.
+Production consensus, public testnet, and mainnet remain not
+implemented.
 Chunk 34R implements the local development node inside
 `packages/sunrey-chain/rust`. The earlier documentation-only stop is
 historical: [`chunk-34-stop.md`](./chunk-34-stop.md). Resume:

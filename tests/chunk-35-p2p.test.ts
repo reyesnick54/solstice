@@ -13,27 +13,27 @@ function walk(dir: string, out: string[] = []): string[] {
     return out;
   }
   for (const entry of readdirSync(dir)) {
-    if (entry === 'node_modules' || entry === '.git') {
+    if (entry === 'node_modules' || entry === '.git' || entry === 'target') {
       continue;
     }
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) {
       walk(full, out);
-    } else if (entry.endsWith('.ts') || entry.endsWith('.md') || entry.endsWith('.json')) {
+    } else if (entry.endsWith('.ts') || entry.endsWith('.rs') || entry.endsWith('.md')) {
       out.push(full);
     }
   }
   return out;
 }
 
-describe('CHUNK-35 P2P / mempool / sync stop', () => {
-  it('stops while P2P remains PLANNED after the local node is IMPLEMENTED', () => {
+describe('CHUNK-35R P2P / mempool / sync', () => {
+  it('marks local-node and P2P implemented on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-local-node').owner, 'packages/sunrey-chain');
-    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-p2p').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').protected, true);
     assert.equal(evaluateCapability(manifest, 'sunrey-p2p').owner, 'packages/sunrey-chain');
 
@@ -41,12 +41,13 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
       (evaluation) => evaluation.chunk === 'CHUNK-35',
     );
     assert.ok(declared, 'CHUNK-35 declaration must exist under docs/architecture/chunks/');
-    assert.equal(declared.mustStop, true);
-    assert.deepEqual(declared.missing, ['sunrey-p2p']);
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
   });
 
   it('does not invent a second chain, node, P2P, mempool, or consensus package', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/lib.rs')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-node')), false);
@@ -60,24 +61,25 @@ describe('CHUNK-35 P2P / mempool / sync stop', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-consensus')), false);
   });
 
-  it('does not implement P2P, mempool, or gossip in the TypeScript trust layer', () => {
-    const chunkDir = join(REPO_ROOT, 'docs/architecture/chunks');
-    const names = readdirSync(chunkDir);
-    assert.equal(names.some((name) => name.startsWith('chunk-31-') && name.endsWith('.json')), true);
-    assert.equal(names.some((name) => name.startsWith('chunk-32-') && name.endsWith('.json')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-34-local-node.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-31-transport.md')), false);
-    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-devnet.md')), false);
+  it('keeps the historical stop and records the implementation', () => {
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-35-stop.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-35-resume.md')), true);
+    const adr = readFileSync(
+      join(REPO_ROOT, 'docs/architecture/adr/ADR-0023-sunrey-blockchain-networking-p2p.md'),
+      'utf8',
+    );
+    assert.match(adr, /Quinn/);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/local-sunrey-devnet.md')), true);
+    const stop = readFileSync(join(REPO_ROOT, 'docs/architecture/chunk-35-stop.md'), 'utf8');
+    assert.match(stop, /historical/i);
+  });
 
-    const chainFiles = walk(join(REPO_ROOT, 'packages/sunrey-chain/src'));
-    for (const file of chainFiles) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts')) {
-        continue;
-      }
+  it('forbids networking from minting, journaling, or issuing authority', () => {
+    const files = walk(join(REPO_ROOT, 'packages/sunrey-chain/node/src'));
+    assert.ok(files.some((file) => file.endsWith('lib.rs')));
+    for (const file of files) {
       const source = readFileSync(file, 'utf8');
-      assert.equal(/PeerManager|Mempool|gossip|handshake|libp2p|NoiseXX/i.test(source), false, file);
-      assert.equal(/AuthorityIssuer\.issue|this\.issuer\.issue\(/.test(source), false, file);
-      assert.equal(/postJournal\s*\(/.test(source), false, file);
+      assert.equal(/AuthorityIssuer|postJournal|LIVE_CHAIN|MAINNET_ENABLED/.test(source), false, file);
     }
   });
 });

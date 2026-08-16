@@ -218,9 +218,12 @@ This document describes only what is implemented and tested in this tree.
   rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
   wallet, exchange, or live network. Canonical ledger remains
   authoritative. ADR-0015 remains PROPOSED.
-  Local deterministic node is Chunk 34R. P2P, mempool, and state
-  sync remain unimplemented. Chunk 35 stopped:
-  `docs/architecture/chunk-35-stop.md`.
+  Local deterministic node is Chunk 34R at
+  `packages/sunrey-chain/rust`. P2P, mempool, and state sync are
+  implemented at `packages/sunrey-chain/node` (Chunk 35R).
+  Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
+  `docs/architecture/chunk-35-resume.md`. Production BFT is not
+  implemented.
 - SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
   canonical actor / object / rights model, envelope v1, deterministic
   protobuf codec, domain-separated SHA-256, replay protection,
@@ -363,10 +366,11 @@ This document describes only what is implemented and tested in this tree.
   Digital Twin are IMPLEMENTED as non-executing intelligence layers.
   Live rails, live issuing, live wallet/SoftPOS certification, live
   treasury, and live securities trading remain later.
-- P2P development network / mempool / state sync (Chunk 35).
-  Chunk 35 **stopped** because `sunrey-p2p` remains `PLANNED`.
-  Capability `sunrey-local-node` is `IMPLEMENTED` (Chunk 34R).
-  See `docs/architecture/chunk-35-stop.md`. This is not a public
+- Production SunRey Blockchain consensus, public testnet, or
+  mainnet. Chunk 35R implements a **development** P2P / mempool /
+  sync plane at `packages/sunrey-chain/node`. Historical stop:
+  `docs/architecture/chunk-35-stop.md`. Resume:
+  `docs/architecture/chunk-35-resume.md`. This is not a public
   testnet, mainnet, or production consensus.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
