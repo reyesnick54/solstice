@@ -1076,6 +1076,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/gas')), false);
   });
 
+  it('CHUNK-48 implements native-chain exchange settlement on the exchange owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').owner, 'packages/sunrey-exchange');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-48',
+    );
+    assert.ok(declared, 'CHUNK-48 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-48-exchange-native-settlement.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/exchange-dvp-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-native-deposit.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-native-withdrawal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-settlement-reconciliation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange/src/native-clearing/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/native-assets/src/settlement.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-settlement-v2')), false);
+  });
+
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     const declaredChunks = evaluateDeclaredChunks(REPO_ROOT, manifest);

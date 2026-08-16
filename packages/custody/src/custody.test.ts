@@ -341,4 +341,68 @@ describe('SunRey custody control plane', () => {
     });
     assert.equal(ai.ok, false);
   });
+
+  it('does not credit a native-chain mempool receipt and requires BFT finality', () => {
+    const h = harness();
+    const { customer: cust, actor } = provision(h, 'actor_bft', 'id_bft', 'cust_bft');
+    const custodyAccountId = asCustodyAccountId('cust_bft');
+    const address = h.custody.allocateExchangeDepositAddress({
+      customerId: cust.id,
+      custodyAccountId,
+      exchangeAccountId: 'xacct_alice',
+    });
+    h.provider.mapCustomerAddress(address, custodyAccountId, cust.id);
+    const mempoolMaterial = 'notice:mempool:sr1ex:1000000';
+    const mempool = h.custody.ingestExternalDeposit({
+      material: mempoolMaterial,
+      signatureHex: signSimulationNotice(mempoolMaterial),
+      notice: {
+        noticeId: 'dep_mempool',
+        providerId: 'SIMULATION_CUSTODY',
+        signatureValid: true,
+        assetId: SUNREY_COIN_ASSET_ID,
+        quantity: coins(1n),
+        destinationAddress: address,
+        txRef: 'sr_tx_mempool',
+        confirmations: 0,
+        receivedAt: NOW,
+        finality: 'MEMPOOL',
+      },
+    });
+    assert.equal(mempool.outcome, 'OK');
+    if (mempool.outcome !== 'OK') {
+      throw new Error('ingest failed');
+    }
+    const waiting = h.custody.creditExternalDeposit({ actorId: actor.actorId, depositId: mempool.value.depositId });
+    assert.equal(waiting.outcome, 'REJECTED');
+    if (waiting.outcome === 'REJECTED') {
+      assert.equal(waiting.code, 'AWAITING_FINALITY');
+    }
+    const finalMaterial = 'notice:bft:sr1ex:1000000';
+    const finalized = h.custody.ingestExternalDeposit({
+      material: finalMaterial,
+      signatureHex: signSimulationNotice(finalMaterial),
+      notice: {
+        noticeId: 'dep_bft',
+        providerId: 'SIMULATION_CUSTODY',
+        signatureValid: true,
+        assetId: SUNREY_COIN_ASSET_ID,
+        quantity: coins(1n),
+        destinationAddress: address,
+        txRef: 'sr_tx_final',
+        confirmations: 0,
+        receivedAt: NOW,
+        finality: 'BFT_FINALIZED',
+      },
+    });
+    assert.equal(finalized.outcome, 'OK');
+    if (finalized.outcome !== 'OK') {
+      throw new Error('final ingest failed');
+    }
+    const credited = h.custody.creditExternalDeposit({ actorId: actor.actorId, depositId: finalized.value.depositId });
+    if (credited.outcome !== 'OK') {
+      throw new Error(credited.outcome === 'REJECTED' ? credited.message : credited.decision.status);
+    }
+    assert.equal(credited.value.state, 'CREDITED');
+  });
 });

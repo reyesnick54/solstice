@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
-    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts"
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
+    "demo:native": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/native-demo.ts"
   },
   "engines": {
     "node": ">=22"

@@ -1,0 +1,29 @@
+{
+  "chunk": "CHUNK-48",
+  "title": "SunRey Exchange native-chain clearing, atomic settlement, and custody integration",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "event-fabric",
+    "money",
+    "ledger",
+    "kernel",
+    "permissions",
+    "sunrey-coin",
+    "sunrey-exchange",
+    "custody",
+    "market-surveillance",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "sunrey-validators",
+    "sunrey-native-assets",
+    "sunrey-native-fees"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange native-clearing, packages/custody BFT deposit recognition, and packages/sunrey-chain EXCHANGE_SETTLEMENT. Matching stays off-chain. Positions are derived. Tickers remain NOT_ASSIGNED. evaluateChunkRequirements returns mustStop: false. Do not create packages/exchange-v2, packages/sunrey-exchange-ledger, or packages/moonrey-coin."
+}

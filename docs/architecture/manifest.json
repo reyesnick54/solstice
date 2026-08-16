@@ -2139,12 +2139,14 @@
         "packages/orderbook",
         "packages/matching-engine-v2",
         "packages/crypto-exchange",
-        "packages/reyn-exchange"
+        "packages/reyn-exchange",
+        "packages/sunrey-exchange-ledger",
+        "packages/exchange-settlement-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
+      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Positions are derived. Do not implement Travel Rule or live exchange here."
     }
   ],
   "authorizedMutationPaths": [
@@ -3109,6 +3111,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 42 deterministic resource metering, integer fee schedule, reservation/charge/release, disposition, validator reward accrual, and height-activated fee parameters at packages/sunrey-chain and packages/sunrey-chain/rust/crates/fees. Attaches FeeIntent beside the Chunk 41 native-asset payload. SUNREY_COIN is the development fee asset. MOONREY_COIN is policy-ready and disabled. No fiat ledger debit. No public staking-yield. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
+    },
+    {
+      "id": "sunrey-exchange-native-settlement",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Chunk 48 native-chain clearing and atomic DVP at packages/sunrey-exchange/src/native-clearing with EXCHANGE_SETTLEMENT in packages/sunrey-chain/rust/crates/native-assets. Positions are derived from custody attribution, finalized holdings, reservations, and settlements. Matching stays off-chain. Tickers remain NOT_ASSIGNED. Do not create a second exchange ledger."
     }
   ],
   "boundedContexts": [

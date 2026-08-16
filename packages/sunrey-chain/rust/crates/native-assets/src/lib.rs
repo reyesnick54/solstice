@@ -15,6 +15,7 @@ pub mod migration;
 pub mod policy;
 pub mod quantity;
 pub mod registry;
+pub mod settlement;
 pub mod state;
 pub mod transaction;
 
@@ -41,6 +42,15 @@ pub use quantity::AssetQuantity;
 pub use registry::{
     NativeAssetDefinition, NativeAssetId, NativeAssetRegistry, TICKER_STATUS_NOT_ASSIGNED,
 };
+pub use settlement::{
+    apply_exchange_settlement, apply_settlement_batch, BatchApplyResult, BatchMode,
+    ExchangeSettlementAuthority, ExchangeSettlementPayload, SettlementApplyContext,
+    SettlementBatch, SettlementLeg, SettlementLegKind, SettlementSource,
+    EXCHANGE_SETTLEMENT_ISSUER, EXCHANGE_SETTLEMENT_POLICY, EXCHANGE_SETTLEMENT_TAG,
+    MAX_BATCH_BYTES, MAX_BATCH_EXECUTION_UNITS, MAX_BATCH_LEGS, MAX_BATCH_TRADES,
+    SETTLEMENT_TX_VERSION,
+};
+pub use state::ExchangeSettlementRecord;
 pub use state::{
     AssetBurnRecord, AssetHolding, AssetIssuanceRecord, AssetLock, AssetSupplyState,
     AssetTransferRecord, LockPurpose, LockStatus, NativeAssetLedger,
@@ -417,25 +427,272 @@ mod tests {
         assert!(!manifest.production_migration_performed);
     }
 
-    #[test]
-    fn settlement_adapter_does_not_implement_dvp() {
-        let mut ledger = NativeAssetLedger::development();
-        issue(&mut ledger, NativeAssetId::SunReyCoin, "alice", 20, "s1", 1);
+    fn signed_settlement_auth(settlement_id: &str, nonce: u64) -> ExchangeSettlementAuthority {
+        let mut auth = ExchangeSettlementAuthority {
+            settlement_id: settlement_id.to_string(),
+            issuer: EXCHANGE_SETTLEMENT_ISSUER.to_string(),
+            policy_version: EXCHANGE_SETTLEMENT_POLICY.to_string(),
+            network_id: "net_sunrey_local_dev".to_string(),
+            chain_id: "chn_sunrey_local_dev".to_string(),
+            nonce,
+            expiration_height: 10_000,
+            suite_id: "TEST_SUITE".to_string(),
+            algorithm_id: "TEST_ALG".to_string(),
+            public_key: vec![0x11; 32],
+            signature: vec![],
+        };
+        auth.signature = auth.public_key.clone();
+        auth
+    }
+
+    fn dvp_payload(
+        settlement_id: &str,
+        trade_id: &str,
+        seller_lock: &str,
+        buyer_lock: &str,
+        nonce: u64,
+        fee_to: &str,
+        trading_fee: u128,
+        network_fee: u128,
+    ) -> ExchangeSettlementPayload {
+        let mut legs = vec![
+            SettlementLeg {
+                asset_id: NativeAssetId::SunReyCoin,
+                from: "bob".to_string(),
+                to: "alice".to_string(),
+                quantity: 10,
+                source: SettlementSource::Lock { lock_id: seller_lock.to_string() },
+                kind: SettlementLegKind::Base,
+            },
+            SettlementLeg {
+                asset_id: NativeAssetId::MoonReyCoin,
+                from: "alice".to_string(),
+                to: "bob".to_string(),
+                quantity: 25,
+                source: SettlementSource::Lock { lock_id: buyer_lock.to_string() },
+                kind: SettlementLegKind::Quote,
+            },
+        ];
+        if trading_fee > 0 {
+            legs.push(SettlementLeg {
+                asset_id: NativeAssetId::MoonReyCoin,
+                from: "alice".to_string(),
+                to: fee_to.to_string(),
+                quantity: trading_fee,
+                source: SettlementSource::Available,
+                kind: SettlementLegKind::TradingFee,
+            });
+        }
+        if network_fee > 0 {
+            legs.push(SettlementLeg {
+                asset_id: NativeAssetId::SunReyCoin,
+                from: "bob".to_string(),
+                to: fee_to.to_string(),
+                quantity: network_fee,
+                source: SettlementSource::Available,
+                kind: SettlementLegKind::NetworkFee,
+            });
+        }
+        ExchangeSettlementPayload {
+            version: SETTLEMENT_TX_VERSION,
+            settlement_id: settlement_id.to_string(),
+            trade_ids: vec![trade_id.to_string()],
+            buyer: "alice".to_string(),
+            seller: "bob".to_string(),
+            base_asset: NativeAssetId::SunReyCoin,
+            base_quantity: 10,
+            quote_asset: NativeAssetId::MoonReyCoin,
+            quote_quantity: 25,
+            reservation_refs: vec![seller_lock.to_string(), buyer_lock.to_string()],
+            expiration_height: 10_000,
+            policy_version: EXCHANGE_SETTLEMENT_POLICY.to_string(),
+            network_id: "net_sunrey_local_dev".to_string(),
+            chain_id: "chn_sunrey_local_dev".to_string(),
+            nonce,
+            legs,
+            authority: signed_settlement_auth(settlement_id, nonce),
+        }
+    }
+
+    fn lock_for(
+        ledger: &mut NativeAssetLedger,
+        owner: &str,
+        asset: NativeAssetId,
+        qty: u128,
+        lock_id: &str,
+        height: u64,
+    ) {
         let crypto = TestCrypto;
         let policy = policy();
-        let apply_ctx = ctx(2, &crypto, &policy, None);
+        let payload = NativeAssetPayload {
+            version: 1,
+            op: NativeAssetOp::Lock,
+            actor_id: owner.to_string(),
+            asset_id: asset,
+            quantity: qty,
+            counterparty: String::new(),
+            lock_id: lock_id.to_string(),
+            lock_purpose: Some(LockPurpose::ExchangeOrder),
+            expiration_height: None,
+            authorized_releaser: EXCHANGE_SETTLEMENT_ISSUER.to_string(),
+            authorization_id: String::new(),
+            issuance_policy: String::new(),
+            proof_reference: String::new(),
+            economic_unit_label: String::new(),
+        };
+        apply_native_asset(ledger, &payload, &ctx(height, &crypto, &policy, None)).unwrap();
+    }
+
+    #[test]
+    fn settlement_adapter_atomic_dvp_and_insufficient_rolls_back() {
+        let mut ledger = NativeAssetLedger::development();
+        issue(&mut ledger, NativeAssetId::SunReyCoin, "alice", 20, "s1", 1);
+        issue(&mut ledger, NativeAssetId::MoonReyCoin, "bob", 30, "s2", 2);
+        let crypto = TestCrypto;
+        let policy = policy();
+        let apply_ctx = ctx(3, &crypto, &policy, None);
         let mut adapter = NativeAssetSettlementAdapter { ledger: &mut ledger, ctx: &apply_ctx };
+        adapter
+            .atomic_delivery_versus_payment(SettlementDvp {
+                asset_sender: "alice".to_string(),
+                asset_recipient: "bob".to_string(),
+                asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
+                contra_asset: NativeAssetId::MoonReyCoin,
+                contra_quantity: 25,
+            })
+            .unwrap();
+        let err = adapter
+            .atomic_delivery_versus_payment(SettlementDvp {
+                asset_sender: "alice".to_string(),
+                asset_recipient: "bob".to_string(),
+                asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 10).unwrap(),
+                contra_asset: NativeAssetId::MoonReyCoin,
+                contra_quantity: 25,
+            })
+            .unwrap_err();
+        assert_eq!(err, AssetError::InsufficientAsset);
+        drop(adapter);
+        assert_eq!(ledger.available("alice", NativeAssetId::SunReyCoin), 10);
+        assert_eq!(ledger.available("bob", NativeAssetId::SunReyCoin), 10);
+        assert_eq!(ledger.available("bob", NativeAssetId::MoonReyCoin), 5);
+        assert_eq!(ledger.available("alice", NativeAssetId::MoonReyCoin), 25);
+    }
+
+    #[test]
+    fn exchange_settlement_is_atomic_and_replay_protected() {
+        let mut ledger = NativeAssetLedger::development();
+        issue(&mut ledger, NativeAssetId::SunReyCoin, "bob", 12, "b1", 1);
+        issue(&mut ledger, NativeAssetId::MoonReyCoin, "alice", 30, "a1", 2);
+        lock_for(&mut ledger, "bob", NativeAssetId::SunReyCoin, 10, "lock-bob", 3);
+        lock_for(&mut ledger, "alice", NativeAssetId::MoonReyCoin, 25, "lock-alice", 4);
+        ledger.register_exchange_authority(EXCHANGE_SETTLEMENT_ISSUER, vec![0x11; 32]).unwrap();
+        let crypto = TestCrypto;
+        let policy = policy();
+        let settle_ctx = SettlementApplyContext {
+            height: 5,
+            network_id: "net_sunrey_local_dev",
+            chain_id: "chn_sunrey_local_dev",
+            crypto: &crypto,
+            crypto_policy: &policy,
+        };
+        let payload = dvp_payload("set-1", "trd-1", "lock-bob", "lock-alice", 1, "fees", 1, 1);
+        apply_exchange_settlement(&mut ledger, &payload, &settle_ctx).unwrap();
+        assert_eq!(ledger.available("alice", NativeAssetId::SunReyCoin), 10);
+        assert_eq!(ledger.available("bob", NativeAssetId::MoonReyCoin), 25);
+        assert_eq!(ledger.available("fees", NativeAssetId::MoonReyCoin), 1);
+        assert_eq!(ledger.available("fees", NativeAssetId::SunReyCoin), 1);
         assert_eq!(
-            adapter
-                .atomic_delivery_versus_payment(SettlementDvp {
-                    asset_sender: "alice".to_string(),
-                    asset_recipient: "bob".to_string(),
-                    asset_quantity: AssetQuantity::new(NativeAssetId::SunReyCoin, 1).unwrap(),
-                    contra_asset: NativeAssetId::MoonReyCoin,
-                    contra_quantity: 1,
-                })
-                .unwrap_err(),
-            AssetError::PolicyDenied
+            apply_exchange_settlement(&mut ledger, &payload, &settle_ctx).unwrap_err(),
+            AssetError::SettlementReplay
         );
+        let mut replay_trade =
+            dvp_payload("set-2", "trd-1", "lock-bob", "lock-alice", 2, "fees", 0, 0);
+        replay_trade.legs.truncate(2);
+        assert_eq!(
+            apply_exchange_settlement(&mut ledger, &replay_trade, &settle_ctx).unwrap_err(),
+            AssetError::TradeAlreadySettled
+        );
+        ledger.reconcile_all().unwrap();
+    }
+
+    #[test]
+    fn fabricated_wrong_asset_network_and_authority_rejected() {
+        let mut ledger = NativeAssetLedger::development();
+        issue(&mut ledger, NativeAssetId::SunReyCoin, "bob", 10, "b2", 1);
+        issue(&mut ledger, NativeAssetId::MoonReyCoin, "alice", 25, "a2", 2);
+        lock_for(&mut ledger, "bob", NativeAssetId::SunReyCoin, 10, "lock-bob-2", 3);
+        lock_for(&mut ledger, "alice", NativeAssetId::MoonReyCoin, 25, "lock-alice-2", 4);
+        ledger.register_exchange_authority(EXCHANGE_SETTLEMENT_ISSUER, vec![0x11; 32]).unwrap();
+        let crypto = TestCrypto;
+        let policy = policy();
+        let settle_ctx = SettlementApplyContext {
+            height: 5,
+            network_id: "net_sunrey_local_dev",
+            chain_id: "chn_sunrey_local_dev",
+            crypto: &crypto,
+            crypto_policy: &policy,
+        };
+        let mut fabricated =
+            dvp_payload("set-f", "trd-f", "lock-bob-2", "lock-alice-2", 9, "fees", 0, 0);
+        fabricated.authority.issuer = "alice".to_string();
+        fabricated.authority.signature = fabricated.authority.public_key.clone();
+        assert_eq!(
+            apply_exchange_settlement(&mut ledger, &fabricated, &settle_ctx).unwrap_err(),
+            AssetError::WrongAuthority
+        );
+        let mut wrong_net =
+            dvp_payload("set-n", "trd-n", "lock-bob-2", "lock-alice-2", 10, "fees", 0, 0);
+        wrong_net.network_id = "net_other".to_string();
+        wrong_net.authority.network_id = "net_other".to_string();
+        wrong_net.authority.signature = wrong_net.authority.public_key.clone();
+        assert_eq!(
+            apply_exchange_settlement(&mut ledger, &wrong_net, &settle_ctx).unwrap_err(),
+            AssetError::WrongNetwork
+        );
+        let mut wrong_asset =
+            dvp_payload("set-a", "trd-a", "lock-bob-2", "lock-alice-2", 11, "fees", 0, 0);
+        wrong_asset.legs[0].asset_id = NativeAssetId::MoonReyCoin;
+        assert_eq!(
+            apply_exchange_settlement(&mut ledger, &wrong_asset, &settle_ctx).unwrap_err(),
+            AssetError::WrongAsset
+        );
+        let mut short =
+            dvp_payload("set-s", "trd-s", "lock-missing", "lock-alice-2", 12, "fees", 0, 0);
+        short.reservation_refs = vec!["lock-missing".to_string(), "lock-alice-2".to_string()];
+        assert_eq!(
+            apply_exchange_settlement(&mut ledger, &short, &settle_ctx).unwrap_err(),
+            AssetError::LockNotFound
+        );
+        assert_eq!(ledger.available("alice", NativeAssetId::SunReyCoin), 0);
+        assert_eq!(ledger.available("bob", NativeAssetId::MoonReyCoin), 0);
+    }
+
+    #[test]
+    fn settlement_round_trip_and_validators_agree() {
+        let mut a = NativeAssetLedger::development();
+        issue(&mut a, NativeAssetId::SunReyCoin, "bob", 10, "r1", 1);
+        issue(&mut a, NativeAssetId::MoonReyCoin, "alice", 25, "r2", 2);
+        lock_for(&mut a, "bob", NativeAssetId::SunReyCoin, 10, "lb", 3);
+        lock_for(&mut a, "alice", NativeAssetId::MoonReyCoin, 25, "la", 4);
+        a.register_exchange_authority(EXCHANGE_SETTLEMENT_ISSUER, vec![0x11; 32]).unwrap();
+        let crypto = TestCrypto;
+        let policy = policy();
+        let settle_ctx = SettlementApplyContext {
+            height: 5,
+            network_id: "net_sunrey_local_dev",
+            chain_id: "chn_sunrey_local_dev",
+            crypto: &crypto,
+            crypto_policy: &policy,
+        };
+        apply_exchange_settlement(
+            &mut a,
+            &dvp_payload("set-r", "trd-r", "lb", "la", 1, "fees", 0, 0),
+            &settle_ctx,
+        )
+        .unwrap();
+        let b = NativeAssetLedger::decode(&a.canonical_bytes()).unwrap();
+        assert_eq!(a.canonical_bytes(), b.canonical_bytes());
+        assert_eq!(b.available("alice", NativeAssetId::SunReyCoin), 10);
+        assert_eq!(b.available("bob", NativeAssetId::MoonReyCoin), 25);
     }
 }

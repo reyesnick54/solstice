@@ -55,6 +55,8 @@ npm run demo:sunrey-validator-devnet
 npm run demo:sunrey-accountability
 npm run demo:sunrey-native-assets
 npm run demo:sunrey-exchange
+npm run demo:sunrey-exchange-native
+npm run demo:sunrey-exchange-settlement
 npm run demo:custody
 npm run demo:market-surveillance
 npm run demo:listing-governance

@@ -776,6 +776,16 @@ metering at `packages/sunrey-chain` and
 minor units, not fiat ledger debits. Do not create
 `packages/fees`, `packages/sunrey-fees`, or `packages/gas`.
 
+Chunk 48 connects the canonical SunRey Exchange to native-chain
+clearing and atomic DVP at `packages/sunrey-exchange` and
+`packages/sunrey-chain`. Capability
+`sunrey-exchange-native-settlement` is `IMPLEMENTED`. Exchange
+positions are derived. Matching stays off-chain. Public tickers
+remain `NOT_ASSIGNED`. See
+[`chunk-48-exchange-native-settlement.md`](./chunk-48-exchange-native-settlement.md).
+Do not create `packages/sunrey-exchange-ledger` or a second
+exchange.
+
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
 consensus signer, and durable signer safety at

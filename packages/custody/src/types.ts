@@ -46,6 +46,7 @@ export type DepositNotice = {
   readonly txRef: string;
   readonly confirmations: number;
   readonly receivedAt: UtcInstant;
+  readonly finality?: 'PENDING_PROPOSAL' | 'MEMPOOL' | 'BFT_FINALIZED';
 };
 
 export type ExternalDeposit = {

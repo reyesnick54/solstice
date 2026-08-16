@@ -4,8 +4,9 @@ use sunrey_crypto::{
     CryptoSuite, DevEd25519Sha256Suite, SigningSecret, DEV_ALGORITHM_ID, DEV_SUITE_ID,
 };
 use sunrey_native_assets::{
-    apply_native_asset, ApplyContext, AssetCrypto, AssetError, CryptoClass, CryptoPolicy,
-    IssuanceAuthorization, NativeAssetLedger, NativeAssetPayload, LEDGER_STORE_KEY,
+    apply_exchange_settlement, apply_native_asset, ApplyContext, AssetCrypto, AssetError,
+    CryptoClass, CryptoPolicy, ExchangeSettlementPayload, IssuanceAuthorization, NativeAssetLedger,
+    NativeAssetPayload, SettlementApplyContext, LEDGER_STORE_KEY,
 };
 use sunrey_protocol::{
     decode_evidence_anchor_payload, decode_system_payload, hex_decode, RejectReason,
@@ -82,6 +83,24 @@ fn apply_native(
     tx: &SignedTransaction,
     ctx: &ExecutionContext<'_>,
 ) -> Result<(), RejectReason> {
+    let mut ledger = load_assets(view)?;
+    let crypto = SuiteCrypto { suite: DevEd25519Sha256Suite };
+    let policy = CryptoPolicy::development_classical(DEV_SUITE_ID, DEV_ALGORITHM_ID);
+    if ExchangeSettlementPayload::looks_like(&tx.unsigned.payload) {
+        let payload =
+            ExchangeSettlementPayload::decode(&tx.unsigned.payload).map_err(RejectReason::from)?;
+        let settle_ctx = SettlementApplyContext {
+            height: ctx.height,
+            network_id: ctx.network_id,
+            chain_id: ctx.chain_id,
+            crypto: &crypto,
+            crypto_policy: &policy,
+        };
+        apply_exchange_settlement(&mut ledger, &payload, &settle_ctx)
+            .map_err(RejectReason::from)?;
+        store_assets(view, &ledger);
+        return Ok(());
+    }
     let (payload, rest) =
         NativeAssetPayload::decode_prefix(&tx.unsigned.payload).map_err(RejectReason::from)?;
     let (_fee_intent, rest) = sunrey_fees::split_fee_intent(rest)?;
@@ -91,9 +110,6 @@ fn apply_native(
         Some(IssuanceAuthorization::decode(rest).map_err(RejectReason::from)?)
     };
     let authorization = embedded.as_ref().or(ctx.authorization.as_ref());
-    let mut ledger = load_assets(view)?;
-    let crypto = SuiteCrypto { suite: DevEd25519Sha256Suite };
-    let policy = CryptoPolicy::development_classical(DEV_SUITE_ID, DEV_ALGORITHM_ID);
     let apply_ctx = ApplyContext {
         height: ctx.height,
         network_id: ctx.network_id,

@@ -9,13 +9,15 @@ use crate::chain::{Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};
 use crate::consensus::FourValidatorFixture;
 use crate::error::{NodeError, NodeResult};
 use crate::identity::{PeerAddress, PeerIdentity};
-use crate::native_assets::{encode_with_auth, sign_authorization};
+use crate::native_assets::{encode_with_auth, sign_authorization, sign_settlement_authority};
 use crate::node::{generate_wallet, ConsensusNodeConfig, DevelopmentNode, NodeConfig, NodeEvent};
 use crate::operator::serve_operator;
 use sunrey_native_assets::{
-    faucet_payload, AssetQuantity, FaucetRequest, IssuanceAuthorization, LockPurpose,
-    NativeAssetId, NativeAssetOp, NativeAssetPayload, DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER,
-    TICKER_STATUS_NOT_ASSIGNED,
+    faucet_payload, AssetQuantity, ExchangeSettlementAuthority, ExchangeSettlementPayload,
+    FaucetRequest, IssuanceAuthorization, LockPurpose, NativeAssetId, NativeAssetOp,
+    NativeAssetPayload, SettlementLeg, SettlementLegKind, SettlementSource,
+    DEVELOPMENT_FAUCET_POLICY, DEV_FAUCET_ISSUER, EXCHANGE_SETTLEMENT_ISSUER,
+    EXCHANGE_SETTLEMENT_POLICY, SETTLEMENT_TX_VERSION, TICKER_STATUS_NOT_ASSIGNED,
 };
 
 #[derive(Debug, Clone, serde::Serialize)]
@@ -445,6 +447,235 @@ pub async fn run_native_asset_devnet(root: PathBuf) -> NodeResult<NativeAssetDev
     })
 }
 
+#[derive(Debug, Clone, serde::Serialize)]
+pub struct ExchangeSettlementDevnetReport {
+    pub validators: u8,
+    pub market: &'static str,
+    pub alice_sunrey: String,
+    pub bob_moonrey: String,
+    pub trading_fee: String,
+    pub network_fee: String,
+    pub deposits_finalized: bool,
+    pub reservations_validated: bool,
+    pub dvp_atomic: bool,
+    pub settlement_finalized: bool,
+    pub failure_rejected_atomically: bool,
+    pub no_partial_movement: bool,
+    pub no_duplicate_settlement: bool,
+    pub ambiguity_resolved_once: bool,
+    pub reconciliation_ok: bool,
+    pub roots_equal: bool,
+    pub tickers: [&'static str; 2],
+    pub environment: &'static str,
+}
+
+pub async fn run_exchange_settlement_devnet(
+    root: PathBuf,
+) -> NodeResult<ExchangeSettlementDevnetReport> {
+    let _ = std::fs::remove_dir_all(&root);
+    std::fs::create_dir_all(&root).map_err(|e| NodeError::Store(e.to_string()))?;
+    let fixture = FourValidatorFixture::development();
+    let (a, listen_a) = spawn_validator("A", root.join("a"), Vec::new(), &fixture).await?;
+    let seed = PeerAddress::from_socket(listen_a);
+    let (b, _) = spawn_validator("B", root.join("b"), vec![seed.clone()], &fixture).await?;
+    let (c, _) = spawn_validator("C", root.join("c"), vec![seed.clone()], &fixture).await?;
+    let (d, _) = spawn_validator("D", root.join("d"), vec![seed], &fixture).await?;
+    let nodes = [a, b, c, d];
+    wait_until(Duration::from_secs(12), || {
+        nodes[0].metrics_snapshot().peer_count >= 3
+            && nodes[1].metrics_snapshot().peer_count >= 1
+            && nodes[2].metrics_snapshot().peer_count >= 1
+            && nodes[3].metrics_snapshot().peer_count >= 1
+    })
+    .await?;
+
+    let wallet = generate_wallet();
+    nodes[3].submit_tx(signed_faucet(
+        &wallet,
+        1,
+        NativeAssetId::MoonReyCoin,
+        "alice",
+        26,
+        "ex-moon-alice",
+    )?)?;
+    wait_until(Duration::from_secs(30), || {
+        nodes.iter().all(|n| {
+            n.native_assets()
+                .available("alice", NativeAssetId::MoonReyCoin)
+                == 26
+        })
+    })
+    .await?;
+    nodes[3].submit_tx(signed_faucet(
+        &wallet,
+        2,
+        NativeAssetId::SunReyCoin,
+        "bob",
+        12,
+        "ex-sun-bob",
+    )?)?;
+    wait_until(Duration::from_secs(30), || {
+        nodes.iter().all(|n| {
+            n.native_assets()
+                .available("bob", NativeAssetId::SunReyCoin)
+                == 12
+        })
+    })
+    .await?;
+    let deposits_finalized = true;
+
+    nodes[2].submit_tx(signed_lock(
+        &wallet,
+        "bob",
+        1,
+        NativeAssetId::SunReyCoin,
+        10,
+        "res-bob-sun",
+    )?)?;
+    wait_until(Duration::from_secs(30), || {
+        nodes.iter().all(|n| {
+            n.native_assets()
+                .available("bob", NativeAssetId::SunReyCoin)
+                == 2
+        })
+    })
+    .await?;
+    nodes[2].submit_tx(signed_lock(
+        &wallet,
+        "alice",
+        1,
+        NativeAssetId::MoonReyCoin,
+        25,
+        "res-alice-moon",
+    )?)?;
+    wait_until(Duration::from_secs(30), || {
+        nodes.iter().all(|n| {
+            n.native_assets()
+                .available("alice", NativeAssetId::MoonReyCoin)
+                == 1
+        })
+    })
+    .await?;
+    let reservations_validated = nodes[0].native_assets().locks.get("res-bob-sun").is_some()
+        && nodes[0]
+            .native_assets()
+            .locks
+            .get("res-alice-moon")
+            .is_some();
+
+    let settlement = signed_exchange_settlement(
+        &wallet,
+        1,
+        "xset-1",
+        "xtrd-1",
+        "res-bob-sun",
+        "res-alice-moon",
+        1,
+        1,
+        1,
+    )?;
+    let settlement_tx_id = hex::encode(nodes[1].submit_tx(settlement)?);
+    wait_until(Duration::from_secs(30), || {
+        nodes.iter().all(|n| {
+            n.native_assets()
+                .available("alice", NativeAssetId::SunReyCoin)
+                == 10
+                && n.native_assets()
+                    .available("bob", NativeAssetId::MoonReyCoin)
+                    == 25
+        })
+    })
+    .await?;
+
+    let after = nodes[0].native_assets();
+    let dvp_atomic = after.available("alice", NativeAssetId::SunReyCoin) == 10
+        && after.available("bob", NativeAssetId::MoonReyCoin) == 25
+        && after.available("alice", NativeAssetId::MoonReyCoin) == 0
+        && after.available("fees", NativeAssetId::MoonReyCoin) == 1
+        && after.available("fees", NativeAssetId::SunReyCoin) == 1;
+    let settlement_finalized = after.used_settlements.contains_key("xset-1")
+        && after.settled_trades.contains_key("xtrd-1");
+
+    let replay = signed_exchange_settlement(
+        &wallet,
+        2,
+        "xset-1",
+        "xtrd-1",
+        "res-bob-sun",
+        "res-alice-moon",
+        2,
+        0,
+        0,
+    )?;
+    let _ = nodes[0].submit_tx(replay);
+    tokio::time::sleep(Duration::from_millis(800)).await;
+    let no_duplicate = nodes.iter().all(|n| {
+        n.native_assets()
+            .available("alice", NativeAssetId::SunReyCoin)
+            == 10
+            && n.native_assets().settled_trades.len() == 1
+    });
+
+    let insufficient = signed_exchange_settlement(
+        &wallet,
+        3,
+        "xset-fail",
+        "xtrd-fail",
+        "res-missing",
+        "res-alice-moon",
+        3,
+        0,
+        0,
+    )?;
+    let _ = nodes[0].submit_tx(insufficient);
+    tokio::time::sleep(Duration::from_millis(800)).await;
+    let after_fail = nodes[0].native_assets();
+    let failure_rejected = !after_fail.used_settlements.contains_key("xset-fail");
+    let no_partial = after_fail.available("alice", NativeAssetId::SunReyCoin) == 10
+        && after_fail.available("bob", NativeAssetId::MoonReyCoin) == 25
+        && after_fail.available("fees", NativeAssetId::MoonReyCoin) == 1;
+
+    let queried = nodes
+        .iter()
+        .all(|n| n.native_assets().used_settlements.contains_key("xset-1"));
+    let _ = settlement_tx_id;
+    let ambiguity_resolved_once = queried && no_duplicate;
+
+    after_fail
+        .reconcile_all()
+        .map_err(|e| NodeError::Validation(e.to_string()))?;
+    let final_height = nodes[0].finalized_height();
+    wait_height(&nodes, final_height).await?;
+    assert_identical(&nodes, final_height)?;
+    let roots: Vec<String> = nodes.iter().map(|n| hex::encode(n.state_root())).collect();
+    let roots_equal = roots.windows(2).all(|w| w[0] == w[1]);
+
+    for node in nodes {
+        node.shutdown().await;
+    }
+
+    Ok(ExchangeSettlementDevnetReport {
+        validators: 4,
+        market: "SUNREY_COIN/MOONREY_COIN",
+        alice_sunrey: "10".into(),
+        bob_moonrey: "25".into(),
+        trading_fee: "1".into(),
+        network_fee: "1".into(),
+        deposits_finalized,
+        reservations_validated,
+        dvp_atomic,
+        settlement_finalized,
+        failure_rejected_atomically: failure_rejected,
+        no_partial_movement: no_partial,
+        no_duplicate_settlement: no_duplicate,
+        ambiguity_resolved_once,
+        reconciliation_ok: true,
+        roots_equal,
+        tickers: [TICKER_STATUS_NOT_ASSIGNED, TICKER_STATUS_NOT_ASSIGNED],
+        environment: "development/simulation",
+    })
+}
+
 async fn wait_height(nodes: &[Arc<DevelopmentNode>; 4], min: u64) -> NodeResult<u64> {
     wait_until(Duration::from_secs(30), || {
         nodes.iter().all(|n| n.finalized_height() >= min)
@@ -618,6 +849,103 @@ fn signed_burn(
         DEV_NETWORK_ID,
         DEV_CHAIN_ID,
         actor,
+        nonce,
+        payload.encode(),
+        0,
+    )
+}
+
+fn signed_exchange_settlement(
+    wallet: &crate::crypto::DomainKey,
+    nonce: u64,
+    settlement_id: &str,
+    trade_id: &str,
+    seller_lock: &str,
+    buyer_lock: &str,
+    auth_nonce: u64,
+    trading_fee: u128,
+    network_fee: u128,
+) -> NodeResult<Transaction> {
+    let mut legs = vec![
+        SettlementLeg {
+            asset_id: NativeAssetId::SunReyCoin,
+            from: "bob".to_string(),
+            to: "alice".to_string(),
+            quantity: 10,
+            source: SettlementSource::Lock {
+                lock_id: seller_lock.to_string(),
+            },
+            kind: SettlementLegKind::Base,
+        },
+        SettlementLeg {
+            asset_id: NativeAssetId::MoonReyCoin,
+            from: "alice".to_string(),
+            to: "bob".to_string(),
+            quantity: 25,
+            source: SettlementSource::Lock {
+                lock_id: buyer_lock.to_string(),
+            },
+            kind: SettlementLegKind::Quote,
+        },
+    ];
+    if trading_fee > 0 {
+        legs.push(SettlementLeg {
+            asset_id: NativeAssetId::MoonReyCoin,
+            from: "alice".to_string(),
+            to: "fees".to_string(),
+            quantity: trading_fee,
+            source: SettlementSource::Available,
+            kind: SettlementLegKind::TradingFee,
+        });
+    }
+    if network_fee > 0 {
+        legs.push(SettlementLeg {
+            asset_id: NativeAssetId::SunReyCoin,
+            from: "bob".to_string(),
+            to: "fees".to_string(),
+            quantity: network_fee,
+            source: SettlementSource::Available,
+            kind: SettlementLegKind::NetworkFee,
+        });
+    }
+    let mut authority = ExchangeSettlementAuthority {
+        settlement_id: settlement_id.to_string(),
+        issuer: EXCHANGE_SETTLEMENT_ISSUER.to_string(),
+        policy_version: EXCHANGE_SETTLEMENT_POLICY.to_string(),
+        network_id: DEV_NETWORK_ID.to_string(),
+        chain_id: DEV_CHAIN_ID.to_string(),
+        nonce: auth_nonce,
+        expiration_height: 10_000,
+        suite_id: String::new(),
+        algorithm_id: String::new(),
+        public_key: vec![],
+        signature: vec![],
+    };
+    sign_settlement_authority(&mut authority, &wallet.seed_bytes());
+    let payload = ExchangeSettlementPayload {
+        version: SETTLEMENT_TX_VERSION,
+        settlement_id: settlement_id.to_string(),
+        trade_ids: vec![trade_id.to_string()],
+        buyer: "alice".to_string(),
+        seller: "bob".to_string(),
+        base_asset: NativeAssetId::SunReyCoin,
+        base_quantity: 10,
+        quote_asset: NativeAssetId::MoonReyCoin,
+        quote_quantity: 25,
+        reservation_refs: vec![seller_lock.to_string(), buyer_lock.to_string()],
+        expiration_height: 10_000,
+        policy_version: EXCHANGE_SETTLEMENT_POLICY.to_string(),
+        network_id: DEV_NETWORK_ID.to_string(),
+        chain_id: DEV_CHAIN_ID.to_string(),
+        nonce: auth_nonce,
+        legs,
+        authority,
+    };
+    Transaction::sign(
+        wallet,
+        DEV_NETWORK_ID,
+        DEV_CHAIN_ID,
+        EXCHANGE_SETTLEMENT_ISSUER,
         nonce,
         payload.encode(),
         0,

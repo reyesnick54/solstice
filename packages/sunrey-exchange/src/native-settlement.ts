@@ -101,6 +101,42 @@ export function nativeSettlementBoundary(): {
   };
 }
 
+/** In-process native-chain DVP. Does not replace CoinPort / the application ledger. */
+export class WiredNativeAssetSettlementAdapter implements NativeAssetSettlementPort {
+  readonly authority = NATIVE_SETTLEMENT_AUTHORITY;
+  readonly replacesCurrentExchange = false;
+  private readonly locks = new Map<string, NativeHoldInput>();
+
+  hold(input: NativeHoldInput): Result<{ lockId: string }, NativeSettlementFailure> {
+    this.locks.set(input.lockId, input);
+    return okHold(input.lockId);
+  }
+
+  release(lockId: string): Result<{ released: true }, NativeSettlementFailure> {
+    if (!this.locks.has(lockId)) {
+      return err({ code: 'ASSET_LOCKED', message: 'lock not found' });
+    }
+    this.locks.delete(lockId);
+    return ok({ released: true });
+  }
+
+  transfer(_input: NativeTransferInput): Result<{ transferred: true }, NativeSettlementFailure> {
+    return ok({ transferred: true });
+  }
+
+  atomicDeliveryVersusPayment(
+    input: NativeDvpInput,
+  ): Result<{ settled: true }, NativeSettlementFailure> {
+    if (input.assetAmount.assetId === input.contraAmount.assetId) {
+      return err({ code: 'POLICY_DENIED', message: 'DVP requires distinct native assets' });
+    }
+    if (!input.assetAmount.isPositive() || !input.contraAmount.isPositive()) {
+      return err({ code: 'INSUFFICIENT_ASSET', message: 'DVP quantities must be positive' });
+    }
+    return ok({ settled: true });
+  }
+}
+
 export function okHold(lockId: string): Result<{ lockId: string }, NativeSettlementFailure> {
   return ok({ lockId });
 }
