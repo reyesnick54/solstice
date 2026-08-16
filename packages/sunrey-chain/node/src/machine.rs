@@ -43,8 +43,11 @@ fn save(path: &Path, store: &MachineStore) -> NodeResult<()> {
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|err| NodeError::Store(err.to_string()))?;
     }
-    fs::write(path, serde_json::to_string_pretty(store).unwrap_or_else(|_| "{}".into()))
-        .map_err(|err| NodeError::Store(err.to_string()))
+    fs::write(
+        path,
+        serde_json::to_string_pretty(store).unwrap_or_else(|_| "{}".into()),
+    )
+    .map_err(|err| NodeError::Store(err.to_string()))
 }
 
 fn find_identity<'a>(store: &'a MachineStore, machine_id: &str) -> Option<&'a Value> {
@@ -68,10 +71,30 @@ pub fn run_machine_command(args: &[String]) -> NodeResult<String> {
         "capabilities" => capabilities(&store, args.get(1).map(String::as_str).unwrap_or(""))?,
         "mandate" => mandate(&store, args.get(1).map(String::as_str).unwrap_or(""))?,
         "offers" => serde_json::to_string_pretty(&store.offers).unwrap_or_default(),
-        "purchase" => lookup(&store.orders, "orderId", args.get(1).map(String::as_str).unwrap_or(""), "purchase")?,
-        "escrow" => lookup(&store.escrows, "orderId", args.get(1).map(String::as_str).unwrap_or(""), "escrow")?,
-        "metering" => lookup(&store.sessions, "sessionId", args.get(1).map(String::as_str).unwrap_or(""), "metering")?,
-        "delivery" => lookup(&store.proofs, "proofId", args.get(1).map(String::as_str).unwrap_or(""), "delivery")?,
+        "purchase" => lookup(
+            &store.orders,
+            "orderId",
+            args.get(1).map(String::as_str).unwrap_or(""),
+            "purchase",
+        )?,
+        "escrow" => lookup(
+            &store.escrows,
+            "orderId",
+            args.get(1).map(String::as_str).unwrap_or(""),
+            "escrow",
+        )?,
+        "metering" => lookup(
+            &store.sessions,
+            "sessionId",
+            args.get(1).map(String::as_str).unwrap_or(""),
+            "metering",
+        )?,
+        "delivery" => lookup(
+            &store.proofs,
+            "proofId",
+            args.get(1).map(String::as_str).unwrap_or(""),
+            "delivery",
+        )?,
         "settlement" => lookup(
             &store.settlements,
             "settlementId",
@@ -127,7 +150,10 @@ fn show(store: &MachineStore, machine_id: &str) -> NodeResult<String> {
 fn capabilities(store: &MachineStore, machine_id: &str) -> NodeResult<String> {
     let identity = find_identity(store, machine_id)
         .ok_or_else(|| NodeError::Validation("machine not found".into()))?;
-    Ok(serde_json::to_string_pretty(identity.get("capabilityManifest").unwrap_or(&Value::Null)).unwrap_or_default())
+    Ok(
+        serde_json::to_string_pretty(identity.get("capabilityManifest").unwrap_or(&Value::Null))
+            .unwrap_or_default(),
+    )
 }
 
 fn mandate(store: &MachineStore, machine_id: &str) -> NodeResult<String> {

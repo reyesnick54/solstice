@@ -117,7 +117,13 @@ export class DevelopmentLockAdapter implements NativeAssetLockPort {
 
 export class DevelopmentFeeAdapter implements ProtocolFeePort {
   readonly source = 'PROTOCOL_FEE_PORT' as const;
-  constructor(private readonly rateNumerator = 1n, private readonly rateDenominator = 100n) {}
+  private readonly rateNumerator: IntegerQuantity;
+  private readonly rateDenominator: IntegerQuantity;
+
+  constructor(rateNumerator = 1n, rateDenominator = 100n) {
+    this.rateNumerator = rateNumerator;
+    this.rateDenominator = rateDenominator;
+  }
 
   feeFor(purchaseAmount: IntegerQuantity): IntegerQuantity {
     if (purchaseAmount <= 0n) {
