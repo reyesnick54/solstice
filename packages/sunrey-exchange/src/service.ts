@@ -129,7 +129,7 @@ export class SunReyExchangeService {
     this.seedSimulationRegistry();
   }
 
-  openAccount(input: {
+  openExchangeAccount(input: {
     readonly actorId: string;
     readonly customerId: CustomerId;
     readonly identityId: string;
@@ -143,7 +143,7 @@ export class SunReyExchangeService {
       accountId,
       customerId: input.customerId,
     });
-    const gated = this.authorize(intent, input.customerId);
+    const gated = this.authorizeIntent(intent, input.customerId);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -159,7 +159,7 @@ export class SunReyExchangeService {
       status: 'ACTIVE_SIMULATION',
       createdAt: this.clock.now(),
     });
-    this.store.putAccount(account);
+    this.store.putExchangeAccount(account);
     this.emit('ExchangeAccountCreated', account.accountId, { accountId: account.accountId });
     this.seal('account.created', { accountId: account.accountId, intentId: intent.id });
     return { outcome: 'OK', value: account, decision: gated.decision };
@@ -239,7 +239,7 @@ export class SunReyExchangeService {
       side: input.side,
       quantity: input.quantity,
     });
-    const gated = this.authorize(intent, input.customerId);
+    const gated = this.authorizeIntent(intent, input.customerId);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -304,7 +304,7 @@ export class SunReyExchangeService {
       accountId: order.sourceAccountId,
       orderId: order.orderId,
     });
-    const gated = this.authorize(intent, input.customerId);
+    const gated = this.authorizeIntent(intent, input.customerId);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -338,7 +338,7 @@ export class SunReyExchangeService {
       accountId: input.targetId,
       scope: input.scope,
     });
-    const gated = this.authorize(intent, input.customerId);
+    const gated = this.authorizeIntent(intent, input.customerId);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -378,7 +378,7 @@ export class SunReyExchangeService {
   restrictParticipant(accountId: ExchangeAccountId, status: ExchangeAccount['status']): void {
     const account = this.store.account(accountId);
     if (account) {
-      this.store.putAccount({ ...account, status });
+      this.store.putExchangeAccount({ ...account, status });
     }
   }
 
@@ -617,7 +617,7 @@ export class SunReyExchangeService {
       accountId: buyerAccount.cashAccountId,
       tradeId: trade.tradeId,
     });
-    const gated = this.authorize(intent, customerId);
+    const gated = this.authorizeIntent(intent, customerId);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -996,7 +996,7 @@ export class SunReyExchangeService {
     };
   }
 
-  private authorize(
+  private authorizeIntent(
     intent: ActionIntent,
     customerId: Customer['id'],
   ):

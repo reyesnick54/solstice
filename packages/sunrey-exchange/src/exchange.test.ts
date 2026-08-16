@@ -122,7 +122,7 @@ function provision(
   return { customer: cust, actor: result.value };
 }
 
-function openAccount(
+function openExchange(
   h: ReturnType<typeof harness>,
   actorId: string,
   customerId: Customer['id'],
@@ -130,7 +130,7 @@ function openAccount(
   custodyAccountId: string,
   cashAccountId: string,
 ) {
-  const opened = h.exchange.openAccount({
+  const opened = h.exchange.openExchangeAccount({
     actorId,
     customerId,
     identityId,
@@ -224,8 +224,8 @@ describe('SunRey Exchange service', () => {
     const buyer = provision(h, 'actor_buyer', 'idn_buyer', 'cust_buyer');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_seller');
     h.fiat.seed('cash_buyer', Money.fromMinorUnits(50_00n, 'USD'));
-    const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_seller', 'cash_seller');
-    const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_buyer', 'cash_buyer');
+    const sellerAccount = openExchange(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_seller', 'cash_seller');
+    const buyerAccount = openExchange(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_buyer', 'cash_buyer');
     assert.equal(Object.hasOwn(sellerAccount, 'balance'), false);
 
     const supplyBefore = h.coin.supply().circulating.scaledUnits;
@@ -300,7 +300,7 @@ describe('SunRey Exchange service', () => {
     const h = harness();
     const seller = provision(h, 'actor_idemp_s', 'idn_idemp_s', 'cust_idemp_s');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_idemp_s');
-    const account = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_idemp_s', 'cash_idemp_s');
+    const account = openExchange(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_idemp_s', 'cash_idemp_s');
     const first = h.exchange.placeDigitalOrder({
       actorId: seller.actor.actorId,
       customerId: seller.customer.id,
@@ -350,8 +350,8 @@ describe('SunRey Exchange service', () => {
     const buyer = provision(h, 'actor_fail_b', 'idn_fail_b', 'cust_fail_b');
     h.coin.seed(seller.customer.id, coins(1n), 'custody_fail_s');
     h.fiat.seed('cash_fail_b', Money.fromMinorUnits(100n, 'USD'));
-    const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_fail_s', 'cash_fail_s');
-    const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_fail_b', 'cash_fail_b');
+    const sellerAccount = openExchange(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_fail_s', 'cash_fail_s');
+    const buyerAccount = openExchange(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_fail_b', 'cash_fail_b');
 
     const shortSell = h.exchange.placeDigitalOrder({
       actorId: seller.actor.actorId,
@@ -448,7 +448,7 @@ describe('SunRey Exchange service', () => {
     const h = harness();
     const seller = provision(h, 'actor_inv', 'idn_inv', 'cust_inv');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_inv');
-    const account = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_inv', 'cash_inv');
+    const account = openExchange(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_inv', 'cash_inv');
     const zero = h.exchange.placeDigitalOrder({
       actorId: seller.actor.actorId,
       customerId: seller.customer.id,
@@ -528,7 +528,7 @@ describe('SunRey Exchange service', () => {
     const h = harness();
     const seller = provision(h, 'actor_nocap', 'idn_nocap', 'cust_nocap', ['EXCHANGE_VIEW']);
     h.coin.seed(seller.customer.id, coins(10n), 'custody_nocap');
-    const opened = h.exchange.openAccount({
+    const opened = h.exchange.openExchangeAccount({
       actorId: seller.actor.actorId,
       customerId: seller.customer.id,
       identityId: seller.actor.subjectId,
@@ -601,8 +601,8 @@ describe('SunRey Exchange service', () => {
     const buyer = provision(h, 'actor_mis_b', 'idn_mis_b', 'cust_mis_b');
     h.coin.seed(seller.customer.id, coins(10n), 'custody_mis');
     h.fiat.seed('cash_mis_b', Money.fromMinorUnits(50_00n, 'USD'));
-    const sellerAccount = openAccount(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_mis', 'cash_mis_s');
-    const buyerAccount = openAccount(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_mis_b', 'cash_mis_b');
+    const sellerAccount = openExchange(h, seller.actor.actorId, seller.customer.id, seller.actor.subjectId, 'custody_mis', 'cash_mis_s');
+    const buyerAccount = openExchange(h, buyer.actor.actorId, buyer.customer.id, buyer.actor.subjectId, 'custody_mis_b', 'cash_mis_b');
     const originalTransfer = h.fiat.transfer.bind(h.fiat);
     h.fiat.transfer = () => err({ code: 'SETTLEMENT_MISMATCH', message: 'forced cash failure' });
     h.exchange.placeDigitalOrder({

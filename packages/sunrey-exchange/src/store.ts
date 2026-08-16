@@ -32,7 +32,7 @@ export class ExchangeStore {
   sequenceByMarket = new Map<string, number>();
   orderSequence = 0;
 
-  putAccount(account: ExchangeAccount): void {
+  putExchangeAccount(account: ExchangeAccount): void {
     this.accounts.set(account.accountId, account);
   }
   putListing(listing: ExchangeListing): void {

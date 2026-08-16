@@ -198,7 +198,7 @@ They do not invent a parallel envelope.
 | `packages/treasury/src/service.ts` reserve / release / commit / rebalance / kill switch | Treasury reservations, proposals, operational controls; rebalance journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/investments/src/service.ts` open / fund / withdraw / paper order / settle / corporate action | Investment profiles, paper orders, positions, lots; brokerage-cash journals | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
 | `packages/sunrey-coin/src/service.ts` `issue` / `transfer` / `burn` | SunRey Coin simulation journals on the canonical Ledger | Kernel `submit` then verified authority; journals only via `Ledger.postJournal` |
-| `packages/sunrey-exchange/src/service.ts` `openAccount` / `placeDigitalOrder` / `cancelDigitalOrder` / `halt` | Exchange accounts, orders, holds, trades, simulation settlement | Kernel `submit` then verified authority; journals only via CoinPort/FiatPort onto the canonical Ledger |
+| `packages/sunrey-exchange/src/service.ts` `openExchangeAccount` / `placeDigitalOrder` / `cancelDigitalOrder` / `halt` | Exchange accounts, orders, holds, trades, simulation settlement | Kernel `submit` then verified authority; journals only via CoinPort/FiatPort onto the canonical Ledger |
 
 In-memory catalog stores (`CustomerStore`, `AccountStore`,
 `LegalEntityStore`, `ProductStore`) hold already-authorized values.

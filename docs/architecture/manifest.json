@@ -2387,7 +2387,7 @@
       "requiresKernel": true
     },
     {
-      "symbol": "openAccount",
+      "symbol": "openExchangeAccount",
       "file": "packages/sunrey-exchange/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true

@@ -129,7 +129,7 @@ async function main(): Promise<void> {
   fiat.seed('cash_b', Money.fromMinorUnits(50_00n, 'USD'));
 
   const sellerAccount = requireOk<{ accountId: string }>(
-    exchange.openAccount({
+    exchange.openExchangeAccount({
       actorId: seller.actorId,
       customerId: sellerCust.id,
       identityId: seller.subjectId,
@@ -140,7 +140,7 @@ async function main(): Promise<void> {
     'open seller',
   );
   const buyerAccount = requireOk<{ accountId: string }>(
-    exchange.openAccount({
+    exchange.openExchangeAccount({
       actorId: buyer.actorId,
       customerId: buyerCust.id,
       identityId: buyer.subjectId,
