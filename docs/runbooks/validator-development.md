@@ -14,7 +14,7 @@ cargo run --manifest-path packages/sunrey-chain/rust/crates/rpc/Cargo.toml -- \
 From the P2P node binary:
 
 ```
-cargo run --manifest-path packages/sunrey-chain/node/Cargo.toml --bin sunrey-node -- \
+cargo +stable run --manifest-path packages/sunrey-chain/node/Cargo.toml --bin sunrey-node -- \
   validator generate --data-dir /tmp/sunrey-validators
 ```
 
