@@ -3,16 +3,26 @@ use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 use parking_lot::Mutex;
 use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use tokio::sync::{broadcast, mpsc};
+use tokio::sync::broadcast;
 use tokio::task::JoinHandle;
 
 use crate::accountability::AccountabilityReceipt;
 use crate::chain::{Block, DevChain, Genesis, Transaction};
 use crate::codec::{encode_frame, Channel, Frame};
+use crate::consensus::auth::ConsensusAuthContext;
+use crate::consensus::engine::Action;
+use crate::consensus::messages::ConsensusMessage;
+use crate::consensus::reactor::ConsensusReactor;
+use crate::consensus::signer::ConsensusSigner;
+use crate::consensus::types::TimeoutKind;
+use crate::consensus::validators::ValidatorSet;
+use crate::consensus::vote::CommitCertificate;
+use crate::consensus::wal::ConsensusWal;
+use crate::consensus::{ConsensusEngine, ConsensusParams};
 use crate::crypto::DomainKey;
 use crate::error::{HandshakeRejectReason, NodeError, NodeResult};
 use crate::evidence::EquivocationEvidence;
@@ -20,8 +30,8 @@ use crate::evidence_pool::EvidencePool;
 use crate::fork::ForkEvidence;
 use crate::handshake::{
     build_hello, evaluate_hello, HandshakeHello, HandshakeReplayCache, LocalHandshakeView,
-    FEATURE_BLOCK_GOSSIP, FEATURE_DEV_PRODUCER, FEATURE_EVIDENCE_GOSSIP, FEATURE_STATE_SYNC,
-    FEATURE_TX_GOSSIP,
+    FEATURE_BLOCK_GOSSIP, FEATURE_CONSENSUS, FEATURE_DEV_PRODUCER, FEATURE_EVIDENCE_GOSSIP,
+    FEATURE_STATE_SYNC, FEATURE_TX_GOSSIP,
 };
 use crate::identity::{unix_ms, NodeId, PeerAddress, PeerIdentity, PeerSession, SessionDirection};
 use crate::mempool::{Mempool, MempoolConfig};
@@ -32,9 +42,9 @@ use crate::transport::bind_endpoint;
 
 pub const MAX_SYNC_RANGE: u64 = 32;
 pub const MAX_SEEN: usize = 4_096;
-const PER_PEER_QUEUE: usize = 128;
+const _PER_PEER_QUEUE: usize = 128;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct NodeConfig {
     pub name: String,
     pub data_dir: PathBuf,
@@ -46,6 +56,15 @@ pub struct NodeConfig {
     pub genesis: Genesis,
     pub limits: PeerLimits,
     pub mempool: MempoolConfig,
+    pub consensus: Option<ConsensusNodeConfig>,
+}
+
+#[derive(Clone)]
+pub struct ConsensusNodeConfig {
+    pub validator_name: String,
+    pub consensus_key: DomainKey,
+    pub validator_set: ValidatorSet,
+    pub params: ConsensusParams,
 }
 
 impl NodeConfig {
@@ -66,6 +85,7 @@ impl NodeConfig {
             genesis: Genesis::development(),
             limits: PeerLimits::default(),
             mempool: MempoolConfig::default(),
+            consensus: None,
         }
     }
 }
@@ -130,16 +150,69 @@ pub enum NodeEvent {
         reason: String,
     },
     MalformedIgnored,
+    ConsensusFinalized {
+        height: u64,
+        block_id: [u8; 32],
+        state_root: [u8; 32],
+        round: u32,
+    },
+    ConsensusRejected {
+        reason: String,
+    },
 }
 
 struct PeerIo {
-    tx: mpsc::Sender<PriorityMessage>,
+    queues: Arc<Mutex<PriorityQueues>>,
+    notify: Arc<tokio::sync::Notify>,
+}
+
+struct PriorityQueues {
+    consensus: VecDeque<NetMessage>,
+    block_sync: VecDeque<NetMessage>,
+    tx: VecDeque<NetMessage>,
+}
+
+impl PriorityQueues {
+    fn new() -> Self {
+        Self {
+            consensus: VecDeque::new(),
+            block_sync: VecDeque::new(),
+            tx: VecDeque::new(),
+        }
+    }
+
+    fn push(&mut self, channel: Channel, message: NetMessage) -> bool {
+        let (queue, cap) = match channel {
+            Channel::Consensus | Channel::PeerControl => (&mut self.consensus, 256usize),
+            Channel::StateSync | Channel::BlockGossip => (&mut self.block_sync, 128usize),
+            Channel::TransactionGossip => (&mut self.tx, 64usize),
+        };
+        if queue.len() >= cap {
+            return false;
+        }
+        queue.push_back(message);
+        true
+    }
+
+    fn pop(&mut self) -> Option<(Channel, NetMessage)> {
+        if let Some(message) = self.consensus.pop_front() {
+            return Some((Channel::Consensus, message));
+        }
+        if let Some(message) = self.block_sync.pop_front() {
+            return Some((Channel::StateSync, message));
+        }
+        self.tx
+            .pop_front()
+            .map(|message| (Channel::TransactionGossip, message))
+    }
 }
 
 #[derive(Clone)]
-struct PriorityMessage {
-    channel: Channel,
-    message: NetMessage,
+struct ScheduledTimeout {
+    kind: TimeoutKind,
+    height: u64,
+    round: u32,
+    at: Instant,
 }
 
 struct SeenCache {
@@ -212,6 +285,9 @@ pub struct DevelopmentNode {
     seen_block: Arc<Mutex<SeenCache>>,
     seen_evidence: Arc<Mutex<SeenCache>>,
     replay: Arc<Mutex<HandshakeReplayCache>>,
+    consensus: Option<Arc<Mutex<ConsensusReactor>>>,
+    timeouts: Arc<Mutex<Vec<ScheduledTimeout>>>,
+    consensus_evidence: Arc<Mutex<Vec<crate::consensus::evidence::EquivocationEvidence>>>,
     pub(crate) shutdown: tokio::sync::Notify,
     tasks: Mutex<Vec<JoinHandle<()>>>,
 }
@@ -229,6 +305,22 @@ impl DevelopmentNode {
         .with_persistence(&config.data_dir)?;
         let (events, _) = broadcast::channel(256);
         let evidence_pool = EvidencePool::open(&config.data_dir)?;
+        let consensus = if let Some(cfg) = &config.consensus {
+            let signer = ConsensusSigner::open(&config.data_dir, cfg.consensus_key.clone())?;
+            let wal = ConsensusWal::open(&config.data_dir)?;
+            let mut engine = ConsensusEngine::new(
+                config.genesis.network_id.clone(),
+                config.genesis.chain_id.clone(),
+                cfg.validator_set.clone(),
+                signer,
+                wal,
+                cfg.params,
+            );
+            let _ = engine.recover();
+            Some(Arc::new(Mutex::new(ConsensusReactor::new(engine))))
+        } else {
+            None
+        };
         Ok(Self {
             identity,
             chain: Arc::new(Mutex::new(chain)),
@@ -244,6 +336,9 @@ impl DevelopmentNode {
             seen_block: Arc::new(Mutex::new(SeenCache::new())),
             seen_evidence: Arc::new(Mutex::new(SeenCache::new())),
             replay: Arc::new(Mutex::new(HandshakeReplayCache::default())),
+            consensus,
+            timeouts: Arc::new(Mutex::new(Vec::new())),
+            consensus_evidence: Arc::new(Mutex::new(Vec::new())),
             shutdown: tokio::sync::Notify::new(),
             tasks: Mutex::new(Vec::new()),
             config,
@@ -264,6 +359,69 @@ impl DevelopmentNode {
 
     pub fn state_root(&self) -> [u8; 32] {
         self.chain.lock().state_root()
+    }
+
+    pub fn finalized_height(&self) -> u64 {
+        if let Some(consensus) = &self.consensus {
+            consensus.lock().engine.finalized_height()
+        } else {
+            self.height()
+        }
+    }
+
+    pub fn finalized_block(&self, height: u64) -> Option<Block> {
+        if let Some(consensus) = &self.consensus {
+            consensus
+                .lock()
+                .engine
+                .store
+                .finalized_block(height)
+                .cloned()
+        } else {
+            self.chain.lock().block_by_height(height).cloned()
+        }
+    }
+
+    pub fn commit_certificate(&self, height: u64) -> Option<CommitCertificate> {
+        self.consensus
+            .as_ref()
+            .and_then(|c| c.lock().engine.store.commit_certificate(height).cloned())
+    }
+
+    pub fn validator_set_at_height(&self, _height: u64) -> Option<ValidatorSet> {
+        self.config
+            .consensus
+            .as_ref()
+            .map(|c| c.validator_set.clone())
+    }
+
+    pub fn consensus_round_at_commit(&self, height: u64) -> Option<u32> {
+        self.consensus
+            .as_ref()
+            .and_then(|c| c.lock().engine.store.consensus_round_at_commit(height))
+    }
+
+    pub fn state_root_at_height(&self, height: u64) -> Option<[u8; 32]> {
+        if let Some(consensus) = &self.consensus {
+            consensus.lock().engine.store.state_root_at_height(height)
+        } else {
+            self.chain
+                .lock()
+                .block_by_height(height)
+                .map(|b| b.header.state_root)
+        }
+    }
+
+    pub fn consensus_metrics(&self) -> Option<crate::consensus::ConsensusMetricsSnapshot> {
+        self.consensus.as_ref().map(|c| c.lock().metrics.snapshot())
+    }
+
+    pub fn consensus_evidence(&self) -> Vec<crate::consensus::evidence::EquivocationEvidence> {
+        self.consensus_evidence.lock().clone()
+    }
+
+    pub fn validator_set_hash(&self) -> [u8; 32] {
+        self.config.genesis.validator_set_hash
     }
 
     pub fn metrics_snapshot(&self) -> MetricsSnapshot {
@@ -314,6 +472,18 @@ impl DevelopmentNode {
         self.metrics
             .evidence_pool_size
             .store(self.evidence_pool.lock().len() as u64, Ordering::Relaxed);
+        if let Some(consensus) = &self.consensus {
+            let session_count = self.sessions.lock().len() as u64;
+            let reactor = consensus.lock();
+            reactor
+                .metrics
+                .consensus_peer_count
+                .store(session_count, Ordering::Relaxed);
+            reactor.metrics.validator_sync_lag.store(
+                max_peer.saturating_sub(reactor.engine.store.finalized_height()),
+                Ordering::Relaxed,
+            );
+        }
     }
 
     pub async fn start(self: &Arc<Self>) -> NodeResult<SocketAddr> {
@@ -355,12 +525,51 @@ impl DevelopmentNode {
                 }
             }
         });
+        if self.consensus.is_some() {
+            let node = Arc::clone(self);
+            self.spawn(async move {
+                loop {
+                    tokio::select! {
+                        _ = node.shutdown.notified() => break,
+                        _ = tokio::time::sleep(Duration::from_millis(5)) => {
+                            node.fire_consensus_timeouts();
+                        }
+                    }
+                }
+            });
+            // Consensus starts after the first authenticated peer so the
+            // opening proposal is not broadcast into an empty mesh.
+        }
         self.emit(NodeEvent::Ready {
             name: self.config.name.clone(),
             listen,
             node_id: self.identity.node_id,
         });
         Ok(listen)
+    }
+
+    fn fire_consensus_timeouts(&self) {
+        let now = Instant::now();
+        let due: Vec<_> = {
+            let mut timeouts = self.timeouts.lock();
+            let due: Vec<_> = timeouts.iter().filter(|t| t.at <= now).cloned().collect();
+            timeouts.retain(|t| t.at > now);
+            due
+        };
+        if due.is_empty() {
+            return;
+        }
+        let Some(consensus) = &self.consensus else {
+            return;
+        };
+        let mut actions = Vec::new();
+        {
+            let mut reactor = consensus.lock();
+            for timeout in due {
+                actions.extend(reactor.on_timeout(timeout.kind, timeout.height, timeout.round));
+            }
+        }
+        NodeHandle::from_node(self).apply_actions(actions);
     }
 
     pub async fn shutdown(&self) {
@@ -450,7 +659,7 @@ impl DevelopmentNode {
     }
 
     pub fn submit_evidence(&self, evidence: EquivocationEvidence) -> NodeResult<[u8; 32]> {
-        self.admit_evidence(evidence, None)
+        NodeHandle::from_node(self).admit_evidence(evidence, None)
     }
 
     pub fn admit_remote_evidence(
@@ -458,127 +667,11 @@ impl DevelopmentNode {
         evidence: EquivocationEvidence,
         from: NodeId,
     ) -> NodeResult<[u8; 32]> {
-        self.admit_evidence(evidence, Some(from))
-    }
-
-    fn admit_evidence(
-        &self,
-        evidence: EquivocationEvidence,
-        from: Option<NodeId>,
-    ) -> NodeResult<[u8; 32]> {
-        self.metrics
-            .evidence_received
-            .fetch_add(1, Ordering::Relaxed);
-        let id = evidence.evidence_id();
-        self.emit(NodeEvent::EvidenceReceived { evidence_id: id });
-        let chain = self.chain.lock();
-        if chain.accountability.already_processed(&id) {
-            self.metrics
-                .evidence_duplicate
-                .fetch_add(1, Ordering::Relaxed);
-            self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
-            return Err(NodeError::Validation("duplicate evidence".into()));
-        }
-        let mut pool = self.evidence_pool.lock();
-        match pool.admit(
-            evidence,
-            &chain.validators,
-            &chain.genesis.network_id,
-            &chain.genesis.chain_id,
-            chain.height(),
-            &chain.accountability.processed,
-        ) {
-            Ok(id) => {
-                drop(pool);
-                drop(chain);
-                self.metrics.evidence_valid.fetch_add(1, Ordering::Relaxed);
-                self.emit(NodeEvent::EvidenceValid { evidence_id: id });
-                self.seen_evidence.lock().insert(id);
-                self.evidence_pool.lock().mark_gossiped(&id);
-                self.broadcast(
-                    Channel::ConsensusReserved,
-                    NetMessage::EvidenceAnnounce { evidence_id: id },
-                    from,
-                );
-                self.refresh_metrics();
-                Ok(id)
-            }
-            Err(err) => {
-                drop(pool);
-                drop(chain);
-                if err.to_string().contains("duplicate") {
-                    self.metrics
-                        .evidence_duplicate
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
-                } else {
-                    self.metrics
-                        .evidence_invalid
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::EvidenceInvalid {
-                        reason: err.to_string(),
-                    });
-                    if let Some(peer) = from {
-                        if self.peers.lock().add_score(peer, 25) {
-                            self.metrics.peer_bans.fetch_add(1, Ordering::Relaxed);
-                            self.emit(NodeEvent::PeerBanned { node_id: peer });
-                        }
-                    }
-                }
-                Err(err)
-            }
-        }
+        NodeHandle::from_node(self).admit_evidence(evidence, Some(from))
     }
 
     fn note_included_evidence(&self, block: &Block, started_ms: u64) {
-        let latency = unix_ms().saturating_sub(started_ms);
-        self.metrics
-            .evidence_processing_latency_ms
-            .store(latency, Ordering::Relaxed);
-        let mut pool = self.evidence_pool.lock();
-        for item in &block.evidence {
-            let id = item.evidence_id();
-            pool.mark_included(&id);
-            pool.mark_processed(&id);
-            self.metrics
-                .evidence_included
-                .fetch_add(1, Ordering::Relaxed);
-            self.emit(NodeEvent::EvidenceIncluded {
-                evidence_id: id,
-                height: block.header.height,
-            });
-        }
-        drop(pool);
-        let chain = self.chain.lock();
-        for receipt in &chain.accountability.receipts {
-            if receipt.processed_height == block.header.height {
-                if receipt.validator_status_change.contains("JAILED") {
-                    self.metrics
-                        .validator_jailed
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::ValidatorJailed {
-                        validator_id: receipt.validator_id.clone(),
-                    });
-                }
-                if receipt.validator_status_change.contains("TOMBSTONED") {
-                    self.metrics
-                        .validator_tombstoned
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::ValidatorTombstoned {
-                        validator_id: receipt.validator_id.clone(),
-                    });
-                }
-                if receipt.bond_penalty_units != "0" {
-                    self.metrics
-                        .simulation_bond_penalized
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::SimulationBondPenalized {
-                        validator_id: receipt.validator_id.clone(),
-                        units: receipt.bond_penalty_units.clone(),
-                    });
-                }
-            }
-        }
+        NodeHandle::from_node(self).note_included_evidence(block, started_ms);
     }
 
     pub fn evidence_list(&self) -> Vec<serde_json::Value> {
@@ -658,16 +751,7 @@ impl DevelopmentNode {
     }
 
     fn broadcast(&self, channel: Channel, message: NetMessage, except: Option<NodeId>) {
-        let ios = self.ios.lock();
-        for (id, io) in ios.iter() {
-            if Some(*id) == except {
-                continue;
-            }
-            let _ = io.tx.try_send(PriorityMessage {
-                channel,
-                message: message.clone(),
-            });
-        }
+        NodeHandle::from_node(self).broadcast(channel, message, except);
     }
 }
 
@@ -688,6 +772,9 @@ struct NodeHandle {
     seen_block: Arc<Mutex<SeenCache>>,
     seen_evidence: Arc<Mutex<SeenCache>>,
     replay: Arc<Mutex<HandshakeReplayCache>>,
+    consensus: Option<Arc<Mutex<ConsensusReactor>>>,
+    timeouts: Arc<Mutex<Vec<ScheduledTimeout>>>,
+    consensus_evidence: Arc<Mutex<Vec<crate::consensus::evidence::EquivocationEvidence>>>,
 }
 
 impl NodeHandle {
@@ -708,11 +795,130 @@ impl NodeHandle {
             seen_block: Arc::clone(&node.seen_block),
             seen_evidence: Arc::clone(&node.seen_evidence),
             replay: Arc::clone(&node.replay),
+            consensus: node.consensus.clone(),
+            timeouts: Arc::clone(&node.timeouts),
+            consensus_evidence: Arc::clone(&node.consensus_evidence),
         }
     }
 
     fn emit(&self, event: NodeEvent) {
         let _ = self.events.send(event);
+    }
+
+    fn admit_evidence(
+        &self,
+        evidence: EquivocationEvidence,
+        from: Option<NodeId>,
+    ) -> NodeResult<[u8; 32]> {
+        self.metrics
+            .evidence_received
+            .fetch_add(1, Ordering::Relaxed);
+        let id = evidence.evidence_id();
+        self.emit(NodeEvent::EvidenceReceived { evidence_id: id });
+        let chain = self.chain.lock();
+        if chain.accountability.already_processed(&id) {
+            self.metrics
+                .evidence_duplicate
+                .fetch_add(1, Ordering::Relaxed);
+            self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
+            return Err(NodeError::Validation("duplicate evidence".into()));
+        }
+        let mut pool = self.evidence_pool.lock();
+        match pool.admit(
+            evidence,
+            &chain.validators,
+            &chain.genesis.network_id,
+            &chain.genesis.chain_id,
+            chain.height(),
+            &chain.accountability.processed,
+        ) {
+            Ok(id) => {
+                drop(pool);
+                drop(chain);
+                self.metrics.evidence_valid.fetch_add(1, Ordering::Relaxed);
+                self.emit(NodeEvent::EvidenceValid { evidence_id: id });
+                self.seen_evidence.lock().insert(id);
+                self.evidence_pool.lock().mark_gossiped(&id);
+                self.broadcast(
+                    Channel::Consensus,
+                    NetMessage::EvidenceAnnounce { evidence_id: id },
+                    from,
+                );
+                Ok(id)
+            }
+            Err(err) => {
+                drop(pool);
+                drop(chain);
+                if err.to_string().contains("duplicate") {
+                    self.metrics
+                        .evidence_duplicate
+                        .fetch_add(1, Ordering::Relaxed);
+                    self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
+                } else {
+                    self.metrics
+                        .evidence_invalid
+                        .fetch_add(1, Ordering::Relaxed);
+                    self.emit(NodeEvent::EvidenceInvalid {
+                        reason: err.to_string(),
+                    });
+                    if let Some(peer) = from {
+                        self.score(peer, 25);
+                    }
+                }
+                Err(err)
+            }
+        }
+    }
+
+    fn note_included_evidence(&self, block: &Block, started_ms: u64) {
+        let latency = unix_ms().saturating_sub(started_ms);
+        self.metrics
+            .evidence_processing_latency_ms
+            .store(latency, Ordering::Relaxed);
+        let mut pool = self.evidence_pool.lock();
+        for item in &block.evidence {
+            let id = item.evidence_id();
+            pool.mark_included(&id);
+            pool.mark_processed(&id);
+            self.metrics
+                .evidence_included
+                .fetch_add(1, Ordering::Relaxed);
+            self.emit(NodeEvent::EvidenceIncluded {
+                evidence_id: id,
+                height: block.header.height,
+            });
+        }
+        drop(pool);
+        let chain = self.chain.lock();
+        for receipt in &chain.accountability.receipts {
+            if receipt.processed_height == block.header.height {
+                if receipt.validator_status_change.contains("JAILED") {
+                    self.metrics
+                        .validator_jailed
+                        .fetch_add(1, Ordering::Relaxed);
+                    self.emit(NodeEvent::ValidatorJailed {
+                        validator_id: receipt.validator_id.clone(),
+                    });
+                }
+                if receipt.validator_status_change.contains("TOMBSTONED") {
+                    self.metrics
+                        .validator_tombstoned
+                        .fetch_add(1, Ordering::Relaxed);
+                    self.emit(NodeEvent::ValidatorTombstoned {
+                        validator_id: receipt.validator_id.clone(),
+                    });
+                }
+                if receipt.bond_penalty_units != "0" {
+                    self.metrics
+                        .simulation_bond_penalized
+                        .fetch_add(1, Ordering::Relaxed);
+                    self.emit(NodeEvent::SimulationBondPenalized {
+                        validator_id: receipt.validator_id.clone(),
+                        units: receipt.bond_penalty_units.clone(),
+                    });
+                }
+            }
+        }
     }
 
     async fn dial_candidates(&self, endpoint: &quinn::Endpoint) {
@@ -795,6 +1001,9 @@ impl NodeHandle {
                 | FEATURE_EVIDENCE_GOSSIP;
             if self.config.producer {
                 bits |= FEATURE_DEV_PRODUCER;
+            }
+            if self.consensus.is_some() {
+                bits |= FEATURE_CONSENSUS;
             }
             build_hello(
                 &self.identity,
@@ -884,10 +1093,27 @@ impl NodeHandle {
             height: session.height,
         });
 
-        let (out_tx, mut out_rx) = mpsc::channel::<PriorityMessage>(PER_PEER_QUEUE);
-        self.ios
-            .lock()
-            .insert(session.node_id, PeerIo { tx: out_tx });
+        let notify = Arc::new(tokio::sync::Notify::new());
+        let queues = Arc::new(Mutex::new(PriorityQueues::new()));
+        self.ios.lock().insert(
+            session.node_id,
+            PeerIo {
+                queues: Arc::clone(&queues),
+                notify: Arc::clone(&notify),
+            },
+        );
+        if let Some(consensus) = &self.consensus {
+            let actions = {
+                let mut reactor = consensus.lock();
+                if reactor.engine.started {
+                    Vec::new()
+                } else {
+                    reactor.start()
+                }
+            };
+            self.apply_actions(actions);
+        }
+        self.share_consensus_state(session.node_id);
 
         if session.height > self.chain.lock().height() {
             let from = self.chain.lock().height() + 1;
@@ -907,15 +1133,19 @@ impl NodeHandle {
         let mut sync_rate = RateWindow::new();
         let mut announce_rate = RateWindow::new();
         loop {
+            loop {
+                let outgoing = queues.lock().pop();
+                let Some((channel, message)) = outgoing else {
+                    break;
+                };
+                if write_message(&mut send, channel, &message).await.is_err() {
+                    return Ok(());
+                }
+                self.metrics.bytes_sent.fetch_add(1, Ordering::Relaxed);
+            }
             tokio::select! {
                 biased;
-                outgoing = out_rx.recv() => {
-                    let Some(outgoing) = outgoing else { break; };
-                    if write_message(&mut send, outgoing.channel, &outgoing.message).await.is_err() {
-                        break;
-                    }
-                    self.metrics.bytes_sent.fetch_add(1, Ordering::Relaxed);
-                }
+                _ = notify.notified() => {}
                 inbound = read_message(&mut recv) => {
                     let message = match inbound {
                         Ok(message) => message,
@@ -989,7 +1219,9 @@ impl NodeHandle {
 
     fn send_to(&self, node_id: NodeId, channel: Channel, message: NetMessage) {
         if let Some(io) = self.ios.lock().get(&node_id) {
-            let _ = io.tx.try_send(PriorityMessage { channel, message });
+            if io.queues.lock().push(channel, message) {
+                io.notify.notify_one();
+            }
         }
     }
 
@@ -999,125 +1231,8 @@ impl NodeHandle {
             if Some(*id) == except {
                 continue;
             }
-            let _ = io.tx.try_send(PriorityMessage {
-                channel,
-                message: message.clone(),
-            });
-        }
-    }
-
-    fn admit_evidence(
-        &self,
-        evidence: EquivocationEvidence,
-        from: Option<NodeId>,
-    ) -> NodeResult<[u8; 32]> {
-        self.metrics
-            .evidence_received
-            .fetch_add(1, Ordering::Relaxed);
-        let id = evidence.evidence_id();
-        self.emit(NodeEvent::EvidenceReceived { evidence_id: id });
-        let chain = self.chain.lock();
-        if chain.accountability.already_processed(&id) {
-            self.metrics
-                .evidence_duplicate
-                .fetch_add(1, Ordering::Relaxed);
-            self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
-            return Err(NodeError::Validation("duplicate evidence".into()));
-        }
-        let mut pool = self.evidence_pool.lock();
-        match pool.admit(
-            evidence,
-            &chain.validators,
-            &chain.genesis.network_id,
-            &chain.genesis.chain_id,
-            chain.height(),
-            &chain.accountability.processed,
-        ) {
-            Ok(id) => {
-                drop(pool);
-                drop(chain);
-                self.metrics.evidence_valid.fetch_add(1, Ordering::Relaxed);
-                self.emit(NodeEvent::EvidenceValid { evidence_id: id });
-                self.seen_evidence.lock().insert(id);
-                self.evidence_pool.lock().mark_gossiped(&id);
-                self.broadcast(
-                    Channel::ConsensusReserved,
-                    NetMessage::EvidenceAnnounce { evidence_id: id },
-                    from,
-                );
-                Ok(id)
-            }
-            Err(err) => {
-                drop(pool);
-                drop(chain);
-                if err.to_string().contains("duplicate") {
-                    self.metrics
-                        .evidence_duplicate
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::EvidenceDuplicate { evidence_id: id });
-                } else {
-                    self.metrics
-                        .evidence_invalid
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::EvidenceInvalid {
-                        reason: err.to_string(),
-                    });
-                    if let Some(peer) = from {
-                        self.score(peer, 25);
-                    }
-                }
-                Err(err)
-            }
-        }
-    }
-
-    fn note_included_evidence(&self, block: &Block, started_ms: u64) {
-        let latency = unix_ms().saturating_sub(started_ms);
-        self.metrics
-            .evidence_processing_latency_ms
-            .store(latency, Ordering::Relaxed);
-        let mut pool = self.evidence_pool.lock();
-        for item in &block.evidence {
-            let id = item.evidence_id();
-            pool.mark_included(&id);
-            pool.mark_processed(&id);
-            self.metrics
-                .evidence_included
-                .fetch_add(1, Ordering::Relaxed);
-            self.emit(NodeEvent::EvidenceIncluded {
-                evidence_id: id,
-                height: block.header.height,
-            });
-        }
-        drop(pool);
-        let chain = self.chain.lock();
-        for receipt in &chain.accountability.receipts {
-            if receipt.processed_height == block.header.height {
-                if receipt.validator_status_change.contains("JAILED") {
-                    self.metrics
-                        .validator_jailed
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::ValidatorJailed {
-                        validator_id: receipt.validator_id.clone(),
-                    });
-                }
-                if receipt.validator_status_change.contains("TOMBSTONED") {
-                    self.metrics
-                        .validator_tombstoned
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::ValidatorTombstoned {
-                        validator_id: receipt.validator_id.clone(),
-                    });
-                }
-                if receipt.bond_penalty_units != "0" {
-                    self.metrics
-                        .simulation_bond_penalized
-                        .fetch_add(1, Ordering::Relaxed);
-                    self.emit(NodeEvent::SimulationBondPenalized {
-                        validator_id: receipt.validator_id.clone(),
-                        units: receipt.bond_penalty_units.clone(),
-                    });
-                }
+            if io.queues.lock().push(channel, message.clone()) {
+                io.notify.notify_one();
             }
         }
     }
@@ -1304,7 +1419,7 @@ impl NodeHandle {
                 if self.seen_evidence.lock().insert(*evidence_id) {
                     self.send_to(
                         from,
-                        Channel::ConsensusReserved,
+                        Channel::Consensus,
                         NetMessage::EvidenceRequest {
                             evidence_id: *evidence_id,
                         },
@@ -1315,7 +1430,7 @@ impl NodeHandle {
                 if let Some(item) = self.evidence_pool.lock().get(evidence_id).cloned() {
                     self.send_to(
                         from,
-                        Channel::ConsensusReserved,
+                        Channel::Consensus,
                         NetMessage::EvidenceResponse {
                             evidence: item.evidence,
                         },
@@ -1326,11 +1441,242 @@ impl NodeHandle {
                 let _ = self.admit_evidence(evidence.clone(), Some(from));
             }
             NetMessage::Handshake(_) | NetMessage::Pong { .. } => {}
+            NetMessage::Consensus(message) => {
+                self.on_consensus_message(from, message.clone());
+            }
         }
         Ok(())
     }
 
+    fn share_consensus_state(&self, to: NodeId) {
+        let Some(consensus) = &self.consensus else {
+            return;
+        };
+        let reactor = consensus.lock();
+        let engine = &reactor.engine;
+        self.send_to(
+            to,
+            Channel::Consensus,
+            NetMessage::Consensus(ConsensusMessage::RoundStateHint {
+                height: engine.height,
+                round: engine.round,
+                step: engine.step,
+            }),
+        );
+        if let Some(proposal) = engine.proposals.get(&(engine.height, engine.round)) {
+            if let Some(block) = engine.blocks.get(&proposal.block_id) {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::ProposalResponse {
+                        proposal: proposal.clone(),
+                        block: block.clone(),
+                    }),
+                );
+            }
+        }
+        if let Some(set) = engine.prevotes.get(&(engine.height, engine.round)) {
+            for vote in set.votes() {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::Prevote(vote.clone())),
+                );
+            }
+        }
+        if let Some(set) = engine.precommits.get(&(engine.height, engine.round)) {
+            for vote in set.votes() {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::Precommit(vote.clone())),
+                );
+            }
+        }
+        let height = engine.store.finalized_height();
+        if height > 0 {
+            if let (Some(certificate), Some(block)) = (
+                engine.store.commit_certificate(height).cloned(),
+                engine.store.finalized_block(height).cloned(),
+            ) {
+                self.send_to(
+                    to,
+                    Channel::Consensus,
+                    NetMessage::Consensus(ConsensusMessage::CommitResponse { certificate, block }),
+                );
+            }
+        }
+    }
+
+    fn on_consensus_message(&self, from: NodeId, message: ConsensusMessage) {
+        let Some(consensus) = &self.consensus else {
+            return;
+        };
+        let set = self
+            .config
+            .consensus
+            .as_ref()
+            .map(|c| c.validator_set.clone())
+            .unwrap_or_default();
+        let ctx = ConsensusAuthContext {
+            network_id: &self.config.genesis.network_id,
+            chain_id: &self.config.genesis.chain_id,
+            genesis_hash: self.config.genesis.hash,
+            validator_set: &set,
+            peer_id: Some(from),
+            peer_is_validator: set.validators.iter().any(|_| true),
+        };
+        let (actions, gossip) = {
+            let mut reactor = consensus.lock();
+            reactor.ingest(&ctx, message.clone())
+        };
+        if gossip {
+            self.broadcast(
+                Channel::Consensus,
+                NetMessage::Consensus(message),
+                Some(from),
+            );
+        }
+        self.apply_actions(actions);
+        let more = {
+            let mut reactor = consensus.lock();
+            reactor.drain_buffer()
+        };
+        self.apply_actions(more);
+    }
+
+    fn apply_actions(&self, actions: Vec<Action>) {
+        for action in actions {
+            match action {
+                Action::Broadcast(message) => {
+                    self.broadcast(Channel::Consensus, NetMessage::Consensus(message), None);
+                }
+                Action::RequestProposal {
+                    height,
+                    round,
+                    block_id,
+                } => {
+                    self.broadcast(
+                        Channel::Consensus,
+                        NetMessage::Consensus(ConsensusMessage::ProposalRequest {
+                            height,
+                            round,
+                            block_id,
+                        }),
+                        None,
+                    );
+                }
+                Action::RequestCommit { height } => {
+                    self.broadcast(
+                        Channel::Consensus,
+                        NetMessage::Consensus(ConsensusMessage::CommitRequest { height }),
+                        None,
+                    );
+                }
+                Action::NeedProposalBlock { height, .. } => {
+                    if self.chain.lock().height() + 1 != height {
+                        continue;
+                    }
+                    let block = {
+                        let chain = self.chain.lock();
+                        let mempool = self.mempool.lock();
+                        let selected = mempool.select_for_block();
+                        let evidence = self.evidence_pool.lock().select_for_block(height);
+                        chain.propose_block_with_evidence(selected, evidence, unix_ms())
+                    };
+                    if let Ok(block) = block {
+                        if let Some(consensus) = &self.consensus {
+                            let next = consensus.lock().on_local_block(block);
+                            self.apply_actions(next);
+                        }
+                    }
+                }
+                Action::Finalize { block, certificate } => {
+                    let applied = {
+                        let mut chain = self.chain.lock();
+                        if chain.block_by_id(&block.block_id).is_some() {
+                            Ok(block.header.state_root)
+                        } else if block.header.height == chain.height() + 1 {
+                            chain.apply_block(block.clone())
+                        } else {
+                            Err(NodeError::Sync(
+                                "commit height not next local height".into(),
+                            ))
+                        }
+                    };
+                    if let Ok(root) = applied {
+                        let mut mempool = self.mempool.lock();
+                        mempool.remove_committed(&block.transactions);
+                        drop(mempool);
+                        self.note_included_evidence(&block, unix_ms());
+                        self.seen_block.lock().insert(block.block_id);
+                        self.emit(NodeEvent::BlockCommitted {
+                            height: block.header.height,
+                            block_id: block.block_id,
+                            state_root: root,
+                        });
+                        self.emit(NodeEvent::ConsensusFinalized {
+                            height: certificate.height,
+                            block_id: certificate.block_id,
+                            state_root: certificate.state_root,
+                            round: certificate.round,
+                        });
+                        if let Some(consensus) = &self.consensus {
+                            consensus.lock().metrics.observe_latency(
+                                "finality",
+                                0,
+                                crate::identity::unix_ms(),
+                            );
+                        }
+                    }
+                }
+                Action::ScheduleTimeout {
+                    kind,
+                    height,
+                    round,
+                    delay,
+                } => {
+                    self.timeouts.lock().push(ScheduledTimeout {
+                        kind,
+                        height,
+                        round,
+                        at: Instant::now() + delay,
+                    });
+                }
+                Action::Evidence(evidence) => {
+                    self.consensus_evidence.lock().push(evidence);
+                }
+                Action::Reject { reason } => {
+                    if let Some(consensus) = &self.consensus {
+                        consensus
+                            .lock()
+                            .metrics
+                            .consensus_message_rejects
+                            .fetch_add(1, Ordering::Relaxed);
+                    }
+                    self.emit(NodeEvent::ConsensusRejected {
+                        reason: reason.as_str().into(),
+                    });
+                }
+            }
+        }
+    }
+
     fn apply_remote_block(&self, from: NodeId, block: Block) -> NodeResult<()> {
+        if let Some(consensus) = &self.consensus {
+            consensus
+                .lock()
+                .engine
+                .apply_remote_block_for_catchup(block.clone());
+            self.broadcast(
+                Channel::Consensus,
+                NetMessage::Consensus(ConsensusMessage::CommitRequest {
+                    height: block.header.height,
+                }),
+                Some(from),
+            );
+            return Ok(());
+        }
         let mut chain = self.chain.lock();
         if block.header.height <= chain.height() {
             if let Some(local) = chain.block_by_height(block.header.height) {

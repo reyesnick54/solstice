@@ -930,7 +930,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/consensus')), false);
   });
 
-  it('CHUNK-36R/39 implements the development validator control plane on sunrey-chain', () => {
+  it('CHUNK-36R implements the validator control plane on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').status, 'IMPLEMENTED');
@@ -950,6 +950,9 @@ describe('architecture constitution', () => {
 
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-stop.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-resume.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-36-validator-lifecycle.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/validators/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/validators/src/lib.rs')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validators')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-v2')), false);
@@ -1072,7 +1075,7 @@ describe('architecture constitution', () => {
     assert.equal(evaluateCapability(manifest, 'sunrey-blockchain-architecture').owner, 'packages/sunrey-chain');
     assert.equal(evaluateCapability(manifest, 'moonrey-coin').status, 'PLANNED');
     assert.equal(evaluateCapability(manifest, 'blockchain-node').status, 'PLANNED');
-    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'PLANNED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'blockchain-runtime').status, 'PLANNED');
 
     const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(

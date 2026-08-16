@@ -22,7 +22,16 @@ path = "src/bin/sunrey-devnet.rs"
 name = "sunrey-accountability-demo"
 path = "src/bin/sunrey-accountability-demo.rs"
 
+[[bin]]
+name = "sunrey-validator-devnet"
+path = "src/bin/sunrey-validator-devnet.rs"
+
+[[bin]]
+name = "sunrey-validator-node"
+path = "src/bin/sunrey-validator-node.rs"
+
 [dependencies]
+clap = { version = "=4.5.23", features = ["derive"] }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"
 parking_lot = "0.12"

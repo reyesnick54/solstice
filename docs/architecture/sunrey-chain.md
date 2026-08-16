@@ -48,10 +48,15 @@ implemented as an internal module at `packages/sunrey-chain/node`.
 See [`chunk-34-resume.md`](./chunk-34-resume.md) and
 [`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
 [`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
-bonding / epoch lifecycle and Chunk 39 accountability are
-implemented at `packages/sunrey-chain/node`. Historical stop:
-[`chunk-36-stop.md`](./chunk-36-stop.md). Resume:
-[`chunk-36-resume.md`](./chunk-36-resume.md). Accountability:
+bonding / epoch lifecycle (Chunk 36R) are implemented. See
+[`chunk-36-resume.md`](./chunk-36-resume.md). Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). A development
+Tendermint-class BFT engine (Chunk 37) lives at
+`packages/sunrey-chain/rust/crates/consensus`. See
+[`chunk-37-bft-consensus-core.md`](./chunk-37-bft-consensus-core.md).
+Chunk 38 networks that engine. See
+[`chunk-38-networked-consensus.md`](./chunk-38-networked-consensus.md).
+Chunk 39 implements simulation accountability. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,

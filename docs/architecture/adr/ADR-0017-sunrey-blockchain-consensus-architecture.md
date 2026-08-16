@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0018
-- Implementation status: NOT_IMPLEMENTED (interface freeze only)
+- Implementation status: IMPLEMENTED (development Tendermint-class engine at packages/sunrey-chain/rust/crates/consensus; production consensus not implemented)
 
 ## Context
 
@@ -27,12 +27,17 @@ production consensus.
    finality on commit).
 3. **Interface freeze:** later chunks implement a `ConsensusEngine`
    module boundary, not a vendor import in application code.
-4. **Not implemented:** no production consensus, no validator network,
-   no slashing runtime, no mainnet.
-5. **Remaining experiment:** library (for example CometBFT) versus a
-   constrained Rust Tendermint-class engine; timeout and block-size
-   parameters; whether a later DAG mempool (Narwhal-class) sits
-   *behind* the same interface.
+4. **Development engine (Chunk 37):** a constrained Rust
+   Tendermint-class `ConsensusEngine` at
+   `packages/sunrey-chain/rust/crates/consensus`. Algorithm rules
+   follow Buchman/Kwon/Milosevic 2018 and the Tendermint Core /
+   CometBFT lock specification. See
+   `packages/sunrey-chain/rust/crates/consensus/ALGORITHM.md`.
+5. **Not implemented:** no production consensus, no public validator
+   network, no slashing runtime, no mainnet.
+6. **Remaining experiment:** whether a later DAG mempool
+   (Narwhal-class) sits *behind* the same interface; production
+   timeouts and block-size limits.
 
 ### Frozen consensus interface
 
@@ -126,14 +131,15 @@ Simulation finality (`ENGINEERING_FIXTURE` in
 
 ## Unresolved questions
 
-- Library versus constrained Rust engine (Chunk 32 experiment).
-- Exact `n`, timeouts, and block gas/compute limits.
+- Exact production `n`, timeouts, and block gas/compute limits.
 - Whether a later Narwhal-class mempool is adopted behind the same
   `ConsensusEngine` interface.
 - Legal characterization of bonds and slashing.
+- Network-wide adversarial behavior (Chunk 38).
 
 ## Status
 
-`ACCEPTED_FOR_ENGINEERING` for Tendermint-family direction and the
-frozen interface. Production consensus: **not implemented**. Legal
-confidence: `RESEARCH_REQUIRED`.
+`ACCEPTED_FOR_ENGINEERING` for Tendermint-family direction.
+Development `ConsensusEngine`: **implemented** (Chunk 37,
+simulation / local harness only). Production consensus: **not
+implemented**. Legal confidence: `RESEARCH_REQUIRED`.

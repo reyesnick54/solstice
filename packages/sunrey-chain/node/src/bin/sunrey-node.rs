@@ -1,10 +1,12 @@
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use clap::Parser;
 use sunrey_chain_node::chain::Genesis;
 use sunrey_chain_node::identity::PeerAddress;
 use sunrey_chain_node::node::{DevelopmentNode, NodeConfig};
 use sunrey_chain_node::operator::serve_operator;
+use sunrey_chain_node::validator::{run_validator_command, NodeCli};
 
 #[tokio::main]
 async fn main() {
@@ -12,9 +14,9 @@ async fn main() {
         .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
         .init();
 
-    let args: Vec<String> = std::env::args().skip(1).collect();
-    if !args.is_empty() && matches!(args[0].as_str(), "evidence" | "validator") {
-        match sunrey_chain_node::cli::run_operator_command(&args) {
+    let args: Vec<String> = std::env::args().collect();
+    match args.get(1).map(String::as_str) {
+        Some("evidence") => match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
             Ok(out) => {
                 println!("{out}");
                 return;
@@ -23,7 +25,44 @@ async fn main() {
                 eprintln!("{err}");
                 std::process::exit(1);
             }
+        },
+        Some("validator")
+            if matches!(
+                args.get(2).map(String::as_str),
+                Some("offenses" | "accountability")
+            ) =>
+        {
+            match sunrey_chain_node::cli::run_operator_command(&args[1..]) {
+                Ok(out) => {
+                    println!("{out}");
+                    return;
+                }
+                Err(err) => {
+                    eprintln!("{err}");
+                    std::process::exit(1);
+                }
+            }
         }
+        Some("validator") => {
+            let cli = NodeCli::parse();
+            match cli.command {
+                Some(sunrey_chain_node::validator::NodeCommand::Validator { command }) => {
+                    match run_validator_command(command) {
+                        Ok(output) => println!("{output}"),
+                        Err(err) => {
+                            eprintln!("error: {err}");
+                            std::process::exit(1);
+                        }
+                    }
+                }
+                None => {
+                    eprintln!("usage: sunrey-node validator <generate|register|show|set|schedule-key-rotation|schedule-exit|signer-status|verify-set|offenses|accountability>");
+                    std::process::exit(2);
+                }
+            }
+            return;
+        }
+        _ => {}
     }
 
     let name = std::env::var("SUNREY_NODE_NAME").unwrap_or_else(|_| "node".into());

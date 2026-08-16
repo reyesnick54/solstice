@@ -30,6 +30,7 @@ pub struct Genesis {
     pub codec_version: u16,
     pub crypto_suite: String,
     pub created_at_ms: u64,
+    pub validator_set_hash: [u8; 32],
     pub validator_set: ValidatorSet,
     pub hash: [u8; 32],
 }
@@ -43,6 +44,7 @@ impl Genesis {
             codec_version: crate::crypto::CODEC_VERSION,
             crypto_suite: crate::crypto::CRYPTO_SUITE_ID.into(),
             created_at_ms: 1,
+            validator_set_hash: [0u8; 32],
             validator_set: ValidatorSet::empty(),
             hash: [0u8; 32],
         };
@@ -51,6 +53,7 @@ impl Genesis {
     }
 
     pub fn with_validator_set(mut self, set: ValidatorSet) -> Self {
+        self.validator_set_hash = set.hash();
         self.validator_set = set;
         self.hash = self.compute_hash();
         self
@@ -64,7 +67,7 @@ impl Genesis {
         w.u16(self.codec_version);
         w.string(&self.crypto_suite).expect("genesis suite");
         w.u64(self.created_at_ms);
-        w.bytes32(&self.validator_set.hash());
+        w.bytes32(&self.validator_set_hash);
         sha256(&w.finish())
     }
 }
@@ -184,6 +187,8 @@ pub struct BlockHeader {
     pub protocol_version: u16,
     pub crypto_suite: String,
     pub time_ms: u64,
+    /// Schema-1 headers omit accountability fields on the wire.
+    pub legacy_wire: bool,
 }
 
 impl BlockHeader {
@@ -195,9 +200,11 @@ impl BlockHeader {
         w.bytes32(&self.parent_id);
         w.bytes32(&self.tx_root);
         w.bytes32(&self.state_root);
-        w.bytes32(&self.evidence_root);
-        w.bytes32(&self.validator_set_hash);
-        w.u64(self.epoch);
+        if !self.legacy_wire {
+            w.bytes32(&self.evidence_root);
+            w.bytes32(&self.validator_set_hash);
+            w.u64(self.epoch);
+        }
         w.u16(self.protocol_version);
         w.string(&self.crypto_suite)?;
         w.u64(self.time_ms);
@@ -267,6 +274,40 @@ impl Block {
 }
 
 fn decode_header(bytes: &[u8]) -> NodeResult<BlockHeader> {
+    decode_header_v2(bytes).or_else(|_| decode_header_v1(bytes))
+}
+
+fn decode_header_v2(bytes: &[u8]) -> NodeResult<BlockHeader> {
+    let mut r = Reader::new(bytes);
+    let network_id = r.string()?;
+    let chain_id = r.string()?;
+    let height = r.u64()?;
+    let parent_id = r.bytes32()?;
+    let tx_root = r.bytes32()?;
+    let state_root = r.bytes32()?;
+    let evidence_root = r.bytes32()?;
+    let validator_set_hash = r.bytes32()?;
+    let epoch = r.u64()?;
+    let header = BlockHeader {
+        network_id,
+        chain_id,
+        height,
+        parent_id,
+        tx_root,
+        state_root,
+        evidence_root,
+        validator_set_hash,
+        epoch,
+        protocol_version: r.u16()?,
+        crypto_suite: r.string()?,
+        time_ms: r.u64()?,
+        legacy_wire: false,
+    };
+    r.finish()?;
+    Ok(header)
+}
+
+fn decode_header_v1(bytes: &[u8]) -> NodeResult<BlockHeader> {
     let mut r = Reader::new(bytes);
     let header = BlockHeader {
         network_id: r.string()?,
@@ -275,12 +316,13 @@ fn decode_header(bytes: &[u8]) -> NodeResult<BlockHeader> {
         parent_id: r.bytes32()?,
         tx_root: r.bytes32()?,
         state_root: r.bytes32()?,
-        evidence_root: r.bytes32()?,
-        validator_set_hash: r.bytes32()?,
-        epoch: r.u64()?,
+        evidence_root: [0u8; 32],
+        validator_set_hash: [0u8; 32],
+        epoch: 0,
         protocol_version: r.u16()?,
         crypto_suite: r.string()?,
         time_ms: r.u64()?,
+        legacy_wire: true,
     };
     r.finish()?;
     Ok(header)
@@ -479,6 +521,7 @@ impl DevChain {
             protocol_version: self.genesis.protocol_version,
             crypto_suite: self.genesis.crypto_suite.clone(),
             time_ms,
+            legacy_wire: false,
         };
         let block_id = sha256(&header.encode()?);
         Ok(Block {

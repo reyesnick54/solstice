@@ -130,3 +130,4 @@ export {
 export { InMemorySunReyChainStore } from './store.ts';
 export { SunReyChainService, type CreateIntentInput } from './service.ts';
 export * as protocol from './protocol/index.ts';
+export * as validators from './validators/index.ts';
