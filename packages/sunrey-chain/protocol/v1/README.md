@@ -11,6 +11,7 @@ Language-neutral contract for later Rust node code.
 | Hash | SHA-256 via `packages/security` (no new algorithm) |
 | Public tickers | `NOT_ASSIGNED` |
 | MoonRey issuance | development faucet / authorized proof only; production economics later |
+| Native fees | Chunk 42 integer resource metering. Default fee asset `SUNREY_COIN`. MoonRey fee asset disabled. |
 
 Consensus hashes are computed from the deterministic protobuf bytes
 defined in ADR-0021 Addendum A. The JSON files under

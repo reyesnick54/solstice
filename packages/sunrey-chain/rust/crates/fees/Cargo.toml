@@ -1,14 +1,14 @@
 [package]
-name = "sunrey-execution"
+name = "sunrey-fees"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
 publish.workspace = true
 
 [dependencies]
-sunrey-crypto.workspace = true
-sunrey-fees.workspace = true
-sunrey-native-assets.workspace = true
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
 sunrey-protocol.workspace = true
-sunrey-state.workspace = true
 thiserror.workspace = true

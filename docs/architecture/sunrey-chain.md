@@ -60,6 +60,8 @@ Chunk 39 implements simulation accountability. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Chunk 40 implements development protocol governance at
 [`chunk-40-protocol-governance.md`](./chunk-40-protocol-governance.md).
+Chunk 42 implements native fees and resource metering at
+[`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/governance`,

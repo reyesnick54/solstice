@@ -11,6 +11,7 @@ pub const NS_ASSET: &[u8] = b"ast/";
 pub const NS_NONCE: &[u8] = b"non/";
 pub const NS_IDEM: &[u8] = b"idm/";
 pub const NS_TX: &[u8] = b"txi/";
+pub const NS_FEE: &[u8] = b"fee/";
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ObjectStore {

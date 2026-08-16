@@ -30,6 +30,7 @@ pub enum UpgradeKind {
     CodecExtension,
     HardProtocolCutover,
     ValidatorPolicyChange,
+    FeeParameterChange,
 }
 
 impl UpgradeKind {
@@ -43,6 +44,7 @@ impl UpgradeKind {
             "CODEC_EXTENSION" => Ok(Self::CodecExtension),
             "HARD_PROTOCOL_CUTOVER" => Ok(Self::HardProtocolCutover),
             "VALIDATOR_POLICY_CHANGE" => Ok(Self::ValidatorPolicyChange),
+            "FEE_PARAMETER_CHANGE" => Ok(Self::FeeParameterChange),
             _ => Err(RejectReason::GovernanceRejected),
         }
     }
@@ -57,6 +59,7 @@ impl UpgradeKind {
             Self::CodecExtension => "CODEC_EXTENSION",
             Self::HardProtocolCutover => "HARD_PROTOCOL_CUTOVER",
             Self::ValidatorPolicyChange => "VALIDATOR_POLICY_CHANGE",
+            Self::FeeParameterChange => "FEE_PARAMETER_CHANGE",
         }
     }
 }

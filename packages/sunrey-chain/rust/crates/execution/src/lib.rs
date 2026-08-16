@@ -83,6 +83,7 @@ fn apply_native(
 ) -> Result<(), RejectReason> {
     let (payload, rest) =
         NativeAssetPayload::decode_prefix(&tx.unsigned.payload).map_err(RejectReason::from)?;
+    let (_fee_intent, rest) = sunrey_fees::split_fee_intent(rest)?;
     let embedded = if rest.is_empty() {
         None
     } else {

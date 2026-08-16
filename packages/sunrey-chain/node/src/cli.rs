@@ -16,8 +16,9 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
         "evidence" => evidence_command(&args[1..]),
         "validator" => validator_command(&args[1..]),
         "asset" => asset_command(&args[1..]),
+        "fees" => fees_command(&args[1..]),
         _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, or asset".into(),
+            "unknown command; expected evidence, validator, asset, or fees".into(),
         )),
     }
 }
@@ -209,5 +210,78 @@ fn validator_command(args: &[String]) -> NodeResult<String> {
         )
         .unwrap_or_default()),
         _ => Err(NodeError::Validation("unknown validator command".into())),
+    }
+}
+
+fn fees_command(args: &[String]) -> NodeResult<String> {
+    if args.is_empty() {
+        return Err(NodeError::Validation(
+            "usage: sunrey-node fees schedule|estimate|receipt|resources|rewards|policy".into(),
+        ));
+    }
+    match args[0].as_str() {
+        "schedule" => Ok(serde_json::json!({
+            "version": 1,
+            "base_transaction_fee": "100",
+            "per_byte_fee": "1",
+            "compute_unit_fee": "2",
+            "state_read_fee": "3",
+            "state_write_fee": "5",
+            "signature_verify_fee": "20",
+            "minimum_fee": "100",
+            "default_fee_asset": "SUNREY_COIN",
+            "moonrey_enabled": false,
+        })
+        .to_string()),
+        "estimate" => Ok(serde_json::json!({
+            "operation": "NATIVE_TRANSFER",
+            "estimated_fee": "576",
+            "fee_asset": "SUNREY_COIN",
+            "note": "integer schedule: 100 + 240*1 + 100*2 + 2*3 + 2*5 + 20",
+        })
+        .to_string()),
+        "receipt" => {
+            let tx = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node fees receipt <tx>".into())
+            })?;
+            Ok(
+                serde_json::json!({ "transaction_id": tx, "status": "query-local-node-store" })
+                    .to_string(),
+            )
+        }
+        "resources" => {
+            let tx = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node fees resources <tx>".into())
+            })?;
+            Ok(
+                serde_json::json!({ "transaction_id": tx, "status": "query-local-node-store" })
+                    .to_string(),
+            )
+        }
+        "rewards" => {
+            let validator = args.get(1).ok_or_else(|| {
+                NodeError::Validation("usage: sunrey-node fees rewards <validator>".into())
+            })?;
+            Ok(serde_json::json!({
+                "validator": validator,
+                "accrued": "0",
+                "note": "accrual is not a public staking promise and is not a fiat credit",
+            })
+            .to_string())
+        }
+        "policy" => Ok(serde_json::json!({
+            "disposition": {
+                "network_sink_bps": 5000,
+                "burn_bps": 2500,
+                "validator_reward_bps": 2500,
+                "treasury_bps": 0,
+            },
+            "enabled_fee_assets": ["SUNREY_COIN"],
+            "moonrey_policy_ready": true,
+            "moonrey_enabled": false,
+            "environment": "simulation",
+        })
+        .to_string()),
+        _ => Err(NodeError::Validation("unknown fees command".into())),
     }
 }

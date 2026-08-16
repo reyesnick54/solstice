@@ -38,6 +38,9 @@ pub enum RejectReason {
     FaucetForbidden,
     PolicyDenied,
     CrossAssetArithmetic,
+    OutOfExecutionUnits,
+    InsufficientFee,
+    UnsupportedFeeAsset,
 }
 
 impl RejectReason {
@@ -78,6 +81,9 @@ impl RejectReason {
             Self::FaucetForbidden => "FAUCET_FORBIDDEN",
             Self::PolicyDenied => "POLICY_DENIED",
             Self::CrossAssetArithmetic => "CROSS_ASSET_ARITHMETIC",
+            Self::OutOfExecutionUnits => "OUT_OF_EXECUTION_UNITS",
+            Self::InsufficientFee => "INSUFFICIENT_FEE",
+            Self::UnsupportedFeeAsset => "UNSUPPORTED_FEE_ASSET",
         }
     }
 }
