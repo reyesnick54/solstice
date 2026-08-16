@@ -218,6 +218,15 @@ This document describes only what is implemented and tested in this tree.
   rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
   wallet, exchange, or live network. Canonical ledger remains
   authoritative. ADR-0015 remains PROPOSED.
+- SunRey Blockchain production architecture freeze (Chunk 31):
+  protocol ADR pack ADR-0016–ADR-0033, authority matrix, and
+  machine-readable spec at
+  `docs/architecture/sunrey-blockchain-protocol.json`.
+  Architecture only. Production node, consensus, P2P, and native
+  execution are **not implemented**. Mainnet remains disabled.
+  SunRey Coin and MoonRey Coin tickers remain `NOT_ASSIGNED`.
+  MoonRey Coin is distinct and not implemented. Canonical Ledger
+  remains authoritative for fiat and current Coin journals.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -259,6 +268,19 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
+- SunRey crypto-agility and post-quantum foundation (Chunk 33) is
+  **stopped**. Chunks 31 and 32 are not merged. No crypto-suite
+  registry, hybrid envelope, PQ provider, threat model, or
+  cryptographic inventory was added. Canonical cryptography remains
+  Chunk 4 `packages/security`. This is not a quantum-proof or
+  production-certification claim. See
+  `docs/architecture/chunk-33-stop.md`.
+- Chunk 32 (canonical SunRey transaction and economic-state
+  protocol) is **stopped**. Chunk 31 is not merged and its
+  protocol / encoding architecture is not canonical on `main`.
+  See `docs/architecture/chunk-32-stop.md`. No transaction
+  envelope, consensus codec, MoonRey issuance, ticker, or
+  production chain database was added.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN
   CELLS and the rest listed in the constitution). PAYMENTS, FX,
   CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are PARTIAL
@@ -331,7 +353,13 @@ This document describes only what is implemented and tested in this tree.
   Digital Twin are IMPLEMENTED as non-executing intelligence layers.
   Live rails, live issuing, live wallet/SoftPOS certification, live
   treasury, and live securities trading remain later.
+- Production SunRey Blockchain node, consensus, P2P, storage, or
+  native execution. Chunk 31 is an architecture freeze only.
+  `packages/sunrey-chain` remains a simulation trust layer.
+- MoonRey Coin runtime, ticker, or package.
 - Real-money rails. Every `LIVE_*` flag is false. `ENVIRONMENT=simulation`.
+  Do not create `MAINNET_ENABLED=true`, `PRODUCTION_BLOCKCHAIN=true`,
+  or `LIVE_CHAIN_ENABLED=true`.
 
 ## Phase 1 exit criterion
 

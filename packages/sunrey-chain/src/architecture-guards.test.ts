@@ -48,7 +48,27 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/reyn-chain')), false);
     assert.equal(existsSync(join(ROOT, 'packages/on-chain-ledger')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-chain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-node')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-protocol')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-network')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-consensus')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-runtime')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-node')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-blockchain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/moonrey-coin')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/moonrey-chain')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
+    const protocol = JSON.parse(
+      readFileSync(join(ROOT, 'docs/architecture/sunrey-blockchain-protocol.json'), 'utf8'),
+    ) as {
+      productionBlockchainImplemented: boolean;
+      tickers: { sunreyCoin: string; moonreyCoin: string };
+      secondFiatLedger: boolean;
+    };
+    assert.equal(protocol.productionBlockchainImplemented, false);
+    assert.equal(protocol.secondFiatLedger, false);
+    assert.equal(protocol.tickers.sunreyCoin, 'NOT_ASSIGNED');
+    assert.equal(protocol.tickers.moonreyCoin, 'NOT_ASSIGNED');
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');

@@ -33,6 +33,11 @@
 - [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
   `packages/sunrey-chain`. Not the financial source of truth.
   ADR-0015 remains PROPOSED.
+- [Chunk 31 production architecture freeze](./chunk-31-sunrey-blockchain-production-architecture.md)
+  — protocol ADR pack, authority matrix, and machine-readable spec.
+  Production blockchain is not implemented.
+- [SunRey chain authority matrix](./sunrey-chain-authority-matrix.md)
+- [SunRey Blockchain protocol spec](./sunrey-blockchain-protocol.json)
 - [Chunk 30 stop (historical)](./chunk-30-stop.md) — original stop while
   custody and market-surveillance were PLANNED
 - [Chunk 30 resume](./chunk-30-resume.md) — custody, Travel Rule,
@@ -41,5 +46,12 @@
 - [Chunk 34 stop](./chunk-34-stop.md) — sovereign node core stopped
   until Chunks 31–33 (architecture, protocol types, CryptoSuite
   registry) merge. Do not invent a node package.
+- [Chunk 33 stop](./chunk-33-stop.md) — process-gate stop until
+  Chunks 31 and 32 are merged. Crypto-agility and post-quantum
+  foundation are not implemented. Canonical owner remains
+  `packages/security`.
+- [Chunk 32 stop](./chunk-32-stop.md) — process-gate stop until
+  Chunk 31 protocol / encoding architecture is merged and canonical
+  on `main`. Not a transaction-protocol implementation.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
