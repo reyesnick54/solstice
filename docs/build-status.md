@@ -218,10 +218,22 @@ This document describes only what is implemented and tested in this tree.
   rewrite, and metadata schema `sunrey_chain`. Not a second ledger,
   wallet, exchange, or live network. Canonical ledger remains
   authoritative. ADR-0015 remains PROPOSED.
-  Local deterministic node, P2P, mempool, state sync, and
-  validator lifecycle are not implemented. Chunk 35 stopped:
-  `docs/architecture/chunk-35-stop.md`. Chunk 36 stopped:
-  `docs/architecture/chunk-36-stop.md`.
+  Local deterministic node is Chunk 34R at
+  `packages/sunrey-chain/rust`. P2P, mempool, and state sync are
+  implemented at `packages/sunrey-chain/node` (Chunk 35R).
+  Historical stop: `docs/architecture/chunk-35-stop.md`. Resume:
+  `docs/architecture/chunk-35-resume.md`. Validator lifecycle
+  (Chunk 36) remains `PLANNED`: `docs/architecture/chunk-36-stop.md`.
+  Production BFT is not implemented.
+- SunRey transaction protocol (Chunk 32R, `packages/sunrey-chain`):
+  canonical actor / object / rights model, envelope v1, deterministic
+  protobuf codec, domain-separated SHA-256, replay protection,
+  rejection codes, and `validateStateless` / `validateStateful` /
+  `apply`. Language-neutral schema and test vectors live under
+  `packages/sunrey-chain/protocol/`. MoonRey issuance is unavailable.
+  Public tickers remain `NOT_ASSIGNED`. Historical stop:
+  `docs/architecture/chunk-32-stop.md`. Resume:
+  `docs/architecture/chunk-32-resume.md`.
 - SunRey Blockchain production architecture freeze (Chunk 31):
   protocol ADR pack ADR-0016–ADR-0033, authority matrix, and
   machine-readable spec at
@@ -231,6 +243,13 @@ This document describes only what is implemented and tested in this tree.
   SunRey Coin and MoonRey Coin tickers remain `NOT_ASSIGNED`.
   MoonRey Coin is distinct and not implemented. Canonical Ledger
   remains authoritative for fiat and current Coin journals.
+- SunRey local development node (Chunk 34R, `packages/sunrey-chain/rust`):
+  deterministic genesis, admission, SYSTEM / EVIDENCE_ANCHOR
+  execution, crash-safe file store, and `DEV_BLOCK_PRODUCER`.
+  Capability `sunrey-local-node` is `IMPLEMENTED`. Production BFT,
+  public network, and MoonRey issuance are not implemented.
+  Historical stop: `docs/architecture/chunk-34-stop.md`. Resume:
+  `docs/architecture/chunk-34-resume.md`.
 
 - Personal Data Vault (Chunk 23, `packages/personal-data-vault`):
   subject-bound vaults, versioned DataAssets, schema registry,
@@ -243,16 +262,11 @@ This document describes only what is implemented and tested in this tree.
 
 ## Not implemented (present on other PRs; not in this consolidated tree)
 
-- Chunk 34 (SunRey sovereign blockchain node core) is **stopped**.
-  Latest green `main` is Chunk 30R (`#58`). Chunks 31–33 — sovereign
-  chain architecture, canonical protocol/block schema, and the
-  CryptoSuite registry — are not declared or merged. There is no
-  local development node, no block producer, no chain state store,
-  and no node CLI. See `docs/architecture/chunk-34-stop.md`.
+- Production BFT consensus, public SunRey network, mainnet, or
+  MoonRey issuance. Chunk 34R is a local development node only.
   Do not invent `packages/sunrey-blockchain`, `packages/sunrey-node`,
   `packages/blockchain-v2`, `packages/l1`, or a competing chain.
-  Do not replace `packages/sunrey-chain`. No BFT consensus, public
-  network, mainnet, or MoonRey issuance. Canonical Ledger remains
+  Do not replace `packages/sunrey-chain`. Canonical Ledger remains
   the financial source of truth.
 - Kafka, Kinesis, Pub/Sub, SNS/SQS, or another production broker. The
   Chunk 3 fabric uses a simulated in-process transport behind a portable
@@ -272,19 +286,15 @@ This document describes only what is implemented and tested in this tree.
   `docs/architecture/chunk-30-resume.md`. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
-- SunRey crypto-agility and post-quantum foundation (Chunk 33) is
-  **stopped**. Chunks 31 and 32 are not merged. No crypto-suite
-  registry, hybrid envelope, PQ provider, threat model, or
-  cryptographic inventory was added. Canonical cryptography remains
-  Chunk 4 `packages/security`. This is not a quantum-proof or
-  production-certification claim. See
-  `docs/architecture/chunk-33-stop.md`.
-- Chunk 32 (canonical SunRey transaction and economic-state
-  protocol) is **stopped**. Chunk 31 is not merged and its
-  protocol / encoding architecture is not canonical on `main`.
-  See `docs/architecture/chunk-32-stop.md`. No transaction
-  envelope, consensus codec, MoonRey issuance, ticker, or
-  production chain database was added.
+- Production PQC library, production chain node, MoonRey issuance,
+  a public ticker, and a production chain database remain later.
+  Chunk 33R implements the CryptoSuite foundation at
+  `packages/security` (not quantum-proof; not certified). Historical
+  stop: `docs/architecture/chunk-33-stop.md`. Implementation:
+  `docs/architecture/chunk-33-crypto-agility.md`.
+  Chunk 32 originally **stopped** on a process gate while Chunk 31
+  architecture was absent. That stop is historical
+  (`docs/architecture/chunk-32-stop.md`). Chunk 32R is IMPLEMENTED.
 - Reserved later bounded contexts that remain PLANNED (SOVEREIGN
   CELLS and the rest listed in the constitution). PAYMENTS, FX,
   CARDS, TREASURY, INVESTMENTS, and STRATEGY LAB are PARTIAL
@@ -357,19 +367,18 @@ This document describes only what is implemented and tested in this tree.
   Digital Twin are IMPLEMENTED as non-executing intelligence layers.
   Live rails, live issuing, live wallet/SoftPOS certification, live
   treasury, and live securities trading remain later.
-- SunRey local deterministic node (Chunk 34) and P2P development
-  network / mempool / state sync (Chunk 35). Chunk 35 **stopped**
-  because Chunk 34 is not merged. Capabilities `sunrey-local-node`
-  and `sunrey-p2p` are `PLANNED`. See
-  `docs/architecture/chunk-35-stop.md`. This is not a public
+- Production SunRey Blockchain consensus, public testnet, or
+  mainnet. Chunk 35R implements a **development** P2P / mempool /
+  sync plane at `packages/sunrey-chain/node`. Historical stop:
+  `docs/architecture/chunk-35-stop.md`. Resume:
+  `docs/architecture/chunk-35-resume.md`. This is not a public
   testnet, mainnet, or production consensus.
 - SunRey validator identity, registry, bonding, and validator-set
-  lifecycle (Chunk 36). **Stopped** because Chunk 35R is not
-  merged and `sunrey-local-node` / `sunrey-p2p` /
-  `sunrey-validators` remain `PLANNED`. See
-  `docs/architecture/chunk-36-stop.md`. No four-node development
-  validator set, no consensus signer, no slashing, no public
-  staking, no MoonRey issuance. ADR-0018 remains
+  lifecycle (Chunk 36). **Stopped** / `PLANNED`. Chunks 32R–35R
+  are on `main`. Capability `sunrey-validators` remains `PLANNED`.
+  See `docs/architecture/chunk-36-stop.md`. No four-node
+  development validator set, no consensus signer, no slashing, no
+  public staking, no MoonRey issuance. ADR-0018 remains
   `NOT_IMPLEMENTED`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.

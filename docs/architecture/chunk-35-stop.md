@@ -1,7 +1,13 @@
-# Chunk 35 stop record
+# Chunk 35 stop record (historical)
 
-This file records a **process-gate and missing-capability stop**, not
-a SunRey P2P, mempool, or state-sync implementation.
+**Historical.** This file records the original process-gate stop.
+Chunk 35R implements the P2P development network, mempool, and state
+sync at `packages/sunrey-chain/node`. See
+[`chunk-35-resume.md`](./chunk-35-resume.md).
+
+This file is **not** the current implementation record. It remains
+as the documentation-only gate that ran before the local node and
+networking modules existed.
 
 Task: SunRey Blockchain P2P Network, Mempool, and State
 Synchronization — turn a single-node development blockchain into a

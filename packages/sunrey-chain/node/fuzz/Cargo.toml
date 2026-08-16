@@ -1,0 +1,42 @@
+[package]
+name = "sunrey-chain-node-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+sunrey-chain-node = { path = ".." }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "handshake_decoder"
+path = "fuzz_targets/handshake_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "frame_decoder"
+path = "fuzz_targets/frame_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "tx_gossip_decoder"
+path = "fuzz_targets/tx_gossip_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "block_gossip_decoder"
+path = "fuzz_targets/block_gossip_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "sync_response_decoder"
+path = "fuzz_targets/sync_response_decoder.rs"
+test = false
+doc = false

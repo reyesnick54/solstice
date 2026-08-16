@@ -41,14 +41,19 @@ finality policy.
 
 See ADR-0015. The chain-technology choice remains `PROPOSED`.
 
-A local deterministic development node (Chunk 34), a P2P
-development network / mempool / state sync (Chunk 35), and a
-validator registry / bonding / epoch lifecycle (Chunk 36) are
-**not** implemented. Those capabilities are reserved `PLANNED` on
-this package. See [`chunk-36-stop.md`](./chunk-36-stop.md). Do not
-create `packages/sunrey-node`, `packages/sunrey-p2p`,
-`packages/validators`, or `packages/staking`.
-See ADR-0015. The simulation foundation remains `PROPOSED`.
+A local deterministic development node (Chunk 34R) is implemented
+inside this owner at `packages/sunrey-chain/rust`. A P2P
+development network / mempool / state sync (Chunk 35R) is
+implemented as an internal module at `packages/sunrey-chain/node`.
+See [`chunk-34-resume.md`](./chunk-34-resume.md) and
+[`chunk-35-resume.md`](./chunk-35-resume.md). Historical stop:
+[`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry /
+bonding / epoch lifecycle (Chunk 36) remains `PLANNED`. See
+[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+`packages/sunrey-node`, `packages/sunrey-p2p`,
+`packages/validators`, or `packages/staking`. Production BFT is
+not implemented. See ADR-0015. The simulation foundation remains
+`PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through
 ADR-0033) without implementing a production node. Canonical spec:
@@ -57,3 +62,10 @@ Authority split: [`sunrey-chain-authority-matrix.md`](./sunrey-chain-authority-m
 MoonRey Coin is a distinct planned native asset. Its ticker is
 `NOT_ASSIGNED`. Do not invent a ticker. Do not claim the chain is
 production-ready, quantum-secure, decentralized, or mainnet-ready.
+
+Chunk 32R implements the canonical transaction protocol in this
+package: envelope v1, typed economic objects, rights, deterministic
+protobuf codec, domain-separated hashes, and the state-transition
+port. Schema and vectors:
+`packages/sunrey-chain/protocol/`. See
+[`chunk-32-resume.md`](./chunk-32-resume.md).

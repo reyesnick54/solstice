@@ -312,10 +312,12 @@ crypto-provider/
 ops-observability/
 ```
 
-Capability ids `blockchain-node`, `blockchain-protocol`,
+Capability ids `blockchain-node`,
 `blockchain-network`, `blockchain-consensus`, and
-`blockchain-runtime` are reserved as **PLANNED internal modules**
-owned by `packages/sunrey-chain`.
+`blockchain-runtime` remain **PLANNED internal modules**
+owned by `packages/sunrey-chain`. `blockchain-protocol` is
+`IMPLEMENTED` by Chunk 32R (envelope, codec, objects, vectors)
+without a production node.
 
 ---
 

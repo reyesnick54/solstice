@@ -14,7 +14,16 @@ python3 scripts/check-deployment-posture.py
 echo "==> kernel gating"
 npm run gate
 
+echo "==> rust (sunrey local node)"
+(
+  cd packages/sunrey-chain/rust
+  cargo fmt --check
+  cargo clippy --all-targets -- -D warnings
+  cargo test --workspace
+)
+
 echo "==> tests"
+npm run test:sunrey-node
 npm test
 
 echo "==> end-to-end demo"
@@ -37,6 +46,8 @@ npm run demo:clean-room
 npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-chain
+npm run demo:sunrey-node
+npm run demo:sunrey-devnet
 npm run demo:sunrey-exchange
 npm run demo:custody
 npm run demo:market-surveillance

@@ -1,0 +1,23 @@
+{
+  "codecId": "srcb.v1",
+  "note": "TypeScript reference encoding must equal Rust encoding for these fixtures.",
+  "unsignedSystem": {
+    "network_id": "net_sunrey_local_dev",
+    "chain_id": "chn_sunrey_local_dev",
+    "codec_id": "srcb.v1",
+    "schema_version": 1,
+    "family": "SYSTEM",
+    "nonce": 0,
+    "idempotency_key": "vector-1",
+    "op": "SET_OBJECT",
+    "object_key": "alpha",
+    "object_value_hex": "6f6e65",
+    "unsigned_hex": "0000000a456e76656c6f70655631000000146e65745f73756e7265795f6c6f63616c5f6465760000001463686e5f73756e7265795f6c6f63616c5f64657600000007737263622e7631000000010000000653595354454d000000000000000000000008766563746f722d310000001e0000000a5345545f4f424a45435400000005616c706861000000036f6e65",
+    "tx_id": "66a121afafb7f545ae5dddfedd43bc0e17bdc758e919f4e16ac5943811f5b993"
+  },
+  "genesis": {
+    "hash": "5716d8a36722b65f73c697e761ba572d13208f4edd1b708b4b095430cc22d14d",
+    "network_id": "net_sunrey_local_dev",
+    "chain_id": "chn_sunrey_local_dev"
+  }
+}

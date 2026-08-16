@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0018
-- Implementation status: NOT_IMPLEMENTED
+- Implementation status: IMPLEMENTED (development network; see addendum)
 
 ## Context
 
@@ -69,12 +69,53 @@ None. No P2P exists.
 
 ## Unresolved questions
 
-- Concrete stack (libp2p, Quinn/QUIC, or CometBFT's transport if a
-  library engine is chosen).
-- Encryption-at-rest versus TLS-on-the-wire for peer metadata.
+- Encryption-at-rest for persisted peer metadata (development stores
+  known-peer records as operator diagnostics only).
+- Whether a later consensus-engine transport replaces Quinn for
+  `CONSENSUS_RESERVED` once Chunk 36+ selects the engine.
 
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for authenticated, permissioned-capable
-P2P as an internal module. Production networking: **not
-implemented**. Legal confidence: `RESEARCH_REQUIRED`.
+P2P as an internal module. Development networking is implemented
+with Quinn + rustls (addendum below). Production BFT networking:
+**not implemented**. Legal confidence: `RESEARCH_REQUIRED`.
+
+---
+
+## Addendum — development transport selection (Chunk 35R)
+
+Date: 2026-08-16. Implementation status: IMPLEMENTED (development
+network only).
+
+ADR-0023 left the concrete stack open. Chunk 35R selects **Quinn
+(QUIC) with rustls TLS 1.3** as the development and first
+node-critical transport. Location: `packages/sunrey-chain/node`.
+Do not create `packages/p2p` or `packages/libp2p`.
+
+| Criterion | Quinn + rustls | libp2p | CometBFT transport |
+| --- | --- | --- | --- |
+| Authentication | TLS 1.3 plus signed application handshake (Ed25519 node identity) | Noise / TLS; heavy stack | Engine-coupled peer IDs |
+| Encryption | rustls TLS 1.3 (not implemented in this repository) | Provided by libp2p | Provided by engine |
+| Maturity | Production QUIC in Rust | Mature, large surface | Mature only if the engine is adopted |
+| Rust safety | Memory-safe crates; no OpenSSL | Mixed; large graph | C-heavy if the Go engine is used |
+| DoS controls | Stream / idle / concurrent-stream limits | Gossipsub + connection limits | Engine-specific |
+| Observability | Connection and byte counters on the node | Rich, extra subsystems | Engine metrics |
+| Dependency health | Narrow (quinn, rustls, ring) | Broad transitive graph | Binds consensus choice |
+| Future BFT channels | Priority class `CONSENSUS_RESERVED` | Possible, extra lock-in | Native, premature |
+
+libp2p is rejected as a mandatory dependency: large graph,
+permissionless gossip defaults, and lock-in before the consensus
+engine is chosen. A hand-rolled TLS-like or Noise construction is
+rejected: do not implement transport encryption. CometBFT transport
+is rejected until ADR-0017's library-versus-constrained-Rust
+experiment is closed.
+
+Peer authentication is the signed handshake (network ID, chain ID,
+genesis hash, node ID, protocol / codec / suite versions, height,
+feature bits, timestamp, nonce). rustls provides confidentiality
+and integrity on the wire. WebPKI is not admission control.
+
+Quinn carries development gossip and sync. It does not vote, does
+not finalize, and does not invent longest-chain fork choice.
+Conflicting valid-looking histories emit `FORK_DETECTED`.

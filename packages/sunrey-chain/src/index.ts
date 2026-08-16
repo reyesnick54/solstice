@@ -94,5 +94,20 @@ export type { AdapterSubmitResult, SunReyChainAdapter } from './adapter.ts';
 export { adapterMethodFor } from './adapter.ts';
 export { SimulationChainAdapter } from './simulation.ts';
 export { signChainIntent } from './signer.ts';
+export { signChainWithSuite, verifyChainWithSuite, type ChainSuiteSignInput } from './suite-signer.ts';
+export {
+  FORBIDDEN_VALIDATOR_PURPOSES,
+  VALIDATOR_KEY_KINDS,
+  assertSeparatedValidatorKeys,
+  type ValidatorBlockProposalKey,
+  type ValidatorConsensusVotingKey,
+  type ValidatorGovernanceKey,
+  type ValidatorKeySet,
+  type ValidatorOperatorIdentity,
+  type ValidatorP2PKey,
+  type ValidatorRecoveryKey,
+  type ValidatorRewardAddress,
+} from './validator-keys.ts';
 export { InMemorySunReyChainStore } from './store.ts';
 export { SunReyChainService, type CreateIntentInput } from './service.ts';
+export * as protocol from './protocol/index.ts';

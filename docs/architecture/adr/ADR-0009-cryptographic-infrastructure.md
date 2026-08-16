@@ -8,7 +8,7 @@
 
 **Depends on:** none
 
-**Implementation status:** IMPLEMENTED
+**Implementation status:** IMPLEMENTED (Chunk 33R extends the same owner with CryptoSuite registry, Ed25519, PQ ports; not quantum-proof)
 
 ## Context
 
@@ -34,7 +34,10 @@ implement the same port without vendor SDKs in this chunk.
   `packages/secrets` are forbidden.
 - Competing post-quantum roots `packages/quantum-security`,
   `packages/crypto-v2`, `packages/pqc-core`, `packages/crypto-agility`,
-  and `packages/post-quantum` are forbidden. Chunk 33 is a process-gate
-  stop until Chunks 31 and 32 merge; see
-  [`chunk-33-stop.md`](../chunk-33-stop.md). This ADR does not authorize
-  a quantum-proof or production-certified claim.
+  and `packages/post-quantum` are forbidden. Chunk 33R extends this
+  package with a versioned CryptoSuite registry, Ed25519 chain
+  signatures, and PQ provider ports. Historical stop:
+  [`chunk-33-stop.md`](../chunk-33-stop.md). Implementation:
+  [`chunk-33-crypto-agility.md`](../chunk-33-crypto-agility.md).
+  This ADR does not authorize a quantum-proof or production-certified
+  claim.
