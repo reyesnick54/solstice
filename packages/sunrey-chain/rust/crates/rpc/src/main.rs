@@ -119,6 +119,10 @@ enum ConsensusCommand {
         validator: String,
     },
     Harness,
+    Validator {
+        #[command(subcommand)]
+        command: sunrey_validators::ValidatorCommand,
+    },
 }
 
 fn main() {
@@ -225,6 +229,9 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
             );
         }
         Command::Consensus { command } => run_consensus(command)?,
+        Command::Validator { command } => {
+            println!("{}", sunrey_validators::run_validator_command(command)?);
+        }
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {

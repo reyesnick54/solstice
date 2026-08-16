@@ -57,6 +57,14 @@ Do not create `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/tendermint`,
 or `packages/consensus-engine`. Production BFT is not implemented.
 See ADR-0015. The simulation foundation remains `PROPOSED`.
+[`chunk-35-stop.md`](./chunk-35-stop.md). Validator registry,
+lifecycle, and signer safety (Chunk 36R) are implemented. See
+[`chunk-36-resume.md`](./chunk-36-resume.md). Historical stop:
+[`chunk-36-stop.md`](./chunk-36-stop.md). Do not create
+`packages/sunrey-node`, `packages/sunrey-p2p`,
+`packages/validators`, or `packages/staking`. Production BFT is
+not implemented. See ADR-0015. The simulation foundation remains
+`PROPOSED`.
 
 Chunk 31 freezes the **production** architecture (ADR-0016 through
 ADR-0033) without implementing a production node. Canonical spec:

@@ -13,7 +13,7 @@ import {
   type ChunkEvaluation,
 } from './manifest.ts';
 
-const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'coverage', '__pycache__']);
+const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'coverage', '__pycache__', 'target']);
 const WORKSPACE_ROOTS = ['packages', 'services', 'tools', 'apps'] as const;
 
 const IMPORT_RE =

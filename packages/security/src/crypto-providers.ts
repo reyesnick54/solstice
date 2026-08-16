@@ -24,6 +24,14 @@ export type SignatureProvider = {
     suiteId: CryptoSuiteId,
     keyId?: string,
   ): SecurityResult<GeneratedKeyPair>;
+  fromSeed(
+    seedHex: string,
+    purpose: KeyPurpose,
+    suiteId: CryptoSuiteId,
+    keyId: string,
+  ): SecurityResult<GeneratedKeyPair>;
+  signRaw(secretHex: string, publicHex: string, message: Buffer): SecurityResult<Buffer>;
+  verifyRaw(publicHex: string, message: Buffer, signatureHex: string): SecurityResult<true>;
   sign(
     privateKey: PrivateKeyMaterial,
     publicKey: PublicKeyDescriptor,

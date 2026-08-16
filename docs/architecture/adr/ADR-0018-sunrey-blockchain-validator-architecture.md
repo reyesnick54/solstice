@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0024
-- Implementation status: NOT_IMPLEMENTED (Chunk 36 stopped; see docs/architecture/chunk-36-stop.md)
+- Implementation status: IMPLEMENTED (development control plane, Chunk 36R; see docs/architecture/chunk-36-resume.md). Production validator set and BFT voting remain NOT_IMPLEMENTED.
 
 ## Context
 
@@ -100,9 +100,11 @@ production voting power.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for bonded identifiable validators and key
-separation. Production validators: **not implemented**. Chunk 36
-attempted the development validator control plane and **stopped**
-because Chunk 35R is not merged and `sunrey-local-node` /
-`sunrey-p2p` remain `PLANNED`. Stop record:
-`docs/architecture/chunk-36-stop.md`. Resume only as Chunk 36R
-after that plane exists. Legal confidence: `RESEARCH_REQUIRED`.
+separation. Chunk 36R implements the **development** validator
+registry, lifecycle, integer voting power, epoch transitions,
+CryptoSuite-routed consensus signer port, and durable signer safety
+at `packages/sunrey-chain`. Production validators, public staking,
+slashing, and the networked BFT engine are **not implemented**.
+Historical stop: `docs/architecture/chunk-36-stop.md`. Resume:
+`docs/architecture/chunk-36-resume.md`. Legal confidence:
+`RESEARCH_REQUIRED`.

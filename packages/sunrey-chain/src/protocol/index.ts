@@ -74,7 +74,13 @@ export {
 } from './hash.ts';
 
 export { toDebugJson, debugJsonMustNotBeHashed } from './json-projection.ts';
-export { signEnvelope, verifyEnvelopeSignature, ed25519PrivateKeyFromSeed } from './authentication.ts';
+export {
+  signEnvelope,
+  verifyEnvelopeSignature,
+  ed25519PrivateKeyFromSeed,
+  protocolKeyPairFromSeed,
+  WIRE_ALGORITHM_TO_SUITE,
+} from './authentication.ts';
 
 export { ProtocolState } from './state.ts';
 export type { ProtocolEvent, ProtocolExecutionContext, StateTransitionResult } from './state.ts';

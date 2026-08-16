@@ -15,5 +15,5 @@
     "sunrey-p2p",
     "sunrey-validators"
   ],
-  "notes": "STOPPED. Chunks 32R–35R are merged. sunrey-local-node and sunrey-p2p are IMPLEMENTED. sunrey-validators remains PLANNED. evaluateChunkRequirements returns mustStop: true and missing: ['sunrey-validators']. Do not implement validator registry, bonding, signer-safety, or BFT voting in this reservation. Do not create packages/validators, packages/staking, packages/validator-v2, packages/consensus-engine, or packages/tendermint. See docs/architecture/chunk-36-stop.md."
+  "notes": "IMPLEMENTED. Chunk 36R validator registry, lifecycle, integer voting power, epoch transitions, CryptoSuite-routed consensus signer, and durable signer safety at packages/sunrey-chain. sunrey-validators is IMPLEMENTED. evaluateChunkRequirements returns mustStop: false. Historical stop: chunk-36-stop.md. Resume: chunk-36-resume.md. Do not create packages/validators, packages/staking, packages/validator-v2, packages/consensus-engine, or packages/tendermint. BFT voting is Chunk 37."
 }

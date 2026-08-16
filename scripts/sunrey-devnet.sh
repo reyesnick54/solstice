@@ -14,7 +14,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-cargo build --manifest-path "$MANIFEST" --bin sunrey-node
+cargo +stable build --manifest-path "$MANIFEST" --bin sunrey-node
 BIN="$ROOT/packages/sunrey-chain/node/target/debug/sunrey-node"
 
 SUNREY_NODE_NAME=A SUNREY_DATA_DIR="$BASE/a" SUNREY_P2P_ADDR=127.0.0.1:41001 \
