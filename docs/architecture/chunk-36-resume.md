@@ -36,7 +36,9 @@ Canonical owner remains `packages/sunrey-chain`. Do not create
   remote / HSM / KMS / PQ-hybrid reserved.
 - Four-validator development set (A–D) with unique consensus and
   P2P keys. Private keys are derived, never committed, and never
-  printed by default.
+  printed by default. Canonical development set hash:
+
+  `e2092c261bb8eae71ab0d220edf3f0777ba3aa3f55c5c984a4ef4867fd56e4cb`
 - `sunrey-node validator` operator commands.
 
 Protocol transaction authentication now resolves the CryptoSuite
