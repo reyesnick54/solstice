@@ -677,6 +677,7 @@ phase is absent.
 | SUNREY INFORMATION MARKET | IMPLEMENTED | `packages/information-market` |
 | SUNREY EXCHANGE | IMPLEMENTED | `packages/sunrey-exchange` |
 | SUNREY CHAIN | IMPLEMENTED | `packages/sunrey-chain` |
+| CUSTODY | PLANNED | `packages/custody` |
 | MARKET SURVEILLANCE | PLANNED | `packages/market-surveillance` |
 | API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
@@ -695,23 +696,21 @@ Chunk 26R implements SunRey Coin at `packages/sunrey-coin`:
 [`chunk-26-resume.md`](./chunk-26-resume.md). Historical stop:
 [`chunk-26-stop.md`](./chunk-26-stop.md). Do not create
 `packages/reyn-coin`, `packages/sunrey-ledger`, `packages/reyn-ledger`,
-`packages/token-ledger`, or `packages/crypto-ledger-v2`. Do not
-implement SunRey Exchange or SunRey Chain in this chunk.
+`packages/token-ledger`, or `packages/crypto-ledger-v2`.
 
 Chunk 27 implements the Human Information Network marketplace
 foundation at `packages/information-market`. Public brand is
-**SunRey Exchange**. Do not implement the Exchange matching engine
-or SunRey Chain here. Do not create `packages/pyramid-data-exchange`,
+**SunRey Exchange**. Do not create `packages/pyramid-data-exchange`,
 `packages/data-exchange`, `packages/sunrey-data-exchange`,
 `packages/personal-oracle`, or a second data-market package.
 
 Chunk 28 implements the SunRey Chain foundation at
 `packages/sunrey-chain`. Simulation trust layer only. The canonical
 ledger remains the financial source of truth. Do not invent a ticker.
-Do not connect a live RPC, mainnet, or testnet. Do not implement
-SunRey Exchange matching in this chunk. Do not create `packages/sunrey-chain-v2`,
-`packages/blockchain`, `packages/reyn-chain`,
-`packages/on-chain-ledger`, or `packages/crypto-chain`.
+Do not connect a live RPC, mainnet, or testnet. Do not create
+`packages/sunrey-chain-v2`, `packages/blockchain`,
+`packages/reyn-chain`, `packages/on-chain-ledger`, or
+`packages/crypto-chain`.
 
 Chunk 29 implements the SunRey Exchange core at
 `packages/sunrey-exchange`. Simulation matching, holds, DVP
@@ -720,6 +719,13 @@ settlement, and market data only. Last trade is labeled
 Do not invent a ticker. Do not create `packages/exchange-v2`,
 `packages/orderbook`, `packages/matching-engine-v2`,
 `packages/crypto-exchange`, or `packages/reyn-exchange`.
+
+Chunk 30 (custody / Travel Rule / surveillance control plane) is
+stopped while `custody` and `market-surveillance` remain `PLANNED`:
+[`chunk-30-stop.md`](./chunk-30-stop.md). Do not create
+`packages/exchange-compliance-v2`, `packages/travel-rule-v2`,
+`packages/crypto-aml`, `packages/surveillance-v2`, or
+`packages/custody-ledger`.
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

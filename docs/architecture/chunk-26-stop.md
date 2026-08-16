@@ -13,6 +13,12 @@ reservation names `REYN_COIN` / `REYN_EXCHANGE` are replaced by
 
 # Original stop record
 
+> Historical. Later reservation names are `SUNREY_COIN` at
+> `packages/sunrey-coin` and `SUNREY_EXCHANGE` at
+> `packages/sunrey-exchange`. See
+> [`chunk-30-stop.md`](./chunk-30-stop.md). This file is not an
+> implementation.
+
 This file records a **constitutional missing-capability stop**, not a
 Reyn Coin implementation.
 

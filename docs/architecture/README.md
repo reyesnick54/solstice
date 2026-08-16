@@ -29,9 +29,13 @@
   `packages/sunrey-coin`. Historical stop:
   [`chunk-26-stop.md`](./chunk-26-stop.md). Resume:
   [`chunk-26-resume.md`](./chunk-26-resume.md). Public ticker is
-  UNDECIDED. SunRey Exchange remains PLANNED.
+  UNDECIDED.
 - [SunRey Chain](./sunrey-chain.md) — simulation trust layer at
   `packages/sunrey-chain`. Not the financial source of truth.
   ADR-0015 remains PROPOSED.
+- [Chunk 30 stop](./chunk-30-stop.md) — exchange custody / Travel Rule /
+  surveillance control plane. Chunk 29 exchange core is now
+  `IMPLEMENTED`. Remaining protected gaps are `custody` and
+  `market-surveillance`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
