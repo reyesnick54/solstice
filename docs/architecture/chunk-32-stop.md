@@ -1,7 +1,11 @@
-# Chunk 32 stop record
+# Chunk 32 stop record (historical)
+
+**Historical.** Superseded by Chunk 32R:
+[`chunk-32-resume.md`](./chunk-32-resume.md).
 
 This file records a **process-gate stop**, not a SunRey transaction
-or economic-state protocol implementation.
+or economic-state protocol implementation. Do not treat it as the
+current protocol status.
 
 Task: CHUNK 32 — SunRey Canonical Economic State Machine &
 Transaction Protocol.

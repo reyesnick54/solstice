@@ -57,6 +57,9 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-blockchain')), false);
     assert.equal(existsSync(join(ROOT, 'packages/moonrey-coin')), false);
     assert.equal(existsSync(join(ROOT, 'packages/moonrey-chain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-protocol')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-tx')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/moonrey')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const protocol = JSON.parse(
       readFileSync(join(ROOT, 'docs/architecture/sunrey-blockchain-protocol.json'), 'utf8'),
@@ -74,5 +77,27 @@ describe('sunrey chain architecture guards', () => {
       const source = readFileSync(file, 'utf8');
       assert.equal(source.includes('packages/sunrey-chain'), false, file);
     }
+  });
+
+  it('keeps the transaction protocol from becoming a second ledger or JSON-hashed consensus', () => {
+    const files = walk(join(ROOT, 'packages/sunrey-chain/src/protocol'));
+    assert.equal(files.length > 0, true);
+    for (const file of files) {
+      if (file.endsWith('.test.ts')) {
+        continue;
+      }
+      const source = readFileSync(file, 'utf8');
+      assert.equal(/class Money\b/.test(source), false, file);
+      assert.equal(/Date\.now\s*\(|Math\.random\s*\(|fetch\s*\(/.test(source), false, file);
+      assert.equal(/from ['"].*packages\/sunrey-coin/.test(source), false, file);
+      if (file.endsWith('hash.ts')) {
+        assert.equal(source.includes('JSON.stringify'), false, file);
+        assert.equal(source.includes('canonicalJson'), false, file);
+      }
+    }
+    const proto = readFileSync(join(ROOT, 'packages/sunrey-chain/protocol/v1/sunrey_tx_v1.proto'), 'utf8');
+    assert.equal(proto.includes('syntax = "proto3"'), true);
+    assert.equal(/\b(double|float)\s+|map</.test(proto), false);
+    assert.equal(existsSync(join(ROOT, 'docs/architecture/chunk-32-resume.md')), true);
   });
 });

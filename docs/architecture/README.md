@@ -52,8 +52,10 @@
   Chunks 31 and 32 are merged. Crypto-agility and post-quantum
   foundation are not implemented. Canonical owner remains
   `packages/security`.
-- [Chunk 32 stop](./chunk-32-stop.md) — process-gate stop until
-  Chunk 31 protocol / encoding architecture is merged and canonical
-  on `main`. Not a transaction-protocol implementation.
+- [Chunk 32 stop (historical)](./chunk-32-stop.md) — original
+  process-gate stop before Chunk 31 architecture was canonical
+- [Chunk 32 resume](./chunk-32-resume.md) — canonical transaction
+  envelope, economic objects, protobuf codec, and test vectors at
+  `packages/sunrey-chain`
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

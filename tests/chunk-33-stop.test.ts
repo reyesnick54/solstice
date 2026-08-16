@@ -22,12 +22,12 @@ function architectureDocs(prefix: string): string[] {
     .sort();
 }
 
-describe('CHUNK-33 process-gate stop until Chunks 31 and 32 merge', () => {
-  it('stops because CHUNK-31 and CHUNK-32 are not merged', () => {
-    assert.deepEqual(chunkFiles('chunk-31-'), []);
-    assert.deepEqual(chunkFiles('chunk-32-'), []);
-    assert.deepEqual(architectureDocs('chunk-31-'), []);
-    assert.deepEqual(architectureDocs('chunk-32-'), []);
+describe('CHUNK-33 process-gate stop until crypto-agility is implemented', () => {
+  it('keeps Chunk 33 stopped after Chunks 31 and 32R', () => {
+    assert.equal(chunkFiles('chunk-31-').length > 0, true);
+    assert.equal(chunkFiles('chunk-32-').length > 0, true);
+    assert.equal(architectureDocs('chunk-31-').includes('chunk-31-sunrey-blockchain-production-architecture.md'), true);
+    assert.equal(architectureDocs('chunk-32-').includes('chunk-32-resume.md'), true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-stop.md')), true);
     assert.equal(existsSync(join(ARCH_DIR, 'chunk-33-post-quantum-security.md')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security')), false);
