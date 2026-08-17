@@ -87,7 +87,7 @@ export function privacySafeHumanEvidence(input: {
     contentHash: input.contentHash,
     quantityBasis: input.quantityBasis,
     purposeClass: input.purposeClass,
-    rawPersonalDataPresent: false,
+    containsRawPersonalData: false,
     pdvSourceExposed: false,
     cleanRoomSourceExposed: false,
   });
@@ -181,7 +181,7 @@ export function authorizeIssuance(
   }
   if (assetId === 'SUNREY_COIN' && draft.issuanceClass === 'AUTHORIZED_HUMAN_ECONOMIC_CONTRIBUTION') {
     const evidence = draft.economicEvidence as HumanEconomicEvidence;
-    if (!evidence.contentHash || evidence.rawPersonalDataPresent) {
+    if (!evidence.contentHash || evidence.containsRawPersonalData) {
       return { ok: false, code: 'RAW_PERSONAL_DATA_REJECTED' };
     }
   }

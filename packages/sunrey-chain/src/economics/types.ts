@@ -223,7 +223,7 @@ export type HumanEconomicEvidence = {
   readonly contentHash: string;
   readonly quantityBasis: bigint;
   readonly purposeClass: HumanEvidencePurposeClass;
-  readonly rawPersonalDataPresent: false;
+  readonly containsRawPersonalData: false;
   readonly pdvSourceExposed: false;
   readonly cleanRoomSourceExposed: false;
 };
