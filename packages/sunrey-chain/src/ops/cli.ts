@@ -16,8 +16,8 @@ import { developmentSentryTopology } from './sentry.ts';
 import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
 import { createSnapshot, verifySnapshot } from './snapshots.ts';
 import { planGenesisSync } from './state-sync.ts';
-import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
 import type { DrillScenario } from './types.ts';
+import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
 import {
   developmentEpoch,
   eraseEvidence,
@@ -356,4 +356,5 @@ if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWi
   } else {
     await main();
   }
+  await main();
 }

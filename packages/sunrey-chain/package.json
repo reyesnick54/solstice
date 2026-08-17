@@ -28,6 +28,7 @@
     "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/cli.ts",
     "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts",
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts"
+    "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts"
   },
   "engines": {
     "node": ">=22"
