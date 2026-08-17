@@ -53,7 +53,6 @@ const ROOT = join(import.meta.dirname, '..', '..', '..');
 
 function draftProvider(providerId = 'oracle_energy-a') {
   const signer = SoftwareDevelopmentSigner.fromLabel(providerId, defaultOracleSuiteId());
-  assert.equal(signer.ok, true);
   if (!signer.ok) {
     throw new Error(signer.error.detail);
   }
@@ -81,7 +80,6 @@ function draftProvider(providerId = 'oracle_energy-a') {
     securityReviewStatus: 'NOT_REVIEWED',
     commercialAgreementEvidenceReference: null,
   });
-  assert.equal(created.ok, true);
   if (!created.ok) {
     throw new Error(created.error.detail);
   }
@@ -129,7 +127,6 @@ describe('Chunk 68 production oracle data plane', () => {
       credentialRefs: { 'src-a': secretRef('simulation', 'oracle/src-a') },
       expiresAtUnix: 2_000_000_000n,
     });
-    assert.equal(identity.ok, true);
     if (!identity.ok) {
       throw new Error(identity.error.detail);
     }
@@ -248,7 +245,7 @@ describe('Chunk 68 production oracle data plane', () => {
           feedId: 'feed',
           unit: 'MWh',
           schemaId: 'energy.resource.v1',
-          schemaVersion: 1,
+          sourceSchemaVersion: 1,
           normalizationVersion: 'oracle.normalize.v1',
           authenticationMethod: 'FILE_FIXTURE_TEST_ONLY',
           credentialRef: null,
@@ -267,7 +264,7 @@ describe('Chunk 68 production oracle data plane', () => {
           feedId: 'feed',
           unit: 'MWh',
           schemaId: 'energy.resource.v1',
-          schemaVersion: 1,
+          sourceSchemaVersion: 1,
           normalizationVersion: 'oracle.normalize.v1',
           authenticationMethod: 'FILE_FIXTURE_TEST_ONLY',
           credentialRef: null,
@@ -292,7 +289,7 @@ describe('Chunk 68 production oracle data plane', () => {
           feedId: 'feed',
           unit: 'MWh',
           schemaId: 'energy.resource.v1',
-          schemaVersion: 1,
+          sourceSchemaVersion: 1,
           normalizationVersion: 'oracle.normalize.v1',
           authenticationMethod: 'FILE_FIXTURE_TEST_ONLY',
           credentialRef: null,
@@ -333,7 +330,6 @@ describe('Chunk 68 production oracle data plane', () => {
       credentialRefs: { src_sim: secretRef('simulation', 'oracle/src_sim') },
       expiresAtUnix: 2_000_000_000n,
     });
-    assert.equal(identity.ok, true);
     if (!identity.ok) {
       throw new Error(identity.error.detail);
     }
@@ -348,7 +344,7 @@ describe('Chunk 68 production oracle data plane', () => {
       feedId: 'feed',
       unit: 'MWh' as const,
       schemaId: 'energy.resource.v1',
-      schemaVersion: 1,
+      sourceSchemaVersion: 1,
       normalizationVersion: 'oracle.normalize.v1',
       authenticationMethod: 'FILE_FIXTURE_TEST_ONLY' as const,
       credentialRef: secretRef('simulation', 'oracle/src_sim'),
@@ -386,7 +382,6 @@ describe('Chunk 68 production oracle data plane', () => {
     assert.equal(hybrid.ok, true);
     const hsm = new DevelopmentHsmSimulator();
     const software = SoftwareDevelopmentSigner.fromLabel('energy-hsm', defaultOracleSuiteId());
-    assert.equal(software.ok, true);
     if (!software.ok) {
       throw new Error(software.error.detail);
     }

@@ -132,6 +132,9 @@ export function runProductionOracleE2E(nowUnix = 1_700_000_000n): ProductionOrac
     throw new Error('shared-controller sources counted as independent');
   }
   const concentration = analyzeConcentration(plane.sources.list(), nowUnix, 9_000);
+  if (concentration.sybilResistanceClaimed) {
+    throw new Error('concentration analysis must not claim Sybil resistance');
+  }
 
   const object = solarFacility();
   const productive = new ProductiveEconomyEngine({
@@ -290,7 +293,7 @@ export function runProductionOracleE2E(nowUnix = 1_700_000_000n): ProductionOrac
     staleFailsClosed,
     conflicted: conflicted.value.qualityStatus === 'CONFLICTED',
     independenceRequired: true,
-    concentrationWarnedWithoutSybilClaim: concentration.sybilResistanceClaimed === false,
+    concentrationWarnedWithoutSybilClaim: true,
     moonreyEligibilityChecked: eligibility.value.eligible,
     automaticIssuance: false,
     formalMoonReyInvariants: true,

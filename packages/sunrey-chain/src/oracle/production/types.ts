@@ -9,6 +9,8 @@
 import type { SecretReference } from '../../../../security/src/secrets.ts';
 import type { AggregationPolicy, FactType, FixedQuantity, OracleType, UnitCode } from '../types.ts';
 
+export type { FactType, FixedQuantity, OracleType, UnitCode };
+
 export const PRODUCTION_ORACLE_SCHEMA_VERSION = 1 as const;
 export const COLLECTOR_VERSION = 'sunrey-oracle-collector/1' as const;
 export const QUALITY_FORMULA_VERSION = 'oracle.quality.profile.v1' as const;
@@ -196,7 +198,7 @@ export type EconomicDataSource = {
   readonly feedId: string;
   readonly unit: UnitCode;
   readonly schemaId: string;
-  readonly schemaVersion: number;
+  readonly sourceSchemaVersion: number;
   readonly normalizationVersion: string;
   readonly authenticationMethod: AuthenticationMethod;
   readonly credentialRef: SecretReference | null;

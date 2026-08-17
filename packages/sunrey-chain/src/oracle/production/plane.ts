@@ -160,7 +160,7 @@ export function createProductionPlane(nowUnix = 1_700_000_000n): ProductionOracl
       feedId: feed.feedId,
       unit: 'MWh',
       schemaId: ENERGY_FIXTURE.schemaId,
-      schemaVersion: 1,
+      sourceSchemaVersion: 1,
       normalizationVersion: 'oracle.normalize.v1',
       authenticationMethod: 'FILE_FIXTURE_TEST_ONLY',
       credentialRef: credential,

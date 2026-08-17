@@ -1,7 +1,6 @@
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
-import { quantity, type FixedQuantity } from '../units.ts';
-import type { UnitCode } from '../types.ts';
-import type { ProductionOracleRejection } from './types.ts';
+import { quantity } from '../units.ts';
+import type { FixedQuantity, ProductionOracleRejection, UnitCode } from './types.ts';
 import { NORMALIZATION_VERSION } from './types.ts';
 
 export type NormalizationVector = {
@@ -39,9 +38,11 @@ export function normalizeExternalInteger(input: {
   }
   if (input.sourceUnit === input.targetUnit) {
     const scaled = mantissa * 10n ** BigInt(input.targetScale);
-    return quantity(scaled, input.targetScale, input.targetUnit).ok
-      ? quantity(scaled, input.targetScale, input.targetUnit)
-      : err({ code: 'NORMALIZATION_FAILED', detail: 'quantity construction failed' });
+    const built = quantity(scaled, input.targetScale, input.targetUnit);
+    if (!built.ok) {
+      return err({ code: 'NORMALIZATION_FAILED', detail: built.error.detail });
+    }
+    return ok(built.value);
   }
   const from = ENERGY_TO_WH[input.sourceUnit];
   const to = ENERGY_TO_WH[input.targetUnit];
