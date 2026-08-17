@@ -50,7 +50,7 @@ export type StorageMigrationResult = {
   readonly nativeSupplyEqual: true;
   readonly validatorSetEqual: true;
   readonly engineeringOnly: true;
-  readonly notTestnetToProduction: true;
+  readonly notPromotionToProductionGenesis: true;
 };
 
 export function storageStatus(input?: Partial<ChainStorageStatus>): ChainStorageStatus {
@@ -107,7 +107,7 @@ export function migrateDevStore(input: {
     nativeSupplyEqual: true,
     validatorSetEqual: true,
     engineeringOnly: true,
-    notTestnetToProduction: true,
+    notPromotionToProductionGenesis: true,
   });
 }
 

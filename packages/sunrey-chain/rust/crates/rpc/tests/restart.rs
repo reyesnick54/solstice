@@ -63,31 +63,29 @@ fn restart_recovers_exact_state() {
     let produced = sunrey_rpc::http_post(&listen, "/admin/produce-block", "{}").unwrap();
     assert!(json_body(&produced).contains("height"), "{produced}");
 
+    let _ = child.kill();
+    let _ = child.wait();
+
     let before = LocalNode::open(&dir).unwrap();
     let height = before.store.meta.height;
     let root = before.store.meta.app_hash.clone();
     let block_id = before.store.meta.tip_block_id.clone();
     assert_eq!(height, 1);
-
-    let _ = child.kill();
-    let _ = child.wait();
+    drop(before);
 
     let mut restarted = spawn_node(&dir, &listen);
     wait_health(&listen);
     let status = sunrey_rpc::http_get(&listen, "/status").unwrap();
     assert!(json_body(&status).contains(&root), "{status}");
     assert!(json_body(&status).contains(&block_id), "{status}");
-    let after = LocalNode::open(&dir).unwrap();
-    assert_eq!(after.store.meta.height, height);
-    assert_eq!(after.store.meta.app_hash, root);
-    after.verify_chain().unwrap();
-
     let produced2 = sunrey_rpc::http_post(&listen, "/admin/produce-block", "{}").unwrap();
     assert!(json_body(&produced2).contains("height"), "{produced2}");
-    let continued = LocalNode::open(&dir).unwrap();
-    assert_eq!(continued.store.meta.height, 2);
-    assert!(!continued.store.meta.tip_block_id.is_empty());
-    continued.verify_chain().unwrap();
     let _ = restarted.kill();
     let _ = restarted.wait();
+
+    let after = LocalNode::open(&dir).unwrap();
+    assert_eq!(after.store.meta.height, 2);
+    assert!(!after.store.meta.app_hash.is_empty());
+    assert!(!after.store.meta.tip_block_id.is_empty());
+    after.verify_chain().unwrap();
 }

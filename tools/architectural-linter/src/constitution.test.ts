@@ -1817,6 +1817,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-db')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/chain-storage-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ledger-db')), false);
+  });
+
   it('CHUNK-66 implements production infrastructure on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-infrastructure').status, 'IMPLEMENTED');

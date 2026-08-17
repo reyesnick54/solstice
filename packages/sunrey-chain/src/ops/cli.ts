@@ -188,6 +188,16 @@ export type CliResult = {
   readonly payload: unknown;
 };
 
+const VALIDATOR_COMMANDS = [
+  'validator',
+  'signer',
+  'snapshot',
+  'state-sync',
+  'upgrade',
+  'incident',
+  'crypto',
+] as const;
+
 export function opsUsage(): string {
   return [
     'sunrey-ops validator status',

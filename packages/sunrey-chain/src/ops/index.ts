@@ -176,5 +176,5 @@ export {
 } from './storage.ts';
 export { databaseRestoreTest, databaseStatus, verifyDatabase } from './database.ts';
 export { storageCapacityGuards } from './capacity.ts';
-export { backupMetadata } from './backup.ts';
+export { backupMetadata, storeBackupInObjectStorage } from './backup.ts';
 export type { BackupMetadata } from './backup.ts';
