@@ -1747,6 +1747,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/liquid-staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/slashing')), false);
+  });
+
   it('CHUNK-71 implements the SunRey dual-asset monetary constitution', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-monetary-constitution').status, 'IMPLEMENTED');

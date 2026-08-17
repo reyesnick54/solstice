@@ -121,6 +121,10 @@ export class ExplorerQueryService {
         jailStatus: row.jailStatus,
         tombstone: row.tombstone,
         unbondStatus: row.unbondStatus ?? { pending: '0', releaseEpoch: null },
+      })),
+    });
+  }
+
   monetary() {
     const assets = this.indexer.store.projection().assets;
     const moonrey = this.indexer.store.projection().moonrey;
