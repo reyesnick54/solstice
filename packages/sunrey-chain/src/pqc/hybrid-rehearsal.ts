@@ -47,6 +47,13 @@ import {
   hybridVoteSizeBytes,
 } from './consensus-bounds.ts';
 
+function requireTrue(value: boolean, message: string): true {
+  if (!value) {
+    throw new Error(message);
+  }
+  return true;
+}
+
 const CLASSICAL = SUITE_SUNREY_ED25519_V1;
 const HYBRID = SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1;
 const PQ = SUITE_SUNREY_MLDSA_65_V1;
@@ -501,13 +508,16 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
     walletTransfers,
     multiAuthHeterogeneous: true,
     oracleFacts,
-    governanceAiCannotVote,
-    governanceHybridScheduled: gov.cryptoSchedule?.suiteId === HYBRID,
+    governanceAiCannotVote: requireTrue(governanceAiCannotVote, 'AI must not vote'),
+    governanceHybridScheduled: requireTrue(gov.cryptoSchedule?.suiteId === HYBRID, 'hybrid schedule missing'),
     downgradeRejected,
-    wrongSuiteRejected,
-    historicalVerifyRetained: historicalVerifyAllowed(CLASSICAL) && historical,
-    providerFailureFailClosed: !failClosed.ok,
-    p2pOversizedRejected: p2p.ok === false,
+    wrongSuiteRejected: requireTrue(wrongSuiteRejected, 'wrong suite must be rejected'),
+    historicalVerifyRetained: requireTrue(
+      historicalVerifyAllowed(CLASSICAL) && historical,
+      'historical verify must remain',
+    ),
+    providerFailureFailClosed: requireTrue(!failClosed.ok, 'provider failure must fail closed'),
+    p2pOversizedRejected: requireTrue(p2p.ok === false, 'oversized p2p must be rejected'),
     secretMaterialAbsentFromReport: true,
     sizes,
     performance: {
