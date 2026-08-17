@@ -350,6 +350,33 @@ export function verifyDatabaseDump(dump: ApplicationDatabaseDump): void {
   }
 }
 
+export type BackupMetadata = {
+  readonly source: BackupClass;
+  readonly heightOrSchema: string;
+  readonly hash: string;
+  readonly encryptionReference: string | null;
+  readonly retention: string;
+  readonly verificationStatus: 'VERIFIED' | 'UNVERIFIED' | 'FAILED';
+};
+
+export function backupMetadata(input: {
+  readonly source: BackupClass;
+  readonly heightOrSchema: string;
+  readonly bytes: Buffer;
+  readonly encrypted: boolean;
+  readonly retention: string;
+  readonly verified: boolean;
+}): BackupMetadata {
+  return Object.freeze({
+    source: input.source,
+    heightOrSchema: input.heightOrSchema,
+    hash: sha256Hex(input.bytes),
+    encryptionReference: input.encrypted ? 'BACKUP_ENCRYPTION' : null,
+    retention: input.retention,
+    verificationStatus: input.verified ? 'VERIFIED' : 'UNVERIFIED',
+  });
+}
+
 export function assertBackupClassCatalog(): void {
   if (backupRecoveryStrategies().length !== BACKUP_CLASSES.length) {
     throw new Error('backup class catalog is incomplete');

@@ -4,6 +4,7 @@
 
 import { evaluateReadiness, type EvaluatorPolicy } from './evaluator.ts';
 import { isExternalDimension, missingEvidenceIds } from './evidence.ts';
+import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
 import { consumeExternalSecurityReview, consumeFormalAssurance, consumePqc, consumeSupplyChain, consumeTestnetRc } from './consumers.ts';
 import {
   custodyReadiness,
@@ -58,6 +59,7 @@ export function buildReadinessReport(input: {
   }
   const pqc = consumePqc();
   const supply = consumeSupplyChain(input.root ?? process.cwd());
+  const artifacts = collectReadinessArtifactDigests(input.root ?? process.cwd());
   return Object.freeze({
     schemaVersion: 1,
     toolVersion: MAINNET_READINESS_TOOL_VERSION,
@@ -69,10 +71,11 @@ export function buildReadinessReport(input: {
     ),
     openSecurityFindings: Object.freeze(openFindings),
     knownLimitations: Object.freeze([
-      'Chunks 61–64 are not implemented on this tree; slots remain explicit',
+      'Chunks 61–64 engineering artifacts are linked by digest; independent auditor, commercial HSM, counsel, regulator, license, and partner evidence remain incomplete',
       'Simulation ceremony is process readiness only',
       'Zero production allocation; no premint and no testnet faucet copy',
       'LIVE_* flags remain false; ENVIRONMENT remains simulation',
+      'PRODUCTION_CANDIDATE infrastructure does not activate mainnet',
     ]),
     testnetRcReference: consumeTestnetRc(),
     formalEvidence: consumeFormalAssurance(),
@@ -89,5 +92,6 @@ export function buildReadinessReport(input: {
     liveFlagsRemainDisabled: true,
     productionServicesActivated: false,
     distinctions: ARCHITECTURE_DISTINCTIONS,
+    infrastructureReadinessDigest: artifacts.formalRegistryDigest,
   });
 }

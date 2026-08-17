@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-default-deny
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-public-to-rpc
+spec:
+  podSelector:
+    matchLabels:
+      sunrey.zone: PUBLIC_RPC
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: PUBLIC_EDGE

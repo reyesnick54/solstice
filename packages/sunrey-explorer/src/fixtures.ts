@@ -73,7 +73,17 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
     ],
     oracleProviders: [{ providerId: 'oracle_dev_1', status: 'ACTIVE', oracleType: 'PUBLIC_DATA_PROVIDER' }],
     oracleFeeds: [
-      { feedId: 'feed_energy_1', providerId: 'oracle_dev_1', factType: 'ENERGY_PRODUCTION', status: 'ACTIVE' },
+      {
+        feedId: 'feed_energy_1',
+        providerId: 'oracle_dev_1',
+        factType: 'ENERGY_PRODUCTION',
+        status: 'ACTIVE',
+        providerCount: 3,
+        aggregationMethod: 'MEDIAN',
+        freshness: 'FRESH',
+        qualityClass: 'ENGINEERING',
+        verifiedFact: 'fact_energy_1',
+      },
     ],
     oracleFacts: [
       {

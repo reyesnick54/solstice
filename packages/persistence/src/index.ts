@@ -96,3 +96,20 @@ export {
   PostgresOutboxStore,
   insertSealedDomainEvent,
 } from './ledger/event-fabric.ts';
+export * from './production/index.ts';
+export { DurableCustodyStore } from './custody/durable-store.ts';
+export type { CustodyDurableSnapshot, DurableVault, DurableWithdrawal } from './custody/durable-store.ts';
+export { DurableExchangeStore } from './exchange/durable-store.ts';
+export type {
+  DurableOrder,
+  DurableReservation,
+  DurableSettlementIntent,
+  DurableTrade,
+  ExchangeDurableSnapshot,
+} from './exchange/durable-store.ts';
+export {
+  EVENT_FABRIC_IS_NOT_A_JOURNAL,
+  assertNotJournal,
+  crashRecoverOutbox,
+} from './production/event-fabric.ts';
+export type { DurableOutboxRecord } from './production/event-fabric.ts';

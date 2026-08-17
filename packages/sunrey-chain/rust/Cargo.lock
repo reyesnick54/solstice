@@ -503,6 +503,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "redb"
+version = "2.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ea0a72cd7140de9fc3e318823b883abf819c20d478ec89ce880466dc2ef263c6"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "regex-automata"
 version = "0.4.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -896,8 +905,11 @@ name = "sunrey-storage"
 version = "0.1.0"
 dependencies = [
  "hex",
+ "redb",
  "serde",
  "serde_json",
+ "sha2",
+ "sunrey-crypto",
  "sunrey-protocol",
  "sunrey-state",
  "thiserror",

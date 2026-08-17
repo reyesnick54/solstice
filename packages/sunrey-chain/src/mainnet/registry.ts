@@ -2,6 +2,7 @@
  * MainnetReadinessRegistry — assembled evidence, capabilities, and candidate.
  */
 
+import { createLocalHarness } from '../infra/harness.ts';
 import { defaultActivationMatrix } from './capabilities.ts';
 import { defaultDimensionCatalog } from './dimensions.ts';
 import { evaluateReadiness, type EvaluatorPolicy, DEFAULT_PRODUCTION_POLICY } from './evaluator.ts';
@@ -27,6 +28,7 @@ export function assembleReadinessRegistry(input?: {
   const capabilities = input?.capabilities ?? defaultActivationMatrix();
   const genesis = input?.genesis ?? buildGenesisCandidate();
   const policy = input?.policy ?? DEFAULT_PRODUCTION_POLICY;
+  const infrastructure = createLocalHarness('LOCAL');
   return Object.freeze({
     schemaVersion: 1,
     records,
@@ -35,5 +37,6 @@ export function assembleReadinessRegistry(input?: {
     candidate: genesis.candidate,
     status: evaluateReadiness(records, authorizations, policy),
     genesisHash: genesis.genesisHash,
+    infrastructureReadinessDigest: infrastructure.report.reportDigest,
   });
 }

@@ -78,6 +78,8 @@ never be two implementations of these systems.
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
+| SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
+| SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -965,6 +967,15 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 68 implements production-candidate oracle provider onboarding,
+off-chain collection, provenance, independence, and MoonRey
+eligibility at `packages/sunrey-chain/src/oracle/production`.
+Capability `sunrey-production-oracles` is `IMPLEMENTED`. Consensus
+never calls external APIs. Oracle facts never mint MoonRey. Missing
+provider agreements are never confirmed. Do not create
+`packages/production-oracles`, `packages/oracle-onboarding`, or
+`packages/oracle-collector`. See
+[`chunk-68-production-oracles.md`](./chunk-68-production-oracles.md).
 Chunk 64 implements production-class root-of-trust and key-ceremony
 architecture at `packages/security/src/ceremony`. Capability
 `sunrey-root-of-trust` is `IMPLEMENTED`. CI uses simulation
@@ -998,6 +1009,27 @@ verification. Do not create `packages/formal`, `packages/tla`,
 `packages/model-checker`, `packages/sunrey-formal`, or
 `tools/formal`. See
 [`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Chunk 69 implements the production-candidate adapter framework that
+connects SunRey Exchange and custody to provider-neutral identity,
+screening, Travel Rule, HSM/custody, surveillance, and
+case-management interfaces. Capability
+`sunrey-regulated-integration` is `IMPLEMENTED` at
+`packages/sunrey-exchange`, `packages/custody`, `packages/kernel`,
+`packages/security`, and `packages/sunrey-chain`. It does not
+activate live regulated services or enable `LIVE_*` flags. Do not
+create `packages/regulated-exchange`, `packages/provider-registry`,
+`packages/travel-rule-production`, `packages/custody-activation`, or
+`packages/exchange-kyc`. See
+[`chunk-69-regulated-integration.md`](./chunk-69-regulated-integration.md).
+Chunk 67 implements production-candidate blockchain storage and
+application PostgreSQL durability at
+`packages/sunrey-chain/rust/crates/storage` and
+`packages/persistence/src/production`. Capability
+`sunrey-production-storage` is `IMPLEMENTED`. The selected engine is
+redb 2.4. Application PostgreSQL is not consensus authority. Do not
+create `packages/blockchain-db`, `packages/chain-storage-v2`, or
+`packages/sunrey-ledger-db`. See
+[`chunk-67-production-storage.md`](./chunk-67-production-storage.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

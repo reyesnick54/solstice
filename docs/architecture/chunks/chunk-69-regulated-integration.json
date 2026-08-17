@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-69",
+  "title": "SunRey Exchange and custody production-candidate regulated integration framework",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "kernel",
+    "compliance-screening",
+    "custody",
+    "sunrey-institutional-custody",
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "market-surveillance",
+    "sunrey-chain",
+    "sunrey-mainnet-readiness",
+    "sunrey-regulated-integration"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange/src/regulated, packages/custody/src/regulated, packages/kernel/src/regulated, packages/security/src/regulated, and packages/sunrey-chain/src/mainnet/regulated-feed.ts. Production-candidate adapters only. Does not activate live regulated services, enable LIVE_* flags, or create a second Exchange, custody system, Kernel, or native-asset ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/regulated-exchange, packages/provider-registry, packages/travel-rule-production, packages/custody-activation, or packages/exchange-kyc."
+}

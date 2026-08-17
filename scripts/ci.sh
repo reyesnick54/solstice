@@ -75,11 +75,12 @@ npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:moonrey-productive
 npm run demo:sunrey-oracle
+npm run demo:sunrey-production-oracles
+npm run sunrey-oracle -- readiness
 npm run demo:sunrey-fees
 npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
 npm run demo:sunrey-interop
-npm run demo:sunrey-ops
 npm run demo:sunrey-ops
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
@@ -106,9 +107,10 @@ npm run demo:explorer
 npm run demo:sunrey-bench
 npm run sunrey-range -- campaign --smoke
 npm run demo:sunrey-range
-node scripts/sunrey-release.mjs rc qualify --profile smoke
-node scripts/sunrey-release.mjs rc verify
-npm run demo:sunrey-rc
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" node scripts/sunrey-release.mjs rc qualify --profile smoke
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" node scripts/sunrey-release.mjs rc verify
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" npm run demo:sunrey-rc
+npm run demo:universal-exchange
 npm run demo:sunrey-audit
 
 echo "==> typecheck"

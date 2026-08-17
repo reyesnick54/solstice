@@ -8,7 +8,15 @@ import { ResiliencePlatform } from './platform.ts';
 import { operatorReadiness } from './readiness.ts';
 import { developmentSentryTopology } from './sentry.ts';
 import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { databaseRestoreTest, databaseStatus, verifyDatabase } from './database.ts';
 import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import {
+  createStorageSnapshot,
+  migrateDevStore,
+  restoreStorageSnapshot,
+  storageStatus,
+  verifyStorage,
+} from './storage.ts';
 import { planGenesisSync } from './state-sync.ts';
 import type { DrillScenario } from './types.ts';
 import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
@@ -30,16 +38,8 @@ const RESILIENCE_COMMANDS = [
   'topology',
   'validator-fencing',
   'crypto',
-] as const;
-
-const VALIDATOR_COMMANDS = [
-  'validator',
-  'signer',
-  'snapshot',
-  'state-sync',
-  'upgrade',
-  'incident',
-  'crypto',
+  'storage',
+  'database',
 ] as const;
 
 export function runSunreyOps(argv: readonly string[]): string {
@@ -101,6 +101,65 @@ export function runSunreyOps(argv: readonly string[]): string {
   if (command === 'crypto') {
     return JSON.stringify(runCryptoCommand(argv.slice(1)), null, 2);
   }
+  if (command === 'storage') {
+    const action = argv[1] ?? 'status';
+    if (action === 'status') {
+      return JSON.stringify(storageStatus(), null, 2);
+    }
+    if (action === 'verify') {
+      return JSON.stringify(verifyStorage(storageStatus()), null, 2);
+    }
+    if (action === 'migrate') {
+      return JSON.stringify(
+        migrateDevStore({
+          height: '1',
+          blockId: 'aa'.repeat(32),
+          stateRoot: 'bb'.repeat(32),
+          nativeSupply: 'cc'.repeat(32),
+          validatorSet: 'dd'.repeat(32),
+        }),
+        null,
+        2,
+      );
+    }
+    if (action === 'snapshot') {
+      const created = createStorageSnapshot({
+        height: 1n,
+        blockId: 'block-1',
+        stateRoot: '11'.repeat(32),
+        payload: '{"state":"dev"}',
+        createdAtUtc: '2026-08-17T00:00:00.000Z',
+      });
+      return JSON.stringify(created, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    }
+    if (action === 'restore') {
+      const created = createStorageSnapshot({
+        height: 1n,
+        blockId: 'block-1',
+        stateRoot: '11'.repeat(32),
+        payload: '{"state":"dev"}',
+        createdAtUtc: '2026-08-17T00:00:00.000Z',
+      });
+      if (!created.ok) {
+        return JSON.stringify(created, null, 2);
+      }
+      return JSON.stringify(restoreStorageSnapshot(created.value, '/tmp/sunrey-storage-restore'), null, 2);
+    }
+    throw new Error('sunrey-ops storage status|verify|migrate|snapshot|restore');
+  }
+  if (command === 'database') {
+    const action = argv[1] ?? 'status';
+    if (action === 'status') {
+      return JSON.stringify(databaseStatus(), null, 2);
+    }
+    if (action === 'verify') {
+      return JSON.stringify(verifyDatabase(), null, 2);
+    }
+    if (action === 'restore-test') {
+      return JSON.stringify(databaseRestoreTest(), null, 2);
+    }
+    throw new Error('sunrey-ops database status|verify|restore-test');
+  }
   throw new Error(`unknown sunrey-ops command; expected ${RESILIENCE_COMMANDS.join('|')}`);
 }
 
@@ -132,6 +191,14 @@ export function opsUsage(): string {
     'sunrey-ops snapshot create',
     'sunrey-ops snapshot verify',
     'sunrey-ops snapshot restore',
+    'sunrey-ops storage status',
+    'sunrey-ops storage verify',
+    'sunrey-ops storage migrate',
+    'sunrey-ops storage snapshot',
+    'sunrey-ops storage restore',
+    'sunrey-ops database status',
+    'sunrey-ops database verify',
+    'sunrey-ops database restore-test',
     'sunrey-ops state-sync',
     'sunrey-ops upgrade precheck',
     'sunrey-ops incident SIGNER_COMPROMISE',
@@ -356,4 +423,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       await main();
     }
   }
+const entry = process.argv[1] ?? '';
+if (
+  import.meta.url === `file://${entry}` ||
+  entry.endsWith('ops/cli.ts') ||
+  entry.endsWith('ops/cli.js') ||
+  entry.endsWith('cli.ts') ||
+  entry.endsWith('cli.js')
+) {
+  await main();
 }

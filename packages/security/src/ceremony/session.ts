@@ -62,7 +62,7 @@ export function createDefaultCeremonyPlan(input: {
   readonly requiredApprovals?: number;
   readonly networkProfile?: CeremonyNetworkProfile;
 }): CeremonyPlan {
-  return Object.freeze({
+  const plan: CeremonyPlan = {
     ceremonyId: input.ceremonyId ?? `cerm_${secureRandomHex(8)}`,
     purpose: 'SunRey production-candidate root-of-trust rehearsal',
     environmentClass: 'REHEARSAL',
@@ -113,13 +113,14 @@ export function createDefaultCeremonyPlan(input: {
       'attestations',
       'genesis-binding',
       'transcript-hash',
-    ]),
-    evidenceRequirements: Object.freeze(['attestation-hash', 'transcript-hash', 'approval-set']),
+    ] as const),
+    evidenceRequirements: Object.freeze(['attestation-hash', 'transcript-hash', 'approval-set'] as const),
     recoveryPlan: 'replacement-key ceremony; recovery authority cannot become protocol governance',
     networkProfile: input.networkProfile ?? 'DEVELOPMENT_SIMULATION',
     schemaVersion: CEREMONY_SCHEMA_VERSION,
     requiresPublicRpc: false,
-  });
+  };
+  return Object.freeze(plan);
 }
 
 export function genesisBindingHash(input: Omit<GenesisBinding, 'bindingHash' | 'signatureHex' | 'authorityPublicKeyHex'>): string {
@@ -820,7 +821,9 @@ export class CeremonySession {
   publicReport(): PublicCeremonyReport {
     return Object.freeze({
       ceremonyId: this.plan.ceremonyId,
-      participantRoles: [...new Set([...this.participants.values()].map((item) => item.role))],
+      participantRoles: Object.freeze(
+        [...new Set<CeremonyRole>([...this.participants.values()].map((item) => item.role))],
+      ),
       publicFingerprints: this.keys.map((key) => ({
         authority: key.authority,
         purpose: key.purpose,

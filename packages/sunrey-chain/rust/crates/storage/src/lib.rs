@@ -1,7 +1,10 @@
-//! Crash-safe local chain store. Not the customer PostgreSQL financial database.
+//! Production-candidate chain store. Not the customer PostgreSQL financial database.
+//!
+//! Engine decision: **redb 2.4** (pure-Rust ACID embedded KV). RocksDB was
+//! considered and rejected for this workspace because it requires a C++
+//! toolchain in CI. redb supplies multi-table atomic transactions and fsync
+//! durability. See `docs/storage/blockchain-storage-engine.md`.
 
-use std::fs::{self, File, OpenOptions};
-use std::io::{Read, Write};
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
@@ -10,23 +13,43 @@ use sunrey_protocol::{
 };
 use sunrey_state::ChainView;
 
-const FILE_GENESIS: &str = "genesis.bin";
-const FILE_STATE: &str = "state.bin";
-const FILE_META: &str = "meta.json";
-const FILE_WAL: &str = "wal.bin";
-const DIR_BLOCKS: &str = "blocks";
-const DIR_CHECKPOINTS: &str = "checkpoints";
-const DIR_TXINDEX: &str = "txindex";
+mod checksum;
+mod durability;
+mod engine;
+mod file_store;
+mod migration;
+mod namespaces;
+mod rebuild;
+mod redb_engine;
+mod schema;
+mod snapshot;
+mod wal;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FailPoint {
-    None,
-    BeforeExecution,
-    DuringExecution,
-    BeforeDatabaseCommit,
-    DuringPersistence,
-    AfterCommitBeforeResponse,
-}
+pub use checksum::{sha256_hex, unwrap_checksum, wrap_checksum};
+pub use durability::{DurabilityClass, DurabilityPolicy};
+pub use engine::{
+    CommitMetadata, FailPoint, NodeRetentionMode, StorageEngine, StorageHealth, StorageMetrics,
+};
+pub use migration::{
+    fingerprint, fingerprints_equal, migrate_file_store_to_production, CommitFingerprint,
+    MigrationReport,
+};
+pub use namespaces::*;
+pub use rebuild::{assert_state_root, rebuild_state_root, StateRootRebuild};
+pub use schema::{
+    SchemaCompatibility, SchemaRecord, FILE_STORE_SCHEMA_VERSION, PRODUCTION_SCHEMA_VERSION,
+};
+pub use snapshot::{
+    create_production_snapshot, mutate_snapshot_chunk, restore_production_snapshot,
+    verify_production_snapshot, ProductionSnapshot, ProductionSnapshotManifest,
+};
+pub use wal::{
+    WalDomain, APPLICATION_STATE_COMMIT_KIND, CONSENSUS_WAL_KIND, SIGNER_SAFETY_DB_KIND,
+};
+
+pub const PRODUCTION_ENGINE_NAME: &str = "redb";
+pub const PRODUCTION_ENGINE_VERSION: &str = "2.4.0"; // pinned for Rust 1.83 / edition 2021
+pub const PRODUCTION_DB_FILE: &str = "chain.redb";
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ChainMeta {
@@ -44,72 +67,168 @@ pub struct StoredBlock {
     pub block_id: Hash32,
 }
 
-#[derive(Debug)]
+enum Backend {
+    File,
+    Production(redb_engine::RedbEngine),
+}
+
 pub struct ChainStore {
     root: PathBuf,
     pub genesis: GenesisV1,
     pub view: ChainView,
     pub meta: ChainMeta,
     pub fail_point: FailPoint,
+    backend: Backend,
 }
 
 impl ChainStore {
+    pub fn exists(root: impl AsRef<Path>) -> bool {
+        let root = root.as_ref();
+        root.join(PRODUCTION_DB_FILE).exists() || root.join(file_store::FILE_GENESIS).exists()
+    }
+
     pub fn init(
         root: impl AsRef<Path>,
         genesis: GenesisV1,
         genesis_hash: Hash32,
         app_hash: Hash32,
     ) -> Result<Self, RejectReason> {
+        Self::init_production(root, genesis, genesis_hash, app_hash)
+    }
+
+    pub fn init_file(
+        root: impl AsRef<Path>,
+        genesis: GenesisV1,
+        genesis_hash: Hash32,
+        app_hash: Hash32,
+    ) -> Result<Self, RejectReason> {
         let root = root.as_ref().to_path_buf();
-        fs::create_dir_all(&root).map_err(|_| RejectReason::PersistenceFailure)?;
-        fs::create_dir_all(root.join(DIR_BLOCKS)).map_err(|_| RejectReason::PersistenceFailure)?;
-        fs::create_dir_all(root.join(DIR_CHECKPOINTS))
-            .map_err(|_| RejectReason::PersistenceFailure)?;
-        fs::create_dir_all(root.join(DIR_TXINDEX)).map_err(|_| RejectReason::PersistenceFailure)?;
-        if root.join(FILE_GENESIS).exists() {
-            return Self::open(root);
+        file_store::init_dirs(&root)?;
+        if root.join(file_store::FILE_GENESIS).exists() {
+            return Self::open_file(root);
         }
         let meta = ChainMeta {
             height: 0,
             tip_block_id: hash_to_hex(&genesis_hash),
             app_hash: hash_to_hex(&app_hash),
             transaction_root: hash_to_hex(&app_hash),
-            schema_version: genesis.state_schema_version,
+            schema_version: FILE_STORE_SCHEMA_VERSION,
         };
-        atomic_write(root.join(FILE_GENESIS), &genesis.encode())?;
-        let store =
-            Self { root, genesis, view: ChainView::default(), meta, fail_point: FailPoint::None };
+        file_store::write_genesis(&root, &genesis)?;
+        let store = Self {
+            root,
+            genesis,
+            view: ChainView::default(),
+            meta,
+            fail_point: FailPoint::None,
+            backend: Backend::File,
+        };
+        store.persist_state_and_meta()?;
+        Ok(store)
+    }
+
+    pub fn init_production(
+        root: impl AsRef<Path>,
+        genesis: GenesisV1,
+        genesis_hash: Hash32,
+        app_hash: Hash32,
+    ) -> Result<Self, RejectReason> {
+        let root = root.as_ref().to_path_buf();
+        std::fs::create_dir_all(&root).map_err(|_| RejectReason::PersistenceFailure)?;
+        if root.join(PRODUCTION_DB_FILE).exists() {
+            return Self::open(root);
+        }
+        if file_store::is_file_store(&root) {
+            return Self::open_file(root);
+        }
+        let engine = redb_engine::RedbEngine::create(
+            root.join(PRODUCTION_DB_FILE),
+            DurabilityPolicy::PRODUCTION_CANDIDATE,
+            NodeRetentionMode::Archive,
+        )?;
+        engine.put_genesis(&genesis)?;
+        let meta = ChainMeta {
+            height: 0,
+            tip_block_id: hash_to_hex(&genesis_hash),
+            app_hash: hash_to_hex(&app_hash),
+            transaction_root: hash_to_hex(&app_hash),
+            schema_version: PRODUCTION_SCHEMA_VERSION,
+        };
+        engine.persist_chain_meta(&meta)?;
+        file_store::write_genesis(&root, &genesis)?;
+        let store = Self {
+            root,
+            genesis,
+            view: ChainView::default(),
+            meta,
+            fail_point: FailPoint::None,
+            backend: Backend::Production(engine),
+        };
         store.persist_state_and_meta()?;
         Ok(store)
     }
 
     pub fn open(root: impl AsRef<Path>) -> Result<Self, RejectReason> {
         let root = root.as_ref().to_path_buf();
-        let genesis_bytes = read_file(root.join(FILE_GENESIS))?;
-        let genesis = GenesisV1::decode(&genesis_bytes)?;
-        let wal = root.join(FILE_WAL);
-        if wal.exists() {
-            let _ = fs::remove_file(&wal);
+        if root.join(PRODUCTION_DB_FILE).exists() {
+            return Self::open_production(root);
         }
-        let meta: ChainMeta = serde_json::from_slice(&read_file(root.join(FILE_META))?)
-            .map_err(|_| RejectReason::CorruptStore)?;
-        let view = load_state(&root)?;
-        if view.store.app_hash_hex_matches(&meta.app_hash).is_err() {
-            // app hash is verified by the caller with a hasher; store still loads
-        }
-        Ok(Self { root, genesis, view, meta, fail_point: FailPoint::None })
+        Self::open_file(root)
+    }
+
+    pub fn open_file(root: impl AsRef<Path>) -> Result<Self, RejectReason> {
+        let root = root.as_ref().to_path_buf();
+        let genesis = file_store::load_genesis(&root)?;
+        file_store::discard_orphan_wal(&root);
+        let meta = file_store::load_meta(&root)?;
+        let view = file_store::load_state(&root)?;
+        Ok(Self { root, genesis, view, meta, fail_point: FailPoint::None, backend: Backend::File })
+    }
+
+    fn open_production(root: PathBuf) -> Result<Self, RejectReason> {
+        let engine = redb_engine::RedbEngine::open(
+            root.join(PRODUCTION_DB_FILE),
+            DurabilityPolicy::PRODUCTION_CANDIDATE,
+        )?;
+        let genesis = engine.load_genesis().or_else(|_| file_store::load_genesis(&root))?;
+        let meta = engine.load_chain_meta()?;
+        let view = engine.load_view()?;
+        Ok(Self {
+            root,
+            genesis,
+            view,
+            meta,
+            fail_point: FailPoint::None,
+            backend: Backend::Production(engine),
+        })
     }
 
     pub fn data_dir(&self) -> &Path {
         &self.root
     }
 
+    pub fn production_db_path(&self) -> Option<PathBuf> {
+        match self.backend {
+            Backend::Production(_) => Some(self.root.join(PRODUCTION_DB_FILE)),
+            Backend::File => None,
+        }
+    }
+
+    pub fn engine_name(&self) -> &'static str {
+        match self.backend {
+            Backend::File => "file-store",
+            Backend::Production(_) => PRODUCTION_ENGINE_NAME,
+        }
+    }
+
     pub fn persist_state_and_meta(&self) -> Result<(), RejectReason> {
-        write_state(&self.root, &self.view)?;
-        atomic_write(
-            self.root.join(FILE_META),
-            &serde_json::to_vec_pretty(&self.meta).map_err(|_| RejectReason::PersistenceFailure)?,
-        )
+        match &self.backend {
+            Backend::File => file_store::persist_state_and_meta(&self.root, &self.view, &self.meta),
+            Backend::Production(engine) => {
+                engine.persist_view(&self.view)?;
+                engine.persist_chain_meta(&self.meta)
+            }
+        }
     }
 
     pub fn commit_block(
@@ -120,213 +239,200 @@ impl ChainStore {
         tx_ids: &[Hash32],
         next_view: ChainView,
     ) -> Result<(), RejectReason> {
-        if self.fail_point == FailPoint::BeforeDatabaseCommit {
-            return Err(RejectReason::PersistenceFailure);
+        match &mut self.backend {
+            Backend::File => {
+                let (view, meta) = file_store::commit_block(
+                    &self.root,
+                    header,
+                    block_id,
+                    transactions,
+                    tx_ids,
+                    next_view,
+                    self.fail_point,
+                )?;
+                self.view = view;
+                self.meta = meta;
+                Ok(())
+            }
+            Backend::Production(engine) => {
+                let meta = engine.commit_block(
+                    header,
+                    block_id,
+                    transactions,
+                    tx_ids,
+                    &next_view,
+                    self.fail_point,
+                )?;
+                self.view = next_view;
+                self.meta = meta;
+                Ok(())
+            }
         }
-        let wal = encode_wal(header, transactions);
-        if self.fail_point == FailPoint::DuringPersistence {
-            return Err(RejectReason::PersistenceFailure);
-        }
-        atomic_write(self.root.join(FILE_WAL), &wal)?;
-        let encoded_block = encode_block(header, transactions);
-        let block_path = self.root.join(DIR_BLOCKS).join(format!("{:016x}.blk", header.height));
-        atomic_write(&block_path, &encoded_block)?;
-        for tx_id in tx_ids {
-            let idx = self.root.join(DIR_TXINDEX).join(format!("{}.idx", hash_to_hex(tx_id)));
-            atomic_write(idx, header.height.to_be_bytes().as_slice())?;
-        }
-        self.view = next_view;
-        self.meta = ChainMeta {
-            height: header.height,
-            tip_block_id: hash_to_hex(&block_id),
-            app_hash: hash_to_hex(&header.app_hash),
-            transaction_root: hash_to_hex(&header.transaction_root),
-            schema_version: self.genesis.state_schema_version,
-        };
-        self.persist_state_and_meta()?;
-        let _ = fs::remove_file(self.root.join(FILE_WAL));
-        if self.fail_point == FailPoint::AfterCommitBeforeResponse {
-            return Err(RejectReason::PersistenceFailure);
-        }
-        Ok(())
     }
 
     pub fn load_block(&self, height: u64) -> Result<StoredBlock, RejectReason> {
-        if height == 0 || height > self.meta.height {
-            return Err(RejectReason::NotFound);
+        match &self.backend {
+            Backend::File => file_store::load_block(&self.root, height, self.meta.height),
+            Backend::Production(engine) => engine.load_block(height),
         }
-        let path = self.root.join(DIR_BLOCKS).join(format!("{height:016x}.blk"));
-        decode_block(&read_file(path)?)
     }
 
     pub fn load_block_by_id(&self, block_id_hex: &str) -> Result<StoredBlock, RejectReason> {
-        for height in 1..=self.meta.height {
-            let stored = self.load_block(height)?;
-            if hash_to_hex(&stored.block_id) == block_id_hex {
-                return Ok(stored);
+        match &self.backend {
+            Backend::File => {
+                file_store::load_block_by_id(&self.root, block_id_hex, self.meta.height)
             }
+            Backend::Production(engine) => engine.load_block_by_id(block_id_hex),
         }
-        Err(RejectReason::NotFound)
     }
 
     pub fn lookup_tx_height(&self, tx_id_hex: &str) -> Result<u64, RejectReason> {
-        let path = self.root.join(DIR_TXINDEX).join(format!("{tx_id_hex}.idx"));
-        let bytes = read_file(path)?;
-        let arr: [u8; 8] = bytes.try_into().map_err(|_| RejectReason::CorruptStore)?;
-        Ok(u64::from_be_bytes(arr))
+        match &self.backend {
+            Backend::File => file_store::lookup_tx_height(&self.root, tx_id_hex),
+            Backend::Production(engine) => engine.lookup_tx_height(tx_id_hex),
+        }
     }
 
     pub fn create_checkpoint(&self, label: &str) -> Result<PathBuf, RejectReason> {
-        if label.is_empty() || label.contains('/') || label.contains('\\') {
-            return Err(RejectReason::StatelessInvalid);
-        }
-        let dest = self.root.join(DIR_CHECKPOINTS).join(label);
-        fs::create_dir_all(&dest).map_err(|_| RejectReason::PersistenceFailure)?;
-        for name in [FILE_GENESIS, FILE_STATE, FILE_META] {
-            fs::copy(self.root.join(name), dest.join(name))
-                .map_err(|_| RejectReason::PersistenceFailure)?;
-        }
-        let blocks_src = self.root.join(DIR_BLOCKS);
-        let blocks_dest = dest.join(DIR_BLOCKS);
-        fs::create_dir_all(&blocks_dest).map_err(|_| RejectReason::PersistenceFailure)?;
-        for entry in fs::read_dir(blocks_src).map_err(|_| RejectReason::PersistenceFailure)? {
-            let entry = entry.map_err(|_| RejectReason::PersistenceFailure)?;
-            fs::copy(entry.path(), blocks_dest.join(entry.file_name()))
-                .map_err(|_| RejectReason::PersistenceFailure)?;
-        }
-        Ok(dest)
-    }
-}
-
-trait AppHashHex {
-    fn app_hash_hex_matches(&self, _expected: &str) -> Result<(), RejectReason> {
-        Ok(())
-    }
-}
-
-impl AppHashHex for sunrey_state::ObjectStore {}
-
-fn encode_block(header: &BlockHeader, transactions: &[SignedTransaction]) -> Vec<u8> {
-    let mut out = Vec::new();
-    sunrey_protocol::encode_bytes(&mut out, &header.encode());
-    sunrey_protocol::encode_u32(&mut out, transactions.len() as u32);
-    for tx in transactions {
-        sunrey_protocol::encode_bytes(&mut out, &tx.encode());
-    }
-    out
-}
-
-fn decode_block(bytes: &[u8]) -> Result<StoredBlock, RejectReason> {
-    let mut rest = bytes;
-    let header_bytes =
-        sunrey_protocol::decode_bytes(&mut rest).map_err(|_| RejectReason::DecodeFailed)?;
-    let header = BlockHeader::decode(&header_bytes)?;
-    let count =
-        sunrey_protocol::decode_u32(&mut rest).map_err(|_| RejectReason::DecodeFailed)? as usize;
-    let mut transactions = Vec::with_capacity(count);
-    for _ in 0..count {
-        let encoded =
-            sunrey_protocol::decode_bytes(&mut rest).map_err(|_| RejectReason::DecodeFailed)?;
-        transactions.push(SignedTransaction::decode(&encoded)?);
-    }
-    if !rest.is_empty() {
-        return Err(RejectReason::SchemaInvalid);
-    }
-    Ok(StoredBlock { header, transactions, block_id: [0u8; 32] })
-}
-
-fn encode_wal(header: &BlockHeader, transactions: &[SignedTransaction]) -> Vec<u8> {
-    encode_block(header, transactions)
-}
-
-fn write_state(root: &Path, view: &ChainView) -> Result<(), RejectReason> {
-    let mut out = Vec::new();
-    let entries = view.store.entries();
-    sunrey_protocol::encode_u32(&mut out, entries.len() as u32);
-    for (key, value) in entries {
-        sunrey_protocol::encode_bytes(&mut out, &key);
-        sunrey_protocol::encode_bytes(&mut out, &value);
-    }
-    sunrey_protocol::encode_u32(&mut out, view.seen_tx_ids.len() as u32);
-    for tx_id in &view.seen_tx_ids {
-        sunrey_protocol::encode_bytes(&mut out, tx_id);
-    }
-    let checksum = checksum32(&out);
-    out.extend_from_slice(&checksum.to_be_bytes());
-    atomic_write(root.join(FILE_STATE), &out)
-}
-
-fn load_state(root: &Path) -> Result<ChainView, RejectReason> {
-    let bytes = read_file(root.join(FILE_STATE))?;
-    if bytes.len() < 4 {
-        return Err(RejectReason::CorruptStore);
-    }
-    let (body, checksum_bytes) = bytes.split_at(bytes.len() - 4);
-    let expected =
-        u32::from_be_bytes(checksum_bytes.try_into().map_err(|_| RejectReason::CorruptStore)?);
-    if checksum32(body) != expected {
-        return Err(RejectReason::CorruptStore);
-    }
-    let mut input = body;
-    let count =
-        sunrey_protocol::decode_u32(&mut input).map_err(|_| RejectReason::CorruptStore)? as usize;
-    let mut map = std::collections::BTreeMap::new();
-    for _ in 0..count {
-        let key =
-            sunrey_protocol::decode_bytes(&mut input).map_err(|_| RejectReason::CorruptStore)?;
-        let value =
-            sunrey_protocol::decode_bytes(&mut input).map_err(|_| RejectReason::CorruptStore)?;
-        map.insert(key, value);
-    }
-    let tx_count =
-        sunrey_protocol::decode_u32(&mut input).map_err(|_| RejectReason::CorruptStore)? as usize;
-    let mut seen = std::collections::BTreeSet::new();
-    for _ in 0..tx_count {
-        let id =
-            sunrey_protocol::decode_bytes(&mut input).map_err(|_| RejectReason::CorruptStore)?;
-        let hash: Hash32 = id.as_slice().try_into().map_err(|_| RejectReason::CorruptStore)?;
-        seen.insert(hash);
-    }
-    if !input.is_empty() {
-        return Err(RejectReason::CorruptStore);
-    }
-    Ok(ChainView { store: sunrey_state::ObjectStore::from_entries(map), seen_tx_ids: seen })
-}
-
-fn checksum32(bytes: &[u8]) -> u32 {
-    let mut acc: u32 = 0x811c_9dc5;
-    for byte in bytes {
-        acc ^= u32::from(*byte);
-        acc = acc.wrapping_mul(0x0100_0193);
-    }
-    acc
-}
-
-fn atomic_write(path: impl AsRef<Path>, bytes: &[u8]) -> Result<(), RejectReason> {
-    let path = path.as_ref();
-    let tmp = path.with_extension("tmp");
-    {
-        let mut file = OpenOptions::new()
-            .create(true)
-            .write(true)
-            .truncate(true)
-            .open(&tmp)
-            .map_err(|_| RejectReason::PersistenceFailure)?;
-        file.write_all(bytes).map_err(|_| RejectReason::PersistenceFailure)?;
-        file.sync_all().map_err(|_| RejectReason::PersistenceFailure)?;
-    }
-    fs::rename(&tmp, path).map_err(|_| RejectReason::PersistenceFailure)?;
-    if let Some(dir) = path.parent() {
-        if let Ok(dir_file) = File::open(dir) {
-            let _ = dir_file.sync_all();
+        match &self.backend {
+            Backend::File => file_store::create_checkpoint(&self.root, label),
+            Backend::Production(_) => {
+                let dest = self.root.join("checkpoints").join(label);
+                let snap = create_production_snapshot(
+                    self,
+                    &dest,
+                    "net_sunrey_local_dev",
+                    "chn_sunrey_local_dev",
+                    "1",
+                    FailPoint::None,
+                )?;
+                Ok(snap.payload_dir)
+            }
         }
     }
-    Ok(())
+
+    pub fn export_engine(&self, dest: &Path) -> Result<(), RejectReason> {
+        match &self.backend {
+            Backend::File => {
+                file_store::create_checkpoint(&self.root, "export")?;
+                Ok(())
+            }
+            Backend::Production(engine) => {
+                engine.export_snapshot(dest)?;
+                Ok(())
+            }
+        }
+    }
+
+    pub fn import_block(&mut self, height: u64, block: &StoredBlock) -> Result<(), RejectReason> {
+        match &self.backend {
+            Backend::File => {
+                let path =
+                    self.root.join(file_store::DIR_BLOCKS).join(format!("{height:016x}.blk"));
+                file_store::atomic_write(
+                    path,
+                    &file_store::encode_block(&block.header, &block.transactions),
+                )
+            }
+            Backend::Production(engine) => {
+                let encoded = file_store::encode_block(&block.header, &block.transactions);
+                engine.put_raw_for_test(
+                    "ns_blocks",
+                    &height.to_be_bytes(),
+                    &wrap_checksum(&encoded),
+                )?;
+                if !block.header.app_hash.iter().all(|b| *b == 0) {
+                    engine.put_raw_for_test(
+                        "ns_blocks",
+                        hash_to_hex(&block.block_id).as_bytes(),
+                        &wrap_checksum(&height.to_be_bytes()),
+                    )?;
+                }
+                Ok(())
+            }
+        }
+    }
+
+    pub fn reindex_from_view(&self) -> Result<(), RejectReason> {
+        self.persist_state_and_meta()
+    }
+
+    pub fn health(&self) -> Result<StorageHealth, RejectReason> {
+        match &self.backend {
+            Backend::File => Ok(StorageHealth {
+                engine: "file-store".to_string(),
+                schema_version: self.meta.schema_version,
+                schema: SchemaCompatibility::MigrationRequired,
+                durability: DurabilityPolicy::DEVELOPMENT,
+                mode: NodeRetentionMode::Archive,
+                height: self.meta.height,
+                ready: true,
+                errors: 0,
+            }),
+            Backend::Production(engine) => engine.health(),
+        }
+    }
+
+    pub fn metrics(&self) -> StorageMetrics {
+        match &self.backend {
+            Backend::File => StorageMetrics::default(),
+            Backend::Production(engine) => engine.metrics(),
+        }
+    }
+
+    pub fn verify_integrity(&self) -> Result<(), RejectReason> {
+        match &self.backend {
+            Backend::File => {
+                let _ = file_store::load_state(&self.root)?;
+                Ok(())
+            }
+            Backend::Production(engine) => engine.verify_integrity(),
+        }
+    }
+
+    pub fn set_retention_mode(&mut self, mode: NodeRetentionMode) {
+        if let Backend::Production(engine) = &mut self.backend {
+            engine.mode = mode;
+        }
+    }
+
+    pub fn corrupt_for_test(&self, target: &str) -> Result<(), RejectReason> {
+        match &self.backend {
+            Backend::File => {
+                let path = match target {
+                    "block" => {
+                        self.root.join(file_store::DIR_BLOCKS).join(format!("{:016x}.blk", 1u64))
+                    }
+                    "state" => self.root.join(file_store::FILE_STATE),
+                    "meta" => self.root.join(file_store::FILE_META),
+                    _ => return Err(RejectReason::StatelessInvalid),
+                };
+                let mut bytes = file_store::read_file(&path)?;
+                if !bytes.is_empty() {
+                    let idx = bytes.len() / 2;
+                    bytes[idx] ^= 0xff;
+                    std::fs::write(path, bytes).map_err(|_| RejectReason::PersistenceFailure)?;
+                }
+                Ok(())
+            }
+            Backend::Production(engine) => match target {
+                "block" => {
+                    engine.put_raw_for_test("ns_blocks", &1u64.to_be_bytes(), b"not-a-checksum")
+                }
+                "state" => engine.put_raw_for_test("ns_state", b"corrupt", b"not-a-checksum"),
+                "meta" => engine.put_raw_for_test("sys_meta", b"chain_meta", b"not-a-checksum"),
+                _ => Err(RejectReason::StatelessInvalid),
+            },
+        }
+    }
 }
 
-fn read_file(path: impl AsRef<Path>) -> Result<Vec<u8>, RejectReason> {
-    let mut file = File::open(path).map_err(|_| RejectReason::NotFound)?;
-    let mut bytes = Vec::new();
-    file.read_to_end(&mut bytes).map_err(|_| RejectReason::CorruptStore)?;
-    Ok(bytes)
+impl std::fmt::Debug for ChainStore {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ChainStore")
+            .field("root", &self.root)
+            .field("meta", &self.meta)
+            .field("engine", &self.engine_name())
+            .finish()
+    }
 }
