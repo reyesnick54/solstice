@@ -97,6 +97,7 @@ import {
   verifySnapshot,
   warnDiskPressure,
 } from './ops/index.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
 import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
@@ -622,10 +623,10 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       trustedFinalizedHeight: 10n,
       trustedStateRoot: '11'.repeat(32),
     };
-    assert.equal(verifySnapshot(created.value, trust).ok, true);
+    assert.equal(verifyChainSnapshot(created.value, trust).ok, true);
     const tampered = { ...created.value, payload: '{"state":"evil"}' };
-    assert.equal(verifySnapshot(tampered, trust).ok, false);
-    const wrongNet = verifySnapshot(created.value, { ...trust, networkId: 'net_other' });
+    assert.equal(verifyChainSnapshot(tampered, trust).ok, false);
+    const wrongNet = verifyChainSnapshot(created.value, { ...trust, networkId: 'net_other' });
     assert.equal(wrongNet.ok, false);
     if (!wrongNet.ok) {
       assert.equal(wrongNet.error.code, 'WRONG_NETWORK_SNAPSHOT');

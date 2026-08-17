@@ -116,6 +116,12 @@ export function markHsmVerified(current: HsmReadinessState, evidenceDigest: stri
   if (current === 'EXTERNAL_HSM_VERIFIED') {
     return infraOk(current);
   }
+  return infraErr(
+    'HSM_UNVERIFIED',
+    evidenceDigest
+      ? `${current} cannot become EXTERNAL_HSM_VERIFIED from the infrastructure adapter; commercial HSM evidence remains external`
+      : 'unverified HSM cannot become verified without independent commercial HSM evidence',
+  );
   if (current === 'EXTERNAL_HSM_CONFIGURED_UNVERIFIED' && !evidenceDigest) {
     return infraErr('HSM_UNVERIFIED', 'unverified HSM cannot become verified without external evidence');
   }

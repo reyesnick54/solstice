@@ -1,3 +1,9 @@
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
+
 import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
 import { runCryptoCommand } from './crypto-cli.ts';
@@ -10,6 +16,7 @@ import { developmentSentryTopology } from './sentry.ts';
 import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
 import { databaseRestoreTest, databaseStatus, verifyDatabase } from './database.ts';
 import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
 import {
   createStorageSnapshot,
   migrateDevStore,
@@ -20,6 +27,7 @@ import {
 import { planGenesisSync } from './state-sync.ts';
 import type { DrillScenario } from './types.ts';
 import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
+import type { DrillScenario } from './types.ts';
 import {
   developmentEpoch,
   eraseEvidence,
@@ -85,6 +93,9 @@ export function runSunreyOps(argv: readonly string[]): string {
       return JSON.stringify({ restored: 'val_dev_7', height: snapshot.manifest.height }, null, 2);
     }
     throw new Error('sunrey-ops backup create|verify|restore');
+  }
+  if (command === 'crypto') {
+    return JSON.stringify(runCryptoCommand(argv.slice(1)), null, 2);
   }
   if (command === 'dr') {
     const action = argv[1] ?? 'run';
@@ -220,10 +231,6 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   }
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
-  }
-  if (group === 'crypto') {
-    const result = runCryptoCommand(args.slice(1));
-    return { ok: result.ok, command: 'crypto', payload: result.payload };
   }
   const config = developmentValidatorConfig({ dataDirectory: dataDir });
   const set = fourValidatorDevelopmentSet();
@@ -413,6 +420,14 @@ export async function main(): Promise<void> {
   }
 }
 
+const entry = process.argv[1] ?? '';
+if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
 if (import.meta.url === `file://${process.argv[1]}`) {
   const entry = process.argv[1] ?? '';
   if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {

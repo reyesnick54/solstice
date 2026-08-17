@@ -84,6 +84,7 @@ npm run demo:sunrey-interop
 npm run demo:sunrey-ops
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
+npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify

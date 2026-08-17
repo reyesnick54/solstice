@@ -2476,11 +2476,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/mainnet",
-        "packages/sunrey-mainnet",
-        "packages/genesis-candidate",
-        "packages/readiness-registry",
-        "packages/activation-control"
         "packages/ceremony",
         "packages/hsm-v2",
         "packages/root-of-trust",

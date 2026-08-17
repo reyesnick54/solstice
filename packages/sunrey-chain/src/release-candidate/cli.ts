@@ -63,6 +63,8 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
     const created = createReleaseCandidate({
       root,
       profile: profileOf(argv),
+      ...(rcId ? { rcId } : {}),
+      ...(sourceCommit ? { sourceCommit } : {}),
       ...(rcId !== undefined ? { rcId } : {}),
       ...(sourceCommit !== undefined ? { sourceCommit } : {}),
       ...optionalFlag('rcId', flagValue(argv, '--id')),
@@ -137,6 +139,7 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
       root,
       profile: profileOf(argv),
       previous,
+      ...(sourceCommit ? { sourceCommit } : {}),
       ...(sourceCommit !== undefined ? { sourceCommit } : {}),
       ...optionalFlag('sourceCommit', flagValue(argv, '--commit')),
       ...(sourceCommit === undefined ? {} : { sourceCommit }),
