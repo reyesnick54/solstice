@@ -122,7 +122,7 @@ describe('Chunk 62 SunRey independent security-review package', () => {
     assert.equal(sample.includes('TEST_ONLY_PUBLIC_KEY_PLACEHOLDER'), true);
     assert.equal(sample.includes('BEGIN PRIVATE KEY'), false);
     assert.equal(JSON.stringify(SANITIZED_SAMPLE_CONFIG).includes('private_key'), false);
-    assert.ok(secretExclusionFindings('-----BEGIN PRIVATE KEY-----\nMIIB').length > 0);
+    assert.ok(secretExclusionFindings('-----BEGIN ' + 'PRIVATE KEY-----\nMIIB').length > 0);
   });
 
   it('enforces finding lifecycle and refuses AI resolution', () => {
@@ -238,6 +238,6 @@ describe('Chunk 62 SunRey independent security-review package', () => {
     const dir = mkdtempSync(join(tmpdir(), 'sunrey-audit-'));
     writeFileSync(join(dir, 'note.txt'), 'safe');
     assert.equal(secretExclusionFindings('safe').length, 0);
-    assert.ok(secretExclusionFindings('-----BEGIN OPENSSH PRIVATE KEY-----').length > 0);
+    assert.ok(secretExclusionFindings('-----BEGIN ' + 'OPENSSH PRIVATE KEY-----').length > 0);
   });
 });

@@ -227,14 +227,15 @@ export function generateAuditBundle(root: string, options: {
   writeFileSync(join(outDir, 'manifest.json'), manifestBody);
 
   const { authority } = localTestReleaseAuthority();
-  const signature = signArtifact(Buffer.from(sha256Text(bundleText + manifestBody)), authority);
+  const canonical = Buffer.from(bundleText + manifestBody);
+  const signature = signArtifact(canonical, authority);
   const signed: SignedAuditBundle = Object.freeze({
     manifest,
     signature,
     authorityId: authority.authorityId,
   });
   writeFileSync(join(outDir, 'signature.json'), stableJson(signed));
-  writeFileSync(join(outDir, 'canonical-hash.txt'), `${sha256Text(bundleText + manifestBody)}\n`);
+  writeFileSync(join(outDir, 'canonical-hash.txt'), `${sha256Text(canonical)}\n`);
 
   const secretFindings = [...artifacts.values()].flatMap((body) => secretExclusionFindings(body));
   return { outDir, manifest, signed, secretFindings };
@@ -268,9 +269,10 @@ export function verifyAuditBundle(bundleDir: string): BundleVerificationResult {
     checks.push({ id: `hash:${row.path}`, ok, detail: digest });
     bundleText += `${row.path}\0${digest}\n`;
   }
-  const expected = sha256Text(bundleText + manifestBody);
+  const canonical = Buffer.from(bundleText + manifestBody);
+  const expected = sha256Text(canonical);
   const { authority } = localTestReleaseAuthority();
-  const signatureOk = verifySignature(Buffer.from(expected), signed.signature, authority)
+  const signatureOk = verifySignature(canonical, signed.signature, authority)
     && signed.signature.artifactDigest === expected;
   checks.push({ id: 'artifact-hashes', ok: hashesOk, detail: hashesOk ? 'matched' : 'tamper' });
   checks.push({ id: 'signature', ok: signatureOk, detail: signed.authorityId });

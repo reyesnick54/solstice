@@ -64,6 +64,6 @@ export const ECONOMIC_REVIEW_PACKAGE = Object.freeze({
     'percentage-return',
     'growth-rate field',
     'blended-performance field',
-  ]
+  ],
   note: 'Cost-avoided is never income. Unrealized is never withdrawable. Principal movement is not growth.',
 });
