@@ -20,12 +20,9 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
         "asset" => asset_command(&args[1..]),
         "fees" => fees_command(&args[1..]),
         "interop" => interop_command(&args[1..]),
-        _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, or interop".into(),
         "wallet" => wallet_command(&args[1..]),
         _ => Err(NodeError::Validation(
-            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, or fees".into(),
-            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, or wallet".into(),
+            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, interop, or wallet".into(),
         )),
     }
 }
@@ -306,6 +303,8 @@ fn fees_command(args: &[String]) -> NodeResult<String> {
 fn interop_command(args: &[String]) -> NodeResult<String> {
     sunrey_interop::cli::run_interop_command(args)
         .map_err(|err| NodeError::Validation(err.to_string()))
+}
+
 fn wallet_command(args: &[String]) -> NodeResult<String> {
     let usage = [
         "sunrey-wallet create|address|account|balance|build|sign|submit|tx|history|key-rotate|recovery|delegate|watch",

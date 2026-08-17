@@ -53,6 +53,8 @@ npm run demo:sunrey-oracle
 npm run demo:sunrey-fees
 npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
+npm run demo:sunrey-interop
+npm run demo:sunrey-ops
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet
 npm run demo:sunrey-accountability

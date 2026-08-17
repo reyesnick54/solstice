@@ -1,0 +1,11 @@
+{
+  "id": "VALIDATOR",
+  "title": "Validator",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "validator_missed_votes",
+    "signer_errors",
+    "validator_peer_count"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "id": "EXPLORER",
+  "title": "Explorer",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "explorer_lag"
+  ]
+}

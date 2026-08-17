@@ -434,3 +434,10 @@ Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 Wallet metadata is not a second native-asset ledger.
+Chunk 55 implements multi-failure-domain resilience, observability,
+backup, and disaster-recovery drills at `packages/sunrey-chain`.
+Capability `sunrey-ops-resilience` is `IMPLEMENTED`. See
+[`chunk-55-resilience-observability.md`](./chunk-55-resilience-observability.md).
+Do not create `packages/sunrey-ops`, `packages/observability`, or
+`packages/disaster-recovery`. Engineering SLOs remain
+`ENGINEERING_TEST_TARGETS`.

@@ -1,0 +1,11 @@
+{
+  "id": "INTEROP",
+  "title": "Interop",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "verified_headers",
+    "frozen_clients",
+    "relayer_latency"
+  ]
+}

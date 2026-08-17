@@ -150,6 +150,7 @@ export {
 export type { AssetMigrationManifest } from './native-assets/migration.ts';
 export type { AssetAuthority, NativeAssetAuthorityBoundary } from './native-assets/authority.ts';
 export * as nativeCustody from './native-custody/index.ts';
+export * as ops from './ops/index.ts';
 export {
   DEVELOPMENT_FAUCET_ADDRESS,
   SimulationNativeCustodyChain,

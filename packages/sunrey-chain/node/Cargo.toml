@@ -37,6 +37,8 @@ path = "src/bin/sunrey-native-asset-demo.rs"
 [[bin]]
 name = "sunrey-relayer"
 path = "src/bin/sunrey-relayer.rs"
+
+[[bin]]
 name = "sunrey-exchange-settlement-demo"
 path = "src/bin/sunrey-exchange-settlement-demo.rs"
 

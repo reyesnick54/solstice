@@ -13,6 +13,13 @@ pub struct ConsensusMetrics {
     pub validator_sync_lag: AtomicU64,
     pub consensus_message_rejects: AtomicU64,
     pub partition_recovery_time_ms: AtomicU64,
+    pub finalized_height: AtomicU64,
+    pub consensus_round: AtomicU64,
+    pub prevote_power: AtomicU64,
+    pub precommit_power: AtomicU64,
+    pub signer_latency_ms: AtomicU64,
+    pub signer_errors: AtomicU64,
+    pub wal_recovery_events: AtomicU64,
 }
 
 impl ConsensusMetrics {
@@ -29,6 +36,13 @@ impl ConsensusMetrics {
             validator_sync_lag: self.validator_sync_lag.load(Ordering::Relaxed),
             consensus_message_rejects: self.consensus_message_rejects.load(Ordering::Relaxed),
             partition_recovery_time_ms: self.partition_recovery_time_ms.load(Ordering::Relaxed),
+            finalized_height: self.finalized_height.load(Ordering::Relaxed),
+            consensus_round: self.consensus_round.load(Ordering::Relaxed),
+            prevote_power: self.prevote_power.load(Ordering::Relaxed),
+            precommit_power: self.precommit_power.load(Ordering::Relaxed),
+            signer_latency_ms: self.signer_latency_ms.load(Ordering::Relaxed),
+            signer_errors: self.signer_errors.load(Ordering::Relaxed),
+            wal_recovery_events: self.wal_recovery_events.load(Ordering::Relaxed),
         }
     }
 
@@ -59,4 +73,11 @@ pub struct ConsensusMetricsSnapshot {
     pub validator_sync_lag: u64,
     pub consensus_message_rejects: u64,
     pub partition_recovery_time_ms: u64,
+    pub finalized_height: u64,
+    pub consensus_round: u64,
+    pub prevote_power: u64,
+    pub precommit_power: u64,
+    pub signer_latency_ms: u64,
+    pub signer_errors: u64,
+    pub wal_recovery_events: u64,
 }

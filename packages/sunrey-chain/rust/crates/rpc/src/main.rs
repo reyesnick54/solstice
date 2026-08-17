@@ -130,6 +130,10 @@ enum Command {
         #[command(subcommand)]
         command: InteropCommand,
     },
+    Wallet {
+        #[command(subcommand)]
+        command: WalletCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -165,9 +169,6 @@ enum InteropCommand {
     Security {
         #[arg(long)]
         data_dir: PathBuf,
-    Wallet {
-        #[command(subcommand)]
-        command: WalletCommand,
     },
 }
 

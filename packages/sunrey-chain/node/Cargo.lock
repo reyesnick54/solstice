@@ -954,7 +954,6 @@ dependencies = [
 
 [[package]]
 name = "sunrey-crypto"
-name = "sunrey-native-assets"
 version = "0.1.0"
 dependencies = [
  "base64ct",

@@ -1131,6 +1131,35 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/relayer')), false);
   });
 
+  it('CHUNK-55 implements multi-failure-domain resilience on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-ops-resilience').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-ops-resilience').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-ops-resilience').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-55',
+    );
+    assert.ok(declared, 'CHUNK-55 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-55-resilience-observability.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/observability.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/alerts.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/backups.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/disaster-recovery.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/failure-domain-loss.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/database-recovery.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/chain-state-recovery.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operations/signer-failover.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/ops/platform.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/ops/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ops')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/observability')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/disaster-recovery')), false);
+  });
+
   it('CHUNK-42 implements native fees on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').status, 'IMPLEMENTED');

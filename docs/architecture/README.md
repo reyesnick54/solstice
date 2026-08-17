@@ -101,4 +101,8 @@
   — native-asset vaults, remote/HSM signing, finalized deposits.
   [Signing architecture](./native-custody-signing.md).
 
+- [Chunk 55 resilience and observability](./chunk-55-resilience-observability.md)
+  — multi-failure-domain operations, backups, and DR drills at
+  `packages/sunrey-chain/src/ops`.
+
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

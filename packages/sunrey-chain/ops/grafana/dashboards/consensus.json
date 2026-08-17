@@ -1,0 +1,11 @@
+{
+  "id": "CONSENSUS",
+  "title": "Consensus",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "consensus_round",
+    "finality_latency",
+    "round_changes"
+  ]
+}

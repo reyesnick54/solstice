@@ -1,0 +1,11 @@
+{
+  "id": "CUSTODY",
+  "title": "Custody",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "deposit_finality_lag",
+    "submission_unknown_count",
+    "reconciliation_mismatches"
+  ]
+}
