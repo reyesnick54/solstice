@@ -137,6 +137,7 @@ export * as productive from './productive/index.ts';
 export * as oracle from './oracle/index.ts';
 export * as fees from './fees/index.ts';
 export * as interop from './interop/index.ts';
+export * as wallet from './wallet/index.ts';
 export {
   CURRENT_APPLICATION_AUTHORITY,
   NATIVE_BLOCKCHAIN_AUTHORITY,
@@ -148,3 +149,10 @@ export {
 } from './native-assets/migration.ts';
 export type { AssetMigrationManifest } from './native-assets/migration.ts';
 export type { AssetAuthority, NativeAssetAuthorityBoundary } from './native-assets/authority.ts';
+export * as nativeCustody from './native-custody/index.ts';
+export {
+  DEVELOPMENT_FAUCET_ADDRESS,
+  SimulationNativeCustodyChain,
+  custodyAddressFromPublicKey,
+} from './native-custody/index.ts';
+export type { NativeCustodyChainPort } from './native-custody/index.ts';

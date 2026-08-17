@@ -18,6 +18,7 @@ sunrey-productive.workspace = true
 sunrey-oracle.workspace = true
 sunrey-fees.workspace = true
 sunrey-native-assets.workspace = true
+sunrey-wallet.workspace = true
 sunrey-node.workspace = true
 sunrey-protocol.workspace = true
 sunrey-storage.workspace = true

@@ -57,6 +57,10 @@ const COMPETING_PATHS = [
   'packages/interop',
   'packages/light-client',
   'packages/relayer',
+  'packages/wallet-v2',
+  'packages/blockchain-wallet',
+  'packages/crypto-wallet',
+  'packages/sunrey-wallet-ledger',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

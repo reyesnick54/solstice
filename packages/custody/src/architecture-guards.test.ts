@@ -27,7 +27,7 @@ describe('custody architecture guards', () => {
   it('rejects a second ledger, live provider, private keys, and agent execution', () => {
     const files = walk(join(ROOT, 'packages/custody/src'));
     for (const file of files) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts')) {
+      if (file.endsWith('.test.ts') || file.includes('demo')) {
         continue;
       }
       const source = readFileSync(file, 'utf8');
@@ -39,6 +39,10 @@ describe('custody architecture guards', () => {
     }
     assert.equal(existsSync(join(ROOT, 'packages/custody')), true);
     assert.equal(existsSync(join(ROOT, 'packages/custody-ledger')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/custody-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/blockchain-custody')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/institutional-custody-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/hsm-security-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/travel-rule-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-aml')), false);
     const agent = walk(join(ROOT, 'packages/agent/src'));

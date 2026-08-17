@@ -16,6 +16,7 @@ members = [
   "crates/validators",
   "crates/native-assets",
   "crates/interop",
+  "crates/wallet",
 ]
 
 [workspace.package]
@@ -40,6 +41,7 @@ sunrey-fees = { path = "crates/fees" }
 sunrey-validators = { path = "crates/validators" }
 sunrey-native-assets = { path = "crates/native-assets" }
 sunrey-interop = { path = "crates/interop" }
+sunrey-wallet = { path = "crates/wallet" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"

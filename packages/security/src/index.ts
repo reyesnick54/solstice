@@ -293,3 +293,36 @@ export {
 } from './store.ts';
 
 export { UnavailableKeyProvider } from './unavailable.ts';
+
+export {
+  HSM_IMPLEMENTATION_STATES,
+  HSM_KEY_IMPORT_POLICIES,
+  HSM_KMS_KINDS,
+  PQ_CAPABILITY_FLAGS,
+  negotiateSuiteCapability,
+  type HsmAttestationMetadata,
+  type HsmGenerateInput,
+  type HsmHealth,
+  type HsmImportInput,
+  type HsmImplementationState,
+  type HsmKeyHandle,
+  type HsmKeyImportPolicy,
+  type HsmKmsCapabilities,
+  type HsmKmsKind,
+  type HsmKmsProvider,
+  type HsmProviderVersion,
+  type HsmSignInput,
+  type PqCapabilityFlag,
+} from './hsm-kms.ts';
+
+export {
+  DEVELOPMENT_HSM_ENVIRONMENT_LABEL,
+  DEVELOPMENT_HSM_PROVIDER_ID,
+  DEVELOPMENT_HSM_VERSION,
+  DEVELOPMENT_KMS_ENVIRONMENT_LABEL,
+  DEVELOPMENT_KMS_PROVIDER_ID,
+  DevelopmentHsmSimulator,
+  DevelopmentKmsSimulator,
+  createDevelopmentHsmSimulator,
+  createDevelopmentKmsSimulator,
+} from './hsm-simulator.ts';

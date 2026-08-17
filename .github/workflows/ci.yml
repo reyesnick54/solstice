@@ -106,14 +106,28 @@ jobs:
         run: npm run demo:sunrey-fees
       - name: SunRey interoperability demo
         run: npm run demo:sunrey-interop
+      - name: SunRey sovereign wallets demo
+        run: npm run demo:sunrey-wallet
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
+      - name: SunRey Exchange native settlement demo
+        run: npm run demo:sunrey-exchange-native
+      - name: SunRey Exchange four-validator DVP demo
+        run: npm run demo:sunrey-exchange-settlement
       - name: Custody deposit and withdrawal demo
         run: npm run demo:custody
+      - name: Institutional native-asset custody demo
+        run: npm run demo:institutional-custody
+      - name: Custody submission-unknown demo
+        run: npm run demo:custody-unknown
+      - name: Custody cold-signing demo
+        run: npm run demo:custody-cold
       - name: Market surveillance demo
         run: npm run demo:market-surveillance
       - name: Listing governance demo
         run: npm run demo:listing-governance
+      - name: Universal economic exchange demo
+        run: npm run demo:universal-exchange
 
       - name: Typecheck
         run: npm run typecheck

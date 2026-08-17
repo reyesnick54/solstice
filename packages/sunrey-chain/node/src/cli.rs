@@ -22,6 +22,10 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
         "interop" => interop_command(&args[1..]),
         _ => Err(NodeError::Validation(
             "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, or interop".into(),
+        "wallet" => wallet_command(&args[1..]),
+        _ => Err(NodeError::Validation(
+            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, or fees".into(),
+            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, or wallet".into(),
         )),
     }
 }
@@ -302,4 +306,24 @@ fn fees_command(args: &[String]) -> NodeResult<String> {
 fn interop_command(args: &[String]) -> NodeResult<String> {
     sunrey_interop::cli::run_interop_command(args)
         .map_err(|err| NodeError::Validation(err.to_string()))
+fn wallet_command(args: &[String]) -> NodeResult<String> {
+    let usage = [
+        "sunrey-wallet create|address|account|balance|build|sign|submit|tx|history|key-rotate|recovery|delegate|watch",
+        "Read endpoints: /wallet/account /wallet/nonce /wallet/holdings /wallet/locks /wallet/fee-estimate /wallet/tx /wallet/finality /wallet/crypto-policy",
+        "Private keys are never exposed over RPC.",
+    ]
+    .join("\n");
+    if args.is_empty() {
+        return Ok(serde_json::json!({
+            "usage": usage,
+            "note": "use the sunrey-wallet binary or TypeScript CLI; this operator surface is read-only"
+        })
+        .to_string());
+    }
+    Ok(serde_json::json!({
+        "command": args[0],
+        "usage": usage,
+        "private_keys_exposed": false,
+    })
+    .to_string())
 }

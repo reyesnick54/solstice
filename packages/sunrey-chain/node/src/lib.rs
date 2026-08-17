@@ -42,8 +42,8 @@ pub use error::{HandshakeRejectReason, NodeError};
 pub use identity::{NodeId, PeerAddress, PeerIdentity, PeerPublicKey, PeerSession};
 pub use node::{ConsensusNodeConfig, DevelopmentNode, NodeConfig, NodeEvent};
 pub use validator_demo::{
-    run_four_validator_devnet, run_native_asset_devnet, FourValidatorReport,
-    NativeAssetDevnetReport,
+    run_exchange_settlement_devnet, run_four_validator_devnet, run_native_asset_devnet,
+    ExchangeSettlementDevnetReport, FourValidatorReport, NativeAssetDevnetReport,
 };
 
 #[cfg(test)]

@@ -93,6 +93,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'creditExternalDeposit', file: 'packages/custody/src/service.ts' },
   { symbol: 'addDestination', file: 'packages/custody/src/service.ts' },
   { symbol: 'initiateWithdrawal', file: 'packages/custody/src/service.ts' },
+  { symbol: 'requestWithdrawal', file: 'packages/custody/src/institutional/service.ts' },
 ];
 
 const failures = [];

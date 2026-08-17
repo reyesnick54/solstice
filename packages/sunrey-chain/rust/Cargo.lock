@@ -712,6 +712,7 @@ dependencies = [
  "sunrey-protocol",
  "sunrey-storage",
  "sunrey-validators",
+ "sunrey-wallet",
  "thiserror",
  "tracing",
  "tracing-subscriber",
@@ -749,6 +750,18 @@ dependencies = [
  "sha2",
  "sunrey-crypto",
  "sunrey-protocol",
+ "thiserror",
+]
+
+[[package]]
+name = "sunrey-wallet"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "hex",
+ "serde",
+ "serde_json",
+ "sha2",
  "thiserror",
 ]
 

@@ -60,6 +60,16 @@
   controller-bound machine identity and commerce.
   [Identity model](./machine-economic-identity.md).
   [Commerce protocol](./machine-commerce-protocol.md).
+- [Chunk 49 universal economic exchange](./chunk-49-universal-economic-exchange.md) —
+  four market families at `packages/sunrey-exchange`.
+  [Market families](./exchange-market-families.md).
+  [Information-right market](./information-right-market.md).
+  [Compute market](./compute-capacity-market.md).
+  [Productive capacity market](./productive-capacity-market.md).
+- [Chunk 46 sovereign wallets](./chunk-46-sovereign-wallets.md) —
+  addresses, BlockchainAccount authorization, multi-auth, recovery.
+  [Address spec](./sunrey-address-spec.md).
+  [Authorization](./blockchain-account-authorization.md).
 - [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
   signed observations and VerifiedEconomicFacts. Not money.
 - [Oracle economic fact spec](./oracle-economic-fact-spec.md)
@@ -86,5 +96,9 @@
 - [Chunk 32 resume](./chunk-32-resume.md) — canonical transaction
   envelope, economic objects, protobuf codec, and test vectors at
   `packages/sunrey-chain`
+
+- [Chunk 47 institutional custody](./chunk-47-institutional-custody.md)
+  — native-asset vaults, remote/HSM signing, finalized deposits.
+  [Signing architecture](./native-custody-signing.md).
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

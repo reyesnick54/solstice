@@ -41,8 +41,33 @@ import {
 } from './ids.ts';
 import { applyFill, matchIncoming, sortBook, toTrade } from './matching.ts';
 import { comparePrice, exchangePrice, quoteMoney, type ExchangePrice } from './price.ts';
-import type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
+import type {
+  ChainAnchorPort,
+  CleanRoomPort,
+  CoinPort,
+  ConsentPort,
+  FiatPort,
+  InformationMarketPort,
+  MachineCapabilityPort,
+  OraclePort,
+  ProductiveGraphPort,
+} from './ports.ts';
 import { ExchangeStore } from './store.ts';
+import { UniversalExchangeEngine } from './universal.ts';
+import {
+  InMemoryCleanRoomPort,
+  InMemoryConsentPort,
+  InMemoryMachineCapabilityPort,
+  InMemoryOraclePort,
+  InMemoryProductiveGraphPort,
+} from './adapters.ts';
+import {
+  GPU_COMPUTE_MARKET_ID,
+  INFORMATION_RIGHT_MARKET_ID,
+  MANUFACTURING_CAPACITY_MARKET_ID,
+  MOONREY_COIN_ASSET_ID,
+  SUNREY_MOONREY_MARKET_ID,
+} from './ids.ts';
 import {
   EVIDENCE_KIND_EXCHANGE,
   PRICE_LABEL,
@@ -90,6 +115,7 @@ export class SunReyExchangeService {
   private readonly informationMarket: InformationMarketPort | null;
   private readonly chain: ChainAnchorPort | null;
   private readonly store = new ExchangeStore();
+  readonly universal: UniversalExchangeEngine;
   readonly feeSchedule: FeeSchedule = Object.freeze({
     scheduleId: SIMULATION_FEE_SCHEDULE_ID,
     version: 1,
@@ -112,6 +138,11 @@ export class SunReyExchangeService {
     readonly fiat: FiatPort;
     readonly informationMarket?: InformationMarketPort;
     readonly chain?: ChainAnchorPort;
+    readonly consent?: ConsentPort;
+    readonly cleanRoom?: CleanRoomPort;
+    readonly oracle?: OraclePort;
+    readonly productive?: ProductiveGraphPort;
+    readonly machines?: MachineCapabilityPort;
   }) {
     if (LIVE_EXCHANGE_ENABLED !== false || LIVE_CRYPTO_ENABLED !== false) {
       throw new Error('live exchange and live crypto paths are forbidden');
@@ -128,6 +159,15 @@ export class SunReyExchangeService {
     this.informationMarket = input.informationMarket ?? null;
     this.chain = input.chain ?? null;
     this.seedSimulationRegistry();
+    this.universal = new UniversalExchangeEngine(
+      this.store,
+      input.consent ?? new InMemoryConsentPort(),
+      input.cleanRoom ?? new InMemoryCleanRoomPort(),
+      input.oracle ?? new InMemoryOraclePort(),
+      input.productive ?? new InMemoryProductiveGraphPort(),
+      input.machines ?? new InMemoryMachineCapabilityPort(),
+      () => this.clock.now(),
+    );
   }
 
   openExchangeAccount(input: {
@@ -156,7 +196,13 @@ export class SunReyExchangeService {
       jurisdiction: input.jurisdiction,
       custodyAccountId: input.custodyAccountId,
       cashAccountId: input.cashAccountId,
-      marketPermissions: input.marketPermissions ?? (['DIGITAL_ASSET', 'INFORMATION_ASSET', 'INTELLIGENCE_COMPUTE'] as const),
+      marketPermissions: input.marketPermissions ?? ([
+        'DIGITAL_ASSET',
+        'INFORMATION_ASSET',
+        'HUMAN_INFORMATION_RIGHT',
+        'INTELLIGENCE_COMPUTE',
+        'PRODUCTIVE_CAPACITY',
+      ] as const),
       status: 'ACTIVE_SIMULATION',
       createdAt: this.clock.now(),
     });
@@ -172,7 +218,7 @@ export class SunReyExchangeService {
     readonly exchangeAccountId: ExchangeAccountId;
     readonly marketId: ExchangeMarketId;
     readonly side: 'BUY' | 'SELL';
-    readonly orderType: 'LIMIT' | 'MARKET';
+    readonly orderType: 'LIMIT' | 'MARKET' | 'IOC' | 'FOK' | 'POST_ONLY';
     readonly quantity: AssetQuantity;
     readonly limitPrice?: ExchangePrice;
     readonly clientIdempotencyKey: string;
@@ -225,8 +271,8 @@ export class SunReyExchangeService {
     if (listing.maxQuantity && input.quantity.scaledUnits > listing.maxQuantity.scaledUnits) {
       return { outcome: 'REJECTED', code: 'INVALID_QUANTITY', message: 'above maximum listing quantity' };
     }
-    if (input.orderType === 'LIMIT' && !input.limitPrice) {
-      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'LIMIT requires a price' };
+    if ((input.orderType === 'LIMIT' || input.orderType === 'IOC' || input.orderType === 'FOK' || input.orderType === 'POST_ONLY') && !input.limitPrice) {
+      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'governed order requires a price' };
     }
     if (input.limitPrice && input.limitPrice.priceUnits <= 0n) {
       return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'price must be positive' };
@@ -264,7 +310,11 @@ export class SunReyExchangeService {
       remaining: input.quantity,
       limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
       createdAt: this.clock.now(),
-      timeInForce: input.timeInForce ?? 'GTC',
+      timeInForce:
+        input.timeInForce ??
+        (input.orderType === 'IOC' || input.orderType === 'FOK' || input.orderType === 'POST_ONLY'
+          ? input.orderType
+          : 'GTC'),
       status: 'OPEN',
       clientIdempotencyKey: input.clientIdempotencyKey,
       authorizationRef: gated.decision.executionAuthority?.authorityId ?? intent.id,
@@ -641,6 +691,29 @@ export class SunReyExchangeService {
       rawRows: false,
     });
     return { outcome: 'OK', value: executed.value };
+  }
+
+  markets(): readonly ExchangeMarket[] {
+    return [...this.store.markets.values()];
+  }
+  instruments() {
+    return this.universal.instruments.list();
+  }
+  auctions() {
+    return [...this.store.auctions.values()];
+  }
+  contracts() {
+    return {
+      compute: [...this.store.computeContracts.values()],
+      capacity: [...this.store.capacityContracts.values()],
+      information: [...this.store.informationContracts.values()],
+    };
+  }
+  familyMarketData(marketId: ExchangeMarketId) {
+    return this.universal.familyData(marketId);
+  }
+  exchangeDisputes() {
+    return this.universal.disputes();
   }
 
   getAccount(id: ExchangeAccountId): ExchangeAccount | undefined {
@@ -1115,9 +1188,60 @@ export class SunReyExchangeService {
       status: 'SIMULATION_LISTED',
       tokenClassificationClaim: 'NONE',
     });
+    const moonreyListing: ExchangeListing = Object.freeze({
+      listingId: asListingId('listing:moonrey-coin'),
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'DIGITAL_ASSET',
+      underlyingRef: MOONREY_COIN_ASSET_ID,
+      settlementModel: 'NATIVE_ASSET_DVP',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['LIMIT', 'IOC', 'FOK', 'POST_ONLY'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: AssetQuantity.fromScaledUnits(1n, MOONREY_COIN_ASSET_ID),
+      maxQuantity: AssetQuantity.fromScaledUnits(1_000_000_000_000n, MOONREY_COIN_ASSET_ID),
+      precision: 0,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
+    const infoRightListing: ExchangeListing = Object.freeze({
+      listingId: asListingId('listing:information-right'),
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'HUMAN_INFORMATION_RIGHT',
+      underlyingRef: 'cohort:consent-qualified-sim',
+      settlementModel: 'DELIVERY_VERSUS_RIGHT',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['LIMIT'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: null,
+      maxQuantity: null,
+      precision: 0,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
+    const capacityListing: ExchangeListing = Object.freeze({
+      listingId: asListingId('listing:manufacturing-capacity'),
+      listingVersion: 1 as ExchangeListing['listingVersion'],
+      family: 'PRODUCTIVE_CAPACITY',
+      underlyingRef: 'object:factory-line-1',
+      settlementModel: 'CAPACITY_ESCROW_ORACLE',
+      jurisdictionEligibility: ['GB' as Jurisdiction],
+      legalReviewState: 'RESEARCH_REQUIRED',
+      enabledCapabilities: ['LIMIT'],
+      riskClassification: 'SIMULATION_ONLY',
+      minQuantity: null,
+      maxQuantity: null,
+      precision: 0,
+      status: 'SIMULATION_LISTED',
+      tokenClassificationClaim: 'NONE',
+    });
     this.store.putListing(coinListing);
     this.store.putListing(cashListing);
     this.store.putListing(computeListing);
+    this.store.putListing(moonreyListing);
+    this.store.putListing(infoRightListing);
+    this.store.putListing(capacityListing);
     this.store.putMarket(
       Object.freeze({
         marketId: SUNREY_COIN_USD_MARKET_ID,
@@ -1133,6 +1257,74 @@ export class SunReyExchangeService {
         feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
         maxSlippageUnits: 50n,
         maxNotionalMinor: 1_000_000n,
+      }),
+    );
+    this.store.putMarket(
+      Object.freeze({
+        marketId: SUNREY_MOONREY_MARKET_ID,
+        family: 'DIGITAL_ASSET',
+        bookId: 'book:sunrey-moonrey' as ExchangeMarket['bookId'],
+        baseListingId: coinListing.listingId,
+        quoteListingId: moonreyListing.listingId,
+        baseAssetId: SUNREY_COIN_ASSET_ID,
+        quoteAssetId: MOONREY_COIN_ASSET_ID,
+        quoteKind: 'ASSET',
+        state: 'OPEN',
+        selfTradePolicy: 'CANCEL_INCOMING',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: 50n,
+        maxNotionalMinor: null,
+      }),
+    );
+    this.store.putMarket(
+      Object.freeze({
+        marketId: GPU_COMPUTE_MARKET_ID,
+        family: 'INTELLIGENCE_COMPUTE',
+        bookId: 'book:gpu-compute' as ExchangeMarket['bookId'],
+        baseListingId: computeListing.listingId,
+        quoteListingId: moonreyListing.listingId,
+        baseAssetId: 'GPU_SECOND',
+        quoteAssetId: MOONREY_COIN_ASSET_ID,
+        quoteKind: 'ASSET',
+        state: 'OPEN',
+        selfTradePolicy: 'PREVENT',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: null,
+        maxNotionalMinor: null,
+      }),
+    );
+    this.store.putMarket(
+      Object.freeze({
+        marketId: MANUFACTURING_CAPACITY_MARKET_ID,
+        family: 'PRODUCTIVE_CAPACITY',
+        bookId: 'book:manufacturing' as ExchangeMarket['bookId'],
+        baseListingId: capacityListing.listingId,
+        quoteListingId: moonreyListing.listingId,
+        baseAssetId: 'MANUFACTURED_UNIT',
+        quoteAssetId: MOONREY_COIN_ASSET_ID,
+        quoteKind: 'ASSET',
+        state: 'OPEN',
+        selfTradePolicy: 'PREVENT',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: null,
+        maxNotionalMinor: null,
+      }),
+    );
+    this.store.putMarket(
+      Object.freeze({
+        marketId: INFORMATION_RIGHT_MARKET_ID,
+        family: 'HUMAN_INFORMATION_RIGHT',
+        bookId: 'book:information-right' as ExchangeMarket['bookId'],
+        baseListingId: infoRightListing.listingId,
+        quoteListingId: moonreyListing.listingId,
+        baseAssetId: 'authorized_computation',
+        quoteAssetId: MOONREY_COIN_ASSET_ID,
+        quoteKind: 'ASSET',
+        state: 'OPEN',
+        selfTradePolicy: 'PREVENT',
+        feeScheduleId: SIMULATION_FEE_SCHEDULE_ID,
+        maxSlippageUnits: null,
+        maxNotionalMinor: null,
       }),
     );
   }
