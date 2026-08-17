@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey full mainnet launch rehearsal (Chunk 70,
+  `packages/sunrey-chain/src/launch-rehearsal`): distinct rehearsal
+  identity `net_sunrey_mainnet_rehearsal_1` /
+  `chn_sunrey_mainnet_rehearsal_1` (`SunRey Mainnet Rehearsal 1`),
+  seven-validator BFT dry run, 14 sentries, three failure domains,
+  signer fencing, production-candidate storage/postgres profile,
+  oracle and Exchange/custody sandbox workflows, failure injection
+  and recovery, `LaunchControlRoomState`, findings, and an updated
+  future ActivationPlan. Capability `sunrey-launch-rehearsal` is
+  `IMPLEMENTED`. This is not mainnet. `LIVE_*` flags remain false.
+  See `docs/mainnet/chunk-70-launch-rehearsal.md`.
 - SunRey mainnet readiness and genesis-candidate controls (Chunk 65,
   `packages/sunrey-chain/src/mainnet`): 24 readiness dimensions, a
   per-capability activation matrix, production-candidate identity

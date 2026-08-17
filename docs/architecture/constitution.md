@@ -949,6 +949,13 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 70 implements the SunRey full mainnet launch rehearsal at
+`packages/sunrey-chain/src/launch-rehearsal`. Capability
+`sunrey-launch-rehearsal` is `IMPLEMENTED`. It is a production-like
+dry run. It does not launch mainnet, enable `LIVE_*` flags, or
+authorize production funds. Do not create `packages/sunrey-launch`,
+`packages/launch-rehearsal`, or `packages/mainnet-rehearsal`. See
+[`chunk-70-launch-rehearsal.md`](./chunk-70-launch-rehearsal.md).
 Chunk 65 implements mainnet readiness evidence, activation control,
 and genesis-candidate engineering at
 `packages/sunrey-chain/src/mainnet`. Capability
