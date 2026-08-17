@@ -14,13 +14,27 @@ python3 scripts/check-deployment-posture.py
 echo "==> kernel gating"
 npm run gate
 
+echo "==> lockfile enforcement"
+node scripts/check-lockfiles.mjs
+
 echo "==> rust (sunrey local node)"
 (
   cd packages/sunrey-chain/rust
   cargo fmt --check
-  cargo clippy --all-targets -- -D warnings
-  cargo test --workspace
+  cargo clippy --all-targets --locked -- -D warnings
+  cargo test --workspace --locked
 )
+
+echo "==> supply-chain audit / sbom / provenance / two-builder / sign-verify"
+node scripts/sunrey-release.mjs audit
+node scripts/sunrey-release.mjs sbom
+node scripts/sunrey-release.mjs provenance
+node scripts/sunrey-release.mjs compare-builds
+node scripts/sunrey-release.mjs sign
+node scripts/sunrey-release.mjs verify
+node scripts/check-generated-drift.mjs
+node scripts/static-security-lint.mjs
+node scripts/check-container-pins.mjs
 
 echo "==> tests"
 npm run test:sunrey-node

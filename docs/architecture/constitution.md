@@ -73,6 +73,7 @@ never be two implementations of these systems.
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
+| SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
@@ -917,6 +918,14 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Chunk 59 implements software supply-chain security at
+`packages/sunrey-chain/src/supply-chain`. Capability
+`sunrey-supply-chain` is `IMPLEMENTED`. `ReleaseAuthority` signs
+artifacts only. It is not Execution Authority and does not activate
+protocol change. Do not create `packages/supply-chain`,
+`packages/sunrey-release`, `packages/sbom`, or
+`packages/reproducible-builds`. See
+[`chunk-59-supply-chain.md`](./chunk-59-supply-chain.md).
 Chunk 58 implements sunrey-bench load, soak, and capacity engineering
 at `packages/sunrey-chain/src/perf`. Capability
 `sunrey-performance-engineering` is `IMPLEMENTED`. Do not create

@@ -1526,6 +1526,26 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-indexer')), false);
   });
 
+  it('CHUNK-59 implements software supply-chain security on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-59',
+    );
+    assert.ok(declared, 'CHUNK-59 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-59-supply-chain.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/chunk-59-supply-chain.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/supply-chain/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/supply-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-release')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sbom')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reproducible-builds')), false);
   it('CHUNK-56 implements SunRey fuzzing and property assurance on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-assurance').status, 'IMPLEMENTED');

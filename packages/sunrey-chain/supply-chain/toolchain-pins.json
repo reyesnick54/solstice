@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "updateProcess": "Change a pin only in this file and the matching rust-toolchain.toml / engines / workflow. The PR diff must show the old and new versions explicitly.",
+  "pins": {
+    "rustWorkspace": {
+      "channel": "1.83.0",
+      "file": "packages/sunrey-chain/rust/rust-toolchain.toml",
+      "components": ["rustfmt", "clippy"]
+    },
+    "rustNodeWorkspace": {
+      "channel": "1.88.0",
+      "file": "packages/sunrey-chain/node/rust-toolchain.toml",
+      "components": ["rustfmt", "clippy"],
+      "notes": "P2P node workspace is pinned separately. Do not silently float to stable."
+    },
+    "nodeRuntime": {
+      "version": "22",
+      "enginesField": ">=22",
+      "file": "package.json"
+    },
+    "npm": {
+      "lockfile": "package-lock.json",
+      "install": "npm ci --ignore-scripts"
+    },
+    "cargo": {
+      "locked": true,
+      "flag": "--locked"
+    },
+    "protocolSchema": {
+      "file": "packages/sunrey-chain/schemas/srcb-v1.json",
+      "generator": "checked-in-srcb-v1",
+      "version": "1"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "policy": "Consensus and security-critical crates forbid unsafe. Any new unsafe block requires explicit justification and review.",
+  "crates": [
+    {
+      "crate": "sunrey-crypto",
+      "path": "packages/sunrey-chain/rust/crates/crypto",
+      "criticality": "cryptography",
+      "unsafeBlocks": 0,
+      "forbidUnsafe": true,
+      "review": "required-if-unsafe-added"
+    },
+    {
+      "crate": "sunrey-consensus",
+      "path": "packages/sunrey-chain/rust/crates/consensus",
+      "criticality": "consensus",
+      "unsafeBlocks": 0,
+      "forbidUnsafe": true,
+      "review": "required-if-unsafe-added"
+    },
+    {
+      "crate": "sunrey-protocol",
+      "path": "packages/sunrey-chain/rust/crates/protocol",
+      "criticality": "serialization",
+      "unsafeBlocks": 0,
+      "forbidUnsafe": true,
+      "review": "required-if-unsafe-added"
+    }
+  ]
+}

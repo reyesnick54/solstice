@@ -118,6 +118,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
 
@@ -474,6 +475,14 @@ Chunk 51 implements the official developer platform at
 Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. The evaluator returns `mustStop: false`.
+Chunk 59 implements software supply-chain security, reproducible
+releases, and dependency assurance at `packages/sunrey-chain`.
+Capability `sunrey-supply-chain` is `IMPLEMENTED`. See
+[`chunk-59-supply-chain.md`](./chunk-59-supply-chain.md).
+`ReleaseAuthority` signs artifacts only and does not activate
+protocol change. Do not create `packages/supply-chain`,
+`packages/sunrey-release`, `packages/sbom`, or
+`packages/reproducible-builds`.
 Chunk 58 implements the sunrey-bench performance, load, soak, and
 capacity suite at `packages/sunrey-chain`. Capability
 `sunrey-performance-engineering` is `IMPLEMENTED`. See

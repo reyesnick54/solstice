@@ -1,3 +1,9 @@
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
+
 import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
 import { incidentProcedure } from './incidents.ts';
@@ -9,6 +15,10 @@ import { developmentSentryTopology } from './sentry.ts';
 import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
 import { createSnapshot, verifySnapshot } from './snapshots.ts';
 import { planGenesisSync } from './state-sync.ts';
+import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
+import type { DrillScenario } from './types.ts';
+import {
+  developmentEpoch,
 import type { DrillScenario } from './types.ts';
 import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
 import {
@@ -365,5 +375,15 @@ export async function main(): Promise<void> {
   console.log(text);
   if (!result.ok) {
     process.exitCode = 1;
+  }
+}
+
+const entry = process.argv[1] ?? '';
+if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
   }
 }
