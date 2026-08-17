@@ -1,7 +1,26 @@
 import { ResiliencePlatform } from './platform.ts';
 import type { DrillScenario } from './types.ts';
-
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { runCryptoCommand } from './crypto-cli.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
+import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
+import {
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+  developmentEpoch,
+} from './workflows.ts';
 
 const COMMANDS = [
   'health',
@@ -83,43 +102,13 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
   };
 }
 
-const entry = process.argv[1] ?? '';
-if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
-  process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-/**
- * sunrey-ops CLI.
- *
- * Operator commands never print private key material.
- */
-
-import { fourValidatorDevelopmentSet } from '../validators/index.ts';
-import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
-import { incidentProcedure } from './incidents.ts';
-import { OperatorKeystore } from './keys.ts';
-import { assertNoPrivateKeyMaterial } from './logging.ts';
-import { operatorReadiness } from './readiness.ts';
-import { developmentSentryTopology } from './sentry.ts';
-import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
-import { createSnapshot, verifySnapshot } from './snapshots.ts';
-import { planGenesisSync } from './state-sync.ts';
-import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
-import {
-  eraseEvidence,
-  exitWorkflow,
-  generateJoinRecord,
-  jailStatus,
-  joinWorkflow,
-  rotateWorkflow,
-  developmentEpoch,
-} from './workflows.ts';
-
 export type CliResult = {
   readonly ok: boolean;
   readonly command: string;
   readonly payload: unknown;
 };
 
-const COMMANDS = [
+const VALIDATOR_OPS_COMMANDS = [
   'validator',
   'signer',
   'snapshot',
@@ -162,7 +151,7 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
     const result = runCryptoCommand(args.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
   }
-  if (!group || !(COMMANDS as readonly string[]).includes(group)) {
+  if (!group || !(VALIDATOR_OPS_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
   const config = developmentValidatorConfig({ dataDirectory: dataDir });
