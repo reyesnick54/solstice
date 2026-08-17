@@ -75,7 +75,7 @@ export function createDefaultCeremonyPlan(input: {
       'RELEASE_SIGNER',
       'WITNESS',
       'INDEPENDENT_OBSERVER',
-    ]),
+    ] as const satisfies readonly CeremonyRole[]),
     requiredApprovals: input.requiredApprovals ?? 2,
     keyPurposes: Object.freeze([
       'VALIDATOR_CONSENSUS_SIGNING',
@@ -84,7 +84,7 @@ export function createDefaultCeremonyPlan(input: {
       'RELEASE_SIGNING',
       'GENESIS_SIGNING',
       'RECOVERY_SIGNING',
-    ]),
+    ] as const satisfies readonly KeyPurpose[]),
     authorities: Object.freeze([
       'GENESIS_AUTHORITY',
       'PROTOCOL_GOVERNANCE_AUTHORITY',
@@ -94,9 +94,9 @@ export function createDefaultCeremonyPlan(input: {
       'VALIDATOR_GOVERNANCE_AUTHORITY',
       'VALIDATOR_P2P_IDENTITY',
       'RECOVERY_AUTHORITY',
-    ]),
+    ] as const satisfies readonly RootOfTrustAuthority[]),
     cryptoSuites: Object.freeze([SUITE_SUNREY_ED25519_V1]),
-    providerRequirements: Object.freeze(['ED25519', 'NON_EXPORTABLE', 'ATTESTATION']),
+    providerRequirements: Object.freeze(['ED25519', 'NON_EXPORTABLE', 'ATTESTATION'] as const),
     steps: Object.freeze([
       { stepId: 'plan', description: 'create ceremony plan', requiredRole: 'CEREMONY_COORDINATOR', highImpact: false },
       { stepId: 'participants', description: 'register participants', requiredRole: 'CEREMONY_COORDINATOR', highImpact: false },
@@ -107,7 +107,7 @@ export function createDefaultCeremonyPlan(input: {
       { stepId: 'genesis', description: 'bind genesis candidate hash', requiredRole: 'GOVERNANCE_SIGNER', highImpact: true },
       { stepId: 'approve', description: 'collect multi-person approvals', requiredRole: 'SECURITY_OFFICER', highImpact: true },
       { stepId: 'transcript', description: 'finalize transcript', requiredRole: 'WITNESS', highImpact: false },
-    ]),
+    ] as const),
     expectedPublicArtifacts: Object.freeze([
       'public-descriptors',
       'attestations',
