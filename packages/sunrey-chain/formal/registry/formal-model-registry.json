@@ -298,6 +298,59 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/CryptoPolicyMigration.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/crypto-policy.ts"
+    },
+    {
+      "modelId": "NATIVE_MONETARY_POLICY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/economics/supply.ts",
+        "packages/sunrey-chain/src/economics/issuance.ts",
+        "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
+      ],
+      "assumptions": [
+        "integer minor units only",
+        "no hidden supply adjustments",
+        "production quantities remain UNCONFIGURED"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "NO_HIDDEN_SUPPLY_CREATION",
+        "NO_DUPLICATE_ISSUANCE",
+        "BURN_ACCOUNTING_EXACT",
+        "LOCK_ACCOUNTING_EXACT",
+        "WRONG_ASSET_CANNOT_AFFECT_OTHER"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
+    },
+    {
+      "modelId": "GENESIS_ALLOCATION_CONSERVATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/mainnet/allocation.ts",
+        "packages/sunrey-chain/src/economics/genesis.ts",
+        "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+      ],
+      "assumptions": [
+        "every non-zero genesis unit appears in the signed allocation manifest",
+        "production candidate default is zero allocation"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "GENESIS_TOTALS_EXACT",
+        "NO_HIDDEN_PREMINT",
+        "NO_UNKNOWN_CATEGORY"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     }
   ]
 }

@@ -272,6 +272,13 @@ function asset(assetId: 'SUNREY_COIN' | 'MOONREY_COIN', issued: string, burned: 
     circulating,
     issuancePolicy: assetId === 'MOONREY_COIN' ? 'VERIFIED_PRODUCTIVE_CONTRIBUTION' : 'DEVELOPMENT_GENESIS',
     notMarketCapitalization: true,
+    policyVersion: 'sunrey.monetary.constitution.v1',
+    genesisAllocationTotal: '0',
+    authorizedIssuanceTotal: issued,
+    escrowed: '0',
+    supplyReconciliation: 'EXACT',
+    moonreyIssuanceCategorySummary: assetId === 'MOONREY_COIN' ? { ENERGY: issued } : undefined,
+    networkEnvironmentLabel: 'DEVELOPMENT',
   };
 }
 

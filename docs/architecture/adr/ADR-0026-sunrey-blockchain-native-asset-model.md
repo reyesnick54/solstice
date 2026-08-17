@@ -6,9 +6,12 @@
 - Affected subsystem: SUNREY_CHAIN / SUNREY_COIN
 - Depends on: ADR-0019, ADR-0020, ADR-0031
 - Implementation status: IMPLEMENTED for development chain-native
-  units at `packages/sunrey-chain` (Chunk 41). Application SunRey
-  Coin on the canonical Ledger remains IMPLEMENTED and is not
-  migrated. Public tickers remain `NOT_ASSIGNED`.
+  units at `packages/sunrey-chain` (Chunk 41). Chunk 71 adds the
+  dual-asset monetary constitution at
+  `packages/sunrey-chain/src/economics` without deciding production
+  quantities. Application SunRey Coin on the canonical Ledger remains
+  IMPLEMENTED and is not migrated. Public tickers remain
+  `NOT_ASSIGNED`.
 
 ## Context
 

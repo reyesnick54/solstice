@@ -2706,6 +2706,50 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 67 production-candidate redb chain storage and PostgreSQL durability. Not a second ledger or consensus authority."
+    },
+    {
+      "id": "sunrey-monetary-constitution",
+      "name": "SunRey dual-native-asset monetary constitution",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "NativeAssetConstitution",
+          "kind": "type"
+        },
+        {
+          "name": "NativeAssetMonetaryPolicy",
+          "kind": "type"
+        },
+        {
+          "name": "MonetaryPolicyRegistry",
+          "kind": "type"
+        },
+        {
+          "name": "MonetaryIssuanceAuthority",
+          "kind": "type"
+        },
+        {
+          "name": "NativeSupplyAuditReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-economics",
+        "packages/monetary-policy",
+        "packages/tokenomics",
+        "packages/genesis-economy"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 71 dual-asset monetary constitution at packages/sunrey-chain/src/economics. Extends native assets, MoonRey issuance, genesis allocation, formal models, Explorer, and SDK. Production quantities remain UNCONFIGURED. Do not create a second ledger or tokenomics package."
     }
   ],
   "authorizedMutationPaths": [
@@ -3956,6 +4000,14 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 66 provider-neutral production infrastructure, secret/KMS/HSM adapters, workload identity, and network zoning at packages/sunrey-chain/src/infra. Reuses packages/security. No mainnet activation. Do not create packages/sunrey-infra, packages/infrastructure, packages/production-infrastructure, packages/cloud-adapters, or packages/sunrey-cloud."
+    },
+    {
+      "id": "sunrey-monetary-constitution",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "adr": "ADR-0026",
+      "notes": "Chunk 71 dual-native-asset monetary constitution at packages/sunrey-chain/src/economics. Production quantities remain UNCONFIGURED. Tickers remain NOT_ASSIGNED. Do not create packages/sunrey-economics, packages/monetary-policy, packages/tokenomics, or packages/genesis-economy."
     }
   ],
   "boundedContexts": [
