@@ -17,6 +17,10 @@ import { elapsedNs, nowNs, summarizeLatency, summarizeThroughput } from './stati
 import type { BenchCaseResult, RpcEndpoint } from './types.ts';
 import { RPC_ENDPOINTS } from './types.ts';
 
+function jsonBytes(value: unknown): number {
+  return JSON.stringify(value, (_key, item) => (typeof item === 'bigint' ? item.toString() : item)).length;
+}
+
 type RpcHandler = () => { readonly ok: boolean; readonly bytes: number };
 
 export type InProcessRpc = {
@@ -48,15 +52,18 @@ export function createInProcessRpc(): InProcessRpc {
   interop.submitHeader(clientId, finalizeForeignHeader(foreign), isolatedRelayer('relayer-rpc'));
 
   const handlers: Record<RpcEndpoint, RpcHandler> = {
-    block: () => ({ ok: true, bytes: JSON.stringify({ height: 1, id: 'blk_1' }).length }),
-    transaction: () => ({ ok: true, bytes: JSON.stringify({ txId: 'tx_1', status: 'FINALIZED' }).length }),
-    account: () => ({ ok: true, bytes: JSON.stringify(fees.accounts.position('alice', 'SUNREY_COIN')).length }),
-    asset_holdings: () => ({ ok: true, bytes: JSON.stringify({ SUNREY_COIN: fees.accounts.position('alice', 'SUNREY_COIN').available.toString() }).length }),
-    fees: () => ({ ok: true, bytes: JSON.stringify(fees.protocolCommitments()).length }),
-    oracle_facts: () => ({ ok: true, bytes: JSON.stringify(oracle.listFacts()).length }),
+    block: () => ({ ok: true, bytes: jsonBytes({ height: 1, id: 'blk_1' }) }),
+    transaction: () => ({ ok: true, bytes: jsonBytes({ txId: 'tx_1', status: 'FINALIZED' }) }),
+    account: () => ({ ok: true, bytes: jsonBytes(fees.accounts.position('alice', 'SUNREY_COIN')) }),
+    asset_holdings: () => ({ ok: true, bytes: jsonBytes({ SUNREY_COIN: fees.accounts.position('alice', 'SUNREY_COIN').available.toString() }) }),
+    fees: () => ({ ok: true, bytes: jsonBytes(fees.protocolCommitments()) }),
+    oracle_facts: () => ({ ok: true, bytes: jsonBytes(oracle.listFacts()) }),
     productive_graph: () => ({ ok: true, bytes: productive.currentGraph().projectionHash.length }),
-    validator_set: () => ({ ok: true, bytes: JSON.stringify(FOUR_VALIDATOR_LABELS).length }),
-    interop_client: () => ({ ok: true, bytes: JSON.stringify({ clientId, height: interop.clients.get(clientId)?.latestHeight ?? 0 }).length }),
+    validator_set: () => ({ ok: true, bytes: jsonBytes(FOUR_VALIDATOR_LABELS) }),
+    interop_client: () => ({
+      ok: true,
+      bytes: jsonBytes({ clientId, height: interop.clients.get(clientId)?.latestHeight ?? 0n }),
+    }),
   };
 
   const limits = { maxInflight: 64, maxBytes: 32_768 };

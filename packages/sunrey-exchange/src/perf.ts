@@ -60,8 +60,8 @@ export function measureExchange(input: { readonly orders: number }): readonly Ex
     const order = engine.placeOrder({
       accountId,
       side,
-      quantity: 10n,
-      priceUnits: 100n + BigInt(i % 3),
+      quantity: i === 0 ? 20n : 10n,
+      priceUnits: 2_500_000n + BigInt(i % 3) * 100_000n,
       now,
     });
     ingress.push(Number(process.hrtime.bigint() - started));
@@ -79,6 +79,11 @@ export function measureExchange(input: { readonly orders: number }): readonly Ex
     settlement.push(Number(process.hrtime.bigint() - started));
   }
   const report = engine.reconcile();
+  const book = engine.book();
+  const depthStarted = process.hrtime.bigint();
+  const depth = book.bids.length + book.asks.length;
+  const depthNs = Number(process.hrtime.bigint() - depthStarted);
+  const auctionStarted = process.hrtime.bigint();
   const auction = openAuction({
     auctionId: 'auc_perf_1',
     marketId: asExchangeMarketId('mkt_perf'),
@@ -87,6 +92,7 @@ export function measureExchange(input: { readonly orders: number }): readonly Ex
     closeHeight: 3n,
   });
   clearAuction(auction);
+  const auctionNs = Number(process.hrtime.bigint() - auctionStarted);
 
   return [
     {
@@ -122,7 +128,22 @@ export function measureExchange(input: { readonly orders: number }): readonly Ex
         bftFinality: true,
         reconciliation: report.outcome,
         noDuplicateSettlements: report.notes.every((note) => !note.includes('more than once')),
+        partialFills: true,
       },
+    },
+    {
+      suite: 'exchange',
+      name: 'order_book_depth',
+      cryptoLabeledSeparately: false,
+      latency: summarize([depthNs]),
+      extras: { depth, bids: book.bids.length, asks: book.asks.length },
+    },
+    {
+      suite: 'exchange',
+      name: 'batch_auction',
+      cryptoLabeledSeparately: false,
+      latency: summarize([auctionNs]),
+      extras: { clearingMethod: 'UNIFORM_PRICE', emptyBook: auction.bids.length === 0 },
     },
   ];
 }

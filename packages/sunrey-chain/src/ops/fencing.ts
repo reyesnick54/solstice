@@ -1,6 +1,6 @@
-import { DEVELOPMENT_CHAIN_ID, type SignerRole } from './types.ts';
+import { DEVELOPMENT_CHAIN_ID, opsErr, opsOk, type OpsResult, type SignerLease, type SignerMode, type SignerRole } from './types.ts';
 
-export type SignerFence = {
+export type ResilienceSignerFence = {
   readonly validatorId: string;
   readonly chainId: string;
   readonly activeSite: string | null;
@@ -10,11 +10,11 @@ export type SignerFence = {
 };
 
 export class SignerFencingController {
-  readonly #fences = new Map<string, SignerFence>();
+  readonly #fences = new Map<string, ResilienceSignerFence>();
   readonly #roles = new Map<string, SignerRole>();
 
-  register(validatorId: string, activeSite: string, passiveSite: string, chainId = DEVELOPMENT_CHAIN_ID): SignerFence {
-    const fence: SignerFence = {
+  register(validatorId: string, activeSite: string, passiveSite: string, chainId = DEVELOPMENT_CHAIN_ID): ResilienceSignerFence {
+    const fence: ResilienceSignerFence = {
       validatorId,
       chainId,
       activeSite,
@@ -32,7 +32,7 @@ export class SignerFencingController {
     return this.#roles.get(siteKey(validatorId, site)) ?? 'DISABLED';
   }
 
-  fence(validatorId: string): SignerFence {
+  fence(validatorId: string): ResilienceSignerFence {
     const found = this.#fences.get(validatorId);
     if (!found) {
       throw new Error(`unknown validator fence ${validatorId}`);
@@ -44,7 +44,7 @@ export class SignerFencingController {
     readonly validatorId: string;
     readonly operatorAuthorized: boolean;
     readonly chainId?: string;
-  }): SignerFence {
+  }): ResilienceSignerFence {
     if (!input.operatorAuthorized) {
       throw new Error('signer fencing requires operator authorization');
     }
@@ -62,7 +62,7 @@ export class SignerFencingController {
       throw new Error('two active signers rejected by fencing');
     }
     this.#roles.set(siteKey(input.validatorId, current.activeSite), 'DISABLED');
-    const next: SignerFence = {
+    const next: ResilienceSignerFence = {
       validatorId: current.validatorId,
       chainId: current.chainId,
       activeSite: current.passiveSite,
@@ -100,7 +100,6 @@ export class SignerFencingController {
 function siteKey(validatorId: string, site: string): string {
   return `${validatorId}:${site}`;
 }
-import { opsErr, opsOk, type OpsResult, type SignerLease, type SignerMode } from './types.ts';
 
 export class SignerFence {
   #lease: SignerLease | null = null;

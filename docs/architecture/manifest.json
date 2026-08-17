@@ -2217,9 +2217,6 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Positions are derived. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing. Chunk 49 adds four canonical market families. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     },
     {
       "id": "sunrey-developer-sdk",
@@ -2812,22 +2809,25 @@
     "packages/sunrey-wallet-ledger",
     "packages/sunrey-ops",
     "packages/observability",
-    "packages/disaster-recovery"
+    "packages/disaster-recovery",
     "packages/validator-ops",
     "packages/sentry",
-    "packages/remote-signer"
+    "packages/remote-signer",
     "packages/sunrey-testnet",
     "packages/sunrey-faucet",
-    "packages/testnet"
+    "packages/testnet",
     "packages/block-explorer",
     "packages/chain-indexer",
     "packages/explorer",
     "packages/sunrey-indexer",
-    "packages/blockchain-explorer"
+    "packages/blockchain-explorer",
     "packages/blockchain-v2",
     "packages/sunrey-chain-sdk-ledger",
     "packages/sdk-ledger",
-    "packages/sunrey-sdk-v2"
+    "packages/sunrey-sdk-v2",
+    "packages/sunrey-bench",
+    "packages/performance",
+    "packages/load-test"
   ],
   "capabilities": [
     {

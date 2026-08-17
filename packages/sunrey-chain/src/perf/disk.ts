@@ -37,7 +37,7 @@ export function estimateDiskGrowth(input: {
           bytesPerOracleFact: BYTES_PER.oracleFact,
           bytesPerContribution: BYTES_PER.productiveContribution,
           estimatedTotalBytes: total,
-          notAProductionGuarantee: true,
+          engineeringEstimateOnly: true,
         },
       }),
     ],

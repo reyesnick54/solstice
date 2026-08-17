@@ -145,7 +145,7 @@ export {
   persistSnapshot,
   restoreSnapshot,
   snapshotManifestHash,
-  verifySnapshot,
+  verifySnapshot as verifyChainSnapshot,
 } from './snapshots.ts';
 export { planGenesisSync, planSnapshotSync, refuseUnverifiedProvider } from './state-sync.ts';
 export {
