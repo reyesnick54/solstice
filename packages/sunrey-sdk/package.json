@@ -1,0 +1,23 @@
+{
+  "name": "@solstice/sunrey-sdk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src",
+    "examples"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
+    "dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/dev.ts",
+    "quickstart": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/quickstart.ts",
+    "generate:api-reference": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/generate-reference.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

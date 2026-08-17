@@ -64,7 +64,7 @@ export {
   InstrumentRegistry,
 } from './instruments.ts';
 export { applyFill, matchIncoming, pricesCross, sortBook, toTrade } from './matching.ts';
-export { comparePrice, exchangePrice, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
+export { comparePrice, exchangePrice, quoteAssetQuantity, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
 export type {
   ChainAnchorPort,
   CleanRoomPort,
@@ -76,8 +76,6 @@ export type {
   OraclePort,
   ProductiveGraphPort,
 } from './ports.ts';
-export { comparePrice, exchangePrice, quoteAssetQuantity, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
-export type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
 export {
   APPLICATION_SETTLEMENT_AUTHORITY,
   NATIVE_SETTLEMENT_AUTHORITY,

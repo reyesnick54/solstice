@@ -133,13 +133,12 @@ export function newDisputeId(): DisputeId {
 export const SIMULATION_USD_CASH_ASSET_ID = 'asset:simulation-usd-cash';
 export const MOONREY_COIN_ASSET_ID = 'asset:moonrey-coin';
 export const SUNREY_COIN_USD_MARKET_ID = asExchangeMarketId('market:sunrey-coin-usd-simulation');
-export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-moonrey-native-simulation');
+export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-coin-moonrey-coin-native');
 export const GPU_COMPUTE_MARKET_ID = asExchangeMarketId('market:gpu-compute-simulation');
 export const MANUFACTURING_CAPACITY_MARKET_ID = asExchangeMarketId('market:manufacturing-capacity-simulation');
 export const INFORMATION_RIGHT_MARKET_ID = asExchangeMarketId('market:information-right-simulation');
 export const SUNREY_COIN_NATIVE_ASSET_ID = 'SUNREY_COIN';
 export const MOONREY_COIN_NATIVE_ASSET_ID = 'MOONREY_COIN';
-export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-coin-moonrey-coin-native');
 export const SUNREY_COIN_NATIVE_LISTING_ID = asListingId('listing:sunrey-coin-native');
 export const MOONREY_COIN_NATIVE_LISTING_ID = asListingId('listing:moonrey-coin-native');
 export const AGGREGATE_RESEARCH_LISTING_ID = asListingId('listing:aggregate-consumer-research-cohort');

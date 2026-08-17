@@ -18,9 +18,7 @@
     "demo:productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/demo.ts",
     "demo:oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/demo.ts",
     "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts",
-    "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts"
-    "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts"
-    "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts",
+    "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts"
   },
   "engines": {

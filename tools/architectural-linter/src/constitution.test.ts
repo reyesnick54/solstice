@@ -1131,6 +1131,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/relayer')), false);
   });
 
+  it('CHUNK-51 implements the developer platform at packages/sunrey-sdk', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-developer-sdk').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-developer-sdk').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-developer-sdk').owner, 'packages/sunrey-sdk');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-51',
+    );
+    assert.ok(declared, 'CHUNK-51 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-51-developer-platform.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/developers/README.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'api/sunrey-chain-v1.openapi.yaml')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-sdk/src/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/sdk/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain-sdk-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sdk-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-v2')), false);
+  });
+
   it('CHUNK-42 implements native fees on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-native-fees').status, 'IMPLEMENTED');
