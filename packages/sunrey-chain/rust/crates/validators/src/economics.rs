@@ -48,11 +48,21 @@ pub fn reward_share(pool: u128, weight: u128, total_weight: u128) -> Result<u128
     Ok(checked_mul(pool, weight)? / total_weight)
 }
 
-pub fn bond_conserved(available: u128, locked: u128, pending: u128, penalized: u128, issued: u128) -> bool {
+pub fn bond_conserved(
+    available: u128,
+    locked: u128,
+    pending: u128,
+    penalized: u128,
+    issued: u128,
+) -> bool {
     available.saturating_add(locked).saturating_add(pending).saturating_add(penalized) == issued
 }
 
-pub fn unbond_release_allowed(now: u64, request_epoch: u64, delay: u64) -> Result<(), ValidatorError> {
+pub fn unbond_release_allowed(
+    now: u64,
+    request_epoch: u64,
+    delay: u64,
+) -> Result<(), ValidatorError> {
     if now < request_epoch.saturating_add(delay) {
         return Err(err("IMMEDIATE_UNBOND_REJECTED", "unbond delay has not elapsed"));
     }

@@ -68,7 +68,13 @@ pub fn settlement_conservation(reserved: u128, settled: u128, cancelled: u128) -
     reserved >= settled.saturating_add(cancelled)
 }
 
-pub fn validator_bond_conservation(available: u128, locked: u128, pending: u128, penalized: u128, issued: u128) -> bool {
+pub fn validator_bond_conservation(
+    available: u128,
+    locked: u128,
+    pending: u128,
+    penalized: u128,
+    issued: u128,
+) -> bool {
     available.saturating_add(locked).saturating_add(pending).saturating_add(penalized) == issued
 }
 
