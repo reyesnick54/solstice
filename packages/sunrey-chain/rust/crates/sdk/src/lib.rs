@@ -120,6 +120,8 @@ impl SunReyRpcClient {
 
     pub fn estimate_fee(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
         self.get(&format!("{PATH_FEES_ESTIMATE}?bytes={bytes}&sigs={sigs}"))
+    }
+
     pub fn get_validator_economic_policy(&self) -> Result<Value, SdkError> {
         self.get(PATH_VALIDATOR_ECONOMIC_POLICY)
     }
