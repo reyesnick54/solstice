@@ -4,6 +4,14 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey root-of-trust and key-ceremony architecture (Chunk 64,
+  `packages/security/src/ceremony`): authority registry, key-purpose
+  matrix, extended HSM contract, simulation ceremony provider,
+  multi-person approvals, attestations, tamper-evident transcripts,
+  genesis binding, rotation/compromise workflows, and
+  `sunrey-ceremony` rehearsal. Simulation only. Not a completed
+  production ceremony and not a commercial HSM claim.
+
 - SunRey fuzzing and deterministic property assurance (Chunk 56,
   `packages/sunrey-chain/src/assurance`,
   `packages/sunrey-chain/rust/crates/assurance`, `tests/assurance`):

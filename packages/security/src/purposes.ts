@@ -33,6 +33,9 @@ export const CHAIN_KEY_PURPOSES = [
   'WALLET_SIGNING',
   'INTEROPERABILITY_SIGNING',
   'MACHINE_SIGNING',
+  'GENESIS_SIGNING',
+  'RELEASE_SIGNING',
+  'RECOVERY_SIGNING',
 ] as const;
 
 export const KEY_PURPOSES = [...APPLICATION_KEY_PURPOSES, ...CHAIN_KEY_PURPOSES] as const;
@@ -88,4 +91,7 @@ export const CHAIN_PURPOSE_DEFAULT_SUITE = Object.freeze({
   WALLET_SIGNING: 'sunrey-ed25519-v1',
   INTEROPERABILITY_SIGNING: 'sunrey-ed25519-v1',
   MACHINE_SIGNING: 'sunrey-ed25519-v1',
+  GENESIS_SIGNING: 'sunrey-ed25519-v1',
+  RELEASE_SIGNING: 'sunrey-ed25519-v1',
+  RECOVERY_SIGNING: 'sunrey-ed25519-v1',
 } as const satisfies Record<ChainKeyPurpose, string>);

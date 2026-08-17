@@ -47,6 +47,7 @@ Not quantum-proof. Not mainnet.
 | validator-signatures | sunrey-chain + security | VALIDATOR_CONSENSUS_SIGNING / BLOCK_PROPOSAL_SIGNING | Ed25519; HMAC forbidden | Chunk 36 lifecycle | validator public keys | hybrid-required selected roles | no universal validator key | IMPLEMENTED (contract) |
 | p2p-identities | sunrey-chain + security | P2P_IDENTITY | Ed25519 | descriptor | peer identity keys | medium | CryptoSuite; P2P later | IMPLEMENTED (purpose) |
 | oracle-signatures | sunrey-chain + security | ORACLE_SIGNING | Ed25519 via CryptoSuite | descriptor | oracle public keys | medium | CryptoSuite; Chunk 43 runtime | IMPLEMENTED (runtime) |
+| root-of-trust-ceremony | security | GENESIS / RELEASE / RECOVERY / GOVERNANCE | ceremony HSM simulator | ACTIVE / ROTATING / RETIRED / COMPROMISED | ceremony public keys | hardware PQC unconfirmed | authority-separated non-exportable ceremony | IMPLEMENTED (simulation) |
 
 ## Migration states (no production dates)
 

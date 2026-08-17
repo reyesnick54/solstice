@@ -1,0 +1,14 @@
+{
+  "chunk": "CHUNK-64",
+  "title": "Implement SunRey production-class key ceremony, HSM root-of-trust, and cryptographic authority architecture",
+  "requires": [
+    "architecture-linting",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-pqc-testnet",
+    "sunrey-supply-chain",
+    "sunrey-chain",
+    "sunrey-root-of-trust"
+  ],
+  "notes": "IMPLEMENTED at packages/security/src/ceremony. Extends canonical HSM/KMS interfaces. Simulation/rehearsal only. No production private keys in CI. No commercial HSM or completed production ceremony claim. evaluateChunkRequirements returns mustStop: false. Do not create packages/ceremony, packages/hsm-v2, packages/root-of-trust, or packages/key-ceremony."
+}

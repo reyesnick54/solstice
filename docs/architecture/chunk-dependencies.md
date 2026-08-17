@@ -512,3 +512,10 @@ differential TypeScript/Rust drivers, and deterministic replay at
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. This is not formal
 verification. The evaluator returns `mustStop: false`.
+Chunk 64 implements production-class root-of-trust and key-ceremony
+architecture at `packages/security`. Capability
+`sunrey-root-of-trust` is `IMPLEMENTED`. See
+[`chunk-64-root-of-trust.md`](./chunk-64-root-of-trust.md).
+CI uses clearly identified simulation providers. No production
+private keys. No commercial HSM or completed production ceremony
+claim. The evaluator returns `mustStop: false`.

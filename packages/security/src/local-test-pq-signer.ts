@@ -16,6 +16,8 @@ import { securityErr, securityOk, type SecurityResult } from './errors.ts';
 import {
   negotiateSuiteCapability,
   type HsmAttestationMetadata,
+  type HsmAuditEventReference,
+  type HsmBackupReference,
   type HsmGenerateInput,
   type HsmHealth,
   type HsmImportInput,
@@ -64,6 +66,22 @@ export class LocalTestPqSigningProvider implements HsmKmsProvider {
       externalHsmPqSupported: false,
       keyImportPolicy: 'DEVELOPMENT_ALLOWED',
       privateMaterialExportSupported: false,
+      algorithmFlags: Object.freeze([
+        'ED25519',
+        'ML_DSA',
+        'HYBRID_SUPPORT',
+        'NON_EXPORTABLE',
+        'ATTESTATION',
+        'BACKUP_SUPPORTED',
+      ] as const),
+      hardwarePqReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED',
+      softwarePqReadiness: 'SOFTWARE_PROVIDER_AVAILABLE',
+      attestationSupported: true,
+      multiAuthAdminSupported: false,
+      backupSupported: true,
+      nonExportable: true,
+      capabilityEvidenceRefs: Object.freeze(['SIMULATION', 'SOFTWARE_PROVIDER_AVAILABLE']),
+      simulationClass: 'SIMULATION',
     });
   }
 
@@ -210,6 +228,37 @@ export class LocalTestPqSigningProvider implements HsmKmsProvider {
         healthy: this.mlDsa.available,
         providerId: this.providerId,
         environmentLabel: this.environmentLabel,
+        simulation: true,
+      }),
+    );
+  }
+
+  getBackupReference(handle: HsmKeyHandle): SecurityResult<HsmBackupReference> {
+    const record = this.records.get(handle.handleId);
+    if (!record) {
+      return securityErr('KEY_NOT_FOUND', 'local test PQ handle is unknown');
+    }
+    return securityOk(
+      Object.freeze({
+        keyId: record.handle.keyId,
+        keyVersion: record.handle.keyVersion,
+        providerId: this.providerId,
+        backupHandleRef: `sim-backup:${record.handle.keyId}:v${record.handle.keyVersion}`,
+        encryptionPurpose: 'BACKUP_ENCRYPTION',
+        containsPlaintextKey: false,
+        simulation: true,
+      }),
+    );
+  }
+
+  recordAuditEvent(eventType: string, handle?: HsmKeyHandle): SecurityResult<HsmAuditEventReference> {
+    return securityOk(
+      Object.freeze({
+        eventId: `ltpq-audit_${secureRandomHex(8)}`,
+        eventType,
+        providerId: this.providerId,
+        keyId: handle?.keyId ?? null,
+        evidenceRef: `sim-ltpq-audit:${eventType}`,
         simulation: true,
       }),
     );

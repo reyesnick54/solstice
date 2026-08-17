@@ -174,6 +174,9 @@ const CHAIN_SIGNING_PURPOSES = [
   'WALLET_SIGNING',
   'INTEROPERABILITY_SIGNING',
   'MACHINE_SIGNING',
+  'GENESIS_SIGNING',
+  'RELEASE_SIGNING',
+  'RECOVERY_SIGNING',
 ] as const satisfies readonly KeyPurpose[];
 
 function grace(allowHistoricalVerify: boolean, rejectNewSignatures: boolean): VerificationGracePolicy {

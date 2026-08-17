@@ -948,6 +948,13 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 64 implements production-class root-of-trust and key-ceremony
+architecture at `packages/security/src/ceremony`. Capability
+`sunrey-root-of-trust` is `IMPLEMENTED`. CI uses simulation
+providers only. Do not create real production private keys. Do not
+create `packages/ceremony`, `packages/hsm-v2`,
+`packages/root-of-trust`, or `packages/key-ceremony`. See
+[`chunk-64-root-of-trust.md`](./chunk-64-root-of-trust.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the
