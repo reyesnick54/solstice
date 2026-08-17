@@ -991,6 +991,18 @@ verification. Do not create `packages/formal`, `packages/tla`,
 `packages/model-checker`, `packages/sunrey-formal`, or
 `tools/formal`. See
 [`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Chunk 69 implements the production-candidate adapter framework that
+connects SunRey Exchange and custody to provider-neutral identity,
+screening, Travel Rule, HSM/custody, surveillance, and
+case-management interfaces. Capability
+`sunrey-regulated-integration` is `IMPLEMENTED` at
+`packages/sunrey-exchange`, `packages/custody`, `packages/kernel`,
+`packages/security`, and `packages/sunrey-chain`. It does not
+activate live regulated services or enable `LIVE_*` flags. Do not
+create `packages/regulated-exchange`, `packages/provider-registry`,
+`packages/travel-rule-production`, `packages/custody-activation`, or
+`packages/exchange-kyc`. See
+[`chunk-69-regulated-integration.md`](./chunk-69-regulated-integration.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

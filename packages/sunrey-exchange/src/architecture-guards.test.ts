@@ -47,6 +47,9 @@ describe('sunrey exchange architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/matching-engine-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-exchange')), false);
     assert.equal(existsSync(join(ROOT, 'packages/reyn-exchange')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/regulated-exchange')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/provider-registry')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/exchange-kyc')), false);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');
