@@ -512,3 +512,12 @@ differential TypeScript/Rust drivers, and deterministic replay at
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. This is not formal
 verification. The evaluator returns `mustStop: false`.
+Chunk 63 implements the Testnet release-candidate freeze,
+qualification, and release-control system at
+`packages/sunrey-chain`. Capability `sunrey-testnet-rc` is
+`IMPLEMENTED`. See
+[`chunk-63-testnet-rc.md`](./chunk-63-testnet-rc.md).
+Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
+`packages/sunrey-rc`, `packages/release-candidate`,
+`packages/testnet-rc`, `packages/sunrey-qualification`, or
+`packages/rc-control`. The evaluator returns `mustStop: false`.

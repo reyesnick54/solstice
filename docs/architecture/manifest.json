@@ -2283,11 +2283,6 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/supply-chain/types.ts",
       "publicInterface": "packages/sunrey-chain/src/supply-chain/index.ts",
-      "id": "sunrey-adversarial-range",
-      "name": "SunRey adversarial cyber-economic test range",
-      "canonicalOwner": "packages/sunrey-range",
-      "canonicalPath": "packages/sunrey-range/src/types.ts",
-      "publicInterface": "packages/sunrey-range/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -2304,6 +2299,23 @@
         "packages/sunrey-release",
         "packages/sbom",
         "packages/reproducible-builds"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 59 supply-chain security at packages/sunrey-chain. ReleaseAuthority signs artifacts only. Not Execution Authority, validator governance, custody, or wallet signing. Software release approval does not activate protocol change."
+    },
+    {
+      "id": "sunrey-adversarial-range",
+      "name": "SunRey adversarial cyber-economic test range",
+      "canonicalOwner": "packages/sunrey-range",
+      "canonicalPath": "packages/sunrey-range/src/types.ts",
+      "publicInterface": "packages/sunrey-range/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/red-team",
@@ -2313,8 +2325,36 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 59 supply-chain security at packages/sunrey-chain. ReleaseAuthority signs artifacts only. Not Execution Authority, validator governance, custody, or wallet signing. Software release approval does not activate protocol change."
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
+    },
+    {
+      "id": "sunrey-testnet-rc",
+      "name": "SunRey Testnet release-candidate freeze and qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "TestnetReleaseCandidateManifest",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-rc",
+        "packages/release-candidate",
+        "packages/testnet-rc",
+        "packages/sunrey-qualification",
+        "packages/rc-control"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -2898,19 +2938,24 @@
     "packages/supply-chain",
     "packages/sunrey-release",
     "packages/sbom",
-    "packages/reproducible-builds"
+    "packages/reproducible-builds",
     "packages/sunrey-bench",
     "packages/performance",
-    "packages/load-test"
+    "packages/load-test",
     "packages/red-team",
     "packages/attack-sim",
-    "packages/sunrey-pentest"
+    "packages/sunrey-pentest",
     "packages/sunrey-test",
     "packages/fuzz",
     "packages/assurance",
     "packages/sunrey-fuzz",
     "packages/protocol-fuzzer",
-    "tools/sunrey-test"
+    "tools/sunrey-test",
+    "packages/sunrey-rc",
+    "packages/release-candidate",
+    "packages/testnet-rc",
+    "packages/sunrey-qualification",
+    "packages/rc-control"
   ],
   "capabilities": [
     {
@@ -3412,21 +3457,34 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 59 software supply-chain security, reproducible releases, and dependency assurance at packages/sunrey-chain/src/supply-chain. ReleaseAuthority signs artifacts only and does not change blockchain state, issue Execution Authority, or act as a custody/wallet/validator signer. Do not create packages/supply-chain, packages/sunrey-release, packages/sbom, or packages/reproducible-builds."
+    },
+    {
       "id": "sunrey-performance-engineering",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 58 sunrey-bench load, soak, and capacity engineering at packages/sunrey-chain/src/perf. Measures finalized consensus, RPC, Explorer, Exchange, oracle, productive, machine, interop, and custody workflows. Engineering measurements only. Do not create packages/sunrey-bench, packages/performance, or packages/load-test. Do not bypass consensus, CryptoSuite, authorization, policy, reconciliation, oracle validation, custody controls, or exchange reservations."
+    },
+    {
       "id": "sunrey-adversarial-range",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-range",
       "protected": true,
       "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+    },
+    {
       "id": "sunrey-assurance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
+    },
+    {
+      "id": "sunrey-testnet-rc",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. Do not create packages/sunrey-rc, packages/release-candidate, packages/testnet-rc, packages/sunrey-qualification, or packages/rc-control."
     }
   ],
   "boundedContexts": [

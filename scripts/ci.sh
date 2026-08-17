@@ -95,6 +95,9 @@ npm run demo:explorer
 npm run demo:sunrey-bench
 npm run sunrey-range -- campaign --smoke
 npm run demo:sunrey-range
+node scripts/sunrey-release.mjs rc qualify --profile smoke
+node scripts/sunrey-release.mjs rc verify
+npm run demo:sunrey-rc
 
 echo "==> typecheck"
 npm run typecheck

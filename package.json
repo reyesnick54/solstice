@@ -71,6 +71,7 @@
     "testnet:cluster": "bash scripts/sunrey-testnet-kind.sh",
     "demo:sunrey-sdk": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/demo.ts",
     "demo:sunrey-range": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-range/src/demo.ts",
+    "demo:sunrey-rc": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/release-candidate/demo.ts",
     "sunrey-range": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-range/src/cli-main.ts",
     "sunrey:dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/dev.ts",
     "generate:sunrey-api-reference": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/generate-reference.ts",
