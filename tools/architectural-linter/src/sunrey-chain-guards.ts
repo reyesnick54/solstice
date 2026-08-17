@@ -16,6 +16,9 @@ const COMPETING_PATHS = [
   'packages/sunrey-testnet',
   'packages/sunrey-faucet',
   'packages/testnet',
+  'packages/blockchain-db',
+  'packages/chain-storage-v2',
+  'packages/sunrey-ledger-db',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

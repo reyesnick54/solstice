@@ -5,7 +5,7 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0019, ADR-0021
-- Implementation status: PARTIAL (local crash-safe file store; production embedded engine not selected)
+- Implementation status: IMPLEMENTED (production-candidate redb 2.4 engine in packages/sunrey-chain/rust/crates/storage; file store retained as migration source)
 
 ## Context
 
@@ -79,10 +79,11 @@ In-memory simulation snapshots are not portable production state.
 ## Unresolved questions
 
 - Concrete tree (IAVL, JMT, or another authenticated structure).
-- Whether a later chunk uses RocksDB/Sled-class embedded storage.
+- Concrete tree remains the existing Merkle commitment over the state map.
+- Embedded engine selected in Chunk 67: redb 2.4.0 (RocksDB rejected for CI/toolchain compatibility).
 
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for append-only blocks plus authenticated
-state. Production storage: **not implemented**. Legal confidence:
-`RESEARCH_REQUIRED`.
+state. Production-candidate storage: **implemented** in Chunk 67.
+Legal confidence: `RESEARCH_REQUIRED`.
