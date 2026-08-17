@@ -4,6 +4,20 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey complete economic mainnet rehearsal (Chunk 80,
+  `packages/sunrey-chain/src/economic-rehearsal`): distinct identity
+  `SunRey Economic Mainnet Rehearsal 1` /
+  `net_sunrey_economic_mainnet_rehearsal_1` /
+  `chn_sunrey_economic_mainnet_rehearsal_1` (HRP `srecr`),
+  deterministic economic genesis, `SUNREY_ECONOMIC_RC_1`, seven-validator
+  bonds/rewards/penalties, FeePolicyV2 loads, MoonRey productive
+  issuance, protocol treasury, synthetic SUNREY/MOONREY Exchange,
+  machine commerce, governed policy upgrades, economic stress and
+  recovery, Explorer rebuild, formal traces, and
+  `EconomicActivationEvidenceBundle`. Capability
+  `sunrey-economic-mainnet-rehearsal` is `IMPLEMENTED`. This is not
+  mainnet. `LIVE_*` flags remain false. `productionAuthorized=false`.
+  See `docs/mainnet/chunk-80-economic-mainnet-rehearsal.md`.
 - SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
   `packages/sunrey-economics`): deterministic human/productive
   layers, economic bridge, Exchange order-flow discovery, fee and

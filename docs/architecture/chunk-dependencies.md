@@ -138,6 +138,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-economic-mainnet-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the

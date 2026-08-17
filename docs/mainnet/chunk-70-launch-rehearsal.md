@@ -44,3 +44,9 @@ None of these means production mainnet is authorized.
 
 Do not create `packages/sunrey-launch`, `packages/launch-rehearsal`, or
 `packages/mainnet-rehearsal`.
+
+Chunk 80 adds `sunrey-launch economic-*` commands and a distinct
+economic-rehearsal identity (`SunRey Economic Mainnet Rehearsal 1`,
+HRP `srecr`). It does not replace this launch rehearsal and does not
+reuse this network ID, chain ID, or genesis. See
+[chunk-80-economic-mainnet-rehearsal.md](./chunk-80-economic-mainnet-rehearsal.md).

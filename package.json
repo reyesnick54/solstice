@@ -69,6 +69,7 @@
     "demo:sunrey-mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/mainnet/demo.ts",
     "sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/launch-rehearsal/cli-main.ts",
     "demo:sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/launch-rehearsal/demo.ts",
+    "demo:sunrey-economic-mainnet-rehearsal": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economic-rehearsal/demo.ts",
     "demo:sunrey-dual-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-economics/src/demo.ts",
     "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-economics/src/cli-main.ts",
     "demo:sunrey-validator-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/validator-economics/demo.ts",

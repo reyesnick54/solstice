@@ -91,6 +91,9 @@ npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify
+npm run demo:sunrey-economic-mainnet-rehearsal
+npm run sunrey-launch -- economic-verify
+npm run sunrey-launch -- economic-audit
 npm run demo:sunrey-dual-economy
 npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
 npm run demo:sunrey-validator-economics

@@ -42,3 +42,11 @@ Independent auditor, commercial HSM, counsel, regulator, license, and
 partner slots remain `NOT_PROVIDED` or
 `EXTERNAL_VERIFICATION_REQUIRED`. Simulation rehearsal of a Chunk 64
 ceremony is process-readiness evidence only.
+
+Chunk 80 economic-rehearsal evidence may advance supported engineering
+dimensions to `ENGINEERING_VERIFIED`. It does not complete independent
+external audit, commercial HSM verification, a real root ceremony,
+production oracle agreements, legal, regulatory, licensing, regulated
+partners, or human production authorization. The production-candidate
+allocation remains zero/unapproved. See
+[chunk-80-economic-mainnet-rehearsal.md](./chunk-80-economic-mainnet-rehearsal.md).
