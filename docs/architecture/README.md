@@ -116,5 +116,8 @@
   `packages/sunrey-sdk`.
 - [Chunk 57 adversarial range](./chunk-57-adversarial-range.md) —
   isolated cyber-economic attack simulator at `packages/sunrey-range`.
+- [Chunk 62 audit readiness](./chunk-62-audit-readiness.md) —
+  independent security-review bundle at
+  `packages/sunrey-chain/src/audit`. See [`docs/audit/`](../audit/README.md).
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

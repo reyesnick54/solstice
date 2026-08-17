@@ -12,6 +12,8 @@ import { protocolFuzzNeverPanics } from './protocol.ts';
 import { assertReplay, loadReplayFixture } from './replay.ts';
 import { SeededRng } from './rng.ts';
 import { runSecurityRegressionFixtures } from './security.ts';
+import { allDevelopmentTraces } from '../formal/traces.ts';
+import { mkdirSync, writeFileSync } from 'node:fs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -40,6 +42,12 @@ function runProfile(name: 'FUZZ_SMOKE' | 'FUZZ_EXTENDED'): void {
   runSecurityRegressionFixtures();
   const corpusRoot = join(repoRoot(), 'tests/assurance/corpus');
   replayProtocolCorpus(loadHexCorpus(corpusRoot));
+  const traceDir = join(repoRoot(), 'packages/sunrey-chain/formal/reports');
+  mkdirSync(traceDir, { recursive: true });
+  writeFileSync(
+    join(traceDir, 'implementation-traces.json'),
+    `${JSON.stringify({ profile: profile.name, traces: allDevelopmentTraces() }, null, 2)}\n`,
+  );
   console.log(JSON.stringify({ profile: profile.name, seed, economic, consensus, coverage: coverageCounts() }, null, 2));
 }
 

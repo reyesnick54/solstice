@@ -33,6 +33,11 @@ export function dashboardDefinitions(): readonly DashboardDefinition[] {
         'relayer_latency',
       ],
     },
+    {
+      id: 'FORMAL_ASSURANCE',
+      title: 'Formal Assurance',
+      panels: ['formal_models_verified', 'formal_counterexamples', 'formal_trace_alignment', 'formal_rust_harnesses'],
+    },
   ]);
 }
 

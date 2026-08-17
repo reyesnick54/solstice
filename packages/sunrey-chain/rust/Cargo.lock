@@ -732,6 +732,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-formal"
+version = "0.1.0"
+dependencies = [
+ "sunrey-consensus",
+ "sunrey-fees",
+ "sunrey-native-assets",
+]
+
+[[package]]
 name = "sunrey-governance"
 version = "0.1.0"
 dependencies = [
