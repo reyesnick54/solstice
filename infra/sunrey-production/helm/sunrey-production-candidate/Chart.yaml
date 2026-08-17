@@ -1,0 +1,6 @@
+apiVersion: v2
+name: sunrey-production-candidate
+description: SunRey production-candidate deployment package (not mainnet)
+type: application
+version: 0.1.0
+appVersion: "1"

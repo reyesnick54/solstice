@@ -2333,21 +2333,119 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/mainnet/types.ts",
       "publicInterface": "packages/sunrey-chain/src/mainnet/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MainnetReadinessRegistry",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/mainnet",
+        "packages/sunrey-mainnet",
+        "packages/genesis-candidate",
+        "packages/readiness-registry",
+        "packages/activation-control"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+    },
+    {
       "id": "sunrey-root-of-trust",
       "name": "SunRey root-of-trust and key ceremony architecture",
       "canonicalOwner": "packages/security",
       "canonicalPath": "packages/security/src/ceremony/types.ts",
       "publicInterface": "packages/security/src/ceremony/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RootOfTrustAuthority",
+          "kind": "type"
+        },
+        {
+          "name": "CeremonyPlan",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/ceremony",
+        "packages/hsm-v2",
+        "packages/root-of-trust",
+        "packages/key-ceremony"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
+    },
+    {
       "id": "sunrey-testnet-rc",
       "name": "SunRey Testnet release-candidate freeze and qualification",
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/release-candidate/types.ts",
       "publicInterface": "packages/sunrey-chain/src/release-candidate/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "TestnetReleaseCandidateManifest",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-rc",
+        "packages/release-candidate",
+        "packages/testnet-rc",
+        "packages/sunrey-qualification",
+        "packages/rc-control"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
+    },
+    {
       "id": "sunrey-audit-readiness",
       "name": "SunRey independent security-review preparation",
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/audit/types.ts",
       "publicInterface": "packages/sunrey-chain/src/audit/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AuditBundleManifest",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-audit",
+        "packages/audit",
+        "packages/security-review",
+        "packages/audit-evidence"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
+    },
+    {
       "id": "sunrey-formal-assurance",
       "name": "SunRey protocol formal models and bounded model checking",
       "canonicalOwner": "packages/sunrey-chain",
@@ -2360,37 +2458,11 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "MainnetReadinessRegistry",
-          "name": "RootOfTrustAuthority",
-          "kind": "type"
-        },
-        {
-          "name": "CeremonyPlan",
-          "name": "TestnetReleaseCandidateManifest",
-          "name": "AuditBundleManifest",
           "name": "FormalModelRegistry",
           "kind": "type"
         }
       ],
       "forbiddenAliases": [
-        "packages/mainnet",
-        "packages/sunrey-mainnet",
-        "packages/genesis-candidate",
-        "packages/readiness-registry",
-        "packages/activation-control"
-        "packages/ceremony",
-        "packages/hsm-v2",
-        "packages/root-of-trust",
-        "packages/key-ceremony"
-        "packages/sunrey-rc",
-        "packages/release-candidate",
-        "packages/testnet-rc",
-        "packages/sunrey-qualification",
-        "packages/rc-control"
-        "packages/sunrey-audit",
-        "packages/audit",
-        "packages/security-review",
-        "packages/audit-evidence"
         "packages/formal",
         "packages/tla",
         "packages/model-checker",
@@ -2401,11 +2473,40 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
-      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
-      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
-      "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
       "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
+    },
+    {
+      "id": "sunrey-production-infrastructure",
+      "name": "SunRey production infrastructure provider adapters and secret controls",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/infra/provider.ts",
+      "publicInterface": "packages/sunrey-chain/src/infra/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionInfrastructureProvider",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionInfrastructureRegistry",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-infra",
+        "packages/infrastructure",
+        "packages/production-infrastructure",
+        "packages/cloud-adapters",
+        "packages/sunrey-cloud"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 66 provider-neutral production infrastructure control plane at packages/sunrey-chain/src/infra. Reuses packages/security SecretReference, KeyProvider, and HSM/KMS contracts. No mainnet activation. Do not create packages/sunrey-infra, packages/infrastructure, or a second security/readiness system."
     }
   ],
   "authorizedMutationPaths": [
@@ -3010,22 +3111,27 @@
     "packages/sunrey-mainnet",
     "packages/genesis-candidate",
     "packages/readiness-registry",
-    "packages/activation-control"
+    "packages/activation-control",
     "packages/ceremony",
     "packages/hsm-v2",
     "packages/root-of-trust",
-    "packages/key-ceremony"
+    "packages/key-ceremony",
     "packages/sunrey-rc",
     "packages/release-candidate",
     "packages/testnet-rc",
     "packages/sunrey-qualification",
-    "packages/rc-control"
+    "packages/rc-control",
     "packages/formal",
     "packages/tla",
     "packages/model-checker",
     "packages/sunrey-formal",
     "packages/formal-methods",
-    "tools/formal"
+    "tools/formal",
+    "packages/sunrey-infra",
+    "packages/infrastructure",
+    "packages/production-infrastructure",
+    "packages/cloud-adapters",
+    "packages/sunrey-cloud"
   ],
   "capabilities": [
     {
@@ -3556,26 +3662,41 @@
       "protected": true,
       "adr": "ADR-0033",
       "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
+    },
+    {
       "id": "sunrey-root-of-trust",
       "status": "IMPLEMENTED",
       "owner": "packages/security",
       "protected": true,
       "notes": "Chunk 64 production-class root-of-trust and key-ceremony architecture at packages/security/src/ceremony. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. No production private keys in CI. No commercial HSM or completed production ceremony claim. Do not create packages/ceremony, packages/hsm-v2, packages/root-of-trust, or packages/key-ceremony."
+    },
+    {
       "id": "sunrey-testnet-rc",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. Do not create packages/sunrey-rc, packages/release-candidate, packages/testnet-rc, packages/sunrey-qualification, or packages/rc-control."
+    },
+    {
       "id": "sunrey-audit-readiness",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed. Do not create packages/sunrey-audit, packages/audit, packages/security-review, or packages/audit-evidence."
+    },
+    {
       "id": "sunrey-formal-assurance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 61 TLA+/TLC protocol models, bounded Rust verification, and implementation-trace conformance at packages/sunrey-chain/formal and packages/sunrey-chain/src/formal. Model checked within stated bounds. Not whole-system formal verification. Do not create packages/formal, packages/tla, packages/model-checker, packages/sunrey-formal, or tools/formal."
+    },
+    {
+      "id": "sunrey-production-infrastructure",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 66 provider-neutral production infrastructure, secret/KMS/HSM adapters, workload identity, and network zoning at packages/sunrey-chain/src/infra. Reuses packages/security. No mainnet activation. Do not create packages/sunrey-infra, packages/infrastructure, packages/production-infrastructure, packages/cloud-adapters, or packages/sunrey-cloud."
     }
   ],
   "boundedContexts": [

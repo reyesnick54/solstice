@@ -1653,6 +1653,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/genesis-candidate')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/readiness-registry')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/activation-control')), false);
+  });
+
   it('CHUNK-63 implements Testnet release-candidate control on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-testnet-rc').status, 'IMPLEMENTED');
@@ -1678,6 +1680,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/testnet-rc')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-qualification')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/rc-control')), false);
+  });
+
   it('CHUNK-62 prepares an independent security-review bundle on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').status, 'IMPLEMENTED');
@@ -1699,6 +1703,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/audit')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/security-review')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/audit-evidence')), false);
+  });
+
   it('CHUNK-61 implements formal SunRey protocol models on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-formal-assurance').status, 'IMPLEMENTED');
@@ -1721,5 +1727,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/model-checker')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-formal')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'tools/formal')), false);
+  });
+
+  it('CHUNK-66 implements production infrastructure on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-infrastructure').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-infrastructure').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-infrastructure').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-66',
+    );
+    assert.ok(declared, 'CHUNK-66 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-66-production-infrastructure.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/infrastructure/chunk-66-production-infrastructure.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/infra/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-infra')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/infrastructure')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/production-infrastructure')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/cloud-adapters')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-cloud')), false);
   });
 });

@@ -9,3 +9,8 @@ This is readiness and candidate tooling only. Production mainnet remains
 disabled. Do not create `packages/mainnet`, `packages/sunrey-mainnet`,
 `packages/genesis-candidate`, `packages/readiness-registry`, or
 `packages/activation-control`.
+
+Chunk 66 adds infrastructure readiness to `MainnetReadinessRegistry`.
+Engineering evidence from Chunks 61–64 is linked by digest. External
+auditor, commercial HSM, counsel, regulator, license, and partner
+slots remain incomplete.
