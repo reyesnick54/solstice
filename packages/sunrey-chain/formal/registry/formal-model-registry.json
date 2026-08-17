@@ -224,6 +224,37 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey.ts"
     },
     {
+      "modelId": "MOONREY_POLICY_GOVERNANCE",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/productive/policy-governance/index.ts",
+        "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
+      ],
+      "assumptions": [
+        "policy activation is height-deterministic",
+        "development caps are ENGINEERING_SIMULATION_PARAMETERS",
+        "production caps remain UNCONFIGURED",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "maxQuantity": 2, "maxEpochs": 2 },
+      "properties": [
+        "SAME_CONTRIBUTION_CANNOT_ISSUE_TWICE",
+        "CATEGORY_CAP_RESPECTED",
+        "EPOCH_CAP_RESPECTED",
+        "POLICY_ACTIVATION_DETERMINISTIC",
+        "WRONG_POLICY_VERSION_REJECTED",
+        "SUPPLY_RECONCILIATION_EXACT",
+        "INVALID_ELIGIBILITY_CANNOT_ISSUE",
+        "CROSS_CATEGORY_DUPLICATE_PREVENTED"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
+    },
+    {
       "modelId": "INTEROP_PACKET_STATE",
       "modelVersion": "1.0.0",
       "implementationReferences": [

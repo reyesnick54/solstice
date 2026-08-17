@@ -132,6 +132,15 @@ export type IndexedMoonReyIssuance = {
   readonly issuedQuantity: QuantityString;
   readonly height: number;
   readonly recipient: string;
+  readonly normalizationPolicy?: string;
+  readonly policyVersion?: number;
+  readonly epoch?: number;
+  readonly antiDoubleCountFingerprint?: string;
+  readonly supplySummary?: {
+    readonly issued: QuantityString;
+    readonly locked: QuantityString;
+    readonly circulating: QuantityString;
+  };
 };
 
 export type IndexedProductiveObject = {

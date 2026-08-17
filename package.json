@@ -47,6 +47,8 @@
     "demo:sunrey-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/governance/demo.ts",
     "demo:sunrey-machine-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/machine-economy/demo.ts",
     "demo:moonrey-productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/demo.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts",
+    "demo:moonrey-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts moonrey simulate",
     "demo:sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/demo.ts",
     "sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/cli.ts",
     "demo:sunrey-production-oracles": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/demo.ts",

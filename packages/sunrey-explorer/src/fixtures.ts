@@ -48,6 +48,11 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         issuedQuantity: '100',
         height: 2,
         recipient: 'sr1qfaucet000000000000000000000000001',
+        normalizationPolicy: 'norm.ENERGY.kWh.v1',
+        policyVersion: 1,
+        epoch: 0,
+        antiDoubleCountFingerprint: 'fp_energy_1',
+        supplySummary: { issued: '250', locked: '10', circulating: '240' },
       },
     ],
     productiveObjects: [

@@ -86,6 +86,8 @@ describe('SunRey TypeScript SDK', () => {
       assert.ok(await client.governance.proposals());
       assert.ok(await client.oracles.facts());
       assert.ok(await client.productive.moonreyAttribution());
+      assert.ok(await client.productive.getMoonReyPolicy());
+      assert.ok(await client.productive.getMoonReySupplyPressure());
       assert.ok(await client.machines.offers());
       assert.ok(await client.interop.packets());
       const markets = await client.exchange.listMarkets() as { readonly markets: readonly { readonly family: string }[] };

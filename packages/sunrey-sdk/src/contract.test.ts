@@ -31,6 +31,8 @@ describe('SunRey API contract alignment', () => {
         '/v1/governance/proposals',
         '/v1/oracles/facts',
         '/v1/productive/moonrey',
+        '/v1/productive/moonrey/policy',
+        '/v1/productive/moonrey/supply-pressure',
         '/v1/machines',
         '/v1/interop/packets',
         '/v1/exchange/markets',

@@ -508,6 +508,21 @@ function dispatch(
   if (method === 'GET' && path === '/v1/productive/moonrey') {
     return json(200, { attribution: platform.productive(), ticker_status: 'NOT_ASSIGNED' });
   }
+  if (method === 'GET' && path === '/v1/productive/moonrey/policy') {
+    return json(200, platform.moonreyPolicy());
+  }
+  if (method === 'GET' && path.startsWith('/v1/productive/moonrey/categories/')) {
+    return json(200, platform.moonreyCategoryPolicy(path.slice('/v1/productive/moonrey/categories/'.length)));
+  }
+  if (method === 'GET' && path.startsWith('/v1/productive/contributions/')) {
+    return json(200, platform.productiveContribution(path.slice('/v1/productive/contributions/'.length)));
+  }
+  if (method === 'GET' && path.startsWith('/v1/productive/moonrey/issuance/')) {
+    return json(200, platform.moonreyIssuanceReceipt(path.slice('/v1/productive/moonrey/issuance/'.length)));
+  }
+  if (method === 'GET' && path === '/v1/productive/moonrey/supply-pressure') {
+    return json(200, platform.moonreySupplyPressure());
+  }
 
   if (method === 'GET' && path === '/v1/machines') {
     return json(200, { machines: platform.machines() });
@@ -703,6 +718,8 @@ export const PUBLIC_ROUTES = [
   'GET /v1/governance/proposals',
   'GET /v1/oracles/facts',
   'GET /v1/productive/moonrey',
+  'GET /v1/productive/moonrey/policy',
+  'GET /v1/productive/moonrey/supply-pressure',
   'GET /v1/machines',
   'GET /v1/interop/packets',
   'GET /v1/exchange/markets',

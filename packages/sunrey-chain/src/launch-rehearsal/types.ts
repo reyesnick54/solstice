@@ -230,6 +230,18 @@ export type ExplorerRehearsalResult = {
   readonly rebuiltToZeroLag: boolean;
 };
 
+export type MoonReyPolicyRehearsalResult = {
+  readonly categoriesExercised: readonly string[];
+  readonly issuance: boolean;
+  readonly capsHonored: boolean;
+  readonly antiDoubleCount: boolean;
+  readonly supplyReconciled: boolean;
+  readonly explorerProvenance: boolean;
+  readonly policyVersionRecorded: boolean;
+  readonly productionCaps: 'UNCONFIGURED';
+  readonly productionAuthorized: false;
+};
+
 export type SecurityIncidentResult = {
   readonly detected: boolean;
   readonly signingRestricted: boolean;
@@ -289,6 +301,7 @@ export type MainnetLaunchRehearsalReport = {
   readonly interop: InteropRehearsalResult;
   readonly sdk: SdkRehearsalResult;
   readonly explorer: ExplorerRehearsalResult;
+  readonly moonreyPolicy: MoonReyPolicyRehearsalResult;
   readonly backups: BackupValidationResult;
   readonly readinessChanges: readonly string[];
   readonly knownLimitations: readonly string[];

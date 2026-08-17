@@ -62,3 +62,4 @@ export { ProductiveEconomyEngine, replicaFromSnapshot } from './engine.ts';
 export type { EngineClock, ProductiveSnapshot } from './engine.ts';
 export { runProductiveCommand } from './cli.ts';
 export { fourValidatorsAgree, runAllDemos, runComputeDemo, runEnergyDemo, runManufacturingDemo } from './demo.ts';
+export * from './policy-governance/index.ts';

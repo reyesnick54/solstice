@@ -105,6 +105,17 @@ export function handleExplorerRequest(
   if (path === '/v1/moonrey') {
     return json(200, queries.collection('moonrey', request.query['cursor'], parseLimit(request.query['limit'])));
   }
+  if (path === '/v1/moonrey/policy') {
+    const issuance = queries.collection('moonrey');
+    const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;
+    return json(200, {
+      policyVersion: first?.policyVersion ?? 1,
+      normalizationPolicy: first?.normalizationPolicy ?? null,
+      assetId: 'MOONREY_COIN',
+      tickerStatus: 'NOT_ASSIGNED',
+      items: issuance.items,
+    });
+  }
   if (path === '/v1/machines') {
     return json(200, queries.collection('machines', request.query['cursor'], parseLimit(request.query['limit'])));
   }

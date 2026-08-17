@@ -1,6 +1,8 @@
 import { ProductiveEconomyEngine, type ProductiveSnapshot } from './engine.ts';
 import { DEV_CLOCK } from './fixtures.ts';
 import { developmentIssuancePolicy } from './policy.ts';
+import { runMoonReyEconomicsCommand } from './policy-governance/cli.ts';
+import { MoonReyPolicyRegistry } from './policy-governance/registry.ts';
 
 export type CliResult = {
   readonly ok: boolean;
@@ -51,12 +53,20 @@ export function runProductiveCommand(
     switch (action) {
       case 'policy':
         return ok('moonrey policy', publicPolicy(engine.activePolicy()));
+      case 'categories':
+      case 'simulate':
+      case 'verify':
+      case 'supply-pressure':
+        return runMoonReyEconomicsCommand(args, engine, new MoonReyPolicyRegistry());
       case 'issuance':
+        if (target === 'verify') {
+          return runMoonReyEconomicsCommand(args, engine, new MoonReyPolicyRegistry());
+        }
         return ok('moonrey issuance', target ? engine.receipt(target) ?? null : engine.listReceipts());
       case 'attribution':
         return ok('moonrey attribution', engine.attribution());
       default:
-        return fail('moonrey', 'expected policy|issuance|attribution');
+        return fail('moonrey', 'expected policy|categories|simulate|issuance|verify|supply-pressure|attribution');
     }
   }
   return fail('cli', 'expected productive|moonrey');
