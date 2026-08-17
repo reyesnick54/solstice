@@ -23,7 +23,7 @@ export type CeremonyRehearsalResult = {
   readonly transcriptHash: string;
   readonly genesisCandidateHash: string;
   readonly report: PublicCeremonyReport;
-  readonly pqHardwareReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED';
+  readonly pqHardwareReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED' | 'SOFTWARE_PROVIDER_AVAILABLE' | 'HARDWARE_PROVIDER_CONFIRMED';
   readonly productionAuthorityActive: false;
 };
 

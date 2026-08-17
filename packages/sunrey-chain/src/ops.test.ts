@@ -46,7 +46,6 @@ import {
   developmentEpoch,
   developmentMultiDomainProfile,
   developmentRemoteSigner,
-  developmentSentryConfig,
   developmentSentryTopology,
   developmentUpgradeFixture,
   developmentValidatorConfig,
