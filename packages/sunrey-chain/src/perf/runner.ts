@@ -158,9 +158,10 @@ export function runProfile(options: RunOptions): BenchReport {
 }
 
 export function runSanity(ports?: BenchPorts): BenchReport {
-  const micro = runProfile({ profile: 'micro', ports });
-  const seven = runProfile({ profile: 'seven-validator', ports, latencyProfile: 'low' });
-  const soak = runProfile({ profile: 'soak', ports, soakMs: 80 });
+  const shared = ports !== undefined ? { ports } : {};
+  const micro = runProfile({ profile: 'micro', ...shared });
+  const seven = runProfile({ profile: 'seven-validator', latencyProfile: 'low', ...shared });
+  const soak = runProfile({ profile: 'soak', soakMs: 80, ...shared });
   const adapterCases = [
     ...(ports?.explorer ? ports.explorer.measure({ blocks: 24, catchUp: true }) : []),
     ...(ports?.exchange ? ports.exchange.measure({ orders: 12 }) : []),

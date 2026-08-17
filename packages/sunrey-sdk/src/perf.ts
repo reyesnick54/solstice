@@ -102,6 +102,7 @@ export function measureSdk(input: { readonly requests: number }): readonly SdkPe
       name: 'submit_envelope_prepare',
       cryptoLabeledSeparately: false,
       latency: summarize(submit),
+      extras: { localSigningSeparated: true },
     },
   ];
 }

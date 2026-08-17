@@ -34,7 +34,7 @@ export function measureStorage(input: { readonly snapshots: number }): readonly 
         createdAtUtc: '2026-08-17T00:00:00.000Z',
       });
       if (!created.ok) {
-        throw new Error(created.error.detail);
+        throw new Error(created.error.message);
       }
       const persistStarted = nowNs();
       persistSnapshot(root, created.value);
@@ -43,13 +43,13 @@ export function measureStorage(input: { readonly snapshots: number }): readonly 
       const verified = verifySnapshot(created.value, TRUST);
       verify.push(elapsedNs(verifyStarted));
       if (!verified.ok) {
-        throw new Error(verified.error.detail);
+        throw new Error(verified.error.message);
       }
       const restoreStarted = nowNs();
       const loaded = restoreSnapshot(created.value, TRUST, root);
       restore.push(elapsedNs(restoreStarted));
       if (!loaded.ok) {
-        throw new Error(loaded.error.detail);
+        throw new Error(loaded.error.message);
       }
     }
   } finally {
@@ -71,7 +71,7 @@ export function measureStorage(input: { readonly snapshots: number }): readonly 
       createdAtUtc: '2026-08-17T00:00:00.000Z',
     });
     if (!created.ok) {
-      throw new Error(created.error.detail);
+      throw new Error(created.error.message);
     }
     persistSnapshot(engineRoot, created.value);
     restoreSnapshot(created.value, TRUST, engineRoot);

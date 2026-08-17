@@ -73,9 +73,9 @@ export function measureExchange(input: { readonly orders: number }): readonly Ex
       cancellations += 1;
     }
   }
-  for (const settlementId of engine.settlements.keys()) {
+  for (const row of engine.settlements.values()) {
     const started = process.hrtime.bigint();
-    engine.submitSettlement(settlementId);
+    engine.submitSettlement(row.settlementId);
     settlement.push(Number(process.hrtime.bigint() - started));
   }
   const report = engine.reconcile();

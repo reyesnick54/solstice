@@ -64,15 +64,16 @@ export function executableForKind(
       feePayer: payer,
       exemption: 'NONE',
     },
-    transfer:
-      kind === 'NATIVE_TRANSFER' || kind === 'MOONREY_TRANSFER' || kind === 'ASSET_LOCK'
-        ? {
+    ...(kind === 'NATIVE_TRANSFER' || kind === 'MOONREY_TRANSFER' || kind === 'ASSET_LOCK'
+      ? {
+          transfer: {
             from: payer,
             to: counterparty,
             asset,
             amount,
-          }
-        : undefined,
+          },
+        }
+      : {}),
   };
 }
 

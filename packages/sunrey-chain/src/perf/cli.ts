@@ -30,7 +30,9 @@ export function runSunreyBench(argv: readonly string[], ports?: BenchPorts): num
   const soakAt = argv.indexOf('--soak-ms');
   const latencyAt = argv.indexOf('--latency');
   const soakMs = soakAt >= 0 ? Number.parseInt(argv[soakAt + 1] ?? '250', 10) : undefined;
-  const latencyProfile = latencyAt >= 0 && argv[latencyAt + 1] && isLatency(argv[latencyAt + 1]!) ? argv[latencyAt + 1] : undefined;
+  const latencyArg = argv[latencyAt + 1];
+  const latencyProfile: LatencyProfile | undefined =
+    latencyAt >= 0 && latencyArg !== undefined && isLatency(latencyArg) ? latencyArg : undefined;
 
   let report: BenchReport;
   if (command === 'sanity') {
