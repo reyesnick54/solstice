@@ -121,6 +121,10 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
+| sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -512,3 +516,10 @@ differential TypeScript/Rust drivers, and deterministic replay at
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. This is not formal
 verification. The evaluator returns `mustStop: false`.
+Chunk 62 implements independent security-review preparation at
+`packages/sunrey-chain`. Capability `sunrey-audit-readiness` is
+`IMPLEMENTED`. See
+[`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
+The bundle does not claim an external audit occurred or passed.
+Do not create `packages/sunrey-audit`, `packages/audit`,
+`packages/security-review`, or `packages/audit-evidence`.

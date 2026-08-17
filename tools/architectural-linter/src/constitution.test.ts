@@ -1553,6 +1553,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/pqc-core')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/quantum-security')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
+  });
+
   it('CHUNK-59 implements software supply-chain security on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').status, 'IMPLEMENTED');
@@ -1573,6 +1575,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-release')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sbom')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reproducible-builds')), false);
+  });
+
   it('CHUNK-56 implements SunRey fuzzing and property assurance on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-assurance').status, 'IMPLEMENTED');
@@ -1594,5 +1598,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/fuzz')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/assurance')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'tools/sunrey-test')), false);
+  });
+
+  it('CHUNK-62 prepares an independent security-review bundle on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-62',
+    );
+    assert.ok(declared, 'CHUNK-62 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-62-audit-readiness.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/audit/README.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/audit/reviewer-guide.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/audit/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-audit')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/audit')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security-review')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/audit-evidence')), false);
   });
 });

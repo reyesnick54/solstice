@@ -65,6 +65,8 @@
     "testnet:validate": "node scripts/sunrey-testnet-validate-manifests.mjs",
     "testnet:sbom": "node scripts/sunrey-testnet-sbom.mjs",
     "sunrey-release": "node scripts/sunrey-release.mjs",
+    "sunrey-audit": "node scripts/sunrey-audit.mjs",
+    "demo:sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/audit/demo.ts",
     "supply-chain:audit": "node scripts/sunrey-release.mjs audit",
     "supply-chain:lockfiles": "node scripts/check-lockfiles.mjs",
     "supply-chain:generated": "node scripts/check-generated-drift.mjs",

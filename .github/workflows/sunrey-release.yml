@@ -36,6 +36,12 @@ jobs:
       - name: Verify bundle
         run: node scripts/sunrey-release.mjs verify
 
+      - name: Generate independent security-review bundle
+        run: node scripts/sunrey-audit.mjs generate
+
+      - name: Verify independent security-review bundle
+        run: node scripts/sunrey-audit.mjs verify dist/sunrey-audit
+
       - name: Retain artifacts locally for 90 days of operator policy
         run: |
           test -f dist/testnet-release/release-manifest.json
