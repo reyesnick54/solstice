@@ -17,7 +17,7 @@ export function measureFeePolicyV2(count = 32): readonly BenchCaseResult[] {
   const meter: number[] = [];
   const quote: number[] = [];
   const select: number[] = [];
-  const process: number[] = [];
+  const blockProcess: number[] = [];
   const pq: number[] = [];
   const policy = developmentFeePolicyV2();
 
@@ -53,7 +53,7 @@ export function measureFeePolicyV2(count = 32): readonly BenchCaseResult[] {
       validators: [{ validatorId: 'val_a', votingPower: 1n }],
     });
   }
-  process.push(elapsedNs(processStarted));
+  blockProcess.push(elapsedNs(processStarted));
 
   return [
     caseResult('fees', 'v2_metering', {
@@ -69,7 +69,7 @@ export function measureFeePolicyV2(count = 32): readonly BenchCaseResult[] {
       extras: { classification: 'ENGINEERING_MEASUREMENT', selected: selected.length },
     }),
     caseResult('fees', 'v2_block_processing', {
-      latency: summarizeLatency(process),
+      latency: summarizeLatency(blockProcess),
       extras: { classification: 'ENGINEERING_MEASUREMENT' },
     }),
     caseResult('fees', 'v2_pq_heavy', {

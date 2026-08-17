@@ -37,15 +37,14 @@ import {
   developmentFeePolicyV2,
   disposeFeeV2,
   dispositionV2Reconciles,
-  estimateFeeV2,
   hashFeePolicyV2,
+  quoteFeeV2,
+  quoteInputForTransaction,
   initialBaseResourcePriceState,
   machineFeeFitsMandate,
   nextBaseResourcePrice,
   rejectPolicyDowngrade,
   toHistoricDispositionShape,
-  usageV2ForTransaction,
-  weightedUsage,
   type BaseResourcePriceState,
   type FeeDispositionPolicyV2,
   type FeePolicyV2,
@@ -99,7 +98,7 @@ export class FeeEngine {
   dispositionPolicyV2: FeeDispositionPolicyV2 = developmentFeeDispositionPolicyV2();
   priceState: BaseResourcePriceState = initialBaseResourcePriceState(
     developmentFeePolicyV2().bounds,
-    100n,
+    developmentFeePolicyV2().bounds.minBasePrice,
     0,
   );
   readonly priceHistory: BaseResourcePriceState[] = [];
@@ -247,7 +246,9 @@ export class FeeEngine {
     }
     const declaredUsage = usageForOperation(tx.operation, tx.encodedBytes, tx.signatureCount);
     if (this.policyVersion === 2) {
-      const quote = estimateFeeV2(this.feePolicyV2, tx, this.priceState.baseResourcePrice);
+      const quote = quoteFeeV2(
+        quoteInputForTransaction(this.feePolicyV2, tx, this.priceState.baseResourcePrice, tx.budget.maxFee),
+      );
       if (!quote.ok) {
         this.metrics.transactionFeeRejections += 1n;
         return { code: quote.code, stage: 'mempool', detail: quote.detail };
@@ -378,7 +379,9 @@ export class FeeEngine {
     let priorityFee = 0n;
     let baseResourcePrice: bigint | undefined;
     if (this.policyVersion === 2 && tx.budget.exemption === 'NONE') {
-      const quote = estimateFeeV2(this.feePolicyV2, tx, this.priceState.baseResourcePrice);
+      const quote = quoteFeeV2(
+        quoteInputForTransaction(this.feePolicyV2, tx, this.priceState.baseResourcePrice, tx.budget.maxFee),
+      );
       if (!quote.ok) {
         if (tx.budget.exemption === 'NONE') {
           this.releaseReservation(tx);
@@ -451,7 +454,7 @@ export class FeeEngine {
       outcome,
       disposition,
       policyVersion: this.policyVersion,
-      baseResourcePrice,
+      ...(baseResourcePrice !== undefined ? { baseResourcePrice } : {}),
       baseCharge,
       priorityFee,
     });

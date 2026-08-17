@@ -24,10 +24,8 @@ import {
   storageStatus,
   verifyStorage,
 } from './storage.ts';
-import { planGenesisSync } from './state-sync.ts';
 import type { DrillScenario } from './types.ts';
 import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
-import type { DrillScenario } from './types.ts';
 import {
   developmentEpoch,
   eraseEvidence,
@@ -430,24 +428,6 @@ export async function main(): Promise<void> {
   }
 }
 
-const entry = process.argv[1] ?? '';
-if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
-  const group = process.argv[2] ?? 'health';
-  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
-    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-  } else {
-    await main();
-  }
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const entry = process.argv[1] ?? '';
-  if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
-    const group = process.argv[2] ?? 'health';
-    if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
-      process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-    } else {
-      await main();
-    }
-  }
 const entry = process.argv[1] ?? '';
 if (
   import.meta.url === `file://${entry}` ||

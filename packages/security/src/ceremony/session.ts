@@ -76,7 +76,6 @@ export function createDefaultCeremonyPlan(input: {
       'WITNESS',
       'INDEPENDENT_OBSERVER',
     ] as const satisfies readonly CeremonyRole[]),
-    ] as const),
     requiredApprovals: input.requiredApprovals ?? 2,
     keyPurposes: Object.freeze([
       'VALIDATOR_CONSENSUS_SIGNING',
@@ -86,7 +85,6 @@ export function createDefaultCeremonyPlan(input: {
       'GENESIS_SIGNING',
       'RECOVERY_SIGNING',
     ] as const satisfies readonly KeyPurpose[]),
-    ] as const),
     authorities: Object.freeze([
       'GENESIS_AUTHORITY',
       'PROTOCOL_GOVERNANCE_AUTHORITY',
@@ -97,7 +95,6 @@ export function createDefaultCeremonyPlan(input: {
       'VALIDATOR_P2P_IDENTITY',
       'RECOVERY_AUTHORITY',
     ] as const satisfies readonly RootOfTrustAuthority[]),
-    ] as const),
     cryptoSuites: Object.freeze([SUITE_SUNREY_ED25519_V1]),
     providerRequirements: Object.freeze(['ED25519', 'NON_EXPORTABLE', 'ATTESTATION'] as const),
     steps: Object.freeze([

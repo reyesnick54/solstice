@@ -74,11 +74,13 @@ pub fn settlement_conservation(reserved: u128, settled: u128, cancelled: u128) -
 pub fn adaptive_price_within_bounds(usage: u128) -> bool {
     let bounds = AdaptivePriceBounds::development();
     let next = BaseResourcePriceState::initial(&bounds).next(usage, &bounds, 1);
-    next.base_resource_price >= bounds.min_base_price && next.base_resource_price <= bounds.max_base_price
+    next.base_resource_price >= bounds.min_base_price
+        && next.base_resource_price <= bounds.max_base_price
 }
 
 pub fn adaptive_disposition_conserves(charged: u128) -> bool {
-    FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles() && !FeePolicyV2::development().production_parameters_configured
+    FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles()
+        && !FeePolicyV2::development().production_parameters_configured
 }
 
 #[cfg(kani)]

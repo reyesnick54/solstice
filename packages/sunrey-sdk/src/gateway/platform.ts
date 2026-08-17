@@ -271,13 +271,13 @@ export class DevelopmentPlatform {
       signatureClass,
       budget: {
         maxExecutionUnits: 10_000n,
-        maxFee: 50_000n,
+        maxFee: 10_000_000n,
         feeAsset: 'SUNREY_COIN' as const,
         feePayer: 'estimator',
         exemption: 'NONE' as const,
       },
     };
-    const quote = estimateFeeV2(policy, tx, 100n);
+    const quote = estimateFeeV2(policy, tx, this.fees.priceState.baseResourcePrice);
     return Object.freeze({
       informational: true,
       authorization: 'signed canonical max_fee',

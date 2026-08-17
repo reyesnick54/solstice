@@ -1,6 +1,6 @@
 import { commitCanonical } from '../../hash.ts';
 import type { ExecutableTransaction, FeeAssetId } from '../types.ts';
-import { checkedAdd, checkedMul, WEIGHT_PRICE_SCALE } from './arithmetic.ts';
+import { checkedAdd, checkedMul, PROTOCOL_U128_MAX, WEIGHT_PRICE_SCALE } from './arithmetic.ts';
 import { usageV2ForTransaction, weightedUsage } from './meter.ts';
 import {
   FEE_QUOTE_V2_DOMAIN,
@@ -93,20 +93,41 @@ export function quoteFeeV2(input: QuoteInput): QuoteResult {
   }
 }
 
+export function quoteInputForTransaction(
+  policy: FeePolicyV2,
+  tx: ExecutableTransaction & V2TransactionExtras,
+  baseResourcePrice: bigint,
+  maximumAuthorizedFee: bigint,
+): QuoteInput {
+  return {
+    policy,
+    usage: usageV2ForTransaction(tx),
+    baseResourcePrice,
+    feeAsset: tx.budget.feeAsset,
+    maximumAuthorizedFee,
+    ...(tx.authorizedPriorityFee !== undefined ? { authorizedPriorityFee: tx.authorizedPriorityFee } : {}),
+    ...(tx.priorityAuthorized !== undefined ? { priorityAuthorized: tx.priorityAuthorized } : {}),
+  };
+}
+
 export function estimateFeeV2(
   policy: FeePolicyV2,
   tx: ExecutableTransaction & V2TransactionExtras,
   baseResourcePrice: bigint,
 ): QuoteResult {
-  return quoteFeeV2({
-    policy,
-    usage: usageV2ForTransaction(tx),
-    baseResourcePrice,
-    feeAsset: tx.budget.feeAsset,
-    maximumAuthorizedFee: tx.budget.maxFee,
-    authorizedPriorityFee: tx.authorizedPriorityFee,
-    priorityAuthorized: tx.priorityAuthorized,
-  });
+  const quoted = quoteFeeV2(
+    quoteInputForTransaction(policy, tx, baseResourcePrice, PROTOCOL_U128_MAX),
+  );
+  if (!quoted.ok) {
+    return quoted;
+  }
+  return {
+    ok: true,
+    quote: Object.freeze({
+      ...quoted.quote,
+      maximumAuthorizedFee: tx.budget.maxFee,
+    }),
+  };
 }
 
 export function hashFeeQuoteV2(quote: FeeQuoteV2): string {

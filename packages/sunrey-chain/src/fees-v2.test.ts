@@ -204,7 +204,11 @@ describe('Chunk 73 FeePolicyV2 adaptive fee market', () => {
     if (result.ok) {
       assert.equal(result.receipt.reservedFee, result.receipt.actualFee + result.receipt.releasedFee);
       assert.ok(result.receipt.actualFee <= tx.budget.maxFee);
-      assert.equal(engine.accounts.position('alice', 'SUNREY_COIN').available, before - result.receipt.actualFee);
+      assert.equal(
+        engine.accounts.position('alice', 'SUNREY_COIN').available,
+        before - result.receipt.actualFee - 100n,
+      );
+      assert.equal(engine.accounts.position('bob', 'SUNREY_COIN').available, 100n);
       assert.equal(result.receipt.disposition.validatorRewardPool + result.receipt.disposition.burned + result.receipt.disposition.treasury, result.receipt.actualFee);
     }
   });
@@ -215,7 +219,7 @@ describe('Chunk 73 FeePolicyV2 adaptive fee market', () => {
     engine.activateFeePolicyV2();
     const mempool = new FeeMempool(engine);
     const first = v2Tx({ transactionId: 'aa'.repeat(32) });
-    const second = v2Tx({ transactionId: 'bb'.repeat(32), budget: { ...v2Tx().budget, maxFee: 40_000n } });
+    const second = v2Tx({ transactionId: 'bb'.repeat(32), budget: { ...v2Tx().budget, maxFee: 80_000n } });
     assert.equal(mempool.admit(first), null);
     assert.equal(mempool.admit(second), null);
     const replica = new FeeEngine();
@@ -251,7 +255,12 @@ describe('Chunk 73 FeePolicyV2 adaptive fee market', () => {
         engine.accounts.position('sunrey.fees.burn', 'SUNREY_COIN').available +
         engine.accounts.position('sunrey.fees.treasury', 'SUNREY_COIN').available;
       assert.equal(sinks, result.receipt.actualFee);
-      assert.equal(engine.accounts.position('alice', 'SUNREY_COIN').available + sinks, availableBefore);
+      assert.equal(
+        engine.accounts.position('alice', 'SUNREY_COIN').available +
+          engine.accounts.position('bob', 'SUNREY_COIN').available +
+          sinks,
+        availableBefore,
+      );
     }
   });
 

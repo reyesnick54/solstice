@@ -128,18 +128,20 @@ pub struct BaseResourcePriceState {
 
 impl BaseResourcePriceState {
     pub fn initial(bounds: &AdaptivePriceBounds) -> Self {
-        Self { height: 0, base_resource_price: 100.min(bounds.max_base_price).max(bounds.min_base_price), previous_usage: 0 }
+        Self { height: 0, base_resource_price: bounds.min_base_price, previous_usage: 0 }
     }
 
     pub fn next(&self, previous_usage: u128, bounds: &AdaptivePriceBounds, height: u64) -> Self {
         let target = bounds.target_usage().max(1);
         let price = self.base_resource_price;
         let next = if previous_usage >= target {
-            let raw = price.saturating_mul(previous_usage - target) / target.saturating_mul(bounds.adjustment_denominator);
+            let raw = price.saturating_mul(previous_usage - target)
+                / target.saturating_mul(bounds.adjustment_denominator);
             let adj = raw.min(bounds.max_one_block_adjustment);
             price.saturating_add(adj).min(bounds.max_base_price)
         } else {
-            let raw = price.saturating_mul(target - previous_usage) / target.saturating_mul(bounds.adjustment_denominator);
+            let raw = price.saturating_mul(target - previous_usage)
+                / target.saturating_mul(bounds.adjustment_denominator);
             let adj = raw.min(bounds.max_one_block_adjustment);
             price.saturating_sub(adj).max(bounds.min_base_price)
         };
@@ -201,7 +203,8 @@ pub fn quote_fee_v2(
         return Err(RejectReason::StatefulInvalid);
     }
     let weighted = policy.weights.weighted(usage)?;
-    let base_charge = weighted.checked_mul(base_price).ok_or(RejectReason::StatefulInvalid)? / WEIGHT_PRICE_SCALE;
+    let base_charge =
+        weighted.checked_mul(base_price).ok_or(RejectReason::StatefulInvalid)? / WEIGHT_PRICE_SCALE;
     let priority_fee = if policy.priority_enabled && priority_authorized { priority } else { 0 };
     let estimated = base_charge.checked_add(priority_fee).ok_or(RejectReason::StatefulInvalid)?;
     let required = estimated.max(policy.minimum_fee);
@@ -238,7 +241,8 @@ impl FeeDispositionV2 {
     }
 
     pub fn reconciles(&self) -> bool {
-        self.validator_reward.saturating_add(self.burned).saturating_add(self.treasury) == self.charged
+        self.validator_reward.saturating_add(self.burned).saturating_add(self.treasury)
+            == self.charged
     }
 }
 

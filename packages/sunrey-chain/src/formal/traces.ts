@@ -85,7 +85,7 @@ export function interopHappyTrace(): LogicalTrace {
 
 export function adaptiveFeeHappyTrace(): LogicalTrace {
   return makeTrace('trace_adaptive_fee', 'adaptive_fee', 'ADAPTIVE_FEE_MARKET', [
-    { domain: 'adaptive_fee', action: 'UpdatePriceTarget', args: { usage: 1 } },
+    { domain: 'adaptive_fee', action: 'UpdatePriceHigh', args: { usage: 2 } },
     { domain: 'adaptive_fee', action: 'Reserve', args: {} },
     { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
   ]);

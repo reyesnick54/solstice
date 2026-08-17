@@ -65,7 +65,13 @@ export {
   hashFeeDispositionPolicyV2,
   toHistoricDispositionShape,
 } from './disposition.ts';
-export { quoteFeeV2, estimateFeeV2, hashFeeQuoteV2, estimateIsInformational } from './quote.ts';
+export {
+  quoteFeeV2,
+  quoteInputForTransaction,
+  estimateFeeV2,
+  hashFeeQuoteV2,
+  estimateIsInformational,
+} from './quote.ts';
 export type { QuoteInput, QuoteResult, QuoteRejectionCode } from './quote.ts';
 export {
   developmentAdaptivePriceBounds,
