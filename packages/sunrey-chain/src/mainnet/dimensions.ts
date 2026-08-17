@@ -610,8 +610,6 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-control-plane:${digests.infraControlPlaneDigest}`,
-      evidenceHash: digests.formalRegistryDigest,
-      evidenceReference: `infra-control-plane:${digests.formalRegistryDigest}`,
     },
     {
       requirementId: 'REQ-INFRA-002',
@@ -628,8 +626,6 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-security-tests:${digests.infraControlPlaneDigest}`,
-      evidenceHash: digests.rcQualificationDigest,
-      evidenceReference: `infra-security-tests:${digests.rcQualificationDigest}`,
     },
   ];
   return Object.freeze(drafts.map(slot));

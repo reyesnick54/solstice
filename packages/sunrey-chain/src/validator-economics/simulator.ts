@@ -41,14 +41,15 @@ export type ValidatorEconomicsSimulationReport = {
 };
 
 function validators(count: number, power: readonly bigint[], operators?: readonly string[]) {
-  return Array.from({ length: count }, (_, index) =>
-    fixtureValidatorRecord({
+  return Array.from({ length: count }, (_, index) => {
+    const operatorId = operators?.[index];
+    return fixtureValidatorRecord({
       label: String.fromCharCode(65 + index),
       votingPower: power[index] ?? 1n,
       status: 'CANDIDATE',
-      operatorId: operators?.[index],
-    }),
-  );
+      ...(operatorId === undefined ? {} : { operatorId }),
+    });
+  });
 }
 
 function evidence(validatorId: string, id: string): ProtocolEvidence {

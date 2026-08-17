@@ -1,6 +1,7 @@
 import { runValidatorEconomicsSimulation } from './simulator.ts';
 import { ValidatorEconomicsEngine } from './engine.ts';
 import { fixtureValidatorRecord } from './fixtures.ts';
+import { productionBondPolicy } from './policy.ts';
 
 const engine = new ValidatorEconomicsEngine('development');
 const record = fixtureValidatorRecord({ label: 'A' });
@@ -24,6 +25,7 @@ if (!reconciliation.balanced) {
 }
 console.log('sunrey validator economics demo');
 console.log(`  bond state ${engine.getBond(record.validatorId)?.state}`);
-console.log(`  production bond asset ${engine.policy().bond.bondAssetStatus}`);
+console.log(`  development bond asset ${engine.policy().bond.bondAssetStatus}`);
+console.log(`  production bond asset ${productionBondPolicy().bondAssetStatus}`);
 console.log(`  simulation ${report.scenarios.length}/${report.scenarios.length} passed`);
 console.log(`  guaranteedEconomicSecurity ${report.guaranteedEconomicSecurity}`);

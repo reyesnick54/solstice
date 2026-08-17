@@ -80,7 +80,7 @@ export function developmentRewardPolicy(version = 1): ValidatorRewardPolicy {
       'TRANSACTION_FEE_ALLOCATION',
       'EXPLICIT_VALIDATOR_REWARD_POOL',
       'MONETARY_POLICY_APPROVED_SOURCE',
-    ]),
+    ] as const),
     voteWeight: 1n,
     proposalWeight: 2n,
     feeRewardShareBps: 2_500n,
