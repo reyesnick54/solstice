@@ -1,7 +1,27 @@
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
 import { ResiliencePlatform } from './platform.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
 import type { DrillScenario } from './types.ts';
+import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
+import {
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+  developmentEpoch,
+} from './workflows.ts';
 
-const COMMANDS = [
+const RESILIENCE_COMMANDS = [
   'health',
   'alerts',
   'backup',
@@ -66,7 +86,7 @@ export function runSunreyOps(argv: readonly string[]): string {
     }
     throw new Error('sunrey-ops dr run|report');
   }
-  throw new Error(`unknown sunrey-ops command; expected ${COMMANDS.join('|')}`);
+  throw new Error(`unknown sunrey-ops command; expected ${RESILIENCE_COMMANDS.join('|')}`);
 }
 
 function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<string, unknown> {
@@ -324,7 +344,13 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
 }
 
 export async function main(): Promise<void> {
-  const result = runOpsCommand(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  const head = argv[0] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(head)) {
+    process.stdout.write(`${runSunreyOps(argv)}\n`);
+    return;
+  }
+  const result = runOpsCommand(argv);
   assertNoPrivateKeyMaterial(result);
   const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
   console.log(text);

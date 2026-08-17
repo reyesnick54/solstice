@@ -74,6 +74,7 @@ never be two implementations of these systems.
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
+| SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -922,6 +923,15 @@ in-process test doubles. Detector output is not legal guilt. Do not
 create `packages/red-team`, `packages/attack-sim`, or
 `packages/sunrey-pentest`. See
 [`chunk-57-adversarial-range.md`](./chunk-57-adversarial-range.md).
+Chunk 56 implements protocol fuzzing, property tests, differential
+TypeScript/Rust drivers, and deterministic replay at
+`packages/sunrey-chain/src/assurance` and
+`packages/sunrey-chain/rust/crates/assurance`. Capability
+`sunrey-assurance` is `IMPLEMENTED`. It is test infrastructure, not
+a second ledger, consensus engine, or formal-verification product.
+Do not create `packages/sunrey-test`, `packages/fuzz`,
+`packages/assurance`, or `tools/sunrey-test`. See
+[`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

@@ -1,0 +1,24 @@
+{
+  "chunk": "CHUNK-56",
+  "title": "SunRey protocol fuzzing, property tests, and differential determinism assurance",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "sunrey-local-node",
+    "blockchain-consensus",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-oracle-network",
+    "moonrey-issuance-engine",
+    "sunrey-machine-economy",
+    "sunrey-exchange",
+    "sunrey-interop",
+    "sunrey-sovereign-wallets",
+    "sunrey-assurance"
+  ],
+  "notes": "IMPLEMENTED as fuzz targets, property tests, differential drivers, and replay fixtures under packages/sunrey-chain and tests/assurance. Not a workspace business package. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
+}

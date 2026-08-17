@@ -54,6 +54,9 @@ jobs:
           npm run test:sunrey-node
           npm test
 
+      - name: Fuzz smoke
+        run: npm run test:fuzz-smoke
+
       - name: End-to-end demo
         run: npm run demo
       - name: Card simulation demo

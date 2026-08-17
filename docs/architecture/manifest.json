@@ -2881,6 +2881,12 @@
     "packages/red-team",
     "packages/attack-sim",
     "packages/sunrey-pentest"
+    "packages/sunrey-test",
+    "packages/fuzz",
+    "packages/assurance",
+    "packages/sunrey-fuzz",
+    "packages/protocol-fuzzer",
+    "tools/sunrey-test"
   ],
   "capabilities": [
     {
@@ -3375,6 +3381,11 @@
       "owner": "packages/sunrey-range",
       "protected": true,
       "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+      "id": "sunrey-assurance",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     }
   ],
   "boundedContexts": [

@@ -1,0 +1,29 @@
+[package]
+name = "sunrey-assurance"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "SunRey fuzz smoke, property tests, differential driver, and replay (Chunk 56)"
+
+[dependencies]
+hex.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sunrey-consensus.workspace = true
+sunrey-fees.workspace = true
+sunrey-interop.workspace = true
+sunrey-native-assets.workspace = true
+sunrey-oracle.workspace = true
+sunrey-productive.workspace = true
+sunrey-protocol.workspace = true
+sunrey-wallet.workspace = true
+
+[dev-dependencies]
+proptest = "=1.6.0"
+tempfile = "=3.14.0"
+
+[[bin]]
+name = "sunrey-test"
+path = "src/bin/sunrey-test.rs"
