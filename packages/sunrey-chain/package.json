@@ -27,6 +27,10 @@
     "sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/audit/cli.ts",
     "demo:perf": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/demo.ts",
     "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/cli.ts",
+    "demo:perf": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/demo.ts",
+    "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/cli.ts",
+    "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts",
+    "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts"
     "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts"
   },
   "engines": {

@@ -95,6 +95,9 @@ jobs:
       - name: Fuzz smoke
         run: npm run test:fuzz-smoke
 
+      - name: Formal smoke
+        run: npm run test:formal-smoke
+
       - name: End-to-end demo
         run: npm run demo
       - name: Card simulation demo

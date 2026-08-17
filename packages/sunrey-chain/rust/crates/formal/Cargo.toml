@@ -1,0 +1,15 @@
+[package]
+name = "sunrey-formal"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Chunk 61 bounded Rust verification harnesses for SunRey protocol arithmetic"
+
+[dependencies]
+sunrey-consensus.workspace = true
+sunrey-fees.workspace = true
+sunrey-native-assets.workspace = true
+
+[lints.rust]
+unexpected_cfgs = { level = "allow", check-cfg = ['cfg(kani)'] }

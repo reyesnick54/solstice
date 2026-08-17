@@ -47,6 +47,9 @@ npm run sunrey-bench -- sanity
 echo "==> fuzz smoke"
 npm run test:fuzz-smoke
 
+echo "==> formal smoke"
+npm run test:formal-smoke
+
 echo "==> end-to-end demo"
 npm run demo
 npm run demo:cards

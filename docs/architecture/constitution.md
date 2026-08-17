@@ -956,6 +956,15 @@ has occurred or passed. Do not create `packages/sunrey-audit`,
 `packages/audit`, `packages/security-review`, or
 `packages/audit-evidence`. See
 [`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
+Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
+bounded verification, and implementation-trace conformance at
+`packages/sunrey-chain/formal`. Capability
+`sunrey-formal-assurance` is `IMPLEMENTED`. Results are model
+checked within stated bounds. This is not whole-system formal
+verification. Do not create `packages/formal`, `packages/tla`,
+`packages/model-checker`, `packages/sunrey-formal`, or
+`tools/formal`. See
+[`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

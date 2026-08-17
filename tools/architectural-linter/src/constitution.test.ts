@@ -1623,5 +1623,27 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/audit')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/security-review')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/audit-evidence')), false);
+  it('CHUNK-61 implements formal SunRey protocol models on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-formal-assurance').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-formal-assurance').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-formal-assurance').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-61',
+    );
+    assert.ok(declared, 'CHUNK-61 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-61-formal-models.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/chunk-61-formal-models.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/formal/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/formal/registry/formal-model-registry.json')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/formal')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/tla')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/model-checker')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-formal')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'tools/formal')), false);
   });
 });

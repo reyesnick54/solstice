@@ -125,6 +125,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -523,3 +524,12 @@ Chunk 62 implements independent security-review preparation at
 The bundle does not claim an external audit occurred or passed.
 Do not create `packages/sunrey-audit`, `packages/audit`,
 `packages/security-review`, or `packages/audit-evidence`.
+Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
+bounded verification, and implementation-trace conformance at
+`packages/sunrey-chain`. Capability `sunrey-formal-assurance` is
+`IMPLEMENTED`. See
+[`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Results are model checked within stated bounds. Do not create
+`packages/formal`, `packages/tla`, `packages/model-checker`,
+`packages/sunrey-formal`, or `tools/formal`. The evaluator returns
+`mustStop: false`.
