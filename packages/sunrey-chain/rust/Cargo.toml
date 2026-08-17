@@ -17,6 +17,7 @@ members = [
   "crates/native-assets",
   "crates/interop",
   "crates/wallet",
+  "crates/ops",
   "crates/sdk",
 ]
 
@@ -43,6 +44,7 @@ sunrey-validators = { path = "crates/validators" }
 sunrey-native-assets = { path = "crates/native-assets" }
 sunrey-interop = { path = "crates/interop" }
 sunrey-wallet = { path = "crates/wallet" }
+sunrey-ops = { path = "crates/ops" }
 sunrey-sdk = { path = "crates/sdk" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }

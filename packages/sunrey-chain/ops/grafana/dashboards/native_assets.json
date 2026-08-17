@@ -1,0 +1,11 @@
+{
+  "id": "NATIVE_ASSETS",
+  "title": "Native Assets",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "sunrey_transactions",
+    "native_fees",
+    "asset_reconciliation"
+  ]
+}

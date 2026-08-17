@@ -1,0 +1,11 @@
+{
+  "id": "EXCHANGE",
+  "title": "Exchange",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "order_ingress",
+    "matching_latency",
+    "pending_settlement_count"
+  ]
+}

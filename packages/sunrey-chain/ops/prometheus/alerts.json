@@ -1,0 +1,61 @@
+{
+  "group": "sunrey-ops",
+  "label": "ENGINEERING_TEST_TARGETS",
+  "rules": [
+    {
+      "alert": "CONSENSUS_FINALITY_DELAY",
+      "expr": "finality_latency > 5000",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "VALIDATOR_MISSED_VOTES",
+      "expr": "validator_missed_votes > 3",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "VALIDATOR_SIGNER_UNAVAILABLE",
+      "expr": "signer_health == 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "VALIDATOR_PEER_ISOLATION",
+      "expr": "validator_peer_count == 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "RPC_HIGH_ERROR_RATE",
+      "expr": "rpc_error_rate > 5",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "DISK_LOW",
+      "expr": "disk < 10",
+      "severity": "WARNING"
+    },
+    {
+      "alert": "EXPLORER_LAG",
+      "expr": "explorer_lag > 2",
+      "severity": "WARNING"
+    },
+    {
+      "alert": "ORACLE_QUORUM_UNAVAILABLE",
+      "expr": "quorum_availability == 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "CUSTODY_RECONCILIATION_MISMATCH",
+      "expr": "reconciliation_mismatches > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "EXCHANGE_SETTLEMENT_BACKLOG",
+      "expr": "pending_settlement_count > 10",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "INTEROP_CLIENT_EXPIRING",
+      "expr": "client_age > 100",
+      "severity": "WARNING"
+    }
+  ]
+}

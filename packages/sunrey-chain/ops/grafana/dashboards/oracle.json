@@ -1,0 +1,11 @@
+{
+  "id": "ORACLE",
+  "title": "Oracle",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "quorum_availability",
+    "stale_facts",
+    "aggregation_latency"
+  ]
+}

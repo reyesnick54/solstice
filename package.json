@@ -51,6 +51,8 @@
     "demo:sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/demo.ts",
     "demo:sunrey-fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/fees/demo.ts",
     "demo:sunrey-interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/interop/demo.ts",
+    "demo:sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/demo.ts",
+    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/cli.ts",
     "demo:explorer": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-explorer/src/demo.ts",
     "sunrey-explorer": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-explorer/src/cli.ts",
     "demo:sunrey-wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/wallet/demo.ts",

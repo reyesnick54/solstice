@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-55",
+  "title": "SunRey multi-failure-domain resilience, observability, backup, and disaster recovery",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "evidence",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-validators",
+    "blockchain-consensus",
+    "sunrey-oracle-network",
+    "sunrey-interop",
+    "sunrey-exchange",
+    "custody",
+    "sunrey-ops-resilience"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/ops and packages/sunrey-chain/rust/crates/ops. Provider-neutral failure domains, OpenTelemetry-compatible configs, verified snapshots, BACKUP_ENCRYPTION, signer fencing, and engineering DR drills. Not a second ledger or production operations contract. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-ops, packages/observability, or packages/disaster-recovery."
+}

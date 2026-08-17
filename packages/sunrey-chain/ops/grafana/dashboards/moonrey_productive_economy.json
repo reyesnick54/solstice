@@ -1,0 +1,10 @@
+{
+  "id": "MOONREY_PRODUCTIVE_ECONOMY",
+  "title": "MoonRey / Productive Economy",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "moonrey_issuance",
+    "productive_contributions"
+  ]
+}

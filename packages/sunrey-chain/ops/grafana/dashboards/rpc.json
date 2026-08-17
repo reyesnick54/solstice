@@ -1,0 +1,10 @@
+{
+  "id": "RPC",
+  "title": "RPC",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "rpc_latency",
+    "rpc_error_rate"
+  ]
+}

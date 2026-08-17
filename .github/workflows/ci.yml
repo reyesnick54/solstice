@@ -106,6 +106,8 @@ jobs:
         run: npm run demo:sunrey-fees
       - name: SunRey interoperability demo
         run: npm run demo:sunrey-interop
+      - name: SunRey resilience and disaster-recovery demo
+        run: npm run demo:sunrey-ops
       - name: SunRey sovereign wallets demo
         run: npm run demo:sunrey-wallet
       - name: SunRey validator operator demo

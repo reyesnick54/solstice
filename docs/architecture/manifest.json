@@ -2811,6 +2811,8 @@
     "packages/crypto-wallet",
     "packages/sunrey-wallet-ledger",
     "packages/sunrey-ops",
+    "packages/observability",
+    "packages/disaster-recovery"
     "packages/validator-ops",
     "packages/sentry",
     "packages/remote-signer"
@@ -3280,6 +3282,11 @@
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     },
     {
+      "id": "sunrey-ops-resilience",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 55 operator-grade multi-failure-domain resilience, OpenTelemetry observability, backup, restore verification, signer fencing, and disaster-recovery drills at packages/sunrey-chain/src/ops. Engineering test targets only. Not a second ledger, Kernel, or production operations contract. Do not create packages/sunrey-ops, packages/observability, or packages/disaster-recovery."
       "id": "sunrey-validator-operations",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
