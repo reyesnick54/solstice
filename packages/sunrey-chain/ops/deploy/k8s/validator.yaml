@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sunrey-validator
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: node
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: operator
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: operator
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "4Gi"
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/sunrey
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 200Gi

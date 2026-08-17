@@ -54,6 +54,8 @@
     "demo:explorer": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-explorer/src/demo.ts",
     "sunrey-explorer": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-explorer/src/cli.ts",
     "demo:sunrey-wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/wallet/demo.ts",
+    "demo:sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/demo.ts",
+    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/cli.ts",
     "demo:sunrey-testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/testnet/demo.ts",
     "sunrey-genesis": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/testnet/cli-main.ts genesis",
     "sunrey-testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/testnet/cli-main.ts",

@@ -94,6 +94,10 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/blockchain-wallet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-wallet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-wallet-ledger')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-ops')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/validator-ops')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sentry')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/remote-signer')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-testnet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-faucet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);

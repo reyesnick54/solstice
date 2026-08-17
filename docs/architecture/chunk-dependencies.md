@@ -114,6 +114,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-operations | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
@@ -437,6 +438,12 @@ Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 Wallet metadata is not a second native-asset ledger.
+Chunk 54 implements validator operator infrastructure at
+`packages/sunrey-chain`. Capability `sunrey-validator-operations`
+is `IMPLEMENTED`. See
+[`chunk-54-validator-operations.md`](./chunk-54-validator-operations.md).
+Do not create `packages/sunrey-ops`, `packages/validator-ops`,
+`packages/sentry`, or `packages/remote-signer`.
 Chunk 53 implements the public TEST NETWORK package at
 `packages/sunrey-chain`. Capability `sunrey-public-testnet` is
 `IMPLEMENTED`. See

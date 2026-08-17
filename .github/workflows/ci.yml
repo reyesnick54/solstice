@@ -108,6 +108,8 @@ jobs:
         run: npm run demo:sunrey-interop
       - name: SunRey sovereign wallets demo
         run: npm run demo:sunrey-wallet
+      - name: SunRey validator operator demo
+        run: npm run demo:sunrey-ops
       - name: SunRey public testnet demo
         run: npm run demo:sunrey-testnet
       - name: SunRey testnet deployment manifests

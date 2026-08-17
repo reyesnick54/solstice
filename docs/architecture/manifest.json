@@ -2216,6 +2216,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Positions are derived. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing. Chunk 49 adds four canonical market families. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
@@ -2809,6 +2810,10 @@
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
     "packages/sunrey-wallet-ledger",
+    "packages/sunrey-ops",
+    "packages/validator-ops",
+    "packages/sentry",
+    "packages/remote-signer"
     "packages/sunrey-testnet",
     "packages/sunrey-faucet",
     "packages/testnet"
@@ -3275,6 +3280,11 @@
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     },
     {
+      "id": "sunrey-validator-operations",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 54 validator operator infrastructure at packages/sunrey-chain/src/ops. Sentry topology, authenticated remote signer, double-sign backup, join/exit/rotation workflows, snapshots, state sync, and governed rolling upgrades. Does not reimplement consensus or the validator registry. Do not create packages/sunrey-ops, packages/validator-ops, packages/sentry, or packages/remote-signer."
       "id": "sunrey-public-testnet",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

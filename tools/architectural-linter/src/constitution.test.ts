@@ -1375,6 +1375,32 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-security-v2')), false);
   });
 
+  it('CHUNK-54 implements validator operator infrastructure on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-operations').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-operations').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-operations').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validators').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'blockchain-consensus').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-governance').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-54',
+    );
+    assert.ok(declared, 'CHUNK-54 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-54-validator-operations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operators/validator.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operators/sentry.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/operators/remote-signer.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/ops/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/node/src/ops.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ops')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-ops')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sentry')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/remote-signer')), false);
   it('CHUNK-53 implements the public testnet package on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').status, 'IMPLEMENTED');
