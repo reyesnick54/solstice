@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
+  `packages/sunrey-economics`): deterministic human/productive
+  layers, economic bridge, Exchange order-flow discovery, fee and
+  validator accounting, oracle-backed MoonRey issuance, scenario
+  catalog, stability signals, and `DUAL_ECONOMY_MODELING`
+  engineering evidence. Capability `sunrey-dual-economy-simulator`
+  is `IMPLEMENTED`. Simulation only. Not a price forecast and not
+  production monetary-policy activation. See
+  `docs/economics/chunk-75-dual-economy-simulator.md`.
 - SunRey validator bonding, reward, and accountability economics
   (Chunk 72, `packages/sunrey-chain/src/validator-economics`):
   governed `ValidatorBondPosition`, versioned reward/penalty

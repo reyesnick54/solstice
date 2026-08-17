@@ -98,6 +98,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger
 - `packages/sunrey-sdk` — official developer SDK and versioned public API adapter
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
+- `packages/sunrey-economics` — Chunk 75 SunRey/MoonRey dual-economy simulation laboratory; not production monetary policy
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - `db/` — versioned SQL migrations per bounded database

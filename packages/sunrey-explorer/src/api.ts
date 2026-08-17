@@ -105,6 +105,14 @@ export function handleExplorerRequest(
   if (path === '/v1/moonrey') {
     return json(200, queries.collection('moonrey', request.query['cursor'], parseLimit(request.query['limit'])));
   }
+  if (path === '/v1/dual-economy') {
+    return json(200, {
+      label: 'SIMULATION',
+      environment: 'simulation',
+      note: 'Development-only dual-economy view. Not a price forecast or production authorization.',
+      sunreySupply: queries.home().sunreyDevelopmentSupply,
+      moonreySupply: queries.home().moonreyDevelopmentSupply,
+      ...queries.lag(),
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');
     const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;
