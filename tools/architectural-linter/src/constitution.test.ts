@@ -1820,6 +1820,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/travel-rule-production')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-activation')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-kyc')), false);
+  });
+
   it('CHUNK-67 implements production-candidate storage on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-storage').status, 'IMPLEMENTED');

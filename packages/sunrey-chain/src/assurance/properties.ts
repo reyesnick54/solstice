@@ -32,7 +32,7 @@ import { DEV_INTEROP_TEST_ASSET, EXTERNAL_DEV_CHAIN_ID } from '../interop/types.
 import { nativeAssetConstitution } from '../economics/constitution.ts';
 import { authorizeIssuance, developmentMoonReyAuthority, developmentSunReyAuthority } from '../economics/issuance.ts';
 import { burn, lock, reserveFee, transfer, unlock } from '../economics/operations.ts';
-import { emptyBook, supplyReconciles } from '../economics/supply.ts';
+import { emptyBook as emptyMonetaryBook, supplyReconciles as monetarySupplyReconciles } from '../economics/supply.ts';
 import type { SeededRng } from './rng.ts';
 
 type AssetBook = {
@@ -351,8 +351,8 @@ export function nativeAssetInvariantProperties(rng: SeededRng, cases: number): v
 
 export function monetaryConstitutionProperties(rng: SeededRng, cases: number): void {
   const constitution = nativeAssetConstitution('DEVELOPMENT_ACTIVE');
-  let sunrey = emptyBook('SUNREY_COIN', constitution.assets[0]!.policyVersion.versionId);
-  let moonrey = emptyBook('MOONREY_COIN', constitution.assets[1]!.policyVersion.versionId);
+  let sunrey = emptyMonetaryBook('SUNREY_COIN', constitution.assets[0]!.policyVersion.versionId);
+  let moonrey = emptyMonetaryBook('MOONREY_COIN', constitution.assets[1]!.policyVersion.versionId);
   const issued = authorizeIssuance(
     constitution,
     sunrey,
@@ -421,7 +421,7 @@ export function monetaryConstitutionProperties(rng: SeededRng, cases: number): v
         moonrey = next.book;
       }
     }
-    if (!supplyReconciles(sunrey) || !supplyReconciles(moonrey)) {
+    if (!monetarySupplyReconciles(sunrey) || !monetarySupplyReconciles(moonrey)) {
       throw new Error('monetary constitution supply identity failed');
     }
   }

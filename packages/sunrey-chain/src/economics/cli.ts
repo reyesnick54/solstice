@@ -46,7 +46,7 @@ export function runEconomicsCommand(argv: readonly string[]): EconomicsCliResult
   }
   if (domain === 'policy' && verb === 'verify') {
     const report = verifyPolicy({
-      assetId: asset,
+      ...(asset ? { assetId: asset } : {}),
       state: 'DEVELOPMENT_ACTIVE',
     });
     return { ok: report.ok, command: 'policy verify', payload: jsonSafe(report) };

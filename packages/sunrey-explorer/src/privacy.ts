@@ -67,6 +67,7 @@ const PUBLIC_FIELDS: readonly FieldExposure[] = [
   { path: 'moonreyIssuanceCategorySummary', classification: 'PUBLIC_DERIVED' },
   { path: 'networkEnvironmentLabel', classification: 'PUBLIC' },
   { path: 'monetary', classification: 'PUBLIC_DERIVED' },
+  { path: 'assets', classification: 'PUBLIC' },
   { path: 'issuanceId', classification: 'PUBLIC' },
   { path: 'receiptId', classification: 'PUBLIC' },
   { path: 'productiveCategory', classification: 'PUBLIC' },

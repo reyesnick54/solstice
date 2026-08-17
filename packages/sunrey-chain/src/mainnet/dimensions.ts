@@ -512,8 +512,6 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-control-plane:${digests.infraControlPlaneDigest}`,
-      evidenceHash: digests.formalRegistryDigest,
-      evidenceReference: `infra-control-plane:${digests.formalRegistryDigest}`,
     },
     {
       requirementId: 'REQ-INFRA-002',
@@ -530,8 +528,6 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-security-tests:${digests.infraControlPlaneDigest}`,
-      evidenceHash: digests.rcQualificationDigest,
-      evidenceReference: `infra-security-tests:${digests.rcQualificationDigest}`,
     },
     {
       requirementId: 'REQ-MONETARY-001',
@@ -577,7 +573,7 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
     },
     {
       requirementId: 'REQ-MONETARY-004',
-      dimension: 'GENESIS',
+      dimension: 'HUMAN_AUTHORIZATION',
       description: 'Genesis allocation authorization',
       scope: 'SUNREY_CHAIN',
       evidenceType: 'HUMAN_AUTHORIZATION',

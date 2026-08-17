@@ -277,7 +277,7 @@ function asset(assetId: 'SUNREY_COIN' | 'MOONREY_COIN', issued: string, burned: 
     authorizedIssuanceTotal: issued,
     escrowed: '0',
     supplyReconciliation: 'EXACT',
-    moonreyIssuanceCategorySummary: assetId === 'MOONREY_COIN' ? { ENERGY: issued } : undefined,
+    ...(assetId === 'MOONREY_COIN' ? { moonreyIssuanceCategorySummary: { ENERGY: issued } } : {}),
     networkEnvironmentLabel: 'DEVELOPMENT',
   };
 }

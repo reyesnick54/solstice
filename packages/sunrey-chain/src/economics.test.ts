@@ -183,7 +183,6 @@ describe('Chunk 71 monetary constitution', () => {
       book,
       developmentSunReyAuthority({ recipient: 'alice', quantity: 100n, replayIdentifier: 'dup-1' }),
     );
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -202,7 +201,6 @@ describe('Chunk 71 monetary constitution', () => {
     book = lock(book, 'alice', 'esc-1', 5n, 'INTEROP_ESCROW');
     book = reserveFee(book, 'alice', 3n);
     const burned = burn(book, 'alice', 7n, 'VOLUNTARY_USER_BURN');
-    assert.equal(burned.ok, true);
     if (!burned.ok) {
       throw new Error(burned.code);
     }
@@ -226,7 +224,7 @@ describe('Chunk 71 monetary constitution', () => {
       assert.equal(result.ok, true, name);
       assert.equal(result.concentration.legalOrPoliticalConclusion, null);
     }
-    assert.equal(scenarios.zeroProductionGenesis.final.SUNREY_COIN.genesisAllocated, 0n);
+    assert.equal(scenarios.zeroProductionGenesis?.final.SUNREY_COIN.genesisAllocated, 0n);
     assert.equal(new MonetaryPolicySimulator().classification, 'ENGINEERING_SIMULATION');
     assert.equal(runEconomicsCommand(['policy', 'verify']).ok, true);
     assert.equal(runEconomicsCommand(['supply', 'verify']).ok, true);

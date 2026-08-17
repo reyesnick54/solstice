@@ -10,10 +10,9 @@ import {
   emptyAllocationManifest,
   rejectUnapprovedAllocation,
   totalsOf,
-  type GenesisAssetAllocationManifest,
 } from '../mainnet/allocation.ts';
 import { TESTNET_MOONREY_FAUCET_ALLOCATION, TESTNET_SUNREY_FAUCET_ALLOCATION } from '../testnet/genesis.ts';
-import type { GenesisAllocationLine } from '../mainnet/types.ts';
+import type { GenesisAllocationLine, GenesisAssetAllocationManifest } from '../mainnet/types.ts';
 import { CATEGORY_FRAMEWORK_VERSION, nativeAssetConstitution, requireKnownAsset } from './constitution.ts';
 import {
   GENESIS_DISTRIBUTION_CATEGORIES,

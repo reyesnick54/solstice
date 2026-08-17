@@ -21,7 +21,6 @@ import { runFullCeremonyRehearsal } from '../../../security/src/ceremony/rehears
 import { IAC_MODULES } from './config.ts';
 import { digestJson, infraSha256, stableJson } from './hash.ts';
 import { INFRA_SCHEMA_VERSION, INFRA_TOOL_VERSION } from './types.ts';
-import { digestJson, infraSha256, stableJson } from './hash.ts';
 
 export type ReadinessArtifactDigests = {
   readonly formalReportDigest: string;
@@ -53,11 +52,6 @@ function infraControlPlaneDigest(): string {
   );
 }
 
-function formalRegistryFileDigest(): string {
-  const path = join(REPO_ROOT, 'packages/sunrey-chain/formal/registry/formal-model-registry.json');
-  return infraSha256(readFileSync(path));
-}
-
 function engineeringAuditBundleDigest(): string {
   return infraSha256(
     [
@@ -77,7 +71,6 @@ export function collectReadinessArtifactDigests(root = REPO_ROOT): ReadinessArti
   const report = buildFormalVerificationReport('FORMAL_SMOKE');
   const formalReportDigest = digestJson(publicAssuranceView(report));
   const formalRegistryDigest = formalRegistryFileDigest(root);
-  const formalRegistryDigest = formalRegistryFileDigest();
   const protocol = freezeProtocol(root);
   const api = freezeApi(root);
   const rcQualificationDigest = infraSha256(
