@@ -45,8 +45,8 @@ import type {
   EconomicFlow,
   EpochSnapshot,
   PropertyCheckSnapshot,
-  StabilitySignal,
 } from './types.ts';
+import type { StabilitySignal } from './ids.ts';
 
 export class DualEconomySimulationEngine {
   simulate(scenario: DualEconomyScenario): DualEconomySimulationReport {

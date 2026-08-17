@@ -564,7 +564,7 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       scope: 'SUNREY_CHAIN',
       evidenceType: 'HUMAN_AUTHORIZATION',
       source: 'human-economic-approval-slot',
-      authorizedVerifierRole: 'PROTOCOL_AUTHORITY',
+      authorizedVerifierRole: 'HUMAN_AUTHORITY',
       expirationOrReviewDateUtc: null,
       notes: 'Human approval is not granted by software. Simulation is not production authorization.',
       externalEvidence: true,

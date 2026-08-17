@@ -38,8 +38,8 @@ type JsonScenario = Omit<DualEconomyScenario, 'human' | 'automation' | 'producti
   readonly policies: Record<string, number | string | false | null>;
 };
 
-function asBig(value: number | string | null | undefined, fallback = 0n): bigint {
-  if (value === null || value === undefined) {
+function asBig(value: number | string | boolean | null | undefined, fallback = 0n): bigint {
+  if (value === null || value === undefined || typeof value === 'boolean') {
     return fallback;
   }
   return BigInt(value);

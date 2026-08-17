@@ -42,7 +42,9 @@ export function compareScenarios(leftId: string, rightId: string, epochs?: numbe
 }
 
 export function runMonteCarlo(scenarioId: string, seeds: readonly number[], epochs?: number): MonteCarloBatch {
-  const reports = seeds.map((seed) => simulateScenario(scenarioId, { seed, epochs }));
+  const reports = seeds.map((seed) =>
+    simulateScenario(scenarioId, epochs === undefined ? { seed } : { seed, epochs }),
+  );
   return Object.freeze({
     baseScenarioId: scenarioId,
     seeds: Object.freeze([...seeds]),

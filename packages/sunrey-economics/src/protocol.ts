@@ -131,8 +131,7 @@ export function issueMoonReyForEpoch(
       quantity: claimQty,
       unit: UNIT_FOR[category],
       count: usableProviders,
-      quality: scenario.oracle.stale ? 100n : undefined,
-      validUntil: scenario.oracle.stale ? 1_799_000_100n : undefined,
+      ...(scenario.oracle.stale ? { quality: 100n, validUntil: 1_799_000_100n } : {}),
       conflicted: scenario.oracle.conflict,
     });
     for (const fact of facts) {
