@@ -4,21 +4,29 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   ci:
     name: architectural-invariants → deployment-posture → kernel-gating → tests → e2e-demo → typecheck → secret-scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
 
-      - name: Install
-        run: npm install
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Lockfile enforcement
+        run: node scripts/check-lockfiles.mjs
 
       - name: Architectural invariants
         run: |
@@ -37,8 +45,8 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Setup Rust stable
-        uses: dtolnay/rust-toolchain@stable
+      - name: Setup Rust 1.88
+        uses: dtolnay/rust-toolchain@1.88.0
         with:
           components: rustfmt, clippy
 
@@ -46,13 +54,40 @@ jobs:
         working-directory: packages/sunrey-chain/rust
         run: |
           cargo +1.83.0 fmt --check
-          cargo +1.83.0 clippy --all-targets -- -D warnings
-          cargo +1.83.0 test --workspace
+          cargo +1.83.0 clippy --all-targets --locked -- -D warnings
+          cargo +1.83.0 test --workspace --locked
+
+      - name: Dependency audit and license inventory
+        run: node scripts/sunrey-release.mjs audit
+
+      - name: SBOM and provenance
+        run: |
+          node scripts/sunrey-release.mjs sbom
+          node scripts/sunrey-release.mjs provenance
+          node scripts/sunrey-testnet-sbom.mjs
+
+      - name: Two-builder reproducibility
+        run: node scripts/sunrey-release.mjs compare-builds
+
+      - name: Artifact sign and verify
+        run: |
+          node scripts/sunrey-release.mjs sign
+          node scripts/sunrey-release.mjs verify
+
+      - name: Generated-code drift
+        run: node scripts/check-generated-drift.mjs
+
+      - name: Static analysis (Rust clippy already -D warnings; TS security lint)
+        run: node scripts/static-security-lint.mjs
 
       - name: Tests
         run: |
           npm run test:sunrey-node
           npm test
+          npm run sunrey-bench -- sanity
+
+      - name: Fuzz smoke
+        run: npm run test:fuzz-smoke
 
       - name: End-to-end demo
         run: npm run demo
@@ -140,6 +175,12 @@ jobs:
         run: npm run demo:listing-governance
       - name: SunRey explorer demo
         run: npm run demo:explorer
+      - name: SunRey performance bench sanity demo
+        run: npm run demo:sunrey-bench
+      - name: SunRey adversarial range smoke campaign
+        run: npm run sunrey-range -- campaign --smoke
+      - name: SunRey adversarial range demo
+        run: npm run demo:sunrey-range
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
 
@@ -150,10 +191,16 @@ jobs:
         run: |
           python3 scripts/secret-scan.py
           python3 scripts/secret-scan.py --self-test
+          if [ -d dist/testnet-release ]; then python3 scripts/secret-scan.py --root dist/testnet-release; fi
+
+      - name: Container pin check
+        run: node scripts/check-container-pins.mjs
 
   persistence:
     name: postgres → migrate → persistence-integration
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     services:
       postgres:
         image: postgres:16
@@ -174,15 +221,15 @@ jobs:
       SOLSTICE_PERSISTENCE_TEST: "1"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
 
-      - name: Install
-        run: npm install
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
 
       - name: Bootstrap and migrate empty databases
         run: npm run db:migrate

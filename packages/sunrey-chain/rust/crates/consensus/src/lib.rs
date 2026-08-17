@@ -2,6 +2,8 @@
 //!
 //! This crate is an internal module of `packages/sunrey-chain`. It is not a
 //! workspace package at `packages/consensus-engine` or `packages/tendermint`.
+
+#![forbid(unsafe_code)]
 //!
 //! Consensus finalizes protocol blocks. It does not post fiat journals, issue
 //! Execution Authority, alter KYC or Consent, mint SunRey Coin or MoonRey,

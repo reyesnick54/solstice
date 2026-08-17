@@ -110,6 +110,13 @@ const INTEROP_METRICS = [
   'relayer_latency',
 ] as const;
 
+const PERFORMANCE_METRICS = [
+  'finalized_tps',
+  'mempool_admission_latency',
+  'explorer_index_rate',
+  'soak_rss_bytes',
+] as const;
+
 export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...CONSENSUS_METRICS,
   ...NODE_METRICS,
@@ -118,6 +125,7 @@ export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...EXCHANGE_METRICS,
   ...ORACLE_METRICS,
   ...INTEROP_METRICS,
+  ...PERFORMANCE_METRICS,
 ]);
 
 export class MetricRegistry {

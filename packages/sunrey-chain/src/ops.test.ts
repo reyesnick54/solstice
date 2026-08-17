@@ -71,36 +71,170 @@ import {
   assertEngineeringLabel,
   assertExplorerCannotMutate,
   assertNoIndependentFinality,
+  assertNoPrivateKeyMaterial,
   assertRpcCannotSign,
   assertSafeTelemetryRecord,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  compareSafetyWatermark,
+  availableSentryCount,
   backupRecoveryStrategies,
+  compareSafetyWatermark,
   createSignerSafetyBackup,
+  createSnapshot,
   createVerifiedSnapshot,
   dashboardDefinitions,
   decryptBackup,
+  developmentEpoch,
   developmentMultiDomainProfile,
+  developmentRemoteSigner,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
   dumpApplicationDatabase,
   encryptBackup,
+  eraseEvidence,
+  evaluateDisk,
+  exitWorkflow,
+  generateJoinRecord,
+  gracefulShutdownPreserves,
+  incidentProcedure,
+  integrityHash,
+  jailRecord,
+  jailStatus,
+  joinWorkflow,
+  kubernetesManifest,
   LocalFilesystemBackupStorage,
   MetricRegistry,
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  operatorReadiness,
+  operatorReadiness,
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  RemoteSignerServer,
+  replaceWorkflow,
+  reportIncompatibleBinary,
   requiredMetricCatalog,
   ResiliencePlatform,
   restoreSignerSafetyBackup,
+  restoreSnapshot,
+  rotateWorkflow,
   runChaosScenario,
   runDrill,
+  runOpsCommand,
+  runRollingUpgrade,
   runSunreyOps,
   S3CompatibleTestProvider,
+  safeRestart,
   sealIncidentEvidence,
+  safeRestart,
+  sentryCanSign,
+  sentrySignerIdentity,
+  SignerFence,
+  SignerSafetyStore,
+  SevenValidatorNetwork,
+  sentryCanSign,
+  sentrySignerIdentity,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
   SignerFencingController,
+  SignerSafetyStore,
   SimulatedResilienceNetwork,
+  structuredLog,
   StructuredLogSink,
+  systemdUnit,
   TraceCollector,
+  upgradePrecheck,
+  validateSentryTopology,
+  warnDiskPressure,
+  validateSignRequest,
+  validateValidatorConfig,
   verifyDatabaseDump,
   verifyBackupSnapshot,
   verifySnapshot,
 } from './ops/index.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
+  validateSignRequest,
+  validateValidatorConfig,
+  verifyDatabaseDump,
+  warnDiskPressure,
+} from './ops/index.ts';
+import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { verifySnapshot as verifyChainSnapshot } from './ops/snapshots.ts';
 
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  RemoteSignerServer,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
+  SignerSafetyStore,
+  assertNoPrivateKeyMaterial,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  availableSentryCount,
+  compareSafetyWatermark,
+  createSnapshot,
+  developmentEpoch,
+  developmentRemoteSigner,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
+  eraseEvidence,
+  evaluateDisk,
+  exitWorkflow,
+  generateJoinRecord,
+  gracefulShutdownPreserves,
+  incidentProcedure,
+  integrityHash,
+  jailRecord,
+  jailStatus,
+  joinWorkflow,
+  kubernetesManifest,
+  operatorReadiness,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  replaceWorkflow,
+  reportIncompatibleBinary,
+  restoreSnapshot,
+  rotateWorkflow,
+  runOpsCommand,
+  runRollingUpgrade,
+  safeRestart,
+  sentryCanSign,
+  sentrySignerIdentity,
+  structuredLog,
+  systemdUnit,
+  upgradePrecheck,
+  validateSentryTopology,
+  validateSignRequest,
+  validateValidatorConfig,
+  verifySnapshot,
+  warnDiskPressure,
+} from './ops/index.ts';
+import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
 const ROOT = join(import.meta.dirname, '..', '..', '..');
+const NOW = '2026-08-17T00:00:00.000Z';
 
 describe('Chunk 55 SunRey resilience and disaster recovery', () => {
   it('distributes seven validators across three domains without independent finality', () => {
@@ -184,7 +318,7 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
       platform.validateObservabilityConfigs(),
       ['otel-collector.yaml', 'prometheus/alerts.json', 'grafana/dashboards'],
     );
-    assert.equal(dashboardDefinitions().length, 11);
+    assert.equal(dashboardDefinitions().length, 12);
     assertEngineeringLabel();
     assert.equal(backupRecoveryStrategies().length, 8);
     const slos = readFileSync(join(ROOT, 'packages/sunrey-chain/ops/slos.json'), 'utf8');
@@ -343,6 +477,66 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
     assert.equal(existsSync(join(ROOT, 'packages/disaster-recovery')), false);
   });
 });
+
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+import {
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  RemoteSignerServer,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
+  SignerSafetyStore,
+  assertNoPrivateKeyMaterial,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  availableSentryCount,
+  compareSafetyWatermark,
+  createSnapshot,
+  developmentEpoch,
+  developmentRemoteSigner,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
+  eraseEvidence,
+  evaluateDisk,
+  exitWorkflow,
+  generateJoinRecord,
+  gracefulShutdownPreserves,
+  incidentProcedure,
+  integrityHash,
+  jailRecord,
+  jailStatus,
+  joinWorkflow,
+  kubernetesManifest,
+  operatorReadiness,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  replaceWorkflow,
+  reportIncompatibleBinary,
+  restoreSnapshot,
+  rotateWorkflow,
+  verifyChainSnapshot,
+  runOpsCommand,
+  runRollingUpgrade,
+  safeRestart,
+  sentryCanSign,
+  sentrySignerIdentity,
+  structuredLog,
+  systemdUnit,
+  upgradePrecheck,
+  validateSentryTopology,
+  validateSignRequest,
+  validateValidatorConfig,
+  warnDiskPressure,
+} from './ops/index.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
 
 const NOW = '2026-08-17T00:00:00.000Z';
 
@@ -624,10 +818,10 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       trustedFinalizedHeight: 10n,
       trustedStateRoot: '11'.repeat(32),
     };
-    assert.equal(verifySnapshot(created.value, trust).ok, true);
+    assert.equal(verifyChainSnapshot(created.value, trust).ok, true);
     const tampered = { ...created.value, payload: '{"state":"evil"}' };
-    assert.equal(verifySnapshot(tampered, trust).ok, false);
-    const wrongNet = verifySnapshot(created.value, { ...trust, networkId: 'net_other' });
+    assert.equal(verifyChainSnapshot(tampered, trust).ok, false);
+    const wrongNet = verifyChainSnapshot(created.value, { ...trust, networkId: 'net_other' });
     assert.equal(wrongNet.ok, false);
     if (!wrongNet.ok) {
       assert.equal(wrongNet.error.code, 'WRONG_NETWORK_SNAPSHOT');

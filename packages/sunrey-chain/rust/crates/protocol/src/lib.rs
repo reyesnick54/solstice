@@ -3,6 +3,8 @@
 //! This crate is encoding and typed envelopes only. Hashing and signatures
 //! are supplied by a [`DomainHasher`] implementation from the crypto crate.
 
+#![forbid(unsafe_code)]
+
 mod block;
 mod codec;
 mod commitments;

@@ -1,0 +1,24 @@
+{
+  "chunk": "CHUNK-58",
+  "title": "SunRey performance, load, soak, and capacity engineering",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "blockchain-consensus",
+    "sunrey-native-fees",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-machine-economy",
+    "sunrey-interop",
+    "sunrey-exchange",
+    "custody",
+    "sunrey-explorer",
+    "sunrey-developer-sdk",
+    "sunrey-ops-resilience",
+    "sunrey-performance-engineering"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/perf with Explorer/Exchange/SDK/custody adapters. sunrey-bench profiles: micro, single-node, four-validator, seven-validator, rpc, exchange, explorer, soak. Results include commit, hardware, OS, validator count, latency profile, dataset, protocol version, duration, and statistics. Engineering measurements only. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-bench, packages/performance, or packages/load-test."
+}

@@ -991,6 +991,37 @@
         "@reyesnick54"
       ],
       "notes": "Official SunRey developer SDK and versioned public API adapter. Not a second chain, ledger, or exchange. Private keys never leave the injected local signer."
+    },
+    {
+      "id": "packages/sunrey-range",
+      "npmName": "@solstice/sunrey-range",
+      "path": "packages/sunrey-range",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/sunrey-chain",
+        "packages/sunrey-exchange",
+        "packages/sunrey-explorer",
+        "packages/sunrey-sdk",
+        "packages/custody",
+        "packages/market-surveillance",
+        "packages/consent",
+        "packages/clean-room",
+        "packages/config",
+        "packages/security",
+        "packages/evidence",
+        "packages/domain",
+        "packages/identity",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Isolated SunRey adversarial cyber-economic test range. Adapter/harness only. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service."
     }
   ],
   "components": [
@@ -2245,6 +2276,45 @@
         "@reyesnick54"
       ],
       "notes": "Official developer interface. Versioned public API v1, TypeScript SDK, Rust client crate, event subscriptions. Adapter over packages/sunrey-chain and packages/sunrey-exchange."
+    },
+    {
+      "id": "sunrey-supply-chain",
+      "name": "SunRey software supply-chain security and releases",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/supply-chain/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/supply-chain/index.ts",
+      "id": "sunrey-adversarial-range",
+      "name": "SunRey adversarial cyber-economic test range",
+      "canonicalOwner": "packages/sunrey-range",
+      "canonicalPath": "packages/sunrey-range/src/types.ts",
+      "publicInterface": "packages/sunrey-range/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ReleaseAuthority",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/supply-chain",
+        "packages/sunrey-release",
+        "packages/sbom",
+        "packages/reproducible-builds"
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/red-team",
+        "packages/attack-sim",
+        "packages/sunrey-pentest"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 59 supply-chain security at packages/sunrey-chain. ReleaseAuthority signs artifacts only. Not Execution Authority, validator governance, custody, or wallet signing. Software release approval does not activate protocol change."
+      "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     }
   ],
   "authorizedMutationPaths": [
@@ -2824,7 +2894,23 @@
     "packages/blockchain-v2",
     "packages/sunrey-chain-sdk-ledger",
     "packages/sdk-ledger",
-    "packages/sunrey-sdk-v2"
+    "packages/sunrey-sdk-v2",
+    "packages/supply-chain",
+    "packages/sunrey-release",
+    "packages/sbom",
+    "packages/reproducible-builds"
+    "packages/sunrey-bench",
+    "packages/performance",
+    "packages/load-test"
+    "packages/red-team",
+    "packages/attack-sim",
+    "packages/sunrey-pentest"
+    "packages/sunrey-test",
+    "packages/fuzz",
+    "packages/assurance",
+    "packages/sunrey-fuzz",
+    "packages/protocol-fuzzer",
+    "tools/sunrey-test"
   ],
   "capabilities": [
     {
@@ -3319,6 +3405,28 @@
       "owner": "packages/sunrey-sdk",
       "protected": true,
       "notes": "Chunk 51 official developer platform: versioned public API v1, TypeScript SDK, Rust client SDK, event subscriptions. Adapter only. Canonical owners remain packages/sunrey-chain and packages/sunrey-exchange. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
+    },
+    {
+      "id": "sunrey-supply-chain",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 59 software supply-chain security, reproducible releases, and dependency assurance at packages/sunrey-chain/src/supply-chain. ReleaseAuthority signs artifacts only and does not change blockchain state, issue Execution Authority, or act as a custody/wallet/validator signer. Do not create packages/supply-chain, packages/sunrey-release, packages/sbom, or packages/reproducible-builds."
+      "id": "sunrey-performance-engineering",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 58 sunrey-bench load, soak, and capacity engineering at packages/sunrey-chain/src/perf. Measures finalized consensus, RPC, Explorer, Exchange, oracle, productive, machine, interop, and custody workflows. Engineering measurements only. Do not create packages/sunrey-bench, packages/performance, or packages/load-test. Do not bypass consensus, CryptoSuite, authorization, policy, reconciliation, oracle validation, custody controls, or exchange reservations."
+      "id": "sunrey-adversarial-range",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-range",
+      "protected": true,
+      "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+      "id": "sunrey-assurance",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     }
   ],
   "boundedContexts": [

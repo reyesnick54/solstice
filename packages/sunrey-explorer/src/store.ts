@@ -24,6 +24,9 @@ import type {
 export type ExplorerIndexStore = {
   checkpoint(): IndexCheckpoint | null;
   putCheckpoint(checkpoint: IndexCheckpoint): void;
+  blockByHeight(height: number): IndexedBlock | undefined;
+  blockById(blockId: string): IndexedBlock | undefined;
+  transactionById(transactionId: string): IndexedTransaction | undefined;
   putBlock(block: IndexedBlock): void;
   putTransaction(tx: IndexedTransaction): void;
   putIndexedAccount(account: IndexedAccount): void;
@@ -51,6 +54,7 @@ export type ExplorerIndexStore = {
  */
 export class InMemoryExplorerIndex implements ExplorerIndexStore {
   private current: IndexCheckpoint | null = null;
+  private cachedProjection: CanonicalProjection | null = null;
   readonly blocks = new Map<number, IndexedBlock>();
   readonly blocksById = new Map<string, number>();
   readonly transactions = new Map<string, IndexedTransaction>();
@@ -75,16 +79,22 @@ export class InMemoryExplorerIndex implements ExplorerIndexStore {
     return this.current;
   }
 
+  private invalidateProjection(): void {
+    this.cachedProjection = null;
+  }
+
   putCheckpoint(checkpoint: IndexCheckpoint): void {
     if (checkpoint.indexerSchemaVersion !== EXPLORER_INDEXER_SCHEMA_VERSION) {
       throw new Error('explorer schema version mismatch; rebuild required');
     }
     this.current = checkpoint;
+    this.invalidateProjection();
   }
 
   putBlock(block: IndexedBlock): void {
     this.blocks.set(block.height, block);
     this.blocksById.set(block.blockId, block.height);
+    this.invalidateProjection();
   }
 
   putTransaction(tx: IndexedTransaction): void {
@@ -96,70 +106,87 @@ export class InMemoryExplorerIndex implements ExplorerIndexStore {
       }
       this.txsByAddress.set(address, list);
     }
+    this.invalidateProjection();
   }
 
   putIndexedAccount(account: IndexedAccount): void {
     this.accounts.set(account.address, account);
+    this.invalidateProjection();
   }
 
   putAsset(asset: IndexedAsset): void {
     this.assets.set(asset.assetId, asset);
+    this.invalidateProjection();
   }
 
   putMoonRey(row: IndexedMoonReyIssuance): void {
     this.moonrey.set(row.issuanceId, row);
+    this.invalidateProjection();
   }
 
   putProductiveObject(row: IndexedProductiveObject): void {
     this.productiveObjects.set(row.objectId, row);
+    this.invalidateProjection();
   }
 
   putContribution(row: IndexedContribution): void {
     this.contributions.set(row.contributionId, row);
+    this.invalidateProjection();
   }
 
   putOracleProvider(row: IndexedOracleProvider): void {
     this.oracleProviders.set(row.providerId, row);
+    this.invalidateProjection();
   }
 
   putOracleFeed(row: IndexedOracleFeed): void {
     this.oracleFeeds.set(row.feedId, row);
+    this.invalidateProjection();
   }
 
   putOracleFact(row: IndexedOracleFact): void {
     this.oracleFacts.set(row.factId, row);
+    this.invalidateProjection();
   }
 
   putValidator(row: IndexedValidator): void {
     this.validators.set(row.validatorId, row);
+    this.invalidateProjection();
   }
 
   putEvidence(row: IndexedEvidence): void {
     this.evidence.set(row.evidenceId, row);
+    this.invalidateProjection();
   }
 
   putGovernance(row: IndexedGovernance): void {
     this.governance.set(row.proposalId, row);
+    this.invalidateProjection();
   }
 
   putInteropClient(row: IndexedInteropClient): void {
     this.interopClients.set(row.clientId, row);
+    this.invalidateProjection();
   }
 
   putInteropPacket(row: IndexedInteropPacket): void {
     this.interopPackets.set(row.packetId, row);
+    this.invalidateProjection();
   }
 
   putMachine(row: IndexedMachine): void {
     this.machines.set(row.machineId, row);
+    this.invalidateProjection();
   }
 
   putSettlement(row: IndexedSettlement): void {
     this.settlements.set(row.settlementId, row);
+    this.invalidateProjection();
   }
 
   dropDerived(): void {
     this.current = null;
+    this.invalidateProjection();
     this.blocks.clear();
     this.blocksById.clear();
     this.transactions.clear();
@@ -181,8 +208,24 @@ export class InMemoryExplorerIndex implements ExplorerIndexStore {
     this.settlements.clear();
   }
 
+  blockByHeight(height: number): IndexedBlock | undefined {
+    return this.blocks.get(height);
+  }
+
+  blockById(blockId: string): IndexedBlock | undefined {
+    const height = this.blocksById.get(blockId);
+    return height === undefined ? undefined : this.blocks.get(height);
+  }
+
+  transactionById(transactionId: string): IndexedTransaction | undefined {
+    return this.transactions.get(transactionId);
+  }
+
   projection(): CanonicalProjection {
-    return {
+    if (this.cachedProjection) {
+      return this.cachedProjection;
+    }
+    this.cachedProjection = {
       schemaVersion: EXPLORER_INDEXER_SCHEMA_VERSION,
       checkpoint: this.current ?? {
         lastIndexedFinalizedHeight: 0,
@@ -208,6 +251,7 @@ export class InMemoryExplorerIndex implements ExplorerIndexStore {
       machines: sortBy((row) => row.machineId, [...this.machines.values()]),
       settlements: sortBy((row) => row.settlementId, [...this.settlements.values()]),
     };
+    return this.cachedProjection;
   }
 }
 

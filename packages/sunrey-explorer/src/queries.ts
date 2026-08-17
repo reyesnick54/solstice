@@ -62,11 +62,10 @@ export class ExplorerQueryService {
   }
 
   block(idOrHeight: string): (IndexedBlock & ExplorerLag) | null {
-    const projection = this.indexer.store.projection();
-    const byHeight = /^\d+$/.test(idOrHeight)
-      ? projection.blocks.find((row) => row.height === Number.parseInt(idOrHeight, 10))
-      : undefined;
-    const block = byHeight ?? projection.blocks.find((row) => row.blockId === idOrHeight);
+    const store = this.indexer.store;
+    const block = /^\d+$/.test(idOrHeight)
+      ? store.blockByHeight(Number.parseInt(idOrHeight, 10))
+      : store.blockById(idOrHeight);
     return block ? this.public({ ...block, ...this.lag() }) : null;
   }
 
@@ -75,7 +74,7 @@ export class ExplorerQueryService {
   }
 
   transaction(id: string): (IndexedTransaction & ExplorerLag) | null {
-    const tx = this.indexer.store.projection().transactions.find((row) => row.transactionId === id);
+    const tx = this.indexer.store.transactionById(id);
     return tx ? this.public({ ...tx, ...this.lag() }) : null;
   }
 

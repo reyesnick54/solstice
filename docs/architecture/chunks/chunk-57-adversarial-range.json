@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-57",
+  "title": "SunRey adversarial cyber-economic test range",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "evidence",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-validators",
+    "sunrey-oracle-network",
+    "sunrey-interop",
+    "sunrey-exchange",
+    "custody",
+    "sunrey-explorer",
+    "sunrey-developer-sdk",
+    "sunrey-adversarial-range"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-range. Isolated development/testnet security range for deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. evaluateChunkRequirements returns mustStop: false. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+}

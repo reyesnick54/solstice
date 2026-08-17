@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "rule": "No homegrown cryptographic primitive. Any library implementing signature, hash, KDF, AEAD, KEM, or PQC must be registered here.",
+  "notQuantumProof": true,
+  "entries": [
+    {
+      "name": "node:crypto",
+      "ecosystem": "platform",
+      "primitives": ["signature", "hash", "KDF", "AEAD"],
+      "algorithms": ["Ed25519", "SHA-256", "HMAC-SHA256", "AES-256-GCM"],
+      "owner": "packages/security",
+      "source": "nodejs-runtime"
+    },
+    {
+      "name": "ed25519-dalek",
+      "ecosystem": "crates.io",
+      "primitives": ["signature"],
+      "algorithms": ["Ed25519"],
+      "owner": "packages/sunrey-chain/rust/crates/crypto",
+      "source": "crates.io"
+    },
+    {
+      "name": "sha2",
+      "ecosystem": "crates.io",
+      "primitives": ["hash"],
+      "algorithms": ["SHA-256"],
+      "owner": "packages/sunrey-chain/rust/crates/crypto",
+      "source": "crates.io"
+    },
+    {
+      "name": "rustls",
+      "ecosystem": "crates.io",
+      "primitives": ["AEAD", "hash", "KDF"],
+      "algorithms": ["TLS-1.3"],
+      "owner": "packages/sunrey-chain/node",
+      "source": "crates.io"
+    },
+    {
+      "name": "ring",
+      "ecosystem": "crates.io",
+      "primitives": ["AEAD", "hash", "signature"],
+      "algorithms": ["AES-GCM", "SHA-256", "ECDSA"],
+      "owner": "packages/sunrey-chain/node",
+      "source": "crates.io",
+      "notes": "Pulled by rustls/quinn. Not a homegrown primitive."
+    },
+    {
+      "name": "zeroize",
+      "ecosystem": "crates.io",
+      "primitives": [],
+      "algorithms": [],
+      "owner": "packages/sunrey-chain/rust/crates/crypto",
+      "source": "crates.io",
+      "notes": "Secret-zeroing helper, not a primitive implementation."
+    },
+    {
+      "name": "base64ct",
+      "ecosystem": "crates.io",
+      "primitives": [],
+      "algorithms": [],
+      "owner": "packages/sunrey-chain/rust/crates/crypto",
+      "source": "crates.io",
+      "notes": "Constant-time encoding, not a primitive implementation."
+    }
+  ]
+}

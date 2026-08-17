@@ -12,12 +12,12 @@ ROOT = Path(__file__).resolve().parent.parent
 SKIP_DIR_NAMES = {
     ".git",
     "node_modules",
-    "dist",
     "build",
     "target",
     "__pycache__",
     "secret-scan-fixtures",
 }
+RELEASE_BUNDLE_DIR = "dist/testnet-release"
 SKIP_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf", ".woff", ".woff2"}
 SKIP_PATH_PARTS = {"secret-scan-fixtures"}
 
@@ -53,6 +53,8 @@ def should_skip(path: Path, root: Path) -> bool:
         rel = path.relative_to(root).as_posix()
     except ValueError:
         return False
+    if rel.startswith("dist/") and not rel.startswith(RELEASE_BUNDLE_DIR):
+        return True
     return "secret-scan-fixtures" in rel
 
 

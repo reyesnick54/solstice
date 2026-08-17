@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "releaseRequiresDigest": true,
+  "updateProcess": "Resolve the registry digest, write it here, and pass --build-arg <NAME>_IMAGE=<name>@sha256:<digest> for a signed release. Floating tags are not sufficient for release images.",
+  "images": [
+    {
+      "id": "rust-1.83-bookworm",
+      "name": "docker.io/library/rust",
+      "tag": "1.83-bookworm",
+      "digest": null,
+      "role": "build",
+      "arg": "RUST_IMAGE"
+    },
+    {
+      "id": "distroless-cc-nonroot",
+      "name": "gcr.io/distroless/cc-debian12",
+      "tag": "nonroot",
+      "digest": null,
+      "role": "runtime",
+      "arg": "DISTROLESS_CC_IMAGE"
+    },
+    {
+      "id": "node-22-bookworm-slim",
+      "name": "docker.io/library/node",
+      "tag": "22-bookworm-slim",
+      "digest": null,
+      "role": "runtime",
+      "arg": "NODE_IMAGE"
+    }
+  ]
+}
