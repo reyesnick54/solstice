@@ -1765,7 +1765,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-71-monetary-constitution.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunks/chunk-71-monetary-constitution.json')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/economics/index.ts')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economics')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economics/src/index.ts')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/monetary-policy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/tokenomics')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/genesis-economy')), false);
