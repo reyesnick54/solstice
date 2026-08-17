@@ -300,6 +300,27 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/crypto-policy.ts"
     },
     {
+      "modelId": "VALIDATOR_ECONOMICS",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/validator-economics/engine.ts",
+        "packages/sunrey-chain/src/formal/models/validator-economics.ts"
+      ],
+      "assumptions": [
+        "bounded epochs and integer quantities",
+        "one validator identity in the smoke bound",
+        "customer-asset domain is isolated from bond/reward accounting",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "validators": 1, "maxEpochs": 2, "maxQuantity": 2 },
+      "properties": [
+        "BOND_CONSERVATION",
+        "NO_DUPLICATE_REWARD",
+        "NO_DUPLICATE_PENALTY",
+        "UNBOND_DELAY_RESPECTED",
+        "CUSTOMER_ASSETS_UNAFFECTED",
+        "INVALID_EVIDENCE_CANNOT_CREATE_PROTOCOL_PENALTY",
+        "POLICY_VERSION_DETERMINISTIC"
       "modelId": "NATIVE_MONETARY_POLICY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -324,6 +345,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ValidatorEconomics.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/validator-economics.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
     },

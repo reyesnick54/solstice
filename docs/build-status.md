@@ -4,6 +4,16 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey validator bonding, reward, and accountability economics
+  (Chunk 72, `packages/sunrey-chain/src/validator-economics`):
+  governed `ValidatorBondPosition`, versioned reward/penalty
+  policies, exclusive native bond locks, delayed unbonding,
+  integer reward remainder handling, evidence-required penalties,
+  customer-asset isolation, `VALIDATOR_ECONOMICS` formal model,
+  economic simulator, Explorer/SDK/ops surfaces, and rehearsal
+  bonds. Capability `sunrey-validator-economics` is `IMPLEMENTED`.
+  Production bond asset remains `UNCONFIGURED`. No public
+  delegation. See `docs/economics/`.
 - SunRey dual-native-asset monetary constitution (Chunk 71,
   `packages/sunrey-chain/src/economics`): versioned
   `NativeAssetConstitution` for SunRey Coin and MoonRey Coin,
@@ -58,7 +68,7 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-production-infrastructure` is `IMPLEMENTED`. This is not
   mainnet. `LIVE_*` flags remain false. See `docs/infrastructure/`.
 - SunRey mainnet readiness and genesis-candidate controls (Chunk 65,
-  `packages/sunrey-chain/src/mainnet`): 25 readiness dimensions, a
+  `packages/sunrey-chain/src/mainnet`): 26 readiness dimensions, a
   per-capability activation matrix, production-candidate identity
   `net_sunrey_production_candidate_1` / `chn_sunrey_production_candidate_1`
   with HRP `srprd`, deterministic zero-allocation genesis candidate,

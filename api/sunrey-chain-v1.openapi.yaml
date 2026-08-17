@@ -267,6 +267,56 @@ paths:
       responses:
         "200":
           description: Public evidence
+  /v1/validators/economics/policy:
+    get:
+      tags: [VALIDATORS]
+      responses:
+        "200":
+          description: Public validator economic policy
+  /v1/validators/{id}/bond:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator bond
+  /v1/validators/{id}/rewards:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator reward summary
+  /v1/validators/{id}/penalties:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator penalties
+  /v1/validators/{id}/unbond:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator unbond status
   /v1/governance/proposals:
     get:
       tags: [GOVERNANCE]

@@ -33,6 +33,7 @@ pub const PATH_MONETARY_GENESIS: &str = "/v1/monetary/genesis";
 pub const PATH_MONETARY_BURNS: &str = "/v1/monetary/burns";
 pub const PATH_MONETARY_ISSUANCE_PREFIX: &str = "/v1/monetary/issuance/";
 pub const PATH_VALIDATORS: &str = "/v1/validators";
+pub const PATH_VALIDATOR_ECONOMIC_POLICY: &str = "/v1/validators/economics/policy";
 
 #[derive(Debug, thiserror::Error)]
 pub enum SdkError {
@@ -99,6 +100,26 @@ impl SunReyRpcClient {
 
     pub fn validators(&self) -> Result<Value, SdkError> {
         self.get(PATH_VALIDATORS)
+    }
+
+    pub fn get_validator_economic_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_VALIDATOR_ECONOMIC_POLICY)
+    }
+
+    pub fn get_validator_bond(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/bond"))
+    }
+
+    pub fn get_validator_reward_summary(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/rewards"))
+    }
+
+    pub fn get_validator_public_penalties(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/penalties"))
+    }
+
+    pub fn get_validator_unbond_status(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/unbond"))
     }
 
     pub fn events(&self, cursor: Option<&str>) -> Result<Value, SdkError> {

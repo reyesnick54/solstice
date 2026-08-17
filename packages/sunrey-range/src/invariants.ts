@@ -60,6 +60,26 @@ export const INVARIANT_CATALOG: Readonly<
     owner: 'packages/sunrey-chain',
     statement: 'Machine spend, capability, and delivery actions beyond an explicit mandate are refused.',
   },
+  NO_DUPLICATE_VALIDATOR_REWARD: {
+    title: 'No duplicate validator reward',
+    owner: 'packages/sunrey-chain',
+    statement: 'One participation entitlement cannot produce two reward payments.',
+  },
+  NO_DUPLICATE_VALIDATOR_PENALTY: {
+    title: 'No duplicate validator penalty',
+    owner: 'packages/sunrey-chain',
+    statement: 'One canonical evidence id cannot execute the same protocol penalty twice.',
+  },
+  NO_CUSTOMER_ASSET_VALIDATOR_PENALTY: {
+    title: 'No customer-asset validator penalty',
+    owner: 'packages/sunrey-chain',
+    statement: 'Validator economic penalties cannot debit customer wallets, custody, Exchange, fiat ledger, or unrelated machine escrow.',
+  },
+  UNBOND_DELAY_RESPECTED: {
+    title: 'Unbond delay respected',
+    owner: 'packages/sunrey-chain',
+    statement: 'A validator cannot release a bond before the governed unbonding delay and accountability window elapse.',
+  },
 });
 
 export function invariantIds(): readonly SecurityInvariantId[] {

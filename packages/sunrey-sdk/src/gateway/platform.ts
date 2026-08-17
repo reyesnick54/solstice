@@ -415,6 +415,39 @@ export class DevelopmentPlatform {
     ]);
   }
 
+  validatorEconomicPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      version: 1,
+      bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+      bondAssetStatus: 'DEVELOPMENT_FIXTURE',
+      productionBondAsset: 'UNCONFIGURED',
+      publicDelegation: false,
+      coinEqualsVote: false,
+    });
+  }
+
+  validatorBond(validatorId: string): Record<string, unknown> {
+    return Object.freeze({
+      validatorId,
+      bondState: 'BONDED',
+      bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+      bondedQuantity: '1000000',
+      policyVersion: 1,
+    });
+  }
+
+  validatorRewardSummary(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, paid: '0', pending: '0', policyVersion: 1 });
+  }
+
+  validatorPublicPenalties(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, penalties: [] });
+  }
+
+  validatorUnbondStatus(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, pending: '0', releaseEpoch: null });
+  }
+
   governance(): readonly Record<string, string>[] {
     return Object.freeze([
       {

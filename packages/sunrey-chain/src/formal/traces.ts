@@ -83,6 +83,11 @@ export function interopHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function validatorEconomicsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
+    { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
+    { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
+    { domain: 'validator_economics', action: 'Reward', args: {} },
 export function monetaryHappyTrace(): LogicalTrace {
   return makeTrace('trace_monetary_policy', 'monetary_policy', 'NATIVE_MONETARY_POLICY', [
     { domain: 'monetary_policy', action: 'Issue(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
@@ -108,6 +113,7 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     moonreyHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
+    validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),
   ];

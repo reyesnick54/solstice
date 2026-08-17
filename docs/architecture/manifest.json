@@ -2357,6 +2357,37 @@
       "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
+      "id": "sunrey-launch-rehearsal",
+      "name": "SunRey full mainnet launch rehearsal",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/launch-rehearsal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/launch-rehearsal/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MainnetLaunchRehearsalReport",
+          "kind": "type"
+        },
+        {
+          "name": "LaunchControlRoomState",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-launch",
+        "packages/launch-rehearsal",
+        "packages/mainnet-rehearsal"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 70 production-like launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or authorize production funds."
+    },
+    {
       "id": "sunrey-root-of-trust",
       "name": "SunRey root-of-trust and key ceremony architecture",
       "canonicalOwner": "packages/security",
@@ -2510,6 +2541,43 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create a second oracle consensus system."
+    },
+    {
+      "id": "sunrey-regulated-integration",
+      "name": "SunRey Exchange and custody production-candidate regulated adapters",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/regulated/types.ts",
+      "publicInterface": "packages/sunrey-exchange/src/regulated/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MarketAccessDecision",
+          "kind": "type"
+        },
+        {
+          "name": "RegulatedMarketReadinessReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/regulated-exchange",
+        "packages/provider-registry",
+        "packages/travel-rule-production",
+        "packages/custody-activation",
+        "packages/exchange-kyc"
+        "packages/production-oracles",
+        "packages/oracle-onboarding",
+        "packages/oracle-collector",
+        "packages/oracle-data-plane"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 69 production-candidate adapter framework. Extends existing Exchange, custody, Kernel, security, and Chunk 65 owners. No live regulated services. No second Exchange, custody system, Kernel, or native-asset ledger."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -3219,6 +3287,10 @@
     "packages/moonrey-coin",
     "packages/validators",
     "packages/staking",
+    "packages/staking-derivatives",
+    "packages/liquid-staking",
+    "packages/validator-economics",
+    "packages/slashing",
     "packages/validator-v2",
     "packages/governance",
     "packages/sunrey-governance",
@@ -3309,7 +3381,15 @@
     "packages/infrastructure",
     "packages/production-infrastructure",
     "packages/cloud-adapters",
-    "packages/sunrey-cloud"
+    "packages/sunrey-cloud",
+    "packages/sunrey-launch",
+    "packages/launch-rehearsal",
+    "packages/mainnet-rehearsal",
+    "packages/regulated-exchange",
+    "packages/provider-registry",
+    "packages/travel-rule-production",
+    "packages/custody-activation",
+    "packages/exchange-kyc"
   ],
   "capabilities": [
     {
@@ -3683,6 +3763,13 @@
       "notes": "Chunk 39 equivocation evidence, pool, gossip, jail, tombstone, and simulation-bond penalties at packages/sunrey-chain/node. Development/simulation policy only. Do not confiscate customer fiat, SunRey Coin, or MoonRey. Do not create packages/slashing or packages/staking."
     },
     {
+      "id": "sunrey-validator-economics",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 72 validator bonding, reward, and accountability economics at packages/sunrey-chain/src/validator-economics. Governed principals only. No public delegation, customer staking, or second native-asset ledger. Production bond asset remains UNCONFIGURED. Do not create packages/validator-economics, packages/staking, packages/slashing, or packages/liquid-staking."
+    },
+    {
       "id": "sunrey-protocol-governance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -3842,6 +3929,21 @@
       "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
     },
     {
+      "id": "sunrey-launch-rehearsal",
+      "id": "sunrey-root-of-trust",
+      "status": "IMPLEMENTED",
+      "owner": "packages/security",
+      "protected": true,
+      "notes": "Chunk 64 production-class root-of-trust and key-ceremony architecture at packages/security/src/ceremony. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. No production private keys in CI. No commercial HSM or completed production ceremony claim. Do not create packages/ceremony, packages/hsm-v2, packages/root-of-trust, or packages/key-ceremony."
+    },
+    {
+      "id": "sunrey-testnet-rc",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 70 full mainnet launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity SunRey Mainnet Rehearsal 1. Does not launch mainnet, enable LIVE_* flags, or authorize production funds. Do not create packages/sunrey-launch, packages/launch-rehearsal, or packages/mainnet-rehearsal."
+    },
+    {
       "id": "sunrey-root-of-trust",
       "status": "IMPLEMENTED",
       "owner": "packages/security",
@@ -3875,6 +3977,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+    },
+    {
+      "id": "sunrey-regulated-integration",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Chunk 69 production-candidate Exchange and custody regulated adapters at packages/sunrey-exchange/src/regulated, packages/custody/src/regulated, packages/kernel/src/regulated, packages/security/src/regulated, and packages/sunrey-chain/src/mainnet/regulated-feed.ts. No live regulated services. Do not create packages/regulated-exchange, packages/provider-registry, packages/travel-rule-production, packages/custody-activation, or packages/exchange-kyc."
     },
     {
       "id": "sunrey-production-storage",
@@ -4272,5 +4381,18 @@
     }
   ],
   "protectedComponents": [],
-  "forbiddenAliases": []
+  "forbiddenAliases": [
+    "packages/slashing",
+    "packages/validator-economics",
+    "packages/liquid-staking",
+    "packages/staking-derivatives",
+    "packages/sunrey-launch",
+    "packages/launch-rehearsal",
+    "packages/mainnet-rehearsal",
+    "packages/regulated-exchange",
+    "packages/provider-registry",
+    "packages/travel-rule-production",
+    "packages/custody-activation",
+    "packages/exchange-kyc"
+  ]
 }

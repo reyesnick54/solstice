@@ -423,6 +423,25 @@ function dispatch(
   if (method === 'GET' && path === '/v1/validators/evidence') {
     return json(200, { evidence: [] });
   }
+  if (method === 'GET' && path === '/v1/validators/economics/policy') {
+    return json(200, platform.validatorEconomicPolicy());
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/bond')) {
+    const id = path.slice('/v1/validators/'.length, -'/bond'.length);
+    return json(200, platform.validatorBond(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/rewards')) {
+    const id = path.slice('/v1/validators/'.length, -'/rewards'.length);
+    return json(200, platform.validatorRewardSummary(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/penalties')) {
+    const id = path.slice('/v1/validators/'.length, -'/penalties'.length);
+    return json(200, platform.validatorPublicPenalties(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/unbond')) {
+    const id = path.slice('/v1/validators/'.length, -'/unbond'.length);
+    return json(200, platform.validatorUnbondStatus(id));
+  }
 
   if (method === 'GET' && path === '/v1/governance/proposals') {
     return json(200, { proposals: platform.governance() });
@@ -658,6 +677,11 @@ export const PUBLIC_ROUTES = [
   'GET /v1/monetary/burns',
   'GET /v1/fees/estimate',
   'GET /v1/validators',
+  'GET /v1/validators/economics/policy',
+  'GET /v1/validators/{id}/bond',
+  'GET /v1/validators/{id}/rewards',
+  'GET /v1/validators/{id}/penalties',
+  'GET /v1/validators/{id}/unbond',
   'GET /v1/governance/proposals',
   'GET /v1/oracles/facts',
   'GET /v1/productive/moonrey',

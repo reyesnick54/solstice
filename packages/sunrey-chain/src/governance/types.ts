@@ -16,6 +16,7 @@ export const UPGRADE_KINDS = [
   'CODEC_EXTENSION',
   'HARD_PROTOCOL_CUTOVER',
   'VALIDATOR_POLICY_CHANGE',
+  'VALIDATOR_ECONOMIC_POLICY_CHANGE',
   'FEE_PARAMETER_CHANGE',
 ] as const;
 export type UpgradeKind = (typeof UPGRADE_KINDS)[number];

@@ -103,6 +103,24 @@ export class ExplorerQueryService {
     return row ? this.public({ ...row, ...this.lag() }) : null;
   }
 
+  validatorEconomics(validatorId?: string) {
+    const projection = this.indexer.store.projection();
+    const validators = projection.validators.filter((row) => !validatorId || row.validatorId === validatorId);
+    const evidence = projection.evidence.filter((row) => !validatorId || row.validatorId === validatorId);
+    return this.public({
+      ...this.lag(),
+      policyVersion: 1,
+      bondAsset: validators[0]?.bondAsset ?? 'DEVELOPMENT_SUNREY_COIN',
+      validators: validators.map((row) => ({
+        validatorId: row.validatorId,
+        bondState: row.bondState ?? (row.tombstone ? 'TOMBSTONED' : row.jailStatus ? 'JAILED' : 'BONDED'),
+        bondAsset: row.bondAsset ?? 'DEVELOPMENT_SUNREY_COIN',
+        policyVersion: row.policyVersion ?? 1,
+        publicRewardSummary: row.publicRewardSummary ?? { paid: '0', pending: '0' },
+        publicPenalties: evidence.filter((item) => item.validatorId === row.validatorId),
+        jailStatus: row.jailStatus,
+        tombstone: row.tombstone,
+        unbondStatus: row.unbondStatus ?? { pending: '0', releaseEpoch: null },
   monetary() {
     const assets = this.indexer.store.projection().assets;
     const moonrey = this.indexer.store.projection().moonrey;

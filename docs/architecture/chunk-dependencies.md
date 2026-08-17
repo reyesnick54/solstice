@@ -103,6 +103,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-machine-economy | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
@@ -593,6 +594,14 @@ Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
 `packages/sunrey-rc`, `packages/release-candidate`,
 `packages/testnet-rc`, `packages/sunrey-qualification`, or
 `packages/rc-control`. The evaluator returns `mustStop: false`.
+Chunk 72 implements validator bonding, reward, and accountability
+economics at `packages/sunrey-chain/src/validator-economics`.
+Capability `sunrey-validator-economics` is `IMPLEMENTED`. See
+[`chunk-72-validator-economics.md`](./chunk-72-validator-economics.md)
+and `docs/economics/`. Production bond asset remains
+`UNCONFIGURED`. Do not create `packages/validator-economics`,
+`packages/staking`, `packages/slashing`, or
+`packages/liquid-staking`. The evaluator returns `mustStop: false`.
 Chunk 62 implements independent security-review preparation at
 `packages/sunrey-chain`. Capability `sunrey-audit-readiness` is
 `IMPLEMENTED`. See

@@ -65,6 +65,25 @@ export function handleExplorerRequest(
   if (path === '/v1/validators') {
     return json(200, queries.collection('validators', request.query['cursor'], parseLimit(request.query['limit'])));
   }
+  if (path === '/v1/validators/economics') {
+    return json(200, queries.validatorEconomics());
+  }
+  if (path.startsWith('/v1/validators/') && path.endsWith('/bond')) {
+    const id = path.slice('/v1/validators/'.length, -'/bond'.length);
+    return json(200, queries.validatorEconomics(id));
+  }
+  if (path.startsWith('/v1/validators/') && path.endsWith('/rewards')) {
+    const id = path.slice('/v1/validators/'.length, -'/rewards'.length);
+    return json(200, queries.validatorEconomics(id));
+  }
+  if (path.startsWith('/v1/validators/') && path.endsWith('/penalties')) {
+    const id = path.slice('/v1/validators/'.length, -'/penalties'.length);
+    return json(200, queries.validatorEconomics(id));
+  }
+  if (path.startsWith('/v1/validators/') && path.endsWith('/unbond')) {
+    const id = path.slice('/v1/validators/'.length, -'/unbond'.length);
+    return json(200, queries.validatorEconomics(id));
+  }
   if (path === '/v1/governance') {
     return json(200, queries.collection('governance', request.query['cursor'], parseLimit(request.query['limit'])));
   }

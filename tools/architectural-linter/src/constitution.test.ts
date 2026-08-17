@@ -1678,6 +1678,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-rehearsal')), false);
   });
 
+  it('CHUNK-72 implements SunRey validator bonding and rewards', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-economics').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-economics').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-validator-economics').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-72',
+    );
+    assert.ok(declared, 'CHUNK-72 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-72-validator-economics.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-72-validator-economics.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/validator-bonding.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/validator-rewards.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/validator-accountability.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/validator-economic-simulation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/validator-economics/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-economics')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/liquid-staking')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/slashing')), false);
   it('CHUNK-71 implements the SunRey dual-asset monetary constitution', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-monetary-constitution').status, 'IMPLEMENTED');
