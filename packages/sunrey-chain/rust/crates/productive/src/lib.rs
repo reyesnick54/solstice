@@ -486,11 +486,15 @@ mod tests {
             oracle_fact_ids: &["fact.2", "fact.1"],
             upstream: &[],
         });
-        let left = governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.a", "claim.b"]);
-        let right = governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.b", "claim.a"]);
+        let left =
+            governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.a", "claim.b"]);
+        let right =
+            governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.b", "claim.a"]);
         assert_eq!(left, right);
-        let event_left = cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f2", "f1"]);
-        let event_right = cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f1", "f2"]);
+        let event_left =
+            cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f2", "f1"]);
+        let event_right =
+            cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f1", "f2"]);
         assert_eq!(event_left, event_right);
         assert!(ai_cannot_activate_policy("AI_PROPOSAL"));
         assert!(!ai_cannot_activate_policy("PROTOCOL_GOVERNANCE"));
