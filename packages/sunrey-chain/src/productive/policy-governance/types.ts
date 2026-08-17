@@ -5,7 +5,7 @@
  * Canonical asset remains MOONREY_COIN. Public ticker remains NOT_ASSIGNED.
  *
  * NormalizedProductiveUnit is an issuance-calculation quantity. It is not
- * fiat value, market capitalization, legal property title, or guaranteed
+ * fiat value, a capitalization statistic, legal property title, or guaranteed
  * economic value.
  */
 
