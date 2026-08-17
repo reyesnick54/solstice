@@ -2328,6 +2328,11 @@
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     },
     {
+      "id": "sunrey-audit-readiness",
+      "name": "SunRey independent security-review preparation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/audit/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/audit/index.ts",
       "id": "sunrey-formal-assurance",
       "name": "SunRey protocol formal models and bounded model checking",
       "canonicalOwner": "packages/sunrey-chain",
@@ -2340,11 +2345,16 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "AuditBundleManifest",
           "name": "FormalModelRegistry",
           "kind": "type"
         }
       ],
       "forbiddenAliases": [
+        "packages/sunrey-audit",
+        "packages/audit",
+        "packages/security-review",
+        "packages/audit-evidence"
         "packages/formal",
         "packages/tla",
         "packages/model-checker",
@@ -2355,6 +2365,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
       "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
     }
   ],
@@ -2946,6 +2957,10 @@
     "packages/red-team",
     "packages/attack-sim",
     "packages/sunrey-pentest",
+    "packages/sunrey-audit",
+    "packages/audit",
+    "packages/security-review",
+    "packages/audit-evidence",
     "packages/sunrey-test",
     "packages/fuzz",
     "packages/assurance",
@@ -3482,6 +3497,11 @@
       "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     },
     {
+      "id": "sunrey-audit-readiness",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed. Do not create packages/sunrey-audit, packages/audit, packages/security-review, or packages/audit-evidence."
       "id": "sunrey-formal-assurance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

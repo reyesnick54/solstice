@@ -948,6 +948,14 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 62 implements independent security-review preparation at
+`packages/sunrey-chain/src/audit`. Capability
+`sunrey-audit-readiness` is `IMPLEMENTED`. The generated bundle is
+an engineering package. It does not claim that an external audit
+has occurred or passed. Do not create `packages/sunrey-audit`,
+`packages/audit`, `packages/security-review`, or
+`packages/audit-evidence`. See
+[`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
 Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
 bounded verification, and implementation-trace conformance at
 `packages/sunrey-chain/formal`. Capability
