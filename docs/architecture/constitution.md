@@ -959,6 +959,15 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 66 implements provider-neutral production infrastructure,
+secret/KMS/HSM adapters, workload identity, and network zoning at
+`packages/sunrey-chain/src/infra`. Capability
+`sunrey-production-infrastructure` is `IMPLEMENTED`. It does not
+launch mainnet, enable `LIVE_*` flags, or couple consensus to a
+cloud vendor. Do not create `packages/sunrey-infra`,
+`packages/infrastructure`, `packages/production-infrastructure`,
+`packages/cloud-adapters`, or `packages/sunrey-cloud`. See
+[`chunk-66-production-infrastructure.md`](./chunk-66-production-infrastructure.md).
 Chunk 64 implements production-class root-of-trust and key-ceremony
 architecture at `packages/security/src/ceremony`. Capability
 `sunrey-root-of-trust` is `IMPLEMENTED`. CI uses simulation

@@ -83,6 +83,7 @@ npm run demo:sunrey-ops
 npm run demo:sunrey-ops
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
+npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
 node scripts/sunrey-testnet-validate-manifests.mjs
 node scripts/sunrey-testnet-sbom.mjs
