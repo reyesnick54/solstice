@@ -4,7 +4,7 @@ export {
   CANONICAL_VALIDATOR_SUITE_ID,
   HYBRID_VALIDATOR_SUITE_ID,
   PQ_VALIDATOR_SUITE_ID,
-  TESTNET_VALIDATOR_SUITE_IDS,
+  DEVELOPMENT_PQ_VALIDATOR_SUITE_IDS,
   CONSENSUS_MESSAGE_TYPES,
   DOMAIN_CONSENSUS_PRECOMMIT,
   DOMAIN_CONSENSUS_PREVOTE,
@@ -87,7 +87,7 @@ export {
 } from './signer.ts';
 export type { ConsensusSigner } from './signer.ts';
 export {
-  createTestnetValidatorSigner,
+  createDevelopmentValidatorSigner,
   signConsensusBytes,
   validatorPublicKeyHex,
   verifyConsensusBytes,

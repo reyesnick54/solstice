@@ -31,7 +31,7 @@ import {
 } from '../governance/engine.ts';
 import { deriveOracleKey, signObservation, verifyObservationSignature } from '../oracle/crypto.ts';
 import {
-  createTestnetValidatorSigner,
+  createDevelopmentValidatorSigner,
   encodeConsensusSignBytes,
   validatorPublicKeyHex,
   verifyConsensusBytes,
@@ -157,7 +157,7 @@ function produceBlock(
     if (!roleAcceptsSuiteForSign(state, 'VALIDATOR_CONSENSUS_SIGNING', suiteId)) {
       continue;
     }
-    const signer = createTestnetValidatorSigner({ seedHex: seedHex(id), suiteId, catalog });
+    const signer = createDevelopmentValidatorSigner({ seedHex: seedHex(id), suiteId, catalog });
     const req = requestAt(id, height, suiteId, blockId);
     const signed = signer.sign(req);
     if (!signed.ok) {
@@ -304,7 +304,7 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
   }
 
   const hybridReq = requestAt('val_0', 40, HYBRID, phases.find((phase) => phase.height === 40)?.blockId ?? 'x');
-  const hybridSigner = createTestnetValidatorSigner({ seedHex: seedHex('val_0'), suiteId: HYBRID, catalog });
+  const hybridSigner = createDevelopmentValidatorSigner({ seedHex: seedHex('val_0'), suiteId: HYBRID, catalog });
   const good = hybridSigner.sign(hybridReq);
   if (!good.ok) {
     throw new Error(good.error.message);
@@ -342,7 +342,7 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
     downgradeRejected.push('replay-pre-migration-signature');
   }
 
-  const wrongSuiteRejected = !createTestnetValidatorSigner({
+  const wrongSuiteRejected = !createDevelopmentValidatorSigner({
     seedHex: seedHex('val_0'),
     suiteId: CLASSICAL,
     catalog,
@@ -350,7 +350,7 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
 
   const historical = verifyConsensusBytes(catalog, CLASSICAL, heightZeroPub, heightZeroBytes, heightZeroSig);
 
-  const failClosed = createTestnetValidatorSigner({
+  const failClosed = createDevelopmentValidatorSigner({
     seedHex: seedHex('val_0'),
     suiteId: HYBRID,
     catalog: createFailClosedPqCatalog(),
@@ -473,9 +473,9 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
   gov.schedule(plan.upgradeId, operator);
   gov.activateAt(40, developmentNodeCapability(plan));
 
-  const classicalSign = createTestnetValidatorSigner({ seedHex: seedHex('bench'), suiteId: CLASSICAL, catalog });
-  const hybridSign = createTestnetValidatorSigner({ seedHex: seedHex('bench'), suiteId: HYBRID, catalog });
-  const pqSign = createTestnetValidatorSigner({ seedHex: seedHex('bench'), suiteId: PQ, catalog });
+  const classicalSign = createDevelopmentValidatorSigner({ seedHex: seedHex('bench'), suiteId: CLASSICAL, catalog });
+  const hybridSign = createDevelopmentValidatorSigner({ seedHex: seedHex('bench'), suiteId: HYBRID, catalog });
+  const pqSign = createDevelopmentValidatorSigner({ seedHex: seedHex('bench'), suiteId: PQ, catalog });
   const benchReq = requestAt('bench', 1, CLASSICAL, 'bench');
   const cSig = classicalSign.sign({ ...benchReq, cryptoSuiteId: CLASSICAL });
   const hSig = hybridSign.sign({ ...benchReq, cryptoSuiteId: HYBRID });

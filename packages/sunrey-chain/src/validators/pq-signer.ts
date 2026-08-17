@@ -1,5 +1,5 @@
 /**
- * Testnet validator signer backed by CryptoSuite / SignatureProvider.
+ * Development-network validator signer backed by CryptoSuite / SignatureProvider.
  *
  * Application code does not import the PQ library. Provider failure
  * is fail-closed: no silent classical-only fallback.
@@ -33,7 +33,7 @@ function pqSeedHex(seedHex: string): string {
   return createHash('sha256').update('SUNREY-VALIDATOR-PQ-SEED-v1').update(Buffer.from(seedHex, 'hex')).digest('hex');
 }
 
-export function createTestnetValidatorSigner(input: {
+export function createDevelopmentValidatorSigner(input: {
   readonly seedHex: string;
   readonly suiteId: string;
   readonly catalog?: ProviderCatalog;

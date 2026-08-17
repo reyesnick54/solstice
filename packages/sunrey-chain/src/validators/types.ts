@@ -101,7 +101,7 @@ export type ValidatorReasonCode = (typeof VALIDATOR_REASON_CODES)[number];
 export const CANONICAL_VALIDATOR_SUITE_ID = 'sunrey-ed25519-v1';
 export const HYBRID_VALIDATOR_SUITE_ID = 'sunrey-hybrid-ed25519-mldsa-v1';
 export const PQ_VALIDATOR_SUITE_ID = 'sunrey-mldsa-65-v1';
-export const TESTNET_VALIDATOR_SUITE_IDS = [
+export const DEVELOPMENT_PQ_VALIDATOR_SUITE_IDS = [
   CANONICAL_VALIDATOR_SUITE_ID,
   HYBRID_VALIDATOR_SUITE_ID,
   PQ_VALIDATOR_SUITE_ID,
