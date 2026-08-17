@@ -14,8 +14,8 @@
   {
     "id": "muldiv.ceil",
     "kind": "muldiv",
-    "input": { "value": 10, "numerator": 1, "denominator": 2, "rounding": "CEIL" },
-    "expected": { "value": "6" }
+    "input": { "value": 10, "numerator": 1, "denominator": 3, "rounding": "CEIL" },
+    "expected": { "value": "4" }
   },
   {
     "id": "formula.cap",

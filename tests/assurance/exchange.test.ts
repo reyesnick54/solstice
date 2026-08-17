@@ -20,7 +20,10 @@ describe('Chunk 56 exchange properties', () => {
     assert.ok(settlement);
     const finalized = clearing.submitSettlement(settlement.settlementId);
     assert.equal(finalized.status, 'FINALIZED');
-    assert.throws(() => clearing.submitSettlement(settlement.settlementId));
+    const replay = clearing.submitSettlement(settlement.settlementId);
+    assert.equal(replay.status, 'FINALIZED');
+    assert.equal(replay.transactionId, finalized.transactionId);
+    assert.equal(clearing.settlements.size, 1);
     assert.equal(clearing.reconcile().outcome, 'MATCHED');
   });
 

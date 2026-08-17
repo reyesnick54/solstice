@@ -87,7 +87,7 @@ export function runEconomicCampaign(seed: number, profile: FuzzProfile): Campaig
     } else if (kind === 'burn' && supply.holdings > 0n) {
       supply = applyBurn(supply, 1n);
     } else {
-      machine.refuseAuthority('machine.campaign', 'BECOME_GOVERNOR');
+      machine.refuseAuthority('machine.campaign', 'BECOME_VALIDATOR');
     }
     if (!supplyReconciles(supply)) {
       throw new Error('economic campaign supply drift');

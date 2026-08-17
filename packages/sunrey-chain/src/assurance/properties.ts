@@ -53,8 +53,8 @@ function bookReconciles(book: AssetBook): boolean {
 export function feeActualNeverExceedsMax(rng: SeededRng, cases: number): void {
   const schedule = developmentFeeSchedule();
   for (let i = 0; i < cases; i += 1) {
-    const encoded = BigInt(rng.int(64, 2_048));
-    const sigs = BigInt(rng.int(1, 8));
+    const encoded = rng.int(64, 2_048);
+    const sigs = rng.int(1, 8);
     const usage = usageForOperation('NATIVE_TRANSFER', encoded, sigs);
     const actual = calculateFee(schedule, usage);
     const maxFee = actual + rng.bigint(0n, 5_000n);

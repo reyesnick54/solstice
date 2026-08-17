@@ -1158,6 +1158,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ops')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/observability')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/disaster-recovery')), false);
+  });
+
   it('CHUNK-51 implements the developer platform at packages/sunrey-sdk', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-developer-sdk').status, 'IMPLEMENTED');

@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -39,10 +38,67 @@ import {
   StructuredLogSink,
   TraceCollector,
   verifyDatabaseDump,
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  RemoteSignerServer,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
+  SignerSafetyStore,
+  assertNoPrivateKeyMaterial,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  availableSentryCount,
+  compareSafetyWatermark,
+  createSnapshot,
+  developmentEpoch,
+  developmentRemoteSigner,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
+  eraseEvidence,
+  evaluateDisk,
+  exitWorkflow,
+  generateJoinRecord,
+  gracefulShutdownPreserves,
+  incidentProcedure,
+  integrityHash,
+  jailRecord,
+  jailStatus,
+  joinWorkflow,
+  kubernetesManifest,
+  operatorReadiness,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  replaceWorkflow,
+  reportIncompatibleBinary,
+  restoreSnapshot,
+  rotateWorkflow,
+  runOpsCommand,
+  runRollingUpgrade,
+  safeRestart,
+  sentryCanSign,
+  sentrySignerIdentity,
+  structuredLog,
+  systemdUnit,
+  upgradePrecheck,
+  validateSentryTopology,
+  validateSignRequest,
+  validateValidatorConfig,
   verifySnapshot,
+  warnDiskPressure,
 } from './ops/index.ts';
-
+import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
 const ROOT = join(import.meta.dirname, '..', '..', '..');
+const NOW = '2026-08-17T00:00:00.000Z';
 
 describe('Chunk 55 SunRey resilience and disaster recovery', () => {
   it('distributes seven validators across three domains without independent finality', () => {
@@ -142,13 +198,13 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
       stateRoot: 'root',
       state: '{"height":"3"}',
     });
-    verifySnapshot(snapshot.manifest, snapshot.state);
+    verifyBackupSnapshot(snapshot.manifest, snapshot.state);
     const envelope = encryptBackup(keys, snapshot.state);
     assert.equal(envelope.purpose, 'BACKUP_ENCRYPTION');
     assert.deepEqual(decryptBackup(keys, envelope), snapshot.state);
-    assert.throws(() => verifySnapshot({ ...snapshot.manifest, stateRoot: 'tampered' }, snapshot.state));
+    assert.throws(() => verifyBackupSnapshot({ ...snapshot.manifest, stateRoot: 'tampered' }, snapshot.state));
     assert.throws(() =>
-      verifySnapshot({ ...snapshot.manifest, chainId: 'chn_other' }, snapshot.state),
+      verifyBackupSnapshot({ ...snapshot.manifest, chainId: 'chn_other' }, snapshot.state),
     );
     const dir = mkdtempSync(join(tmpdir(), 'sunrey-ops-backup-'));
     try {
@@ -283,68 +339,8 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-ops')), false);
     assert.equal(existsSync(join(ROOT, 'packages/observability')), false);
     assert.equal(existsSync(join(ROOT, 'packages/disaster-recovery')), false);
-import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
-import {
-  OperatorKeystore,
-  OperatorPeerPolicy,
-  RemoteSignerServer,
-  SEVEN_VALIDATOR_IDS,
-  SevenValidatorNetwork,
-  SignerFence,
-  SignerSafetyStore,
-  assertNoPrivateKeyMaterial,
-  authenticateSignerClient,
-  authorizeDevelopmentUpgrade,
-  availableSentryCount,
-  compareSafetyWatermark,
-  createSnapshot,
-  developmentEpoch,
-  developmentRemoteSigner,
-  developmentSentryTopology,
-  developmentUpgradeFixture,
-  developmentValidatorConfig,
-  eraseEvidence,
-  evaluateDisk,
-  exitWorkflow,
-  generateJoinRecord,
-  gracefulShutdownPreserves,
-  incidentProcedure,
-  integrityHash,
-  jailRecord,
-  jailStatus,
-  joinWorkflow,
-  kubernetesManifest,
-  operatorReadiness,
-  opsUsage,
-  planGenesisSync,
-  planSnapshotSync,
-  prune,
-  publicRpcSignerIdentity,
-  recommendedLimits,
-  refuseUnverifiedProvider,
-  replaceWorkflow,
-  reportIncompatibleBinary,
-  restoreSnapshot,
-  rotateWorkflow,
-  verifySnapshot,
-  runOpsCommand,
-  runRollingUpgrade,
-  safeRestart,
-  sentryCanSign,
-  sentrySignerIdentity,
-  structuredLog,
-  systemdUnit,
-  upgradePrecheck,
-  validateSentryTopology,
-  validateSignRequest,
-  validateValidatorConfig,
-  warnDiskPressure,
-} from './ops/index.ts';
-import { developmentSentryConfig } from './ops/sentry.ts';
-import { MaintenanceMode } from './ops/maintenance.ts';
-
-const NOW = '2026-08-17T00:00:00.000Z';
-const ROOT = join(import.meta.dirname, '..', '..', '..');
+  });
+});
 
 function request(
   validatorId: string,

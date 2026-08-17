@@ -37,15 +37,31 @@ export type VoteAdmission =
 
 export class ModelVoteSet {
   readonly votes = new Map<string, ModelVote>();
+  readonly voteType: VoteType;
+  readonly height: bigint;
+  readonly round: bigint;
+  readonly networkId: string;
+  readonly chainId: string;
+  readonly validatorSetVersion: number;
+  readonly powerByValidator: Readonly<Record<string, bigint>>;
+
   constructor(
-    readonly voteType: VoteType,
-    readonly height: bigint,
-    readonly round: bigint,
-    readonly networkId: string,
-    readonly chainId: string,
-    readonly validatorSetVersion: number,
-    readonly powerByValidator: Readonly<Record<string, bigint>>,
-  ) {}
+    voteType: VoteType,
+    height: bigint,
+    round: bigint,
+    networkId: string,
+    chainId: string,
+    validatorSetVersion: number,
+    powerByValidator: Readonly<Record<string, bigint>>,
+  ) {
+    this.voteType = voteType;
+    this.height = height;
+    this.round = round;
+    this.networkId = networkId;
+    this.chainId = chainId;
+    this.validatorSetVersion = validatorSetVersion;
+    this.powerByValidator = powerByValidator;
+  }
 
   add(vote: ModelVote): VoteAdmission {
     if (!vote.signatureValid) {

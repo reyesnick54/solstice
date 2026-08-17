@@ -42,7 +42,7 @@ export function replayFixture(fixture: ReplayFixture): ReplayExpectation {
       roots.push(`finalized:${report.finalized}`);
     }
   }
-  return { ok: true, stateRoots: roots.length > 0 ? roots : fixture.expected.stateRoots };
+  return { ok: true, stateRoots: roots.length > 0 ? roots : fixture.expected.stateRoots ?? [] };
 }
 
 export function assertReplay(fixture: ReplayFixture): void {

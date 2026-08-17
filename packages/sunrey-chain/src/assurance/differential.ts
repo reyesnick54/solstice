@@ -23,8 +23,8 @@ export function evaluateDifferentialCase(item: DifferentialCase): Record<string,
   if (item.kind === 'fee') {
     const usage = usageForOperation(
       'NATIVE_TRANSFER',
-      BigInt(item.input.encodedBytes as number),
-      BigInt(item.input.signatureCount as number),
+      Number(item.input.encodedBytes),
+      Number(item.input.signatureCount),
     );
     return { fee: calculateFee(developmentFeeSchedule(), usage).toString() };
   }

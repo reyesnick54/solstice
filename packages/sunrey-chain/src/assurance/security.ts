@@ -6,7 +6,7 @@ import { encodeAddress } from '../wallet/address.ts';
 import type { BlockchainAccount } from '../wallet/types.ts';
 import { ASSURANCE_CHAIN_ID, ASSURANCE_NETWORK_ID } from './types.ts';
 
-function account(keyId: string): { account: BlockchainAccount; seed: Uint8Array; bodyHash: string } {
+function makeAccount(keyId: string): { account: BlockchainAccount; seed: Uint8Array; bodyHash: string } {
   const seed = seedFromLabel(keyId);
   const descriptor = publicDescriptorFromSeed(keyId, seed);
   const address = encodeAddress({
@@ -66,7 +66,11 @@ export function runSecurityRegressionFixtures(): readonly string[] {
   const passed: string[] = [];
   const bytes = encodeEnvelope(signedTransferEnvelope());
   const mutated = Uint8Array.from(bytes);
-  mutated[Math.min(8, mutated.length - 1)] ^= 0x01;
+  const mutateAt = Math.min(8, mutated.length - 1);
+  const current = mutated[mutateAt];
+  if (current !== undefined) {
+    mutated[mutateAt] = current ^ 0x01;
+  }
   if (decode(mutated).ok && Buffer.from(mutated).equals(Buffer.from(bytes))) {
     throw new Error('one-byte mutation was a no-op');
   }
@@ -100,10 +104,13 @@ export function runSecurityRegressionFixtures(): readonly string[] {
   }
   passed.push('cross-network-replay');
 
-  const { account, seed, bodyHash } = account('sec.key');
+  const { account, seed, bodyHash } = makeAccount('sec.key');
   const signature = signWalletBytes(seed, Buffer.from(bodyHash, 'hex'));
   const malleated = Buffer.from(signature, 'hex');
-  malleated[0] ^= 0x01;
+  const first = malleated[0];
+  if (first !== undefined) {
+    malleated[0] = first ^ 0x01;
+  }
   const bad = authorizeAccountAction({
     account,
     bodyHash,

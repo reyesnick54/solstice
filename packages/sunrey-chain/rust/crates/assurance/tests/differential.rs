@@ -6,7 +6,7 @@ use sunrey_assurance::{
 fn load_cases() -> Vec<Value> {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
-        "/../../../../tests/assurance/corpus/differential/cases.json"
+        "/../../../../../tests/assurance/corpus/differential/cases.json"
     );
     let raw = std::fs::read_to_string(path).expect("differential cases");
     serde_json::from_str::<Value>(&raw).expect("json").as_array().cloned().unwrap_or_default()

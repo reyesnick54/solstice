@@ -45,7 +45,11 @@ export function mutateCanonicalBytes(rng: SeededRng, bytes: Uint8Array): Uint8Ar
   const out = Uint8Array.from(bytes);
   const mode = rng.int(0, 5);
   if (mode === 0) {
-    out[rng.int(0, out.length - 1)] ^= 1 << rng.int(0, 7);
+    const index = rng.int(0, out.length - 1);
+    const current = out[index];
+    if (current !== undefined) {
+      out[index] = current ^ (1 << rng.int(0, 7));
+    }
     return out;
   }
   if (mode === 1) {
