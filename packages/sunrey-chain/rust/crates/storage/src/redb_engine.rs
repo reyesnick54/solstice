@@ -61,7 +61,14 @@ fn open_shared_db(path: &Path, create: bool) -> Result<Arc<Database>, RejectReas
     let db = if create || !path.exists() {
         Database::create(path).map_err(|_| RejectReason::PersistenceFailure)?
     } else {
-        Database::open(path).map_err(|_| RejectReason::CorruptStore)?
+        Database::open(path).map_err(|err| {
+            let text = err.to_string();
+            if text.contains("lock") || text.contains("already open") || text.contains("busy") {
+                RejectReason::PersistenceFailure
+            } else {
+                RejectReason::CorruptStore
+            }
+        })?
     };
     let arc = Arc::new(db);
     map.insert(key, Arc::downgrade(&arc));
