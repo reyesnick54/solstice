@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-faucet
+  namespace: sunrey-testnet-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sunrey-faucet
+  template:
+    metadata:
+      labels:
+        app: sunrey-faucet
+        sunrey.role: faucet
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: faucet
+          image: sunrey-faucet:testnet-1
+          env:
+            - name: SUNREY_FIXTURE_ENV
+              value: local
+            - name: SUNREY_FAUCET_HANDLE
+              valueFrom:
+                secretKeyRef:
+                  name: sunrey-testnet-1-key-handles
+                  key: faucetHandle
+          ports:
+            - containerPort: 8787
+          readinessProbe:
+            tcpSocket:
+              port: 8787
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-explorer
+  namespace: sunrey-testnet-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sunrey-explorer
+  template:
+    metadata:
+      labels:
+        app: sunrey-explorer
+        sunrey.role: explorer
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: explorer
+          image: sunrey-explorer:testnet-1
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sunrey-faucet
+  namespace: sunrey-testnet-1
+spec:
+  selector:
+    app: sunrey-faucet
+  ports:
+    - port: 8787
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sunrey-explorer
+  namespace: sunrey-testnet-1
+spec:
+  selector:
+    app: sunrey-explorer
+  ports:
+    - port: 8080

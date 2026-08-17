@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sunrey-testnet-1-public
+data:
+  networkId: {{ .Values.networkId | quote }}
+  chainId: {{ .Values.chainId | quote }}
+  environment: {{ .Values.environment | quote }}
+  productionNetworkEnabled: {{ .Values.productionNetworkEnabled | quote }}
+  validatorCount: {{ .Values.validatorReplicas | quote }}

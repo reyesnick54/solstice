@@ -1,0 +1,48 @@
+# TLS termination via standard Ingress. Hosts are operator-configured.
+# Do not hard-code a commercial cloud or credentials.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sunrey-testnet-1
+  namespace: sunrey-testnet-1
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - rpc.example.test
+        - explorer.example.test
+        - faucet.example.test
+      secretName: sunrey-testnet-1-tls
+  rules:
+    - host: rpc.example.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sunrey-rpc
+                port:
+                  number: 26657
+    - host: explorer.example.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sunrey-explorer
+                port:
+                  number: 8080
+    - host: faucet.example.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sunrey-faucet
+                port:
+                  number: 8787

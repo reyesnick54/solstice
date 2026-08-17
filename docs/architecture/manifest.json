@@ -2216,6 +2216,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing. Chunk 49 adds four canonical market families. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     },
@@ -2808,6 +2809,9 @@
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
     "packages/sunrey-wallet-ledger",
+    "packages/sunrey-testnet",
+    "packages/sunrey-faucet",
+    "packages/testnet"
     "packages/block-explorer",
     "packages/chain-indexer",
     "packages/explorer",
@@ -3271,6 +3275,11 @@
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     },
     {
+      "id": "sunrey-public-testnet",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 53 public TEST NETWORK package at packages/sunrey-chain/src/testnet and deploy/sunrey-testnet. Network net_sunrey_testnet_1 / chain chn_sunrey_testnet_1. Not mainnet. Tickers remain NOT_ASSIGNED. ENVIRONMENT stays simulation. Do not create packages/sunrey-testnet or enable production banking rails."
       "id": "sunrey-explorer",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-explorer",

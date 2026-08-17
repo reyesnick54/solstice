@@ -24,7 +24,9 @@ pub fn faucet_permitted(
         return false;
     }
     let env_ok = environment == "simulation" || environment == "development";
-    let net_ok = network_id.contains("dev") || network_id.contains("simulation");
+    let net_ok = network_id.contains("dev")
+        || network_id.contains("simulation")
+        || network_id.contains("testnet");
     env_ok && net_ok
 }
 

@@ -41,7 +41,19 @@ describe('sunrey chain architecture guards', () => {
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
       assert.equal(/APY|APR|blended return|yield rate|market cap/i.test(source), false, file);
       assert.equal(/from ['"].*services\//.test(source), false, file);
-      assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);
+      const allowsTestNetwork =
+        file.includes(`${join('src', 'testnet')}`) ||
+        file.endsWith(`${join('src', 'index.ts')}`) ||
+        file.endsWith(`${join('wallet', 'types.ts')}`) ||
+        file.endsWith(`${join('wallet', 'address.ts')}`) ||
+        file.endsWith(`${join('wallet', 'builder.ts')}`) ||
+        file.endsWith(`${join('wallet', 'index.ts')}`);
+      if (allowsTestNetwork) {
+        assert.equal(/LIVE_CHAIN|MAINNET_ENABLED/.test(source), false, file);
+        assert.equal(/productionNetworkEnabled:\s*true/.test(source), false, file);
+      } else {
+        assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);
+      }
     }
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-chain-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/blockchain')), false);
@@ -82,6 +94,8 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/blockchain-wallet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-wallet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-wallet-ledger')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-testnet')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-faucet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);

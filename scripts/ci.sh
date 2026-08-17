@@ -53,6 +53,9 @@ npm run demo:sunrey-oracle
 npm run demo:sunrey-fees
 npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
+npm run demo:sunrey-testnet
+node scripts/sunrey-testnet-validate-manifests.mjs
+node scripts/sunrey-testnet-sbom.mjs
 npm run demo:sunrey-sdk
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet

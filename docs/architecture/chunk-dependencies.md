@@ -114,6 +114,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
 
@@ -436,6 +437,13 @@ Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 Wallet metadata is not a second native-asset ledger.
+Chunk 53 implements the public TEST NETWORK package at
+`packages/sunrey-chain`. Capability `sunrey-public-testnet` is
+`IMPLEMENTED`. See
+[`chunk-53-public-testnet.md`](./chunk-53-public-testnet.md).
+Network `net_sunrey_testnet_1` / chain `chn_sunrey_testnet_1`.
+Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
+`packages/sunrey-testnet` or enable production banking rails.
 Chunk 52 implements the rebuildable SunRey explorer at
 `packages/sunrey-explorer`. Capability `sunrey-explorer` is
 `IMPLEMENTED`. See

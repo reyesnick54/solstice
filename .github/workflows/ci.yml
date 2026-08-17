@@ -108,6 +108,12 @@ jobs:
         run: npm run demo:sunrey-interop
       - name: SunRey sovereign wallets demo
         run: npm run demo:sunrey-wallet
+      - name: SunRey public testnet demo
+        run: npm run demo:sunrey-testnet
+      - name: SunRey testnet deployment manifests
+        run: node scripts/sunrey-testnet-validate-manifests.mjs
+      - name: SunRey testnet SBOM and release manifest
+        run: node scripts/sunrey-testnet-sbom.mjs
       - name: SunRey developer SDK demo
         run: npm run demo:sunrey-sdk
       - name: SunRey Exchange simulation demo
