@@ -11,6 +11,7 @@ import { createInteropPacketModel } from './interop-packet.ts';
 import { createMoonReyModel } from './moonrey.ts';
 import { createMoonReyPolicyGovernanceModel } from './moonrey-policy-governance.ts';
 import { createGenesisAllocationModel } from './genesis-allocation.ts';
+import { createGovernanceOpsModel } from './governance-ops.ts';
 import { createMonetaryPolicyModel } from './monetary-policy.ts';
 import { createNativeAssetModel } from './native-asset.ts';
 import { createSignerModel } from './signer.ts';
@@ -45,6 +46,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createValidatorEconomicsModel(bounds),
     createMonetaryPolicyModel(bounds),
     createGenesisAllocationModel(bounds),
+    createGovernanceOpsModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -64,3 +66,4 @@ export { createAdaptiveFeeMarketModel } from './adaptive-fee-market.ts';
 export { createValidatorEconomicsModel } from './validator-economics.ts';
 export { createMonetaryPolicyModel } from './monetary-policy.ts';
 export { createGenesisAllocationModel } from './genesis-allocation.ts';
+export { createGovernanceOpsModel } from './governance-ops.ts';

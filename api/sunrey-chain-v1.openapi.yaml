@@ -347,6 +347,30 @@ paths:
       responses:
         "200":
           description: Scheduled activations
+  /v1/governance/operations/package:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Public governance operation package
+  /v1/governance/operations/diff:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Canonical economic policy diff
+  /v1/governance/operations/activation:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Governance activation status
+  /v1/governance/operations/emergency:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Public emergency protocol status
   /v1/oracles/providers:
     get:
       tags: [ORACLES]

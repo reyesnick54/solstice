@@ -95,11 +95,17 @@ export function adaptiveFeeHappyTrace(): LogicalTrace {
     { domain: 'adaptive_fee', action: 'UpdatePriceHigh', args: { usage: 2 } },
     { domain: 'adaptive_fee', action: 'Reserve', args: {} },
     { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
+  ]);
+}
+
 export function validatorEconomicsHappyTrace(): LogicalTrace {
   return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
     { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
     { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
     { domain: 'validator_economics', action: 'Reward', args: {} },
+  ]);
+}
+
 export function monetaryHappyTrace(): LogicalTrace {
   return makeTrace('trace_monetary_policy', 'monetary_policy', 'NATIVE_MONETARY_POLICY', [
     { domain: 'monetary_policy', action: 'Issue(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
@@ -107,6 +113,18 @@ export function monetaryHappyTrace(): LogicalTrace {
     { domain: 'monetary_policy', action: 'Unlock(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
     { domain: 'monetary_policy', action: 'Burn(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
     { domain: 'monetary_policy', action: 'Issue(MOONREY_COIN)', args: { asset: 'MOONREY_COIN' } },
+  ]);
+}
+
+export function governanceOpsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_governance_ops_activate', 'governance_operations', 'GOVERNANCE_OPERATION_SAFETY', [
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'MarkApproved', args: {} },
+    { domain: 'governance_operations', action: 'Schedule', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'Activate', args: { height: 2 } },
   ]);
 }
 
@@ -130,5 +148,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),
+    governanceOpsHappyTrace(),
   ];
 }

@@ -14,6 +14,10 @@ import {
   hashFeePolicyV2,
   usageV2ForTransaction,
 } from '../../../sunrey-chain/src/fees/v2/index.ts';
+import {
+  rehearseFeePolicyChange,
+  rehearseOracleCompromiseEmergency,
+} from '../../../sunrey-chain/src/governance-ops/rehearsals.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -532,6 +536,37 @@ export class DevelopmentPlatform {
         activation_height: '100',
       },
     ]);
+  }
+
+  governanceOperations(): {
+    readonly package: Record<string, unknown>;
+    readonly diff: Record<string, unknown> | null;
+    readonly activation: Record<string, unknown>;
+    readonly emergency: Record<string, unknown>;
+  } {
+    const fee = rehearseFeePolicyChange();
+    const emergency = rehearseOracleCompromiseEmergency();
+    return Object.freeze({
+      package: {
+        package_id: fee.package.packageId,
+        operation_type: fee.package.operationType,
+        package_hash: fee.package.packageHash,
+        network_id: fee.package.networkId,
+        activation_height: fee.package.activation.height,
+        governance_token: false,
+      },
+      diff: fee.package.economic?.canonicalDiff ?? null,
+      activation: {
+        status: fee.public.approvalResult,
+        active_version: fee.public.activeVersion,
+        coordinate: fee.public.activationCoordinate,
+      },
+      emergency: {
+        restriction_class: emergency.suspend.actionClass,
+        restriction_state: emergency.suspend.result,
+        supply_rewritten: false,
+      },
+    });
   }
 
   oracles(): readonly Record<string, string>[] {

@@ -87,6 +87,28 @@ export function handleExplorerRequest(
   if (path === '/v1/governance') {
     return json(200, queries.collection('governance', request.query['cursor'], parseLimit(request.query['limit'])));
   }
+  if (path === '/v1/governance/operations') {
+    const rows = queries.collection('governance');
+    const first = rows.items[0] as {
+      proposalId?: string;
+      proposalHash?: string;
+      activationHeight?: number;
+      status?: string;
+      policyDiffHash?: string;
+      activeVersion?: string;
+      emergencyRestrictionClass?: string;
+      restrictionState?: string;
+    } | undefined;
+    return json(200, {
+      proposal: first?.proposalId ?? null,
+      policyDiff: first?.policyDiffHash ?? null,
+      activationCoordinate: first?.activationHeight ?? null,
+      approvalResult: first?.status ?? null,
+      activeVersion: first?.activeVersion ?? null,
+      emergencyRestrictionClass: first?.emergencyRestrictionClass ?? null,
+      restrictionState: first?.restrictionState ?? 'INACTIVE',
+    });
+  }
   if (path === '/v1/oracles' || path === '/v1/oracles/facts') {
     return json(200, queries.collection('oracleFacts', request.query['cursor'], parseLimit(request.query['limit'])));
   }
@@ -113,6 +135,8 @@ export function handleExplorerRequest(
       sunreySupply: queries.home().sunreyDevelopmentSupply,
       moonreySupply: queries.home().moonreyDevelopmentSupply,
       ...queries.lag(),
+    });
+  }
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');
     const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;

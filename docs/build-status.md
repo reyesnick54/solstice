@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey production governance operations (Chunk 79,
+  `packages/sunrey-chain/src/governance-ops`): operational packaging,
+  canonical policy diffs, preflight, human multi-person approvals,
+  height/epoch activation evidence, post-activation verification,
+  bounded emergency authority, Explorer/SDK/CLI surfaces, and
+  `GOVERNANCE_OPERATION_SAFETY`. Capability
+  `sunrey-governance-operations` is `IMPLEMENTED`. Not a governance
+  token, AI authority, or finalized-history rewrite. See
+  `docs/governance/chunk-79-production-governance-operations.md`.
 - SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
   `packages/sunrey-economics`): deterministic human/productive
   layers, economic bridge, Exchange order-flow discovery, fee and

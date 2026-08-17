@@ -167,6 +167,10 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         moduleHashes: ['mod_fees_v1'],
         protocolVersion: 'sunrey-protocol-0',
         activationResult: 'ACTIVATED',
+        policyDiffHash: 'diff_fee_dev_1',
+        activeVersion: '3',
+        emergencyRestrictionClass: 'SUSPEND_ORACLE_PROVIDER',
+        restrictionState: 'INACTIVE',
       },
     ],
     interopClients: [
