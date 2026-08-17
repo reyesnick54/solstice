@@ -26,7 +26,7 @@ export type ExplorerIndexStore = {
   putCheckpoint(checkpoint: IndexCheckpoint): void;
   putBlock(block: IndexedBlock): void;
   putTransaction(tx: IndexedTransaction): void;
-  putAccount(account: IndexedAccount): void;
+  putIndexedAccount(account: IndexedAccount): void;
   putAsset(asset: IndexedAsset): void;
   putMoonRey(row: IndexedMoonReyIssuance): void;
   putProductiveObject(row: IndexedProductiveObject): void;
@@ -98,7 +98,7 @@ export class InMemoryExplorerIndex implements ExplorerIndexStore {
     }
   }
 
-  putAccount(account: IndexedAccount): void {
+  putIndexedAccount(account: IndexedAccount): void {
     this.accounts.set(account.address, account);
   }
 

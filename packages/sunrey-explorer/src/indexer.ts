@@ -133,7 +133,7 @@ export class ExplorerIndexer {
       this.metrics.transactionsIndexedTotal += 1;
     }
     for (const row of snapshot.accounts) {
-      this.store.putAccount(row);
+      this.store.putIndexedAccount(row);
     }
     for (const row of snapshot.assets) {
       this.store.putAsset(row);
