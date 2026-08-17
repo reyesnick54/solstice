@@ -2283,11 +2283,6 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/supply-chain/types.ts",
       "publicInterface": "packages/sunrey-chain/src/supply-chain/index.ts",
-      "id": "sunrey-adversarial-range",
-      "name": "SunRey adversarial cyber-economic test range",
-      "canonicalOwner": "packages/sunrey-range",
-      "canonicalPath": "packages/sunrey-range/src/types.ts",
-      "publicInterface": "packages/sunrey-range/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -2304,6 +2299,23 @@
         "packages/sunrey-release",
         "packages/sbom",
         "packages/reproducible-builds"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 59 supply-chain security at packages/sunrey-chain. ReleaseAuthority signs artifacts only. Not Execution Authority, validator governance, custody, or wallet signing. Software release approval does not activate protocol change."
+    },
+    {
+      "id": "sunrey-adversarial-range",
+      "name": "SunRey adversarial cyber-economic test range",
+      "canonicalOwner": "packages/sunrey-range",
+      "canonicalPath": "packages/sunrey-range/src/types.ts",
+      "publicInterface": "packages/sunrey-range/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/red-team",
@@ -2313,7 +2325,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 59 supply-chain security at packages/sunrey-chain. ReleaseAuthority signs artifacts only. Not Execution Authority, validator governance, custody, or wallet signing. Software release approval does not activate protocol change."
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     }
   ],
@@ -2898,13 +2909,13 @@
     "packages/supply-chain",
     "packages/sunrey-release",
     "packages/sbom",
-    "packages/reproducible-builds"
+    "packages/reproducible-builds",
     "packages/sunrey-bench",
     "packages/performance",
-    "packages/load-test"
+    "packages/load-test",
     "packages/red-team",
     "packages/attack-sim",
-    "packages/sunrey-pentest"
+    "packages/sunrey-pentest",
     "packages/sunrey-test",
     "packages/fuzz",
     "packages/assurance",
@@ -3412,16 +3423,22 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 59 software supply-chain security, reproducible releases, and dependency assurance at packages/sunrey-chain/src/supply-chain. ReleaseAuthority signs artifacts only and does not change blockchain state, issue Execution Authority, or act as a custody/wallet/validator signer. Do not create packages/supply-chain, packages/sunrey-release, packages/sbom, or packages/reproducible-builds."
+    },
+    {
       "id": "sunrey-performance-engineering",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 58 sunrey-bench load, soak, and capacity engineering at packages/sunrey-chain/src/perf. Measures finalized consensus, RPC, Explorer, Exchange, oracle, productive, machine, interop, and custody workflows. Engineering measurements only. Do not create packages/sunrey-bench, packages/performance, or packages/load-test. Do not bypass consensus, CryptoSuite, authorization, policy, reconciliation, oracle validation, custody controls, or exchange reservations."
+    },
+    {
       "id": "sunrey-adversarial-range",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-range",
       "protected": true,
       "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+    },
+    {
       "id": "sunrey-assurance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
