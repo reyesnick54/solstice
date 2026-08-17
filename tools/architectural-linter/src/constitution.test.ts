@@ -1721,6 +1721,33 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/dual-economy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-macro')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-bridge')), false);
+  });
+
+  it('CHUNK-76 reconciles the economic stack and implements the stress laboratory', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-stress-lab').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-stress-lab').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-stress-lab').owner, 'packages/sunrey-economics');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-76',
+    );
+    assert.ok(declared, 'CHUNK-76 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-76-economic-stress-lab.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-76-economic-stress-lab.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/economic-invariants.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/economic-stress-scenarios.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/compound-economic-failures.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/economic-recovery.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economics/src/stress/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-stress')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-stress-chain')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-red-team')), false);
+  });
+
   it('CHUNK-72 implements SunRey validator bonding and rewards', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-validator-economics').status, 'IMPLEMENTED');
@@ -1745,6 +1772,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/liquid-staking')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/slashing')), false);
+  });
+
   it('CHUNK-71 implements the SunRey dual-asset monetary constitution', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-monetary-constitution').status, 'IMPLEMENTED');
@@ -1761,7 +1790,6 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-71-monetary-constitution.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunks/chunk-71-monetary-constitution.json')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/economics/index.ts')), true);
-    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economics')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/monetary-policy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/tokenomics')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/genesis-economy')), false);

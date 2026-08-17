@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-76",
+  "title": "Reconcile the complete SunRey economic stack and implement the adversarial economic stress laboratory",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "moonrey-issuance-engine",
+    "sunrey-exchange",
+    "sunrey-adversarial-range",
+    "sunrey-dual-economy-simulator",
+    "sunrey-economic-stress-lab"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-economics/src/stress with reconciliation in packages/sunrey-chain/src/economics/stack.ts. Simulation only. Does not authorize production, assign tickers, or enable LIVE_* flags. Do not create packages/economic-stress, packages/sunrey-stress-chain, or packages/economic-red-team. evaluateChunkRequirements returns mustStop: false."
+}

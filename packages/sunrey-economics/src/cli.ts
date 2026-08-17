@@ -1,18 +1,33 @@
 /**
- * sunrey-economics dual CLI.
+ * sunrey-economics dual and stress CLI.
  */
 
 import { writeFileSync } from 'node:fs';
 
+import { runEconomicsCommand as runMonetaryCommand } from '../../sunrey-chain/src/economics/cli.ts';
+import { runSunreyEconomicsCli } from '../../sunrey-chain/src/fees/v2/cli.ts';
 import { analyzeReport } from './analysis.ts';
 import { compareScenarios } from './compare.ts';
 import { renderDashboard } from './dashboard.ts';
 import { simulateScenario } from './engine.ts';
 import { catalogScenarios, listScenarioIds, loadScenario } from './scenarios.ts';
 import { dualEconomyReadiness } from './readiness.ts';
+import { runStressCommand } from './stress/cli.ts';
+
+const MONETARY_PLANES = new Set(['supply', 'policy', 'genesis', 'simulate', 'readiness', 'rehearsal']);
 
 export function runEconomicsCommand(argv: readonly string[]): string {
   const [plane, command, ...rest] = argv;
+  if (plane === 'stress') {
+    return runStressCommand([command ?? '', ...rest]);
+  }
+  if (plane === 'fees') {
+    return runSunreyEconomicsCli(argv).trimEnd();
+  }
+  if (plane && MONETARY_PLANES.has(plane)) {
+    const result = runMonetaryCommand(argv);
+    return JSON.stringify(result.payload, bigintReplacer, 2);
+  }
   if (plane !== 'dual') {
     return usage();
   }
@@ -42,6 +57,13 @@ function usage(): string {
     'sunrey-economics dual report --scenario <id>',
     'sunrey-economics dual stability --scenario <id>',
     'sunrey-economics dual export --scenario <id> --out <path>',
+    'sunrey-economics stress run --scenario <id> [--seed n] [--epochs n]',
+    'sunrey-economics stress scenario [--list] [--id <id>]',
+    'sunrey-economics stress campaign --id <smoke|critical-invariants|compound|extended-12> [--extended]',
+    'sunrey-economics stress report --campaign <id>',
+    'sunrey-economics stress compare --left <id> --right <id>',
+    'sunrey-economics stress replay --scenario <id> --seed n',
+    'sunrey-economics policy verify | supply verify | fees <policy|verify>',
   ].join('\n');
 }
 

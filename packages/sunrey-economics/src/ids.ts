@@ -20,10 +20,10 @@ export const INDEX_SCALE = 1_000_000n;
 export const BASIS_POINTS = 10_000n;
 export const WEIGHT_SCALE = 1_000_000n;
 
-export const SUNREY_MONETARY_POLICY_VERSION = 'sunrey.monetary.simulation.v1' as const;
-export const MOONREY_PRODUCTIVE_POLICY_VERSION = 'moonrey.productive.simulation.v1' as const;
-export const FEE_POLICY_VERSION = 'sunrey.fees.development.v1' as const;
-export const VALIDATOR_ECONOMICS_VERSION = 'sunrey.validator-economics.simulation.v1' as const;
+export const SUNREY_MONETARY_POLICY_VERSION = 'sunrey.monetary.constitution.v1' as const;
+export const MOONREY_PRODUCTIVE_POLICY_VERSION = 'moonrey.issuance.formula.v1' as const;
+export const FEE_POLICY_VERSION = 'sunrey.fees.v2' as const;
+export const VALIDATOR_ECONOMICS_VERSION = 'sunrey.validator-economics.v1' as const;
 export const BRIDGE_POLICY_VERSION = 'sunrey.economic-bridge.simulation.v1' as const;
 export const EXCHANGE_MARKET_ID = 'market:sunrey-coin-moonrey-coin-native' as const;
 

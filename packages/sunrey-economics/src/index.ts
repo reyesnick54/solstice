@@ -61,3 +61,25 @@ export { dualEconomyReadiness } from './readiness.ts';
 export { allPropertiesHold, propertyChecks } from './properties.ts';
 export { benchmarkSimulator } from './benchmark.ts';
 export { DEFAULT_BRIDGE_POLICY } from './policies.ts';
+export {
+  ECONOMIC_INVARIANT_IDS,
+  ECONOMIC_STRESS_CATALOG,
+  compareStressScenarios,
+  replayStressScenario,
+  requiredCatalogComplete as requiredStressCatalogComplete,
+  runEconomicStressDemo,
+  runEconomicStressScenario,
+  runPropertyStream,
+  runSmokeStressCampaign,
+  runStressCampaign,
+  runStressCommand,
+} from './stress/index.ts';
+export type {
+  EconomicInvariantResult,
+  EconomicRecoveryResult,
+  EconomicStressCampaign,
+  EconomicStressFinding,
+  EconomicStressReport,
+  EconomicStressResult,
+  EconomicStressScenario,
+} from './stress/index.ts';
