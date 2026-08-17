@@ -2333,6 +2333,21 @@
       "canonicalOwner": "packages/security",
       "canonicalPath": "packages/security/src/ceremony/types.ts",
       "publicInterface": "packages/security/src/ceremony/index.ts",
+      "id": "sunrey-testnet-rc",
+      "name": "SunRey Testnet release-candidate freeze and qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/index.ts",
+      "id": "sunrey-audit-readiness",
+      "name": "SunRey independent security-review preparation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/audit/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/audit/index.ts",
+      "id": "sunrey-formal-assurance",
+      "name": "SunRey protocol formal models and bounded model checking",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/formal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/formal/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -2345,6 +2360,9 @@
         },
         {
           "name": "CeremonyPlan",
+          "name": "TestnetReleaseCandidateManifest",
+          "name": "AuditBundleManifest",
+          "name": "FormalModelRegistry",
           "kind": "type"
         }
       ],
@@ -2353,11 +2371,29 @@
         "packages/hsm-v2",
         "packages/root-of-trust",
         "packages/key-ceremony"
+        "packages/sunrey-rc",
+        "packages/release-candidate",
+        "packages/testnet-rc",
+        "packages/sunrey-qualification",
+        "packages/rc-control"
+        "packages/sunrey-audit",
+        "packages/audit",
+        "packages/security-review",
+        "packages/audit-evidence"
+        "packages/formal",
+        "packages/tla",
+        "packages/model-checker",
+        "packages/sunrey-formal",
+        "packages/formal-methods",
+        "tools/formal"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
+      "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
+      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
     }
   ],
   "authorizedMutationPaths": [
@@ -2948,6 +2984,10 @@
     "packages/red-team",
     "packages/attack-sim",
     "packages/sunrey-pentest",
+    "packages/sunrey-audit",
+    "packages/audit",
+    "packages/security-review",
+    "packages/audit-evidence",
     "packages/sunrey-test",
     "packages/fuzz",
     "packages/assurance",
@@ -2958,6 +2998,17 @@
     "packages/hsm-v2",
     "packages/root-of-trust",
     "packages/key-ceremony"
+    "packages/sunrey-rc",
+    "packages/release-candidate",
+    "packages/testnet-rc",
+    "packages/sunrey-qualification",
+    "packages/rc-control"
+    "packages/formal",
+    "packages/tla",
+    "packages/model-checker",
+    "packages/sunrey-formal",
+    "packages/formal-methods",
+    "tools/formal"
   ],
   "capabilities": [
     {
@@ -3487,6 +3538,21 @@
       "owner": "packages/security",
       "protected": true,
       "notes": "Chunk 64 production-class root-of-trust and key-ceremony architecture at packages/security/src/ceremony. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. No production private keys in CI. No commercial HSM or completed production ceremony claim. Do not create packages/ceremony, packages/hsm-v2, packages/root-of-trust, or packages/key-ceremony."
+      "id": "sunrey-testnet-rc",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. Do not create packages/sunrey-rc, packages/release-candidate, packages/testnet-rc, packages/sunrey-qualification, or packages/rc-control."
+      "id": "sunrey-audit-readiness",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed. Do not create packages/sunrey-audit, packages/audit, packages/security-review, or packages/audit-evidence."
+      "id": "sunrey-formal-assurance",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 61 TLA+/TLC protocol models, bounded Rust verification, and implementation-trace conformance at packages/sunrey-chain/formal and packages/sunrey-chain/src/formal. Model checked within stated bounds. Not whole-system formal verification. Do not create packages/formal, packages/tla, packages/model-checker, packages/sunrey-formal, or tools/formal."
     }
   ],
   "boundedContexts": [

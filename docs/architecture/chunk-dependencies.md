@@ -121,6 +121,11 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
+| sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -519,3 +524,28 @@ architecture at `packages/security`. Capability
 CI uses clearly identified simulation providers. No production
 private keys. No commercial HSM or completed production ceremony
 claim. The evaluator returns `mustStop: false`.
+Chunk 63 implements the Testnet release-candidate freeze,
+qualification, and release-control system at
+`packages/sunrey-chain`. Capability `sunrey-testnet-rc` is
+`IMPLEMENTED`. See
+[`chunk-63-testnet-rc.md`](./chunk-63-testnet-rc.md).
+Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
+`packages/sunrey-rc`, `packages/release-candidate`,
+`packages/testnet-rc`, `packages/sunrey-qualification`, or
+`packages/rc-control`. The evaluator returns `mustStop: false`.
+Chunk 62 implements independent security-review preparation at
+`packages/sunrey-chain`. Capability `sunrey-audit-readiness` is
+`IMPLEMENTED`. See
+[`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
+The bundle does not claim an external audit occurred or passed.
+Do not create `packages/sunrey-audit`, `packages/audit`,
+`packages/security-review`, or `packages/audit-evidence`.
+Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
+bounded verification, and implementation-trace conformance at
+`packages/sunrey-chain`. Capability `sunrey-formal-assurance` is
+`IMPLEMENTED`. See
+[`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Results are model checked within stated bounds. Do not create
+`packages/formal`, `packages/tla`, `packages/model-checker`,
+`packages/sunrey-formal`, or `tools/formal`. The evaluator returns
+`mustStop: false`.

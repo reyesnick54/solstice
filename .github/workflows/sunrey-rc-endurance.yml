@@ -1,0 +1,35 @@
+# Extended RC qualification. Manual/scheduled only.
+# Do not claim a multi-day run unless that duration actually completed.
+name: SunRey RC endurance
+
+on:
+  workflow_dispatch:
+    inputs:
+      ticks:
+        description: Endurance ticks (not wall-clock days)
+        required: false
+        default: "32"
+
+permissions:
+  contents: read
+
+jobs:
+  endurance:
+    name: rc-endurance
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: RC endurance profile
+        run: node scripts/sunrey-release.mjs rc qualify --profile endurance --ticks ${{ inputs.ticks || 32 }}

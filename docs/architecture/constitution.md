@@ -955,6 +955,32 @@ providers only. Do not create real production private keys. Do not
 create `packages/ceremony`, `packages/hsm-v2`,
 `packages/root-of-trust`, or `packages/key-ceremony`. See
 [`chunk-64-root-of-trust.md`](./chunk-64-root-of-trust.md).
+Chunk 63 implements Testnet release-candidate freeze, qualification,
+and release control at `packages/sunrey-chain/src/release-candidate`.
+Capability `sunrey-testnet-rc` is `IMPLEMENTED`. It remains TESTNET
+work. No RC status implies mainnet readiness. Tickers remain
+`NOT_ASSIGNED`. `ReleaseAuthority` signs the candidate bundle only.
+Do not create `packages/sunrey-rc`, `packages/release-candidate`,
+`packages/testnet-rc`, `packages/sunrey-qualification`, or
+`packages/rc-control`. See
+[`chunk-63-testnet-rc.md`](./chunk-63-testnet-rc.md).
+Chunk 62 implements independent security-review preparation at
+`packages/sunrey-chain/src/audit`. Capability
+`sunrey-audit-readiness` is `IMPLEMENTED`. The generated bundle is
+an engineering package. It does not claim that an external audit
+has occurred or passed. Do not create `packages/sunrey-audit`,
+`packages/audit`, `packages/security-review`, or
+`packages/audit-evidence`. See
+[`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
+Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
+bounded verification, and implementation-trace conformance at
+`packages/sunrey-chain/formal`. Capability
+`sunrey-formal-assurance` is `IMPLEMENTED`. Results are model
+checked within stated bounds. This is not whole-system formal
+verification. Do not create `packages/formal`, `packages/tla`,
+`packages/model-checker`, `packages/sunrey-formal`, or
+`tools/formal`. See
+[`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

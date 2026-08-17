@@ -11,6 +11,21 @@ This document describes only what is implemented and tested in this tree.
   genesis binding, rotation/compromise workflows, and
   `sunrey-ceremony` rehearsal. Simulation only. Not a completed
   production ceremony and not a commercial HSM claim.
+- SunRey Testnet release-candidate freeze, qualification, and release
+  control (Chunk 63, `packages/sunrey-chain/src/release-candidate`):
+  versioned `SUNREY_TESTNET_RC_*` ids, protocol/API/crypto/dependency/
+  artifact freeze, qualification matrix, seven-validator and recovery
+  rehearsals, ReleaseAuthority-signed bundles, and `sunrey-release rc`
+  commands. TESTNET only. Tickers remain `NOT_ASSIGNED`. No status
+  implies mainnet readiness.
+- SunRey formal protocol models (Chunk 61,
+  `packages/sunrey-chain/formal`, `packages/sunrey-chain/src/formal`,
+  `packages/sunrey-chain/rust/crates/formal`): TLA+/TLC models for
+  consensus, signer, validator-set, governance, native assets, fees,
+  Exchange DVP, MoonRey issuance, interop, and CryptoPolicy;
+  `FORMAL_SMOKE` / `FORMAL_EXTENDED` profiles; implementation-trace
+  conformance; selected Rust bounded harnesses. Model checked within
+  stated bounds. Not whole-system formal verification.
 
 - SunRey fuzzing and deterministic property assurance (Chunk 56,
   `packages/sunrey-chain/src/assurance`,
@@ -551,6 +566,7 @@ npm run demo:consent
 npm run demo:clean-room
 npm run demo:sunrey-wallet
 npm run demo:sunrey-sdk
+npm run demo:sunrey-rc
 npm run sunrey:dev
 npm run typecheck
 npm run scan:secrets

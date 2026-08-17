@@ -494,6 +494,10 @@ export class SimulatedResilienceNetwork {
       'mempool_admission_latency',
       'explorer_index_rate',
       'soak_rss_bytes',
+      'formal_models_verified',
+      'formal_counterexamples',
+      'formal_trace_alignment',
+      'formal_rust_harnesses',
     ] as const) {
       this.metrics.observe(name, 0n, { plane: 'node' });
     }

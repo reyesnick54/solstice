@@ -32,6 +32,9 @@ node scripts/sunrey-release.mjs provenance
 node scripts/sunrey-release.mjs compare-builds
 node scripts/sunrey-release.mjs sign
 node scripts/sunrey-release.mjs verify
+node scripts/sunrey-audit.mjs generate
+node scripts/sunrey-audit.mjs verify dist/sunrey-audit
+node scripts/sunrey-audit.mjs reproduce
 node scripts/check-generated-drift.mjs
 node scripts/static-security-lint.mjs
 node scripts/check-container-pins.mjs
@@ -44,6 +47,9 @@ npm run sunrey-bench -- sanity
 
 echo "==> fuzz smoke"
 npm run test:fuzz-smoke
+
+echo "==> formal smoke"
+npm run test:formal-smoke
 
 echo "==> end-to-end demo"
 npm run demo
@@ -96,6 +102,10 @@ npm run demo:explorer
 npm run demo:sunrey-bench
 npm run sunrey-range -- campaign --smoke
 npm run demo:sunrey-range
+node scripts/sunrey-release.mjs rc qualify --profile smoke
+node scripts/sunrey-release.mjs rc verify
+npm run demo:sunrey-rc
+npm run demo:sunrey-audit
 
 echo "==> typecheck"
 npm run typecheck

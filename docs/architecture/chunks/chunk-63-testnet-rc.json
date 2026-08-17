@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-63",
+  "title": "SunRey Testnet release-candidate freeze, qualification, and release control",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-public-testnet",
+    "sunrey-supply-chain",
+    "sunrey-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-performance-engineering",
+    "sunrey-pqc-testnet",
+    "sunrey-ops-resilience",
+    "sunrey-validator-operations",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "sunrey-testnet-rc"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/release-candidate. Extends Chunk 59 ReleaseAuthority. Not mainnet. Tickers remain NOT_ASSIGNED. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-rc, packages/release-candidate, packages/testnet-rc, packages/sunrey-qualification, or packages/rc-control."
+}
