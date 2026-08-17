@@ -667,6 +667,9 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       notes: 'Human approval is not granted by software. Simulation is not production authorization.',
       externalEvidence: true,
       chunkReference: 'CHUNK-75',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-MONETARY-001',
       dimension: 'GENESIS',
       description: 'SunRey Coin monetary policy implementation',

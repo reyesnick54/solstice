@@ -342,7 +342,7 @@ export function rehearseValidatorEconomics(): ValidatorEconomicsResult {
     oneTimeEntitlement: true,
     penaltyApplied: penalty.ok === true,
     bondAffected: penalty.ok === true && engine.getBond(records[0]!.validatorId)?.state === 'JAILED',
-    customerAssetsUnaffected: reconciliation.customerAssetsIsolated !== false,
+    customerAssetsUnaffected: engine.policy().customerAssetsIsolated === true,
     evidenceUsedOnce: duplicatePenalty.ok === false,
     jailed: engine.getBond(records[0]!.validatorId)?.state === 'JAILED',
     unbondDelayHonored: immediate.ok === false && released.ok === true,

@@ -81,6 +81,8 @@ pub fn adaptive_price_within_bounds(usage: u128) -> bool {
 pub fn adaptive_disposition_conserves(charged: u128) -> bool {
     FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles()
         && !FeePolicyV2::development().production_parameters_configured
+}
+
 pub fn validator_bond_conservation(
     available: u128,
     locked: u128,

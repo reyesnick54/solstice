@@ -56,7 +56,7 @@ export function rehearseGovernedPolicyUpgrades(): GovernanceRehearsalResult {
   const registry = new MoonReyPolicyRegistry();
   const oldMoon = developmentPolicyBundle(1, 1);
   const newMoon = developmentPolicyBundle(16, 2);
-  const proposed = registry.propose(newMoon, 'HUMAN', 'human.fixture.protocol');
+  const proposed = registry.propose(newMoon, 'HUMAN_GOVERNANCE', 'human.fixture.protocol');
   const activeBefore = registry.activeAt(1);
   const activeAfter = registry.activeAt(16);
 
