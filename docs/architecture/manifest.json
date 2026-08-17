@@ -2387,6 +2387,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 64 production-class root-of-trust and key-ceremony architecture at packages/security/src/ceremony. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. No production private keys in CI."
+      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
     },
     {
       "id": "sunrey-testnet-rc",
@@ -2416,6 +2417,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED."
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
     },
     {
       "id": "sunrey-audit-readiness",
@@ -2444,6 +2446,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed."
+      "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
     },
     {
       "id": "sunrey-formal-assurance",
@@ -2474,6 +2477,40 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 61 TLA+/TLC protocol models, bounded Rust verification, and implementation-trace conformance at packages/sunrey-chain/formal. Model checked within stated bounds. Not whole-system formal verification."
+      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
+    },
+    {
+      "id": "sunrey-production-infrastructure",
+      "name": "SunRey production infrastructure provider adapters and secret controls",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/infra/provider.ts",
+      "publicInterface": "packages/sunrey-chain/src/infra/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionInfrastructureProvider",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionInfrastructureRegistry",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-infra",
+        "packages/infrastructure",
+        "packages/production-infrastructure",
+        "packages/cloud-adapters",
+        "packages/sunrey-cloud"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 66 provider-neutral production infrastructure control plane at packages/sunrey-chain/src/infra. Reuses packages/security SecretReference, KeyProvider, and HSM/KMS contracts. No mainnet activation. Do not create packages/sunrey-infra, packages/infrastructure, or a second security/readiness system."
     }
   ],
   "authorizedMutationPaths": [
@@ -3097,6 +3134,11 @@
     "packages/blockchain-db",
     "packages/chain-storage-v2",
     "packages/sunrey-ledger-db"
+    "packages/sunrey-infra",
+    "packages/infrastructure",
+    "packages/production-infrastructure",
+    "packages/cloud-adapters",
+    "packages/sunrey-cloud"
   ],
   "capabilities": [
     {
@@ -3663,6 +3705,11 @@
       "protected": true,
       "adr": "ADR-0022",
       "notes": "Chunk 67 production-candidate chain storage (redb) at packages/sunrey-chain/rust/crates/storage and application PostgreSQL durability at packages/persistence/src/production. Not a second ledger or consensus authority. Do not create packages/blockchain-db, packages/chain-storage-v2, or packages/sunrey-ledger-db."
+      "id": "sunrey-production-infrastructure",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 66 provider-neutral production infrastructure, secret/KMS/HSM adapters, workload identity, and network zoning at packages/sunrey-chain/src/infra. Reuses packages/security. No mainnet activation. Do not create packages/sunrey-infra, packages/infrastructure, packages/production-infrastructure, packages/cloud-adapters, or packages/sunrey-cloud."
     }
   ],
   "boundedContexts": [

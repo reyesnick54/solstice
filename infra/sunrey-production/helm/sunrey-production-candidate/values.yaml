@@ -1,0 +1,10 @@
+environment: PRODUCTION_CANDIDATE
+mainnetEnabled: false
+image:
+  repository: sunrey-node
+  digest: sha256:0000000000000000000000000000000000000000000000000000000000000000
+  tag: ""
+networkPolicy:
+  defaultDeny: true
+secrets:
+  useSecretReferences: true
