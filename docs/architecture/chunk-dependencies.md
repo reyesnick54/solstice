@@ -118,6 +118,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
+| sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -479,3 +481,17 @@ capacity suite at `packages/sunrey-chain`. Capability
 Do not create `packages/sunrey-bench`, `packages/performance`, or
 `packages/load-test`. Results are engineering measurements, not
 production guarantees. The evaluator returns `mustStop: false`.
+Chunk 57 implements the isolated adversarial cyber-economic test
+range at `packages/sunrey-range`. Capability
+`sunrey-adversarial-range` is `IMPLEMENTED`. See
+[`chunk-57-adversarial-range.md`](./chunk-57-adversarial-range.md).
+Do not create `packages/red-team`, `packages/attack-sim`, or
+`packages/sunrey-pentest`. The evaluator returns `mustStop: false`.
+Chunk 56 implements SunRey protocol fuzzing, property tests,
+differential TypeScript/Rust drivers, and deterministic replay at
+`packages/sunrey-chain`. Capability `sunrey-assurance` is
+`IMPLEMENTED`. See
+[`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Do not create `packages/sunrey-test`, `packages/fuzz`,
+`packages/assurance`, or `tools/sunrey-test`. This is not formal
+verification. The evaluator returns `mustStop: false`.

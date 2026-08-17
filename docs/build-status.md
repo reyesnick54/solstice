@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey fuzzing and deterministic property assurance (Chunk 56,
+  `packages/sunrey-chain/src/assurance`,
+  `packages/sunrey-chain/rust/crates/assurance`, `tests/assurance`):
+  protocol/parser fuzz, consensus and economic property campaigns,
+  TypeScript/Rust differential cases, replay fixtures, and
+  `FUZZ_SMOKE` / `FUZZ_EXTENDED` profiles. Not formal verification.
+
 - Customer domain (prospect through closed, typed status transitions, KYC state modelled not executed).
 - Thirteen typed account classes, product catalog, and legal-entity records in `packages/domain`.
 - Account entity with no balance field. Opening requires a verified Execution Authority.
@@ -465,6 +472,12 @@ This document describes only what is implemented and tested in this tree.
   with height delay, delegated keys, watch-only, and a local
   encrypted development keystore. Wallet metadata is not a
   second native-asset ledger and not a fiat Account.
+- SunRey adversarial range (Chunk 57, `packages/sunrey-range`):
+  isolated 7-validator cyber-economic test range. Capability
+  `sunrey-adversarial-range` is `IMPLEMENTED`. Deterministic
+  replay only. Detector output is not legal guilt. See
+  `docs/architecture/chunk-57-adversarial-range.md` and
+  `docs/assurance/`.
 - SunRey developer platform (Chunk 51, `packages/sunrey-sdk`):
   versioned public API `v1`, TypeScript SDK, Rust client crate
   at `packages/sunrey-chain/rust/crates/sdk`, SSE/JSON events,

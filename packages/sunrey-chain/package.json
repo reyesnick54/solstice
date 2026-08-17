@@ -25,6 +25,10 @@
     "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts",
     "demo:perf": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/demo.ts",
     "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/perf/cli.ts"
+    "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts"
+    "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts",
+    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli.ts",
+    "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts"
   },
   "engines": {
     "node": ">=22"

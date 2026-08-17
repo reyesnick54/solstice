@@ -12,7 +12,7 @@ export {
   restoreSignerSafetyBackup,
   S3CompatibleTestProvider,
   verifyDatabaseDump,
-  verifySnapshot,
+  verifySnapshot as verifyBackupSnapshot,
 } from './backup.ts';
 export type { ApplicationDatabaseDump, BackupStorageProvider, SignerSafetyBackup, VerifiedSnapshotManifest } from './backup.ts';
 export { allChaosFaults, runChaosScenario } from './chaos.ts';

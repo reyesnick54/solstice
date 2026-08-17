@@ -21,7 +21,7 @@ import {
   developmentEpoch,
 } from './workflows.ts';
 
-const COMMANDS = [
+const RESILIENCE_COMMANDS = [
   'health',
   'alerts',
   'backup',
@@ -86,7 +86,7 @@ export function runSunreyOps(argv: readonly string[]): string {
     }
     throw new Error('sunrey-ops dr run|report');
   }
-  throw new Error(`unknown sunrey-ops command; expected ${COMMANDS.join('|')}`);
+  throw new Error(`unknown sunrey-ops command; expected ${RESILIENCE_COMMANDS.join('|')}`);
 }
 
 function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<string, unknown> {
@@ -106,6 +106,35 @@ if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
     await main();
   }
 }
+  process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+}
+
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
+
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
+import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
+import {
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+  developmentEpoch,
+} from './workflows.ts';
 
 export type CliResult = {
   readonly ok: boolean;
@@ -114,6 +143,7 @@ export type CliResult = {
 };
 
 const OPERATOR_COMMANDS = [
+const VALIDATOR_COMMANDS = [
   'validator',
   'signer',
   'snapshot',
@@ -147,6 +177,7 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
   if (!group || !(OPERATOR_COMMANDS as readonly string[]).includes(group)) {
+  if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
   const config = developmentValidatorConfig({ dataDirectory: dataDir });
@@ -322,7 +353,13 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
 }
 
 export async function main(): Promise<void> {
-  const result = runOpsCommand(process.argv.slice(2));
+  const argv = process.argv.slice(2);
+  const head = argv[0] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(head)) {
+    process.stdout.write(`${runSunreyOps(argv)}\n`);
+    return;
+  }
+  const result = runOpsCommand(argv);
   assertNoPrivateKeyMaterial(result);
   const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
   console.log(text);

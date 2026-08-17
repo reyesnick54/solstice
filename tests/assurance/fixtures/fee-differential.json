@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "fee-differential",
+  "target": "differential.fee",
+  "seed": 56,
+  "profile": "FUZZ_SMOKE",
+  "networkId": "net_sunrey_simulation",
+  "chainId": "chn_sunrey_simulation",
+  "genesisRef": "local-dev",
+  "actions": [
+    {
+      "kind": "differential",
+      "payload": {
+        "id": "fee.240.1",
+        "kind": "fee",
+        "input": { "encodedBytes": 240, "signatureCount": 1 },
+        "expected": { "fee": "576" }
+      }
+    }
+  ],
+  "expected": { "ok": true }
+}

@@ -141,6 +141,7 @@ export * as wallet from './wallet/index.ts';
 export * as ops from './ops/index.ts';
 export * as testnet from './testnet/index.ts';
 export * as perf from './perf/index.ts';
+export * as assurance from './assurance/index.ts';
 export {
   CURRENT_APPLICATION_AUTHORITY,
   NATIVE_BLOCKCHAIN_AUTHORITY,

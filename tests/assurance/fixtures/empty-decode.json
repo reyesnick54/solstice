@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "empty-decode",
+  "target": "protocol.decode",
+  "seed": 56,
+  "profile": "FUZZ_SMOKE",
+  "networkId": "net_sunrey_simulation",
+  "chainId": "chn_sunrey_simulation",
+  "genesisRef": "local-dev",
+  "actions": [
+    { "kind": "decode", "payload": { "hex": "", "expectOk": false } }
+  ],
+  "expected": { "ok": true }
+}
