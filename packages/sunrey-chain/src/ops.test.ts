@@ -10,7 +10,7 @@ import {
   OperatorPeerPolicy,
   RemoteSignerServer,
   SEVEN_VALIDATOR_IDS,
-  SevenValidatorTestnet,
+  SevenValidatorNetwork,
   SignerFence,
   SignerSafetyStore,
   assertNoPrivateKeyMaterial,
@@ -389,7 +389,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     const topology = developmentSentryTopology();
     assert.equal(availableSentryCount(topology, new Set([topology.sentries[0]!.sentryId])), 1);
     assert.equal(availableSentryCount(topology, new Set(topology.sentries.map((row) => row.sentryId))), 0);
-    const net = new SevenValidatorTestnet();
+    const net = new SevenValidatorNetwork();
     net.produce(1n);
     net.nodes[0]!.online = false;
     assert.equal(net.produce(2n) !== null, true);

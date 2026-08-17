@@ -6,7 +6,7 @@ import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { runOpsCommand } from './cli.ts';
 import { developmentValidatorConfig } from './config.ts';
 import { developmentRemoteSigner } from './signer.ts';
-import { runRollingUpgrade } from './testnet.ts';
+import { runRollingUpgrade } from './seven-validator.ts';
 import { developmentEpoch, exitWorkflow, joinWorkflow, generateJoinRecord } from './workflows.ts';
 import { OperatorKeystore } from './keys.ts';
 

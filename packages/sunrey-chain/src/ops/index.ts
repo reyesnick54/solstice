@@ -95,5 +95,5 @@ export { incidentProcedure } from './incidents.ts';
 export { MaintenanceMode } from './maintenance.ts';
 export { gracefulShutdownPreserves, kubernetesManifest, systemdUnit } from './supervision.ts';
 export { restartDoesNotDuplicateVote, safeRestart } from './restart.ts';
-export { SEVEN_VALIDATOR_IDS, SevenValidatorTestnet, runRollingUpgrade } from './testnet.ts';
+export { SEVEN_VALIDATOR_IDS, SevenValidatorNetwork, runRollingUpgrade } from './seven-validator.ts';
 export { opsUsage, runOpsCommand } from './cli.ts';
