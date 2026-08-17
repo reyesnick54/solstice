@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import type { EncryptedEnvelope } from '../../../security/src/envelope.ts';
 import type { KeyProvider } from '../../../security/src/provider.ts';
 import { sha256Hex } from '../../../security/src/hash.ts';
+import { ObjectStorageAdapter, type StoredObject } from '../infra/services.ts';
+import type { InfraEnvironment } from '../infra/types.ts';
 import {
   BACKUP_CLASSES,
   DEVELOPMENT_CHAIN_ID,
@@ -375,6 +377,31 @@ export function backupMetadata(input: {
     retention: input.retention,
     verificationStatus: input.verified ? 'VERIFIED' : 'UNVERIFIED',
   });
+}
+
+/** Persist backup bytes through the Chunk 66 provider-neutral object store. */
+export function storeBackupInObjectStorage(
+  storage: ObjectStorageAdapter,
+  meta: BackupMetadata,
+  bytes: Buffer,
+  environment: InfraEnvironment = 'LOCAL',
+): StoredObject {
+  const stored = storage.put({
+    objectId: `backup:${meta.source}:${meta.hash}`,
+    objectClass: 'BACKUP',
+    environment,
+    payload: bytes,
+    encryptionPolicy: meta.encryptionReference ? 'BACKUP_ENCRYPTION_KEY' : 'PROVIDER_MANAGED',
+    retentionUntilUtc: null,
+  });
+  const verified = storage.verify(stored.objectId);
+  if (!verified.ok) {
+    throw new Error(verified.error.message);
+  }
+  if (stored.integrityHash !== meta.hash) {
+    throw new Error('backup object hash does not match backup metadata');
+  }
+  return stored;
 }
 
 export function assertBackupClassCatalog(): void {

@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { backupMetadata } from './ops/backup.ts';
+import { backupMetadata, storeBackupInObjectStorage } from './ops/backup.ts';
+import { ObjectStorageAdapter } from './infra/services.ts';
 import { storageCapacityGuards } from './ops/capacity.ts';
 import { runSunreyOps } from './ops/cli.ts';
 import { databaseRestoreTest, databaseStatus, verifyDatabase } from './ops/database.ts';
@@ -94,6 +95,11 @@ describe('Chunk 67 storage and database ops', () => {
     assert.equal(meta.encryptionReference, 'BACKUP_ENCRYPTION');
     assert.equal(meta.verificationStatus, 'VERIFIED');
     assert.equal(meta.hash.length, 64);
+    const objectStore = new ObjectStorageAdapter();
+    const stored = storeBackupInObjectStorage(objectStore, meta, Buffer.from('dump'));
+    assert.equal(stored.objectClass, 'BACKUP');
+    assert.equal(stored.integrityHash, meta.hash);
+    assert.equal(objectStore.verify(stored.objectId).ok, true);
   });
 
   it('exposes sunrey-ops storage and database commands', () => {
