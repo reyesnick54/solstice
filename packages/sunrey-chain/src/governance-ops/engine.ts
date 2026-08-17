@@ -557,7 +557,7 @@ export function developmentEmergencyPolicy(): EmergencyAuthorityPolicy {
     chainId: DEVELOPMENT_CHAIN_ID,
     permittedClasses: EMERGENCY_ACTION_CLASSES,
     forbiddenPowers: FORBIDDEN_EMERGENCY_POWERS,
-    requiredRoles: ['SECURITY_AUTHORITY', 'PROTOCOL_AUTHORITY'],
+    requiredRoles: ['SECURITY_AUTHORITY', 'PROTOCOL_AUTHORITY'] as const,
     minimumDistinctActors: 2,
     aiCannotApprove: true,
     mayMintNativeAssets: false,

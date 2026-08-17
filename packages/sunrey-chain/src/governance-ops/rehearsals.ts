@@ -146,13 +146,16 @@ export function rehearseMoonReyPolicyChange(activationHeight = 50): MoonReyPolic
   }
   const before = registry.activeAt(activationHeight - 1);
   const after = registry.activeAt(activationHeight);
+  if (!activation.accepted || !before || !after || before.policyVersion !== 1 || after.policyVersion < 2) {
+    throw new Error('MoonRey policy rehearsal must activate version 2 after the coordinate');
+  }
   return Object.freeze({
-    oldPolicyVersion: before?.policyVersion ?? 1,
-    newPolicyVersion: after?.policyVersion ?? 1,
-    oldContributionUsedOldPolicy: true,
-    newContributionUsedNewPolicy: (after?.policyVersion ?? 0) >= 2,
-    historyReproducible: true,
-    activated: activation.accepted,
+    oldPolicyVersion: before.policyVersion,
+    newPolicyVersion: after.policyVersion,
+    oldContributionUsedOldPolicy: true as const,
+    newContributionUsedNewPolicy: true as const,
+    historyReproducible: true as const,
+    activated: true,
   });
 }
 
