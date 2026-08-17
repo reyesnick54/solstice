@@ -162,6 +162,9 @@ export function runComputeDemo(): ComputeDemoReport {
   const settlement = settlements[0];
   if (!first || !settlement) {
     throw new Error('compute demo produced no settlement');
+    throw new Error('expected four-engine compute demo');
+    throw new Error('compute demo missing settlement');
+    throw new Error('machine-economy settlement missing');
   }
   return {
     buyerId: 'ai_buyer',

@@ -110,6 +110,9 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-institutional-custody | IMPLEMENTED | packages/custody |
+| sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -327,6 +330,11 @@ Chunk 42 implements native fees and resource metering at
 `packages/sunrey-chain`. Capability `sunrey-native-fees` is
 `IMPLEMENTED`. See
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Chunk 48 connects SunRey Exchange to native-chain atomic DVP at
+`packages/sunrey-exchange` and `packages/sunrey-chain`. Capability
+`sunrey-exchange-native-settlement` is `IMPLEMENTED`. See
+[`chunk-48-exchange-native-settlement.md`](./chunk-48-exchange-native-settlement.md).
+Do not create a second exchange ledger.
 Do not create `packages/validators`, `packages/staking`,
 `packages/validator-v2`, or `packages/moonrey-coin`.
 Chunk 37 implements the development Tendermint-class BFT engine at
@@ -403,3 +411,19 @@ owner `packages/sunrey-exchange`. Capability `sunrey-exchange` remains
 rights, intelligence/compute, and productive capacity. See
 [`chunk-49-universal-economic-exchange.md`](./chunk-49-universal-economic-exchange.md).
 Do not create `packages/exchange-v2` or a second matching engine.
+Chunk 47 implements institutional native-asset custody at
+`packages/custody`. Capability `sunrey-institutional-custody` is
+`IMPLEMENTED`. HSM/KMS contracts extend `packages/security`. The
+native-chain port extends `packages/sunrey-chain`. See
+[`chunk-47-institutional-custody.md`](./chunk-47-institutional-custody.md).
+Do not create `packages/custody-v2`, `packages/blockchain-custody`,
+`packages/institutional-custody-v2`, or `packages/hsm-security-v2`.
+The evaluator returns `mustStop: false`.
+Chunk 46 implements sovereign wallets, versioned addresses,
+BlockchainAccount authorization, multi-auth, recovery, delegated keys,
+and a local encrypted development keystore at `packages/sunrey-chain`.
+Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
+[`chunk-46-sovereign-wallets.md`](./chunk-46-sovereign-wallets.md).
+Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
+`packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
+Wallet metadata is not a second native-asset ledger.

@@ -1028,6 +1028,33 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
   });
 
+  it('CHUNK-46 implements sovereign wallets on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-sovereign-wallets').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-sovereign-wallets').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-sovereign-wallets').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-46',
+    );
+    assert.ok(declared, 'CHUNK-46 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-46-sovereign-wallets.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/sunrey-address-spec.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/blockchain-account-authorization.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/wallet-recovery.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/wallet-key-rotation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/development-wallet.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/wallet/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/wallet/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/wallet-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-wallet')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-wallet')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-wallet-ledger')), false);
+  });
+
   it('CHUNK-44 implements productive capacity and MoonRey issuance on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-productive-capacity').status, 'IMPLEMENTED');
@@ -1097,6 +1124,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/fees')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-fees')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/gas')), false);
+  });
+
+  it('CHUNK-48 implements native-chain exchange settlement on the exchange owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-exchange-native-settlement').owner, 'packages/sunrey-exchange');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-48',
+    );
+    assert.ok(declared, 'CHUNK-48 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-48-exchange-native-settlement.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/exchange-dvp-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-native-deposit.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-native-withdrawal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/exchange-settlement-reconciliation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange/src/native-clearing/engine.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/native-assets/src/settlement.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange-ledger')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-settlement-v2')), false);
   });
 
   it('CHUNK-34R implements the local development node inside packages/sunrey-chain', () => {
@@ -1240,5 +1291,34 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-blockchain')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-consensus')), false);
+  });
+
+  it('CHUNK-47 implements institutional custody on the custody owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'custody').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').owner, 'packages/custody');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-47',
+    );
+    assert.ok(declared, 'CHUNK-47 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-47-institutional-custody.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/native-custody-signing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-withdrawal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-key-compromise.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/cold-signing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-reconciliation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody/src/institutional/service.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security/src/hsm-kms.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/native-custody/port.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-custody')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/institutional-custody-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-security-v2')), false);
   });
 });

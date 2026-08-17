@@ -92,6 +92,7 @@ export const EVIDENCE_KIND_EXCHANGE = 'sunrey-exchange';
 export const SETTLEMENT_MODELS = [
   'DIGITAL_ASSET_DVP',
   'NATIVE_ASSET_DVP',
+  'NATIVE_CHAIN_DVP',
   'INFORMATION_PERMISSION_CONTRACT',
   'DELIVERY_VERSUS_RIGHT',
   'COMPUTE_CONTRACT',
@@ -214,3 +215,24 @@ export const COUNTERPARTY_CLASSES = [
   'DEVELOPMENT',
 ] as const;
 export type ExchangeCounterpartyClass = (typeof COUNTERPARTY_CLASSES)[number];
+export const NATIVE_POSITION_COMPONENTS = [
+  'AVAILABLE',
+  'RESERVED',
+  'PENDING_SETTLEMENT',
+  'FINALIZED',
+] as const;
+export type NativePositionComponent = (typeof NATIVE_POSITION_COMPONENTS)[number];
+
+export const NATIVE_SETTLEMENT_STATUSES = [
+  'MATCHED',
+  'SETTLEMENT_CREATED',
+  'SUBMITTED',
+  'SUBMISSION_UNKNOWN',
+  'FINALIZED',
+  'FAILED',
+  'RECONCILIATION_REQUIRED',
+] as const;
+export type NativeSettlementStatus = (typeof NATIVE_SETTLEMENT_STATUSES)[number];
+
+export const NATIVE_FINALITY = ['PENDING_PROPOSAL', 'BFT_FINALIZED'] as const;
+export type NativeFinality = (typeof NATIVE_FINALITY)[number];

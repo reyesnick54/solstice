@@ -60,7 +60,7 @@ Typed only. Arbitrary strings are not cryptographic authority.
 | `GOVERNANCE_SIGNING` | Ed25519 (CryptoSuite) | Governance. |
 | `ATTESTATION_SIGNING` | Ed25519 (CryptoSuite) | Attestations / recovery descriptors. |
 | `EVIDENCE_SIGNING` | Ed25519 (CryptoSuite) | Signed evidence anchors. Distinct from SHA-256 vault hashing. |
-| `WALLET_SIGNING` | Ed25519 (CryptoSuite) | Wallet / reward address signing. |
+| `WALLET_SIGNING` | Ed25519 (CryptoSuite) | Wallet / institutional custody signing. Distinct from validator, oracle, governance, machine, and Execution Authority keys. |
 | `INTEROPERABILITY_SIGNING` | Ed25519 (CryptoSuite) | Reserved bridge / interoperability signatures. |
 
 ## Algorithms
@@ -129,6 +129,14 @@ Future adapters (`AWS_KMS`, `GCP_KMS`, `AZURE_KEY_VAULT`,
 `SecretProvider`. This chunk does not add those SDKs and does not
 connect to a live provider. `LIVE_*` stays false. `ENVIRONMENT` stays
 `simulation`.
+
+Chunk 47 adds a provider-neutral HSM/KMS port
+(`packages/security/src/hsm-kms.ts`) and a labeled development
+simulator that emulates non-exportable handles with `node:crypto`
+Ed25519. Private material extraction is unsupported. CryptoSuite
+negotiation is explicit; unavailable suites fail closed. MPC remains
+a port only. See
+[`native-custody-signing.md`](./native-custody-signing.md).
 
 ## Execution Authority
 

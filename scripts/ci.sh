@@ -50,12 +50,20 @@ npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:moonrey-productive
 npm run demo:sunrey-oracle
+npm run demo:sunrey-fees
+npm run demo:sunrey-machine-economy
+npm run demo:sunrey-wallet
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet
 npm run demo:sunrey-accountability
 npm run demo:sunrey-native-assets
 npm run demo:sunrey-exchange
+npm run demo:sunrey-exchange-native
+npm run demo:sunrey-exchange-settlement
 npm run demo:custody
+npm run demo:institutional-custody
+npm run demo:custody-unknown
+npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
 

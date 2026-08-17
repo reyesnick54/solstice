@@ -27,6 +27,13 @@ pub enum AssetError {
     LockNotOwned,
     AuthorizationExpired,
     WrongAuthority,
+    UnauthorizedSettlement,
+    SettlementReplay,
+    TradeAlreadySettled,
+    WrongAsset,
+    InsufficientReservation,
+    ReservationMismatch,
+    BatchLimitExceeded,
 }
 
 impl AssetError {
@@ -57,6 +64,13 @@ impl AssetError {
             Self::LockNotOwned => "LOCK_NOT_OWNED",
             Self::AuthorizationExpired => "AUTHORIZATION_EXPIRED",
             Self::WrongAuthority => "WRONG_AUTHORITY",
+            Self::UnauthorizedSettlement => "UNAUTHORIZED_SETTLEMENT",
+            Self::SettlementReplay => "SETTLEMENT_REPLAY",
+            Self::TradeAlreadySettled => "TRADE_ALREADY_SETTLED",
+            Self::WrongAsset => "WRONG_ASSET",
+            Self::InsufficientReservation => "INSUFFICIENT_RESERVATION",
+            Self::ReservationMismatch => "RESERVATION_MISMATCH",
+            Self::BatchLimitExceeded => "BATCH_LIMIT_EXCEEDED",
         }
     }
 
@@ -85,7 +99,14 @@ impl AssetError {
             | Self::LockNotFound
             | Self::LockNotOwned
             | Self::AuthorizationExpired
-            | Self::WrongAuthority => RejectReason::StatefulInvalid,
+            | Self::WrongAuthority
+            | Self::UnauthorizedSettlement
+            | Self::SettlementReplay
+            | Self::TradeAlreadySettled
+            | Self::InsufficientReservation
+            | Self::ReservationMismatch
+            | Self::BatchLimitExceeded => RejectReason::StatefulInvalid,
+            Self::WrongAsset => RejectReason::CrossAssetArithmetic,
             Self::AssetInactive => RejectReason::PolicyDenied,
         }
     }

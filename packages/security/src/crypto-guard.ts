@@ -26,4 +26,5 @@ export const PROVIDER_ONLY_FILES = Object.freeze([
   'packages/security/src/hmac.ts',
   'packages/security/src/hash.ts',
   'packages/security/src/random.ts',
+  'packages/security/src/hsm-simulator.ts',
 ]);

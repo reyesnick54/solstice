@@ -304,7 +304,9 @@ This document describes only what is implemented and tested in this tree.
   adapters, or regulated market surveillance. Chunk 30R implements
   simulation custody, Travel Rule messaging, listing governance,
   kill switches, and deterministic surveillance alerts. See
-  `docs/architecture/chunk-30-resume.md`. This is not a licensed
+  `docs/architecture/chunk-30-resume.md`. Chunk 47 extends the
+  same custody owner with institutional native-asset vaults and
+  non-exportable signers. This is not a licensed
   exchange, registered VASP, or Travel Rule compliance claim.
   Historical PRs `#18` and `#19` are not canonical.
 - Production PQC library, production chain node, MoonRey issuance,
@@ -445,6 +447,24 @@ This document describes only what is implemented and tested in this tree.
   parameters. FeeIntent attaches beside the Chunk 41 payload.
   No fiat ledger debit. MoonRey remains disabled as
   a fee asset until a height-activated policy change.
+- Institutional native-asset custody (Chunk 47, `packages/custody`):
+  `CustodyVault`, segregated/omnibus/hot/warm/cold classifications,
+  `InstitutionalSigningProvider`, development HSM/KMS simulator at
+  `packages/security`, native-chain deposit indexer, dual-control
+  approval, withdrawal lifecycle including `SUBMISSION_UNKNOWN`,
+  cold-signing packages, exact reconciliation, and the Chunk 48
+  exchange custody port. Capability
+  `sunrey-institutional-custody` is `IMPLEMENTED`. Not a second
+  asset ledger. Simulation only. See
+  `docs/architecture/chunk-47-institutional-custody.md`.
+- SunRey sovereign wallets (Chunk 46) are **development-only**
+  at `packages/sunrey-chain/src/wallet` and
+  `packages/sunrey-chain/rust/crates/wallet`. Capability
+  `sunrey-sovereign-wallets` is `IMPLEMENTED`. Versioned
+  addresses, BlockchainAccount authorization, M-of-N, recovery
+  with height delay, delegated keys, watch-only, and a local
+  encrypted development keystore. Wallet metadata is not a
+  second native-asset ledger and not a fiat Account.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
@@ -500,6 +520,7 @@ npm run demo:strategy-lab
 npm run demo:mesh
 npm run demo:consent
 npm run demo:clean-room
+npm run demo:sunrey-wallet
 npm run typecheck
 npm run scan:secrets
 npm run ci

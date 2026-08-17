@@ -34,6 +34,10 @@ path = "src/bin/sunrey-validator-node.rs"
 name = "sunrey-native-asset-demo"
 path = "src/bin/sunrey-native-asset-demo.rs"
 
+[[bin]]
+name = "sunrey-exchange-settlement-demo"
+path = "src/bin/sunrey-exchange-settlement-demo.rs"
+
 [dependencies]
 clap = { version = "=4.5.23", features = ["derive"] }
 sunrey-native-assets = { path = "../rust/crates/native-assets" }

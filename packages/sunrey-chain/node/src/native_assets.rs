@@ -3,8 +3,9 @@
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 
 use sunrey_native_assets::{
-    apply_native_asset, ApplyContext, AssetCrypto, AssetError, CryptoClass, CryptoPolicy,
-    IssuanceAuthorization, NativeAssetLedger, NativeAssetPayload,
+    apply_exchange_settlement, apply_native_asset, ApplyContext, AssetCrypto, AssetError,
+    CryptoClass, CryptoPolicy, ExchangeSettlementAuthority, ExchangeSettlementPayload,
+    IssuanceAuthorization, NativeAssetLedger, NativeAssetPayload, SettlementApplyContext,
 };
 
 use crate::chain::{Genesis, Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};
@@ -58,12 +59,35 @@ pub fn sign_authorization(auth: &mut IssuanceAuthorization, seed: &[u8; 32]) {
     auth.signature = key.sign(&auth.unsigned_bytes()).to_bytes().to_vec();
 }
 
+pub fn sign_settlement_authority(auth: &mut ExchangeSettlementAuthority, seed: &[u8; 32]) {
+    let key = SigningKey::from_bytes(seed);
+    auth.suite_id = CRYPTO_SUITE_ID.to_string();
+    auth.algorithm_id = SIG_ALG_ID.to_string();
+    auth.public_key = key.verifying_key().to_bytes().to_vec();
+    auth.signature = key.sign(&auth.unsigned_bytes()).to_bytes().to_vec();
+}
+
 pub fn apply_payload(
     ledger: &mut NativeAssetLedger,
     tx: &Transaction,
     height: u64,
     genesis: &Genesis,
 ) -> NodeResult<()> {
+    if ExchangeSettlementPayload::looks_like(&tx.payload) {
+        let payload = ExchangeSettlementPayload::decode(&tx.payload)
+            .map_err(|e| NodeError::Validation(e.to_string()))?;
+        let crypto = NodeAssetCrypto;
+        let policy = development_policy();
+        let settle_ctx = SettlementApplyContext {
+            height,
+            network_id: &genesis.network_id,
+            chain_id: &genesis.chain_id,
+            crypto: &crypto,
+            crypto_policy: &policy,
+        };
+        return apply_exchange_settlement(ledger, &payload, &settle_ctx)
+            .map_err(|e| NodeError::Validation(e.to_string()));
+    }
     if !NativeAssetPayload::looks_like(&tx.payload) {
         return Ok(());
     }

@@ -126,6 +126,10 @@ enum Command {
         #[command(subcommand)]
         command: FeesCommand,
     },
+    Wallet {
+        #[command(subcommand)]
+        command: WalletCommand,
+    },
 }
 
 #[derive(Subcommand)]
@@ -347,6 +351,28 @@ enum MoonreyCommand {
 }
 
 #[derive(Subcommand)]
+enum WalletCommand {
+    Account {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    Holdings {
+        #[arg(long)]
+        data_dir: PathBuf,
+        id: String,
+    },
+    FeeEstimate {
+        #[arg(long)]
+        data_dir: PathBuf,
+        #[arg(long, default_value_t = 256)]
+        bytes: u128,
+        #[arg(long, default_value_t = 1)]
+        signatures: u128,
+    },
+}
+
+#[derive(Subcommand)]
 enum FeesCommand {
     Schedule {
         #[arg(long)]
@@ -535,6 +561,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
         Command::Oracle { command } => return run_oracle(command),
         Command::Asset { command } => return run_asset(command),
         Command::Fees { command } => return run_fees(command),
+        Command::Wallet { command } => return run_wallet(command),
         Command::EncodeFixture { name } => {
             let node = LocalNode::init(std::env::temp_dir().join(format!("sunrey-encode-{name}")))?;
             let bytes = match name.as_str() {
@@ -696,6 +723,45 @@ fn run_oracle(command: OracleCommand) -> Result<(), Box<dyn std::error::Error>> 
             run_oracle_demo(&mut node)?;
             node.oracle.persist(&data_dir)?;
             println!("{}", serde_json::to_string_pretty(&node.oracle.metrics_json())?);
+        }
+    }
+    Ok(())
+}
+
+fn run_wallet(command: WalletCommand) -> Result<(), Box<dyn std::error::Error>> {
+    match command {
+        WalletCommand::Account { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let sun = assets.holding(&id, NativeAssetId::SunReyCoin);
+            println!(
+                "{}",
+                serde_json::json!({
+                    "account_id": id,
+                    "sunrey_available": sun.available.to_string(),
+                    "ticker_status": "NOT_ASSIGNED",
+                    "private_keys_exposed": false,
+                })
+            );
+        }
+        WalletCommand::Holdings { data_dir, id } => {
+            let node = LocalNode::open(&data_dir)?;
+            let assets = node.native_assets()?;
+            let sun = assets.holding(&id, NativeAssetId::SunReyCoin);
+            let moon = assets.holding(&id, NativeAssetId::MoonReyCoin);
+            println!(
+                "{}",
+                serde_json::json!({
+                    "account_id": id,
+                    "SUNREY_COIN": { "available": sun.available.to_string(), "locked": sun.locked.to_string() },
+                    "MOONREY_COIN": { "available": moon.available.to_string(), "locked": moon.locked.to_string() },
+                    "ticker_status": "NOT_ASSIGNED",
+                })
+            );
+        }
+        WalletCommand::FeeEstimate { data_dir, bytes, signatures } => {
+            let node = LocalNode::open(&data_dir)?;
+            println!("{}", node.fees_estimate(bytes, signatures));
         }
     }
     Ok(())

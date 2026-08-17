@@ -9,6 +9,10 @@ const COMPETING_PATHS = [
   'packages/reyn-chain',
   'packages/on-chain-ledger',
   'packages/crypto-chain',
+  'packages/wallet-v2',
+  'packages/blockchain-wallet',
+  'packages/crypto-wallet',
+  'packages/sunrey-wallet-ledger',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {
