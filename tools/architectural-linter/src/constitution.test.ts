@@ -1182,6 +1182,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-bench')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/performance')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/load-test')), false);
+  });
+
   it('CHUNK-57 implements the SunRey adversarial cyber-economic range', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-adversarial-range').status, 'IMPLEMENTED');
@@ -1546,6 +1548,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-release')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sbom')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reproducible-builds')), false);
+  });
+
   it('CHUNK-56 implements SunRey fuzzing and property assurance on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-assurance').status, 'IMPLEMENTED');
