@@ -58,6 +58,9 @@
 /packages/sunrey-coin/ @reyesnick54
 /packages/information-market/ @reyesnick54
 /packages/sunrey-chain/ @reyesnick54
+/packages/sunrey-explorer/ @reyesnick54
+/apps/explorer/ @reyesnick54
+/db/explorer/ @reyesnick54
 /packages/sunrey-exchange/ @reyesnick54
 /packages/custody/ @reyesnick54
 /packages/market-surveillance/ @reyesnick54

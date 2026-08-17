@@ -114,6 +114,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -435,6 +436,13 @@ Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 Wallet metadata is not a second native-asset ledger.
+Chunk 52 implements the rebuildable SunRey explorer at
+`packages/sunrey-explorer`. Capability `sunrey-explorer` is
+`IMPLEMENTED`. See
+[`chunk-52-explorer.md`](./chunk-52-explorer.md).
+The explorer is a projection. Canonical authority remains finalized
+SunRey Blockchain state. Do not create `packages/block-explorer`,
+`packages/chain-indexer`, or a second indexer.
 Chunk 51 implements the official developer platform at
 `packages/sunrey-sdk`. Capability `sunrey-developer-sdk` is
 `IMPLEMENTED`. See

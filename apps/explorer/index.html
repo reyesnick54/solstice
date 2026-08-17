@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SunRey Explorer — DEVELOPMENT</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="banner" role="status">
+      NETWORK CLASSIFICATION: <strong>DEVELOPMENT</strong>
+      — simulation / testnet quantities are not market capitalization and are not real-value production.
+    </div>
+    <header>
+      <h1>SunRey Explorer</h1>
+      <p class="sub">Rebuildable projection of finalized SunRey Blockchain state. Not an authoritative ledger.</p>
+      <form id="search-form">
+        <input id="search" name="q" maxlength="128" placeholder="height, block, tx, address, validator, asset, fact, object, issuance, packet, proposal, settlement" />
+        <button type="submit">Search</button>
+      </form>
+    </header>
+    <nav>
+      <button data-page="home">Home</button>
+      <button data-page="blocks">Blocks</button>
+      <button data-page="transactions">Transactions</button>
+      <button data-page="accounts">Accounts</button>
+      <button data-page="assets">Assets</button>
+      <button data-page="validators">Validators</button>
+      <button data-page="governance">Governance</button>
+      <button data-page="oracles">Oracles</button>
+      <button data-page="productive">Productive Economy</button>
+      <button data-page="moonrey">MoonRey</button>
+      <button data-page="machines">Machine Economy</button>
+      <button data-page="interop">Interoperability</button>
+    </nav>
+    <main id="app">Loading…</main>
+    <footer>
+      Canonical authority remains finalized chain state. Explorer index is derived and rebuildable.
+    </footer>
+    <script src="/app.js"></script>
+  </body>
+</html>
