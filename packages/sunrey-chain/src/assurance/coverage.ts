@@ -14,6 +14,7 @@ export const COVERAGE_INVENTORY: readonly CoverageEntry[] = Object.freeze([
   { subsystem: 'consensus', target: 'signer safety', status: 'IMPLEMENTED', notes: 'DurableSignerSafety sequences + Rust SignerSafetyStore' },
   { subsystem: 'assets', target: 'SUNREY_COIN / MOONREY_COIN supply', status: 'IMPLEMENTED', notes: 'TS invariant book + Rust NativeAssetLedger proptest' },
   { subsystem: 'fees', target: 'actual/max/reserve/disposition', status: 'IMPLEMENTED', notes: 'TS FeeEngine + Rust FeeSchedule::calculate' },
+  { subsystem: 'fees', target: 'FeePolicyV2 meter/price/max-fee/disposition/overflow', status: 'IMPLEMENTED', notes: 'Chunk 73 adaptive fee market properties + rust/crates/fees/src/v2.rs' },
   { subsystem: 'wallet', target: 'M-of-N / revoke / historic / watch-only', status: 'IMPLEMENTED', notes: 'authorizeAccountAction + Rust authorize' },
   { subsystem: 'oracle', target: 'quorum / order / stale / units', status: 'IMPLEMENTED', notes: 'median order-independence + Rust integer_median' },
   { subsystem: 'moonrey', target: 'issuance / fingerprint / caps / supply', status: 'IMPLEMENTED', notes: 'formula + fingerprint + supplyReconciles' },

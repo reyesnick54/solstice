@@ -1,6 +1,7 @@
 import type { FormalModel } from '../explore.ts';
 import type { FormalProfile } from '../types.ts';
 import { createConsensusModel } from './consensus.ts';
+import { createAdaptiveFeeMarketModel } from './adaptive-fee-market.ts';
 import { createCryptoPolicyModel } from './crypto-policy.ts';
 import { createDvpModel } from './dvp.ts';
 import { createFeeModel } from './fees.ts';
@@ -9,8 +10,11 @@ import { createInteropAssetModel } from './interop-asset.ts';
 import { createInteropPacketModel } from './interop-packet.ts';
 import { createMoonReyModel } from './moonrey.ts';
 import { createMoonReyPolicyGovernanceModel } from './moonrey-policy-governance.ts';
+import { createGenesisAllocationModel } from './genesis-allocation.ts';
+import { createMonetaryPolicyModel } from './monetary-policy.ts';
 import { createNativeAssetModel } from './native-asset.ts';
 import { createSignerModel } from './signer.ts';
+import { createValidatorEconomicsModel } from './validator-economics.ts';
 import { createValidatorSetModel } from './validator-set.ts';
 
 export function modelsForProfile(profile: FormalProfile) {
@@ -37,6 +41,10 @@ export function modelsForProfile(profile: FormalProfile) {
     createInteropPacketModel(bounds),
     createInteropAssetModel(bounds),
     createCryptoPolicyModel(bounds),
+    createAdaptiveFeeMarketModel(bounds),
+    createValidatorEconomicsModel(bounds),
+    createMonetaryPolicyModel(bounds),
+    createGenesisAllocationModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -52,3 +60,7 @@ export { createMoonReyPolicyGovernanceModel, policyContentHash } from './moonrey
 export { createInteropPacketModel } from './interop-packet.ts';
 export { createInteropAssetModel, MODEL_INTEROP_ASSET } from './interop-asset.ts';
 export { createCryptoPolicyModel, MODEL_CRYPTO_STATES } from './crypto-policy.ts';
+export { createAdaptiveFeeMarketModel } from './adaptive-fee-market.ts';
+export { createValidatorEconomicsModel } from './validator-economics.ts';
+export { createMonetaryPolicyModel } from './monetary-policy.ts';
+export { createGenesisAllocationModel } from './genesis-allocation.ts';

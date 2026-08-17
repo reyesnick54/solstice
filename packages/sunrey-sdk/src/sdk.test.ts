@@ -92,6 +92,14 @@ describe('SunRey TypeScript SDK', () => {
       assert.ok(await client.interop.packets());
       const markets = await client.exchange.listMarkets() as { readonly markets: readonly { readonly family: string }[] };
       assert.equal(markets.markets.length, 4);
+      const policy = await client.monetary.policy() as { readonly ticker_status: string; readonly production_activation: string };
+      assert.equal(policy.ticker_status, 'NOT_ASSIGNED');
+      assert.equal(policy.production_activation, 'UNCONFIGURED');
+      assert.ok(await client.monetary.supply());
+      assert.ok(await client.monetary.genesis());
+      const receipt = await client.monetary.issuanceReceipt('iss_dev_1') as { readonly mint_interface: boolean };
+      assert.equal(receipt.mint_interface, false);
+      assert.ok(await client.monetary.burns());
       const wallet = createDevelopmentWallet({ walletId: 'ns' });
       await client.wallet.register(publicRegistration(wallet));
       assert.equal((await client.wallet.get(wallet.account.accountId)).authorization_policy, 'SINGLE_SIGNATURE');

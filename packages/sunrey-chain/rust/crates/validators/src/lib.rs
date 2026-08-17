@@ -3,6 +3,7 @@
 
 pub mod cli;
 pub mod devset;
+pub mod economics;
 pub mod lifecycle;
 pub mod power;
 pub mod set;

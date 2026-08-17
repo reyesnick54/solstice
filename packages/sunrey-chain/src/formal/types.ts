@@ -28,6 +28,10 @@ export const FORMAL_MODEL_IDS = [
   'INTEROP_PACKET_STATE',
   'INTEROP_ASSET_CONSERVATION',
   'CRYPTO_POLICY_MIGRATION',
+  'ADAPTIVE_FEE_MARKET',
+  'VALIDATOR_ECONOMICS',
+  'NATIVE_MONETARY_POLICY',
+  'GENESIS_ALLOCATION_CONSERVATION',
 ] as const;
 export type FormalModelId = (typeof FORMAL_MODEL_IDS)[number];
 
@@ -54,6 +58,10 @@ export const TRACE_DOMAINS = [
   'fee',
   'crypto_policy',
   'validator_set',
+  'adaptive_fee',
+  'validator_economics',
+  'monetary_policy',
+  'genesis_allocation',
 ] as const;
 export type TraceDomain = (typeof TRACE_DOMAINS)[number];
 

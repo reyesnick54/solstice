@@ -1,0 +1,26 @@
+{
+  "chunk": "CHUNK-72",
+  "title": "SunRey validator bonding, reward, and accountability economics",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-validators",
+    "sunrey-validator-accountability",
+    "blockchain-consensus",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-validator-operations",
+    "sunrey-formal-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-explorer",
+    "sunrey-developer-sdk",
+    "sunrey-mainnet-readiness",
+    "sunrey-launch-rehearsal",
+    "sunrey-validator-economics"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/validator-economics. Governed validator principals only. Production bond asset remains UNCONFIGURED. evaluateChunkRequirements returns mustStop: false. Do not create packages/validator-economics, packages/staking, packages/slashing, packages/liquid-staking, or a second validator registry."
+}

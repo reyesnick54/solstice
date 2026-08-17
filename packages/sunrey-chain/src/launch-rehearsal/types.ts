@@ -164,6 +164,16 @@ export type NativeAssetRehearsalResult = {
   readonly supplyReconciled: boolean;
   readonly productionValueClaim: false;
   readonly units: 'REHEARSAL_ONLY';
+  readonly feePolicyV2: {
+    readonly normalTraffic: boolean;
+    readonly highUtilization: boolean;
+    readonly pqHeavy: boolean;
+    readonly exchangeDvp: boolean;
+    readonly moonreyActivity: boolean;
+    readonly validatorRewardAllocation: boolean;
+    readonly supplyReconciled: boolean;
+    readonly productionParametersConfigured: false;
+  };
 };
 
 export type OracleRehearsalResult = {
@@ -201,6 +211,17 @@ export type SdkRehearsalResult = {
   readonly typescript: boolean;
   readonly rust: boolean;
   readonly failoverPolicyHonored: boolean;
+};
+
+export type ValidatorEconomicsRehearsalResult = {
+  readonly bondedValidators: 7;
+  readonly healthyRewardEpoch: boolean;
+  readonly jailedValidator: boolean;
+  readonly evidencePenalty: boolean;
+  readonly unbondDelayHonored: boolean;
+  readonly supplyReconciled: boolean;
+  readonly units: 'REHEARSAL_ONLY';
+  readonly productionBondAsset: 'UNCONFIGURED';
 };
 
 export type ExplorerRehearsalResult = {
@@ -276,6 +297,7 @@ export type MainnetLaunchRehearsalReport = {
   readonly oracleStatus: OracleRehearsalResult;
   readonly exchangeCustodySandbox: RegulatedSandboxResult;
   readonly nativeAssets: NativeAssetRehearsalResult;
+  readonly validatorEconomics: ValidatorEconomicsRehearsalResult;
   readonly interop: InteropRehearsalResult;
   readonly sdk: SdkRehearsalResult;
   readonly explorer: ExplorerRehearsalResult;

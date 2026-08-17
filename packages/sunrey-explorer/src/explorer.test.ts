@@ -100,6 +100,12 @@ describe('sunrey explorer', () => {
     assert.equal(body.index_lag, 0);
     const moonrey = handleExplorerRequest({ method: 'GET', path: '/v1/moonrey', query: {} }, queries, indexer);
     assert.match(moonrey.body, /iss_moonrey_1/);
+    const monetary = handleExplorerRequest({ method: 'GET', path: '/v1/monetary', query: {} }, queries, indexer);
+    assert.equal(monetary.status, 200);
+    assert.match(monetary.body, /sunrey.monetary.constitution.v1/);
+    assert.match(monetary.body, /SUNREY_COIN/);
+    assert.match(monetary.body, /supplyReconciliation/);
+    assert.doesNotMatch(monetary.body, /marketCap|market_cap|marketCapitalization/);
     const bad = handleExplorerRequest({ method: 'POST', path: '/v1/blocks', query: {} }, queries, indexer);
     assert.equal(bad.status, 405);
     const search = handleExplorerRequest(

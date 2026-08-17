@@ -372,6 +372,33 @@ function dispatch(
   if (method === 'GET' && path === '/v1/assets/burns') {
     return json(200, { burns: [] });
   }
+  if (method === 'GET' && path === '/v1/monetary/policy') {
+    return json(200, {
+      ticker_status: 'NOT_ASSIGNED',
+      production_activation: 'UNCONFIGURED',
+      assets: [
+        { asset_id: 'SUNREY_COIN', purpose: 'HUMAN_ECONOMIC_LAYER', policy_version: 'sunrey.monetary.constitution.v1' },
+        { asset_id: 'MOONREY_COIN', purpose: 'AUTONOMOUS_PRODUCTIVE_ECONOMY', policy_version: 'sunrey.monetary.constitution.v1' },
+      ],
+    });
+  }
+  if (method === 'GET' && path === '/v1/monetary/supply') {
+    return json(200, {
+      SUNREY_COIN: { genesis: '0', issued: '0', burned: '0', circulating: '0', locked: '0', reconciliation: 'EXACT' },
+      MOONREY_COIN: { genesis: '0', issued: '0', burned: '0', circulating: '0', locked: '0', reconciliation: 'EXACT' },
+      ticker_status: 'NOT_ASSIGNED',
+      not_market_cap: true,
+    });
+  }
+  if (method === 'GET' && path === '/v1/monetary/genesis') {
+    return json(200, { SUNREY_COIN: '0', MOONREY_COIN: '0', production_allocation_authorized: false });
+  }
+  if (method === 'GET' && path.startsWith('/v1/monetary/issuance/')) {
+    return json(200, { receipt_id: path.slice('/v1/monetary/issuance/'.length), mint_interface: false });
+  }
+  if (method === 'GET' && path === '/v1/monetary/burns') {
+    return json(200, { burns: [], classes: ['VOLUNTARY_USER_BURN', 'FEE_BURN', 'PROTOCOL_ECONOMIC_PENALTY'] });
+  }
 
   if (method === 'GET' && path === '/v1/fees/schedule') {
     return json(200, platform.estimateFee());
@@ -380,7 +407,22 @@ function dispatch(
     return json(200, platform.estimateFee(Number(q.bytes ?? '256'), Number(q.sigs ?? '1')));
   }
   if (method === 'GET' && path === '/v1/fees/resources') {
-    return json(200, { encoded_bytes: q.bytes ?? '256', signature_count: q.sigs ?? '1' });
+    const signatureClass = q.class === 'HYBRID' || q.class === 'PQ' ? q.class : 'CLASSICAL';
+    return json(200, {
+      encoded_bytes: q.bytes ?? '256',
+      signature_count: q.sigs ?? '1',
+      usage: platform.estimateResourcesV2(Number(q.bytes ?? '256'), Number(q.sigs ?? '1'), signatureClass),
+    });
+  }
+  if (method === 'GET' && path === '/v1/fees/policy') {
+    return json(200, platform.getFeePolicy());
+  }
+  if (method === 'GET' && path === '/v1/fees/price') {
+    return json(200, platform.getBaseResourcePrice());
+  }
+  if (method === 'GET' && path === '/v1/fees/estimate-v2') {
+    const signatureClass = q.class === 'HYBRID' || q.class === 'PQ' ? q.class : 'CLASSICAL';
+    return json(200, platform.estimateFeeV2(Number(q.bytes ?? '256'), Number(q.sigs ?? '1'), signatureClass));
   }
   if (method === 'GET' && path.startsWith('/v1/fees/receipts/')) {
     const receipt = platform.txStatus(path.slice('/v1/fees/receipts/'.length));
@@ -395,6 +437,25 @@ function dispatch(
   }
   if (method === 'GET' && path === '/v1/validators/evidence') {
     return json(200, { evidence: [] });
+  }
+  if (method === 'GET' && path === '/v1/validators/economics/policy') {
+    return json(200, platform.validatorEconomicPolicy());
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/bond')) {
+    const id = path.slice('/v1/validators/'.length, -'/bond'.length);
+    return json(200, platform.validatorBond(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/rewards')) {
+    const id = path.slice('/v1/validators/'.length, -'/rewards'.length);
+    return json(200, platform.validatorRewardSummary(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/penalties')) {
+    const id = path.slice('/v1/validators/'.length, -'/penalties'.length);
+    return json(200, platform.validatorPublicPenalties(id));
+  }
+  if (method === 'GET' && path.startsWith('/v1/validators/') && path.endsWith('/unbond')) {
+    const id = path.slice('/v1/validators/'.length, -'/unbond'.length);
+    return json(200, platform.validatorUnbondStatus(id));
   }
 
   if (method === 'GET' && path === '/v1/governance/proposals') {
@@ -639,8 +700,21 @@ export const PUBLIC_ROUTES = [
   'GET /v1/accounts/{id}',
   'GET /v1/assets',
   'GET /v1/assets/holdings/{id}',
+  'GET /v1/monetary/policy',
+  'GET /v1/monetary/supply',
+  'GET /v1/monetary/genesis',
+  'GET /v1/monetary/issuance/{id}',
+  'GET /v1/monetary/burns',
   'GET /v1/fees/estimate',
+  'GET /v1/fees/policy',
+  'GET /v1/fees/price',
+  'GET /v1/fees/estimate-v2',
   'GET /v1/validators',
+  'GET /v1/validators/economics/policy',
+  'GET /v1/validators/{id}/bond',
+  'GET /v1/validators/{id}/rewards',
+  'GET /v1/validators/{id}/penalties',
+  'GET /v1/validators/{id}/unbond',
   'GET /v1/governance/proposals',
   'GET /v1/oracles/facts',
   'GET /v1/productive/moonrey',

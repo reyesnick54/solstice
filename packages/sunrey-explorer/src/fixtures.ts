@@ -116,6 +116,11 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         missed: 0,
         jailStatus: null,
         tombstone: false,
+        bondState: 'BONDED',
+        bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+        policyVersion: 1,
+        publicRewardSummary: { paid: '0', pending: '0' },
+        unbondStatus: { pending: '0', releaseEpoch: null },
       },
       {
         validatorId: 'val_dev_2',
@@ -129,6 +134,11 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         missed: 0,
         jailStatus: null,
         tombstone: false,
+        bondState: 'BONDED',
+        bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+        policyVersion: 1,
+        publicRewardSummary: { paid: '0', pending: '0' },
+        unbondStatus: { pending: '0', releaseEpoch: null },
       },
     ],
     evidence: [
@@ -216,6 +226,10 @@ export function makeBlock(height: number, parentId: string): IndexedBlock {
     resourceUsage: height === 0 ? '0' : '12',
     feeTotal: height === 0 ? '0' : '1',
     feeAsset: 'SUNREY_COIN',
+    feePolicyVersion: '2',
+    baseResourcePrice: '100',
+    targetUtilizationBps: '5000',
+    feeDisposition: 'VALIDATOR_REWARD+BURN+PROTOCOL_TREASURY',
     stateRoot: `state_${height}`,
     commit: {
       height,
@@ -243,6 +257,9 @@ export function makeTx(height: number, block: string, type: string): IndexedTran
     resourceUsage: '12',
     fee: '1',
     feeAsset: 'SUNREY_COIN',
+    chargedFee: '1',
+    feeDisposition: 'VALIDATOR_REWARD+BURN+PROTOCOL_TREASURY',
+    feePolicyVersion: '2',
     cryptoSuite: 'SUNREY_ED25519_V1',
     assetQuantities: type === 'NATIVE_TRANSFER' ? { SUNREY_COIN: '25' } : {},
     economicObjectRefs: type === 'NATIVE_TRANSFER' ? ['sunrey.asset.sunrey_coin'] : [],
@@ -277,6 +294,13 @@ function asset(assetId: 'SUNREY_COIN' | 'MOONREY_COIN', issued: string, burned: 
     circulating,
     issuancePolicy: assetId === 'MOONREY_COIN' ? 'VERIFIED_PRODUCTIVE_CONTRIBUTION' : 'DEVELOPMENT_GENESIS',
     notMarketCapitalization: true,
+    policyVersion: 'sunrey.monetary.constitution.v1',
+    genesisAllocationTotal: '0',
+    authorizedIssuanceTotal: issued,
+    escrowed: '0',
+    supplyReconciliation: 'EXACT',
+    ...(assetId === 'MOONREY_COIN' ? { moonreyIssuanceCategorySummary: { ENERGY: issued } } : {}),
+    networkEnvironmentLabel: 'DEVELOPMENT',
   };
 }
 
