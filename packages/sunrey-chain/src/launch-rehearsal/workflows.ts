@@ -174,19 +174,13 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
   const alice = engine.accounts.position('alice', 'SUNREY_COIN').available;
   const bob = engine.accounts.position('bob', 'SUNREY_COIN').available;
   const nativeReconciled = alice + bob + sinks === 1_000_000n && sinks === charged;
-  return Object.freeze({
-    sunreyTransfer: sunrey.bob === 200n,
-    moonreyIssuance: moonrey.issued === 75n,
-    fees: sunrey.fees === 10n,
-    locks: sunrey.locked === 40n,
-    supplyReconciled: sunreyReconciled && moonreyReconciled && nativeReconciled,
   const monetary = rehearseMonetaryConstitution();
   return Object.freeze({
     sunreyTransfer: monetary.sunreyTransfer,
     moonreyIssuance: monetary.moonreyIssuance,
     fees: monetary.fees,
     locks: monetary.locks,
-    supplyReconciled: monetary.supplyReconciled,
+    supplyReconciled: monetary.supplyReconciled && sunreyReconciled && moonreyReconciled && nativeReconciled,
     productionValueClaim: false,
     units: 'REHEARSAL_ONLY',
     feePolicyV2: Object.freeze({

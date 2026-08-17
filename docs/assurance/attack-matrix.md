@@ -138,3 +138,7 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | VECON-IMMEDIATE-UNBOND | validator-economics | immediate unbond attempt | governed unbonding delay | immediate release refusal | UNBOND_DELAY_RESPECTED | none | TESTED |
 | VECON-WRONG-POLICY-VERSION | validator-economics | wrong policy version | epoch-scoped policy version | wrong policy refusal | NO_UNAUTHORIZED_GOVERNANCE | none | TESTED |
 | VECON-REWARD-OVERFLOW | validator-economics | reward overflow boundary | checked integer arithmetic | overflow refusal | NO_DUPLICATE_VALIDATOR_REWARD | none | TESTED |
+| TREASURY-MINT-ATTEMPT | protocol-treasury | treasury mint | treasury mint unavailable | TREASURY_MINT_UNAVAILABLE | NO_TREASURY_MINT | none | TESTED |
+| TREASURY-DUPLICATE-DISBURSE | protocol-treasury | duplicate disbursement | intent identity binding | DUPLICATE_DISBURSEMENT_REJECTED | NO_TREASURY_DOUBLE_SPEND | none | TESTED |
+| TREASURY-UNAUTHORIZED-DISBURSE | protocol-treasury | AI approval | human governance required | AI_APPROVAL_REJECTED | NO_UNAUTHORIZED_TREASURY_SPEND | none | TESTED |
+| TREASURY-CUSTOMER-CLAIM | protocol-treasury | customer asset claim | customer-asset isolation | CUSTOMER_ASSETS_UNREACHABLE | NO_CUSTOMER_ASSET_TREASURY_CLAIM | none | TESTED |

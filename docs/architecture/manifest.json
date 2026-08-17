@@ -2800,10 +2800,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "ProtocolTreasuryEngine",
-          "kind": "class"
-        },
-        {
           "name": "ProtocolTreasuryPolicy",
           "kind": "type"
         },

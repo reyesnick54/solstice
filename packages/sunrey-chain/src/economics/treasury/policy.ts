@@ -33,7 +33,7 @@ export function unconfiguredSpendingConstraints(): TreasurySpendingConstraints {
 }
 
 export function developmentTreasuryPolicy(
-  policyVersion = PROTOCOL_TREASURY_POLICY_VERSION_ID,
+  policyVersion: string = PROTOCOL_TREASURY_POLICY_VERSION_ID,
 ): ProtocolTreasuryPolicy {
   return Object.freeze({
     schemaVersion: PROTOCOL_TREASURY_SCHEMA_VERSION,

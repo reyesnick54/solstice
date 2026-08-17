@@ -15,7 +15,7 @@ import { dualEconomyReadiness } from './readiness.ts';
 export function runEconomicsCommand(argv: readonly string[]): string {
   const [plane, command, ...rest] = argv;
   if (plane === 'treasury') {
-    const result = runTreasuryCommand([command, ...rest]);
+    const result = runTreasuryCommand([command ?? 'help', ...rest]);
     return JSON.stringify(result.payload, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
   }
   if (plane !== 'dual') {

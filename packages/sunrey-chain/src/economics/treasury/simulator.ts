@@ -52,7 +52,7 @@ export class TreasuryScenarioSimulator {
       keyRefs: ['rot.governance.treasury.1', 'rot.governance.treasury.2'],
     });
     const notes: string[] = [];
-    const feeIncome = scenario === 'LOW_FEE_INCOME' || scenario === 'FEE_REVENUE_COLLAPSE' || scenario === 'LOW_AVAILABLE_RESERVE'
+    const feeIncome = scenario === 'LOW_FEE_INCOME' || scenario === 'LOW_AVAILABLE_RESERVE'
       ? 40n
       : scenario === 'HIGH_FEE_INCOME'
         ? 4_000n

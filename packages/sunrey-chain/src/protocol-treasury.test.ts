@@ -187,46 +187,86 @@ describe('Chunk 77 protocol treasury', () => {
     if (!dup.ok) {
       assert.equal(dup.code, 'DUPLICATE_DISBURSEMENT_REJECTED');
     }
-    engine.createIntent(
+    const tight = new ProtocolTreasuryEngine();
+    tight.fund({
+      fundingId: 'tight',
+      source: 'EXPLICIT_APPROVED_GENESIS_ALLOCATION',
+      asset: 'SUNREY_COIN',
+      reserveClass: 'PROTOCOL_OPERATIONS_RESERVE',
+      quantity: 100n,
+      epoch: 0n,
+      height: 0n,
+      evidenceRef: 'tight',
+      monetaryPolicyVersion: 'sunrey.monetary.constitution.v1',
+    });
+    tight.proposeBudget(
+      {
+        budgetId: 'tight-ops',
+        asset: 'SUNREY_COIN',
+        reserveClass: 'PROTOCOL_OPERATIONS_RESERVE',
+        purpose: 'PROTOCOL_INFRASTRUCTURE',
+        maximumAuthorizedQuantity: 400n,
+        cycle: developmentCycle('tight'),
+        recipientClass: 'PROTOCOL_SERVICE_PROVIDER',
+        evidenceRefs: ['tight'],
+        governanceProposalRef: 'gov:tight',
+      },
+      HUMAN,
+    );
+    tight.approveBudget('tight-ops', HUMAN);
+    tight.createIntent(
       {
         intentId: 'a',
-        budgetId: 'ops',
+        budgetId: 'tight-ops',
         recipient: 'acct.a',
         recipientClass: 'PROTOCOL_SERVICE_PROVIDER',
         asset: 'SUNREY_COIN',
-        quantity: 300n,
+        quantity: 80n,
         purpose: 'PROTOCOL_INFRASTRUCTURE',
         expirationEpoch: 10n,
       },
       HUMAN,
     );
-    engine.createIntent(
+    tight.createIntent(
       {
         intentId: 'b',
-        budgetId: 'ops',
+        budgetId: 'tight-ops',
         recipient: 'acct.b',
         recipientClass: 'PROTOCOL_SERVICE_PROVIDER',
         asset: 'SUNREY_COIN',
-        quantity: 300n,
+        quantity: 80n,
         purpose: 'PROTOCOL_INFRASTRUCTURE',
         expirationEpoch: 10n,
       },
       HUMAN,
     );
-    engine.approveIntent('a', HUMAN);
-    engine.approveIntent('b', HUMAN);
-    engine.reserve('a', HUMAN);
-    const race = engine.reserve('b', HUMAN);
+    tight.approveIntent('a', HUMAN);
+    tight.approveIntent('b', HUMAN);
+    tight.reserve('a', HUMAN);
+    const race = tight.reserve('b', HUMAN);
     assert.equal(race.ok, false);
     if (!race.ok) {
       assert.equal(race.code, 'RESERVATION_RACE_REJECTED');
     }
-    const recipient = engine.assertIntentBinding('a', 'acct.tampered', 300n);
+    engine.createIntent(
+      {
+        intentId: 'bound',
+        budgetId: 'ops',
+        recipient: 'acct.a',
+        recipientClass: 'PROTOCOL_SERVICE_PROVIDER',
+        asset: 'SUNREY_COIN',
+        quantity: 80n,
+        purpose: 'PROTOCOL_INFRASTRUCTURE',
+        expirationEpoch: 10n,
+      },
+      HUMAN,
+    );
+    const recipient = engine.assertIntentBinding('bound', 'acct.tampered', 80n);
     assert.equal(recipient.ok, false);
     if (!recipient.ok) {
       assert.equal(recipient.code, 'TAMPERED_RECIPIENT_REJECTED');
     }
-    const quantity = engine.assertIntentBinding('a', 'acct.a', 1n);
+    const quantity = engine.assertIntentBinding('bound', 'acct.a', 1n);
     assert.equal(quantity.ok, false);
     if (!quantity.ok) {
       assert.equal(quantity.code, 'TAMPERED_QUANTITY_REJECTED');

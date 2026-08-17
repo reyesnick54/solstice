@@ -15,6 +15,9 @@ import {
   type NativeMonetaryAssetId,
 } from '../types.ts';
 
+export { PROTOCOL_TREASURY_CLASS };
+export type { NativeMonetaryAssetId };
+
 export const PROTOCOL_TREASURY_SCHEMA_VERSION = 1 as const;
 export const PROTOCOL_TREASURY_POLICY_VERSION_ID = 'sunrey.protocol.treasury.v1' as const;
 export const PROTOCOL_TREASURY_OWNER = 'packages/sunrey-chain' as const;
