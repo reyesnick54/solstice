@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-47",
+  "title": "SunRey institutional native-asset custody, remote signing, and HSM/KMS security architecture",
+  "requires": [
+    "architecture-linting",
+    "money",
+    "domain",
+    "permissions",
+    "kernel",
+    "evidence",
+    "events",
+    "event-fabric",
+    "config",
+    "security",
+    "identity",
+    "policy-engine",
+    "compliance-screening",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "sunrey-native-assets",
+    "sunrey-validators",
+    "custody",
+    "sunrey-institutional-custody"
+  ],
+  "notes": "IMPLEMENTED at packages/custody (institutional control plane), packages/security (HSM/KMS contracts and development simulator), and packages/sunrey-chain (native-chain custody port). Reuses existing deposit, screening, Travel Rule, SUBMISSION_UNKNOWN, and reconciliation. Not a second asset ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
+}

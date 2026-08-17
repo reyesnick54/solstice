@@ -1245,4 +1245,33 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-coin')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-consensus')), false);
   });
+
+  it('CHUNK-47 implements institutional custody on the custody owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'custody').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-institutional-custody').owner, 'packages/custody');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-47',
+    );
+    assert.ok(declared, 'CHUNK-47 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-47-institutional-custody.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/native-custody-signing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-withdrawal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-key-compromise.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/cold-signing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/custody-reconciliation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody/src/institutional/service.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security/src/hsm-kms.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/native-custody/port.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/blockchain-custody')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/institutional-custody-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-security-v2')), false);
+  });
 });

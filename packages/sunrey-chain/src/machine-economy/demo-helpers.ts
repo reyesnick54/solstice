@@ -161,6 +161,7 @@ export function runComputeDemo(): ComputeDemoReport {
   const first = engines[0];
   const settlement = settlements[0];
   if (!first || !settlement) {
+    throw new Error('compute demo missing settlement');
     throw new Error('machine-economy settlement missing');
   }
   return {

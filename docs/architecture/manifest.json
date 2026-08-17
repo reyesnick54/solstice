@@ -921,12 +921,13 @@
         "packages/events",
         "packages/permissions",
         "packages/kernel",
-        "packages/sunrey-coin"
+        "packages/sunrey-coin",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Provider-neutral digital-asset custody control plane. Simulation adapters only. Provider state is operational, not customer-accounting truth. Canonical Ledger remains the ledger. No private keys."
+      "notes": "Provider-neutral digital-asset custody control plane. Chunk 30R simulation adapters plus Chunk 47 institutional native-asset vaults, remote/HSM signing, and finalized-chain deposit recognition. Provider state is operational, not customer-accounting truth. Canonical native quantity is on SunRey Blockchain. No second asset ledger. No private keys."
     },
     {
       "id": "packages/market-surveillance",
@@ -2525,6 +2526,12 @@
       "file": "packages/custody/src/service.ts",
       "requiresExecutionAuthority": true,
       "requiresKernel": true
+    },
+    {
+      "symbol": "requestWithdrawal",
+      "file": "packages/custody/src/institutional/service.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
     }
   ],
   "allowedCycles": [
@@ -2686,6 +2693,10 @@
     "packages/oracle",
     "packages/sunrey-oracle",
     "packages/oracle-network",
+    "packages/custody-v2",
+    "packages/blockchain-custody",
+    "packages/institutional-custody-v2",
+    "packages/hsm-security-v2"
     "packages/wallet-v2",
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
@@ -3025,7 +3036,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
-      "notes": "Canonical provider-neutral digital-asset custody control plane. Chunk 30R. Simulation adapters only. Not customer-accounting truth. Canonical Ledger remains the ledger."
+      "notes": "Canonical provider-neutral digital-asset custody control plane. Chunk 30R simulation adapters. Chunk 47 adds institutional native-asset vaults, HSM/KMS/remote-signer ports, human approval, finalized-chain deposit recognition, and exact reconciliation. Not customer-accounting truth. Canonical native quantity is on SunRey Blockchain. Do not create custody-v2."
     },
     {
       "id": "market-surveillance",
@@ -3115,6 +3126,11 @@
       "notes": "Chunk 42 deterministic resource metering, integer fee schedule, reservation/charge/release, disposition, validator reward accrual, and height-activated fee parameters at packages/sunrey-chain and packages/sunrey-chain/rust/crates/fees. Attaches FeeIntent beside the Chunk 41 native-asset payload. SUNREY_COIN is the development fee asset. MOONREY_COIN is policy-ready and disabled. No fiat ledger debit. No public staking-yield. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
     },
     {
+      "id": "sunrey-institutional-custody",
+      "status": "IMPLEMENTED",
+      "owner": "packages/custody",
+      "protected": true,
+      "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
       "id": "sunrey-sovereign-wallets",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -3359,7 +3375,7 @@
         "packages/custody"
       ],
       "protected": true,
-      "notes": "Canonical provider-neutral digital-asset custody architecture at packages/custody. Simulation only. Custody provider state is operational, not customer-accounting truth. Do not create custody-ledger or treat a provider API as the Ledger."
+      "notes": "Canonical provider-neutral digital-asset custody architecture at packages/custody. Simulation only. Chunk 47 extends this owner with institutional native-asset vaults and non-exportable signers. Custody provider state is operational, not customer-accounting truth. Do not create custody-ledger, custody-v2, or treat a provider API as the Ledger."
     },
     {
       "id": "SUNREY_CHAIN",
