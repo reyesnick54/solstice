@@ -63,6 +63,7 @@ export type {
   FailureDomain,
   SovereignDeploymentCell,
 } from './types.ts';
+export { runCryptoCommand, cryptoUsage } from './crypto-cli.ts';
 export { runSunreyOps } from './cli.ts';
 export {
   DEFAULT_LOG_POLICY,

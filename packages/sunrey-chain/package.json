@@ -10,7 +10,7 @@
     "src"
   ],
   "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts src/local-node/*.test.ts src/ops/*.test.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts src/local-node/*.test.ts src/ops/*.test.ts src/pqc/*.test.ts",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:local-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/local-node/demo.ts",
     "demo:governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/governance/demo.ts",
@@ -21,10 +21,8 @@
     "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts",
     "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/demo.ts",
-    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli.ts"
-    "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/demo.ts"
+    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli.ts",
     "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts"
-    "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts"
   },
   "engines": {
     "node": ">=22"

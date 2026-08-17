@@ -36,6 +36,8 @@ pub enum AddressAlgorithm {
     Ed25519V1 = 1,
     HybridSimV1 = 2,
     PqSimV1 = 3,
+    HybridV1 = 4,
+    MlDsa65V1 = 5,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -127,6 +129,8 @@ impl AddressAlgorithm {
             1 => Some(Self::Ed25519V1),
             2 => Some(Self::HybridSimV1),
             3 => Some(Self::PqSimV1),
+            4 => Some(Self::HybridV1),
+            5 => Some(Self::MlDsa65V1),
             _ => None,
         }
     }

@@ -14,6 +14,13 @@ pub const DEV_SUITE_ID: &str = "SUNREY_DEV_ED25519_SHA256";
 pub const DEV_ALGORITHM_ID: &str = "ED25519";
 pub const PROTOCOL_SUITE_ID: &str = "sunrey-ed25519-v1";
 pub const PROTOCOL_ALGORITHM_ID: &str = "Ed25519";
+pub const HYBRID_ED25519_MLDSA_SUITE_ID: &str = "sunrey-hybrid-ed25519-mldsa-v1";
+pub const ML_DSA_65_SUITE_ID: &str = "sunrey-mldsa-65-v1";
+pub const ML_DSA_65_V1: &str = "ML_DSA_65_V1";
+pub const MAX_PQ_SIGNATURE_BYTES: usize = 8192;
+pub const MAX_HYBRID_ENVELOPE_BYTES: usize = 16384;
+pub const MAX_REMOTE_SIGNER_SIGNATURE_BYTES: usize = 16384;
+pub const MAX_P2P_PQ_MESSAGE_BYTES: usize = 1_048_576;
 pub const DEV_SUITE_LIFECYCLE: &str = "APPROVED_FOR_SIMULATION";
 pub const DEV_KEY_ID: &str = "dev_fixture_key_v1";
 const DEV_KEY_LABEL: &[u8] = b"SUNREY_LOCAL_DEV_FIXTURE_KEY_NOT_FOR_PRODUCTION_v1";
@@ -117,6 +124,10 @@ impl CryptoSuite for DevEd25519Sha256Suite {
 pub fn suite_by_id(suite_id: &str) -> Result<DevEd25519Sha256Suite, CryptoError> {
     match suite_id {
         DEV_SUITE_ID | PROTOCOL_SUITE_ID => Ok(DevEd25519Sha256Suite),
+        // Standardized PQ/hybrid suites are registered in the TypeScript
+        // CryptoSuite catalog. The Rust node fail-closes rather than
+        // silently mapping them to Ed25519.
+        HYBRID_ED25519_MLDSA_SUITE_ID | ML_DSA_65_SUITE_ID => Err(CryptoError::UnknownSuite),
         _ => Err(CryptoError::UnknownSuite),
     }
 }
@@ -163,5 +174,16 @@ mod tests {
         let message = unsigned_signature_payload(&suite, &unsigned);
         let signature = suite.sign(&secret, &message).unwrap();
         suite.verify(&secret.public_key(), &message, &signature).unwrap();
+    }
+
+    #[test]
+    fn standardized_pq_suites_fail_closed_without_ed25519_fallback() {
+        assert_eq!(
+            suite_by_id(HYBRID_ED25519_MLDSA_SUITE_ID).unwrap_err(),
+            CryptoError::UnknownSuite
+        );
+        assert_eq!(suite_by_id(ML_DSA_65_SUITE_ID).unwrap_err(), CryptoError::UnknownSuite);
+        assert!(MAX_REMOTE_SIGNER_SIGNATURE_BYTES >= 3309);
+        assert_eq!(MAX_P2P_PQ_MESSAGE_BYTES, 1_048_576);
     }
 }

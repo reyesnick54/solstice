@@ -1064,8 +1064,8 @@ export class MachineEconomyEngine {
       nonce: input.nonce,
       purpose: input.purpose,
     });
-    const signatureHex = signMachinePayload(seedFromLabel(input.seedLabel), payload);
-    if (!verifyMachinePayload(activeKey.publicKeyHex, payload, signatureHex)) {
+    const signatureHex = signMachinePayload(seedFromLabel(input.seedLabel), payload, activeKey.suiteId);
+    if (!verifyMachinePayload(activeKey.publicKeyHex, payload, signatureHex, activeKey.suiteId)) {
       return this.reject(input.machine.machineId, 'SIGNATURE_INVALID', 'machine signature failed', null);
     }
     this.nonces.add(`${input.machine.machineId}:${input.nonce}`);

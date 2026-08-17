@@ -1,6 +1,8 @@
 import { ResiliencePlatform } from './platform.ts';
 import type { DrillScenario } from './types.ts';
 
+import { runCryptoCommand } from './crypto-cli.ts';
+
 const COMMANDS = [
   'health',
   'alerts',
@@ -8,6 +10,7 @@ const COMMANDS = [
   'dr',
   'topology',
   'validator-fencing',
+  'crypto',
 ] as const;
 
 export function runSunreyOps(argv: readonly string[]): string {
@@ -53,6 +56,9 @@ export function runSunreyOps(argv: readonly string[]): string {
       return JSON.stringify({ restored: 'val_dev_7', height: snapshot.manifest.height }, null, 2);
     }
     throw new Error('sunrey-ops backup create|verify|restore');
+  }
+  if (command === 'crypto') {
+    return JSON.stringify(runCryptoCommand(argv.slice(1)), null, 2);
   }
   if (command === 'dr') {
     const action = argv[1] ?? 'run';
@@ -120,6 +126,7 @@ const COMMANDS = [
   'state-sync',
   'upgrade',
   'incident',
+  'crypto',
 ] as const;
 
 export function opsUsage(): string {
@@ -139,6 +146,11 @@ export function opsUsage(): string {
     'sunrey-ops state-sync',
     'sunrey-ops upgrade precheck',
     'sunrey-ops incident SIGNER_COMPROMISE',
+    'sunrey-ops crypto suites',
+    'sunrey-ops crypto policy',
+    'sunrey-ops crypto inventory',
+    'sunrey-ops crypto readiness',
+    'sunrey-ops crypto benchmark',
   ].join('\n');
 }
 
@@ -146,6 +158,10 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (group === 'crypto') {
+    const result = runCryptoCommand(args.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   if (!group || !(COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }

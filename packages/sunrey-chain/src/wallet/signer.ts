@@ -34,7 +34,7 @@ export class LocalEncryptedDevelopmentSigner implements WalletSignerProvider {
       throw new Error(`development key ${keyId} is not in the unlocked keystore`);
     }
     const seed = Buffer.from(record.seedHex, 'hex');
-    const signatureHex = signWalletBytes(seed, signBytes);
+    const signatureHex = signWalletBytes(seed, signBytes, record.suiteId);
     seed.fill(0);
     return Object.freeze({
       keyId: record.keyId,

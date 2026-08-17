@@ -472,3 +472,11 @@ Chunk 51 implements the official developer platform at
 Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. The evaluator returns `mustStop: false`.
+Chunk 60 integrates a standardized post-quantum provider
+(`@noble/post-quantum@0.5.4`) into the existing CryptoSuite at
+`packages/security` for development/testnet hybrid migration.
+Capability `sunrey-pqc-testnet` is `IMPLEMENTED`. See
+[`chunk-60-post-quantum-integration.md`](./chunk-60-post-quantum-integration.md).
+Do not create `packages/post-quantum`, `packages/pqc-core`,
+`packages/quantum-security`, or `packages/crypto-v2`.
+Production / HSM / counsel approval remains pending. Not quantum-proof.

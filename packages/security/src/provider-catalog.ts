@@ -6,16 +6,34 @@ import {
   createSimulationPqKemProvider,
   createSimulationPqSignatureProvider,
 } from './pq-simulation-provider.ts';
+import {
+  createMlDsa65Provider,
+  createMlKem768Provider,
+  createSlhDsaSha2128sProvider,
+  type StandardizedMlKemProvider,
+  type StandardizedPqSignatureProvider,
+} from './pq-provider.ts';
+
+export type SecurityProviderCatalogOptions = {
+  readonly pqEnabled?: boolean;
+};
 
 /**
  * Canonical provider catalog. Unknown algorithm IDs fail closed.
  * No provider silently falls back to another algorithm.
+ * Real PQ may be disabled; callers then fail closed instead of
+ * silently using classical-only signing.
  */
 export class SecurityProviderCatalog implements ProviderCatalog {
   readonly #signatures = new Map<AlgorithmId, SignatureProvider>();
   readonly #kems = new Map<AlgorithmId, KemProvider>();
+  readonly #mlDsa: StandardizedPqSignatureProvider;
+  readonly #slh: StandardizedPqSignatureProvider;
+  readonly #mlKem: StandardizedMlKemProvider;
+  readonly pqEnabled: boolean;
 
-  constructor() {
+  constructor(options: SecurityProviderCatalogOptions = {}) {
+    this.pqEnabled = options.pqEnabled !== false;
     const ed25519 = createEd25519SignatureProvider();
     this.#signatures.set(ed25519.algorithmId, ed25519);
     const simMlDsa = createSimulationPqSignatureProvider('SIMULATION-ML-DSA-65');
@@ -24,7 +42,23 @@ export class SecurityProviderCatalog implements ProviderCatalog {
     this.#signatures.set(simSlh.algorithmId, simSlh);
     const simKem = createSimulationPqKemProvider();
     this.#kems.set(simKem.algorithmId, simKem);
+
+    this.#mlDsa = createMlDsa65Provider(this.pqEnabled);
+    this.#slh = createSlhDsaSha2128sProvider(this.pqEnabled);
+    this.#mlKem = createMlKem768Provider(this.pqEnabled);
+    this.#signatures.set('ML_DSA_65_V1', this.#mlDsa);
+    this.#signatures.set('ML-DSA-65', this.#mlDsa);
+    this.#signatures.set('SLH_DSA_SHA2_128S_V1', this.#slh);
+    this.#signatures.set('SLH-DSA-SHA2-128S', this.#slh);
+    this.#kems.set('ML_KEM_768_V1', this.#mlKem);
+    this.#kems.set('ML-KEM-768', this.#mlKem);
     Object.freeze(this);
+  }
+
+  markPqUnavailable(): void {
+    this.#mlDsa.markUnavailable();
+    this.#slh.markUnavailable();
+    this.#mlKem.markUnavailable();
   }
 
   signature(algorithmId: AlgorithmId): SecurityResult<SignatureProvider> {
@@ -50,6 +84,12 @@ export class SecurityProviderCatalog implements ProviderCatalog {
   }
 }
 
-export function createSecurityProviderCatalog(): SecurityProviderCatalog {
-  return new SecurityProviderCatalog();
+export function createSecurityProviderCatalog(
+  options: SecurityProviderCatalogOptions = {},
+): SecurityProviderCatalog {
+  return new SecurityProviderCatalog(options);
+}
+
+export function createFailClosedPqCatalog(): SecurityProviderCatalog {
+  return new SecurityProviderCatalog({ pqEnabled: false });
 }
