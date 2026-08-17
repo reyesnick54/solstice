@@ -63,6 +63,8 @@ export {
   HsmBackedSigningProvider,
   MpcSigningPort,
   OfflineColdSigningProvider,
+  negotiateInstitutionalPqCapability,
 } from './institutional/signing.ts';
+export type { InstitutionalSignerCapabilities, InstitutionalSigningProvider } from './institutional/signing.ts';
 export type { ExchangeCustodyPort } from './institutional/exchange.ts';
 export { runCustodyCommand, custodyUsage } from './institutional/cli.ts';

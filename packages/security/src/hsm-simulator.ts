@@ -82,6 +82,8 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
       classical: true,
       hybrid: true,
       postQuantum: false,
+      realPqSupported: false,
+      externalHsmPqSupported: false,
       keyImportPolicy: 'DEVELOPMENT_ALLOWED',
       privateMaterialExportSupported: false,
     });

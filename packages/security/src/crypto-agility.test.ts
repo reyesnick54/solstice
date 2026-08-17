@@ -93,9 +93,9 @@ describe('CryptoSuite registry', () => {
     const secp = catalog.signature('Ed25519');
     assert.equal(secp.ok, true);
     const unknown = catalog.signature('ML-DSA-65');
-    assert.equal(unknown.ok, false);
-    if (!unknown.ok) {
-      assert.equal(unknown.error.code, 'UNKNOWN_ALGORITHM');
+    assert.equal(unknown.ok, true);
+    if (unknown.ok) {
+      assert.equal(unknown.value.providerId, 'noble-post-quantum-0.5.4');
     }
   });
 
@@ -524,20 +524,29 @@ describe('private key isolation', () => {
 });
 
 describe('provider and PQ ports', () => {
-  it('real NIST PQ algorithm IDs fail closed without a production provider', () => {
+  it('standardized PQ algorithm IDs are registered for development/testnet only', () => {
     const catalog = createSecurityProviderCatalog();
-    const missing = catalog.signature('ML-DSA-65');
-    assert.equal(missing.ok, false);
-    assert.equal(PQC_LIBRARY_SELECTION.status, 'NOT_SELECTED_FOR_PRODUCTION');
+    const present = catalog.signature('ML_DSA_65_V1');
+    assert.equal(present.ok, true);
+    assert.equal(PQC_LIBRARY_SELECTION.status, 'SELECTED_FOR_DEVELOPMENT_AND_TESTNET');
+    assert.equal(PQC_LIBRARY_SELECTION.productionStatus, 'NOT_SELECTED_FOR_PRODUCTION');
     assert.equal(PQC_LIBRARY_SELECTION.notQuantumProof, true);
     assert.equal(PQC_LIBRARY_SELECTION.notCertified, true);
-    const draft = evaluateCryptoPolicy(createDefaultCryptoSuiteRegistry(), {
+    assert.equal(PQC_LIBRARY_SELECTION.notMainnet, true);
+    const testnet = evaluateCryptoPolicy(createDefaultCryptoSuiteRegistry(), {
       ...policyBase(),
       suiteId: SUITE_SUNREY_MLDSA_65_V1,
       environment: 'test',
       operation: 'SIGN',
     });
-    assert.equal(draft.outcome, 'REJECT');
+    assert.equal(testnet.outcome, 'ALLOW');
+    const production = evaluateCryptoPolicy(createDefaultCryptoSuiteRegistry(), {
+      ...policyBase(),
+      suiteId: SUITE_SUNREY_MLDSA_65_V1,
+      environment: 'production',
+      operation: 'SIGN',
+    });
+    assert.equal(production.outcome, 'REJECT');
   });
 
   it('direct algorithm instantiation outside providers is guarded', () => {
@@ -546,6 +555,7 @@ describe('provider and PQ ports', () => {
     const forbidden = files.filter((file) => {
       if (file.includes('/security/src/ed25519-provider.ts')) return false;
       if (file.includes('/security/src/pq-simulation-provider.ts')) return false;
+      if (file.includes('/security/src/pq-provider.ts')) return false;
       if (file.includes('.test.ts')) return false;
       const source = readFileSync(file, 'utf8');
       return /generateKeyPairSync\(\s*['"]ed25519['"]/.test(source);
@@ -581,6 +591,9 @@ describe('benchmarks record measurements only', () => {
     assert.equal(edSign?.elapsedMs !== undefined, true);
     const sim = rows.find((row) => row.algorithm === 'SIMULATION-ML-DSA-65');
     assert.match(sim?.note ?? '', /NOT ML-DSA/);
+    const real = rows.find((row) => row.algorithm === 'ML_DSA_65_V1' && row.operation === 'sign');
+    assert.equal(real?.signatureBytes, 3309);
+    assert.match(real?.note ?? '', /FIPS 204/);
     assert.ok(CRYPTOGRAPHIC_INVENTORY.some((row) => row.id === 'execution-authority'));
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security/cryptographic-inventory.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/security/cryptographic-inventory.json')), true);

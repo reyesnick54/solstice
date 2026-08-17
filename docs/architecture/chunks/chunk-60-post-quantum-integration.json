@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-60",
+  "title": "Integrate standardized post-quantum cryptography into SunRey CryptoSuite and rehearse hybrid testnet migration",
+  "requires": [
+    "architecture-linting",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-validators",
+    "blockchain-consensus",
+    "sunrey-protocol-governance",
+    "sunrey-oracle-network",
+    "sunrey-sovereign-wallets",
+    "sunrey-institutional-custody",
+    "sunrey-pqc-testnet"
+  ],
+  "notes": "IMPLEMENTED at packages/security (standardized @noble/post-quantum 0.5.4 providers) and packages/sunrey-chain (wallet, validator signer, oracle, governance, seven-validator rehearsal). TESTNET_APPROVED only. Not mainnet. Not quantum-proof. evaluateChunkRequirements returns mustStop: false. Do not create packages/post-quantum, packages/pqc-core, packages/quantum-security, or packages/crypto-v2."
+}

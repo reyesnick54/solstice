@@ -99,6 +99,13 @@ export const VALIDATOR_REASON_CODES = [
 export type ValidatorReasonCode = (typeof VALIDATOR_REASON_CODES)[number];
 
 export const CANONICAL_VALIDATOR_SUITE_ID = 'sunrey-ed25519-v1';
+export const HYBRID_VALIDATOR_SUITE_ID = 'sunrey-hybrid-ed25519-mldsa-v1';
+export const PQ_VALIDATOR_SUITE_ID = 'sunrey-mldsa-65-v1';
+export const DEVELOPMENT_PQ_VALIDATOR_SUITE_IDS = [
+  CANONICAL_VALIDATOR_SUITE_ID,
+  HYBRID_VALIDATOR_SUITE_ID,
+  PQ_VALIDATOR_SUITE_ID,
+] as const;
 export const CANONICAL_VALIDATOR_ALGORITHM_ID = 'Ed25519';
 export const DOMAIN_VALSET = 'sunrey.valset.v1';
 export const DOMAIN_CONSENSUS_PROPOSAL = 'sunrey.consensus.proposal.v1';

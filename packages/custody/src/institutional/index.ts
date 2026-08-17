@@ -44,7 +44,8 @@ export {
   MpcSigningPort,
   OfflineColdSigningProvider,
 } from './signing.ts';
-export type { InstitutionalSigningProvider } from './signing.ts';
+export type { InstitutionalSignerCapabilities, InstitutionalSigningProvider } from './signing.ts';
+export { negotiateInstitutionalPqCapability } from './signing.ts';
 export { InstitutionalCustodyService } from './service.ts';
 export type { ExchangeCustodyPort } from './exchange.ts';
 export { buildRecoveryManifest } from './recovery.ts';

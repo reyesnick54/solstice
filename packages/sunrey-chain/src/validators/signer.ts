@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, renameSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 
+import { MAX_REMOTE_SIGNER_SIGNATURE_BYTES } from '../../../security/src/pq-sizes.ts';
 import {
   CANONICAL_VALIDATOR_ALGORITHM_ID,
   CANONICAL_VALIDATOR_SUITE_ID,
@@ -60,18 +61,30 @@ export type ConsensusSigner = {
 export class LocalDevelopmentSigner implements ConsensusSigner {
   readonly kind = 'LOCAL_DEVELOPMENT_SIGNER' as const;
   readonly #sign: (message: Buffer) => string;
+  readonly acceptedSuiteIds: readonly string[];
 
-  constructor(sign: (message: Buffer) => string) {
+  constructor(
+    sign: (message: Buffer) => string,
+    acceptedSuiteIds: readonly string[] = [CANONICAL_VALIDATOR_SUITE_ID],
+  ) {
     this.#sign = sign;
+    this.acceptedSuiteIds = acceptedSuiteIds;
   }
 
   sign(request: ConsensusSignRequest): ValidatorResult<{ readonly signatureHex: string; readonly signBytesHash: string }> {
-    if (request.cryptoSuiteId !== CANONICAL_VALIDATOR_SUITE_ID) {
+    if (!this.acceptedSuiteIds.includes(request.cryptoSuiteId)) {
       return validatorErr('SIGNER_PROVIDER_UNAVAILABLE', `unknown crypto suite ${request.cryptoSuiteId}; no silent fallback`);
     }
     const bytes = encodeConsensusSignBytes(request);
+    const signatureHex = this.#sign(bytes);
+    if (signatureHex.length % 2 !== 0 || signatureHex.length / 2 > MAX_REMOTE_SIGNER_SIGNATURE_BYTES) {
+      return validatorErr(
+        'SIGNER_PROVIDER_UNAVAILABLE',
+        `signature exceeds remote-signer bound of ${MAX_REMOTE_SIGNER_SIGNATURE_BYTES} bytes; no truncation`,
+      );
+    }
     return validatorOk({
-      signatureHex: this.#sign(bytes),
+      signatureHex,
       signBytesHash: consensusSignBytesHash(request),
     });
   }

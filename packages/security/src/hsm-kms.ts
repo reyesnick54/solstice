@@ -22,6 +22,7 @@ export const PQ_CAPABILITY_FLAGS = [
   'CLASSICAL_SUPPORTED',
   'HYBRID_SUPPORTED',
   'PQ_SUPPORTED',
+  'REAL_PQ_SUPPORTED',
 ] as const;
 export type PqCapabilityFlag = (typeof PQ_CAPABILITY_FLAGS)[number];
 
@@ -46,6 +47,8 @@ export type HsmKmsCapabilities = {
   readonly classical: boolean;
   readonly hybrid: boolean;
   readonly postQuantum: boolean;
+  readonly realPqSupported: boolean;
+  readonly externalHsmPqSupported: false;
   readonly keyImportPolicy: HsmKeyImportPolicy;
   readonly privateMaterialExportSupported: false;
 };
@@ -126,7 +129,8 @@ export function negotiateSuiteCapability(
   const supported =
     (requested === 'CLASSICAL_SUPPORTED' && capabilities.classical) ||
     (requested === 'HYBRID_SUPPORTED' && capabilities.hybrid) ||
-    (requested === 'PQ_SUPPORTED' && capabilities.postQuantum);
+    (requested === 'PQ_SUPPORTED' && capabilities.postQuantum) ||
+    (requested === 'REAL_PQ_SUPPORTED' && capabilities.realPqSupported);
   if (!supported) {
     return {
       ok: false,

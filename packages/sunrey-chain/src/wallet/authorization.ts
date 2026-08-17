@@ -64,7 +64,14 @@ export function authorizeAccountAction(input: {
     if (suiteRank(signature.suiteId) < highest && policy.kind !== 'M_OF_N') {
       return { ok: false, code: 'CRYPTO_SUITE_DOWNGRADE', detail: 'cannot sign new transactions with a downgraded CryptoSuite' };
     }
-    if (!verifyWalletBytes(signature.publicKeyHex, Buffer.from(input.bodyHash, 'hex'), signature.signatureHex)) {
+    if (
+      !verifyWalletBytes(
+        signature.publicKeyHex,
+        Buffer.from(input.bodyHash, 'hex'),
+        signature.signatureHex,
+        signature.suiteId,
+      )
+    ) {
       return { ok: false, code: 'UNAUTHORIZED_SIGNER', detail: `signature for ${signature.keyId} failed verification` };
     }
     if (signature.publicKeyHex !== record.publicKeyHex) {

@@ -15,6 +15,36 @@ function sha256File(rel) {
   return createHash('sha256').update(readFileSync(path)).digest('hex');
 }
 
+function noblePostQuantumComponent() {
+  const lockPath = join(root, 'package-lock.json');
+  if (!existsSync(lockPath)) {
+    return [];
+  }
+  const lock = JSON.parse(readFileSync(lockPath, 'utf8'));
+  const packageKey = Object.keys(lock.packages ?? {}).find(
+    (key) => key === 'node_modules/@noble/post-quantum' || key.endsWith('/node_modules/@noble/post-quantum'),
+  );
+  const entry = packageKey ? lock.packages[packageKey] : undefined;
+  if (!entry?.version) {
+    return [];
+  }
+  return [
+    {
+      type: 'library',
+      name: '@noble/post-quantum',
+      version: entry.version,
+      licenses: [{ license: { id: 'MIT' } }],
+      hashes: sha256File('package-lock.json')
+        ? [{ alg: 'SHA-256', content: sha256File('package-lock.json') }]
+        : [],
+      properties: [
+        { name: 'purpose', value: 'standardized-pqc-testnet' },
+        { name: 'mainnetActivation', value: 'false' },
+      ],
+    },
+  ];
+}
+
 const components = [
   { name: 'package-lock.json', path: 'package-lock.json', version: '0.1.0' },
   { name: 'sunrey-chain-rust-lock', path: 'packages/sunrey-chain/rust/Cargo.lock', version: '0.1.0' },
@@ -25,7 +55,7 @@ const components = [
   return hash
     ? [{ type: 'file', name: row.name, version: row.version, hashes: [{ alg: 'SHA-256', content: hash }] }]
     : [];
-});
+}).concat(noblePostQuantumComponent());
 
 const sbom = {
   bomFormat: 'CycloneDX',
