@@ -53,6 +53,11 @@ export function isHybridOracleSuite(suiteId: string): boolean {
   return suiteId === SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1;
 }
 
+function classicalOracleAlgorithm(ports: OracleCryptoPorts) {
+  const suite = ports.registry.get(CHAIN_PURPOSE_DEFAULT_SUITE.ORACLE_SIGNING);
+  return suite.ok ? suite.value.signatureAlgorithm : null;
+}
+
 export function deriveOracleKey(
   ports: OracleCryptoPorts,
   suiteId: string,
@@ -63,7 +68,11 @@ export function deriveOracleKey(
     return err({ code: 'ORACLE_WRONG_CRYPTO_SUITE', detail: `unknown CryptoSuite ${suiteId}` });
   }
   if (isHybridOracleSuite(suiteId)) {
-    const ed = ports.catalog.signature('Ed25519');
+    const classicalAlg = classicalOracleAlgorithm(ports);
+    if (classicalAlg === null) {
+      return err({ code: 'ORACLE_WRONG_CRYPTO_SUITE', detail: 'classical oracle suite has no signature algorithm' });
+    }
+    const ed = ports.catalog.signature(classicalAlg);
     const pq = ports.catalog.signature('ML_DSA_65_V1');
     if (!ed.ok) {
       return err({ code: 'ORACLE_WRONG_CRYPTO_SUITE', detail: ed.error.message });
@@ -120,7 +129,11 @@ function signHybridOracle(
   payload: string,
 ): Result<string, OracleRejection> {
   const label = publicKey.keyId.startsWith('oracle:') ? publicKey.keyId.slice('oracle:'.length) : publicKey.keyId;
-  const ed = ports.catalog.signature('Ed25519');
+  const classicalAlg = classicalOracleAlgorithm(ports);
+  if (classicalAlg === null) {
+    return err({ code: 'ORACLE_WRONG_CRYPTO_SUITE', detail: 'classical oracle suite has no signature algorithm' });
+  }
+  const ed = ports.catalog.signature(classicalAlg);
   const pq = ports.catalog.signature('ML_DSA_65_V1');
   if (!ed.ok || !pq.ok) {
     return err({
@@ -156,7 +169,11 @@ function verifyHybridOracle(
   payload: string,
   signatureHex: string,
 ): Result<true, OracleRejection> {
-  const ed = ports.catalog.signature('Ed25519');
+  const classicalAlg = classicalOracleAlgorithm(ports);
+  if (classicalAlg === null) {
+    return err({ code: 'ORACLE_WRONG_CRYPTO_SUITE', detail: 'classical oracle suite has no signature algorithm' });
+  }
+  const ed = ports.catalog.signature(classicalAlg);
   const pq = ports.catalog.signature('ML_DSA_65_V1');
   if (!ed.ok || !pq.ok) {
     return err({

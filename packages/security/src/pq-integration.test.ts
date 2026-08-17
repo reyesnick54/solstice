@@ -86,7 +86,7 @@ describe('Chunk 60 standardized PQ providers', () => {
     assert.equal(signed.value.toString('hex'), VECTORS.mlDsa65.signatureHex);
     const verified = provider.verifyRaw(VECTORS.mlDsa65.publicKeyHex, message, VECTORS.mlDsa65.signatureHex);
     assert.equal(verified.ok, true);
-    assert.match(VECTORS.source, /FIPS 204/);
+    assert.match(VECTORS.source, /FIPS 203\/204\/205/);
   });
 
   it('rejects malformed ML-DSA signatures and public keys', () => {

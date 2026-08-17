@@ -271,9 +271,9 @@ export function runCryptoBenchmarks(): readonly BenchmarkRow[] {
   if (!hybridEd.ok) {
     throw new Error(hybridEd.error.message);
   }
-  const pqKey = mlDsa.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1);
-  if (!pqKey.ok) {
-    throw new Error(pqKey.error.message);
+  const hybridPqKey = mlDsa.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1);
+  if (!hybridPqKey.ok) {
+    throw new Error(hybridPqKey.error.message);
   }
   const hybrid = signHybrid({
     suiteId: SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
@@ -290,8 +290,8 @@ export function runCryptoBenchmarks(): readonly BenchmarkRow[] {
     },
     postQuantum: {
       provider: mlDsa,
-      publicKey: pqKey.value.publicKey,
-      privateKey: pqKey.value.privateKey,
+      publicKey: hybridPqKey.value.publicKey,
+      privateKey: hybridPqKey.value.privateKey,
     },
   });
   if (!hybrid.ok) {

@@ -2217,9 +2217,6 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Positions are derived. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing. Chunk 49 adds four canonical market families. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     },
     {
       "id": "sunrey-developer-sdk",
@@ -2812,18 +2809,18 @@
     "packages/sunrey-wallet-ledger",
     "packages/sunrey-ops",
     "packages/observability",
-    "packages/disaster-recovery"
+    "packages/disaster-recovery",
     "packages/validator-ops",
     "packages/sentry",
-    "packages/remote-signer"
+    "packages/remote-signer",
     "packages/sunrey-testnet",
     "packages/sunrey-faucet",
-    "packages/testnet"
+    "packages/testnet",
     "packages/block-explorer",
     "packages/chain-indexer",
     "packages/explorer",
     "packages/sunrey-indexer",
-    "packages/blockchain-explorer"
+    "packages/blockchain-explorer",
     "packages/blockchain-v2",
     "packages/sunrey-chain-sdk-ledger",
     "packages/sdk-ledger",
@@ -3294,21 +3291,29 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 55 operator-grade multi-failure-domain resilience, OpenTelemetry observability, backup, restore verification, signer fencing, and disaster-recovery drills at packages/sunrey-chain/src/ops. Engineering test targets only. Not a second ledger, Kernel, or production operations contract. Do not create packages/sunrey-ops, packages/observability, or packages/disaster-recovery."
+    },
+    {
       "id": "sunrey-validator-operations",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 54 validator operator infrastructure at packages/sunrey-chain/src/ops. Sentry topology, authenticated remote signer, double-sign backup, join/exit/rotation workflows, snapshots, state sync, and governed rolling upgrades. Does not reimplement consensus or the validator registry. Do not create packages/sunrey-ops, packages/validator-ops, packages/sentry, or packages/remote-signer."
+    },
+    {
       "id": "sunrey-public-testnet",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 53 public TEST NETWORK package at packages/sunrey-chain/src/testnet and deploy/sunrey-testnet. Network net_sunrey_testnet_1 / chain chn_sunrey_testnet_1. Not mainnet. Tickers remain NOT_ASSIGNED. ENVIRONMENT stays simulation. Do not create packages/sunrey-testnet or enable production banking rails."
+    },
+    {
       "id": "sunrey-explorer",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-explorer",
       "protected": true,
       "notes": "Chunk 52 rebuildable SunRey block and economic explorer at packages/sunrey-explorer. Projection only. Canonical authority remains finalized SunRey Blockchain state. Do not create packages/block-explorer, packages/chain-indexer, or a second indexer."
+    },
+    {
       "id": "sunrey-developer-sdk",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-sdk",

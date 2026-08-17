@@ -78,7 +78,7 @@ export type HybridRehearsalReport = {
   readonly historicalVerifyRetained: true;
   readonly providerFailureFailClosed: true;
   readonly p2pOversizedRejected: true;
-  readonly privateKeysAbsentFromReport: true;
+  readonly secretMaterialAbsentFromReport: true;
   readonly sizes: {
     readonly mlDsaPublicKeyBytes: number;
     readonly mlDsaSignatureBytes: number;
@@ -508,7 +508,7 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
     historicalVerifyRetained: historicalVerifyAllowed(CLASSICAL) && historical,
     providerFailureFailClosed: !failClosed.ok,
     p2pOversizedRejected: p2p.ok === false,
-    privateKeysAbsentFromReport: true,
+    secretMaterialAbsentFromReport: true,
     sizes,
     performance: {
       classicalSignMs: timeMs(() => {
@@ -558,7 +558,7 @@ export function runHybridTestnetRehearsal(): HybridRehearsalReport {
     claimLanguage: 'standardized post-quantum algorithm implementation; hybrid testnet migration',
   };
   if (containsPrivateMaterial(JSON.stringify(report))) {
-    throw new Error('rehearsal report leaked private key material');
+    throw new Error('rehearsal report leaked secret material');
   }
   return report;
 }
