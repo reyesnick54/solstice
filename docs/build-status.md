@@ -4,8 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey production infrastructure and secret controls (Chunk 66,
+  `packages/sunrey-chain/src/infra`): provider-neutral provider
+  registry, workload identity, classified secrets over
+  `SecretReference`, KMS/HSM adapters, network zones, TLS/DNS/object
+  storage/container digest interfaces, OpenTofu-style and Helm
+  modules, and a local CI harness. Chunk 61–65 evidence is reconciled
+  with exact artifact digests. Capability
+  `sunrey-production-infrastructure` is `IMPLEMENTED`. This is not
+  mainnet. `LIVE_*` flags remain false. See `docs/infrastructure/`.
 - SunRey mainnet readiness and genesis-candidate controls (Chunk 65,
-  `packages/sunrey-chain/src/mainnet`): 24 readiness dimensions, a
+  `packages/sunrey-chain/src/mainnet`): 25 readiness dimensions, a
   per-capability activation matrix, production-candidate identity
   `net_sunrey_production_candidate_1` / `chn_sunrey_production_candidate_1`
   with HRP `srprd`, deterministic zero-allocation genesis candidate,
