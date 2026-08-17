@@ -44,6 +44,8 @@ describe('sunrey chain architecture guards', () => {
       const allowsTestNetwork =
         file.includes(`${join('src', 'testnet')}`) ||
         file.includes(`${join('src', 'mainnet')}`) ||
+        file.includes(`${join('src', 'infra')}`) ||
+        file.includes(`${join('src', 'release-candidate')}`) ||
         file.includes(`${join('src', 'pqc')}`) ||
         file.endsWith(`${join('ops', 'crypto-cli.ts')}`) ||
         file.includes(`${join('src', 'supply-chain')}`) ||
@@ -120,6 +122,11 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/genesis-candidate')), false);
     assert.equal(existsSync(join(ROOT, 'packages/readiness-registry')), false);
     assert.equal(existsSync(join(ROOT, 'packages/activation-control')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-infra')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/infrastructure')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-infrastructure')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/cloud-adapters')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-cloud')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
