@@ -35,6 +35,8 @@ name = "sunrey-native-asset-demo"
 path = "src/bin/sunrey-native-asset-demo.rs"
 
 [[bin]]
+name = "sunrey-relayer"
+path = "src/bin/sunrey-relayer.rs"
 name = "sunrey-exchange-settlement-demo"
 path = "src/bin/sunrey-exchange-settlement-demo.rs"
 
@@ -52,6 +54,7 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sha2 = "0.10"
 sunrey-productive = { path = "../rust/crates/productive" }
+sunrey-interop = { path = "../rust/crates/interop" }
 thiserror = "2"
 tokio = { version = "1", features = ["io-util", "macros", "net", "rt-multi-thread", "sync", "time"] }
 tracing = "0.1"

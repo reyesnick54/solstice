@@ -110,6 +110,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-interop | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
@@ -405,6 +406,12 @@ contributions at `packages/sunrey-chain`. Capabilities
 [`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Do not create `packages/moonrey` or `packages/moonrey-coin`.
 The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.
+Chunk 50 implements the development interoperability gateway at
+`packages/sunrey-chain`. Capability `sunrey-interop` is
+`IMPLEMENTED`. See
+[`chunk-50-interoperability.md`](./chunk-50-interoperability.md).
+Do not create `packages/ibc`, `packages/bridge`, or
+`packages/interop`. Production interoperability remains unimplemented.
 Chunk 49 implements the Universal Economic Exchange at the existing
 owner `packages/sunrey-exchange`. Capability `sunrey-exchange` remains
 `IMPLEMENTED`. Four market families: digital assets, human-information

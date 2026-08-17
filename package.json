@@ -49,6 +49,7 @@
     "demo:moonrey-productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/demo.ts",
     "demo:sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/demo.ts",
     "demo:sunrey-fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/fees/demo.ts",
+    "demo:sunrey-interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/interop/demo.ts",
     "demo:sunrey-wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/wallet/demo.ts",
     "demo:sunrey-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-devnet'",
     "demo:sunrey-validator-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-validator-devnet'",

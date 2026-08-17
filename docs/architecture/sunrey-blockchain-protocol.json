@@ -153,7 +153,12 @@
     "packages/machine-identity",
     "packages/fees",
     "packages/sunrey-fees",
-    "packages/gas"
+    "packages/gas",
+    "packages/ibc",
+    "packages/bridge",
+    "packages/interop",
+    "packages/light-client",
+    "packages/relayer"
   ],
   "futureInternalModules": [
     "api-rpc",
@@ -167,7 +172,8 @@
     "storage",
     "p2p",
     "crypto-provider",
-    "ops-observability"
+    "ops-observability",
+    "interoperability"
   ],
   "legalStatusAutoPromote": false,
   "counselStatus": "RESEARCH_REQUIRED",

@@ -2696,6 +2696,13 @@
     "packages/oracle",
     "packages/sunrey-oracle",
     "packages/oracle-network",
+    "packages/ibc",
+    "packages/bridge",
+    "packages/interop",
+    "packages/light-client",
+    "packages/relayer",
+    "packages/sunrey-interop",
+    "packages/sunrey-bridge"
     "packages/custody-v2",
     "packages/blockchain-custody",
     "packages/institutional-custody-v2",
@@ -3129,6 +3136,12 @@
       "notes": "Chunk 42 deterministic resource metering, integer fee schedule, reservation/charge/release, disposition, validator reward accrual, and height-activated fee parameters at packages/sunrey-chain and packages/sunrey-chain/rust/crates/fees. Attaches FeeIntent beside the Chunk 41 native-asset payload. SUNREY_COIN is the development fee asset. MOONREY_COIN is policy-ready and disabled. No fiat ledger debit. No public staking-yield. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
     },
     {
+      "id": "sunrey-interop",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "adr": "ADR-0029",
+      "notes": "Chunk 50 development light-client / IBC-class interoperability gateway at packages/sunrey-chain and packages/sunrey-chain/rust/crates/interop. Relayers are untrusted. No trusted-multisig bridge. No wrapped fiat. Production SunRey Coin and MoonRey interoperability remain unavailable. Do not create packages/ibc, packages/bridge, packages/interop, or a competing chain."
       "id": "sunrey-exchange-native-settlement",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-exchange",
