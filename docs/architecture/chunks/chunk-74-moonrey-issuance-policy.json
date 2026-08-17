@@ -1,0 +1,24 @@
+{
+  "chunk": "CHUNK-74",
+  "title": "MoonRey productive-economy issuance policy governance, normalization, and macro supply controls",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-protocol-governance",
+    "sunrey-formal-assurance",
+    "sunrey-mainnet-readiness",
+    "sunrey-launch-rehearsal",
+    "sunrey-adversarial-range",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "moonrey-policy-governance"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44 issuance. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-policy, packages/moonrey-economics, or packages/issuance-policy."
+}

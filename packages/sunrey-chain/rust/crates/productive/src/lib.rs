@@ -16,6 +16,8 @@ pub const FORMULA_VERSION: &str = "moonrey.issuance.formula.v1";
 pub const WEIGHT_SCALE: u128 = 1_000_000;
 pub const PARAMETER_CLASS: &str = "ENGINEERING_SIMULATION_PARAMETERS";
 pub const HASH_DOMAIN: &str = "SUNREY_PRODUCTIVE_V1";
+pub const POLICY_DOMAIN: &str = "SUNREY_MOONREY_POLICY_V1";
+pub const CROSS_CATEGORY_DOMAIN: &str = "SUNREY_MOONREY_EVENT_V1";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
@@ -181,6 +183,43 @@ pub struct FingerprintInput<'a> {
     pub base_unit: &'a str,
     pub oracle_fact_ids: &'a [&'a str],
     pub upstream: &'a [&'a str],
+}
+
+pub fn governed_contribution_fingerprint(
+    v1: &str,
+    actor_id: &str,
+    delivery_from: u64,
+    delivery_until: u64,
+    lineage: &[&str],
+) -> String {
+    let mut items: Vec<&str> = lineage.to_vec();
+    items.sort_unstable();
+    let canonical = format!(
+        "{POLICY_DOMAIN}|{v1}|{actor_id}|{delivery_from}|{delivery_until}|{}",
+        items.join(",")
+    );
+    hex::encode(Sha256::digest(canonical.as_bytes()))
+}
+
+pub fn cross_category_event_fingerprint(
+    object_id: &str,
+    epoch: u64,
+    valid_from: u64,
+    valid_until: u64,
+    actor_id: &str,
+    facts: &[&str],
+) -> String {
+    let mut items: Vec<&str> = facts.to_vec();
+    items.sort_unstable();
+    let canonical = format!(
+        "{CROSS_CATEGORY_DOMAIN}|{object_id}|{epoch}|{valid_from}|{valid_until}|{actor_id}|{}",
+        items.join(",")
+    );
+    hex::encode(Sha256::digest(canonical.as_bytes()))
+}
+
+pub fn ai_cannot_activate_policy(actor_kind: &str) -> bool {
+    actor_kind == "AI_PROPOSAL"
 }
 
 pub fn contribution_fingerprint(input: FingerprintInput<'_>) -> String {
@@ -431,6 +470,30 @@ mod tests {
         assert_eq!(mul_div(10, 1, 3, RoundingMode::Floor), 3);
         assert_eq!(mul_div(10, 1, 3, RoundingMode::Ceil), 4);
         assert_eq!(mul_div(10, 1, 4, RoundingMode::RoundHalfEven), 2);
+    }
+
+    #[test]
+    fn governed_fingerprint_includes_actor_and_rejects_ai_activation() {
+        let v1 = contribution_fingerprint(FingerprintInput {
+            object_id: "obj.solar.alpha",
+            epoch: 1,
+            valid_from: 10,
+            valid_until: 20,
+            claim_type: "OUTPUT",
+            category: "ENERGY",
+            normalized: 1_200_000,
+            base_unit: "Wh",
+            oracle_fact_ids: &["fact.2", "fact.1"],
+            upstream: &[],
+        });
+        let left = governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.a", "claim.b"]);
+        let right = governed_contribution_fingerprint(&v1, "actor.1", 10, 20, &["claim.b", "claim.a"]);
+        assert_eq!(left, right);
+        let event_left = cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f2", "f1"]);
+        let event_right = cross_category_event_fingerprint("obj.shared", 1, 10, 20, "op.1", &["f1", "f2"]);
+        assert_eq!(event_left, event_right);
+        assert!(ai_cannot_activate_policy("AI_PROPOSAL"));
+        assert!(!ai_cannot_activate_policy("PROTOCOL_GOVERNANCE"));
     }
 
     #[test]

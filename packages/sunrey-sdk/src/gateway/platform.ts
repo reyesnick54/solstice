@@ -444,6 +444,49 @@ export class DevelopmentPlatform {
     ]);
   }
 
+  moonreyPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      policyVersion: 1,
+      assetId: 'MOONREY_COIN',
+      tickerStatus: TICKER_STATUS,
+      parameterClass: 'ENGINEERING_SIMULATION_PARAMETERS',
+      productionCaps: 'UNCONFIGURED',
+    });
+  }
+
+  moonreyCategoryPolicy(category: string): Record<string, unknown> {
+    return Object.freeze({
+      category,
+      canonical: true,
+      tickerStatus: TICKER_STATUS,
+    });
+  }
+
+  productiveContribution(contributionId: string): Record<string, unknown> {
+    return Object.freeze({
+      contribution_id: contributionId,
+      object_id: 'prod.obj.1',
+      status: 'ELIGIBLE',
+    });
+  }
+
+  moonreyIssuanceReceipt(issuanceId: string): Record<string, unknown> {
+    return Object.freeze({
+      issuanceId,
+      assetId: 'MOONREY_COIN',
+      tickerStatus: TICKER_STATUS,
+      policyVersion: 1,
+    });
+  }
+
+  moonreySupplyPressure(): Record<string, unknown> {
+    return Object.freeze({
+      classification: 'ENGINEERING_ECONOMIC_SIMULATION',
+      automaticMarketPriceClaim: false,
+      tickerStatus: TICKER_STATUS,
+    });
+  }
+
   machines(): readonly Record<string, string>[] {
     return Object.freeze([
       {

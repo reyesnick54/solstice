@@ -61,6 +61,13 @@ export function moonreyHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function moonreyPolicyGovernanceHappyTrace(): LogicalTrace {
+  return makeTrace('trace_moonrey_policy', 'moonrey_policy_governance', 'MOONREY_POLICY_GOVERNANCE', [
+    { domain: 'moonrey_policy_governance', action: 'Issue(authorized)', args: { authorized: true } },
+    { domain: 'moonrey_policy_governance', action: 'ActivatePolicy(v2)', args: { version: 2 } },
+  ]);
+}
+
 export function governanceHappyTrace(): LogicalTrace {
   return makeTrace('trace_governance_activate', 'governance', 'PROTOCOL_GOVERNANCE', [
     { domain: 'governance', action: 'Propose', args: {} },
@@ -89,6 +96,7 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     assetHappyTrace(),
     dvpHappyTrace(),
     moonreyHappyTrace(),
+    moonreyPolicyGovernanceHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
   ];

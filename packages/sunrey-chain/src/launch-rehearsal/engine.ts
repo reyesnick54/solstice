@@ -74,6 +74,7 @@ import type {
 import {
   rehearseExplorer,
   rehearseInterop,
+  rehearseMoonReyPolicy,
   rehearseNativeAssets,
   rehearseOracle,
   rehearseRegulatedSandbox,
@@ -261,6 +262,7 @@ export function runLaunchRehearsal(root = process.cwd()): LaunchRehearsalSession
   const interop = rehearseInterop();
   const sdk = rehearseSdk(root);
   const explorer = rehearseExplorer();
+  const moonreyPolicy = rehearseMoonReyPolicy();
   const network = createRehearsalNetworkState();
 
   const scenarios: FailureScenarioResult[] = [];
@@ -348,6 +350,7 @@ export function runLaunchRehearsal(root = process.cwd()): LaunchRehearsalSession
     interop,
     sdk,
     explorer,
+    moonreyPolicy,
     backups,
     readinessChanges: Object.freeze([
       `readiness status ${readiness.status}`,

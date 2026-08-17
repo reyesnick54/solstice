@@ -212,6 +212,26 @@ export class ProductiveClient {
   moonreyAttribution(): Promise<unknown> {
     return this.http.get('/v1/productive/moonrey');
   }
+
+  getMoonReyPolicy(): Promise<unknown> {
+    return this.http.get('/v1/productive/moonrey/policy');
+  }
+
+  getMoonReyCategoryPolicy(category: string): Promise<unknown> {
+    return this.http.get(`/v1/productive/moonrey/categories/${encodeURIComponent(category)}`);
+  }
+
+  getProductiveContribution(contributionId: string): Promise<unknown> {
+    return this.http.get(`/v1/productive/contributions/${encodeURIComponent(contributionId)}`);
+  }
+
+  getMoonReyIssuanceReceipt(issuanceId: string): Promise<unknown> {
+    return this.http.get(`/v1/productive/moonrey/issuance/${encodeURIComponent(issuanceId)}`);
+  }
+
+  getMoonReySupplyPressure(): Promise<unknown> {
+    return this.http.get('/v1/productive/moonrey/supply-pressure');
+  }
 }
 
 export class MachineClient {

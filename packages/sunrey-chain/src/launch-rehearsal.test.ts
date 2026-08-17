@@ -57,6 +57,10 @@ describe('Chunk 70 SunRey mainnet launch rehearsal', () => {
     assert.equal(session.report.exchangeCustodySandbox.productionExchangeActivated, false);
     assert.equal(session.report.interop.productionBridgeActivated, false);
     assert.equal(session.report.oracleStatus.fabricatedFact, false);
+    assert.equal(session.report.moonreyPolicy.productionAuthorized, false);
+    assert.equal(session.report.moonreyPolicy.issuance, true);
+    assert.equal(session.report.moonreyPolicy.antiDoubleCount, true);
+    assert.equal(session.report.moonreyPolicy.supplyReconciled, true);
     assert.equal(session.report.recoveryResults.every((row) => row.safetyHolds), true);
     assert.equal(session.plan.executes, false);
     assert.equal(ENVIRONMENT, 'simulation');

@@ -17,6 +17,7 @@ import {
   custodyReadiness,
   exchangeReadiness,
   interopReadiness,
+  moonreyPolicyReadiness,
   oracleReadiness,
   privacyReadiness,
 } from './product-readiness.ts';
@@ -62,6 +63,7 @@ export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
         oracle: oracleReadiness(),
         interop: interopReadiness(),
         privacy: privacyReadiness(),
+        moonreyPolicy: moonreyPolicyReadiness(),
       }),
     };
   }

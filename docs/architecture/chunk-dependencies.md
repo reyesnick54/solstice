@@ -133,6 +133,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -601,3 +602,12 @@ Results are model checked within stated bounds. Do not create
 `packages/formal`, `packages/tla`, `packages/model-checker`,
 `packages/sunrey-formal`, or `tools/formal`. The evaluator returns
 `mustStop: false`.
+Chunk 74 implements MoonRey productive-economy issuance policy
+governance, normalization, and macro supply controls at
+`packages/sunrey-chain/src/productive/policy-governance`. Capability
+`moonrey-policy-governance` is `IMPLEMENTED`. See
+[`chunk-74-moonrey-issuance-policy.md`](./chunk-74-moonrey-issuance-policy.md).
+It extends Chunk 44 and does not create a second MoonRey asset or mint
+path. Production caps remain `UNCONFIGURED`. Do not create
+`packages/moonrey-policy`, `packages/moonrey-economics`, or
+`packages/issuance-policy`. The evaluator returns `mustStop: false`.

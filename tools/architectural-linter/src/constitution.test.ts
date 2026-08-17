@@ -1676,6 +1676,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-launch')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/launch-rehearsal')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-rehearsal')), false);
+  });
+
   it('CHUNK-68 implements production-candidate oracle onboarding on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').status, 'IMPLEMENTED');
@@ -1796,6 +1798,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/travel-rule-production')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-activation')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-kyc')), false);
+  });
+
   it('CHUNK-67 implements production-candidate storage on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-storage').status, 'IMPLEMENTED');
@@ -1840,5 +1844,26 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/production-infrastructure')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/cloud-adapters')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-cloud')), false);
+  });
+
+  it('CHUNK-74 implements MoonRey productive issuance policy on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'moonrey-policy-governance').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'moonrey-policy-governance').protected, true);
+    assert.equal(evaluateCapability(manifest, 'moonrey-policy-governance').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-74',
+    );
+    assert.ok(declared, 'CHUNK-74 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-74-moonrey-issuance-policy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-74-moonrey-issuance-policy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/productive/policy-governance/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-policy')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-economics')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/issuance-policy')), false);
   });
 });

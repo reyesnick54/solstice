@@ -153,6 +153,8 @@ export function privacyReadiness(): PrivacyReadinessSlot {
   });
 }
 
+export { moonreyPolicyReadiness } from '../productive/policy-governance/readiness.ts';
+
 export function developmentOracleFixturesAreProductionFeeds(): false {
   return false;
 }

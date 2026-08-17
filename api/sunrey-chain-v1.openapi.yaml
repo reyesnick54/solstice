@@ -322,6 +322,54 @@ paths:
       responses:
         "200":
           description: MoonRey attribution
+  /v1/productive/moonrey/policy:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Active MoonRey issuance policy
+  /v1/productive/moonrey/categories/{category}:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      parameters:
+        - in: path
+          name: category
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Category policy
+  /v1/productive/contributions/{contributionId}:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      parameters:
+        - in: path
+          name: contributionId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Productive contribution
+  /v1/productive/moonrey/issuance/{issuanceId}:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      parameters:
+        - in: path
+          name: issuanceId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: MoonRey issuance receipt
+  /v1/productive/moonrey/supply-pressure:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: MoonRey supply-pressure report
   /v1/machines:
     get:
       tags: [MACHINE_ECONOMY]

@@ -12,9 +12,12 @@ import { createExternalDevChain, developmentExternalChain, InteropEngine } from 
 import { DEV_INTEROP_TEST_ASSET } from '../interop/types.ts';
 import { qualifySdkCompatibility } from '../release-candidate/rehearsals.ts';
 import { REHEARSAL_BANNER } from './identity.ts';
+import { runEnergyDemo as runProductiveEnergyDemo, runManufacturingDemo } from '../productive/demo.ts';
+import { developmentPolicyBundle } from '../productive/policy-governance/registry.ts';
 import type {
   ExplorerRehearsalResult,
   InteropRehearsalResult,
+  MoonReyPolicyRehearsalResult,
   NativeAssetRehearsalResult,
   OracleRehearsalResult,
   RegulatedSandboxResult,
@@ -112,6 +115,23 @@ export function rehearseSdk(root = process.cwd()): SdkRehearsalResult {
     typescript: compat.typescriptQuickstart,
     rust: rustPresent && compat.rustVectorAgreement,
     failoverPolicyHonored: failover,
+  });
+}
+
+export function rehearseMoonReyPolicy(): MoonReyPolicyRehearsalResult {
+  const energy = runProductiveEnergyDemo();
+  const manufacturing = runManufacturingDemo();
+  const bundle = developmentPolicyBundle();
+  return Object.freeze({
+    categoriesExercised: Object.freeze(['ENERGY', 'MANUFACTURING', 'AI_COMPUTE']),
+    issuance: energy.receipt.moonreyQuantity > 0n && manufacturing.outputIssued,
+    capsHonored: manufacturing.deliveryIssuanceRejected && manufacturing.notSummedAs2300,
+    antiDoubleCount: energy.duplicateRejected,
+    supplyReconciled: energy.reconciled,
+    explorerProvenance: bundle.policyVersion === energy.receipt.policyVersion,
+    policyVersionRecorded: energy.receipt.policyVersion === bundle.policyVersion,
+    productionCaps: 'UNCONFIGURED',
+    productionAuthorized: false,
   });
 }
 
