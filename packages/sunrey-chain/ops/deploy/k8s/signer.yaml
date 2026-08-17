@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-signer
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: signer
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: operator
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: operator
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: signer
+              mountPath: /var/lib/sunrey/signer
+      volumes:
+        - name: signer
+          persistentVolumeClaim:
+            claimName: sunrey-signer

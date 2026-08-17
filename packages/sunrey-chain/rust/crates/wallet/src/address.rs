@@ -67,12 +67,17 @@ pub enum AddressError {
 
 impl NetworkClass {
     pub fn from_network_id(network_id: &str) -> Option<Self> {
-        match network_id {
-            "net_sunrey_simulation" | "net_sunrey_local_dev" => Some(Self::Development),
-            "net_sunrey_reserved_test" => Some(Self::ReservedTest),
-            "net_sunrey_reserved_production" => Some(Self::ReservedProduction),
-            _ => None,
+        if matches!(network_id, "net_sunrey_simulation" | "net_sunrey_local_dev") {
+            return Some(Self::Development);
         }
+        if network_id == "net_sunrey_reserved_test" || network_id.starts_with("net_sunrey_testnet_")
+        {
+            return Some(Self::ReservedTest);
+        }
+        if network_id == "net_sunrey_reserved_production" {
+            return Some(Self::ReservedProduction);
+        }
+        None
     }
 
     pub fn hrp(self) -> &'static str {
@@ -300,6 +305,20 @@ mod tests {
             parse_address(&broken, Some("net_sunrey_simulation")),
             Err(AddressError::ChecksumFailure)
         );
+    }
+
+    #[test]
+    fn testnet_hrp_is_srtst() {
+        let addr = encode_address(
+            "net_sunrey_testnet_1",
+            AddressClass::SingleKey,
+            AddressAlgorithm::Ed25519V1,
+            b"alice-public",
+        )
+        .unwrap();
+        assert!(addr.text.starts_with("srtst1"));
+        let parsed = parse_address(&addr.text, Some("net_sunrey_testnet_1")).unwrap();
+        assert_eq!(parsed.network_class, NetworkClass::ReservedTest);
     }
 
     #[test]

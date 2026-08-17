@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-51",
+  "title": "SunRey developer platform, public SDK, versioned APIs, and real-time events",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-exchange",
+    "sunrey-sovereign-wallets",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "sunrey-machine-economy",
+    "sunrey-protocol-governance",
+    "sunrey-interop",
+    "sunrey-developer-sdk"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-sdk (TypeScript SDK and public RPC gateway) and packages/sunrey-chain/rust/crates/sdk (Rust client). Adapter only. evaluateChunkRequirements returns mustStop: false. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
+}

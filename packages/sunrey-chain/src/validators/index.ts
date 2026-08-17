@@ -42,6 +42,7 @@ export type {
   ValidatorResult,
   ValidatorSet,
   ValidatorStatus,
+  ValidatorKeyRole,
 } from './types.ts';
 export { allowedTransitions, transitionValidator } from './lifecycle.ts';
 export { VALIDATOR_CONTROL_ACTIONS, assertPermittedValidatorController } from './controller.ts';

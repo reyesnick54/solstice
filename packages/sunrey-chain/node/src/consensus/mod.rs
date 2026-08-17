@@ -23,7 +23,7 @@ pub mod vote;
 pub mod wal;
 
 pub use engine::{Action, ConsensusEngine};
-pub use fixture::FourValidatorFixture;
+pub use fixture::{FourValidatorFixture, SevenValidatorFixture};
 pub use messages::ConsensusMessage;
 pub use metrics::{ConsensusMetrics, ConsensusMetricsSnapshot};
 pub use reactor::ConsensusReactor;
@@ -37,7 +37,7 @@ pub use vote::CommitCertificate;
 mod tests {
     use super::chaos::ChaosController;
     use super::engine::refuse_if_conflicting_finality;
-    use super::fixture::FourValidatorFixture;
+    use super::fixture::{FourValidatorFixture, SevenValidatorFixture};
     use super::messages::ConsensusMessage;
     use super::simnet::SimNet;
     use super::types::RejectReason;
@@ -267,6 +267,45 @@ mod tests {
         }
         net.start_all();
         net.step_until_height(1, 500).expect("delayed finality");
+    }
+
+    #[test]
+    fn seven_testnet_validators_finalize_and_survive_two_faults() {
+        let fixture = SevenValidatorFixture::testnet();
+        assert_eq!(fixture.validators.len(), 7);
+        assert_eq!(
+            fixture.genesis.network_id,
+            crate::chain::TESTNET_1_NETWORK_ID
+        );
+        let mut net = SimNet::seven_honest(&fixture);
+        net.start_all();
+        net.step_until_height(1, 600)
+            .expect("seven-validator finality");
+        assert!(net.identical_finality(1));
+        net.set_online("F", false);
+        net.set_online("G", false);
+        net.step_until_majority(2, 600).expect("5/7 availability");
+        assert!(net.by_name("A").unwrap().engine.finalized_height() >= 2);
+    }
+
+    #[test]
+    fn seven_validator_partition_without_quorum_has_no_conflicting_finality() {
+        let fixture = SevenValidatorFixture::testnet();
+        let mut net = SimNet::seven_honest(&fixture);
+        net.start_all();
+        net.partition_groups(&["A", "B", "C"], &["D", "E", "F", "G"]);
+        for _ in 0..80 {
+            net.step();
+        }
+        let heights: Vec<_> = net
+            .nodes
+            .values()
+            .map(|n| n.engine.finalized_height())
+            .collect();
+        assert!(
+            heights.iter().all(|h| *h == 0),
+            "3+4 must not finalize: {heights:?}"
+        );
     }
 
     #[test]

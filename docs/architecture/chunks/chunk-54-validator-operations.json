@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-54",
+  "title": "SunRey validator operator infrastructure, sentry topology, and secure node operations",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-p2p",
+    "sunrey-validators",
+    "sunrey-validator-accountability",
+    "blockchain-consensus",
+    "sunrey-protocol-governance",
+    "sunrey-validator-operations"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/ops and packages/sunrey-chain/node/src/ops.rs. Completes the remote signer, sentry topology, double-sign backup, operator CLI, snapshots, state sync, and governed rolling upgrades. Does not reimplement consensus or the validator registry. Do not create packages/sunrey-ops, packages/validator-ops, packages/sentry, or packages/remote-signer."
+}

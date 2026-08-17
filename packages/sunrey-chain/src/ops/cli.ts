@@ -80,4 +80,257 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
 const entry = process.argv[1] ?? '';
 if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
   process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
+
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
+import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
+import {
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+  developmentEpoch,
+} from './workflows.ts';
+
+export type CliResult = {
+  readonly ok: boolean;
+  readonly command: string;
+  readonly payload: unknown;
+};
+
+const COMMANDS = [
+  'validator',
+  'signer',
+  'snapshot',
+  'state-sync',
+  'upgrade',
+  'incident',
+] as const;
+
+export function opsUsage(): string {
+  return [
+    'sunrey-ops validator status',
+    'sunrey-ops validator peers',
+    'sunrey-ops validator keys',
+    'sunrey-ops validator key-generate',
+    'sunrey-ops validator rotate',
+    'sunrey-ops validator join',
+    'sunrey-ops validator exit',
+    'sunrey-ops validator evidence',
+    'sunrey-ops signer status',
+    'sunrey-ops snapshot create',
+    'sunrey-ops snapshot verify',
+    'sunrey-ops snapshot restore',
+    'sunrey-ops state-sync',
+    'sunrey-ops upgrade precheck',
+    'sunrey-ops incident SIGNER_COMPROMISE',
+  ].join('\n');
+}
+
+const nowUtc = () => '2026-08-17T00:00:00.000Z';
+
+export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
+  const [group, action, extra] = args;
+  if (!group || !(COMMANDS as readonly string[]).includes(group)) {
+    return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
+  }
+  const config = developmentValidatorConfig({ dataDirectory: dataDir });
+  const set = fourValidatorDevelopmentSet();
+  const topology = developmentSentryTopology('val_dev_a');
+  const signer = developmentRemoteSigner({ dataDir, validatorId: 'val_dev_a' });
+  const keystore = new OperatorKeystore();
+
+  if (group === 'validator' && action === 'status') {
+    const report = operatorReadiness({
+      config,
+      genesisHash: 'aa'.repeat(32),
+      validatorSet: set,
+      validatorId: 'val_dev_a',
+      signerAvailable: true,
+      safety: signer.store,
+      topology,
+      unavailableSentries: new Set(),
+      stateSyncComplete: true,
+      localFinalizedHeight: 10n,
+      networkFinalizedHeight: 10n,
+      diskOk: true,
+      protocolCompatible: true,
+      pendingUpgrade: null,
+      nowUtc: nowUtc(),
+    });
+    return { ok: report.ready || report.checks.some((check) => check.id === 'signer-safety-high-watermark'), command: 'validator status', payload: report };
+  }
+  if (group === 'validator' && action === 'peers') {
+    return {
+      ok: true,
+      command: 'validator peers',
+      payload: { sentries: topology.sentries, policy: config.peerPolicy },
+    };
+  }
+  if (group === 'validator' && (action === 'keys' || action === 'key-generate')) {
+    const generated = keystore.generate('CONSENSUS_VOTING_KEY', 'cli', nowUtc());
+    return { ok: generated.ok, command: 'validator key-generate', payload: generated };
+  }
+  if (group === 'validator' && action === 'join') {
+    const record = generateJoinRecord(keystore, 'E', nowUtc());
+    if (!record.ok) {
+      return { ok: false, command: 'validator join', payload: record };
+    }
+    const joined = joinWorkflow(
+      { set, epoch: developmentEpoch(0n, 0n, 8n), queued: [] },
+      record.value,
+      nowUtc(),
+    );
+    return { ok: joined.ok, command: 'validator join', payload: joined };
+  }
+  if (group === 'validator' && action === 'exit') {
+    const exited = exitWorkflow({ set, epoch: developmentEpoch(0n, 0n, 8n), queued: [] }, 'val_dev_a', nowUtc());
+    return { ok: exited.ok, command: 'validator exit', payload: exited };
+  }
+  if (group === 'validator' && action === 'rotate') {
+    const next = keystore.generate('CONSENSUS_VOTING_KEY', 'rotated', nowUtc());
+    if (!next.ok) {
+      return { ok: false, command: 'validator rotate', payload: next };
+    }
+    const descriptor = keystore.descriptor(next.value.keyId);
+    if (!descriptor.ok) {
+      return { ok: false, command: 'validator rotate', payload: descriptor };
+    }
+    const rotated = rotateWorkflow(
+      { set, epoch: developmentEpoch(0n, 0n, 8n), queued: [] },
+      'val_dev_a',
+      descriptor.value,
+      nowUtc(),
+    );
+    return { ok: rotated.ok, command: 'validator rotate', payload: rotated };
+  }
+  if (group === 'validator' && action === 'evidence') {
+    const erased = eraseEvidence();
+    const status = jailStatus(set.validators[0]!, 'ev_dev_1', 1n);
+    return { ok: status.ok && !erased.ok, command: 'validator evidence', payload: { status, erase: erased } };
+  }
+  if (group === 'signer' && action === 'status') {
+    const sentry = signer.server.sign(
+      {
+        validatorId: 'val_dev_a',
+        networkId: config.networkId,
+        chainId: config.chainId,
+        protocolVersion: '1',
+        messageType: 'PREVOTE',
+        height: 1n,
+        round: 0n,
+        blockId: 'block-1',
+        validatorSetVersion: 1n,
+        cryptoSuiteId: 'sunrey-ed25519-v1',
+      },
+      sentrySignerIdentity(),
+      nowUtc(),
+    );
+    const rpc = signer.server.sign(
+      {
+        validatorId: 'val_dev_a',
+        networkId: config.networkId,
+        chainId: config.chainId,
+        protocolVersion: '1',
+        messageType: 'PREVOTE',
+        height: 1n,
+        round: 0n,
+        blockId: 'block-1',
+        validatorSetVersion: 1n,
+        cryptoSuiteId: 'sunrey-ed25519-v1',
+      },
+      publicRpcSignerIdentity(),
+      nowUtc(),
+    );
+    return {
+      ok: true,
+      command: 'signer status',
+      payload: {
+        transport: signer.server.transport,
+        lease: signer.server.fence.current(),
+        sentryRejected: !sentry.ok,
+        publicRpcRejected: !rpc.ok,
+        privateKeyExport: signer.server.exportPrivateKey(),
+      },
+    };
+  }
+  if (group === 'snapshot') {
+    const created = createSnapshot({
+      networkId: config.networkId,
+      chainId: config.chainId,
+      height: 10n,
+      blockId: 'block-10',
+      stateRoot: '11'.repeat(32),
+      protocolVersion: '1',
+      validatorSetHash: '22'.repeat(32),
+      validatorSetVersion: 1n,
+      payload: '{"state":"dev"}',
+      createdAtUtc: nowUtc(),
+    });
+    if (!created.ok) {
+      return { ok: false, command: `snapshot ${action ?? 'create'}`, payload: created };
+    }
+    if (action === 'verify' || action === 'restore') {
+      const verified = verifySnapshot(created.value, {
+        networkId: config.networkId,
+        chainId: config.chainId,
+        protocolVersion: '1',
+        trustedFinalizedHeight: 10n,
+        trustedStateRoot: '11'.repeat(32),
+      });
+      return { ok: verified.ok, command: `snapshot ${action}`, payload: { snapshot: created.value.manifest, verified } };
+    }
+    return { ok: true, command: 'snapshot create', payload: created.value.manifest };
+  }
+  if (group === 'state-sync') {
+    return { ok: true, command: 'state-sync', payload: planGenesisSync(10n) };
+  }
+  if (group === 'upgrade' && action === 'precheck') {
+    const fixture = developmentUpgradeFixture(20);
+    authorizeDevelopmentUpgrade(fixture.manager, fixture.plan);
+    const report = upgradePrecheck({
+      manager: fixture.manager,
+      node: fixture.compatible,
+      diskFreeBytes: 10_000,
+      diskRequiredBytes: 1_000,
+      snapshotAvailable: true,
+      signerSuiteIds: fixture.compatible.suiteIds,
+    });
+    return { ok: report.binaryCompatible, command: 'upgrade precheck', payload: report };
+  }
+  if (group === 'incident') {
+    const kind = (action ?? extra ?? 'SIGNER_COMPROMISE') as Parameters<typeof incidentProcedure>[0];
+    return { ok: true, command: 'incident', payload: incidentProcedure(kind) };
+  }
+  const safe = validateValidatorConfig(config);
+  return { ok: safe.ok, command: `${group} ${action ?? ''}`.trim(), payload: { usage: opsUsage(), config: safe } };
+}
+
+export async function main(): Promise<void> {
+  const result = runOpsCommand(process.argv.slice(2));
+  assertNoPrivateKeyMaterial(result);
+  const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+  console.log(text);
+  if (!result.ok) {
+    process.exitCode = 1;
+  }
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  await main();
 }

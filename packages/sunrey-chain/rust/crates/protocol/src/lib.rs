@@ -24,8 +24,9 @@ pub use commitments::{
     transaction_root, unsigned_signature_payload, DomainHasher, HASH_SIZE,
 };
 pub use genesis::{
-    local_dev_genesis, GenesisV1, NativeAssetDefinition, LOCAL_DEV_CHAIN_ID, LOCAL_DEV_NETWORK_ID,
-    PROTOCOL_VERSION, SCHEMA_REGISTRY_DOCUMENT, SCHEMA_VERSION, SRCB_CODEC_ID,
+    local_dev_genesis, testnet_1_genesis, GenesisV1, NativeAssetDefinition, LOCAL_DEV_CHAIN_ID,
+    LOCAL_DEV_NETWORK_ID, PROTOCOL_VERSION, SCHEMA_REGISTRY_DOCUMENT, SCHEMA_VERSION,
+    SRCB_CODEC_ID, TESTNET_1_CHAIN_ID, TESTNET_1_NETWORK_ID,
 };
 pub use reject::RejectReason;
 pub use transaction::{

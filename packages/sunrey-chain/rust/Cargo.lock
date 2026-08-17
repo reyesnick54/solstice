@@ -730,6 +730,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-sdk"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "serde",
+ "serde_json",
+ "sunrey-protocol",
+ "sunrey-wallet",
+ "thiserror",
+]
+
+[[package]]
 name = "sunrey-state"
 version = "0.1.0"
 dependencies = [

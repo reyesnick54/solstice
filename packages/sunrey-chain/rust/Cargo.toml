@@ -18,6 +18,7 @@ members = [
   "crates/interop",
   "crates/wallet",
   "crates/ops",
+  "crates/sdk",
 ]
 
 [workspace.package]
@@ -44,6 +45,7 @@ sunrey-native-assets = { path = "crates/native-assets" }
 sunrey-interop = { path = "crates/interop" }
 sunrey-wallet = { path = "crates/wallet" }
 sunrey-ops = { path = "crates/ops" }
+sunrey-sdk = { path = "crates/sdk" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"
