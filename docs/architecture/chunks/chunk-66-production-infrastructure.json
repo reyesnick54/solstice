@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-66",
+  "title": "Implement SunRey production infrastructure provider adapters, secret management and readiness evidence reconciliation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-supply-chain",
+    "sunrey-formal-assurance",
+    "sunrey-audit-readiness",
+    "sunrey-testnet-rc",
+    "sunrey-root-of-trust",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-infrastructure"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/infra. Provider-neutral production infrastructure control plane. Reuses packages/security SecretReference, KeyProvider, and HSM/KMS contracts. No mainnet activation. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-infra, packages/infrastructure, packages/production-infrastructure, packages/cloud-adapters, or packages/sunrey-cloud."
+}

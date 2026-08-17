@@ -150,6 +150,11 @@ export type IndexedOracleFeed = {
   readonly providerId: string;
   readonly factType: string;
   readonly status: string;
+  readonly providerCount: number;
+  readonly aggregationMethod: string;
+  readonly freshness: string;
+  readonly qualityClass: string;
+  readonly verifiedFact: string | null;
 };
 
 export type IndexedOracleFact = {

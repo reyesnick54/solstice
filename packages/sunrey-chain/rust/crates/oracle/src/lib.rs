@@ -13,6 +13,12 @@ use sha2::{Digest, Sha256};
 use sunrey_crypto::{CryptoSuite, SigningSecret};
 use sunrey_protocol::{encode_string, encode_u64, hash_to_hex, RejectReason, DOMAIN_ORACLE};
 
+mod production;
+pub use production::{
+    independent_controller_count, production_eligibility_requires_evidence, reject_float_numeric,
+    OnboardingStatus,
+};
+
 pub const MAX_ORACLE_PAYLOAD_BYTES: usize = 4096;
 pub const BASE_RESOURCE_UNITS: u64 = 100;
 pub const PER_BYTE_RESOURCE_UNITS: u64 = 1;

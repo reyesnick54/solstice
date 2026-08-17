@@ -79,7 +79,7 @@ struct QueuedTx {
 impl LocalNode {
     pub fn init(data_dir: impl AsRef<Path>) -> Result<Self, RejectReason> {
         let data_dir = data_dir.as_ref();
-        if data_dir.join("genesis.bin").exists() {
+        if sunrey_storage::ChainStore::exists(data_dir) {
             return Self::open(data_dir);
         }
         let suite = DevEd25519Sha256Suite;

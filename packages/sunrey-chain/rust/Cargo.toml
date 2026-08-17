@@ -61,3 +61,4 @@ tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter", "json"] }
 base64ct = "=1.6.0"
 zeroize = "=1.8.1"
+redb = "=2.4.0"

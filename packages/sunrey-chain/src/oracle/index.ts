@@ -85,3 +85,4 @@ export {
   consensusMustNotCallAdapters,
 } from './adapter.ts';
 export type { OracleAdapter, OracleAdapterContext, OracleObservationDraft } from './adapter.ts';
+export * from './production/index.ts';

@@ -49,6 +49,8 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'supply-chain')}`) ||
         file.includes(`${join('src', 'audit')}`) ||
         file.includes(`${join('src', 'release-candidate')}`) ||
+        file.includes(`${join('src', 'formal')}`) ||
+        file.includes(`${join('src', 'oracle', 'production')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||
@@ -121,6 +123,10 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/genesis-candidate')), false);
     assert.equal(existsSync(join(ROOT, 'packages/readiness-registry')), false);
     assert.equal(existsSync(join(ROOT, 'packages/activation-control')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-oracles')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-onboarding')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-collector')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-data-plane')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);

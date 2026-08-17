@@ -10,7 +10,8 @@ Capability: `sunrey-mainnet-readiness`.
 
 ## What exists
 
-- `MainnetReadinessRegistry` and a 24-dimension evidence catalog
+- `MainnetReadinessRegistry` and a 25-dimension evidence catalog
+  including infrastructure readiness
 - Per-capability activation matrix (chain vs financial products)
 - Production network **candidate** identity
 - Deterministic genesis candidate builder (`sunrey-genesis candidate`)
@@ -19,6 +20,9 @@ Capability: `sunrey-mainnet-readiness`.
 - External legal/regulatory/security-review slots that stay incomplete
   unless real evidence is supplied
 - Separate Exchange, custody, oracle, interop, and privacy checklists
+- Chunk 68 oracle readiness distinguishes technical implementation,
+  provider configured, provider agreement evidence, and production
+  eligible. Development fixtures are not production feeds.
 - Activation-plan generation that does not execute infrastructure
 - Readiness CLI: `sunrey-mainnet`
 
@@ -31,7 +35,10 @@ Capability: `sunrey-mainnet-readiness`.
 - Not a licensed exchange or custody business
 - Not production HSM post-quantum capability
 
-Chunks 61–64 are not implemented on this tree. Their evidence slots are
-reserved and remain `NOT_PROVIDED` or
+Chunks 61–64 are implemented on this tree. Engineering artifacts are
+linked by exact digest (formal report, audit preparation bundle, RC
+qualification, root-of-trust rehearsal transcript, SBOM, provenance).
+Independent auditor, commercial HSM, counsel, regulator, license, and
+partner slots remain `NOT_PROVIDED` or
 `EXTERNAL_VERIFICATION_REQUIRED`. Simulation rehearsal of a Chunk 64
-style ceremony is process-readiness evidence only.
+ceremony is process-readiness evidence only.

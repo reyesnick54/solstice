@@ -237,6 +237,7 @@ export function runFullCeremonyRehearsal(
   const pq = hsm.assessPqCapability();
   if (pq.hardware !== 'HARDWARE_PROVIDER_UNCONFIRMED') {
     return securityErr('PRODUCTION_CLAIM_FORBIDDEN', 'rehearsal cannot claim hardware PQC');
+    return securityErr('PRODUCTION_CLAIM_FORBIDDEN', 'rehearsal must not claim confirmed PQ hardware');
   }
   const report = session.publicReport();
   if (!finalized.value.transcriptHash) {

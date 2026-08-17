@@ -58,11 +58,15 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
   if (command === 'create' || command === 'qualify') {
     const previousPath = storePath(root, 'current.json');
     const previous = existsSync(previousPath) ? readBundle(previousPath) : null;
+    const rcId = flagValue(argv, '--id');
+    const sourceCommit = flagValue(argv, '--commit');
     const created = createReleaseCandidate({
       root,
       profile: profileOf(argv),
       ...optionalFlag('rcId', flagValue(argv, '--id')),
       ...optionalFlag('sourceCommit', flagValue(argv, '--commit')),
+      ...(rcId === undefined ? {} : { rcId }),
+      ...(sourceCommit === undefined ? {} : { sourceCommit }),
       previous: command === 'qualify' ? previous : null,
       enduranceTicks: Number(flagValue(argv, '--ticks') ?? '8'),
     });
@@ -126,11 +130,13 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
   if (command === 'supersede') {
     const currentPath = storePath(root, 'current.json');
     const previous = existsSync(currentPath) ? readBundle(currentPath) : null;
+    const sourceCommit = flagValue(argv, '--commit');
     const created = createReleaseCandidate({
       root,
       profile: profileOf(argv),
       previous,
       ...optionalFlag('sourceCommit', flagValue(argv, '--commit')),
+      ...(sourceCommit === undefined ? {} : { sourceCommit }),
     });
     const pair = previous
       ? supersedeReleaseCandidate(previous, created.bundle)
