@@ -991,6 +991,37 @@
         "@reyesnick54"
       ],
       "notes": "Official SunRey developer SDK and versioned public API adapter. Not a second chain, ledger, or exchange. Private keys never leave the injected local signer."
+    },
+    {
+      "id": "packages/sunrey-range",
+      "npmName": "@solstice/sunrey-range",
+      "path": "packages/sunrey-range",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/sunrey-chain",
+        "packages/sunrey-exchange",
+        "packages/sunrey-explorer",
+        "packages/sunrey-sdk",
+        "packages/custody",
+        "packages/market-surveillance",
+        "packages/consent",
+        "packages/clean-room",
+        "packages/config",
+        "packages/security",
+        "packages/evidence",
+        "packages/domain",
+        "packages/identity",
+        "packages/events"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Isolated SunRey adversarial cyber-economic test range. Adapter/harness only. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service."
     }
   ],
   "components": [
@@ -2245,6 +2276,28 @@
         "@reyesnick54"
       ],
       "notes": "Official developer interface. Versioned public API v1, TypeScript SDK, Rust client crate, event subscriptions. Adapter over packages/sunrey-chain and packages/sunrey-exchange."
+    },
+    {
+      "id": "sunrey-adversarial-range",
+      "name": "SunRey adversarial cyber-economic test range",
+      "canonicalOwner": "packages/sunrey-range",
+      "canonicalPath": "packages/sunrey-range/src/types.ts",
+      "publicInterface": "packages/sunrey-range/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/red-team",
+        "packages/attack-sim",
+        "packages/sunrey-pentest"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     }
   ],
   "authorizedMutationPaths": [
@@ -2825,6 +2878,9 @@
     "packages/sunrey-chain-sdk-ledger",
     "packages/sdk-ledger",
     "packages/sunrey-sdk-v2",
+    "packages/red-team",
+    "packages/attack-sim",
+    "packages/sunrey-pentest"
     "packages/sunrey-test",
     "packages/fuzz",
     "packages/assurance",
@@ -3320,6 +3376,11 @@
       "notes": "Chunk 51 official developer platform: versioned public API v1, TypeScript SDK, Rust client SDK, event subscriptions. Adapter only. Canonical owners remain packages/sunrey-chain and packages/sunrey-exchange. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
     },
     {
+      "id": "sunrey-adversarial-range",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-range",
+      "protected": true,
+      "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
       "id": "sunrey-assurance",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

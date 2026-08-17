@@ -342,6 +342,68 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
   });
 });
 
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+import {
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  RemoteSignerServer,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
+  SignerSafetyStore,
+  assertNoPrivateKeyMaterial,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  availableSentryCount,
+  compareSafetyWatermark,
+  createSnapshot,
+  developmentEpoch,
+  developmentRemoteSigner,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
+  eraseEvidence,
+  evaluateDisk,
+  exitWorkflow,
+  generateJoinRecord,
+  gracefulShutdownPreserves,
+  incidentProcedure,
+  integrityHash,
+  jailRecord,
+  jailStatus,
+  joinWorkflow,
+  kubernetesManifest,
+  operatorReadiness,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  replaceWorkflow,
+  reportIncompatibleBinary,
+  restoreSnapshot,
+  rotateWorkflow,
+  verifyChainSnapshot,
+  runOpsCommand,
+  runRollingUpgrade,
+  safeRestart,
+  sentryCanSign,
+  sentrySignerIdentity,
+  structuredLog,
+  systemdUnit,
+  upgradePrecheck,
+  validateSentryTopology,
+  validateSignRequest,
+  validateValidatorConfig,
+  warnDiskPressure,
+} from './ops/index.ts';
+import { developmentSentryConfig } from './ops/sentry.ts';
+import { MaintenanceMode } from './ops/maintenance.ts';
+
+const NOW = '2026-08-17T00:00:00.000Z';
+
 function request(
   validatorId: string,
   overrides: Partial<ConsensusSignRequest> = {},
@@ -620,10 +682,10 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       trustedFinalizedHeight: 10n,
       trustedStateRoot: '11'.repeat(32),
     };
-    assert.equal(verifySnapshot(created.value, trust).ok, true);
+    assert.equal(verifyChainSnapshot(created.value, trust).ok, true);
     const tampered = { ...created.value, payload: '{"state":"evil"}' };
-    assert.equal(verifySnapshot(tampered, trust).ok, false);
-    const wrongNet = verifySnapshot(created.value, { ...trust, networkId: 'net_other' });
+    assert.equal(verifyChainSnapshot(tampered, trust).ok, false);
+    const wrongNet = verifyChainSnapshot(created.value, { ...trust, networkId: 'net_other' });
     assert.equal(wrongNet.ok, false);
     if (!wrongNet.ok) {
       assert.equal(wrongNet.error.code, 'WRONG_NETWORK_SNAPSHOT');

@@ -97,6 +97,38 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
   };
 }
 
+const entry = process.argv[1] ?? '';
+if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+}
+
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
+
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
+import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
+import {
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+  developmentEpoch,
+} from './workflows.ts';
+
 export type CliResult = {
   readonly ok: boolean;
   readonly command: string;

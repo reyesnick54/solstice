@@ -73,6 +73,7 @@ never be two implementations of these systems.
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
+| SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -86,7 +87,7 @@ the same architecture-linting system, not a second linter.
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
-`sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `custody`,
+`sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
 `consent`, `clean-room`, `sunrey-sdk`.
 
@@ -915,6 +916,13 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Chunk 57 implements the isolated adversarial cyber-economic test
+range at `packages/sunrey-range`. Capability
+`sunrey-adversarial-range` is `IMPLEMENTED`. Red actors are
+in-process test doubles. Detector output is not legal guilt. Do not
+create `packages/red-team`, `packages/attack-sim`, or
+`packages/sunrey-pentest`. See
+[`chunk-57-adversarial-range.md`](./chunk-57-adversarial-range.md).
 Chunk 56 implements protocol fuzzing, property tests, differential
 TypeScript/Rust drivers, and deterministic replay at
 `packages/sunrey-chain/src/assurance` and

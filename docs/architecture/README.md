@@ -111,5 +111,7 @@
 - [Chunk 51 developer platform](./chunk-51-developer-platform.md) —
   official SDK, versioned public API v1, and real-time events at
   `packages/sunrey-sdk`.
+- [Chunk 57 adversarial range](./chunk-57-adversarial-range.md) —
+  isolated cyber-economic attack simulator at `packages/sunrey-range`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

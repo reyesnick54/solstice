@@ -143,6 +143,10 @@ jobs:
         run: npm run demo:listing-governance
       - name: SunRey explorer demo
         run: npm run demo:explorer
+      - name: SunRey adversarial range smoke campaign
+        run: npm run sunrey-range -- campaign --smoke
+      - name: SunRey adversarial range demo
+        run: npm run demo:sunrey-range
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
 

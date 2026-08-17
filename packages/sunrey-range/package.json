@@ -1,0 +1,20 @@
+{
+  "name": "@solstice/sunrey-range",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/*.test.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
+    "sunrey-range": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli-main.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
