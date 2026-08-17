@@ -37,6 +37,8 @@ export const TESTNET_NETWORK_IDS = [
   SUNREY_TESTNET_1_NETWORK_ID,
 ] as const;
 export const RESERVED_PRODUCTION_NETWORK_ID = 'net_sunrey_reserved_production' as const;
+export const PRODUCTION_CANDIDATE_NETWORK_ID = 'net_sunrey_production_candidate_1' as const;
+export const PRODUCTION_CANDIDATE_NETWORK_PREFIX = 'net_sunrey_production_candidate_' as const;
 
 export const ADDRESS_CLASSES = [
   'SINGLE_KEY_ACCOUNT',

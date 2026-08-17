@@ -121,6 +121,10 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
+| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mainnet-readiness | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -512,3 +516,13 @@ differential TypeScript/Rust drivers, and deterministic replay at
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. This is not formal
 verification. The evaluator returns `mustStop: false`.
+Chunk 65 implements mainnet readiness evidence, a per-capability
+activation matrix, and deterministic genesis-candidate tooling at
+`packages/sunrey-chain/src/mainnet`. Capability
+`sunrey-mainnet-readiness` is `IMPLEMENTED`. See
+[`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+It does not launch mainnet or enable `LIVE_*` services. Do not
+create `packages/mainnet`, `packages/sunrey-mainnet`,
+`packages/genesis-candidate`, `packages/readiness-registry`, or
+`packages/activation-control`. The evaluator returns
+`mustStop: false`.

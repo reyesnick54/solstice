@@ -49,7 +49,10 @@ export function networkClassOf(networkId: string): NetworkClass | null {
   if ((TESTNET_NETWORK_IDS as readonly string[]).includes(networkId) || networkId.startsWith('net_sunrey_testnet_')) {
     return 'RESERVED_TEST';
   }
-  if (networkId === RESERVED_PRODUCTION_NETWORK_ID) {
+  if (
+    networkId === RESERVED_PRODUCTION_NETWORK_ID ||
+    networkId.startsWith('net_sunrey_production_candidate_')
+  ) {
     return 'RESERVED_PRODUCTION';
   }
   return null;

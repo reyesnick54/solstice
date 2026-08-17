@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey mainnet readiness and genesis-candidate controls (Chunk 65,
+  `packages/sunrey-chain/src/mainnet`): 24 readiness dimensions, a
+  per-capability activation matrix, production-candidate identity
+  `net_sunrey_production_candidate_1` / `chn_sunrey_production_candidate_1`
+  with HRP `srprd`, deterministic zero-allocation genesis candidate,
+  seven simulated validator candidates, human-only authorization,
+  external evidence slots left incomplete, and an activation plan that
+  does not launch infrastructure. Capability `sunrey-mainnet-readiness`
+  is `IMPLEMENTED`. This is not mainnet. `LIVE_*` flags remain false.
+  See `docs/mainnet/`.
+
 - SunRey fuzzing and deterministic property assurance (Chunk 56,
   `packages/sunrey-chain/src/assurance`,
   `packages/sunrey-chain/rust/crates/assurance`, `tests/assurance`):
@@ -543,6 +554,8 @@ npm run demo:consent
 npm run demo:clean-room
 npm run demo:sunrey-wallet
 npm run demo:sunrey-sdk
+npm run demo:sunrey-mainnet
+npm run sunrey-mainnet -- readiness
 npm run sunrey:dev
 npm run typecheck
 npm run scan:secrets
