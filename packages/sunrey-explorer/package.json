@@ -1,0 +1,23 @@
+{
+  "name": "@solstice/sunrey-explorer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "bin": {
+    "sunrey-explorer": "./src/cli.ts"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
+    "cli": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

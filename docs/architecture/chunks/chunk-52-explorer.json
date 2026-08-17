@@ -1,0 +1,24 @@
+{
+  "chunk": "CHUNK-52",
+  "title": "SunRey block explorer, economic explorer, and rebuildable chain indexer",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-validators",
+    "sunrey-validator-accountability",
+    "sunrey-protocol-governance",
+    "sunrey-machine-economy",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-oracle-network",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-interop",
+    "sunrey-exchange-native-settlement",
+    "sunrey-explorer"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-explorer. Projection only. Canonical authority remains finalized SunRey Blockchain state. Do not create packages/block-explorer, packages/chain-indexer, or a second indexer. evaluateChunkRequirements returns mustStop: false."
+}

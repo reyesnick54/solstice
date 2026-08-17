@@ -114,6 +114,8 @@ jobs:
         run: node scripts/sunrey-testnet-validate-manifests.mjs
       - name: SunRey testnet SBOM and release manifest
         run: node scripts/sunrey-testnet-sbom.mjs
+      - name: SunRey developer SDK demo
+        run: npm run demo:sunrey-sdk
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: SunRey Exchange native settlement demo
@@ -132,6 +134,8 @@ jobs:
         run: npm run demo:market-surveillance
       - name: Listing governance demo
         run: npm run demo:listing-governance
+      - name: SunRey explorer demo
+        run: npm run demo:explorer
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
 

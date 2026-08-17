@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "apiVersion": "v1",
+  "tickerStatus": "NOT_ASSIGNED",
+  "notes": "Checked-in identifiers that TypeScript and Rust SDKs must agree on.",
+  "networkId": "net_sunrey_simulation",
+  "chainId": "chn_sunrey_simulation",
+  "localDevNetworkId": "net_sunrey_local_dev",
+  "localDevChainId": "chn_sunrey_local_dev",
+  "codecId": "sunrey.protobuf.canonical.v1",
+  "assetIds": ["SUNREY_COIN", "MOONREY_COIN"],
+  "cryptoSuiteIds": [
+    "sunrey-ed25519-v1",
+    "sunrey-hybrid-ed25519-mldsa-sim-v1",
+    "sunrey-mldsa-65-v1"
+  ],
+  "feeDeclarationFields": [
+    "estimatedFee",
+    "maximumAuthorizedFee",
+    "actualFinalizedFee",
+    "feeAsset"
+  ],
+  "feeAsset": "SUNREY_COIN",
+  "transactionStatus": [
+    "LOCAL_ONLY",
+    "SUBMITTED",
+    "MEMPOOL",
+    "INCLUDED",
+    "FINALIZED",
+    "REJECTED",
+    "EXPIRED",
+    "UNKNOWN"
+  ],
+  "submissionStatus": ["ACCEPTED", "REJECTED", "KNOWN", "SUBMISSION_UNKNOWN"],
+  "address": {
+    "networkId": "net_sunrey_simulation",
+    "classId": 1,
+    "algorithmId": 1,
+    "descriptorUtf8": "alice",
+    "hrp": "srdev"
+  },
+  "protocolVector": {
+    "name": "valid-sunrey-coin-transfer-shape",
+    "transactionIdHex": "d11b276ab04e14627d63d2506b36d1b6d2dd9f0d5194a225f1a60ac2b2e161ef"
+  }
+}

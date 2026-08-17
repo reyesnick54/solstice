@@ -115,6 +115,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
+| sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -442,3 +444,17 @@ Chunk 53 implements the public TEST NETWORK package at
 Network `net_sunrey_testnet_1` / chain `chn_sunrey_testnet_1`.
 Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
 `packages/sunrey-testnet` or enable production banking rails.
+Chunk 52 implements the rebuildable SunRey explorer at
+`packages/sunrey-explorer`. Capability `sunrey-explorer` is
+`IMPLEMENTED`. See
+[`chunk-52-explorer.md`](./chunk-52-explorer.md).
+The explorer is a projection. Canonical authority remains finalized
+SunRey Blockchain state. Do not create `packages/block-explorer`,
+`packages/chain-indexer`, or a second indexer.
+Chunk 51 implements the official developer platform at
+`packages/sunrey-sdk`. Capability `sunrey-developer-sdk` is
+`IMPLEMENTED`. See
+[`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Do not create `packages/blockchain-v2`,
+`packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
+`packages/exchange-v2`. The evaluator returns `mustStop: false`.

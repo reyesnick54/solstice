@@ -71,6 +71,8 @@ never be two implementations of these systems.
 | Consent Ledger / Purpose Firewall | `packages/consent` | `packages/consent/src/service.ts` | IMPLEMENTED |
 | Privacy Clean Room | `packages/clean-room` | `packages/clean-room/src/service.ts` | IMPLEMENTED |
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
+| SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
+| SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -82,13 +84,17 @@ the same architecture-linting system, not a second linter.
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`,
-`consent`, `clean-room`.
+`consent`, `clean-room`, `sunrey-coin`, `information-market`,
+`sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `custody`,
+`market-surveillance`.
+`consent`, `clean-room`, `sunrey-sdk`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`, `strategy-lab`.
 
-**Applications:** none. `apps/` is reserved in the workspace glob and
-does not exist. The Phase 1 demo is `packages/domain/src/demo.ts`.
+**Applications:** `apps/explorer` is the functional SunRey explorer
+web interface. It is a projection UI, not an authoritative ledger.
+The Phase 1 demo remains `packages/domain/src/demo.ts`.
 
 **Tools:** `architectural-linter`.
 
@@ -111,6 +117,10 @@ at `packages/sunrey-coin`. SunRey Chain is `IMPLEMENTED` at
 `packages/sunrey-exchange`. SunRey Testnet 1 (`net_sunrey_testnet_1`)
 is a public TEST NETWORK package at `packages/sunrey-chain/src/testnet`.
 It is not mainnet. Tickers remain `NOT_ASSIGNED`.
+`packages/sunrey-exchange`. SunRey Explorer is `IMPLEMENTED` at
+`packages/sunrey-explorer`.
+`packages/sunrey-exchange`. The official developer SDK is
+`IMPLEMENTED` at `packages/sunrey-sdk`.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage).
@@ -888,6 +898,14 @@ create `packages/custody-v2`, `packages/blockchain-custody`,
 `packages/institutional-custody-v2`, or `packages/hsm-security-v2`.
 See
 [`chunk-47-institutional-custody.md`](./chunk-47-institutional-custody.md).
+Chunk 51 implements the official developer platform at
+`packages/sunrey-sdk` with a Rust client at
+`packages/sunrey-chain/rust/crates/sdk`. Capability
+`sunrey-developer-sdk` is `IMPLEMENTED`. The SDK is an adapter.
+Do not create `packages/blockchain-v2`,
+`packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
+`packages/exchange-v2`. See
+[`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the
