@@ -164,6 +164,16 @@ export type NativeAssetRehearsalResult = {
   readonly supplyReconciled: boolean;
   readonly productionValueClaim: false;
   readonly units: 'REHEARSAL_ONLY';
+  readonly feePolicyV2: {
+    readonly normalTraffic: boolean;
+    readonly highUtilization: boolean;
+    readonly pqHeavy: boolean;
+    readonly exchangeDvp: boolean;
+    readonly moonreyActivity: boolean;
+    readonly validatorRewardAllocation: boolean;
+    readonly supplyReconciled: boolean;
+    readonly productionParametersConfigured: false;
+  };
 };
 
 export type OracleRehearsalResult = {

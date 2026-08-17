@@ -33,6 +33,10 @@ pub const PATH_MONETARY_GENESIS: &str = "/v1/monetary/genesis";
 pub const PATH_MONETARY_BURNS: &str = "/v1/monetary/burns";
 pub const PATH_MONETARY_ISSUANCE_PREFIX: &str = "/v1/monetary/issuance/";
 pub const PATH_VALIDATORS: &str = "/v1/validators";
+pub const PATH_FEES_POLICY: &str = "/v1/fees/policy";
+pub const PATH_FEES_PRICE: &str = "/v1/fees/price";
+pub const PATH_FEES_ESTIMATE: &str = "/v1/fees/estimate-v2";
+pub const PATH_FEES_RESOURCES: &str = "/v1/fees/resources";
 pub const PATH_VALIDATOR_ECONOMIC_POLICY: &str = "/v1/validators/economics/policy";
 
 #[derive(Debug, thiserror::Error)]
@@ -102,6 +106,20 @@ impl SunReyRpcClient {
         self.get(PATH_VALIDATORS)
     }
 
+    pub fn get_fee_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_FEES_POLICY)
+    }
+
+    pub fn get_base_resource_price(&self) -> Result<Value, SdkError> {
+        self.get(PATH_FEES_PRICE)
+    }
+
+    pub fn estimate_resources(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_FEES_RESOURCES}?bytes={bytes}&sigs={sigs}"))
+    }
+
+    pub fn estimate_fee(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_FEES_ESTIMATE}?bytes={bytes}&sigs={sigs}"))
     pub fn get_validator_economic_policy(&self) -> Result<Value, SdkError> {
         self.get(PATH_VALIDATOR_ECONOMIC_POLICY)
     }

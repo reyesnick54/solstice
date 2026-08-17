@@ -83,6 +83,11 @@ export function interopHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function adaptiveFeeHappyTrace(): LogicalTrace {
+  return makeTrace('trace_adaptive_fee', 'adaptive_fee', 'ADAPTIVE_FEE_MARKET', [
+    { domain: 'adaptive_fee', action: 'UpdatePriceHigh', args: { usage: 2 } },
+    { domain: 'adaptive_fee', action: 'Reserve', args: {} },
+    { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
 export function validatorEconomicsHappyTrace(): LogicalTrace {
   return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
     { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
@@ -113,6 +118,7 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     moonreyHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
+    adaptiveFeeHappyTrace(),
     validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),

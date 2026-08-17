@@ -155,6 +155,22 @@ export class FeeClient {
   receipt(transactionId: string): Promise<unknown> {
     return this.http.get(`/v1/fees/receipts/${transactionId}`);
   }
+
+  getFeePolicy(): Promise<unknown> {
+    return this.http.get('/v1/fees/policy');
+  }
+
+  getBaseResourcePrice(): Promise<unknown> {
+    return this.http.get('/v1/fees/price');
+  }
+
+  estimateResources(bytes = 256, sigs = 1, signatureClass = 'CLASSICAL'): Promise<unknown> {
+    return this.http.get(`/v1/fees/resources?bytes=${bytes}&sigs=${sigs}&class=${signatureClass}`);
+  }
+
+  estimateFeeV2(bytes = 256, sigs = 1, signatureClass = 'CLASSICAL'): Promise<unknown> {
+    return this.http.get(`/v1/fees/estimate-v2?bytes=${bytes}&sigs=${sigs}&class=${signatureClass}`);
+  }
 }
 
 export class ValidatorClient {

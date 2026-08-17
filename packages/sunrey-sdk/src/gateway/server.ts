@@ -407,7 +407,22 @@ function dispatch(
     return json(200, platform.estimateFee(Number(q.bytes ?? '256'), Number(q.sigs ?? '1')));
   }
   if (method === 'GET' && path === '/v1/fees/resources') {
-    return json(200, { encoded_bytes: q.bytes ?? '256', signature_count: q.sigs ?? '1' });
+    const signatureClass = q.class === 'HYBRID' || q.class === 'PQ' ? q.class : 'CLASSICAL';
+    return json(200, {
+      encoded_bytes: q.bytes ?? '256',
+      signature_count: q.sigs ?? '1',
+      usage: platform.estimateResourcesV2(Number(q.bytes ?? '256'), Number(q.sigs ?? '1'), signatureClass),
+    });
+  }
+  if (method === 'GET' && path === '/v1/fees/policy') {
+    return json(200, platform.getFeePolicy());
+  }
+  if (method === 'GET' && path === '/v1/fees/price') {
+    return json(200, platform.getBaseResourcePrice());
+  }
+  if (method === 'GET' && path === '/v1/fees/estimate-v2') {
+    const signatureClass = q.class === 'HYBRID' || q.class === 'PQ' ? q.class : 'CLASSICAL';
+    return json(200, platform.estimateFeeV2(Number(q.bytes ?? '256'), Number(q.sigs ?? '1'), signatureClass));
   }
   if (method === 'GET' && path.startsWith('/v1/fees/receipts/')) {
     const receipt = platform.txStatus(path.slice('/v1/fees/receipts/'.length));
@@ -676,6 +691,9 @@ export const PUBLIC_ROUTES = [
   'GET /v1/monetary/issuance/{id}',
   'GET /v1/monetary/burns',
   'GET /v1/fees/estimate',
+  'GET /v1/fees/policy',
+  'GET /v1/fees/price',
+  'GET /v1/fees/estimate-v2',
   'GET /v1/validators',
   'GET /v1/validators/economics/policy',
   'GET /v1/validators/{id}/bond',

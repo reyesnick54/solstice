@@ -80,3 +80,4 @@ export {
   estimatedPriorityFee,
 } from './mempool.ts';
 export { applyFeeGovernance } from './governance.ts';
+export * from './v2/index.ts';

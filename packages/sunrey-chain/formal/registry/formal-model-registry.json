@@ -300,6 +300,28 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/crypto-policy.ts"
     },
     {
+      "modelId": "ADAPTIVE_FEE_MARKET",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/fees/v2/price.ts",
+        "packages/sunrey-chain/src/fees/v2/quote.ts",
+        "packages/sunrey-chain/src/fees/engine.ts",
+        "packages/sunrey-chain/rust/crates/fees/src/v2.rs"
+      ],
+      "assumptions": [
+        "next price depends only on prior finalized usage and governed bounds",
+        "charged fee cannot exceed signed max_fee",
+        "disposition cannot mint native-asset quantity",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "PRICE_WITHIN_BOUNDS",
+        "DETERMINISTIC_UPDATE",
+        "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
+        "FEE_CONSERVATION",
+        "MAX_FEE_AUTHORIZATION",
+        "DISPOSITION_CONSERVATION"
       "modelId": "VALIDATOR_ECONOMICS",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -372,6 +394,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     }

@@ -111,6 +111,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-adaptive-fee-market | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-interop | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
@@ -351,6 +352,11 @@ Chunk 42 implements native fees and resource metering at
 `packages/sunrey-chain`. Capability `sunrey-native-fees` is
 `IMPLEMENTED`. See
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Chunk 73 implements FeePolicyV2 adaptive resource pricing at
+`packages/sunrey-chain/src/fees/v2`. Capability
+`sunrey-adaptive-fee-market` is `IMPLEMENTED`. Historic v1 fee
+semantics are preserved. Production parameters remain unconfigured.
+See [`chunk-73-adaptive-fee-market.md`](./chunk-73-adaptive-fee-market.md).
 Chunk 48 connects SunRey Exchange to native-chain atomic DVP at
 `packages/sunrey-exchange` and `packages/sunrey-chain`. Capability
 `sunrey-exchange-native-settlement` is `IMPLEMENTED`. See

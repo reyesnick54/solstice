@@ -73,6 +73,8 @@
 - [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
   signed observations and VerifiedEconomicFacts. Not money.
 - [Oracle economic fact spec](./oracle-economic-fact-spec.md)
+- [Chunk 73 adaptive fee market](./chunk-73-adaptive-fee-market.md) —
+  FeePolicyV2 resource pricing, disposition, anti-spam economics
 - [Chunk 42 native fees](./chunk-42-native-fees.md) —
   resource metering, integer fee schedule, reservation/charge/release
 - [SunRey resource metering](./sunrey-resource-metering.md)
