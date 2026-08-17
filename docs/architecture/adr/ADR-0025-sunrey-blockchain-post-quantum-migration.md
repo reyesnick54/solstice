@@ -5,10 +5,11 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN / SECURITY
 - Depends on: ADR-0024, ADR-0028
-- Implementation status: PARTIAL (Chunk 33R: hybrid envelope,
-  migration states, PQ ports, simulation/test provider, inventory,
-  threat model). Production PQC algorithms are not implemented.
-  Not quantum-secure.
+- Implementation status: PARTIAL (Chunk 60: real standardized PQ
+  provider `@noble/post-quantum@0.5.4` integrated for
+  development/testnet; hybrid CLASSICAL_AND_PQ; height-activated
+  migration rehearsal). Production deployment, external HSM, and
+  certification remain pending. Not quantum-secure. Not mainnet.
 
 ## Context
 
@@ -87,7 +88,11 @@ simulation.
 ## Status
 
 `ACCEPTED_FOR_ENGINEERING` for hybrid, algorithm-ID-based migration
-shape. Chunk 33R implements the hybrid envelope, migration-state
+shape. Chunk 33R implemented the hybrid envelope, migration-state
 table, provider ports, and a TEST_ONLY simulation provider.
-Production PQC: **not selected**, **not claimed**. Legal confidence:
-`RESEARCH_REQUIRED`.
+Chunk 60 selects `@noble/post-quantum@0.5.4` for development/testnet
+and registers `TESTNET_APPROVED` suites (`ML_DSA_65_V1`,
+`ML_KEM_768_V1`, `SLH_DSA_SHA2_128S_V1`, hybrid Ed25519+ML-DSA).
+Production PQC / HSM / certification: **not selected**, **not claimed**.
+Legal confidence remains `RESEARCH_REQUIRED` and is separate from
+engineering implementation.

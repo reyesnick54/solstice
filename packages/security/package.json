@@ -14,5 +14,8 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "dependencies": {
+    "@noble/post-quantum": "0.5.4"
   }
 }

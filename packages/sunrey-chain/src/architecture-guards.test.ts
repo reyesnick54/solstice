@@ -43,6 +43,8 @@ describe('sunrey chain architecture guards', () => {
       assert.equal(/from ['"].*services\//.test(source), false, file);
       const allowsTestNetwork =
         file.includes(`${join('src', 'testnet')}`) ||
+        file.includes(`${join('src', 'pqc')}`) ||
+        file.endsWith(`${join('ops', 'crypto-cli.ts')}`) ||
         file.includes(`${join('src', 'supply-chain')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||

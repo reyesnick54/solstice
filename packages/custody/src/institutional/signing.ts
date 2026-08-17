@@ -19,6 +19,12 @@ export type InstitutionalSignRequest = {
   readonly suiteId: CryptoSuiteId;
 };
 
+export type InstitutionalSignerCapabilities = {
+  readonly realPqSupported: boolean;
+  readonly externalHsmPqSupported: boolean;
+  readonly flags: readonly string[];
+};
+
 export type InstitutionalSigningProvider = {
   readonly kind: SigningProviderKind;
   readonly implementationState: SigningImplementationState;
@@ -29,7 +35,21 @@ export type InstitutionalSigningProvider = {
   rotate(handle: HsmKeyHandle): SecurityResult<HsmKeyHandle>;
   disable(handle: HsmKeyHandle): SecurityResult<HsmKeyHandle>;
   status(): { readonly kind: SigningProviderKind; readonly healthy: boolean; readonly simulation: boolean };
+  capabilities?(): InstitutionalSignerCapabilities;
 };
+
+export function negotiateInstitutionalPqCapability(
+  provider: InstitutionalSigningProvider,
+): InstitutionalSignerCapabilities {
+  if (typeof provider.capabilities === 'function') {
+    return provider.capabilities();
+  }
+  return Object.freeze({
+    realPqSupported: false,
+    externalHsmPqSupported: false,
+    flags: Object.freeze(['CLASSICAL_SUPPORTED'] as const),
+  });
+}
 
 export class HsmBackedSigningProvider implements InstitutionalSigningProvider {
   readonly kind: SigningProviderKind;
@@ -76,6 +96,22 @@ export class HsmBackedSigningProvider implements InstitutionalSigningProvider {
   status(): { readonly kind: SigningProviderKind; readonly healthy: boolean; readonly simulation: boolean } {
     const health = this.hsm.healthCheck();
     return { kind: this.kind, healthy: health.ok && health.value.healthy, simulation: true };
+  }
+
+  capabilities(): InstitutionalSignerCapabilities {
+    if (typeof this.hsm.capabilities === 'function') {
+      const caps = this.hsm.capabilities();
+      return Object.freeze({
+        realPqSupported: caps.realPqSupported === true,
+        externalHsmPqSupported: caps.externalHsmPqSupported === true,
+        flags: Object.freeze([...caps.flags]),
+      });
+    }
+    return Object.freeze({
+      realPqSupported: false,
+      externalHsmPqSupported: false,
+      flags: Object.freeze(['CLASSICAL_SUPPORTED'] as const),
+    });
   }
 }
 

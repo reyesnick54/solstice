@@ -20,6 +20,7 @@ export function assertProviderPermit(permit: symbol): SecurityResult<true> {
 export const PROVIDER_ONLY_FILES = Object.freeze([
   'packages/security/src/ed25519-provider.ts',
   'packages/security/src/pq-simulation-provider.ts',
+  'packages/security/src/pq-provider.ts',
   'packages/security/src/crypto-providers.ts',
   'packages/security/src/simulation.ts',
   'packages/security/src/envelope.ts',
@@ -27,4 +28,5 @@ export const PROVIDER_ONLY_FILES = Object.freeze([
   'packages/security/src/hash.ts',
   'packages/security/src/random.ts',
   'packages/security/src/hsm-simulator.ts',
+  'packages/security/src/local-test-pq-signer.ts',
 ]);

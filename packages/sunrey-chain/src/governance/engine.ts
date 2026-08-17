@@ -30,7 +30,13 @@ import {
 const PKCS8_PREFIX = Buffer.from('302e020100300506032b657004220420', 'hex');
 const VOTE_DOMAIN = 'sunrey.gov.vote.v1';
 const PLAN_DOMAIN = 'sunrey.gov.plan.v1';
-const KNOWN_DEV_SUITES = new Set(['SUNREY_DEV_ED25519_SHA256', 'cs_ed25519_sha256_v1']);
+const KNOWN_DEV_SUITES = new Set([
+  'SUNREY_DEV_ED25519_SHA256',
+  'cs_ed25519_sha256_v1',
+  'sunrey-ed25519-v1',
+  'sunrey-hybrid-ed25519-mldsa-v1',
+  'sunrey-mldsa-65-v1',
+]);
 
 export function isUpgradeKind(value: string): value is UpgradeKind {
   return (UPGRADE_KINDS as readonly string[]).includes(value);

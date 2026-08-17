@@ -61,6 +61,8 @@ export const ADDRESS_ALGORITHMS = [
   'ED25519_V1',
   'HYBRID_SIM_V1',
   'PQ_SIM_V1',
+  'HYBRID_V1',
+  'ML_DSA_65_V1',
 ] as const;
 export type AddressAlgorithm = (typeof ADDRESS_ALGORITHMS)[number];
 
@@ -68,6 +70,8 @@ export const ADDRESS_ALGORITHM_IDS: { readonly [K in AddressAlgorithm]: number }
   ED25519_V1: 1,
   HYBRID_SIM_V1: 2,
   PQ_SIM_V1: 3,
+  HYBRID_V1: 4,
+  ML_DSA_65_V1: 5,
 };
 
 export const WALLET_TYPES = [

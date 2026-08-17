@@ -1526,6 +1526,33 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-indexer')), false);
   });
 
+  it('CHUNK-60 integrates standardized PQC on the security owner for testnet', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-pqc-testnet').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-pqc-testnet').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-pqc-testnet').owner, 'packages/security');
+    assert.equal(evaluateCapability(manifest, 'crypto-suite-registry').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-60',
+    );
+    assert.ok(declared, 'CHUNK-60 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/chunk-60-post-quantum-integration.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/pqc-provider-selection.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/hybrid-signature-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/pqc-testnet-migration.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/pqc-performance.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/pqc-key-rotation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/pqc-provider-failure.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security/src/pq-provider.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/pqc/hybrid-rehearsal.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/post-quantum')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/pqc-core')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/quantum-security')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
   it('CHUNK-59 implements software supply-chain security on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').status, 'IMPLEMENTED');

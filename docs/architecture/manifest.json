@@ -3365,6 +3365,13 @@
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     },
     {
+      "id": "sunrey-pqc-testnet",
+      "status": "IMPLEMENTED",
+      "owner": "packages/security",
+      "protected": true,
+      "notes": "Chunk 60 standardized post-quantum CryptoSuite provider for development/testnet at packages/security. Hybrid CLASSICAL_AND_PQ via CryptoSuite. Not mainnet. Not quantum-proof. Do not create packages/post-quantum, packages/pqc-core, packages/quantum-security, or packages/crypto-v2."
+    },
+    {
       "id": "sunrey-ops-resilience",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

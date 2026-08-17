@@ -1,7 +1,23 @@
 import { createSignedBinding } from './crypto-binding.ts';
-import { SUITE_SUNREY_ED25519_V1, SUITE_SUNREY_MLKEM_768_V1 } from './crypto-suite.ts';
+import { signHybrid } from './crypto-hybrid.ts';
+import {
+  SUITE_SUNREY_ED25519_V1,
+  SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
+  SUITE_SUNREY_MLDSA_65_V1,
+  SUITE_SUNREY_MLKEM_768_V1,
+  SUITE_SUNREY_SLHDSA_V1,
+} from './crypto-suite.ts';
 import { createEd25519SignatureProvider } from './ed25519-provider.ts';
 import { createSimulationPqKemProvider, createSimulationPqSignatureProvider } from './pq-simulation-provider.ts';
+import { createMlDsa65Provider, createMlKem768Provider, createSlhDsaSha2128sProvider } from './pq-provider.ts';
+import {
+  ML_DSA_65_V1_PUBLIC_KEY_BYTES,
+  ML_DSA_65_V1_SECRET_KEY_BYTES,
+  ML_DSA_65_V1_SIGNATURE_BYTES,
+  SLH_DSA_SHA2_128S_V1_PUBLIC_KEY_BYTES,
+  SLH_DSA_SHA2_128S_V1_SECRET_KEY_BYTES,
+  SLH_DSA_SHA2_128S_V1_SIGNATURE_BYTES,
+} from './pq-sizes.ts';
 
 export type BenchmarkRow = {
   readonly algorithm: string;
@@ -154,6 +170,144 @@ export function runCryptoBenchmarks(): readonly BenchmarkRow[] {
     publicKeyBytes: Buffer.from(edKey.value.publicKey.publicKeyHex, 'hex').length,
     signatureBytes: Buffer.from(signed.value.signatureHex, 'hex').length,
     note: `public key + signature = ${txImpact} bytes on this host`,
+  });
+
+  const mlDsa = createMlDsa65Provider();
+  const mlDsaKey = mlDsa.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_MLDSA_65_V1);
+  if (!mlDsaKey.ok) {
+    throw new Error(mlDsaKey.error.message);
+  }
+  const mlDsaBinding = createSignedBinding({
+    networkId: 'sunrey-sim',
+    chainId: 'sunrey-sim-0',
+    protocolVersion: 'sunrey-protocol-0',
+    algorithmId: 'ML_DSA_65_V1',
+    suiteId: SUITE_SUNREY_MLDSA_65_V1,
+    keyPurpose: 'TRANSACTION_SIGNING',
+    messageDomain: 'tx.v1',
+    payload: 'benchmark-payload',
+  });
+  const mlDsaSigned = mlDsa.sign(mlDsaKey.value.privateKey, mlDsaKey.value.publicKey, mlDsaBinding);
+  if (!mlDsaSigned.ok) {
+    throw new Error(mlDsaSigned.error.message);
+  }
+  rows.push({
+    algorithm: 'ML_DSA_65_V1',
+    providerId: mlDsa.providerId,
+    operation: 'sign',
+    iterations: 20,
+    elapsedMs: timeMs(20, () => {
+      mlDsa.sign(mlDsaKey.value.privateKey, mlDsaKey.value.publicKey, mlDsaBinding);
+    }),
+    publicKeyBytes: ML_DSA_65_V1_PUBLIC_KEY_BYTES,
+    signatureBytes: ML_DSA_65_V1_SIGNATURE_BYTES,
+    note: `standardized FIPS 204; secret material ${ML_DSA_65_V1_SECRET_KEY_BYTES} bytes if safely measurable`,
+  });
+  rows.push({
+    algorithm: 'ML_DSA_65_V1',
+    providerId: mlDsa.providerId,
+    operation: 'verify',
+    iterations: 20,
+    elapsedMs: timeMs(20, () => {
+      mlDsa.verify(mlDsaKey.value.publicKey, mlDsaBinding, mlDsaSigned.value);
+    }),
+    note: 'standardized FIPS 204 verify; no marketing interpretation',
+  });
+
+  const slh = createSlhDsaSha2128sProvider();
+  const slhKey = slh.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_SLHDSA_V1);
+  if (!slhKey.ok) {
+    throw new Error(slhKey.error.message);
+  }
+  const slhBinding = createSignedBinding({
+    networkId: 'sunrey-sim',
+    chainId: 'sunrey-sim-0',
+    protocolVersion: 'sunrey-protocol-0',
+    algorithmId: 'SLH_DSA_SHA2_128S_V1',
+    suiteId: SUITE_SUNREY_SLHDSA_V1,
+    keyPurpose: 'TRANSACTION_SIGNING',
+    messageDomain: 'tx.v1',
+    payload: 'benchmark-payload',
+  });
+  const slhSigned = slh.sign(slhKey.value.privateKey, slhKey.value.publicKey, slhBinding);
+  if (!slhSigned.ok) {
+    throw new Error(slhSigned.error.message);
+  }
+  rows.push({
+    algorithm: 'SLH_DSA_SHA2_128S_V1',
+    providerId: slh.providerId,
+    operation: 'sign',
+    iterations: 2,
+    elapsedMs: timeMs(2, () => {
+      slh.sign(slhKey.value.privateKey, slhKey.value.publicKey, slhBinding);
+    }),
+    publicKeyBytes: SLH_DSA_SHA2_128S_V1_PUBLIC_KEY_BYTES,
+    signatureBytes: SLH_DSA_SHA2_128S_V1_SIGNATURE_BYTES,
+    note: `diversification option; secret material ${SLH_DSA_SHA2_128S_V1_SECRET_KEY_BYTES} bytes; not the default validator algorithm`,
+  });
+
+  const realKem = createMlKem768Provider();
+  const realKemKey = realKem.generateKey('DATA_ENCRYPTION', SUITE_SUNREY_MLKEM_768_V1);
+  if (!realKemKey.ok) {
+    throw new Error(realKemKey.error.message);
+  }
+  const realEnc = realKem.encapsulate(realKemKey.value.publicKey, SUITE_SUNREY_MLKEM_768_V1);
+  if (!realEnc.ok) {
+    throw new Error(realEnc.error.message);
+  }
+  rows.push({
+    algorithm: 'ML_KEM_768_V1',
+    providerId: realKem.providerId,
+    operation: 'encapsulate',
+    iterations: 20,
+    elapsedMs: timeMs(20, () => {
+      realKem.encapsulate(realKemKey.value.publicKey, SUITE_SUNREY_MLKEM_768_V1);
+    }),
+    ciphertextBytes: Buffer.from(realEnc.value.kem.ciphertextHex, 'hex').length,
+    note: 'standardized FIPS 203; KEM is not a signature primitive',
+  });
+
+  const hybridEd = ed.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1);
+  if (!hybridEd.ok) {
+    throw new Error(hybridEd.error.message);
+  }
+  const hybridPqKey = mlDsa.generateKey('TRANSACTION_SIGNING', SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1);
+  if (!hybridPqKey.ok) {
+    throw new Error(hybridPqKey.error.message);
+  }
+  const hybrid = signHybrid({
+    suiteId: SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
+    protocolVersion: 'sunrey-protocol-0',
+    domain: 'consensus.v1',
+    networkId: 'sunrey-sim',
+    chainId: 'sunrey-sim-0',
+    payload: 'benchmark-vote',
+    verificationPolicy: 'REQUIRE_ALL',
+    classical: {
+      provider: ed,
+      publicKey: hybridEd.value.publicKey,
+      privateKey: hybridEd.value.privateKey,
+    },
+    postQuantum: {
+      provider: mlDsa,
+      publicKey: hybridPqKey.value.publicKey,
+      privateKey: hybridPqKey.value.privateKey,
+    },
+  });
+  if (!hybrid.ok) {
+    throw new Error(hybrid.error.message);
+  }
+  const hybridBytes =
+    Buffer.from(hybrid.value.classicalSignature.signatureHex, 'hex').length +
+    Buffer.from(hybrid.value.postQuantumSignature.signatureHex, 'hex').length;
+  rows.push({
+    algorithm: 'CLASSICAL_AND_PQ',
+    providerId: 'hybrid-ed25519-noble-mldsa-65-v1',
+    operation: 'hybrid-envelope-size',
+    iterations: 1,
+    elapsedMs: 0,
+    signatureBytes: hybridBytes,
+    note: `hybrid envelope signature components = ${hybridBytes} bytes; vote/commit/block grow by this amount; finality latency is not hidden`,
   });
 
   return Object.freeze(rows);

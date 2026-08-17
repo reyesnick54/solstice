@@ -141,6 +141,7 @@ export function evaluateCryptoPolicy(
     case 'RETIRED':
       return decision('REJECT', 'LIFECYCLE_RETIRED', suite.lifecycleState);
     case 'TEST_ONLY':
+    case 'TESTNET_APPROVED':
       if (input.environment === 'production') {
         return decision('REJECT', 'LIFECYCLE_TEST_ONLY', suite.lifecycleState);
       }

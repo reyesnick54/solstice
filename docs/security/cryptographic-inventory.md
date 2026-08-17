@@ -22,11 +22,13 @@ receipts) and is not validator public-key consensus signing.
 
 ## Post-quantum status
 
-NIST family IDs `ML-DSA-65`, `ML-KEM-768`, and `SLH-DSA-SHA2-128S`
-are registered. No production PQC provider is selected. A
-`TEST_ONLY` simulation provider is explicitly labeled as **not**
-ML-DSA / ML-KEM / SLH-DSA. See
-[`pqc-library-selection.md`](./pqc-library-selection.md).
+Standardized algorithm IDs `ML_DSA_65_V1`, `ML_KEM_768_V1`, and
+`SLH_DSA_SHA2_128S_V1` are registered. Development/testnet provider:
+`@noble/post-quantum@0.5.4` (`noble-post-quantum-0.5.4`). Lifecycle:
+`TESTNET_APPROVED`. Production provider is not selected. A retained
+`TEST_ONLY` simulation provider remains labeled as **not** those NIST
+algorithms. See [pqc-provider-selection.md](./pqc-provider-selection.md).
+Not quantum-proof. Not mainnet.
 
 ## Inventory
 

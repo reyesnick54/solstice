@@ -1,34 +1,29 @@
 # PQC library-selection record
 
-Status: **NOT_SELECTED_FOR_PRODUCTION**.
+Status: **SELECTED_FOR_DEVELOPMENT_AND_TESTNET**.
+Production: **NOT_SELECTED_FOR_PRODUCTION**.
 
 This is not a quantum-proof claim and not a certification.
 
 ## Decision
 
-Chunk 33R registers NIST family algorithm IDs and provider ports for
-ML-KEM, ML-DSA, and SLH-DSA. It does **not** vendor a production
-post-quantum library.
+Chunk 60 selects `@noble/post-quantum@0.5.4` for the TypeScript
+CryptoSuite path (development/testnet). See
+[pqc-provider-selection.md](./pqc-provider-selection.md).
 
-Node.js 22 has no native FIPS 203/204/205. Adding `@noble/post-quantum`
-or `liboqs` would expand the trusted computing base before a portable,
-reviewed integration exists for this monorepo.
+Node.js 22 has no native FIPS 203/204/205. liboqs native bindings are
+not portable across this monorepo CI. Future `node:crypto` FIPS
+modules remain preferred if they ship.
 
 ## What shipped
 
 - Provider interfaces (`SignatureProvider`, `KemProvider`)
-- Algorithm IDs for `ML-DSA-65`, `ML-KEM-768`, `SLH-DSA-SHA2-128S`
-- DRAFT suites that fail closed (no production provider)
-- `simulation-pq-placeholder` TEST_ONLY provider using HMAC/SHA-256
-  test doubles, labeled as **not** those NIST algorithms
-
-## Candidates (not selected)
-
-| Candidate | Kind | Portable here | Selected |
-| --- | --- | --- | --- |
-| `@noble/post-quantum` | JavaScript | yes | no |
-| liboqs / liboqs-js | native or WASM | no | no |
-| future `node:crypto` | runtime | yes | no |
+- Explicit algorithm IDs `ML_DSA_65_V1`, `ML_KEM_768_V1`,
+  `SLH_DSA_SHA2_128S_V1` (aliases retained)
+- `TESTNET_APPROVED` suites backed by noble
+- Retained `simulation-pq-placeholder` TEST_ONLY provider
+- Known-answer tests from the selected implementation
+- Lockfile pin and SBOM component
 
 Machine-readable copy lives in
 `packages/security/src/pqc-library-selection.ts`.

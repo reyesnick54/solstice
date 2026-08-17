@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 
+import { MAX_REMOTE_SIGNER_SIGNATURE_BYTES } from '../../../security/src/pq-sizes.ts';
 import {
   CANONICAL_VALIDATOR_SUITE_ID,
   LocalDevelopmentSigner,
@@ -24,6 +25,7 @@ export type RemoteSignPolicy = {
   readonly chainId: string;
   readonly validatorId: string;
   readonly cryptoSuiteId: string;
+  readonly allowedCryptoSuiteIds?: readonly string[];
   readonly validatorSetVersion: bigint;
   readonly allowedClientIds: readonly string[];
 };
@@ -76,7 +78,8 @@ export function validateSignRequest(
   if (request.validatorId !== policy.validatorId) {
     return opsErr('WRONG_VALIDATOR', `signer expected validator ${policy.validatorId}`);
   }
-  if (request.cryptoSuiteId !== policy.cryptoSuiteId) {
+  const allowed = policy.allowedCryptoSuiteIds ?? [policy.cryptoSuiteId];
+  if (!allowed.includes(request.cryptoSuiteId)) {
     return opsErr('UNSUPPORTED_CRYPTO_SUITE', `unknown crypto suite ${request.cryptoSuiteId}`);
   }
   if (request.validatorSetVersion !== policy.validatorSetVersion) {
@@ -156,6 +159,15 @@ export class RemoteSignerServer {
     const signed = this.store.safety.protect(request, this.#inner, 'HUMAN', nowUtc);
     if (!signed.ok) {
       return opsErr('SIGNER_UNAVAILABLE', signed.error.message);
+    }
+    if (
+      signed.value.signatureHex.length % 2 !== 0 ||
+      signed.value.signatureHex.length / 2 > MAX_REMOTE_SIGNER_SIGNATURE_BYTES
+    ) {
+      return opsErr(
+        'SIGNATURE_TOO_LARGE',
+        `remote signer refused to return a truncated signature; bound ${MAX_REMOTE_SIGNER_SIGNATURE_BYTES} bytes`,
+      );
     }
     return opsOk({
       signatureHex: signed.value.signatureHex,

@@ -22,7 +22,10 @@ export {
   APPLICATION_MAC_ALGORITHM_ID,
   CLASSICAL_SIGNATURE_ALGORITHM_ID,
   SECP256K1_NOT_AN_ALIAS,
+  STANDARDIZED_PQ_KEM_IDS,
+  STANDARDIZED_PQ_SIGNATURE_IDS,
   assertAlgorithmId,
+  canonicalPqAlgorithmId,
   isAlgorithmId,
   type AlgorithmId,
 } from './algorithm-ids.ts';
@@ -126,6 +129,7 @@ export {
   SUITE_SUNREY_ED25519_DEPRECATED,
   SUITE_SUNREY_ED25519_V1,
   SUITE_SUNREY_ED25519_VERIFY_ONLY,
+  SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
   SUITE_SUNREY_HYBRID_SIM_V1,
   SUITE_SUNREY_MLDSA_65_V1,
   SUITE_SUNREY_MLKEM_768_V1,
@@ -237,9 +241,71 @@ export {
   createSimulationPqSignatureProvider,
 } from './pq-simulation-provider.ts';
 
-export { SecurityProviderCatalog, createSecurityProviderCatalog } from './provider-catalog.ts';
+export {
+  SecurityProviderCatalog,
+  createFailClosedPqCatalog,
+  createSecurityProviderCatalog,
+} from './provider-catalog.ts';
 
 export { PQC_LIBRARY_SELECTION } from './pqc-library-selection.ts';
+
+export {
+  ML_DSA_65_V1,
+  ML_KEM_768_V1,
+  NOBLE_PQ_ENVIRONMENT_LABEL,
+  NOBLE_PQ_PROVIDER_ID,
+  SLH_DSA_SHA2_128S_V1,
+  STANDARDIZED_PQ_ZEROIZATION_NOTE,
+  StandardizedMlKemProvider,
+  StandardizedPqSignatureProvider,
+  createMlDsa65Provider,
+  createMlKem768Provider,
+  createSlhDsaSha2128sProvider,
+} from './pq-provider.ts';
+
+export {
+  HYBRID_ENCODING_VERSION,
+  decodeHybridComponent,
+  encodeHybridComponent,
+  isHybridEncoded,
+} from './pq-encoding.ts';
+
+export {
+  MAX_HYBRID_ENVELOPE_BYTES,
+  MAX_P2P_PQ_MESSAGE_BYTES,
+  MAX_PQ_PUBLIC_KEY_BYTES,
+  MAX_PQ_SIGNATURE_BYTES,
+  MAX_REMOTE_SIGNER_SIGNATURE_BYTES,
+  ML_DSA_65_V1_PUBLIC_KEY_BYTES,
+  ML_DSA_65_V1_SECRET_KEY_BYTES,
+  ML_DSA_65_V1_SEED_BYTES,
+  ML_DSA_65_V1_SIGNATURE_BYTES,
+  ML_KEM_768_V1_CIPHERTEXT_BYTES,
+  ML_KEM_768_V1_PUBLIC_KEY_BYTES,
+  ML_KEM_768_V1_SECRET_KEY_BYTES,
+  ML_KEM_768_V1_SEED_BYTES,
+  ML_KEM_768_V1_SHARED_SECRET_BYTES,
+  SLH_DSA_SHA2_128S_V1_PUBLIC_KEY_BYTES,
+  SLH_DSA_SHA2_128S_V1_SECRET_KEY_BYTES,
+  SLH_DSA_SHA2_128S_V1_SEED_BYTES,
+  SLH_DSA_SHA2_128S_V1_SIGNATURE_BYTES,
+} from './pq-sizes.ts';
+
+export {
+  TESTNET_HYBRID_MIGRATION_SCHEDULE,
+  historicalVerifyAllowed,
+  migrationStateAtHeight,
+  policyAcceptedSuites,
+  roleAcceptsSuiteForSign,
+  type HeightActivatedCryptoSchedule,
+} from './crypto-height-policy.ts';
+
+export {
+  LOCAL_TEST_PQ_ENVIRONMENT_LABEL,
+  LOCAL_TEST_PQ_SIGNER_ID,
+  LocalTestPqSigningProvider,
+  createLocalTestPqSigningProvider,
+} from './local-test-pq-signer.ts';
 
 export { CRYPTOGRAPHIC_INVENTORY } from './crypto-inventory.ts';
 
