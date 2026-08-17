@@ -31,7 +31,7 @@
     "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/assurance/cli.ts",
     "sunrey-mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/cli-main.ts",
     "demo:mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/demo.ts",
-    "demo:rc": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/demo.ts",
+    "demo:rc": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/demo.ts",
     "sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/audit/cli.ts",
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
