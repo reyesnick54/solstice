@@ -77,7 +77,10 @@ export function custodyReadiness(): CustodyReadinessSlot {
 
 export function oracleReadiness(): OracleReadinessSlot {
   const items = Object.freeze([
-    item('OR-AGREEMENT', 'Real oracle provider agreements', 'NOT_PROVIDED', false, 'Development oracle fixtures are not production feeds.'),
+    item('OR-TECHNICAL', 'Technical oracle implementation', 'ENGINEERING_VERIFIED', true, 'Chunk 68 collector, adapters, and provenance are implemented. Not a production feed.'),
+    item('OR-CONFIGURED', 'Provider configured', 'ENGINEERING_VERIFIED', true, 'Simulation providers can be onboarded. Configuration is not a production agreement.'),
+    item('OR-AGREEMENT', 'Provider agreement evidence', 'NOT_PROVIDED', false, 'No production data-license or commercial agreement is recorded as confirmed.'),
+    item('OR-ELIGIBLE', 'Production eligible', 'NOT_PROVIDED', false, 'Technical implementation and configuration do not make a feed production eligible.'),
     item('OR-DIVERSITY', 'Source diversity', 'NOT_PROVIDED', false, 'No production source-diversity evidence is recorded.'),
     item('OR-QUALITY', 'Data quality controls', 'EXTERNAL_VERIFICATION_REQUIRED', true, 'Simulation quality checks are not a production SLA.'),
     item('OR-MONITOR', 'Operational monitoring', 'EXTERNAL_VERIFICATION_REQUIRED', true, 'Engineering monitors are not a production operations contract.'),
@@ -86,6 +89,10 @@ export function oracleReadiness(): OracleReadinessSlot {
     item('OR-SECURITY', 'Oracle security review', 'NOT_PROVIDED', false, 'No independent oracle review is recorded.'),
   ]);
   return Object.freeze({
+    technicalImplementation: 'ENGINEERING_VERIFIED',
+    providerConfigured: 'ENGINEERING_VERIFIED',
+    providerAgreementEvidence: 'NOT_PROVIDED',
+    productionEligible: 'NOT_PROVIDED',
     realProviderAgreements: 'NOT_PROVIDED',
     sourceDiversity: 'NOT_PROVIDED',
     dataQuality: 'EXTERNAL_VERIFICATION_REQUIRED',

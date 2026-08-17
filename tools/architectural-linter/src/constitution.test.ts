@@ -1655,6 +1655,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/activation-control')), false);
   });
 
+  it('CHUNK-68 implements production-candidate oracle onboarding on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-68',
+    );
+    assert.ok(declared, 'CHUNK-68 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-68-production-oracles.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/oracle/chunk-68-production-oracles.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/oracle/production/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/production-oracles')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-onboarding')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-collector')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-oracle')), false);
+  });
+
   it('CHUNK-63 implements Testnet release-candidate control on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-testnet-rc').status, 'IMPLEMENTED');

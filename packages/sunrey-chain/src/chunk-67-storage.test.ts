@@ -29,7 +29,7 @@ describe('Chunk 67 storage and database ops', () => {
     assert.equal(migrated.ok, true);
     if (migrated.ok) {
       assert.equal(migrated.value.engineeringOnly, true);
-      assert.equal(migrated.value.notTestnetToProduction, true);
+      assert.equal(migrated.value.notPromotionToProductionGenesis, true);
       assert.equal(migrated.value.stateRootEqual, true);
     }
   });

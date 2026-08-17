@@ -21,7 +21,7 @@ export function sourceReproducibility(root: string, sourceCommit: string): Sourc
     toolchains: PINNED_TOOLCHAINS,
     formalToolVersions: {
       propertyHarness: FORMAL_HARNESS_VERSION,
-      machineCheckedProofs: 'NOT_APPLICABLE',
+      machineCheckedProofs: 'NOT_APPLICABLE' as const,
     },
     pqcProviderVersion: PQC_PROVIDER_VERSION,
     testConfiguration: 'FUZZ_SMOKE + sunrey-range campaign --smoke + sunrey-bench sanity + local fixture keys',
