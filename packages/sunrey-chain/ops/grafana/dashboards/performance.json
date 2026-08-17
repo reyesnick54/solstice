@@ -1,0 +1,18 @@
+{
+  "id": "PERFORMANCE",
+  "title": "Performance",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "finality_latency",
+    "sunrey_transactions",
+    "mempool_count",
+    "block_execution_duration",
+    "state_commit_duration",
+    "rpc_latency",
+    "explorer_lag",
+    "matching_latency",
+    "aggregation_latency",
+    "relayer_latency"
+  ]
+}

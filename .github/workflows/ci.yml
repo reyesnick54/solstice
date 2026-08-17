@@ -53,6 +53,7 @@ jobs:
         run: |
           npm run test:sunrey-node
           npm test
+          npm run sunrey-bench -- sanity
 
       - name: End-to-end demo
         run: npm run demo
@@ -140,6 +141,8 @@ jobs:
         run: npm run demo:listing-governance
       - name: SunRey explorer demo
         run: npm run demo:explorer
+      - name: SunRey performance bench sanity demo
+        run: npm run demo:sunrey-bench
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
 

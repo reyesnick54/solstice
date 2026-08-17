@@ -65,6 +65,9 @@ const COMPETING_PATHS = [
   'packages/validator-ops',
   'packages/sentry',
   'packages/remote-signer',
+  'packages/sunrey-bench',
+  'packages/performance',
+  'packages/load-test',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

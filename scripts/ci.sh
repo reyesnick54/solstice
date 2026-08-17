@@ -25,6 +25,7 @@ echo "==> rust (sunrey local node)"
 echo "==> tests"
 npm run test:sunrey-node
 npm test
+npm run sunrey-bench -- sanity
 
 echo "==> end-to-end demo"
 npm run demo
@@ -74,6 +75,7 @@ npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
 npm run demo:explorer
+npm run demo:sunrey-bench
 
 echo "==> typecheck"
 npm run typecheck

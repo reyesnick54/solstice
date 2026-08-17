@@ -1,0 +1,38 @@
+{
+  "context": {
+    "schemaVersion": 1,
+    "resultClass": "ENGINEERING_MEASUREMENT",
+    "sourceCommit": "pending-first-capture",
+    "hardware": {
+      "arch": "unknown",
+      "cpus": 0,
+      "totalMemoryBytes": 0,
+      "model": "pending-first-capture"
+    },
+    "os": {
+      "platform": "linux",
+      "release": "pending",
+      "container": true,
+      "nodeVersion": "pending"
+    },
+    "validatorCount": 7,
+    "latencyProfile": "low",
+    "datasetSize": 0,
+    "protocolVersion": "sunrey.protocol.v1",
+    "testDurationMs": 0,
+    "profile": "micro",
+    "startedAtUtc": "2026-08-17T00:00:00.000Z"
+  },
+  "cases": [],
+  "invariants": [],
+  "resources": [],
+  "connections": {
+    "p2p": 0,
+    "rpc": 0,
+    "databasePools": 0,
+    "eventSubscriptions": 0
+  },
+  "warnings": [
+    "Placeholder compact baseline. Replaced after the first captured sunrey-bench sanity run on this branch."
+  ]
+}
