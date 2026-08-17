@@ -175,3 +175,11 @@ model by extending this package. Historical stop:
 [`chunk-33-crypto-agility.md`](./chunk-33-crypto-agility.md).
 Inventory: [`docs/security/cryptographic-inventory.md`](../security/cryptographic-inventory.md).
 This is not a quantum-proof or production-certified claim.
+
+Chunk 64 extends the HSM/KMS port with ceremony architecture,
+attestation, and rehearsal tooling at
+`packages/security/src/ceremony`. See
+[`chunk-64-root-of-trust.md`](./chunk-64-root-of-trust.md).
+CI uses simulation providers only. Do not create
+`packages/ceremony`, `packages/hsm-v2`, `packages/root-of-trust`,
+or `packages/key-ceremony`.

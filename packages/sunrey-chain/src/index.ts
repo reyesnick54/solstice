@@ -156,6 +156,7 @@ export type { AssetAuthority, NativeAssetAuthorityBoundary } from './native-asse
 export * as nativeCustody from './native-custody/index.ts';
 export * as supplyChain from './supply-chain/index.ts';
 export * as mainnet from './mainnet/index.ts';
+export * as audit from './audit/index.ts';
 export {
   DEVELOPMENT_FAUCET_ADDRESS,
   SimulationNativeCustodyChain,

@@ -68,6 +68,10 @@ const COMPETING_PATHS = [
   'packages/sunrey-bench',
   'packages/performance',
   'packages/load-test',
+  'packages/sunrey-audit',
+  'packages/audit',
+  'packages/security-review',
+  'packages/audit-evidence',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

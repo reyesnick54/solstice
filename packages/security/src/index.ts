@@ -361,12 +361,17 @@ export {
 export { UnavailableKeyProvider } from './unavailable.ts';
 
 export {
+  HSM_ALGORITHM_CAPABILITIES,
   HSM_IMPLEMENTATION_STATES,
   HSM_KEY_IMPORT_POLICIES,
   HSM_KMS_KINDS,
   PQ_CAPABILITY_FLAGS,
+  PQ_HARDWARE_READINESS,
   negotiateSuiteCapability,
+  type HsmAlgorithmCapability,
   type HsmAttestationMetadata,
+  type HsmAuditEventReference,
+  type HsmBackupReference,
   type HsmGenerateInput,
   type HsmHealth,
   type HsmImportInput,
@@ -379,7 +384,10 @@ export {
   type HsmProviderVersion,
   type HsmSignInput,
   type PqCapabilityFlag,
+  type PqHardwareReadiness,
 } from './hsm-kms.ts';
+
+export * from './ceremony/index.ts';
 
 export {
   DEVELOPMENT_HSM_ENVIRONMENT_LABEL,

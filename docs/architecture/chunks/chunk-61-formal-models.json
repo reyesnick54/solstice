@@ -1,0 +1,25 @@
+{
+  "chunk": "CHUNK-61",
+  "title": "Implement formal SunRey protocol models, model checking and implementation trace conformance",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-consensus",
+    "sunrey-validators",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "moonrey-issuance-engine",
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "sunrey-interop",
+    "sunrey-assurance",
+    "sunrey-supply-chain",
+    "sunrey-formal-assurance"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/formal and packages/sunrey-chain/src/formal. TLA+/TLC models, bounded Rust harnesses, and trace conformance. Model checked within stated bounds. Not whole-system formal verification. evaluateChunkRequirements returns mustStop: false. Do not create packages/formal, packages/tla, packages/model-checker, packages/sunrey-formal, or tools/formal."
+}

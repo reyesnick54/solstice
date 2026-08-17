@@ -1,0 +1,38 @@
+# SunRey independent security-review scope
+# Engineering package only. Not an audit result.
+schema_version: 1
+claims_external_audit_completed: false
+environment: simulation
+domains:
+  - id: CONSENSUS
+    owner_path: packages/sunrey-chain/rust/crates/consensus
+  - id: PROTOCOL_ENCODING
+    owner_path: packages/sunrey-chain/src/protocol
+  - id: CRYPTOGRAPHY
+    owner_path: packages/security
+  - id: PQC
+    owner_path: packages/security
+  - id: WALLETS
+    owner_path: packages/sunrey-chain/src/wallet
+  - id: VALIDATORS
+    owner_path: packages/sunrey-chain/src/ops
+  - id: NATIVE_ASSETS
+    owner_path: packages/sunrey-chain/src/native-assets
+  - id: MOONREY_ISSUANCE
+    owner_path: packages/sunrey-chain/src/productive
+  - id: EXCHANGE
+    owner_path: packages/sunrey-exchange
+  - id: CUSTODY
+    owner_path: packages/custody
+  - id: ORACLES
+    owner_path: packages/sunrey-chain/src/oracle
+  - id: MACHINE_ECONOMY
+    owner_path: packages/sunrey-chain/src/machine-economy
+  - id: INTEROPERABILITY
+    owner_path: packages/sunrey-chain/src/interop
+  - id: PRIVACY
+    owner_path: packages/personal-data-vault
+  - id: SUPPLY_CHAIN
+    owner_path: packages/sunrey-chain/src/supply-chain
+  - id: OPERATIONS
+    owner_path: packages/sunrey-chain/src/ops

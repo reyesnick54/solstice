@@ -30,7 +30,6 @@ export function runOpsDemo(): Record<string, unknown> {
   };
 }
 
-
 export function runValidatorOpsDemo(): void {
   const dir = mkdtempSync(join(tmpdir(), 'sunrey-ops-demo-'));
   try {

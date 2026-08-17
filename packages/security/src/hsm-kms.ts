@@ -26,6 +26,26 @@ export const PQ_CAPABILITY_FLAGS = [
 ] as const;
 export type PqCapabilityFlag = (typeof PQ_CAPABILITY_FLAGS)[number];
 
+export const HSM_ALGORITHM_CAPABILITIES = [
+  'ED25519',
+  'ML_DSA',
+  'ML_KEM',
+  'SLH_DSA',
+  'HYBRID_SUPPORT',
+  'NON_EXPORTABLE',
+  'ATTESTATION',
+  'MULTI_AUTH_ADMIN',
+  'BACKUP_SUPPORTED',
+] as const;
+export type HsmAlgorithmCapability = (typeof HSM_ALGORITHM_CAPABILITIES)[number];
+
+export const PQ_HARDWARE_READINESS = [
+  'SOFTWARE_PROVIDER_AVAILABLE',
+  'HARDWARE_PROVIDER_CONFIRMED',
+  'HARDWARE_PROVIDER_UNCONFIRMED',
+] as const;
+export type PqHardwareReadiness = (typeof PQ_HARDWARE_READINESS)[number];
+
 export const HSM_KEY_IMPORT_POLICIES = ['FORBIDDEN', 'DEVELOPMENT_ALLOWED'] as const;
 export type HsmKeyImportPolicy = (typeof HSM_KEY_IMPORT_POLICIES)[number];
 
@@ -51,6 +71,34 @@ export type HsmKmsCapabilities = {
   readonly externalHsmPqSupported: false;
   readonly keyImportPolicy: HsmKeyImportPolicy;
   readonly privateMaterialExportSupported: false;
+  readonly algorithmFlags: readonly HsmAlgorithmCapability[];
+  readonly hardwarePqReadiness: PqHardwareReadiness;
+  readonly softwarePqReadiness: PqHardwareReadiness;
+  readonly attestationSupported: boolean;
+  readonly multiAuthAdminSupported: boolean;
+  readonly backupSupported: boolean;
+  readonly nonExportable: true;
+  readonly capabilityEvidenceRefs: readonly string[];
+  readonly simulationClass: 'SIMULATION' | 'UNDECLARED';
+};
+
+export type HsmBackupReference = {
+  readonly keyId: string;
+  readonly keyVersion: number;
+  readonly providerId: string;
+  readonly backupHandleRef: string;
+  readonly encryptionPurpose: 'BACKUP_ENCRYPTION';
+  readonly containsPlaintextKey: false;
+  readonly simulation: boolean;
+};
+
+export type HsmAuditEventReference = {
+  readonly eventId: string;
+  readonly eventType: string;
+  readonly providerId: string;
+  readonly keyId: string | null;
+  readonly evidenceRef: string;
+  readonly simulation: boolean;
 };
 
 export type HsmAttestationMetadata = {
@@ -120,6 +168,8 @@ export type HsmKmsProvider = {
   getAttestationMetadata(handle: HsmKeyHandle): SecurityResult<HsmAttestationMetadata>;
   getProviderKeyVersion(handle: HsmKeyHandle): SecurityResult<HsmProviderVersion>;
   healthCheck(): SecurityResult<HsmHealth>;
+  getBackupReference(handle: HsmKeyHandle): SecurityResult<HsmBackupReference>;
+  recordAuditEvent(eventType: string, handle?: HsmKeyHandle): SecurityResult<HsmAuditEventReference>;
 };
 
 export function negotiateSuiteCapability(

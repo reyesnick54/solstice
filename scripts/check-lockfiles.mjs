@@ -15,7 +15,7 @@ if (missing.length > 0) {
 }
 
 const pins = JSON.parse(readFileSync(join(root, 'packages/sunrey-chain/supply-chain/action-pins.json'), 'utf8'));
-const workflows = ['.github/workflows/ci.yml', '.github/workflows/sunrey-release.yml'];
+const workflows = ['.github/workflows/ci.yml', '.github/workflows/sunrey-release.yml', '.github/workflows/sunrey-audit.yml'];
 for (const action of pins.actions) {
   if (!action.commit || action.commit.includes('stable')) {
     continue;

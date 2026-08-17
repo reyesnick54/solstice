@@ -159,6 +159,18 @@
       "migrationPriority": "medium",
       "targetArchitecture": "CryptoSuite; Chunk 43 oracle runtime",
       "currentStatus": "IMPLEMENTED (purpose + suite + oracle runtime)"
+    },
+    {
+      "id": "root-of-trust-ceremony",
+      "owner": "packages/security",
+      "purpose": "GENESIS_SIGNING / RELEASE_SIGNING / RECOVERY_SIGNING / GOVERNANCE_SIGNING",
+      "algorithm": "Ed25519 via ceremony HSM simulator; software PQ optional",
+      "provider": "sunrey-ceremony-hsm-simulator",
+      "keyLifecycle": "ACTIVE / ROTATING / RETIRED_FOR_NEW_USE / COMPROMISED / DESTROYED_PROVIDER_CONFIRMED",
+      "quantumExposure": "ceremony public keys",
+      "migrationPriority": "hardware PQC unconfirmed; software provider available",
+      "targetArchitecture": "authority-separated non-exportable ceremony",
+      "currentStatus": "IMPLEMENTED (simulation/rehearsal)"
     }
   ]
 }

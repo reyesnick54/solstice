@@ -208,4 +208,18 @@ export const CRYPTOGRAPHIC_INVENTORY = Object.freeze([
     protocolDependencies: 'KemProvider port',
     currentStatus: 'IMPLEMENTED (provider; not a consensus primitive)',
   },
+  {
+    id: 'root-of-trust-ceremony',
+    owner: 'packages/security',
+    purpose: 'GENESIS_SIGNING / RELEASE_SIGNING / RECOVERY_SIGNING / GOVERNANCE_SIGNING',
+    algorithm: 'Ed25519 via ceremony HSM simulator; software PQ optional',
+    provider: 'sunrey-ceremony-hsm-simulator',
+    keyLifecycle: 'ACTIVE / ROTATING / RETIRED_FOR_NEW_USE / COMPROMISED / DESTROYED_PROVIDER_CONFIRMED',
+    securityClassification: 'SIMULATION rehearsal; not a completed production ceremony',
+    quantumExposure: 'ceremony public keys',
+    migrationPriority: 'hardware PQC unconfirmed; software provider available',
+    protocolDependencies: 'HsmKmsProvider, KeyPurpose, ReleaseAuthority binding',
+    targetArchitecture: 'authority-separated non-exportable ceremony',
+    currentStatus: 'IMPLEMENTED (simulation/rehearsal)',
+  },
 ] as const);

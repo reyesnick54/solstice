@@ -1,0 +1,12 @@
+{
+  "id": "FORMAL_ASSURANCE",
+  "title": "Formal Assurance",
+  "schemaVersion": 1,
+  "label": "MODEL_CHECKED_WITHIN_STATED_BOUNDS",
+  "panels": [
+    "formal_models_verified",
+    "formal_counterexamples",
+    "formal_trace_alignment",
+    "formal_rust_harnesses"
+  ]
+}

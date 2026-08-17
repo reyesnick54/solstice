@@ -74,6 +74,12 @@ jobs:
           node scripts/sunrey-release.mjs sign
           node scripts/sunrey-release.mjs verify
 
+      - name: Independent security-review bundle
+        run: |
+          node scripts/sunrey-audit.mjs generate
+          node scripts/sunrey-audit.mjs verify dist/sunrey-audit
+          node scripts/sunrey-audit.mjs reproduce
+
       - name: Generated-code drift
         run: node scripts/check-generated-drift.mjs
 
@@ -84,10 +90,14 @@ jobs:
         run: |
           npm run test:sunrey-node
           npm test
+          npm run sunrey-ceremony -- rehearse
           npm run sunrey-bench -- sanity
 
       - name: Fuzz smoke
         run: npm run test:fuzz-smoke
+
+      - name: Formal smoke
+        run: npm run test:formal-smoke
 
       - name: End-to-end demo
         run: npm run demo
@@ -185,8 +195,16 @@ jobs:
         run: npm run sunrey-range -- campaign --smoke
       - name: SunRey adversarial range demo
         run: npm run demo:sunrey-range
+      - name: SunRey Testnet RC smoke qualification
+        run: node scripts/sunrey-release.mjs rc qualify --profile smoke
+      - name: SunRey Testnet RC verify
+        run: node scripts/sunrey-release.mjs rc verify
+      - name: SunRey Testnet RC demo
+        run: npm run demo:sunrey-rc
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
+      - name: SunRey independent security-review demo
+        run: npm run demo:sunrey-audit
 
       - name: Typecheck
         run: npm run typecheck
@@ -196,6 +214,7 @@ jobs:
           python3 scripts/secret-scan.py
           python3 scripts/secret-scan.py --self-test
           if [ -d dist/testnet-release ]; then python3 scripts/secret-scan.py --root dist/testnet-release; fi
+          if [ -d dist/sunrey-audit ]; then python3 scripts/secret-scan.py --root dist/sunrey-audit; fi
 
       - name: Container pin check
         run: node scripts/check-container-pins.mjs

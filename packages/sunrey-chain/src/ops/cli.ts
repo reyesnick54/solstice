@@ -1,5 +1,6 @@
 import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { runCryptoCommand } from './crypto-cli.ts';
 import { incidentProcedure } from './incidents.ts';
 import { OperatorKeystore } from './keys.ts';
 import { assertNoPrivateKeyMaterial } from './logging.ts';
@@ -13,13 +14,16 @@ import { runCryptoCommand } from './crypto-cli.ts';
 import type { DrillScenario } from './types.ts';
 import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
 import {
+import type { DrillScenario } from './types.ts';
+import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
+import {
+  developmentEpoch,
   eraseEvidence,
   exitWorkflow,
   generateJoinRecord,
   jailStatus,
   joinWorkflow,
   rotateWorkflow,
-  developmentEpoch,
 } from './workflows.ts';
 
 const RESILIENCE_COMMANDS = [
@@ -29,6 +33,16 @@ const RESILIENCE_COMMANDS = [
   'dr',
   'topology',
   'validator-fencing',
+  'crypto',
+] as const;
+
+const VALIDATOR_COMMANDS = [
+  'validator',
+  'signer',
+  'snapshot',
+  'state-sync',
+  'upgrade',
+  'incident',
   'crypto',
 ] as const;
 
@@ -147,6 +161,10 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (group === 'crypto') {
+    const result = runCryptoCommand(args.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
@@ -343,5 +361,13 @@ export async function main(): Promise<void> {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+const entry = process.argv[1] ?? '';
+if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
   await main();
 }

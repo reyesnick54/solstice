@@ -8,6 +8,24 @@ import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
 import {
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
+import {
+  LocalFilesystemBackupStorage,
+  MetricRegistry,
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  RemoteSignerServer,
+  ResiliencePlatform,
+  S3CompatibleTestProvider,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
+  SignerFencingController,
+  SignerSafetyStore,
+  SimulatedResilienceNetwork,
+  StructuredLogSink,
+  TraceCollector,
   allChaosFaults,
   analyzeVotingPower,
   assertEngineeringLabel,
@@ -15,24 +33,50 @@ import {
   assertNoIndependentFinality,
   assertRpcCannotSign,
   assertSafeTelemetryRecord,
+  authenticateSignerClient,
+  authorizeDevelopmentUpgrade,
+  availableSentryCount,
   backupRecoveryStrategies,
   createSignerSafetyBackup,
   createVerifiedSnapshot,
   dashboardDefinitions,
   decryptBackup,
   developmentMultiDomainProfile,
+  developmentRemoteSigner,
+  developmentSentryConfig,
+  developmentSentryTopology,
+  developmentUpgradeFixture,
+  developmentValidatorConfig,
   dumpApplicationDatabase,
   encryptBackup,
   LocalFilesystemBackupStorage,
   MetricRegistry,
+  OperatorKeystore,
+  OperatorPeerPolicy,
+  operatorReadiness,
+  opsUsage,
+  planGenesisSync,
+  planSnapshotSync,
+  prune,
+  publicRpcSignerIdentity,
+  recommendedLimits,
+  refuseUnverifiedProvider,
+  replaceWorkflow,
+  reportIncompatibleBinary,
   requiredMetricCatalog,
-  ResiliencePlatform,
   restoreSignerSafetyBackup,
   runChaosScenario,
   runDrill,
   runSunreyOps,
   S3CompatibleTestProvider,
   sealIncidentEvidence,
+  safeRestart,
+  sealIncidentEvidence,
+  sentryCanSign,
+  sentrySignerIdentity,
+  SEVEN_VALIDATOR_IDS,
+  SevenValidatorNetwork,
+  SignerFence,
   SignerFencingController,
   SimulatedResilienceNetwork,
   StructuredLogSink,
@@ -95,10 +139,50 @@ import {
 } from './ops/index.ts';
 import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
 import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
+  verifyBackupSnapshot,
+  verifyChainSnapshot,
+  verifyDatabaseDump,
+  warnDiskPressure,
+} from './ops/index.ts';
 import { developmentSentryConfig } from './ops/sentry.ts';
 import { MaintenanceMode } from './ops/maintenance.ts';
+
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const NOW = '2026-08-17T00:00:00.000Z';
+
+function request(
+  validatorId: string,
+  overrides: Partial<ConsensusSignRequest> = {},
+): ConsensusSignRequest {
+  return {
+    validatorId,
+    networkId: 'net_sunrey_local_dev',
+    chainId: 'chn_sunrey_local_dev',
+    protocolVersion: '1',
+    messageType: 'PREVOTE',
+    height: 3n,
+    round: 1n,
+    blockId: 'block-3',
+    validatorSetVersion: 1n,
+    cryptoSuiteId: CANONICAL_VALIDATOR_SUITE_ID,
+    ...overrides,
+  };
+}
+
+function failedCode(result: { readonly ok: boolean; readonly error?: { readonly code: string } }): string {
+  assert.equal(result.ok, false);
+  assert.ok(result.error);
+  return result.error.code;
+}
+
+function withDir<T>(fn: (dir: string) => T): T {
+  const dir = mkdtempSync(join(tmpdir(), 'sunrey-ops-'));
+  try {
+    return fn(dir);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
 
 describe('Chunk 55 SunRey resilience and disaster recovery', () => {
   it('distributes seven validators across three domains without independent finality', () => {
@@ -182,7 +266,7 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
       platform.validateObservabilityConfigs(),
       ['otel-collector.yaml', 'prometheus/alerts.json', 'grafana/dashboards'],
     );
-    assert.equal(dashboardDefinitions().length, 12);
+    assert.equal(dashboardDefinitions().length, 13);
     assertEngineeringLabel();
     assert.equal(backupRecoveryStrategies().length, 8);
     const slos = readFileSync(join(ROOT, 'packages/sunrey-chain/ops/slos.json'), 'utf8');

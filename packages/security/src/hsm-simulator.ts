@@ -29,6 +29,8 @@ import type { PrivateKeyMaterial } from './redaction.ts';
 import {
   negotiateSuiteCapability,
   type HsmAttestationMetadata,
+  type HsmAuditEventReference,
+  type HsmBackupReference,
   type HsmGenerateInput,
   type HsmHealth,
   type HsmImportInput,
@@ -86,6 +88,21 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
       externalHsmPqSupported: false,
       keyImportPolicy: 'DEVELOPMENT_ALLOWED',
       privateMaterialExportSupported: false,
+      algorithmFlags: Object.freeze([
+        'ED25519',
+        'HYBRID_SUPPORT',
+        'NON_EXPORTABLE',
+        'ATTESTATION',
+        'BACKUP_SUPPORTED',
+      ] as const),
+      hardwarePqReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED',
+      softwarePqReadiness: 'SOFTWARE_PROVIDER_AVAILABLE',
+      attestationSupported: true,
+      multiAuthAdminSupported: false,
+      backupSupported: true,
+      nonExportable: true,
+      capabilityEvidenceRefs: Object.freeze(['SIMULATION']),
+      simulationClass: 'SIMULATION',
     });
   }
 
@@ -251,6 +268,37 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
         healthy: true,
         providerId: this.providerId,
         environmentLabel: this.environmentLabel,
+        simulation: true,
+      }),
+    );
+  }
+
+  getBackupReference(handle: HsmKeyHandle): SecurityResult<HsmBackupReference> {
+    const record = this.lookup(handle);
+    if (!record.ok) {
+      return record;
+    }
+    return securityOk(
+      Object.freeze({
+        keyId: record.value.handle.keyId,
+        keyVersion: record.value.handle.keyVersion,
+        providerId: this.providerId,
+        backupHandleRef: `sim-backup:${record.value.handle.keyId}:v${record.value.handle.keyVersion}`,
+        encryptionPurpose: 'BACKUP_ENCRYPTION',
+        containsPlaintextKey: false,
+        simulation: true,
+      }),
+    );
+  }
+
+  recordAuditEvent(eventType: string, handle?: HsmKeyHandle): SecurityResult<HsmAuditEventReference> {
+    return securityOk(
+      Object.freeze({
+        eventId: `hsm-audit_${secureRandomHex(8)}`,
+        eventType,
+        providerId: this.providerId,
+        keyId: handle?.keyId ?? null,
+        evidenceRef: `sim-hsm-audit:${eventType}`,
         simulation: true,
       }),
     );

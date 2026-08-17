@@ -1,0 +1,20 @@
+{
+  "environment": "simulation",
+  "networkId": "net_sunrey_testnet_1",
+  "chainId": "chn_sunrey_testnet_1",
+  "protocolVersion": "1",
+  "fixtureEnvironment": "local",
+  "keys": {
+    "validatorConsensusPublicKey": "TEST_ONLY_PUBLIC_KEY_PLACEHOLDER",
+    "walletPublicKey": "TEST_ONLY_PUBLIC_KEY_PLACEHOLDER",
+    "releasePublicKey": "TEST_ONLY_PUBLIC_KEY_PLACEHOLDER"
+  },
+  "notes": [
+    "No private keys",
+    "No API secrets",
+    "No HSM credentials",
+    "No real KYC",
+    "No PDV payloads",
+    "No external vendor credentials"
+  ]
+}
