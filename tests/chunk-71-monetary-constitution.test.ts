@@ -18,7 +18,7 @@ describe('Chunk 71 exit criteria', () => {
     assert.equal(existsSync('docs/economics/native-supply-accounting.md'), true);
     assert.equal(existsSync('docs/economics/genesis-allocation-policy.md'), true);
     assert.equal(existsSync('docs/economics/monetary-governance.md'), true);
-    assert.equal(existsSync('packages/sunrey-economics'), false);
+    assert.equal(existsSync('packages/sunrey-economics/src/index.ts'), true);
     assert.equal(existsSync('packages/tokenomics'), false);
   });
 

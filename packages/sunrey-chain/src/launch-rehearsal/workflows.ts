@@ -100,19 +100,6 @@ export function rehearseValidatorEconomics(): ValidatorEconomicsRehearsalResult 
 }
 
 export function rehearseNativeAssets(): NativeAssetRehearsalResult {
-  const sunrey = { supply: 0n, alice: 0n, bob: 0n, locked: 0n, fees: 0n };
-  sunrey.supply += 1_000n;
-  sunrey.alice += 1_000n;
-  sunrey.alice -= 250n;
-  sunrey.bob += 240n;
-  sunrey.fees += 10n;
-  sunrey.bob -= 40n;
-  sunrey.locked += 40n;
-  const moonrey = { supply: 0n, issued: 0n };
-  moonrey.issued += 75n;
-  moonrey.supply += 75n;
-  const sunreyReconciled = sunrey.alice + sunrey.bob + sunrey.locked + sunrey.fees === sunrey.supply;
-  const moonreyReconciled = moonrey.issued === moonrey.supply;
   const engine = new FeeEngine();
   engine.faucet('alice', 1_000_000n);
   engine.activateFeePolicyV2();
@@ -172,12 +159,6 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
   const alice = engine.accounts.position('alice', 'SUNREY_COIN').available;
   const bob = engine.accounts.position('bob', 'SUNREY_COIN').available;
   const nativeReconciled = alice + bob + sinks === 1_000_000n && sinks === charged;
-  return Object.freeze({
-    sunreyTransfer: sunrey.bob === 200n,
-    moonreyIssuance: moonrey.issued === 75n,
-    fees: sunrey.fees === 10n,
-    locks: sunrey.locked === 40n,
-    supplyReconciled: sunreyReconciled && moonreyReconciled && nativeReconciled,
   const monetary = rehearseMonetaryConstitution();
   return Object.freeze({
     sunreyTransfer: monetary.sunreyTransfer,
