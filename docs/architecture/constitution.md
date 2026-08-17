@@ -725,6 +725,11 @@ settlement, and market data only. Last trade is labeled
 Do not invent a ticker. Do not create `packages/exchange-v2`,
 `packages/orderbook`, `packages/matching-engine-v2`,
 `packages/crypto-exchange`, or `packages/reyn-exchange`.
+Chunk 49 extends that same owner with four market families —
+digital assets, human-information rights, intelligence/compute,
+and productive capacity — plus two-stage eligibility, auctions,
+native DVP, and delivery-versus-right. See
+[`chunk-49-universal-economic-exchange.md`](./chunk-49-universal-economic-exchange.md).
 
 Chunk 30R implements the exchange control plane at
 `packages/custody` and `packages/market-surveillance`, extending

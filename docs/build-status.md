@@ -417,6 +417,14 @@ This document describes only what is implemented and tested in this tree.
   Capability `sunrey-machine-economy` is `IMPLEMENTED`. Machines
   are controller-bound and capability-limited. They cannot
   validate, govern, or issue MoonRey.
+- SunRey Universal Economic Exchange (Chunk 49) extends
+  `packages/sunrey-exchange` with four market families: native
+  digital assets, permissioned human-information rights,
+  intelligence/compute, and productive capacity. Two-stage
+  eligibility, governed order types, batch auction, native DVP,
+  delivery-versus-right, and exact oracle partial settlement.
+  Capability `sunrey-exchange` remains `IMPLEMENTED`. No second
+  exchange. Simulation only.
 - SunRey oracle network (Chunk 43) is **development-only** at
   `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
   `IMPLEMENTED`. Signed observations become time-bounded

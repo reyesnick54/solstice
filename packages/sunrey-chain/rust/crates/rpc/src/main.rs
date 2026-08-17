@@ -247,11 +247,13 @@ enum OracleCommand {
     Observation {
         #[arg(long)]
         data_dir: PathBuf,
+        #[arg(long)]
         id: String,
     },
     Fact {
         #[arg(long)]
         data_dir: PathBuf,
+        #[arg(long)]
         id: String,
     },
     Facts {

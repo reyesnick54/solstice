@@ -405,6 +405,12 @@ contributions at `packages/sunrey-chain`. Capabilities
 [`chunk-44-productive-capacity-moonrey.md`](./chunk-44-productive-capacity-moonrey.md).
 Do not create `packages/moonrey` or `packages/moonrey-coin`.
 The public MoonRey Coin product (`moonrey-coin`) remains `PLANNED`.
+Chunk 49 implements the Universal Economic Exchange at the existing
+owner `packages/sunrey-exchange`. Capability `sunrey-exchange` remains
+`IMPLEMENTED`. Four market families: digital assets, human-information
+rights, intelligence/compute, and productive capacity. See
+[`chunk-49-universal-economic-exchange.md`](./chunk-49-universal-economic-exchange.md).
+Do not create `packages/exchange-v2` or a second matching engine.
 Chunk 47 implements institutional native-asset custody at
 `packages/custody`. Capability `sunrey-institutional-custody` is
 `IMPLEMENTED`. HSM/KMS contracts extend `packages/security`. The

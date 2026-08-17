@@ -20,6 +20,14 @@ export type ExchangeSessionId = Brand<string, 'ExchangeSessionId'>;
 export type ClearingInstructionId = Brand<string, 'ClearingInstructionId'>;
 export type FeeScheduleId = Brand<string, 'FeeScheduleId'>;
 export type ReconciliationId = Brand<string, 'ReconciliationId'>;
+export type InstrumentId = Brand<string, 'InstrumentId'>;
+export type AuctionId = Brand<string, 'AuctionId'>;
+export type ContractId = Brand<string, 'ContractId'>;
+export type RightId = Brand<string, 'RightId'>;
+export type EscrowId = Brand<string, 'EscrowId'>;
+export type DeliveryId = Brand<string, 'DeliveryId'>;
+export type DisputeId = Brand<string, 'DisputeId'>;
+export type TemplateHash = Brand<string, 'TemplateHash'>;
 
 function branded(prefix: string): string {
   return `${prefix}_${randomUUID().replace(/-/g, '')}`;
@@ -78,8 +86,57 @@ export function newExchangeSessionId(): ExchangeSessionId {
   return brandAs<string, 'ExchangeSessionId'>(branded('xses'));
 }
 
+export function asInstrumentId(value: string): InstrumentId {
+  return brandAs<string, 'InstrumentId'>(value);
+}
+export function asAuctionId(value: string): AuctionId {
+  return brandAs<string, 'AuctionId'>(value);
+}
+export function asContractId(value: string): ContractId {
+  return brandAs<string, 'ContractId'>(value);
+}
+export function asRightId(value: string): RightId {
+  return brandAs<string, 'RightId'>(value);
+}
+export function asEscrowId(value: string): EscrowId {
+  return brandAs<string, 'EscrowId'>(value);
+}
+export function asDeliveryId(value: string): DeliveryId {
+  return brandAs<string, 'DeliveryId'>(value);
+}
+export function asDisputeId(value: string): DisputeId {
+  return brandAs<string, 'DisputeId'>(value);
+}
+
+export function newInstrumentId(): InstrumentId {
+  return asInstrumentId(branded('xins'));
+}
+export function newAuctionId(): AuctionId {
+  return asAuctionId(branded('xauc'));
+}
+export function newContractId(): ContractId {
+  return asContractId(branded('xcon'));
+}
+export function newRightId(): RightId {
+  return asRightId(branded('xright'));
+}
+export function newEscrowId(): EscrowId {
+  return asEscrowId(branded('xesc'));
+}
+export function newDeliveryId(): DeliveryId {
+  return asDeliveryId(branded('xdel'));
+}
+export function newDisputeId(): DisputeId {
+  return asDisputeId(branded('xdsp'));
+}
+
 export const SIMULATION_USD_CASH_ASSET_ID = 'asset:simulation-usd-cash';
+export const MOONREY_COIN_ASSET_ID = 'asset:moonrey-coin';
 export const SUNREY_COIN_USD_MARKET_ID = asExchangeMarketId('market:sunrey-coin-usd-simulation');
+export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-moonrey-native-simulation');
+export const GPU_COMPUTE_MARKET_ID = asExchangeMarketId('market:gpu-compute-simulation');
+export const MANUFACTURING_CAPACITY_MARKET_ID = asExchangeMarketId('market:manufacturing-capacity-simulation');
+export const INFORMATION_RIGHT_MARKET_ID = asExchangeMarketId('market:information-right-simulation');
 export const SUNREY_COIN_NATIVE_ASSET_ID = 'SUNREY_COIN';
 export const MOONREY_COIN_NATIVE_ASSET_ID = 'MOONREY_COIN';
 export const SUNREY_MOONREY_MARKET_ID = asExchangeMarketId('market:sunrey-coin-moonrey-coin-native');

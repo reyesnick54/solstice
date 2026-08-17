@@ -4,7 +4,22 @@ import { err, ok, type Result } from '../../domain/src/result.ts';
 import { AssetQuantity } from '../../money/src/asset-quantity.ts';
 import { Money } from '../../money/src/money.ts';
 import { SUNREY_COIN_ASSET_ID } from '../../sunrey-coin/src/ids.ts';
-import type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
+import type {
+  ChainAnchorPort,
+  CleanRoomComputeInput,
+  CleanRoomComputeResult,
+  CleanRoomPort,
+  CoinPort,
+  ConsentCheckInput,
+  ConsentCheckResult,
+  ConsentPort,
+  FiatPort,
+  InformationMarketPort,
+  MachineCapabilityPort,
+  OracleFactRecord,
+  OraclePort,
+  ProductiveGraphPort,
+} from './ports.ts';
 import type { ExchangeFailure } from './types.ts';
 
 type CoinPosition = { available: bigint; held: bigint };
@@ -255,5 +270,119 @@ export class StubInformationMarketPort implements InformationMarketPort {
     ExchangeFailure
   > {
     return this.result;
+  }
+}
+
+export class InMemoryConsentPort implements ConsentPort {
+  private readonly grants = new Map<
+    string,
+    { subjectOrCohortRef: string; purpose: string; recipientClass: string; revoked: boolean }
+  >();
+
+  grant(input: {
+    readonly consentRef: string;
+    readonly subjectOrCohortRef: string;
+    readonly purpose: string;
+    readonly recipientClass: string;
+  }): { readonly granted: true } {
+    this.grants.set(input.consentRef, { ...input, revoked: false });
+    return { granted: true };
+  }
+
+  revoke(consentRef: string): { readonly revoked: true } {
+    const existing = this.grants.get(consentRef);
+    if (existing) {
+      this.grants.set(consentRef, { ...existing, revoked: true });
+    } else {
+      this.grants.set(consentRef, { subjectOrCohortRef: '', purpose: '', recipientClass: '', revoked: true });
+    }
+    return { revoked: true };
+  }
+
+  check(input: ConsentCheckInput): ConsentCheckResult {
+    const grant = this.grants.get(input.consentRef);
+    if (!grant) {
+      return { active: false, revoked: false, purposeMatch: false, rawExportAllowed: false, reasonCode: 'CONSENT_MISSING' };
+    }
+    if (grant.revoked) {
+      return { active: false, revoked: true, purposeMatch: false, rawExportAllowed: false, reasonCode: 'CONSENT_REVOKED' };
+    }
+    if (grant.purpose !== input.purpose) {
+      return { active: true, revoked: false, purposeMatch: false, rawExportAllowed: false, reasonCode: 'PURPOSE_MISMATCH' };
+    }
+    if (grant.recipientClass !== input.recipientClass) {
+      return { active: true, revoked: false, purposeMatch: true, rawExportAllowed: false, reasonCode: 'COUNTERPARTY_CLASS_DENIED' };
+    }
+    return { active: true, revoked: false, purposeMatch: true, rawExportAllowed: false, reasonCode: 'ELIGIBLE' };
+  }
+}
+
+export class InMemoryCleanRoomPort implements CleanRoomPort {
+  executeAggregate(input: CleanRoomComputeInput): Result<CleanRoomComputeResult, ExchangeFailure> {
+    if (input.templateId.includes('raw') || input.purpose === 'RAW_EXPORT') {
+      return err({ code: 'RAW_INFORMATION_UNAVAILABLE', message: 'raw subject rows are unavailable by default' });
+    }
+    return ok({
+      receiptId: `cr_${input.cohortRef}_${input.templateId}`,
+      authorizedOutputType: 'AGGREGATE_ONLY',
+      aggregate: Object.freeze({ count: '12', meanMinor: '1840' }),
+      rawRows: false,
+      rawPayload: null,
+    });
+  }
+}
+
+export class InMemoryOraclePort implements OraclePort {
+  private readonly facts = new Map<string, OracleFactRecord[]>();
+
+  record(fact: OracleFactRecord): Result<OracleFactRecord, ExchangeFailure> {
+    const list = this.facts.get(fact.contractId) ?? [];
+    this.facts.set(fact.contractId, [...list, fact]);
+    return ok(fact);
+  }
+
+  latest(contractId: string): OracleFactRecord | null {
+    const list = this.facts.get(contractId) ?? [];
+    return list[list.length - 1] ?? null;
+  }
+}
+
+export class InMemoryProductiveGraphPort implements ProductiveGraphPort {
+  private readonly refs = new Set<string>();
+
+  recordCapacityReference(input: {
+    readonly objectId: string;
+    readonly contractId: string;
+    readonly quantity: bigint;
+    readonly unit: string;
+    readonly category: string;
+  }): Result<{ readonly recorded: true; readonly doubleCounted: false }, ExchangeFailure> {
+    const key = `${input.objectId}::${input.contractId}`;
+    if (this.refs.has(key)) {
+      return err({ code: 'DOUBLE_COUNT_FORBIDDEN', message: 'productive graph already holds this contract reference' });
+    }
+    this.refs.add(key);
+    void input.quantity;
+    void input.unit;
+    void input.category;
+    return ok({ recorded: true, doubleCounted: false });
+  }
+
+  hasReference(objectId: string, contractId: string): boolean {
+    return this.refs.has(`${objectId}::${contractId}`);
+  }
+}
+
+export class InMemoryMachineCapabilityPort implements MachineCapabilityPort {
+  private readonly caps = new Map<string, Set<string>>();
+
+  grant(machineId: string, capability: string): void {
+    const set = this.caps.get(machineId) ?? new Set<string>();
+    set.add(capability);
+    this.caps.set(machineId, set);
+  }
+
+  hasCapability(machineId: string, capability: string): boolean {
+    return this.caps.get(machineId)?.has(capability) ?? false;
   }
 }

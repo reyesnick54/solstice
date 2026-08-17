@@ -62,3 +62,80 @@ export type ChainAnchorPort = {
     readonly listingVersion: string;
   }): { readonly requested: true; readonly authoritative: false };
 };
+
+export type ConsentCheckInput = {
+  readonly consentRef: string;
+  readonly subjectOrCohortRef: string;
+  readonly purpose: string;
+  readonly recipientClass: string;
+  readonly operation: 'LIST' | 'MATCH' | 'DELIVER';
+};
+
+export type ConsentCheckResult = {
+  readonly active: boolean;
+  readonly revoked: boolean;
+  readonly purposeMatch: boolean;
+  readonly rawExportAllowed: false;
+  readonly reasonCode: string;
+};
+
+export type ConsentPort = {
+  check(input: ConsentCheckInput): ConsentCheckResult;
+  revoke(consentRef: string): { readonly revoked: true };
+  grant(input: {
+    readonly consentRef: string;
+    readonly subjectOrCohortRef: string;
+    readonly purpose: string;
+    readonly recipientClass: string;
+  }): { readonly granted: true };
+};
+
+export type CleanRoomComputeInput = {
+  readonly templateId: string;
+  readonly purpose: string;
+  readonly cohortRef: string;
+  readonly requesterId: string;
+};
+
+export type CleanRoomComputeResult = {
+  readonly receiptId: string;
+  readonly authorizedOutputType: string;
+  readonly aggregate: Readonly<Record<string, string>>;
+  readonly rawRows: false;
+  readonly rawPayload: null;
+};
+
+export type CleanRoomPort = {
+  executeAggregate(input: CleanRoomComputeInput): Result<CleanRoomComputeResult, ExchangeFailure>;
+};
+
+export type OracleFactRecord = {
+  readonly factId: string;
+  readonly contractId: string;
+  readonly quantity: bigint;
+  readonly unit: string;
+  readonly quality: 'FINALIZED' | 'CONFLICTED' | 'STALE' | 'SELF_REPORT';
+  readonly providerId: string;
+  readonly factType: string;
+};
+
+export type OraclePort = {
+  record(fact: OracleFactRecord): Result<OracleFactRecord, ExchangeFailure>;
+  latest(contractId: string): OracleFactRecord | null;
+};
+
+export type ProductiveGraphPort = {
+  recordCapacityReference(input: {
+    readonly objectId: string;
+    readonly contractId: string;
+    readonly quantity: bigint;
+    readonly unit: string;
+    readonly category: string;
+  }): Result<{ readonly recorded: true; readonly doubleCounted: false }, ExchangeFailure>;
+  hasReference(objectId: string, contractId: string): boolean;
+};
+
+export type MachineCapabilityPort = {
+  hasCapability(machineId: string, capability: string): boolean;
+  grant(machineId: string, capability: string): void;
+};

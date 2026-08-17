@@ -140,3 +140,102 @@ export class WiredNativeAssetSettlementAdapter implements NativeAssetSettlementP
 export function okHold(lockId: string): Result<{ lockId: string }, NativeSettlementFailure> {
   return ok({ lockId });
 }
+
+/**
+ * Simulation native DVP used by the SunRey/MoonRey digital market.
+ * Does not replace CoinPort for the existing USD cash market.
+ */
+export class SimulationNativeDvpAdapter implements NativeAssetSettlementPort {
+  readonly authority = NATIVE_SETTLEMENT_AUTHORITY;
+  readonly replacesCurrentExchange = false;
+  private readonly balances = new Map<string, bigint>();
+  private readonly locks = new Map<string, { owner: string; assetId: string; amount: bigint }>();
+
+  seed(owner: string, amount: AssetQuantity): void {
+    const key = this.key(owner, amount.assetId);
+    this.balances.set(key, (this.balances.get(key) ?? 0n) + amount.scaledUnits);
+  }
+
+  available(owner: string, assetId: string): bigint {
+    return this.balances.get(this.key(owner, assetId)) ?? 0n;
+  }
+
+  hold(input: NativeHoldInput): Result<{ lockId: string }, NativeSettlementFailure> {
+    const key = this.key(input.owner, input.amount.assetId);
+    const available = this.balances.get(key) ?? 0n;
+    if (available < input.amount.scaledUnits) {
+      return err({ code: 'INSUFFICIENT_ASSET', message: 'native hold exceeds available units' });
+    }
+    this.balances.set(key, available - input.amount.scaledUnits);
+    this.locks.set(input.lockId, {
+      owner: input.owner,
+      assetId: input.amount.assetId,
+      amount: input.amount.scaledUnits,
+    });
+    return ok({ lockId: input.lockId });
+  }
+
+  release(lockId: string): Result<{ released: true }, NativeSettlementFailure> {
+    const lock = this.locks.get(lockId);
+    if (!lock) {
+      return err({ code: 'POLICY_DENIED', message: 'native lock not found' });
+    }
+    const key = this.key(lock.owner, lock.assetId);
+    this.balances.set(key, (this.balances.get(key) ?? 0n) + lock.amount);
+    this.locks.delete(lockId);
+    return ok({ released: true });
+  }
+
+  transfer(input: NativeTransferInput): Result<{ transferred: true }, NativeSettlementFailure> {
+    const from = this.key(input.sender, input.amount.assetId);
+    const available = this.balances.get(from) ?? 0n;
+    if (available < input.amount.scaledUnits) {
+      return err({ code: 'INSUFFICIENT_ASSET', message: 'native transfer exceeds available' });
+    }
+    this.balances.set(from, available - input.amount.scaledUnits);
+    const to = this.key(input.recipient, input.amount.assetId);
+    this.balances.set(to, (this.balances.get(to) ?? 0n) + input.amount.scaledUnits);
+    return ok({ transferred: true });
+  }
+
+  atomicDeliveryVersusPayment(input: NativeDvpInput): Result<{ settled: true }, NativeSettlementFailure> {
+    const assetFrom = this.key(input.assetSender, input.assetAmount.assetId);
+    const contraFrom = this.key(input.contraSender, input.contraAmount.assetId);
+    const assetAvail = this.balances.get(assetFrom) ?? 0n;
+    const contraAvail = this.balances.get(contraFrom) ?? 0n;
+    if (assetAvail < input.assetAmount.scaledUnits || contraAvail < input.contraAmount.scaledUnits) {
+      return err({ code: 'INSUFFICIENT_ASSET', message: 'atomic DVP would overdraw a side' });
+    }
+    this.balances.set(assetFrom, assetAvail - input.assetAmount.scaledUnits);
+    this.balances.set(contraFrom, contraAvail - input.contraAmount.scaledUnits);
+    this.balances.set(
+      this.key(input.assetRecipient, input.assetAmount.assetId),
+      (this.balances.get(this.key(input.assetRecipient, input.assetAmount.assetId)) ?? 0n) +
+        input.assetAmount.scaledUnits,
+    );
+    this.balances.set(
+      this.key(input.contraRecipient, input.contraAmount.assetId),
+      (this.balances.get(this.key(input.contraRecipient, input.contraAmount.assetId)) ?? 0n) +
+        input.contraAmount.scaledUnits,
+    );
+    return ok({ settled: true });
+  }
+
+  consumeLock(lockId: string): Result<{ amount: bigint; assetId: string; owner: string }, NativeSettlementFailure> {
+    const lock = this.locks.get(lockId);
+    if (!lock) {
+      return err({ code: 'ASSET_LOCKED', message: 'native lock not found' });
+    }
+    this.locks.delete(lockId);
+    return ok(lock);
+  }
+
+  credit(owner: string, assetId: string, amount: bigint): void {
+    const key = this.key(owner, assetId);
+    this.balances.set(key, (this.balances.get(key) ?? 0n) + amount);
+  }
+
+  private key(owner: string, assetId: string): string {
+    return `${owner}::${assetId}`;
+  }
+}

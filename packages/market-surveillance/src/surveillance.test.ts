@@ -183,4 +183,29 @@ describe('market surveillance detectors', () => {
     });
     assert.equal('applied' in proposal && proposal.applied === false, true);
   });
+
+  it('raises family-specific candidate alerts without legal conclusions', () => {
+    const surveillance = service();
+    const alerts = surveillance.observe({
+      marketId: 'compute-1',
+      family: 'INTELLIGENCE_COMPUTE',
+      orders: [],
+      trades: [],
+      unauthorizedPurposeAttempts: ['WRONG_PURPOSE'],
+      consentMismatches: ['consent-x'],
+      deniedAccessCount: 3,
+      nonDeliveryCount: 3,
+      listedCapacity: 10n,
+      deliveredCapacity: 20n,
+      oracleProviderShares: { monopolist: 9n, other: 1n },
+      circularPairs: [{ a: 'm1', b: 'm2' }],
+    });
+    assert.equal(alerts.some((alert) => alert.kind === 'UNAUTHORIZED_PURPOSE_ATTEMPT'), true);
+    assert.equal(alerts.some((alert) => alert.kind === 'CONSENT_MISMATCH_CANDIDATE'), true);
+    assert.equal(alerts.some((alert) => alert.kind === 'REPEATED_DENIED_ACCESS'), true);
+    assert.equal(alerts.some((alert) => alert.kind === 'ARTIFICIAL_CAPACITY_CANDIDATE'), true);
+    assert.equal(alerts.some((alert) => alert.kind === 'CIRCULAR_TRADING_CANDIDATE'), true);
+    assert.equal(alerts.some((alert) => alert.kind === 'ORACLE_CONCENTRATION_CANDIDATE'), true);
+    assert.equal(alerts.every((alert) => alert.legalConclusion === false), true);
+  });
 });
