@@ -185,6 +185,22 @@
       "notes": "Harmless test fixture for blocked-package policy."
     },
     {
+      "name": "tla2tools",
+      "ecosystem": "github-release",
+      "classification": "APPROVED",
+      "role": "dev",
+      "source": "github.com/tlaplus/tlaplus",
+      "notes": "Pinned TLA+ TLC 1.8.0 via packages/sunrey-chain/formal/tools/tla-pin.json. Not a runtime protocol dependency."
+    },
+    {
+      "name": "kani",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "dev",
+      "source": "crates.io",
+      "notes": "Bounded Rust verifier pin 0.65.0. Not shipped in release artifacts."
+    },
+    {
       "name": "temp-exception-demo",
       "ecosystem": "npm",
       "classification": "TEMPORARY_EXCEPTION",

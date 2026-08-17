@@ -948,6 +948,15 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
+bounded verification, and implementation-trace conformance at
+`packages/sunrey-chain/formal`. Capability
+`sunrey-formal-assurance` is `IMPLEMENTED`. Results are model
+checked within stated bounds. This is not whole-system formal
+verification. Do not create `packages/formal`, `packages/tla`,
+`packages/model-checker`, `packages/sunrey-formal`, or
+`tools/formal`. See
+[`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey formal protocol models (Chunk 61,
+  `packages/sunrey-chain/formal`, `packages/sunrey-chain/src/formal`,
+  `packages/sunrey-chain/rust/crates/formal`): TLA+/TLC models for
+  consensus, signer, validator-set, governance, native assets, fees,
+  Exchange DVP, MoonRey issuance, interop, and CryptoPolicy;
+  `FORMAL_SMOKE` / `FORMAL_EXTENDED` profiles; implementation-trace
+  conformance; selected Rust bounded harnesses. Model checked within
+  stated bounds. Not whole-system formal verification.
+
 - SunRey fuzzing and deterministic property assurance (Chunk 56,
   `packages/sunrey-chain/src/assurance`,
   `packages/sunrey-chain/rust/crates/assurance`, `tests/assurance`):

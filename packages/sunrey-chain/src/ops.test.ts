@@ -318,7 +318,7 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
       platform.validateObservabilityConfigs(),
       ['otel-collector.yaml', 'prometheus/alerts.json', 'grafana/dashboards'],
     );
-    assert.equal(dashboardDefinitions().length, 12);
+    assert.equal(dashboardDefinitions().length, 13);
     assertEngineeringLabel();
     assert.equal(backupRecoveryStrategies().length, 8);
     const slos = readFileSync(join(ROOT, 'packages/sunrey-chain/ops/slos.json'), 'utf8');

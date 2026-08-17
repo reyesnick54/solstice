@@ -143,3 +143,9 @@ Simulation finality (`ENGINEERING_FIXTURE` in
 Development `ConsensusEngine`: **implemented** (Chunk 37,
 simulation / local harness only). Production consensus: **not
 implemented**. Legal confidence: `RESEARCH_REQUIRED`.
+
+Chunk 61 adds a bounded TLA+/TLC safety model of this Tendermint-family
+design at `packages/sunrey-chain/formal/tla/ConsensusSafety.tla`.
+Quorum arithmetic is `power > ⌊2 · total / 3⌋`. Results are model
+checked within stated bounds and do not claim production consensus
+verification.
