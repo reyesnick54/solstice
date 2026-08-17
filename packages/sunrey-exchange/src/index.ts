@@ -186,3 +186,4 @@ export type {
 } from './types-universal.ts';
 export { UniversalExchangeEngine, moonreyPrice } from './universal.ts';
 export { exchangeUsage, runExchangeCommand } from './cli.ts';
+export * from './regulated/index.ts';

@@ -64,6 +64,9 @@ Chunk 45 implements machine economic identity and commerce at
 [`chunk-45-machine-economy.md`](./chunk-45-machine-economy.md).
 Chunk 43 implements the sovereign oracle network at
 [`chunk-43-oracle-network.md`](./chunk-43-oracle-network.md).
+Chunk 68 extends that owner with production-candidate provider
+onboarding and off-chain collection at
+[`chunk-68-production-oracles.md`](./chunk-68-production-oracles.md).
 Chunk 42 implements native fees and resource metering at
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
 Chunk 46 implements sovereign wallets at

@@ -23,7 +23,7 @@ export type CeremonyRehearsalResult = {
   readonly transcriptHash: string;
   readonly genesisCandidateHash: string;
   readonly report: PublicCeremonyReport;
-  readonly pqHardwareReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED';
+  readonly pqHardwareReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED' | 'SOFTWARE_PROVIDER_AVAILABLE' | 'HARDWARE_PROVIDER_CONFIRMED';
   readonly productionAuthorityActive: false;
 };
 
@@ -240,6 +240,8 @@ export function runFullCeremonyRehearsal(
       'PRODUCTION_CLAIM_FORBIDDEN',
       'rehearsal must not claim confirmed hardware post-quantum capability',
     );
+    return securityErr('PRODUCTION_CLAIM_FORBIDDEN', 'rehearsal cannot claim hardware PQC');
+    return securityErr('PRODUCTION_CLAIM_FORBIDDEN', 'rehearsal must not claim confirmed PQ hardware');
   }
   const report = session.publicReport();
   if (!finalized.value.transcriptHash) {

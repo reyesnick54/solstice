@@ -389,6 +389,8 @@ export {
 
 export * from './ceremony/index.ts';
 
+export * from './regulated/index.ts';
+
 export {
   DEVELOPMENT_HSM_ENVIRONMENT_LABEL,
   DEVELOPMENT_HSM_PROVIDER_ID,

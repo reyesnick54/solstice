@@ -8,9 +8,9 @@ import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
 import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
-import { verifySnapshot as verifyBackupSnapshot } from './ops/backup.ts';
 import {
   LocalFilesystemBackupStorage,
+  MaintenanceMode,
   MetricRegistry,
   OperatorKeystore,
   OperatorPeerPolicy,
@@ -46,7 +46,6 @@ import {
   developmentEpoch,
   developmentMultiDomainProfile,
   developmentRemoteSigner,
-  developmentSentryConfig,
   developmentSentryTopology,
   developmentUpgradeFixture,
   developmentValidatorConfig,
@@ -92,11 +91,14 @@ import {
   validateSentryTopology,
   validateSignRequest,
   validateValidatorConfig,
+  verifyBackupSnapshot,
   verifyChainSnapshot,
   verifyDatabaseDump,
+  verifySnapshot,
   warnDiskPressure,
 } from './ops/index.ts';
 import { MaintenanceMode } from './ops/maintenance.ts';
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const NOW = '2026-08-17T00:00:00.000Z';

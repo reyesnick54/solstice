@@ -93,5 +93,6 @@ export function buildReadinessReport(input: {
     productionServicesActivated: false,
     distinctions: ARCHITECTURE_DISTINCTIONS,
     infrastructureReadinessDigest: artifacts.infraControlPlaneDigest,
+    infrastructureReadinessDigest: artifacts.formalRegistryDigest,
   });
 }

@@ -165,3 +165,16 @@ export { gracefulShutdownPreserves, kubernetesManifest, systemdUnit } from './su
 export { restartDoesNotDuplicateVote, safeRestart } from './restart.ts';
 export { SEVEN_VALIDATOR_IDS, SevenValidatorNetwork, runRollingUpgrade } from './seven-validator.ts';
 export { opsUsage, runOpsCommand } from './cli.ts';
+export {
+  createStorageSnapshot,
+  migrateDevStore,
+  restoreStorageSnapshot,
+  storageStatus,
+  verifyStorage,
+  STORAGE_ENGINE_NAME,
+  STORAGE_SCHEMA_VERSION,
+} from './storage.ts';
+export { databaseRestoreTest, databaseStatus, verifyDatabase } from './database.ts';
+export { storageCapacityGuards } from './capacity.ts';
+export { backupMetadata } from './backup.ts';
+export type { BackupMetadata } from './backup.ts';

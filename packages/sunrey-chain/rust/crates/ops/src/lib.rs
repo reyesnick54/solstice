@@ -31,12 +31,15 @@ pub struct ValidatorPlacement {
 pub struct SnapshotManifest {
     pub snapshot_id: String,
     pub chain_id: String,
+    pub network: String,
     pub height: u64,
     pub block_id: String,
     pub state_root: String,
+    pub storage_schema: u32,
     pub protocol_version: String,
     pub state_sha256: String,
     pub manifest_sha256: String,
+    pub hash_manifest: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -97,26 +100,33 @@ pub fn create_snapshot(
     let mut manifest = SnapshotManifest {
         snapshot_id: format!("snap_{height}"),
         chain_id: DEVELOPMENT_CHAIN_ID.to_string(),
+        network: "net_sunrey_local_dev".to_string(),
         height,
         block_id: block_id.to_string(),
         state_root: state_root.to_string(),
+        storage_schema: 1,
         protocol_version: "1".to_string(),
         state_sha256,
         manifest_sha256: String::new(),
+        hash_manifest: String::new(),
     };
-    manifest.manifest_sha256 = manifest_hash(&manifest);
+    let hashed = manifest_hash(&manifest);
+    manifest.manifest_sha256 = hashed.clone();
+    manifest.hash_manifest = hashed;
     manifest
 }
 
 fn manifest_hash(manifest: &SnapshotManifest) -> String {
     sha256_hex(
         format!(
-            "{}\n{}\n{}\n{}\n{}\n{}\n{}",
+            "{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
             manifest.snapshot_id,
             manifest.chain_id,
+            manifest.network,
             manifest.height,
             manifest.block_id,
             manifest.state_root,
+            manifest.storage_schema,
             manifest.protocol_version,
             manifest.state_sha256
         )

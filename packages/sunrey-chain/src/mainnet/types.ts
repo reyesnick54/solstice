@@ -35,6 +35,7 @@ export const READINESS_DIMENSIONS = [
   'GENESIS',
   'OBSERVABILITY',
   'DISASTER_RECOVERY',
+  'STORAGE',
   'PERFORMANCE',
   'PRIVACY',
   'CUSTODY',
@@ -340,6 +341,10 @@ export type CustodyReadinessSlot = {
 };
 
 export type OracleReadinessSlot = {
+  readonly technicalImplementation: EvidenceState;
+  readonly providerConfigured: EvidenceState;
+  readonly providerAgreementEvidence: EvidenceState;
+  readonly productionEligible: EvidenceState;
   readonly realProviderAgreements: EvidenceState;
   readonly sourceDiversity: EvidenceState;
   readonly dataQuality: EvidenceState;

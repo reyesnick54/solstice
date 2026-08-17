@@ -45,6 +45,8 @@ describe('custody architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/hsm-security-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/travel-rule-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/crypto-aml')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/travel-rule-production')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/custody-activation')), false);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {
       const source = readFileSync(file, 'utf8');

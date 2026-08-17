@@ -45,11 +45,15 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'testnet')}`) ||
         file.includes(`${join('src', 'mainnet')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
+        file.includes(`${join('src', 'launch-rehearsal')}`) ||
         file.includes(`${join('src', 'release-candidate')}`) ||
         file.includes(`${join('src', 'pqc')}`) ||
         file.endsWith(`${join('ops', 'crypto-cli.ts')}`) ||
         file.includes(`${join('src', 'supply-chain')}`) ||
         file.includes(`${join('src', 'audit')}`) ||
+        file.includes(`${join('src', 'release-candidate')}`) ||
+        file.includes(`${join('src', 'formal')}`) ||
+        file.includes(`${join('src', 'oracle', 'production')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||
@@ -127,6 +131,13 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/production-infrastructure')), false);
     assert.equal(existsSync(join(ROOT, 'packages/cloud-adapters')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-cloud')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-launch')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/launch-rehearsal')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/mainnet-rehearsal')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-oracles')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-onboarding')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-collector')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/oracle-data-plane')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);

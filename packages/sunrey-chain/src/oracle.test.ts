@@ -339,7 +339,13 @@ describe('SunRey sovereign oracle network', () => {
     assert.equal(consensusMustNotCallAdapters(), true);
     const files = walk(join(ROOT, 'packages/sunrey-chain/src/oracle'));
     for (const file of files) {
-      if (file.endsWith('adapter.ts') || file.endsWith('demo.ts') || file.endsWith('demo-helpers.ts')) {
+      if (
+        file.endsWith('adapter.ts') ||
+        file.endsWith('adapters.ts') ||
+        file.endsWith('demo.ts') ||
+        file.endsWith('demo-helpers.ts') ||
+        file.includes(`${join('oracle', 'production')}`)
+      ) {
         continue;
       }
       const source = readFileSync(file, 'utf8');

@@ -526,6 +526,7 @@ export type SnapshotManifest = {
   readonly blockId: string;
   readonly stateRoot: string;
   readonly protocolVersion: string;
+  readonly storageSchema: number;
   readonly validatorSetHash: string;
   readonly validatorSetVersion: bigint;
   readonly payloadHash: string;

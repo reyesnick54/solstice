@@ -384,6 +384,12 @@ export class OracleEngine {
     return this.observations.get(id);
   }
 
+  listObservations(feedId?: string): readonly OracleObservation[] {
+    return [...this.observations.values()]
+      .filter((row) => (feedId ? row.feedId === feedId : true))
+      .sort((a, b) => (a.observationId < b.observationId ? -1 : 1));
+  }
+
   getFact(id: string): VerifiedEconomicFact | undefined {
     this.refreshStaleness();
     return this.facts.get(id);

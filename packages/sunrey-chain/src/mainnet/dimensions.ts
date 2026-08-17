@@ -274,6 +274,20 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
     },
     {
+      requirementId: 'REQ-STORAGE-001',
+      dimension: 'STORAGE',
+      description: 'Production-candidate chain storage, PostgreSQL durability, PITR, and restore drills',
+      scope: 'SUNREY_CHAIN',
+      evidenceType: 'SOFTWARE_TEST',
+      source: 'packages/sunrey-chain/rust/crates/storage + packages/persistence/src/production',
+      authorizedVerifierRole: 'ENGINEERING',
+      expirationOrReviewDateUtc: null,
+      notes: 'Engineering verification of crash-consistent storage. Does not imply a production provider deployment.',
+      externalEvidence: false,
+      chunkReference: 'CHUNK-67',
+      verificationStatus: 'ENGINEERING_VERIFIED',
+    },
+    {
       requirementId: 'REQ-PERF-001',
       dimension: 'PERFORMANCE',
       description: 'Measured testnet engineering results and capacity assumptions',
@@ -498,6 +512,8 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-control-plane:${digests.infraControlPlaneDigest}`,
+      evidenceHash: digests.formalRegistryDigest,
+      evidenceReference: `infra-control-plane:${digests.formalRegistryDigest}`,
     },
     {
       requirementId: 'REQ-INFRA-002',
@@ -514,6 +530,8 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       verificationStatus: 'ENGINEERING_VERIFIED',
       evidenceHash: digests.infraControlPlaneDigest,
       evidenceReference: `infra-security-tests:${digests.infraControlPlaneDigest}`,
+      evidenceHash: digests.rcQualificationDigest,
+      evidenceReference: `infra-security-tests:${digests.rcQualificationDigest}`,
     },
   ];
   return Object.freeze(drafts.map(slot));

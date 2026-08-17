@@ -139,6 +139,12 @@ jobs:
         run: npm run demo:sunrey-chain
       - name: MoonRey productive capacity demo
         run: npm run demo:moonrey-productive
+      - name: SunRey oracle network demo
+        run: npm run demo:sunrey-oracle
+      - name: SunRey production oracle onboarding demo
+        run: npm run demo:sunrey-production-oracles
+      - name: SunRey production oracle readiness
+        run: npm run sunrey-oracle -- readiness
       - name: SunRey local node demo
         run: npm run demo:sunrey-node
       - name: SunRey P2P development network demo
@@ -165,6 +171,10 @@ jobs:
         run: npm run demo:sunrey-infra
       - name: SunRey mainnet candidate verify
         run: npm run sunrey-mainnet -- verify
+      - name: SunRey mainnet launch rehearsal demo
+        run: npm run demo:sunrey-launch
+      - name: SunRey mainnet launch rehearsal verify
+        run: npm run sunrey-launch -- verify
       - name: SunRey testnet deployment manifests
         run: node scripts/sunrey-testnet-validate-manifests.mjs
       - name: SunRey testnet SBOM and release manifest

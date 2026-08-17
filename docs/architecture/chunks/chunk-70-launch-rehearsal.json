@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-70",
+  "title": "SunRey full mainnet launch rehearsal and production operations dry run",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-oracle-network",
+    "sunrey-interop",
+    "sunrey-exchange",
+    "sunrey-developer-sdk",
+    "sunrey-supply-chain",
+    "sunrey-mainnet-readiness",
+    "sunrey-launch-rehearsal"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/launch-rehearsal. Production-like rehearsal only. Does not launch mainnet, enable LIVE_* flags, or authorize production funds. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-launch, packages/launch-rehearsal, or packages/mainnet-rehearsal."
+}
