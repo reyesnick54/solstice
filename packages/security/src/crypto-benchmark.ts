@@ -201,7 +201,7 @@ export function runCryptoBenchmarks(): readonly BenchmarkRow[] {
     }),
     publicKeyBytes: ML_DSA_65_V1_PUBLIC_KEY_BYTES,
     signatureBytes: ML_DSA_65_V1_SIGNATURE_BYTES,
-    note: `standardized FIPS 204; private key ${ML_DSA_65_V1_SECRET_KEY_BYTES} bytes if safely measurable`,
+    note: `standardized FIPS 204; secret material ${ML_DSA_65_V1_SECRET_KEY_BYTES} bytes if safely measurable`,
   });
   rows.push({
     algorithm: 'ML_DSA_65_V1',
@@ -243,7 +243,7 @@ export function runCryptoBenchmarks(): readonly BenchmarkRow[] {
     }),
     publicKeyBytes: SLH_DSA_SHA2_128S_V1_PUBLIC_KEY_BYTES,
     signatureBytes: SLH_DSA_SHA2_128S_V1_SIGNATURE_BYTES,
-    note: `diversification option; private key ${SLH_DSA_SHA2_128S_V1_SECRET_KEY_BYTES} bytes; not the default validator algorithm`,
+    note: `diversification option; secret material ${SLH_DSA_SHA2_128S_V1_SECRET_KEY_BYTES} bytes; not the default validator algorithm`,
   });
 
   const realKem = createMlKem768Provider();

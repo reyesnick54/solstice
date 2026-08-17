@@ -76,7 +76,7 @@ export const PQC_LIBRARY_SELECTION = Object.freeze({
   }),
   zeroization: Object.freeze({
     claimed: false,
-    note: 'JS runtimes and noble intermediates are not guaranteed to zeroize. PrivateKeyMaterial can be wiped on dispose. Do not claim guaranteed zeroization.',
+    note: 'JS runtimes and noble intermediates are not guaranteed to zeroize. Secret material can be wiped on dispose. Do not claim guaranteed zeroization.',
   }),
   notQuantumProof: true,
   notCertified: true,

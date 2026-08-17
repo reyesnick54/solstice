@@ -37,11 +37,13 @@ describe('Chunk 60 hybrid testnet rehearsal', () => {
     const policy = runCryptoCommand(['policy', '40']);
     const inventory = runCryptoCommand(['inventory']);
     const readiness = runCryptoCommand(['readiness']);
+    const benchmark = runCryptoCommand(['benchmark']);
     assert.equal(suites.ok, true);
     assert.equal(policy.ok, true);
     assert.equal(inventory.ok, true);
     assert.equal(readiness.ok, true);
-    const text = JSON.stringify({ suites, policy, inventory, readiness });
+    assert.equal(benchmark.ok, true);
+    const text = JSON.stringify({ suites, policy, inventory, readiness, benchmark });
     assert.equal(containsPrivateMaterial(text), false);
     assert.match(text, /noble-post-quantum-0.5.4/);
     assert.match(text, /HYBRID_REQUIRED_SELECTED_ROLES/);
