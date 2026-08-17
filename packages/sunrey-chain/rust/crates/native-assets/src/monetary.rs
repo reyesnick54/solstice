@@ -46,9 +46,7 @@ pub struct MonetarySupplyIdentity {
 
 impl MonetarySupplyIdentity {
     pub fn expected_total(&self) -> Option<u128> {
-        self.genesis_allocated
-            .checked_add(self.issued_post_genesis)?
-            .checked_sub(self.burned)
+        self.genesis_allocated.checked_add(self.issued_post_genesis)?.checked_sub(self.burned)
     }
 
     pub fn observed_total(&self) -> Option<u128> {
