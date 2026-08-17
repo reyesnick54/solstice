@@ -13,6 +13,7 @@ import { oracleScenarios, runOracle } from './scenarios/oracle.ts';
 import { privacyScenarios, runPrivacy } from './scenarios/privacy.ts';
 import { signerScenarios, runSigner } from './scenarios/signer.ts';
 import { walletScenarios, runWallet } from './scenarios/wallet.ts';
+import { validatorEconomicsScenarios, runValidatorEconomics } from './scenarios/validator-economics.ts';
 import type { AttackResult, AttackScenario } from './types.ts';
 
 export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
@@ -30,6 +31,7 @@ export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
   ...interopScenarios,
   ...apiScenarios,
   ...compoundScenarios,
+  ...validatorEconomicsScenarios,
 ]);
 
 const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackScenario) => AttackResult>> = {
@@ -52,6 +54,7 @@ const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackS
   BRIDGE: runInterop,
   API: runApi,
   COMPOUND: runCompound,
+  VECON: runValidatorEconomics,
 };
 
 export function scenarioById(scenarioId: string): AttackScenario | undefined {

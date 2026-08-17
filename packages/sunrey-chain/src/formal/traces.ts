@@ -61,6 +61,13 @@ export function moonreyHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function moonreyPolicyGovernanceHappyTrace(): LogicalTrace {
+  return makeTrace('trace_moonrey_policy', 'moonrey_policy_governance', 'MOONREY_POLICY_GOVERNANCE', [
+    { domain: 'moonrey_policy_governance', action: 'Issue(authorized)', args: { authorized: true } },
+    { domain: 'moonrey_policy_governance', action: 'ActivatePolicy(v2)', args: { version: 2 } },
+  ]);
+}
+
 export function governanceHappyTrace(): LogicalTrace {
   return makeTrace('trace_governance_activate', 'governance', 'PROTOCOL_GOVERNANCE', [
     { domain: 'governance', action: 'Propose', args: {} },
@@ -83,13 +90,45 @@ export function interopHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function adaptiveFeeHappyTrace(): LogicalTrace {
+  return makeTrace('trace_adaptive_fee', 'adaptive_fee', 'ADAPTIVE_FEE_MARKET', [
+    { domain: 'adaptive_fee', action: 'UpdatePriceHigh', args: { usage: 2 } },
+    { domain: 'adaptive_fee', action: 'Reserve', args: {} },
+    { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
+export function validatorEconomicsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
+    { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
+    { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
+    { domain: 'validator_economics', action: 'Reward', args: {} },
+export function monetaryHappyTrace(): LogicalTrace {
+  return makeTrace('trace_monetary_policy', 'monetary_policy', 'NATIVE_MONETARY_POLICY', [
+    { domain: 'monetary_policy', action: 'Issue(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
+    { domain: 'monetary_policy', action: 'Lock(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
+    { domain: 'monetary_policy', action: 'Unlock(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
+    { domain: 'monetary_policy', action: 'Burn(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
+    { domain: 'monetary_policy', action: 'Issue(MOONREY_COIN)', args: { asset: 'MOONREY_COIN' } },
+  ]);
+}
+
+export function genesisHappyTrace(): LogicalTrace {
+  return makeTrace('trace_genesis_allocation', 'genesis_allocation', 'GENESIS_ALLOCATION_CONSERVATION', [
+    { domain: 'genesis_allocation', action: 'Allocate(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
+    { domain: 'genesis_allocation', action: 'Allocate(MOONREY_COIN)', args: { asset: 'MOONREY_COIN' } },
+  ]);
+}
+
 export function allDevelopmentTraces(): readonly LogicalTrace[] {
   return [
     consensusHappyTrace(),
     assetHappyTrace(),
     dvpHappyTrace(),
     moonreyHappyTrace(),
+    moonreyPolicyGovernanceHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
+    adaptiveFeeHappyTrace(),
+    validatorEconomicsHappyTrace(),
+    monetaryHappyTrace(),
+    genesisHappyTrace(),
   ];
 }

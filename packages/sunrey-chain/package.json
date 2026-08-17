@@ -37,6 +37,11 @@
     "sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/cli-main.ts",
     "demo:launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/demo.ts",
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/cli-main.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/v2/cli-main.ts",
+    "demo:validator-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/validator-economics/demo.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/cli-main.ts",
+    "demo:economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
   },
   "engines": {

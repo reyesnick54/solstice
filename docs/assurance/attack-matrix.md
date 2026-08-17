@@ -54,6 +54,13 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | MOONREY-CONFLICTED-ORACLE | moonrey | conflicted oracle issuance | conflicted facts cannot issue | CONFLICTED_ORACLE_FACT | NO_UNAUTHORIZED_ISSUANCE | suspend feed | TESTED |
 | MOONREY-EPOCH-CAP | moonrey | epoch cap bypass | epoch global cap | EPOCH_GLOBAL_CAP | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
 | MOONREY-CATEGORY-CAP | moonrey | category cap bypass | epoch category cap | EPOCH_CATEGORY_CAP | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
+| MOONREY-CROSS-CATEGORY-DUP | moonrey | cross-category full credit for one event | cross-category event fingerprint | CROSS_CATEGORY_DUPLICATE | NO_DOUBLE_MOONREY_ATTRIBUTION | none | TESTED |
+| MOONREY-ORACLE-CONTROLLER-CONC | moonrey | nominally different feeds under one controller | Chunk 68 independence analysis | ORACLE_CONTROLLER_CONCENTRATION | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
+| MOONREY-STALE-REFERENCE | moonrey | stale economic reference factor | canonical VerifiedEconomicFact freshness | REFERENCE_FACT_STALE | NO_UNAUTHORIZED_ISSUANCE | suspend feed | TESTED |
+| MOONREY-WRONG-UNIT | moonrey | incompatible raw unit | category-specific normalization | WRONG_UNIT | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
+| MOONREY-MALFORMED-NORM | moonrey | malformed normalization factor | bounded versioned factors | MALFORMED_NORMALIZATION | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
+| MOONREY-POLICY-REPLAY | moonrey | replay superseded policy version | height-activated policy registry | POLICY_REPLAY | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
+| MOONREY-FUTURE-POLICY | moonrey | use future policy before activation height | deterministic activation height | POLICY_NOT_YET_ACTIVE | NO_UNAUTHORIZED_ISSUANCE | none | TESTED |
 | GRAPH-TAMPER-REBUILD | productive-graph | alter/delete derived graph | graph is a projection of finalized state | hash mismatch | NO_UNAUTHORIZED_ISSUANCE, NO_DOUBLE_MOONREY_ATTRIBUTION | rebuild from snapshot | TESTED |
 | MACHINE-OVERSPEND | machine-economy | machine overspend | spending mandate | SPENDING_LIMIT_EXCEEDED | NO_MACHINE_MANDATE_BYPASS | none | TESTED |
 | MACHINE-OUTSIDE-CAPABILITY | machine-economy | purchase outside capability | capability manifest | CAPABILITY_MISSING | NO_MACHINE_MANDATE_BYPASS | none | TESTED |
@@ -122,3 +129,12 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | API-DUPLICATE-SUBMISSION | rpc | duplicate submission | transaction id mempool set | KNOWN / DUPLICATE_SUBMISSION | NO_DOUBLE_SETTLEMENT | none | TESTED |
 | COMPOUND-ORACLE-VALIDATOR-EXCHANGE | compound | oracle conflict + validator outage + exchange settlement backlog | fail-closed issuance + atomic DVP + BFT quorum | compound alert | NO_CONFLICTING_FINALITY, NO_UNAUTHORIZED_ISSUANCE, NO_ASSET_CREATION_FROM_SETTLEMENT | suspend oracle, reconcile exchange, wait for validator quorum | TESTED |
 | COMPOUND-REGIONAL-SIGNER-RPC | compound | regional outage + signer failover + RPC failure | sentry domains + signer fence + RPC limiter | compound alert | NO_CONFLICTING_FINALITY, NO_VALIDATOR_KEY_REUSE | fence signer, restore domain, RPC backoff | TESTED |
+| VECON-EQUIVOCATION-PENALTY | validator-economics | equivocation penalty | valid protocol evidence required | penalty receipt | NO_DUPLICATE_VALIDATOR_PENALTY | tombstone or jail per policy | TESTED |
+| VECON-FORGED-EVIDENCE | validator-economics | forged evidence | evidence verification | forged evidence refusal | NO_DUPLICATE_VALIDATOR_PENALTY | none | TESTED |
+| VECON-REPLAYED-EVIDENCE | validator-economics | replayed evidence | canonical evidence id | duplicate penalty refusal | NO_DUPLICATE_VALIDATOR_PENALTY | none | TESTED |
+| VECON-DUPLICATE-REWARD | validator-economics | duplicate reward | entitlement id | duplicate reward refusal | NO_DUPLICATE_VALIDATOR_REWARD | none | TESTED |
+| VECON-DUPLICATE-PENALTY | validator-economics | duplicate penalty | executed evidence set | duplicate penalty refusal | NO_DUPLICATE_VALIDATOR_PENALTY | none | TESTED |
+| VECON-CUSTOMER-ASSET-PENALTY | validator-economics | customer-asset penalty attempt | economic account domain isolation | customer debit refusal | NO_CUSTOMER_ASSET_VALIDATOR_PENALTY | none | TESTED |
+| VECON-IMMEDIATE-UNBOND | validator-economics | immediate unbond attempt | governed unbonding delay | immediate release refusal | UNBOND_DELAY_RESPECTED | none | TESTED |
+| VECON-WRONG-POLICY-VERSION | validator-economics | wrong policy version | epoch-scoped policy version | wrong policy refusal | NO_UNAUTHORIZED_GOVERNANCE | none | TESTED |
+| VECON-REWARD-OVERFLOW | validator-economics | reward overflow boundary | checked integer arithmetic | overflow refusal | NO_DUPLICATE_VALIDATOR_REWARD | none | TESTED |

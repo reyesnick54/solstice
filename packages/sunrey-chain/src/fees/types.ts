@@ -50,6 +50,9 @@ export const FEE_REJECTION_CODES = [
   'FEE_ARITHMETIC_OVERFLOW',
   'BLOCK_RESOURCE_LIMIT',
   'DISPOSITION_MISMATCH',
+  'POLICY_DOWNGRADE_REJECTED',
+  'PRIORITY_FIELD_TAMPER',
+  'MACHINE_MANDATE_EXCEEDED',
 ] as const;
 export type FeeRejectionCode = (typeof FEE_REJECTION_CODES)[number];
 
@@ -172,6 +175,10 @@ export type FeeReceipt = {
   readonly blockId: string;
   readonly outcome: ExecutionOutcome;
   readonly disposition: FeeDisposition;
+  readonly policyVersion?: 1 | 2;
+  readonly baseResourcePrice?: bigint;
+  readonly baseCharge?: bigint;
+  readonly priorityFee?: bigint;
 };
 
 export type NativeAssetPosition = {
@@ -210,6 +217,15 @@ export type ExecutableTransaction = {
   };
   readonly applicationShouldFail?: boolean;
   readonly forceOverBudget?: boolean;
+  readonly policyVersion?: 1 | 2;
+  readonly signatureClass?: 'CLASSICAL' | 'HYBRID' | 'PQ';
+  readonly authorizedPriorityFee?: bigint;
+  readonly priorityAuthorized?: boolean;
+  readonly oracleVerifyCount?: number;
+  readonly interopProofCount?: number;
+  readonly exchangeDvpLegs?: number;
+  readonly otherGovernedUnits?: bigint;
+  readonly machineMandateCeiling?: bigint;
 };
 
 export type FeeRejection = {

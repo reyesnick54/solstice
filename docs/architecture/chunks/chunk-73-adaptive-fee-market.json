@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-73",
+  "title": "SunRey adaptive fee market, resource pricing and anti-spam economic engine",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-performance-engineering",
+    "sunrey-pqc-testnet",
+    "sunrey-formal-assurance",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "sunrey-launch-rehearsal",
+    "sunrey-adaptive-fee-market"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/fees/v2 and packages/sunrey-chain/rust/crates/fees/src/v2.rs. Extends Chunk 42. Historic FeePolicy v1 is preserved. Production parameters remain unconfigured. evaluateChunkRequirements returns mustStop: false. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
+}

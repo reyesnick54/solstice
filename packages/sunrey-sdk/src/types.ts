@@ -30,6 +30,7 @@ export const API_NAMESPACES = [
   'MACHINE_ECONOMY',
   'INTEROPERABILITY',
   'EXCHANGE',
+  'MONETARY',
 ] as const;
 export type ApiNamespace = (typeof API_NAMESPACES)[number];
 

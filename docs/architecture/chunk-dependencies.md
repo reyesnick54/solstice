@@ -103,6 +103,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-machine-economy | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
@@ -110,6 +111,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-adaptive-fee-market | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-interop | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
@@ -135,6 +137,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
+| moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -352,6 +355,11 @@ Chunk 42 implements native fees and resource metering at
 `packages/sunrey-chain`. Capability `sunrey-native-fees` is
 `IMPLEMENTED`. See
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Chunk 73 implements FeePolicyV2 adaptive resource pricing at
+`packages/sunrey-chain/src/fees/v2`. Capability
+`sunrey-adaptive-fee-market` is `IMPLEMENTED`. Historic v1 fee
+semantics are preserved. Production parameters remain unconfigured.
+See [`chunk-73-adaptive-fee-market.md`](./chunk-73-adaptive-fee-market.md).
 Chunk 48 connects SunRey Exchange to native-chain atomic DVP at
 `packages/sunrey-exchange` and `packages/sunrey-chain`. Capability
 `sunrey-exchange-native-settlement` is `IMPLEMENTED`. See
@@ -534,6 +542,14 @@ It does not launch mainnet or enable `LIVE_*` services. Do not
 create `packages/sunrey-launch`, `packages/launch-rehearsal`, or
 `packages/mainnet-rehearsal`. The evaluator returns
 `mustStop: false`.
+Chunk 71 implements the SunRey dual-native-asset monetary
+constitution at `packages/sunrey-chain/src/economics`. Capability
+`sunrey-monetary-constitution` is `IMPLEMENTED`. See
+[`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
+It does not invent production tokenomics or create a second ledger.
+Do not create `packages/sunrey-economics`, `packages/monetary-policy`,
+`packages/tokenomics`, or `packages/genesis-economy`. The evaluator
+returns `mustStop: false`.
 Chunk 65 implements mainnet readiness evidence, a per-capability
 activation matrix, and deterministic genesis-candidate tooling at
 `packages/sunrey-chain/src/mainnet`. Capability
@@ -587,6 +603,14 @@ Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
 `packages/sunrey-rc`, `packages/release-candidate`,
 `packages/testnet-rc`, `packages/sunrey-qualification`, or
 `packages/rc-control`. The evaluator returns `mustStop: false`.
+Chunk 72 implements validator bonding, reward, and accountability
+economics at `packages/sunrey-chain/src/validator-economics`.
+Capability `sunrey-validator-economics` is `IMPLEMENTED`. See
+[`chunk-72-validator-economics.md`](./chunk-72-validator-economics.md)
+and `docs/economics/`. Production bond asset remains
+`UNCONFIGURED`. Do not create `packages/validator-economics`,
+`packages/staking`, `packages/slashing`, or
+`packages/liquid-staking`. The evaluator returns `mustStop: false`.
 Chunk 62 implements independent security-review preparation at
 `packages/sunrey-chain`. Capability `sunrey-audit-readiness` is
 `IMPLEMENTED`. See
@@ -611,3 +635,12 @@ It does not predict prices, promise returns, or activate production
 monetary policy. Do not create `packages/dual-economy`,
 `packages/moonrey-macro`, or `packages/economic-bridge`. The
 evaluator returns `mustStop: false`.
+Chunk 74 implements MoonRey productive-economy issuance policy
+governance, normalization, and macro supply controls at
+`packages/sunrey-chain/src/productive/policy-governance`. Capability
+`moonrey-policy-governance` is `IMPLEMENTED`. See
+[`chunk-74-moonrey-issuance-policy.md`](./chunk-74-moonrey-issuance-policy.md).
+It extends Chunk 44 and does not create a second MoonRey asset or mint
+path. Production caps remain `UNCONFIGURED`. Do not create
+`packages/moonrey-policy`, `packages/moonrey-economics`, or
+`packages/issuance-policy`. The evaluator returns `mustStop: false`.

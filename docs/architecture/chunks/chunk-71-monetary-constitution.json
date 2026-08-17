@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-71",
+  "title": "SunRey dual-native-asset monetary constitution, genesis economic policy, and supply governance",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-native-assets",
+    "sunrey-protocol-governance",
+    "moonrey-issuance-engine",
+    "sunrey-mainnet-readiness",
+    "sunrey-formal-assurance",
+    "sunrey-assurance",
+    "sunrey-launch-rehearsal",
+    "sunrey-developer-sdk",
+    "sunrey-monetary-constitution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics. Extends Chunk 41 native assets, Chunk 44 MoonRey issuance, Chunk 65 genesis allocation, Chunk 61 formal models, and Chunk 70 rehearsal. Does not invent production tokenomics, launch mainnet, or create a second ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-economics, packages/monetary-policy, packages/tokenomics, or packages/genesis-economy."
+}

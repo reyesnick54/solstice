@@ -19,6 +19,10 @@ is not a certification or a marketing claim.
 | NO_INTEROP_PROOF_BYPASS | packages/sunrey-chain | Headers, finality, and membership proofs are verified. Relayers are untrusted. |
 | NO_BLIND_WITHDRAWAL_RESUBMISSION | packages/custody | A timed-out or unknown custody submission cannot be blindly resigned against a new destination. |
 | NO_MACHINE_MANDATE_BYPASS | packages/sunrey-chain | Machine spend, capability, and delivery actions beyond an explicit mandate are refused. |
+| NO_DUPLICATE_VALIDATOR_REWARD | packages/sunrey-chain | One participation entitlement cannot produce two reward payments. |
+| NO_DUPLICATE_VALIDATOR_PENALTY | packages/sunrey-chain | One canonical evidence id cannot execute the same protocol penalty twice. |
+| NO_CUSTOMER_ASSET_VALIDATOR_PENALTY | packages/sunrey-chain | Validator economic penalties cannot debit customer wallets, custody, Exchange, fiat ledger, or unrelated machine escrow. |
+| UNBOND_DELAY_RESPECTED | packages/sunrey-chain | A validator cannot release a bond before the governed unbonding delay and accountability window elapse. |
 
 A preventive control without an alert is acceptable where the scenario
 marks `preventiveOnly: true` (for example some BFT power-boundary

@@ -84,12 +84,16 @@ npm run demo:sunrey-interop
 npm run demo:sunrey-ops
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
+npm run demo:sunrey-economics
+npm run sunrey-economics -- policy verify
+npm run sunrey-economics -- supply verify
 npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify
 npm run demo:sunrey-dual-economy
 npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
+npm run demo:sunrey-validator-economics
 node scripts/sunrey-testnet-validate-manifests.mjs
 node scripts/sunrey-testnet-sbom.mjs
 npm run demo:sunrey-sdk

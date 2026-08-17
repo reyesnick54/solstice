@@ -48,6 +48,10 @@ export type IndexedBlock = {
   readonly resourceUsage: QuantityString;
   readonly feeTotal: QuantityString;
   readonly feeAsset: NativeAssetId;
+  readonly feePolicyVersion?: QuantityString;
+  readonly baseResourcePrice?: QuantityString;
+  readonly targetUtilizationBps?: QuantityString;
+  readonly feeDisposition?: string;
   readonly stateRoot: string;
   readonly commit: CommitCertificateSummary;
   readonly finalityStatus: FinalityStatus;
@@ -64,6 +68,9 @@ export type IndexedTransaction = {
   readonly resourceUsage: QuantityString;
   readonly fee: QuantityString;
   readonly feeAsset: NativeAssetId;
+  readonly chargedFee?: QuantityString;
+  readonly feeDisposition?: string;
+  readonly feePolicyVersion?: QuantityString;
   readonly cryptoSuite: string;
   readonly assetQuantities: Readonly<Record<string, QuantityString>>;
   readonly economicObjectRefs: readonly string[];
@@ -103,6 +110,13 @@ export type IndexedAsset = {
   readonly circulating: QuantityString;
   readonly issuancePolicy: string;
   readonly notMarketCapitalization: true;
+  readonly policyVersion: string;
+  readonly genesisAllocationTotal: QuantityString;
+  readonly authorizedIssuanceTotal: QuantityString;
+  readonly escrowed: QuantityString;
+  readonly supplyReconciliation: 'EXACT' | 'MISMATCH';
+  readonly moonreyIssuanceCategorySummary?: Readonly<Record<string, QuantityString>>;
+  readonly networkEnvironmentLabel: 'DEVELOPMENT' | 'TESTNET' | 'REHEARSAL';
 };
 
 export type IndexedMoonReyIssuance = {
@@ -118,6 +132,15 @@ export type IndexedMoonReyIssuance = {
   readonly issuedQuantity: QuantityString;
   readonly height: number;
   readonly recipient: string;
+  readonly normalizationPolicy?: string;
+  readonly policyVersion?: number;
+  readonly epoch?: number;
+  readonly antiDoubleCountFingerprint?: string;
+  readonly supplySummary?: {
+    readonly issued: QuantityString;
+    readonly locked: QuantityString;
+    readonly circulating: QuantityString;
+  };
 };
 
 export type IndexedProductiveObject = {
@@ -181,6 +204,11 @@ export type IndexedValidator = {
   readonly missed: number;
   readonly jailStatus: string | null;
   readonly tombstone: boolean;
+  readonly bondState?: string;
+  readonly bondAsset?: string;
+  readonly policyVersion?: number;
+  readonly publicRewardSummary?: { readonly paid: QuantityString; readonly pending: QuantityString };
+  readonly unbondStatus?: { readonly pending: QuantityString; readonly releaseEpoch: string | null };
 };
 
 export type IndexedEvidence = {

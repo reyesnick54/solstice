@@ -16,10 +16,12 @@ export { ModelVoteSet, consensusCampaign, runSignerSafetySequence, twoThirdsThre
 export {
   feeActualNeverExceedsMax,
   feeEngineReservationConserved,
+  feePolicyV2Properties,
   interopPacketAtMostOnce,
   machineMandateProperties,
   moonreyIssuanceProperties,
   mulDivMatchesRounding,
+  monetaryConstitutionProperties,
   nativeAssetInvariantProperties,
   oracleAggregationProperties,
   walletThresholdProperties,

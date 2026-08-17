@@ -12,6 +12,7 @@ Modules cover:
 - transaction submission
 - block queries
 - asset queries
+- monetary policy / native supply / genesis / issuance receipt / burns (read-only; no mint)
 - validator queries
 - event subscriptions (`/v1/events`)
 

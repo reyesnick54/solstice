@@ -9,6 +9,16 @@ import type { AccountKeyRecord, BlockchainAccount, WalletSignature } from '../wa
 import { calculateFee, developmentFeeSchedule } from '../fees/schedule.ts';
 import { usageForOperation } from '../fees/meter.ts';
 import { FeeEngine } from '../fees/engine.ts';
+import {
+  developmentFeePolicyV2,
+  disposeFeeV2,
+  developmentFeeDispositionPolicyV2,
+  dispositionV2Reconciles,
+  nextBaseResourcePrice,
+  initialBaseResourcePriceState,
+  quoteFeeV2,
+  usageV2ForTransaction,
+} from '../fees/v2/index.ts';
 import { transferTx, txId } from '../fees/demo-helpers.ts';
 import { developmentFeeAssetPolicy, disposeFee, developmentFeeDispositionPolicy, dispositionReconciles } from '../fees/policy.ts';
 import { medianOf, weightedMedianOf } from '../oracle/aggregation.ts';
@@ -29,6 +39,10 @@ import {
   putForeignState,
 } from '../interop/index.ts';
 import { DEV_INTEROP_TEST_ASSET, EXTERNAL_DEV_CHAIN_ID } from '../interop/types.ts';
+import { nativeAssetConstitution } from '../economics/constitution.ts';
+import { authorizeIssuance, developmentMoonReyAuthority, developmentSunReyAuthority } from '../economics/issuance.ts';
+import { burn, lock, reserveFee, transfer, unlock } from '../economics/operations.ts';
+import { emptyBook as emptyMonetaryBook, supplyReconciles as monetarySupplyReconciles } from '../economics/supply.ts';
 import type { SeededRng } from './rng.ts';
 
 type AssetBook = {
@@ -67,6 +81,40 @@ export function feeActualNeverExceedsMax(rng: SeededRng, cases: number): void {
     }
     if (!developmentFeeAssetPolicy().enabledAssets.includes('SUNREY_COIN')) {
       throw new Error('development fee asset policy missing SUNREY_COIN');
+    }
+  }
+}
+
+export function feePolicyV2Properties(rng: SeededRng, cases: number): void {
+  const policy = developmentFeePolicyV2();
+  const start = initialBaseResourcePriceState(policy.bounds, 100n, 0);
+  for (let i = 0; i < cases; i += 1) {
+    const used = rng.bigint(0n, policy.bounds.blockResourceLimit * 2n);
+    const next = nextBaseResourcePrice(start, used, policy.bounds, 1);
+    if (next.baseResourcePrice < policy.bounds.minBasePrice || next.baseResourcePrice > policy.bounds.maxBasePrice) {
+      throw new Error('v2 base price escaped bounds');
+    }
+    const again = nextBaseResourcePrice(start, used, policy.bounds, 1);
+    if (again.baseResourcePrice !== next.baseResourcePrice) {
+      throw new Error('v2 next price is not deterministic');
+    }
+    const tx = transferTx(txId(`v2-prop-${i}`), 'alice', 'bob', 1n, 5_000_000n);
+    const usage = usageV2ForTransaction({ ...tx, signatureClass: i % 3 === 0 ? 'PQ' : 'CLASSICAL' });
+    const quote = quoteFeeV2({
+      policy,
+      usage,
+      baseResourcePrice: next.baseResourcePrice,
+      feeAsset: 'SUNREY_COIN',
+      maximumAuthorizedFee: 5_000_000n,
+    });
+    if (quote.ok && quote.quote.estimatedTotal > quote.quote.maximumAuthorizedFee) {
+      throw new Error('v2 charged exceeded max_fee');
+    }
+    if (quote.ok) {
+      const split = disposeFeeV2(developmentFeeDispositionPolicyV2(), 'SUNREY_COIN', quote.quote.estimatedTotal);
+      if (!dispositionV2Reconciles(split)) {
+        throw new Error('v2 disposition mismatch');
+      }
     }
   }
 }
@@ -340,6 +388,85 @@ export function nativeAssetInvariantProperties(rng: SeededRng, cases: number): v
     }
     if (books.SUNREY_COIN.circulating + books.MOONREY_COIN.circulating < 0n) {
       throw new Error('cross-asset arithmetic produced a negative');
+    }
+  }
+  monetaryConstitutionProperties(rng.child('constitution'), cases);
+}
+
+export function monetaryConstitutionProperties(rng: SeededRng, cases: number): void {
+  const constitution = nativeAssetConstitution('DEVELOPMENT_ACTIVE');
+  let sunrey = emptyMonetaryBook('SUNREY_COIN', constitution.assets[0]!.policyVersion.versionId);
+  let moonrey = emptyMonetaryBook('MOONREY_COIN', constitution.assets[1]!.policyVersion.versionId);
+  const issued = authorizeIssuance(
+    constitution,
+    sunrey,
+    developmentSunReyAuthority({ recipient: 'alice', quantity: 10_000n, replayIdentifier: 'prop-src' }),
+  );
+  if (!issued.ok) {
+    throw new Error(issued.code);
+  }
+  sunrey = issued.book;
+  for (let i = 0; i < cases; i += 1) {
+    const op = rng.pick(['issue', 'transfer', 'lock', 'unlock', 'escrow', 'release', 'burn', 'fee', 'moonrey'] as const);
+    if (op === 'issue') {
+      const next = authorizeIssuance(
+        constitution,
+        sunrey,
+        developmentSunReyAuthority({
+          recipient: 'alice',
+          quantity: rng.bigint(1n, 20n),
+          replayIdentifier: `prop-issue-${i}`,
+        }),
+      );
+      if (next.ok) {
+        sunrey = next.book;
+      }
+    } else if (op === 'transfer' && sunrey.circulating > 0n) {
+      const qty = rng.bigint(1n, 5n);
+      if ((sunrey.positions.get('alice')?.circulating ?? 0n) >= qty) {
+        sunrey = transfer(sunrey, 'alice', 'bob', qty);
+      }
+    } else if (op === 'lock' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      const qty = 1n;
+      sunrey = lock(sunrey, 'alice', `lock-${i}`, qty, 'ORDER_RESERVATION');
+    } else if (op === 'unlock') {
+      const active = [...sunrey.locks.values()].find((row) => row.active && row.lockClass === 'ORDER_RESERVATION');
+      if (active) {
+        sunrey = unlock(sunrey, active.lockId);
+      }
+    } else if (op === 'escrow' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      sunrey = lock(sunrey, 'alice', `escrow-${i}`, 1n, 'MACHINE_ESCROW');
+    } else if (op === 'release') {
+      const active = [...sunrey.locks.values()].find((row) => row.active && row.lockClass === 'MACHINE_ESCROW');
+      if (active) {
+        sunrey = unlock(sunrey, active.lockId);
+      }
+    } else if (op === 'burn' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      const burned = burn(sunrey, 'alice', 1n, 'VOLUNTARY_USER_BURN');
+      if (burned.ok) {
+        sunrey = burned.book;
+      }
+    } else if (op === 'fee' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      sunrey = reserveFee(sunrey, 'alice', 1n);
+    } else if (op === 'moonrey') {
+      const next = authorizeIssuance(
+        constitution,
+        moonrey,
+        developmentMoonReyAuthority({
+          recipient: 'producer',
+          quantity: rng.bigint(1n, 10n),
+          replayIdentifier: `prop-moon-${i}`,
+          contributionId: `contrib-${i}`,
+          fingerprint: `fp-${i}`,
+          authorizationId: `mia-${i}`,
+        }),
+      );
+      if (next.ok) {
+        moonrey = next.book;
+      }
+    }
+    if (!monetarySupplyReconciles(sunrey) || !monetarySupplyReconciles(moonrey)) {
+      throw new Error('monetary constitution supply identity failed');
     }
   }
 }

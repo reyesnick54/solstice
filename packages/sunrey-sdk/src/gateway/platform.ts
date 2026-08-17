@@ -8,6 +8,12 @@ import { createHash, randomUUID } from 'node:crypto';
 import { estimateFee, FeeEngine } from '../../../sunrey-chain/src/fees/engine.ts';
 import { developmentFeeSchedule, hashFeeSchedule } from '../../../sunrey-chain/src/fees/schedule.ts';
 import { usageForOperation } from '../../../sunrey-chain/src/fees/meter.ts';
+import {
+  developmentFeePolicyV2,
+  estimateFeeV2,
+  hashFeePolicyV2,
+  usageV2ForTransaction,
+} from '../../../sunrey-chain/src/fees/v2/index.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -214,6 +220,75 @@ export class DevelopmentPlatform {
     });
   }
 
+  getFeePolicy(): Record<string, unknown> {
+    const policy = developmentFeePolicyV2();
+    return Object.freeze({
+      historicPolicy: 'FeeSchedule v1',
+      policyVersion: policy.policyVersion,
+      formulaVersion: policy.formulaVersion,
+      feeAsset: policy.feeAsset,
+      moonreyFeeEnabled: policy.moonreyFeeEnabled,
+      productionParametersConfigured: policy.productionParametersConfigured,
+      hash: hashFeePolicyV2(policy),
+    });
+  }
+
+  getBaseResourcePrice(): Record<string, unknown> {
+    return Object.freeze({
+      baseResourcePrice: this.fees.priceState.baseResourcePrice.toString(),
+      formulaVersion: this.fees.priceState.formulaVersion,
+      targetUtilizationBps: this.fees.feePolicyV2.bounds.targetUtilizationBps.toString(),
+    });
+  }
+
+  estimateResourcesV2(encodedBytes = 256, signatureCount = 1, signatureClass: 'CLASSICAL' | 'HYBRID' | 'PQ' = 'CLASSICAL') {
+    const tx = {
+      transactionId: 'estimate',
+      operation: 'NATIVE_TRANSFER' as const,
+      payerAuthenticated: true,
+      encodedBytes,
+      signatureCount,
+      signatureClass,
+      budget: {
+        maxExecutionUnits: 10_000n,
+        maxFee: 50_000n,
+        feeAsset: 'SUNREY_COIN' as const,
+        feePayer: 'estimator',
+        exemption: 'NONE' as const,
+      },
+    };
+    return usageV2ForTransaction(tx);
+  }
+
+  estimateFeeV2(encodedBytes = 256, signatureCount = 1, signatureClass: 'CLASSICAL' | 'HYBRID' | 'PQ' = 'CLASSICAL') {
+    const policy = developmentFeePolicyV2();
+    const tx = {
+      transactionId: 'estimate',
+      operation: 'NATIVE_TRANSFER' as const,
+      payerAuthenticated: true,
+      encodedBytes,
+      signatureCount,
+      signatureClass,
+      budget: {
+        maxExecutionUnits: 10_000n,
+        maxFee: 10_000_000n,
+        feeAsset: 'SUNREY_COIN' as const,
+        feePayer: 'estimator',
+        exemption: 'NONE' as const,
+      },
+    };
+    const quote = estimateFeeV2(policy, tx, this.fees.priceState.baseResourcePrice);
+    return Object.freeze({
+      informational: true,
+      authorization: 'signed canonical max_fee',
+      policy: this.getFeePolicy(),
+      resourceUsage: this.estimateResourcesV2(encodedBytes, signatureCount, signatureClass),
+      quote: quote.ok ? quote.quote : quote,
+      feeAsset: 'SUNREY_COIN',
+      maxFeeGuidance: 'authorize max_fee >= estimatedTotal; estimate is not authorization',
+    });
+  }
+
   submitSigned(input: {
     readonly signed_envelope_hex: string;
     readonly network_id: string;
@@ -415,6 +490,39 @@ export class DevelopmentPlatform {
     ]);
   }
 
+  validatorEconomicPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      version: 1,
+      bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+      bondAssetStatus: 'DEVELOPMENT_FIXTURE',
+      productionBondAsset: 'UNCONFIGURED',
+      publicDelegation: false,
+      coinEqualsVote: false,
+    });
+  }
+
+  validatorBond(validatorId: string): Record<string, unknown> {
+    return Object.freeze({
+      validatorId,
+      bondState: 'BONDED',
+      bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+      bondedQuantity: '1000000',
+      policyVersion: 1,
+    });
+  }
+
+  validatorRewardSummary(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, paid: '0', pending: '0', policyVersion: 1 });
+  }
+
+  validatorPublicPenalties(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, penalties: [] });
+  }
+
+  validatorUnbondStatus(validatorId: string): Record<string, unknown> {
+    return Object.freeze({ validatorId, pending: '0', releaseEpoch: null });
+  }
+
   governance(): readonly Record<string, string>[] {
     return Object.freeze([
       {
@@ -442,6 +550,49 @@ export class DevelopmentPlatform {
         ticker_status: TICKER_STATUS,
       },
     ]);
+  }
+
+  moonreyPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      policyVersion: 1,
+      assetId: 'MOONREY_COIN',
+      tickerStatus: TICKER_STATUS,
+      parameterClass: 'ENGINEERING_SIMULATION_PARAMETERS',
+      productionCaps: 'UNCONFIGURED',
+    });
+  }
+
+  moonreyCategoryPolicy(category: string): Record<string, unknown> {
+    return Object.freeze({
+      category,
+      canonical: true,
+      tickerStatus: TICKER_STATUS,
+    });
+  }
+
+  productiveContribution(contributionId: string): Record<string, unknown> {
+    return Object.freeze({
+      contribution_id: contributionId,
+      object_id: 'prod.obj.1',
+      status: 'ELIGIBLE',
+    });
+  }
+
+  moonreyIssuanceReceipt(issuanceId: string): Record<string, unknown> {
+    return Object.freeze({
+      issuanceId,
+      assetId: 'MOONREY_COIN',
+      tickerStatus: TICKER_STATUS,
+      policyVersion: 1,
+    });
+  }
+
+  moonreySupplyPressure(): Record<string, unknown> {
+    return Object.freeze({
+      classification: 'ENGINEERING_ECONOMIC_SIMULATION',
+      automaticMarketPriceClaim: false,
+      tickerStatus: TICKER_STATUS,
+    });
   }
 
   machines(): readonly Record<string, string>[] {

@@ -3,6 +3,8 @@
 //! Integer minor units only. No floating point. Not a fiat ledger debit.
 //! Fee parameters change only at a height-activated governed upgrade.
 
+pub mod v2;
+
 use std::collections::BTreeMap;
 
 use serde::{Deserialize, Serialize};

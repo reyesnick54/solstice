@@ -3,6 +3,7 @@ import { usageForOperation } from './meter.ts';
 import { PRIORITY_SCALE, totalUnits, type ExecutableTransaction } from './types.ts';
 import type { FeeEngine } from './engine.ts';
 import type { BlockResourceLimits, FeeRejection } from './types.ts';
+import { developmentAntiSpamControls, mempoolAdmissionBounded, usageV2ForTransaction, weightedUsage } from './v2/index.ts';
 
 /**
  * Deterministic mempool selection:
@@ -13,14 +14,25 @@ import type { BlockResourceLimits, FeeRejection } from './types.ts';
  * Local arrival time is not used. Validators that see the same admitted
  * set therefore select the same prefix independently.
  */
-export function effectiveFeePriority(tx: ExecutableTransaction): bigint {
+export function effectiveFeePriority(tx: ExecutableTransaction, engine?: FeeEngine): bigint {
+  if (engine?.policyVersion === 2) {
+    const usage = usageV2ForTransaction(tx);
+    const units = weightedUsage(usage, engine.feePolicyV2.weights);
+    const denom = units === 0n ? 1n : units;
+    const authorized = tx.budget.maxFee + (tx.priorityAuthorized === true ? tx.authorizedPriorityFee ?? 0n : 0n);
+    return (authorized * PRIORITY_SCALE) / denom;
+  }
   const units = tx.budget.maxExecutionUnits === 0n ? 1n : tx.budget.maxExecutionUnits;
   return (tx.budget.maxFee * PRIORITY_SCALE) / units;
 }
 
-export function compareForSelection(left: ExecutableTransaction, right: ExecutableTransaction): number {
-  const leftPriority = effectiveFeePriority(left);
-  const rightPriority = effectiveFeePriority(right);
+export function compareForSelection(
+  left: ExecutableTransaction,
+  right: ExecutableTransaction,
+  engine?: FeeEngine,
+): number {
+  const leftPriority = effectiveFeePriority(left, engine);
+  const rightPriority = effectiveFeePriority(right, engine);
   if (leftPriority > rightPriority) {
     return -1;
   }
@@ -44,7 +56,7 @@ export class FeeMempool {
     let hi = this.ordered.length;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
-      if (compareForSelection(this.ordered[mid]!, tx) <= 0) {
+      if (compareForSelection(this.ordered[mid]!, tx, this.engine) <= 0) {
         lo = mid + 1;
       } else {
         hi = mid;
@@ -63,6 +75,14 @@ export class FeeMempool {
   admit(tx: ExecutableTransaction): FeeRejection | null {
     if (this.byId.has(tx.transactionId)) {
       return { code: 'INVALID_RESOURCE_DECLARATION', stage: 'mempool', detail: 'duplicate transaction id' };
+    }
+    if (this.engine.policyVersion === 2) {
+      const controls = developmentAntiSpamControls(this.engine.feePolicyV2);
+      const actorCount = this.ordered.filter((item) => item.budget.feePayer === tx.budget.feePayer).length;
+      const currentBytes = this.ordered.reduce((sum, item) => sum + item.encodedBytes, 0);
+      if (!mempoolAdmissionBounded(this.ordered.length, currentBytes, actorCount, tx.encodedBytes, controls)) {
+        return { code: 'BLOCK_RESOURCE_LIMIT', stage: 'mempool', detail: 'mempool resource exhaustion is bounded' };
+      }
     }
     const rejection = this.engine.validateAdmission(tx);
     if (rejection) {
@@ -97,7 +117,10 @@ export class FeeMempool {
     for (const tx of ordered) {
       const usage = usageForOperation(tx.operation, tx.encodedBytes, tx.signatureCount);
       const nextBytes = bytes + BigInt(tx.encodedBytes);
-      const nextUnits = units + totalUnits(usage);
+      const nextUnits =
+        this.engine.policyVersion === 2
+          ? units + weightedUsage(usageV2ForTransaction(tx), this.engine.feePolicyV2.weights)
+          : units + totalUnits(usage);
       const nextWrites = writes + usage.STATE_WRITE_UNITS;
       const nextSigs = sigs + usage.SIGNATURE_VERIFY_UNITS;
       if (

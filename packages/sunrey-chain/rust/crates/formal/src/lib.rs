@@ -11,7 +11,10 @@ use sunrey_consensus::{
     exceeds_two_thirds, two_thirds_threshold, BlockId, ConsensusStep, Height, Round,
     SignerSafetyStore,
 };
-use sunrey_fees::{FeeDispositionPolicy, BPS_DENOM};
+use sunrey_fees::{
+    v2::{AdaptivePriceBounds, BaseResourcePriceState, FeeDispositionV2, FeePolicyV2},
+    FeeDispositionPolicy, BPS_DENOM,
+};
 use sunrey_native_assets::{AssetError, AssetQuantity, NativeAssetId};
 
 pub fn quorum_agrees(signed: u64, total: u64) -> bool {
@@ -66,6 +69,26 @@ pub fn signer_conflict_refused() -> bool {
 
 pub fn settlement_conservation(reserved: u128, settled: u128, cancelled: u128) -> bool {
     reserved >= settled.saturating_add(cancelled)
+}
+
+pub fn adaptive_price_within_bounds(usage: u128) -> bool {
+    let bounds = AdaptivePriceBounds::development();
+    let next = BaseResourcePriceState::initial(&bounds).next(usage, &bounds, 1);
+    next.base_resource_price >= bounds.min_base_price
+        && next.base_resource_price <= bounds.max_base_price
+}
+
+pub fn adaptive_disposition_conserves(charged: u128) -> bool {
+    FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles()
+        && !FeePolicyV2::development().production_parameters_configured
+pub fn validator_bond_conservation(
+    available: u128,
+    locked: u128,
+    pending: u128,
+    penalized: u128,
+    issued: u128,
+) -> bool {
+    available.saturating_add(locked).saturating_add(pending).saturating_add(penalized) == issued
 }
 
 #[cfg(kani)]
@@ -142,5 +165,10 @@ mod tests {
         assert!(settlement_conservation(2, 2, 0));
         assert!(settlement_conservation(2, 0, 2));
         assert!(!settlement_conservation(2, 2, 1));
+        assert!(adaptive_price_within_bounds(0));
+        assert!(adaptive_price_within_bounds(2_000_000));
+        assert!(adaptive_disposition_conserves(1_000));
+        assert!(validator_bond_conservation(1, 2, 1, 1, 5));
+        assert!(!validator_bond_conservation(1, 2, 1, 1, 4));
     }
 }

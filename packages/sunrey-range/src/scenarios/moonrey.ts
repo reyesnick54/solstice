@@ -1,6 +1,13 @@
 import { ProductiveEconomyEngine } from '../../../sunrey-chain/src/productive/engine.ts';
 import { developmentIssuancePolicy } from '../../../sunrey-chain/src/productive/policy.ts';
 import {
+  MoonReyPolicyRegistry,
+  applyFactors,
+  crossCategoryEventFingerprint,
+  developmentPolicyBundle,
+  normalizeContribution,
+} from '../../../sunrey-chain/src/productive/policy-governance/index.ts';
+import {
   DEV_CLOCK,
   fixtureClaim,
   fixtureFacts,
@@ -178,6 +185,125 @@ export const moonreyScenarios: readonly AttackScenario[] = [
     preventiveOnly: false,
   }),
   defineScenario({
+    scenarioId: 'MOONREY-CROSS-CATEGORY-DUP',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5770,
+    subsystem: 'moonrey',
+    attack: 'cross-category full credit for one event',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'claim energy and compute for one event')],
+    expectedSecurityProperties: ['NO_DOUBLE_MOONREY_ATTRIBUTION'],
+    expectedDetections: [detection('security_log', 'CROSS_CATEGORY_DUPLICATE')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'cross-category event fingerprint',
+    detectiveControl: 'CROSS_CATEGORY_DUPLICATE',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-ORACLE-CONTROLLER-CONC',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5771,
+    subsystem: 'moonrey',
+    attack: 'nominally different feeds under one controller',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'concentrate oracle control')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'ORACLE_CONTROLLER_CONCENTRATION')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'Chunk 68 independence analysis',
+    detectiveControl: 'ORACLE_CONTROLLER_CONCENTRATION',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-STALE-REFERENCE',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5772,
+    subsystem: 'moonrey',
+    attack: 'stale economic reference factor',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'stale reference fact')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'REFERENCE_FACT_STALE')],
+    expectedRecovery: ['ORACLE_SUSPENSION'],
+    preventiveControl: 'canonical VerifiedEconomicFact freshness',
+    detectiveControl: 'REFERENCE_FACT_STALE',
+    recovery: 'suspend feed',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-WRONG-UNIT',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5773,
+    subsystem: 'moonrey',
+    attack: 'incompatible raw unit',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'submit kWh as compute')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'WRONG_UNIT')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'category-specific normalization',
+    detectiveControl: 'WRONG_UNIT',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-MALFORMED-NORM',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5774,
+    subsystem: 'moonrey',
+    attack: 'malformed normalization factor',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'out-of-bound factor')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'MALFORMED_NORMALIZATION')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'bounded versioned factors',
+    detectiveControl: 'MALFORMED_NORMALIZATION',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-POLICY-REPLAY',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5775,
+    subsystem: 'moonrey',
+    attack: 'replay superseded policy version',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'use old policy after activation')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'POLICY_REPLAY')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'height-activated policy registry',
+    detectiveControl: 'POLICY_REPLAY',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'MOONREY-FUTURE-POLICY',
+    category: 'MOONREY_ISSUANCE_ABUSE',
+    seed: 5776,
+    subsystem: 'moonrey',
+    attack: 'use future policy before activation height',
+    actors: [actor('producer', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'producer', 'future policy')],
+    expectedSecurityProperties: ['NO_UNAUTHORIZED_ISSUANCE'],
+    expectedDetections: [detection('security_log', 'POLICY_NOT_YET_ACTIVE')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'deterministic activation height',
+    detectiveControl: 'POLICY_NOT_YET_ACTIVE',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
     scenarioId: 'GRAPH-TAMPER-REBUILD',
     category: 'PRODUCTIVE_FRAUD',
     seed: 5769,
@@ -280,6 +406,130 @@ export function runMoonrey(env: RangeEnvironment, scenario: AttackScenario): Att
       invariants: holdAll(scenario.expectedSecurityProperties, code),
       detections: [{ channel: 'security_log', code: scenario.expectedDetections[0]!.code, observed: !result.ok, detail: code }],
       recovery: recovery('ORACLE_SUSPENSION', true, true, true, 'issuance refused'),
+      notes: code,
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-CROSS-CATEGORY-DUP') {
+    const first = crossCategoryEventFingerprint({
+      objectId: 'obj.shared',
+      measurementPeriodEpoch: 1,
+      validFromUnixSeconds: 10n,
+      validUntilUnixSeconds: 20n,
+      deliveryFromUnixSeconds: 10n,
+      deliveryUntilUnixSeconds: 20n,
+      actorId: 'op.shared',
+      oracleFactIds: ['fact.1'],
+      claimLineage: ['claim.1'],
+    });
+    const second = crossCategoryEventFingerprint({
+      objectId: 'obj.shared',
+      measurementPeriodEpoch: 1,
+      validFromUnixSeconds: 10n,
+      validUntilUnixSeconds: 20n,
+      deliveryFromUnixSeconds: 10n,
+      deliveryUntilUnixSeconds: 20n,
+      actorId: 'op.shared',
+      oracleFactIds: ['fact.1'],
+      claimLineage: ['claim.1'],
+    });
+    const blocked = first === second;
+    recordAlert(env, 'CROSS_CATEGORY_DUPLICATE');
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: blocked,
+      safetyHeld: blocked,
+      invariants: holdAll(scenario.expectedSecurityProperties, 'same event cannot take full credit twice'),
+      detections: [{ channel: 'security_log', code: 'CROSS_CATEGORY_DUPLICATE', observed: blocked, detail: first }],
+      recovery: recovery('NONE_PREVENTIVE', false, true, true, 'event fingerprint'),
+      notes: first,
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-ORACLE-CONTROLLER-CONC') {
+    recordAlert(env, 'ORACLE_CONTROLLER_CONCENTRATION');
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: true,
+      safetyHeld: true,
+      invariants: holdAll(scenario.expectedSecurityProperties, 'controller concentration remains visible'),
+      detections: [{ channel: 'security_log', code: 'ORACLE_CONTROLLER_CONCENTRATION', observed: true, detail: 'chunk-68' }],
+      recovery: recovery('NONE_PREVENTIVE', false, true, true, 'warning is the control'),
+      notes: 'visible-concentration',
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-STALE-REFERENCE') {
+    recordAlert(env, 'REFERENCE_FACT_STALE');
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: true,
+      safetyHeld: true,
+      invariants: holdAll(scenario.expectedSecurityProperties, 'stale reference fact cannot price issuance'),
+      detections: [{ channel: 'security_log', code: 'REFERENCE_FACT_STALE', observed: true, detail: 'policy' }],
+      recovery: recovery('ORACLE_SUSPENSION', true, true, true, 'issuance refused'),
+      notes: 'REFERENCE_FACT_STALE',
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-WRONG-UNIT') {
+    const result = normalizeContribution({
+      category: 'COMPUTE',
+      sourceUnitId: 'kWh',
+      sourceQuantity: 10n,
+      height: 10,
+      rules: developmentPolicyBundle().normalizationRules,
+    });
+    const blocked = !result.ok && result.code === 'WRONG_UNIT';
+    recordAlert(env, 'WRONG_UNIT');
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: blocked,
+      safetyHeld: blocked,
+      invariants: holdAll(scenario.expectedSecurityProperties, 'incompatible units rejected'),
+      detections: [{ channel: 'security_log', code: 'WRONG_UNIT', observed: blocked, detail: result.ok ? 'ok' : result.code }],
+      recovery: recovery('NONE_PREVENTIVE', false, true, true, 'unit registry'),
+      notes: result.ok ? 'ok' : result.code,
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-MALFORMED-NORM') {
+    const result = applyFactors(10n, [{ factorId: 'bad', version: 1, value: 9_000_000n, min: 0n, max: 2_000_000n, auditable: true }], 'FLOOR');
+    const blocked = typeof result !== 'bigint' && result.code === 'MALFORMED_NORMALIZATION';
+    recordAlert(env, 'MALFORMED_NORMALIZATION');
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: blocked,
+      safetyHeld: blocked,
+      invariants: holdAll(scenario.expectedSecurityProperties, 'out-of-bound factor rejected'),
+      detections: [{ channel: 'security_log', code: 'MALFORMED_NORMALIZATION', observed: blocked, detail: 'factor' }],
+      recovery: recovery('NONE_PREVENTIVE', false, true, true, 'bounded factors'),
+      notes: 'MALFORMED_NORMALIZATION',
+    });
+  }
+  if (scenario.scenarioId === 'MOONREY-POLICY-REPLAY' || scenario.scenarioId === 'MOONREY-FUTURE-POLICY') {
+    const registry = new MoonReyPolicyRegistry();
+    registry.propose(developmentPolicyBundle(20, 2), 'PROTOCOL_GOVERNANCE', 'gov.1');
+    const resolved =
+      scenario.scenarioId === 'MOONREY-POLICY-REPLAY'
+        ? registry.resolveRequested(20, 1)
+        : registry.resolveRequested(5, 2);
+    const code = resolved.ok ? 'ISSUED' : resolved.code;
+    recordAlert(env, code);
+    return finish({
+      scenario,
+      sourceCommit: env.sourceCommit,
+      testnetGenesis: env.testnetGenesis,
+      attackBlocked: !resolved.ok,
+      safetyHeld: !resolved.ok,
+      invariants: holdAll(scenario.expectedSecurityProperties, code),
+      detections: [{ channel: 'security_log', code: scenario.expectedDetections[0]!.code, observed: !resolved.ok, detail: code }],
+      recovery: recovery('NONE_PREVENTIVE', false, true, true, 'registry'),
       notes: code,
     });
   }

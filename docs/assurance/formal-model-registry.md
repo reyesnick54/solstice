@@ -12,6 +12,7 @@ Machine-readable catalog: `packages/sunrey-chain/formal/registry/formal-model-re
 | FEE_CONSERVATION | TLA+/TLC 1.8.0 | quantity 2 | reserved = charged + released |
 | EXCHANGE_ATOMIC_DVP | TLA+/TLC 1.8.0 | quantity 2, 1 order | atomic legs, no double settle, conservation |
 | MOONREY_ISSUANCE | TLA+/TLC 1.8.0 | quantity 2 | uniqueness, fingerprint reorder, limits |
+| MOONREY_POLICY_GOVERNANCE | TLA+/TLC 1.8.0 | quantity 2, 2 epochs | uniqueness, caps, activation, eligibility, supply, cross-category |
 | INTEROP_PACKET_STATE | TLA+/TLC 1.8.0 | 2 packets | at most once send/ack, frozen client |
 | INTEROP_ASSET_CONSERVATION | TLA+/TLC 1.8.0 | DEV_INTEROP_TEST_ASSET quantity 3 | circulating + escrowed + remote = total |
 | CRYPTO_POLICY_MIGRATION | TLA+/TLC 1.8.0 | five Chunk 60 states | governed transitions only |

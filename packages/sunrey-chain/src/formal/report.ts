@@ -50,6 +50,7 @@ export function buildFormalVerificationReport(
       { harness: 'quorum_arithmetic', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
       { harness: 'checked_asset_arithmetic', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
       { harness: 'fee_arithmetic', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
+      { harness: 'adaptive_fee_market', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
       { harness: 'signer_coordinate_conflict', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
       { harness: 'settlement_conservation', result: 'VERIFIED_WITHIN_MODEL_BOUNDS' },
     ],
