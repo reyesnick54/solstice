@@ -32,10 +32,32 @@ export function compareForSelection(left: ExecutableTransaction, right: Executab
 
 export class FeeMempool {
   private readonly byId = new Map<string, ExecutableTransaction>();
+  private readonly ordered: ExecutableTransaction[] = [];
   private readonly engine: FeeEngine;
 
   constructor(engine: FeeEngine) {
     this.engine = engine;
+  }
+
+  private insertOrdered(tx: ExecutableTransaction): void {
+    let lo = 0;
+    let hi = this.ordered.length;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (compareForSelection(this.ordered[mid]!, tx) <= 0) {
+        lo = mid + 1;
+      } else {
+        hi = mid;
+      }
+    }
+    this.ordered.splice(lo, 0, tx);
+  }
+
+  private removeOrdered(transactionId: string): void {
+    const index = this.ordered.findIndex((tx) => tx.transactionId === transactionId);
+    if (index >= 0) {
+      this.ordered.splice(index, 1);
+    }
   }
 
   admit(tx: ExecutableTransaction): FeeRejection | null {
@@ -51,6 +73,7 @@ export class FeeMempool {
       return reserved;
     }
     this.byId.set(tx.transactionId, tx);
+    this.insertOrdered(tx);
     return null;
   }
 
@@ -61,10 +84,11 @@ export class FeeMempool {
     }
     this.engine.releaseReservation(tx);
     this.byId.delete(transactionId);
+    this.removeOrdered(transactionId);
   }
 
   selectForBlock(limits: BlockResourceLimits = this.engine.limits): ExecutableTransaction[] {
-    const ordered = [...this.byId.values()].sort(compareForSelection);
+    const ordered = this.ordered;
     const selected: ExecutableTransaction[] = [];
     let bytes = 0n;
     let units = 0n;
@@ -98,6 +122,7 @@ export class FeeMempool {
   removeCommitted(ids: readonly string[]): void {
     for (const id of ids) {
       this.byId.delete(id);
+      this.removeOrdered(id);
     }
   }
 

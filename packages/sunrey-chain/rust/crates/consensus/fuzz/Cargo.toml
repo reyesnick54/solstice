@@ -28,3 +28,9 @@ name = "commit_certificate_decoder"
 path = "fuzz_targets/commit_certificate_decoder.rs"
 test = false
 doc = false
+
+[[bin]]
+name = "signer_safety_decoder"
+path = "fuzz_targets/signer_safety_decoder.rs"
+test = false
+doc = false

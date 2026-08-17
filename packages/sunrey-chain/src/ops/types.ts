@@ -3,6 +3,8 @@
  *
  * Failure domains are not AWS/Azure/GCP. Cloud adapters may be added later.
  * Engineering SLOs are ENGINEERING_TEST_TARGETS, not production contracts.
+ *
+ * Chunk 54 validator-operator types continue in this same module.
  */
 
 import type { ConsensusMessageType, ValidatorStatus } from '../validators/types.ts';
@@ -103,6 +105,7 @@ export const DASHBOARD_IDS = [
   'EXCHANGE',
   'CUSTODY',
   'INTEROP',
+  'PERFORMANCE',
 ] as const;
 export type DashboardId = (typeof DASHBOARD_IDS)[number];
 

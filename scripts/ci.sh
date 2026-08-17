@@ -39,6 +39,10 @@ node scripts/check-container-pins.mjs
 echo "==> tests"
 npm run test:sunrey-node
 npm test
+npm run sunrey-bench -- sanity
+
+echo "==> fuzz smoke"
+npm run test:fuzz-smoke
 
 echo "==> end-to-end demo"
 npm run demo
@@ -88,6 +92,9 @@ npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
 npm run demo:explorer
+npm run demo:sunrey-bench
+npm run sunrey-range -- campaign --smoke
+npm run demo:sunrey-range
 
 echo "==> typecheck"
 npm run typecheck
