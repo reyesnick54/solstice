@@ -15,8 +15,17 @@ human-approval evidence must never be fabricated.
 | License / registration | `NOT_PROVIDED` |
 | Regulatory approval | `NOT_PROVIDED` |
 | Partner agreements | `NOT_PROVIDED` |
+| Exchange license / market approval | `NOT_PROVIDED` |
+| Real custody HSM/provider | `NOT_PROVIDED` |
+| Oracle provider agreements | `NOT_PROVIDED` |
+| Interop legal/compliance review | `NOT_PROVIDED` |
+| Jurisdictional privacy analysis | `NOT_PROVIDED` |
 
 Simulation rehearsal of a ceremony transcript is process readiness, not
 proof of real production key creation.
+
+Development oracle fixtures are not production feeds. Simulation HSM
+does not satisfy real-provider evidence. Software Exchange or custody
+is not a licensed business.
 
 No repository legal position is `CONFIRMED_BY_COUNSEL`.

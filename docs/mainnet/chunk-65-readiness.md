@@ -18,6 +18,7 @@ Capability: `sunrey-mainnet-readiness`.
 - Human authorization workflow that rejects AI signatures
 - External legal/regulatory/security-review slots that stay incomplete
   unless real evidence is supplied
+- Separate Exchange, custody, oracle, interop, and privacy checklists
 - Activation-plan generation that does not execute infrastructure
 - Readiness CLI: `sunrey-mainnet`
 

@@ -26,3 +26,9 @@ authority.
 
 Software implementation alone is insufficient for Exchange, custody,
 oracle, interop, or privacy production activation.
+
+Structured checklists (`ExchangeReadinessSlot`, `CustodyReadinessSlot`,
+`OracleReadinessSlot`, `InteropReadinessSlot`, `PrivacyReadinessSlot`)
+keep those sub-requirements explicit. Default items remain
+`NOT_PROVIDED` or `EXTERNAL_VERIFICATION_REQUIRED`. No capability
+inherits another capability's legal authority.

@@ -5,6 +5,13 @@
 import { evaluateReadiness, type EvaluatorPolicy } from './evaluator.ts';
 import { isExternalDimension, missingEvidenceIds } from './evidence.ts';
 import { consumeExternalSecurityReview, consumeFormalAssurance, consumePqc, consumeSupplyChain, consumeTestnetRc } from './consumers.ts';
+import {
+  custodyReadiness,
+  exchangeReadiness,
+  interopReadiness,
+  oracleReadiness,
+  privacyReadiness,
+} from './product-readiness.ts';
 import { READINESS_DIMENSIONS, type DimensionStatus, type MainnetAuthorizationRecord, type MainnetReadinessReport, type ProductionCapabilityActivation, type ReadinessEvidenceRecord } from './types.ts';
 import { MAINNET_READINESS_TOOL_VERSION } from './types.ts';
 
@@ -69,6 +76,11 @@ export function buildReadinessReport(input: {
     ]),
     testnetRcReference: consumeTestnetRc(),
     formalEvidence: consumeFormalAssurance(),
+    exchangeReadiness: exchangeReadiness(),
+    custodyReadiness: custodyReadiness(),
+    oracleReadiness: oracleReadiness(),
+    interopReadiness: interopReadiness(),
+    privacyReadiness: privacyReadiness(),
     pqcStatus: `${pqc.productionStatus}; provider=${pqc.provider}; certifiedHsm=${String(pqc.certifiedHsm)}`,
     supplyChainStatus: `engineering digest=${supply.generatedSourceDigest}; productionSigningKey=null`,
     disasterRecoveryStatus: 'ENGINEERING_VERIFIED (Chunk 55 drills); not a contractual commitment',

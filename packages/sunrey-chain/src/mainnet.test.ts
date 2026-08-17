@@ -40,6 +40,15 @@ import {
   runMainnetCandidateRehearsal,
   runMainnetCommand,
   assembleReadinessRegistry,
+  rejectWrongReleaseArtifact,
+  developmentOracleFixturesAreProductionFeeds,
+  softwareExchangeIsLicensedExchange,
+  softwareCustodyIsLicensedCustody,
+  exchangeReadiness,
+  custodyReadiness,
+  oracleReadiness,
+  interopReadiness,
+  privacyReadiness,
   READINESS_DIMENSIONS,
   ACTIVATION_DOMAINS,
   PRODUCTION_CANDIDATE_NETWORK_ID,
@@ -216,6 +225,26 @@ describe('Chunk 65 SunRey mainnet readiness', () => {
       index === 0 ? { ...row, notes: `${row.notes} tampered` } : row,
     );
     assert.equal(tamperedEvidenceRejected(records, tampered, bundle), true);
+    assert.throws(() => rejectWrongReleaseArtifact('aa'.repeat(32), 'bb'.repeat(32)), /wrong release artifact/);
+    rejectWrongReleaseArtifact(bundle.bundleHash, bundle.bundleHash);
+  });
+
+  it('tracks exchange, custody, oracle, interop, and privacy separately', () => {
+    const report = runMainnetCandidateRehearsal().report;
+    assert.equal(report.exchangeReadiness.softwareImplementationSufficient, false);
+    assert.equal(report.custodyReadiness.simulationHsmSatisfiesRealProvider, false);
+    assert.equal(report.oracleReadiness.developmentFixturesAreProductionFeeds, false);
+    assert.equal(report.interopReadiness.wrappedFiat, false);
+    assert.equal(report.interopReadiness.separatelyControlled, true);
+    assert.equal(report.privacyReadiness.jurisdictionalPrivacyAnalysis, 'NOT_PROVIDED');
+    assert.equal(softwareExchangeIsLicensedExchange(), false);
+    assert.equal(softwareCustodyIsLicensedCustody(), false);
+    assert.equal(developmentOracleFixturesAreProductionFeeds(), false);
+    assert.equal(exchangeReadiness().licensingOrRegistration, 'NOT_PROVIDED');
+    assert.equal(custodyReadiness().realHsmOrProvider, 'NOT_PROVIDED');
+    assert.equal(oracleReadiness().realProviderAgreements, 'NOT_PROVIDED');
+    assert.equal(interopReadiness().legalComplianceReview, 'NOT_PROVIDED');
+    assert.equal(privacyReadiness().humanLegalReview, 'NOT_PROVIDED');
   });
 
   it('keeps unlicensed capabilities unavailable', () => {

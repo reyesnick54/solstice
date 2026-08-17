@@ -3,6 +3,7 @@ export * from './identity.ts';
 export * from './evidence.ts';
 export * from './dimensions.ts';
 export * from './capabilities.ts';
+export * from './product-readiness.ts';
 export * from './authorization.ts';
 export * from './allocation.ts';
 export * from './validators.ts';

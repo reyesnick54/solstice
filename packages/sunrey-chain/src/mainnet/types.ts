@@ -304,6 +304,77 @@ export type LegalRegulatorySlot = {
   readonly notes: string;
 };
 
+export type ChecklistItem = {
+  readonly id: string;
+  readonly description: string;
+  readonly status: EvidenceState;
+  readonly softwareOnly: boolean;
+  readonly notes: string;
+};
+
+export type ExchangeReadinessSlot = {
+  readonly custodyReady: EvidenceState;
+  readonly marketSurveillanceReady: EvidenceState;
+  readonly listingGovernanceReady: EvidenceState;
+  readonly travelRuleArchitectureReady: EvidenceState;
+  readonly licensingOrRegistration: EvidenceState;
+  readonly marketLegalApprovals: EvidenceState;
+  readonly operationalStaffing: EvidenceState;
+  readonly securityReview: EvidenceState;
+  readonly softwareImplementationSufficient: false;
+  readonly items: readonly ChecklistItem[];
+};
+
+export type CustodyReadinessSlot = {
+  readonly realHsmOrProvider: EvidenceState;
+  readonly keyCeremony: EvidenceState;
+  readonly segregation: EvidenceState;
+  readonly reconciliation: EvidenceState;
+  readonly withdrawalApproval: EvidenceState;
+  readonly disasterRecovery: EvidenceState;
+  readonly securityReview: EvidenceState;
+  readonly legalLicensingPartner: EvidenceState;
+  readonly simulationHsmSatisfiesRealProvider: false;
+  readonly items: readonly ChecklistItem[];
+};
+
+export type OracleReadinessSlot = {
+  readonly realProviderAgreements: EvidenceState;
+  readonly sourceDiversity: EvidenceState;
+  readonly dataQuality: EvidenceState;
+  readonly operationalMonitoring: EvidenceState;
+  readonly keyManagement: EvidenceState;
+  readonly jurisdictionConstraints: EvidenceState;
+  readonly securityReview: EvidenceState;
+  readonly developmentFixturesAreProductionFeeds: false;
+  readonly items: readonly ChecklistItem[];
+};
+
+export type InteropReadinessSlot = {
+  readonly externalChainVerifierImplemented: boolean;
+  readonly securityReview: EvidenceState;
+  readonly economicConservationAnalysis: EvidenceState;
+  readonly operationalRelayers: EvidenceState;
+  readonly incidentProcedures: EvidenceState;
+  readonly legalComplianceReview: EvidenceState;
+  readonly wrappedFiat: false;
+  readonly separatelyControlled: true;
+  readonly items: readonly ChecklistItem[];
+};
+
+export type PrivacyReadinessSlot = {
+  readonly personalDataVault: EvidenceState;
+  readonly consent: EvidenceState;
+  readonly cleanRoom: EvidenceState;
+  readonly dataResidency: EvidenceState;
+  readonly retention: EvidenceState;
+  readonly deletion: EvidenceState;
+  readonly jurisdictionalPrivacyAnalysis: EvidenceState;
+  readonly securityAssessment: EvidenceState;
+  readonly humanLegalReview: EvidenceState;
+  readonly items: readonly ChecklistItem[];
+};
+
 export type ProductionNetworkCandidate = {
   readonly displayName: string;
   readonly networkId: string;
@@ -385,6 +456,11 @@ export type MainnetReadinessReport = {
   readonly knownLimitations: readonly string[];
   readonly testnetRcReference: TestnetReleaseCandidateSlot;
   readonly formalEvidence: FormalAssuranceSlot;
+  readonly exchangeReadiness: ExchangeReadinessSlot;
+  readonly custodyReadiness: CustodyReadinessSlot;
+  readonly oracleReadiness: OracleReadinessSlot;
+  readonly interopReadiness: InteropReadinessSlot;
+  readonly privacyReadiness: PrivacyReadinessSlot;
   readonly pqcStatus: string;
   readonly supplyChainStatus: string;
   readonly disasterRecoveryStatus: string;

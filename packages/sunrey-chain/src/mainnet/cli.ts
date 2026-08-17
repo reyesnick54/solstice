@@ -13,6 +13,13 @@ import { runMainnetCandidateRehearsal } from './rehearsal.ts';
 import { buildReadinessReport } from './report.ts';
 import { signReadinessBundle } from './bundle.ts';
 import { sevenProductionCandidateValidators, validatorCandidateManifest } from './validators.ts';
+import {
+  custodyReadiness,
+  exchangeReadiness,
+  interopReadiness,
+  oracleReadiness,
+  privacyReadiness,
+} from './product-readiness.ts';
 import { verifyMainnetCandidate } from './verify.ts';
 
 export type MainnetCliResult = {
@@ -50,6 +57,11 @@ export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
           source: row.source,
           notes: row.notes,
         })),
+        exchange: exchangeReadiness(),
+        custody: custodyReadiness(),
+        oracle: oracleReadiness(),
+        interop: interopReadiness(),
+        privacy: privacyReadiness(),
       }),
     };
   }

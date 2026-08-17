@@ -52,6 +52,12 @@ export function verifyMainnetCandidate(input: {
   });
 }
 
+export function rejectWrongReleaseArtifact(expectedDigest: string, observedDigest: string): void {
+  if (expectedDigest !== observedDigest) {
+    throw new TypeError('wrong release artifact');
+  }
+}
+
 export function expectedCandidateIdentity(): {
   readonly networkId: typeof PRODUCTION_CANDIDATE_NETWORK_ID;
   readonly chainId: typeof PRODUCTION_CANDIDATE_CHAIN_ID;
