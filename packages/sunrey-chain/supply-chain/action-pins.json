@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "updateProcess": "Replace both the immutable commit SHA and the version comment in .github/workflows/*.yml and this file in the same PR. Verify the SHA on the action repository before merging.",
+  "actions": [
+    {
+      "uses": "actions/checkout",
+      "version": "v4.2.2",
+      "commit": "11bd71901bbe5b1630ceea73d27597364c9af683"
+    },
+    {
+      "uses": "actions/setup-node",
+      "version": "v4.1.0",
+      "commit": "39370e3970a6d050c480ffad4ff0ed4d3fdee5af"
+    },
+    {
+      "uses": "dtolnay/rust-toolchain",
+      "version": "1.83.0",
+      "commit": "1.83.0",
+      "notes": "Version tag is the toolchain identity. Do not use @stable."
+    },
+    {
+      "uses": "dtolnay/rust-toolchain",
+      "version": "1.88.0",
+      "commit": "1.88.0",
+      "notes": "Pinned channel for the node workspace. Do not use @stable."
+    }
+  ]
+}

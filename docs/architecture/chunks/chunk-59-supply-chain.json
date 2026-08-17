@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-59",
+  "title": "SunRey software supply-chain security, reproducible releases, and dependency assurance",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-protocol-governance",
+    "sunrey-validator-operations",
+    "sunrey-public-testnet",
+    "sunrey-supply-chain"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/supply-chain. Extends Chunk 53 SBOM/release-manifest foundations. ReleaseAuthority signs artifacts only and does not change blockchain state. evaluateChunkRequirements returns mustStop: false. Do not create packages/supply-chain, packages/sunrey-release, packages/sbom, or packages/reproducible-builds."
+}

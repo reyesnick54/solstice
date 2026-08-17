@@ -1,12 +1,15 @@
 # syntax=docker/dockerfile:1.7
-FROM rust:1.83-bookworm AS build
+# Image pins: packages/sunrey-chain/supply-chain/image-pins.json
+ARG RUST_IMAGE=docker.io/library/rust:1.83-bookworm
+ARG DISTROLESS_CC_IMAGE=gcr.io/distroless/cc-debian12:nonroot
+FROM ${RUST_IMAGE} AS build
 WORKDIR /src
 COPY packages/sunrey-chain/node /src/node
 COPY packages/sunrey-chain/rust /src/rust
 WORKDIR /src/node
-RUN cargo build --release --bin sunrey-relayer
+RUN cargo build --release --bin sunrey-relayer --locked
 
-FROM gcr.io/distroless/cc-debian12:nonroot
+FROM ${DISTROLESS_CC_IMAGE}
 ARG SOURCE_COMMIT=unknown
 LABEL org.opencontainers.image.title="sunrey-relayer" \
       sunrey.source.commit="${SOURCE_COMMIT}" \

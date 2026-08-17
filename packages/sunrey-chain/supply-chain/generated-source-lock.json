@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "generator": "checked-in-srcb-v1",
+  "generatorVersion": "1",
+  "expectedDigest": "754c680b409b4c957db4a6ea3888e0aa29e54f6b94137099cc375ca38a5ad5d1",
+  "sources": [
+    "packages/sunrey-chain/schemas/srcb-v1.json",
+    "packages/sunrey-chain/rust/crates/protocol/src/codec.rs",
+    "packages/sunrey-chain/src/local-node/codec.ts"
+  ]
+}

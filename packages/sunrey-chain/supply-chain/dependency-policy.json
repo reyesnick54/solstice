@@ -1,0 +1,208 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "notLegalAdvice": true,
+  "popularityIsNotSecurity": true,
+  "classifications": ["APPROVED", "REVIEW_REQUIRED", "TEMPORARY_EXCEPTION", "BLOCKED"],
+  "criteria": [
+    "source",
+    "maintainerActivity",
+    "license",
+    "securityAdvisory",
+    "nativeCode",
+    "cryptographicRole",
+    "networkFacingRole",
+    "abandonmentRisk"
+  ],
+  "packages": [
+    {
+      "name": "typescript",
+      "ecosystem": "npm",
+      "classification": "APPROVED",
+      "role": "build",
+      "source": "registry.npmjs.org",
+      "notes": "Pinned via package-lock.json. Popularity is not the approval reason."
+    },
+    {
+      "name": "@types/node",
+      "ecosystem": "npm",
+      "classification": "APPROVED",
+      "role": "dev",
+      "source": "registry.npmjs.org"
+    },
+    {
+      "name": "tsx",
+      "ecosystem": "npm",
+      "classification": "APPROVED",
+      "role": "dev",
+      "source": "registry.npmjs.org"
+    },
+    {
+      "name": "vitest",
+      "ecosystem": "npm",
+      "classification": "REVIEW_REQUIRED",
+      "role": "dev",
+      "source": "registry.npmjs.org",
+      "notes": "Test runner only. Not used in release artifacts."
+    },
+    {
+      "name": "ed25519-dalek",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "crates.io",
+      "cryptoRegistered": true
+    },
+    {
+      "name": "sha2",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "crates.io",
+      "cryptoRegistered": true
+    },
+    {
+      "name": "rustls",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "crates.io",
+      "cryptoRegistered": true
+    },
+    {
+      "name": "ring",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "crates.io",
+      "cryptoRegistered": true
+    },
+    {
+      "name": "zeroize",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "crates.io",
+      "cryptoRegistered": true
+    },
+    {
+      "name": "serde",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "serialization",
+      "source": "crates.io"
+    },
+    {
+      "name": "serde_json",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "serialization",
+      "source": "crates.io"
+    },
+    {
+      "name": "quinn",
+      "ecosystem": "crates.io",
+      "classification": "REVIEW_REQUIRED",
+      "role": "runtime",
+      "criticality": "p2p",
+      "source": "crates.io",
+      "notes": "Network-facing transport. Heightened review metadata required."
+    },
+    {
+      "name": "tokio",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "source": "crates.io"
+    },
+    {
+      "name": "clap",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "source": "crates.io"
+    },
+    {
+      "name": "thiserror",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "source": "crates.io"
+    },
+    {
+      "name": "hex",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "source": "crates.io"
+    },
+    {
+      "name": "base64ct",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "cryptoRegistered": true,
+      "source": "crates.io"
+    },
+    {
+      "name": "tracing",
+      "ecosystem": "crates.io",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "source": "crates.io"
+    },
+    {
+      "name": "node:crypto",
+      "ecosystem": "platform",
+      "classification": "APPROVED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "cryptoRegistered": true,
+      "source": "nodejs-runtime"
+    },
+    {
+      "name": "evil-homegrown-crypto",
+      "ecosystem": "npm",
+      "classification": "BLOCKED",
+      "role": "runtime",
+      "criticality": "cryptography",
+      "source": "fixture",
+      "notes": "Harmless test fixture. Unregistered high-risk crypto dependency."
+    },
+    {
+      "name": "blocked-demo-package",
+      "ecosystem": "npm",
+      "classification": "BLOCKED",
+      "role": "runtime",
+      "source": "fixture",
+      "notes": "Harmless test fixture for blocked-package policy."
+    },
+    {
+      "name": "temp-exception-demo",
+      "ecosystem": "npm",
+      "classification": "TEMPORARY_EXCEPTION",
+      "role": "dev",
+      "source": "fixture",
+      "expiresUtc": "2026-12-31T00:00:00Z",
+      "notes": "Time-bounded exception. Not a security endorsement."
+    }
+  ],
+  "unknownDefault": "REVIEW_REQUIRED",
+  "failurePolicy": {
+    "blocked": "fail",
+    "unregisteredCrypto": "fail",
+    "unlockedDependency": "fail",
+    "knownHighAdvisory": "fail",
+    "yanked": "fail",
+    "licenseReview": "report",
+    "unmaintained": "warn",
+    "duplicateRisk": "warn"
+  }
+}

@@ -3,6 +3,8 @@
 //! Algorithm choice lives only in this crate. State and execution modules
 //! receive a [`CryptoSuite`] and must not name a concrete algorithm.
 
+#![forbid(unsafe_code)]
+
 use ed25519_dalek::{Signature, Signer, SigningKey, Verifier, VerifyingKey};
 use sha2::{Digest, Sha256};
 use sunrey_protocol::{

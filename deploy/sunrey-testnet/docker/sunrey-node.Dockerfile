@@ -1,13 +1,17 @@
 # syntax=docker/dockerfile:1.7
 # SunRey validator / seed node image. Simulation testnet only.
-FROM rust:1.83-bookworm AS build
+# Image pins: packages/sunrey-chain/supply-chain/image-pins.json
+# Release builds must pass digest-qualified ARG values, not floating tags alone.
+ARG RUST_IMAGE=docker.io/library/rust:1.83-bookworm
+ARG DISTROLESS_CC_IMAGE=gcr.io/distroless/cc-debian12:nonroot
+FROM ${RUST_IMAGE} AS build
 WORKDIR /src
 COPY packages/sunrey-chain/node /src/node
 COPY packages/sunrey-chain/rust /src/rust
 WORKDIR /src/node
-RUN cargo build --release --bin sunrey-validator-node --locked || cargo build --release --bin sunrey-validator-node
+RUN cargo build --release --bin sunrey-validator-node --locked
 
-FROM gcr.io/distroless/cc-debian12:nonroot
+FROM ${DISTROLESS_CC_IMAGE}
 ARG SOURCE_COMMIT=unknown
 ARG PROTOCOL_VERSION=1
 LABEL org.opencontainers.image.title="sunrey-node" \

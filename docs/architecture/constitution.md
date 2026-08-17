@@ -73,6 +73,7 @@ never be two implementations of these systems.
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
+| SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -914,6 +915,14 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Chunk 59 implements software supply-chain security at
+`packages/sunrey-chain/src/supply-chain`. Capability
+`sunrey-supply-chain` is `IMPLEMENTED`. `ReleaseAuthority` signs
+artifacts only. It is not Execution Authority and does not activate
+protocol change. Do not create `packages/supply-chain`,
+`packages/sunrey-release`, `packages/sbom`, or
+`packages/reproducible-builds`. See
+[`chunk-59-supply-chain.md`](./chunk-59-supply-chain.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

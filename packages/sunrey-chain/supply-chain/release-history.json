@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "kind": "sunrey-binary-transparency-log",
+  "appendOnly": true,
+  "records": []
+}
