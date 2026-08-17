@@ -85,6 +85,53 @@ export class AssetClient {
   burns(): Promise<unknown> {
     return this.http.get('/v1/assets/burns');
   }
+
+  monetaryPolicy(): Promise<unknown> {
+    return this.http.get('/v1/monetary/policy');
+  }
+
+  nativeSupplySummary(): Promise<unknown> {
+    return this.http.get('/v1/monetary/supply');
+  }
+
+  genesisAllocationSummary(): Promise<unknown> {
+    return this.http.get('/v1/monetary/genesis');
+  }
+
+  issuanceReceipt(id: string): Promise<unknown> {
+    return this.http.get(`/v1/monetary/issuance/${id}`);
+  }
+
+  burnSummary(): Promise<unknown> {
+    return this.http.get('/v1/monetary/burns');
+  }
+}
+
+export class MonetaryClient {
+  readonly http: HttpTransport;
+  constructor(http: HttpTransport) {
+    this.http = http;
+  }
+
+  policy(): Promise<unknown> {
+    return this.http.get('/v1/monetary/policy');
+  }
+
+  supply(): Promise<unknown> {
+    return this.http.get('/v1/monetary/supply');
+  }
+
+  genesis(): Promise<unknown> {
+    return this.http.get('/v1/monetary/genesis');
+  }
+
+  issuanceReceipt(id: string): Promise<unknown> {
+    return this.http.get(`/v1/monetary/issuance/${id}`);
+  }
+
+  burns(): Promise<unknown> {
+    return this.http.get('/v1/monetary/burns');
+  }
 }
 
 export class FeeClient {
@@ -363,6 +410,7 @@ export class EventClient {
 export class SunReyClient {
   readonly wallet: WalletClient;
   readonly assets: AssetClient;
+  readonly monetary: MonetaryClient;
   readonly fees: FeeClient;
   readonly validators: ValidatorClient;
   readonly governance: GovernanceClient;
@@ -378,6 +426,7 @@ export class SunReyClient {
     this.http = http;
     this.wallet = new WalletClient(http);
     this.assets = new AssetClient(http);
+    this.monetary = new MonetaryClient(http);
     this.fees = new FeeClient(http);
     this.validators = new ValidatorClient(http);
     this.governance = new GovernanceClient(http);

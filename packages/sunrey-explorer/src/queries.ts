@@ -121,6 +121,29 @@ export class ExplorerQueryService {
         jailStatus: row.jailStatus,
         tombstone: row.tombstone,
         unbondStatus: row.unbondStatus ?? { pending: '0', releaseEpoch: null },
+  monetary() {
+    const assets = this.indexer.store.projection().assets;
+    const moonrey = this.indexer.store.projection().moonrey;
+    const categorySummary: Record<string, string> = {};
+    for (const row of moonrey) {
+      categorySummary[row.productiveCategory] = String(
+        BigInt(categorySummary[row.productiveCategory] ?? '0') + BigInt(row.issuedQuantity),
+      );
+    }
+    return this.public({
+      ...this.lag(),
+      networkEnvironmentLabel: 'DEVELOPMENT' as const,
+      notMarketCapitalization: true,
+      assets: assets.map((row) => ({
+        assetId: row.assetId,
+        policyVersion: row.policyVersion,
+        genesisAllocationTotal: row.genesisAllocationTotal,
+        authorizedIssuanceTotal: row.authorizedIssuanceTotal,
+        burned: row.burned,
+        locked: row.locked,
+        circulating: row.circulating,
+        supplyReconciliation: row.supplyReconciliation,
+        moonreyIssuanceCategorySummary: row.assetId === 'MOONREY_COIN' ? categorySummary : undefined,
       })),
     });
   }

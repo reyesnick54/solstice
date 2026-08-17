@@ -96,6 +96,8 @@
     "test:fuzz-smoke": "FUZZ_PROFILE=FUZZ_SMOKE node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/assurance/cli.ts fuzz-smoke && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-assurance --test fuzz_smoke --locked'",
     "test:fuzz-extended": "FUZZ_PROFILE=FUZZ_EXTENDED node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/assurance/cli.ts fuzz-extended && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-assurance --locked'",
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/cli-main.ts",
+    "demo:sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/demo.ts",
     "test:formal-smoke": "FORMAL_PROFILE=FORMAL_SMOKE node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts smoke && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",
     "test:formal-extended": "FORMAL_PROFILE=FORMAL_EXTENDED node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts extended && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",
     "demo:sunrey-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/demo.ts",

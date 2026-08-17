@@ -12,6 +12,7 @@ pub mod exchange;
 pub mod faucet;
 pub mod issuance;
 pub mod migration;
+pub mod monetary;
 pub mod policy;
 pub mod quantity;
 pub mod registry;
@@ -37,6 +38,10 @@ pub use issuance::{
     DEV_FAUCET_ISSUER, MOONREY_ISSUANCE_POLICY, SUNREY_ISSUANCE_POLICY,
 };
 pub use migration::AssetMigrationManifest;
+pub use monetary::{
+    MonetaryPolicyState, MonetarySupplyIdentity, MONETARY_POLICY_VERSION,
+    PRODUCTION_PARAMETER_UNCONFIGURED,
+};
 pub use policy::{AssetPolicy, PolicyDecision, PolicyReason};
 pub use quantity::AssetQuantity;
 pub use registry::{

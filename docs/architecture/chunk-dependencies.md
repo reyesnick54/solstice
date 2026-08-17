@@ -533,6 +533,14 @@ It does not launch mainnet or enable `LIVE_*` services. Do not
 create `packages/sunrey-launch`, `packages/launch-rehearsal`, or
 `packages/mainnet-rehearsal`. The evaluator returns
 `mustStop: false`.
+Chunk 71 implements the SunRey dual-native-asset monetary
+constitution at `packages/sunrey-chain/src/economics`. Capability
+`sunrey-monetary-constitution` is `IMPLEMENTED`. See
+[`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
+It does not invent production tokenomics or create a second ledger.
+Do not create `packages/sunrey-economics`, `packages/monetary-policy`,
+`packages/tokenomics`, or `packages/genesis-economy`. The evaluator
+returns `mustStop: false`.
 Chunk 65 implements mainnet readiness evidence, a per-capability
 activation matrix, and deterministic genesis-candidate tooling at
 `packages/sunrey-chain/src/mainnet`. Capability

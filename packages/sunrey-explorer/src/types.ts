@@ -103,6 +103,13 @@ export type IndexedAsset = {
   readonly circulating: QuantityString;
   readonly issuancePolicy: string;
   readonly notMarketCapitalization: true;
+  readonly policyVersion: string;
+  readonly genesisAllocationTotal: QuantityString;
+  readonly authorizedIssuanceTotal: QuantityString;
+  readonly escrowed: QuantityString;
+  readonly supplyReconciliation: 'EXACT' | 'MISMATCH';
+  readonly moonreyIssuanceCategorySummary?: Readonly<Record<string, QuantityString>>;
+  readonly networkEnvironmentLabel: 'DEVELOPMENT' | 'TESTNET' | 'REHEARSAL';
 };
 
 export type IndexedMoonReyIssuance = {

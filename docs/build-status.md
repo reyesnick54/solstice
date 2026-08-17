@@ -14,6 +14,18 @@ This document describes only what is implemented and tested in this tree.
   bonds. Capability `sunrey-validator-economics` is `IMPLEMENTED`.
   Production bond asset remains `UNCONFIGURED`. No public
   delegation. See `docs/economics/`.
+- SunRey dual-native-asset monetary constitution (Chunk 71,
+  `packages/sunrey-chain/src/economics`): versioned
+  `NativeAssetConstitution` for SunRey Coin and MoonRey Coin,
+  genesis/issuance/burn policy, exact supply accounting,
+  `MonetaryIssuanceAuthority`, privacy-safe human-economic evidence,
+  `MonetaryPolicySimulator` (`ENGINEERING_SIMULATION` only),
+  `sunrey-economics` auditors, Explorer/SDK read APIs, and Chunk 61
+  formal models `NATIVE_MONETARY_POLICY` and
+  `GENESIS_ALLOCATION_CONSERVATION`. Production quantities remain
+  `UNCONFIGURED`. Tickers remain `NOT_ASSIGNED`. Capability
+  `sunrey-monetary-constitution` is `IMPLEMENTED`. See
+  `docs/economics/`.
 - SunRey full mainnet launch rehearsal (Chunk 70,
   `packages/sunrey-chain/src/launch-rehearsal`): distinct rehearsal
   identity `net_sunrey_mainnet_rehearsal_1` /
@@ -629,6 +641,9 @@ npm run demo:sunrey-wallet
 npm run demo:sunrey-sdk
 npm run demo:sunrey-mainnet
 npm run sunrey-mainnet -- readiness
+npm run demo:sunrey-economics
+npm run sunrey-economics -- policy verify
+npm run sunrey-economics -- supply verify
 npm run demo:sunrey-rc
 npm run sunrey:dev
 npm run typecheck

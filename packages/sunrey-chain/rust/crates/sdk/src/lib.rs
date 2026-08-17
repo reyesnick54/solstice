@@ -27,6 +27,11 @@ pub const PATH_EVENTS: &str = "/v1/events";
 pub const PATH_EXCHANGE_MARKETS: &str = "/v1/exchange/markets";
 pub const PATH_BLOCKS: &str = "/v1/chain/blocks";
 pub const PATH_ASSETS: &str = "/v1/assets";
+pub const PATH_MONETARY_POLICY: &str = "/v1/monetary/policy";
+pub const PATH_MONETARY_SUPPLY: &str = "/v1/monetary/supply";
+pub const PATH_MONETARY_GENESIS: &str = "/v1/monetary/genesis";
+pub const PATH_MONETARY_BURNS: &str = "/v1/monetary/burns";
+pub const PATH_MONETARY_ISSUANCE_PREFIX: &str = "/v1/monetary/issuance/";
 pub const PATH_VALIDATORS: &str = "/v1/validators";
 pub const PATH_VALIDATOR_ECONOMIC_POLICY: &str = "/v1/validators/economics/policy";
 
@@ -71,6 +76,26 @@ impl SunReyRpcClient {
 
     pub fn assets(&self) -> Result<Value, SdkError> {
         self.get(PATH_ASSETS)
+    }
+
+    pub fn monetary_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_POLICY)
+    }
+
+    pub fn native_supply_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_SUPPLY)
+    }
+
+    pub fn genesis_allocation_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_GENESIS)
+    }
+
+    pub fn issuance_receipt(&self, id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_MONETARY_ISSUANCE_PREFIX}{id}"))
+    }
+
+    pub fn burn_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_BURNS)
     }
 
     pub fn validators(&self) -> Result<Value, SdkError> {
@@ -183,5 +208,9 @@ mod tests {
         assert!(PATH_TX.starts_with("/v1/"));
         assert!(PATH_EVENTS.starts_with("/v1/"));
         assert!(PATH_EXCHANGE_MARKETS.starts_with("/v1/"));
+        assert!(PATH_MONETARY_POLICY.starts_with("/v1/"));
+        assert!(PATH_MONETARY_SUPPLY.starts_with("/v1/"));
+        assert!(PATH_MONETARY_GENESIS.starts_with("/v1/"));
+        assert!(PATH_MONETARY_BURNS.starts_with("/v1/"));
     }
 }
