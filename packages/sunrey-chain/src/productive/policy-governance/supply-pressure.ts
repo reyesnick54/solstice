@@ -46,7 +46,7 @@ export function buildSupplyPressureReport(input: {
     issuanceByRegion: input.issuanceByRegion,
     totalIssuance: total,
     warnAtBps: input.warnAtBps,
-    oracleConcentration: input.oracleConcentration,
+    ...(input.oracleConcentration ? { oracleConcentration: input.oracleConcentration } : {}),
   });
   return Object.freeze({
     classification: 'ENGINEERING_ECONOMIC_SIMULATION',

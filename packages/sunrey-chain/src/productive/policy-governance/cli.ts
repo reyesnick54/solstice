@@ -90,7 +90,7 @@ function verifyIssuance(
     auditMoonReyIssuance({
       contribution,
       bundle,
-      receipt,
+      ...(receipt ? { receipt } : {}),
       supply: engine.currentSupply(),
       expectedFingerprint: contribution.fingerprint,
       issuanceBasis: contribution.normalizedQuantity,
