@@ -26,6 +26,7 @@ pub mod metrics;
 pub mod native_assets;
 pub mod node;
 pub mod operator;
+pub mod ops;
 pub mod peer;
 pub mod transport;
 pub mod validator;

@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-sentry
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: sentry
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: operator
+          livenessProbe:
+            httpGet:
+              path: /live
+              port: operator
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"

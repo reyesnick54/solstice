@@ -1,0 +1,18 @@
+[Unit]
+Description=SunRey remote signer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/sunrey-signer
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=15
+KillSignal=SIGTERM
+LimitNOFILE=1024
+MemoryMax=268435456
+ReadWritePaths=/var/lib/sunrey/signer
+
+[Install]
+WantedBy=multi-user.target

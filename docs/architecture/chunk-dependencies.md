@@ -114,6 +114,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-operations | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -434,3 +435,9 @@ Capability `sunrey-sovereign-wallets` is `IMPLEMENTED`. See
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 Wallet metadata is not a second native-asset ledger.
+Chunk 54 implements validator operator infrastructure at
+`packages/sunrey-chain`. Capability `sunrey-validator-operations`
+is `IMPLEMENTED`. See
+[`chunk-54-validator-operations.md`](./chunk-54-validator-operations.md).
+Do not create `packages/sunrey-ops`, `packages/validator-ops`,
+`packages/sentry`, or `packages/remote-signer`.

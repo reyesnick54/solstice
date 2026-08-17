@@ -94,7 +94,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
 - `packages/personal-data-vault` — Personal Data Vault; subject-bound encrypted store
-- `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger
+- `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`.
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - `db/` — versioned SQL migrations per bounded database

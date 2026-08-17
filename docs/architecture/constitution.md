@@ -886,6 +886,14 @@ create `packages/custody-v2`, `packages/blockchain-custody`,
 `packages/institutional-custody-v2`, or `packages/hsm-security-v2`.
 See
 [`chunk-47-institutional-custody.md`](./chunk-47-institutional-custody.md).
+Chunk 54 implements validator operator infrastructure, sentry
+topology, authenticated remote signer, double-sign backup, and
+governed rolling upgrades at `packages/sunrey-chain/src/ops`.
+Capability `sunrey-validator-operations` is `IMPLEMENTED`. It does
+not reimplement the validator registry or consensus engine. Do not
+create `packages/sunrey-ops`, `packages/validator-ops`,
+`packages/sentry`, or `packages/remote-signer`. See
+[`chunk-54-validator-operations.md`](./chunk-54-validator-operations.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the

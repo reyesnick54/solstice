@@ -1,0 +1,17 @@
+[Unit]
+Description=SunRey sentry
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/sunrey-node sentry
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+LimitNOFILE=65536
+ReadWritePaths=/var/lib/sunrey
+
+[Install]
+WantedBy=multi-user.target

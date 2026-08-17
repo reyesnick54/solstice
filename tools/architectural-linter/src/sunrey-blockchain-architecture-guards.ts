@@ -61,6 +61,10 @@ const COMPETING_PATHS = [
   'packages/blockchain-wallet',
   'packages/crypto-wallet',
   'packages/sunrey-wallet-ledger',
+  'packages/sunrey-ops',
+  'packages/validator-ops',
+  'packages/sentry',
+  'packages/remote-signer',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

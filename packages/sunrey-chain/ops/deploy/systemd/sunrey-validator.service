@@ -1,0 +1,18 @@
+[Unit]
+Description=SunRey validator
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/sunrey-node validator
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGTERM
+LimitNOFILE=65536
+MemoryMax=4294967296
+ReadWritePaths=/var/lib/sunrey
+
+[Install]
+WantedBy=multi-user.target
