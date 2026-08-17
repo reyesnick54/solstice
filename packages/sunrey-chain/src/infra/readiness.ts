@@ -82,6 +82,8 @@ export function buildInfrastructureReadinessReport(input: {
     { id: 'candidate-identity', ok: PRODUCTION_CANDIDATE_NETWORK_ID.startsWith('net_sunrey_production_candidate_'), detail: `${PRODUCTION_CANDIDATE_NETWORK_ID}/${PRODUCTION_CANDIDATE_CHAIN_ID}` },
     { id: 'no-secret-values', ok: true, detail: 'report contains references only' },
   ];
+  const hsmStatus: InfrastructureReadinessReport['hsmStatus'] =
+    input.hsm === null || input.hsm === undefined ? 'UNCONFIGURED' : input.hsm.readiness;
   const body = {
     schemaVersion: INFRA_SCHEMA_VERSION,
     toolVersion: INFRA_TOOL_VERSION,
@@ -91,7 +93,7 @@ export function buildInfrastructureReadinessReport(input: {
     workloadIdentities: identities.ok && distinct.ok,
     secretManager: input.secrets.list().length > 0,
     kms: input.kms !== null,
-    hsmStatus: input.hsm?.readiness ?? 'UNCONFIGURED',
+    hsmStatus,
     networkZoning: true,
     tls: (input.certificates?.list().length ?? 0) > 0,
     objectStorage: (input.storage?.list().length ?? 0) > 0,
