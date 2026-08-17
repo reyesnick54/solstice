@@ -117,6 +117,13 @@ const PERFORMANCE_METRICS = [
   'soak_rss_bytes',
 ] as const;
 
+const FORMAL_METRICS = [
+  'formal_models_verified',
+  'formal_counterexamples',
+  'formal_trace_alignment',
+  'formal_rust_harnesses',
+] as const;
+
 export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...CONSENSUS_METRICS,
   ...NODE_METRICS,
@@ -126,6 +133,7 @@ export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...ORACLE_METRICS,
   ...INTEROP_METRICS,
   ...PERFORMANCE_METRICS,
+  ...FORMAL_METRICS,
 ]);
 
 export class MetricRegistry {

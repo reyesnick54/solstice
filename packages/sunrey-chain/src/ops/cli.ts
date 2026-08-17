@@ -6,6 +6,7 @@
 
 import { fourValidatorDevelopmentSet } from '../validators/index.ts';
 import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { runCryptoCommand } from './crypto-cli.ts';
 import { incidentProcedure } from './incidents.ts';
 import { OperatorKeystore } from './keys.ts';
 import { assertNoPrivateKeyMaterial } from './logging.ts';
@@ -19,20 +20,6 @@ import type { DrillScenario } from './types.ts';
 import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
 import {
   developmentEpoch,
-import type { DrillScenario } from './types.ts';
-import { fourValidatorDevelopmentSet } from '../validators/index.ts';
-import { runCryptoCommand } from './crypto-cli.ts';
-import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
-import { incidentProcedure } from './incidents.ts';
-import { OperatorKeystore } from './keys.ts';
-import { assertNoPrivateKeyMaterial } from './logging.ts';
-import { operatorReadiness } from './readiness.ts';
-import { developmentSentryTopology } from './sentry.ts';
-import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
-import { createSnapshot, verifySnapshot } from './snapshots.ts';
-import { planGenesisSync } from './state-sync.ts';
-import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
-import {
   eraseEvidence,
   exitWorkflow,
   generateJoinRecord,
@@ -48,6 +35,16 @@ const RESILIENCE_COMMANDS = [
   'dr',
   'topology',
   'validator-fencing',
+  'crypto',
+] as const;
+
+const VALIDATOR_COMMANDS = [
+  'validator',
+  'signer',
+  'snapshot',
+  'state-sync',
+  'upgrade',
+  'incident',
   'crypto',
 ] as const;
 
@@ -127,18 +124,6 @@ export type CliResult = {
   readonly payload: unknown;
 };
 
-const VALIDATOR_OPS_COMMANDS = [
-const OPERATOR_COMMANDS = [
-const VALIDATOR_COMMANDS = [
-  'validator',
-  'signer',
-  'snapshot',
-  'state-sync',
-  'upgrade',
-  'incident',
-  'crypto',
-] as const;
-
 export function opsUsage(): string {
   return [
     'sunrey-ops validator status',
@@ -172,8 +157,6 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
     const result = runCryptoCommand(args.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
   }
-  if (!group || !(VALIDATOR_OPS_COMMANDS as readonly string[]).includes(group)) {
-  if (!group || !(OPERATOR_COMMANDS as readonly string[]).includes(group)) {
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
@@ -367,5 +350,11 @@ export async function main(): Promise<void> {
 
 const entry = process.argv[1] ?? '';
 if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
   await main();
 }

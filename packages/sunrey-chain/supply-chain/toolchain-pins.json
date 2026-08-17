@@ -31,6 +31,20 @@
       "file": "packages/sunrey-chain/schemas/srcb-v1.json",
       "generator": "checked-in-srcb-v1",
       "version": "1"
+    },
+    "tlc": {
+      "tool": "TLA+/TLC",
+      "version": "1.8.0",
+      "artifact": "tla2tools.jar",
+      "file": "packages/sunrey-chain/formal/tools/tla-pin.json",
+      "sha256": "3b8a24190c17a9097a73e827c0bf1b62e51356b14cf90a3b37f68b6c3b51c0d7",
+      "notes": "Pinned formal model checker. Protocol code does not download the jar at runtime."
+    },
+    "kani": {
+      "tool": "Kani",
+      "version": "0.65.0",
+      "file": "packages/sunrey-chain/formal/tools/tla-pin.json",
+      "notes": "Selected bounded Rust verifier. Default CI runs equivalent exhaustive cargo tests."
     }
   }
 }

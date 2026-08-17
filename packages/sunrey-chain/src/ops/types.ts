@@ -106,6 +106,7 @@ export const DASHBOARD_IDS = [
   'CUSTODY',
   'INTEROP',
   'PERFORMANCE',
+  'FORMAL_ASSURANCE',
 ] as const;
 export type DashboardId = (typeof DASHBOARD_IDS)[number];
 

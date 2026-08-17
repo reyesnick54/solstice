@@ -17,6 +17,10 @@ export type ResilienceSignerFence = {
   readonly leaseId: string | null;
 };
 
+export type SignerFenceRecord = ResilienceSignerFence;
+
+/** @deprecated use SignerFenceRecord — kept for Chunk 55 call sites */
+export type SignerFenceState = SignerFenceRecord;
 /** Alias used by Chunk 55 call sites and the adversarial range. */
 export type SignerFenceRecord = ResilienceSignerFence;
 

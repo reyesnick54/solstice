@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "tool": "TLA+/TLC",
+  "artifact": "tla2tools.jar",
+  "version": "1.8.0",
+  "source": "https://github.com/tlaplus/tlaplus/releases/tag/v1.8.0",
+  "sha256": "3b8a24190c17a9097a73e827c0bf1b62e51356b14cf90a3b37f68b6c3b51c0d7",
+  "license": "MIT",
+  "role": "formal-model-checker",
+  "classification": "APPROVED",
+  "notes": "Pinned through Chunk 59 toolchain controls. Popularity is not the approval reason. The jar is not downloaded at runtime by protocol code. FORMAL_SMOKE uses the checked-in executable TLA+ twins; TLC may be invoked when the pinned jar is present.",
+  "kani": {
+    "tool": "Kani",
+    "version": "0.65.0",
+    "role": "bounded-rust-verification",
+    "classification": "APPROVED",
+    "notes": "Selected for pure Rust quorum, asset, fee, signer, and settlement arithmetic. CI smoke runs equivalent exhaustive cargo tests when Kani is not installed on the default toolchain."
+  }
+}

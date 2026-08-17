@@ -1,0 +1,303 @@
+{
+  "schemaVersion": 1,
+  "owner": "packages/sunrey-chain",
+  "claimLanguage": "model checked within stated bounds",
+  "notWholeSystemVerification": true,
+  "selectedTool": "TLA+/TLC",
+  "selectedToolVersion": "1.8.0",
+  "rustBoundedTool": "Kani",
+  "rustBoundedToolVersion": "0.65.0",
+  "models": [
+    {
+      "modelId": "CONSENSUS_SAFETY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/rust/crates/consensus/src/quorum.rs",
+        "packages/sunrey-chain/rust/crates/consensus/ALGORITHM.md",
+        "packages/sunrey-chain/src/assurance/consensus.ts"
+      ],
+      "assumptions": [
+        "f < 1/3 of voting power",
+        "partial synchrony is not required for the listed safety properties",
+        "bounded heights and rounds",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "validators": 3, "maxHeight": 1, "maxRound": 1, "byzantineValidators": 0 },
+      "properties": [
+        "NO_CONFLICTING_FINALIZED_BLOCKS",
+        "FINALIZED_HEIGHT_MONOTONIC",
+        "LESS_THAN_REQUIRED_COMMIT_POWER_CANNOT_FINALIZE",
+        "DUPLICATE_VOTE_DOES_NOT_ADD_POWER",
+        "WRONG_HEIGHT_VOTE_INVALID",
+        "WRONG_ROUND_VOTE_INVALID",
+        "WRONG_VALIDATOR_SET_VOTE_INVALID",
+        "LOCK_RULE_PRESERVES_SAFETY",
+        "NIL_DOES_NOT_CREATE_BLOCK_COMMIT"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ConsensusSafety.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/consensus.ts"
+    },
+    {
+      "modelId": "SIGNER_SAFETY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/rust/crates/consensus/src/signer.rs",
+        "packages/sunrey-chain/src/ops/signer-safety.ts"
+      ],
+      "assumptions": [
+        "one signing authority per validator identity",
+        "restored state cannot roll the watermark backwards"
+      ],
+      "stateBounds": { "maxHeight": 2, "maxRound": 1 },
+      "properties": [
+        "ONE_COORDINATE_ONE_VALUE",
+        "CONFLICTING_SIGNATURE_REFUSED",
+        "RESTORE_DOES_NOT_ROLLBACK"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/SignerSafety.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/signer.ts"
+    },
+    {
+      "modelId": "VALIDATOR_SET_TRANSITION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/rust/crates/consensus/src/valset.rs",
+        "packages/sunrey-chain/rust/crates/validators/src/set.rs"
+      ],
+      "assumptions": [
+        "active set changes only at epoch boundaries",
+        "jail zeroes voting power"
+      ],
+      "stateBounds": { "validators": 4, "maxEpochs": 2 },
+      "properties": [
+        "ACTIVE_SET_STABLE_MID_EPOCH",
+        "OLD_KEY_NOT_CURRENT_AFTER_ROTATION",
+        "POWER_COUNTED_ONCE",
+        "SET_HASH_DETERMINISTIC"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ValidatorSetTransition.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/validator-set.ts"
+    },
+    {
+      "modelId": "PROTOCOL_GOVERNANCE",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/governance/engine.ts",
+        "packages/sunrey-chain/src/governance/types.ts"
+      ],
+      "assumptions": [
+        "no governance token",
+        "AI_PREPARER cannot authorize or activate",
+        "binary installation is not protocol activation"
+      ],
+      "stateBounds": { "validators": 3, "maxHeight": 3 },
+      "properties": [
+        "CONTENT_IMMUTABLE_AFTER_AUTHORIZATION",
+        "VOTES_COUNTED_ONCE",
+        "INSUFFICIENT_POWER_CANNOT_AUTHORIZE",
+        "ACTIVATION_NOT_BEFORE_HEIGHT",
+        "AI_CANNOT_AUTHORIZE",
+        "BINARY_INSTALL_DOES_NOT_CHANGE_RULES"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ProtocolGovernance.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/governance.ts"
+    },
+    {
+      "modelId": "NATIVE_ASSET_CONSERVATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/rust/crates/native-assets/src/quantity.rs",
+        "packages/sunrey-chain/src/assurance/properties.ts"
+      ],
+      "assumptions": [
+        "integer minor units only",
+        "cross-asset arithmetic is forbidden"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "SUPPLY_IDENTITY",
+        "TRANSFER_CONSERVES",
+        "LOCK_CONSERVES",
+        "UNLOCK_CONSERVES",
+        "BURN_REDUCES_SUPPLY",
+        "NO_NEGATIVE_HOLDINGS"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/NativeAssetConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/native-asset.ts"
+    },
+    {
+      "modelId": "FEE_CONSERVATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/fees/types.ts",
+        "packages/sunrey-chain/rust/crates/fees/src/lib.rs"
+      ],
+      "assumptions": [
+        "reserved units are later charged or released",
+        "disposition cannot create native-asset quantity"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
+        "FEE_IDENTITY",
+        "NO_CREATED_QUANTITY"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/FeeConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/fees.ts"
+    },
+    {
+      "modelId": "EXCHANGE_ATOMIC_DVP",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-exchange/src/native-settlement.ts",
+        "packages/sunrey-chain/rust/crates/native-assets/src/settlement.rs"
+      ],
+      "assumptions": [
+        "two-asset SUNREY_COIN / MOONREY_COIN settlement",
+        "explicit fee burn is the only permitted quantity reduction"
+      ],
+      "stateBounds": { "maxQuantity": 2, "maxOrders": 1 },
+      "properties": [
+        "ATOMIC_LEGS",
+        "NO_DOUBLE_SETTLE",
+        "SETTLED_NOT_EXCEED_RESERVED",
+        "CANCELLED_REQUIRES_NEW_AUTH",
+        "TOTAL_CONSERVED"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ExchangeAtomicDvp.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/dvp.ts"
+    },
+    {
+      "modelId": "MOONREY_ISSUANCE",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/rust/crates/productive/src/lib.rs",
+        "docs/architecture/moonrey-issuance-model.md"
+      ],
+      "assumptions": [
+        "ContributionFingerprint is order-independent",
+        "issuance requires MoonReyIssuanceAuthorization"
+      ],
+      "stateBounds": { "maxQuantity": 2, "maxEpochs": 1 },
+      "properties": [
+        "SAME_CONTRIBUTION_CANNOT_ISSUE_TWICE",
+        "FINGERPRINT_REORDER_NOT_INDEPENDENT",
+        "CATEGORY_LIMIT",
+        "EPOCH_LIMIT",
+        "GLOBAL_LIMIT",
+        "ISSUANCE_REQUIRES_AUTHORIZATION",
+        "SUPPLY_RECONCILES"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyIssuance.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey.ts"
+    },
+    {
+      "modelId": "INTEROP_PACKET_STATE",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/interop/engine.ts",
+        "packages/sunrey-chain/rust/crates/interop/src/packet.rs"
+      ],
+      "assumptions": [
+        "relayer is untrusted",
+        "DEV_INTEROP_TEST_ASSET development architecture only"
+      ],
+      "stateBounds": { "maxPackets": 2 },
+      "properties": [
+        "PACKET_AT_MOST_ONCE",
+        "ACK_AT_MOST_ONCE",
+        "WRONG_CHANNEL_DOES_NOT_EXECUTE",
+        "WRONG_DESTINATION_DOES_NOT_EXECUTE",
+        "FROZEN_CLIENT_CANNOT_ADVANCE",
+        "TIMEOUT_AND_ACK_NO_DUPLICATE_EFFECT"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/InteropPacketState.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/interop-packet.ts"
+    },
+    {
+      "modelId": "INTEROP_ASSET_CONSERVATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/interop/engine.ts",
+        "packages/sunrey-chain/rust/crates/interop/tests/asset_invariant.rs"
+      ],
+      "assumptions": [
+        "DEV_INTEROP_TEST_ASSET only",
+        "no SunRey Coin, MoonRey Coin, or fiat production bridge"
+      ],
+      "stateBounds": { "maxQuantity": 3 },
+      "properties": [
+        "ACCOUNTING_BOUNDARY",
+        "DEV_ASSET_ONLY",
+        "NO_PRODUCTION_BRIDGE"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/InteropAssetConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/interop-asset.ts"
+    },
+    {
+      "modelId": "CRYPTO_POLICY_MIGRATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/security/src/crypto-migration.ts",
+        "packages/security/src/crypto-policy.ts"
+      ],
+      "assumptions": [
+        "transitions occur only through protocol governance",
+        "local configuration cannot weaken finalized chain policy"
+      ],
+      "stateBounds": {},
+      "properties": [
+        "TRANSITION_ONLY_THROUGH_GOVERNANCE",
+        "HYBRID_REQUIRED_REJECTS_CLASSICAL_AUTH",
+        "HISTORICAL_VERIFY_RETAINED",
+        "LOCAL_CONFIG_CANNOT_WEAKEN"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/CryptoPolicyMigration.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/crypto-policy.ts"
+    }
+  ]
+}

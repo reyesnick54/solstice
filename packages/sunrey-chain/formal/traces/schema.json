@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "title": "SunRey sanitized logical implementation trace",
+  "required": ["id", "domain", "modelId", "events"],
+  "secretsForbidden": true,
+  "properties": {
+    "id": { "type": "string" },
+    "domain": {
+      "enum": [
+        "consensus",
+        "asset",
+        "exchange_dvp",
+        "moonrey_issuance",
+        "governance",
+        "interop",
+        "signer",
+        "fee",
+        "crypto_policy",
+        "validator_set"
+      ]
+    },
+    "modelId": { "type": "string" },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["domain", "action", "args"],
+        "properties": {
+          "domain": { "type": "string" },
+          "action": { "type": "string" },
+          "args": { "type": "object" }
+        }
+      }
+    }
+  }
+}
