@@ -308,6 +308,7 @@ describe('Chunk 64 root-of-trust ceremony', () => {
     if (!rehearsal.ok) {
       throw new Error(rehearsal.error.message);
     }
+    assert.equal(rehearsal.ok, true);
     assert.equal(rehearsal.value.validatorCount, 7);
     assert.equal(rehearsal.value.state, 'REHEARSAL_COMPLETE');
     assert.equal(rehearsal.value.productionAuthorityActive, false);

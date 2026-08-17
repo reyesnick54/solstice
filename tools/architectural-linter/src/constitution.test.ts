@@ -1751,6 +1751,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'tools/formal')), false);
   });
 
+  it('CHUNK-69 implements Exchange and custody regulated adapters on existing owners', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-regulated-integration').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-regulated-integration').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-regulated-integration').owner, 'packages/sunrey-exchange');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-69',
+    );
+    assert.ok(declared, 'CHUNK-69 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-69-regulated-integration.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/regulated/chunk-69-exchange-custody-integration.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-exchange/src/regulated/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody/src/regulated/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/kernel/src/regulated/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security/src/regulated/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/regulated-exchange')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/provider-registry')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/travel-rule-production')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/custody-activation')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/exchange-kyc')), false);
   it('CHUNK-67 implements production-candidate storage on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-storage').status, 'IMPLEMENTED');

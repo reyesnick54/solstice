@@ -19,3 +19,4 @@ export * from './verify.ts';
 export * from './registry.ts';
 export * from './rehearsal.ts';
 export * from './cli.ts';
+export * from './regulated-feed.ts';

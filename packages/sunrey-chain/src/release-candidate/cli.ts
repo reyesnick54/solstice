@@ -41,6 +41,10 @@ function flagValue(argv: readonly string[], name: string): string | undefined {
   return argv[index + 1];
 }
 
+function optionalFlag<K extends string>(key: K, value: string | undefined): Partial<Record<K, string>> {
+  return value === undefined ? {} : ({ [key]: value } as Record<K, string>);
+}
+
 function profileOf(argv: readonly string[]): QualificationProfile {
   const raw = flagValue(argv, '--profile') ?? 'smoke';
   if ((QUALIFICATION_PROFILES as readonly string[]).includes(raw)) {
@@ -59,6 +63,8 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
     const created = createReleaseCandidate({
       root,
       profile: profileOf(argv),
+      ...optionalFlag('rcId', flagValue(argv, '--id')),
+      ...optionalFlag('sourceCommit', flagValue(argv, '--commit')),
       ...(rcId === undefined ? {} : { rcId }),
       ...(sourceCommit === undefined ? {} : { sourceCommit }),
       previous: command === 'qualify' ? previous : null,
@@ -129,6 +135,7 @@ export function runSunreyReleaseRc(root: string, argv: readonly string[]): RcCli
       root,
       profile: profileOf(argv),
       previous,
+      ...optionalFlag('sourceCommit', flagValue(argv, '--commit')),
       ...(sourceCommit === undefined ? {} : { sourceCommit }),
     });
     const pair = previous

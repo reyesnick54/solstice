@@ -129,6 +129,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-regulated-integration | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
@@ -533,6 +534,16 @@ create `packages/mainnet`, `packages/sunrey-mainnet`,
 `packages/genesis-candidate`, `packages/readiness-registry`, or
 `packages/activation-control`. The evaluator returns
 `mustStop: false`.
+Chunk 69 implements the production-candidate Exchange and custody
+regulated integration framework at `packages/sunrey-exchange`,
+`packages/custody`, `packages/kernel`, `packages/security`, and
+`packages/sunrey-chain`. Capability `sunrey-regulated-integration`
+is `IMPLEMENTED`. See
+[`chunk-69-regulated-integration.md`](./chunk-69-regulated-integration.md).
+It does not activate live regulated services. Do not create
+`packages/regulated-exchange`, `packages/provider-registry`,
+`packages/travel-rule-production`, `packages/custody-activation`, or
+`packages/exchange-kyc`. The evaluator returns `mustStop: false`.
 Chunk 68 implements production-candidate oracle provider onboarding,
 off-chain collection, provenance, independence, and MoonRey
 eligibility at `packages/sunrey-chain/src/oracle`. Capability

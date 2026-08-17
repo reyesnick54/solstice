@@ -7,6 +7,7 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
+import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
 import {
   LocalFilesystemBackupStorage,
   MaintenanceMode,
