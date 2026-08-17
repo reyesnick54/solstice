@@ -2661,37 +2661,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "MainnetLaunchRehearsalReport",
-          "kind": "type"
-        },
-        {
-          "name": "LaunchControlRoomState",
-          "kind": "type"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/sunrey-launch",
-        "packages/launch-rehearsal",
-        "packages/mainnet-rehearsal"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 70 full mainnet launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or authorize production funds."
-    },
-    {
-      "id": "sunrey-regulated-integration",
-      "name": "SunRey Exchange and custody production-candidate regulated adapters",
-      "canonicalOwner": "packages/sunrey-exchange",
-      "canonicalPath": "packages/sunrey-exchange/src/regulated/types.ts",
-      "publicInterface": "packages/sunrey-exchange/src/regulated/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
           "name": "MarketAccessDecision",
           "kind": "type"
         },

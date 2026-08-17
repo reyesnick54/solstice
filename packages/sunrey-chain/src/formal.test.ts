@@ -37,8 +37,7 @@ describe('Chunk 61 formal models', () => {
     assert.equal(registry.claimLanguage, 'model checked within stated bounds');
     assert.equal(registry.notWholeSystemVerification, true);
     assert.equal(registry.selectedTool, 'TLA+/TLC');
-    assert.equal(registry.models.length, 12);
-    assert.equal(registry.models.length, 13);
+    assert.equal(registry.models.length, 16);
   });
 
   it('model-checks the smoke campaign within stated bounds', () => {

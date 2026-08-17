@@ -52,7 +52,7 @@ export function economicRcReadinessRecords(): readonly ReadinessEvidenceRecord[]
     }),
     freezeEvidence({
       requirementId: 'REQ-ECON-RC-002',
-      dimension: 'RELEASE',
+      dimension: 'HUMAN_AUTHORIZATION',
       description: 'External/human approval that economic RC may inform production activation',
       scope: 'SUNREY_CHAIN',
       evidenceType: 'HUMAN_AUTHORIZATION',

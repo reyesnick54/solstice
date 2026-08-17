@@ -127,4 +127,17 @@ describe('Chunk 75 dual-economy simulator', () => {
     assert.equal(smoke.scenarioIds.includes('MACHINE-OVERSPEND'), true);
     assert.equal(smoke.failed, 0);
   });
+
+  it('emits a dual qualify payload for economic RC without authorizing production', () => {
+    const payload = JSON.parse(runEconomicsCommand(['dual', 'qualify', '--seed', '78', '--epochs', '2'])) as {
+      readonly ok: boolean;
+      readonly scenarios: readonly { readonly scenarioId: string; readonly ok: boolean }[];
+      readonly property: { readonly ok: boolean };
+      readonly stress: { readonly ok: boolean };
+    };
+    assert.equal(payload.ok, true);
+    assert.equal(payload.scenarios.length, 5);
+    assert.equal(payload.property.ok, true);
+    assert.equal(payload.stress.ok, true);
+  });
 });

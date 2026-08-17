@@ -353,6 +353,15 @@
         "FEE_CONSERVATION",
         "MAX_FEE_AUTHORIZATION",
         "DISPOSITION_CONSERVATION"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
+    },
+    {
       "modelId": "VALIDATOR_ECONOMICS",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -374,6 +383,15 @@
         "CUSTOMER_ASSETS_UNAFFECTED",
         "INVALID_EVIDENCE_CANNOT_CREATE_PROTOCOL_PENALTY",
         "POLICY_VERSION_DETERMINISTIC"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ValidatorEconomics.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/validator-economics.ts"
+    },
+    {
       "modelId": "NATIVE_MONETARY_POLICY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -398,8 +416,6 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
-      "tlaModule": "packages/sunrey-chain/formal/tla/ValidatorEconomics.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/validator-economics.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
     },
@@ -425,8 +441,6 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
-      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     }

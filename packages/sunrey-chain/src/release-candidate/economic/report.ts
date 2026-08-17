@@ -11,8 +11,8 @@ export function buildEconomicQualificationReport(bundle: SignedEconomicRcBundle)
     rcId: bundle.manifest.economic_rc_id,
     sourceCommit: bundle.manifest.source_commit,
     policyHashes: Object.freeze({
-      sunreyMonetary: bundle.manifest.monetary_policy_hashes.sunrey,
-      moonreyMonetary: bundle.manifest.monetary_policy_hashes.moonrey,
+      sunreyMonetary: bundle.manifest.monetary_policy_hashes.sunrey ?? '',
+      moonreyMonetary: bundle.manifest.monetary_policy_hashes.moonrey ?? '',
       feePolicyV2: bundle.manifest.fee_policy_hash,
       validatorEconomics: bundle.manifest.validator_economics_hash,
       moonreyPolicy: bundle.manifest.moonrey_policy_hash,

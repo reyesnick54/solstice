@@ -42,8 +42,8 @@ function signText(value: string, authorityId: string): string {
 
 export function createEconomicReleaseCandidate(input: {
   readonly root: string;
-  readonly sourceCommit?: string;
-  readonly rcId?: string;
+  readonly sourceCommit?: string | undefined;
+  readonly rcId?: string | undefined;
   readonly profile?: EconomicQualificationProfile;
   readonly previous?: SignedEconomicRcBundle | null;
 }): CreatedEconomicCandidate {
@@ -196,11 +196,11 @@ export function compareEconomicReleaseCandidates(left: SignedEconomicRcBundle, r
     .filter(([key, value]) => value !== right.schemaFreeze.hashes[key as keyof typeof right.schemaFreeze.hashes])
     .map(([field, value]) => Object.freeze({ field, left: value, right: right.schemaFreeze.hashes[field as keyof typeof right.schemaFreeze.hashes] }));
   const parameterChanges = [
-    ['source_commit', left.manifest.source_commit, right.manifest.source_commit],
-    ['qualification_result', left.manifest.qualification_result, right.manifest.qualification_result],
+    { field: 'source_commit', left: left.manifest.source_commit, right: right.manifest.source_commit },
+    { field: 'qualification_result', left: left.manifest.qualification_result, right: right.manifest.qualification_result },
   ]
-    .filter(([, a, b]) => a !== b)
-    .map(([field, a, b]) => Object.freeze({ field, left: a, right: b }));
+    .filter((row) => row.left !== row.right)
+    .map((row) => Object.freeze(row));
   const formalChanges = left.evidence.formal.digest === right.evidence.formal.digest
     ? []
     : [Object.freeze({ field: 'formal_digest', left: left.evidence.formal.digest, right: right.evidence.formal.digest })];

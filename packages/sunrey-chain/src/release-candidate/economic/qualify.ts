@@ -1,3 +1,4 @@
+import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -43,7 +44,6 @@ import {
   qualifySnapshotRestore,
   rehearseUpgrade,
 } from '../rehearsals.ts';
-import { allPropertiesHold, propertyChecks, runAdversarialSmoke, simulateScenario } from '../../../../sunrey-economics/src/index.ts';
 import { freezeEconomicPolicies, freezeEconomicSchemas } from './freeze.ts';
 import {
   ECONOMIC_FORMAL_MODEL_IDS,
@@ -243,18 +243,51 @@ function qualifyTreasury(fee: ReturnType<typeof qualifyFees>): { readonly ok: bo
   };
 }
 
-function qualifyDualEconomy(profile: EconomicQualificationProfile): {
+type DualQualifyPayload = {
+  readonly ok: boolean;
+  readonly scenarios: readonly { readonly scenarioId: string; readonly ok: boolean }[];
+  readonly property: { readonly seed: number; readonly ok: boolean };
+  readonly stress: { readonly ok: boolean; readonly failed: readonly string[] };
+};
+
+function runDualQualify(root: string, profile: EconomicQualificationProfile): DualQualifyPayload {
+  const epochs = profile === 'smoke' ? 2 : 3;
+  const result = spawnSync(
+    process.execPath,
+    [
+      '--experimental-strip-types',
+      '--disable-warning=ExperimentalWarning',
+      join(root, 'packages/sunrey-economics/src/cli-main.ts'),
+      'dual',
+      'qualify',
+      '--seed',
+      String(PROPERTY_SEED),
+      '--epochs',
+      String(epochs),
+    ],
+    { cwd: root, encoding: 'utf8' },
+  );
+  if (result.status !== 0 || result.stdout.trim().length === 0) {
+    return {
+      ok: false,
+      scenarios: REQUIRED_DUAL_ECONOMY_SCENARIOS.map((scenarioId) => Object.freeze({ scenarioId, ok: false })),
+      property: { seed: PROPERTY_SEED, ok: false },
+      stress: { ok: false, failed: Object.freeze(['dual-qualify-cli']) },
+    };
+  }
+  return JSON.parse(result.stdout) as DualQualifyPayload;
+}
+
+function qualifyDualEconomy(payload: DualQualifyPayload): {
   readonly ok: boolean;
   readonly digest: string;
   readonly scenarios: readonly string[];
 } {
-  const epochs = profile === 'smoke' ? 2 : 3;
-  const reports = REQUIRED_DUAL_ECONOMY_SCENARIOS.map((id) => simulateScenario(id, { seed: PROPERTY_SEED, epochs }));
-  const ok = reports.every((row) => allPropertiesHold(row.properties));
+  const required = REQUIRED_DUAL_ECONOMY_SCENARIOS.every((id) => payload.scenarios.some((row) => row.scenarioId === id && row.ok));
   return {
-    ok,
+    ok: payload.ok && required,
     scenarios: REQUIRED_DUAL_ECONOMY_SCENARIOS,
-    digest: sha256Text(reports.map((row) => `${row.scenario.scenarioId}:${row.properties.sunreySupplyReconciles}`).join('|')),
+    digest: sha256Text(payload.scenarios.map((row) => `${row.scenarioId}:${row.ok}`).join('|')),
   };
 }
 
@@ -269,16 +302,15 @@ function qualifyFormal(): EconomicQualificationEvidence['formal'] {
     maxPackets: FORMAL_SMOKE_PROFILE.maxPackets,
     maxEpochs: FORMAL_SMOKE_PROFILE.maxEpochs,
   };
-  const models = [
-    createMonetaryPolicyModel(bounds),
-    createGenesisAllocationModel(bounds),
-    createValidatorEconomicsModel(bounds),
-    createAdaptiveFeeMarketModel(bounds),
-    createMoonReyPolicyGovernanceModel(bounds),
-    createFeeModel(bounds),
-    createNativeAssetModel(bounds),
+  const results = [
+    exploreModel(createMonetaryPolicyModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createGenesisAllocationModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createValidatorEconomicsModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createAdaptiveFeeMarketModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createMoonReyPolicyGovernanceModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createFeeModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createNativeAssetModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
   ];
-  const results = models.map((model) => exploreModel(model, FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'));
   const counterexamples = results
     .filter((row) => row.result !== 'VERIFIED_WITHIN_MODEL_BOUNDS')
     .map((row) => `${row.modelId}:${row.result}`);
@@ -294,28 +326,26 @@ function qualifyFormal(): EconomicQualificationEvidence['formal'] {
   });
 }
 
-function qualifyProperty(): EconomicQualificationEvidence['property'] {
-  const snapshot = propertyChecks('baseline', PROPERTY_SEED, 2);
+function qualifyProperty(payload: DualQualifyPayload): EconomicQualificationEvidence['property'] {
   protocolFuzzNeverPanics(new SeededRng(PROPERTY_SEED), 8);
   return Object.freeze({
     seed: PROPERTY_SEED,
     corpusReference: PROPERTY_CORPUS,
-    ok: allPropertiesHold(snapshot),
-    digest: sha256Text(`property:${PROPERTY_SEED}:${PROPERTY_CORPUS}:${allPropertiesHold(snapshot)}`),
+    ok: payload.property.ok,
+    digest: sha256Text(`property:${PROPERTY_SEED}:${PROPERTY_CORPUS}:${payload.property.ok}`),
   });
 }
 
-function qualifyStress(): EconomicQualificationEvidence['stress'] {
-  const dual = runAdversarialSmoke();
+function qualifyStress(payload: DualQualifyPayload): EconomicQualificationEvidence['stress'] {
   const range = qualifyAdversarialCritical();
   const criticalFailures = [
-    ...dual.results.filter((row) => !row.passed).map((row) => `dual:${row.scenarioId}`),
+    ...payload.stress.failed.map((id) => `dual:${id}`),
     ...(range.ok ? [] : ['range:critical-invariants']),
   ];
   return Object.freeze({
-    ok: dual.failed === 0 && range.ok,
+    ok: payload.stress.ok && range.ok,
     criticalFailures: Object.freeze(criticalFailures),
-    digest: sha256Text(JSON.stringify({ dual: dual.failed, range: range.ok, criticalFailures })),
+    digest: sha256Text(JSON.stringify({ dual: payload.stress.failed, range: range.ok, criticalFailures })),
     hiddenFailures: false,
   });
 }
@@ -465,10 +495,11 @@ export function qualifyEconomicReleaseCandidate(input: {
   const fees = qualifyFees();
   const moonrey = qualifyMoonrey();
   const treasury = qualifyTreasury(fees);
-  const dual = qualifyDualEconomy(input.profile);
+  const dualPayload = runDualQualify(input.root, input.profile);
+  const dual = qualifyDualEconomy(dualPayload);
   const formal = qualifyFormal();
-  const property = qualifyProperty();
-  const stress = qualifyStress();
+  const property = qualifyProperty(dualPayload);
+  const stress = qualifyStress(dualPayload);
   const supply = qualifySupply(validator.bond, fees.burn, fees.treasury);
   const recovery = qualifyRecovery();
   const upgrade = qualifyUpgrade();
