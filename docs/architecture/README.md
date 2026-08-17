@@ -104,6 +104,9 @@
 - [Chunk 55 resilience and observability](./chunk-55-resilience-observability.md)
   — multi-failure-domain operations, backups, and DR drills at
   `packages/sunrey-chain/src/ops`.
+- [Chunk 58 performance engineering](./chunk-58-performance.md)
+  — sunrey-bench load, soak, and capacity measurements at
+  `packages/sunrey-chain/src/perf`.
 - [Chunk 56 fuzzing and property assurance](./chunk-56-assurance-fuzzing.md)
   — protocol fuzzing, property tests, differential drivers, and
   replay fixtures at `packages/sunrey-chain`. See

@@ -1,3 +1,4 @@
+import { DEVELOPMENT_CHAIN_ID, opsErr, opsOk, type OpsResult, type SignerLease, type SignerMode, type SignerRole } from './types.ts';
 import { DEVELOPMENT_CHAIN_ID, type SignerRole } from './types.ts';
 import { opsErr, opsOk, type OpsResult, type SignerLease, type SignerMode } from './types.ts';
 
@@ -25,6 +26,9 @@ export type ResilienceSignerFence = {
 export type SignerFenceState = SignerFenceRecord;
 
 export class SignerFencingController {
+  readonly #fences = new Map<string, ResilienceSignerFence>();
+  readonly #roles = new Map<string, SignerRole>();
+
   readonly #fences = new Map<string, SignerFenceRecord>();
   readonly #roles = new Map<string, SignerRole>();
 

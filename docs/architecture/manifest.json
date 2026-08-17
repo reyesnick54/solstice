@@ -2878,6 +2878,9 @@
     "packages/sunrey-chain-sdk-ledger",
     "packages/sdk-ledger",
     "packages/sunrey-sdk-v2",
+    "packages/sunrey-bench",
+    "packages/performance",
+    "packages/load-test"
     "packages/red-team",
     "packages/attack-sim",
     "packages/sunrey-pentest"
@@ -3376,6 +3379,11 @@
       "notes": "Chunk 51 official developer platform: versioned public API v1, TypeScript SDK, Rust client SDK, event subscriptions. Adapter only. Canonical owners remain packages/sunrey-chain and packages/sunrey-exchange. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
     },
     {
+      "id": "sunrey-performance-engineering",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 58 sunrey-bench load, soak, and capacity engineering at packages/sunrey-chain/src/perf. Measures finalized consensus, RPC, Explorer, Exchange, oracle, productive, machine, interop, and custody workflows. Engineering measurements only. Do not create packages/sunrey-bench, packages/performance, or packages/load-test. Do not bypass consensus, CryptoSuite, authorization, policy, reconciliation, oracle validation, custody controls, or exchange reservations."
       "id": "sunrey-adversarial-range",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-range",

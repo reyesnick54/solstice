@@ -474,6 +474,13 @@ Chunk 51 implements the official developer platform at
 Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. The evaluator returns `mustStop: false`.
+Chunk 58 implements the sunrey-bench performance, load, soak, and
+capacity suite at `packages/sunrey-chain`. Capability
+`sunrey-performance-engineering` is `IMPLEMENTED`. See
+[`chunk-58-performance.md`](./chunk-58-performance.md).
+Do not create `packages/sunrey-bench`, `packages/performance`, or
+`packages/load-test`. Results are engineering measurements, not
+production guarantees. The evaluator returns `mustStop: false`.
 Chunk 57 implements the isolated adversarial cyber-economic test
 range at `packages/sunrey-range`. Capability
 `sunrey-adversarial-range` is `IMPLEMENTED`. See

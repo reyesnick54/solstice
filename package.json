@@ -67,6 +67,8 @@
     "sunrey-range": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-range/src/cli-main.ts",
     "sunrey:dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/dev.ts",
     "generate:sunrey-api-reference": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/generate-reference.ts",
+    "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/sunrey-bench.mjs",
+    "demo:sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/perf/demo.ts",
     "demo:sunrey-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-devnet'",
     "demo:sunrey-validator-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-validator-devnet'",
     "demo:sunrey-accountability": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-accountability-demo'",

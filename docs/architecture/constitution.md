@@ -73,6 +73,7 @@ never be two implementations of these systems.
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
+| SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 
@@ -916,6 +917,12 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Chunk 58 implements sunrey-bench load, soak, and capacity engineering
+at `packages/sunrey-chain/src/perf`. Capability
+`sunrey-performance-engineering` is `IMPLEMENTED`. Do not create
+`packages/sunrey-bench`, `packages/performance`, or
+`packages/load-test`. See
+[`chunk-58-performance.md`](./chunk-58-performance.md).
 Chunk 57 implements the isolated adversarial cyber-economic test
 range at `packages/sunrey-range`. Capability
 `sunrey-adversarial-range` is `IMPLEMENTED`. Red actors are

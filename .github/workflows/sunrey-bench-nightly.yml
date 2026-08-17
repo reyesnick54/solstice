@@ -1,0 +1,35 @@
+name: SunRey bench nightly
+
+# Long load and soak profiles. Do not fold this into the unit-test CI job.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * *"
+
+jobs:
+  sunrey-bench:
+    name: seven-validator + soak + compare
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install
+
+      - name: Seven-validator load
+        run: npm run sunrey-bench -- seven-validator --json packages/sunrey-chain/perf/baseline/nightly-seven.json
+
+      - name: Soak (short nightly window; set SUNREY_BENCH_SOAK_MS for multi-hour)
+        env:
+          SUNREY_BENCH_SOAK_MS: "120000"
+        run: npm run sunrey-bench -- soak --soak-ms 120000 --json packages/sunrey-chain/perf/baseline/nightly-soak.json
+
+      - name: Compare stable micro suites against committed baseline
+        run: npm run sunrey-bench -- compare --baseline packages/sunrey-chain/perf/baseline/manifest.json

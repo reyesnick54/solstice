@@ -99,6 +99,13 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
 
 const entry = process.argv[1] ?? '';
 if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if (['health', 'alerts', 'backup', 'dr', 'topology', 'validator-fencing'].includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
+}
   process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
 }
 
@@ -135,6 +142,7 @@ export type CliResult = {
   readonly payload: unknown;
 };
 
+const OPERATOR_COMMANDS = [
 const VALIDATOR_COMMANDS = [
   'validator',
   'signer',
@@ -168,6 +176,7 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (!group || !(OPERATOR_COMMANDS as readonly string[]).includes(group)) {
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
@@ -357,8 +366,4 @@ export async function main(): Promise<void> {
   if (!result.ok) {
     process.exitCode = 1;
   }
-}
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  await main();
 }

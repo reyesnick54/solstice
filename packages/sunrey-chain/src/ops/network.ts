@@ -490,6 +490,10 @@ export class SimulatedResilienceNetwork {
       'state_commit_duration',
       'rpc_latency',
       'rpc_error_rate',
+      'finalized_tps',
+      'mempool_admission_latency',
+      'explorer_index_rate',
+      'soak_rss_bytes',
     ] as const) {
       this.metrics.observe(name, 0n, { plane: 'node' });
     }

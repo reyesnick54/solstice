@@ -17,6 +17,22 @@ export function dashboardDefinitions(): readonly DashboardDefinition[] {
     { id: 'EXCHANGE', title: 'Exchange', panels: ['order_ingress', 'matching_latency', 'pending_settlement_count'] },
     { id: 'CUSTODY', title: 'Custody', panels: ['deposit_finality_lag', 'submission_unknown_count', 'reconciliation_mismatches'] },
     { id: 'INTEROP', title: 'Interop', panels: ['verified_headers', 'frozen_clients', 'relayer_latency'] },
+    {
+      id: 'PERFORMANCE',
+      title: 'Performance',
+      panels: [
+        'finality_latency',
+        'sunrey_transactions',
+        'mempool_count',
+        'block_execution_duration',
+        'state_commit_duration',
+        'rpc_latency',
+        'explorer_lag',
+        'matching_latency',
+        'aggregation_latency',
+        'relayer_latency',
+      ],
+    },
   ]);
 }
 
