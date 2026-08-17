@@ -958,6 +958,15 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 68 implements production-candidate oracle provider onboarding,
+off-chain collection, provenance, independence, and MoonRey
+eligibility at `packages/sunrey-chain/src/oracle/production`.
+Capability `sunrey-production-oracles` is `IMPLEMENTED`. Consensus
+never calls external APIs. Oracle facts never mint MoonRey. Missing
+provider agreements are never confirmed. Do not create
+`packages/production-oracles`, `packages/oracle-onboarding`, or
+`packages/oracle-collector`. See
+[`chunk-68-production-oracles.md`](./chunk-68-production-oracles.md).
 Chunk 64 implements production-class root-of-trust and key-ceremony
 architecture at `packages/security/src/ceremony`. Capability
 `sunrey-root-of-trust` is `IMPLEMENTED`. CI uses simulation

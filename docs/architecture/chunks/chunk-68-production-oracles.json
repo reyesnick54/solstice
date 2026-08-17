@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-68",
+  "title": "SunRey production oracle provider onboarding, data provenance, and operations",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-pqc-testnet",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-oracles"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production. Extends the Chunk 43 oracle engine. Off-chain collector, provider onboarding, provenance, independence, quorum, and MoonRey eligibility. Consensus never calls HTTP. No fabricated provider agreements. evaluateChunkRequirements returns mustStop: false. Do not create packages/oracle, packages/sunrey-oracle, packages/oracle-network, or a second oracle consensus system."
+}

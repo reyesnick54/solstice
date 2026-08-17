@@ -339,6 +339,10 @@ export type CustodyReadinessSlot = {
 };
 
 export type OracleReadinessSlot = {
+  readonly technicalImplementation: EvidenceState;
+  readonly providerConfigured: EvidenceState;
+  readonly providerAgreementEvidence: EvidenceState;
+  readonly productionEligible: EvidenceState;
   readonly realProviderAgreements: EvidenceState;
   readonly sourceDiversity: EvidenceState;
   readonly dataQuality: EvidenceState;

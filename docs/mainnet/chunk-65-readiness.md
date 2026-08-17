@@ -19,6 +19,9 @@ Capability: `sunrey-mainnet-readiness`.
 - External legal/regulatory/security-review slots that stay incomplete
   unless real evidence is supplied
 - Separate Exchange, custody, oracle, interop, and privacy checklists
+- Chunk 68 oracle readiness distinguishes technical implementation,
+  provider configured, provider agreement evidence, and production
+  eligible. Development fixtures are not production feeds.
 - Activation-plan generation that does not execute infrastructure
 - Readiness CLI: `sunrey-mainnet`
 

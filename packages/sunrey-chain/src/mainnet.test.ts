@@ -243,6 +243,10 @@ describe('Chunk 65 SunRey mainnet readiness', () => {
     assert.equal(exchangeReadiness().licensingOrRegistration, 'NOT_PROVIDED');
     assert.equal(custodyReadiness().realHsmOrProvider, 'NOT_PROVIDED');
     assert.equal(oracleReadiness().realProviderAgreements, 'NOT_PROVIDED');
+    assert.equal(oracleReadiness().technicalImplementation, 'ENGINEERING_VERIFIED');
+    assert.equal(oracleReadiness().providerConfigured, 'ENGINEERING_VERIFIED');
+    assert.equal(oracleReadiness().providerAgreementEvidence, 'NOT_PROVIDED');
+    assert.equal(oracleReadiness().productionEligible, 'NOT_PROVIDED');
     assert.equal(interopReadiness().legalComplianceReview, 'NOT_PROVIDED');
     assert.equal(privacyReadiness().humanLegalReview, 'NOT_PROVIDED');
   });
