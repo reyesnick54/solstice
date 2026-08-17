@@ -412,6 +412,8 @@ mod tests {
             AssetError::FaucetForbidden
         );
         assert!(faucet_permitted("simulation", false, "net_sunrey_local_dev"));
+        assert!(faucet_permitted("simulation", false, "net_sunrey_testnet_1"));
+        assert!(!faucet_permitted("simulation", false, "net_sunrey_reserved_production"));
     }
 
     #[test]

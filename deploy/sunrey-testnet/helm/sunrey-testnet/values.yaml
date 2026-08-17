@@ -1,0 +1,22 @@
+name: sunrey-testnet
+networkId: net_sunrey_testnet_1
+chainId: chn_sunrey_testnet_1
+environment: simulation
+productionNetworkEnabled: false
+validatorReplicas: 7
+seedReplicas: 2
+rpcReplicas: 1
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    rpc: ""
+    explorer: ""
+    faucet: ""
+  tlsSecretName: sunrey-testnet-1-tls
+images:
+  node: sunrey-node:testnet-1
+  rpc: sunrey-rpc:testnet-1
+  faucet: sunrey-faucet:testnet-1
+  explorer: sunrey-explorer:testnet-1
+  relayer: sunrey-relayer:testnet-1

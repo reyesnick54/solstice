@@ -1,0 +1,470 @@
+openapi: 3.1.0
+info:
+  title: SunRey Chain public API
+  version: v1
+  description: >
+    Official public developer API for SunRey Blockchain. Simulation only.
+    Public tickers remain NOT_ASSIGNED. Private keys must never be sent.
+servers:
+  - url: http://127.0.0.1:18480
+    description: Local development RPC
+tags:
+  - name: CHAIN
+  - name: ACCOUNTS
+  - name: ASSETS
+  - name: FEES
+  - name: VALIDATORS
+  - name: GOVERNANCE
+  - name: ORACLES
+  - name: PRODUCTIVE_ECONOMY
+  - name: MACHINE_ECONOMY
+  - name: INTEROPERABILITY
+paths:
+  /v1/chain/status:
+    get:
+      tags: [CHAIN]
+      summary: Network status, protocol version, finalized height
+      responses:
+        "200":
+          description: Chain status
+  /v1/chain/network:
+    get:
+      tags: [CHAIN]
+      responses:
+        "200":
+          description: Network identifiers
+  /v1/chain/protocol:
+    get:
+      tags: [CHAIN]
+      responses:
+        "200":
+          description: Protocol and API versions
+  /v1/chain/finality:
+    get:
+      tags: [CHAIN]
+      summary: BFT finality only. No probabilistic confirmations.
+      responses:
+        "200":
+          description: Finality
+  /v1/chain/blocks:
+    get:
+      tags: [CHAIN]
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+        - in: query
+          name: page_size
+          schema: { type: integer, maximum: 100 }
+      responses:
+        "200":
+          description: Cursor-paginated blocks
+  /v1/chain/transactions:
+    get:
+      tags: [CHAIN]
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cursor-paginated transactions
+  /v1/chain/transactions/{id}:
+    get:
+      tags: [CHAIN]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Transaction status
+  /v1/chain/state-roots:
+    get:
+      tags: [CHAIN]
+      responses:
+        "200":
+          description: State root
+  /v1/accounts:
+    post:
+      tags: [ACCOUNTS]
+      summary: Register a public account descriptor. No private keys.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [account_id, address, public_key_hex, suite_id]
+              properties:
+                account_id: { type: string }
+                address: { type: string }
+                public_key_hex: { type: string }
+                suite_id: { type: string }
+                authorization_policy: { type: string }
+                private_key:
+                  description: Forbidden. Public RPC rejects this field.
+                  type: string
+      responses:
+        "200":
+          description: Public account
+        "403":
+          description: PRIVATE_KEY_REJECTED
+  /v1/accounts/{id}:
+    get:
+      tags: [ACCOUNTS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Account, nonce, authorization policy, status
+  /v1/accounts/{id}/nonce:
+    get:
+      tags: [ACCOUNTS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Account nonce
+  /v1/assets:
+    get:
+      tags: [ASSETS]
+      responses:
+        "200":
+          description: Asset registry
+  /v1/assets/holdings/{id}:
+    get:
+      tags: [ASSETS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Holdings
+  /v1/assets/locks/{id}:
+    get:
+      tags: [ASSETS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Locks
+  /v1/assets/supply:
+    get:
+      tags: [ASSETS]
+      responses:
+        "200":
+          description: Supply
+  /v1/assets/issuance:
+    get:
+      tags: [ASSETS]
+      responses:
+        "200":
+          description: Issuance attribution
+  /v1/assets/burns:
+    get:
+      tags: [ASSETS]
+      responses:
+        "200":
+          description: Burn records
+  /v1/fees/schedule:
+    get:
+      tags: [FEES]
+      responses:
+        "200":
+          description: Active fee schedule
+  /v1/fees/estimate:
+    get:
+      tags: [FEES]
+      responses:
+        "200":
+          description: Fee estimate
+  /v1/fees/resources:
+    get:
+      tags: [FEES]
+      responses:
+        "200":
+          description: Resource estimate
+  /v1/fees/receipts/{id}:
+    get:
+      tags: [FEES]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Finalized fee receipt
+  /v1/validators:
+    get:
+      tags: [VALIDATORS]
+      responses:
+        "200":
+          description: Validator set
+  /v1/validators/epochs:
+    get:
+      tags: [VALIDATORS]
+      responses:
+        "200":
+          description: Epochs
+  /v1/validators/evidence:
+    get:
+      tags: [VALIDATORS]
+      responses:
+        "200":
+          description: Public evidence
+  /v1/governance/proposals:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Proposals
+  /v1/governance/upgrades:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Upgrade plans
+  /v1/governance/votes:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Votes
+  /v1/governance/versions:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Protocol versions
+  /v1/governance/activations:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Scheduled activations
+  /v1/oracles/providers:
+    get:
+      tags: [ORACLES]
+      responses:
+        "200":
+          description: Providers
+  /v1/oracles/feeds:
+    get:
+      tags: [ORACLES]
+      responses:
+        "200":
+          description: Feeds
+  /v1/oracles/observations:
+    get:
+      tags: [ORACLES]
+      responses:
+        "200":
+          description: Observations
+  /v1/oracles/facts:
+    get:
+      tags: [ORACLES]
+      responses:
+        "200":
+          description: Verified economic facts
+  /v1/oracles/quality:
+    get:
+      tags: [ORACLES]
+      responses:
+        "200":
+          description: Quality
+  /v1/productive/objects:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Productive objects
+  /v1/productive/claims:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Claims
+  /v1/productive/contributions:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Contributions
+  /v1/productive/lineage:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Lineage
+  /v1/productive/graph:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: Graph queries
+  /v1/productive/moonrey:
+    get:
+      tags: [PRODUCTIVE_ECONOMY]
+      responses:
+        "200":
+          description: MoonRey attribution
+  /v1/machines:
+    get:
+      tags: [MACHINE_ECONOMY]
+      responses:
+        "200":
+          description: Machine identity
+  /v1/machines/capabilities:
+    get:
+      tags: [MACHINE_ECONOMY]
+      responses:
+        "200":
+          description: Capabilities
+  /v1/machines/offers:
+    get:
+      tags: [MACHINE_ECONOMY]
+      responses:
+        "200":
+          description: Offers
+  /v1/machines/commerce:
+    get:
+      tags: [MACHINE_ECONOMY]
+      responses:
+        "200":
+          description: Commerce state
+  /v1/machines/deliveries:
+    get:
+      tags: [MACHINE_ECONOMY]
+      responses:
+        "200":
+          description: Delivery proofs
+  /v1/interop/chains:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: External chains
+  /v1/interop/clients:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: Light clients
+  /v1/interop/connections:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: Connections
+  /v1/interop/channels:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: Channels
+  /v1/interop/packets:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: Packet state
+  /v1/interop/security:
+    get:
+      tags: [INTEROPERABILITY]
+      responses:
+        "200":
+          description: Security profile
+  /v1/transactions:
+    post:
+      tags: [CHAIN]
+      summary: Submit an already-signed canonical envelope
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [signed_envelope_hex]
+              properties:
+                signed_envelope_hex: { type: string }
+                network_id: { type: string }
+                idempotency_key: { type: string }
+      responses:
+        "200":
+          description: Submission response
+  /v1/dev/faucet:
+    post:
+      tags: [ACCOUNTS]
+      summary: Development faucet. Simulation only.
+      responses:
+        "200":
+          description: Holdings after faucet
+  /v1/events:
+    get:
+      tags: [CHAIN]
+      summary: Versioned event stream (SSE) or JSON replay
+      parameters:
+        - in: query
+          name: cursor
+          schema: { type: string }
+        - in: query
+          name: subscribe
+          schema: { type: string }
+        - in: query
+          name: format
+          schema: { type: string, enum: [sse, json] }
+      responses:
+        "200":
+          description: Events
+components:
+  schemas:
+    ApiErrorEnvelope:
+      type: object
+      required: [error_code, category, message, retryable, details_safe_for_client, request_id]
+      properties:
+        error_code: { type: string }
+        category:
+          type: string
+          enum:
+            - VALIDATION
+            - AUTHENTICATION
+            - AUTHORIZATION
+            - POLICY
+            - CONSENSUS
+            - RESOURCE
+            - RATE_LIMIT
+            - NOT_FOUND
+            - TEMPORARY_UNAVAILABLE
+            - INTERNAL
+        message: { type: string }
+        retryable: { type: boolean }
+        details_safe_for_client: { type: object }
+        request_id: { type: string }
+    SubmissionResponse:
+      type: object
+      required: [transaction_id, submission_status, network_id, received_at]
+      properties:
+        transaction_id: { type: string }
+        submission_status:
+          type: string
+          enum: [ACCEPTED, REJECTED, KNOWN, SUBMISSION_UNKNOWN]
+        network_id: { type: string }
+        received_at: { type: string }
+        mempool_status: { type: string }
+    TransactionStatus:
+      type: string
+      enum: [LOCAL_ONLY, SUBMITTED, MEMPOOL, INCLUDED, FINALIZED, REJECTED, EXPIRED, UNKNOWN]

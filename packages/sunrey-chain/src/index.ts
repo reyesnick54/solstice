@@ -139,6 +139,7 @@ export * as fees from './fees/index.ts';
 export * as interop from './interop/index.ts';
 export * as wallet from './wallet/index.ts';
 export * as ops from './ops/index.ts';
+export * as testnet from './testnet/index.ts';
 export {
   CURRENT_APPLICATION_AUTHORITY,
   NATIVE_BLOCKCHAIN_AUTHORITY,

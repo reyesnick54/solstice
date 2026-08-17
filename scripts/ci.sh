@@ -54,6 +54,10 @@ npm run demo:sunrey-fees
 npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
 npm run demo:sunrey-ops
+npm run demo:sunrey-testnet
+node scripts/sunrey-testnet-validate-manifests.mjs
+node scripts/sunrey-testnet-sbom.mjs
+npm run demo:sunrey-sdk
 npm run demo:sunrey-devnet
 npm run demo:sunrey-validator-devnet
 npm run demo:sunrey-accountability
@@ -67,6 +71,7 @@ npm run demo:custody-unknown
 npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
+npm run demo:explorer
 
 echo "==> typecheck"
 npm run typecheck

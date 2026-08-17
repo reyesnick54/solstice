@@ -22,7 +22,7 @@ import {
   NETWORK_CLASS_IDS,
   NETWORK_CLASSES,
   RESERVED_PRODUCTION_NETWORK_ID,
-  RESERVED_TEST_NETWORK_ID,
+  TESTNET_NETWORK_IDS,
   type AccountDescriptor,
   type AddressAlgorithm,
   type AddressClass,
@@ -46,7 +46,7 @@ export function networkClassOf(networkId: string): NetworkClass | null {
   if ((DEVELOPMENT_NETWORK_IDS as readonly string[]).includes(networkId)) {
     return 'DEVELOPMENT';
   }
-  if (networkId === RESERVED_TEST_NETWORK_ID) {
+  if ((TESTNET_NETWORK_IDS as readonly string[]).includes(networkId) || networkId.startsWith('net_sunrey_testnet_')) {
     return 'RESERVED_TEST';
   }
   if (networkId === RESERVED_PRODUCTION_NETWORK_ID) {
@@ -310,7 +310,7 @@ export function parseAddress(
     (networkClass === 'DEVELOPMENT'
       ? DEVELOPMENT_NETWORK_IDS[0]
       : networkClass === 'RESERVED_TEST'
-        ? RESERVED_TEST_NETWORK_ID
+        ? TESTNET_NETWORK_IDS[1]
         : RESERVED_PRODUCTION_NETWORK_ID);
   return {
     ok: true,

@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sunrey-validator
+  namespace: sunrey-testnet-1
+spec:
+  serviceName: sunrey-validator
+  replicas: 7
+  selector:
+    matchLabels:
+      app: sunrey-validator
+  template:
+    metadata:
+      labels:
+        app: sunrey-validator
+        sunrey.role: validator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      containers:
+        - name: node
+          image: sunrey-node:testnet-1
+          env:
+            - name: SUNREY_NETWORK_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: sunrey-testnet-1-public
+                  key: networkId
+            - name: SUNREY_KEY_HANDLE
+              valueFrom:
+                secretKeyRef:
+                  name: sunrey-testnet-1-key-handles
+                  key: validatorAHandle
+          ports:
+            - name: consensus
+              containerPort: 26656
+            - name: sentry
+              containerPort: 26657
+          livenessProbe:
+            tcpSocket:
+              port: 26656
+            initialDelaySeconds: 10
+          readinessProbe:
+            tcpSocket:
+              port: 26656
+            initialDelaySeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sunrey-validator
+  namespace: sunrey-testnet-1
+spec:
+  clusterIP: None
+  selector:
+    app: sunrey-validator
+  ports:
+    - name: consensus
+      port: 26656

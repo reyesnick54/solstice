@@ -465,6 +465,14 @@ This document describes only what is implemented and tested in this tree.
   with height delay, delegated keys, watch-only, and a local
   encrypted development keystore. Wallet metadata is not a
   second native-asset ledger and not a fiat Account.
+- SunRey developer platform (Chunk 51, `packages/sunrey-sdk`):
+  versioned public API `v1`, TypeScript SDK, Rust client crate
+  at `packages/sunrey-chain/rust/crates/sdk`, SSE/JSON events,
+  local signing, faucet, and Exchange read/write adapters.
+  Capability `sunrey-developer-sdk` is `IMPLEMENTED`. Adapter
+  only. Private keys never go to public RPC. See
+  `docs/architecture/chunk-51-developer-platform.md` and
+  `docs/developers/README.md`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
@@ -521,6 +529,8 @@ npm run demo:mesh
 npm run demo:consent
 npm run demo:clean-room
 npm run demo:sunrey-wallet
+npm run demo:sunrey-sdk
+npm run sunrey:dev
 npm run typecheck
 npm run scan:secrets
 npm run ci

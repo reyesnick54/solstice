@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  title: SunRey Exchange public API
+  version: v1
+  description: >
+    Typed developer API for the four SunRey Exchange market families.
+    Public information-right APIs expose only permitted market metadata.
+    Tickers remain NOT_ASSIGNED.
+servers:
+  - url: http://127.0.0.1:18480
+paths:
+  /v1/exchange/markets:
+    get:
+      summary: listMarkets
+      responses:
+        "200":
+          description: Markets for DIGITAL_ASSET, HUMAN_INFORMATION_RIGHT, INTELLIGENCE_COMPUTE, PRODUCTIVE_CAPACITY
+  /v1/exchange/instruments/{id}:
+    get:
+      summary: getInstrument
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Instrument
+  /v1/exchange/order-books/{marketId}:
+    get:
+      summary: getOrderBook
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order book
+  /v1/exchange/orders:
+    post:
+      summary: placeSignedOrder
+      description: Accepts an already-signed order. Private keys are rejected.
+      responses:
+        "200":
+          description: Accepted order
+  /v1/exchange/orders/{id}/cancel:
+    post:
+      summary: cancelOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled
+  /v1/exchange/trades/{id}:
+    get:
+      summary: getTrade
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Trade
+  /v1/exchange/settlements/{id}:
+    get:
+      summary: getSettlement
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Settlement
+  /v1/exchange/auctions:
+    get:
+      summary: getAuction
+      responses:
+        "200":
+          description: Auctions
+  /v1/exchange/capacity-contracts:
+    get:
+      summary: getCapacityContract
+      responses:
+        "200":
+          description: Capacity contracts
+  /v1/exchange/market-data:
+    get:
+      summary: Market data
+      responses:
+        "200":
+          description: Market data

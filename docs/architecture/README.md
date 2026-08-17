@@ -101,4 +101,8 @@
   — native-asset vaults, remote/HSM signing, finalized deposits.
   [Signing architecture](./native-custody-signing.md).
 
+- [Chunk 51 developer platform](./chunk-51-developer-platform.md) —
+  official SDK, versioned public API v1, and real-time events at
+  `packages/sunrey-sdk`.
+
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

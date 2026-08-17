@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sunrey-testnet-1-public
+  namespace: sunrey-testnet-1
+data:
+  networkId: net_sunrey_testnet_1
+  chainId: chn_sunrey_testnet_1
+  displayName: SunRey Testnet 1
+  banner: SUNREY TESTNET
+  addressHrp: srtst
+  protocolVersion: "1"
+  environment: simulation
+  productionNetworkEnabled: "false"
+  tickerStatus: NOT_ASSIGNED
+  sdkNetworkName: SUNREY_TESTNET_1
+  rpcUrl: ""
+  explorerUrl: ""
+  faucetUrl: ""
+  validatorCount: "7"
