@@ -2479,7 +2479,7 @@
       "id": "sunrey-regulated-integration",
       "name": "SunRey Exchange and custody production-candidate regulated adapters",
       "canonicalOwner": "packages/sunrey-exchange",
-      "canonicalPath": "packages/sunrey-exchange/src/regulated/index.ts",
+      "canonicalPath": "packages/sunrey-exchange/src/regulated/types.ts",
       "publicInterface": "packages/sunrey-exchange/src/regulated/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,

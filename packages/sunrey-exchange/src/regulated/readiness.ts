@@ -1,23 +1,7 @@
-import type { EvidenceCompleteness } from '../../../kernel/src/regulated/providers.ts';
 import type { RegulatedActivationCapability } from '../../../kernel/src/regulated/activation-policy.ts';
+import type { ReadinessDimensionStatus, RegulatedMarketReadinessReport } from './types.ts';
 
-export type ReadinessDimensionStatus = {
-  readonly complete: boolean;
-  readonly completeness: EvidenceCompleteness;
-  readonly notes: string;
-};
-
-export type RegulatedMarketReadinessReport = {
-  readonly technical: ReadinessDimensionStatus;
-  readonly security: ReadinessDimensionStatus;
-  readonly operations: ReadinessDimensionStatus;
-  readonly provider: ReadinessDimensionStatus;
-  readonly legal: ReadinessDimensionStatus;
-  readonly license: ReadinessDimensionStatus;
-  readonly humanAuthorization: ReadinessDimensionStatus;
-  readonly productionActivated: false;
-  readonly liveFlagsRemainDisabled: true;
-};
+export type { ReadinessDimensionStatus, RegulatedMarketReadinessReport };
 
 export function evaluateRegulatedMarketReadiness(input: {
   readonly technicalComplete: boolean;

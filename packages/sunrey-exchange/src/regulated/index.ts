@@ -16,14 +16,12 @@ export {
 export {
   evaluateMarketAccess,
   familyInheritsRegulatoryStatus,
-  type MarketAccessDecision,
-  type MarketAccessInput,
 } from './market-access.ts';
+export type { MarketAccessDecision, MarketAccessInput, RegulatedMarketReadinessReport } from './types.ts';
 export {
   evaluateRegulatedMarketReadiness,
   readinessForCapability,
   unlicensedActivationRemainsIncomplete,
-  type RegulatedMarketReadinessReport,
 } from './readiness.ts';
 export {
   exportSurveillanceCases,

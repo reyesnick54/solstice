@@ -82,7 +82,6 @@
     "demo:sunrey-validator-devnet": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-validator-devnet'",
     "demo:sunrey-accountability": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-accountability-demo'",
     "demo:sunrey-native-assets": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-native-asset-demo'",
-    "test:sunrey-node": "bash -lc 'cd packages/sunrey-chain/node && cargo fmt --check && cargo clippy --all-targets -- -D warnings && cargo test --locked'",
     "test:sunrey-node": "bash -lc 'cd packages/sunrey-chain/node && cargo fmt --check && cargo clippy --all-targets --locked -- -D warnings && cargo test --locked'",
     "sunrey-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/assurance/cli.ts",
     "test:property": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/sunrey-chain/src/assurance.test.ts tests/assurance/*.test.ts",

@@ -235,6 +235,9 @@ export function runFullCeremonyRehearsal(
     return securityErr('AUTHORITY_SEPARATION', 'rehearsal produced duplicate fingerprints');
   }
   const pq = hsm.assessPqCapability();
+  if (pq.hardware !== 'HARDWARE_PROVIDER_UNCONFIRMED') {
+    return securityErr('PRODUCTION_CLAIM_FORBIDDEN', 'rehearsal cannot claim hardware PQC');
+  }
   const report = session.publicReport();
   if (!finalized.value.transcriptHash) {
     return securityErr('CEREMONY_TRANSCRIPT_TAMPERED', 'missing transcript hash');
@@ -247,7 +250,7 @@ export function runFullCeremonyRehearsal(
     transcriptHash: finalized.value.transcriptHash,
     genesisCandidateHash,
     report,
-    pqHardwareReadiness: pq.hardware,
+    pqHardwareReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED',
     productionAuthorityActive: false,
   });
 }

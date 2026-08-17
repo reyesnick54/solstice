@@ -21,17 +21,11 @@ export type SignerFenceRecord = ResilienceSignerFence;
 
 /** @deprecated use SignerFenceRecord — kept for Chunk 55 call sites */
 export type SignerFenceState = SignerFenceRecord;
-/** Alias used by Chunk 55 call sites and the adversarial range. */
-export type SignerFenceRecord = ResilienceSignerFence;
-
-/** @deprecated use SignerFenceRecord */
-export type SignerFenceState = ResilienceSignerFence;
 
 export class SignerFencingController {
   readonly #fences = new Map<string, ResilienceSignerFence>();
   readonly #roles = new Map<string, SignerRole>();
 
-  register(validatorId: string, activeSite: string, passiveSite: string, chainId = DEVELOPMENT_CHAIN_ID): ResilienceSignerFence {
   register(
     validatorId: string,
     activeSite: string,
