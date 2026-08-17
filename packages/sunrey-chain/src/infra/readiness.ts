@@ -94,6 +94,8 @@ export function buildInfrastructureReadinessReport(input: {
     secretManager: input.secrets.list().length > 0,
     kms: input.kms !== null,
     hsmStatus,
+    hsmStatus: (input.hsm?.readiness ?? 'UNCONFIGURED') as InfrastructureReadinessReport['hsmStatus'],
+    hsmStatus: input.hsm?.readiness ?? 'UNCONFIGURED',
     networkZoning: true,
     tls: (input.certificates?.list().length ?? 0) > 0,
     objectStorage: (input.storage?.list().length ?? 0) > 0,

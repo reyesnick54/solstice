@@ -4,6 +4,28 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey full mainnet launch rehearsal (Chunk 70,
+  `packages/sunrey-chain/src/launch-rehearsal`): distinct rehearsal
+  identity `net_sunrey_mainnet_rehearsal_1` /
+  `chn_sunrey_mainnet_rehearsal_1` (`SunRey Mainnet Rehearsal 1`),
+  seven-validator BFT dry run, 14 sentries, three failure domains,
+  signer fencing, production-candidate storage/postgres profile,
+  oracle and Exchange/custody sandbox workflows, failure injection
+  and recovery, `LaunchControlRoomState`, findings, and an updated
+  future ActivationPlan. Capability `sunrey-launch-rehearsal` is
+  `IMPLEMENTED`. This is not mainnet. `LIVE_*` flags remain false.
+  See `docs/mainnet/chunk-70-launch-rehearsal.md`.
+- SunRey Exchange and custody production-candidate regulated adapters
+  (Chunk 69, `packages/sunrey-exchange/src/regulated`,
+  `packages/custody/src/regulated`, `packages/kernel/src/regulated`,
+  `packages/security/src/regulated`,
+  `packages/sunrey-chain/src/mainnet/regulated-feed.ts`): provider
+  registry, explicit activation modes, KYC/screening/Travel Rule/HSM
+  ports, withdrawal gate, segregation reconciliation, market access,
+  listing governance, surveillance/case export, and Chunk 65
+  readiness feed. Capability `sunrey-regulated-integration` is
+  `IMPLEMENTED`. No live regulated services. `LIVE_*` flags remain
+  false. See `docs/regulated/`.
 - SunRey production-candidate oracle onboarding and collection
   (Chunk 68, `packages/sunrey-chain/src/oracle/production`): provider
   onboarding, versioned data sources, off-chain collector, SecretReference

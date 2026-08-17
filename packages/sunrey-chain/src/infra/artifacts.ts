@@ -18,6 +18,9 @@ import { freezeApi, freezeProtocol } from '../release-candidate/freeze.ts';
 import { collectSoftwareInventory } from '../supply-chain/inventory.ts';
 import { buildProvenance, buildTargetSbom, provenanceDigest, sbomDigest } from '../supply-chain/release.ts';
 import { runFullCeremonyRehearsal } from '../../../security/src/ceremony/rehearsal.ts';
+import { IAC_MODULES } from './config.ts';
+import { digestJson, infraSha256, stableJson } from './hash.ts';
+import { INFRA_SCHEMA_VERSION, INFRA_TOOL_VERSION } from './types.ts';
 import { digestJson, infraSha256, stableJson } from './hash.ts';
 
 export type ReadinessArtifactDigests = {
@@ -28,11 +31,27 @@ export type ReadinessArtifactDigests = {
   readonly rootOfTrustRehearsalDigest: string;
   readonly releaseProvenanceDigest: string;
   readonly sbomDigest: string;
+  readonly infraControlPlaneDigest: string;
 };
 
 const REPO_ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../../..');
 
 let cached: ReadinessArtifactDigests | null = null;
+
+function formalRegistryFileDigest(root: string): string {
+  const path = join(root, 'packages/sunrey-chain/formal/registry/formal-model-registry.json');
+  return infraSha256(readFileSync(path));
+}
+
+function infraControlPlaneDigest(): string {
+  return infraSha256(
+    [
+      INFRA_TOOL_VERSION,
+      String(INFRA_SCHEMA_VERSION),
+      ...IAC_MODULES.map((row) => `${row.moduleId}:${row.kind}:${row.path}`),
+    ].join('|'),
+  );
+}
 
 function formalRegistryFileDigest(): string {
   const path = join(REPO_ROOT, 'packages/sunrey-chain/formal/registry/formal-model-registry.json');
@@ -57,6 +76,7 @@ export function collectReadinessArtifactDigests(root = REPO_ROOT): ReadinessArti
   const registry = loadFormalModelRegistry();
   const report = buildFormalVerificationReport('FORMAL_SMOKE');
   const formalReportDigest = digestJson(publicAssuranceView(report));
+  const formalRegistryDigest = formalRegistryFileDigest(root);
   const formalRegistryDigest = formalRegistryFileDigest();
   const protocol = freezeProtocol(root);
   const api = freezeApi(root);
@@ -92,6 +112,7 @@ export function collectReadinessArtifactDigests(root = REPO_ROOT): ReadinessArti
     rootOfTrustRehearsalDigest: rehearsal.value.transcriptHash,
     releaseProvenanceDigest: provenanceDigest(provenance),
     sbomDigest: sbomDigest(sbom),
+    infraControlPlaneDigest: infraControlPlaneDigest(),
   });
   return cached;
 }

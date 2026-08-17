@@ -82,10 +82,12 @@ npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
 npm run demo:sunrey-interop
 npm run demo:sunrey-ops
-npm run demo:sunrey-ops
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
+npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
+npm run demo:sunrey-launch
+npm run sunrey-launch -- verify
 node scripts/sunrey-testnet-validate-manifests.mjs
 node scripts/sunrey-testnet-sbom.mjs
 npm run demo:sunrey-sdk
@@ -109,6 +111,10 @@ npm run demo:sunrey-range
 SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs rc qualify --profile smoke
 SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs rc verify
 SUNREY_FIXTURE_ENV=local npm run demo:sunrey-rc
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" node scripts/sunrey-release.mjs rc qualify --profile smoke
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" node scripts/sunrey-release.mjs rc verify
+SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" npm run demo:sunrey-rc
+npm run demo:universal-exchange
 npm run demo:sunrey-audit
 
 echo "==> typecheck"

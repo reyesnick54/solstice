@@ -951,6 +951,13 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 70 implements the SunRey full mainnet launch rehearsal at
+`packages/sunrey-chain/src/launch-rehearsal`. Capability
+`sunrey-launch-rehearsal` is `IMPLEMENTED`. It is a production-like
+dry run. It does not launch mainnet, enable `LIVE_*` flags, or
+authorize production funds. Do not create `packages/sunrey-launch`,
+`packages/launch-rehearsal`, or `packages/mainnet-rehearsal`. See
+[`chunk-70-launch-rehearsal.md`](./chunk-70-launch-rehearsal.md).
 Chunk 65 implements mainnet readiness evidence, activation control,
 and genesis-candidate engineering at
 `packages/sunrey-chain/src/mainnet`. Capability
@@ -960,6 +967,15 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 66 implements provider-neutral production infrastructure,
+secret/KMS/HSM adapters, workload identity, and network zoning at
+`packages/sunrey-chain/src/infra`. Capability
+`sunrey-production-infrastructure` is `IMPLEMENTED`. It does not
+launch mainnet, enable `LIVE_*` flags, or couple consensus to a
+cloud vendor. Do not create `packages/sunrey-infra`,
+`packages/infrastructure`, `packages/production-infrastructure`,
+`packages/cloud-adapters`, or `packages/sunrey-cloud`. See
+[`chunk-66-production-infrastructure.md`](./chunk-66-production-infrastructure.md).
 Chunk 68 implements production-candidate oracle provider onboarding,
 off-chain collection, provenance, independence, and MoonRey
 eligibility at `packages/sunrey-chain/src/oracle/production`.
@@ -1002,6 +1018,18 @@ verification. Do not create `packages/formal`, `packages/tla`,
 `packages/model-checker`, `packages/sunrey-formal`, or
 `tools/formal`. See
 [`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Chunk 69 implements the production-candidate adapter framework that
+connects SunRey Exchange and custody to provider-neutral identity,
+screening, Travel Rule, HSM/custody, surveillance, and
+case-management interfaces. Capability
+`sunrey-regulated-integration` is `IMPLEMENTED` at
+`packages/sunrey-exchange`, `packages/custody`, `packages/kernel`,
+`packages/security`, and `packages/sunrey-chain`. It does not
+activate live regulated services or enable `LIVE_*` flags. Do not
+create `packages/regulated-exchange`, `packages/provider-registry`,
+`packages/travel-rule-production`, `packages/custody-activation`, or
+`packages/exchange-kyc`. See
+[`chunk-69-regulated-integration.md`](./chunk-69-regulated-integration.md).
 Chunk 67 implements production-candidate blockchain storage and
 application PostgreSQL durability at
 `packages/sunrey-chain/rust/crates/storage` and
