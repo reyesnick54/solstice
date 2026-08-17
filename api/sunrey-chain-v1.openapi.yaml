@@ -19,6 +19,7 @@ tags:
   - name: PRODUCTIVE_ECONOMY
   - name: MACHINE_ECONOMY
   - name: INTEROPERABILITY
+  - name: MONETARY
 paths:
   /v1/chain/status:
     get:
@@ -179,6 +180,46 @@ paths:
       responses:
         "200":
           description: Burn records
+  /v1/monetary/policy:
+    get:
+      tags: [MONETARY]
+      summary: Dual-asset monetary constitution (read-only)
+      responses:
+        "200":
+          description: Native monetary policy. Production quantities remain UNCONFIGURED. No mint interface.
+  /v1/monetary/supply:
+    get:
+      tags: [MONETARY]
+      summary: Native supply summary
+      responses:
+        "200":
+          description: Genesis, issuance, burn, lock, circulating, and reconciliation. Not market capitalization.
+  /v1/monetary/genesis:
+    get:
+      tags: [MONETARY]
+      summary: Genesis allocation summary
+      responses:
+        "200":
+          description: Signed allocation totals. Production default is zero.
+  /v1/monetary/issuance/{id}:
+    get:
+      tags: [MONETARY]
+      summary: Issuance receipt
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Privacy-safe issuance receipt. No unrestricted mint.
+  /v1/monetary/burns:
+    get:
+      tags: [MONETARY]
+      summary: Burn summary
+      responses:
+        "200":
+          description: Authorized burn classes and records
   /v1/fees/schedule:
     get:
       tags: [FEES]
@@ -226,6 +267,56 @@ paths:
       responses:
         "200":
           description: Public evidence
+  /v1/validators/economics/policy:
+    get:
+      tags: [VALIDATORS]
+      responses:
+        "200":
+          description: Public validator economic policy
+  /v1/validators/{id}/bond:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator bond
+  /v1/validators/{id}/rewards:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator reward summary
+  /v1/validators/{id}/penalties:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator penalties
+  /v1/validators/{id}/unbond:
+    get:
+      tags: [VALIDATORS]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Public validator unbond status
   /v1/governance/proposals:
     get:
       tags: [GOVERNANCE]

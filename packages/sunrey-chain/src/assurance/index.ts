@@ -21,6 +21,7 @@ export {
   machineMandateProperties,
   moonreyIssuanceProperties,
   mulDivMatchesRounding,
+  monetaryConstitutionProperties,
   nativeAssetInvariantProperties,
   oracleAggregationProperties,
   walletThresholdProperties,

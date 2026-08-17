@@ -39,6 +39,10 @@ import {
   putForeignState,
 } from '../interop/index.ts';
 import { DEV_INTEROP_TEST_ASSET, EXTERNAL_DEV_CHAIN_ID } from '../interop/types.ts';
+import { nativeAssetConstitution } from '../economics/constitution.ts';
+import { authorizeIssuance, developmentMoonReyAuthority, developmentSunReyAuthority } from '../economics/issuance.ts';
+import { burn, lock, reserveFee, transfer, unlock } from '../economics/operations.ts';
+import { emptyBook as emptyMonetaryBook, supplyReconciles as monetarySupplyReconciles } from '../economics/supply.ts';
 import type { SeededRng } from './rng.ts';
 
 type AssetBook = {
@@ -384,6 +388,85 @@ export function nativeAssetInvariantProperties(rng: SeededRng, cases: number): v
     }
     if (books.SUNREY_COIN.circulating + books.MOONREY_COIN.circulating < 0n) {
       throw new Error('cross-asset arithmetic produced a negative');
+    }
+  }
+  monetaryConstitutionProperties(rng.child('constitution'), cases);
+}
+
+export function monetaryConstitutionProperties(rng: SeededRng, cases: number): void {
+  const constitution = nativeAssetConstitution('DEVELOPMENT_ACTIVE');
+  let sunrey = emptyMonetaryBook('SUNREY_COIN', constitution.assets[0]!.policyVersion.versionId);
+  let moonrey = emptyMonetaryBook('MOONREY_COIN', constitution.assets[1]!.policyVersion.versionId);
+  const issued = authorizeIssuance(
+    constitution,
+    sunrey,
+    developmentSunReyAuthority({ recipient: 'alice', quantity: 10_000n, replayIdentifier: 'prop-src' }),
+  );
+  if (!issued.ok) {
+    throw new Error(issued.code);
+  }
+  sunrey = issued.book;
+  for (let i = 0; i < cases; i += 1) {
+    const op = rng.pick(['issue', 'transfer', 'lock', 'unlock', 'escrow', 'release', 'burn', 'fee', 'moonrey'] as const);
+    if (op === 'issue') {
+      const next = authorizeIssuance(
+        constitution,
+        sunrey,
+        developmentSunReyAuthority({
+          recipient: 'alice',
+          quantity: rng.bigint(1n, 20n),
+          replayIdentifier: `prop-issue-${i}`,
+        }),
+      );
+      if (next.ok) {
+        sunrey = next.book;
+      }
+    } else if (op === 'transfer' && sunrey.circulating > 0n) {
+      const qty = rng.bigint(1n, 5n);
+      if ((sunrey.positions.get('alice')?.circulating ?? 0n) >= qty) {
+        sunrey = transfer(sunrey, 'alice', 'bob', qty);
+      }
+    } else if (op === 'lock' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      const qty = 1n;
+      sunrey = lock(sunrey, 'alice', `lock-${i}`, qty, 'ORDER_RESERVATION');
+    } else if (op === 'unlock') {
+      const active = [...sunrey.locks.values()].find((row) => row.active && row.lockClass === 'ORDER_RESERVATION');
+      if (active) {
+        sunrey = unlock(sunrey, active.lockId);
+      }
+    } else if (op === 'escrow' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      sunrey = lock(sunrey, 'alice', `escrow-${i}`, 1n, 'MACHINE_ESCROW');
+    } else if (op === 'release') {
+      const active = [...sunrey.locks.values()].find((row) => row.active && row.lockClass === 'MACHINE_ESCROW');
+      if (active) {
+        sunrey = unlock(sunrey, active.lockId);
+      }
+    } else if (op === 'burn' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      const burned = burn(sunrey, 'alice', 1n, 'VOLUNTARY_USER_BURN');
+      if (burned.ok) {
+        sunrey = burned.book;
+      }
+    } else if (op === 'fee' && (sunrey.positions.get('alice')?.circulating ?? 0n) > 0n) {
+      sunrey = reserveFee(sunrey, 'alice', 1n);
+    } else if (op === 'moonrey') {
+      const next = authorizeIssuance(
+        constitution,
+        moonrey,
+        developmentMoonReyAuthority({
+          recipient: 'producer',
+          quantity: rng.bigint(1n, 10n),
+          replayIdentifier: `prop-moon-${i}`,
+          contributionId: `contrib-${i}`,
+          fingerprint: `fp-${i}`,
+          authorizationId: `mia-${i}`,
+        }),
+      );
+      if (next.ok) {
+        moonrey = next.book;
+      }
+    }
+    if (!monetarySupplyReconciles(sunrey) || !monetarySupplyReconciles(moonrey)) {
+      throw new Error('monetary constitution supply identity failed');
     }
   }
 }

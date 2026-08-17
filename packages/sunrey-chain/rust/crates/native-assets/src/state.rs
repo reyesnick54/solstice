@@ -46,6 +46,7 @@ pub enum LockPurpose {
     ResourcePurchase,
     MachineCommerce,
     Settlement,
+    ValidatorBond,
 }
 
 impl LockPurpose {
@@ -57,6 +58,7 @@ impl LockPurpose {
             Self::ResourcePurchase => "RESOURCE_PURCHASE",
             Self::MachineCommerce => "MACHINE_COMMERCE",
             Self::Settlement => "SETTLEMENT",
+            Self::ValidatorBond => "VALIDATOR_BOND",
         }
     }
 
@@ -68,6 +70,7 @@ impl LockPurpose {
             "RESOURCE_PURCHASE" => Ok(Self::ResourcePurchase),
             "MACHINE_COMMERCE" => Ok(Self::MachineCommerce),
             "SETTLEMENT" => Ok(Self::Settlement),
+            "VALIDATOR_BOND" => Ok(Self::ValidatorBond),
             _ => Err(AssetError::SchemaInvalid),
         }
     }

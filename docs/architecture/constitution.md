@@ -842,6 +842,12 @@ simulation-bond penalties. Capability
 `sunrey-validator-accountability` is `IMPLEMENTED`. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Penalties never debit customer fiat, SunRey Coin, or MoonRey.
+Chunk 72 implements governed validator bonding, rewards, and
+accountability economics at `packages/sunrey-chain`. Capability
+`sunrey-validator-economics` is `IMPLEMENTED`. Production bond
+asset remains `UNCONFIGURED`. No public delegation, customer
+staking, or second native-asset ledger. See
+[`chunk-72-validator-economics.md`](./chunk-72-validator-economics.md).
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that
@@ -958,6 +964,15 @@ dry run. It does not launch mainnet, enable `LIVE_*` flags, or
 authorize production funds. Do not create `packages/sunrey-launch`,
 `packages/launch-rehearsal`, or `packages/mainnet-rehearsal`. See
 [`chunk-70-launch-rehearsal.md`](./chunk-70-launch-rehearsal.md).
+Chunk 71 implements the SunRey dual-native-asset monetary
+constitution at `packages/sunrey-chain/src/economics`. Capability
+`sunrey-monetary-constitution` is `IMPLEMENTED`. It governs how
+SunRey Coin and MoonRey Coin may be created, allocated, issued,
+locked, burned, audited, and governed. Production quantities remain
+`UNCONFIGURED`. Do not create `packages/sunrey-economics`,
+`packages/monetary-policy`, `packages/tokenomics`, or
+`packages/genesis-economy`. See
+[`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
 Chunk 65 implements mainnet readiness evidence, activation control,
 and genesis-candidate engineering at
 `packages/sunrey-chain/src/mainnet`. Capability

@@ -35,6 +35,11 @@ import {
   joinWorkflow,
   rotateWorkflow,
 } from './workflows.ts';
+import {
+  ValidatorEconomicsEngine,
+  fixtureValidatorRecord,
+  runValidatorEconomicsSimulation,
+} from '../validator-economics/index.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -206,6 +211,11 @@ export function opsUsage(): string {
     'sunrey-ops validator join',
     'sunrey-ops validator exit',
     'sunrey-ops validator evidence',
+    'sunrey-ops validator bond',
+    'sunrey-ops validator rewards',
+    'sunrey-ops validator penalties',
+    'sunrey-ops validator unbond',
+    'sunrey-ops validator economics-report',
     'sunrey-ops signer status',
     'sunrey-ops snapshot create',
     'sunrey-ops snapshot verify',
@@ -309,6 +319,37 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
       nowUtc(),
     );
     return { ok: rotated.ok, command: 'validator rotate', payload: rotated };
+  }
+  if (group === 'validator' && (action === 'bond' || action === 'rewards' || action === 'penalties' || action === 'unbond' || action === 'economics-report')) {
+    const engine = new ValidatorEconomicsEngine('development');
+    const record = fixtureValidatorRecord({ label: 'A' });
+    engine.registerValidator(record, 2_000_000n);
+    engine.bond({ validatorId: record.validatorId, quantity: 1_000_000n, asset: 'DEVELOPMENT_SUNREY_COIN' });
+    engine.advanceEpoch();
+    if (action === 'bond') {
+      return { ok: true, command: 'validator bond', payload: engine.publicBondView(record.validatorId) };
+    }
+    if (action === 'rewards') {
+      return { ok: true, command: 'validator rewards', payload: engine.getValidatorRewardSummary(record.validatorId) };
+    }
+    if (action === 'penalties') {
+      return { ok: true, command: 'validator penalties', payload: engine.getValidatorPublicPenalties(record.validatorId) };
+    }
+    if (action === 'unbond') {
+      return { ok: true, command: 'validator unbond', payload: engine.getValidatorUnbondStatus(record.validatorId) };
+    }
+    return {
+      ok: true,
+      command: 'validator economics-report',
+      payload: {
+        policy: engine.getValidatorEconomicPolicy(),
+        reconciliation: engine.reconcile(),
+        metrics: engine.metrics(),
+        simulation: runValidatorEconomicsSimulation('development'),
+        productionBondAsset: 'UNCONFIGURED',
+        guaranteedEconomicSecurity: false,
+      },
+    };
   }
   if (group === 'validator' && action === 'evidence') {
     const erased = eraseEvidence();

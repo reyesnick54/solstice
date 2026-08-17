@@ -27,11 +27,17 @@ pub const PATH_EVENTS: &str = "/v1/events";
 pub const PATH_EXCHANGE_MARKETS: &str = "/v1/exchange/markets";
 pub const PATH_BLOCKS: &str = "/v1/chain/blocks";
 pub const PATH_ASSETS: &str = "/v1/assets";
+pub const PATH_MONETARY_POLICY: &str = "/v1/monetary/policy";
+pub const PATH_MONETARY_SUPPLY: &str = "/v1/monetary/supply";
+pub const PATH_MONETARY_GENESIS: &str = "/v1/monetary/genesis";
+pub const PATH_MONETARY_BURNS: &str = "/v1/monetary/burns";
+pub const PATH_MONETARY_ISSUANCE_PREFIX: &str = "/v1/monetary/issuance/";
 pub const PATH_VALIDATORS: &str = "/v1/validators";
 pub const PATH_FEES_POLICY: &str = "/v1/fees/policy";
 pub const PATH_FEES_PRICE: &str = "/v1/fees/price";
 pub const PATH_FEES_ESTIMATE: &str = "/v1/fees/estimate-v2";
 pub const PATH_FEES_RESOURCES: &str = "/v1/fees/resources";
+pub const PATH_VALIDATOR_ECONOMIC_POLICY: &str = "/v1/validators/economics/policy";
 
 #[derive(Debug, thiserror::Error)]
 pub enum SdkError {
@@ -76,6 +82,26 @@ impl SunReyRpcClient {
         self.get(PATH_ASSETS)
     }
 
+    pub fn monetary_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_POLICY)
+    }
+
+    pub fn native_supply_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_SUPPLY)
+    }
+
+    pub fn genesis_allocation_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_GENESIS)
+    }
+
+    pub fn issuance_receipt(&self, id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_MONETARY_ISSUANCE_PREFIX}{id}"))
+    }
+
+    pub fn burn_summary(&self) -> Result<Value, SdkError> {
+        self.get(PATH_MONETARY_BURNS)
+    }
+
     pub fn validators(&self) -> Result<Value, SdkError> {
         self.get(PATH_VALIDATORS)
     }
@@ -94,6 +120,24 @@ impl SunReyRpcClient {
 
     pub fn estimate_fee(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
         self.get(&format!("{PATH_FEES_ESTIMATE}?bytes={bytes}&sigs={sigs}"))
+    pub fn get_validator_economic_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_VALIDATOR_ECONOMIC_POLICY)
+    }
+
+    pub fn get_validator_bond(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/bond"))
+    }
+
+    pub fn get_validator_reward_summary(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/rewards"))
+    }
+
+    pub fn get_validator_public_penalties(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/penalties"))
+    }
+
+    pub fn get_validator_unbond_status(&self, validator_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/validators/{validator_id}/unbond"))
     }
 
     pub fn events(&self, cursor: Option<&str>) -> Result<Value, SdkError> {
@@ -182,5 +226,9 @@ mod tests {
         assert!(PATH_TX.starts_with("/v1/"));
         assert!(PATH_EVENTS.starts_with("/v1/"));
         assert!(PATH_EXCHANGE_MARKETS.starts_with("/v1/"));
+        assert!(PATH_MONETARY_POLICY.starts_with("/v1/"));
+        assert!(PATH_MONETARY_SUPPLY.starts_with("/v1/"));
+        assert!(PATH_MONETARY_GENESIS.starts_with("/v1/"));
+        assert!(PATH_MONETARY_BURNS.starts_with("/v1/"));
     }
 }

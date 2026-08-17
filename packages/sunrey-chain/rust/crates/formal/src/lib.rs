@@ -81,6 +81,14 @@ pub fn adaptive_price_within_bounds(usage: u128) -> bool {
 pub fn adaptive_disposition_conserves(charged: u128) -> bool {
     FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles()
         && !FeePolicyV2::development().production_parameters_configured
+pub fn validator_bond_conservation(
+    available: u128,
+    locked: u128,
+    pending: u128,
+    penalized: u128,
+    issued: u128,
+) -> bool {
+    available.saturating_add(locked).saturating_add(pending).saturating_add(penalized) == issued
 }
 
 #[cfg(kani)]
@@ -160,5 +168,7 @@ mod tests {
         assert!(adaptive_price_within_bounds(0));
         assert!(adaptive_price_within_bounds(2_000_000));
         assert!(adaptive_disposition_conserves(1_000));
+        assert!(validator_bond_conservation(1, 2, 1, 1, 5));
+        assert!(!validator_bond_conservation(1, 2, 1, 1, 4));
     }
 }

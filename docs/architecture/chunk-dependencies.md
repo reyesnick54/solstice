@@ -103,6 +103,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-accountability | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-machine-economy | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-productive-capacity | IMPLEMENTED | packages/sunrey-chain |
@@ -538,6 +539,14 @@ It does not launch mainnet or enable `LIVE_*` services. Do not
 create `packages/sunrey-launch`, `packages/launch-rehearsal`, or
 `packages/mainnet-rehearsal`. The evaluator returns
 `mustStop: false`.
+Chunk 71 implements the SunRey dual-native-asset monetary
+constitution at `packages/sunrey-chain/src/economics`. Capability
+`sunrey-monetary-constitution` is `IMPLEMENTED`. See
+[`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
+It does not invent production tokenomics or create a second ledger.
+Do not create `packages/sunrey-economics`, `packages/monetary-policy`,
+`packages/tokenomics`, or `packages/genesis-economy`. The evaluator
+returns `mustStop: false`.
 Chunk 65 implements mainnet readiness evidence, a per-capability
 activation matrix, and deterministic genesis-candidate tooling at
 `packages/sunrey-chain/src/mainnet`. Capability
@@ -591,6 +600,14 @@ Not mainnet. Tickers remain `NOT_ASSIGNED`. Do not create
 `packages/sunrey-rc`, `packages/release-candidate`,
 `packages/testnet-rc`, `packages/sunrey-qualification`, or
 `packages/rc-control`. The evaluator returns `mustStop: false`.
+Chunk 72 implements validator bonding, reward, and accountability
+economics at `packages/sunrey-chain/src/validator-economics`.
+Capability `sunrey-validator-economics` is `IMPLEMENTED`. See
+[`chunk-72-validator-economics.md`](./chunk-72-validator-economics.md)
+and `docs/economics/`. Production bond asset remains
+`UNCONFIGURED`. Do not create `packages/validator-economics`,
+`packages/staking`, `packages/slashing`, or
+`packages/liquid-staking`. The evaluator returns `mustStop: false`.
 Chunk 62 implements independent security-review preparation at
 `packages/sunrey-chain`. Capability `sunrey-audit-readiness` is
 `IMPLEMENTED`. See
