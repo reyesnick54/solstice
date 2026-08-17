@@ -78,6 +78,7 @@ never be two implementations of these systems.
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
+| SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -991,6 +992,15 @@ verification. Do not create `packages/formal`, `packages/tla`,
 `packages/model-checker`, `packages/sunrey-formal`, or
 `tools/formal`. See
 [`chunk-61-formal-models.md`](./chunk-61-formal-models.md).
+Chunk 67 implements production-candidate blockchain storage and
+application PostgreSQL durability at
+`packages/sunrey-chain/rust/crates/storage` and
+`packages/persistence/src/production`. Capability
+`sunrey-production-storage` is `IMPLEMENTED`. The selected engine is
+redb 2.4. Application PostgreSQL is not consensus authority. Do not
+create `packages/blockchain-db`, `packages/chain-storage-v2`, or
+`packages/sunrey-ledger-db`. See
+[`chunk-67-production-storage.md`](./chunk-67-production-storage.md).
 
 Do not implement these in this chunk. Creating a reserved path on disk
 while the manifest still says `PLANNED` is a defect: update the
