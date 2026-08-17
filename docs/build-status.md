@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
+  `packages/sunrey-economics`): deterministic human/productive
+  layers, economic bridge, Exchange order-flow discovery, fee and
+  validator accounting, oracle-backed MoonRey issuance, scenario
+  catalog, stability signals, and `DUAL_ECONOMY_MODELING`
+  engineering evidence. Capability `sunrey-dual-economy-simulator`
+  is `IMPLEMENTED`. Simulation only. Not a price forecast and not
+  production monetary-policy activation. See
+  `docs/economics/chunk-75-dual-economy-simulator.md`.
 - SunRey full mainnet launch rehearsal (Chunk 70,
   `packages/sunrey-chain/src/launch-rehearsal`): distinct rehearsal
   identity `net_sunrey_mainnet_rehearsal_1` /
@@ -46,7 +55,7 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-production-infrastructure` is `IMPLEMENTED`. This is not
   mainnet. `LIVE_*` flags remain false. See `docs/infrastructure/`.
 - SunRey mainnet readiness and genesis-candidate controls (Chunk 65,
-  `packages/sunrey-chain/src/mainnet`): 25 readiness dimensions, a
+  `packages/sunrey-chain/src/mainnet`): 26 readiness dimensions, a
   per-capability activation matrix, production-candidate identity
   `net_sunrey_production_candidate_1` / `chn_sunrey_production_candidate_1`
   with HRP `srprd`, deterministic zero-allocation genesis candidate,

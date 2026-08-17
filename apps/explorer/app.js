@@ -12,6 +12,7 @@ const pages = {
   oracles: () => renderList('/v1/oracles', ['factId', 'factType', 'quality', 'aggregationMethod', 'artifactKind']),
   productive: renderProductive,
   moonrey: () => renderList('/v1/moonrey', ['issuanceId', 'productiveCategory', 'contributionId', 'issuedQuantity', 'formulaVersion']),
+  'dual-economy': renderDualEconomy,
   machines: () => renderList('/v1/machines', ['machineId', 'machineType', 'serviceOffer', 'settledQuantity']),
   interop: renderInterop,
 };
@@ -80,6 +81,19 @@ async function renderProductive() {
     <pre>${JSON.stringify(payload.objects.items, null, 2)}</pre>
     <h2>Verified contributions</h2>
     <pre>${JSON.stringify(payload.contributions.items, null, 2)}</pre>
+  `;
+}
+
+async function renderDualEconomy() {
+  const payload = await get('/v1/dual-economy');
+  app.innerHTML = `
+    <p><strong>SIMULATION</strong> — development-only dual-economy view. Not a price forecast.</p>
+    ${lagLine(payload)}
+    <div class="grid">
+      <div class="card"><h3>SunRey development supply</h3><div>${payload.sunreySupply}</div></div>
+      <div class="card"><h3>MoonRey development supply</h3><div>${payload.moonreySupply}</div></div>
+    </div>
+    <pre>${JSON.stringify(payload, null, 2)}</pre>
   `;
 }
 

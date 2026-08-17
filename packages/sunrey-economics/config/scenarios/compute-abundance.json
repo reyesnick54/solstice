@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "scenarioId": "compute-abundance",
+  "title": "Compute capacity abundance",
+  "parameterClass": "ENGINEERING_SIMULATION_PARAMETERS",
+  "simulationLabel": "SIMULATION",
+  "seed": 75,
+  "epochs": 12,
+  "epochDurationLabel": "ABSTRACT_EPOCH",
+  "human": {
+    "participants": 1000,
+    "demandScale": "800000",
+    "laborShareBps": "5500",
+    "informationRightIntensityBps": "2000",
+    "creativeIntensityBps": "1500",
+    "entrepreneurialIntensityBps": "1200",
+    "communityIntensityBps": "1800",
+    "governedDistributionBps": "800"
+  },
+  "automation": {
+    "penetrationBps": "3500",
+    "aiProductivityBps": "7000",
+    "robotDeploymentBps": "3000",
+    "productiveSystemCount": 12
+  },
+  "productive": {
+    "energyAvailabilityBps": "10000",
+    "computeAvailabilityBps": "18000",
+    "manufacturingCapacityBps": "10000",
+    "logisticsCapacityBps": "10000",
+    "categoryWeightsBps": {
+      "ENERGY": "1600",
+      "COMPUTE": "2200",
+      "AI_COMPUTE": "2000",
+      "AUTOMATED_MACHINE_OUTPUT": "800",
+      "MANUFACTURING": "1000",
+      "FOOD_AGRICULTURE": "700",
+      "WATER": "400",
+      "STORAGE": "500",
+      "LOGISTICS_TRANSPORTATION": "700",
+      "BANDWIDTH_COMMUNICATIONS": "500",
+      "MINERALS_RAW_MATERIALS": "400",
+      "REAL_ESTATE_USE": "400",
+      "SERVICES": "400"
+    }
+  },
+  "oracle": {
+    "providerCount": 3,
+    "stale": false,
+    "conflict": false,
+    "removeProviders": 0
+  },
+  "market": {
+    "volatilityBps": "250",
+    "makerSpreadBps": "80",
+    "startingPriceUnits": "2000000",
+    "orderSize": "40",
+    "makerInventorySunrey": "20000",
+    "makerInventoryMoonrey": "40000"
+  },
+  "fees": {
+    "utilizationBps": "3500",
+    "txPerEpoch": 6,
+    "transferAmount": "80"
+  },
+  "validators": {
+    "count": 4,
+    "unavailable": [],
+    "penaltyValidatorId": null,
+    "penaltyBps": "0",
+    "feeRevenueMode": "normal"
+  },
+  "concentration": {
+    "operatorCount": 8,
+    "dominantShareBps": "1800"
+  },
+  "policies": {
+    "sunreyIssuanceScaleBps": "10000",
+    "moonreyEpochCapScaleBps": "10000",
+    "feeMaxUnits": "10000",
+    "validatorRewardBpsOverride": null,
+    "productiveNormalizationBps": "10000",
+    "becomesProductionPolicy": false
+  },
+  "assumptions": [
+    "Abstract epochs are not calendar years unless configured.",
+    "Human aggregates are synthetic and contain no personal information.",
+    "MoonRey issuance requires oracle-verified productive output.",
+    "Exchange prices form from simulated order flow, not a peg.",
+    "Simulation evidence is not production authorization."
+  ]
+}

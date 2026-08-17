@@ -1048,6 +1048,16 @@ competing directory.
 
 ---
 
+Chunk 75 implements the SunRey / MoonRey dual-economy simulation
+laboratory at `packages/sunrey-economics`. Capability
+`sunrey-dual-economy-simulator` is `IMPLEMENTED`. It models the
+human SunRey layer and autonomous MoonRey productive layer for
+engineering analysis. It does not predict prices, promise returns,
+or activate production monetary policy. Do not create
+`packages/dual-economy`, `packages/moonrey-macro`, or
+`packages/economic-bridge`. See
+[`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

@@ -207,6 +207,10 @@ jobs:
         run: npm run sunrey-range -- campaign --smoke
       - name: SunRey adversarial range demo
         run: npm run demo:sunrey-range
+      - name: SunRey MoonRey dual-economy simulation demo
+        run: npm run demo:sunrey-dual-economy
+      - name: SunRey dual-economy baseline CLI
+        run: npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
       - name: SunRey Testnet RC smoke qualification
         run: node scripts/sunrey-release.mjs rc qualify --profile smoke
       - name: SunRey Testnet RC verify

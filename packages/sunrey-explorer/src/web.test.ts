@@ -21,6 +21,7 @@ describe('explorer web interface', () => {
       'Oracles',
       'Productive Economy',
       'MoonRey',
+      'Dual Economy SIMULATION',
       'Machine Economy',
       'Interoperability',
     ]) {

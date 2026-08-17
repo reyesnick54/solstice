@@ -21,7 +21,6 @@ import { runFullCeremonyRehearsal } from '../../../security/src/ceremony/rehears
 import { IAC_MODULES } from './config.ts';
 import { digestJson, infraSha256, stableJson } from './hash.ts';
 import { INFRA_SCHEMA_VERSION, INFRA_TOOL_VERSION } from './types.ts';
-import { digestJson, infraSha256, stableJson } from './hash.ts';
 
 export type ReadinessArtifactDigests = {
   readonly formalReportDigest: string;

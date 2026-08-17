@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-75",
+  "title": "SunRey / MoonRey dual-economy macro simulation and economic bridge lab",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "moonrey-issuance-engine",
+    "sunrey-productive-capacity",
+    "sunrey-oracle-network",
+    "sunrey-machine-economy",
+    "sunrey-exchange",
+    "sunrey-adversarial-range",
+    "sunrey-dual-economy-simulator"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-economics. Simulation laboratory only. Does not predict prices, promise returns, activate production monetary policy, or enable LIVE_* flags. Do not create packages/dual-economy, packages/moonrey-macro, or packages/economic-bridge. evaluateChunkRequirements returns mustStop: false."
+}

@@ -133,6 +133,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -601,3 +603,11 @@ Results are model checked within stated bounds. Do not create
 `packages/formal`, `packages/tla`, `packages/model-checker`,
 `packages/sunrey-formal`, or `tools/formal`. The evaluator returns
 `mustStop: false`.
+Chunk 75 implements the SunRey / MoonRey dual-economy simulation
+laboratory at `packages/sunrey-economics`. Capability
+`sunrey-dual-economy-simulator` is `IMPLEMENTED`. See
+[`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
+It does not predict prices, promise returns, or activate production
+monetary policy. Do not create `packages/dual-economy`,
+`packages/moonrey-macro`, or `packages/economic-bridge`. The
+evaluator returns `mustStop: false`.
