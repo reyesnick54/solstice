@@ -35,6 +35,7 @@ export const READINESS_DIMENSIONS = [
   'GENESIS',
   'OBSERVABILITY',
   'DISASTER_RECOVERY',
+  'STORAGE',
   'PERFORMANCE',
   'PRIVACY',
   'CUSTODY',
@@ -45,6 +46,7 @@ export const READINESS_DIMENSIONS = [
   'LICENSING',
   'PARTNER_DEPENDENCIES',
   'HUMAN_AUTHORIZATION',
+  'INFRASTRUCTURE',
 ] as const;
 export type MainnetReadinessDimension = (typeof READINESS_DIMENSIONS)[number];
 
@@ -473,6 +475,7 @@ export type MainnetReadinessReport = {
   readonly liveFlagsRemainDisabled: true;
   readonly productionServicesActivated: false;
   readonly distinctions: readonly string[];
+  readonly infrastructureReadinessDigest: string | null;
 };
 
 export type MainnetReadinessRegistry = {
@@ -483,6 +486,7 @@ export type MainnetReadinessRegistry = {
   readonly candidate: ProductionNetworkCandidate;
   readonly status: ReadinessEvaluatorStatus;
   readonly genesisHash: string;
+  readonly infrastructureReadinessDigest: string | null;
 };
 
 export type ReadinessBundle = {

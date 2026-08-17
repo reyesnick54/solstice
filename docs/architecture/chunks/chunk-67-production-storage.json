@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-67",
+  "title": "SunRey production-class blockchain storage, application database durability, and data recovery",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "persistence",
+    "events",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-storage"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/rust/crates/storage and packages/persistence/src/production. Production-candidate redb engine, atomic finalized commits, schema versioning, archive/pruning, snapshots, and PostgreSQL durability/PITR. Not a second financial ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/blockchain-db, packages/chain-storage-v2, or packages/sunrey-ledger-db."
+}

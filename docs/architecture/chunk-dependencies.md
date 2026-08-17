@@ -130,6 +130,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -539,6 +541,15 @@ eligibility at `packages/sunrey-chain/src/oracle`. Capability
 Consensus never calls HTTP. Do not create
 `packages/production-oracles`, `packages/oracle-onboarding`, or
 `packages/oracle-collector`. The evaluator returns `mustStop: false`.
+Chunk 66 implements provider-neutral production infrastructure,
+secret/KMS/HSM adapters, workload identity, and network zoning at
+`packages/sunrey-chain/src/infra`. Capability
+`sunrey-production-infrastructure` is `IMPLEMENTED`. See
+[`chunk-66-production-infrastructure.md`](./chunk-66-production-infrastructure.md).
+It does not launch mainnet or enable `LIVE_*` services. Do not
+create `packages/sunrey-infra`, `packages/infrastructure`,
+`packages/production-infrastructure`, `packages/cloud-adapters`, or
+`packages/sunrey-cloud`. The evaluator returns `mustStop: false`.
 Chunk 64 implements production-class root-of-trust and key-ceremony
 architecture at `packages/security`. Capability
 `sunrey-root-of-trust` is `IMPLEMENTED`. See
