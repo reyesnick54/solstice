@@ -159,6 +159,10 @@ jobs:
         run: npm run demo:sunrey-ops
       - name: SunRey public testnet demo
         run: npm run demo:sunrey-testnet
+      - name: SunRey mainnet readiness rehearsal
+        run: npm run demo:sunrey-mainnet
+      - name: SunRey mainnet candidate verify
+        run: npm run sunrey-mainnet -- verify
       - name: SunRey testnet deployment manifests
         run: node scripts/sunrey-testnet-validate-manifests.mjs
       - name: SunRey testnet SBOM and release manifest

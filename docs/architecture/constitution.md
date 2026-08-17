@@ -77,6 +77,7 @@ never be two implementations of these systems.
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
+| SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -948,6 +949,15 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 65 implements mainnet readiness evidence, activation control,
+and genesis-candidate engineering at
+`packages/sunrey-chain/src/mainnet`. Capability
+`sunrey-mainnet-readiness` is `IMPLEMENTED`. It does not launch
+mainnet, enable `LIVE_*` flags, or fabricate external legal or
+audit evidence. Do not create `packages/mainnet`,
+`packages/sunrey-mainnet`, `packages/genesis-candidate`,
+`packages/readiness-registry`, or `packages/activation-control`.
+See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
 Chunk 64 implements production-class root-of-trust and key-ceremony
 architecture at `packages/security/src/ceremony`. Capability
 `sunrey-root-of-trust` is `IMPLEMENTED`. CI uses simulation

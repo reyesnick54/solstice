@@ -2328,6 +2328,11 @@
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     },
     {
+      "id": "sunrey-mainnet-readiness",
+      "name": "SunRey mainnet readiness and genesis-candidate controls",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/index.ts",
       "id": "sunrey-root-of-trust",
       "name": "SunRey root-of-trust and key ceremony architecture",
       "canonicalOwner": "packages/security",
@@ -2355,6 +2360,7 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "MainnetReadinessRegistry",
           "name": "RootOfTrustAuthority",
           "kind": "type"
         },
@@ -2367,6 +2373,11 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/mainnet",
+        "packages/sunrey-mainnet",
+        "packages/genesis-candidate",
+        "packages/readiness-registry",
+        "packages/activation-control"
         "packages/ceremony",
         "packages/hsm-v2",
         "packages/root-of-trust",
@@ -2390,6 +2401,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
       "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
       "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
       "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
@@ -2994,6 +3006,11 @@
     "packages/sunrey-fuzz",
     "packages/protocol-fuzzer",
     "tools/sunrey-test",
+    "packages/mainnet",
+    "packages/sunrey-mainnet",
+    "packages/genesis-candidate",
+    "packages/readiness-registry",
+    "packages/activation-control"
     "packages/ceremony",
     "packages/hsm-v2",
     "packages/root-of-trust",
@@ -3533,6 +3550,12 @@
       "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     },
     {
+      "id": "sunrey-mainnet-readiness",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "adr": "ADR-0033",
+      "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
       "id": "sunrey-root-of-trust",
       "status": "IMPLEMENTED",
       "owner": "packages/security",

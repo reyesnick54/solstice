@@ -102,8 +102,8 @@ export class HsmBackedSigningProvider implements InstitutionalSigningProvider {
     if (typeof this.hsm.capabilities === 'function') {
       const caps = this.hsm.capabilities();
       return Object.freeze({
-        realPqSupported: caps.realPqSupported === true,
-        externalHsmPqSupported: caps.externalHsmPqSupported === true,
+        realPqSupported: caps.realPqSupported,
+        externalHsmPqSupported: caps.externalHsmPqSupported,
         flags: Object.freeze([...caps.flags]),
       });
     }

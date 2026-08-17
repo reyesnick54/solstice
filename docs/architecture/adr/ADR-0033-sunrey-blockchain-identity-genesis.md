@@ -5,8 +5,9 @@
 - Date: 2026-08-16
 - Affected subsystem: SUNREY_CHAIN
 - Depends on: ADR-0016, ADR-0017, ADR-0021, ADR-0028
-- Implementation status: PARTIAL (simulation IDs plus local-dev GenesisV1);
-  production genesis: NOT_IMPLEMENTED
+- Implementation status: PARTIAL (simulation IDs, testnet GenesisV1, and
+  Chunk 65 production-candidate tooling); production genesis
+  activation: NOT_IMPLEMENTED
 
 ## Context
 

@@ -54,7 +54,7 @@ are not reused or silently changed.
 | 0030 | Privacy / confidentiality model | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED — no counsel review | SUNREY_CHAIN / PDV / CONSENT | ADR-0015, ADR-0019, ADR-0031 | PARTIAL (simulation classification) | [ADR-0030-sunrey-blockchain-privacy-confidentiality.md](./ADR-0030-sunrey-blockchain-privacy-confidentiality.md) |
 | 0031 | Canonical ledger vs blockchain authority | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED — no counsel review | BANKING / SUNREY_CHAIN | ADR-0015, ADR-0026 | IMPLEMENTED (matrix + tests; no production chain) | [ADR-0031-canonical-ledger-vs-blockchain-authority.md](./ADR-0031-canonical-ledger-vs-blockchain-authority.md) |
 | 0032 | Evidence anchoring and audit | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED — no counsel review | EVIDENCE / SUNREY_CHAIN | ADR-0015, ADR-0019, ADR-0031 | PARTIAL (simulation anchors) | [ADR-0032-sunrey-blockchain-evidence-anchoring.md](./ADR-0032-sunrey-blockchain-evidence-anchoring.md) |
-| 0033 | Chain identity / network ID / genesis | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED — no counsel review | SUNREY_CHAIN | ADR-0016, ADR-0017, ADR-0021, ADR-0028 | PARTIAL (simulation IDs plus local-dev GenesisV1; no production genesis) | [ADR-0033-sunrey-blockchain-identity-genesis.md](./ADR-0033-sunrey-blockchain-identity-genesis.md) |
+| 0033 | Chain identity / network ID / genesis | ACCEPTED_FOR_ENGINEERING | RESEARCH_REQUIRED — no counsel review | SUNREY_CHAIN | ADR-0016, ADR-0017, ADR-0021, ADR-0028 | PARTIAL (simulation + testnet + production-candidate tooling; production genesis activation NOT_IMPLEMENTED) | [ADR-0033-sunrey-blockchain-identity-genesis.md](./ADR-0033-sunrey-blockchain-identity-genesis.md) |
 
 ## Notes on ADR-0007
 

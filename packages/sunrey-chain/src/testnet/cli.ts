@@ -2,6 +2,7 @@
  * Operator CLI: sunrey-genesis / sunrey-testnet verify / bootstrap.
  */
 
+import { runMainnetCommand } from '../mainnet/cli.ts';
 import { buildCeremonyArtifact } from './ceremony.ts';
 import { launchLocalClusterSimulation } from './cluster.ts';
 import { buildGenesis, fixtureGenesisHash, GENESIS_TOOL_VERSION } from './genesis.ts';
@@ -19,6 +20,10 @@ export type CliResult = {
 
 export function runTestnetCommand(argv: readonly string[]): CliResult {
   const [command = 'help', sub = ''] = argv;
+  if (command === 'candidate' || (command === 'genesis' && sub === 'candidate')) {
+    const rest = command === 'candidate' ? argv.slice(1) : argv.slice(2);
+    return runMainnetCommand(rest[0] === 'verify' ? ['verify'] : ['genesis-candidate']);
+  }
   if (command === 'genesis' || command === 'sunrey-genesis') {
     const bundle = buildGenesis();
     return {
@@ -81,7 +86,7 @@ export function runTestnetCommand(argv: readonly string[]): CliResult {
     ok: true,
     command: 'help',
     payload: {
-      usage: 'sunrey-testnet <genesis|ceremony|verify|bootstrap|e2e|reset|release>',
+      usage: 'sunrey-testnet <genesis|ceremony|verify|bootstrap|e2e|reset|release|candidate>',
       networkId: SUNREY_TESTNET_1_NETWORK_ID,
       chainId: SUNREY_TESTNET_1_CHAIN_ID,
     },

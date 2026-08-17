@@ -1,0 +1,26 @@
+{
+  "chunk": "CHUNK-65",
+  "title": "SunRey mainnet readiness evidence, activation control, and genesis candidate engineering",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-local-node",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets",
+    "sunrey-sovereign-wallets",
+    "sunrey-public-testnet",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-performance-engineering",
+    "sunrey-supply-chain",
+    "sunrey-pqc-testnet",
+    "sunrey-mainnet-readiness"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/mainnet. Readiness and genesis-candidate tooling only. Does not launch mainnet, enable LIVE_* flags, or fabricate external legal/audit evidence. evaluateChunkRequirements returns mustStop: false. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
+}

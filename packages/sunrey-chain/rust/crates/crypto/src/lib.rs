@@ -185,7 +185,7 @@ mod tests {
             CryptoError::UnknownSuite
         );
         assert_eq!(suite_by_id(ML_DSA_65_SUITE_ID).unwrap_err(), CryptoError::UnknownSuite);
-        assert!(MAX_REMOTE_SIGNER_SIGNATURE_BYTES >= 3309);
+        const _: () = assert!(MAX_REMOTE_SIGNER_SIGNATURE_BYTES >= 3309);
         assert_eq!(MAX_P2P_PQ_MESSAGE_BYTES, 1_048_576);
     }
 }

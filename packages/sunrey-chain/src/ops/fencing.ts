@@ -31,6 +31,7 @@ export class SignerFencingController {
   readonly #fences = new Map<string, ResilienceSignerFence>();
   readonly #roles = new Map<string, SignerRole>();
 
+  register(validatorId: string, activeSite: string, passiveSite: string, chainId = DEVELOPMENT_CHAIN_ID): ResilienceSignerFence {
   register(
     validatorId: string,
     activeSite: string,

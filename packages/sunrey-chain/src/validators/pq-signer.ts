@@ -13,6 +13,7 @@ import {
   SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
   SUITE_SUNREY_MLDSA_65_V1,
   createSecurityProviderCatalog,
+  cryptoSuiteId,
   decodeHybridComponent,
   encodeHybridComponent,
   type ProviderCatalog,
@@ -22,12 +23,11 @@ import {
   HYBRID_VALIDATOR_SUITE_ID,
   PQ_VALIDATOR_SUITE_ID,
   type ConsensusSignRequest,
-  type ConsensusSigner,
   type ValidatorResult,
   validatorErr,
   validatorOk,
 } from './types.ts';
-import { consensusSignBytesHash, encodeConsensusSignBytes } from './signer.ts';
+import { consensusSignBytesHash, encodeConsensusSignBytes, type ConsensusSigner } from './signer.ts';
 
 function pqSeedHex(seedHex: string): string {
   return createHash('sha256').update('SUNREY-VALIDATOR-PQ-SEED-v1').update(Buffer.from(seedHex, 'hex')).digest('hex');
@@ -89,7 +89,7 @@ export function signConsensusBytes(
     if (!pq.ok) {
       return validatorErr('SIGNER_PROVIDER_UNAVAILABLE', `${pq.error.message}; fail-closed`);
     }
-    const key = pq.value.fromSeed(seedHex, 'VALIDATOR_CONSENSUS_SIGNING', suiteId, 'validator-pq');
+    const key = pq.value.fromSeed(seedHex, 'VALIDATOR_CONSENSUS_SIGNING', cryptoSuiteId(suiteId), 'validator-pq');
     if (!key.ok) {
       return validatorErr('SIGNER_PROVIDER_UNAVAILABLE', key.error.message);
     }
@@ -185,7 +185,7 @@ export function validatorPublicKeyHex(catalog: ProviderCatalog, suiteId: string,
     if (!pq.ok) {
       throw new Error(pq.error.message);
     }
-    const key = pq.value.fromSeed(seedHex, 'VALIDATOR_CONSENSUS_SIGNING', suiteId, 'validator-pq');
+    const key = pq.value.fromSeed(seedHex, 'VALIDATOR_CONSENSUS_SIGNING', cryptoSuiteId(suiteId), 'validator-pq');
     if (!key.ok) {
       throw new Error(key.error.message);
     }

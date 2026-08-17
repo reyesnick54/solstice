@@ -103,7 +103,11 @@ describe('Chunk 60 standardized PQ providers', () => {
     assert.equal(signed.ok, true);
     if (!signed.ok) return;
     const flipped = Buffer.from(signed.value);
-    flipped[0] = flipped[0] ^ 0xff;
+    const firstByte = flipped[0];
+    if (firstByte === undefined) {
+      throw new Error('signature must be non-empty');
+    }
+    flipped[0] = firstByte ^ 0xff;
     const badSig = provider.verifyRaw(key.value.publicKey.publicKeyHex, message, flipped.toString('hex'));
     assert.equal(badSig.ok, false);
     const shortSig = provider.verifyRaw(key.value.publicKey.publicKeyHex, message, '00'.repeat(32));
