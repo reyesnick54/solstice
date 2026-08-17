@@ -144,11 +144,12 @@ export function runFeeEpoch(lab: ProtocolLab, scenario: DualEconomyScenario, epo
   const mode = scenario.validators.feeRevenueMode;
   const planned = mode === 'low' ? Math.max(1, Math.floor(scenario.fees.txPerEpoch / 3)) : mode === 'high' ? scenario.fees.txPerEpoch * 2 : scenario.fees.txPerEpoch;
   for (let index = 0; index < planned; index += 1) {
+    const proposerId = lab.stack.feeValidators[epoch % lab.stack.feeValidators.length]?.validatorId;
     const executed = lab.stack.executeTransferFee({
       label: `dual-${epoch}-${index}`,
       amount: scenario.fees.transferAmount,
       maxFee: scenario.policies.feeMaxUnits,
-      proposerId: lab.stack.feeValidators[epoch % lab.stack.feeValidators.length]?.validatorId,
+      ...(proposerId ? { proposerId } : {}),
     });
     if (!executed.ok) {
       lab.skippedTx += 1;

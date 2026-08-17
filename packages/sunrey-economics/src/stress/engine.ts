@@ -5,7 +5,7 @@
  * checks to increase simulated throughput.
  */
 
-import { createIntegratedEconomicStack, type IntegratedEconomicStack } from '../../sunrey-chain/src/economics/stack.ts';
+import { createIntegratedEconomicStack, type IntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
 import { PRODUCTIVE_SIM_CATEGORIES } from '../ids.ts';
 import { createMachineLab, machineSnapshot, runMachineEpoch } from '../machine.ts';
 import { createMarket, marketConserves, runMarketEpoch } from '../market.ts';
@@ -159,8 +159,8 @@ function runFees(stack: IntegratedEconomicStack, scenario: EconomicStressScenari
       amount: 5n,
       maxFee: scenario.shocks.includes('FEE_MAX_BOUNDARY') && index === 0 ? 1n : 50_000n,
       signatureClass: scenario.shocks.includes('FEE_PQ_MIX') ? 'PQ' : 'CLASSICAL',
-      encodedBytes: scenario.shocks.includes('FEE_PQ_MIX') ? 1_200 : undefined,
-      exchangeDvpLegs: scenario.shocks.includes('FEE_EXCHANGE_HEAVY') ? 2 : undefined,
+      ...(scenario.shocks.includes('FEE_PQ_MIX') ? { encodedBytes: 1_200 } : {}),
+      ...(scenario.shocks.includes('FEE_EXCHANGE_HEAVY') ? { exchangeDvpLegs: 2 } : {}),
     });
   }
 }

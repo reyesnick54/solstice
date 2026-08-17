@@ -80,10 +80,11 @@ function compare(args: readonly string[]): string {
 }
 
 function replay(args: readonly string[]): string {
+  const fixture = flag(args, '--fixture');
   const result = replayStressScenario({
     scenarioId: flag(args, '--scenario') ?? 'ECON-LIQ-001',
     seed: Number(flag(args, '--seed') ?? '7601'),
-    ...(flag(args, '--fixture') ? { expectedFixtureHash: flag(args, '--fixture') } : {}),
+    ...(fixture ? { expectedFixtureHash: fixture } : {}),
   });
   return JSON.stringify(result, bigintReplacer, 2);
 }

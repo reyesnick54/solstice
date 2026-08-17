@@ -1,11 +1,13 @@
 /**
  * Adversarial-range integration for the Chunk 76 economic stress lab.
  *
- * Delegates to packages/sunrey-economics/src/stress. Not a second
- * stress package.
+ * Scenario definitions live here. Execution uses the reconciled
+ * sunrey-chain stack so this package does not depend on
+ * packages/sunrey-economics (that would cycle through the dual-economy
+ * adversarial adapter).
  */
 
-import { runEconomicStressScenario } from '../../sunrey-economics/src/stress/engine.ts';
+import { createIntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
 import type { RangeEnvironment } from '../environment.ts';
 import type { AttackResult, AttackScenario } from '../types.ts';
 import { actor, defineScenario, detection, finish, holdAll, recovery, step } from './helpers.ts';
@@ -64,38 +66,89 @@ export const economicStressScenarios: readonly AttackScenario[] = [
   }),
 ];
 
-const RANGE_TO_LAB: Readonly<Record<string, string>> = {
-  'ECON-ORACLE-STALE': 'ECON-ORACLE-002',
-  'ECON-DUP-REPLAY': 'ECON-DUP-001',
-  'ECON-NO-QUORUM': 'ECON-NQ-001',
-};
-
 export function runEconomicStress(env: RangeEnvironment, scenario: AttackScenario): AttackResult {
-  const labId = RANGE_TO_LAB[scenario.scenarioId] ?? scenario.scenarioId;
-  const result = runEconomicStressScenario(labId, { seed: scenario.seed });
+  const stack = createIntegratedEconomicStack();
+  stack.registerProductiveObject({
+    objectId: 'obj.energy.0',
+    category: 'ENERGY',
+    unit: 'kWh',
+    owner: 'ctl.op_0',
+  });
+  let attackBlocked = true;
+  let livenessDegraded = false;
+  let failClosed = false;
+  let pending = 0;
+  if (scenario.scenarioId === 'ECON-ORACLE-STALE') {
+    const result = stack.issueMoonReyFromClaim({
+      claimId: 'claim.range.stale',
+      objectId: 'obj.energy.0',
+      category: 'ENERGY',
+      quantity: 50n,
+      unit: 'kWh',
+      controller: 'ctl.op_0',
+      epoch: 1,
+      providerCount: 3,
+      stale: true,
+    });
+    attackBlocked = result.ok === false;
+    failClosed = result.ok === false;
+  } else if (scenario.scenarioId === 'ECON-DUP-REPLAY') {
+    const first = stack.issueMoonReyFromClaim({
+      claimId: 'claim.range.dup.a',
+      objectId: 'obj.energy.0',
+      category: 'ENERGY',
+      quantity: 30n,
+      unit: 'kWh',
+      controller: 'ctl.op_0',
+      epoch: 1,
+      providerCount: 3,
+    });
+    const second = stack.issueMoonReyFromClaim({
+      claimId: 'claim.range.dup.b',
+      objectId: 'obj.energy.0',
+      category: 'ENERGY',
+      quantity: 30n,
+      unit: 'kWh',
+      controller: 'ctl.op_0',
+      epoch: 1,
+      providerCount: 3,
+    });
+    attackBlocked = first.ok === true && second.ok === false;
+    failClosed = second.ok === false;
+  } else if (scenario.scenarioId === 'ECON-NO-QUORUM') {
+    stack.finalityAvailable = false;
+    const executed = stack.executeTransferFee({ label: 'range-nq', amount: 1n, maxFee: 1_000n });
+    attackBlocked = executed.ok === false && stack.feeCharged === 0n;
+    livenessDegraded = true;
+    pending = stack.pendingOperations;
+  }
+  const recon = stack.reconcile();
   return finish({
     scenario,
     sourceCommit: env.sourceCommit,
     testnetGenesis: env.testnetGenesis,
-    attackBlocked: result.preservedInvariants,
-    safetyHeld: result.preservedInvariants,
-    livenessDegraded: result.degradedAvailability,
-    invariants: holdAll(scenario.expectedSecurityProperties, result.invariants.map((row) => `${row.invariant}=${row.held}`).join(';')),
+    attackBlocked,
+    safetyHeld: attackBlocked && recon.ok,
+    livenessDegraded,
+    invariants: holdAll(
+      scenario.expectedSecurityProperties,
+      `recon=${recon.ok} failClosed=${failClosed} pending=${pending}`,
+    ),
     detections: [
       {
         channel: 'reconciliation',
         code: scenario.expectedDetections[0]?.code ?? 'CHECKED',
         observed: true,
-        detail: `failClosed=${result.failClosed} pending=${result.pendingOperations}`,
+        detail: `failClosed=${failClosed} pending=${pending}`,
       },
     ],
     recovery: recovery(
       scenario.expectedRecovery[0] ?? 'NONE_PREVENTIVE',
-      result.recovery.attempted,
-      result.recovery.recoveredAutomatically || result.preservedInvariants,
-      result.recovery.sameCanonicalStateChain,
-      result.recovery.detail,
+      true,
+      attackBlocked,
+      recon.ok,
+      'range adapter over IntegratedEconomicStack; full catalog is packages/sunrey-economics/src/stress',
     ),
-    notes: 'Delegated to packages/sunrey-economics/src/stress. Not a second stress package.',
+    notes: 'Range adapter over packages/sunrey-chain/src/economics/stack.ts. Not a second stress package.',
   });
 }

@@ -95,11 +95,17 @@ export function adaptiveFeeHappyTrace(): LogicalTrace {
     { domain: 'adaptive_fee', action: 'UpdatePriceHigh', args: { usage: 2 } },
     { domain: 'adaptive_fee', action: 'Reserve', args: {} },
     { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
+  ]);
+}
+
 export function validatorEconomicsHappyTrace(): LogicalTrace {
   return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
     { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
     { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
     { domain: 'validator_economics', action: 'Reward', args: {} },
+  ]);
+}
+
 export function monetaryHappyTrace(): LogicalTrace {
   return makeTrace('trace_monetary_policy', 'monetary_policy', 'NATIVE_MONETARY_POLICY', [
     { domain: 'monetary_policy', action: 'Issue(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
@@ -117,6 +123,15 @@ export function genesisHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function crossEconomicHappyTrace(): LogicalTrace {
+  return makeTrace('trace_cross_economic', 'cross_economic', 'CROSS_ECONOMIC_INVARIANTS', [
+    { domain: 'cross_economic', action: 'IssueSunRey', args: {} },
+    { domain: 'cross_economic', action: 'ChargeFee', args: {} },
+    { domain: 'cross_economic', action: 'AuthorizeMoonRey', args: {} },
+    { domain: 'cross_economic', action: 'IssueMoonRey', args: {} },
+  ]);
+}
+
 export function allDevelopmentTraces(): readonly LogicalTrace[] {
   return [
     consensusHappyTrace(),
@@ -130,5 +145,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),
+    crossEconomicHappyTrace(),
   ];
 }

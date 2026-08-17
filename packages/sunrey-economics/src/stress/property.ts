@@ -4,7 +4,7 @@
  * After each operation the full economic invariant set is checked.
  */
 
-import { createIntegratedEconomicStack } from '../../sunrey-chain/src/economics/stack.ts';
+import { createIntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
 import { DeterministicRng } from '../seed.ts';
 import { checkInvariants, type LabAuxState } from './invariants.ts';
 import type { EconomicInvariantResult } from './types.ts';

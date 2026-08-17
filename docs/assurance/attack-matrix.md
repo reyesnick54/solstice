@@ -138,3 +138,6 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | VECON-IMMEDIATE-UNBOND | validator-economics | immediate unbond attempt | governed unbonding delay | immediate release refusal | UNBOND_DELAY_RESPECTED | none | TESTED |
 | VECON-WRONG-POLICY-VERSION | validator-economics | wrong policy version | epoch-scoped policy version | wrong policy refusal | NO_UNAUTHORIZED_GOVERNANCE | none | TESTED |
 | VECON-REWARD-OVERFLOW | validator-economics | reward overflow boundary | checked integer arithmetic | overflow refusal | NO_DUPLICATE_VALIDATOR_REWARD | none | TESTED |
+| ECON-ORACLE-STALE | economic-stress | stale oracle mint | oracle freshness + MonetaryIssuanceAuthority | FAIL_CLOSED | NO_DOUBLE_MOONREY_ATTRIBUTION, NO_UNAUTHORIZED_ISSUANCE | fail-closed; no fabricated facts | TESTED |
+| ECON-DUP-REPLAY | economic-stress | MoonRey contribution replay | fingerprint + MonetaryIssuanceAuthority replay id | DUPLICATE_REFUSED | NO_DOUBLE_MOONREY_ATTRIBUTION | second mint refused | TESTED |
+| ECON-NO-QUORUM | economic-stress | advance economics without finality | no synthetic accounting without finality | FINALITY_UNAVAILABLE | NO_UNAUTHORIZED_ISSUANCE | pending until quorum returns | TESTED |

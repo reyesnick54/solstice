@@ -5,8 +5,8 @@
  * reconcile native supplies, and allow Explorer rebuild.
  */
 
-import { explorerSupplyReport } from '../../sunrey-chain/src/economics/explorer.ts';
-import type { IntegratedEconomicStack } from '../../sunrey-chain/src/economics/stack.ts';
+import { explorerSupplyReport } from '../../../sunrey-chain/src/economics/explorer.ts';
+import type { IntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
 import type { LabAuxState } from './invariants.ts';
 import type { EconomicRecoveryResult, EconomicStressScenario } from './types.ts';
 

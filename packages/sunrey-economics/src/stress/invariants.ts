@@ -4,19 +4,19 @@
 
 import { createHash } from 'node:crypto';
 
-import { explorerSupplyReport } from '../../sunrey-chain/src/economics/explorer.ts';
-import { MONETARY_POLICY_VERSION_ID } from '../../sunrey-chain/src/economics/types.ts';
-import type { IntegratedEconomicStack } from '../../sunrey-chain/src/economics/stack.ts';
+import { explorerSupplyReport } from '../../../sunrey-chain/src/economics/explorer.ts';
+import { MONETARY_POLICY_VERSION_ID } from '../../../sunrey-chain/src/economics/types.ts';
+import type { IntegratedEconomicStack } from '../../../sunrey-chain/src/economics/stack.ts';
 import { ECONOMIC_INVARIANT_IDS, type EconomicInvariantId } from './ids.ts';
 import type { EconomicInvariantResult } from './types.ts';
 
 export type LabAuxState = {
-  readonly exchangeConserved: boolean;
-  readonly custodyReconciled: boolean;
-  readonly machineMandatesHold: boolean;
-  readonly oracleFabricated: boolean;
-  readonly dvpDuplicated: boolean;
-  readonly custodyBlindResubmit: boolean;
+  exchangeConserved: boolean;
+  custodyReconciled: boolean;
+  machineMandatesHold: boolean;
+  oracleFabricated: boolean;
+  dvpDuplicated: boolean;
+  custodyBlindResubmit: boolean;
 };
 
 export function checkInvariants(stack: IntegratedEconomicStack, aux: LabAuxState): readonly EconomicInvariantResult[] {
