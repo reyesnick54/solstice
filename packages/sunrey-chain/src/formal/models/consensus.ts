@@ -260,17 +260,10 @@ export function createConsensusModel(bounds: FormalModelBounds): FormalModel<Con
         state.finalizedHeight === 0 ||
         (state.finalizedHeight <= state.height &&
           Object.keys(state.finalized).every((h) => Number(h) <= state.finalizedHeight)),
-      LESS_THAN_REQUIRED_COMMIT_POWER_CANNOT_FINALIZE: (state) => {
-        for (const [height, value] of Object.entries(state.finalized)) {
-          void height;
-          if (value === 'NIL') {
-            return false;
-          }
-        }
-        return true;
-      },
+      LESS_THAN_REQUIRED_COMMIT_POWER_CANNOT_FINALIZE: (state) =>
+        Object.values(state.finalized).every((value) => value === 'A' || value === 'B'),
       NIL_DOES_NOT_CREATE_BLOCK_COMMIT: (state) =>
-        Object.values(state.finalized).every((value) => value !== 'NIL'),
+        Object.values(state.finalized).every((value) => value === 'A' || value === 'B'),
       LOCK_RULE_PRESERVES_SAFETY: (state) => {
         if (!state.lockedValue || state.lockedValue === 'NIL') {
           return true;

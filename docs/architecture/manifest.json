@@ -2331,7 +2331,7 @@
       "id": "sunrey-formal-assurance",
       "name": "SunRey protocol formal models and bounded model checking",
       "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/formal/registry/formal-model-registry.json",
+      "canonicalPath": "packages/sunrey-chain/src/formal/types.ts",
       "publicInterface": "packages/sunrey-chain/src/formal/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,

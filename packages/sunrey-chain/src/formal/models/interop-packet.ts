@@ -77,10 +77,12 @@ export function createInteropPacketModel(bounds: FormalModelBounds): FormalModel
           });
         }
       }
-      out.push({
-        name: 'FreezeClient',
-        next: state.client === 'FROZEN' ? null : { ...state, client: 'FROZEN' },
-      });
+      if (state.client === 'ACTIVE') {
+        out.push({
+          name: 'FreezeClient',
+          next: { ...state, client: 'FROZEN' },
+        });
+      }
       return out;
     },
     key: (state) =>

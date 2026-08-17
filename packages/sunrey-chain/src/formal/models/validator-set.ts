@@ -58,10 +58,12 @@ export function createValidatorSetModel(bounds: FormalModelBounds): FormalModel<
         out.push({ name: 'RefuseMidEpochRotate', next: null });
       }
       if (!state.midEpoch && state.pending === null) {
-        out.push({
-          name: 'QueueJoin',
-          next: { ...state, pending: [...state.current, v4] },
-        });
+        if (!state.current.some((row) => row.id === v4.id)) {
+          out.push({
+            name: 'QueueJoin',
+            next: { ...state, pending: [...state.current, v4] },
+          });
+        }
         out.push({
           name: 'QueueExit',
           next: { ...state, pending: state.current.filter((row) => row.id !== 'V1') },

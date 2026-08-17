@@ -1,4 +1,5 @@
-import { publicAssuranceView, type FormalVerificationReport } from './report.ts';
+import { publicAssuranceView } from './report.ts';
+import type { FormalVerificationReport } from './types.ts';
 
 export const FORMAL_DASHBOARD_ID = 'FORMAL_ASSURANCE' as const;
 

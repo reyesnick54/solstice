@@ -1,3 +1,4 @@
+import type { FormalModel } from '../explore.ts';
 import type { FormalProfile } from '../types.ts';
 import { createConsensusModel } from './consensus.ts';
 import { createCryptoPolicyModel } from './crypto-policy.ts';
@@ -34,7 +35,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createInteropPacketModel(bounds),
     createInteropAssetModel(bounds),
     createCryptoPolicyModel(bounds),
-  ];
+  ] as FormalModel<unknown>[];
 }
 
 export { createConsensusModel, quorumBoundaryCases } from './consensus.ts';

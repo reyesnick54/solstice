@@ -24,7 +24,7 @@ export type GovernanceState = {
 const POWER: Readonly<Record<string, number>> = { V1: 1, V2: 1, V3: 1 };
 
 export function createGovernanceModel(bounds: FormalModelBounds): FormalModel<GovernanceState> {
-  const maxHeight = bounds.maxHeight ?? 3;
+  const maxHeight = Math.max(bounds.maxHeight ?? 3, 3);
   return {
     modelId: 'PROTOCOL_GOVERNANCE',
     modelVersion: '1.0.0',
