@@ -121,6 +121,10 @@ export class ExplorerQueryService {
         jailStatus: row.jailStatus,
         tombstone: row.tombstone,
         unbondStatus: row.unbondStatus ?? { pending: '0', releaseEpoch: null },
+      })),
+    });
+  }
+
   monetary() {
     const assets = this.indexer.store.projection().assets;
     const moonrey = this.indexer.store.projection().moonrey;
@@ -145,6 +149,29 @@ export class ExplorerQueryService {
         supplyReconciliation: row.supplyReconciliation,
         moonreyIssuanceCategorySummary: row.assetId === 'MOONREY_COIN' ? categorySummary : undefined,
       })),
+    });
+  }
+
+  fees() {
+    return this.public({
+      ...this.lag(),
+      policyVersion: '2',
+      feePolicyVersion: '2',
+      label: 'FeePolicyV2',
+      environment: 'simulation',
+      productionParameters: 'UNCONFIGURED',
+      note: 'Engineering FeePolicyV2 view from the economic RC. Production parameters remain UNCONFIGURED.',
+    });
+  }
+
+  treasury() {
+    return this.public({
+      ...this.lag(),
+      class: 'SUNREY_BLOCKCHAIN_TREASURY',
+      productionBudget: 'UNCONFIGURED',
+      productionDisbursement: 'UNCONFIGURED',
+      environment: 'simulation',
+      note: 'Fee-funded protocol treasury sink. Production budget and disbursement remain UNCONFIGURED.',
     });
   }
 

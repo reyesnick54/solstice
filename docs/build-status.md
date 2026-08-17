@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey economic release-candidate freeze and qualification
+  (Chunk 78, `packages/sunrey-chain/src/release-candidate/economic`):
+  versioned `SUNREY_ECONOMIC_TESTNET_RC_*` identity, economic policy
+  and schema freeze, qualification matrix, formal/stress/simulation
+  evidence, seven-validator economic rehearsal, supply
+  reconciliation, Chunk 67 recovery, SDK/Explorer compatibility,
+  ReleaseAuthority-signed bundles, and `sunrey-release economic`
+  commands. Capability `sunrey-economic-rc` is `IMPLEMENTED`.
+  TESTNET / PRODUCTION-CANDIDATE qualification only. Production
+  parameters remain `UNCONFIGURED`. Not mainnet authorization. See
+  `docs/releases/chunk-78-economic-rc.md`.
 - SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
   `packages/sunrey-economics`): deterministic human/productive
   layers, economic bridge, Exchange order-flow discovery, fee and

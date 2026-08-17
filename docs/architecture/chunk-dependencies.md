@@ -137,6 +137,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -635,6 +636,16 @@ It does not predict prices, promise returns, or activate production
 monetary policy. Do not create `packages/dual-economy`,
 `packages/moonrey-macro`, or `packages/economic-bridge`. The
 evaluator returns `mustStop: false`.
+Chunk 78 implements economic release-candidate freeze, policy freeze,
+and qualification at
+`packages/sunrey-chain/src/release-candidate/economic`. Capability
+`sunrey-economic-rc` is `IMPLEMENTED`. See
+[`chunk-78-economic-rc.md`](./chunk-78-economic-rc.md).
+It does not authorize mainnet or invent production parameters. Do not
+create `packages/sunrey-economic-rc`, `packages/economic-rc`,
+`packages/economic-qualification`, `packages/sunrey-economic-release`,
+or `packages/economic-policy-freeze`. The evaluator returns
+`mustStop: false`.
 Chunk 74 implements MoonRey productive-economy issuance policy
 governance, normalization, and macro supply controls at
 `packages/sunrey-chain/src/productive/policy-governance`. Capability

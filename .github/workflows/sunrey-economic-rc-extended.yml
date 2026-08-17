@@ -1,0 +1,42 @@
+# Extended economic RC qualification. Manual/scheduled only.
+# Do not claim a long-horizon, soak, or multi-day duration unless that
+# duration actually completed. This workflow records that the extended
+# profile ran; it does not invent wall-clock evidence.
+name: SunRey economic RC extended
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Economic qualification profile
+        required: false
+        default: extended
+  schedule:
+    - cron: "0 4 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  economic-extended:
+    name: economic-rc-extended
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Economic RC extended profile
+        run: node scripts/sunrey-release.mjs economic qualify --profile ${{ inputs.profile || 'extended' }}
+
+      - name: Economic RC verify
+        run: node scripts/sunrey-release.mjs economic verify

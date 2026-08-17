@@ -76,6 +76,32 @@ export {
 } from './registry.ts';
 export { runSunreyReleaseRc } from './cli.ts';
 export {
+  ECONOMIC_FORMAL_MODEL_IDS,
+  ECONOMIC_QUALIFICATION_CATEGORIES,
+  ECONOMIC_QUALIFICATION_PROFILES,
+  FIRST_ECONOMIC_RC_ID,
+  compareEconomicReleaseCandidates,
+  consumeEconomicRc,
+  createEconomicReleaseCandidate,
+  economicLimitationsHidden,
+  freezeEconomicPolicies,
+  freezeEconomicSchemas,
+  invalidateEconomicBundle,
+  isEconomicReleaseCandidateId,
+  loadEconomicKnownLimitations,
+  nextEconomicReleaseCandidateId,
+  qualifyEconomicReleaseCandidate,
+  runSunreyReleaseEconomic,
+  supersedeEconomicReleaseCandidate,
+  unconfiguredProductionValues,
+  verifyEconomicReleaseCandidate,
+} from './economic/index.ts';
+export type {
+  EconomicQualificationReport,
+  EconomicReleaseComparison,
+  SignedEconomicRcBundle,
+} from './economic/index.ts';
+export {
   qualifyAdversarialCritical,
   qualifyDatabaseRecovery,
   qualifyExplorerRebuild,

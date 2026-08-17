@@ -219,6 +219,12 @@ jobs:
         run: node scripts/sunrey-release.mjs rc verify
       - name: SunRey Testnet RC demo
         run: npm run demo:sunrey-rc
+      - name: SunRey economic RC smoke qualification
+        run: node scripts/sunrey-release.mjs economic create --profile smoke --id SUNREY_ECONOMIC_TESTNET_RC_1
+      - name: SunRey economic RC verify
+        run: node scripts/sunrey-release.mjs economic verify
+      - name: SunRey economic RC demo
+        run: npm run demo:sunrey-economic-rc
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
       - name: SunRey independent security-review demo

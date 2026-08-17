@@ -113,6 +113,14 @@ export function handleExplorerRequest(
       sunreySupply: queries.home().sunreyDevelopmentSupply,
       moonreySupply: queries.home().moonreyDevelopmentSupply,
       ...queries.lag(),
+    });
+  }
+  if (path === '/v1/fees') {
+    return json(200, queries.fees());
+  }
+  if (path === '/v1/treasury') {
+    return json(200, queries.treasury());
+  }
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');
     const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;

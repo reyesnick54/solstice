@@ -1073,6 +1073,20 @@ or activate production monetary policy. Do not create
 `packages/economic-bridge`. See
 [`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
 
+Chunk 78 implements economic release-candidate freeze, policy freeze,
+and qualification at
+`packages/sunrey-chain/src/release-candidate/economic`. Capability
+`sunrey-economic-rc` is `IMPLEMENTED`. It remains TESTNET /
+PRODUCTION-CANDIDATE economic qualification. No economic RC status
+implies mainnet authorization. Production parameters remain
+`UNCONFIGURED`. Qualification is not regulatory approval.
+`ReleaseAuthority` signs the economic bundle only and does not
+activate economic policy. Do not create `packages/sunrey-economic-rc`,
+`packages/economic-rc`, `packages/economic-qualification`,
+`packages/sunrey-economic-release`, or
+`packages/economic-policy-freeze`. See
+[`chunk-78-economic-rc.md`](./chunk-78-economic-rc.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

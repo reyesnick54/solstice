@@ -10,6 +10,7 @@ import { generatedSourceDigest } from '../supply-chain/inventory.ts';
 import { FORMAL_MODEL_IDS } from '../formal/types.ts';
 import { loadFormalModelRegistry } from '../formal/registry.ts';
 import { FIRST_RC_ID } from '../release-candidate/types.ts';
+import { consumeEconomicRc as consumeEconomicRcEvidence } from '../release-candidate/economic/readiness.ts';
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
 
 /** Documented Chunk 57 facts. sunrey-chain must not import packages/sunrey-range. */
@@ -17,6 +18,7 @@ const RANGE_SCHEMA_VERSION = 1;
 const RANGE_INVARIANT_COUNT = 11;
 import { RELEASE_AUTHORITY_ID } from '../supply-chain/release.ts';
 import type {
+  EconomicReleaseCandidateSlot,
   ExternalSecurityReviewSlot,
   FormalAssuranceSlot,
   LegalRegulatorySlot,
@@ -131,6 +133,10 @@ export function consumeTestnetRc(): TestnetReleaseCandidateSlot {
     status: 'ENGINEERING_VERIFIED',
     notes: `RC qualification digest ${digests.rcQualificationDigest}. Testnet-1 genesis hash is bound as an engineering reference only. It is not a production RC and cannot become production genesis.`,
   });
+}
+
+export function consumeEconomicRc(): EconomicReleaseCandidateSlot {
+  return consumeEconomicRcEvidence();
 }
 
 export function consumeLegalRegulatory(): LegalRegulatorySlot {
