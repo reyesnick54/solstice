@@ -10,6 +10,7 @@ import {
   coverageCounts,
   feeActualNeverExceedsMax,
   feeEngineReservationConserved,
+  feePolicyV2Properties,
   generateDifferentialCases,
   interopPacketAtMostOnce,
   loadHexCorpus,
@@ -46,6 +47,7 @@ describe('Chunk 56 SunRey assurance', () => {
     const rng = new SeededRng(SEED);
     feeActualNeverExceedsMax(rng.child('fee'), profile.propertyCases);
     feeEngineReservationConserved(rng.child('fee-engine'), 16);
+    feePolicyV2Properties(rng.child('fee-v2'), profile.propertyCases);
     walletThresholdProperties(rng.child('wallet'), 16);
     oracleAggregationProperties(rng.child('oracle'), profile.propertyCases);
     moonreyIssuanceProperties(rng.child('moonrey'), profile.propertyCases);

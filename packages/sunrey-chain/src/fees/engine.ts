@@ -32,6 +32,24 @@ import {
   type ResourceUsage,
   type ValidatorRewardShare,
 } from './types.ts';
+import {
+  developmentFeeDispositionPolicyV2,
+  developmentFeePolicyV2,
+  disposeFeeV2,
+  dispositionV2Reconciles,
+  estimateFeeV2,
+  hashFeePolicyV2,
+  initialBaseResourcePriceState,
+  machineFeeFitsMandate,
+  nextBaseResourcePrice,
+  rejectPolicyDowngrade,
+  toHistoricDispositionShape,
+  usageV2ForTransaction,
+  weightedUsage,
+  type BaseResourcePriceState,
+  type FeeDispositionPolicyV2,
+  type FeePolicyV2,
+} from './v2/index.ts';
 
 export const NETWORK_SINK_ACCOUNT = 'sunrey.fees.network_sink';
 export const BURN_ACCOUNT = 'sunrey.fees.burn';
@@ -76,6 +94,15 @@ export class FeeEngine {
   assetPolicy: FeeAssetPolicy;
   dispositionPolicy: FeeDispositionPolicy;
   limits: BlockResourceLimits;
+  policyVersion: 1 | 2 = 1;
+  feePolicyV2: FeePolicyV2 = developmentFeePolicyV2();
+  dispositionPolicyV2: FeeDispositionPolicyV2 = developmentFeeDispositionPolicyV2();
+  priceState: BaseResourcePriceState = initialBaseResourcePriceState(
+    developmentFeePolicyV2().bounds,
+    100n,
+    0,
+  );
+  readonly priceHistory: BaseResourcePriceState[] = [];
   readonly accounts = new NativeAssetAccounts();
   readonly receipts = new Map<string, FeeReceipt>();
   readonly rewardAccrual = new Map<string, Record<FeeAssetId, bigint>>();
@@ -101,13 +128,42 @@ export class FeeEngine {
     readonly feeAssetPolicyHash: string;
     readonly feeDispositionHash: string;
     readonly blockLimitsHash: string;
+    readonly feePolicyV2Hash: string;
+    readonly policyVersion: 1 | 2;
   } {
     return {
       feeScheduleHash: hashFeeSchedule(this.schedule),
       feeAssetPolicyHash: hashFeeAssetPolicy(this.assetPolicy),
       feeDispositionHash: hashFeeDispositionPolicy(this.dispositionPolicy),
       blockLimitsHash: hashBlockResourceLimits(this.limits),
+      feePolicyV2Hash: hashFeePolicyV2(this.feePolicyV2),
+      policyVersion: this.policyVersion,
     };
+  }
+
+  activateFeePolicyV2(policy: FeePolicyV2 = developmentFeePolicyV2(), height = policy.activationHeight): FeeRejection | null {
+    if (rejectPolicyDowngrade(this.policyVersion, policy.policyVersion)) {
+      return {
+        code: 'POLICY_DOWNGRADE_REJECTED',
+        stage: 'stateless',
+        detail: 'FeePolicyV2 cannot be replaced by a lower policy version',
+      };
+    }
+    this.feePolicyV2 = policy;
+    this.policyVersion = 2;
+    this.priceState = initialBaseResourcePriceState(policy.bounds, this.priceState.baseResourcePrice, height);
+    this.metrics.mempoolFeeFloor = policy.minimumFee;
+    return null;
+  }
+
+  finalizeBlock(weightedUsageUnits: bigint, height: number): BaseResourcePriceState {
+    this.priceState = nextBaseResourcePrice(this.priceState, weightedUsageUnits, this.feePolicyV2.bounds, height);
+    this.priceHistory.push(this.priceState);
+    this.metrics.blockResourceUtilization =
+      this.feePolicyV2.bounds.blockResourceLimit === 0n
+        ? 0n
+        : (weightedUsageUnits * 10_000n) / this.feePolicyV2.bounds.blockResourceLimit;
+    return this.priceState;
   }
 
   faucet(accountId: string, amount: bigint, asset: FeeAssetId = 'SUNREY_COIN'): void {
@@ -181,20 +237,46 @@ export class FeeEngine {
         detail: `${budget.feeAsset} is not an enabled fee asset`,
       };
     }
-    const declaredUsage = usageForOperation(tx.operation, tx.encodedBytes, tx.signatureCount);
-    if (budget.maxFee < this.schedule.minimumFee) {
+    if (this.policyVersion === 2 && (tx.policyVersion ?? 2) < 2) {
       this.metrics.transactionFeeRejections += 1n;
-      return { code: 'FEE_BELOW_MINIMUM', stage: 'mempool', detail: 'max_fee is below the active minimum' };
+      return {
+        code: 'POLICY_DOWNGRADE_REJECTED',
+        stage: 'mempool',
+        detail: 'historic FeePolicy v1 cannot execute after FeePolicyV2 activation',
+      };
     }
-    if (totalUnits(declaredUsage) <= budget.maxExecutionUnits) {
-      const estimated = calculateFee(this.schedule, declaredUsage);
-      if (budget.maxFee < estimated) {
+    const declaredUsage = usageForOperation(tx.operation, tx.encodedBytes, tx.signatureCount);
+    if (this.policyVersion === 2) {
+      const quote = estimateFeeV2(this.feePolicyV2, tx, this.priceState.baseResourcePrice);
+      if (!quote.ok) {
         this.metrics.transactionFeeRejections += 1n;
-        return {
-          code: 'INSUFFICIENT_MAX_FEE',
-          stage: 'mempool',
-          detail: 'max_fee cannot cover the estimated resource cost',
-        };
+        return { code: quote.code, stage: 'mempool', detail: quote.detail };
+      }
+      if (tx.machineMandateCeiling !== undefined && tx.transfer) {
+        if (!machineFeeFitsMandate(tx.machineMandateCeiling, tx.transfer.amount, quote.quote)) {
+          this.metrics.transactionFeeRejections += 1n;
+          return {
+            code: 'MACHINE_MANDATE_EXCEEDED',
+            stage: 'mempool',
+            detail: 'priority fee cannot bypass the machine spending mandate',
+          };
+        }
+      }
+    } else {
+      if (budget.maxFee < this.schedule.minimumFee) {
+        this.metrics.transactionFeeRejections += 1n;
+        return { code: 'FEE_BELOW_MINIMUM', stage: 'mempool', detail: 'max_fee is below the active minimum' };
+      }
+      if (totalUnits(declaredUsage) <= budget.maxExecutionUnits) {
+        const estimated = calculateFee(this.schedule, declaredUsage);
+        if (budget.maxFee < estimated) {
+          this.metrics.transactionFeeRejections += 1n;
+          return {
+            code: 'INSUFFICIENT_MAX_FEE',
+            stage: 'mempool',
+            detail: 'max_fee cannot cover the estimated resource cost',
+          };
+        }
       }
     }
     const alreadyReserved = this.accounts.position(budget.feePayer, budget.feeAsset).reserved >= budget.maxFee;
@@ -290,8 +372,38 @@ export class FeeEngine {
     }
 
     const usage = outcome === 'OUT_OF_EXECUTION_UNITS' ? baseUsage : meter.snapshot();
-    const computed = calculateFee(this.schedule, usage);
-    const actualFee = tx.budget.exemption === 'NONE' ? minBig(computed, tx.budget.maxFee) : 0n;
+    let computed = calculateFee(this.schedule, usage);
+    let actualFee = tx.budget.exemption === 'NONE' ? minBig(computed, tx.budget.maxFee) : 0n;
+    let baseCharge = computed;
+    let priorityFee = 0n;
+    let baseResourcePrice: bigint | undefined;
+    if (this.policyVersion === 2 && tx.budget.exemption === 'NONE') {
+      const quote = estimateFeeV2(this.feePolicyV2, tx, this.priceState.baseResourcePrice);
+      if (!quote.ok) {
+        if (tx.budget.exemption === 'NONE') {
+          this.releaseReservation(tx);
+        }
+        this.metrics.transactionFeeRejections += 1n;
+        return { ok: false, rejection: { code: quote.code, stage: 'execution', detail: quote.detail } };
+      }
+      computed = quote.quote.estimatedTotal;
+      if (computed > tx.budget.maxFee) {
+        this.releaseReservation(tx);
+        this.metrics.transactionFeeRejections += 1n;
+        return {
+          ok: false,
+          rejection: {
+            code: 'INSUFFICIENT_MAX_FEE',
+            stage: 'execution',
+            detail: 'required fee exceeds the signed max_fee; insufficient-fee path applies',
+          },
+        };
+      }
+      actualFee = computed;
+      baseCharge = quote.quote.baseCharge;
+      priorityFee = quote.quote.priorityFee;
+      baseResourcePrice = quote.quote.baseResourcePrice;
+    }
     const reservedFee = tx.budget.exemption === 'NONE' ? tx.budget.maxFee : 0n;
     const releasedFee = reservedFee - actualFee;
 
@@ -308,8 +420,14 @@ export class FeeEngine {
       }
     }
 
-    const disposition = disposeFee(this.dispositionPolicy, tx.budget.feeAsset, actualFee);
-    if (!dispositionReconciles(disposition)) {
+    const v2Disposition =
+      this.policyVersion === 2
+        ? disposeFeeV2(this.dispositionPolicyV2, tx.budget.feeAsset, actualFee)
+        : null;
+    const disposition = v2Disposition
+      ? toHistoricDispositionShape(v2Disposition)
+      : disposeFee(this.dispositionPolicy, tx.budget.feeAsset, actualFee);
+    if ((v2Disposition && !dispositionV2Reconciles(v2Disposition)) || !dispositionReconciles(disposition)) {
       return {
         ok: false,
         rejection: { code: 'DISPOSITION_MISMATCH', stage: 'execution', detail: 'fee disposition does not reconcile' },
@@ -332,6 +450,10 @@ export class FeeEngine {
       blockId: input.blockId,
       outcome,
       disposition,
+      policyVersion: this.policyVersion,
+      baseResourcePrice,
+      baseCharge,
+      priorityFee,
     });
     this.receipts.set(tx.transactionId, receipt);
     this.metrics.executionUnits += totalUnits(usage);

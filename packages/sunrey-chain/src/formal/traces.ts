@@ -83,6 +83,14 @@ export function interopHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function adaptiveFeeHappyTrace(): LogicalTrace {
+  return makeTrace('trace_adaptive_fee', 'adaptive_fee', 'ADAPTIVE_FEE_MARKET', [
+    { domain: 'adaptive_fee', action: 'UpdatePriceTarget', args: { usage: 1 } },
+    { domain: 'adaptive_fee', action: 'Reserve', args: {} },
+    { domain: 'adaptive_fee', action: 'ChargeWithinMax', args: {} },
+  ]);
+}
+
 export function allDevelopmentTraces(): readonly LogicalTrace[] {
   return [
     consensusHappyTrace(),
@@ -91,5 +99,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     moonreyHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
+    adaptiveFeeHappyTrace(),
   ];
 }

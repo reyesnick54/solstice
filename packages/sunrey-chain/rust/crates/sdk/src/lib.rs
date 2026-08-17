@@ -28,6 +28,10 @@ pub const PATH_EXCHANGE_MARKETS: &str = "/v1/exchange/markets";
 pub const PATH_BLOCKS: &str = "/v1/chain/blocks";
 pub const PATH_ASSETS: &str = "/v1/assets";
 pub const PATH_VALIDATORS: &str = "/v1/validators";
+pub const PATH_FEES_POLICY: &str = "/v1/fees/policy";
+pub const PATH_FEES_PRICE: &str = "/v1/fees/price";
+pub const PATH_FEES_ESTIMATE: &str = "/v1/fees/estimate-v2";
+pub const PATH_FEES_RESOURCES: &str = "/v1/fees/resources";
 
 #[derive(Debug, thiserror::Error)]
 pub enum SdkError {
@@ -74,6 +78,22 @@ impl SunReyRpcClient {
 
     pub fn validators(&self) -> Result<Value, SdkError> {
         self.get(PATH_VALIDATORS)
+    }
+
+    pub fn get_fee_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_FEES_POLICY)
+    }
+
+    pub fn get_base_resource_price(&self) -> Result<Value, SdkError> {
+        self.get(PATH_FEES_PRICE)
+    }
+
+    pub fn estimate_resources(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_FEES_RESOURCES}?bytes={bytes}&sigs={sigs}"))
+    }
+
+    pub fn estimate_fee(&self, bytes: u32, sigs: u32) -> Result<Value, SdkError> {
+        self.get(&format!("{PATH_FEES_ESTIMATE}?bytes={bytes}&sigs={sigs}"))
     }
 
     pub fn events(&self, cursor: Option<&str>) -> Result<Value, SdkError> {

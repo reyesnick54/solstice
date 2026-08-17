@@ -48,6 +48,10 @@ export type IndexedBlock = {
   readonly resourceUsage: QuantityString;
   readonly feeTotal: QuantityString;
   readonly feeAsset: NativeAssetId;
+  readonly feePolicyVersion?: QuantityString;
+  readonly baseResourcePrice?: QuantityString;
+  readonly targetUtilizationBps?: QuantityString;
+  readonly feeDisposition?: string;
   readonly stateRoot: string;
   readonly commit: CommitCertificateSummary;
   readonly finalityStatus: FinalityStatus;
@@ -64,6 +68,9 @@ export type IndexedTransaction = {
   readonly resourceUsage: QuantityString;
   readonly fee: QuantityString;
   readonly feeAsset: NativeAssetId;
+  readonly chargedFee?: QuantityString;
+  readonly feeDisposition?: string;
+  readonly feePolicyVersion?: QuantityString;
   readonly cryptoSuite: string;
   readonly assetQuantities: Readonly<Record<string, QuantityString>>;
   readonly economicObjectRefs: readonly string[];

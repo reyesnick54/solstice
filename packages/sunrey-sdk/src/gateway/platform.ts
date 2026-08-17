@@ -8,6 +8,12 @@ import { createHash, randomUUID } from 'node:crypto';
 import { estimateFee, FeeEngine } from '../../../sunrey-chain/src/fees/engine.ts';
 import { developmentFeeSchedule, hashFeeSchedule } from '../../../sunrey-chain/src/fees/schedule.ts';
 import { usageForOperation } from '../../../sunrey-chain/src/fees/meter.ts';
+import {
+  developmentFeePolicyV2,
+  estimateFeeV2,
+  hashFeePolicyV2,
+  usageV2ForTransaction,
+} from '../../../sunrey-chain/src/fees/v2/index.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -211,6 +217,75 @@ export class DevelopmentPlatform {
       actualFinalizedFee: null,
       feeAsset: 'SUNREY_COIN',
       scheduleHash: hashFeeSchedule(schedule),
+    });
+  }
+
+  getFeePolicy(): Record<string, unknown> {
+    const policy = developmentFeePolicyV2();
+    return Object.freeze({
+      historicPolicy: 'FeeSchedule v1',
+      policyVersion: policy.policyVersion,
+      formulaVersion: policy.formulaVersion,
+      feeAsset: policy.feeAsset,
+      moonreyFeeEnabled: policy.moonreyFeeEnabled,
+      productionParametersConfigured: policy.productionParametersConfigured,
+      hash: hashFeePolicyV2(policy),
+    });
+  }
+
+  getBaseResourcePrice(): Record<string, unknown> {
+    return Object.freeze({
+      baseResourcePrice: this.fees.priceState.baseResourcePrice.toString(),
+      formulaVersion: this.fees.priceState.formulaVersion,
+      targetUtilizationBps: this.fees.feePolicyV2.bounds.targetUtilizationBps.toString(),
+    });
+  }
+
+  estimateResourcesV2(encodedBytes = 256, signatureCount = 1, signatureClass: 'CLASSICAL' | 'HYBRID' | 'PQ' = 'CLASSICAL') {
+    const tx = {
+      transactionId: 'estimate',
+      operation: 'NATIVE_TRANSFER' as const,
+      payerAuthenticated: true,
+      encodedBytes,
+      signatureCount,
+      signatureClass,
+      budget: {
+        maxExecutionUnits: 10_000n,
+        maxFee: 50_000n,
+        feeAsset: 'SUNREY_COIN' as const,
+        feePayer: 'estimator',
+        exemption: 'NONE' as const,
+      },
+    };
+    return usageV2ForTransaction(tx);
+  }
+
+  estimateFeeV2(encodedBytes = 256, signatureCount = 1, signatureClass: 'CLASSICAL' | 'HYBRID' | 'PQ' = 'CLASSICAL') {
+    const policy = developmentFeePolicyV2();
+    const tx = {
+      transactionId: 'estimate',
+      operation: 'NATIVE_TRANSFER' as const,
+      payerAuthenticated: true,
+      encodedBytes,
+      signatureCount,
+      signatureClass,
+      budget: {
+        maxExecutionUnits: 10_000n,
+        maxFee: 50_000n,
+        feeAsset: 'SUNREY_COIN' as const,
+        feePayer: 'estimator',
+        exemption: 'NONE' as const,
+      },
+    };
+    const quote = estimateFeeV2(policy, tx, 100n);
+    return Object.freeze({
+      informational: true,
+      authorization: 'signed canonical max_fee',
+      policy: this.getFeePolicy(),
+      resourceUsage: this.estimateResourcesV2(encodedBytes, signatureCount, signatureClass),
+      quote: quote.ok ? quote.quote : quote,
+      feeAsset: 'SUNREY_COIN',
+      maxFeeGuidance: 'authorize max_fee >= estimatedTotal; estimate is not authorization',
     });
   }
 

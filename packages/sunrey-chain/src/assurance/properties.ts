@@ -9,6 +9,16 @@ import type { AccountKeyRecord, BlockchainAccount, WalletSignature } from '../wa
 import { calculateFee, developmentFeeSchedule } from '../fees/schedule.ts';
 import { usageForOperation } from '../fees/meter.ts';
 import { FeeEngine } from '../fees/engine.ts';
+import {
+  developmentFeePolicyV2,
+  disposeFeeV2,
+  developmentFeeDispositionPolicyV2,
+  dispositionV2Reconciles,
+  nextBaseResourcePrice,
+  initialBaseResourcePriceState,
+  quoteFeeV2,
+  usageV2ForTransaction,
+} from '../fees/v2/index.ts';
 import { transferTx, txId } from '../fees/demo-helpers.ts';
 import { developmentFeeAssetPolicy, disposeFee, developmentFeeDispositionPolicy, dispositionReconciles } from '../fees/policy.ts';
 import { medianOf, weightedMedianOf } from '../oracle/aggregation.ts';
@@ -67,6 +77,40 @@ export function feeActualNeverExceedsMax(rng: SeededRng, cases: number): void {
     }
     if (!developmentFeeAssetPolicy().enabledAssets.includes('SUNREY_COIN')) {
       throw new Error('development fee asset policy missing SUNREY_COIN');
+    }
+  }
+}
+
+export function feePolicyV2Properties(rng: SeededRng, cases: number): void {
+  const policy = developmentFeePolicyV2();
+  const start = initialBaseResourcePriceState(policy.bounds, 100n, 0);
+  for (let i = 0; i < cases; i += 1) {
+    const used = rng.bigint(0n, policy.bounds.blockResourceLimit * 2n);
+    const next = nextBaseResourcePrice(start, used, policy.bounds, 1);
+    if (next.baseResourcePrice < policy.bounds.minBasePrice || next.baseResourcePrice > policy.bounds.maxBasePrice) {
+      throw new Error('v2 base price escaped bounds');
+    }
+    const again = nextBaseResourcePrice(start, used, policy.bounds, 1);
+    if (again.baseResourcePrice !== next.baseResourcePrice) {
+      throw new Error('v2 next price is not deterministic');
+    }
+    const tx = transferTx(txId(`v2-prop-${i}`), 'alice', 'bob', 1n, 5_000_000n);
+    const usage = usageV2ForTransaction({ ...tx, signatureClass: i % 3 === 0 ? 'PQ' : 'CLASSICAL' });
+    const quote = quoteFeeV2({
+      policy,
+      usage,
+      baseResourcePrice: next.baseResourcePrice,
+      feeAsset: 'SUNREY_COIN',
+      maximumAuthorizedFee: 5_000_000n,
+    });
+    if (quote.ok && quote.quote.estimatedTotal > quote.quote.maximumAuthorizedFee) {
+      throw new Error('v2 charged exceeded max_fee');
+    }
+    if (quote.ok) {
+      const split = disposeFeeV2(developmentFeeDispositionPolicyV2(), 'SUNREY_COIN', quote.quote.estimatedTotal);
+      if (!dispositionV2Reconciles(split)) {
+        throw new Error('v2 disposition mismatch');
+      }
     }
   }
 }

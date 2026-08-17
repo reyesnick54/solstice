@@ -16,6 +16,7 @@ import { measureFinalizedThroughput } from './throughput.ts';
 import type { BenchCaseResult, BenchProfile, BenchReport, InvariantCheck, LatencyProfile } from './types.ts';
 import { LATENCY_PROFILES } from './types.ts';
 import { measureWalletSdk } from './wallet.ts';
+import { measureFeePolicyV2 } from './fee-market.ts';
 
 export type RunOptions = {
   readonly profile: BenchProfile;
@@ -45,6 +46,7 @@ export function runProfile(options: RunOptions): BenchReport {
     cases.push(...measureMempool({ count: 32, load: 'normal' }));
     cases.push(...measureMempool({ count: 32, load: 'burst' }));
     cases.push(...measureMempool({ count: 16, load: 'invalid' }));
+    cases.push(...measureFeePolicyV2(24));
   } else if (options.profile === 'single-node') {
     datasetSize = 24;
     const native = measureFinalizedThroughput({ validatorCount: 4, transfers: 24, mixed: false });

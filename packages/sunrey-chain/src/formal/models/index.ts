@@ -1,6 +1,7 @@
 import type { FormalModel } from '../explore.ts';
 import type { FormalProfile } from '../types.ts';
 import { createConsensusModel } from './consensus.ts';
+import { createAdaptiveFeeMarketModel } from './adaptive-fee-market.ts';
 import { createCryptoPolicyModel } from './crypto-policy.ts';
 import { createDvpModel } from './dvp.ts';
 import { createFeeModel } from './fees.ts';
@@ -35,6 +36,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createInteropPacketModel(bounds),
     createInteropAssetModel(bounds),
     createCryptoPolicyModel(bounds),
+    createAdaptiveFeeMarketModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -49,3 +51,4 @@ export { createMoonReyModel, contributionFingerprint } from './moonrey.ts';
 export { createInteropPacketModel } from './interop-packet.ts';
 export { createInteropAssetModel, MODEL_INTEROP_ASSET } from './interop-asset.ts';
 export { createCryptoPolicyModel, MODEL_CRYPTO_STATES } from './crypto-policy.ts';
+export { createAdaptiveFeeMarketModel } from './adaptive-fee-market.ts';
