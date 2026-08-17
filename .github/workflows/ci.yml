@@ -126,6 +126,8 @@ jobs:
         run: npm run demo:market-surveillance
       - name: Listing governance demo
         run: npm run demo:listing-governance
+      - name: SunRey explorer demo
+        run: npm run demo:explorer
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
 

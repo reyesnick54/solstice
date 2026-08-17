@@ -66,6 +66,7 @@ npm run demo:custody-unknown
 npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
+npm run demo:explorer
 
 echo "==> typecheck"
 npm run typecheck

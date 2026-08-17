@@ -875,6 +875,24 @@
       "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer, plus the Chunk 32R transaction protocol. Simulation only. Not the financial source of truth. Canonical ledger remains authoritative. No live RPC or production network. Development BFT is Chunk 38 at packages/sunrey-chain/node. Development validator lifecycle and accountability are IMPLEMENTED. See chunk-36-resume.md, chunk-38-networked-consensus.md, and chunk-39-validator-accountability.md. Production mainnet remains disabled."
     },
     {
+      "id": "packages/sunrey-explorer",
+      "npmName": "@solstice/sunrey-explorer",
+      "path": "packages/sunrey-explorer",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/config"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Canonical SunRey explorer projection. Rebuildable index of finalized blocks and public economic views. Not a second ledger, not blockchain authority, and not a custody store. Simulation / DEVELOPMENT network only."
+    },
+    {
       "id": "packages/sunrey-exchange",
       "npmName": "@solstice/sunrey-exchange",
       "path": "packages/sunrey-exchange",
@@ -2119,6 +2137,35 @@
       "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
     },
     {
+      "id": "sunrey-explorer",
+      "name": "SunRey blockchain and economic explorer",
+      "canonicalOwner": "packages/sunrey-explorer",
+      "canonicalPath": "packages/sunrey-explorer/src/indexer.ts",
+      "publicInterface": "packages/sunrey-explorer/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ExplorerIndexer",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/block-explorer",
+        "packages/chain-indexer",
+        "packages/explorer",
+        "packages/sunrey-indexer",
+        "packages/blockchain-explorer"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "One explorer owner. Rebuildable projection of finalized SunRey Blockchain state. Not a second ledger or chain store."
+    },
+    {
       "id": "sunrey-exchange",
       "name": "SunRey Exchange simulation core",
       "canonicalOwner": "packages/sunrey-exchange",
@@ -2147,8 +2194,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Positions are derived. Do not implement Travel Rule or live exchange here."
+      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
     }
   ],
   "authorizedMutationPaths": [
@@ -2702,15 +2748,20 @@
     "packages/light-client",
     "packages/relayer",
     "packages/sunrey-interop",
-    "packages/sunrey-bridge"
+    "packages/sunrey-bridge",
     "packages/custody-v2",
     "packages/blockchain-custody",
     "packages/institutional-custody-v2",
-    "packages/hsm-security-v2"
+    "packages/hsm-security-v2",
     "packages/wallet-v2",
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
-    "packages/sunrey-wallet-ledger"
+    "packages/sunrey-wallet-ledger",
+    "packages/block-explorer",
+    "packages/chain-indexer",
+    "packages/explorer",
+    "packages/sunrey-indexer",
+    "packages/blockchain-explorer"
   ],
   "capabilities": [
     {
@@ -3142,21 +3193,34 @@
       "protected": true,
       "adr": "ADR-0029",
       "notes": "Chunk 50 development light-client / IBC-class interoperability gateway at packages/sunrey-chain and packages/sunrey-chain/rust/crates/interop. Relayers are untrusted. No trusted-multisig bridge. No wrapped fiat. Production SunRey Coin and MoonRey interoperability remain unavailable. Do not create packages/ibc, packages/bridge, packages/interop, or a competing chain."
+    },
+    {
       "id": "sunrey-exchange-native-settlement",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-exchange",
       "protected": true,
       "notes": "Chunk 48 native-chain clearing and atomic DVP at packages/sunrey-exchange/src/native-clearing with EXCHANGE_SETTLEMENT in packages/sunrey-chain/rust/crates/native-assets. Positions are derived from custody attribution, finalized holdings, reservations, and settlements. Matching stays off-chain. Tickers remain NOT_ASSIGNED. Do not create a second exchange ledger."
+    },
+    {
       "id": "sunrey-institutional-custody",
       "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
       "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
+    },
+    {
       "id": "sunrey-sovereign-wallets",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
+    },
+    {
+      "id": "sunrey-explorer",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-explorer",
+      "protected": true,
+      "notes": "Chunk 52 rebuildable SunRey block and economic explorer at packages/sunrey-explorer. Projection only. Canonical authority remains finalized SunRey Blockchain state. Do not create packages/block-explorer, packages/chain-indexer, or a second indexer."
     }
   ],
   "boundedContexts": [
@@ -3406,6 +3470,16 @@
       ],
       "protected": true,
       "notes": "Canonical SunRey Chain trust, provenance, permission, attestation, policy, and settlement-anchor layer at packages/sunrey-chain. Simulation only. Not the financial source of truth. Coin package may keep a type-only FutureChainAdapter stub. Do not connect a live RPC, mainnet, or testnet. Chunk 31 freezes production architecture as a modular monolith inside this owner. Chunk 32R implements the canonical transaction protocol in this same owner. Chunk 33R adds the CryptoSuite registry on packages/security. Chunk 34R implements the local development node (sunrey-local-node). Chunk 35R implements development P2P/mempool/sync at packages/sunrey-chain/node. Chunk 36R implements the development validator registry and signer safety. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 38 networks that engine across the four-validator P2P devnet. Chunk 39 implements simulation validator accountability. Chunk 40 implements development protocol governance. Chunk 41 implements dual native assets. Chunk 42 implements native fees and resource metering. Chunk 43 implements the sovereign oracle network. Chunk 44 implements the derived Global Productive Capacity Graph and development MoonRey issuance from verified productive contributions. Chunk 45 implements machine economic identity and commerce. Production mainnet is not implemented. MoonRey Coin is a distinct planned native asset with ticker NOT_ASSIGNED."
+    },
+    {
+      "id": "SUNREY_EXPLORER",
+      "status": "IMPLEMENTED",
+      "reservedPaths": [
+        "packages/sunrey-explorer",
+        "apps/explorer"
+      ],
+      "protected": true,
+      "notes": "Canonical public SunRey explorer projection at packages/sunrey-explorer. Web UI at apps/explorer. Not blockchain authority and not a second ledger. DEVELOPMENT network banner required."
     },
     {
       "id": "SUNREY_INFORMATION_MARKET",

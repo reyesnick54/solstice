@@ -1350,4 +1350,31 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/institutional-custody-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-security-v2')), false);
   });
+
+  it('CHUNK-52 implements the SunRey explorer as a rebuildable projection', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-explorer').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-explorer').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-explorer').owner, 'packages/sunrey-explorer');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-52',
+    );
+    assert.ok(declared, 'CHUNK-52 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-52-explorer.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/explorer-index-model.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/explorer-privacy-policy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/explorer-rebuild.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/explorer-integrity.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-explorer/src/indexer.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'apps/explorer/index.html')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'db/explorer/migrations/V001__explorer.sql')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/block-explorer')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/chain-indexer')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/explorer')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-indexer')), false);
+  });
 });
