@@ -90,6 +90,7 @@ jobs:
         run: |
           npm run test:sunrey-node
           npm test
+          npm run sunrey-ceremony -- rehearse
           npm run sunrey-bench -- sanity
 
       - name: Fuzz smoke

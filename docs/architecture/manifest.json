@@ -2328,6 +2328,11 @@
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     },
     {
+      "id": "sunrey-root-of-trust",
+      "name": "SunRey root-of-trust and key ceremony architecture",
+      "canonicalOwner": "packages/security",
+      "canonicalPath": "packages/security/src/ceremony/types.ts",
+      "publicInterface": "packages/security/src/ceremony/index.ts",
       "id": "sunrey-testnet-rc",
       "name": "SunRey Testnet release-candidate freeze and qualification",
       "canonicalOwner": "packages/sunrey-chain",
@@ -2350,6 +2355,11 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "RootOfTrustAuthority",
+          "kind": "type"
+        },
+        {
+          "name": "CeremonyPlan",
           "name": "TestnetReleaseCandidateManifest",
           "name": "AuditBundleManifest",
           "name": "FormalModelRegistry",
@@ -2357,6 +2367,10 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/ceremony",
+        "packages/hsm-v2",
+        "packages/root-of-trust",
+        "packages/key-ceremony"
         "packages/sunrey-rc",
         "packages/release-candidate",
         "packages/testnet-rc",
@@ -2376,6 +2390,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
       "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
       "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
       "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
@@ -2979,6 +2994,10 @@
     "packages/sunrey-fuzz",
     "packages/protocol-fuzzer",
     "tools/sunrey-test",
+    "packages/ceremony",
+    "packages/hsm-v2",
+    "packages/root-of-trust",
+    "packages/key-ceremony"
     "packages/sunrey-rc",
     "packages/release-candidate",
     "packages/testnet-rc",
@@ -3514,6 +3533,11 @@
       "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     },
     {
+      "id": "sunrey-root-of-trust",
+      "status": "IMPLEMENTED",
+      "owner": "packages/security",
+      "protected": true,
+      "notes": "Chunk 64 production-class root-of-trust and key-ceremony architecture at packages/security/src/ceremony. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. No production private keys in CI. No commercial HSM or completed production ceremony claim. Do not create packages/ceremony, packages/hsm-v2, packages/root-of-trust, or packages/key-ceremony."
       "id": "sunrey-testnet-rc",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

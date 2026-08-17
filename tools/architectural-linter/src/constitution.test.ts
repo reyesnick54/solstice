@@ -1557,6 +1557,34 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/crypto-v2')), false);
   });
 
+  it('CHUNK-64 implements root-of-trust ceremony architecture on the security owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-root-of-trust').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-root-of-trust').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-root-of-trust').owner, 'packages/security');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-64',
+    );
+    assert.ok(declared, 'CHUNK-64 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/chunk-64-root-of-trust.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/key-purpose-matrix.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/hsm-provider-requirements.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/key-ceremony-protocol.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/security/genesis-signing-ceremony.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/root-key-compromise.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/key-rotation-ceremony.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/ceremony-verification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security/src/ceremony/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/ceremony')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/root-of-trust')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/key-ceremony')), false);
+  });
+
   it('CHUNK-59 implements software supply-chain security on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-supply-chain').status, 'IMPLEMENTED');

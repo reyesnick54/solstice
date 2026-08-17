@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey root-of-trust and key-ceremony architecture (Chunk 64,
+  `packages/security/src/ceremony`): authority registry, key-purpose
+  matrix, extended HSM contract, simulation ceremony provider,
+  multi-person approvals, attestations, tamper-evident transcripts,
+  genesis binding, rotation/compromise workflows, and
+  `sunrey-ceremony` rehearsal. Simulation only. Not a completed
+  production ceremony and not a commercial HSM claim.
 - SunRey Testnet release-candidate freeze, qualification, and release
   control (Chunk 63, `packages/sunrey-chain/src/release-candidate`):
   versioned `SUNREY_TESTNET_RC_*` ids, protocol/API/crypto/dependency/

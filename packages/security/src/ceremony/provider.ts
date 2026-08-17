@@ -1,12 +1,12 @@
 /**
- * Development HSM simulator.
+ * Ceremony simulation HSM.
  *
- * Emulates a non-exportable key handle, generate, sign, rotate, and
- * disable using node:crypto Ed25519. Labeled simulation. Private
- * material never leaves this module.
+ * Test-only credentials, non-exportable interface semantics, separate
+ * authority keys, audit records. Labeled SIMULATION. Not a commercial
+ * HSM and not a completed production ceremony.
  */
 
-import { createEd25519SignatureProvider } from './ed25519-provider.ts';
+import { createEd25519SignatureProvider } from '../ed25519-provider.ts';
 import {
   freezePublicKeyDescriptor,
   freezeSignatureDescriptor,
@@ -14,18 +14,15 @@ import {
   keyVersion,
   type PublicKeyDescriptor,
   type SignatureDescriptor,
-} from './crypto-descriptors.ts';
+} from '../crypto-descriptors.ts';
 import {
   createDefaultCryptoSuiteRegistry,
   SUITE_SUNREY_ED25519_V1,
-  SUITE_SUNREY_HYBRID_SIM_V1,
+  SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1,
   SUITE_SUNREY_MLDSA_65_V1,
   type CryptoSuiteId,
-} from './crypto-suite.ts';
-import { securityErr, securityOk, type SecurityResult } from './errors.ts';
-import type { KeyPurpose } from './purposes.ts';
-import { secureRandomHex } from './random.ts';
-import type { PrivateKeyMaterial } from './redaction.ts';
+} from '../crypto-suite.ts';
+import { securityErr, securityOk, type SecurityResult } from '../errors.ts';
 import {
   negotiateSuiteCapability,
   type HsmAttestationMetadata,
@@ -39,17 +36,32 @@ import {
   type HsmKmsProvider,
   type HsmProviderVersion,
   type HsmSignInput,
-} from './hsm-kms.ts';
+} from '../hsm-kms.ts';
+import { createMlDsa65Provider } from '../pq-provider.ts';
+import type { KeyPurpose } from '../purposes.ts';
+import { secureRandomHex } from '../random.ts';
+import type { PrivateKeyMaterial } from '../redaction.ts';
+import { assertCeremonyFixtureContext, FIXTURE_KEY_MARKER } from './access.ts';
+import type { PqCapabilityAssessment } from './types.ts';
 
-export const DEVELOPMENT_HSM_PROVIDER_ID = 'sunrey-development-hsm-simulator';
-export const DEVELOPMENT_KMS_PROVIDER_ID = 'sunrey-development-kms-simulator';
-export const DEVELOPMENT_HSM_VERSION = 'hsm-sim-v1';
-export const DEVELOPMENT_HSM_ENVIRONMENT_LABEL =
-  'SIMULATION development HSM. Non-exportable handles via node:crypto Ed25519. Not a certified HSM. Not for production.';
-export const DEVELOPMENT_KMS_ENVIRONMENT_LABEL =
-  'SIMULATION development KMS. Non-exportable handles via node:crypto Ed25519. Not a cloud KMS. Not for production.';
+export const CEREMONY_HSM_PROVIDER_ID = 'sunrey-ceremony-hsm-simulator';
+export const CEREMONY_HSM_VERSION = 'ceremony-hsm-sim-v1';
+export const CEREMONY_HSM_ENVIRONMENT_LABEL =
+  `SIMULATION ceremony HSM. ${FIXTURE_KEY_MARKER}. Non-exportable handles. Not a certified HSM. Not a completed production ceremony.`;
 
-const CUSTODY_PURPOSE: KeyPurpose = 'WALLET_SIGNING';
+const CEREMONY_PURPOSES: readonly KeyPurpose[] = [
+  'VALIDATOR_CONSENSUS_SIGNING',
+  'BLOCK_PROPOSAL_SIGNING',
+  'P2P_IDENTITY',
+  'GOVERNANCE_SIGNING',
+  'WALLET_SIGNING',
+  'ORACLE_SIGNING',
+  'ATTESTATION_SIGNING',
+  'GENESIS_SIGNING',
+  'RELEASE_SIGNING',
+  'RECOVERY_SIGNING',
+  'BACKUP_ENCRYPTION',
+];
 
 type InternalRecord = {
   handle: HsmKeyHandle;
@@ -57,26 +69,23 @@ type InternalRecord = {
   material: PrivateKeyMaterial;
 };
 
-function suiteCapabilityFlag(suiteId: CryptoSuiteId): 'CLASSICAL_SUPPORTED' | 'HYBRID_SUPPORTED' | 'PQ_SUPPORTED' {
-  if (suiteId === SUITE_SUNREY_MLDSA_65_V1) {
-    return 'PQ_SUPPORTED';
-  }
-  if (suiteId === SUITE_SUNREY_HYBRID_SIM_V1) {
-    return 'HYBRID_SUPPORTED';
-  }
-  return 'CLASSICAL_SUPPORTED';
-}
-
-export class DevelopmentHsmSimulator implements HsmKmsProvider {
-  readonly providerId: string = DEVELOPMENT_HSM_PROVIDER_ID;
-  readonly kind: 'HSM' | 'KMS' = 'HSM';
-  readonly environmentLabel: string = DEVELOPMENT_HSM_ENVIRONMENT_LABEL;
+export class CeremonySimulationHsm implements HsmKmsProvider {
+  readonly providerId = CEREMONY_HSM_PROVIDER_ID;
+  readonly kind = 'HSM' as const;
+  readonly environmentLabel = CEREMONY_HSM_ENVIRONMENT_LABEL;
   readonly implementationState = 'SIMULATION' as const;
   readonly simulation = true;
 
   private readonly records = new Map<string, InternalRecord>();
   private readonly ed25519 = createEd25519SignatureProvider();
+  private readonly mlDsa = createMlDsa65Provider(true);
   private readonly registry = createDefaultCryptoSuiteRegistry();
+  private readonly fixtureGuard: () => SecurityResult<true>;
+
+  constructor(options: { readonly fixtureEnv?: NodeJS.ProcessEnv } = {}) {
+    const env = options.fixtureEnv ?? process.env;
+    this.fixtureGuard = () => assertCeremonyFixtureContext(env);
+  }
 
   capabilities(): HsmKmsCapabilities {
     return Object.freeze({
@@ -93,12 +102,13 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
         'HYBRID_SUPPORT',
         'NON_EXPORTABLE',
         'ATTESTATION',
+        'MULTI_AUTH_ADMIN',
         'BACKUP_SUPPORTED',
       ] as const),
       hardwarePqReadiness: 'HARDWARE_PROVIDER_UNCONFIRMED',
       softwarePqReadiness: 'SOFTWARE_PROVIDER_AVAILABLE',
       attestationSupported: true,
-      multiAuthAdminSupported: false,
+      multiAuthAdminSupported: true,
       backupSupported: true,
       nonExportable: true,
       capabilityEvidenceRefs: Object.freeze(['SIMULATION']),
@@ -106,16 +116,32 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     });
   }
 
+  assessPqCapability(): PqCapabilityAssessment {
+    return Object.freeze({
+      software: 'SOFTWARE_PROVIDER_AVAILABLE',
+      hardware: 'HARDWARE_PROVIDER_UNCONFIRMED',
+      hybridSoftwareAvailable: true,
+      hardwareEvidenceRefs: Object.freeze([]),
+      note: 'Chunk 60 software PQC is available in development/testnet. External HSM PQC is unconfirmed. No hardware PQC claim.',
+    });
+  }
+
   generateKey(input: HsmGenerateInput): SecurityResult<HsmKeyHandle> {
-    const purposeCheck = this.assertCustodyPurpose(input.purpose);
-    if (!purposeCheck.ok) {
-      return purposeCheck;
+    const fixture = this.fixtureGuard();
+    if (!fixture.ok) {
+      return fixture;
+    }
+    if (!CEREMONY_PURPOSES.includes(input.purpose)) {
+      return securityErr('PURPOSE_MISMATCH', `ceremony HSM rejects purpose ${input.purpose}`);
     }
     const suiteCheck = this.assertSuite(input.suiteId);
     if (!suiteCheck.ok) {
       return suiteCheck;
     }
-    const generated = this.ed25519.generateKey(input.purpose, input.suiteId, input.keyId);
+    const generated =
+      input.suiteId === SUITE_SUNREY_MLDSA_65_V1 || input.suiteId === SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1
+        ? this.softwarePqKey(input)
+        : this.ed25519.generateKey(input.purpose, input.suiteId, input.keyId);
     if (!generated.ok) {
       return generated;
     }
@@ -123,16 +149,12 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
   }
 
   importAllowedKey(input: HsmImportInput): SecurityResult<HsmKeyHandle> {
+    const fixture = this.fixtureGuard();
+    if (!fixture.ok) {
+      return fixture;
+    }
     if (input.importPolicy !== 'DEVELOPMENT_ALLOWED') {
-      return securityErr('POLICY_REJECTED', 'HSM-class import is forbidden unless development policy permits');
-    }
-    const purposeCheck = this.assertCustodyPurpose(input.purpose);
-    if (!purposeCheck.ok) {
-      return purposeCheck;
-    }
-    const suiteCheck = this.assertSuite(input.suiteId);
-    if (!suiteCheck.ok) {
-      return suiteCheck;
+      return securityErr('POLICY_REJECTED', 'ceremony HSM import is forbidden unless development policy permits');
     }
     const derived = this.ed25519.fromSeed(input.seedHex, input.purpose, input.suiteId, input.keyId);
     if (!derived.ok) {
@@ -155,7 +177,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
       return record;
     }
     if (record.value.handle.disabled || record.value.handle.compromised) {
-      return securityErr('KEY_NOT_USABLE', 'disabled or compromised HSM key cannot sign');
+      return securityErr('KEY_NOT_USABLE', 'disabled or compromised ceremony key cannot sign');
     }
     if (input.purpose !== record.value.handle.purpose) {
       return securityErr('PURPOSE_MISMATCH', 'sign purpose does not match key purpose');
@@ -163,10 +185,9 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     if (input.suiteId !== record.value.handle.suiteId) {
       return securityErr('DOWNGRADE_REJECTED', 'requested CryptoSuite does not match key; no silent downgrade');
     }
-    const publicHex = record.value.publicKey.publicKeyHex;
     const signed = this.ed25519.signRaw(
       record.value.material.reveal().toString('hex'),
-      publicHex,
+      record.value.publicKey.publicKeyHex,
       input.digest,
     );
     if (!signed.ok) {
@@ -180,7 +201,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
         keyVersion: record.value.publicKey.keyVersion,
         purpose: record.value.publicKey.purpose,
         signatureHex: signed.value.toString('hex'),
-        domain: 'sunrey.custody.wallet.v1',
+        domain: 'sunrey.ceremony.v1',
         protocolVersion: 'sunrey-protocol-0',
       }),
     );
@@ -191,16 +212,17 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     if (!record.ok) {
       return record;
     }
-    const generated = this.ed25519.generateKey(
-      record.value.handle.purpose,
-      record.value.handle.suiteId,
-      `${record.value.handle.keyId}:v${record.value.handle.keyVersion + 1}`,
-    );
+    const generated = this.generateKey({
+      purpose: record.value.handle.purpose,
+      suiteId: record.value.handle.suiteId,
+      keyId: `${record.value.handle.keyId}:v${record.value.handle.keyVersion + 1}`,
+    });
     if (!generated.ok) {
       return generated;
     }
-    this.records.delete(handle.handleId);
-    return this.store(generated.value.publicKey, generated.value.privateKey, record.value.handle.keyVersion + 1);
+    const retired: HsmKeyHandle = Object.freeze({ ...record.value.handle, disabled: true });
+    this.records.set(handle.handleId, { ...record.value, handle: retired });
+    return generated;
   }
 
   disableKey(handle: HsmKeyHandle): SecurityResult<HsmKeyHandle> {
@@ -235,7 +257,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     return securityOk(
       Object.freeze({
         providerId: this.providerId,
-        providerVersion: DEVELOPMENT_HSM_VERSION,
+        providerVersion: CEREMONY_HSM_VERSION,
         keyId: record.value.handle.keyId,
         keyVersion: record.value.handle.keyVersion,
         suiteId: record.value.handle.suiteId,
@@ -255,7 +277,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     return securityOk(
       Object.freeze({
         providerId: this.providerId,
-        providerVersion: DEVELOPMENT_HSM_VERSION,
+        providerVersion: CEREMONY_HSM_VERSION,
         keyId: record.value.handle.keyId,
         keyVersion: record.value.handle.keyVersion,
       }),
@@ -283,7 +305,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
         keyId: record.value.handle.keyId,
         keyVersion: record.value.handle.keyVersion,
         providerId: this.providerId,
-        backupHandleRef: `sim-backup:${record.value.handle.keyId}:v${record.value.handle.keyVersion}`,
+        backupHandleRef: `ceremony-backup:${record.value.handle.keyId}:v${record.value.handle.keyVersion}`,
         encryptionPurpose: 'BACKUP_ENCRYPTION',
         containsPlaintextKey: false,
         simulation: true,
@@ -294,24 +316,29 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
   recordAuditEvent(eventType: string, handle?: HsmKeyHandle): SecurityResult<HsmAuditEventReference> {
     return securityOk(
       Object.freeze({
-        eventId: `hsm-audit_${secureRandomHex(8)}`,
+        eventId: `ceremony-audit_${secureRandomHex(8)}`,
         eventType,
         providerId: this.providerId,
         keyId: handle?.keyId ?? null,
-        evidenceRef: `sim-hsm-audit:${eventType}`,
+        evidenceRef: `sim-ceremony-audit:${eventType}`,
         simulation: true,
       }),
     );
   }
 
-  private assertCustodyPurpose(purpose: KeyPurpose): SecurityResult<true> {
-    if (purpose !== CUSTODY_PURPOSE) {
-      return securityErr(
-        'PURPOSE_MISMATCH',
-        `HSM custody keys must use WALLET_SIGNING; ${purpose} is rejected`,
-      );
+  verifyDigest(
+    publicKeyHex: string,
+    digest: Buffer,
+    signatureHex: string,
+  ): SecurityResult<true> {
+    return this.ed25519.verifyRaw(publicKeyHex, digest, signatureHex);
+  }
+
+  private softwarePqKey(input: HsmGenerateInput): ReturnType<CeremonySimulationHsm['ed25519']['generateKey']> {
+    if (input.suiteId === SUITE_SUNREY_MLDSA_65_V1) {
+      return this.mlDsa.generateKey(input.purpose, input.suiteId, input.keyId);
     }
-    return securityOk(true);
+    return this.ed25519.generateKey(input.purpose, SUITE_SUNREY_ED25519_V1, input.keyId);
   }
 
   private assertSuite(suiteId: CryptoSuiteId): SecurityResult<true> {
@@ -322,13 +349,16 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     if (suiteId === SUITE_SUNREY_ED25519_V1) {
       return securityOk(true);
     }
-    return negotiateSuiteCapability(this.capabilities(), suiteCapabilityFlag(suiteId));
+    if (suiteId === SUITE_SUNREY_MLDSA_65_V1 || suiteId === SUITE_SUNREY_HYBRID_ED25519_MLDSA_V1) {
+      return negotiateSuiteCapability(this.capabilities(), 'HYBRID_SUPPORTED');
+    }
+    return securityErr('DOWNGRADE_REJECTED', `ceremony HSM does not claim hardware support for ${suiteId}`);
   }
 
   private lookup(handle: HsmKeyHandle): SecurityResult<InternalRecord> {
     const record = this.records.get(handle.handleId);
     if (!record) {
-      return securityErr('KEY_NOT_FOUND', 'HSM handle is unknown');
+      return securityErr('KEY_NOT_FOUND', 'ceremony HSM handle is unknown');
     }
     return securityOk(record);
   }
@@ -339,7 +369,7 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
     version: number,
   ): SecurityResult<HsmKeyHandle> {
     const handle: HsmKeyHandle = Object.freeze({
-      handleId: `hsmh_${secureRandomHex(12)}`,
+      handleId: `cerhsm_${secureRandomHex(12)}`,
       keyId: publicKey.keyId,
       keyVersion: version,
       purpose: publicKey.purpose,
@@ -350,27 +380,22 @@ export class DevelopmentHsmSimulator implements HsmKmsProvider {
       providerId: this.providerId,
       kind: this.kind,
     });
-    const descriptor = freezePublicKeyDescriptor({
-      ...publicKey,
-      keyId: keyId(publicKey.keyId),
-      keyVersion: keyVersion(version),
-      providerId: this.providerId,
+    this.records.set(handle.handleId, {
+      handle,
+      publicKey: freezePublicKeyDescriptor({
+        ...publicKey,
+        keyId: keyId(publicKey.keyId),
+        keyVersion: keyVersion(version),
+        providerId: this.providerId,
+      }),
+      material,
     });
-    this.records.set(handle.handleId, { handle, publicKey: descriptor, material });
     return securityOk(handle);
   }
 }
 
-export class DevelopmentKmsSimulator extends DevelopmentHsmSimulator {
-  override readonly providerId = DEVELOPMENT_KMS_PROVIDER_ID;
-  override readonly kind = 'KMS';
-  override readonly environmentLabel = DEVELOPMENT_KMS_ENVIRONMENT_LABEL;
-}
-
-export function createDevelopmentHsmSimulator(): DevelopmentHsmSimulator {
-  return new DevelopmentHsmSimulator();
-}
-
-export function createDevelopmentKmsSimulator(): DevelopmentKmsSimulator {
-  return new DevelopmentKmsSimulator();
+export function createCeremonySimulationHsm(
+  options: { readonly fixtureEnv?: NodeJS.ProcessEnv } = {},
+): CeremonySimulationHsm {
+  return new CeremonySimulationHsm(options);
 }

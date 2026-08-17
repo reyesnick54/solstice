@@ -42,6 +42,7 @@ node scripts/check-container-pins.mjs
 echo "==> tests"
 npm run test:sunrey-node
 npm test
+npm run sunrey-ceremony -- rehearse
 npm run sunrey-bench -- sanity
 
 echo "==> fuzz smoke"
