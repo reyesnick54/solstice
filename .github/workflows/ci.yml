@@ -190,6 +190,12 @@ jobs:
         run: npm run sunrey-range -- campaign --smoke
       - name: SunRey adversarial range demo
         run: npm run demo:sunrey-range
+      - name: SunRey Testnet RC smoke qualification
+        run: node scripts/sunrey-release.mjs rc qualify --profile smoke
+      - name: SunRey Testnet RC verify
+        run: node scripts/sunrey-release.mjs rc verify
+      - name: SunRey Testnet RC demo
+        run: npm run demo:sunrey-rc
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
       - name: SunRey independent security-review demo

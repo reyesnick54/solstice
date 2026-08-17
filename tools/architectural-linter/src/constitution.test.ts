@@ -1602,6 +1602,31 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'tools/sunrey-test')), false);
   });
 
+  it('CHUNK-63 implements Testnet release-candidate control on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-testnet-rc').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-testnet-rc').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-testnet-rc').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-63',
+    );
+    assert.ok(declared, 'CHUNK-63 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-63-testnet-rc.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/chunk-63-testnet-rc.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/rc-qualification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/rc-freeze-policy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/rc-upgrade-rehearsal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/rc-known-limitations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/release-candidate/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-rc')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/release-candidate')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/testnet-rc')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-qualification')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/rc-control')), false);
   it('CHUNK-62 prepares an independent security-review bundle on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').status, 'IMPLEMENTED');

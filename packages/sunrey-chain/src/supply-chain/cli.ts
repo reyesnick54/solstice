@@ -7,6 +7,7 @@
 
 import { join } from 'node:path';
 
+import { runSunreyReleaseRc } from '../release-candidate/cli.ts';
 import { auditDependencies } from './audit.ts';
 import { canonicalArtifactDigest, collectSoftwareInventory, generatedSourceDigest, generatedSourceDrift, sha256File, sha256Text } from './inventory.ts';
 import { loadDependencyPolicy } from './policy.ts';
@@ -41,6 +42,10 @@ const HIGH_VALUE = [
 
 export function runSunreyRelease(root: string, argv: readonly string[]): ReleaseCliResult {
   const [command = 'help'] = argv;
+  if (command === 'rc') {
+    const result = runSunreyReleaseRc(root, argv.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   const sourceCommit = process.env.GITHUB_SHA ?? 'local';
   const packageLock = sha256File(root, 'package-lock.json') ?? 'missing';
   const cargoLockRust = sha256File(root, 'packages/sunrey-chain/rust/Cargo.lock') ?? 'missing';
@@ -180,7 +185,7 @@ export function runSunreyRelease(root: string, argv: readonly string[]): Release
     ok: command === 'help',
     command: command === 'help' ? 'help' : command,
     payload: {
-      usage: 'sunrey-release <build|sbom|provenance|sign|verify|compare-builds|audit>',
+      usage: 'sunrey-release <build|sbom|provenance|sign|verify|compare-builds|audit|rc>',
       sha256Hint: sha256Text(command),
     },
   };

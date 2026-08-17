@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey Testnet release-candidate freeze, qualification, and release
+  control (Chunk 63, `packages/sunrey-chain/src/release-candidate`):
+  versioned `SUNREY_TESTNET_RC_*` ids, protocol/API/crypto/dependency/
+  artifact freeze, qualification matrix, seven-validator and recovery
+  rehearsals, ReleaseAuthority-signed bundles, and `sunrey-release rc`
+  commands. TESTNET only. Tickers remain `NOT_ASSIGNED`. No status
+  implies mainnet readiness.
 - SunRey formal protocol models (Chunk 61,
   `packages/sunrey-chain/formal`, `packages/sunrey-chain/src/formal`,
   `packages/sunrey-chain/rust/crates/formal`): TLA+/TLC models for
@@ -552,6 +559,7 @@ npm run demo:consent
 npm run demo:clean-room
 npm run demo:sunrey-wallet
 npm run demo:sunrey-sdk
+npm run demo:sunrey-rc
 npm run sunrey:dev
 npm run typecheck
 npm run scan:secrets

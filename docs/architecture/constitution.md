@@ -948,6 +948,15 @@ a second ledger, consensus engine, or formal-verification product.
 Do not create `packages/sunrey-test`, `packages/fuzz`,
 `packages/assurance`, or `tools/sunrey-test`. See
 [`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Chunk 63 implements Testnet release-candidate freeze, qualification,
+and release control at `packages/sunrey-chain/src/release-candidate`.
+Capability `sunrey-testnet-rc` is `IMPLEMENTED`. It remains TESTNET
+work. No RC status implies mainnet readiness. Tickers remain
+`NOT_ASSIGNED`. `ReleaseAuthority` signs the candidate bundle only.
+Do not create `packages/sunrey-rc`, `packages/release-candidate`,
+`packages/testnet-rc`, `packages/sunrey-qualification`, or
+`packages/rc-control`. See
+[`chunk-63-testnet-rc.md`](./chunk-63-testnet-rc.md).
 Chunk 62 implements independent security-review preparation at
 `packages/sunrey-chain/src/audit`. Capability
 `sunrey-audit-readiness` is `IMPLEMENTED`. The generated bundle is

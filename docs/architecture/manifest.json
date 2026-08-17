@@ -2328,6 +2328,11 @@
       "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
     },
     {
+      "id": "sunrey-testnet-rc",
+      "name": "SunRey Testnet release-candidate freeze and qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/index.ts",
       "id": "sunrey-audit-readiness",
       "name": "SunRey independent security-review preparation",
       "canonicalOwner": "packages/sunrey-chain",
@@ -2345,12 +2350,18 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "TestnetReleaseCandidateManifest",
           "name": "AuditBundleManifest",
           "name": "FormalModelRegistry",
           "kind": "type"
         }
       ],
       "forbiddenAliases": [
+        "packages/sunrey-rc",
+        "packages/release-candidate",
+        "packages/testnet-rc",
+        "packages/sunrey-qualification",
+        "packages/rc-control"
         "packages/sunrey-audit",
         "packages/audit",
         "packages/security-review",
@@ -2365,6 +2376,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. ReleaseAuthority signs RC artifacts only and does not activate protocol change or issue Execution Authority."
       "notes": "Chunk 62 reviewer-ready security package at packages/sunrey-chain/src/audit. Signs evidence with ReleaseAuthority. Does not claim an external audit occurred or passed."
       "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
     }
@@ -2967,6 +2979,11 @@
     "packages/sunrey-fuzz",
     "packages/protocol-fuzzer",
     "tools/sunrey-test",
+    "packages/sunrey-rc",
+    "packages/release-candidate",
+    "packages/testnet-rc",
+    "packages/sunrey-qualification",
+    "packages/rc-control"
     "packages/formal",
     "packages/tla",
     "packages/model-checker",
@@ -3497,6 +3514,11 @@
       "notes": "Chunk 56 protocol fuzzing, property tests, differential TypeScript/Rust drivers, and deterministic replay at packages/sunrey-chain/src/assurance, packages/sunrey-chain/rust/crates/assurance, existing cargo-fuzz targets, and tests/assurance. Development/testnet only. Not a second ledger, consensus engine, or formal-verification product. Do not create packages/sunrey-test, packages/fuzz, packages/assurance, or tools/sunrey-test."
     },
     {
+      "id": "sunrey-testnet-rc",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED. Do not create packages/sunrey-rc, packages/release-candidate, packages/testnet-rc, packages/sunrey-qualification, or packages/rc-control."
       "id": "sunrey-audit-readiness",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
