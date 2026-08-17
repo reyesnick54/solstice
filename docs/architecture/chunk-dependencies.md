@@ -110,6 +110,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-oracle-network | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-assets | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-native-fees | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
 
@@ -329,6 +330,11 @@ Chunk 42 implements native fees and resource metering at
 `packages/sunrey-chain`. Capability `sunrey-native-fees` is
 `IMPLEMENTED`. See
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Chunk 48 connects SunRey Exchange to native-chain atomic DVP at
+`packages/sunrey-exchange` and `packages/sunrey-chain`. Capability
+`sunrey-exchange-native-settlement` is `IMPLEMENTED`. See
+[`chunk-48-exchange-native-settlement.md`](./chunk-48-exchange-native-settlement.md).
+Do not create a second exchange ledger.
 Do not create `packages/validators`, `packages/staking`,
 `packages/validator-v2`, or `packages/moonrey-coin`.
 Chunk 37 implements the development Tendermint-class BFT engine at

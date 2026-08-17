@@ -21,6 +21,7 @@ pub fn run_operator_command(args: &[String]) -> NodeResult<String> {
         "fees" => fees_command(&args[1..]),
         "wallet" => wallet_command(&args[1..]),
         _ => Err(NodeError::Validation(
+            "unknown command; expected evidence, validator, machine, productive, moonrey, asset, or fees".into(),
             "unknown command; expected evidence, validator, machine, productive, moonrey, asset, fees, or wallet".into(),
         )),
     }

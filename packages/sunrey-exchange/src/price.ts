@@ -82,6 +82,13 @@ export function quoteMoney(price: ExchangePrice, quantity: AssetQuantity, curren
   return Money.fromMinorUnits(quoteForQuantity(price, quantity), currency);
 }
 
+export function quoteAssetQuantity(price: ExchangePrice, quantity: AssetQuantity): AssetQuantity {
+  if (price.quoteKind !== 'ASSET') {
+    throw new TypeError('quoteAssetQuantity requires ASSET quote');
+  }
+  return AssetQuantity.fromScaledUnits(quoteForQuantity(price, quantity), price.quoteAssetId);
+}
+
 function assertCompatible(a: ExchangePrice, b: ExchangePrice): void {
   if (
     a.baseAssetId !== b.baseAssetId ||

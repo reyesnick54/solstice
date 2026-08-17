@@ -55,3 +55,6 @@ export type CustodyReconciliationOutcome = (typeof CUSTODY_RECONCILIATION_OUTCOM
 export const EVIDENCE_KIND_CUSTODY = 'sunrey-custody';
 
 export const CUSTODY_PROVIDER_MODE = 'SIMULATION_ONLY' as const;
+
+export const NATIVE_CHAIN_FINALITY = ['PENDING_PROPOSAL', 'MEMPOOL', 'BFT_FINALIZED'] as const;
+export type NativeChainFinality = (typeof NATIVE_CHAIN_FINALITY)[number];

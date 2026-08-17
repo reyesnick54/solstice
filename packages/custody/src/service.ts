@@ -119,6 +119,16 @@ export class CustodyService {
     this.store.addressOwners.set(address, { customerId, custodyAccountId });
   }
 
+  allocateExchangeDepositAddress(input: {
+    readonly customerId: string;
+    readonly custodyAccountId: CustodyAccountId;
+    readonly exchangeAccountId: string;
+  }): string {
+    const address = `sr1ex_${input.exchangeAccountId}`;
+    this.registerAddress(address, input.customerId, input.custodyAccountId);
+    return address;
+  }
+
   setKillSwitch(kind: KillSwitchKind, active: boolean, actorKind: 'HUMAN_OPERATOR' | 'AGENT' | 'AI'): CustodyOutcome<true> {
     if (actorKind !== 'HUMAN_OPERATOR') {
       return { outcome: 'REJECTED', code: 'AI_CANNOT_DISABLE_CONTROLS', message: 'only a human operator may change custody kill switches' };
@@ -196,7 +206,12 @@ export class CustodyService {
       this.openCase('SANCTIONS_REVIEW', ['DESTINATION_BLOCK'], current.customerId);
       return { outcome: 'REJECTED', code: 'DEPOSIT_SCREEN_BLOCK', message: screen.reason };
     }
-    if (current.notice.confirmations < 1) {
+    if (current.notice.finality === 'PENDING_PROPOSAL' || current.notice.finality === 'MEMPOOL') {
+      const waiting = Object.freeze({ ...screened, state: 'AWAITING_FINALITY' as const });
+      this.store.putDeposit(waiting);
+      return { outcome: 'REJECTED', code: 'AWAITING_FINALITY', message: 'mempool receipt is not BFT finality' };
+    }
+    if (current.notice.finality !== 'BFT_FINALIZED' && current.notice.confirmations < 1) {
       const waiting = Object.freeze({ ...screened, state: 'AWAITING_FINALITY' as const });
       this.store.putDeposit(waiting);
       return { outcome: 'REJECTED', code: 'AWAITING_FINALITY', message: 'deposit is not final' };

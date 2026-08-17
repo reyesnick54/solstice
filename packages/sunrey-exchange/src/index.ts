@@ -11,6 +11,9 @@ export {
   SIMULATION_FEE_SCHEDULE_ID,
   SIMULATION_USD_CASH_ASSET_ID,
   SUNREY_COIN_USD_MARKET_ID,
+  SUNREY_MOONREY_MARKET_ID,
+  SUNREY_COIN_NATIVE_ASSET_ID,
+  MOONREY_COIN_NATIVE_ASSET_ID,
   asExchangeAccountId,
   asExchangeHoldId,
   asExchangeMarketId,
@@ -33,12 +36,13 @@ export {
   type TradeId,
 } from './ids.ts';
 export { applyFill, matchIncoming, pricesCross, sortBook, toTrade } from './matching.ts';
-export { comparePrice, exchangePrice, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
+export { comparePrice, exchangePrice, quoteAssetQuantity, quoteForQuantity, quoteMoney, type ExchangePrice } from './price.ts';
 export type { ChainAnchorPort, CoinPort, FiatPort, InformationMarketPort } from './ports.ts';
 export {
   APPLICATION_SETTLEMENT_AUTHORITY,
   NATIVE_SETTLEMENT_AUTHORITY,
   UnwiredNativeAssetSettlementAdapter,
+  WiredNativeAssetSettlementAdapter,
   nativeSettlementBoundary,
 } from './native-settlement.ts';
 export type {
@@ -48,6 +52,24 @@ export type {
   NativeSettlementFailure,
   NativeTransferInput,
 } from './native-settlement.ts';
+export {
+  EXCHANGE_SETTLEMENT_ISSUER,
+  NATIVE_SETTLEMENT_POLICY,
+  NATIVE_TICKER_STATUS,
+  NativeClearingEngine,
+  nativeExchangeApi,
+  sunreyMoonreyMarket,
+} from './native-clearing/index.ts';
+export type {
+  DerivedNativePosition,
+  ExchangeSettlementIntent,
+  MarketDefinition,
+  NativeDeposit,
+  NativeReservation,
+  NativeSettlement,
+  NativeTrade,
+  TradeSettlementReceipt,
+} from './native-clearing/index.ts';
 export { SunReyExchangeService, type ExchangeCatalog } from './service.ts';
 export { ExchangeStore } from './store.ts';
 export {
@@ -65,6 +87,8 @@ export {
   RECONCILIATION_OUTCOMES,
   SELF_TRADE_POLICIES,
   SETTLEMENT_MODELS,
+  NATIVE_SETTLEMENT_STATUSES,
+  NATIVE_POSITION_COMPONENTS,
   TIME_IN_FORCE,
   type ContractOrderType,
   type DigitalOrderType,

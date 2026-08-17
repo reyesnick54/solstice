@@ -783,6 +783,16 @@ is not a fiat Account. Wallet metadata is not a second ledger.
 Do not create `packages/wallet-v2` or `packages/blockchain-wallet`.
 See [`chunk-46-sovereign-wallets.md`](./chunk-46-sovereign-wallets.md).
 
+Chunk 48 connects the canonical SunRey Exchange to native-chain
+clearing and atomic DVP at `packages/sunrey-exchange` and
+`packages/sunrey-chain`. Capability
+`sunrey-exchange-native-settlement` is `IMPLEMENTED`. Exchange
+positions are derived. Matching stays off-chain. Public tickers
+remain `NOT_ASSIGNED`. See
+[`chunk-48-exchange-native-settlement.md`](./chunk-48-exchange-native-settlement.md).
+Do not create `packages/sunrey-exchange-ledger` or a second
+exchange.
+
 Chunk 36R implements the development validator registry, lifecycle,
 integer voting power, epoch-boundary set transitions, CryptoSuite
 consensus signer, and durable signer safety at

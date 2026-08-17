@@ -108,6 +108,10 @@ jobs:
         run: npm run demo:sunrey-wallet
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
+      - name: SunRey Exchange native settlement demo
+        run: npm run demo:sunrey-exchange-native
+      - name: SunRey Exchange four-validator DVP demo
+        run: npm run demo:sunrey-exchange-settlement
       - name: Custody deposit and withdrawal demo
         run: npm run demo:custody
       - name: Institutional native-asset custody demo

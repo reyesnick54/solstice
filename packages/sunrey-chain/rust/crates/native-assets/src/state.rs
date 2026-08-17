@@ -165,6 +165,13 @@ pub struct AssetTransferRecord {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ExchangeSettlementRecord {
+    pub settlement_id: String,
+    pub trade_ids: Vec<String>,
+    pub height: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NativeAssetLedger {
     pub registry: NativeAssetRegistry,
     pub supplies: BTreeMap<NativeAssetId, AssetSupplyState>,
@@ -174,6 +181,11 @@ pub struct NativeAssetLedger {
     pub burns: BTreeMap<String, AssetBurnRecord>,
     pub transfers: BTreeMap<String, AssetTransferRecord>,
     pub used_authorizations: BTreeMap<String, String>,
+    pub exchange_authorities: BTreeMap<String, Vec<u8>>,
+    pub used_settlements: BTreeMap<String, String>,
+    pub used_settlement_nonces: BTreeMap<(String, u64), String>,
+    pub settled_trades: BTreeMap<String, u128>,
+    pub settlement_records: BTreeMap<String, ExchangeSettlementRecord>,
 }
 
 impl Default for NativeAssetLedger {
@@ -198,6 +210,11 @@ impl NativeAssetLedger {
             burns: BTreeMap::new(),
             transfers: BTreeMap::new(),
             used_authorizations: BTreeMap::new(),
+            exchange_authorities: BTreeMap::new(),
+            used_settlements: BTreeMap::new(),
+            used_settlement_nonces: BTreeMap::new(),
+            settled_trades: BTreeMap::new(),
+            settlement_records: BTreeMap::new(),
         }
     }
 
@@ -360,6 +377,36 @@ impl NativeAssetLedger {
             encode_u128_local(&mut out, rec.quantity);
             encode_u64(&mut out, rec.height);
         }
+        encode_u32(&mut out, self.exchange_authorities.len() as u32);
+        for (issuer, key) in &self.exchange_authorities {
+            encode_string(&mut out, issuer);
+            sunrey_protocol::encode_bytes(&mut out, key);
+        }
+        encode_u32(&mut out, self.used_settlements.len() as u32);
+        for (id, trades) in &self.used_settlements {
+            encode_string(&mut out, id);
+            encode_string(&mut out, trades);
+        }
+        encode_u32(&mut out, self.used_settlement_nonces.len() as u32);
+        for ((issuer, nonce), settlement_id) in &self.used_settlement_nonces {
+            encode_string(&mut out, issuer);
+            encode_u64(&mut out, *nonce);
+            encode_string(&mut out, settlement_id);
+        }
+        encode_u32(&mut out, self.settled_trades.len() as u32);
+        for (trade_id, qty) in &self.settled_trades {
+            encode_string(&mut out, trade_id);
+            encode_u128_local(&mut out, *qty);
+        }
+        encode_u32(&mut out, self.settlement_records.len() as u32);
+        for rec in self.settlement_records.values() {
+            encode_string(&mut out, &rec.settlement_id);
+            encode_u32(&mut out, rec.trade_ids.len() as u32);
+            for trade_id in &rec.trade_ids {
+                encode_string(&mut out, trade_id);
+            }
+            encode_u64(&mut out, rec.height);
+        }
         out
     }
 
@@ -503,8 +550,60 @@ impl NativeAssetLedger {
             };
             transfers.insert(record_id, rec);
         }
+        let mut exchange_authorities = BTreeMap::new();
+        let mut used_settlements = BTreeMap::new();
+        let mut used_settlement_nonces = BTreeMap::new();
+        let mut settled_trades = BTreeMap::new();
+        let mut settlement_records = BTreeMap::new();
         if !input.is_empty() {
-            return Err(AssetError::SchemaInvalid);
+            let auth_count = decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+            for _ in 0..auth_count {
+                let issuer = decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let key = sunrey_protocol::decode_bytes(&mut input)
+                    .map_err(|_| AssetError::DecodeFailed)?;
+                exchange_authorities.insert(issuer, key);
+            }
+            let used_count = decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+            for _ in 0..used_count {
+                let id = decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let trades = decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                used_settlements.insert(id, trades);
+            }
+            let nonce_count =
+                decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+            for _ in 0..nonce_count {
+                let issuer = decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let nonce = decode_u64(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let settlement_id =
+                    decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                used_settlement_nonces.insert((issuer, nonce), settlement_id);
+            }
+            let trade_count =
+                decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+            for _ in 0..trade_count {
+                let trade_id = decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let qty = decode_u128(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                settled_trades.insert(trade_id, qty);
+            }
+            let rec_count = decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+            for _ in 0..rec_count {
+                let settlement_id =
+                    decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                let n = decode_u32(&mut input).map_err(|_| AssetError::DecodeFailed)? as usize;
+                let mut trade_ids = Vec::with_capacity(n);
+                for _ in 0..n {
+                    trade_ids
+                        .push(decode_string(&mut input).map_err(|_| AssetError::DecodeFailed)?);
+                }
+                let height = decode_u64(&mut input).map_err(|_| AssetError::DecodeFailed)?;
+                settlement_records.insert(
+                    settlement_id.clone(),
+                    ExchangeSettlementRecord { settlement_id, trade_ids, height },
+                );
+            }
+            if !input.is_empty() {
+                return Err(AssetError::SchemaInvalid);
+            }
         }
         Ok(Self {
             registry,
@@ -515,6 +614,11 @@ impl NativeAssetLedger {
             burns,
             transfers,
             used_authorizations,
+            exchange_authorities,
+            used_settlements,
+            used_settlement_nonces,
+            settled_trades,
+            settlement_records,
         })
     }
 
@@ -524,6 +628,39 @@ impl NativeAssetLedger {
 
     pub fn locks_for(&self, actor: &str) -> Vec<AssetLock> {
         self.locks.values().filter(|l| l.owner == actor).cloned().collect()
+    }
+
+    pub fn register_exchange_authority(
+        &mut self,
+        issuer: impl Into<String>,
+        public_key: Vec<u8>,
+    ) -> Result<(), AssetError> {
+        let issuer = issuer.into();
+        if issuer.is_empty() || public_key.is_empty() {
+            return Err(AssetError::WrongAuthority);
+        }
+        if let Some(existing) = self.exchange_authorities.get(&issuer) {
+            if existing != &public_key {
+                return Err(AssetError::WrongAuthority);
+            }
+            return Ok(());
+        }
+        self.exchange_authorities.insert(issuer, public_key);
+        Ok(())
+    }
+
+    pub fn require_exchange_authority(
+        &mut self,
+        issuer: &str,
+        public_key: &[u8],
+    ) -> Result<(), AssetError> {
+        if let Some(existing) = self.exchange_authorities.get(issuer) {
+            if existing != public_key {
+                return Err(AssetError::WrongAuthority);
+            }
+            return Ok(());
+        }
+        self.register_exchange_authority(issuer, public_key.to_vec())
     }
 
     pub fn public_supply(&self, asset: NativeAssetId) -> serde_json::Value {
