@@ -19,13 +19,13 @@ export function structuredLog(input: {
     ts: input.nowUtc,
     level: input.level,
     event: input.event,
-    height: input.height?.toString(),
-    round: input.round?.toString(),
-    step: input.step,
-    peerState: input.peerState,
-    consensusEvent: input.consensusEvent,
-    signerError: input.signerError,
-    upgradeState: input.upgradeState,
+    ...(input.height !== undefined ? { height: input.height.toString() } : {}),
+    ...(input.round !== undefined ? { round: input.round.toString() } : {}),
+    ...(input.step ? { step: input.step } : {}),
+    ...(input.peerState ? { peerState: input.peerState } : {}),
+    ...(input.consensusEvent ? { consensusEvent: input.consensusEvent } : {}),
+    ...(input.signerError ? { signerError: input.signerError } : {}),
+    ...(input.upgradeState ? { upgradeState: input.upgradeState } : {}),
   };
   const serialized = JSON.stringify(record);
   if (FORBIDDEN.test(serialized)) {

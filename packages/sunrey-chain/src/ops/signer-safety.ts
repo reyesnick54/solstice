@@ -174,14 +174,22 @@ function serializeCheckpoint(checkpoint: SafetyCheckpoint): Record<string, strin
   };
 }
 
+function field(raw: Record<string, string>, key: string): string {
+  const value = raw[key];
+  if (typeof value !== 'string' || value.length === 0) {
+    throw new Error(`signer-safety checkpoint missing ${key}`);
+  }
+  return value;
+}
+
 function deserializeCheckpoint(raw: Record<string, string>): SafetyCheckpoint {
   return {
-    validatorId: raw.validatorId,
-    chainId: raw.chainId,
-    lastSignedHeight: BigInt(raw.lastSignedHeight),
-    lastSignedRound: BigInt(raw.lastSignedRound),
-    lastSignedStep: raw.lastSignedStep as SafetyCheckpoint['lastSignedStep'],
-    integrityHash: raw.integrityHash,
-    createdAtUtc: raw.createdAtUtc,
+    validatorId: field(raw, 'validatorId'),
+    chainId: field(raw, 'chainId'),
+    lastSignedHeight: BigInt(field(raw, 'lastSignedHeight')),
+    lastSignedRound: BigInt(field(raw, 'lastSignedRound')),
+    lastSignedStep: field(raw, 'lastSignedStep') as SafetyCheckpoint['lastSignedStep'],
+    integrityHash: field(raw, 'integrityHash'),
+    createdAtUtc: field(raw, 'createdAtUtc'),
   };
 }

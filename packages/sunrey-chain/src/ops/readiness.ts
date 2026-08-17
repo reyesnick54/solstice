@@ -1,6 +1,7 @@
 import type { ValidatorSet } from '../validators/index.ts';
 import { validateValidatorConfig } from './config.ts';
-import { availableSentryCount, type SentryTopology } from './sentry.ts';
+import { availableSentryCount } from './sentry.ts';
+import type { SentryTopology } from './types.ts';
 import type { SignerSafetyStore } from './signer-safety.ts';
 import type { OperatorReadinessReport, ReadinessCheck, ValidatorNodeConfig } from './types.ts';
 

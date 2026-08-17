@@ -86,6 +86,12 @@ function request(
   };
 }
 
+function failedCode(result: { readonly ok: boolean; readonly error?: { readonly code: string } }): string {
+  assert.equal(result.ok, false);
+  assert.ok(result.error);
+  return result.error.code;
+}
+
 function withDir<T>(fn: (dir: string) => T): T {
   const dir = mkdtempSync(join(tmpdir(), 'sunrey-ops-'));
   try {
@@ -123,7 +129,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     assert.equal(validateSentryTopology({ ...topology, sentries: topology.sentries.slice(0, 1) }).ok, false);
     const sentry = developmentSentryConfig(topology, 0);
     assert.equal(sentry.hasConsensusVotingKey, false);
-    assert.equal(sentryCanSign(sentry).error.code, 'SENTRY_CANNOT_SIGN');
+    assert.equal(failedCode(sentryCanSign(sentry)), 'SENTRY_CANNOT_SIGN');
   });
 
   it('sentry cannot sign and public RPC cannot reach the signer', () => {
@@ -194,6 +200,9 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       assert.equal(first.ok, true);
       const backup = store.backup(NOW);
       assert.equal(backup.ok, true);
+      if (!backup.ok) {
+        return;
+      }
       const current = store.safety.load();
       assert.ok(current);
       const older = {
@@ -202,12 +211,12 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
         lastSignedRound: 0n,
         lastSignedStep: 'PREVOTE' as const,
       };
-      const rolled = store.restore(older, backup.ok ? backup.value : backup.error as never);
+      const rolled = store.restore(older, backup.value);
       assert.equal(rolled.ok, false);
       if (!rolled.ok) {
         assert.equal(rolled.error.code, 'SIGNER_ROLLBACK');
       }
-      const same = store.restore(current, backup.ok ? backup.value : ({} as never));
+      const same = store.restore(current, backup.value);
       assert.equal(same.ok, true);
       assert.equal(compareSafetyWatermark(current, current), 0);
       assert.equal(integrityHash(current).length, 64);
@@ -309,7 +318,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
         assert.equal(status.value.recoveryEligible, true);
       }
     }
-    assert.equal(eraseEvidence().error.code, 'EVIDENCE_IMMUTABLE');
+    assert.equal(failedCode(eraseEvidence()), 'EVIDENCE_IMMUTABLE');
   });
 
   it('verifies snapshots and rejects tamper or wrong-network restores', () => {
@@ -348,7 +357,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       const restored = restoreSnapshot(created.value, trust, dir);
       assert.equal(restored.ok, true);
     });
-    assert.equal(refuseUnverifiedProvider().error.code, 'SNAPSHOT_TAMPER');
+    assert.equal(failedCode(refuseUnverifiedProvider()), 'SNAPSHOT_TAMPER');
     const genesis = planGenesisSync(10n);
     assert.equal(genesis.ok, true);
     const snapSync = planSnapshotSync(created.value, trust, 12n);
@@ -429,7 +438,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     const policy = new OperatorPeerPolicy(developmentValidatorConfig({ dataDirectory: '/tmp/x' }).peerPolicy);
     assert.equal(policy.register({ peerId: 'sentry_a', kind: 'SENTRY', address: '10.0.0.11:26656', persistent: true }).ok, true);
     assert.equal(policy.connect('sentry_a').ok, true);
-    assert.equal(policy.applyVotingPowerChange().error.code, 'PEER_CANNOT_CHANGE_VOTING_POWER');
+    assert.equal(failedCode(policy.applyVotingPowerChange()), 'PEER_CANNOT_CHANGE_VOTING_POWER');
   });
 
   it('emits structured logs and refuses private key material', () => {
@@ -441,7 +450,6 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       step: 'PREVOTE',
       peerState: '2 sentries',
       consensusEvent: 'prevote',
-      signerError: undefined,
       upgradeState: 'none',
       nowUtc: NOW,
     });

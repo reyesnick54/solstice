@@ -61,7 +61,7 @@ export function developmentValidatorConfig(input: {
       transport: input.signer?.transport ?? 'UNIX_DOMAIN_SOCKET',
       endpoint: input.signer?.endpoint ?? `${input.dataDirectory}/signer.sock`,
       clientId: input.signer?.clientId ?? 'validator-client-a',
-      serverName: input.signer?.serverName,
+      ...(input.signer?.serverName ? { serverName: input.signer.serverName } : {}),
     }),
     rpc: Object.freeze({
       host: input.rpc?.host ?? '127.0.0.1',
