@@ -969,6 +969,28 @@
         "@reyesnick54"
       ],
       "notes": "Deterministic market-surveillance alerts and restriction proposals. Cannot freeze balances, issue Execution Authority, or mutate the ledger. Reuses canonical compliance cases."
+    },
+    {
+      "id": "packages/sunrey-sdk",
+      "npmName": "@solstice/sunrey-sdk",
+      "path": "packages/sunrey-sdk",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/sunrey-chain",
+        "packages/sunrey-exchange",
+        "packages/security",
+        "packages/config",
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Official SunRey developer SDK and versioned public API adapter. Not a second chain, ledger, or exchange. Private keys never leave the injected local signer."
     }
   ],
   "components": [
@@ -2195,6 +2217,35 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
+      "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 48 adds native-chain clearing. Chunk 49 adds four canonical market families. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
+    },
+    {
+      "id": "sunrey-developer-sdk",
+      "name": "SunRey developer platform and public SDK",
+      "canonicalOwner": "packages/sunrey-sdk",
+      "canonicalPath": "packages/sunrey-sdk/src/clients.ts",
+      "publicInterface": "packages/sunrey-sdk/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "SunReyClient",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/blockchain-v2",
+        "packages/sunrey-chain-sdk-ledger",
+        "packages/sdk-ledger",
+        "packages/sunrey-sdk-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Official developer interface. Versioned public API v1, TypeScript SDK, Rust client crate, event subscriptions. Adapter over packages/sunrey-chain and packages/sunrey-exchange."
     }
   ],
   "authorizedMutationPaths": [
@@ -2762,6 +2813,10 @@
     "packages/explorer",
     "packages/sunrey-indexer",
     "packages/blockchain-explorer"
+    "packages/blockchain-v2",
+    "packages/sunrey-chain-sdk-ledger",
+    "packages/sdk-ledger",
+    "packages/sunrey-sdk-v2"
   ],
   "capabilities": [
     {
@@ -3221,6 +3276,11 @@
       "owner": "packages/sunrey-explorer",
       "protected": true,
       "notes": "Chunk 52 rebuildable SunRey block and economic explorer at packages/sunrey-explorer. Projection only. Canonical authority remains finalized SunRey Blockchain state. Do not create packages/block-explorer, packages/chain-indexer, or a second indexer."
+      "id": "sunrey-developer-sdk",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-sdk",
+      "protected": true,
+      "notes": "Chunk 51 official developer platform: versioned public API v1, TypeScript SDK, Rust client SDK, event subscriptions. Adapter only. Canonical owners remain packages/sunrey-chain and packages/sunrey-exchange. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
     }
   ],
   "boundedContexts": [
@@ -3498,6 +3558,15 @@
       ],
       "protected": true,
       "notes": "Canonical market-surveillance subsystem at packages/market-surveillance. Alerts are not legal conclusions. Cannot mutate the ledger. Reuse packages/kernel/src/compliance cases. Do not create surveillance-v2."
+    },
+    {
+      "id": "SUNREY_DEVELOPER_PLATFORM",
+      "status": "IMPLEMENTED",
+      "reservedPaths": [
+        "packages/sunrey-sdk"
+      ],
+      "protected": true,
+      "notes": "Official SunRey developer SDK and versioned public API at packages/sunrey-sdk. Adapter only. Not apps/api or services/api."
     },
     {
       "id": "API_INTEGRATION",
