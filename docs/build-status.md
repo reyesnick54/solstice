@@ -449,6 +449,14 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-institutional-custody` is `IMPLEMENTED`. Not a second
   asset ledger. Simulation only. See
   `docs/architecture/chunk-47-institutional-custody.md`.
+- SunRey sovereign wallets (Chunk 46) are **development-only**
+  at `packages/sunrey-chain/src/wallet` and
+  `packages/sunrey-chain/rust/crates/wallet`. Capability
+  `sunrey-sovereign-wallets` is `IMPLEMENTED`. Versioned
+  addresses, BlockchainAccount authorization, M-of-N, recovery
+  with height delay, delegated keys, watch-only, and a local
+  encrypted development keystore. Wallet metadata is not a
+  second native-asset ledger and not a fiat Account.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.
@@ -504,6 +512,7 @@ npm run demo:strategy-lab
 npm run demo:mesh
 npm run demo:consent
 npm run demo:clean-room
+npm run demo:sunrey-wallet
 npm run typecheck
 npm run scan:secrets
 npm run ci

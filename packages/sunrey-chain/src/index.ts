@@ -136,6 +136,7 @@ export * as machineEconomy from './machine-economy/index.ts';
 export * as productive from './productive/index.ts';
 export * as oracle from './oracle/index.ts';
 export * as fees from './fees/index.ts';
+export * as wallet from './wallet/index.ts';
 export {
   CURRENT_APPLICATION_AUTHORITY,
   NATIVE_BLOCKCHAIN_AUTHORITY,

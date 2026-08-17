@@ -307,7 +307,6 @@ impl LocalNode {
                     return Err(RejectReason::SizeExceeded);
                 }
             }
-            _ => return Err(RejectReason::TransactionNotActivated),
             TransactionFamily::NativeAsset => {
                 let (payload, rest) =
                     sunrey_native_assets::NativeAssetPayload::decode_prefix(&unsigned.payload)

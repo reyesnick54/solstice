@@ -60,6 +60,10 @@
   controller-bound machine identity and commerce.
   [Identity model](./machine-economic-identity.md).
   [Commerce protocol](./machine-commerce-protocol.md).
+- [Chunk 46 sovereign wallets](./chunk-46-sovereign-wallets.md) —
+  addresses, BlockchainAccount authorization, multi-auth, recovery.
+  [Address spec](./sunrey-address-spec.md).
+  [Authorization](./blockchain-account-authorization.md).
 - [Chunk 43 oracle network](./chunk-43-oracle-network.md) —
   signed observations and VerifiedEconomicFacts. Not money.
 - [Oracle economic fact spec](./oracle-economic-fact-spec.md)

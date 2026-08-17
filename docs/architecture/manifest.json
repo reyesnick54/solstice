@@ -2697,6 +2697,10 @@
     "packages/blockchain-custody",
     "packages/institutional-custody-v2",
     "packages/hsm-security-v2"
+    "packages/wallet-v2",
+    "packages/blockchain-wallet",
+    "packages/crypto-wallet",
+    "packages/sunrey-wallet-ledger"
   ],
   "capabilities": [
     {
@@ -3127,6 +3131,11 @@
       "owner": "packages/custody",
       "protected": true,
       "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
+      "id": "sunrey-sovereign-wallets",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     }
   ],
   "boundedContexts": [
