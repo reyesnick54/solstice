@@ -1182,6 +1182,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-bench')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/performance')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/load-test')), false);
+  });
+
   it('CHUNK-57 implements the SunRey adversarial cyber-economic range', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-adversarial-range').status, 'IMPLEMENTED');
