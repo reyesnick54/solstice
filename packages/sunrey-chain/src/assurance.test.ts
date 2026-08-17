@@ -15,7 +15,7 @@ import {
   loadHexCorpus,
   loadReplayFixture,
   machineMandateProperties,
-  moonreyFormulaProperties,
+  moonreyIssuanceProperties,
   mulDivMatchesRounding,
   nativeAssetInvariantProperties,
   oracleAggregationProperties,
@@ -48,7 +48,7 @@ describe('Chunk 56 SunRey assurance', () => {
     feeEngineReservationConserved(rng.child('fee-engine'), 16);
     walletThresholdProperties(rng.child('wallet'), 16);
     oracleAggregationProperties(rng.child('oracle'), profile.propertyCases);
-    moonreyFormulaProperties(rng.child('moonrey'), profile.propertyCases);
+    moonreyIssuanceProperties(rng.child('moonrey'), profile.propertyCases);
     nativeAssetInvariantProperties(rng.child('assets'), profile.propertyCases);
     mulDivMatchesRounding(rng.child('muldiv'), profile.propertyCases);
     machineMandateProperties();

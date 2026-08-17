@@ -18,7 +18,7 @@ export {
   feeEngineReservationConserved,
   interopPacketAtMostOnce,
   machineMandateProperties,
-  moonreyFormulaProperties,
+  moonreyIssuanceProperties,
   mulDivMatchesRounding,
   nativeAssetInvariantProperties,
   oracleAggregationProperties,

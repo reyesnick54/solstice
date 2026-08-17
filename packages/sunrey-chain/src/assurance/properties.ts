@@ -228,7 +228,7 @@ export function oracleAggregationProperties(rng: SeededRng, cases: number): void
   }
 }
 
-export function moonreyFormulaProperties(rng: SeededRng, cases: number): void {
+export function moonreyIssuanceProperties(rng: SeededRng, cases: number): void {
   let supply = emptyMoonReySupply();
   const seen = new Set<string>();
   for (let i = 0; i < cases; i += 1) {
