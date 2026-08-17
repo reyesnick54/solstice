@@ -108,6 +108,8 @@ jobs:
         run: npm run demo:sunrey-interop
       - name: SunRey sovereign wallets demo
         run: npm run demo:sunrey-wallet
+      - name: SunRey developer SDK demo
+        run: npm run demo:sunrey-sdk
       - name: SunRey Exchange simulation demo
         run: npm run demo:sunrey-exchange
       - name: SunRey Exchange native settlement demo

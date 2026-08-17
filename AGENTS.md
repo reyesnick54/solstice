@@ -95,6 +95,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
 - `packages/personal-data-vault` — Personal Data Vault; subject-bound encrypted store
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger
+- `packages/sunrey-sdk` — official developer SDK and versioned public API adapter
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - `db/` — versioned SQL migrations per bounded database
@@ -103,6 +104,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `services/economic-graph` — PEG application facade; not a second graph model
 - `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
 - `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
+- `docs/developers/` — public SDK and API documentation
+- `api/` — OpenAPI and event specifications
 
 ## Commands
 
