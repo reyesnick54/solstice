@@ -54,6 +54,14 @@ describe('Chunk 70 SunRey mainnet launch rehearsal', () => {
     assert.equal(session.report.productionAuthorized, false);
     assert.equal(session.report.liveFlagsRemainDisabled, true);
     assert.equal(session.report.nativeAssets.productionValueClaim, false);
+    assert.equal(session.report.validatorEconomics.bondedValidators, 7);
+    assert.equal(session.report.validatorEconomics.healthyRewardEpoch, true);
+    assert.equal(session.report.validatorEconomics.jailedValidator, true);
+    assert.equal(session.report.validatorEconomics.evidencePenalty, true);
+    assert.equal(session.report.validatorEconomics.unbondDelayHonored, true);
+    assert.equal(session.report.validatorEconomics.supplyReconciled, true);
+    assert.equal(session.report.validatorEconomics.units, 'REHEARSAL_ONLY');
+    assert.equal(session.report.validatorEconomics.productionBondAsset, 'UNCONFIGURED');
     assert.equal(session.report.exchangeCustodySandbox.productionExchangeActivated, false);
     assert.equal(session.report.interop.productionBridgeActivated, false);
     assert.equal(session.report.oracleStatus.fabricatedFact, false);

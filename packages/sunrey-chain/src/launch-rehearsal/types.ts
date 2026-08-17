@@ -203,6 +203,17 @@ export type SdkRehearsalResult = {
   readonly failoverPolicyHonored: boolean;
 };
 
+export type ValidatorEconomicsRehearsalResult = {
+  readonly bondedValidators: 7;
+  readonly healthyRewardEpoch: boolean;
+  readonly jailedValidator: boolean;
+  readonly evidencePenalty: boolean;
+  readonly unbondDelayHonored: boolean;
+  readonly supplyReconciled: boolean;
+  readonly units: 'REHEARSAL_ONLY';
+  readonly productionBondAsset: 'UNCONFIGURED';
+};
+
 export type ExplorerRehearsalResult = {
   readonly banner: 'MAINNET REHEARSAL';
   readonly productionLabel: false;
@@ -264,6 +275,7 @@ export type MainnetLaunchRehearsalReport = {
   readonly oracleStatus: OracleRehearsalResult;
   readonly exchangeCustodySandbox: RegulatedSandboxResult;
   readonly nativeAssets: NativeAssetRehearsalResult;
+  readonly validatorEconomics: ValidatorEconomicsRehearsalResult;
   readonly interop: InteropRehearsalResult;
   readonly sdk: SdkRehearsalResult;
   readonly explorer: ExplorerRehearsalResult;

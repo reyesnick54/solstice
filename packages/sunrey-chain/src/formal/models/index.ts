@@ -10,6 +10,7 @@ import { createInteropPacketModel } from './interop-packet.ts';
 import { createMoonReyModel } from './moonrey.ts';
 import { createNativeAssetModel } from './native-asset.ts';
 import { createSignerModel } from './signer.ts';
+import { createValidatorEconomicsModel } from './validator-economics.ts';
 import { createValidatorSetModel } from './validator-set.ts';
 
 export function modelsForProfile(profile: FormalProfile) {
@@ -35,6 +36,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createInteropPacketModel(bounds),
     createInteropAssetModel(bounds),
     createCryptoPolicyModel(bounds),
+    createValidatorEconomicsModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -49,3 +51,4 @@ export { createMoonReyModel, contributionFingerprint } from './moonrey.ts';
 export { createInteropPacketModel } from './interop-packet.ts';
 export { createInteropAssetModel, MODEL_INTEROP_ASSET } from './interop-asset.ts';
 export { createCryptoPolicyModel, MODEL_CRYPTO_STATES } from './crypto-policy.ts';
+export { createValidatorEconomicsModel } from './validator-economics.ts';

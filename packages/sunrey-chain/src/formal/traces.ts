@@ -83,6 +83,14 @@ export function interopHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function validatorEconomicsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_validator_economics', 'validator_economics', 'VALIDATOR_ECONOMICS', [
+    { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
+    { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
+    { domain: 'validator_economics', action: 'Reward', args: {} },
+  ]);
+}
+
 export function allDevelopmentTraces(): readonly LogicalTrace[] {
   return [
     consensusHappyTrace(),
@@ -91,5 +99,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     moonreyHappyTrace(),
     governanceHappyTrace(),
     interopHappyTrace(),
+    validatorEconomicsHappyTrace(),
   ];
 }

@@ -127,6 +127,26 @@ export class ValidatorClient {
   evidence(): Promise<unknown> {
     return this.http.get('/v1/validators/evidence');
   }
+
+  getValidatorEconomicPolicy(): Promise<unknown> {
+    return this.http.get('/v1/validators/economics/policy');
+  }
+
+  getValidatorBond(validatorId: string): Promise<unknown> {
+    return this.http.get(`/v1/validators/${encodeURIComponent(validatorId)}/bond`);
+  }
+
+  getValidatorRewardSummary(validatorId: string): Promise<unknown> {
+    return this.http.get(`/v1/validators/${encodeURIComponent(validatorId)}/rewards`);
+  }
+
+  getValidatorPublicPenalties(validatorId: string): Promise<unknown> {
+    return this.http.get(`/v1/validators/${encodeURIComponent(validatorId)}/penalties`);
+  }
+
+  getValidatorUnbondStatus(validatorId: string): Promise<unknown> {
+    return this.http.get(`/v1/validators/${encodeURIComponent(validatorId)}/unbond`);
+  }
 }
 
 export class GovernanceClient {

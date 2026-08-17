@@ -842,6 +842,12 @@ simulation-bond penalties. Capability
 `sunrey-validator-accountability` is `IMPLEMENTED`. See
 [`chunk-39-validator-accountability.md`](./chunk-39-validator-accountability.md).
 Penalties never debit customer fiat, SunRey Coin, or MoonRey.
+Chunk 72 implements governed validator bonding, rewards, and
+accountability economics at `packages/sunrey-chain`. Capability
+`sunrey-validator-economics` is `IMPLEMENTED`. Production bond
+asset remains `UNCONFIGURED`. No public delegation, customer
+staking, or second native-asset ledger. See
+[`chunk-72-validator-economics.md`](./chunk-72-validator-economics.md).
 Chunk 35R implements the P2P development network, mempool, and
 state sync at `packages/sunrey-chain/node`. Capabilities
 `sunrey-local-node` and `sunrey-p2p` are `IMPLEMENTED` on that

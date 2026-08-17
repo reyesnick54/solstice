@@ -78,6 +78,7 @@ import {
   rehearseOracle,
   rehearseRegulatedSandbox,
   rehearseSdk,
+  rehearseValidatorEconomics,
 } from './workflows.ts';
 
 export type LaunchRehearsalSession = {
@@ -208,7 +209,7 @@ export function reevaluateReadinessAfterRehearsal(): MainnetReadinessRegistry {
     if (row.externalEvidence || row.dimension === 'LEGAL' || row.dimension === 'REGULATORY' || row.dimension === 'LICENSING' || row.dimension === 'HUMAN_AUTHORIZATION') {
       return row;
     }
-    if (row.dimension === 'VALIDATOR_OPERATIONS' || row.dimension === 'OBSERVABILITY' || row.dimension === 'DISASTER_RECOVERY' || row.dimension === 'GENESIS') {
+    if (row.dimension === 'VALIDATOR_OPERATIONS' || row.dimension === 'VALIDATOR_ECONOMICS' || row.dimension === 'OBSERVABILITY' || row.dimension === 'DISASTER_RECOVERY' || row.dimension === 'GENESIS') {
       try {
         return applyEngineeringVerification(row, 'ENGINEERING_VERIFIED');
       } catch {
@@ -256,6 +257,7 @@ export function runLaunchRehearsal(root = process.cwd()): LaunchRehearsalSession
   });
   const observability = validateObservability();
   const nativeAssets = rehearseNativeAssets();
+  const validatorEconomics = rehearseValidatorEconomics();
   const oracle = rehearseOracle();
   const sandbox = rehearseRegulatedSandbox();
   const interop = rehearseInterop();
@@ -345,6 +347,7 @@ export function runLaunchRehearsal(root = process.cwd()): LaunchRehearsalSession
     oracleStatus: oracle,
     exchangeCustodySandbox: sandbox,
     nativeAssets,
+    validatorEconomics,
     interop,
     sdk,
     explorer,

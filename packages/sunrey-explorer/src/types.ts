@@ -181,6 +181,11 @@ export type IndexedValidator = {
   readonly missed: number;
   readonly jailStatus: string | null;
   readonly tombstone: boolean;
+  readonly bondState?: string;
+  readonly bondAsset?: string;
+  readonly policyVersion?: number;
+  readonly publicRewardSummary?: { readonly paid: QuantityString; readonly pending: QuantityString };
+  readonly unbondStatus?: { readonly pending: QuantityString; readonly releaseEpoch: string | null };
 };
 
 export type IndexedEvidence = {

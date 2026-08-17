@@ -111,6 +111,11 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         missed: 0,
         jailStatus: null,
         tombstone: false,
+        bondState: 'BONDED',
+        bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+        policyVersion: 1,
+        publicRewardSummary: { paid: '0', pending: '0' },
+        unbondStatus: { pending: '0', releaseEpoch: null },
       },
       {
         validatorId: 'val_dev_2',
@@ -124,6 +129,11 @@ export function developmentSnapshot(blockCount = 4): FinalizedChainSnapshot {
         missed: 0,
         jailStatus: null,
         tombstone: false,
+        bondState: 'BONDED',
+        bondAsset: 'DEVELOPMENT_SUNREY_COIN',
+        policyVersion: 1,
+        publicRewardSummary: { paid: '0', pending: '0' },
+        unbondStatus: { pending: '0', releaseEpoch: null },
       },
     ],
     evidence: [
