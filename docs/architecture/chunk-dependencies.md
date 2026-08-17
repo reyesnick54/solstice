@@ -118,6 +118,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -472,3 +473,9 @@ Chunk 51 implements the official developer platform at
 Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. The evaluator returns `mustStop: false`.
+Chunk 57 implements the isolated adversarial cyber-economic test
+range at `packages/sunrey-range`. Capability
+`sunrey-adversarial-range` is `IMPLEMENTED`. See
+[`chunk-57-adversarial-range.md`](./chunk-57-adversarial-range.md).
+Do not create `packages/red-team`, `packages/attack-sim`, or
+`packages/sunrey-pentest`. The evaluator returns `mustStop: false`.

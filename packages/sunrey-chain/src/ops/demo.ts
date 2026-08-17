@@ -28,6 +28,8 @@ if (entry.endsWith('demo.ts') || entry.endsWith('demo.js')) {
   console.log(JSON.stringify(result, null, 2));
   console.log('sunrey-ops health');
   console.log(runSunreyOps(['health']));
+}
+
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';

@@ -74,6 +74,8 @@ npm run demo:custody-cold
 npm run demo:market-surveillance
 npm run demo:listing-governance
 npm run demo:explorer
+npm run sunrey-range -- campaign --smoke
+npm run demo:sunrey-range
 
 echo "==> typecheck"
 npm run typecheck

@@ -3,7 +3,11 @@
  *
  * Failure domains are not AWS/Azure/GCP. Cloud adapters may be added later.
  * Engineering SLOs are ENGINEERING_TEST_TARGETS, not production contracts.
+ *
+ * Chunk 54 validator-operator types continue in this same module.
  */
+
+import type { ConsensusMessageType, ValidatorStatus } from '../validators/types.ts';
 
 export const OPS_SCHEMA_VERSION = 1 as const;
 export const OPS_PROTOCOL_VERSION = 'sunrey.ops.v1' as const;
@@ -259,16 +263,6 @@ export type DisasterRecoveryReport = {
   readonly operatorNotes: string;
   readonly alertsFired: readonly AlertCode[];
 };
- * Chunk 54 — SunRey validator operator infrastructure types.
- *
- * Operator tooling around the existing validator registry, BFT engine,
- * signer safety, P2P, governance, and CryptoSuite. This is not a second
- * consensus engine or validator registry.
- */
-
-import type { ConsensusMessageType, ValidatorStatus } from '../validators/types.ts';
-
-export const OPS_SCHEMA_VERSION = 1 as const;
 
 export const NODE_ROLES = [
   'VALIDATOR',

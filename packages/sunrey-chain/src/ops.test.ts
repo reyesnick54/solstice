@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -283,6 +282,9 @@ describe('Chunk 55 SunRey resilience and disaster recovery', () => {
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-ops')), false);
     assert.equal(existsSync(join(ROOT, 'packages/observability')), false);
     assert.equal(existsSync(join(ROOT, 'packages/disaster-recovery')), false);
+  });
+});
+
 import { CANONICAL_VALIDATOR_SUITE_ID, fourValidatorDevelopmentSet, type ConsensusSignRequest } from './validators/index.ts';
 import {
   OperatorKeystore,
@@ -326,7 +328,7 @@ import {
   reportIncompatibleBinary,
   restoreSnapshot,
   rotateWorkflow,
-  verifySnapshot,
+  verifyChainSnapshot,
   runOpsCommand,
   runRollingUpgrade,
   safeRestart,
@@ -344,7 +346,6 @@ import { developmentSentryConfig } from './ops/sentry.ts';
 import { MaintenanceMode } from './ops/maintenance.ts';
 
 const NOW = '2026-08-17T00:00:00.000Z';
-const ROOT = join(import.meta.dirname, '..', '..', '..');
 
 function request(
   validatorId: string,
@@ -624,10 +625,10 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       trustedFinalizedHeight: 10n,
       trustedStateRoot: '11'.repeat(32),
     };
-    assert.equal(verifySnapshot(created.value, trust).ok, true);
+    assert.equal(verifyChainSnapshot(created.value, trust).ok, true);
     const tampered = { ...created.value, payload: '{"state":"evil"}' };
-    assert.equal(verifySnapshot(tampered, trust).ok, false);
-    const wrongNet = verifySnapshot(created.value, { ...trust, networkId: 'net_other' });
+    assert.equal(verifyChainSnapshot(tampered, trust).ok, false);
+    const wrongNet = verifyChainSnapshot(created.value, { ...trust, networkId: 'net_other' });
     assert.equal(wrongNet.ok, false);
     if (!wrongNet.ok) {
       assert.equal(wrongNet.error.code, 'WRONG_NETWORK_SNAPSHOT');

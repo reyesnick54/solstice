@@ -1158,6 +1158,32 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-ops')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/observability')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/disaster-recovery')), false);
+  });
+
+  it('CHUNK-57 implements the SunRey adversarial cyber-economic range', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-adversarial-range').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-adversarial-range').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-adversarial-range').owner, 'packages/sunrey-range');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-57',
+    );
+    assert.ok(declared, 'CHUNK-57 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-57-adversarial-range.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/chunk-57-adversarial-range.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/attack-matrix.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/security-invariants.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/range-operations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-range/src/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/red-team')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/attack-sim')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-pentest')), false);
+  });
+
   it('CHUNK-51 implements the developer platform at packages/sunrey-sdk', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-developer-sdk').status, 'IMPLEMENTED');
@@ -1428,6 +1454,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-ops')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sentry')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/remote-signer')), false);
+  });
+
   it('CHUNK-53 implements the public testnet package on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').status, 'IMPLEMENTED');
@@ -1447,6 +1475,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'deploy/sunrey-testnet/k8s/namespace.yaml')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-testnet')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-faucet')), false);
+  });
+
   it('CHUNK-52 implements the SunRey explorer as a rebuildable projection', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-explorer').status, 'IMPLEMENTED');

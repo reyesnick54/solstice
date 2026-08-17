@@ -80,6 +80,8 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
 const entry = process.argv[1] ?? '';
 if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
   process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+}
+
 /**
  * sunrey-ops CLI.
  *
@@ -113,7 +115,7 @@ export type CliResult = {
   readonly payload: unknown;
 };
 
-const COMMANDS = [
+const VALIDATOR_COMMANDS = [
   'validator',
   'signer',
   'snapshot',
@@ -146,7 +148,7 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
-  if (!group || !(COMMANDS as readonly string[]).includes(group)) {
+  if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
   }
   const config = developmentValidatorConfig({ dataDirectory: dataDir });
