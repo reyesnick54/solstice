@@ -1,7 +1,33 @@
-import { ResiliencePlatform } from './platform.ts';
-import type { DrillScenario } from './types.ts';
+/**
+ * sunrey-ops CLI.
+ *
+ * Operator commands never print private key material.
+ */
 
-const COMMANDS = [
+import { fourValidatorDevelopmentSet } from '../validators/index.ts';
+import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
+import { incidentProcedure } from './incidents.ts';
+import { OperatorKeystore } from './keys.ts';
+import { assertNoPrivateKeyMaterial } from './logging.ts';
+import { ResiliencePlatform } from './platform.ts';
+import { operatorReadiness } from './readiness.ts';
+import { developmentSentryTopology } from './sentry.ts';
+import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
+import { createSnapshot, verifySnapshot } from './snapshots.ts';
+import { planGenesisSync } from './state-sync.ts';
+import { authorizeDevelopmentUpgrade, developmentUpgradeFixture, upgradePrecheck } from './upgrade.ts';
+import type { DrillScenario } from './types.ts';
+import {
+  developmentEpoch,
+  eraseEvidence,
+  exitWorkflow,
+  generateJoinRecord,
+  jailStatus,
+  joinWorkflow,
+  rotateWorkflow,
+} from './workflows.ts';
+
+const RESILIENCE_COMMANDS = [
   'health',
   'alerts',
   'backup',
@@ -66,7 +92,7 @@ export function runSunreyOps(argv: readonly string[]): string {
     }
     throw new Error('sunrey-ops dr run|report');
   }
-  throw new Error(`unknown sunrey-ops command; expected ${COMMANDS.join('|')}`);
+  throw new Error(`unknown sunrey-ops command; expected ${RESILIENCE_COMMANDS.join('|')}`);
 }
 
 function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<string, unknown> {
@@ -76,36 +102,6 @@ function serializeReport(report: ReturnType<ResiliencePlatform['run']>): Record<
     measuredRtoMs: report.measuredRtoMs.toString(),
   };
 }
-
-const entry = process.argv[1] ?? '';
-if (entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
-  process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-/**
- * sunrey-ops CLI.
- *
- * Operator commands never print private key material.
- */
-
-import { fourValidatorDevelopmentSet } from '../validators/index.ts';
-import { developmentValidatorConfig, validateValidatorConfig } from './config.ts';
-import { incidentProcedure } from './incidents.ts';
-import { OperatorKeystore } from './keys.ts';
-import { assertNoPrivateKeyMaterial } from './logging.ts';
-import { operatorReadiness } from './readiness.ts';
-import { developmentSentryTopology } from './sentry.ts';
-import { developmentRemoteSigner, publicRpcSignerIdentity, sentrySignerIdentity } from './signer.ts';
-import { createSnapshot, verifySnapshot } from './snapshots.ts';
-import { planGenesisSync } from './state-sync.ts';
-import { developmentUpgradeFixture, upgradePrecheck, authorizeDevelopmentUpgrade } from './upgrade.ts';
-import {
-  eraseEvidence,
-  exitWorkflow,
-  generateJoinRecord,
-  jailStatus,
-  joinWorkflow,
-  rotateWorkflow,
-  developmentEpoch,
-} from './workflows.ts';
 
 export type CliResult = {
   readonly ok: boolean;
@@ -331,6 +327,12 @@ export async function main(): Promise<void> {
   }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  await main();
+const entry = process.argv[1] ?? '';
+if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js')) {
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
 }
