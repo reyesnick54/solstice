@@ -1,0 +1,62 @@
+[
+  {
+    "id": "fee.240.1",
+    "kind": "fee",
+    "input": { "encodedBytes": 240, "signatureCount": 1 },
+    "expected": { "fee": "576" }
+  },
+  {
+    "id": "muldiv.floor",
+    "kind": "muldiv",
+    "input": { "value": 10, "numerator": 1, "denominator": 2, "rounding": "FLOOR" },
+    "expected": { "value": "5" }
+  },
+  {
+    "id": "muldiv.ceil",
+    "kind": "muldiv",
+    "input": { "value": 10, "numerator": 1, "denominator": 2, "rounding": "CEIL" },
+    "expected": { "value": "6" }
+  },
+  {
+    "id": "formula.cap",
+    "kind": "formula",
+    "input": {
+      "eligible": 1000,
+      "categoryWeight": 1000000,
+      "claimWeight": 1000000,
+      "quality": 1000000,
+      "rounding": "FLOOR",
+      "maximum": 500
+    },
+    "expected": { "uncapped": "1000", "moonrey": "500" }
+  },
+  {
+    "id": "median.odd",
+    "kind": "median",
+    "input": { "values": "1,5,3" },
+    "expected": { "median": "3" }
+  },
+  {
+    "id": "median.even",
+    "kind": "median",
+    "input": { "values": "2,4" },
+    "expected": { "median": "3" }
+  },
+  {
+    "id": "fingerprint.order",
+    "kind": "fingerprint",
+    "input": {
+      "objectId": "obj.solar",
+      "epoch": 1,
+      "validFrom": 1700000000,
+      "validUntil": 1800000000,
+      "claimType": "OUTPUT",
+      "category": "ENERGY",
+      "normalized": 100,
+      "baseUnit": "kWh",
+      "facts": "z,a",
+      "upstream": "b,a"
+    },
+    "expected": { "hash": "0ceb8b25c6fdbfef37d06bc28c22c6eb6f9900b34417bd5daf8652858e3074e4" }
+  }
+]

@@ -1428,6 +1428,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/validator-ops')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sentry')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/remote-signer')), false);
+  });
+
   it('CHUNK-53 implements the public testnet package on the sunrey-chain owner', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').status, 'IMPLEMENTED');
@@ -1447,6 +1449,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'deploy/sunrey-testnet/k8s/namespace.yaml')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-testnet')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-faucet')), false);
+  });
+
   it('CHUNK-52 implements the SunRey explorer as a rebuildable projection', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-explorer').status, 'IMPLEMENTED');
@@ -1472,5 +1476,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/chain-indexer')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/explorer')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-indexer')), false);
+  });
+
+  it('CHUNK-56 implements SunRey fuzzing and property assurance on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-assurance').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-assurance').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-assurance').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-56',
+    );
+    assert.ok(declared, 'CHUNK-56 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-56-assurance-fuzzing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/assurance/chunk-56-fuzzing.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/assurance/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/rust/crates/assurance/src/lib.rs')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-test')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/fuzz')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/assurance')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'tools/sunrey-test')), false);
   });
 });

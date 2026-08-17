@@ -118,6 +118,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -472,3 +473,11 @@ Chunk 51 implements the official developer platform at
 Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. The evaluator returns `mustStop: false`.
+Chunk 56 implements SunRey protocol fuzzing, property tests,
+differential TypeScript/Rust drivers, and deterministic replay at
+`packages/sunrey-chain`. Capability `sunrey-assurance` is
+`IMPLEMENTED`. See
+[`chunk-56-assurance-fuzzing.md`](./chunk-56-assurance-fuzzing.md).
+Do not create `packages/sunrey-test`, `packages/fuzz`,
+`packages/assurance`, or `tools/sunrey-test`. This is not formal
+verification. The evaluator returns `mustStop: false`.

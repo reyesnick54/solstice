@@ -1,0 +1,32 @@
+name: Fuzz extended
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 4 * * *"
+
+jobs:
+  fuzz-extended:
+    name: FUZZ_EXTENDED property and campaign suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install
+        run: npm install
+
+      - name: Setup Rust 1.83
+        uses: dtolnay/rust-toolchain@1.83.0
+        with:
+          components: rustfmt, clippy
+
+      - name: Extended fuzz / property campaign
+        env:
+          FUZZ_PROFILE: FUZZ_EXTENDED
+        run: npm run test:fuzz-extended

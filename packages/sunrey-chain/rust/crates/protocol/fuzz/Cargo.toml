@@ -1,0 +1,30 @@
+[package]
+name = "sunrey-protocol-fuzz"
+version = "0.0.0"
+edition = "2021"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+sunrey-protocol = { path = ".." }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "envelope_decoder"
+path = "fuzz_targets/envelope_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "block_header_decoder"
+path = "fuzz_targets/block_header_decoder.rs"
+test = false
+doc = false
+
+[[bin]]
+name = "genesis_decoder"
+path = "fuzz_targets/genesis_decoder.rs"
+test = false
+doc = false
