@@ -35,9 +35,9 @@
     "demo:rc": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/demo.ts",
     "sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/audit/cli.ts",
     "sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/cli-main.ts",
-    "demo:launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/demo.ts"
-    "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts"
-    "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts",
+    "demo:launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/demo.ts",
+    "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/cli-main.ts",
+    "demo:economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
   },
   "engines": {

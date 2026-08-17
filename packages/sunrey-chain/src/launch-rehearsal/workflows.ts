@@ -6,6 +6,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { rehearseMonetaryConstitution } from '../economics/rehearsal.ts';
 import { interopPacketAtMostOnce } from '../assurance/properties.ts';
 import { mutableClock, runEnergyDemo } from '../oracle/demo-helpers.ts';
 import { createExternalDevChain, developmentExternalChain, InteropEngine } from '../interop/engine.ts';
@@ -22,25 +23,13 @@ import type {
 } from './types.ts';
 
 export function rehearseNativeAssets(): NativeAssetRehearsalResult {
-  const sunrey = { supply: 0n, alice: 0n, bob: 0n, locked: 0n, fees: 0n };
-  sunrey.supply += 1_000n;
-  sunrey.alice += 1_000n;
-  sunrey.alice -= 250n;
-  sunrey.bob += 240n;
-  sunrey.fees += 10n;
-  sunrey.bob -= 40n;
-  sunrey.locked += 40n;
-  const moonrey = { supply: 0n, issued: 0n };
-  moonrey.issued += 75n;
-  moonrey.supply += 75n;
-  const sunreyReconciled = sunrey.alice + sunrey.bob + sunrey.locked + sunrey.fees === sunrey.supply;
-  const moonreyReconciled = moonrey.issued === moonrey.supply;
+  const monetary = rehearseMonetaryConstitution();
   return Object.freeze({
-    sunreyTransfer: sunrey.bob === 200n,
-    moonreyIssuance: moonrey.issued === 75n,
-    fees: sunrey.fees === 10n,
-    locks: sunrey.locked === 40n,
-    supplyReconciled: sunreyReconciled && moonreyReconciled,
+    sunreyTransfer: monetary.sunreyTransfer,
+    moonreyIssuance: monetary.moonreyIssuance,
+    fees: monetary.fees,
+    locks: monetary.locks,
+    supplyReconciled: monetary.supplyReconciled,
     productionValueClaim: false,
     units: 'REHEARSAL_ONLY',
   });

@@ -372,6 +372,33 @@ function dispatch(
   if (method === 'GET' && path === '/v1/assets/burns') {
     return json(200, { burns: [] });
   }
+  if (method === 'GET' && path === '/v1/monetary/policy') {
+    return json(200, {
+      ticker_status: 'NOT_ASSIGNED',
+      production_activation: 'UNCONFIGURED',
+      assets: [
+        { asset_id: 'SUNREY_COIN', purpose: 'HUMAN_ECONOMIC_LAYER', policy_version: 'sunrey.monetary.constitution.v1' },
+        { asset_id: 'MOONREY_COIN', purpose: 'AUTONOMOUS_PRODUCTIVE_ECONOMY', policy_version: 'sunrey.monetary.constitution.v1' },
+      ],
+    });
+  }
+  if (method === 'GET' && path === '/v1/monetary/supply') {
+    return json(200, {
+      SUNREY_COIN: { genesis: '0', issued: '0', burned: '0', circulating: '0', locked: '0', reconciliation: 'EXACT' },
+      MOONREY_COIN: { genesis: '0', issued: '0', burned: '0', circulating: '0', locked: '0', reconciliation: 'EXACT' },
+      ticker_status: 'NOT_ASSIGNED',
+      not_market_cap: true,
+    });
+  }
+  if (method === 'GET' && path === '/v1/monetary/genesis') {
+    return json(200, { SUNREY_COIN: '0', MOONREY_COIN: '0', production_allocation_authorized: false });
+  }
+  if (method === 'GET' && path.startsWith('/v1/monetary/issuance/')) {
+    return json(200, { receipt_id: path.slice('/v1/monetary/issuance/'.length), mint_interface: false });
+  }
+  if (method === 'GET' && path === '/v1/monetary/burns') {
+    return json(200, { burns: [], classes: ['VOLUNTARY_USER_BURN', 'FEE_BURN', 'PROTOCOL_ECONOMIC_PENALTY'] });
+  }
 
   if (method === 'GET' && path === '/v1/fees/schedule') {
     return json(200, platform.estimateFee());
@@ -624,6 +651,11 @@ export const PUBLIC_ROUTES = [
   'GET /v1/accounts/{id}',
   'GET /v1/assets',
   'GET /v1/assets/holdings/{id}',
+  'GET /v1/monetary/policy',
+  'GET /v1/monetary/supply',
+  'GET /v1/monetary/genesis',
+  'GET /v1/monetary/issuance/{id}',
+  'GET /v1/monetary/burns',
   'GET /v1/fees/estimate',
   'GET /v1/validators',
   'GET /v1/governance/proposals',

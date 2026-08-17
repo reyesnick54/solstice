@@ -55,6 +55,9 @@ export function handleExplorerRequest(
   if (path === '/v1/assets') {
     return json(200, queries.assets());
   }
+  if (path === '/v1/monetary') {
+    return json(200, queries.monetary());
+  }
   if (path.startsWith('/v1/assets/')) {
     const found = queries.asset(path.slice('/v1/assets/'.length));
     return found ? json(200, found) : json(404, { error: 'NOT_FOUND' });

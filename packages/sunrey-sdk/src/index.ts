@@ -49,6 +49,7 @@ export {
   SunReyClient,
   WalletClient,
   AssetClient,
+  MonetaryClient,
   FeeClient,
   ValidatorClient,
   GovernanceClient,

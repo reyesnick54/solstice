@@ -8,6 +8,7 @@
 import { encodeBool, encodeString, encodeU32, encodeU64, sha256Hex } from '../validators/canonical.ts';
 import { fixtureGenesisHash, TESTNET_MODULE_REGISTRY } from '../testnet/genesis.ts';
 import { NATIVE_ASSET_TICKER_STATUS } from '../protocol/assets.ts';
+import { verifyGenesisAllocationManifest } from '../economics/genesis.ts';
 import { allocationManifestHash, emptyAllocationManifest, rejectUnapprovedAllocation } from './allocation.ts';
 import { bindCeremony, buildSimulatedCeremonyTranscript } from './ceremony.ts';
 import { productionCandidateCryptoPolicy, PRODUCTION_CANDIDATE_FEE_POLICY, rejectUnsupportedPqHsmRequirement } from './crypto-policy.ts';
@@ -355,6 +356,16 @@ export function verifyGenesisCandidate(input: GenesisCandidateInput, expectedHas
   push('ceremony-reference', input.ceremonyTranscriptHash.length === 64, input.ceremonyTranscriptHash);
   const nativeOk = input.nativeAssets.every((asset) => asset.genesisSupply === 0n && asset.faucetAllocation === 0n);
   push('native-asset-registry', nativeOk, 'zero genesis supply and no faucet');
+  const monetary = verifyGenesisAllocationManifest(input.allocation, {
+    monetaryPolicyVersion: input.allocation.policyVersion,
+  });
+  push(
+    'monetary-constitution',
+    monetary.ok,
+    monetary.ok ? 'allocation matches constitution' : monetary.checks.filter((row) => !row.ok).map((row) => row.id).join(','),
+  );
+  push('hidden-allocation', input.allocation.hiddenPremint === false && input.allocation.lines.every((line) => line.quantityMinorUnits >= 0n), 'no hidden allocation');
+  push('wrong-asset', input.nativeAssets.every((asset) => asset.assetId === 'SUNREY_COIN' || asset.assetId === 'MOONREY_COIN'), 'only SUNREY_COIN and MOONREY_COIN');
   return Object.freeze({
     ok: checks.every((check) => check.ok),
     checks: Object.freeze(checks),

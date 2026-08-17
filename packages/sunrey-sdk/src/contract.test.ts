@@ -34,6 +34,10 @@ describe('SunRey API contract alignment', () => {
         '/v1/machines',
         '/v1/interop/packets',
         '/v1/exchange/markets',
+        '/v1/monetary/policy',
+        '/v1/monetary/supply',
+        '/v1/monetary/genesis',
+        '/v1/monetary/burns',
       ]) {
         const response = await fetch(`${gateway.url}${path}`);
         assert.equal(response.status, 200, path);
@@ -60,6 +64,7 @@ describe('SunRey API contract alignment', () => {
       'interop',
       'exchange',
       'events',
+      'monetary',
     ];
     for (const name of names) {
       assert.ok(name in new SunReyClient({
@@ -74,7 +79,7 @@ describe('SunRey API contract alignment', () => {
 
   it('Rust client crate declares the same public paths', () => {
     const rust = readFileSync(join(ROOT, 'packages/sunrey-chain/rust/crates/sdk/src/lib.rs'), 'utf8');
-    for (const path of ['/v1/chain/status', '/v1/transactions', '/v1/events', '/v1/exchange/markets']) {
+    for (const path of ['/v1/chain/status', '/v1/transactions', '/v1/events', '/v1/exchange/markets', '/v1/monetary/policy']) {
       assert.ok(rust.includes(path), path);
     }
     assert.ok(rust.includes('sunrey-ed25519-v1'));

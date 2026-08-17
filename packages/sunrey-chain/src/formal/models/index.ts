@@ -8,6 +8,8 @@ import { createGovernanceModel } from './governance.ts';
 import { createInteropAssetModel } from './interop-asset.ts';
 import { createInteropPacketModel } from './interop-packet.ts';
 import { createMoonReyModel } from './moonrey.ts';
+import { createGenesisAllocationModel } from './genesis-allocation.ts';
+import { createMonetaryPolicyModel } from './monetary-policy.ts';
 import { createNativeAssetModel } from './native-asset.ts';
 import { createSignerModel } from './signer.ts';
 import { createValidatorSetModel } from './validator-set.ts';
@@ -35,6 +37,8 @@ export function modelsForProfile(profile: FormalProfile) {
     createInteropPacketModel(bounds),
     createInteropAssetModel(bounds),
     createCryptoPolicyModel(bounds),
+    createMonetaryPolicyModel(bounds),
+    createGenesisAllocationModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -49,3 +53,5 @@ export { createMoonReyModel, contributionFingerprint } from './moonrey.ts';
 export { createInteropPacketModel } from './interop-packet.ts';
 export { createInteropAssetModel, MODEL_INTEROP_ASSET } from './interop-asset.ts';
 export { createCryptoPolicyModel, MODEL_CRYPTO_STATES } from './crypto-policy.ts';
+export { createMonetaryPolicyModel } from './monetary-policy.ts';
+export { createGenesisAllocationModel } from './genesis-allocation.ts';

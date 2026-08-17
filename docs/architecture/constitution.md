@@ -958,6 +958,15 @@ dry run. It does not launch mainnet, enable `LIVE_*` flags, or
 authorize production funds. Do not create `packages/sunrey-launch`,
 `packages/launch-rehearsal`, or `packages/mainnet-rehearsal`. See
 [`chunk-70-launch-rehearsal.md`](./chunk-70-launch-rehearsal.md).
+Chunk 71 implements the SunRey dual-native-asset monetary
+constitution at `packages/sunrey-chain/src/economics`. Capability
+`sunrey-monetary-constitution` is `IMPLEMENTED`. It governs how
+SunRey Coin and MoonRey Coin may be created, allocated, issued,
+locked, burned, audited, and governed. Production quantities remain
+`UNCONFIGURED`. Do not create `packages/sunrey-economics`,
+`packages/monetary-policy`, `packages/tokenomics`, or
+`packages/genesis-economy`. See
+[`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
 Chunk 65 implements mainnet readiness evidence, activation control,
 and genesis-candidate engineering at
 `packages/sunrey-chain/src/mainnet`. Capability
