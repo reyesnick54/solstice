@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey fuzzing and deterministic property assurance (Chunk 56,
+  `packages/sunrey-chain/src/assurance`,
+  `packages/sunrey-chain/rust/crates/assurance`, `tests/assurance`):
+  protocol/parser fuzz, consensus and economic property campaigns,
+  TypeScript/Rust differential cases, replay fixtures, and
+  `FUZZ_SMOKE` / `FUZZ_EXTENDED` profiles. Not formal verification.
+
 - Customer domain (prospect through closed, typed status transitions, KYC state modelled not executed).
 - Thirteen typed account classes, product catalog, and legal-entity records in `packages/domain`.
 - Account entity with no balance field. Opening requires a verified Execution Authority.

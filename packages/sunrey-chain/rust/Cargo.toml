@@ -19,6 +19,7 @@ members = [
   "crates/wallet",
   "crates/ops",
   "crates/sdk",
+  "crates/assurance",
 ]
 
 [workspace.package]
@@ -46,6 +47,7 @@ sunrey-interop = { path = "crates/interop" }
 sunrey-wallet = { path = "crates/wallet" }
 sunrey-ops = { path = "crates/ops" }
 sunrey-sdk = { path = "crates/sdk" }
+sunrey-assurance = { path = "crates/assurance" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"

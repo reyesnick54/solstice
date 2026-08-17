@@ -26,6 +26,9 @@ echo "==> tests"
 npm run test:sunrey-node
 npm test
 
+echo "==> fuzz smoke"
+npm run test:fuzz-smoke
+
 echo "==> end-to-end demo"
 npm run demo
 npm run demo:cards
