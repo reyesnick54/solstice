@@ -61,3 +61,4 @@ export { dualEconomyReadiness } from './readiness.ts';
 export { allPropertiesHold, propertyChecks } from './properties.ts';
 export { benchmarkSimulator } from './benchmark.ts';
 export { DEFAULT_BRIDGE_POLICY } from './policies.ts';
+export { modelTreasuryAcrossEpochs } from './treasury.ts';

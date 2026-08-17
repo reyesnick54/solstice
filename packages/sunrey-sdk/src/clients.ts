@@ -422,6 +422,37 @@ export class ExchangeClient {
   }
 }
 
+export class ProtocolTreasuryClient {
+  readonly http: HttpTransport;
+  constructor(http: HttpTransport) {
+    this.http = http;
+  }
+
+  getProtocolTreasury(): Promise<unknown> {
+    return this.http.get('/v1/treasury');
+  }
+
+  getProtocolReserves(): Promise<unknown> {
+    return this.http.get('/v1/treasury/reserves');
+  }
+
+  getTreasuryBudget(budgetId?: string): Promise<unknown> {
+    return budgetId
+      ? this.http.get(`/v1/treasury/budgets/${encodeURIComponent(budgetId)}`)
+      : this.http.get('/v1/treasury/budgets');
+  }
+
+  getTreasuryDisbursement(disbursementId?: string): Promise<unknown> {
+    return disbursementId
+      ? this.http.get(`/v1/treasury/disbursements/${encodeURIComponent(disbursementId)}`)
+      : this.http.get('/v1/treasury/disbursements');
+  }
+
+  getTreasuryPolicy(): Promise<unknown> {
+    return this.http.get('/v1/treasury/policy');
+  }
+}
+
 export class EventClient {
   readonly http: HttpTransport;
   constructor(http: HttpTransport) {
@@ -455,6 +486,7 @@ export class SunReyClient {
   readonly machines: MachineClient;
   readonly interop: InteropClient;
   readonly exchange: ExchangeClient;
+  readonly treasury: ProtocolTreasuryClient;
   readonly events: EventClient;
 
   readonly http: HttpTransport;
@@ -471,6 +503,7 @@ export class SunReyClient {
     this.machines = new MachineClient(http);
     this.interop = new InteropClient(http);
     this.exchange = new ExchangeClient(http);
+    this.treasury = new ProtocolTreasuryClient(http);
     this.events = new EventClient(http);
   }
 

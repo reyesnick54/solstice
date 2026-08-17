@@ -9,6 +9,7 @@ import { monetaryReadinessSummary } from './readiness.ts';
 import { rehearseMonetaryConstitution } from './rehearsal.ts';
 import { requiredScenarios } from './simulator.ts';
 import { emptyBook } from './supply.ts';
+import { runTreasuryCommand } from './treasury/cli.ts';
 import type { NativeMonetaryAssetId } from './types.ts';
 
 export type EconomicsCliResult = {
@@ -33,6 +34,9 @@ function emptyBooks() {
 
 export function runEconomicsCommand(argv: readonly string[]): EconomicsCliResult {
   const [domain = 'help', verb = 'show', asset] = argv;
+  if (domain === 'treasury') {
+    return runTreasuryCommand(argv.slice(1));
+  }
   if (domain === 'supply' && verb === 'show') {
     return { ok: true, command: 'supply show', payload: jsonSafe(showSupply(emptyBooks())) };
   }
@@ -88,7 +92,7 @@ export function runEconomicsCommand(argv: readonly string[]): EconomicsCliResult
     command: 'help',
     payload: {
       usage:
-        'sunrey-economics <supply show|supply verify|policy show|policy verify|genesis|simulate|readiness|rehearsal>',
+        'sunrey-economics <supply show|supply verify|policy show|policy verify|genesis|simulate|readiness|rehearsal|treasury ...>',
       productionMainnetUnavailable: true,
       tickerStatus: 'NOT_ASSIGNED',
     },

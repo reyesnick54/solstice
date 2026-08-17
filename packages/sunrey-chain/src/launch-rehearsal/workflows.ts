@@ -11,6 +11,7 @@ import { FOUR_VALIDATORS, transferTx, txId } from '../fees/demo-helpers.ts';
 import { nextBaseResourcePrice, initialBaseResourcePriceState, developmentFeePolicyV2 } from '../fees/v2/index.ts';
 
 import { rehearseMonetaryConstitution } from '../economics/rehearsal.ts';
+import { rehearseProtocolTreasury } from '../economics/treasury/rehearsal.ts';
 import { interopPacketAtMostOnce } from '../assurance/properties.ts';
 import { mutableClock, runEnergyDemo } from '../oracle/demo-helpers.ts';
 import { createExternalDevChain, developmentExternalChain, InteropEngine } from '../interop/engine.ts';
@@ -27,6 +28,7 @@ import type {
   ExplorerRehearsalResult,
   InteropRehearsalResult,
   MoonReyPolicyRehearsalResult,
+  ProtocolTreasuryRehearsalResult,
   NativeAssetRehearsalResult,
   OracleRehearsalResult,
   RegulatedSandboxResult,
@@ -284,6 +286,10 @@ export function rehearseMoonReyPolicy(): MoonReyPolicyRehearsalResult {
     productionCaps: 'UNCONFIGURED',
     productionAuthorized: false,
   });
+}
+
+export function rehearseProtocolTreasuryWorkflow(): ProtocolTreasuryRehearsalResult {
+  return rehearseProtocolTreasury();
 }
 
 export function rehearseExplorer(): ExplorerRehearsalResult {

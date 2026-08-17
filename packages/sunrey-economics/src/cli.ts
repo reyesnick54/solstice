@@ -4,6 +4,7 @@
 
 import { writeFileSync } from 'node:fs';
 
+import { runTreasuryCommand } from '../../sunrey-chain/src/economics/treasury/cli.ts';
 import { analyzeReport } from './analysis.ts';
 import { compareScenarios } from './compare.ts';
 import { renderDashboard } from './dashboard.ts';
@@ -13,6 +14,10 @@ import { dualEconomyReadiness } from './readiness.ts';
 
 export function runEconomicsCommand(argv: readonly string[]): string {
   const [plane, command, ...rest] = argv;
+  if (plane === 'treasury') {
+    const result = runTreasuryCommand([command, ...rest]);
+    return JSON.stringify(result.payload, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+  }
   if (plane !== 'dual') {
     return usage();
   }
@@ -42,6 +47,12 @@ function usage(): string {
     'sunrey-economics dual report --scenario <id>',
     'sunrey-economics dual stability --scenario <id>',
     'sunrey-economics dual export --scenario <id> --out <path>',
+    'sunrey-economics treasury policy',
+    'sunrey-economics treasury reserves',
+    'sunrey-economics treasury budgets',
+    'sunrey-economics treasury disbursements',
+    'sunrey-economics treasury verify',
+    'sunrey-economics treasury simulate',
   ].join('\n');
 }
 

@@ -104,6 +104,7 @@
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts",
     "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/cli-main.ts",
     "demo:sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/demo.ts",
+    "demo:sunrey-protocol-treasury": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/treasury/demo.ts",
     "test:formal-smoke": "FORMAL_PROFILE=FORMAL_SMOKE node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts smoke && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",
     "test:formal-extended": "FORMAL_PROFILE=FORMAL_EXTENDED node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts extended && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",
     "demo:sunrey-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/demo.ts",

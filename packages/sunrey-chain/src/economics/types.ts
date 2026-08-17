@@ -295,7 +295,7 @@ export type MonetaryPolicyAuditReport = {
   readonly checks: readonly { readonly id: string; readonly ok: boolean; readonly detail: string }[];
 };
 
-export type ProtocolTreasuryAccount = {
+export type ProtocolTreasuryAccountRef = {
   readonly classification: typeof PROTOCOL_TREASURY_CLASS;
   readonly distinctFromFiatTreasuryPackage: true;
   readonly fiatTreasuryOwner: 'packages/treasury';

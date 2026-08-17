@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey protocol treasury, reserves, and budget governance
+  (Chunk 77, `packages/sunrey-chain/src/economics/treasury`):
+  protocol-owned `SUNREY_COIN` / `MOONREY_COIN` holdings,
+  governed reserve classes, versioned budget policy, reservation
+  before finality, FeePolicyV2 treasury disposition, validator
+  reward reserve integration, `PROTOCOL_TREASURY` formal model,
+  stress catalog, Explorer/SDK/CLI read surfaces, and rehearsal-only
+  units. Distinct from `packages/treasury`. No second ledger, new
+  native asset, price peg, or treasury mint. Production treasury
+  inactive. Capability `sunrey-protocol-treasury` is `IMPLEMENTED`.
+  See `docs/economics/chunk-77-protocol-treasury.md`.
 - SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
   `packages/sunrey-economics`): deterministic human/productive
   layers, economic bridge, Exchange order-flow discovery, fee and

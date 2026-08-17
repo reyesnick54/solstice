@@ -10,3 +10,4 @@ export * from './simulator.ts';
 export * from './readiness.ts';
 export * from './rehearsal.ts';
 export * from './cli.ts';
+export * from './treasury/index.ts';
