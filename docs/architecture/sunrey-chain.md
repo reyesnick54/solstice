@@ -66,6 +66,8 @@ Chunk 43 implements the sovereign oracle network at
 [`chunk-43-oracle-network.md`](./chunk-43-oracle-network.md).
 Chunk 42 implements native fees and resource metering at
 [`chunk-42-native-fees.md`](./chunk-42-native-fees.md).
+Chunk 46 implements sovereign wallets at
+[`chunk-46-sovereign-wallets.md`](./chunk-46-sovereign-wallets.md).
 Do not create
 `packages/sunrey-node`, `packages/sunrey-p2p`,
 `packages/validators`, `packages/staking`, `packages/governance`,

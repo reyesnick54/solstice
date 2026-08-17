@@ -2685,7 +2685,11 @@
     "packages/sunrey-governance",
     "packages/oracle",
     "packages/sunrey-oracle",
-    "packages/oracle-network"
+    "packages/oracle-network",
+    "packages/wallet-v2",
+    "packages/blockchain-wallet",
+    "packages/crypto-wallet",
+    "packages/sunrey-wallet-ledger"
   ],
   "capabilities": [
     {
@@ -3109,6 +3113,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 42 deterministic resource metering, integer fee schedule, reservation/charge/release, disposition, validator reward accrual, and height-activated fee parameters at packages/sunrey-chain and packages/sunrey-chain/rust/crates/fees. Attaches FeeIntent beside the Chunk 41 native-asset payload. SUNREY_COIN is the development fee asset. MOONREY_COIN is policy-ready and disabled. No fiat ledger debit. No public staking-yield. Do not create packages/fees, packages/sunrey-fees, or packages/gas."
+    },
+    {
+      "id": "sunrey-sovereign-wallets",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
     }
   ],
   "boundedContexts": [

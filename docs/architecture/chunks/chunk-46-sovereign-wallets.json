@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-46",
+  "title": "SunRey Sovereign Wallets, Addresses, Account Abstraction and Recovery",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "evidence",
+    "events",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "blockchain-protocol",
+    "crypto-suite-registry",
+    "sunrey-validators",
+    "sunrey-protocol-governance",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-machine-economy",
+    "sunrey-sovereign-wallets"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/wallet and packages/sunrey-chain/rust/crates/wallet. Versioned SunRey addresses, BlockchainAccount (not a fiat Account), WalletDescriptor without private keys, M-of-N authorization, encrypted development keystore, recovery providers with height delay, delegated keys, watch-only, transaction builder, nonce manager, fee quotes, machine-mandate enforcement, and rebuildable history. Wallet metadata is not a second native-asset ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
+}

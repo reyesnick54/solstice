@@ -14,10 +14,11 @@
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:local-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/local-node/demo.ts",
     "demo:governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/governance/demo.ts",
-    "demo:machine-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/machine-economy/demo.ts"
-    "demo:productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/demo.ts"
-    "demo:oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/demo.ts"
-    "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts"
+    "demo:machine-economy": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/machine-economy/demo.ts",
+    "demo:productive": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/demo.ts",
+    "demo:oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/demo.ts",
+    "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts",
+    "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts"
   },
   "engines": {
     "node": ">=22"
