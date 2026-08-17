@@ -4,6 +4,16 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey production-candidate oracle onboarding and collection
+  (Chunk 68, `packages/sunrey-chain/src/oracle/production`): provider
+  onboarding, versioned data sources, off-chain collector, SecretReference
+  credentials, software/KMS/HSM signing interfaces, schema validation,
+  integer normalization, provenance, independence, concentration,
+  quality, quorum, MoonRey eligibility, incident controls, Explorer
+  public feed metadata, and seven-validator E2E. Capability
+  `sunrey-production-oracles` is `IMPLEMENTED`. Consensus never calls
+  HTTP. Missing agreements are never confirmed. Oracle facts never
+  mint MoonRey.
 - SunRey production infrastructure and secret controls (Chunk 66,
   `packages/sunrey-chain/src/infra`): provider-neutral provider
   registry, workload identity, classified secrets over

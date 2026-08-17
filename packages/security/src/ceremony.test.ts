@@ -305,7 +305,6 @@ describe('Chunk 64 root-of-trust ceremony', () => {
 
   it('runs the seven-validator rehearsal and public report', () => {
     const rehearsal = runFullCeremonyRehearsal({ fixtureEnv: { SUNREY_FIXTURE_ENV: 'test' } });
-    assert.equal(rehearsal.ok, true);
     if (!rehearsal.ok) {
       throw new Error(rehearsal.error.message);
     }

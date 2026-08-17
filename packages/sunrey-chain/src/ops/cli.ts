@@ -177,16 +177,6 @@ export type CliResult = {
   readonly payload: unknown;
 };
 
-const VALIDATOR_COMMANDS = [
-  'validator',
-  'signer',
-  'snapshot',
-  'state-sync',
-  'upgrade',
-  'incident',
-  'crypto',
-] as const;
-
 export function opsUsage(): string {
   return [
     'sunrey-ops validator status',
@@ -423,6 +413,7 @@ export async function main(): Promise<void> {
   }
 }
 
+if (import.meta.url === `file://${process.argv[1]}`) {
 const entry = process.argv[1] ?? '';
 if (
   import.meta.url === `file://${entry}` ||

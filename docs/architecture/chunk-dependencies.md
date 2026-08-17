@@ -129,6 +129,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
 
@@ -532,6 +533,14 @@ create `packages/mainnet`, `packages/sunrey-mainnet`,
 `packages/genesis-candidate`, `packages/readiness-registry`, or
 `packages/activation-control`. The evaluator returns
 `mustStop: false`.
+Chunk 68 implements production-candidate oracle provider onboarding,
+off-chain collection, provenance, independence, and MoonRey
+eligibility at `packages/sunrey-chain/src/oracle`. Capability
+`sunrey-production-oracles` is `IMPLEMENTED`. See
+[`chunk-68-production-oracles.md`](./chunk-68-production-oracles.md).
+Consensus never calls HTTP. Do not create
+`packages/production-oracles`, `packages/oracle-onboarding`, or
+`packages/oracle-collector`. The evaluator returns `mustStop: false`.
 Chunk 66 implements provider-neutral production infrastructure,
 secret/KMS/HSM adapters, workload identity, and network zoning at
 `packages/sunrey-chain/src/infra`. Capability
