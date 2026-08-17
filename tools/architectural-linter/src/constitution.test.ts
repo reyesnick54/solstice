@@ -1350,4 +1350,25 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/institutional-custody-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/hsm-security-v2')), false);
   });
+
+  it('CHUNK-53 implements the public testnet package on the sunrey-chain owner', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-public-testnet').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-53',
+    );
+    assert.ok(declared, 'CHUNK-53 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-53-public-testnet.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/testnet/README.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/testnet/genesis.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'deploy/sunrey-testnet/k8s/namespace.yaml')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-testnet')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-faucet')), false);
+  });
 });

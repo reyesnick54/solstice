@@ -20,6 +20,8 @@ use sunrey_native_assets::NativeAssetLedger;
 
 pub const DEV_NETWORK_ID: &str = "net_sunrey_development";
 pub const DEV_CHAIN_ID: &str = "chn_sunrey_development";
+pub const TESTNET_1_NETWORK_ID: &str = "net_sunrey_testnet_1";
+pub const TESTNET_1_CHAIN_ID: &str = "chn_sunrey_testnet_1";
 pub const MAX_TX_BYTES: usize = 16_384;
 pub const MAX_BLOCK_TXS: usize = 128;
 pub const MAX_BLOCK_BYTES: usize = 512_000;
@@ -46,6 +48,22 @@ impl Genesis {
             codec_version: crate::crypto::CODEC_VERSION,
             crypto_suite: crate::crypto::CRYPTO_SUITE_ID.into(),
             created_at_ms: 1,
+            validator_set_hash: [0u8; 32],
+            validator_set: ValidatorSet::empty(),
+            hash: [0u8; 32],
+        };
+        genesis.hash = genesis.compute_hash();
+        genesis
+    }
+
+    pub fn testnet_1() -> Self {
+        let mut genesis = Self {
+            network_id: TESTNET_1_NETWORK_ID.into(),
+            chain_id: TESTNET_1_CHAIN_ID.into(),
+            protocol_version: crate::crypto::PROTOCOL_VERSION,
+            codec_version: crate::crypto::CODEC_VERSION,
+            crypto_suite: crate::crypto::CRYPTO_SUITE_ID.into(),
+            created_at_ms: 1_704_067_200_000,
             validator_set_hash: [0u8; 32],
             validator_set: ValidatorSet::empty(),
             hash: [0u8; 32],

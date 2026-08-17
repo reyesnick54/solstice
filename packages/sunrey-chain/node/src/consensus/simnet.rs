@@ -8,7 +8,7 @@ use crate::error::{NodeError, NodeResult};
 use crate::identity::unix_ms;
 
 use super::engine::{Action, ConsensusEngine};
-use super::fixture::FourValidatorFixture;
+use super::fixture::{FourValidatorFixture, SevenValidatorFixture, ValidatorFixture};
 use super::messages::ConsensusMessage;
 use super::signer::ConsensusSigner;
 use super::types::{ConsensusParams, Height, RejectReason, TimeoutKind};
@@ -55,19 +55,24 @@ pub struct SimNet {
 }
 
 impl SimNet {
-    pub fn four_honest(fixture: &FourValidatorFixture) -> Self {
+    pub fn from_validators(
+        genesis: &Genesis,
+        set: &super::validators::ValidatorSet,
+        validators: &[ValidatorFixture],
+        params: ConsensusParams,
+    ) -> Self {
         let mut nodes = HashMap::new();
         let mut order = Vec::new();
-        for (i, item) in fixture.validators.iter().enumerate() {
+        for item in validators {
             let signer = ConsensusSigner::new(item.consensus_key.clone()).expect("signer");
             let id = signer.validator_id;
             let engine = ConsensusEngine::new(
-                fixture.genesis.network_id.clone(),
-                fixture.genesis.chain_id.clone(),
-                fixture.set.clone(),
+                genesis.network_id.clone(),
+                genesis.chain_id.clone(),
+                set.clone(),
                 signer,
                 ConsensusWal::memory(),
-                ConsensusParams::fast_dev(),
+                params,
             );
             order.push(id);
             nodes.insert(
@@ -75,14 +80,13 @@ impl SimNet {
                 SimNode {
                     name: item.name.clone(),
                     engine,
-                    chain: DevChain::new(fixture.genesis.clone()),
-                    online: i < 4,
+                    chain: DevChain::new(genesis.clone()),
+                    online: true,
                     paused: false,
                     pending_timeouts: Vec::new(),
                     clock: 0,
                 },
             );
-            let _ = i;
         }
         Self {
             nodes,
@@ -96,6 +100,24 @@ impl SimNet {
             evidence: Vec::new(),
             rejects: Vec::new(),
         }
+    }
+
+    pub fn four_honest(fixture: &FourValidatorFixture) -> Self {
+        Self::from_validators(
+            &fixture.genesis,
+            &fixture.set,
+            &fixture.validators,
+            ConsensusParams::fast_dev(),
+        )
+    }
+
+    pub fn seven_honest(fixture: &SevenValidatorFixture) -> Self {
+        Self::from_validators(
+            &fixture.genesis,
+            &fixture.set,
+            &fixture.validators,
+            ConsensusParams::fast_dev(),
+        )
     }
 
     pub fn start_all(&mut self) {

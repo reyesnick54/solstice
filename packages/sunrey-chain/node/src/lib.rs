@@ -33,7 +33,7 @@ pub mod validator_demo;
 pub mod validators;
 
 pub use chain::{Genesis, Transaction, DEV_CHAIN_ID, DEV_NETWORK_ID};
-pub use consensus::{CommitCertificate, FourValidatorFixture, ValidatorSet};
+pub use consensus::{CommitCertificate, FourValidatorFixture, SevenValidatorFixture, ValidatorSet};
 pub use crypto::{KeyDomain, CRYPTO_SUITE_ID};
 pub use demo::{
     run_accountability_demo, run_required_devnet_demo, AccountabilityDemoReport, DemoReport,

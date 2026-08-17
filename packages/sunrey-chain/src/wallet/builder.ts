@@ -79,7 +79,12 @@ export function buildNativeTransfer(input: BuildTransferInput): BuiltTransaction
   if (!parsed.ok) {
     return { ok: false, code: parsed.code === 'CHECKSUM_FAILURE' ? 'CHECKSUM_FAILURE' : 'WRONG_NETWORK_ADDRESS', detail: parsed.detail };
   }
-  if (networkId !== PROTOCOL_NETWORK_ID && networkId !== 'net_sunrey_local_dev') {
+  if (
+    networkId !== PROTOCOL_NETWORK_ID &&
+    networkId !== 'net_sunrey_local_dev' &&
+    networkId !== 'net_sunrey_testnet_1' &&
+    !networkId.startsWith('net_sunrey_testnet_')
+  ) {
     return { ok: false, code: 'WRONG_CHAIN_TRANSACTION', detail: 'wallet builder refuses unknown chain ids' };
   }
   const fee = quoteFee('NATIVE_TRANSFER', input.encodedBytes ?? 256, input.signatureCount ?? 1, input.maxFee);

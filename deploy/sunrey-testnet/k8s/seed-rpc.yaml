@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-seed
+  namespace: sunrey-testnet-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sunrey-seed
+  template:
+    metadata:
+      labels:
+        app: sunrey-seed
+        sunrey.role: seed
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: seed
+          image: sunrey-node:testnet-1
+          env:
+            - name: SUNREY_ROLE
+              value: SEED
+          ports:
+            - containerPort: 26656
+          readinessProbe:
+            tcpSocket:
+              port: 26656
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-rpc
+  namespace: sunrey-testnet-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sunrey-rpc
+  template:
+    metadata:
+      labels:
+        app: sunrey-rpc
+        sunrey.role: public-rpc
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: rpc
+          image: sunrey-rpc:testnet-1
+          env:
+            - name: SUNREY_ROLE
+              value: PUBLIC_RPC
+          ports:
+            - containerPort: 26657
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 26657
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 26657
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sunrey-rpc
+  namespace: sunrey-testnet-1
+spec:
+  selector:
+    app: sunrey-rpc
+  ports:
+    - name: http
+      port: 26657

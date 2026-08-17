@@ -108,7 +108,9 @@ Strategy Lab is `PARTIAL` at `packages/strategy-lab` and
 `IMPLEMENTED` at `packages/clean-room`. SunRey Coin is `IMPLEMENTED`
 at `packages/sunrey-coin`. SunRey Chain is `IMPLEMENTED` at
 `packages/sunrey-chain`. SunRey Exchange is `IMPLEMENTED` at
-`packages/sunrey-exchange`.
+`packages/sunrey-exchange`. SunRey Testnet 1 (`net_sunrey_testnet_1`)
+is a public TEST NETWORK package at `packages/sunrey-chain/src/testnet`.
+It is not mainnet. Tickers remain `NOT_ASSIGNED`.
 Strategy Lab is implemented at the reserved owners:
 `STRATEGY_LAB` is `PARTIAL` at `packages/strategy-lab` and
 `services/strategy-lab` (no LIVE stage).

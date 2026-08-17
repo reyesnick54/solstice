@@ -2148,7 +2148,6 @@
         "@reyesnick54"
       ],
       "notes": "One SunRey Exchange owner. Chunk 29 simulation matching and DVP. Chunk 49 adds four canonical market families (digital, information-right, compute, productive capacity), two-stage eligibility, auctions, native DVP, oracle partial settlement, and delivery-versus-right. Public ticker is NOT_ASSIGNED. Do not implement Travel Rule or live exchange here."
-      "notes": "One SunRey Exchange owner. Simulation matching and DVP settlement only. Public ticker is NOT_ASSIGNED. Chunk 48 adds native-chain clearing and atomic EXCHANGE_SETTLEMENT against packages/sunrey-chain. Positions are derived. Do not implement Travel Rule or live exchange here."
     }
   ],
   "authorizedMutationPaths": [
@@ -2702,15 +2701,18 @@
     "packages/light-client",
     "packages/relayer",
     "packages/sunrey-interop",
-    "packages/sunrey-bridge"
+    "packages/sunrey-bridge",
     "packages/custody-v2",
     "packages/blockchain-custody",
     "packages/institutional-custody-v2",
-    "packages/hsm-security-v2"
+    "packages/hsm-security-v2",
     "packages/wallet-v2",
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
-    "packages/sunrey-wallet-ledger"
+    "packages/sunrey-wallet-ledger",
+    "packages/sunrey-testnet",
+    "packages/sunrey-faucet",
+    "packages/testnet"
   ],
   "capabilities": [
     {
@@ -3142,21 +3144,34 @@
       "protected": true,
       "adr": "ADR-0029",
       "notes": "Chunk 50 development light-client / IBC-class interoperability gateway at packages/sunrey-chain and packages/sunrey-chain/rust/crates/interop. Relayers are untrusted. No trusted-multisig bridge. No wrapped fiat. Production SunRey Coin and MoonRey interoperability remain unavailable. Do not create packages/ibc, packages/bridge, packages/interop, or a competing chain."
+    },
+    {
       "id": "sunrey-exchange-native-settlement",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-exchange",
       "protected": true,
       "notes": "Chunk 48 native-chain clearing and atomic DVP at packages/sunrey-exchange/src/native-clearing with EXCHANGE_SETTLEMENT in packages/sunrey-chain/rust/crates/native-assets. Positions are derived from custody attribution, finalized holdings, reservations, and settlements. Matching stays off-chain. Tickers remain NOT_ASSIGNED. Do not create a second exchange ledger."
+    },
+    {
       "id": "sunrey-institutional-custody",
       "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
       "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
+    },
+    {
       "id": "sunrey-sovereign-wallets",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 46 sovereign wallets, versioned addresses, BlockchainAccount authorization, multi-auth, recovery, delegated keys, development keystore, and watch-only at packages/sunrey-chain. Not a second native-asset ledger and not a packages/domain Account. Do not create packages/wallet-v2, packages/blockchain-wallet, packages/crypto-wallet, or packages/sunrey-wallet-ledger."
+    },
+    {
+      "id": "sunrey-public-testnet",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 53 public TEST NETWORK package at packages/sunrey-chain/src/testnet and deploy/sunrey-testnet. Network net_sunrey_testnet_1 / chain chn_sunrey_testnet_1. Not mainnet. Tickers remain NOT_ASSIGNED. ENVIRONMENT stays simulation. Do not create packages/sunrey-testnet or enable production banking rails."
     }
   ],
   "boundedContexts": [

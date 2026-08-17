@@ -23,7 +23,7 @@ Maximum binary length is 42 bytes.
 Human-readable prefixes:
 
 - `srdev` — development (`net_sunrey_simulation`, `net_sunrey_local_dev`)
-- `srtst` — reserved future test network
+- `srtst` — reserved test class, including `net_sunrey_testnet_1` (SunRey Testnet 1)
 - `srprd` — reserved future production network
 
 Maximum text length is 90 characters.

@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sunrey-testnet-1
+  labels:
+    sunrey.network: net_sunrey_testnet_1
+    sunrey.environment: simulation
+    sunrey.banner: SUNREY-TESTNET

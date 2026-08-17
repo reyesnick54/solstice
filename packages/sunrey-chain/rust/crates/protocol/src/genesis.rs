@@ -9,6 +9,8 @@ use crate::RejectReason;
 
 pub const LOCAL_DEV_NETWORK_ID: &str = "net_sunrey_local_dev";
 pub const LOCAL_DEV_CHAIN_ID: &str = "chn_sunrey_local_dev";
+pub const TESTNET_1_NETWORK_ID: &str = "net_sunrey_testnet_1";
+pub const TESTNET_1_CHAIN_ID: &str = "chn_sunrey_testnet_1";
 pub const PROTOCOL_VERSION: &str = "1";
 pub const SRCB_CODEC_ID: &str = "srcb.v1";
 pub const SCHEMA_VERSION: u32 = 1;
@@ -191,5 +193,31 @@ pub fn local_dev_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String
         ],
         production_network_enabled: false,
         environment: "simulation".to_string(),
+    }
+}
+
+pub fn testnet_1_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String) -> GenesisV1 {
+    let mut genesis = local_dev_genesis(schema_registry_hash, crypto_policy_id);
+    genesis.network_id = TESTNET_1_NETWORK_ID.to_string();
+    genesis.chain_id = TESTNET_1_CHAIN_ID.to_string();
+    genesis.validator_placeholder = "TESTNET_1_SEVEN_VALIDATOR_SET".to_string();
+    genesis
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn testnet_genesis_is_deterministic_and_not_local_dev() {
+        let a = testnet_1_genesis(vec![1, 2, 3], "cs_ed25519_sha256_v1".into());
+        let b = testnet_1_genesis(vec![1, 2, 3], "cs_ed25519_sha256_v1".into());
+        assert_eq!(a.encode(), b.encode());
+        assert_eq!(a.network_id, TESTNET_1_NETWORK_ID);
+        assert_ne!(a.network_id, LOCAL_DEV_NETWORK_ID);
+        assert!(!a.production_network_enabled);
+        assert_eq!(a.environment, "simulation");
+        assert_eq!(a.native_assets.len(), 2);
+        assert!(a.native_assets.iter().all(|asset| asset.ticker_status == "NOT_ASSIGNED"));
     }
 }
