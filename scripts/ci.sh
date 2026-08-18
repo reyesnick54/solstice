@@ -58,6 +58,14 @@ npm run sunrey-ops -- production evidence-seal
 npm run sunrey-ops -- production handoff
 npm run sunrey-ops -- production readiness
 npm run sunrey-ops -- production rehearse
+npm run sunrey-ops -- rpc status
+npm run sunrey-ops -- rpc endpoints
+npm run sunrey-ops -- rpc limits
+npm run sunrey-ops -- rpc health
+npm run sunrey-ops -- explorer status
+npm run sunrey-ops -- explorer lag
+npm run sunrey-ops -- explorer rebuild
+npm run sunrey-ops -- explorer verify
 npm run sunrey-launch -- production execute
 npm run sunrey-launch -- production verify
 npm run sunrey-bench -- sanity

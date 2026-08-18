@@ -66,9 +66,56 @@ pub struct SunReyRpcClient {
     addr: String,
 }
 
+pub struct RpcEndpointPool {
+    endpoints: Vec<String>,
+}
+
+impl RpcEndpointPool {
+    pub fn connect(endpoints: impl Into<Vec<String>>) -> Self {
+        Self { endpoints: endpoints.into() }
+    }
+
+    pub fn clients(&self) -> Vec<SunReyRpcClient> {
+        self.endpoints.iter().map(|addr| SunReyRpcClient::connect(addr.clone())).collect()
+    }
+
+    pub fn read_with_failover(&self, path: &str) -> Result<Value, SdkError> {
+        let mut last = SdkError::Transport;
+        for addr in &self.endpoints {
+            match SunReyRpcClient::connect(addr).get_path(path) {
+                Ok(value) => return Ok(value),
+                Err(error) => last = error,
+            }
+        }
+        Err(last)
+    }
+
+    /// Failover never blindly resubmits. Status is checked by canonical tx id.
+    pub fn submit_idempotent(
+        &self,
+        signed_envelope_hex: &str,
+        network_id: &str,
+        transaction_id: &str,
+    ) -> Result<Value, SdkError> {
+        if let Ok(existing) =
+            self.read_with_failover(&format!("/v1/chain/transactions/{transaction_id}"))
+        {
+            return Ok(existing);
+        }
+        let Some(primary) = self.endpoints.first() else {
+            return Err(SdkError::Transport);
+        };
+        SunReyRpcClient::connect(primary).submit_transaction(signed_envelope_hex, network_id)
+    }
+}
+
 impl SunReyRpcClient {
     pub fn connect(addr: impl Into<String>) -> Self {
         Self { addr: addr.into() }
+    }
+
+    pub fn get_path(&self, path: &str) -> Result<Value, SdkError> {
+        self.get(path)
     }
 
     pub fn chain_status(&self) -> Result<Value, SdkError> {
@@ -313,5 +360,13 @@ mod tests {
         assert!(PATH_TREASURY.starts_with("/v1/"));
         assert!(PATH_TREASURY_POLICY.starts_with("/v1/"));
         assert!(PATH_TREASURY_RESERVES.starts_with("/v1/"));
+    }
+
+    #[test]
+    fn endpoint_pool_is_constructed_without_blind_resubmit() {
+        let pool =
+            RpcEndpointPool::connect(vec!["127.0.0.1:1".to_string(), "127.0.0.1:2".to_string()]);
+        assert_eq!(pool.clients().len(), 2);
+        assert!(pool.read_with_failover(PATH_STATUS).is_err());
     }
 }

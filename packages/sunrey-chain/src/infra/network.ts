@@ -36,6 +36,7 @@ export const FORBIDDEN_NETWORK_PATHS: readonly NetworkPath[] = Object.freeze([
   { from: 'PUBLIC_EDGE', to: 'SIGNER_PRIVATE', purpose: 'public → signer' },
   { from: 'PUBLIC_EDGE', to: 'VALIDATOR_PRIVATE', purpose: 'public → validator administration' },
   { from: 'PUBLIC_RPC', to: 'SIGNER_PRIVATE', purpose: 'RPC → HSM / signer' },
+  { from: 'PUBLIC_RPC', to: 'VALIDATOR_PRIVATE', purpose: 'RPC → validator administration' },
   { from: 'PUBLIC_EDGE', to: 'CUSTODY_PRIVATE', purpose: 'Explorer → custody signer' },
   { from: 'OPERATIONS_PRIVATE', to: 'SIGNER_PRIVATE', purpose: 'relayer → governance signer' },
   { from: 'PUBLIC_RPC', to: 'CUSTODY_PRIVATE', purpose: 'RPC → custody HSM' },

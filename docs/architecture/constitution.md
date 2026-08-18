@@ -81,6 +81,7 @@ never be two implementations of these systems.
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
+| SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1217,6 +1218,17 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
 
+Chunk 93 implements the SunRey public RPC edge, high-availability
+Explorer, and production network data plane at
+`packages/sunrey-chain/src/public-data-plane`. Capability
+`sunrey-public-data-plane` is `IMPLEMENTED`. RPC reads canonical chain
+state. Explorer projections are rebuildable and non-authoritative. It
+does not create a second consensus, second financial ledger,
+authoritative Explorer database, or public validator admin endpoints.
+Do not create `packages/public-rpc`, `packages/sunrey-rpc-edge`,
+`packages/rpc-gateway`, `packages/explorer-ha`, or
+`packages/public-data-plane`. See
+[`chunk-93-public-data-plane.md`](./chunk-93-public-data-plane.md).
 Chunk 92 implements the SunRey validator operator platform, fleet
 management, and production operator control plane at
 `packages/sunrey-chain/src/validator-operator`. Capability

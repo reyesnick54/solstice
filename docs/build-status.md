@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey public RPC edge, high-availability Explorer, and production
+  network data plane (Chunk 93,
+  `packages/sunrey-chain/src/public-data-plane`): `PublicRpcGateway`,
+  endpoint pool, request/quota/rate/abuse/cache policies, health
+  router, bounded subscriptions, archive query, Explorer indexer
+  fleet, HA query failover, public network status, TypeScript/Rust
+  SDK endpoint pools, and `sunrey-ops rpc|explorer` commands.
+  Capability `sunrey-public-data-plane` is `IMPLEMENTED`. RPC reads
+  canonical chain state. Explorer is rebuildable and
+  non-authoritative. `ENVIRONMENT` remains `simulation`. See
+  `docs/network/chunk-93-public-data-plane.md`.
 - SunRey validator operator platform (Chunk 92,
   `packages/sunrey-chain/src/validator-operator`):
   `ValidatorOperator`, organizations, profiles, fleet, node and

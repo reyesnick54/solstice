@@ -46,3 +46,20 @@ export function parseApiVersion(raw: string | undefined): PublicApiVersion | nul
 export function isSupportedPublicApiVersion(value: string): value is PublicApiVersion {
   return (SUPPORTED_PUBLIC_API_VERSIONS as readonly string[]).includes(value);
 }
+
+/**
+ * Breaking public API changes require a new versioned prefix.
+ * `/v1` remains the current public surface. `/v2` is reserved and
+ * unpublished until an explicit compatibility review.
+ */
+export const PUBLIC_API_VERSION_STRATEGY = Object.freeze({
+  current: 'v1' as const,
+  preserveV1: true,
+  breakingChangesRequireVersioning: true,
+  unpublishedNext: 'v2' as const,
+  protocolUpgradeDoesNotBreakApi: true,
+});
+
+export function requireVersionedPublicPath(path: string): boolean {
+  return path === '/health' || path === '/ready' || path.startsWith('/v1/') || path.startsWith('/operator/v1/');
+}
