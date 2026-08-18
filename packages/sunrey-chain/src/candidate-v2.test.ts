@@ -32,7 +32,7 @@ import {
 import { consumeExternalSecurityReview } from './mainnet/consumers.ts';
 import { ECONOMIC_REHEARSAL_CHAIN_ID, ECONOMIC_REHEARSAL_NETWORK_ID } from './economic-rehearsal/identity.ts';
 
-const ROOT = join(import.meta.dirname, '../..');
+const ROOT = join(import.meta.dirname, '../../..');
 
 let cached: ReturnType<typeof createProductionNetworkCandidateV2> | undefined;
 function candidate() {
