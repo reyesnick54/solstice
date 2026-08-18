@@ -29,6 +29,7 @@ export {
   CONSUMER_SETTLEMENT_VIEWS,
   LIQUIDITY_WARNING_CODES,
   circuitBreakerSafeExplanation,
+  mapConsumerSettlementView,
   mapOrderStatusView,
 } from './taxonomy.ts';
 export type {

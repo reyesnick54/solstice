@@ -1,4 +1,10 @@
-import { MARKET_STATES, ORDER_STATUSES, type MarketState, type OrderStatus } from '../taxonomy.ts';
+import {
+  MARKET_STATES,
+  ORDER_STATUSES,
+  type MarketState,
+  type NativeSettlementStatus,
+  type OrderStatus,
+} from '../taxonomy.ts';
 import { OPERATIONAL_ORDER_TYPES, type OperationalOrderType } from '../ops/taxonomy.ts';
 
 export { MARKET_STATES, ORDER_STATUSES, OPERATIONAL_ORDER_TYPES };
@@ -109,6 +115,21 @@ export function mapOrderStatusView(status: OrderStatus | 'UNKNOWN'): ConsumerOrd
 
 export function consumerOrderTypeToOperational(type: ConsumerOrderType): OperationalOrderType {
   return type;
+}
+
+export function mapConsumerSettlementView(
+  status: NativeSettlementStatus | 'NONE',
+): ConsumerSettlementView {
+  if (status === 'FINALIZED') {
+    return 'FINALIZED';
+  }
+  if (status === 'SUBMISSION_UNKNOWN') {
+    return 'SUBMISSION_UNKNOWN';
+  }
+  if (status === 'MATCHED') {
+    return 'TRADE_MATCHED';
+  }
+  return 'SETTLEMENT_PENDING';
 }
 
 export function circuitBreakerSafeExplanation(state: MarketState): string {

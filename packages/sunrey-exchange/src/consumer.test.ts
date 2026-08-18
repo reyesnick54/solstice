@@ -12,6 +12,7 @@ import {
   createConsumerSandbox,
   defaultConsumerExchangePolicy,
   humanReadableTradeIntent,
+  mapConsumerSettlementView,
   runConsumerExchangeCommand,
   sessionCannotSpend,
 } from './consumer/index.ts';
@@ -675,12 +676,59 @@ describe('chunk 99 portfolio, settlement, sandbox, alerts, and privacy', () => {
     assert.equal(bypass.reason, 'WITHDRAWAL_BYPASS_REJECTED');
   });
 
-  it('reconciles projection, reservations, trades, DVP, custody, and chain holdings', () => {
+  it('binds a filled order to a DVP receipt and maps settlement states without duplicates', () => {
+    assert.equal(mapConsumerSettlementView('MATCHED'), 'TRADE_MATCHED');
+    assert.equal(mapConsumerSettlementView('SETTLEMENT_CREATED'), 'SETTLEMENT_PENDING');
+    assert.equal(mapConsumerSettlementView('SUBMITTED'), 'SETTLEMENT_PENDING');
+    assert.equal(mapConsumerSettlementView('SUBMISSION_UNKNOWN'), 'SUBMISSION_UNKNOWN');
+    assert.equal(mapConsumerSettlementView('FINALIZED'), 'FINALIZED');
+    assert.equal(mapConsumerSettlementView('NONE'), 'SETTLEMENT_PENDING');
+
     const engine = readyEngine();
+    const result = engine.submitConsumerTrade({
+      participantId: 'alice',
+      now: NOW,
+      authorization: walletAuth(),
+      request: {
+        clientOrderId: 'dvp-1',
+        marketId: SUNREY_MOONREY_MARKET_ID,
+        flow: 'BUY',
+        side: 'BUY',
+        orderType: 'LIMIT',
+        quantity: 1n,
+        limitPriceUnits: 2_500_000n,
+        priceProtectionBps: null,
+        quoteId: null,
+        previewId: null,
+      },
+    });
+    assert.equal('ok' in result, false);
+    if ('ok' in result) {
+      throw new Error(result.reason);
+    }
+    assert.ok(['FILLED', 'PARTIALLY_FILLED', 'OPEN', 'SUBMITTED'].includes(result.view));
+    if (result.orderId && (result.view === 'FILLED' || result.view === 'PARTIALLY_FILLED')) {
+      const receipt = engine.getConsumerTradeReceipt(result.orderId);
+      assert.ok(receipt);
+      assert.ok(receipt.fills.length >= 1);
+      assert.equal(receipt.fees.productionRatesInvented, false);
+      assert.ok(receipt.marketPolicyVersion >= 1);
+    }
+    const portfolio = engine.getConsumerPortfolio({
+      participantId: 'alice',
+      authenticated: true,
+      now: NOW,
+    });
+    assert.equal('ok' in portfolio, false);
+    if ('ok' in portfolio) {
+      throw new Error(portfolio.reason);
+    }
+    assert.ok(portfolio.pendingSettlement.every((row) => row.duplicateInstructionCreated === false));
     const report = engine.reconcile();
     assert.equal(report.balancingEntries, false);
     assert.equal(report.portfolioCreatedBalance, false);
     assert.ok(report.projectionHoldings >= 1);
+    assert.ok(report.dvpIntents >= 0);
   });
 
   it('does not expose a private portfolio on the explorer view', () => {

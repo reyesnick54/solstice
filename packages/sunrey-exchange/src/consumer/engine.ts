@@ -29,13 +29,13 @@ import { createConsumerSandbox, type ConsumerSandboxContext } from './sandbox.ts
 import {
   circuitBreakerSafeExplanation,
   consumerOrderTypeToOperational,
+  mapConsumerSettlementView,
   mapOrderStatusView,
   type ConsumerEnvironment,
   type ConsumerFlow,
   type ConsumerNativeAsset,
   type ConsumerOrderType,
   type ConsumerQuoteKind,
-  type ConsumerSettlementView,
   type LiquidityWarningCode,
   type ValueSourceKind,
 } from './taxonomy.ts';
@@ -785,7 +785,7 @@ export class ConsumerExchangeEngine {
       rows.push(
         Object.freeze({
           settlementId: settlement.settlementId,
-          view: this.settlementView(settlement.status),
+          view: mapConsumerSettlementView(settlement.status),
           canonicalStatus: settlement.status,
           tradeIds: settlement.tradeIds,
           duplicateInstructionCreated: false,
@@ -793,19 +793,6 @@ export class ConsumerExchangeEngine {
       );
     }
     return Object.freeze(rows);
-  }
-
-  private settlementView(status: ConsumerSettlementProjection['canonicalStatus']): ConsumerSettlementView {
-    if (status === 'FINALIZED') {
-      return 'FINALIZED';
-    }
-    if (status === 'SUBMISSION_UNKNOWN') {
-      return 'SUBMISSION_UNKNOWN';
-    }
-    if (status === 'MATCHED') {
-      return 'TRADE_MATCHED';
-    }
-    return 'SETTLEMENT_PENDING';
   }
 
   private recordReceipt(participantId: string, status: ConsumerOrderStatus, clientOrderId: string, now: UtcInstant): void {
