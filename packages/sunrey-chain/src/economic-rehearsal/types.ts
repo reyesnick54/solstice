@@ -244,7 +244,6 @@ export type GovernanceRehearsalResult = {
   readonly productionAuthorized: false;
 };
 
-export type RehearsalStressFinding = {
 export type EconomicRehearsalStressFinding = {
   readonly findingId: string;
   readonly scenario: string;
@@ -253,8 +252,8 @@ export type EconomicRehearsalStressFinding = {
   readonly description: string;
   readonly becomesMainnetBlocker: boolean;
 };
+export type RehearsalStressFinding = EconomicRehearsalStressFinding;
 
-export type RehearsalStressResult = {
 export type EconomicRehearsalStressResult = {
   readonly oracleDegradation: boolean;
   readonly liquidityStress: boolean;
@@ -265,13 +264,12 @@ export type EconomicRehearsalStressResult = {
   readonly custodyDelay: boolean;
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
-  readonly findings: readonly RehearsalStressFinding[];
   readonly findings: readonly EconomicRehearsalStressFinding[];
-  readonly findings: readonly EconomicStressFinding[];
   readonly chunk76CampaignId?: string;
   readonly chunk76ReportHash?: string;
   readonly chunk76Violations?: number;
 };
+export type RehearsalStressResult = EconomicRehearsalStressResult;
 
 export type RecoveryResult = {
   readonly scenario: string;
@@ -305,7 +303,6 @@ export type EconomicActivationEvidenceBundle = {
     readonly failureDomains: readonly string[];
   };
   readonly formalResults: readonly TraceConformanceResult[];
-  readonly stressResults: RehearsalStressResult;
   readonly stressResults: EconomicRehearsalStressResult;
   readonly supplyAudits: readonly SupplyAuditResult[];
   readonly treasuryAudit: TreasuryRehearsalResult;
@@ -353,14 +350,12 @@ export type EconomicMainnetRehearsalReport = {
     readonly supplyTracked: boolean;
     readonly classification: 'ENGINEERING_SIMULATION';
   };
-  readonly stress: RehearsalStressResult;
   readonly stress: EconomicRehearsalStressResult;
   readonly recoveries: readonly RecoveryResult[];
   readonly explorer: ExplorerRebuildResult;
   readonly formal: readonly TraceConformanceResult[];
   readonly controlRoom: EconomicLaunchControlRoomState;
   readonly findings: readonly RehearsalFinding[];
-  readonly economicFindings: readonly RehearsalStressFinding[];
   readonly economicFindings: readonly EconomicRehearsalStressFinding[];
   readonly engineeringBlockers: readonly RehearsalFinding[];
   readonly classification: EconomicRehearsalResultState;

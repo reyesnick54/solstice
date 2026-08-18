@@ -390,7 +390,7 @@
         "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
         "FEE_CONSERVATION",
         "MAX_FEE_AUTHORIZATION",
-        "DISPOSITION_CONSERVATION"
+        "DISPOSITION_CONSERVATION",
         "NO_HIDDEN_SUPPLY_CREATION",
         "NO_DUPLICATE_ISSUANCE",
         "BURN_ACCOUNTING_EXACT",
@@ -402,7 +402,7 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
     },
@@ -433,7 +433,7 @@
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     },
     {
@@ -472,7 +472,6 @@
     },
     {
       "modelId": "NATIVE_MONETARY_POLICY",
-      "modelId": "ADAPTIVE_FEE_MARKET",
       "modelVersion": "1.0.0",
       "implementationReferences": [
         "packages/sunrey-chain/src/economics/supply.ts",
@@ -500,8 +499,6 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
-      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
     },
     {
       "modelId": "GENESIS_ALLOCATION_CONSERVATION",
@@ -528,9 +525,9 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
     },
@@ -687,9 +684,45 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/ProtocolTreasury.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/protocol-treasury.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/protocol-treasury.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
+    },
+    {
+      "modelId": "GENESIS_EXECUTION_AUTHORIZATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/genesis-execution/engine.ts",
+        "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
+      ],
+      "assumptions": [
+        "execution requires the declared launch-plan hash",
+        "execution requires the declared genesis hash",
+        "AI cannot authorize genesis execution",
+        "fixture artifacts cannot execute production",
+        "a consumed execution permit cannot be replayed",
+        "launch orchestration cannot rewrite a finalized first block",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": {
+        "maxHeight": 2,
+        "validators": 3
+      },
+      "properties": [
+        "WRONG_PLAN_CANNOT_EXECUTE",
+        "WRONG_GENESIS_CANNOT_EXECUTE",
+        "INSUFFICIENT_HUMAN_AUTHORITY_CANNOT_EXECUTE",
+        "AI_CANNOT_AUTHORIZE",
+        "FIXTURE_ARTIFACTS_CANNOT_EXECUTE_PRODUCTION",
+        "EXECUTION_PERMIT_CANNOT_BE_REPLAYED",
+        "FIRST_FINALIZED_STATE_NOT_REWRITTEN"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisExecutionAuthorization.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
     }
   ]
 }

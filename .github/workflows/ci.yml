@@ -92,6 +92,8 @@ jobs:
           npm test
           npm run sunrey-ceremony -- rehearse
           npm run sunrey-ceremony -- production rehearse
+          npm run sunrey-launch -- production execute
+          npm run sunrey-launch -- production verify
           npm run sunrey-bench -- sanity
 
       - name: Fuzz smoke
@@ -176,6 +178,8 @@ jobs:
         run: npm run demo:sunrey-launch
       - name: SunRey mainnet launch rehearsal verify
         run: npm run sunrey-launch -- verify
+      - name: SunRey authorized genesis execution rehearsal
+        run: npm run sunrey-launch -- production report
       - name: SunRey validator economics demo
         run: npm run demo:sunrey-validator-economics
       - name: SunRey testnet deployment manifests

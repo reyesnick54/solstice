@@ -11,6 +11,7 @@ import { createInteropPacketModel } from './interop-packet.ts';
 import { createMoonReyModel } from './moonrey.ts';
 import { createMoonReyPolicyGovernanceModel } from './moonrey-policy-governance.ts';
 import { createCrossEconomicModel } from './cross-economic.ts';
+import { createGenesisExecutionAuthorizationModel } from './genesis-execution.ts';
 import { createGenesisAllocationModel } from './genesis-allocation.ts';
 import { createGovernanceOpsModel } from './governance-ops.ts';
 import { createMonetaryPolicyModel } from './monetary-policy.ts';
@@ -51,6 +52,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createGovernanceOpsModel(bounds),
     createProtocolTreasuryModel(bounds),
     createCrossEconomicModel(bounds),
+    createGenesisExecutionAuthorizationModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -73,3 +75,4 @@ export { createGenesisAllocationModel } from './genesis-allocation.ts';
 export { createGovernanceOpsModel } from './governance-ops.ts';
 export { createProtocolTreasuryModel } from './protocol-treasury.ts';
 export { createCrossEconomicModel } from './cross-economic.ts';
+export { createGenesisExecutionAuthorizationModel } from './genesis-execution.ts';
