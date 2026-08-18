@@ -16,6 +16,7 @@ Coin, and SunRey Exchange. Public tickers remain `NOT_ASSIGNED`.
 - [API reference](./api-reference.md)
 - [Human Information Network](../information/chunk-100-human-information-network.md)
 - [Requester API](../information/requester-api.md)
+- [Consumer Exchange API](./consumer-exchange.md)
 
 Install the workspace SDK:
 

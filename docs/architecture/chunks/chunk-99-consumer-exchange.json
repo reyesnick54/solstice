@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-99",
+  "title": "SunRey consumer Exchange, portfolio, quote, and simple trading experience backend",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "sunrey-exchange-market-operations",
+    "sunrey-institutional-custody",
+    "sunrey-regulated-integration",
+    "sunrey-developer-sdk",
+    "sunrey-developer-platform",
+    "sunrey-public-data-plane",
+    "sunrey-exchange-consumer-trading"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange/src/consumer. UX/API projection over the canonical Exchange, custody, and chain. Does not match orders, hold independent balances, or settle independently. Production consumer trading remains gated by legal/licensing/custody/human evidence. evaluateChunkRequirements returns mustStop: false. Do not create packages/consumer-exchange, packages/sunrey-consumer-exchange, packages/retail-exchange, or packages/consumer-trading."
+}

@@ -158,6 +158,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
+| sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
+| sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -791,6 +793,18 @@ Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
 
+Chunk 98 implements user-controlled AI agent mandates, transaction
+proposals, and bounded financial automation at `packages/sunrey-agent`.
+Capability `sunrey-user-agent-mandates` is `IMPLEMENTED`. See
+[`chunk-98-agent-mandates.md`](./chunk-98-agent-mandates.md). AI
+proposes. Execution requires a human mandate and the canonical
+wallet, custody, or Execution Authority path. It does not create a
+second AI authority system, wallet, Execution Authority, Exchange,
+risk engine, or financial Ledger. Do not create
+`packages/ai-authority`, `packages/agent-authority`,
+`packages/user-agent-v2`, `packages/agent-execution`,
+`packages/financial-automation`, or `packages/mandate-v2`. The
+evaluator returns `mustStop: false`.
 Chunk 95 implements production-candidate institutional market
 operations at `packages/sunrey-exchange/src/ops`. Capability
 `sunrey-exchange-market-operations` is `IMPLEMENTED`. It extends
@@ -799,6 +813,15 @@ second native-asset balance ledger. Production market activation
 remains dependent on real external authorization. Do not create
 `packages/market-operations`, `packages/institutional-gateway`,
 `packages/exchange-ops`, or `packages/sunrey-exchange-ops`. The
+evaluator returns `mustStop: false`.
+Chunk 99 implements the consumer Exchange, portfolio, quote, and
+simple trading backend at `packages/sunrey-exchange/src/consumer`.
+Capability `sunrey-exchange-consumer-trading` is `IMPLEMENTED`. It
+extends the canonical Exchange. It does not create a second Exchange,
+matching engine, or balance ledger. Production consumer trading
+remains dependent on real external authorization. Do not create
+`packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
+`packages/retail-exchange`, or `packages/consumer-trading`. The
 evaluator returns `mustStop: false`.
 Chunk 94 implements the SunRey developer application platform at
 `packages/sunrey-sdk/src/developer-platform`. Capability
@@ -855,3 +878,22 @@ Do not create `packages/human-information-network`,
 `packages/information-market-v2`, `packages/human-information-v2`,
 `packages/data-marketplace`, or `packages/sunrey-information-network`.
 The evaluator returns `mustStop: false`.
+Chunk 97 implements mobile wallet synchronization at
+`packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+`sunrey-mobile-wallet-sync` is `IMPLEMENTED`. See
+[`chunk-97-mobile-sync.md`](./chunk-97-mobile-sync.md).
+It extends Chunks 46, 51, 93, 94, and 96. Wallet projections are
+rebuildable. Backend sync is not a second ledger. Do not create
+`packages/mobile-wallet-sync`, `packages/sunrey-mobile-sync`,
+`packages/wallet-sync`, `packages/mobile-wallet-v2`, or
+`packages/sunrey-push`. The evaluator returns `mustStop: false`.
+Chunk 96 implements advanced wallet security at
+`packages/sunrey-chain/src/wallet/security`. Capability
+`sunrey-wallet-security` is `IMPLEMENTED`. See
+[`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
+It extends Chunk 46. Application login is not native signing.
+Recovery cannot rewrite finalized state. Do not create
+`packages/wallet-security`, `packages/sunrey-wallet-security`,
+`packages/wallet-auth`, `packages/device-trust`, or
+`packages/wallet-recovery-v2`. The evaluator returns
+`mustStop: false`.

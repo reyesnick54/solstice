@@ -4,6 +4,8 @@ import type { UniversalExchangeEngine } from './universal.ts';
 import type { SunReyExchangeService } from './service.ts';
 import { MARKET_OPS_COMMANDS, marketOpsUsage, runMarketOpsCommand } from './ops/cli.ts';
 import type { MarketOperationsEngine } from './ops/engine.ts';
+import { CONSUMER_COMMANDS, consumerExchangeUsage, runConsumerExchangeCommand } from './consumer/cli.ts';
+import type { ConsumerExchangeEngine } from './consumer/engine.ts';
 
 export type ExchangeCliResult = {
   readonly ok: boolean;
@@ -43,6 +45,7 @@ export function exchangeUsage(): string {
     'sunrey-exchange disputes',
     'sunrey-exchange templates',
     marketOpsUsage(),
+    consumerExchangeUsage(),
   ].join('\n');
 }
 
@@ -50,10 +53,14 @@ export function runExchangeCommand(
   exchange: SunReyExchangeService,
   args: readonly string[],
   ops?: MarketOperationsEngine,
+  consumer?: ConsumerExchangeEngine,
 ): ExchangeCliResult {
   const command = args[0];
   if (command && (MARKET_OPS_COMMANDS as readonly string[]).includes(command) && ops) {
     return runMarketOpsCommand(ops, args);
+  }
+  if (command && (CONSUMER_COMMANDS as readonly string[]).includes(command) && consumer) {
+    return runConsumerExchangeCommand(consumer, args, consumer.ops.createdAt);
   }
   if (!command || !(COMMANDS as readonly string[]).includes(command)) {
     return { ok: false, command: command ?? 'missing', payload: { error: 'unknown exchange command', usage: exchangeUsage() } };

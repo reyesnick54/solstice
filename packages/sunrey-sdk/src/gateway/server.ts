@@ -201,7 +201,8 @@ export async function startPublicGateway(options: GatewayOptions = {}): Promise<
     }
 
     try {
-      const result = dispatch(platform, method, path, query(url), body, requestId, autoFinalize);
+      const authorization = typeof req.headers.authorization === 'string' ? req.headers.authorization : undefined;
+      const result = dispatch(platform, method, path, query(url), body, requestId, autoFinalize, authorization);
       if (result.kind === 'sse') {
         writeSse(res, platform, result.types, result.cursor);
         return;
@@ -280,6 +281,7 @@ function dispatch(
   body: unknown,
   requestId: string,
   autoFinalize: boolean,
+  authorization?: string,
 ): DispatchResult {
   const rec = (body ?? {}) as Record<string, unknown>;
   if (objectHasPrivateKeyField(body)) {
@@ -668,6 +670,86 @@ function dispatch(
   if (method === 'GET' && path.startsWith('/v1/exchange/trading-sessions/')) {
     return json(200, platform.tradingSession(path.slice('/v1/exchange/trading-sessions/'.length)));
   }
+  if (method === 'GET' && path === '/v1/consumer/exchange/markets') {
+    return json(200, platform.consumer.market());
+  }
+  if (method === 'GET' && path === '/v1/consumer/exchange/portfolio') {
+    const authError = platform.consumer.requireAuth(authorization, requestId);
+    if (authError) {
+      return json(401, authError);
+    }
+    return json(200, platform.consumer.portfolio(true, requestId));
+  }
+  if (method === 'POST' && path === '/v1/consumer/exchange/quotes') {
+    return json(200, {
+      kind: 'INDICATIVE',
+      guaranteed_execution: false,
+      informational: true,
+      side: rec.side === 'SELL' ? 'SELL' : 'BUY',
+      quantity: String(rec.quantity ?? '1'),
+    });
+  }
+  if (method === 'POST' && path === '/v1/consumer/exchange/preview') {
+    return json(200, {
+      human_readable_intent: 'Review before authorization. This is not a guaranteed price.',
+      no_guaranteed_price: true,
+    });
+  }
+  if (method === 'POST' && path === '/v1/consumer/exchange/orders') {
+    const authError = platform.consumer.requireAuth(authorization, requestId);
+    if (authError) {
+      return json(401, authError);
+    }
+    if (!rec.signed_intent_hex && !rec.wallet) {
+      return json(
+        401,
+        apiError({
+          error_code: 'SESSION_WITHOUT_FINANCIAL_AUTHORITY',
+          category: 'AUTHORIZATION',
+          message: 'API session alone cannot spend',
+          retryable: false,
+          request_id: requestId,
+        }),
+      );
+    }
+    return json(200, { accepted: true, environment: 'SIMULATION' });
+  }
+  if (method === 'POST' && path.startsWith('/v1/consumer/exchange/orders/') && path.endsWith('/cancel')) {
+    const authError = platform.consumer.requireAuth(authorization, requestId);
+    if (authError) {
+      return json(401, authError);
+    }
+    return json(200, { order_id: path.slice('/v1/consumer/exchange/orders/'.length, -'/cancel'.length), status: 'CANCELLED' });
+  }
+  if (method === 'GET' && path.startsWith('/v1/consumer/exchange/orders/')) {
+    const authError = platform.consumer.requireAuth(authorization, requestId);
+    if (authError) {
+      return json(401, authError);
+    }
+    return json(200, { order_id: path.slice('/v1/consumer/exchange/orders/'.length), status: 'UNKNOWN' });
+  }
+  if (method === 'GET' && path.startsWith('/v1/consumer/exchange/receipts/')) {
+    const authError = platform.consumer.requireAuth(authorization, requestId);
+    if (authError) {
+      return json(401, authError);
+    }
+    return json(200, { receipt_id: path.slice('/v1/consumer/exchange/receipts/'.length) });
+  }
+  if (method === 'POST' && path === '/v1/consumer/exchange/alerts') {
+    if (rec.auto_trade === true || rec.autoTrade === true) {
+      return json(
+        400,
+        apiError({
+          error_code: 'PRICE_ALERT_CANNOT_TRADE',
+          category: 'VALIDATION',
+          message: 'price alerts are informational',
+          retryable: false,
+          request_id: requestId,
+        }),
+      );
+    }
+    return json(200, { informational: true, can_trade_automatically: false });
+  }
 
   if (method === 'POST' && path === '/v1/transactions') {
     const submitted = platform.submitSigned({
@@ -844,6 +926,15 @@ export const PUBLIC_ROUTES = [
   'POST /v1/exchange/sandbox/orders',
   'GET /v1/exchange/orders/{id}',
   'GET /v1/exchange/trading-sessions/{id}',
+  'GET /v1/consumer/exchange/markets',
+  'GET /v1/consumer/exchange/portfolio',
+  'POST /v1/consumer/exchange/quotes',
+  'POST /v1/consumer/exchange/preview',
+  'POST /v1/consumer/exchange/orders',
+  'POST /v1/consumer/exchange/orders/{id}/cancel',
+  'GET /v1/consumer/exchange/orders/{id}',
+  'GET /v1/consumer/exchange/receipts/{id}',
+  'POST /v1/consumer/exchange/alerts',
   'POST /v1/transactions',
   'GET /v1/events',
   'POST /v1/dev/faucet',

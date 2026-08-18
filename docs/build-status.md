@@ -4,6 +4,19 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey advanced wallet security, recovery, device trust, and
+  transaction authorization (Chunk 96,
+  `packages/sunrey-chain/src/wallet/security`):
+  `WalletSecurityProfile`, device binding and trust, scoped sessions,
+  `SigningIntent`, spend and destination controls, delegated-key
+  bindings, recovery with delay/cancel, key rotation, custody/self-
+  custody boundaries, TypeScript/Rust SDK helpers,
+  `sunrey-wallet security|devices|sessions|trusted-destinations|recovery|rotate-key|delegations|audit`,
+  and bounded model `WALLET_AUTHORIZATION_SAFETY`. Capability
+  `sunrey-wallet-security` is `IMPLEMENTED`. Application login is not
+  native signing. Recovery cannot rewrite finalized transfers.
+  `ENVIRONMENT` remains `simulation`. See
+  `docs/wallet/chunk-96-wallet-security.md`.
 - SunRey public RPC edge, high-availability Explorer, and production
   network data plane (Chunk 93,
   `packages/sunrey-chain/src/public-data-plane`): `PublicRpcGateway`,
@@ -754,6 +767,14 @@ This document describes only what is implemented and tested in this tree.
   source data remains off-chain. No human-worth or social-credit
   score. `productionActivated` remains false without privacy/legal
   human authorization.
+- SunRey consumer Exchange (Chunk 99,
+  `packages/sunrey-exchange/src/consumer`): consumer portfolio,
+  indicative quotes, trade preview, buy/sell/convert with price
+  protection, wallet/mobile authorization, sandbox, and DVP
+  settlement projection. Capability
+  `sunrey-exchange-consumer-trading` is `IMPLEMENTED`. Production
+  consumer trading remains unlicensed without external
+  authorization. No second Exchange or balance store.
 - SunRey oracle network (Chunk 43) is **development-only** at
   `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
   `IMPLEMENTED`. Signed observations become time-bounded
@@ -794,6 +815,14 @@ This document describes only what is implemented and tested in this tree.
   with height delay, delegated keys, watch-only, and a local
   encrypted development keystore. Wallet metadata is not a
   second native-asset ledger and not a fiat Account.
+- SunRey mobile wallet synchronization (Chunk 97) is
+  **development-only** at
+  `packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+  `sunrey-mobile-wallet-sync` is `IMPLEMENTED`. Snapshot/delta
+  sync, multi-device sessions, BFT finality, offline drafts,
+  privacy-safe push ports, and versioned payment requests.
+  Backend sync is not a second ledger and does not hold
+  self-custody master keys.
 - SunRey adversarial range (Chunk 57, `packages/sunrey-range`):
   isolated 7-validator cyber-economic test range. Capability
   `sunrey-adversarial-range` is `IMPLEMENTED`. Deterministic

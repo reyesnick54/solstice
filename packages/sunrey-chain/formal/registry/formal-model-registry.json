@@ -647,6 +647,40 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisExecutionAuthorization.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
+    },
+    {
+      "modelId": "WALLET_AUTHORIZATION_SAFETY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/wallet/security/engine.ts",
+        "packages/sunrey-chain/src/formal/models/wallet-authorization.ts"
+      ],
+      "assumptions": [
+        "application login is not native signing authority",
+        "a passkey credential is not the blockchain private key",
+        "guardian approval is scoped to recovery",
+        "recovery cannot rewrite finalized transfers",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": {
+        "maxHeight": 2,
+        "validators": 1
+      },
+      "properties": [
+        "WRONG_NETWORK_CANNOT_AUTHORIZE",
+        "CHANGED_TRANSACTION_INVALIDATES_APPROVAL",
+        "REVOKED_DELEGATION_CANNOT_AUTHORIZE",
+        "GUARDIAN_CANNOT_SPEND",
+        "RECOVERY_CANNOT_REWRITE_FINALIZED",
+        "LOGIN_IS_NOT_NATIVE_SIGNING",
+        "AI_CANNOT_CONVERT_SESSION_TO_MASTER"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/WalletAuthorizationSafety.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/wallet-authorization.ts"
     }
   ]
 }

@@ -13,6 +13,7 @@ import { createMoonReyPolicyGovernanceModel } from './moonrey-policy-governance.
 import { createCapabilityActivationModel } from './capability-activation.ts';
 import { createCrossEconomicModel } from './cross-economic.ts';
 import { createGenesisExecutionAuthorizationModel } from './genesis-execution.ts';
+import { createWalletAuthorizationModel } from './wallet-authorization.ts';
 import { createGenesisAllocationModel } from './genesis-allocation.ts';
 import { createGovernanceOpsModel } from './governance-ops.ts';
 import { createMonetaryPolicyModel } from './monetary-policy.ts';
@@ -55,6 +56,7 @@ export function modelsForProfile(profile: FormalProfile) {
     createCrossEconomicModel(bounds),
     createCapabilityActivationModel(bounds),
     createGenesisExecutionAuthorizationModel(bounds),
+    createWalletAuthorizationModel(bounds),
   ] as FormalModel<unknown>[];
 }
 
@@ -79,3 +81,4 @@ export { createProtocolTreasuryModel } from './protocol-treasury.ts';
 export { createCrossEconomicModel } from './cross-economic.ts';
 export { createCapabilityActivationModel } from './capability-activation.ts';
 export { createGenesisExecutionAuthorizationModel } from './genesis-execution.ts';
+export { createWalletAuthorizationModel } from './wallet-authorization.ts';
