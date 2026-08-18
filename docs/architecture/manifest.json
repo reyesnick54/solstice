@@ -2314,14 +2314,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "PublicRpcGateway",
-          "kind": "class"
-        },
-        {
-          "name": "ExplorerIndexerFleet",
-          "kind": "class"
-        },
-        {
           "name": "PublicDataPlaneReport",
           "kind": "type"
         }
