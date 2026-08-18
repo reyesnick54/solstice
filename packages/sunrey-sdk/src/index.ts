@@ -100,3 +100,14 @@ export type {
   DeveloperPlatformReport,
 } from './developer-platform/index.ts';
 export { verifyWebhookSignature as verifySunReyWebhook } from './webhook.ts';
+export {
+  connectMobileWallet,
+  syncWallet,
+  subscribeWallet,
+  trackFinality,
+  createPaymentRequest,
+  parsePaymentRequest,
+  getPendingTransactions,
+  getSecurityEvents,
+} from './mobile-sync.ts';
+export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';

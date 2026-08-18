@@ -783,6 +783,14 @@ This document describes only what is implemented and tested in this tree.
   with height delay, delegated keys, watch-only, and a local
   encrypted development keystore. Wallet metadata is not a
   second native-asset ledger and not a fiat Account.
+- SunRey mobile wallet synchronization (Chunk 97) is
+  **development-only** at
+  `packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+  `sunrey-mobile-wallet-sync` is `IMPLEMENTED`. Snapshot/delta
+  sync, multi-device sessions, BFT finality, offline drafts,
+  privacy-safe push ports, and versioned payment requests.
+  Backend sync is not a second ledger and does not hold
+  self-custody master keys.
 - SunRey adversarial range (Chunk 57, `packages/sunrey-range`):
   isolated 7-validator cyber-economic test range. Capability
   `sunrey-adversarial-range` is `IMPLEMENTED`. Deterministic

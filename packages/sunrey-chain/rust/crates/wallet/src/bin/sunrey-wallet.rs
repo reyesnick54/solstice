@@ -44,6 +44,20 @@ enum Commands {
     Delegate,
     /// Watch-only reminder
     Watch,
+    /// Incremental wallet synchronization from a finalized cursor
+    Sync,
+    /// Multi-device sync health and public network status
+    SyncStatus,
+    /// Discard the local projection and rebuild from canonical APIs
+    SyncRebuild,
+    /// Privacy-safe push notification test
+    PushTest,
+    /// Encode a versioned payment request (preview only)
+    PaymentRequest,
+    /// Construct an offline draft (not authorization)
+    OfflineDraft,
+    /// Report BFT finality (mempool is not final)
+    Finality,
 }
 
 fn main() {
@@ -113,6 +127,38 @@ fn main() {
         Commands::Watch => json!({
             "can": ["query", "build unsigned", "monitor finality"],
             "cannot": ["sign", "rotate", "recover"]
+        }),
+        Commands::Sync => json!({
+            "model": "snapshot_plus_delta",
+            "cursor_binds": ["network", "chain", "wallet", "finalized_height", "projection_sequence", "schema_version"],
+            "authoritative": false,
+            "self_custody_key_on_server": false
+        }),
+        Commands::SyncStatus => json!({
+            "rpc": "Chunk 93 public network status",
+            "device_cache_authoritative": false
+        }),
+        Commands::SyncRebuild => json!({
+            "action": "discard local projection and rebuild from canonical APIs"
+        }),
+        Commands::PushTest => json!({
+            "providers": ["APNS_COMPATIBLE", "FCM_COMPATIBLE", "FUTURE"],
+            "push_token_is_authorization": false,
+            "sensitive_detail": false
+        }),
+        Commands::PaymentRequest => json!({
+            "encoding": "sunrey:pay/1",
+            "preview_only": true,
+            "auto_sign": false
+        }),
+        Commands::OfflineDraft => json!({
+            "authorization": false,
+            "signed_payload": ["network", "chain", "nonce", "fee_authorization", "canonical_bytes"]
+        }),
+        Commands::Finality => json!({
+            "model": "deterministic_bft",
+            "mempool_acceptance_is_finality": false,
+            "confirmation_count_ui": false
         }),
     };
     let text = serde_json::to_string_pretty(&payload).expect("json");

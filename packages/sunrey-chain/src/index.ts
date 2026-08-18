@@ -161,6 +161,7 @@ export * as economicRehearsal from './economic-rehearsal/index.ts';
 export * as productionCeremony from './production-ceremony/index.ts';
 export * as productionHandoff from './production-handoff/index.ts';
 export * as publicDataPlane from './public-data-plane/index.ts';
+export * as mobileWalletSync from './wallet/mobile-sync/index.ts';
 export * as genesisExecution from './genesis-execution/index.ts';
 export * as pregenesis from './pregenesis/index.ts';
 export * as validatorEconomics from './validator-economics/index.ts';

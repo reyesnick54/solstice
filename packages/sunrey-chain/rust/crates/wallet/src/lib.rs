@@ -6,6 +6,7 @@
 pub mod account;
 pub mod address;
 pub mod auth;
+pub mod mobile_sync;
 
 pub use account::{AccountStatus, BlockchainAccount};
 pub use address::{

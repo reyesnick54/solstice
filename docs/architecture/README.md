@@ -150,6 +150,10 @@
   — institutional gateway, sequenced market data, risk controls,
   circuit breakers, and reopening auctions at
   `packages/sunrey-exchange/src/ops`.
+- [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
+  — multi-device sync, BFT finality, offline drafts, privacy-safe
+  push, and payment requests at
+  `packages/sunrey-chain/src/wallet/mobile-sync`.
 
 - [Chunk 92 validator operator platform](../validators/chunk-92-validator-operator-platform.md)
   — fleet, enrollment, maintenance, upgrade, signer, and incident
