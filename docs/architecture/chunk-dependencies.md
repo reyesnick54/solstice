@@ -157,6 +157,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -839,6 +840,15 @@ approval. Do not create `packages/provider-runtime`,
 `packages/sunrey-provider-runtime`, `packages/executable-providers`,
 `packages/provider-adapters`, or `packages/integration-providers`.
 The evaluator returns `mustStop: false`.
+Chunk 97 implements mobile wallet synchronization at
+`packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+`sunrey-mobile-wallet-sync` is `IMPLEMENTED`. See
+[`chunk-97-mobile-sync.md`](./chunk-97-mobile-sync.md).
+It extends Chunks 46, 51, 93, 94, and 96. Wallet projections are
+rebuildable. Backend sync is not a second ledger. Do not create
+`packages/mobile-wallet-sync`, `packages/sunrey-mobile-sync`,
+`packages/wallet-sync`, `packages/mobile-wallet-v2`, or
+`packages/sunrey-push`. The evaluator returns `mustStop: false`.
 Chunk 96 implements advanced wallet security at
 `packages/sunrey-chain/src/wallet/security`. Capability
 `sunrey-wallet-security` is `IMPLEMENTED`. See

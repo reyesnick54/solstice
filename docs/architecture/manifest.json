@@ -2330,6 +2330,43 @@
       "notes": "Chunk 93 public RPC and Explorer data plane at packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Does not create a second consensus, second ledger, or public validator admin endpoints."
     },
     {
+      "id": "sunrey-mobile-wallet-sync",
+      "name": "SunRey mobile wallet synchronization, multi-device state, push events, and offline transaction workflows",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/wallet/mobile-sync/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/wallet/mobile-sync/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "WalletSyncSession",
+          "kind": "type"
+        },
+        {
+          "name": "MobileWalletSyncEngine",
+          "kind": "class"
+        },
+        {
+          "name": "WalletSyncReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/mobile-wallet-sync",
+        "packages/sunrey-mobile-sync",
+        "packages/wallet-sync",
+        "packages/mobile-wallet-v2",
+        "packages/sunrey-push"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 97 mobile wallet synchronization at packages/sunrey-chain/src/wallet/mobile-sync. Extends Chunk 46 wallets, Chunk 51 SDK, Chunk 93 public RPC, Chunk 94 developer APIs, and Chunk 96 device trust. Wallet projections are rebuildable. Backend sync is not a second ledger and does not hold self-custody master keys."
+    },
+    {
       "id": "sunrey-supply-chain",
       "name": "SunRey software supply-chain security and releases",
       "canonicalOwner": "packages/sunrey-chain",
@@ -4156,6 +4193,11 @@
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
     "packages/sunrey-wallet-ledger",
+    "packages/mobile-wallet-sync",
+    "packages/sunrey-mobile-sync",
+    "packages/wallet-sync",
+    "packages/mobile-wallet-v2",
+    "packages/sunrey-push",
     "packages/sunrey-ops",
     "packages/observability",
     "packages/disaster-recovery",
@@ -5108,6 +5150,15 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+    },
+    {
+      "id": "sunrey-mobile-wallet-sync",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 97 mobile wallet synchronization, multi-device state, push events, and offline transaction workflows at packages/sunrey-chain/src/wallet/mobile-sync. Extends Chunks 46, 51, 93, 94, and 96. Wallet projections are rebuildable. Backend sync servers must not obtain self-custody master private keys. Do not create packages/mobile-wallet-sync, packages/sunrey-mobile-sync, packages/wallet-sync, packages/mobile-wallet-v2, or packages/sunrey-push."
       "notes": "Chunk 96 advanced wallet security, recovery, device trust, and transaction authorization at packages/sunrey-chain/src/wallet/security. Extends Chunk 46. Application authentication is not native signing. Recovery cannot rewrite finalized transfers. Do not create packages/wallet-security, packages/sunrey-wallet-security, packages/wallet-auth, packages/device-trust, or packages/wallet-recovery-v2."
     }
   ],

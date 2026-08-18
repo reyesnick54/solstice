@@ -123,3 +123,10 @@ export {
   runRecoveryDemo,
   runTransferDemo,
 } from './demo-helpers.ts';
+export * as mobileSync from './mobile-sync/index.ts';
+export {
+  MobileWalletSyncEngine,
+  ReferenceMobileClient,
+  runMobileWalletCommand,
+  mobileWalletUsage,
+} from './mobile-sync/index.ts';

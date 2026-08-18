@@ -6,6 +6,7 @@
  */
 
 import { WalletEngine, createRecoveryPolicy } from './engine.ts';
+import { mobileWalletUsage, runMobileWalletCommand } from './mobile-sync/cli.ts';
 import { runWalletSecurityCommand, walletSecurityUsage } from './security/cli.ts';
 import { isWalletRejection } from './types.ts';
 
@@ -29,6 +30,13 @@ const COMMANDS = [
   'recovery',
   'delegate',
   'watch',
+  'sync',
+  'sync-status',
+  'sync-rebuild',
+  'push-test',
+  'payment-request',
+  'offline-draft',
+  'finality',
   'security',
   'devices',
   'sessions',
@@ -53,6 +61,7 @@ export function walletUsage(): string {
     'sunrey-wallet recovery <walletId> request|cancel|state',
     'sunrey-wallet delegate <walletId> <label> <maxAmount>',
     'sunrey-wallet watch <walletId>',
+    mobileWalletUsage(),
     walletSecurityUsage(),
   ].join('\n');
 }
@@ -265,6 +274,14 @@ export function runWalletCommand(args: readonly string[]): CliResult {
       });
       return { ok: result.ok !== false, command, payload: result };
     }
+    case 'sync':
+    case 'sync-status':
+    case 'sync-rebuild':
+    case 'push-test':
+    case 'payment-request':
+    case 'offline-draft':
+    case 'finality':
+      return runMobileWalletCommand(args);
     case 'security':
     case 'devices':
     case 'sessions':

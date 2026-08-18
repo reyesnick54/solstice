@@ -1,5 +1,6 @@
 export {
   PUBLIC_API_VERSION,
+  PUBLIC_API_VERSION_STRATEGY,
   V1_API,
   API_COMPATIBILITY,
   API_DEPRECATIONS,
@@ -99,6 +100,16 @@ export type {
 } from './developer-platform/index.ts';
 export { verifyWebhookSignature as verifySunReyWebhook } from './webhook.ts';
 export {
+  connectMobileWallet,
+  syncWallet,
+  subscribeWallet,
+  trackFinality,
+  createPaymentRequest,
+  parsePaymentRequest,
+  getPendingTransactions,
+  getSecurityEvents,
+} from './mobile-sync.ts';
+export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';
   WalletSecurityClient,
   getWalletSecurityProfile,
   getWalletDevices,

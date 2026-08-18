@@ -83,6 +83,7 @@ never be two implementations of these systems.
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
+| SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1278,6 +1279,17 @@ and human evidence. Do not create `packages/market-operations`,
 `packages/sunrey-exchange-ops`. See
 [`chunk-95-market-operations.md`](./chunk-95-market-operations.md).
 
+Chunk 97 implements SunRey mobile wallet synchronization at
+`packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+`sunrey-mobile-wallet-sync` is `IMPLEMENTED`. It extends Chunk 46
+wallets, Chunk 51 SDK, Chunk 93 public RPC, Chunk 94 developer APIs,
+and Chunk 96 device trust. Wallet projections are rebuildable from
+canonical chain APIs. Backend sync servers must not obtain
+self-custody master private keys. Do not create
+`packages/mobile-wallet-sync`, `packages/sunrey-mobile-sync`,
+`packages/wallet-sync`, `packages/mobile-wallet-v2`, or
+`packages/sunrey-push`. See
+[`chunk-97-mobile-sync.md`](./chunk-97-mobile-sync.md).
 Chunk 96 implements SunRey advanced wallet security, recovery,
 device trust, and transaction authorization at
 `packages/sunrey-chain/src/wallet/security`. Capability

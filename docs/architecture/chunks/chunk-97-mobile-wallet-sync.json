@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-97",
+  "title": "SunRey mobile wallet synchronization, multi-device state, push events, and offline transaction workflows",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-sovereign-wallets",
+    "sunrey-developer-sdk",
+    "sunrey-developer-platform",
+    "sunrey-public-data-plane",
+    "sunrey-provider-runtime",
+    "sunrey-mobile-wallet-sync"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/wallet/mobile-sync. Extends Chunks 46, 51, 93, 94, and 96. Wallet projections are rebuildable from canonical RPC/finality. Backend sync servers must not obtain self-custody master private keys. Not a second wallet authority or balance ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/mobile-wallet-sync, packages/sunrey-mobile-sync, packages/wallet-sync, packages/mobile-wallet-v2, or packages/sunrey-push."
+}
