@@ -92,9 +92,9 @@ npm run demo:sunrey-protocol-treasury
 npm run sunrey-economics -- treasury verify
 npm run sunrey-economics -- treasury simulate
 npm run demo:sunrey-infra
-npm run sunrey-ops -- production plan
-npm run sunrey-ops -- production verify-plan
-npm run sunrey-ops -- production rehearse
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production plan
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production verify-plan
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production rehearse
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify

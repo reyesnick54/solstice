@@ -259,6 +259,7 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
     return { ok: result.ok, command: result.command, payload: result.payload };
   }
   if (group === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
     const result = runProductionProvisioningCommand(args.slice(1));
     return { ok: result.ok, command: `production ${result.command}`, payload: result.payload };
   }
@@ -482,6 +483,7 @@ export async function main(): Promise<void> {
     return;
   }
   if (head === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
     const result = runProductionProvisioningCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);
     const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
