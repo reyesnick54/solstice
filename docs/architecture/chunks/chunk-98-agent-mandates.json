@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-98",
+  "title": "SunRey user-controlled AI agent mandates, transaction proposals, and bounded financial automation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "permissions",
+    "kernel",
+    "personal-economy-agent",
+    "growth-orchestrator",
+    "agentic-capital-mesh",
+    "risk",
+    "sunrey-sovereign-wallets",
+    "sunrey-machine-economy",
+    "sunrey-exchange",
+    "sunrey-exchange-market-operations",
+    "sunrey-developer-platform",
+    "sunrey-user-agent-mandates"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-agent. ProposalGate only. Does not create a second AI authority system, wallet authority, Execution Authority, Exchange, risk engine, or financial Ledger. Personal Economy Agent remains proposal-only. evaluateChunkRequirements returns mustStop: false. Do not create packages/ai-authority, packages/agent-authority, packages/user-agent-v2, packages/agent-execution, packages/financial-automation, or packages/mandate-v2."
+}

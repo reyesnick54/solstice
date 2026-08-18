@@ -100,3 +100,17 @@ export type {
   DeveloperPlatformReport,
 } from './developer-platform/index.ts';
 export { verifyWebhookSignature as verifySunReyWebhook } from './webhook.ts';
+export {
+  approveAgentProposal,
+  createAgentMandate,
+  getAgentActivity,
+  getAgentMandate,
+  getAgentProposal,
+  revokeAgentMandate,
+  UserAgentMandateEngine,
+} from './agent-mandates.ts';
+export type {
+  AgentActivityReport,
+  AgentTransactionProposal,
+  UserAgentMandate,
+} from './agent-mandates.ts';

@@ -157,6 +157,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -787,6 +788,18 @@ Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
 
+Chunk 98 implements user-controlled AI agent mandates, transaction
+proposals, and bounded financial automation at `packages/sunrey-agent`.
+Capability `sunrey-user-agent-mandates` is `IMPLEMENTED`. See
+[`chunk-98-agent-mandates.md`](./chunk-98-agent-mandates.md). AI
+proposes. Execution requires a human mandate and the canonical
+wallet, custody, or Execution Authority path. It does not create a
+second AI authority system, wallet, Execution Authority, Exchange,
+risk engine, or financial Ledger. Do not create
+`packages/ai-authority`, `packages/agent-authority`,
+`packages/user-agent-v2`, `packages/agent-execution`,
+`packages/financial-automation`, or `packages/mandate-v2`. The
+evaluator returns `mustStop: false`.
 Chunk 95 implements production-candidate institutional market
 operations at `packages/sunrey-exchange/src/ops`. Capability
 `sunrey-exchange-market-operations` is `IMPLEMENTED`. It extends
