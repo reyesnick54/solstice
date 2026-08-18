@@ -34,12 +34,6 @@ export const CANDIDATE_V2_STATUS = 'CANDIDATE' as const;
 
 export function assertCandidateV2Identity(networkId: string, chainId: string): void {
   assertCandidateIdentity(networkId, chainId);
-  if (networkId !== CANDIDATE_V2_NETWORK_ID) {
-    throw new TypeError(`candidate v2 network id must be ${CANDIDATE_V2_NETWORK_ID}`);
-  }
-  if (chainId !== CANDIDATE_V2_CHAIN_ID) {
-    throw new TypeError(`candidate v2 chain id must be ${CANDIDATE_V2_CHAIN_ID}`);
-  }
   if (networkId === PRODUCTION_CANDIDATE_NETWORK_ID || chainId === PRODUCTION_CANDIDATE_CHAIN_ID) {
     throw new TypeError('candidate v2 must not reuse candidate v1 identity');
   }
@@ -54,5 +48,11 @@ export function assertCandidateV2Identity(networkId: string, chainId: string): v
   }
   if (!networkId.startsWith(PRODUCTION_CANDIDATE_PREFIX) || !chainId.startsWith(PRODUCTION_CANDIDATE_CHAIN_PREFIX)) {
     throw new TypeError('candidate v2 must keep the approved production-candidate prefix');
+  }
+  if (networkId !== CANDIDATE_V2_NETWORK_ID) {
+    throw new TypeError(`candidate v2 network id must be ${CANDIDATE_V2_NETWORK_ID}`);
+  }
+  if (chainId !== CANDIDATE_V2_CHAIN_ID) {
+    throw new TypeError(`candidate v2 chain id must be ${CANDIDATE_V2_CHAIN_ID}`);
   }
 }
