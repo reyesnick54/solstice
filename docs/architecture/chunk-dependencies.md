@@ -155,6 +155,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-provider-runtime | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -785,6 +786,16 @@ It extends Chunk 66. CI uses local/rehearsal infrastructure only.
 Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
+
+Chunk 95 implements production-candidate institutional market
+operations at `packages/sunrey-exchange/src/ops`. Capability
+`sunrey-exchange-market-operations` is `IMPLEMENTED`. It extends
+the canonical Exchange. It does not create a second Exchange or a
+second native-asset balance ledger. Production market activation
+remains dependent on real external authorization. Do not create
+`packages/market-operations`, `packages/institutional-gateway`,
+`packages/exchange-ops`, or `packages/sunrey-exchange-ops`. The
+evaluator returns `mustStop: false`.
 Chunk 94 implements the SunRey developer application platform at
 `packages/sunrey-sdk/src/developer-platform`. Capability
 `sunrey-developer-platform` is `IMPLEMENTED`. See

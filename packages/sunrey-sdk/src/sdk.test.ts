@@ -101,6 +101,20 @@ describe('SunRey TypeScript SDK', () => {
       assert.ok(await client.interop.packets());
       const markets = await client.exchange.listMarkets() as { readonly markets: readonly { readonly family: string }[] };
       assert.equal(markets.markets.length, 4);
+      const md = await client.exchange.marketData(markets.markets[0] ? 'market:sunrey-coin-usd-simulation' : 'm', 'public') as {
+        readonly tier: string;
+        readonly delayed_ms: number;
+      };
+      assert.equal(md.tier, 'PUBLIC_DELAYED');
+      assert.ok(md.delayed_ms > 0);
+      const sandbox = await client.exchange.orderSandbox({
+        market_id: 'market:sunrey-coin-usd-simulation',
+        signed_order_hex: '00',
+        actor: 'sdk-test',
+      }) as { readonly environment: string; readonly production_funds: string };
+      assert.equal(sandbox.environment, 'SANDBOX');
+      assert.equal(sandbox.production_funds, 'false');
+      assert.ok(await client.exchange.tradingSession('xses_sdk'));
       const policy = await client.monetary.policy() as { readonly ticker_status: string; readonly production_activation: string };
       assert.equal(policy.ticker_status, 'NOT_ASSIGNED');
       assert.equal(policy.production_activation, 'UNCONFIGURED');

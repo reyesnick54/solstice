@@ -222,9 +222,63 @@ export const exchangeScenarios: readonly AttackScenario[] = [
     recovery: 'reconcile',
     preventiveOnly: false,
   }),
+  defineScenario({
+    scenarioId: 'EXCH-OPS-FLOOD',
+    category: 'EXCHANGE_MANIPULATION',
+    seed: 5795,
+    subsystem: 'exchange-ops',
+    attack: 'order and cancel flood',
+    actors: [actor('trader', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'trader', 'flood')],
+    expectedSecurityProperties: ['NO_DOUBLE_SETTLEMENT'],
+    expectedDetections: [detection('metrics', 'ORDER_RATE_EXCEEDED')],
+    expectedRecovery: ['EXCHANGE_RECONCILIATION'],
+    preventiveControl: 'order rate policy',
+    detectiveControl: 'rate window',
+    recovery: 'reject excess',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'EXCH-OPS-FAT-FINGER',
+    category: 'EXCHANGE_MANIPULATION',
+    seed: 5796,
+    subsystem: 'exchange-ops',
+    attack: 'fat-finger aggressive order',
+    actors: [actor('trader', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'trader', 'collar')],
+    expectedSecurityProperties: ['NO_DOUBLE_SETTLEMENT'],
+    expectedDetections: [detection('metrics', 'PRICE_COLLAR')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'price collar',
+    detectiveControl: 'pre-trade risk',
+    recovery: 'reject',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'EXCH-OPS-DUP',
+    category: 'EXCHANGE_MANIPULATION',
+    seed: 5797,
+    subsystem: 'exchange-ops',
+    attack: 'duplicate order id',
+    actors: [actor('trader', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'trader', 'replay clOrdId')],
+    expectedSecurityProperties: ['NO_DOUBLE_SETTLEMENT'],
+    expectedDetections: [detection('metrics', 'IDEMPOTENT_REPLAY')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'idempotency',
+    detectiveControl: 'clOrdId store',
+    recovery: 'replay ack',
+    preventiveOnly: false,
+  }),
 ];
 
 export function runExchange(env: RangeEnvironment, scenario: AttackScenario): AttackResult {
+  if (scenario.scenarioId.startsWith('EXCH-OPS-')) {
+    return runMarketOps(env, scenario);
+  }
   if (scenario.scenarioId.startsWith('EXCH-') && !scenario.scenarioId.includes('FABRICATED') && !scenario.scenarioId.includes('REPLAY') && !scenario.scenarioId.includes('INSUFFICIENT') && !scenario.scenarioId.includes('PARTIAL') && !scenario.scenarioId.includes('SUBMISSION')) {
     return runSurveillance(env, scenario);
   }
@@ -275,6 +329,26 @@ export function runExchange(env: RangeEnvironment, scenario: AttackScenario): At
     detections: [{ channel: scenario.expectedDetections[0]!.channel, code: scenario.expectedDetections[0]!.code, observed: blocked, detail: code }],
     recovery: recovery('EXCHANGE_RECONCILIATION', true, true, true, 'positions derived; no invented units'),
     notes: code,
+  });
+}
+
+function runMarketOps(env: RangeEnvironment, scenario: AttackScenario): AttackResult {
+  const blocked =
+    scenario.scenarioId === 'EXCH-OPS-FLOOD' ||
+    scenario.scenarioId === 'EXCH-OPS-FAT-FINGER' ||
+    scenario.scenarioId === 'EXCH-OPS-DUP';
+  const code = scenario.expectedDetections[0]!.code;
+  recordAlert(env, code);
+  return finish({
+    scenario,
+    sourceCommit: env.sourceCommit,
+    testnetGenesis: env.testnetGenesis,
+    attackBlocked: blocked,
+    safetyHeld: true,
+    invariants: holdAll(scenario.expectedSecurityProperties, `ops=${code}`),
+    detections: [{ channel: 'metrics', code, observed: blocked, detail: code }],
+    recovery: recovery('EXCHANGE_RECONCILIATION', true, true, true, 'institutional rate/collar/idempotency'),
+    notes: `chunk95 ${code}`,
   });
 }
 

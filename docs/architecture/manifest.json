@@ -3518,6 +3518,19 @@
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
     },
     {
+      "id": "sunrey-exchange-market-operations",
+      "name": "SunRey Exchange production-candidate market operations",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/ops/engine.ts",
+      "publicInterface": "packages/sunrey-exchange/src/ops/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "MarketOperationsEngine",
       "id": "sunrey-developer-platform",
       "name": "SunRey developer application platform, credentials, webhooks, and sandbox",
       "canonicalOwner": "packages/sunrey-sdk",
@@ -3535,6 +3548,11 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/market-operations",
+        "packages/institutional-gateway",
+        "packages/exchange-ops",
+        "packages/sunrey-exchange-ops",
+        "packages/exchange-v2"
         "packages/sunrey-developer-platform",
         "packages/developer-portal",
         "packages/app-registry",
@@ -3544,6 +3562,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
       "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox, and local devnet at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Not an EVM chain."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
     }
@@ -4058,6 +4077,10 @@
     "packages/surveillance-v2",
     "packages/custody-ledger",
     "packages/sunrey-exchange-v2",
+    "packages/market-operations",
+    "packages/institutional-gateway",
+    "packages/exchange-ops",
+    "packages/sunrey-exchange-ops",
     "packages/sunrey-coin-v2",
     "packages/crypto-custody",
     "packages/wallet-risk-v2",
@@ -5041,6 +5064,11 @@
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
     },
     {
+      "id": "sunrey-exchange-market-operations",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Chunk 95 institutional market operations, sequenced market data, circuit breakers, and reopening auctions at packages/sunrey-exchange/src/ops. Extends sunrey-exchange. No second Exchange or native-asset balance ledger. Production market activation remains dependent on real external authorization. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
       "id": "sunrey-developer-platform",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-sdk",

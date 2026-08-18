@@ -817,6 +817,52 @@ export class DevelopmentPlatform {
     return this.trades.get(tradeId);
   }
 
+  marketData(marketId: string, tier: 'public' | 'authorized' = 'public'): Readonly<Record<string, string | number>> {
+    const book = this.orderBook(marketId);
+    return Object.freeze({
+      market_id: marketId,
+      tier: tier === 'authorized' ? 'AUTHORIZED_REALTIME' : 'PUBLIC_DELAYED',
+      delayed_ms: tier === 'authorized' ? 0 : 900_000,
+      depth_levels: tier === 'authorized' ? 10 : 1,
+      bids: book.bids,
+      asks: book.asks,
+      sequence: this.events.length,
+      canonical_state_unchanged: 'true',
+    });
+  }
+
+  placeSandboxOrder(input: {
+    readonly market_id: string;
+    readonly signed_order_hex: string;
+    readonly actor: string;
+    readonly environment?: string;
+  }): Readonly<Record<string, string>> | ApiErrorEnvelope {
+    if (input.environment && input.environment !== 'SANDBOX') {
+      return apiError({
+        error_code: 'SANDBOX_CANNOT_TRADE_PRODUCTION',
+        category: 'AUTHORIZATION',
+        message: 'developer API key cannot trade production funds',
+        retryable: false,
+        request_id: this.requestId(),
+      });
+    }
+    const placed = this.placeSignedOrder(input);
+    if ('error_code' in placed) {
+      return placed;
+    }
+    return Object.freeze({ ...placed, environment: 'SANDBOX', production_funds: 'false' });
+  }
+
+  tradingSession(sessionId: string): Readonly<Record<string, string>> {
+    return Object.freeze({
+      session_id: sessionId,
+      environment: 'SANDBOX',
+      can_trade_production_funds: 'false',
+      requires_trading_authority: 'true',
+      custody_private_keys: 'outside_sdk_path',
+    });
+  }
+
   eventsSince(cursor: string | undefined, types: readonly EventType[] | undefined): {
     readonly events: readonly PublicStreamEvent[];
     readonly cursor: string;

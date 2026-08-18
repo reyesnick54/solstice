@@ -187,3 +187,39 @@ export type {
 export { UniversalExchangeEngine, moonreyPrice } from './universal.ts';
 export { exchangeUsage, runExchangeCommand } from './cli.ts';
 export * from './regulated/index.ts';
+export {
+  MarketOperationsEngine,
+  InstitutionalOrderGateway,
+  SequencedMarketData,
+  defaultMarketOperationsPolicy,
+  issueTradingCredential,
+  rejectCredentialWithCustodyKey,
+  developerApiKeyCannotTradeProduction,
+  authorizeMarketRestriction,
+  evaluatePreTradeRisk,
+  resolveReferencePrice,
+  measureLiquidity,
+  runMarketOpsCommand,
+  marketOpsUsage,
+} from './ops/index.ts';
+export type {
+  MarketOperationsPolicy,
+  MarketSession,
+  OperationalMarketState,
+  MarketDataBook,
+  MarketDataSequence,
+  MarketMakerSession,
+  MarketMakerQuote,
+  MarketRiskControl,
+  VolatilityControl,
+  CircuitBreaker,
+  AuctionState,
+  LiquidityMetric,
+  ExchangeOperationalReport,
+  TradingCredential,
+  TradingSession,
+  OrderRatePolicy,
+  InstitutionalOrderAck,
+  InstitutionalOrderRequest,
+  ProductionMarketActivation,
+} from './ops/index.ts';
