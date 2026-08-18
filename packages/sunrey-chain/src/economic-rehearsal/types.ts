@@ -244,6 +244,7 @@ export type GovernanceRehearsalResult = {
   readonly productionAuthorized: false;
 };
 
+export type RehearsalStressFinding = {
 export type RehearsalStressFinding = EconomicRehearsalStressFinding;
 export type EconomicRehearsalStressFinding = {
 export type EconomicStressFinding = {
@@ -256,6 +257,9 @@ export type EconomicStressFinding = {
 };
 export type RehearsalStressFinding = EconomicRehearsalStressFinding;
 
+export type EconomicRehearsalStressFinding = RehearsalStressFinding;
+
+export type RehearsalStressResult = {
 export type RehearsalStressResult = EconomicRehearsalStressResult;
 export type EconomicRehearsalStressResult = {
 export type EconomicStressResult = {
@@ -268,6 +272,7 @@ export type EconomicStressResult = {
   readonly custodyDelay: boolean;
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
+  readonly findings: readonly RehearsalStressFinding[];
   readonly findings: readonly EconomicRehearsalStressFinding[];
   readonly findings: readonly EconomicStressFinding[];
   readonly chunk76CampaignId?: string;
@@ -275,6 +280,8 @@ export type EconomicStressResult = {
   readonly chunk76Violations?: number;
 };
 export type RehearsalStressResult = EconomicRehearsalStressResult;
+
+export type EconomicRehearsalStressResult = RehearsalStressResult;
 
 export type RecoveryResult = {
   readonly scenario: string;

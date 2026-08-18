@@ -232,6 +232,15 @@ This document describes only what is implemented and tested in this tree.
   does not launch infrastructure. Capability `sunrey-mainnet-readiness`
   is `IMPLEMENTED`. This is not mainnet. `LIVE_*` flags remain false.
   See `docs/mainnet/`.
+- SunRey post-genesis stabilization and progressive capability
+  activation (Chunk 89, `packages/sunrey-chain/src/post-genesis`):
+  governed phases starting at `CHAIN_STABILIZATION`, deterministic
+  height/epoch/finalized-state checkpoints, independent capability
+  packages, bounded restrictions, and rehearsal-only activation
+  negatives. Capability `sunrey-post-genesis-stabilization` is
+  `IMPLEMENTED`. `realProductionCapabilitiesActivated=false`. This is
+  not mainnet. `LIVE_*` flags remain false. See
+  `docs/mainnet/chunk-89-post-genesis-stabilization.md`.
 - SunRey root-of-trust and key-ceremony architecture (Chunk 64,
   `packages/security/src/ceremony`): authority registry, key-purpose
   matrix, extended HSM contract, simulation ceremony provider,

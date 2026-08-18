@@ -3,6 +3,7 @@
  */
 
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
+import { postGenesisReadinessRecords } from '../post-genesis/readiness.ts';
 import { mainnetRcReadinessRecords } from '../release-candidate/mainnet/readiness.ts';
 import type { MainnetReadinessDimension, ReadinessEvidenceRecord } from './types.ts';
 import { READINESS_DIMENSIONS } from './types.ts';
@@ -1259,6 +1260,7 @@ export function defaultDimensionCatalog(
       verificationStatus: 'NOT_PROVIDED',
     },
   ];
+  return Object.freeze([...drafts.map(slot), ...mainnetRcReadinessRecords(), ...postGenesisReadinessRecords()]);
   return Object.freeze([...drafts.map((draft) => slot(draft, overlay)), ...mainnetRcReadinessRecords()]);
 }
 

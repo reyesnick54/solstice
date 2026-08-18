@@ -23,6 +23,7 @@ import {
 } from './product-readiness.ts';
 import { verifyMainnetCandidate } from './verify.ts';
 import { runCandidateV2Command } from './candidate-v2/cli.ts';
+import { runStabilizationCommand } from '../post-genesis/cli.ts';
 
 export type MainnetCliResult = {
   readonly ok: boolean;
@@ -41,6 +42,9 @@ export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
   if (command === 'candidate-v2') {
     const result = runCandidateV2Command(argv.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
+  }
+  if (command === 'stabilization' || command === 'capability') {
+    return runStabilizationCommand(argv);
   }
   const records = defaultDimensionCatalog();
   const capabilities = defaultActivationMatrix();
@@ -129,7 +133,7 @@ export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
     command: 'help',
     payload: {
       usage:
-        'sunrey-mainnet <readiness|evidence|capabilities|validator-candidates|genesis-candidate|verify|activation-plan|candidate-v2>',
+        'sunrey-mainnet <readiness|evidence|capabilities|validator-candidates|genesis-candidate|verify|activation-plan|candidate-v2|stabilization|capability>',
       also: 'sunrey-genesis candidate | sunrey-genesis candidate verify',
       launchesProduction: false,
     },

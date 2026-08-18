@@ -22,6 +22,10 @@ pub const SUITE_ED25519: &str = "sunrey-ed25519-v1";
 pub const SUITE_HYBRID: &str = "sunrey-hybrid-ed25519-mldsa-sim-v1";
 pub const SUITE_PQ: &str = "sunrey-mldsa-65-v1";
 pub const PATH_STATUS: &str = "/v1/chain/status";
+pub const PATH_NETWORK_PHASE: &str = "/v1/network/phase";
+pub const PATH_NETWORK_CAPABILITIES: &str = "/v1/network/capabilities";
+pub const PATH_NETWORK_HEALTH: &str = "/v1/network/health";
+pub const PATH_PROTOCOL: &str = "/v1/chain/protocol";
 pub const PATH_TX: &str = "/v1/transactions";
 pub const PATH_EVENTS: &str = "/v1/events";
 pub const PATH_EXCHANGE_MARKETS: &str = "/v1/exchange/markets";
@@ -69,6 +73,22 @@ impl SunReyRpcClient {
 
     pub fn chain_status(&self) -> Result<Value, SdkError> {
         self.get(PATH_STATUS)
+    }
+
+    pub fn get_network_phase(&self) -> Result<Value, SdkError> {
+        self.get(PATH_NETWORK_PHASE)
+    }
+
+    pub fn get_capability_status(&self) -> Result<Value, SdkError> {
+        self.get(PATH_NETWORK_CAPABILITIES)
+    }
+
+    pub fn get_post_genesis_health(&self) -> Result<Value, SdkError> {
+        self.get(PATH_NETWORK_HEALTH)
+    }
+
+    pub fn get_protocol_version(&self) -> Result<Value, SdkError> {
+        self.get(PATH_PROTOCOL)
     }
 
     pub fn submit_transaction(

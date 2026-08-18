@@ -254,6 +254,14 @@ jobs:
         run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet verify
       - name: SunRey Mainnet RC demo
         run: npm run demo:sunrey-mainnet-rc
+      - name: SunRey post-genesis rehearsal
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization status
+      - name: SunRey post-genesis checkpoint
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization checkpoint 1 0 aaaaaaaa
+      - name: SunRey post-genesis audit
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization audit
+      - name: SunRey capability activation negatives
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- capability history
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
       - name: SunRey independent security-review demo

@@ -366,6 +366,7 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
       "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
@@ -436,9 +437,14 @@
     },
     {
       "modelId": "NATIVE_MONETARY_POLICY",
-      "modelId": "ADAPTIVE_FEE_MARKET",
       "modelVersion": "1.0.0",
       "implementationReferences": [
+        "packages/sunrey-chain/src/economics/index.ts",
+        "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
+      ],
+      "assumptions": [
+        "SunRey and MoonRey supplies remain separate",
+        "no hidden supply creation",
         "packages/sunrey-chain/src/fees/v2/price.ts",
         "packages/sunrey-chain/src/fees/v2/quote.ts",
         "packages/sunrey-chain/src/fees/engine.ts",
@@ -467,8 +473,6 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
-      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
     },
     {
       "modelId": "MOONREY_POLICY_GOVERNANCE",
@@ -501,6 +505,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
@@ -606,11 +612,12 @@
       "modelId": "CROSS_ECONOMIC_INVARIANTS",
       "modelVersion": "1.0.0",
       "implementationReferences": [
-        "packages/sunrey-chain/src/economics/stack.ts",
-        "packages/sunrey-economics/src/stress/invariants.ts",
         "packages/sunrey-chain/src/formal/models/cross-economic.ts"
       ],
       "assumptions": [
+        "SunRey and MoonRey supplies remain separate",
+        "MoonRey issuance requires authorization",
+        "fee disposition conserves charged quantity",
         "integer minor units only",
         "FeePolicyV2 disposition cannot mint",
         "MoonRey issuance requires MonetaryIssuanceAuthority",
@@ -636,6 +643,31 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
     },
     {
+      "modelId": "CAPABILITY_ACTIVATION_SAFETY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/post-genesis/capabilities.ts",
+        "packages/sunrey-chain/src/formal/models/capability-activation.ts"
+      ],
+      "assumptions": [
+        "activation packages are bound to network, chain, release, capability, and policy version",
+        "AI can prepare evidence summaries and cannot authorize activation",
+        "regulated capabilities do not inherit chain authorization",
+        "restriction actions remain bounded",
+        "incident handling cannot rewrite finalized state",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": {
+        "maxHeight": 2
+      },
+      "properties": [
+        "CAPABILITIES_INDEPENDENT",
+        "WRONG_NETWORK_CANNOT_ACTIVATE",
+        "MISSING_AUTHORITY_CANNOT_ACTIVATE",
+        "AI_CANNOT_ACTIVATE",
+        "REGULATED_DOES_NOT_INHERIT_CHAIN",
+        "RESTRICTION_STATE_ENFORCED",
+        "HISTORIC_FINALIZED_UNCHANGED"
       "modelId": "GENESIS_EXECUTION_AUTHORIZATION",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -668,6 +700,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/CapabilityActivationSafety.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/capability-activation.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisExecutionAuthorization.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
     }

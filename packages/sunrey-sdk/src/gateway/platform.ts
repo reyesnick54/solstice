@@ -19,6 +19,11 @@ import {
   rehearseOracleCompromiseEmergency,
 } from '../../../sunrey-chain/src/governance-ops/rehearsals.ts';
 import { developmentTreasuryPolicy, showTreasuryPolicy } from '../../../sunrey-chain/src/economics/treasury/index.ts';
+import {
+  defaultPostGenesisPolicy,
+  initialStabilizationState,
+  publicNetworkStatus,
+} from '../../../sunrey-chain/src/post-genesis/index.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -141,6 +146,54 @@ export class DevelopmentPlatform {
       environment: 'simulation',
       ticker_status: TICKER_STATUS,
       consistency: 'FINALIZED',
+    });
+  }
+
+  postGenesisPublicStatus() {
+    const state = initialStabilizationState(defaultPostGenesisPolicy());
+    return publicNetworkStatus({
+      phase: state.phase,
+      health: state.latestHealth,
+      enabled: state.enabled,
+      restricted: state.restricted,
+    });
+  }
+
+  getNetworkPhase() {
+    const status = this.postGenesisPublicStatus();
+    return Object.freeze({
+      phase: status.phase,
+      environment: 'simulation',
+      networkClass: status.networkClass,
+      realProductionCapabilitiesActivated: false,
+    });
+  }
+
+  getCapabilityStatus() {
+    const status = this.postGenesisPublicStatus();
+    return Object.freeze({
+      capabilities: status.capabilities,
+      planes: status.planes,
+      realProductionCapabilitiesActivated: false,
+    });
+  }
+
+  getPostGenesisHealth() {
+    const status = this.postGenesisPublicStatus();
+    return Object.freeze({
+      engineeringHealth: status.planes.ENGINEERING_HEALTH,
+      productionCapabilityStatus: status.planes.PRODUCTION_CAPABILITY_STATUS,
+      regulatedServiceStatus: status.planes.REGULATED_SERVICE_STATUS,
+      securityInternalsExposed: false,
+    });
+  }
+
+  getProtocolVersion() {
+    return Object.freeze({
+      protocol_version: '1',
+      api_version: 'v1',
+      active_protocol: 'sunrey-protocol-0',
+      compatibility: 'BACKWARD_COMPATIBLE',
     });
   }
 

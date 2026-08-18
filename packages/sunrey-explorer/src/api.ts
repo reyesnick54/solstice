@@ -26,7 +26,16 @@ export function handleExplorerRequest(
     return json(405, { error: 'METHOD_NOT_ALLOWED' });
   }
   if (path === '/v1/status' || path === '/v1/health') {
-    return json(200, { ok: true, environment: 'simulation', network: 'DEVELOPMENT', ...queries.lag() });
+    return json(200, {
+      ok: true,
+      environment: 'simulation',
+      network: 'DEVELOPMENT',
+      ...queries.networkStatus(),
+      ...queries.lag(),
+    });
+  }
+  if (path === '/v1/network/status') {
+    return json(200, queries.networkStatus());
   }
   if (path === '/v1/home') {
     return json(200, queries.home());

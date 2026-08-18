@@ -34,6 +34,29 @@ export class ExplorerQueryService {
     };
   }
 
+  networkStatus() {
+    return this.public({
+      environment: 'simulation',
+      networkClass: 'DEVELOPMENT',
+      phase: 'CHAIN_STABILIZATION',
+      protocolVersion: 'sunrey-protocol-0',
+      planes: {
+        ENGINEERING_HEALTH: 'HEALTHY',
+        PRODUCTION_CAPABILITY_STATUS: 'UNAVAILABLE',
+        REGULATED_SERVICE_STATUS: 'UNAVAILABLE',
+      },
+      capabilities: [
+        { capability: 'SUNREY_CHAIN', engineeringHealth: 'HEALTHY', productionCapabilityStatus: 'ELIGIBLE', regulatedServiceStatus: 'NOT_APPLICABLE' },
+        { capability: 'SUNREY_EXCHANGE', engineeringHealth: 'HEALTHY', productionCapabilityStatus: 'UNAVAILABLE', regulatedServiceStatus: 'UNAVAILABLE' },
+        { capability: 'INSTITUTIONAL_CUSTODY', engineeringHealth: 'HEALTHY', productionCapabilityStatus: 'UNAVAILABLE', regulatedServiceStatus: 'UNAVAILABLE' },
+        { capability: 'FIAT_BANKING', engineeringHealth: 'HEALTHY', productionCapabilityStatus: 'UNAVAILABLE', regulatedServiceStatus: 'UNAVAILABLE' },
+      ],
+      realProductionCapabilitiesActivated: false,
+      securityInternalsExposed: false,
+      ...this.lag(),
+    });
+  }
+
   home(): ExplorerHome & ExplorerLag {
     const projection = this.indexer.store.projection();
     const latest = projection.blocks[projection.blocks.length - 1] ?? null;

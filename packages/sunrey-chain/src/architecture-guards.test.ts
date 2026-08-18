@@ -61,6 +61,8 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'fees', 'v2')}`) ||
         file.includes(`${join('src', 'governance-ops')}`) ||
         file.includes(`${join('src', 'economic-rehearsal')}`) ||
+        file.includes(`${join('src', 'post-genesis')}`) ||
+        file.includes(`${join('src', 'production-ceremony')}`) ||
         file.includes(`${join('src', 'providers')}`) ||
         file.includes(`${join('src', 'production-ceremony')}`) ||
         file.includes(`${join('src', 'fees')}`) ||
@@ -140,6 +142,11 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/genesis-candidate')), false);
     assert.equal(existsSync(join(ROOT, 'packages/readiness-registry')), false);
     assert.equal(existsSync(join(ROOT, 'packages/activation-control')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/post-genesis')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-post-genesis')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/stabilization')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/capability-activation')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-activation')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-infra')), false);
     assert.equal(existsSync(join(ROOT, 'packages/infrastructure')), false);
     assert.equal(existsSync(join(ROOT, 'packages/production-infrastructure')), false);
