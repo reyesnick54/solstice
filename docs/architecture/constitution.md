@@ -58,6 +58,7 @@ never be two implementations of these systems.
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |
+| User-controlled agent mandates | `packages/sunrey-agent` | `packages/sunrey-agent/src/engine.ts` | IMPLEMENTED |
 | Growth Orchestrator | `packages/platform` | `packages/platform/src/service.ts` | IMPLEMENTED |
 | Personal Economic Value Engine | `packages/platform` | `packages/platform/src/value/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
@@ -83,6 +84,7 @@ never be two implementations of these systems.
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
+| SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -93,7 +95,7 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`,
+`agentic-capital-mesh`, `sunrey-agent`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
@@ -447,6 +449,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent`, `packages/clean-room` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
+| `packages/sunrey-agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/permissions`, `packages/kernel`, `packages/security`, `packages/risk`, `packages/model-registry`, `packages/sunrey-chain`, `packages/sunrey-exchange`, `packages/custody` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
@@ -689,6 +692,7 @@ phase is absent.
 | TREASURY | PARTIAL | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
+| USER AGENT MANDATES | IMPLEMENTED | `packages/sunrey-agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
 | REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
@@ -1289,6 +1293,28 @@ licensing, custody, and human evidence. Do not create
 `packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
 `packages/retail-exchange`, or `packages/consumer-trading`. See
 [`chunk-99-consumer-exchange.md`](./chunk-99-consumer-exchange.md).
+Chunk 97 implements SunRey mobile wallet synchronization at
+`packages/sunrey-chain/src/wallet/mobile-sync`. Capability
+`sunrey-mobile-wallet-sync` is `IMPLEMENTED`. It extends Chunk 46
+wallets, Chunk 51 SDK, Chunk 93 public RPC, Chunk 94 developer APIs,
+and Chunk 96 device trust. Wallet projections are rebuildable from
+canonical chain APIs. Backend sync servers must not obtain
+self-custody master private keys. Do not create
+`packages/mobile-wallet-sync`, `packages/sunrey-mobile-sync`,
+`packages/wallet-sync`, `packages/mobile-wallet-v2`, or
+`packages/sunrey-push`. See
+[`chunk-97-mobile-sync.md`](./chunk-97-mobile-sync.md).
+Chunk 96 implements SunRey advanced wallet security, recovery,
+device trust, and transaction authorization at
+`packages/sunrey-chain/src/wallet/security`. Capability
+`sunrey-wallet-security` is `IMPLEMENTED`. It extends Chunk 46
+sovereign wallets. Application authentication is not native
+signing. Passkeys are not blockchain private keys. Recovery
+cannot rewrite finalized transfers. Do not create
+`packages/wallet-security`, `packages/sunrey-wallet-security`,
+`packages/wallet-auth`, `packages/device-trust`, or
+`packages/wallet-recovery-v2`. See
+[`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
 
 ## Agent stop rule
 

@@ -1,11 +1,15 @@
 export {
   PUBLIC_API_VERSION,
+  PUBLIC_API_VERSION_STRATEGY,
   V1_API,
   API_COMPATIBILITY,
   API_DEPRECATIONS,
   compatibilityPolicy,
   parseApiVersion,
   PUBLIC_API_VERSION_STRATEGY,
+  PUBLIC_API_VERSION_STRATEGY,
+  compatibilityPolicy,
+  parseApiVersion,
   requireVersionedPublicPath,
 } from './versioning.ts';
 export type { ApiDeprecationMetadata } from './versioning.ts';
@@ -98,3 +102,35 @@ export type {
   DeveloperPlatformReport,
 } from './developer-platform/index.ts';
 export { verifyWebhookSignature as verifySunReyWebhook } from './webhook.ts';
+export {
+  approveAgentProposal,
+  createAgentMandate,
+  getAgentActivity,
+  getAgentMandate,
+  getAgentProposal,
+  revokeAgentMandate,
+  UserAgentMandateEngine,
+} from './agent-mandates.ts';
+export type {
+  AgentActivityReport,
+  AgentTransactionProposal,
+  UserAgentMandate,
+} from './agent-mandates.ts';
+  connectMobileWallet,
+  syncWallet,
+  subscribeWallet,
+  trackFinality,
+  createPaymentRequest,
+  parsePaymentRequest,
+  getPendingTransactions,
+  getSecurityEvents,
+} from './mobile-sync.ts';
+export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';
+  WalletSecurityClient,
+  getWalletSecurityProfile,
+  getWalletDevices,
+  getWalletSessions,
+  buildSigningIntent,
+  getWalletPolicies,
+  getRecoveryState,
+} from './wallet-security.ts';

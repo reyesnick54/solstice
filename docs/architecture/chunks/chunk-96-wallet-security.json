@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-96",
+  "title": "Implement SunRey advanced wallet security, recovery, device trust and transaction authorization",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "custody",
+    "sunrey-institutional-custody",
+    "sunrey-chain",
+    "sunrey-sovereign-wallets",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "sunrey-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-wallet-security"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/wallet/security. Extends Chunk 46 sovereign wallets. Application authentication is not native signing. Passkeys are not blockchain keys. Recovery cannot rewrite finalized transfers. evaluateChunkRequirements returns mustStop: false. Do not create packages/wallet-security, packages/sunrey-wallet-security, packages/wallet-auth, packages/device-trust, or packages/wallet-recovery-v2."
+}

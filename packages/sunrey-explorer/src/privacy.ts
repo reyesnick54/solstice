@@ -246,6 +246,13 @@ const FORBIDDEN_FIELDS: readonly FieldExposure[] = [
   { path: 'orderAccountPrivate', classification: 'PRIVATE' },
   { path: 'validatorInfrastructure', classification: 'FORBIDDEN' },
   { path: 'privateInvestigation', classification: 'FORBIDDEN' },
+  { path: 'walletDeviceBinding', classification: 'FORBIDDEN' },
+  { path: 'walletSession', classification: 'FORBIDDEN' },
+  { path: 'walletRecoveryRequest', classification: 'FORBIDDEN' },
+  { path: 'walletRecoveryEvidence', classification: 'FORBIDDEN' },
+  { path: 'walletRecoveryChallenge', classification: 'FORBIDDEN' },
+  { path: 'devicePublicDescriptor', classification: 'PRIVATE' },
+  { path: 'sessionToken', classification: 'FORBIDDEN' },
 ];
 
 const PUBLIC_SET = new Set(PUBLIC_FIELDS.map((field) => field.path));
