@@ -33,6 +33,17 @@ export const IAC_MODULES: readonly InfrastructureModule[] = Object.freeze([
   { moduleId: 'secrets', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/secrets', providerNeutral: true },
   { moduleId: 'storage', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/storage', providerNeutral: true },
   { moduleId: 'compute', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/compute', providerNeutral: true },
+  { moduleId: 'validator', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/validator', providerNeutral: true },
+  { moduleId: 'sentry', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/sentry', providerNeutral: true },
+  { moduleId: 'rpc', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/rpc', providerNeutral: true },
+  { moduleId: 'explorer', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/explorer', providerNeutral: true },
+  { moduleId: 'monitoring', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/monitoring', providerNeutral: true },
+  { moduleId: 'database', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/database', providerNeutral: true },
+  { moduleId: 'backup', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/backup', providerNeutral: true },
+  { moduleId: 'oracle', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/oracle', providerNeutral: true },
+  { moduleId: 'exchange', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/exchange', providerNeutral: true },
+  { moduleId: 'custody', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/custody', providerNeutral: true },
+  { moduleId: 'release', kind: 'OPENTOFU', path: 'infra/sunrey-production/modules/release', providerNeutral: true },
   { moduleId: 'helm-candidate', kind: 'HELM', path: 'infra/sunrey-production/helm/sunrey-production-candidate', providerNeutral: true },
 ]);
 

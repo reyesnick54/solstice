@@ -1,20 +1,14 @@
 import { ENVIRONMENT } from '../../../../config/src/index.ts';
-import { encodeString, sha256Hex } from '../../validators/canonical.ts';
-import { buildGenesisCandidate } from '../../mainnet/genesis-candidate.ts';
-import {
-  PRODUCTION_CANDIDATE_CHAIN_ID,
-  PRODUCTION_CANDIDATE_NETWORK_ID,
-  PRODUCTION_CANDIDATE_PROTOCOL_VERSION,
-} from '../../mainnet/identity.ts';
+import { createProductionNetworkCandidateV2 } from '../../mainnet/candidate-v2/assemble.ts';
+import { CANDIDATE_V2_DOMAIN, CANDIDATE_V2_ID } from '../../mainnet/candidate-v2/identity.ts';
 import { productionCandidateCryptoPolicy, rejectUnsupportedPqHsmRequirement } from '../../mainnet/crypto-policy.ts';
 import { bindCeremony, buildSimulatedCeremonyTranscript } from '../../mainnet/ceremony.ts';
+import { PRODUCTION_CANDIDATE_PROTOCOL_VERSION } from '../../mainnet/identity.ts';
 import { sevenProductionCandidateValidators } from '../../mainnet/validators.ts';
 import { sha256File, sha256Text, generatedSourceDigest } from '../../supply-chain/inventory.ts';
 import { freezeArtifacts, freezeDependencies, freezeProtocol } from '../freeze.ts';
 import { FIRST_ECONOMIC_RC_ID, freezeEconomicPolicies } from '../economic/index.ts';
 import {
-  CANDIDATE_V2_DOMAIN,
-  CANDIDATE_V2_ID,
   CEREMONY_EVIDENCE_CHUNK,
   ROOT_OF_TRUST_CHUNK,
   type MainnetCandidateV2Freeze,
@@ -155,31 +149,27 @@ export function freezeMainnetEconomic(root: string, economicRcId = FIRST_ECONOMI
   });
 }
 
-export function freezeProductionNetworkCandidateV2(expectedRootHash?: string): MainnetCandidateV2Freeze {
+export function freezeProductionNetworkCandidateV2(
+  expectedRootHash?: string,
+  root = process.cwd(),
+): MainnetCandidateV2Freeze {
   if (ENVIRONMENT !== 'simulation') {
     throw new TypeError('mainnet RC may only bind a candidate while ENVIRONMENT is simulation');
   }
-  const genesis = buildGenesisCandidate();
-  const rootHash = sha256Hex(
-    Buffer.concat([
-      encodeString(CANDIDATE_V2_DOMAIN),
-      encodeString(genesis.genesisHash),
-      encodeString(PRODUCTION_CANDIDATE_NETWORK_ID),
-      encodeString(PRODUCTION_CANDIDATE_CHAIN_ID),
-      encodeString(PRODUCTION_CANDIDATE_PROTOCOL_VERSION),
-      encodeString(String(genesis.candidate.mainnetEnabled)),
-    ]),
-  );
-  if (expectedRootHash !== undefined && expectedRootHash !== rootHash) {
-    throw new TypeError(`wrong Candidate V2 rejected: expected ${expectedRootHash}, observed ${rootHash}`);
+  const candidate = createProductionNetworkCandidateV2(root);
+  if (candidate.candidateId !== CANDIDATE_V2_ID) {
+    throw new TypeError(`wrong Candidate V2 rejected: ${candidate.candidateId}`);
+  }
+  if (expectedRootHash !== undefined && expectedRootHash !== candidate.candidateRootHash) {
+    throw new TypeError(`wrong Candidate V2 rejected: expected ${expectedRootHash}, observed ${candidate.candidateRootHash}`);
   }
   return Object.freeze({
     candidateId: CANDIDATE_V2_ID,
     domain: CANDIDATE_V2_DOMAIN,
-    genesisCandidateHash: genesis.genesisHash,
-    networkId: PRODUCTION_CANDIDATE_NETWORK_ID,
-    chainId: PRODUCTION_CANDIDATE_CHAIN_ID,
-    rootHash,
+    genesisCandidateHash: candidate.genesisInput.inputHash,
+    networkId: candidate.configuration.networkId,
+    chainId: candidate.configuration.chainId,
+    rootHash: candidate.candidateRootHash,
     mainnetEnabled: false,
     productionActivated: false,
   });

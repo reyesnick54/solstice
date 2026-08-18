@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-86",
+  "title": "SunRey production environment provisioning control plane",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-production-infrastructure",
+    "sunrey-production-storage",
+    "sunrey-production-network-candidate",
+    "sunrey-production-provider-acceptance",
+    "sunrey-audit-remediation",
+    "sunrey-mainnet-rc",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-production-provisioning"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral control plane. CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
+}

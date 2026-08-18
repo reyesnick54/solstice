@@ -18,8 +18,6 @@ import {
   PRODUCTION_PROTOCOL_AUTHORITY_ID,
   PRODUCTION_RELEASE_AUTHORITY_ID,
   PRODUCTION_SECURITY_AUTHORITY_ID,
-  REHEARSAL_CANDIDATE_V2_ID,
-  REHEARSAL_MAINNET_RC_ID,
 } from './identity.ts';
 import { REQUIRED_PRODUCTION_HUMAN_ROLES, type GenesisTimePolicy, type ProductionGenesisCeremonyPlan } from './types.ts';
 
@@ -130,7 +128,9 @@ export function createProductionCeremonyPlan(input: {
 }
 
 export function createDressRehearsalCeremonyPlan(input: {
+  readonly mainnetRcId?: string;
   readonly mainnetRcHash: string;
+  readonly candidateV2Id?: string;
   readonly candidateV2RootHash: string;
   readonly economicBundleHash: string;
   readonly cryptoPolicyHash: string;
@@ -142,9 +142,9 @@ export function createDressRehearsalCeremonyPlan(input: {
     planId: `plan.${DRESS_REHEARSAL_ID}`,
     planVersion: 1,
     environmentClass: 'DRESS_REHEARSAL',
-    mainnetRcId: REHEARSAL_MAINNET_RC_ID,
+    mainnetRcId: input.mainnetRcId ?? EXPECTED_MAINNET_RC_ID,
     mainnetRcHash: input.mainnetRcHash,
-    candidateV2Id: REHEARSAL_CANDIDATE_V2_ID,
+    candidateV2Id: input.candidateV2Id ?? EXPECTED_CANDIDATE_V2_ID,
     candidateV2RootHash: input.candidateV2RootHash,
     protocolVersion: '1',
     economicBundleHash: input.economicBundleHash,

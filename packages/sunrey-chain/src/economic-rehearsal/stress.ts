@@ -16,6 +16,10 @@ import type {
   EconomicRehearsalStressResult,
   RecoveryResult,
 } from './types.ts';
+  RehearsalStressFinding,
+  RehearsalStressResult,
+} from './types.ts';
+import type { EconomicStressFinding, EconomicStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 
@@ -26,6 +30,10 @@ function finding(
   accountingSafe: boolean,
   description: string,
 ): EconomicRehearsalStressFinding {
+  severity: EconomicStressFinding['severity'],
+  accountingSafe: boolean,
+  description: string,
+): EconomicStressFinding {
   return Object.freeze({
     findingId,
     scenario,
@@ -37,6 +45,7 @@ function finding(
 }
 
 export function runEconomicStressCampaign(root = process.cwd()): EconomicRehearsalStressResult {
+export function runEconomicStressCampaign(root = process.cwd()): EconomicStressResult {
   const chunk76 = runCanonicalSmokeStressCampaign(root);
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();

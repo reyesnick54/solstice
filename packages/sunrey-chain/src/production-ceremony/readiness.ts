@@ -38,37 +38,31 @@ function reservedRootOfTrustRecord(): ReadinessEvidenceRecord {
 }
 
 export function reevaluateReadinessAfterProductionCeremony(): MainnetReadinessRegistry {
-  try {
-    const records = defaultDimensionCatalog().map((row) => {
-      if (
-        row.externalEvidence ||
-        row.dimension === 'LEGAL' ||
-        row.dimension === 'REGULATORY' ||
-        row.dimension === 'LICENSING' ||
-        row.dimension === 'HUMAN_AUTHORIZATION' ||
-        row.dimension === 'EXTERNAL_SECURITY_REVIEW' ||
-        row.dimension === 'ROOT_OF_TRUST' ||
-        row.dimension === 'PARTNER_DEPENDENCIES'
-      ) {
+  const records = defaultDimensionCatalog().map((row) => {
+    if (
+      row.externalEvidence ||
+      row.dimension === 'LEGAL' ||
+      row.dimension === 'REGULATORY' ||
+      row.dimension === 'LICENSING' ||
+      row.dimension === 'HUMAN_AUTHORIZATION' ||
+      row.dimension === 'EXTERNAL_SECURITY_REVIEW' ||
+      row.dimension === 'ROOT_OF_TRUST' ||
+      row.dimension === 'PARTNER_DEPENDENCIES'
+    ) {
+      return row;
+    }
+    if (ENGINEERING_DIMENSIONS.has(row.dimension)) {
+      try {
+        return applyEngineeringVerification(row, 'ENGINEERING_VERIFIED');
+      } catch {
         return row;
       }
-      if (ENGINEERING_DIMENSIONS.has(row.dimension)) {
-        try {
-          return applyEngineeringVerification(row, 'ENGINEERING_VERIFIED');
-        } catch {
-          return row;
-        }
-      }
-      return row;
-    });
-    return assembleReadinessRegistry({ records });
-  } catch {
-    return Object.freeze({
-      schemaVersion: 1,
-      generatedAtUtc: '2026-01-01T00:00:00.000Z',
-      records: Object.freeze([reservedRootOfTrustRecord()]),
-    }) as MainnetReadinessRegistry;
-  }
+    }
+    return row;
+  });
+  return assembleReadinessRegistry({
+    records: Object.freeze([...records, reservedRootOfTrustRecord()]),
+  });
 }
 
 export function realCeremonyRemainsExternal(): {

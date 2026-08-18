@@ -138,5 +138,9 @@
   — production genesis execution engine and launch control room at
   `packages/sunrey-chain/src/genesis-execution`. See
   [`docs/mainnet/chunk-88-genesis-execution.md`](../mainnet/chunk-88-genesis-execution.md).
+- [Chunk 87 pre-genesis qualification](./chunk-87-pregenesis-qualification.md)
+  — isolated production-like shadow network at
+  `packages/sunrey-chain/src/pregenesis`. See
+  [`docs/mainnet/chunk-87-pregenesis-qualification.md`](../mainnet/chunk-87-pregenesis-qualification.md).
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

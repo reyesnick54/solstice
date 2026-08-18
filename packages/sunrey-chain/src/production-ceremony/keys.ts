@@ -6,16 +6,15 @@
  * production private-key material.
  */
 
-import {
-  AUTHORITY_PURPOSE,
-  type RootOfTrustAuthority,
-} from '../../../security/src/ceremony/authorities.ts';
+import { AUTHORITY_PURPOSE } from '../../../security/src/ceremony/authorities.ts';
+import type { RootOfTrustAuthority } from '../../../security/src/ceremony/types.ts';
 import { createEd25519SignatureProvider, SUITE_SUNREY_ED25519_V1, type KeyPurpose } from '../../../security/src/index.ts';
 import { FIXTURE_KEY_MARKER, assertFixtureEnvironment } from '../testnet/security.ts';
 import { sevenValidatorFixture } from '../testnet/validators.ts';
 import { sevenProductionCandidateValidators } from '../mainnet/validators.ts';
 import { sevenRehearsalValidators } from '../launch-rehearsal/genesis.ts';
 import { sevenEconomicRehearsalValidators } from '../economic-rehearsal/genesis.ts';
+import { sevenShadowValidators } from '../pregenesis/genesis.ts';
 import { encodeString, sha256Bytes, sha256Hex } from '../validators/canonical.ts';
 import type { HighRiskKeyPurpose, ProductionKeyPurpose } from './types.ts';
 import { HIGH_RISK_KEY_PURPOSES } from './types.ts';
@@ -119,6 +118,11 @@ function collectKnownFixtureKeys(): ReadonlySet<string> {
     keys.add(row.p2pPublicKeyHex.toLowerCase());
     keys.add(row.governancePublicKeyHex.toLowerCase());
   }
+  for (const row of sevenShadowValidators()) {
+    keys.add(row.consensusPublicKeyHex.toLowerCase());
+    keys.add(row.p2pPublicKeyHex.toLowerCase());
+    keys.add(row.governancePublicKeyHex.toLowerCase());
+  }
   return keys;
 }
 
@@ -130,13 +134,13 @@ export function isForbiddenProductionKeyLabel(label: string): boolean {
   if (!label.includes(FIXTURE_KEY_MARKER) && /testnet|development|rehearsal|fixture/i.test(label)) {
     return true;
   }
-  return /SUNREY_TESTNET_|SUNREY_LOCAL_DEV_|SUNREY_DEV_|SUNREY_MAINNET_REHEARSAL_|SUNREY_ECONOMIC_MAINNET_REHEARSAL_|SUNREY_PRODUCTION_CANDIDATE_1_FIXTURE_/i.test(
+  return /SUNREY_TESTNET_|SUNREY_LOCAL_DEV_|SUNREY_DEV_|SUNREY_MAINNET_REHEARSAL_|SUNREY_ECONOMIC_MAINNET_REHEARSAL_|SUNREY_PRODUCTION_CANDIDATE_1_FIXTURE_|SUNREY_PREGENESIS_SHADOW_/i.test(
     label,
   );
 }
 
 export function rejectFixtureTestnetRehearsalKeys(
-  keys: readonly { readonly publicKeyHex: string; readonly label?: string },
+  keys: readonly { readonly publicKeyHex: string; readonly label?: string }[],
   options: { readonly allowDressRehearsalLabels?: boolean } = {},
 ): void {
   const known = collectKnownFixtureKeys();

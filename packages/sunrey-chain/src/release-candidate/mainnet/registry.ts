@@ -69,7 +69,7 @@ export function createMainnetReleaseCandidate(input: {
   const sourceFreeze = freezeMainnetSource(input.root, sourceCommit, artifactsPlaceholder);
   const protocolFreeze = freezeMainnetProtocol(input.root);
   const economicFreeze = freezeMainnetEconomic(input.root);
-  const candidateV2 = freezeProductionNetworkCandidateV2(input.expectedCandidateV2Hash);
+  const candidateV2 = freezeProductionNetworkCandidateV2(input.expectedCandidateV2Hash, input.root);
   const cryptoFreeze = freezeMainnetCrypto();
   const rootOfTrust = freezeRootOfTrust();
   const hsm = reportHsmState();
@@ -167,7 +167,7 @@ export function verifyMainnetReleaseCandidate(
   const expectedQualification = sha256Text(
     bundle.qualification.cells.map((row) => `${row.category}:${row.state}:${row.evidenceDigest}`).join('|'),
   );
-  const recomputedCandidate = root ? freezeProductionNetworkCandidateV2() : null;
+  const recomputedCandidate = root ? freezeProductionNetworkCandidateV2(undefined, root) : null;
   const recomputedEconomic = root ? freezeMainnetEconomic(root) : null;
   const checks = [
     { id: 'not-mainnet', ok: bundle.manifest.mainnet_enabled === false && bundle.manifest.mainnet_ready === false, detail: 'mainnetEnabled=false' },

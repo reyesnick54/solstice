@@ -244,7 +244,9 @@ export type GovernanceRehearsalResult = {
   readonly productionAuthorized: false;
 };
 
+export type RehearsalStressFinding = EconomicRehearsalStressFinding;
 export type EconomicRehearsalStressFinding = {
+export type EconomicStressFinding = {
   readonly findingId: string;
   readonly scenario: string;
   readonly severity: 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -254,7 +256,9 @@ export type EconomicRehearsalStressFinding = {
 };
 export type RehearsalStressFinding = EconomicRehearsalStressFinding;
 
+export type RehearsalStressResult = EconomicRehearsalStressResult;
 export type EconomicRehearsalStressResult = {
+export type EconomicStressResult = {
   readonly oracleDegradation: boolean;
   readonly liquidityStress: boolean;
   readonly networkCongestion: boolean;
@@ -265,6 +269,7 @@ export type EconomicRehearsalStressResult = {
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
   readonly findings: readonly EconomicRehearsalStressFinding[];
+  readonly findings: readonly EconomicStressFinding[];
   readonly chunk76CampaignId?: string;
   readonly chunk76ReportHash?: string;
   readonly chunk76Violations?: number;
@@ -304,6 +309,7 @@ export type EconomicActivationEvidenceBundle = {
   };
   readonly formalResults: readonly TraceConformanceResult[];
   readonly stressResults: EconomicRehearsalStressResult;
+  readonly stressResults: EconomicStressResult;
   readonly supplyAudits: readonly SupplyAuditResult[];
   readonly treasuryAudit: TreasuryRehearsalResult;
   readonly exchangeReconciliation: ExchangeRehearsalResult;
@@ -351,12 +357,14 @@ export type EconomicMainnetRehearsalReport = {
     readonly classification: 'ENGINEERING_SIMULATION';
   };
   readonly stress: EconomicRehearsalStressResult;
+  readonly stress: EconomicStressResult;
   readonly recoveries: readonly RecoveryResult[];
   readonly explorer: ExplorerRebuildResult;
   readonly formal: readonly TraceConformanceResult[];
   readonly controlRoom: EconomicLaunchControlRoomState;
   readonly findings: readonly RehearsalFinding[];
   readonly economicFindings: readonly EconomicRehearsalStressFinding[];
+  readonly economicFindings: readonly EconomicStressFinding[];
   readonly engineeringBlockers: readonly RehearsalFinding[];
   readonly classification: EconomicRehearsalResultState;
   readonly productionCandidateAllocationUnchanged: true;
