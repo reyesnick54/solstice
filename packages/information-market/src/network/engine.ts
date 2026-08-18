@@ -741,11 +741,12 @@ export class HumanInformationNetworkEngine {
     this.store.compensation.set(instruction.instructionId, instruction);
     const subject = this.store.subjects.get(input.subjectId);
     if (subject) {
+      const requesterClass = this.store.requesters.get(input.requesterId)?.requesterClass;
       this.notifications.push(
         privacyMinimizedNotification({
           kind: 'COMPENSATION_EVENT',
           subjectHandle: subject.publicHandle,
-          requesterClass: this.store.requesters.get(input.requesterId)?.requesterClass,
+          ...(requesterClass === undefined ? {} : { requesterClass }),
         }),
       );
     }

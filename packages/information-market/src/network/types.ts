@@ -377,7 +377,11 @@ export type ControlCenterProjection = {
 export type RequesterPortalProjection = {
   readonly requesterId: string;
   readonly requests: readonly HumanInformationRequest[];
-  readonly eligibility: readonly { readonly requestId: string; readonly eligible: boolean; readonly reason: string };
+  readonly eligibility: readonly {
+    readonly requestId: string;
+    readonly eligible: boolean;
+    readonly reason: string;
+  }[];
   readonly compensation: readonly HumanInformationCompensationInstruction[];
   readonly cleanRoomJobs: readonly CleanRoomComputationRequest[];
   readonly results: readonly CleanRoomComputationResult[];

@@ -53,8 +53,11 @@ export function runInformationCommand(
     case 'audit':
       return { command, ok: true, payload: engine.audit() };
     case 'requester': {
-      const portal = args[1] ? engine.requesterPortal(args[1]) : { ok: false, error: { code: 'REQUESTER_REQUIRED', message: 'requester id required' } };
-      return { command, ok: portal.ok, payload: portal.ok ? portal.value : 'error' in portal ? portal.error : portal };
+      if (!args[1]) {
+        return { command, ok: false, payload: { error: 'REQUESTER_REQUIRED' } };
+      }
+      const portal = engine.requesterPortal(args[1]);
+      return { command, ok: portal.ok, payload: portal.ok ? portal.value : portal.error };
     }
     case 'status':
     default:

@@ -157,6 +157,12 @@ export function runHumanInformationNetworkDemo(): HumanInformationNetworkDemoRes
   if (activation.productionActivated !== false || report.rawPersonalDataExported !== false) {
     throw new Error('production or raw-export invariants failed');
   }
+  if (engine.store.anchors.length === 0) {
+    throw new Error('expected an on-chain evidence anchor');
+  }
+  if (revocation.historicalSettlementErased !== false) {
+    throw new Error('historical settlement must be retained after revocation');
+  }
   return Object.freeze({
     syntheticData: true,
     rawPersonalDataExported: false,
@@ -168,9 +174,9 @@ export function runHumanInformationNetworkDemo(): HumanInformationNetworkDemoRes
     privacySafeResult: true,
     compensated: true,
     usageReceiptIssued: true,
-    onChainAnchored: engine.store.anchors.length > 0,
+    onChainAnchored: true,
     revoked: true,
-    historicalSettlementRetained: revocation.historicalSettlementErased === false,
+    historicalSettlementRetained: true,
     cliStatus: formatInformationCli(cli),
   });
 }

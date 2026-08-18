@@ -42,15 +42,15 @@ export function defaultNetworkPolicy(): HumanInformationNetworkPolicy {
   return Object.freeze({
     policyVersion: 'hin-policy-v1',
     rawExportPolicy: RAW_EXPORT_POLICY,
-    enabledRightTypes: Object.freeze([...DEFAULT_ENABLED_RIGHT_TYPES]),
-    defaultDenyCategories: Object.freeze([...DEFAULT_DENY_CATEGORIES]),
-    permittedCategories: Object.freeze([
+    enabledRightTypes: DEFAULT_ENABLED_RIGHT_TYPES,
+    defaultDenyCategories: DEFAULT_DENY_CATEGORIES,
+    permittedCategories: [
       'FINANCIAL_ACTIVITY_METADATA',
       'COMMERCE_PREFERENCES',
       'PROFESSIONAL_INFORMATION',
       'CREATIVE_ACTIVITY',
       'DEVICE_ACTIVITY_SIGNALS',
-    ]),
+    ] as const,
     minCohortSize: 10,
     maxQueriesPerRequesterPurpose: 8,
     maxOutputRows: 1,
