@@ -52,3 +52,9 @@ production oracle agreements, legal, regulatory, licensing, regulated
 partners, or human production authorization. The production-candidate
 allocation remains zero/unapproved. See
 [chunk-80-economic-mainnet-rehearsal.md](./chunk-80-economic-mainnet-rehearsal.md).
+
+Chunk 81 Production Network Candidate V2 consumes exact Chunk 76–81
+engineering evidence hashes without overwriting external evidence
+status. External audit, commercial HSM, counsel, regulator, license,
+partner, and human-authorization slots remain `NOT_PROVIDED`. See
+[chunk-81-production-network-candidate-v2.md](./chunk-81-production-network-candidate-v2.md).

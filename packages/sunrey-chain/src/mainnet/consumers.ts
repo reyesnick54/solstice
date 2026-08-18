@@ -12,6 +12,7 @@ import { loadFormalModelRegistry } from '../formal/registry.ts';
 import { FIRST_RC_ID } from '../release-candidate/types.ts';
 import { consumeEconomicRc as consumeEconomicRcEvidence } from '../release-candidate/economic/readiness.ts';
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
+import { CANDIDATE_V2_ID } from './candidate-v2/identity.ts';
 
 /** Documented Chunk 57 facts. sunrey-chain must not import packages/sunrey-range. */
 const RANGE_SCHEMA_VERSION = 1;
@@ -154,4 +155,20 @@ export function consumeLegalRegulatory(): LegalRegulatorySlot {
 
 export function consumeFormalModelIds(): readonly string[] {
   return FORMAL_MODEL_IDS;
+}
+
+export function consumeCandidateV2(): {
+  readonly candidateId: typeof CANDIDATE_V2_ID;
+  readonly status: 'CANDIDATE';
+  readonly mainnetEnabled: false;
+  readonly productionAuthorized: false;
+  readonly notes: string;
+} {
+  return Object.freeze({
+    candidateId: CANDIDATE_V2_ID,
+    status: 'CANDIDATE',
+    mainnetEnabled: false,
+    productionAuthorized: false,
+    notes: 'Chunk 81 candidate binds Chunks 65–80. External legal, audit, HSM, and human-authorization evidence remain NOT_PROVIDED. This is not mainnet authorization.',
+  });
 }

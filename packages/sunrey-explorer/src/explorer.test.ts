@@ -117,6 +117,8 @@ describe('sunrey explorer', () => {
     assert.match(treasury.body, /PROTOCOL TREASURY/);
     assert.match(treasury.body, /distinctFromFiatLedger/);
     assert.match(treasury.body, /distinctFromCustomerCustody/);
+    assert.match(treasury.body, /SUNREY_BLOCKCHAIN_TREASURY|PROTOCOL TREASURY/);
+    assert.match(treasury.body, /UNCONFIGURED|distinctFromFiatLedger/);
     const economics = handleExplorerRequest({ method: 'GET', path: '/v1/validators/economics', query: {} }, queries, indexer);
     assert.equal(economics.status, 200);
     assert.match(economics.body, /bondAsset/);

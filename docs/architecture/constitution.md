@@ -1127,6 +1127,17 @@ treasury mint. Production treasury remains inactive. Do not create
 `packages/reserve-bank`. See
 [`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
+Chunk 82 implements external production provider onboarding,
+acceptance testing, and evidence qualification at
+`packages/sunrey-chain/src/providers`. Capability
+`sunrey-production-provider-acceptance` is `IMPLEMENTED`. It reuses
+canonical infrastructure, oracle, regulated, and HSM registries.
+It does not fabricate contracts, licenses, commercial HSM
+certification, or human approvals. Do not create
+`packages/provider-acceptance`, `packages/production-providers`,
+`packages/external-providers`, or `packages/sunrey-providers`. See
+[`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

@@ -81,6 +81,10 @@ const COMPETING_PATHS = [
   'packages/sunrey-protocol-treasury',
   'packages/native-treasury',
   'packages/reserve-bank',
+  'packages/provider-acceptance',
+  'packages/production-providers',
+  'packages/external-providers',
+  'packages/sunrey-providers',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

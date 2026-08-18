@@ -11,6 +11,31 @@ This document describes only what is implemented and tested in this tree.
   `TEST_FIXTURE_NOT_EXTERNAL_AUDIT` fixtures never satisfy real
   external-review readiness. Capability `sunrey-audit-remediation`
   is `IMPLEMENTED`. See `docs/audit/chunk-83-audit-remediation.md`.
+- SunRey external production provider acceptance (Chunk 82,
+  `packages/sunrey-chain/src/providers`): one evidence-driven
+  acceptance framework over canonical infrastructure, oracle,
+  regulated-service, and HSM registries. Local/sandbox contract
+  tests run in CI. Production eligibility is derived from
+  configured requirements. Contracts, licenses, commercial HSM
+  certification, oracle data rights, banking agreements, and
+  human approvals remain unfilled. AI cannot mark
+  `HUMAN_ACCEPTED` or `PRODUCTION_ELIGIBLE`. Capability
+  `sunrey-production-provider-acceptance` is `IMPLEMENTED`.
+  See `docs/providers/chunk-82-production-provider-acceptance.md`.
+- SunRey production network candidate v2 (Chunk 81,
+  `packages/sunrey-chain/src/mainnet/candidate-v2`): identity
+  `SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` /
+  `net_sunrey_production_candidate_2` /
+  `chn_sunrey_production_candidate_2` (HRP `srprd`), deterministic
+  protocol/economic/security/infrastructure/storage bundles, topology
+  and service manifests, Candidate V1 comparison, and
+  `sunrey-mainnet candidate-v2` commands. Reconciles merged Chunks
+  76–80 so economic RC, treasury, stress, governance operations, and
+  economic rehearsal consume canonical implementations.
+  `productionAuthorized=false`. `mainnetEnabled=false`. Capability
+  `sunrey-production-network-candidate` is `IMPLEMENTED`. This is not
+  mainnet. `LIVE_*` flags remain false. See
+  `docs/mainnet/chunk-81-production-network-candidate-v2.md`.
 - SunRey complete economic mainnet rehearsal (Chunk 80,
   `packages/sunrey-chain/src/economic-rehearsal`): distinct identity
   `SunRey Economic Mainnet Rehearsal 1` /
