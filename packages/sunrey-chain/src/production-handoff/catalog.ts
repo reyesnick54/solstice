@@ -83,7 +83,7 @@ export function createSystemInventory(): ProductionSystemInventory {
     schemaVersion: PRODUCTION_HANDOFF_SCHEMA_VERSION,
     inventoryId: 'prod_inv_rehearsal_1',
     components: Object.freeze(components),
-    secretsPresent: false,
+    secretsPresent: false as const,
     hash: '',
   };
   const hashed = Object.freeze({ ...inventory, hash: handoffHash({ ...inventory, hash: '' }) });
@@ -141,7 +141,7 @@ export function createAccessInventory(): ProductionAccessInventory {
   const inventory = {
     schemaVersion: PRODUCTION_HANDOFF_SCHEMA_VERSION,
     grants: Object.freeze(grants),
-    secretsPresent: false,
+    secretsPresent: false as const,
     hash: '',
   };
   const hashed = Object.freeze({ ...inventory, hash: handoffHash({ ...inventory, hash: '' }) });
@@ -179,7 +179,7 @@ export function createSloPolicy(): ProductionSLOPolicy {
   const policy = {
     schemaVersion: PRODUCTION_HANDOFF_SCHEMA_VERSION,
     label: SLO_CONTRACT_LABEL,
-    contractualPromises: false,
+    contractualPromises: false as const,
     operational: Object.freeze(operational),
     economicIntegrity: Object.freeze(economicIntegrity),
     hash: '',

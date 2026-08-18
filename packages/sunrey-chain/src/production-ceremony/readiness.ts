@@ -63,11 +63,7 @@ export function reevaluateReadinessAfterProductionCeremony(): MainnetReadinessRe
     });
     return assembleReadinessRegistry({ records });
   } catch {
-    return Object.freeze({
-      schemaVersion: 1,
-      generatedAtUtc: '2026-01-01T00:00:00.000Z',
-      records: Object.freeze([reservedRootOfTrustRecord()]),
-    }) as MainnetReadinessRegistry;
+    return assembleReadinessRegistry({ records: [reservedRootOfTrustRecord()] });
   }
 }
 

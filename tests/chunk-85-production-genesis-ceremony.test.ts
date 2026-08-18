@@ -219,7 +219,14 @@ describe('Chunk 85 production genesis ceremony', () => {
 
   it('rejects dress-rehearsal authorization as production input', () => {
     const rehearsal = runProductionGenesisCeremonyDressRehearsal(ROOT);
-    assert.throws(() => dressRehearsalUnusableForProduction({ ...rehearsal, usableForProduction: true }), /unusable for production/);
+    assert.throws(
+      () =>
+        dressRehearsalUnusableForProduction({
+          ...rehearsal,
+          usableForProduction: true as unknown as false,
+        }),
+      /unusable for production/,
+    );
     assert.equal(rehearsal.session.authorization?.usableForProduction, false);
     const state = evaluateCurrentProductionState(ROOT);
     const eligibility = evaluateGenesisEligibility({

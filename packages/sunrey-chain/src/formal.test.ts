@@ -27,7 +27,6 @@ import { MODEL_INTEROP_ASSET } from './formal/models/interop-asset.ts';
 import { FORMAL_SMOKE_PROFILE } from './formal/profiles.ts';
 import { FORMAL_MODEL_IDS } from './formal/types.ts';
 import { loadFormalModelRegistry } from './formal/registry.ts';
-import { FORMAL_MODEL_IDS } from './formal/types.ts';
 import { buildFormalVerificationReport, publicAssuranceView } from './formal/report.ts';
 import { allDevelopmentTraces } from './formal/traces.ts';
 
@@ -48,7 +47,7 @@ describe('Chunk 61 formal models', () => {
       'PROTOCOL_TREASURY',
       'GOVERNANCE_OPERATION_SAFETY',
       'CROSS_ECONOMIC_INVARIANTS',
-    ]) {
+    ] as const) {
       assert.equal(ids.has(required), true, required);
     }
     assert.equal(registry.models.length, FORMAL_MODEL_IDS.length);

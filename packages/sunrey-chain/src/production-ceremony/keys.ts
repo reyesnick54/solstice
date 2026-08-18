@@ -6,10 +6,8 @@
  * production private-key material.
  */
 
-import {
-  AUTHORITY_PURPOSE,
-  type RootOfTrustAuthority,
-} from '../../../security/src/ceremony/authorities.ts';
+import { AUTHORITY_PURPOSE } from '../../../security/src/ceremony/authorities.ts';
+import type { RootOfTrustAuthority } from '../../../security/src/ceremony/types.ts';
 import { createEd25519SignatureProvider, SUITE_SUNREY_ED25519_V1, type KeyPurpose } from '../../../security/src/index.ts';
 import { FIXTURE_KEY_MARKER, assertFixtureEnvironment } from '../testnet/security.ts';
 import { sevenValidatorFixture } from '../testnet/validators.ts';
@@ -136,7 +134,7 @@ export function isForbiddenProductionKeyLabel(label: string): boolean {
 }
 
 export function rejectFixtureTestnetRehearsalKeys(
-  keys: readonly { readonly publicKeyHex: string; readonly label?: string },
+  keys: readonly { readonly publicKeyHex: string; readonly label?: string }[],
   options: { readonly allowDressRehearsalLabels?: boolean } = {},
 ): void {
   const known = collectKnownFixtureKeys();

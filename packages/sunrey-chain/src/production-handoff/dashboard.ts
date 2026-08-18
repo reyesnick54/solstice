@@ -18,7 +18,7 @@ export function createOperatorDashboard(root = process.cwd()): OperatorDashboard
     economicReconciliation: 'REHEARSAL_INTEGRITY_INDICATORS',
     incidents: Object.freeze([]),
     capabilityStatus: report.package.activeCapabilities,
-    secretsPresent: false,
+    secretsPresent: false as const,
   });
   assertNoSecrets(projection);
   return projection;
