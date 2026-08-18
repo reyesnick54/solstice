@@ -130,6 +130,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-audit-remediation | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-regulated-integration | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
@@ -626,6 +627,14 @@ Chunk 62 implements independent security-review preparation at
 The bundle does not claim an external audit occurred or passed.
 Do not create `packages/sunrey-audit`, `packages/audit`,
 `packages/security-review`, or `packages/audit-evidence`.
+Chunk 83 implements independent security-review findings ingestion,
+remediation, and retest evidence management at
+`packages/sunrey-chain`. Capability `sunrey-audit-remediation` is
+`IMPLEMENTED`. See
+[`chunk-83-audit-remediation.md`](./chunk-83-audit-remediation.md).
+The workflow does not claim an external audit occurred or passed.
+Do not create `packages/audit-remediation` or
+`packages/security-audit-v2`.
 Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
 bounded verification, and implementation-trace conformance at
 `packages/sunrey-chain`. Capability `sunrey-formal-assurance` is

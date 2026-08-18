@@ -1944,6 +1944,26 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/rc-control')), false);
   });
 
+  it('CHUNK-83 implements audit findings remediation on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-remediation').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-remediation').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-audit-remediation').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-83',
+    );
+    assert.ok(declared, 'CHUNK-83 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-83-audit-remediation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/audit/chunk-83-audit-remediation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/audit/remediation/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/audit-remediation')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/security-audit-v2')), false);
+  });
+
   it('CHUNK-62 prepares an independent security-review bundle on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-audit-readiness').status, 'IMPLEMENTED');

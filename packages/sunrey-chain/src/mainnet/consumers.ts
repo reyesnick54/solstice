@@ -52,7 +52,7 @@ export function consumeExternalSecurityReview(): ExternalSecurityReviewSlot {
     openHighFindings: null,
     retestEvidence: null,
     status: 'NOT_PROVIDED',
-    notes: `Chunk 62 engineering preparation bundle digest ${digests.auditBundleDigest} exists. It does not claim an independent audit occurred or passed. Missing security report cannot appear verified.`,
+    notes: `Chunk 62 engineering preparation and Chunk 83 remediation workflow exist. Digest ${digests.auditBundleDigest} is an engineering package. No independent auditor report is supplied. TEST_FIXTURE_NOT_EXTERNAL_AUDIT records cannot satisfy this slot. Missing security report cannot appear verified.`,
   });
 }
 

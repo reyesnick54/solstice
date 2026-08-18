@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey independent security-review findings remediation (Chunk 83,
+  `packages/sunrey-chain/src/audit/remediation`): ingest, triage,
+  remediate, regress, retest-package, and risk-accept external
+  findings without claiming an independent audit occurred.
+  `TEST_FIXTURE_NOT_EXTERNAL_AUDIT` fixtures never satisfy real
+  external-review readiness. Capability `sunrey-audit-remediation`
+  is `IMPLEMENTED`. See `docs/audit/chunk-83-audit-remediation.md`.
 - SunRey external production provider acceptance (Chunk 82,
   `packages/sunrey-chain/src/providers`): one evidence-driven
   acceptance framework over canonical infrastructure, oracle,

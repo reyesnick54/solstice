@@ -1,14 +1,17 @@
 /**
  * sunrey-audit — independent security-review bundle tooling.
  *
- * Commands: generate, verify, reproduce, readiness, scope, quickstart.
- * Local/test signing only. Does not claim an external audit occurred.
+ * Commands: generate, verify, reproduce, readiness, scope, quickstart,
+ * plus Chunk 83 review import / findings / remediation / retest /
+ * risk-acceptance / status / bundle. Local/test signing only. Does not
+ * claim an external audit occurred.
  */
 
 import { join } from 'node:path';
 
 import { generateAuditBundle, verifyAuditBundle } from './bundle.ts';
 import { buildReadinessReport } from './readiness.ts';
+import { runAuditRemediationCommand } from './remediation/cli.ts';
 import { QUICKSTART_STEPS, reproduceCritical } from './reproduce.ts';
 import { emitAuditScopeYaml, requiredReviewDomains, scopeIsComplete } from './scope.ts';
 
@@ -20,6 +23,10 @@ export type AuditCliResult = {
 
 export function runSunreyAudit(root: string, argv: readonly string[]): AuditCliResult {
   const [command = 'help', arg] = argv;
+  const remediation = runAuditRemediationCommand(root, command, argv.slice(1));
+  if (remediation) {
+    return remediation;
+  }
   if (command === 'generate') {
     const generated = generateAuditBundle(root, { sourceCommit: process.env.GITHUB_SHA ?? 'local' });
     return {
@@ -76,7 +83,8 @@ export function runSunreyAudit(root: string, argv: readonly string[]): AuditCliR
     ok: command === 'help',
     command: command === 'help' ? 'help' : command,
     payload: {
-      usage: 'sunrey-audit <generate|verify|reproduce|readiness|scope|quickstart> [bundle]',
+      usage:
+        'sunrey-audit <generate|verify|reproduce|readiness|scope|quickstart|review import|findings|finding show|finding reproduce|remediation|regression|retest-package|risk-acceptance|status|bundle>',
       claims_external_audit_completed: false,
     },
   };

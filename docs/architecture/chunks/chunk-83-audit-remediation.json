@@ -1,0 +1,22 @@
+{
+  "chunk": "CHUNK-83",
+  "title": "SunRey independent security audit findings ingestion, remediation, and retest evidence management",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-audit-readiness",
+    "sunrey-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-formal-assurance",
+    "sunrey-performance-engineering",
+    "sunrey-testnet-rc",
+    "sunrey-economic-rc",
+    "sunrey-mainnet-readiness",
+    "sunrey-supply-chain",
+    "sunrey-audit-remediation"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/audit/remediation. Extends Chunk 62. Does not claim an external audit occurred or passed. TEST_FIXTURE_NOT_EXTERNAL_AUDIT cannot satisfy real external-review readiness. evaluateChunkRequirements returns mustStop: false. Do not create packages/audit-remediation or packages/security-audit-v2."
+}

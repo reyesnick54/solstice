@@ -76,6 +76,8 @@ const COMPETING_PATHS = [
   'packages/audit',
   'packages/security-review',
   'packages/audit-evidence',
+  'packages/audit-remediation',
+  'packages/security-audit-v2',
   'packages/sunrey-protocol-treasury',
   'packages/native-treasury',
   'packages/reserve-bank',

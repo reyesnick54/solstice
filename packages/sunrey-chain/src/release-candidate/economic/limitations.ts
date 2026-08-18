@@ -53,7 +53,7 @@ export const ECONOMIC_KNOWN_LIMITATIONS: readonly EconomicKnownLimitation[] = Ob
   }),
   Object.freeze({
     id: 'EXTERNAL_AUDIT_ABSENT',
-    title: 'Independent external audit evidence is absent. Chunk 62 is engineering preparation only.',
+    title: 'Independent external audit evidence is absent. Chunk 62/83 are engineering preparation and remediation workflow only. TEST_FIXTURE_NOT_EXTERNAL_AUDIT cannot satisfy this slot.',
     severity: 'warning',
     source: 'chunk-62',
     hiddenFromReleaseNotes: false,
