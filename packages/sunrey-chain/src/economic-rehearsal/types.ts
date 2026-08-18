@@ -97,6 +97,19 @@ export type EconomicRcBundle = {
   readonly qualificationEvidence: readonly string[];
   readonly productionAuthorized: false;
   readonly ok: boolean;
+  readonly canonicalEconomicRcId?: string;
+  readonly canonicalQualificationDigest?: string;
+  readonly canonicalStressReportHash?: string;
+  readonly canonicalTreasuryPolicyHash?: string;
+};
+
+export type IntegratedEconomicEvidenceHashes = {
+  readonly chunk76StressReportHash: string;
+  readonly chunk77TreasuryPolicyHash: string;
+  readonly chunk77TreasuryFormalHash: string;
+  readonly chunk77TreasuryStressHash: string;
+  readonly chunk78EconomicRcHash: string;
+  readonly chunk79GovernancePackageHash: string;
 };
 
 export type EconomicGenesisBundle = {
@@ -251,6 +264,9 @@ export type EconomicStressResult = {
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
   readonly findings: readonly EconomicStressFinding[];
+  readonly chunk76CampaignId?: string;
+  readonly chunk76ReportHash?: string;
+  readonly chunk76Violations?: number;
 };
 
 export type RecoveryResult = {
@@ -294,6 +310,7 @@ export type EconomicActivationEvidenceBundle = {
   readonly knownLimitations: readonly string[];
   readonly productionAuthorized: false;
   readonly liveFlagsRemainDisabled: true;
+  readonly integratedEvidenceHashes?: IntegratedEconomicEvidenceHashes;
 };
 
 export type EconomicMainnetRehearsalReport = {
@@ -345,4 +362,5 @@ export type EconomicMainnetRehearsalReport = {
   readonly liveFlagsRemainDisabled: true;
   readonly tickersAssigned: false;
   readonly knownLimitations: readonly string[];
+  readonly integratedEvidenceHashes?: IntegratedEconomicEvidenceHashes;
 };

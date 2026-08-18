@@ -1,8 +1,9 @@
 /**
  * Chunk 77 treasury stress catalog.
  *
- * Chunk 76 is not present on this tree. These scenarios are the
- * treasury stress integration surface required by Chunk 77.
+ * Canonical Chunk 76 EconomicStressReport campaigns live in
+ * packages/sunrey-economics/src/stress. These scenarios remain the
+ * treasury-specific integration surface required by Chunk 77.
  */
 
 import { ProtocolTreasuryEngine, developmentCycle } from './engine.ts';

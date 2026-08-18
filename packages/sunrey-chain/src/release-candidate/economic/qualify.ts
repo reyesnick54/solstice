@@ -10,6 +10,10 @@ import { verifyGenesisAllocationManifest } from '../../economics/genesis.ts';
 import { lock, reserveFee, transfer, burn } from '../../economics/operations.ts';
 import { creditCirculating, emptyBook, supplyReconciles } from '../../economics/supply.ts';
 import { PROTOCOL_TREASURY_CLASS } from '../../economics/types.ts';
+import { ProtocolTreasuryEngine } from '../../economics/treasury/engine.ts';
+import { developmentTreasuryPolicy } from '../../economics/treasury/policy.ts';
+import { verifyTreasury } from '../../economics/treasury/auditor.ts';
+import { allTreasuryStressHold } from '../../economics/treasury/stress.ts';
 import { exploreModel } from '../../formal/explore.ts';
 import { createAdaptiveFeeMarketModel } from '../../formal/models/adaptive-fee-market.ts';
 import { createFeeModel } from '../../formal/models/fees.ts';
@@ -17,8 +21,11 @@ import { createGenesisAllocationModel } from '../../formal/models/genesis-alloca
 import { createMonetaryPolicyModel } from '../../formal/models/monetary-policy.ts';
 import { createMoonReyPolicyGovernanceModel } from '../../formal/models/moonrey-policy-governance.ts';
 import { createNativeAssetModel } from '../../formal/models/native-asset.ts';
+import { createProtocolTreasuryModel } from '../../formal/models/protocol-treasury.ts';
 import { createValidatorEconomicsModel } from '../../formal/models/validator-economics.ts';
 import { FORMAL_SMOKE_PROFILE } from '../../formal/profiles.ts';
+import { commitCanonical } from '../../hash.ts';
+import { runSmokeStressCampaign } from '../../../../sunrey-economics/src/stress/campaign.ts';
 import { emptyAllocationManifest } from '../../mainnet/allocation.ts';
 import {
   developmentFeeDispositionPolicyV2,
@@ -225,11 +232,35 @@ function qualifyMoonrey(): { readonly ok: boolean; readonly digest: string } {
 }
 
 function qualifyTreasury(fee: ReturnType<typeof qualifyFees>): { readonly ok: boolean; readonly digest: string } {
+  const policy = developmentTreasuryPolicy();
+  const verified = verifyTreasury(new ProtocolTreasuryEngine(policy));
+  const treasuryStress = allTreasuryStressHold();
+  const bounds = {
+    validators: FORMAL_SMOKE_PROFILE.consensusValidators,
+    maxHeight: FORMAL_SMOKE_PROFILE.consensusMaxHeight,
+    maxRound: FORMAL_SMOKE_PROFILE.consensusMaxRound,
+    byzantineValidators: FORMAL_SMOKE_PROFILE.byzantineValidators,
+    maxQuantity: FORMAL_SMOKE_PROFILE.maxQuantity,
+    maxOrders: FORMAL_SMOKE_PROFILE.maxOrders,
+    maxPackets: FORMAL_SMOKE_PROFILE.maxPackets,
+    maxEpochs: FORMAL_SMOKE_PROFILE.maxEpochs,
+  };
+  const formal = exploreModel(
+    createProtocolTreasuryModel(bounds),
+    FORMAL_SMOKE_PROFILE.name,
+    'sunrey-formal-explicit-state/1',
+  );
   const disposition = disposeFeeV2(developmentFeeDispositionPolicyV2(), 'SUNREY_COIN', 10_000n);
   const noMint = disposition.validatorReward + disposition.burned + disposition.treasury === 10_000n;
   const ok =
     fee.ok &&
     noMint &&
+    verified.ok &&
+    treasuryStress &&
+    formal.result === 'VERIFIED_WITHIN_MODEL_BOUNDS' &&
+    policy.productionTreasuryInactive === true &&
+    policy.productionLimitsConfigured === false &&
+    policy.treasuryMintForbidden === true &&
     PROTOCOL_TREASURY_CLASS === 'SUNREY_BLOCKCHAIN_TREASURY' &&
     dispositionV2Reconciles(disposition);
   return {
@@ -237,6 +268,10 @@ function qualifyTreasury(fee: ReturnType<typeof qualifyFees>): { readonly ok: bo
     digest: sha256Text(JSON.stringify({
       ok,
       class: PROTOCOL_TREASURY_CLASS,
+      policyHash: commitCanonical(policy),
+      treasuryVerify: verified.ok,
+      treasuryStress,
+      formal: formal.result,
       productionBudget: 'UNCONFIGURED',
       productionDisbursement: 'UNCONFIGURED',
     })),
@@ -310,6 +345,7 @@ function qualifyFormal(): EconomicQualificationEvidence['formal'] {
     exploreModel(createMoonReyPolicyGovernanceModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
     exploreModel(createFeeModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
     exploreModel(createNativeAssetModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
+    exploreModel(createProtocolTreasuryModel(bounds), FORMAL_SMOKE_PROFILE.name, 'sunrey-formal-explicit-state/1'),
   ];
   const counterexamples = results
     .filter((row) => row.result !== 'VERIFIED_WITHIN_MODEL_BOUNDS')
@@ -320,8 +356,8 @@ function qualifyFormal(): EconomicQualificationEvidence['formal'] {
     digest: sha256Text(results.map((row) => `${row.modelId}:${row.result}`).join('|')),
     counterexamples: Object.freeze(counterexamples),
     registryEquivalents: Object.freeze([
-      'PROTOCOL_TREASURY -> FEE_CONSERVATION + ADAPTIVE_FEE_MARKET disposition',
-      'CROSS_ECONOMIC_INVARIANTS -> NATIVE_ASSET_CONSERVATION + NATIVE_MONETARY_POLICY',
+      'PROTOCOL_TREASURY -> PROTOCOL_TREASURY formal model plus Chunk 77 engine/stress',
+      'CROSS_ECONOMIC_INVARIANTS -> NATIVE_ASSET_CONSERVATION + NATIVE_MONETARY_POLICY + Chunk 76 stress',
     ]),
   });
 }
@@ -338,14 +374,33 @@ function qualifyProperty(payload: DualQualifyPayload): EconomicQualificationEvid
 
 function qualifyStress(payload: DualQualifyPayload): EconomicQualificationEvidence['stress'] {
   const range = qualifyAdversarialCritical();
+  const report = runSmokeStressCampaign();
+  const reportFailures = report.openFindings
+    .filter((row) => row.severity === 'CRITICAL' || row.severity === 'HIGH')
+    .map((row) => `chunk76:${row.findingId}`);
   const criticalFailures = [
     ...payload.stress.failed.map((id) => `dual:${id}`),
     ...(range.ok ? [] : ['range:critical-invariants']),
+    ...reportFailures,
+    ...(report.violations > 0 ? [`chunk76:violations:${report.violations}`] : []),
   ];
   return Object.freeze({
-    ok: payload.stress.ok && range.ok,
+    ok: payload.stress.ok && range.ok && report.violations === 0 && report.productionAuthorization === false,
     criticalFailures: Object.freeze(criticalFailures),
-    digest: sha256Text(JSON.stringify({ dual: payload.stress.failed, range: range.ok, criticalFailures })),
+    digest: sha256Text(JSON.stringify({
+      chunk76: {
+        campaignId: report.campaignId,
+        commit: report.commit,
+        scenarioCount: report.scenarioCount,
+        seed: report.seed,
+        violations: report.violations,
+        failClosedResults: report.failClosedResults,
+        fixtureHashes: report.results.map((row) => row.inputFixtureHash),
+      },
+      dual: payload.stress.failed,
+      range: range.ok,
+      criticalFailures,
+    })),
     hiddenFailures: false,
   });
 }
@@ -522,7 +577,7 @@ export function qualifyEconomicReleaseCandidate(input: {
     cell('FEE_MARKET', passFail(fees.ok), input.sourceCommit, 'FeePolicyV2 meter/bounds/disposition', fees.digest),
     cell('MOONREY_ISSUANCE', passFail(moonrey.ok), input.sourceCommit, 'oracle, eligibility, anti-double-count, caps', moonrey.digest),
     cell('ORACLES', passFail(seven.ok), input.sourceCommit, 'oracle fact dependency for MoonRey and seven-validator oracle', seven.digest),
-    cell('PROTOCOL_TREASURY', passFail(treasury.ok), input.sourceCommit, 'fee-funded treasury; production budget UNCONFIGURED', treasury.digest),
+    cell('PROTOCOL_TREASURY', passFail(treasury.ok), input.sourceCommit, 'Chunk 77 ProtocolTreasuryPolicy + formal + stress; production budget UNCONFIGURED', treasury.digest),
     cell('EXCHANGE_SETTLEMENT', passFail(seven.ok), input.sourceCommit, 'Exchange DVP conservation on seven-validator profile', seven.digest),
     cell('MACHINE_ECONOMY', passFail(seven.ok), input.sourceCommit, 'machine commerce on seven-validator profile', seven.digest),
     cell('DUAL_ECONOMY', passFail(dual.ok), input.sourceCommit, dual.scenarios.join(','), dual.digest),

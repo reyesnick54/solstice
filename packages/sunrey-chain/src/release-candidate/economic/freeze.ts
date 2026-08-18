@@ -1,5 +1,6 @@
 import { nativeAssetConstitution, currentPolicyVersion } from '../../economics/constitution.ts';
 import { PROTOCOL_TREASURY_CLASS, PRODUCTION_PARAMETER_UNCONFIGURED } from '../../economics/types.ts';
+import { developmentTreasuryPolicy } from '../../economics/treasury/policy.ts';
 import {
   developmentFeeDispositionPolicyV2,
   hashFeeDispositionPolicyV2,
@@ -46,17 +47,21 @@ const SCHEMA_PATHS: Readonly<Record<EconomicSchemaFreezeKey, readonly string[]>>
     'packages/sunrey-chain/src/productive/policy-governance/registry.ts',
   ],
   treasuryBudget: [
+    'packages/sunrey-chain/src/economics/treasury/types.ts',
+    'packages/sunrey-chain/src/economics/treasury/policy.ts',
     'packages/sunrey-chain/src/fees/v2/disposition.ts',
-    'packages/sunrey-chain/src/economics/types.ts',
   ],
   treasuryDisbursement: [
+    'packages/sunrey-chain/src/economics/treasury/engine.ts',
+    'packages/sunrey-chain/src/economics/treasury/types.ts',
     'packages/sunrey-chain/src/fees/v2/disposition.ts',
-    'packages/sunrey-chain/src/economics/types.ts',
   ],
   economicReports: [
     'packages/sunrey-chain/src/economics/auditor.ts',
     'packages/sunrey-chain/src/economics/readiness.ts',
+    'packages/sunrey-chain/src/economics/treasury/auditor.ts',
     'packages/sunrey-economics/src/types.ts',
+    'packages/sunrey-economics/src/stress/types.ts',
   ],
 };
 
@@ -147,6 +152,7 @@ export function freezeEconomicPolicies(root: string): EconomicPolicyFreeze {
     issuanceBudgets: commitCanonical(moonreyBundle.budget),
     protocolTreasuryPolicy: commitCanonical({
       class: PROTOCOL_TREASURY_CLASS,
+      policy: developmentTreasuryPolicy(),
       disposition: hashFeeDispositionPolicyV2(disposition),
       productionBudget: UNCONFIGURED,
       productionDisbursement: UNCONFIGURED,

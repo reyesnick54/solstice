@@ -55,12 +55,14 @@ schema. Breaking schema changes create a new economic RC.
 
 ## Known gaps
 
-Chunks 76 (economic stress lab) and 77 (protocol treasury) are not
-separate packages on this `main`. Stress qualification uses the
-existing dual-economy adversarial adapter and Chunk 57 critical
-invariants. Treasury qualification freezes the FeePolicyV2
-`PROTOCOL_TREASURY` sink and records production budget/disbursement
-as `UNCONFIGURED`.
+Chunks 76 and 77 are implemented on this tree. Economic RC
+qualification now consumes canonical `EconomicStressReport` smoke
+campaigns, `ProtocolTreasuryPolicy`, treasury formal
+`PROTOCOL_TREASURY` evidence, and treasury stress hold results.
+Production treasury budget and disbursement remain `UNCONFIGURED`.
+Engineering qualification is still not mainnet authorization.
+
+See Chunk 81 for the production-network candidate that binds this RC.
 
 See [economic-qualification.md](./economic-qualification.md),
 [economic-policy-freeze.md](./economic-policy-freeze.md),
