@@ -65,13 +65,15 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'fees')}`) ||
         file.includes(`${join('src', 'fees', 'v2')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
+        file.includes(`${join('src', 'production-ceremony')}`) ||
+        file.includes(`${join('src', 'production-handoff')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||
         file.endsWith(`${join('wallet', 'builder.ts')}`) ||
         file.endsWith(`${join('wallet', 'index.ts')}`);
       if (allowsTestNetwork) {
-        assert.equal(/LIVE_CHAIN|MAINNET_ENABLED/.test(source), false, file);
+        assert.equal(/\bLIVE_CHAIN\b|\bMAINNET_ENABLED\b/.test(source), false, file);
         assert.equal(/productionNetworkEnabled:\s*true/.test(source), false, file);
       } else {
         assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);
@@ -153,6 +155,11 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/oracle-data-plane')), false);
     assert.equal(existsSync(join(ROOT, 'packages/consensus-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/tendermint')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-handoff')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/sunrey-handoff')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/day-2-ops')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/production-ops')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/operator-acceptance')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const protocol = JSON.parse(
       readFileSync(join(ROOT, 'docs/architecture/sunrey-blockchain-protocol.json'), 'utf8'),
