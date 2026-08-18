@@ -1,22 +1,16 @@
 /**
- * Protocol-plane adapters: MoonRey issuance, native fees, validators.
+ * Protocol-plane adapters over the reconciled Chunk 71–75 stack.
  *
- * MoonRey issuance always flows through ProductiveEconomyEngine and
- * oracle-fact quorum. Fees use FeeEngine. Validator rewards/penalties
- * stay on the fee/accountability accounting path.
+ * charged fee → FeeDispositionPolicyV2 → ValidatorEconomicsEngine
+ * fee burn → AssetSupplyBook FEE_BURN
+ * MoonRey quantity from productive policy, authorization from
+ * MonetaryIssuanceAuthority.
  */
 
-import { FeeEngine, type ValidatorDescriptor } from '../../sunrey-chain/src/fees/engine.ts';
-import { FeeMempool } from '../../sunrey-chain/src/fees/mempool.ts';
-import { FOUR_VALIDATORS, transferTx, txId } from '../../sunrey-chain/src/fees/demo-helpers.ts';
-import { developmentBlockLimits } from '../../sunrey-chain/src/fees/policy.ts';
-import { ProductiveEconomyEngine } from '../../sunrey-chain/src/productive/engine.ts';
-import { fixtureClaim, fixtureFacts, fixtureObject, fixtureRight } from '../../sunrey-chain/src/productive/fixtures.ts';
+import { createIntegratedEconomicStack, type IntegratedEconomicStack } from '../../sunrey-chain/src/economics/stack.ts';
 import { moonreyIssuanceActivated } from '../../sunrey-chain/src/protocol/assets.ts';
 import { PRODUCTIVE_SIM_CATEGORIES, type ProductiveSimCategory } from './ids.ts';
-import { claimCategory } from './layers.ts';
 import { moonreyPolicyFor } from './policies.ts';
-import { mulBps } from './seed.ts';
 import type {
   DualEconomyScenario,
   FeeEconomicsSnapshot,
@@ -26,10 +20,7 @@ import type {
 } from './types.ts';
 
 export type ProtocolLab = {
-  readonly productive: ProductiveEconomyEngine;
-  readonly fees: FeeEngine;
-  readonly mempool: FeeMempool;
-  readonly validators: ValidatorDescriptor[];
+  readonly stack: IntegratedEconomicStack;
   issuedFingerprints: Set<string>;
   moonreyIssued: bigint;
   rejectedClaims: number;
@@ -67,32 +58,23 @@ export function createProtocolLab(scenario: DualEconomyScenario): ProtocolLab {
   if (moonreyIssuanceActivated()) {
     throw new Error('dual-economy lab must not activate production MoonRey issuance');
   }
-  const productive = new ProductiveEconomyEngine(
-    { height: 10, blockTimeUnixSeconds: 1_800_000_000n, blockId: 'blk_dual_10' },
-    [moonreyPolicyFor(scenario)],
-  );
+  const available = ['val_a', 'val_b', 'val_c', 'val_d'].filter((id) => !scenario.validators.unavailable.includes(id));
+  const stack = createIntegratedEconomicStack({
+    validatorIds: available.length > 0 ? available : ['val_a'],
+    moonreyPolicy: moonreyPolicyFor(scenario),
+  });
   const operators = Math.max(1, scenario.concentration.operatorCount);
   for (let index = 0; index < scenario.automation.productiveSystemCount; index += 1) {
     const category = PRODUCTIVE_SIM_CATEGORIES[index % PRODUCTIVE_SIM_CATEGORIES.length] ?? 'ENERGY';
-    const operator = `ctl.op_${index % operators}`;
-    const objectId = `obj.${category.toLowerCase()}.${index}`;
-    productive.registerObject(fixtureObject({ objectId, category: claimCategory(category), unitSchema: UNIT_FOR[category], owner: operator }));
-    productive.putRight(fixtureRight({ rightId: `right.${objectId}`, objectId, holderId: operator }));
-  }
-  const fees = new FeeEngine();
-  fees.faucet('household', 5_000_000n);
-  fees.faucet('community', 2_000_000n);
-  const validators = FOUR_VALIDATORS.filter((validator) => !scenario.validators.unavailable.includes(validator.validatorId)).map((validator) => ({
-    ...validator,
-  }));
-  if (validators.length === 0) {
-    validators.push({ validatorId: 'val_a', votingPower: 1n });
+    stack.registerProductiveObject({
+      objectId: `obj.${category.toLowerCase()}.${index}`,
+      category,
+      unit: UNIT_FOR[category],
+      owner: `ctl.op_${index % operators}`,
+    });
   }
   return {
-    productive,
-    fees,
-    mempool: new FeeMempool(fees),
-    validators,
+    stack,
     issuedFingerprints: new Set(),
     moonreyIssued: 0n,
     rejectedClaims: 0,
@@ -106,7 +88,7 @@ export function createProtocolLab(scenario: DualEconomyScenario): ProtocolLab {
     feeTreasury: 0n,
     includedTx: 0,
     skippedTx: 0,
-    validatorRewards: new Map(validators.map((validator) => [validator.validatorId, 0n])),
+    validatorRewards: new Map(stack.feeValidators.map((validator) => [validator.validatorId, 0n])),
     penalizedUnits: 0n,
   };
 }
@@ -125,49 +107,34 @@ export function issueMoonReyForEpoch(
     const objectId = `obj.${category.toLowerCase()}.${index}`;
     const quantity = (productive.output[category] ?? 0n) / BigInt(Math.max(1, Math.ceil(scenario.automation.productiveSystemCount / PRODUCTIVE_SIM_CATEGORIES.length)));
     const claimQty = quantity < 1n ? 1n : quantity > 50_000n ? 50_000n : quantity;
-    const facts = fixtureFacts({
+    if (scenario.oracle.stale) {
+      lab.staleFacts += usableProviders;
+    } else if (scenario.oracle.conflict) {
+      lab.conflictedFacts += usableProviders;
+    } else {
+      lab.usableFacts += usableProviders;
+    }
+    const result = lab.stack.issueMoonReyFromClaim({
+      claimId: `claim.${objectId}.${epoch}`,
       objectId,
-      category: claimCategory(category),
+      category,
       quantity: claimQty,
       unit: UNIT_FOR[category],
-      count: usableProviders,
-      ...(scenario.oracle.stale ? { quality: 100n, validUntil: 1_799_000_100n } : {}),
-      conflicted: scenario.oracle.conflict,
+      controller: `ctl.op_${index % operators}`,
+      epoch,
+      providerCount: usableProviders,
+      stale: scenario.oracle.stale,
+      conflict: scenario.oracle.conflict,
     });
-    for (const fact of facts) {
-      lab.productive.putOracleFact(fact);
-      if (fact.status === 'CONFLICTED') {
-        lab.conflictedFacts += 1;
-      } else if (scenario.oracle.stale) {
-        lab.staleFacts += 1;
-      } else {
-        lab.usableFacts += 1;
-      }
-    }
-    const claimId = `claim.${objectId}.${epoch}`;
-    lab.productive.submitClaim(
-      fixtureClaim({
-        claimId,
-        objectId,
-        claimType: 'OUTPUT',
-        category: claimCategory(category),
-        quantity: claimQty,
-        unit: UNIT_FOR[category],
-        controller: `ctl.op_${index % operators}`,
-        factCount: usableProviders,
-        epoch,
-      }),
-    );
-    const result = lab.productive.issueFromClaim(claimId);
     if (!result.ok) {
       lab.rejectedClaims += 1;
       continue;
     }
-    if (lab.issuedFingerprints.has(result.receipt.fingerprint)) {
+    if (lab.issuedFingerprints.has(result.fingerprint)) {
       throw new Error('duplicate MoonRey issuance fingerprint');
     }
-    lab.issuedFingerprints.add(result.receipt.fingerprint);
-    issued += result.receipt.moonreyQuantity;
+    lab.issuedFingerprints.add(result.fingerprint);
+    issued += result.quantity;
   }
   lab.moonreyIssued += issued;
   return issued;
@@ -176,58 +143,45 @@ export function issueMoonReyForEpoch(
 export function runFeeEpoch(lab: ProtocolLab, scenario: DualEconomyScenario, epoch: number): void {
   const mode = scenario.validators.feeRevenueMode;
   const planned = mode === 'low' ? Math.max(1, Math.floor(scenario.fees.txPerEpoch / 3)) : mode === 'high' ? scenario.fees.txPerEpoch * 2 : scenario.fees.txPerEpoch;
-  const limits = developmentBlockLimits();
-  let admittedCount = 0;
   for (let index = 0; index < planned; index += 1) {
-    const tx = transferTx(txId(`dual-${epoch}-${index}`), 'household', 'community', scenario.fees.transferAmount, scenario.policies.feeMaxUnits, scenario.policies.feeMaxUnits);
-    if (lab.mempool.admit(tx) === null) {
-      admittedCount += 1;
-    } else {
-      lab.skippedTx += 1;
-    }
-  }
-  const selected = lab.mempool.selectForBlock(limits);
-  lab.skippedTx += Math.max(0, admittedCount - selected.length);
-  const proposer = lab.validators[epoch % lab.validators.length];
-  if (!proposer) {
-    return;
-  }
-  for (const tx of selected) {
-    const executed = lab.fees.execute({
-      tx,
-      blockHeight: 10 + epoch,
-      blockId: `blk_dual_${10 + epoch}`,
-      proposerId: proposer.validatorId,
-      validators: lab.validators,
+    const proposerId = lab.stack.feeValidators[epoch % lab.stack.feeValidators.length]?.validatorId;
+    const executed = lab.stack.executeTransferFee({
+      label: `dual-${epoch}-${index}`,
+      amount: scenario.fees.transferAmount,
+      maxFee: scenario.policies.feeMaxUnits,
+      ...(proposerId ? { proposerId } : {}),
     });
     if (!executed.ok) {
       lab.skippedTx += 1;
       continue;
     }
     lab.includedTx += 1;
-    lab.feeCharged += executed.receipt.actualFee;
-    lab.feeBurned += executed.receipt.disposition.burned;
-    lab.feeRewards += executed.receipt.disposition.validatorRewardPool;
-    lab.feeSink += executed.receipt.disposition.networkSink;
-    lab.feeTreasury += executed.receipt.disposition.treasury;
   }
-  lab.mempool.removeCommitted(selected.map((tx) => tx.transactionId));
-  for (const validator of lab.validators) {
-    const claimed = lab.fees.claimRewards(validator.validatorId, 'SUNREY_COIN');
-    lab.validatorRewards.set(validator.validatorId, (lab.validatorRewards.get(validator.validatorId) ?? 0n) + claimed);
+  lab.feeCharged = lab.stack.feeCharged;
+  lab.feeBurned = lab.stack.feeBurned;
+  lab.feeRewards = lab.stack.feeRewards;
+  lab.feeTreasury = lab.stack.feeTreasury;
+  lab.feeSink = 0n;
+  const settled = lab.stack.settleValidatorEpoch();
+  if (settled.ok) {
+    const share = lab.stack.feeValidators.length === 0 ? 0n : settled.paid / BigInt(lab.stack.feeValidators.length);
+    for (const validator of lab.stack.feeValidators) {
+      lab.validatorRewards.set(validator.validatorId, (lab.validatorRewards.get(validator.validatorId) ?? 0n) + share);
+    }
   }
   if (scenario.validators.penaltyValidatorId && epoch === 1) {
-    const current = lab.validatorRewards.get(scenario.validators.penaltyValidatorId) ?? 0n;
-    const penalty = mulBps(current + 1_000n, scenario.validators.penaltyBps);
-    lab.penalizedUnits += penalty;
-    lab.validatorRewards.set(scenario.validators.penaltyValidatorId, current > penalty ? current - penalty : 0n);
+    const target = lab.stack.feeValidators.some((row) => row.validatorId === scenario.validators.penaltyValidatorId)
+      ? scenario.validators.penaltyValidatorId
+      : lab.stack.feeValidators[0]!.validatorId;
+    lab.stack.applyValidatorPenalty(target, `ev.dual.${epoch}`);
+    lab.penalizedUnits = lab.stack.penalizedUnits;
   }
 }
 
 export function feeSnapshot(lab: ProtocolLab, utilizationBps: bigint): FeeEconomicsSnapshot {
   const conserved = lab.feeCharged === lab.feeBurned + lab.feeRewards + lab.feeSink + lab.feeTreasury;
   return Object.freeze({
-    policyVersion: 'sunrey.fees.development.v1',
+    policyVersion: 'sunrey.fees.v2',
     charged: lab.feeCharged,
     burned: lab.feeBurned,
     validatorRewardPool: lab.feeRewards,
@@ -242,15 +196,15 @@ export function feeSnapshot(lab: ProtocolLab, utilizationBps: bigint): FeeEconom
 
 export function validatorSnapshot(lab: ProtocolLab, scenario: DualEconomyScenario): ValidatorEconomicsSnapshot {
   const rewards = Object.fromEntries(lab.validatorRewards.entries());
-  const rewardSum = [...lab.validatorRewards.values()].reduce((sum, value) => sum + value, 0n);
+  const recon = lab.stack.reconcile();
   return Object.freeze({
-    policyVersion: 'sunrey.validator-economics.simulation.v1',
-    activeCount: lab.validators.length,
+    policyVersion: 'sunrey.validator-economics.v1',
+    activeCount: lab.stack.feeValidators.length,
     unavailable: scenario.validators.unavailable,
     rewards: Object.freeze(rewards),
     penalizedUnits: lab.penalizedUnits,
     feeRevenue: lab.feeCharged,
-    accountingReconciled: rewardSum + lab.penalizedUnits === lab.feeRewards || lab.feeRewards >= rewardSum,
+    accountingReconciled: recon.validatorRewardMatchesIngested && recon.ok,
   });
 }
 
@@ -266,5 +220,11 @@ export function oracleSnapshot(lab: ProtocolLab, scenario: DualEconomyScenario):
 }
 
 export function moonreySupplyFromEngine(lab: ProtocolLab): { readonly issued: bigint; readonly burned: bigint; readonly locked: bigint; readonly holdings: bigint } {
-  return lab.productive.currentSupply();
+  const productive = lab.stack.productive.currentSupply();
+  return {
+    issued: lab.stack.moonrey.issuedPostGenesis,
+    burned: lab.stack.moonrey.burned,
+    locked: lab.stack.moonrey.locked,
+    holdings: productive.holdings,
+  };
 }

@@ -14,6 +14,7 @@ import { privacyScenarios, runPrivacy } from './scenarios/privacy.ts';
 import { signerScenarios, runSigner } from './scenarios/signer.ts';
 import { walletScenarios, runWallet } from './scenarios/wallet.ts';
 import { validatorEconomicsScenarios, runValidatorEconomics } from './scenarios/validator-economics.ts';
+import { economicStressScenarios, runEconomicStress } from './scenarios/economic-stress.ts';
 import type { AttackResult, AttackScenario } from './types.ts';
 
 export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
@@ -32,6 +33,7 @@ export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
   ...apiScenarios,
   ...compoundScenarios,
   ...validatorEconomicsScenarios,
+  ...economicStressScenarios,
 ]);
 
 const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackScenario) => AttackResult>> = {
@@ -55,6 +57,7 @@ const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackS
   API: runApi,
   COMPOUND: runCompound,
   VECON: runValidatorEconomics,
+  ECON: runEconomicStress,
 };
 
 export function scenarioById(scenarioId: string): AttackScenario | undefined {

@@ -113,6 +113,8 @@ export function handleExplorerRequest(
       sunreySupply: queries.home().sunreyDevelopmentSupply,
       moonreySupply: queries.home().moonreyDevelopmentSupply,
       ...queries.lag(),
+    });
+  }
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');
     const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;

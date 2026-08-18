@@ -477,12 +477,4 @@ if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWi
   } else {
     await main();
   }
-if (
-  import.meta.url === `file://${entry}` ||
-  entry.endsWith('ops/cli.ts') ||
-  entry.endsWith('ops/cli.js') ||
-  entry.endsWith('cli.ts') ||
-  entry.endsWith('cli.js')
-) {
-  await main();
 }

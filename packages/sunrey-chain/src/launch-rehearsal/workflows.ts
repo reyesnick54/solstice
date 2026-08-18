@@ -6,10 +6,10 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { FeeEngine } from '../fees/engine.ts';
-import { FOUR_VALIDATORS, transferTx, txId } from '../fees/demo-helpers.ts';
+import { transferTx, txId } from '../fees/demo-helpers.ts';
 import { nextBaseResourcePrice, initialBaseResourcePriceState, developmentFeePolicyV2 } from '../fees/v2/index.ts';
 
+import { createIntegratedEconomicStack } from '../economics/stack.ts';
 import { rehearseMonetaryConstitution } from '../economics/rehearsal.ts';
 import { interopPacketAtMostOnce } from '../assurance/properties.ts';
 import { mutableClock, runEnergyDemo } from '../oracle/demo-helpers.ts';
@@ -100,51 +100,25 @@ export function rehearseValidatorEconomics(): ValidatorEconomicsRehearsalResult 
 }
 
 export function rehearseNativeAssets(): NativeAssetRehearsalResult {
-  const sunrey = { supply: 0n, alice: 0n, bob: 0n, locked: 0n, fees: 0n };
-  sunrey.supply += 1_000n;
-  sunrey.alice += 1_000n;
-  sunrey.alice -= 250n;
-  sunrey.bob += 240n;
-  sunrey.fees += 10n;
-  sunrey.bob -= 40n;
-  sunrey.locked += 40n;
-  const moonrey = { supply: 0n, issued: 0n };
-  moonrey.issued += 75n;
-  moonrey.supply += 75n;
-  const sunreyReconciled = sunrey.alice + sunrey.bob + sunrey.locked + sunrey.fees === sunrey.supply;
-  const moonreyReconciled = moonrey.issued === moonrey.supply;
-  const engine = new FeeEngine();
-  engine.faucet('alice', 1_000_000n);
-  engine.activateFeePolicyV2();
-  const normal = engine.execute({
-    tx: { ...transferTx(txId('rehearse-normal'), 'alice', 'bob', 25n, 500_000n), policyVersion: 2, signatureClass: 'CLASSICAL' },
-    blockHeight: 1,
-    blockId: 'rehearse_1',
-    proposerId: 'val_a',
-    validators: FOUR_VALIDATORS,
+  const monetary = rehearseMonetaryConstitution();
+  const stack = createIntegratedEconomicStack();
+  const normal = stack.executeTransferFee({
+    label: 'rehearse-normal',
+    amount: 25n,
+    maxFee: 500_000n,
   });
-  const pq = engine.execute({
-    tx: {
-      ...transferTx(txId('rehearse-pq'), 'alice', 'bob', 10n, 500_000n),
-      policyVersion: 2,
-      signatureClass: 'PQ',
-      encodedBytes: 1_200,
-    },
-    blockHeight: 2,
-    blockId: 'rehearse_2',
-    proposerId: 'val_a',
-    validators: FOUR_VALIDATORS,
+  const pq = stack.executeTransferFee({
+    label: 'rehearse-pq',
+    amount: 10n,
+    maxFee: 500_000n,
+    signatureClass: 'PQ',
+    encodedBytes: 1_200,
   });
-  const dvp = engine.execute({
-    tx: {
-      ...transferTx(txId('rehearse-dvp'), 'alice', 'bob', 5n, 500_000n),
-      policyVersion: 2,
-      exchangeDvpLegs: 2,
-    },
-    blockHeight: 3,
-    blockId: 'rehearse_3',
-    proposerId: 'val_a',
-    validators: FOUR_VALIDATORS,
+  const dvp = stack.executeTransferFee({
+    label: 'rehearse-dvp',
+    amount: 5n,
+    maxFee: 500_000n,
+    exchangeDvpLegs: 2,
   });
   const policy = developmentFeePolicyV2();
   const high = nextBaseResourcePrice(
@@ -153,38 +127,41 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
     policy.bounds,
     1,
   );
-  const moonreyRejected = engine.validateAdmission({
-    ...transferTx(txId('rehearse-moon'), 'alice', 'bob', 1n, 20_000n),
+  const moonreyRejected = stack.fees.validateAdmission({
+    ...transferTx(txId('rehearse-moon'), 'household', 'community', 1n, 20_000n),
     policyVersion: 2,
     budget: {
       maxExecutionUnits: 10_000n,
       maxFee: 20_000n,
       feeAsset: 'MOONREY_COIN',
-      feePayer: 'alice',
+      feePayer: 'household',
       exemption: 'NONE',
     },
   });
-  const charged = [normal, pq, dvp].reduce((sum, result) => sum + (result.ok ? result.receipt.actualFee : 0n), 0n);
-  const sinks =
-    engine.accounts.position('sunrey.fees.validator_reward_pool', 'SUNREY_COIN').available +
-    engine.accounts.position('sunrey.fees.burn', 'SUNREY_COIN').available +
-    engine.accounts.position('sunrey.fees.treasury', 'SUNREY_COIN').available;
-  const alice = engine.accounts.position('alice', 'SUNREY_COIN').available;
-  const bob = engine.accounts.position('bob', 'SUNREY_COIN').available;
-  const nativeReconciled = alice + bob + sinks === 1_000_000n && sinks === charged;
-  return Object.freeze({
-    sunreyTransfer: sunrey.bob === 200n,
-    moonreyIssuance: moonrey.issued === 75n,
-    fees: sunrey.fees === 10n,
-    locks: sunrey.locked === 40n,
-    supplyReconciled: sunreyReconciled && moonreyReconciled && nativeReconciled,
-  const monetary = rehearseMonetaryConstitution();
+  stack.registerProductiveObject({
+    objectId: 'obj.energy.0',
+    category: 'ENERGY',
+    unit: 'kWh',
+    owner: 'ctl.op_0',
+  });
+  const moonrey = stack.issueMoonReyFromClaim({
+    claimId: 'claim.rehearse.energy.1',
+    objectId: 'obj.energy.0',
+    category: 'ENERGY',
+    quantity: 75n,
+    unit: 'kWh',
+    controller: 'ctl.op_0',
+    epoch: 1,
+    providerCount: 3,
+  });
+  const settled = stack.settleValidatorEpoch();
+  const recon = stack.reconcile();
   return Object.freeze({
     sunreyTransfer: monetary.sunreyTransfer,
-    moonreyIssuance: monetary.moonreyIssuance,
-    fees: monetary.fees,
+    moonreyIssuance: monetary.moonreyIssuance && moonrey.ok,
+    fees: monetary.fees && stack.feeCharged > 0n,
     locks: monetary.locks,
-    supplyReconciled: monetary.supplyReconciled,
+    supplyReconciled: monetary.supplyReconciled && recon.ok,
     productionValueClaim: false,
     units: 'REHEARSAL_ONLY',
     feePolicyV2: Object.freeze({
@@ -193,9 +170,13 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
       pqHeavy: pq.ok === true,
       exchangeDvp: dvp.ok === true,
       moonreyActivity: moonreyRejected?.code === 'UNSUPPORTED_FEE_ASSET',
-      validatorRewardAllocation: sinks > 0n && engine.rewardsOf('val_a').SUNREY_COIN > 0n,
-      supplyReconciled: nativeReconciled,
+      validatorRewardAllocation: settled.ok && stack.ingestedRewards === stack.feeRewards,
+      supplyReconciled: recon.feeDispositionReconciles && recon.feeBurnMatchesMonetary,
       productionParametersConfigured: false,
+    }),
+    dualEconomyReporting: Object.freeze({
+      used: true,
+      simulationOnly: true,
     }),
   });
 }
