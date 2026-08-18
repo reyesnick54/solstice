@@ -165,6 +165,8 @@ impl SunReyRpcClient {
 
     pub fn emergency_protocol_status(&self) -> Result<Value, SdkError> {
         self.get(PATH_GOVERNANCE_EMERGENCY)
+    }
+
     pub fn get_protocol_treasury(&self) -> Result<Value, SdkError> {
         self.get(PATH_TREASURY)
     }
