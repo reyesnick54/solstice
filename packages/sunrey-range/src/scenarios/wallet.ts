@@ -210,7 +210,7 @@ export const walletScenarios: readonly AttackScenario[] = [
     seed: 5749,
     subsystem: 'wallet',
     attack: 'convert application login into master wallet authority',
-    actors: [actor('alice.session', 'AI_AGENT', true)],
+    actors: [actor('alice.session', 'MACHINE_ACTOR', true)],
     faults: [],
     timeline: [step(1, 'alice.session', 'treat session as signing key')],
     expectedSecurityProperties: ['NO_MACHINE_MANDATE_BYPASS'],

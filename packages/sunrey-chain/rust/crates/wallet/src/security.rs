@@ -62,7 +62,10 @@ pub fn retrieve_self_custody_private_key() -> Result<(), WalletSecurityError> {
     Err(WalletSecurityError::SelfCustodyKeyUnavailable)
 }
 
-pub fn authorize_network(wallet_network: &str, key_network: &str) -> Result<(), WalletSecurityError> {
+pub fn authorize_network(
+    wallet_network: &str,
+    key_network: &str,
+) -> Result<(), WalletSecurityError> {
     let test_key = key_network.contains("test") || key_network.contains("rehearsal");
     let production = wallet_network.contains("production") || wallet_network.contains("mainnet");
     if test_key && production {
@@ -74,7 +77,10 @@ pub fn authorize_network(wallet_network: &str, key_network: &str) -> Result<(), 
     Ok(())
 }
 
-pub fn approval_holds(approved: &SigningIntent, candidate: &SigningIntent) -> Result<(), WalletSecurityError> {
+pub fn approval_holds(
+    approved: &SigningIntent,
+    candidate: &SigningIntent,
+) -> Result<(), WalletSecurityError> {
     if approved != candidate {
         return Err(WalletSecurityError::TamperedIntent);
     }
@@ -101,7 +107,10 @@ mod tests {
 
     #[test]
     fn safety_properties() {
-        assert_eq!(session_cannot_sign(SessionScope::ReadOnly), Err(WalletSecurityError::SessionIsNotSigning));
+        assert_eq!(
+            session_cannot_sign(SessionScope::ReadOnly),
+            Err(WalletSecurityError::SessionIsNotSigning)
+        );
         assert_eq!(guardian_cannot_spend(), Err(WalletSecurityError::GuardianCannotSpend));
         assert_eq!(
             retrieve_self_custody_private_key(),
@@ -121,7 +130,10 @@ mod tests {
         let mut tampered = intent.clone();
         tampered.quantity = 99;
         assert_eq!(approval_holds(&intent, &tampered), Err(WalletSecurityError::TamperedIntent));
-        assert_eq!(revoked_delegation_cannot_authorize(true), Err(WalletSecurityError::RevokedDelegation));
+        assert_eq!(
+            revoked_delegation_cannot_authorize(true),
+            Err(WalletSecurityError::RevokedDelegation)
+        );
         assert_eq!(recovery_cannot_rewrite(true), Err(WalletSecurityError::RecoveryRewrite));
         assert_eq!(CustodyClass::SelfCustody, CustodyClass::SelfCustody);
     }

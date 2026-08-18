@@ -103,7 +103,6 @@ describe('Chunk 96 wallet security', () => {
     }
     assert.equal(credential.publicKeyMaterial.includes('PRIVATE'), false);
     const { security } = provision();
-    security.passkeys = auth as never;
     const login = security.sessionCannotSign('sess.login');
     assert.equal(login.code, 'SESSION_IS_NOT_SIGNING_AUTHORITY');
   });
