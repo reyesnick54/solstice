@@ -142,5 +142,9 @@
   — isolated production-like shadow network at
   `packages/sunrey-chain/src/pregenesis`. See
   [`docs/mainnet/chunk-87-pregenesis-qualification.md`](../mainnet/chunk-87-pregenesis-qualification.md).
+- [Chunk 95 Exchange market operations](./chunk-95-market-operations.md)
+  — institutional gateway, sequenced market data, risk controls,
+  circuit breakers, and reopening auctions at
+  `packages/sunrey-exchange/src/ops`.
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

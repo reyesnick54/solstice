@@ -645,7 +645,28 @@ function dispatch(
     return json(200, { contracts: [] });
   }
   if (method === 'GET' && path === '/v1/exchange/market-data') {
-    return json(200, { markets: platform.markets() });
+    const marketId = String(q.market_id ?? platform.markets()[0]?.market_id ?? '');
+    const tier = q.tier === 'authorized' ? 'authorized' : 'public';
+    return json(200, platform.marketData(marketId, tier));
+  }
+  if (method === 'POST' && path === '/v1/exchange/sandbox/orders') {
+    const placed = platform.placeSandboxOrder({
+      market_id: String(rec.market_id ?? ''),
+      signed_order_hex: String(rec.signed_order_hex ?? ''),
+      actor: String(rec.actor ?? 'sandbox'),
+      environment: String(rec.environment ?? 'SANDBOX'),
+    });
+    if (isApiError(placed)) {
+      return json(errorStatus(placed), placed);
+    }
+    return json(200, placed);
+  }
+  if (method === 'GET' && path.startsWith('/v1/exchange/orders/') && !path.endsWith('/cancel')) {
+    const order = platform.getOrder(path.slice('/v1/exchange/orders/'.length));
+    return order ? json(200, order) : json(404, notFound(requestId));
+  }
+  if (method === 'GET' && path.startsWith('/v1/exchange/trading-sessions/')) {
+    return json(200, platform.tradingSession(path.slice('/v1/exchange/trading-sessions/'.length)));
   }
 
   if (method === 'POST' && path === '/v1/transactions') {
@@ -782,7 +803,11 @@ export const PUBLIC_ROUTES = [
   'GET /v1/machines',
   'GET /v1/interop/packets',
   'GET /v1/exchange/markets',
+  'GET /v1/exchange/market-data',
   'POST /v1/exchange/orders',
+  'POST /v1/exchange/sandbox/orders',
+  'GET /v1/exchange/orders/{id}',
+  'GET /v1/exchange/trading-sessions/{id}',
   'POST /v1/transactions',
   'GET /v1/events',
   'POST /v1/dev/faucet',

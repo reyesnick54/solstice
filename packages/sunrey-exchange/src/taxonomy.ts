@@ -35,7 +35,15 @@ export const LISTING_STATUSES = [
 ] as const;
 export type ListingStatus = (typeof LISTING_STATUSES)[number];
 
-export const DIGITAL_ORDER_TYPES = ['LIMIT', 'MARKET', 'CANCEL', 'IOC', 'FOK', 'POST_ONLY'] as const;
+export const DIGITAL_ORDER_TYPES = [
+  'LIMIT',
+  'MARKET',
+  'MARKET_WITH_PROTECTION',
+  'CANCEL',
+  'IOC',
+  'FOK',
+  'POST_ONLY',
+] as const;
 export type DigitalOrderType = (typeof DIGITAL_ORDER_TYPES)[number];
 
 export const GOVERNED_ORDER_TYPES = ['LIMIT', 'IOC', 'FOK', 'POST_ONLY'] as const;
@@ -64,7 +72,25 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
-export const MARKET_STATES = ['PREOPEN', 'OPEN', 'HALTED', 'CANCEL_ONLY', 'CLOSED'] as const;
+/**
+ * Canonical market states. Existing Chunk 29 names remain:
+ * PREOPEN, OPEN, HALTED, CANCEL_ONLY, CLOSED.
+ * Chunk 95 operational names AUCTION, PAUSED, CLOSE_ONLY, RESTRICTED
+ * sit alongside them. PAUSED is the circuit-breaker pause; HALTED is
+ * the existing emergency halt. CLOSE_ONLY is the operational alias of
+ * CANCEL_ONLY for reduce-only sessions.
+ */
+export const MARKET_STATES = [
+  'PREOPEN',
+  'OPEN',
+  'AUCTION',
+  'PAUSED',
+  'HALTED',
+  'CLOSE_ONLY',
+  'CANCEL_ONLY',
+  'RESTRICTED',
+  'CLOSED',
+] as const;
 export type MarketState = (typeof MARKET_STATES)[number];
 
 export const SELF_TRADE_POLICIES = ['CANCEL_INCOMING', 'PREVENT'] as const;

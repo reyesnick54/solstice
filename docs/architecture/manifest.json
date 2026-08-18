@@ -2444,7 +2444,7 @@
         "packages/mainnet-rehearsal",
         "packages/monetary-policy",
         "packages/tokenomics",
-        "packages/genesis-economy"
+        "packages/genesis-economy",
         "packages/mainnet-rehearsal"
       ],
       "codeowners": [
@@ -2740,7 +2740,7 @@
         "packages/sunrey-economic-mainnet",
         "packages/economic-stress",
         "packages/sunrey-stress-chain",
-        "packages/economic-red-team"
+        "packages/economic-red-team",
         "packages/genesis-economy"
       ],
       "codeowners": [
@@ -2952,7 +2952,7 @@
         "packages/validator-economics",
         "packages/staking",
         "packages/slashing",
-        "packages/liquid-staking"
+        "packages/liquid-staking",
         "packages/economic-policy-freeze"
       ],
       "codeowners": [
@@ -3297,7 +3297,7 @@
         "packages/sunrey-handoff",
         "packages/day-2-ops",
         "packages/production-ops",
-        "packages/operator-acceptance"
+        "packages/operator-acceptance",
         "packages/post-genesis",
         "packages/sunrey-post-genesis",
         "packages/stabilization",
@@ -3375,12 +3375,12 @@
         "packages/sunrey-genesis-execution",
         "packages/production-genesis-execution",
         "packages/mainnet-execution",
-        "packages/launch-execution"
+        "packages/launch-execution",
         "packages/sunrey-pregenesis",
         "packages/pregenesis",
         "packages/shadow-network",
         "packages/pregenesis-qualification",
-        "packages/sunrey-shadow"
+        "packages/sunrey-shadow",
         "packages/sunrey-production-platform",
         "packages/mainnet-infrastructure-v2",
         "packages/cloud-control-plane"
@@ -3391,6 +3391,35 @@
       "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
+    },
+    {
+      "id": "sunrey-exchange-market-operations",
+      "name": "SunRey Exchange production-candidate market operations",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "canonicalPath": "packages/sunrey-exchange/src/ops/engine.ts",
+      "publicInterface": "packages/sunrey-exchange/src/ops/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "MarketOperationsEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/market-operations",
+        "packages/institutional-gateway",
+        "packages/exchange-ops",
+        "packages/sunrey-exchange-ops",
+        "packages/exchange-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
     }
   ],
   "authorizedMutationPaths": [
@@ -3903,6 +3932,10 @@
     "packages/surveillance-v2",
     "packages/custody-ledger",
     "packages/sunrey-exchange-v2",
+    "packages/market-operations",
+    "packages/institutional-gateway",
+    "packages/exchange-ops",
+    "packages/sunrey-exchange-ops",
     "packages/sunrey-coin-v2",
     "packages/crypto-custody",
     "packages/wallet-risk-v2",
@@ -4884,6 +4917,13 @@
       "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
+    },
+    {
+      "id": "sunrey-exchange-market-operations",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Chunk 95 institutional market operations, sequenced market data, circuit breakers, and reopening auctions at packages/sunrey-exchange/src/ops. Extends sunrey-exchange. No second Exchange or native-asset balance ledger. Production market activation remains dependent on real external authorization. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
     }
   ],
   "boundedContexts": [

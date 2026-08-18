@@ -436,6 +436,30 @@ export class ExchangeClient {
   getCapacityContract(): Promise<unknown> {
     return this.http.get('/v1/exchange/capacity-contracts');
   }
+
+  marketData(marketId: string, tier: 'public' | 'authorized' = 'public'): Promise<unknown> {
+    return this.http.get(`/v1/exchange/market-data?market_id=${encodeURIComponent(marketId)}&tier=${tier}`);
+  }
+
+  orderSandbox(input: {
+    readonly market_id: string;
+    readonly signed_order_hex: string;
+    readonly actor: string;
+    readonly environment?: 'SANDBOX';
+  }): Promise<unknown> {
+    return this.http.post('/v1/exchange/sandbox/orders', {
+      ...input,
+      environment: 'SANDBOX',
+    });
+  }
+
+  orderStatus(orderId: string): Promise<unknown> {
+    return this.http.get(`/v1/exchange/orders/${orderId}`);
+  }
+
+  tradingSession(sessionId: string): Promise<unknown> {
+    return this.http.get(`/v1/exchange/trading-sessions/${sessionId}`);
+  }
 }
 
 export class ProtocolTreasuryClient {

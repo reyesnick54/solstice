@@ -69,7 +69,10 @@ export function matchIncoming(
     if (!makerPrice) {
       continue;
     }
-    if (incoming.orderType === 'LIMIT' && incoming.limitPrice) {
+    if (
+      (incoming.orderType === 'LIMIT' || incoming.orderType === 'MARKET_WITH_PROTECTION') &&
+      incoming.limitPrice
+    ) {
       if (incoming.side === 'BUY' && !pricesCross(incoming.limitPrice, makerPrice)) {
         break;
       }

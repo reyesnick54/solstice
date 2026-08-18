@@ -703,6 +703,12 @@ This document describes only what is implemented and tested in this tree.
   delivery-versus-right, and exact oracle partial settlement.
   Capability `sunrey-exchange` remains `IMPLEMENTED`. No second
   exchange. Simulation only.
+- SunRey Exchange market operations (Chunk 95,
+  `packages/sunrey-exchange/src/ops`): institutional gateway,
+  sequenced market data, liquidity metrics, market-maker sessions,
+  circuit breakers, and reopening auctions. Capability
+  `sunrey-exchange-market-operations` is `IMPLEMENTED`. Production
+  activation remains unlicensed without external authorization.
 - SunRey oracle network (Chunk 43) is **development-only** at
   `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
   `IMPLEMENTED`. Signed observations become time-bounded

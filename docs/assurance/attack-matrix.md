@@ -81,6 +81,9 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | EXCH-INSUFFICIENT-RESERVATION | exchange-settlement | insufficient reservation | atomic DVP | reservation check | NO_ASSET_CREATION_FROM_SETTLEMENT | no partial movement | TESTED |
 | EXCH-PARTIAL-MULTILEG | exchange-settlement | partial multi-leg state change | native DVP is atomic | reconciliation | NO_ASSET_CREATION_FROM_SETTLEMENT, NO_DOUBLE_SETTLEMENT | reconcile | TESTED |
 | EXCH-SUBMISSION-AMBIGUITY | exchange-settlement | submission ambiguity duplicate | idempotent settlement id | replay / already settled | NO_DOUBLE_SETTLEMENT | reconcile | TESTED |
+| EXCH-OPS-FLOOD | exchange-ops | order and cancel flood | order rate policy | rate window | NO_DOUBLE_SETTLEMENT | reject excess | TESTED |
+| EXCH-OPS-FAT-FINGER | exchange-ops | fat-finger aggressive order | price collar | pre-trade risk | NO_DOUBLE_SETTLEMENT | reject | TESTED |
+| EXCH-OPS-DUP | exchange-ops | duplicate order id | idempotency | clOrdId store | NO_DOUBLE_SETTLEMENT | replay ack | TESTED |
 | INFO-WRONG-PURPOSE | consent | wrong purpose | purpose firewall | PURPOSE_MISMATCH | NO_RAW_PERSONAL_DATA_EGRESS | none | TESTED |
 | INFO-EXPIRED-CONSENT | consent | expired consent | permit TTL | PERMIT_EXPIRED | NO_RAW_PERSONAL_DATA_EGRESS | none | TESTED |
 | INFO-REVOKED-CONSENT | consent | revoked consent | revocation | NO_ACTIVE_CONSENT | NO_RAW_PERSONAL_DATA_EGRESS | none | TESTED |

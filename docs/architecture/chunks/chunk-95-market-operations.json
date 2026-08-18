@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-95",
+  "title": "SunRey Exchange production-candidate market operations, institutional order gateway, market data and liquidity controls",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "sunrey-institutional-custody",
+    "market-surveillance",
+    "sunrey-regulated-integration",
+    "sunrey-developer-sdk",
+    "sunrey-adversarial-range",
+    "sunrey-exchange-market-operations"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. Does not create a second Exchange or native-asset balance ledger. Production regulated trading remains independently gated by legal/licensing/provider evidence. evaluateChunkRequirements returns mustStop: false. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
+}

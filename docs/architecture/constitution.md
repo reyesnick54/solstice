@@ -1217,6 +1217,19 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
 
+Chunk 95 implements SunRey Exchange production-candidate market
+operations at `packages/sunrey-exchange/src/ops`. Capability
+`sunrey-exchange-market-operations` is `IMPLEMENTED`. It extends
+the canonical Exchange with an institutional gateway, sequenced
+market data, liquidity metrics, market-maker sessions, circuit
+breakers, and reopening auctions. It does not create a second
+Exchange or native-asset balance ledger. Production regulated
+trading remains independently gated by legal, licensing, custody,
+and human evidence. Do not create `packages/market-operations`,
+`packages/institutional-gateway`, `packages/exchange-ops`, or
+`packages/sunrey-exchange-ops`. See
+[`chunk-95-market-operations.md`](./chunk-95-market-operations.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not
