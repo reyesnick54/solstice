@@ -18,7 +18,9 @@ Capability: `sunrey-mainnet-readiness`.
 - Validator, allocation, crypto-policy, and ceremony bindings
 - Human authorization workflow that rejects AI signatures
 - External legal/regulatory/security-review slots that stay incomplete
-  unless real evidence is supplied
+  unless real evidence is supplied. Chunk 83 engineering remediation
+  infrastructure may be verified; `TEST_FIXTURE_NOT_EXTERNAL_AUDIT`
+  records never satisfy the independent-review slot.
 - Separate Exchange, custody, oracle, interop, and privacy checklists
 - Chunk 68 oracle readiness distinguishes technical implementation,
   provider configured, provider agreement evidence, and production

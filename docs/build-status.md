@@ -4,6 +4,13 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey independent security-review findings remediation (Chunk 83,
+  `packages/sunrey-chain/src/audit/remediation`): ingest, triage,
+  remediate, regress, retest-package, and risk-accept external
+  findings without claiming an independent audit occurred.
+  `TEST_FIXTURE_NOT_EXTERNAL_AUDIT` fixtures never satisfy real
+  external-review readiness. Capability `sunrey-audit-remediation`
+  is `IMPLEMENTED`. See `docs/audit/chunk-83-audit-remediation.md`.
 - SunRey complete economic mainnet rehearsal (Chunk 80,
   `packages/sunrey-chain/src/economic-rehearsal`): distinct identity
   `SunRey Economic Mainnet Rehearsal 1` /
