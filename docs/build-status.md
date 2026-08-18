@@ -4,6 +4,40 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey public RPC edge, high-availability Explorer, and production
+  network data plane (Chunk 93,
+  `packages/sunrey-chain/src/public-data-plane`): `PublicRpcGateway`,
+  endpoint pool, request/quota/rate/abuse/cache policies, health
+  router, bounded subscriptions, archive query, Explorer indexer
+  fleet, HA query failover, public network status, TypeScript/Rust
+  SDK endpoint pools, and `sunrey-ops rpc|explorer` commands.
+  Capability `sunrey-public-data-plane` is `IMPLEMENTED`. RPC reads
+  canonical chain state. Explorer is rebuildable and
+  non-authoritative. `ENVIRONMENT` remains `simulation`. See
+  `docs/network/chunk-93-public-data-plane.md`.
+- SunRey validator operator platform (Chunk 92,
+  `packages/sunrey-chain/src/validator-operator`):
+  `ValidatorOperator`, organizations, profiles, fleet, node and
+  signer inventory, enrollment over Chunk 85 dossiers, health,
+  maintenance quorum safety, rolling upgrades, key-rotation
+  packages, recovery, incidents, concentration, public/private
+  views, authenticated operator API/CLI, and the isolated
+  seven-validator rehearsal. Capability
+  `sunrey-validator-operator-platform` is `IMPLEMENTED`. Operational
+  projection only. Canonical validator-set state remains
+  authoritative. No public delegated staking. See
+  `docs/validators/chunk-92-validator-operator-platform.md`.
+- SunRey executable production provider runtime (Chunk 91,
+  `packages/sunrey-chain/src/provider-runtime`):
+  `ExecutableProviderAdapter`, `ProviderRuntime`, sessions, credential
+  bindings, local mocks, sandbox harness, KMS/HSM/PQC probes, oracle
+  clients, KYC/screening/Travel Rule/custody/banking technical
+  adapters, webhook security, circuit breakers, and
+  `sunrey-ops provider runtime-test`. Capability
+  `sunrey-provider-runtime` is `IMPLEMENTED`. Adapter success is not
+  legal or commercial approval. `PRODUCTION_AUTHORIZED` remains gated
+  on configured evidence and human authority. See
+  `docs/providers/chunk-91-provider-runtime.md`.
 - SunRey production handoff and day-2 operations control plane
   (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
   `ProductionHandoffPackage`, system inventory, responsibility matrix,
@@ -763,6 +797,15 @@ This document describes only what is implemented and tested in this tree.
   only. Private keys never go to public RPC. See
   `docs/architecture/chunk-51-developer-platform.md` and
   `docs/developers/README.md`.
+- SunRey developer application platform (Chunk 94,
+  `packages/sunrey-sdk/src/developer-platform`): application registry,
+  scoped API credentials, signed webhooks, quotas, Testnet faucet
+  controls, sandbox identities, and local devnet. Capability
+  `sunrey-developer-platform` is `IMPLEMENTED`. Developer credentials
+  cannot sign user funds. Production application registration does
+  not activate production financial capabilities. See
+  `docs/architecture/chunk-94-developer-platform.md` and
+  `docs/developers/chunk-94-developer-platform.md`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

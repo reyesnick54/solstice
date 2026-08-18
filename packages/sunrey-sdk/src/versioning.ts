@@ -46,3 +46,40 @@ export function parseApiVersion(raw: string | undefined): PublicApiVersion | nul
 export function isSupportedPublicApiVersion(value: string): value is PublicApiVersion {
   return (SUPPORTED_PUBLIC_API_VERSIONS as readonly string[]).includes(value);
 }
+
+export type ApiDeprecationMetadata = {
+  readonly path: string;
+  readonly introducedIn: PublicApiVersion;
+  readonly compatibility: 'DEPRECATED';
+  readonly successor: string | null;
+  readonly sunsetAt: string | null;
+  readonly silentBreakForbidden: true;
+};
+
+export const API_DEPRECATIONS: readonly ApiDeprecationMetadata[] = Object.freeze([]);
+
+export function compatibilityPolicy(): Readonly<Record<string, string>> {
+  return Object.freeze({
+    current: PUBLIC_API_VERSION,
+    additiveFields: 'BACKWARD_COMPATIBLE',
+    scheduledRemoval: 'DEPRECATED',
+    newMajor: 'BREAKING_CHANGE',
+    silentBreaks: 'forbidden',
+    protocolUpgradeImpliesApiBreak: 'false',
+  });
+/**
+ * Breaking public API changes require a new versioned prefix.
+ * `/v1` remains the current public surface. `/v2` is reserved and
+ * unpublished until an explicit compatibility review.
+ */
+export const PUBLIC_API_VERSION_STRATEGY = Object.freeze({
+  current: 'v1' as const,
+  preserveV1: true,
+  breakingChangesRequireVersioning: true,
+  unpublishedNext: 'v2' as const,
+  protocolUpgradeDoesNotBreakApi: true,
+});
+
+export function requireVersionedPublicPath(path: string): boolean {
+  return path === '/health' || path === '/ready' || path.startsWith('/v1/') || path.startsWith('/operator/v1/');
+}

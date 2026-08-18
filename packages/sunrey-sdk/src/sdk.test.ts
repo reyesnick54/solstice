@@ -6,7 +6,8 @@ import { fileURLToPath } from 'node:url';
 
 import { transactionIdFromCanonicalBytes } from '../../sunrey-chain/src/protocol/index.ts';
 import { encodeAddress } from '../../sunrey-chain/src/wallet/address.ts';
-import { connectSunRey } from './client.ts';
+import { connectSunRey, connectSunReyPool } from './client.ts';
+import { PUBLIC_API_VERSION_STRATEGY, requireVersionedPublicPath } from './versioning.ts';
 import { createDevelopmentWallet, publicRegistration } from './development-wallet.ts';
 import { startPublicGateway } from './gateway/server.ts';
 import {
@@ -145,5 +146,14 @@ describe('SunRey TypeScript SDK', () => {
   it('refuses unsafe submission retries that would mint a new transaction id', () => {
     assert.equal(submissionRetrySafe({ previousTransactionId: 'aa', nextTransactionId: 'aa' }), true);
     assert.equal(submissionRetrySafe({ previousTransactionId: 'aa', nextTransactionId: 'bb' }), false);
+  });
+
+  it('supports endpoint pools and preserves /v1 versioning', () => {
+    const pool = connectSunReyPool(['http://127.0.0.1:1', 'http://127.0.0.1:2']);
+    assert.equal(pool.clients.length, 2);
+    assert.equal(PUBLIC_API_VERSION_STRATEGY.current, 'v1');
+    assert.equal(PUBLIC_API_VERSION_STRATEGY.breakingChangesRequireVersioning, true);
+    assert.equal(requireVersionedPublicPath('/v1/chain/status'), true);
+    assert.equal(requireVersionedPublicPath('/v2/chain/status'), false);
   });
 });

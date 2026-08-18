@@ -1,0 +1,116 @@
+openapi: 3.1.0
+info:
+  title: SunRey developer platform API
+  version: v1
+  description: >
+    Application registry, scoped API credentials, webhooks, quotas, sandbox,
+    and Testnet faucet controls. Developer credentials cannot sign user funds.
+    Creating a production application does not activate production financial
+    capabilities. Simulation only.
+servers:
+  - url: http://127.0.0.1:18480
+    description: Local developer control plane
+tags:
+  - name: DEVELOPER_APPS
+  - name: DEVELOPER_KEYS
+  - name: DEVELOPER_WEBHOOKS
+  - name: DEVELOPER_SANDBOX
+  - name: DEVELOPER_USAGE
+paths:
+  /v1/developer/apps:
+    get:
+      tags: [DEVELOPER_APPS]
+      summary: List applications for the caller organization
+      responses:
+        "200":
+          description: Application list
+    post:
+      tags: [DEVELOPER_APPS]
+      summary: Create an application
+      responses:
+        "200":
+          description: Created application
+  /v1/developer/apps/{appId}:
+    get:
+      tags: [DEVELOPER_APPS]
+      parameters:
+        - in: path
+          name: appId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Application
+  /v1/developer/keys:
+    post:
+      tags: [DEVELOPER_KEYS]
+      summary: Create a server secret or public client credential
+      description: The plaintext secret is returned once. Subsequent reads return only the hash and hint.
+      responses:
+        "200":
+          description: One-time secret reveal
+  /v1/developer/keys/{credentialId}/revoke:
+    post:
+      tags: [DEVELOPER_KEYS]
+      parameters:
+        - in: path
+          name: credentialId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked credential
+  /v1/developer/webhooks:
+    post:
+      tags: [DEVELOPER_WEBHOOKS]
+      summary: Register a signed webhook endpoint
+      description: Destinations are SSRF-checked. Scheme sunrey-webhook-v1.
+      responses:
+        "200":
+          description: Endpoint and one-time signing secret
+  /v1/developer/webhooks/{endpointId}/test:
+    post:
+      tags: [DEVELOPER_WEBHOOKS]
+      parameters:
+        - in: path
+          name: endpointId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Test delivery
+  /v1/developer/sandbox:
+    post:
+      tags: [DEVELOPER_SANDBOX]
+      summary: Create a labeled non-production sandbox actor set
+      responses:
+        "200":
+          description: Sandbox account
+  /v1/developer/usage:
+    get:
+      tags: [DEVELOPER_USAGE]
+      summary: Application usage and quota state
+      responses:
+        "200":
+          description: Usage records
+  /v1/developer/testnet/status:
+    get:
+      tags: [DEVELOPER_USAGE]
+      summary: Testnet network, faucet, RPC, and Explorer status
+      responses:
+        "200":
+          description: Status snapshot
+  /v1/developer/testnet/faucet:
+    post:
+      tags: [DEVELOPER_SANDBOX]
+      summary: Request Testnet faucet assets under developer quota
+      responses:
+        "200":
+          description: Faucet transaction
+components:
+  securitySchemes:
+    DeveloperApiKey:
+      type: apiKey
+      in: header
+      name: X-SunRey-Developer-Key
+      description: Server-side credential. Never embed in mobile or browser clients.

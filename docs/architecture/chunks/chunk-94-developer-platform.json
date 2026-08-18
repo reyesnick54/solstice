@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-94",
+  "title": "SunRey developer platform, application registry, API credentials, webhooks, and sandbox",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-exchange",
+    "sunrey-public-testnet",
+    "sunrey-developer-sdk",
+    "sunrey-developer-platform"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51 SDK/API and Chunk 53 Testnet. Adapter and developer control plane only. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Do not create packages/sunrey-developer-platform, packages/developer-portal, packages/app-registry, packages/webhook-service, or packages/developer-platform-v2. Not an EVM chain and not Ethereum smart contracts."
+}

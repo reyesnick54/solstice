@@ -32,11 +32,17 @@ ${OPERATOR_ROUTES.map((route) => `- \`${route}\``).join('\n')}
 
 ${EVENT_TYPES.map((name) => `- \`${name}\``).join('\n')}
 
+## Developer platform (Chunk 94)
+
+Control-plane routes live under \`/v1/developer\`. Specs:
+
 Canonical specifications:
 
 - \`api/sunrey-chain-v1.openapi.yaml\`
 - \`api/sunrey-exchange-v1.openapi.yaml\`
 - \`api/sunrey-events-v1.md\`
+- \`api/sunrey-developer-platform-v1.openapi.yaml\`
+- \`api/sunrey-webhooks-v1.json\`
 `;
 
 writeFileSync(join(root, 'docs/developers/api-reference.md'), markdown);

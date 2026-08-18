@@ -5,6 +5,9 @@
  * production ceremony defaults.
  */
 
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 import { createProductionNetworkCandidateV2 } from '../mainnet/candidate-v2/assemble.ts';
 import { CANDIDATE_V2_ID } from '../mainnet/candidate-v2/identity.ts';
 import { verifyProductionNetworkCandidateV2 } from '../mainnet/candidate-v2/verify.ts';
