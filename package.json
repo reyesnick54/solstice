@@ -78,7 +78,7 @@
     "testnet:validate": "node scripts/sunrey-testnet-validate-manifests.mjs",
     "testnet:sbom": "node scripts/sunrey-testnet-sbom.mjs",
     "sunrey-release": "node scripts/sunrey-release.mjs",
-    "sunrey-ceremony": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/security/src/ceremony/cli.ts",
+    "sunrey-ceremony": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/production-ceremony/cli-main.ts",
     "sunrey-audit": "node scripts/sunrey-audit.mjs",
     "demo:sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/audit/demo.ts",
     "supply-chain:audit": "node scripts/sunrey-release.mjs audit",

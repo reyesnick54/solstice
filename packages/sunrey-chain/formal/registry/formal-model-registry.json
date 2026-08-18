@@ -348,7 +348,7 @@
         "NO_DUPLICATE_ISSUANCE",
         "BURN_ACCOUNTING_EXACT",
         "LOCK_ACCOUNTING_EXACT",
-        "WRONG_ASSET_CANNOT_AFFECT_OTHER"
+        "WRONG_ASSET_CANNOT_AFFECT_OTHER",
         "PRICE_WITHIN_BOUNDS",
         "DETERMINISTIC_UPDATE",
         "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
@@ -388,7 +388,7 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
     },

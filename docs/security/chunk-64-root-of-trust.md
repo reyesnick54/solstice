@@ -30,6 +30,10 @@ Do not create `packages/ceremony`, `packages/hsm-v2`,
 - key rotation, backup references, compromise, and retirement states
 - local ceremony simulator labeled `SIMULATION`
 - `sunrey-ceremony` CLI and full seven-validator rehearsal
+- Chunk 85 extends `sunrey-ceremony production *` for the production
+  genesis ceremony architecture. Real production ceremony evidence
+  remains EXTERNAL/HUMAN until performed. See
+  [`docs/mainnet/chunk-85-production-genesis-ceremony.md`](../mainnet/chunk-85-production-genesis-ceremony.md).
 
 ## Authority classes
 

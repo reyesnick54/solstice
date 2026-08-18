@@ -14,3 +14,7 @@ Chunk 66 adds infrastructure readiness to `MainnetReadinessRegistry`.
 Engineering evidence from Chunks 61–64 is linked by digest. External
 auditor, commercial HSM, counsel, regulator, license, and partner
 slots remain incomplete.
+
+Chunk 85 feeds production-ceremony architecture and dress-rehearsal
+engineering evidence here. The real ceremony remains EXTERNAL/HUMAN
+until performed.

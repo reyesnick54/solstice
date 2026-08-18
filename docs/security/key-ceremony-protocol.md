@@ -58,4 +58,15 @@ sunrey-ceremony approve
 sunrey-ceremony transcript
 sunrey-ceremony verify
 sunrey-ceremony rehearse
+sunrey-ceremony production plan
+sunrey-ceremony production validators
+sunrey-ceremony production participants
+sunrey-ceremony production provider-check
+sunrey-ceremony production contribute
+sunrey-ceremony production attest
+sunrey-ceremony production genesis
+sunrey-ceremony production verify
+sunrey-ceremony production transcript
+sunrey-ceremony production authorization-dossier
+sunrey-ceremony production rehearse
 ```

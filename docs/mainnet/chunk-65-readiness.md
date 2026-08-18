@@ -50,3 +50,8 @@ production oracle agreements, legal, regulatory, licensing, regulated
 partners, or human production authorization. The production-candidate
 allocation remains zero/unapproved. See
 [chunk-80-economic-mainnet-rehearsal.md](./chunk-80-economic-mainnet-rehearsal.md).
+
+Chunk 85 feeds ceremony architecture and dress-rehearsal engineering
+evidence into this readiness plane. The actual real production
+ceremony remains EXTERNAL/HUMAN evidence until performed. See
+[chunk-85-production-genesis-ceremony.md](./chunk-85-production-genesis-ceremony.md).

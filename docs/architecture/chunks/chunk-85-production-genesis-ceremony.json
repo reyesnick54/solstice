@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-85",
+  "title": "SunRey production genesis ceremony, validator onboarding, and launch-authorization package",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-public-testnet",
+    "sunrey-validator-operations",
+    "sunrey-root-of-trust",
+    "sunrey-mainnet-readiness",
+    "sunrey-monetary-constitution",
+    "sunrey-audit-readiness",
+    "sunrey-production-genesis-ceremony"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-ceremony. Ceremony architecture and dress rehearsal only. Does not launch mainnet, create real production private keys in CI, or enable LIVE_* flags. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, or packages/production-ceremony."
+}

@@ -3199,6 +3199,43 @@
       "notes": "Chunk 80 production-like economic rehearsal at packages/sunrey-chain/src/economic-rehearsal. Distinct rehearsal identity. Does not activate mainnet, customer funds, live Exchange, live custody, or LIVE_* flags."
       "notes": "Chunk 71 dual-asset monetary constitution at packages/sunrey-chain/src/economics. Extends native assets, MoonRey issuance, genesis allocation, formal models, Explorer, and SDK. Production quantities remain UNCONFIGURED. packages/sunrey-economics is the Chunk 75 dual-economy laboratory, not a second monetary constitution or tokenomics package."
       "notes": "Chunk 76 reconciled economic stack and adversarial stress laboratory at packages/sunrey-economics/src/stress with range integration. Simulation only. Not production authorization."
+    },
+    {
+      "id": "sunrey-production-genesis-ceremony",
+      "name": "SunRey production genesis ceremony and launch-authorization package",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/production-ceremony/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/production-ceremony/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionGenesisCeremonyPlan",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionGenesisAuthorizationPackage",
+          "kind": "type"
+        },
+        {
+          "name": "LaunchAuthorizationDossier",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-ceremony",
+        "packages/production-genesis",
+        "packages/genesis-ceremony",
+        "packages/launch-authorization",
+        "packages/production-ceremony"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package at packages/sunrey-chain/src/production-ceremony. Dress rehearsal only in CI. Does not launch mainnet or create real production private keys."
     }
   ],
   "authorizedMutationPaths": [
@@ -3889,7 +3926,12 @@
     "packages/economic-policy-freeze"
     "packages/governance-ops",
     "packages/sunrey-governance",
-    "packages/governance-token"
+    "packages/governance-token",
+    "packages/sunrey-ceremony",
+    "packages/production-genesis",
+    "packages/genesis-ceremony",
+    "packages/launch-authorization",
+    "packages/production-ceremony"
   ],
   "capabilities": [
     {
@@ -4668,6 +4710,13 @@
       "owner": "packages/sunrey-economics",
       "protected": true,
       "notes": "Chunk 76 economic stack reconciliation and adversarial stress laboratory at packages/sunrey-economics/src/stress. Simulation only. Do not create packages/economic-stress, packages/sunrey-stress-chain, or packages/economic-red-team."
+    },
+    {
+      "id": "sunrey-production-genesis-ceremony",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, or packages/production-ceremony."
     }
   ],
   "boundedContexts": [
@@ -5053,7 +5102,12 @@
     "packages/sunrey-economic-rehearsal",
     "packages/economic-mainnet",
     "packages/economic-rehearsal",
-    "packages/sunrey-economic-mainnet"
+    "packages/sunrey-economic-mainnet",
+    "packages/sunrey-ceremony",
+    "packages/production-genesis",
+    "packages/genesis-ceremony",
+    "packages/launch-authorization",
+    "packages/production-ceremony"
   ]
   "forbiddenAliases": []
 }
