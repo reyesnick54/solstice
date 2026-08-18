@@ -58,6 +58,7 @@ never be two implementations of these systems.
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |
+| User-controlled agent mandates | `packages/sunrey-agent` | `packages/sunrey-agent/src/engine.ts` | IMPLEMENTED |
 | Growth Orchestrator | `packages/platform` | `packages/platform/src/service.ts` | IMPLEMENTED |
 | Personal Economic Value Engine | `packages/platform` | `packages/platform/src/value/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
@@ -94,7 +95,7 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`agentic-capital-mesh`, `strategy-lab`, `personal-data-vault`,
+`agentic-capital-mesh`, `sunrey-agent`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
@@ -448,6 +449,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
 | `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent`, `packages/clean-room` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
+| `packages/sunrey-agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/permissions`, `packages/kernel`, `packages/security`, `packages/risk`, `packages/model-registry`, `packages/sunrey-chain`, `packages/sunrey-exchange`, `packages/custody` |
 | `packages/platform` | `packages/domain`, `packages/money`, `packages/identity`, `packages/events`, `packages/evidence`, `packages/config`, `packages/personal-economic-graph`, `packages/agent`, `packages/permissions`, `packages/security` |
 | `services/accounts` | the packages above, including `packages/persistence`, `packages/security`, and `packages/identity` |
 | `packages/payments` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/ledger`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
@@ -690,6 +692,7 @@ phase is absent.
 | TREASURY | PARTIAL | `packages/treasury`, `services/treasury` |
 | PERSONAL ECONOMIC GRAPH | IMPLEMENTED | `packages/personal-economic-graph`, `services/economic-graph` |
 | PERSONAL ECONOMY AGENT | IMPLEMENTED | `packages/agent` |
+| USER AGENT MANDATES | IMPLEMENTED | `packages/sunrey-agent` |
 | GROWTH ORCHESTRATOR | IMPLEMENTED | `packages/platform` |
 | PERSONAL ECONOMIC VALUE ENGINE | IMPLEMENTED | `packages/platform` |
 | REGULATORY DIGITAL TWIN | IMPLEMENTED | `packages/regulatory-twin` |
