@@ -756,6 +756,14 @@ This document describes only what is implemented and tested in this tree.
   circuit breakers, and reopening auctions. Capability
   `sunrey-exchange-market-operations` is `IMPLEMENTED`. Production
   activation remains unlicensed without external authorization.
+- SunRey consumer Exchange (Chunk 99,
+  `packages/sunrey-exchange/src/consumer`): consumer portfolio,
+  indicative quotes, trade preview, buy/sell/convert with price
+  protection, wallet/mobile authorization, sandbox, and DVP
+  settlement projection. Capability
+  `sunrey-exchange-consumer-trading` is `IMPLEMENTED`. Production
+  consumer trading remains unlicensed without external
+  authorization. No second Exchange or balance store.
 - SunRey oracle network (Chunk 43) is **development-only** at
   `packages/sunrey-chain`. Capability `sunrey-oracle-network` is
   `IMPLEMENTED`. Signed observations become time-bounded

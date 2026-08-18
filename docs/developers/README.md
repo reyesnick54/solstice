@@ -14,6 +14,7 @@ Coin, and SunRey Exchange. Public tickers remain `NOT_ASSIGNED`.
 - [Rust SDK](./rust-sdk.md)
 - [Events](./events.md)
 - [API reference](./api-reference.md)
+- [Consumer Exchange API](./consumer-exchange.md)
 
 Install the workspace SDK:
 

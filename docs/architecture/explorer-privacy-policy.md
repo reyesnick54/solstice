@@ -27,6 +27,7 @@ or `PUBLIC_DERIVED` are stripped.
 - validator private infrastructure
 - machine controller secrets, secret mandates, or security credentials
 - private exchange order-account information
+- private consumer portfolio, trading profile, favorites, or price alerts
 - private investigations
 - private wallet device bindings, sessions, recovery requests, recovery evidence, or session tokens
 

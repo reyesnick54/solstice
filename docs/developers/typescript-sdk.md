@@ -18,7 +18,7 @@ Modules:
 - `ProductiveClient`
 - `MachineClient`
 - `InteropClient`
-- `ExchangeClient`
+- `ExchangeClient` (includes consumer portfolio, quote, preview, trade, cancel, receipt, and price-alert methods)
 - `EventClient`
 - `MonetaryClient` (read-only policy, supply, genesis, issuance receipt, burns; no mint)
 - Mobile sync helpers: `connectMobileWallet`, `syncWallet`, `subscribeWallet`, `trackFinality`, `createPaymentRequest`, `parsePaymentRequest`, `getPendingTransactions`, `getSecurityEvents`

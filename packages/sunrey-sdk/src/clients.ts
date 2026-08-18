@@ -460,6 +460,46 @@ export class ExchangeClient {
   tradingSession(sessionId: string): Promise<unknown> {
     return this.http.get(`/v1/exchange/trading-sessions/${sessionId}`);
   }
+
+  getConsumerPortfolio(participantId: string): Promise<unknown> {
+    return this.http.get(`/v1/consumer/exchange/portfolio?participant_id=${encodeURIComponent(participantId)}`);
+  }
+
+  getConsumerMarket(): Promise<unknown> {
+    return this.http.get('/v1/consumer/exchange/markets');
+  }
+
+  getConsumerQuote(input: {
+    readonly participant_id: string;
+    readonly side: 'BUY' | 'SELL';
+    readonly quantity: string;
+  }): Promise<unknown> {
+    return this.http.post('/v1/consumer/exchange/quotes', input);
+  }
+
+  previewConsumerTrade(input: Readonly<Record<string, string>>): Promise<unknown> {
+    return this.http.post('/v1/consumer/exchange/preview', input);
+  }
+
+  submitConsumerTrade(input: Readonly<Record<string, unknown>>): Promise<unknown> {
+    return this.http.post('/v1/consumer/exchange/orders', input);
+  }
+
+  cancelConsumerOrder(orderId: string, input: Readonly<Record<string, unknown>> = {}): Promise<unknown> {
+    return this.http.post(`/v1/consumer/exchange/orders/${orderId}/cancel`, input);
+  }
+
+  getConsumerOrder(orderId: string): Promise<unknown> {
+    return this.http.get(`/v1/consumer/exchange/orders/${orderId}`);
+  }
+
+  getConsumerTradeReceipt(orderId: string): Promise<unknown> {
+    return this.http.get(`/v1/consumer/exchange/receipts/${orderId}`);
+  }
+
+  createPriceAlert(input: Readonly<Record<string, unknown>>): Promise<unknown> {
+    return this.http.post('/v1/consumer/exchange/alerts', input);
+  }
 }
 
 export class ProtocolTreasuryClient {

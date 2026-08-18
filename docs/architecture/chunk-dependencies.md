@@ -810,6 +810,15 @@ remains dependent on real external authorization. Do not create
 `packages/market-operations`, `packages/institutional-gateway`,
 `packages/exchange-ops`, or `packages/sunrey-exchange-ops`. The
 evaluator returns `mustStop: false`.
+Chunk 99 implements the consumer Exchange, portfolio, quote, and
+simple trading backend at `packages/sunrey-exchange/src/consumer`.
+Capability `sunrey-exchange-consumer-trading` is `IMPLEMENTED`. It
+extends the canonical Exchange. It does not create a second Exchange,
+matching engine, or balance ledger. Production consumer trading
+remains dependent on real external authorization. Do not create
+`packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
+`packages/retail-exchange`, or `packages/consumer-trading`. The
+evaluator returns `mustStop: false`.
 Chunk 94 implements the SunRey developer application platform at
 `packages/sunrey-sdk/src/developer-platform`. Capability
 `sunrey-developer-platform` is `IMPLEMENTED`. See

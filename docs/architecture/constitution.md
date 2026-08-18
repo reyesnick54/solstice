@@ -1282,6 +1282,17 @@ and human evidence. Do not create `packages/market-operations`,
 `packages/sunrey-exchange-ops`. See
 [`chunk-95-market-operations.md`](./chunk-95-market-operations.md).
 
+Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
+and simple trading experience backend at
+`packages/sunrey-exchange/src/consumer`. Capability
+`sunrey-exchange-consumer-trading` is `IMPLEMENTED`. It is a UX/API
+projection over the canonical Exchange, custody, and chain. It does
+not match orders, hold independent balances, or settle independently.
+Production consumer trading remains independently gated by legal,
+licensing, custody, and human evidence. Do not create
+`packages/consumer-exchange`, `packages/sunrey-consumer-exchange`,
+`packages/retail-exchange`, or `packages/consumer-trading`. See
+[`chunk-99-consumer-exchange.md`](./chunk-99-consumer-exchange.md).
 Chunk 97 implements SunRey mobile wallet synchronization at
 `packages/sunrey-chain/src/wallet/mobile-sync`. Capability
 `sunrey-mobile-wallet-sync` is `IMPLEMENTED`. It extends Chunk 46

@@ -59,6 +59,7 @@ import type {
   PublicStreamEvent,
 } from '../types.ts';
 import { objectHasPrivateKeyField } from './privacy.ts';
+import { ConsumerGatewayApi } from './consumer-api.ts';
 
 export type RegisteredAccount = PublicAccount & {
   readonly publicKeyHex: string;
@@ -107,6 +108,7 @@ export class DevelopmentPlatform {
   private readonly locks = new Map<string, readonly { readonly lock_id: string; readonly amount: string }[]>();
   private readonly orders = new Map<string, Readonly<Record<string, string>>>();
   private readonly trades = new Map<string, Readonly<Record<string, string>>>();
+  readonly consumer = new ConsumerGatewayApi();
 
   constructor(input: { readonly operatorToken?: string } = {}) {
     this.operatorToken = input.operatorToken ?? 'dev-operator-token';
