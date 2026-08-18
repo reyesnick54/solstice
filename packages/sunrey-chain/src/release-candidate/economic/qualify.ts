@@ -25,8 +25,8 @@ import { createProtocolTreasuryModel } from '../../formal/models/protocol-treasu
 import { createValidatorEconomicsModel } from '../../formal/models/validator-economics.ts';
 import { FORMAL_SMOKE_PROFILE } from '../../formal/profiles.ts';
 import { commitCanonical } from '../../hash.ts';
-import { runSmokeStressCampaign } from '../../../../sunrey-economics/src/stress/campaign.ts';
 import { emptyAllocationManifest } from '../../mainnet/allocation.ts';
+import { runCanonicalSmokeStressCampaign } from './chunk76-stress.ts';
 import {
   developmentFeeDispositionPolicyV2,
   disposeFeeV2,
@@ -372,9 +372,9 @@ function qualifyProperty(payload: DualQualifyPayload): EconomicQualificationEvid
   });
 }
 
-function qualifyStress(payload: DualQualifyPayload): EconomicQualificationEvidence['stress'] {
+function qualifyStress(payload: DualQualifyPayload, root: string): EconomicQualificationEvidence['stress'] {
   const range = qualifyAdversarialCritical();
-  const report = runSmokeStressCampaign();
+  const report = runCanonicalSmokeStressCampaign(root);
   const reportFailures = report.openFindings
     .filter((row) => row.severity === 'CRITICAL' || row.severity === 'HIGH')
     .map((row) => `chunk76:${row.findingId}`);
@@ -554,7 +554,7 @@ export function qualifyEconomicReleaseCandidate(input: {
   const dual = qualifyDualEconomy(dualPayload);
   const formal = qualifyFormal();
   const property = qualifyProperty(dualPayload);
-  const stress = qualifyStress(dualPayload);
+  const stress = qualifyStress(dualPayload, input.root);
   const supply = qualifySupply(validator.bond, fees.burn, fees.treasury);
   const recovery = qualifyRecovery();
   const upgrade = qualifyUpgrade();

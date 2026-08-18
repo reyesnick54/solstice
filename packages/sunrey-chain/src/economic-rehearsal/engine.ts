@@ -163,7 +163,7 @@ export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSes
   const oracle = rehearseOraclePlane();
   const dual = rehearseDualEconomyBaseline();
   const governance = rehearseGovernedPolicyUpgrades();
-  const stress = runEconomicStressCampaign();
+  const stress = runEconomicStressCampaign(root);
   const treasuryFormal = exploreModel(
     createProtocolTreasuryModel({
       validators: FORMAL_SMOKE_PROFILE.consensusValidators,

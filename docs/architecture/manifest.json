@@ -2757,19 +2757,11 @@
           "kind": "type"
         },
         {
-          "name": "EconomicStressResult",
-          "kind": "type"
-        },
-        {
           "name": "EconomicInvariantResult",
           "kind": "type"
         },
         {
           "name": "EconomicRecoveryResult",
-          "kind": "type"
-        },
-        {
-          "name": "EconomicStressFinding",
           "kind": "type"
         },
         {
@@ -2884,10 +2876,6 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        {
-          "name": "ProtocolTreasuryEngine",
-          "kind": "class"
-        },
         {
           "name": "ProtocolTreasuryPolicy",
           "kind": "type"

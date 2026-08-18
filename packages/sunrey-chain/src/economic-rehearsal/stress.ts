@@ -7,7 +7,7 @@
 
 import { commitCanonical } from '../hash.ts';
 import { SevenValidatorNetwork } from '../ops/seven-validator.ts';
-import { runSmokeStressCampaign } from '../../../sunrey-economics/src/stress/campaign.ts';
+import { runCanonicalSmokeStressCampaign } from '../release-candidate/economic/chunk76-stress.ts';
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
@@ -32,8 +32,8 @@ function finding(
   });
 }
 
-export function runEconomicStressCampaign(): EconomicStressResult {
-  const chunk76 = runSmokeStressCampaign();
+export function runEconomicStressCampaign(root = process.cwd()): EconomicStressResult {
+  const chunk76 = runCanonicalSmokeStressCampaign(root);
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();
   const network = new SevenValidatorNetwork();
