@@ -1,0 +1,29 @@
+{
+  "fixture": true,
+  "label": "TEST_FIXTURE_NOT_EXTERNAL_AUDIT",
+  "review": {
+    "reviewId": "REV-TEST-FIXTURE-001",
+    "reviewOrganizationReference": "org_ref_test_fixture_not_named",
+    "scope": "TEST_FIXTURE isolated consensus and custody surfaces",
+    "sourceCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "protocolVersion": "1",
+    "releaseCandidate": "SUNREY_TESTNET_RC_1",
+    "reportDigest": "fixture-report-digest-not-external",
+    "fixture": true
+  },
+  "findings": [
+    {
+      "findingId": "FND-TEST-CRITICAL-001",
+      "externalReviewId": "REV-TEST-FIXTURE-001",
+      "externalSeverity": "CRITICAL",
+      "title": "TEST_FIXTURE fictional consensus safety observation",
+      "affectedComponent": "packages/sunrey-chain/rust/crates/consensus",
+      "affectedSurface": "consensus",
+      "affectedCommit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "descriptionReference": "TEST_FIXTURE_NOT_EXTERNAL_AUDIT description ref",
+      "evidenceReference": "TEST_FIXTURE_NOT_EXTERNAL_AUDIT evidence ref",
+      "disclosureClass": "SECURITY_RESTRICTED",
+      "fixture": true
+    }
+  ]
+}

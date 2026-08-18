@@ -1024,6 +1024,16 @@ has occurred or passed. Do not create `packages/sunrey-audit`,
 `packages/audit`, `packages/security-review`, or
 `packages/audit-evidence`. See
 [`chunk-62-audit-readiness.md`](./chunk-62-audit-readiness.md).
+Chunk 83 implements independent security-review findings ingestion,
+remediation, regression, retest packaging, and risk-acceptance
+workflow at `packages/sunrey-chain/src/audit/remediation`. Capability
+`sunrey-audit-remediation` is `IMPLEMENTED`. It extends Chunk 62 and
+does not create a second audit-bundle owner. It does not claim that
+an external audit has occurred or passed. Fictional fixtures are
+labeled `TEST_FIXTURE_NOT_EXTERNAL_AUDIT` and cannot satisfy real
+external-review readiness. Do not create
+`packages/audit-remediation` or `packages/security-audit-v2`. See
+[`chunk-83-audit-remediation.md`](./chunk-83-audit-remediation.md).
 Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
 bounded verification, and implementation-trace conformance at
 `packages/sunrey-chain/formal`. Capability
@@ -1128,6 +1138,17 @@ treasury mint. Production treasury remains inactive. Do not create
 `packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
 `packages/reserve-bank`. See
 [`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
+
+Chunk 82 implements external production provider onboarding,
+acceptance testing, and evidence qualification at
+`packages/sunrey-chain/src/providers`. Capability
+`sunrey-production-provider-acceptance` is `IMPLEMENTED`. It reuses
+canonical infrastructure, oracle, regulated, and HSM registries.
+It does not fabricate contracts, licenses, commercial HSM
+certification, or human approvals. Do not create
+`packages/provider-acceptance`, `packages/production-providers`,
+`packages/external-providers`, or `packages/sunrey-providers`. See
+[`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
 
 ## Agent stop rule
 

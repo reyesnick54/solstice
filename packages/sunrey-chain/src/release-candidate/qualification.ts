@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { queryReleaseSecurityState } from '../audit/remediation/release-query.ts';
+import { defaultRemediationStore } from '../audit/remediation/store.ts';
 import { loadHexCorpus, replayProtocolCorpus } from '../assurance/corpus.ts';
 import { protocolFuzzNeverPanics } from '../assurance/protocol.ts';
 import { resolveFuzzProfile } from '../assurance/profiles.ts';
@@ -136,6 +138,11 @@ export function qualifyReleaseCandidate(input: {
   const performance = comparePerformance(root);
   const audit = auditDependencies(root);
   const endurance = profile === 'endurance' ? runEnduranceWorkflow(input.enduranceTicks ?? 8) : null;
+  const securityFindings = queryReleaseSecurityState({
+    findings: defaultRemediationStore.snapshot().findings,
+    acceptedRisks: defaultRemediationStore.snapshot().acceptedRisks,
+    policy: defaultRemediationStore.snapshot().policy,
+  });
 
   const cells: QualificationCell[] = [
     cell('BUILD', 'PASS', sourceCommit, 'artifact freeze hashed at RC commit', sha256Text('build')),
@@ -152,7 +159,13 @@ export function qualifyReleaseCandidate(input: {
     cell('INTEROP', passFail(seven.interopDevelopmentPacket), sourceCommit, 'interop development packet at-most-once', seven.digest),
     cell('SDK', passFail(sdk.crossLanguageMatch), sourceCommit, 'TypeScript/Rust vector agreement', sdk.digest),
     cell('EXPLORER', passFail(explorer.queryEquivalence && explorer.banner === 'SUNREY TESTNET'), sourceCommit, 'explorer rebuild query equivalence', explorer.digest),
-    cell('SECURITY', passFail(adversarial.ok), sourceCommit, `critical invariants ${adversarial.invariants.length}`, adversarial.digest),
+    cell(
+      'SECURITY',
+      passFail(adversarial.ok && !securityFindings.criticalIsMainnetBlocker),
+      sourceCommit,
+      `critical invariants ${adversarial.invariants.length}; openCritical=${securityFindings.openCriticalFindings.length}; openHigh=${securityFindings.openHighFindings.length}; retest=${securityFindings.externalRetestState}`,
+      adversarial.digest,
+    ),
     cell(
       'FORMAL',
       formal.counterexamples.length > 0 ? 'FAIL' : formal.kind === 'CHUNK_61_FORMAL_SMOKE' ? 'PASS' : 'PENDING_EXTENDED_TEST',

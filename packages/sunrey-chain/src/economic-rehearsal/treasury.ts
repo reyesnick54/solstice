@@ -5,6 +5,7 @@
  * customer accounts, Exchange customer obligations, or the fiat Ledger.
  */
 
+import { rehearseProtocolTreasury as rehearseCanonicalTreasury } from '../economics/treasury/rehearsal.ts';
 import { REHEARSAL_ONLY, type TreasuryRehearsalResult } from './types.ts';
 
 const TREASURY_ACCOUNT = 'sunrey.fees.treasury';
@@ -137,6 +138,7 @@ export class ProtocolTreasuryRehearsal {
 }
 
 export function rehearseProtocolTreasury(feeTreasuryAllocation: bigint): TreasuryRehearsalResult {
+  const canonical = rehearseCanonicalTreasury();
   const engine = new ProtocolTreasuryRehearsal();
   engine.fundFromFees(feeTreasuryAllocation);
   engine.setBudget(feeTreasuryAllocation);
@@ -167,7 +169,7 @@ export function rehearseProtocolTreasury(feeTreasuryAllocation: bigint): Treasur
     custodyIsolated: isolation.custodyIsolated && custodyAttempt === false,
     exchangeObligationsIsolated: isolation.exchangeObligationsIsolated && exchangeAttempt === false,
     fiatLedgerIsolated: isolation.fiatLedgerIsolated && fiatAttempt === false,
-    reconciled: engine.reconcile(),
+    reconciled: engine.reconcile() && canonical.reconciliation && canonical.productionTreasuryInactive,
     productionAuthorized: false,
   });
 }

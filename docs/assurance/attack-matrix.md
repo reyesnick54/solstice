@@ -145,3 +145,4 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | ECON-ORACLE-STALE | economic-stress | stale oracle mint | oracle freshness + MonetaryIssuanceAuthority | FAIL_CLOSED | NO_DOUBLE_MOONREY_ATTRIBUTION, NO_UNAUTHORIZED_ISSUANCE | fail-closed; no fabricated facts | TESTED |
 | ECON-DUP-REPLAY | economic-stress | MoonRey contribution replay | fingerprint + MonetaryIssuanceAuthority replay id | DUPLICATE_REFUSED | NO_DOUBLE_MOONREY_ATTRIBUTION | second mint refused | TESTED |
 | ECON-NO-QUORUM | economic-stress | advance economics without finality | no synthetic accounting without finality | FINALITY_UNAVAILABLE | NO_UNAUTHORIZED_ISSUANCE | pending until quorum returns | TESTED |
+| AUDIT-FINDING-REGRESSION | audit-remediation | public exposure of restricted exploit detail | disclosure classification SECURITY_RESTRICTED | RESTRICTED_DETAIL_WITHHELD | NO_RAW_PERSONAL_DATA_EGRESS | none | TESTED |

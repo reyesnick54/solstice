@@ -41,6 +41,7 @@ import {
   runValidatorEconomicsSimulation,
 } from '../validator-economics/index.ts';
 import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
+import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -239,6 +240,7 @@ export function opsUsage(): string {
     'sunrey-ops crypto readiness',
     'sunrey-ops crypto benchmark',
     ...governanceOpsUsage().split('\n'),
+    ...providerUsage(),
   ].join('\n');
 }
 
@@ -252,6 +254,10 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   }
   if (group === 'governance') {
     return runGovernanceOpsCommand(args.slice(1));
+  }
+  if (group === 'provider') {
+    const result = runProviderOpsCommand(args.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
   }
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
@@ -462,6 +468,16 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
 export async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const head = argv[0] ?? 'health';
+  if (head === 'provider') {
+    const result = runProviderOpsCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(head)) {
     process.stdout.write(`${runSunreyOps(argv)}\n`);
     return;
@@ -479,11 +495,9 @@ const entry = process.argv[1] ?? '';
 if (
   import.meta.url === `file://${entry}` ||
   entry.endsWith('ops/cli.ts') ||
-  entry.endsWith('ops/cli.js') ||
-  entry.endsWith('cli.ts') ||
-  entry.endsWith('cli.js')
+  entry.endsWith('ops/cli.js')
 ) {
-if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
+  await main();
   const group = process.argv[2] ?? 'health';
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
     process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);

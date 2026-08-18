@@ -93,7 +93,7 @@ export function runEconomicLaunchCommand(argv: readonly string[], root = process
     };
   }
   if (command === 'economic-stress') {
-    const stress = runEconomicStressCampaign();
+    const stress = runEconomicStressCampaign(process.cwd());
     return {
       ok: stress.accountingSafe,
       command: 'economic-stress',

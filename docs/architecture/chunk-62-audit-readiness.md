@@ -18,3 +18,8 @@ Capability `sunrey-audit-readiness` is `IMPLEMENTED`.
 The generated bundle is a reviewer-ready engineering package. It does
 not claim that an external audit has occurred or passed.
 `ReleaseAuthority` from Chunk 59 signs the bundle only.
+
+Chunk 83 extends this owner with findings ingestion, remediation,
+regression, retest packaging, and risk acceptance at
+`packages/sunrey-chain/src/audit/remediation`. See
+[`../audit/chunk-83-audit-remediation.md`](../audit/chunk-83-audit-remediation.md).

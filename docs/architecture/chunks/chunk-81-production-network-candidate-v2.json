@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-81",
+  "title": "SunRey production network candidate v2 and complete engineering-stack reconciliation through Chunk 80",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-infrastructure",
+    "sunrey-production-storage",
+    "sunrey-economic-stress-lab",
+    "sunrey-protocol-treasury",
+    "sunrey-economic-rc",
+    "sunrey-governance-operations",
+    "sunrey-economic-mainnet-rehearsal",
+    "sunrey-production-network-candidate"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic production-network candidate only. Does not launch mainnet, enable LIVE_* flags, or convert missing external evidence into approved evidence. evaluateChunkRequirements returns mustStop: false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
+}

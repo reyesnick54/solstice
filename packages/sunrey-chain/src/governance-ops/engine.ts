@@ -82,6 +82,47 @@ export function bindEconomicReleaseCandidate(evidence: GovernanceEvidenceBundle)
   });
 }
 
+export function evidenceFromEconomicReleaseCandidate(input: {
+  readonly economicRcId: string;
+  readonly sourceCommit: string;
+  readonly releaseArtifactHash: string;
+  readonly formalReportHash: string;
+  readonly economicStressReportHash: string;
+  readonly qualificationReportHash: string;
+  readonly simulationEvidenceHash: string;
+  readonly supplyInvariantHash: string;
+  readonly schemaHash: string;
+  readonly propertyTestHash?: string;
+  readonly readinessEvidenceHash?: string;
+}): GovernanceEvidenceBundle {
+  return Object.freeze({
+    schemaHash: input.schemaHash,
+    formalReportHash: input.formalReportHash,
+    propertyTestHash: input.propertyTestHash ?? sha256Hex(`govops-property|${input.economicRcId}`),
+    economicStressReportHash: input.economicStressReportHash,
+    simulationEvidenceHash: input.simulationEvidenceHash,
+    qualificationReportHash: input.qualificationReportHash,
+    readinessEvidenceHash: input.readinessEvidenceHash ?? sha256Hex(`govops-readiness|${input.sourceCommit}`),
+    releaseArtifactHash: input.releaseArtifactHash,
+    economicReleaseCandidateHash: sha256Hex(`govops-economic-rc|${input.economicRcId}|${input.sourceCommit}`),
+    supplyInvariantHash: input.supplyInvariantHash,
+  });
+}
+
+export function bindCanonicalEconomicReleaseCandidate(input: {
+  readonly economicRcId: string;
+  readonly sourceCommit: string;
+  readonly releaseArtifactHash: string;
+  readonly formalReportHash: string;
+  readonly economicStressReportHash: string;
+  readonly qualificationReportHash: string;
+  readonly simulationEvidenceHash: string;
+  readonly supplyInvariantHash: string;
+  readonly schemaHash: string;
+}): EconomicReleaseCandidateBinding {
+  return bindEconomicReleaseCandidate(evidenceFromEconomicReleaseCandidate(input));
+}
+
 export function developmentFeeSnapshots(activationHeight: number): {
   readonly current: PolicySnapshot;
   readonly proposed: PolicySnapshot;
