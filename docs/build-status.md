@@ -4,6 +4,40 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey authorized production genesis execution engine (Chunk 88,
+  `packages/sunrey-chain/src/genesis-execution`):
+  `ProductionLaunchPlan` bound to exact RC, Candidate V2, environment,
+  ceremony, provider, audit, and pre-genesis hashes; multi-person
+  `ProductionLaunchAuthorization`; single-use `LaunchExecutionPermit`
+  with replay protection; launch control room; seven-validator first
+  block; genesis supply audit. Isolated rehearsal identity
+  `net_sunrey_genesis_execution_rehearsal_1` /
+  `chn_sunrey_genesis_execution_rehearsal_1` (HRP `srger`). Capability
+  `sunrey-production-genesis-execution` is `IMPLEMENTED`. This is not
+  a mainnet launch. `realProductionExecutionPerformed=false`.
+  `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-88-genesis-execution.md`.
+- SunRey pre-genesis production shadow network and operational
+  qualification (Chunk 87, `packages/sunrey-chain/src/pregenesis`):
+  isolated identity `net_sunrey_pregenesis_shadow_1` /
+  `chn_sunrey_pregenesis_shadow_1` (HRP `srpgn`), Candidate V2
+  topology, Mainnet RC artifact parity, configuration-variance
+  accounting, seven-validator consensus, signer fencing, redb and
+  PostgreSQL recovery, oracle/Exchange/custody sandbox, burn-in
+  metadata, and `sunrey-ops pregenesis` commands. Capability
+  `sunrey-pregenesis-qualification` is `IMPLEMENTED`. This is not a
+  mainnet launch. `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-87-pregenesis-qualification.md`.
+- SunRey production environment provisioning control plane (Chunk 86,
+  `packages/sunrey-chain/src/infra/provisioning`):
+  `ProductionEnvironmentPlan` bound to the actual Chunk 81 Candidate V2
+  and Chunk 84 `SUNREY_MAINNET_RC_1` cryptographic manifest, provider
+  gating over Chunk 82, audit binding over Chunk 83, deterministic
+  plan hash, local/rehearsal harness, and `sunrey-ops production`
+  commands. Capability `sunrey-production-provisioning` is
+  `IMPLEMENTED`. CI uses local/rehearsal infrastructure only.
+  `productionAuthorized=false`. `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-86-production-provisioning.md`.
 - SunRey production genesis ceremony package (Chunk 85,
   `packages/sunrey-chain/src/production-ceremony`):
   `ProductionGenesisCeremonyPlan` bound to an exact Mainnet RC and

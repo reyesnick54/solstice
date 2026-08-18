@@ -248,40 +248,6 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey.ts"
     },
     {
-      "modelId": "MOONREY_POLICY_GOVERNANCE",
-      "modelVersion": "1.0.0",
-      "implementationReferences": [
-        "packages/sunrey-chain/src/productive/policy-governance/index.ts",
-        "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
-      ],
-      "assumptions": [
-        "policy activation is height-deterministic",
-        "development caps are ENGINEERING_SIMULATION_PARAMETERS",
-        "production caps remain UNCONFIGURED",
-        "bounded checking does not prove unlimited-state correctness"
-      ],
-      "stateBounds": {
-        "maxQuantity": 2,
-        "maxEpochs": 2
-      },
-      "properties": [
-        "SAME_CONTRIBUTION_CANNOT_ISSUE_TWICE",
-        "CATEGORY_CAP_RESPECTED",
-        "EPOCH_CAP_RESPECTED",
-        "POLICY_ACTIVATION_DETERMINISTIC",
-        "WRONG_POLICY_VERSION_REJECTED",
-        "SUPPLY_RECONCILIATION_EXACT",
-        "INVALID_ELIGIBILITY_CANNOT_ISSUE",
-        "CROSS_CATEGORY_DUPLICATE_PREVENTED"
-      ],
-      "tool": "TLA+/TLC",
-      "toolVersion": "1.8.0",
-      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
-      "sourceCommit": "WORKTREE",
-      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
-      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
-    },
-    {
       "modelId": "INTEROP_PACKET_STATE",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -362,7 +328,7 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/crypto-policy.ts"
     },
     {
-      "modelId": "ADAPTIVE_FEE_MARKET",
+      "modelId": "NATIVE_MONETARY_POLICY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
         "packages/sunrey-chain/src/economics/supply.ts",
@@ -382,6 +348,17 @@
         "NO_DUPLICATE_ISSUANCE",
         "BURN_ACCOUNTING_EXACT",
         "LOCK_ACCOUNTING_EXACT",
+        "WRONG_ASSET_CANNOT_AFFECT_OTHER",
+        "PRICE_WITHIN_BOUNDS",
+        "DETERMINISTIC_UPDATE",
+        "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
+        "FEE_CONSERVATION",
+        "MAX_FEE_AUTHORIZATION",
+        "DISPOSITION_CONSERVATION",
+        "NO_HIDDEN_SUPPLY_CREATION",
+        "NO_DUPLICATE_ISSUANCE",
+        "BURN_ACCOUNTING_EXACT",
+        "LOCK_ACCOUNTING_EXACT",
         "WRONG_ASSET_CANNOT_AFFECT_OTHER"
       ],
       "tool": "TLA+/TLC",
@@ -390,6 +367,39 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts",
+      "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
+    },
+    {
+      "modelId": "GENESIS_ALLOCATION_CONSERVATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/mainnet/allocation.ts",
+        "packages/sunrey-chain/src/economics/genesis.ts",
+        "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+      ],
+      "assumptions": [
+        "every non-zero genesis unit appears in the signed allocation manifest",
+        "production candidate default is zero allocation"
+      ],
+      "stateBounds": {
+        "maxQuantity": 2
+      },
+      "properties": [
+        "GENESIS_TOTALS_EXACT",
+        "NO_HIDDEN_PREMINT",
+        "NO_UNKNOWN_CATEGORY"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
+      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     },
     {
       "modelId": "VALIDATOR_ECONOMICS",
@@ -435,17 +445,27 @@
       "assumptions": [
         "SunRey and MoonRey supplies remain separate",
         "no hidden supply creation",
+        "packages/sunrey-chain/src/fees/v2/price.ts",
+        "packages/sunrey-chain/src/fees/v2/quote.ts",
+        "packages/sunrey-chain/src/fees/engine.ts",
+        "packages/sunrey-chain/rust/crates/fees/src/v2.rs"
+      ],
+      "assumptions": [
+        "next price depends only on prior finalized usage and governed bounds",
+        "charged fee cannot exceed signed max_fee",
+        "disposition cannot mint native-asset quantity",
         "bounded checking does not prove unlimited-state correctness"
       ],
       "stateBounds": {
         "maxQuantity": 2
       },
       "properties": [
-        "NO_HIDDEN_SUPPLY_CREATION",
-        "NO_DUPLICATE_ISSUANCE",
-        "BURN_ACCOUNTING_EXACT",
-        "LOCK_ACCOUNTING_EXACT",
-        "WRONG_ASSET_CANNOT_AFFECT_OTHER"
+        "PRICE_WITHIN_BOUNDS",
+        "DETERMINISTIC_UPDATE",
+        "RESERVED_EQUALS_CHARGED_PLUS_RELEASED",
+        "FEE_CONSERVATION",
+        "MAX_FEE_AUTHORIZATION",
+        "DISPOSITION_CONSERVATION"
       ],
       "tool": "TLA+/TLC",
       "toolVersion": "1.8.0",
@@ -455,24 +475,31 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
     },
     {
-      "modelId": "GENESIS_ALLOCATION_CONSERVATION",
+      "modelId": "MOONREY_POLICY_GOVERNANCE",
       "modelVersion": "1.0.0",
       "implementationReferences": [
-        "packages/sunrey-chain/src/mainnet/allocation.ts",
-        "packages/sunrey-chain/src/economics/genesis.ts",
-        "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+        "packages/sunrey-chain/src/productive/policy-governance/index.ts",
+        "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
       ],
       "assumptions": [
-        "every non-zero genesis unit appears in the signed allocation manifest",
-        "production candidate default is zero allocation"
+        "policy activation is height-deterministic",
+        "development caps are ENGINEERING_SIMULATION_PARAMETERS",
+        "production caps remain UNCONFIGURED",
+        "bounded checking does not prove unlimited-state correctness"
       ],
       "stateBounds": {
-        "maxQuantity": 2
+        "maxQuantity": 2,
+        "maxEpochs": 2
       },
       "properties": [
-        "GENESIS_TOTALS_EXACT",
-        "NO_HIDDEN_PREMINT",
-        "NO_UNKNOWN_CATEGORY"
+        "SAME_CONTRIBUTION_CANNOT_ISSUE_TWICE",
+        "CATEGORY_CAP_RESPECTED",
+        "EPOCH_CAP_RESPECTED",
+        "POLICY_ACTIVATION_DETERMINISTIC",
+        "WRONG_POLICY_VERSION_REJECTED",
+        "SUPPLY_RECONCILIATION_EXACT",
+        "INVALID_ELIGIBILITY_CANNOT_ISSUE",
+        "CROSS_CATEGORY_DUPLICATE_PREVENTED"
       ],
       "tool": "TLA+/TLC",
       "toolVersion": "1.8.0",
@@ -480,6 +507,44 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
+      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
+      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
+    },
+    {
+      "modelId": "CROSS_ECONOMIC_INVARIANTS",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/economics/stack.ts",
+        "packages/sunrey-economics/src/stress/invariants.ts",
+        "packages/sunrey-chain/src/formal/models/cross-economic.ts"
+      ],
+      "assumptions": [
+        "integer minor units only",
+        "FeePolicyV2 disposition cannot mint",
+        "MoonRey issuance requires MonetaryIssuanceAuthority",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": {
+        "maxQuantity": 2
+      },
+      "properties": [
+        "FEE_TO_VALIDATOR_REWARD_CONSERVATION",
+        "FEE_TO_BURN_CONSERVATION",
+        "MOONREY_AUTHORIZATION_REQUIRES_MONETARY_ISSUANCE",
+        "NATIVE_SUPPLY_SEPARATION",
+        "NO_CROSS_ASSET_CREATION"
+      ],
+      "tool": "TLA+/TLC",
+      "toolVersion": "1.8.0",
+      "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
+      "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
+      "executableTwin": "packages/sunrey-chain/src/formal/models/moonrey-policy-governance.ts"
     },
     {
       "modelId": "GOVERNANCE_OPERATION_SAFETY",
@@ -489,9 +554,9 @@
         "packages/sunrey-chain/src/formal/models/governance-ops.ts"
       ],
       "assumptions": [
-        "activation requires the declared package hash",
-        "AI cannot authorize activation",
-        "emergency restriction cannot mint or overreach",
+        "human multi-person approvals bind an exact package hash",
+        "activation is height or epoch deterministic",
+        "emergency actions are drawn from a closed catalog",
         "bounded checking does not prove unlimited-state correctness"
       ],
       "stateBounds": {
@@ -521,11 +586,9 @@
         "packages/sunrey-chain/src/formal/models/protocol-treasury.ts"
       ],
       "assumptions": [
-        "treasury is fee-funded and cannot mint native supply",
-        "customer assets are unaffected by treasury motion",
-        "production budget remains UNCONFIGURED",
         "treasury redistributes existing native quantity only",
-        "customer-asset domains are unreachable"
+        "customer-asset domains are unreachable",
+        "bounded checking does not prove unlimited-state correctness"
       ],
       "stateBounds": {
         "maxQuantity": 2
@@ -555,6 +618,9 @@
         "SunRey and MoonRey supplies remain separate",
         "MoonRey issuance requires authorization",
         "fee disposition conserves charged quantity",
+        "integer minor units only",
+        "FeePolicyV2 disposition cannot mint",
+        "MoonRey issuance requires MonetaryIssuanceAuthority",
         "bounded checking does not prove unlimited-state correctness"
       ],
       "stateBounds": {
@@ -571,6 +637,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/ProtocolTreasury.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/protocol-treasury.ts",
       "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
     },
@@ -600,6 +668,33 @@
         "REGULATED_DOES_NOT_INHERIT_CHAIN",
         "RESTRICTION_STATE_ENFORCED",
         "HISTORIC_FINALIZED_UNCHANGED"
+      "modelId": "GENESIS_EXECUTION_AUTHORIZATION",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/genesis-execution/engine.ts",
+        "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
+      ],
+      "assumptions": [
+        "execution requires the declared launch-plan hash",
+        "execution requires the declared genesis hash",
+        "AI cannot authorize genesis execution",
+        "fixture artifacts cannot execute production",
+        "a consumed execution permit cannot be replayed",
+        "launch orchestration cannot rewrite a finalized first block",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": {
+        "maxHeight": 2,
+        "validators": 3
+      },
+      "properties": [
+        "WRONG_PLAN_CANNOT_EXECUTE",
+        "WRONG_GENESIS_CANNOT_EXECUTE",
+        "INSUFFICIENT_HUMAN_AUTHORITY_CANNOT_EXECUTE",
+        "AI_CANNOT_AUTHORIZE",
+        "FIXTURE_ARTIFACTS_CANNOT_EXECUTE_PRODUCTION",
+        "EXECUTION_PERMIT_CANNOT_BE_REPLAYED",
+        "FIRST_FINALIZED_STATE_NOT_REWRITTEN"
       ],
       "tool": "TLA+/TLC",
       "toolVersion": "1.8.0",
@@ -607,6 +702,8 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/CapabilityActivationSafety.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/capability-activation.ts"
+      "tlaModule": "packages/sunrey-chain/formal/tla/GenesisExecutionAuthorization.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-execution.ts"
     }
   ]
 }

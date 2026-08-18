@@ -7,6 +7,10 @@
  * AUTHORIZED_CANDIDATE. ReleaseAuthority signs the bundle only.
  */
 
+import { CANDIDATE_V2_DOMAIN, CANDIDATE_V2_ID } from '../../mainnet/candidate-v2/identity.ts';
+
+export { CANDIDATE_V2_DOMAIN, CANDIDATE_V2_ID };
+
 export const MAINNET_RC_SCHEMA_VERSION = 1 as const;
 export const MAINNET_RC_ID_PREFIX = 'SUNREY_MAINNET_RC_' as const;
 export const FIRST_MAINNET_RC_ID = 'SUNREY_MAINNET_RC_1' as const;
@@ -16,8 +20,6 @@ export const MAINNET_RC_TICKER_STATUS = 'NOT_ASSIGNED' as const;
 export const MAINNET_RC_MAINNET_ENABLED = false as const;
 export const MAINNET_RC_PRODUCTION_FINANCIAL_SERVICES = false as const;
 export const MAINNET_RC_SIGNING_ACTIVATES_NETWORK = false as const;
-export const CANDIDATE_V2_ID = 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2' as const;
-export const CANDIDATE_V2_DOMAIN = 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2' as const;
 export const ROOT_OF_TRUST_CHUNK = 'CHUNK-64' as const;
 export const CEREMONY_EVIDENCE_CHUNK = 'CHUNK-85' as const;
 

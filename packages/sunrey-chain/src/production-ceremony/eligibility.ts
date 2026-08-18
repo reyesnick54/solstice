@@ -263,3 +263,9 @@ export function rejectDressRehearsalAsProduction(value: string): void {
     throw new TypeError('dress-rehearsal authorization unusable for production');
   }
 }
+
+export function rejectShadowNetworkAsProduction(value: string): void {
+  if (rehearsalIdentityUnusableForProduction(value) || /pregenesis|shadow/i.test(value)) {
+    throw new TypeError('shadow genesis rejected from production');
+  }
+}

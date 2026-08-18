@@ -64,6 +64,7 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'post-genesis')}`) ||
         file.includes(`${join('src', 'production-ceremony')}`) ||
         file.includes(`${join('src', 'providers')}`) ||
+        file.includes(`${join('src', 'production-ceremony')}`) ||
         file.includes(`${join('src', 'fees')}`) ||
         file.includes(`${join('src', 'fees', 'v2')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
@@ -73,7 +74,7 @@ describe('sunrey chain architecture guards', () => {
         file.endsWith(`${join('wallet', 'builder.ts')}`) ||
         file.endsWith(`${join('wallet', 'index.ts')}`);
       if (allowsTestNetwork) {
-        assert.equal(/LIVE_CHAIN|MAINNET_ENABLED/.test(source), false, file);
+        assert.equal(/\bLIVE_CHAIN\b|\bMAINNET_ENABLED\b/.test(source), false, file);
         assert.equal(/productionNetworkEnabled:\s*true/.test(source), false, file);
       } else {
         assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);

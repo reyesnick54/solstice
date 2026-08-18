@@ -44,6 +44,8 @@ npm run test:sunrey-node
 npm test
 npm run sunrey-ceremony -- rehearse
 npm run sunrey-ceremony -- production rehearse
+npm run sunrey-launch -- production execute
+npm run sunrey-launch -- production verify
 npm run sunrey-bench -- sanity
 
 echo "==> fuzz smoke"
@@ -92,9 +94,16 @@ npm run demo:sunrey-protocol-treasury
 npm run sunrey-economics -- treasury verify
 npm run sunrey-economics -- treasury simulate
 npm run demo:sunrey-infra
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production plan
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production verify-plan
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production rehearse
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify
+npm run sunrey-launch -- production report
+npm run demo:sunrey-pregenesis
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
 npm run demo:sunrey-economic-mainnet-rehearsal
 npm run sunrey-launch -- economic-verify
 npm run sunrey-launch -- economic-audit

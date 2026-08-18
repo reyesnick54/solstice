@@ -12,6 +12,7 @@ import {
   type LaunchRehearsalSession,
 } from './engine.ts';
 import { runEconomicLaunchCommand } from '../economic-rehearsal/cli.ts';
+import { runProductionLaunchCommand } from '../genesis-execution/cli.ts';
 
 export type LaunchCliResult = {
   readonly ok: boolean;
@@ -42,6 +43,9 @@ function session(root = process.cwd()): LaunchRehearsalSession {
 
 export function runLaunchCommand(argv: readonly string[], root = process.cwd()): LaunchCliResult {
   const [command = 'help', arg = ''] = argv;
+  if (command === 'production') {
+    return runProductionLaunchCommand(argv.slice(1), root);
+  }
   if (command === 'rehearse') {
     resetLaunchCliCache();
     const ran = session(root);
@@ -108,7 +112,7 @@ export function runLaunchCommand(argv: readonly string[], root = process.cwd()):
     command: 'help',
     payload: {
       usage:
-        'sunrey-launch <rehearse|status|verify|inject-failure|recover|report|findings|activation-plan|economic-rehearse|economic-status|economic-verify|economic-audit|economic-stress|economic-report|economic-evidence>',
+        'sunrey-launch <rehearse|status|verify|inject-failure|recover|report|findings|activation-plan|economic-*|production <plan|verify|authorization|permit|readiness|control-room|execute|first-block|report>>',
       launchesProduction: false,
       banner: 'MAINNET REHEARSAL',
     },

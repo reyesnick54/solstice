@@ -29,10 +29,10 @@ private keys.
 
 | Artifact | Expected id | Current tree |
 | --- | --- | --- |
-| Chunk 84 Mainnet RC | `SUNREY_MAINNET_RC_1` | Bound when present; otherwise explicit `MISSING_MAINNET_RC` |
-| Chunk 81 Candidate V2 | `SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2` | Bound when present; otherwise explicit `MISSING_CANDIDATE_V2` |
-| Chunk 82 provider acceptance | provider module | Cannot be labeled production-eligible beyond actual status |
-| Chunk 83 audit remediation | audit module | Open HIGH/CRITICAL limitations remain visible |
+| Chunk 84 Mainnet RC | `SUNREY_MAINNET_RC_1` | Cryptographic manifest verified via `verifyMainnetReleaseCandidate` |
+| Chunk 81 Candidate V2 | `SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` | Canonical `createProductionNetworkCandidateV2` root hash |
+| Chunk 82 provider acceptance | `ProductionProviderMatrix` | ENGINEERING_TESTED remains distinct from HUMAN_ACCEPTED / PRODUCTION_ELIGIBLE |
+| Chunk 83 audit remediation | Chunk 83 review state | `TEST_FIXTURE_NOT_EXTERNAL_AUDIT` cannot satisfy external review |
 | Chunk 71 allocation | `GenesisAssetAllocationManifest` | Production allocation remains unapproved / zero |
 | Chunk 64 CryptoPolicy | production-candidate Ed25519 policy | No improvised PQ migration |
 | Chunk 65 readiness | engineering feed only | Real ceremony remains EXTERNAL/HUMAN |
@@ -49,11 +49,12 @@ Identity: `SunRey Production Genesis Ceremony Dress Rehearsal 1`
 | Network ID | `net_sunrey_production_genesis_ceremony_rehearsal_1` |
 | Chain ID | `chn_sunrey_production_genesis_ceremony_rehearsal_1` |
 | Address HRP | `srpgc` |
-| Candidate stand-in | `SUNREY_PGC_REHEARSAL_CANDIDATE_V2` |
-| RC stand-in | `SUNREY_PGC_REHEARSAL_MAINNET_RC` |
+| Candidate binding | `SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` |
+| RC binding | `SUNREY_MAINNET_RC_1` |
 
 Dress-rehearsal keys, network ID, chain ID, genesis, and approvals are
-unusable as real production inputs.
+unusable as real production inputs. Artifact IDs are the canonical
+Chunk 81/84 identities; they are not locally constructed stand-ins.
 
 ## Eligibility
 

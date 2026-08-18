@@ -36,6 +36,7 @@ export const FORMAL_MODEL_IDS = [
   'PROTOCOL_TREASURY',
   'CROSS_ECONOMIC_INVARIANTS',
   'CAPABILITY_ACTIVATION_SAFETY',
+  'GENESIS_EXECUTION_AUTHORIZATION',
 ] as const;
 export type FormalModelId = (typeof FORMAL_MODEL_IDS)[number];
 
@@ -70,6 +71,7 @@ export const TRACE_DOMAINS = [
   'protocol_treasury',
   'cross_economic',
   'capability_activation',
+  'genesis_execution',
 ] as const;
 export type TraceDomain = (typeof TRACE_DOMAINS)[number];
 

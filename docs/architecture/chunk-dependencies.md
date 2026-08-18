@@ -148,6 +148,10 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-post-genesis-stabilization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -741,3 +745,39 @@ approved evidence. Do not create `packages/production-network`,
 `packages/sunrey-production-network`, `packages/candidate-v2`,
 `packages/mainnet-v2`, or `packages/production-candidate-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 88 implements the authorized production genesis execution engine
+and launch control room at
+`packages/sunrey-chain/src/genesis-execution`. Capability
+`sunrey-production-genesis-execution` is `IMPLEMENTED`. Automated
+tests use isolated rehearsal inputs only. It does not launch mainnet,
+enable `LIVE_*` flags, or automatically activate customer financial
+capabilities. Do not create `packages/genesis-execution`,
+`packages/sunrey-genesis-execution`,
+`packages/production-genesis-execution`, `packages/mainnet-execution`,
+or `packages/launch-execution`. The evaluator returns `mustStop: false`.
+Chunk 87 implements the isolated pre-genesis production shadow network
+and operational qualification system at
+`packages/sunrey-chain/src/pregenesis`. Capability
+`sunrey-pregenesis-qualification` is `IMPLEMENTED`. See
+[`chunk-87-pregenesis-qualification.md`](./chunk-87-pregenesis-qualification.md).
+It does not launch mainnet or treat engineering qualification as
+authorization. Do not create `packages/sunrey-pregenesis`,
+`packages/pregenesis`, `packages/shadow-network`,
+`packages/pregenesis-qualification`, or `packages/sunrey-shadow`. The
+evaluator returns `mustStop: false`.
+Chunk 85 implements the production genesis ceremony at
+`packages/sunrey-chain/src/production-ceremony`. Capability
+`sunrey-production-genesis-ceremony` is `IMPLEMENTED`. See
+[`chunk-85-production-genesis-ceremony.md`](./chunk-85-production-genesis-ceremony.md).
+It binds the actual Chunk 81 Candidate V2 and Chunk 84 Mainnet RC.
+Do not create `packages/sunrey-ceremony`, `packages/production-genesis`,
+`packages/genesis-ceremony`, `packages/launch-authorization`, or
+`packages/production-ceremony`. The evaluator returns `mustStop: false`.
+Chunk 86 implements the production-environment provisioning control
+plane at `packages/sunrey-chain/src/infra/provisioning`. Capability
+`sunrey-production-provisioning` is `IMPLEMENTED`. See
+[`chunk-86-production-provisioning.md`](./chunk-86-production-provisioning.md).
+It extends Chunk 66. CI uses local/rehearsal infrastructure only.
+Do not create `packages/sunrey-production-platform`,
+`packages/mainnet-infrastructure-v2`, or
+`packages/cloud-control-plane`. The evaluator returns `mustStop: false`.

@@ -42,6 +42,8 @@ import {
 } from '../validator-economics/index.ts';
 import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
 import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
+import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
+import { productionProvisioningUsage, runProductionProvisioningCommand } from '../infra/provisioning/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -98,9 +100,6 @@ export function runSunreyOps(argv: readonly string[]): string {
       return JSON.stringify({ restored: 'val_dev_7', height: snapshot.manifest.height }, null, 2);
     }
     throw new Error('sunrey-ops backup create|verify|restore');
-  }
-  if (command === 'crypto') {
-    return JSON.stringify(runCryptoCommand(argv.slice(1)), null, 2);
   }
   if (command === 'dr') {
     const action = argv[1] ?? 'run';
@@ -241,6 +240,8 @@ export function opsUsage(): string {
     'sunrey-ops crypto benchmark',
     ...governanceOpsUsage().split('\n'),
     ...providerUsage(),
+    pregenesisUsage(),
+    ...productionProvisioningUsage(),
   ].join('\n');
 }
 
@@ -258,6 +259,11 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   if (group === 'provider') {
     const result = runProviderOpsCommand(args.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
+  }
+  if (group === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
+    const result = runProductionProvisioningCommand(args.slice(1));
+    return { ok: result.ok, command: `production ${result.command}`, payload: result.payload };
   }
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };
@@ -478,6 +484,19 @@ export async function main(): Promise<void> {
     }
     return;
   }
+  if (head === 'pregenesis') {
+    const result = runPregenesisCommand(argv.slice(1));
+  if (head === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
+    const result = runProductionProvisioningCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(head)) {
     process.stdout.write(`${runSunreyOps(argv)}\n`);
     return;
@@ -498,10 +517,4 @@ if (
   entry.endsWith('ops/cli.js')
 ) {
   await main();
-  const group = process.argv[2] ?? 'health';
-  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
-    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-  } else {
-    await main();
-  }
 }

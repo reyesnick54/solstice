@@ -22,6 +22,7 @@ export type EngineeringEvidenceOverlay = {
   readonly chunk79?: string;
   readonly chunk80?: string;
   readonly chunk81?: string;
+  readonly chunk87?: string;
 };
 
 function overlayHash(draft: SlotDraft, overlay?: EngineeringEvidenceOverlay): string | null {
@@ -45,6 +46,9 @@ function overlayHash(draft: SlotDraft, overlay?: EngineeringEvidenceOverlay): st
   }
   if (draft.chunkReference === 'CHUNK-81') {
     return overlay?.chunk81 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-87') {
+    return overlay?.chunk87 ?? draft.evidenceHash ?? null;
   }
   return draft.evidenceHash ?? null;
 }
@@ -1155,6 +1159,9 @@ export function defaultDimensionCatalog(
       notes: 'AI cannot mark HUMAN_ACCEPTED or PRODUCTION_ELIGIBLE.',
       externalEvidence: true,
       chunkReference: 'CHUNK-82',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-ECON-REHEARSAL-001',
       dimension: 'GENESIS',
       description: 'Chunk 80 economic mainnet rehearsal engineering evidence',
@@ -1224,8 +1231,37 @@ export function defaultDimensionCatalog(
       chunkReference: 'CHUNK-81',
       verificationStatus: 'NOT_PROVIDED',
     },
+    {
+      requirementId: 'REQ-PREGENESIS-001',
+      dimension: 'INFRASTRUCTURE',
+      description: 'Pre-genesis shadow-network engineering qualification',
+      scope: 'SUNREY_CHAIN',
+      evidenceType: 'ENGINEERING_ARTIFACT',
+      source: 'packages/sunrey-chain/src/pregenesis',
+      authorizedVerifierRole: 'ENGINEERING',
+      expirationOrReviewDateUtc: null,
+      notes: 'Chunk 87 feeds engineering evidence only. External/human requirements remain separate. Does not authorize mainnet.',
+      externalEvidence: false,
+      chunkReference: 'CHUNK-87',
+      verificationStatus: 'ENGINEERING_VERIFIED',
+    },
+    {
+      requirementId: 'REQ-PREGENESIS-002',
+      dimension: 'HUMAN_AUTHORIZATION',
+      description: 'Human authorization that pre-genesis qualification may inform production activation',
+      scope: 'ALL',
+      evidenceType: 'HUMAN_AUTHORIZATION',
+      source: 'human-pregenesis-authorization-slot',
+      authorizedVerifierRole: 'HUMAN_AUTHORITY',
+      expirationOrReviewDateUtc: null,
+      notes: 'Engineering qualification is not legal or operator certification. Human authorization remains NOT_PROVIDED.',
+      externalEvidence: true,
+      chunkReference: 'CHUNK-87',
+      verificationStatus: 'NOT_PROVIDED',
+    },
   ];
   return Object.freeze([...drafts.map(slot), ...mainnetRcReadinessRecords(), ...postGenesisReadinessRecords()]);
+  return Object.freeze([...drafts.map((draft) => slot(draft, overlay)), ...mainnetRcReadinessRecords()]);
 }
 
 export function dimensionsCovered(): readonly MainnetReadinessDimension[] {
