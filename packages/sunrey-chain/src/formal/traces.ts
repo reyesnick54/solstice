@@ -155,6 +155,19 @@ export function crossEconomicHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function genesisExecutionHappyTrace(): LogicalTrace {
+  return makeTrace('trace_genesis_execution', 'genesis_execution', 'GENESIS_EXECUTION_AUTHORIZATION', [
+    { domain: 'genesis_execution', action: 'VerifyPlan', args: {} },
+    { domain: 'genesis_execution', action: 'ApproveHuman', args: {} },
+    { domain: 'genesis_execution', action: 'ApproveHuman', args: {} },
+    { domain: 'genesis_execution', action: 'CompleteAuthorization', args: {} },
+    { domain: 'genesis_execution', action: 'IssuePermit', args: {} },
+    { domain: 'genesis_execution', action: 'ExecuteGenesis', args: {} },
+    { domain: 'genesis_execution', action: 'FinalizeFirstBlock', args: {} },
+    { domain: 'genesis_execution', action: 'VerifyInitialChain', args: {} },
+  ]);
+}
+
 export function allDevelopmentTraces(): readonly LogicalTrace[] {
   return [
     consensusHappyTrace(),
@@ -171,5 +184,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     governanceOpsHappyTrace(),
     protocolTreasuryHappyTrace(),
     crossEconomicHappyTrace(),
+    genesisExecutionHappyTrace(),
   ];
 }

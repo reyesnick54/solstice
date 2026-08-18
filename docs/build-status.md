@@ -4,6 +4,19 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey authorized production genesis execution engine (Chunk 88,
+  `packages/sunrey-chain/src/genesis-execution`):
+  `ProductionLaunchPlan` bound to exact RC, Candidate V2, environment,
+  ceremony, provider, audit, and pre-genesis hashes; multi-person
+  `ProductionLaunchAuthorization`; single-use `LaunchExecutionPermit`
+  with replay protection; launch control room; seven-validator first
+  block; genesis supply audit. Isolated rehearsal identity
+  `net_sunrey_genesis_execution_rehearsal_1` /
+  `chn_sunrey_genesis_execution_rehearsal_1` (HRP `srger`). Capability
+  `sunrey-production-genesis-execution` is `IMPLEMENTED`. This is not
+  a mainnet launch. `realProductionExecutionPerformed=false`.
+  `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-88-genesis-execution.md`.
 - SunRey pre-genesis production shadow network and operational
   qualification (Chunk 87, `packages/sunrey-chain/src/pregenesis`):
   isolated identity `net_sunrey_pregenesis_shadow_1` /

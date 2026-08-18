@@ -3197,6 +3197,11 @@
       "notes": "Chunk 81 second-generation production-network candidate. Binds the complete stack through Chunk 80. Candidate state remains CANDIDATE. mainnetEnabled=false. Does not launch mainnet or enable LIVE_* flags. External legal/audit/HSM/human evidence remains unfabricated."
     },
     {
+      "id": "sunrey-production-genesis-execution",
+      "name": "SunRey authorized production genesis execution engine and launch control room",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/genesis-execution/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/genesis-execution/index.ts",
       "id": "sunrey-pregenesis-qualification",
       "name": "SunRey pre-genesis production shadow network and operational qualification",
       "canonicalOwner": "packages/sunrey-chain",
@@ -3217,6 +3222,15 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "ProductionLaunchPlan",
+          "kind": "type"
+        },
+        {
+          "name": "LaunchExecutionPermit",
+          "kind": "type"
+        },
+        {
+          "name": "LaunchControlRoomState",
           "name": "PregenesisNetworkDefinition",
           "kind": "type"
         },
@@ -3239,6 +3253,11 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/genesis-execution",
+        "packages/sunrey-genesis-execution",
+        "packages/production-genesis-execution",
+        "packages/mainnet-execution",
+        "packages/launch-execution"
         "packages/sunrey-pregenesis",
         "packages/pregenesis",
         "packages/shadow-network",
@@ -3251,6 +3270,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
     }
@@ -3911,6 +3931,34 @@
     "packages/travel-rule-production",
     "packages/custody-activation",
     "packages/exchange-kyc",
+    "packages/moonrey-policy",
+    "packages/moonrey-economics",
+    "packages/issuance-policy",
+    "packages/dual-economy",
+    "packages/moonrey-macro",
+    "packages/economic-bridge",
+    "packages/sunrey-economic-rehearsal",
+    "packages/economic-mainnet",
+    "packages/economic-rehearsal",
+    "packages/sunrey-economic-mainnet",
+    "packages/sunrey-economic-rc",
+    "packages/economic-rc",
+    "packages/economic-qualification",
+    "packages/sunrey-economic-release",
+    "packages/economic-policy-freeze",
+    "packages/governance-ops",
+    "packages/sunrey-governance",
+    "packages/governance-token",
+    "packages/sunrey-ceremony",
+    "packages/production-genesis",
+    "packages/genesis-ceremony",
+    "packages/launch-authorization",
+    "packages/production-ceremony",
+    "packages/genesis-execution",
+    "packages/sunrey-genesis-execution",
+    "packages/production-genesis-execution",
+    "packages/mainnet-execution",
+    "packages/launch-execution",
     "packages/provider-acceptance",
     "packages/production-providers",
     "packages/external-providers",
@@ -4640,6 +4688,11 @@
       "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
     },
     {
+      "id": "sunrey-production-genesis-execution",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 88 authorized production genesis execution engine and launch control room. Owner: packages/sunrey-chain/src/genesis-execution. CI uses isolated rehearsal inputs only. Does not launch mainnet or automatically activate customer financial capabilities. Do not create packages/genesis-execution, packages/sunrey-genesis-execution, packages/production-genesis-execution, packages/mainnet-execution, or packages/launch-execution."
       "id": "sunrey-pregenesis-qualification",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -5027,6 +5080,29 @@
     "packages/provider-registry",
     "packages/travel-rule-production",
     "packages/custody-activation",
+    "packages/exchange-kyc",
+    "packages/sunrey-economic-rehearsal",
+    "packages/economic-mainnet",
+    "packages/economic-rehearsal",
+    "packages/sunrey-economic-mainnet",
+    "packages/sunrey-ceremony",
+    "packages/production-genesis",
+    "packages/genesis-ceremony",
+    "packages/launch-authorization",
+    "packages/production-ceremony",
+    "packages/genesis-execution",
+    "packages/sunrey-genesis-execution",
+    "packages/production-genesis-execution",
+    "packages/mainnet-execution",
+    "packages/launch-execution"
+  ]
+    "packages/sunrey-economic-mainnet"
+  ],
+  "forbiddenAliases": []
+    "packages/provider-acceptance",
+    "packages/production-providers",
+    "packages/external-providers",
+    "packages/sunrey-providers"
     "packages/exchange-kyc"
   ]
 }

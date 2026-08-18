@@ -15,6 +15,7 @@ import type {
   EconomicRehearsalStressFinding,
   EconomicRehearsalStressResult,
   RecoveryResult,
+} from './types.ts';
   RehearsalStressFinding,
   RehearsalStressResult,
 } from './types.ts';
