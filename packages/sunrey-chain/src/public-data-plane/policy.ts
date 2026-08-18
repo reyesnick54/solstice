@@ -217,11 +217,11 @@ export class RpcAbuseProtection {
     readonly nowMs: number;
     readonly quota: RpcQuotaPolicy;
   }): AbuseDecision {
-    if ((FORBIDDEN_PUBLIC_METHODS as readonly string[]).includes(input.request.method)) {
-      return { allowed: false, reason: 'FORBIDDEN_METHOD' };
-    }
     if (input.request.requestClass === 'OPERATOR_AUTHENTICATED') {
       return { allowed: false, reason: 'OPERATOR_METHOD_FORBIDDEN' };
+    }
+    if ((FORBIDDEN_PUBLIC_METHODS as readonly string[]).includes(input.request.method)) {
+      return { allowed: false, reason: 'FORBIDDEN_METHOD' };
     }
     if (input.containsPrivateKey) {
       return { allowed: false, reason: 'PRIVATE_KEY_REJECTED' };

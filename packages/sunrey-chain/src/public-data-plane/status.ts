@@ -144,6 +144,8 @@ export function exerciseFailureScenarios(gateway = new PublicRpcGateway()): {
   });
   gateway.pool.mark('rpc-b', { health: 'DOWN', synced: false });
   gateway.pool.mark('rpc-archive', { health: 'DOWN', synced: false });
+  gateway.pool.mark('rpc-stale', { health: 'DOWN', synced: false });
+  gateway.cache.disable();
   const many = gateway.handle({
     requestId: 'fail_many',
     method: 'chain.status',

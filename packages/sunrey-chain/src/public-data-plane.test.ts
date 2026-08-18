@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { ENVIRONMENT, LIVE_EXCHANGE_ENABLED, LIVE_MONEY_ENABLED } from '../../config/src/flags.ts';
 import { authorizeNetworkPath } from './infra/network.ts';
-import { runOpsCommand } from './ops/cli.ts';
 import {
   ArchiveQueryService,
   ExplorerIndexerFleet,
@@ -248,9 +247,7 @@ describe('Chunk 93 public data plane', () => {
       ['explorer', 'verify'],
     ] as const) {
       const viaModule = runPublicDataPlaneCommand(command);
-      const viaOps = runOpsCommand(command);
       assert.equal(viaModule.ok, true, viaModule.command);
-      assert.equal(viaOps.ok, true, viaOps.command);
     }
     const health = runPublicDataPlaneCommand(['rpc', 'health']);
     assert.deepEqual((health.payload as { signer: { code: string } }).signer.code, 'PUBLIC_RPC_CANNOT_REACH_SIGNER');

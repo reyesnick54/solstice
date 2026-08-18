@@ -72,16 +72,11 @@ pub struct RpcEndpointPool {
 
 impl RpcEndpointPool {
     pub fn connect(endpoints: impl Into<Vec<String>>) -> Self {
-        Self {
-            endpoints: endpoints.into(),
-        }
+        Self { endpoints: endpoints.into() }
     }
 
     pub fn clients(&self) -> Vec<SunReyRpcClient> {
-        self.endpoints
-            .iter()
-            .map(|addr| SunReyRpcClient::connect(addr.clone()))
-            .collect()
+        self.endpoints.iter().map(|addr| SunReyRpcClient::connect(addr.clone())).collect()
     }
 
     pub fn read_with_failover(&self, path: &str) -> Result<Value, SdkError> {
@@ -102,7 +97,9 @@ impl RpcEndpointPool {
         network_id: &str,
         transaction_id: &str,
     ) -> Result<Value, SdkError> {
-        if let Ok(existing) = self.read_with_failover(&format!("/v1/chain/transactions/{transaction_id}")) {
+        if let Ok(existing) =
+            self.read_with_failover(&format!("/v1/chain/transactions/{transaction_id}"))
+        {
             return Ok(existing);
         }
         let Some(primary) = self.endpoints.first() else {
@@ -367,10 +364,8 @@ mod tests {
 
     #[test]
     fn endpoint_pool_is_constructed_without_blind_resubmit() {
-        let pool = RpcEndpointPool::connect(vec![
-            "127.0.0.1:1".to_string(),
-            "127.0.0.1:2".to_string(),
-        ]);
+        let pool =
+            RpcEndpointPool::connect(vec!["127.0.0.1:1".to_string(), "127.0.0.1:2".to_string()]);
         assert_eq!(pool.clients().len(), 2);
         assert!(pool.read_with_failover(PATH_STATUS).is_err());
     }
