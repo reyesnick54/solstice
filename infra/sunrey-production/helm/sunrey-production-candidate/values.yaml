@@ -1,5 +1,6 @@
 environment: PRODUCTION_CANDIDATE
 mainnetEnabled: false
+productionAuthorized: false
 image:
   repository: sunrey-node
   digest: sha256:0000000000000000000000000000000000000000000000000000000000000000

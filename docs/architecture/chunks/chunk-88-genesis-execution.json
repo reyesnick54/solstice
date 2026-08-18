@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-88",
+  "title": "SunRey authorized production genesis execution engine and launch control room",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-public-testnet",
+    "sunrey-validator-operations",
+    "sunrey-root-of-trust",
+    "sunrey-mainnet-readiness",
+    "sunrey-launch-rehearsal",
+    "sunrey-monetary-constitution",
+    "sunrey-audit-readiness",
+    "sunrey-audit-remediation",
+    "sunrey-production-provider-acceptance",
+    "sunrey-production-network-candidate",
+    "sunrey-mainnet-rc",
+    "sunrey-governance-operations",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-formal-assurance",
+    "sunrey-production-genesis-execution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/genesis-execution. Deterministic, tamper-evident, multi-person-authorized production genesis execution path. Automated tests use isolated rehearsal inputs only. Does not launch mainnet, enable LIVE_* flags, or automatically activate customer financial capabilities. evaluateChunkRequirements returns mustStop: false. Do not create packages/genesis-execution, packages/sunrey-genesis-execution, packages/production-genesis-execution, packages/mainnet-execution, or packages/launch-execution."
+}

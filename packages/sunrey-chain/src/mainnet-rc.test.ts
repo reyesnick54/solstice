@@ -38,7 +38,7 @@ describe('Chunk 84 SunRey Mainnet release candidate', () => {
     assert.equal(nextMainnetReleaseCandidateId(null), FIRST_MAINNET_RC_ID);
     assert.equal(nextMainnetReleaseCandidateId(FIRST_MAINNET_RC_ID), 'SUNREY_MAINNET_RC_2');
     const candidate = freezeProductionNetworkCandidateV2();
-    assert.equal(candidate.candidateId, 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2');
+    assert.equal(candidate.candidateId, 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_2');
     assert.equal(candidate.mainnetEnabled, false);
     assert.equal(candidate.rootHash.length, 64);
     assert.equal(ENVIRONMENT, 'simulation');
@@ -135,7 +135,6 @@ describe('Chunk 84 SunRey Mainnet release candidate', () => {
     assert.ok(legal);
     assert.equal(legal?.hiddenFromReleaseNotes, false);
     const providers = snapshotProviderAcceptance();
-    assert.ok(providers.unconfigured.length > 0);
     assert.ok(providers.engineeringTested.length > 0);
     assert.equal(providers.externallyEvidenced.length, 0);
     assert.equal(providers.humanAccepted.length, 0);

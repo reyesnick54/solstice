@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-89",
+  "title": "SunRey post-genesis stabilization, safe-mode operations, and progressive production capability activation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-mainnet-readiness",
+    "sunrey-governance-operations",
+    "sunrey-launch-rehearsal",
+    "sunrey-economic-mainnet-rehearsal",
+    "sunrey-mainnet-rc",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-formal-assurance",
+    "sunrey-regulated-integration",
+    "sunrey-post-genesis-stabilization"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. evaluateChunkRequirements returns mustStop: false. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation."
+}

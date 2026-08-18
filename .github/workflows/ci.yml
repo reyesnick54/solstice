@@ -106,6 +106,8 @@ jobs:
           npm run sunrey-ops -- production handoff
           npm run sunrey-ops -- production readiness
           npm run sunrey-ops -- production rehearse
+          npm run sunrey-launch -- production execute
+          npm run sunrey-launch -- production verify
           npm run sunrey-bench -- sanity
 
       - name: Fuzz smoke
@@ -184,12 +186,26 @@ jobs:
         run: npm run demo:sunrey-mainnet
       - name: SunRey production infrastructure harness
         run: npm run demo:sunrey-infra
+      - name: SunRey production environment plan
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production plan
+      - name: SunRey production environment verify-plan
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production verify-plan
+      - name: SunRey production environment rehearse
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production rehearse
       - name: SunRey mainnet candidate verify
         run: npm run sunrey-mainnet -- verify
       - name: SunRey mainnet launch rehearsal demo
         run: npm run demo:sunrey-launch
       - name: SunRey mainnet launch rehearsal verify
         run: npm run sunrey-launch -- verify
+      - name: SunRey authorized genesis execution rehearsal
+        run: npm run sunrey-launch -- production report
+      - name: SunRey pre-genesis shadow qualification demo
+        run: npm run demo:sunrey-pregenesis
+      - name: SunRey pre-genesis shadow qualify
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
+      - name: SunRey pre-genesis shadow verify
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
       - name: SunRey validator economics demo
         run: npm run demo:sunrey-validator-economics
       - name: SunRey testnet deployment manifests
@@ -252,6 +268,14 @@ jobs:
         run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet verify
       - name: SunRey Mainnet RC demo
         run: npm run demo:sunrey-mainnet-rc
+      - name: SunRey post-genesis rehearsal
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization status
+      - name: SunRey post-genesis checkpoint
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization checkpoint 1 0 aaaaaaaa
+      - name: SunRey post-genesis audit
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- stabilization audit
+      - name: SunRey capability activation negatives
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-mainnet -- capability history
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
       - name: SunRey independent security-review demo

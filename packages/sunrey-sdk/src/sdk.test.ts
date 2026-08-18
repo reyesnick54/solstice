@@ -82,6 +82,14 @@ describe('SunRey TypeScript SDK', () => {
     try {
       const client = connectSunRey(gateway.url);
       assert.equal((await client.status()).api_version, 'v1');
+      const phase = await client.getNetworkPhase() as { readonly phase: string; readonly realProductionCapabilitiesActivated: boolean };
+      assert.equal(phase.phase, 'CHAIN_STABILIZATION');
+      assert.equal(phase.realProductionCapabilitiesActivated, false);
+      const caps = await client.getCapabilityStatus() as { readonly realProductionCapabilitiesActivated: boolean };
+      assert.equal(caps.realProductionCapabilitiesActivated, false);
+      assert.ok(await client.getPostGenesisHealth());
+      const protocol = await client.getProtocolVersion() as { readonly protocol_version: string };
+      assert.equal(protocol.protocol_version, '1');
       assert.ok(await client.validators.list());
       assert.ok(await client.governance.proposals());
       assert.ok(await client.oracles.facts());

@@ -40,3 +40,6 @@ sunrey-ops provider verify
 sunrey-ops provider readiness
 sunrey-ops provider matrix
 ```
+
+Chunk 86 production provisioning consumes this matrix. Engineering-tested
+providers remain distinct from `HUMAN_ACCEPTED` and `PRODUCTION_ELIGIBLE`.

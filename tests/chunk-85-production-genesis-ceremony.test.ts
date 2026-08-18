@@ -11,8 +11,8 @@ import { emptyAllocationManifest } from '../packages/sunrey-chain/src/mainnet/al
 import {
   DRESS_REHEARSAL_CHAIN_ID,
   DRESS_REHEARSAL_NETWORK_ID,
-  REHEARSAL_CANDIDATE_V2_ID,
-  REHEARSAL_MAINNET_RC_ID,
+  EXPECTED_CANDIDATE_V2_ID,
+  EXPECTED_MAINNET_RC_ID,
   assertPurposeSeparation,
   collectExternalBlockers,
   consumeAuditEvidence,
@@ -64,8 +64,8 @@ describe('Chunk 85 production genesis ceremony', () => {
     assert.equal(first.mainnetEnabled, false);
     assert.equal(first.session.plan.networkId, DRESS_REHEARSAL_NETWORK_ID);
     assert.equal(first.session.plan.chainId, DRESS_REHEARSAL_CHAIN_ID);
-    assert.equal(first.session.plan.candidateV2Id, REHEARSAL_CANDIDATE_V2_ID);
-    assert.equal(first.session.plan.mainnetRcId, REHEARSAL_MAINNET_RC_ID);
+    assert.equal(first.session.plan.candidateV2Id, EXPECTED_CANDIDATE_V2_ID);
+    assert.equal(first.session.plan.mainnetRcId, EXPECTED_MAINNET_RC_ID);
     assert.equal(first.report.mainnetRcVerified, true);
     assert.equal(first.report.candidateV2Verified, true);
     assert.equal(first.dossier.executesLaunch, false);

@@ -12,10 +12,7 @@ import { DurableSignerSafety } from '../validators/signer.ts';
 import type { SignerSafetyState } from '../validators/types.ts';
 import { encodeString, sha256Hex } from '../validators/canonical.ts';
 import type { ArtifactBinding, ProviderAcceptanceBinding, AuditBinding } from './bindings.ts';
-import {
-  rehearsalCandidateV2Binding,
-  rehearsalMainnetRcBinding,
-} from './bindings.ts';
+import { consumeCandidateV2, consumeMainnetRc } from './bindings.ts';
 import {
   buildProductionGenesisManifest,
   defaultModuleRegistry,
@@ -433,19 +430,13 @@ export class ProductionCeremonySessionController {
   }
 }
 
-export function dressRehearsalBindings(validatorSetHash: string): {
+export function dressRehearsalBindings(root = process.cwd()): {
   readonly candidateV2: ArtifactBinding;
   readonly mainnetRc: ArtifactBinding;
 } {
-  const candidateHash = sha256Hex(
-    Buffer.concat([encodeString('sunrey.pgc.rehearsal.candidate-v2.v1'), encodeString(validatorSetHash)]),
-  );
-  const rcHash = sha256Hex(
-    Buffer.concat([encodeString('sunrey.pgc.rehearsal.mainnet-rc.v1'), encodeString(validatorSetHash)]),
-  );
   return {
-    candidateV2: rehearsalCandidateV2Binding(candidateHash),
-    mainnetRc: rehearsalMainnetRcBinding(rcHash),
+    candidateV2: consumeCandidateV2(root),
+    mainnetRc: consumeMainnetRc(root),
   };
 }
 

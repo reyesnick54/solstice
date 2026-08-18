@@ -1,30 +1,89 @@
 import { sha256Text } from '../../supply-chain/inventory.ts';
+import { createProviderAcceptanceFixture, missingEvidenceFor } from '../../providers/fixture.ts';
+import { buildAcceptanceReport, buildProductionProviderMatrix } from '../../providers/report.ts';
+import type { AcceptanceState, ProductionProviderMatrix, ProviderDomain } from '../../providers/types.ts';
 import type { HsmQualificationState, ProviderAcceptanceMatrix, ProviderAcceptanceRow, ProviderLifecycleState } from './types.ts';
 
-/**
- * Consume the current repository provider surface (Chunk 66/68/69 and the
- * Chunk 82 acceptance vocabulary). No provider is promoted to production
- * eligible without external evidence and human acceptance.
- */
-const PROVIDER_ROWS: readonly Omit<ProviderAcceptanceRow, 'productionEligible'>[] = [
-  { providerId: 'infra.local', domain: 'INFRASTRUCTURE', state: 'ENGINEERING_TESTED', notes: 'Local/simulation infrastructure harness. Not a production cloud account.' },
-  { providerId: 'infra.aws', domain: 'INFRASTRUCTURE', state: 'UNCONFIGURED', notes: 'AWS adapter present; production credentials absent.' },
-  { providerId: 'infra.azure', domain: 'INFRASTRUCTURE', state: 'UNCONFIGURED', notes: 'Azure adapter present; production credentials absent.' },
-  { providerId: 'infra.gcp', domain: 'INFRASTRUCTURE', state: 'UNCONFIGURED', notes: 'GCP adapter present; production credentials absent.' },
-  { providerId: 'infra.kubernetes', domain: 'INFRASTRUCTURE', state: 'UNCONFIGURED', notes: 'Kubernetes adapter present; cluster unconfigured.' },
-  { providerId: 'kms.vault', domain: 'HSM', state: 'UNCONFIGURED', notes: 'Vault adapter present; production HSM evidence absent.' },
-  { providerId: 'hsm.simulation', domain: 'HSM', state: 'ENGINEERING_TESTED', notes: 'Ceremony/test fixture HSM. Cannot satisfy EXTERNAL_HSM_VERIFIED.' },
-  { providerId: 'oracle.production-candidate', domain: 'ORACLE', state: 'ENGINEERING_TESTED', notes: 'Chunk 68 onboarding exists. Provider agreements absent.' },
-  { providerId: 'custody.simulation', domain: 'CUSTODY', state: 'ENGINEERING_TESTED', notes: 'Simulation signer. External HSM not verified.' },
-  { providerId: 'exchange.sandbox', domain: 'EXCHANGE', state: 'ENGINEERING_TESTED', notes: 'Sandbox/regulated-feed only. Live trading disabled.' },
-  { providerId: 'identity.kyc', domain: 'REGULATED', state: 'UNCONFIGURED', notes: 'LIVE_EXTERNAL_KYC remains false.' },
-  { providerId: 'payments.rails', domain: 'REGULATED', state: 'UNCONFIGURED', notes: 'LIVE_BANKING_RAILS remains false.' },
-];
+function mapDomain(domain: ProviderDomain): ProviderAcceptanceRow['domain'] {
+  if (domain === 'HSM' || domain === 'KMS' || domain === 'SECRET_MANAGER') {
+    return 'HSM';
+  }
+  if (domain === 'ORACLE_DATA_SOURCE') {
+    return 'ORACLE';
+  }
+  if (domain === 'CUSTODY_PROVIDER') {
+    return 'CUSTODY';
+  }
+  if (
+    domain === 'IDENTITY_KYC' ||
+    domain === 'SANCTIONS_PEP' ||
+    domain === 'AML_TRANSACTION_MONITORING' ||
+    domain === 'TRAVEL_RULE' ||
+    domain === 'BANKING_REFERENCE'
+  ) {
+    return 'REGULATED';
+  }
+  return 'INFRASTRUCTURE';
+}
 
+function mapLifecycle(state: AcceptanceState, engineeringTested: boolean, externalEvidence: boolean, humanAccepted: boolean): ProviderLifecycleState {
+  if (state === 'PRODUCTION_ELIGIBLE') {
+    return 'PRODUCTION_ELIGIBLE';
+  }
+  if (state === 'HUMAN_ACCEPTED' || humanAccepted) {
+    return 'HUMAN_ACCEPTED';
+  }
+  if (state === 'EXTERNAL_EVIDENCE_PROVIDED' || externalEvidence) {
+    return 'EXTERNALLY_EVIDENCED';
+  }
+  if (state === 'ENGINEERING_TESTED' || engineeringTested) {
+    return 'ENGINEERING_TESTED';
+  }
+  return 'UNCONFIGURED';
+}
+
+/**
+ * Consume the actual Chunk 82 ProductionProviderMatrix.
+ * Engineering-tested providers remain distinct from HUMAN_ACCEPTED
+ * and PRODUCTION_ELIGIBLE. No provider is promoted without evidence.
+ */
 export function snapshotProviderAcceptance(): ProviderAcceptanceMatrix {
-  const rows: ProviderAcceptanceRow[] = PROVIDER_ROWS.map((row) =>
+  const fixture = createProviderAcceptanceFixture();
+  const inputs = fixture.suites.map((suite) =>
     Object.freeze({
-      ...row,
+      providerId: suite.providerId,
+      domain: suite.domain,
+      configured: true,
+      suite,
+      evidence: missingEvidenceFor(suite.providerId, suite.domain),
+      humanAccepted: false,
+      humanReviewerKind: null,
+      nowUtc: fixture.nowUtc,
+    }),
+  );
+  const report = buildAcceptanceReport(inputs, fixture.nowUtc);
+  const matrix: ProductionProviderMatrix = buildProductionProviderMatrix(report.results);
+  const rows: ProviderAcceptanceRow[] = matrix.rows.map((row) =>
+    Object.freeze({
+      providerId: row.providerId,
+      domain: mapDomain(row.domain),
+      state: mapLifecycle(
+        row.productionEligible
+          ? 'PRODUCTION_ELIGIBLE'
+          : row.humanAccepted
+            ? 'HUMAN_ACCEPTED'
+            : row.externalEvidence
+              ? 'EXTERNAL_EVIDENCE_PROVIDED'
+              : row.engineeringTested
+                ? 'ENGINEERING_TESTED'
+                : 'NOT_CONFIGURED',
+        row.engineeringTested,
+        row.externalEvidence,
+        row.humanAccepted,
+      ),
+      notes: row.engineeringTested
+        ? 'Chunk 82 ENGINEERING_TESTED. Distinct from HUMAN_ACCEPTED and PRODUCTION_ELIGIBLE.'
+        : 'Chunk 82 provider slot is not production eligible.',
       productionEligible: false as const,
     }),
   );
@@ -37,7 +96,9 @@ export function snapshotProviderAcceptance(): ProviderAcceptanceMatrix {
     externallyEvidenced: byState('EXTERNALLY_EVIDENCED'),
     humanAccepted: byState('HUMAN_ACCEPTED'),
     productionEligible: Object.freeze(rows.filter((row) => row.productionEligible).map((row) => row.providerId)),
-    digest: sha256Text(rows.map((row) => `${row.providerId}:${row.state}:${String(row.productionEligible)}`).join('|')),
+    digest: sha256Text(
+      `${matrix.matrixDigest}|${rows.map((row) => `${row.providerId}:${row.state}:${String(row.productionEligible)}`).join('|')}`,
+    ),
   });
 }
 
@@ -51,7 +112,7 @@ export function reportHsmState(): {
     state: 'SIMULATION_HSM',
     simulationSatisfiesExternalHardware: false,
     fixtureSatisfiesExternalHardware: false,
-    notes: 'Test fixture / simulation HSM cannot satisfy a policy requiring externally verified hardware.',
+    notes: 'Test fixture / simulation HSM cannot satisfy a policy requiring externally verified hardware. CONFIGURED_UNVERIFIED is not upgraded.',
   });
 }
 

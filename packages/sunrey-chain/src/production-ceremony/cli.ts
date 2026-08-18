@@ -75,8 +75,8 @@ export function runProductionCeremonyCommand(argv: readonly string[], root = pro
       economicBundleHash: economicBundleHash(),
       cryptoPolicyHash: cryptoPolicyHash(),
       validatorCandidateSetHash: validatorSetHashFromDossiers(dossiers),
-      networkId: 'net_sunrey_production_candidate_1',
-      chainId: 'chn_sunrey_production_candidate_1',
+      networkId: 'net_sunrey_production_candidate_2',
+      chainId: 'chn_sunrey_production_candidate_2',
       addressHrp: 'srprd',
       allocationManifestHash: productionAllocationHash(),
     });

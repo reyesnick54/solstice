@@ -25,7 +25,6 @@ import { modelsForProfile, quorumBoundaryCases } from './formal/models/index.ts'
 import { MODEL_CRYPTO_STATES } from './formal/models/crypto-policy.ts';
 import { MODEL_INTEROP_ASSET } from './formal/models/interop-asset.ts';
 import { FORMAL_SMOKE_PROFILE } from './formal/profiles.ts';
-import { FORMAL_MODEL_IDS } from './formal/types.ts';
 import { loadFormalModelRegistry } from './formal/registry.ts';
 import { buildFormalVerificationReport, publicAssuranceView } from './formal/report.ts';
 import { allDevelopmentTraces } from './formal/traces.ts';
@@ -38,19 +37,22 @@ describe('Chunk 61 formal models', () => {
     assert.equal(registry.claimLanguage, 'model checked within stated bounds');
     assert.equal(registry.notWholeSystemVerification, true);
     assert.equal(registry.selectedTool, 'TLA+/TLC');
-    assert.equal(registry.models.length, 19);
+    assert.equal(registry.models.length, 20);
     assert.ok(registry.models.length >= 17);
     const ids = new Set(registry.models.map((row) => row.modelId));
+    for (const required of FORMAL_MODEL_IDS) {
     for (const required of [
       'CONSENSUS_SAFETY',
       'NATIVE_MONETARY_POLICY',
       'PROTOCOL_TREASURY',
       'GOVERNANCE_OPERATION_SAFETY',
       'CROSS_ECONOMIC_INVARIANTS',
+      'CAPABILITY_ACTIVATION_SAFETY',
+    ]) {
     ] as const) {
       assert.equal(ids.has(required), true, required);
     }
-    assert.equal(registry.models.length, FORMAL_MODEL_IDS.length);
+    assert.equal(ids.has('GENESIS_EXECUTION_AUTHORIZATION'), true);
   });
 
   it('model-checks the smoke campaign within stated bounds', () => {

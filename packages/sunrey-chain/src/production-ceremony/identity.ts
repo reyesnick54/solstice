@@ -21,8 +21,15 @@ import {
   ECONOMIC_REHEARSAL_CHAIN_ID,
   ECONOMIC_REHEARSAL_NETWORK_ID,
 } from '../economic-rehearsal/identity.ts';
+import { CANDIDATE_V2_ID } from '../mainnet/candidate-v2/identity.ts';
+import { FIRST_MAINNET_RC_ID } from '../release-candidate/mainnet/types.ts';
 import { SUNREY_TESTNET_1_CHAIN_ID, SUNREY_TESTNET_1_NETWORK_ID } from '../testnet/identity.ts';
 import { RESERVED_PRODUCTION_NETWORK_ID } from '../wallet/types.ts';
+import {
+  PREGENESIS_CHAIN_ID,
+  PREGENESIS_ID,
+  PREGENESIS_NETWORK_ID,
+} from '../pregenesis/identity.ts';
 
 export const PRODUCTION_CEREMONY_DISPLAY_NAME = 'SunRey Production Genesis Ceremony' as const;
 export const DRESS_REHEARSAL_DISPLAY_NAME = 'SunRey Production Genesis Ceremony Dress Rehearsal 1' as const;
@@ -35,8 +42,8 @@ export const DRESS_REHEARSAL_GENESIS_VERSION = 'production-ceremony-rehearsal-1'
 export const DRESS_REHEARSAL_FIXTURE_GENESIS_TIME_MS = 1_767_225_600_000n;
 export const DRESS_REHEARSAL_FIXTURE_GENESIS_TIME_UTC = '2026-01-01T00:00:00.000Z' as const;
 
-export const EXPECTED_CANDIDATE_V2_ID = 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2' as const;
-export const EXPECTED_MAINNET_RC_ID = 'SUNREY_MAINNET_RC_1' as const;
+export const EXPECTED_CANDIDATE_V2_ID = CANDIDATE_V2_ID;
+export const EXPECTED_MAINNET_RC_ID = FIRST_MAINNET_RC_ID;
 export const REHEARSAL_CANDIDATE_V2_ID = 'SUNREY_PGC_REHEARSAL_CANDIDATE_V2' as const;
 export const REHEARSAL_MAINNET_RC_ID = 'SUNREY_PGC_REHEARSAL_MAINNET_RC' as const;
 
@@ -51,6 +58,7 @@ export const FORBIDDEN_CEREMONY_NETWORK_IDS = [
   SUNREY_TESTNET_1_NETWORK_ID,
   LAUNCH_REHEARSAL_NETWORK_ID,
   ECONOMIC_REHEARSAL_NETWORK_ID,
+  PREGENESIS_NETWORK_ID,
   'net_sunrey_local_dev',
   'net_sunrey_simulation',
   'net_sunrey_development',
@@ -61,6 +69,7 @@ export const FORBIDDEN_CEREMONY_CHAIN_IDS = [
   SUNREY_TESTNET_1_CHAIN_ID,
   LAUNCH_REHEARSAL_CHAIN_ID,
   ECONOMIC_REHEARSAL_CHAIN_ID,
+  PREGENESIS_CHAIN_ID,
   'chn_sunrey_local_dev',
   'chn_sunrey_simulation',
   'chn_sunrey_development',
@@ -74,6 +83,9 @@ export const FORBIDDEN_PRODUCTION_INPUT_IDENTITIES = [
   LAUNCH_REHEARSAL_NETWORK_ID,
   ECONOMIC_REHEARSAL_NETWORK_ID,
   SUNREY_TESTNET_1_NETWORK_ID,
+  PREGENESIS_NETWORK_ID,
+  PREGENESIS_CHAIN_ID,
+  PREGENESIS_ID,
 ] as const;
 
 export function assertDressRehearsalIdentity(networkId: string, chainId: string, addressHrp: string): void {

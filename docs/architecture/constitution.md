@@ -1140,6 +1140,17 @@ treasury mint. Production treasury remains inactive. Do not create
 `packages/reserve-bank`. See
 [`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
+Chunk 86 implements the SunRey production-environment provisioning
+control plane at `packages/sunrey-chain/src/infra/provisioning`.
+Capability `sunrey-production-provisioning` is `IMPLEMENTED`. It
+extends Chunk 66. It binds the actual merged Chunk 81–85 artifacts,
+produces a deterministic plan before any infrastructure mutation, and
+does not execute genesis, enable `LIVE_*` flags, or activate customer
+financial capabilities. Do not create
+`packages/sunrey-production-platform`,
+`packages/mainnet-infrastructure-v2`, or
+`packages/cloud-control-plane`. See
+[`chunk-86-production-provisioning.md`](./chunk-86-production-provisioning.md).
 Chunk 85 implements the SunRey production genesis ceremony, validator
 onboarding, and launch-authorization package at
 `packages/sunrey-chain/src/production-ceremony`. Capability
@@ -1160,6 +1171,18 @@ Do not create `packages/production-handoff`, `packages/sunrey-handoff`,
 `packages/day-2-ops`, `packages/production-ops`, or
 `packages/operator-acceptance`. See
 [`chunk-90-production-handoff.md`](./chunk-90-production-handoff.md).
+Chunk 88 implements the SunRey authorized production genesis execution
+engine and launch control room at
+`packages/sunrey-chain/src/genesis-execution`. Capability
+`sunrey-production-genesis-execution` is `IMPLEMENTED`. The complete
+real-production path exists in code. Automated tests use isolated
+rehearsal inputs only. Engineering qualification is not authorization.
+AI cannot occupy a human role. Chain genesis does not automatically
+enable customer financial capabilities or `LIVE_*` flags. Do not create
+`packages/genesis-execution`, `packages/sunrey-genesis-execution`,
+`packages/production-genesis-execution`, `packages/mainnet-execution`,
+or `packages/launch-execution`. See
+[`chunk-88-genesis-execution.md`](./chunk-88-genesis-execution.md).
 Chunk 82 implements external production provider onboarding,
 acceptance testing, and evidence qualification at
 `packages/sunrey-chain/src/providers`. Capability
@@ -1170,6 +1193,29 @@ certification, or human approvals. Do not create
 `packages/provider-acceptance`, `packages/production-providers`,
 `packages/external-providers`, or `packages/sunrey-providers`. See
 [`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
+Chunk 87 implements the isolated SunRey pre-genesis production shadow
+network and operational qualification system at
+`packages/sunrey-chain/src/pregenesis`. Capability
+`sunrey-pregenesis-qualification` is `IMPLEMENTED`. It uses distinct
+network ID, chain ID, genesis, keys, and address HRP. It does not
+launch mainnet, enable `LIVE_*` flags, or treat
+`PREGENESIS_ENGINEERING_QUALIFIED` as production authorization. Do not
+create `packages/sunrey-pregenesis`, `packages/pregenesis`,
+`packages/shadow-network`, `packages/pregenesis-qualification`, or
+`packages/sunrey-shadow`. See
+[`chunk-87-pregenesis-qualification.md`](./chunk-87-pregenesis-qualification.md).
+
+Chunk 89 implements SunRey post-genesis stabilization, safe-mode
+operations, and progressive production capability activation at
+`packages/sunrey-chain/src/post-genesis`. Capability
+`sunrey-post-genesis-stabilization` is `IMPLEMENTED`. Automated tests
+use rehearsal networks. It does not launch mainnet, enable `LIVE_*`
+flags, or activate real production capabilities. Genesis does not
+automatically enable regulated or high-risk financial services. Do not
+create `packages/post-genesis`, `packages/sunrey-post-genesis`,
+`packages/stabilization`, `packages/capability-activation`, or
+`packages/production-activation`. See
+[`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
 
 ## Agent stop rule
 

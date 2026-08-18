@@ -1,0 +1,36 @@
+# Extended pre-genesis burn-in. Manual only.
+# Do not claim a duration that this workflow has not actually executed.
+name: SunRey pre-genesis burn-in
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pregenesis-burn-in:
+    name: pregenesis-extended-burn-in
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Bounded shadow qualification
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
+
+      - name: Record burn-in metadata
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis burn-in
+
+      - name: Verify
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
