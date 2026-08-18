@@ -152,6 +152,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-provider-runtime | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -782,3 +783,12 @@ It extends Chunk 66. CI uses local/rehearsal infrastructure only.
 Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
+Chunk 91 implements the executable provider runtime at
+`packages/sunrey-chain/src/provider-runtime`. Capability
+`sunrey-provider-runtime` is `IMPLEMENTED`. See
+[`chunk-91-provider-runtime.md`](./chunk-91-provider-runtime.md).
+It extends Chunks 66, 68, 69, 82, and 90. Adapter success is not
+approval. Do not create `packages/provider-runtime`,
+`packages/sunrey-provider-runtime`, `packages/executable-providers`,
+`packages/provider-adapters`, or `packages/integration-providers`.
+The evaluator returns `mustStop: false`.

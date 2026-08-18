@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-91",
+  "title": "Implement the SunRey executable production provider runtime and credential-injected integration framework",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "identity",
+    "kernel",
+    "sunrey-chain",
+    "sunrey-production-infrastructure",
+    "sunrey-production-oracles",
+    "sunrey-regulated-integration",
+    "sunrey-production-provider-acceptance",
+    "sunrey-production-handoff",
+    "sunrey-provider-runtime"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Local mocks, sandbox-shape tests, and credential-injected adapters. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority. evaluateChunkRequirements returns mustStop: false. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+}

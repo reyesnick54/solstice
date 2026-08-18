@@ -3391,6 +3391,47 @@
       "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
+    },
+    {
+      "id": "sunrey-provider-runtime",
+      "name": "SunRey executable production provider runtime",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/provider-runtime/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/provider-runtime/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ExecutableProviderAdapter",
+          "kind": "type"
+        },
+        {
+          "name": "ProviderRuntime",
+          "kind": "type"
+        },
+        {
+          "name": "ProviderSession",
+          "kind": "type"
+        },
+        {
+          "name": "ProviderRuntimeReadinessReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/provider-runtime",
+        "packages/sunrey-provider-runtime",
+        "packages/executable-providers",
+        "packages/provider-adapters",
+        "packages/integration-providers"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -4106,10 +4147,15 @@
     "packages/sunrey-handoff",
     "packages/day-2-ops",
     "packages/production-ops",
-    "packages/operator-acceptance"
+    "packages/operator-acceptance",
     "packages/sunrey-production-platform",
     "packages/mainnet-infrastructure-v2",
-    "packages/cloud-control-plane"
+    "packages/cloud-control-plane",
+    "packages/provider-runtime",
+    "packages/sunrey-provider-runtime",
+    "packages/executable-providers",
+    "packages/provider-adapters",
+    "packages/integration-providers"
   ],
   "capabilities": [
     {
@@ -4884,6 +4930,13 @@
       "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
+    },
+    {
+      "id": "sunrey-provider-runtime",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
     }
   ],
   "boundedContexts": [

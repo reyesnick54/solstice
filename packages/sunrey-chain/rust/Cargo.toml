@@ -21,6 +21,7 @@ members = [
   "crates/sdk",
   "crates/assurance",
   "crates/formal",
+  "crates/provider-runtime",
 ]
 
 [workspace.package]
@@ -50,6 +51,7 @@ sunrey-ops = { path = "crates/ops" }
 sunrey-sdk = { path = "crates/sdk" }
 sunrey-assurance = { path = "crates/assurance" }
 sunrey-formal = { path = "crates/formal" }
+sunrey-provider-runtime = { path = "crates/provider-runtime" }
 hex = "0.4.3"
 serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.135"

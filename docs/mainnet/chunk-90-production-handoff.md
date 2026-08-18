@@ -81,3 +81,10 @@ sunrey-ops production evidence-seal
 sunrey-ops production handoff
 sunrey-ops production readiness
 ```
+
+Chunk 91 feeds day-2 provider renewal, credential rotation, provider
+outage, evidence expiration, provider replacement, and incident
+command with executable runtime status. Runtime success remains
+engineering evidence only. See
+[../providers/chunk-91-provider-runtime.md](../providers/chunk-91-provider-runtime.md)
+and [../runbooks/provider-runtime-incident.md](../runbooks/provider-runtime-incident.md).

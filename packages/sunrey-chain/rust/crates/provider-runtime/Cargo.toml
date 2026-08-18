@@ -1,0 +1,10 @@
+[package]
+name = "sunrey-provider-runtime"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "SunRey executable provider-runtime invariants. Not a second ledger or live provider SDK."
+
+[dependencies]
+thiserror.workspace = true

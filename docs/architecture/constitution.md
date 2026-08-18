@@ -1217,6 +1217,19 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
 
+Chunk 91 implements the SunRey executable production provider runtime
+and credential-injected integration framework at
+`packages/sunrey-chain/src/provider-runtime`. Capability
+`sunrey-provider-runtime` is `IMPLEMENTED`. It extends Chunks 66, 68,
+69, 82, and 90. Local mocks are the CI path. Sandbox credentials are
+optional `SecretReference` bindings. Adapter success is not legal or
+commercial approval. `PRODUCTION_AUTHORIZED` requires configured
+evidence and human authority. Do not create
+`packages/provider-runtime`, `packages/sunrey-provider-runtime`,
+`packages/executable-providers`, `packages/provider-adapters`, or
+`packages/integration-providers`. See
+[`chunk-91-provider-runtime.md`](./chunk-91-provider-runtime.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey executable production provider runtime (Chunk 91,
+  `packages/sunrey-chain/src/provider-runtime`):
+  `ExecutableProviderAdapter`, `ProviderRuntime`, sessions, credential
+  bindings, local mocks, sandbox harness, KMS/HSM/PQC probes, oracle
+  clients, KYC/screening/Travel Rule/custody/banking technical
+  adapters, webhook security, circuit breakers, and
+  `sunrey-ops provider runtime-test`. Capability
+  `sunrey-provider-runtime` is `IMPLEMENTED`. Adapter success is not
+  legal or commercial approval. `PRODUCTION_AUTHORIZED` remains gated
+  on configured evidence and human authority. See
+  `docs/providers/chunk-91-provider-runtime.md`.
 - SunRey production handoff and day-2 operations control plane
   (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
   `ProductionHandoffPackage`, system inventory, responsibility matrix,
