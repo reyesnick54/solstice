@@ -656,6 +656,14 @@ It extends Chunk 44 and does not create a second MoonRey asset or mint
 path. Production caps remain `UNCONFIGURED`. Do not create
 `packages/moonrey-policy`, `packages/moonrey-economics`, or
 `packages/issuance-policy`. The evaluator returns `mustStop: false`.
+Chunk 79 implements production governance operations, economic policy
+change control, and bounded emergency authority at
+`packages/sunrey-chain/src/governance-ops`. Capability
+`sunrey-governance-operations` is `IMPLEMENTED`. See
+[`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md).
+Existing Chunk 40 protocol governance remains authoritative. Do not
+create `packages/governance-ops`, `packages/sunrey-governance`, or
+`packages/governance-token`. The evaluator returns `mustStop: false`.
 Chunk 77 implements the blockchain-native SunRey protocol treasury
 and reserve architecture at
 `packages/sunrey-chain/src/economics/treasury`. Capability

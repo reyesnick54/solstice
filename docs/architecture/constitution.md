@@ -1073,6 +1073,16 @@ or activate production monetary policy. Do not create
 `packages/economic-bridge`. See
 [`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
 
+Chunk 79 implements SunRey production governance operations, economic
+policy change control, and bounded emergency authority at
+`packages/sunrey-chain/src/governance-ops`. Capability
+`sunrey-governance-operations` is `IMPLEMENTED`. It orchestrates
+existing Chunk 40 protocol governance and does not introduce a
+governance token, AI voting, a competing governance engine, or an
+authority that can rewrite finalized history. Do not create
+`packages/governance-ops`, `packages/sunrey-governance`, or
+`packages/governance-token`. See
+[`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md).
 Chunk 77 implements the blockchain-native SunRey protocol treasury
 and reserve architecture at
 `packages/sunrey-chain/src/economics/treasury`. Capability

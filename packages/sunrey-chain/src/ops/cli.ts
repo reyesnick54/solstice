@@ -40,6 +40,7 @@ import {
   fixtureValidatorRecord,
   runValidatorEconomicsSimulation,
 } from '../validator-economics/index.ts';
+import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -199,6 +200,7 @@ const VALIDATOR_COMMANDS = [
   'upgrade',
   'incident',
   'crypto',
+  'governance',
 ] as const;
 
 export function opsUsage(): string {
@@ -236,6 +238,7 @@ export function opsUsage(): string {
     'sunrey-ops crypto inventory',
     'sunrey-ops crypto readiness',
     'sunrey-ops crypto benchmark',
+    ...governanceOpsUsage().split('\n'),
   ].join('\n');
 }
 
@@ -246,6 +249,9 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   if (group === 'crypto') {
     const result = runCryptoCommand(args.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
+  }
+  if (group === 'governance') {
+    return runGovernanceOpsCommand(args.slice(1));
   }
   if (!group || !(VALIDATOR_COMMANDS as readonly string[]).includes(group)) {
     return { ok: false, command: group ?? 'missing', payload: { error: 'unknown ops command', usage: opsUsage() } };

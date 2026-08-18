@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-79",
+  "title": "SunRey production governance operations, economic policy change control, and bounded emergency authority",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-protocol-governance",
+    "sunrey-root-of-trust",
+    "sunrey-mainnet-readiness",
+    "sunrey-formal-assurance",
+    "sunrey-monetary-constitution",
+    "moonrey-policy-governance",
+    "sunrey-governance-operations"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/governance-ops. Operational orchestration around canonical Chunk 40 protocol governance. No governance token, AI voting, competing governance engine, or finalized-history rewrite. evaluateChunkRequirements returns mustStop: false. Do not create packages/governance-ops, packages/sunrey-governance, or packages/governance-token."
+}

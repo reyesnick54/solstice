@@ -102,6 +102,15 @@ export function rehearseValidatorEconomics(): ValidatorEconomicsRehearsalResult 
 }
 
 export function rehearseNativeAssets(): NativeAssetRehearsalResult {
+  const engine = new FeeEngine();
+  engine.faucet('alice', 1_000_000n);
+  engine.activateFeePolicyV2();
+  const normal = engine.execute({
+    tx: { ...transferTx(txId('rehearse-normal'), 'alice', 'bob', 25n, 500_000n), policyVersion: 2, signatureClass: 'CLASSICAL' },
+    blockHeight: 1,
+    blockId: 'rehearse_1',
+    proposerId: 'val_a',
+    validators: FOUR_VALIDATORS,
   const monetary = rehearseMonetaryConstitution();
   const stack = createIntegratedEconomicStack();
   const normal = stack.executeTransferFee({

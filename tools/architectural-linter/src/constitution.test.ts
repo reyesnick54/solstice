@@ -1814,6 +1814,7 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-71-monetary-constitution.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunks/chunk-71-monetary-constitution.json')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/economics/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economics/src/index.ts')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/monetary-policy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/tokenomics')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/genesis-economy')), false);
@@ -2006,5 +2007,26 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-policy')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-economics')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/issuance-policy')), false);
+  });
+
+  it('CHUNK-79 implements SunRey production governance operations', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-governance-operations').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-governance-operations').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-governance-operations').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-79',
+    );
+    assert.ok(declared, 'CHUNK-79 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-79-governance-operations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/governance/chunk-79-production-governance-operations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/governance-ops/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/governance-ops')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/governance-token')), false);
   });
 });

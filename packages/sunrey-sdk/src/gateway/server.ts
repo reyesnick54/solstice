@@ -473,6 +473,18 @@ function dispatch(
   if (method === 'GET' && path === '/v1/governance/activations') {
     return json(200, { scheduled: platform.governance() });
   }
+  if (method === 'GET' && path === '/v1/governance/operations/package') {
+    return json(200, platform.governanceOperations().package);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/diff') {
+    return json(200, platform.governanceOperations().diff);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/activation') {
+    return json(200, platform.governanceOperations().activation);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/emergency') {
+    return json(200, platform.governanceOperations().emergency);
+  }
 
   if (method === 'GET' && path === '/v1/oracles/providers') {
     return json(200, { providers: platform.oracles() });
@@ -738,6 +750,10 @@ export const PUBLIC_ROUTES = [
   'GET /v1/validators/{id}/penalties',
   'GET /v1/validators/{id}/unbond',
   'GET /v1/governance/proposals',
+  'GET /v1/governance/operations/package',
+  'GET /v1/governance/operations/diff',
+  'GET /v1/governance/operations/activation',
+  'GET /v1/governance/operations/emergency',
   'GET /v1/oracles/facts',
   'GET /v1/productive/moonrey',
   'GET /v1/productive/moonrey/policy',

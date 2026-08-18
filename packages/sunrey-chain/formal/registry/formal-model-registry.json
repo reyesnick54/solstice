@@ -445,6 +445,26 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     },
     {
+      "modelId": "GOVERNANCE_OPERATION_SAFETY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/governance-ops/engine.ts",
+        "packages/sunrey-chain/src/formal/models/governance-ops.ts"
+      ],
+      "assumptions": [
+        "human multi-person approvals bind an exact package hash",
+        "activation is height or epoch deterministic",
+        "emergency actions are drawn from a closed catalog",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "maxHeight": 3, "validators": 3 },
+      "properties": [
+        "WRONG_PACKAGE_HASH_CANNOT_ACTIVATE",
+        "INSUFFICIENT_APPROVAL_CANNOT_ACTIVATE",
+        "ACTIVATION_NOT_BEFORE_COORDINATE",
+        "AI_CANNOT_AUTHORIZE",
+        "EMERGENCY_ACTION_CANNOT_MINT",
+        "EMERGENCY_RESTRICTION_SCOPE_BOUNDED"
       "modelId": "PROTOCOL_TREASURY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -485,6 +505,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/GovernanceOperationSafety.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/governance-ops.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/ProtocolTreasury.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/protocol-treasury.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",

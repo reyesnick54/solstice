@@ -237,6 +237,22 @@ export class GovernanceClient {
   activations(): Promise<unknown> {
     return this.http.get('/v1/governance/activations');
   }
+
+  operationPackage(): Promise<unknown> {
+    return this.http.get('/v1/governance/operations/package');
+  }
+
+  policyDiff(): Promise<unknown> {
+    return this.http.get('/v1/governance/operations/diff');
+  }
+
+  activationStatus(): Promise<unknown> {
+    return this.http.get('/v1/governance/operations/activation');
+  }
+
+  emergencyStatus(): Promise<unknown> {
+    return this.http.get('/v1/governance/operations/emergency');
+  }
 }
 
 export class OracleClient {

@@ -116,6 +116,18 @@ export function monetaryHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function governanceOpsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_governance_ops_activate', 'governance_operations', 'GOVERNANCE_OPERATION_SAFETY', [
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'MarkApproved', args: {} },
+    { domain: 'governance_operations', action: 'Schedule', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'Activate', args: { height: 2 } },
+  ]);
+}
+
 export function genesisHappyTrace(): LogicalTrace {
   return makeTrace('trace_genesis_allocation', 'genesis_allocation', 'GENESIS_ALLOCATION_CONSERVATION', [
     { domain: 'genesis_allocation', action: 'Allocate(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
@@ -149,6 +161,7 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),
+    governanceOpsHappyTrace(),
     protocolTreasuryHappyTrace(),
     crossEconomicHappyTrace(),
   ];

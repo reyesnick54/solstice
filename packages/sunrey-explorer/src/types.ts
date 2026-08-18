@@ -235,6 +235,10 @@ export type IndexedGovernance = {
   readonly moduleHashes: readonly string[];
   readonly protocolVersion: string;
   readonly activationResult: string | null;
+  readonly policyDiffHash?: string;
+  readonly activeVersion?: string;
+  readonly emergencyRestrictionClass?: string;
+  readonly restrictionState?: string;
 };
 
 export type IndexedInteropClient = {
