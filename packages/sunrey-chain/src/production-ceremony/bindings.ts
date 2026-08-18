@@ -51,7 +51,7 @@ export type ProviderAcceptanceBinding = {
   readonly acceptanceStatus: AcceptanceState | 'NOT_PRESENT';
   readonly engineeringTested: boolean;
   readonly humanAccepted: boolean;
-  readonly productionEligible: false;
+  readonly productionEligible: boolean;
   readonly matrix: ProductionProviderMatrix | null;
   readonly notes: string;
 };

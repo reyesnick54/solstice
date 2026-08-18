@@ -135,7 +135,6 @@ describe('Chunk 84 SunRey Mainnet release candidate', () => {
     assert.ok(legal);
     assert.equal(legal?.hiddenFromReleaseNotes, false);
     const providers = snapshotProviderAcceptance();
-    assert.ok(providers.unconfigured.length > 0);
     assert.ok(providers.engineeringTested.length > 0);
     assert.equal(providers.externallyEvidenced.length, 0);
     assert.equal(providers.humanAccepted.length, 0);

@@ -441,7 +441,7 @@ export type ProductionGenesisCeremonyDressRehearsal = {
   readonly evidence: CeremonyEvidenceBundle;
   readonly genesisHash: string;
   readonly transcriptVerified: boolean;
-  readonly usableForProduction: false;
+  readonly usableForProduction: boolean;
   readonly realProductionKeysCreated: false;
   readonly mainnetEnabled: false;
 };
