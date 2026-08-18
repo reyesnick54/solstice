@@ -20,7 +20,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 describe('Chunk 94 developer platform', () => {
   it('registers applications with environment, permissions, and production gating', () => {
     const portal = new DeveloperPortalApi();
-    const owner = portal.createAccount({ email: 'owner@example.test', displayName: 'Owner' });
+    const owner = portal.registerDeveloper({ email: 'owner@example.test', displayName: 'Owner' });
     const org = must(portal.createOrganization({ name: 'Acme', ownerAccountId: owner.accountId }));
     const sandbox = must(portal.createApplication({
       actorAccountId: owner.accountId,
@@ -281,7 +281,7 @@ describe('Chunk 94 developer platform', () => {
 
   it('keeps developer RBAC distinct from protocol governance', () => {
     const { portal, owner, org } = provision();
-    const viewer = portal.createAccount({ email: 'view@example.test', displayName: 'Viewer' });
+    const viewer = portal.registerDeveloper({ email: 'view@example.test', displayName: 'Viewer' });
     const added = portal.addMember({
       actorAccountId: owner.accountId,
       organizationId: org.organizationId,
@@ -378,7 +378,7 @@ describe('Chunk 94 developer platform', () => {
 
 function provision(permissions: readonly ('CHAIN_READ' | 'WEBHOOK_MANAGE' | 'MARKET_DATA_READ' | 'TRANSACTION_SUBMIT' | 'SANDBOX_MANAGE' | 'FAUCET_REQUEST')[] = ['CHAIN_READ']) {
   const portal = new DeveloperPortalApi();
-  const owner = portal.createAccount({ email: 'owner@example.test', displayName: 'Owner' });
+  const owner = portal.registerDeveloper({ email: 'owner@example.test', displayName: 'Owner' });
   const org = must(portal.createOrganization({ name: 'Org', ownerAccountId: owner.accountId }));
   const app = must(portal.createApplication({
     actorAccountId: owner.accountId,

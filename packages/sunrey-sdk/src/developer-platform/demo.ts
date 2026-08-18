@@ -1,7 +1,7 @@
 import { DeveloperPortalApi } from './index.ts';
 
 const portal = new DeveloperPortalApi();
-const account = portal.createAccount({ email: 'demo@example.test', displayName: 'Demo Developer' });
+const account = portal.registerDeveloper({ email: 'demo@example.test', displayName: 'Demo Developer' });
 const org = portal.createOrganization({ name: 'Demo Org', ownerAccountId: account.accountId });
 if (!org.ok) {
   throw new Error(org.reason);

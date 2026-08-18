@@ -11,6 +11,7 @@ import {
   publicRegistration,
   startLocalDeveloperStack,
   DeveloperPortalApi,
+  InjectedDevelopmentSigner,
   verifyWebhookSignature,
 } from '../src/index.ts';
 
@@ -20,7 +21,7 @@ const portal = new DeveloperPortalApi({ transport: async (input) => {
   return { ok: true };
 } });
 
-const developer = portal.createAccount({ email: 'sample@example.test', displayName: 'Sample' });
+const developer = portal.registerDeveloper({ email: 'sample@example.test', displayName: 'Sample' });
 const org = portal.createOrganization({ name: 'sample-org', ownerAccountId: developer.accountId });
 if (!org.ok) {
   throw new Error(org.reason);
@@ -50,18 +51,21 @@ const alice = createDevelopmentWallet({ walletId: 'sample-alice' });
 const bob = createDevelopmentWallet({ walletId: 'sample-bob' });
 await client.wallet.register(publicRegistration(alice));
 await client.wallet.register(publicRegistration(bob));
-await client.faucet(alice.account.accountId, 50_000n);
+await client.faucet(alice.account.accountId, 1_000_000n);
 const nonce = await client.wallet.nonce(alice.account.accountId);
 const built = client.buildTransfer({
   account: alice.account,
   toAccountId: bob.account.accountId,
   toAddressText: bob.account.address.text,
   amount: 1_000n,
-  maxFee: 500n,
+  maxFee: 2_000n,
   nonce: BigInt(nonce.nonce),
 });
+const signer = new InjectedDevelopmentSigner(alice.engine.keystore);
+const signedHex = client.signLocally(signer, alice.keyId, built);
 const submitted = await client.submitTransaction({
-  signed_envelope_hex: built.unsigned_envelope_hex,
+  signed_envelope_hex: signedHex,
+  actor: alice.account.ownerActorId,
   from_account_id: alice.account.accountId,
   to_account_id: bob.account.accountId,
   amount: 1_000n,

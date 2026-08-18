@@ -201,7 +201,7 @@ function testnetCommand(args: readonly string[], context: CliContext): string {
 
 function ensureActor(context: CliContext): void {
   if (!context.actorAccountId) {
-    context.actorAccountId = context.portal.createAccount({
+    context.actorAccountId = context.portal.registerDeveloper({
       email: 'dev@example.test',
       displayName: 'local-developer',
     }).accountId;

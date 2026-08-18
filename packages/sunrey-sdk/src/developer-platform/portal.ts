@@ -103,7 +103,7 @@ export class DeveloperPlatformEngine {
     return new Date().toISOString();
   }
 
-  createAccount(input: { readonly email: string; readonly displayName: string }): DeveloperAccount {
+  registerDeveloper(input: { readonly email: string; readonly displayName: string }): DeveloperAccount {
     const account: DeveloperAccount = {
       accountId: `devacc_${randomUUID()}`,
       email: input.email,
