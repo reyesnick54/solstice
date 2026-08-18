@@ -73,6 +73,7 @@ export {
   InteropClient,
   ExchangeClient,
   ProtocolTreasuryClient,
+  InformationClient,
   EventClient,
 } from './clients.ts';
 export { connectSunRey, connectSunReyWithFailover } from './client.ts';

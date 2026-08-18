@@ -534,6 +534,7 @@ describe('settlement, licensing, CLI, and adversarial scenarios', () => {
       samples.push(Number(process.hrtime.bigint() - started) / 1_000_000);
     }
     samples.sort((a, b) => a - b);
+    const p50 = samples[Math.floor((samples.length * 50) / 100)] ?? 0;
     const p50 = samples[Math.floor(samples.length / 2)] ?? 0;
     const p99 = samples[Math.floor((samples.length * 99) / 100)] ?? 0;
     assert.ok(p50 >= 0);

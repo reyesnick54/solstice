@@ -770,6 +770,42 @@ function dispatch(
     return json(200, submitted);
   }
 
+  if (method === 'GET' && path === '/v1/information/rights') {
+    return json(200, {
+      rights: [],
+      rawPersonalDataExported: false,
+      productionActivated: false,
+      subject_id: q.subject_id ?? null,
+    });
+  }
+  if (method === 'GET' && path === '/v1/information/requests') {
+    return json(200, { requests: [], productionActivated: false, requester_id: q.requester_id ?? null });
+  }
+  if (method === 'POST' && path === '/v1/information/consent/preview') {
+    return json(200, { preview: null, productionActivated: false });
+  }
+  if (method === 'POST' && path === '/v1/information/consent/approve') {
+    return json(200, { approved: false, productionActivated: false, reason: 'ENGINEERING_INSUFFICIENT_WITHOUT_PRIVACY_LEGAL_AUTH' });
+  }
+  if (method === 'POST' && path === '/v1/information/consent/revoke') {
+    return json(200, { revoked: false, productionActivated: false });
+  }
+  if (method === 'GET' && path === '/v1/information/usage') {
+    return json(200, { usage: [], rawPersonalData: false });
+  }
+  if (method === 'GET' && path === '/v1/information/compensation') {
+    return json(200, { compensation: [], unrestrictedMint: false });
+  }
+  if (method === 'POST' && path === '/v1/information/requests') {
+    return json(200, { submitted: false, productionActivated: false });
+  }
+  if (method === 'POST' && path === '/v1/information/clean-room') {
+    return json(200, { authorized: false, rawExport: false, productionActivated: false });
+  }
+  if (method === 'GET' && path.startsWith('/v1/information/clean-room/')) {
+    return json(200, { result: null, rawRows: false, productionActivated: false });
+  }
+
   if (method === 'POST' && path === '/v1/dev/faucet') {
     const accountId = String(rec.account_id ?? '');
     const amount = BigInt(String(rec.amount ?? '0'));
@@ -902,6 +938,16 @@ export const PUBLIC_ROUTES = [
   'POST /v1/transactions',
   'GET /v1/events',
   'POST /v1/dev/faucet',
+  'GET /v1/information/rights',
+  'GET /v1/information/requests',
+  'POST /v1/information/consent/preview',
+  'POST /v1/information/consent/approve',
+  'POST /v1/information/consent/revoke',
+  'GET /v1/information/usage',
+  'GET /v1/information/compensation',
+  'POST /v1/information/requests',
+  'POST /v1/information/clean-room',
+  'GET /v1/information/clean-room/{id}',
 ] as const;
 
 export const OPERATOR_ROUTES = ['POST /operator/v1/produce-block', 'GET /operator/v1/status'] as const;

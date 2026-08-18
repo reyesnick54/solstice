@@ -16,6 +16,11 @@ SunRey issues two credential kinds:
   Execution Authority.
 - Revoked and rotated keys are rejected.
 - Each request is scoped. Missing scope returns `WRONG_SCOPE`.
+- Human Information scopes (`HUMAN_INFORMATION_READ`,
+  `HUMAN_INFORMATION_REQUEST`, `HUMAN_INFORMATION_CLEAN_ROOM`) are
+  separate from `CHAIN_READ`. A developer API key still needs
+  application approval, purpose, consent/right, privacy policy, and
+  eligibility.
 
 ## Header
 

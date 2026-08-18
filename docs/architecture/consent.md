@@ -9,6 +9,10 @@ The Purpose Firewall defaults to DENY. A valid consent for one purpose
 version does not authorize another. Internal service identity is not
 sufficient by itself.
 
+Chunk 100 binds Human Information consent grants to this ledger. Consent
+is not ownership transfer. See
+[`../information/consent-and-purpose.md`](../information/consent-and-purpose.md).
+
 Short-lived DataUsePermits are HMAC-signed through the canonical
 `KeyProvider` purpose `DATA_USE_PERMIT_SIGNING`. Revocation blocks new
 permits immediately. Historical access audit is retained.

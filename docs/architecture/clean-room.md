@@ -7,6 +7,10 @@ receive only Egress-approved derived results. They cannot browse a
 subject's Personal Data Vault, obtain encryption keys, obtain raw
 identifiers, run arbitrary SQL, or bypass the Purpose Firewall.
 
+Chunk 100 production-candidate interfaces bind clean-room jobs to
+allow-listed computations, output classes, cohort rules, and usage
+receipts. See [`../information/privacy-clean-room.md`](../information/privacy-clean-room.md).
+
 ## Authorization
 
 Every session requires a verified `ActorContext` with

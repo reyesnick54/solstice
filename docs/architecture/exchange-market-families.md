@@ -29,6 +29,10 @@ unavailable by default.
 Market data: contract availability, purpose category, authorized
 output type. No subject-level fields.
 
+Chunk 100 production-candidate interfaces evaluate this eligibility
+before match and keep `NO_RAW_EXPORT` as the default sensitive-data
+policy. See [`../information/information-rights.md`](../information/information-rights.md).
+
 ## INTELLIGENCE_COMPUTE
 
 Instruments for GPU/CPU compute, inference, storage, bandwidth, and

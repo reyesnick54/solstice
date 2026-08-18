@@ -84,6 +84,7 @@ never be two implementations of these systems.
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
+| SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -1282,6 +1283,18 @@ and human evidence. Do not create `packages/market-operations`,
 `packages/sunrey-exchange-ops`. See
 [`chunk-95-market-operations.md`](./chunk-95-market-operations.md).
 
+Chunk 100 implements SunRey Human Information Network
+production-candidate interfaces at
+`packages/information-market/src/network`. Capability
+`sunrey-human-information-network` is `IMPLEMENTED`. It extends the
+canonical information-market, Consent, Clean Room, Personal Data Vault,
+and Exchange `HUMAN_INFORMATION_RIGHT` family. Sensitive source data
+remains off-chain. Engineering completion does not activate production.
+Do not create `packages/human-information-network`,
+`packages/information-market-v2`, `packages/human-information-v2`,
+`packages/data-marketplace`, or `packages/sunrey-information-network`.
+See
+[`chunk-100-human-information-network.md`](./chunk-100-human-information-network.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

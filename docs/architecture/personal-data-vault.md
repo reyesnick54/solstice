@@ -6,6 +6,10 @@ The vault is the subject-bound encrypted store for user-controlled
 personal data. It is not a financial asset, Consent Ledger, Clean Room,
 data marketplace, or Sol Coin.
 
+Chunk 100 Human Information descriptors and connectors reference vault
+metadata only. Raw vault contents are never exported to the blockchain
+or to a market buyer.
+
 ## Technical deletion guarantees
 
 When a deletion request is allowed by the simulation retention port:

@@ -157,6 +157,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-human-information-network | IMPLEMENTED | packages/information-market |
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 
@@ -202,6 +203,9 @@ as a proposal-only interpreter. The evaluator returns
 Chunk 16 implements machine-verifiable economic mandates and the
 Growth Orchestrator at `packages/platform`. It does not execute
 investments and does not start the Personal Economic Value Engine.
+Chunk 100 adds `MANAGE_HUMAN_INFORMATION_PREFERENCES` as an explicit
+mandate constraint. Generic financial-agent permission cannot manage
+Human Information preferences.
 
 Chunk 17 implements the Personal Economic Value Engine at
 `packages/platform/src/value`. It extends platform ownership rather
@@ -861,6 +865,18 @@ It extends Chunks 66, 68, 69, 82, and 90. Adapter success is not
 approval. Do not create `packages/provider-runtime`,
 `packages/sunrey-provider-runtime`, `packages/executable-providers`,
 `packages/provider-adapters`, or `packages/integration-providers`.
+The evaluator returns `mustStop: false`.
+Chunk 100 implements production-candidate Human Information Network
+interfaces at `packages/information-market/src/network`. Capability
+`sunrey-human-information-network` is `IMPLEMENTED`. It extends
+canonical Consent, Clean Room, Personal Data Vault, the information
+marketplace, and Exchange `HUMAN_INFORMATION_RIGHT` eligibility.
+Sensitive source data remains off-chain. Production remains
+`RESEARCH_REQUIRED` until privacy review, legal analysis, jurisdiction
+policy, terms, requester controls, and human authorization exist.
+Do not create `packages/human-information-network`,
+`packages/information-market-v2`, `packages/human-information-v2`,
+`packages/data-marketplace`, or `packages/sunrey-information-network`.
 The evaluator returns `mustStop: false`.
 Chunk 97 implements mobile wallet synchronization at
 `packages/sunrey-chain/src/wallet/mobile-sync`. Capability

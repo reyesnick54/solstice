@@ -42,6 +42,8 @@
     "demo:clean-room": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/clean-room/src/demo.ts",
     "demo:sunrey-coin": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-coin/src/demo.ts",
     "demo:information-market": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/demo.ts",
+    "demo:sunrey-human-information-network": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/demo.ts",
+    "sunrey-information": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/cli-main.ts",
     "demo:sunrey-chain": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/demo.ts",
     "demo:sunrey-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/local-node/demo.ts",
     "demo:sunrey-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/governance/demo.ts",

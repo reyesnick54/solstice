@@ -402,7 +402,10 @@ This document describes only what is implemented and tested in this tree.
 - Personal Economy Agent (Chunk 16, `packages/agent`): natural-language
   mandate interpretation, candidate ideas, and plan/goal explanation.
   Proposal-only. Cannot execute, post journals, or issue Execution
-  Authority. Must not depend on `packages/platform`.
+  Authority. Must not depend on `packages/platform`. Chunk 100
+  Human Information preference management requires an explicit
+  `MANAGE_HUMAN_INFORMATION_PREFERENCES` mandate; a generic
+  financial-agent mandate is insufficient.
 - Growth Orchestrator and mandate compiler (Chunk 16, `packages/platform`):
   versioned machine-verifiable mandates, user confirmation bound to
   ActorContext, deterministic feasibility and ranking, explainable
@@ -756,6 +759,14 @@ This document describes only what is implemented and tested in this tree.
   circuit breakers, and reopening auctions. Capability
   `sunrey-exchange-market-operations` is `IMPLEMENTED`. Production
   activation remains unlicensed without external authorization.
+- SunRey Human Information Network (Chunk 100,
+  `packages/information-market/src/network`): production-candidate
+  rights, consent, clean-room, compensation, requester, and user
+  control-center interfaces. Capability
+  `sunrey-human-information-network` is `IMPLEMENTED`. Sensitive
+  source data remains off-chain. No human-worth or social-credit
+  score. `productionActivated` remains false without privacy/legal
+  human authorization.
 - SunRey consumer Exchange (Chunk 99,
   `packages/sunrey-exchange/src/consumer`): consumer portfolio,
   indicative quotes, trade preview, buy/sell/convert with price

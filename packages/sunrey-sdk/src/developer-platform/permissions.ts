@@ -21,6 +21,9 @@ export const ROLE_PERMISSIONS: Readonly<Record<DeveloperRole, readonly Developer
     'MONETARY_PUBLIC_READ',
     'FAUCET_REQUEST',
     'SANDBOX_MANAGE',
+    'HUMAN_INFORMATION_READ',
+    'HUMAN_INFORMATION_REQUEST',
+    'HUMAN_INFORMATION_CLEAN_ROOM',
   ]),
   ADMIN: Object.freeze([
     'CHAIN_READ',
@@ -35,6 +38,9 @@ export const ROLE_PERMISSIONS: Readonly<Record<DeveloperRole, readonly Developer
     'MONETARY_PUBLIC_READ',
     'FAUCET_REQUEST',
     'SANDBOX_MANAGE',
+    'HUMAN_INFORMATION_READ',
+    'HUMAN_INFORMATION_REQUEST',
+    'HUMAN_INFORMATION_CLEAN_ROOM',
   ]),
   DEVELOPER: Object.freeze([
     'CHAIN_READ',
@@ -49,6 +55,9 @@ export const ROLE_PERMISSIONS: Readonly<Record<DeveloperRole, readonly Developer
     'MONETARY_PUBLIC_READ',
     'FAUCET_REQUEST',
     'SANDBOX_MANAGE',
+    'HUMAN_INFORMATION_READ',
+    'HUMAN_INFORMATION_REQUEST',
+    'HUMAN_INFORMATION_CLEAN_ROOM',
   ]),
   VIEWER: Object.freeze([
     'CHAIN_READ',
@@ -59,6 +68,7 @@ export const ROLE_PERMISSIONS: Readonly<Record<DeveloperRole, readonly Developer
     'GOVERNANCE_PUBLIC_READ',
     'VALIDATOR_PUBLIC_READ',
     'MONETARY_PUBLIC_READ',
+    'HUMAN_INFORMATION_READ',
   ]),
 });
 

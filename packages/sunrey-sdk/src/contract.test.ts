@@ -67,6 +67,7 @@ describe('SunRey API contract alignment', () => {
       'exchange',
       'events',
       'monetary',
+      'information',
     ];
     for (const name of names) {
       assert.ok(name in new SunReyClient({
