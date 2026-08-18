@@ -20,6 +20,11 @@
 These IDs remain candidates until human authorization. They do not reuse
 testnet, local-dev, or simulation IDs.
 
+Chunk 85 binds an exact later Production Network Candidate V2 and
+Mainnet RC into the production genesis ceremony plan. Changing those
+artifacts requires a new ceremony plan version. Candidate 1 remains
+the Chunk 65 predecessor and is not automatically Candidate V2.
+
 ## Canonical encoding
 
 Domain `SUNREY_PRODUCTION_GENESIS_CANDIDATE_V1`. Identical approved

@@ -130,5 +130,9 @@
   — complete economic launch rehearsal at
   `packages/sunrey-chain/src/economic-rehearsal`. See
   [`docs/mainnet/chunk-80-economic-mainnet-rehearsal.md`](../mainnet/chunk-80-economic-mainnet-rehearsal.md).
+- [Chunk 85 production genesis ceremony](./chunk-85-production-genesis-ceremony.md)
+  — production-genesis and validator-onboarding ceremony architecture
+  at `packages/sunrey-chain/src/production-ceremony`. See
+  [`docs/mainnet/chunk-85-production-genesis-ceremony.md`](../mainnet/chunk-85-production-genesis-ceremony.md).
 
 Implementation inventory: [`docs/build-status.md`](../build-status.md).

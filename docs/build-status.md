@@ -4,6 +4,20 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey production genesis ceremony package (Chunk 85,
+  `packages/sunrey-chain/src/production-ceremony`):
+  `ProductionGenesisCeremonyPlan` bound to an exact Mainnet RC and
+  Candidate V2 root hash, validator dossiers and acceptance,
+  simulation-labeled HSM attestation, append-only ceremony transcript,
+  deterministic genesis candidate bytes, authorization package, and
+  launch-authorization dossier. Dress rehearsal identity
+  `net_sunrey_production_genesis_ceremony_rehearsal_1` /
+  `chn_sunrey_production_genesis_ceremony_rehearsal_1` (HRP `srpgc`)
+  is unusable as production input. Capability
+  `sunrey-production-genesis-ceremony` is `IMPLEMENTED`. This is not
+  a mainnet launch. `realProductionKeysCreated=false`.
+  `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-85-production-genesis-ceremony.md`.
 - SunRey Mainnet release-candidate freeze and qualification
   (Chunk 84, `packages/sunrey-chain/src/release-candidate/mainnet`):
   versioned `SUNREY_MAINNET_RC_*` identity, source/protocol/economic/

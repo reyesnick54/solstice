@@ -431,6 +431,9 @@
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts",
+      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
     },
     {

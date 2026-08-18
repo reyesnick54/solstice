@@ -53,6 +53,10 @@ partners, or human production authorization. The production-candidate
 allocation remains zero/unapproved. See
 [chunk-80-economic-mainnet-rehearsal.md](./chunk-80-economic-mainnet-rehearsal.md).
 
+Chunk 85 feeds ceremony architecture and dress-rehearsal engineering
+evidence into this readiness plane. The actual real production
+ceremony remains EXTERNAL/HUMAN evidence until performed. See
+[chunk-85-production-genesis-ceremony.md](./chunk-85-production-genesis-ceremony.md).
 Chunk 81 Production Network Candidate V2 consumes exact Chunk 76–81
 engineering evidence hashes without overwriting external evidence
 status. External audit, commercial HSM, counsel, regulator, license,

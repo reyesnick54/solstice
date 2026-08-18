@@ -1139,6 +1139,16 @@ treasury mint. Production treasury remains inactive. Do not create
 `packages/reserve-bank`. See
 [`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
+Chunk 85 implements the SunRey production genesis ceremony, validator
+onboarding, and launch-authorization package at
+`packages/sunrey-chain/src/production-ceremony`. Capability
+`sunrey-production-genesis-ceremony` is `IMPLEMENTED`. CI uses
+rehearsal and simulation credentials only. It does not launch mainnet,
+create real production private keys, or enable `LIVE_*` flags. Do not
+create `packages/sunrey-ceremony`, `packages/production-genesis`,
+`packages/genesis-ceremony`, `packages/launch-authorization`, or
+`packages/production-ceremony`. See
+[`chunk-85-production-genesis-ceremony.md`](./chunk-85-production-genesis-ceremony.md).
 Chunk 82 implements external production provider onboarding,
 acceptance testing, and evidence qualification at
 `packages/sunrey-chain/src/providers`. Capability
