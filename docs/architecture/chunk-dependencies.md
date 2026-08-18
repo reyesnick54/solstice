@@ -153,6 +153,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -782,3 +783,12 @@ It extends Chunk 66. CI uses local/rehearsal infrastructure only.
 Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
+Chunk 93 implements the public RPC edge, Explorer HA, and production
+network data plane at `packages/sunrey-chain/src/public-data-plane`.
+Capability `sunrey-public-data-plane` is `IMPLEMENTED`. See
+[`chunk-93-public-data-plane.md`](./chunk-93-public-data-plane.md).
+RPC reads canonical chain state. Explorer is rebuildable and
+non-authoritative. Do not create `packages/public-rpc`,
+`packages/sunrey-rpc-edge`, `packages/rpc-gateway`,
+`packages/explorer-ha`, or `packages/public-data-plane`. The evaluator
+returns `mustStop: false`.

@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-93",
+  "title": "SunRey public RPC edge, high-availability Explorer, and production network data plane",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "sunrey-public-testnet",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-production-infrastructure",
+    "sunrey-production-network-candidate",
+    "sunrey-production-provisioning",
+    "sunrey-production-handoff",
+    "sunrey-public-data-plane"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/public-data-plane. Public RPC and Explorer access layer only. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Does not create a second consensus, second financial ledger, authoritative Explorer database, or public validator admin endpoints. evaluateChunkRequirements returns mustStop: false. Do not create packages/public-rpc, packages/sunrey-rpc-edge, packages/rpc-gateway, packages/explorer-ha, or packages/public-data-plane."
+}

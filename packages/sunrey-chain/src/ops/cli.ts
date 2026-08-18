@@ -45,6 +45,7 @@ import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
 import { productionUsage, runProductionHandoffCommand } from '../production-handoff/cli.ts';
 import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
 import { productionProvisioningUsage, runProductionProvisioningCommand } from '../infra/provisioning/cli.ts';
+import { publicDataPlaneUsage, runPublicDataPlaneCommand } from '../public-data-plane/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -244,6 +245,7 @@ export function opsUsage(): string {
     ...productionUsage().split('\n'),
     pregenesisUsage(),
     ...productionProvisioningUsage(),
+    ...publicDataPlaneUsage().split('\n'),
   ].join('\n');
 }
 
@@ -251,6 +253,10 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (group === 'rpc' || group === 'explorer') {
+    const result = runPublicDataPlaneCommand(args);
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   if (group === 'production') {
     const result = runProductionHandoffCommand(args.slice(1));
     return { ok: result.ok, command: `production ${result.command}`, payload: result.payload };
@@ -480,6 +486,16 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
 export async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const head = argv[0] ?? 'health';
+  if (head === 'rpc' || head === 'explorer') {
+    const result = runPublicDataPlaneCommand(argv);
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if (head === 'production') {
     const result = runProductionHandoffCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);
@@ -502,6 +518,14 @@ export async function main(): Promise<void> {
   }
   if (head === 'pregenesis') {
     const result = runPregenesisCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if (head === 'production') {
     process.env.SUNREY_FIXTURE_ENV ??= 'local';
     const result = runProductionProvisioningCommand(argv.slice(1));
