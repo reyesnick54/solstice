@@ -87,6 +87,9 @@ npm run demo:sunrey-mainnet
 npm run demo:sunrey-economics
 npm run sunrey-economics -- policy verify
 npm run sunrey-economics -- supply verify
+npm run demo:sunrey-protocol-treasury
+npm run sunrey-economics -- treasury verify
+npm run sunrey-economics -- treasury simulate
 npm run demo:sunrey-infra
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch

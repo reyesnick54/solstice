@@ -36,6 +36,7 @@ describe('explorer privacy', () => {
     indexer.indexFromGenesis();
     const queries = new ExplorerQueryService(indexer);
     for (const path of ['/v1/home', '/v1/accounts', '/v1/moonrey', '/v1/machines', '/v1/validators', '/v1/monetary', '/v1/fees', '/v1/treasury']) {
+    for (const path of ['/v1/home', '/v1/accounts', '/v1/moonrey', '/v1/machines', '/v1/validators', '/v1/monetary', '/v1/treasury']) {
       const response = handleExplorerRequest({ method: 'GET', path, query: {} }, queries, indexer);
       assertNoSecrets(JSON.parse(response.body));
       assert.doesNotMatch(response.body, /privateKey|pdvRaw|kycRecord|cleanRoomRow/);

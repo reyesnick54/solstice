@@ -220,6 +220,41 @@ paths:
       responses:
         "200":
           description: Authorized burn classes and records
+  /v1/treasury:
+    get:
+      tags: [TREASURY]
+      summary: Public protocol treasury view
+      responses:
+        "200":
+          description: Protocol-owned native treasury. Distinct from customer custody, fiat Ledger, and Exchange customer balances.
+  /v1/treasury/policy:
+    get:
+      tags: [TREASURY]
+      summary: Protocol treasury policy
+      responses:
+        "200":
+          description: Versioned treasury policy. Write interfaces remain governance-authorized.
+  /v1/treasury/reserves:
+    get:
+      tags: [TREASURY]
+      summary: Protocol reserve balances
+      responses:
+        "200":
+          description: Reserve class, asset, available, and reserved quantities.
+  /v1/treasury/budgets:
+    get:
+      tags: [TREASURY]
+      summary: Treasury budgets
+      responses:
+        "200":
+          description: Public budget authorizations.
+  /v1/treasury/disbursements:
+    get:
+      tags: [TREASURY]
+      summary: Treasury disbursements
+      responses:
+        "200":
+          description: Approved and finalized disbursements. Off-chain approval alone does not move assets.
   /v1/fees/schedule:
     get:
       tags: [FEES]
@@ -347,6 +382,30 @@ paths:
       responses:
         "200":
           description: Scheduled activations
+  /v1/governance/operations/package:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Public governance operation package
+  /v1/governance/operations/diff:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Canonical economic policy diff
+  /v1/governance/operations/activation:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Governance activation status
+  /v1/governance/operations/emergency:
+    get:
+      tags: [GOVERNANCE]
+      responses:
+        "200":
+          description: Public emergency protocol status
   /v1/oracles/providers:
     get:
       tags: [ORACLES]

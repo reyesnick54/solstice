@@ -473,6 +473,18 @@ function dispatch(
   if (method === 'GET' && path === '/v1/governance/activations') {
     return json(200, { scheduled: platform.governance() });
   }
+  if (method === 'GET' && path === '/v1/governance/operations/package') {
+    return json(200, platform.governanceOperations().package);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/diff') {
+    return json(200, platform.governanceOperations().diff);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/activation') {
+    return json(200, platform.governanceOperations().activation);
+  }
+  if (method === 'GET' && path === '/v1/governance/operations/emergency') {
+    return json(200, platform.governanceOperations().emergency);
+  }
 
   if (method === 'GET' && path === '/v1/oracles/providers') {
     return json(200, { providers: platform.oracles() });
@@ -522,6 +534,28 @@ function dispatch(
   }
   if (method === 'GET' && path === '/v1/productive/moonrey/supply-pressure') {
     return json(200, platform.moonreySupplyPressure());
+  }
+
+  if (method === 'GET' && path === '/v1/treasury') {
+    return json(200, platform.getProtocolTreasury());
+  }
+  if (method === 'GET' && path === '/v1/treasury/reserves') {
+    return json(200, platform.getProtocolReserves());
+  }
+  if (method === 'GET' && path === '/v1/treasury/policy') {
+    return json(200, platform.getTreasuryPolicy());
+  }
+  if (method === 'GET' && path === '/v1/treasury/budgets') {
+    return json(200, platform.getTreasuryBudget());
+  }
+  if (method === 'GET' && path.startsWith('/v1/treasury/budgets/')) {
+    return json(200, platform.getTreasuryBudget(path.slice('/v1/treasury/budgets/'.length)));
+  }
+  if (method === 'GET' && path === '/v1/treasury/disbursements') {
+    return json(200, platform.getTreasuryDisbursement());
+  }
+  if (method === 'GET' && path.startsWith('/v1/treasury/disbursements/')) {
+    return json(200, platform.getTreasuryDisbursement(path.slice('/v1/treasury/disbursements/'.length)));
   }
 
   if (method === 'GET' && path === '/v1/machines') {
@@ -716,10 +750,19 @@ export const PUBLIC_ROUTES = [
   'GET /v1/validators/{id}/penalties',
   'GET /v1/validators/{id}/unbond',
   'GET /v1/governance/proposals',
+  'GET /v1/governance/operations/package',
+  'GET /v1/governance/operations/diff',
+  'GET /v1/governance/operations/activation',
+  'GET /v1/governance/operations/emergency',
   'GET /v1/oracles/facts',
   'GET /v1/productive/moonrey',
   'GET /v1/productive/moonrey/policy',
   'GET /v1/productive/moonrey/supply-pressure',
+  'GET /v1/treasury',
+  'GET /v1/treasury/policy',
+  'GET /v1/treasury/reserves',
+  'GET /v1/treasury/budgets',
+  'GET /v1/treasury/disbursements',
   'GET /v1/machines',
   'GET /v1/interop/packets',
   'GET /v1/exchange/markets',

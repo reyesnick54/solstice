@@ -14,6 +14,11 @@ import {
   hashFeePolicyV2,
   usageV2ForTransaction,
 } from '../../../sunrey-chain/src/fees/v2/index.ts';
+import {
+  rehearseFeePolicyChange,
+  rehearseOracleCompromiseEmergency,
+} from '../../../sunrey-chain/src/governance-ops/rehearsals.ts';
+import { developmentTreasuryPolicy, showTreasuryPolicy } from '../../../sunrey-chain/src/economics/treasury/index.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -534,6 +539,37 @@ export class DevelopmentPlatform {
     ]);
   }
 
+  governanceOperations(): {
+    readonly package: Record<string, unknown>;
+    readonly diff: Record<string, unknown> | null;
+    readonly activation: Record<string, unknown>;
+    readonly emergency: Record<string, unknown>;
+  } {
+    const fee = rehearseFeePolicyChange();
+    const emergency = rehearseOracleCompromiseEmergency();
+    return Object.freeze({
+      package: {
+        package_id: fee.package.packageId,
+        operation_type: fee.package.operationType,
+        package_hash: fee.package.packageHash,
+        network_id: fee.package.networkId,
+        activation_height: fee.package.activation.height,
+        governance_token: false,
+      },
+      diff: fee.package.economic?.canonicalDiff ?? null,
+      activation: {
+        status: fee.public.approvalResult,
+        active_version: fee.public.activeVersion,
+        coordinate: fee.public.activationCoordinate,
+      },
+      emergency: {
+        restriction_class: emergency.suspend.actionClass,
+        restriction_state: emergency.suspend.result,
+        supply_rewritten: false,
+      },
+    });
+  }
+
   oracles(): readonly Record<string, string>[] {
     return Object.freeze([
       { provider_id: 'oracle.sim.1', feed_id: 'feed.energy', quality: 'DEVELOPMENT', fact_id: 'fact.energy.1' },
@@ -550,6 +586,49 @@ export class DevelopmentPlatform {
         ticker_status: TICKER_STATUS,
       },
     ]);
+  }
+
+  getProtocolTreasury(): Record<string, unknown> {
+    const policy = developmentTreasuryPolicy();
+    return Object.freeze({
+      classification: 'PROTOCOL TREASURY',
+      distinctFrom: Object.freeze(['customer custody', 'fiat Ledger', 'Exchange customer balances']),
+      owner: 'packages/sunrey-chain',
+      policyVersion: policy.policyVersion,
+      productionTreasuryInactive: true,
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getProtocolReserves(): Record<string, unknown> {
+    return Object.freeze({
+      classification: 'PROTOCOL TREASURY',
+      reserves: Object.freeze([]),
+      productionTreasuryInactive: true,
+    });
+  }
+
+  getTreasuryBudget(budgetId?: string): Record<string, unknown> {
+    return Object.freeze({
+      budget_id: budgetId ?? null,
+      budgets: Object.freeze([]),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getTreasuryDisbursement(disbursementId?: string): Record<string, unknown> {
+    return Object.freeze({
+      disbursement_id: disbursementId ?? null,
+      disbursements: Object.freeze([]),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getTreasuryPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      ...showTreasuryPolicy(),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
   }
 
   moonreyPolicy(): Record<string, unknown> {

@@ -28,6 +28,7 @@ export const SMOKE_SCENARIO_IDS = [
   'API-BURST',
   'EXPLORER-PDV',
   'COMPOUND-ORACLE-VALIDATOR-EXCHANGE',
+  'ECON-ORACLE-STALE',
 ] as const;
 
 export function runCampaign(ids: readonly string[] = SCENARIO_CATALOG.map((row) => row.scenarioId)): CampaignReport {

@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-77",
+  "title": "SunRey sovereign protocol treasury, reserve and budget governance architecture",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-adaptive-fee-market",
+    "sunrey-validator-economics",
+    "sunrey-monetary-constitution",
+    "sunrey-protocol-governance",
+    "sunrey-formal-assurance",
+    "sunrey-developer-sdk",
+    "sunrey-explorer",
+    "sunrey-launch-rehearsal",
+    "sunrey-dual-economy-simulator",
+    "sunrey-protocol-treasury"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. Does not create a second ledger, new native asset, price peg, or treasury mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
+}

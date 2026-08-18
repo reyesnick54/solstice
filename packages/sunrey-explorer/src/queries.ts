@@ -125,6 +125,22 @@ export class ExplorerQueryService {
     });
   }
 
+  protocolTreasury() {
+    return this.public({
+      ...this.lag(),
+      classification: 'PROTOCOL TREASURY',
+      distinctFromCustomerCustody: true,
+      distinctFromFiatLedger: true,
+      distinctFromExchangeCustomerBalances: true,
+      policyVersion: 'sunrey.protocol.treasury.v1',
+      reserves: [],
+      budgets: [],
+      approvedDisbursements: [],
+      finalizedDisbursements: [],
+      productionTreasuryInactive: true,
+    });
+  }
+
   monetary() {
     const assets = this.indexer.store.projection().assets;
     const moonrey = this.indexer.store.projection().moonrey;

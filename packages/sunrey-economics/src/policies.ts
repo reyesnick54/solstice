@@ -1,13 +1,15 @@
 /**
- * Policy consumption adapters.
+ * Policy consumption adapters over the final Chunk 71–74 owners.
  *
- * Chunk 71-style SunRey monetary parameters, Chunk 72 validator
- * economics, Chunk 73/42 native fees, and Chunk 74/44 MoonRey
- * productive issuance are consumed from canonical owners. This
- * laboratory does not invent production parameters or activate them.
+ * Chunk 71 monetary constitution, Chunk 72 validator economics,
+ * Chunk 73 FeePolicyV2, and Chunk 74 MoonRey policy governance are
+ * consumed from canonical owners. This laboratory does not invent
+ * production parameters or activate them.
  */
 
+import { MONETARY_POLICY_VERSION_ID } from '../../sunrey-chain/src/economics/types.ts';
 import { developmentIssuancePolicy, type MoonReyIssuancePolicy } from '../../sunrey-chain/src/productive/policy.ts';
+import { developmentPolicyBundle } from '../../sunrey-chain/src/productive/policy-governance/registry.ts';
 import { WEIGHT_SCALE } from '../../sunrey-chain/src/productive/types.ts';
 import {
   BRIDGE_FLOW_KINDS,
@@ -40,6 +42,14 @@ export function sunreyMonetaryIssuance(input: {
 }): bigint {
   const base = 50n + input.humanActivity / 20_000n;
   return mulBps(base, input.scenario.policies.sunreyIssuanceScaleBps);
+}
+
+export function activeMonetaryPolicyVersion(): string {
+  return MONETARY_POLICY_VERSION_ID;
+}
+
+export function activeMoonReyPolicyVersion(): number {
+  return developmentPolicyBundle().policyVersion;
 }
 
 export function consumedPolicyVersions(): {

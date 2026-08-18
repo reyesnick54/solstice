@@ -32,6 +32,9 @@ export const FORMAL_MODEL_IDS = [
   'VALIDATOR_ECONOMICS',
   'NATIVE_MONETARY_POLICY',
   'GENESIS_ALLOCATION_CONSERVATION',
+  'GOVERNANCE_OPERATION_SAFETY',
+  'PROTOCOL_TREASURY',
+  'CROSS_ECONOMIC_INVARIANTS',
 ] as const;
 export type FormalModelId = (typeof FORMAL_MODEL_IDS)[number];
 
@@ -62,6 +65,9 @@ export const TRACE_DOMAINS = [
   'validator_economics',
   'monetary_policy',
   'genesis_allocation',
+  'governance_operations',
+  'protocol_treasury',
+  'cross_economic',
 ] as const;
 export type TraceDomain = (typeof TRACE_DOMAINS)[number];
 
