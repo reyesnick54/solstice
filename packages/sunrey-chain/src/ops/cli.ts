@@ -483,7 +483,6 @@ if (
   entry.endsWith('cli.ts') ||
   entry.endsWith('cli.js')
 ) {
-if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
   const group = process.argv[2] ?? 'health';
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
     process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);

@@ -13,16 +13,52 @@ type SlotDraft = Omit<ReadinessEvidenceRecord, 'verificationStatus' | 'evidenceH
   readonly evidenceReference?: string | null;
 };
 
-function slot(draft: SlotDraft): ReadinessEvidenceRecord {
+export type EngineeringEvidenceOverlay = {
+  readonly chunk76?: string;
+  readonly chunk77?: string;
+  readonly chunk78?: string;
+  readonly chunk79?: string;
+  readonly chunk80?: string;
+  readonly chunk81?: string;
+};
+
+function overlayHash(draft: SlotDraft, overlay?: EngineeringEvidenceOverlay): string | null {
+  if (draft.externalEvidence) {
+    return draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-76') {
+    return overlay?.chunk76 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-77') {
+    return overlay?.chunk77 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-78') {
+    return overlay?.chunk78 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-79') {
+    return overlay?.chunk79 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-80') {
+    return overlay?.chunk80 ?? draft.evidenceHash ?? null;
+  }
+  if (draft.chunkReference === 'CHUNK-81') {
+    return overlay?.chunk81 ?? draft.evidenceHash ?? null;
+  }
+  return draft.evidenceHash ?? null;
+}
+
+function slot(draft: SlotDraft, overlay?: EngineeringEvidenceOverlay): ReadinessEvidenceRecord {
   return freezeEvidence({
     ...draft,
-    evidenceHash: draft.evidenceHash ?? null,
+    evidenceHash: overlayHash(draft, overlay),
     evidenceReference: draft.evidenceReference ?? null,
     verificationStatus: draft.verificationStatus ?? 'NOT_PROVIDED',
   });
 }
 
-export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
+export function defaultDimensionCatalog(
+  overlay?: EngineeringEvidenceOverlay,
+): readonly ReadinessEvidenceRecord[] {
   const digests = collectReadinessArtifactDigests();
   const drafts: SlotDraft[] = [
     {
@@ -891,6 +927,9 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       notes: 'Human and external approvals remain unfilled. Engineering qualification is not mainnet authorization.',
       externalEvidence: true,
       chunkReference: 'CHUNK-78',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-GOVOPS-001',
       dimension: 'GOVERNANCE_OPERATIONS',
       description: 'Production governance operations package, preflight, and audit',
@@ -958,6 +997,9 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       notes: 'External legal approval is not provided and is not invented by software.',
       externalEvidence: true,
       chunkReference: 'CHUNK-79',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-TREASURY-001',
       dimension: 'GENESIS',
       description: 'Protocol treasury policy and reserve classifications',
@@ -1055,8 +1097,78 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       chunkReference: 'CHUNK-77',
       verificationStatus: 'NOT_PROVIDED',
     },
+    {
+      requirementId: 'REQ-ECON-REHEARSAL-001',
+      dimension: 'GENESIS',
+      description: 'Chunk 80 economic mainnet rehearsal engineering evidence',
+      scope: 'SUNREY_CHAIN',
+      evidenceType: 'SOFTWARE_TEST',
+      source: 'packages/sunrey-chain/src/economic-rehearsal',
+      authorizedVerifierRole: 'ENGINEERING',
+      expirationOrReviewDateUtc: null,
+      notes: 'Integrated rehearsal over canonical Chunks 76–79. Distinct rehearsal identity. Not production genesis.',
+      externalEvidence: false,
+      chunkReference: 'CHUNK-80',
+      verificationStatus: 'ENGINEERING_VERIFIED',
+    },
+    {
+      requirementId: 'REQ-ECON-REHEARSAL-002',
+      dimension: 'HUMAN_AUTHORIZATION',
+      description: 'Human authorization that economic rehearsal may inform production activation',
+      scope: 'ALL',
+      evidenceType: 'HUMAN_AUTHORIZATION',
+      source: 'human-economic-rehearsal-approval-slot',
+      authorizedVerifierRole: 'HUMAN_AUTHORITY',
+      expirationOrReviewDateUtc: null,
+      notes: 'Rehearsal classification does not authorize production. External/human slots remain unfilled.',
+      externalEvidence: true,
+      chunkReference: 'CHUNK-80',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
+      requirementId: 'REQ-CANDIDATE-V2-001',
+      dimension: 'RELEASE',
+      description: 'SunRey production network candidate v2 deterministic binding',
+      scope: 'SUNREY_CHAIN',
+      evidenceType: 'ENGINEERING_ARTIFACT',
+      source: 'packages/sunrey-chain/src/mainnet/candidate-v2',
+      authorizedVerifierRole: 'ENGINEERING',
+      expirationOrReviewDateUtc: null,
+      notes: 'Chunk 81 candidate remains CANDIDATE. mainnetEnabled=false. productionAuthorized=false.',
+      externalEvidence: false,
+      chunkReference: 'CHUNK-81',
+      verificationStatus: 'ENGINEERING_VERIFIED',
+    },
+    {
+      requirementId: 'REQ-CANDIDATE-V2-002',
+      dimension: 'EXTERNAL_SECURITY_REVIEW',
+      description: 'Independent production audit for candidate v2',
+      scope: 'ALL',
+      evidenceType: 'EXTERNAL_AUDIT_REPORT',
+      source: 'external-production-audit-slot',
+      authorizedVerifierRole: 'EXTERNAL_AUDITOR',
+      expirationOrReviewDateUtc: null,
+      notes: 'Missing independent audit remains missing. Software cannot convert absence into approved evidence.',
+      externalEvidence: true,
+      chunkReference: 'CHUNK-81',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
+      requirementId: 'REQ-CANDIDATE-V2-003',
+      dimension: 'HUMAN_AUTHORIZATION',
+      description: 'Human production authorization of candidate v2',
+      scope: 'ALL',
+      evidenceType: 'HUMAN_AUTHORIZATION',
+      source: 'human-production-authorization-slot',
+      authorizedVerifierRole: 'HUMAN_AUTHORITY',
+      expirationOrReviewDateUtc: null,
+      notes: 'AI production authorization is rejected. Human authorization remains NOT_PROVIDED.',
+      externalEvidence: true,
+      chunkReference: 'CHUNK-81',
+      verificationStatus: 'NOT_PROVIDED',
+    },
   ];
-  return Object.freeze(drafts.map(slot));
+  return Object.freeze(drafts.map((draft) => slot(draft, overlay)));
 }
 
 export function dimensionsCovered(): readonly MainnetReadinessDimension[] {

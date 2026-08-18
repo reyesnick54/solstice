@@ -5,12 +5,14 @@
 
 import { freezeEvidence } from '../../mainnet/evidence.ts';
 import type { ReadinessEvidenceRecord } from '../../mainnet/types.ts';
+import { freezeEconomicPolicies } from './freeze.ts';
 import { FIRST_ECONOMIC_RC_ID } from './types.ts';
 
 export function consumeEconomicRc(input?: {
   readonly rcId?: string;
   readonly sourceCommit?: string;
   readonly qualificationDigest?: string;
+  readonly root?: string;
 }): {
   readonly rcId: string;
   readonly sourceCommit: string;
@@ -20,14 +22,16 @@ export function consumeEconomicRc(input?: {
   readonly externalApprovalsRemain: true;
   readonly notes: string;
 } {
+  const root = input?.root ?? process.cwd();
+  const policy = freezeEconomicPolicies(root);
   return Object.freeze({
     rcId: input?.rcId ?? FIRST_ECONOMIC_RC_ID,
     sourceCommit: input?.sourceCommit ?? 'linked-from-chunk-78',
-    qualificationDigest: input?.qualificationDigest ?? 'pending-economic-rc',
+    qualificationDigest: input?.qualificationDigest ?? policy.combinedHash,
     engineeringStatus: 'ENGINEERING_VERIFIED',
     mainnetAuthorized: false,
     externalApprovalsRemain: true,
-    notes: 'Chunk 78 economic RC is engineering qualification only. External/human approvals remain according to actual evidence. This is not mainnet authorization.',
+    notes: 'Chunk 78 economic RC is engineering qualification only. External/human approvals remain according to actual evidence. This is not mainnet authorization. Qualification digest binds the canonical Chunk 76/77 policy freeze when a signed bundle is not supplied.',
   });
 }
 

@@ -46,6 +46,7 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'mainnet')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
         file.includes(`${join('src', 'launch-rehearsal')}`) ||
+        file.includes(`${join('src', 'economic-rehearsal')}`) ||
         file.includes(`${join('src', 'release-candidate')}`) ||
         file.includes(`${join('src', 'pqc')}`) ||
         file.endsWith(`${join('ops', 'crypto-cli.ts')}`) ||
