@@ -15,6 +15,29 @@ This document describes only what is implemented and tested in this tree.
   canonical chain state. Explorer is rebuildable and
   non-authoritative. `ENVIRONMENT` remains `simulation`. See
   `docs/network/chunk-93-public-data-plane.md`.
+- SunRey validator operator platform (Chunk 92,
+  `packages/sunrey-chain/src/validator-operator`):
+  `ValidatorOperator`, organizations, profiles, fleet, node and
+  signer inventory, enrollment over Chunk 85 dossiers, health,
+  maintenance quorum safety, rolling upgrades, key-rotation
+  packages, recovery, incidents, concentration, public/private
+  views, authenticated operator API/CLI, and the isolated
+  seven-validator rehearsal. Capability
+  `sunrey-validator-operator-platform` is `IMPLEMENTED`. Operational
+  projection only. Canonical validator-set state remains
+  authoritative. No public delegated staking. See
+  `docs/validators/chunk-92-validator-operator-platform.md`.
+- SunRey executable production provider runtime (Chunk 91,
+  `packages/sunrey-chain/src/provider-runtime`):
+  `ExecutableProviderAdapter`, `ProviderRuntime`, sessions, credential
+  bindings, local mocks, sandbox harness, KMS/HSM/PQC probes, oracle
+  clients, KYC/screening/Travel Rule/custody/banking technical
+  adapters, webhook security, circuit breakers, and
+  `sunrey-ops provider runtime-test`. Capability
+  `sunrey-provider-runtime` is `IMPLEMENTED`. Adapter success is not
+  legal or commercial approval. `PRODUCTION_AUTHORIZED` remains gated
+  on configured evidence and human authority. See
+  `docs/providers/chunk-91-provider-runtime.md`.
 - SunRey production handoff and day-2 operations control plane
   (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
   `ProductionHandoffPackage`, system inventory, responsibility matrix,

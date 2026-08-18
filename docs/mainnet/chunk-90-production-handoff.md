@@ -37,6 +37,12 @@ authorization exist. Internal tests cannot create that status.
 - `sunrey-ops production` commands and a secret-free operator dashboard
 - Isolated 86–90 lifecycle rehearsal
 
+Chunk 92 adds the long-lived validator operator control plane used
+after handoff. Day-2 inventory and incident command remain here;
+fleet, enrollment, maintenance, upgrade, and signer operations live
+at `packages/sunrey-chain/src/validator-operator`. See
+[../validators/chunk-92-validator-operator-platform.md](../validators/chunk-92-validator-operator-platform.md).
+
 ## Evidence classes
 
 `REHEARSAL` · `ENGINEERING` · `EXTERNAL` · `HUMAN` · `PRODUCTION_OBSERVED`
@@ -81,3 +87,10 @@ sunrey-ops production evidence-seal
 sunrey-ops production handoff
 sunrey-ops production readiness
 ```
+
+Chunk 91 feeds day-2 provider renewal, credential rotation, provider
+outage, evidence expiration, provider replacement, and incident
+command with executable runtime status. Runtime success remains
+engineering evidence only. See
+[../providers/chunk-91-provider-runtime.md](../providers/chunk-91-provider-runtime.md)
+and [../runbooks/provider-runtime-incident.md](../runbooks/provider-runtime-incident.md).

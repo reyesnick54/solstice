@@ -24,6 +24,7 @@
     "demo:wallet": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/wallet/demo.ts",
     "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/demo.ts",
     "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli-entry.ts",
+    "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops/cli-dispatch.ts",
     "demo:pregenesis": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/pregenesis/demo.ts",
     "demo:testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/testnet/demo.ts",
     "sunrey-release": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/supply-chain/cli.ts",

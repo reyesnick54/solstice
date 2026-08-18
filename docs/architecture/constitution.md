@@ -1229,6 +1229,29 @@ Do not create `packages/public-rpc`, `packages/sunrey-rpc-edge`,
 `packages/rpc-gateway`, `packages/explorer-ha`, or
 `packages/public-data-plane`. See
 [`chunk-93-public-data-plane.md`](./chunk-93-public-data-plane.md).
+Chunk 92 implements the SunRey validator operator platform, fleet
+management, and production operator control plane at
+`packages/sunrey-chain/src/validator-operator`. Capability
+`sunrey-validator-operator-platform` is `IMPLEMENTED`. It is an
+operational projection. Canonical validator-set state remains
+authoritative. It does not create a second registry, consensus
+engine, public delegated staking, or governance token. Do not create
+`packages/validator-operator`, `packages/sunrey-validator-ops`,
+`packages/operator-platform`, `packages/validator-fleet`, or
+`packages/delegated-staking`. See
+[`chunk-92-validator-operator-platform.md`](./chunk-92-validator-operator-platform.md).
+Chunk 91 implements the SunRey executable production provider runtime
+and credential-injected integration framework at
+`packages/sunrey-chain/src/provider-runtime`. Capability
+`sunrey-provider-runtime` is `IMPLEMENTED`. It extends Chunks 66, 68,
+69, 82, and 90. Local mocks are the CI path. Sandbox credentials are
+optional `SecretReference` bindings. Adapter success is not legal or
+commercial approval. `PRODUCTION_AUTHORIZED` requires configured
+evidence and human authority. Do not create
+`packages/provider-runtime`, `packages/sunrey-provider-runtime`,
+`packages/executable-providers`, `packages/provider-adapters`, or
+`packages/integration-providers`. See
+[`chunk-91-provider-runtime.md`](./chunk-91-provider-runtime.md).
 
 ## Agent stop rule
 

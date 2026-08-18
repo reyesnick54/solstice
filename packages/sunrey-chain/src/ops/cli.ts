@@ -46,6 +46,11 @@ import { productionUsage, runProductionHandoffCommand } from '../production-hand
 import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
 import { productionProvisioningUsage, runProductionProvisioningCommand } from '../infra/provisioning/cli.ts';
 import { publicDataPlaneUsage, runPublicDataPlaneCommand } from '../public-data-plane/cli.ts';
+import {
+  VALIDATOR_OPERATOR_COMMANDS,
+  operatorUsage as validatorOperatorUsage,
+  runValidatorOperatorCommand,
+} from '../validator-operator/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -220,6 +225,7 @@ export function opsUsage(): string {
     'sunrey-ops validator penalties',
     'sunrey-ops validator unbond',
     'sunrey-ops validator economics-report',
+    ...validatorOperatorUsage().split('\n'),
     'sunrey-ops signer status',
     'sunrey-ops snapshot create',
     'sunrey-ops snapshot verify',
@@ -256,6 +262,13 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   if (group === 'rpc' || group === 'explorer') {
     const result = runPublicDataPlaneCommand(args);
     return { ok: result.ok, command: result.command, payload: result.payload };
+  if (
+    group === 'validator' &&
+    action &&
+    (VALIDATOR_OPERATOR_COMMANDS as readonly string[]).includes(action)
+  ) {
+    const result = runValidatorOperatorCommand(args.slice(1));
+    return { ok: result.ok, command: `validator ${result.command}`, payload: result.payload };
   }
   if (group === 'production') {
     const result = runProductionHandoffCommand(args.slice(1));

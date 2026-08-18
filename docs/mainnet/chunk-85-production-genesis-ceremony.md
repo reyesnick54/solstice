@@ -92,3 +92,7 @@ Chunk 90 binds the ceremony authorization package into the production
 handoff package and the isolated 86–90 rehearsal chain. See
 [chunk-90-production-handoff.md](./chunk-90-production-handoff.md).
 
+Chunk 92 consumes `ProductionValidatorDossier` as enrollment
+authority. It does not duplicate the dossier. See
+[../validators/chunk-92-validator-operator-platform.md](../validators/chunk-92-validator-operator-platform.md).
+

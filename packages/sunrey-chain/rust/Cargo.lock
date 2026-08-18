@@ -854,6 +854,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sunrey-provider-runtime"
+version = "0.1.0"
+dependencies = [
+ "thiserror",
+]
+
+[[package]]
 name = "sunrey-rpc"
 version = "0.1.0"
 dependencies = [
