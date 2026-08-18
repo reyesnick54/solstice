@@ -191,16 +191,16 @@ export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSes
     chunk79GovernancePackageHash: bindRehearsalGovernanceToEconomicRc({
       economicRcId: rc.canonicalEconomicRcId ?? rc.rcId,
       sourceCommit: rc.sourceCommit,
-      releaseArtifactHash: rc.manifestHash,
+      releaseArtifactHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
       formalReportHash: commitCanonical({
         modelId: treasuryFormal.modelId,
         result: treasuryFormal.result,
       }),
       economicStressReportHash: stress.chunk76ReportHash ?? rc.canonicalStressReportHash ?? rc.manifestHash,
       qualificationReportHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
-      simulationEvidenceHash: rc.manifestHash,
+      simulationEvidenceHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
       supplyInvariantHash: genesis.allocationHash,
-      schemaHash: rc.manifestHash,
+      schemaHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
     }),
   });
   const recoveries = runFailureAndRecoveryCampaign();

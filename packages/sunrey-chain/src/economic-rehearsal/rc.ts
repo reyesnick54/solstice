@@ -59,7 +59,17 @@ export function buildEconomicRcBundle(root = process.cwd()): EconomicRcBundle {
     sourceCommit: canonical.manifest.source_commit,
     protocolVersion: ECONOMIC_REHEARSAL_PROTOCOL_VERSION,
     networkCompatibility: ECONOMIC_REHEARSAL_NETWORK_ID,
-    canonicalManifestHash: sha256Text(JSON.stringify(canonical.manifest)),
+    canonicalManifestHash: sha256Text(
+      JSON.stringify({
+        economic_rc_id: canonical.manifest.economic_rc_id,
+        source_commit: canonical.manifest.source_commit,
+        qualification: canonical.qualification.combinedDigest,
+        policy: canonical.policyFreeze.combinedHash,
+        schema: canonical.schemaFreeze.combinedHash,
+        stress: canonical.manifest.stress_report_hash,
+        treasury: canonical.manifest.treasury_policy_hash,
+      }),
+    ),
     environment: 'simulation',
     productionAuthorized: false,
   });

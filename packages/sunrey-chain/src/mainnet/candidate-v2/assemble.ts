@@ -46,9 +46,26 @@ import {
 import { CANDIDATE_V2_TOOL_VERSION, SERVICE_ROLES, type FailureDomainRecord, type ProductionEconomicBundle, type ProductionGenesisInput, type ProductionInfrastructureBundle, type ProductionNetworkCandidateV2, type ProductionNetworkConfiguration, type ProductionNetworkEvidenceBundle, type ProductionNetworkManifestV2, type ProductionProtocolBundle, type ProductionSecurityBundle, type ProductionServiceManifest, type ProductionStorageBundle, type ProductionTopologyManifest, type ProductionValidatorCandidateV2, type ProviderConcentrationReport } from './types.ts';
 
 const DIGEST_RE = /^sha256:[0-9a-f]{64}$/;
+const OVERLAY_CHUNKS = new Set(['CHUNK-76', 'CHUNK-77', 'CHUNK-78', 'CHUNK-79', 'CHUNK-80', 'CHUNK-81']);
 
 function digest(label: string, value: unknown): string {
   return commitCanonical({ domain: CANDIDATE_V2_DOMAIN, label, value });
+}
+
+function readinessBinding(row: {
+  readonly requirementId: string;
+  readonly verificationStatus: string;
+  readonly evidenceHash: string | null;
+  readonly externalEvidence: boolean;
+  readonly chunkReference: string | null;
+}): string {
+  if (row.chunkReference && OVERLAY_CHUNKS.has(row.chunkReference)) {
+    return `${row.requirementId}:${row.verificationStatus}:${row.evidenceHash ?? ''}`;
+  }
+  if (row.externalEvidence) {
+    return `${row.requirementId}:${row.verificationStatus}:${row.evidenceHash ? 'PRESENT' : 'NOT_PROVIDED'}`;
+  }
+  return `${row.requirementId}:${row.verificationStatus}`;
 }
 
 function fileDigest(root: string, rel: string): string {
@@ -371,6 +388,10 @@ export function buildGenesisInput(): ProductionGenesisInput {
 
 const candidateCache = new Map<string, ProductionNetworkCandidateV2>();
 
+export function resetProductionNetworkCandidateV2Cache(): void {
+  candidateCache.clear();
+}
+
 export function createProductionNetworkCandidateV2(root = process.cwd()): ProductionNetworkCandidateV2 {
   assertCandidateV2Identity(CANDIDATE_V2_NETWORK_ID, CANDIDATE_V2_CHAIN_ID);
   const configuration = productionCandidateV2Configuration();
@@ -431,23 +452,30 @@ export function createProductionNetworkCandidateV2(root = process.cwd()): Produc
     ...evidence,
     combinedHash: digest('evidence', { ...evidence, combinedHash: undefined }),
   });
-  const catalog = defaultDimensionCatalog({
+  const overlay = {
     chunk76: integrated.chunk76StressReportHash,
     chunk77: integrated.chunk77TreasuryPolicyHash,
     chunk78: integrated.chunk78EconomicRcHash,
     chunk79: integrated.chunk79GovernancePackageHash,
     chunk80: rehearsalEvidenceHash,
     chunk81: digest('candidate-v2-id', CANDIDATE_V2_ID),
-  });
+  };
+  const catalog = defaultDimensionCatalog(overlay);
   const readinessHash = digest(
     'readiness',
-    catalog.map((row) => `${row.requirementId}:${row.verificationStatus}:${row.evidenceHash ?? ''}`),
+    catalog.map((row) => readinessBinding(row)),
   );
   const manifestBody = {
     candidateId: CANDIDATE_V2_ID,
     configuration,
     sourceCommit,
-    releaseArtifactHash: artifacts.releaseProvenanceDigest,
+    releaseArtifactHash: digest('committed-release', {
+      sourceCommit,
+      packageLock: fileDigest(root, 'package-lock.json'),
+      cargoLockRust: fileDigest(root, 'packages/sunrey-chain/rust/Cargo.lock'),
+      cargoLockNode: fileDigest(root, 'packages/sunrey-chain/node/Cargo.lock'),
+      protocol: protocol.combinedHash,
+    }),
     protocolVersion: CANDIDATE_V2_PROTOCOL_VERSION,
     apiVersion: CANDIDATE_V2_API_VERSION,
     economicRcId: economicRc.bundle.manifest.economic_rc_id,

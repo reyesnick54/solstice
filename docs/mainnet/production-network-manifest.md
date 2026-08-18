@@ -20,9 +20,13 @@ Bound fields:
 - security evidence hash
 - readiness evidence hash
 
-The manifest digest is deterministic for identical inputs. Changing a
-validator, policy hash, release artifact, network ID, chain ID,
-service artifact, HSM state, economic RC, or readiness evidence
-changes or invalidates the candidate root hash.
+The manifest digest is deterministic for identical inputs. Release
+artifact binding uses committed lockfiles and the protocol bundle, not
+ephemeral `dist/` output. Readiness binding records Chunk 76–81
+evidence hashes and external-slot statuses without incorporating
+wall-clock ceremony transcripts. Changing a validator, policy hash,
+release artifact, network ID, chain ID, service artifact, HSM state,
+economic RC, or readiness evidence changes or invalidates the
+candidate root hash.
 
 `productionAuthorized` remains `false`.

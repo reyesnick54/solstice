@@ -12,6 +12,7 @@ import {
   CANDIDATE_V2_NETWORK_ID,
   compareProductionCandidates,
   createProductionNetworkCandidateV2,
+  resetProductionNetworkCandidateV2Cache,
   detectConfigurationDrift,
   rejectAiProductionAuthorization,
   rejectFixtureValidatorKey,
@@ -57,6 +58,10 @@ describe('Chunk 81 production network candidate v2', () => {
     assert.equal(first.protocolBundleDigest, second.protocolBundleDigest);
     assert.equal(first.economicBundleDigest, second.economicBundleDigest);
     assert.equal(first.candidateRootHash, second.candidateRootHash);
+    resetProductionNetworkCandidateV2Cache();
+    const recomputed = createProductionNetworkCandidateV2(ROOT);
+    assert.equal(first.candidateRootHash, recomputed.candidateRootHash);
+    cached = recomputed;
     assert.match(first.candidateRootHash, /^[0-9a-f]{64}$/);
     assert.equal(ENVIRONMENT, 'simulation');
     assert.equal(LIVE_MONEY_ENABLED, false);
