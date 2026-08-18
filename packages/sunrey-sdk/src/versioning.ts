@@ -46,3 +46,25 @@ export function parseApiVersion(raw: string | undefined): PublicApiVersion | nul
 export function isSupportedPublicApiVersion(value: string): value is PublicApiVersion {
   return (SUPPORTED_PUBLIC_API_VERSIONS as readonly string[]).includes(value);
 }
+
+export type ApiDeprecationMetadata = {
+  readonly path: string;
+  readonly introducedIn: PublicApiVersion;
+  readonly compatibility: 'DEPRECATED';
+  readonly successor: string | null;
+  readonly sunsetAt: string | null;
+  readonly silentBreakForbidden: true;
+};
+
+export const API_DEPRECATIONS: readonly ApiDeprecationMetadata[] = Object.freeze([]);
+
+export function compatibilityPolicy(): Readonly<Record<string, string>> {
+  return Object.freeze({
+    current: PUBLIC_API_VERSION,
+    additiveFields: 'BACKWARD_COMPATIBLE',
+    scheduledRemoval: 'DEPRECATED',
+    newMajor: 'BREAKING_CHANGE',
+    silentBreaks: 'forbidden',
+    protocolUpgradeImpliesApiBreak: 'false',
+  });
+}

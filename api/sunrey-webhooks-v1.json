@@ -1,0 +1,41 @@
+{
+  "event_version": "v1",
+  "signing_scheme": "sunrey-webhook-v1",
+  "algorithm": "HMAC-SHA256",
+  "payload": "sunrey-webhook-v1.{deliveryId}.{eventId}.{timestamp}.{attempt}.{sha256(body)}",
+  "headers": [
+    "X-SunRey-Webhook-Id",
+    "X-SunRey-Event-Id",
+    "X-SunRey-Timestamp",
+    "X-SunRey-Attempt",
+    "X-SunRey-Signature",
+    "X-SunRey-Webhook-Scheme"
+  ],
+  "replay_protection": {
+    "delivery_id": "unique per attempt chain",
+    "event_id": "stable application event id",
+    "timestamp": "UTC ISO-8601, 5 minute skew",
+    "signature": "sunrey-webhook-v1=<hex>",
+    "attempt": "1-based bounded retry counter"
+  },
+  "idempotency": {
+    "duplicate_key": ["event_id", "delivery_id"]
+  },
+  "events": [
+    "transaction.finalized",
+    "deposit.detected",
+    "withdrawal.state_changed",
+    "exchange.order.state_changed",
+    "exchange.trade.finalized",
+    "governance.event",
+    "validator.event",
+    "moonrey.issuance.receipt",
+    "machine.commerce.settlement"
+  ],
+  "delivery_states": ["PENDING", "DELIVERED", "RETRYING", "PERMANENTLY_FAILED"],
+  "retry": {
+    "maxAttempts": 5,
+    "backoffMs": [1000, 4000, 16000, 64000],
+    "infinite": false
+  }
+}

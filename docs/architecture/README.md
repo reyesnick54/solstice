@@ -118,6 +118,10 @@
 - [Chunk 51 developer platform](./chunk-51-developer-platform.md) —
   official SDK, versioned public API v1, and real-time events at
   `packages/sunrey-sdk`.
+- [Chunk 94 developer application platform](./chunk-94-developer-platform.md) —
+  application registry, scoped credentials, signed webhooks, sandbox,
+  and Testnet faucet controls at
+  `packages/sunrey-sdk/src/developer-platform`.
 - [Chunk 57 adversarial range](./chunk-57-adversarial-range.md) —
   isolated cyber-economic attack simulator at `packages/sunrey-range`.
 - [Chunk 62 audit readiness](./chunk-62-audit-readiness.md) —

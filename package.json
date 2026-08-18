@@ -90,6 +90,8 @@
     "demo:sunrey-mainnet-rc": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/release-candidate/mainnet/demo.ts",
     "sunrey-range": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-range/src/cli-main.ts",
     "sunrey:dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/dev.ts",
+    "sunrey-dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/developer-platform/cli-main.ts",
+    "demo:sunrey-developer-platform": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/developer-platform/demo.ts",
     "generate:sunrey-api-reference": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-sdk/src/generate-reference.ts",
     "sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/sunrey-bench.mjs",
     "demo:sunrey-bench": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/perf/demo.ts",

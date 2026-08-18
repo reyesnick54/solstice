@@ -120,6 +120,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-developer-platform | IMPLEMENTED | packages/sunrey-sdk |
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
@@ -782,3 +783,14 @@ It extends Chunk 66. CI uses local/rehearsal infrastructure only.
 Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
+Chunk 94 implements the SunRey developer application platform at
+`packages/sunrey-sdk/src/developer-platform`. Capability
+`sunrey-developer-platform` is `IMPLEMENTED`. See
+[`chunk-94-developer-platform.md`](./chunk-94-developer-platform.md).
+It extends Chunk 51 and Chunk 53. Developer credentials cannot sign
+user funds. Production application registration does not activate
+production financial capabilities. Do not create
+`packages/sunrey-developer-platform`, `packages/developer-portal`,
+`packages/app-registry`, `packages/webhook-service`, or
+`packages/developer-platform-v2`. The evaluator returns
+`mustStop: false`.

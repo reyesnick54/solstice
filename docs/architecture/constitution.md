@@ -73,6 +73,7 @@ never be two implementations of these systems.
 | SunRey oracle network | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/engine.ts` | IMPLEMENTED |
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
+| SunRey developer application platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/developer-platform/index.ts` | IMPLEMENTED |
 | SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
@@ -1216,6 +1217,17 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/stabilization`, `packages/capability-activation`, or
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
+Chunk 94 implements the SunRey developer application platform,
+credentials, signed webhooks, Testnet/sandbox, and local developer
+environment at `packages/sunrey-sdk/src/developer-platform`. Capability
+`sunrey-developer-platform` is `IMPLEMENTED`. It extends Chunk 51 and
+does not create a second SDK, chain, or EVM layer. Developer
+credentials cannot sign user funds. Production application
+registration does not activate production financial capabilities.
+Do not create `packages/sunrey-developer-platform`,
+`packages/developer-portal`, `packages/app-registry`,
+`packages/webhook-service`, or `packages/developer-platform-v2`. See
+[`chunk-94-developer-platform.md`](./chunk-94-developer-platform.md).
 
 ## Agent stop rule
 
