@@ -689,6 +689,15 @@ second financial Ledger, a new native asset, a price peg, or a
 treasury mint. Production treasury remains inactive. Do not create
 `packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
 `packages/reserve-bank`. The evaluator returns `mustStop: false`.
+
+Chunk 82 implements external production provider acceptance at
+`packages/sunrey-chain/src/providers`. Capability
+`sunrey-production-provider-acceptance` is `IMPLEMENTED`. See
+[`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
+It reuses Chunk 66/68/69/64 registries and feeds Chunk 65 readiness.
+Do not create `packages/provider-acceptance`,
+`packages/production-providers`, `packages/external-providers`, or
+`packages/sunrey-providers`. The evaluator returns `mustStop: false`.
 Chunk 81 implements the second-generation SunRey production-network
 candidate at `packages/sunrey-chain/src/mainnet/candidate-v2`.
 Capability `sunrey-production-network-candidate` is `IMPLEMENTED`.

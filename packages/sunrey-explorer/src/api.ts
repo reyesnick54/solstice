@@ -141,6 +141,7 @@ export function handleExplorerRequest(
     return json(200, queries.fees());
   }
   if (path === '/v1/treasury') {
+    return json(200, { ...queries.treasury(), ...queries.protocolTreasury() });
     return json(200, {
       ...queries.treasury(),
       ...queries.protocolTreasury(),

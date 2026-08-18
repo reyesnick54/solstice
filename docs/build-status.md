@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey external production provider acceptance (Chunk 82,
+  `packages/sunrey-chain/src/providers`): one evidence-driven
+  acceptance framework over canonical infrastructure, oracle,
+  regulated-service, and HSM registries. Local/sandbox contract
+  tests run in CI. Production eligibility is derived from
+  configured requirements. Contracts, licenses, commercial HSM
+  certification, oracle data rights, banking agreements, and
+  human approvals remain unfilled. AI cannot mark
+  `HUMAN_ACCEPTED` or `PRODUCTION_ELIGIBLE`. Capability
+  `sunrey-production-provider-acceptance` is `IMPLEMENTED`.
+  See `docs/providers/chunk-82-production-provider-acceptance.md`.
 - SunRey production network candidate v2 (Chunk 81,
   `packages/sunrey-chain/src/mainnet/candidate-v2`): identity
   `SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` /
