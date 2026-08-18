@@ -228,6 +228,13 @@ export type LiveRuntimeCapabilityStatus = {
   readonly commerciallyApproved: false;
 };
 
+export type ExecutableProviderAdapter = {
+  readonly adapterId: string;
+  readonly domain: ProviderDomain;
+  readonly providerType: string;
+  health(session: ProviderSession): ProviderRuntimeResult<{ readonly status: ProviderCircuitState }>;
+};
+
 export type ProviderRuntimeReadinessReport = {
   readonly schemaVersion: typeof PROVIDER_RUNTIME_SCHEMA_VERSION;
   readonly toolVersion: typeof PROVIDER_RUNTIME_TOOL_VERSION;

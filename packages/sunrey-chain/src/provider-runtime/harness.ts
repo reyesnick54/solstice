@@ -529,7 +529,7 @@ export function runNegativeControls(runtime: ProviderRuntime): {
     wrongWorkloadRejected: !authorizeWorkload('rpc', 'KMS').ok,
     oracleCannotAccessHsm: !oracleHsm.ok,
     explorerCannotAccessKyc: !explorerKyc.ok,
-    kycCannotIssueAuthority: kycResult.ok ? kycResult.value.issuesExecutionAuthority === false : false,
+    kycCannotIssueAuthority: kycResult.ok ? kycResult.value.vendorCannotAuthorize === true : false,
     bankCannotCreateLedger: !bank.createLedgerBalance().ok,
     duplicateFinancialProtected: retry.retry === false && retry.financialState === 'SUBMISSION_UNKNOWN',
     replayedWebhookRejected: firstCb.ok && !replay.ok && replay.error.code === 'WEBHOOK_REPLAY',

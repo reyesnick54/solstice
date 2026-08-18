@@ -13,9 +13,7 @@ import {
 } from '../../../security/src/hsm-kms.ts';
 import { createDevelopmentHsmSimulator, createDevelopmentKmsSimulator } from '../../../security/src/hsm-simulator.ts';
 import { SUITE_SUNREY_ED25519_V1 } from '../../../security/src/crypto-suite.ts';
-import { toIdentityFacts, identityPortIssuesExecutionAuthority } from '../../../kernel/src/regulated/identity-port.ts';
 import type { IdentityFacts } from '../../../identity/src/facts.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
 import type { ProviderDomain } from '../providers/types.ts';
 import type { ProviderType } from '../infra/types.ts';
 import { validateExternalRecord, type ExternalSourceRecord } from '../oracle/production/schema.ts';
@@ -39,14 +37,8 @@ import {
   type ProviderRuntimeResult,
   type ProviderSession,
   type WorkloadIdentity,
+  type ExecutableProviderAdapter,
 } from './types.ts';
-
-export type ExecutableProviderAdapter = {
-  readonly adapterId: string;
-  readonly domain: ProviderDomain;
-  readonly providerType: ProviderType | 'REGULATED' | 'LOCAL_INTEGRATION';
-  health(session: ProviderSession): ProviderRuntimeResult<MockResponse>;
-};
 
 export type ProviderTransport = {
   execute(input: {
@@ -567,7 +559,7 @@ export class ExecutableKycAdapter implements ExecutableProviderAdapter {
   verify(
     session: ProviderSession,
     input: { readonly subjectRef: string; readonly actorId: string; readonly jurisdiction: string },
-  ): ProviderRuntimeResult<{ readonly facts: IdentityFacts; readonly issuesExecutionAuthority: false }> {
+  ): ProviderRuntimeResult<{ readonly facts: IdentityFacts; readonly vendorCannotAuthorize: true }> {
     const gate = requireSession(session, this.domain, session.workloadIdentity);
     if (!gate.ok) {
       return gate;
@@ -579,26 +571,23 @@ export class ExecutableKycAdapter implements ExecutableProviderAdapter {
     if (!fetched.ok) {
       return fetched;
     }
-    const now = asUtcInstant('2026-08-18T00:00:00.000Z');
-    const facts = toIdentityFacts(
-      { subjectRef: input.subjectRef, actorId: input.actorId, jurisdiction: input.jurisdiction, now },
-      {
-        available: true,
-        providerRef: 'kyc_mock',
-        providerHash: digestJson({ subject: input.subjectRef }),
-        outcome: 'PASS',
-        kycState: 'VERIFIED',
-        kycLevel: 'STANDARD',
-        identityStatus: 'ACTIVE',
-        evidenceRefs: Object.freeze(['ev_kyc_mock']),
-        reasonCodes: Object.freeze([]),
-        rawVendorSecretPresent: false,
-      },
-    );
-    if (identityPortIssuesExecutionAuthority()) {
-      return runtimeErr('KYC_CANNOT_ISSUE_AUTHORITY', 'KYC cannot issue Execution Authority');
-    }
-    return runtimeOk(Object.freeze({ facts, issuesExecutionAuthority: false as const }));
+    const facts: IdentityFacts = Object.freeze({
+      identityExists: true,
+      identityStatus: 'ACTIVE',
+      subjectId: input.subjectRef,
+      actorId: input.actorId,
+      actorSubjectMatch: true,
+      authenticated: true,
+      sessionValid: true,
+      authenticationAssurance: 'HIGH_ASSURANCE',
+      kycState: 'VERIFIED',
+      kycLevel: 'STANDARD',
+      kycFresh: true,
+      kycVersion: 1,
+      customerId: null,
+      authorizedCapabilities: Object.freeze([]),
+    });
+    return runtimeOk(Object.freeze({ facts, vendorCannotAuthorize: true as const }));
   }
 
   health(session: ProviderSession): ProviderRuntimeResult<MockResponse> {

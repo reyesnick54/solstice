@@ -74,7 +74,7 @@ launch orchestration cannot model rewriting chain history.
 
 ## Control room
 
-`LaunchControlRoomState` aggregates authorization, release, Candidate
+`ProductionLaunchControlRoomState` aggregates authorization, release, Candidate
 V2, provider health, validator readiness, signer readiness, network,
 storage, database, observability, backup, security findings, external
 readiness, genesis status, and first-block status.

@@ -1,12 +1,12 @@
 /**
- * LaunchControlRoomState aggregates authorization, release, Candidate
+ * ProductionLaunchControlRoomState aggregates authorization, release, Candidate
  * V2, provider, validator, signer, network, storage, database,
  * observability, backup, security, external, genesis, and first-block
  * status. Chain genesis is not capability authorization.
  */
 
 import type {
-  LaunchControlRoomState,
+  ProductionLaunchControlRoomState,
   LaunchExecutionMode,
   LaunchExecutionState,
   LaunchServiceReadiness,
@@ -17,7 +17,7 @@ import { SERVICE_BRING_UP_SEQUENCE } from './types.ts';
 export function emptyControlRoom(input: {
   readonly sessionId: string;
   readonly mode: LaunchExecutionMode;
-}): LaunchControlRoomState {
+}): ProductionLaunchControlRoomState {
   return Object.freeze({
     schemaVersion: 1,
     sessionId: input.sessionId,
@@ -58,9 +58,9 @@ export function snapshotControlRoom(input: {
   readonly backupReady: boolean;
   readonly securityFindingsClear: boolean;
   readonly externalReady: boolean;
-  readonly genesisStatus: LaunchControlRoomState['genesisStatus'];
-  readonly firstBlockStatus: LaunchControlRoomState['firstBlockStatus'];
-}): LaunchControlRoomState {
+  readonly genesisStatus: ProductionLaunchControlRoomState['genesisStatus'];
+  readonly firstBlockStatus: ProductionLaunchControlRoomState['firstBlockStatus'];
+}): ProductionLaunchControlRoomState {
   const sequenced = input.services.filter((row) =>
     (SERVICE_BRING_UP_SEQUENCE as readonly string[]).includes(row.step),
   );
