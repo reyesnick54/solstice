@@ -2415,7 +2415,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76\u201381 engineering evidence hashes without overwriting external evidence status. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -2461,68 +2461,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "RootOfTrustAuthority",
-          "kind": "type"
-        },
-        {
-          "name": "CeremonyPlan",
-          "kind": "type"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/ceremony",
-        "packages/hsm-v2",
-        "packages/root-of-trust",
-        "packages/key-ceremony"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
-    },
-    {
-      "id": "sunrey-formal-assurance",
-      "name": "SunRey protocol formal models and bounded model checking",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/formal/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/formal/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "FormalModelRegistry",
-          "kind": "type"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/formal",
-        "packages/tla",
-        "packages/model-checker",
-        "packages/sunrey-formal",
-        "packages/formal-methods",
-        "tools/formal"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
-    },
-    {
-      "id": "sunrey-launch-rehearsal",
-      "name": "SunRey full mainnet launch rehearsal",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/launch-rehearsal/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/launch-rehearsal/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
           "name": "MainnetLaunchRehearsalReport",
           "kind": "type"
         },
@@ -2539,7 +2477,101 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
+    },
+    {
+      "id": "sunrey-formal-assurance",
+      "name": "SunRey protocol formal models and bounded model checking",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/formal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/formal/index.ts",
+      "notes": "Chunk 70 production-like launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or authorize production funds."
+    },
+    {
+      "id": "sunrey-root-of-trust",
+      "name": "SunRey root-of-trust and key ceremony architecture",
+      "canonicalOwner": "packages/security",
+      "canonicalPath": "packages/security/src/ceremony/types.ts",
+      "publicInterface": "packages/security/src/ceremony/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "FormalModelRegistry",
+          "name": "RootOfTrustAuthority",
+          "kind": "type"
+        },
+        {
+          "name": "CeremonyPlan",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/formal",
+        "packages/tla",
+        "packages/model-checker",
+        "packages/sunrey-formal",
+        "packages/formal-methods",
+        "tools/formal"
+        "packages/ceremony",
+        "packages/hsm-v2",
+        "packages/root-of-trust",
+        "packages/key-ceremony"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
+    },
+    {
+      "id": "sunrey-launch-rehearsal",
+      "name": "SunRey full mainnet launch rehearsal",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/launch-rehearsal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/launch-rehearsal/index.ts",
+      "notes": "Chunk 64 ceremony architecture at packages/security. Simulation/rehearsal only. Extends canonical HSM/KMS interfaces. Not a completed production ceremony and not a commercial HSM claim."
+    },
+    {
+      "id": "sunrey-formal-assurance",
+      "name": "SunRey protocol formal models and bounded model checking",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/formal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/formal/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MainnetLaunchRehearsalReport",
+          "kind": "type"
+        },
+        {
+          "name": "LaunchControlRoomState",
+          "name": "FormalModelRegistry",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-launch",
+        "packages/launch-rehearsal",
+        "packages/mainnet-rehearsal"
+        "packages/formal",
+        "packages/tla",
+        "packages/model-checker",
+        "packages/sunrey-formal",
+        "packages/formal-methods",
+        "tools/formal"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Chunk 70 full mainnet launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity SunRey Mainnet Rehearsal 1. Does not launch mainnet, enable LIVE_* flags, or authorize production funds."
+      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
     },
     {
       "id": "sunrey-regulated-integration",
@@ -2596,6 +2628,11 @@
         },
         {
           "name": "ProductionContributionEligibilityPolicy",
+          "name": "MarketAccessDecision",
+          "kind": "type"
+        },
+        {
+          "name": "RegulatedMarketReadinessReport",
           "kind": "type"
         }
       ],
@@ -2604,11 +2641,17 @@
         "packages/oracle-onboarding",
         "packages/oracle-collector",
         "packages/oracle-data-plane"
+        "packages/regulated-exchange",
+        "packages/provider-registry",
+        "packages/travel-rule-production",
+        "packages/custody-activation",
+        "packages/exchange-kyc"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
+      "notes": "Chunk 69 regulated Exchange and custody activation adapters. Simulation/production-candidate only. Does not enable LIVE_* flags."
     },
     {
       "id": "sunrey-regulated-integration",
@@ -2678,6 +2721,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 69 production-candidate adapter framework. Extends existing Exchange, custody, Kernel, security, and Chunk 65 owners. No live regulated services. No second Exchange, custody system, Kernel, or native-asset ledger."
+      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -2779,25 +2823,19 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "MarketAccessDecision",
-          "kind": "type"
-        },
-        {
-          "name": "RegulatedMarketReadinessReport",
-          "kind": "type"
+          "name": "MoonReyPolicyRegistry",
+          "kind": "class"
         }
       ],
       "forbiddenAliases": [
-        "packages/regulated-exchange",
-        "packages/provider-registry",
-        "packages/travel-rule-production",
-        "packages/custody-activation",
-        "packages/exchange-kyc"
+        "packages/moonrey-policy",
+        "packages/moonrey-economics",
+        "packages/issuance-policy"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 69 production-candidate adapter framework. Extends existing Exchange, custody, Kernel, security, and Chunk 65 owners. No live regulated services. No second Exchange, custody system, Kernel, or native-asset ledger."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
     },
     {
       "id": "sunrey-dual-economy-simulator",
@@ -2906,6 +2944,18 @@
           "kind": "type"
         },
         {
+          "name": "EconomicStressCampaign",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicInvariantResult",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicRecoveryResult",
+          "kind": "type"
+        },
+        {
           "name": "EconomicStressReport",
           "kind": "type"
         }
@@ -2926,6 +2976,11 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/providers/types.ts",
       "publicInterface": "packages/sunrey-chain/src/providers/index.ts",
+      "id": "sunrey-testnet-rc",
+      "name": "SunRey Testnet release-candidate freeze and qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -2946,6 +3001,64 @@
         },
         {
           "name": "ProviderProductionEligibilityEvaluation",
+          "name": "TestnetReleaseCandidateManifest",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-rc",
+        "packages/release-candidate",
+        "packages/testnet-rc",
+        "packages/sunrey-qualification",
+        "packages/rc-control"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 63 Testnet release-candidate freeze, qualification, and release control at packages/sunrey-chain/src/release-candidate. Not mainnet. Tickers remain NOT_ASSIGNED."
+    },
+    {
+      "id": "sunrey-audit-readiness",
+      "name": "SunRey independent security-review preparation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/audit/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/audit/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AuditBundleManifest",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-audit",
+        "packages/audit",
+        "packages/security-review",
+        "packages/audit-evidence"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed."
+    },
+    {
+      "id": "sunrey-validator-economics",
+      "name": "SunRey validator bonding, reward, and accountability economics",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/validator-economics/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/validator-economics/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ValidatorBondPosition",
           "kind": "type"
         }
       ],
@@ -2954,11 +3067,16 @@
         "packages/production-providers",
         "packages/external-providers",
         "packages/sunrey-providers"
+        "packages/validator-economics",
+        "packages/staking",
+        "packages/slashing",
+        "packages/liquid-staking"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 82 evidence-driven external production provider acceptance at packages/sunrey-chain/src/providers. Reuses ProductionInfrastructureRegistry, OracleOnboardingRegistry, RegulatedServiceProviderRegistry, and HsmKmsProvider. Does not fabricate contracts, licenses, commercial HSM certification, or human approvals."
+      "notes": "Chunk 72 validator bonding, reward, and accountability economics at packages/sunrey-chain/src/validator-economics. Governed principals only. Production bond asset remains UNCONFIGURED. Do not create packages/validator-economics, packages/staking, packages/slashing, or packages/liquid-staking."
     },
     {
       "id": "sunrey-protocol-treasury",
@@ -2972,6 +3090,24 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
+      "protectedSymbols": [
+        {
+          "name": "ProtocolTreasuryPolicy",
+          "kind": "type"
+        },
+        {
+          "name": "ProtocolTreasuryAccount",
+          "kind": "type"
+        },
+        {
+          "name": "TreasuryBudget",
+          "kind": "type"
+        },
+        {
+          "name": "TreasuryDisbursementIntent",
+          "kind": "type"
+        }
+      ],
       "forbiddenAliases": [
         "packages/sunrey-protocol-treasury",
         "packages/native-treasury",
@@ -2981,6 +3117,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 77 protocol treasury. Distinct from packages/treasury."
+      "notes": "Chunk 77 blockchain-native protocol treasury at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive."
     },
     {
       "id": "sunrey-economic-rc",
@@ -2994,6 +3131,20 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
+      "protectedSymbols": [
+        {
+          "name": "EconomicReleaseManifest",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicPolicyFreeze",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicQualificationMatrix",
+          "kind": "type"
+        }
+      ],
       "forbiddenAliases": [
         "packages/sunrey-economic-rc",
         "packages/economic-rc",
@@ -3003,6 +3154,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 78 economic RC qualification."
+      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. ReleaseAuthority signs the economic bundle only and does not activate economic policy or authorize mainnet."
     },
     {
       "id": "sunrey-governance-operations",
@@ -3010,12 +3162,27 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/governance-ops/index.ts",
       "publicInterface": "packages/sunrey-chain/src/governance-ops/index.ts",
+      "canonicalPath": "packages/sunrey-chain/src/governance-ops/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/governance-ops/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "protectedSymbols": [],
+      "protectedSymbols": [
+        {
+          "name": "GovernanceOperationPackage",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicPolicyChangePackage",
+          "kind": "type"
+        },
+        {
+          "name": "EmergencyAuthorityPolicy",
+          "kind": "type"
+        }
+      ],
       "forbiddenAliases": [
         "packages/governance-ops",
         "packages/sunrey-governance",
@@ -3024,7 +3191,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 79 governance operations."
+      "notes": "Chunk 79 operational orchestration around canonical Chunk 40 protocol governance. No governance token, AI voting, or finalized-history rewrite."
     },
     {
       "id": "sunrey-economic-mainnet-rehearsal",
@@ -3039,6 +3206,24 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [],
       "forbiddenAliases": [
+        "packages/governance-ops",
+        "packages/sunrey-governance",
+        "packages/governance-token"
+      "protectedSymbols": [
+        {
+          "name": "EconomicMainnetRehearsalReport",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicActivationEvidenceBundle",
+          "kind": "type"
+        },
+        {
+          "name": "EconomicLaunchControlRoomState",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
         "packages/sunrey-economic-rehearsal",
         "packages/economic-mainnet",
         "packages/economic-rehearsal",
@@ -3047,7 +3232,59 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 79 governance operations."
+    },
+    {
+      "id": "sunrey-economic-mainnet-rehearsal",
+      "name": "SunRey complete economic mainnet rehearsal",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economic-rehearsal/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economic-rehearsal/index.ts",
+      "notes": "Chunk 80 production-like economic rehearsal at packages/sunrey-chain/src/economic-rehearsal. Distinct rehearsal identity. Does not activate mainnet, customer funds, live Exchange, live custody, or LIVE_* flags."
+    },
+    {
+      "id": "sunrey-production-network-candidate",
+      "name": "SunRey production network candidate v2",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/candidate-v2/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/candidate-v2/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/sunrey-economic-rehearsal",
+        "packages/economic-mainnet",
+        "packages/economic-rehearsal",
+        "packages/sunrey-economic-mainnet"
+      "protectedSymbols": [
+        {
+          "name": "ProductionNetworkCandidateV2",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionNetworkManifestV2",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionNetworkVerificationReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/production-network",
+        "packages/sunrey-production-network",
+        "packages/candidate-v2",
+        "packages/mainnet-v2",
+        "packages/production-candidate-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Chunk 80 economic mainnet rehearsal."
+      "notes": "Chunk 81 second-generation production-network candidate. Binds the complete stack through Chunk 80. Candidate state remains CANDIDATE. mainnetEnabled=false. Does not launch mainnet or enable LIVE_* flags. External legal/audit/HSM/human evidence remains unfabricated."
     }
   ],
   "authorizedMutationPaths": [
@@ -3710,6 +3947,7 @@
     "packages/production-providers",
     "packages/external-providers",
     "packages/sunrey-providers"
+    "packages/exchange-kyc"
   ],
   "capabilities": [
     {
@@ -4318,6 +4556,13 @@
       "notes": "Chunk 62 independent security-review preparation at packages/sunrey-chain/src/audit. Generates a signed, reviewer-safe evidence bundle. Does not claim an external audit occurred or passed. Do not create packages/sunrey-audit, packages/audit, packages/security-review, or packages/audit-evidence."
     },
     {
+      "id": "sunrey-launch-rehearsal",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 70 full mainnet launch rehearsal at packages/sunrey-chain/src/launch-rehearsal. Distinct rehearsal identity SunRey Mainnet Rehearsal 1. Does not launch mainnet, enable LIVE_* flags, or authorize production funds. Do not create packages/sunrey-launch, packages/launch-rehearsal, or packages/mainnet-rehearsal."
+    },
+    {
       "id": "sunrey-regulated-integration",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-exchange",
@@ -4402,16 +4647,29 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
+      "id": "sunrey-protocol-treasury",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
     },
     {
       "id": "sunrey-economic-rc",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-qualification, packages/sunrey-economic-release, or packages/economic-policy-freeze."
+      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. Does not authorize mainnet, invent production parameters, or treat engineering qualification as regulatory approval. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-qualification, packages/sunrey-economic-release, or packages/economic-policy-freeze."
     },
     {
       "id": "sunrey-governance-operations",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-qualification, packages/sunrey-economic-release, or packages/economic-policy-freeze."
+      "notes": "Chunk 79 production governance operations, economic policy change control, and bounded emergency authority at packages/sunrey-chain/src/governance-ops. Orchestrates existing Chunk 40 protocol governance. No governance token, AI voting, history rewrite, or competing governance engine. Do not create packages/governance-ops, packages/sunrey-governance, or packages/governance-token."
+    },
+    {
+      "id": "sunrey-economic-mainnet-rehearsal",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
@@ -4423,6 +4681,14 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 80 complete economic mainnet rehearsal at packages/sunrey-chain/src/economic-rehearsal. Does not activate mainnet or LIVE_* flags. Do not create packages/sunrey-economic-rehearsal, packages/economic-mainnet, packages/economic-rehearsal, or packages/sunrey-economic-mainnet."
+      "notes": "Chunk 80 complete economic mainnet rehearsal, economic genesis dry run, and activation evidence package. Owner: packages/sunrey-chain/src/economic-rehearsal. Do not create packages/sunrey-economic-rehearsal, packages/economic-mainnet, packages/economic-rehearsal, or packages/sunrey-economic-mainnet."
+    },
+    {
+      "id": "sunrey-production-network-candidate",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
     }
   ],
   "boundedContexts": [
@@ -4809,5 +5075,6 @@
     "packages/production-providers",
     "packages/external-providers",
     "packages/sunrey-providers"
+    "packages/exchange-kyc"
   ]
 }

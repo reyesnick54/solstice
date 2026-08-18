@@ -142,6 +142,10 @@ export function handleExplorerRequest(
   }
   if (path === '/v1/treasury') {
     return json(200, { ...queries.treasury(), ...queries.protocolTreasury() });
+    return json(200, {
+      ...queries.treasury(),
+      ...queries.protocolTreasury(),
+    });
   }
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');

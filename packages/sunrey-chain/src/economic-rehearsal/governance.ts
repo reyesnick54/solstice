@@ -7,6 +7,12 @@
 
 import { encodeString, sha256Hex } from '../validators/canonical.ts';
 import { developmentFeePolicyV2 } from '../fees/v2/index.ts';
+import {
+  bindCanonicalEconomicReleaseCandidate,
+  buildEconomicChange,
+  buildOperationPackage,
+  developmentFeeSnapshots,
+} from '../governance-ops/index.ts';
 import { developmentPolicyBundle, MoonReyPolicyRegistry } from '../productive/policy-governance/registry.ts';
 import { ECONOMIC_REHEARSAL_CHAIN_ID, ECONOMIC_REHEARSAL_NETWORK_ID } from './identity.ts';
 import type { GovernanceRehearsalResult } from './types.ts';
@@ -46,6 +52,50 @@ export function approveRehearsalConfiguration(input: {
     validOnlyForRehearsal: true,
     productionAuthorized: false,
   });
+}
+
+export function bindRehearsalGovernanceToEconomicRc(input: {
+  readonly economicRcId: string;
+  readonly sourceCommit: string;
+  readonly releaseArtifactHash: string;
+  readonly formalReportHash: string;
+  readonly economicStressReportHash: string;
+  readonly qualificationReportHash: string;
+  readonly simulationEvidenceHash: string;
+  readonly supplyInvariantHash: string;
+  readonly schemaHash: string;
+}): string {
+  const binding = bindCanonicalEconomicReleaseCandidate(input);
+  const snapshots = developmentFeeSnapshots(8);
+  const evidence = {
+    schemaHash: input.schemaHash,
+    formalReportHash: input.formalReportHash,
+    propertyTestHash: input.qualificationReportHash,
+    economicStressReportHash: input.economicStressReportHash,
+    simulationEvidenceHash: input.simulationEvidenceHash,
+    qualificationReportHash: input.qualificationReportHash,
+    readinessEvidenceHash: input.qualificationReportHash,
+    releaseArtifactHash: input.releaseArtifactHash,
+    economicReleaseCandidateHash: binding.economicReleaseCandidateHash,
+    supplyInvariantHash: input.supplyInvariantHash,
+  };
+  const economic = buildEconomicChange({
+    current: snapshots.current,
+    proposed: snapshots.proposed,
+    activation: { kind: 'HEIGHT', height: 8, epoch: 1 },
+    evidence,
+  });
+  const pkg = buildOperationPackage({
+    packageId: 'govops.economic-rehearsal.fee-v2',
+    operationType: 'FEE_POLICY',
+    networkId: ECONOMIC_REHEARSAL_NETWORK_ID,
+    chainId: ECONOMIC_REHEARSAL_CHAIN_ID,
+    networkClass: 'REHEARSAL',
+    activation: { kind: 'HEIGHT', height: 8, epoch: 1 },
+    economic,
+    evidence,
+  });
+  return pkg.packageHash;
 }
 
 export function rehearseGovernedPolicyUpgrades(): GovernanceRehearsalResult {

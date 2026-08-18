@@ -498,4 +498,10 @@ if (
   entry.endsWith('ops/cli.js')
 ) {
   await main();
+  const group = process.argv[2] ?? 'health';
+  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
+    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
+  } else {
+    await main();
+  }
 }

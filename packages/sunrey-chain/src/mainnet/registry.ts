@@ -4,7 +4,7 @@
 
 import { createLocalHarness } from '../infra/harness.ts';
 import { defaultActivationMatrix } from './capabilities.ts';
-import { defaultDimensionCatalog } from './dimensions.ts';
+import { defaultDimensionCatalog, type EngineeringEvidenceOverlay } from './dimensions.ts';
 import { evaluateReadiness, type EvaluatorPolicy, DEFAULT_PRODUCTION_POLICY } from './evaluator.ts';
 import { buildGenesisCandidate, type GenesisCandidateBundle } from './genesis-candidate.ts';
 import type {
@@ -22,8 +22,9 @@ export function assembleReadinessRegistry(input?: {
   readonly capabilities?: readonly ProductionCapabilityActivation[];
   readonly genesis?: GenesisCandidateBundle;
   readonly policy?: EvaluatorPolicy;
+  readonly engineeringEvidence?: EngineeringEvidenceOverlay;
 }): MainnetReadinessRegistry {
-  const records = input?.records ?? defaultDimensionCatalog();
+  const records = input?.records ?? defaultDimensionCatalog(input?.engineeringEvidence);
   const authorizations = input?.authorizations ?? [];
   const capabilities = input?.capabilities ?? defaultActivationMatrix();
   const genesis = input?.genesis ?? buildGenesisCandidate();
