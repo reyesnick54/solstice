@@ -1820,6 +1820,33 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/genesis-economy')), false);
   });
 
+  it('CHUNK-80 implements the SunRey complete economic mainnet rehearsal', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-mainnet-rehearsal').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-mainnet-rehearsal').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-mainnet-rehearsal').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-80',
+    );
+    assert.ok(declared, 'CHUNK-80 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-80-economic-mainnet-rehearsal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/chunk-80-economic-mainnet-rehearsal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/economic-genesis-rehearsal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/economic-control-room.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/economic-activation-evidence.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/economic-rehearsal-findings.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/economic-mainnet-rehearsal.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/economic-rehearsal/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economic-rehearsal')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-mainnet')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-rehearsal')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economic-mainnet')), false);
+  });
+
   it('CHUNK-68 implements production-candidate oracle onboarding on sunrey-chain', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').status, 'IMPLEMENTED');

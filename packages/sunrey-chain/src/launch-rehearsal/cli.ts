@@ -11,6 +11,7 @@ import {
   runLaunchRehearsal,
   type LaunchRehearsalSession,
 } from './engine.ts';
+import { runEconomicLaunchCommand } from '../economic-rehearsal/cli.ts';
 
 export type LaunchCliResult = {
   readonly ok: boolean;
@@ -99,12 +100,15 @@ export function runLaunchCommand(argv: readonly string[], root = process.cwd()):
     const plan = session(root).plan;
     return { ok: plan.executes === false, command: 'activation-plan', payload: jsonSafe(plan) };
   }
+  if (command.startsWith('economic-')) {
+    return runEconomicLaunchCommand(argv, root);
+  }
   return {
     ok: true,
     command: 'help',
     payload: {
       usage:
-        'sunrey-launch <rehearse|status|verify|inject-failure|recover|report|findings|activation-plan>',
+        'sunrey-launch <rehearse|status|verify|inject-failure|recover|report|findings|activation-plan|economic-rehearse|economic-status|economic-verify|economic-audit|economic-stress|economic-report|economic-evidence>',
       launchesProduction: false,
       banner: 'MAINNET REHEARSAL',
     },

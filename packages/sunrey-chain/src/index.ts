@@ -157,6 +157,7 @@ export * as nativeCustody from './native-custody/index.ts';
 export * as supplyChain from './supply-chain/index.ts';
 export * as mainnet from './mainnet/index.ts';
 export * as launchRehearsal from './launch-rehearsal/index.ts';
+export * as economicRehearsal from './economic-rehearsal/index.ts';
 export * as validatorEconomics from './validator-economics/index.ts';
 export * as audit from './audit/index.ts';
 export {

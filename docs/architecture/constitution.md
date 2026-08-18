@@ -1073,6 +1073,16 @@ or activate production monetary policy. Do not create
 `packages/economic-bridge`. See
 [`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
 
+Chunk 80 implements the complete SunRey economic mainnet rehearsal at
+`packages/sunrey-chain/src/economic-rehearsal`. Capability
+`sunrey-economic-mainnet-rehearsal` is `IMPLEMENTED`. It is a
+production-like dry run of the dual-native-asset economy. It does not
+activate SunRey mainnet, customer funds, live Exchange, live custody,
+fiat rails, tickers, or `LIVE_*` flags. Do not create
+`packages/sunrey-economic-rehearsal`, `packages/economic-mainnet`,
+`packages/economic-rehearsal`, or `packages/sunrey-economic-mainnet`.
+See
+[`chunk-80-economic-mainnet-rehearsal.md`](./chunk-80-economic-mainnet-rehearsal.md).
 Chunk 78 implements economic release-candidate freeze, policy freeze,
 and qualification at
 `packages/sunrey-chain/src/release-candidate/economic`. Capability

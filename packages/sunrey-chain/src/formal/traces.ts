@@ -103,6 +103,10 @@ export function validatorEconomicsHappyTrace(): LogicalTrace {
     { domain: 'validator_economics', action: 'Bond', args: { quantity: 1 } },
     { domain: 'validator_economics', action: 'CreditPool', args: { amount: 1 } },
     { domain: 'validator_economics', action: 'Reward', args: {} },
+    { domain: 'validator_economics', action: 'AdvanceEpoch', args: {} },
+    { domain: 'validator_economics', action: 'RequestUnbond', args: {} },
+    { domain: 'validator_economics', action: 'AdvanceEpoch', args: {} },
+    { domain: 'validator_economics', action: 'ReleaseUnbond', args: {} },
   ]);
 }
 

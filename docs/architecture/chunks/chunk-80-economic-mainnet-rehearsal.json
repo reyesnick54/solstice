@@ -1,0 +1,28 @@
+{
+  "chunk": "CHUNK-80",
+  "title": "SunRey complete economic mainnet rehearsal, economic genesis dry run, and activation evidence",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-native-assets",
+    "sunrey-native-fees",
+    "sunrey-adaptive-fee-market",
+    "sunrey-validator-economics",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-machine-economy",
+    "sunrey-exchange",
+    "sunrey-launch-rehearsal",
+    "sunrey-mainnet-readiness",
+    "sunrey-formal-assurance",
+    "sunrey-dual-economy-simulator",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-mainnet-rehearsal"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economic-rehearsal. Production-like economic rehearsal only. Does not activate SunRey mainnet, customer funds, live Exchange, live custody, or LIVE_* flags. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-economic-rehearsal, packages/economic-mainnet, packages/economic-rehearsal, or packages/sunrey-economic-mainnet."
+}
