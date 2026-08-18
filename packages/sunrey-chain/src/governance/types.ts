@@ -18,6 +18,7 @@ export const UPGRADE_KINDS = [
   'VALIDATOR_POLICY_CHANGE',
   'VALIDATOR_ECONOMIC_POLICY_CHANGE',
   'FEE_PARAMETER_CHANGE',
+  'TREASURY_POLICY_CHANGE',
 ] as const;
 export type UpgradeKind = (typeof UPGRADE_KINDS)[number];
 

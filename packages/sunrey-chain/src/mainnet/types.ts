@@ -49,6 +49,8 @@ export const READINESS_DIMENSIONS = [
   'HUMAN_AUTHORIZATION',
   'INFRASTRUCTURE',
   'DUAL_ECONOMY_MODELING',
+  'GOVERNANCE_OPERATIONS',
+  'ECONOMIC_STRESS',
 ] as const;
 export type MainnetReadinessDimension = (typeof READINESS_DIMENSIONS)[number];
 
@@ -297,6 +299,16 @@ export type TestnetReleaseCandidateSlot = {
   readonly notes: string;
 };
 
+export type EconomicReleaseCandidateSlot = {
+  readonly rcId: string;
+  readonly sourceCommit: string;
+  readonly qualificationDigest: string;
+  readonly engineeringStatus: 'ENGINEERING_VERIFIED';
+  readonly mainnetAuthorized: false;
+  readonly externalApprovalsRemain: true;
+  readonly notes: string;
+};
+
 export type LegalRegulatorySlot = {
   readonly counselOpinionReference: string | null;
   readonly licenseOrRegistration: string | null;
@@ -463,6 +475,7 @@ export type MainnetReadinessReport = {
   readonly openSecurityFindings: readonly string[];
   readonly knownLimitations: readonly string[];
   readonly testnetRcReference: TestnetReleaseCandidateSlot;
+  readonly economicRcReference: EconomicReleaseCandidateSlot;
   readonly formalEvidence: FormalAssuranceSlot;
   readonly exchangeReadiness: ExchangeReadinessSlot;
   readonly custodyReadiness: CustodyReadinessSlot;

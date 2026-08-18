@@ -58,6 +58,7 @@ export {
   MachineClient,
   InteropClient,
   ExchangeClient,
+  ProtocolTreasuryClient,
   EventClient,
 } from './clients.ts';
 export { connectSunRey } from './client.ts';

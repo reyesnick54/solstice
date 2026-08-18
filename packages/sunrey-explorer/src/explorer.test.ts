@@ -106,6 +106,22 @@ describe('sunrey explorer', () => {
     assert.match(monetary.body, /SUNREY_COIN/);
     assert.match(monetary.body, /supplyReconciliation/);
     assert.doesNotMatch(monetary.body, /marketCap|market_cap|marketCapitalization/);
+    const fees = handleExplorerRequest({ method: 'GET', path: '/v1/fees', query: {} }, queries, indexer);
+    assert.equal(fees.status, 200);
+    assert.match(fees.body, /FeePolicyV2/);
+    assert.match(fees.body, /UNCONFIGURED/);
+    const treasury = handleExplorerRequest({ method: 'GET', path: '/v1/treasury', query: {} }, queries, indexer);
+    assert.equal(treasury.status, 200);
+    assert.match(treasury.body, /SUNREY_BLOCKCHAIN_TREASURY/);
+    assert.match(treasury.body, /UNCONFIGURED/);
+    const economics = handleExplorerRequest({ method: 'GET', path: '/v1/validators/economics', query: {} }, queries, indexer);
+    assert.equal(economics.status, 200);
+    assert.match(economics.body, /bondAsset/);
+    const treasury = handleExplorerRequest({ method: 'GET', path: '/v1/treasury', query: {} }, queries, indexer);
+    assert.equal(treasury.status, 200);
+    assert.match(treasury.body, /PROTOCOL TREASURY/);
+    assert.match(treasury.body, /distinctFromFiatLedger/);
+    assert.match(treasury.body, /distinctFromCustomerCustody/);
     const bad = handleExplorerRequest({ method: 'POST', path: '/v1/blocks', query: {} }, queries, indexer);
     assert.equal(bad.status, 405);
     const search = handleExplorerRequest(

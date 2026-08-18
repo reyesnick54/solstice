@@ -120,10 +120,35 @@ export function monetaryHappyTrace(): LogicalTrace {
   ]);
 }
 
+export function governanceOpsHappyTrace(): LogicalTrace {
+  return makeTrace('trace_governance_ops_activate', 'governance_operations', 'GOVERNANCE_OPERATION_SAFETY', [
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'ApproveHuman', args: {} },
+    { domain: 'governance_operations', action: 'MarkApproved', args: {} },
+    { domain: 'governance_operations', action: 'Schedule', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'AdvanceHeight', args: {} },
+    { domain: 'governance_operations', action: 'Activate', args: { height: 2 } },
+  ]);
+}
+
 export function genesisHappyTrace(): LogicalTrace {
   return makeTrace('trace_genesis_allocation', 'genesis_allocation', 'GENESIS_ALLOCATION_CONSERVATION', [
     { domain: 'genesis_allocation', action: 'Allocate(SUNREY_COIN)', args: { asset: 'SUNREY_COIN' } },
     { domain: 'genesis_allocation', action: 'Allocate(MOONREY_COIN)', args: { asset: 'MOONREY_COIN' } },
+  ]);
+}
+
+export function protocolTreasuryHappyTrace(): LogicalTrace {
+  return makeTrace('trace_protocol_treasury', 'protocol_treasury', 'PROTOCOL_TREASURY', [
+    { domain: 'protocol_treasury', action: 'Reserve', args: {} },
+    { domain: 'protocol_treasury', action: 'Finalize', args: {} },
+export function crossEconomicHappyTrace(): LogicalTrace {
+  return makeTrace('trace_cross_economic', 'cross_economic', 'CROSS_ECONOMIC_INVARIANTS', [
+    { domain: 'cross_economic', action: 'IssueSunRey', args: {} },
+    { domain: 'cross_economic', action: 'ChargeFee', args: {} },
+    { domain: 'cross_economic', action: 'AuthorizeMoonRey', args: {} },
+    { domain: 'cross_economic', action: 'IssueMoonRey', args: {} },
   ]);
 }
 
@@ -140,5 +165,8 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     validatorEconomicsHappyTrace(),
     monetaryHappyTrace(),
     genesisHappyTrace(),
+    governanceOpsHappyTrace(),
+    protocolTreasuryHappyTrace(),
+    crossEconomicHappyTrace(),
   ];
 }

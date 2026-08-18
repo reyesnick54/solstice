@@ -1,18 +1,47 @@
 /**
- * sunrey-economics dual CLI.
+ * sunrey-economics dual and stress CLI.
  */
 
 import { writeFileSync } from 'node:fs';
 
+import { runTreasuryCommand } from '../../sunrey-chain/src/economics/treasury/cli.ts';
+import { runEconomicsCommand as runMonetaryCommand } from '../../sunrey-chain/src/economics/cli.ts';
+import { runSunreyEconomicsCli } from '../../sunrey-chain/src/fees/v2/cli.ts';
 import { analyzeReport } from './analysis.ts';
+import { runAdversarialSmoke } from './adversarial.ts';
 import { compareScenarios } from './compare.ts';
 import { renderDashboard } from './dashboard.ts';
 import { simulateScenario } from './engine.ts';
+import { allPropertiesHold, propertyChecks } from './properties.ts';
 import { catalogScenarios, listScenarioIds, loadScenario } from './scenarios.ts';
 import { dualEconomyReadiness } from './readiness.ts';
+import { runStressCommand } from './stress/cli.ts';
+
+const MONETARY_PLANES = new Set(['supply', 'policy', 'genesis', 'simulate', 'readiness', 'rehearsal']);
+
+const QUALIFY_SCENARIOS = [
+  'baseline',
+  'rapid-automation',
+  'energy-scarcity',
+  'compute-abundance',
+  'high-concentration',
+] as const;
 
 export function runEconomicsCommand(argv: readonly string[]): string {
   const [plane, command, ...rest] = argv;
+  if (plane === 'treasury') {
+    const result = runTreasuryCommand([command ?? 'help', ...rest]);
+    return JSON.stringify(result.payload, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+  if (plane === 'stress') {
+    return runStressCommand([command ?? '', ...rest]);
+  }
+  if (plane === 'fees') {
+    return runSunreyEconomicsCli(argv).trimEnd();
+  }
+  if (plane && MONETARY_PLANES.has(plane)) {
+    const result = runMonetaryCommand(argv);
+    return JSON.stringify(result.payload, bigintReplacer, 2);
+  }
   if (plane !== 'dual') {
     return usage();
   }
@@ -29,6 +58,8 @@ export function runEconomicsCommand(argv: readonly string[]): string {
       return stability(rest);
     case 'export':
       return exportReport(rest);
+    case 'qualify':
+      return qualify(rest);
     default:
       return usage();
   }
@@ -42,6 +73,20 @@ function usage(): string {
     'sunrey-economics dual report --scenario <id>',
     'sunrey-economics dual stability --scenario <id>',
     'sunrey-economics dual export --scenario <id> --out <path>',
+    'sunrey-economics dual qualify [--seed n] [--epochs n]',
+    'sunrey-economics treasury policy',
+    'sunrey-economics treasury reserves',
+    'sunrey-economics treasury budgets',
+    'sunrey-economics treasury disbursements',
+    'sunrey-economics treasury verify',
+    'sunrey-economics treasury simulate',
+    'sunrey-economics stress run --scenario <id> [--seed n] [--epochs n]',
+    'sunrey-economics stress scenario [--list] [--id <id>]',
+    'sunrey-economics stress campaign --id <smoke|critical-invariants|compound|extended-12> [--extended]',
+    'sunrey-economics stress report --campaign <id>',
+    'sunrey-economics stress compare --left <id> --right <id>',
+    'sunrey-economics stress replay --scenario <id> --seed n',
+    'sunrey-economics policy verify | supply verify | fees <policy|verify>',
   ].join('\n');
 }
 
@@ -94,6 +139,34 @@ function exportReport(args: readonly string[]): string {
   const simulated = simulateScenario(id);
   writeFileSync(out, JSON.stringify(simulated, bigintReplacer, 2));
   return `exported ${out}`;
+}
+
+function qualify(args: readonly string[]): string {
+  const seed = Number(flag(args, '--seed') ?? '78');
+  const epochs = Number(flag(args, '--epochs') ?? '2');
+  const reports = QUALIFY_SCENARIOS.map((id) => {
+    const report = simulateScenario(id, { seed, epochs });
+    return Object.freeze({
+      scenarioId: id,
+      ok: allPropertiesHold(report.properties),
+      sunreySupplyReconciles: report.properties.sunreySupplyReconciles,
+    });
+  });
+  const property = propertyChecks('baseline', seed, epochs);
+  const stress = runAdversarialSmoke();
+  return JSON.stringify({
+    schemaVersion: 1,
+    seed,
+    epochs,
+    scenarios: reports,
+    ok: reports.every((row) => row.ok),
+    property: { seed, ok: allPropertiesHold(property) },
+    stress: {
+      ok: stress.failed === 0,
+      failed: stress.results.filter((row) => !row.passed).map((row) => row.scenarioId),
+      passed: stress.passed,
+    },
+  }, bigintReplacer);
 }
 
 export function bigintReplacer(_key: string, value: unknown): unknown {

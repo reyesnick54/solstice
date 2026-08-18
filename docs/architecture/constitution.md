@@ -1083,6 +1083,39 @@ fiat rails, tickers, or `LIVE_*` flags. Do not create
 `packages/economic-rehearsal`, or `packages/sunrey-economic-mainnet`.
 See
 [`chunk-80-economic-mainnet-rehearsal.md`](./chunk-80-economic-mainnet-rehearsal.md).
+Chunk 78 implements economic release-candidate freeze, policy freeze,
+and qualification at
+`packages/sunrey-chain/src/release-candidate/economic`. Capability
+`sunrey-economic-rc` is `IMPLEMENTED`. It remains TESTNET /
+PRODUCTION-CANDIDATE economic qualification. No economic RC status
+implies mainnet authorization. Production parameters remain
+`UNCONFIGURED`. Qualification is not regulatory approval.
+`ReleaseAuthority` signs the economic bundle only and does not
+activate economic policy. Do not create `packages/sunrey-economic-rc`,
+`packages/economic-rc`, `packages/economic-qualification`,
+`packages/sunrey-economic-release`, or
+`packages/economic-policy-freeze`. See
+[`chunk-78-economic-rc.md`](./chunk-78-economic-rc.md).
+Chunk 79 implements SunRey production governance operations, economic
+policy change control, and bounded emergency authority at
+`packages/sunrey-chain/src/governance-ops`. Capability
+`sunrey-governance-operations` is `IMPLEMENTED`. It orchestrates
+existing Chunk 40 protocol governance and does not introduce a
+governance token, AI voting, a competing governance engine, or an
+authority that can rewrite finalized history. Do not create
+`packages/governance-ops`, `packages/sunrey-governance`, or
+`packages/governance-token`. See
+[`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md).
+Chunk 77 implements the blockchain-native SunRey protocol treasury
+and reserve architecture at
+`packages/sunrey-chain/src/economics/treasury`. Capability
+`sunrey-protocol-treasury` is `IMPLEMENTED`. It is distinct from
+the fiat/application owner `packages/treasury`. It does not create
+a second financial Ledger, a new native asset, a price peg, or a
+treasury mint. Production treasury remains inactive. Do not create
+`packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
+`packages/reserve-bank`. See
+[`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
 ## Agent stop rule
 

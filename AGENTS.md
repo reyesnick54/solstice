@@ -94,7 +94,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
 - `packages/personal-data-vault` — Personal Data Vault; subject-bound encrypted store
-- `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`. Chunk 63 Testnet RC freeze and qualification lives at `src/release-candidate`. Chunk 70 launch rehearsal lives at `src/launch-rehearsal`. Chunk 71 monetary constitution lives at `src/economics`.
+- `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`. Chunk 63 Testnet RC freeze and qualification lives at `src/release-candidate`. Chunk 70 launch rehearsal lives at `src/launch-rehearsal`. Chunk 71 monetary constitution lives at `src/economics`. Chunk 78 economic RC freeze and qualification lives at `src/release-candidate/economic`.
+- `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`. Chunk 63 Testnet RC freeze and qualification lives at `src/release-candidate`. Chunk 70 launch rehearsal lives at `src/launch-rehearsal`. Chunk 71 monetary constitution lives at `src/economics`. Chunk 79 production governance operations live at `src/governance-ops`.
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger
 - `packages/sunrey-sdk` — official developer SDK and versioned public API adapter
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
