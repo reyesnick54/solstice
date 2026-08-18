@@ -152,6 +152,8 @@ jobs:
         run: npm run demo:sunrey-coin
       - name: Human Information Network marketplace demo
         run: npm run demo:information-market
+      - name: Human Information Network production-candidate demo
+        run: npm run demo:sunrey-human-information-network
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
       - name: MoonRey productive capacity demo
