@@ -102,15 +102,6 @@ export function rehearseValidatorEconomics(): ValidatorEconomicsRehearsalResult 
 }
 
 export function rehearseNativeAssets(): NativeAssetRehearsalResult {
-  const engine = new FeeEngine();
-  engine.faucet('alice', 1_000_000n);
-  engine.activateFeePolicyV2();
-  const normal = engine.execute({
-    tx: { ...transferTx(txId('rehearse-normal'), 'alice', 'bob', 25n, 500_000n), policyVersion: 2, signatureClass: 'CLASSICAL' },
-    blockHeight: 1,
-    blockId: 'rehearse_1',
-    proposerId: 'val_a',
-    validators: FOUR_VALIDATORS,
   const monetary = rehearseMonetaryConstitution();
   const stack = createIntegratedEconomicStack();
   const normal = stack.executeTransferFee({
@@ -149,15 +140,6 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
       exemption: 'NONE',
     },
   });
-  const charged = [normal, pq, dvp].reduce((sum, result) => sum + (result.ok ? result.receipt.actualFee : 0n), 0n);
-  const sinks =
-    engine.accounts.position('sunrey.fees.validator_reward_pool', 'SUNREY_COIN').available +
-    engine.accounts.position('sunrey.fees.burn', 'SUNREY_COIN').available +
-    engine.accounts.position('sunrey.fees.treasury', 'SUNREY_COIN').available;
-  const alice = engine.accounts.position('alice', 'SUNREY_COIN').available;
-  const bob = engine.accounts.position('bob', 'SUNREY_COIN').available;
-  const nativeReconciled = alice + bob + sinks === 1_000_000n && sinks === charged;
-  const monetary = rehearseMonetaryConstitution();
   stack.registerProductiveObject({
     objectId: 'obj.energy.0',
     category: 'ENERGY',
@@ -181,7 +163,6 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
     moonreyIssuance: monetary.moonreyIssuance && moonrey.ok,
     fees: monetary.fees && stack.feeCharged > 0n,
     locks: monetary.locks,
-    supplyReconciled: monetary.supplyReconciled && sunreyReconciled && moonreyReconciled && nativeReconciled,
     supplyReconciled: monetary.supplyReconciled && recon.ok,
     productionValueClaim: false,
     units: 'REHEARSAL_ONLY',

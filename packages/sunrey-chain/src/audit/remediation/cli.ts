@@ -46,7 +46,7 @@ function loadImportedReview(path: string): RemediationStore {
     store.putReview(createExternalSecurityReview({ ...parsed.review, fixture }));
   }
   for (const row of parsed.findings ?? []) {
-    const received = receiveExternalFinding({ ...row, fixture: fixture || row.fixture });
+    const received = receiveExternalFinding({ ...row, fixture: fixture || row.fixture === true });
     store.putFinding(received.finding, received.chain);
   }
   return store;
