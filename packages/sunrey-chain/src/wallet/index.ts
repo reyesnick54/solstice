@@ -71,9 +71,62 @@ export { assertMachineMaySpend } from './machine.ts';
 export { WalletEngine } from './engine.ts';
 export { runWalletCommand, walletUsage } from './cli.ts';
 export {
+  BACKUP_MODELS,
+  DESTINATION_TRUST_STATES,
+  DevelopmentPasskeyAuthenticator,
+  HIGH_RISK_CATEGORIES,
+  InMemorySecureLocalStorage,
+  TRANSACTION_REQUIREMENT_KINDS,
+  WALLET_AUTH_METHODS,
+  WALLET_CUSTODY_CLASSES,
+  WALLET_DEVICE_TRUST_STATES,
+  WALLET_SECURITY_EVENT_KINDS,
+  WALLET_SECURITY_OWNER,
+  WALLET_SECURITY_REJECTION_CODES,
+  WALLET_SECURITY_SCHEMA_VERSION,
+  WALLET_SESSION_SCOPES,
+  WalletSecurityEngine,
+  isWalletSecurityRejection,
+  passkeyIsNotNativeKey,
+  runWalletSecurityCommand,
+  walletSecurityUsage,
+} from './security/index.ts';
+export type {
+  SigningIntent,
+  TransactionPreview,
+  WalletAuthorizationPolicy,
+  WalletAuthenticationPolicy,
+  WalletCustodyClass,
+  WalletDelegatedKeyBinding,
+  WalletDestinationPolicy,
+  WalletDeviceBinding,
+  WalletKeyRotationPlan,
+  WalletRecoveryApproval,
+  WalletRecoveryEvidence,
+  WalletRecoveryPolicy,
+  WalletRecoveryRequest,
+  WalletRiskChallenge,
+  WalletSecurityAuditReport,
+  WalletSecurityEvent,
+  WalletSecurityProfile,
+  WalletSecurityRejection,
+  WalletSession,
+  WalletSessionPolicy,
+  WalletSpendControl,
+  WalletTransactionPolicy,
+  WalletTrustedDevice,
+} from './security/index.ts';
+export {
   runMachineMandateDemo,
   runMultiAuthDemo,
   runPqMigrationDemo,
   runRecoveryDemo,
   runTransferDemo,
 } from './demo-helpers.ts';
+export * as mobileSync from './mobile-sync/index.ts';
+export {
+  MobileWalletSyncEngine,
+  ReferenceMobileClient,
+  runMobileWalletCommand,
+  mobileWalletUsage,
+} from './mobile-sync/index.ts';

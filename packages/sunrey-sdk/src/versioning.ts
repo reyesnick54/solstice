@@ -67,6 +67,8 @@ export function compatibilityPolicy(): Readonly<Record<string, string>> {
     silentBreaks: 'forbidden',
     protocolUpgradeImpliesApiBreak: 'false',
   });
+}
+
 /**
  * Breaking public API changes require a new versioned prefix.
  * `/v1` remains the current public surface. `/v2` is reserved and

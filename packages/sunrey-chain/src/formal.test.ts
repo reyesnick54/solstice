@@ -38,7 +38,7 @@ describe('Chunk 61 formal models', () => {
     assert.equal(registry.claimLanguage, 'model checked within stated bounds');
     assert.equal(registry.notWholeSystemVerification, true);
     assert.equal(registry.selectedTool, 'TLA+/TLC');
-    assert.equal(registry.models.length, 21);
+    assert.equal(registry.models.length, 22);
     assert.ok(registry.models.length >= 17);
     const ids = new Set(registry.models.map((row) => row.modelId));
     for (const required of FORMAL_MODEL_IDS) {

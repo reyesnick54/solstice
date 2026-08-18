@@ -77,7 +77,10 @@ describe('sunrey chain architecture guards', () => {
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||
         file.endsWith(`${join('wallet', 'builder.ts')}`) ||
-        file.endsWith(`${join('wallet', 'index.ts')}`);
+        file.endsWith(`${join('wallet', 'index.ts')}`) ||
+        file.includes(`${join('src', 'wallet', 'security')}`) ||
+        file.includes(`${join('src', 'public-data-plane')}`) ||
+        file.includes(`${join('src', 'validator-operator')}`);
       if (allowsTestNetwork) {
         assert.equal(/\bLIVE_CHAIN\b|\bMAINNET_ENABLED\b/.test(source), false, file);
         assert.equal(/productionNetworkEnabled:\s*true/.test(source), false, file);

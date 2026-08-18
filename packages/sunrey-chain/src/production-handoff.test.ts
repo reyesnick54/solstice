@@ -49,7 +49,7 @@ import {
   assertTreasuryCannotMint,
 } from './production-handoff/index.ts';
 
-const ROOT = join(import.meta.dirname, '../..');
+const ROOT = join(import.meta.dirname, '../../..');
 
 const policy: ProductionSecurityPolicy = {
   criticalOpenFindingsBlockMainnet: true,

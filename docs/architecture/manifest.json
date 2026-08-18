@@ -2346,14 +2346,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "PublicRpcGateway",
-          "kind": "class"
-        },
-        {
-          "name": "ExplorerIndexerFleet",
-          "kind": "class"
-        },
-        {
           "name": "PublicDataPlaneReport",
           "kind": "type"
         }
@@ -2369,6 +2361,43 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 93 public RPC and Explorer data plane at packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Does not create a second consensus, second ledger, or public validator admin endpoints."
+    },
+    {
+      "id": "sunrey-mobile-wallet-sync",
+      "name": "SunRey mobile wallet synchronization, multi-device state, push events, and offline transaction workflows",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/wallet/mobile-sync/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/wallet/mobile-sync/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "WalletSyncSession",
+          "kind": "type"
+        },
+        {
+          "name": "MobileWalletSyncEngine",
+          "kind": "class"
+        },
+        {
+          "name": "WalletSyncReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/mobile-wallet-sync",
+        "packages/sunrey-mobile-sync",
+        "packages/wallet-sync",
+        "packages/mobile-wallet-v2",
+        "packages/sunrey-push"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 97 mobile wallet synchronization at packages/sunrey-chain/src/wallet/mobile-sync. Extends Chunk 46 wallets, Chunk 51 SDK, Chunk 93 public RPC, Chunk 94 developer APIs, and Chunk 96 device trust. Wallet projections are rebuildable. Backend sync is not a second ledger and does not hold self-custody master keys."
     },
     {
       "id": "sunrey-supply-chain",
@@ -3546,9 +3575,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities.",
-      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization.",
-      "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
     },
     {
       "id": "sunrey-exchange-market-operations",
@@ -3573,6 +3600,7 @@
         "packages/exchange-ops",
         "packages/sunrey-exchange-ops",
         "packages/exchange-v2"
+        "packages/sunrey-exchange-ops"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -3614,6 +3642,11 @@
       "canonicalOwner": "packages/sunrey-agent",
       "canonicalPath": "packages/sunrey-agent/src/engine.ts",
       "publicInterface": "packages/sunrey-agent/src/index.ts",
+      "id": "sunrey-wallet-security",
+      "name": "SunRey advanced wallet security, recovery, device trust, and transaction authorization",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/wallet/security/engine.ts",
+      "publicInterface": "packages/sunrey-chain/src/wallet/security/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -3622,6 +3655,10 @@
       "protectedSymbols": [
         {
           "name": "UserAgentMandateEngine",
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "WalletSecurityEngine",
           "kind": "class"
         }
       ],
@@ -3632,11 +3669,17 @@
         "packages/agent-execution",
         "packages/financial-automation",
         "packages/mandate-v2"
+        "packages/wallet-security",
+        "packages/sunrey-wallet-security",
+        "packages/wallet-auth",
+        "packages/device-trust",
+        "packages/wallet-recovery-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 98. Human-created mandates authorize bounded AI proposals. Final transaction authority remains wallet delegated key, custody approval, or Execution Authority. AI identity alone cannot sign. Do not create a second Kernel, wallet, Exchange, risk engine, or ledger."
+      "notes": "Chunk 96 wallet security at packages/sunrey-chain/src/wallet/security. Extends Chunk 46. Application authentication is not native signing. Recovery cannot rewrite finalized transfers."
     }
   ],
   "authorizedMutationPaths": [
@@ -4207,6 +4250,11 @@
     "packages/blockchain-wallet",
     "packages/crypto-wallet",
     "packages/sunrey-wallet-ledger",
+    "packages/mobile-wallet-sync",
+    "packages/sunrey-mobile-sync",
+    "packages/wallet-sync",
+    "packages/mobile-wallet-v2",
+    "packages/sunrey-push",
     "packages/sunrey-ops",
     "packages/observability",
     "packages/disaster-recovery",
@@ -4381,6 +4429,11 @@
     "packages/agent-execution",
     "packages/financial-automation",
     "packages/mandate-v2"
+    "packages/wallet-security",
+    "packages/sunrey-wallet-security",
+    "packages/wallet-auth",
+    "packages/device-trust",
+    "packages/wallet-recovery-v2"
   ],
   "capabilities": [
     {
@@ -5137,16 +5190,22 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation.",
-      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow.",
-      "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
     },
     {
-      "id": "sunrey-exchange-market-operations",
+      "id": "sunrey-validator-operator-platform",
       "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-exchange",
+      "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 95 institutional market operations, sequenced market data, circuit breakers, and reopening auctions at packages/sunrey-exchange/src/ops. Extends sunrey-exchange. No second Exchange or native-asset balance ledger. Production market activation remains dependent on real external authorization. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
+      "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
+    },
+    {
+      "id": "sunrey-public-data-plane",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 93 public RPC edge, Explorer HA, and production network data plane. Owner: packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Do not create packages/public-rpc, packages/sunrey-rpc-edge, packages/rpc-gateway, packages/explorer-ha, or packages/public-data-plane."
     },
     {
       "id": "sunrey-developer-platform",
@@ -5157,13 +5216,18 @@
     },
     {
       "id": "sunrey-public-data-plane",
+      "id": "sunrey-exchange-market-operations",
       "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-chain",
+      "owner": "packages/sunrey-exchange",
       "protected": true,
       "notes": "Chunk 93 public RPC edge, Explorer HA, and production network data plane. Owner: packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Do not create packages/public-rpc, packages/sunrey-rpc-edge, packages/rpc-gateway, packages/explorer-ha, or packages/public-data-plane."
     },
     {
       "id": "sunrey-validator-operator-platform",
+      "notes": "Chunk 95 institutional market operations, sequenced market data, circuit breakers, and reopening auctions at packages/sunrey-exchange/src/ops. Extends sunrey-exchange. No second Exchange or native-asset balance ledger. Production market activation remains dependent on real external authorization. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
+    },
+    {
+      "id": "sunrey-wallet-security",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
@@ -5175,6 +5239,15 @@
       "owner": "packages/sunrey-agent",
       "protected": true,
       "notes": "Chunk 98 user-controlled AI agent mandates, budgets, asset/market permissions, transaction proposals, and revocable delegated authority. Owner: packages/sunrey-agent. AI proposes. Execution requires a human mandate and the canonical wallet/custody/Execution Authority path. Do not create packages/ai-authority, packages/agent-authority, packages/user-agent-v2, packages/agent-execution, packages/financial-automation, or packages/mandate-v2."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+    },
+    {
+      "id": "sunrey-mobile-wallet-sync",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 97 mobile wallet synchronization, multi-device state, push events, and offline transaction workflows at packages/sunrey-chain/src/wallet/mobile-sync. Extends Chunks 46, 51, 93, 94, and 96. Wallet projections are rebuildable. Backend sync servers must not obtain self-custody master private keys. Do not create packages/mobile-wallet-sync, packages/sunrey-mobile-sync, packages/wallet-sync, packages/mobile-wallet-v2, or packages/sunrey-push."
+      "notes": "Chunk 96 advanced wallet security, recovery, device trust, and transaction authorization at packages/sunrey-chain/src/wallet/security. Extends Chunk 46. Application authentication is not native signing. Recovery cannot rewrite finalized transfers. Do not create packages/wallet-security, packages/sunrey-wallet-security, packages/wallet-auth, packages/device-trust, or packages/wallet-recovery-v2."
     }
   ],
   "boundedContexts": [
@@ -5591,6 +5664,11 @@
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
     "packages/provider-adapters",
-    "packages/integration-providers"
+    "packages/integration-providers",
+    "packages/wallet-security",
+    "packages/sunrey-wallet-security",
+    "packages/wallet-auth",
+    "packages/device-trust",
+    "packages/wallet-recovery-v2"
   ]
 }
