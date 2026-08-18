@@ -76,9 +76,15 @@ const COMPETING_PATHS = [
   'packages/audit',
   'packages/security-review',
   'packages/audit-evidence',
+  'packages/audit-remediation',
+  'packages/security-audit-v2',
   'packages/sunrey-protocol-treasury',
   'packages/native-treasury',
   'packages/reserve-bank',
+  'packages/provider-acceptance',
+  'packages/production-providers',
+  'packages/external-providers',
+  'packages/sunrey-providers',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

@@ -32,6 +32,7 @@ export { PRIVACY_REVIEW_PACKAGE } from './privacy-package.ts';
 export { REQUIRED_REVIEW_ARTIFACTS, buildReadinessReport, classifyReadiness } from './readiness.ts';
 export { PINNED_TOOLCHAINS, PQC_PROVIDER_VERSION, requiredLockfilesPresent, sourceReproducibility } from './reproducibility.ts';
 export { QUICKSTART_STEPS, reproduceCritical } from './reproduce.ts';
+export * from './remediation/index.ts';
 export { REVIEW_DOMAIN_RECORDS, emitAuditScopeYaml, requiredReviewDomains, scopeIsComplete } from './scope.ts';
 export { SANITIZED_SAMPLE_CONFIG, assertSecretFree, secretExclusionFindings } from './secrets.ts';
 export { INTERNAL_SEVERITY_GUIDE, suggestInternalSeverity } from './severity.ts';

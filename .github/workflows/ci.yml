@@ -230,6 +230,14 @@ jobs:
         run: node scripts/sunrey-release.mjs economic verify
       - name: SunRey economic RC demo
         run: npm run demo:sunrey-economic-rc
+      - name: SunRey Mainnet RC smoke qualification
+        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet create --profile smoke --id SUNREY_MAINNET_RC_1
+      - name: SunRey Mainnet RC qualify
+        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet qualify --profile smoke
+      - name: SunRey Mainnet RC verify
+        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet verify
+      - name: SunRey Mainnet RC demo
+        run: npm run demo:sunrey-mainnet-rc
       - name: Universal economic exchange demo
         run: npm run demo:universal-exchange
       - name: SunRey independent security-review demo

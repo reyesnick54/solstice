@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-82",
+  "title": "Implement SunRey external production provider onboarding, acceptance testing and evidence qualification",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "kernel",
+    "sunrey-chain",
+    "sunrey-root-of-trust",
+    "sunrey-mainnet-readiness",
+    "sunrey-audit-readiness",
+    "sunrey-production-infrastructure",
+    "sunrey-production-oracles",
+    "sunrey-regulated-integration",
+    "sunrey-institutional-custody",
+    "sunrey-production-provider-acceptance"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/providers. Evidence-driven acceptance over canonical ProductionInfrastructureRegistry, OracleOnboardingRegistry, RegulatedServiceProviderRegistry, and HsmKmsProvider. Does not fabricate contracts, licenses, commercial HSM certification, or human approvals. evaluateChunkRequirements returns mustStop: false. Do not create packages/provider-acceptance, packages/production-providers, packages/external-providers, or packages/sunrey-providers."
+}

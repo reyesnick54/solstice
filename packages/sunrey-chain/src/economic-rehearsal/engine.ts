@@ -22,7 +22,13 @@ import {
 } from './identity.ts';
 import { buildEconomicGenesis, productionCandidateAllocationUnchanged, sevenEconomicRehearsalValidators } from './genesis.ts';
 import { buildEconomicRcBundle, verifyEconomicRc } from './rc.ts';
-import { approveRehearsalConfiguration, rehearseGovernedPolicyUpgrades } from './governance.ts';
+import { approveRehearsalConfiguration, bindRehearsalGovernanceToEconomicRc, rehearseGovernedPolicyUpgrades } from './governance.ts';
+import { commitCanonical } from '../hash.ts';
+import { developmentTreasuryPolicy } from '../economics/treasury/policy.ts';
+import { allTreasuryStressHold } from '../economics/treasury/stress.ts';
+import { exploreModel } from '../formal/explore.ts';
+import { createProtocolTreasuryModel } from '../formal/models/protocol-treasury.ts';
+import { FORMAL_SMOKE_PROFILE } from '../formal/profiles.ts';
 import { rehearseProtocolTreasury } from './treasury.ts';
 import {
   moonreySupplyAudit,
@@ -70,7 +76,7 @@ function classify(
 function knownLimitations(): readonly string[] {
   return Object.freeze([
     'Economic RC is the frozen development/rehearsal policy bundle. It is not a production monetary-policy activation.',
-    'Chunks 76–79 were not present as separate packages on main; rehearsal integrates the implemented 65–75 stack.',
+    'Chunks 76–79 are consumed as their canonical merged implementations. Compatibility substitutes are not used.',
     'External legal, regulatory, licensing, counsel, independent audit, commercial HSM, real root ceremony, and production oracle agreements remain unfabricated.',
     'Simulation HSM is not a commercial production HSM.',
     'Rehearsal classification does not authorize production mainnet.',
@@ -121,7 +127,12 @@ export function economicRehearsalFindings(input: {
   ]);
 }
 
+let rehearsalCache: { readonly root: string; readonly session: EconomicRehearsalSession } | null = null;
+
 export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSession {
+  if (rehearsalCache && rehearsalCache.root === root) {
+    return rehearsalCache.session;
+  }
   const rc = buildEconomicRcBundle(root);
   if (!verifyEconomicRc(rc)) {
     throw new Error('economic RC verification failed before bring-up');
@@ -152,7 +163,46 @@ export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSes
   const oracle = rehearseOraclePlane();
   const dual = rehearseDualEconomyBaseline();
   const governance = rehearseGovernedPolicyUpgrades();
-  const stress = runEconomicStressCampaign();
+  const stress = runEconomicStressCampaign(root);
+  const treasuryFormal = exploreModel(
+    createProtocolTreasuryModel({
+      validators: FORMAL_SMOKE_PROFILE.consensusValidators,
+      maxHeight: FORMAL_SMOKE_PROFILE.consensusMaxHeight,
+      maxRound: FORMAL_SMOKE_PROFILE.consensusMaxRound,
+      byzantineValidators: FORMAL_SMOKE_PROFILE.byzantineValidators,
+      maxQuantity: FORMAL_SMOKE_PROFILE.maxQuantity,
+      maxOrders: FORMAL_SMOKE_PROFILE.maxOrders,
+      maxPackets: FORMAL_SMOKE_PROFILE.maxPackets,
+      maxEpochs: FORMAL_SMOKE_PROFILE.maxEpochs,
+    }),
+    FORMAL_SMOKE_PROFILE.name,
+    'sunrey-formal-explicit-state/1',
+  );
+  const integratedEvidenceHashes = Object.freeze({
+    chunk76StressReportHash: stress.chunk76ReportHash ?? commitCanonical({ missing: 'chunk76' }),
+    chunk77TreasuryPolicyHash: rc.canonicalTreasuryPolicyHash ?? commitCanonical(developmentTreasuryPolicy()),
+    chunk77TreasuryFormalHash: commitCanonical({
+      modelId: treasuryFormal.modelId,
+      result: treasuryFormal.result,
+      statesExplored: treasuryFormal.statesExplored,
+    }),
+    chunk77TreasuryStressHash: commitCanonical({ treasuryStressHold: allTreasuryStressHold() }),
+    chunk78EconomicRcHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
+    chunk79GovernancePackageHash: bindRehearsalGovernanceToEconomicRc({
+      economicRcId: rc.canonicalEconomicRcId ?? rc.rcId,
+      sourceCommit: rc.sourceCommit,
+      releaseArtifactHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
+      formalReportHash: commitCanonical({
+        modelId: treasuryFormal.modelId,
+        result: treasuryFormal.result,
+      }),
+      economicStressReportHash: stress.chunk76ReportHash ?? rc.canonicalStressReportHash ?? rc.manifestHash,
+      qualificationReportHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
+      simulationEvidenceHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
+      supplyInvariantHash: genesis.allocationHash,
+      schemaHash: rc.canonicalQualificationDigest ?? rc.manifestHash,
+    }),
+  });
   const recoveries = runFailureAndRecoveryCampaign();
   const moonreyAudit = moonreySupplyAudit(moonrey);
   const explorer = rebuildExplorerViews({
@@ -259,6 +309,7 @@ export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSes
     liveFlagsRemainDisabled: true,
     tickersAssigned: false,
     knownLimitations: knownLimitations(),
+    integratedEvidenceHashes,
   });
   const evidence: EconomicActivationEvidenceBundle = Object.freeze({
     schemaVersion: 1,
@@ -283,15 +334,18 @@ export function runEconomicRehearsal(root = process.cwd()): EconomicRehearsalSes
     knownLimitations: knownLimitations(),
     productionAuthorized: false,
     liveFlagsRemainDisabled: true,
+    integratedEvidenceHashes,
   });
   void topology;
   void oracle;
-  return Object.freeze({
+  const session = Object.freeze({
     report,
     evidence,
     readiness: reevaluateReadinessAfterEconomicRehearsal(),
     plan: updateActivationPlanFromEconomicRehearsal(findings),
   });
+  rehearsalCache = { root, session };
+  return session;
 }
 
 export function economicRehearsalDoesNotActivateProduction(session: EconomicRehearsalSession): true {

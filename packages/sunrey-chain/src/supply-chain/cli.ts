@@ -9,6 +9,7 @@ import { join } from 'node:path';
 
 import { runSunreyReleaseRc } from '../release-candidate/cli.ts';
 import { runSunreyReleaseEconomic } from '../release-candidate/economic/cli.ts';
+import { runSunreyReleaseMainnet } from '../release-candidate/mainnet/cli.ts';
 import { auditDependencies } from './audit.ts';
 import { canonicalArtifactDigest, collectSoftwareInventory, generatedSourceDigest, generatedSourceDrift, sha256File, sha256Text } from './inventory.ts';
 import { loadDependencyPolicy } from './policy.ts';
@@ -49,6 +50,10 @@ export function runSunreyRelease(root: string, argv: readonly string[]): Release
   }
   if (command === 'economic') {
     const result = runSunreyReleaseEconomic(root, argv.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
+  if (command === 'mainnet') {
+    const result = runSunreyReleaseMainnet(root, argv.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
   }
   const sourceCommit = process.env.GITHUB_SHA ?? 'local';
@@ -190,7 +195,7 @@ export function runSunreyRelease(root: string, argv: readonly string[]): Release
     ok: command === 'help',
     command: command === 'help' ? 'help' : command,
     payload: {
-      usage: 'sunrey-release <build|sbom|provenance|sign|verify|compare-builds|audit|rc|economic>',
+      usage: 'sunrey-release <build|sbom|provenance|sign|verify|compare-builds|audit|rc|economic|mainnet>',
       sha256Hint: sha256Text(command),
     },
   };

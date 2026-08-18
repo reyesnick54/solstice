@@ -130,6 +130,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-audit-remediation | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-regulated-integration | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
@@ -138,10 +139,14 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mainnet-rc | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-economic-stress-lab | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-governance-operations | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-mainnet-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -624,6 +629,14 @@ Chunk 62 implements independent security-review preparation at
 The bundle does not claim an external audit occurred or passed.
 Do not create `packages/sunrey-audit`, `packages/audit`,
 `packages/security-review`, or `packages/audit-evidence`.
+Chunk 83 implements independent security-review findings ingestion,
+remediation, and retest evidence management at
+`packages/sunrey-chain`. Capability `sunrey-audit-remediation` is
+`IMPLEMENTED`. See
+[`chunk-83-audit-remediation.md`](./chunk-83-audit-remediation.md).
+The workflow does not claim an external audit occurred or passed.
+Do not create `packages/audit-remediation` or
+`packages/security-audit-v2`.
 Chunk 61 implements bounded TLA+/TLC protocol models, selected Rust
 bounded verification, and implementation-trace conformance at
 `packages/sunrey-chain`. Capability `sunrey-formal-assurance` is
@@ -650,6 +663,17 @@ It does not authorize mainnet or invent production parameters. Do not
 create `packages/sunrey-economic-rc`, `packages/economic-rc`,
 `packages/economic-qualification`, `packages/sunrey-economic-release`,
 or `packages/economic-policy-freeze`. The evaluator returns
+`mustStop: false`.
+Chunk 84 implements the SunRey Mainnet Release Candidate freeze,
+full-system qualification, and release evidence bundle at
+`packages/sunrey-chain/src/release-candidate/mainnet`. Capability
+`sunrey-mainnet-rc` is `IMPLEMENTED`. See
+[`chunk-84-mainnet-rc.md`](./chunk-84-mainnet-rc.md).
+It does not launch mainnet or treat engineering qualification as
+authorization. Do not create `packages/sunrey-mainnet-rc`,
+`packages/mainnet-rc`, `packages/mainnet-qualification`,
+`packages/sunrey-mainnet-release`, or
+`packages/mainnet-release-candidate`. The evaluator returns
 `mustStop: false`.
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at
@@ -687,3 +711,23 @@ second financial Ledger, a new native asset, a price peg, or a
 treasury mint. Production treasury remains inactive. Do not create
 `packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
 `packages/reserve-bank`. The evaluator returns `mustStop: false`.
+
+Chunk 82 implements external production provider acceptance at
+`packages/sunrey-chain/src/providers`. Capability
+`sunrey-production-provider-acceptance` is `IMPLEMENTED`. See
+[`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
+It reuses Chunk 66/68/69/64 registries and feeds Chunk 65 readiness.
+Do not create `packages/provider-acceptance`,
+`packages/production-providers`, `packages/external-providers`, or
+`packages/sunrey-providers`. The evaluator returns `mustStop: false`.
+Chunk 81 implements the second-generation SunRey production-network
+candidate at `packages/sunrey-chain/src/mainnet/candidate-v2`.
+Capability `sunrey-production-network-candidate` is `IMPLEMENTED`.
+See [`chunk-81-production-network-candidate-v2.md`](./chunk-81-production-network-candidate-v2.md).
+It binds the reconciled Chunks 76–80 stack into
+`SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` without launching mainnet,
+enabling `LIVE_*`, or converting missing external evidence into
+approved evidence. Do not create `packages/production-network`,
+`packages/sunrey-production-network`, `packages/candidate-v2`,
+`packages/mainnet-v2`, or `packages/production-candidate-v2`. The
+evaluator returns `mustStop: false`.

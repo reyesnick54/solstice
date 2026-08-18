@@ -1,6 +1,7 @@
 # SunRey independent security-review package
 
-This directory is the reviewer-facing documentation for Chunk 62.
+This directory is the reviewer-facing documentation for Chunk 62 and
+the Chunk 83 findings-remediation workflow.
 
 It prepares SunRey for independent review. It does **not** claim that
 an external audit has occurred or passed.
@@ -27,6 +28,10 @@ npm run sunrey-audit -- readiness
 - [Known limitations](./known-limitations.md)
 - [Finding lifecycle](./finding-lifecycle.md)
 - [Reproduction](./reproduction.md)
+- [Chunk 83 remediation](./chunk-83-audit-remediation.md)
+- [Remediation evidence](./remediation-evidence.md)
+- [External retest](./external-retest.md)
+- [Security risk acceptance](./security-risk-acceptance.md)
 
 ## Status
 

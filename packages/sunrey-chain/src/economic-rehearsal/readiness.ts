@@ -5,9 +5,10 @@
  * partner slots remain incomplete. Software cannot mark them HUMAN_VERIFIED.
  */
 
-import { applyEngineeringVerification, defaultDimensionCatalog } from '../mainnet/index.ts';
-import { assembleReadinessRegistry } from '../mainnet/registry.ts';
 import { generateActivationPlan, activationPlanDoesNotEnableLiveFlags } from '../mainnet/activation-plan.ts';
+import { defaultDimensionCatalog } from '../mainnet/dimensions.ts';
+import { applyEngineeringVerification } from '../mainnet/evidence.ts';
+import { assembleReadinessRegistry } from '../mainnet/registry.ts';
 import type { ActivationPlan, MainnetReadinessRegistry } from '../mainnet/types.ts';
 import type { RehearsalFinding } from '../launch-rehearsal/types.ts';
 

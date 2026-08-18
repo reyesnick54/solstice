@@ -102,6 +102,34 @@ export type {
   SignedEconomicRcBundle,
 } from './economic/index.ts';
 export {
+  CANDIDATE_V2_ID,
+  FIRST_MAINNET_RC_ID,
+  MAINNET_QUALIFICATION_CATEGORIES,
+  compareMainnetReleaseCandidates,
+  consumeMainnetRc,
+  createMainnetReleaseCandidate,
+  freezeProductionNetworkCandidateV2,
+  invalidateMainnetBundle,
+  isMainnetReleaseCandidateId,
+  loadMainnetKnownLimitations,
+  mainnetLimitationsHidden,
+  nextMainnetReleaseCandidateId,
+  rejectAiReleaseAuthorization,
+  rejectFakeAuditResult,
+  rejectFixtureHsmAsExternal,
+  rejectFloatingImage,
+  runSunreyReleaseMainnet,
+  snapshotAuditRemediation,
+  snapshotProviderAcceptance,
+  supersedeMainnetReleaseCandidate,
+  verifyMainnetReleaseCandidate,
+} from './mainnet/index.ts';
+export type {
+  MainnetQualificationReport,
+  MainnetReleaseComparison,
+  SignedMainnetRcBundle,
+} from './mainnet/index.ts';
+export {
   qualifyAdversarialCritical,
   qualifyDatabaseRecovery,
   qualifyExplorerRebuild,

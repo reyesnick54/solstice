@@ -10,6 +10,7 @@ import {
   signArtifact,
   verifySignature,
 } from '../supply-chain/index.ts';
+import { providerAcceptanceAuditPayload } from '../providers/audit.ts';
 import { ATTACK_SURFACE } from './attack-surface.ts';
 import { REVIEWER_CHECKLIST } from './checklist.ts';
 import { CONSENSUS_REVIEW_PACKAGE } from './consensus-package.ts';
@@ -62,12 +63,19 @@ const SOURCE_DOCUMENTS = [
   'docs/audit/known-limitations.md',
   'docs/audit/finding-lifecycle.md',
   'docs/audit/reproduction.md',
+  'docs/audit/chunk-83-audit-remediation.md',
+  'docs/audit/remediation-evidence.md',
+  'docs/audit/external-retest.md',
+  'docs/audit/security-risk-acceptance.md',
+  'docs/runbooks/security-finding-remediation.md',
   'packages/sunrey-chain/rust/crates/consensus/ALGORITHM.md',
   'packages/sunrey-chain/src/assurance/coverage.ts',
   'packages/sunrey-chain/perf/baseline/manifest.json',
   'packages/sunrey-chain/fixtures/testnet/genesis-hash.txt',
   'packages/sunrey-chain/audit/audit-scope.yaml',
   'packages/sunrey-chain/audit/sample-config.json',
+  'docs/providers/chunk-82-production-provider-acceptance.md',
+  'docs/providers/provider-evidence.md',
 ] as const;
 
 const EVIDENCE_REFERENCES = [
@@ -159,6 +167,7 @@ export function generateAuditBundle(root: string, options: {
     'generated/attack-surface.json': ATTACK_SURFACE,
     'generated/checklist.json': REVIEWER_CHECKLIST,
     'generated/known-limitations.json': KNOWN_SECURITY_LIMITATIONS,
+    'generated/provider-acceptance.json': providerAcceptanceAuditPayload(),
     'generated/sample-config.json': SANITIZED_SAMPLE_CONFIG,
     'generated/source-reproducibility.json': sourceReproducibility(root, sourceCommit),
     'generated/review-instructions.md': [

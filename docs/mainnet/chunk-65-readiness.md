@@ -18,7 +18,9 @@ Capability: `sunrey-mainnet-readiness`.
 - Validator, allocation, crypto-policy, and ceremony bindings
 - Human authorization workflow that rejects AI signatures
 - External legal/regulatory/security-review slots that stay incomplete
-  unless real evidence is supplied
+  unless real evidence is supplied. Chunk 83 engineering remediation
+  infrastructure may be verified; `TEST_FIXTURE_NOT_EXTERNAL_AUDIT`
+  records never satisfy the independent-review slot.
 - Separate Exchange, custody, oracle, interop, and privacy checklists
 - Chunk 68 oracle readiness distinguishes technical implementation,
   provider configured, provider agreement evidence, and production
@@ -55,3 +57,8 @@ Chunk 85 feeds ceremony architecture and dress-rehearsal engineering
 evidence into this readiness plane. The actual real production
 ceremony remains EXTERNAL/HUMAN evidence until performed. See
 [chunk-85-production-genesis-ceremony.md](./chunk-85-production-genesis-ceremony.md).
+Chunk 81 Production Network Candidate V2 consumes exact Chunk 76–81
+engineering evidence hashes without overwriting external evidence
+status. External audit, commercial HSM, counsel, regulator, license,
+partner, and human-authorization slots remain `NOT_PROVIDED`. See
+[chunk-81-production-network-candidate-v2.md](./chunk-81-production-network-candidate-v2.md).

@@ -2,6 +2,10 @@
 
 Candidate release notes must not hide known limitations.
 
+Chunk 83 accepted findings also flow into this register. Fictional
+`TEST_FIXTURE_NOT_EXTERNAL_AUDIT` records never satisfy a real
+external-review slot.
+
 When Chunk 62 lands `KnownSecurityLimitations`, the RC loader imports
 that register. Until then the candidate carries the explicit set
 below and still prints every item in release notes.

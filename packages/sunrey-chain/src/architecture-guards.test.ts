@@ -46,6 +46,7 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'mainnet')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
         file.includes(`${join('src', 'launch-rehearsal')}`) ||
+        file.includes(`${join('src', 'economic-rehearsal')}`) ||
         file.includes(`${join('src', 'release-candidate')}`) ||
         file.includes(`${join('src', 'pqc')}`) ||
         file.endsWith(`${join('ops', 'crypto-cli.ts')}`) ||
@@ -59,6 +60,8 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'validator-economics')}`) ||
         file.includes(`${join('src', 'fees', 'v2')}`) ||
         file.includes(`${join('src', 'governance-ops')}`) ||
+        file.includes(`${join('src', 'economic-rehearsal')}`) ||
+        file.includes(`${join('src', 'providers')}`) ||
         file.includes(`${join('src', 'fees')}`) ||
         file.includes(`${join('src', 'fees', 'v2')}`) ||
         file.includes(`${join('src', 'infra')}`) ||
@@ -127,6 +130,8 @@ describe('sunrey chain architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/audit')), false);
     assert.equal(existsSync(join(ROOT, 'packages/security-review')), false);
     assert.equal(existsSync(join(ROOT, 'packages/audit-evidence')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/audit-remediation')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/security-audit-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-testnet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-faucet')), false);
     assert.equal(existsSync(join(ROOT, 'packages/mainnet')), false);

@@ -1,0 +1,41 @@
+# Extended Mainnet RC qualification. Manual/scheduled only.
+# Do not claim soak, extended fuzz, formal extended, full adversarial
+# range, or long-horizon economics unless that work actually completed.
+name: SunRey Mainnet RC extended
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Mainnet qualification profile
+        required: false
+        default: extended
+  schedule:
+    - cron: "0 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  mainnet-extended:
+    name: mainnet-rc-extended
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Mainnet RC extended profile
+        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet qualify --profile ${{ inputs.profile || 'extended' }}
+
+      - name: Mainnet RC verify
+        run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet verify

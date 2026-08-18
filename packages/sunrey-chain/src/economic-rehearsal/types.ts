@@ -97,6 +97,19 @@ export type EconomicRcBundle = {
   readonly qualificationEvidence: readonly string[];
   readonly productionAuthorized: false;
   readonly ok: boolean;
+  readonly canonicalEconomicRcId?: string;
+  readonly canonicalQualificationDigest?: string;
+  readonly canonicalStressReportHash?: string;
+  readonly canonicalTreasuryPolicyHash?: string;
+};
+
+export type IntegratedEconomicEvidenceHashes = {
+  readonly chunk76StressReportHash: string;
+  readonly chunk77TreasuryPolicyHash: string;
+  readonly chunk77TreasuryFormalHash: string;
+  readonly chunk77TreasuryStressHash: string;
+  readonly chunk78EconomicRcHash: string;
+  readonly chunk79GovernancePackageHash: string;
 };
 
 export type EconomicGenesisBundle = {
@@ -231,7 +244,8 @@ export type GovernanceRehearsalResult = {
   readonly productionAuthorized: false;
 };
 
-export type EconomicStressFinding = {
+export type RehearsalStressFinding = {
+export type EconomicRehearsalStressFinding = {
   readonly findingId: string;
   readonly scenario: string;
   readonly severity: 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -240,7 +254,8 @@ export type EconomicStressFinding = {
   readonly becomesMainnetBlocker: boolean;
 };
 
-export type EconomicStressResult = {
+export type RehearsalStressResult = {
+export type EconomicRehearsalStressResult = {
   readonly oracleDegradation: boolean;
   readonly liquidityStress: boolean;
   readonly networkCongestion: boolean;
@@ -250,7 +265,12 @@ export type EconomicStressResult = {
   readonly custodyDelay: boolean;
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
+  readonly findings: readonly RehearsalStressFinding[];
+  readonly findings: readonly EconomicRehearsalStressFinding[];
   readonly findings: readonly EconomicStressFinding[];
+  readonly chunk76CampaignId?: string;
+  readonly chunk76ReportHash?: string;
+  readonly chunk76Violations?: number;
 };
 
 export type RecoveryResult = {
@@ -285,7 +305,8 @@ export type EconomicActivationEvidenceBundle = {
     readonly failureDomains: readonly string[];
   };
   readonly formalResults: readonly TraceConformanceResult[];
-  readonly stressResults: EconomicStressResult;
+  readonly stressResults: RehearsalStressResult;
+  readonly stressResults: EconomicRehearsalStressResult;
   readonly supplyAudits: readonly SupplyAuditResult[];
   readonly treasuryAudit: TreasuryRehearsalResult;
   readonly exchangeReconciliation: ExchangeRehearsalResult;
@@ -294,6 +315,7 @@ export type EconomicActivationEvidenceBundle = {
   readonly knownLimitations: readonly string[];
   readonly productionAuthorized: false;
   readonly liveFlagsRemainDisabled: true;
+  readonly integratedEvidenceHashes?: IntegratedEconomicEvidenceHashes;
 };
 
 export type EconomicMainnetRehearsalReport = {
@@ -331,13 +353,15 @@ export type EconomicMainnetRehearsalReport = {
     readonly supplyTracked: boolean;
     readonly classification: 'ENGINEERING_SIMULATION';
   };
-  readonly stress: EconomicStressResult;
+  readonly stress: RehearsalStressResult;
+  readonly stress: EconomicRehearsalStressResult;
   readonly recoveries: readonly RecoveryResult[];
   readonly explorer: ExplorerRebuildResult;
   readonly formal: readonly TraceConformanceResult[];
   readonly controlRoom: EconomicLaunchControlRoomState;
   readonly findings: readonly RehearsalFinding[];
-  readonly economicFindings: readonly EconomicStressFinding[];
+  readonly economicFindings: readonly RehearsalStressFinding[];
+  readonly economicFindings: readonly EconomicRehearsalStressFinding[];
   readonly engineeringBlockers: readonly RehearsalFinding[];
   readonly classification: EconomicRehearsalResultState;
   readonly productionCandidateAllocationUnchanged: true;
@@ -345,4 +369,5 @@ export type EconomicMainnetRehearsalReport = {
   readonly liveFlagsRemainDisabled: true;
   readonly tickersAssigned: false;
   readonly knownLimitations: readonly string[];
+  readonly integratedEvidenceHashes?: IntegratedEconomicEvidenceHashes;
 };

@@ -22,6 +22,7 @@ import {
   privacyReadiness,
 } from './product-readiness.ts';
 import { verifyMainnetCandidate } from './verify.ts';
+import { runCandidateV2Command } from './candidate-v2/cli.ts';
 
 export type MainnetCliResult = {
   readonly ok: boolean;
@@ -37,6 +38,10 @@ function jsonSafe(value: unknown): unknown {
 
 export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
   const [command = 'help', sub = ''] = argv;
+  if (command === 'candidate-v2') {
+    const result = runCandidateV2Command(argv.slice(1));
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   const records = defaultDimensionCatalog();
   const capabilities = defaultActivationMatrix();
 
@@ -124,7 +129,7 @@ export function runMainnetCommand(argv: readonly string[]): MainnetCliResult {
     command: 'help',
     payload: {
       usage:
-        'sunrey-mainnet <readiness|evidence|capabilities|validator-candidates|genesis-candidate|verify|activation-plan>',
+        'sunrey-mainnet <readiness|evidence|capabilities|validator-candidates|genesis-candidate|verify|activation-plan|candidate-v2>',
       also: 'sunrey-genesis candidate | sunrey-genesis candidate verify',
       launchesProduction: false,
     },

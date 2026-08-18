@@ -1,25 +1,32 @@
 /**
  * Economic stress campaign and compound failure for Chunk 80.
  *
- * Uses in-process adapters over FeePolicyV2, MoonRey eligibility,
- * validator economics, treasury, and the seven-validator network.
+ * Consumes the canonical Chunk 76 smoke campaign plus rehearsal-local
+ * seven-validator / treasury / oracle workflows.
  */
 
+import { commitCanonical } from '../hash.ts';
 import { SevenValidatorNetwork } from '../ops/seven-validator.ts';
+import { runCanonicalSmokeStressCampaign } from '../release-candidate/economic/chunk76-stress.ts';
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
-import type { EconomicStressFinding, EconomicStressResult, RecoveryResult } from './types.ts';
+import type { RehearsalStressFinding, RehearsalStressResult, RecoveryResult } from './types.ts';
+import type { EconomicRehearsalStressFinding, EconomicRehearsalStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 
 function finding(
   findingId: string,
   scenario: string,
-  severity: EconomicStressFinding['severity'],
+  severity: RehearsalStressFinding['severity'],
   accountingSafe: boolean,
   description: string,
-): EconomicStressFinding {
+): RehearsalStressFinding {
+  severity: EconomicRehearsalStressFinding['severity'],
+  accountingSafe: boolean,
+  description: string,
+): EconomicRehearsalStressFinding {
   return Object.freeze({
     findingId,
     scenario,
@@ -30,7 +37,10 @@ function finding(
   });
 }
 
-export function runEconomicStressCampaign(): EconomicStressResult {
+export function runEconomicStressCampaign(): RehearsalStressResult {
+export function runEconomicStressCampaign(): EconomicRehearsalStressResult {
+export function runEconomicStressCampaign(root = process.cwd()): EconomicStressResult {
+  const chunk76 = runCanonicalSmokeStressCampaign(root);
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();
   const network = new SevenValidatorNetwork();
@@ -60,8 +70,18 @@ export function runEconomicStressCampaign(): EconomicStressResult {
     treasuryFundingPressure: underfunded === false,
     custodyDelay: true,
     compoundEnergyOracleLiquidityCongestion: true,
-    accountingSafe: findings.every((row) => row.accountingSafe),
+    accountingSafe: findings.every((row) => row.accountingSafe) && chunk76.violations === 0,
     findings,
+    chunk76CampaignId: chunk76.campaignId,
+    chunk76ReportHash: commitCanonical({
+      campaignId: chunk76.campaignId,
+      commit: chunk76.commit,
+      seed: chunk76.seed,
+      scenarioCount: chunk76.scenarioCount,
+      violations: chunk76.violations,
+      fixtureHashes: chunk76.results.map((row) => row.inputFixtureHash),
+    }),
+    chunk76Violations: chunk76.violations,
   });
 }
 

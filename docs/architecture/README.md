@@ -123,6 +123,9 @@
 - [Chunk 62 audit readiness](./chunk-62-audit-readiness.md) —
   independent security-review bundle at
   `packages/sunrey-chain/src/audit`. See [`docs/audit/`](../audit/README.md).
+- [Chunk 83 audit remediation](./chunk-83-audit-remediation.md) —
+  findings ingestion, remediation, retest, and risk acceptance at
+  `packages/sunrey-chain/src/audit/remediation`.
 - [Chunk 80 economic mainnet rehearsal](./chunk-80-economic-mainnet-rehearsal.md)
   — complete economic launch rehearsal at
   `packages/sunrey-chain/src/economic-rehearsal`. See

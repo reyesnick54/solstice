@@ -40,6 +40,8 @@ function signText(value: string, authorityId: string): string {
   return `${authorityId}:${signed.signatureHex}`;
 }
 
+const createdCandidateCache = new Map<string, CreatedEconomicCandidate>();
+
 export function createEconomicReleaseCandidate(input: {
   readonly root: string;
   readonly sourceCommit?: string | undefined;
@@ -49,6 +51,11 @@ export function createEconomicReleaseCandidate(input: {
 }): CreatedEconomicCandidate {
   const sourceCommit = resolveEconomicSourceCommit(input.root, input.sourceCommit);
   const rcId = input.rcId ?? (input.previous ? nextEconomicReleaseCandidateId(input.previous.manifest.economic_rc_id) : FIRST_ECONOMIC_RC_ID);
+  const profile = input.profile ?? 'smoke';
+  const cacheKey = input.previous ? null : `${input.root}|${sourceCommit}|${rcId}|${profile}`;
+  if (cacheKey && createdCandidateCache.has(cacheKey)) {
+    return createdCandidateCache.get(cacheKey)!;
+  }
   const identity = testnetIdentityFreeze();
   const policy = freezeEconomicPolicies(input.root);
   const schema = freezeEconomicSchemas(input.root);
@@ -72,7 +79,7 @@ export function createEconomicReleaseCandidate(input: {
     root: input.root,
     rcId,
     sourceCommit,
-    profile: input.profile ?? 'smoke',
+    profile,
   });
   const status = deriveEconomicRcStatus(evidence.matrix);
   const sourceBinding = bindEconomicSource({
@@ -135,11 +142,15 @@ export function createEconomicReleaseCandidate(input: {
     authorityId: authority.authorityId,
     supersededBy: null,
   });
-  return Object.freeze({
+  const created = Object.freeze({
     bundle,
     report: buildEconomicQualificationReport(bundle),
     evidence,
   });
+  if (cacheKey) {
+    createdCandidateCache.set(cacheKey, created);
+  }
+  return created;
 }
 
 export function verifyEconomicReleaseCandidate(bundle: SignedEconomicRcBundle, expectedCommit?: string, root?: string): EconomicRcVerifyReport {

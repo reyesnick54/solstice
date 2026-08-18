@@ -40,6 +40,18 @@ reuse Chunk 70 launch-rehearsal IDs.
 - Formal trace conformance
 - `EconomicActivationEvidenceBundle`
 
+## Integrated Chunks 76–79
+
+After the overlapping-branch merge, rehearsal consumes the canonical
+implementations rather than compatibility substitutes:
+
+- Chunk 76 `EconomicStressReport` smoke campaign
+- Chunk 77 `ProtocolTreasuryEngine` rehearsal
+- Chunk 78 `SUNREY_ECONOMIC_TESTNET_RC_1` qualification bundle
+- Chunk 79 `GovernanceOperationPackage` bound to that RC
+
+Exact hashes are recorded on `EconomicActivationEvidenceBundle.integratedEvidenceHashes`.
+
 ## What it does not do
 
 - Publish a production genesis
@@ -70,6 +82,11 @@ npm run sunrey-launch -- economic-report
 npm run sunrey-launch -- economic-evidence
 npm run demo:sunrey-economic-mainnet-rehearsal
 ```
+
+Chunk 81 re-runs this rehearsal against the merged Chunks 76–79 and
+binds the exact integrated evidence hashes into Production Network
+Candidate V2. See
+[chunk-81-production-network-candidate-v2.md](./chunk-81-production-network-candidate-v2.md).
 
 See also [economic-genesis-rehearsal.md](./economic-genesis-rehearsal.md),
 [economic-control-room.md](./economic-control-room.md),
