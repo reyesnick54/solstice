@@ -244,6 +244,8 @@ export type GovernanceRehearsalResult = {
   readonly productionAuthorized: false;
 };
 
+export type RehearsalStressFinding = EconomicRehearsalStressFinding;
+export type EconomicRehearsalStressFinding = {
 export type EconomicStressFinding = {
   readonly findingId: string;
   readonly scenario: string;
@@ -253,6 +255,8 @@ export type EconomicStressFinding = {
   readonly becomesMainnetBlocker: boolean;
 };
 
+export type RehearsalStressResult = EconomicRehearsalStressResult;
+export type EconomicRehearsalStressResult = {
 export type EconomicStressResult = {
   readonly oracleDegradation: boolean;
   readonly liquidityStress: boolean;

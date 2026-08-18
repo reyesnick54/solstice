@@ -3190,6 +3190,18 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package at packages/sunrey-chain/src/production-ceremony. Dress rehearsal only in CI. Does not launch mainnet or create real production private keys."
+      "notes": "Chunk 75 dual-economy simulation laboratory. Consumes canonical SunRey/MoonRey/fee/validator/Exchange/oracle/machine owners. Does not predict prices, promise returns, or activate production monetary policy."
+      "notes": "Chunk 77 blockchain-native protocol treasury at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive."
+      "notes": "Chunk 80 economic mainnet rehearsal."
+      "notes": "Chunk 81 second-generation production-network candidate. Binds the complete stack through Chunk 80. Candidate state remains CANDIDATE. mainnetEnabled=false. Does not launch mainnet or enable LIVE_* flags. External legal/audit/HSM/human evidence remains unfabricated."
+    },
+    {
+      "id": "sunrey-pregenesis-qualification",
+      "name": "SunRey pre-genesis production shadow network and operational qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/pregenesis/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/pregenesis/index.ts",
       "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package at packages/sunrey-chain/src/production-ceremony. Dress rehearsal binds the actual Chunk 81 Candidate V2 and Chunk 84 Mainnet RC. Does not launch mainnet or create real production private keys."
     },
     {
@@ -3205,6 +3217,15 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "PregenesisNetworkDefinition",
+          "kind": "type"
+        },
+        {
+          "name": "PregenesisQualificationReport",
+          "kind": "type"
+        },
+        {
+          "name": "PregenesisQualificationPlan",
           "name": "ProductionEnvironmentPlan",
           "kind": "type"
         },
@@ -3218,6 +3239,11 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/sunrey-pregenesis",
+        "packages/pregenesis",
+        "packages/shadow-network",
+        "packages/pregenesis-qualification",
+        "packages/sunrey-shadow"
         "packages/sunrey-production-platform",
         "packages/mainnet-infrastructure-v2",
         "packages/cloud-control-plane"
@@ -3225,6 +3251,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
     }
   ],
@@ -4608,6 +4635,16 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 84 Mainnet Release Candidate freeze and qualification at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59/63/78. Does not launch mainnet or treat ENGINEERING_QUALIFIED as AUTHORIZED_CANDIDATE. Do not create packages/sunrey-mainnet-rc, packages/mainnet-rc, packages/mainnet-qualification, packages/sunrey-mainnet-release, or packages/mainnet-release-candidate."
+      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
+      "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
+    },
+    {
+      "id": "sunrey-pregenesis-qualification",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
     }
   ],

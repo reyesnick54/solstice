@@ -98,6 +98,9 @@ SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production rehearse
 npm run sunrey-mainnet -- verify
 npm run demo:sunrey-launch
 npm run sunrey-launch -- verify
+npm run demo:sunrey-pregenesis
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
+SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
 npm run demo:sunrey-economic-mainnet-rehearsal
 npm run sunrey-launch -- economic-verify
 npm run sunrey-launch -- economic-audit

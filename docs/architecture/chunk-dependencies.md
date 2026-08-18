@@ -147,6 +147,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
 
@@ -732,6 +733,16 @@ enabling `LIVE_*`, or converting missing external evidence into
 approved evidence. Do not create `packages/production-network`,
 `packages/sunrey-production-network`, `packages/candidate-v2`,
 `packages/mainnet-v2`, or `packages/production-candidate-v2`. The
+evaluator returns `mustStop: false`.
+Chunk 87 implements the isolated pre-genesis production shadow network
+and operational qualification system at
+`packages/sunrey-chain/src/pregenesis`. Capability
+`sunrey-pregenesis-qualification` is `IMPLEMENTED`. See
+[`chunk-87-pregenesis-qualification.md`](./chunk-87-pregenesis-qualification.md).
+It does not launch mainnet or treat engineering qualification as
+authorization. Do not create `packages/sunrey-pregenesis`,
+`packages/pregenesis`, `packages/shadow-network`,
+`packages/pregenesis-qualification`, or `packages/sunrey-shadow`. The
 evaluator returns `mustStop: false`.
 Chunk 85 implements the production genesis ceremony at
 `packages/sunrey-chain/src/production-ceremony`. Capability

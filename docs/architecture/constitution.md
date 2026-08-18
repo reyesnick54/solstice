@@ -1170,6 +1170,17 @@ certification, or human approvals. Do not create
 `packages/provider-acceptance`, `packages/production-providers`,
 `packages/external-providers`, or `packages/sunrey-providers`. See
 [`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
+Chunk 87 implements the isolated SunRey pre-genesis production shadow
+network and operational qualification system at
+`packages/sunrey-chain/src/pregenesis`. Capability
+`sunrey-pregenesis-qualification` is `IMPLEMENTED`. It uses distinct
+network ID, chain ID, genesis, keys, and address HRP. It does not
+launch mainnet, enable `LIVE_*` flags, or treat
+`PREGENESIS_ENGINEERING_QUALIFIED` as production authorization. Do not
+create `packages/sunrey-pregenesis`, `packages/pregenesis`,
+`packages/shadow-network`, `packages/pregenesis-qualification`, or
+`packages/sunrey-shadow`. See
+[`chunk-87-pregenesis-qualification.md`](./chunk-87-pregenesis-qualification.md).
 
 ## Agent stop rule
 

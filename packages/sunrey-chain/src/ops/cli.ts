@@ -42,6 +42,7 @@ import {
 } from '../validator-economics/index.ts';
 import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
 import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
+import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
 import { productionProvisioningUsage, runProductionProvisioningCommand } from '../infra/provisioning/cli.ts';
 
 const RESILIENCE_COMMANDS = [
@@ -239,6 +240,7 @@ export function opsUsage(): string {
     'sunrey-ops crypto benchmark',
     ...governanceOpsUsage().split('\n'),
     ...providerUsage(),
+    pregenesisUsage(),
     ...productionProvisioningUsage(),
   ].join('\n');
 }
@@ -482,6 +484,8 @@ export async function main(): Promise<void> {
     }
     return;
   }
+  if (head === 'pregenesis') {
+    const result = runPregenesisCommand(argv.slice(1));
   if (head === 'production') {
     process.env.SUNREY_FIXTURE_ENV ??= 'local';
     const result = runProductionProvisioningCommand(argv.slice(1));
