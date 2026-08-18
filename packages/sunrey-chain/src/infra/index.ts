@@ -12,3 +12,4 @@ export * from './operations.ts';
 export * from './artifacts.ts';
 export * from './readiness.ts';
 export * from './harness.ts';
+export * from './provisioning/index.ts';

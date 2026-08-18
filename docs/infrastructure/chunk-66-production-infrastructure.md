@@ -34,3 +34,8 @@ Capability: `sunrey-production-infrastructure`.
 
 `PRODUCTION_CANDIDATE` is a configuration layer. It does not imply
 active mainnet.
+
+Chunk 86 extends this owner at
+`packages/sunrey-chain/src/infra/provisioning` with a plan-first
+production-environment control plane. See
+[chunk-86-production-provisioning.md](../mainnet/chunk-86-production-provisioning.md).
