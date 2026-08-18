@@ -20,8 +20,8 @@ import {
   DRESS_REHEARSAL_CHAIN_ID,
   DRESS_REHEARSAL_ID,
   DRESS_REHEARSAL_NETWORK_ID,
-  REHEARSAL_CANDIDATE_V2_ID,
-  REHEARSAL_MAINNET_RC_ID,
+  EXPECTED_CANDIDATE_V2_ID,
+  EXPECTED_MAINNET_RC_ID,
 } from './identity.ts';
 import { defaultDressRehearsalParticipants } from './participants.ts';
 import { createDressRehearsalCeremonyPlan } from './plan.ts';
@@ -40,9 +40,11 @@ export function runProductionGenesisCeremonyDressRehearsal(
 ): ProductionGenesisCeremonyDressRehearsal {
   const dossiers = sevenDressRehearsalDossiers();
   const validatorSetHash = validatorSetHashFromDossiers(dossiers);
-  const bindings = dressRehearsalBindings(validatorSetHash);
+  const bindings = dressRehearsalBindings(root);
   const plan = createDressRehearsalCeremonyPlan({
+    mainnetRcId: bindings.mainnetRc.id,
     mainnetRcHash: bindings.mainnetRc.hash!,
+    candidateV2Id: bindings.candidateV2.id,
     candidateV2RootHash: bindings.candidateV2.hash!,
     economicBundleHash: economicBundleHash(),
     cryptoPolicyHash: cryptoPolicyHash(),
@@ -132,11 +134,11 @@ export function dressRehearsalUnusableForProduction(rehearsal: ProductionGenesis
   if (rehearsal.session.plan.chainId !== DRESS_REHEARSAL_CHAIN_ID) {
     throw new TypeError('dress rehearsal chain identity mismatch');
   }
-  if (rehearsal.session.plan.candidateV2Id !== REHEARSAL_CANDIDATE_V2_ID) {
-    throw new TypeError('dress rehearsal candidate id mismatch');
+  if (rehearsal.session.plan.candidateV2Id !== EXPECTED_CANDIDATE_V2_ID) {
+    throw new TypeError('dress rehearsal must bind the canonical Candidate V2');
   }
-  if (rehearsal.session.plan.mainnetRcId !== REHEARSAL_MAINNET_RC_ID) {
-    throw new TypeError('dress rehearsal Mainnet RC id mismatch');
+  if (rehearsal.session.plan.mainnetRcId !== EXPECTED_MAINNET_RC_ID) {
+    throw new TypeError('dress rehearsal must bind the canonical Mainnet RC');
   }
   return true;
 }

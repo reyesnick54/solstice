@@ -21,6 +21,8 @@ import {
   ECONOMIC_REHEARSAL_CHAIN_ID,
   ECONOMIC_REHEARSAL_NETWORK_ID,
 } from '../economic-rehearsal/identity.ts';
+import { CANDIDATE_V2_ID } from '../mainnet/candidate-v2/identity.ts';
+import { FIRST_MAINNET_RC_ID } from '../release-candidate/mainnet/types.ts';
 import { SUNREY_TESTNET_1_CHAIN_ID, SUNREY_TESTNET_1_NETWORK_ID } from '../testnet/identity.ts';
 import { RESERVED_PRODUCTION_NETWORK_ID } from '../wallet/types.ts';
 
@@ -35,8 +37,8 @@ export const DRESS_REHEARSAL_GENESIS_VERSION = 'production-ceremony-rehearsal-1'
 export const DRESS_REHEARSAL_FIXTURE_GENESIS_TIME_MS = 1_767_225_600_000n;
 export const DRESS_REHEARSAL_FIXTURE_GENESIS_TIME_UTC = '2026-01-01T00:00:00.000Z' as const;
 
-export const EXPECTED_CANDIDATE_V2_ID = 'SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2' as const;
-export const EXPECTED_MAINNET_RC_ID = 'SUNREY_MAINNET_RC_1' as const;
+export const EXPECTED_CANDIDATE_V2_ID = CANDIDATE_V2_ID;
+export const EXPECTED_MAINNET_RC_ID = FIRST_MAINNET_RC_ID;
 export const REHEARSAL_CANDIDATE_V2_ID = 'SUNREY_PGC_REHEARSAL_CANDIDATE_V2' as const;
 export const REHEARSAL_MAINNET_RC_ID = 'SUNREY_PGC_REHEARSAL_MAINNET_RC' as const;
 

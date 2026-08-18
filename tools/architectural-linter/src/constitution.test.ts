@@ -1869,6 +1869,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/production-providers')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/external-providers')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-providers')), false);
+  });
+
   it('CHUNK-81 implements the SunRey production network candidate v2', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-production-network-candidate').status, 'IMPLEMENTED');
@@ -2178,5 +2180,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-qualification')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-mainnet-release')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-release-candidate')), false);
+  });
+
+  it('CHUNK-86 implements SunRey production environment provisioning', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-provisioning').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-provisioning').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-provisioning').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-86',
+    );
+    assert.ok(declared, 'CHUNK-86 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-86-production-provisioning.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/chunk-86-production-provisioning.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/production-environment-plan.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/production-deployment-topology.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/mainnet/production-provisioning-authority.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/production-environment-provisioning.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/infra/provisioning/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-production-platform')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-infrastructure-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/cloud-control-plane')), false);
   });
 });

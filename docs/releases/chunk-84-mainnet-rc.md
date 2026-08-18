@@ -18,6 +18,10 @@ release-candidate scheme. It is not a second release authority.
 ## Owner
 
 Canonical owner: `packages/sunrey-chain/src/release-candidate/mainnet`.
+The freeze now binds the actual Chunk 81
+`SUNREY_PRODUCTION_NETWORK_CANDIDATE_2` root rather than a locally
+constructed substitute. Chunk 86 verifies this cryptographic manifest
+before planning infrastructure.
 
 CLI:
 
@@ -55,10 +59,12 @@ No status implies network activation because tests passed.
   crypto protocol freeze
 - Chunk 78 economic RC policy hashes (SunRey, MoonRey, FeePolicyV2,
   validator economics, MoonRey issuance, protocol treasury)
-- Production Network Candidate V2 root hash derived from the Chunk 65
-  genesis candidate (`SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2`)
-- Chunk 82-shaped provider acceptance matrix
-- Chunk 83/62 security-review snapshot (no invented audit pass)
+- Production Network Candidate V2 root hash from the canonical Chunk 81
+  candidate (`SUNREY_PRODUCTION_NETWORK_CANDIDATE_2`, domain
+  `SUNREY_PRODUCTION_NETWORK_CANDIDATE_V2`)
+- Chunk 82 ProductionProviderMatrix (engineering-tested remains distinct
+  from HUMAN_ACCEPTED and PRODUCTION_ELIGIBLE)
+- Chunk 83/62 security-review snapshot (fixtures cannot satisfy external review)
 - Chunk 64 root-of-trust architecture; production ceremony evidence
   remains Chunk 85
 

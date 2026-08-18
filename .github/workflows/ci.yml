@@ -170,6 +170,12 @@ jobs:
         run: npm run demo:sunrey-mainnet
       - name: SunRey production infrastructure harness
         run: npm run demo:sunrey-infra
+      - name: SunRey production environment plan
+        run: npm run sunrey-ops -- production plan
+      - name: SunRey production environment verify-plan
+        run: npm run sunrey-ops -- production verify-plan
+      - name: SunRey production environment rehearse
+        run: npm run sunrey-ops -- production rehearse
       - name: SunRey mainnet candidate verify
         run: npm run sunrey-mainnet -- verify
       - name: SunRey mainnet launch rehearsal demo

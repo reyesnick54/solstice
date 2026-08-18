@@ -1139,6 +1139,17 @@ treasury mint. Production treasury remains inactive. Do not create
 `packages/reserve-bank`. See
 [`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
+Chunk 86 implements the SunRey production-environment provisioning
+control plane at `packages/sunrey-chain/src/infra/provisioning`.
+Capability `sunrey-production-provisioning` is `IMPLEMENTED`. It
+extends Chunk 66. It binds the actual merged Chunk 81–85 artifacts,
+produces a deterministic plan before any infrastructure mutation, and
+does not execute genesis, enable `LIVE_*` flags, or activate customer
+financial capabilities. Do not create
+`packages/sunrey-production-platform`,
+`packages/mainnet-infrastructure-v2`, or
+`packages/cloud-control-plane`. See
+[`chunk-86-production-provisioning.md`](./chunk-86-production-provisioning.md).
 Chunk 85 implements the SunRey production genesis ceremony, validator
 onboarding, and launch-authorization package at
 `packages/sunrey-chain/src/production-ceremony`. Capability
