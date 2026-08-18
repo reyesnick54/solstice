@@ -14,6 +14,7 @@ import {
   hashFeePolicyV2,
   usageV2ForTransaction,
 } from '../../../sunrey-chain/src/fees/v2/index.ts';
+import { developmentTreasuryPolicy, showTreasuryPolicy } from '../../../sunrey-chain/src/economics/treasury/index.ts';
 import { encodeFromPublicKey } from '../../../sunrey-chain/src/wallet/index.ts';
 import type { AddressClass, AuthorizationPolicyKind } from '../../../sunrey-chain/src/wallet/types.ts';
 import { decodeEnvelope, transactionIdFromCanonicalBytes } from '../../../sunrey-chain/src/protocol/index.ts';
@@ -550,6 +551,49 @@ export class DevelopmentPlatform {
         ticker_status: TICKER_STATUS,
       },
     ]);
+  }
+
+  getProtocolTreasury(): Record<string, unknown> {
+    const policy = developmentTreasuryPolicy();
+    return Object.freeze({
+      classification: 'PROTOCOL TREASURY',
+      distinctFrom: Object.freeze(['customer custody', 'fiat Ledger', 'Exchange customer balances']),
+      owner: 'packages/sunrey-chain',
+      policyVersion: policy.policyVersion,
+      productionTreasuryInactive: true,
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getProtocolReserves(): Record<string, unknown> {
+    return Object.freeze({
+      classification: 'PROTOCOL TREASURY',
+      reserves: Object.freeze([]),
+      productionTreasuryInactive: true,
+    });
+  }
+
+  getTreasuryBudget(budgetId?: string): Record<string, unknown> {
+    return Object.freeze({
+      budget_id: budgetId ?? null,
+      budgets: Object.freeze([]),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getTreasuryDisbursement(disbursementId?: string): Record<string, unknown> {
+    return Object.freeze({
+      disbursement_id: disbursementId ?? null,
+      disbursements: Object.freeze([]),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
+  }
+
+  getTreasuryPolicy(): Record<string, unknown> {
+    return Object.freeze({
+      ...showTreasuryPolicy(),
+      writeInterface: 'GOVERNANCE_AUTHORIZED',
+    });
   }
 
   moonreyPolicy(): Record<string, unknown> {

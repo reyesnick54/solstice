@@ -11,6 +11,7 @@ import { nextBaseResourcePrice, initialBaseResourcePriceState, developmentFeePol
 
 import { createIntegratedEconomicStack } from '../economics/stack.ts';
 import { rehearseMonetaryConstitution } from '../economics/rehearsal.ts';
+import { rehearseProtocolTreasury } from '../economics/treasury/rehearsal.ts';
 import { interopPacketAtMostOnce } from '../assurance/properties.ts';
 import { mutableClock, runEnergyDemo } from '../oracle/demo-helpers.ts';
 import { createExternalDevChain, developmentExternalChain, InteropEngine } from '../interop/engine.ts';
@@ -27,6 +28,7 @@ import type {
   ExplorerRehearsalResult,
   InteropRehearsalResult,
   MoonReyPolicyRehearsalResult,
+  ProtocolTreasuryRehearsalResult,
   NativeAssetRehearsalResult,
   OracleRehearsalResult,
   RegulatedSandboxResult,
@@ -138,6 +140,15 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
       exemption: 'NONE',
     },
   });
+  const charged = [normal, pq, dvp].reduce((sum, result) => sum + (result.ok ? result.receipt.actualFee : 0n), 0n);
+  const sinks =
+    engine.accounts.position('sunrey.fees.validator_reward_pool', 'SUNREY_COIN').available +
+    engine.accounts.position('sunrey.fees.burn', 'SUNREY_COIN').available +
+    engine.accounts.position('sunrey.fees.treasury', 'SUNREY_COIN').available;
+  const alice = engine.accounts.position('alice', 'SUNREY_COIN').available;
+  const bob = engine.accounts.position('bob', 'SUNREY_COIN').available;
+  const nativeReconciled = alice + bob + sinks === 1_000_000n && sinks === charged;
+  const monetary = rehearseMonetaryConstitution();
   stack.registerProductiveObject({
     objectId: 'obj.energy.0',
     category: 'ENERGY',
@@ -161,6 +172,7 @@ export function rehearseNativeAssets(): NativeAssetRehearsalResult {
     moonreyIssuance: monetary.moonreyIssuance && moonrey.ok,
     fees: monetary.fees && stack.feeCharged > 0n,
     locks: monetary.locks,
+    supplyReconciled: monetary.supplyReconciled && sunreyReconciled && moonreyReconciled && nativeReconciled,
     supplyReconciled: monetary.supplyReconciled && recon.ok,
     productionValueClaim: false,
     units: 'REHEARSAL_ONLY',
@@ -265,6 +277,10 @@ export function rehearseMoonReyPolicy(): MoonReyPolicyRehearsalResult {
     productionCaps: 'UNCONFIGURED',
     productionAuthorized: false,
   });
+}
+
+export function rehearseProtocolTreasuryWorkflow(): ProtocolTreasuryRehearsalResult {
+  return rehearseProtocolTreasury();
 }
 
 export function rehearseExplorer(): ExplorerRehearsalResult {

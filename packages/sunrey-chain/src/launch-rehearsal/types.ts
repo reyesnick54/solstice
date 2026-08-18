@@ -234,6 +234,19 @@ export type ExplorerRehearsalResult = {
   readonly rebuiltToZeroLag: boolean;
 };
 
+export type ProtocolTreasuryRehearsalResult = {
+  readonly units: 'REHEARSAL_ONLY';
+  readonly productionTreasuryInactive: true;
+  readonly feeFunding: boolean;
+  readonly budgetCreated: boolean;
+  readonly approvedReservation: boolean;
+  readonly disbursement: boolean;
+  readonly cancellation: boolean;
+  readonly emergencyReserveWorkflow: boolean;
+  readonly reconciliation: boolean;
+  readonly supplyUnchanged: true;
+};
+
 export type MoonReyPolicyRehearsalResult = {
   readonly categoriesExercised: readonly string[];
   readonly issuance: boolean;
@@ -306,6 +319,7 @@ export type MainnetLaunchRehearsalReport = {
   readonly sdk: SdkRehearsalResult;
   readonly explorer: ExplorerRehearsalResult;
   readonly moonreyPolicy: MoonReyPolicyRehearsalResult;
+  readonly protocolTreasury: ProtocolTreasuryRehearsalResult;
   readonly backups: BackupValidationResult;
   readonly readinessChanges: readonly string[];
   readonly knownLimitations: readonly string[];

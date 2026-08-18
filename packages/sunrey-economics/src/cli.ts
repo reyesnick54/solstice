@@ -4,6 +4,7 @@
 
 import { writeFileSync } from 'node:fs';
 
+import { runTreasuryCommand } from '../../sunrey-chain/src/economics/treasury/cli.ts';
 import { runEconomicsCommand as runMonetaryCommand } from '../../sunrey-chain/src/economics/cli.ts';
 import { runSunreyEconomicsCli } from '../../sunrey-chain/src/fees/v2/cli.ts';
 import { analyzeReport } from './analysis.ts';
@@ -18,6 +19,9 @@ const MONETARY_PLANES = new Set(['supply', 'policy', 'genesis', 'simulate', 'rea
 
 export function runEconomicsCommand(argv: readonly string[]): string {
   const [plane, command, ...rest] = argv;
+  if (plane === 'treasury') {
+    const result = runTreasuryCommand([command ?? 'help', ...rest]);
+    return JSON.stringify(result.payload, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
   if (plane === 'stress') {
     return runStressCommand([command ?? '', ...rest]);
   }
@@ -57,6 +61,12 @@ function usage(): string {
     'sunrey-economics dual report --scenario <id>',
     'sunrey-economics dual stability --scenario <id>',
     'sunrey-economics dual export --scenario <id> --out <path>',
+    'sunrey-economics treasury policy',
+    'sunrey-economics treasury reserves',
+    'sunrey-economics treasury budgets',
+    'sunrey-economics treasury disbursements',
+    'sunrey-economics treasury verify',
+    'sunrey-economics treasury simulate',
     'sunrey-economics stress run --scenario <id> [--seed n] [--epochs n]',
     'sunrey-economics stress scenario [--list] [--id <id>]',
     'sunrey-economics stress campaign --id <smoke|critical-invariants|compound|extended-12> [--extended]',

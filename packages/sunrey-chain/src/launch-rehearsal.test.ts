@@ -69,6 +69,10 @@ describe('Chunk 70 SunRey mainnet launch rehearsal', () => {
     assert.equal(session.report.moonreyPolicy.issuance, true);
     assert.equal(session.report.moonreyPolicy.antiDoubleCount, true);
     assert.equal(session.report.moonreyPolicy.supplyReconciled, true);
+    assert.equal(session.report.protocolTreasury.units, 'REHEARSAL_ONLY');
+    assert.equal(session.report.protocolTreasury.productionTreasuryInactive, true);
+    assert.equal(session.report.protocolTreasury.reconciliation, true);
+    assert.equal(session.report.protocolTreasury.feeFunding, true);
     assert.equal(session.report.recoveryResults.every((row) => row.safetyHolds), true);
     assert.equal(session.plan.executes, false);
     assert.equal(ENVIRONMENT, 'simulation');

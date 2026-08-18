@@ -1073,6 +1073,17 @@ or activate production monetary policy. Do not create
 `packages/economic-bridge`. See
 [`chunk-75-dual-economy.md`](./chunk-75-dual-economy.md).
 
+Chunk 77 implements the blockchain-native SunRey protocol treasury
+and reserve architecture at
+`packages/sunrey-chain/src/economics/treasury`. Capability
+`sunrey-protocol-treasury` is `IMPLEMENTED`. It is distinct from
+the fiat/application owner `packages/treasury`. It does not create
+a second financial Ledger, a new native asset, a price peg, or a
+treasury mint. Production treasury remains inactive. Do not create
+`packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
+`packages/reserve-bank`. See
+[`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

@@ -13,6 +13,7 @@ const pages = {
   productive: renderProductive,
   moonrey: () => renderList('/v1/moonrey', ['issuanceId', 'productiveCategory', 'contributionId', 'issuedQuantity', 'formulaVersion']),
   'dual-economy': renderDualEconomy,
+  treasury: renderProtocolTreasury,
   machines: () => renderList('/v1/machines', ['machineId', 'machineType', 'serviceOffer', 'settledQuantity']),
   interop: renderInterop,
 };
@@ -92,6 +93,19 @@ async function renderDualEconomy() {
     <div class="grid">
       <div class="card"><h3>SunRey development supply</h3><div>${payload.sunreySupply}</div></div>
       <div class="card"><h3>MoonRey development supply</h3><div>${payload.moonreySupply}</div></div>
+    </div>
+    <pre>${JSON.stringify(payload, null, 2)}</pre>
+  `;
+}
+
+async function renderProtocolTreasury() {
+  const payload = await get('/v1/treasury');
+  app.innerHTML = `
+    <p><strong>PROTOCOL TREASURY</strong> — protocol-owned native SunRey/MoonRey reserves. Distinct from customer custody, fiat Ledger, and Exchange customer balances.</p>
+    ${lagLine(payload)}
+    <div class="grid">
+      <div class="card"><h3>Policy version</h3><div>${payload.policyVersion}</div></div>
+      <div class="card"><h3>Production treasury</h3><div>${payload.productionTreasuryInactive ? 'INACTIVE' : 'ACTIVE'}</div></div>
     </div>
     <pre>${JSON.stringify(payload, null, 2)}</pre>
   `;

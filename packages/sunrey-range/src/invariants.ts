@@ -80,6 +80,26 @@ export const INVARIANT_CATALOG: Readonly<
     owner: 'packages/sunrey-chain',
     statement: 'A validator cannot release a bond before the governed unbonding delay and accountability window elapse.',
   },
+  NO_TREASURY_MINT: {
+    title: 'No treasury mint',
+    owner: 'packages/sunrey-chain',
+    statement: 'Protocol treasury cannot mint SunRey or MoonRey to fund a budget.',
+  },
+  NO_TREASURY_DOUBLE_SPEND: {
+    title: 'No treasury double spend',
+    owner: 'packages/sunrey-chain',
+    statement: 'The same reserved treasury quantity cannot be committed to two disbursements.',
+  },
+  NO_UNAUTHORIZED_TREASURY_SPEND: {
+    title: 'No unauthorized treasury spend',
+    owner: 'packages/sunrey-chain',
+    statement: 'AI and unauthorized actors cannot approve budgets or authorize treasury transfers.',
+  },
+  NO_CUSTOMER_ASSET_TREASURY_CLAIM: {
+    title: 'No customer-asset treasury claim',
+    owner: 'packages/sunrey-chain',
+    statement: 'Protocol treasury cannot claim customer wallets, custody, Exchange obligations, machine escrow, or fiat ledger balances.',
+  },
 });
 
 export function invariantIds(): readonly SecurityInvariantId[] {

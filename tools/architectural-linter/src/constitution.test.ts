@@ -1723,6 +1723,30 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-bridge')), false);
   });
 
+  it('CHUNK-77 implements the SunRey protocol treasury and reserves', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-treasury').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-treasury').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-protocol-treasury').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-77',
+    );
+    assert.ok(declared, 'CHUNK-77 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-77-protocol-treasury.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-77-protocol-treasury.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/protocol-reserves.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/treasury-budget-governance.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/treasury-disbursements.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/treasury-reconciliation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/treasury-simulation.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/economics/treasury/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-protocol-treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/native-treasury')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/reserve-bank')), false);
   it('CHUNK-76 reconciles the economic stack and implements the stress laboratory', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-economic-stress-lab').status, 'IMPLEMENTED');

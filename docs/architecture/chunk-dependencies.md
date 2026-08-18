@@ -138,6 +138,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -655,3 +656,13 @@ It extends Chunk 44 and does not create a second MoonRey asset or mint
 path. Production caps remain `UNCONFIGURED`. Do not create
 `packages/moonrey-policy`, `packages/moonrey-economics`, or
 `packages/issuance-policy`. The evaluator returns `mustStop: false`.
+Chunk 77 implements the blockchain-native SunRey protocol treasury
+and reserve architecture at
+`packages/sunrey-chain/src/economics/treasury`. Capability
+`sunrey-protocol-treasury` is `IMPLEMENTED`. See
+[`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
+It is distinct from `packages/treasury`. It does not create a
+second financial Ledger, a new native asset, a price peg, or a
+treasury mint. Production treasury remains inactive. Do not create
+`packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
+`packages/reserve-bank`. The evaluator returns `mustStop: false`.

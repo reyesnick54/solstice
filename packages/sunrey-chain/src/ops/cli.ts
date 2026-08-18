@@ -470,6 +470,13 @@ export async function main(): Promise<void> {
 }
 
 const entry = process.argv[1] ?? '';
+if (
+  import.meta.url === `file://${entry}` ||
+  entry.endsWith('ops/cli.ts') ||
+  entry.endsWith('ops/cli.js') ||
+  entry.endsWith('cli.ts') ||
+  entry.endsWith('cli.js')
+) {
 if (entry.endsWith('ops/cli.ts') || entry.endsWith('ops/cli.js') || entry.endsWith('cli.ts') || entry.endsWith('cli.js')) {
   const group = process.argv[2] ?? 'health';
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {

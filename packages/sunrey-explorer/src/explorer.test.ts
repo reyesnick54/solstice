@@ -106,6 +106,11 @@ describe('sunrey explorer', () => {
     assert.match(monetary.body, /SUNREY_COIN/);
     assert.match(monetary.body, /supplyReconciliation/);
     assert.doesNotMatch(monetary.body, /marketCap|market_cap|marketCapitalization/);
+    const treasury = handleExplorerRequest({ method: 'GET', path: '/v1/treasury', query: {} }, queries, indexer);
+    assert.equal(treasury.status, 200);
+    assert.match(treasury.body, /PROTOCOL TREASURY/);
+    assert.match(treasury.body, /distinctFromFiatLedger/);
+    assert.match(treasury.body, /distinctFromCustomerCustody/);
     const bad = handleExplorerRequest({ method: 'POST', path: '/v1/blocks', query: {} }, queries, indexer);
     assert.equal(bad.status, 405);
     const search = handleExplorerRequest(

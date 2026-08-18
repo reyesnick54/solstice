@@ -81,6 +81,8 @@ pub fn adaptive_price_within_bounds(usage: u128) -> bool {
 pub fn adaptive_disposition_conserves(charged: u128) -> bool {
     FeeDispositionV2::dispose(charged, 5_000, 2_500).reconciles()
         && !FeePolicyV2::development().production_parameters_configured
+}
+
 pub fn validator_bond_conservation(
     available: u128,
     locked: u128,
@@ -89,6 +91,22 @@ pub fn validator_bond_conservation(
     issued: u128,
 ) -> bool {
     available.saturating_add(locked).saturating_add(pending).saturating_add(penalized) == issued
+}
+
+pub fn protocol_treasury_equation(
+    opening: u128,
+    authorized_funding: u128,
+    returned_funds: u128,
+    finalized: u128,
+    available: u128,
+    reserved: u128,
+    encumbered: u128,
+) -> bool {
+    opening
+        .saturating_add(authorized_funding)
+        .saturating_add(returned_funds)
+        .saturating_sub(finalized)
+        == available.saturating_add(reserved).saturating_add(encumbered)
 }
 
 #[cfg(kani)]
@@ -170,5 +188,7 @@ mod tests {
         assert!(adaptive_disposition_conserves(1_000));
         assert!(validator_bond_conservation(1, 2, 1, 1, 5));
         assert!(!validator_bond_conservation(1, 2, 1, 1, 4));
+        assert!(protocol_treasury_equation(10, 5, 1, 4, 8, 3, 1));
+        assert!(!protocol_treasury_equation(10, 5, 1, 4, 8, 3, 0));
     }
 }
