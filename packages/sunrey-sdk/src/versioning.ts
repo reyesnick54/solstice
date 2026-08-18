@@ -67,4 +67,19 @@ export function compatibilityPolicy(): Readonly<Record<string, string>> {
     silentBreaks: 'forbidden',
     protocolUpgradeImpliesApiBreak: 'false',
   });
+/**
+ * Breaking public API changes require a new versioned prefix.
+ * `/v1` remains the current public surface. `/v2` is reserved and
+ * unpublished until an explicit compatibility review.
+ */
+export const PUBLIC_API_VERSION_STRATEGY = Object.freeze({
+  current: 'v1' as const,
+  preserveV1: true,
+  breakingChangesRequireVersioning: true,
+  unpublishedNext: 'v2' as const,
+  protocolUpgradeDoesNotBreakApi: true,
+});
+
+export function requireVersionedPublicPath(path: string): boolean {
+  return path === '/health' || path === '/ready' || path.startsWith('/v1/') || path.startsWith('/operator/v1/');
 }

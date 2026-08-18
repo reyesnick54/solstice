@@ -43,3 +43,10 @@ sunrey-ops provider matrix
 
 Chunk 86 production provisioning consumes this matrix. Engineering-tested
 providers remain distinct from `HUMAN_ACCEPTED` and `PRODUCTION_ELIGIBLE`.
+
+Chunk 91 adds live runtime capability status (`ProviderHealthSnapshot`,
+circuit state, and engineering connectivity) on top of this matrix.
+Technical connectivity does not move a provider into
+`PRODUCTION_ELIGIBLE`. Independent lanes remain technical, security,
+commercial, legal/regulatory, and human. See
+[chunk-91-provider-runtime.md](./chunk-91-provider-runtime.md).

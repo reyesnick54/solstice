@@ -27,6 +27,7 @@ Production-candidate zones:
 - public → signer
 - public → validator administration
 - RPC → HSM
+- RPC → validator administration
 - Explorer → custody signer
 - relayer → governance signer
 

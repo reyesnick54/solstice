@@ -153,7 +153,9 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-provider-runtime | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -794,3 +796,35 @@ production financial capabilities. Do not create
 `packages/app-registry`, `packages/webhook-service`, or
 `packages/developer-platform-v2`. The evaluator returns
 `mustStop: false`.
+Chunk 93 implements the public RPC edge, Explorer HA, and production
+network data plane at `packages/sunrey-chain/src/public-data-plane`.
+Capability `sunrey-public-data-plane` is `IMPLEMENTED`. See
+[`chunk-93-public-data-plane.md`](./chunk-93-public-data-plane.md).
+RPC reads canonical chain state. Explorer is rebuildable and
+non-authoritative. Do not create `packages/public-rpc`,
+`packages/sunrey-rpc-edge`, `packages/rpc-gateway`,
+`packages/explorer-ha`, or `packages/public-data-plane`. The evaluator
+returns `mustStop: false`.
+Chunk 92 implements the validator operator platform, fleet
+management, and production operator control plane at
+`packages/sunrey-chain/src/validator-operator`. Capability
+`sunrey-validator-operator-platform` is `IMPLEMENTED`. See
+[`chunk-92-validator-operator-platform.md`](./chunk-92-validator-operator-platform.md).
+It consumes the validator registry, Chunk 36 lifecycle, Chunk 39
+accountability, Chunk 54 operations, Chunk 72 economics, Chunk 81
+Candidate V2, Chunk 85 dossiers, Chunk 87 qualification, and Chunk 90
+production operations. It does not create a second registry,
+consensus engine, public delegated staking, or governance token.
+Do not create `packages/validator-operator`,
+`packages/sunrey-validator-ops`, `packages/operator-platform`,
+`packages/validator-fleet`, or `packages/delegated-staking`. The
+evaluator returns `mustStop: false`.
+Chunk 91 implements the executable provider runtime at
+`packages/sunrey-chain/src/provider-runtime`. Capability
+`sunrey-provider-runtime` is `IMPLEMENTED`. See
+[`chunk-91-provider-runtime.md`](./chunk-91-provider-runtime.md).
+It extends Chunks 66, 68, 69, 82, and 90. Adapter success is not
+approval. Do not create `packages/provider-runtime`,
+`packages/sunrey-provider-runtime`, `packages/executable-providers`,
+`packages/provider-adapters`, or `packages/integration-providers`.
+The evaluator returns `mustStop: false`.

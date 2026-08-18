@@ -7,6 +7,10 @@ export {
   parseApiVersion,
 } from './versioning.ts';
 export type { ApiDeprecationMetadata } from './versioning.ts';
+  PUBLIC_API_VERSION_STRATEGY,
+  parseApiVersion,
+  requireVersionedPublicPath,
+} from './versioning.ts';
 export { apiError, API_ERROR_CATEGORIES, API_ERROR_CODES } from './errors.ts';
 export type { ApiErrorEnvelope, ApiErrorCategory, ApiErrorCode } from './errors.ts';
 export {
@@ -69,7 +73,8 @@ export {
   ProtocolTreasuryClient,
   EventClient,
 } from './clients.ts';
-export { connectSunRey } from './client.ts';
+export { connectSunRey, connectSunReyWithFailover } from './client.ts';
+export { SdkRpcEndpointPool, connectSunReyPool, pooledTransport } from './pool.ts';
 export { createDevelopmentWallet, publicRegistration } from './development-wallet.ts';
 export { startPublicGateway, PUBLIC_ROUTES, OPERATOR_ROUTES } from './gateway/server.ts';
 export { DevelopmentPlatform } from './gateway/platform.ts';

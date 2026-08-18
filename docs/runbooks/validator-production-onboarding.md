@@ -40,3 +40,8 @@ into application code.
 - Testnet, development, and rehearsal keys are rejected
 - Duplicate high-risk fingerprints are rejected
 - Simulation HSM cannot satisfy a configured real-HSM requirement
+
+Chunk 92 operator enrollment consumes this dossier and records
+`ValidatorOperatorEnrollment` / `ValidatorOperatorAcceptance`.
+Fixture production acceptance remains rejected. See
+[../validators/operator-enrollment.md](../validators/operator-enrollment.md).

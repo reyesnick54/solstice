@@ -66,6 +66,7 @@ export type {
 export { runCryptoCommand, cryptoUsage } from './crypto-cli.ts';
 export { runSunreyOps } from './cli.ts';
 export { runProductionHandoffCommand, productionUsage } from '../production-handoff/cli.ts';
+export { runPublicDataPlaneCommand, publicDataPlaneUsage } from '../public-data-plane/cli.ts';
 export {
   DEFAULT_LOG_POLICY,
   DEFAULT_RESOURCE_LIMITS,
@@ -166,6 +167,12 @@ export { gracefulShutdownPreserves, kubernetesManifest, systemdUnit } from './su
 export { restartDoesNotDuplicateVote, safeRestart } from './restart.ts';
 export { SEVEN_VALIDATOR_IDS, SevenValidatorNetwork, runRollingUpgrade } from './seven-validator.ts';
 export { opsUsage, runOpsCommand } from './cli.ts';
+export {
+  ValidatorOperatorPlatform,
+  runValidatorOperatorCommand,
+  runValidatorOperatorRehearsal,
+  operatorUsage as validatorOperatorUsage,
+} from '../validator-operator/index.ts';
 export {
   createStorageSnapshot,
   migrateDevStore,

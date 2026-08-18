@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey-provider-runtime-config",
+  "credentialsInGit": false,
+  "domains": [
+    "CLOUD_INFRASTRUCTURE",
+    "SECRET_MANAGER",
+    "KMS",
+    "HSM",
+    "DATABASE",
+    "OBJECT_STORAGE",
+    "DNS",
+    "CERTIFICATE_MANAGER",
+    "ORACLE_DATA_SOURCE",
+    "IDENTITY_KYC",
+    "SANCTIONS_PEP",
+    "AML_TRANSACTION_MONITORING",
+    "TRAVEL_RULE",
+    "MARKET_SURVEILLANCE",
+    "CASE_MANAGEMENT",
+    "CUSTODY_PROVIDER",
+    "BANKING_REFERENCE"
+  ],
+  "notes": "Versioned provider definitions only. Bind credentials through SecretReference at runtime."
+}
