@@ -90,6 +90,11 @@ const COMPETING_PATHS = [
   'packages/operator-platform',
   'packages/validator-fleet',
   'packages/delegated-staking',
+  'packages/provider-runtime',
+  'packages/sunrey-provider-runtime',
+  'packages/executable-providers',
+  'packages/provider-adapters',
+  'packages/integration-providers',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

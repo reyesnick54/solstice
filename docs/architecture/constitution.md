@@ -1228,6 +1228,18 @@ engine, public delegated staking, or governance token. Do not create
 `packages/operator-platform`, `packages/validator-fleet`, or
 `packages/delegated-staking`. See
 [`chunk-92-validator-operator-platform.md`](./chunk-92-validator-operator-platform.md).
+Chunk 91 implements the SunRey executable production provider runtime
+and credential-injected integration framework at
+`packages/sunrey-chain/src/provider-runtime`. Capability
+`sunrey-provider-runtime` is `IMPLEMENTED`. It extends Chunks 66, 68,
+69, 82, and 90. Local mocks are the CI path. Sandbox credentials are
+optional `SecretReference` bindings. Adapter success is not legal or
+commercial approval. `PRODUCTION_AUTHORIZED` requires configured
+evidence and human authority. Do not create
+`packages/provider-runtime`, `packages/sunrey-provider-runtime`,
+`packages/executable-providers`, `packages/provider-adapters`, or
+`packages/integration-providers`. See
+[`chunk-91-provider-runtime.md`](./chunk-91-provider-runtime.md).
 
 ## Agent stop rule
 

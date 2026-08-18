@@ -160,6 +160,9 @@ export function capabilityActivationHappyTrace(): LogicalTrace {
     { domain: 'capability_activation', action: 'SelectExchange', args: {} },
     { domain: 'capability_activation', action: 'HumanAuthority', args: {} },
     { domain: 'capability_activation', action: 'PresentEvidence', args: {} },
+  ]);
+}
+
 export function genesisExecutionHappyTrace(): LogicalTrace {
   return makeTrace('trace_genesis_execution', 'genesis_execution', 'GENESIS_EXECUTION_AUTHORIZATION', [
     { domain: 'genesis_execution', action: 'VerifyPlan', args: {} },

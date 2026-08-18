@@ -1,6 +1,8 @@
 # Launch control room
 
-`LaunchControlRoomState` aggregates the live launch picture:
+Chunk 70 rehearsal uses `LaunchControlRoomState`. Chunk 88 production
+genesis execution uses `ProductionLaunchControlRoomState`. The
+production object aggregates the live launch picture:
 
 - authorization
 - release / Mainnet RC

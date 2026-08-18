@@ -20,6 +20,7 @@ import type {
   RehearsalStressFinding,
   RehearsalStressResult,
 } from './types.ts';
+import type { RehearsalStressFinding, RehearsalStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 

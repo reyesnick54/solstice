@@ -23,3 +23,8 @@ AI cannot mark `HUMAN_ACCEPTED` or `PRODUCTION_ELIGIBLE`.
 Do not create `packages/provider-acceptance`,
 `packages/production-providers`, `packages/external-providers`,
 or `packages/sunrey-providers`.
+
+Chunk 91 extends this owner with an executable runtime at
+`packages/sunrey-chain/src/provider-runtime`. Live capability status
+may be attached to `ProductionProviderMatrix` without collapsing the
+independent technical, security, commercial, legal, and human lanes.

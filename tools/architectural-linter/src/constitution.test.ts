@@ -1869,6 +1869,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/production-providers')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/external-providers')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-providers')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/provider-runtime')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-provider-runtime')), false);
   });
 
   it('CHUNK-81 implements the SunRey production network candidate v2', () => {
