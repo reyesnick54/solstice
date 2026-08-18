@@ -1083,6 +1083,16 @@ authority that can rewrite finalized history. Do not create
 `packages/governance-ops`, `packages/sunrey-governance`, or
 `packages/governance-token`. See
 [`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md).
+Chunk 77 implements the blockchain-native SunRey protocol treasury
+and reserve architecture at
+`packages/sunrey-chain/src/economics/treasury`. Capability
+`sunrey-protocol-treasury` is `IMPLEMENTED`. It is distinct from
+the fiat/application owner `packages/treasury`. It does not create
+a second financial Ledger, a new native asset, a price peg, or a
+treasury mint. Production treasury remains inactive. Do not create
+`packages/sunrey-protocol-treasury`, `packages/native-treasury`, or
+`packages/reserve-bank`. See
+[`chunk-77-protocol-treasury.md`](./chunk-77-protocol-treasury.md).
 
 ## Agent stop rule
 

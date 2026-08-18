@@ -137,6 +137,9 @@ export function handleExplorerRequest(
       ...queries.lag(),
     });
   }
+  if (path === '/v1/treasury') {
+    return json(200, queries.protocolTreasury());
+  }
   if (path === '/v1/moonrey/policy') {
     const issuance = queries.collection('moonrey');
     const first = issuance.items[0] as { policyVersion?: number; normalizationPolicy?: string } | undefined;

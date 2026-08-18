@@ -42,6 +42,11 @@ pub const PATH_GOVERNANCE_PACKAGE: &str = "/v1/governance/operations/package";
 pub const PATH_GOVERNANCE_DIFF: &str = "/v1/governance/operations/diff";
 pub const PATH_GOVERNANCE_ACTIVATION: &str = "/v1/governance/operations/activation";
 pub const PATH_GOVERNANCE_EMERGENCY: &str = "/v1/governance/operations/emergency";
+pub const PATH_TREASURY: &str = "/v1/treasury";
+pub const PATH_TREASURY_POLICY: &str = "/v1/treasury/policy";
+pub const PATH_TREASURY_RESERVES: &str = "/v1/treasury/reserves";
+pub const PATH_TREASURY_BUDGETS: &str = "/v1/treasury/budgets";
+pub const PATH_TREASURY_DISBURSEMENTS: &str = "/v1/treasury/disbursements";
 
 #[derive(Debug, thiserror::Error)]
 pub enum SdkError {
@@ -160,6 +165,33 @@ impl SunReyRpcClient {
 
     pub fn emergency_protocol_status(&self) -> Result<Value, SdkError> {
         self.get(PATH_GOVERNANCE_EMERGENCY)
+    pub fn get_protocol_treasury(&self) -> Result<Value, SdkError> {
+        self.get(PATH_TREASURY)
+    }
+
+    pub fn get_protocol_reserves(&self) -> Result<Value, SdkError> {
+        self.get(PATH_TREASURY_RESERVES)
+    }
+
+    pub fn get_treasury_policy(&self) -> Result<Value, SdkError> {
+        self.get(PATH_TREASURY_POLICY)
+    }
+
+    pub fn get_treasury_budget(&self, budget_id: Option<&str>) -> Result<Value, SdkError> {
+        match budget_id {
+            Some(id) => self.get(&format!("{PATH_TREASURY_BUDGETS}/{id}")),
+            None => self.get(PATH_TREASURY_BUDGETS),
+        }
+    }
+
+    pub fn get_treasury_disbursement(
+        &self,
+        disbursement_id: Option<&str>,
+    ) -> Result<Value, SdkError> {
+        match disbursement_id {
+            Some(id) => self.get(&format!("{PATH_TREASURY_DISBURSEMENTS}/{id}")),
+            None => self.get(PATH_TREASURY_DISBURSEMENTS),
+        }
     }
 
     pub fn events(&self, cursor: Option<&str>) -> Result<Value, SdkError> {
@@ -256,5 +288,8 @@ mod tests {
         assert!(PATH_GOVERNANCE_DIFF.starts_with("/v1/"));
         assert!(PATH_GOVERNANCE_ACTIVATION.starts_with("/v1/"));
         assert!(PATH_GOVERNANCE_EMERGENCY.starts_with("/v1/"));
+        assert!(PATH_TREASURY.starts_with("/v1/"));
+        assert!(PATH_TREASURY_POLICY.starts_with("/v1/"));
+        assert!(PATH_TREASURY_RESERVES.starts_with("/v1/"));
     }
 }

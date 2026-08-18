@@ -13,6 +13,27 @@ This document describes only what is implemented and tested in this tree.
   `sunrey-governance-operations` is `IMPLEMENTED`. Not a governance
   token, AI authority, or finalized-history rewrite. See
   `docs/governance/chunk-79-production-governance-operations.md`.
+- SunRey protocol treasury, reserves, and budget governance
+  (Chunk 77, `packages/sunrey-chain/src/economics/treasury`):
+  protocol-owned `SUNREY_COIN` / `MOONREY_COIN` holdings,
+  governed reserve classes, versioned budget policy, reservation
+  before finality, FeePolicyV2 treasury disposition, validator
+  reward reserve integration, `PROTOCOL_TREASURY` formal model,
+  stress catalog, Explorer/SDK/CLI read surfaces, and rehearsal-only
+  units. Distinct from `packages/treasury`. No second ledger, new
+  native asset, price peg, or treasury mint. Production treasury
+  inactive. Capability `sunrey-protocol-treasury` is `IMPLEMENTED`.
+  See `docs/economics/chunk-77-protocol-treasury.md`.
+- SunRey economic stack reconciliation and adversarial stress
+  laboratory (Chunk 76, `packages/sunrey-economics/src/stress` and
+  `packages/sunrey-chain/src/economics/stack.ts`): FeePolicyV2
+  validator rewards flow into `ValidatorEconomicsEngine`, fee burn
+  uses canonical Chunk 71 burn accounting, MoonRey issuance is gated
+  by `MonetaryIssuanceAuthority`, and at least 60 deterministic
+  economic stress scenarios continuously check cross-subsystem
+  invariants. Capability `sunrey-economic-stress-lab` is
+  `IMPLEMENTED`. Simulation only. Not production authorization. See
+  `docs/economics/chunk-76-economic-stress-lab.md`.
 - SunRey / MoonRey dual-economy simulation laboratory (Chunk 75,
   `packages/sunrey-economics`): deterministic human/productive
   layers, economic bridge, Exchange order-flow discovery, fee and
@@ -660,8 +681,11 @@ npm run demo:sunrey-sdk
 npm run demo:sunrey-mainnet
 npm run sunrey-mainnet -- readiness
 npm run demo:sunrey-economics
-npm run sunrey-economics -- policy verify
-npm run sunrey-economics -- supply verify
+npm run sunrey-monetary -- policy verify
+npm run sunrey-monetary -- supply verify
+npm run sunrey-economics -- dual simulate --scenario baseline --epochs 2
+npm run sunrey-economics -- stress campaign --id smoke
+npm run demo:sunrey-economic-stress
 npm run demo:sunrey-rc
 npm run sunrey:dev
 npm run typecheck

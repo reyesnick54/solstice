@@ -18,4 +18,5 @@
     "sunrey-monetary-constitution"
   ],
   "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics. Extends Chunk 41 native assets, Chunk 44 MoonRey issuance, Chunk 65 genesis allocation, Chunk 61 formal models, and Chunk 70 rehearsal. Chunk 75 owns packages/sunrey-economics as the dual-economy simulation laboratory, not a second monetary constitution. Does not invent production tokenomics, launch mainnet, or create a second ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/monetary-policy, packages/tokenomics, or packages/genesis-economy."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics. Extends Chunk 41 native assets, Chunk 44 MoonRey issuance, Chunk 65 genesis allocation, Chunk 61 formal models, and Chunk 70 rehearsal. Does not invent production tokenomics, launch mainnet, or create a second ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/monetary-policy, packages/tokenomics, or packages/genesis-economy. packages/sunrey-economics is the Chunk 75/76 laboratory owner."
 }

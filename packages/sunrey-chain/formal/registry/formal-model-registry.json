@@ -465,6 +465,41 @@
         "AI_CANNOT_AUTHORIZE",
         "EMERGENCY_ACTION_CANNOT_MINT",
         "EMERGENCY_RESTRICTION_SCOPE_BOUNDED"
+      "modelId": "PROTOCOL_TREASURY",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/economics/treasury/engine.ts",
+        "packages/sunrey-chain/src/formal/models/protocol-treasury.ts"
+      ],
+      "assumptions": [
+        "treasury redistributes existing native quantity only",
+        "customer-asset domains are unreachable",
+      "modelId": "CROSS_ECONOMIC_INVARIANTS",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/economics/stack.ts",
+        "packages/sunrey-economics/src/stress/invariants.ts",
+        "packages/sunrey-chain/src/formal/models/cross-economic.ts"
+      ],
+      "assumptions": [
+        "integer minor units only",
+        "FeePolicyV2 disposition cannot mint",
+        "MoonRey issuance requires MonetaryIssuanceAuthority",
+        "bounded checking does not prove unlimited-state correctness"
+      ],
+      "stateBounds": { "maxQuantity": 2 },
+      "properties": [
+        "TREASURY_CANNOT_CREATE_NATIVE_SUPPLY",
+        "RESERVED_QUANTITY_CANNOT_BE_DOUBLE_SPENT",
+        "FINALIZED_DISBURSEMENT_LEQ_AUTHORIZED",
+        "CANCELLED_RESERVATION_RELEASES",
+        "CUSTOMER_ASSETS_UNAFFECTED",
+        "UNAUTHORIZED_GOVERNANCE_CANNOT_SPEND"
+        "FEE_TO_VALIDATOR_REWARD_CONSERVATION",
+        "FEE_TO_BURN_CONSERVATION",
+        "MOONREY_AUTHORIZATION_REQUIRES_MONETARY_ISSUANCE",
+        "NATIVE_SUPPLY_SEPARATION",
+        "NO_CROSS_ASSET_CREATION"
       ],
       "tool": "TLA+/TLC",
       "toolVersion": "1.8.0",
@@ -472,6 +507,10 @@
       "sourceCommit": "WORKTREE",
       "tlaModule": "packages/sunrey-chain/formal/tla/GovernanceOperationSafety.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/governance-ops.ts"
+      "tlaModule": "packages/sunrey-chain/formal/tla/ProtocolTreasury.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/protocol-treasury.ts"
+      "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
     }
   ]
 }

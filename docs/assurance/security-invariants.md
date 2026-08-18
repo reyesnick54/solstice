@@ -23,6 +23,10 @@ is not a certification or a marketing claim.
 | NO_DUPLICATE_VALIDATOR_PENALTY | packages/sunrey-chain | One canonical evidence id cannot execute the same protocol penalty twice. |
 | NO_CUSTOMER_ASSET_VALIDATOR_PENALTY | packages/sunrey-chain | Validator economic penalties cannot debit customer wallets, custody, Exchange, fiat ledger, or unrelated machine escrow. |
 | UNBOND_DELAY_RESPECTED | packages/sunrey-chain | A validator cannot release a bond before the governed unbonding delay and accountability window elapse. |
+| NO_TREASURY_MINT | packages/sunrey-chain | Protocol treasury cannot mint SunRey or MoonRey to fund a budget. |
+| NO_TREASURY_DOUBLE_SPEND | packages/sunrey-chain | The same reserved treasury quantity cannot be committed to two disbursements. |
+| NO_UNAUTHORIZED_TREASURY_SPEND | packages/sunrey-chain | AI and unauthorized actors cannot approve budgets or authorize treasury transfers. |
+| NO_CUSTOMER_ASSET_TREASURY_CLAIM | packages/sunrey-chain | Protocol treasury cannot claim customer wallets, custody, Exchange obligations, machine escrow, or fiat ledger balances. |
 
 A preventive control without an alert is acceptable where the scenario
 marks `preventiveOnly: true` (for example some BFT power-boundary

@@ -73,7 +73,8 @@ export class DualEconomySimulationEngine {
       const issuedMoon = issueMoonReyForEpoch(protocol, scenario, lastProductive, epoch);
       lastProductive = productiveState(scenario, lastAutomation, lastHuman, issuedMoon === 0n ? 1n : issuedMoon);
       const issuedSun = sunreyMonetaryIssuance({ scenario, epoch, humanActivity: lastHuman.totalActivity });
-      sunrey = applyIssuanceSlice(sunrey, issuedSun);
+      const authorizedSun = protocol.stack.issueSunRey('household', issuedSun, `dual-sunrey-${epoch}`);
+      sunrey = applyIssuanceSlice(sunrey, authorizedSun.ok ? authorizedSun.quantity : 0n);
       const nativeMoon = moonreySupplyFromEngine(protocol);
       moonrey = Object.freeze({
         ...moonrey,
@@ -190,12 +191,12 @@ export class DualEconomySimulationEngine {
     const balance = balanceReport(lastHuman, lastProductive, assets.sunrey, assets.moonrey, lastMarket, flows);
     const stability = stabilityReport(scenario, lastMarket, concentration, oracle, fees, balance, lastProductive);
     const properties: PropertyCheckSnapshot = Object.freeze({
-      sunreySupplyReconciles: supplyReconciles(sunrey),
-      moonreySupplyReconciles: supplyReconciles(moonrey) && protocol.productive.supplyIsReconciled(),
+      sunreySupplyReconciles: supplyReconciles(sunrey) && protocol.stack.reconcile().sunreyReconciles,
+      moonreySupplyReconciles: supplyReconciles(moonrey) && protocol.stack.reconcile().moonreyReconciles,
       exchangeDvpConserves: marketConserves(market),
-      feeConserves: fees.conserved,
+      feeConserves: fees.conserved && protocol.stack.reconcile().feeDispositionReconciles,
       validatorEconomicsReconciles: validators.accountingReconciled,
-      noDuplicateMoonreyIssuance: protocol.issuedFingerprints.size === protocol.productive.snapshot().receipts.length,
+      noDuplicateMoonreyIssuance: protocol.issuedFingerprints.size === protocol.stack.productive.snapshot().receipts.length,
       noMachineMandateBypass: machine.mandateBypass === false,
     });
     const bridge = bridgeAnalysis(flows);

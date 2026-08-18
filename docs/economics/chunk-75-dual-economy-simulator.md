@@ -14,19 +14,18 @@ Canonical owner: `packages/sunrey-economics`.
 
 ## Consumed protocol surfaces
 
-Standalone Chunk 71–74 laboratories are not present as separate packages
-on `main`. This lab consumes the canonical implementations those chunks
-would wrap:
+Chunk 76 reconciles this laboratory onto the final Chunk 71–74 owners
+through `IntegratedEconomicStack`:
 
 | Concern | Owner consumed |
 | --- | --- |
-| SunRey monetary simulation | `packages/sunrey-coin` formula + development issuance parameters |
-| Validator economics | Chunk 42 fee rewards + Chunk 36/39 validator accounting |
-| Native fees / utilization | `packages/sunrey-chain/src/fees` (Chunk 42) |
-| MoonRey productive issuance | `ProductiveEconomyEngine` (Chunk 44) + oracle facts (Chunk 43) |
+| SunRey monetary policy | Chunk 71 `MonetaryIssuanceAuthority` + `AssetSupplyBook` |
+| Validator economics | Chunk 72 `ValidatorEconomicsEngine` |
+| Native fees / utilization | Chunk 73 `FeePolicyV2` / `FeeDispositionPolicyV2` |
+| MoonRey productive issuance | Chunk 74 policy bundle + Chunk 44 engine, gated by Chunk 71 |
 | Exchange price discovery | `packages/sunrey-exchange` matching (`SUNREY_COIN` / `MOONREY_COIN`) |
 | Machine commerce | `packages/sunrey-chain/src/machine-economy` |
-| Adversarial smokes | `packages/sunrey-range` (Chunk 57) |
+| Adversarial smokes | `packages/sunrey-range` (Chunk 57) + Chunk 76 stress lab |
 
 MoonRey issuance never bypasses oracle quorum, freshness, conflict, or
 fingerprint anti-duplication rules.

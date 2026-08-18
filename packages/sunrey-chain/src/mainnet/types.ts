@@ -50,6 +50,7 @@ export const READINESS_DIMENSIONS = [
   'INFRASTRUCTURE',
   'DUAL_ECONOMY_MODELING',
   'GOVERNANCE_OPERATIONS',
+  'ECONOMIC_STRESS',
 ] as const;
 export type MainnetReadinessDimension = (typeof READINESS_DIMENSIONS)[number];
 
