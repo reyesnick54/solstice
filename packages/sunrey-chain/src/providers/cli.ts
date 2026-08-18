@@ -11,6 +11,7 @@ import { buildProviderAcceptanceReadinessFeed } from './readiness.ts';
 import { DOMAIN_PROFILES } from './profiles.ts';
 import type { ProviderDomain } from './types.ts';
 import { isProviderDomain } from './types.ts';
+import { providerRuntimeUsage, runProviderRuntimeCommand } from '../provider-runtime/cli.ts';
 
 export type ProviderCliResult = {
   readonly ok: boolean;
@@ -27,6 +28,7 @@ export function providerUsage(): readonly string[] {
     'sunrey-ops provider verify <providerId>',
     'sunrey-ops provider readiness',
     'sunrey-ops provider matrix',
+    ...providerRuntimeUsage(),
   ]);
 }
 
@@ -48,6 +50,9 @@ function fixtureInputs(): readonly AcceptanceInputs[] {
 
 export function runProviderOpsCommand(args: readonly string[]): ProviderCliResult {
   const [action, extra] = args;
+  if (action === 'runtime-test' || action === 'runtime-readiness' || action === 'runtime-matrix') {
+    return runProviderRuntimeCommand(args);
+  }
   const inputs = fixtureInputs();
   const report = buildAcceptanceReport(inputs, inputs[0]?.nowUtc ?? '2026-08-18T00:00:00.000Z');
   const matrix = buildProductionProviderMatrix(report.results);

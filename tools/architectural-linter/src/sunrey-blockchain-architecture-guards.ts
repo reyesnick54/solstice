@@ -85,6 +85,11 @@ const COMPETING_PATHS = [
   'packages/production-providers',
   'packages/external-providers',
   'packages/sunrey-providers',
+  'packages/provider-runtime',
+  'packages/sunrey-provider-runtime',
+  'packages/executable-providers',
+  'packages/provider-adapters',
+  'packages/integration-providers',
 ] as const;
 
 const FORBIDDEN_FLAG_ASSIGNMENTS = [

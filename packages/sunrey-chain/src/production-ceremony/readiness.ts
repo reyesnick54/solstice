@@ -57,19 +57,6 @@ export function reevaluateReadinessAfterProductionCeremony(): MainnetReadinessRe
       } catch {
         return row;
       }
-      if (ENGINEERING_DIMENSIONS.has(row.dimension)) {
-        try {
-          return applyEngineeringVerification(row, 'ENGINEERING_VERIFIED');
-        } catch {
-          return row;
-        }
-      }
-      return row;
-    });
-    return assembleReadinessRegistry({ records });
-  } catch {
-    return assembleReadinessRegistry({ records: [reservedRootOfTrustRecord()] });
-  }
     }
     return row;
   });

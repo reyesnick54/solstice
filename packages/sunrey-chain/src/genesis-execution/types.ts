@@ -276,7 +276,7 @@ export type LaunchBackupReadiness = {
   readonly ready: boolean;
 };
 
-export type LaunchControlRoomState = {
+export type ProductionLaunchControlRoomState = {
   readonly schemaVersion: 1;
   readonly sessionId: string;
   readonly mode: LaunchExecutionMode;
@@ -383,7 +383,7 @@ export type LaunchExecutionSession = {
   readonly services: readonly LaunchServiceReadiness[];
   readonly observability: LaunchObservabilityReadiness;
   readonly backup: LaunchBackupReadiness;
-  readonly controlRoom: LaunchControlRoomState;
+  readonly controlRoom: ProductionLaunchControlRoomState;
   readonly events: readonly LaunchEvent[];
   readonly genesis: GenesisExecutionResult | null;
   readonly firstBlock: FirstBlockVerification | null;
@@ -406,7 +406,7 @@ export type LaunchExecutionReport = {
   readonly genesisHash: string | null;
   readonly firstBlockVerified: boolean;
   readonly supplyAuditOk: boolean;
-  readonly controlRoom: LaunchControlRoomState;
+  readonly controlRoom: ProductionLaunchControlRoomState;
   readonly eventsHash: string;
   readonly previousReportHash: string;
   readonly reportHash: string;

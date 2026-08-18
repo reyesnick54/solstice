@@ -502,9 +502,6 @@ export async function main(): Promise<void> {
   }
   if (head === 'pregenesis') {
     const result = runPregenesisCommand(argv.slice(1));
-  if (head === 'production') {
-    process.env.SUNREY_FIXTURE_ENV ??= 'local';
-    const result = runProductionProvisioningCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);
     const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
     console.log(text);
