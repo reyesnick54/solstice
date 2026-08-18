@@ -137,6 +137,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 
@@ -638,6 +639,16 @@ It does not predict prices, promise returns, or activate production
 monetary policy. Do not create `packages/dual-economy`,
 `packages/moonrey-macro`, or `packages/economic-bridge`. The
 evaluator returns `mustStop: false`.
+Chunk 78 implements economic release-candidate freeze, policy freeze,
+and qualification at
+`packages/sunrey-chain/src/release-candidate/economic`. Capability
+`sunrey-economic-rc` is `IMPLEMENTED`. See
+[`chunk-78-economic-rc.md`](./chunk-78-economic-rc.md).
+It does not authorize mainnet or invent production parameters. Do not
+create `packages/sunrey-economic-rc`, `packages/economic-rc`,
+`packages/economic-qualification`, `packages/sunrey-economic-release`,
+or `packages/economic-policy-freeze`. The evaluator returns
+`mustStop: false`.
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at
 `packages/sunrey-economics/src/stress` with

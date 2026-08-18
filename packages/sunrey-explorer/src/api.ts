@@ -137,6 +137,11 @@ export function handleExplorerRequest(
       ...queries.lag(),
     });
   }
+  if (path === '/v1/fees') {
+    return json(200, queries.fees());
+  }
+  if (path === '/v1/treasury') {
+    return json(200, queries.treasury());
   if (path === '/v1/treasury') {
     return json(200, queries.protocolTreasury());
   }

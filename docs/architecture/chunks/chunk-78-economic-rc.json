@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-78",
+  "title": "SunRey economic release-candidate freeze, policy freeze, and qualification",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-testnet-rc",
+    "sunrey-supply-chain",
+    "sunrey-formal-assurance",
+    "sunrey-audit-readiness",
+    "sunrey-monetary-constitution",
+    "sunrey-validator-economics",
+    "sunrey-native-fees",
+    "moonrey-policy-governance",
+    "sunrey-dual-economy-simulator",
+    "sunrey-mainnet-readiness",
+    "sunrey-economic-rc"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63 release-candidate control and Chunk 59 ReleaseAuthority. TESTNET / PRODUCTION-CANDIDATE economic qualification only. Does not authorize mainnet, invent production parameters, or treat engineering qualification as regulatory approval. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-qualification, packages/sunrey-economic-release, or packages/economic-policy-freeze."
+}

@@ -168,6 +168,29 @@ export class ExplorerQueryService {
     });
   }
 
+  fees() {
+    return this.public({
+      ...this.lag(),
+      policyVersion: '2',
+      feePolicyVersion: '2',
+      label: 'FeePolicyV2',
+      environment: 'simulation',
+      productionParameters: 'UNCONFIGURED',
+      note: 'Engineering FeePolicyV2 view from the economic RC. Production parameters remain UNCONFIGURED.',
+    });
+  }
+
+  treasury() {
+    return this.public({
+      ...this.lag(),
+      class: 'SUNREY_BLOCKCHAIN_TREASURY',
+      productionBudget: 'UNCONFIGURED',
+      productionDisbursement: 'UNCONFIGURED',
+      environment: 'simulation',
+      note: 'Fee-funded protocol treasury sink. Production budget and disbursement remain UNCONFIGURED.',
+    });
+  }
+
   collection(
     key: Exclude<keyof CanonicalProjection, 'schemaVersion' | 'checkpoint'>,
     cursor?: string,
