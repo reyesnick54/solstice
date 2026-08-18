@@ -37,8 +37,17 @@ describe('Chunk 61 formal models', () => {
     assert.equal(registry.claimLanguage, 'model checked within stated bounds');
     assert.equal(registry.notWholeSystemVerification, true);
     assert.equal(registry.selectedTool, 'TLA+/TLC');
-    assert.equal(registry.models.length, 16);
-    assert.equal(registry.models.length, 17);
+    assert.ok(registry.models.length >= 17);
+    const ids = new Set(registry.models.map((row) => row.modelId));
+    for (const required of [
+      'CONSENSUS_SAFETY',
+      'NATIVE_MONETARY_POLICY',
+      'PROTOCOL_TREASURY',
+      'GOVERNANCE_OPERATION_SAFETY',
+      'CROSS_ECONOMIC_INVARIANTS',
+    ]) {
+      assert.equal(ids.has(required), true, required);
+    }
   });
 
   it('model-checks the smoke campaign within stated bounds', () => {

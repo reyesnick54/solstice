@@ -3,7 +3,12 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../../domain/src/time.ts';
 import { identityPortIssuesExecutionAuthority } from '../../kernel/src/regulated/identity-port.ts';
+import { createSimulationProviders } from '../../kernel/src/compliance/simulation.ts';
+import { InMemoryCaseManagementPort } from '../../kernel/src/regulated/index.ts';
+import { SandboxIdentityKycProvider, SandboxTravelRuleProvider } from '../../custody/src/regulated/sandbox.ts';
+import { createInstitutionalHarness } from '../../custody/src/institutional/harness.ts';
 import { createDevelopmentHsmSimulator } from '../../security/src/hsm-simulator.ts';
 import { createDefaultCryptoSuiteRegistry, SUITE_SUNREY_MLDSA_65_V1 } from '../../security/src/crypto-suite.ts';
 import { defaultCapabilityActivation } from './mainnet/capabilities.ts';
@@ -172,7 +177,41 @@ describe('Chunk 82 production provider acceptance', () => {
   });
 
   it('does not let KYC success issue Execution Authority', () => {
+    const kyc = new SandboxIdentityKycProvider();
+    const result = kyc.verify({
+      subjectRef: 'cust_sandbox_1',
+      actorId: 'actor_sandbox_1',
+      jurisdiction: 'GB',
+      now: asUtcInstant(NOW),
+    });
+    assert.equal(result.outcome, 'PASS');
     assert.equal(identityPortIssuesExecutionAuthority(), false);
+    const screen = createSimulationProviders().sanctions.screen({
+      subjectKind: 'PERSON',
+      subjectRef: 'cust_sandbox_1',
+      jurisdiction: 'GB',
+      now: asUtcInstant(NOW),
+    });
+    assert.equal(screen.outcome, 'CLEAR');
+    const travel = new SandboxTravelRuleProvider().exchangeRequiredData({
+      withdrawalId: 'wd_sandbox_1',
+      destination: 'addr_sandbox',
+      originatorRef: 'orig',
+      beneficiaryRef: 'bene',
+    });
+    assert.equal(travel.state, 'DELIVERED');
+    const opened = new InMemoryCaseManagementPort().open({
+      detectorFactRefs: ['fact_sandbox_1'],
+      customerAccountRefs: ['acct_sandbox_1'],
+      priority: 'MEDIUM',
+      subjectRef: 'cust_sandbox_1',
+      jurisdiction: 'GB',
+      evidenceRefs: ['ev_sandbox_1'],
+      createdAt: asUtcInstant(NOW),
+    });
+    assert.ok(opened.caseId.length > 0);
+    const custody = createInstitutionalHarness();
+    assert.ok(custody);
   });
 
   it('does not let a bank adapter activate fiat capability', () => {

@@ -4,37 +4,69 @@
  * Do not create a second provider registry for domains that already
  * have ProductionInfrastructureRegistry, OracleOnboardingRegistry,
  * RegulatedServiceProviderRegistry, or the security HSM/KMS port.
+ *
+ * Regulated-service and institutional-custody objects stay in their
+ * owning packages. This catalog stores pointers, not copies.
  */
 
 import { ProductionInfrastructureRegistry, type ProductionInfrastructureProvider } from '../infra/provider.ts';
 import { OracleOnboardingRegistry, type OracleProviderOnboardingRecord } from '../oracle/production/index.ts';
-import { RegulatedServiceProviderRegistry, type RegulatedServiceProvider } from '../../../kernel/src/regulated/index.ts';
 import type { HsmKmsProvider } from '../../../security/src/hsm-kms.ts';
 import type { CanonicalRegistryKind, CrossDomainProviderReference, ProviderDomain } from './types.ts';
+
+export type CanonicalRegistryPointer = {
+  readonly kind: CanonicalRegistryKind;
+  readonly ownerPackage: string;
+  readonly canonicalPath: string;
+  readonly isCopy: false;
+};
+
+export const CANONICAL_REGISTRY_POINTERS: readonly CanonicalRegistryPointer[] = Object.freeze([
+  {
+    kind: 'PRODUCTION_INFRASTRUCTURE',
+    ownerPackage: 'packages/sunrey-chain',
+    canonicalPath: 'packages/sunrey-chain/src/infra/provider.ts',
+    isCopy: false,
+  },
+  {
+    kind: 'ORACLE_PROVIDER',
+    ownerPackage: 'packages/sunrey-chain',
+    canonicalPath: 'packages/sunrey-chain/src/oracle/production/onboarding.ts',
+    isCopy: false,
+  },
+  {
+    kind: 'REGULATED_SERVICE',
+    ownerPackage: 'packages/kernel',
+    canonicalPath: 'packages/kernel/src/regulated/index.ts',
+    isCopy: false,
+  },
+  {
+    kind: 'SECURITY_HSM',
+    ownerPackage: 'packages/security',
+    canonicalPath: 'packages/security/src/hsm-kms.ts',
+    isCopy: false,
+  },
+]);
 
 export type CanonicalProviderBinding = {
   readonly reference: CrossDomainProviderReference;
   readonly infrastructure?: ProductionInfrastructureProvider;
   readonly oracle?: OracleProviderOnboardingRecord;
-  readonly regulated?: RegulatedServiceProvider;
   readonly hsm?: HsmKmsProvider;
 };
 
 export class ProviderAcceptanceCatalog {
   readonly infrastructure: ProductionInfrastructureRegistry;
   readonly oracles: OracleOnboardingRegistry;
-  readonly regulated: RegulatedServiceProviderRegistry;
   readonly #hsm = new Map<string, HsmKmsProvider>();
   readonly #bindings = new Map<string, CanonicalProviderBinding>();
 
   constructor(input?: {
     readonly infrastructure?: ProductionInfrastructureRegistry;
     readonly oracles?: OracleOnboardingRegistry;
-    readonly regulated?: RegulatedServiceProviderRegistry;
   }) {
     this.infrastructure = input?.infrastructure ?? new ProductionInfrastructureRegistry();
     this.oracles = input?.oracles ?? new OracleOnboardingRegistry();
-    this.regulated = input?.regulated ?? new RegulatedServiceProviderRegistry();
   }
 
   bindInfrastructure(domain: ProviderDomain, provider: ProductionInfrastructureProvider): CrossDomainProviderReference {
@@ -71,18 +103,11 @@ export class ProviderAcceptanceCatalog {
     });
   }
 
-  bindRegulated(domain: ProviderDomain, provider: RegulatedServiceProvider): CrossDomainProviderReference {
-    this.regulated.register(provider);
-    return this.#store({
-      reference: Object.freeze({
-        domain,
-        providerId: provider.providerId,
-        registry: 'REGULATED_SERVICE',
-        canonicalRecordId: provider.providerId,
-        isCopy: false,
-      }),
-      regulated: provider,
-    });
+  bindExternalReference(reference: CrossDomainProviderReference): CrossDomainProviderReference {
+    if (reference.isCopy) {
+      throw new TypeError('provider acceptance stores cross-domain references, not copies');
+    }
+    return this.#store({ reference: Object.freeze({ ...reference, isCopy: false }) });
   }
 
   bindHsm(provider: HsmKmsProvider): CrossDomainProviderReference {
@@ -109,6 +134,14 @@ export class ProviderAcceptanceCatalog {
 
   hsm(providerId: string): HsmKmsProvider | undefined {
     return this.#hsm.get(providerId);
+  }
+
+  pointerFor(kind: CanonicalRegistryKind): CanonicalRegistryPointer {
+    const found = CANONICAL_REGISTRY_POINTERS.find((row) => row.kind === kind);
+    if (!found) {
+      throw new TypeError(`unknown registry kind ${kind}`);
+    }
+    return found;
   }
 
   registryKindFor(domain: ProviderDomain): CanonicalRegistryKind | null {

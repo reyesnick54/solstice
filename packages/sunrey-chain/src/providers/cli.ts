@@ -79,6 +79,9 @@ export function runProviderOpsCommand(args: readonly string[]): ProviderCliResul
   }
   if (action === 'evidence') {
     const found = inputs.find((row) => row.providerId === extra) ?? inputs[0];
+    if (!found) {
+      return { ok: false, command: 'provider evidence', payload: { error: 'no provider fixture' } };
+    }
     return {
       ok: true,
       command: 'provider evidence',
@@ -92,6 +95,9 @@ export function runProviderOpsCommand(args: readonly string[]): ProviderCliResul
   }
   if (action === 'verify') {
     const found = inputs.find((row) => row.providerId === extra) ?? inputs[0];
+    if (!found) {
+      return { ok: false, command: 'provider verify', payload: { error: 'no provider fixture' } };
+    }
     return { ok: true, command: 'provider verify', payload: evaluateEligibility(found) };
   }
   if (action === 'readiness') {

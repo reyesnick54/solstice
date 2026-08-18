@@ -9,17 +9,17 @@ import { SevenValidatorNetwork } from '../ops/seven-validator.ts';
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
-import type { EconomicStressFinding, EconomicStressResult, RecoveryResult } from './types.ts';
+import type { EconomicRehearsalStressFinding, EconomicRehearsalStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 
 function finding(
   findingId: string,
   scenario: string,
-  severity: EconomicStressFinding['severity'],
+  severity: EconomicRehearsalStressFinding['severity'],
   accountingSafe: boolean,
   description: string,
-): EconomicStressFinding {
+): EconomicRehearsalStressFinding {
   return Object.freeze({
     findingId,
     scenario,
@@ -30,7 +30,7 @@ function finding(
   });
 }
 
-export function runEconomicStressCampaign(): EconomicStressResult {
+export function runEconomicStressCampaign(): EconomicRehearsalStressResult {
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();
   const network = new SevenValidatorNetwork();

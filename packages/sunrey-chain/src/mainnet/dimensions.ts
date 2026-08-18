@@ -891,6 +891,9 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       notes: 'Human and external approvals remain unfilled. Engineering qualification is not mainnet authorization.',
       externalEvidence: true,
       chunkReference: 'CHUNK-78',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-GOVOPS-001',
       dimension: 'GOVERNANCE_OPERATIONS',
       description: 'Production governance operations package, preflight, and audit',
@@ -958,6 +961,9 @@ export function defaultDimensionCatalog(): readonly ReadinessEvidenceRecord[] {
       notes: 'External legal approval is not provided and is not invented by software.',
       externalEvidence: true,
       chunkReference: 'CHUNK-79',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-TREASURY-001',
       dimension: 'GENESIS',
       description: 'Protocol treasury policy and reserve classifications',

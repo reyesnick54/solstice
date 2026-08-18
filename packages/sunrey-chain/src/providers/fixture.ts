@@ -3,10 +3,7 @@
  * No live credentials. No fabricated contracts.
  */
 
-import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
-import { emptyEvidenceSlot, type RegulatedServiceProvider } from '../../../kernel/src/regulated/index.ts';
 import { createDevelopmentHsmSimulator } from '../../../security/src/hsm-simulator.ts';
-import { secretRef } from '../../../security/src/secrets.ts';
 import { createLocalHarness } from '../infra/harness.ts';
 import { emptyOnboardingEvidence, createOnboardingDraft } from '../oracle/production/index.ts';
 import { SoftwareDevelopmentSigner } from '../oracle/production/index.ts';
@@ -17,28 +14,6 @@ import { ProviderAcceptanceCatalog } from './references.ts';
 import type { ExternalProviderEvidenceRecord, ProviderDomain } from './types.ts';
 
 export const PROVIDER_ACCEPTANCE_NOW_UTC = '2026-08-18T00:00:00.000Z';
-
-export function sandboxRegulatedProvider(
-  providerId: string,
-  serviceClass: RegulatedServiceProvider['serviceClass'],
-): RegulatedServiceProvider {
-  return Object.freeze({
-    providerId,
-    serviceClass,
-    jurisdiction: asJurisdiction('GB'),
-    endpointConfigRef: 'config://sandbox',
-    credentialRef: secretRef('simulation', `${providerId}-cred`),
-    contractEvidence: emptyEvidenceSlot('contract', 'Missing partner agreement.'),
-    licenseRegistrationEvidence: emptyEvidenceSlot('license', 'No license recorded.'),
-    securityReviewEvidence: emptyEvidenceSlot('security', 'No security review recorded.'),
-    dataProcessingPrivacyEvidence: emptyEvidenceSlot('privacy', 'No DPA recorded.'),
-    supportedCapabilities: Object.freeze(['sandbox']),
-    environment: 'SANDBOX',
-    health: 'HEALTHY',
-    activationEligibility: 'SANDBOX_ONLY',
-    qualifiedOrApprovedClaim: false,
-  });
-}
 
 export function missingEvidenceFor(providerId: string, domain: ProviderDomain): readonly ExternalProviderEvidenceRecord[] {
   return Object.freeze([
@@ -54,8 +29,27 @@ export function createProviderAcceptanceFixture() {
   const catalog = new ProviderAcceptanceCatalog({ infrastructure: infra.registry });
   catalog.bindInfrastructure('CLOUD_INFRASTRUCTURE', infra.provider);
   catalog.bindHsm(createDevelopmentHsmSimulator());
-  catalog.bindRegulated('IDENTITY_KYC', sandboxRegulatedProvider('kyc-sandbox', 'IDENTITY_KYC'));
-  catalog.bindRegulated('BANKING_REFERENCE', sandboxRegulatedProvider('bank-reference', 'FIAT_BANKING_REFERENCE'));
+  catalog.bindExternalReference({
+    domain: 'IDENTITY_KYC',
+    providerId: 'kyc-sandbox',
+    registry: 'REGULATED_SERVICE',
+    canonicalRecordId: 'kyc-sandbox',
+    isCopy: false,
+  });
+  catalog.bindExternalReference({
+    domain: 'BANKING_REFERENCE',
+    providerId: 'bank-reference',
+    registry: 'REGULATED_SERVICE',
+    canonicalRecordId: 'bank-reference',
+    isCopy: false,
+  });
+  catalog.bindExternalReference({
+    domain: 'CUSTODY_PROVIDER',
+    providerId: 'institutional-hsm-simulator',
+    registry: 'REGULATED_SERVICE',
+    canonicalRecordId: 'institutional-hsm-simulator',
+    isCopy: false,
+  });
   const signer = SoftwareDevelopmentSigner.fromLabel('oracle-local-simulator', defaultOracleSuiteId());
   if (signer.ok) {
     const draft = createOnboardingDraft({
