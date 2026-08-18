@@ -73,6 +73,11 @@ export type ExecuteResult =
   | { readonly ok: true; readonly receipt: FeeReceipt; readonly applicationApplied: boolean }
   | { readonly ok: false; readonly rejection: FeeRejection };
 
+export type EconomicFeeSinks = {
+  readonly onValidatorReward?: (amount: bigint, asset: FeeAssetId) => void;
+  readonly onFeeBurn?: (amount: bigint, asset: FeeAssetId) => void;
+};
+
 function emptyMetrics(): FeeMetrics {
   return {
     executionUnits: 0n,
@@ -113,6 +118,7 @@ export class FeeEngine {
     readonly dispositionPolicy?: FeeDispositionPolicy;
     readonly limits?: BlockResourceLimits;
   }> = [];
+  private economicSinks: EconomicFeeSinks | null = null;
 
   constructor() {
     this.schedule = developmentFeeSchedule();
@@ -173,6 +179,21 @@ export class FeeEngine {
     if (!this.accounts.transfer(FAUCET_ACCOUNT, accountId, asset, amount)) {
       throw new Error('faucet transfer failed');
     }
+  }
+
+  /**
+   * Credit an account from an already-authorized monetary issuance.
+   * Does not create a second faucet mint identity.
+   */
+  creditAuthorized(accountId: string, amount: bigint, asset: FeeAssetId = 'SUNREY_COIN'): void {
+    if (amount < 0n) {
+      throw new TypeError('authorized credit must be unsigned');
+    }
+    this.accounts.credit(accountId, asset, amount);
+  }
+
+  attachEconomicSinks(sinks: EconomicFeeSinks): void {
+    this.economicSinks = sinks;
   }
 
   scheduleGovernedChange(change: FeeEngine['scheduledChanges'][number]): void {
@@ -437,7 +458,18 @@ export class FeeEngine {
       };
     }
     this.applyDisposition(disposition);
-    const shares = this.accrueRewards(input.proposerId, input.validators, disposition);
+    const useCanonicalRewardPool = this.policyVersion === 2 && this.economicSinks !== null;
+    if (useCanonicalRewardPool) {
+      if (disposition.validatorRewardPool > 0n) {
+        this.economicSinks!.onValidatorReward?.(disposition.validatorRewardPool, disposition.asset);
+      }
+      if (disposition.burned > 0n) {
+        this.economicSinks!.onFeeBurn?.(disposition.burned, disposition.asset);
+      }
+    }
+    const shares = useCanonicalRewardPool
+      ? []
+      : this.accrueRewards(input.proposerId, input.validators, disposition);
 
     const receipt: FeeReceipt = Object.freeze({
       transactionId: tx.transactionId,
@@ -464,7 +496,9 @@ export class FeeEngine {
     this.metrics.feeRevenueByAsset[tx.budget.feeAsset] += actualFee;
     this.metrics.feeBurned += disposition.burned;
     this.metrics.feeNetworkSink += disposition.networkSink;
-    this.metrics.validatorRewardAccrual += shares.reduce((sum, share) => sum + share.amount, 0n);
+    this.metrics.validatorRewardAccrual += useCanonicalRewardPool
+      ? disposition.validatorRewardPool
+      : shares.reduce((sum, share) => sum + share.amount, 0n);
 
     if (outcome === 'OUT_OF_EXECUTION_UNITS') {
       return {

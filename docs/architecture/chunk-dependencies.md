@@ -548,8 +548,10 @@ constitution at `packages/sunrey-chain/src/economics`. Capability
 `sunrey-monetary-constitution` is `IMPLEMENTED`. See
 [`chunk-71-monetary-constitution.md`](./chunk-71-monetary-constitution.md).
 It does not invent production tokenomics or create a second ledger.
-Do not create `packages/sunrey-economics`, `packages/monetary-policy`,
-`packages/tokenomics`, or `packages/genesis-economy`. The evaluator
+Do not create `packages/monetary-policy`,
+`packages/tokenomics`, or `packages/genesis-economy`.
+`packages/sunrey-economics` is the Chunk 75/76 laboratory owner, not
+a second monetary constitution. The evaluator
 returns `mustStop: false`.
 Chunk 65 implements mainnet readiness evidence, a per-capability
 activation matrix, and deterministic genesis-candidate tooling at
@@ -636,6 +638,15 @@ It does not predict prices, promise returns, or activate production
 monetary policy. Do not create `packages/dual-economy`,
 `packages/moonrey-macro`, or `packages/economic-bridge`. The
 evaluator returns `mustStop: false`.
+Chunk 76 reconciles the merged Chunk 71–75 economic stack and
+implements the adversarial economic stress laboratory at
+`packages/sunrey-economics/src/stress` with
+`packages/sunrey-chain/src/economics/stack.ts`. Capability
+`sunrey-economic-stress-lab` is `IMPLEMENTED`. See
+[`chunk-76-economic-stress-lab.md`](./chunk-76-economic-stress-lab.md).
+It does not authorize production or assign tickers. Do not create
+`packages/economic-stress`, `packages/sunrey-stress-chain`, or
+`packages/economic-red-team`. The evaluator returns `mustStop: false`.
 Chunk 74 implements MoonRey productive-economy issuance policy
 governance, normalization, and macro supply controls at
 `packages/sunrey-chain/src/productive/policy-governance`. Capability

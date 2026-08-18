@@ -142,3 +142,6 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | TREASURY-DUPLICATE-DISBURSE | protocol-treasury | duplicate disbursement | intent identity binding | DUPLICATE_DISBURSEMENT_REJECTED | NO_TREASURY_DOUBLE_SPEND | none | TESTED |
 | TREASURY-UNAUTHORIZED-DISBURSE | protocol-treasury | AI approval | human governance required | AI_APPROVAL_REJECTED | NO_UNAUTHORIZED_TREASURY_SPEND | none | TESTED |
 | TREASURY-CUSTOMER-CLAIM | protocol-treasury | customer asset claim | customer-asset isolation | CUSTOMER_ASSETS_UNREACHABLE | NO_CUSTOMER_ASSET_TREASURY_CLAIM | none | TESTED |
+| ECON-ORACLE-STALE | economic-stress | stale oracle mint | oracle freshness + MonetaryIssuanceAuthority | FAIL_CLOSED | NO_DOUBLE_MOONREY_ATTRIBUTION, NO_UNAUTHORIZED_ISSUANCE | fail-closed; no fabricated facts | TESTED |
+| ECON-DUP-REPLAY | economic-stress | MoonRey contribution replay | fingerprint + MonetaryIssuanceAuthority replay id | DUPLICATE_REFUSED | NO_DOUBLE_MOONREY_ATTRIBUTION | second mint refused | TESTED |
+| ECON-NO-QUORUM | economic-stress | advance economics without finality | no synthetic accounting without finality | FINALITY_UNAVAILABLE | NO_UNAUTHORIZED_ISSUANCE | pending until quorum returns | TESTED |

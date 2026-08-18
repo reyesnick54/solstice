@@ -127,6 +127,12 @@ export function protocolTreasuryHappyTrace(): LogicalTrace {
   return makeTrace('trace_protocol_treasury', 'protocol_treasury', 'PROTOCOL_TREASURY', [
     { domain: 'protocol_treasury', action: 'Reserve', args: {} },
     { domain: 'protocol_treasury', action: 'Finalize', args: {} },
+export function crossEconomicHappyTrace(): LogicalTrace {
+  return makeTrace('trace_cross_economic', 'cross_economic', 'CROSS_ECONOMIC_INVARIANTS', [
+    { domain: 'cross_economic', action: 'IssueSunRey', args: {} },
+    { domain: 'cross_economic', action: 'ChargeFee', args: {} },
+    { domain: 'cross_economic', action: 'AuthorizeMoonRey', args: {} },
+    { domain: 'cross_economic', action: 'IssueMoonRey', args: {} },
   ]);
 }
 
@@ -144,5 +150,6 @@ export function allDevelopmentTraces(): readonly LogicalTrace[] {
     monetaryHappyTrace(),
     genesisHappyTrace(),
     protocolTreasuryHappyTrace(),
+    crossEconomicHappyTrace(),
   ];
 }

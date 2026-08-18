@@ -32,6 +32,7 @@ export const ATTACK_CATEGORIES = [
   'API_ABUSE',
   'UPGRADE_ABUSE',
   'COMPOUND_FAILURE',
+  'ECONOMIC_STRESS',
 ] as const;
 export type AttackCategory = (typeof ATTACK_CATEGORIES)[number];
 

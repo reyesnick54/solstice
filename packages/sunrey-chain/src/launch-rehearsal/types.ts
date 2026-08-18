@@ -174,6 +174,10 @@ export type NativeAssetRehearsalResult = {
     readonly supplyReconciled: boolean;
     readonly productionParametersConfigured: false;
   };
+  readonly dualEconomyReporting: {
+    readonly used: true;
+    readonly simulationOnly: true;
+  };
 };
 
 export type OracleRehearsalResult = {
