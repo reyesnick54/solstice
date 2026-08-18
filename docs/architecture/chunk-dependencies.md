@@ -139,6 +139,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mainnet-rc | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-stress-lab | IMPLEMENTED | packages/sunrey-economics |
 | sunrey-governance-operations | IMPLEMENTED | packages/sunrey-chain |
@@ -661,6 +662,17 @@ It does not authorize mainnet or invent production parameters. Do not
 create `packages/sunrey-economic-rc`, `packages/economic-rc`,
 `packages/economic-qualification`, `packages/sunrey-economic-release`,
 or `packages/economic-policy-freeze`. The evaluator returns
+`mustStop: false`.
+Chunk 84 implements the SunRey Mainnet Release Candidate freeze,
+full-system qualification, and release evidence bundle at
+`packages/sunrey-chain/src/release-candidate/mainnet`. Capability
+`sunrey-mainnet-rc` is `IMPLEMENTED`. See
+[`chunk-84-mainnet-rc.md`](./chunk-84-mainnet-rc.md).
+It does not launch mainnet or treat engineering qualification as
+authorization. Do not create `packages/sunrey-mainnet-rc`,
+`packages/mainnet-rc`, `packages/mainnet-qualification`,
+`packages/sunrey-mainnet-release`, or
+`packages/mainnet-release-candidate`. The evaluator returns
 `mustStop: false`.
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at

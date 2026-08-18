@@ -5,7 +5,7 @@
 import { evaluateReadiness, type EvaluatorPolicy } from './evaluator.ts';
 import { isExternalDimension, missingEvidenceIds } from './evidence.ts';
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
-import { consumeEconomicRc, consumeExternalSecurityReview, consumeFormalAssurance, consumePqc, consumeSupplyChain, consumeTestnetRc } from './consumers.ts';
+import { consumeEconomicRc, consumeExternalSecurityReview, consumeFormalAssurance, consumeMainnetRc, consumePqc, consumeSupplyChain, consumeTestnetRc } from './consumers.ts';
 import {
   custodyReadiness,
   exchangeReadiness,
@@ -77,9 +77,11 @@ export function buildReadinessReport(input: {
       'LIVE_* flags remain false; ENVIRONMENT remains simulation',
       'PRODUCTION_CANDIDATE infrastructure does not activate mainnet',
       'Chunk 78 economic RC is ENGINEERING_VERIFIED qualification only and does not authorize mainnet',
+      'Chunk 84 Mainnet RC ENGINEERING_QUALIFIED is not AUTHORIZED_CANDIDATE',
     ]),
     testnetRcReference: consumeTestnetRc(),
     economicRcReference: consumeEconomicRc(),
+    mainnetRcReference: consumeMainnetRc(),
     formalEvidence: consumeFormalAssurance(),
     exchangeReadiness: exchangeReadiness(),
     custodyReadiness: custodyReadiness(),

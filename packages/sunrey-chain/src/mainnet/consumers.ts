@@ -11,6 +11,7 @@ import { FORMAL_MODEL_IDS } from '../formal/types.ts';
 import { loadFormalModelRegistry } from '../formal/registry.ts';
 import { FIRST_RC_ID } from '../release-candidate/types.ts';
 import { consumeEconomicRc as consumeEconomicRcEvidence } from '../release-candidate/economic/readiness.ts';
+import { consumeMainnetRc as consumeMainnetRcEvidence } from '../release-candidate/mainnet/readiness.ts';
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
 import { CANDIDATE_V2_ID } from './candidate-v2/identity.ts';
 
@@ -21,6 +22,7 @@ import { RELEASE_AUTHORITY_ID } from '../supply-chain/release.ts';
 import type {
   EconomicReleaseCandidateSlot,
   ExternalSecurityReviewSlot,
+  MainnetReleaseCandidateSlot,
   FormalAssuranceSlot,
   LegalRegulatorySlot,
   TestnetReleaseCandidateSlot,
@@ -138,6 +140,10 @@ export function consumeTestnetRc(): TestnetReleaseCandidateSlot {
 
 export function consumeEconomicRc(): EconomicReleaseCandidateSlot {
   return consumeEconomicRcEvidence();
+}
+
+export function consumeMainnetRc(): MainnetReleaseCandidateSlot {
+  return consumeMainnetRcEvidence();
 }
 
 export function consumeLegalRegulatory(): LegalRegulatorySlot {

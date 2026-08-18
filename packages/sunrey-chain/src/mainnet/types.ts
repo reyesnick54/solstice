@@ -309,6 +309,17 @@ export type EconomicReleaseCandidateSlot = {
   readonly notes: string;
 };
 
+export type MainnetReleaseCandidateSlot = {
+  readonly rcId: string;
+  readonly sourceCommit: string;
+  readonly qualificationDigest: string;
+  readonly engineeringStatus: 'ENGINEERING_QUALIFIED' | 'AWAITING_EXTERNAL_EVIDENCE' | 'ENGINEERING_QUALIFICATION';
+  readonly authorizedCandidate: false;
+  readonly mainnetAuthorized: false;
+  readonly externalApprovalsRemain: true;
+  readonly notes: string;
+};
+
 export type LegalRegulatorySlot = {
   readonly counselOpinionReference: string | null;
   readonly licenseOrRegistration: string | null;
@@ -476,6 +487,7 @@ export type MainnetReadinessReport = {
   readonly knownLimitations: readonly string[];
   readonly testnetRcReference: TestnetReleaseCandidateSlot;
   readonly economicRcReference: EconomicReleaseCandidateSlot;
+  readonly mainnetRcReference: MainnetReleaseCandidateSlot;
   readonly formalEvidence: FormalAssuranceSlot;
   readonly exchangeReadiness: ExchangeReadinessSlot;
   readonly custodyReadiness: CustodyReadinessSlot;

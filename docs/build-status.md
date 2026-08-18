@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey Mainnet release-candidate freeze and qualification
+  (Chunk 84, `packages/sunrey-chain/src/release-candidate/mainnet`):
+  versioned `SUNREY_MAINNET_RC_*` identity, source/protocol/economic/
+  Candidate V2/provider/audit/HSM/PQC freeze, 38-category
+  qualification matrix, formal/fuzz/adversarial/economic-stress/
+  performance/seven-validator/storage/DR evidence,
+  ReleaseAuthority-signed bundles, and `sunrey-release mainnet`
+  commands. Capability `sunrey-mainnet-rc` is `IMPLEMENTED`.
+  Mainnet RC only. `ENGINEERING_QUALIFIED` is not
+  `AUTHORIZED_CANDIDATE`. `mainnetEnabled=false`. See
+  `docs/releases/chunk-84-mainnet-rc.md`.
 - SunRey independent security-review findings remediation (Chunk 83,
   `packages/sunrey-chain/src/audit/remediation`): ingest, triage,
   remediate, regress, retest-package, and risk-accept external

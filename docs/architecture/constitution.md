@@ -1106,6 +1106,18 @@ activate economic policy. Do not create `packages/sunrey-economic-rc`,
 `packages/sunrey-economic-release`, or
 `packages/economic-policy-freeze`. See
 [`chunk-78-economic-rc.md`](./chunk-78-economic-rc.md).
+Chunk 84 implements the SunRey Mainnet Release Candidate freeze,
+full-system qualification, and release evidence bundle at
+`packages/sunrey-chain/src/release-candidate/mainnet`. Capability
+`sunrey-mainnet-rc` is `IMPLEMENTED`. It creates a cryptographically
+identified Mainnet RC. It does not launch mainnet, enable `LIVE_*`
+flags, or treat `ENGINEERING_QUALIFIED` as `AUTHORIZED_CANDIDATE`.
+`ReleaseAuthority` signs the bundle only and cannot activate the
+network. Do not create `packages/sunrey-mainnet-rc`,
+`packages/mainnet-rc`, `packages/mainnet-qualification`,
+`packages/sunrey-mainnet-release`, or
+`packages/mainnet-release-candidate`. See
+[`chunk-84-mainnet-rc.md`](./chunk-84-mainnet-rc.md).
 Chunk 79 implements SunRey production governance operations, economic
 policy change control, and bounded emergency authority at
 `packages/sunrey-chain/src/governance-ops`. Capability

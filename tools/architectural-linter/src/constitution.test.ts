@@ -2151,4 +2151,32 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-governance')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/governance-token')), false);
   });
+
+  it('CHUNK-84 implements SunRey Mainnet release-candidate qualification', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-mainnet-rc').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-mainnet-rc').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-mainnet-rc').owner, 'packages/sunrey-chain');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-84',
+    );
+    assert.ok(declared, 'CHUNK-84 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-84-mainnet-rc.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/chunk-84-mainnet-rc.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/mainnet-freeze-policy.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/mainnet-qualification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/mainnet-known-limitations.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/releases/mainnet-reproducibility.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/runbooks/mainnet-rc-qualification.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/release-candidate/mainnet/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-mainnet-rc')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-rc')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-qualification')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-mainnet-release')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-release-candidate')), false);
+  });
 });

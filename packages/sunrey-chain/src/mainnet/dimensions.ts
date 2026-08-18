@@ -3,6 +3,7 @@
  */
 
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
+import { mainnetRcReadinessRecords } from '../release-candidate/mainnet/readiness.ts';
 import type { MainnetReadinessDimension, ReadinessEvidenceRecord } from './types.ts';
 import { READINESS_DIMENSIONS } from './types.ts';
 import { freezeEvidence } from './evidence.ts';
@@ -1223,6 +1224,7 @@ export function defaultDimensionCatalog(
       verificationStatus: 'NOT_PROVIDED',
     },
   ];
+  return Object.freeze([...drafts.map(slot), ...mainnetRcReadinessRecords()]);
   return Object.freeze(drafts.map((draft) => slot(draft, overlay)));
 }
 

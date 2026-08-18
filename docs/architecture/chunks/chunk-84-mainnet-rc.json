@@ -1,0 +1,29 @@
+{
+  "chunk": "CHUNK-84",
+  "title": "SunRey Mainnet release-candidate freeze, full-system qualification, and release evidence bundle",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "crypto-suite-registry",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-testnet-rc",
+    "sunrey-economic-rc",
+    "sunrey-mainnet-readiness",
+    "sunrey-supply-chain",
+    "sunrey-assurance",
+    "sunrey-adversarial-range",
+    "sunrey-performance-engineering",
+    "sunrey-pqc-testnet",
+    "sunrey-audit-readiness",
+    "sunrey-formal-assurance",
+    "sunrey-launch-rehearsal",
+    "sunrey-economic-mainnet-rehearsal",
+    "sunrey-production-infrastructure",
+    "sunrey-production-oracles",
+    "sunrey-regulated-integration",
+    "sunrey-mainnet-rc"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59 ReleaseAuthority and Chunk 63/78 RC control. Creates a Mainnet Release Candidate. Does not launch mainnet, enable LIVE_* flags, or treat ENGINEERING_QUALIFIED as AUTHORIZED_CANDIDATE. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-mainnet-rc, packages/mainnet-rc, packages/mainnet-qualification, packages/sunrey-mainnet-release, or packages/mainnet-release-candidate."
+}
