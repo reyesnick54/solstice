@@ -3691,6 +3691,43 @@
       "notes": "Chunk 77 blockchain-native protocol treasury at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive."
       "notes": "Chunk 80 economic mainnet rehearsal."
       "notes": "Chunk 81 second-generation production-network candidate. Binds the complete stack through Chunk 80. Candidate state remains CANDIDATE. mainnetEnabled=false. Does not launch mainnet or enable LIVE_* flags. External legal/audit/HSM/human evidence remains unfabricated."
+    },
+    {
+      "id": "sunrey-pregenesis-qualification",
+      "name": "SunRey pre-genesis production shadow network and operational qualification",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/pregenesis/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/pregenesis/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PregenesisNetworkDefinition",
+          "kind": "type"
+        },
+        {
+          "name": "PregenesisQualificationReport",
+          "kind": "type"
+        },
+        {
+          "name": "PregenesisQualificationPlan",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-pregenesis",
+        "packages/pregenesis",
+        "packages/shadow-network",
+        "packages/pregenesis-qualification",
+        "packages/sunrey-shadow"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization."
     }
   ],
   "authorizedMutationPaths": [
@@ -5245,6 +5282,13 @@
       "notes": "Chunk 84 Mainnet Release Candidate freeze and qualification at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59/63/78. Does not launch mainnet or treat ENGINEERING_QUALIFIED as AUTHORIZED_CANDIDATE. Do not create packages/sunrey-mainnet-rc, packages/mainnet-rc, packages/mainnet-qualification, packages/sunrey-mainnet-release, or packages/mainnet-release-candidate."
       "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
       "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
+    },
+    {
+      "id": "sunrey-pregenesis-qualification",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
     }
   ],
   "boundedContexts": [

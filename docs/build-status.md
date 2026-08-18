@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey pre-genesis production shadow network and operational
+  qualification (Chunk 87, `packages/sunrey-chain/src/pregenesis`):
+  isolated identity `net_sunrey_pregenesis_shadow_1` /
+  `chn_sunrey_pregenesis_shadow_1` (HRP `srpgn`), Candidate V2
+  topology, Mainnet RC artifact parity, configuration-variance
+  accounting, seven-validator consensus, signer fencing, redb and
+  PostgreSQL recovery, oracle/Exchange/custody sandbox, burn-in
+  metadata, and `sunrey-ops pregenesis` commands. Capability
+  `sunrey-pregenesis-qualification` is `IMPLEMENTED`. This is not a
+  mainnet launch. `mainnetEnabled=false`. See
+  `docs/mainnet/chunk-87-pregenesis-qualification.md`.
 - SunRey production genesis ceremony package (Chunk 85,
   `packages/sunrey-chain/src/production-ceremony`):
   `ProductionGenesisCeremonyPlan` bound to an exact Mainnet RC and

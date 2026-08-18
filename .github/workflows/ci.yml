@@ -176,6 +176,12 @@ jobs:
         run: npm run demo:sunrey-launch
       - name: SunRey mainnet launch rehearsal verify
         run: npm run sunrey-launch -- verify
+      - name: SunRey pre-genesis shadow qualification demo
+        run: npm run demo:sunrey-pregenesis
+      - name: SunRey pre-genesis shadow qualify
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis qualify
+      - name: SunRey pre-genesis shadow verify
+        run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
       - name: SunRey validator economics demo
         run: npm run demo:sunrey-validator-economics
       - name: SunRey testnet deployment manifests

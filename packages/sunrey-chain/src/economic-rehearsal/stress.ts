@@ -11,18 +11,19 @@ import { runCanonicalSmokeStressCampaign } from '../release-candidate/economic/c
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
-import type { RehearsalStressFinding, RehearsalStressResult, RecoveryResult } from './types.ts';
-import type { EconomicRehearsalStressFinding, EconomicRehearsalStressResult, RecoveryResult } from './types.ts';
+import type {
+  EconomicRehearsalStressFinding,
+  EconomicRehearsalStressResult,
+  RecoveryResult,
+  RehearsalStressFinding,
+  RehearsalStressResult,
+} from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 
 function finding(
   findingId: string,
   scenario: string,
-  severity: RehearsalStressFinding['severity'],
-  accountingSafe: boolean,
-  description: string,
-): RehearsalStressFinding {
   severity: EconomicRehearsalStressFinding['severity'],
   accountingSafe: boolean,
   description: string,
@@ -37,9 +38,7 @@ function finding(
   });
 }
 
-export function runEconomicStressCampaign(): RehearsalStressResult {
-export function runEconomicStressCampaign(): EconomicRehearsalStressResult {
-export function runEconomicStressCampaign(root = process.cwd()): EconomicStressResult {
+export function runEconomicStressCampaign(root = process.cwd()): EconomicRehearsalStressResult {
   const chunk76 = runCanonicalSmokeStressCampaign(root);
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();

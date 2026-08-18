@@ -1,0 +1,26 @@
+{
+  "chunk": "CHUNK-87",
+  "title": "SunRey pre-genesis production shadow network and operational qualification",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-blockchain-architecture",
+    "sunrey-public-testnet",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-production-infrastructure",
+    "sunrey-production-storage",
+    "sunrey-production-oracles",
+    "sunrey-performance-engineering",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-network-candidate",
+    "sunrey-production-provider-acceptance",
+    "sunrey-audit-remediation",
+    "sunrey-mainnet-rc",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-pregenesis-qualification"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/pregenesis. Isolated pre-genesis shadow network only. Does not launch mainnet, enable LIVE_* flags, or treat PREGENESIS_ENGINEERING_QUALIFIED as production authorization. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
+}

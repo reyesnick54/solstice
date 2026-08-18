@@ -42,6 +42,7 @@ import {
 } from '../validator-economics/index.ts';
 import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
 import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
+import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -241,6 +242,7 @@ export function opsUsage(): string {
     'sunrey-ops crypto benchmark',
     ...governanceOpsUsage().split('\n'),
     ...providerUsage(),
+    pregenesisUsage(),
   ].join('\n');
 }
 
@@ -478,6 +480,16 @@ export async function main(): Promise<void> {
     }
     return;
   }
+  if (head === 'pregenesis') {
+    const result = runPregenesisCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if ((RESILIENCE_COMMANDS as readonly string[]).includes(head)) {
     process.stdout.write(`${runSunreyOps(argv)}\n`);
     return;
@@ -498,10 +510,4 @@ if (
   entry.endsWith('ops/cli.js')
 ) {
   await main();
-  const group = process.argv[2] ?? 'health';
-  if ((RESILIENCE_COMMANDS as readonly string[]).includes(group)) {
-    process.stdout.write(`${runSunreyOps(process.argv.slice(2))}\n`);
-  } else {
-    await main();
-  }
 }
