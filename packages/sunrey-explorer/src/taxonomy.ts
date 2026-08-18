@@ -99,6 +99,10 @@ export const FORBIDDEN_FIELD_NAMES = [
   'securityCredential',
   'orderAccountPrivate',
   'validatorInfrastructure',
+  'consumerPortfolio',
+  'consumerTradingProfile',
+  'favoriteMarkets',
+  'priceAlerts',
 ] as const;
 
 export const SEARCH_MAX_QUERY_BYTES = 128 as const;

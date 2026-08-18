@@ -95,3 +95,81 @@ paths:
       responses:
         "200":
           description: Market data
+  /v1/consumer/exchange/markets:
+    get:
+      summary: getConsumerMarket
+      responses:
+        "200":
+          description: Consumer market view for SUNREY_COIN / MOONREY_COIN
+  /v1/consumer/exchange/portfolio:
+    get:
+      summary: getConsumerPortfolio
+      description: Authenticated personal projection. Not public explorer data.
+      responses:
+        "200":
+          description: Portfolio projection
+        "401":
+          description: Authentication required
+  /v1/consumer/exchange/quotes:
+    post:
+      summary: getConsumerQuote
+      responses:
+        "200":
+          description: Indicative consumer quote
+  /v1/consumer/exchange/preview:
+    post:
+      summary: previewConsumerTrade
+      responses:
+        "200":
+          description: Trade preview with human-readable intent
+  /v1/consumer/exchange/orders:
+    post:
+      summary: submitConsumerTrade
+      description: Requires wallet or mobile authorization. API session alone cannot spend.
+      responses:
+        "200":
+          description: Consumer order
+        "401":
+          description: Missing financial authority
+  /v1/consumer/exchange/orders/{id}:
+    get:
+      summary: getConsumerOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Consumer order status
+  /v1/consumer/exchange/orders/{id}/cancel:
+    post:
+      summary: cancelConsumerOrder
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled
+  /v1/consumer/exchange/receipts/{id}:
+    get:
+      summary: getConsumerTradeReceipt
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Trade receipt
+  /v1/consumer/exchange/alerts:
+    post:
+      summary: createPriceAlert
+      description: Informational only. Cannot trade automatically.
+      responses:
+        "200":
+          description: Price alert
+        "400":
+          description: Alert cannot trade

@@ -5,12 +5,10 @@ export {
   API_DEPRECATIONS,
   compatibilityPolicy,
   parseApiVersion,
-} from './versioning.ts';
-export type { ApiDeprecationMetadata } from './versioning.ts';
   PUBLIC_API_VERSION_STRATEGY,
-  parseApiVersion,
   requireVersionedPublicPath,
 } from './versioning.ts';
+export type { ApiDeprecationMetadata } from './versioning.ts';
 export { apiError, API_ERROR_CATEGORIES, API_ERROR_CODES } from './errors.ts';
 export type { ApiErrorEnvelope, ApiErrorCategory, ApiErrorCode } from './errors.ts';
 export {

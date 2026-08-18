@@ -118,6 +118,7 @@
     "demo:universal-exchange": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/universal-demo.ts",
     "demo:sunrey-exchange-native": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/native-demo.ts",
     "demo:sunrey-exchange-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/ops-demo.ts",
+    "demo:sunrey-exchange-consumer": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/consumer-demo.ts",
     "demo:sunrey-exchange-settlement": "bash -lc 'cd packages/sunrey-chain/node && cargo run --bin sunrey-exchange-settlement-demo'",
     "demo:custody": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",
     "demo:institutional-custody": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/institutional-demo.ts",

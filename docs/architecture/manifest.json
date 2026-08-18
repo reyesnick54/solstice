@@ -3565,6 +3565,7 @@
       "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
       "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox, and local devnet at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Not an EVM chain."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
+      "notes": "Chunk 99 consumer Exchange, portfolio, quote, and simple trading APIs at packages/sunrey-exchange/src/consumer. UX/API projection over the canonical Exchange. No second Exchange, matching engine, or balance ledger. Production consumer trading remains gated by external legal/licensing/custody/human evidence."
     }
   ],
   "authorizedMutationPaths": [
@@ -5085,6 +5086,13 @@
       "protected": true,
       "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+    },
+    {
+      "id": "sunrey-exchange-consumer-trading",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-exchange",
+      "protected": true,
+      "notes": "Chunk 99 consumer Exchange, portfolio, quote, and simple trading APIs at packages/sunrey-exchange/src/consumer. Extends sunrey-exchange. No second Exchange, matching engine, or native-asset balance ledger. Production consumer trading remains dependent on real external authorization. Do not create packages/consumer-exchange, packages/sunrey-consumer-exchange, packages/retail-exchange, or packages/consumer-trading."
     }
   ],
   "boundedContexts": [

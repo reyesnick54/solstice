@@ -15,7 +15,8 @@
     "demo:universal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/universal-demo.ts",
     "cli": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/cli.ts",
     "demo:native": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/native-demo.ts",
-    "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops-demo.ts"
+    "demo:ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/ops-demo.ts",
+    "demo:consumer": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/consumer-demo.ts"
   },
   "engines": {
     "node": ">=22"

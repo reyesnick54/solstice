@@ -150,6 +150,9 @@
   — institutional gateway, sequenced market data, risk controls,
   circuit breakers, and reopening auctions at
   `packages/sunrey-exchange/src/ops`.
+- [Chunk 99 consumer Exchange](./chunk-99-consumer-exchange.md)
+  — consumer portfolio, quote, preview, and simple trading APIs at
+  `packages/sunrey-exchange/src/consumer`.
 
 - [Chunk 92 validator operator platform](../validators/chunk-92-validator-operator-platform.md)
   — fleet, enrollment, maintenance, upgrade, signer, and incident
