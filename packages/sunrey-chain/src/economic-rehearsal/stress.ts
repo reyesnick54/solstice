@@ -11,16 +11,15 @@ import { runCanonicalSmokeStressCampaign } from '../release-candidate/economic/c
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
-import type { RehearsalStressFinding, RehearsalStressResult, RecoveryResult } from './types.ts';
 import type {
   EconomicRehearsalStressFinding,
   EconomicRehearsalStressResult,
+  EconomicStressFinding,
+  EconomicStressResult,
   RecoveryResult,
-} from './types.ts';
   RehearsalStressFinding,
   RehearsalStressResult,
 } from './types.ts';
-import type { EconomicStressFinding, EconomicStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';
 
@@ -31,14 +30,6 @@ function finding(
   accountingSafe: boolean,
   description: string,
 ): RehearsalStressFinding {
-  severity: EconomicRehearsalStressFinding['severity'],
-  accountingSafe: boolean,
-  description: string,
-): EconomicRehearsalStressFinding {
-  severity: EconomicStressFinding['severity'],
-  accountingSafe: boolean,
-  description: string,
-): EconomicStressFinding {
   return Object.freeze({
     findingId,
     scenario,
@@ -50,8 +41,6 @@ function finding(
 }
 
 export function runEconomicStressCampaign(root = process.cwd()): RehearsalStressResult {
-export function runEconomicStressCampaign(root = process.cwd()): EconomicRehearsalStressResult {
-export function runEconomicStressCampaign(root = process.cwd()): EconomicStressResult {
   const chunk76 = runCanonicalSmokeStressCampaign(root);
   const oracle = rehearseOraclePlane();
   const exchange = rehearseSunReyMoonReyExchange();
