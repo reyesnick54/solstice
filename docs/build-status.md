@@ -4,6 +4,17 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey production handoff and day-2 operations control plane
+  (Chunk 90, `packages/sunrey-chain/src/production-handoff`):
+  `ProductionHandoffPackage`, system inventory, responsibility matrix,
+  operator acceptance, engineering SLO/SLI policy, configuration
+  baseline, change management, provider renewal, security-finding
+  continuity, incident command, backup/restore rehearsal, evidence
+  seal, readiness report, `sunrey-ops production` commands, and the
+  isolated 86–90 lifecycle rehearsal. Capability
+  `sunrey-production-handoff` is `IMPLEMENTED`. This is not a mainnet
+  launch. `observedProduction=false`. `ENVIRONMENT` remains
+  `simulation`. See `docs/mainnet/chunk-90-production-handoff.md`.
 - SunRey authorized production genesis execution engine (Chunk 88,
   `packages/sunrey-chain/src/genesis-execution`):
   `ProductionLaunchPlan` bound to exact RC, Candidate V2, environment,

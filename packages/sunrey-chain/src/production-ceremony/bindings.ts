@@ -66,6 +66,45 @@ export type AuditBinding = {
   readonly notes: string;
 };
 
+const CANDIDATE_V2_PATHS = [
+  'packages/sunrey-chain/src/mainnet/candidate-v2/index.ts',
+  'packages/sunrey-chain/src/production-candidate/index.ts',
+  'packages/sunrey-chain/src/candidate-v2/index.ts',
+  'packages/sunrey-chain/src/network-candidate-v2/index.ts',
+] as const;
+
+const MAINNET_RC_PATHS = [
+  'packages/sunrey-chain/src/mainnet-rc/index.ts',
+  'packages/sunrey-chain/src/release-candidate/mainnet/index.ts',
+] as const;
+
+const PROVIDER_PATHS = [
+  'packages/sunrey-chain/src/provider-acceptance/index.ts',
+  'packages/sunrey-chain/src/providers/acceptance.ts',
+] as const;
+
+const AUDIT_REMEDIATION_PATHS = [
+  'packages/sunrey-chain/src/audit-remediation/index.ts',
+  'packages/sunrey-chain/src/audit/remediation.ts',
+] as const;
+
+function firstExisting(root: string, paths: readonly string[]): string | null {
+  for (const relative of paths) {
+    if (existsSync(join(root, relative))) {
+      return relative;
+    }
+  }
+  return null;
+}
+
+function optionalHashFile(root: string, relative: string): string | null {
+  const path = join(root, relative);
+  if (!existsSync(path)) {
+    return null;
+  }
+  const text = readFileSync(path, 'utf8').trim();
+  return text.length > 0 ? text : null;
+}
 const rcCache = new Map<string, { binding: ArtifactBinding; bundle: SignedMainnetRcBundle }>();
 
 export function cryptoPolicyHash(): string {

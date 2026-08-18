@@ -65,6 +65,7 @@ export type {
 } from './types.ts';
 export { runCryptoCommand, cryptoUsage } from './crypto-cli.ts';
 export { runSunreyOps } from './cli.ts';
+export { runProductionHandoffCommand, productionUsage } from '../production-handoff/cli.ts';
 export {
   DEFAULT_LOG_POLICY,
   DEFAULT_RESOURCE_LIMITS,

@@ -148,6 +148,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-post-genesis-stabilization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-handoff | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |

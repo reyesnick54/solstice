@@ -436,6 +436,15 @@
       "executableTwin": "packages/sunrey-chain/src/formal/models/validator-economics.ts"
     },
     {
+      "modelId": "ADAPTIVE_FEE_MARKET",
+      "modelVersion": "1.0.0",
+      "implementationReferences": [
+        "packages/sunrey-chain/src/fees/v2/price.ts",
+        "packages/sunrey-chain/src/fees/v2/quote.ts",
+        "packages/sunrey-chain/src/fees/engine.ts",
+        "packages/sunrey-chain/rust/crates/fees/src/v2.rs"
+      ],
+      "assumptions": [
       "modelId": "NATIVE_MONETARY_POLICY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
@@ -471,6 +480,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/AdaptiveFeeMarket.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/adaptive-fee-market.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/NativeMonetaryPolicy.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/monetary-policy.ts"
     },
@@ -505,6 +516,7 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisAllocationConservation.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/genesis-allocation.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/MoonReyPolicyGovernance.tla",
@@ -646,6 +658,14 @@
       "modelId": "CAPABILITY_ACTIVATION_SAFETY",
       "modelVersion": "1.0.0",
       "implementationReferences": [
+        "packages/sunrey-chain/src/economics/stack.ts",
+        "packages/sunrey-economics/src/stress/invariants.ts",
+        "packages/sunrey-chain/src/formal/models/cross-economic.ts"
+      ],
+      "assumptions": [
+        "integer minor units only",
+        "FeePolicyV2 disposition cannot mint",
+        "MoonRey issuance requires MonetaryIssuanceAuthority",
         "packages/sunrey-chain/src/post-genesis/capabilities.ts",
         "packages/sunrey-chain/src/formal/models/capability-activation.ts"
       ],
@@ -700,6 +720,8 @@
       "toolVersion": "1.8.0",
       "lastResult": "VERIFIED_WITHIN_MODEL_BOUNDS",
       "sourceCommit": "WORKTREE",
+      "tlaModule": "packages/sunrey-chain/formal/tla/CrossEconomicInvariants.tla",
+      "executableTwin": "packages/sunrey-chain/src/formal/models/cross-economic.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/CapabilityActivationSafety.tla",
       "executableTwin": "packages/sunrey-chain/src/formal/models/capability-activation.ts"
       "tlaModule": "packages/sunrey-chain/formal/tla/GenesisExecutionAuthorization.tla",

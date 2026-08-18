@@ -1,5 +1,11 @@
 # Chunk 82 — SunRey production provider acceptance
 
+Chunk 90 consumes this evidence matrix for provider renewal reminders
+and regulated-capability eligibility. Expired evidence is reported.
+There is no automatic renewal claim. See
+[../mainnet/chunk-90-production-handoff.md](../mainnet/chunk-90-production-handoff.md).
+
+
 SunRey has one evidence-driven acceptance framework for external
 production dependencies. The framework technically validates local and
 sandbox providers in CI and records the slots that real providers must

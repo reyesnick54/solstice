@@ -1,5 +1,10 @@
 # Chunk 70 — SunRey full mainnet launch rehearsal
 
+Chunk 90 composes this rehearsal with ceremony, Candidate V2, Mainnet
+RC, and day-2 handoff into the isolated 86–90 lifecycle rehearsal. See
+[chunk-90-production-handoff.md](./chunk-90-production-handoff.md).
+
+
 This chunk executes a production-like **rehearsal**. It does not launch
 SunRey mainnet. It does not activate live customer funds, regulated
 Exchange trading, live custody, fiat, payments, cards, investments, or
