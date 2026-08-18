@@ -16,6 +16,7 @@ export const COVERAGE_INVENTORY: readonly CoverageEntry[] = Object.freeze([
   { subsystem: 'fees', target: 'actual/max/reserve/disposition', status: 'IMPLEMENTED', notes: 'TS FeeEngine + Rust FeeSchedule::calculate' },
   { subsystem: 'fees', target: 'FeePolicyV2 meter/price/max-fee/disposition/overflow', status: 'IMPLEMENTED', notes: 'Chunk 73 adaptive fee market properties + rust/crates/fees/src/v2.rs' },
   { subsystem: 'wallet', target: 'M-of-N / revoke / historic / watch-only', status: 'IMPLEMENTED', notes: 'authorizeAccountAction + Rust authorize' },
+  { subsystem: 'wallet', target: 'device / session / recovery / signing-intent authorization', status: 'IMPLEMENTED', notes: 'Chunk 96 WalletSecurityEngine + WALLET_AUTHORIZATION_SAFETY' },
   { subsystem: 'oracle', target: 'quorum / order / stale / units', status: 'IMPLEMENTED', notes: 'median order-independence + Rust integer_median' },
   { subsystem: 'moonrey', target: 'issuance / fingerprint / caps / supply', status: 'IMPLEMENTED', notes: 'formula + fingerprint + supplyReconciles' },
   { subsystem: 'machine', target: 'capability / mandate / escrow / revoke', status: 'IMPLEMENTED', notes: 'MachineEconomyEngine refuseAuthority' },

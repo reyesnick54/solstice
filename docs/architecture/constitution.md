@@ -1278,6 +1278,18 @@ and human evidence. Do not create `packages/market-operations`,
 `packages/sunrey-exchange-ops`. See
 [`chunk-95-market-operations.md`](./chunk-95-market-operations.md).
 
+Chunk 96 implements SunRey advanced wallet security, recovery,
+device trust, and transaction authorization at
+`packages/sunrey-chain/src/wallet/security`. Capability
+`sunrey-wallet-security` is `IMPLEMENTED`. It extends Chunk 46
+sovereign wallets. Application authentication is not native
+signing. Passkeys are not blockchain private keys. Recovery
+cannot rewrite finalized transfers. Do not create
+`packages/wallet-security`, `packages/sunrey-wallet-security`,
+`packages/wallet-auth`, `packages/device-trust`, or
+`packages/wallet-recovery-v2`. See
+[`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

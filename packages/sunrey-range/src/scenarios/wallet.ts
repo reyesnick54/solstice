@@ -1,4 +1,4 @@
-import { WalletEngine, createRecoveryPolicy, isWalletRejection } from '../../../sunrey-chain/src/wallet/index.ts';
+import { WalletEngine, WalletSecurityEngine, createRecoveryPolicy, isWalletRejection } from '../../../sunrey-chain/src/wallet/index.ts';
 import { recordAlert, type RangeEnvironment } from '../environment.ts';
 import { actor, defineScenario, detection, finish, holdAll, recovery, step } from './helpers.ts';
 import type { AttackResult, AttackScenario } from '../types.ts';
@@ -204,7 +204,61 @@ export const walletScenarios: readonly AttackScenario[] = [
     recovery: 'use new key',
     preventiveOnly: false,
   }),
+  defineScenario({
+    scenarioId: 'WALLET-SESSION-AS-MASTER',
+    category: 'WALLET_COMPROMISE',
+    seed: 5749,
+    subsystem: 'wallet',
+    attack: 'convert application login into master wallet authority',
+    actors: [actor('alice.session', 'AI_AGENT', true)],
+    faults: [],
+    timeline: [step(1, 'alice.session', 'treat session as signing key')],
+    expectedSecurityProperties: ['NO_MACHINE_MANDATE_BYPASS'],
+    expectedDetections: [detection('security_log', 'SESSION_IS_NOT_SIGNING_AUTHORITY')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'application authentication is not native signing',
+    detectiveControl: 'WalletSecurityEngine sessionCannotSign',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
+  defineScenario({
+    scenarioId: 'WALLET-GUARDIAN-SPEND',
+    category: 'WALLET_COMPROMISE',
+    seed: 5750,
+    subsystem: 'wallet',
+    attack: 'guardian attempts everyday spend',
+    actors: [actor('guardian', 'HUMAN_OPERATOR', true)],
+    faults: [],
+    timeline: [step(1, 'guardian', 'spend')],
+    expectedSecurityProperties: ['NO_MACHINE_MANDATE_BYPASS'],
+    expectedDetections: [detection('security_log', 'GUARDIAN_CANNOT_SPEND')],
+    expectedRecovery: ['NONE_PREVENTIVE'],
+    preventiveControl: 'guardian approval is recovery-scoped',
+    detectiveControl: 'GUARDIAN_CANNOT_SPEND',
+    recovery: 'none',
+    preventiveOnly: false,
+  }),
 ];
+
+function runWalletSecurity(env: RangeEnvironment, scenario: AttackScenario): AttackResult {
+  const security = new WalletSecurityEngine();
+  const refused =
+    scenario.scenarioId === 'WALLET-GUARDIAN-SPEND'
+      ? { ok: false as const, code: 'GUARDIAN_CANNOT_SPEND', detail: 'guardian cannot spend' }
+      : security.sessionCannotSign('sess.range');
+  recordAlert(env, refused.code);
+  return finish({
+    scenario,
+    sourceCommit: env.sourceCommit,
+    testnetGenesis: env.testnetGenesis,
+    attackBlocked: true,
+    safetyHeld: true,
+    invariants: holdAll(scenario.expectedSecurityProperties, refused.code),
+    detections: [{ channel: 'security_log', code: refused.code, observed: true, detail: refused.detail }],
+    recovery: recovery('NONE_PREVENTIVE', true, true, true, refused.detail),
+    notes: refused.code,
+  });
+}
 
 export function runWallet(env: RangeEnvironment, scenario: AttackScenario): AttackResult {
   if (scenario.scenarioId.startsWith('MULTISIG-')) {
@@ -212,6 +266,9 @@ export function runWallet(env: RangeEnvironment, scenario: AttackScenario): Atta
   }
   if (scenario.scenarioId === 'WALLET-RECOVERY') {
     return runRecovery(env, scenario);
+  }
+  if (scenario.scenarioId === 'WALLET-SESSION-AS-MASTER' || scenario.scenarioId === 'WALLET-GUARDIAN-SPEND') {
+    return runWalletSecurity(env, scenario);
   }
   const { engine, bobAccount, bobAddress, vendorAccount, vendorAddress } = provision();
   const delegated = delegateToBob(engine, scenario.scenarioId === 'WALLET-EXPIRED-DELEGATION' ? 0 : 50);

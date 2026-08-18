@@ -44,6 +44,22 @@ enum Commands {
     Delegate,
     /// Watch-only reminder
     Watch,
+    /// Application security profile (no private keys)
+    Security { id: String },
+    /// Bound devices
+    Devices { id: String },
+    /// Application sessions
+    Sessions { id: String },
+    /// Destination trust policy
+    TrustedDestinations { id: String },
+    /// Recovery state (cannot rewrite finalized transfers)
+    RecoveryState { id: String },
+    /// Key rotation plan (public key only)
+    RotateKey { id: String },
+    /// Delegated key bindings
+    Delegations { id: String },
+    /// Security audit report
+    Audit { id: String },
 }
 
 fn main() {
@@ -113,6 +129,46 @@ fn main() {
         Commands::Watch => json!({
             "can": ["query", "build unsigned", "monitor finality"],
             "cannot": ["sign", "rotate", "recover"]
+        }),
+        Commands::Security { id } => json!({
+            "wallet_id": id,
+            "login_is_not_signing": true,
+            "passkey_is_not_native_key": true,
+            "custody_classes": ["SELF_CUSTODY", "ASSISTED_SELF_CUSTODY", "INSTITUTIONAL_CUSTODY", "MACHINE_CONTROLLED", "DELEGATED_AGENT"],
+            "note": "query the TypeScript WalletSecurityEngine; this binary does not hold private keys"
+        }),
+        Commands::Devices { id } => json!({
+            "wallet_id": id,
+            "trust_states": ["NEW", "VERIFIED", "TRUSTED", "RESTRICTED", "REVOKED"],
+            "public_only": true
+        }),
+        Commands::Sessions { id } => json!({
+            "wallet_id": id,
+            "scopes": ["READ_ONLY", "TRANSACTION_PREVIEW", "TRANSACTION_APPROVAL", "TRADING", "PROFILE_MANAGEMENT", "RECOVERY_ADMIN"],
+            "grants_native_signing": false
+        }),
+        Commands::TrustedDestinations { id } => json!({
+            "wallet_id": id,
+            "states": ["UNRECOGNIZED", "PENDING_VERIFICATION", "TRUSTED", "RESTRICTED", "REVOKED"]
+        }),
+        Commands::RecoveryState { id } => json!({
+            "wallet_id": id,
+            "rewrites_finalized": false,
+            "guardian_spend": false
+        }),
+        Commands::RotateKey { id } => json!({
+            "wallet_id": id,
+            "accepts": "new public key",
+            "rejects": "plaintext seed"
+        }),
+        Commands::Delegations { id } => json!({
+            "wallet_id": id,
+            "inherits_master": false
+        }),
+        Commands::Audit { id } => json!({
+            "wallet_id": id,
+            "reconciles": ["devices", "sessions", "signing authorities", "delegations", "recovery", "destinations", "pending actions"],
+            "private_keys": false
         }),
     };
     let text = serde_json::to_string_pretty(&payload).expect("json");
