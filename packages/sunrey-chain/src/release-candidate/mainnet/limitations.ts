@@ -1,3 +1,4 @@
+import { sha256Text } from '../../supply-chain/inventory.ts';
 import { loadEconomicKnownLimitations } from '../economic/limitations.ts';
 import { BUILTIN_KNOWN_LIMITATIONS, loadKnownSecurityLimitations } from '../limitations.ts';
 import type { MainnetReleaseKnownLimitation } from './types.ts';
@@ -127,4 +128,8 @@ export function loadMainnetKnownLimitations(root: string): readonly MainnetRelea
 
 export function mainnetLimitationsHidden(rows: readonly MainnetReleaseKnownLimitation[]): boolean {
   return rows.some((row) => row.hiddenFromReleaseNotes !== false);
+}
+
+export function limitationsDigest(rows: readonly MainnetReleaseKnownLimitation[]): string {
+  return sha256Text(rows.map((row) => `${row.id}:${row.title}:${row.severity}:${row.source}`).join('|'));
 }

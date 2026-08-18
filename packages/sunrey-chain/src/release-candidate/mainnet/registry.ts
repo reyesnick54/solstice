@@ -24,7 +24,7 @@ import {
   mainnetMaterialChange,
 } from './freeze.ts';
 import { mainnetUtcNow, nextMainnetReleaseCandidateId, resolveMainnetSourceCommit } from './identity.ts';
-import { loadMainnetKnownLimitations } from './limitations.ts';
+import { limitationsDigest, loadMainnetKnownLimitations } from './limitations.ts';
 import { reportHsmState, snapshotProviderAcceptance } from './providers.ts';
 import { deriveMainnetRcStatus, qualifyMainnetReleaseCandidate } from './qualify.ts';
 import { buildMainnetQualificationReport } from './report.ts';
@@ -96,6 +96,7 @@ export function createMainnetReleaseCandidate(input: {
     profile: input.profile ?? 'smoke',
   });
   const status = deriveMainnetRcStatus(evidence.matrix);
+  const limitations = loadMainnetKnownLimitations(input.root);
   const manifest = Object.freeze({
     schemaVersion: 1 as const,
     mainnet_rc_id: rcId,
@@ -115,6 +116,7 @@ export function createMainnetReleaseCandidate(input: {
     hsm_state: hsm.state,
     sbom_digest: sbomDigest(sbom),
     provenance_digest: provenanceDigest(provenance),
+    limitations_hash: limitationsDigest(limitations),
     qualification_result: status,
     environment: 'simulation' as const,
     ticker_status: 'NOT_ASSIGNED' as const,
@@ -125,7 +127,6 @@ export function createMainnetReleaseCandidate(input: {
     engineering_qualified_is_not_authorized_candidate: true as const,
     created_at_utc: mainnetUtcNow(),
   });
-  const limitations = loadMainnetKnownLimitations(input.root);
   const bundle: SignedMainnetRcBundle = Object.freeze({
     manifest,
     sourceFreeze: Object.freeze({ ...sourceFreeze, releaseSignature: signText(sourceFreeze.combinedDigest, authority.authorityId) }),
@@ -198,6 +199,12 @@ export function verifyMainnetReleaseCandidate(
       detail: 'ReleaseAuthority manifest signature',
     },
     { id: 'qualification-digest', ok: expectedQualification === bundle.qualification.combinedDigest, detail: bundle.qualification.combinedDigest },
+    { id: 'source-freeze', ok: bundle.manifest.source_freeze_hash === bundle.sourceFreeze.combinedDigest, detail: bundle.sourceFreeze.combinedDigest },
+    { id: 'protocol-freeze', ok: bundle.manifest.protocol_freeze_hash === bundle.protocolFreeze.combinedHash, detail: bundle.protocolFreeze.combinedHash },
+    { id: 'economic-hash', ok: bundle.manifest.economic_rc_hash === bundle.economicFreeze.economicRcHash, detail: bundle.economicFreeze.economicRcHash },
+    { id: 'candidate-hash', ok: bundle.manifest.candidate_v2_hash === bundle.candidateV2.rootHash, detail: bundle.candidateV2.rootHash },
+    { id: 'crypto-hash', ok: bundle.manifest.crypto_policy_hash === bundle.cryptoFreeze.digest, detail: bundle.cryptoFreeze.digest },
+    { id: 'limitations', ok: bundle.manifest.limitations_hash === limitationsDigest(bundle.limitations), detail: bundle.manifest.limitations_hash },
     { id: 'provider-digest', ok: bundle.manifest.provider_matrix_hash === bundle.providers.digest, detail: bundle.providers.digest },
     { id: 'audit-digest', ok: bundle.manifest.audit_snapshot_hash === bundle.audit.digest, detail: bundle.audit.digest },
     { id: 'status-supersede', ok: bundle.manifest.qualification_result !== 'SUPERSEDED' || bundle.supersededBy !== null, detail: bundle.manifest.qualification_result },

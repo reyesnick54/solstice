@@ -42,7 +42,7 @@ export {
 } from './freeze.ts';
 export { rejectFixtureHsmAsExternal, reportHsmState, snapshotProviderAcceptance } from './providers.ts';
 export { openCriticalFindingBlocksAuthorization, rejectFakeAuditResult, snapshotAuditRemediation } from './audit.ts';
-export { MAINNET_KNOWN_LIMITATIONS, loadMainnetKnownLimitations, mainnetLimitationsHidden } from './limitations.ts';
+export { MAINNET_KNOWN_LIMITATIONS, limitationsDigest, loadMainnetKnownLimitations, mainnetLimitationsHidden } from './limitations.ts';
 export { deriveMainnetRcStatus, qualifyMainnetReleaseCandidate } from './qualify.ts';
 export {
   compareMainnetReleaseCandidates,

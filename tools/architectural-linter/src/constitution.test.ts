@@ -2061,6 +2061,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-qualification')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-economic-release')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/economic-policy-freeze')), false);
+  });
+
   it('CHUNK-79 implements SunRey production governance operations', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-governance-operations').status, 'IMPLEMENTED');

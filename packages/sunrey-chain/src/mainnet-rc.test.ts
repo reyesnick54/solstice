@@ -115,7 +115,7 @@ describe('Chunk 84 SunRey Mainnet release candidate', () => {
     const sbomTamper = invalidateMainnetBundle(created.bundle, 'sbom');
     assert.equal(verifyMainnetReleaseCandidate(sbomTamper, 'commit-a', ROOT).ok, false);
 
-    for (const field of ['binary', 'container', 'candidate', 'provider', 'security', 'qualification', 'provenance'] as const) {
+    for (const field of ['binary', 'container', 'candidate', 'provider', 'security', 'qualification', 'limitation', 'provenance'] as const) {
       const tampered = invalidateMainnetBundle(created.bundle, field);
       const report = verifyMainnetReleaseCandidate(tampered, 'commit-a', ROOT);
       assert.equal(report.ok, false, `tamper ${field} should fail verify`);

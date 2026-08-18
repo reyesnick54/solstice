@@ -375,6 +375,7 @@ export type MainnetReleaseManifest = {
   readonly hsm_state: HsmQualificationState;
   readonly sbom_digest: string;
   readonly provenance_digest: string;
+  readonly limitations_hash: string;
   readonly qualification_result: MainnetRcStatus;
   readonly environment: typeof MAINNET_RC_ENVIRONMENT;
   readonly ticker_status: typeof MAINNET_RC_TICKER_STATUS;
