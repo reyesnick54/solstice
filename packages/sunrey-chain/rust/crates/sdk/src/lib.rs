@@ -9,7 +9,10 @@ use std::net::TcpStream;
 use std::time::Duration;
 
 use serde_json::Value;
-use sunrey_wallet::{encode_address, AddressAlgorithm, AddressClass};
+use sunrey_wallet::{
+    encode_address, session_cannot_sign, AddressAlgorithm, AddressClass, SessionScope,
+    SigningIntent,
+};
 
 pub const API_VERSION: &str = "v1";
 pub const PUBLIC_NETWORK_ID: &str = "net_sunrey_simulation";
@@ -56,6 +59,11 @@ pub const PATH_DEVELOPER_APPS: &str = "/v1/developer/apps";
 pub const PATH_DEVELOPER_KEYS: &str = "/v1/developer/keys";
 pub const PATH_DEVELOPER_WEBHOOKS: &str = "/v1/developer/webhooks";
 pub const PATH_DEVELOPER_STATUS: &str = "/v1/developer/testnet/status";
+pub const PATH_WALLET_SECURITY: &str = "/v1/wallets/{id}/security";
+pub const PATH_WALLET_DEVICES: &str = "/v1/wallets/{id}/devices";
+pub const PATH_WALLET_SESSIONS: &str = "/v1/wallets/{id}/sessions";
+pub const PATH_WALLET_POLICIES: &str = "/v1/wallets/{id}/policies";
+pub const PATH_WALLET_RECOVERY: &str = "/v1/wallets/{id}/recovery";
 
 /// Canonical webhook signing payload. Official clients verify locally
 /// and never send private keys or webhook secrets to SunRey servers.
@@ -293,6 +301,26 @@ impl SunReyRpcClient {
         self.get(PATH_EXCHANGE_MARKETS)
     }
 
+    pub fn get_wallet_security_profile(&self, wallet_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/wallets/{wallet_id}/security"))
+    }
+
+    pub fn get_wallet_devices(&self, wallet_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/wallets/{wallet_id}/devices"))
+    }
+
+    pub fn get_wallet_sessions(&self, wallet_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/wallets/{wallet_id}/sessions"))
+    }
+
+    pub fn get_wallet_policies(&self, wallet_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/wallets/{wallet_id}/policies"))
+    }
+
+    pub fn get_recovery_state(&self, wallet_id: &str) -> Result<Value, SdkError> {
+        self.get(&format!("/v1/wallets/{wallet_id}/recovery"))
+    }
+
     fn get(&self, path: &str) -> Result<Value, SdkError> {
         http(&self.addr, "GET", path, None)
     }
@@ -320,6 +348,27 @@ fn http(addr: &str, method: &str, path: &str, body: Option<&str>) -> Result<Valu
     stream.read_to_string(&mut buf).map_err(|_| SdkError::Transport)?;
     let payload = buf.split("\r\n\r\n").nth(1).unwrap_or("{}");
     serde_json::from_str(payload).map_err(|_| SdkError::Api(payload.to_string()))
+}
+
+/// Local signing-intent helper. Private keys stay with the caller.
+pub fn build_signing_intent(
+    transaction_hash: impl Into<String>,
+    destination: impl Into<String>,
+    quantity: u128,
+    asset: impl Into<String>,
+    network: impl Into<String>,
+) -> SigningIntent {
+    SigningIntent {
+        transaction_hash: transaction_hash.into(),
+        destination: destination.into(),
+        quantity,
+        asset: asset.into(),
+        network: network.into(),
+    }
+}
+
+pub fn login_is_not_native_signing() -> bool {
+    session_cannot_sign(SessionScope::ReadOnly).is_err()
 }
 
 pub fn public_address(descriptor: &[u8]) -> String {

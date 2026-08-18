@@ -262,6 +262,7 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
   if (group === 'rpc' || group === 'explorer') {
     const result = runPublicDataPlaneCommand(args);
     return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   if (
     group === 'validator' &&
     action &&

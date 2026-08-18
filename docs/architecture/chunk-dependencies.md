@@ -839,3 +839,13 @@ approval. Do not create `packages/provider-runtime`,
 `packages/sunrey-provider-runtime`, `packages/executable-providers`,
 `packages/provider-adapters`, or `packages/integration-providers`.
 The evaluator returns `mustStop: false`.
+Chunk 96 implements advanced wallet security at
+`packages/sunrey-chain/src/wallet/security`. Capability
+`sunrey-wallet-security` is `IMPLEMENTED`. See
+[`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
+It extends Chunk 46. Application login is not native signing.
+Recovery cannot rewrite finalized state. Do not create
+`packages/wallet-security`, `packages/sunrey-wallet-security`,
+`packages/wallet-auth`, `packages/device-trust`, or
+`packages/wallet-recovery-v2`. The evaluator returns
+`mustStop: false`.

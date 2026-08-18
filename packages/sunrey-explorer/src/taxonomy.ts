@@ -99,6 +99,12 @@ export const FORBIDDEN_FIELD_NAMES = [
   'securityCredential',
   'orderAccountPrivate',
   'validatorInfrastructure',
+  'walletDeviceBinding',
+  'walletSession',
+  'walletRecoveryRequest',
+  'walletRecoveryEvidence',
+  'walletRecoveryChallenge',
+  'sessionToken',
 ] as const;
 
 export const SEARCH_MAX_QUERY_BYTES = 128 as const;

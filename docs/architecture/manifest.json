@@ -2313,14 +2313,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "PublicRpcGateway",
-          "kind": "class"
-        },
-        {
-          "name": "ExplorerIndexerFleet",
-          "kind": "class"
-        },
-        {
           "name": "PublicDataPlaneReport",
           "kind": "type"
         }
@@ -3400,12 +3392,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles.",
-      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet or activate real production capabilities.",
-      "notes": "Chunk 75 dual-economy simulation laboratory. Consumes canonical SunRey/MoonRey/fee/validator/Exchange/oracle/machine owners. Does not predict prices, promise returns, or activate production monetary policy.",
-      "notes": "Chunk 77 blockchain-native protocol treasury at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive.",
-      "notes": "Chunk 80 economic mainnet rehearsal.",
-      "notes": "Chunk 81 second-generation production-network candidate. Binds the complete stack through Chunk 80. Candidate state remains CANDIDATE. mainnetEnabled=false. Does not launch mainnet or enable LIVE_* flags. External legal/audit/HSM/human evidence remains unfabricated."
       "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet or activate real production capabilities."
     },
     {
@@ -3503,7 +3489,7 @@
         "packages/sunrey-shadow",
         "packages/sunrey-production-platform",
         "packages/mainnet-infrastructure-v2",
-        "packages/cloud-control-plane"
+        "packages/cloud-control-plane",
         "packages/provider-runtime",
         "packages/sunrey-provider-runtime",
         "packages/executable-providers",
@@ -3513,9 +3499,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities.",
-      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization.",
-      "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
     },
     {
       "id": "sunrey-exchange-market-operations",
@@ -3531,6 +3515,21 @@
       "protectedSymbols": [
         {
           "name": "MarketOperationsEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/market-operations",
+        "packages/institutional-gateway",
+        "packages/exchange-ops",
+        "packages/sunrey-exchange-ops"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
+    },
+    {
       "id": "sunrey-developer-platform",
       "name": "SunRey developer application platform, credentials, webhooks, and sandbox",
       "canonicalOwner": "packages/sunrey-sdk",
@@ -3548,11 +3547,6 @@
         }
       ],
       "forbiddenAliases": [
-        "packages/market-operations",
-        "packages/institutional-gateway",
-        "packages/exchange-ops",
-        "packages/sunrey-exchange-ops",
-        "packages/exchange-v2"
         "packages/sunrey-developer-platform",
         "packages/developer-portal",
         "packages/app-registry",
@@ -3562,9 +3556,36 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
       "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox, and local devnet at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Not an EVM chain."
-      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
+    },
+    {
+      "id": "sunrey-wallet-security",
+      "name": "SunRey advanced wallet security, recovery, device trust, and transaction authorization",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/wallet/security/engine.ts",
+      "publicInterface": "packages/sunrey-chain/src/wallet/security/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "WalletSecurityEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/wallet-security",
+        "packages/sunrey-wallet-security",
+        "packages/wallet-auth",
+        "packages/device-trust",
+        "packages/wallet-recovery-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 96 wallet security at packages/sunrey-chain/src/wallet/security. Extends Chunk 46. Application authentication is not native signing. Recovery cannot rewrite finalized transfers."
     }
   ],
   "authorizedMutationPaths": [
@@ -4297,12 +4318,17 @@
     "packages/developer-portal",
     "packages/app-registry",
     "packages/webhook-service",
-    "packages/developer-platform-v2"
+    "packages/developer-platform-v2",
     "packages/provider-runtime",
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
     "packages/provider-adapters",
-    "packages/integration-providers"
+    "packages/integration-providers",
+    "packages/wallet-security",
+    "packages/sunrey-wallet-security",
+    "packages/wallet-auth",
+    "packages/device-trust",
+    "packages/wallet-recovery-v2"
   ],
   "capabilities": [
     {
@@ -5019,9 +5045,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 84 Mainnet Release Candidate freeze and qualification at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59/63/78. Does not launch mainnet or treat ENGINEERING_QUALIFIED as AUTHORIZED_CANDIDATE. Do not create packages/sunrey-mainnet-rc, packages/mainnet-rc, packages/mainnet-qualification, packages/sunrey-mainnet-release, or packages/mainnet-release-candidate.",
-      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank.",
-      "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow."
     },
     {
@@ -5029,12 +5052,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 88 authorized production genesis execution engine and launch control room. Owner: packages/sunrey-chain/src/genesis-execution. CI uses isolated rehearsal inputs only. Does not launch mainnet or automatically activate customer financial capabilities. Do not create packages/genesis-execution, packages/sunrey-genesis-execution, packages/production-genesis-execution, packages/mainnet-execution, or packages/launch-execution.",
-      "id": "sunrey-pregenesis-qualification",
-      "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-chain",
-      "protected": true,
-      "notes": "Chunk 84 Mainnet Release Candidate freeze and qualification at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59/63/78. Does not launch mainnet or treat ENGINEERING_QUALIFIED as AUTHORIZED_CANDIDATE. Do not create packages/sunrey-mainnet-rc, packages/mainnet-rc, packages/mainnet-qualification, packages/sunrey-mainnet-release, or packages/mainnet-release-candidate."
       "notes": "Chunk 88 authorized production genesis execution engine and launch control room. Owner: packages/sunrey-chain/src/genesis-execution. CI uses isolated rehearsal inputs only. Does not launch mainnet or automatically activate customer financial capabilities. Do not create packages/genesis-execution, packages/sunrey-genesis-execution, packages/production-genesis-execution, packages/mainnet-execution, or packages/launch-execution."
     },
     {
@@ -5049,9 +5066,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Owner: packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet or convert rehearsal into observed production. Do not create packages/production-handoff, packages/sunrey-handoff, packages/day-2-ops, packages/production-ops, or packages/operator-acceptance.",
-      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank.",
-      "notes": "Chunk 81 production network candidate v2 at packages/sunrey-chain/src/mainnet/candidate-v2. Deterministic engineering candidate only. productionAuthorized=false. Do not create packages/production-network, packages/sunrey-production-network, packages/candidate-v2, packages/mainnet-v2, or packages/production-candidate-v2."
       "notes": "Chunk 90 production handoff and day-2 operations control plane. Owner: packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet or convert rehearsal into observed production. Do not create packages/production-handoff, packages/sunrey-handoff, packages/day-2-ops, packages/production-ops, or packages/operator-acceptance."
     },
     {
@@ -5059,9 +5073,28 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation.",
-      "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated rehearsal identity. Does not launch mainnet, enable LIVE_* flags, or treat engineering qualification as authorization. Do not create packages/sunrey-pregenesis, packages/pregenesis, packages/shadow-network, packages/pregenesis-qualification, or packages/sunrey-shadow.",
-      "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
+      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+    },
+    {
+      "id": "sunrey-validator-operator-platform",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
+    },
+    {
+      "id": "sunrey-public-data-plane",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 93 public RPC edge, Explorer HA, and production network data plane. Owner: packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Do not create packages/public-rpc, packages/sunrey-rpc-edge, packages/rpc-gateway, packages/explorer-ha, or packages/public-data-plane."
+    },
+    {
+      "id": "sunrey-developer-platform",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-sdk",
+      "protected": true,
+      "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox tooling, and local developer environment at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51 SDK/API and Chunk 53 Testnet. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Do not create packages/sunrey-developer-platform, packages/developer-portal, packages/app-registry, packages/webhook-service, or packages/developer-platform-v2."
     },
     {
       "id": "sunrey-exchange-market-operations",
@@ -5069,22 +5102,13 @@
       "owner": "packages/sunrey-exchange",
       "protected": true,
       "notes": "Chunk 95 institutional market operations, sequenced market data, circuit breakers, and reopening auctions at packages/sunrey-exchange/src/ops. Extends sunrey-exchange. No second Exchange or native-asset balance ledger. Production market activation remains dependent on real external authorization. Do not create packages/market-operations, packages/institutional-gateway, packages/exchange-ops, or packages/sunrey-exchange-ops."
-      "id": "sunrey-developer-platform",
-      "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-sdk",
-      "protected": true,
-      "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox tooling, and local developer environment at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51 SDK/API and Chunk 53 Testnet. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Do not create packages/sunrey-developer-platform, packages/developer-portal, packages/app-registry, packages/webhook-service, or packages/developer-platform-v2."
-      "id": "sunrey-public-data-plane",
+    },
+    {
+      "id": "sunrey-wallet-security",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 93 public RPC edge, Explorer HA, and production network data plane. Owner: packages/sunrey-chain/src/public-data-plane. RPC reads canonical chain state. Explorer is rebuildable and non-authoritative. Do not create packages/public-rpc, packages/sunrey-rpc-edge, packages/rpc-gateway, packages/explorer-ha, or packages/public-data-plane."
-      "id": "sunrey-validator-operator-platform",
-      "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-chain",
-      "protected": true,
-      "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
-      "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+      "notes": "Chunk 96 advanced wallet security, recovery, device trust, and transaction authorization at packages/sunrey-chain/src/wallet/security. Extends Chunk 46. Application authentication is not native signing. Recovery cannot rewrite finalized transfers. Do not create packages/wallet-security, packages/sunrey-wallet-security, packages/wallet-auth, packages/device-trust, or packages/wallet-recovery-v2."
     }
   ],
   "boundedContexts": [
@@ -5486,12 +5510,16 @@
     "packages/production-providers",
     "packages/external-providers",
     "packages/sunrey-providers",
-    "packages/exchange-kyc"
     "packages/exchange-kyc",
     "packages/provider-runtime",
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
     "packages/provider-adapters",
-    "packages/integration-providers"
+    "packages/integration-providers",
+    "packages/wallet-security",
+    "packages/sunrey-wallet-security",
+    "packages/wallet-auth",
+    "packages/device-trust",
+    "packages/wallet-recovery-v2"
   ]
 }

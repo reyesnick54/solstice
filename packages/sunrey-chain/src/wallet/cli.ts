@@ -6,6 +6,7 @@
  */
 
 import { WalletEngine, createRecoveryPolicy } from './engine.ts';
+import { runWalletSecurityCommand, walletSecurityUsage } from './security/cli.ts';
 import { isWalletRejection } from './types.ts';
 
 export type CliResult = {
@@ -28,6 +29,13 @@ const COMMANDS = [
   'recovery',
   'delegate',
   'watch',
+  'security',
+  'devices',
+  'sessions',
+  'trusted-destinations',
+  'rotate-key',
+  'delegations',
+  'audit',
 ] as const;
 
 export function walletUsage(): string {
@@ -42,9 +50,10 @@ export function walletUsage(): string {
     'sunrey-wallet tx <txId>',
     'sunrey-wallet history <walletId>',
     'sunrey-wallet key-rotate <walletId> <currentKeyId> <nextLabel>',
-    'sunrey-wallet recovery <walletId> request|cancel',
+    'sunrey-wallet recovery <walletId> request|cancel|state',
     'sunrey-wallet delegate <walletId> <label> <maxAmount>',
     'sunrey-wallet watch <walletId>',
+    walletSecurityUsage(),
   ].join('\n');
 }
 
@@ -199,6 +208,9 @@ export function runWalletCommand(args: readonly string[]): CliResult {
     case 'recovery': {
       const walletId = args[1] ?? '';
       const action = args[2] ?? 'request';
+      if (action === 'state') {
+        return runWalletSecurityCommand(args);
+      }
       if (action === 'cancel') {
         return { ok: true, command, payload: wallet.cancelPendingRecovery(walletId, `rec.${walletId}`) };
       }
@@ -253,6 +265,14 @@ export function runWalletCommand(args: readonly string[]): CliResult {
       });
       return { ok: result.ok !== false, command, payload: result };
     }
+    case 'security':
+    case 'devices':
+    case 'sessions':
+    case 'trusted-destinations':
+    case 'rotate-key':
+    case 'delegations':
+    case 'audit':
+      return runWalletSecurityCommand(args);
     case 'watch': {
       const [walletId] = args.slice(1);
       if (!walletId) {
