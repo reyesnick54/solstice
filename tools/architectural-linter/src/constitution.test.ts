@@ -1747,6 +1747,8 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-protocol-treasury')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/native-treasury')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/reserve-bank')), false);
+  });
+
   it('CHUNK-76 reconciles the economic stack and implements the stress laboratory', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-economic-stress-lab').status, 'IMPLEMENTED');

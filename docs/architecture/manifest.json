@@ -4675,17 +4675,11 @@
       "notes": "Chunk 61 formal models at packages/sunrey-chain/src/formal. Model checked within stated bounds. Not whole-system verification."
     },
     {
-      "id": "sunrey-regulated-integration",
       "id": "sunrey-protocol-treasury",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank.",
-      "id": "sunrey-dual-economy-simulator",
-      "status": "IMPLEMENTED",
-      "owner": "packages/sunrey-economics",
-      "protected": true,
-      "notes": "Chunk 75 dual-economy simulation laboratory at packages/sunrey-economics. Simulation only. Do not create packages/dual-economy, packages/moonrey-macro, or packages/economic-bridge."
+      "notes": "Chunk 77 protocol-owned native treasury and reserves at packages/sunrey-chain/src/economics/treasury. Distinct from packages/treasury. No second ledger, new native asset, price peg, or treasury mint. Production treasury inactive. Do not create packages/sunrey-protocol-treasury, packages/native-treasury, or packages/reserve-bank."
     },
     {
       "id": "sunrey-economic-mainnet-rehearsal",
