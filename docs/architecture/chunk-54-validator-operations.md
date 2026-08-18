@@ -71,3 +71,8 @@ quorum, and lets a lagging node catch up.
 - Counsel-confirmed policy
 
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains false.
+
+Chunk 92 adds the production validator operator control plane at
+`packages/sunrey-chain/src/validator-operator`. It consumes this
+infrastructure as the operational substrate and does not replace it.
+See [`../../validators/chunk-92-validator-operator-platform.md`](../validators/chunk-92-validator-operator-platform.md).

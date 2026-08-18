@@ -45,6 +45,11 @@ import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
 import { productionUsage, runProductionHandoffCommand } from '../production-handoff/cli.ts';
 import { pregenesisUsage, runPregenesisCommand } from '../pregenesis/cli.ts';
 import { productionProvisioningUsage, runProductionProvisioningCommand } from '../infra/provisioning/cli.ts';
+import {
+  VALIDATOR_OPERATOR_COMMANDS,
+  operatorUsage as validatorOperatorUsage,
+  runValidatorOperatorCommand,
+} from '../validator-operator/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -219,6 +224,7 @@ export function opsUsage(): string {
     'sunrey-ops validator penalties',
     'sunrey-ops validator unbond',
     'sunrey-ops validator economics-report',
+    ...validatorOperatorUsage().split('\n'),
     'sunrey-ops signer status',
     'sunrey-ops snapshot create',
     'sunrey-ops snapshot verify',
@@ -251,6 +257,14 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (
+    group === 'validator' &&
+    action &&
+    (VALIDATOR_OPERATOR_COMMANDS as readonly string[]).includes(action)
+  ) {
+    const result = runValidatorOperatorCommand(args.slice(1));
+    return { ok: result.ok, command: `validator ${result.command}`, payload: result.payload };
+  }
   if (group === 'production') {
     const result = runProductionHandoffCommand(args.slice(1));
     return { ok: result.ok, command: `production ${result.command}`, payload: result.payload };
@@ -502,6 +516,17 @@ export async function main(): Promise<void> {
   }
   if (head === 'pregenesis') {
     const result = runPregenesisCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
+  if (head === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
+    const result = runProductionProvisioningCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);
     const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
     console.log(text);

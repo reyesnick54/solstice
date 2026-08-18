@@ -11,6 +11,15 @@ import { runCanonicalSmokeStressCampaign } from '../release-candidate/economic/c
 import { hasTwoThirdsPlus } from '../validators/index.ts';
 import { verifyDatabaseDump } from '../ops/backup.ts';
 import { rehearsalApplicationDump } from '../launch-rehearsal/infrastructure.ts';
+import type {
+  EconomicRehearsalStressFinding,
+  EconomicRehearsalStressResult,
+  EconomicStressFinding,
+  EconomicStressResult,
+  RecoveryResult,
+  RehearsalStressFinding,
+  RehearsalStressResult,
+} from './types.ts';
 import type { RehearsalStressFinding, RehearsalStressResult, RecoveryResult } from './types.ts';
 import { ProtocolTreasuryRehearsal } from './treasury.ts';
 import { rehearseOraclePlane, rehearseSunReyMoonReyExchange } from './workflows.ts';

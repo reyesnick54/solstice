@@ -167,6 +167,12 @@ export { restartDoesNotDuplicateVote, safeRestart } from './restart.ts';
 export { SEVEN_VALIDATOR_IDS, SevenValidatorNetwork, runRollingUpgrade } from './seven-validator.ts';
 export { opsUsage, runOpsCommand } from './cli.ts';
 export {
+  ValidatorOperatorPlatform,
+  runValidatorOperatorCommand,
+  runValidatorOperatorRehearsal,
+  operatorUsage as validatorOperatorUsage,
+} from '../validator-operator/index.ts';
+export {
   createStorageSnapshot,
   migrateDevStore,
   restoreStorageSnapshot,

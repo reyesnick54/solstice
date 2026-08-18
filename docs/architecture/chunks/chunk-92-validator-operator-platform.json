@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-92",
+  "title": "SunRey validator operator platform, fleet management and production operator control plane",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-validators",
+    "sunrey-validator-accountability",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-validator-economics",
+    "sunrey-production-network-candidate",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-pregenesis-qualification",
+    "sunrey-production-handoff",
+    "sunrey-validator-operator-platform"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/validator-operator. Operational projection and control plane only. Does not independently change validator-set state, create a second registry or consensus engine, enable public delegated staking, or issue a governance token. evaluateChunkRequirements returns mustStop: false. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
+}
