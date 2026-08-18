@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-100",
+  "title": "SunRey Human Information Network production-candidate rights, consent, clean-room, and compensation interfaces",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "evidence",
+    "personal-data-vault",
+    "consent",
+    "clean-room",
+    "information-market",
+    "sunrey-exchange",
+    "sunrey-developer-platform",
+    "sunrey-provider-runtime",
+    "sunrey-human-information-network"
+  ],
+  "notes": "IMPLEMENTED at packages/information-market/src/network. Extends the canonical Human Information marketplace, Consent/Purpose Firewall, Privacy Clean Room, Personal Data Vault, and Exchange HUMAN_INFORMATION_RIGHT family. Sensitive source data remains off-chain. Engineering completion does not activate production. Do not create packages/human-information-network, packages/information-market-v2, packages/human-information-v2, packages/data-marketplace, or packages/sunrey-information-network."
+}

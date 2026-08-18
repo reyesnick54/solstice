@@ -13,6 +13,11 @@ Implemented on latest `main` after Chunk 45. Canonical owner remains
 Do not create `packages/wallet-v2`, `packages/blockchain-wallet`,
 `packages/crypto-wallet`, or `packages/sunrey-wallet-ledger`.
 
+Chunk 100 can project privacy-minimized Human Information mobile
+events (new request, consent, usage receipt, compensation,
+revocation, security) onto the wallet/mobile surface. Payloads never
+include legal name or raw personal data.
+
 ## Account distinction
 
 A `BlockchainAccount` is not a bank deposit, brokerage, card, or

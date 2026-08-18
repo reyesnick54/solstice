@@ -843,12 +843,13 @@
         "packages/consent",
         "packages/clean-room",
         "packages/sunrey-coin",
-        "packages/platform"
+        "packages/platform",
+        "packages/sunrey-exchange"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Do not implement the Exchange matching engine or SunRey Chain."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Do not implement the Exchange matching engine or SunRey Chain."
     },
     {
       "id": "packages/sunrey-chain",
@@ -3565,6 +3566,35 @@
       "notes": "Chunk 95 institutional market operations at packages/sunrey-exchange/src/ops. Extends the canonical Exchange. No second Exchange or native-asset balance ledger. Production activation remains unlicensed without external legal/licensing/custody/human evidence."
       "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox, and local devnet at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Not an EVM chain."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
+    },
+    {
+      "id": "sunrey-human-information-network",
+      "name": "SunRey Human Information Network production-candidate interfaces",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/network/engine.ts",
+      "publicInterface": "packages/information-market/src/network/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "protectedSymbols": [
+        {
+          "name": "HumanInformationNetworkEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/human-information-network",
+        "packages/information-market-v2",
+        "packages/human-information-v2",
+        "packages/data-marketplace",
+        "packages/sunrey-information-network"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 100 production-candidate Human Information rights, consent, clean-room, and compensation interfaces at packages/information-market/src/network. Extends the canonical information-market, consent, clean-room, PDV, and Exchange HUMAN_INFORMATION_RIGHT family. Sensitive source data stays off-chain. Engineering completion does not activate production. Do not create a parallel identity, consent, PDV, clean-room, market, wallet, Exchange, chain, or ledger."
     }
   ],
   "authorizedMutationPaths": [
@@ -5085,6 +5115,13 @@
       "protected": true,
       "notes": "Chunk 92 validator operator platform, fleet management, and production operator control plane at packages/sunrey-chain/src/validator-operator. Operational projection only. Canonical validator-set state remains authoritative. Does not create a second registry, consensus engine, public delegated staking, or governance token. Do not create packages/validator-operator, packages/sunrey-validator-ops, packages/operator-platform, packages/validator-fleet, or packages/delegated-staking."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66/68/69/82/90. Adapter success is not approval. Do not create packages/provider-runtime, packages/sunrey-provider-runtime, packages/executable-providers, packages/provider-adapters, or packages/integration-providers."
+    },
+    {
+      "id": "sunrey-human-information-network",
+      "status": "IMPLEMENTED",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Chunk 100 Human Information Network production-candidate interfaces at packages/information-market/src/network. Purpose-limited information rights, clean-room computation, and compensation instructions. No human-worth or social-credit score. productionActivated=false. Do not create packages/human-information-network, packages/information-market-v2, packages/human-information-v2, packages/data-marketplace, or packages/sunrey-information-network."
     }
   ],
   "boundedContexts": [

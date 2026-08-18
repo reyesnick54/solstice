@@ -14,6 +14,8 @@ Coin, and SunRey Exchange. Public tickers remain `NOT_ASSIGNED`.
 - [Rust SDK](./rust-sdk.md)
 - [Events](./events.md)
 - [API reference](./api-reference.md)
+- [Human Information Network](../information/chunk-100-human-information-network.md)
+- [Requester API](../information/requester-api.md)
 
 Install the workspace SDK:
 

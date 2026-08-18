@@ -20,6 +20,9 @@ export const SCOPE_RESOURCE_COST: Readonly<Record<DeveloperPermission, number>> 
   MONETARY_PUBLIC_READ: 1,
   FAUCET_REQUEST: 8,
   SANDBOX_MANAGE: 3,
+  HUMAN_INFORMATION_READ: 2,
+  HUMAN_INFORMATION_REQUEST: 4,
+  HUMAN_INFORMATION_CLEAN_ROOM: 6,
 });
 
 export const DEFAULT_QUOTA: Omit<DeveloperQuota, 'quotaId' | 'appId' | 'environment'> = Object.freeze({

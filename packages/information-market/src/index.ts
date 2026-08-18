@@ -60,6 +60,38 @@ export {
   type RequesterVerificationState,
   type RequestStatus,
 } from './taxonomy.ts';
+export {
+  AGENT_INFORMATION_MANDATE,
+  DEVELOPER_INFORMATION_SCOPES,
+  HUMAN_INFORMATION_RIGHTS_SAFETY,
+  HumanInformationNetworkEngine,
+  createInformationApi,
+  INFORMATION_CATEGORIES,
+  INFORMATION_COMMANDS,
+  INFORMATION_RIGHT_TYPES,
+  NETWORK_LEGAL_STATUS,
+  OUTPUT_CLASSES,
+  RAW_EXPORT_POLICY,
+  createAuthorizedConnector,
+  defaultNetworkPolicy,
+  formatInformationCli,
+  privacyMinimizedNotification,
+  runInformationCommand,
+} from './network/index.ts';
+export type {
+  ConsentPreview,
+  ControlCenterProjection,
+  DeveloperAccessContext,
+  HumanInformationAssetDescriptor,
+  HumanInformationCompensationInstruction,
+  HumanInformationConsentGrant,
+  HumanInformationNetworkReport,
+  HumanInformationRequest,
+  HumanInformationRevocation,
+  HumanInformationRight,
+  HumanInformationSubject,
+  HumanInformationUsageReceipt,
+} from './network/index.ts';
 export type {
   BillingBreakdown,
   CompensationAgreement,

@@ -30,7 +30,10 @@
     "governance.event",
     "validator.event",
     "moonrey.issuance.receipt",
-    "machine.commerce.settlement"
+    "machine.commerce.settlement",
+    "information.request.submitted",
+    "information.consent.changed",
+    "information.usage.recorded"
   ],
   "delivery_states": ["PENDING", "DELIVERED", "RETRYING", "PERMANENTLY_FAILED"],
   "retry": {

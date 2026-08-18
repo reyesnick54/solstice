@@ -14,6 +14,12 @@ application is permitted to receive are sent.
 - `validator.event`
 - `moonrey.issuance.receipt`
 - `machine.commerce.settlement`
+- `information.request.submitted`
+- `information.consent.changed`
+- `information.usage.recorded`
+
+Human Information webhook events require a `HUMAN_INFORMATION_*` scope.
+Ordinary `CHAIN_READ` is not sufficient.
 
 ## Signing (`sunrey-webhook-v1`)
 

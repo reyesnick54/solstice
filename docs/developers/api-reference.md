@@ -20,6 +20,7 @@ Generated from the in-repo OpenAPI definitions and SDK route table.
 - INTEROPERABILITY
 - EXCHANGE
 - MONETARY
+- INFORMATION
 
 ## Public routes
 
@@ -74,6 +75,16 @@ Generated from the in-repo OpenAPI definitions and SDK route table.
 - `POST /v1/transactions`
 - `GET /v1/events`
 - `POST /v1/dev/faucet`
+- `GET /v1/information/rights`
+- `GET /v1/information/requests`
+- `POST /v1/information/consent/preview`
+- `POST /v1/information/consent/approve`
+- `POST /v1/information/consent/revoke`
+- `GET /v1/information/usage`
+- `GET /v1/information/compensation`
+- `POST /v1/information/requests`
+- `POST /v1/information/clean-room`
+- `GET /v1/information/clean-room/{id}`
 
 ## Operator routes
 
@@ -107,3 +118,7 @@ Canonical specifications:
 - `api/sunrey-events-v1.md`
 - `api/sunrey-developer-platform-v1.openapi.yaml`
 - `api/sunrey-webhooks-v1.json`
+
+Human Information Network (Chunk 100) routes stay privacy-minimized.
+A developer API key is not sufficient by itself. Production remains
+unactivated.

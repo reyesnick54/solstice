@@ -21,6 +21,10 @@ The information-right market sells **authorized use**, not data.
 
 The instrument never embeds a Personal Data Vault payload.
 
+Chunk 100 production-candidate interfaces at
+`packages/information-market/src/network` evaluate this eligibility
+before economic match and keep raw PDV unavailable to buyers.
+
 ## Consent checkpoints
 
 1. **List / sell** — required consent and rights must be active.

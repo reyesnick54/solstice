@@ -493,6 +493,64 @@ export class ProtocolTreasuryClient {
   }
 }
 
+export class InformationClient {
+  readonly http: HttpTransport;
+  constructor(http: HttpTransport) {
+    this.http = http;
+  }
+
+  getInformationRights(subjectId: string): Promise<unknown> {
+    return this.http.get(`/v1/information/rights?subject_id=${encodeURIComponent(subjectId)}`);
+  }
+
+  getInformationRequests(requesterId?: string): Promise<unknown> {
+    const query = requesterId ? `?requester_id=${encodeURIComponent(requesterId)}` : '';
+    return this.http.get(`/v1/information/requests${query}`);
+  }
+
+  previewInformationConsent(input: {
+    readonly request_id: string;
+    readonly subject_id: string;
+    readonly descriptor_id: string;
+  }): Promise<unknown> {
+    return this.http.post('/v1/information/consent/preview', input);
+  }
+
+  approveInformationConsent(input: {
+    readonly request_id: string;
+    readonly subject_id: string;
+    readonly descriptor_id: string;
+  }): Promise<unknown> {
+    return this.http.post('/v1/information/consent/approve', input);
+  }
+
+  revokeInformationConsent(input: { readonly grant_id: string }): Promise<unknown> {
+    return this.http.post('/v1/information/consent/revoke', input);
+  }
+
+  getInformationUsage(subjectId?: string): Promise<unknown> {
+    const query = subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : '';
+    return this.http.get(`/v1/information/usage${query}`);
+  }
+
+  getInformationCompensation(subjectId?: string): Promise<unknown> {
+    const query = subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : '';
+    return this.http.get(`/v1/information/compensation${query}`);
+  }
+
+  submitInformationRequest(input: Record<string, unknown>): Promise<unknown> {
+    return this.http.post('/v1/information/requests', input);
+  }
+
+  submitCleanRoomComputation(input: Record<string, unknown>): Promise<unknown> {
+    return this.http.post('/v1/information/clean-room', input);
+  }
+
+  getCleanRoomResult(computationRequestId: string): Promise<unknown> {
+    return this.http.get(`/v1/information/clean-room/${encodeURIComponent(computationRequestId)}`);
+  }
+}
+
 export class EventClient {
   readonly http: HttpTransport;
   constructor(http: HttpTransport) {
@@ -527,6 +585,7 @@ export class SunReyClient {
   readonly interop: InteropClient;
   readonly exchange: ExchangeClient;
   readonly treasury: ProtocolTreasuryClient;
+  readonly information: InformationClient;
   readonly events: EventClient;
 
   readonly http: HttpTransport;
@@ -544,6 +603,7 @@ export class SunReyClient {
     this.interop = new InteropClient(http);
     this.exchange = new ExchangeClient(http);
     this.treasury = new ProtocolTreasuryClient(http);
+    this.information = new InformationClient(http);
     this.events = new EventClient(http);
   }
 

@@ -42,6 +42,9 @@ export const DEVELOPER_SCOPES = [
   'MONETARY_PUBLIC_READ',
   'FAUCET_REQUEST',
   'SANDBOX_MANAGE',
+  'HUMAN_INFORMATION_READ',
+  'HUMAN_INFORMATION_REQUEST',
+  'HUMAN_INFORMATION_CLEAN_ROOM',
 ] as const;
 export type DeveloperPermission = (typeof DEVELOPER_SCOPES)[number];
 
@@ -61,6 +64,9 @@ export const WEBHOOK_EVENT_TYPES = [
   'validator.event',
   'moonrey.issuance.receipt',
   'machine.commerce.settlement',
+  'information.request.submitted',
+  'information.consent.changed',
+  'information.usage.recorded',
 ] as const;
 export type WebhookEventType = (typeof WEBHOOK_EVENT_TYPES)[number];
 
@@ -252,6 +258,9 @@ export const SCOPE_REQUIRED_EVENTS: Readonly<Record<WebhookEventType, DeveloperP
   'validator.event': 'VALIDATOR_PUBLIC_READ',
   'moonrey.issuance.receipt': 'MONETARY_PUBLIC_READ',
   'machine.commerce.settlement': 'MACHINE_PUBLIC_READ',
+  'information.request.submitted': 'HUMAN_INFORMATION_READ',
+  'information.consent.changed': 'HUMAN_INFORMATION_READ',
+  'information.usage.recorded': 'HUMAN_INFORMATION_READ',
 });
 
 export function isDeveloperRole(value: string): value is DeveloperRole {

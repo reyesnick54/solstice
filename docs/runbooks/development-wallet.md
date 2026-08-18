@@ -2,6 +2,10 @@
 
 Simulation only. Tickers remain `NOT_ASSIGNED`.
 
+Chunk 100 Human Information mobile events may appear as
+privacy-minimized wallet notifications. They never include legal name
+or raw personal data.
+
 ## Create and transfer
 
 ```
