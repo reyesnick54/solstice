@@ -88,3 +88,7 @@ npm run sunrey-mainnet -- candidate-v2 evidence
 - Not regulatory, legal, or licensing approval
 - Not an independent audit completion
 - Not production HSM or PQC activation
+
+Chunk 86 binds this candidate's root hash into
+`ProductionEnvironmentPlan`. It does not substitute a locally
+constructed Candidate V2.

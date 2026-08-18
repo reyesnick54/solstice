@@ -1154,6 +1154,9 @@ export function defaultDimensionCatalog(
       notes: 'AI cannot mark HUMAN_ACCEPTED or PRODUCTION_ELIGIBLE.',
       externalEvidence: true,
       chunkReference: 'CHUNK-82',
+      verificationStatus: 'NOT_PROVIDED',
+    },
+    {
       requirementId: 'REQ-ECON-REHEARSAL-001',
       dimension: 'GENESIS',
       description: 'Chunk 80 economic mainnet rehearsal engineering evidence',
@@ -1224,8 +1227,7 @@ export function defaultDimensionCatalog(
       verificationStatus: 'NOT_PROVIDED',
     },
   ];
-  return Object.freeze([...drafts.map(slot), ...mainnetRcReadinessRecords()]);
-  return Object.freeze(drafts.map((draft) => slot(draft, overlay)));
+  return Object.freeze([...drafts.map((draft) => slot(draft, overlay)), ...mainnetRcReadinessRecords()]);
 }
 
 export function dimensionsCovered(): readonly MainnetReadinessDimension[] {
