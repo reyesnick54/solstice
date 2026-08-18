@@ -791,6 +791,15 @@ This document describes only what is implemented and tested in this tree.
   only. Private keys never go to public RPC. See
   `docs/architecture/chunk-51-developer-platform.md` and
   `docs/developers/README.md`.
+- SunRey developer application platform (Chunk 94,
+  `packages/sunrey-sdk/src/developer-platform`): application registry,
+  scoped API credentials, signed webhooks, quotas, Testnet faucet
+  controls, sandbox identities, and local devnet. Capability
+  `sunrey-developer-platform` is `IMPLEMENTED`. Developer credentials
+  cannot sign user funds. Production application registration does
+  not activate production financial capabilities. See
+  `docs/architecture/chunk-94-developer-platform.md` and
+  `docs/developers/chunk-94-developer-platform.md`.
 - Production SunRey Blockchain node, consensus, P2P, storage, or
   native execution. Chunk 31 is an architecture freeze only.
   `packages/sunrey-chain` remains a simulation trust layer.

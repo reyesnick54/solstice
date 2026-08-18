@@ -2,6 +2,11 @@ export {
   PUBLIC_API_VERSION,
   V1_API,
   API_COMPATIBILITY,
+  API_DEPRECATIONS,
+  compatibilityPolicy,
+  parseApiVersion,
+} from './versioning.ts';
+export type { ApiDeprecationMetadata } from './versioning.ts';
   PUBLIC_API_VERSION_STRATEGY,
   parseApiVersion,
   requireVersionedPublicPath,
@@ -73,3 +78,25 @@ export { SdkRpcEndpointPool, connectSunReyPool, pooledTransport } from './pool.t
 export { createDevelopmentWallet, publicRegistration } from './development-wallet.ts';
 export { startPublicGateway, PUBLIC_ROUTES, OPERATOR_ROUTES } from './gateway/server.ts';
 export { DevelopmentPlatform } from './gateway/platform.ts';
+export {
+  DeveloperPortalApi,
+  DeveloperPlatformEngine,
+  verifyWebhookSignature,
+  signWebhookDelivery,
+  startLocalDeveloperStack,
+  runSunReyDev,
+  WEBHOOK_SIGNING_SCHEME,
+} from './developer-platform/index.ts';
+export type {
+  DeveloperAccount,
+  DeveloperOrganization,
+  DeveloperApplication,
+  DeveloperApiCredential,
+  DeveloperPermission,
+  DeveloperQuota,
+  WebhookEndpoint,
+  WebhookDelivery,
+  SandboxAccount,
+  DeveloperPlatformReport,
+} from './developer-platform/index.ts';
+export { verifyWebhookSignature as verifySunReyWebhook } from './webhook.ts';

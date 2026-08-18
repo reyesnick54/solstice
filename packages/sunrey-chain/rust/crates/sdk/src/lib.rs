@@ -51,6 +51,25 @@ pub const PATH_TREASURY_POLICY: &str = "/v1/treasury/policy";
 pub const PATH_TREASURY_RESERVES: &str = "/v1/treasury/reserves";
 pub const PATH_TREASURY_BUDGETS: &str = "/v1/treasury/budgets";
 pub const PATH_TREASURY_DISBURSEMENTS: &str = "/v1/treasury/disbursements";
+pub const WEBHOOK_SIGNING_SCHEME: &str = "sunrey-webhook-v1";
+pub const PATH_DEVELOPER_APPS: &str = "/v1/developer/apps";
+pub const PATH_DEVELOPER_KEYS: &str = "/v1/developer/keys";
+pub const PATH_DEVELOPER_WEBHOOKS: &str = "/v1/developer/webhooks";
+pub const PATH_DEVELOPER_STATUS: &str = "/v1/developer/testnet/status";
+
+/// Canonical webhook signing payload. Official clients verify locally
+/// and never send private keys or webhook secrets to SunRey servers.
+pub fn webhook_signing_payload(
+    delivery_id: &str,
+    event_id: &str,
+    timestamp: &str,
+    attempt: u32,
+    body_sha256_hex: &str,
+) -> String {
+    format!(
+        "{WEBHOOK_SIGNING_SCHEME}.{delivery_id}.{event_id}.{timestamp}.{attempt}.{body_sha256_hex}"
+    )
+}
 
 #[derive(Debug, thiserror::Error)]
 pub enum SdkError {
@@ -360,6 +379,14 @@ mod tests {
         assert!(PATH_TREASURY.starts_with("/v1/"));
         assert!(PATH_TREASURY_POLICY.starts_with("/v1/"));
         assert!(PATH_TREASURY_RESERVES.starts_with("/v1/"));
+        assert!(PATH_DEVELOPER_APPS.starts_with("/v1/"));
+        assert!(PATH_DEVELOPER_KEYS.starts_with("/v1/"));
+        assert!(PATH_DEVELOPER_WEBHOOKS.starts_with("/v1/"));
+        assert_eq!(WEBHOOK_SIGNING_SCHEME, "sunrey-webhook-v1");
+        assert_eq!(
+            webhook_signing_payload("whd_1", "evt_1", "2026-01-01T00:00:00.000Z", 1, "ab"),
+            "sunrey-webhook-v1.whd_1.evt_1.2026-01-01T00:00:00.000Z.1.ab"
+        );
     }
 
     #[test]

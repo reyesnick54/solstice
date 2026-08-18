@@ -3516,6 +3516,35 @@
       "notes": "Chunk 88 authorized production genesis execution engine at packages/sunrey-chain/src/genesis-execution. Isolated rehearsal in CI. Does not launch mainnet or automatically activate customer financial capabilities.",
       "notes": "Chunk 87 pre-genesis production shadow network and operational qualification at packages/sunrey-chain/src/pregenesis. Isolated identity. Does not launch mainnet or treat PREGENESIS_ENGINEERING_QUALIFIED as authorization.",
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Plan-first, provider-neutral, CI uses local/rehearsal infrastructure only. Does not execute production genesis, enable LIVE_* flags, or activate customer financial capabilities."
+    },
+    {
+      "id": "sunrey-developer-platform",
+      "name": "SunRey developer application platform, credentials, webhooks, and sandbox",
+      "canonicalOwner": "packages/sunrey-sdk",
+      "canonicalPath": "packages/sunrey-sdk/src/developer-platform/index.ts",
+      "publicInterface": "packages/sunrey-sdk/src/developer-platform/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "DeveloperPortalApi",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-developer-platform",
+        "packages/developer-portal",
+        "packages/app-registry",
+        "packages/webhook-service",
+        "packages/developer-platform-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox, and local devnet at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Not an EVM chain."
       "notes": "Chunk 91 executable provider runtime at packages/sunrey-chain/src/provider-runtime. Extends Chunks 66, 68, 69, 82 and 90. Adapter success is not legal or commercial approval. PRODUCTION_AUTHORIZED requires configured evidence and human authority."
     }
   ],
@@ -4241,6 +4270,11 @@
     "packages/sunrey-production-platform",
     "packages/mainnet-infrastructure-v2",
     "packages/cloud-control-plane",
+    "packages/sunrey-developer-platform",
+    "packages/developer-portal",
+    "packages/app-registry",
+    "packages/webhook-service",
+    "packages/developer-platform-v2"
     "packages/provider-runtime",
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
@@ -5007,6 +5041,11 @@
       "notes": "Chunk 86 production-environment provisioning control plane at packages/sunrey-chain/src/infra/provisioning. Extends Chunk 66. Deterministic plan-first control plane. CI uses local/rehearsal infrastructure only. Does not provision billable cloud, execute genesis, or activate LIVE_* / customer capabilities. Do not create packages/sunrey-production-platform, packages/mainnet-infrastructure-v2, or packages/cloud-control-plane."
     },
     {
+      "id": "sunrey-developer-platform",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-sdk",
+      "protected": true,
+      "notes": "Chunk 94 developer application registry, scoped API credentials, signed webhooks, Testnet/sandbox tooling, and local developer environment at packages/sunrey-sdk/src/developer-platform. Extends Chunk 51 SDK/API and Chunk 53 Testnet. Developer credentials cannot sign user funds. Production application registration does not activate production financial capabilities. Do not create packages/sunrey-developer-platform, packages/developer-portal, packages/app-registry, packages/webhook-service, or packages/developer-platform-v2."
       "id": "sunrey-public-data-plane",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

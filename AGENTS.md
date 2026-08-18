@@ -101,7 +101,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`. Chunk 63 Testnet RC freeze and qualification lives at `src/release-candidate`. Chunk 70 launch rehearsal lives at `src/launch-rehearsal`. Chunk 71 monetary constitution lives at `src/economics`. Chunk 78 economic RC freeze and qualification lives at `src/release-candidate/economic`. Chunk 84 Mainnet RC freeze and qualification lives at `src/release-candidate/mainnet`. Chunk 87 pre-genesis shadow qualification lives at `src/pregenesis`.
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger. Chunk 54 operator infrastructure lives at `src/ops`. Chunk 63 Testnet RC freeze and qualification lives at `src/release-candidate`. Chunk 70 launch rehearsal lives at `src/launch-rehearsal`. Chunk 71 monetary constitution lives at `src/economics`. Chunk 79 production governance operations live at `src/governance-ops`.
 - `packages/sunrey-chain` — SunRey Chain simulation trust layer; not a second ledger
-- `packages/sunrey-sdk` — official developer SDK and versioned public API adapter
+- `packages/sunrey-sdk` — official developer SDK and versioned public API adapter. Chunk 94 application registry, credentials, webhooks, and sandbox live at `src/developer-platform`.
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
 - `packages/sunrey-economics` — Chunk 75 SunRey/MoonRey dual-economy simulation laboratory; not production monetary policy
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
