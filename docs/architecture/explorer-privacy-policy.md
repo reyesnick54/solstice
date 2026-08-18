@@ -28,6 +28,7 @@ or `PUBLIC_DERIVED` are stripped.
 - machine controller secrets, secret mandates, or security credentials
 - private exchange order-account information
 - private investigations
+- private wallet device bindings, sessions, recovery requests, recovery evidence, or session tokens
 
 A BlockchainAccount is not a bank account. The account view states
 `notABankAccount: true`.

@@ -4,6 +4,19 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- SunRey advanced wallet security, recovery, device trust, and
+  transaction authorization (Chunk 96,
+  `packages/sunrey-chain/src/wallet/security`):
+  `WalletSecurityProfile`, device binding and trust, scoped sessions,
+  `SigningIntent`, spend and destination controls, delegated-key
+  bindings, recovery with delay/cancel, key rotation, custody/self-
+  custody boundaries, TypeScript/Rust SDK helpers,
+  `sunrey-wallet security|devices|sessions|trusted-destinations|recovery|rotate-key|delegations|audit`,
+  and bounded model `WALLET_AUTHORIZATION_SAFETY`. Capability
+  `sunrey-wallet-security` is `IMPLEMENTED`. Application login is not
+  native signing. Recovery cannot rewrite finalized transfers.
+  `ENVIRONMENT` remains `simulation`. See
+  `docs/wallet/chunk-96-wallet-security.md`.
 - SunRey public RPC edge, high-availability Explorer, and production
   network data plane (Chunk 93,
   `packages/sunrey-chain/src/public-data-plane`): `PublicRpcGateway`,

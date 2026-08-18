@@ -4,6 +4,7 @@ export {
   V1_API,
   API_COMPATIBILITY,
   API_DEPRECATIONS,
+  PUBLIC_API_VERSION_STRATEGY,
   compatibilityPolicy,
   parseApiVersion,
   requireVersionedPublicPath,
@@ -109,3 +110,11 @@ export {
   getSecurityEvents,
 } from './mobile-sync.ts';
 export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';
+  WalletSecurityClient,
+  getWalletSecurityProfile,
+  getWalletDevices,
+  getWalletSessions,
+  buildSigningIntent,
+  getWalletPolicies,
+  getRecoveryState,
+} from './wallet-security.ts';

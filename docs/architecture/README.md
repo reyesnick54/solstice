@@ -154,6 +154,10 @@
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at
   `packages/sunrey-chain/src/wallet/mobile-sync`.
+- [Chunk 96 wallet security](../wallet/chunk-96-wallet-security.md)
+  — device trust, sessions, transaction authorization, delegated
+  keys, recovery, and key rotation at
+  `packages/sunrey-chain/src/wallet/security`.
 
 - [Chunk 92 validator operator platform](../validators/chunk-92-validator-operator-platform.md)
   — fleet, enrollment, maintenance, upgrade, signer, and incident

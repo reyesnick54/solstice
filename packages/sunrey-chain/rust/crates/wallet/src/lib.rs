@@ -7,6 +7,7 @@ pub mod account;
 pub mod address;
 pub mod auth;
 pub mod mobile_sync;
+pub mod security;
 
 pub use account::{AccountStatus, BlockchainAccount};
 pub use address::{
@@ -14,6 +15,11 @@ pub use address::{
     NetworkClass, ADDRESS_MAX_BINARY, ADDRESS_MAX_TEXT, ADDRESS_VERSION,
 };
 pub use auth::{authorize, AccountPolicy, AuthError, AuthPolicy, PresentedSignature};
+pub use security::{
+    approval_holds, authorize_network, guardian_cannot_spend, recovery_cannot_rewrite,
+    retrieve_self_custody_private_key, revoked_delegation_cannot_authorize, session_cannot_sign,
+    CustodyClass, SessionScope, SigningIntent, WalletSecurityError,
+};
 
 #[cfg(test)]
 mod tests {

@@ -37,6 +37,8 @@ Engineering test matrix for the isolated Chunk 57 range. Detector output is not 
 | MULTISIG-UNAUTHORIZED | wallet | unauthorized signer | authorizedKeyIds | UNAUTHORIZED_SIGNER | NO_UNAUTHORIZED_GOVERNANCE | none | TESTED |
 | MULTISIG-FORGED | wallet | one valid + one forged signature | threshold + authorized set | INSUFFICIENT_M_OF_N | NO_UNAUTHORIZED_GOVERNANCE | none | TESTED |
 | MULTISIG-STALE-AFTER-ROTATION | wallet | stale signer after rotation | rotated key becomes HISTORICAL | OLD_ROTATED_KEY | NO_UNAUTHORIZED_GOVERNANCE | use new key | TESTED |
+| WALLET-SESSION-AS-MASTER | wallet | convert application login into master wallet authority | application authentication is not native signing | SESSION_IS_NOT_SIGNING_AUTHORITY | NO_MACHINE_MANDATE_BYPASS | none | TESTED |
+| WALLET-GUARDIAN-SPEND | wallet | guardian attempts everyday spend | guardian approval is recovery-scoped | GUARDIAN_CANNOT_SPEND | NO_MACHINE_MANDATE_BYPASS | none | TESTED |
 | ORACLE-ONE-MALICIOUS | oracle | one malicious source | median + quorum | quality / conflict metrics | NO_UNAUTHORIZED_ISSUANCE | suspend provider | TESTED |
 | ORACLE-TWO-COLLUDING | oracle | two colluding sources | spread / conflict policy | conflicted fact | NO_UNAUTHORIZED_ISSUANCE | suspend colluders | TESTED |
 | ORACLE-OUTLIER | oracle | outlier values | REJECT_OUTSIDE_SPREAD | conflict metrics | NO_UNAUTHORIZED_ISSUANCE | drop outlier | TESTED |

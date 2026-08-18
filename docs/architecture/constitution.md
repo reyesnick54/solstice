@@ -1290,6 +1290,17 @@ self-custody master private keys. Do not create
 `packages/wallet-sync`, `packages/mobile-wallet-v2`, or
 `packages/sunrey-push`. See
 [`chunk-97-mobile-sync.md`](./chunk-97-mobile-sync.md).
+Chunk 96 implements SunRey advanced wallet security, recovery,
+device trust, and transaction authorization at
+`packages/sunrey-chain/src/wallet/security`. Capability
+`sunrey-wallet-security` is `IMPLEMENTED`. It extends Chunk 46
+sovereign wallets. Application authentication is not native
+signing. Passkeys are not blockchain private keys. Recovery
+cannot rewrite finalized transfers. Do not create
+`packages/wallet-security`, `packages/sunrey-wallet-security`,
+`packages/wallet-auth`, `packages/device-trust`, or
+`packages/wallet-recovery-v2`. See
+[`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
 
 ## Agent stop rule
 
