@@ -28,10 +28,10 @@ export function handleExplorerRequest(
   if (path === '/v1/status' || path === '/v1/health') {
     return json(200, {
       ok: true,
-      environment: 'simulation',
       network: 'DEVELOPMENT',
       ...queries.networkStatus(),
       ...queries.lag(),
+      environment: 'simulation',
     });
   }
   if (path === '/v1/network/status') {

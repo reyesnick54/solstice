@@ -27,12 +27,12 @@ import {
   openProviderSession,
   probePqcCapability,
   resolveAssignedSecret,
-  type ProviderCredentialBinding,
 } from './core.ts';
 import {
   runtimeErr,
   runtimeOk,
   type PqcCapabilityProbe,
+  type ProviderCredentialBinding,
   type ProviderRuntimeMode,
   type ProviderRuntimeResult,
   type ProviderSession,
@@ -67,9 +67,9 @@ export class MockBackedTransport implements ProviderTransport {
     return this.#fleet.get(input.domain).handle({
       domain: input.domain,
       operation: input.operation,
-      idempotencyKey: input.idempotencyKey,
-      schemaVersion: input.schemaVersion,
-      body: input.body,
+      ...(input.idempotencyKey === undefined ? {} : { idempotencyKey: input.idempotencyKey }),
+      ...(input.schemaVersion === undefined ? {} : { schemaVersion: input.schemaVersion }),
+      ...(input.body === undefined ? {} : { body: input.body }),
     });
   }
 }

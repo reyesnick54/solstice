@@ -123,7 +123,7 @@ export function createProviderRuntime(input?: {
 }): ProviderRuntimeResult<ProviderRuntime> {
   const sandboxCredentialPresent = input?.sandboxCredentialPresent === true;
   const mode = resolveRuntimeMode({
-    requested: input?.requestedMode,
+    ...(input?.requestedMode === undefined ? {} : { requested: input.requestedMode }),
     sandboxCredentialPresent,
     externalEvidencePresent: input?.externalEvidencePresent === true,
     humanAuthorityPresent: input?.humanAuthorityPresent === true,
@@ -182,7 +182,7 @@ function sessionFor(
     domain,
     environment: runtime.mode,
     workloadIdentity: workload,
-    credentialHref: runtime.sandboxCredentialPresent ? secretRef('local', 'kyc-worker').href : undefined,
+    ...(runtime.sandboxCredentialPresent ? { credentialHref: secretRef('local', 'kyc-worker').href } : {}),
   });
 }
 

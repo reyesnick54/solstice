@@ -306,8 +306,6 @@ export type EconomicActivationEvidenceBundle = {
   };
   readonly formalResults: readonly TraceConformanceResult[];
   readonly stressResults: RehearsalStressResult;
-  readonly stressResults: EconomicRehearsalStressResult;
-  readonly stressResults: EconomicStressResult;
   readonly supplyAudits: readonly SupplyAuditResult[];
   readonly treasuryAudit: TreasuryRehearsalResult;
   readonly exchangeReconciliation: ExchangeRehearsalResult;

@@ -70,6 +70,9 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'infra')}`) ||
         file.includes(`${join('src', 'production-ceremony')}`) ||
         file.includes(`${join('src', 'production-handoff')}`) ||
+        file.includes(`${join('src', 'genesis-execution')}`) ||
+        file.includes(`${join('src', 'provider-runtime')}`) ||
+        file.includes(`${join('src', 'pregenesis')}`) ||
         file.endsWith(`${join('src', 'index.ts')}`) ||
         file.endsWith(`${join('wallet', 'types.ts')}`) ||
         file.endsWith(`${join('wallet', 'address.ts')}`) ||

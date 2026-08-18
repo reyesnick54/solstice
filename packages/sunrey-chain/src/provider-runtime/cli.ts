@@ -56,8 +56,9 @@ function requestedMode(): ProviderRuntimeMode | undefined {
 export function runProviderRuntimeCommand(args: readonly string[]): ProviderRuntimeCliResult {
   const [action] = args;
   const sandboxCredentialPresent = envSandboxPresent();
+  const modeRequest = requestedMode();
   const created = createProviderRuntime({
-    requestedMode: requestedMode(),
+    ...(modeRequest === undefined ? {} : { requestedMode: modeRequest }),
     sandboxCredentialPresent,
   });
   if (!created.ok) {

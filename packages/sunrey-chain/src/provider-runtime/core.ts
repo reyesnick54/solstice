@@ -45,16 +45,16 @@ export const FORBIDDEN_SECRET_KEYS = Object.freeze([
 ]);
 
 const WORKLOAD_ALLOWED_DOMAINS: Readonly<Record<WorkloadIdentity, readonly ProviderDomain[]>> = Object.freeze({
-  oracle_collector: Object.freeze(['ORACLE_DATA_SOURCE']),
-  explorer: Object.freeze(['OBJECT_STORAGE', 'DNS', 'CERTIFICATE_MANAGER']),
-  rpc: Object.freeze(['OBJECT_STORAGE', 'DNS', 'CERTIFICATE_MANAGER', 'DATABASE']),
-  case_management: Object.freeze(['CASE_MANAGEMENT', 'MARKET_SURVEILLANCE']),
-  kyc_worker: Object.freeze(['IDENTITY_KYC']),
-  screening_worker: Object.freeze(['SANCTIONS_PEP', 'AML_TRANSACTION_MONITORING']),
-  travel_rule_worker: Object.freeze(['TRAVEL_RULE']),
-  surveillance_worker: Object.freeze(['MARKET_SURVEILLANCE', 'CASE_MANAGEMENT']),
-  custody_worker: Object.freeze(['CUSTODY_PROVIDER']),
-  banking_worker: Object.freeze(['BANKING_REFERENCE']),
+  oracle_collector: Object.freeze(['ORACLE_DATA_SOURCE'] as const),
+  explorer: Object.freeze(['OBJECT_STORAGE', 'DNS', 'CERTIFICATE_MANAGER'] as const),
+  rpc: Object.freeze(['OBJECT_STORAGE', 'DNS', 'CERTIFICATE_MANAGER', 'DATABASE'] as const),
+  case_management: Object.freeze(['CASE_MANAGEMENT', 'MARKET_SURVEILLANCE'] as const),
+  kyc_worker: Object.freeze(['IDENTITY_KYC'] as const),
+  screening_worker: Object.freeze(['SANCTIONS_PEP', 'AML_TRANSACTION_MONITORING'] as const),
+  travel_rule_worker: Object.freeze(['TRAVEL_RULE'] as const),
+  surveillance_worker: Object.freeze(['MARKET_SURVEILLANCE', 'CASE_MANAGEMENT'] as const),
+  custody_worker: Object.freeze(['CUSTODY_PROVIDER'] as const),
+  banking_worker: Object.freeze(['BANKING_REFERENCE'] as const),
   infra_worker: Object.freeze([
     'CLOUD_INFRASTRUCTURE',
     'SECRET_MANAGER',
@@ -63,12 +63,12 @@ const WORKLOAD_ALLOWED_DOMAINS: Readonly<Record<WorkloadIdentity, readonly Provi
     'DNS',
     'CERTIFICATE_MANAGER',
     'OTHER_GOVERNED_EXTERNAL_PROVIDER',
-  ]),
-  kms_worker: Object.freeze(['KMS']),
-  hsm_worker: Object.freeze(['HSM']),
-  validator_signer: Object.freeze(['HSM']),
-  consensus_execution: Object.freeze([]),
-  governance_kms: Object.freeze(['KMS']),
+  ] as const),
+  kms_worker: Object.freeze(['KMS'] as const),
+  hsm_worker: Object.freeze(['HSM'] as const),
+  validator_signer: Object.freeze(['HSM'] as const),
+  consensus_execution: Object.freeze([] as const),
+  governance_kms: Object.freeze(['KMS'] as const),
 });
 
 const WORKLOAD_ZONE: Readonly<Record<WorkloadIdentity, NetworkZone>> = Object.freeze({
@@ -148,7 +148,7 @@ export function authorizeWorkload(
   workload: WorkloadIdentity,
   domain: ProviderDomain,
 ): ProviderRuntimeResult<true> {
-  if (workload === 'consensus_execution' || CONSENSUS_HAS_NO_PROVIDER_EGRESS === false) {
+  if (workload === 'consensus_execution' && CONSENSUS_HAS_NO_PROVIDER_EGRESS) {
     return runtimeErr('CONSENSUS_EGRESS_FORBIDDEN', 'consensus execution has no general provider egress');
   }
   const allowed = WORKLOAD_ALLOWED_DOMAINS[workload];
