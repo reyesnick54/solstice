@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -276,6 +277,22 @@ describe('Chunk 85 production genesis ceremony', () => {
     const readiness = reevaluateReadinessAfterProductionCeremony();
     assert.ok(readiness.records.some((row) => row.dimension === 'ROOT_OF_TRUST' && row.verificationStatus !== 'HUMAN_VERIFIED'));
     assert.equal(assertPurposeSeparation.length > 0 || true, true);
+
+    const spawned = spawnSync(
+      process.execPath,
+      [
+        '--experimental-strip-types',
+        '--disable-warning=ExperimentalWarning',
+        join(ROOT, 'packages/sunrey-chain/src/production-ceremony/cli-main.ts'),
+        'production',
+        'rehearse',
+      ],
+      { encoding: 'utf8', env: { ...process.env, SUNREY_FIXTURE_ENV: 'local' } },
+    );
+    assert.equal(spawned.status, 0, spawned.stderr);
+    assert.doesNotMatch(spawned.stdout, /sunrey-ceremony <plan\|participants/);
+    assert.match(spawned.stdout, /rehearsal_sunrey_production_genesis_ceremony_1/);
+    assert.match(spawned.stdout, /"realProductionKeysCreated": false/);
   });
 
   it('publishes the required documentation and forbids competing packages', () => {

@@ -144,7 +144,7 @@ function main(): void {
   process.exitCode = result.ok ? 0 : 1;
 }
 
-const invoked = process.argv[1]?.includes('ceremony/cli');
+const invoked = /(?:^|[\\/])packages[\\/]security[\\/]src[\\/]ceremony[\\/]cli\.ts$/.test(process.argv[1] ?? '');
 if (invoked) {
   main();
 }
