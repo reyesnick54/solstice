@@ -294,7 +294,19 @@ function dispatch(
     return json(200, { network_id: platform.networkId, chain_id: platform.chainId, environment: 'simulation' });
   }
   if (method === 'GET' && path === '/v1/chain/protocol') {
-    return json(200, { protocol_version: '1', api_version: 'v1', compatibility: 'BACKWARD_COMPATIBLE' });
+    return json(200, platform.getProtocolVersion());
+  }
+  if (method === 'GET' && path === '/v1/network/phase') {
+    return json(200, platform.getNetworkPhase());
+  }
+  if (method === 'GET' && path === '/v1/network/capabilities') {
+    return json(200, platform.getCapabilityStatus());
+  }
+  if (method === 'GET' && path === '/v1/network/health') {
+    return json(200, platform.getPostGenesisHealth());
+  }
+  if (method === 'GET' && path === '/v1/network/status') {
+    return json(200, platform.postGenesisPublicStatus());
   }
   if (method === 'GET' && path === '/v1/chain/finality') {
     const status = platform.chainStatus();
@@ -726,6 +738,10 @@ export const PUBLIC_ROUTES = [
   'GET /v1/chain/status',
   'GET /v1/chain/network',
   'GET /v1/chain/protocol',
+  'GET /v1/network/phase',
+  'GET /v1/network/capabilities',
+  'GET /v1/network/health',
+  'GET /v1/network/status',
   'GET /v1/chain/finality',
   'GET /v1/chain/blocks',
   'GET /v1/chain/transactions',

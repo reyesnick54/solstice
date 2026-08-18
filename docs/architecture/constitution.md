@@ -1160,6 +1160,18 @@ certification, or human approvals. Do not create
 `packages/external-providers`, or `packages/sunrey-providers`. See
 [`chunk-82-production-provider-acceptance.md`](./chunk-82-production-provider-acceptance.md).
 
+Chunk 89 implements SunRey post-genesis stabilization, safe-mode
+operations, and progressive production capability activation at
+`packages/sunrey-chain/src/post-genesis`. Capability
+`sunrey-post-genesis-stabilization` is `IMPLEMENTED`. Automated tests
+use rehearsal networks. It does not launch mainnet, enable `LIVE_*`
+flags, or activate real production capabilities. Genesis does not
+automatically enable regulated or high-risk financial services. Do not
+create `packages/post-genesis`, `packages/sunrey-post-genesis`,
+`packages/stabilization`, `packages/capability-activation`, or
+`packages/production-activation`. See
+[`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

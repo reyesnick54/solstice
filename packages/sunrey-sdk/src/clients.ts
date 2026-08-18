@@ -527,6 +527,22 @@ export class SunReyClient {
     return this.http.get('/v1/chain/status');
   }
 
+  getNetworkPhase(): Promise<unknown> {
+    return this.http.get('/v1/network/phase');
+  }
+
+  getCapabilityStatus(): Promise<unknown> {
+    return this.http.get('/v1/network/capabilities');
+  }
+
+  getPostGenesisHealth(): Promise<unknown> {
+    return this.http.get('/v1/network/health');
+  }
+
+  getProtocolVersion(): Promise<unknown> {
+    return this.http.get('/v1/chain/protocol');
+  }
+
   transaction(id: string): Promise<TransactionReceipt> {
     return this.http.get(`/v1/chain/transactions/${id}`);
   }

@@ -245,7 +245,6 @@ export type GovernanceRehearsalResult = {
 };
 
 export type RehearsalStressFinding = {
-export type EconomicRehearsalStressFinding = {
   readonly findingId: string;
   readonly scenario: string;
   readonly severity: 'INFO' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
@@ -254,8 +253,9 @@ export type EconomicRehearsalStressFinding = {
   readonly becomesMainnetBlocker: boolean;
 };
 
+export type EconomicRehearsalStressFinding = RehearsalStressFinding;
+
 export type RehearsalStressResult = {
-export type EconomicRehearsalStressResult = {
   readonly oracleDegradation: boolean;
   readonly liquidityStress: boolean;
   readonly networkCongestion: boolean;
@@ -266,12 +266,12 @@ export type EconomicRehearsalStressResult = {
   readonly compoundEnergyOracleLiquidityCongestion: boolean;
   readonly accountingSafe: boolean;
   readonly findings: readonly RehearsalStressFinding[];
-  readonly findings: readonly EconomicRehearsalStressFinding[];
-  readonly findings: readonly EconomicStressFinding[];
   readonly chunk76CampaignId?: string;
   readonly chunk76ReportHash?: string;
   readonly chunk76Violations?: number;
 };
+
+export type EconomicRehearsalStressResult = RehearsalStressResult;
 
 export type RecoveryResult = {
   readonly scenario: string;

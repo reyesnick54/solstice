@@ -146,6 +146,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-economic-mainnet-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-post-genesis-stabilization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -674,6 +675,15 @@ authorization. Do not create `packages/sunrey-mainnet-rc`,
 `packages/mainnet-rc`, `packages/mainnet-qualification`,
 `packages/sunrey-mainnet-release`, or
 `packages/mainnet-release-candidate`. The evaluator returns
+`mustStop: false`.
+Chunk 89 implements post-genesis stabilization and progressive
+capability activation at `packages/sunrey-chain/src/post-genesis`.
+Capability `sunrey-post-genesis-stabilization` is `IMPLEMENTED`. See
+[`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
+It does not launch mainnet or activate real production capabilities.
+Do not create `packages/post-genesis`, `packages/sunrey-post-genesis`,
+`packages/stabilization`, `packages/capability-activation`, or
+`packages/production-activation`. The evaluator returns
 `mustStop: false`.
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at
