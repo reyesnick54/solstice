@@ -1,5 +1,11 @@
 # Mainnet readiness framework
 
+Chunk 90 adds the production-handoff and day-2 readiness report at
+`packages/sunrey-chain/src/production-handoff`. Handoff states describe
+the evidence package, not network launch. See
+[chunk-90-production-handoff.md](./chunk-90-production-handoff.md).
+
+
 Readiness is assembled from machine-readable dimensions. Each dimension
 holds requirement ID, description, scope, evidence type, hash/reference,
 source, verification status, authorized verifier role, optional review

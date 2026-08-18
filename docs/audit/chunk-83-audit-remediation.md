@@ -1,5 +1,10 @@
 # Chunk 83 — Independent security-review findings remediation
 
+Chunk 90 carries unresolved findings and accepted risks forward across
+production releases. A rehearsal is not an external audit. See
+[../mainnet/chunk-90-production-handoff.md](../mainnet/chunk-90-production-handoff.md).
+
+
 Canonical owner remains `packages/sunrey-chain/src/audit`.
 Implementation lives at `packages/sunrey-chain/src/audit/remediation`.
 

@@ -2572,6 +2572,43 @@
       "notes": "Chunk 84 Mainnet Release Candidate freeze, qualification, and evidence bundle at packages/sunrey-chain/src/release-candidate/mainnet. Extends Chunk 59 ReleaseAuthority and Chunk 63/78 RC control. Does not launch mainnet. ENGINEERING_QUALIFIED is not AUTHORIZED_CANDIDATE."
     },
     {
+      "id": "sunrey-production-handoff",
+      "name": "SunRey production handoff and day-2 operations control plane",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/production-handoff/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/production-handoff/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionHandoffPackage",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionEvidenceSeal",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionOperationalReadinessReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/production-handoff",
+        "packages/sunrey-handoff",
+        "packages/day-2-ops",
+        "packages/production-ops",
+        "packages/operator-acceptance"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
+    },
+    {
       "id": "sunrey-audit-readiness",
       "name": "SunRey independent security-review preparation",
       "id": "sunrey-launch-rehearsal",
@@ -4395,7 +4432,12 @@
     "packages/production-genesis",
     "packages/genesis-ceremony",
     "packages/launch-authorization",
-    "packages/production-ceremony"
+    "packages/production-ceremony",
+    "packages/production-handoff",
+    "packages/sunrey-handoff",
+    "packages/day-2-ops",
+    "packages/production-ops",
+    "packages/operator-acceptance"
     "packages/sunrey-mainnet-rc",
     "packages/mainnet-rc",
     "packages/mainnet-qualification",
@@ -5238,6 +5280,11 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, or packages/production-ceremony."
+      "id": "sunrey-production-handoff",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Owner: packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet or convert rehearsal into observed production. Do not create packages/production-handoff, packages/sunrey-handoff, packages/day-2-ops, packages/production-ops, or packages/operator-acceptance."
       "id": "sunrey-mainnet-rc",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",

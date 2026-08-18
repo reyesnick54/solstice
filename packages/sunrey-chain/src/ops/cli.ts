@@ -42,6 +42,7 @@ import {
 } from '../validator-economics/index.ts';
 import { governanceOpsUsage, runGovernanceOpsCommand } from '../governance-ops/cli.ts';
 import { providerUsage, runProviderOpsCommand } from '../providers/cli.ts';
+import { productionUsage, runProductionHandoffCommand } from '../production-handoff/cli.ts';
 
 const RESILIENCE_COMMANDS = [
   'health',
@@ -241,6 +242,7 @@ export function opsUsage(): string {
     'sunrey-ops crypto benchmark',
     ...governanceOpsUsage().split('\n'),
     ...providerUsage(),
+    ...productionUsage().split('\n'),
   ].join('\n');
 }
 
@@ -248,6 +250,10 @@ const nowUtc = () => '2026-08-17T00:00:00.000Z';
 
 export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-ops-dev'): CliResult {
   const [group, action, extra] = args;
+  if (group === 'production') {
+    const result = runProductionHandoffCommand(args.slice(1));
+    return { ok: result.ok, command: `production ${result.command}`, payload: result.payload };
+  }
   if (group === 'crypto') {
     const result = runCryptoCommand(args.slice(1));
     return { ok: result.ok, command: result.command, payload: result.payload };
@@ -468,6 +474,16 @@ export function runOpsCommand(args: readonly string[], dataDir = '/tmp/sunrey-op
 export async function main(): Promise<void> {
   const argv = process.argv.slice(2);
   const head = argv[0] ?? 'health';
+  if (head === 'production') {
+    const result = runProductionHandoffCommand(argv.slice(1));
+    assertNoPrivateKeyMaterial(result);
+    const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+    console.log(text);
+    if (!result.ok) {
+      process.exitCode = 1;
+    }
+    return;
+  }
   if (head === 'provider') {
     const result = runProviderOpsCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);

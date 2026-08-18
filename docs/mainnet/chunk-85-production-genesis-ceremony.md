@@ -86,3 +86,8 @@ sunrey-ceremony production rehearse
 
 Chunk 64 commands (`sunrey-ceremony rehearse`, and the other
 non-`production` commands) remain unchanged.
+
+Chunk 90 binds the ceremony authorization package into the production
+handoff package and the isolated 86–90 rehearsal chain. See
+[chunk-90-production-handoff.md](./chunk-90-production-handoff.md).
+

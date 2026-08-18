@@ -92,6 +92,20 @@ jobs:
           npm test
           npm run sunrey-ceremony -- rehearse
           npm run sunrey-ceremony -- production rehearse
+          npm run sunrey-ops -- production inventory
+          npm run sunrey-ops -- production baseline
+          npm run sunrey-ops -- production access
+          npm run sunrey-ops -- production operators
+          npm run sunrey-ops -- production slo
+          npm run sunrey-ops -- production incidents
+          npm run sunrey-ops -- production backups
+          npm run sunrey-ops -- production restore-drill
+          npm run sunrey-ops -- production providers
+          npm run sunrey-ops -- production changes
+          npm run sunrey-ops -- production evidence-seal
+          npm run sunrey-ops -- production handoff
+          npm run sunrey-ops -- production readiness
+          npm run sunrey-ops -- production rehearse
           npm run sunrey-bench -- sanity
 
       - name: Fuzz smoke

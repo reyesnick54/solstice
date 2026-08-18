@@ -1,5 +1,10 @@
 # Chunk 84 — SunRey Mainnet release candidate
 
+Chunk 90 binds this Mainnet RC into the production handoff package
+and evidence seal. See
+[../mainnet/chunk-90-production-handoff.md](../mainnet/chunk-90-production-handoff.md).
+
+
 This document describes the first complete SunRey Mainnet Release
 Candidate qualification system.
 

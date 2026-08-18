@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-90",
+  "title": "SunRey production handoff, day-2 operations, final launch evidence and operator acceptance architecture",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-validator-operations",
+    "sunrey-ops-resilience",
+    "sunrey-governance-operations",
+    "sunrey-production-provider-acceptance",
+    "sunrey-audit-remediation",
+    "sunrey-mainnet-rc",
+    "sunrey-production-network-candidate",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-production-handoff"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-handoff. Day-2 operations and production-handoff architecture only. Does not launch mainnet, convert rehearsal into observed production, enable LIVE_* flags, or let AI satisfy human accountability roles. evaluateChunkRequirements returns mustStop: false. Do not create packages/production-handoff, packages/sunrey-handoff, packages/day-2-ops, packages/production-ops, or packages/operator-acceptance."
+}

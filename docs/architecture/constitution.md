@@ -80,6 +80,7 @@ never be two implementations of these systems.
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
+| SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1149,6 +1150,16 @@ create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. See
 [`chunk-85-production-genesis-ceremony.md`](./chunk-85-production-genesis-ceremony.md).
+
+Chunk 90 implements the SunRey production handoff and day-2 operations
+control plane at `packages/sunrey-chain/src/production-handoff`.
+Capability `sunrey-production-handoff` is `IMPLEMENTED`. It does not
+launch mainnet, convert rehearsal into observed production, enable
+`LIVE_*` flags, or let AI satisfy required human accountability roles.
+Do not create `packages/production-handoff`, `packages/sunrey-handoff`,
+`packages/day-2-ops`, `packages/production-ops`, or
+`packages/operator-acceptance`. See
+[`chunk-90-production-handoff.md`](./chunk-90-production-handoff.md).
 Chunk 82 implements external production provider onboarding,
 acceptance testing, and evidence qualification at
 `packages/sunrey-chain/src/providers`. Capability

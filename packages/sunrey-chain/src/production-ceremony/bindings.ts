@@ -54,6 +54,7 @@ export type AuditBinding = {
 };
 
 const CANDIDATE_V2_PATHS = [
+  'packages/sunrey-chain/src/mainnet/candidate-v2/index.ts',
   'packages/sunrey-chain/src/production-candidate/index.ts',
   'packages/sunrey-chain/src/candidate-v2/index.ts',
   'packages/sunrey-chain/src/network-candidate-v2/index.ts',
