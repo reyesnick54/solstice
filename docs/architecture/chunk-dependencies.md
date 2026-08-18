@@ -782,3 +782,17 @@ It extends Chunk 66. CI uses local/rehearsal infrastructure only.
 Do not create `packages/sunrey-production-platform`,
 `packages/mainnet-infrastructure-v2`, or
 `packages/cloud-control-plane`. The evaluator returns `mustStop: false`.
+Chunk 92 implements the validator operator platform, fleet
+management, and production operator control plane at
+`packages/sunrey-chain/src/validator-operator`. Capability
+`sunrey-validator-operator-platform` is `IMPLEMENTED`. See
+[`chunk-92-validator-operator-platform.md`](./chunk-92-validator-operator-platform.md).
+It consumes the validator registry, Chunk 36 lifecycle, Chunk 39
+accountability, Chunk 54 operations, Chunk 72 economics, Chunk 81
+Candidate V2, Chunk 85 dossiers, Chunk 87 qualification, and Chunk 90
+production operations. It does not create a second registry,
+consensus engine, public delegated staking, or governance token.
+Do not create `packages/validator-operator`,
+`packages/sunrey-validator-ops`, `packages/operator-platform`,
+`packages/validator-fleet`, or `packages/delegated-staking`. The
+evaluator returns `mustStop: false`.

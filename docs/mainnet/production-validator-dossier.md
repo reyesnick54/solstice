@@ -24,6 +24,10 @@ Private keys are never stored in the dossier.
 
 Organizational independence is not claimed.
 
+Chunk 92 consumes this dossier as enrollment authority. It does not
+create a second dossier type. See
+[../validators/operator-enrollment.md](../validators/operator-enrollment.md).
+
 ## Operator evidence
 
 Supported evidence kinds:

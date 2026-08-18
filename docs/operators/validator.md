@@ -33,7 +33,21 @@ sunrey-ops validator join
 sunrey-ops validator rotate
 sunrey-ops validator exit
 sunrey-ops validator evidence
+sunrey-ops validator fleet
+sunrey-ops validator operator
+sunrey-ops validator enrollment
+sunrey-ops validator health
+sunrey-ops validator maintenance
+sunrey-ops validator upgrade
+sunrey-ops validator rotate-key
+sunrey-ops validator backup
+sunrey-ops validator incidents
+sunrey-ops validator concentration
 ```
+
+Chunk 92 operator-platform commands are an operational projection.
+They do not replace the canonical validator registry. See
+[`../validators/chunk-92-validator-operator-platform.md`](../validators/chunk-92-validator-operator-platform.md).
 
 ## Restart
 

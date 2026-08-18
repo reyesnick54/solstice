@@ -1217,6 +1217,18 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
 
+Chunk 92 implements the SunRey validator operator platform, fleet
+management, and production operator control plane at
+`packages/sunrey-chain/src/validator-operator`. Capability
+`sunrey-validator-operator-platform` is `IMPLEMENTED`. It is an
+operational projection. Canonical validator-set state remains
+authoritative. It does not create a second registry, consensus
+engine, public delegated staking, or governance token. Do not create
+`packages/validator-operator`, `packages/sunrey-validator-ops`,
+`packages/operator-platform`, `packages/validator-fleet`, or
+`packages/delegated-staking`. See
+[`chunk-92-validator-operator-platform.md`](./chunk-92-validator-operator-platform.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

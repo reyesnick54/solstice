@@ -143,4 +143,8 @@
   `packages/sunrey-chain/src/pregenesis`. See
   [`docs/mainnet/chunk-87-pregenesis-qualification.md`](../mainnet/chunk-87-pregenesis-qualification.md).
 
+- [Chunk 92 validator operator platform](../validators/chunk-92-validator-operator-platform.md)
+  — fleet, enrollment, maintenance, upgrade, signer, and incident
+  control plane at `packages/sunrey-chain/src/validator-operator`.
+
 Implementation inventory: [`docs/build-status.md`](../build-status.md).
