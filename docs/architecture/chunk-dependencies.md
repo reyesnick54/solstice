@@ -176,6 +176,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-compute-ai-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1193,6 +1194,18 @@ Certification is not a verified fact, productive contribution, or
 MoonRey mint. Do not create `packages/provider-certification`,
 `packages/oracle-certification`, or a second oracle registry. The
 evaluator returns `mustStop: false`.
+Chunk 130 implements the provider-neutral compute and AI compute
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/compute`.
+Capability `sunrey-compute-ai-data-fabric` is `IMPLEMENTED` on the
+existing production-oracle owner. See
+[`chunk-130-compute-ai-data-fabric.md`](./chunk-130-compute-ai-data-fabric.md)
+and
+[`docs/economics/chunk-130-compute-ai-data-fabric.md`](../economics/chunk-130-compute-ai-data-fabric.md).
+Tokens are not GPU-time. Capacity is not realized output. Facts do
+not mint MoonRey. Do not create `packages/compute-oracle`,
+`packages/ai-compute-provider`, `packages/gpu-metering`, or
+`packages/compute-data-fabric`. The evaluator returns `mustStop: false`.
 Chunk 129 implements the energy and electrical-grid economic data
 fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/energy`.

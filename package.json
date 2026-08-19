@@ -64,6 +64,7 @@
     "demo:sunrey-production-oracles": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/demo.ts",
     "demo:sunrey-provider-certification": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/certification/demo.ts",
     "demo:sunrey-oracle-connector-runtime": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/connector-demo.ts",
+    "demo:moonrey-compute-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/compute/demo.ts",
     "demo:moonrey-energy-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/energy/demo.ts",
     "demo:moonrey-source-claim-path": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/claim-candidate/demo.ts",
     "demo:moonrey-economic-event-identity": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/attribution/demo.ts",
