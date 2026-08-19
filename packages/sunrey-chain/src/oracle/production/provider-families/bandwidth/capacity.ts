@@ -105,7 +105,7 @@ export function bandwidthUtilization(input: {
     const converted = rateTimesDuration({
       rate: input.capacityRate,
       durationSeconds: input.durationSeconds,
-      factType: 'BANDWIDTH_CAPACITY',
+      factType: 'BANDWIDTH_USAGE',
     });
     if (!converted.ok) {
       return converted;

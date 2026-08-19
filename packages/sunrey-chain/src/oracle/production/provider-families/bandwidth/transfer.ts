@@ -28,7 +28,11 @@ export function sourceQuantityOf(observation: BandwidthSourceObservation): Resul
     return err(bandwidthRefusal('FLOAT_QUANTITY_FORBIDDEN', 'bandwidth quantities must be integer strings'));
   }
   const unitId = observation.unit === 'B_s' ? 'B_s' : observation.unit;
-  return ok(exactQuantity(BigInt(observation.numericValue), 0, 1n, 1n, unitId));
+  const quantity = exactQuantity({ mantissa: BigInt(observation.numericValue), unitId });
+  if (!quantity.ok) {
+    return err(bandwidthRefusal('FLOAT_QUANTITY_FORBIDDEN', quantity.error.detail));
+  }
+  return ok(quantity.value);
 }
 
 export function rateTimesDuration(input: {
