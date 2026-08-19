@@ -246,12 +246,19 @@ export function admitCollection(
       sourceQuantity: quantity.value,
       factType: input.factType,
       productiveCategory: routed.value.productiveCategory,
+      claimType: taxonomy.ok ? taxonomy.value.mapping.allowedClaimTypes[0] ?? null : null,
+      context: Object.freeze({
+        factType: input.factType,
+        productiveCategory: routed.value.productiveCategory,
+        resourceClass: input.sourceQuantity.unit === 'compute_s' || input.sourceQuantity.unit === 'gpu_s' ? 'CPU' : undefined,
+        semanticQualifier: lookupUnit(input.sourceQuantity.unit)?.semanticQualifier,
+      }),
     });
     if (!measured.ok) {
       if (measured.error.code === 'CANONICAL_UNIT_REQUIRED') {
         return err(fabricRejection('UNIT_EXTENSION_REQUIRED', measured.error.detail));
       }
-      if (routed.value.family.implementationState === 'ADAPTER_IMPLEMENTED') {
+      if (mode === 'PRODUCTION_CANDIDATE') {
         return err(fabricRejection('UNIT_NORMALIZATION_FAILED', `${measured.error.code}: ${measured.error.detail}`));
       }
     } else {

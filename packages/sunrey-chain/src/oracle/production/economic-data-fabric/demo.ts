@@ -126,9 +126,16 @@ export function simulateGovernedPath(input: {
   readonly claimId: string;
 }): { readonly quantity: bigint; readonly authorizationId: string; readonly supplyReconciles: boolean; readonly simulationOnly: true } {
   const stack = new IntegratedEconomicStack();
+  const objectId = `obj.unified.${input.category.toLowerCase()}`;
+  stack.registerProductiveObject({
+    objectId,
+    category: input.category,
+    unit: input.unit,
+    owner: 'controller.sim',
+  });
   const issued = stack.issueMoonReyFromGovernedValue({
     claimId: input.claimId,
-    objectId: `obj.${input.category.toLowerCase()}`,
+    objectId,
     category: input.category,
     quantity: input.quantity,
     unit: input.unit,
@@ -211,7 +218,7 @@ export function runUnifiedEconomicDataFabricDemo(): {
   const manufacturingIssuance = simulateGovernedPath({
     category: 'MANUFACTURING',
     quantity: 40n,
-    unit: 'units_produced',
+    unit: 'UNIT',
     claimId: 'claim.unified.manufacturing',
   });
 

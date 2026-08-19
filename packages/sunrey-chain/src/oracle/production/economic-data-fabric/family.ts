@@ -132,7 +132,7 @@ export const CANONICAL_PROVIDER_FAMILIES: readonly EconomicDataProviderFamilyRec
   }),
   family({
     familyId: 'AUTOMATED_MACHINE_OUTPUT',
-    implementationState: 'ADAPTER_IMPLEMENTED',
+    implementationState: 'ROUTING_INDEX_ONLY',
     adapterOwnerPath: 'packages/sunrey-chain/src/oracle/production/provider-families/manufacturing',
     supportedSourceCategories: ['automated_machine_output'],
     supportedFactTypes: ['AUTOMATED_MACHINE_OUTPUT'],
