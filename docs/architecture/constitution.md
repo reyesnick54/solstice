@@ -89,6 +89,7 @@ never be two implementations of these systems.
 | Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
 | Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |
 | Minerals / resource extraction data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/resources/types.ts` | IMPLEMENTED |
+| Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1642,6 +1643,23 @@ not `RESOURCE_EXTRACTION` and cannot create OUTPUT or mint MoonRey.
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or a second oracle owner. See
 [`chunk-133-resource-extraction-data-fabric.md`](./chunk-133-resource-extraction-data-fabric.md).
+
+Chunk 135 implements the real-estate use and infrastructure economic
+data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/real-estate`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/infrastructure`.
+Capability `sunrey-real-estate-infrastructure-data-fabric` is
+`IMPLEMENTED` on the existing `sunrey-production-oracles` owner.
+`REAL_ESTATE_USAGE` is the governed realized-use fact; historical
+`REAL_ESTATE_USE_CAPACITY` records stay capacity. New infrastructure
+feeds use `facility_hour` (`INFRASTRUCTURE_FACILITY_TIME_V2`); stored
+`machine_h` remains `LEGACY_INFRASTRUCTURE_MACHINE_H_V1`. Vacancy,
+listing, appraisal, and ownership are not productive use. Do not create
+`packages/real-estate-oracles`, `packages/infrastructure-oracles`,
+`packages/property-data-fabric`, or `packages/facility-data-fabric`.
+See
+[`chunk-135-real-estate-infrastructure-data-fabric.md`](./chunk-135-real-estate-infrastructure-data-fabric.md).
 
 ## Agent stop rule
 

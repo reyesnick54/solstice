@@ -422,6 +422,7 @@ function applyDistinctService(
 function isIndependentServiceClaim(subject: AttributionSubject): boolean {
   return subject.category === 'LOGISTICS_TRANSPORTATION'
     || subject.category === 'STORAGE'
+    || subject.category === 'INFRASTRUCTURE'
     || subject.eventClass === 'DELIVERY';
 }
 
@@ -712,6 +713,9 @@ function serviceReason(category: ProductiveCategory): AttributionReasonCode[] {
   if (category === 'STORAGE') {
     return ['INDEPENDENT_STORAGE_SERVICE'];
   }
+  if (category === 'INFRASTRUCTURE') {
+    return ['INDEPENDENT_INFRASTRUCTURE_SERVICE'];
+  }
   return ['SEPARATE_REALIZED_SERVICE'];
 }
 
@@ -724,6 +728,18 @@ function reasonsForCategoryRule(rule: CategoryRelationshipRule): AttributionReas
   }
   if (rule.leftCategory === 'COMPUTE' && rule.rightCategory === 'AI_COMPUTE') {
     return ['COMPUTE_AI_SAME_EXECUTION', 'SAME_EVENT_DUPLICATE'];
+  }
+  if (
+    (rule.leftCategory === 'REAL_ESTATE_USE' && rule.rightCategory === 'INFRASTRUCTURE')
+    || (rule.leftCategory === 'INFRASTRUCTURE' && rule.rightCategory === 'REAL_ESTATE_USE')
+  ) {
+    return ['REAL_ESTATE_INFRASTRUCTURE_SAME_SERVICE', 'SAME_EVENT_DUPLICATE'];
+  }
+  if (
+    (rule.leftCategory === 'INFRASTRUCTURE' && rule.rightCategory === 'LOGISTICS_TRANSPORTATION')
+    || (rule.leftCategory === 'LOGISTICS_TRANSPORTATION' && rule.rightCategory === 'INFRASTRUCTURE')
+  ) {
+    return ['INFRASTRUCTURE_LOGISTICS_DUPLICATE', 'SAME_EVENT_DUPLICATE'];
   }
   if (rule.relationship === 'DEPENDENT_INPUT') {
     return ['ENERGY_CONSUMPTION_IS_LINEAGE', 'DEPENDENT_INPUT_NOT_OWNERSHIP'];

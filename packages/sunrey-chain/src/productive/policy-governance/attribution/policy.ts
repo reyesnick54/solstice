@@ -167,6 +167,30 @@ const CATEGORY_RELATIONSHIP_RULES: readonly CategoryRelationshipRule[] = Object.
     'LINEAGE_ONLY',
     { primaryCategory: 'ENERGY' },
   ),
+  pair(
+    'cat.real-estate-infra.same-event',
+    'REAL_ESTATE_USE',
+    'INFRASTRUCTURE',
+    'SAME_UNDERLYING_EVENT',
+    'PRIMARY_AND_LINEAGE',
+    { primaryCategory: 'REAL_ESTATE_USE' },
+  ),
+  pair(
+    'cat.infra-logistics.distinct',
+    'INFRASTRUCTURE',
+    'LOGISTICS_TRANSPORTATION',
+    'DISTINCT_REALIZED_SERVICE',
+    'SEPARATE_IF_INDEPENDENT',
+    { requiredEvidence: ['facility_hour', 'tonne_km'] },
+  ),
+  pair(
+    'cat.infra-logistics.same-event',
+    'INFRASTRUCTURE',
+    'LOGISTICS_TRANSPORTATION',
+    'SAME_UNDERLYING_EVENT',
+    'PRIMARY_AND_LINEAGE',
+    { primaryCategory: 'INFRASTRUCTURE' },
+  ),
 ]);
 
 const CLAIM_RELATIONSHIP_RULES: readonly ClaimRelationshipRule[] = Object.freeze([

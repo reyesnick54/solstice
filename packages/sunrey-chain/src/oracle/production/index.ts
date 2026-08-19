@@ -279,4 +279,11 @@ export {
   runResourceDataFabricDemo,
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
+export {
+  ingestRealEstateRecord,
+  ingestInfrastructureRecord,
+  realEstateFactCannotAutoMint,
+  infrastructureFactCannotAutoMint,
+  runRealEstateInfrastructureDataFabricDemo,
+} from './provider-families/index.ts';
 

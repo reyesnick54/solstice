@@ -2833,6 +2833,38 @@
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
     },
     {
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "name": "Real-estate use and infrastructure economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "RealEstateEvidenceRecord",
+          "kind": "type"
+        },
+        {
+          "name": "InfrastructureEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/real-estate-oracles",
+        "packages/infrastructure-oracles",
+        "packages/property-data-fabric",
+        "packages/facility-data-fabric"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time; REAL_ESTATE_USE_CAPACITY stays capacity. New infrastructure feeds use facility_hour; historical machine_h is LEGACY_INFRASTRUCTURE_MACHINE_H_V1. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
+    },
+    {
       "id": "sunrey-production-infrastructure",
       "name": "SunRey production infrastructure provider adapters and secret controls",
       "canonicalOwner": "packages/sunrey-chain",
@@ -6213,6 +6245,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. RESOURCE_RESERVE is not extraction or OUTPUT. REFERENCE_PRICE cannot create a productive claim. No named provider integration, production activation, or second oracle owner. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+    },
+    {
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/real-estate and packages/sunrey-chain/src/oracle/production/provider-families/infrastructure. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time. Historical machine_h infrastructure evidence is not reinterpreted as facility-hour. No named provider integration, production activation, or second oracle owner. Do not create packages/real-estate-oracles, packages/infrastructure-oracles, packages/property-data-fabric, or packages/facility-data-fabric."
     },
     {
       "id": "moonrey-productive-value-settlement",
