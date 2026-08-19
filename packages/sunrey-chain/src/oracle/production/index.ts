@@ -165,6 +165,7 @@ export type {
   EconomicDataSourceCertificationRecord,
   ProviderConformanceReport,
 } from './certification/index.ts';
+export {
   ALLOWED_CONTENT_TYPES,
   CONNECTOR_RUNTIME_MODES,
   CONSENSUS_CALLED_HTTP,
@@ -258,4 +259,5 @@ export {
   enforceSourceTimestamp,
   parseJsonSourceRecord,
 } from './runtime.ts';
+export * from './provider-families/compute/index.ts';
 
