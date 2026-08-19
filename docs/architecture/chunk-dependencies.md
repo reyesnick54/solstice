@@ -174,6 +174,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1167,6 +1168,16 @@ existing MoonRey policy-governance owner. It does not mint or replace
 the legacy issuance formula. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. The
+evaluator returns `mustStop: false`.
+Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
+migration readiness, and economic stress hardening at
+`packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
+Capability `moonrey-v2-shadow-economics` is `IMPLEMENTED`. V1 remains
+the legacy engineering-simulation model. V2 is the governed-value
+simulation model. Production activation remains an explicit future
+governance boundary. Do not create `packages/moonrey-shadow`,
+`packages/value-migration`, `packages/moonrey-v2-engine`,
+`packages/shadow-economics`, or `packages/moonrey-cutover`. The
 evaluator returns `mustStop: false`.
 Chunk 125 implements the Productive Value → MoonRey settlement
 conversion bridge at

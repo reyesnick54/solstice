@@ -54,6 +54,7 @@
     "sunrey-moonrey-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts",
     "demo:moonrey-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts moonrey simulate",
     "demo:moonrey-productive-value-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/value-function/demo.ts",
+    "demo:moonrey-v2-shadow-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/shadow-economics/demo.ts",
     "demo:moonrey-governed-value-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/value-settlement/demo.ts",
     "demo:moonrey-productive-value-engine": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/value-function/engine-demo.ts",
     "demo:moonrey-attribution-reconciliation": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/attribution-accounting/demo.ts",

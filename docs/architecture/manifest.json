@@ -2844,7 +2844,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Chunk 123 Productive Value Function constitution lives at packages/sunrey-chain/src/productive/policy-governance/value-function."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Chunk 123 Productive Value Function constitution lives at packages/sunrey-chain/src/productive/policy-governance/value-function. Chunk 126 V2 shadow evaluation lives at packages/sunrey-chain/src/productive/policy-governance/shadow-economics."
     },
     {
       "id": "moonrey-productive-value-function",
@@ -2877,6 +2877,36 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain."
+    },
+    {
+      "id": "moonrey-v2-shadow-economics",
+      "name": "MoonRey governed-value V2 shadow evaluation and migration hardening",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/productive/policy-governance/shadow-economics/evaluator.ts",
+      "publicInterface": "packages/sunrey-chain/src/productive/policy-governance/shadow-economics/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MoonReyEconomicShadowEvaluator",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/moonrey-shadow",
+        "packages/value-migration",
+        "packages/moonrey-v2-engine",
+        "packages/shadow-economics",
+        "packages/moonrey-cutover"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. Canonical owner remains packages/sunrey-chain."
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain.",
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path.",
       "notes": "Chunk 123 governed Productive Value Function constitution and Chunk 124 deterministic simulation engine at packages/sunrey-chain/src/productive/policy-governance/value-function. Engineering implementation is not production activation. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain."
@@ -6039,6 +6069,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint or replace moonrey.issuance.formula.v1. Production remains inactive."
+    },
+    {
+      "id": "moonrey-v2-shadow-economics",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1 or activate V2 in production."
     },
     {
       "notes": "Chunk 123/124 Productive Value Function constitution and simulation engine at packages/sunrey-chain/src/productive/policy-governance/value-function. Engineering implementation is not production activation. Does not mint or replace moonrey.issuance.formula.v1. Production remains inactive."
