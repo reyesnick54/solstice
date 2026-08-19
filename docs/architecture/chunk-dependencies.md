@@ -1039,3 +1039,15 @@ It does not value, mint, or issue Execution Authority. Do not create
 `packages/human-contribution-verification`,
 `packages/contribution-verification`, or `packages/human-worth`.
 The evaluator returns `mustStop: false`.
+Chunk 117 enforces the MoonRey source / fact / claim mapping at
+`packages/sunrey-chain/src/oracle/source-taxonomy` and
+`packages/sunrey-chain/src/productive/claim-candidate`. It extends
+`sunrey-production-oracles` and `sunrey-productive-capacity`. See
+[`chunk-117-moonrey-source-claim-enforcement.md`](./chunk-117-moonrey-source-claim-enforcement.md)
+and
+[`docs/economics/chunk-117-moonrey-source-claim-enforcement.md`](../economics/chunk-117-moonrey-source-claim-enforcement.md).
+A compatible mapping and a `ProductiveClaimCandidate` do not mint
+MoonRey. Do not create `packages/moonrey-source-taxonomy`,
+`packages/source-claim-enforcement`, or
+`packages/productive-claim-candidate`. The evaluator returns
+`mustStop: false`.

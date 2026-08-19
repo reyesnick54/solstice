@@ -1,13 +1,21 @@
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
+import { enforceSourceRegistrationMapping } from '../source-taxonomy/onboarding.ts';
+import type { SourceClaimCompatibilityRejection } from '../source-taxonomy/types.ts';
 import type { EconomicDataSource, ProductionOracleRejection } from './types.ts';
 import { CATEGORY_TO_FACT_TYPE } from './types.ts';
+
+export type SourceRegistrationRejection = ProductionOracleRejection | SourceClaimCompatibilityRejection;
 
 export class EconomicDataSourceRegistry {
   private readonly sources = new Map<string, EconomicDataSource[]>();
 
-  register(source: EconomicDataSource): Result<EconomicDataSource, ProductionOracleRejection> {
+  register(source: EconomicDataSource): Result<EconomicDataSource, SourceRegistrationRejection> {
     if (source.sourceId.length === 0 || source.providerId.length === 0) {
       return err({ code: 'INVALID_IDENTIFIER', detail: 'source and provider identifiers are required' });
+    }
+    const mapped = enforceSourceRegistrationMapping(source);
+    if (!mapped.ok) {
+      return mapped;
     }
     if (CATEGORY_TO_FACT_TYPE[source.category] !== source.factType && source.category !== 'food_agriculture') {
       if (source.category === 'energy' && source.factType !== 'ENERGY_PRODUCTION' && source.factType !== 'ENERGY_CAPACITY') {

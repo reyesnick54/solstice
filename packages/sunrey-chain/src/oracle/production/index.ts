@@ -54,6 +54,8 @@ export {
   transitionOnboarding,
 } from './onboarding.ts';
 export { EconomicDataSourceRegistry } from './sources.ts';
+export type { SourceRegistrationRejection } from './sources.ts';
+export * from '../source-taxonomy/index.ts';
 export { contentHashOf, provenanceCommitment, recordProvenance } from './provenance.ts';
 export {
   createCollectorIdentity,

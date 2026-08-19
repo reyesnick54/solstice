@@ -6,6 +6,7 @@ import { SoftwareDevelopmentSigner } from './signing.ts';
 import { LocalProviderSimulator } from './simulator.ts';
 import { validateExternalRecord } from './schema.ts';
 import { isOnboardingStatus } from './types.ts';
+import { enforceFeedDefinitionMapping } from '../source-taxonomy/onboarding.ts';
 
 export type CliResult = {
   readonly ok: boolean;
@@ -91,9 +92,17 @@ export function runSunreyOracle(argv: readonly string[]): CliResult {
     }
     if (command === 'feed' && subject === 'create') {
       const feed = developmentProductionFeed(argv[2] ?? 'feed_energy_production_sim');
+      const mapped = enforceFeedDefinitionMapping(feed, 'energy');
+      if (!mapped.ok) {
+        return { ok: false, output: json(mapped.error) };
+      }
       return { ok: true, output: json({ feedId: feed.feedId, version: feed.version, productionEligible: feed.productionEligible }) };
     }
     if (command === 'feed' && subject === 'validate') {
+      const mapped = enforceFeedDefinitionMapping(plane.feed, 'energy');
+      if (!mapped.ok) {
+        return { ok: false, output: json(mapped.error) };
+      }
       const checked = validateExternalRecord(plane.feed.schema, {
         identifier: 'plant_sim_1',
         numericValue: '100',

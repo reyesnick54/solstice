@@ -1,0 +1,14 @@
+{
+  "chunk": "CHUNK-117",
+  "title": "MoonRey Source / Fact / Claim Compatibility Enforcement",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED by extending packages/sunrey-chain/src/oracle/source-taxonomy and packages/sunrey-chain/src/productive/claim-candidate. Enforces the Chunk 116 Source Category → Fact Type → Productive Category → Unit → Claim Type mapping at production source/feed onboarding and at ProductiveClaimCandidate construction. Candidates do not auto-verify or mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-source-taxonomy, packages/source-claim-enforcement, packages/productive-claim-candidate, or a second oracle/productive/mint owner."
+}

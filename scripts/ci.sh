@@ -108,6 +108,7 @@ npm run demo:sunrey-governance
 npm run demo:moonrey-productive
 npm run demo:sunrey-oracle
 npm run demo:sunrey-production-oracles
+npm run demo:moonrey-source-claim-path
 npm run sunrey-oracle -- readiness
 npm run demo:sunrey-fees
 npm run demo:sunrey-machine-economy
