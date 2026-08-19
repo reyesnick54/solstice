@@ -322,8 +322,6 @@ export const FORBIDDEN_SCORE_FIELDS = [
   'mintAmount',
   'issuanceQuantity',
   'tokenQuantity',
-  'apy',
-  'apr',
   'yieldRate',
   'blendedReturn',
 ] as const;

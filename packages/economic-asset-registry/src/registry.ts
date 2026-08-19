@@ -158,7 +158,7 @@ export class EconomicAssetRegistry {
     const indexed = this.projectionsReady ? this.indexes.matchingIds(criteria) : null;
     const candidates = indexed
       ? indexed.map((id) => this.descriptors.get(id)).filter((item): item is EconomicAssetDescriptor => item !== undefined)
-      : [...this.descriptors.values()];
+      : [...this.descriptors.values()].filter((descriptor) => matchesQuery(descriptor, criteria));
     return Object.freeze(
       candidates.sort((left, right) => (left.createdAt < right.createdAt ? -1 : left.assetId < right.assetId ? -1 : 1)),
     );
@@ -269,6 +269,58 @@ export class EconomicAssetRegistry {
   private allLineage() {
     return [...this.descriptors.values()].flatMap((descriptor) => [...descriptor.lineage]);
   }
+}
+
+function matchesQuery(descriptor: EconomicAssetDescriptor, criteria: EconomicAssetQuery): boolean {
+  if (criteria.assetId && descriptor.assetId !== criteria.assetId) {
+    return false;
+  }
+  if (criteria.assetClass && descriptor.assetClass !== criteria.assetClass) {
+    return false;
+  }
+  if (criteria.domain && descriptor.domain !== criteria.domain) {
+    return false;
+  }
+  if (criteria.canonicalOwner && descriptor.canonicalOwner !== criteria.canonicalOwner) {
+    return false;
+  }
+  if (criteria.controller && descriptor.controllerRef !== criteria.controller) {
+    return false;
+  }
+  if (criteria.jurisdiction && descriptor.jurisdiction !== criteria.jurisdiction) {
+    return false;
+  }
+  if (criteria.economicCategory && descriptor.economicCategory !== criteria.economicCategory) {
+    return false;
+  }
+  if (criteria.sensitivity && descriptor.sensitivityClass !== criteria.sensitivity) {
+    return false;
+  }
+  if (criteria.quality && descriptor.qualityClass !== criteria.quality) {
+    return false;
+  }
+  if (criteria.freshness && descriptor.freshness !== criteria.freshness) {
+    return false;
+  }
+  if (criteria.sourceClass && descriptor.sourceClass !== criteria.sourceClass) {
+    return false;
+  }
+  if (criteria.status && descriptor.status !== criteria.status) {
+    return false;
+  }
+  if (criteria.chainAnchor && descriptor.chainAnchor?.contentCommitment !== criteria.chainAnchor) {
+    return false;
+  }
+  if (criteria.lineageParent && !descriptor.lineage.some((edge) => edge.toAssetId === criteria.lineageParent)) {
+    return false;
+  }
+  if (
+    criteria.permittedValuationMethod &&
+    !descriptor.permittedValuationMethodRefs.includes(criteria.permittedValuationMethod)
+  ) {
+    return false;
+  }
+  return true;
 }
 
 export { EconomicAssetRegistry as CanonicalEconomicAssetRegistry };
