@@ -85,6 +85,7 @@ never be two implementations of these systems.
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
+| Economic data provider certification | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/certification/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1564,6 +1565,19 @@ create `packages/hin-contribution-registry`,
 `packages/information-contribution-v2`, or
 `packages/human-information-contribution`. See
 [`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md).
+
+Chunk 128 implements economic data provider certification, the
+conformance sandbox, and the source admission gate at
+`packages/sunrey-chain/src/oracle/production/certification`.
+Capability `sunrey-provider-certification` is `IMPLEMENTED` on the
+existing `sunrey-production-oracles` owner. Certification is an
+admission control. It does not finalize an oracle fact, create a
+productive contribution, mint MoonRey, or activate production
+ingestion. There is no `PRODUCTION_APPROVED` state. Commercial
+`CONFIRMED` is never inferred from fixture strings. Do not create
+`packages/provider-certification`, `packages/oracle-certification`,
+`packages/conformance-sandbox`, or a second oracle registry. See
+[`chunk-128-provider-certification.md`](./chunk-128-provider-certification.md).
 
 ## Agent stop rule
 

@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-128",
+  "title": "Economic Data Provider Certification, Conformance Sandbox, and Source Admission Gate",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "sunrey-economic-asset-registry",
+    "sunrey-provider-certification"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is an admission control, not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Commercial CONFIRMED is never inferred from fixtures. evaluateChunkRequirements returns mustStop: false. Do not create packages/provider-certification, packages/provider-registry, packages/oracle-certification, or a second oracle registry."
+}

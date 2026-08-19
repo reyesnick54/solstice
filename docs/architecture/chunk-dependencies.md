@@ -174,6 +174,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 
@@ -1180,6 +1181,17 @@ existing MoonRey policy-governance owner. It does not mint or replace
 the legacy issuance formula. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. The
+evaluator returns `mustStop: false`.
+Chunk 128 implements economic data provider certification at
+`packages/sunrey-chain/src/oracle/production/certification`.
+Capability `sunrey-provider-certification` is `IMPLEMENTED` on the
+existing production-oracle owner. See
+[`chunk-128-provider-certification.md`](./chunk-128-provider-certification.md)
+and
+[`docs/economics/chunk-128-provider-certification.md`](../economics/chunk-128-provider-certification.md).
+Certification is not a verified fact, productive contribution, or
+MoonRey mint. Do not create `packages/provider-certification`,
+`packages/oracle-certification`, or a second oracle registry. The
 evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
