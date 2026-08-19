@@ -55,16 +55,14 @@ export function runHumanContributionOntologyDemo(): {
     registry.record({
       ...fixtureContribution('CREATIVE_PRODUCTION', 'demo-creative'),
       measurementQuantity: 2n,
-      verificationQuality: 'VERIFIED',
-      status: 'VERIFIED',
+      verificationQuality: 'ATTESTED',
     }),
   );
   const research = unwrap(
     registry.record({
       ...fixtureContribution('RESEARCH_PARTICIPATION', 'demo-research'),
       measurementQuantity: 4n,
-      verificationQuality: 'VERIFIED',
-      status: 'VERIFIED',
+      verificationQuality: 'ATTESTED',
     }),
   );
   const professional = unwrap(

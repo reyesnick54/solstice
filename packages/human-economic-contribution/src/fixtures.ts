@@ -53,9 +53,17 @@ const CLASS_SOURCES: Readonly<Record<ContributionClass, SourceClass>> = Object.f
 });
 
 export function fixtureContribution(contributionClass: ContributionClass, seed: string = contributionClass): RecordContributionInput {
-  const information = ['INFORMATION_RIGHT_CONTRIBUTION', 'VERIFIED_KNOWLEDGE_CONTRIBUTION', 'MODEL_TRAINING_PARTICIPATION', 'CREATOR_ROYALTY_EVENT'].includes(
-    contributionClass,
-  );
+  const information = [
+    'INFORMATION_RIGHT_CONTRIBUTION',
+    'VERIFIED_KNOWLEDGE_CONTRIBUTION',
+    'MODEL_TRAINING_PARTICIPATION',
+    'CREATOR_ROYALTY_EVENT',
+  ].includes(contributionClass);
+  const consentBound = information || contributionClass === 'RESEARCH_PARTICIPATION';
+  const rightsBound = information || contributionClass === 'CREATIVE_PRODUCTION';
+  const usageBound = (
+    ['INFORMATION_RIGHT_CONTRIBUTION', 'MODEL_TRAINING_PARTICIPATION', 'CREATOR_ROYALTY_EVENT'] as readonly ContributionClass[]
+  ).includes(contributionClass);
   return {
     subjectRef: FIXTURE_SUBJECT,
     contributionClass,
@@ -67,17 +75,17 @@ export function fixtureContribution(contributionClass: ContributionClass, seed: 
     validUntil: FIXTURE_UNTIL,
     jurisdiction: 'GB',
     evidenceReferences: [evidenceRefFor(seed)],
-    rightsReferences: information ? [informationRightRefFor(seed)] : [],
-    consentReferences: information ? [consentGrantRefFor(seed)] : [],
-    purposeReferences: information ? [purposeRefFor(seed)] : [],
+    rightsReferences: rightsBound ? [informationRightRefFor(seed)] : [],
+    consentReferences: consentBound ? [consentGrantRefFor(seed)] : [],
+    purposeReferences: consentBound ? [purposeRefFor(seed)] : [],
     provenanceReferences: [provenanceRefFor(seed)],
     attestationReferences: [attestationRefFor(seed)],
-    usageReceiptReferences: contributionClass === 'INFORMATION_RIGHT_CONTRIBUTION' ? [usageReceiptRefFor(seed)] : [],
+    usageReceiptReferences: usageBound ? [usageReceiptRefFor(seed)] : [],
     createdAt: FIXTURE_NOW,
     canonicalReferences: {
-      informationRightRefs: information ? [informationRightRefFor(seed)] : [],
-      consentGrantRefs: information ? [consentGrantRefFor(seed)] : [],
-      usageReceiptRefs: contributionClass === 'INFORMATION_RIGHT_CONTRIBUTION' ? [usageReceiptRefFor(seed)] : [],
+      informationRightRefs: rightsBound ? [informationRightRefFor(seed)] : [],
+      consentGrantRefs: consentBound ? [consentGrantRefFor(seed)] : [],
+      usageReceiptRefs: usageBound ? [usageReceiptRefFor(seed)] : [],
       communityAttestationRefs: contributionClass === 'COMMUNITY_CONTRIBUTION' ? [communityAttestationRefFor(seed)] : [],
       researchAttestationRefs: contributionClass === 'RESEARCH_PARTICIPATION' ? [researchAttestationRefFor(seed)] : [],
       professionalAttestationRefs: contributionClass === 'PROFESSIONAL_EXPERTISE' ? [professionalAttestationRefFor(seed)] : [],

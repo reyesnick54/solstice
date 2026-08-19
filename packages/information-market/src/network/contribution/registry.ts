@@ -1,7 +1,14 @@
-import { createHash, randomUUID } from 'node:crypto';
+import { createHash } from 'node:crypto';
 
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
 import type { UtcInstant } from '../../../../domain/src/time.ts';
+import { fingerprintEconomicEvent } from '../../../../human-economic-contribution/src/fingerprint.ts';
+import {
+  ENGINEERING_VERIFICATION_POLICY,
+  HumanContributionVerificationEngine,
+  bundleFromInformationRightEvidence,
+  factsFromInformationRightEvidence,
+} from '../../../../human-economic-contribution/src/verification/index.ts';
 import {
   INFORMATION_RIGHT_CONTRIBUTION,
   type HinContributionFailure,
@@ -10,6 +17,44 @@ import {
   type InformationRightContributionEvidence,
 } from './contract.ts';
 import { assertPrivacySafeRegistryPayload } from './privacy.ts';
+
+const verificationEngine = new HumanContributionVerificationEngine(ENGINEERING_VERIFICATION_POLICY);
+
+function mapVerificationFailure(codes: readonly string[]): HinContributionFailure {
+  if (codes.includes('REQUIRES_ADDITIONAL_EVIDENCE') || codes.includes('EVIDENCE_MISSING')) {
+    return { code: 'REQUIRES_ADDITIONAL_EVIDENCE', message: codes.join(',') };
+  }
+  return {
+    code: 'VERIFICATION_REJECTED',
+    message: `Chunk 109 verification rejected the information-right contribution: ${codes.join(',')}`,
+  };
+}
+
+export function evaluateHinContributionEvidence(
+  evidence: InformationRightContributionEvidence,
+): Result<{ readonly contributionId: string; readonly decision: 'VERIFIED' }, HinContributionFailure> {
+  const bundle = bundleFromInformationRightEvidence(evidence);
+  const fingerprint = fingerprintEconomicEvent({
+    subjectRef: bundle.subjectRef,
+    contributionClass: bundle.contributionClass,
+    eventReference: bundle.eventReference,
+    validFrom: bundle.measurementPeriod.start,
+    validUntil: bundle.measurementPeriod.end,
+    measurementQuantity: bundle.measurement.quantity,
+    measurementUnit: bundle.measurementUnit,
+    jurisdiction: bundle.jurisdiction,
+    sourceClass: bundle.sourceClass,
+  });
+  const facts = factsFromInformationRightEvidence(evidence, bundle, {
+    declaredFingerprint: fingerprint,
+    expectedFingerprint: fingerprint,
+  });
+  const decision = verificationEngine.evaluate({ bundle, facts, fingerprint });
+  if (decision.decision !== 'VERIFIED') {
+    return err(mapVerificationFailure(decision.decisionCodes));
+  }
+  return ok({ contributionId: bundle.contributionId, decision: 'VERIFIED' });
+}
 
 function digestEvidence(evidence: InformationRightContributionEvidence): string {
   return createHash('sha256')
@@ -95,8 +140,12 @@ export function createInProcessHumanContributionRegistry(): HumanContributionReg
           message: 'a usage receipt can create at most one verified contribution',
         });
       }
+      const verified = evaluateHinContributionEvidence(evidence);
+      if (!verified.ok) {
+        return verified;
+      }
       const record: HumanContributionRecord = Object.freeze({
-        contributionId: `hcr_${randomUUID().replace(/-/g, '').slice(0, 20)}`,
+        contributionId: verified.value.contributionId,
         contributionClass: INFORMATION_RIGHT_CONTRIBUTION,
         status: 'VERIFIED',
         evidence,

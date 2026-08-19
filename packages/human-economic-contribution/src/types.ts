@@ -26,6 +26,10 @@ import type {
   VerificationPolicyVersion,
 } from './ids.ts';
 import type {
+  HumanContributionEvidenceFacts,
+  HumanContributionVerificationDecision,
+} from './verification/types.ts';
+import type {
   ContributionClass,
   ContributionLifecycleState,
   DataQualityState,
@@ -72,7 +76,31 @@ export type ContributionFailureCode =
   | 'NOT_VERIFIABLE'
   | 'ALREADY_TERMINAL'
   | 'CORRECTION_TARGET_REQUIRED'
-  | 'VERIFICATION_POLICY_REQUIRED';
+  | 'VERIFICATION_POLICY_REQUIRED'
+  | 'VERIFICATION_REJECTED'
+  | 'REQUIRES_ADDITIONAL_EVIDENCE'
+  | 'EVIDENCE_MISSING'
+  | 'EVIDENCE_STALE'
+  | 'EVIDENCE_CONFLICTED'
+  | 'SOURCE_NOT_PERMITTED'
+  | 'SOURCE_QUALITY_INSUFFICIENT'
+  | 'CONSENT_REQUIRED'
+  | 'CONSENT_INVALID'
+  | 'PURPOSE_REQUIRED'
+  | 'PURPOSE_MISMATCH'
+  | 'RIGHT_REQUIRED'
+  | 'RIGHT_INVALID'
+  | 'RIGHT_EXPIRED'
+  | 'RIGHT_REVOKED_BEFORE_USE'
+  | 'USAGE_NOT_REALIZED'
+  | 'SUBJECT_MISMATCH'
+  | 'JURISDICTION_UNRESOLVED'
+  | 'USER_DECLARATION_INSUFFICIENT'
+  | 'SELF_ATTESTATION_INSUFFICIENT'
+  | 'DUPLICATE_CONTRIBUTION'
+  | 'HUMAN_WORTH_SCORING_FORBIDDEN'
+  | 'EVIDENCE_DIGEST_TAMPERED'
+  | 'DECISION_NOT_VERIFIED';
 
 export type ContributionMeasurement = {
   readonly quantity: bigint;
@@ -323,6 +351,12 @@ export type VerifyContributionInput = {
   readonly contributionId: ContributionId;
   readonly verificationPolicyVersion?: VerificationPolicyVersion;
   readonly verificationTimestamp: UtcInstant;
+  readonly facts?: HumanContributionEvidenceFacts;
+};
+
+export type ApplyVerificationDecisionInput = {
+  readonly decision: HumanContributionVerificationDecision;
+  readonly verificationTimestamp?: UtcInstant;
 };
 
 export type RejectContributionInput = {

@@ -195,8 +195,15 @@ export function assertEligibilityNotAutomatic(input: RecordContributionInput): R
 }
 
 export function assertLifecycle(input: RecordContributionInput): Result<true, ContributionFailure> {
-  if (input.status === 'VERIFIED' && input.sourceClass === 'MODEL_INFERENCE') {
-    return err(failure('MODEL_INFERENCE_CANNOT_VERIFY', 'AI/model inference alone cannot verify a contribution'));
+  if (input.status === 'VERIFIED') {
+    return err(
+      failure(
+        input.sourceClass === 'MODEL_INFERENCE' ? 'MODEL_INFERENCE_CANNOT_VERIFY' : 'VERIFICATION_POLICY_REQUIRED',
+        input.sourceClass === 'MODEL_INFERENCE'
+          ? 'AI/model inference alone cannot verify a contribution'
+          : 'VERIFIED status requires a HumanContributionVerificationDecision; it cannot be manufactured on record()',
+      ),
+    );
   }
   if (input.validUntil && isUtcInstant(input.validFrom) && isUtcInstant(input.validUntil) && input.validUntil <= input.validFrom) {
     return err(failure('INVALID_LIFECYCLE', 'validUntil must be after validFrom'));
