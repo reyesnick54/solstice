@@ -236,7 +236,7 @@ export const ATTRIBUTION_AUTHORITY_BOUNDARY = Object.freeze({
   authorizesMoonReyIssuance: false,
   authorizesSunReyIssuance: false,
   authorizesSettlement: false,
-  issuesExecutionAuthority: false,
+  issuesSignedAuthority: false,
   isLedger: false,
   isMonetaryAuthority: false,
   canMint: false,

@@ -3968,12 +3968,6 @@
     },
     {
       "id": "sunrey-human-contribution-valuation",
-      "name": "Human Contribution Valuation constitution and engine",
-      "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package.",
-      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Do not create a second registry package."
-    },
-    {
-      "id": "sunrey-human-contribution-valuation",
       "name": "Human contribution valuation constitution and engine",
       "canonicalOwner": "packages/human-economic-contribution",
       "canonicalPath": "packages/human-economic-contribution/src/valuation/engine.ts",
@@ -4197,7 +4191,7 @@
       "id": "moonrey-economic-event-attribution",
       "name": "MoonRey productive economic event identity and attribution",
       "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/productive/policy-governance/attribution/index.ts",
+      "canonicalPath": "packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts",
       "publicInterface": "packages/sunrey-chain/src/productive/policy-governance/attribution/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
