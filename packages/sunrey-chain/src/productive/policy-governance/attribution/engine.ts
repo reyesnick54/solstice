@@ -114,10 +114,11 @@ function applyReviewConditions(
     if (!batch || members.length < 2) {
       continue;
     }
-    const controllers = new Set(members.map((item) => item.subject.controllerId));
-    if (controllers.size > 1) {
-      for (const item of members) {
-        review(item, 'CONTROLLER_CONFLICT_SAME_OUTPUT', peers(item, members));
+    const productionClaims = members.filter((item) => claimsPhysicalOutput(item.subject));
+    const controllers = new Set(productionClaims.map((item) => item.subject.controllerId));
+    if (productionClaims.length > 1 && controllers.size > 1) {
+      for (const item of productionClaims) {
+        review(item, 'CONTROLLER_CONFLICT_SAME_OUTPUT', peers(item, productionClaims));
       }
     }
     const identities = new Set(members.map((item) => item.subject.economicEventId));
@@ -390,6 +391,11 @@ function applyDistinctService(
         'DISTINCT_REALIZED_SERVICE',
       );
       const required = pairRule?.requiredEvidence ?? evidenceForCategory(item.subject.category, policy);
+      if (!isIndependentServiceClaim(item.subject)) {
+        item.reasons.push(controllers.size === 1 ? 'VERTICAL_DISTINCT_STAGES' : 'SEPARATE_REALIZED_SERVICE');
+        link(item, counterpart);
+        continue;
+      }
       if (item.subject.category === 'LOGISTICS_TRANSPORTATION' && item.subject.measurementSemantics === 'units_produced') {
         review(item, 'MANUFACTURING_QUANTITY_NOT_LOGISTICS_OUTPUT', counterpart);
         continue;
@@ -411,6 +417,22 @@ function applyDistinctService(
     }
   }
   void rel;
+}
+
+function isIndependentServiceClaim(subject: AttributionSubject): boolean {
+  return subject.category === 'LOGISTICS_TRANSPORTATION'
+    || subject.category === 'STORAGE'
+    || subject.eventClass === 'DELIVERY';
+}
+
+function claimsPhysicalOutput(subject: AttributionSubject): boolean {
+  return (subject.category === 'GOODS' || subject.category === 'MANUFACTURING' || subject.eventClass === 'PRODUCTION_OUTPUT')
+    && subject.eventClass !== 'CONSUMPTION'
+    && subject.eventClass !== 'DELIVERY'
+    && subject.eventClass !== 'USAGE'
+    && subject.category !== 'LOGISTICS_TRANSPORTATION'
+    && subject.category !== 'STORAGE'
+    && subject.category !== 'ENERGY';
 }
 
 function applyRelabel(members: WorkingDecision[], policy: ProductiveAttributionPolicy): void {

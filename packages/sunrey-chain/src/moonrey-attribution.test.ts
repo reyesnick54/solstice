@@ -13,6 +13,7 @@ import {
   MoonReyPolicyRegistry,
   PRODUCTION_ACTIVE,
   compileCrossCategoryAllocation,
+  runMoonReyAttributionPolicyDemo,
   computePair,
   developmentAttributionPolicy,
   evaluateAttribution,
@@ -580,5 +581,17 @@ describe('Chunk 121 MoonRey attribution policy', () => {
     assert.equal(ATTRIBUTION_SHARE_SCALE, WEIGHT_SCALE);
     assert.equal(validateShareSet([700_000n, 300_000n]).ok, true);
     assert.equal(validateShareSet([700_000n, 400_000n]).ok, false);
+  });
+
+  it('prints the supply-chain demo without minting or activating production', () => {
+    const output = runMoonReyAttributionPolicyDemo();
+    assert.match(output, /DUPLICATE_FULL_ATTRIBUTION_ALLOWED=false/);
+    assert.match(output, /ATTRIBUTION_DOES_FINAL_VALUATION=false/);
+    assert.match(output, /ATTRIBUTION_AUTHORIZES_MOONREY=false/);
+    assert.match(output, /AI_CAN_ACTIVATE_POLICY=false/);
+    assert.match(output, /PRODUCTION_ACTIVE=false/);
+    assert.match(output, /SAME_UNDERLYING_EVENT/);
+    assert.match(output, /DEPENDENT_INPUT/);
+    assert.match(output, /DISTINCT_REALIZED_SERVICE/);
   });
 });
