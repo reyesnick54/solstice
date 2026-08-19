@@ -543,7 +543,7 @@ describe('CHUNK-115 cross-domain economic asset fabric', () => {
     const fact = fixtureFact();
     const oracle = createOracleEconomicAssetAdapter(registry);
     const factAsset = unwrap(oracle.projectVerifiedFact({ fact, at: NOW }));
-    unwrap(registry.verifyDescriptor(factAsset.assetId, NOW));
+    registry.verifyDescriptor(factAsset.assetId, NOW);
     assert.equal(fact.qualityStatus, 'VERIFIED');
     assert.equal(SOURCE_OF_TRUTH_BOUNDARY.oracleFactValidity, false);
     assert.equal(SOURCE_OF_TRUTH_BOUNDARY.contributionVerification, false);

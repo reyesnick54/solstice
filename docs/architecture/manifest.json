@@ -1142,7 +1142,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, mint, or second source-specific registry. Simulation only."
+      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful policy decision."
     }
   ],
   "components": [
@@ -3960,6 +3960,20 @@
       "canonicalOwner": "packages/human-economic-contribution",
       "canonicalPath": "packages/human-economic-contribution/src/valuation/engine.ts",
       "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/human-valuation-engine",
+        "packages/contribution-valuation",
+        "packages/human-contribution-valuation"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Chunk 110 valuation constitution lives at src/valuation. Do not create a second registry package."
     },
     {
@@ -3968,6 +3982,20 @@
       "canonicalOwner": "packages/human-economic-contribution",
       "canonicalPath": "packages/human-economic-contribution/src/valuation/registry.ts",
       "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/human-valuation-engine",
+        "packages/contribution-valuation",
+        "packages/human-valuation"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
       "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 109 evidence-verification policy. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     },
     {
@@ -4026,12 +4054,46 @@
         "packages/economic-assets",
         "packages/data-assets-v2",
         "packages/universal-data-registry",
-        "packages/tokenized-data"
+        "packages/tokenized-data",
+        "packages/dataset-verification",
+        "packages/data-rights-registry",
+        "packages/economic-provenance",
+        "packages/asset-rights",
+        "packages/economic-assets-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. Registration does not authorize settlement or minting."
+      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry and Chunk 114 verification layer. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. VERIFIED requires a successful EconomicAssetVerificationDecision. Registration does not authorize settlement or minting."
+    },
+    {
+      "id": "sunrey-economic-asset-verification",
+      "name": "Economic asset rights and provenance verification",
+      "canonicalOwner": "packages/economic-asset-registry",
+      "canonicalPath": "packages/economic-asset-registry/src/verification/engine.ts",
+      "publicInterface": "packages/economic-asset-registry/src/verification/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "EconomicAssetVerificationEngine",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/dataset-verification",
+        "packages/data-rights-registry",
+        "packages/economic-provenance",
+        "packages/asset-rights",
+        "packages/economic-assets-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 114 class-specific rights/provenance/lineage verification layer on the existing Economic Asset Registry owner. VERIFIED means the descriptor passed a versioned policy. Not valuation, not minting, not Execution Authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -5660,7 +5722,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/economic-asset-registry",
       "protected": true,
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
+      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data. VERIFIED requires a successful policy decision."
     },
     {
       "id": "sunrey-human-contribution-valuation",
@@ -5675,6 +5737,13 @@
       "owner": "packages/human-economic-contribution",
       "protected": true,
       "notes": "Chunk 109 versioned, contribution-class-specific evidence-verification layer. Canonical owner remains packages/human-economic-contribution. VERIFIED means the contribution passed the activated engineering policy. Production legal/commercial policy remains NOT_ACTIVATED. Not valuation or minting."
+    },
+    {
+      "id": "sunrey-economic-asset-verification",
+      "status": "IMPLEMENTED",
+      "owner": "packages/economic-asset-registry",
+      "protected": true,
+      "notes": "Chunk 114 versioned, asset-class-specific rights/provenance/lineage verification layer. Canonical owner remains packages/economic-asset-registry. VERIFIED means the descriptor passed the activated engineering policy. Production remains inactive. Not valuation or minting."
     }
   ],
   "boundedContexts": [
@@ -5812,7 +5881,7 @@
         "packages/economic-asset-registry"
       ],
       "protected": true,
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 115 is the cross-domain integration fabric on the same owner. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply."
+      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 114 is the verification layer. Chunk 115 is the cross-domain integration fabric on the same owner. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. VERIFIED requires a successful policy decision."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

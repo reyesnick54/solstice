@@ -27,6 +27,9 @@ import type {
   TransactionId,
   UsageRestrictionRef,
   ValuationMethodRef,
+  VerificationDecisionId,
+  VerificationPolicyId,
+  VerificationPolicyVersion,
 } from './ids.ts';
 import {
   ECONOMIC_ASSET_SCHEMA_VERSION,
@@ -75,7 +78,8 @@ export type RegistryFailureCode =
   | 'INVALID_TIMESTAMP'
   | 'PROTECTED_CONTENT_ON_CHAIN_FORBIDDEN'
   | 'SOURCE_IDENTITY_CONFLICT'
-  | 'LINEAGE_TARGET_NOT_FOUND';
+  | 'LINEAGE_TARGET_NOT_FOUND'
+  | 'VERIFICATION_REJECTED';
 
 export type AuthorityBoundaryFlags = {
   readonly authorizesFinancialExecution: false;
@@ -221,6 +225,9 @@ export type EconomicAssetDescriptor = {
   readonly automaticMoonReyQuantity: null;
   readonly issuanceEligible: false;
   readonly sourceRecordId: string;
+  readonly verificationPolicyId: VerificationPolicyId | null;
+  readonly verificationPolicyVersion: VerificationPolicyVersion | null;
+  readonly verificationDecisionId: VerificationDecisionId | null;
 };
 
 export type RegisterAssetInput = {

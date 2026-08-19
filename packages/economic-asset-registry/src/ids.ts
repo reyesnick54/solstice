@@ -29,6 +29,9 @@ export type ChainId = Brand<string, 'EconomicAssetChainId'>;
 export type TransactionId = Brand<string, 'EconomicAssetTransactionId'>;
 export type BlockId = Brand<string, 'EconomicAssetBlockId'>;
 export type StateRootRef = Brand<string, 'EconomicAssetStateRootRef'>;
+export type VerificationDecisionId = Brand<string, 'EconomicAssetVerificationDecisionId'>;
+export type VerificationPolicyId = Brand<string, 'EconomicAssetVerificationPolicyId'>;
+export type VerificationPolicyVersion = Brand<string, 'EconomicAssetVerificationPolicyVersion'>;
 
 export const ASSET_ID_PREFIXES = Object.freeze({
   asset: 'ear_',
@@ -58,6 +61,9 @@ export const ASSET_ID_PREFIXES = Object.freeze({
   transaction: 'eatx_',
   block: 'eablk_',
   stateRoot: 'easr_',
+  verificationDecision: 'eavd_',
+  verificationPolicy: 'eavp_',
+  verificationPolicyVersion: 'eavpv_',
 });
 
 const HEX_BODY = /^[a-f0-9]{16,64}$/;
@@ -166,6 +172,15 @@ export function asBlockId(value: string): BlockId {
 export function asStateRootRef(value: string): StateRootRef {
   return asPrefixedHex(value, ASSET_ID_PREFIXES.stateRoot, 'StateRootRef');
 }
+export function asVerificationDecisionId(value: string): VerificationDecisionId {
+  return asPrefixedHex(value, ASSET_ID_PREFIXES.verificationDecision, 'VerificationDecisionId');
+}
+export function asVerificationPolicyId(value: string): VerificationPolicyId {
+  return asPrefixedHex(value, ASSET_ID_PREFIXES.verificationPolicy, 'VerificationPolicyId');
+}
+export function asVerificationPolicyVersion(value: string): VerificationPolicyVersion {
+  return asPrefixedHex(value, ASSET_ID_PREFIXES.verificationPolicyVersion, 'VerificationPolicyVersion');
+}
 
 export function assetIdFor(material: string): AssetId {
   return refFor(ASSET_ID_PREFIXES.asset, `asset:${material}`);
@@ -247,6 +262,15 @@ export function blockIdFor(material: string): BlockId {
 }
 export function stateRootRefFor(material: string): StateRootRef {
   return refFor(ASSET_ID_PREFIXES.stateRoot, `state:${material}`);
+}
+export function verificationDecisionIdFor(material: string): VerificationDecisionId {
+  return refFor(ASSET_ID_PREFIXES.verificationDecision, `verification-decision:${material}`);
+}
+export function verificationPolicyIdFor(material: string): VerificationPolicyId {
+  return refFor(ASSET_ID_PREFIXES.verificationPolicy, `verification-policy:${material}`);
+}
+export function verificationPolicyVersionFor(material: string): VerificationPolicyVersion {
+  return refFor(ASSET_ID_PREFIXES.verificationPolicyVersion, `verification-policy-version:${material}`);
 }
 
 export const CANONICAL_SYSTEM_OWNERS = Object.freeze({
