@@ -509,7 +509,7 @@ export class ProductiveAttributionBook {
     }
     if (lineage.kind === 'MERGE' || lineage.kind === 'LOT_AGGREGATION') {
       const parentAllocated = lineage.parentEventIds.reduce((sum, eventId) => sum + this.allocatedShareForEvent(eventId), 0n);
-      if (parentAllocated > 0n && shareWouldExceed(parentAllocated, 0n, decision.allocatedShare)) {
+      if (parentAllocated > 0n && decision.allocatedShare > 0n) {
         return attributionFailure(
           'BATCH_MERGE_DUPLICATE',
           'merged batch cannot fabricate new goods production',

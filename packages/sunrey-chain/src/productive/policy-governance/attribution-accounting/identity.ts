@@ -9,7 +9,7 @@ import {
 } from './types.ts';
 
 export function canonicalUnitId(unitId: string): string {
-  return lookupUnit(unitId)?.unitId ?? unitId;
+  return lookupUnit(unitId)?.canonicalBaseUnit ?? lookupUnit(unitId)?.unitId ?? unitId;
 }
 
 export function quantizeUnixSeconds(value: bigint): bigint {
