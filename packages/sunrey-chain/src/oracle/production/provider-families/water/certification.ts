@@ -55,7 +55,7 @@ export function waterSandboxSubject(feed: WaterSandboxFeed, nowUnix = NOW): Cert
   const observation: SandboxObservation = Object.freeze({
     identifier: `sandbox_${feed}`,
     numericValue: '1000',
-    unit: 'm3',
+    unit: 'L',
     sourceTimestampUnix: nowUnix.toString(),
     collectionTimestampUnix: nowUnix.toString(),
     sourceObservationId: `obs_${feed}`,
@@ -76,7 +76,7 @@ export function waterSandboxSubject(feed: WaterSandboxFeed, nowUnix = NOW): Cert
     claimType: factType === 'WATER_AVAILABILITY' ? 'CAPACITY' : 'OUTPUT',
     schemaId: schema.schemaId,
     schemaVersion: 1,
-    unit: 'm3',
+    unit: 'L',
     normalizationVersion: 'sunrey.economic-unit.normalization.v1',
     mappingVersion: 1,
     connectorRuntimeVersion: 'sunrey.economic-data-connector.v1',

@@ -34,7 +34,7 @@ export function mapAgricultureObservationToEconomicAsset(
     sourceSchemaVersion: `agriculture:${observation.sourceClass}:1`,
     controllerRef: controllerRefFor(observation.controllerId),
     operatorRef: operatorRefFor(observation.operatorPartyId),
-    jurisdiction: observation.geography.jurisdiction,
+    jurisdiction: 'US',
     rightsConcepts: ['USAGE_RIGHTS', 'CONTROLLER_RIGHTS'],
     sensitivityClass: 'INTERNAL',
     qualityClass: 'ATTESTED',

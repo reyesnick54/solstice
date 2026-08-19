@@ -27,7 +27,7 @@ function volumeSchema(
     version: 1,
     factType,
     requiredFields: REQUIRED,
-    unit: 'm3',
+    unit: 'L',
     quantityScale: 0,
     identifierPattern: '^[A-Za-z0-9][A-Za-z0-9_.:-]{1,63}$',
     maxRecordBytes: 8_192,
