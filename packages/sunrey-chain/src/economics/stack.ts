@@ -6,8 +6,11 @@
  *   → ValidatorEconomicsEngine entitlement accounting
  *   and the burn component → canonical AssetSupplyBook FEE_BURN.
  *
- * MoonRey productive eligibility (Chunk 74/44) determines quantity.
- * Chunk 71 MonetaryIssuanceAuthority remains the constitutional gate.
+ * MoonRey V1 productive eligibility (Chunk 74/44 formula) determines
+ * quantity through `issueMoonReyFromClaim`.
+ * MoonRey V2 (`issueMoonReyFromGovernedValue`) converts GPUV through
+ * a settlement policy, then Chunk 71 MonetaryIssuanceAuthority.
+ * Chunk 71 remains the constitutional gate. The paths are not mixed.
  *
  * This is not a second ledger, fee engine, validator economy, or mint.
  */
@@ -25,6 +28,13 @@ import {
   ValidatorEconomicsEngine,
   fixtureValidatorRecord,
 } from '../validator-economics/index.ts';
+import {
+  MoonReyProductiveSettlementBridge,
+  fixtureAttribution,
+  fixtureEvent,
+  fixtureProductiveValueResult,
+  simulationConversionPolicy,
+} from '../productive/policy-governance/value-settlement/index.ts';
 import { auditSupply } from './auditor.ts';
 import { nativeAssetConstitution } from './constitution.ts';
 import {
@@ -60,6 +70,7 @@ export type IntegratedStackReconciliation = {
   readonly noHiddenNativeIssuance: boolean;
   readonly treasuryDidNotMint: boolean;
   readonly productiveMatchesConstitution: boolean;
+  readonly canonicalMoonReyReconciles: boolean;
   readonly ok: boolean;
 };
 
@@ -82,7 +93,10 @@ export class IntegratedEconomicStack {
   settledRewards = 0n;
   penalizedUnits = 0n;
   moonreyConstitutionalIssued = 0n;
+  moonreyV1Issued = 0n;
+  moonreyV2Issued = 0n;
   sunreyIssued = 0n;
+  private readonly governedValueBridge = new MoonReyProductiveSettlementBridge();
   duplicateRewardAttempts = 0;
   duplicatePenaltyAttempts = 0;
   duplicateMoonReyAttempts = 0;
@@ -289,11 +303,109 @@ export class IntegratedEconomicStack {
     }
     this.moonrey = monetary.book;
     this.moonreyConstitutionalIssued += finalized.receipt.moonreyQuantity;
+    this.moonreyV1Issued += finalized.receipt.moonreyQuantity;
     return {
       ok: true,
       quantity: finalized.receipt.moonreyQuantity,
       fingerprint: finalized.receipt.fingerprint,
       authorizationId: productiveAuth.authorization.authorizationId,
+    };
+  }
+
+  issueMoonReyFromGovernedValue(input: {
+    readonly claimId: string;
+    readonly objectId: string;
+    readonly category: string;
+    readonly quantity: bigint;
+    readonly unit: string;
+    readonly controller: string;
+    readonly epoch: number;
+    readonly providerCount: number;
+    readonly productiveValueQuantity?: bigint;
+    readonly conversionNumerator?: bigint;
+    readonly conversionDenominator?: bigint;
+    readonly authorizedBy?: string;
+    readonly production?: boolean;
+  }): StackMoonReyResult {
+    if (!this.finalityAvailable) {
+      this.pendingOperations += 1;
+      return { ok: false, code: 'FINALITY_UNAVAILABLE' };
+    }
+    const facts = fixtureFacts({
+      objectId: input.objectId,
+      category: input.category as ProductiveCategory,
+      quantity: input.quantity,
+      unit: input.unit,
+      count: input.providerCount,
+    });
+    for (const fact of facts) {
+      this.productive.putOracleFact(fact);
+    }
+    this.productive.submitClaim(
+      fixtureClaim({
+        claimId: input.claimId,
+        objectId: input.objectId,
+        claimType: 'OUTPUT',
+        category: input.category as ProductiveCategory,
+        quantity: input.quantity,
+        unit: input.unit,
+        controller: input.controller,
+        factCount: input.providerCount,
+        epoch: input.epoch,
+      }),
+    );
+    const verified = this.productive.verifyClaim(input.claimId);
+    if (!verified.ok) {
+      this.rejectedMoonRey += 1;
+      return { ok: false, code: verified.code };
+    }
+    const event = fixtureEvent(verified.contribution, {
+      eventId: `event.${verified.contribution.contributionId}`,
+      eventFingerprint: `efp.${verified.contribution.fingerprint}`,
+    });
+    const attribution = fixtureAttribution(verified.contribution, event.eventId, 400_000n);
+    const valueResult = fixtureProductiveValueResult({
+      contribution: verified.contribution,
+      event,
+      attribution,
+      productiveValueQuantity: input.productiveValueQuantity ?? 10_000n,
+      productiveValueId: `pvr.${verified.contribution.contributionId}`,
+    });
+    if (input.production) {
+      this.rejectedMoonRey += 1;
+      return { ok: false, code: 'PRODUCTION_V2_UNAVAILABLE' };
+    }
+    const conversionPolicy = simulationConversionPolicy({
+      conversionNumerator: input.conversionNumerator,
+      conversionDenominator: input.conversionDenominator,
+    });
+    const issued = this.governedValueBridge.attempt(
+      {
+        contribution: verified.contribution,
+        event,
+        attributionDecision: attribution,
+        valueResult,
+        conversionPolicy,
+        authorizedBy: input.authorizedBy ?? 'PROTOCOL',
+      },
+      this.constitution,
+      this.moonrey,
+    );
+    if (!issued.ok) {
+      if (issued.code === 'REPLAY_REJECTED' || issued.code === 'DUPLICATE_ISSUANCE') {
+        this.duplicateMoonReyAttempts += 1;
+      }
+      this.rejectedMoonRey += 1;
+      return { ok: false, code: issued.code };
+    }
+    this.moonrey = issued.book;
+    this.moonreyConstitutionalIssued += issued.receipt.moonreyQuantity;
+    this.moonreyV2Issued += issued.receipt.moonreyQuantity;
+    return {
+      ok: true,
+      quantity: issued.receipt.moonreyQuantity,
+      fingerprint: issued.receipt.fingerprint,
+      authorizationId: issued.authorization.authorizationId,
     };
   }
 
@@ -453,7 +565,9 @@ export class IntegratedEconomicStack {
     const feeBurnMatchesMonetary = this.sunrey.burned === this.feeBurned;
     const validatorRewardMatchesIngested = this.ingestedRewards === this.feeRewards;
     const productive = this.productive.currentSupply();
-    const productiveMatchesConstitution = productive.issued === this.moonrey.issuedPostGenesis;
+    const productiveMatchesConstitution = productive.issued === this.moonreyV1Issued;
+    const canonicalMoonReyReconciles =
+      this.moonrey.issuedPostGenesis === this.moonreyV1Issued + this.moonreyV2Issued;
     const audit = auditSupply([this.sunrey, this.moonrey]);
     const noHiddenNativeIssuance = this.sunrey.issuedPostGenesis === this.sunreyIssued;
     const treasuryDidNotMint = this.feeTreasury <= this.feeCharged;
@@ -466,6 +580,7 @@ export class IntegratedEconomicStack {
       noHiddenNativeIssuance &&
       treasuryDidNotMint &&
       productiveMatchesConstitution &&
+      canonicalMoonReyReconciles &&
       audit.ok &&
       this.validators.reconcile().balanced;
     return Object.freeze({
@@ -477,6 +592,7 @@ export class IntegratedEconomicStack {
       noHiddenNativeIssuance,
       treasuryDidNotMint,
       productiveMatchesConstitution,
+      canonicalMoonReyReconciles,
       ok,
     });
   }

@@ -10,7 +10,6 @@ import {
   COMPANY_A,
   DUPLICATE_FULL_ATTRIBUTION_ALLOWED,
   ENERGY_CO,
-  MoonReyPolicyRegistry,
   PRODUCTION_ACTIVE,
   compileCrossCategoryAllocation,
   runMoonReyAttributionPolicyDemo,
@@ -25,7 +24,8 @@ import {
   supplyChainSubjects,
   validateShare,
   validateShareSet,
-} from './productive/policy-governance/index.ts';
+} from './productive/policy-governance/attribution/index.ts';
+import { MoonReyPolicyRegistry } from './productive/policy-governance/index.ts';
 
 describe('Chunk 121 MoonRey attribution policy', () => {
   it('1. manufacturing + machine output same event cannot both take 100%', () => {

@@ -80,6 +80,7 @@ export type { MoonReyPolicySimulationReport, PolicySimulationScenario } from './
 export { moonreyPolicyReadiness } from './readiness.ts';
 export type { MoonReyPolicyReadiness } from './readiness.ts';
 export { runMoonReyEconomicsCommand } from './cli.ts';
+export * from './value-function/index.ts';
 export * from './attribution/index.ts';
 export * from './value-function/index.ts';
 export {
