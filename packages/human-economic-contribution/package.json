@@ -14,6 +14,7 @@
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/registry-demo.ts",
     "demo:valuation": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/valuation/demo.ts"
+    "demo:verification": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/verification-demo.ts"
   },
   "engines": {
     "node": ">=22"

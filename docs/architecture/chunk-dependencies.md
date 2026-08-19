@@ -166,6 +166,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
+| sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -992,3 +993,15 @@ quantity and does not mint. Production valuation remains
 unconfigured. Do not create `packages/human-valuation-engine`,
 `packages/contribution-valuation`, or `packages/human-valuation`. The
 evaluator returns `mustStop: false`.
+Chunk 109 hardens verification at
+`packages/human-economic-contribution/src/verification`. Capability
+`sunrey-human-contribution-verification` is `IMPLEMENTED` on the same
+owner. See
+[`chunk-109-human-contribution-verification.md`](./chunk-109-human-contribution-verification.md)
+and
+[`docs/economics/chunk-109-human-contribution-verification.md`](../economics/chunk-109-human-contribution-verification.md).
+VERIFIED means the contribution passed a versioned evidence policy.
+It does not value, mint, or issue Execution Authority. Do not create
+`packages/human-contribution-verification`,
+`packages/contribution-verification`, or `packages/human-worth`.
+The evaluator returns `mustStop: false`.

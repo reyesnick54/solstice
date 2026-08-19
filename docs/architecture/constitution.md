@@ -90,6 +90,7 @@ never be two implementations of these systems.
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
+| Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -1345,6 +1346,11 @@ quantity, and not a mint. Production valuation remains unconfigured.
 Do not create `packages/human-valuation-engine`,
 `packages/contribution-valuation`, or `packages/human-valuation`. See
 [`chunk-110-human-contribution-valuation-constitution.md`](./chunk-110-human-contribution-valuation-constitution.md).
+Chunk 109 hardens verification on that same owner so VERIFIED means
+the contribution passed a versioned, contribution-class-specific
+evidence policy. Capability
+`sunrey-human-contribution-verification` names that layer.
+See [`chunk-109-human-contribution-verification.md`](./chunk-109-human-contribution-verification.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

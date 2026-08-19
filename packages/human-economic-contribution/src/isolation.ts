@@ -27,6 +27,8 @@ export const HUMAN_CONTRIBUTION_ISOLATION = Object.freeze({
     'packages/human-economic-contribution-registry',
     'packages/human-valuation-engine',
     'packages/human-valuation',
+    'packages/human-contribution-verification',
+    'packages/contribution-verification',
   ]),
   mustNotImport: Object.freeze([
     'packages/kernel',

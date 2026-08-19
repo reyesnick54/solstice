@@ -204,7 +204,7 @@ describe('Chunk 93 public data plane', () => {
     const key = developerApiKey('dev_1', 4);
     assert.equal(apiKeyCannotAuthorizeFinancialAction(key), true);
     const gateway = new PublicRpcGateway();
-    gateway.registerApiKey({ ...key, canAuthorizeCustody: true });
+    gateway.registerApiKey({ ...key, canAuthorizeCustody: true } as unknown as typeof key);
     const denied = gateway.handle({
       requestId: 'key_1',
       method: 'chain.status',

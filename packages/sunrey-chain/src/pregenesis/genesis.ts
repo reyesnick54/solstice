@@ -142,8 +142,8 @@ export function buildShadowGenesis(validators = sevenShadowValidators()): Pregen
     allocationHash: allocationManifestHash(allocation),
     moduleRegistryHash,
     consensusParametersHash,
-    sunreyGenesisSupply: '0',
-    moonreyGenesisSupply: '0',
+    sunreyGenesisSupply: '0' as const,
+    moonreyGenesisSupply: '0' as const,
   };
   const encoded = Buffer.concat([
     encodeString(PREGENESIS_DOMAIN),

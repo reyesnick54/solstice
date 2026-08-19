@@ -26,7 +26,7 @@ export type CanonicalContributionRecord = {
 };
 
 export type CanonicalContributionRecorder = {
-  record(input: {
+  submit(input: {
     readonly subjectRef: string;
     readonly contributionClass: typeof INFORMATION_RIGHT_CONTRIBUTION;
     readonly sourceClass: 'HUMAN_INFORMATION_NETWORK';
@@ -36,9 +36,7 @@ export type CanonicalContributionRecorder = {
     readonly validFrom: UtcInstant;
     readonly jurisdiction: string;
     readonly createdAt: UtcInstant;
-    readonly status: 'VERIFIED';
     readonly eligibilityState: 'NOT_SETTLEMENT_ELIGIBLE';
-    readonly verificationQuality: 'VERIFIED';
     readonly evidenceReferences: readonly string[];
     readonly rightsReferences: readonly string[];
     readonly consentReferences: readonly string[];
@@ -50,6 +48,10 @@ export type CanonicalContributionRecorder = {
       readonly usageReceiptRefs: readonly string[];
       readonly cleanRoomResultRefs: readonly string[];
     };
+  }): Result<CanonicalContributionRecord, { readonly code: string; readonly message: string }>;
+  verify(input: {
+    readonly contributionId: string;
+    readonly verificationTimestamp: UtcInstant;
   }): Result<CanonicalContributionRecord, { readonly code: string; readonly message: string }>;
   get?(contributionId: string): CanonicalContributionRecord | undefined;
 };
@@ -70,6 +72,12 @@ function mapFailure(code: string, message: string): HinContributionFailure {
   }
   if (code === 'MINT_AUTHORIZATION_FORBIDDEN' || code === 'ISSUANCE_QUANTITY_FORBIDDEN') {
     return { code: 'AUTOMATIC_MINT_FORBIDDEN', message };
+  }
+  if (code === 'REQUIRES_ADDITIONAL_EVIDENCE' || code === 'EVIDENCE_MISSING') {
+    return { code: 'REQUIRES_ADDITIONAL_EVIDENCE', message };
+  }
+  if (code === 'VERIFICATION_REJECTED' || code === 'VERIFICATION_POLICY_REQUIRED') {
+    return { code: 'VERIFICATION_REJECTED', message };
   }
   return { code: 'EVIDENCE_INCOMPLETE', message };
 }
@@ -96,7 +104,7 @@ export function bindCanonicalHumanContributionRegistry(
       if (!privacy.ok) {
         return privacy;
       }
-      const recorded = canonical.record({
+      const submitted = canonical.submit({
         subjectRef: hexRef('subj_', evidence.subjectPseudonymousRef),
         contributionClass: INFORMATION_RIGHT_CONTRIBUTION,
         sourceClass: 'HUMAN_INFORMATION_NETWORK',
@@ -104,11 +112,9 @@ export function bindCanonicalHumanContributionRegistry(
         measurementQuantity: 1n,
         measurementUnit: 'CONSENT_SCOPED_INFORMATION_USE',
         validFrom: evidence.occurredAt,
-        jurisdiction: 'SIMULATION',
+        jurisdiction: 'GB',
         createdAt: verifiedAt,
-        status: 'VERIFIED',
         eligibilityState: 'NOT_SETTLEMENT_ELIGIBLE',
-        verificationQuality: 'VERIFIED',
         evidenceReferences: [hexRef('hevr_', evidence.evidenceDigest)],
         rightsReferences: [hexRef('hir_', evidence.rightId)],
         consentReferences: [hexRef('cgr_', evidence.consentRef)],
@@ -123,8 +129,21 @@ export function bindCanonicalHumanContributionRegistry(
             : [],
         },
       });
+      if (!submitted.ok) {
+        return err(mapFailure(submitted.error.code, submitted.error.message));
+      }
+      const recorded = canonical.verify({
+        contributionId: submitted.value.contributionId,
+        verificationTimestamp: verifiedAt,
+      });
       if (!recorded.ok) {
         return err(mapFailure(recorded.error.code, recorded.error.message));
+      }
+      if (recorded.value.status !== 'VERIFIED') {
+        return err({
+          code: 'VERIFICATION_REJECTED',
+          message: 'canonical registry refused to manufacture VERIFIED without a policy decision',
+        });
       }
       const record: HumanContributionRecord = Object.freeze({
         contributionId: recorded.value.contributionId,

@@ -69,7 +69,7 @@ export class SdkRpcEndpointPool {
     const client = this.clients[0]!;
     const submitted = await client.submitTransaction({
       signed_envelope_hex: input.signed_envelope_hex,
-      network_id: input.network_id,
+      ...(input.network_id !== undefined ? { network_id: input.network_id } : {}),
       previous_transaction_id: input.transaction_id,
     });
     if (!submissionRetrySafe({ previousTransactionId: input.transaction_id, nextTransactionId: submitted.transaction_id })) {
