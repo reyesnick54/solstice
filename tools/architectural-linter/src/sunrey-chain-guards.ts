@@ -62,7 +62,12 @@ export function lintSunReyChainBoundary(root: string): Finding[] {
       continue;
     }
     const source = readFileSync(file, 'utf8');
-    if (/postJournal\s*\(/.test(source) || /AuthorityIssuer/.test(source) || /ExecutionAuthority/.test(source)) {
+    const withoutExplicitDenials = source.replace(/createsExecutionAuthority\s*:\s*false/g, '');
+    if (
+      /postJournal\s*\(/.test(withoutExplicitDenials) ||
+      /AuthorityIssuer/.test(withoutExplicitDenials) ||
+      /ExecutionAuthority/.test(withoutExplicitDenials)
+    ) {
       findings.push({
         rule: 'unauthorized-mutator',
         file,
