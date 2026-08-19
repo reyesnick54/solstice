@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-132",
+  "title": "Logistics, Freight, Delivery & Storage Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-provider-certification",
+    "sunrey-logistics-storage-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/logistics. Extends sunrey-production-oracles. Distinguishes goods production, transportation, delivery completion, storage service, and capacity. Tonne-km requires mass and distance or attested tonne-km. Warehouse capacity is not realized storage. Digital and physical storage stay distinct. No named vendors, no live carriers, no MoonRey activation. evaluateChunkRequirements returns mustStop: false. Do not create packages/logistics-data-fabric, packages/freight-oracles, packages/warehouse-storage-oracles, or packages/moonrey-logistics."
+}

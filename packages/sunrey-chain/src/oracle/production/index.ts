@@ -259,5 +259,13 @@ export {
   enforceSourceTimestamp,
   parseJsonSourceRecord,
 } from './runtime.ts';
+export {
+  LogisticsStorageDataFabric,
+  defaultLogisticsFabric,
+  ingestLogisticsObservation,
+  logisticsFactCannotAutoMint,
+  storageFactCannotAutoMint,
+} from './provider-families/logistics/index.ts';
+export type { LogisticsFabricDecision, LogisticsSourceObservation } from './provider-families/logistics/index.ts';
 export * from './provider-families/compute/index.ts';
 
