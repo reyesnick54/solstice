@@ -69,3 +69,10 @@ responses are not stored.
 
 No real commercial provider is certified. No contracts, licenses, security
 reviews, provider approvals, or legal opinions are fabricated.
+
+Chunk 129 adds energy-family certification fixtures (generator interval,
+utility consumption, cumulative register, reference price) and
+adversarial cases (meter reset, duplicate interval, stale reading,
+wrong unit, float quantity, same-controller fake quorum, reference
+price pretending to be production). See
+[`chunk-129-energy-data-fabric.md`](./chunk-129-energy-data-fabric.md).

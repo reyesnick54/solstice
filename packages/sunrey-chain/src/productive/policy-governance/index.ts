@@ -82,6 +82,7 @@ export type { MoonReyPolicyReadiness } from './readiness.ts';
 export { runMoonReyEconomicsCommand } from './cli.ts';
 export * from './value-function/index.ts';
 export * from './attribution-accounting/index.ts';
+export * from './attribution/index.ts';
 export type * from './attribution/index.ts';
 export {
   AI_CAN_ACTIVATE_POLICY,

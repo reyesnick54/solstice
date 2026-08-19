@@ -1591,6 +1591,18 @@ GPU-time. Capacity is not realized output. Facts do not mint MoonRey.
 Do not create `packages/compute-oracle`, `packages/ai-compute-provider`,
 `packages/gpu-metering`, or `packages/compute-data-fabric`. See
 [`chunk-130-compute-ai-data-fabric.md`](./chunk-130-compute-ai-data-fabric.md).
+Chunk 129 implements the provider-neutral energy and electrical-grid
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+It extends the existing `sunrey-production-oracles` owner. Energy
+observations use Chunk 118/119 units, Chunk 116/117 taxonomy, and the
+Chunk 127 connector runtime through injected sandbox transports.
+Reference price cannot create a claim or mint MoonRey. Installed
+capacity in MW/kW remains `UNIT_EXTENSION_REQUIRED` until the unit
+constitution is extended. Do not create `packages/energy-oracle`,
+`packages/grid-oracle`, `packages/moonrey-energy`,
+`packages/power-data`, or `packages/utility-integration`. See
+[`docs/economics/chunk-129-energy-data-fabric.md`](../economics/chunk-129-energy-data-fabric.md).
 
 ## Agent stop rule
 
