@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-115",
+  "title": "Cross-Domain Economic Asset Registry Integration Fabric",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "information-market",
+    "sunrey-human-information-network",
+    "sunrey-human-economic-contributions",
+    "sunrey-human-contribution-valuation",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-productive-capacity",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED as adapters over the existing packages/economic-asset-registry owner. Adds EconomicAssetRegistryPort and source-domain privacy-safe projectors from HIN, Human Contribution Registry, Oracle Network, and productive economy. Does not create a second registry, store raw datasets, mint, or become source of truth for consent, verification, oracle facts, productive eligibility, or native supply. evaluateChunkRequirements returns mustStop: false. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
+}

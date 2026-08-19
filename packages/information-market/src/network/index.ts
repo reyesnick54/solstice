@@ -57,6 +57,12 @@ export {
   type InformationRightContributionEvidence,
 } from './contribution/index.ts';
 export { runHumanInformationContributionDemo } from './contribution/demo.ts';
+export {
+  HinEconomicAssetAdapter,
+  createHinEconomicAssetAdapter,
+  mapInformationAsset,
+  mapInformationRight,
+} from './economic-asset-adapter.ts';
 export type {
   CleanRoomComputationRequest,
   CleanRoomComputationResult,

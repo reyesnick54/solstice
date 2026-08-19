@@ -22,6 +22,8 @@ export const ECONOMIC_ASSET_REGISTRY_ISOLATION = Object.freeze({
     'packages/universal-data-registry',
     'packages/tokenized-data',
   ]),
+  fabricPort: 'EconomicAssetRegistryPort',
+  isSourceOfTruth: false,
   sitsAbove: Object.freeze([
     'packages/information-market',
     'packages/personal-data-vault',

@@ -147,6 +147,7 @@ export function createEconomicAssetDescriptor(
     automaticSunReyQuantity: null,
     automaticMoonReyQuantity: null,
     issuanceEligible: false,
+    sourceRecordId: input.sourceRecordId ?? input.contentCommitmentMaterial,
   });
 
   void DEFAULT_CLASS_POLICY;

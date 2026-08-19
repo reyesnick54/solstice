@@ -102,6 +102,7 @@
     "demo:sunrey-human-contribution-ontology": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/demo.ts",
     "demo:sunrey-human-contribution-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/registry-demo.ts",
     "demo:sunrey-economic-asset-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/economic-asset-registry/src/demo.ts",
+    "demo:sunrey-economic-asset-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/economic-asset-registry/src/fabric/demo.ts",
     "demo:sunrey-human-contribution-valuation": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/valuation-demo.ts",
     "demo:sunrey-human-contribution-valuation-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/valuation/demo.ts",
     "demo:sunrey-human-contribution-verification": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/verification-demo.ts",

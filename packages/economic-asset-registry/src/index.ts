@@ -36,6 +36,8 @@ export {
   legalOwnershipRightsRefFor,
   licenseRefFor,
   lineageRootFor,
+  networkIdFor,
+  chainIdFor,
   operatorRefFor,
   provenanceDigestFor,
   purposeRefFor,
@@ -66,7 +68,23 @@ export {
 } from './invariants.ts';
 export { assertAcyclicLineage, childrenOf, normalizeLineage, parentsOf, wouldCreateCycle } from './lineage.ts';
 export { EconomicAssetQueryIndex } from './projections.ts';
+export {
+  projectDescriptor,
+  reflectSourceLifecycle,
+  sourceIdentityKey,
+  sourceProjectionKey,
+  type AddLineageInput,
+  type EconomicAssetRegistryPort,
+  type SourceProjectionKey,
+} from './port.ts';
 export { CanonicalEconomicAssetRegistry, EconomicAssetRegistry } from './registry.ts';
+export {
+  FABRIC_AUTHORITY_BOUNDARY,
+  FABRIC_DIRECTION,
+  FABRIC_PRIVACY_BOUNDARY,
+  REGISTRY_IS_SOURCE_OF_TRUTH,
+  SOURCE_OF_TRUTH_BOUNDARY,
+} from './source-of-truth.ts';
 export { InMemoryEconomicAssetRegistryStore, type EconomicAssetRegistryStore } from './store.ts';
 export {
   ASSET_LIFECYCLE_STATES,

@@ -126,11 +126,6 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
       ...rest,
       ...(requestedStatus && requestedStatus !== 'VERIFIED' ? { status: requestedStatus } : {}),
     });
-    const { status, ...rest } = input;
-    if (status && status !== 'VERIFIED') {
-      return this.insert({ ...rest, status });
-    }
-    return this.insert(rest);
   }
 
   evaluateVerification(input: VerifyContributionInput): Result<HumanContributionVerificationDecision, ContributionFailure> {

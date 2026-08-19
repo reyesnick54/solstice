@@ -1346,10 +1346,17 @@ above HIN, PDV, PEG, the Human Economic Contribution Registry, the
 Oracle Network, productive registries, and the monetary constitution.
 It does not store raw datasets, value assets, mint, or replace those
 owners. Native SunRey and MoonRey supply remain outside this
-registry. Do not create `packages/dataset-registry`,
+registry. Chunk 115 adds the cross-domain integration fabric and
+`EconomicAssetRegistryPort` on that same owner. Source-domain adapters
+live in HIN, the Human Contribution Registry, the Oracle Network, and
+the productive economy. The registry remains an index, not the source
+of truth for consent, verification, oracle facts, productive
+eligibility, or native supply. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. See
-[`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md).
+[`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md)
+and
+[`chunk-115-economic-asset-integration-fabric.md`](./chunk-115-economic-asset-integration-fabric.md).
 Chunk 111 implements the Deterministic Human Contribution Valuation
 Engine at `packages/human-economic-contribution/src/valuation`.
 Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.

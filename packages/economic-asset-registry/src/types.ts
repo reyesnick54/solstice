@@ -73,7 +73,9 @@ export type RegistryFailureCode =
   | 'FORBIDDEN_FIELD'
   | 'INVALID_JURISDICTION'
   | 'INVALID_TIMESTAMP'
-  | 'PROTECTED_CONTENT_ON_CHAIN_FORBIDDEN';
+  | 'PROTECTED_CONTENT_ON_CHAIN_FORBIDDEN'
+  | 'SOURCE_IDENTITY_CONFLICT'
+  | 'LINEAGE_TARGET_NOT_FOUND';
 
 export type AuthorityBoundaryFlags = {
   readonly authorizesFinancialExecution: false;
@@ -218,6 +220,7 @@ export type EconomicAssetDescriptor = {
   readonly automaticSunReyQuantity: null;
   readonly automaticMoonReyQuantity: null;
   readonly issuanceEligible: false;
+  readonly sourceRecordId: string;
 };
 
 export type RegisterAssetInput = {
@@ -265,6 +268,7 @@ export type RegisterAssetInput = {
   readonly legalOwnershipRightsRef?: LegalOwnershipRightsRef | null;
   readonly supersedes?: AssetId | null;
   readonly corrects?: AssetId | null;
+  readonly sourceRecordId?: string;
 };
 
 export type EconomicAssetQuery = {
@@ -283,6 +287,7 @@ export type EconomicAssetQuery = {
   readonly chainAnchor?: ContentCommitment;
   readonly lineageParent?: AssetId;
   readonly permittedValuationMethod?: ValuationMethodRef;
+  readonly sourceRecordId?: string;
 };
 
 export type EconomicAssetRegistrySnapshot = {
