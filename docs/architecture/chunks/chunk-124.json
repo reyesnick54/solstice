@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-124",
+  "title": "Deterministic MoonRey Productive Value Function Engine",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-unit-normalization",
+    "moonrey-productive-value-function",
+    "moonrey-economic-event-attribution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance/value-function. Adds the simulation valuation engine, governed base-value schedule, and explainability receipt. Engineering implementation is not production activation. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-value-engine, packages/productive-valuation, packages/moonrey-valuation, or packages/economic-value-engine."
+}

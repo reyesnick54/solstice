@@ -1161,3 +1161,9 @@ the legacy issuance formula. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 124 adds the deterministic Productive Value Function engine
+inside that same module. Engineering implementation is not production
+activation. Do not create `packages/moonrey-value-engine`,
+`packages/productive-valuation`, `packages/moonrey-valuation`, or
+`packages/economic-value-engine`. The evaluator returns
+`mustStop: false`.
