@@ -51,11 +51,14 @@ const proposal = engine.createProposal({
   modelRef: 'model:sim-v1',
   networkId: 'net_sunrey_simulation',
 });
+if (!proposal.ok) {
+  throw new Error(proposal.error.detail);
+}
 console.log(
   JSON.stringify(
     {
-      mandate: mandate.ok ? mandate.value.mandateId : mandate.error,
-      proposal: proposal.ok ? proposal.value.proposalId : proposal.error,
+      mandate: mandate.value.mandateId,
+      proposal: proposal.value.proposalId,
       formal: exploreAgentMandateSafety(),
     },
     (_key, value) => (typeof value === 'bigint' ? value.toString() : value),

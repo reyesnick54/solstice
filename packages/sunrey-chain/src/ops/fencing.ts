@@ -30,7 +30,7 @@ export class SignerFencingController {
     validatorId: string,
     activeSite: string,
     passiveSite: string,
-    chainId = DEVELOPMENT_CHAIN_ID,
+    chainId: string = DEVELOPMENT_CHAIN_ID,
   ): ResilienceSignerFence {
     const fence: ResilienceSignerFence = {
       validatorId,

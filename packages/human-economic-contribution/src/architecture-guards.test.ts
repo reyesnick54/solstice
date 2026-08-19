@@ -26,7 +26,7 @@ describe('chunk 104 architecture guards', () => {
   it('stays an ontology and does not become a second financial authority', () => {
     const files = walk(join(ROOT, 'packages/human-economic-contribution/src'));
     for (const file of files) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts')) {
+      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts') || file.endsWith('verification-demo.ts')) {
         continue;
       }
       const source = readFileSync(file, 'utf8');
@@ -55,8 +55,23 @@ describe('chunk 104 architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/personal-economic-graph/src/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/platform/src/value/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/information-market/src/network/engine.ts')), true);
-    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationImplemented, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationImplemented, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationEngineImplemented, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationIsNotMint, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationIsNotPeve, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationIsNotHumanWorth, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationIsNotSettlementAuthorization, true);
     assert.equal(HUMAN_CONTRIBUTION_ISOLATION.mintingImplemented, false);
     assert.equal(HUMAN_CONTRIBUTION_ISOLATION.financialStateMutation, false);
+    assert.equal(existsSync(join(ROOT, 'packages/human-economic-contribution/src/valuation/engine.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/human-valuation-engine')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/human-economic-contribution/src/valuation/constitution.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/human-valuation-engine')), false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationImplemented, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationConstitutionImplemented, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationEngineComputesSettlement, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.mintingImplemented, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.financialStateMutation, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.productionValuationActivated, false);
   });
 });

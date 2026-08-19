@@ -1260,8 +1260,11 @@ export function defaultDimensionCatalog(
       verificationStatus: 'NOT_PROVIDED',
     },
   ];
-  return Object.freeze([...drafts.map(slot), ...mainnetRcReadinessRecords(), ...postGenesisReadinessRecords()]);
-  return Object.freeze([...drafts.map((draft) => slot(draft, overlay)), ...mainnetRcReadinessRecords()]);
+  return Object.freeze([
+    ...drafts.map((draft) => slot(draft, overlay)),
+    ...mainnetRcReadinessRecords(),
+    ...postGenesisReadinessRecords(),
+  ]);
 }
 
 export function dimensionsCovered(): readonly MainnetReadinessDimension[] {

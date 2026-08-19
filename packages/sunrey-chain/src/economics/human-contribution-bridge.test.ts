@@ -59,7 +59,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       authorizedSunReyQuantity: 75n,
     });
     const evidence = toHumanEconomicEvidence(contribution, authorization);
-    assert.equal(evidence.ok, true);
     if (!evidence.ok) {
       throw new Error(evidence.code);
     }
@@ -74,7 +73,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       { recipient: 'alice', contribution, authorization, actorKind: 'HUMAN' },
       book(),
     );
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       throw new Error(issued.code);
     }
@@ -108,7 +106,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       authorizedSunReyQuantity: 20n,
     });
     const first = bridge.attempt({ recipient: 'alice', contribution, authorization }, book());
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -238,7 +235,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       authorizationId: 'hcesa.orig.1',
     });
     const first = bridge.attempt({ recipient: 'alice', contribution: original, authorization: firstAuth }, book());
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -287,7 +283,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       },
       first.book,
     );
-    assert.equal(adjusted.ok, true);
     if (!adjusted.ok) {
       throw new Error(adjusted.code);
     }
@@ -351,7 +346,6 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       authorizedSunReyQuantity: 30n,
     });
     const issued = bridge.attempt({ recipient: 'alice', contribution, authorization }, book());
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       throw new Error(issued.code);
     }

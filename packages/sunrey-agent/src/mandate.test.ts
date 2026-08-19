@@ -215,10 +215,10 @@ describe('user agent mandates', () => {
       throw new Error('expected proposal');
     }
     const executed = svc.requestExecution(proposal.value.proposalId, execContext());
-    assert.equal(executed.ok, true);
     if (!executed.ok) {
       throw new Error(executed.error.detail);
     }
+    assert.equal(executed.ok, true);
     assert.equal(executed.value.finality, 'SUBMITTED');
     assert.equal(getAgentProposal(svc, proposal.value.proposalId)?.state, 'EXECUTED');
   });

@@ -278,7 +278,7 @@ describe('adversarial agent mandate fixtures', () => {
     assert.equal(compliance.ok, false);
     const aiSign = svc.requestExecution(proposal.value.proposalId, ctx({ signerIsAiIdentity: true }));
     assert.equal(aiSign.ok, false);
-    const noHuman = svc.requestExecution(proposal.value.proposalId, ctx({ humanApproved: false, approvalClassUsed: undefined }));
+    const noHuman = svc.requestExecution(proposal.value.proposalId, ctx({ humanApproved: false }));
     assert.equal(noHuman.ok, false);
   });
 });

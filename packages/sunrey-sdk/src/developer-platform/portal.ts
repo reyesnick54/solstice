@@ -93,7 +93,7 @@ export class DeveloperPlatformEngine {
     this.faucet = input.faucet ?? new DeveloperFaucet();
     this.webhooks = new WebhookDispatcher({
       policy: DEFAULT_WEBHOOK_RETRY_POLICY,
-      transport: input.transport,
+      ...(input.transport !== undefined ? { transport: input.transport } : {}),
     });
     this.rpcUp = input.rpcUp ?? true;
     this.explorerUp = input.explorerUp ?? true;

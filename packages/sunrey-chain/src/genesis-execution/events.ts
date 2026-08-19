@@ -21,7 +21,7 @@ export function appendLaunchEvent(
     readonly evidenceHash: string;
   },
 ): readonly LaunchEvent[] {
-  const previousEventHash = events.length === 0 ? LAUNCH_EVENT_GENESIS_PRIOR : events[events.length - 1]!.eventHash;
+  const previousEventHash = events.length === 0 ? ('GENESIS' as const) : events[events.length - 1]!.eventHash;
   const draft = {
     sequence: events.length + 1,
     actor: input.actor,
@@ -38,7 +38,7 @@ export function appendLaunchEvent(
 }
 
 export function verifyLaunchEvents(events: readonly LaunchEvent[]): boolean {
-  let previous = LAUNCH_EVENT_GENESIS_PRIOR;
+  let previous: string = LAUNCH_EVENT_GENESIS_PRIOR;
   for (const [index, entry] of events.entries()) {
     if (entry.sequence !== index + 1 || entry.previousEventHash !== previous) {
       return false;
