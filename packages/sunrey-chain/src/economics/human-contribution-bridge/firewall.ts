@@ -7,7 +7,7 @@
 
 import type { BridgeRejection } from './types.ts';
 
-const RAW_PERSONAL_KEYS = [
+const RAW_PERSONAL_KEYS = new Set([
   'name',
   'legalName',
   'email',
@@ -24,9 +24,9 @@ const RAW_PERSONAL_KEYS = [
   'biometric',
   'fullName',
   'nationalId',
-] as const;
+]);
 
-const PROTECTED_TRAIT_KEYS = [
+const PROTECTED_TRAIT_KEYS = new Set([
   'race',
   'religion',
   'ethnicity',
@@ -37,9 +37,9 @@ const PROTECTED_TRAIT_KEYS = [
   'disability',
   'medicalCondition',
   'medical_condition',
-] as const;
+]);
 
-const HUMAN_WORTH_KEYS = [
+const HUMAN_WORTH_KEYS = new Set([
   'humanWorthScore',
   'human_worth',
   'humanWorth',
@@ -50,16 +50,29 @@ const HUMAN_WORTH_KEYS = [
   'credit_score',
   'desirabilityScore',
   'desirability',
-] as const;
+]);
 
-const PEVE_QUANTITY_KEYS = [
+const PEVE_QUANTITY_KEYS = new Set([
   'peveScore',
   'peveComposite',
   'peve_composite',
   'peveQuantity',
   'personalEconomicValue',
   'peve',
-] as const;
+]);
+
+/** Explicit false invariants on the privacy-safe adapter are not valuation features. */
+const INVARIANT_FALSE_FLAGS = new Set([
+  'humanWorthScore',
+  'peveScoreUsedAsQuantity',
+  'peveUsedAsTokenFormula',
+  'containsRawPersonalData',
+  'pdvSourceExposed',
+  'cleanRoomSourceExposed',
+  'aiAuthorized',
+  'valuationEngineImplemented',
+  'mappingIsIssuanceAuthorization',
+]);
 
 export function collectObjectKeys(value: unknown, into: Set<string> = new Set(), depth = 0): Set<string> {
   if (value === null || value === undefined || typeof value !== 'object' || depth > 3) {
@@ -78,29 +91,46 @@ export function collectObjectKeys(value: unknown, into: Set<string> = new Set(),
   return into;
 }
 
+function inspect(value: unknown, reject: (code: BridgeRejection) => void, depth = 0): void {
+  if (value === null || value === undefined || typeof value !== 'object' || depth > 3) {
+    return;
+  }
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      inspect(item, reject, depth + 1);
+    }
+    return;
+  }
+  for (const [key, inner] of Object.entries(value as Record<string, unknown>)) {
+    const invariantFalse = INVARIANT_FALSE_FLAGS.has(key) && inner === false;
+    if (RAW_PERSONAL_KEYS.has(key) && !invariantFalse) {
+      reject('RAW_PERSONAL_DATA_REJECTED');
+      return;
+    }
+    if (PROTECTED_TRAIT_KEYS.has(key)) {
+      reject('PROTECTED_TRAIT_VALUATION_REJECTED');
+      return;
+    }
+    if (HUMAN_WORTH_KEYS.has(key) && !invariantFalse) {
+      reject('HUMAN_WORTH_SCORE_REJECTED');
+      return;
+    }
+    if (PEVE_QUANTITY_KEYS.has(key)) {
+      reject('PEVE_SCORE_CANNOT_BECOME_ISSUANCE_QUANTITY');
+      return;
+    }
+    inspect(inner, reject, depth + 1);
+  }
+}
+
 export function firewallRejection(value: unknown): BridgeRejection | null {
-  const keys = collectObjectKeys(value);
-  for (const key of RAW_PERSONAL_KEYS) {
-    if (keys.has(key)) {
-      return 'RAW_PERSONAL_DATA_REJECTED';
+  let code: BridgeRejection | null = null;
+  inspect(value, (found) => {
+    if (code === null) {
+      code = found;
     }
-  }
-  for (const key of PROTECTED_TRAIT_KEYS) {
-    if (keys.has(key)) {
-      return 'PROTECTED_TRAIT_VALUATION_REJECTED';
-    }
-  }
-  for (const key of HUMAN_WORTH_KEYS) {
-    if (keys.has(key)) {
-      return 'HUMAN_WORTH_SCORE_REJECTED';
-    }
-  }
-  for (const key of PEVE_QUANTITY_KEYS) {
-    if (keys.has(key)) {
-      return 'PEVE_SCORE_CANNOT_BECOME_ISSUANCE_QUANTITY';
-    }
-  }
-  return null;
+  });
+  return code;
 }
 
 export function isSha256Hex(value: string): boolean {
