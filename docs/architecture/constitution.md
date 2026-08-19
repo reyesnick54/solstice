@@ -1416,6 +1416,16 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 122 extends `moonrey-policy-governance` with
+`ProductiveAttributionBook` at
+`packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.
+The book records reserved and finalized attribution shares. It is not
+a second monetary ledger, AssetSupplyBook, customer ledger, wallet, or
+MoonRey supply. It does not calculate Productive Value or change
+MoonRey quantities. Do not create `packages/attribution-ledger`,
+`packages/moonrey-attribution-book`, or
+`packages/productive-attribution-ledger`. See
+[`chunk-122-moonrey-attribution-reconciliation.md`](./chunk-122-moonrey-attribution-reconciliation.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

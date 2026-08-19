@@ -2829,12 +2829,15 @@
       "forbiddenAliases": [
         "packages/moonrey-policy",
         "packages/moonrey-economics",
-        "packages/issuance-policy"
+        "packages/issuance-policy",
+        "packages/attribution-ledger",
+        "packages/moonrey-attribution-book",
+        "packages/productive-attribution-ledger"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
     },
     {
       "id": "sunrey-dual-economy-simulator",
@@ -5562,7 +5565,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Do not create packages/moonrey-policy, packages/moonrey-economics, or packages/issuance-policy."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds non-monetary ProductiveAttributionBook at policy-governance/attribution-accounting. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or attribution ledger. Do not create packages/moonrey-policy, packages/moonrey-economics, packages/issuance-policy, packages/attribution-ledger, packages/moonrey-attribution-book, or packages/productive-attribution-ledger."
     },
     {
       "id": "sunrey-dual-economy-simulator",

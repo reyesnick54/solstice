@@ -21,6 +21,7 @@
     "demo:unit-normalization": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/units/demo.ts",
     "demo:production-oracles": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/demo.ts",
     "demo:moonrey-source-claim-path": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/claim-candidate/demo.ts",
+    "demo:moonrey-attribution-reconciliation": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/attribution-accounting/demo.ts",
     "sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/cli.ts",
     "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts",
     "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",

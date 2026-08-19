@@ -12,6 +12,13 @@ import {
 } from './fingerprint.ts';
 import { issuanceBasisFromNpu, normalizeContribution } from './normalization.ts';
 import {
+  evaluateAttributionEligibility,
+  routeRequiresAttribution,
+  type AttributionReservationRequest,
+  type ProductiveAttributionBook,
+  type ProductiveAttributionDecision,
+} from './attribution-accounting/index.ts';
+import {
   POLICY_GOVERNANCE_SCHEMA_VERSION,
   type CapacityOutputAllocationRule,
   type ContributionEligibilityPolicy,
@@ -72,6 +79,11 @@ export type EligibilityInput = {
   readonly budgetUsage: BudgetUsage;
   readonly issuancePolicy: MoonReyIssuancePolicy;
   readonly bundle: MoonReyIssuancePolicyBundle;
+  readonly attributionBook?: ProductiveAttributionBook;
+  readonly attributionDecision?: ProductiveAttributionDecision;
+  readonly attributionRequest?: AttributionReservationRequest;
+  readonly independentlyEvidenced?: boolean;
+  readonly requireAttributionWhenSensitive?: boolean;
 };
 
 export type EligibilityOk = {
@@ -224,6 +236,10 @@ export function evaluateContributionEligibility(input: EligibilityInput): Eligib
   ) {
     return { ok: false, code: 'CAPACITY_OUTPUT_DUPLICATE' };
   }
+  const attribution = evaluateSensitiveAttribution(input);
+  if (attribution) {
+    return attribution;
+  }
   return {
     ok: true,
     fingerprint,
@@ -233,6 +249,34 @@ export function evaluateContributionEligibility(input: EligibilityInput): Eligib
     policyVersion: bundle.policyVersion,
     epoch: currentEpoch.epoch,
   };
+}
+
+function evaluateSensitiveAttribution(input: EligibilityInput): EligibilityResult | undefined {
+  const required = routeRequiresAttribution({
+    category: input.category,
+    independentlyEvidenced: input.independentlyEvidenced,
+    attributionRequired: input.requireAttributionWhenSensitive,
+  });
+  if (!required) {
+    return undefined;
+  }
+  if (!input.attributionDecision || !input.attributionRequest || !input.attributionBook) {
+    return { ok: false, code: 'ATTRIBUTION_DECISION_REQUIRED' };
+  }
+  const gated = evaluateAttributionEligibility({
+    category: input.category,
+    claimType: input.claimType,
+    independentlyEvidenced: input.independentlyEvidenced,
+    attributionRequired: true,
+    expectedPolicyVersion: input.requestedPolicyVersion,
+    decision: input.attributionDecision,
+    request: input.attributionRequest,
+    book: input.attributionBook,
+  });
+  if (!gated.ok) {
+    return { ok: false, code: gated.code };
+  }
+  return undefined;
 }
 
 function evaluateReferenceFacts(

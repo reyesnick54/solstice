@@ -28,3 +28,12 @@ prices. Missing, stale, or conflicted reference facts fail closed.
 `IssuanceCorrectionRecord` is explicit evidence. It does not silently
 rewrite finalized history and does not debit innocent downstream
 holders. Any economic correction uses a separately governed mechanism.
+
+## Attribution accounting (Chunk 122)
+
+`ProductiveAttributionBook` is a non-monetary record of reserved and
+finalized attribution shares. It is not MoonRey supply and not a
+customer ledger. Attribution-sensitive eligibility requires a valid
+decision and available share before any future Productive Value
+Function. See
+[`chunk-122-moonrey-attribution-reconciliation.md`](./chunk-122-moonrey-attribution-reconciliation.md).

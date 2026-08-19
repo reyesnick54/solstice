@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-122",
+  "title": "MoonRey Attribution Accounting, Replay Protection, and Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "sunrey-economic-unit-normalization",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance/attribution-accounting. Extends Chunk 74/117 eligibility. ProductiveAttributionBook is a non-monetary share record, not AssetSupplyBook, a customer ledger, a wallet, MoonRey supply, or an Exchange balance. evaluateChunkRequirements returns mustStop: false. Do not create packages/attribution-ledger, packages/moonrey-attribution-book, packages/productive-attribution-ledger, or a second monetary ledger."
+}
