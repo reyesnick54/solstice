@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-130",
+  "title": "Compute and AI Compute Economic Data Provider Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-provider-certification",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-economic-asset-registry",
+    "sunrey-compute-ai-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/compute. Extends sunrey-production-oracles. Provider-neutral compute/GPU/AI inference/AI training/capacity metering. No live commercial provider calls. Tokens are not GPU-time. Capacity is not realized output. Facts and certification do not mint MoonRey. evaluateChunkRequirements returns mustStop: false. Do not create packages/compute-oracle, packages/ai-compute-provider, packages/gpu-metering, or packages/compute-data-fabric."
+}

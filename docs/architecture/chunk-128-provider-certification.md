@@ -10,3 +10,8 @@ Capability `sunrey-production-oracles` is extended. Bounded capability
 Do not create `packages/provider-certification`,
 `packages/provider-registry`, `packages/oracle-certification`,
 `packages/conformance-sandbox`, or a second oracle registry.
+
+Chunk 129 extends this suite with energy-family fixtures and
+adversarial cases at
+`packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+Certification remains an admission control.

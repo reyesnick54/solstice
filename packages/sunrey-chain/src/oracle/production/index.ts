@@ -267,4 +267,5 @@ export {
   storageFactCannotAutoMint,
 } from './provider-families/logistics/index.ts';
 export type { LogisticsFabricDecision, LogisticsSourceObservation } from './provider-families/logistics/index.ts';
+export * from './provider-families/compute/index.ts';
 

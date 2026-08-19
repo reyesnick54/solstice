@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-131",
+  "title": "Manufacturing, Industrial Automation & Robotics Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-provider-certification",
+    "sunrey-manufacturing-robotics-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/manufacturing. Extends sunrey-production-oracles. Read-only economic evidence for manufacturing, factory automation, industrial equipment, and robotic production. No industrial control path, no real factory contact, no production activation, and no MoonRey mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/manufacturing-oracle, packages/industrial-data-fabric, packages/robotics-oracle, or packages/factory-connectors."
+}

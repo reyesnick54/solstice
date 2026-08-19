@@ -189,7 +189,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     canonicalBaseUnit: 'gpu_s',
     scaleNumerator: 1n,
     aliases: ['GPU_SECOND'],
-    allowedFactTypes: [...COMPUTE_FACTS, 'AI_INFERENCE_USAGE'],
+    allowedFactTypes: [...COMPUTE_FACTS, 'AI_INFERENCE_USAGE', 'AI_TRAINING_USAGE', 'AI_COMPUTE_CAPACITY'],
     allowedProductiveCategories: ['COMPUTE', 'AI_COMPUTE'],
   }),
   define({
@@ -198,7 +198,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'GPU_TIME',
     canonicalBaseUnit: 'gpu_s',
     scaleNumerator: 3_600n,
-    allowedFactTypes: [...COMPUTE_FACTS, 'AI_INFERENCE_USAGE'],
+    allowedFactTypes: [...COMPUTE_FACTS, 'AI_INFERENCE_USAGE', 'AI_TRAINING_USAGE', 'AI_COMPUTE_CAPACITY'],
     allowedProductiveCategories: ['COMPUTE', 'AI_COMPUTE'],
   }),
   define({
