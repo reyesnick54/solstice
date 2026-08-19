@@ -1193,6 +1193,14 @@ Certification is not a verified fact, productive contribution, or
 MoonRey mint. Do not create `packages/provider-certification`,
 `packages/oracle-certification`, or a second oracle registry. The
 evaluator returns `mustStop: false`.
+Chunk 129 implements the energy and electrical-grid economic data
+fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+It extends `sunrey-production-oracles`. It does not contact live
+providers, activate production ingestion, or mint MoonRey. Do not
+create `packages/energy-oracle`, `packages/grid-oracle`,
+`packages/moonrey-energy`, `packages/power-data`, or
+`packages/utility-integration`. The evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
