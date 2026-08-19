@@ -91,6 +91,7 @@ never be two implementations of these systems.
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
+| MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
@@ -1416,6 +1417,16 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 123 implements the governed MoonRey Productive Value Function
+constitution at
+`packages/sunrey-chain/src/productive/policy-governance/value-function`.
+Capability `moonrey-productive-value-function` is `IMPLEMENTED` as a
+policy layer on the existing MoonRey policy-governance owner. It does
+not mint, does not replace `moonrey.issuance.formula.v1`, and does not
+activate production valuation. Do not create `packages/moonrey-value`,
+`packages/productive-value`, `packages/moonrey-tokenomics`,
+`packages/moonrey-pricing`, or `packages/value-function-v2`. See
+[`chunk-123-moonrey-productive-value-constitution.md`](../economics/chunk-123-moonrey-productive-value-constitution.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

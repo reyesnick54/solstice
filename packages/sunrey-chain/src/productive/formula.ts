@@ -1,4 +1,6 @@
-import { WEIGHT_SCALE, type RoundingMode } from './types.ts';
+import { LEGACY_FORMULA_PATH_CLASS, WEIGHT_SCALE, type RoundingMode } from './types.ts';
+
+export { LEGACY_FORMULA_PATH_CLASS };
 
 export function mulDiv(value: bigint, numerator: bigint, denominator: bigint, rounding: RoundingMode): bigint {
   if (denominator <= 0n) {
@@ -40,6 +42,7 @@ export type FormulaInputs = {
 
 export type FormulaResult = {
   readonly formulaVersion: 'moonrey.issuance.formula.v1';
+  readonly formulaPathClass: typeof LEGACY_FORMULA_PATH_CLASS;
   readonly eligibleQuantity: bigint;
   readonly categoryWeight: bigint;
   readonly claimTypeWeight: bigint;
@@ -50,8 +53,13 @@ export type FormulaResult = {
 };
 
 /**
+ * LEGACY_ENGINEERING_SIMULATION_V1
+ *
  * eligible × category_weight × claim_factor × quality_factor
  * with explicit rounding at each scale division. No floating point.
+ *
+ * Historical simulation and replay continue to use this path. Chunk 123
+ * does not switch issuance onto the Productive Value Function.
  */
 export function evaluateIssuanceFormula(input: FormulaInputs): FormulaResult {
   const afterCategory = mulDiv(input.eligibleQuantity, input.categoryWeight, WEIGHT_SCALE, input.roundingMode);
@@ -60,6 +68,7 @@ export function evaluateIssuanceFormula(input: FormulaInputs): FormulaResult {
   const moonreyQuantity = uncapped > input.maximumIssuance ? input.maximumIssuance : uncapped;
   return Object.freeze({
     formulaVersion: 'moonrey.issuance.formula.v1',
+    formulaPathClass: LEGACY_FORMULA_PATH_CLASS,
     eligibleQuantity: input.eligibleQuantity,
     categoryWeight: input.categoryWeight,
     claimTypeWeight: input.claimTypeWeight,

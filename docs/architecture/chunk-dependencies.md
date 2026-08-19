@@ -171,6 +171,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1097,3 +1098,12 @@ issuance. Do not create `packages/moonrey-taxonomy`,
 `packages/source-taxonomy`, `packages/productive-taxonomy`, or
 `packages/moonrey-source-taxonomy`. The evaluator returns
 `mustStop: false`.
+Chunk 123 implements the governed MoonRey Productive Value Function
+constitution at
+`packages/sunrey-chain/src/productive/policy-governance/value-function`.
+Capability `moonrey-productive-value-function` is `IMPLEMENTED` on the
+existing MoonRey policy-governance owner. It does not mint or replace
+the legacy issuance formula. Do not create `packages/moonrey-value`,
+`packages/productive-value`, `packages/moonrey-tokenomics`,
+`packages/moonrey-pricing`, or `packages/value-function-v2`. The
+evaluator returns `mustStop: false`.

@@ -53,6 +53,7 @@
     "demo:moonrey-source-taxonomy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/source-taxonomy/demo.ts",
     "sunrey-moonrey-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts",
     "demo:moonrey-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/cli-main.ts moonrey simulate",
+    "demo:moonrey-productive-value-policy": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/value-function/demo.ts",
     "demo:sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/demo.ts",
     "sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/cli.ts",
     "demo:sunrey-production-oracles": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/demo.ts",

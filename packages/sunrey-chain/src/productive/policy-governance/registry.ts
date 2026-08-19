@@ -14,6 +14,9 @@ import {
   type PolicyActivationRecord,
   type PolicyRejectionCode,
 } from './types.ts';
+import { developmentValueFunctionPolicy } from './value-function/policy.ts';
+import { ProductiveValueFunctionPolicyRegistry } from './value-function/registry.ts';
+import type { ProductiveValueFunctionPolicy, ValueFunctionActivationRecord } from './value-function/types.ts';
 
 export function hashPolicyBundle(bundle: Omit<MoonReyIssuancePolicyBundle, 'contentHash'> | MoonReyIssuancePolicyBundle): string {
   const { contentHash: _ignored, ...rest } = bundle as MoonReyIssuancePolicyBundle;
@@ -62,14 +65,20 @@ export class MoonReyPolicyRegistry {
   private readonly bundles: MoonReyIssuancePolicyBundle[] = [];
   private readonly activations: PolicyActivationRecord[] = [];
   private readonly issuancePolicies: MoonReyIssuancePolicy[] = [];
+  private readonly valueFunctions: ProductiveValueFunctionPolicyRegistry;
 
-  constructor(seed?: readonly MoonReyIssuancePolicyBundle[], issuance?: readonly MoonReyIssuancePolicy[]) {
+  constructor(
+    seed?: readonly MoonReyIssuancePolicyBundle[],
+    issuance?: readonly MoonReyIssuancePolicy[],
+    valueFunctions?: readonly ProductiveValueFunctionPolicy[],
+  ) {
     for (const bundle of seed ?? [developmentPolicyBundle()]) {
       this.bundles.push(bundle);
     }
     for (const policy of issuance ?? [developmentIssuancePolicy()]) {
       this.issuancePolicies.push(policy);
     }
+    this.valueFunctions = new ProductiveValueFunctionPolicyRegistry(valueFunctions ?? [developmentValueFunctionPolicy()]);
   }
 
   list(): readonly MoonReyIssuancePolicyBundle[] {
@@ -160,6 +169,30 @@ export class MoonReyPolicyRegistry {
 
   activationHistory(): readonly PolicyActivationRecord[] {
     return [...this.activations];
+  }
+
+  listValueFunctionPolicies(): readonly ProductiveValueFunctionPolicy[] {
+    return this.valueFunctions.list();
+  }
+
+  getValueFunctionPolicy(policyId: string, policyVersion: number): ProductiveValueFunctionPolicy | undefined {
+    return this.valueFunctions.get(policyId, policyVersion);
+  }
+
+  activeValueFunctionPolicyAt(height: number): ProductiveValueFunctionPolicy | undefined {
+    return this.valueFunctions.activeSimulationAt(height);
+  }
+
+  proposeValueFunctionPolicy(
+    policy: ProductiveValueFunctionPolicy,
+    actorKind: GovernanceActorKind,
+    actorId: string,
+  ): ValueFunctionActivationRecord {
+    return this.valueFunctions.propose(policy, actorKind, actorId);
+  }
+
+  valueFunctionActivationHistory(): readonly ValueFunctionActivationRecord[] {
+    return this.valueFunctions.activationHistory();
   }
 }
 
