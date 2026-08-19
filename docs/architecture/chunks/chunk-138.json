@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-138",
+  "title": "Unified Multi-Provider Economic Data Fabric, Coverage & Cross-Domain Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-provider-certification",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-asset-registry",
+    "moonrey-productive-value-settlement",
+    "sunrey-unified-economic-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Operational routing, admission, coverage, and reconciliation above provider-family adapters. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. evaluateChunkRequirements returns mustStop: false. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
+}
