@@ -64,7 +64,9 @@ export class ReferenceMobileClient {
     if (!this.online) {
       return { ok: false, code: 'DEVICE_UNTRUSTED', message: 'client is offline' };
     }
-    const result = this.engine.sync({ sessionId: this.sessionId, cursor: this.cursor ?? undefined });
+    const result = this.cursor
+      ? this.engine.sync({ sessionId: this.sessionId, cursor: this.cursor })
+      : this.engine.sync({ sessionId: this.sessionId });
     if ('ok' in result) {
       return result;
     }

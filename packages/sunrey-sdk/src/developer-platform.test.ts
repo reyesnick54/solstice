@@ -391,7 +391,6 @@ function provision(permissions: readonly ('CHAIN_READ' | 'WEBHOOK_MANAGE' | 'MAR
 }
 
 function must<T>(result: { readonly ok: true; readonly value: T } | { readonly ok: false; readonly reason: string }): T {
-  assert.equal(result.ok, true, result.ok ? '' : result.reason);
   if (!result.ok) {
     throw new Error(result.reason);
   }

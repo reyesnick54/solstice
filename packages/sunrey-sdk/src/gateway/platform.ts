@@ -826,8 +826,8 @@ export class DevelopmentPlatform {
       tier: tier === 'authorized' ? 'AUTHORIZED_REALTIME' : 'PUBLIC_DELAYED',
       delayed_ms: tier === 'authorized' ? 0 : 900_000,
       depth_levels: tier === 'authorized' ? 10 : 1,
-      bids: book.bids,
-      asks: book.asks,
+      ...(book.bids !== undefined ? { bids: book.bids } : {}),
+      ...(book.asks !== undefined ? { asks: book.asks } : {}),
       sequence: this.events.length,
       canonical_state_unchanged: 'true',
     });
