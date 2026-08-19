@@ -105,6 +105,7 @@ export {
 } from './fingerprint.ts';
 export { asVerifiedReference, registryRecordFromEvent } from './record.ts';
 export { ContributionQueryIndex } from './projections.ts';
+export { HumanContributionRegistry, type HumanContributionRegistrySnapshot } from './registry.ts';
 export {
   CONTRIBUTION_CLASSES,
   CONTRIBUTION_CLASS_RECORDS,
