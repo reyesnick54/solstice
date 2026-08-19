@@ -106,6 +106,7 @@ npm run demo:sunrey-chain
 npm run demo:sunrey-node
 npm run demo:sunrey-governance
 npm run demo:moonrey-productive
+npm run demo:sunrey-unit-normalization
 npm run demo:sunrey-oracle
 npm run demo:sunrey-production-oracles
 npm run demo:moonrey-source-claim-path

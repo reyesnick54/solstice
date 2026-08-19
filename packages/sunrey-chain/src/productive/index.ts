@@ -27,6 +27,11 @@ export type {
 } from './types.ts';
 export { UnitRegistry, defaultUnitRegistry, UNIT_REGISTRY_ID } from './units.ts';
 export type { NormalizedQuantity, UnitDefinition } from './units.ts';
+export {
+  CanonicalUnitRegistry,
+  defaultCanonicalUnitRegistry,
+  NORMALIZATION_CONSTITUTION_VERSION,
+} from '../units/index.ts';
 export { objectIsActive } from './objects.ts';
 export type { ProductiveEconomicObject } from './objects.ts';
 export {

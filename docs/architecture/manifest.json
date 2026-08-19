@@ -3965,6 +3965,10 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package."
+    },
+    {
+      "id": "sunrey-human-contribution-valuation",
+      "name": "Human Contribution Valuation constitution and engine",
       "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package.",
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Do not create a second registry package."
     },
@@ -4024,6 +4028,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
       "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
       "notes": "Chunk 111 valuation engine and Chunk 110 constitution at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
       "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 109 evidence-verification policy. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
@@ -4099,6 +4104,11 @@
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. Registration does not authorize settlement or minting."
     },
     {
+      "id": "sunrey-economic-unit-normalization",
+      "name": "SunRey canonical economic unit normalization",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/units/registry.ts",
+      "publicInterface": "packages/sunrey-chain/src/units/index.ts",
       "id": "moonrey-source-taxonomy",
       "name": "MoonRey Canonical Source-to-Productive Taxonomy Registry",
       "canonicalOwner": "packages/sunrey-chain",
@@ -4119,12 +4129,18 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "CanonicalUnitRegistry",
           "name": "SourceProductiveTaxonomyRegistry",
           "name": "EconomicAssetVerificationEngine",
           "kind": "class"
         }
       ],
       "forbiddenAliases": [
+        "packages/unit-registry",
+        "packages/economic-units",
+        "packages/sunrey-units",
+        "packages/normalization",
+        "packages/canonical-units"
         "packages/moonrey-taxonomy",
         "packages/source-taxonomy",
         "packages/productive-taxonomy",
@@ -4138,6 +4154,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 118 canonical economic unit and normalization constitution. Extends the Chunk 43 protocol unit contract inside packages/sunrey-chain. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Not MoonRey issuance, not a fake universal unit, not a live provider plane."
       "notes": "Chunk 116 exhaustive DataSourceCategory to FactType to ProductiveCategory mapping. Does not connect live providers, value output, or mint MoonRey. Chunk 71 remains the issuance authority."
       "notes": "Chunk 114 class-specific rights/provenance/lineage verification layer on the existing Economic Asset Registry owner. VERIFIED means the descriptor passed a versioned policy. Not valuation, not minting, not Execution Authority."
     }
@@ -4923,6 +4940,11 @@
     "packages/tokenized-data",
     "packages/human-contribution-verification",
     "packages/contribution-verification",
+    "packages/unit-registry",
+    "packages/economic-units",
+    "packages/sunrey-units",
+    "packages/normalization",
+    "packages/canonical-units"
     "packages/moonrey-taxonomy",
     "packages/source-taxonomy",
     "packages/productive-taxonomy",
@@ -5799,6 +5821,11 @@
       "notes": "Chunk 109 versioned, contribution-class-specific evidence-verification layer. Canonical owner remains packages/human-economic-contribution. VERIFIED means the contribution passed the activated engineering policy. Production legal/commercial policy remains NOT_ACTIVATED. Not valuation or minting."
     },
     {
+      "id": "sunrey-economic-unit-normalization",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 118 canonical economic unit normalization at packages/sunrey-chain/src/units. Extends the Chunk 43 protocol unit contract. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Do not create packages/unit-registry, packages/economic-units, packages/sunrey-units, packages/normalization, or packages/canonical-units."
       "id": "moonrey-source-taxonomy",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6283,6 +6310,11 @@
     "packages/human-valuation",
     "packages/human-contribution-verification",
     "packages/contribution-verification",
+    "packages/unit-registry",
+    "packages/economic-units",
+    "packages/sunrey-units",
+    "packages/normalization",
+    "packages/canonical-units"
     "packages/moonrey-source-taxonomy",
     "packages/source-claim-enforcement",
     "packages/productive-claim-candidate"

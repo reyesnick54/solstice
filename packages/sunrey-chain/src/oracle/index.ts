@@ -52,6 +52,11 @@ export {
   unitFamily,
   unitsCompatible,
 } from './units.ts';
+export {
+  CanonicalUnitRegistry,
+  defaultCanonicalUnitRegistry,
+  NORMALIZATION_CONSTITUTION_VERSION,
+} from '../units/index.ts';
 export { FACT_SCHEMAS, governedSchemaUpgradeOnly, schemaAllowsUnit } from './schemas.ts';
 export {
   defaultOracleCrypto,

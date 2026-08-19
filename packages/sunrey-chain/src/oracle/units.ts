@@ -1,3 +1,9 @@
+/**
+ * Oracle fixed-quantity helpers. Cross-vocabulary conversion lives in
+ * the Chunk 118 canonical registry at packages/sunrey-chain/src/units.
+ * This module keeps the existing oracle FixedQuantity API.
+ */
+
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import type { FixedQuantity, OracleRejection, UnitCode } from './types.ts';
 import { UNIT_CODES } from './types.ts';

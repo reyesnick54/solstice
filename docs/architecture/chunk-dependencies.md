@@ -169,6 +169,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
+| sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1060,6 +1061,19 @@ It does not value, mint, or issue Execution Authority. Do not create
 `packages/human-contribution-verification`,
 `packages/contribution-verification`, or `packages/human-worth`.
 The evaluator returns `mustStop: false`.
+Chunk 118 implements the canonical economic unit normalization
+constitution at `packages/sunrey-chain/src/units`. Capability
+`sunrey-economic-unit-normalization` is `IMPLEMENTED`. See
+[`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md)
+and
+[`docs/economics/chunk-118-canonical-economic-units.md`](../economics/chunk-118-canonical-economic-units.md).
+It extends the Chunk 43 protocol unit contract. The productive
+`UnitRegistry` remains a compatibility facade. Conversion is exact
+rational arithmetic. It does not issue MoonRey or activate live
+providers. Do not create `packages/unit-registry`,
+`packages/economic-units`, `packages/sunrey-units`,
+`packages/normalization`, or `packages/canonical-units`. The
+evaluator returns `mustStop: false`.
 Chunk 117 enforces the MoonRey source / fact / claim mapping at
 `packages/sunrey-chain/src/oracle/source-taxonomy` and
 `packages/sunrey-chain/src/productive/claim-candidate`. It extends
