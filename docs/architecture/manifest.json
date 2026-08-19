@@ -3936,7 +3936,7 @@
       "id": "sunrey-human-contribution-valuation",
       "name": "Human Contribution Valuation constitution",
       "canonicalOwner": "packages/human-economic-contribution",
-      "canonicalPath": "packages/human-economic-contribution/src/valuation/constitution.ts",
+      "canonicalPath": "packages/human-economic-contribution/src/valuation/registry.ts",
       "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,

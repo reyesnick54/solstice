@@ -89,7 +89,7 @@ never be two implementations of these systems.
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
-| Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/constitution.ts` | IMPLEMENTED |
+| Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of

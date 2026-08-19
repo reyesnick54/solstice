@@ -40,6 +40,8 @@ describe('CHUNK-110 human contribution valuation constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-110-human-contribution-valuation-constitution.md')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/human-economic-contribution/src/valuation/constitution.ts')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/human-economic-contribution/src/valuation/registry.ts')), true);
+    const valuationComponent = manifest.components.find((component) => component.id === 'sunrey-human-contribution-valuation');
+    assert.equal(valuationComponent?.canonicalPath, 'packages/human-economic-contribution/src/valuation/registry.ts');
     assert.equal(existsSync(join(REPO_ROOT, 'packages/human-valuation-engine')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/contribution-valuation')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/human-valuation')), false);
