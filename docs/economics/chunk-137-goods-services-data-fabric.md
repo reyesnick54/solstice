@@ -5,10 +5,13 @@ Canonical owner: `packages/sunrey-chain`.
 Capability `sunrey-goods-services-data-fabric` is `IMPLEMENTED` at
 `packages/sunrey-chain/src/oracle/production/provider-families/goods`
 and
-`packages/sunrey-chain/src/oracle/production/provider-families/services`.
+`packages/sunrey-chain/src/oracle/production/provider-families/service-delivery`.
 It extends the existing `sunrey-production-oracles` owner. It does not
 create a second oracle network, a second mint, a named commerce vendor
-integration, or a live service provider.
+integration, or a live service provider. The service family directory is
+`service-delivery` rather than `services` so import paths do not collide
+with the application `services/` packages that architecture lint forbids
+library code from importing.
 
 ## Why this exists
 

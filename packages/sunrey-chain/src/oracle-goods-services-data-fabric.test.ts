@@ -50,7 +50,7 @@ import {
   projectServiceMetadata,
   publicEvidenceHidesPayload,
   serviceObservationNeverMints,
-} from './oracle/production/provider-families/services/index.ts';
+} from './oracle/production/provider-families/service-delivery/index.ts';
 import {
   BOOKING_AS_COMPLETION,
   DIGITAL_PAYLOAD_LEAK,
@@ -62,7 +62,7 @@ import {
   MACHINE_H_AS_HUMAN_HOUR,
   VALID_TIME_SERVICE,
   VALID_UNITIZED_SERVICE,
-} from './oracle/production/provider-families/services/fixtures.ts';
+} from './oracle/production/provider-families/service-delivery/fixtures.ts';
 
 describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
   it('1. valid goods output', () => {

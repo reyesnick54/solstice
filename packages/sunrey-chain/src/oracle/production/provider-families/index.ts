@@ -17,5 +17,5 @@ export {
   ServicesDataFabric,
   ingestServiceObservation,
   serviceFactCannotAutoMint,
-} from './services/index.ts';
-export type { ServiceSourceObservation } from './services/index.ts';
+} from './service-delivery/index.ts';
+export type { ServiceSourceObservation } from './service-delivery/index.ts';

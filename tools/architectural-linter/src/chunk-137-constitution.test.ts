@@ -39,7 +39,7 @@ describe('CHUNK-137 goods and services data fabric constitution', () => {
       true,
     );
     assert.equal(
-      existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/oracle/production/provider-families/services/types.ts')),
+      existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/oracle/production/provider-families/service-delivery/types.ts')),
       true,
     );
     assert.equal(existsSync(join(REPO_ROOT, 'packages/goods-oracles')), false);

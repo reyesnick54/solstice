@@ -1259,7 +1259,7 @@ Chunk 137 implements the goods, commerce, and service-delivery
 economic data fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/goods`
 and
-`packages/sunrey-chain/src/oracle/production/provider-families/services`.
+`packages/sunrey-chain/src/oracle/production/provider-families/service-delivery`.
 Capability `sunrey-goods-services-data-fabric` is `IMPLEMENTED` on
 the existing production-oracle owner. See
 [`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md)

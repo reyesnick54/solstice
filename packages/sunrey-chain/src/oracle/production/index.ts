@@ -289,6 +289,6 @@ export {
   ServicesDataFabric,
   ingestServiceObservation,
   serviceFactCannotAutoMint,
-} from './provider-families/services/index.ts';
-export type { ServiceSourceObservation } from './provider-families/services/index.ts';
+} from './provider-families/service-delivery/index.ts';
+export type { ServiceSourceObservation } from './provider-families/service-delivery/index.ts';
 

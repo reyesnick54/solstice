@@ -30,7 +30,7 @@ import {
   INVOICE_EQUALS_COMPLETED_SERVICE,
   VALID_UNITIZED_SERVICE,
   ingestServiceObservation,
-} from '../services/index.ts';
+} from '../service-delivery/index.ts';
 
 export function runMoonReyGoodsServicesDataFabricDemo(): {
   readonly manufacturingAccepted: boolean;

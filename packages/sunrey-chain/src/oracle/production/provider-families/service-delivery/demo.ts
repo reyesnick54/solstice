@@ -34,7 +34,7 @@ export function runServicesDataFabricDemo(): {
   };
 }
 
-const invokedDirectly = (process.argv[1] ?? '').includes('provider-families/services/demo');
+const invokedDirectly = (process.argv[1] ?? '').includes('provider-families/service-delivery/demo');
 if (invokedDirectly) {
   runServicesDataFabricDemo();
 }

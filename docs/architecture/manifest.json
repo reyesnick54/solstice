@@ -2858,7 +2858,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 137 provider-neutral goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../services. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. SERVICE_DELIVERY allows service_hour; historical machine_h is preserved. No named vendor, live provider, production activation, or MoonRey mint."
+      "notes": "Chunk 137 provider-neutral goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../service-delivery. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. SERVICE_DELIVERY allows service_hour; historical machine_h is preserved. No named vendor, live provider, production activation, or MoonRey mint."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -6247,7 +6247,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 137 goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../services. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. service_hour is the governed time-based service unit; historical machine_h records are preserved. No named vendor, live provider, production activation, or MoonRey mint. Do not create packages/goods-oracles, packages/commerce-data-fabric, packages/services-oracle, or packages/moonrey-commerce."
+      "notes": "Chunk 137 goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../service-delivery. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. service_hour is the governed time-based service unit; historical machine_h records are preserved. No named vendor, live provider, production activation, or MoonRey mint. Do not create packages/goods-oracles, packages/commerce-data-fabric, packages/services-oracle, or packages/moonrey-commerce."
     },
     {
       "id": "moonrey-productive-value-settlement",
