@@ -12,6 +12,11 @@ export {
   type NonHinContributionClass,
 } from './contract.ts';
 export { createHinContributionAdapter, HinContributionAdapter } from './adapter.ts';
+export {
+  bindCanonicalHumanContributionRegistry,
+  type CanonicalContributionRecorder,
+  type CanonicalContributionRecord,
+} from './canonical-bind.ts';
 export { toInformationRightContributionEvidence } from './evidence.ts';
 export { evaluateHinContributionInvariants } from './invariants.ts';
 export { assertPrivacySafeRegistryPayload, FORBIDDEN_REGISTRY_KEYS } from './privacy.ts';

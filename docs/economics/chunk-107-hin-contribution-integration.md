@@ -35,10 +35,16 @@ personal data → automatic SunRey mint
 
 HIN is the source adapter only for `INFORMATION_RIGHT_CONTRIBUTION`
 and related consent-scoped information activity. Other contribution
-classes (`LABOR_CONTRIBUTION`, `CREATIVE_CONTRIBUTION`,
-`ENTREPRENEURIAL_CONTRIBUTION`, and the remaining non-HIN classes)
-remain available through their appropriate verified attestation paths.
-They are not forced through HIN.
+classes from the Chunk 104 ontology (`CREATIVE_PRODUCTION`,
+`RESEARCH_PARTICIPATION`, `PROFESSIONAL_EXPERTISE`,
+`COMMUNITY_CONTRIBUTION`, and the remaining non-HIN classes) remain
+available through their appropriate verified attestation paths. They
+are not forced through HIN.
+
+After Chunks 104–106 merge, bind the canonical
+`packages/human-economic-contribution` registry with
+`bindCanonicalHumanContributionRegistry`. The in-process binding is
+only the HIN-side simulation of that same evidence contract.
 
 ## Adapter and dependency direction
 

@@ -26,6 +26,7 @@ SunRey.
 
 - `HinContributionAdapter`
 - `HumanContributionRegistryPort`
+- `bindCanonicalHumanContributionRegistry` for the Chunk 104–106 owner
 - Privacy-safe `InformationRightContributionEvidence`
 - Fail-closed rights / purpose / consent invariants
 - Authorized internal contribution-ID projection

@@ -46,6 +46,7 @@ export {
   HIN_CONTRIBUTION_BOUNDARY,
   INFORMATION_RIGHT_CONTRIBUTION,
   NON_HIN_CONTRIBUTION_CLASSES,
+  bindCanonicalHumanContributionRegistry,
   createHinContributionAdapter,
   createInProcessHumanContributionRegistry,
   createInMemoryDataAssetProjection,

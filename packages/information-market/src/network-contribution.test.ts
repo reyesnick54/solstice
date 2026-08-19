@@ -394,7 +394,7 @@ describe('Chunk 107 HIN contribution integration', () => {
   });
 
   it('does not force non-information contribution classes through HIN', () => {
-    assert.ok(NON_HIN_CONTRIBUTION_CLASSES.includes('LABOR_CONTRIBUTION'));
+    assert.ok(NON_HIN_CONTRIBUTION_CLASSES.includes('CREATIVE_PRODUCTION'));
     assert.equal(NON_HIN_CONTRIBUTION_CLASSES.includes(INFORMATION_RIGHT_CONTRIBUTION as never), false);
   });
 
