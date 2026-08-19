@@ -1315,6 +1315,10 @@ create `packages/human-contribution`,
 `packages/human-contribution-score`, or
 `packages/sunrey-contribution`. See
 [`chunk-104-human-contribution-ontology.md`](./chunk-104-human-contribution-ontology.md).
+Chunk 106 extends that same owner with the canonical verified
+contribution registry. Capability
+`sunrey-human-economic-contributions` remains singular. See
+[`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

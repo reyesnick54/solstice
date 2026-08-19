@@ -22,12 +22,16 @@ export {
   asSubjectRef,
   asTaxonomyVersion,
   asUsageReceiptRef,
+  asRegistryRecordId,
+  asContributionFingerprint,
+  asVerificationPolicyVersion,
   attestationRefFor,
   cardEventRefFor,
   cleanRoomResultRefFor,
   communityAttestationRefFor,
   consentGrantRefFor,
   CONTRIBUTION_ID_PREFIXES,
+  contributionFingerprintFor,
   contributionIdFor,
   eventReferenceFor,
   evidenceRefFor,
@@ -40,10 +44,12 @@ export {
   professionalAttestationRefFor,
   provenanceRefFor,
   purposeRefFor,
+  registryRecordIdFor,
   researchAttestationRefFor,
   sha256Canonical,
   subjectRefFor,
   usageReceiptRefFor,
+  verificationPolicyVersionFor,
   type AttestationRef,
   type CardEventRef,
   type CleanRoomResultRef,
@@ -65,6 +71,9 @@ export {
   type SubjectRef,
   type TaxonomyVersion,
   type UsageReceiptRef,
+  type ContributionFingerprint,
+  type RegistryRecordId,
+  type VerificationPolicyVersion,
 } from './ids.ts';
 export { HUMAN_CONTRIBUTION_ISOLATION } from './isolation.ts';
 export {
@@ -81,7 +90,21 @@ export {
   validateContributionInput,
 } from './invariants.ts';
 export { EMPTY_CANONICAL_REFERENCES, mergeCanonicalReferences } from './references.ts';
-export { HumanContributionRegistry, type HumanContributionRegistrySnapshot } from './registry.ts';
+export {
+  HumanContributionRegistry,
+  HumanEconomicContributionRegistry,
+  type HumanContributionRegistrySnapshot,
+} from './registry.ts';
+export type { HumanContributionRegistryPort } from './port.ts';
+export { InMemoryHumanContributionRegistryStore, type HumanContributionRegistryStore } from './store.ts';
+export {
+  DEFAULT_VERIFICATION_POLICY_VERSION,
+  evidenceDigestOf,
+  fingerprintEconomicEvent,
+  registryRecordIdForContribution,
+} from './fingerprint.ts';
+export { asVerifiedReference, registryRecordFromEvent } from './record.ts';
+export { ContributionQueryIndex } from './projections.ts';
 export {
   CONTRIBUTION_CLASSES,
   CONTRIBUTION_CLASS_RECORDS,
@@ -138,4 +161,12 @@ export {
   type MintRefusal,
   type PrivacyBoundaryFlags,
   type RecordContributionInput,
+  type HumanContributionRegistryRecord,
+  type VerifiedContributionReference,
+  type ContributionQuery,
+  type HumanContributionRegistryAudit,
+  type DuplicateAttempt,
+  type VerifyContributionInput,
+  type RejectContributionInput,
+  type MeasurementPeriod,
 } from './types.ts';

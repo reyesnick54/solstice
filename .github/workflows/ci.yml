@@ -160,6 +160,8 @@ jobs:
         run: npm run demo:sunrey-ai-s3m
       - name: SunRey human contribution ontology demo
         run: npm run demo:sunrey-human-contribution-ontology
+      - name: SunRey human contribution registry demo
+        run: npm run demo:sunrey-human-contribution-registry
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
       - name: MoonRey productive capacity demo

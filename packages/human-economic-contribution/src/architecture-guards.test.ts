@@ -39,6 +39,8 @@ describe('chunk 104 architecture guards', () => {
       assert.equal(/\bfetch\s*\(/.test(source), false, file);
       assert.equal(/https?:\/\//.test(source), false, file);
       assert.equal(/parseFloat\s*\(/.test(source), false, file);
+      assert.equal(/new AuthorityIssuer|issueExecutionAuthority/.test(source), false, file);
+      assert.equal(/valuationAmount\s*[:=]\s*(?!null)/.test(source) && /valuationAmount\s*[:=]\s*[0-9]/.test(source), false, file);
       for (const forbidden of HUMAN_CONTRIBUTION_ISOLATION.mustNotImport) {
         if (forbidden === 'packages/domain') {
           continue;
