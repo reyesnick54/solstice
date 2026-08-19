@@ -19,6 +19,12 @@ export function isOrderLifecycleState(value: string): value is OrderLifecycleSta
 }
 
 export function orderIsNotGoodsOutput(observation: GoodsSourceObservation): Result<true, GoodsRefusal> {
+  if (observation.cancelled && !observation.cancelledAfterRealization) {
+    return err({
+      code: 'CANCELLED_BEFORE_REALIZATION',
+      detail: 'cancelled unfulfilled orders create no completed goods event',
+    });
+  }
   if (observation.orderState !== null && observation.factType === 'GOODS_OUTPUT') {
     const realized = observation.goodsState === 'ACCEPTED' || observation.goodsState === 'AVAILABLE' || observation.goodsState === 'FULFILLED';
     if (!realized) {
@@ -27,12 +33,6 @@ export function orderIsNotGoodsOutput(observation: GoodsSourceObservation): Resu
         detail: `order state ${observation.orderState} does not prove goods were produced`,
       });
     }
-  }
-  if (observation.cancelled && !observation.cancelledAfterRealization) {
-    return err({
-      code: 'CANCELLED_BEFORE_REALIZATION',
-      detail: 'cancelled unfulfilled orders create no completed goods event',
-    });
   }
   return ok(true);
 }

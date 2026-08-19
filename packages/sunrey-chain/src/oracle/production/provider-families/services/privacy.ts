@@ -85,11 +85,10 @@ export function publicEvidenceFrom(observation: ServiceSourceObservation): Publi
 }
 
 export function publicEvidenceHidesPayload(evidence: PublicServiceEvidence): boolean {
-  const encoded = JSON.stringify(evidence).toLowerCase();
   return (
     evidence.containsPayload === false &&
-    !encoded.includes('prompt') &&
-    !encoded.includes('payload') &&
-    !encoded.includes('you are a helpful')
+    evidence.containsCustomerPii === false &&
+    !JSON.stringify(evidence.identity).toLowerCase().includes('prompt') &&
+    !JSON.stringify(evidence.identity).toLowerCase().includes('you are a helpful')
   );
 }
