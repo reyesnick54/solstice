@@ -99,6 +99,7 @@ npm run demo:sunrey-human-information-network
 npm run demo:sunrey-ai-runtime
 npm run demo:sunrey-ai-s3m
 npm run demo:sunrey-human-contribution-ontology
+npm run demo:sunrey-human-contribution-registry
 npm run demo:sunrey-chain
 npm run demo:sunrey-node
 npm run demo:sunrey-governance

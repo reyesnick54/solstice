@@ -13,5 +13,6 @@
     "sunrey-human-information-network",
     "sunrey-human-economic-contributions"
   ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution. Defines the human contribution ontology. Chunk 106 extends the same registry as the verified-contribution system of record. Does not calculate SunRey quantities, value contributions, mint, issue Execution Authority, post journals, or replace PEG, PEVE, HIN, consent, clean-room, or the Chunk 71 monetary constitution. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution, packages/human-economic-contribution-v2, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, packages/human-contribution-score, or packages/sunrey-contribution."
   "notes": "IMPLEMENTED at packages/human-economic-contribution. Defines the human contribution ontology and registry only. Does not calculate SunRey quantities, value contributions, mint, issue Execution Authority, post journals, or replace PEG, PEVE, HIN, consent, clean-room, or the Chunk 71 monetary constitution. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution, packages/human-economic-contribution-v2, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, packages/human-contribution-score, or packages/sunrey-contribution."
 }

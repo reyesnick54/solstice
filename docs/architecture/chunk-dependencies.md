@@ -937,3 +937,13 @@ Chunk 71. Measurement is not token valuation. Do not create
 `packages/human-contribution-score`, or
 `packages/sunrey-contribution`. The evaluator returns
 `mustStop: false`.
+Chunk 106 extends the same capability with the canonical verified
+contribution registry at `packages/human-economic-contribution`.
+See [`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md)
+and [`docs/economics/chunk-106-human-contribution-registry.md`](../economics/chunk-106-human-contribution-registry.md).
+It is the system of record for verified contribution records. It does
+not value, mint, or issue Execution Authority. Do not create
+`packages/human-contribution-registry`,
+`packages/contribution-registry`, or
+`packages/human-economic-contribution-registry`. The evaluator returns
+`mustStop: false`.

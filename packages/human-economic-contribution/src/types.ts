@@ -5,6 +5,7 @@ import type {
   CleanRoomResultRef,
   CommunityAttestationRef,
   ConsentGrantRef,
+  ContributionFingerprint,
   ContributionId,
   EvidenceRef,
   EventReference,
@@ -17,10 +18,12 @@ import type {
   ProfessionalAttestationRef,
   ProvenanceRef,
   PurposeRef,
+  RegistryRecordId,
   ResearchAttestationRef,
   SubjectRef,
   TaxonomyVersion,
   UsageReceiptRef,
+  VerificationPolicyVersion,
 } from './ids.ts';
 import type {
   ContributionClass,
@@ -63,6 +66,13 @@ export type ContributionFailureCode =
   | 'ALREADY_SUPERSEDED'
   | 'POLICY_REF_REQUIRED'
   | 'ISSUANCE_QUANTITY_FORBIDDEN'
+  | 'FORBIDDEN_FIELD'
+  | 'DUPLICATE_FINGERPRINT'
+  | 'DUPLICATE_ATTEMPT'
+  | 'NOT_VERIFIABLE'
+  | 'ALREADY_TERMINAL'
+  | 'CORRECTION_TARGET_REQUIRED'
+  | 'VERIFICATION_POLICY_REQUIRED';
   | 'FORBIDDEN_FIELD';
 
 export type ContributionMeasurement = {
@@ -211,3 +221,122 @@ export type MintRefusal = {
 };
 
 export const CURRENT_TAXONOMY_VERSION = HUMAN_CONTRIBUTION_TAXONOMY_VERSION as TaxonomyVersion;
+
+export type MeasurementPeriod = {
+  readonly start: UtcInstant;
+  readonly end: UtcInstant | null;
+};
+
+export type HumanContributionRegistryRecord = {
+  readonly registryRecordId: RegistryRecordId;
+  readonly contributionId: ContributionId;
+  readonly fingerprint: ContributionFingerprint;
+  readonly subjectRef: SubjectRef;
+  readonly contributionClass: ContributionClass;
+  readonly verifiedMeasurement: ContributionMeasurement | null;
+  readonly measurementUnit: MeasurementUnit;
+  readonly measurementPeriod: MeasurementPeriod;
+  readonly jurisdiction: string;
+  readonly sourceClass: SourceClass;
+  readonly evidenceDigest: string;
+  readonly evidenceReferences: readonly EvidenceRef[];
+  readonly rightsReferences: readonly InformationRightRef[];
+  readonly consentReferences: readonly ConsentGrantRef[];
+  readonly purposeReferences: readonly PurposeRef[];
+  readonly provenanceReferences: readonly ProvenanceRef[];
+  readonly verificationPolicyVersion: VerificationPolicyVersion | null;
+  readonly verificationTimestamp: UtcInstant | null;
+  readonly status: ContributionLifecycleState;
+  readonly createdAt: UtcInstant;
+  readonly supersedes: ContributionId | null;
+  readonly supersededBy: ContributionId | null;
+  readonly corrects: ContributionId | null;
+  readonly correctedBy: ContributionId | null;
+  readonly event: HumanContributionEvent;
+  readonly sunReyQuantity: null;
+  readonly valuationAmount: null;
+  readonly issuesExecutionAuthority: false;
+  readonly issuesMintAuthority: false;
+};
+
+export type VerifiedContributionReference = {
+  readonly registryRecordId: RegistryRecordId;
+  readonly contributionId: ContributionId;
+  readonly fingerprint: ContributionFingerprint;
+  readonly subjectRef: SubjectRef;
+  readonly contributionClass: ContributionClass;
+  readonly status: 'VERIFIED';
+  readonly evidenceDigest: string;
+  readonly verificationPolicyVersion: VerificationPolicyVersion;
+  readonly verificationTimestamp: UtcInstant;
+  readonly measurementUnit: MeasurementUnit;
+  readonly verifiedMeasurement: ContributionMeasurement;
+  readonly jurisdiction: string;
+  readonly containsRawPersonalData: false;
+};
+
+export type ContributionQuery = {
+  readonly subjectRef?: SubjectRef;
+  readonly contributionClass?: ContributionClass;
+  readonly jurisdiction?: string;
+  readonly status?: ContributionLifecycleState;
+  readonly sourceClass?: SourceClass;
+  readonly fingerprint?: ContributionFingerprint;
+  readonly evidenceRef?: EvidenceRef;
+  readonly periodStart?: UtcInstant;
+  readonly periodEnd?: UtcInstant;
+  readonly verifiedOnly?: boolean;
+};
+
+export type ContributionClassCount = {
+  readonly contributionClass: ContributionClass;
+  readonly count: number;
+};
+
+export type JurisdictionCount = {
+  readonly jurisdiction: string;
+  readonly count: number;
+};
+
+export type HumanContributionRegistryAudit = {
+  readonly submitted: number;
+  readonly verified: number;
+  readonly rejected: number;
+  readonly superseded: number;
+  readonly corrected: number;
+  readonly countsByContributionClass: readonly ContributionClassCount[];
+  readonly countsByJurisdiction: readonly JurisdictionCount[];
+  readonly duplicateAttempts: number;
+  readonly correctionCount: number;
+  readonly verificationPolicyVersions: readonly VerificationPolicyVersion[];
+  readonly valuationTotals: null;
+  readonly sunReyTotals: null;
+};
+
+export type DuplicateAttempt = {
+  readonly fingerprint: ContributionFingerprint;
+  readonly attemptedContributionId: ContributionId | null;
+  readonly at: UtcInstant;
+  readonly reason: 'DUPLICATE_FINGERPRINT';
+};
+
+export type VerifyContributionInput = {
+  readonly contributionId: ContributionId;
+  readonly verificationPolicyVersion?: VerificationPolicyVersion;
+  readonly verificationTimestamp: UtcInstant;
+};
+
+export type RejectContributionInput = {
+  readonly contributionId: ContributionId;
+  readonly rejectedAt: UtcInstant;
+  readonly reasonCode: string;
+};
+
+export type HumanContributionRegistrySnapshot = {
+  readonly events: readonly HumanContributionEvent[];
+  readonly records: readonly HumanContributionRegistryRecord[];
+  readonly duplicateAttempts: readonly DuplicateAttempt[];
+  readonly taxonomyDoesNotGrantEligibility: true;
+  readonly valuationImplemented: false;
+  readonly mintingImplemented: false;
+};

@@ -1120,6 +1120,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Defines contribution classes, provenance, lifecycle, fingerprints, and rebuildable query projections. Not PEVE, not token valuation, not a human-worth score, not a mint or Execution Authority. Simulation only."
       "notes": "Chunk 104 canonical Human Economic Contribution ontology and registry. Defines contribution classes, source classes, provenance, and reference-safe events. Not PEVE, not token valuation, not a human-worth score, not a mint or Execution Authority. Simulation ontology only."
     }
   ],
@@ -3866,11 +3867,16 @@
         "packages/human-worth",
         "packages/contribution-valuation",
         "packages/human-contribution-score",
+        "packages/sunrey-contribution",
+        "packages/human-contribution-registry",
+        "packages/contribution-registry",
+        "packages/human-economic-contribution-registry"
         "packages/sunrey-contribution"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
       "notes": "Chunk 104 contribution ontology only. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority."
     }
   ],
@@ -4642,6 +4648,10 @@
     "packages/human-worth",
     "packages/contribution-valuation",
     "packages/human-contribution-score",
+    "packages/sunrey-contribution",
+    "packages/human-contribution-registry",
+    "packages/contribution-registry",
+    "packages/human-economic-contribution-registry"
     "packages/sunrey-contribution"
   ],
   "capabilities": [
@@ -5467,6 +5477,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
       "protected": true,
+      "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
       "notes": "Chunk 104 Human Economic Contribution ontology. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, or packages/contribution-valuation."
     }
   ],
@@ -5914,6 +5925,10 @@
     "packages/human-worth",
     "packages/contribution-valuation",
     "packages/human-contribution-score",
+    "packages/sunrey-contribution",
+    "packages/human-contribution-registry",
+    "packages/contribution-registry",
+    "packages/human-economic-contribution-registry"
     "packages/sunrey-contribution"
   ]
 }

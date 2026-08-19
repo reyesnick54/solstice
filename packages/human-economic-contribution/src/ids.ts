@@ -23,6 +23,9 @@ export type ResearchAttestationRef = Brand<string, 'ResearchAttestationRef'>;
 export type ProfessionalAttestationRef = Brand<string, 'ProfessionalAttestationRef'>;
 export type PolicyDecisionRef = Brand<string, 'PolicyDecisionRef'>;
 export type TaxonomyVersion = Brand<string, 'TaxonomyVersion'>;
+export type RegistryRecordId = Brand<string, 'RegistryRecordId'>;
+export type ContributionFingerprint = Brand<string, 'ContributionFingerprint'>;
+export type VerificationPolicyVersion = Brand<string, 'VerificationPolicyVersion'>;
 
 export const CONTRIBUTION_ID_PREFIXES = Object.freeze({
   contribution: 'hec_',
@@ -45,6 +48,9 @@ export const CONTRIBUTION_ID_PREFIXES = Object.freeze({
   researchAttestation: 'resatt_',
   professionalAttestation: 'proatt_',
   policy: 'pol_',
+  registryRecord: 'hrr_',
+  fingerprint: 'hfp_',
+  verificationPolicy: 'hvp_',
 });
 
 const HEX_BODY = /^[a-f0-9]{16,64}$/;
@@ -130,6 +136,15 @@ export function asTaxonomyVersion(value: string): TaxonomyVersion {
   }
   return brandAs<string, 'TaxonomyVersion'>(value);
 }
+export function asRegistryRecordId(value: string): RegistryRecordId {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.registryRecord, 'RegistryRecordId');
+}
+export function asContributionFingerprint(value: string): ContributionFingerprint {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.fingerprint, 'ContributionFingerprint');
+}
+export function asVerificationPolicyVersion(value: string): VerificationPolicyVersion {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.verificationPolicy, 'VerificationPolicyVersion');
+}
 
 export function contributionIdFor(seed: string): ContributionId {
   return asContributionId(`${CONTRIBUTION_ID_PREFIXES.contribution}${digest(`contribution:${seed}`).slice(0, 32)}`);
@@ -209,6 +224,18 @@ export function professionalAttestationRefFor(seed: string): ProfessionalAttesta
 
 export function policyDecisionRefFor(seed: string): PolicyDecisionRef {
   return asPolicyDecisionRef(`${CONTRIBUTION_ID_PREFIXES.policy}${digest(`policy:${seed}`).slice(0, 32)}`);
+}
+
+export function registryRecordIdFor(seed: string): RegistryRecordId {
+  return asRegistryRecordId(`${CONTRIBUTION_ID_PREFIXES.registryRecord}${digest(`registry-record:${seed}`).slice(0, 32)}`);
+}
+
+export function contributionFingerprintFor(seed: string): ContributionFingerprint {
+  return asContributionFingerprint(`${CONTRIBUTION_ID_PREFIXES.fingerprint}${digest(`fingerprint:${seed}`)}`);
+}
+
+export function verificationPolicyVersionFor(seed: string): VerificationPolicyVersion {
+  return asVerificationPolicyVersion(`${CONTRIBUTION_ID_PREFIXES.verificationPolicy}${digest(`verification-policy:${seed}`).slice(0, 32)}`);
 }
 
 export function sha256Canonical(value: string): string {

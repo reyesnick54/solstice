@@ -70,6 +70,7 @@ export const CONTRIBUTION_LIFECYCLE_STATES = [
   'VERIFIED',
   'REJECTED',
   'SUPERSEDED',
+  'CORRECTED',
 ] as const;
 export type ContributionLifecycleState = (typeof CONTRIBUTION_LIFECYCLE_STATES)[number];
 
