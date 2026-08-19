@@ -27,6 +27,8 @@ export const ECONOMIC_ASSET_REGISTRY_ISOLATION = Object.freeze({
     'packages/asset-rights',
     'packages/economic-assets-v2',
   ]),
+  fabricPort: 'EconomicAssetRegistryPort',
+  isSourceOfTruth: false,
   sitsAbove: Object.freeze([
     'packages/information-market',
     'packages/personal-data-vault',

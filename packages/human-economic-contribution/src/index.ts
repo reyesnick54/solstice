@@ -105,6 +105,16 @@ export {
   type HumanContributionRegistrySnapshot,
 } from './registry.ts';
 export type { HumanContributionRegistryPort } from './port.ts';
+export {
+  HumanContributionEconomicAssetAdapter,
+  createHumanContributionEconomicAssetAdapter,
+  mapContributionEvidence,
+  mapContributionRecord,
+  mapValuationReference,
+  valuationResultIsNotAutomaticValue,
+  type ProjectableValuationReference,
+  type ProjectableValuationResult,
+} from './economic-asset-adapter.ts';
 export { InMemoryHumanContributionRegistryStore, type HumanContributionRegistryStore } from './store.ts';
 export {
   DEFAULT_VERIFICATION_POLICY_VERSION,

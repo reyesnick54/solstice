@@ -147,6 +147,7 @@ export function createEconomicAssetDescriptor(
     automaticSunReyQuantity: null,
     automaticMoonReyQuantity: null,
     issuanceEligible: false,
+    sourceRecordId: input.sourceRecordId ?? input.contentCommitmentMaterial,
     verificationPolicyId: null,
     verificationPolicyVersion: null,
     verificationDecisionId: null,

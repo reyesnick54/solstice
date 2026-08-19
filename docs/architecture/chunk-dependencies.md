@@ -1015,6 +1015,13 @@ not value, mint, or issue Execution Authority. Do not create
 `packages/dataset-verification`, `packages/data-rights-registry`,
 `packages/economic-provenance`, `packages/asset-rights`, or
 `packages/economic-assets-v2`. The evaluator returns `mustStop: false`.
+Chunk 115 extends the same Economic Asset Registry owner with the
+cross-domain integration fabric. Source-domain adapters project
+privacy-safe metadata from HIN, the Human Contribution Registry, the
+Oracle Network, and the productive economy through
+`EconomicAssetRegistryPort`. The registry is not the source of truth
+for those domains and does not mint. Do not create a second registry
+package. The evaluator returns `mustStop: false`.
 Chunk 111 implements the Deterministic Human Contribution Valuation
 Engine at `packages/human-economic-contribution/src/valuation`.
 Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
