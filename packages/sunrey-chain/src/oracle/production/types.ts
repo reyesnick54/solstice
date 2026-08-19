@@ -24,6 +24,7 @@ export const PRODUCTION_ORACLE_SCHEMA_VERSION = 1 as const;
 export const COLLECTOR_VERSION = 'sunrey-oracle-collector/1' as const;
 export const QUALITY_FORMULA_VERSION = 'oracle.quality.profile.v1' as const;
 export const NORMALIZATION_VERSION = 'oracle.normalize.v1' as const;
+export const CANONICAL_NORMALIZATION_VERSION = 'sunrey.economic-unit.normalization.v1' as const;
 
 export const ONBOARDING_STATUSES = [
   'DRAFT',
@@ -224,6 +225,8 @@ export type CanonicalCollectedObservation = {
   readonly feedId: string;
   readonly subject: string;
   readonly value: FixedQuantity;
+  readonly sourceValue?: FixedQuantity;
+  readonly canonicalMeasurement?: import('../../units/measurement.ts').CanonicalProductiveMeasurement;
   readonly provenance: SourceProvenance;
 };
 

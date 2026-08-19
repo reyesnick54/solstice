@@ -5,8 +5,13 @@ export {
   GRAPH_NODE_KINDS,
   HASH_DOMAIN_PRODUCTIVE,
   LEGACY_FORMULA_PATH_CLASS,
+  HASH_DOMAIN_PRODUCTIVE_V2,
   POLICY_PARAMETER_CLASS,
   PRODUCTIVE_CATEGORIES,
+  PRODUCTIVE_CONTRIBUTION_SCHEMA_V1,
+  PRODUCTIVE_CONTRIBUTION_SCHEMA_V2,
+  PRODUCTIVE_FINGERPRINT_V1,
+  PRODUCTIVE_FINGERPRINT_V2,
   PRODUCTIVE_SCHEMA_VERSION,
   REJECTION_CODES,
   ROUNDING_MODES,
@@ -32,7 +37,9 @@ export {
   CanonicalUnitRegistry,
   defaultCanonicalUnitRegistry,
   NORMALIZATION_CONSTITUTION_VERSION,
+  measureCanonical,
 } from '../units/index.ts';
+export type { CanonicalProductiveMeasurement } from '../units/index.ts';
 export { objectIsActive } from './objects.ts';
 export type { ProductiveEconomicObject } from './objects.ts';
 export {
@@ -46,7 +53,7 @@ export { periodIsDefined } from './claims.ts';
 export type { ProductiveClaim } from './claims.ts';
 export { detectConflicts, distinctOracleSources, factIsConflicted, factIsStale } from './oracle.ts';
 export type { OracleFact } from './oracle.ts';
-export { contributionFingerprint } from './fingerprint.ts';
+export { contributionFingerprint, contributionFingerprintV2 } from './fingerprint.ts';
 export { evaluateIssuanceFormula, mulDiv } from './formula.ts';
 export type { FormulaInputs, FormulaResult } from './formula.ts';
 export { developmentIssuancePolicy, policyAtHeight } from './policy.ts';

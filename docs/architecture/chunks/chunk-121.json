@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-121",
+  "title": "Governed MoonRey Cross-Domain Attribution Policy Engine",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "moonrey-source-taxonomy",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED by extending packages/sunrey-chain/src/productive/policy-governance/attribution. Evolves Chunk 74 CrossCategoryAllocationRule and CapacityOutputAllocationRule into a versioned attribution policy. MoonReyPolicyRegistry remains the only policy registry. Attribution assigns shares only. It does not mint MoonRey, perform final valuation, or activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/attribution-policy, packages/moonrey-attribution, packages/productive-attribution, or packages/attribution-engine."
+}

@@ -137,6 +137,11 @@ export class UnitRegistry {
     return this.definitions.has(keyOf(category, unitId));
   }
 
+  /**
+   * Historical category-scoped scale. Not the semantic authority.
+   * New contributions must call the Chunk 118 catalog via
+   * `packages/sunrey-chain/src/units`.
+   */
   normalize(category: ProductiveCategory, unitId: string, quantity: bigint): NormalizedQuantity | null {
     if (quantity < 0n) {
       return null;
@@ -152,6 +157,10 @@ export class UnitRegistry {
       quantity,
       normalizedQuantity: quantity * definition.scaleToBase,
     });
+  }
+
+  isIndependentSemanticAuthority(): false {
+    return false;
   }
 }
 

@@ -17,6 +17,15 @@ reproducible from contribution + source facts + policy version.
 - AI cannot create a VerifiedEconomicFact, approve a contribution,
   authorize issuance, change a normalization factor, or activate policy.
 
+## Attribution (Chunk 121)
+
+`ProductiveAttributionPolicy` lives under the same registry. It
+assigns eligibility shares for claims bound to the same or related
+economic events. It does not mint MoonRey and does not perform final
+valuation. Historical issuance bundles remain valid without an
+attribution field. AI may propose attribution policy and cannot
+activate it.
+
 ## Oracle reference factors
 
 If a policy uses an economic reference fact, that fact must be a
@@ -28,3 +37,12 @@ prices. Missing, stale, or conflicted reference facts fail closed.
 `IssuanceCorrectionRecord` is explicit evidence. It does not silently
 rewrite finalized history and does not debit innocent downstream
 holders. Any economic correction uses a separately governed mechanism.
+
+## Attribution accounting (Chunk 122)
+
+`ProductiveAttributionBook` is a non-monetary record of reserved and
+finalized attribution shares. It is not MoonRey supply and not a
+customer ledger. Attribution-sensitive eligibility requires a valid
+decision and available share before any future Productive Value
+Function. See
+[`chunk-122-moonrey-attribution-reconciliation.md`](./chunk-122-moonrey-attribution-reconciliation.md).
