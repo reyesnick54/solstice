@@ -11,6 +11,7 @@ import type {
 } from './contract.ts';
 import { toInformationRightContributionEvidence } from './evidence.ts';
 import { HinContributionProjection } from './projection.ts';
+import { evaluateHinContributionEvidence } from './registry.ts';
 
 export type HinContributionAdapterOptions = {
   readonly engine: HumanInformationNetworkEngine;
@@ -48,6 +49,10 @@ export class HinContributionAdapter {
     const evidence = toInformationRightContributionEvidence(this.engine, input.receiptId);
     if (!evidence.ok) {
       return evidence;
+    }
+    const verified = evaluateHinContributionEvidence(evidence.value);
+    if (!verified.ok) {
+      return verified;
     }
     const recorded = this.registry.recordVerifiedContribution(evidence.value, evidence.value.occurredAt);
     if (!recorded.ok) {

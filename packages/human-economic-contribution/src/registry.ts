@@ -1,15 +1,16 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
 import { createHumanContributionEvent, refuseExecution, refuseMint } from './event.ts';
-import { DEFAULT_VERIFICATION_POLICY_VERSION } from './fingerprint.ts';
 import type { ContributionFingerprint, ContributionId, PolicyDecisionRef, SubjectRef } from './ids.ts';
-import { isNonAuthoritativeSource, type SettlementEligibilityState } from './taxonomy.ts';
+import { type SettlementEligibilityState } from './taxonomy.ts';
 import { ContributionQueryIndex, periodOverlaps } from './projections.ts';
 import type { HumanContributionRegistryPort } from './port.ts';
 import { asVerifiedReference, registryRecordFromEvent, replaceRecordEvent } from './record.ts';
 import type { HumanContributionRegistryStore } from './store.ts';
 import type {
+  ApplyVerificationDecisionInput,
   ContributionClassCount,
   ContributionFailure,
+  ContributionFailureCode,
   ContributionQuery,
   DuplicateAttempt,
   ExecutionRefusal,
@@ -24,6 +25,14 @@ import type {
   VerifiedContributionReference,
   VerifyContributionInput,
 } from './types.ts';
+import {
+  ENGINEERING_VERIFICATION_POLICY,
+  HumanContributionVerificationEngine,
+  defaultFactsFromRecord,
+  evidenceBundleFromRecord,
+  withExpectedDigest,
+  type HumanContributionVerificationDecision,
+} from './verification/index.ts';
 
 export type { HumanContributionRegistrySnapshot } from './types.ts';
 
@@ -33,6 +42,51 @@ const VERIFIABLE_STATUSES = new Set(['OBSERVED', 'SUBMITTED', 'VERIFICATION_REQU
 
 function failure(code: ContributionFailure['code'], message: string): ContributionFailure {
   return Object.freeze({ code, message });
+}
+
+function mapDecisionCode(
+  code: string | undefined,
+  decision?: HumanContributionVerificationDecision['decision'],
+): ContributionFailureCode {
+  if (decision === 'REQUIRES_ADDITIONAL_EVIDENCE' && (!code || code === 'EVIDENCE_MISSING')) {
+    return 'REQUIRES_ADDITIONAL_EVIDENCE';
+  }
+  const mapped: Record<string, ContributionFailureCode> = {
+    CONTRIBUTION_NOT_FOUND: 'CONTRIBUTION_NOT_FOUND',
+    CONTRIBUTION_CLASS_NOT_ELIGIBLE: 'NOT_VERIFIABLE',
+    EVIDENCE_MISSING: 'EVIDENCE_MISSING',
+    EVIDENCE_STALE: 'EVIDENCE_STALE',
+    EVIDENCE_CONFLICTED: 'EVIDENCE_CONFLICTED',
+    SOURCE_NOT_PERMITTED: 'SOURCE_NOT_PERMITTED',
+    SOURCE_QUALITY_INSUFFICIENT: 'SOURCE_QUALITY_INSUFFICIENT',
+    ATTESTATION_REQUIRED: 'VERIFICATION_REJECTED',
+    INDEPENDENT_ATTESTATION_REQUIRED: 'SELF_ATTESTATION_INSUFFICIENT',
+    CONSENT_REQUIRED: 'CONSENT_REQUIRED',
+    CONSENT_INVALID: 'CONSENT_INVALID',
+    PURPOSE_REQUIRED: 'PURPOSE_REQUIRED',
+    PURPOSE_MISMATCH: 'PURPOSE_MISMATCH',
+    RIGHT_REQUIRED: 'RIGHT_REQUIRED',
+    RIGHT_INVALID: 'RIGHT_INVALID',
+    RIGHT_EXPIRED: 'RIGHT_EXPIRED',
+    RIGHT_REVOKED_BEFORE_USE: 'RIGHT_REVOKED_BEFORE_USE',
+    USAGE_RECEIPT_REQUIRED: 'USAGE_RECEIPT_REQUIRED',
+    USAGE_NOT_REALIZED: 'USAGE_NOT_REALIZED',
+    SUBJECT_MISMATCH: 'SUBJECT_MISMATCH',
+    JURISDICTION_UNRESOLVED: 'JURISDICTION_UNRESOLVED',
+    MODEL_INFERENCE_INSUFFICIENT: 'MODEL_INFERENCE_CANNOT_VERIFY',
+    USER_DECLARATION_INSUFFICIENT: 'USER_DECLARATION_INSUFFICIENT',
+    SELF_ATTESTATION_INSUFFICIENT: 'SELF_ATTESTATION_INSUFFICIENT',
+    DUPLICATE_CONTRIBUTION: 'DUPLICATE_FINGERPRINT',
+    RAW_PERSONAL_DATA_FORBIDDEN: 'RAW_PERSONAL_DATA_FORBIDDEN',
+    PROTECTED_TRAIT_RANKING_FORBIDDEN: 'PROTECTED_TRAIT_RANKING_FORBIDDEN',
+    HUMAN_WORTH_SCORING_FORBIDDEN: 'HUMAN_WORTH_SCORING_FORBIDDEN',
+    EVIDENCE_DIGEST_TAMPERED: 'EVIDENCE_DIGEST_TAMPERED',
+    FINGERPRINT_REPLAY: 'DUPLICATE_FINGERPRINT',
+    OTHER_CLASS_FAIL_CLOSED: 'NOT_VERIFIABLE',
+    POLICY_NOT_ACTIVE: 'VERIFICATION_POLICY_REQUIRED',
+    REQUIRES_ADDITIONAL_EVIDENCE: 'REQUIRES_ADDITIONAL_EVIDENCE',
+  };
+  return mapped[code ?? ''] ?? 'VERIFICATION_REJECTED';
 }
 
 /**
@@ -46,10 +100,12 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
   private readonly indexes = new ContributionQueryIndex();
   private readonly duplicateAttempts: DuplicateAttempt[] = [];
   private readonly store: HumanContributionRegistryStore | undefined;
+  private readonly verificationEngine: HumanContributionVerificationEngine;
   private projectionsReady = true;
 
-  constructor(store?: HumanContributionRegistryStore) {
+  constructor(store?: HumanContributionRegistryStore, engine?: HumanContributionVerificationEngine) {
     this.store = store;
+    this.verificationEngine = engine ?? new HumanContributionVerificationEngine(ENGINEERING_VERIFICATION_POLICY);
   }
 
   record(input: RecordContributionInput): Result<HumanContributionEvent, ContributionFailure> {
@@ -65,10 +121,99 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
     if (existing) {
       return ok(existing);
     }
+    const { status: requestedStatus, ...rest } = input;
     return this.insert({
-      ...input,
-      status: input.status && input.status !== 'VERIFIED' ? input.status : undefined,
+      ...rest,
+      ...(requestedStatus && requestedStatus !== 'VERIFIED' ? { status: requestedStatus } : {}),
     });
+  }
+
+  evaluateVerification(input: VerifyContributionInput): Result<HumanContributionVerificationDecision, ContributionFailure> {
+    const current = this.records.get(input.contributionId);
+    if (!current) {
+      return err(failure('CONTRIBUTION_NOT_FOUND', `contribution ${input.contributionId} was not recorded`));
+    }
+    const bundle = evidenceBundleFromRecord(current);
+    const holder = this.activeVerifiedHolder(current.fingerprint, current.contributionId);
+    const facts = input.facts
+      ? input.facts
+      : withExpectedDigest(
+          defaultFactsFromRecord(current, input.verificationTimestamp, {
+            activeDuplicateFingerprint: holder !== undefined,
+          }),
+          bundle.evidenceDigest,
+        );
+    return ok(
+      this.verificationEngine.evaluate({
+        bundle,
+        facts,
+        fingerprint: current.fingerprint,
+      }),
+    );
+  }
+
+  applyVerificationDecision(
+    input: ApplyVerificationDecisionInput,
+  ): Result<HumanContributionRegistryRecord, ContributionFailure> {
+    const decision = input.decision;
+    if (decision.valuationPerformed !== false || decision.sunReyQuantityCalculated !== false) {
+      return err(failure('ISSUANCE_QUANTITY_FORBIDDEN', 'a verification decision cannot carry valuation or SunRey quantity'));
+    }
+    if (decision.mintAuthorityCreated !== false || decision.executionAuthorityCreated !== false) {
+      return err(failure('EXECUTION_AUTHORIZATION_FORBIDDEN', 'a verification decision cannot create authority'));
+    }
+    if (decision.containsRawPersonalData !== false) {
+      return err(failure('RAW_PERSONAL_DATA_FORBIDDEN', 'a verification decision cannot contain raw personal data'));
+    }
+    const current = this.records.get(decision.contributionId);
+    if (!current) {
+      return err(failure('CONTRIBUTION_NOT_FOUND', `contribution ${decision.contributionId} was not recorded`));
+    }
+    if (current.status === 'VERIFIED') {
+      return ok(current);
+    }
+    if (!VERIFIABLE_STATUSES.has(current.status)) {
+      return err(failure('ALREADY_TERMINAL', `contribution ${decision.contributionId} cannot be verified from ${current.status}`));
+    }
+    if (decision.decision !== 'VERIFIED') {
+      return err(
+        failure(
+          decision.decision === 'REQUIRES_ADDITIONAL_EVIDENCE' ? 'REQUIRES_ADDITIONAL_EVIDENCE' : mapDecisionCode(decision.decisionCodes[0]),
+          `verification decision ${decision.decision} cannot promote a contribution to VERIFIED`,
+        ),
+      );
+    }
+    if (decision.fingerprint !== current.fingerprint) {
+      return err(failure('DUPLICATE_CONTRIBUTION', 'verification decision fingerprint does not bind the registered contribution'));
+    }
+    const bundle = evidenceBundleFromRecord(current);
+    if (decision.evidenceDigest !== bundle.evidenceDigest) {
+      return err(failure('EVIDENCE_DIGEST_TAMPERED', 'verification decision evidence digest does not bind the registered contribution'));
+    }
+    if (decision.policyVersion !== ENGINEERING_VERIFICATION_POLICY.policyVersion) {
+      return err(failure('VERIFICATION_POLICY_REQUIRED', 'verification must use the activated engineering policy'));
+    }
+    const holder = this.activeVerifiedHolder(current.fingerprint, current.contributionId);
+    if (holder) {
+      this.noteDuplicate(current.fingerprint, current.contributionId, decision.evaluatedAt);
+      return err(
+        failure('DUPLICATE_FINGERPRINT', `active verified fingerprint ${current.fingerprint} is already held by ${holder}`),
+      );
+    }
+    const nextEvent: HumanContributionEvent = Object.freeze({
+      ...current.event,
+      status: 'VERIFIED',
+      verificationQuality: current.event.verificationQuality === 'AUTHORITATIVE_REFERENCE' ? 'AUTHORITATIVE_REFERENCE' : 'VERIFIED',
+      dataQuality: 'CURRENT',
+      policyDecisionRef: current.event.policyDecisionRef,
+    });
+    const next = replaceRecordEvent(current, nextEvent, {
+      verificationPolicyVersion: decision.policyVersion,
+      verificationTimestamp: input.verificationTimestamp ?? decision.evaluatedAt,
+      verifiedMeasurement: nextEvent.measurement,
+    });
+    this.put(next);
+    return ok(next);
   }
 
   verify(input: VerifyContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure> {
@@ -82,38 +227,25 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
     if (!VERIFIABLE_STATUSES.has(current.status)) {
       return err(failure('ALREADY_TERMINAL', `contribution ${input.contributionId} cannot be verified from ${current.status}`));
     }
-    if (isNonAuthoritativeSource(current.sourceClass)) {
+    const evaluated = this.evaluateVerification(input);
+    if (!evaluated.ok) {
+      return evaluated;
+    }
+    if (evaluated.value.decision !== 'VERIFIED') {
+      if (evaluated.value.decisionCodes.includes('DUPLICATE_CONTRIBUTION')) {
+        this.noteDuplicate(current.fingerprint, current.contributionId, input.verificationTimestamp);
+      }
       return err(
         failure(
-          current.sourceClass === 'MODEL_INFERENCE' ? 'MODEL_INFERENCE_CANNOT_VERIFY' : 'NOT_VERIFIABLE',
-          `${current.sourceClass} cannot be registered as a verified contribution`,
+          mapDecisionCode(evaluated.value.decisionCodes[0], evaluated.value.decision),
+          `contribution ${input.contributionId} was not verified: ${evaluated.value.decisionCodes.join(',') || evaluated.value.decision}`,
         ),
       );
     }
-    const holder = this.activeVerifiedHolder(current.fingerprint, current.contributionId);
-    if (holder) {
-      this.noteDuplicate(current.fingerprint, current.contributionId, input.verificationTimestamp);
-      return err(
-        failure(
-          'DUPLICATE_FINGERPRINT',
-          `active verified fingerprint ${current.fingerprint} is already held by ${holder}`,
-        ),
-      );
-    }
-    const policy = input.verificationPolicyVersion ?? DEFAULT_VERIFICATION_POLICY_VERSION;
-    const nextEvent: HumanContributionEvent = Object.freeze({
-      ...current.event,
-      status: 'VERIFIED',
-      verificationQuality: current.event.verificationQuality === 'AUTHORITATIVE_REFERENCE' ? 'AUTHORITATIVE_REFERENCE' : 'VERIFIED',
-      dataQuality: 'CURRENT',
-    });
-    const next = replaceRecordEvent(current, nextEvent, {
-      verificationPolicyVersion: policy,
+    return this.applyVerificationDecision({
+      decision: evaluated.value,
       verificationTimestamp: input.verificationTimestamp,
-      verifiedMeasurement: nextEvent.measurement,
     });
-    this.put(next);
-    return ok(next);
   }
 
   reject(input: RejectContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure> {
@@ -397,9 +529,17 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
     input: RecordContributionInput,
     replacing?: ContributionId,
   ): Result<HumanContributionRegistryRecord, ContributionFailure> {
+    if (input.status === 'VERIFIED') {
+      return err(
+        failure('VERIFICATION_POLICY_REQUIRED', 'VERIFIED status requires a HumanContributionVerificationDecision'),
+      );
+    }
     const created = createHumanContributionEvent(input);
     if (!created.ok) {
       return created;
+    }
+    if (created.value.status === 'VERIFIED') {
+      return err(failure('VERIFICATION_POLICY_REQUIRED', 'VERIFIED status requires applyVerificationDecision'));
     }
     if (this.records.has(created.value.contributionId)) {
       return err(

@@ -26,7 +26,7 @@ describe('chunk 104 architecture guards', () => {
   it('stays an ontology and does not become a second financial authority', () => {
     const files = walk(join(ROOT, 'packages/human-economic-contribution/src'));
     for (const file of files) {
-      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts')) {
+      if (file.endsWith('.test.ts') || file.endsWith('demo.ts') || file.endsWith('isolation.ts') || file.endsWith('verification-demo.ts')) {
         continue;
       }
       const source = readFileSync(file, 'utf8');
