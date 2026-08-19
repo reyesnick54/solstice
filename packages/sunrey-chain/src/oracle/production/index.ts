@@ -165,6 +165,7 @@ export type {
   EconomicDataSourceCertificationRecord,
   ProviderConformanceReport,
 } from './certification/index.ts';
+export {
   ALLOWED_CONTENT_TYPES,
   CONNECTOR_RUNTIME_MODES,
   CONSENSUS_CALLED_HTTP,
@@ -258,4 +259,12 @@ export {
   enforceSourceTimestamp,
   parseJsonSourceRecord,
 } from './runtime.ts';
+export {
+  LogisticsStorageDataFabric,
+  defaultLogisticsFabric,
+  ingestLogisticsObservation,
+  logisticsFactCannotAutoMint,
+  storageFactCannotAutoMint,
+} from './provider-families/logistics/index.ts';
+export type { LogisticsFabricDecision, LogisticsSourceObservation } from './provider-families/logistics/index.ts';
 

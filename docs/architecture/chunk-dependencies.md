@@ -176,6 +176,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-logistics-storage-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1193,6 +1194,20 @@ Certification is not a verified fact, productive contribution, or
 MoonRey mint. Do not create `packages/provider-certification`,
 `packages/oracle-certification`, or a second oracle registry. The
 evaluator returns `mustStop: false`.
+Chunk 132 implements the logistics, freight, delivery, and storage
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/logistics`.
+Capability `sunrey-logistics-storage-data-fabric` is `IMPLEMENTED`.
+See
+[`chunk-132-logistics-storage-data-fabric.md`](./chunk-132-logistics-storage-data-fabric.md)
+and
+[`docs/economics/chunk-132-logistics-storage-data-fabric.md`](../economics/chunk-132-logistics-storage-data-fabric.md).
+It extends Chunk 68 / 127 / 128. Named carriers are not contacted.
+Goods production is not recounted as logistics. Warehouse capacity is
+not realized storage. Logistics and storage facts cannot auto-mint.
+Do not create `packages/logistics-data-fabric`,
+`packages/freight-oracles`, `packages/warehouse-storage-oracles`, or
+`packages/moonrey-logistics`. The evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.

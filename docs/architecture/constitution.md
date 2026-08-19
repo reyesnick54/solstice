@@ -1579,6 +1579,22 @@ ingestion. There is no `PRODUCTION_APPROVED` state. Commercial
 `packages/conformance-sandbox`, or a second oracle registry. See
 [`chunk-128-provider-certification.md`](./chunk-128-provider-certification.md).
 
+Chunk 132 implements the logistics, freight, delivery, and storage
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/logistics`.
+Capability `sunrey-logistics-storage-data-fabric` is `IMPLEMENTED` on
+the existing `sunrey-production-oracles` owner. The fabric preserves
+the difference between goods production, transportation, delivery
+completion, storage service, and capacity. Tonne-km requires mass and
+distance or attested tonne-km. Warehouse available volume is not
+realized storage. Digital byte storage and warehouse cubic volume stay
+distinct. Named carriers are not contacted. Logistics and storage
+facts cannot auto-mint MoonRey. Do not create
+`packages/logistics-data-fabric`, `packages/freight-oracles`,
+`packages/warehouse-storage-oracles`, or `packages/moonrey-logistics`.
+See
+[`chunk-132-logistics-storage-data-fabric.md`](./chunk-132-logistics-storage-data-fabric.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not
