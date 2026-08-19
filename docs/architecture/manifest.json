@@ -2868,13 +2868,19 @@
         "packages/productive-value",
         "packages/moonrey-tokenomics",
         "packages/moonrey-pricing",
-        "packages/value-function-v2"
+        "packages/value-function-v2",
+        "packages/moonrey-value-engine",
+        "packages/productive-valuation",
+        "packages/moonrey-valuation",
+        "packages/economic-value-engine"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain.",
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path.",
+      "notes": "Chunk 123 governed Productive Value Function constitution and Chunk 124 deterministic simulation engine at packages/sunrey-chain/src/productive/policy-governance/value-function. Engineering implementation is not production activation. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry."
     },
     {
@@ -6035,6 +6041,7 @@
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint or replace moonrey.issuance.formula.v1. Production remains inactive."
     },
     {
+      "notes": "Chunk 123/124 Productive Value Function constitution and simulation engine at packages/sunrey-chain/src/productive/policy-governance/value-function. Engineering implementation is not production activation. Does not mint or replace moonrey.issuance.formula.v1. Production remains inactive."
       "id": "moonrey-economic-event-attribution",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6539,6 +6546,10 @@
     "packages/moonrey-attribution",
     "packages/economic-event-graph",
     "packages/deduplication-engine",
-    "packages/productive-attribution-v2"
+    "packages/productive-attribution-v2",
+    "packages/moonrey-value-engine",
+    "packages/productive-valuation",
+    "packages/moonrey-valuation",
+    "packages/economic-value-engine"
   ]
 }

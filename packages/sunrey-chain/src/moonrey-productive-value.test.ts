@@ -4,7 +4,6 @@ import { describe, it } from 'node:test';
 import { evaluateIssuanceFormula, LEGACY_FORMULA_PATH_CLASS } from './productive/formula.ts';
 import { MoonReyPolicyRegistry } from './productive/policy-governance/registry.ts';
 import {
-  ATTRIBUTION_SHARE_SCALE,
   CANONICAL_FACTOR_ORDER,
   FORBIDDEN_VALUE_FACTOR_TYPES,
   PRODUCTIVE_VALUE_FUNCTION_CAN_MINT,
@@ -47,7 +46,8 @@ import {
   type ProductiveAttributionDecision,
   type ProductiveValueInput,
   type ProductiveValueReferenceFact,
-} from './productive/policy-governance/index.ts';
+} from './productive/policy-governance/value-function/index.ts';
+import { ATTRIBUTION_SHARE_SCALE } from './productive/policy-governance/value-function/types.ts';
 import { FORMULA_VERSION, PRODUCTIVE_CATEGORIES, WEIGHT_SCALE } from './productive/types.ts';
 import type { VerifiedProductiveContribution } from './productive/verification.ts';
 

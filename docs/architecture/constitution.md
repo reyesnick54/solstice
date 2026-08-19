@@ -93,6 +93,7 @@ never be two implementations of these systems.
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
 | MoonRey productive value settlement bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts` | IMPLEMENTED |
+| MoonRey Productive Value Function engine | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/engine.ts` | IMPLEMENTED |
 | MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
@@ -1443,6 +1444,14 @@ Production V2 is unavailable. Do not create `packages/moonrey-mint`,
 `packages/moonrey-conversion`, or `packages/productive-settlement`.
 See
 [`chunk-125-moonrey-value-settlement-bridge.md`](../economics/chunk-125-moonrey-value-settlement-bridge.md).
+Chunk 124 adds the deterministic Productive Value Function engine
+inside the same owner. Engineering implementation is not production
+activation. The engine evaluates GPUV in simulation only. It does not
+mint, does not produce MoonRey quantity, and does not replace
+`moonrey.issuance.formula.v1`. Do not create
+`packages/moonrey-value-engine`, `packages/productive-valuation`,
+`packages/moonrey-valuation`, or `packages/economic-value-engine`. See
+[`chunk-124-moonrey-productive-value-engine.md`](../economics/chunk-124-moonrey-productive-value-engine.md).
 Chunk 122 extends `moonrey-policy-governance` with
 `ProductiveAttributionBook` at
 `packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.
