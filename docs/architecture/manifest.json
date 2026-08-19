@@ -2783,6 +2783,8 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures.",
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle/production. Chunk 127 adds the off-chain connector runtime on the same owner. Consensus never calls HTTP. No fabricated provider agreements."
       "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures."
     },
     {
@@ -4447,6 +4449,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 127 off-chain economic data connector runtime and provider-neutral transport at packages/sunrey-chain/src/oracle/production. Extends Chunk 68. Consensus never calls HTTP. Fetch success is not a verified fact and does not mint MoonRey. No named live provider integration."
+    },
+    {
+      "id": "sunrey-manufacturing-robotics-data-fabric",
+      "name": "Manufacturing, industrial automation, and robotics economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ManufacturingObservation",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/manufacturing-oracle",
+        "packages/industrial-data-fabric",
+        "packages/robotics-oracle",
+        "packages/factory-connectors"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 131 read-only manufacturing and robotics economic data fabric. Extends sunrey-production-oracles. Observes MES, robot telemetry, quality, and ERP evidence. Does not command industrial equipment, contact a real factory, activate production, or mint MoonRey."
     }
   ],
   "authorizedMutationPaths": [
@@ -5836,6 +5866,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 131 manufacturing/robotics data fabric extend the same owner. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification extends the same owner at packages/sunrey-chain/src/oracle/production/certification. Chunk 129 energy data fabric extends the same owner at packages/sunrey-chain/src/oracle/production/provider-families/energy. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, packages/energy-oracle, or a second oracle consensus system."
     },
     {
@@ -5843,6 +5874,8 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry.",
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 127 adds the off-chain connector runtime on the same owner. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry."
     },
     {
@@ -6184,6 +6217,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 125 Productive Value to MoonRey settlement conversion bridge. GPUV is not MoonRey. Chunk 71 remains the only mint. Production remains inactive."
+    },
+    {
+      "id": "sunrey-manufacturing-robotics-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 131 read-only manufacturing, industrial automation, and robotics economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/manufacturing. Extends sunrey-production-oracles. No industrial control path, no real factory contact, no production activation, and no MoonRey mint. Do not create packages/manufacturing-oracle, packages/industrial-data-fabric, packages/robotics-oracle, or packages/factory-connectors."
     }
   ],
   "boundedContexts": [
