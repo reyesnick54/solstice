@@ -130,6 +130,10 @@ describe('AI runtime adversarial fixtures', () => {
     if (!proposal.ok) {
       throw new Error(proposal.error.detail);
     }
+    if (!proposal.ok) {
+      throw new Error(proposal.error.detail);
+    }
+    assert.equal(proposal.ok, true);
     assert.equal(proposal.value.intent, 'PREPARE_PAYMENT');
     assert.equal(proposal.value.guaranteedReturn, false);
     const submitted = engine.gate.toActionIntent({

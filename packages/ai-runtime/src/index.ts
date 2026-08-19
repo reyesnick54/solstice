@@ -18,6 +18,7 @@ export type {
   S3mSafetyEvent,
   S3mTransport,
 } from './providers/s3m/index.ts';
+export { S3mAiProvider } from './providers/s3m.ts';
 export { XaiGrokAiProvider } from './providers/xai-grok.ts';
 export {
   CANONICAL_GROK_RESERVED_MODEL_ID,

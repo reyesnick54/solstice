@@ -73,6 +73,9 @@ function seedAiModel(
     liveApproved: false,
     inferencePlaneOnly: true,
     claimsRealWorldPerformance: false,
+    simulationOnly: true,
+    liveApproved: false,
+    inferencePlaneOnly: true,
   });
   const registered = registry.register({
     modelId: input.modelId,
@@ -82,6 +85,8 @@ function seedAiModel(
     owner: input.owner,
     inputSchema: input.inputSchema ?? 'AiInferenceRequest',
     outputSchema: input.outputSchema ?? 'AiInferenceResponse',
+    inputSchema: 'AiInferenceRequest',
+    outputSchema: 'AiInferenceResponse',
     determinism: 'DETERMINISTIC',
     configurationCanonical,
     createdAt: now,
@@ -94,6 +99,12 @@ function seedAiModel(
     ]),
     applicableDomain: input.applicableDomain ?? 'SUNREY_AI_INFERENCE_SIMULATION',
     dataRequirements: Object.freeze([...(input.dataRequirements ?? ['task-class', 'released-context'])]),
+      'Inference plane only',
+      'Cannot execute payments, trades, mint, or sign',
+      'Simulation approval only',
+    ]),
+    applicableDomain: 'SUNREY_AI_INFERENCE_SIMULATION',
+    dataRequirements: Object.freeze(['task-class', 'released-context']),
     artifactKind: 'CONFIGURATION',
     artifactDescription: 'Canonical AI model binding for the inference runtime',
   });
@@ -180,6 +191,9 @@ export function seedCanonicalAiModels(
       'Cannot hold master keys or override risk, jurisdiction, or Compliance Kernel',
       'Simulation approval only; no real-world performance claim',
     ]),
+    description: 'Reserved S3M primary intelligence engine binding. Simulation registry only.',
+    owner: 'solstice-ai-runtime',
+    validationId: 'mvn_s3m_ai_v1',
   });
   if (!s3m.ok) {
     return s3m;

@@ -13,6 +13,7 @@
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:s3m": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/providers/s3m/demo.ts"
+    "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts"
   },
   "engines": {
     "node": ">=22"

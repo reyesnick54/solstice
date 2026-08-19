@@ -1103,6 +1103,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 101 inference plane and Chunk 102 S3M primary provider adapter. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent. Does not fork the S3M training system."
+      "notes": "Chunk 101 inference plane only. Provider-neutral AI runtime. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent."
     }
   ],
   "components": [
@@ -2402,10 +2403,6 @@
         {
           "name": "WalletSyncSession",
           "kind": "type"
-        },
-        {
-          "name": "MobileWalletSyncEngine",
-          "kind": "class"
         },
         {
           "name": "WalletSyncReport",
@@ -5529,6 +5526,7 @@
       ],
       "protected": true,
       "notes": "Chunk 101 inference plane and Chunk 102 S3M adapter. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
+      "notes": "Chunk 101 inference plane. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",
