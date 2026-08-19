@@ -64,7 +64,13 @@ export {
   AGENT_INFORMATION_MANDATE,
   DEVELOPER_INFORMATION_SCOPES,
   HUMAN_INFORMATION_RIGHTS_SAFETY,
+  HIN_CONTRIBUTION_BOUNDARY,
+  INFORMATION_RIGHT_CONTRIBUTION,
+  NON_HIN_CONTRIBUTION_CLASSES,
   HumanInformationNetworkEngine,
+  HinContributionAdapter,
+  createHinContributionAdapter,
+  createInProcessHumanContributionRegistry,
   createInformationApi,
   INFORMATION_CATEGORIES,
   INFORMATION_COMMANDS,
@@ -76,7 +82,13 @@ export {
   defaultNetworkPolicy,
   formatInformationCli,
   privacyMinimizedNotification,
+  runHumanInformationContributionDemo,
   runInformationCommand,
+} from './network/index.ts';
+export type {
+  HumanContributionRecord,
+  HumanContributionRegistryPort,
+  InformationRightContributionEvidence,
 } from './network/index.ts';
 export type {
   ConsentPreview,

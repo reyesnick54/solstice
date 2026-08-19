@@ -849,7 +849,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Do not implement the Exchange matching engine or SunRey Chain."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution. Do not implement the Exchange matching engine or SunRey Chain."
     },
     {
       "id": "packages/sunrey-chain",
@@ -1103,7 +1103,6 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 101 inference plane and Chunk 102 S3M primary provider adapter. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent. Does not fork the S3M training system."
-      "notes": "Chunk 101 inference plane only. Provider-neutral AI runtime. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent."
     }
   ],
   "components": [
@@ -3824,6 +3823,33 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 102 bounded S3M inference adapter. Proprietary primary intelligence provider. Advisory/proposal-generation only. Does not invent undocumented S3M routes, implement Grok, or fork the S3M training system."
+    },
+    {
+      "id": "sunrey-hin-contribution-integration",
+      "name": "Human Information Network to Human Economic Contribution Registry integration",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/network/contribution/adapter.ts",
+      "publicInterface": "packages/information-market/src/network/contribution/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "HinContributionAdapter",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/hin-contribution-registry",
+        "packages/information-contribution-v2",
+        "packages/human-information-contribution"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     }
   ],
   "authorizedMutationPaths": [
@@ -5406,6 +5432,13 @@
       "owner": "packages/ai-runtime",
       "protected": true,
       "notes": "Chunk 102 S3M primary intelligence adapter at packages/ai-runtime/src/providers/s3m. Not a second runtime, training system, Execution Authority, or ledger. Grok is not implemented here."
+    },
+    {
+      "id": "sunrey-hin-contribution-integration",
+      "status": "IMPLEMENTED",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
     }
   ],
   "boundedContexts": [
@@ -5526,7 +5559,6 @@
       ],
       "protected": true,
       "notes": "Chunk 101 inference plane and Chunk 102 S3M adapter. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
-      "notes": "Chunk 101 inference plane. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

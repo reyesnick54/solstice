@@ -374,6 +374,26 @@ describe('Personal Economic Graph', () => {
     assert.equal(mismatch.ok, false);
   });
 
+  it('DATA_ASSET nodes can carry a canonical contribution reference without raw content', () => {
+    const { peg, actor, subjectId } = harness();
+    peg.openGraph(actor, subjectId);
+    const node = peg.declareDataAsset(actor, subjectId, {
+      label: 'authorized information descriptor',
+      vaultAssetId: 'hidesc_canonical_ref',
+      category: 'FINANCIAL_ACTIVITY_METADATA',
+      contributionId: 'hcr_verified_example',
+    });
+    assert.equal(node.ok, true);
+    if (node.ok) {
+      assert.equal(node.value.kind, 'DATA_ASSET');
+      assert.equal(node.value.attributes.kind, 'DATA_ASSET');
+      if (node.value.attributes.kind === 'DATA_ASSET') {
+        assert.equal(node.value.attributes.contributionId, 'hcr_verified_example');
+      }
+    }
+    assert.equal(JSON.stringify(node.value).includes('ada@example.com'), false);
+  });
+
   it('rebuilds derived projection and keeps user-declared facts', () => {
     const { peg, actor, subjectId } = harness();
     const source = seedCanonicalLife(peg, subjectId);

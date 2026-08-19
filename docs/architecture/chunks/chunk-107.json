@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-107",
+  "title": "Human Information Network to Human Economic Contribution Registry integration",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "evidence",
+    "consent",
+    "clean-room",
+    "information-market",
+    "personal-economic-graph",
+    "personal-economic-value-engine",
+    "sunrey-human-information-network",
+    "sunrey-hin-contribution-integration"
+  ],
+  "notes": "IMPLEMENTED at packages/information-market/src/network/contribution. Narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Does not store raw personal information. Compensation remains mintRequested=false. evaluateChunkRequirements returns mustStop: false. Do not create packages/hin-contribution-registry, packages/information-contribution-v2, or packages/human-information-contribution."
+}
