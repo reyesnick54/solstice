@@ -1,8 +1,8 @@
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
 import { enforceSourceRegistrationMapping } from '../source-taxonomy/onboarding.ts';
 import type { SourceClaimCompatibilityRejection } from '../source-taxonomy/types.ts';
+import { factTypeIsMappedForSource } from '../../productive/source-taxonomy/registry.ts';
 import type { EconomicDataSource, ProductionOracleRejection } from './types.ts';
-import { CATEGORY_TO_FACT_TYPE } from './types.ts';
 
 export type SourceRegistrationRejection = ProductionOracleRejection | SourceClaimCompatibilityRejection;
 
@@ -21,6 +21,11 @@ export class EconomicDataSourceRegistry {
       if (source.category === 'energy' && source.factType !== 'ENERGY_PRODUCTION' && source.factType !== 'ENERGY_CAPACITY') {
         return err({ code: 'SCHEMA_INCOMPATIBLE', detail: `category ${source.category} does not match ${source.factType}` });
       }
+    if (!factTypeIsMappedForSource(source.category, source.factType)) {
+      return err({
+        code: 'SCHEMA_INCOMPATIBLE',
+        detail: `category ${source.category} does not collect ${source.factType}`,
+      });
     }
     if (source.credentialRef === null && source.authenticationMethod !== 'FILE_FIXTURE_TEST_ONLY') {
       return err({ code: 'CREDENTIAL_NOT_ASSIGNED', detail: 'non-fixture sources must reference a SecretReference' });

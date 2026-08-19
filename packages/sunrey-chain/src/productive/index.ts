@@ -29,6 +29,13 @@ export { UnitRegistry, defaultUnitRegistry, UNIT_REGISTRY_ID } from './units.ts'
 export type { NormalizedQuantity, UnitDefinition } from './units.ts';
 export { objectIsActive } from './objects.ts';
 export type { ProductiveEconomicObject } from './objects.ts';
+export {
+  ProductiveEconomicAssetAdapter,
+  createProductiveEconomicAssetAdapter,
+  mapProductiveClaim,
+  mapProductiveContribution,
+  mapProductiveObject,
+} from './economic-asset-adapter.ts';
 export { periodIsDefined } from './claims.ts';
 export type { ProductiveClaim } from './claims.ts';
 export { detectConflicts, distinctOracleSources, factIsConflicted, factIsStale } from './oracle.ts';
@@ -64,3 +71,4 @@ export { runProductiveCommand } from './cli.ts';
 export { fourValidatorsAgree, runAllDemos, runComputeDemo, runEnergyDemo, runManufacturingDemo } from './demo.ts';
 export * from './policy-governance/index.ts';
 export * from './claim-candidate/index.ts';
+export * from './source-taxonomy/index.ts';

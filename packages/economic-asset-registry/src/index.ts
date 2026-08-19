@@ -25,6 +25,9 @@ export {
   asSubjectRef,
   asUsageRestrictionRef,
   asValuationMethodRef,
+  asVerificationDecisionId,
+  asVerificationPolicyId,
+  asVerificationPolicyVersion,
   assetIdFor,
   canonicalOwnerRefFor,
   canonicalSourceRefFor,
@@ -36,6 +39,8 @@ export {
   legalOwnershipRightsRefFor,
   licenseRefFor,
   lineageRootFor,
+  networkIdFor,
+  chainIdFor,
   operatorRefFor,
   provenanceDigestFor,
   purposeRefFor,
@@ -48,6 +53,9 @@ export {
   subjectRefFor,
   usageRestrictionRefFor,
   valuationMethodRefFor,
+  verificationDecisionIdFor,
+  verificationPolicyIdFor,
+  verificationPolicyVersionFor,
   type AssetId,
   type CanonicalOwnerRef,
   type ConsentRef,
@@ -56,6 +64,9 @@ export {
   type RightsHolderRef,
   type SubjectRef,
   type ValuationMethodRef,
+  type VerificationDecisionId,
+  type VerificationPolicyId,
+  type VerificationPolicyVersion,
 } from './ids.ts';
 export { ECONOMIC_ASSET_REGISTRY_ISOLATION } from './isolation.ts';
 export {
@@ -66,7 +77,23 @@ export {
 } from './invariants.ts';
 export { assertAcyclicLineage, childrenOf, normalizeLineage, parentsOf, wouldCreateCycle } from './lineage.ts';
 export { EconomicAssetQueryIndex } from './projections.ts';
+export {
+  projectDescriptor,
+  reflectSourceLifecycle,
+  sourceIdentityKey,
+  sourceProjectionKey,
+  type AddLineageInput,
+  type EconomicAssetRegistryPort,
+  type SourceProjectionKey,
+} from './port.ts';
 export { CanonicalEconomicAssetRegistry, EconomicAssetRegistry } from './registry.ts';
+export {
+  FABRIC_AUTHORITY_BOUNDARY,
+  FABRIC_DIRECTION,
+  FABRIC_PRIVACY_BOUNDARY,
+  REGISTRY_IS_SOURCE_OF_TRUTH,
+  SOURCE_OF_TRUTH_BOUNDARY,
+} from './source-of-truth.ts';
 export { InMemoryEconomicAssetRegistryStore, type EconomicAssetRegistryStore } from './store.ts';
 export {
   ASSET_LIFECYCLE_STATES,
@@ -133,3 +160,28 @@ export {
   type RightsMetadata,
   type RoleBindings,
 } from './types.ts';
+export {
+  ADDITIONAL_EVIDENCE_CODES,
+  ECONOMIC_ASSET_VERIFICATION_CODES,
+  ECONOMIC_ASSET_VERIFICATION_SCHEMA_VERSION,
+  ENGINEERING_CLASS_RULES,
+  ENGINEERING_VERIFICATION_POLICY,
+  ENGINEERING_VERIFICATION_POLICY_SEED,
+  EconomicAssetVerificationEngine,
+  activateVerificationPolicy,
+  chainAnchorIsConsistent,
+  classRuleFor,
+  decideVerification,
+  eligibleAssetClasses,
+  getActivatedVerificationPolicy,
+  isEconomicAssetVerificationCode,
+  requiresAdditionalEvidence,
+  rolesDoNotInferOwnership,
+  type AssetClassVerificationRule,
+  type EconomicAssetVerificationCode,
+  type EconomicAssetVerificationDecision,
+  type EconomicAssetVerificationInput,
+  type EconomicAssetVerificationOutcome,
+  type EconomicAssetVerificationPolicy,
+  type VerificationPolicyState,
+} from './verification/index.ts';
