@@ -17,6 +17,17 @@ refused. Public ticker remains `NOT_ASSIGNED`.
 9. Finalize a native issuance transaction
 10. Persist `MoonReyIssuanceReceipt` and reconcile supply
 
+## Path classes
+
+- `LEGACY_ENGINEERING_SIMULATION_V1` — Chunk 44 formula
+  `moonrey.issuance.formula.v1`. Preserved for historical simulation
+  and replay.
+- `GOVERNED_VALUE_SIMULATION_V2` — Chunk 125 GPUV → conversion policy
+  → settlement authorization → Chunk 71. GPUV is not MoonRey.
+- `PRODUCTION` — unavailable.
+
+Old V1 calls are not routed onto V2 economics.
+
 ## Formula version
 
 `moonrey.issuance.formula.v1`

@@ -1,6 +1,12 @@
 import { evaluateIssuanceFormula, type FormulaResult } from './formula.ts';
 import type { MoonReyIssuancePolicy } from './policy.ts';
-import { PRODUCTIVE_SCHEMA_VERSION, type ProductiveCategory, type ProductiveRejectionCode } from './types.ts';
+import {
+  LEGACY_FORMULA_PATH_CLASS,
+  PRODUCTIVE_SCHEMA_VERSION,
+  type IssuancePathClass,
+  type ProductiveCategory,
+  type ProductiveRejectionCode,
+} from './types.ts';
 import type { VerifiedProductiveContribution } from './verification.ts';
 
 export type MoonReyIssuanceAuthorization = {
@@ -33,6 +39,15 @@ export type MoonReyIssuanceReceipt = {
   readonly oracleFacts: readonly string[];
   readonly blockHeight: number;
   readonly blockId: string;
+  readonly pathClass?: IssuancePathClass;
+  readonly eventId?: string;
+  readonly attributionDecisionId?: string;
+  readonly normalizationReceiptId?: string;
+  readonly productiveValueId?: string;
+  readonly productiveValueDigest?: string;
+  readonly valueFunctionPolicy?: { readonly policyId: string; readonly policyVersion: number };
+  readonly conversionPolicy?: { readonly policyId: string; readonly policyVersion: string };
+  readonly monetaryPolicyVersion?: string;
 };
 
 export type EpochIssuance = {
@@ -134,6 +149,7 @@ export function finalizeIssuance(
     oracleFacts: contribution.oracleFactIds,
     blockHeight,
     blockId,
+    pathClass: LEGACY_FORMULA_PATH_CLASS,
   });
 }
 

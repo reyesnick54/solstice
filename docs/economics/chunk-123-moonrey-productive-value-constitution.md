@@ -13,7 +13,10 @@ engine.
 
 The legacy path `moonrey.issuance.formula.v1` remains available and is
 labeled `LEGACY_ENGINEERING_SIMULATION_V1`. Historical simulation and
-replay continue to use it.
+replay continue to use it. Chunk 125 adds the separate V2 path
+`GOVERNED_VALUE_SIMULATION_V2`: GPUV is converted by a versioned
+settlement policy before Chunk 71 may issue MoonRey. Production
+remains unavailable.
 
 ## Why this exists
 

@@ -146,6 +146,8 @@ export function moonreyProductiveEvidence(input: {
 }): MoonReyProductiveEvidence {
   return Object.freeze({
     evidenceClass: 'VERIFIED_PRODUCTIVE_CONTRIBUTION',
+    evidencePath: 'LEGACY_ENGINEERING_SIMULATION_V1',
+    schemaVersion: 1,
     contributionId: input.contributionId,
     fingerprint: input.fingerprint,
     authorizationId: input.authorizationId,
@@ -345,6 +347,34 @@ export function developmentMoonReyAuthority(input: {
     replayIdentifier: input.replayIdentifier,
     activationState: 'DEVELOPMENT_ACTIVE',
     actorKind: 'PROTOCOL',
+    authorized: input.authorized ?? true,
+  });
+}
+
+export function governedValueMoonReyAuthority(input: {
+  readonly recipient: string;
+  readonly quantity: bigint;
+  readonly quantityCeiling?: bigint;
+  readonly replayIdentifier: string;
+  readonly evidence: MoonReyProductiveEvidence;
+  readonly authorized?: boolean;
+  readonly actorKind?: MonetaryIssuanceAuthority['actorKind'];
+}): MonetaryIssuanceAuthority {
+  return Object.freeze({
+    authorityId: `mia.moonrey.v2.${input.replayIdentifier.slice(0, 48)}`,
+    assetId: 'MOONREY_COIN',
+    recipient: input.recipient,
+    issuanceClass: 'VERIFIED_PRODUCTIVE_CONTRIBUTION',
+    monetaryPolicyVersion: 'sunrey.monetary.constitution.v1',
+    authorizationSource: 'MOONREY_PRODUCTIVE_AUTHORIZATION',
+    economicEvidence: input.evidence,
+    quantity: input.quantity,
+    quantityCeiling: input.quantityCeiling ?? input.quantity,
+    epoch: 0,
+    timeDomain: 'EPOCH',
+    replayIdentifier: input.replayIdentifier,
+    activationState: 'DEVELOPMENT_ACTIVE',
+    actorKind: input.actorKind ?? 'PROTOCOL',
     authorized: input.authorized ?? true,
   });
 }
