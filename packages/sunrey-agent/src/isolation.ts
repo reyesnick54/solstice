@@ -22,6 +22,7 @@ export const SUNREY_AGENT_ISOLATION = {
     'packages/sunrey-chain',
     'packages/sunrey-exchange',
     'packages/custody',
+    'packages/ai-runtime',
   ] as const,
   mayNotCall: [
     'postJournal',

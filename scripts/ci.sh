@@ -96,6 +96,7 @@ npm run demo:clean-room
 npm run demo:sunrey-coin
 npm run demo:information-market
 npm run demo:sunrey-human-information-network
+npm run demo:sunrey-ai-runtime
 npm run demo:sunrey-chain
 npm run demo:sunrey-node
 npm run demo:sunrey-governance
