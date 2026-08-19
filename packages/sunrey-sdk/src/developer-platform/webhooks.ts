@@ -106,7 +106,7 @@ export class WebhookDispatcher {
     }
     const destination = inspectWebhookDestination(input.endpoint.url, {
       environment: input.environment,
-      allowLocalMock: input.allowLocalMock,
+      ...(input.allowLocalMock !== undefined ? { allowLocalMock: input.allowLocalMock } : {}),
     });
     if (!destination.ok) {
       return { rejected: destination.reason };
