@@ -162,6 +162,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
+| sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -920,3 +921,19 @@ inference-provider adapter and a configurable transport contract.
 Grok is not implemented here. Do not create `packages/s3m`,
 `packages/s3m-runtime`, or `packages/s3m-training`. The evaluator
 returns `mustStop: false`.
+Chunk 104 implements the canonical Human Economic Contribution
+ontology at `packages/human-economic-contribution`. Capability
+`sunrey-human-economic-contributions` is `IMPLEMENTED`. See
+[`chunk-104-human-contribution-ontology.md`](./chunk-104-human-contribution-ontology.md)
+and [`docs/economics/chunk-104-human-contribution-ontology.md`](../economics/chunk-104-human-contribution-ontology.md).
+It defines what a human economic contribution is. PEVE remains
+`packages/platform/src/value`. HIN remains
+`packages/information-market`. The monetary constitution remains
+Chunk 71. Measurement is not token valuation. Do not create
+`packages/human-contribution`,
+`packages/human-economic-contribution-v2`,
+`packages/contribution-ontology`, `packages/human-worth`,
+`packages/contribution-valuation`,
+`packages/human-contribution-score`, or
+`packages/sunrey-contribution`. The evaluator returns
+`mustStop: false`.
