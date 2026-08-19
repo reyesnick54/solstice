@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-118",
+  "title": "Canonical SunRey/MoonRey Economic Unit & Normalization Constitution",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "sunrey-economic-unit-normalization"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/units. Extends the Chunk 43 protocol unit contract. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. No floating point, no silent truncation, no fake universal unit, no MoonRey issuance, no live providers. evaluateChunkRequirements returns mustStop: false. Do not create packages/unit-registry, packages/economic-units, packages/sunrey-units, packages/normalization, or packages/canonical-units."
+}

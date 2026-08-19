@@ -166,6 +166,8 @@ jobs:
         run: npm run demo:sunrey-chain
       - name: MoonRey productive capacity demo
         run: npm run demo:moonrey-productive
+      - name: SunRey economic unit normalization demo
+        run: npm run demo:sunrey-unit-normalization
       - name: SunRey oracle network demo
         run: npm run demo:sunrey-oracle
       - name: SunRey production oracle onboarding demo

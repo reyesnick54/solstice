@@ -172,3 +172,4 @@ export {
   custodyAddressFromPublicKey,
 } from './native-custody/index.ts';
 export type { NativeCustodyChainPort } from './native-custody/index.ts';
+export * as economicUnits from './units/index.ts';

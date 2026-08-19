@@ -171,6 +171,10 @@
   — master dataset and economic-evidence metadata registry at
   `packages/economic-asset-registry`. See
   [`docs/economics/chunk-113-economic-asset-registry-foundation.md`](../economics/chunk-113-economic-asset-registry-foundation.md).
+- [Chunk 118 canonical economic units](./chunk-118-canonical-economic-units.md)
+  — exact unit/normalization constitution at
+  `packages/sunrey-chain/src/units`. See
+  [`docs/economics/chunk-118-canonical-economic-units.md`](../economics/chunk-118-canonical-economic-units.md).
 - [Chunk 111 human contribution valuation engine](./chunk-111-human-contribution-valuation-engine.md)
   — engineering-simulation reference valuation at
   `packages/human-economic-contribution/src/valuation`.

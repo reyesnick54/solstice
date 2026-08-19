@@ -1,10 +1,11 @@
 /**
- * Productive-economy UnitRegistry binding.
+ * Productive-economy UnitRegistry compatibility facade.
  *
- * Chunk 43 owns the protocol UnitRegistry. This module consumes that
- * registry contract: category-specific units and intra-category
- * normalization only. Unrelated economic dimensions are never converted
- * into one fake universal physical unit. Economic weighting is policy.
+ * Chunk 43 owns the protocol unit contract. Chunk 118 owns the single
+ * canonical normalization authority at packages/sunrey-chain/src/units.
+ * This class stays category-scoped for existing productive callers and
+ * does not claim canonical unit authority. Unrelated economic dimensions
+ * are never converted into one fake universal physical unit.
  */
 
 import { PRODUCTIVE_CATEGORIES, type ProductiveCategory } from './types.ts';

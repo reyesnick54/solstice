@@ -1376,6 +1376,17 @@ the contribution passed a versioned, contribution-class-specific
 evidence policy. Capability
 `sunrey-human-contribution-verification` names that layer.
 See [`chunk-109-human-contribution-verification.md`](./chunk-109-human-contribution-verification.md).
+Chunk 118 implements the canonical SunRey/MoonRey economic unit
+normalization constitution at `packages/sunrey-chain/src/units`.
+Capability `sunrey-economic-unit-normalization` is `IMPLEMENTED`.
+It extends the Chunk 43 protocol unit contract. The productive
+`UnitRegistry` remains a compatibility facade. Conversion is exact
+rational arithmetic only. It does not issue MoonRey, change valuation
+weights, or activate live providers. Do not create
+`packages/unit-registry`, `packages/economic-units`,
+`packages/sunrey-units`, `packages/normalization`, or
+`packages/canonical-units`. See
+[`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability
