@@ -42,7 +42,7 @@ export function runStabilizationCommand(argv: readonly string[]): StabilizationC
     const scenario = (rest[0] ?? command ?? 'healthy-first-epochs') as Parameters<typeof runPostGenesisRehearsal>[0];
     const result = command === 'all' || rest[0] === 'all'
       ? { all: runAllPostGenesisRehearsals().map(publicRehearsal) }
-      : publicRehearsal(runPostGenesisRehearsal(scenario === 'rehearsal' ? 'healthy-first-epochs' : scenario));
+      : publicRehearsal(runPostGenesisRehearsal(scenario));
     return { ok: true, command: 'rehearsal', payload: jsonSafe(result) };
   }
   if (family === 'stabilization') {
