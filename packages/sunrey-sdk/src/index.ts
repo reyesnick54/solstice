@@ -117,6 +117,7 @@ export type {
   AgentTransactionProposal,
   UserAgentMandate,
 } from './agent-mandates.ts';
+export {
   connectMobileWallet,
   syncWallet,
   subscribeWallet,
@@ -127,6 +128,7 @@ export type {
   getSecurityEvents,
 } from './mobile-sync.ts';
 export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';
+export {
   WalletSecurityClient,
   getWalletSecurityProfile,
   getWalletDevices,

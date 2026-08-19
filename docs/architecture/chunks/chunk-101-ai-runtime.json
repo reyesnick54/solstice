@@ -1,0 +1,13 @@
+{
+  "chunk": "CHUNK-101",
+  "title": "SunRey canonical AI inference runtime and model provider abstraction",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "model-registry",
+    "sunrey-user-agent-mandates",
+    "sunrey-ai-runtime"
+  ],
+  "notes": "IMPLEMENTED at packages/ai-runtime. Inference plane only. S3M is the intended primary intelligence engine. xAI/Grok is reserved for Chunk 103 and is not networked here. Does not create a second Financial Agent, Execution Authority, wallet, Exchange, risk engine, or ledger. evaluateChunkRequirements returns mustStop: false. Do not create packages/ai-engine, packages/model-runtime, packages/grok-runtime, packages/s3m, packages/llm, or packages/inference-v2."
+}

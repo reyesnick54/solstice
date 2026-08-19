@@ -7,6 +7,12 @@ export {
   revokeAgentMandate,
 } from './sdk.ts';
 export { UserAgentMandateEngine, type CreateMandateInput, type CreateProposalInput, type ExecutionContext } from './engine.ts';
+export {
+  createProposalFromInference,
+  inferenceCannotExecute,
+  proposalInputFromToolIntent,
+  type AiRuntimePort,
+} from './inference.ts';
 export { ProposalGate, type KernelSubmitPort } from './gate.ts';
 export { explainProposal } from './explain.ts';
 export { evaluateBudget, emptyUsage, recordUsage, rolloverUsage } from './budget.ts';

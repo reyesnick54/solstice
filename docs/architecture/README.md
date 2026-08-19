@@ -153,6 +153,9 @@
 - [Chunk 99 consumer Exchange](./chunk-99-consumer-exchange.md)
   — consumer portfolio, quote, preview, and simple trading APIs at
   `packages/sunrey-exchange/src/consumer`.
+- [Chunk 101 AI runtime](./chunk-101-ai-runtime.md)
+  — provider-neutral inference plane at `packages/ai-runtime`.
+  See [`docs/ai/chunk-101-ai-runtime.md`](../ai/chunk-101-ai-runtime.md).
 - [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at

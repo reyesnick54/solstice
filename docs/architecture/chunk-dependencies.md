@@ -160,6 +160,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-information-network | IMPLEMENTED | packages/information-market |
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -896,4 +897,15 @@ Recovery cannot rewrite finalized state. Do not create
 `packages/wallet-security`, `packages/sunrey-wallet-security`,
 `packages/wallet-auth`, `packages/device-trust`, or
 `packages/wallet-recovery-v2`. The evaluator returns
+`mustStop: false`.
+Chunk 101 implements the canonical AI inference runtime at
+`packages/ai-runtime`. Capability `sunrey-ai-runtime` is
+`IMPLEMENTED`. See [`chunk-101-ai-runtime.md`](./chunk-101-ai-runtime.md)
+and [`docs/ai/chunk-101-ai-runtime.md`](../ai/chunk-101-ai-runtime.md).
+It is an inference plane only. S3M is the intended primary
+intelligence engine. xAI/Grok is reserved for Chunk 103 and is not
+networked here. The Financial Agent remains
+`packages/sunrey-agent`. Do not create `packages/ai-engine`,
+`packages/model-runtime`, `packages/grok-runtime`, `packages/s3m`,
+`packages/llm`, or `packages/inference-v2`. The evaluator returns
 `mustStop: false`.
