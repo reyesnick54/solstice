@@ -175,6 +175,9 @@
   — exact unit/normalization constitution at
   `packages/sunrey-chain/src/units`. See
   [`docs/economics/chunk-118-canonical-economic-units.md`](../economics/chunk-118-canonical-economic-units.md).
+- [Chunk 119 canonical unit migration](./chunk-119-canonical-unit-migration.md)
+  — productive-pipeline migration onto that same unit authority. See
+  [`docs/economics/chunk-119-canonical-unit-migration.md`](../economics/chunk-119-canonical-unit-migration.md).
 - [Chunk 111 human contribution valuation engine](./chunk-111-human-contribution-valuation-engine.md)
   — engineering-simulation reference valuation at
   `packages/human-economic-contribution/src/valuation`.

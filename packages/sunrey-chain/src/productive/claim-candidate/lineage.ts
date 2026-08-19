@@ -15,6 +15,7 @@ export type CompatibilityLineageRefs = {
   readonly oracleSourceDatasetId: AssetId;
   readonly oracleObservationSetId: AssetId;
   readonly verifiedEconomicFactId: AssetId;
+  readonly normalizationReceiptId: AssetId;
   readonly productiveClaimId: AssetId;
   readonly verifiedProductiveContributionId: AssetId | null;
 };
@@ -58,9 +59,22 @@ export function recordCompatibilityLineage(
       createdAt,
     }),
   );
+  const receipt = registerOrThrow(
+    registry,
+    childAsset(fact.assetId, 'NORMALIZED_FROM', {
+      ...fixtureAsset('verified-fact', `compat-receipt:${candidate.normalizationReceiptId}`),
+      assetClass: 'VERIFIED_ECONOMIC_FACT',
+      sourceClass: 'ORACLE_NETWORK',
+      canonicalOwnerSystem: CANONICAL_SYSTEM_OWNERS.oracle,
+      sourceSystem: CANONICAL_SYSTEM_OWNERS.oracle,
+      contentCommitmentMaterial: `commit:nrc:${candidate.normalizationReceiptDigest}`.slice(0, 256),
+      provenanceMaterial: `prov:nrc:${candidate.normalizationConstitutionVersion}`.slice(0, 256),
+      createdAt,
+    }),
+  );
   const claim = registerOrThrow(
     registry,
-    childAsset(fact.assetId, 'DERIVED_FROM', {
+    childAsset(receipt.assetId, 'DERIVED_FROM', {
       ...fixtureAsset('productive-object', `compat-claim:${candidate.candidateId}`),
       assetClass: 'PRODUCTIVE_CLAIM',
       sourceClass: 'PRODUCTIVE_CLAIM_REGISTRY',
@@ -76,6 +90,7 @@ export function recordCompatibilityLineage(
     oracleSourceDatasetId: source.assetId,
     oracleObservationSetId: observations.assetId,
     verifiedEconomicFactId: fact.assetId,
+    normalizationReceiptId: receipt.assetId,
     productiveClaimId: claim.assetId,
     verifiedProductiveContributionId: null,
   });

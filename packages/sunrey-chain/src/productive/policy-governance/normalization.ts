@@ -1,10 +1,15 @@
 import { mulDiv } from '../formula.ts';
 import { WEIGHT_SCALE, type ProductiveCategory, type RoundingMode } from '../types.ts';
 import { defaultUnitRegistry } from '../units.ts';
+import type { CanonicalProductiveMeasurement } from '../../units/measurement.ts';
+import { integralCanonicalQuantity } from '../../units/measurement.ts';
 import { boundedFactor, developmentCategoryPolicy } from './categories.ts';
 import {
+  CANONICAL_MEASUREMENT_V2,
+  LEGACY_NPU_V1,
   NORMALIZED_PRODUCTIVE_UNIT_ID,
   POLICY_GOVERNANCE_SCHEMA_VERSION,
+  type NormalizationFamily,
   type NormalizedProductiveUnit,
   type PolicyFactor,
   type ProductiveNormalizationRule,
@@ -38,6 +43,7 @@ export function developmentNormalizationRule(
     roundingMode: 'FLOOR',
     activationHeight,
     mixesIncompatibleUnits: false,
+    family: LEGACY_NPU_V1,
   });
 }
 
@@ -153,6 +159,45 @@ export function normalizeContribution(input: {
 
 export function issuanceBasisFromNpu(npu: NormalizedProductiveUnit): bigint {
   return npu.quantity;
+}
+
+/**
+ * Physical-only measurement for new contributions. Quality, delivery,
+ * economic-category, scarcity, utilization, and geographic factors are
+ * not applied. This is not the Productive Value Function and not MoonRey.
+ */
+export function normalizePhysicalMeasurement(measurement: CanonicalProductiveMeasurement):
+  | {
+      readonly ok: true;
+      readonly family: typeof CANONICAL_MEASUREMENT_V2;
+      readonly quantity: bigint;
+      readonly unit: string;
+      readonly receiptId: string;
+      readonly qualityFactorApplied: false;
+      readonly economicCategoryFactorApplied: false;
+      readonly moonreyQuantity: null;
+    }
+  | { readonly ok: false; readonly code: 'LOSSY_NORMALIZATION_FORBIDDEN' } {
+  const integer = integralCanonicalQuantity(measurement);
+  if (!integer.ok) {
+    return { ok: false, code: 'LOSSY_NORMALIZATION_FORBIDDEN' };
+  }
+  return {
+    ok: true,
+    family: CANONICAL_MEASUREMENT_V2,
+    quantity: integer.value,
+    unit: measurement.canonicalUnit,
+    receiptId: measurement.normalizationReceiptId,
+    qualityFactorApplied: false,
+    economicCategoryFactorApplied: false,
+    moonreyQuantity: null,
+  };
+}
+
+export function normalizationFamilyOf(
+  rule: ProductiveNormalizationRule | undefined,
+): NormalizationFamily {
+  return rule?.family ?? LEGACY_NPU_V1;
 }
 
 void boundedFactor;

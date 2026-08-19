@@ -1,6 +1,7 @@
 /**
- * Compatibility adapters. Chunk 119 will migrate consumers.
- * These maps do not rewrite oracle or productive APIs.
+ * Compatibility adapters. Chunk 119 migrated productive consumers onto
+ * the Chunk 118 catalog. These maps do not rewrite historical APIs and
+ * do not claim a second unit authority.
  */
 
 import { UNIT_CODES, type UnitCode } from '../oracle/types.ts';

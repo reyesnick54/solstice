@@ -3,10 +3,12 @@ import type {
   AttributionState,
   SourceProductiveMapping,
 } from '../../oracle/source-taxonomy/types.ts';
+import type { CanonicalProductiveMeasurement } from '../../units/measurement.ts';
+import type { ExactQuantity, NormalizationReceipt, ResourceClass, SemanticQualifier } from '../../units/index.ts';
 import type { ProductiveEconomicObject } from '../objects.ts';
 import type { ClaimType, GeographyRef, MeasurementPeriod, ProductiveCategory } from '../types.ts';
 
-export const CLAIM_CANDIDATE_SCHEMA_VERSION = 1 as const;
+export const CLAIM_CANDIDATE_SCHEMA_VERSION = 2 as const;
 
 export type ProductiveClaimCandidate = {
   readonly schemaVersion: typeof CLAIM_CANDIDATE_SCHEMA_VERSION;
@@ -19,6 +21,13 @@ export type ProductiveClaimCandidate = {
   readonly proposedClaimType: ClaimType;
   readonly quantity: bigint;
   readonly sourceUnit: UnitCode;
+  readonly sourceQuantity: ExactQuantity;
+  readonly canonicalUnit: string;
+  readonly canonicalQuantity: ExactQuantity;
+  readonly normalizationReceiptId: string;
+  readonly normalizationReceiptDigest: string;
+  readonly normalizationConstitutionVersion: string;
+  readonly canonicalMeasurement: CanonicalProductiveMeasurement;
   readonly measurementPeriod: MeasurementPeriod;
   readonly geography: GeographyRef;
   readonly rightsReferences: readonly string[];
@@ -51,6 +60,12 @@ export type ClaimCandidateBuildInput = {
   readonly attributionPolicyRef: string | null;
   readonly requireApprovedAttributionPolicy: boolean;
   readonly quorumCount: number | null;
+  readonly resourceClass?: ResourceClass;
+  readonly semanticQualifier?: SemanticQualifier;
+  readonly durationSeconds?: bigint;
+  readonly providedMeasurement?: CanonicalProductiveMeasurement;
+  readonly substitutedCanonicalQuantity?: ExactQuantity;
+  readonly providedReceipt?: NormalizationReceipt;
 };
 
 export function candidateCannotVerify(candidate: ProductiveClaimCandidate): false {

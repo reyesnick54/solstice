@@ -1416,6 +1416,16 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 119 migrates the MoonRey productive pipeline onto that same
+unit authority through `CanonicalProductiveMeasurement`. New
+observations, facts, claim candidates, and verified contributions
+retain source quantity, canonical quantity, and a normalization
+receipt. Physical measurement is not economic weighting and is not
+MoonRey issuance. Historical v1 fingerprints stay reproducible.
+Do not create `packages/moonrey-units`, `packages/productive-units-v2`,
+`packages/economic-normalization-v2`, `packages/measurement-engine`,
+or `packages/unit-registry-v2`. See
+[`chunk-119-canonical-unit-migration.md`](./chunk-119-canonical-unit-migration.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

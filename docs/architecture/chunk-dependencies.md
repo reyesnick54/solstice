@@ -1074,6 +1074,20 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 119 migrates the MoonRey productive pipeline onto the Chunk 118
+canonical unit authority via `CanonicalProductiveMeasurement` at
+`packages/sunrey-chain/src/units`. Capability
+`sunrey-economic-unit-normalization` remains the single owner. See
+[`chunk-119-canonical-unit-migration.md`](./chunk-119-canonical-unit-migration.md)
+and
+[`docs/economics/chunk-119-canonical-unit-migration.md`](../economics/chunk-119-canonical-unit-migration.md).
+New contributions require a normalization receipt. Physical
+measurement does not apply quality, economic-category, or MoonRey
+factors. Historical v1 fingerprints remain unchanged. Do not create
+`packages/moonrey-units`, `packages/productive-units-v2`,
+`packages/economic-normalization-v2`, `packages/measurement-engine`,
+or `packages/unit-registry-v2`. The evaluator returns
+`mustStop: false`.
 Chunk 117 enforces the MoonRey source / fact / claim mapping at
 `packages/sunrey-chain/src/oracle/source-taxonomy` and
 `packages/sunrey-chain/src/productive/claim-candidate`. It extends
@@ -1085,6 +1099,7 @@ A compatible mapping and a `ProductiveClaimCandidate` do not mint
 MoonRey. Do not create `packages/moonrey-source-taxonomy`,
 `packages/source-claim-enforcement`, or
 `packages/productive-claim-candidate`. The evaluator returns
+`mustStop: false`.
 Chunk 116 implements the canonical MoonRey source-to-productive
 taxonomy at `packages/sunrey-chain/src/productive/source-taxonomy`.
 Capability `moonrey-source-taxonomy` is `IMPLEMENTED`. See
