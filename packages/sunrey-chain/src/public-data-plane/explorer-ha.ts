@@ -82,7 +82,7 @@ export function projectCanonicalChain(chain: CanonicalChainSnapshot): PublicExpl
     validators: chain.validators,
     governance: chain.governance,
     moonreyIssuance: chain.moonreyIssuance,
-    protocolTreasury: { distinctFromCustomerCustody: true },
+    protocolTreasury: { distinctFromCustomerCustody: true as const },
     capabilityStatus: [{ capability: 'SUNREY_CHAIN', status: 'ELIGIBLE' }],
     networkPhase: 'CHAIN_STABILIZATION',
     humanInformation: [{ rightId: 'right_public_1', attestationHash: 'att_public_1' }],

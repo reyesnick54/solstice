@@ -64,11 +64,14 @@ export function runValidatorOperatorRehearsal(): ValidatorOperatorRehearsal {
     platform.activateRotation(alpha, rotation.value.packageId);
   }
 
-  const exitNode = platform.nodes.find((row) => row.validatorId === 'val_op_d' && row.kind === 'VALIDATOR');
-  if (exitNode) {
-    exitNode.operationalState = 'EXITING';
-    exitNode.canonicalStatus = 'PENDING_EXIT';
-  }
+  const exitIndex = platform.nodes.findIndex((row) => row.validatorId === 'val_op_d' && row.kind === 'VALIDATOR');
+  const exitNode = exitIndex >= 0
+    ? (platform.nodes[exitIndex] = {
+        ...platform.nodes[exitIndex]!,
+        operationalState: 'EXITING',
+        canonicalStatus: 'PENDING_EXIT',
+      })
+    : undefined;
 
   const snapshot = platform.createBackup(alpha, 'val_op_a', 'SNAPSHOT');
   const signerSafety = platform.createBackup(alpha, 'val_op_a', 'SIGNER_SAFETY');
