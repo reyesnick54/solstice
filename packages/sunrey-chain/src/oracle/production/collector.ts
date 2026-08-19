@@ -12,13 +12,15 @@ import { OracleEngine } from '../engine.ts';
 import type { OracleObservation, VerifiedEconomicFact } from '../types.ts';
 import type { OracleSourceAdapter } from './adapters.ts';
 import { OracleOnboardingRegistry } from './onboarding.ts';
-import { normalizeExternalInteger } from './normalize.ts';
+import { normalizeAgainstCanonicalCatalog, normalizeExternalInteger } from './normalize.ts';
 import { recordProvenance, provenanceCommitment } from './provenance.ts';
 import { validateExternalRecord } from './schema.ts';
 import type { OracleSigner } from './signing.ts';
 import { EconomicDataSourceRegistry } from './sources.ts';
+import type { ProductiveCategory } from '../../productive/types.ts';
 import type {
   CanonicalCollectedObservation,
+  DataSourceCategory,
   OracleWorkloadIdentity,
   ProductionFeedConfiguration,
   ProductionOracleRejection,
@@ -166,6 +168,14 @@ export class OracleCollector {
     if (!submitted.ok) {
       return submitted;
     }
+    const catalog = normalizeAgainstCanonicalCatalog({
+      sourceValue: validated.value.numericValue,
+      sourceUnit: input.feed.measurementUnit,
+      productiveCategory: productiveCategoryForSource(source.category),
+      factType: source.factType,
+      measurementStart: input.nowUnix,
+      measurementEnd: input.nowUnix + 60n,
+    });
     const canonical: CanonicalCollectedObservation = Object.freeze({
       schemaVersion: 1,
       observationDraftId: signed.value.observationId,
@@ -174,6 +184,8 @@ export class OracleCollector {
       feedId: input.feed.feedId,
       subject: input.subject,
       value: normalized.value,
+      sourceValue: normalized.value,
+      ...(catalog.ok ? { canonicalMeasurement: catalog.value.measurement } : {}),
       provenance,
     });
     return ok(
@@ -185,5 +197,45 @@ export class OracleCollector {
         collectorVersion: COLLECTOR_VERSION,
       }),
     );
+  }
+}
+
+function productiveCategoryForSource(category: DataSourceCategory): ProductiveCategory {
+  switch (category) {
+    case 'energy':
+      return 'ENERGY';
+    case 'food_agriculture':
+      return 'FOOD_AGRICULTURE';
+    case 'water':
+      return 'WATER';
+    case 'compute':
+      return 'COMPUTE';
+    case 'ai_usage':
+    case 'ai_compute':
+      return 'AI_COMPUTE';
+    case 'manufacturing':
+      return 'MANUFACTURING';
+    case 'real_estate_use':
+      return 'REAL_ESTATE_USE';
+    case 'storage':
+      return 'STORAGE';
+    case 'logistics':
+      return 'LOGISTICS_TRANSPORTATION';
+    case 'bandwidth':
+      return 'BANDWIDTH_COMMUNICATIONS';
+    case 'resources':
+    case 'minerals_resources':
+      return 'MINERALS_RAW_MATERIALS';
+    case 'service_delivery':
+    case 'services':
+      return 'SERVICES';
+    case 'infrastructure':
+      return 'INFRASTRUCTURE';
+    case 'goods':
+      return 'GOODS';
+    case 'automated_machine_output':
+      return 'AUTOMATED_MACHINE_OUTPUT';
+    default:
+      return 'ENERGY';
   }
 }

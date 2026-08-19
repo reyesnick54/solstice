@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-119",
+  "title": "Canonical Economic Unit Migration Through the MoonRey Productive Pipeline",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-productive-capacity",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED by extending packages/sunrey-chain/src/units with CanonicalProductiveMeasurement and migrating oracle, claim-candidate, verification, and policy-governance consumers onto that authority. Productive UnitRegistry remains a compatibility facade. Physical measurement is not economic weighting and is not MoonRey issuance. Historical v1 fingerprints stay reproducible. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-units, packages/productive-units-v2, packages/economic-normalization-v2, packages/measurement-engine, or packages/unit-registry-v2."
+}

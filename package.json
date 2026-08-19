@@ -106,6 +106,7 @@
     "demo:sunrey-human-contribution-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/registry-demo.ts",
     "demo:sunrey-economic-asset-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/economic-asset-registry/src/demo.ts",
     "demo:sunrey-unit-normalization": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/units/demo.ts",
+    "demo:moonrey-canonical-measurement": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/canonical-measurement/demo.ts",
     "demo:sunrey-economic-asset-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/economic-asset-registry/src/fabric/demo.ts",
     "demo:sunrey-economic-asset-verification": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/economic-asset-registry/src/verification-demo.ts",
     "demo:sunrey-human-contribution-valuation": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/human-economic-contribution/src/valuation-demo.ts",

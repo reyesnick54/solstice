@@ -138,6 +138,8 @@ export class ProductiveEconomyEngine {
       policy: this.activePolicy(),
       knownFingerprints: this.fingerprints,
       unitRegistry: this.units,
+      canonicalMeasurement: claim.canonicalMeasurement,
+      contributionSchema: claim.contributionSchema,
     });
     if (!result.ok) {
       this.metrics.rejected_contributions += 1;

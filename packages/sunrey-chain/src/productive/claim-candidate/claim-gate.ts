@@ -69,6 +69,8 @@ export function claimFromCandidate(
     proofReferences: [`mapping:${candidate.mappingId}@${candidate.mappingVersion}`],
     status: 'SUBMITTED',
     upstreamContributionIds: [],
+    canonicalMeasurement: candidate.canonicalMeasurement,
+    contributionSchema: 2,
   });
 }
 
