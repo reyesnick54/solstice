@@ -175,6 +175,11 @@
   — exact unit/normalization constitution at
   `packages/sunrey-chain/src/units`. See
   [`docs/economics/chunk-118-canonical-economic-units.md`](../economics/chunk-118-canonical-economic-units.md).
+- [Chunk 121 MoonRey attribution policy](./chunk-121-moonrey-attribution-policy.md)
+  — governed cross-domain productive attribution shares at
+  `packages/sunrey-chain/src/productive/policy-governance/attribution`.
+  See
+  [`docs/economics/chunk-121-moonrey-attribution-policy.md`](../economics/chunk-121-moonrey-attribution-policy.md).
 - [Chunk 119 canonical unit migration](./chunk-119-canonical-unit-migration.md)
   — productive-pipeline migration onto that same unit authority. See
   [`docs/economics/chunk-119-canonical-unit-migration.md`](../economics/chunk-119-canonical-unit-migration.md).

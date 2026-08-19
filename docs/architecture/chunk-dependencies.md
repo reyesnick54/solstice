@@ -734,9 +734,12 @@ governance, normalization, and macro supply controls at
 `moonrey-policy-governance` is `IMPLEMENTED`. See
 [`chunk-74-moonrey-issuance-policy.md`](./chunk-74-moonrey-issuance-policy.md).
 It extends Chunk 44 and does not create a second MoonRey asset or mint
-path. Production caps remain `UNCONFIGURED`. Do not create
-`packages/moonrey-policy`, `packages/moonrey-economics`, or
-`packages/issuance-policy`. The evaluator returns `mustStop: false`.
+path. Production caps remain `UNCONFIGURED`. Chunk 121 extends the
+same owner with cross-domain attribution policy at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Do not create `packages/moonrey-policy`, `packages/moonrey-economics`,
+`packages/issuance-policy`, `packages/attribution-policy`, or
+`packages/moonrey-attribution`. The evaluator returns `mustStop: false`.
 Chunk 79 implements production governance operations, economic policy
 change control, and bounded emergency authority at
 `packages/sunrey-chain/src/governance-ops`. Capability
@@ -1075,6 +1078,18 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 121 extends `moonrey-policy-governance` with the governed
+MoonRey cross-domain attribution policy engine at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+See [`chunk-121-moonrey-attribution-policy.md`](./chunk-121-moonrey-attribution-policy.md)
+and
+[`docs/economics/chunk-121-moonrey-attribution-policy.md`](../economics/chunk-121-moonrey-attribution-policy.md).
+It evolves Chunk 74 allocation rules into a versioned attribution
+policy. Historical policy versions remain reproducible. Attribution
+does not mint MoonRey or determine final quantity. Do not create
+`packages/attribution-policy`, `packages/moonrey-attribution`,
+`packages/productive-attribution`, or `packages/attribution-engine`.
+The evaluator returns `mustStop: false`.
 Chunk 120 implements canonical productive economic event identity at
 `packages/sunrey-chain/src/productive/policy-governance/attribution`.
 Capability `moonrey-economic-event-attribution` is `IMPLEMENTED`. See

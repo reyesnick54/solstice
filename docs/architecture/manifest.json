@@ -1142,6 +1142,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful policy decision."
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
       "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 valuation engine at src/valuation. Not PEVE, not SunRey issuance, not a human-worth score, not a mint or Execution Authority. Simulation only.",
@@ -2830,12 +2831,16 @@
       "forbiddenAliases": [
         "packages/moonrey-policy",
         "packages/moonrey-economics",
-        "packages/issuance-policy"
+        "packages/issuance-policy",
+        "packages/attribution-policy",
+        "packages/moonrey-attribution",
+        "packages/productive-attribution",
+        "packages/attribution-engine"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry."
     },
     {
       "id": "sunrey-dual-economy-simulator",
@@ -5628,6 +5633,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry. Do not create packages/moonrey-policy, packages/moonrey-economics, packages/issuance-policy, packages/attribution-policy, or packages/moonrey-attribution."
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 120 event identity and attribution lives at src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Do not create packages/moonrey-policy, packages/moonrey-economics, or packages/issuance-policy."
     },
     {
