@@ -1102,7 +1102,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 101 inference plane only. Provider-neutral AI runtime. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent."
+      "notes": "Chunk 101 inference plane and Chunk 102 S3M primary provider adapter. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent. Does not fork the S3M training system."
     }
   ],
   "components": [
@@ -3800,6 +3800,33 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 101 inference plane only. Provider-neutral AI runtime. S3M is the intended primary intelligence engine. xAI/Grok is reserved for Chunk 103 and is not networked here. Does not sign, issue Execution Authority, post journals, mint, or bypass packages/sunrey-agent."
+    },
+    {
+      "id": "sunrey-s3m-provider",
+      "name": "S3M primary SunRey intelligence provider",
+      "canonicalOwner": "packages/ai-runtime",
+      "canonicalPath": "packages/ai-runtime/src/providers/s3m/adapter.ts",
+      "publicInterface": "packages/ai-runtime/src/providers/s3m/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "S3mInferenceProvider",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/s3m",
+        "packages/s3m-runtime",
+        "packages/s3m-training"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 102 bounded S3M inference adapter. Proprietary primary intelligence provider. Advisory/proposal-generation only. Does not invent undocumented S3M routes, implement Grok, or fork the S3M training system."
     }
   ],
   "authorizedMutationPaths": [
@@ -5375,6 +5402,13 @@
       "owner": "packages/ai-runtime",
       "protected": true,
       "notes": "Chunk 101 canonical AI inference runtime. Inference plane only. S3M-primary. Grok reserved for Chunk 103. Do not create packages/ai-engine, packages/model-runtime, packages/grok-runtime, packages/s3m, packages/llm, or packages/inference-v2."
+    },
+    {
+      "id": "sunrey-s3m-provider",
+      "status": "IMPLEMENTED",
+      "owner": "packages/ai-runtime",
+      "protected": true,
+      "notes": "Chunk 102 S3M primary intelligence adapter at packages/ai-runtime/src/providers/s3m. Not a second runtime, training system, Execution Authority, or ledger. Grok is not implemented here."
     }
   ],
   "boundedContexts": [
@@ -5494,7 +5528,7 @@
         "packages/ai-runtime"
       ],
       "protected": true,
-      "notes": "Chunk 101 inference plane. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
+      "notes": "Chunk 101 inference plane and Chunk 102 S3M adapter. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",

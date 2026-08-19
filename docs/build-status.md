@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- S3M primary SunRey intelligence provider (Chunk 102,
+  `packages/ai-runtime/src/providers/s3m`): `S3mInferenceProvider`
+  satisfies the Chunk 101 `AiInferenceProvider` contract. Configurable
+  transport, local simulator, structured-output normalization, health,
+  bounded retries, circuit breaker, and safety events. Capability
+  `sunrey-s3m-provider` is `IMPLEMENTED`. S3M is advisory /
+  proposal-generation only. Grok is not implemented. The financial
+  operating system remains independent from the model. See
+  `docs/ai/chunk-102-s3m-provider.md`.
 - SunRey advanced wallet security, recovery, device trust, and
   transaction authorization (Chunk 96,
   `packages/sunrey-chain/src/wallet/security`):

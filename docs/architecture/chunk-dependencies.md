@@ -161,6 +161,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
+| sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -909,3 +910,13 @@ networked here. The Financial Agent remains
 `packages/model-runtime`, `packages/grok-runtime`, `packages/s3m`,
 `packages/llm`, or `packages/inference-v2`. The evaluator returns
 `mustStop: false`.
+Chunk 102 implements the S3M primary intelligence adapter at
+`packages/ai-runtime/src/providers/s3m`. Capability
+`sunrey-s3m-provider` is `IMPLEMENTED`. See
+[`chunk-102-s3m-provider.md`](./chunk-102-s3m-provider.md) and
+[`docs/ai/chunk-102-s3m-provider.md`](../ai/chunk-102-s3m-provider.md).
+S3M is a separate AI system. SunRey communicates through a bounded
+inference-provider adapter and a configurable transport contract.
+Grok is not implemented here. Do not create `packages/s3m`,
+`packages/s3m-runtime`, or `packages/s3m-training`. The evaluator
+returns `mustStop: false`.

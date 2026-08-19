@@ -26,6 +26,7 @@ export const AI_RUNTIME_ISOLATION = {
   modelRegistryRemainsCanonical: true,
   secretsReusePackagesSecurity: true,
   grokNetworkingDisabled: true,
+  s3mIsAdapterNotATrainingFork: true,
   receivesMasterKey: false,
   maySignTransactions: false,
   mayIssueExecutionAuthority: false,

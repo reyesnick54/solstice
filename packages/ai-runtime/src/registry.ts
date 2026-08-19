@@ -54,15 +54,25 @@ function seedAiModel(
     readonly description: string;
     readonly owner: string;
     readonly validationId: string;
+    readonly inputSchema?: string;
+    readonly outputSchema?: string;
+    readonly limitations?: readonly string[];
+    readonly applicableDomain?: string;
+    readonly dataRequirements?: readonly string[];
+    readonly provider?: string;
+    readonly supportedTasks?: readonly string[];
   },
 ): Result<RegisteredModelVersion, RegistryFailure> {
   const configurationCanonical = JSON.stringify({
     modelId: input.modelId,
     version: input.version,
     type: 'AI_MODEL_REFERENCE',
+    provider: input.provider ?? 'LOCAL_TEST',
+    supportedTasks: input.supportedTasks ?? [],
     simulationOnly: true,
     liveApproved: false,
     inferencePlaneOnly: true,
+    claimsRealWorldPerformance: false,
   });
   const registered = registry.register({
     modelId: input.modelId,
@@ -70,18 +80,20 @@ function seedAiModel(
     type: 'AI_MODEL_REFERENCE',
     description: input.description,
     owner: input.owner,
-    inputSchema: 'AiInferenceRequest',
-    outputSchema: 'AiInferenceResponse',
+    inputSchema: input.inputSchema ?? 'AiInferenceRequest',
+    outputSchema: input.outputSchema ?? 'AiInferenceResponse',
     determinism: 'DETERMINISTIC',
     configurationCanonical,
     createdAt: now,
     limitations: Object.freeze([
-      'Inference plane only',
-      'Cannot execute payments, trades, mint, or sign',
-      'Simulation approval only',
+      ...(input.limitations ?? [
+        'Inference plane only',
+        'Cannot execute payments, trades, mint, or sign',
+        'Simulation approval only',
+      ]),
     ]),
-    applicableDomain: 'SUNREY_AI_INFERENCE_SIMULATION',
-    dataRequirements: Object.freeze(['task-class', 'released-context']),
+    applicableDomain: input.applicableDomain ?? 'SUNREY_AI_INFERENCE_SIMULATION',
+    dataRequirements: Object.freeze([...(input.dataRequirements ?? ['task-class', 'released-context'])]),
     artifactKind: 'CONFIGURATION',
     artifactDescription: 'Canonical AI model binding for the inference runtime',
   });
@@ -140,9 +152,34 @@ export function seedCanonicalAiModels(
   const s3m = seedAiModel(registry, actor, now, {
     modelId: CANONICAL_S3M_MODEL_ID,
     version: CANONICAL_S3M_MODEL_VERSION,
-    description: 'Reserved S3M primary intelligence engine binding. Simulation registry only.',
+    description:
+      'S3M primary SunRey intelligence provider. Simulation registry binding only. Not a real-world performance claim.',
     owner: 'solstice-ai-runtime',
     validationId: 'mvn_s3m_ai_v1',
+    provider: 'S3M',
+    inputSchema: 'CanonicalProviderRequest',
+    outputSchema: 'AiInferenceResponse',
+    applicableDomain: 'SUNREY_AI_S3M_PRIMARY_SIMULATION',
+    dataRequirements: Object.freeze(['task-class', 'released-context', 's3m-transport-contract']),
+    supportedTasks: Object.freeze([
+      'GENERAL_ASSISTANT',
+      'FINANCIAL_EXPLANATION',
+      'GROWTH_PLANNING',
+      'PORTFOLIO_REASONING',
+      'PAYMENT_PREPARATION',
+      'EXCHANGE_ORDER_PREPARATION',
+      'ECONOMIC_ANALYSIS',
+      'SUNREY_INFORMATION_REASONING',
+      'MOONREY_PRODUCTIVE_ANALYSIS',
+      'REGULATORY_EXPLANATION',
+      'USER_SUPPORT',
+    ]),
+    limitations: Object.freeze([
+      'Inference plane only; advisory and proposal-generation only',
+      'Cannot sign, approve, execute, mint, or change policy or mandates',
+      'Cannot hold master keys or override risk, jurisdiction, or Compliance Kernel',
+      'Simulation approval only; no real-world performance claim',
+    ]),
   });
   if (!s3m.ok) {
     return s3m;
