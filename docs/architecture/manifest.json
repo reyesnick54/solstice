@@ -2741,12 +2741,20 @@
         "packages/grid-oracle",
         "packages/moonrey-energy",
         "packages/power-data",
-        "packages/utility-integration"
+        "packages/utility-integration",
+        "packages/agriculture-oracle",
+        "packages/food-data-fabric",
+        "packages/farm-connectors",
+        "packages/ag-data",
+        "packages/water-oracle",
+        "packages/water-data-fabric",
+        "packages/utility-water",
+        "packages/irrigation-oracle"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–134 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2831,6 +2839,62 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
+    },
+    {
+      "id": "sunrey-agriculture-food-data-fabric",
+      "name": "Agriculture and food economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/agriculture/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/agriculture/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "AgricultureHarvestEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/agriculture-oracle",
+        "packages/food-data-fabric",
+        "packages/farm-connectors",
+        "packages/ag-data"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 134 agriculture and food economic data fabric. Extends sunrey-production-oracles. Planted area and forecast yield are not production. Inventory movement is not new harvest. Facts do not mint MoonRey. No named provider integration, farm control, or production activation."
+    },
+    {
+      "id": "sunrey-water-data-fabric",
+      "name": "Water production and availability economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/water/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/water/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "WaterProductionEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/water-oracle",
+        "packages/water-data-fabric",
+        "packages/utility-water",
+        "packages/irrigation-oracle"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 134 water economic data fabric. Extends sunrey-production-oracles. WATER_AVAILABILITY is not production. Irrigation consumption is an agricultural input, not a utility production claim. Facts do not mint MoonRey. No named provider integration, valve control, or production activation."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -6213,6 +6277,20 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. RESOURCE_RESERVE is not extraction or OUTPUT. REFERENCE_PRICE cannot create a productive claim. No named provider integration, production activation, or second oracle owner. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+    },
+    {
+      "id": "sunrey-agriculture-food-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 134 agriculture and food economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/agriculture. Extends sunrey-production-oracles. Planted area and forecast yield are not production. No named provider integration, farm control, or MoonRey mint. Do not create packages/agriculture-oracle, packages/food-data-fabric, packages/farm-connectors, or packages/ag-data."
+    },
+    {
+      "id": "sunrey-water-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 134 water economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/water. Extends sunrey-production-oracles. WATER_AVAILABILITY is not production. Irrigation consumption is not water production. No named provider integration, valve control, or MoonRey mint. Do not create packages/water-oracle, packages/water-data-fabric, packages/utility-water, or packages/irrigation-oracle."
     },
     {
       "id": "moonrey-productive-value-settlement",

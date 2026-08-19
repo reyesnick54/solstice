@@ -279,4 +279,19 @@ export {
   runResourceDataFabricDemo,
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
+export {
+  ingestAgricultureRecord,
+  ingestAgricultureRecords,
+  identifyHarvestEvents,
+  agricultureFactCannotAutoMint,
+  runAgricultureWaterDataFabricDemo,
+} from './provider-families/agriculture/index.ts';
+export type { AgricultureHarvestEvidenceRecord } from './provider-families/agriculture/index.ts';
+export {
+  ingestWaterRecord,
+  ingestWaterRecords,
+  identifyWaterProductionEvents,
+  waterFactCannotAutoMint,
+} from './provider-families/water/index.ts';
+export type { WaterProductionEvidenceRecord } from './provider-families/water/index.ts';
 

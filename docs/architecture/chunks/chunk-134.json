@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-134",
+  "title": "Agriculture, Food & Water Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-asset-registry",
+    "sunrey-provider-certification",
+    "sunrey-agriculture-food-data-fabric",
+    "sunrey-water-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/agriculture and packages/sunrey-chain/src/oracle/production/provider-families/water. Extends sunrey-production-oracles. Provider-neutral evidence for agriculture, food production, harvest output, water production, treated/desalinated water, and water availability. Planted area and forecast yield are not production. WATER_AVAILABILITY is not WATER_PRODUCTION. Irrigation consumption is an agricultural input. REFERENCE_PRICE stays reference-only. No named provider integration, farm/valve control, production activation, or second oracle owner. evaluateChunkRequirements returns mustStop: false. Do not create packages/agriculture-oracle, packages/food-data-fabric, packages/water-oracle, or packages/water-data-fabric."
+}
