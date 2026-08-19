@@ -1,0 +1,16 @@
+{
+  "chunk": "CHUNK-120",
+  "title": "Canonical Productive Economic Event Identity and Attribution Graph",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "security",
+    "sunrey-chain",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "sunrey-economic-asset-registry",
+    "moonrey-economic-event-attribution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 74 policy-governance. Strengthens governedContributionFingerprint, crossCategoryEventFingerprint, and capacityOutputEventFingerprint with event fingerprint v3. Does not replace those fingerprints, allocate MoonRey, or mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-attribution, packages/economic-event-graph, packages/deduplication-engine, or packages/productive-attribution-v2."
+}

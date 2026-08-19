@@ -75,3 +75,115 @@ export {
   supplyChainSubjects,
 } from './fixtures.ts';
 export { runMoonReyAttributionPolicyDemo } from './demo.ts';
+  ATTRIBUTION_AUTHORITY_BOUNDARY,
+  ATTRIBUTION_GRAPH_DOMAIN,
+  ATTRIBUTION_NODE_KINDS,
+  ATTRIBUTION_SCHEMA_VERSION,
+  EVENT_FINGERPRINT_V3_DOMAIN,
+  EVENT_RELATION_TYPES,
+  HISTORICAL_FINGERPRINT_DOMAINS,
+  LINEAGE_NODE_KINDS,
+  LINKAGE_CONFIDENCE_CLASSES,
+  EVENT_IDENTITY_PRODUCTION_ACTIVE,
+  PRODUCTIVE_ECONOMIC_EVENT_CLASSES,
+  PRODUCTIVE_ECONOMIC_EVENT_STATUSES,
+  confidenceCanEstablishSameUnderlyingEvent,
+  isEventRelationType,
+  isLinkageConfidenceClass,
+  isProductiveEconomicEventClass,
+  relationImpliesDuplicateValue,
+} from './types.ts';
+export type {
+  AttributionGraphEdge,
+  AttributionGraphNode,
+  AttributionNodeKind,
+  BatchLineageEdge,
+  BatchLineageNode,
+  DeliveryPeriod,
+  EventIdentityEvidence,
+  EventRelation,
+  EventRelationType,
+  HistoricalFingerprintSet,
+  IdentityRef,
+  LineageNodeKind,
+  LinkageAssessment,
+  LinkageConfidenceClass,
+  ProductiveAttributionGraph,
+  ProductiveEconomicEvent,
+  ProductiveEconomicEventClass,
+  ProductiveEconomicEventStatus,
+} from './types.ts';
+export {
+  assessEventLinkage,
+  containsRawIndustrialData,
+  economicEventFingerprintV3,
+  evidenceDigest,
+  fingerprintV1RemainsHistorical,
+  fingerprintV2RemainsHistorical,
+  hasStrongCrossObjectIdentity,
+  historicalFingerprintDomains,
+  historicalFingerprints,
+  identityRef,
+  periodsOverlap,
+  sharedRefs,
+  sortRefs,
+  eventIdentityCannotAuthorizeIssuance as identityCannotAuthorizeIssuance,
+} from './identity.ts';
+export {
+  CANDIDATE_EVENT_CLASSES,
+  candidateEventClassesFor,
+  categoryDoesNotEqualEventClass,
+  classifyEventClass,
+  classifyObservationRelation,
+  defaultDistinctServiceClass,
+  knownEventClasses,
+  possibleMatchCannotMerge,
+  relationDoesNotImplyDuplicate,
+} from './classification.ts';
+export type { ObservationKind } from './classification.ts';
+export {
+  attachClaimToEvent,
+  attachContributionToEvent,
+  attachObjectView,
+  claimRefFor,
+  considerEventLink,
+  contributionRefFor,
+  createProductiveEconomicEvent,
+  disputeEvent,
+  eventIdFromFingerprint,
+  eventIdentityCannotAuthorizeIssuance,
+  eventOmitsMoonReyQuantity,
+  mergeSameUnderlyingEvent,
+  objectRefFor,
+  relationRecord,
+  sameEventId,
+  supersedeEvent,
+  verifyEvent,
+} from './event.ts';
+export type { CreateEconomicEventInput } from './event.ts';
+export {
+  attributionGraphCannotMint,
+  attributionGraphIsProjection,
+  rebuildProductiveAttributionGraph,
+} from './graph.ts';
+export type { AttributionGraphSources } from './graph.ts';
+export {
+  authoritativeLineageCreatesStrongLink,
+  buildBatchLineage,
+  goodsIdentityOf,
+  lineageRootRef,
+  logisticsIsDistinctService,
+  manufacturingEventOf,
+  outputBatchIsIndependentProduction,
+  storageIsDistinctService,
+} from './lineage.ts';
+export type { ProductiveBatchLineage } from './lineage.ts';
+export {
+  defaultProjectionInstant,
+  eventProjectionAuthorizesIssuance,
+  eventProjectionCannotMint,
+  mapEconomicEventAsset,
+  projectEconomicEvent,
+  refuseMissingRegistry,
+} from './registry.ts';
+export { ProductiveEventIdentityRegistry } from './store.ts';

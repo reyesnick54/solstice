@@ -124,7 +124,7 @@ A later rule change must not silently reinterpret MoonRey evidence.
 
 ## What this chunk does not do
 
-- wholesale rewrite of oracle or productive consumers (Chunk 119)
+- wholesale rewrite of oracle or productive consumers (completed by Chunk 119)
 - valuation-weight changes
 - MoonRey issuance changes
 - live oracle or energy/compute providers

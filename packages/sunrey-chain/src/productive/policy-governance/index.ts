@@ -3,6 +3,9 @@ export {
   DEFAULT_EPOCH_LENGTH_HEIGHTS,
   DELIVERY_STATES,
   GOVERNANCE_ACTOR_KINDS,
+  CANONICAL_MEASUREMENT_V2,
+  LEGACY_NPU_V1,
+  NORMALIZATION_FAMILIES,
   NORMALIZED_PRODUCTIVE_UNIT_ID,
   POLICY_GOVERNANCE_DOMAIN,
   POLICY_GOVERNANCE_SCHEMA_VERSION,
@@ -22,6 +25,7 @@ export type {
   IssuanceEpoch,
   MoonReyIssuancePolicyBundle,
   MoonReyPolicyDecisionCode,
+  NormalizationFamily,
   NormalizedProductiveUnit,
   PolicyFactor,
   PolicyRejectionCode,
@@ -36,6 +40,7 @@ export {
   developmentNormalizationRules,
   issuanceBasisFromNpu,
   normalizeContribution,
+  normalizePhysicalMeasurement,
   ruleFor,
 } from './normalization.ts';
 export { epochFromHeight, heightInEpoch } from './epochs.ts';

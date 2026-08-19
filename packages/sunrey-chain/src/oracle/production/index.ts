@@ -82,7 +82,7 @@ export {
 export type { SimulatorScenario } from './simulator.ts';
 export { breakingSchemaChange, validateExternalRecord } from './schema.ts';
 export type { ExternalSourceRecord } from './schema.ts';
-export { normalizeExternalInteger, normalizationVector } from './normalize.ts';
+export { normalizeAgainstCanonicalCatalog, normalizeExternalInteger, normalizationVector } from './normalize.ts';
 export type { NormalizationVector } from './normalize.ts';
 export {
   HsmOracleSigner,
