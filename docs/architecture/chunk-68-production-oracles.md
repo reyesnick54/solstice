@@ -50,4 +50,9 @@ A random external API response is never consensus truth.
 - Automatic MoonRey minting from oracle facts
 - Sybil resistance
 
+Chunk 129 adds the provider-neutral energy / electrical-grid data
+fabric at `packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+It uses the Chunk 127 connector runtime through injected sandbox
+transports. It does not contact live providers or mint MoonRey.
+
 `ENVIRONMENT` remains `simulation`. Every `LIVE_*` flag remains false.
