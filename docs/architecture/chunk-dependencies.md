@@ -176,6 +176,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-compute-ai-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 
@@ -1205,6 +1206,26 @@ industrial equipment, contact a real factory, or mint MoonRey. Do not
 create `packages/manufacturing-oracle`,
 `packages/industrial-data-fabric`, `packages/robotics-oracle`, or
 `packages/factory-connectors`. The evaluator returns `mustStop: false`.
+Chunk 130 implements the provider-neutral compute and AI compute
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/compute`.
+Capability `sunrey-compute-ai-data-fabric` is `IMPLEMENTED` on the
+existing production-oracle owner. See
+[`chunk-130-compute-ai-data-fabric.md`](./chunk-130-compute-ai-data-fabric.md)
+and
+[`docs/economics/chunk-130-compute-ai-data-fabric.md`](../economics/chunk-130-compute-ai-data-fabric.md).
+Tokens are not GPU-time. Capacity is not realized output. Facts do
+not mint MoonRey. Do not create `packages/compute-oracle`,
+`packages/ai-compute-provider`, `packages/gpu-metering`, or
+`packages/compute-data-fabric`. The evaluator returns `mustStop: false`.
+Chunk 129 implements the energy and electrical-grid economic data
+fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+It extends `sunrey-production-oracles`. It does not contact live
+providers, activate production ingestion, or mint MoonRey. Do not
+create `packages/energy-oracle`, `packages/grid-oracle`,
+`packages/moonrey-energy`, `packages/power-data`, or
+`packages/utility-integration`. The evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.

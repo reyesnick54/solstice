@@ -87,6 +87,7 @@ never be two implementations of these systems.
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | Economic data provider certification | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/certification/types.ts` | IMPLEMENTED |
 | Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
+| Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1591,6 +1592,29 @@ ingestion, or mint MoonRey. Do not create
 `packages/manufacturing-oracle`, `packages/industrial-data-fabric`,
 `packages/robotics-oracle`, or `packages/factory-connectors`. See
 [`chunk-131-manufacturing-robotics-data-fabric.md`](./chunk-131-manufacturing-robotics-data-fabric.md).
+Chunk 130 implements the provider-neutral compute and AI compute
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/compute`.
+Capability `sunrey-compute-ai-data-fabric` is `IMPLEMENTED` on the
+existing production-oracle owner. It meters general compute, GPU
+compute, AI inference, AI training, and compute capacity without
+storing prompts, model outputs, or private workloads. Tokens are not
+GPU-time. Capacity is not realized output. Facts do not mint MoonRey.
+Do not create `packages/compute-oracle`, `packages/ai-compute-provider`,
+`packages/gpu-metering`, or `packages/compute-data-fabric`. See
+[`chunk-130-compute-ai-data-fabric.md`](./chunk-130-compute-ai-data-fabric.md).
+Chunk 129 implements the provider-neutral energy and electrical-grid
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/energy`.
+It extends the existing `sunrey-production-oracles` owner. Energy
+observations use Chunk 118/119 units, Chunk 116/117 taxonomy, and the
+Chunk 127 connector runtime through injected sandbox transports.
+Reference price cannot create a claim or mint MoonRey. Installed
+capacity in MW/kW remains `UNIT_EXTENSION_REQUIRED` until the unit
+constitution is extended. Do not create `packages/energy-oracle`,
+`packages/grid-oracle`, `packages/moonrey-energy`,
+`packages/power-data`, or `packages/utility-integration`. See
+[`docs/economics/chunk-129-energy-data-fabric.md`](../economics/chunk-129-energy-data-fabric.md).
 
 ## Agent stop rule
 

@@ -2745,12 +2745,17 @@
         "packages/production-oracles",
         "packages/oracle-onboarding",
         "packages/oracle-collector",
-        "packages/oracle-data-plane"
+        "packages/oracle-data-plane",
+        "packages/energy-oracle",
+        "packages/grid-oracle",
+        "packages/moonrey-energy",
+        "packages/power-data",
+        "packages/utility-integration"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129 energy data fabric lives at packages/sunrey-chain/src/oracle/production/provider-families/energy. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2780,6 +2785,35 @@
       ],
       "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures.",
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle/production. Chunk 127 adds the off-chain connector runtime on the same owner. Consensus never calls HTTP. No fabricated provider agreements."
+      "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures."
+    },
+    {
+      "id": "sunrey-compute-ai-data-fabric",
+      "name": "Compute and AI compute economic data provider fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/compute/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ComputeEconomicExecutionReference",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/compute-oracle",
+        "packages/ai-compute-provider",
+        "packages/gpu-metering",
+        "packages/compute-data-fabric"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 130 provider-neutral compute and AI compute economic data fabric. Extends sunrey-production-oracles. No live commercial provider calls. Tokens are not GPU-time. Capacity is not realized output. Facts do not mint MoonRey."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -2937,6 +2971,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. Canonical owner remains packages/sunrey-chain."
       "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. Canonical owner remains packages/sunrey-chain.",
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain.",
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path.",
@@ -5832,6 +5867,7 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 131 manufacturing/robotics data fabric extend the same owner. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification extends the same owner at packages/sunrey-chain/src/oracle/production/certification. Chunk 129 energy data fabric extends the same owner at packages/sunrey-chain/src/oracle/production/provider-families/energy. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, packages/energy-oracle, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
@@ -5840,6 +5876,14 @@
       "protected": true,
       "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry.",
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 127 adds the off-chain connector runtime on the same owner. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry."
+    },
+    {
+      "id": "sunrey-compute-ai-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 130 compute and AI compute economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/compute. Extends sunrey-production-oracles. No live providers. Tokens are not GPU-time. Capacity is not realized output. Do not create packages/compute-oracle, packages/ai-compute-provider, packages/gpu-metering, or packages/compute-data-fabric."
     },
     {
       "id": "sunrey-production-storage",
@@ -6167,6 +6211,7 @@
       "notes": "Chunk 127 off-chain economic data connector runtime at packages/sunrey-chain/src/oracle/production. Extends Chunk 68 production oracles. Consensus never calls HTTP. Fetch success is not a verified economic fact and does not mint MoonRey. Do not create packages/oracle-connectors, packages/data-ingestion, packages/moonrey-connectors, or packages/provider-runtime-v2."
     },
     {
+      "notes": "Chunk 127 off-chain economic data connector runtime at packages/sunrey-chain/src/oracle/production. Extends Chunk 68 production oracles. Consensus never calls HTTP. Fetch success is not a verified economic fact and does not mint MoonRey. Do not create packages/oracle-connectors, packages/data-ingestion, packages/moonrey-connectors, or packages/provider-runtime-v2.",
       "id": "moonrey-productive-value-settlement",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6675,6 +6720,10 @@
     "packages/moonrey-value-engine",
     "packages/productive-valuation",
     "packages/moonrey-valuation",
-    "packages/economic-value-engine"
+    "packages/economic-value-engine",
+    "packages/compute-oracle",
+    "packages/ai-compute-provider",
+    "packages/gpu-metering",
+    "packages/compute-data-fabric"
   ]
 }

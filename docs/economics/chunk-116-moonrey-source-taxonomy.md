@@ -92,6 +92,11 @@ had no explicit collection path:
 One source category may map to several fact types. Example:
 
 - `energy` → `ENERGY_PRODUCTION`, `ENERGY_CAPACITY`, `ENERGY_CONSUMPTION`
+
+Chunk 129 consumes these energy mappings through the provider-neutral
+energy data fabric. It does not add or reinterpret fact types.
+`ENERGY_CAPACITY` remains mapped here; the fabric refuses to fake MW
+by storing MWh until the unit constitution is extended.
 - `manufacturing` → `MANUFACTURING_OUTPUT`, `MANUFACTURING_CAPACITY`
 - `compute` → `COMPUTE_USAGE`, `COMPUTE_CAPACITY`
 

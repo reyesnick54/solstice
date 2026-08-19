@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-129",
+  "title": "Energy and Electrical Grid Economic Data Provider Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-provider-certification",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "sunrey-economic-asset-registry",
+    "moonrey-economic-event-attribution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/energy. Extends sunrey-production-oracles. Provider-neutral energy/grid integration family using the Chunk 127 connector runtime through injected sandbox transports. Does not contact real providers, activate production ingestion, or mint MoonRey. REFERENCE_PRICE cannot create a claim. ENERGY_CAPACITY in MW/kW returns UNIT_EXTENSION_REQUIRED. evaluateChunkRequirements returns mustStop: false. Do not create packages/energy-oracle, packages/grid-oracle, packages/moonrey-energy, packages/power-data, or packages/utility-integration."
+}
