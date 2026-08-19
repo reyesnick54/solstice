@@ -226,6 +226,17 @@ export type HumanEconomicEvidence = {
   readonly containsRawPersonalData: false;
   readonly pdvSourceExposed: false;
   readonly cleanRoomSourceExposed: false;
+  /** Canonical contribution id when evidence was bridged from Chunk 108. */
+  readonly contributionId?: string;
+  /** Contribution fingerprint used for replay protection. */
+  readonly fingerprint?: string;
+  /** Verification policy that attested the contribution. */
+  readonly verificationPolicyVersion?: string;
+  /** Settlement/valuation authorization that separately authorized quantity. */
+  readonly settlementAuthorizationRef?: string;
+  /** Future valuation-engine policy reference; never a PEVE formula. */
+  readonly valuationPolicyRef?: string;
+  readonly valuationVersion?: string;
 };
 
 export type MonetaryIssuanceAuthority = {

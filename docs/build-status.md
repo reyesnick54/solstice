@@ -4,6 +4,14 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Human contribution to SunRey monetary evidence bridge (Chunk 108,
+  `packages/sunrey-chain/src/economics/human-contribution-bridge`):
+  privacy-safe adapter from verified human contributions to existing
+  Chunk 71 `HumanEconomicEvidence` and `MonetaryIssuanceAuthority`.
+  Capability `sunrey-human-contribution-monetary-bridge` is
+  `IMPLEMENTED`. Not a second mint. The Human Contribution Valuation
+  Engine is not implemented. Production issuance remains unavailable.
+  See `docs/economics/chunk-108-human-contribution-monetary-bridge.md`.
 - S3M primary SunRey intelligence provider (Chunk 102,
   `packages/ai-runtime/src/providers/s3m`): `S3mInferenceProvider`
   satisfies the Chunk 101 `AiInferenceProvider` contract. Configurable

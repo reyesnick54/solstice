@@ -87,6 +87,7 @@ never be two implementations of these systems.
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
+| Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -1299,6 +1300,20 @@ Do not create `packages/human-information-network`,
 `packages/data-marketplace`, or `packages/sunrey-information-network`.
 See
 [`chunk-100-human-information-network.md`](./chunk-100-human-information-network.md).
+Chunk 108 implements the Human Contribution to SunRey monetary
+evidence bridge at
+`packages/sunrey-chain/src/economics/human-contribution-bridge`.
+Capability `sunrey-human-contribution-monetary-bridge` is
+`IMPLEMENTED`. It adapts privacy-safe verified contribution fields
+into existing Chunk 71 `HumanEconomicEvidence` and then the existing
+`MonetaryIssuanceAuthority`. It is not a second mint and does not
+implement the future Human Contribution Valuation Engine. Production
+issuance remains unavailable. PEVE, HIN consent, HIN usage receipts,
+clean-room results, AI, and Financial Agents cannot authorize
+issuance. Do not create `packages/human-contribution-mint`,
+`packages/human-valuation-engine`, `packages/contribution-issuance`,
+`packages/human-worth-token`, or `packages/peve-mint`. See
+[`chunk-108-human-contribution-monetary-bridge.md`](./chunk-108-human-contribution-monetary-bridge.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability
