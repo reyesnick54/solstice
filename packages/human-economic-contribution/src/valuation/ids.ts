@@ -1,3 +1,23 @@
+import { createHash } from 'node:crypto';
+
+import { type Brand, brandAs } from '../../../domain/src/brand.ts';
+
+export type ValuationId = Brand<string, 'ValuationId'>;
+export type ValuationPolicyId = Brand<string, 'ValuationPolicyId'>;
+export type ValuationPolicyVersion = Brand<string, 'ValuationPolicyVersion'>;
+export type ValuationReferenceId = Brand<string, 'ValuationReferenceId'>;
+export type ValuationDigest = Brand<string, 'ValuationDigest'>;
+export type PolicyRuleRef = Brand<string, 'PolicyRuleRef'>;
+export type JurisdictionPolicyRef = Brand<string, 'JurisdictionPolicyRef'>;
+
+export const VALUATION_ID_PREFIXES = Object.freeze({
+  valuation: 'hcv_',
+  policy: 'hcvp_',
+  policyVersion: 'hcvpv_',
+  reference: 'hcref_',
+  digest: 'hcvd_',
+  policyRule: 'hcvrule_',
+  jurisdictionPolicy: 'hcvj_',
 import { type Brand, brandAs } from '../../../domain/src/brand.ts';
 import { sha256Canonical } from '../ids.ts';
 
@@ -16,6 +36,10 @@ export const VALUATION_ID_PREFIXES = Object.freeze({
 
 const HEX_BODY = /^[a-f0-9]{16,64}$/;
 
+function digest(material: string): string {
+  return createHash('sha256').update(material).digest('hex');
+}
+
 function asPrefixedHex<T extends string>(value: string, prefix: string, label: string): Brand<string, T> {
   if (!value.startsWith(prefix)) {
     throw new TypeError(`${label} must start with ${prefix}`);
@@ -27,10 +51,68 @@ function asPrefixedHex<T extends string>(value: string, prefix: string, label: s
   return brandAs<string, T>(value);
 }
 
+export function asValuationId(value: string): ValuationId {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.valuation, 'ValuationId');
+}
+
 export function asValuationPolicyId(value: string): ValuationPolicyId {
   return asPrefixedHex(value, VALUATION_ID_PREFIXES.policy, 'ValuationPolicyId');
 }
 
+export function asValuationPolicyVersion(value: string): ValuationPolicyVersion {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.policyVersion, 'ValuationPolicyVersion');
+}
+
+export function asValuationReferenceId(value: string): ValuationReferenceId {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.reference, 'ValuationReferenceId');
+}
+
+export function asValuationDigest(value: string): ValuationDigest {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.digest, 'ValuationDigest');
+}
+
+export function asPolicyRuleRef(value: string): PolicyRuleRef {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.policyRule, 'PolicyRuleRef');
+}
+
+export function asJurisdictionPolicyRef(value: string): JurisdictionPolicyRef {
+  return asPrefixedHex(value, VALUATION_ID_PREFIXES.jurisdictionPolicy, 'JurisdictionPolicyRef');
+}
+
+export function valuationIdFor(seed: string): ValuationId {
+  return asValuationId(`${VALUATION_ID_PREFIXES.valuation}${digest(`valuation:${seed}`).slice(0, 32)}`);
+}
+
+export function valuationPolicyIdFor(seed: string): ValuationPolicyId {
+  return asValuationPolicyId(`${VALUATION_ID_PREFIXES.policy}${digest(`valuation-policy:${seed}`).slice(0, 32)}`);
+}
+
+export function valuationPolicyVersionFor(seed: string): ValuationPolicyVersion {
+  return asValuationPolicyVersion(
+    `${VALUATION_ID_PREFIXES.policyVersion}${digest(`valuation-policy-version:${seed}`).slice(0, 32)}`,
+  );
+}
+
+export function valuationReferenceIdFor(seed: string): ValuationReferenceId {
+  return asValuationReferenceId(`${VALUATION_ID_PREFIXES.reference}${digest(`valuation-reference:${seed}`).slice(0, 32)}`);
+}
+
+export function valuationDigestFor(material: string): ValuationDigest {
+  return asValuationDigest(`${VALUATION_ID_PREFIXES.digest}${digest(material)}`);
+}
+
+export function policyRuleRefFor(seed: string): PolicyRuleRef {
+  return asPolicyRuleRef(`${VALUATION_ID_PREFIXES.policyRule}${digest(`policy-rule:${seed}`).slice(0, 32)}`);
+}
+
+export function jurisdictionPolicyRefFor(seed: string): JurisdictionPolicyRef {
+  return asJurisdictionPolicyRef(
+    `${VALUATION_ID_PREFIXES.jurisdictionPolicy}${digest(`jurisdiction-policy:${seed}`).slice(0, 32)}`,
+  );
+}
+
+export function sha256Canonical(value: string): string {
+  return digest(value);
 export function asValuationMethodologyId(value: string): ValuationMethodologyId {
   return asPrefixedHex(value, VALUATION_ID_PREFIXES.methodology, 'ValuationMethodologyId');
 }

@@ -980,6 +980,18 @@ not value, mint, or issue Execution Authority. Do not create
 `packages/contribution-registry`, or
 `packages/human-economic-contribution-registry`. The evaluator returns
 `mustStop: false`.
+Chunk 111 implements the Deterministic Human Contribution Valuation
+Engine at `packages/human-economic-contribution/src/valuation`.
+Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
+See [`chunk-111-human-contribution-valuation-engine.md`](./chunk-111-human-contribution-valuation-engine.md)
+and
+[`docs/economics/chunk-111-human-contribution-valuation-engine.md`](../economics/chunk-111-human-contribution-valuation-engine.md).
+It evaluates a VERIFIED contribution under an active versioned
+valuation policy. A valuation result is not settlement authorization,
+SunRey issuance, PEVE, or a human-worth score. Do not create
+`packages/human-valuation-engine`, `packages/contribution-valuation`,
+or `packages/human-contribution-valuation`. The evaluator returns
+`mustStop: false`.
 Chunk 110 implements the Human Contribution Valuation constitution
 and methodology registry at
 `packages/human-economic-contribution/src/valuation`. Capability

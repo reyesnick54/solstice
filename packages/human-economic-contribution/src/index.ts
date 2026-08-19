@@ -157,6 +157,21 @@ export {
   type VerificationQuality,
 } from './taxonomy.ts';
 export {
+  createSimulationValuationPolicy,
+  DEFAULT_SIMULATION_VALUATION_POLICY,
+  HumanContributionValuationEngine,
+  HumanContributionValuationHistory,
+  InMemoryValuationReferenceDataPort,
+  VALUATION_INVARIANTS,
+  VALUATION_METHODS,
+  type HumanContributionValuationPolicy,
+  type HumanContributionValuationResult,
+  type ValuationExplanationReceipt,
+  type ValuationMethod,
+  type ValuationReferenceDataPort,
+  type VerifiedHumanEconomicContribution,
+} from './valuation/index.ts';
+export {
   AUTHORITY_BOUNDARY,
   CURRENT_TAXONOMY_VERSION,
   PRIVACY_BOUNDARY,

@@ -89,6 +89,7 @@ never be two implementations of these systems.
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
+| Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
@@ -1336,6 +1337,17 @@ Chunk 106 extends that same owner with the canonical verified
 contribution registry. Capability
 `sunrey-human-economic-contributions` remains singular. See
 [`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md).
+Chunk 111 implements the Deterministic Human Contribution Valuation
+Engine at `packages/human-economic-contribution/src/valuation`.
+Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
+It evaluates a VERIFIED contribution under an active versioned
+valuation policy and produces a simulation reference settlement
+value plus an explainability receipt. A valuation result is not
+settlement authorization, SunRey issuance, PEVE, or a human-worth
+score. Do not create `packages/human-valuation-engine`,
+`packages/contribution-valuation`, or
+`packages/human-contribution-valuation`. See
+[`chunk-111-human-contribution-valuation-engine.md`](./chunk-111-human-contribution-valuation-engine.md).
 Chunk 110 extends that same owner with the Human Contribution
 Valuation constitution and methodology registry at
 `packages/human-economic-contribution/src/valuation`. Capability
