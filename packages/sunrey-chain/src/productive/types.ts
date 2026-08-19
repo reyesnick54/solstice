@@ -15,6 +15,7 @@ export const PRODUCTIVE_CONTRIBUTION_SCHEMA_V1 = 1 as const;
 export const PRODUCTIVE_CONTRIBUTION_SCHEMA_V2 = 2 as const;
 export const WEIGHT_SCALE = 1_000_000n;
 export const FORMULA_VERSION = 'moonrey.issuance.formula.v1' as const;
+export const LEGACY_FORMULA_PATH_CLASS = 'LEGACY_ENGINEERING_SIMULATION_V1' as const;
 export const POLICY_PARAMETER_CLASS = 'ENGINEERING_SIMULATION_PARAMETERS' as const;
 export const HASH_DOMAIN_PRODUCTIVE = 'SUNREY_PRODUCTIVE_V1' as const;
 export const HASH_DOMAIN_PRODUCTIVE_V2 = 'SUNREY_PRODUCTIVE_V2' as const;
