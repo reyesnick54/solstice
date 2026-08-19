@@ -140,10 +140,6 @@ export function validateManufacturingPayload(
   if (observation.unit !== schema.unit) {
     return err({ code: 'WRONG_UNIT', detail: `expected ${schema.unit}, received ${observation.unit}` });
   }
-  const encoded = JSON.stringify(observation);
-  if (Buffer.byteLength(encoded, 'utf8') > schema.maxRecordBytes) {
-    return err({ code: 'RECORD_OVERSIZED', detail: `record exceeds ${schema.maxRecordBytes} bytes` });
-  }
   if (containsForbiddenIndustrialPayload(observation.extras) || containsForbiddenIndustrialPayload(observation, '')) {
     return err({
       code: 'RAW_INDUSTRIAL_CONTROL_PAYLOAD',

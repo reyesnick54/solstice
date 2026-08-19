@@ -4428,8 +4428,8 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "ManufacturingDataFabric",
-          "kind": "class"
+          "name": "ManufacturingObservation",
+          "kind": "type"
         }
       ],
       "forbiddenAliases": [

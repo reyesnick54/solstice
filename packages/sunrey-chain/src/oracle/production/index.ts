@@ -259,5 +259,4 @@ export {
   enforceSourceTimestamp,
   parseJsonSourceRecord,
 } from './runtime.ts';
-export * from './provider-families/manufacturing/index.ts';
 
