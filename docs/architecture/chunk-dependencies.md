@@ -172,6 +172,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1079,6 +1080,12 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey. Chunk 71 remains the only mint. The evaluator
+returns `mustStop: false`.
 Chunk 122 extends `moonrey-policy-governance` with
 `ProductiveAttributionBook` at
 `packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.
@@ -1161,3 +1168,9 @@ the legacy issuance formula. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey. Chunk 71 remains the only mint. The evaluator
+returns `mustStop: false`.

@@ -77,6 +77,10 @@ be issued twice.
 
 ## Formula
 
+This remains the `LEGACY_ENGINEERING_SIMULATION_V1` path. Chunk 125
+adds a separate `GOVERNED_VALUE_SIMULATION_V2` conversion from GPUV
+through a settlement policy into Chunk 71. The formula is not replaced.
+
 Version `moonrey.issuance.formula.v1`:
 
 ```

@@ -4,7 +4,10 @@ export {
   GRAPH_EDGE_KINDS,
   GRAPH_NODE_KINDS,
   HASH_DOMAIN_PRODUCTIVE,
+  GOVERNED_VALUE_SIMULATION_PATH_CLASS,
+  ISSUANCE_PATH_CLASSES,
   LEGACY_FORMULA_PATH_CLASS,
+  PRODUCTION_ISSUANCE_PATH_CLASS,
   HASH_DOMAIN_PRODUCTIVE_V2,
   POLICY_PARAMETER_CLASS,
   PRODUCTIVE_CATEGORIES,
@@ -21,6 +24,7 @@ export {
   isProductiveCategory,
 } from './types.ts';
 export type {
+  IssuancePathClass,
   CategoryExtension,
   ClaimType,
   GeographyRef,

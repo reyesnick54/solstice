@@ -92,6 +92,7 @@ never be two implementations of these systems.
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
+| MoonRey productive value settlement bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts` | IMPLEMENTED |
 | MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
@@ -1429,6 +1430,19 @@ activate production valuation. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. See
 [`chunk-123-moonrey-productive-value-constitution.md`](../economics/chunk-123-moonrey-productive-value-constitution.md).
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey Coin. The V2 path is
+`GOVERNED_VALUE_SIMULATION_V2`. Legacy
+`moonrey.issuance.formula.v1` remains `LEGACY_ENGINEERING_SIMULATION_V1`.
+Chunk 71 `MonetaryIssuanceAuthority` remains the only mint.
+Production V2 is unavailable. Do not create `packages/moonrey-mint`,
+`packages/gpuv-token`, `packages/value-settlement`,
+`packages/moonrey-conversion`, or `packages/productive-settlement`.
+See
+[`chunk-125-moonrey-value-settlement-bridge.md`](../economics/chunk-125-moonrey-value-settlement-bridge.md).
 Chunk 122 extends `moonrey-policy-governance` with
 `ProductiveAttributionBook` at
 `packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.

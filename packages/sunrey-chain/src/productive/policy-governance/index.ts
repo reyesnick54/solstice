@@ -83,3 +83,4 @@ export { runMoonReyEconomicsCommand } from './cli.ts';
 export * from './value-function/index.ts';
 export * from './attribution-accounting/index.ts';
 export * from './attribution/index.ts';
+export * from './value-settlement/index.ts';
