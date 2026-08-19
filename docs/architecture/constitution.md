@@ -92,6 +92,7 @@ never be two implementations of these systems.
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
+| MoonRey V2 shadow evaluation and migration | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/shadow-economics/evaluator.ts` | IMPLEMENTED |
 | MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
@@ -1419,6 +1420,20 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
+migration readiness, and economic stress hardening at
+`packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
+Capability `moonrey-v2-shadow-economics` is `IMPLEMENTED` on the
+existing MoonRey policy-governance owner. V1 remains
+`LEGACY_ENGINEERING_SIMULATION_V1`. V2 is
+`GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2`. The production path remains
+`UNCONFIGURED`. Passing tests cannot activate V2. Do not create
+`packages/moonrey-shadow`, `packages/value-migration`,
+`packages/moonrey-v2-engine`, `packages/shadow-economics`, or
+`packages/moonrey-cutover`. See
+[`chunk-126-moonrey-v2-shadow-migration.md`](./chunk-126-moonrey-v2-shadow-migration.md)
+and
+[`docs/economics/chunk-126-moonrey-v2-shadow-migration.md`](../economics/chunk-126-moonrey-v2-shadow-migration.md).
 Chunk 123 implements the governed MoonRey Productive Value Function
 constitution at
 `packages/sunrey-chain/src/productive/policy-governance/value-function`.
