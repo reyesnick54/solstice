@@ -100,6 +100,7 @@ export const UNIT_CODES = [
   'GB',
   'TB',
   'GB_s',
+  'B_s',
 ] as const;
 export type UnitCode = (typeof UNIT_CODES)[number];
 

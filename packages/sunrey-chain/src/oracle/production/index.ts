@@ -279,4 +279,12 @@ export {
   runResourceDataFabricDemo,
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
+export {
+  ingestBandwidthObservation,
+  bandwidthFactDoesNotMintMoonRey,
+  bandwidthAdapterDoesNotMint,
+  certifyBandwidthObservation,
+  bandwidthCertificationDoesNotMint,
+} from './provider-families/bandwidth/index.ts';
+export type { BandwidthEconomicRecord, BandwidthSourceObservation } from './provider-families/bandwidth/index.ts';
 

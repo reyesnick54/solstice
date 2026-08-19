@@ -338,7 +338,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'DATA_VOLUME',
     canonicalBaseUnit: 'B',
     scaleNumerator: 1_000_000_000n,
-    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE', 'BANDWIDTH_CAPACITY'],
+    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE'],
     allowedProductiveCategories: ['BANDWIDTH_COMMUNICATIONS'],
   }),
   define({
@@ -347,7 +347,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'DATA_VOLUME',
     canonicalBaseUnit: 'B',
     scaleNumerator: 1_000_000_000_000n,
-    allowedFactTypes: ['STORAGE_CAPACITY'],
+    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE'],
     allowedProductiveCategories: ['BANDWIDTH_COMMUNICATIONS'],
   }),
   define({
