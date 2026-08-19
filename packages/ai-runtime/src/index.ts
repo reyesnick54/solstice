@@ -4,6 +4,20 @@ export { AI_RUNTIME_ISOLATION } from './isolation.ts';
 export { createDefaultAiRuntimePolicy, evaluateContextRelease, externalProviderEligible } from './policy.ts';
 export type { AiInferenceProvider } from './provider.ts';
 export { LocalTestAiProvider } from './providers/local-test.ts';
+export { S3mAiProvider, S3mInferenceProvider } from './providers/s3m.ts';
+export {
+  ConfigurableS3mTransport,
+  SimulatedS3mServer,
+  resolveS3mProviderConfig,
+  S3M_PROVIDER_ID,
+  S3M_SUPPORTED_TASK_CLASSES,
+} from './providers/s3m/index.ts';
+export type {
+  S3mCapabilityRecord,
+  S3mEndpointContract,
+  S3mSafetyEvent,
+  S3mTransport,
+} from './providers/s3m/index.ts';
 export { S3mAiProvider } from './providers/s3m.ts';
 export { XaiGrokAiProvider } from './providers/xai-grok.ts';
 export {

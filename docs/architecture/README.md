@@ -156,6 +156,10 @@
 - [Chunk 101 AI runtime](./chunk-101-ai-runtime.md)
   — provider-neutral inference plane at `packages/ai-runtime`.
   See [`docs/ai/chunk-101-ai-runtime.md`](../ai/chunk-101-ai-runtime.md).
+- [Chunk 102 S3M provider](./chunk-102-s3m-provider.md)
+  — proprietary primary intelligence adapter at
+  `packages/ai-runtime/src/providers/s3m`.
+  See [`docs/ai/chunk-102-s3m-provider.md`](../ai/chunk-102-s3m-provider.md).
 - [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at

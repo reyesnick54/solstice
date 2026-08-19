@@ -156,6 +156,8 @@ jobs:
         run: npm run demo:sunrey-human-information-network
       - name: SunRey AI runtime demo
         run: npm run demo:sunrey-ai-runtime
+      - name: SunRey S3M primary provider demo
+        run: npm run demo:sunrey-ai-s3m
       - name: Demo sunrey-chain
         run: npm run demo:sunrey-chain
       - name: MoonRey productive capacity demo

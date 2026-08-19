@@ -1,0 +1,14 @@
+{
+  "chunk": "CHUNK-102",
+  "title": "S3M primary AI provider for SunRey",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "model-registry",
+    "sunrey-ai-runtime",
+    "sunrey-user-agent-mandates",
+    "sunrey-s3m-provider"
+  ],
+  "notes": "IMPLEMENTED at packages/ai-runtime/src/providers/s3m. Bounded inference-provider adapter only. Does not fork the S3M training system, invent undocumented S3M routes, implement Grok, or create packages/s3m. evaluateChunkRequirements returns mustStop: false."
+}

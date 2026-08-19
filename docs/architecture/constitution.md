@@ -60,6 +60,7 @@ never be two implementations of these systems.
 | Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |
 | User-controlled agent mandates | `packages/sunrey-agent` | `packages/sunrey-agent/src/engine.ts` | IMPLEMENTED |
 | SunRey AI runtime | `packages/ai-runtime` | `packages/ai-runtime/src/runtime.ts` | IMPLEMENTED |
+| S3M primary inference provider | `packages/ai-runtime` | `packages/ai-runtime/src/providers/s3m/adapter.ts` | IMPLEMENTED |
 | Growth Orchestrator | `packages/platform` | `packages/platform/src/service.ts` | IMPLEMENTED |
 | Personal Economic Value Engine | `packages/platform` | `packages/platform/src/value/service.ts` | IMPLEMENTED |
 | Treasury | `packages/treasury` | `packages/treasury/src/service.ts` | IMPLEMENTED |
@@ -97,7 +98,7 @@ the same architecture-linting system, not a second linter.
 `kernel`, `ledger`, `evidence`, `events`, `config`, `persistence`,
 `payments`, `cards`, `personal-economic-graph`, `agent`, `platform`,
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
-`agentic-capital-mesh`, `sunrey-agent`, `strategy-lab`, `personal-data-vault`,
+`agentic-capital-mesh`, `sunrey-agent`, `ai-runtime`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.

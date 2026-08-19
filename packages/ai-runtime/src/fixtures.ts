@@ -1,6 +1,12 @@
 import { asUtcInstant } from '../../domain/src/time.ts';
 import { requestIdFor } from './ids.ts';
 import { createDefaultAiRuntimePolicy } from './policy.ts';
+import {
+  CANONICAL_LOCAL_TEST_MODEL_ID,
+  CANONICAL_LOCAL_TEST_MODEL_VERSION,
+  CANONICAL_S3M_MODEL_ID,
+  CANONICAL_S3M_MODEL_VERSION,
+} from './registry.ts';
 import { CANONICAL_LOCAL_TEST_MODEL_ID, CANONICAL_LOCAL_TEST_MODEL_VERSION } from './registry.ts';
 import type { AiDataClass, AiRuntimeMode, AiTaskClass, LocalTestFixture } from './taxonomy.ts';
 import type { AiInferenceRequest, AiRuntimePolicy } from './types.ts';
@@ -38,5 +44,12 @@ export function localTestRequest(overrides: {
     prompt: overrides.prompt ?? 'Explain my simulation balances',
     context: Object.freeze(overrides.context ?? []),
     ...(overrides.fixture ? { fixture: overrides.fixture } : {}),
+  });
+}
+
+export function s3mRequest(overrides: Parameters<typeof localTestRequest>[0] = {}): AiInferenceRequest {
+  return Object.freeze({
+    ...localTestRequest(overrides),
+    modelRef: { modelId: CANONICAL_S3M_MODEL_ID, version: CANONICAL_S3M_MODEL_VERSION },
   });
 }

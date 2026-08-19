@@ -1,3 +1,5 @@
+export { S3mAiProvider, S3mInferenceProvider } from './s3m/adapter.ts';
+export type { S3mInferenceProviderOptions } from './s3m/adapter.ts';
 import type { Clock } from '../../../config/src/clock.ts';
 import { err, type Result } from '../../../domain/src/result.ts';
 import { asAiProviderId } from '../ids.ts';
