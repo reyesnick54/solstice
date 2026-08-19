@@ -1078,6 +1078,18 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 122 extends `moonrey-policy-governance` with
+`ProductiveAttributionBook` at
+`packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.
+See
+[`chunk-122-moonrey-attribution-reconciliation.md`](./chunk-122-moonrey-attribution-reconciliation.md)
+and
+[`docs/economics/chunk-122-moonrey-attribution-reconciliation.md`](../economics/chunk-122-moonrey-attribution-reconciliation.md).
+The book is a non-monetary share record. It is not a second ledger,
+AssetSupplyBook, wallet, or MoonRey supply. It does not calculate
+Productive Value. Do not create `packages/attribution-ledger`,
+`packages/moonrey-attribution-book`, or
+`packages/productive-attribution-ledger`. The evaluator returns
 Chunk 121 extends `moonrey-policy-governance` with the governed
 MoonRey cross-domain attribution policy engine at
 `packages/sunrey-chain/src/productive/policy-governance/attribution`.

@@ -80,4 +80,5 @@ export type { MoonReyPolicySimulationReport, PolicySimulationScenario } from './
 export { moonreyPolicyReadiness } from './readiness.ts';
 export type { MoonReyPolicyReadiness } from './readiness.ts';
 export { runMoonReyEconomicsCommand } from './cli.ts';
+export * from './attribution-accounting/index.ts';
 export * from './attribution/index.ts';
