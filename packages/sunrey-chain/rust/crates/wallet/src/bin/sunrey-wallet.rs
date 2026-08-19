@@ -175,6 +175,7 @@ fn main() {
             "model": "deterministic_bft",
             "mempool_acceptance_is_finality": false,
             "confirmation_count_ui": false
+        }),
         Commands::Security { id } => json!({
             "wallet_id": id,
             "login_is_not_signing": true,

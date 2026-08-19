@@ -73,7 +73,6 @@ export type ContributionFailureCode =
   | 'ALREADY_TERMINAL'
   | 'CORRECTION_TARGET_REQUIRED'
   | 'VERIFICATION_POLICY_REQUIRED';
-  | 'FORBIDDEN_FIELD';
 
 export type ContributionMeasurement = {
   readonly quantity: bigint;
