@@ -86,8 +86,8 @@ export function projectCanonicalChain(chain: CanonicalChainSnapshot): PublicExpl
     capabilityStatus: [{ capability: 'SUNREY_CHAIN', status: 'ELIGIBLE' }],
     networkPhase: 'CHAIN_STABILIZATION',
     humanInformation: [{ rightId: 'right_public_1', attestationHash: 'att_public_1' }],
-    machineEconomy: [{ classification: 'PUBLIC' }],
-    marketData: { referenced: false, authoritativeChainState: false },
+    machineEconomy: [{ classification: 'PUBLIC' as const }],
+    marketData: { referenced: false as const, authoritativeChainState: false as const },
   });
 }
 

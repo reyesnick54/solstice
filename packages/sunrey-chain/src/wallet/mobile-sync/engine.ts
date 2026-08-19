@@ -172,7 +172,7 @@ export class MobileWalletSyncEngine {
       exchangeActivityIds: [],
       agentMandateIds: [],
     });
-    if ('ok' in projection && projection.ok === false) {
+    if ('ok' in projection) {
       return projection;
     }
     const snapshotNeeded = !input.cursor;

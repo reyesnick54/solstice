@@ -65,10 +65,11 @@ export class HumanContributionRegistry implements HumanContributionRegistryPort 
     if (existing) {
       return ok(existing);
     }
-    return this.insert({
-      ...input,
-      status: input.status && input.status !== 'VERIFIED' ? input.status : undefined,
-    });
+    const { status, ...rest } = input;
+    if (status && status !== 'VERIFIED') {
+      return this.insert({ ...rest, status });
+    }
+    return this.insert(rest);
   }
 
   verify(input: VerifyContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure> {

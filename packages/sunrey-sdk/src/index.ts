@@ -6,10 +6,6 @@ export {
   API_DEPRECATIONS,
   compatibilityPolicy,
   parseApiVersion,
-  PUBLIC_API_VERSION_STRATEGY,
-  PUBLIC_API_VERSION_STRATEGY,
-  compatibilityPolicy,
-  parseApiVersion,
   requireVersionedPublicPath,
 } from './versioning.ts';
 export type { ApiDeprecationMetadata } from './versioning.ts';
