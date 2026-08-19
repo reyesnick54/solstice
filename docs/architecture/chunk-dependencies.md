@@ -168,6 +168,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
+| moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1039,3 +1040,15 @@ It does not value, mint, or issue Execution Authority. Do not create
 `packages/human-contribution-verification`,
 `packages/contribution-verification`, or `packages/human-worth`.
 The evaluator returns `mustStop: false`.
+Chunk 116 implements the canonical MoonRey source-to-productive
+taxonomy at `packages/sunrey-chain/src/productive/source-taxonomy`.
+Capability `moonrey-source-taxonomy` is `IMPLEMENTED`. See
+[`chunk-116-moonrey-source-taxonomy.md`](./chunk-116-moonrey-source-taxonomy.md)
+and
+[`docs/economics/chunk-116-moonrey-source-taxonomy.md`](../economics/chunk-116-moonrey-source-taxonomy.md).
+It maps data-source categories to fact types, productive categories,
+source units, and allowed claim types. A mapping is not MoonRey
+issuance. Do not create `packages/moonrey-taxonomy`,
+`packages/source-taxonomy`, `packages/productive-taxonomy`, or
+`packages/moonrey-source-taxonomy`. The evaluator returns
+`mustStop: false`.

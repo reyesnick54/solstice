@@ -1139,9 +1139,9 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 valuation engine at src/valuation. Not PEVE, not SunRey issuance, not a human-worth score, not a mint or Execution Authority. Simulation only."
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 110 valuation constitution at src/valuation. Defines contribution classes, provenance, lifecycle, fingerprints, and versioned valuation methods. Not PEVE, not a SunRey quantity, not a human-worth score, not a mint or Execution Authority. Simulation only."
+      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
+      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 valuation engine at src/valuation. Not PEVE, not SunRey issuance, not a human-worth score, not a mint or Execution Authority. Simulation only.",
+      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 110 valuation constitution at src/valuation. Defines contribution classes, provenance, lifecycle, fingerprints, and versioned valuation methods. Not PEVE, not a SunRey quantity, not a human-worth score, not a mint or Execution Authority. Simulation only.",
       "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 109 evidence-verification policy. Defines contribution classes, provenance, lifecycle, fingerprints, and class-specific verification. Not PEVE, not token valuation, not a human-worth score, not a mint or Execution Authority. Simulation only."
     }
   ],
@@ -3891,8 +3891,8 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 108/112 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize."
-      "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize."
+      "notes": "Chunk 108/112 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
+      "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
       "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint or valuation engine. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize."
     },
     {
@@ -3920,8 +3920,8 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN to HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Chunk 109 requires the contribution verification engine before VERIFIED. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN to HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Chunk 109 requires the contribution verification engine before VERIFIED. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
       "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
@@ -3956,7 +3956,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package."
+      "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package.",
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Do not create a second registry package."
     },
     {
@@ -3997,8 +3997,8 @@
       "forbiddenAliases": [
         "packages/human-valuation-engine",
         "packages/contribution-valuation",
-        "packages/human-contribution-valuation"
-        "packages/human-valuation"
+        "packages/human-contribution-valuation",
+        "packages/human-valuation",
         "packages/human-contribution-verification",
         "packages/contribution-verification",
         "packages/human-contribution",
@@ -4007,9 +4007,9 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
-      "notes": "Chunk 110 valuation constitution and methodology registry. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
-      "notes": "Chunk 109 class-specific evidence-verification layer on the existing Human Economic Contribution owner. VERIFIED means the contribution passed a versioned evidence policy. Not valuation, not minting, not Execution Authority, not a human-worth score."
+      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
+      "notes": "Chunk 110 valuation constitution and methodology registry. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine.",
+      "notes": "Chunk 109 class-specific evidence-verification layer on the existing Human Economic Contribution owner. VERIFIED means the contribution passed a versioned evidence policy. Not valuation, not minting, not Execution Authority, not a human-worth score.",
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     },
     {
@@ -4040,6 +4040,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. Registration does not authorize settlement or minting."
+    },
+    {
+      "id": "moonrey-source-taxonomy",
+      "name": "MoonRey Canonical Source-to-Productive Taxonomy Registry",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/productive/source-taxonomy/registry.ts",
+      "publicInterface": "packages/sunrey-chain/src/productive/source-taxonomy/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "SourceProductiveTaxonomyRegistry",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/moonrey-taxonomy",
+        "packages/source-taxonomy",
+        "packages/productive-taxonomy",
+        "packages/moonrey-source-taxonomy"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 116 exhaustive DataSourceCategory to FactType to ProductiveCategory mapping. Does not connect live providers, value output, or mint MoonRey. Chunk 71 remains the issuance authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -4820,9 +4848,13 @@
     "packages/economic-assets",
     "packages/data-assets-v2",
     "packages/universal-data-registry",
-    "packages/tokenized-data"
+    "packages/tokenized-data",
     "packages/human-contribution-verification",
-    "packages/contribution-verification"
+    "packages/contribution-verification",
+    "packages/moonrey-taxonomy",
+    "packages/source-taxonomy",
+    "packages/productive-taxonomy",
+    "packages/moonrey-source-taxonomy"
   ],
   "capabilities": [
     {
@@ -5647,8 +5679,8 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 108/112 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Engineering valuation is simulation-only. Production valuation remains unactivated. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint."
-      "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint."
+      "notes": "Chunk 108/112 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Engineering valuation is simulation-only. Production valuation remains unactivated. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
+      "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
       "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Valuation engine is not implemented. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint."
     },
     {
@@ -5656,7 +5688,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/information-market",
       "protected": true,
-      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED."
+      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED.",
       "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
     },
     {
@@ -5664,7 +5696,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
       "protected": true,
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 engineering-simulation reference valuation. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
+      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 engineering-simulation reference valuation. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry.",
       "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
     },
     {
@@ -5672,13 +5704,13 @@
       "status": "IMPLEMENTED",
       "owner": "packages/economic-asset-registry",
       "protected": true,
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
+      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data.",
       "id": "sunrey-human-contribution-valuation",
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
       "protected": true,
-      "notes": "Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
-      "notes": "Chunk 110 valuation constitution and methodology registry at packages/human-economic-contribution/src/valuation. Event-specific. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
+      "notes": "Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
+      "notes": "Chunk 110 valuation constitution and methodology registry at packages/human-economic-contribution/src/valuation. Event-specific. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine.",
       "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 109 evidence-verification policy. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
     },
     {
@@ -5687,6 +5719,13 @@
       "owner": "packages/human-economic-contribution",
       "protected": true,
       "notes": "Chunk 109 versioned, contribution-class-specific evidence-verification layer. Canonical owner remains packages/human-economic-contribution. VERIFIED means the contribution passed the activated engineering policy. Production legal/commercial policy remains NOT_ACTIVATED. Not valuation or minting."
+    },
+    {
+      "id": "moonrey-source-taxonomy",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 116 canonical source-to-productive taxonomy at packages/sunrey-chain/src/productive/source-taxonomy. Mapping is not issuance. Do not create packages/moonrey-taxonomy, packages/source-taxonomy, packages/productive-taxonomy, or packages/moonrey-source-taxonomy."
     }
   ],
   "boundedContexts": [
@@ -5815,8 +5854,8 @@
         "packages/human-economic-contribution"
       ],
       "protected": true,
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 111 valuation engine. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. A valuation result is not SunRey issuance."
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 110 valuation constitution. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation. A valuation reference is not a SunRey quantity."
+      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 111 valuation engine. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. A valuation result is not SunRey issuance.",
+      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 110 valuation constitution. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation. A valuation reference is not a SunRey quantity.",
       "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 109 evidence-verification policy. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation. Verification is not valuation."
     },
     {
@@ -6154,10 +6193,14 @@
     "packages/economic-assets",
     "packages/data-assets-v2",
     "packages/universal-data-registry",
-    "packages/tokenized-data"
+    "packages/tokenized-data",
     "packages/human-valuation-engine",
-    "packages/human-valuation"
+    "packages/human-valuation",
     "packages/human-contribution-verification",
-    "packages/contribution-verification"
+    "packages/contribution-verification",
+    "packages/moonrey-taxonomy",
+    "packages/source-taxonomy",
+    "packages/productive-taxonomy",
+    "packages/moonrey-source-taxonomy"
   ]
 }

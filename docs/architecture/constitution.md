@@ -90,6 +90,7 @@ never be two implementations of these systems.
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
+| MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
@@ -1350,6 +1351,16 @@ registry. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. See
 [`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md).
+Chunk 116 implements the canonical MoonRey source-to-productive
+taxonomy at `packages/sunrey-chain/src/productive/source-taxonomy`.
+Capability `moonrey-source-taxonomy` is `IMPLEMENTED`. It is the
+exhaustive `DataSourceCategory → FactType → ProductiveCategory →
+source unit → ClaimType` mapping. It does not connect live providers,
+value output, or mint MoonRey. Chunk 71 remains the issuance
+authority. Do not create `packages/moonrey-taxonomy`,
+`packages/source-taxonomy`, `packages/productive-taxonomy`, or
+`packages/moonrey-source-taxonomy`. See
+[`chunk-116-moonrey-source-taxonomy.md`](./chunk-116-moonrey-source-taxonomy.md).
 Chunk 111 implements the Deterministic Human Contribution Valuation
 Engine at `packages/human-economic-contribution/src/valuation`.
 Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
