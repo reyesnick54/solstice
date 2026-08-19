@@ -128,7 +128,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     scaleNumerator: 1_000n,
     requiresContext: true,
     contextRequirements: ['DURATION'],
-    allowedFactTypes: VOLUME_FACTS,
+    allowedFactTypes: [...VOLUME_FACTS, 'STORAGE_CAPACITY'],
     allowedProductiveCategories: ['WATER', 'STORAGE'],
   }),
   define({
