@@ -16,18 +16,30 @@ Public ticker: `NOT_ASSIGNED`.
 
 ## Issuance path
 
-The canonical path is unchanged:
+The legacy V1 path (`LEGACY_ENGINEERING_SIMULATION_V1`) remains:
 
 Oracle observations
 → VerifiedEconomicFact
 → ProductiveEconomicObject / contribution
 → VerifiedProductiveContribution
 → eligibility
+→ `moonrey.issuance.formula.v1`
 → MoonRey issuance authorization
 → native MoonRey issuance
 → receipt
 
-There is no shorter mint path. Arbitrary admin mint remains unavailable.
+Chunk 125 adds a separate V2 path (`GOVERNED_VALUE_SIMULATION_V2`):
+
+VerifiedProductiveContribution
+→ Productive Value Function (GPUV)
+→ settlement conversion policy
+→ settlement authorization
+→ Chunk 71 MonetaryIssuanceAuthority
+→ canonical AssetSupplyBook
+
+The paths are not silently interchangeable. Production V2 is
+unavailable. There is no shorter mint path. Arbitrary admin mint
+remains unavailable.
 
 ## What this chunk adds
 

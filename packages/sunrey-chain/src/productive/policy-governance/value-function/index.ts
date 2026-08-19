@@ -7,6 +7,13 @@ export {
   PHYSICAL_MEASUREMENT_IS_NOT_PRODUCTIVE_ECONOMIC_VALUE,
   PRODUCTIVE_ECONOMIC_VALUE_IS_NOT_MARKET_PRICE,
   PRODUCTIVE_ECONOMIC_VALUE_IS_NOT_MOONREY_COIN_QUANTITY,
+  PRODUCTIVE_VALUE_ENGINE_CAN_CREATE_MONETARY_AUTHORITY,
+  PRODUCTIVE_VALUE_ENGINE_CAN_MINT,
+  PRODUCTIVE_VALUE_ENGINE_ENGINEERING_IMPLEMENTED,
+  PRODUCTIVE_VALUE_ENGINE_PRODUCTION_ACTIVATED,
+  PRODUCTIVE_VALUE_ENGINE_PRODUCTION_POLICY_CONFIGURED,
+  PRODUCTIVE_VALUE_ENGINE_SCHEMA_VERSION,
+  PRODUCTIVE_VALUE_ENGINE_SIMULATION_AVAILABLE,
   PRODUCTIVE_VALUE_FUNCTION_CAN_MINT,
   PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION,
   PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION_ID,
@@ -21,6 +28,7 @@ export {
   PRODUCTIVE_VALUE_UNIT_IS_PHYSICAL_UNIT,
   PRODUCTION_VALUE_POLICY_ACTIVE,
   REFERENCE_PRICE_IS_CONTEXT_NOT_AUTOMATIC_VALUE,
+  VALUE_FUNCTION_ENGINE_NOT_PRODUCTION,
   VALUE_FUNCTION_NOT_ENGINE,
   VALUE_FUNCTION_NOT_MINT,
   VALUE_NOT_MARKET_PRICE,
@@ -91,14 +99,61 @@ export {
 } from './policy.ts';
 export { ProductiveValueFunctionPolicyRegistry } from './registry.ts';
 export {
-  ATTRIBUTION_SHARE_SCALE,
+  applyBaseValueSchedule,
+  BASE_VALUE_SCHEDULE_PARAMETER_CLASS,
+  everyCategoryHasBaseValueEntry,
+  PRODUCTION_BASE_VALUE_SCHEDULE_STATUS,
+  productionBaseValueScheduleUnconfigured,
+  resolveBaseValueEntry,
+  scheduleUsesFakeUniversalPhysicalUnit,
+  SIMULATION_BASE_VALUE_ENTRIES,
+  SIMULATION_BASE_VALUE_SCHEDULE_ID,
+  SIMULATION_BASE_VALUE_SCHEDULE_VERSION,
+  simulationBaseValueSchedule,
+} from './basis.ts';
+export {
+  engineCannotMint,
+  engineProductionActive,
+  evaluateProductiveValue,
+  VALUE_ENGINE_ROUNDING_DOCUMENTATION,
+} from './engine.ts';
+export { buildExplanationReceipt } from './explanation.ts';
+export {
+  digestProductiveValueResult,
+  PRODUCTIVE_VALUE_RESULT_SCHEMA_VERSION,
+  ProductiveValueResultStore,
+  sealProductiveValueResult,
+  valueIdFromDigest,
+} from './result.ts';
+export {
+  geographyMatches,
+  isPermittedGeographicContext,
+  MAXIMUM_REFERENCE_FRESHNESS_EPOCHS,
+  MINIMUM_REFERENCE_SOURCE_QUORUM,
+  periodsMatch,
+  resolveReferenceFacts,
+} from './reference-resolution.ts';
+export {
+  constitutionEraEngineImplementedMarker,
+  engineeringImplementedMeansProductionActivated,
+  productiveValueFunctionEngineStatus,
+  valueFunctionEngineCanCreateMonetaryAuthority,
+  valueFunctionEngineCanMint,
+  valueFunctionEngineProductionActivated,
+  valueFunctionEngineProductionPolicyConfigured,
+  valueFunctionEngineeringImplemented,
+  valueFunctionSimulationAvailable,
+} from './status.ts';
+export {
   CLAIM_OUTPUT_STATES,
   FORBIDDEN_VALUE_FACTOR_TYPES,
   FORBIDDEN_VALUE_INPUTS,
+  GEOGRAPHIC_CONTEXT_KINDS,
   GOVERNED_PRODUCTIVE_VALUE_UNIT_ID,
   MISSING_INPUT_BEHAVIORS,
   PRODUCTION_VALUE_FUNCTION_POLICY,
   PRODUCTION_VALUE_POLICY_STATUS,
+  PRODUCTIVE_VALUE_FUNCTION_ENGINE_STATUS,
   PRODUCTIVE_VALUE_UNIT,
   PRODUCTIVE_VALUE_UNIT_ID,
   REALIZATION_ELIGIBILITY,
@@ -110,7 +165,9 @@ export {
   VALUE_FUNCTION_PARAMETER_CLASS,
   VALUE_FUNCTION_POLICY_STATES,
   VALUE_FUNCTION_REJECTION_CODES,
+  VALUE_PIPELINE_STAGES,
   VALUE_REFERENCE_FACT_TYPES,
+  VALUE_RESULT_STATES,
   VALUE_TRANSFORMATION_METHODS,
   valueFunctionOk,
   valueFunctionRefuse,
@@ -121,14 +178,17 @@ export type {
   CategoryFactorEligibility,
   CategoryFactorRule,
   ClaimOutputState,
+  ConcentrationEvidence,
   ExactRational,
   ForbiddenValueFactorType,
   ForbiddenValueInput,
+  GeographicContextKind,
   GovernedProductiveValueUnit,
   MissingInputBehavior,
   PerCategoryValueRule,
   ProductiveAttributionDecision,
   ProductiveEconomicEventIdentity,
+  ProductiveValueFunctionEngineStatus,
   ProductiveValueFunctionPolicy,
   ProductiveValueInput,
   ProductiveValueReferenceFact,
@@ -136,6 +196,7 @@ export type {
   RealizationState,
   ReservedValueFactorDefinition,
   ReservedValueFactorType,
+  UtilizationEvidence,
   ValueFactorDefinition,
   ValueFactorInputSourceType,
   ValueFactorType,
@@ -145,6 +206,24 @@ export type {
   ValueFunctionRefusal,
   ValueFunctionRejectionCode,
   ValueFunctionResult,
+  ValuePipelineStage,
   ValueReferenceFactType,
+  ValueResultState,
   ValueTransformationMethod,
 } from './types.ts';
+export type {
+  ProductiveBaseValueSchedule,
+  ProductiveBaseValueScheduleEntry,
+  ProductionBaseValueSchedule,
+} from './basis.ts';
+export type {
+  EvaluateProductiveValueContext,
+  ProductiveValueEvaluation,
+} from './engine.ts';
+export type { ProductiveValueExplanationReceipt } from './explanation.ts';
+export type {
+  FactorApplicationRecord,
+  PipelineTrace,
+  ProductiveValueOutcome,
+  ProductiveValueResult,
+} from './result.ts';

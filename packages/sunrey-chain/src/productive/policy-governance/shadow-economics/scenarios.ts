@@ -1,0 +1,336 @@
+/**
+ * Deterministic representative simulation scenarios. No network calls.
+ */
+
+import { ATTRIBUTION_SHARE_SCALE, VALUE_FACTOR_SCALE } from '../value-function/types.ts';
+import { SHADOW_CONVERSION_POLICY_ID, SHADOW_CONVERSION_POLICY_VERSION } from './identities.ts';
+import type { MoonReyShadowScenario } from './types.ts';
+import type { ClaimType, ProductiveCategory } from '../../types.ts';
+import type { RealizationState } from '../value-function/types.ts';
+
+export const REPRESENTATIVE_SCENARIO_IDS = [
+  'solar-energy',
+  'wind-energy',
+  'grid-energy',
+  'gpu-compute',
+  'ai-inference',
+  'manufacturing',
+  'robotic-production',
+  'agriculture',
+  'water',
+  'mineral-extraction',
+  'freight-logistics',
+  'storage',
+  'bandwidth',
+  'real-estate-utilization',
+  'infrastructure',
+  'services',
+  'goods',
+] as const;
+export type RepresentativeScenarioId = (typeof REPRESENTATIVE_SCENARIO_IDS)[number];
+
+type ScenarioSeed = {
+  readonly category: ProductiveCategory;
+  readonly claimType: ClaimType;
+  readonly realizationState: RealizationState;
+  readonly unit: string;
+  readonly quantity: bigint;
+  readonly objectId: string;
+  readonly controllerId: string;
+  readonly geographyId: string;
+  readonly sourceProviderClass: string;
+  readonly scarcity?: boolean;
+  readonly utilization?: boolean;
+  readonly delivery?: boolean;
+  readonly geography?: boolean;
+};
+
+const SEEDS: Readonly<Record<RepresentativeScenarioId, ScenarioSeed>> = {
+  'solar-energy': {
+    category: 'ENERGY',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'Wh',
+    quantity: 1_200_000n,
+    objectId: 'obj.solar.1',
+    controllerId: 'ctl.solar.1',
+    geographyId: 'grid.west',
+    sourceProviderClass: 'GRID_METER',
+    scarcity: true,
+    utilization: true,
+    geography: true,
+  },
+  'wind-energy': {
+    category: 'ENERGY',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'Wh',
+    quantity: 800_000n,
+    objectId: 'obj.wind.1',
+    controllerId: 'ctl.wind.1',
+    geographyId: 'grid.north',
+    sourceProviderClass: 'GRID_METER',
+    scarcity: true,
+    utilization: true,
+    geography: true,
+  },
+  'grid-energy': {
+    category: 'ENERGY',
+    claimType: 'OUTPUT',
+    realizationState: 'VERIFIED_DELIVERY',
+    unit: 'Wh',
+    quantity: 2_000_000n,
+    objectId: 'obj.grid.1',
+    controllerId: 'ctl.grid.1',
+    geographyId: 'grid.east',
+    sourceProviderClass: 'TSO_SETTLEMENT',
+    scarcity: true,
+    utilization: true,
+    geography: true,
+    delivery: true,
+  },
+  'gpu-compute': {
+    category: 'COMPUTE',
+    claimType: 'USAGE',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'gpu_s',
+    quantity: 360_000n,
+    objectId: 'obj.gpu.1',
+    controllerId: 'ctl.compute.1',
+    geographyId: 'dc.us-west',
+    sourceProviderClass: 'CLUSTER_TELEMETRY',
+    utilization: true,
+  },
+  'ai-inference': {
+    category: 'AI_COMPUTE',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'gpu_s',
+    quantity: 180_000n,
+    objectId: 'obj.infer.1',
+    controllerId: 'ctl.ai.1',
+    geographyId: 'dc.us-east',
+    sourceProviderClass: 'INFERENCE_METER',
+    utilization: true,
+  },
+  manufacturing: {
+    category: 'MANUFACTURING',
+    claimType: 'OUTPUT',
+    realizationState: 'VERIFIED_DELIVERY',
+    unit: 'unit',
+    quantity: 4_000n,
+    objectId: 'obj.factory.1',
+    controllerId: 'ctl.mfg.1',
+    geographyId: 'plant.midwest',
+    sourceProviderClass: 'FACTORY_MES',
+    delivery: true,
+  },
+  'robotic-production': {
+    category: 'AUTOMATED_MACHINE_OUTPUT',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'unit',
+    quantity: 1_500n,
+    objectId: 'obj.robot.1',
+    controllerId: 'ctl.robot.1',
+    geographyId: 'cell.a',
+    sourceProviderClass: 'MACHINE_LOG',
+    utilization: true,
+    delivery: true,
+  },
+  agriculture: {
+    category: 'FOOD_AGRICULTURE',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'kg',
+    quantity: 25_000n,
+    objectId: 'obj.farm.1',
+    controllerId: 'ctl.farm.1',
+    geographyId: 'basin.central',
+    sourceProviderClass: 'HARVEST_LEDGER',
+    delivery: true,
+    geography: true,
+  },
+  water: {
+    category: 'WATER',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'L',
+    quantity: 50_000n,
+    objectId: 'obj.well.1',
+    controllerId: 'ctl.water.1',
+    geographyId: 'basin.arid',
+    sourceProviderClass: 'BASIN_METER',
+    scarcity: true,
+    utilization: true,
+    geography: true,
+  },
+  'mineral-extraction': {
+    category: 'MINERALS_RAW_MATERIALS',
+    claimType: 'OUTPUT',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'kg',
+    quantity: 12_000n,
+    objectId: 'obj.mine.1',
+    controllerId: 'ctl.mine.1',
+    geographyId: 'field.north',
+    sourceProviderClass: 'EXTRACTION_LOG',
+    scarcity: true,
+    geography: true,
+  },
+  'freight-logistics': {
+    category: 'LOGISTICS_TRANSPORTATION',
+    claimType: 'DELIVERY',
+    realizationState: 'VERIFIED_DELIVERY',
+    unit: 'tkm',
+    quantity: 75_000n,
+    objectId: 'obj.freight.1',
+    controllerId: 'ctl.logistics.1',
+    geographyId: 'corridor.i80',
+    sourceProviderClass: 'BILL_OF_LADING',
+    delivery: true,
+    geography: true,
+  },
+  storage: {
+    category: 'STORAGE',
+    claimType: 'USAGE',
+    realizationState: 'COMPLETED_ECONOMIC_SERVICE',
+    unit: 'm3_h',
+    quantity: 8_000n,
+    objectId: 'obj.warehouse.1',
+    controllerId: 'ctl.storage.1',
+    geographyId: 'hub.south',
+    sourceProviderClass: 'WMS',
+    utilization: true,
+  },
+  bandwidth: {
+    category: 'BANDWIDTH_COMMUNICATIONS',
+    claimType: 'USAGE',
+    realizationState: 'ACTUAL_OUTPUT',
+    unit: 'GB',
+    quantity: 9_000n,
+    objectId: 'obj.link.1',
+    controllerId: 'ctl.net.1',
+    geographyId: 'pop.west',
+    sourceProviderClass: 'NETFLOW',
+    utilization: true,
+  },
+  'real-estate-utilization': {
+    category: 'REAL_ESTATE_USE',
+    claimType: 'USAGE',
+    realizationState: 'COMPLETED_ECONOMIC_SERVICE',
+    unit: 'm2_h',
+    quantity: 3_000n,
+    objectId: 'obj.building.1',
+    controllerId: 'ctl.re.1',
+    geographyId: 'city.core',
+    sourceProviderClass: 'OCCUPANCY_SENSOR',
+    utilization: true,
+    geography: true,
+  },
+  infrastructure: {
+    category: 'INFRASTRUCTURE',
+    claimType: 'OUTPUT',
+    realizationState: 'VERIFIED_DELIVERY',
+    unit: 'unit',
+    quantity: 2_200n,
+    objectId: 'obj.infra.1',
+    controllerId: 'ctl.infra.1',
+    geographyId: 'region.coast',
+    sourceProviderClass: 'COMMISSIONING_LOG',
+    delivery: true,
+  },
+  services: {
+    category: 'SERVICES',
+    claimType: 'USAGE',
+    realizationState: 'COMPLETED_ECONOMIC_SERVICE',
+    unit: 'h',
+    quantity: 40n,
+    objectId: 'obj.service.1',
+    controllerId: 'ctl.service.1',
+    geographyId: 'metro.1',
+    sourceProviderClass: 'WORK_ORDER',
+    delivery: true,
+  },
+  goods: {
+    category: 'GOODS',
+    claimType: 'OUTPUT',
+    realizationState: 'VERIFIED_DELIVERY',
+    unit: 'unit',
+    quantity: 600n,
+    objectId: 'obj.goods.1',
+    controllerId: 'ctl.goods.1',
+    geographyId: 'dc.central',
+    sourceProviderClass: 'INVOICE',
+    delivery: true,
+  },
+};
+
+export function representativeScenario(
+  id: RepresentativeScenarioId,
+  overrides: Partial<MoonReyShadowScenario> = {},
+): MoonReyShadowScenario {
+  const seed = SEEDS[id];
+  return Object.freeze({
+    scenarioId: id,
+    eventId: `event.${id}`,
+    contributionId: `c.${id}`,
+    category: seed.category,
+    claimType: seed.claimType,
+    realizationState: seed.realizationState,
+    objectId: seed.objectId,
+    controllerId: seed.controllerId,
+    geographyId: seed.geographyId,
+    jurisdiction: 'SIMULATION',
+    sourceProviderClass: seed.sourceProviderClass,
+    providerIds: [`provider.${id}`],
+    canonicalQuantity: seed.quantity,
+    canonicalUnit: seed.unit,
+    normalizationVersion: 'sunrey.economic-unit.normalization.v1',
+    eventIdentityVersion: '1',
+    attributionPolicyId: 'moonrey.attribution.simulation.v1',
+    attributionPolicyVersion: '1',
+    attributionShare: { numerator: 400_000n, denominator: ATTRIBUTION_SHARE_SCALE },
+    valuePolicyId: 'moonrey.productive-value-function.simulation.v1',
+    valuePolicyVersion: 1,
+    conversionPolicyId: SHADOW_CONVERSION_POLICY_ID,
+    conversionPolicyVersion: SHADOW_CONVERSION_POLICY_VERSION,
+    conversionRate: VALUE_FACTOR_SCALE,
+    conversionCap: 50_000_000n,
+    v1PolicyVersion: 1,
+    v1MaximumIssuance: 10_000_000n,
+    evidence: Object.freeze({
+      quality: VALUE_FACTOR_SCALE,
+      freshnessAgeEpochs: 0n,
+      freshnessMaxAgeEpochs: 8n,
+      sourceIndependence: VALUE_FACTOR_SCALE,
+      provenanceConfidence: VALUE_FACTOR_SCALE,
+      utilizationActual: seed.utilization ? seed.quantity : undefined,
+      utilizationBasis: seed.utilization ? seed.quantity : undefined,
+      scarcity: seed.scarcity ? VALUE_FACTOR_SCALE : undefined,
+      scarcityEvidenced: seed.scarcity ?? false,
+      geography: seed.geography ? VALUE_FACTOR_SCALE : undefined,
+      geographyEvidenced: seed.geography ?? false,
+      delivery: seed.delivery ? VALUE_FACTOR_SCALE : undefined,
+      category: VALUE_FACTOR_SCALE,
+      concentration: VALUE_FACTOR_SCALE,
+      realization: VALUE_FACTOR_SCALE,
+      claimState: VALUE_FACTOR_SCALE,
+    }),
+    ...overrides,
+  });
+}
+
+export function representativeScenarioLibrary(): readonly MoonReyShadowScenario[] {
+  return Object.freeze(REPRESENTATIVE_SCENARIO_IDS.map((id) => representativeScenario(id)));
+}
+
+export function capacityNotValuedScenario(): MoonReyShadowScenario {
+  return representativeScenario('solar-energy', {
+    scenarioId: 'capacity-not-valued',
+    eventId: 'event.capacity-not-valued',
+    contributionId: 'c.capacity-not-valued',
+    claimType: 'CAPACITY',
+    realizationState: 'INSTALLED_CAPACITY',
+  });
+}

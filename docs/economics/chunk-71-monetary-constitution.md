@@ -18,6 +18,11 @@ tokenomics.
 Public tickers remain `NOT_ASSIGNED`. Production mainnet and
 production economic activation remain unavailable.
 
+MoonRey V2 productive issuance (Chunk 125) still enters only through
+`MonetaryIssuanceAuthority`. GPUV is not a native asset. A
+`ProductiveValueResult` cannot mint. Legacy V1 continues to use
+`moonrey.issuance.formula.v1` as `LEGACY_ENGINEERING_SIMULATION_V1`.
+
 ## What this is not
 
 - Not a second blockchain, native-asset ledger, Exchange, wallet,

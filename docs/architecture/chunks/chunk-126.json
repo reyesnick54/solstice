@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-126",
+  "title": "MoonRey Governed Value V2 Shadow Evaluation, Migration, and Economic Stress Hardening",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "moonrey-policy-governance",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-unit-normalization",
+    "moonrey-economic-event-attribution",
+    "moonrey-productive-value-function",
+    "moonrey-v2-shadow-economics"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation-only V1/V2 shadow comparison, migration readiness, and adversarial hardening. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-shadow, packages/value-migration, packages/moonrey-v2-engine, packages/shadow-economics, or packages/moonrey-cutover."
+}

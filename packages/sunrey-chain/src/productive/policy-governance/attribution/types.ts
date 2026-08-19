@@ -227,6 +227,8 @@ export type AttributionEvaluation = {
   readonly performsFinalValuation: false;
   readonly productionActivated: false;
 };
+
+/**
  * Chunk 120 — Canonical productive economic event identity types.
  *
  * A ProductiveEconomicEvent is the underlying productive occurrence.
