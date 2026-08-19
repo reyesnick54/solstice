@@ -80,7 +80,7 @@ export type ConsumerPortfolioProjection = {
   readonly productionLabel: 'NON_PRODUCTION' | 'SIMULATION';
   readonly holdings: readonly ConsumerHoldingProjection[];
   readonly openOrders: readonly ConsumerOrderStatus[];
-  readonly recentTrades: readonly ConsumerTradeReceipt['fills'];
+  readonly recentTrades: ConsumerTradeReceipt['fills'];
   readonly pendingSettlement: readonly ConsumerSettlementProjection[];
   readonly costBasis: ConsumerCostBasisAnalytics | null;
   readonly performance: ConsumerPerformanceAnalytics | null;

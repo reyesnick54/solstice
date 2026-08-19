@@ -288,10 +288,12 @@ export class ValidatorOperatorPlatform {
     }
     if (enrollment.fixture && asProduction) {
       const refusal = operatorErr('FIXTURE_ACCEPTANCE_REJECTED', 'fixture production acceptance rejected');
-      this.audit(principal, 'ACCEPT', enrollment.validatorId, 'REFUSE', refusal.code, 'ACCEPTANCE', {
-        enrollmentId,
-        asProduction,
-      });
+      if (!refusal.ok) {
+        this.audit(principal, 'ACCEPT', enrollment.validatorId, 'REFUSE', refusal.code, 'ACCEPTANCE', {
+          enrollmentId,
+          asProduction,
+        });
+      }
       return refusal;
     }
     const acceptance: ValidatorOperatorAcceptance = {
@@ -370,7 +372,9 @@ export class ValidatorOperatorPlatform {
     for (const validatorId of validatorIds) {
       if (operatorForValidator(validatorId) !== principal.operatorId) {
         const refusal = operatorErr('CROSS_OPERATOR_DENIED', `operator ${principal.operatorId} cannot maintain ${validatorId}`);
-        this.audit(principal, 'MAINTENANCE_PLAN', validatorId, 'REFUSE', refusal.code, 'QUORUM', { validatorIds });
+        if (!refusal.ok) {
+          this.audit(principal, 'MAINTENANCE_PLAN', validatorId, 'REFUSE', refusal.code, 'QUORUM', { validatorIds });
+        }
         return refusal;
       }
     }
@@ -412,10 +416,9 @@ export class ValidatorOperatorPlatform {
       return operatorErr('UNSAFE_MAINTENANCE', 'refused maintenance plan cannot execute');
     }
     for (const validatorId of plan.validatorIds) {
-      const node = this.nodes.find((row) => row.validatorId === validatorId && row.kind === 'VALIDATOR');
-      if (node) {
-        node.operationalState = 'MAINTENANCE';
-      }
+      patchRecord(this.nodes, (row) => row.validatorId === validatorId && row.kind === 'VALIDATOR', {
+        operationalState: 'MAINTENANCE',
+      });
     }
     this.audit(principal, 'MAINTENANCE_EXECUTE', plan.validatorIds[0] ?? null, 'ALLOW', 'OK', plan.planId, plan, principal.actorId);
     return operatorOk(plan);
@@ -471,20 +474,20 @@ export class ValidatorOperatorPlatform {
       return gate;
     }
     for (const validatorId of plan.validatorBatch) {
-      const node = this.nodes.find((row) => row.validatorId === validatorId && row.kind === 'VALIDATOR');
-      if (node) {
-        node.softwareRelease = plan.release;
-        node.artifactDigest = plan.artifactDigest;
-      }
+      patchRecord(this.nodes, (row) => row.validatorId === validatorId && row.kind === 'VALIDATOR', {
+        softwareRelease: plan.release,
+        artifactDigest: plan.artifactDigest,
+      });
     }
-    plan.binaryDeployed = true;
-    plan.readiness = 'VERIFIED';
-    plan.postUpgradeVerification = 'binary digest matched; protocol rules unchanged';
-    if (!BINARY_DEPLOY_DOES_NOT_ACTIVATE_PROTOCOL) {
-      plan.protocolActivated = true;
-    }
-    this.audit(principal, 'UPGRADE_BATCH', plan.validatorBatch[0] ?? null, 'ALLOW', 'OK', plan.release, plan, principal.actorId);
-    return operatorOk(plan);
+    const deployed = patchRecord(this.upgradePlans, (row) => row.planId === planId, {
+      binaryDeployed: true,
+      readiness: 'VERIFIED',
+      postUpgradeVerification: 'binary digest matched; protocol rules unchanged',
+      protocolActivated: BINARY_DEPLOY_DOES_NOT_ACTIVATE_PROTOCOL ? plan.protocolActivated : true,
+    });
+    const next = deployed ?? plan;
+    this.audit(principal, 'UPGRADE_BATCH', next.validatorBatch[0] ?? null, 'ALLOW', 'OK', next.release, next, principal.actorId);
+    return operatorOk(next);
   }
 
   activateProtocol(principal: OperatorPrincipal, planId: string): OperatorResult<never> {
@@ -538,7 +541,7 @@ export class ValidatorOperatorPlatform {
       fencingState: signer.fencingState,
       activated: false,
     };
-    signer.rotationState = 'PREPARED';
+    patchRecord(this.signers, (row) => row.signerId === signer.signerId, { rotationState: 'PREPARED' });
     this.rotations.push(pkg);
     this.audit(principal, 'ROTATE_PREPARE', validatorId, 'ALLOW', 'OK', 'KEY_ROTATION', pkg, principal.actorId);
     return operatorOk(pkg);
@@ -561,14 +564,17 @@ export class ValidatorOperatorPlatform {
     if (!signer) {
       return operatorErr('MISSING_EVIDENCE', 'signer missing');
     }
-    signer.publicKeyFingerprint = pkg.nextFingerprint;
-    signer.rotationState = 'CURRENT';
-    signer.watermarkHeight = pkg.watermark;
-    signer.fencingState = pkg.fencingState;
-    pkg.activated = true;
-    this.usedRotationHashes.add(pkg.requestHash);
-    this.audit(principal, 'ROTATE_ACTIVATE', pkg.validatorId, 'ALLOW', 'OK', 'KEY_ROTATION', pkg, principal.actorId);
-    return operatorOk(pkg);
+    patchRecord(this.signers, (row) => row.signerId === signer.signerId, {
+      publicKeyFingerprint: pkg.nextFingerprint,
+      rotationState: 'CURRENT',
+      watermarkHeight: pkg.watermark,
+      fencingState: pkg.fencingState,
+    });
+    const activated = patchRecord(this.rotations, (row) => row.packageId === packageId, { activated: true });
+    const next = activated ?? pkg;
+    this.usedRotationHashes.add(next.requestHash);
+    this.audit(principal, 'ROTATE_ACTIVATE', next.validatorId, 'ALLOW', 'OK', 'KEY_ROTATION', next, principal.actorId);
+    return operatorOk(next);
   }
 
   signWithFingerprint(validatorId: string, fingerprint: string): OperatorResult<true> {
@@ -592,7 +598,7 @@ export class ValidatorOperatorPlatform {
     );
     if (active.length > 1) {
       for (const signer of active) {
-        signer.antiDoubleSignState = 'CONFLICT';
+        patchRecord(this.signers, (row) => row.signerId === signer.signerId, { antiDoubleSignState: 'CONFLICT' });
       }
       return operatorErr('DUAL_ACTIVE_SIGNER', `dual-active signer detected for ${validatorId}`);
     }
@@ -622,7 +628,7 @@ export class ValidatorOperatorPlatform {
 
   forceDualActive(validatorId: string): void {
     const extra = this.attachPassiveSigner(validatorId);
-    extra.fencingState = 'ACTIVE';
+    patchRecord(this.signers, (row) => row.signerId === extra.signerId, { fencingState: 'ACTIVE' });
   }
 
   fenceSigner(principal: OperatorPrincipal, signerId: string, state: ValidatorSignerRecord['fencingState']): OperatorResult<ValidatorSignerRecord> {
@@ -634,9 +640,10 @@ export class ValidatorOperatorPlatform {
     if (!gate.ok) {
       return gate;
     }
-    signer.fencingState = state;
-    this.audit(principal, 'SIGNER_FENCE', signer.validatorId, 'ALLOW', 'OK', 'FENCE', signer, principal.actorId);
-    return operatorOk(signer);
+    const fenced = patchRecord(this.signers, (row) => row.signerId === signerId, { fencingState: state });
+    const next = fenced ?? signer;
+    this.audit(principal, 'SIGNER_FENCE', next.validatorId, 'ALLOW', 'OK', 'FENCE', next, principal.actorId);
+    return operatorOk(next);
   }
 
   createBackup(
@@ -694,10 +701,13 @@ export class ValidatorOperatorPlatform {
     if (!gate.ok) {
       return gate;
     }
-    sentry.operationalState = 'RETIRED';
-    sentry.canSign = false;
+    const retired = patchRecord(this.nodes, (row) => row.nodeId === sentryId, {
+      operationalState: 'RETIRED',
+      canSign: false,
+    });
+    const previous = retired ?? sentry;
     const replacement: ValidatorNodeRecord = {
-      ...sentry,
+      ...previous,
       nodeId: this.nextId('sentry'),
       operationalState: 'READY',
       canSign: false,
@@ -749,9 +759,10 @@ export class ValidatorOperatorPlatform {
     if (!gate.ok) {
       return gate;
     }
-    incident.evidencePreserved = true;
-    this.audit(principal, 'INCIDENT_PRESERVE', incident.validatorId, 'ALLOW', 'OK', incident.type, incident, principal.actorId);
-    return operatorOk(incident);
+    const preserved = patchRecord(this.incidents, (row) => row.incidentId === incidentId, { evidencePreserved: true });
+    const next = preserved ?? incident;
+    this.audit(principal, 'INCIDENT_PRESERVE', next.validatorId, 'ALLOW', 'OK', next.type, next, principal.actorId);
+    return operatorOk(next);
   }
 
   economicsProjection(validatorId: string): OperatorEconomicsProjection {
@@ -964,6 +975,16 @@ export class ValidatorOperatorPlatform {
       this.collectHealth(validatorId);
     }
   }
+}
+
+function patchRecord<T>(items: T[], match: (item: T) => boolean, patch: Partial<T>): T | undefined {
+  const index = items.findIndex(match);
+  if (index < 0) {
+    return undefined;
+  }
+  const next = { ...items[index]!, ...patch };
+  items[index] = next;
+  return next;
 }
 
 function bucket(

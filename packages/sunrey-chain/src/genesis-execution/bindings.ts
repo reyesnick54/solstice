@@ -79,7 +79,7 @@ export function chainLaunchProviderOk(root = process.cwd()): boolean {
   const provider = consumeProviderAcceptance(root);
   // Regulated providers that remain intentionally inactive at genesis
   // are not required unless production policy explicitly requires them.
-  return provider.acceptanceStatus !== 'ACCEPTED' || provider.productionEligible === false;
+  return provider.acceptanceStatus !== 'PRODUCTION_ELIGIBLE' || provider.productionEligible === false;
 }
 
 export function snapshotCapabilityMatrix(): readonly ProductionCapabilityActivation[] {

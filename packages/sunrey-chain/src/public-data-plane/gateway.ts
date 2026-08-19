@@ -13,7 +13,6 @@ import { RpcSubscriptionGateway } from './subscriptions.ts';
 import type {
   DeveloperApiKey,
   FinalityStatus,
-  PublicDataPlaneMetrics,
   RpcClientIdentity,
   RpcRequest,
   SubmissionEdgeResponse,
@@ -39,7 +38,18 @@ export class PublicRpcGateway {
   readonly abuse: RpcAbuseProtection;
   readonly cache: RpcCachePolicyEngine;
   readonly subscriptions: RpcSubscriptionGateway;
-  readonly metrics: PublicDataPlaneMetrics;
+  readonly metrics: {
+    requests: number;
+    latencyMsTotal: number;
+    errors: number;
+    rateLimitEvents: number;
+    payloadRejections: number;
+    subscriptionCount: number;
+    syncLag: number;
+    indexerLag: number;
+    cacheHits: number;
+    cacheMisses: number;
+  };
   private readonly knownTx = new Map<string, SubmissionEdgeResponse>();
   private readonly finalized = new Map<string, FinalityStatus>();
   private readonly keys = new Map<string, DeveloperApiKey>();

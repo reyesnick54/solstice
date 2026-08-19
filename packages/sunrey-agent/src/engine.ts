@@ -363,7 +363,7 @@ export class UserAgentMandateEngine {
       mandate,
       proposal,
       humanApproved: context.humanApproved || mandate.policy.approval.class === 'NO_ADDITIONAL_APPROVAL_WITHIN_MANDATE',
-      approvalClassUsed: context.approvalClassUsed,
+      ...(context.approvalClassUsed !== undefined ? { approvalClassUsed: context.approvalClassUsed } : {}),
     });
     if (!approval.ok) {
       return err(approval);

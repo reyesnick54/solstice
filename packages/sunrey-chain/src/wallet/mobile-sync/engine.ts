@@ -165,14 +165,14 @@ export class MobileWalletSyncEngine {
       finalizedHeight: this.chain.finalizedHeight(),
       projectionSequence: this.sequence,
       nativeBalances: native,
-      fiatBalances: input.fiat,
+      ...(input.fiat === undefined ? {} : { fiatBalances: input.fiat }),
       pendingTransactionIds: this.pending.list(session.walletId).map((tx) => tx.transactionId),
       delegatedKeyIds: [],
       securityEventIds: [],
       exchangeActivityIds: [],
       agentMandateIds: [],
     });
-    if ('ok' in projection && projection.ok === false) {
+    if ('ok' in projection) {
       return projection;
     }
     const snapshotNeeded = !input.cursor;
@@ -207,7 +207,7 @@ export class MobileWalletSyncEngine {
       return session;
     }
     this.projections.discard(session.walletId);
-    return this.sync({ sessionId, accountId });
+    return accountId === undefined ? this.sync({ sessionId }) : this.sync({ sessionId, accountId });
   }
 
   recordChainEvent(walletId: string, kind: Parameters<WalletEventLog['append']>[0]['kind'], payload: Readonly<Record<string, unknown>>): void {

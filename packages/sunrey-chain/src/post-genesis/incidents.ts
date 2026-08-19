@@ -76,5 +76,8 @@ export function resolveIncident(
 }
 
 export function cannotRewriteFinality(incident: PostGenesisIncident): true {
-  return incident.rewritesFinalizedState === false;
+  if (incident.rewritesFinalizedState !== false) {
+    throw new TypeError('incident handling cannot rewrite finalized state');
+  }
+  return true;
 }

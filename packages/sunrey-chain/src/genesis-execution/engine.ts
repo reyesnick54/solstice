@@ -338,6 +338,7 @@ export function runAuthorizedGenesisExecution(
 
   const eligibility = permitEligible(permit, plan);
   if (!eligibility.ok) {
+    const failureCode = eligibility.code === 'OK' ? 'AUTHORIZATION_MISMATCH' : eligibility.code;
     events = appendLaunchEvent(events, {
       actor: 'permit-guard',
       actorKind: 'SERVICE',
@@ -346,7 +347,7 @@ export function runAuthorizedGenesisExecution(
       result: 'REJECTED',
       evidenceHash: permit.permitHash,
     });
-    return failSession({ ...session, events }, events, eligibility.code);
+    return failSession({ ...session, events }, events, failureCode);
   }
 
   if (options.replayPermit) {

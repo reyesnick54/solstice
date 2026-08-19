@@ -3898,6 +3898,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Chunk 109 requires the contribution verification engine before VERIFIED. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
       "id": "sunrey-human-economic-contributions",
@@ -3960,6 +3961,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 109 class-specific evidence-verification layer on the existing Human Economic Contribution owner. VERIFIED means the contribution passed a versioned evidence policy. Not valuation, not minting, not Execution Authority, not a human-worth score."
+      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     }
   ],
   "authorizedMutationPaths": [
@@ -5568,6 +5570,7 @@
       "owner": "packages/information-market",
       "protected": true,
       "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED."
+      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
     },
     {
       "id": "sunrey-human-economic-contributions",

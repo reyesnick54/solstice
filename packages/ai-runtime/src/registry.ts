@@ -180,9 +180,6 @@ export function seedCanonicalAiModels(
       'Cannot hold master keys or override risk, jurisdiction, or Compliance Kernel',
       'Simulation approval only; no real-world performance claim',
     ]),
-    description: 'Reserved S3M primary intelligence engine binding. Simulation registry only.',
-    owner: 'solstice-ai-runtime',
-    validationId: 'mvn_s3m_ai_v1',
   });
   if (!s3m.ok) {
     return s3m;
