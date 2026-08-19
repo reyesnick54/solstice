@@ -205,6 +205,8 @@ export type CrossCategoryAllocationRule = {
   readonly shares: Readonly<Record<string, bigint>>;
   readonly shareScale: bigint;
   readonly governed: true;
+  readonly attributionPolicyId?: string;
+  readonly attributionPolicyVersion?: number;
 };
 
 export type CapacityOutputAllocationRule = {
@@ -214,6 +216,8 @@ export type CapacityOutputAllocationRule = {
   readonly claimShares: Readonly<Record<ClaimType, bigint>>;
   readonly shareScale: bigint;
   readonly governed: true;
+  readonly attributionPolicyId?: string;
+  readonly attributionPolicyVersion?: number;
 };
 
 export type IssuanceEpoch = {
@@ -250,6 +254,8 @@ export type PolicyActivationRecord = {
   readonly actorId: string;
   readonly activated: boolean;
   readonly rejection?: PolicyRejectionCode;
+  readonly policyKind?: 'ISSUANCE_BUNDLE' | 'ATTRIBUTION_POLICY';
+  readonly policyId?: string;
 };
 
 export { CLAIM_TYPES, PRODUCTIVE_CATEGORIES, PRODUCTIVE_SCHEMA_VERSION, WEIGHT_SCALE };

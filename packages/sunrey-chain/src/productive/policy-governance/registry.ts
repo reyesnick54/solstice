@@ -2,6 +2,8 @@ import { createHash } from 'node:crypto';
 
 import { developmentIssuancePolicy, policyAtHeight, type MoonReyIssuancePolicy } from '../policy.ts';
 import { PRODUCTIVE_CATEGORIES } from '../types.ts';
+import { developmentAttributionPolicy } from './attribution/policy.ts';
+import type { ProductiveAttributionPolicy } from './attribution/types.ts';
 import { developmentBudgetPolicy, productionBudgetPolicy } from './budget.ts';
 import { developmentCategoryPolicies } from './categories.ts';
 import { developmentEligibilityPolicy } from './eligibility.ts';
@@ -62,13 +64,21 @@ export class MoonReyPolicyRegistry {
   private readonly bundles: MoonReyIssuancePolicyBundle[] = [];
   private readonly activations: PolicyActivationRecord[] = [];
   private readonly issuancePolicies: MoonReyIssuancePolicy[] = [];
+  private readonly attributionPolicies: ProductiveAttributionPolicy[] = [];
 
-  constructor(seed?: readonly MoonReyIssuancePolicyBundle[], issuance?: readonly MoonReyIssuancePolicy[]) {
+  constructor(
+    seed?: readonly MoonReyIssuancePolicyBundle[],
+    issuance?: readonly MoonReyIssuancePolicy[],
+    attribution?: readonly ProductiveAttributionPolicy[],
+  ) {
     for (const bundle of seed ?? [developmentPolicyBundle()]) {
       this.bundles.push(bundle);
     }
     for (const policy of issuance ?? [developmentIssuancePolicy()]) {
       this.issuancePolicies.push(policy);
+    }
+    for (const policy of attribution ?? [developmentAttributionPolicy()]) {
+      this.attributionPolicies.push(policy);
     }
   }
 
@@ -160,6 +170,78 @@ export class MoonReyPolicyRegistry {
 
   activationHistory(): readonly PolicyActivationRecord[] {
     return [...this.activations];
+  }
+
+  listAttributionPolicies(): readonly ProductiveAttributionPolicy[] {
+    return [...this.attributionPolicies];
+  }
+
+  getAttribution(policyId: string, version: number): ProductiveAttributionPolicy | undefined {
+    return this.attributionPolicies.find((policy) => policy.policyId === policyId && policy.version === version);
+  }
+
+  attributionActiveAt(height: number): ProductiveAttributionPolicy | undefined {
+    return [...this.attributionPolicies]
+      .filter((policy) => policy.effectiveHeight <= height && policy.status === 'SIMULATION_ACTIVE')
+      .sort((left, right) => {
+        if (left.effectiveHeight !== right.effectiveHeight) {
+          return right.effectiveHeight - left.effectiveHeight;
+        }
+        return right.version - left.version;
+      })[0];
+  }
+
+  proposeAttribution(
+    policy: ProductiveAttributionPolicy,
+    actorKind: GovernanceActorKind,
+    actorId: string,
+  ): PolicyActivationRecord {
+    if (actorKind === 'AI_PROPOSAL') {
+      const record = Object.freeze({
+        policyVersion: policy.version,
+        contentHash: policy.contentHash,
+        activationHeight: policy.effectiveHeight,
+        actorKind,
+        actorId,
+        activated: false,
+        rejection: 'AI_CANNOT_ACTIVATE_POLICY' as PolicyRejectionCode,
+        policyKind: 'ATTRIBUTION_POLICY' as const,
+        policyId: policy.policyId,
+      });
+      this.activations.push(record);
+      return record;
+    }
+    const existing = this.getAttribution(policy.policyId, policy.version);
+    if (existing && existing.contentHash !== policy.contentHash) {
+      const record = Object.freeze({
+        policyVersion: policy.version,
+        contentHash: policy.contentHash,
+        activationHeight: policy.effectiveHeight,
+        actorKind,
+        actorId,
+        activated: false,
+        rejection: 'POLICY_REPLAY' as PolicyRejectionCode,
+        policyKind: 'ATTRIBUTION_POLICY' as const,
+        policyId: policy.policyId,
+      });
+      this.activations.push(record);
+      return record;
+    }
+    if (!existing) {
+      this.attributionPolicies.push(policy);
+    }
+    const record = Object.freeze({
+      policyVersion: policy.version,
+      contentHash: policy.contentHash,
+      activationHeight: policy.effectiveHeight,
+      actorKind,
+      actorId,
+      activated: true,
+      policyKind: 'ATTRIBUTION_POLICY' as const,
+      policyId: policy.policyId,
+    });
+    this.activations.push(record);
+    return record;
   }
 }
 

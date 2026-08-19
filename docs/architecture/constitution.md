@@ -91,6 +91,7 @@ never be two implementations of these systems.
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
+| MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
@@ -1416,6 +1417,18 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 121 extends the existing MoonRey policy-governance owner with
+the cross-domain productive attribution policy engine at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Capability `moonrey-policy-governance` remains `IMPLEMENTED`.
+Attribution assigns eligibility shares for claims bound to the same
+or related economic events. It is not the Productive Value Function,
+not MoonRey issuance, and not a second policy registry. AI may
+propose policy; AI cannot activate it. Production remains inactive.
+Do not create `packages/attribution-policy`,
+`packages/moonrey-attribution`, `packages/productive-attribution`,
+or `packages/attribution-engine`. See
+[`chunk-121-moonrey-attribution-policy.md`](./chunk-121-moonrey-attribution-policy.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

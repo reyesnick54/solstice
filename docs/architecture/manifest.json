@@ -2829,12 +2829,16 @@
       "forbiddenAliases": [
         "packages/moonrey-policy",
         "packages/moonrey-economics",
-        "packages/issuance-policy"
+        "packages/issuance-policy",
+        "packages/attribution-policy",
+        "packages/moonrey-attribution",
+        "packages/productive-attribution",
+        "packages/attribution-engine"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry."
     },
     {
       "id": "sunrey-dual-economy-simulator",
@@ -5562,7 +5566,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Do not create packages/moonrey-policy, packages/moonrey-economics, or packages/issuance-policy."
+      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry. Do not create packages/moonrey-policy, packages/moonrey-economics, packages/issuance-policy, packages/attribution-policy, or packages/moonrey-attribution."
     },
     {
       "id": "sunrey-dual-economy-simulator",
