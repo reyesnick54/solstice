@@ -171,6 +171,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1074,6 +1075,18 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 120 implements canonical productive economic event identity at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Capability `moonrey-economic-event-attribution` is `IMPLEMENTED`. See
+[`chunk-120-productive-economic-event-identity.md`](./chunk-120-productive-economic-event-identity.md)
+and
+[`docs/economics/chunk-120-productive-economic-event-identity.md`](../economics/chunk-120-productive-economic-event-identity.md).
+It extends Chunk 74. Event fingerprint v3 does not delete v1/v2.
+The attribution graph cannot mint. Do not create
+`packages/moonrey-attribution`, `packages/economic-event-graph`,
+`packages/deduplication-engine`, or
+`packages/productive-attribution-v2`. The evaluator returns
+`mustStop: false`.
 Chunk 117 enforces the MoonRey source / fact / claim mapping at
 `packages/sunrey-chain/src/oracle/source-taxonomy` and
 `packages/sunrey-chain/src/productive/claim-candidate`. It extends
