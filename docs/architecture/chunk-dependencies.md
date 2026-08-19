@@ -177,6 +177,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1193,6 +1194,17 @@ Certification is not a verified fact, productive contribution, or
 MoonRey mint. Do not create `packages/provider-certification`,
 `packages/oracle-certification`, or a second oracle registry. The
 evaluator returns `mustStop: false`.
+
+Capability `sunrey-manufacturing-robotics-data-fabric` is `IMPLEMENTED`
+on the existing production-oracle owner. See
+[`chunk-131-manufacturing-robotics-data-fabric.md`](./chunk-131-manufacturing-robotics-data-fabric.md)
+and
+[`docs/economics/chunk-131-manufacturing-robotics-data-fabric.md`](../economics/chunk-131-manufacturing-robotics-data-fabric.md).
+The fabric is read-only economic evidence. It does not command
+industrial equipment, contact a real factory, or mint MoonRey. Do not
+create `packages/manufacturing-oracle`,
+`packages/industrial-data-fabric`, `packages/robotics-oracle`, or
+`packages/factory-connectors`. The evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.

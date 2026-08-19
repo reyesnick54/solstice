@@ -86,6 +86,7 @@ never be two implementations of these systems.
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | Economic data provider certification | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/certification/types.ts` | IMPLEMENTED |
+| Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1578,6 +1579,18 @@ ingestion. There is no `PRODUCTION_APPROVED` state. Commercial
 `packages/provider-certification`, `packages/oracle-certification`,
 `packages/conformance-sandbox`, or a second oracle registry. See
 [`chunk-128-provider-certification.md`](./chunk-128-provider-certification.md).
+
+Chunk 131 implements the read-only manufacturing, industrial
+automation, and robotics economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/manufacturing`.
+Capability `sunrey-manufacturing-robotics-data-fabric` is `IMPLEMENTED`
+on the existing `sunrey-production-oracles` owner. The fabric observes
+MES, robot telemetry, quality, and ERP evidence. It does not command
+industrial equipment, contact a real factory, activate production
+ingestion, or mint MoonRey. Do not create
+`packages/manufacturing-oracle`, `packages/industrial-data-fabric`,
+`packages/robotics-oracle`, or `packages/factory-connectors`. See
+[`chunk-131-manufacturing-robotics-data-fabric.md`](./chunk-131-manufacturing-robotics-data-fabric.md).
 
 ## Agent stop rule
 
