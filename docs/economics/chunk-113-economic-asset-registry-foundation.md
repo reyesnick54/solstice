@@ -129,7 +129,8 @@ AUTOMATIC_MOONREY_MINT=false
 
 ## Later chunks
 
-Chunk 114+ may add deeper category mappings, adapters from HIN / PDV /
-PEG / contribution / oracle / productive owners, and actual chain
-transaction types. This chunk establishes the canonical registry model
-only.
+Chunk 115 adds the cross-domain integration fabric and
+`EconomicAssetRegistryPort`. Source-domain adapters live in HIN, the
+Human Contribution Registry, the Oracle Network, and the productive
+economy. This chunk remains the canonical registry model. The registry
+does not become the source of truth for those domains.

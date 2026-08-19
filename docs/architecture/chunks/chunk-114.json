@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-114",
+  "title": "Economic Asset Rights, Provenance & Verification Policy",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "sunrey-economic-asset-registry",
+    "sunrey-economic-asset-verification",
+    "sunrey-human-economic-contributions",
+    "sunrey-human-information-network",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity"
+  ],
+  "notes": "IMPLEMENTED at packages/economic-asset-registry/src/verification. Extends the existing Economic Asset Registry owner. VERIFIED now means the descriptor passed a versioned, asset-class-specific rights/provenance/lineage policy. Does not create a competing package. Does not value, mint, issue Execution Authority, or activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/dataset-verification, packages/data-rights-registry, packages/economic-provenance, packages/asset-rights, or packages/economic-assets-v2."
+}

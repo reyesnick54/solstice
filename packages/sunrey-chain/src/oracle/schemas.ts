@@ -42,6 +42,8 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
   COMPUTE_CAPACITY: schema('COMPUTE_CAPACITY', 'gpu_s', COMPUTE_UNITS, 'compute.resource.v1'),
   COMPUTE_USAGE: schema('COMPUTE_USAGE', 'gpu_s', COMPUTE_UNITS, 'compute.resource.v1'),
   AI_INFERENCE_USAGE: schema('AI_INFERENCE_USAGE', 'token_inference', ['token_inference'], 'ai.inference.v1'),
+  AI_COMPUTE_CAPACITY: schema('AI_COMPUTE_CAPACITY', 'gpu_s', COMPUTE_UNITS, 'ai.compute.capacity.v1'),
+  AI_TRAINING_USAGE: schema('AI_TRAINING_USAGE', 'token_inference', ['token_inference', 'gpu_s'], 'ai.training.v1'),
   MANUFACTURING_CAPACITY: schema(
     'MANUFACTURING_CAPACITY',
     'units_produced',
@@ -67,6 +69,21 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
     'units_produced',
     ['units_produced', 'machine_h'],
     'service.delivery.v1',
+  ),
+  INFRASTRUCTURE_CAPACITY: schema(
+    'INFRASTRUCTURE_CAPACITY',
+    'machine_h',
+    ['machine_h'],
+    'infrastructure.capacity.v1',
+  ),
+  INFRASTRUCTURE_USAGE: schema('INFRASTRUCTURE_USAGE', 'machine_h', ['machine_h'], 'infrastructure.usage.v1'),
+  GOODS_OUTPUT: schema('GOODS_OUTPUT', 'units_produced', ['units_produced', 'kg', 'tonne'], 'goods.output.v1'),
+  GOODS_DELIVERY: schema('GOODS_DELIVERY', 'units_produced', ['units_produced'], 'goods.delivery.v1'),
+  AUTOMATED_MACHINE_OUTPUT: schema(
+    'AUTOMATED_MACHINE_OUTPUT',
+    'units_produced',
+    ['units_produced', 'machine_h'],
+    'automated.machine.output.v1',
   ),
   REFERENCE_PRICE: schema('REFERENCE_PRICE', 'units_produced', ['units_produced'], 'reference.price.v1'),
 });

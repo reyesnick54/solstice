@@ -8,8 +8,17 @@
 
 import type { SecretReference } from '../../../../security/src/secrets.ts';
 import type { AggregationPolicy, FactType, FixedQuantity, OracleType, UnitCode } from '../types.ts';
+import {
+  DATA_SOURCE_CATEGORIES,
+  PRIMARY_FACT_TYPE_BY_CATEGORY,
+  isDataSourceCategory,
+  type DataSourceCategory,
+} from '../../productive/source-taxonomy/types.ts';
 
 export type { FactType, FixedQuantity, OracleType, UnitCode };
+export { DATA_SOURCE_CATEGORIES, isDataSourceCategory };
+export type { DataSourceCategory };
+export const CATEGORY_TO_FACT_TYPE = PRIMARY_FACT_TYPE_BY_CATEGORY;
 
 export const PRODUCTION_ORACLE_SCHEMA_VERSION = 1 as const;
 export const COLLECTOR_VERSION = 'sunrey-oracle-collector/1' as const;
@@ -25,23 +34,6 @@ export const ONBOARDING_STATUSES = [
   'REVOKED',
 ] as const;
 export type OnboardingStatus = (typeof ONBOARDING_STATUSES)[number];
-
-export const DATA_SOURCE_CATEGORIES = [
-  'energy',
-  'food_agriculture',
-  'water',
-  'compute',
-  'ai_usage',
-  'manufacturing',
-  'real_estate_use',
-  'storage',
-  'logistics',
-  'bandwidth',
-  'resources',
-  'service_delivery',
-  'reference_price',
-] as const;
-export type DataSourceCategory = (typeof DATA_SOURCE_CATEGORIES)[number];
 
 export const AUTHENTICATION_METHODS = [
   'MTLS',
@@ -339,32 +331,12 @@ export type PublicOracleFeedMetadata = {
   readonly commercialTermsExposed: false;
 };
 
-export const CATEGORY_TO_FACT_TYPE: Readonly<Record<DataSourceCategory, FactType>> = Object.freeze({
-  energy: 'ENERGY_PRODUCTION',
-  food_agriculture: 'FOOD_PRODUCTION',
-  water: 'WATER_PRODUCTION',
-  compute: 'COMPUTE_USAGE',
-  ai_usage: 'AI_INFERENCE_USAGE',
-  manufacturing: 'MANUFACTURING_OUTPUT',
-  real_estate_use: 'REAL_ESTATE_USE_CAPACITY',
-  storage: 'STORAGE_CAPACITY',
-  logistics: 'LOGISTICS_CAPACITY',
-  bandwidth: 'BANDWIDTH_USAGE',
-  resources: 'RESOURCE_EXTRACTION',
-  service_delivery: 'SERVICE_DELIVERY',
-  reference_price: 'REFERENCE_PRICE',
-});
-
 export function isOnboardingStatus(value: string): value is OnboardingStatus {
   return (ONBOARDING_STATUSES as readonly string[]).includes(value);
 }
 
 export function isAuthenticationMethod(value: string): value is AuthenticationMethod {
   return (AUTHENTICATION_METHODS as readonly string[]).includes(value);
-}
-
-export function isDataSourceCategory(value: string): value is DataSourceCategory {
-  return (DATA_SOURCE_CATEGORIES as readonly string[]).includes(value);
 }
 
 export function missingContractIsNeverConfirmed(): false {

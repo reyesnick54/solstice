@@ -7,7 +7,10 @@
  *
  * Native SunRey Coin and MoonRey Coin supply remain outside this registry.
  * Productive MoonRey categories are mirrored for indexing only; Chunk 44
- * remains the productive taxonomy owner.
+ * remains the productive taxonomy owner. Chunk 116 source-to-productive
+ * mappings point at these mirrored categories and at
+ * SHARED_ECONOMIC_REFERENCE for reference-price facts. This registry does
+ * not become a second productive taxonomy.
  */
 
 export const ECONOMIC_ASSET_TAXONOMY_ID = 'sunrey-economic-asset-taxonomy' as const;

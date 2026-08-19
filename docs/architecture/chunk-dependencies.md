@@ -166,9 +166,11 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
+| sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1003,6 +1005,25 @@ minting. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. The
 evaluator returns `mustStop: false`.
+Chunk 114 extends the same owner with rights, provenance, and lineage
+verification at `packages/economic-asset-registry/src/verification`.
+Capability `sunrey-economic-asset-verification` is `IMPLEMENTED` on
+that owner. See
+[`chunk-114-economic-asset-verification.md`](./chunk-114-economic-asset-verification.md)
+and
+[`docs/economics/chunk-114-economic-asset-verification.md`](../economics/chunk-114-economic-asset-verification.md).
+`VERIFIED` means the descriptor passed a versioned policy. It does
+not value, mint, or issue Execution Authority. Do not create
+`packages/dataset-verification`, `packages/data-rights-registry`,
+`packages/economic-provenance`, `packages/asset-rights`, or
+`packages/economic-assets-v2`. The evaluator returns `mustStop: false`.
+Chunk 115 extends the same Economic Asset Registry owner with the
+cross-domain integration fabric. Source-domain adapters project
+privacy-safe metadata from HIN, the Human Contribution Registry, the
+Oracle Network, and the productive economy through
+`EconomicAssetRegistryPort`. The registry is not the source of truth
+for those domains and does not mint. Do not create a second registry
+package. The evaluator returns `mustStop: false`.
 Chunk 111 implements the Deterministic Human Contribution Valuation
 Engine at `packages/human-economic-contribution/src/valuation`.
 Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
@@ -1053,3 +1074,26 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 117 enforces the MoonRey source / fact / claim mapping at
+`packages/sunrey-chain/src/oracle/source-taxonomy` and
+`packages/sunrey-chain/src/productive/claim-candidate`. It extends
+`sunrey-production-oracles` and `sunrey-productive-capacity`. See
+[`chunk-117-moonrey-source-claim-enforcement.md`](./chunk-117-moonrey-source-claim-enforcement.md)
+and
+[`docs/economics/chunk-117-moonrey-source-claim-enforcement.md`](../economics/chunk-117-moonrey-source-claim-enforcement.md).
+A compatible mapping and a `ProductiveClaimCandidate` do not mint
+MoonRey. Do not create `packages/moonrey-source-taxonomy`,
+`packages/source-claim-enforcement`, or
+`packages/productive-claim-candidate`. The evaluator returns
+Chunk 116 implements the canonical MoonRey source-to-productive
+taxonomy at `packages/sunrey-chain/src/productive/source-taxonomy`.
+Capability `moonrey-source-taxonomy` is `IMPLEMENTED`. See
+[`chunk-116-moonrey-source-taxonomy.md`](./chunk-116-moonrey-source-taxonomy.md)
+and
+[`docs/economics/chunk-116-moonrey-source-taxonomy.md`](../economics/chunk-116-moonrey-source-taxonomy.md).
+It maps data-source categories to fact types, productive categories,
+source units, and allowed claim types. A mapping is not MoonRey
+issuance. Do not create `packages/moonrey-taxonomy`,
+`packages/source-taxonomy`, `packages/productive-taxonomy`, or
+`packages/moonrey-source-taxonomy`. The evaluator returns
+`mustStop: false`.

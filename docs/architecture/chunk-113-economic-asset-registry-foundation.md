@@ -29,3 +29,7 @@ state, not issuance eligibility.
   snapshot / rebuild
 - cycle-safe lineage edges
 - structural refusal of native SunRey/MoonRey supply records
+
+Chunk 115 extends this owner with `EconomicAssetRegistryPort` and
+source-domain adapters. See
+[`chunk-115-economic-asset-integration-fabric.md`](./chunk-115-economic-asset-integration-fabric.md).
