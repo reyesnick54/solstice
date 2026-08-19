@@ -12,6 +12,7 @@ export const HUMAN_CONTRIBUTION_ISOLATION = Object.freeze({
   valuationIsNotHumanWorth: true,
   valuationIsNotSettlementAuthorization: true,
   valuationImplemented: false,
+  engineeringReferenceValuation: 'SIMULATION_ONLY',
   valuationConstitutionImplemented: true,
   valuationEngineComputesSettlement: false,
   mintingImplemented: false,

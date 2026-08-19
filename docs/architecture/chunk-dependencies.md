@@ -168,6 +168,13 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 
+Chunk 111 implements engineering-simulation reference valuation at
+`packages/human-economic-contribution/src/valuation`. It does not mint
+and does not compute SunRey quantity. Chunk 112 extends the existing
+human-contribution monetary bridge with settlement authorization from
+that valuation result. Production remains unavailable. The evaluator
+returns `mustStop: false`.
+
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
 identity facts the engine consumes.
@@ -935,9 +942,10 @@ and
 [`docs/economics/chunk-108-human-contribution-monetary-bridge.md`](../economics/chunk-108-human-contribution-monetary-bridge.md).
 It adapts privacy-safe verified contribution fields into existing
 Chunk 71 `HumanEconomicEvidence` and `MonetaryIssuanceAuthority`.
-It is not a second mint. The Human Contribution Valuation Engine is
-not implemented. Production issuance remains unavailable. Do not
-create `packages/human-contribution-mint`,
+It is not a second mint. Chunk 112 extends the same owner with an
+engineering-implemented valuation-to-settlement path. Production
+valuation remains unactivated. Legacy fixtures remain simulation-only.
+Do not create `packages/human-contribution-mint`,
 `packages/human-valuation-engine`, `packages/contribution-issuance`,
 `packages/human-worth-token`, or `packages/peve-mint`. The evaluator
 returns `mustStop: false`.

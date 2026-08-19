@@ -85,6 +85,12 @@ export function privacySafeHumanEvidence(input: {
   readonly settlementAuthorizationRef?: string;
   readonly valuationPolicyRef?: string;
   readonly valuationVersion?: string;
+  readonly valuationId?: string;
+  readonly valuationDigest?: string;
+  readonly conversionPolicyRef?: string;
+  readonly conversionPolicyVersion?: string;
+  readonly referenceValue?: bigint;
+  readonly referenceDenomination?: string;
   readonly extra?: Readonly<Record<string, unknown>>;
 }): HumanEconomicEvidence {
   if (input.extra) {
@@ -117,6 +123,14 @@ export function privacySafeHumanEvidence(input: {
       : {}),
     ...(input.valuationPolicyRef !== undefined ? { valuationPolicyRef: input.valuationPolicyRef } : {}),
     ...(input.valuationVersion !== undefined ? { valuationVersion: input.valuationVersion } : {}),
+    ...(input.valuationId !== undefined ? { valuationId: input.valuationId } : {}),
+    ...(input.valuationDigest !== undefined ? { valuationDigest: input.valuationDigest } : {}),
+    ...(input.conversionPolicyRef !== undefined ? { conversionPolicyRef: input.conversionPolicyRef } : {}),
+    ...(input.conversionPolicyVersion !== undefined
+      ? { conversionPolicyVersion: input.conversionPolicyVersion }
+      : {}),
+    ...(input.referenceValue !== undefined ? { referenceValue: input.referenceValue } : {}),
+    ...(input.referenceDenomination !== undefined ? { referenceDenomination: input.referenceDenomination } : {}),
   });
 }
 

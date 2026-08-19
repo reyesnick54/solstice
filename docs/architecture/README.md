@@ -167,6 +167,14 @@
   — canonical verified-contribution system of record in the same
   package. See
   [`docs/economics/chunk-106-human-contribution-registry.md`](../economics/chunk-106-human-contribution-registry.md).
+- [Chunk 111 human contribution valuation engine](./chunk-111-human-contribution-valuation-engine.md)
+  — engineering-simulation reference valuation at
+  `packages/human-economic-contribution/src/valuation`.
+- [Chunk 112 human contribution settlement integration](./chunk-112-human-contribution-settlement-integration.md)
+  — valuation result to settlement authorization at
+  `packages/sunrey-chain/src/economics/human-contribution-bridge`.
+  See
+  [`docs/economics/chunk-112-human-contribution-settlement-integration.md`](../economics/chunk-112-human-contribution-settlement-integration.md).
 - [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at

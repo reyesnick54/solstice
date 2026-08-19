@@ -378,6 +378,8 @@ describe('Chunk 108 human contribution monetary bridge', () => {
       'human-contribution-bridge/evidence.ts',
       'human-contribution-bridge/gate.ts',
       'human-contribution-bridge/fixtures.ts',
+      'human-contribution-bridge/adapter.ts',
+      'human-contribution-bridge/conversion.ts',
       'human-contribution-bridge/index.ts',
     ];
     for (const rel of files) {

@@ -237,6 +237,14 @@ export type HumanEconomicEvidence = {
   /** Future valuation-engine policy reference; never a PEVE formula. */
   readonly valuationPolicyRef?: string;
   readonly valuationVersion?: string;
+  /** Chunk 112 engine valuation identifier. Absent on MoonRey and legacy fixtures. */
+  readonly valuationId?: string;
+  readonly valuationDigest?: string;
+  readonly conversionPolicyRef?: string;
+  readonly conversionPolicyVersion?: string;
+  /** Contribution reference settlement value. Not a SunRey quantity. */
+  readonly referenceValue?: bigint;
+  readonly referenceDenomination?: string;
 };
 
 export type MonetaryIssuanceAuthority = {
