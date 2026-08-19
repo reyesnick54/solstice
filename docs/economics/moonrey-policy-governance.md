@@ -17,6 +17,15 @@ reproducible from contribution + source facts + policy version.
 - AI cannot create a VerifiedEconomicFact, approve a contribution,
   authorize issuance, change a normalization factor, or activate policy.
 
+## Attribution (Chunk 121)
+
+`ProductiveAttributionPolicy` lives under the same registry. It
+assigns eligibility shares for claims bound to the same or related
+economic events. It does not mint MoonRey and does not perform final
+valuation. Historical issuance bundles remain valid without an
+attribution field. AI may propose attribution policy and cannot
+activate it.
+
 ## Oracle reference factors
 
 If a policy uses an economic reference fact, that fact must be a

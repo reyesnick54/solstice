@@ -29,6 +29,10 @@ export const CANONICAL_MOONREY_ASSET_ID = 'MOONREY_COIN' as const;
 export const PUBLIC_MOONREY_TICKER = 'NOT_ASSIGNED' as const;
 export const SIMULATION_CLASSIFICATION = 'ENGINEERING_ECONOMIC_SIMULATION' as const;
 export const UNCONFIGURED = 'UNCONFIGURED' as const;
+export const LEGACY_NPU_V1 = 'LEGACY_NPU_V1' as const;
+export const CANONICAL_MEASUREMENT_V2 = 'CANONICAL_MEASUREMENT_V2' as const;
+export const NORMALIZATION_FAMILIES = [LEGACY_NPU_V1, CANONICAL_MEASUREMENT_V2] as const;
+export type NormalizationFamily = (typeof NORMALIZATION_FAMILIES)[number];
 export const DEFAULT_EPOCH_LENGTH_HEIGHTS = 100 as const;
 export const FACTOR_BOUND_MIN = 0n;
 export const FACTOR_BOUND_MAX = 2_000_000n;
@@ -152,6 +156,7 @@ export type ProductiveNormalizationRule = {
   readonly roundingMode: RoundingMode;
   readonly activationHeight: number;
   readonly mixesIncompatibleUnits: false;
+  readonly family?: NormalizationFamily;
 };
 
 export type NormalizedProductiveUnit = {
@@ -219,6 +224,8 @@ export type CrossCategoryAllocationRule = {
   readonly shares: Readonly<Record<string, bigint>>;
   readonly shareScale: bigint;
   readonly governed: true;
+  readonly attributionPolicyId?: string;
+  readonly attributionPolicyVersion?: number;
 };
 
 export type CapacityOutputAllocationRule = {
@@ -228,6 +235,8 @@ export type CapacityOutputAllocationRule = {
   readonly claimShares: Readonly<Record<ClaimType, bigint>>;
   readonly shareScale: bigint;
   readonly governed: true;
+  readonly attributionPolicyId?: string;
+  readonly attributionPolicyVersion?: number;
 };
 
 export type IssuanceEpoch = {
@@ -264,6 +273,8 @@ export type PolicyActivationRecord = {
   readonly actorId: string;
   readonly activated: boolean;
   readonly rejection?: PolicyRejectionCode;
+  readonly policyKind?: 'ISSUANCE_BUNDLE' | 'ATTRIBUTION_POLICY';
+  readonly policyId?: string;
 };
 
 export { CLAIM_TYPES, PRODUCTIVE_CATEGORIES, PRODUCTIVE_SCHEMA_VERSION, WEIGHT_SCALE };

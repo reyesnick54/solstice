@@ -10,7 +10,8 @@ import {
   crossCategoryEventFingerprint,
   governedContributionFingerprint,
 } from './fingerprint.ts';
-import { issuanceBasisFromNpu, normalizeContribution } from './normalization.ts';
+import type { CanonicalProductiveMeasurement } from '../../units/measurement.ts';
+import { issuanceBasisFromNpu, normalizeContribution, normalizePhysicalMeasurement } from './normalization.ts';
 import {
   evaluateAttributionEligibility,
   routeRequiresAttribution,
@@ -19,12 +20,15 @@ import {
   type ProductiveAttributionDecision,
 } from './attribution-accounting/index.ts';
 import {
+  CANONICAL_MEASUREMENT_V2,
+  LEGACY_NPU_V1,
   POLICY_GOVERNANCE_SCHEMA_VERSION,
   type CapacityOutputAllocationRule,
   type ContributionEligibilityPolicy,
   type CrossCategoryAllocationRule,
   type MoonReyIssuancePolicyBundle,
   type MoonReyPolicyDecisionCode,
+  type NormalizationFamily,
 } from './types.ts';
 
 export function developmentEligibilityPolicy(
@@ -84,6 +88,8 @@ export type EligibilityInput = {
   readonly attributionRequest?: AttributionReservationRequest;
   readonly independentlyEvidenced?: boolean;
   readonly requireAttributionWhenSensitive?: boolean;
+  readonly canonicalMeasurement?: CanonicalProductiveMeasurement;
+  readonly normalizationFamily?: NormalizationFamily;
 };
 
 export type EligibilityOk = {
@@ -170,17 +176,36 @@ export function evaluateContributionEligibility(input: EligibilityInput): Eligib
   if (!referenceCheck.ok) {
     return referenceCheck;
   }
-  const normalized = normalizeContribution({
-    category: input.category,
-    sourceUnitId: input.sourceUnitId,
-    sourceQuantity: input.sourceQuantity,
-    height: input.height,
-    rules: bundle.normalizationRules,
-  });
-  if (!normalized.ok) {
-    return normalized;
+  const family = input.normalizationFamily ?? (input.canonicalMeasurement ? CANONICAL_MEASUREMENT_V2 : LEGACY_NPU_V1);
+  let issuanceBasis: bigint;
+  let fingerprintQuantity: bigint;
+  let fingerprintUnit: string;
+  if (family === CANONICAL_MEASUREMENT_V2) {
+    if (!input.canonicalMeasurement) {
+      return { ok: false, code: 'CANONICAL_UNIT_REQUIRED' };
+    }
+    const physical = normalizePhysicalMeasurement(input.canonicalMeasurement);
+    if (!physical.ok) {
+      return { ok: false, code: physical.code };
+    }
+    issuanceBasis = physical.quantity;
+    fingerprintQuantity = physical.quantity;
+    fingerprintUnit = physical.unit;
+  } else {
+    const normalized = normalizeContribution({
+      category: input.category,
+      sourceUnitId: input.sourceUnitId,
+      sourceQuantity: input.sourceQuantity,
+      height: input.height,
+      rules: bundle.normalizationRules,
+    });
+    if (!normalized.ok) {
+      return normalized;
+    }
+    issuanceBasis = issuanceBasisFromNpu(normalized.npu);
+    fingerprintQuantity = normalized.npu.quantity;
+    fingerprintUnit = normalized.npu.unitId;
   }
-  const issuanceBasis = issuanceBasisFromNpu(normalized.npu);
   const budget = evaluateBudget(bundle.budget, input.budgetUsage, issuanceBasis);
   if (!budget.ok) {
     return budget.code === 'CONTRIBUTION_CAP' || budget.code === 'BUDGET_UNAVAILABLE'
@@ -194,8 +219,8 @@ export function evaluateContributionEligibility(input: EligibilityInput): Eligib
     validUntilUnixSeconds: input.validUntilUnixSeconds,
     claimType: input.claimType,
     category: input.category,
-    normalizedQuantity: normalized.npu.quantity,
-    baseUnitId: normalized.npu.unitId,
+    normalizedQuantity: fingerprintQuantity,
+    baseUnitId: fingerprintUnit,
     oracleFactIds: facts.map((fact) => fact.factId),
     upstreamContributionIds: input.claimLineage,
     actorId: input.actorId,

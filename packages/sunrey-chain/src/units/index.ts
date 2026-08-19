@@ -51,3 +51,31 @@ export {
   resolveOracleUnit,
   resolveProductiveUnit,
 } from './adapters.ts';
+export {
+  CANONICAL_MEASUREMENT_REJECTION_CODES,
+  measurementRefusal,
+} from './codes.ts';
+export type { CanonicalMeasurementRefusal, CanonicalMeasurementRejectionCode } from './codes.ts';
+export {
+  CANONICAL_MEASUREMENT_SCHEMA_VERSION,
+  CANONICAL_UNIT_AUTHORITY,
+  NORMALIZATION_AUTHORIZES_MOONREY,
+  PHYSICAL_NORMALIZATION_INCLUDES_ECONOMIC_WEIGHTING,
+  exactFromFixed,
+  integralCanonicalQuantity,
+  isResourceClass,
+  measureCanonical,
+  measurementDoesNotAuthorizeMoonRey,
+  measurementHasNoEconomicWeighting,
+  receiptDigestOf,
+  resolveCanonicalTarget,
+} from './measurement.ts';
+export type { CanonicalMeasurementPeriod, CanonicalProductiveMeasurement, MeasureCanonicalInput } from './measurement.ts';
+export {
+  attachMeasurementToCollected,
+  measureOracleObservation,
+  measureSourceObservation,
+  measureVerifiedFact,
+  originalObservationPreserved,
+  requireMeasurement,
+} from './pipeline.ts';

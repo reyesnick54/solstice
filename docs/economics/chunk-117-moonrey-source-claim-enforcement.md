@@ -72,8 +72,9 @@ evidence, credential, schema, or independence checks.
 and returns a `ProductiveClaimCandidate`, **not** a verified
 `ProductiveClaim`.
 
-The candidate records `mappingId` / `mappingVersion`, quantity,
-source unit, period, geography, rights, and oracle references.
+The candidate records `mappingId` / `mappingVersion`, source and
+canonical quantity, a Chunk 118 normalization receipt, period,
+geography, rights, and oracle references.
 `automaticIssuance` is always `false`. The candidate does not
 auto-verify and does not mint.
 

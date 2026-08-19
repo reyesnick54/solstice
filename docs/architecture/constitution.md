@@ -91,6 +91,8 @@ never be two implementations of these systems.
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
+| MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
+| MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
@@ -1426,6 +1428,39 @@ MoonRey quantities. Do not create `packages/attribution-ledger`,
 `packages/moonrey-attribution-book`, or
 `packages/productive-attribution-ledger`. See
 [`chunk-122-moonrey-attribution-reconciliation.md`](./chunk-122-moonrey-attribution-reconciliation.md).
+Chunk 121 extends the existing MoonRey policy-governance owner with
+the cross-domain productive attribution policy engine at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Capability `moonrey-policy-governance` remains `IMPLEMENTED`.
+Attribution assigns eligibility shares for claims bound to the same
+or related economic events. It is not the Productive Value Function,
+not MoonRey issuance, and not a second policy registry. AI may
+propose policy; AI cannot activate it. Production remains inactive.
+Do not create `packages/attribution-policy`,
+`packages/moonrey-attribution`, `packages/productive-attribution`,
+or `packages/attribution-engine`. See
+[`chunk-121-moonrey-attribution-policy.md`](./chunk-121-moonrey-attribution-policy.md).
+Chunk 120 implements canonical productive economic event identity and
+the rebuildable attribution graph at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Capability `moonrey-economic-event-attribution` is `IMPLEMENTED`. It
+extends Chunk 74 policy-governance. Event fingerprint v3 strengthens
+existing v1/v2 fingerprints without replacing them. The graph is a
+projection, not a ledger or mint. Event identity cannot authorize
+issuance. Do not create `packages/moonrey-attribution`,
+`packages/economic-event-graph`, `packages/deduplication-engine`, or
+`packages/productive-attribution-v2`. See
+[`chunk-120-productive-economic-event-identity.md`](./chunk-120-productive-economic-event-identity.md).
+Chunk 119 migrates the MoonRey productive pipeline onto that same
+unit authority through `CanonicalProductiveMeasurement`. New
+observations, facts, claim candidates, and verified contributions
+retain source quantity, canonical quantity, and a normalization
+receipt. Physical measurement is not economic weighting and is not
+MoonRey issuance. Historical v1 fingerprints stay reproducible.
+Do not create `packages/moonrey-units`, `packages/productive-units-v2`,
+`packages/economic-normalization-v2`, `packages/measurement-engine`,
+or `packages/unit-registry-v2`. See
+[`chunk-119-canonical-unit-migration.md`](./chunk-119-canonical-unit-migration.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability
