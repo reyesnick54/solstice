@@ -9,16 +9,16 @@
  * REFERENCE settlement value is not SunRey quantity.
  */
 
-import { asUtcInstant } from '../../../../domain/src/time.ts';
-import { fixtureContribution } from '../../../../human-economic-contribution/src/fixtures.ts';
-import { DEFAULT_VERIFICATION_POLICY_VERSION } from '../../../../human-economic-contribution/src/fingerprint.ts';
-import { HumanContributionRegistry } from '../../../../human-economic-contribution/src/registry.ts';
+import { asUtcInstant } from '../../../../../domain/src/time.ts';
+import { fixtureContribution } from '../../../../../human-economic-contribution/src/fixtures.ts';
+import { DEFAULT_VERIFICATION_POLICY_VERSION } from '../../../../../human-economic-contribution/src/fingerprint.ts';
+import { HumanContributionRegistry } from '../../../../../human-economic-contribution/src/registry.ts';
 import {
   simulationValuationPolicy,
   valueVerifiedContribution,
-} from '../../../../human-economic-contribution/src/valuation/index.ts';
-import { nativeAssetConstitution } from '../constitution.ts';
-import { emptyBook, expectedTotal, observedTotal, supplyReconciles } from '../supply.ts';
+} from '../../../../../human-economic-contribution/src/valuation/index.ts';
+import { nativeAssetConstitution } from '../../constitution.ts';
+import { emptyBook, expectedTotal, observedTotal, supplyReconciles } from '../../supply.ts';
 import {
   AI_AUTHORIZED,
   HumanContributionMonetaryBridge,
@@ -29,7 +29,7 @@ import {
   simulationConversionPolicy,
   type EngineValuationReference,
   type VerifiedHumanEconomicContribution,
-} from './index.ts';
+} from '../index.ts';
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { message: string } }): T {
   if (!result.ok) {

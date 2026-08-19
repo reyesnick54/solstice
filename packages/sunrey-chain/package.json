@@ -46,7 +46,7 @@
     "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/cli-main.ts",
     "demo:economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/demo.ts",
     "demo:human-contribution-monetary-bridge": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/demo.ts",
-    "demo:human-contribution-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/settlement-demo.ts",
+    "demo:human-contribution-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/settlement/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
   },
   "engines": {
