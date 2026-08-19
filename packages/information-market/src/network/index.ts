@@ -42,6 +42,20 @@ export {
   type InformationRightType,
   type OutputClass,
 } from './taxonomy.ts';
+export {
+  HIN_CONTRIBUTION_BOUNDARY,
+  INFORMATION_RIGHT_CONTRIBUTION,
+  NON_HIN_CONTRIBUTION_CLASSES,
+  bindCanonicalHumanContributionRegistry,
+  createHinContributionAdapter,
+  createInProcessHumanContributionRegistry,
+  createInMemoryDataAssetProjection,
+  HinContributionAdapter,
+  type HumanContributionRecord,
+  type HumanContributionRegistryPort,
+  type InformationRightContributionEvidence,
+} from './contribution/index.ts';
+export { runHumanInformationContributionDemo } from './contribution/demo.ts';
 export type {
   CleanRoomComputationRequest,
   CleanRoomComputationResult,

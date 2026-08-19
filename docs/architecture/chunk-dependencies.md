@@ -162,6 +162,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
+| sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
@@ -921,6 +922,19 @@ inference-provider adapter and a configurable transport contract.
 Grok is not implemented here. Do not create `packages/s3m`,
 `packages/s3m-runtime`, or `packages/s3m-training`. The evaluator
 returns `mustStop: false`.
+Chunk 107 implements the Human Information Network to Human
+Economic Contribution Registry adapter at
+`packages/information-market/src/network/contribution`. Capability
+`sunrey-hin-contribution-integration` is `IMPLEMENTED`. See
+[`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md)
+and
+[`docs/economics/chunk-107-hin-contribution-integration.md`](../economics/chunk-107-hin-contribution-integration.md).
+HIN is the source adapter for `INFORMATION_RIGHT_CONTRIBUTION`.
+Other contribution classes use their own verified attestation paths.
+Compensation remains `mintRequested: false`. Do not create
+`packages/hin-contribution-registry`,
+`packages/information-contribution-v2`, or
+`packages/human-information-contribution`. The evaluator returns
 Chunk 104 implements the canonical Human Economic Contribution
 ontology at `packages/human-economic-contribution`. Capability
 `sunrey-human-economic-contributions` is `IMPLEMENTED`. See

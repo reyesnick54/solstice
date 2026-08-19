@@ -87,6 +87,7 @@ export type DeclaredDataAssetInput = {
   readonly consentVersion?: string;
   readonly purposeVersion?: string;
   readonly derivationVersion?: string;
+  readonly contributionId?: string;
 };
 
 export type GraphView = {
@@ -283,6 +284,7 @@ export class EconomicGraphService {
         ...(input.consentVersion ? { consentVersion: input.consentVersion } : {}),
         ...(input.purposeVersion ? { purposeVersion: input.purposeVersion } : {}),
         ...(input.derivationVersion ? { derivationVersion: input.derivationVersion } : {}),
+        ...(input.contributionId ? { contributionId: input.contributionId } : {}),
       },
       canonicalRef: { system: 'PERSONAL_DATA_VAULT', id: input.vaultAssetId },
       quality: 'CURRENT',

@@ -1353,6 +1353,18 @@ cannot rewrite finalized transfers. Do not create
 `packages/wallet-recovery-v2`. See
 [`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
 
+Chunk 107 implements the Human Information Network to Human
+Economic Contribution Registry adapter at
+`packages/information-market/src/network/contribution`. Capability
+`sunrey-hin-contribution-integration` is `IMPLEMENTED`. HIN depends
+on `HumanContributionRegistryPort`. The adapter stores privacy-safe
+references and hashes only. Merely owning data or granting consent
+does not create a verified contribution or mint SunRey. Do not
+create `packages/hin-contribution-registry`,
+`packages/information-contribution-v2`, or
+`packages/human-information-contribution`. See
+[`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md).
+
 ## Agent stop rule
 
 If a task requires a **protected** capability that is not

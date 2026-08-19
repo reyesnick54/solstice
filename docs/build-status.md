@@ -4,6 +4,15 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Human Information Network to Human Economic Contribution Registry
+  adapter (Chunk 107,
+  `packages/information-market/src/network/contribution`):
+  `HinContributionAdapter` maps realized authorized HIN use onto
+  privacy-safe `INFORMATION_RIGHT_CONTRIBUTION` evidence and a
+  `HumanContributionRegistryPort`. Ownership or consent alone does
+  not verify a contribution. HIN compensation does not mint SunRey.
+  Capability `sunrey-hin-contribution-integration` is `IMPLEMENTED`.
+  See `docs/economics/chunk-107-hin-contribution-integration.md`.
 - S3M primary SunRey intelligence provider (Chunk 102,
   `packages/ai-runtime/src/providers/s3m`): `S3mInferenceProvider`
   satisfies the Chunk 101 `AiInferenceProvider` contract. Configurable
