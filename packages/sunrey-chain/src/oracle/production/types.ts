@@ -22,6 +22,8 @@ export const CATEGORY_TO_FACT_TYPE = PRIMARY_FACT_TYPE_BY_CATEGORY;
 
 export const PRODUCTION_ORACLE_SCHEMA_VERSION = 1 as const;
 export const COLLECTOR_VERSION = 'sunrey-oracle-collector/1' as const;
+export const CONNECTOR_VERSION = 'sunrey-oracle-connector/1' as const;
+export type OracleCollectorVersion = typeof COLLECTOR_VERSION | typeof CONNECTOR_VERSION;
 export const QUALITY_FORMULA_VERSION = 'oracle.quality.profile.v1' as const;
 export const NORMALIZATION_VERSION = 'oracle.normalize.v1' as const;
 export const CANONICAL_NORMALIZATION_VERSION = 'sunrey.economic-unit.normalization.v1' as const;
@@ -121,6 +123,22 @@ export const PRODUCTION_ORACLE_REJECTION_CODES = [
   'AUTOMATIC_ISSUANCE_FORBIDDEN',
   'AI_CANNOT_RESTORE_PROVIDER',
   'FABRICATED_DATA_FORBIDDEN',
+  'CONNECTIVITY_DISABLED',
+  'ENDPOINT_NOT_APPROVED',
+  'SSRF_DESTINATION_FORBIDDEN',
+  'TLS_POLICY_VIOLATION',
+  'REQUEST_TIMEOUT',
+  'RATE_LIMITED',
+  'CIRCUIT_OPEN',
+  'RESPONSE_TOO_LARGE',
+  'CONTENT_TYPE_INVALID',
+  'HTTP_STATUS_REJECTED',
+  'OAUTH_TOKEN_FAILED',
+  'SIGNATURE_PROFILE_INVALID',
+  'SOURCE_RECORD_INVALID',
+  'SOURCE_TIMESTAMP_MISSING',
+  'SOURCE_TIMESTAMP_STALE',
+  'PROVENANCE_HASH_FAILED',
 ] as const;
 export type ProductionOracleRejectionCode = (typeof PRODUCTION_ORACLE_REJECTION_CODES)[number];
 
@@ -213,7 +231,7 @@ export type SourceProvenance = {
   readonly normalizationVersion: string;
   readonly credentialRefHref: string | null;
   readonly authMethod: AuthenticationMethod;
-  readonly collectorVersion: typeof COLLECTOR_VERSION;
+  readonly collectorVersion: OracleCollectorVersion;
   readonly contentHash: string;
 };
 

@@ -1,0 +1,14 @@
+{
+  "chunk": "CHUNK-127",
+  "title": "Production Economic Data Connector Runtime and Provider-Neutral Transport",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-data-connector-runtime"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production. Extends Chunk 68. Off-chain async connector runtime, injectable transport, endpoint allowlist, SSRF/TLS firewall, provider-neutral auth, retries, rate limits, and circuit breaker. Consensus never calls HTTP. Fetch success is not a verified fact and does not mint MoonRey. evaluateChunkRequirements returns mustStop: false. Do not create packages/oracle-connectors, packages/data-ingestion, packages/moonrey-connectors, or packages/provider-runtime-v2."
+}

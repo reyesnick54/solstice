@@ -200,6 +200,8 @@ export class MoonReyPolicyRegistry {
 
   valueFunctionActivationHistory(): readonly ValueFunctionActivationRecord[] {
     return this.valueFunctions.activationHistory();
+  }
+
   listAttributionPolicies(): readonly ProductiveAttributionPolicy[] {
     return [...this.attributionPolicies];
   }

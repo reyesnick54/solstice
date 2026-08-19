@@ -1142,15 +1142,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful policy decision."
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 valuation engine at src/valuation. Not PEVE, not SunRey issuance, not a human-worth score, not a mint or Execution Authority. Simulation only.",
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 110 valuation constitution at src/valuation. Defines contribution classes, provenance, lifecycle, fingerprints, and versioned valuation methods. Not PEVE, not a SunRey quantity, not a human-worth score, not a mint or Execution Authority. Simulation only.",
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 109 evidence-verification policy. Defines contribution classes, provenance, lifecycle, fingerprints, and class-specific verification. Not PEVE, not token valuation, not a human-worth score, not a mint or Execution Authority. Simulation only.",
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful policy decision.",
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry and Chunk 114 rights/provenance verification layer for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful EconomicAssetVerificationDecision."
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only. VERIFIED requires a successful EconomicAssetVerificationDecision."
     }
   ],
@@ -2750,7 +2741,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 61 formal-assurance layer. TLA+/TLC models and bounded Rust harnesses over existing SunRey owners. Not a second consensus, ledger, exchange, or verifier product. Results are model-checked within stated bounds."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle/production. Chunk 127 adds the off-chain connector runtime on the same owner. Consensus never calls HTTP. No fabricated provider agreements."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -2835,7 +2826,7 @@
         "packages/issuance-policy",
         "packages/attribution-ledger",
         "packages/moonrey-attribution-book",
-        "packages/productive-attribution-ledger"
+        "packages/productive-attribution-ledger",
         "packages/attribution-policy",
         "packages/moonrey-attribution",
         "packages/productive-attribution",
@@ -2873,8 +2864,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain."
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path."
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry."
     },
     {
@@ -3938,10 +3927,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 108/112 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
-      "notes": "Chunk 108/112 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
-      "notes": "Chunk 108/112 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
-      "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize.",
       "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint or valuation engine. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize."
     },
     {
@@ -3969,10 +3954,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN to HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN to HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN to HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Chunk 109 requires the contribution verification engine before VERIFIED. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint.",
       "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
@@ -4029,7 +4010,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 111 engineering-simulation reference valuation. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No mint or Execution Authority. Do not create a second registry or valuation-engine package.",
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Do not create a second registry package."
     },
     {
@@ -4092,11 +4072,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
-      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine.",
-      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
-      "notes": "Chunk 111 valuation engine and Chunk 110 constitution at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
-      "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 109 evidence-verification policy. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
       "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. A valuation result is not settlement authorization."
     },
     {
@@ -4131,12 +4106,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
-      "notes": "Chunk 109 versioned, contribution-class-specific evidence-verification layer. VERIFIED means the contribution passed the activated engineering policy. Not valuation or minting.",
-      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
-      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
-      "notes": "Chunk 110 valuation constitution and methodology registry. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine.",
-      "notes": "Chunk 109 class-specific evidence-verification layer on the existing Human Economic Contribution owner. VERIFIED means the contribution passed a versioned evidence policy. Not valuation, not minting, not Execution Authority, not a human-worth score.",
       "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     },
     {
@@ -4190,7 +4159,7 @@
         "packages/economic-units",
         "packages/sunrey-units",
         "packages/normalization",
-        "packages/canonical-units"
+        "packages/canonical-units",
         "packages/canonical-units",
         "packages/moonrey-units",
         "packages/productive-units-v2",
@@ -4201,7 +4170,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 118 canonical economic unit and normalization constitution. Extends the Chunk 43 protocol unit contract inside packages/sunrey-chain. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Not MoonRey issuance, not a fake universal unit, not a live provider plane."
       "notes": "Chunk 118 canonical economic unit constitution and Chunk 119 productive-pipeline migration at packages/sunrey-chain/src/units. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Physical measurement is not economic weighting and not MoonRey issuance. Do not create a second unit authority."
     },
     {
@@ -4230,7 +4198,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry and Chunk 114 verification layer. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. VERIFIED requires a successful EconomicAssetVerificationDecision. Registration does not authorize settlement or minting."
       "notes": "Chunk 116 exhaustive DataSourceCategory to FactType to ProductiveCategory mapping. Does not connect live providers, value output, or mint MoonRey. Chunk 71 remains the issuance authority."
     },
     {
@@ -4261,7 +4228,7 @@
         "packages/source-taxonomy",
         "packages/productive-taxonomy",
         "packages/moonrey-source-taxonomy",
-        "packages/canonical-units"
+        "packages/canonical-units",
         "packages/dataset-verification",
         "packages/data-rights-registry",
         "packages/economic-provenance",
@@ -4271,9 +4238,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 118 canonical economic unit and normalization constitution. Extends the Chunk 43 protocol unit contract inside packages/sunrey-chain. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Not MoonRey issuance, not a fake universal unit, not a live provider plane.",
-      "notes": "Chunk 116 exhaustive DataSourceCategory to FactType to ProductiveCategory mapping. Does not connect live providers, value output, or mint MoonRey. Chunk 71 remains the issuance authority.",
-      "notes": "Chunk 118 canonical economic unit and normalization constitution. Extends the Chunk 43 protocol unit contract inside packages/sunrey-chain. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Not MoonRey issuance, not a fake universal unit, not a live provider plane."
       "notes": "Chunk 114 class-specific rights/provenance/lineage verification layer on the existing Economic Asset Registry owner. VERIFIED means the descriptor passed a versioned policy. Not valuation, not minting, not Execution Authority."
     },
     {
@@ -4303,6 +4267,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 120 canonical productive economic event identity and rebuildable attribution graph. Extends Chunk 74 policy-governance. Strengthens existing fingerprints with v3. Not a second ledger, mint, or allocation engine."
+    },
+    {
+      "id": "sunrey-economic-data-connector-runtime",
+      "name": "SunRey production economic data connector runtime",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/runtime.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "EconomicDataConnectorRuntime",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/oracle-connectors",
+        "packages/data-ingestion",
+        "packages/moonrey-connectors",
+        "packages/provider-runtime-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 127 off-chain economic data connector runtime and provider-neutral transport at packages/sunrey-chain/src/oracle/production. Extends Chunk 68. Consensus never calls HTTP. Fetch success is not a verified fact and does not mint MoonRey. No named live provider integration."
     }
   ],
   "authorizedMutationPaths": [
@@ -5090,12 +5082,16 @@
     "packages/economic-units",
     "packages/sunrey-units",
     "packages/normalization",
-    "packages/canonical-units"
+    "packages/canonical-units",
     "packages/canonical-units",
     "packages/moonrey-taxonomy",
     "packages/source-taxonomy",
     "packages/productive-taxonomy",
-    "packages/moonrey-source-taxonomy"
+    "packages/moonrey-source-taxonomy",
+    "packages/oracle-connectors",
+    "packages/data-ingestion",
+    "packages/moonrey-connectors",
+    "packages/provider-runtime-v2"
   ],
   "capabilities": [
     {
@@ -5495,7 +5491,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 44 derived Global Productive Capacity Graph, productive object/claim registry, anti-double-counting fingerprints, and verified productive contributions at packages/sunrey-chain. Graph is rebuildable from finalized facts. Do not create packages/productive-capacity or packages/moonrey."
       "notes": "Chunk 44 derived Global Productive Capacity Graph, productive object/claim registry, anti-double-counting fingerprints, and verified productive contributions at packages/sunrey-chain. Chunk 117 ProductiveClaimCandidate mapping enforcement lives at src/productive/claim-candidate. Chunk 119 migrates new contributions onto CanonicalProductiveMeasurement from packages/sunrey-chain/src/units. Graph is rebuildable from finalized facts. Do not create packages/productive-capacity or packages/moonrey."
     },
     {
@@ -5688,7 +5683,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 127 adds the off-chain connector runtime on the same owner. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-production-storage",
@@ -5710,8 +5705,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds non-monetary ProductiveAttributionBook at policy-governance/attribution-accounting. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or attribution ledger. Do not create packages/moonrey-policy, packages/moonrey-economics, packages/issuance-policy, packages/attribution-ledger, packages/moonrey-attribution-book, or packages/productive-attribution-ledger."
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry. Do not create packages/moonrey-policy, packages/moonrey-economics, packages/issuance-policy, packages/attribution-policy, or packages/moonrey-attribution."
       "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 120 event identity and attribution lives at src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path. Do not create packages/moonrey-policy, packages/moonrey-economics, or packages/issuance-policy."
     },
     {
@@ -5923,10 +5916,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 108/112 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Engineering valuation is simulation-only. Production valuation remains unactivated. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
-      "notes": "Chunk 108/112 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Engineering valuation is simulation-only. Production valuation remains unactivated. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
-      "notes": "Chunk 108/112 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Engineering valuation is simulation-only. Production valuation remains unactivated. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
-      "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint.",
       "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Valuation engine is not implemented. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint."
     },
     {
@@ -5934,9 +5923,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/information-market",
       "protected": true,
-      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED.",
-      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED.",
-      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false. Chunk 109 verification is required before VERIFIED.",
       "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
     },
     {
@@ -5944,9 +5930,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
       "protected": true,
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 engineering-simulation reference valuation. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry.",
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 engineering-simulation reference valuation. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry.",
-      "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 engineering-simulation reference valuation. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry.",
       "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
     },
     {
@@ -5954,9 +5937,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/economic-asset-registry",
       "protected": true,
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data.",
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 114 adds the verification layer. Chunk 115 adds the cross-domain integration fabric and EconomicAssetRegistryPort. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data. VERIFIED requires a successful policy decision.",
       "notes": "Chunk 113 master dataset and economic-asset metadata registry and Chunk 114 verification layer. Not a blob store, HIN, PDV, PEG, contribution registry, oracle, productive engine, or monetary supply book. VERIFIED requires a successful policy decision. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, packages/tokenized-data, packages/dataset-verification, packages/data-rights-registry, packages/economic-provenance, packages/asset-rights, or packages/economic-assets-v2."
     },
     {
@@ -5964,7 +5944,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/human-economic-contribution",
       "protected": true,
-      "notes": "Chunk 111 valuation engine and Chunk 110 constitution at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
       "notes": "Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
     },
     {
@@ -5979,8 +5958,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 118 canonical economic unit normalization at packages/sunrey-chain/src/units. Extends the Chunk 43 protocol unit contract. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Do not create packages/unit-registry, packages/economic-units, packages/sunrey-units, packages/normalization, or packages/canonical-units.",
-      "notes": "Chunk 118 canonical economic unit normalization at packages/sunrey-chain/src/units. Extends the Chunk 43 protocol unit contract. Productive UnitRegistry remains a compatibility facade. Exact rational conversion only. Do not create packages/unit-registry, packages/economic-units, packages/sunrey-units, packages/normalization, or packages/canonical-units."
       "notes": "Chunk 118 canonical economic unit constitution at packages/sunrey-chain/src/units. Chunk 119 migrates the MoonRey productive pipeline onto that authority via CanonicalProductiveMeasurement. Productive UnitRegistry is a compatibility facade, not an independent semantic authority. Physical measurement is not economic weighting and is not MoonRey issuance. Do not create packages/unit-registry, packages/economic-units, packages/sunrey-units, packages/normalization, packages/canonical-units, packages/moonrey-units, packages/productive-units-v2, packages/economic-normalization-v2, packages/measurement-engine, or packages/unit-registry-v2."
     },
     {
@@ -5988,7 +5965,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 116 canonical source-to-productive taxonomy at packages/sunrey-chain/src/productive/source-taxonomy. Mapping is not issuance. Do not create packages/moonrey-taxonomy, packages/source-taxonomy, packages/productive-taxonomy, or packages/moonrey-source-taxonomy.",
       "notes": "Chunk 116 canonical source-to-productive taxonomy at packages/sunrey-chain/src/productive/source-taxonomy. Mapping is not issuance. Do not create packages/moonrey-taxonomy, packages/source-taxonomy, packages/productive-taxonomy, or packages/moonrey-source-taxonomy."
     },
     {
@@ -6004,11 +5980,20 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint or replace moonrey.issuance.formula.v1. Production remains inactive."
+    },
+    {
       "id": "moonrey-economic-event-attribution",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 120 canonical productive economic event identity and attribution graph at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 74. Event fingerprint v3 strengthens historical v1/v2 fingerprints. Graph is a projection, not a ledger or mint. Do not create packages/moonrey-attribution, packages/economic-event-graph, packages/deduplication-engine, or packages/productive-attribution-v2."
+    },
+    {
+      "id": "sunrey-economic-data-connector-runtime",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 127 off-chain economic data connector runtime at packages/sunrey-chain/src/oracle/production. Extends Chunk 68 production oracles. Consensus never calls HTTP. Fetch success is not a verified economic fact and does not mint MoonRey. Do not create packages/oracle-connectors, packages/data-ingestion, packages/moonrey-connectors, or packages/provider-runtime-v2."
     }
   ],
   "boundedContexts": [
@@ -6137,10 +6122,6 @@
         "packages/human-economic-contribution"
       ],
       "protected": true,
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 111 valuation engine. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. A valuation result is not SunRey issuance.",
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 111 valuation engine. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. A valuation result is not SunRey issuance.",
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 111 valuation engine. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. A valuation result is not SunRey issuance.",
-      "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 110 valuation constitution. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation. A valuation reference is not a SunRey quantity.",
       "notes": "Chunk 104 ontology, Chunk 106 registry, and Chunk 109 evidence-verification policy. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation. Verification is not valuation."
     },
     {
@@ -6150,8 +6131,6 @@
         "packages/economic-asset-registry"
       ],
       "protected": true,
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply."
-      "notes": "Chunk 113 master dataset and economic-asset metadata registry. Chunk 114 is the verification layer. Chunk 115 is the cross-domain integration fabric on the same owner. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. VERIFIED requires a successful policy decision.",
       "notes": "Chunk 113 master dataset and economic-asset metadata registry and Chunk 114 verification layer. Not HIN, PDV, PEG, Human Economic Contribution Registry, oracle consensus, productive engine, or native monetary supply. VERIFIED requires a successful policy decision."
     },
     {
@@ -6489,7 +6468,7 @@
     "packages/economic-units",
     "packages/sunrey-units",
     "packages/normalization",
-    "packages/canonical-units"
+    "packages/canonical-units",
     "packages/canonical-units",
     "packages/moonrey-source-taxonomy",
     "packages/source-claim-enforcement",
@@ -6501,6 +6480,10 @@
     "packages/moonrey-attribution",
     "packages/economic-event-graph",
     "packages/deduplication-engine",
-    "packages/productive-attribution-v2"
+    "packages/productive-attribution-v2",
+    "packages/oracle-connectors",
+    "packages/data-ingestion",
+    "packages/moonrey-connectors",
+    "packages/provider-runtime-v2"
   ]
 }

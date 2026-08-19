@@ -2208,4 +2208,27 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/mainnet-infrastructure-v2')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/cloud-control-plane')), false);
   });
+
+  it('CHUNK-127 implements the off-chain economic data connector runtime on sunrey-chain', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-data-connector-runtime').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-data-connector-runtime').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-economic-data-connector-runtime').owner, 'packages/sunrey-chain');
+    assert.equal(evaluateCapability(manifest, 'sunrey-production-oracles').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-127',
+    );
+    assert.ok(declared, 'CHUNK-127 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/architecture/chunk-127-economic-data-connector-runtime.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/economics/chunk-127-economic-data-connector-runtime.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-chain/src/oracle/production/runtime.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/oracle-connectors')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/data-ingestion')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-connectors')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/provider-runtime-v2')), false);
+  });
 });
