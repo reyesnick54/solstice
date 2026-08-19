@@ -2746,7 +2746,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–135 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2846,10 +2846,6 @@
       "protectedSymbols": [
         {
           "name": "RealEstateEvidenceRecord",
-          "kind": "type"
-        },
-        {
-          "name": "InfrastructureEvidenceRecord",
           "kind": "type"
         }
       ],
@@ -5898,7 +5894,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–133 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",

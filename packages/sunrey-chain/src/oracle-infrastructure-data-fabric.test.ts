@@ -103,7 +103,7 @@ describe('CHUNK-135 infrastructure data fabric', () => {
       infrastructure: terminal.value.observation,
       sameUnderlyingService: true,
     });
-    assert.equal(same.decisions.some((row) => row.reasons.includes('REAL_ESTATE_INFRASTRUCTURE_SAME_SERVICE')), true);
+    assert.equal(same.decisions.some((row) => row.reasonCodes.includes('REAL_ESTATE_INFRASTRUCTURE_SAME_SERVICE')), true);
     assert.equal(same.decisions.filter((row) => row.decision === 'FULL_ATTRIBUTION').length < 2, true);
   });
 
@@ -119,7 +119,7 @@ describe('CHUNK-135 infrastructure data fabric', () => {
     });
     assert.equal(
       distinct.decisions.some((row) =>
-        row.reasons.includes('INDEPENDENT_INFRASTRUCTURE_SERVICE') || row.reasons.includes('INDEPENDENT_LOGISTICS_SERVICE') || row.reasons.includes('SEPARATE_REALIZED_SERVICE'),
+        row.reasonCodes.includes('INDEPENDENT_INFRASTRUCTURE_SERVICE') || row.reasonCodes.includes('INDEPENDENT_LOGISTICS_SERVICE') || row.reasonCodes.includes('SEPARATE_REALIZED_SERVICE'),
       ),
       true,
     );
@@ -135,7 +135,7 @@ describe('CHUNK-135 infrastructure data fabric', () => {
       infrastructure: terminal.value.observation,
       sameUnderlyingService: true,
     });
-    assert.equal(duplicate.decisions.some((row) => row.reasons.includes('INFRASTRUCTURE_LOGISTICS_DUPLICATE')), true);
+    assert.equal(duplicate.decisions.some((row) => row.reasonCodes.includes('INFRASTRUCTURE_LOGISTICS_DUPLICATE')), true);
     assert.equal(duplicate.decisions.filter((row) => row.decision === 'FULL_ATTRIBUTION').length < 2, true);
   });
 
