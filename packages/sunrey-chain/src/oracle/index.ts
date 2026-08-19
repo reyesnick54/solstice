@@ -86,3 +86,10 @@ export {
 } from './adapter.ts';
 export type { OracleAdapter, OracleAdapterContext, OracleObservationDraft } from './adapter.ts';
 export * from './production/index.ts';
+export {
+  OracleEconomicAssetAdapter,
+  createOracleEconomicAssetAdapter,
+  mapOracleObservationSet,
+  mapOracleSource,
+  mapVerifiedEconomicFact,
+} from './economic-asset-adapter.ts';

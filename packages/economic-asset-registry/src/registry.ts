@@ -1,8 +1,11 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 import { createEconomicAssetDescriptor, replaceDescriptor } from './descriptor.ts';
-import { assetIdFor, type AssetId } from './ids.ts';
+import { assetIdFor, contentCommitmentFor, type AssetId } from './ids.ts';
 import { refuseNativeMonetaryAsset } from './invariants.ts';
+import { assertAcyclicLineage, normalizeLineage } from './lineage.ts';
+import type { AddLineageInput, EconomicAssetRegistryPort } from './port.ts';
+import { sourceIdentityKey, sourceProjectionKey } from './port.ts';
 import { EconomicAssetQueryIndex } from './projections.ts';
 import type { EconomicAssetRegistryStore } from './store.ts';
 import { isNativeMonetaryAssetClass } from './taxonomy.ts';
@@ -16,6 +19,12 @@ import type {
   RegistryAudit,
   RegistryFailure,
 } from './types.ts';
+import {
+  ENGINEERING_VERIFICATION_POLICY,
+  EconomicAssetVerificationEngine,
+  type EconomicAssetVerificationDecision,
+  type EconomicAssetVerificationPolicy,
+} from './verification/index.ts';
 
 const TERMINAL = new Set(['SUPERSEDED', 'RETIRED']);
 
@@ -32,33 +41,101 @@ function failure(code: RegistryFailure['code'], message: string): RegistryFailur
  * Contribution Registry, oracles, productive engines, or the
  * monetary supply book.
  */
-export class EconomicAssetRegistry {
+export class EconomicAssetRegistry implements EconomicAssetRegistryPort {
   private readonly descriptors = new Map<AssetId, EconomicAssetDescriptor>();
   private readonly indexes = new EconomicAssetQueryIndex();
   private readonly store: EconomicAssetRegistryStore | undefined;
+  private readonly bySourceIdentity = new Map<string, AssetId>();
+  private readonly byProjection = new Map<string, AssetId>();
+  private readonly verifier: EconomicAssetVerificationEngine;
+  private readonly policy: EconomicAssetVerificationPolicy;
   private projectionsReady = true;
 
-  constructor(store?: EconomicAssetRegistryStore) {
+  constructor(store?: EconomicAssetRegistryStore, policy: EconomicAssetVerificationPolicy = ENGINEERING_VERIFICATION_POLICY) {
     this.store = store;
+    this.policy = policy;
+    this.verifier = new EconomicAssetVerificationEngine(policy);
   }
 
   register(input: RegisterAssetInput): Result<EconomicAssetDescriptor, RegistryFailure> {
     if (isNativeMonetaryAssetClass(input.assetClass as string)) {
       return err(refuseNativeMonetaryAsset(input.assetClass));
     }
-    const created = createEconomicAssetDescriptor(input, this.allLineage());
+    const sourceRecordId = input.sourceRecordId ?? input.contentCommitmentMaterial;
+    const projection = sourceProjectionKey({
+      canonicalOwnerSystem: input.canonicalOwnerSystem,
+      sourceRecordId,
+      sourceVersion: input.sourceSchemaVersion ?? '1',
+      contentCommitmentMaterial: contentCommitmentFor(input.contentCommitmentMaterial),
+    });
+    const existingProjection = this.byProjection.get(projection);
+    if (existingProjection) {
+      const current = this.descriptors.get(existingProjection);
+      if (current) {
+        return ok(current);
+      }
+    }
+    const identity = sourceIdentityKey(input.canonicalOwnerSystem, sourceRecordId);
+    const existingIdentity = this.bySourceIdentity.get(identity);
+    if (existingIdentity && !input.supersedes && !input.corrects) {
+      const current = this.descriptors.get(existingIdentity);
+      if (current && current.contentCommitment === contentCommitmentFor(input.contentCommitmentMaterial)) {
+        return ok(current);
+      }
+      if (current && !current.supersededBy) {
+        return err(
+          failure(
+            'SOURCE_IDENTITY_CONFLICT',
+            `source ${sourceRecordId} is already projected; changed versions use supersession or correction`,
+          ),
+        );
+      }
+    }
+    const created = createEconomicAssetDescriptor({ ...input, sourceRecordId }, this.allLineage());
     if (!created.ok) {
       return created;
     }
     if (this.descriptors.has(created.value.assetId)) {
       return err(failure('ALREADY_REGISTERED', `asset ${created.value.assetId} already exists; updates use supersession`));
     }
+    if (input.status === 'VERIFIED') {
+      const decision = this.verifier.evaluate({
+        descriptor: created.value,
+        knownAssets: this.knownAssets(),
+        evaluatedAt: created.value.createdAt,
+        policy: this.policy,
+      });
+      if (decision.decision !== 'VERIFIED') {
+        return err(
+          failure(
+            'VERIFICATION_REJECTED',
+            `register({ status: "VERIFIED" }) cannot bypass policy: ${decision.decisionCodes.join(',') || decision.decision}`,
+          ),
+        );
+      }
+      const verified = this.descriptorFromDecision(created.value, decision);
+      this.put(verified);
+      return ok(verified);
+    }
     this.put(created.value);
     return ok(created.value);
   }
 
+  registerDescriptor(input: RegisterAssetInput): Result<EconomicAssetDescriptor, RegistryFailure> {
+    return this.register(input);
+  }
+
   get(assetId: AssetId): EconomicAssetDescriptor | undefined {
     return this.descriptors.get(assetId);
+  }
+
+  getDescriptor(assetId: AssetId): EconomicAssetDescriptor | undefined {
+    return this.get(assetId);
+  }
+
+  findBySourceRecord(canonicalOwnerSystem: string, sourceRecordId: string): EconomicAssetDescriptor | undefined {
+    const currentId = this.bySourceIdentity.get(sourceIdentityKey(canonicalOwnerSystem, sourceRecordId));
+    return currentId ? this.descriptors.get(currentId) : undefined;
   }
 
   updateMetadata(assetId: AssetId, input: RegisterAssetInput): Result<EconomicAssetDescriptor, RegistryFailure> {
@@ -130,28 +207,93 @@ export class EconomicAssetRegistry {
     return ok(corrected);
   }
 
-  verify(assetId: AssetId, verifiedAt: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+  verifyDescriptor(assetId: AssetId, verifiedAt: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+    return this.verify(assetId, verifiedAt);
+  }
+
+  queryDescriptors(criteria: EconomicAssetQuery): readonly EconomicAssetDescriptor[] {
+    return this.query(criteria);
+  }
+
+  addLineage(input: AddLineageInput): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const from = this.descriptors.get(input.fromAssetId);
+    const to = this.descriptors.get(input.toAssetId);
+    if (!to) {
+      return err(failure('LINEAGE_TARGET_NOT_FOUND', 'both lineage endpoints must already be registered'));
+    }
+    if (!from) {
+      return err(failure('LINEAGE_TARGET_NOT_FOUND', 'both lineage endpoints must already be registered'));
+    }
+    const nextEdges = normalizeLineage([
+      ...from.lineage,
+      { kind: input.kind, fromAssetId: input.fromAssetId, toAssetId: input.toAssetId },
+    ]);
+    const cycle = assertAcyclicLineage(this.allLineage(), nextEdges);
+    if (!cycle.ok) {
+      return cycle;
+    }
+    const next = replaceDescriptor(from, { lineage: nextEdges }, input.at);
+    this.put(next);
+    return ok(next);
+  }
+
+  restrict(assetId: AssetId, at: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+    return this.setLifecycle(assetId, 'RESTRICTED', at);
+  }
+
+  suspend(assetId: AssetId, at: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+    return this.setLifecycle(assetId, 'SUSPENDED', at);
+  }
+
+  evaluateVerification(
+    assetId: AssetId,
+    evaluatedAt: UtcInstant,
+    policy?: EconomicAssetVerificationPolicy,
+  ): Result<EconomicAssetVerificationDecision, RegistryFailure> {
     const current = this.descriptors.get(assetId);
     if (!current) {
       return err(failure('ASSET_NOT_FOUND', `asset ${assetId} was not registered`));
+    }
+    return ok(
+      this.verifier.evaluate({
+        descriptor: current,
+        knownAssets: this.knownAssets(),
+        evaluatedAt,
+        policy: policy ?? this.policy,
+      }),
+    );
+  }
+
+  applyVerificationDecision(decision: EconomicAssetVerificationDecision): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const current = this.descriptors.get(decision.assetId);
+    if (!current) {
+      return err(failure('ASSET_NOT_FOUND', `asset ${decision.assetId} was not registered`));
+    }
+    if (decision.decision !== 'VERIFIED') {
+      return err(
+        failure(
+          'VERIFICATION_REJECTED',
+          `asset ${decision.assetId} was not verified: ${decision.decisionCodes.join(',') || decision.decision}`,
+        ),
+      );
     }
     if (current.status === 'VERIFIED') {
       return ok(current);
     }
     if (TERMINAL.has(current.status) || current.status === 'SUSPENDED') {
-      return err(failure('INVALID_LIFECYCLE', `asset ${assetId} cannot be verified from ${current.status}`));
+      return err(failure('INVALID_LIFECYCLE', `asset ${decision.assetId} cannot be verified from ${current.status}`));
     }
-    const next = replaceDescriptor(
-      current,
-      {
-        status: 'VERIFIED',
-        qualityClass: current.qualityClass === 'AUTHORITATIVE' ? 'AUTHORITATIVE' : 'VERIFIED',
-        freshness: current.freshness === 'SUPERSEDED' ? current.freshness : 'CURRENT',
-      },
-      verifiedAt,
-    );
+    const next = this.descriptorFromDecision(current, decision);
     this.put(next);
     return ok(next);
+  }
+
+  verify(assetId: AssetId, verifiedAt: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const evaluated = this.evaluateVerification(assetId, verifiedAt);
+    if (!evaluated.ok) {
+      return evaluated;
+    }
+    return this.applyVerificationDecision(evaluated.value);
   }
 
   query(criteria: EconomicAssetQuery): readonly EconomicAssetDescriptor[] {
@@ -177,10 +319,13 @@ export class EconomicAssetRegistry {
 
   restore(snapshot: EconomicAssetRegistrySnapshot): void {
     this.descriptors.clear();
+    this.bySourceIdentity.clear();
+    this.byProjection.clear();
     for (const descriptor of snapshot.descriptors) {
       this.descriptors.set(descriptor.assetId, descriptor);
     }
     this.rebuildProjections();
+    this.rebuildSourceIndexes();
   }
 
   rebuildProjections(): void {
@@ -261,13 +406,92 @@ export class EconomicAssetRegistry {
     });
   }
 
+  private setLifecycle(
+    assetId: AssetId,
+    status: 'RESTRICTED' | 'SUSPENDED',
+    at: UtcInstant,
+  ): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const current = this.descriptors.get(assetId);
+    if (!current) {
+      return err(failure('ASSET_NOT_FOUND', `asset ${assetId} was not registered`));
+    }
+    if (TERMINAL.has(current.status) || current.supersededBy) {
+      return err(failure('INVALID_LIFECYCLE', `asset ${assetId} cannot move from ${current.status} to ${status}`));
+    }
+    if (current.status === status) {
+      return ok(current);
+    }
+    const next = replaceDescriptor(current, { status }, at);
+    this.put(next);
+    return ok(next);
+  }
+
   private put(descriptor: EconomicAssetDescriptor): void {
     this.descriptors.set(descriptor.assetId, descriptor);
+    if (!descriptor.supersededBy) {
+      this.bySourceIdentity.set(
+        sourceIdentityKey(descriptor.canonicalOwnerSystem, descriptor.sourceRecordId),
+        descriptor.assetId,
+      );
+    }
+    this.byProjection.set(
+      sourceProjectionKey({
+        canonicalOwnerSystem: descriptor.canonicalOwnerSystem,
+        sourceRecordId: descriptor.sourceRecordId,
+        sourceVersion: descriptor.sourceSchemaVersion,
+        contentCommitmentMaterial: descriptor.contentCommitment,
+      }),
+      descriptor.assetId,
+    );
     this.rebuildProjections();
+  }
+
+  private rebuildSourceIndexes(): void {
+    this.bySourceIdentity.clear();
+    this.byProjection.clear();
+    for (const descriptor of this.descriptors.values()) {
+      if (!descriptor.supersededBy) {
+        this.bySourceIdentity.set(
+          sourceIdentityKey(descriptor.canonicalOwnerSystem, descriptor.sourceRecordId),
+          descriptor.assetId,
+        );
+      }
+      this.byProjection.set(
+        sourceProjectionKey({
+          canonicalOwnerSystem: descriptor.canonicalOwnerSystem,
+          sourceRecordId: descriptor.sourceRecordId,
+          sourceVersion: descriptor.sourceSchemaVersion,
+          contentCommitmentMaterial: descriptor.contentCommitment,
+        }),
+        descriptor.assetId,
+      );
+    }
   }
 
   private allLineage() {
     return [...this.descriptors.values()].flatMap((descriptor) => [...descriptor.lineage]);
+  }
+
+  private knownAssets(): readonly EconomicAssetDescriptor[] {
+    return [...this.descriptors.values()];
+  }
+
+  private descriptorFromDecision(
+    current: EconomicAssetDescriptor,
+    decision: EconomicAssetVerificationDecision,
+  ): EconomicAssetDescriptor {
+    return replaceDescriptor(
+      current,
+      {
+        status: 'VERIFIED',
+        qualityClass: decision.qualityClass,
+        freshness: current.freshness === 'SUPERSEDED' ? current.freshness : 'CURRENT',
+        verificationPolicyId: decision.verificationPolicyId,
+        verificationPolicyVersion: decision.verificationPolicyVersion,
+        verificationDecisionId: decision.decisionId,
+      },
+      decision.evaluatedAt,
+    );
   }
 }
 
@@ -318,6 +542,9 @@ function matchesQuery(descriptor: EconomicAssetDescriptor, criteria: EconomicAss
     criteria.permittedValuationMethod &&
     !descriptor.permittedValuationMethodRefs.includes(criteria.permittedValuationMethod)
   ) {
+    return false;
+  }
+  if (criteria.sourceRecordId && descriptor.sourceRecordId !== criteria.sourceRecordId) {
     return false;
   }
   return true;

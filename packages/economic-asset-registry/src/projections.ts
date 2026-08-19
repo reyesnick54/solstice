@@ -37,6 +37,7 @@ export class EconomicAssetQueryIndex {
   private readonly byAnchor = new Map<ContentCommitment, AssetId[]>();
   private readonly byLineageParent = new Map<AssetId, AssetId[]>();
   private readonly byValuation = new Map<ValuationMethodRef, AssetId[]>();
+  private readonly bySourceRecord = new Map<string, AssetId[]>();
 
   clear(): void {
     this.byId.clear();
@@ -54,6 +55,7 @@ export class EconomicAssetQueryIndex {
     this.byAnchor.clear();
     this.byLineageParent.clear();
     this.byValuation.clear();
+    this.bySourceRecord.clear();
   }
 
   rebuild(descriptors: readonly EconomicAssetDescriptor[]): void {
@@ -84,6 +86,9 @@ export class EconomicAssetQueryIndex {
     }
     for (const method of descriptor.permittedValuationMethodRefs) {
       push(this.byValuation, method, descriptor.assetId);
+    }
+    if (descriptor.sourceRecordId) {
+      push(this.bySourceRecord, descriptor.sourceRecordId, descriptor.assetId);
     }
   }
 
@@ -133,6 +138,9 @@ export class EconomicAssetQueryIndex {
     }
     if (criteria.permittedValuationMethod) {
       sets.push(this.byValuation.get(criteria.permittedValuationMethod) ?? []);
+    }
+    if (criteria.sourceRecordId) {
+      sets.push(this.bySourceRecord.get(criteria.sourceRecordId) ?? []);
     }
     if (sets.length === 0) {
       return null;

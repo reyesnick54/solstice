@@ -34,9 +34,25 @@ function isCanonicalReference(text: string): boolean {
   return Object.values(ASSET_ID_PREFIXES).some((prefix) => text.startsWith(prefix));
 }
 
-function walkKeysAndStrings(value: unknown, keys: string[], strings: string[]): void {
+const PHONE_EXEMPT_IDENTIFIER_KEYS = new Set([
+  'sourceRecordId',
+  'sourceSystem',
+  'canonicalOwnerSystem',
+  'sourceSchemaVersion',
+  'schemaId',
+  'geography',
+  'contentCommitmentMaterial',
+  'provenanceMaterial',
+]);
+
+function walkKeysAndStrings(
+  value: unknown,
+  keys: string[],
+  strings: Array<{ readonly key: string | null; readonly text: string }>,
+  currentKey: string | null = null,
+): void {
   if (typeof value === 'string') {
-    strings.push(value);
+    strings.push({ key: currentKey, text: value });
     return;
   }
   if (typeof value === 'bigint' || typeof value === 'number' || typeof value === 'boolean' || value === null) {
@@ -44,21 +60,21 @@ function walkKeysAndStrings(value: unknown, keys: string[], strings: string[]): 
   }
   if (Array.isArray(value)) {
     for (const item of value) {
-      walkKeysAndStrings(item, keys, strings);
+      walkKeysAndStrings(item, keys, strings, currentKey);
     }
     return;
   }
   if (value && typeof value === 'object') {
     for (const [key, item] of Object.entries(value as Record<string, unknown>)) {
       keys.push(key);
-      walkKeysAndStrings(item, keys, strings);
+      walkKeysAndStrings(item, keys, strings, key);
     }
   }
 }
 
 export function scanForbiddenPayload(input: unknown): Result<true, RegistryFailure> {
   const keys: string[] = [];
-  const strings: string[] = [];
+  const strings: Array<{ readonly key: string | null; readonly text: string }> = [];
   walkKeysAndStrings(input, keys, strings);
 
   for (const key of keys) {
@@ -73,11 +89,17 @@ export function scanForbiddenPayload(input: unknown): Result<true, RegistryFailu
     }
   }
 
-  for (const text of strings) {
+  for (const { key, text } of strings) {
     if (isCanonicalReference(text)) {
       continue;
     }
-    if (EMAIL_RE.test(text) || PHONE_RE.test(text) || SSN_RE.test(text) || RAW_HINT_RE.test(text)) {
+    if (EMAIL_RE.test(text) || SSN_RE.test(text) || RAW_HINT_RE.test(text)) {
+      return err(failure('RAW_SENSITIVE_DATA_FORBIDDEN', 'registry metadata must not leak protected content'));
+    }
+    if (key && PHONE_EXEMPT_IDENTIFIER_KEYS.has(key)) {
+      continue;
+    }
+    if (PHONE_RE.test(text)) {
       return err(failure('RAW_SENSITIVE_DATA_FORBIDDEN', 'registry metadata must not leak protected content'));
     }
   }
