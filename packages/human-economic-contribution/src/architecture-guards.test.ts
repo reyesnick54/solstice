@@ -55,8 +55,13 @@ describe('chunk 104 architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/personal-economic-graph/src/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/platform/src/value/service.ts')), true);
     assert.equal(existsSync(join(ROOT, 'packages/information-market/src/network/engine.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/human-economic-contribution/src/valuation/constitution.ts')), true);
+    assert.equal(existsSync(join(ROOT, 'packages/human-valuation-engine')), false);
     assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationImplemented, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationConstitutionImplemented, true);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.valuationEngineComputesSettlement, false);
     assert.equal(HUMAN_CONTRIBUTION_ISOLATION.mintingImplemented, false);
     assert.equal(HUMAN_CONTRIBUTION_ISOLATION.financialStateMutation, false);
+    assert.equal(HUMAN_CONTRIBUTION_ISOLATION.productionValuationActivated, false);
   });
 });

@@ -180,6 +180,7 @@ export {
   type ApplyVerificationDecisionInput,
   type MeasurementPeriod,
 } from './types.ts';
+export * from './valuation/index.ts';
 export {
   ADDITIONAL_EVIDENCE_CODES,
   ENGINEERING_CLASS_REQUIREMENTS,
