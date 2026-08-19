@@ -1,13 +1,15 @@
 import { createHash } from 'node:crypto';
 
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
-import { isUnitCode } from '../../oracle/types.ts';
+import { isFactType, isUnitCode } from '../../oracle/types.ts';
 import {
   mappingRejection,
   type AttributionState,
   type SourceClaimCompatibilityRejection,
 } from '../../oracle/source-taxonomy/types.ts';
 import { validateSourceFactClaimMapping } from '../../oracle/source-taxonomy/validator.ts';
+import { measureVerifiedFact } from '../../units/pipeline.ts';
+import { measureCanonical } from '../../units/measurement.ts';
 import { periodIsDefined } from '../claims.ts';
 import { CLAIM_CANDIDATE_SCHEMA_VERSION, type ClaimCandidateBuildInput, type ProductiveClaimCandidate } from './types.ts';
 import { evaluateProductiveObjectMatch } from './object-match.ts';
@@ -113,6 +115,54 @@ export function buildProductiveClaimCandidate(
 
   const geography = input.geography ?? input.object.geography;
   const candidateId = candidateIdOf(input.object.objectId, input.fact.factId, input.mapping.mappingId, input.mapping.mappingVersion);
+  if (!isFactType(input.factType)) {
+    return err(mappingRejection('FACT_NOT_ALLOWED_FOR_SOURCE', `unknown fact type ${input.factType}`));
+  }
+  if (input.substitutedCanonicalQuantity !== undefined && input.providedReceipt === undefined) {
+    return err(
+      mappingRejection(
+        'NORMALIZATION_RECEIPT_REQUIRED',
+        'callers cannot substitute a normalized quantity without the matching receipt',
+      ),
+    );
+  }
+  const measured = input.providedMeasurement
+    ? measureCanonical({
+        sourceQuantity: input.providedMeasurement.sourceQuantity,
+        productiveCategory: input.mapping.productiveCategory!,
+        factType: input.factType,
+        claimType: input.proposedClaimType,
+        targetUnit: input.providedMeasurement.canonicalUnit,
+        providedReceipt: input.providedMeasurement.receipt,
+        substitutedCanonicalQuantity: input.substitutedCanonicalQuantity,
+        mappingId: input.mapping.mappingId,
+        mappingVersion: input.mapping.mappingVersion,
+        measurementPeriod: {
+          startUnix: period.validFromUnixSeconds,
+          endUnix: period.validUntilUnixSeconds,
+        },
+        context: {
+          measurementStart: period.validFromUnixSeconds,
+          measurementEnd: period.validUntilUnixSeconds,
+          durationSeconds: input.durationSeconds ?? period.validUntilUnixSeconds - period.validFromUnixSeconds,
+          resourceClass: input.resourceClass,
+          semanticQualifier: input.semanticQualifier,
+          factType: input.factType,
+          productiveCategory: input.mapping.productiveCategory!,
+        },
+      })
+    : measureVerifiedFact(input.fact, {
+        productiveCategory: input.mapping.productiveCategory!,
+        factType: input.factType,
+        claimType: input.proposedClaimType,
+        resourceClass: input.resourceClass,
+        mappingId: input.mapping.mappingId,
+        mappingVersion: input.mapping.mappingVersion,
+        period,
+      });
+  if (!measured.ok) {
+    return err(mappingRejection(measured.error.code, measured.error.detail));
+  }
 
   return ok(
     Object.freeze({
@@ -126,6 +176,13 @@ export function buildProductiveClaimCandidate(
       proposedClaimType: input.proposedClaimType,
       quantity: input.fact.aggregatedValue.mantissa,
       sourceUnit: input.fact.aggregatedValue.unit,
+      sourceQuantity: measured.value.sourceQuantity,
+      canonicalUnit: measured.value.canonicalUnit,
+      canonicalQuantity: measured.value.canonicalQuantity,
+      normalizationReceiptId: measured.value.normalizationReceiptId,
+      normalizationReceiptDigest: measured.value.normalizationReceiptDigest,
+      normalizationConstitutionVersion: measured.value.normalizationConstitutionVersion,
+      canonicalMeasurement: measured.value,
       measurementPeriod: period,
       geography,
       rightsReferences: Object.freeze([...input.rightsReferences]),

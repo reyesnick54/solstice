@@ -260,7 +260,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     scaleNumerator: 1n,
     semanticQualifier: 'MACHINE_USAGE',
     allowedFactTypes: ['MANUFACTURING_CAPACITY', 'SERVICE_DELIVERY'],
-    allowedProductiveCategories: ['MANUFACTURING', 'SERVICES'],
+    allowedProductiveCategories: ['MANUFACTURING', 'SERVICES', 'INFRASTRUCTURE'],
   }),
   define({
     unitId: 'machine_h',
@@ -270,7 +270,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     scaleNumerator: 3_600n,
     semanticQualifier: 'MACHINE_USAGE',
     allowedFactTypes: ['MANUFACTURING_CAPACITY', 'SERVICE_DELIVERY'],
-    allowedProductiveCategories: ['MANUFACTURING', 'SERVICES'],
+    allowedProductiveCategories: ['MANUFACTURING', 'SERVICES', 'INFRASTRUCTURE'],
   }),
   define({
     unitId: 'units_produced',

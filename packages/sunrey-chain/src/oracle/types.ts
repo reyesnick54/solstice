@@ -266,6 +266,8 @@ export type OracleObservation = {
   readonly feedId: string;
   readonly subject: string;
   readonly value: FixedQuantity;
+  readonly sourceValue?: FixedQuantity;
+  readonly canonicalMeasurement?: import('../units/measurement.ts').CanonicalProductiveMeasurement;
   readonly measurementStartUnix: bigint;
   readonly measurementEndUnix: bigint;
   readonly observationTimeUnix: bigint;
@@ -295,6 +297,8 @@ export type VerifiedEconomicFact = {
   readonly feedId: string;
   readonly subject: string;
   readonly aggregatedValue: FixedQuantity;
+  readonly sourceAggregatedValue?: FixedQuantity;
+  readonly canonicalMeasurement?: import('../units/measurement.ts').CanonicalProductiveMeasurement;
   readonly sourceObservationIds: readonly string[];
   readonly aggregationPolicy: AggregationPolicy;
   readonly observationWindow: ObservationWindow;
