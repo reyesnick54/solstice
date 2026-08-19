@@ -292,7 +292,7 @@ export type MoonReyProductiveEvidence = {
   readonly authorizedMoonReyQuantity?: bigint;
   readonly productiveValueAloneInsufficient?: true;
   readonly gpuvEqualsMoonReyByDefinition?: false;
-  readonly rawProviderPayload?: false;
+  readonly sourcePayloadOmitted?: true;
 };
 
 export type GenesisEvidence = {

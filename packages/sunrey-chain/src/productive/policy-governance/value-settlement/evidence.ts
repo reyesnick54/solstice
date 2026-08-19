@@ -29,7 +29,7 @@ export type MoonReyGovernedValueEvidence = MoonReyProductiveEvidence & {
   readonly authorizedMoonReyQuantity: bigint;
   readonly productiveValueAloneInsufficient: true;
   readonly gpuvEqualsMoonReyByDefinition: false;
-  readonly rawProviderPayload: false;
+  readonly sourcePayloadOmitted: true;
 };
 
 export function toGovernedValueMonetaryEvidence(
@@ -62,7 +62,7 @@ export function toGovernedValueMonetaryEvidence(
     authorizedMoonReyQuantity: authorization.authorizedMoonReyQuantity,
     productiveValueAloneInsufficient: true,
     gpuvEqualsMoonReyByDefinition: false,
-    rawProviderPayload: false,
+    sourcePayloadOmitted: true,
   });
 }
 

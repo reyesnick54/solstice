@@ -375,7 +375,7 @@ describe('Chunk 125 productive value settlement bridge', () => {
     if (issued.ok) {
       assert.equal(containsRawProviderData(issued.receipt), false);
       assert.equal(containsRawProviderData(issued.evidence), false);
-      assert.equal(issued.evidence.rawProviderPayload, false);
+      assert.equal(issued.evidence.sourcePayloadOmitted, true);
     }
   });
 
