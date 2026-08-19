@@ -25,6 +25,7 @@
     "demo:sunrey-provider-certification": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/certification/demo.ts",
     "demo:moonrey-logistics-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/provider-families/logistics/demo.ts",
     "demo:moonrey-compute-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/provider-families/compute/demo.ts",
+    "demo:moonrey-resource-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/provider-families/resources/demo.ts",
     "demo:moonrey-source-claim-path": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/claim-candidate/demo.ts",
     "demo:moonrey-attribution-reconciliation": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/attribution-accounting/demo.ts",
     "demo:moonrey-v2-shadow-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/shadow-economics/demo.ts",

@@ -2746,7 +2746,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129 energy data fabric lives at packages/sunrey-chain/src/oracle/production/provider-families/energy. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2775,9 +2775,6 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Chunk 127 adds the off-chain connector runtime on the same owner. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures."
-      "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures.",
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle/production. Chunk 127 adds the off-chain connector runtime on the same owner. Consensus never calls HTTP. No fabricated provider agreements."
-      "notes": "Chunk 128 economic data provider certification, conformance sandbox, and source admission gate. Extends sunrey-production-oracles. Not a second oracle registry, not production approval, not MoonRey issuance. Commercial CONFIRMED is never inferred from fixtures."
     },
     {
       "id": "sunrey-compute-ai-data-fabric",
@@ -2806,6 +2803,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 130 provider-neutral compute and AI compute economic data fabric. Extends sunrey-production-oracles. No live commercial provider calls. Tokens are not GPU-time. Capacity is not realized output. Facts do not mint MoonRey."
+    },
+    {
+      "id": "sunrey-resource-extraction-data-fabric",
+      "name": "Minerals, natural resources, and extraction economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/resources/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/resources/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ResourceExtractionEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/resource-oracles",
+        "packages/minerals-data",
+        "packages/extraction-fabric",
+        "packages/resource-data-fabric"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -2962,12 +2987,6 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. Canonical owner remains packages/sunrey-chain."
-      "notes": "Chunk 126 MoonRey V2 shadow evaluation, migration readiness, and economic stress hardening at packages/sunrey-chain/src/productive/policy-governance/shadow-economics. Simulation only. Does not delete V1, does not activate V2 in production, does not mutate canonical MoonRey supply. Canonical owner remains packages/sunrey-chain.",
-      "notes": "Chunk 123 governed Productive Value Function constitution at packages/sunrey-chain/src/productive/policy-governance/value-function. Policy only. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain.",
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path.",
-      "notes": "Chunk 123 governed Productive Value Function constitution and Chunk 124 deterministic simulation engine at packages/sunrey-chain/src/productive/policy-governance/value-function. Engineering implementation is not production activation. Does not mint, does not replace moonrey.issuance.formula.v1, does not activate production. Canonical owner remains packages/sunrey-chain.",
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 122 adds ProductiveAttributionBook at policy-governance/attribution-accounting. The book is a non-monetary share record, not a second ledger, AssetSupplyBook, wallet, or MoonRey supply. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset or mint path.",
-      "notes": "Chunk 74 MoonRey productive issuance policy governance, normalization, budgets, and supply-pressure controls at packages/sunrey-chain/src/productive/policy-governance. Chunk 121 extends the same owner with cross-domain attribution policy at packages/sunrey-chain/src/productive/policy-governance/attribution. Extends Chunk 44. Canonical asset MOONREY_COIN. Ticker NOT_ASSIGNED. No second MoonRey asset, mint path, or policy registry."
     },
     {
       "id": "moonrey-productive-value-settlement",
@@ -4124,29 +4143,35 @@
     },
     {
       "id": "sunrey-human-contribution-valuation",
-      "name": "Human Contribution Valuation constitution and engine",
+      "name": "Human Contribution Valuation constitution",
       "canonicalOwner": "packages/human-economic-contribution",
-      "canonicalPath": "packages/human-economic-contribution/src/valuation/engine.ts",
+      "canonicalPath": "packages/human-economic-contribution/src/valuation/registry.ts",
       "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "protectedSymbols": [],
+      "protectedSymbols": [
+        {
+          "name": "HumanContributionValuationPolicyRegistry",
+          "kind": "class"
+        }
+      ],
       "forbiddenAliases": [
         "packages/human-valuation-engine",
         "packages/contribution-valuation",
-        "packages/human-contribution-valuation"
+        "packages/human-contribution-valuation",
+        "packages/human-valuation"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Do not create a second registry package."
+      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
     },
     {
       "id": "sunrey-human-contribution-valuation",
-      "name": "Human contribution valuation constitution and engine",
+      "name": "Human contribution valuation engine",
       "canonicalOwner": "packages/human-economic-contribution",
       "canonicalPath": "packages/human-economic-contribution/src/valuation/engine.ts",
       "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
@@ -4169,41 +4194,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. Chunk 110 valuation constitution lives at src/valuation. Do not create a second registry package."
-    },
-    {
-      "id": "sunrey-human-contribution-valuation",
-      "name": "Human Contribution Valuation constitution",
-      "canonicalOwner": "packages/human-economic-contribution",
-      "canonicalPath": "packages/human-economic-contribution/src/valuation/registry.ts",
-      "publicInterface": "packages/human-economic-contribution/src/valuation/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "HumanContributionValuationPolicyRegistry",
-          "kind": "class"
-        }
-      ],
-      "forbiddenAliases": [
-        "packages/human-valuation-engine",
-        "packages/contribution-valuation",
-        "packages/human-contribution-valuation",
-        "packages/human-contribution-valuation"
-      ],
-      "protectedSymbols": [],
-      "forbiddenAliases": [
-        "packages/human-valuation-engine",
-        "packages/contribution-valuation",
-        "packages/human-valuation"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine."
+      "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
     },
     {
       "id": "sunrey-human-contribution-verification",
@@ -4430,11 +4421,6 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/logistics/adapter.ts",
       "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/logistics/index.ts",
-      "id": "sunrey-manufacturing-robotics-data-fabric",
-      "name": "Manufacturing, industrial automation, and robotics economic data fabric",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -4451,6 +4437,25 @@
         "packages/freight-oracles",
         "packages/warehouse-storage-oracles",
         "packages/moonrey-logistics"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 132 provider-neutral logistics, freight, delivery, and storage data fabric at packages/sunrey-chain/src/oracle/production/provider-families/logistics. Extends sunrey-production-oracles. Distinguishes goods production, transportation, delivery completion, storage service, and capacity. No named vendors, no live carriers, no MoonRey activation."
+    },
+    {
+      "id": "sunrey-manufacturing-robotics-data-fabric",
+      "name": "Manufacturing, industrial automation, and robotics economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
           "name": "ManufacturingObservation",
           "kind": "type"
         }
@@ -4464,7 +4469,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 132 provider-neutral logistics, freight, delivery, and storage data fabric at packages/sunrey-chain/src/oracle/production/provider-families/logistics. Extends sunrey-production-oracles. Distinguishes goods production, transportation, delivery completion, storage service, and capacity. No named vendors, no live carriers, no MoonRey activation."
       "notes": "Chunk 131 read-only manufacturing and robotics economic data fabric. Extends sunrey-production-oracles. Observes MES, robot telemetry, quality, and ERP evidence. Does not command industrial equipment, contact a real factory, activate production, or mint MoonRey."
     }
   ],
@@ -5266,7 +5270,11 @@
     "packages/logistics-data-fabric",
     "packages/freight-oracles",
     "packages/warehouse-storage-oracles",
-    "packages/moonrey-logistics"
+    "packages/moonrey-logistics",
+    "packages/resource-oracles",
+    "packages/minerals-data",
+    "packages/extraction-fabric",
+    "packages/resource-data-fabric"
   ],
   "capabilities": [
     {
@@ -5858,17 +5866,13 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 131 manufacturing/robotics data fabric extend the same owner. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification extends the same owner at packages/sunrey-chain/src/oracle/production/certification. Chunk 129 energy data fabric extends the same owner at packages/sunrey-chain/src/oracle/production/provider-families/energy. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, packages/energy-oracle, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–133 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry."
-      "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry.",
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 127 adds the off-chain connector runtime on the same owner. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 128 economic data provider certification and source admission gate at packages/sunrey-chain/src/oracle/production/certification. Extends sunrey-production-oracles. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state. Do not create packages/provider-certification, packages/oracle-certification, or a second oracle registry."
     },
     {
@@ -6204,7 +6208,13 @@
       "notes": "Chunk 132 logistics, freight, delivery, and storage economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/logistics. Extends sunrey-production-oracles. Not a second oracle, mint, or live carrier integration."
     },
     {
-      "notes": "Chunk 127 off-chain economic data connector runtime at packages/sunrey-chain/src/oracle/production. Extends Chunk 68 production oracles. Consensus never calls HTTP. Fetch success is not a verified economic fact and does not mint MoonRey. Do not create packages/oracle-connectors, packages/data-ingestion, packages/moonrey-connectors, or packages/provider-runtime-v2.",
+      "id": "sunrey-resource-extraction-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. RESOURCE_RESERVE is not extraction or OUTPUT. REFERENCE_PRICE cannot create a productive claim. No named provider integration, production activation, or second oracle owner. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+    },
+    {
       "id": "moonrey-productive-value-settlement",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6719,6 +6729,10 @@
     "packages/compute-oracle",
     "packages/ai-compute-provider",
     "packages/gpu-metering",
-    "packages/compute-data-fabric"
+    "packages/compute-data-fabric",
+    "packages/resource-oracles",
+    "packages/minerals-data",
+    "packages/extraction-fabric",
+    "packages/resource-data-fabric"
   ]
 }

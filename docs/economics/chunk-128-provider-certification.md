@@ -76,3 +76,7 @@ adversarial cases (meter reset, duplicate interval, stale reading,
 wrong unit, float quantity, same-controller fake quorum, reference
 price pretending to be production). See
 [`chunk-129-energy-data-fabric.md`](./chunk-129-energy-data-fabric.md).
+
+Chunk 133 adds resource-family sandbox feeds (extracted tonnage,
+weighbridge, reserve reference, stockpile, assay attestation) on this
+same certification owner. Certification still cannot authorize MoonRey.

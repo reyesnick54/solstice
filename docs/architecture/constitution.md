@@ -88,6 +88,7 @@ never be two implementations of these systems.
 | Economic data provider certification | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/certification/types.ts` | IMPLEMENTED |
 | Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
 | Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |
+| Minerals / resource extraction data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/resources/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1630,6 +1631,17 @@ constitution is extended. Do not create `packages/energy-oracle`,
 `packages/grid-oracle`, `packages/moonrey-energy`,
 `packages/power-data`, or `packages/utility-integration`. See
 [`docs/economics/chunk-129-energy-data-fabric.md`](../economics/chunk-129-energy-data-fabric.md).
+
+Chunk 133 implements the minerals, natural resources, and extraction
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/resources`.
+Capability `sunrey-resource-extraction-data-fabric` is `IMPLEMENTED` on
+the existing `sunrey-production-oracles` owner. `RESOURCE_RESERVE` is
+not `RESOURCE_EXTRACTION` and cannot create OUTPUT or mint MoonRey.
+`REFERENCE_PRICE` stays reference-only. Do not create
+`packages/resource-oracles`, `packages/minerals-data`,
+`packages/extraction-fabric`, or a second oracle owner. See
+[`chunk-133-resource-extraction-data-fabric.md`](./chunk-133-resource-extraction-data-fabric.md).
 
 ## Agent stop rule
 
