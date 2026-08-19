@@ -106,9 +106,11 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-agent` — Chunk 98 user-controlled AI agent mandates, transaction proposals, and bounded financial automation. ProposalGate only. Not a second Execution Authority, wallet, Exchange, risk engine, or ledger.
 - `packages/ai-runtime` — Chunk 101 canonical AI inference runtime and Chunk 102 S3M primary intelligence adapter. Inference plane only. S3M-primary. Grok reserved for Chunk 103. Not a second Financial Agent, Execution Authority, wallet, Exchange, ledger, or S3M training system.
 - `packages/ai-runtime` — Chunk 101 canonical AI inference runtime and model provider abstraction. Inference plane only. S3M-primary. Grok reserved for Chunk 103. Not a second Financial Agent, Execution Authority, wallet, Exchange, or ledger.
+- `packages/human-economic-contribution` — Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Defines contribution classes, provenance, lifecycle, and fingerprints. Not PEVE valuation, not SunRey issuance, not a human-worth score, not a second PEG, HIN, consent, clean-room, ledger, or monetary authority.
 - `packages/sunrey-sdk` — official developer SDK and versioned public API adapter. Chunk 94 application registry, credentials, webhooks, and sandbox live at `src/developer-platform`.
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
 - `packages/sunrey-economics` — Chunk 75 SunRey/MoonRey dual-economy simulation laboratory; not production monetary policy
+- `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`.
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - `db/` — versioned SQL migrations per bounded database

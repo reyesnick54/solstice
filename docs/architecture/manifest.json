@@ -849,7 +849,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Do not implement the Exchange matching engine or SunRey Chain."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution. Do not implement the Exchange matching engine or SunRey Chain."
     },
     {
       "id": "packages/sunrey-chain",
@@ -1104,6 +1104,25 @@
       ],
       "notes": "Chunk 101 inference plane and Chunk 102 S3M primary provider adapter. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent. Does not fork the S3M training system.",
       "notes": "Chunk 101 inference plane only. Provider-neutral AI runtime. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent."
+      "notes": "Chunk 101 inference plane and Chunk 102 S3M primary provider adapter. Never signs, issues Execution Authority, posts journals, or bypasses packages/sunrey-agent. Does not fork the S3M training system."
+    },
+    {
+      "id": "packages/human-economic-contribution",
+      "npmName": "@solstice/human-economic-contribution",
+      "path": "packages/human-economic-contribution",
+      "kind": "package",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Defines contribution classes, provenance, lifecycle, fingerprints, and rebuildable query projections. Not PEVE, not token valuation, not a human-worth score, not a mint or Execution Authority. Simulation only."
     }
   ],
   "components": [
@@ -3831,6 +3850,16 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts",
       "publicInterface": "packages/sunrey-chain/src/economics/human-contribution-bridge/index.ts",
+      "id": "sunrey-hin-contribution-integration",
+      "name": "Human Information Network to Human Economic Contribution Registry integration",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/network/contribution/adapter.ts",
+      "publicInterface": "packages/information-market/src/network/contribution/index.ts",
+      "id": "sunrey-human-economic-contributions",
+      "name": "SunRey Human Economic Contribution ontology",
+      "canonicalOwner": "packages/human-economic-contribution",
+      "canonicalPath": "packages/human-economic-contribution/src/registry.ts",
+      "publicInterface": "packages/human-economic-contribution/src/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -3839,6 +3868,8 @@
       "protectedSymbols": [
         {
           "name": "HumanContributionMonetaryBridge",
+          "name": "HinContributionAdapter",
+          "name": "HumanContributionRegistry",
           "kind": "class"
         }
       ],
@@ -3848,11 +3879,26 @@
         "packages/contribution-issuance",
         "packages/human-worth-token",
         "packages/peve-mint"
+        "packages/hin-contribution-registry",
+        "packages/information-contribution-v2",
+        "packages/human-information-contribution"
+        "packages/human-contribution",
+        "packages/human-economic-contribution-v2",
+        "packages/contribution-ontology",
+        "packages/human-worth",
+        "packages/contribution-valuation",
+        "packages/human-contribution-score",
+        "packages/sunrey-contribution",
+        "packages/human-contribution-registry",
+        "packages/contribution-registry",
+        "packages/human-economic-contribution-registry"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 108 privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint or valuation engine. Production issuance remains unavailable. PEVE cannot become token quantity. AI cannot authorize."
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
+      "notes": "Chunk 104 contribution ontology and Chunk 106 canonical registry. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     }
   ],
   "authorizedMutationPaths": [
@@ -4616,7 +4662,17 @@
     "packages/consumer-exchange",
     "packages/sunrey-consumer-exchange",
     "packages/retail-exchange",
-    "packages/consumer-trading"
+    "packages/consumer-trading",
+    "packages/human-contribution",
+    "packages/human-economic-contribution-v2",
+    "packages/contribution-ontology",
+    "packages/human-worth",
+    "packages/contribution-valuation",
+    "packages/human-contribution-score",
+    "packages/sunrey-contribution",
+    "packages/human-contribution-registry",
+    "packages/contribution-registry",
+    "packages/human-economic-contribution-registry"
   ],
   "capabilities": [
     {
@@ -5442,6 +5498,16 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 108 privacy-safe human-contribution monetary evidence bridge at packages/sunrey-chain/src/economics/human-contribution-bridge. Existing MonetaryIssuanceAuthority remains the only mint. Valuation engine is not implemented. Do not create packages/human-contribution-mint, packages/human-valuation-engine, or packages/peve-mint."
+      "id": "sunrey-hin-contribution-integration",
+      "status": "IMPLEMENTED",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
+      "id": "sunrey-human-economic-contributions",
+      "status": "IMPLEMENTED",
+      "owner": "packages/human-economic-contribution",
+      "protected": true,
+      "notes": "Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Not PEVE valuation, not SunRey issuance, not a human-worth score. Do not create packages/human-contribution, packages/contribution-ontology, packages/human-worth, packages/contribution-valuation, or packages/human-contribution-registry."
     }
   ],
   "boundedContexts": [
@@ -5563,6 +5629,16 @@
       "protected": true,
       "notes": "Chunk 101 inference plane and Chunk 102 S3M adapter. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103.",
       "notes": "Chunk 101 inference plane. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
+      "notes": "Chunk 101 inference plane and Chunk 102 S3M adapter. Not a second Financial Agent, Kernel, wallet, Exchange, risk engine, or ledger. S3M-primary. Grok reserved for Chunk 103."
+    },
+    {
+      "id": "HUMAN_ECONOMIC_CONTRIBUTION",
+      "status": "IMPLEMENTED",
+      "reservedPaths": [
+        "packages/human-economic-contribution"
+      ],
+      "protected": true,
+      "notes": "Chunk 104 human contribution ontology. Not a second PEG, PEVE, HIN, consent, clean-room, ledger, or monetary authority. Measurement is not token valuation."
     },
     {
       "id": "GROWTH_ORCHESTRATOR",
@@ -5873,6 +5949,16 @@
     "packages/sunrey-wallet-security",
     "packages/wallet-auth",
     "packages/device-trust",
-    "packages/wallet-recovery-v2"
+    "packages/wallet-recovery-v2",
+    "packages/human-contribution",
+    "packages/human-economic-contribution-v2",
+    "packages/contribution-ontology",
+    "packages/human-worth",
+    "packages/contribution-valuation",
+    "packages/human-contribution-score",
+    "packages/sunrey-contribution",
+    "packages/human-contribution-registry",
+    "packages/contribution-registry",
+    "packages/human-economic-contribution-registry"
   ]
 }

@@ -88,6 +88,7 @@ never be two implementations of these systems.
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
+| SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -101,6 +102,7 @@ the same architecture-linting system, not a second linter.
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `sunrey-agent`, `ai-runtime`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
+`human-economic-contribution`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
 `consent`, `clean-room`, `sunrey-sdk`.
@@ -1314,6 +1316,24 @@ issuance. Do not create `packages/human-contribution-mint`,
 `packages/human-valuation-engine`, `packages/contribution-issuance`,
 `packages/human-worth-token`, or `packages/peve-mint`. See
 [`chunk-108-human-contribution-monetary-bridge.md`](./chunk-108-human-contribution-monetary-bridge.md).
+Chunk 104 implements the canonical SunRey Human Economic Contribution
+ontology at `packages/human-economic-contribution`. Capability
+`sunrey-human-economic-contributions` is `IMPLEMENTED`. It defines
+contribution classes, source classes, provenance, and reference-safe
+events. It does not calculate SunRey quantities, value contributions
+with PEVE, mint, issue Execution Authority, or replace PEG, HIN,
+consent, clean-room, or the Chunk 71 monetary constitution. Do not
+create `packages/human-contribution`,
+`packages/human-economic-contribution-v2`,
+`packages/contribution-ontology`, `packages/human-worth`,
+`packages/contribution-valuation`,
+`packages/human-contribution-score`, or
+`packages/sunrey-contribution`. See
+[`chunk-104-human-contribution-ontology.md`](./chunk-104-human-contribution-ontology.md).
+Chunk 106 extends that same owner with the canonical verified
+contribution registry. Capability
+`sunrey-human-economic-contributions` remains singular. See
+[`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability
@@ -1347,6 +1367,18 @@ cannot rewrite finalized transfers. Do not create
 `packages/wallet-auth`, `packages/device-trust`, or
 `packages/wallet-recovery-v2`. See
 [`chunk-96-wallet-security.md`](./chunk-96-wallet-security.md).
+
+Chunk 107 implements the Human Information Network to Human
+Economic Contribution Registry adapter at
+`packages/information-market/src/network/contribution`. Capability
+`sunrey-hin-contribution-integration` is `IMPLEMENTED`. HIN depends
+on `HumanContributionRegistryPort`. The adapter stores privacy-safe
+references and hashes only. Merely owning data or granting consent
+does not create a verified contribution or mint SunRey. Do not
+create `packages/hin-contribution-registry`,
+`packages/information-contribution-v2`, or
+`packages/human-information-contribution`. See
+[`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md).
 
 ## Agent stop rule
 
