@@ -165,6 +165,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
+| sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -977,4 +978,16 @@ not value, mint, or issue Execution Authority. Do not create
 `packages/human-contribution-registry`,
 `packages/contribution-registry`, or
 `packages/human-economic-contribution-registry`. The evaluator returns
+`mustStop: false`.
+Chunk 111 implements the Deterministic Human Contribution Valuation
+Engine at `packages/human-economic-contribution/src/valuation`.
+Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
+See [`chunk-111-human-contribution-valuation-engine.md`](./chunk-111-human-contribution-valuation-engine.md)
+and
+[`docs/economics/chunk-111-human-contribution-valuation-engine.md`](../economics/chunk-111-human-contribution-valuation-engine.md).
+It evaluates a VERIFIED contribution under an active versioned
+valuation policy. A valuation result is not settlement authorization,
+SunRey issuance, PEVE, or a human-worth score. Do not create
+`packages/human-valuation-engine`, `packages/contribution-valuation`,
+or `packages/human-contribution-valuation`. The evaluator returns
 `mustStop: false`.
