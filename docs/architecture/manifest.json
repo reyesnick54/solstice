@@ -4077,7 +4077,6 @@
           "kind": "class"
         }
       ],
-      "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/human-valuation-engine",
         "packages/contribution-valuation",
@@ -4140,11 +4139,6 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
-          "name": "HumanContributionValuationEngine",
-          "kind": "class"
-        },
-        {
-          "name": "HumanContributionValuationPolicyRegistry",
           "name": "HumanContributionVerificationEngine",
           "kind": "class"
         }
@@ -4276,10 +4270,6 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
-        {
-          "name": "CanonicalUnitRegistry",
-          "kind": "class"
-        },
         {
           "name": "EconomicAssetVerificationEngine",
           "kind": "class"
