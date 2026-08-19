@@ -165,6 +165,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
+| sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -978,3 +979,16 @@ not value, mint, or issue Execution Authority. Do not create
 `packages/contribution-registry`, or
 `packages/human-economic-contribution-registry`. The evaluator returns
 `mustStop: false`.
+Chunk 113 implements the canonical Dataset and Economic Asset Registry
+at `packages/economic-asset-registry`. Capability
+`sunrey-economic-asset-registry` is `IMPLEMENTED`. See
+[`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md)
+and
+[`docs/economics/chunk-113-economic-asset-registry-foundation.md`](../economics/chunk-113-economic-asset-registry-foundation.md).
+It is the master metadata registry above HIN, PDV, PEG, the Human
+Economic Contribution Registry, oracles, productive registries, and
+the monetary constitution. It does not store raw datasets or authorize
+minting. Do not create `packages/dataset-registry`,
+`packages/economic-assets`, `packages/data-assets-v2`,
+`packages/universal-data-registry`, or `packages/tokenized-data`. The
+evaluator returns `mustStop: false`.

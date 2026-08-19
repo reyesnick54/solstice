@@ -167,6 +167,10 @@
   — canonical verified-contribution system of record in the same
   package. See
   [`docs/economics/chunk-106-human-contribution-registry.md`](../economics/chunk-106-human-contribution-registry.md).
+- [Chunk 113 economic asset registry](./chunk-113-economic-asset-registry-foundation.md)
+  — master dataset and economic-evidence metadata registry at
+  `packages/economic-asset-registry`. See
+  [`docs/economics/chunk-113-economic-asset-registry-foundation.md`](../economics/chunk-113-economic-asset-registry-foundation.md).
 - [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at

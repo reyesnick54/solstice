@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-113",
+  "title": "Canonical SunRey Dataset & Economic Asset Registry Foundation",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "personal-data-vault",
+    "personal-economic-graph",
+    "consent",
+    "information-market",
+    "sunrey-human-information-network",
+    "sunrey-human-economic-contributions",
+    "sunrey-oracle-network",
+    "sunrey-productive-capacity",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "IMPLEMENTED at packages/economic-asset-registry. Master metadata/rights/provenance/lineage/policy registry sitting above HIN, PDV, PEG, Human Economic Contribution Registry, Oracle Network, productive registries, and the monetary constitution. Does not store raw datasets, value assets, mint, or replace those owners. Native SunRey/MoonRey supply remains outside this registry. evaluateChunkRequirements returns mustStop: false. Do not create packages/dataset-registry, packages/economic-assets, packages/data-assets-v2, packages/universal-data-registry, or packages/tokenized-data."
+}

@@ -89,6 +89,7 @@ never be two implementations of these systems.
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
+| SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -102,7 +103,7 @@ the same architecture-linting system, not a second linter.
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `sunrey-agent`, `ai-runtime`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
-`human-economic-contribution`,
+`human-economic-contribution`, `economic-asset-registry`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
 `consent`, `clean-room`, `sunrey-sdk`.
@@ -1334,6 +1335,18 @@ Chunk 106 extends that same owner with the canonical verified
 contribution registry. Capability
 `sunrey-human-economic-contributions` remains singular. See
 [`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md).
+Chunk 113 implements the canonical SunRey Dataset and Economic Asset
+Registry at `packages/economic-asset-registry`. Capability
+`sunrey-economic-asset-registry` is `IMPLEMENTED`. It is the master
+metadata, rights, provenance, lineage, and policy registry sitting
+above HIN, PDV, PEG, the Human Economic Contribution Registry, the
+Oracle Network, productive registries, and the monetary constitution.
+It does not store raw datasets, value assets, mint, or replace those
+owners. Native SunRey and MoonRey supply remain outside this
+registry. Do not create `packages/dataset-registry`,
+`packages/economic-assets`, `packages/data-assets-v2`,
+`packages/universal-data-registry`, or `packages/tokenized-data`. See
+[`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability
