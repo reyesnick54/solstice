@@ -39,7 +39,7 @@ function unwrap<T>(result: { readonly ok: true; readonly value: T } | { readonly
 }
 
 function assertNoLeak(descriptor: EconomicAssetDescriptor): void {
-  const serialized = JSON.stringify(descriptor);
+  const serialized = JSON.stringify(descriptor, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
   assert.equal(descriptor.automaticValue, null);
   assert.equal(descriptor.automaticSunReyQuantity, null);
   assert.equal(descriptor.automaticMoonReyQuantity, null);
@@ -460,9 +460,9 @@ describe('CHUNK-115 cross-domain economic asset fabric', () => {
       }),
     );
     const evidenceAsset = unwrap(hec.projectEvidence(evidenceBundleFromRecord(verified), NOW));
-    unwrap(hec.linkRightToEvidence(right.assetId, evidenceAsset.assetId, NOW));
+    const linkedEvidence = unwrap(hec.linkRightToEvidence(right.assetId, evidenceAsset.assetId, NOW));
     const recordAsset = unwrap(hec.projectRecord(verified, NOW, evidenceAsset.assetId));
-    assert.equal(evidenceAsset.lineage.some((edge) => edge.kind === 'CONTRIBUTED_TO' && edge.toAssetId === right.assetId), true);
+    assert.equal(linkedEvidence.lineage.some((edge) => edge.kind === 'CONTRIBUTED_TO' && edge.toAssetId === right.assetId), true);
     assert.equal(recordAsset.lineage.some((edge) => edge.kind === 'VERIFIED_BY' && edge.toAssetId === evidenceAsset.assetId), true);
     assert.equal(right.lineage.some((edge) => edge.kind === 'DERIVED_FROM' && edge.toAssetId === information.assetId), true);
   });

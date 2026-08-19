@@ -283,7 +283,7 @@ export function mapVerifiedEconomicFact(fact: VerifiedEconomicFact, at: UtcInsta
       anchorType: 'VERIFIED_FACT_COMMITMENT',
       finalityState: fact.finalizedHeight > 0 ? 'FINALIZED_ON_SIMULATION' : 'UNANCHORED',
     },
-    status: fact.qualityStatus === 'VERIFIED' ? 'VERIFIED' : 'REGISTERED',
+    status: 'REGISTERED',
     createdAt: at,
   };
   const scanned = scanForbiddenPayload(payload);

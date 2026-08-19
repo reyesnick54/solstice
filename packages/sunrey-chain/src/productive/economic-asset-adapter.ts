@@ -190,7 +190,7 @@ export function mapProductiveClaim(claim: ProductiveClaim, at: UtcInstant): Resu
     contentCommitmentMaterial: `prod-claim:${claim.claimId}:${claim.objectId}:${claim.unit}`.slice(0, 256),
     provenanceMaterial: `prod-claim-prov:${claim.oracleFactIds.join(',')}:${claim.rightsReferences.join(',')}`.slice(0, 256),
     storageClass: 'ON_CHAIN_COMMITMENT_ONLY',
-    status: claim.status === 'SUPERSEDED' ? 'SUPERSEDED' : claim.status === 'VERIFIED' ? 'VERIFIED' : 'REGISTERED',
+    status: claim.status === 'SUPERSEDED' ? 'SUPERSEDED' : 'REGISTERED',
     createdAt: at,
   };
   const scanned = scanForbiddenPayload(payload);
@@ -225,7 +225,7 @@ export function mapProductiveContribution(
     contentCommitmentMaterial: `prod-contrib:${contribution.contributionId}:${contribution.fingerprint}`.slice(0, 256),
     provenanceMaterial: `prod-contrib-prov:${contribution.claimId}:${contribution.objectId}`.slice(0, 256),
     storageClass: 'ON_CHAIN_COMMITMENT_ONLY',
-    status: contribution.status === 'SUPERSEDED' ? 'SUPERSEDED' : 'VERIFIED',
+    status: contribution.status === 'SUPERSEDED' ? 'SUPERSEDED' : 'REGISTERED',
     createdAt: at,
   };
   const scanned = scanForbiddenPayload(payload);

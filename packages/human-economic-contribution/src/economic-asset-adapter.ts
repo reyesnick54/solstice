@@ -225,7 +225,7 @@ export function mapContributionRecord(
     contentCommitmentMaterial: `hec-rec:${record.contributionId}:${fingerprint}`.slice(0, 256),
     provenanceMaterial: `hec-rec-prov:${record.evidenceDigest}`.slice(0, 256),
     storageClass: 'ON_CHAIN_COMMITMENT_ONLY',
-    status: record.status === 'VERIFIED' ? 'VERIFIED' : record.status === 'SUPERSEDED' ? 'SUPERSEDED' : 'REGISTERED',
+    status: record.status === 'SUPERSEDED' ? 'SUPERSEDED' : 'REGISTERED',
     createdAt: at,
   };
   const scanned = scanForbiddenPayload(payload);
