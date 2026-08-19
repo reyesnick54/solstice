@@ -95,7 +95,6 @@ describe('Chunk 102 S3M primary provider', () => {
         ],
       }),
     );
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -309,7 +308,6 @@ describe('Chunk 102 S3M primary provider', () => {
       delegatedSigningKeyId: null,
       createdByActorId: 'user_s3m',
     });
-    assert.equal(mandate.ok, true);
     if (!mandate.ok) {
       throw new Error(mandate.error.detail);
     }
@@ -318,7 +316,6 @@ describe('Chunk 102 S3M primary provider', () => {
       response: inferred.value.response,
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error(proposal.error.detail);
     }

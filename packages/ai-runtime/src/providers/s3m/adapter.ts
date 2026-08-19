@@ -173,6 +173,7 @@ export class S3mInferenceProvider implements AiInferenceProvider {
       return credential;
     }
 
+    const mappedFixture = request.fixture ? fixtureFromCanonical(request.fixture) : undefined;
     const nativeRequest = Object.freeze({
       correlationId,
       modelId: this.config.modelId,
@@ -180,7 +181,15 @@ export class S3mInferenceProvider implements AiInferenceProvider {
       promptHash: request.promptHash,
       taskClass: request.taskClass,
       releasedContext: request.releasedContext.map((object) => object.payload),
-      ...(request.fixture ? { fixture: fixtureFromCanonical(request.fixture) } : {}),
+      ...(mappedFixture ? { fixture: mappedFixture } : {}),
+    } satisfies {
+      readonly correlationId: string;
+      readonly modelId: string;
+      readonly modelVersion: string;
+      readonly promptHash: string;
+      readonly taskClass: CanonicalProviderRequest['taskClass'];
+      readonly releasedContext: readonly Readonly<Record<string, unknown>>[];
+      readonly fixture?: NonNullable<ReturnType<typeof fixtureFromCanonical>>;
     });
 
     const maxAttempts = Math.max(1, this.config.maxAttempts);
