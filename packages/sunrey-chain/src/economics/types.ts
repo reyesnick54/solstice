@@ -274,6 +274,25 @@ export type MoonReyProductiveEvidence = {
   readonly moonreyIssuanceAuthorizationRequired: true;
   readonly oracleObservationAloneInsufficient: true;
   readonly verifiedFactAloneInsufficient: true;
+  readonly evidencePath?: 'LEGACY_ENGINEERING_SIMULATION_V1' | 'GOVERNED_VALUE_SIMULATION_V2';
+  readonly schemaVersion?: 1 | 2;
+  readonly eventId?: string;
+  readonly eventFingerprint?: string;
+  readonly attributionDecisionId?: string;
+  readonly normalizationReceiptId?: string;
+  readonly productiveValueId?: string;
+  readonly productiveValueDigest?: string;
+  readonly valueFunctionPolicyId?: string;
+  readonly valueFunctionPolicyVersion?: string;
+  readonly conversionPolicyId?: string;
+  readonly conversionPolicyVersion?: string;
+  readonly settlementAuthorizationId?: string;
+  readonly productiveValueQuantity?: bigint;
+  readonly productiveValueUnit?: 'GPUV';
+  readonly authorizedMoonReyQuantity?: bigint;
+  readonly productiveValueAloneInsufficient?: true;
+  readonly gpuvEqualsMoonReyByDefinition?: false;
+  readonly sourcePayloadOmitted?: true;
 };
 
 export type GenesisEvidence = {

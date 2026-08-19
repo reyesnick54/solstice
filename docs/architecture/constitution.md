@@ -93,6 +93,8 @@ never be two implementations of these systems.
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
 | MoonRey V2 shadow evaluation and migration | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/shadow-economics/evaluator.ts` | IMPLEMENTED |
+| MoonRey productive value settlement bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts` | IMPLEMENTED |
+| MoonRey Productive Value Function engine | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/engine.ts` | IMPLEMENTED |
 | MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
@@ -1444,6 +1446,27 @@ activate production valuation. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. See
 [`chunk-123-moonrey-productive-value-constitution.md`](../economics/chunk-123-moonrey-productive-value-constitution.md).
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey Coin. The V2 path is
+`GOVERNED_VALUE_SIMULATION_V2`. Legacy
+`moonrey.issuance.formula.v1` remains `LEGACY_ENGINEERING_SIMULATION_V1`.
+Chunk 71 `MonetaryIssuanceAuthority` remains the only mint.
+Production V2 is unavailable. Do not create `packages/moonrey-mint`,
+`packages/gpuv-token`, `packages/value-settlement`,
+`packages/moonrey-conversion`, or `packages/productive-settlement`.
+See
+[`chunk-125-moonrey-value-settlement-bridge.md`](../economics/chunk-125-moonrey-value-settlement-bridge.md).
+Chunk 124 adds the deterministic Productive Value Function engine
+inside the same owner. Engineering implementation is not production
+activation. The engine evaluates GPUV in simulation only. It does not
+mint, does not produce MoonRey quantity, and does not replace
+`moonrey.issuance.formula.v1`. Do not create
+`packages/moonrey-value-engine`, `packages/productive-valuation`,
+`packages/moonrey-valuation`, or `packages/economic-value-engine`. See
+[`chunk-124-moonrey-productive-value-engine.md`](../economics/chunk-124-moonrey-productive-value-engine.md).
 Chunk 122 extends `moonrey-policy-governance` with
 `ProductiveAttributionBook` at
 `packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.

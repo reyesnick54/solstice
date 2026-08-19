@@ -68,6 +68,31 @@ describe('Chunk 76 integrated economic stack', () => {
     assert.equal(stack.reconcile().productiveMatchesConstitution, true);
   });
 
+  it('issues MoonRey V2 through governed value and canonical supply', () => {
+    const stack = createIntegratedEconomicStack();
+    stack.registerProductiveObject({
+      objectId: 'obj.energy.v2stack',
+      category: 'ENERGY',
+      unit: 'kWh',
+      owner: 'ctl.v2stack',
+    });
+    const issued = stack.issueMoonReyFromGovernedValue({
+      claimId: 'claim.obj.energy.v2stack.1',
+      objectId: 'obj.energy.v2stack',
+      category: 'ENERGY',
+      quantity: 100n,
+      unit: 'kWh',
+      controller: 'ctl.v2stack',
+      epoch: 1,
+      providerCount: 3,
+    });
+    assert.equal(issued.ok, true);
+    assert.equal(stack.moonreyV2Issued > 0n, true);
+    assert.equal(stack.moonrey.issuedPostGenesis, stack.moonreyV2Issued);
+    assert.equal(stack.productive.currentSupply().issued, 0n);
+    assert.equal(stack.reconcile().canonicalMoonReyReconciles, true);
+  });
+
   it('does not advance economic state without finality', () => {
     const stack = createIntegratedEconomicStack();
     stack.finalityAvailable = false;

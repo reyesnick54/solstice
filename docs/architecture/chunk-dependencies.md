@@ -172,6 +172,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 
@@ -1080,6 +1081,12 @@ providers. Do not create `packages/unit-registry`,
 `packages/economic-units`, `packages/sunrey-units`,
 `packages/normalization`, or `packages/canonical-units`. The
 evaluator returns `mustStop: false`.
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey. Chunk 71 remains the only mint. The evaluator
+returns `mustStop: false`.
 Chunk 122 extends `moonrey-policy-governance` with
 `ProductiveAttributionBook` at
 `packages/sunrey-chain/src/productive/policy-governance/attribution-accounting`.
@@ -1172,3 +1179,15 @@ governance boundary. Do not create `packages/moonrey-shadow`,
 `packages/value-migration`, `packages/moonrey-v2-engine`,
 `packages/shadow-economics`, or `packages/moonrey-cutover`. The
 evaluator returns `mustStop: false`.
+Chunk 125 implements the Productive Value → MoonRey settlement
+conversion bridge at
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement`.
+Capability `moonrey-productive-value-settlement` is `IMPLEMENTED`.
+GPUV is not MoonRey. Chunk 71 remains the only mint. The evaluator
+returns `mustStop: false`.
+Chunk 124 adds the deterministic Productive Value Function engine
+inside that same module. Engineering implementation is not production
+activation. Do not create `packages/moonrey-value-engine`,
+`packages/productive-valuation`, `packages/moonrey-valuation`, or
+`packages/economic-value-engine`. The evaluator returns
+`mustStop: false`.

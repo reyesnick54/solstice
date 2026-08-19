@@ -32,6 +32,19 @@ export const PRODUCTIVE_VALUE_UNIT_IS_FIAT = false as const;
 export const ATTRIBUTION_REQUIRED = true as const;
 export const MOONREY_PRICE_SELF_REFERENCE_FORBIDDEN = true as const;
 
+/**
+ * Chunk 124 engine-era status. Distinct from the Chunk 123
+ * constitution-era `PRODUCTIVE_VALUE_FUNCTION_ENGINE_IMPLEMENTED`
+ * marker. Engineering implementation is not production activation.
+ */
+export const PRODUCTIVE_VALUE_ENGINE_SCHEMA_VERSION = 1 as const;
+export const PRODUCTIVE_VALUE_ENGINE_ENGINEERING_IMPLEMENTED = true as const;
+export const PRODUCTIVE_VALUE_ENGINE_SIMULATION_AVAILABLE = true as const;
+export const PRODUCTIVE_VALUE_ENGINE_PRODUCTION_ACTIVATED = false as const;
+export const PRODUCTIVE_VALUE_ENGINE_PRODUCTION_POLICY_CONFIGURED = false as const;
+export const PRODUCTIVE_VALUE_ENGINE_CAN_MINT = false as const;
+export const PRODUCTIVE_VALUE_ENGINE_CAN_CREATE_MONETARY_AUTHORITY = false as const;
+
 export const PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION = Object.freeze({
   constitutionId: PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION_ID,
   constitutionVersion: PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION_VERSION,
@@ -54,9 +67,16 @@ export const PRODUCTIVE_VALUE_FUNCTION_CONSTITUTION = Object.freeze({
   PRODUCTIVE_VALUE_UNIT_IS_FIAT,
   ATTRIBUTION_REQUIRED,
   MOONREY_PRICE_SELF_REFERENCE_FORBIDDEN,
+  PRODUCTIVE_VALUE_ENGINE_ENGINEERING_IMPLEMENTED,
+  PRODUCTIVE_VALUE_ENGINE_SIMULATION_AVAILABLE,
+  PRODUCTIVE_VALUE_ENGINE_PRODUCTION_ACTIVATED,
+  PRODUCTIVE_VALUE_ENGINE_PRODUCTION_POLICY_CONFIGURED,
+  PRODUCTIVE_VALUE_ENGINE_CAN_MINT,
+  PRODUCTIVE_VALUE_ENGINE_CAN_CREATE_MONETARY_AUTHORITY,
   legacyFormulaRemainsAvailable: true,
   issuanceEngineUnchanged: true,
   productionActivated: false,
+  engineeringImplementedDoesNotActivateProduction: true,
 });
 
 export const VALUE_NOT_PHYSICAL_MEASUREMENT =
@@ -72,4 +92,7 @@ export const VALUE_FUNCTION_NOT_MINT =
   'The Productive Value Function does not mint MoonRey and does not create monetary authority. Chunk 71 remains the issuance authority.';
 
 export const VALUE_FUNCTION_NOT_ENGINE =
-  'Chunk 123 defines the governed constitution and policy. The valuation/issuance engine remains unimplemented.';
+  'Chunk 123 defines the governed constitution and policy. Its engineImplemented=false marker is a constitution-era fact, not a production-activation switch.';
+
+export const VALUE_FUNCTION_ENGINE_NOT_PRODUCTION =
+  'Chunk 124 implements the simulation valuation engine. Engineering implementation is not production activation, mint authority, or MoonRey quantity.';
