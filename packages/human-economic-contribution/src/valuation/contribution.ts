@@ -112,5 +112,3 @@ export function asVerifiedHumanEconomicContribution(
     sunReyQuantity: null,
   });
 }
-
-void verified;

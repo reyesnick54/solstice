@@ -1,5 +1,4 @@
-import { scanForbiddenPayload } from '../invariants.ts';
-import { FORBIDDEN_SCORE_FIELDS, PROTECTED_TRAIT_FIELDS } from '../taxonomy.ts';
+import { FORBIDDEN_IDENTITY_FIELDS, FORBIDDEN_SCORE_FIELDS, PROTECTED_TRAIT_FIELDS } from '../taxonomy.ts';
 import {
   applyCap,
   applyFloor,
@@ -85,58 +84,63 @@ function asPolicyFactor(factor: FactorRequest): ValuationFactor | null {
   });
 }
 
+const ENGINE_INPUT_KEYS = new Set([
+  'contribution',
+  'policy',
+  'valuationTimestamp',
+  'requestedFactors',
+  'supersedesValuationId',
+  'revaluationReason',
+  'outcomeEvidenceRefs',
+  'attributionPolicyRef',
+]);
+
 function scanForbiddenValuationInput(input: EngineEvaluateInput): ValuationReasonCode | null {
-  const payload = scanForbiddenPayload(input);
-  if (!payload.ok) {
-    if (payload.error.code === 'PROTECTED_TRAIT_RANKING_FORBIDDEN') {
-      return 'PROTECTED_TRAIT_FORBIDDEN';
-    }
-    if (payload.error.code === 'HUMAN_WORTH_SCORE_FORBIDDEN' || payload.error.code === 'MEASUREMENT_IS_PEVE_SCORE') {
-      return payload.error.message.includes('peve') || payload.error.message.includes('PEVE')
-        ? 'PEVE_INPUT_FORBIDDEN'
-        : 'AI_SUBJECTIVE_SCORE_FORBIDDEN';
-    }
-    if (payload.error.code === 'MEASUREMENT_IS_PEVE_SCORE') {
-      return 'PEVE_INPUT_FORBIDDEN';
-    }
-    return 'PROTECTED_TRAIT_FORBIDDEN';
-  }
   const extra = input as unknown as Record<string, unknown>;
-  if (extra.peveScore !== undefined || extra.peveScoreUsedAsValue === true || extra.isPeveScore === true) {
-    return 'PEVE_INPUT_FORBIDDEN';
-  }
-  if (extra.aiSubjectiveScore !== undefined || extra.modelScore !== undefined) {
-    return 'AI_SUBJECTIVE_SCORE_FORBIDDEN';
-  }
-  if (extra.personLevelMultiplier !== undefined || extra.humanWorthMultiplier !== undefined) {
-    return 'PERSON_LEVEL_MULTIPLIER_FORBIDDEN';
-  }
-  for (const field of PROTECTED_TRAIT_FIELDS) {
-    if (field in extra) {
+  for (const [key, item] of Object.entries(extra)) {
+    if (ENGINE_INPUT_KEYS.has(key)) {
+      continue;
+    }
+    if ((PROTECTED_TRAIT_FIELDS as readonly string[]).includes(key) || (PROTECTED_TRAIT_FIELDS as readonly string[]).includes(key.toLowerCase())) {
       return 'PROTECTED_TRAIT_FORBIDDEN';
     }
-  }
-  for (const field of FORBIDDEN_SCORE_FIELDS) {
-    if (field in extra && extra[field] !== false && extra[field] !== null) {
-      if (field.toLowerCase().includes('peve')) {
-        return 'PEVE_INPUT_FORBIDDEN';
-      }
+    if ((FORBIDDEN_IDENTITY_FIELDS as readonly string[]).includes(key)) {
+      return 'PROTECTED_TRAIT_FORBIDDEN';
+    }
+    if (key === 'personLevelMultiplier' || key === 'humanWorthMultiplier') {
+      return 'PERSON_LEVEL_MULTIPLIER_FORBIDDEN';
+    }
+    if (key === 'aiSubjectiveScore' || key === 'modelScore') {
       return 'AI_SUBJECTIVE_SCORE_FORBIDDEN';
+    }
+    if ((FORBIDDEN_SCORE_FIELDS as readonly string[]).includes(key) || key === 'peveScore' || key === 'isPeveScore') {
+      if (item === false || item === null) {
+        continue;
+      }
+      return key.toLowerCase().includes('peve') ? 'PEVE_INPUT_FORBIDDEN' : 'AI_SUBJECTIVE_SCORE_FORBIDDEN';
     }
   }
   return null;
 }
 
-function materializeValuationId(input: ValuationEngineInput, method: ValuationMethod | null, state: ValuationState): ReturnType<typeof valuationIdFor> {
+function materializeValuationId(
+  contribution: VerifiedHumanEconomicContribution,
+  policy: HumanContributionValuationPolicy,
+  valuationTimestamp: ValuationEngineInput['valuationTimestamp'],
+  method: ValuationMethod | null,
+  state: ValuationState,
+  supersedesValuationId?: ValuationEngineInput['supersedesValuationId'],
+  revaluationReason?: ValuationEngineInput['revaluationReason'],
+): ReturnType<typeof valuationIdFor> {
   return valuationIdFor(
     [
-      input.contribution.contributionId,
-      input.contribution.contributionFingerprint,
-      input.policy.valuationPolicyVersion,
+      contribution.contributionId,
+      contribution.contributionFingerprint,
+      policy.valuationPolicyVersion,
       method ?? 'NONE',
-      input.valuationTimestamp,
-      input.supersedesValuationId ?? '',
-      input.revaluationReason ?? '',
+      valuationTimestamp,
+      supersedesValuationId ?? '',
+      revaluationReason ?? '',
       state,
     ].join('\n'),
   );
@@ -168,7 +172,11 @@ function digestOf(result: Omit<HumanContributionValuationResult, 'valuationDiges
       })),
       finalReferenceValue: result.finalReferenceValue?.toString() ?? null,
       roundingApplied: result.roundingApplied,
-      capsApplied: result.capsApplied,
+      capsApplied: result.capsApplied.map((item) => ({
+        kind: item.kind,
+        limit: item.limit.toString(),
+        applied: item.applied,
+      })),
       state: result.state,
       reasonCodes: result.reasonCodes,
       valuationTimestamp: result.valuationTimestamp,
@@ -193,15 +201,13 @@ function emptyResult(input: {
   readonly priorPolicyVersion?: HumanContributionValuationResult['priorPolicyVersion'];
 }): HumanContributionValuationResult {
   const valuationId = materializeValuationId(
-    {
-      contribution: input.contribution,
-      policy: input.policy,
-      valuationTimestamp: input.valuationTimestamp,
-      supersedesValuationId: input.supersedesValuationId,
-      revaluationReason: input.revaluationReason,
-    },
+    input.contribution,
+    input.policy,
+    input.valuationTimestamp,
     input.method,
     input.state,
+    input.supersedesValuationId,
+    input.revaluationReason,
   );
   const explanation = buildExplanation({
     valuationId,
@@ -275,10 +281,16 @@ function selectEligibleMethods(
 }
 
 export class HumanContributionValuationEngine {
+  private readonly references: ValuationReferenceDataPort;
+  private readonly historyStore: HumanContributionValuationHistory;
+
   constructor(
-    private readonly references: ValuationReferenceDataPort,
-    private readonly historyStore: HumanContributionValuationHistory = new HumanContributionValuationHistory(),
-  ) {}
+    references: ValuationReferenceDataPort,
+    historyStore: HumanContributionValuationHistory = new HumanContributionValuationHistory(),
+  ) {
+    this.references = references;
+    this.historyStore = historyStore;
+  }
 
   history(): HumanContributionValuationHistory {
     return this.historyStore;
@@ -291,11 +303,11 @@ export class HumanContributionValuationEngine {
       contribution,
       policy: raw.policy,
       valuationTimestamp: raw.valuationTimestamp,
-      requestedFactors: raw.requestedFactors,
-      supersedesValuationId: raw.supersedesValuationId,
-      revaluationReason: raw.revaluationReason,
-      outcomeEvidenceRefs: raw.outcomeEvidenceRefs,
-      attributionPolicyRef: raw.attributionPolicyRef,
+      ...(raw.requestedFactors ? { requestedFactors: raw.requestedFactors } : {}),
+      ...(raw.supersedesValuationId ? { supersedesValuationId: raw.supersedesValuationId } : {}),
+      ...(raw.revaluationReason ? { revaluationReason: raw.revaluationReason } : {}),
+      ...(raw.outcomeEvidenceRefs ? { outcomeEvidenceRefs: raw.outcomeEvidenceRefs } : {}),
+      ...(raw.attributionPolicyRef ? { attributionPolicyRef: raw.attributionPolicyRef } : {}),
     };
     const result = this.evaluateVerified(input, forbidden);
     return this.historyStore.append(result);
@@ -776,7 +788,15 @@ export class HumanContributionValuationEngine {
     }
     reasonCodes.push('ROUNDING_APPLIED');
 
-    const valuationId = materializeValuationId(input, method, 'VALUED_SIMULATION');
+    const valuationId = materializeValuationId(
+      input.contribution,
+      input.policy,
+      input.valuationTimestamp,
+      method,
+      'VALUED_SIMULATION',
+      input.supersedesValuationId,
+      input.revaluationReason,
+    );
     const appliedCap = caps.find((item) => item.applied) ?? null;
     const explanation = buildExplanation({
       valuationId,

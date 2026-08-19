@@ -78,7 +78,7 @@ export function referenceFor(
     sourceClass: METHOD_SOURCE[method],
     observedAt: extras.observedAt ?? VALUATION_OBSERVED_AT,
     effectiveAt: extras.effectiveAt ?? VALUATION_OBSERVED_AT,
-    expiresAt: extras.expiresAt,
+    ...(extras.expiresAt !== undefined ? { expiresAt: extras.expiresAt } : {}),
     jurisdiction: extras.jurisdiction ?? 'GB',
     unit: extras.unit ?? (method === 'CREATOR_ROYALTY_SCHEDULE'
       ? 'ROYALTY_BASIS_MINOR_UNIT'
@@ -86,14 +86,14 @@ export function referenceFor(
         ? 'CONTRACT_MINOR_UNIT'
         : (extras.measurementUnit ?? fixtureContribution(contributionClass).measurementUnit)),
     value,
-    royaltyBasisPoints: extras.royaltyBasisPoints,
-    quality: extras.quality,
-    confidenceBps: extras.confidenceBps,
+    ...(extras.royaltyBasisPoints !== undefined ? { royaltyBasisPoints: extras.royaltyBasisPoints } : {}),
+    ...(extras.quality ? { quality: extras.quality } : {}),
+    ...(extras.confidenceBps !== undefined ? { confidenceBps: extras.confidenceBps } : {}),
     contributionClass,
     valuationMethod: method,
     measurementUnit: extras.measurementUnit ?? fixtureContribution(contributionClass).measurementUnit,
-    relatedContributionId: extras.relatedContributionId,
-    policyCompatibility: extras.policyCompatibility,
+    ...(extras.relatedContributionId ? { relatedContributionId: extras.relatedContributionId } : {}),
+    ...(extras.policyCompatibility !== undefined ? { policyCompatibility: extras.policyCompatibility } : {}),
   });
 }
 

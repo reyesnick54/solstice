@@ -101,7 +101,7 @@ export function createSimulationValuationPolicy(
       'OUTCOME_ATTRIBUTION',
       'FRESHNESS',
       'JURISDICTION_POLICY',
-    ]),
+    ] as const),
     defaultFactors: Object.freeze([identityFactor('default-quality')]),
     outcomeAttributionRequiresExplicitEvidence: true,
     correction: Object.freeze({
@@ -113,7 +113,7 @@ export function createSimulationValuationPolicy(
     createsMintAuthority: false,
     createsExecutionAuthority: false,
     ...overrides,
-  });
+  }) as HumanContributionValuationPolicy;
 }
 
 export const DEFAULT_SIMULATION_VALUATION_POLICY = createSimulationValuationPolicy();

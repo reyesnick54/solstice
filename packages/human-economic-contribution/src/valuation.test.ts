@@ -282,7 +282,6 @@ describe('CHUNK-111 human contribution valuation engine', () => {
   it('17. rejects an unverified contribution', () => {
     const registry = new HumanContributionRegistry();
     const submitted = registry.submit(fixtureContribution('PROFESSIONAL_EXPERTISE', 'val-unverified'));
-    assert.equal(submitted.ok, true);
     if (!submitted.ok) {
       throw new Error(submitted.error.message);
     }
@@ -298,7 +297,6 @@ describe('CHUNK-111 human contribution valuation engine', () => {
   it('18. rejects a superseded contribution', () => {
     const registry = new HumanContributionRegistry();
     const first = registry.submit(fixtureContribution('PROFESSIONAL_EXPERTISE', 'val-super-1'));
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.error.message);
     }
