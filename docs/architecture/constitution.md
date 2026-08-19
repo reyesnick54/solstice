@@ -89,6 +89,7 @@ never be two implementations of these systems.
 | Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
 | Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |
 | Minerals / resource extraction data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/resources/types.ts` | IMPLEMENTED |
+| Goods / commerce / service delivery data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/goods/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1642,6 +1643,24 @@ not `RESOURCE_EXTRACTION` and cannot create OUTPUT or mint MoonRey.
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or a second oracle owner. See
 [`chunk-133-resource-extraction-data-fabric.md`](./chunk-133-resource-extraction-data-fabric.md).
+
+Chunk 137 implements the goods, commerce, and service-delivery
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/goods`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/services`.
+Capability `sunrey-goods-services-data-fabric` is `IMPLEMENTED` on
+the existing `sunrey-production-oracles` owner. Order, invoice, and
+payment are not productive output. Manufacturing and agriculture goods
+registrations are not automatic second full credits. Merchant
+`GOODS_DELIVERY` and carrier `DELIVERY_COMPLETION` remain
+attribution-linked. `SERVICE_DELIVERY` allows `service_hour` for
+time-based services; historical `machine_h` records are preserved.
+The fabric does not score human worth, contact live providers, or
+mint MoonRey. Do not create `packages/goods-oracles`,
+`packages/commerce-data-fabric`, `packages/services-oracle`, or
+`packages/moonrey-commerce`. See
+[`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md).
 
 ## Agent stop rule
 

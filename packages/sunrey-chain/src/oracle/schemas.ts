@@ -67,7 +67,7 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
   SERVICE_DELIVERY: schema(
     'SERVICE_DELIVERY',
     'units_produced',
-    ['units_produced', 'machine_h'],
+    ['units_produced', 'machine_h', 'service_hour'],
     'service.delivery.v1',
   ),
   INFRASTRUCTURE_CAPACITY: schema(

@@ -2833,6 +2833,34 @@
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
     },
     {
+      "id": "sunrey-goods-services-data-fabric",
+      "name": "Goods, commerce, and service delivery economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/goods/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/goods/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "GoodsSourceObservation",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/goods-oracles",
+        "packages/commerce-data-fabric",
+        "packages/services-oracle",
+        "packages/moonrey-commerce"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 137 provider-neutral goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../services. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. SERVICE_DELIVERY allows service_hour; historical machine_h is preserved. No named vendor, live provider, production activation, or MoonRey mint."
+    },
+    {
       "id": "sunrey-production-infrastructure",
       "name": "SunRey production infrastructure provider adapters and secret controls",
       "canonicalOwner": "packages/sunrey-chain",
@@ -6213,6 +6241,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. RESOURCE_RESERVE is not extraction or OUTPUT. REFERENCE_PRICE cannot create a productive claim. No named provider integration, production activation, or second oracle owner. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+    },
+    {
+      "id": "sunrey-goods-services-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 137 goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../services. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. service_hour is the governed time-based service unit; historical machine_h records are preserved. No named vendor, live provider, production activation, or MoonRey mint. Do not create packages/goods-oracles, packages/commerce-data-fabric, packages/services-oracle, or packages/moonrey-commerce."
     },
     {
       "id": "moonrey-productive-value-settlement",
