@@ -21,6 +21,11 @@ export const ECONOMIC_ASSET_REGISTRY_ISOLATION = Object.freeze({
     'packages/data-assets-v2',
     'packages/universal-data-registry',
     'packages/tokenized-data',
+    'packages/dataset-verification',
+    'packages/data-rights-registry',
+    'packages/economic-provenance',
+    'packages/asset-rights',
+    'packages/economic-assets-v2',
   ]),
   sitsAbove: Object.freeze([
     'packages/information-market',

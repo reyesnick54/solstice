@@ -90,6 +90,7 @@ never be two implementations of these systems.
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
+| Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
@@ -1350,6 +1351,16 @@ registry. Do not create `packages/dataset-registry`,
 `packages/economic-assets`, `packages/data-assets-v2`,
 `packages/universal-data-registry`, or `packages/tokenized-data`. See
 [`chunk-113-economic-asset-registry-foundation.md`](./chunk-113-economic-asset-registry-foundation.md).
+Chunk 114 extends that same owner with a deterministic rights,
+provenance, lineage, and storage verification layer at
+`packages/economic-asset-registry/src/verification`. Capability
+`sunrey-economic-asset-verification` names that layer. `VERIFIED`
+means the descriptor passed a versioned policy. It does not infer
+legal ownership, store raw datasets, value assets, mint, or issue
+Execution Authority. Do not create `packages/dataset-verification`,
+`packages/data-rights-registry`, `packages/economic-provenance`,
+`packages/asset-rights`, or `packages/economic-assets-v2`. See
+[`chunk-114-economic-asset-verification.md`](./chunk-114-economic-asset-verification.md).
 Chunk 111 implements the Deterministic Human Contribution Valuation
 Engine at `packages/human-economic-contribution/src/valuation`.
 Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.

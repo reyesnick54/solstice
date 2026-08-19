@@ -134,7 +134,7 @@ export function createEconomicAssetDescriptor(
     lineage: proposedLineage,
     storageClass,
     chainAnchor: input.chainAnchor ?? null,
-    status: input.status ?? 'REGISTERED',
+    status: input.status === 'VERIFIED' ? 'REGISTERED' : (input.status ?? 'REGISTERED'),
     createdAt,
     updatedAt: createdAt,
     supersedes: input.supersedes ?? null,
@@ -147,6 +147,9 @@ export function createEconomicAssetDescriptor(
     automaticSunReyQuantity: null,
     automaticMoonReyQuantity: null,
     issuanceEligible: false,
+    verificationPolicyId: null,
+    verificationPolicyVersion: null,
+    verificationDecisionId: null,
   });
 
   void DEFAULT_CLASS_POLICY;

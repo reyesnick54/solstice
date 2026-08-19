@@ -16,6 +16,12 @@ import type {
   RegistryAudit,
   RegistryFailure,
 } from './types.ts';
+import {
+  ENGINEERING_VERIFICATION_POLICY,
+  EconomicAssetVerificationEngine,
+  type EconomicAssetVerificationDecision,
+  type EconomicAssetVerificationPolicy,
+} from './verification/index.ts';
 
 const TERMINAL = new Set(['SUPERSEDED', 'RETIRED']);
 
@@ -36,10 +42,14 @@ export class EconomicAssetRegistry {
   private readonly descriptors = new Map<AssetId, EconomicAssetDescriptor>();
   private readonly indexes = new EconomicAssetQueryIndex();
   private readonly store: EconomicAssetRegistryStore | undefined;
+  private readonly verifier: EconomicAssetVerificationEngine;
+  private readonly policy: EconomicAssetVerificationPolicy;
   private projectionsReady = true;
 
-  constructor(store?: EconomicAssetRegistryStore) {
+  constructor(store?: EconomicAssetRegistryStore, policy: EconomicAssetVerificationPolicy = ENGINEERING_VERIFICATION_POLICY) {
     this.store = store;
+    this.policy = policy;
+    this.verifier = new EconomicAssetVerificationEngine(policy);
   }
 
   register(input: RegisterAssetInput): Result<EconomicAssetDescriptor, RegistryFailure> {
@@ -52,6 +62,25 @@ export class EconomicAssetRegistry {
     }
     if (this.descriptors.has(created.value.assetId)) {
       return err(failure('ALREADY_REGISTERED', `asset ${created.value.assetId} already exists; updates use supersession`));
+    }
+    if (input.status === 'VERIFIED') {
+      const decision = this.verifier.evaluate({
+        descriptor: created.value,
+        knownAssets: this.knownAssets(),
+        evaluatedAt: created.value.createdAt,
+        policy: this.policy,
+      });
+      if (decision.decision !== 'VERIFIED') {
+        return err(
+          failure(
+            'VERIFICATION_REJECTED',
+            `register({ status: "VERIFIED" }) cannot bypass policy: ${decision.decisionCodes.join(',') || decision.decision}`,
+          ),
+        );
+      }
+      const verified = this.descriptorFromDecision(created.value, decision);
+      this.put(verified);
+      return ok(verified);
     }
     this.put(created.value);
     return ok(created.value);
@@ -130,28 +159,55 @@ export class EconomicAssetRegistry {
     return ok(corrected);
   }
 
-  verify(assetId: AssetId, verifiedAt: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+  evaluateVerification(
+    assetId: AssetId,
+    evaluatedAt: UtcInstant,
+    policy?: EconomicAssetVerificationPolicy,
+  ): Result<EconomicAssetVerificationDecision, RegistryFailure> {
     const current = this.descriptors.get(assetId);
     if (!current) {
       return err(failure('ASSET_NOT_FOUND', `asset ${assetId} was not registered`));
+    }
+    return ok(
+      this.verifier.evaluate({
+        descriptor: current,
+        knownAssets: this.knownAssets(),
+        evaluatedAt,
+        policy: policy ?? this.policy,
+      }),
+    );
+  }
+
+  applyVerificationDecision(decision: EconomicAssetVerificationDecision): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const current = this.descriptors.get(decision.assetId);
+    if (!current) {
+      return err(failure('ASSET_NOT_FOUND', `asset ${decision.assetId} was not registered`));
+    }
+    if (decision.decision !== 'VERIFIED') {
+      return err(
+        failure(
+          'VERIFICATION_REJECTED',
+          `asset ${decision.assetId} was not verified: ${decision.decisionCodes.join(',') || decision.decision}`,
+        ),
+      );
     }
     if (current.status === 'VERIFIED') {
       return ok(current);
     }
     if (TERMINAL.has(current.status) || current.status === 'SUSPENDED') {
-      return err(failure('INVALID_LIFECYCLE', `asset ${assetId} cannot be verified from ${current.status}`));
+      return err(failure('INVALID_LIFECYCLE', `asset ${decision.assetId} cannot be verified from ${current.status}`));
     }
-    const next = replaceDescriptor(
-      current,
-      {
-        status: 'VERIFIED',
-        qualityClass: current.qualityClass === 'AUTHORITATIVE' ? 'AUTHORITATIVE' : 'VERIFIED',
-        freshness: current.freshness === 'SUPERSEDED' ? current.freshness : 'CURRENT',
-      },
-      verifiedAt,
-    );
+    const next = this.descriptorFromDecision(current, decision);
     this.put(next);
     return ok(next);
+  }
+
+  verify(assetId: AssetId, verifiedAt: UtcInstant): Result<EconomicAssetDescriptor, RegistryFailure> {
+    const evaluated = this.evaluateVerification(assetId, verifiedAt);
+    if (!evaluated.ok) {
+      return evaluated;
+    }
+    return this.applyVerificationDecision(evaluated.value);
   }
 
   query(criteria: EconomicAssetQuery): readonly EconomicAssetDescriptor[] {
@@ -268,6 +324,28 @@ export class EconomicAssetRegistry {
 
   private allLineage() {
     return [...this.descriptors.values()].flatMap((descriptor) => [...descriptor.lineage]);
+  }
+
+  private knownAssets(): readonly EconomicAssetDescriptor[] {
+    return [...this.descriptors.values()];
+  }
+
+  private descriptorFromDecision(
+    current: EconomicAssetDescriptor,
+    decision: EconomicAssetVerificationDecision,
+  ): EconomicAssetDescriptor {
+    return replaceDescriptor(
+      current,
+      {
+        status: 'VERIFIED',
+        qualityClass: decision.qualityClass,
+        freshness: current.freshness === 'SUPERSEDED' ? current.freshness : 'CURRENT',
+        verificationPolicyId: decision.verificationPolicyId,
+        verificationPolicyVersion: decision.verificationPolicyVersion,
+        verificationDecisionId: decision.decisionId,
+      },
+      decision.evaluatedAt,
+    );
   }
 }
 
