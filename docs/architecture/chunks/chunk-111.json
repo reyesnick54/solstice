@@ -1,0 +1,10 @@
+{
+  "chunk": "CHUNK-111",
+  "title": "Human Contribution Valuation Engine",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "sunrey-human-economic-contributions"
+  ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution/src/valuation. Engineering-simulation reference valuation only. Does not mint, does not compute SunRey quantity, does not use PEVE as a formula, and does not activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-valuation-engine or packages/contribution-valuation."
+}

@@ -10,5 +10,5 @@
     "sunrey-human-information-network",
     "sunrey-human-contribution-monetary-bridge"
   ],
-  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/human-contribution-bridge. Privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Valuation engine is not implemented. Production issuance remains unavailable. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution-mint, packages/human-valuation-engine, packages/contribution-issuance, packages/human-worth-token, or packages/peve-mint."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/human-contribution-bridge. Privacy-safe adapter from verified human contributions to existing Chunk 71 HumanEconomicEvidence and MonetaryIssuanceAuthority. Not a second mint. Engineering valuation is simulation-only; production valuation remains unactivated. Legacy fixtures remain fail-closed. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution-mint, packages/human-valuation-engine, packages/contribution-issuance, packages/human-worth-token, or packages/peve-mint."
 }

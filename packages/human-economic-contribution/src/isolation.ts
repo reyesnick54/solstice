@@ -6,6 +6,7 @@ export const HUMAN_CONTRIBUTION_ISOLATION = Object.freeze({
   executionAuthorityRequired: false,
   kernelAuthorizationRequired: false,
   valuationImplemented: false,
+  engineeringReferenceValuation: 'SIMULATION_ONLY',
   mintingImplemented: false,
   peveIsNotContributionValue: true,
   measurementIsNotSunReyQuantity: true,

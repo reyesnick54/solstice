@@ -1308,9 +1308,9 @@ evidence bridge at
 Capability `sunrey-human-contribution-monetary-bridge` is
 `IMPLEMENTED`. It adapts privacy-safe verified contribution fields
 into existing Chunk 71 `HumanEconomicEvidence` and then the existing
-`MonetaryIssuanceAuthority`. It is not a second mint and does not
-implement the future Human Contribution Valuation Engine. Production
-issuance remains unavailable. PEVE, HIN consent, HIN usage receipts,
+`MonetaryIssuanceAuthority`. It is not a second mint. Chunk 112 extends the same bridge with an
+engineering-implemented valuation-to-settlement path. Production
+valuation and issuance remain unavailable. PEVE, HIN consent, HIN usage receipts,
 clean-room results, AI, and Financial Agents cannot authorize
 issuance. Do not create `packages/human-contribution-mint`,
 `packages/human-valuation-engine`, `packages/contribution-issuance`,
