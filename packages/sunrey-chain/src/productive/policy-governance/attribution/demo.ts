@@ -75,6 +75,8 @@ export function runMoonReyAttributionPolicyDemo(): string {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   process.stdout.write(`${runMoonReyAttributionPolicyDemo()}\n`);
+}
+
 import { EconomicAssetRegistry } from '../../../../../economic-asset-registry/src/index.ts';
 import { classifyEventClass, classifyObservationRelation } from './classification.ts';
 import {

@@ -75,6 +75,7 @@ export {
   supplyChainSubjects,
 } from './fixtures.ts';
 export { runMoonReyAttributionPolicyDemo } from './demo.ts';
+export {
   ATTRIBUTION_AUTHORITY_BOUNDARY,
   ATTRIBUTION_GRAPH_DOMAIN,
   ATTRIBUTION_NODE_KINDS,

@@ -213,6 +213,25 @@ export const VALUE_FUNCTION_REJECTION_CODES = [
   'MISSING_INPUT_REVIEW_REQUIRED',
   'POLICY_STATE_INVALID',
   'FACTOR_ORDER_NONDETERMINISTIC',
+  'INCOMPLETE_VALUE_INPUT',
+  'CROSS_REFERENCE_MISMATCH',
+  'EVENT_ATTRIBUTION_MISMATCH',
+  'POLICY_VERSION_MISMATCH',
+  'ATTRIBUTION_UNRESOLVED',
+  'ATTRIBUTION_NOT_RECONCILED',
+  'BASE_SCHEDULE_NOT_FOUND',
+  'PRODUCTION_SCHEDULE_UNCONFIGURED',
+  'REFERENCE_FACTS_CONFLICT',
+  'REFERENCE_FACT_STALE',
+  'REFERENCE_FACT_QUORUM_INSUFFICIENT',
+  'UTILIZATION_BASIS_STALE',
+  'UTILIZATION_OBJECT_MISMATCH',
+  'UTILIZATION_PERIOD_MISMATCH',
+  'UTILIZATION_GEOGRAPHY_MISMATCH',
+  'GEOGRAPHY_AMBIGUOUS',
+  'SCARCITY_UNBOUNDED_FORBIDDEN',
+  'AI_ECONOMIC_JUDGMENT_FORBIDDEN',
+  'VALUE_RESULT_IMMUTABLE',
 ] as const;
 export type ValueFunctionRejectionCode = (typeof VALUE_FUNCTION_REJECTION_CODES)[number];
 
@@ -275,7 +294,78 @@ export type ProductiveValueReferenceFact = {
   readonly moonreyMarketPrice: false;
   readonly socialMediaSentiment: false;
   readonly providerSelfReportedAlone: false;
+  readonly quantity?: ExactRational;
+  readonly objectId?: string;
+  readonly stale?: boolean;
+  readonly conflictsWithFactIds?: readonly string[];
 };
+
+export const GEOGRAPHIC_CONTEXT_KINDS = [
+  'VERIFIED_GRID_SCARCITY',
+  'WATER_BASIN_AVAILABILITY',
+  'LOGISTICS_CORRIDOR_CONGESTION',
+  'REGIONAL_RESOURCE_AVAILABILITY',
+] as const;
+export type GeographicContextKind = (typeof GEOGRAPHIC_CONTEXT_KINDS)[number];
+
+export const VALUE_RESULT_STATES = [
+  'VALUED_SIMULATION',
+  'VALUE_REVIEW_REQUIRED',
+  'VALUE_REJECTED',
+] as const;
+export type ValueResultState = (typeof VALUE_RESULT_STATES)[number];
+
+export const VALUE_PIPELINE_STAGES = [
+  'VERIFIED_PRODUCTIVE_CONTRIBUTION',
+  'CANONICAL_MEASUREMENT_VERIFICATION',
+  'ECONOMIC_EVENT_VERIFICATION',
+  'ATTRIBUTION_VERIFICATION',
+  'BASE_VALUE_SCHEDULE_RESOLUTION',
+  'PRELIMINARY_PRODUCTIVE_VALUE_BASIS',
+  'REQUIRED_REFERENCE_FACT_RESOLUTION',
+  'FACTOR_EVALUATION',
+  'ORDERED_FACTOR_COMPOSITION',
+  'ATTRIBUTION_APPLICATION',
+  'POLICY_FLOOR_CEILING',
+  'FINAL_GOVERNED_PRODUCTIVE_VALUE',
+  'EXPLAINABILITY_RECEIPT',
+] as const;
+export type ValuePipelineStage = (typeof VALUE_PIPELINE_STAGES)[number];
+
+export type UtilizationEvidence = {
+  readonly actual: bigint;
+  readonly basis: bigint;
+  readonly objectId: string;
+  readonly geography: GeographyRef;
+  readonly measurementPeriod: MeasurementPeriod;
+  readonly basisFreshnessEpochs: number;
+  readonly independentlyEvidenced: true;
+};
+
+export type ConcentrationEvidence = {
+  readonly providerShare: ExactRational;
+  readonly controllerShare: ExactRational;
+  readonly objectShare: ExactRational;
+  readonly reviewThreshold: ExactRational;
+};
+
+export type ProductiveValueFunctionEngineStatus = {
+  readonly engineeringImplemented: true;
+  readonly simulationAvailable: true;
+  readonly productionActivated: false;
+  readonly productionPolicyConfigured: false;
+  readonly canMint: false;
+  readonly canCreateMonetaryAuthority: false;
+};
+
+export const PRODUCTIVE_VALUE_FUNCTION_ENGINE_STATUS = Object.freeze({
+  engineeringImplemented: true,
+  simulationAvailable: true,
+  productionActivated: false,
+  productionPolicyConfigured: false,
+  canMint: false,
+  canCreateMonetaryAuthority: false,
+}) satisfies ProductiveValueFunctionEngineStatus;
 
 export type CanonicalMeasurementReference = {
   readonly unitId: string;
@@ -289,6 +379,7 @@ export type ProductiveEconomicEventIdentity = {
   readonly category: ProductiveCategory;
   readonly objectId: string;
   readonly measurementPeriod: MeasurementPeriod;
+  readonly eventFingerprint?: string;
 };
 
 /**
@@ -305,6 +396,7 @@ export type ProductiveAttributionDecision = {
   readonly availableShare: ExactRational;
   readonly authoritative: true;
   readonly reconciled: boolean;
+  readonly contributionId?: string;
 };
 
 export type ProductiveValueInput = {
@@ -328,6 +420,21 @@ export type ProductiveValueInput = {
   readonly realizationState: RealizationState;
   readonly claimOutputState: ClaimOutputState;
   readonly rawProviderPayload: never | undefined;
+  readonly eventFingerprint?: string;
+  readonly measurementSemantic?: string;
+  readonly utilization?: UtilizationEvidence;
+  readonly concentration?: ConcentrationEvidence;
+  readonly freshnessAgeEpochs?: bigint;
+  readonly policyMaxAgeEpochs?: bigint;
+  readonly geographyContextKind?: GeographicContextKind;
+  readonly countryPreferenceRequested?: boolean;
+  readonly referencePriceAlone?: boolean;
+  readonly aiEconomicJudgment?: boolean;
+  readonly providerSelfReportAlone?: boolean;
+  readonly evaluatedAt?: string;
+  readonly supersedesValueId?: string;
+  readonly revaluationReason?: string;
+  readonly priorPolicyVersion?: number;
 };
 
 export type PerCategoryValueRule = {
