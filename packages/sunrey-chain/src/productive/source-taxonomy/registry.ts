@@ -12,7 +12,7 @@ import { SOURCE_PRODUCTIVE_MAPPINGS } from './mapping.ts';
 import {
   PRIMARY_FACT_TYPE_BY_CATEGORY,
   isDataSourceCategory,
-  isOverlapRiskCategory,
+  isAttributionRiskCategory,
   resolveSourceCategory,
   type DataSourceCategory,
   type MappingRejection,
@@ -93,7 +93,7 @@ export class SourceProductiveTaxonomyRegistry {
     if (byId) {
       return byId.requiresAttributionPolicy;
     }
-    if (isOverlapRiskCategory(key)) {
+    if (isAttributionRiskCategory(key)) {
       return true;
     }
     if (isProductiveCategory(key)) {

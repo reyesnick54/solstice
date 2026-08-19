@@ -116,7 +116,7 @@ export const OVERLAP_RISK_PRODUCTIVE_CATEGORIES = [
   'AUTOMATED_MACHINE_OUTPUT',
   'LOGISTICS_TRANSPORTATION',
 ] as const;
-export type OverlapRiskProductiveCategory = (typeof OVERLAP_RISK_PRODUCTIVE_CATEGORIES)[number];
+export type AttributionRiskProductiveCategory = (typeof OVERLAP_RISK_PRODUCTIVE_CATEGORIES)[number];
 
 /**
  * Economic Asset Registry category pointer. Productive names are the
@@ -219,7 +219,7 @@ export function isMappingStatus(value: string): value is MappingStatus {
   return (MAPPING_STATUSES as readonly string[]).includes(value);
 }
 
-export function isOverlapRiskCategory(value: string): value is OverlapRiskProductiveCategory {
+export function isAttributionRiskCategory(value: string): value is AttributionRiskProductiveCategory {
   return (OVERLAP_RISK_PRODUCTIVE_CATEGORIES as readonly string[]).includes(value);
 }
 

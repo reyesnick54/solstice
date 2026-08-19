@@ -54,7 +54,7 @@ export {
   isEconomicEventClass,
   isLegacyDataSourceAlias,
   isMappingStatus,
-  isOverlapRiskCategory,
+  isAttributionRiskCategory,
   resolveSourceCategory,
 } from './types.ts';
 export type {
@@ -67,7 +67,7 @@ export type {
   MappingRejection,
   MappingRejectionCode,
   MappingStatus,
-  OverlapRiskProductiveCategory,
+  AttributionRiskProductiveCategory,
   SourceCategoryResolution,
   SourceProductiveMapping,
   TaxonomyCompletenessReport,

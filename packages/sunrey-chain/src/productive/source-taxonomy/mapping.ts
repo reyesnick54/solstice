@@ -6,7 +6,7 @@ import {
   ISSUANCE_BOUNDARY,
   SOURCE_TAXONOMY_MAPPING_VERSION,
   SOURCE_TAXONOMY_SCHEMA_VERSION,
-  isOverlapRiskCategory,
+  isAttributionRiskCategory,
   type DataSourceCategory,
   type EconomicEventClass,
   type MappingEconomicAssetCategory,
@@ -46,7 +46,7 @@ function mappingId(source: DataSourceCategory, fact: FactType): string {
 function defineMapping(draft: MappingDraft): SourceProductiveMapping {
   const canClaim = draft.canClaim ?? draft.productive !== null;
   const attribution =
-    draft.attribution ?? (draft.productive !== null && isOverlapRiskCategory(draft.productive));
+    draft.attribution ?? (draft.productive !== null && isAttributionRiskCategory(draft.productive));
   return Object.freeze({
     mappingId: mappingId(draft.source, draft.fact),
     mappingVersion: SOURCE_TAXONOMY_MAPPING_VERSION,
