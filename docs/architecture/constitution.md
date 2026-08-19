@@ -87,6 +87,7 @@ never be two implementations of these systems.
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
+| SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -100,6 +101,7 @@ the same architecture-linting system, not a second linter.
 `treasury`, `investments`, `regulatory-twin`, `risk`, `model-registry`,
 `agentic-capital-mesh`, `sunrey-agent`, `ai-runtime`, `strategy-lab`, `personal-data-vault`,
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
+`human-economic-contribution`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
 `market-surveillance`.
 `consent`, `clean-room`, `sunrey-sdk`.
@@ -1299,6 +1301,24 @@ Do not create `packages/human-information-network`,
 `packages/data-marketplace`, or `packages/sunrey-information-network`.
 See
 [`chunk-100-human-information-network.md`](./chunk-100-human-information-network.md).
+Chunk 104 implements the canonical SunRey Human Economic Contribution
+ontology at `packages/human-economic-contribution`. Capability
+`sunrey-human-economic-contributions` is `IMPLEMENTED`. It defines
+contribution classes, source classes, provenance, and reference-safe
+events. It does not calculate SunRey quantities, value contributions
+with PEVE, mint, issue Execution Authority, or replace PEG, HIN,
+consent, clean-room, or the Chunk 71 monetary constitution. Do not
+create `packages/human-contribution`,
+`packages/human-economic-contribution-v2`,
+`packages/contribution-ontology`, `packages/human-worth`,
+`packages/contribution-valuation`,
+`packages/human-contribution-score`, or
+`packages/sunrey-contribution`. See
+[`chunk-104-human-contribution-ontology.md`](./chunk-104-human-contribution-ontology.md).
+Chunk 106 extends that same owner with the canonical verified
+contribution registry. Capability
+`sunrey-human-economic-contributions` remains singular. See
+[`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md).
 Chunk 99 implements the SunRey consumer Exchange, portfolio, quote,
 and simple trading experience backend at
 `packages/sunrey-exchange/src/consumer`. Capability

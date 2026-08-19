@@ -163,6 +163,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
+| sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -934,4 +935,29 @@ Compensation remains `mintRequested: false`. Do not create
 `packages/hin-contribution-registry`,
 `packages/information-contribution-v2`, or
 `packages/human-information-contribution`. The evaluator returns
+Chunk 104 implements the canonical Human Economic Contribution
+ontology at `packages/human-economic-contribution`. Capability
+`sunrey-human-economic-contributions` is `IMPLEMENTED`. See
+[`chunk-104-human-contribution-ontology.md`](./chunk-104-human-contribution-ontology.md)
+and [`docs/economics/chunk-104-human-contribution-ontology.md`](../economics/chunk-104-human-contribution-ontology.md).
+It defines what a human economic contribution is. PEVE remains
+`packages/platform/src/value`. HIN remains
+`packages/information-market`. The monetary constitution remains
+Chunk 71. Measurement is not token valuation. Do not create
+`packages/human-contribution`,
+`packages/human-economic-contribution-v2`,
+`packages/contribution-ontology`, `packages/human-worth`,
+`packages/contribution-valuation`,
+`packages/human-contribution-score`, or
+`packages/sunrey-contribution`. The evaluator returns
+`mustStop: false`.
+Chunk 106 extends the same capability with the canonical verified
+contribution registry at `packages/human-economic-contribution`.
+See [`chunk-106-human-contribution-registry.md`](./chunk-106-human-contribution-registry.md)
+and [`docs/economics/chunk-106-human-contribution-registry.md`](../economics/chunk-106-human-contribution-registry.md).
+It is the system of record for verified contribution records. It does
+not value, mint, or issue Execution Authority. Do not create
+`packages/human-contribution-registry`,
+`packages/contribution-registry`, or
+`packages/human-economic-contribution-registry`. The evaluator returns
 `mustStop: false`.

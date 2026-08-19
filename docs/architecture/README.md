@@ -160,6 +160,13 @@
   — proprietary primary intelligence adapter at
   `packages/ai-runtime/src/providers/s3m`.
   See [`docs/ai/chunk-102-s3m-provider.md`](../ai/chunk-102-s3m-provider.md).
+- [Chunk 104 human contribution ontology](./chunk-104-human-contribution-ontology.md)
+  — versioned contribution taxonomy at
+  `packages/human-economic-contribution`.
+- [Chunk 106 human contribution registry](./chunk-106-human-contribution-registry.md)
+  — canonical verified-contribution system of record in the same
+  package. See
+  [`docs/economics/chunk-106-human-contribution-registry.md`](../economics/chunk-106-human-contribution-registry.md).
 - [Chunk 97 mobile wallet synchronization](./chunk-97-mobile-sync.md)
   — multi-device sync, BFT finality, offline drafts, privacy-safe
   push, and payment requests at

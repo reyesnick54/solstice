@@ -1,0 +1,10 @@
+{
+  "chunk": "CHUNK-106",
+  "title": "Canonical Human Economic Contribution Registry",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "sunrey-human-economic-contributions"
+  ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution. Extends the Chunk 104 ontology with the canonical verified-contribution system of record. Does not create a second registry package or capability. Does not calculate SunRey quantities, value contributions, mint, issue Execution Authority, or replace the ledger, PEG, HIN, PEVE, Exchange, or wallet. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution-registry, packages/contribution-registry, or packages/human-economic-contribution-registry."
+}
