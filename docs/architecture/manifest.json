@@ -1142,6 +1142,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only.",
       "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 111 valuation engine at src/valuation. Not PEVE, not SunRey issuance, not a human-worth score, not a mint or Execution Authority. Simulation only.",
       "notes": "Chunk 104 ontology, Chunk 106 canonical verified-contribution registry, and Chunk 110 valuation constitution at src/valuation. Defines contribution classes, provenance, lifecycle, fingerprints, and versioned valuation methods. Not PEVE, not a SunRey quantity, not a human-worth score, not a mint or Execution Authority. Simulation only.",
@@ -3978,6 +3979,9 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "HumanContributionValuationEngine",
       "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/human-valuation-engine",
@@ -4009,6 +4013,7 @@
       "forbiddenAliases": [
         "packages/human-valuation-engine",
         "packages/contribution-valuation",
+        "packages/human-contribution-valuation",
         "packages/human-contribution-valuation"
       "protectedSymbols": [],
       "forbiddenAliases": [
@@ -4019,6 +4024,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 110 valuation constitution and Chunk 111 valuation engine at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
       "notes": "Chunk 111 valuation engine and Chunk 110 constitution at packages/human-economic-contribution/src/valuation. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
       "notes": "Chunk 104 contribution ontology, Chunk 106 canonical registry, and Chunk 109 evidence-verification policy. PEVE remains packages/platform/src/value. HIN remains packages/information-market. Monetary constitution remains packages/sunrey-chain/src/economics. No valuation formula, mint, or Execution Authority. Do not create a second registry package."
     },
@@ -4046,12 +4052,12 @@
         "packages/human-valuation",
         "packages/human-contribution-verification",
         "packages/contribution-verification",
-        "packages/human-contribution",
         "packages/human-worth"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 109 versioned, contribution-class-specific evidence-verification layer. VERIFIED means the contribution passed the activated engineering policy. Not valuation or minting."
       "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score."
       "notes": "Chunk 111 deterministic valuation engine at packages/human-economic-contribution/src/valuation. Extends the Chunk 110 valuation capability. A valuation result is not settlement authorization, SunRey issuance, PEVE, or a human-worth score.",
       "notes": "Chunk 110 valuation constitution and methodology registry. Event-specific and versioned. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint. productionActivated=false. Do not create packages/human-valuation-engine.",
@@ -5320,7 +5326,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 44 derived Global Productive Capacity Graph, productive object/claim registry, anti-double-counting fingerprints, and verified productive contributions at packages/sunrey-chain. Graph is rebuildable from finalized facts. Do not create packages/productive-capacity or packages/moonrey."
+      "notes": "Chunk 44 derived Global Productive Capacity Graph, productive object/claim registry, anti-double-counting fingerprints, and verified productive contributions at packages/sunrey-chain. Chunk 117 ProductiveClaimCandidate mapping enforcement lives at src/productive/claim-candidate. Graph is rebuildable from finalized facts. Do not create packages/productive-capacity or packages/moonrey."
     },
     {
       "id": "moonrey-issuance-engine",
@@ -5512,7 +5518,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 117 source/fact/claim mapping enforcement lives at src/oracle/source-taxonomy. Extends Chunk 43. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-production-storage",
@@ -6277,6 +6283,9 @@
     "packages/human-valuation",
     "packages/human-contribution-verification",
     "packages/contribution-verification",
+    "packages/moonrey-source-taxonomy",
+    "packages/source-claim-enforcement",
+    "packages/productive-claim-candidate"
     "packages/moonrey-taxonomy",
     "packages/source-taxonomy",
     "packages/productive-taxonomy",
