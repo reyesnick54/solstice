@@ -180,6 +180,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-compute-ai-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-resource-extraction-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1241,6 +1242,18 @@ providers, activate production ingestion, or mint MoonRey. Do not
 create `packages/energy-oracle`, `packages/grid-oracle`,
 `packages/moonrey-energy`, `packages/power-data`, or
 `packages/utility-integration`. The evaluator returns `mustStop: false`.
+Chunk 133 implements the minerals, natural resources, and extraction
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/resources`.
+Capability `sunrey-resource-extraction-data-fabric` is `IMPLEMENTED` on
+the existing production-oracle owner. See
+[`chunk-133-resource-extraction-data-fabric.md`](./chunk-133-resource-extraction-data-fabric.md)
+and
+[`docs/economics/chunk-133-resource-extraction-data-fabric.md`](../economics/chunk-133-resource-extraction-data-fabric.md).
+`RESOURCE_RESERVE` is not extraction or OUTPUT. Do not create
+`packages/resource-oracles`, `packages/minerals-data`,
+`packages/extraction-fabric`, or `packages/resource-data-fabric`.
+The evaluator returns `mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.

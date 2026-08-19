@@ -161,3 +161,8 @@ REFERENCE_PRICE_CAN_CREATE_CLAIM=false
 MAPPING_AUTHORIZES_MOONREY=false
 PRODUCTION_ACTIVE=false
 ```
+
+Chunk 133 consumes the existing `resources` / `minerals_resources`
+`RESOURCE_RESERVE` and `RESOURCE_EXTRACTION` mappings. It does not add
+`RESOURCE_VALUE` or `MINERAL_VALUE` facts. `REFERENCE_PRICE` remains
+unable to create a productive claim.

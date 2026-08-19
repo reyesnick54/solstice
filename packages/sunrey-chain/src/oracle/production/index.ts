@@ -268,4 +268,15 @@ export {
 } from './provider-families/logistics/index.ts';
 export type { LogisticsFabricDecision, LogisticsSourceObservation } from './provider-families/logistics/index.ts';
 export * from './provider-families/compute/index.ts';
+export {
+  ingestResourceRecord,
+  ingestResourceRecords,
+  identifyExtractionEvents,
+  resourceFactCannotAutoMint,
+  resourceProductionIsActive,
+  resourceRealProviderContacted,
+  certifyResourceSandbox,
+  runResourceDataFabricDemo,
+} from './provider-families/resources/index.ts';
+export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
 

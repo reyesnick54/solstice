@@ -40,6 +40,7 @@ const CATEGORY_MAP = Object.freeze({
   logistics: 'LOGISTICS_TRANSPORTATION',
   bandwidth: 'BANDWIDTH_COMMUNICATIONS',
   resources: 'MINERALS_RAW_MATERIALS',
+  minerals_resources: 'MINERALS_RAW_MATERIALS',
   service_delivery: 'SERVICES',
   reference_price: 'SHARED_ECONOMIC_REFERENCE',
 } as const);

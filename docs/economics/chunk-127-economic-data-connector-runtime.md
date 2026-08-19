@@ -136,3 +136,7 @@ FETCH_AUTO_MINTED_MOONREY=false
 Do not create `packages/oracle-connectors`,
 `packages/data-ingestion`, `packages/moonrey-connectors`, or
 `packages/provider-runtime-v2`.
+
+Chunk 133 adds a provider-neutral minerals/extraction evidence family on
+the same production-oracle owner. It does not connect live mines or
+named commodity providers.

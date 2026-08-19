@@ -132,3 +132,8 @@ RAW_INDUSTRIAL_PAYLOAD=false
 CREDENTIALS_EXPOSED=false
 AUTOMATIC_ISSUANCE=false
 ```
+
+Chunk 133 resource extraction observations continue to project through
+the existing oracle Economic Asset Registry adapter. `minerals_resources`
+maps to `MINERALS_RAW_MATERIALS`. The registry is still not the source
+of truth for extraction, reserves, or ownership.

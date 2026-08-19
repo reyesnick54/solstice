@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-133",
+  "title": "Minerals, Natural Resources & Extraction Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-asset-registry",
+    "sunrey-provider-certification",
+    "sunrey-resource-extraction-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. Provider-neutral evidence for mineral reserves, extraction, raw-material production, and stockpiles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION and cannot create OUTPUT or mint MoonRey. REFERENCE_PRICE stays reference-only. No named provider integration, production activation, or second oracle owner. evaluateChunkRequirements returns mustStop: false. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+}
