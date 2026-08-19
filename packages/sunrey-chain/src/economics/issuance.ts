@@ -40,6 +40,17 @@ const FORBIDDEN_PERSONAL_KEYS = [
   'cleanRoomRow',
   'rawPersonalData',
   'biometric',
+  'race',
+  'religion',
+  'ethnicity',
+  'sexualOrientation',
+  'politicalAffiliation',
+  'disability',
+  'medicalCondition',
+  'humanWorthScore',
+  'socialCreditScore',
+  'creditScore',
+  'desirabilityScore',
 ] as const;
 
 export type IssuanceRejection =
@@ -68,6 +79,12 @@ export function privacySafeHumanEvidence(input: {
   readonly contentHash: string;
   readonly quantityBasis: bigint;
   readonly purposeClass: HumanEvidencePurposeClass;
+  readonly contributionId?: string;
+  readonly fingerprint?: string;
+  readonly verificationPolicyVersion?: string;
+  readonly settlementAuthorizationRef?: string;
+  readonly valuationPolicyRef?: string;
+  readonly valuationVersion?: string;
   readonly extra?: Readonly<Record<string, unknown>>;
 }): HumanEconomicEvidence {
   if (input.extra) {
@@ -90,6 +107,16 @@ export function privacySafeHumanEvidence(input: {
     containsRawPersonalData: false,
     pdvSourceExposed: false,
     cleanRoomSourceExposed: false,
+    ...(input.contributionId !== undefined ? { contributionId: input.contributionId } : {}),
+    ...(input.fingerprint !== undefined ? { fingerprint: input.fingerprint } : {}),
+    ...(input.verificationPolicyVersion !== undefined
+      ? { verificationPolicyVersion: input.verificationPolicyVersion }
+      : {}),
+    ...(input.settlementAuthorizationRef !== undefined
+      ? { settlementAuthorizationRef: input.settlementAuthorizationRef }
+      : {}),
+    ...(input.valuationPolicyRef !== undefined ? { valuationPolicyRef: input.valuationPolicyRef } : {}),
+    ...(input.valuationVersion !== undefined ? { valuationVersion: input.valuationVersion } : {}),
   });
 }
 

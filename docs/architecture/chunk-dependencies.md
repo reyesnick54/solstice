@@ -162,6 +162,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
+| sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 
@@ -921,6 +922,22 @@ S3M is a separate AI system. SunRey communicates through a bounded
 inference-provider adapter and a configurable transport contract.
 Grok is not implemented here. Do not create `packages/s3m`,
 `packages/s3m-runtime`, or `packages/s3m-training`. The evaluator
+returns `mustStop: false`.
+Chunk 108 implements the Human Contribution to SunRey monetary
+evidence bridge at
+`packages/sunrey-chain/src/economics/human-contribution-bridge`.
+Capability `sunrey-human-contribution-monetary-bridge` is
+`IMPLEMENTED`. See
+[`chunk-108-human-contribution-monetary-bridge.md`](./chunk-108-human-contribution-monetary-bridge.md)
+and
+[`docs/economics/chunk-108-human-contribution-monetary-bridge.md`](../economics/chunk-108-human-contribution-monetary-bridge.md).
+It adapts privacy-safe verified contribution fields into existing
+Chunk 71 `HumanEconomicEvidence` and `MonetaryIssuanceAuthority`.
+It is not a second mint. The Human Contribution Valuation Engine is
+not implemented. Production issuance remains unavailable. Do not
+create `packages/human-contribution-mint`,
+`packages/human-valuation-engine`, `packages/contribution-issuance`,
+`packages/human-worth-token`, or `packages/peve-mint`. The evaluator
 returns `mustStop: false`.
 Chunk 107 implements the Human Information Network to Human
 Economic Contribution Registry adapter at

@@ -13,3 +13,4 @@ export * from './cli.ts';
 export * from './treasury/index.ts';
 export * from './stack.ts';
 export * from './explorer.ts';
+export * from './human-contribution-bridge/index.ts';

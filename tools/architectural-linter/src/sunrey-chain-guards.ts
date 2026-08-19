@@ -19,6 +19,11 @@ const COMPETING_PATHS = [
   'packages/blockchain-db',
   'packages/chain-storage-v2',
   'packages/sunrey-ledger-db',
+  'packages/human-contribution-mint',
+  'packages/human-valuation-engine',
+  'packages/contribution-issuance',
+  'packages/human-worth-token',
+  'packages/peve-mint',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -80,6 +85,22 @@ export function lintSunReyChainBoundary(root: string): Finding[] {
         line: 1,
         message: 'SunRey Chain must not import services',
       });
+    }
+    const posix = file.replaceAll('\\', '/');
+    if (posix.includes('/economics/human-contribution-bridge/') && !file.endsWith('.test.ts')) {
+      if (
+        source.includes('packages/platform') ||
+        /from ['"].*\/value\//.test(source) ||
+        source.includes('PersonalEconomicValueEngine') ||
+        source.includes('computePeve')
+      ) {
+        findings.push({
+          rule: 'illegal-package-dependency',
+          file,
+          line: 1,
+          message: 'Human contribution monetary bridge must not import PEVE formula logic',
+        });
+      }
     }
   }
   const agentFiles = walk(join(root, 'packages/agent/src'));

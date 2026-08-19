@@ -3,6 +3,8 @@ import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
+import { HumanContributionMonetaryBridge } from '../../sunrey-chain/src/economics/human-contribution-bridge/index.ts';
+import { emptyBook } from '../../sunrey-chain/src/economics/supply.ts';
 import { INFORMATION_COMMANDS, runInformationCommand } from './network/cli.ts';
 import { runHumanInformationNetworkDemo } from './network/demo.ts';
 import { HumanInformationNetworkEngine } from './network/engine.ts';
@@ -249,5 +251,68 @@ describe('Chunk 100 Human Information Network', () => {
     const net = engine();
     assert.deepEqual(net.providerAvailabilityIsNotAuthority(), { available: true, authority: false });
     assert.equal(net.ingestScrapedSource().ok, false);
+  });
+
+  it('cannot mint SunRey from HIN consent, usage receipt, or clean-room result alone', () => {
+    const net = engine();
+    const { subject, computation, approved } = provision(net);
+    const job = unwrap(
+      net.submitCleanRoomComputation({
+        requesterId: 'req_lab',
+        purpose: 'AGGREGATED_RESEARCH',
+        rightId: approved.right.rightId,
+        approvedComputationId: computation.computationId,
+        outputClass: 'AGGREGATE_STATISTIC',
+        expiresAt: EXPIRES,
+        jurisdiction: 'GB',
+        presentedConsentHash: approved.grant.consentHash,
+        cohortSize: 12,
+      }),
+    );
+    unwrap(
+      net.getCleanRoomResult({
+        computationRequestId: job.computationRequestId,
+        privacySafeValue: 42,
+        cohortSize: 12,
+      }),
+    );
+    const receipt = unwrap(
+      net.recordUsage({
+        rightId: approved.right.rightId,
+        requesterId: 'req_lab',
+        computationId: computation.computationId,
+        outputClass: 'AGGREGATE_STATISTIC',
+        settlementRef: null,
+      }),
+    );
+    const bridge = new HumanContributionMonetaryBridge();
+    const book = emptyBook('SUNREY_COIN', 'sunrey.monetary.constitution.v1');
+    const consent = bridge.attempt(
+      { recipient: subject.publicHandle, standalone: { kind: 'HIN_CONSENT', consentRef: approved.grant.grantId } },
+      book,
+    );
+    assert.equal(consent.ok, false);
+    if (!consent.ok) {
+      assert.equal(consent.code, 'HIN_CONSENT_ALONE_CANNOT_ISSUE');
+    }
+    const usage = bridge.attempt(
+      { recipient: subject.publicHandle, standalone: { kind: 'HIN_USAGE_RECEIPT', receiptId: receipt.receiptId } },
+      book,
+    );
+    assert.equal(usage.ok, false);
+    if (!usage.ok) {
+      assert.equal(usage.code, 'HIN_USAGE_RECEIPT_ALONE_CANNOT_ISSUE');
+    }
+    const cleanRoom = bridge.attempt(
+      {
+        recipient: subject.publicHandle,
+        standalone: { kind: 'CLEAN_ROOM_RESULT', resultId: job.computationRequestId },
+      },
+      book,
+    );
+    assert.equal(cleanRoom.ok, false);
+    if (!cleanRoom.ok) {
+      assert.equal(cleanRoom.code, 'CLEAN_ROOM_RESULT_ALONE_CANNOT_ISSUE');
+    }
   });
 });
