@@ -94,14 +94,17 @@ export function parsePaymentRequest(
   if (expected?.chainId && expected.chainId !== chainId) {
     return reject('WRONG_CHAIN', 'payment request is for a different chain');
   }
+  const quantityMinorUnits = uri.searchParams.get('q');
+  const memo = uri.searchParams.get('m');
+  const expiryUtc = uri.searchParams.get('x');
   return createPaymentRequest({
     networkId,
     chainId,
     recipient,
     assetId,
-    quantityMinorUnits: uri.searchParams.get('q') ?? undefined,
-    memo: uri.searchParams.get('m') ?? undefined,
-    expiryUtc: uri.searchParams.get('x') ?? undefined,
+    ...(quantityMinorUnits === null ? {} : { quantityMinorUnits }),
+    ...(memo === null ? {} : { memo }),
+    ...(expiryUtc === null ? {} : { expiryUtc }),
   });
 }
 

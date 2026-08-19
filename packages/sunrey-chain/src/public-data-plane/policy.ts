@@ -14,6 +14,8 @@ import {
   type RpcRequestPolicy,
 } from './types.ts';
 
+export type { RpcRequestPolicy };
+
 export const DEFAULT_RPC_REQUEST_POLICY: RpcRequestPolicy = Object.freeze({
   allowStaleForMutationEligibility: false,
   staleReadExplicitPolicyRequired: true,

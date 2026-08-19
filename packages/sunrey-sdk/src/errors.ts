@@ -40,6 +40,10 @@ export const API_ERROR_CODES = [
   'REQUEST_TIMEOUT',
   'NOT_FOUND',
   'TEMPORARY_UNAVAILABLE',
+  'AUTH_REQUIRED',
+  'SANDBOX_CANNOT_TRADE_PRODUCTION',
+  'SESSION_WITHOUT_FINANCIAL_AUTHORITY',
+  'PRICE_ALERT_CANNOT_TRADE',
 ] as const;
 export type ApiErrorCode = (typeof API_ERROR_CODES)[number];
 
@@ -112,6 +116,9 @@ export function categoryForCode(code: ApiErrorCode): ApiErrorCategory {
     case 'OPERATOR_NAMESPACE_FORBIDDEN':
     case 'PRIVATE_KEY_REJECTED':
     case 'SENSITIVE_FIELD_REJECTED':
+    case 'AUTH_REQUIRED':
+    case 'SANDBOX_CANNOT_TRADE_PRODUCTION':
+    case 'SESSION_WITHOUT_FINANCIAL_AUTHORITY':
       return 'AUTHORIZATION';
     case 'WRONG_NETWORK':
     case 'WRONG_CHAIN':
@@ -124,6 +131,7 @@ export function categoryForCode(code: ApiErrorCode): ApiErrorCategory {
     case 'BATCH_SIZE_EXCEEDED':
     case 'IDEMPOTENCY_CONFLICT':
     case 'UNSIGNED_ENVELOPE_REQUIRED':
+    case 'PRICE_ALERT_CANNOT_TRADE':
       return 'VALIDATION';
     case 'INVALID_SIGNATURE':
     case 'CRYPTO_SUITE_DOWNGRADE':

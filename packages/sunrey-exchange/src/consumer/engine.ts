@@ -363,7 +363,7 @@ export class ConsumerExchangeEngine {
     });
     const previewOrFresh =
       preview ??
-      (this.previewConsumerTrade({
+      this.previewConsumerTrade({
         participantId: input.participantId,
         flow: input.request.flow,
         side: input.request.side,
@@ -372,7 +372,7 @@ export class ConsumerExchangeEngine {
         protectionBps: input.request.priceProtectionBps,
         quoteId: input.request.quoteId,
         now: input.now,
-      }) as ConsumerTradePreview);
+      });
     if ('ok' in previewOrFresh) {
       return previewOrFresh;
     }
@@ -568,7 +568,7 @@ export class ConsumerExchangeEngine {
       source: (this.reference().source ?? 'UNAVAILABLE') as ValueSourceKind,
       marketDataSequence: this.ops.snapshot('BBO').sequence,
       now: input.now,
-      autoTrade: input.autoTrade,
+      ...(input.autoTrade !== undefined ? { autoTrade: input.autoTrade } : {}),
     });
     if (!created.ok) {
       return created;
@@ -693,7 +693,10 @@ export class ConsumerExchangeEngine {
       marketState: this.ops.marketState().state,
       openOrders: [...this.orders.values()].filter((order) => order.view === 'OPEN' || order.view === 'PARTIALLY_FILLED').length,
       alerts: this.alerts.size,
-      notifications: 'rows' in this.notifications ? this.notifications.rows.length : 0,
+      notifications:
+        this.notifications instanceof InMemoryConsumerNotificationPort
+          ? this.notifications.rows.length
+          : 0,
       sandboxAccounts: this.sandboxes.length,
       productionActivated: false,
       secretsPresent: false,

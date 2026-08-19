@@ -5,20 +5,20 @@ import { asUtcInstant } from '../../domain/src/time.ts';
 import { fixtureContribution, FIXTURE_NOW, FIXTURE_SUBJECT } from './fixtures.ts';
 import { DEFAULT_VERIFICATION_POLICY_VERSION, fingerprintEconomicEvent } from './fingerprint.ts';
 import { eventReferenceFor, evidenceRefFor, subjectRefFor } from './ids.ts';
+import type { ContributionId } from './ids.ts';
 import { HumanContributionRegistry, HumanEconomicContributionRegistry } from './registry.ts';
 import { InMemoryHumanContributionRegistryStore } from './store.ts';
 import type { HumanContributionRegistryPort } from './port.ts';
 import type { HumanContributionRegistryRecord } from './types.ts';
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }): T {
-  assert.equal(result.ok, true, result.ok ? '' : result.error.message);
   if (!result.ok) {
     throw new Error(result.error.message);
   }
   return result.value;
 }
 
-function verifyAt(registry: HumanContributionRegistry, contributionId: ReturnType<typeof unwrap>['contributionId']) {
+function verifyAt(registry: HumanContributionRegistry, contributionId: ContributionId) {
   return unwrap(
     registry.verify({
       contributionId,

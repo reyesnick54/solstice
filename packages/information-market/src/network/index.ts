@@ -49,6 +49,7 @@ export {
   bindCanonicalHumanContributionRegistry,
   createHinContributionAdapter,
   createInProcessHumanContributionRegistry,
+  evaluateHinContributionEvidence,
   createInMemoryDataAssetProjection,
   HinContributionAdapter,
   type HumanContributionRecord,

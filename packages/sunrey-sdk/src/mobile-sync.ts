@@ -32,8 +32,8 @@ export function connectMobileWallet(input: {
   readonly chainId?: string;
 }): MobileSyncClient {
   const engine = new MobileWalletSyncEngine({
-    networkId: input.networkId,
-    chainId: input.chainId,
+    ...(input.networkId !== undefined ? { networkId: input.networkId } : {}),
+    ...(input.chainId !== undefined ? { chainId: input.chainId } : {}),
   });
   const client = new ReferenceMobileClient(engine, {
     walletId: input.walletId,

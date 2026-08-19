@@ -15,7 +15,7 @@ import {
 import type { ContributionClass, MeasurementUnit, SourceClass } from './taxonomy.ts';
 
 export const DEFAULT_VERIFICATION_POLICY_VERSION: VerificationPolicyVersion = verificationPolicyVersionFor(
-  'sunrey-human-contribution-verification-v1',
+  'sunrey-human-contribution-verification-engineering-v1',
 );
 
 export type FingerprintMaterial = {

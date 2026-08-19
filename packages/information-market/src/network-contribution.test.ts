@@ -393,6 +393,16 @@ describe('Chunk 107 HIN contribution integration', () => {
     }
   });
 
+  it('25. HIN realized use passes through the Chunk 109 verifier', () => {
+    const net = provision();
+    const { receipt } = realizeUse(net);
+    const recorded = unwrap(net.adapter.submitRealizedUse({ receiptId: receipt.receiptId }));
+    assert.equal(recorded.status, 'VERIFIED');
+    assert.ok(recorded.contributionId.startsWith('hec_'));
+    assert.equal(recorded.automaticSunReyMint, false);
+    assert.equal(recorded.evidence.rawPersonalData, false);
+  });
+
   it('does not force non-information contribution classes through HIN', () => {
     assert.ok(NON_HIN_CONTRIBUTION_CLASSES.includes('CREATIVE_PRODUCTION'));
     assert.equal(NON_HIN_CONTRIBUTION_CLASSES.includes(INFORMATION_RIGHT_CONTRIBUTION as never), false);

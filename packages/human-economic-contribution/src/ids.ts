@@ -26,6 +26,9 @@ export type TaxonomyVersion = Brand<string, 'TaxonomyVersion'>;
 export type RegistryRecordId = Brand<string, 'RegistryRecordId'>;
 export type ContributionFingerprint = Brand<string, 'ContributionFingerprint'>;
 export type VerificationPolicyVersion = Brand<string, 'VerificationPolicyVersion'>;
+export type EvidenceBundleId = Brand<string, 'EvidenceBundleId'>;
+export type VerificationDecisionId = Brand<string, 'VerificationDecisionId'>;
+export type VerificationPolicyId = Brand<string, 'VerificationPolicyId'>;
 
 export const CONTRIBUTION_ID_PREFIXES = Object.freeze({
   contribution: 'hec_',
@@ -51,6 +54,9 @@ export const CONTRIBUTION_ID_PREFIXES = Object.freeze({
   registryRecord: 'hrr_',
   fingerprint: 'hfp_',
   verificationPolicy: 'hvp_',
+  evidenceBundle: 'hcb_',
+  verificationDecision: 'hvd_',
+  verificationPolicyId: 'hpid_',
 });
 
 const HEX_BODY = /^[a-f0-9]{16,64}$/;
@@ -145,6 +151,15 @@ export function asContributionFingerprint(value: string): ContributionFingerprin
 export function asVerificationPolicyVersion(value: string): VerificationPolicyVersion {
   return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.verificationPolicy, 'VerificationPolicyVersion');
 }
+export function asEvidenceBundleId(value: string): EvidenceBundleId {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.evidenceBundle, 'EvidenceBundleId');
+}
+export function asVerificationDecisionId(value: string): VerificationDecisionId {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.verificationDecision, 'VerificationDecisionId');
+}
+export function asVerificationPolicyId(value: string): VerificationPolicyId {
+  return asPrefixedHex(value, CONTRIBUTION_ID_PREFIXES.verificationPolicyId, 'VerificationPolicyId');
+}
 
 export function contributionIdFor(seed: string): ContributionId {
   return asContributionId(`${CONTRIBUTION_ID_PREFIXES.contribution}${digest(`contribution:${seed}`).slice(0, 32)}`);
@@ -236,6 +251,18 @@ export function contributionFingerprintFor(seed: string): ContributionFingerprin
 
 export function verificationPolicyVersionFor(seed: string): VerificationPolicyVersion {
   return asVerificationPolicyVersion(`${CONTRIBUTION_ID_PREFIXES.verificationPolicy}${digest(`verification-policy:${seed}`).slice(0, 32)}`);
+}
+
+export function evidenceBundleIdFor(seed: string): EvidenceBundleId {
+  return asEvidenceBundleId(`${CONTRIBUTION_ID_PREFIXES.evidenceBundle}${digest(`evidence-bundle:${seed}`).slice(0, 32)}`);
+}
+
+export function verificationDecisionIdFor(seed: string): VerificationDecisionId {
+  return asVerificationDecisionId(`${CONTRIBUTION_ID_PREFIXES.verificationDecision}${digest(`verification-decision:${seed}`).slice(0, 32)}`);
+}
+
+export function verificationPolicyIdFor(seed: string): VerificationPolicyId {
+  return asVerificationPolicyId(`${CONTRIBUTION_ID_PREFIXES.verificationPolicyId}${digest(`verification-policy-id:${seed}`).slice(0, 32)}`);
 }
 
 export function sha256Canonical(value: string): string {

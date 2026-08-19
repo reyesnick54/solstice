@@ -9,7 +9,9 @@ describe('Chunk 89 post-genesis repository checks', () => {
     assert.equal(rehearsal.realProductionCapabilitiesActivated, false);
     assert.equal(rehearsal.report.genesisDoesNotEnableCapabilities, true);
     const negatives = runNegativeActivationSuite();
-    assert.equal(negatives.exchangeWithoutEvidence.outcome, 'REJECTED');
+    const exchangeWithoutEvidence = negatives.exchangeWithoutEvidence;
+    assert.ok(exchangeWithoutEvidence);
+    assert.equal(exchangeWithoutEvidence.outcome, 'REJECTED');
     const cli = runStabilizationCommand(['stabilization', 'status']);
     assert.equal(cli.ok, true);
   });

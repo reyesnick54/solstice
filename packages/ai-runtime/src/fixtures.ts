@@ -7,7 +7,6 @@ import {
   CANONICAL_S3M_MODEL_ID,
   CANONICAL_S3M_MODEL_VERSION,
 } from './registry.ts';
-import { CANONICAL_LOCAL_TEST_MODEL_ID, CANONICAL_LOCAL_TEST_MODEL_VERSION } from './registry.ts';
 import type { AiDataClass, AiRuntimeMode, AiTaskClass, LocalTestFixture } from './taxonomy.ts';
 import type { AiInferenceRequest, AiRuntimePolicy } from './types.ts';
 

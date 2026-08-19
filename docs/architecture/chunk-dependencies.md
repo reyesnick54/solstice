@@ -166,6 +166,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
+| sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 
 Chunk 6 implements the policy engine inside `packages/kernel`. It does
 not reimplement identity. Customer KYC status and residency remain the
@@ -991,3 +992,28 @@ SunRey issuance, PEVE, or a human-worth score. Do not create
 `packages/human-valuation-engine`, `packages/contribution-valuation`,
 or `packages/human-contribution-valuation`. The evaluator returns
 `mustStop: false`.
+Chunk 110 implements the Human Contribution Valuation constitution
+and methodology registry at
+`packages/human-economic-contribution/src/valuation`. Capability
+`sunrey-human-contribution-valuation` is `IMPLEMENTED`. See
+[`chunk-110-human-contribution-valuation-constitution.md`](./chunk-110-human-contribution-valuation-constitution.md)
+and
+[`docs/economics/chunk-110-human-contribution-valuation-constitution.md`](../economics/chunk-110-human-contribution-valuation-constitution.md).
+It is event-specific and versioned. PEVE remains
+`packages/platform/src/value`. A reference value is not a SunRey
+quantity and does not mint. Production valuation remains
+unconfigured. Do not create `packages/human-valuation-engine`,
+`packages/contribution-valuation`, or `packages/human-valuation`. The
+evaluator returns `mustStop: false`.
+Chunk 109 hardens verification at
+`packages/human-economic-contribution/src/verification`. Capability
+`sunrey-human-contribution-verification` is `IMPLEMENTED` on the same
+owner. See
+[`chunk-109-human-contribution-verification.md`](./chunk-109-human-contribution-verification.md)
+and
+[`docs/economics/chunk-109-human-contribution-verification.md`](../economics/chunk-109-human-contribution-verification.md).
+VERIFIED means the contribution passed a versioned evidence policy.
+It does not value, mint, or issue Execution Authority. Do not create
+`packages/human-contribution-verification`,
+`packages/contribution-verification`, or `packages/human-worth`.
+The evaluator returns `mustStop: false`.

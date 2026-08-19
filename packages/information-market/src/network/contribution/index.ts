@@ -24,4 +24,4 @@ export {
   createInMemoryDataAssetProjection,
   HinContributionProjection,
 } from './projection.ts';
-export { contributionEvidenceDigest, createInProcessHumanContributionRegistry } from './registry.ts';
+export { contributionEvidenceDigest, createInProcessHumanContributionRegistry, evaluateHinContributionEvidence } from './registry.ts';
