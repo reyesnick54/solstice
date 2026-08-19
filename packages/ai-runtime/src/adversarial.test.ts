@@ -126,10 +126,10 @@ describe('AI runtime adversarial fixtures', () => {
       response: inferred.value.response,
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error(proposal.error.detail);
     }
+    assert.equal(proposal.ok, true);
     assert.equal(proposal.value.intent, 'PREPARE_PAYMENT');
     assert.equal(proposal.value.guaranteedReturn, false);
     const submitted = engine.gate.toActionIntent({

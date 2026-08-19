@@ -2404,10 +2404,6 @@
           "kind": "type"
         },
         {
-          "name": "MobileWalletSyncEngine",
-          "kind": "class"
-        },
-        {
           "name": "WalletSyncReport",
           "kind": "type"
         }
