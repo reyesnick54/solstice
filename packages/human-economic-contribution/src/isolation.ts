@@ -6,11 +6,14 @@ export const HUMAN_CONTRIBUTION_ISOLATION = Object.freeze({
   executionAuthorityRequired: false,
   kernelAuthorizationRequired: false,
   valuationImplemented: false,
+  valuationConstitutionImplemented: true,
+  valuationEngineComputesSettlement: false,
   mintingImplemented: false,
   peveIsNotContributionValue: true,
   measurementIsNotSunReyQuantity: true,
   contributionIsNotHumanWorth: true,
   productionActivated: false,
+  productionValuationActivated: false,
   forbiddenCompetingPackages: Object.freeze([
     'packages/human-contribution',
     'packages/human-economic-contribution-v2',
@@ -22,6 +25,8 @@ export const HUMAN_CONTRIBUTION_ISOLATION = Object.freeze({
     'packages/human-contribution-registry',
     'packages/contribution-registry',
     'packages/human-economic-contribution-registry',
+    'packages/human-valuation-engine',
+    'packages/human-valuation',
   ]),
   mustNotImport: Object.freeze([
     'packages/kernel',
