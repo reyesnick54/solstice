@@ -1,22 +1,44 @@
 /**
- * Chunk 108 — privacy-safe Human Contribution → monetary evidence bridge.
+ * Chunk 108 / 112 — privacy-safe Human Contribution → monetary evidence bridge.
  *
  * This is not a second mint and not a second MonetaryIssuanceAuthority.
  * Quantity is never inferred from a contribution, PEVE score, HIN
  * receipt, consent, clean-room result, or AI output.
  *
- * The Human Contribution Valuation Engine is not implemented here.
+ * Versioned valuation paths:
+ * - LEGACY_DEVELOPMENT_FIXTURE — Chunk 108 fixture quantity (unchanged)
+ * - ENGINE_VALUATION_SIMULATION — engineering-implemented reference valuation
+ * - PRODUCTION — remains unavailable
+ *
+ * Production valuation is not activated. VALUATION_ENGINE_IMPLEMENTED
+ * remains false so the production boolean cannot be flipped.
  */
 
 import type { HumanEvidencePurposeClass } from '../types.ts';
 
-export const HUMAN_CONTRIBUTION_BRIDGE_SCHEMA_VERSION = 1 as const;
-export const HUMAN_CONTRIBUTION_BRIDGE_ID = 'sunrey.human-contribution.monetary-bridge.v1' as const;
+export const HUMAN_CONTRIBUTION_BRIDGE_SCHEMA_VERSION = 2 as const;
+export const HUMAN_CONTRIBUTION_BRIDGE_ID = 'sunrey.human-contribution.monetary-bridge.v2' as const;
+export const HUMAN_CONTRIBUTION_BRIDGE_LEGACY_SCHEMA_VERSION = 1 as const;
+/** Production valuation engine remains unimplemented. Do not flip. */
 export const VALUATION_ENGINE_IMPLEMENTED = false as const;
+export const VALUATION_ENGINE_ENGINEERING_IMPLEMENTED = true as const;
+export const VALUATION_ENGINE_PRODUCTION_ACTIVATED = false as const;
 export const PRODUCTION_ACTIVATED = false as const;
 export const PEVE_USED_AS_TOKEN_FORMULA = false as const;
 export const RAW_PERSONAL_DATA = false as const;
 export const AI_AUTHORIZED = false as const;
+export const HUMAN_WORTH_USED_AS_VALUE = false as const;
+export const REFERENCE_VALUE_EQUALS_SUNREY_BY_DEFINITION = false as const;
+export const ENGINEERING_SIMULATION_PARAMETERS = 'ENGINEERING_SIMULATION_PARAMETERS' as const;
+export const PRODUCTION_CONVERSION_POLICY_STATUS = 'UNCONFIGURED' as const;
+export const PRODUCTION_SETTLEMENT_AUTHORIZATION_STATUS = 'UNAVAILABLE' as const;
+
+export const VALUATION_PATH_KINDS = [
+  'LEGACY_DEVELOPMENT_FIXTURE',
+  'ENGINE_VALUATION_SIMULATION',
+  'PRODUCTION',
+] as const;
+export type ValuationPathKind = (typeof VALUATION_PATH_KINDS)[number];
 
 export const MONETARY_CONTRIBUTION_CLASSES = [
   'INFORMATION_RIGHT_CONTRIBUTION',
@@ -39,14 +61,37 @@ export const CONTRIBUTION_VERIFICATION_STATES = [
 ] as const;
 export type ContributionVerificationState = (typeof CONTRIBUTION_VERIFICATION_STATES)[number];
 
-export const SETTLEMENT_AUTHORIZERS = ['HUMAN', 'PROTOCOL', 'DEVELOPMENT_FIXTURE'] as const;
+export const SETTLEMENT_AUTHORIZERS = [
+  'HUMAN',
+  'PROTOCOL',
+  'DEVELOPMENT_FIXTURE',
+  'GOVERNED_PROTOCOL_SIMULATION',
+] as const;
 export type SettlementAuthorizer = (typeof SETTLEMENT_AUTHORIZERS)[number];
+
+export const FORBIDDEN_SETTLEMENT_AUTHORIZERS = [
+  'AI',
+  'FINANCIAL_AGENT',
+  'AGENT',
+  'S3M',
+  'GROK',
+  'MODEL',
+  'MODEL_OUTPUT',
+] as const;
+export type ForbiddenSettlementAuthorizer = (typeof FORBIDDEN_SETTLEMENT_AUTHORIZERS)[number];
 
 export const SETTLEMENT_ENVIRONMENTS = ['DEVELOPMENT', 'SIMULATION', 'PRODUCTION'] as const;
 export type SettlementEnvironment = (typeof SETTLEMENT_ENVIRONMENTS)[number];
 
-export const SETTLEMENT_QUANTITY_SOURCES = ['DEVELOPMENT_FIXTURE', 'SIMULATION_FIXTURE'] as const;
+export const SETTLEMENT_QUANTITY_SOURCES = [
+  'DEVELOPMENT_FIXTURE',
+  'SIMULATION_FIXTURE',
+  'ENGINE_VALUATION_SIMULATION',
+] as const;
 export type SettlementQuantitySource = (typeof SETTLEMENT_QUANTITY_SOURCES)[number];
+
+export const CONVERSION_ROUNDING_RULES = ['FLOOR', 'CEILING', 'NEAREST_EVEN'] as const;
+export type ConversionRoundingRule = (typeof CONVERSION_ROUNDING_RULES)[number];
 
 /**
  * Privacy-safe adapter for a verified human economic contribution.
@@ -99,11 +144,13 @@ export type HumanContributionMonetaryEvidenceCandidate = {
 };
 
 /**
- * Separate settlement/valuation authorization. Fixtures may create
- * DEVELOPMENT/SIMULATION authorizations only. Production remains
- * unavailable. AI and Financial Agents cannot create this object.
+ * Chunk 108 legacy fixture authorization. Quantity is an explicit
+ * DEVELOPMENT/SIMULATION fixture. The production valuation engine
+ * remains unimplemented (`valuationEngineImplemented: false`).
  */
-export type HumanContributionSettlementAuthorization = {
+export type LegacyFixtureSettlementAuthorization = {
+  readonly schemaVersion?: 1;
+  readonly valuationPath?: 'LEGACY_DEVELOPMENT_FIXTURE';
   readonly authorizationId: string;
   readonly contributionId: string;
   readonly fingerprint: string;
@@ -119,11 +166,117 @@ export type HumanContributionSettlementAuthorization = {
   readonly simulationOnly: true;
   readonly productionStatus: 'UNAVAILABLE' | 'UNCONFIGURED';
   readonly evidenceDigest: string;
-  readonly quantitySource: SettlementQuantitySource;
+  readonly quantitySource: 'DEVELOPMENT_FIXTURE' | 'SIMULATION_FIXTURE';
   readonly valuationEngineImplemented: false;
   readonly peveUsedAsTokenFormula: false;
   readonly aiAuthorized: false;
 };
+
+/**
+ * Chunk 112 engine-based settlement authorization. Reference
+ * settlement value is distinct from authorized SunRey quantity.
+ * Production remains unavailable.
+ */
+export type EngineValuationSettlementAuthorization = {
+  readonly schemaVersion: 2;
+  readonly valuationPath: 'ENGINE_VALUATION_SIMULATION';
+  readonly authorizationId: string;
+  readonly contributionId: string;
+  readonly fingerprint: string;
+  readonly valuationId: string;
+  readonly valuationPolicyRef: string;
+  readonly valuationVersion: string;
+  readonly valuationDigest: string;
+  readonly referenceValue: bigint;
+  readonly referenceDenomination: string;
+  readonly conversionPolicyRef: string;
+  readonly conversionPolicyVersion: string;
+  readonly authorizedQuantityBasis: bigint;
+  readonly authorizedSunReyQuantity: bigint;
+  readonly quantityCeiling: bigint;
+  readonly jurisdictionPolicyRef: string;
+  readonly authorizedBy: SettlementAuthorizer;
+  readonly authorizedAt: string;
+  readonly environment: 'DEVELOPMENT' | 'SIMULATION';
+  readonly simulationOnly: true;
+  readonly productionStatus: 'UNAVAILABLE';
+  readonly evidenceDigest: string;
+  readonly quantitySource: 'ENGINE_VALUATION_SIMULATION';
+  readonly valuationEngineImplemented: true;
+  readonly productionValuationActivated: false;
+  readonly productionActivated: false;
+  readonly peveUsedAsTokenFormula: false;
+  readonly humanWorthUsedAsValue: false;
+  readonly aiAuthorized: false;
+  readonly referenceValueEqualsSunReyByDefinition: false;
+  readonly parameterClass: typeof ENGINEERING_SIMULATION_PARAMETERS;
+};
+
+export type HumanContributionSettlementAuthorization =
+  | LegacyFixtureSettlementAuthorization
+  | EngineValuationSettlementAuthorization;
+
+/**
+ * Privacy-safe valuation-result fields accepted by the adapter.
+ * sunrey-chain does not import the contribution registry.
+ */
+export type EngineValuationReference = {
+  readonly valuationId: string;
+  readonly contributionId: string;
+  readonly fingerprint: string;
+  readonly valuationPolicyId: string;
+  readonly valuationPolicyVersion: string;
+  readonly valuationMethod: string;
+  readonly valuationDigest: string;
+  readonly finalReferenceValue: bigint;
+  readonly referenceDenomination: string;
+  readonly jurisdictionPolicyRef: string;
+  readonly status: 'ACTIVE' | 'SUPERSEDED' | 'INVALID';
+  readonly environment: 'DEVELOPMENT' | 'SIMULATION' | 'PRODUCTION';
+  readonly productionActivated: false;
+  readonly peveUsedAsTokenFormula: false;
+  readonly humanWorthUsedAsValue: false;
+  readonly aiAuthorized: false;
+};
+
+export type EngineValuationSettlementCandidate = {
+  readonly valuationId: string;
+  readonly contributionId: string;
+  readonly fingerprint: string;
+  readonly valuationPolicyId: string;
+  readonly valuationPolicyVersion: string;
+  readonly valuationMethod: string;
+  readonly valuationDigest: string;
+  readonly finalReferenceValue: bigint;
+  readonly referenceDenomination: string;
+  readonly jurisdictionPolicyRef: string;
+  readonly mappingIsIssuanceAuthorization: false;
+  readonly containsRawPersonalData: false;
+};
+
+export type SunReyHumanSettlementConversionPolicy = {
+  readonly policyId: string;
+  readonly version: string;
+  readonly environment: 'DEVELOPMENT' | 'SIMULATION';
+  readonly inputDenomination: string;
+  readonly conversionNumerator: bigint;
+  readonly conversionDenominator: bigint;
+  readonly roundingRule: ConversionRoundingRule;
+  readonly perContributionCeiling: bigint;
+  readonly perEpochCeiling: bigint;
+  readonly jurisdictionPolicyRef: string;
+  readonly governanceReference: string;
+  readonly effectiveFrom: string;
+  readonly effectiveUntil: string | null;
+  readonly simulationOnly: true;
+  readonly productionActivated: false;
+  readonly parameterClass: typeof ENGINEERING_SIMULATION_PARAMETERS;
+};
+
+export const PRODUCTION_CONVERSION_POLICY = Object.freeze({
+  status: PRODUCTION_CONVERSION_POLICY_STATUS,
+  productionActivated: false,
+});
 
 export type ContributionCorrectionPolicy = {
   readonly kind: 'EXPLICIT_ADJUSTMENT';
@@ -144,14 +297,31 @@ export type StandaloneMonetaryAttempt =
   | { readonly kind: 'CONSENT'; readonly consentRef: string }
   | { readonly kind: 'PDV_RECORD'; readonly vaultRef: string }
   | { readonly kind: 'AI_OUTPUT'; readonly outputDigest: string }
-  | { readonly kind: 'FINANCIAL_AGENT_PROPOSAL'; readonly proposalId: string };
+  | { readonly kind: 'FINANCIAL_AGENT_PROPOSAL'; readonly proposalId: string }
+  | { readonly kind: 'S3M_OUTPUT'; readonly outputDigest: string }
+  | { readonly kind: 'GROK_OUTPUT'; readonly outputDigest: string }
+  | { readonly kind: 'MODEL_OUTPUT'; readonly outputDigest: string }
+  | { readonly kind: 'VALUATION_RESULT'; readonly valuationId: string };
 
 export type HumanContributionSettlementRequest = {
   readonly recipient: string;
   readonly contribution?: VerifiedHumanEconomicContribution;
   readonly authorization?: HumanContributionSettlementAuthorization;
-  readonly actorKind?: 'HUMAN' | 'PROTOCOL' | 'AI' | 'AGENT' | 'FINANCIAL_AGENT';
+  readonly valuation?: EngineValuationReference;
+  readonly conversionPolicy?: SunReyHumanSettlementConversionPolicy;
+  readonly actorKind?:
+    | 'HUMAN'
+    | 'PROTOCOL'
+    | 'AI'
+    | 'AGENT'
+    | 'FINANCIAL_AGENT'
+    | 'S3M'
+    | 'GROK'
+    | 'MODEL'
+    | 'DEVELOPMENT_FIXTURE'
+    | 'GOVERNED_PROTOCOL_SIMULATION';
   readonly authorizedBy?: string;
+  readonly epochKey?: string;
   readonly standalone?: StandaloneMonetaryAttempt;
   readonly correction?: ContributionCorrectionPolicy;
   readonly extra?: Readonly<Record<string, unknown>>;
@@ -182,7 +352,25 @@ export type BridgeRejection =
   | 'AUTHORIZATION_CONTRIBUTION_MISMATCH'
   | 'INELIGIBLE_CONTRIBUTION_CLASS'
   | 'AUTHORIZATION_ACTOR_FORBIDDEN'
-  | 'VALUATION_ENGINE_UNAVAILABLE';
+  | 'VALUATION_ENGINE_UNAVAILABLE'
+  | 'VALUATION_REQUIRED'
+  | 'VALUATION_RESULT_CANNOT_MINT'
+  | 'VALUATION_CONTRIBUTION_MISMATCH'
+  | 'VALUATION_FINGERPRINT_MISMATCH'
+  | 'VALUATION_DIGEST_INVALID'
+  | 'VALUATION_POLICY_MISMATCH'
+  | 'VALUATION_POLICY_VERSION_MISMATCH'
+  | 'CONVERSION_POLICY_INVALID'
+  | 'CONVERSION_POLICY_PRODUCTION_UNCONFIGURED'
+  | 'CAP_EXCEEDED'
+  | 'EPOCH_CAP_EXCEEDED'
+  | 'REVALUATION_DOES_NOT_REMINT'
+  | 'S3M_CANNOT_AUTHORIZE_ISSUANCE'
+  | 'GROK_CANNOT_AUTHORIZE_ISSUANCE'
+  | 'MODEL_OUTPUT_CANNOT_AUTHORIZE_ISSUANCE'
+  | 'PRODUCTION_VALUATION_UNAVAILABLE'
+  | 'PRODUCTION_SETTLEMENT_AUTHORIZATION_UNAVAILABLE'
+  | 'JURISDICTION_POLICY_MISMATCH';
 
 export type SettledContributionRecord = {
   readonly contributionId: string;
@@ -191,6 +379,8 @@ export type SettledContributionRecord = {
   readonly replayKey: string;
   readonly quantity: bigint;
   readonly superseded: boolean;
+  readonly valuationId?: string;
+  readonly conversionPolicyVersion?: string;
 };
 
 export type HumanContributionSettlementBook = {
@@ -198,4 +388,6 @@ export type HumanContributionSettlementBook = {
   readonly settledFingerprints: Map<string, SettledContributionRecord>;
   readonly settledAuthorizationIds: Set<string>;
   readonly settledContributionIds: Set<string>;
+  readonly settledValuationIds: Set<string>;
+  readonly issuedByEpoch: Map<string, bigint>;
 };

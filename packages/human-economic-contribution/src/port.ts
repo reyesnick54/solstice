@@ -15,7 +15,9 @@ import type {
   HumanContributionRegistrySnapshot,
   VerifiedContributionReference,
   VerifyContributionInput,
+  ApplyVerificationDecisionInput,
 } from './types.ts';
+import type { HumanContributionVerificationDecision } from './verification/types.ts';
 
 /**
  * Narrow interface other domains may use. Callers submit normalized
@@ -24,6 +26,10 @@ import type {
  */
 export type HumanContributionRegistryPort = {
   submit(input: RecordContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure>;
+  evaluateVerification(input: VerifyContributionInput): Result<HumanContributionVerificationDecision, ContributionFailure>;
+  applyVerificationDecision(
+    input: ApplyVerificationDecisionInput,
+  ): Result<HumanContributionRegistryRecord, ContributionFailure>;
   verify(input: VerifyContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure>;
   reject(input: RejectContributionInput): Result<HumanContributionRegistryRecord, ContributionFailure>;
   supersede(

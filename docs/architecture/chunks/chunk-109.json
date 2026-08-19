@@ -1,0 +1,12 @@
+{
+  "chunk": "CHUNK-109",
+  "title": "Canonical Human Economic Contribution Verification and Evidence Policy Hardening",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "sunrey-human-economic-contributions",
+    "sunrey-human-contribution-verification",
+    "sunrey-hin-contribution-integration"
+  ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution/src/verification. Extends the existing Human Economic Contribution owner. VERIFIED now means the contribution passed a versioned, contribution-class-specific evidence policy. Does not create a competing package. Does not value, mint, issue Execution Authority, or activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-contribution-verification, packages/contribution-verification, or packages/human-worth."
+}

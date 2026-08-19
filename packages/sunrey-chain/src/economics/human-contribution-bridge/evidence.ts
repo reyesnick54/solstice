@@ -8,6 +8,7 @@
 import { evidenceHash, privacySafeHumanEvidence } from '../issuance.ts';
 import type { HumanEconomicEvidence } from '../types.ts';
 import { firewallRejection, isSha256Hex } from './firewall.ts';
+import { isEngineValuationAuthorization } from './authorization.ts';
 import { isMonetaryContributionClass, mapContributionClassToPurposeClass } from './mapping.ts';
 import type {
   BridgeRejection,
@@ -15,6 +16,12 @@ import type {
   HumanContributionSettlementAuthorization,
   VerifiedHumanEconomicContribution,
 } from './types.ts';
+
+function isEngineAuthorization(
+  authorization?: HumanContributionSettlementAuthorization,
+): authorization is Extract<HumanContributionSettlementAuthorization, { valuationPath: 'ENGINE_VALUATION_SIMULATION' }> {
+  return authorization !== undefined && isEngineValuationAuthorization(authorization);
+}
 
 export function validateVerifiedContribution(
   contribution: VerifiedHumanEconomicContribution,
@@ -73,6 +80,10 @@ export function toMonetaryEvidenceCandidate(
     authorization?.valuationPolicyRef ?? '',
     authorization?.valuationVersion ?? '',
     authorization?.authorizedSunReyQuantity.toString() ?? '',
+    isEngineAuthorization(authorization) ? authorization.valuationId : '',
+    isEngineAuthorization(authorization) ? authorization.valuationDigest : '',
+    isEngineAuthorization(authorization) ? authorization.conversionPolicyVersion : '',
+    isEngineAuthorization(authorization) ? authorization.referenceValue.toString() : '',
   ].join(':');
   return {
     ok: true,
@@ -122,6 +133,16 @@ export function toHumanEconomicEvidence(
       settlementAuthorizationRef: authorization.authorizationId,
       valuationPolicyRef: authorization.valuationPolicyRef,
       valuationVersion: authorization.valuationVersion,
+      ...(isEngineAuthorization(authorization)
+        ? {
+            valuationId: authorization.valuationId,
+            valuationDigest: authorization.valuationDigest,
+            conversionPolicyRef: authorization.conversionPolicyRef,
+            conversionPolicyVersion: authorization.conversionPolicyVersion,
+            referenceValue: authorization.referenceValue,
+            referenceDenomination: authorization.referenceDenomination,
+          }
+        : {}),
     });
     return { ok: true, evidence };
   } catch (error) {

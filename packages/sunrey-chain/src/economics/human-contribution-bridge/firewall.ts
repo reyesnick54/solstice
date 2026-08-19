@@ -72,6 +72,10 @@ const INVARIANT_FALSE_FLAGS = new Set([
   'aiAuthorized',
   'valuationEngineImplemented',
   'mappingIsIssuanceAuthorization',
+  'humanWorthUsedAsValue',
+  'productionActivated',
+  'productionValuationActivated',
+  'referenceValueEqualsSunReyByDefinition',
 ]);
 
 export function collectObjectKeys(value: unknown, into: Set<string> = new Set(), depth = 0): Set<string> {

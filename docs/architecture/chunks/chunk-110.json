@@ -1,0 +1,12 @@
+{
+  "chunk": "CHUNK-110",
+  "title": "Human Contribution Valuation Constitution & Methodology Registry",
+  "requires": [
+    "architecture-linting",
+    "domain",
+    "personal-economic-value-engine",
+    "sunrey-human-economic-contributions",
+    "sunrey-human-contribution-valuation"
+  ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution/src/valuation. Valuation constitution and versioned methodology registry only. Not PEVE, not a human-worth score, not a SunRey quantity, not a mint or Execution Authority. productionActivated=false. evaluateChunkRequirements returns mustStop: false. Do not create packages/human-valuation-engine, packages/contribution-valuation, or packages/human-valuation."
+}

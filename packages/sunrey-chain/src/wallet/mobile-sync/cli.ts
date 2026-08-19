@@ -120,7 +120,7 @@ export function runMobileWalletCommand(args: readonly string[]): MobileCliResult
         chainId: PROTOCOL_CHAIN_ID,
         recipient: args[1] ?? 'srdev1alice',
         assetId: args[2] ?? 'SUNREY_COIN',
-        quantityMinorUnits: args[3],
+        ...(args[3] === undefined ? {} : { quantityMinorUnits: args[3] }),
       });
       const encoded = encodePaymentRequest(request);
       const parsed = parsePaymentRequest(encoded, { networkId: PROTOCOL_NETWORK_ID, chainId: PROTOCOL_CHAIN_ID });

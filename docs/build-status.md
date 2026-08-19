@@ -4,14 +4,22 @@ This document describes only what is implemented and tested in this tree.
 
 ## Implemented
 
+- Deterministic Human Contribution Valuation Engine (Chunk 111,
+  `packages/human-economic-contribution/src/valuation`): evaluates a
+  VERIFIED contribution under an active versioned valuation policy.
+  Capability `sunrey-human-contribution-valuation` is `IMPLEMENTED`.
+  A valuation result is not settlement authorization, SunRey
+  issuance, PEVE, or a human-worth score. Production remains
+  unavailable. See
+  `docs/economics/chunk-111-human-contribution-valuation-engine.md`.
 - Human contribution to SunRey monetary evidence bridge (Chunk 108,
   `packages/sunrey-chain/src/economics/human-contribution-bridge`):
   privacy-safe adapter from verified human contributions to existing
   Chunk 71 `HumanEconomicEvidence` and `MonetaryIssuanceAuthority`.
   Capability `sunrey-human-contribution-monetary-bridge` is
-  `IMPLEMENTED`. Not a second mint. The Human Contribution Valuation
-  Engine is not implemented. Production issuance remains unavailable.
-  See `docs/economics/chunk-108-human-contribution-monetary-bridge.md`.
+  `IMPLEMENTED`. Not a second mint. Production issuance remains
+  unavailable. See
+  `docs/economics/chunk-108-human-contribution-monetary-bridge.md`.
 - Human Information Network to Human Economic Contribution Registry
   adapter (Chunk 107,
   `packages/information-market/src/network/contribution`):

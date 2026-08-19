@@ -10,7 +10,7 @@ import { nativeAssetConstitution } from '../constitution.ts';
 import { authorizeIssuance, developmentMoonReyAuthority, developmentSunReyAuthority } from '../issuance.ts';
 import { emptyBook, supplyReconciles, type AssetSupplyBook } from '../supply.ts';
 import type { HumanEconomicEvidence, MonetaryIssuanceAuthority, NativeAssetConstitution } from '../types.ts';
-import { validateSettlementAuthorization } from './authorization.ts';
+import { isEngineValuationAuthorization, validateSettlementAuthorization } from './authorization.ts';
 import { toHumanEconomicEvidence, toMonetaryEvidenceCandidate, validateVerifiedContribution } from './evidence.ts';
 import { firewallRejection } from './firewall.ts';
 import type {
@@ -45,10 +45,22 @@ export function emptySettlementBook(): HumanContributionSettlementBook {
     settledFingerprints: new Map(),
     settledAuthorizationIds: new Set(),
     settledContributionIds: new Set(),
+    settledValuationIds: new Set(),
+    issuedByEpoch: new Map(),
   };
 }
 
-export function replayKeyOf(fingerprint: string, authorizationId: string): string {
+export function replayKeyOf(
+  fingerprint: string,
+  authorizationId: string,
+  extras?: {
+    readonly valuationId?: string;
+    readonly conversionPolicyVersion?: string;
+  },
+): string {
+  if (extras?.valuationId && extras.conversionPolicyVersion) {
+    return `${fingerprint}:${extras.valuationId}:${authorizationId}:${extras.conversionPolicyVersion}`;
+  }
   return `${fingerprint}:${authorizationId}`;
 }
 
@@ -72,6 +84,14 @@ export function refuseStandaloneAttempt(attempt: StandaloneMonetaryAttempt): Hum
       return { ok: false, code: 'AI_CANNOT_AUTHORIZE_ISSUANCE' };
     case 'FINANCIAL_AGENT_PROPOSAL':
       return { ok: false, code: 'FINANCIAL_AGENT_CANNOT_AUTHORIZE_ISSUANCE' };
+    case 'S3M_OUTPUT':
+      return { ok: false, code: 'S3M_CANNOT_AUTHORIZE_ISSUANCE' };
+    case 'GROK_OUTPUT':
+      return { ok: false, code: 'GROK_CANNOT_AUTHORIZE_ISSUANCE' };
+    case 'MODEL_OUTPUT':
+      return { ok: false, code: 'MODEL_OUTPUT_CANNOT_AUTHORIZE_ISSUANCE' };
+    case 'VALUATION_RESULT':
+      return { ok: false, code: 'VALUATION_RESULT_CANNOT_MINT' };
     default: {
       const _exhaustive: never = attempt;
       return _exhaustive;
@@ -162,6 +182,18 @@ export class HumanContributionMonetaryBridge {
     if (request.actorKind === 'AGENT' || request.actorKind === 'FINANCIAL_AGENT' || request.authorizedBy === 'FINANCIAL_AGENT') {
       return { ok: false, code: 'FINANCIAL_AGENT_CANNOT_AUTHORIZE_ISSUANCE' };
     }
+    if (request.actorKind === 'S3M' || request.authorizedBy === 'S3M') {
+      return { ok: false, code: 'S3M_CANNOT_AUTHORIZE_ISSUANCE' };
+    }
+    if (request.actorKind === 'GROK' || request.authorizedBy === 'GROK') {
+      return { ok: false, code: 'GROK_CANNOT_AUTHORIZE_ISSUANCE' };
+    }
+    if (request.actorKind === 'MODEL' || request.authorizedBy === 'MODEL' || request.authorizedBy === 'MODEL_OUTPUT') {
+      return { ok: false, code: 'MODEL_OUTPUT_CANNOT_AUTHORIZE_ISSUANCE' };
+    }
+    if (request.valuation && !request.authorization && !request.contribution) {
+      return { ok: false, code: 'VALUATION_RESULT_CANNOT_MINT' };
+    }
     if (!request.contribution) {
       return { ok: false, code: 'INVALID_CONTRIBUTION' };
     }
@@ -169,10 +201,18 @@ export class HumanContributionMonetaryBridge {
     if (contributionCheck) {
       return { ok: false, code: contributionCheck };
     }
+    if (request.valuation && !request.authorization) {
+      return { ok: false, code: 'SETTLEMENT_AUTHORIZATION_REQUIRED' };
+    }
     if (!request.authorization) {
       return { ok: false, code: 'SETTLEMENT_AUTHORIZATION_REQUIRED' };
     }
-    const authCheck = validateSettlementAuthorization(request.contribution, request.authorization);
+    const authCheck = validateSettlementAuthorization(
+      request.contribution,
+      request.authorization,
+      request.valuation,
+      request.conversionPolicy,
+    );
     if (authCheck) {
       return { ok: false, code: authCheck };
     }
@@ -186,13 +226,34 @@ export class HumanContributionMonetaryBridge {
     if (correctionCheck) {
       return { ok: false, code: correctionCheck };
     }
-    const replayKey = replayKeyOf(request.contribution.fingerprint, request.authorization.authorizationId);
+    if (
+      prior &&
+      isEngineValuationAuthorization(request.authorization) &&
+      request.authorization.valuationId !== prior.valuationId &&
+      !request.correction
+    ) {
+      return { ok: false, code: 'REVALUATION_DOES_NOT_REMINT' };
+    }
+    const engineAuth = isEngineValuationAuthorization(request.authorization) ? request.authorization : undefined;
+    const replayKey = replayKeyOf(request.contribution.fingerprint, request.authorization.authorizationId, {
+      ...(engineAuth
+        ? { valuationId: engineAuth.valuationId, conversionPolicyVersion: engineAuth.conversionPolicyVersion }
+        : {}),
+    });
     if (
       this.settlements.settledReplayKeys.has(replayKey) ||
       this.settlements.settledAuthorizationIds.has(request.authorization.authorizationId) ||
+      (engineAuth !== undefined && this.settlements.settledValuationIds.has(engineAuth.valuationId) && !request.correction) ||
       (this.settlements.settledContributionIds.has(request.contribution.contributionId) && !request.correction)
     ) {
       return { ok: false, code: 'DUPLICATE_CONTRIBUTION_SETTLEMENT' };
+    }
+    if (engineAuth && request.conversionPolicy) {
+      const epochKey = request.epochKey ?? `${engineAuth.conversionPolicyVersion}:default`;
+      const issuedThisEpoch = this.settlements.issuedByEpoch.get(epochKey) ?? 0n;
+      if (issuedThisEpoch + engineAuth.authorizedSunReyQuantity > request.conversionPolicy.perEpochCeiling) {
+        return { ok: false, code: 'EPOCH_CAP_EXCEEDED' };
+      }
     }
     const evidence = toHumanEconomicEvidence(request.contribution, request.authorization);
     if (!evidence.ok) {
@@ -206,7 +267,10 @@ export class HumanContributionMonetaryBridge {
         quantity: request.authorization.authorizedSunReyQuantity,
         replayIdentifier: replayKey,
         issuanceClass: 'AUTHORIZED_HUMAN_ECONOMIC_CONTRIBUTION',
-        actorKind: request.actorKind === 'PROTOCOL' ? 'PROTOCOL' : 'HUMAN',
+        actorKind:
+          request.actorKind === 'PROTOCOL' || request.actorKind === 'GOVERNED_PROTOCOL_SIMULATION'
+            ? 'PROTOCOL'
+            : 'HUMAN',
         evidence: evidence.evidence,
       }),
     );
@@ -220,11 +284,23 @@ export class HumanContributionMonetaryBridge {
       replayKey,
       quantity: request.authorization.authorizedSunReyQuantity,
       superseded: request.contribution.verificationState === 'SUPERSEDED',
+      ...(engineAuth
+        ? {
+            valuationId: engineAuth.valuationId,
+            conversionPolicyVersion: engineAuth.conversionPolicyVersion,
+          }
+        : {}),
     };
     this.settlements.settledReplayKeys.add(replayKey);
     this.settlements.settledFingerprints.set(request.contribution.fingerprint, record);
     this.settlements.settledAuthorizationIds.add(request.authorization.authorizationId);
     this.settlements.settledContributionIds.add(request.contribution.contributionId);
+    if (engineAuth) {
+      this.settlements.settledValuationIds.add(engineAuth.valuationId);
+      const epochKey = request.epochKey ?? `${engineAuth.conversionPolicyVersion}:default`;
+      const issuedThisEpoch = this.settlements.issuedByEpoch.get(epochKey) ?? 0n;
+      this.settlements.issuedByEpoch.set(epochKey, issuedThisEpoch + engineAuth.authorizedSunReyQuantity);
+    }
     return {
       ok: true,
       evidence: evidence.evidence,

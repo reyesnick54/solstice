@@ -13,8 +13,10 @@ Existing Chunk 71 `MonetaryIssuanceAuthority` remains the only canonical
 native monetary issuance gate. This chunk is a privacy-safe evidence
 adapter. It does not mint.
 
-The Human Contribution Valuation Engine is **not** implemented here.
-Production authorization remains unavailable.
+The production Human Contribution Valuation Engine remains
+**unactivated**. Chunk 112 adds an engineering-simulation valuation
+path. Legacy fixtures remain simulation-only. Production authorization
+remains unavailable. Chunk 71 remains the sole monetary authority.
 
 ## What it does not do
 

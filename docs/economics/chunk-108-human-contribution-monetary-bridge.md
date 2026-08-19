@@ -12,14 +12,17 @@ and not a second monetary authority.
 ```
 Human Contribution Registry
   → verification
-  → future valuation/settlement authorization
+  → versioned valuation / settlement authorization
+     (LEGACY_DEVELOPMENT_FIXTURE or ENGINE_VALUATION_SIMULATION)
   → privacy-safe HumanEconomicEvidence
   → existing Chunk 71 MonetaryIssuanceAuthority
   → native AssetSupplyBook
 ```
 
 `MonetaryIssuanceAuthority` remains the **only** canonical native
-monetary issuance gate.
+monetary issuance gate. Chunk 112 extends this bridge with an
+engineering-implemented valuation path. Production valuation remains
+inactive. The legacy fixture path remains simulation-only.
 
 ## What this chunk implements
 
@@ -32,12 +35,25 @@ monetary issuance gate.
 - Protected-trait / human-worth / raw-personal-data firewall
 - Explicit supersession/correction handling without clawback
 
+## Valuation paths
+
+Chunk 108 originally treated the valuation engine as unavailable and
+supported DEVELOPMENT/SIMULATION fixture quantities only.
+
+Chunk 112 adds a versioned `ENGINE_VALUATION_SIMULATION` path. It does
+not flip the production boolean. `VALUATION_ENGINE_IMPLEMENTED`
+remains `false`. Engineering availability is a separate constant.
+
+A fixture may still carry an explicit DEVELOPMENT/SIMULATION quantity
+on the legacy path. Production valuation remains unavailable.
+
 ## What this chunk does not implement
 
-**Chunk 108 does not implement the future Human Contribution Valuation
-Engine.** Quantity is never computed here. A fixture may carry an
-explicit DEVELOPMENT/SIMULATION quantity. Production valuation remains
-unavailable.
+**Chunk 108 does not become a second mint.** Quantity is never inferred
+here from PEVE, HIN, consent, clean-room results, or AI output.
+Engineering valuation lives at
+`packages/human-economic-contribution/src/valuation` and still cannot
+mint. Production valuation remains unavailable.
 
 This chunk also does not:
 
