@@ -2,6 +2,7 @@ export {
   AUTHENTICATION_METHODS,
   CATEGORY_TO_FACT_TYPE,
   COLLECTOR_VERSION,
+  CONNECTOR_VERSION,
   DATA_SOURCE_CATEGORIES,
   INCIDENT_ACTIONS,
   NORMALIZATION_VERSION,
@@ -22,6 +23,7 @@ export type {
   AuthenticationMethod,
   CanonicalCollectedObservation,
   DataSourceCategory,
+  OracleCollectorVersion,
   EconomicDataSource,
   FeedSchemaDefinition,
   IncidentAction,
@@ -127,3 +129,98 @@ export { runProductionOracleE2E } from './e2e.ts';
 export type { ProductionOracleE2EReport } from './e2e.ts';
 export { runSunreyOracle } from './cli.ts';
 export type { CliResult } from './cli.ts';
+export {
+  ALLOWED_CONTENT_TYPES,
+  CONNECTOR_RUNTIME_MODES,
+  CONSENSUS_CALLED_HTTP,
+  CREDENTIALS_EXPOSED,
+  DEFAULT_CONNECTOR_RUNTIME_CONFIG,
+  DEFAULT_CONNECTOR_RUNTIME_MODE,
+  FETCH_AUTO_FINALIZED_ORACLE,
+  FETCH_AUTO_MINTED_MOONREY,
+  HTTP_FETCH_SUCCESS_IS_NOT_VERIFIED_ECONOMIC_FACT,
+  HTTP_METHODS,
+  LIVE_MAINNET_CONNECTIVITY,
+  MAINNET_CONNECTIVITY_STATES,
+  NETWORK_CLASSES,
+  PRODUCTIVE_CONTRIBUTION_IS_NOT_PRODUCTIVE_VALUE,
+  PRODUCTIVE_VALUE_IS_NOT_MOONREY_ISSUANCE,
+  REDIRECT_POLICIES,
+  TLS_POLICIES,
+  VERIFIED_ECONOMIC_FACT_IS_NOT_PRODUCTIVE_CONTRIBUTION,
+  connectorRuntimeVersion,
+  consensusMustNotCallHttp,
+  fetchDoesNotFinalizeOracle,
+  fetchDoesNotMintMoonRey,
+  liveMainnetConnectivityEnabled,
+} from './runtime-types.ts';
+export type {
+  ConnectorAuthConfig,
+  ConnectorClock,
+  ConnectorFetchSuccess,
+  ConnectorHttpMethod,
+  ConnectorNetworkClass,
+  ConnectorRandom,
+  ConnectorRedirectPolicy,
+  ConnectorRuntimeConfig,
+  ConnectorRuntimeContext,
+  ConnectorRuntimeMode,
+  ConnectorTlsPolicy,
+  ExternalHttpRequest,
+  ExternalHttpResponse,
+  ExternalHttpTransport,
+  MainnetConnectivityState,
+  OracleSourceAdapterV2,
+  ProviderEndpointProfile,
+  SourceFetchRequestV2,
+} from './runtime-types.ts';
+export { FakeExternalHttpTransport, headerValue } from './transport.ts';
+export { NodeExternalHttpTransport, createConnectorTransport } from './http-transport.ts';
+export {
+  ProviderEndpointProfileRegistry,
+  approveEndpointProfile,
+  classifyHostname,
+  destinationMatchesProfile,
+  enforceSsrfPolicy,
+  enforceTlsPolicy,
+  governRedirect,
+  isLinkLocalOrMetadata,
+  isLoopbackHostname,
+  isPrivateIpv4,
+  parseDestination,
+} from './security-policy.ts';
+export {
+  OauthTokenCache,
+  acquireOauthToken,
+  canonicalSignedRequest,
+  prepareAuthenticatedRequest,
+  profileUrl,
+  signConnectorRequest,
+} from './auth-runtime.ts';
+export { DEFAULT_RETRY_POLICY, isRetryableRejection, retryDelayMs } from './retry.ts';
+export type { RetryPolicy } from './retry.ts';
+export { ConnectorRateLimiter, DEFAULT_RATE_LIMIT_POLICY } from './rate-limit.ts';
+export type { RateLimitPolicy } from './rate-limit.ts';
+export {
+  CIRCUIT_STATES,
+  ConnectorCircuitBreaker,
+  DEFAULT_CIRCUIT_BREAKER_POLICY,
+} from './circuit-breaker.ts';
+export type { CircuitBreakerPolicy, CircuitSnapshot, CircuitState } from './circuit-breaker.ts';
+export {
+  ConnectorObservability,
+  auditContainsCredential,
+  classifyHttpStatus,
+  classifyRejection,
+  emptyConnectorMetrics,
+} from './observability.ts';
+export type { ConnectorAuditRecord, ConnectorMetrics } from './observability.ts';
+export {
+  ConnectorRuntimeAdapterV2,
+  EconomicDataConnectorRuntime,
+  createDeterministicRandom,
+  createFrozenConnectorClock,
+  enforceSourceTimestamp,
+  parseJsonSourceRecord,
+} from './runtime.ts';
+

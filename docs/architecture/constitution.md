@@ -1446,6 +1446,15 @@ activate production valuation. Do not create `packages/moonrey-value`,
 `packages/productive-value`, `packages/moonrey-tokenomics`,
 `packages/moonrey-pricing`, or `packages/value-function-v2`. See
 [`chunk-123-moonrey-productive-value-constitution.md`](../economics/chunk-123-moonrey-productive-value-constitution.md).
+Chunk 127 implements the off-chain production economic data connector
+runtime at `packages/sunrey-chain/src/oracle/production`. Capability
+`sunrey-economic-data-connector-runtime` is `IMPLEMENTED` on the
+existing production-oracle owner. Consensus never calls HTTP. A
+successful fetch is not a verified economic fact and does not mint
+MoonRey. Do not create `packages/oracle-connectors`,
+`packages/data-ingestion`, `packages/moonrey-connectors`, or
+`packages/provider-runtime-v2`. See
+[`chunk-127-economic-data-connector-runtime.md`](./chunk-127-economic-data-connector-runtime.md).
 Chunk 125 implements the Productive Value → MoonRey settlement
 conversion bridge at
 `packages/sunrey-chain/src/productive/policy-governance/value-settlement`.

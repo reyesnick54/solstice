@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 
 import { commitCanonical } from '../../hash.ts';
-import type { AuthenticationMethod, SourceProvenance, UnitCode } from './types.ts';
+import type { AuthenticationMethod, OracleCollectorVersion, SourceProvenance, UnitCode } from './types.ts';
 import { COLLECTOR_VERSION } from './types.ts';
 
 export function contentHashOf(payload: unknown): string {
@@ -20,7 +20,9 @@ export function recordProvenance(input: {
   readonly credentialRefHref: string | null;
   readonly authMethod: AuthenticationMethod;
   readonly payload: unknown;
+  readonly collectorVersion?: OracleCollectorVersion;
 }): SourceProvenance {
+  const contentHash = contentHashOf(input.payload);
   return Object.freeze({
     schemaVersion: 1,
     providerId: input.providerId,
@@ -33,8 +35,8 @@ export function recordProvenance(input: {
     normalizationVersion: input.normalizationVersion,
     credentialRefHref: input.credentialRefHref,
     authMethod: input.authMethod,
-    collectorVersion: COLLECTOR_VERSION,
-    contentHash: contentHashOf(input.payload),
+    collectorVersion: input.collectorVersion ?? COLLECTOR_VERSION,
+    contentHash,
   });
 }
 

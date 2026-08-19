@@ -1,8 +1,12 @@
 /**
- * Provider-neutral OracleSourceAdapter.
+ * Provider-neutral OracleSourceAdapter (V1, synchronous).
  *
- * Adapters run off-chain. Consensus execution never imports an adapter
- * for HTTP. Credential values are never stored on the feed definition.
+ * V1 adapters are interface-only / legacy simulation. They authenticate
+ * against SecretProvider and do not contact live provider endpoints.
+ * Real asynchronous collection lives on OracleSourceAdapterV2 in the
+ * off-chain connector runtime. Consensus execution never imports an
+ * adapter for HTTP. Credential values are never stored on the feed
+ * definition.
  */
 
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
