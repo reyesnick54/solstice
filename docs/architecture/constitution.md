@@ -91,6 +91,7 @@ never be two implementations of these systems.
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
 | MoonRey source-to-productive taxonomy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/source-taxonomy/registry.ts` | IMPLEMENTED |
+| MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
 | Economic asset rights and provenance verification | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/verification/engine.ts` | IMPLEMENTED |
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
@@ -1416,6 +1417,17 @@ weights, or activate live providers. Do not create
 `packages/sunrey-units`, `packages/normalization`, or
 `packages/canonical-units`. See
 [`chunk-118-canonical-economic-units.md`](./chunk-118-canonical-economic-units.md).
+Chunk 120 implements canonical productive economic event identity and
+the rebuildable attribution graph at
+`packages/sunrey-chain/src/productive/policy-governance/attribution`.
+Capability `moonrey-economic-event-attribution` is `IMPLEMENTED`. It
+extends Chunk 74 policy-governance. Event fingerprint v3 strengthens
+existing v1/v2 fingerprints without replacing them. The graph is a
+projection, not a ledger or mint. Event identity cannot authorize
+issuance. Do not create `packages/moonrey-attribution`,
+`packages/economic-event-graph`, `packages/deduplication-engine`, or
+`packages/productive-attribution-v2`. See
+[`chunk-120-productive-economic-event-identity.md`](./chunk-120-productive-economic-event-identity.md).
 Chunk 119 migrates the MoonRey productive pipeline onto that same
 unit authority through `CanonicalProductiveMeasurement`. New
 observations, facts, claim candidates, and verified contributions

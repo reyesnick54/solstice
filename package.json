@@ -57,6 +57,7 @@
     "sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/cli.ts",
     "demo:sunrey-production-oracles": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/demo.ts",
     "demo:moonrey-source-claim-path": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/claim-candidate/demo.ts",
+    "demo:moonrey-economic-event-identity": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/productive/policy-governance/attribution/demo.ts",
     "demo:sunrey-fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/fees/demo.ts",
     "sunrey-fees-v2": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/fees/v2/cli-main.ts",
     "demo:sunrey-interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/interop/demo.ts",
