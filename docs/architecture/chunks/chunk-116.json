@@ -1,0 +1,16 @@
+{
+  "chunk": "CHUNK-116",
+  "title": "MoonRey Canonical Source-to-Productive Taxonomy Registry",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-productive-capacity",
+    "moonrey-issuance-engine",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-asset-registry",
+    "moonrey-source-taxonomy"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/source-taxonomy. Exhaustive DataSourceCategory → FactType → ProductiveCategory → source unit → ClaimType mapping. Does not connect live providers, value output, or mint MoonRey. Chunk 71 remains the issuance authority. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-taxonomy, packages/source-taxonomy, packages/productive-taxonomy, or packages/moonrey-source-taxonomy."
+}

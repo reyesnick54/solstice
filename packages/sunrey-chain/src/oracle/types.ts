@@ -35,6 +35,20 @@ export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 export const FEED_STATUSES = ['REGISTERED', 'ACTIVE', 'SUSPENDED', 'RETIRED'] as const;
 export type FeedStatus = (typeof FEED_STATUSES)[number];
 
+/**
+ * Oracle fact vocabulary. Chunk 116 adds only the types required to cover
+ * previously implicit productive domains. Existing types keep their
+ * historical meaning and are not reinterpreted.
+ *
+ * New types:
+ * - AI_COMPUTE_CAPACITY — installed or available AI accelerator capacity
+ * - AI_TRAINING_USAGE — measured training consumption, distinct from inference
+ * - INFRASTRUCTURE_CAPACITY — facility / civil-infrastructure capacity
+ * - INFRASTRUCTURE_USAGE — measured infrastructure utilization
+ * - GOODS_OUTPUT — finished-goods production, distinct from process output
+ * - GOODS_DELIVERY — finished-goods delivery completion
+ * - AUTOMATED_MACHINE_OUTPUT — autonomous or machine-originated output
+ */
 export const FACT_TYPES = [
   'ENERGY_PRODUCTION',
   'ENERGY_CAPACITY',
@@ -46,6 +60,8 @@ export const FACT_TYPES = [
   'COMPUTE_CAPACITY',
   'COMPUTE_USAGE',
   'AI_INFERENCE_USAGE',
+  'AI_COMPUTE_CAPACITY',
+  'AI_TRAINING_USAGE',
   'MANUFACTURING_CAPACITY',
   'MANUFACTURING_OUTPUT',
   'REAL_ESTATE_USE_CAPACITY',
@@ -57,6 +73,11 @@ export const FACT_TYPES = [
   'RESOURCE_RESERVE',
   'RESOURCE_EXTRACTION',
   'SERVICE_DELIVERY',
+  'INFRASTRUCTURE_CAPACITY',
+  'INFRASTRUCTURE_USAGE',
+  'GOODS_OUTPUT',
+  'GOODS_DELIVERY',
+  'AUTOMATED_MACHINE_OUTPUT',
   'REFERENCE_PRICE',
 ] as const;
 export type FactType = (typeof FACT_TYPES)[number];
