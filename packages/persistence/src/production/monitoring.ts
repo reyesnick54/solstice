@@ -60,3 +60,25 @@ export function evaluateCapacity(input: {
 export function loggingBounded(maxLogBytes: bigint, usedLogBytes: bigint): boolean {
   return usedLogBytes <= maxLogBytes;
 }
+
+export function operationalBackupScope(): readonly string[] {
+  return Object.freeze([
+    'payments.operational_payment',
+    'payments.operational_rail_submission',
+    'payments.operational_fx_execution',
+    'custody.operational_vault',
+    'custody.operational_wallet',
+    'custody.operational_withdrawal',
+    'custody.operational_deposit',
+    'custody.operational_reservation',
+    'custody.operational_provider_submission',
+    'sunrey_exchange.operational_order',
+    'sunrey_exchange.operational_reservation',
+    'sunrey_exchange.operational_trade',
+    'sunrey_exchange.operational_settlement_intent',
+    'customer.provider_operational_state',
+    'customer.operational_outbox',
+    'customer.operational_inbox',
+    'security.credential_descriptor_ref',
+  ]);
+}

@@ -448,6 +448,31 @@ describe('versioned SQL migrations', () => {
     assert.match(v005.sql, /TYPE TEXT/);
   });
 
+  it('customer V027 adds operational persistence without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v027 = files.find((file) => file.version === 27);
+    assert.ok(v027);
+    assert.equal(v027.filename, 'V027__operational_persistence.sql');
+    assert.match(v027.sql, /CREATE TABLE payments\.operational_payment/);
+    assert.match(v027.sql, /CREATE TABLE custody\.operational_withdrawal/);
+    assert.match(v027.sql, /asset_id TEXT NOT NULL CHECK \(asset_id IN \('SUNREY_COIN', 'MOONREY_COIN'\)\)/);
+    assert.match(v027.sql, /CREATE TABLE sunrey_exchange\.operational_settlement_intent/);
+    assert.match(v027.sql, /CREATE TABLE customer\.provider_operational_state/);
+    assert.match(v027.sql, /raw_credential_present BOOLEAN NOT NULL CHECK \(raw_credential_present = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
+  });
+
+  it('security V002 stores credential descriptor references without secret values', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
+    const v002 = files.find((file) => file.version === 2);
+    assert.ok(v002);
+    assert.equal(v002.filename, 'V002__credential_descriptor_refs.sql');
+    assert.match(v002.sql, /CREATE TABLE security\.credential_descriptor_ref/);
+    assert.match(v002.sql, /raw_credential_present BOOLEAN NOT NULL CHECK \(raw_credential_present = FALSE\)/);
+    assert.match(v002.sql, /private_key_present BOOLEAN NOT NULL CHECK \(private_key_present = FALSE\)/);
+    assert.equal(/api_key_value|oauth_access_token|client_secret|private_key_pem/i.test(v002.sql), false);
+  });
+
   it('security V001 stores metadata only and forbids private key material', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v001 = files.find((file) => file.version === 1);

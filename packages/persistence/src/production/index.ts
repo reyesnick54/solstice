@@ -29,5 +29,8 @@ export { assertMigrationSafe, planDomainMigration } from './migration-control.ts
 export type { SchemaMigrationPlan } from './migration-control.ts';
 export { postgresReadiness } from './health.ts';
 export type { PostgresHealth } from './health.ts';
-export { evaluateCapacity, loggingBounded } from './monitoring.ts';
+export { evaluateCapacity, loggingBounded, operationalBackupScope } from './monitoring.ts';
 export type { ApplicationStorageMetrics, CapacityGuard } from './monitoring.ts';
+export * from './operational/index.ts';
+export * from './recovery/index.ts';
+export { DurableStoreError, SNAPSHOT_ENVELOPE_VERSION } from './snapshot-envelope.ts';
