@@ -63,6 +63,37 @@ export {
   mapInformationAsset,
   mapInformationRight,
 } from './economic-asset-adapter.ts';
+export {
+  ANCHOR_ALTERS_LEDGER,
+  ANCHOR_MINTS_ASSET,
+  CHAIN_ANCHOR_IS_EVIDENCE,
+  CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY,
+  CONSENT_SOURCE_OF_TRUTH,
+  HIN_ANCHOR_FAILURE_CODES,
+  HIN_ANCHOR_INVARIANTS,
+  PRODUCTION_ACTIVE,
+  RAW_PERSONAL_DATA_ON_CHAIN,
+  REVOCATION_REQUIRES_CHAIN_TO_BLOCK_FUTURE_USE,
+  HumanInformationAnchorCoordinator,
+  SunReyHumanInformationChainAnchorAdapter,
+  createHumanInformationAnchorCoordinator,
+  createHumanInformationChainAnchorPort,
+  scheduleConsentAnchor,
+  scheduleContributionAnchor,
+  scheduleRevocationAnchor,
+  scheduleSettlementAnchor,
+  scheduleUsageAnchor,
+} from './chain-anchor/index.ts';
+export type {
+  HinAnchorFailure,
+  HumanInformationAnchor,
+  HumanInformationAnchorHealth,
+  HumanInformationAnchorReconciliation,
+  HumanInformationChainAnchorPort,
+  HumanInformationUsageAnchorProjection,
+  PrivacySafeAnchorStatus,
+} from './chain-anchor/index.ts';
+export { runHumanInformationChainFinalityDemo } from './chain-anchor/demo.ts';
 export type {
   CleanRoomComputationRequest,
   CleanRoomComputationResult,

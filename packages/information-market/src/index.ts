@@ -83,7 +83,11 @@ export {
   formatInformationCli,
   privacyMinimizedNotification,
   runHumanInformationContributionDemo,
+  runHumanInformationChainFinalityDemo,
   runInformationCommand,
+  HumanInformationAnchorCoordinator,
+  createHumanInformationAnchorCoordinator,
+  createHumanInformationChainAnchorPort,
 } from './network/index.ts';
 export type {
   HumanContributionRecord,

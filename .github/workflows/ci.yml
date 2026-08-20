@@ -154,6 +154,8 @@ jobs:
         run: npm run demo:information-market
       - name: Human Information Network production-candidate demo
         run: npm run demo:sunrey-human-information-network
+      - name: Human Information Network chain-anchor finality demo
+        run: npm run demo:sunrey-hin-chain-finality
       - name: SunRey AI runtime demo
         run: npm run demo:sunrey-ai-runtime
       - name: SunRey S3M primary provider demo

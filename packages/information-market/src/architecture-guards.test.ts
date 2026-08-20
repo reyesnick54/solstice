@@ -31,6 +31,10 @@ describe('information market architecture guards', () => {
         continue;
       }
       const source = readFileSync(file, 'utf8');
+      if (file.includes(`${join('network', 'chain-anchor')}`) && !file.endsWith('adapter.ts')) {
+        assert.equal(source.includes('SimulationChainAdapter'), false, file);
+        assert.equal(/from ['"].*\/simulation\.ts['"]/.test(source), false, file);
+      }
       assert.equal(/AuthorityIssuer\.issue|this\.issuer\.issue\(/.test(source), false, file);
       assert.equal(/ticker\s*[:=]\s*['"]?(SUNREY|SRN|SRY|REYN|RYN|RCOIN)/.test(source), false, file);
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
@@ -48,6 +52,9 @@ describe('information market architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/information-contribution-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/human-information-contribution')), false);
     assert.equal(existsSync(join(ROOT, 'packages/data-marketplace')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/hin-chain-anchor')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/hin-finality')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/information-chain-node')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const agent = walk(join(ROOT, 'packages/agent/src'));
     for (const file of agent) {

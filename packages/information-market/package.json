@@ -13,7 +13,8 @@
     "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:network": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/demo.ts",
-    "demo:contribution": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/contribution/demo.ts"
+    "demo:contribution": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/contribution/demo.ts",
+    "demo:chain-finality": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/chain-anchor/demo.ts"
   },
   "engines": {
     "node": ">=22"
