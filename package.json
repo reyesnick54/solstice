@@ -47,6 +47,8 @@
     "demo:information-market": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/demo.ts",
     "demo:sunrey-human-information-network": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/demo.ts",
     "demo:sunrey-human-information-contribution": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/contribution/demo.ts",
+    "demo:sunrey-hin-chain-anchor-foundation": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/chain-anchor/demo.ts",
+    "demo:sunrey-hin-chain-finality": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/chain-anchor/finality-demo.ts",
     "sunrey-information": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/information-market/src/network/cli-main.ts",
     "demo:sunrey-chain": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/demo.ts",
     "demo:sunrey-node": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/local-node/demo.ts",

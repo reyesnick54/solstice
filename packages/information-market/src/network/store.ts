@@ -87,6 +87,9 @@ export class HumanInformationNetworkStore {
       pendingRequests: Object.freeze(
         [...this.requests.values()].filter((row) => row.status === 'SUBMITTED' || row.status === 'ELIGIBLE'),
       ),
+      consentAnchorStatus: null,
+      revocationAnchorStatus: null,
+      usageAnchorStatus: null,
     });
   }
 }
