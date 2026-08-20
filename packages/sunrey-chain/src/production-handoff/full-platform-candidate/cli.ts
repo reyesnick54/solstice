@@ -31,6 +31,7 @@ export function fullPlatformUsage(): string {
 }
 
 export function runFullPlatformCommand(argv: readonly string[], root = process.cwd()): FullPlatformCliResult {
+  process.env.SUNREY_FIXTURE_ENV ??= 'local';
   const [command = 'help'] = argv;
   if (command === 'help' || !(SUBCOMMANDS as readonly string[]).includes(command as (typeof SUBCOMMANDS)[number])) {
     return {

@@ -38,10 +38,16 @@ jobs:
         run: npm ci --ignore-scripts
 
       - name: Full-platform STANDARD/EXTENDED burn-in
+        env:
+          SUNREY_FIXTURE_ENV: local
         run: npm run sunrey-ops -- production full-platform rehearse --profile ${{ inputs.profile || 'STANDARD' }}
 
       - name: Adversarial smoke plus verification
+        env:
+          SUNREY_FIXTURE_ENV: local
         run: npm run sunrey-ops -- production full-platform verify
 
       - name: Bundle report
+        env:
+          SUNREY_FIXTURE_ENV: local
         run: npm run sunrey-ops -- production full-platform report

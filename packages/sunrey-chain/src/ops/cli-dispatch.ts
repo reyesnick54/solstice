@@ -14,5 +14,6 @@ if (group === 'validator' && action && (VALIDATOR_OPERATOR_COMMANDS as readonly 
   const { main } = await import('../validator-operator/cli-main.ts');
   await main(argv);
 } else {
-  await import('./cli.ts');
+  const { main } = await import('./cli.ts');
+  await main();
 }
