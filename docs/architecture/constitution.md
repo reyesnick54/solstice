@@ -118,6 +118,7 @@ never be two implementations of these systems.
 | Production provider credential plane | `packages/security` | `packages/security/src/regulated/credentials/types.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 | Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
+| Distributed idempotency recovery | `packages/events` | `packages/events/src/operation/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1898,6 +1899,17 @@ Do not create `packages/moonrey-custody`, `packages/sunrey-custody-v2`,
 `packages/key-vault`, `packages/hsm-v2`, `packages/mpc-v2`, or
 `packages/custody-provider-v2`. See
 [`docs/custody/chunk-153-dual-asset-custody-provider-candidate.md`](../custody/chunk-153-dual-asset-custody-provider-candidate.md).
+Chunk 155 hardens distributed idempotency and external side-effect
+recovery at `packages/events/src/operation` with a PostgreSQL adapter
+in `packages/persistence/src/operations`. Capability
+`sunrey-distributed-idempotency-recovery` is `IMPLEMENTED`. The
+canonical model is `EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION`.
+It does not claim magical exactly-once delivery. The coordinator cannot
+post ledger journals, mint, or issue Execution Authority. Do not create
+`packages/saga-engine`, `packages/workflow-v2`,
+`packages/idempotency-service`, `packages/transaction-manager`,
+`packages/distributed-ledger`, or `packages/exactly-once`. See
+[`chunk-155-distributed-idempotency-recovery.md`](./chunk-155-distributed-idempotency-recovery.md).
 
 ## Agent stop rule
 

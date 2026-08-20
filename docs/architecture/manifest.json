@@ -1606,6 +1606,40 @@
       ]
     },
     {
+      "id": "sunrey-distributed-idempotency-recovery",
+      "name": "Distributed idempotency and external side-effect recovery",
+      "canonicalOwner": "packages/events",
+      "canonicalPath": "packages/events/src/operation/index.ts",
+      "publicInterface": "packages/events/src/operation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "OperationExecutionRecord",
+          "kind": "type"
+        },
+        {
+          "name": "ReconciliationCoordinator",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/saga-engine",
+        "packages/workflow-v2",
+        "packages/idempotency-service",
+        "packages/transaction-manager",
+        "packages/distributed-ledger",
+        "packages/exactly-once"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 155. Extends event-fabric and packages/persistence. EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. Does not post journals, mint, or issue Execution Authority. PostgreSQL adapter in packages/persistence/src/operations."
+    },
+    {
       "id": "ledger",
       "name": "Ledger",
       "canonicalOwner": "packages/ledger",
@@ -5782,7 +5816,13 @@
     "packages/sunrey-custody-v2",
     "packages/key-vault",
     "packages/mpc-v2",
-    "packages/custody-provider-v2"
+    "packages/custody-provider-v2",
+    "packages/saga-engine",
+    "packages/workflow-v2",
+    "packages/idempotency-service",
+    "packages/transaction-manager",
+    "packages/distributed-ledger",
+    "packages/exactly-once"
   ],
   "capabilities": [
     {
@@ -6846,6 +6886,13 @@
       "owner": "packages/custody",
       "protected": true,
       "notes": "Chunk 153 dual-native-asset custody hardening and institutional custody provider-candidate framework at packages/custody/src/provider-candidate. Extends packages/custody. HSM/KMS remain packages/security. Native quantity remains SunRey Chain / AssetSupplyBook. productionAuthorized stays false. Do not create packages/moonrey-custody, packages/sunrey-custody-v2, packages/key-vault, packages/hsm-v2, packages/mpc-v2, or packages/custody-provider-v2."
+    },
+    {
+      "id": "sunrey-distributed-idempotency-recovery",
+      "status": "IMPLEMENTED",
+      "owner": "packages/events",
+      "protected": true,
+      "notes": "Chunk 155 distributed idempotency, external side-effect recovery, transactional workflow safety, and cross-domain reconciliation. Extends packages/events and packages/persistence. Canonical model is EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. Not magical exactly-once delivery. Coordinator cannot post ledger, mint, or issue Execution Authority. Do not create packages/saga-engine, packages/workflow-v2, packages/idempotency-service, packages/transaction-manager, packages/distributed-ledger, or packages/exactly-once."
     }
   ],
   "boundedContexts": [

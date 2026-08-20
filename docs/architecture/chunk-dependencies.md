@@ -1531,3 +1531,13 @@ credential plane. Do not create `packages/moonrey-custody`,
 `packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
 `packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
 returns `mustStop: false`.
+Chunk 155 implements distributed idempotency, external side-effect
+recovery, transactional workflow safety, and cross-domain reconciliation
+at `packages/events/src/operation` with persistence in
+`packages/persistence/src/operations`. Capability
+`sunrey-distributed-idempotency-recovery` is `IMPLEMENTED`. The
+canonical model is `EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION`.
+Do not create `packages/saga-engine`, `packages/workflow-v2`,
+`packages/idempotency-service`, `packages/transaction-manager`,
+`packages/distributed-ledger`, or `packages/exactly-once`. The evaluator
+returns `mustStop: false`.

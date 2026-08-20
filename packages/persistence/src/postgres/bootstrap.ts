@@ -213,6 +213,8 @@ export async function resetPersistedData(env: PersistenceEnv): Promise<void> {
               ledger.reconciliation_item,
               ledger.account_coordinate,
               ledger.product_metadata,
+              ledger.operation_callback,
+              ledger.operation_execution,
               ledger.dead_letter,
               ledger.inbox,
               ledger.outbox,

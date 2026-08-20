@@ -115,3 +115,5 @@ export {
   crashRecoverOutbox,
 } from './production/event-fabric.ts';
 export type { DurableOutboxRecord } from './production/event-fabric.ts';
+export { PostgresOperationStore, insertOperationExecution } from './operations/pg-operation-store.ts';
+export { persistOperationWithOutbox } from './operations/unit.ts';

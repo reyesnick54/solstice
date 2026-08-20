@@ -1,0 +1,16 @@
+{
+  "chunk": "CHUNK-155",
+  "title": "Distributed Idempotency, External Side-Effect Recovery, Transactional Workflow Safety, and Cross-Domain Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "events",
+    "event-fabric",
+    "persistence",
+    "payments",
+    "custody",
+    "sunrey-exchange",
+    "evidence"
+  ],
+  "notes": "IMPLEMENTED at packages/events/src/operation and packages/persistence/src/operations. Extends Chunk 3 outbox/inbox/replay. Canonical model is EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. evaluateChunkRequirements returns mustStop: false. Do not create packages/saga-engine, packages/workflow-v2, packages/idempotency-service, packages/transaction-manager, packages/distributed-ledger, or packages/exactly-once."
+}
