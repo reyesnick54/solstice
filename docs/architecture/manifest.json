@@ -3101,6 +3101,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
       "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
     },
     {
@@ -3650,6 +3651,10 @@
         "packages/economic-qualification",
         "packages/sunrey-economic-release",
         "packages/economic-policy-freeze",
+        "packages/economic-constitution",
+        "packages/economic-rc-v2",
+        "packages/tokenomics-release",
+        "packages/dual-economy-release",
         "packages/validator-economics",
         "packages/staking",
         "packages/slashing",
@@ -3659,7 +3664,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. ReleaseAuthority signs the economic bundle only and does not activate economic policy or authorize mainnet."
+      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Chunk 148 extends that owner with a versioned production economic constitution candidate bundle at production-constitution/. Historical Economic RC hashes remain reproducible. Does not activate production or invent tokenomics. Do not create packages/economic-constitution, packages/economic-rc-v2, packages/tokenomics-release, or packages/dual-economy-release."
     },
     {
       "id": "sunrey-governance-operations",
@@ -6347,7 +6352,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Extends Chunk 63. Does not authorize mainnet, invent production parameters, or treat engineering qualification as regulatory approval. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-qualification, packages/sunrey-economic-release, or packages/economic-policy-freeze."
+      "notes": "Chunk 78 economic TESTNET / PRODUCTION-CANDIDATE qualification at packages/sunrey-chain/src/release-candidate/economic. Chunk 148 extends that owner with a versioned production economic constitution candidate. Historical hashes remain reproducible. Does not authorize mainnet, invent production parameters, or activate production. Do not create packages/sunrey-economic-rc, packages/economic-rc, packages/economic-constitution, packages/economic-rc-v2, packages/tokenomics-release, or packages/dual-economy-release."
     },
     {
       "id": "sunrey-governance-operations",
@@ -6696,6 +6701,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate at packages/sunrey-chain/src/release-candidate/economic/production-constitution. Evaluator only. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
       "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
     },
     {

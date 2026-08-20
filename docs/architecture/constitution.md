@@ -1151,7 +1151,9 @@ PRODUCTION-CANDIDATE economic qualification. No economic RC status
 implies mainnet authorization. Production parameters remain
 `UNCONFIGURED`. Qualification is not regulatory approval.
 `ReleaseAuthority` signs the economic bundle only and does not
-activate economic policy. Do not create `packages/sunrey-economic-rc`,
+activate economic policy. Chunk 148 extends this owner with a
+versioned production economic constitution candidate at
+`production-constitution/`. Do not create `packages/sunrey-economic-rc`,
 `packages/economic-rc`, `packages/economic-qualification`,
 `packages/sunrey-economic-release`, or
 `packages/economic-policy-freeze`. See
@@ -1769,6 +1771,20 @@ create `packages/production-economics`, `packages/monetary-activation`,
 `packages/mainnet-economics`, `packages/tokenomics-v2`, or
 `packages/launch-economics`. See
 [`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
+Chunk 148 implements the production economic constitution candidate
+bundle, cross-policy reconciliation, and economic release-candidate
+gate at
+`packages/sunrey-chain/src/release-candidate/economic/production-constitution`.
+Capability `sunrey-economic-rc` remains `IMPLEMENTED` on the existing
+economic release-candidate owner. Chunk 148 creates a new versioned
+candidate bundle and does not rewrite historical Economic RC hashes.
+The firewall decision is included by hash and cannot be overridden.
+Parameter selection is not final activation authorization. Current
+production parameters remain `UNCONFIGURED`. `PRODUCTION_ACTIVE` is
+not an achievable state. Do not create `packages/economic-constitution`,
+`packages/economic-rc-v2`, `packages/tokenomics-release`, or
+`packages/dual-economy-release`. See
+[`docs/economics/chunk-148-production-economic-constitution-candidate.md`](../economics/chunk-148-production-economic-constitution-candidate.md).
 Chunk 146 defines the MoonRey production-candidate Productive Value,
 GPUV conversion, category-cap, and issuance parameter package inside
 the existing value-function, value-settlement, and

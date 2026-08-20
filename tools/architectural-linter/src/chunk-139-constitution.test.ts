@@ -26,7 +26,6 @@ describe('CHUNK-139 HIN chain-anchor foundation constitution', () => {
 
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'sunrey-hin-chain-anchoring').status, 'IMPLEMENTED');
-    assert.equal(evaluateCapability(manifest, 'sunrey-hin-chain-anchoring').status, 'PARTIAL');
     assert.equal(evaluateCapability(manifest, 'sunrey-hin-chain-anchoring').owner, 'packages/information-market');
     assert.equal(evaluateCapability(manifest, 'sunrey-chain').status, 'IMPLEMENTED');
     assert.equal(evaluateCapability(manifest, 'sunrey-human-information-network').owner, 'packages/information-market');
