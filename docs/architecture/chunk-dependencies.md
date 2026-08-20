@@ -181,6 +181,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-resource-extraction-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1255,6 +1256,18 @@ and
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or `packages/resource-data-fabric`.
 The evaluator returns `mustStop: false`.
+Chunk 136 implements the bandwidth, telecom, and digital-network
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/bandwidth`.
+Capability `sunrey-bandwidth-network-data-fabric` is `IMPLEMENTED` on
+the existing production-oracle owner. See
+[`chunk-136-bandwidth-network-data-fabric.md`](./chunk-136-bandwidth-network-data-fabric.md)
+and
+[`docs/economics/chunk-136-bandwidth-network-data-fabric.md`](../economics/chunk-136-bandwidth-network-data-fabric.md).
+`DATA_RATE` is not `DATA_VOLUME`. Capacity is not realized usage.
+Facts do not mint MoonRey. Do not create `packages/bandwidth-oracle`,
+`packages/telecom-data-fabric`, `packages/network-oracles`, or
+`packages/cdn-metering`. The evaluator returns `mustStop: false`.
 Chunk 135 implements the real-estate use and infrastructure economic
 data fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/real-estate`

@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-136",
+  "title": "Bandwidth, Telecom & Digital Network Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-asset-registry",
+    "sunrey-provider-certification",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-bandwidth-network-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/bandwidth. Extends sunrey-production-oracles. Provider-neutral bandwidth/telecom/CDN/peering metering. BANDWIDTH_USAGE_SCHEMA_V1 remains historical GB_s compatibility. BANDWIDTH_USAGE_SCHEMA_V2 is transferred-volume (GB/TB). DATA_RATE is not DATA_VOLUME. Capacity is not realized usage. No live provider, production activation, or MoonRey mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/bandwidth-oracle, packages/telecom-data-fabric, packages/network-oracles, or packages/cdn-metering."
+}
