@@ -846,12 +846,13 @@
         "packages/platform",
         "packages/sunrey-exchange",
         "packages/human-economic-contribution",
-        "packages/economic-asset-registry"
+        "packages/economic-asset-registry",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Do not implement the Exchange matching engine or SunRey Chain."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 140 chain anchoring uses a narrow HumanInformationChainAnchorPort over existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
     },
     {
       "id": "packages/sunrey-chain",
@@ -2252,7 +2253,10 @@
         "packages/information-market-v2",
         "packages/proof-of-contribution",
         "packages/human-information-network",
-        "packages/data-marketplace"
+        "packages/data-marketplace",
+        "packages/hin-chain-anchor",
+        "packages/hin-finality",
+        "packages/information-chain-node"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -4298,10 +4302,6 @@
         {
           "name": "HumanInformationAnchorCoordinator",
           "kind": "class"
-        },
-        {
-          "name": "HumanInformationChainAnchorPort",
-          "kind": "type"
         }
       ],
       "forbiddenAliases": [

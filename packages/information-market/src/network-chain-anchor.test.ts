@@ -54,6 +54,47 @@ function stack(portOverride?: HumanInformationChainAnchorRuntime) {
   return { clock, chain, port, registry, coordinator, engine };
 }
 
+function realizeUse(
+  engine: HumanInformationNetworkEngine,
+  input: {
+    readonly rightId: string;
+    readonly computationId: string;
+    readonly consentHash: string;
+    readonly subjectId: string;
+  },
+) {
+  const job = unwrap(
+    engine.submitCleanRoomComputation({
+      requesterId: 'req_lab',
+      purpose: 'AGGREGATED_RESEARCH',
+      rightId: input.rightId as never,
+      approvedComputationId: input.computationId as never,
+      outputClass: 'AGGREGATE_STATISTIC',
+      expiresAt: EXPIRES,
+      jurisdiction: 'GB',
+      presentedConsentHash: input.consentHash,
+      cohortSize: 12,
+      outputRowCount: 1,
+    }),
+  );
+  unwrap(
+    engine.getCleanRoomResult({
+      computationRequestId: job.computationRequestId,
+      privacySafeValue: 'activity_band=moderate',
+      cohortSize: 12,
+    }),
+  );
+  return unwrap(
+    engine.recordUsage({
+      rightId: input.rightId as never,
+      requesterId: 'req_lab',
+      computationId: input.computationId as never,
+      outputClass: 'AGGREGATE_STATISTIC',
+      settlementRef: null,
+    }),
+  );
+}
+
 function provision(engine: HumanInformationNetworkEngine) {
   const subject = unwrap(engine.registerSubject({ internalRef: 'synthetic-ada' }));
   const descriptor = unwrap(
@@ -171,16 +212,12 @@ describe('HIN chain anchor finality', () => {
     assert.ok(finalizedConsent?.blockReference);
     assert.ok((finalizedConsent?.confirmations ?? 0) >= 2);
 
-    unwrap(
-      engine.recordUsage({
-        rightId: approved.right.rightId,
-        requesterId: 'req_lab',
-        computationId: computation.computationId,
-        outputClass: 'AGGREGATE_STATISTIC',
-        settlementRef: null,
-      }),
-    );
-    const usage = [...engine.store.receipts.values()][0]!;
+    const usage = realizeUse(engine, {
+      rightId: approved.right.rightId,
+      computationId: computation.computationId,
+      consentHash: approved.grant.consentHash,
+      subjectId: subject.subjectId,
+    });
     assert.equal(usage.chainHeight, 0n);
     coordinator.advanceSimulatedFinality(2);
     const usageAnchor = coordinator.store.findBySource('USAGE_RECEIPT', usage.receiptId);
@@ -406,30 +443,20 @@ describe('HIN chain anchor finality', () => {
         at: NOW,
       }),
     );
-    const before = registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', approved.right.rightId);
+    const before = registry.findBySourceRecord('packages/information-market', approved.right.rightId);
     assert.equal(before?.status === 'VERIFIED', false);
     assert.equal(before?.chainAnchor?.finalityState, 'UNANCHORED');
     const consentAnchor = coordinator.store.findBySource('CONSENT_RECEIPT', approved.grant.grantId)!;
     coordinator.advanceSimulatedFinality(2);
     coordinator.project(consentAnchor.anchorId);
-    const afterConsent = registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', approved.right.rightId);
-    unwrap(
-      adapter.projectInformationRight({
-        right: approved.right,
-        descriptor,
-        subject,
-        consent: approved.grant,
-        at: NOW,
-      }),
-    );
-    const projected = registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', approved.grant.grantId)
-      ?? afterConsent
-      ?? registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', approved.right.rightId);
+    const afterConsent = registry.findBySourceRecord('packages/information-market', approved.right.rightId);
+    const projected = afterConsent
+      ?? registry.findBySourceRecord('packages/information-market', approved.grant.grantId);
     assert.ok(projected);
     const finalized = coordinator.store.findBySource('CONSENT_RECEIPT', approved.grant.grantId)!;
     const updated = unwrap(
       ((): ReturnType<typeof adapter.projectInformationRight> => {
-        const current = registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', approved.right.rightId);
+        const current = registry.findBySourceRecord('packages/information-market', approved.right.rightId);
         if (!current || !finalized.finalized) {
           return { ok: false, error: { code: 'ASSET_NOT_FOUND', message: 'missing' } };
         }
@@ -521,16 +548,12 @@ describe('HIN chain anchor finality', () => {
         expiresAt: EXPIRES,
       }),
     );
-    unwrap(
-      engine.recordUsage({
-        rightId: approved.right.rightId,
-        requesterId: 'req_lab',
-        computationId: computation.computationId,
-        outputClass: 'AGGREGATE_STATISTIC',
-        settlementRef: 'settle_demo',
-      }),
-    );
-    const usage = [...engine.store.receipts.values()][0]!;
+    const usage = realizeUse(engine, {
+      rightId: approved.right.rightId,
+      computationId: computation.computationId,
+      consentHash: approved.grant.consentHash,
+      subjectId: subject.subjectId,
+    });
     const contributions = createHinContributionAdapter({
       engine,
       registry: createInProcessHumanContributionRegistry(),

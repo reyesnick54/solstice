@@ -1,6 +1,7 @@
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { ok, type Result } from '../../../../domain/src/result.ts';
 import {
+  CANONICAL_SYSTEM_OWNERS,
   chainIdFor,
   contentCommitmentFor,
   networkIdFor,
@@ -26,7 +27,7 @@ export function projectFinalizedChainAnchor(
   if (!anchor.finalized || anchor.chainState !== 'FINALIZED') {
     return ok(null);
   }
-  const existing = registry.findBySourceRecord('HUMAN_INFORMATION_NETWORK', sourceRecordFor(anchor));
+  const existing = registry.findBySourceRecord(CANONICAL_SYSTEM_OWNERS.hin, sourceRecordFor(anchor));
   if (!existing) {
     return ok(null);
   }

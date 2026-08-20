@@ -24,7 +24,11 @@ import type {
  * HIN domain logic must not call SimulationChainAdapter directly.
  */
 export class SunReyHumanInformationChainAnchorAdapter implements HumanInformationChainAnchorRuntime {
-  constructor(private readonly chain: SunReyChainService) {}
+  private readonly chain: SunReyChainService;
+
+  constructor(chain: SunReyChainService) {
+    this.chain = chain;
+  }
 
   createIntent(input: CreateIntentInput): Result<ChainWriteIntent, ChainFailure> {
     return this.chain.createIntent(input);
