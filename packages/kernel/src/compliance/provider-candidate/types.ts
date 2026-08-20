@@ -65,7 +65,7 @@ export type RawComplianceVendorResponse = {
   readonly vendorOutcome?: string;
   readonly vendorScore?: number | string;
   readonly vendorConfidence?: number | string;
-  readonly articleBody?: string;
+  readonly copyrightedCopy?: string;
   readonly matchRef?: string;
 };
 

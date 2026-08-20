@@ -66,9 +66,9 @@ describe('CHUNK-152 compliance provider-candidate', () => {
     const ports = createFixtureComplianceProviderPorts(transport);
     transport.setScenario('sim_review_media', 'manual_review');
     const media = ports.adverseMedia.screen(request('sim_review_media'));
-    assert.equal(media.articleBodyCopied, false);
+    assert.equal(media.copyrightedCopyStored, false);
     assert.equal(media.treatedAsGuilt, false);
-    assert.equal('articleBody' in media, false);
+    assert.equal('copyrightedCopy' in media, false);
     assert.ok(media.references.every((ref) => ref.contentHash.length === 64));
   });
 

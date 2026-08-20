@@ -13,7 +13,7 @@ export class FixtureAdverseMediaProvider implements AdverseMediaProvider {
 
   screen(request: ScreeningRequest): ProviderScreenResponse & {
     readonly references: readonly AdverseMediaReference[];
-    readonly articleBodyCopied: false;
+    readonly copyrightedCopyStored: false;
     readonly treatedAsGuilt: false;
   } {
     const raw = this.#transport.exchange({
@@ -24,7 +24,7 @@ export class FixtureAdverseMediaProvider implements AdverseMediaProvider {
     return Object.freeze({
       ...normalized,
       references: safeAdverseMediaReferences(request, normalized.outcome === 'REVIEW'),
-      articleBodyCopied: false,
+      copyrightedCopyStored: false,
       treatedAsGuilt: false,
     });
   }
