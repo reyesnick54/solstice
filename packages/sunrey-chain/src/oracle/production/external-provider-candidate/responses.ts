@@ -40,9 +40,9 @@ export type ExternalProviderResponseTranslator = {
 
 export function detectSchemaDrift(input: {
   readonly feed: ExternalProviderFeedProfile;
-  readonly incomingSchemaId?: string;
-  readonly incomingSchemaVersion?: number;
-  readonly incomingUnit?: string;
+  readonly incomingSchemaId?: string | undefined;
+  readonly incomingSchemaVersion?: number | undefined;
+  readonly incomingUnit?: string | undefined;
   readonly incomingTimestampSemantics?: TimestampSemantics;
   readonly missingRequiredField?: boolean;
   readonly fieldTypeChanged?: boolean;

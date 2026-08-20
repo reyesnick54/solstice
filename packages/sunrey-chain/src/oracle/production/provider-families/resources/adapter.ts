@@ -250,12 +250,13 @@ export function ingestResourceRecord(
     );
   }
 
+  const measurementSemantics: string = record.measurementSemantics;
   const canCreateOutputClaim =
     record.factType === 'RESOURCE_EXTRACTION' &&
     profile.createsExtractionEvent &&
-    record.measurementSemantics !== 'STOCKPILE_INVENTORY_MASS' &&
-    record.measurementSemantics !== 'ASSAY_GRADE_QUALITY' &&
-    record.measurementSemantics !== 'PROCESSED_CONCENTRATE';
+    measurementSemantics !== 'STOCKPILE_INVENTORY_MASS' &&
+    measurementSemantics !== 'ASSAY_GRADE_QUALITY' &&
+    measurementSemantics !== 'PROCESSED_CONCENTRATE';
 
   const observation: NormalizedResourceObservation = Object.freeze({
     schemaVersion: RESOURCE_FABRIC_SCHEMA_VERSION,
@@ -285,7 +286,7 @@ export function ingestResourceRecord(
     createsExtractionEvent: profile.createsExtractionEvent && record.factType === 'RESOURCE_EXTRACTION',
     createsReserveEstimate: profile.createsReserveEstimate || record.factType === 'RESOURCE_RESERVE',
     createsInventoryEvidence: profile.createsInventoryEvidence,
-    isAssayQualityOnly: profile.isAssayQualityOnly || record.measurementSemantics === 'ASSAY_GRADE_QUALITY',
+    isAssayQualityOnly: profile.isAssayQualityOnly || measurementSemantics === 'ASSAY_GRADE_QUALITY',
     canCreateOutputClaim,
     canMintMoonRey: false,
     legalOwnershipInferred: false,

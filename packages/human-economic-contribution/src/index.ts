@@ -202,8 +202,6 @@ export {
   InMemoryValuationReferenceDataPort,
   VALUATION_INVARIANTS,
   VALUATION_METHODS,
-  type HumanContributionValuationPolicy,
-  type HumanContributionValuationResult,
   type ValuationExplanationReceipt,
   type ValuationMethod,
   type ValuationReferenceDataPort,
@@ -233,7 +231,6 @@ export {
   type ApplyVerificationDecisionInput,
   type MeasurementPeriod,
 } from './types.ts';
-export * from './valuation/index.ts';
 export {
   ADDITIONAL_EVIDENCE_CODES,
   ENGINEERING_CLASS_REQUIREMENTS,

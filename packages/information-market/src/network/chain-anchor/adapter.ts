@@ -54,7 +54,7 @@ import type {
   HumanInformationAnchorKey,
   HumanInformationChainAnchorRecord,
 } from './types.ts';
-import { HIN_ANCHOR_KINDS } from './types.ts';
+import { HIN_ANCHOR_FAILURE_CODES, HIN_ANCHOR_KINDS, type HinAnchorFailureCode } from './types.ts';
 
 export type HinChainAnchorAdapterOptions = {
   readonly engine: HumanInformationNetworkEngine;
@@ -131,10 +131,6 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
   readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
   readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
   readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
-  readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
-  readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
-  readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
-  private readonly clock: Clock;
   private readonly contributionRegistry: HumanContributionRegistryPort | null;
   private readonly records = new Map<string, HumanInformationChainAnchorRecord>();
   private readonly keys = new Map<HumanInformationAnchorKey, HumanInformationAnchorId>();
@@ -329,29 +325,58 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
   > {
     switch (request.kind) {
       case 'CONSENT_GRANT':
-        return this.prepareConsent(request);
+        return this.asPrepare(this.prepareConsent(request));
       case 'CONSENT_REVOCATION':
-        return this.prepareRevocation(request);
+        return this.asPrepare(this.prepareRevocation(request));
       case 'INFORMATION_RIGHT_STATE':
-        return this.prepareRight(request);
+        return this.asPrepare(this.prepareRight(request));
       case 'PURPOSE_GRANT':
-        return this.preparePurpose(request);
+        return this.asPrepare(this.preparePurpose(request));
       case 'USAGE_RECEIPT':
-        return this.prepareUsage(request);
+        return this.asPrepare(this.prepareUsage(request));
       case 'CLEAN_ROOM_COMPUTATION':
-        return this.prepareComputation(request);
+        return this.asPrepare(this.prepareComputation(request));
       case 'PROVENANCE':
-        return this.prepareProvenance(request);
+        return this.asPrepare(this.prepareProvenance(request));
       case 'HUMAN_CONTRIBUTION_PROOF':
-        return this.prepareContribution(request);
+        return this.asPrepare(this.prepareContribution(request));
       case 'COMPENSATION_SETTLEMENT_REFERENCE':
-        return this.prepareSettlement(request);
+        return this.asPrepare(this.prepareSettlement(request));
       default:
         return err({
           code: 'HIN_ANCHOR_KIND_UNSUPPORTED',
           message: `anchor kind ${String(request.kind)} is not supported`,
         });
     }
+  }
+
+  private asPrepare(result: Result<
+    {
+      readonly sourceRecordId: string;
+      readonly sourceRecordVersion: string;
+      readonly schema: ChainRecordSchema;
+      readonly intent: CreateIntentInput;
+    },
+    { readonly code: string; readonly message: string }
+  >): Result<
+    {
+      readonly sourceRecordId: string;
+      readonly sourceRecordVersion: string;
+      readonly schema: ChainRecordSchema;
+      readonly intent: CreateIntentInput;
+    },
+    HinAnchorFailure
+  > {
+    if (!result.ok) {
+      if ((HIN_ANCHOR_FAILURE_CODES as readonly string[]).includes(result.error.code)) {
+        return err({
+          code: result.error.code as HinAnchorFailureCode,
+          message: result.error.message,
+        });
+      }
+      return err(mapChainFailure(result.error.code, result.error.message));
+    }
+    return ok(result.value);
   }
 
   private prepareConsent(request: HinAnchorRequest) {
@@ -931,9 +956,6 @@ export function hinFinalizedAnchorForRegistry(
     transactionId: record.transactionId ? transactionIdFor(record.transactionId) : null,
     blockHeight: parseChainHeight(record.blockReference),
     blockId: record.blockReference ? blockIdFor(record.blockReference) : null,
-    transactionId: null,
-    blockHeight: null,
-    blockId: null,
     stateRootRef: null,
     contentCommitment: contentCommitmentFor(record.payloadCommitment),
     anchorType:

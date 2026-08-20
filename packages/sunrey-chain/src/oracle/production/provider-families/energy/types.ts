@@ -215,10 +215,10 @@ export type EnergyObservationInput = {
   readonly deviceProvenance: DeviceProvenance | null;
   readonly calibrationRecordRef: string | null;
   readonly prior: EnergyRegisterSnapshot | null;
-  readonly relatedObservations?: readonly EnergyObservationInput[];
-  readonly referencePrice?: EnergyReferencePriceMeta | null;
-  readonly storageInputLineageRef?: string | null;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly relatedObservations?: readonly EnergyObservationInput[] | undefined;
+  readonly referencePrice?: EnergyReferencePriceMeta | null | undefined;
+  readonly storageInputLineageRef?: string | null | undefined;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type EnergyRegisterSnapshot = {

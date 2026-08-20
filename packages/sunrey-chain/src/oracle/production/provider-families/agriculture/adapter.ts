@@ -255,11 +255,11 @@ export function ingestAgricultureRecord(
   }
 
   const canCreateOutputClaim =
-    isRealizedHarvestSemantics(record.measurementSemantics) &&
-    profile.createsHarvestEvent &&
     record.measurementSemantics !== 'INVENTORY' &&
     record.measurementSemantics !== 'PROCESSED_FOOD' &&
-    record.measurementSemantics !== 'QUALITY_GRADE';
+    record.measurementSemantics !== 'QUALITY_GRADE' &&
+    isRealizedHarvestSemantics(record.measurementSemantics) &&
+    profile.createsHarvestEvent;
 
   const observation: NormalizedAgricultureObservation = Object.freeze({
     schemaVersion: AGRICULTURE_FABRIC_SCHEMA_VERSION,

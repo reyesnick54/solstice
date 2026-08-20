@@ -59,12 +59,12 @@ export function rehearsalValueInput(overrides: Partial<ProductionCandidateValueI
     canonicalQuantity: 14n,
     attributionDecisionId: 'attr.rehearsal.energy.1',
     availableAttributionShare: Object.freeze({ numerator: 400_000n, denominator: 1_000_000n }),
-    creditedCategories: Object.freeze(['ENERGY']),
+    creditedCategories: Object.freeze(['ENERGY'] as const),
     valuePath: GOVERNED_VALUE_V2,
     fixturePolicy: true,
     authorizedBy: 'HUMAN',
     ...overrides,
-  });
+  }) as ProductionCandidateValueInput;
 }
 
 export function unconfiguredProductiveValuePolicyCandidate(): MoonReyProductiveValuePolicyCandidate {

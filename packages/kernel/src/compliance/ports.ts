@@ -35,6 +35,8 @@ export type PepProvider = {
 export type AdverseMediaProvider = {
   screen(request: ScreeningRequest): ProviderScreenResponse & {
     readonly references: readonly AdverseMediaReference[];
+    readonly copyrightedCopyStored: false;
+    readonly treatedAsGuilt: false;
   };
 };
 
@@ -43,7 +45,11 @@ export type TransactionMonitoringProvider = {
 };
 
 export type FraudRiskProvider = {
-  evaluate(request: ScreeningRequest): ProviderScreenResponse;
+  evaluate(request: ScreeningRequest): ProviderScreenResponse & {
+    readonly freezesFunds: false;
+    readonly deletesAccount: false;
+    readonly reversesSettlement: false;
+  };
 };
 
 export type DeviceRiskProvider = {

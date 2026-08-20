@@ -29,7 +29,7 @@ export function vaultAuthorizes(
   vault: CustodyVault,
   assetId: NativeCustodyAssetId,
 ): boolean {
-  return vault.authorizedAssets.includes(assetId);
+  return (vault.authorizedAssets as readonly NativeCustodyAssetId[]).includes(assetId);
 }
 
 export function parseInstitutionalVaultRecord(

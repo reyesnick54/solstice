@@ -40,7 +40,7 @@ export function createRequestBlueprint(
 export function materializeApprovedUrl(input: {
   readonly endpoint: ExternalProviderEndpointProfile;
   readonly blueprint: ExternalProviderRequestBlueprint;
-  readonly pathParameters?: Readonly<Record<string, string>>;
+  readonly pathParameters?: Readonly<Record<string, string>> | undefined;
 }): Result<string, ProviderCandidateRejection> {
   if (input.blueprint.endpointProfileId !== input.endpoint.endpointProfileId) {
     return err(candidateRejection('ENDPOINT_NOT_APPROVED', 'blueprint endpointProfileId does not match the approved profile'));

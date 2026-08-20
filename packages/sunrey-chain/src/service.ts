@@ -256,7 +256,7 @@ export class SunReyChainService {
     return ok(operation);
   }
 
-  advanceFinality(blocks = ENGINEERING_FINALITY_POLICY.minimumConfirmations): void {
+  advanceFinality(blocks: number = ENGINEERING_FINALITY_POLICY.minimumConfirmations): void {
     this.adapter.advanceBlocks(blocks);
     for (const operation of this.store.operations.values()) {
       const finality = this.adapter.getFinality(operation.operationId);

@@ -52,7 +52,6 @@ const NOW = 1_700_000_000n;
 describe('CHUNK-133 minerals / resource extraction data fabric', () => {
   it('1. accepts valid extraction mass', () => {
     const ingested = ingestResourceRecord(mineProductionRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -64,25 +63,21 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('2. normalizes kg and tonne exactly', () => {
     const kg = ingestResourceRecord(kgExtractionRecord(NOW), NOW);
-    assert.equal(kg.ok, true);
     if (!kg.ok) {
       throw new Error(kg.error.detail);
     }
     assert.equal(kg.value.observation.canonicalUnit, 'kg');
     const grams = quantityToGrams(kg.value.observation.canonicalQuantity);
-    assert.equal(grams.ok, true);
     if (!grams.ok) {
       throw new Error(grams.error.detail);
     }
     assert.equal(grams.value, 2_000_000_000n);
     const converted = normalizeMassQuantity({ mantissa: 2_000_000n, unit: 'kg', density: null, targetUnit: 'tonne' });
-    assert.equal(converted.ok, true);
     if (!converted.ok) {
       throw new Error(converted.error.detail);
     }
     assert.equal(converted.value.unit, 'tonne');
     const tonneGrams = quantityToGrams(converted.value.canonical);
-    assert.equal(tonneGrams.ok, true);
     if (!tonneGrams.ok) {
       throw new Error(tonneGrams.error.detail);
     }
@@ -91,7 +86,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('3. keeps reserve distinct from extraction', () => {
     const reserve = ingestResourceRecord(reserveReportRecord(NOW), NOW);
-    assert.equal(reserve.ok, true);
     if (!reserve.ok) {
       throw new Error(reserve.error.detail);
     }
@@ -120,7 +114,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
       [mineProductionRecord(NOW), haulTelemetryRecord(NOW), weighbridgeRecord(NOW)],
       NOW,
     );
-    assert.equal(batch.ok, true);
     if (!batch.ok) {
       throw new Error(batch.error.detail);
     }
@@ -129,7 +122,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
       NOW,
       NOW + 3_600n,
     );
-    assert.equal(events.ok, true);
     if (!events.ok) {
       throw new Error(events.error.detail);
     }
@@ -142,7 +134,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('6. does not treat stockpile movement as extraction', () => {
     const stockpile = ingestResourceRecord(stockpileRecord(NOW), NOW);
-    assert.equal(stockpile.ok, true);
     if (!stockpile.ok) {
       throw new Error(stockpile.error.detail);
     }
@@ -153,7 +144,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
     const disguised = evaluateResourceAdversary('STOCKPILE_AS_EXTRACTION', NOW);
     assert.equal(disguised.ok, true);
     const extraction = ingestResourceRecord(mineProductionRecord(NOW), NOW);
-    assert.equal(extraction.ok, true);
     if (!extraction.ok) {
       throw new Error(extraction.error.detail);
     }
@@ -161,7 +151,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
       extraction: extraction.value.observation,
       stockpile: stockpile.value.observation,
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -180,7 +169,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
       extraction: ore.value.observation,
       concentrate: concentrate.value.observation,
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -222,7 +210,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('11. does not infer operator as legal owner', () => {
     const ingested = ingestResourceRecord(mineProductionRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -234,7 +221,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('12-13. supports rights references and fails closed when missing', () => {
     const present = evaluateExtractionRights(mineProductionRecord(NOW), simulationPolicy());
-    assert.equal(present.ok, true);
     if (!present.ok) {
       throw new Error(present.error.detail);
     }
@@ -285,7 +271,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
       },
       simulationPolicy(),
     );
-    assert.equal(okBalance.ok, true);
     if (!okBalance.ok) {
       throw new Error(okBalance.error.detail);
     }
@@ -348,7 +333,6 @@ describe('CHUNK-133 minerals / resource extraction data fabric', () => {
 
   it('19. cannot auto-mint from a resource fact', () => {
     const ingested = ingestResourceRecord(mineProductionRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }

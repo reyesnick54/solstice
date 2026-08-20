@@ -158,7 +158,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const { valuation, conversionPolicy, created } = authorizedPath(contribution, {
       authorizationId: 'hcesa.112.ok',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -171,7 +170,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     assert.equal(created.authorization.productionActivated, false);
     assert.equal(REFERENCE_VALUE_EQUALS_SUNREY_BY_DEFINITION, false);
     const evidence = toHumanEconomicEvidence(contribution, created.authorization);
-    assert.equal(evidence.ok, true);
     if (!evidence.ok) {
       throw new Error(evidence.code);
     }
@@ -191,7 +189,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       book(),
     );
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       throw new Error(issued.code);
     }
@@ -217,7 +214,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.worth' });
     const { created } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -240,7 +236,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.ai' });
     const { created, valuation, conversionPolicy } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -354,7 +349,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.policy' });
     const { created, valuation, conversionPolicy } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -416,7 +410,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const { created, valuation, conversionPolicy } = authorizedPath(contribution, {
       authorizationId: 'hcesa.112.replay',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -430,7 +423,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       book(),
     );
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -454,7 +446,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.reval' });
     const firstPath = authorizedPath(contribution, { authorizationId: 'hcesa.112.reval.1' });
-    assert.equal(firstPath.created.ok, true);
     if (!firstPath.created.ok) {
       throw new Error(firstPath.created.code);
     }
@@ -468,7 +459,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       book(),
     );
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -480,7 +470,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       authorizedBy: 'PROTOCOL',
       authorizationId: 'hcesa.112.reval.2',
     });
-    assert.equal(second.ok, true);
     if (!second.ok) {
       throw new Error(second.code);
     }
@@ -504,7 +493,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const original = fixtureVerifiedContribution({ contributionId: 'hec.112.corr' });
     const firstPath = authorizedPath(original, { authorizationId: 'hcesa.112.corr.1' });
-    assert.equal(firstPath.created.ok, true);
     if (!firstPath.created.ok) {
       throw new Error(firstPath.created.code);
     }
@@ -518,7 +506,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       book(),
     );
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.code);
     }
@@ -541,7 +528,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       authorizationId: 'hcesa.112.corr.2',
       measurementQuantity: 1n,
     });
-    assert.equal(adjustment.created.ok, true);
     if (!adjustment.created.ok) {
       throw new Error(adjustment.created.code);
     }
@@ -564,7 +550,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       first.book,
     );
-    assert.equal(adjusted.ok, true);
     if (!adjusted.ok) {
       throw new Error(adjusted.code);
     }
@@ -580,7 +565,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge({ constitution });
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.prod' });
     const { created, valuation, conversionPolicy } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -605,7 +589,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge();
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.pii' });
     const { created } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -629,7 +612,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
     const bridge = new HumanContributionMonetaryBridge({ constitution });
     const contribution = fixtureVerifiedContribution({ contributionId: 'hec.112.supply' });
     const { created, valuation, conversionPolicy } = authorizedPath(contribution);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error(created.code);
     }
@@ -643,7 +625,6 @@ describe('Chunk 112 human contribution valuation settlement integration', () => 
       },
       book(),
     );
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       throw new Error(issued.code);
     }

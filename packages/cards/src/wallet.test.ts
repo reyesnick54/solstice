@@ -39,7 +39,6 @@ function walletService(world: ReturnType<typeof createCardWorld>) {
 async function activeCard(suffix: string) {
   const world = createCardWorld(suffix, 100_000n);
   const requested = world.cards.requestCard(requestCardIntent(world, `card_${suffix}`));
-  assert.equal(requested.outcome, 'OK');
   if (requested.outcome !== 'OK') {
     throw new Error('request failed');
   }
@@ -52,7 +51,6 @@ async function activeCard(suffix: string) {
     purpose: 'CUSTOMER_CARD',
     payload: { cardId: requested.value.cardId, accountId: world.account.id },
   });
-  assert.equal(activated.outcome, 'OK');
   if (activated.outcome !== 'OK') {
     throw new Error('activate failed');
   }
@@ -138,7 +136,6 @@ describe('wallet provisioning', () => {
     it(`provisions ${provider} after step-up and binds the token to one device`, async () => {
       const { world, card, wallet, device } = await activeCard(`w_${provider.slice(0, 3).toLowerCase()}`);
       const first = wallet.provisionToWallet(provisionIntent(world, card.cardId, device.deviceId, provider, `tok_${provider}`));
-      assert.equal(first.outcome, 'OK');
       if (first.outcome !== 'OK') {
         throw new Error('expected step-up outcome');
       }
@@ -171,7 +168,6 @@ describe('wallet provisioning', () => {
           providerId,
         ),
       );
-      assert.equal(activated.outcome, 'OK');
       if (activated.outcome !== 'OK') {
         throw new Error('activate failed');
       }

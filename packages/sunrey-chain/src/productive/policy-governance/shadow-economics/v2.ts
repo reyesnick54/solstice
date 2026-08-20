@@ -190,7 +190,7 @@ function refuse(
     conversionPolicyId: scenario.conversionPolicyId,
     conversionPolicyVersion: scenario.conversionPolicyVersion,
     capApplied: false,
-    reasonCodes: Object.freeze(unique(['V2_PRODUCTION_INACTIVE', ...reasonCodes])),
+    reasonCodes: Object.freeze(unique<ShadowReasonCode>(['V2_PRODUCTION_INACTIVE', ...reasonCodes])),
     warnings: Object.freeze(unique([...warnings, detail])),
     productionActive: false,
   });

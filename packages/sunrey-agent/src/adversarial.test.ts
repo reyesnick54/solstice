@@ -75,7 +75,6 @@ describe('adversarial agent mandate fixtures', () => {
   it('blocks prompt injection against agent tools', () => {
     const svc = engine();
     const created = svc.createMandate(mandateInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -103,7 +102,6 @@ describe('adversarial agent mandate fixtures', () => {
   it('blocks self-expansion, budget bypass, asset bypass, and destination bypass', () => {
     const svc = engine();
     const created = svc.createMandate(mandateInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -172,7 +170,6 @@ describe('adversarial agent mandate fixtures', () => {
   it('rejects replayed approval, wrong wallet, wrong network, expired mandate, market restriction, and compliance bypass', () => {
     const svc = engine();
     const created = svc.createMandate(mandateInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -190,7 +187,6 @@ describe('adversarial agent mandate fixtures', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }
@@ -220,7 +216,6 @@ describe('adversarial agent mandate fixtures', () => {
       kernel: { submit: () => ({ status: 'ALLOW', evidenceRecordId: 'ev' }) },
     });
     const late = expired.createMandate(mandateInput());
-    assert.equal(late.ok, true);
     if (!late.ok) {
       throw new Error('expected mandate');
     }

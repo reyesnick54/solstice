@@ -6,7 +6,7 @@ import {
   type GovernedFingerprintInput,
 } from '../fingerprint.ts';
 import { contributionFingerprint, type ContributionFingerprintInput } from '../../fingerprint.ts';
-import type { ProductiveCategory } from '../../types.ts';
+import type { ClaimType, ProductiveCategory } from '../../types.ts';
 import {
   EVENT_FINGERPRINT_V3_DOMAIN,
   HISTORICAL_FINGERPRINT_DOMAINS,

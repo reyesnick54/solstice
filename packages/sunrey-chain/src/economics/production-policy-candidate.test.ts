@@ -34,7 +34,6 @@ describe('Chunk 145 SunRey production issuance policy candidate', () => {
       policy: rehearsalConversionPolicyCandidate(),
       actor: 'PROTOCOL',
     });
-    assert.equal(converted.ok, true);
     if (!converted.ok) {
       throw new Error(converted.code);
     }
@@ -485,7 +484,6 @@ describe('Chunk 145 SunRey production issuance policy candidate', () => {
       policy: rehearsalValuationPolicyCandidate(),
       actor: 'PROTOCOL',
     });
-    assert.equal(valued.ok, true);
     if (!valued.ok) {
       throw new Error(valued.code);
     }
@@ -497,7 +495,6 @@ describe('Chunk 145 SunRey production issuance policy candidate', () => {
       policy: rehearsalConversionPolicyCandidate(),
       actor: 'PROTOCOL',
     });
-    assert.equal(converted.ok, true);
     if (!converted.ok) {
       throw new Error(converted.code);
     }

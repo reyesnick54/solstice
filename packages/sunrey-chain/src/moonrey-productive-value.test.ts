@@ -73,6 +73,7 @@ function contribution(category: VerifiedProductiveContribution['category'] = 'EN
     rightsReferences: ['right.1'],
     controller: 'ctl.solar.1',
     fingerprint: 'fp.energy.1',
+    fingerprintVersion: 'PRODUCTIVE_FINGERPRINT_V1',
     upstreamContributionIds: [],
     downstreamContributionIds: [],
     status: 'ELIGIBLE',

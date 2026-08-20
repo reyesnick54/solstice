@@ -21,17 +21,17 @@ import type { NormalizationClock, NormalizationContext } from './types.ts';
 export type ObservationMeasurementInput = {
   readonly sourceUnit: string;
   readonly sourceMantissa: bigint;
-  readonly sourceScale?: number;
+  readonly sourceScale?: number | undefined;
   readonly productiveCategory: ProductiveCategory;
   readonly factType: FactType;
-  readonly claimType?: ClaimType | null;
-  readonly measurementStart?: bigint;
-  readonly measurementEnd?: bigint;
-  readonly durationSeconds?: bigint;
-  readonly resourceClass?: ResourceClass;
-  readonly mappingId?: string | null;
-  readonly mappingVersion?: number | null;
-  readonly clock?: NormalizationClock;
+  readonly claimType?: ClaimType | null | undefined;
+  readonly measurementStart?: bigint | undefined;
+  readonly measurementEnd?: bigint | undefined;
+  readonly durationSeconds?: bigint | undefined;
+  readonly resourceClass?: ResourceClass | undefined;
+  readonly mappingId?: string | null | undefined;
+  readonly mappingVersion?: number | null | undefined;
+  readonly clock?: NormalizationClock | undefined;
 };
 
 export function measureSourceObservation(
@@ -74,11 +74,11 @@ export function measureOracleObservation(
   input: {
     readonly productiveCategory: ProductiveCategory;
     readonly factType: FactType;
-    readonly claimType?: ClaimType | null;
-    readonly resourceClass?: ResourceClass;
-    readonly mappingId?: string | null;
-    readonly mappingVersion?: number | null;
-    readonly clock?: NormalizationClock;
+    readonly claimType?: ClaimType | null | undefined;
+    readonly resourceClass?: ResourceClass | undefined;
+    readonly mappingId?: string | null | undefined;
+    readonly mappingVersion?: number | null | undefined;
+    readonly clock?: NormalizationClock | undefined;
   },
 ): Result<CanonicalProductiveMeasurement, CanonicalMeasurementRefusal> {
   return measureSourceObservation({
@@ -102,12 +102,12 @@ export function measureVerifiedFact(
   input: {
     readonly productiveCategory: ProductiveCategory;
     readonly factType: FactType;
-    readonly claimType?: ClaimType | null;
-    readonly resourceClass?: ResourceClass;
-    readonly mappingId?: string | null;
-    readonly mappingVersion?: number | null;
-    readonly period?: MeasurementPeriod | null;
-    readonly clock?: NormalizationClock;
+    readonly claimType?: ClaimType | null | undefined;
+    readonly resourceClass?: ResourceClass | undefined;
+    readonly mappingId?: string | null | undefined;
+    readonly mappingVersion?: number | null | undefined;
+    readonly period?: MeasurementPeriod | null | undefined;
+    readonly clock?: NormalizationClock | undefined;
   },
 ): Result<CanonicalProductiveMeasurement, CanonicalMeasurementRefusal> {
   return measureSourceObservation({

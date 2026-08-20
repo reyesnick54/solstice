@@ -291,7 +291,7 @@ export type ProductiveValueReferenceFact = {
   readonly verified: true;
   readonly consensusHttpCall: false;
   readonly rawHttpData: false;
-  readonly moonreyMarketPrice: false;
+  readonly moonreyMarketPrice: boolean;
   readonly socialMediaSentiment: false;
   readonly providerSelfReportedAlone: false;
   readonly quantity?: ExactRational;
@@ -379,7 +379,7 @@ export type ProductiveEconomicEventIdentity = {
   readonly category: ProductiveCategory;
   readonly objectId: string;
   readonly measurementPeriod: MeasurementPeriod;
-  readonly eventFingerprint?: string;
+  readonly eventFingerprint?: string | undefined;
 };
 
 /**
@@ -396,7 +396,7 @@ export type ProductiveAttributionDecision = {
   readonly availableShare: ExactRational;
   readonly authoritative: true;
   readonly reconciled: boolean;
-  readonly contributionId?: string;
+  readonly contributionId?: string | undefined;
 };
 
 export type ProductiveValueInput = {
@@ -420,21 +420,21 @@ export type ProductiveValueInput = {
   readonly realizationState: RealizationState;
   readonly claimOutputState: ClaimOutputState;
   readonly rawProviderPayload: never | undefined;
-  readonly eventFingerprint?: string;
-  readonly measurementSemantic?: string;
-  readonly utilization?: UtilizationEvidence;
-  readonly concentration?: ConcentrationEvidence;
-  readonly freshnessAgeEpochs?: bigint;
-  readonly policyMaxAgeEpochs?: bigint;
-  readonly geographyContextKind?: GeographicContextKind;
-  readonly countryPreferenceRequested?: boolean;
-  readonly referencePriceAlone?: boolean;
-  readonly aiEconomicJudgment?: boolean;
-  readonly providerSelfReportAlone?: boolean;
-  readonly evaluatedAt?: string;
-  readonly supersedesValueId?: string;
-  readonly revaluationReason?: string;
-  readonly priorPolicyVersion?: number;
+  readonly eventFingerprint?: string | undefined;
+  readonly measurementSemantic?: string | undefined;
+  readonly utilization?: UtilizationEvidence | undefined;
+  readonly concentration?: ConcentrationEvidence | undefined;
+  readonly freshnessAgeEpochs?: bigint | undefined;
+  readonly policyMaxAgeEpochs?: bigint | undefined;
+  readonly geographyContextKind?: GeographicContextKind | undefined;
+  readonly countryPreferenceRequested?: boolean | undefined;
+  readonly referencePriceAlone?: boolean | undefined;
+  readonly aiEconomicJudgment?: boolean | undefined;
+  readonly providerSelfReportAlone?: boolean | undefined;
+  readonly evaluatedAt?: string | undefined;
+  readonly supersedesValueId?: string | undefined;
+  readonly revaluationReason?: string | undefined;
+  readonly priorPolicyVersion?: number | undefined;
 };
 
 export type PerCategoryValueRule = {

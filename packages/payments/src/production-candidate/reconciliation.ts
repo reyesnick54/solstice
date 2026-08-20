@@ -23,7 +23,7 @@ export function reconcileCandidatePayment(input: {
   readonly journals: readonly Journal[];
   readonly report: SettlementReport | null;
   readonly providerStatus?: CanonicalRailStatus | null;
-  readonly duplicateExternal?: boolean;
+  readonly duplicateExternal?: boolean | undefined;
 }): CandidateReconciliationResult {
   const rail = reconcileRail(input.payment, input.submission, input.journals, input.report, {
     duplicateExternal: input.duplicateExternal,

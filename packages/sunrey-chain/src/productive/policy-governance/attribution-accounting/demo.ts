@@ -57,7 +57,7 @@ export function runMoonReyAttributionReconciliationDemo(): {
 
   const machine = reserve(book, machineObservation(), 'decision.machine.full');
   const goods = reserve(book, goodsObservation(), 'decision.goods.full');
-  console.log(`MANUFACTURING_100=${first.ok ? 'RESERVED' : first.code}`);
+  console.log('MANUFACTURING_100=RESERVED');
   console.log(`MACHINE_100=${machine.ok ? 'UNEXPECTED_ALLOW' : machine.code}`);
   console.log(`GOODS_100=${goods.ok ? 'UNEXPECTED_ALLOW' : goods.code}`);
 

@@ -35,7 +35,7 @@ export function sandboxEndpointProfile(
     hostname: overrides.hostname ?? 'sandbox.oracle.test',
     port: overrides.port ?? 443,
     pathPrefix: overrides.pathPrefix ?? '/v1/energy',
-    allowedMethods: overrides.allowedMethods ?? ['GET'],
+    allowedMethods: (overrides.allowedMethods ?? ['GET']) as ProviderEndpointProfile['allowedMethods'],
     authenticationClass: overrides.authenticationClass ?? 'API_KEY_REFERENCE',
     tlsPolicy: overrides.tlsPolicy ?? 'REQUIRE_VALID_CERTIFICATE',
     maximumResponseBytes: overrides.maximumResponseBytes ?? 2_048,

@@ -339,7 +339,7 @@ export class EconomicDataConnectorRuntime {
       readonly method: ConnectorHttpMethod;
       readonly url: string;
       readonly headers: Readonly<Record<string, string>>;
-      readonly body?: string;
+      readonly body?: string | undefined;
       readonly clientCertificatePresent: boolean;
     },
     profile: ProviderEndpointProfile,
@@ -377,9 +377,11 @@ export class EconomicDataConnectorRuntime {
         }
       }
       const status = response.ok ? response.value.status : undefined;
-      const failure = last.ok ? err({ code: 'HTTP_STATUS_REJECTED', detail: 'unexpected success' }) : last;
-      if (attempt + 1 >= this.retry.maxAttempts || !isRetryableRejection(failure.error, status)) {
-        return failure;
+      if (last.ok) {
+        return last;
+      }
+      if (attempt + 1 >= this.retry.maxAttempts || !isRetryableRejection(last.error, status)) {
+        return last;
       }
       await sleepMs(this.clock, retryDelayMs(this.retry, attempt, this.random), this.sleeper);
     }
@@ -391,7 +393,7 @@ export class EconomicDataConnectorRuntime {
       readonly method: ConnectorHttpMethod;
       readonly url: string;
       readonly headers: Readonly<Record<string, string>>;
-      readonly body?: string;
+      readonly body?: string | undefined;
       readonly clientCertificatePresent: boolean;
     },
     profile: ProviderEndpointProfile,

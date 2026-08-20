@@ -55,8 +55,8 @@ import {
   validateHsmKeyProfile,
 } from './provider-candidate/index.ts';
 
-const SUNREY = 'SUNREY_COIN';
-const MOONREY = 'MOONREY_COIN';
+const SUNREY = 'SUNREY_COIN' as const;
+const MOONREY = 'MOONREY_COIN' as const;
 
 describe('chunk 153 dual-asset custody hardening', () => {
   it('preserves v1 institutional custody replay and rejects silent upgrade', () => {
@@ -105,9 +105,8 @@ describe('chunk 153 dual-asset custody hardening', () => {
       authorizedAssets: [SUNREY, MOONREY],
       schemaVersion: 2,
     });
-    assert.equal(vault.outcome, 'OK');
     if (vault.outcome !== 'OK') {
-      throw new Error(vault.message);
+      throw new Error(vault.outcome === 'REJECTED' ? vault.message : String(vault.outcome));
     }
     assert.equal(vault.value.schemaVersion, 2);
     const sunreyWallet = h.custody.createAddress({
@@ -136,7 +135,9 @@ describe('chunk 153 dual-asset custody hardening', () => {
     assert.equal(sunreyPos?.notALedgerBalance, true);
     assert.equal(moonreyPos?.assetId, MOONREY);
     assert.equal(moonreyPos?.onChain, 200n);
-    assert.equal(h.custody.rebindWalletAsset().code, 'ASSET_IMMUTABLE');
+    const rebound = h.custody.rebindWalletAsset();
+    assert.equal(rebound.outcome, 'REJECTED');
+    assert.equal(rebound.code, 'ASSET_IMMUTABLE');
   });
 
   it('isolates consumer credits, holds, and rejects cross-asset debit without lastAssetId', () => {
@@ -184,7 +185,7 @@ describe('chunk 153 dual-asset custody hardening', () => {
       schemaVersion: 2,
     });
     if (vault.outcome !== 'OK') {
-      throw new Error(vault.message);
+      throw new Error(vault.outcome === 'REJECTED' ? vault.message : vault.outcome);
     }
     const sunreyWallet = h.custody.createAddress({
       actorKind: 'HUMAN_OPERATOR',
@@ -231,9 +232,8 @@ describe('chunk 153 dual-asset custody hardening', () => {
     resetWithdrawals();
     resetKmsKeys();
     const profile = validateCustodyProviderCandidateProfile(fixtureCustodyProviderProfile());
-    assert.equal(profile.ok, true);
     if (!profile.ok) {
-      throw new Error(profile.error.message);
+      throw new Error('profile');
     }
     assert.equal(profile.value.productionAuthorized, false);
     const binding = bindCustodyCredential({
@@ -242,15 +242,13 @@ describe('chunk 153 dual-asset custody hardening', () => {
       workload: 'custody_worker',
       secretRef: fixtureCustodySecretRef(),
     });
-    assert.equal(binding.ok, true);
     if (!binding.ok) {
-      throw new Error(binding.error.message);
+      throw new Error('binding');
     }
     assert.equal(binding.value.rawCredentialPresent, false);
     const plane = bindFixtureCustodyCredential({ bindingId: 'bind_plane' });
-    assert.equal(plane.ok, true);
     if (!plane.ok) {
-      throw new Error(plane.error.message);
+      throw new Error('plane');
     }
     assert.equal(plane.value.rawCredentialPresent, false);
     assert.equal(plane.value.grantsExecutionAuthority, false);
@@ -275,9 +273,8 @@ describe('chunk 153 dual-asset custody hardening', () => {
     assert.equal(oracleReuse.error.code, 'CREDENTIAL_DOMAIN_MISMATCH');
     const hsm = createDevelopmentHsmSimulator();
     const handle = generateNonExportableCustodyKey(hsm, SUITE_SUNREY_ED25519_V1);
-    assert.equal(handle.ok, true);
     if (!handle.ok) {
-      throw new Error(handle.error.message);
+      throw new Error('handle');
     }
     assert.equal(handle.value.exportable, false);
     assert.equal(rejectPrivateKeyExport(handle.value).ok, false);
@@ -296,9 +293,9 @@ describe('chunk 153 dual-asset custody hardening', () => {
     const previewBase = {
       source: 'sr1_src',
       destination: 'sr1_dst',
-      assetId: SUNREY as const,
+      assetId: SUNREY,
       quantity: 5n,
-      feeAssetId: SUNREY as const,
+      feeAssetId: SUNREY,
       feeLimit: 1n,
       nonce: 1n,
       networkId: 'sunrey-devnet',

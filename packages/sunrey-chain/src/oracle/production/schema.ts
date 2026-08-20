@@ -9,7 +9,7 @@ export type ExternalSourceRecord = {
   readonly sourceTimestampUnix: string;
   readonly schemaId: string;
   readonly schemaVersion: number;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 const INTEGER_RE = /^-?\d+$/;
