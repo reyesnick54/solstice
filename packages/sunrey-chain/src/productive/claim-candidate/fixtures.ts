@@ -15,13 +15,13 @@ export const CANDIDATE_PERIOD: MeasurementPeriod = Object.freeze({
 });
 
 export function fixtureVerifiedFact(input: {
-  readonly factId?: string;
+  readonly factId?: string | undefined;
   readonly subject: string;
   readonly unit: UnitCode;
-  readonly quantity?: bigint;
-  readonly qualityStatus?: QualityStatus;
-  readonly validUntilUnix?: bigint;
-  readonly feedId?: string;
+  readonly quantity?: bigint | undefined;
+  readonly qualityStatus?: QualityStatus | undefined;
+  readonly validUntilUnix?: bigint | undefined;
+  readonly feedId?: string | undefined;
 }): VerifiedEconomicFact {
   return Object.freeze({
     schemaVersion: 1,
@@ -56,20 +56,20 @@ export function requireMapping(mappingId: string, mappingVersion = 1): SourcePro
 }
 
 export function energyBuildInput(overrides?: {
-  readonly object?: ProductiveEconomicObject;
-  readonly subject?: string;
-  readonly qualityStatus?: QualityStatus;
-  readonly unit?: UnitCode;
-  readonly claimType?: ClaimType;
-  readonly geography?: GeographyRef | null;
-  readonly measurementPeriod?: MeasurementPeriod | null;
-  readonly rightsReferences?: readonly string[];
-  readonly attributionPolicyRef?: string | null;
-  readonly requireApprovedAttributionPolicy?: boolean;
-  readonly mapping?: SourceProductiveMapping;
-  readonly nowUnix?: bigint;
-  readonly factType?: FactType;
-  readonly sourceCategory?: string;
+  readonly object?: ProductiveEconomicObject | undefined;
+  readonly subject?: string | undefined;
+  readonly qualityStatus?: QualityStatus | undefined;
+  readonly unit?: UnitCode | undefined;
+  readonly claimType?: ClaimType | undefined;
+  readonly geography?: GeographyRef | null | undefined;
+  readonly measurementPeriod?: MeasurementPeriod | null | undefined;
+  readonly rightsReferences?: readonly string[] | undefined;
+  readonly attributionPolicyRef?: string | null | undefined;
+  readonly requireApprovedAttributionPolicy?: boolean | undefined;
+  readonly mapping?: SourceProductiveMapping | undefined;
+  readonly nowUnix?: bigint | undefined;
+  readonly factType?: FactType | undefined;
+  readonly sourceCategory?: string | undefined;
 }): ClaimCandidateBuildInput {
   const object = overrides?.object ?? fixtureObject({ objectId: 'obj.solar.alpha', category: 'ENERGY', unitSchema: 'kWh' });
   const subject = overrides?.subject ?? object.objectId;
@@ -99,7 +99,7 @@ export function pathBuildInput(input: {
   readonly objectId: string;
   readonly category: ProductiveCategory;
   readonly mappingId: string;
-  readonly mappingVersion?: number;
+  readonly mappingVersion?: number | undefined;
   readonly sourceCategory: string;
   readonly factType: FactType;
   readonly unit: UnitCode;

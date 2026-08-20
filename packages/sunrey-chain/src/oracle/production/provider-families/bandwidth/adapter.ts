@@ -210,7 +210,7 @@ function toRecord(
       sourceUnit: sourceQuantity.unitId,
       canonicalQuantity,
       canonicalUnit,
-      measurementDimension: dimension,
+      measurementDimension: observation.factType === 'BANDWIDTH_CAPACITY' ? 'DATA_RATE' : 'DATA_VOLUME',
       semanticQualifier: 'UNQUALIFIED' as const,
       productiveCategory: 'BANDWIDTH_COMMUNICATIONS' as const,
       factType: observation.factType,

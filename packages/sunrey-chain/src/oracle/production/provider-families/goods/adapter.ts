@@ -151,7 +151,10 @@ export class GoodsCommerceDataFabric {
   }
 
   goodsFactCannotAutoMint(): true {
-    return oracleFactCreationNeverMintsMoonRey() && this.autoMints === false;
+    if (!oracleFactCreationNeverMintsMoonRey() || this.autoMints !== false) {
+      throw new Error('GOODS_FACT_AUTO_MINTS');
+    }
+    return true;
   }
 }
 
@@ -162,5 +165,8 @@ export function ingestGoodsObservation(
 }
 
 export function goodsObservationNeverMints(_accepted?: AcceptedGoodsObservation): true {
-  return oracleFactCreationNeverMintsMoonRey();
+  if (!oracleFactCreationNeverMintsMoonRey()) {
+    throw new Error('GOODS_FACT_AUTO_MINTS');
+  }
+  return true;
 }

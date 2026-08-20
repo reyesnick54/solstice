@@ -146,16 +146,16 @@ export type ServiceSourceObservation = {
   readonly historicalMachineHourRecord: boolean;
   readonly cancelled: boolean;
   readonly cancelledAfterRealization: boolean;
-  readonly extras?: Readonly<Record<string, unknown>>;
-  readonly promptContent?: string;
-  readonly payloadBody?: string;
-  readonly customerContent?: string;
-  readonly supportChatContent?: string;
-  readonly rawCustomerName?: string;
-  readonly rawEmail?: string;
-  readonly rawPhone?: string;
-  readonly humanWorthScore?: string;
-  readonly networkCallAttempted?: boolean;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
+  readonly promptContent?: string | undefined;
+  readonly payloadBody?: string | undefined;
+  readonly customerContent?: string | undefined;
+  readonly supportChatContent?: string | undefined;
+  readonly rawCustomerName?: string | undefined;
+  readonly rawEmail?: string | undefined;
+  readonly rawPhone?: string | undefined;
+  readonly humanWorthScore?: string | undefined;
+  readonly networkCallAttempted?: boolean | undefined;
 };
 
 export type PublicServiceEvidence = {

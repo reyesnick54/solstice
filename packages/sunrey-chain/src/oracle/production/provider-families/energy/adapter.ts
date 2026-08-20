@@ -16,6 +16,7 @@ import {
 import { validateSourceFactClaimMapping } from '../../../source-taxonomy/validator.ts';
 import { OracleEconomicAssetAdapter } from '../../../economic-asset-adapter.ts';
 import type { ExternalSourceRecord } from '../../schema.ts';
+import type { UnitCode } from '../../../types.ts';
 import type {
   CanonicalCollectedObservation,
   EconomicDataSource,
@@ -365,16 +366,24 @@ export class EnergyProviderFamilyAdapter implements OracleSourceAdapterV2 {
       feedId: input.request.source.feedId,
       subject: ingested.value.subject.canonicalRef,
       value: {
-        schemaVersion: 1,
+        schemaVersion: 1 as const,
         mantissa: ingested.value.intervalQuantity?.mantissa ?? ingested.value.sourceQuantity.mantissa,
         scale: 0,
-        unit: ingested.value.intervalQuantity?.unit === 'units_produced' ? 'units_produced' : ingested.value.canonicalMeasurement?.canonicalUnit === 'Wh' ? 'Wh' : ingested.value.sourceQuantity.unit === 'units_produced' ? 'units_produced' : ingested.value.sourceQuantity.unit,
+        unit: (ingested.value.intervalQuantity?.unit === 'units_produced'
+          ? 'units_produced'
+          : ingested.value.canonicalMeasurement?.canonicalUnit === 'Wh'
+            ? 'Wh'
+            : ingested.value.sourceQuantity.unit === 'units_produced'
+              ? 'units_produced'
+              : ingested.value.sourceQuantity.unit) as UnitCode,
       },
       sourceValue: {
-        schemaVersion: 1,
+        schemaVersion: 1 as const,
         mantissa: ingested.value.sourceQuantity.originalMantissa,
         scale: 0,
-        unit: ingested.value.sourceQuantity.unit === 'units_produced' ? 'units_produced' : ingested.value.sourceQuantity.unit,
+        unit: (ingested.value.sourceQuantity.unit === 'units_produced'
+          ? 'units_produced'
+          : ingested.value.sourceQuantity.unit) as UnitCode,
       },
       canonicalMeasurement: ingested.value.canonicalMeasurement ?? undefined,
       provenance: {
@@ -385,7 +394,9 @@ export class EnergyProviderFamilyAdapter implements OracleSourceAdapterV2 {
         collectionTimestampUnix: ingested.value.time.collectionTimestampUnix,
         sourceTimestampUnix: ingested.value.time.sourceTimestampUnix,
         schemaVersionRecord: 1,
-        unit: ingested.value.sourceQuantity.unit === 'units_produced' ? 'units_produced' : ingested.value.sourceQuantity.unit,
+        unit: (ingested.value.sourceQuantity.unit === 'units_produced'
+          ? 'units_produced'
+          : ingested.value.sourceQuantity.unit) as UnitCode,
         normalizationVersion: 'sunrey.economic-unit.normalization.v1',
         credentialRefHref: null,
         authMethod: input.request.source.authenticationMethod,

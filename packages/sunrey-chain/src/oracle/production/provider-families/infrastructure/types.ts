@@ -152,7 +152,7 @@ export type InfrastructureSourceRecord = {
   readonly operatorPartyId: string;
   readonly identity: InfrastructureIdentity;
   readonly sourceTimestampUnix: string;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type InfrastructureFabricPolicy = {

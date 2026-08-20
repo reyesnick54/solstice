@@ -45,9 +45,9 @@ export function isLegacyFixtureAuthorization(
 export function createDevelopmentSettlementAuthorization(input: {
   readonly contribution: VerifiedHumanEconomicContribution;
   readonly authorizedSunReyQuantity: bigint;
-  readonly authorizedAt?: string;
-  readonly authorizationId?: string;
-  readonly environment?: 'DEVELOPMENT' | 'SIMULATION';
+  readonly authorizedAt?: string | undefined;
+  readonly authorizationId?: string | undefined;
+  readonly environment?: 'DEVELOPMENT' | 'SIMULATION' | undefined;
 }): LegacyFixtureSettlementAuthorization {
   if (input.authorizedSunReyQuantity <= 0n) {
     throw new TypeError('development settlement authorization requires a positive fixture quantity');
@@ -133,9 +133,9 @@ export function createValuationSettlementAuthorization(input: {
   readonly valuation: EngineValuationReference;
   readonly conversionPolicy: SunReyHumanSettlementConversionPolicy;
   readonly authorizedBy: SettlementAuthorizer;
-  readonly authorizedAt?: string;
-  readonly authorizationId?: string;
-  readonly monetaryQuantityCeiling?: bigint;
+  readonly authorizedAt?: string | undefined;
+  readonly authorizationId?: string | undefined;
+  readonly monetaryQuantityCeiling?: bigint | undefined;
 }):
   | { readonly ok: true; readonly authorization: EngineValuationSettlementAuthorization }
   | { readonly ok: false; readonly code: BridgeRejection } {

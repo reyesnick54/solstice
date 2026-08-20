@@ -104,7 +104,7 @@ export type ExternalHttpRequest = {
   readonly method: ConnectorHttpMethod;
   readonly url: string;
   readonly headers: Readonly<Record<string, string>>;
-  readonly body?: string;
+  readonly body?: string | undefined;
   readonly timeoutMs: number;
   readonly maximumResponseBytes: number;
   readonly tls: {

@@ -51,7 +51,7 @@ export async function collectCandidateFeed(input: {
   readonly rateLimiter: ConnectorRateLimiter;
   readonly circuitBreaker: ConnectorCircuitBreaker;
   readonly nowUnix: bigint;
-  readonly pathParameters?: Readonly<Record<string, string>>;
+  readonly pathParameters?: Readonly<Record<string, string>> | undefined;
 }): Promise<Result<CandidateCollectionSuccess, ProviderCandidateRejection>> {
   const allowed = profileMayCollect(input.profile);
   if (!allowed.ok) {

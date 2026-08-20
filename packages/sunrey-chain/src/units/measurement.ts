@@ -372,7 +372,7 @@ export function measureCanonical(
 
 export function exactFromFixed(input: {
   readonly mantissa: bigint;
-  readonly scale?: number;
+  readonly scale?: number | undefined;
   readonly unitId: string;
 }): Result<ExactQuantity, CanonicalMeasurementRefusal> {
   const built = exactQuantity({

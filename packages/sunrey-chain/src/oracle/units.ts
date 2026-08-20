@@ -21,6 +21,7 @@ export const UNIT_FAMILIES = Object.freeze({
   STORAGE: ['GB', 'TB'],
   BANDWIDTH: ['GB_s', 'B_s'],
   FACILITY_TIME: ['facility_hour'],
+  SERVICE_TIME: ['service_hour'],
 } as const);
 
 const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonly toBase: bigint }>> =
@@ -45,6 +46,7 @@ const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonl
     GB_s: { family: 'BANDWIDTH', toBase: 1_000_000_000n },
     B_s: { family: 'BANDWIDTH', toBase: 1n },
     facility_hour: { family: 'FACILITY_TIME', toBase: 1n },
+    service_hour: { family: 'SERVICE_TIME', toBase: 1n },
   });
 
 export const MAX_QUANTITY_MANTISSA = 10n ** 38n - 1n;

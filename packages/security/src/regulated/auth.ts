@@ -25,8 +25,8 @@ export function bindProviderAuthentication(input: {
   readonly providerId: string;
   readonly method: ProviderAuthMethod;
   readonly credentialRef: SecretReference;
-  readonly workloadIdentityRef?: string;
-  readonly mtlsClientCertRef?: string;
+  readonly workloadIdentityRef?: string | undefined;
+  readonly mtlsClientCertRef?: string | undefined;
 }): ProviderAuthenticationBinding {
   return Object.freeze({
     providerId: input.providerId,

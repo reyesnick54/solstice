@@ -129,6 +129,8 @@ export class SimulatedAdverseMediaProvider implements AdverseMediaProvider {
   }
   screen(request: ScreeningRequest): ProviderScreenResponse & {
     readonly references: readonly AdverseMediaReference[];
+    readonly copyrightedCopyStored: false;
+    readonly treatedAsGuilt: false;
   } {
     const base = response(request, 'sim-adverse-media', 'media', this.unavailable);
     const references: readonly AdverseMediaReference[] =
@@ -144,7 +146,7 @@ export class SimulatedAdverseMediaProvider implements AdverseMediaProvider {
             },
           ])
         : Object.freeze([]);
-    return Object.freeze({ ...base, references });
+    return Object.freeze({ ...base, references, copyrightedCopyStored: false, treatedAsGuilt: false });
   }
 }
 
@@ -176,8 +178,17 @@ export class SimulatedFraudRiskProvider implements FraudRiskProvider {
   constructor(unavailable: ReadonlySet<string>) {
     this.unavailable = unavailable;
   }
-  evaluate(request: ScreeningRequest): ProviderScreenResponse {
-    return response(request, 'sim-fraud', 'fraud', this.unavailable);
+  evaluate(request: ScreeningRequest): ProviderScreenResponse & {
+    readonly freezesFunds: false;
+    readonly deletesAccount: false;
+    readonly reversesSettlement: false;
+  } {
+    return Object.freeze({
+      ...response(request, 'sim-fraud', 'fraud', this.unavailable),
+      freezesFunds: false,
+      deletesAccount: false,
+      reversesSettlement: false,
+    });
   }
 }
 

@@ -76,9 +76,9 @@ export function fixtureProductiveValueResult(input: {
   readonly contribution: VerifiedProductiveContribution;
   readonly event: ProductiveEconomicEventIdentity & { readonly eventFingerprint: string };
   readonly attribution: ProductiveAttributionDecision;
-  readonly productiveValueQuantity?: bigint;
-  readonly productiveValueId?: string;
-  readonly valueFunctionPolicyVersion?: number;
+  readonly productiveValueQuantity?: bigint | undefined;
+  readonly productiveValueId?: string | undefined;
+  readonly valueFunctionPolicyVersion?: number | undefined;
   readonly state?: ProductiveValueResult['state'];
   readonly environment?: ProductiveValueResult['environment'];
 }): ProductiveValueResult {

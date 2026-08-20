@@ -112,13 +112,13 @@ export type CanonicalSettlementReference = {
 export type HinAnchorRequest = {
   readonly kind: HinAnchorKind;
   readonly sourceRecordId: string;
-  readonly sourceRecordVersion?: string;
-  readonly contributionId?: string;
-  readonly canonicalSettlement?: CanonicalSettlementReference;
-  readonly extraPayload?: Readonly<Record<string, unknown>>;
-  readonly requesterId?: string | null;
-  readonly subjectHandle?: string;
-  readonly priorConsentCommitment?: string | null;
+  readonly sourceRecordVersion?: string | undefined;
+  readonly contributionId?: string | undefined;
+  readonly canonicalSettlement?: CanonicalSettlementReference | undefined;
+  readonly extraPayload?: Readonly<Record<string, unknown>> | undefined;
+  readonly requesterId?: string | null | undefined;
+  readonly subjectHandle?: string | undefined;
+  readonly priorConsentCommitment?: string | null | undefined;
 };
 
 export type HinSubjectScope = {

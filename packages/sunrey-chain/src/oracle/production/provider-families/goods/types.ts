@@ -174,14 +174,14 @@ export type GoodsSourceObservation = {
   readonly returnOfObservationId: string | null;
   readonly monetaryAlreadySettled: boolean;
   readonly productSpecificMassEvidence: boolean;
-  readonly extras?: Readonly<Record<string, unknown>>;
-  readonly rawCustomerName?: string;
-  readonly rawShippingAddress?: string;
-  readonly rawEmail?: string;
-  readonly rawPhone?: string;
-  readonly orderNotes?: string;
-  readonly paymentCardData?: string;
-  readonly networkCallAttempted?: boolean;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
+  readonly rawCustomerName?: string | undefined;
+  readonly rawShippingAddress?: string | undefined;
+  readonly rawEmail?: string | undefined;
+  readonly rawPhone?: string | undefined;
+  readonly orderNotes?: string | undefined;
+  readonly paymentCardData?: string | undefined;
+  readonly networkCallAttempted?: boolean | undefined;
 };
 
 export type PublicGoodsEvidence = {

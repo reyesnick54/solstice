@@ -29,8 +29,8 @@ import type { GoodsRefusal, GoodsSourceObservation } from './types.ts';
 export type GoodsCertificationCase = {
   readonly caseId: string;
   readonly valid: boolean;
-  readonly observation?: GoodsSourceObservation;
-  readonly evaluate: () => { readonly ok: boolean; readonly code?: GoodsRefusal['code'] };
+  readonly observation?: GoodsSourceObservation | undefined;
+  readonly evaluate: () => { readonly ok: boolean; readonly code?: GoodsRefusal['code'] | string | undefined };
 };
 
 function fromIngest(observation: GoodsSourceObservation) {

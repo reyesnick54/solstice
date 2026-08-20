@@ -291,7 +291,7 @@ export type ProductiveValueReferenceFact = {
   readonly verified: true;
   readonly consensusHttpCall: false;
   readonly rawHttpData: false;
-  readonly moonreyMarketPrice: false;
+  readonly moonreyMarketPrice: boolean;
   readonly socialMediaSentiment: false;
   readonly providerSelfReportedAlone: false;
   readonly quantity?: ExactRational;

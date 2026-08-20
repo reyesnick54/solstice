@@ -226,7 +226,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_signed',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     });
     const ingested = ingestor.ingest(signed);
     assert.equal(ingested.outcome, 'ACCEPTED');
@@ -251,7 +250,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_replay',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     };
     const signed = ingestor.sign(config, envelope);
     assert.equal(ingestor.ingest(signed).outcome, 'ACCEPTED');
@@ -622,7 +620,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_stale',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     });
     assert.equal(staleIngestor.ingest(stale).outcome, 'DEAD_LETTER');
   });

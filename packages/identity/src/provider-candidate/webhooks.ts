@@ -48,10 +48,10 @@ export class IdentityProviderWebhookConformance {
     apply: () => IdentityVerificationResult,
   ):
     | { readonly ok: true; readonly duplicate: boolean; readonly result: IdentityVerificationResult | null }
-    | { readonly ok: false; readonly code: WebhookValidationResult extends { ok: false } ? WebhookValidationResult['code'] : never } {
+    | { readonly ok: false; readonly code: 'SCHEMA_INVALID' | 'UNKNOWN_PROVIDER' | 'INVALID_SIGNATURE' | 'STALE_TIMESTAMP' | 'REPLAYED' } {
     const validated = this.#guard.validate(envelope, nowMs);
     if (!validated.ok) {
-      return validated;
+      return { ok: false, code: validated.code };
     }
     if (validated.duplicate || this.#applied.has(envelope.idempotencyKey)) {
       return { ok: true, duplicate: true, result: null };

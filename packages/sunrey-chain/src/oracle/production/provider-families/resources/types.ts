@@ -240,7 +240,7 @@ export type ResourceSourceRecord = {
   readonly effectiveDateUnix: bigint | null;
   readonly documentedMeterReset: boolean;
   readonly priorCumulativeMantissa: bigint | null;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type ResourceFabricPolicy = {
