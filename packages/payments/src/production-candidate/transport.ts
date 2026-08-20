@@ -107,14 +107,17 @@ export class ScriptedSandboxTransport implements PaymentProviderTransport {
   }
 
   execute(request: PaymentTransportRequest): PaymentTransportResponse {
-    const key = request.idempotencyKey ?? request.correlationId ?? request.providerId;
     if (request.operation === 'SUBMIT' && request.idempotencyKey) {
       const existing = this.submitted.get(request.idempotencyKey);
       if (existing) {
         return existing;
       }
     }
-    const outcome = this.scripts.get(key) ?? 'SUCCESS';
+    const outcome =
+      (request.idempotencyKey ? this.scripts.get(request.idempotencyKey) : undefined) ??
+      (request.correlationId ? this.scripts.get(request.correlationId) : undefined) ??
+      this.scripts.get(request.providerId) ??
+      'SUCCESS';
     const result = this.resultFor(request, outcome);
     if (request.operation === 'SUBMIT' && request.idempotencyKey && outcome !== 'TIMEOUT_BEFORE_SUBMIT' && outcome !== 'OUTAGE' && outcome !== 'AUTH_FAILED') {
       this.submitted.set(request.idempotencyKey, result);
