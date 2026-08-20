@@ -30,6 +30,8 @@ local/testnet fixtures created by this repository.
 
 - Full catalog: `sunrey-range campaign` (≥50 scenarios).
 - Bounded CI smoke: `sunrey-range campaign --smoke`.
+- Chunk 157 production-safety smoke: `sunrey-range campaign --production-safety-smoke`.
+- Chunk 157 production-safety extended: `sunrey-range campaign --production-safety-extended`.
 - Replay: `sunrey-range replay <id>`.
 
 See [`attack-matrix.md`](./attack-matrix.md) and

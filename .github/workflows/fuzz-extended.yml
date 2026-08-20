@@ -30,3 +30,9 @@ jobs:
         env:
           FUZZ_PROFILE: FUZZ_EXTENDED
         run: npm run test:fuzz-extended
+
+      - name: Production-safety extended campaign
+        run: npm run sunrey-range -- campaign --production-safety-extended
+
+      - name: Production-safety executable property tests
+        run: node --experimental-strip-types --disable-warning=ExperimentalWarning --test packages/sunrey-range/src/property.test.ts

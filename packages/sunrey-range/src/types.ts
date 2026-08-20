@@ -33,6 +33,22 @@ export const ATTACK_CATEGORIES = [
   'UPGRADE_ABUSE',
   'COMPOUND_FAILURE',
   'ECONOMIC_STRESS',
+  'CREDENTIAL_ABUSE',
+  'ENDPOINT_SSRF',
+  'PROVIDER_BOUNDARY_ABUSE',
+  'PAYMENT_ABUSE',
+  'COMPLIANCE_ABUSE',
+  'TRAVEL_RULE_ABUSE',
+  'ORACLE_ADVERSARIAL',
+  'PRODUCTIVE_ECONOMY_ABUSE',
+  'HUMAN_ECONOMY_ABUSE',
+  'PERSISTENCE_ABUSE',
+  'EVENT_FABRIC_ABUSE',
+  'DISTRIBUTED_IDEMPOTENCY_ABUSE',
+  'ECONOMIC_CONSTITUTION_ABUSE',
+  'AI_AUTHORITY_ABUSE',
+  'OBSERVABILITY_ABUSE',
+  'CONTROL_ROOM_ABUSE',
 ] as const;
 export type AttackCategory = (typeof ATTACK_CATEGORIES)[number];
 
@@ -56,8 +72,40 @@ export const SECURITY_INVARIANT_IDS = [
   'NO_TREASURY_DOUBLE_SPEND',
   'NO_UNAUTHORIZED_TREASURY_SPEND',
   'NO_CUSTOMER_ASSET_TREASURY_CLAIM',
+  'LEDGER_APPEND_ONLY',
+  'EXECUTION_AUTHORITY_REQUIRED',
+  'KERNEL_CANNOT_BE_BYPASSED',
+  'ASSET_SUPPLYBOOK_CANONICAL',
+  'CHUNK_71_MONETARY_AUTHORITY',
+  'AI_CANNOT_EXECUTE',
+  'RAW_SECRET_NOT_EXPOSED',
+  'PII_NOT_PUBLIC_CHAIN',
+  'ORACLE_CONSENSUS_NO_HTTP',
+  'REFERENCE_PRICE_NOT_PRODUCTIVE_OUTPUT',
+  'CROSS_ASSET_CUSTODY_ISOLATED',
+  'UNKNOWN_SUBMISSION_NOT_BLINDLY_RETRIED',
+  'COMPLIANCE_UNAVAILABLE_NOT_CLEAR',
+  'CONTROL_ROOM_READ_ONLY',
+  'PRODUCTION_NOT_ACTIVE',
+  'NO_RAW_SECRET_EXPOSURE',
+  'NO_CROSS_WORKLOAD_CREDENTIAL_USE',
+  'CONNECTOR_FAILS_CLOSED',
+  'TRAVEL_RULE_ACK_IS_NOT_WITHDRAWAL_AUTHORITY',
+  'PRIVATE_KEY_EXPORT_FORBIDDEN',
+  'NO_FALSE_INDEPENDENT_QUORUM',
+  'NO_DIRECT_PROVIDER_MINT',
+  'NO_REFERENCE_PRICE_MINT',
+  'NO_DUPLICATE_FINANCIAL_CONSEQUENCE',
+  'NO_HUMAN_WORTH_SCORING',
+  'NO_REGULATORY_BYPASS',
 ] as const;
 export type SecurityInvariantId = (typeof SECURITY_INVARIANT_IDS)[number];
+
+export const CAMPAIGN_SEVERITIES = ['PROTECTED', 'DEGRADED_BUT_SAFE', 'INVARIANT_BREACH'] as const;
+export type CampaignSeverity = (typeof CAMPAIGN_SEVERITIES)[number];
+
+export const PRODUCTION_SAFETY_FIXTURE_VERSION = 'sunrey.range.fixture.v157' as const;
+export const RANGE_FIXTURE_VERSION = 'sunrey.range.fixture.v1' as const;
 
 export const DETECTION_CHANNELS = [
   'metrics',
@@ -81,6 +129,12 @@ export const RECOVERY_KINDS = [
   'SIGNER_FENCING',
   'KEY_ROTATION',
   'NONE_PREVENTIVE',
+  'CREDENTIAL_ROTATION',
+  'PROVIDER_QUERY',
+  'COMPLIANCE_HOLD',
+  'IDEMPOTENT_RECONCILE',
+  'SNAPSHOT_REJECT',
+  'DEAD_LETTER',
 ] as const;
 export type RecoveryKind = (typeof RECOVERY_KINDS)[number];
 
@@ -101,6 +155,12 @@ export const RANGE_ROLES = [
   'OBSERVABILITY',
   'MALICIOUS_PEER',
   'HUMAN_OPERATOR',
+  'PROVIDER_CREDENTIAL',
+  'COMPLIANCE_PROVIDER',
+  'AI_MODEL',
+  'CONTROL_ROOM',
+  'TELEMETRY',
+  'PAYMENT_PROVIDER',
 ] as const;
 export type RangeRole = (typeof RANGE_ROLES)[number];
 
@@ -143,6 +203,7 @@ export type AttackScenario = {
   readonly category: AttackCategory;
   readonly version: number;
   readonly seed: number;
+  readonly fixtureVersion: string;
   readonly subsystem: string;
   readonly attack: string;
   readonly initialState: RangeInitialState;
@@ -183,11 +244,13 @@ export type AttackResult = {
   readonly scenarioId: string;
   readonly version: number;
   readonly seed: number;
+  readonly fixtureVersion: string;
   readonly sourceCommit: string;
   readonly testnetGenesis: string;
   readonly attackBlocked: boolean;
   readonly safetyHeld: boolean;
   readonly livenessDegraded: boolean;
+  readonly severity: CampaignSeverity;
   readonly invariants: readonly SecurityInvariantResult[];
   readonly detections: readonly DetectionResult[];
   readonly recovery: RecoveryResult;
@@ -203,6 +266,8 @@ export type CampaignReport = {
   readonly scenarioCount: number;
   readonly passed: number;
   readonly failed: number;
+  readonly invariantBreaches: number;
+  readonly severities: Readonly<Record<CampaignSeverity, number>>;
   readonly results: readonly AttackResult[];
   readonly scorecard: SecurityScorecard;
 };

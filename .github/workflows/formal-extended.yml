@@ -30,3 +30,7 @@ jobs:
         env:
           FORMAL_PROFILE: FORMAL_EXTENDED
         run: npm run test:formal-extended
+
+      # Executable property tests only. Not TLA+ / formal verification.
+      - name: Production-safety executable properties (not formal verification)
+        run: node --experimental-strip-types --disable-warning=ExperimentalWarning --test packages/sunrey-range/src/property.test.ts

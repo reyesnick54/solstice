@@ -2,6 +2,7 @@ import { held, type SecurityInvariantId } from '../invariants.ts';
 import type {
   AttackResult,
   AttackScenario,
+  CampaignSeverity,
   DetectionResult,
   ExpectedDetection,
   RangeActor,
@@ -12,6 +13,7 @@ import type {
   RecoveryResult,
   SecurityInvariantResult,
 } from '../types.ts';
+import { RANGE_FIXTURE_VERSION } from '../types.ts';
 
 export const INITIAL_STATE: RangeInitialState = Object.freeze({
   networkId: 'net_sunrey_range_dev',
@@ -39,11 +41,15 @@ export function detection(channel: ExpectedDetection['channel'], code: string, r
 }
 
 export function defineScenario(
-  input: Omit<AttackScenario, 'initialState' | 'version'> & { readonly version?: number },
+  input: Omit<AttackScenario, 'initialState' | 'version' | 'fixtureVersion'> & {
+    readonly version?: number;
+    readonly fixtureVersion?: string;
+  },
 ): AttackScenario {
   return Object.freeze({
     ...input,
     version: input.version ?? 1,
+    fixtureVersion: input.fixtureVersion ?? RANGE_FIXTURE_VERSION,
     initialState: INITIAL_STATE,
   });
 }
@@ -82,21 +88,40 @@ export function finish(input: {
       input.detections.some((row) => row.channel === expected.channel && row.code === expected.code && row.observed),
     );
   const passed = input.attackBlocked && input.safetyHeld && invariantsHeld && detectionsMet && input.recovery.historicalEvidencePreserved;
+  const severity = campaignSeverity({
+    safetyHeld: input.safetyHeld && invariantsHeld,
+    livenessDegraded: input.livenessDegraded ?? false,
+  });
   return {
     scenarioId: input.scenario.scenarioId,
     version: input.scenario.version,
     seed: input.scenario.seed,
+    fixtureVersion: input.scenario.fixtureVersion,
     sourceCommit: input.sourceCommit,
     testnetGenesis: input.testnetGenesis,
     attackBlocked: input.attackBlocked,
     safetyHeld: input.safetyHeld,
     livenessDegraded: input.livenessDegraded ?? false,
+    severity,
     invariants: input.invariants,
     detections: input.detections,
     recovery: input.recovery,
     notes: input.notes,
-    passed,
+    passed: passed && severity !== 'INVARIANT_BREACH',
   };
+}
+
+export function campaignSeverity(input: {
+  readonly safetyHeld: boolean;
+  readonly livenessDegraded: boolean;
+}): CampaignSeverity {
+  if (!input.safetyHeld) {
+    return 'INVARIANT_BREACH';
+  }
+  if (input.livenessDegraded) {
+    return 'DEGRADED_BUT_SAFE';
+  }
+  return 'PROTECTED';
 }
 
 export function holdAll(ids: readonly SecurityInvariantId[], detail: string): SecurityInvariantResult[] {

@@ -168,7 +168,9 @@ npm run demo:listing-governance
 npm run demo:explorer
 npm run demo:sunrey-bench
 npm run sunrey-range -- campaign --smoke
+npm run sunrey-range -- campaign --production-safety-smoke
 npm run demo:sunrey-range
+npm run demo:sunrey-production-adversarial-campaign
 SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs rc qualify --profile smoke
 SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs rc verify
 SUNREY_FIXTURE_ENV=local npm run demo:sunrey-rc

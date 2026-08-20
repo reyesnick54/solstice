@@ -1898,6 +1898,19 @@ Do not create `packages/moonrey-custody`, `packages/sunrey-custody-v2`,
 `packages/key-vault`, `packages/hsm-v2`, `packages/mpc-v2`, or
 `packages/custody-provider-v2`. See
 [`docs/custody/chunk-153-dual-asset-custody-provider-candidate.md`](../custody/chunk-153-dual-asset-custody-provider-candidate.md).
+Chunk 157 extends the isolated adversarial range at
+`packages/sunrey-range` with a production-safety campaign against
+credential, provider, payment, compliance, Travel Rule, oracle,
+productive-economy, human-economy, custody, persistence, event,
+distributed-idempotency, economic-constitution, AI-authority,
+observability, and control-room failure modes. Capability
+`sunrey-adversarial-range` remains `IMPLEMENTED` on the same owner.
+Red actors are in-process fixture doubles. This is not live
+penetration testing and does not contact external targets. Do not
+create `packages/red-team`, `packages/chaos-v2`,
+`packages/security-range-v2`, `packages/pentest`, or
+`packages/adversarial-v2`. See
+[`docs/security/chunk-157-production-adversarial-resilience.md`](../security/chunk-157-production-adversarial-resilience.md).
 
 ## Agent stop rule
 

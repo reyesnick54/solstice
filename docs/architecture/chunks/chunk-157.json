@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-157",
+  "title": "Cross-Layer Adversarial Resilience Campaign for Provider, Financial, Economic, AI, Persistence, and Control-Plane Failure Modes",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "evidence",
+    "events",
+    "kernel",
+    "payments",
+    "custody",
+    "sunrey-chain",
+    "sunrey-adversarial-range"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-range. Extends sunrey-adversarial-range. Isolated defensive test range only. Deterministic production-safety smoke and extended campaigns. Fixture transports. No live penetration testing, external targets, network scanning, or real credentials. evaluateChunkRequirements returns mustStop: false. Do not create packages/red-team, packages/chaos-v2, packages/security-range-v2, packages/pentest, or packages/adversarial-v2."
+}

@@ -1024,7 +1024,12 @@
         "packages/evidence",
         "packages/domain",
         "packages/identity",
-        "packages/events"
+        "packages/events",
+        "packages/money",
+        "packages/kernel",
+        "packages/payments",
+        "packages/ai-runtime",
+        "packages/human-economic-contribution"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -2628,12 +2633,16 @@
       "forbiddenAliases": [
         "packages/red-team",
         "packages/attack-sim",
-        "packages/sunrey-pentest"
+        "packages/sunrey-pentest",
+        "packages/chaos-v2",
+        "packages/security-range-v2",
+        "packages/pentest",
+        "packages/adversarial-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel."
+      "notes": "Isolated development/testnet security range. Deterministic replay only. Detector output is not legal guilt. Not a second ledger or Kernel. Chunk 157 extends this owner with the production-safety campaign at packages/sunrey-range/src/scenarios. No live pentest, external targets, or real credentials."
     },
     {
       "id": "sunrey-mainnet-readiness",
@@ -6325,7 +6334,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-range",
       "protected": true,
-      "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Deterministic replay of Byzantine, financial, oracle, exchange, custody, machine, privacy, governance, and interoperability abuse. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, or packages/sunrey-pentest."
+      "notes": "Chunk 57 isolated development/testnet adversarial cyber-economic range at packages/sunrey-range. Chunk 157 extends the same owner with a production-safety campaign covering credential, provider, payment, compliance, Travel Rule, oracle, productive, human-economy, custody, persistence, event, idempotency, economic-constitution, AI authority, observability, and control-room failure modes. Red actors are in-process test doubles. Not a second ledger, Kernel, or live pentest service. Do not create packages/red-team, packages/attack-sim, packages/sunrey-pentest, packages/chaos-v2, packages/security-range-v2, packages/pentest, or packages/adversarial-v2."
     },
     {
       "id": "sunrey-assurance",
