@@ -268,7 +268,7 @@ describe('Chunk 161 evidence-backed operating scope', () => {
     const evaluation = evaluateOperatingScope(queryXa('CARDS'), catalog);
     const fact = toOperatingScopeFact(evaluation);
     assert.ok(fact.reasonCodes.length > 0);
-    assert.equal(fact.issuesExecutionAuthority, false);
+    assert.equal(fact.createsExecutionAuthority, false);
     assert.equal(fact.productionActive, false);
     assert.equal(fact.eligibility, evaluation.eligible);
     assert.equal(fact.jurisdiction, FIXTURE_JURISDICTION_XA);

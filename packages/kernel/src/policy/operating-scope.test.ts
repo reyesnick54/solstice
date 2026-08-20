@@ -24,7 +24,7 @@ describe('Kernel operating-scope fact', () => {
     reasonCodes: Object.freeze(['JURISDICTION_RESEARCH_REQUIRED', 'LICENSE_EVIDENCE_MISSING']),
     evidenceReferences: Object.freeze([]),
     productionActive: false,
-    issuesExecutionAuthority: false,
+    createsExecutionAuthority: false,
     confirmedByCounsel: false,
   });
 
@@ -37,7 +37,7 @@ describe('Kernel operating-scope fact', () => {
 
   it('never issues Execution Authority', () => {
     assert.equal(operatingScopeIssuesExecutionAuthority(fact), false);
-    assert.equal(fact.issuesExecutionAuthority, false);
+    assert.equal(fact.createsExecutionAuthority, false);
     const source = readFileSync(join(HERE, 'operating-scope-fact.ts'), 'utf8');
     assert.equal(/AuthorityIssuer/.test(source), false);
     assert.equal(/from ['"].*execution-authority/.test(source), false);

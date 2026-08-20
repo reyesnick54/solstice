@@ -18,7 +18,7 @@ export type OperatingScopeFact = {
   readonly reasonCodes: readonly string[];
   readonly evidenceReferences: readonly string[];
   readonly productionActive: false;
-  readonly issuesExecutionAuthority: false;
+  readonly createsExecutionAuthority: false;
   readonly confirmedByCounsel: false;
 };
 
@@ -41,7 +41,7 @@ export function acceptOperatingScopeFact(fact: OperatingScopeFact): OperatingSco
     reasonCodes: Object.freeze([...fact.reasonCodes]),
     evidenceReferences: Object.freeze([...fact.evidenceReferences]),
     productionActive: false,
-    issuesExecutionAuthority: false,
+    createsExecutionAuthority: false,
     confirmedByCounsel: false,
   });
 }

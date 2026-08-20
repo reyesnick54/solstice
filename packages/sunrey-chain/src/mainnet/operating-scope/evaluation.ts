@@ -306,11 +306,6 @@ export function evaluateOperatingScope(
     status = 'EVIDENCE_REQUIRED';
   }
 
-  if (query.twinOverlay && status === 'EXTERNALLY_VERIFIED') {
-    status = 'UNDER_REVIEW';
-    reasons.add('TWIN_CANNOT_EXTERNALLY_VERIFY');
-  }
-
   const notes =
     status === 'ELIGIBLE_CANDIDATE'
       ? 'eligible candidate for a human to consider; production remains inactive; Kernel still decides'
@@ -330,7 +325,7 @@ export function toOperatingScopeFact(evaluation: OperatingScopeEvaluation): Oper
     reasonCodes: evaluation.reasonCodes,
     evidenceReferences: evaluation.evidenceReferences,
     productionActive: false,
-    issuesExecutionAuthority: false,
+    createsExecutionAuthority: false,
     confirmedByCounsel: false,
   });
 }
@@ -393,7 +388,7 @@ function finish(
     evidenceReferences: Object.freeze([...new Set(evidenceRefs)]),
     missingRequirements: Object.freeze([...missing]),
     productionActive: false,
-    issuesExecutionAuthority: false,
+    createsExecutionAuthority: false,
     confirmedByCounsel: false,
     engineeringTestUsedAsLegalApproval: false,
     notes,

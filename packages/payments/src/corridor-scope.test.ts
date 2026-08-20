@@ -15,7 +15,7 @@ describe('payments corridor operating-scope binding', () => {
       reasonCodes: ['CORRIDOR_DISABLED', 'FX_EVIDENCE_NOT_PAYMENT_RAIL'],
       evidenceReferences: [],
       productionActive: false,
-      issuesExecutionAuthority: false,
+      createsExecutionAuthority: false,
       confirmedByCounsel: false,
     };
     const result = corridorLiveFromOperatingScope('US-SA-USD-SAR', fact);

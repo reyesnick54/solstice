@@ -241,7 +241,7 @@ export type OperatingScopeEvaluation = {
   readonly evidenceReferences: readonly string[];
   readonly missingRequirements: readonly string[];
   readonly productionActive: false;
-  readonly issuesExecutionAuthority: false;
+  readonly createsExecutionAuthority: false;
   readonly confirmedByCounsel: false;
   readonly engineeringTestUsedAsLegalApproval: false;
   readonly notes: string;
@@ -261,7 +261,7 @@ export type OperatingScopeFact = {
   readonly reasonCodes: readonly OperatingScopeReasonCode[];
   readonly evidenceReferences: readonly string[];
   readonly productionActive: false;
-  readonly issuesExecutionAuthority: false;
+  readonly createsExecutionAuthority: false;
   readonly confirmedByCounsel: false;
 };
 
