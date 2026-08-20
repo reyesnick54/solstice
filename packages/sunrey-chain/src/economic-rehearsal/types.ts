@@ -8,6 +8,7 @@
 
 import type { LaunchControlRoomState, LaunchPhase, RehearsalFinding } from '../launch-rehearsal/types.ts';
 import type { TraceConformanceResult } from '../formal/types.ts';
+import type { ParameterizedDualEconomyRehearsalReportFields } from './parameterized-candidate/types.ts';
 
 export const ECONOMIC_REHEARSAL_SCHEMA_VERSION = 1 as const;
 export const ECONOMIC_REHEARSAL_TOOL_VERSION = 'sunrey-launch/economic/1' as const;
@@ -368,3 +369,6 @@ export type EconomicMainnetRehearsalReport = {
   readonly knownLimitations: readonly string[];
   readonly integratedEvidenceHashes?: IntegratedEconomicEvidenceHashes;
 };
+
+/** Chunk 147 report. Lives on the Chunk 80 rehearsal owner. */
+export type ParameterizedDualEconomyRehearsalReport = ParameterizedDualEconomyRehearsalReportFields;

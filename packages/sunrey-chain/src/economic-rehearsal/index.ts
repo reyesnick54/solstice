@@ -11,3 +11,4 @@ export * from './readiness.ts';
 export * from './engine.ts';
 export * from './cli.ts';
 export * from './extended-run.ts';
+export * as parameterizedCandidate from './parameterized-candidate/index.ts';

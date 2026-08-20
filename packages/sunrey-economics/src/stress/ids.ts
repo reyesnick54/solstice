@@ -150,5 +150,6 @@ export const CAMPAIGN_IDS = [
   'extended-12',
   'extended-120',
   'extended-600',
+  'parameterized-dual-economy-rehearsal',
 ] as const;
 export type CampaignId = (typeof CAMPAIGN_IDS)[number];

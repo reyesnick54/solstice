@@ -1361,6 +1361,16 @@ or create a second mint. Do not create `packages/production-economics`,
 `packages/monetary-activation`, `packages/mainnet-economics`,
 `packages/tokenomics-v2`, or `packages/launch-economics`. The
 evaluator returns `mustStop: false`.
+Chunk 147 extends the existing economic mainnet rehearsal owner at
+`packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate`.
+Capability `sunrey-economic-mainnet-rehearsal` remains `IMPLEMENTED`.
+The rehearsal feeds a complete `REHEARSAL_FIXTURE` parameter package
+through the production validators, SunRey and MoonRey candidate
+policies, Exchange DVP, and dual-economy stress. Fixture values have
+no production economic meaning. The Chunk 143 firewall remains
+production-blocked. Do not create `packages/parameterized-rehearsal`,
+`packages/dual-economy-rehearsal`, or a second economic rehearsal
+owner. The evaluator returns `mustStop: false`.
 Chunk 145 implements the SunRey production issuance policy candidate at
 `packages/human-economic-contribution/src/valuation/production-candidate`,
 `packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate`,

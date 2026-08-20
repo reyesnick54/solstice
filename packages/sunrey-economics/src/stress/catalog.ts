@@ -105,6 +105,12 @@ export const ECONOMIC_STRESS_CATALOG: readonly EconomicStressScenario[] = Object
   scenario('ECON-COMP-001', 'COMPOUND', 'energy scarcity + compute shortage + MoonRey liquidity shock', 7711, ['COMPOUND_ENERGY_COMPUTE_LIQUIDITY'], 'LIQUIDITY_STRESS', 'Compound productive and liquidity stress', 3),
   scenario('ECON-COMP-002', 'COMPOUND', 'oracle outage + Exchange volatility + validator unavailability', 7712, ['COMPOUND_ORACLE_EXCHANGE_VALIDATOR'], 'AVAILABILITY_DEGRADATION', 'Compound oracle, exchange, validator stress', 3),
   scenario('ECON-COMP-003', 'COMPOUND', 'fee congestion + custody backlog + machine commerce surge', 7713, ['COMPOUND_FEE_CUSTODY_MACHINE'], 'AVAILABILITY_DEGRADATION', 'Compound fee, custody, machine stress', 3),
+  scenario('ECON-COMP-147-001', 'COMPOUND', 'human contribution burst + productive output surge', 14701, ['HUM_COMMUNITY_DISTRIBUTION', 'PROD_ISSUANCE_PRESSURE'], null, 'Chunk 147 combined human burst and productive surge; accounting must hold', 2),
+  scenario('ECON-COMP-147-002', 'COMPOUND', 'oracle outage + MoonRey demand shock', 14702, ['ORACLE_OUTAGE', 'HUM_DEMAND_RISE'], 'EXPECTED_FAIL_CLOSED_BEHAVIOR', 'Chunk 147 oracle outage under MoonRey demand; no invented output', 2),
+  scenario('ECON-COMP-147-003', 'COMPOUND', 'exchange price volatility + high issuance volume', 14703, ['EXCH_PRICE_MOVE', 'PROD_ISSUANCE_PRESSURE'], 'LIQUIDITY_STRESS', 'Chunk 147 exchange volatility does not alter issuance conversion', 2),
+  scenario('ECON-COMP-147-004', 'COMPOUND', 'provider concentration + controller concentration', 14704, ['ORACLE_ONE_CONTROLLER', 'PROD_OPERATOR_CONCENTRATION'], 'CONCENTRATION_RISK', 'Chunk 147 concentration reported; no antitrust conclusion', 2),
+  scenario('ECON-COMP-147-005', 'COMPOUND', 'network congestion + settlement backlog', 14705, ['EXCH_SETTLEMENT_CONGESTION', 'FEE_SATURATION'], 'AVAILABILITY_DEGRADATION', 'Chunk 147 congestion does not duplicate DVP', 2),
+  scenario('ECON-COMP-147-006', 'COMPOUND', 'policy upgrade + reconciliation delay', 14706, ['CUST_RECONCILIATION_LAG', 'FEE_BURST'], 'AVAILABILITY_DEGRADATION', 'Chunk 147 upgrade does not silently recompute historical supply', 2),
   scenario('ECON-NQ-001', 'NO_QUORUM', 'no-quorum economic freeze', 7721, ['NO_QUORUM_FREEZE'], 'AVAILABILITY_DEGRADATION', 'No synthetic accounting without finality', 1, true),
 ]);
 
@@ -173,6 +179,20 @@ export const STRESS_CAMPAIGNS: readonly EconomicStressCampaign[] = Object.freeze
     scenarioIds: Object.freeze(['ECON-COMP-001']),
     epochs: 600,
     extendedWorkflow: true,
+  },
+  {
+    campaignId: 'parameterized-dual-economy-rehearsal',
+    title: 'Chunk 147 parameterized dual-economy rehearsal stress',
+    scenarioIds: Object.freeze([
+      'ECON-COMP-147-001',
+      'ECON-COMP-147-002',
+      'ECON-COMP-147-003',
+      'ECON-COMP-147-004',
+      'ECON-COMP-147-005',
+      'ECON-COMP-147-006',
+    ]),
+    epochs: 2,
+    extendedWorkflow: false,
   },
 ]);
 

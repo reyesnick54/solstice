@@ -1133,6 +1133,16 @@ fiat rails, tickers, or `LIVE_*` flags. Do not create
 `packages/economic-rehearsal`, or `packages/sunrey-economic-mainnet`.
 See
 [`chunk-80-economic-mainnet-rehearsal.md`](./chunk-80-economic-mainnet-rehearsal.md).
+Chunk 147 extends that same owner at
+`packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate`.
+It rehearses a complete fixture parameter package through the real
+production validators, SunRey and MoonRey candidate policies, Exchange
+DVP, and dual-economy stress. Every value is `REHEARSAL_FIXTURE`.
+NOT RECOMMENDED TOKENOMICS. NOT A PRODUCTION PROPOSAL. NO ECONOMIC
+MEANING OUTSIDE REHEARSAL. The Chunk 143 firewall remains production
+blocked. Do not create `packages/parameterized-rehearsal` or
+`packages/dual-economy-rehearsal`. See
+[`docs/economics/chunk-147-parameterized-dual-economy-rehearsal.md`](../economics/chunk-147-parameterized-dual-economy-rehearsal.md).
 Chunk 78 implements economic release-candidate freeze, policy freeze,
 and qualification at
 `packages/sunrey-chain/src/release-candidate/economic`. Capability

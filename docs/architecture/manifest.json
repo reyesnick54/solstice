@@ -3725,18 +3725,24 @@
         {
           "name": "EconomicLaunchControlRoomState",
           "kind": "type"
+        },
+        {
+          "name": "ParameterizedDualEconomyRehearsalReport",
+          "kind": "type"
         }
       ],
       "forbiddenAliases": [
         "packages/sunrey-economic-rehearsal",
         "packages/economic-mainnet",
         "packages/economic-rehearsal",
-        "packages/sunrey-economic-mainnet"
+        "packages/sunrey-economic-mainnet",
+        "packages/parameterized-rehearsal",
+        "packages/dual-economy-rehearsal"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 80 production-like economic rehearsal at packages/sunrey-chain/src/economic-rehearsal. Distinct rehearsal identity. Does not activate mainnet, customer funds, live Exchange, live custody, or LIVE_* flags."
+      "notes": "Chunk 80 production-like economic rehearsal at packages/sunrey-chain/src/economic-rehearsal. Chunk 147 parameterized dual-economy rehearsal extends the same owner at parameterized-candidate/. Distinct rehearsal identity. Fixture parameters have no production meaning. Does not activate mainnet, customer funds, live Exchange, live custody, or LIVE_* flags."
     },
     {
       "id": "sunrey-production-network-candidate",
@@ -4468,11 +4474,6 @@
       "canonicalPath": "packages/information-market/src/network/chain-anchor/coordinator.ts",
       "publicInterface": "packages/information-market/src/network/chain-anchor/index.ts",
       "status": "IMPLEMENTED",
-      "name": "Human Information Network to SunRey Chain anchoring foundation",
-      "canonicalOwner": "packages/information-market",
-      "canonicalPath": "packages/information-market/src/network/chain-anchor/adapter.ts",
-      "publicInterface": "packages/information-market/src/network/chain-anchor/index.ts",
-      "status": "PARTIAL",
       "protected": true,
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
@@ -4480,7 +4481,6 @@
       "protectedSymbols": [
         {
           "name": "HumanInformationAnchorCoordinator",
-          "name": "HinChainAnchorAdapter",
           "kind": "class"
         }
       ],
@@ -4493,6 +4493,7 @@
         "packages/hin-chain-anchor",
         "packages/hin-finality",
         "packages/information-chain-node",
+        "packages/hin-blockchain"
         "packages/hin-blockchain",
         "packages/human-data-ledger"
       ],
@@ -6360,7 +6361,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 80 complete economic mainnet rehearsal, economic genesis dry run, and activation evidence package. Owner: packages/sunrey-chain/src/economic-rehearsal. Do not create packages/sunrey-economic-rehearsal, packages/economic-mainnet, packages/economic-rehearsal, or packages/sunrey-economic-mainnet."
+      "notes": "Chunk 80 complete economic mainnet rehearsal, economic genesis dry run, and activation evidence package. Chunk 147 parameterized dual-economy rehearsal extends the same owner at packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate. Do not create packages/sunrey-economic-rehearsal, packages/economic-mainnet, packages/economic-rehearsal, packages/sunrey-economic-mainnet, packages/parameterized-rehearsal, or packages/dual-economy-rehearsal."
     },
     {
       "id": "sunrey-production-network-candidate",
