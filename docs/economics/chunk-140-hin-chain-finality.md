@@ -29,8 +29,15 @@ Do not create `packages/hin-chain-anchor`, `packages/hin-finality`,
 ## Coordinator
 
 `HumanInformationAnchorCoordinator` prepares, submits, refreshes
-finality, reconciles, and projects. It talks only to the narrow
-`HumanInformationChainAnchorPort`, which wraps
+finality, reconciles, and projects. It talks only to the Chunk 139
+narrow `HumanInformationChainAnchorPort`:
+
+- `createAnchorIntent`
+- `submitAnchor`
+- `anchorStatus`
+- `reconcileAnchor`
+
+The port is implemented by `HinChainAnchorAdapter` over existing
 `SunReyChainService.submit`, `reconcile`, and finality reads.
 
 HIN domain logic must not call `SimulationChainAdapter` directly.

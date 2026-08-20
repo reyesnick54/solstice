@@ -1346,6 +1346,20 @@ engine, economic asset registry, or mint. Do not create
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. The evaluator returns
 `mustStop: false`.
+Chunk 139 implements the Human Information Network → SunRey Chain
+anchoring foundation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED` after Chunk 140
+completes submit, finality, reorg, and reconciliation. Required
+capabilities are `IMPLEMENTED`, so the evaluator returns
+`mustStop: false`. The adapter does not create a second chain,
+consent ledger, or Evidence Vault. Do not create
+`packages/hin-chain`, `packages/information-blockchain`,
+`packages/privacy-chain`, `packages/consent-chain`, or
+`packages/human-data-ledger`. See
+[`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md)
+and
+[`docs/economics/chunk-139-hin-chain-anchor-foundation.md`](../economics/chunk-139-hin-chain-anchor-foundation.md).
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.

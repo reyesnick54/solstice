@@ -121,7 +121,7 @@ export class HumanInformationNetworkEngine {
   readonly store: HumanInformationNetworkStore;
   private readonly hmacSecret: string;
   readonly notifications: MobileNotification[] = [];
-  readonly anchorCoordinator: HumanInformationAnchorCoordinator | null;
+  anchorCoordinator: HumanInformationAnchorCoordinator | null;
 
   constructor(options: HumanInformationNetworkEngineOptions) {
     this.clock = options.clock;
@@ -129,6 +129,10 @@ export class HumanInformationNetworkEngine {
     this.store = new HumanInformationNetworkStore();
     this.hmacSecret = options.hmacSecret ?? 'hin-simulation-hmac';
     this.anchorCoordinator = options.anchorCoordinator ?? null;
+  }
+
+  attachAnchorCoordinator(coordinator: HumanInformationAnchorCoordinator): void {
+    this.anchorCoordinator = coordinator;
   }
 
   report(): HumanInformationNetworkReport {
@@ -503,8 +507,6 @@ export class HumanInformationNetworkEngine {
       scheduleConsentAnchor(this.anchorCoordinator!, {
         grant,
         subjectHandle: subject.publicHandle,
-        subjectRawId: subject.internalRef,
-        jurisdictionCell: `${request.jurisdiction}:SIM`,
       }),
     );
     return ok(Object.freeze({ grant, right, receiptHash: consentHash }));
@@ -812,8 +814,6 @@ export class HumanInformationNetworkEngine {
         scheduleUsageAnchor(this.anchorCoordinator!, {
           receipt,
           subjectHandle: usageSubject.publicHandle,
-          subjectRawId: usageSubject.internalRef,
-          jurisdictionCell: 'GB:SIM',
         }),
       );
     }
@@ -878,14 +878,12 @@ export class HumanInformationNetworkEngine {
     });
     const revokeSubject = this.store.subjects.get(grant.subjectId);
     if (revokeSubject) {
-      const prior = this.anchorCoordinator?.store.findBySource('CONSENT_RECEIPT', grant.grantId);
+      const prior = this.anchorCoordinator?.store.findBySource('CONSENT_GRANT', grant.grantId);
       this.scheduleAnchor(() =>
         scheduleRevocationAnchor(this.anchorCoordinator!, {
           revocation,
           grant,
           subjectHandle: revokeSubject.publicHandle,
-          subjectRawId: revokeSubject.internalRef,
-          jurisdictionCell: 'GB:SIM',
           priorConsentCommitment: prior?.payloadCommitment ?? grant.consentHash,
         }),
       );

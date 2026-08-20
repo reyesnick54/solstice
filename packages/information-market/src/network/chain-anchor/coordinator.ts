@@ -2,35 +2,34 @@ import type { Clock } from '../../../../config/src/clock.ts';
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import type { DomainEventLog } from '../../../../events/src/events.ts';
-import type { ChainOperationId, ChainWriteIntentId } from '../../../../sunrey-chain/src/ids.ts';
-import type { ChainOperationState, ReconciliationOutcome } from '../../../../sunrey-chain/src/taxonomy.ts';
-import type { ChainOperation } from '../../../../sunrey-chain/src/types.ts';
+import type { ChainOperationId } from '../../../../sunrey-chain/src/ids.ts';
+import type { ReconciliationOutcome } from '../../../../sunrey-chain/src/taxonomy.ts';
 import type { EconomicAssetRegistryPort } from '../../../../economic-asset-registry/src/index.ts';
-import {
-  newAnchorReconciliationId,
-  newHumanInformationAnchorId,
-  newUsageAnchorProjectionId,
-} from './ids.ts';
-import { privacySafeIntentInput, recordTypeForAnchorKind } from './intents.ts';
+import type { HinChainAnchorAdapter } from './adapter.ts';
+import { newAnchorReconciliationId, newUsageAnchorProjectionId } from './ids.ts';
 import {
   CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY,
   HIN_ANCHOR_INVARIANTS,
 } from './invariants.ts';
-import type { HumanInformationChainAnchorRuntime } from './port.ts';
+import type { HumanInformationChainAnchorPort } from './port.ts';
 import {
   isPendingState,
   mapHinReconciliation,
   parseChainHeight,
   privacySafeStatus,
+  scheduleFor,
 } from './projections.ts';
 import { projectFinalizedChainAnchor } from './registry-projection.ts';
 import { HumanInformationAnchorStore } from './store.ts';
 import type {
   HinAnchorFailure,
-  HinAnchorPrepareInput,
+  HinAnchorKind,
+  HinAnchorRequest,
   HumanInformationAnchor,
   HumanInformationAnchorHealth,
+  HumanInformationAnchorId,
   HumanInformationAnchorReconciliation,
+  HumanInformationChainAnchorRecord,
   HumanInformationConsentAnchorProjection,
   HumanInformationRevocationAnchorProjection,
   HumanInformationRightsAuditV2,
@@ -39,8 +38,9 @@ import type {
 } from './types.ts';
 
 export type HumanInformationAnchorCoordinatorOptions = {
-  readonly clock: Clock;
-  readonly port: HumanInformationChainAnchorRuntime;
+  readonly clock?: Clock;
+  readonly port: HumanInformationChainAnchorPort;
+  readonly adapter?: HinChainAnchorAdapter;
   readonly registry?: EconomicAssetRegistryPort;
   readonly events?: DomainEventLog;
 };
@@ -49,23 +49,36 @@ function failure(code: HinAnchorFailure['code'], message: string): HinAnchorFail
   return Object.freeze({ code, message });
 }
 
+function asAdapter(port: HumanInformationChainAnchorPort, adapter?: HinChainAnchorAdapter): HinChainAnchorAdapter | null {
+  if (adapter) {
+    return adapter;
+  }
+  if ('chain' in port && 'listAnchors' in port) {
+    return port as HinChainAnchorAdapter;
+  }
+  return null;
+}
+
 /**
  * Completes the HIN → chain lifecycle:
  * prepare → submit → refresh finality → reconcile → project.
  *
- * Uses the existing SunRey Chain lifecycle. Does not invent finality.
+ * Uses the Chunk 139 HumanInformationChainAnchorPort and the existing
+ * SunRey Chain lifecycle. Does not invent finality.
  */
 export class HumanInformationAnchorCoordinator {
   readonly store = new HumanInformationAnchorStore();
   readonly invariants = HIN_ANCHOR_INVARIANTS;
-  private readonly clock: Clock;
-  private readonly port: HumanInformationChainAnchorRuntime;
+  readonly port: HumanInformationChainAnchorPort;
+  private readonly clock: Clock | null;
+  private readonly adapter: HinChainAnchorAdapter | null;
   private readonly registry: EconomicAssetRegistryPort | null;
   private readonly events: DomainEventLog | null;
 
   constructor(options: HumanInformationAnchorCoordinatorOptions) {
-    this.clock = options.clock;
     this.port = options.port;
+    this.adapter = asAdapter(options.port, options.adapter);
+    this.clock = options.clock ?? this.adapter?.clock ?? null;
     this.registry = options.registry ?? null;
     this.events = options.events ?? null;
   }
@@ -74,231 +87,164 @@ export class HumanInformationAnchorCoordinator {
     return CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY;
   }
 
-  prepare(input: HinAnchorPrepareInput): Result<HumanInformationAnchor, HinAnchorFailure> {
-    const existing = this.store.findBySource(input.kind, input.sourceRecordId);
+  prepare(request: HinAnchorRequest): Result<HumanInformationAnchor, HinAnchorFailure> {
+    const existing = this.store.findBySource(request.kind, request.sourceRecordId);
     if (existing) {
       return this.retry(existing.anchorId);
     }
-    const now = this.clock.now();
-    const created: HumanInformationAnchor = Object.freeze({
-      schemaVersion: 1,
-      anchorId: newHumanInformationAnchorId(),
-      kind: input.kind,
-      recordType: recordTypeForAnchorKind(input.kind),
-      sourceRecordId: input.sourceRecordId,
-      subjectHandle: input.subjectHandle,
-      requesterId: input.requesterId ?? null,
-      intentId: null,
-      operationId: null,
-      payloadCommitment: null,
-      chainState: 'CREATED',
-      schedule: 'PENDING_ANCHOR',
-      transactionId: null,
-      receiptId: null,
-      blockReference: null,
-      confirmations: 0,
-      finalized: false,
-      unknownAfterBroadcast: false,
-      reorgObserved: false,
-      priorConsentCommitment: input.priorConsentCommitment ?? null,
-      revocationCommitment: null,
-      projectedActive: input.kind === 'CONSENT_RECEIPT',
-      createdAt: now,
-      updatedAt: now,
-      rawPersonalData: false,
-      mintsAsset: false,
-      altersLedger: false,
-    });
-    this.store.put(created);
-    const intent = this.port.createIntent(privacySafeIntentInput(input));
-    if (!intent.ok) {
-      return err(failure(intent.error.code, intent.error.message));
+    const created = this.port.createAnchorIntent(request);
+    if (!created.ok) {
+      return created;
     }
-    const withIntent = this.patch(created, {
-      intentId: intent.value.intentId,
-      operationId: intent.value.operationId,
-      payloadCommitment: intent.value.payloadCommitment,
-      chainState: 'CREATED',
-      schedule: 'PENDING_ANCHOR',
+    this.store.meta.set(created.value.anchorId, {
+      requesterId: request.requesterId ?? null,
+      subjectHandle: request.subjectHandle ?? '',
+      priorConsentCommitment: request.priorConsentCommitment ?? null,
     });
+    const view = this.remember(created.value);
     this.emit('HumanInformationAnchorCreated', {
-      anchorId: withIntent.anchorId,
-      kind: withIntent.kind,
-      sourceRecordId: withIntent.sourceRecordId,
+      anchorId: view.anchorId,
+      kind: view.kind,
+      sourceRecordId: view.sourceRecordId,
     });
-    return ok(withIntent);
+    return ok(view);
   }
 
-  submit(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchor, HinAnchorFailure> {
+  submit(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchor, HinAnchorFailure> {
     return this.retry(anchorId);
   }
 
-  retry(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchor, HinAnchorFailure> {
-    const anchor = this.store.anchors.get(anchorId);
-    if (!anchor) {
+  retry(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchor, HinAnchorFailure> {
+    const current = this.refreshView(anchorId);
+    if (!current) {
       return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'HIN anchor does not exist'));
     }
-    if (anchor.finalized && anchor.chainState === 'FINALIZED') {
-      return ok(anchor);
+    if (current.finalized && current.chainState === 'FINALIZED') {
+      return ok(current);
     }
-    if (anchor.reorgObserved || anchor.chainState === 'REORG_OBSERVED') {
+    if (current.reorgObserved || current.chainState === 'REORG_OBSERVED') {
       return err(failure('HIN_ANCHOR_REORG_OBSERVED', 'REANCHOR_REVIEW_REQUIRED; HIN history is preserved'));
     }
-    if (anchor.unknownAfterBroadcast || anchor.chainState === 'UNKNOWN') {
+    if (current.unknownAfterBroadcast || current.chainState === 'UNKNOWN') {
       return err(
         failure('HIN_ANCHOR_RECONCILIATION_REQUIRED', 'UNKNOWN requires reconcile before any resubmit'),
       );
     }
-    if (anchor.chainState === 'REJECTED') {
+    if (current.chainState === 'REJECTED') {
       return err(failure('HIN_ANCHOR_REJECTED', 'rejected anchors are not retried as duplicate submissions'));
     }
-    if (anchor.operationId && isPendingState(anchor.chainState) && anchor.chainState !== 'CREATED') {
+    if (current.operationId && isPendingState(current.chainState) && current.chainState !== 'CREATED' && current.chainState !== 'INTENT_CREATED') {
       return this.refreshFinality(anchorId);
     }
-    if (!anchor.intentId) {
-      return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'anchor has no chain intent'));
-    }
-    const submitted = this.port.submit(anchor.intentId);
+    const submitted = this.port.submitAnchor(anchorId);
     if (!submitted.ok) {
-      if (submitted.error.code === 'CHAIN_UNAVAILABLE' || submitted.error.code === 'CHAIN_HEALTH_DENIED') {
+      if (submitted.error.code === 'HIN_ANCHOR_CHAIN_UNAVAILABLE') {
         return err(failure('HIN_ANCHOR_FINALITY_UNAVAILABLE', submitted.error.message));
       }
-      if (submitted.error.code === 'CHAIN_SUBMISSION_UNKNOWN') {
+      if (submitted.error.code === 'HIN_ANCHOR_RECONCILIATION_REQUIRED' || submitted.error.code === 'HIN_ANCHOR_SUBMISSION_UNKNOWN') {
+        this.markUnknown(anchorId);
         return err(failure('HIN_ANCHOR_RECONCILIATION_REQUIRED', submitted.error.message));
       }
-      return err(failure(submitted.error.code, submitted.error.message));
+      return submitted;
     }
-    return ok(this.applyOperation(anchor, submitted.value));
+    const view = this.remember(submitted.value);
+    if (view.chainState === 'UNKNOWN' || view.unknownAfterBroadcast) {
+      return err(failure('HIN_ANCHOR_RECONCILIATION_REQUIRED', 'UNKNOWN requires reconcile before any resubmit'));
+    }
+    this.emit('HumanInformationAnchorSubmitted', {
+      anchorId: view.anchorId,
+      operationId: view.operationId,
+      chainState: view.chainState,
+    });
+    if (view.finalized) {
+      this.project(view.anchorId);
+    }
+    return ok(view);
   }
 
-  refreshFinality(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchor, HinAnchorFailure> {
-    const anchor = this.store.anchors.get(anchorId);
-    if (!anchor) {
+  refreshFinality(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchor, HinAnchorFailure> {
+    const record = this.port.anchorStatus(anchorId);
+    if (!record) {
       return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'HIN anchor does not exist'));
     }
-    if (!anchor.operationId) {
-      return err(failure('HIN_ANCHOR_FINALITY_PENDING', 'anchor has not been submitted'));
-    }
-    const finality = this.port.getFinality(anchor.operationId);
-    if (!finality) {
-      return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'chain operation was not found'));
-    }
-    if (finality.state === 'UNKNOWN' || finality.unknownAfterBroadcast) {
-      const next = this.patch(anchor, {
-        chainState: 'UNKNOWN',
-        unknownAfterBroadcast: true,
-        schedule: 'REVIEW',
-        transactionId: finality.transactionId,
-        receiptId: finality.receiptId,
-        blockReference: finality.blockReference,
-        confirmations: finality.confirmations,
-        payloadCommitment: finality.payloadCommitment,
-      });
+    const view = this.remember(record);
+    if (view.chainState === 'UNKNOWN' || view.unknownAfterBroadcast) {
       return err(failure('HIN_ANCHOR_SUBMISSION_UNKNOWN', 'query or reconcile before any resubmit'));
     }
-    if (finality.state === 'REORG_OBSERVED') {
-      const next = this.patch(anchor, {
-        chainState: 'REORG_OBSERVED',
-        reorgObserved: true,
-        finalized: false,
-        schedule: 'REVIEW',
-        confirmations: finality.confirmations,
-        blockReference: finality.blockReference,
-        transactionId: finality.transactionId,
-        receiptId: finality.receiptId,
-      });
+    if (view.chainState === 'REORG_OBSERVED') {
       return err(failure('HIN_ANCHOR_REORG_OBSERVED', 'REANCHOR_REVIEW_REQUIRED; legal and financial state unchanged'));
     }
-    if (finality.state === 'REJECTED' || finality.state === 'FAILED') {
-      return ok(
-        this.patch(anchor, {
-          chainState: finality.state,
-          schedule: 'REVIEW',
-          finalized: false,
-        }),
-      );
+    if (view.finalized) {
+      this.project(view.anchorId);
     }
-    if (finality.state !== 'FINALIZED') {
-      return ok(
-        this.patch(anchor, {
-          chainState: finality.state,
-          schedule: 'SUBMITTED',
-          transactionId: finality.transactionId,
-          receiptId: finality.receiptId,
-          blockReference: finality.blockReference,
-          confirmations: finality.confirmations,
-          payloadCommitment: finality.payloadCommitment,
-          finalized: false,
-        }),
-      );
+    if (!view.operationId && view.chainState === 'INTENT_CREATED') {
+      return err(failure('HIN_ANCHOR_FINALITY_PENDING', 'anchor has not been submitted'));
     }
-    const finalized = this.patch(anchor, {
-      chainState: 'FINALIZED',
-      schedule: 'SETTLED',
-      transactionId: finality.transactionId,
-      receiptId: finality.receiptId,
-      blockReference: finality.blockReference,
-      confirmations: finality.confirmations,
-      payloadCommitment: finality.payloadCommitment,
-      finalized: true,
-      revocationCommitment: anchor.kind === 'CONSENT_REVOCATION' ? finality.payloadCommitment : anchor.revocationCommitment,
-      projectedActive: anchor.kind === 'CONSENT_RECEIPT',
-    });
-    this.project(finalized.anchorId);
-    return ok(finalized);
+    return ok(view);
   }
 
-  reconcile(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchorReconciliation, HinAnchorFailure> {
-    const anchor = this.store.anchors.get(anchorId);
-    if (!anchor) {
+  reconcile(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchorReconciliation, HinAnchorFailure> {
+    const current = this.refreshView(anchorId);
+    if (!current) {
       return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'HIN anchor does not exist'));
     }
-    if (!anchor.operationId) {
+    if (!current.operationId) {
       return err(failure('HIN_ANCHOR_RECONCILIATION_REQUIRED', 'anchor has no chain operation to reconcile'));
     }
-    return this.reconcileOperation(anchor.operationId);
+    return this.reconcileOperation(current.operationId);
   }
 
   reconcileOperation(operationId: ChainOperationId): Result<HumanInformationAnchorReconciliation, HinAnchorFailure> {
     const hin = this.store.findByOperation(operationId);
-    const reconciled = this.port.reconcile(operationId);
+    const adapter = this.adapter;
+    if (!adapter) {
+      return err(failure('HIN_ANCHOR_FINALITY_UNAVAILABLE', 'reconciliation requires the existing chain adapter'));
+    }
+    const reconciled = adapter.chain.reconcile(operationId);
     if (!reconciled.ok) {
       if (reconciled.error.code === 'OPERATION_NOT_FOUND' && !hin) {
-        const record = this.recordReconciliation({
-          anchorId: null,
-          sourceRecordId: '',
-          operationId,
-          expectedCommitment: null,
-          observedCommitment: null,
-          chainOutcome: 'MISSING_INTERNAL_RECORD',
-        });
-        return ok(record);
+        return ok(
+          this.recordReconciliation({
+            anchorId: null,
+            sourceRecordId: '',
+            operationId,
+            expectedCommitment: null,
+            observedCommitment: null,
+            chainOutcome: 'MISSING_INTERNAL_RECORD',
+          }),
+        );
       }
-      return err(failure(reconciled.error.code, reconciled.error.message));
+      return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', reconciled.error.message));
     }
     const chain = reconciled.value;
+    if (hin) {
+      this.port.reconcileAnchor(hin.anchorId);
+      this.refreshView(hin.anchorId);
+    }
     if (!hin) {
-      const record = this.recordReconciliation({
-        anchorId: null,
-        sourceRecordId: chain.sourceRecordReference,
-        operationId,
-        expectedCommitment: chain.intentCommitment,
-        observedCommitment: chain.chainCommitment,
-        chainOutcome: 'MISSING_INTERNAL_RECORD',
-      });
-      return ok(record);
+      return ok(
+        this.recordReconciliation({
+          anchorId: null,
+          sourceRecordId: chain.sourceRecordReference,
+          operationId,
+          expectedCommitment: chain.intentCommitment,
+          observedCommitment: chain.chainCommitment,
+          chainOutcome: 'MISSING_INTERNAL_RECORD',
+        }),
+      );
     }
     if (chain.outcome === 'HASH_MISMATCH') {
       this.patch(hin, { schedule: 'REVIEW' });
-      const record = this.recordReconciliation({
-        anchorId: hin.anchorId,
-        sourceRecordId: hin.sourceRecordId,
-        operationId,
-        expectedCommitment: chain.intentCommitment,
-        observedCommitment: chain.chainCommitment,
-        chainOutcome: 'HASH_MISMATCH',
-      });
-      return ok(record);
+      return ok(
+        this.recordReconciliation({
+          anchorId: hin.anchorId,
+          sourceRecordId: hin.sourceRecordId,
+          operationId,
+          expectedCommitment: chain.intentCommitment,
+          observedCommitment: chain.chainCommitment,
+          chainOutcome: 'HASH_MISMATCH',
+        }),
+      );
     }
     if (chain.outcome === 'REORG_OBSERVED') {
       this.patch(hin, { chainState: 'REORG_OBSERVED', reorgObserved: true, schedule: 'REVIEW', finalized: false });
@@ -306,38 +252,43 @@ export class HumanInformationAnchorCoordinator {
     if (chain.outcome === 'SUBMISSION_UNKNOWN') {
       this.patch(hin, { chainState: 'UNKNOWN', unknownAfterBroadcast: true, schedule: 'REVIEW' });
     }
-    const record = this.recordReconciliation({
-      anchorId: hin.anchorId,
-      sourceRecordId: hin.sourceRecordId,
-      operationId,
-      expectedCommitment: chain.intentCommitment,
-      observedCommitment: chain.chainCommitment,
-      chainOutcome: chain.outcome,
-    });
-    return ok(record);
+    if (chain.outcome === 'MISSING_CHAIN_RECORD') {
+      this.patch(hin, { schedule: 'REVIEW' });
+    }
+    return ok(
+      this.recordReconciliation({
+        anchorId: hin.anchorId,
+        sourceRecordId: hin.sourceRecordId,
+        operationId,
+        expectedCommitment: chain.intentCommitment,
+        observedCommitment: chain.chainCommitment,
+        chainOutcome: chain.outcome,
+      }),
+    );
   }
 
-  project(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchor, HinAnchorFailure> {
-    const anchor = this.store.anchors.get(anchorId);
+  project(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchor, HinAnchorFailure> {
+    const anchor = this.refreshView(anchorId);
     if (!anchor) {
       return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'HIN anchor does not exist'));
     }
-    if (anchor.kind === 'USAGE_RECEIPT' || anchor.kind === 'COMPUTATION_RECEIPT') {
+    if (anchor.kind === 'USAGE_RECEIPT' || anchor.kind === 'CLEAN_ROOM_COMPUTATION') {
+      const rightId = this.usageRightId(anchor);
       const projection: HumanInformationUsageAnchorProjection = Object.freeze({
         schemaVersion: 2,
         projectionId: newUsageAnchorProjectionId(),
         receiptId: anchor.sourceRecordId as HumanInformationUsageAnchorProjection['receiptId'],
-        rightId: (anchor.requesterId ?? '') as HumanInformationUsageAnchorProjection['rightId'],
+        rightId,
         anchorId: anchor.anchorId,
         chainHeight: parseChainHeight(anchor.blockReference),
         transactionId: anchor.transactionId,
         blockReference: anchor.blockReference,
         finalized: anchor.finalized,
-        createdAt: this.clock.now(),
+        createdAt: this.now(),
       });
       this.store.usageProjections.set(anchor.sourceRecordId, projection);
     }
-    if (anchor.kind === 'CONSENT_RECEIPT') {
+    if (anchor.kind === 'CONSENT_GRANT') {
       const projection: HumanInformationConsentAnchorProjection = Object.freeze({
         grantId: anchor.sourceRecordId as HumanInformationConsentAnchorProjection['grantId'],
         anchorId: anchor.anchorId,
@@ -352,12 +303,11 @@ export class HumanInformationAnchorCoordinator {
       this.store.consentProjections.set(anchor.sourceRecordId, projection);
     }
     if (anchor.kind === 'CONSENT_REVOCATION') {
-      const prior = [...this.store.anchors.values()].find(
-        (row) => row.kind === 'CONSENT_RECEIPT' && row.sourceRecordId === this.grantIdFromRevocation(anchor),
-      );
+      const grantId = this.grantIdFromRevocation(anchor);
+      const prior = this.store.findBySource('CONSENT_GRANT', grantId);
       const projection: HumanInformationRevocationAnchorProjection = Object.freeze({
         revocationId: anchor.sourceRecordId as HumanInformationRevocationAnchorProjection['revocationId'],
-        grantId: this.grantIdFromRevocation(anchor) as HumanInformationRevocationAnchorProjection['grantId'],
+        grantId: grantId as HumanInformationRevocationAnchorProjection['grantId'],
         anchorId: anchor.anchorId,
         priorConsentAnchorCommitment: prior?.payloadCommitment ?? anchor.priorConsentCommitment,
         revocationCommitment: anchor.payloadCommitment,
@@ -377,23 +327,24 @@ export class HumanInformationAnchorCoordinator {
       }
     }
     if (anchor.finalized && this.registry) {
-      projectFinalizedChainAnchor(this.registry, anchor, this.clock.now());
+      projectFinalizedChainAnchor(this.registry, anchor, this.now());
     }
     return ok(anchor);
   }
 
-  observeReorg(anchorId: HumanInformationAnchor['anchorId']): Result<HumanInformationAnchor, HinAnchorFailure> {
-    const anchor = this.store.anchors.get(anchorId);
+  observeReorg(anchorId: HumanInformationAnchorId | string): Result<HumanInformationAnchor, HinAnchorFailure> {
+    const anchor = this.refreshView(anchorId);
     if (!anchor?.operationId) {
       return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', 'cannot observe reorg without a chain operation'));
     }
-    if (!this.port.observeReorg) {
+    if (!this.adapter) {
       return err(failure('HIN_ANCHOR_FINALITY_UNAVAILABLE', 'reorg observation is a chain responsibility'));
     }
-    const observed = this.port.observeReorg(anchor.operationId);
+    const observed = this.adapter.chain.observeReorg(anchor.operationId);
     if (!observed.ok) {
-      return err(failure(observed.error.code, observed.error.message));
+      return err(failure('HIN_ANCHOR_OPERATION_NOT_FOUND', observed.error.message));
     }
+    this.port.anchorStatus(anchor.anchorId);
     const next = this.patch(anchor, {
       chainState: 'REORG_OBSERVED',
       reorgObserved: true,
@@ -409,8 +360,8 @@ export class HumanInformationAnchorCoordinator {
   }
 
   advanceSimulatedFinality(blocks?: number): void {
-    this.port.advanceFinality?.(blocks);
-    for (const anchor of this.store.anchors.values()) {
+    this.adapter?.chain.advanceFinality(blocks);
+    for (const anchor of this.store.views.values()) {
       if (anchor.operationId && !anchor.unknownAfterBroadcast) {
         this.refreshFinality(anchor.anchorId);
       }
@@ -418,22 +369,20 @@ export class HumanInformationAnchorCoordinator {
   }
 
   setChainUnavailable(unavailable: boolean): void {
-    this.port.setUnavailable?.(unavailable);
+    this.adapter?.chain.simulationAdapter.setControls({ unavailable });
   }
 
   setUnknownNext(unknownNext: boolean): void {
-    this.port.setUnknownNext?.(unknownNext);
+    this.adapter?.chain.simulationAdapter.setControls({ unknownNext });
   }
 
   health(): HumanInformationAnchorHealth {
-    const anchors = [...this.store.anchors.values()];
+    const anchors = [...this.store.views.values()];
     const pending = anchors.filter((row) => row.schedule === 'PENDING_ANCHOR' || isPendingState(row.chainState));
-    const oldest = pending
-      .map((row) => Date.parse(row.createdAt) )
-      .sort((a, b) => a - b)[0];
-    const now = Date.parse(this.clock.now());
+    const oldest = pending.map((row) => Date.parse(row.createdAt)).sort((a, b) => a - b)[0];
+    const now = Date.parse(this.now());
     return Object.freeze({
-      chainAvailable: this.port.getHealth().status !== 'UNAVAILABLE',
+      chainAvailable: this.adapter?.chain.getHealth().status !== 'UNAVAILABLE',
       pendingAnchors: pending.length,
       unknownSubmissions: anchors.filter((row) => row.unknownAfterBroadcast || row.chainState === 'UNKNOWN').length,
       reconciliationFailures: this.store.reconciliations.filter((row) => row.hinOutcome !== 'MATCHED' && row.hinOutcome !== 'PENDING').length,
@@ -444,12 +393,12 @@ export class HumanInformationAnchorCoordinator {
   }
 
   auditCounters(): HumanInformationRightsAuditV2 {
-    const anchors = [...this.store.anchors.values()];
+    const anchors = [...this.store.views.values()];
     return Object.freeze({
       schemaVersion: 2,
       onChainAnchors: anchors.length,
       anchorsCreated: anchors.length,
-      anchorsSubmitted: anchors.filter((row) => row.intentId !== null && row.chainState !== 'CREATED').length,
+      anchorsSubmitted: anchors.filter((row) => row.intentId !== null && row.chainState !== 'CREATED' && row.chainState !== 'INTENT_CREATED').length,
       anchorsFinalized: anchors.filter((row) => row.finalized).length,
       anchorsPending: anchors.filter((row) => row.schedule === 'PENDING_ANCHOR' || isPendingState(row.chainState)).length,
       anchorsReconciliationRequired: anchors.filter(
@@ -460,7 +409,7 @@ export class HumanInformationAnchorCoordinator {
   }
 
   consentStatus(sourceRecordId: string): PrivacySafeAnchorStatus | null {
-    return privacySafeStatus(this.store.findBySource('CONSENT_RECEIPT', sourceRecordId));
+    return privacySafeStatus(this.store.findBySource('CONSENT_GRANT', sourceRecordId));
   }
 
   revocationStatus(sourceRecordId: string): PrivacySafeAnchorStatus | null {
@@ -468,57 +417,60 @@ export class HumanInformationAnchorCoordinator {
   }
 
   usageStatus(sourceRecordId: string): PrivacySafeAnchorStatus | null {
-    return (
-      privacySafeStatus(this.store.findBySource('USAGE_RECEIPT', sourceRecordId)) ??
-      privacySafeStatus(this.store.findBySource('COMPUTATION_RECEIPT', sourceRecordId))
-    );
+    return privacySafeStatus(this.store.findBySource('USAGE_RECEIPT', sourceRecordId));
   }
 
   anchorsForRequester(requesterId: string): readonly HumanInformationAnchor[] {
-    return Object.freeze([...this.store.anchors.values()].filter((row) => row.requesterId === requesterId));
+    return Object.freeze([...this.store.views.values()].filter((row) => row.requesterId === requesterId));
   }
 
   anchorsForSubjectHandle(subjectHandle: string): readonly HumanInformationAnchor[] {
-    return Object.freeze([...this.store.anchors.values()].filter((row) => row.subjectHandle === subjectHandle));
+    return Object.freeze([...this.store.views.values()].filter((row) => row.subjectHandle === subjectHandle));
   }
 
-  private applyOperation(anchor: HumanInformationAnchor, operation: ChainOperation): HumanInformationAnchor {
-    if (operation.state === 'UNKNOWN' || operation.unknownAfterBroadcast) {
-      return this.patch(anchor, {
-        intentId: operation.intentId as ChainWriteIntentId,
-        operationId: operation.operationId,
-        payloadCommitment: operation.payloadCommitment,
-        chainState: 'UNKNOWN',
-        unknownAfterBroadcast: true,
-        schedule: 'REVIEW',
-        transactionId: operation.transactionId,
-        receiptId: operation.receiptId,
-        blockReference: operation.blockReference,
-        confirmations: operation.confirmations,
-      });
+  private refreshView(anchorId: HumanInformationAnchorId | string): HumanInformationAnchor | undefined {
+    const record = this.port.anchorStatus(anchorId);
+    if (!record) {
+      return this.store.views.get(anchorId as HumanInformationAnchorId);
     }
-    const next = this.patch(anchor, {
-      intentId: operation.intentId as ChainWriteIntentId,
-      operationId: operation.operationId,
-      payloadCommitment: operation.payloadCommitment,
-      chainState: operation.state,
-      schedule: operation.state === 'FINALIZED' ? 'SETTLED' : 'SUBMITTED',
-      transactionId: operation.transactionId,
-      receiptId: operation.receiptId,
-      blockReference: operation.blockReference,
-      confirmations: operation.confirmations,
-      unknownAfterBroadcast: false,
-      finalized: operation.state === 'FINALIZED',
+    return this.remember(record);
+  }
+
+  private remember(record: HumanInformationChainAnchorRecord): HumanInformationAnchor {
+    const previous = this.store.views.get(record.anchorId);
+    const meta = this.store.meta.get(record.anchorId);
+    const view: HumanInformationAnchor = Object.freeze({
+      schemaVersion: 1,
+      record,
+      anchorId: record.anchorId,
+      kind: record.anchorKind,
+      recordType: record.chainRecordType,
+      sourceRecordId: record.sourceRecordId,
+      subjectHandle: meta?.subjectHandle ?? previous?.subjectHandle ?? '',
+      requesterId: meta?.requesterId ?? previous?.requesterId ?? this.requesterFromSource(record),
+      intentId: record.intentId,
+      operationId: record.operationId,
+      payloadCommitment: record.payloadCommitment,
+      chainState: record.state,
+      schedule: scheduleFor(record.state),
+      transactionId: record.transactionId,
+      receiptId: record.receiptId,
+      blockReference: record.blockReference,
+      confirmations: record.confirmations,
+      finalized: record.state === 'FINALIZED',
+      unknownAfterBroadcast: record.state === 'UNKNOWN',
+      reorgObserved: record.state === 'REORG_OBSERVED' || previous?.reorgObserved === true,
+      priorConsentCommitment: meta?.priorConsentCommitment ?? previous?.priorConsentCommitment ?? null,
+      revocationCommitment: record.anchorKind === 'CONSENT_REVOCATION' ? record.payloadCommitment : previous?.revocationCommitment ?? null,
+      projectedActive: record.anchorKind === 'CONSENT_GRANT' && previous?.projectedActive !== false,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      rawPersonalData: false,
+      mintsAsset: false,
+      altersLedger: false,
     });
-    this.emit('HumanInformationAnchorSubmitted', {
-      anchorId: next.anchorId,
-      operationId: next.operationId,
-      chainState: next.chainState,
-    });
-    if (next.finalized) {
-      this.project(next.anchorId);
-    }
-    return next;
+    this.store.put(view);
+    return view;
   }
 
   private patch(
@@ -531,14 +483,21 @@ export class HumanInformationAnchorCoordinator {
       rawPersonalData: false,
       mintsAsset: false,
       altersLedger: false,
-      updatedAt: this.clock.now(),
+      updatedAt: this.now(),
     });
     this.store.put(next);
     return next;
   }
 
+  private markUnknown(anchorId: HumanInformationAnchorId | string): void {
+    const current = this.store.views.get(anchorId as HumanInformationAnchorId);
+    if (current) {
+      this.patch(current, { chainState: 'UNKNOWN', unknownAfterBroadcast: true, schedule: 'REVIEW' });
+    }
+  }
+
   private recordReconciliation(input: {
-    readonly anchorId: HumanInformationAnchor['anchorId'] | null;
+    readonly anchorId: HumanInformationAnchorId | null;
     readonly sourceRecordId: string;
     readonly operationId: ChainOperationId | null;
     readonly expectedCommitment: string | null;
@@ -554,7 +513,7 @@ export class HumanInformationAnchorCoordinator {
       observedCommitment: input.observedCommitment,
       chainOutcome: input.chainOutcome,
       hinOutcome: mapHinReconciliation(input.chainOutcome),
-      createdAt: this.clock.now(),
+      createdAt: this.now(),
       autoFixed: false,
     });
     this.store.rememberReconciliation(record);
@@ -562,25 +521,48 @@ export class HumanInformationAnchorCoordinator {
   }
 
   private hasFinalizedRevocation(grantId: string): boolean {
-    return [...this.store.anchors.values()].some(
-      (row) =>
-        row.kind === 'CONSENT_REVOCATION' &&
-        (row.sourceRecordId === grantId || row.priorConsentCommitment !== null) &&
-        this.grantIdFromRevocation(row) === grantId,
+    return [...this.store.views.values()].some(
+      (row) => row.kind === 'CONSENT_REVOCATION' && this.grantIdFromRevocation(row) === grantId && row.finalized,
     );
   }
 
   private grantIdFromRevocation(anchor: HumanInformationAnchor): string {
-    const intent = anchor.intentId ? this.port.getIntent(anchor.intentId) : undefined;
-    const consentId = intent?.schema.fields.consentId;
-    return typeof consentId === 'string' ? consentId : anchor.sourceRecordId;
+    const revocation = this.adapter?.engine.store.revocations.get(anchor.sourceRecordId);
+    return revocation?.grantId ?? anchor.sourceRecordId;
+  }
+
+  private usageRightId(anchor: HumanInformationAnchor): HumanInformationUsageAnchorProjection['rightId'] {
+    const receipt = this.adapter?.engine.store.receipts.get(anchor.sourceRecordId);
+    return (receipt?.rightId ?? '') as HumanInformationUsageAnchorProjection['rightId'];
+  }
+
+  private requesterFromSource(record: HumanInformationChainAnchorRecord): string | null {
+    const engine = this.adapter?.engine;
+    if (!engine) {
+      return null;
+    }
+    if (record.anchorKind === 'CONSENT_GRANT') {
+      return engine.store.grants.get(record.sourceRecordId as never)?.requesterId ?? null;
+    }
+    if (record.anchorKind === 'USAGE_RECEIPT') {
+      return engine.store.receipts.get(record.sourceRecordId)?.requesterId ?? null;
+    }
+    if (record.anchorKind === 'CONSENT_REVOCATION') {
+      const revocation = engine.store.revocations.get(record.sourceRecordId);
+      return revocation ? engine.store.grants.get(revocation.grantId)?.requesterId ?? null : null;
+    }
+    return null;
+  }
+
+  private now(): UtcInstant {
+    return this.clock?.now() ?? (this.adapter?.clock.now() as UtcInstant);
   }
 
   private emit(eventType: string, payload: Record<string, unknown>): void {
     this.events?.append({
       eventType: eventType as never,
       schemaVersion: 1,
-      occurredAt: this.clock.now() as UtcInstant,
+      occurredAt: this.now(),
       payload,
     });
   }
@@ -592,4 +574,4 @@ export function createHumanInformationAnchorCoordinator(
   return new HumanInformationAnchorCoordinator(options);
 }
 
-export type { ChainOperationState };
+export type { HinAnchorKind };

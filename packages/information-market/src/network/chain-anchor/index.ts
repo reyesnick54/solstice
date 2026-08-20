@@ -1,18 +1,37 @@
 export {
-  createHumanInformationChainAnchorPort,
-  SunReyHumanInformationChainAnchorAdapter,
+  HinChainAnchorAdapter,
+  createHinChainAnchorAdapter,
+  hinFinalizedAnchorForRegistry,
 } from './adapter.ts';
+export {
+  commitHinDomain,
+  computationCommitment,
+  consentCommitment,
+  contributionProofCommitment,
+  humanInformationAnchorKey,
+  provenanceCommitment,
+  purposeGrantCommitment,
+  revocationCommitment,
+  rightStateCommitment,
+  usageReceiptCommitment,
+} from './commitments.ts';
 export {
   createHumanInformationAnchorCoordinator,
   HumanInformationAnchorCoordinator,
 } from './coordinator.ts';
+export { runHinChainAnchorFoundationDemo } from './demo.ts';
+export { runHumanInformationChainFinalityDemo } from './finality-demo.ts';
+export {
+  HIN_ANCHOR_NOW,
+  createSimulationChain,
+  provisionHinChainAnchorFixture,
+  realizeHinUse,
+} from './fixtures.ts';
 export {
   newAnchorReconciliationId,
-  newHumanInformationAnchorId,
   newUsageAnchorProjectionId,
   HIN_ANCHOR_ID_PREFIXES,
 } from './ids.ts';
-export { privacySafeIntentInput, recordTypeForAnchorKind } from './intents.ts';
 export {
   ANCHOR_ALTERS_LEDGER,
   ANCHOR_MINTS_ASSET,
@@ -24,12 +43,14 @@ export {
   RAW_PERSONAL_DATA_ON_CHAIN,
   REVOCATION_REQUIRES_CHAIN_TO_BLOCK_FUTURE_USE,
 } from './invariants.ts';
-export type {
-  HinChainFinality,
-  HumanInformationChainAnchorPort,
-  HumanInformationChainAnchorRuntime,
-  HumanInformationChainSimulationControls,
-} from './port.ts';
+export {
+  HIN_ANCHOR_COMMITMENT_DOMAINS,
+  HIN_ANCHOR_KIND_TO_CHAIN_RECORD,
+  HIN_CHAIN_ANCHOR_INVARIANTS,
+  HIN_CHAIN_ANCHOR_OWNER,
+  chainRecordTypeFor,
+} from './policy.ts';
+export type { HumanInformationChainAnchorPort } from './port.ts';
 export {
   mapHinReconciliation,
   parseChainHeight,
@@ -44,21 +65,39 @@ export {
   scheduleSettlementAnchor,
   scheduleUsageAnchor,
 } from './schedule.ts';
+export {
+  assertPrivacySafeAnchorMaterial,
+  buildComputationAnchorSchema,
+  buildConsentAnchorSchema,
+  buildContributionProofAnchorSchema,
+  buildProvenanceAnchorSchema,
+  buildPurposeGrantAnchorSchema,
+  buildRevocationAnchorSchema,
+  buildRightStateAnchorSchema,
+  buildSettlementReferenceAnchorSchema,
+  buildUsageReceiptAnchorSchema,
+  classifyHinSchema,
+} from './schemas.ts';
 export { HumanInformationAnchorStore } from './store.ts';
-export type {
-  HinAnchorFailure,
-  HinAnchorFailureCode,
-  HinAnchorKind,
-  HinAnchorPrepareInput,
-  HinReconciliationOutcome,
-  HumanInformationAnchor,
-  HumanInformationAnchorHealth,
-  HumanInformationAnchorReconciliation,
-  HumanInformationConsentAnchorProjection,
-  HumanInformationRevocationAnchorProjection,
-  HumanInformationRightsAuditV2,
-  HumanInformationUsageAnchorProjection,
-  PrivacySafeAnchorPresentation,
-  PrivacySafeAnchorStatus,
+export {
+  HIN_ANCHOR_FAILURE_CODES,
+  HIN_ANCHOR_KINDS,
+  HIN_ANCHOR_STATES,
+  HIN_RECONCILIATION_OUTCOMES,
+  type CanonicalSettlementReference,
+  type HinAnchorFailure,
+  type HinAnchorKind,
+  type HinAnchorRequest,
+  type HinAnchorState,
+  type HumanInformationAnchor,
+  type HumanInformationAnchorHealth,
+  type HumanInformationAnchorKey,
+  type HumanInformationAnchorReconciliation,
+  type HumanInformationChainAnchorRecord,
+  type HumanInformationConsentAnchorProjection,
+  type HumanInformationRevocationAnchorProjection,
+  type HumanInformationRightsAuditV2,
+  type HumanInformationUsageAnchorProjection,
+  type PrivacySafeAnchorPresentation,
+  type PrivacySafeAnchorStatus,
 } from './types.ts';
-export { HIN_ANCHOR_FAILURE_CODES, HIN_ANCHOR_KINDS, HIN_RECONCILIATION_OUTCOMES } from './types.ts';

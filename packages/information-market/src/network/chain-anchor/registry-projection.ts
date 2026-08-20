@@ -45,9 +45,6 @@ export function projectFinalizedChainAnchor(
 }
 
 function sourceRecordFor(anchor: HumanInformationAnchor): string {
-  if (anchor.kind === 'CONSENT_REVOCATION') {
-    return anchor.sourceRecordId;
-  }
   return anchor.sourceRecordId;
 }
 

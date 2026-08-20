@@ -70,14 +70,7 @@ export class HinContributionAdapter {
       );
       const prepared = scheduleContributionAnchor(this.anchorCoordinator, {
         contributionId: recorded.value.contributionId,
-        fingerprint: recorded.value.evidence.evidenceDigest,
-        verificationDecision: recorded.value.status,
-        informationRightEvidence: recorded.value.evidence.rightId,
-        usageReceiptId: recorded.value.evidence.usageReceiptId,
         subjectHandle: subject?.publicHandle ?? recorded.value.evidence.subjectPseudonymousRef,
-        subjectRawId: recorded.value.evidence.subjectPseudonymousRef,
-        purpose: recorded.value.evidence.purposeRef,
-        jurisdictionCell: 'GB:SIM',
       });
       if (prepared.ok) {
         this.anchorCoordinator.submit(prepared.value.anchorId);

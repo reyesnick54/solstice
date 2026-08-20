@@ -339,6 +339,11 @@ export type MobileNotification = {
   readonly legalName: false;
 };
 
+/**
+ * Weak HIN-local evidence projection retained for Chunk 100 audit
+ * counts. Canonical chain-bound records live in
+ * `HumanInformationChainAnchorRecord` at `./chain-anchor`.
+ */
 export type OnChainAnchor = {
   readonly permissionId: string | null;
   readonly consentHash: string | null;

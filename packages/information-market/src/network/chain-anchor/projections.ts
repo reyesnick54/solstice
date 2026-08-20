@@ -1,5 +1,4 @@
-import type { ChainOperationState } from '../../../../sunrey-chain/src/taxonomy.ts';
-import type { HumanInformationAnchor, PrivacySafeAnchorPresentation, PrivacySafeAnchorStatus } from './types.ts';
+import type { HinAnchorState, HumanInformationAnchor, PrivacySafeAnchorPresentation, PrivacySafeAnchorStatus } from './types.ts';
 
 export function parseChainHeight(blockReference: string | null): bigint | null {
   if (!blockReference) {
@@ -42,9 +41,10 @@ export function privacySafeStatus(anchor: HumanInformationAnchor | undefined): P
   });
 }
 
-export function isPendingState(state: ChainOperationState): boolean {
+export function isPendingState(state: HinAnchorState | string): boolean {
   return (
     state === 'CREATED' ||
+    state === 'INTENT_CREATED' ||
     state === 'QUEUED' ||
     state === 'SUBMITTED' ||
     state === 'ACCEPTED' ||
@@ -52,7 +52,27 @@ export function isPendingState(state: ChainOperationState): boolean {
   );
 }
 
-export function mapHinReconciliation(chainOutcome: string): 'MATCHED' | 'PENDING' | 'REVIEW_REQUIRED' | 'REANCHOR_REVIEW_REQUIRED' | 'FAILED' {
+export function scheduleFor(state: HinAnchorState | string): HumanInformationAnchor['schedule'] {
+  if (state === 'FINALIZED') {
+    return 'SETTLED';
+  }
+  if (
+    state === 'UNKNOWN' ||
+    state === 'REORG_OBSERVED' ||
+    state === 'REJECTED' ||
+    state === 'FAILED'
+  ) {
+    return 'REVIEW';
+  }
+  if (state === 'CREATED' || state === 'INTENT_CREATED' || state === 'QUEUED') {
+    return 'PENDING_ANCHOR';
+  }
+  return 'SUBMITTED';
+}
+
+export function mapHinReconciliation(
+  chainOutcome: string,
+): 'MATCHED' | 'PENDING' | 'REVIEW_REQUIRED' | 'REANCHOR_REVIEW_REQUIRED' | 'FAILED' {
   switch (chainOutcome) {
     case 'MATCHED':
       return 'MATCHED';

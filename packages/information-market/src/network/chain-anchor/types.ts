@@ -14,12 +14,49 @@ import type {
   HumanInformationUsageReceiptId,
 } from '../ids.ts';
 import type {
-  HumanInformationAnchorId,
   HumanInformationAnchorReconciliationId,
   HumanInformationUsageAnchorProjectionId,
 } from './ids.ts';
 
+export const HIN_ANCHOR_KINDS = [
+  'CONSENT_GRANT',
+  'CONSENT_REVOCATION',
+  'INFORMATION_RIGHT_STATE',
+  'PURPOSE_GRANT',
+  'USAGE_RECEIPT',
+  'CLEAN_ROOM_COMPUTATION',
+  'PROVENANCE',
+  'HUMAN_CONTRIBUTION_PROOF',
+  'COMPENSATION_SETTLEMENT_REFERENCE',
+] as const;
+export type HinAnchorKind = (typeof HIN_ANCHOR_KINDS)[number];
+
+export const HIN_ANCHOR_STATES = [
+  'CREATED',
+  'INTENT_CREATED',
+  'QUEUED',
+  'SUBMITTED',
+  'ACCEPTED',
+  'PENDING_FINALITY',
+  'FINALIZED',
+  'REJECTED',
+  'UNKNOWN',
+  'REORG_OBSERVED',
+  'FAILED',
+] as const;
+export type HinAnchorState = (typeof HIN_ANCHOR_STATES)[number];
+
 export const HIN_ANCHOR_FAILURE_CODES = [
+  'HIN_ANCHOR_SOURCE_NOT_FOUND',
+  'HIN_ANCHOR_KIND_UNSUPPORTED',
+  'HIN_ANCHOR_PRIVACY_VIOLATION',
+  'HIN_ANCHOR_SCHEMA_INVALID',
+  'HIN_ANCHOR_DUPLICATE',
+  'HIN_ANCHOR_SUBJECT_SCOPE_REQUIRED',
+  'HIN_ANCHOR_SETTLEMENT_NOT_CANONICAL',
+  'HIN_ANCHOR_CONTRIBUTION_NOT_VERIFIED',
+  'HIN_ANCHOR_CHAIN_UNAVAILABLE',
+  'HIN_ANCHOR_INTENT_CREATION_FAILED',
   'HIN_ANCHOR_OPERATION_NOT_FOUND',
   'HIN_ANCHOR_SUBMISSION_UNKNOWN',
   'HIN_ANCHOR_RECONCILIATION_REQUIRED',
@@ -33,19 +70,63 @@ export const HIN_ANCHOR_FAILURE_CODES = [
 export type HinAnchorFailureCode = (typeof HIN_ANCHOR_FAILURE_CODES)[number];
 
 export type HinAnchorFailure = {
-  readonly code: HinAnchorFailureCode | string;
+  readonly code: HinAnchorFailureCode;
   readonly message: string;
 };
 
-export const HIN_ANCHOR_KINDS = [
-  'CONSENT_RECEIPT',
-  'CONSENT_REVOCATION',
-  'USAGE_RECEIPT',
-  'COMPUTATION_RECEIPT',
-  'PROOF_OF_CONTRIBUTION',
-  'DIGITAL_ASSET_SETTLEMENT',
-] as const;
-export type HinAnchorKind = (typeof HIN_ANCHOR_KINDS)[number];
+export type HumanInformationAnchorId = string & { readonly __brand: 'HumanInformationAnchorId' };
+export type HumanInformationAnchorKey = string & { readonly __brand: 'HumanInformationAnchorKey' };
+
+export type HumanInformationChainAnchorRecord = {
+  readonly anchorId: HumanInformationAnchorId;
+  readonly anchorKind: HinAnchorKind;
+  readonly sourceRecordId: string;
+  readonly sourceRecordVersion: string;
+  readonly chainRecordType: ChainRecordType;
+  readonly payloadCommitment: string;
+  readonly subjectReferenceCommitment: string | null;
+  readonly intentId: ChainWriteIntentId | null;
+  readonly operationId: ChainOperationId | null;
+  readonly transactionId: ChainTransactionId | null;
+  readonly receiptId: ChainReceiptId | null;
+  readonly blockReference: ChainBlockReference | null;
+  readonly state: HinAnchorState;
+  readonly confirmations: number;
+  readonly policyVersion: string;
+  readonly jurisdictionCell: string;
+  readonly createdAt: UtcInstant;
+  readonly updatedAt: UtcInstant;
+  readonly rawSensitivePersonalInformation: false;
+  readonly transfersOwnership: false;
+  readonly createsMonetaryAuthority: false;
+  readonly mintsAsset: false;
+};
+
+export type CanonicalSettlementReference = {
+  readonly journalId: string;
+  readonly transferId: string;
+  readonly assetCommitment: string;
+};
+
+export type HinAnchorRequest = {
+  readonly kind: HinAnchorKind;
+  readonly sourceRecordId: string;
+  readonly sourceRecordVersion?: string;
+  readonly contributionId?: string;
+  readonly canonicalSettlement?: CanonicalSettlementReference;
+  readonly extraPayload?: Readonly<Record<string, unknown>>;
+  readonly requesterId?: string | null;
+  readonly subjectHandle?: string;
+  readonly priorConsentCommitment?: string | null;
+};
+
+export type HinSubjectScope = {
+  readonly rawSubjectId: string;
+  readonly recipientContext: string;
+  readonly purpose: string;
+  readonly jurisdictionCell: string;
+  readonly keyVersion: number;
+};
 
 export const HIN_RECONCILIATION_OUTCOMES = [
   'MATCHED',
@@ -65,6 +146,7 @@ export type PrivacySafeAnchorPresentation = (typeof PRIVACY_SAFE_ANCHOR_PRESENTA
  */
 export type HumanInformationAnchor = {
   readonly schemaVersion: 1;
+  readonly record: HumanInformationChainAnchorRecord;
   readonly anchorId: HumanInformationAnchorId;
   readonly kind: HinAnchorKind;
   readonly recordType: ChainRecordType;
@@ -74,7 +156,7 @@ export type HumanInformationAnchor = {
   readonly intentId: ChainWriteIntentId | null;
   readonly operationId: ChainOperationId | null;
   readonly payloadCommitment: string | null;
-  readonly chainState: ChainOperationState;
+  readonly chainState: HinAnchorState | ChainOperationState;
   readonly schedule: 'PENDING_ANCHOR' | 'SUBMITTED' | 'SETTLED' | 'REVIEW';
   readonly transactionId: ChainTransactionId | null;
   readonly receiptId: ChainReceiptId | null;
@@ -112,7 +194,7 @@ export type HumanInformationConsentAnchorProjection = {
   readonly payloadCommitment: string | null;
   readonly transactionId: ChainTransactionId | null;
   readonly blockReference: ChainBlockReference | null;
-  readonly chainState: ChainOperationState;
+  readonly chainState: HinAnchorState | ChainOperationState;
   readonly finalized: boolean;
   readonly projectedActive: boolean;
   readonly legalConsentAuthority: 'HIN';
@@ -146,7 +228,7 @@ export type HumanInformationAnchorReconciliation = {
 
 export type PrivacySafeAnchorStatus = {
   readonly presentation: PrivacySafeAnchorPresentation;
-  readonly chainState: ChainOperationState;
+  readonly chainState: HinAnchorState | ChainOperationState;
   readonly transactionId: ChainTransactionId | null;
   readonly blockReference: ChainBlockReference | null;
   readonly confirmations: number;
@@ -172,17 +254,4 @@ export type HumanInformationRightsAuditV2 = {
   readonly anchorsPending: number;
   readonly anchorsReconciliationRequired: number;
   readonly anchorsReorgObserved: number;
-};
-
-export type HinAnchorPrepareInput = {
-  readonly kind: HinAnchorKind;
-  readonly sourceRecordId: string;
-  readonly subjectHandle: string;
-  readonly requesterId?: string | null;
-  readonly purpose: string;
-  readonly jurisdictionCell: string;
-  readonly correlationId: string;
-  readonly schemaFields: Readonly<Record<string, string | number | boolean | null>>;
-  readonly subjectRawId?: string;
-  readonly priorConsentCommitment?: string | null;
 };
