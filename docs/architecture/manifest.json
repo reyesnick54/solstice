@@ -3101,7 +3101,7 @@
       "id": "moonrey-production-issuance-policy-candidate",
       "name": "MoonRey production-candidate Productive Value, conversion, and issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate/index.ts",
+      "canonicalPath": "packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate/types.ts",
       "publicInterface": "packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
@@ -3111,10 +3111,6 @@
       "protectedSymbols": [
         {
           "name": "MoonReyProductiveValuePolicyCandidate",
-          "kind": "type"
-        },
-        {
-          "name": "MoonReyProductionIssuanceParameterPackage",
           "kind": "type"
         }
       ],
@@ -3129,6 +3125,33 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 146 MoonRey production-candidate Productive Value, GPUV conversion, category caps, and issuance parameter package. Schema only. Does not invent GPUV values, conversion rates, or tokenomics. Does not activate MoonRey issuance. Chunk 71 remains the mint."
+    },
+    {
+      "id": "moonrey-production-issuance-parameter-package",
+      "name": "MoonRey production-candidate issuance parameter package",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/moonrey-parameter-package.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "MoonReyProductionIssuanceParameterPackage",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/moonrey-production-tokenomics",
+        "packages/moonrey-issuance-policy",
+        "packages/tokenomics-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 146 production-candidate issuance parameter assembly under the Chunk 143 production-activation owner. Binds unconfigured supply, conversion, and cap identifiers. Does not choose production tokenomics or activate issuance."
     },
     {
       "id": "sunrey-production-infrastructure",
