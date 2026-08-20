@@ -2746,7 +2746,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2831,6 +2831,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
+    },
+    {
+      "id": "sunrey-unified-economic-data-fabric",
+      "name": "Unified multi-provider economic data fabric, coverage, and cross-domain reconciliation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/economic-data-fabric/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "EconomicDataCollectionEnvelope",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/economic-data-fabric",
+        "packages/unified-oracles",
+        "packages/cross-domain-reconciliation",
+        "packages/moonrey-data-fabric"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -6227,6 +6255,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 131 read-only manufacturing, industrial automation, and robotics economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/manufacturing. Extends sunrey-production-oracles. No industrial control path, no real factory contact, no production activation, and no MoonRey mint. Do not create packages/manufacturing-oracle, packages/industrial-data-fabric, packages/robotics-oracle, or packages/factory-connectors."
+    },
+    {
+      "id": "sunrey-unified-economic-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 138 unified multi-provider economic data fabric at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Not a second oracle, productive registry, attribution engine, economic asset registry, or mint. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
     }
   ],
   "boundedContexts": [

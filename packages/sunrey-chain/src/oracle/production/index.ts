@@ -279,4 +279,19 @@ export {
   runResourceDataFabricDemo,
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
+export {
+  CANONICAL_FAMILY_REGISTRY,
+  DATA_FABRIC_FINALIZES_FACTS,
+  DATA_FABRIC_MINTS_MOONREY,
+  EconomicDataProviderFamilyRegistry,
+  admitCollection,
+  buildCoverageReport,
+  ingestBatch,
+  runUnifiedEconomicDataFabricDemo,
+} from './economic-data-fabric/index.ts';
+export type {
+  EconomicDataCollectionEnvelope,
+  EconomicDataFabricCoverageReport,
+  EconomicDataProviderFamilyRecord,
+} from './economic-data-fabric/index.ts';
 
