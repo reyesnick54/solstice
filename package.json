@@ -105,6 +105,7 @@
     "sunrey-testnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/testnet/cli-main.ts",
     "sunrey-mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/mainnet/cli-main.ts",
     "demo:sunrey-mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/mainnet/demo.ts",
+    "demo:sunrey-external-evidence-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/mainnet/external-evidence/demo.ts",
     "sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/launch-rehearsal/cli-main.ts",
     "demo:sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/launch-rehearsal/demo.ts",
     "demo:sunrey-economic-mainnet-rehearsal": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economic-rehearsal/demo.ts",

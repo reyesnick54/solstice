@@ -195,6 +195,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
 | sunrey-dual-asset-custody-provider-candidate | IMPLEMENTED | packages/custody |
 | sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-distributed-idempotency-recovery | IMPLEMENTED | packages/events |
 | sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
 
@@ -1576,6 +1577,15 @@ Do not create `packages/database-v2`, `packages/state-store`,
 `packages/durable-state`, `packages/operational-ledger`,
 `packages/financial-database`, or `packages/persistence-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 160 extends `packages/sunrey-chain/src/mainnet` with the
+external production evidence registry at `src/mainnet/external-evidence`.
+Capability `sunrey-external-production-evidence` is `IMPLEMENTED`.
+It does not fabricate external evidence, store confidential documents
+in Git, or activate production. The Evidence Vault remains the
+sealing authority. The evaluator returns `mustStop: false`. Do not
+create `packages/legal`, `packages/licenses`, `packages/external-audit`,
+`packages/compliance-evidence`, or `packages/evidence-v2`. See
+[`chunk-160-external-evidence-registry.md`](../operations/chunk-160-external-evidence-registry.md).
 Chunk 159 locks main-branch JSON, merge-collision, and canonical
 test-surface integrity. Capability `sunrey-repository-integrity` is
 `IMPLEMENTED` on `tools/architectural-linter`. Companion scripts stay

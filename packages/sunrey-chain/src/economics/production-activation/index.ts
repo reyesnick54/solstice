@@ -105,6 +105,7 @@ export {
 } from './bindings.ts';
 export {
   ProductionEconomicActivationFirewall,
+  activationFirewallConsumesRegistryOnly,
   domainState,
   evaluateProductionEconomicActivation,
   summarizeMissingEvidence,

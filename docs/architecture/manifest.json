@@ -2727,7 +2727,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -5022,6 +5022,35 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 152 fixture provider-candidate adapters. Identity adapters live at packages/identity/src/provider-candidate. Compliance adapters live at packages/kernel/src/compliance/provider-candidate. Travel Rule candidate lives at packages/custody/src/provider-candidate. Surveillance candidate lives at packages/market-surveillance/src/provider-candidate. Does not replace identity, compliance-screening, custody, or market-surveillance. No live vendors. No Execution Authority from provider output."
+    },
+    {
+      "id": "sunrey-external-production-evidence",
+      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ExternalProductionEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/legal",
+        "packages/licenses",
+        "packages/external-audit",
+        "packages/compliance-evidence",
+        "packages/evidence-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -6415,7 +6444,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
+      "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Chunk 160 extends the same owner with the external production evidence registry at src/mainnet/external-evidence. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, packages/activation-control, packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
     },
     {
       "id": "sunrey-audit-readiness",
@@ -6938,6 +6967,11 @@
       "notes": "Chunk 154 production operational persistence, crash recovery, state rehydration, and repository integrity gate at packages/persistence/src/production/recovery. Extends existing PostgreSQL adapters and durable fixture stores. Not a second ledger, mint, or Execution Authority. Do not create packages/database-v2, packages/state-store, packages/durable-state, packages/operational-ledger, packages/financial-database, or packages/persistence-v2."
     },
     {
+      "id": "sunrey-external-production-evidence",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 160 external production evidence registry at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
       "id": "sunrey-repository-integrity",
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
@@ -7454,6 +7488,11 @@
     "packages/sunrey-custody-v2",
     "packages/key-vault",
     "packages/mpc-v2",
-    "packages/custody-provider-v2"
+    "packages/custody-provider-v2",
+    "packages/legal",
+    "packages/licenses",
+    "packages/external-audit",
+    "packages/compliance-evidence",
+    "packages/evidence-v2"
   ]
 }
