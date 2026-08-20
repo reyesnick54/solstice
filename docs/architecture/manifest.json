@@ -1616,16 +1616,7 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "OperationExecutionRecord",
-          "kind": "type"
-        },
-        {
-          "name": "ReconciliationCoordinator",
-          "kind": "class"
-        }
-      ],
+      "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/saga-engine",
         "packages/workflow-v2",

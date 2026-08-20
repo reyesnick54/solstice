@@ -1,6 +1,6 @@
 -- V006 Chunk 155: durable OperationExecutionRecord.
 -- Provider-neutral operational-effect state. Not a journal, not a second
--- outbox, and never stores raw credentials or raw provider payloads.
+-- outbox. No raw provider bodies and no authentication material.
 
 CREATE TABLE ledger.operation_execution (
   operation_id TEXT PRIMARY KEY,
