@@ -336,4 +336,20 @@ export type {
   EconomicDataFabricCoverageReport,
   EconomicDataProviderFamilyRecord,
 } from './economic-data-fabric/index.ts';
+export {
+  bindCredentialDescriptor,
+  buildOnboardingPacket,
+  buildProviderCandidateCoverageReport,
+  collectCandidateFeed,
+  createCandidateProfile,
+  createEndpointProfile,
+  createRequestBlueprint,
+  runExternalOracleProviderCandidateDemo,
+} from './external-provider-candidate/index.ts';
+export type {
+  ExternalEconomicOracleProviderCandidateProfile,
+  ExternalEconomicProviderOnboardingPacket,
+  ExternalProviderEndpointProfile,
+  ExternalProviderRequestBlueprint,
+} from './external-provider-candidate/index.ts';
 
