@@ -1,6 +1,7 @@
-import { FORBIDDEN_TELEMETRY_KEYS } from './types.ts';
+import { FORBIDDEN_TELEMETRY_KEYS, HIGH_CARDINALITY_METRIC_LABELS } from './types.ts';
 
 const FORBIDDEN = new Set<string>(FORBIDDEN_TELEMETRY_KEYS);
+const HIGH_CARDINALITY = new Set<string>(HIGH_CARDINALITY_METRIC_LABELS);
 
 const FORBIDDEN_VALUE_PATTERNS = [
   /BEGIN [A-Z ]*PRIVATE KEY/i,
@@ -9,6 +10,10 @@ const FORBIDDEN_VALUE_PATTERNS = [
   /cleanroom:raw:/i,
   /hsm:secret:/i,
   /consent:raw:/i,
+  /api[_-]?token/i,
+  /bearer [a-z0-9._~+/-]+=*/i,
+  /sk_live_/i,
+  /secretPath=/i,
 ];
 
 export function assertSafeTelemetryRecord(
@@ -50,7 +55,7 @@ function walk(value: unknown, surface: string, path: string): void {
 export function lowCardinalityLabels(labels: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(labels)) {
-    if (FORBIDDEN.has(key)) {
+    if (FORBIDDEN.has(key) || HIGH_CARDINALITY.has(key)) {
       throw new Error(`metrics label ${key} is forbidden`);
     }
     if (value.length > 64) {

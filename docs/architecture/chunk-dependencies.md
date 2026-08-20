@@ -196,6 +196,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
 | sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
+| sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1531,3 +1532,12 @@ credential plane. Do not create `packages/moonrey-custody`,
 `packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
 `packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
 returns `mustStop: false`.
+Chunk 156 extends `packages/sunrey-chain/src/ops` with a unified
+production-candidate control room at `src/ops/control-room`.
+Capability `sunrey-unified-control-room` is `IMPLEMENTED`. It is a
+read/operations plane and does not post ledger, mint, issue Execution
+Authority, or enable `LIVE_*` flags. Do not create
+`packages/observability`, `packages/control-room`,
+`packages/sunrey-ops`, or `packages/sre`. The evaluator returns
+`mustStop: false`. See
+[`docs/operations/chunk-156-sunrey-control-room.md`](../operations/chunk-156-sunrey-control-room.md).

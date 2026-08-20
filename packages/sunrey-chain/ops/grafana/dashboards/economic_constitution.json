@@ -1,0 +1,12 @@
+{
+  "id": "ECONOMIC_CONSTITUTION",
+  "title": "Economic Constitution",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "supply_reconciliation",
+    "moonrey_issuance",
+    "productive_value_review_queue",
+    "human_contribution_review_queue"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "id": "SECURITY",
+  "title": "Security",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "credential_expiry_horizon",
+    "credential_rotation_required",
+    "credential_scope_rejections",
+    "credential_resolution_failures",
+    "hsm_health"
+  ]
+}

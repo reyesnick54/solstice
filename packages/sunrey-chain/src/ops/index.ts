@@ -28,7 +28,21 @@ export {
   routeHealthyRpc,
 } from './failover.ts';
 export { SimulatedResilienceNetwork } from './network.ts';
-export { MetricRegistry, requiredMetricCatalog, StructuredLogSink, TraceCollector } from './observability.ts';
+export {
+  CONTROL_ROOM_METRIC_NAMES,
+  MetricRegistry,
+  controlRoomMetricCatalog,
+  requiredMetricCatalog,
+  StructuredLogSink,
+  TraceCollector,
+} from './observability.ts';
+export {
+  ControlRoom,
+  CONTROL_ROOM_CAPABILITIES,
+  CONTROL_ROOM_CAPABILITY_ID,
+  runControlRoomDemo,
+} from './control-room/index.ts';
+export type { ControlRoomReport, OperationalIncident } from './control-room/index.ts';
 export { metricCatalogComplete, ResiliencePlatform } from './platform.ts';
 export { assertSafeTelemetryRecord, lowCardinalityLabels } from './privacy.ts';
 export { assertEngineeringLabel, engineeringRecoveryObjectives, engineeringSlos } from './slo.ts';
