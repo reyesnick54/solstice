@@ -1,0 +1,11 @@
+{
+  "id": "CHAIN",
+  "title": "Chain",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "finalized_height",
+    "finality_latency",
+    "supply_reconciliation"
+  ]
+}

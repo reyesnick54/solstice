@@ -120,6 +120,7 @@ npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
 npm run demo:sunrey-interop
 npm run demo:sunrey-ops
+npm run demo:sunrey-control-room
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
 npm run demo:sunrey-economics

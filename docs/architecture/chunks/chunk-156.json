@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-156",
+  "title": "Unified Production-Candidate Observability, Engineering SLOs, Control Room, Incident Correlation, and Cross-Domain Operational Health",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "evidence",
+    "events",
+    "persistence",
+    "sunrey-chain",
+    "sunrey-ops-resilience",
+    "sunrey-validator-operations",
+    "sunrey-provider-runtime",
+    "sunrey-production-provider-credential-plane",
+    "sunrey-banking-payment-provider-candidates",
+    "sunrey-regulated-provider-candidates",
+    "sunrey-dual-asset-custody-provider-candidate"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/ops/control-room. Extends the existing ops/observability owner. Read/operations plane only. Does not post ledger, mint, issue Execution Authority, sign custody, modify credentials, clear sanctions, change tokenomics, or enable LIVE_* flags. Engineering SLOs only. No real alert provider. evaluateChunkRequirements returns mustStop: false. Do not create packages/observability, packages/control-room, packages/sunrey-ops, or packages/sre."
+}

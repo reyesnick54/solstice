@@ -1,0 +1,12 @@
+{
+  "id": "COMPLIANCE",
+  "title": "Compliance",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "kyc_provider_unavailable",
+    "sanctions_provider_unavailable",
+    "aml_provider_unavailable",
+    "compliance_manual_review_queue"
+  ]
+}

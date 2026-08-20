@@ -1,0 +1,12 @@
+{
+  "id": "ORACLES",
+  "title": "Oracles",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "oracle_quorum_degradation",
+    "quorum_availability",
+    "observation_freshness",
+    "stale_facts"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "id": "EVENT_FABRIC",
+  "title": "Event Fabric",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "outbox_backlog",
+    "inbox_failed",
+    "dead_letter_count"
+  ]
+}

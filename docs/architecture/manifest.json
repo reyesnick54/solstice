@@ -6879,6 +6879,11 @@
       "notes": "Chunk 153 dual-native-asset custody hardening and institutional custody provider-candidate framework at packages/custody/src/provider-candidate. Extends packages/custody. HSM/KMS remain packages/security. Native quantity remains SunRey Chain / AssetSupplyBook. productionAuthorized stays false. Do not create packages/moonrey-custody, packages/sunrey-custody-v2, packages/key-vault, packages/hsm-v2, packages/mpc-v2, or packages/custody-provider-v2."
     },
     {
+      "id": "sunrey-unified-control-room",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 156 unified production-candidate observability, engineering SLOs, control room, incident correlation, and cross-domain operational health at packages/sunrey-chain/src/ops/control-room. Extends the existing ops owner. Read/operations plane only. Does not post ledger, mint, issue Execution Authority, or enable LIVE_* flags. Do not create packages/observability, packages/control-room, packages/sunrey-ops, or packages/sre."
       "id": "sunrey-distributed-idempotency-recovery",
       "status": "IMPLEMENTED",
       "owner": "packages/events",

@@ -118,6 +118,7 @@ never be two implementations of these systems.
 | Production provider credential plane | `packages/security` | `packages/security/src/regulated/credentials/types.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 | Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
+| Unified production-candidate control room | `packages/sunrey-chain` | `packages/sunrey-chain/src/ops/control-room/index.ts` | IMPLEMENTED |
 | Distributed idempotency recovery | `packages/events` | `packages/events/src/operation/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
@@ -1899,6 +1900,19 @@ Do not create `packages/moonrey-custody`, `packages/sunrey-custody-v2`,
 `packages/key-vault`, `packages/hsm-v2`, `packages/mpc-v2`, or
 `packages/custody-provider-v2`. See
 [`docs/custody/chunk-153-dual-asset-custody-provider-candidate.md`](../custody/chunk-153-dual-asset-custody-provider-candidate.md).
+Chunk 156 extends the existing operations owner at
+`packages/sunrey-chain/src/ops` with a unified production-candidate
+control room at `src/ops/control-room`. Capability
+`sunrey-unified-control-room` is `IMPLEMENTED`. It is a
+read/operations plane: observe, alert, report, recommend, and seal
+incident metadata. It cannot post a ledger journal, mint, issue
+Execution Authority, sign custody, modify credentials, clear
+sanctions, change tokenomics, or enable `LIVE_*` flags. Engineering
+SLOs remain `ENGINEERING_TEST_TARGETS`. No real alert provider is
+connected. Do not create `packages/observability`,
+`packages/control-room`, `packages/sunrey-ops`, or `packages/sre`.
+See
+[`docs/operations/chunk-156-sunrey-control-room.md`](../operations/chunk-156-sunrey-control-room.md).
 Chunk 155 hardens distributed idempotency and external side-effect
 recovery at `packages/events/src/operation` with a PostgreSQL adapter
 in `packages/persistence/src/operations`. Capability
