@@ -23,6 +23,8 @@ import { SUITE_SUNREY_ED25519_V1, type CryptoSuiteId } from '../../../security/s
 import { sha256Hex } from '../../../security/src/hash.ts';
 import type { HsmKeyHandle } from '../../../security/src/hsm-kms.ts';
 import type { NativeChainTransfer, NativeCustodyChainPort } from '../../../sunrey-chain/src/native-custody/port.ts';
+import { addressAssetAttributionKey, type NativeCustodyAssetId } from '../native-assets.ts';
+import { vaultAuthorizes } from './schema.ts';
 import type { CustodyCatalog } from '../service.ts';
 import type { DestinationRiskProvider, TravelRuleNetworkPort } from '../ports.ts';
 import { EVIDENCE_KIND_CUSTODY } from '../taxonomy.ts';
@@ -49,6 +51,7 @@ import {
   CUSTODY_KEY_PURPOSE,
   DEVELOPMENT_TIER_LIMITS,
   VAULT_SCHEMA_VERSION,
+  VAULT_SCHEMA_VERSION_V2,
   type ApprovalMode,
   type CustodyActorKind,
   type CustodyType,
@@ -153,16 +156,29 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     readonly requiredApprovals?: number;
     readonly classifications: readonly CustodyWalletClass[];
     readonly providerKind?: SigningProviderKind;
+    readonly authorizedAssets?: readonly NativeCustodyAssetId[];
+    readonly schemaVersion?: 1 | 2;
   }): CustodyOutcome<CustodyVault> {
     if (!isHuman(input.actorKind)) {
       return { outcome: 'REJECTED', code: 'AI_CANNOT_OPERATE', message: 'AI cannot create a custody vault' };
+    }
+    const requestedAssets = input.authorizedAssets ?? (['SUNREY_COIN'] as const);
+    const dualOrMoonrey = requestedAssets.some((asset) => asset === 'MOONREY_COIN') || requestedAssets.length > 1;
+    const schemaVersion =
+      input.schemaVersion ?? (dualOrMoonrey ? VAULT_SCHEMA_VERSION_V2 : VAULT_SCHEMA_VERSION);
+    if (schemaVersion === 1 && (dualOrMoonrey || requestedAssets[0] !== 'SUNREY_COIN')) {
+      return {
+        outcome: 'REJECTED',
+        code: 'V1_SUNREY_ONLY',
+        message: 'schemaVersion 1 remains SunRey-only and is not reinterpreted',
+      };
     }
     const vaultId = newVaultId();
     const vault: CustodyVault = Object.freeze({
       vaultId,
       custodyType: input.custodyType,
       network: this.chain.networkId,
-      authorizedAssets: Object.freeze(['SUNREY_COIN'] as const),
+      authorizedAssets: Object.freeze([...requestedAssets]) as CustodyVault['authorizedAssets'],
       walletIds: Object.freeze([]),
       signingPolicy: Object.freeze({
         providerKind: input.providerKind ?? this.signer.kind,
@@ -189,7 +205,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       status: 'ACTIVE',
       providerReference: this.signer.kind,
       createdAt: this.clock.now(),
-      schemaVersion: VAULT_SCHEMA_VERSION,
+      schemaVersion,
     });
     this.store.putVault(vault);
     void input.classifications;
@@ -205,6 +221,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     readonly actorKind: CustodyActorKind;
     readonly vaultId: VaultId;
     readonly classifications: readonly CustodyWalletClass[];
+    readonly assetId?: NativeCustodyAssetId;
   }): CustodyOutcome<CustodyWallet> {
     if (!isHuman(input.actorKind)) {
       return { outcome: 'REJECTED', code: 'AI_CANNOT_OPERATE', message: 'AI cannot assign a custody address' };
@@ -221,13 +238,21 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (!descriptor.ok) {
       return { outcome: 'REJECTED', code: descriptor.error.code, message: descriptor.error.message };
     }
+    const assetId = input.assetId ?? vault.authorizedAssets[0]!;
+    if (!vaultAuthorizes(vault, assetId)) {
+      return { outcome: 'REJECTED', code: 'ASSET_NOT_AUTHORIZED', message: `${assetId} is not authorized on this vault` };
+    }
     const wallet: CustodyWallet = Object.freeze({
+      schemaVersion: 2,
       walletId: newCustodyWalletId(),
       vaultId: vault.vaultId,
-      classifications: Object.freeze([...input.classifications]),
+      assetId,
       address: this.chain.addressFromPublicKey(descriptor.value.publicKeyHex),
-      assetId: 'SUNREY_COIN',
+      network: this.chain.networkId,
+      chainId: this.chain.chainId,
       signerHandle: generated.value,
+      securityTier: vault.securityTier,
+      classifications: Object.freeze([...input.classifications]),
       createdAt: this.clock.now(),
     });
     this.store.putWallet(wallet);
@@ -246,11 +271,13 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
         continue;
       }
       for (const tx of block.transactions) {
-        const wallet = [...this.store.wallets.values()].find((entry) => entry.address === tx.destination);
+        const wallet = [...this.store.wallets.values()].find(
+          (entry) => entry.address === tx.destination && entry.assetId === tx.assetId,
+        );
         if (!wallet) {
           continue;
         }
-        const depositKey = `${tx.txId}:${tx.destination}`;
+        const depositKey = `${tx.txId}:${tx.destination}:${tx.assetId}`;
         if (this.store.deposits.has(depositKey)) {
           continue;
         }
@@ -267,13 +294,14 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
           txId: tx.txId,
           height: block.height,
           quantity: tx.quantity,
-          assetId: 'SUNREY_COIN',
+          assetId: tx.assetId,
           screeningOutcome: screen.outcome,
           mempoolRejected: true,
           createdAt: this.clock.now(),
         });
         this.store.putDeposit(deposit);
-        this.store.attributed.set(wallet.address, (this.store.attributed.get(wallet.address) ?? 0n) + tx.quantity);
+        const attributionKey = addressAssetAttributionKey(wallet.address, wallet.assetId);
+        this.store.attributed.set(attributionKey, (this.store.attributed.get(attributionKey) ?? 0n) + tx.quantity);
         created.push(deposit);
         this.seal('deposit.recognized', {
           depositKey,
@@ -399,14 +427,15 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (destination.status !== 'APPROVED') {
       return { outcome: 'REJECTED', code: 'UNAPPROVED_DESTINATION', message: 'destination is not APPROVED' };
     }
-    const available = this.chain.holding(wallet.address, 'SUNREY_COIN') - this.pendingOut(wallet.address);
+    const available =
+      this.chain.holding(wallet.address, wallet.assetId) - this.pendingOut(wallet.address, wallet.assetId);
     if (available < input.quantity) {
       return { outcome: 'REJECTED', code: 'INSUFFICIENT_ON_CHAIN', message: 'withdrawal exceeds on-chain holding' };
     }
     const screen = this.destinationRisk.screen({
       address: destination.address,
       customerId: input.customerId,
-      assetId: 'SUNREY_COIN',
+      assetId: wallet.assetId,
     });
     if (screen.outcome === 'BLOCK') {
       this.openCase('SANCTIONS_REVIEW', ['DESTINATION_BLOCK'], input.customerId);
@@ -416,7 +445,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     const travel = evaluateTravelRuleApplicability({
       pack: this.pack,
       originatorJurisdiction: customer?.jurisdiction ?? ('GB' as Jurisdiction),
-      quantity: AssetQuantity.fromScaledUnits(input.quantity, 'SUNREY_COIN'),
+      quantity: AssetQuantity.fromScaledUnits(input.quantity, wallet.assetId),
       counterpartyIsVasp: this.travelNetwork.discoverCounterparty(destination.address) !== null,
     });
     const decision = evaluateWithdrawalPolicy({
@@ -438,7 +467,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       accountId: wallet.walletId,
       customerId: input.customerId,
       destinationId: destination.destinationId,
-      amount: AssetQuantity.fromScaledUnits(input.quantity, 'SUNREY_COIN'),
+      amount: AssetQuantity.fromScaledUnits(input.quantity, wallet.assetId),
     });
     const gated = this.authorizeIntent(intent, input.customerId);
     if (gated.outcome !== 'ALLOWED') {
@@ -450,6 +479,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       vaultId: vault.vaultId,
       walletId: wallet.walletId,
       destinationId: destination.destinationId,
+      assetId: wallet.assetId,
       quantity: input.quantity,
       state,
       policyDecision: decision,
@@ -497,6 +527,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       actorKind: input.actorKind,
       decidedAt: this.clock.now(),
       decision: input.decision,
+      boundPreviewHash: current.preview?.previewHash ?? null,
     });
     this.store.approvals.push(action);
     if (input.decision === 'REJECT') {
@@ -535,13 +566,13 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (vault.approvalPolicy.mode !== 'SINGLE_OPERATOR' && current.state !== 'APPROVED') {
       return { outcome: 'REJECTED', code: 'ADDITIONAL_APPROVAL_REQUIRED', message: 'dual control is not satisfied' };
     }
-    const nonce = this.chain.holding(wallet.address, 'SUNREY_COIN');
+    const nonce = this.chain.holding(wallet.address, wallet.assetId);
     const draft = {
       source: wallet.address,
       destination: destination.address,
-      assetId: 'SUNREY_COIN' as const,
+      assetId: wallet.assetId,
       quantity: current.quantity,
-      feeAssetId: 'SUNREY_COIN' as const,
+      feeAssetId: wallet.assetId,
       maxFee: 0n,
       nonce,
       networkId: this.chain.networkId,
@@ -556,7 +587,14 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       canonicalBytesHex: canonical.toString('hex'),
       previewHash: sha256Hex(canonical),
     });
-    const next = Object.freeze({ ...current, preview, state: current.state });
+    const previewChanged = current.preview !== null && current.preview.previewHash !== preview.previewHash;
+    const approvals = previewChanged ? Object.freeze([]) : current.approvals;
+    const next = Object.freeze({
+      ...current,
+      preview,
+      approvals,
+      state: previewChanged && vault.approvalPolicy.mode !== 'SINGLE_OPERATOR' ? ('AWAITING_APPROVAL' as const) : current.state,
+    });
     this.store.putWithdrawal(next);
     this.seal('withdrawal.simulated', { withdrawalId, previewHash: preview.previewHash });
     return { outcome: 'OK', value: next };
@@ -609,13 +647,22 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (!previewBindsApprovedBytes(current.preview, current.preview.canonicalBytesHex)) {
       return { outcome: 'REJECTED', code: 'PREVIEW_BINDING_FAILED', message: 'signed bytes do not match approved preview' };
     }
+    if (current.preview.assetId !== wallet.assetId) {
+      return { outcome: 'REJECTED', code: 'PREVIEW_ASSET_MISMATCH', message: 'preview asset no longer matches wallet asset' };
+    }
+    const staleApproval = current.approvals.find(
+      (approval) => approval.boundPreviewHash !== null && approval.boundPreviewHash !== current.preview!.previewHash,
+    );
+    if (staleApproval) {
+      return { outcome: 'REJECTED', code: 'APPROVAL_PREVIEW_CHANGED', message: 'prior approval no longer binds this preview' };
+    }
     const tx: NativeChainTransfer = Object.freeze({
       txId: current.preview.previewHash,
       source: current.preview.source,
       destination: current.preview.destination,
-      assetId: 'SUNREY_COIN',
+      assetId: current.preview.assetId,
       quantity: current.preview.quantity,
-      feeAssetId: 'SUNREY_COIN',
+      feeAssetId: current.preview.feeAssetId,
       maxFee: current.preview.maxFee,
       nonce: current.preview.nonce,
       networkId: current.preview.networkId,
@@ -661,8 +708,9 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     }
     const queried = this.chain.queryByTxId(current.chainTxId);
     if (queried.kind === 'FINALIZED') {
-      const attributed = this.store.attributed.get(current.preview?.source ?? '') ?? 0n;
-      this.store.attributed.set(current.preview!.source, attributed - current.quantity);
+      const attributionKey = addressAssetAttributionKey(current.preview!.source, current.assetId);
+      const attributed = this.store.attributed.get(attributionKey) ?? 0n;
+      this.store.attributed.set(attributionKey, attributed - current.quantity);
       const finalized = Object.freeze({ ...current, state: 'FINALIZED' as const });
       this.store.putWithdrawal(finalized);
       this.seal('withdrawal.finalized', { withdrawalId, txId: current.chainTxId });
@@ -696,11 +744,12 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       return { outcome: 'REJECTED', code: 'NOT_APPROVED', message: 'cold export requires an approved preview' };
     }
     const pack: ColdSigningPackage = Object.freeze({
+      schemaVersion: 2,
       unsignedCanonicalHex: current.preview.canonicalBytesHex,
       approvalEvidence: current.approvals,
       networkId: current.preview.networkId,
       chainId: current.preview.chainId,
-      assetId: 'SUNREY_COIN',
+      assetId: current.preview.assetId,
       quantity: current.quantity,
       feeLimit: current.preview.maxFee,
       expirationUnixSeconds: 1_900_000_000n,
@@ -731,6 +780,9 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (input.imported.signedCanonicalHex !== current.preview.canonicalBytesHex) {
       return { outcome: 'REJECTED', code: 'ALTERED_TRANSACTION', message: 'altered transaction after approval is rejected' };
     }
+    if (input.pack.assetId !== current.preview.assetId || input.pack.networkId !== current.preview.networkId) {
+      return { outcome: 'REJECTED', code: 'COLD_ASSET_NETWORK_MISMATCH', message: 'cold package asset/network does not match preview' };
+    }
     const wallet = this.store.wallets.get(current.walletId);
     if (!wallet?.signerHandle) {
       return { outcome: 'REJECTED', code: 'SIGNER_MISSING', message: 'wallet has no signer handle' };
@@ -757,9 +809,9 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       txId: current.preview.previewHash,
       source: current.preview.source,
       destination: current.preview.destination,
-      assetId: 'SUNREY_COIN',
+      assetId: current.preview.assetId,
       quantity: current.preview.quantity,
-      feeAssetId: 'SUNREY_COIN',
+      feeAssetId: current.preview.feeAssetId,
       maxFee: current.preview.maxFee,
       nonce: current.preview.nonce,
       networkId: current.preview.networkId,
@@ -813,7 +865,7 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     if (!fromWallet) {
       return { outcome: 'REJECTED', code: 'WALLET_MISSING', message: 'source vault has no wallet' };
     }
-    const holding = this.chain.holding(fromWallet.address, 'SUNREY_COIN');
+    const holding = this.chain.holding(fromWallet.address, fromWallet.assetId);
     const threshold = DEVELOPMENT_TIER_LIMITS[to.securityTier] / 2n;
     const quantity = holding > threshold ? threshold : 0n;
     const proposal: RebalanceProposal = Object.freeze({
@@ -836,11 +888,11 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     const notes: string[] = [];
     let outcome: InstitutionalReconciliationReport['outcome'] = 'MATCHED';
     for (const wallet of this.store.wallets.values()) {
-      const onChain = this.chain.holding(wallet.address, 'SUNREY_COIN');
-      const attributed = this.store.attributed.get(wallet.address) ?? 0n;
-      const pending = this.pendingOut(wallet.address);
+      const onChain = this.chain.holding(wallet.address, wallet.assetId);
+      const attributed = this.store.attributed.get(addressAssetAttributionKey(wallet.address, wallet.assetId)) ?? 0n;
+      const pending = this.pendingOut(wallet.address, wallet.assetId);
       const reserved = [...this.store.reservations.values()]
-        .filter((row) => row.vaultId === wallet.vaultId && !row.released)
+        .filter((row) => row.vaultId === wallet.vaultId && row.assetId === wallet.assetId && !row.released && !row.debited)
         .reduce((sum, row) => sum + row.quantity, 0n);
       if (onChain !== attributed) {
         outcome = 'MISMATCH';
@@ -872,17 +924,23 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       return null;
     }
     return Object.freeze({
+      schemaVersion: 2,
+      assetId: wallet.assetId,
       vaultId: wallet.vaultId,
       walletId: wallet.walletId,
       address: wallet.address,
-      onChain: this.chain.holding(wallet.address, 'SUNREY_COIN'),
-      attributed: this.store.attributed.get(wallet.address) ?? 0n,
-      pendingWithdrawals: this.pendingOut(wallet.address),
+      onChain: this.chain.holding(wallet.address, wallet.assetId),
+      attributed: this.store.attributed.get(addressAssetAttributionKey(wallet.address, wallet.assetId)) ?? 0n,
+      pendingWithdrawals: this.pendingOut(wallet.address, wallet.assetId),
       reservedForExchange: [...this.store.reservations.values()]
-        .filter((row) => row.vaultId === wallet.vaultId && !row.released)
+        .filter((row) => row.vaultId === wallet.vaultId && row.assetId === wallet.assetId && !row.released && !row.debited)
         .reduce((sum, row) => sum + row.quantity, 0n),
       notALedgerBalance: true,
     });
+  }
+
+  rebindWalletAsset(): CustodyOutcome<never> {
+    return { outcome: 'REJECTED', code: 'ASSET_IMMUTABLE', message: 'a wallet asset cannot mutate after creation' };
   }
 
   setSecurityControl(input: {
@@ -1000,16 +1058,20 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     return [...this.store.wallets.values()].filter((wallet) => wallet.vaultId === vaultId);
   }
 
-  exchangeDepositAddress(vaultId: VaultId): string | null {
-    return this.walletsFor(vaultId)[0]?.address ?? null;
+  exchangeDepositAddress(vaultId: VaultId, assetId: NativeCustodyAssetId = 'SUNREY_COIN'): string | null {
+    return this.walletsFor(vaultId).find((wallet) => wallet.assetId === assetId)?.address ?? null;
   }
 
-  reserveForExchange(vaultId: VaultId, quantity: bigint): ExchangeReservation | { readonly rejected: true; readonly code: string } {
-    const wallet = this.walletsFor(vaultId)[0];
+  reserveForExchange(
+    vaultId: VaultId,
+    quantity: bigint,
+    assetId: NativeCustodyAssetId = 'SUNREY_COIN',
+  ): ExchangeReservation | { readonly rejected: true; readonly code: string } {
+    const wallet = this.walletsFor(vaultId).find((entry) => entry.assetId === assetId);
     if (!wallet) {
       return { rejected: true, code: 'WALLET_MISSING' };
     }
-    const available = this.chain.holding(wallet.address, 'SUNREY_COIN') - this.pendingOut(wallet.address);
+    const available = this.chain.holding(wallet.address, assetId) - this.pendingOut(wallet.address, assetId);
     if (available < quantity) {
       return { rejected: true, code: 'INSUFFICIENT_ON_CHAIN' };
     }
@@ -1017,13 +1079,16 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       reservationId: `xres_${randomUUID().replace(/-/g, '')}`,
       vaultId,
       quantity,
-      assetId: 'SUNREY_COIN',
+      assetId,
       released: false,
+      debited: false,
     });
     this.store.reservations.set(reservation.reservationId, {
       vaultId,
       quantity,
+      assetId,
       released: false,
+      debited: false,
     });
     return reservation;
   }
@@ -1038,8 +1103,35 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       reservationId,
       vaultId: current.vaultId,
       quantity: current.quantity,
-      assetId: 'SUNREY_COIN',
+      assetId: current.assetId,
       released: true,
+      debited: current.debited,
+    });
+  }
+
+  debitReservation(
+    reservationId: string,
+    amount: { readonly assetId: NativeCustodyAssetId; readonly quantity: bigint },
+  ): ExchangeReservation | { readonly rejected: true; readonly code: string } {
+    const current = this.store.reservations.get(reservationId);
+    if (!current || current.released || current.debited) {
+      return { rejected: true, code: 'UNKNOWN_RESERVATION' };
+    }
+    if (amount.assetId !== current.assetId) {
+      return { rejected: true, code: 'CROSS_ASSET_DEBIT' };
+    }
+    if (amount.quantity !== current.quantity) {
+      return { rejected: true, code: 'RESERVATION_QUANTITY_MISMATCH' };
+    }
+    const next = { ...current, debited: true };
+    this.store.reservations.set(reservationId, next);
+    return Object.freeze({
+      reservationId,
+      vaultId: current.vaultId,
+      quantity: current.quantity,
+      assetId: current.assetId,
+      released: false,
+      debited: true,
     });
   }
 
@@ -1060,8 +1152,8 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     return this.reconcile();
   }
 
-  fundDevelopment(address: string, quantity: bigint) {
-    return this.chain.fundDevelopment(address, quantity);
+  fundDevelopment(address: string, quantity: bigint, assetId: NativeCustodyAssetId = 'SUNREY_COIN') {
+    return this.chain.fundDevelopment(address, quantity, assetId);
   }
 
   finalizeBlock() {
@@ -1072,11 +1164,11 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
     return this.store.controls.get(kind)?.active === true;
   }
 
-  private pendingOut(address: string): bigint {
+  private pendingOut(address: string, assetId: NativeCustodyAssetId): bigint {
     let total = 0n;
     for (const withdrawal of this.store.withdrawals.values()) {
       const wallet = this.store.wallets.get(withdrawal.walletId);
-      if (wallet?.address !== address) {
+      if (wallet?.address !== address || withdrawal.assetId !== assetId) {
         continue;
       }
       if (

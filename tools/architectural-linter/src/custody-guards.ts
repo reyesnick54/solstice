@@ -9,6 +9,12 @@ const COMPETING_PATHS = [
   'packages/crypto-aml',
   'packages/crypto-custody',
   'packages/wallet-risk-v2',
+  'packages/moonrey-custody',
+  'packages/sunrey-custody-v2',
+  'packages/key-vault',
+  'packages/hsm-v2',
+  'packages/mpc-v2',
+  'packages/custody-provider-v2',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

@@ -1,6 +1,13 @@
 export { SubjectScopedCustodyTool } from './agent-tool.ts';
 export { InMemoryCustomerAssetPort } from './asset-adapter.ts';
 export {
+  NATIVE_CUSTODY_ASSET_IDS,
+  isNativeCustodyAssetId,
+  ownerAssetPositionKey,
+  type NativeCustodyAssetId,
+} from './native-assets.ts';
+export * as providerCandidate from './provider-candidate/index.ts';
+export {
   asCustodyAccountId,
   asDepositId,
   asDestinationId,
@@ -19,6 +26,7 @@ export { KeyProviderTravelRuleProtection } from './protection.ts';
 export type {
   CustodyProviderPort,
   CustomerAssetPort,
+  CustomerAssetPosition,
   DestinationRiskProvider,
   TravelRuleNetworkPort,
   TravelRuleProtectionPort,

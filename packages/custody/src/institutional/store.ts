@@ -1,3 +1,4 @@
+import type { NativeCustodyAssetId } from '../native-assets.ts';
 import type { NativeDepositRecord } from './types.ts';
 import type {
   ApprovalAction,
@@ -27,7 +28,10 @@ export class InstitutionalCustodyStore {
   readonly proposals: RebalanceProposal[] = [];
   readonly incidents: CompromiseIncident[] = [];
   readonly controls = new Map<InstitutionalSecurityControl, SecurityControlState>();
-  readonly reservations = new Map<string, { vaultId: VaultId; quantity: bigint; released: boolean }>();
+  readonly reservations = new Map<
+    string,
+    { vaultId: VaultId; quantity: bigint; assetId: NativeCustodyAssetId; released: boolean; debited: boolean }
+  >();
   readonly attributed = new Map<string, bigint>();
   lastIndexedHeight = 0n;
 

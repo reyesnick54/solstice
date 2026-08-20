@@ -312,7 +312,7 @@ export class CustodyService {
     if (!destination || destination.customerId !== input.customerId) {
       return { outcome: 'REJECTED', code: 'UNKNOWN_DESTINATION', message: 'destination not found for customer' };
     }
-    const available = this.assets.position(input.customerId).available;
+    const available = this.assets.position(input.customerId, input.quantity.assetId).available;
     if (available.scaledUnits < input.quantity.scaledUnits) {
       return { outcome: 'REJECTED', code: 'INSUFFICIENT_ASSET', message: 'withdrawal exceeds owned available asset' };
     }

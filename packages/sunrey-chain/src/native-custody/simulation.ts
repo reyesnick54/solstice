@@ -8,6 +8,7 @@
 import { createHash } from 'node:crypto';
 
 import { sha256Hex } from '../../../security/src/hash.ts';
+import type { NativeAssetId } from '../protocol/assets.ts';
 import { PROTOCOL_CHAIN_ID, PROTOCOL_NETWORK_ID } from '../protocol/constants.ts';
 import { FOUR_VALIDATOR_LABELS } from '../validators/four-validator.ts';
 import type {
@@ -26,6 +27,10 @@ export function custodyAddressFromPublicKey(publicKeyHex: string): string {
   return `sr1${sha256Hex(publicKeyHex).slice(0, 40)}`;
 }
 
+function holdingKey(address: string, assetId: NativeAssetId): string {
+  return `${address}\0${assetId}`;
+}
+
 function blockIdFor(height: bigint, txIds: readonly string[]): string {
   return sha256Hex(`sunrey.custody.block.v1:${height}:${txIds.join(',')}`);
 }
@@ -35,7 +40,10 @@ export class SimulationNativeCustodyChain implements NativeCustodyChainPort {
   readonly networkId = PROTOCOL_NETWORK_ID;
   readonly chainId = PROTOCOL_CHAIN_ID;
 
-  private readonly balances = new Map<string, bigint>([[DEVELOPMENT_FAUCET_ADDRESS, DEVELOPMENT_FAUCET_SUPPLY]]);
+  private readonly balances = new Map<string, bigint>([
+    [holdingKey(DEVELOPMENT_FAUCET_ADDRESS, 'SUNREY_COIN'), DEVELOPMENT_FAUCET_SUPPLY],
+    [holdingKey(DEVELOPMENT_FAUCET_ADDRESS, 'MOONREY_COIN'), DEVELOPMENT_FAUCET_SUPPLY],
+  ]);
   private readonly mempool: NativeChainTransfer[] = [];
   private readonly unknown = new Map<string, NativeChainTransfer>();
   private readonly blocks: FinalizedNativeBlock[] = [];
@@ -45,9 +53,8 @@ export class SimulationNativeCustodyChain implements NativeCustodyChainPort {
     return custodyAddressFromPublicKey(publicKeyHex);
   }
 
-  holding(address: string, assetId: 'SUNREY_COIN'): bigint {
-    void assetId;
-    return this.balances.get(address) ?? 0n;
+  holding(address: string, assetId: NativeAssetId): bigint {
+    return this.balances.get(holdingKey(address, assetId)) ?? 0n;
   }
 
   forceNextUnknown(): void {
@@ -131,19 +138,19 @@ export class SimulationNativeCustodyChain implements NativeCustodyChainPort {
     return [...this.blocks];
   }
 
-  fundDevelopment(address: string, quantity: bigint): FinalizedNativeBlock {
-    const faucetNonce = this.holding(DEVELOPMENT_FAUCET_ADDRESS, 'SUNREY_COIN');
+  fundDevelopment(address: string, quantity: bigint, assetId: NativeAssetId = 'SUNREY_COIN'): FinalizedNativeBlock {
+    const faucetNonce = this.holding(DEVELOPMENT_FAUCET_ADDRESS, assetId);
     const canonical = Buffer.from(
-      `faucet:${DEVELOPMENT_FAUCET_ADDRESS}:${address}:${quantity}:${this.blocks.length}`,
+      `faucet:${DEVELOPMENT_FAUCET_ADDRESS}:${address}:${assetId}:${quantity}:${this.blocks.length}`,
       'utf8',
     );
     const tx: NativeChainTransfer = Object.freeze({
       txId: sha256Hex(canonical),
       source: DEVELOPMENT_FAUCET_ADDRESS,
       destination: address,
-      assetId: 'SUNREY_COIN',
+      assetId,
       quantity,
-      feeAssetId: 'SUNREY_COIN',
+      feeAssetId: assetId,
       maxFee: 0n,
       nonce: faucetNonce,
       networkId: this.networkId,
@@ -159,11 +166,25 @@ export class SimulationNativeCustodyChain implements NativeCustodyChainPort {
   }
 
   private apply(tx: NativeChainTransfer): void {
-    const source = this.balances.get(tx.source) ?? 0n;
-    if (source < tx.quantity + tx.maxFee) {
-      throw new Error(`insufficient on-chain holding at ${tx.source}`);
+    const sourceKey = holdingKey(tx.source, tx.assetId);
+    const destKey = holdingKey(tx.destination, tx.assetId);
+    const source = this.balances.get(sourceKey) ?? 0n;
+    const fee =
+      tx.feeAssetId === tx.assetId
+        ? tx.maxFee
+        : 0n;
+    if (source < tx.quantity + fee) {
+      throw new Error(`insufficient on-chain holding at ${tx.source} for ${tx.assetId}`);
     }
-    this.balances.set(tx.source, source - tx.quantity - tx.maxFee);
-    this.balances.set(tx.destination, (this.balances.get(tx.destination) ?? 0n) + tx.quantity);
+    this.balances.set(sourceKey, source - tx.quantity - fee);
+    this.balances.set(destKey, (this.balances.get(destKey) ?? 0n) + tx.quantity);
+    if (tx.feeAssetId !== tx.assetId && tx.maxFee > 0n) {
+      const feeKey = holdingKey(tx.source, tx.feeAssetId);
+      const feeAvailable = this.balances.get(feeKey) ?? 0n;
+      if (feeAvailable < tx.maxFee) {
+        throw new Error(`insufficient fee-asset holding at ${tx.source} for ${tx.feeAssetId}`);
+      }
+      this.balances.set(feeKey, feeAvailable - tx.maxFee);
+    }
   }
 }

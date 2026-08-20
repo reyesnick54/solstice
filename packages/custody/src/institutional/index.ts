@@ -10,8 +10,14 @@ export {
   INSTITUTIONAL_WITHDRAWAL_STATES,
   SIGNING_PROVIDER_KINDS,
   VAULT_SCHEMA_VERSION,
+  VAULT_SCHEMA_VERSION_V2,
   WITHDRAWAL_POLICY_DECISIONS,
 } from './taxonomy.ts';
+export {
+  parseInstitutionalVaultRecord,
+  upgradeVaultRecordSilently,
+  vaultAuthorizes,
+} from './schema.ts';
 export type {
   ApprovalMode,
   CustodyType,
@@ -32,7 +38,10 @@ export {
 export type {
   ColdSigningPackage,
   CustodyVault,
+  CustodyVaultV1,
+  CustodyVaultV2,
   CustodyWallet,
+  DerivedPosition,
   InstitutionalDestination,
   InstitutionalReconciliationReport,
   NativeWithdrawal,

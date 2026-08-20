@@ -1,5 +1,6 @@
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { HsmKeyHandle } from '../../../security/src/hsm-kms.ts';
+import type { NativeCustodyAssetId } from '../native-assets.ts';
 import type { DestinationScreeningOutcome, TravelRuleApplicability } from '../taxonomy.ts';
 import type { TravelRuleDecision } from '../types.ts';
 import type {
@@ -52,7 +53,8 @@ export type DestinationPolicy = {
   readonly allowNewWithoutReview: false;
 };
 
-export type CustodyWallet = {
+export type CustodyWalletV1 = {
+  readonly schemaVersion?: 1;
   readonly walletId: CustodyWalletId;
   readonly vaultId: VaultId;
   readonly classifications: readonly CustodyWalletClass[];
@@ -62,11 +64,26 @@ export type CustodyWallet = {
   readonly createdAt: UtcInstant;
 };
 
-export type CustodyVault = {
+export type CustodyWalletV2 = {
+  readonly schemaVersion: 2;
+  readonly walletId: CustodyWalletId;
+  readonly vaultId: VaultId;
+  readonly assetId: NativeCustodyAssetId;
+  readonly address: string;
+  readonly network: string;
+  readonly chainId: string;
+  readonly signerHandle: HsmKeyHandle | null;
+  readonly securityTier: SecurityTier;
+  readonly classifications: readonly CustodyWalletClass[];
+  readonly createdAt: UtcInstant;
+};
+
+export type CustodyWallet = CustodyWalletV1 | CustodyWalletV2;
+
+type CustodyVaultBase = {
   readonly vaultId: VaultId;
   readonly custodyType: CustodyType;
   readonly network: string;
-  readonly authorizedAssets: readonly 'SUNREY_COIN'[];
   readonly walletIds: readonly CustodyWalletId[];
   readonly signingPolicy: SigningPolicy;
   readonly approvalPolicy: ApprovalPolicy;
@@ -76,8 +93,19 @@ export type CustodyVault = {
   readonly status: VaultStatus;
   readonly providerReference: string;
   readonly createdAt: UtcInstant;
+};
+
+export type CustodyVaultV1 = CustodyVaultBase & {
+  readonly authorizedAssets: readonly ['SUNREY_COIN'];
   readonly schemaVersion: 1;
 };
+
+export type CustodyVaultV2 = CustodyVaultBase & {
+  readonly authorizedAssets: readonly NativeCustodyAssetId[];
+  readonly schemaVersion: 2;
+};
+
+export type CustodyVault = CustodyVaultV1 | CustodyVaultV2;
 
 export type InstitutionalDestination = {
   readonly destinationId: InstitutionalDestinationId;
@@ -97,15 +125,16 @@ export type ApprovalAction = {
   readonly actorKind: HumanCustodyActor;
   readonly decidedAt: UtcInstant;
   readonly decision: 'APPROVE' | 'REJECT';
+  readonly boundPreviewHash: string | null;
 };
 
 export type TransactionPreview = {
   readonly previewId: PreviewId;
   readonly source: string;
   readonly destination: string;
-  readonly assetId: 'SUNREY_COIN';
+  readonly assetId: NativeCustodyAssetId;
   readonly quantity: bigint;
-  readonly feeAssetId: 'SUNREY_COIN';
+  readonly feeAssetId: NativeCustodyAssetId;
   readonly maxFee: bigint;
   readonly nonce: bigint;
   readonly networkId: string;
@@ -116,11 +145,12 @@ export type TransactionPreview = {
 };
 
 export type ColdSigningPackage = {
+  readonly schemaVersion: 1 | 2;
   readonly unsignedCanonicalHex: string;
   readonly approvalEvidence: readonly ApprovalAction[];
   readonly networkId: string;
   readonly chainId: string;
-  readonly assetId: 'SUNREY_COIN';
+  readonly assetId: NativeCustodyAssetId;
   readonly quantity: bigint;
   readonly feeLimit: bigint;
   readonly expirationUnixSeconds: bigint;
@@ -140,6 +170,7 @@ export type NativeWithdrawal = {
   readonly vaultId: VaultId;
   readonly walletId: CustodyWalletId;
   readonly destinationId: InstitutionalDestinationId;
+  readonly assetId: NativeCustodyAssetId;
   readonly quantity: bigint;
   readonly state: InstitutionalWithdrawalState;
   readonly policyDecision: WithdrawalPolicyDecision | null;
@@ -160,13 +191,27 @@ export type NativeDepositRecord = {
   readonly txId: string;
   readonly height: bigint;
   readonly quantity: bigint;
-  readonly assetId: 'SUNREY_COIN';
+  readonly assetId: NativeCustodyAssetId;
   readonly screeningOutcome: DestinationScreeningOutcome;
   readonly mempoolRejected: true;
   readonly createdAt: UtcInstant;
 };
 
+export type DerivedPositionV1 = {
+  readonly schemaVersion?: 1;
+  readonly vaultId: VaultId;
+  readonly walletId: CustodyWalletId;
+  readonly address: string;
+  readonly onChain: bigint;
+  readonly attributed: bigint;
+  readonly pendingWithdrawals: bigint;
+  readonly reservedForExchange: bigint;
+  readonly notALedgerBalance: true;
+};
+
 export type DerivedPosition = {
+  readonly schemaVersion: 2;
+  readonly assetId: NativeCustodyAssetId;
   readonly vaultId: VaultId;
   readonly walletId: CustodyWalletId;
   readonly address: string;
@@ -214,7 +259,11 @@ export type CompromiseIncident = {
 };
 
 export type RecoveryManifest = {
-  readonly walletMetadata: readonly { readonly walletId: string; readonly address: string }[];
+  readonly walletMetadata: readonly {
+    readonly walletId: string;
+    readonly address: string;
+    readonly assetId: NativeCustodyAssetId;
+  }[];
   readonly keyHandles: readonly { readonly handleId: string; readonly keyId: string }[];
   readonly approvalPolicy: ApprovalPolicy;
   readonly coldBackupRefs: readonly string[];

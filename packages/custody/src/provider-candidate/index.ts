@@ -10,3 +10,81 @@ export {
   type TravelRuleCandidateTransport,
   type TravelRuleCredentialBinding,
 } from './types.ts';
+export { applyProviderCompromise } from './compromise.ts';
+export { createCandidateWallet, getCandidateWallet, rebindCandidateWalletAsset, resetCandidateWallets } from './addresses.ts';
+export { planCustodyProviderFailover, silentlyMoveProviderControl } from './failover.ts';
+export {
+  assertWorkloadMayUseKey,
+  bindCustodyCredential,
+  bindFixtureCustodyCredential,
+  revokeCredentialBinding,
+  type CustodyCredentialBinding,
+} from './auth.ts';
+export { signFixtureCallback, verifyAuthenticCallback, type CustodyProviderCallback } from './callbacks.ts';
+export { admitProviderDeposit, resetDepositCallbacks, type DepositAdmission } from './deposits.ts';
+export { fixtureEvidenceBundle } from './evidence.ts';
+export { fixtureCustodyProviderProfile, fixtureCustodySecretRef, FIXTURE_CUSTODY_HMAC_SECRET } from './fixtures.ts';
+export {
+  assertCustodyCannotUseGovernanceKms,
+  assertOracleCannotUseCustodyHsm,
+  fixtureHsmAttestation,
+  generateNonExportableCustodyKey,
+  rejectPrivateKeyExport,
+  validateHsmKeyProfile,
+} from './hsm.ts';
+export {
+  activeSigningVersion,
+  assertCustodyWorkerCannotUseGovernanceKms,
+  historicalVersions,
+  markKmsCompromised,
+  registerKmsKey,
+  resetKmsKeys,
+  rotateKmsKey,
+} from './kms.ts';
+export { exposeMpcShare, FixtureMpcCandidatePort } from './mpc.ts';
+export { validateCustodyProviderCandidateProfile } from './profile.ts';
+export {
+  asProviderOperationalBalance,
+  reconcileCustodyCandidate,
+  type CustodyCandidateReconciliationReport,
+} from './reconciliation.ts';
+export {
+  assertNoRealCustodyCall,
+  FixtureCustodyTransport,
+  ScriptedCustodySandboxTransport,
+} from './transport.ts';
+export {
+  CUSTODY_CANDIDATE_WORKLOADS,
+  CUSTODY_KEY_LIFECYCLES,
+  CUSTODY_KEY_ORIGINS,
+  CUSTODY_PROVIDER_CANDIDATE_TYPES,
+  CUSTODY_SUBMISSION_STATES,
+  type CustodyCandidatePreview,
+  type CustodyCandidateWallet,
+  type CustodyKeyLifecycle,
+  type CustodyKeyOrigin,
+  type CustodyProviderCandidateProfile,
+  type CustodySubmissionState,
+  type ProviderOperationalBalance,
+} from './types.ts';
+export type { NativeCustodyAssetId } from '../native-assets.ts';
+export {
+  aiApproveWithdrawal,
+  aiDisableCoolingPeriod,
+  aiModifyAllowlist,
+  aiReduceQuorum,
+  aiSignTransaction,
+  approvalStillValid,
+  bindHumanApproval,
+  hashCandidatePreview,
+  previewChangedInvalidatesApproval,
+} from './signing-policy.ts';
+export {
+  admitWithdrawalCallback,
+  createWithdrawalSubmission,
+  finalizeLocallyWithoutEvidence,
+  getWithdrawalSubmission,
+  queryBeforeRetry,
+  resetWithdrawals,
+  submitWithdrawal,
+} from './withdrawals.ts';

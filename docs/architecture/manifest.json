@@ -853,9 +853,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint.",
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139 HIN chain-anchor adapter lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain.",
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation — not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
     },
     {
       "id": "packages/sunrey-chain",
@@ -2403,7 +2401,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016\u2013ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
     },
     {
       "id": "sunrey-explorer",
@@ -2670,7 +2668,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76\u201381 engineering evidence hashes without overwriting external evidence status. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -2852,11 +2850,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family and unified economic data fabrics live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -3161,8 +3155,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state.",
-      "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
       "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
     },
     {
@@ -3193,55 +3185,6 @@
       "id": "sunrey-production-issuance-policy-candidate",
       "name": "SunRey Coin production-candidate valuation, conversion, supply, and issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [],
-      "forbiddenAliases": [
-        "packages/sunrey-tokenomics",
-        "packages/production-valuation",
-        "packages/issuance-parameters",
-        "packages/human-worth-token"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 145 SunRey production-candidate valuation, conversion, and issuance parameter package. Does not select production quantities, activate issuance, flip LIVE_* flags, or create a second mint. Fixture packages cannot authorize production."
-    },
-    {
-      "id": "sunrey-production-economic-parameters",
-      "name": "Canonical production economic parameter registry and typed parameter packages",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/parameter-package/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/parameter-package/index.ts",
-      "status": "IMPLEMENTED",
-      "protected": true,
-      "financialStateMutation": false,
-      "executionAuthorityRequired": false,
-      "kernelAuthorizationRequired": false,
-      "protectedSymbols": [],
-      "forbiddenAliases": [
-        "packages/tokenomics",
-        "packages/economic-parameters",
-        "packages/monetary-policy-v2",
-        "packages/coin-supply",
-        "packages/production-mint"
-      ],
-      "codeowners": [
-        "@reyesnick54"
-      ],
-      "notes": "Chunk 144 canonical production economic parameter registry. Typed values behind Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, mint, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED."
-    },
-    {
-      "id": "sunrey-production-issuance-policy-candidate",
-      "name": "SunRey Coin production-candidate valuation, conversion, supply, and issuance parameter package",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/parameter-package/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/parameter-package/index.ts",
       "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts",
       "publicInterface": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/index.ts",
       "status": "IMPLEMENTED",
@@ -3288,25 +3231,23 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/tokenomics",
+        "packages/economic-parameters",
+        "packages/monetary-policy-v2",
+        "packages/coin-supply",
+        "packages/production-mint",
         "packages/moonrey-production-tokenomics",
         "packages/moonrey-issuance-policy",
         "packages/tokenomics-v2",
         "packages/sunrey-tokenomics",
         "packages/production-valuation",
         "packages/issuance-parameters",
-        "packages/human-worth-token",
-        "packages/tokenomics",
-        "packages/economic-parameters",
-        "packages/monetary-policy-v2",
-        "packages/coin-supply",
-        "packages/production-mint"
+        "packages/human-worth-token"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 146 production-candidate issuance parameter assembly under the Chunk 143 production-activation owner. Binds unconfigured supply, conversion, and cap identifiers. Does not choose production tokenomics or activate issuance.",
-      "notes": "Chunk 145 production-candidate policy package. Valuation remains at packages/human-economic-contribution/src/valuation/production-candidate. Conversion remains at packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate. Assembly remains under production-activation. Does not select production quantities, activate issuance, flip LIVE_* flags, or create a second mint. Fixture packages cannot authorize production.",
-      "notes": "Chunk 144 typed production economic parameter registry. Reuses Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, mint, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED."
+      "notes": "Chunk 144 canonical production economic parameter registry. Typed values behind Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, mint, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED."
     },
     {
       "id": "moonrey-production-issuance-parameter-package",
@@ -4653,9 +4594,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 139/140 privacy-safe HIN → SunRey Chain anchoring. Uses HumanInformationChainAnchorPort over existing SunReyChainService. Completes intent, submit, finality, reorg, and reconciliation. Does not invent a second finality model, blockchain node, ledger, or mint. Chain finality is evidence, not legal consent authority. Production remains inactive.",
-      "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records.",
-      "notes": "Chunk 139/140 privacy-safe HIN → SunRey Chain anchoring. Uses HumanInformationChainAnchorPort over existing SunReyChainService. Completes intent, submit, finality, reorg, and reconciliation. Does not invent a second finality model, blockchain node, ledger, or mint. Chain finality is evidence, not legal consent authority. Production remains inactive."
+      "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records."
     },
     {
       "id": "sunrey-human-economic-contributions",
@@ -5838,7 +5777,12 @@
     "packages/gpuv-conversion",
     "packages/moonrey-issuance-policy",
     "packages/production-value-function",
-    "packages/moonrey-production-policy"
+    "packages/moonrey-production-policy",
+    "packages/moonrey-custody",
+    "packages/sunrey-custody-v2",
+    "packages/key-vault",
+    "packages/mpc-v2",
+    "packages/custody-provider-v2"
   ],
   "capabilities": [
     {
@@ -6188,7 +6132,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
-      "notes": "Canonical provider-neutral digital-asset custody control plane. Chunk 30R simulation adapters. Chunk 47 adds institutional native-asset vaults, HSM/KMS/remote-signer ports, human approval, finalized-chain deposit recognition, and exact reconciliation. Not customer-accounting truth. Canonical native quantity is on SunRey Blockchain. Do not create custody-v2."
+      "notes": "Canonical provider-neutral digital-asset custody control plane. Chunk 30R simulation adapters. Chunk 47 adds institutional native-asset vaults, HSM/KMS/remote-signer ports, human approval, finalized-chain deposit recognition, and exact reconciliation. Chunk 153 hardens dual-native-asset positions and adds a production-candidate provider framework at packages/custody/src/provider-candidate. Not customer-accounting truth. Canonical native quantity is on SunRey Blockchain. Do not create custody-v2, moonrey-custody, or custody-provider-v2."
     },
     {
       "id": "market-surveillance",
@@ -6311,7 +6255,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/custody",
       "protected": true,
-      "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
+      "notes": "Chunk 47 institutional native-asset custody control plane at packages/custody. Extends existing custody. Chunk 153 adds schemaVersion 2 dual-native assets (SUNREY_COIN and MOONREY_COIN) without reinterpreting v1 SunRey-only records. HSM/KMS contracts live at packages/security. Native-chain port lives at packages/sunrey-chain. Simulation only. Not a second asset ledger. Do not create packages/custody-v2, packages/blockchain-custody, packages/institutional-custody-v2, or packages/hsm-security-v2."
     },
     {
       "id": "sunrey-sovereign-wallets",
@@ -6444,10 +6388,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system.",
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family and unified economic data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system.",
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification, Chunk 129–138 provider-family and unified economic data fabrics, and Chunk 150 external provider candidates extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family data fabrics and the unified economic data fabric extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
@@ -6708,13 +6649,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/information-market",
       "protected": true,
-      "notes": "Chunk 139/140 HIN chain-anchor lifecycle at packages/information-market/src/network/chain-anchor. Uses existing SunRey Chain finality through HumanInformationChainAnchorPort. Not a second ledger, mint, or blockchain node. CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY=true.",
-      "status": "PARTIAL",
-      "owner": "packages/information-market",
-      "protected": true,
-      "notes": "Chunk 139 HIN to SunRey Chain anchoring foundation at packages/information-market/src/network/chain-anchor. Uses existing SunReyChainService. Not a second chain, consent ledger, or Evidence Vault. Lifecycle completion is Chunk 140. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger.",
-      "notes": "Chunk 139/140 HIN chain-anchor lifecycle at packages/information-market/src/network/chain-anchor. Uses existing SunRey Chain finality through HumanInformationChainAnchorPort. Not a second ledger, mint, or blockchain node. CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY=true."
-      "notes": "Chunk 139/140 HIN chain-anchor lifecycle at packages/information-market/src/network/chain-anchor. Uses existing SunRey Chain finality through HumanInformationChainAnchorPort. Not a second ledger, mint, or blockchain node. CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY=true. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
+      "notes": "Chunk 139 HIN to SunRey Chain anchoring foundation at packages/information-market/src/network/chain-anchor. Uses existing SunReyChainService. Not a second chain, consent ledger, or Evidence Vault. Lifecycle completion is Chunk 140. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
     },
     {
       "id": "sunrey-human-economic-contributions",
@@ -6868,8 +6803,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate at packages/sunrey-chain/src/release-candidate/economic/production-constitution. Evaluator only. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics.",
-      "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
       "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Chunk 148 binds the firewall decision by hash into the production economic constitution candidate at packages/sunrey-chain/src/release-candidate/economic/production-constitution. Evaluator only. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
     },
     {
@@ -6877,7 +6810,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 145 SunRey production issuance policy candidate at packages/human-economic-contribution/src/valuation/production-candidate, packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate, and packages/sunrey-chain/src/economics/production-activation/sunrey-package. Does not select production quantities or activate issuance. Do not create packages/sunrey-tokenomics, packages/production-valuation, packages/issuance-parameters, or packages/human-worth-token.",
       "notes": "Chunk 145 SunRey production issuance policy candidate at packages/human-economic-contribution/src/valuation/production-candidate, packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate, and packages/sunrey-chain/src/economics/production-activation/sunrey-package. Does not select production quantities or activate issuance. Do not create packages/sunrey-tokenomics, packages/production-valuation, packages/issuance-parameters, or packages/human-worth-token."
     },
     {
@@ -6907,6 +6839,13 @@
       "owner": "packages/kernel",
       "protected": true,
       "notes": "Chunk 152 identity/KYC, sanctions/PEP, AML, Travel Rule, case-management, and market-surveillance provider-candidate adapters. Existing ports remain canonical. No live vendors. Do not create packages/kyc, packages/aml, packages/sanctions, packages/compliance-v2, packages/regtech, packages/travel-rule-v2, or packages/surveillance-v2."
+    },
+    {
+      "id": "sunrey-dual-asset-custody-provider-candidate",
+      "status": "IMPLEMENTED",
+      "owner": "packages/custody",
+      "protected": true,
+      "notes": "Chunk 153 dual-native-asset custody hardening and institutional custody provider-candidate framework at packages/custody/src/provider-candidate. Extends packages/custody. HSM/KMS remain packages/security. Native quantity remains SunRey Chain / AssetSupplyBook. productionAuthorized stays false. Do not create packages/moonrey-custody, packages/sunrey-custody-v2, packages/key-vault, packages/hsm-v2, packages/mpc-v2, or packages/custody-provider-v2."
     }
   ],
   "boundedContexts": [
@@ -7413,6 +7352,11 @@
     "packages/resource-oracles",
     "packages/minerals-data",
     "packages/extraction-fabric",
-    "packages/resource-data-fabric"
+    "packages/resource-data-fabric",
+    "packages/moonrey-custody",
+    "packages/sunrey-custody-v2",
+    "packages/key-vault",
+    "packages/mpc-v2",
+    "packages/custody-provider-v2"
   ]
 }
