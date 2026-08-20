@@ -186,6 +186,7 @@
     "demo:travel-rule": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",
     "demo:withdrawal": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/custody/src/demo.ts",
     "demo:market-surveillance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/market-surveillance/src/demo.ts",
+    "demo:sunrey-regulated-provider-candidates": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/demo-sunrey-regulated-provider-candidates.ts",
     "demo:listing-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/listing-demo.ts",
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",

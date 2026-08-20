@@ -135,3 +135,4 @@ export {
   simulatedProviderPorts,
 } from './simulation.ts';
 export { IdentityStore, type IdentitySnapshot } from './store.ts';
+export * as identityProviderCandidate from './provider-candidate/index.ts';

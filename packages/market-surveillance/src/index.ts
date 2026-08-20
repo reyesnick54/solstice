@@ -9,3 +9,4 @@ export type {
   RestrictionProposal,
   SurveillanceAlert,
 } from './types.ts';
+export * as surveillanceProviderCandidate from './provider-candidate/index.ts';

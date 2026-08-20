@@ -2852,6 +2852,9 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family and unified economic data fabrics live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state.",
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
@@ -4990,6 +4993,37 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 131 read-only manufacturing and robotics economic data fabric. Extends sunrey-production-oracles. Observes MES, robot telemetry, quality, and ERP evidence. Does not command industrial equipment, contact a real factory, activate production, or mint MoonRey."
+    },
+    {
+      "id": "sunrey-regulated-provider-candidates",
+      "name": "Identity, compliance, Travel Rule, and market-surveillance provider-candidate adapters",
+      "canonicalOwner": "packages/kernel",
+      "canonicalPath": "packages/kernel/src/compliance/provider-candidate/types.ts",
+      "publicInterface": "packages/kernel/src/compliance/provider-candidate/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ComplianceProviderCandidateProfile",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/kyc",
+        "packages/aml",
+        "packages/sanctions",
+        "packages/compliance-v2",
+        "packages/regtech",
+        "packages/travel-rule-v2",
+        "packages/surveillance-v2"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 152 fixture provider-candidate adapters. Identity adapters live at packages/identity/src/provider-candidate. Compliance adapters live at packages/kernel/src/compliance/provider-candidate. Travel Rule candidate lives at packages/custody/src/provider-candidate. Surveillance candidate lives at packages/market-surveillance/src/provider-candidate. Does not replace identity, compliance-screening, custody, or market-surveillance. No live vendors. No Execution Authority from provider output."
     }
   ],
   "authorizedMutationPaths": [
@@ -6866,6 +6900,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 146 MoonRey production-candidate Productive Value, GPUV conversion, and issuance parameter package. Schema only. Does not invent GPUV values or activate issuance. Chunk 71 remains the mint. Do not create packages/moonrey-production-tokenomics, packages/gpuv-conversion, packages/moonrey-issuance-policy, packages/production-value-function, or packages/moonrey-production-policy."
+    },
+    {
+      "id": "sunrey-regulated-provider-candidates",
+      "status": "IMPLEMENTED",
+      "owner": "packages/kernel",
+      "protected": true,
+      "notes": "Chunk 152 identity/KYC, sanctions/PEP, AML, Travel Rule, case-management, and market-surveillance provider-candidate adapters. Existing ports remain canonical. No live vendors. Do not create packages/kyc, packages/aml, packages/sanctions, packages/compliance-v2, packages/regtech, packages/travel-rule-v2, or packages/surveillance-v2."
     }
   ],
   "boundedContexts": [

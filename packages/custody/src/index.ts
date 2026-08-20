@@ -69,3 +69,4 @@ export type { InstitutionalSignerCapabilities, InstitutionalSigningProvider } fr
 export type { ExchangeCustodyPort } from './institutional/exchange.ts';
 export { runCustodyCommand, custodyUsage } from './institutional/cli.ts';
 export * from './regulated/index.ts';
+export * as travelRuleProviderCandidate from './provider-candidate/index.ts';
