@@ -16,6 +16,7 @@
     "demo:contribution": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/contribution/demo.ts",
     "demo:chain-anchor": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/chain-anchor/demo.ts",
     "demo:chain-finality": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/chain-anchor/finality-demo.ts"
+    "demo:chain-anchor": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/network/chain-anchor/demo.ts"
   },
   "engines": {
     "node": ">=22"

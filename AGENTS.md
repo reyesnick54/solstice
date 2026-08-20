@@ -137,6 +137,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
 - `packages/sunrey-economics` — Chunk 75 SunRey/MoonRey dual-economy simulation laboratory; not production monetary policy
 - `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`. Chunk 139/140 HIN → SunRey Chain anchoring lives at `src/network/chain-anchor`. Not a second chain, finality model, consent ledger, Evidence Vault, blockchain node, ledger, or mint.
+- `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`. Chunk 139 HIN → SunRey Chain anchoring foundation lives at `src/network/chain-anchor`. Not a second chain, consent ledger, or Evidence Vault.
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - `db/` — versioned SQL migrations per bounded database

@@ -7,6 +7,8 @@ export const HIN_CHAIN_ANCHOR_OWNER = Object.freeze({
   capability: 'sunrey-hin-chain-anchoring',
   chunk: 'CHUNK-140',
   lifecycleComplete: true,
+  chunk: 'CHUNK-139',
+  lifecycleComplete: false,
 });
 
 export const HIN_CHAIN_ANCHOR_INVARIANTS = Object.freeze({

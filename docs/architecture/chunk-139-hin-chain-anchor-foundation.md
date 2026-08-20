@@ -7,6 +7,8 @@ Canonical blockchain owner remains `packages/sunrey-chain`.
 
 Capability `sunrey-hin-chain-anchoring` is `IMPLEMENTED` after
 Chunk 140 completes lifecycle, finality, and reconciliation.
+Capability `sunrey-hin-chain-anchoring` is `PARTIAL`. Chunk 140
+completes lifecycle, finality, and reconciliation.
 
 See
 [`docs/economics/chunk-139-hin-chain-anchor-foundation.md`](../economics/chunk-139-hin-chain-anchor-foundation.md).

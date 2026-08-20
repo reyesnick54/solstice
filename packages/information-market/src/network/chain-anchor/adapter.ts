@@ -81,6 +81,9 @@ function mapChainFailure(code: string, message: string): HinAnchorFailure {
   if (code === 'OPERATION_NOT_FOUND' || code === 'INTENT_NOT_FOUND') {
     return { code: 'HIN_ANCHOR_OPERATION_NOT_FOUND', message };
   }
+  if (code === 'CHAIN_UNAVAILABLE') {
+    return { code: 'HIN_ANCHOR_CHAIN_UNAVAILABLE', message };
+  }
   if (
     code === 'FORBIDDEN_ON_CHAIN_FIELD' ||
     code === 'RAW_SENSITIVE_DATA_DENIED' ||
@@ -128,6 +131,10 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
   readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
   readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
   readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
+  readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
+  readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
+  readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
+  private readonly clock: Clock;
   private readonly contributionRegistry: HumanContributionRegistryPort | null;
   private readonly records = new Map<string, HumanInformationChainAnchorRecord>();
   private readonly keys = new Map<HumanInformationAnchorKey, HumanInformationAnchorId>();
@@ -226,6 +233,7 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
         code: 'HIN_ANCHOR_REJECTED',
         message: 'rejected anchors are not retried as duplicate submissions',
       });
+      return err({ code: 'HIN_ANCHOR_SOURCE_NOT_FOUND', message: `anchor ${anchorId} has no stored intent` });
     }
     const submitted = this.chain.submit(current.intentId);
     if (!submitted.ok) {
@@ -923,6 +931,9 @@ export function hinFinalizedAnchorForRegistry(
     transactionId: record.transactionId ? transactionIdFor(record.transactionId) : null,
     blockHeight: parseChainHeight(record.blockReference),
     blockId: record.blockReference ? blockIdFor(record.blockReference) : null,
+    transactionId: null,
+    blockHeight: null,
+    blockId: null,
     stateRootRef: null,
     contentCommitment: contentCommitmentFor(record.payloadCommitment),
     anchorType:

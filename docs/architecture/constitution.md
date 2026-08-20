@@ -1582,6 +1582,11 @@ owner. Existing `SunReyChainService` remains the only chain owner.
 The adapter creates privacy-safe `ChainWriteIntent` records. Chunk 140
 completes submit, finality, reorg, and reconciliation. Anchors do not
 mint, transfer ownership, or rewrite historical HIN records. Do not create
+`sunrey-hin-chain-anchoring` is `PARTIAL`. HIN remains the rights
+owner. Existing `SunReyChainService` remains the only chain owner.
+The adapter creates privacy-safe `ChainWriteIntent` records and does
+not mint, transfer ownership, or rewrite historical HIN records.
+Chunk 140 completes lifecycle and finality. Do not create
 `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or
 `packages/human-data-ledger`. See

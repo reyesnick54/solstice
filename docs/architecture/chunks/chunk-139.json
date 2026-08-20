@@ -15,4 +15,5 @@
     "sunrey-economic-asset-registry"
   ],
   "notes": "Foundation at packages/information-market/src/network/chain-anchor. Narrow privacy-safe HIN adapter over the existing SunReyChainService. Creates schemas, commitments, and ChainWriteIntent records. Chunk 140 completes lifecycle, finality, and reconciliation. Capability sunrey-hin-chain-anchoring is IMPLEMENTED. evaluateChunkRequirements returns mustStop: false because required capabilities are IMPLEMENTED. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
+  "notes": "PARTIAL at packages/information-market/src/network/chain-anchor. Narrow privacy-safe HIN adapter over the existing SunReyChainService. Creates schemas, commitments, and ChainWriteIntent records. Chunk 140 completes lifecycle, finality, and reconciliation. Capability sunrey-hin-chain-anchoring is PARTIAL. evaluateChunkRequirements returns mustStop: false because required capabilities are IMPLEMENTED. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
 }

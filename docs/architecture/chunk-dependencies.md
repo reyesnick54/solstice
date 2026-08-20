@@ -187,6 +187,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1354,6 +1355,10 @@ completes submit, finality, reorg, and reconciliation. Required
 capabilities are `IMPLEMENTED`, so the evaluator returns
 `mustStop: false`. The adapter does not create a second chain,
 consent ledger, or Evidence Vault. Do not create
+`sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
+`IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
+adapter does not create a second chain, consent ledger, or Evidence
+Vault. Chunk 140 completes lifecycle and finality. Do not create
 `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or
 `packages/human-data-ledger`. See

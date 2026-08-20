@@ -28,6 +28,7 @@ It is not a second Evidence Vault.
 | Human Information rights | `packages/information-market` |
 | Chain writes, receipts, finality | `packages/sunrey-chain` |
 | Capability | `sunrey-hin-chain-anchoring` (`IMPLEMENTED` after Chunk 140) |
+| Capability | `sunrey-hin-chain-anchoring` (`PARTIAL`) |
 
 Do not create `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or

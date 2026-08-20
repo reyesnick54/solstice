@@ -17,6 +17,7 @@ import type {
   HumanInformationAnchorReconciliationId,
   HumanInformationUsageAnchorProjectionId,
 } from './ids.ts';
+import type { ChainRecordType } from '../../../../sunrey-chain/src/taxonomy.ts';
 
 export const HIN_ANCHOR_KINDS = [
   'CONSENT_GRANT',
@@ -37,6 +38,7 @@ export const HIN_ANCHOR_STATES = [
   'QUEUED',
   'SUBMITTED',
   'ACCEPTED',
+  'SUBMITTED',
   'PENDING_FINALITY',
   'FINALIZED',
   'REJECTED',
