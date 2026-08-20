@@ -150,6 +150,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'AREA_TIME',
     canonicalBaseUnit: 'm2_s',
     scaleNumerator: 1n,
+    allowedFactTypes: ['REAL_ESTATE_USE_CAPACITY', 'REAL_ESTATE_USAGE'],
     allowedProductiveCategories: ['REAL_ESTATE_USE'],
   }),
   define({
@@ -158,6 +159,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'AREA_TIME',
     canonicalBaseUnit: 'm2_s',
     scaleNumerator: 3_600n,
+    allowedFactTypes: ['REAL_ESTATE_USAGE'],
     allowedProductiveCategories: ['REAL_ESTATE_USE'],
   }),
   define({
@@ -340,7 +342,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'DATA_VOLUME',
     canonicalBaseUnit: 'B',
     scaleNumerator: 1_000_000_000n,
-    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE', 'BANDWIDTH_CAPACITY'],
+    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE'],
     allowedProductiveCategories: ['BANDWIDTH_COMMUNICATIONS'],
   }),
   define({
@@ -349,7 +351,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'DATA_VOLUME',
     canonicalBaseUnit: 'B',
     scaleNumerator: 1_000_000_000_000n,
-    allowedFactTypes: ['STORAGE_CAPACITY'],
+    allowedFactTypes: ['STORAGE_CAPACITY', 'BANDWIDTH_USAGE'],
     allowedProductiveCategories: ['BANDWIDTH_COMMUNICATIONS'],
   }),
   define({
@@ -380,6 +382,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     dimension: 'FACILITY_TIME',
     canonicalBaseUnit: 'facility_hour',
     scaleNumerator: 1n,
+    allowedFactTypes: ['INFRASTRUCTURE_USAGE', 'INFRASTRUCTURE_CAPACITY'],
     allowedProductiveCategories: ['INFRASTRUCTURE'],
   }),
   define({

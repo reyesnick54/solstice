@@ -291,4 +291,31 @@ export {
   serviceFactCannotAutoMint,
 } from './provider-families/service-delivery/index.ts';
 export type { ServiceSourceObservation } from './provider-families/service-delivery/index.ts';
+  ingestBandwidthObservation,
+  bandwidthFactDoesNotMintMoonRey,
+  bandwidthAdapterDoesNotMint,
+  certifyBandwidthObservation,
+  bandwidthCertificationDoesNotMint,
+} from './provider-families/bandwidth/index.ts';
+export type { BandwidthEconomicRecord, BandwidthSourceObservation } from './provider-families/bandwidth/index.ts';
+  ingestRealEstateRecord,
+  ingestInfrastructureRecord,
+  realEstateFactCannotAutoMint,
+  infrastructureFactCannotAutoMint,
+  runRealEstateInfrastructureDataFabricDemo,
+} from './provider-families/index.ts';
+  CANONICAL_FAMILY_REGISTRY,
+  DATA_FABRIC_FINALIZES_FACTS,
+  DATA_FABRIC_MINTS_MOONREY,
+  EconomicDataProviderFamilyRegistry,
+  admitCollection,
+  buildCoverageReport,
+  ingestBatch,
+  runUnifiedEconomicDataFabricDemo,
+} from './economic-data-fabric/index.ts';
+export type {
+  EconomicDataCollectionEnvelope,
+  EconomicDataFabricCoverageReport,
+  EconomicDataProviderFamilyRecord,
+} from './economic-data-fabric/index.ts';
 

@@ -122,8 +122,9 @@ describe('Chunk 116 MoonRey source-to-productive taxonomy', () => {
     assert.equal(mappingRequiresAttribution('MANUFACTURING'), true);
   });
 
-  it('maps real-estate use capacity', () => {
-    assert.deepEqual(factsFor('real_estate_use'), ['REAL_ESTATE_USE_CAPACITY']);
+  it('maps real-estate realized usage separately from capacity', () => {
+    assert.deepEqual(factsFor('real_estate_use'), ['REAL_ESTATE_USAGE', 'REAL_ESTATE_USE_CAPACITY']);
+    assert.deepEqual(claimsFor('real_estate_use', 'REAL_ESTATE_USAGE'), ['USAGE']);
     assert.deepEqual(claimsFor('real_estate_use', 'REAL_ESTATE_USE_CAPACITY'), ['CAPACITY']);
     assert.equal(mappingsForSourceCategory('real_estate_use')[0]?.productiveCategory, 'REAL_ESTATE_USE');
   });

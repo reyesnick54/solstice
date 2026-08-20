@@ -45,9 +45,14 @@ export type FeedStatus = (typeof FEED_STATUSES)[number];
  * - AI_TRAINING_USAGE — measured training consumption, distinct from inference
  * - INFRASTRUCTURE_CAPACITY — facility / civil-infrastructure capacity
  * - INFRASTRUCTURE_USAGE — measured infrastructure utilization
+ * - REAL_ESTATE_USAGE — realized occupied/use area-time (Chunk 135)
  * - GOODS_OUTPUT — finished-goods production, distinct from process output
  * - GOODS_DELIVERY — finished-goods delivery completion
  * - AUTOMATED_MACHINE_OUTPUT — autonomous or machine-originated output
+ *
+ * REAL_ESTATE_USE_CAPACITY remains installed/available area. It is never
+ * reinterpreted as realized occupancy. REAL_ESTATE_USAGE is the governed
+ * addition for completed space use.
  */
 export const FACT_TYPES = [
   'ENERGY_PRODUCTION',
@@ -65,6 +70,7 @@ export const FACT_TYPES = [
   'MANUFACTURING_CAPACITY',
   'MANUFACTURING_OUTPUT',
   'REAL_ESTATE_USE_CAPACITY',
+  'REAL_ESTATE_USAGE',
   'STORAGE_CAPACITY',
   'LOGISTICS_CAPACITY',
   'DELIVERY_COMPLETION',
@@ -101,6 +107,9 @@ export const UNIT_CODES = [
   'TB',
   'GB_s',
   'service_hour',
+  'B_s',
+  'm2_hour',
+  'facility_hour',
 ] as const;
 export type UnitCode = (typeof UNIT_CODES)[number];
 

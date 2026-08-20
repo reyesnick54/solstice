@@ -118,6 +118,13 @@ const MANUFACTURING_ROWS = [
 
 const REAL_ESTATE_ROWS = [
   {
+    fact: 'REAL_ESTATE_USAGE',
+    productive: 'REAL_ESTATE_USE',
+    claims: ['USAGE'],
+    event: 'USAGE',
+    attribution: true,
+  },
+  {
     fact: 'REAL_ESTATE_USE_CAPACITY',
     productive: 'REAL_ESTATE_USE',
     claims: ['CAPACITY'],
@@ -141,7 +148,13 @@ const BANDWIDTH_ROWS = [
 
 const INFRASTRUCTURE_ROWS = [
   { fact: 'INFRASTRUCTURE_CAPACITY', productive: 'INFRASTRUCTURE', claims: ['CAPACITY'], event: 'CAPACITY' },
-  { fact: 'INFRASTRUCTURE_USAGE', productive: 'INFRASTRUCTURE', claims: ['USAGE'], event: 'USAGE' },
+  {
+    fact: 'INFRASTRUCTURE_USAGE',
+    productive: 'INFRASTRUCTURE',
+    claims: ['USAGE'],
+    event: 'USAGE',
+    attribution: true,
+  },
 ] as const satisfies readonly Omit<MappingDraft, 'source'>[];
 
 const GOODS_ROWS = [

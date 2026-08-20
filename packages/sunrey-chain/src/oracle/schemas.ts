@@ -57,11 +57,12 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
     'manufacturing.resource.v1',
   ),
   REAL_ESTATE_USE_CAPACITY: schema('REAL_ESTATE_USE_CAPACITY', 'm2', ['m2'], 'real_estate.use.v1'),
+  REAL_ESTATE_USAGE: schema('REAL_ESTATE_USAGE', 'm2_hour', ['m2_hour'], 'real_estate.usage.v1'),
   STORAGE_CAPACITY: schema('STORAGE_CAPACITY', 'TB', STORAGE_UNITS, 'storage.resource.v1'),
   LOGISTICS_CAPACITY: schema('LOGISTICS_CAPACITY', 'tonne_km', ['tonne_km'], 'logistics.resource.v1'),
   DELIVERY_COMPLETION: schema('DELIVERY_COMPLETION', 'units_produced', ['units_produced'], 'delivery.completion.v1'),
-  BANDWIDTH_CAPACITY: schema('BANDWIDTH_CAPACITY', 'GB_s', ['GB_s'], 'bandwidth.resource.v1'),
-  BANDWIDTH_USAGE: schema('BANDWIDTH_USAGE', 'GB_s', ['GB_s'], 'bandwidth.resource.v1'),
+  BANDWIDTH_CAPACITY: schema('BANDWIDTH_CAPACITY', 'GB_s', ['GB_s', 'B_s'], 'bandwidth.capacity.v1'),
+  BANDWIDTH_USAGE: schema('BANDWIDTH_USAGE', 'GB_s', ['GB_s', 'GB', 'TB'], 'bandwidth.usage.v1'),
   RESOURCE_RESERVE: schema('RESOURCE_RESERVE', 'tonne', MASS_UNITS, 'minerals.reserve.v1'),
   RESOURCE_EXTRACTION: schema('RESOURCE_EXTRACTION', 'tonne', MASS_UNITS, 'minerals.extraction.v1'),
   SERVICE_DELIVERY: schema(
@@ -73,10 +74,15 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
   INFRASTRUCTURE_CAPACITY: schema(
     'INFRASTRUCTURE_CAPACITY',
     'machine_h',
-    ['machine_h'],
+    ['machine_h', 'facility_hour'],
     'infrastructure.capacity.v1',
   ),
-  INFRASTRUCTURE_USAGE: schema('INFRASTRUCTURE_USAGE', 'machine_h', ['machine_h'], 'infrastructure.usage.v1'),
+  INFRASTRUCTURE_USAGE: schema(
+    'INFRASTRUCTURE_USAGE',
+    'machine_h',
+    ['machine_h', 'facility_hour'],
+    'infrastructure.usage.v1',
+  ),
   GOODS_OUTPUT: schema('GOODS_OUTPUT', 'units_produced', ['units_produced', 'kg', 'tonne'], 'goods.output.v1'),
   GOODS_DELIVERY: schema('GOODS_DELIVERY', 'units_produced', ['units_produced'], 'goods.delivery.v1'),
   AUTOMATED_MACHINE_OUTPUT: schema(
@@ -91,6 +97,34 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
 export function schemaAllowsUnit(factType: FactType, unit: UnitCode): boolean {
   return FACT_SCHEMAS[factType].allowedUnits.includes(unit);
 }
+
+/**
+ * Historical BANDWIDTH_USAGE contract. Observations already admitted
+ * under GB_s remain valid. Volume semantics live on V2.
+ */
+export const BANDWIDTH_USAGE_SCHEMA_V1 = Object.freeze({
+  schemaVersion: 1 as const,
+  factType: 'BANDWIDTH_USAGE' as const,
+  defaultUnit: 'GB_s' as const,
+  allowedUnits: Object.freeze(['GB_s'] as const),
+  subjectSchema: 'bandwidth.resource.v1',
+  quantityKind: 'DATA_RATE' as const,
+  upgradePath: 'GOVERNED_SCHEMA_UPGRADE' as const,
+});
+
+/**
+ * Governed volume contract. Transferred/used network service uses
+ * DATA_VOLUME units. GB/s is not GB.
+ */
+export const BANDWIDTH_USAGE_SCHEMA_V2 = Object.freeze({
+  schemaVersion: 2 as const,
+  factType: 'BANDWIDTH_USAGE' as const,
+  defaultUnit: 'GB' as const,
+  allowedUnits: Object.freeze(['GB', 'TB'] as const),
+  subjectSchema: 'bandwidth.usage.v2',
+  quantityKind: 'DATA_VOLUME' as const,
+  upgradePath: 'GOVERNED_SCHEMA_UPGRADE' as const,
+});
 
 export function governedSchemaUpgradeOnly(): 'GOVERNED_SCHEMA_UPGRADE' {
   return 'GOVERNED_SCHEMA_UPGRADE';
