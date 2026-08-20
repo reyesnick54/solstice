@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { SCENARIO_CATALOG, runScenarioIsolated } from './catalog.ts';
 import { createRangeEnvironment } from './environment.ts';
 import { evidenceRecord, redact, writeEvidenceArtifact } from './evidence.ts';
+import { countSeverities, invariantBreachCount } from './production-safety.ts';
 import { buildScorecard } from './scorecard.ts';
 import type { AttackResult, CampaignReport } from './types.ts';
 
@@ -31,6 +32,39 @@ export const SMOKE_SCENARIO_IDS = [
   'ECON-ORACLE-STALE',
 ] as const;
 
+export const PRODUCTION_SAFETY_SMOKE_IDS = [
+  'CRED-WRONG-WORKLOAD',
+  'CRED-AUTHORIZATION-HEADER-LOG',
+  'ENDPOINT-METADATA',
+  'ENDPOINT-CREDENTIAL-IN-URL',
+  'ORADV-FALSE-INDEPENDENCE',
+  'ORADV-REFERENCE-PRICE',
+  'PRODATT-MANUFACTURING-GOODS',
+  'HUMAN-WORTH-FIELD',
+  'HUMAN-AI-APPROVE',
+  'PAY-IDEMPOTENCY-AMOUNT',
+  'PAY-TIMEOUT-AFTER-SUCCESS',
+  'PAY-PROVIDER-CLAIMS-DISABLED-CORRIDOR',
+  'COMPLY-SANCTIONS-TIMEOUT-CLEAR',
+  'COMPLY-AI-COUNSEL-REVIEW',
+  'TRAVEL-ACK-AS-WITHDRAWAL',
+  'CUSTADV-MOONREY-AS-SUNREY',
+  'CUSTADV-PRIVATE-KEY-EXPORT',
+  'CUSTADV-DUPLICATE-WITHDRAWAL',
+  'PERSIST-CHECKSUM',
+  'EVENT-DUPLICATE',
+  'IDEM-QUERY-NOT-RESUBMIT',
+  'CONST-AI-TOKENOMICS',
+  'AIAUTH-ISSUE-AUTHORITY',
+  'OBS-SECRET-TRACE',
+  'CTRL-FLIP-LIVE',
+  'COMPSAFE-KYC-SANCTIONS-AI',
+] as const;
+
+export const PRODUCTION_SAFETY_EXTENDED_IDS = SCENARIO_CATALOG
+  .filter((row) => row.fixtureVersion === 'sunrey.range.fixture.v157')
+  .map((row) => row.scenarioId);
+
 export function runCampaign(ids: readonly string[] = SCENARIO_CATALOG.map((row) => row.scenarioId)): CampaignReport {
   const env = createRangeEnvironment(57);
   const results: AttackResult[] = ids.map((id) => runScenarioIsolated(id));
@@ -42,6 +76,8 @@ export function runCampaign(ids: readonly string[] = SCENARIO_CATALOG.map((row) 
     scenarioCount: results.length,
     passed: results.filter((row) => row.passed).length,
     failed: results.filter((row) => !row.passed).length,
+    invariantBreaches: invariantBreachCount(results),
+    severities: countSeverities(results),
     results,
     scorecard: buildScorecard(results),
   };
@@ -49,6 +85,14 @@ export function runCampaign(ids: readonly string[] = SCENARIO_CATALOG.map((row) 
 
 export function runSmokeCampaign(): CampaignReport {
   return runCampaign(SMOKE_SCENARIO_IDS);
+}
+
+export function runProductionSafetySmokeCampaign(): CampaignReport {
+  return runCampaign(PRODUCTION_SAFETY_SMOKE_IDS);
+}
+
+export function runProductionSafetyExtendedCampaign(): CampaignReport {
+  return runCampaign(PRODUCTION_SAFETY_EXTENDED_IDS);
 }
 
 export function persistCampaign(report: CampaignReport, directory = 'artifacts/sunrey-range'): CampaignReport {

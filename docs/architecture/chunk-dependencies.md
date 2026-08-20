@@ -594,8 +594,13 @@ Chunk 57 implements the isolated adversarial cyber-economic test
 range at `packages/sunrey-range`. Capability
 `sunrey-adversarial-range` is `IMPLEMENTED`. See
 [`chunk-57-adversarial-range.md`](./chunk-57-adversarial-range.md).
-Do not create `packages/red-team`, `packages/attack-sim`, or
-`packages/sunrey-pentest`. The evaluator returns `mustStop: false`.
+Chunk 157 extends the same capability with a production-safety
+campaign. See
+[`docs/security/chunk-157-production-adversarial-resilience.md`](../security/chunk-157-production-adversarial-resilience.md).
+Do not create `packages/red-team`, `packages/attack-sim`,
+`packages/sunrey-pentest`, `packages/chaos-v2`,
+`packages/security-range-v2`, `packages/pentest`, or
+`packages/adversarial-v2`. The evaluator returns `mustStop: false`.
 Chunk 56 implements SunRey protocol fuzzing, property tests,
 differential TypeScript/Rust drivers, and deterministic replay at
 `packages/sunrey-chain`. Capability `sunrey-assurance` is

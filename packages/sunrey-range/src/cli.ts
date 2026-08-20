@@ -1,6 +1,13 @@
 import { writeFileSync } from 'node:fs';
 
-import { persistCampaign, runCampaign, runSmokeCampaign } from './campaign.ts';
+import {
+  persistCampaign,
+  runCampaign,
+  runProductionSafetyExtendedCampaign,
+  runProductionSafetySmokeCampaign,
+  runSmokeCampaign,
+} from './campaign.ts';
+import { productionSafetySummary } from './production-safety.ts';
 import { SCENARIO_CATALOG, renderAttackMatrixMarkdown, runScenarioIsolated, scenarioById } from './catalog.ts';
 import { createRangeEnvironment } from './environment.ts';
 import { evidenceRecord, writeEvidenceArtifact } from './evidence.ts';
@@ -36,15 +43,31 @@ export function runRangeCli(argv: readonly string[]): number {
   }
   if (command === 'campaign') {
     const smoke = rest.includes('--smoke');
-    const report = persistCampaign(smoke ? runSmokeCampaign() : runCampaign());
+    const productionSafetySmoke = rest.includes('--production-safety-smoke');
+    const productionSafetyExtended = rest.includes('--production-safety-extended');
+    const report = persistCampaign(
+      productionSafetySmoke
+        ? runProductionSafetySmokeCampaign()
+        : productionSafetyExtended
+          ? runProductionSafetyExtendedCampaign()
+          : smoke
+            ? runSmokeCampaign()
+            : runCampaign(),
+    );
+    const summary = productionSafetySmoke || productionSafetyExtended ? productionSafetySummary(report.results) : undefined;
     console.log(JSON.stringify({
       smoke,
+      productionSafetySmoke,
+      productionSafetyExtended,
       scenarioCount: report.scenarioCount,
       passed: report.passed,
       failed: report.failed,
+      invariantBreaches: report.invariantBreaches,
+      severities: report.severities,
       scorecard: report.scorecard,
+      ...(summary === undefined ? {} : { summary }),
     }, null, 2));
-    return report.failed === 0 ? 0 : 2;
+    return report.failed === 0 && report.invariantBreaches === 0 ? 0 : 2;
   }
   if (command === 'report') {
     const report = runSmokeCampaign();
@@ -85,7 +108,7 @@ export function runRangeCli(argv: readonly string[]): number {
     console.log(`wrote ${SCENARIO_CATALOG.length} matrix rows`);
     return 0;
   }
-  console.error('sunrey-range run | scenario <id> | campaign [--smoke] | report | replay [id]');
+  console.error('sunrey-range run | scenario <id> | campaign [--smoke|--production-safety-smoke|--production-safety-extended] | report | replay [id]');
   return 1;
 }
 

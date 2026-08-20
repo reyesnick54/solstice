@@ -261,8 +261,12 @@ jobs:
         run: npm run demo:sunrey-bench
       - name: SunRey adversarial range smoke campaign
         run: npm run sunrey-range -- campaign --smoke
+      - name: SunRey production-safety smoke campaign
+        run: npm run sunrey-range -- campaign --production-safety-smoke
       - name: SunRey adversarial range demo
         run: npm run demo:sunrey-range
+      - name: SunRey production adversarial campaign demo
+        run: npm run demo:sunrey-production-adversarial-campaign
       - name: SunRey MoonRey dual-economy simulation demo
         run: npm run demo:sunrey-dual-economy
       - name: SunRey dual-economy baseline CLI
