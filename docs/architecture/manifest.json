@@ -1812,12 +1812,37 @@
       "protectedSymbols": [],
       "forbiddenAliases": [
         "tools/architecture-linter",
-        "packages/architecture-linter"
+        "packages/architecture-linter",
+        "packages/repository-integrity",
+        "packages/architecture-v2",
+        "packages/merge-manager"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Companion invariant scripts live under scripts/. Do not add a second linter system."
+      "notes": "Companion invariant scripts live under scripts/. Chunk 159 repository merge-integrity lock is check-json-integrity.mjs and check-merge-integrity.mjs. Do not add a second linter or architecture owner."
+    },
+    {
+      "id": "sunrey-repository-integrity",
+      "name": "Repository merge integrity and canonical test-surface lock",
+      "canonicalOwner": "tools/architectural-linter",
+      "canonicalPath": "scripts/check-merge-integrity.mjs",
+      "publicInterface": "scripts/check-json-integrity.mjs",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/repository-integrity",
+        "packages/architecture-v2",
+        "packages/merge-manager"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 159 main-branch integrity lock. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create a mutating auto-fixer that chooses between conflicting owners."
     },
     {
       "id": "persistence-adapter",
@@ -5851,7 +5876,10 @@
     "packages/idempotency-service",
     "packages/transaction-manager",
     "packages/distributed-ledger",
-    "packages/exactly-once"
+    "packages/exactly-once",
+    "packages/repository-integrity",
+    "packages/architecture-v2",
+    "packages/merge-manager"
   ],
   "capabilities": [
     {
@@ -5919,7 +5947,8 @@
       "id": "architecture-linting",
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
-      "protected": true
+      "protected": true,
+      "notes": "Chunk 159 companion integrity scripts live under scripts/. Not a second architecture owner."
     },
     {
       "id": "persistence",
@@ -6943,6 +6972,11 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 160 external production evidence registry at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
+      "id": "sunrey-repository-integrity",
+      "status": "IMPLEMENTED",
+      "owner": "tools/architectural-linter",
+      "protected": true,
+      "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
     }
   ],
   "boundedContexts": [

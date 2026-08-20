@@ -26,8 +26,15 @@ describe('repository JSON integrity', () => {
     assert.ok(String(packageJson?.scripts?.test).includes('packages/sunrey-chain/src/release-candidate/economic/**/*.test.ts'));
     assert.ok(String(packageJson?.scripts?.test).includes('packages/security/src/regulated/**/*.test.ts'));
     assert.ok(String(packageJson?.scripts?.test).includes('packages/payments/src/**/*.test.ts'));
+    assert.ok(String(packageJson?.scripts?.test).includes('packages/persistence/src/**/*.test.ts'));
     const ciText = readFileSync(join(ROOT, '.github/workflows/ci.yml'), 'utf8');
     assert.ok(ciText.indexOf('node scripts/check-json-integrity.mjs') < ciText.indexOf('npm ci --ignore-scripts'));
+    assert.ok(ciText.indexOf('node scripts/check-merge-integrity.mjs') < ciText.indexOf('npm ci --ignore-scripts'));
+    const platformText = readFileSync(join(ROOT, '.github/workflows/sunrey-full-platform-candidate.yml'), 'utf8');
+    assert.ok(
+      platformText.indexOf('node scripts/check-merge-integrity.mjs') <
+        platformText.indexOf('npm ci --ignore-scripts'),
+    );
     parseJsonStrict(readFileSync(join(ROOT, 'docs/architecture/manifest.json'), 'utf8'), 'manifest');
     const ids = (manifest?.capabilities ?? []).map((item: { id: string }) => item.id);
     assert.equal(new Set(ids).size, ids.length);

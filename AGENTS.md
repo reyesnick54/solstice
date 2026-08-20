@@ -92,7 +92,6 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity, SUNREY_* env resolution with official legacy env aliases
 - `packages/payments` — Cross-border payments, FX, and rail adapters. Chunk 151 banking / payment-rail / FX provider candidates live at `src/production-candidate`. Sandbox conformance only. Not a second ledger, not live bank / rail / FX access.
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger. Chunk 154 operational persistence, crash recovery, state rehydration, and repository integrity gate live at `src/production/recovery`. Durable fixture snapshots fail closed on corruption. Not a second ledger, mint, or Execution Authority.
-- `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
 - `packages/personal-data-vault` — Personal Data Vault; subject-bound encrypted store
@@ -135,7 +134,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
 - `services/identity` — identity application facade; not a second identity model
 - `services/economic-graph` — PEG application facade; not a second graph model
-- `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks
+- `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks. Chunk 159 repository merge-integrity lock lives with the companion scripts `scripts/check-json-integrity.mjs` and `scripts/check-merge-integrity.mjs`. Not a second architecture owner.
 - `docs/architecture/` — constitution, manifest, ADR index, chunk declarations
 - `docs/developers/` — public SDK and API documentation
 - `api/` — OpenAPI and event specifications
@@ -145,6 +144,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 ```
 npm install
 npm test
+npm run integrity:check
+npm run integrity:report
 npm run demo
 npm run ci
 npm run db:up
@@ -154,6 +155,9 @@ npm run db:down
 ```
 
 ## What CI checks, in order
+
+JSON and merge-integrity preflight runs after Node setup and before `npm ci`.
+Do not skip it. The seven stages below stay in this order:
 
 1. Architectural invariants (Python linter + extraction dry-run + `lint:architecture`)
 2. Deployment posture (simulation flags)

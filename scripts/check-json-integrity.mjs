@@ -5,7 +5,7 @@
  * JSON.parse silently keeps the last duplicate key. This scanner walks
  * objects and rejects duplicate keys, then validates architecture IDs.
  */
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -187,10 +187,16 @@ export function parseJsonStrict(text, path = 'input') {
 
 export function collectIntegrityTargets(root = ROOT) {
   const targets = [join(root, 'package.json'), join(root, 'docs/architecture/manifest.json')];
+  const baseline = join(root, 'docs/architecture/integrity-baseline.json');
+  if (existsSync(baseline)) {
+    targets.push(baseline);
+  }
   const chunksDir = join(root, 'docs/architecture/chunks');
-  for (const entry of readdirSync(chunksDir).sort()) {
-    if (entry.endsWith('.json')) {
-      targets.push(join(chunksDir, entry));
+  if (existsSync(chunksDir)) {
+    for (const entry of readdirSync(chunksDir).sort()) {
+      if (entry.endsWith('.json')) {
+        targets.push(join(chunksDir, entry));
+      }
     }
   }
   return targets;
@@ -209,13 +215,22 @@ function uniqueIds(items, path, label) {
   }
 }
 
+export function countPackageTestKeys(text) {
+  return [...text.matchAll(/^\s*"test"\s*:/gm)].length;
+}
+
 export function checkJsonIntegrity(root = ROOT) {
   const findings = [];
   const targets = collectIntegrityTargets(root);
   let packageJson;
   let manifest;
+  const chunkIds = new Map();
   for (const abs of targets) {
-    const rel = abs.slice(root.length + 1);
+    if (!existsSync(abs)) {
+      findings.push(`missing integrity target: ${abs.slice(root.length + 1)}`);
+      continue;
+    }
+    const rel = abs.slice(root.length + 1).replaceAll('\\', '/');
     const text = readFileSync(abs, 'utf8');
     let parsed;
     try {
@@ -226,9 +241,9 @@ export function checkJsonIntegrity(root = ROOT) {
     }
     if (rel === 'package.json') {
       packageJson = parsed;
-      const matches = [...text.matchAll(/^\s*"test"\s*:/gm)];
-      if (matches.length !== 1) {
-        findings.push(`package.json must contain exactly one "test" script (found ${matches.length})`);
+      const testKeyCount = countPackageTestKeys(text);
+      if (testKeyCount !== 1) {
+        findings.push(`package.json must contain exactly one "test" script (found ${testKeyCount})`);
       }
     }
     if (rel === 'docs/architecture/manifest.json') {
@@ -240,6 +255,13 @@ export function checkJsonIntegrity(root = ROOT) {
         uniqueIds(parsed.boundedContexts, rel, 'bounded context');
       } catch (error) {
         findings.push(error instanceof Error ? error.message : String(error));
+      }
+    }
+    if (rel.startsWith('docs/architecture/chunks/') && parsed && typeof parsed === 'object' && typeof parsed.chunk === 'string') {
+      if (chunkIds.has(parsed.chunk)) {
+        findings.push(`${rel}: duplicate chunk id "${parsed.chunk}" (also ${chunkIds.get(parsed.chunk)})`);
+      } else {
+        chunkIds.set(parsed.chunk, rel);
       }
     }
   }
