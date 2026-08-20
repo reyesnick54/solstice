@@ -84,6 +84,7 @@ never be two implementations of these systems.
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
+| External production evidence registry | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/external-evidence/types.ts` | IMPLEMENTED |
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
@@ -1027,6 +1028,17 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 160 extends that same owner with the external production
+evidence registry at
+`packages/sunrey-chain/src/mainnet/external-evidence`. Capability
+`sunrey-external-production-evidence` is `IMPLEMENTED`. It registers,
+verifies, expires, revokes, and binds external evidence references.
+It does not fabricate audits or counsel opinions, store confidential
+documents in Git, put raw contracts on-chain, or activate production.
+The Evidence Vault remains the sealing authority. Do not create
+`packages/legal`, `packages/licenses`, `packages/external-audit`,
+`packages/compliance-evidence`, or `packages/evidence-v2`. See
+[`chunk-160-external-evidence-registry.md`](../operations/chunk-160-external-evidence-registry.md).
 Chunk 66 implements provider-neutral production infrastructure,
 secret/KMS/HSM adapters, workload identity, and network zoning at
 `packages/sunrey-chain/src/infra`. Capability

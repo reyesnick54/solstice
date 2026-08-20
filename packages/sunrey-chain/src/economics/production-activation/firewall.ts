@@ -22,6 +22,9 @@ import {
   parameterManifestHash,
 } from './parameters.ts';
 import { ACTIVATION_REQUIREMENTS, DOMAIN_TO_MAINNET } from './requirements.ts';
+import { registryFromSnapshot } from '../../mainnet/external-evidence/registry.ts';
+import { satisfiesProductionVerification } from '../../mainnet/external-evidence/types.ts';
+import type { ExternalProductionEvidenceClass } from '../../mainnet/external-evidence/types.ts';
 import {
   REJECTED_PARAMETER_SOURCES,
   type ActivationEvidenceRecord,
@@ -190,7 +193,8 @@ function evaluateOne(
         ? result(requirement, true, false, null, 'genesis allocation authorized')
         : result(requirement, false, true, 'GENESIS_ALLOCATION_NOT_AUTHORIZED', 'genesis allocation not authorized');
     case 'SHARED.EXTERNAL_SECURITY':
-      return snapshot.externalSecurity.assessmentProvided &&
+      return registrySatisfies(snapshot, 'EXTERNAL_SECURITY_AUDIT') &&
+        snapshot.externalSecurity.assessmentProvided &&
         snapshot.externalSecurity.openCriticalFindings === 0 &&
         snapshot.externalSecurity.openHighFindings === 0 &&
         snapshot.externalSecurity.retestEvidence &&
@@ -198,15 +202,21 @@ function evaluateOne(
         ? result(requirement, true, false, null, 'external security review present')
         : result(requirement, false, true, 'EXTERNAL_SECURITY_REVIEW_MISSING', 'external security review missing');
     case 'SHARED.LEGAL_EVIDENCE':
-      return snapshot.legalRegulatory.counselOpinion && evidenceClassOk(evidence, 'EXTERNAL')
+      return registrySatisfies(snapshot, 'COUNSEL_OPINION') &&
+        snapshot.legalRegulatory.counselOpinion &&
+        evidenceClassOk(evidence, 'EXTERNAL')
         ? result(requirement, true, false, null, 'counsel opinion recorded')
         : result(requirement, false, true, 'LEGAL_EVIDENCE_MISSING', 'legal evidence missing');
     case 'SHARED.REGULATORY_EVIDENCE':
-      return snapshot.legalRegulatory.regulatoryApproval && evidenceClassOk(evidence, 'EXTERNAL')
+      return registrySatisfies(snapshot, 'REGULATORY_APPROVAL') &&
+        snapshot.legalRegulatory.regulatoryApproval &&
+        evidenceClassOk(evidence, 'EXTERNAL')
         ? result(requirement, true, false, null, 'regulatory evidence recorded')
         : result(requirement, false, true, 'REGULATORY_EVIDENCE_MISSING', 'regulatory evidence missing');
     case 'SHARED.PARTNER_EVIDENCE':
-      return snapshot.legalRegulatory.partnerAgreement && evidenceClassOk(evidence, 'EXTERNAL')
+      return registrySatisfies(snapshot, 'PARTNER_AGREEMENT') &&
+        snapshot.legalRegulatory.partnerAgreement &&
+        evidenceClassOk(evidence, 'EXTERNAL')
         ? result(requirement, true, false, null, 'partner evidence recorded')
         : result(requirement, false, true, 'PARTNER_EVIDENCE_MISSING', 'partner evidence missing');
     case 'SHARED.HUMAN_AUTHORIZATION':
@@ -335,6 +345,45 @@ function hinAnchorReady(anchor: ProductionEconomicActivationSnapshot['hinChainAn
     anchor.reorgHandling &&
     anchor.privacyClassification
   );
+}
+
+function registrySatisfies(
+  snapshot: ProductionEconomicActivationSnapshot,
+  evidenceClass: ExternalProductionEvidenceClass,
+): boolean {
+  if (!snapshot.externalEvidenceRegistry) {
+    return true;
+  }
+  const registry = registryFromSnapshot(snapshot.externalEvidenceRegistry);
+  const nowUtc = snapshot.externalEvidenceRegistry.generatedAtUtc;
+  return registry.productionEligible({
+    evidenceClass,
+    nowUtc,
+    production: true,
+  });
+}
+
+export function activationFirewallConsumesRegistryOnly(
+  snapshot: ProductionEconomicActivationSnapshot,
+): {
+  readonly evaluatorOnly: true;
+  readonly productionActivated: false;
+  readonly registryConsumed: boolean;
+  readonly fixtureSatisfiesProduction: false;
+} {
+  const consumed = snapshot.externalEvidenceRegistry !== undefined && snapshot.externalEvidenceRegistry !== null;
+  if (consumed) {
+    const registry = registryFromSnapshot(snapshot.externalEvidenceRegistry!);
+    for (const record of registry.list()) {
+      void satisfiesProductionVerification(record);
+    }
+  }
+  return Object.freeze({
+    evaluatorOnly: true,
+    productionActivated: false,
+    registryConsumed: consumed,
+    fixtureSatisfiesProduction: false,
+  });
 }
 
 function evidenceClassOk(

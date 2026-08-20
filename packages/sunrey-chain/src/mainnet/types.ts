@@ -166,6 +166,9 @@ export type ReadinessEvidenceRecord = {
   readonly notes: string;
   readonly externalEvidence: boolean;
   readonly chunkReference: string | null;
+  /** Chunk 160 verified registry binding. A string slot is not enough. */
+  readonly externalRegistryRecordId?: string | null;
+  readonly externalRegistryBindingHash?: string | null;
 };
 
 export type ProductionCapabilityActivation = {

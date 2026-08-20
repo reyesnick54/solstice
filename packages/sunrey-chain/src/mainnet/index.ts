@@ -21,3 +21,4 @@ export * from './rehearsal.ts';
 export * from './cli.ts';
 export * from './regulated-feed.ts';
 export * from './candidate-v2/index.ts';
+export * from './external-evidence/index.ts';

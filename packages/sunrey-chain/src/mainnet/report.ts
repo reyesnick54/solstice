@@ -2,7 +2,7 @@
  * MainnetReadinessReport assembly.
  */
 
-import { evaluateReadiness, type EvaluatorPolicy } from './evaluator.ts';
+import { evaluateReadiness, type EvaluatorPolicy, type ReadinessEvaluationContext } from './evaluator.ts';
 import { isExternalDimension, missingEvidenceIds } from './evidence.ts';
 import { collectReadinessArtifactDigests } from '../infra/artifacts.ts';
 import { consumeEconomicRc, consumeExternalSecurityReview, consumeFormalAssurance, consumeMainnetRc, consumePqc, consumeSupplyChain, consumeTestnetRc } from './consumers.ts';
@@ -32,8 +32,9 @@ export function buildReadinessReport(input: {
   readonly candidateGenesisHash: string | null;
   readonly policy?: EvaluatorPolicy;
   readonly root?: string;
+  readonly registryContext?: ReadinessEvaluationContext;
 }): MainnetReadinessReport {
-  const overall = evaluateReadiness(input.records, input.authorizations, input.policy);
+  const overall = evaluateReadiness(input.records, input.authorizations, input.policy, input.registryContext);
   const perDimension: DimensionStatus[] = READINESS_DIMENSIONS.map((dimension) => {
     const rows = input.records.filter((record) => record.dimension === dimension);
     const missing = rows
