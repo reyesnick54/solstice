@@ -9,9 +9,8 @@ describe('Chunk 11 exit criterion', () => {
   it('walks simulated card issue → auth hold → clear → refund → reconcile → evidence', async () => {
     const world = createCardWorld('exit', 100_000n);
     const requested = world.cards.requestCard(requestCardIntent(world, 'card_exit'));
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const activated = world.cards.activateCard({
       id: asIntentId('act_exit'),
@@ -22,9 +21,8 @@ describe('Chunk 11 exit criterion', () => {
       purpose: 'CUSTOMER_CARD',
       payload: { cardId: requested.value.cardId, accountId: world.account.id },
     });
-    assert.equal(activated.outcome, 'OK');
     if (activated.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(activated.value.status, 'ACTIVE');
     assert.equal(activated.value.displayHint, 'SIM-CARD');
@@ -45,9 +43,8 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'auth_exit_1',
       }),
     );
-    assert.equal(auth.outcome, 'OK');
     if (auth.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(auth.value.decision, 'APPROVE');
     assert.ok(auth.value.holdId);
@@ -67,9 +64,8 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'clr_exit_1',
       }),
     );
-    assert.equal(clearing.outcome, 'OK');
     if (clearing.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(clearing.value.state, 'SETTLED');
     assert.ok(clearing.value.journalId);
@@ -84,9 +80,8 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'rf_exit_1',
       }),
     );
-    assert.equal(refund.outcome, 'OK');
     if (refund.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(refund.value.state, 'POSTED');
 

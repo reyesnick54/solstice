@@ -151,14 +151,14 @@ export type ProofOfDelivery = {
 export type RestrictedTelematicsSample = {
   readonly vehicleRef: string;
   readonly observedAtUnix: bigint;
-  readonly latitudeMilliArcsec?: bigint;
-  readonly longitudeMilliArcsec?: bigint;
-  readonly reportedDistanceMeters?: bigint;
+  readonly latitudeMilliArcsec?: bigint | undefined;
+  readonly longitudeMilliArcsec?: bigint | undefined;
+  readonly reportedDistanceMeters?: bigint | undefined;
 };
 
 export type RestrictedTelematics = {
   readonly samples: readonly RestrictedTelematicsSample[];
-  readonly reportedDistanceMeters?: bigint;
+  readonly reportedDistanceMeters?: bigint | undefined;
   readonly publicExposureForbidden: true;
 };
 
@@ -171,15 +171,15 @@ export type TransportLegInput = {
   readonly legRef: string;
   readonly mode: TransportMode;
   readonly independentlyRealized: boolean;
-  readonly mass?: IntegerMeasure;
-  readonly distance?: IntegerMeasure;
-  readonly attestedTonneKm?: IntegerMeasure;
+  readonly mass?: IntegerMeasure | undefined;
+  readonly distance?: IntegerMeasure | undefined;
+  readonly attestedTonneKm?: IntegerMeasure | undefined;
   readonly originRegionRef: string;
   readonly destinationRegionRef: string;
   readonly startUnix: bigint;
   readonly endUnix: bigint;
   readonly carrierRef: string;
-  readonly vehicleRef?: string;
+  readonly vehicleRef?: string | undefined;
 };
 
 export type LogisticsIdentityBundle = {
@@ -210,28 +210,28 @@ export type LogisticsSourceObservation = {
   readonly schemaVersion: number;
   readonly sourceTimestampUnix: bigint;
   readonly collectionTimestampUnix: bigint;
-  readonly numericValue?: string;
-  readonly unit?: string;
-  readonly mass?: IntegerMeasure;
-  readonly distance?: IntegerMeasure;
-  readonly volume?: IntegerMeasure;
-  readonly measurementStartUnix?: bigint;
-  readonly measurementEndUnix?: bigint;
-  readonly durationSeconds?: bigint;
-  readonly realizationState?: RealizationState;
-  readonly deliveryStatus?: DeliveryStatus;
-  readonly proofOfDelivery?: ProofOfDelivery;
+  readonly numericValue?: string | undefined;
+  readonly unit?: string | undefined;
+  readonly mass?: IntegerMeasure | undefined;
+  readonly distance?: IntegerMeasure | undefined;
+  readonly volume?: IntegerMeasure | undefined;
+  readonly measurementStartUnix?: bigint | undefined;
+  readonly measurementEndUnix?: bigint | undefined;
+  readonly durationSeconds?: bigint | undefined;
+  readonly realizationState?: RealizationState | undefined;
+  readonly deliveryStatus?: DeliveryStatus | undefined;
+  readonly proofOfDelivery?: ProofOfDelivery | undefined;
   readonly identity: LogisticsIdentityBundle;
-  readonly legs?: readonly TransportLegInput[];
-  readonly countsWholeJourney?: boolean;
-  readonly storageQualifier?: StorageSemanticQualifier;
-  readonly temperatureReadings?: readonly TemperatureReading[];
-  readonly restrictedTelematics?: RestrictedTelematics;
-  readonly rawCustomerAddress?: string;
-  readonly signatureImage?: string;
-  readonly requireSignatureImage?: boolean;
-  readonly extras?: Readonly<Record<string, unknown>>;
-  readonly networkCallAttempted?: boolean;
+  readonly legs?: readonly TransportLegInput[] | undefined;
+  readonly countsWholeJourney?: boolean | undefined;
+  readonly storageQualifier?: StorageSemanticQualifier | undefined;
+  readonly temperatureReadings?: readonly TemperatureReading[] | undefined;
+  readonly restrictedTelematics?: RestrictedTelematics | undefined;
+  readonly rawCustomerAddress?: string | undefined;
+  readonly signatureImage?: string | undefined;
+  readonly requireSignatureImage?: boolean | undefined;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
+  readonly networkCallAttempted?: boolean | undefined;
 };
 
 export type MassDistanceDerivationReceipt = {

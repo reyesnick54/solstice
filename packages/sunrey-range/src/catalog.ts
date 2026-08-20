@@ -17,6 +17,23 @@ import { validatorEconomicsScenarios, runValidatorEconomics } from './scenarios/
 import { protocolTreasuryScenarios, runProtocolTreasury } from './scenarios/protocol-treasury.ts';
 import { economicStressScenarios, runEconomicStress } from './scenarios/economic-stress.ts';
 import { auditFindingScenarios, runAuditFinding } from './scenarios/audit-finding.ts';
+import { credentialScenarios, runCredential } from './scenarios/credential.ts';
+import { endpointScenarios, runEndpoint } from './scenarios/endpoint.ts';
+import { oracleAdversarialScenarios, runOracleAdversarial } from './scenarios/oracle-adversarial.ts';
+import { productiveAttackScenarios, runProductiveAttack } from './scenarios/productive-attack.ts';
+import { humanEconomyScenarios, runHumanEconomy } from './scenarios/human-economy.ts';
+import { paymentAttackScenarios, runPaymentAttack } from './scenarios/payment-attack.ts';
+import { complianceAttackScenarios, runComplianceAttack } from './scenarios/compliance-attack.ts';
+import { travelRuleScenarios, runTravelRule } from './scenarios/travel-rule.ts';
+import { custodyAttackScenarios, runCustodyAttack } from './scenarios/custody-attack.ts';
+import { persistenceAttackScenarios, runPersistenceAttack } from './scenarios/persistence-attack.ts';
+import { eventAttackScenarios, runEventAttack } from './scenarios/event-attack.ts';
+import { idempotencyAttackScenarios, runIdempotencyAttack } from './scenarios/idempotency-attack.ts';
+import { constitutionAttackScenarios, runConstitutionAttack } from './scenarios/constitution-attack.ts';
+import { aiAuthorityScenarios, runAiAuthority } from './scenarios/ai-authority.ts';
+import { observabilityAttackScenarios, runObservabilityAttack } from './scenarios/observability-attack.ts';
+import { controlRoomScenarios, runControlRoom } from './scenarios/control-room.ts';
+import { compoundProductionScenarios, runCompoundProduction } from './scenarios/compound-production.ts';
 import type { AttackResult, AttackScenario } from './types.ts';
 
 export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
@@ -38,6 +55,23 @@ export const SCENARIO_CATALOG: readonly AttackScenario[] = Object.freeze([
   ...protocolTreasuryScenarios,
   ...economicStressScenarios,
   ...auditFindingScenarios,
+  ...credentialScenarios,
+  ...endpointScenarios,
+  ...oracleAdversarialScenarios,
+  ...productiveAttackScenarios,
+  ...humanEconomyScenarios,
+  ...paymentAttackScenarios,
+  ...complianceAttackScenarios,
+  ...travelRuleScenarios,
+  ...custodyAttackScenarios,
+  ...persistenceAttackScenarios,
+  ...eventAttackScenarios,
+  ...idempotencyAttackScenarios,
+  ...constitutionAttackScenarios,
+  ...aiAuthorityScenarios,
+  ...observabilityAttackScenarios,
+  ...controlRoomScenarios,
+  ...compoundProductionScenarios,
 ]);
 
 const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackScenario) => AttackResult>> = {
@@ -64,6 +98,23 @@ const RUNNERS: Readonly<Record<string, (env: RangeEnvironment, scenario: AttackS
   TREASURY: runProtocolTreasury,
   ECON: runEconomicStress,
   AUDIT: runAuditFinding,
+  CRED: runCredential,
+  ENDPOINT: runEndpoint,
+  ORADV: runOracleAdversarial,
+  PRODATT: runProductiveAttack,
+  HUMAN: runHumanEconomy,
+  PAY: runPaymentAttack,
+  COMPLY: runComplianceAttack,
+  TRAVEL: runTravelRule,
+  CUSTADV: runCustodyAttack,
+  PERSIST: runPersistenceAttack,
+  EVENT: runEventAttack,
+  IDEM: runIdempotencyAttack,
+  CONST: runConstitutionAttack,
+  AIAUTH: runAiAuthority,
+  OBS: runObservabilityAttack,
+  CTRL: runControlRoom,
+  COMPSAFE: runCompoundProduction,
 };
 
 export function scenarioById(scenarioId: string): AttackScenario | undefined {

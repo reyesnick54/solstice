@@ -217,3 +217,9 @@ export { RailStore } from "./rail-store.ts";
 export { RailMetrics } from "./rail-metrics.ts";
 export { freezeInbound, type InboundRailPayment } from "./rail-inbound.ts";
 export * from "./production-candidate/index.ts";
+export {
+  PaymentSideEffectRecovery,
+  paymentCallbackDigest,
+  paymentDigest,
+  paymentProviderIdempotencyKey,
+} from "./operation-recovery.ts";

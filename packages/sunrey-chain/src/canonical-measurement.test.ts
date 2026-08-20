@@ -38,11 +38,18 @@ const clock = { nowIso: () => '2026-08-19T00:00:00.000Z' };
 
 function qty(unitId: string, mantissa: bigint) {
   const built = exactFromFixed({ mantissa, unitId });
-  assert.equal(built.ok, true, built.ok ? '' : built.error.detail);
   if (!built.ok) {
     throw new Error(built.error.detail);
   }
   return built.value;
+}
+
+function integerMantissa(quantity: Parameters<typeof integerMantissaOf>[0]): bigint {
+  const measured = integerMantissaOf(quantity);
+  if (!measured.ok) {
+    throw new Error(measured.error.detail);
+  }
+  return measured.value;
 }
 
 function measure(input: Parameters<typeof measureCanonical>[0]) {
@@ -57,12 +64,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'Wh');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 3_000n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 3_000n);
     assert.equal(result.value.sourceUnit, 'kWh');
     assert.equal(result.value.exact, true);
     assert.equal(result.value.lossy, false);
@@ -75,12 +81,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'FOOD_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'g');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 2_000_000n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 2_000_000n);
   });
 
   it('3. gpu_s canonical compute', () => {
@@ -90,12 +95,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'COMPUTE_USAGE',
       claimType: 'USAGE',
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'gpu_s');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 1n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 1n);
   });
 
   it('4. GPU_HOUR canonical compute', () => {
@@ -105,12 +109,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'AI_INFERENCE_USAGE',
       claimType: 'USAGE',
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'gpu_s');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 3_600n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 3_600n);
     const truncated = defaultCanonicalUnitRegistry.convert(qty('gpu_s', 1n), 'GPU_HOUR', undefined, clock);
     assert.equal(truncated.ok, true);
     if (truncated.ok) {
@@ -126,12 +129,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'CAPACITY',
       context: { durationSeconds: 3_600n, factType: 'REAL_ESTATE_USE_CAPACITY', productiveCategory: 'REAL_ESTATE_USE' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'm2_s');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 7_200n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 7_200n);
   });
 
   it('6. m2 without duration rejected', () => {
@@ -155,12 +157,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'CAPACITY',
       context: { durationSeconds: 3_600n, factType: 'STORAGE_CAPACITY', productiveCategory: 'STORAGE' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'L_s');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 3_600_000n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 3_600_000n);
   });
 
   it('8. m3 storage without duration rejected', () => {
@@ -184,12 +185,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'USAGE',
       context: { durationSeconds: 5n, factType: 'BANDWIDTH_USAGE', productiveCategory: 'BANDWIDTH_COMMUNICATIONS' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'B');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 10_000_000_000n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 10_000_000_000n);
   });
 
   it('10. GB_s without duration rejected', () => {
@@ -213,12 +213,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'USAGE',
       context: { resourceClass: 'CPU', factType: 'COMPUTE_USAGE', productiveCategory: 'COMPUTE' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
     assert.equal(result.value.canonicalUnit, 'cpu_s');
-    assert.equal(integerMantissaOf(result.value.canonicalQuantity).ok ? integerMantissaOf(result.value.canonicalQuantity).value : 0n, 7_200n);
+    assert.equal(integerMantissa(result.value.canonicalQuantity), 7_200n);
   });
 
   it('12. generic compute_s with GPU context', () => {
@@ -229,7 +228,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'USAGE',
       context: { resourceClass: 'GPU', factType: 'COMPUTE_USAGE', productiveCategory: 'COMPUTE' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -258,7 +256,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       claimType: 'USAGE',
       context: { semanticQualifier: 'INFERENCE_PROCESSED_TOKENS', factType: 'AI_INFERENCE_USAGE', productiveCategory: 'AI_COMPUTE' },
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -315,13 +312,11 @@ describe('CHUNK-119 canonical unit migration', () => {
       measurementEnd: 1_800_000_000n,
       clock,
     });
-    assert.equal(observation.ok, true);
     if (!observation.ok) {
       throw new Error(observation.error.detail);
     }
     assert.equal(originalObservationPreserved({ mantissa: 1_200n, unit: 'kWh' }, observation.value), true);
     const built = buildProductiveClaimCandidate(energyBuildInput());
-    assert.equal(built.ok, true);
     if (!built.ok) {
       throw new Error(built.error.detail);
     }
@@ -334,7 +329,6 @@ describe('CHUNK-119 canonical unit migration', () => {
 
   it('18. verified contribution records normalization version', () => {
     const built = buildProductiveClaimCandidate(energyBuildInput());
-    assert.equal(built.ok, true);
     if (!built.ok) {
       throw new Error(built.error.detail);
     }
@@ -362,7 +356,6 @@ describe('CHUNK-119 canonical unit migration', () => {
         contributionSchema: 2,
       },
     );
-    assert.equal(verified.ok, true);
     if (!verified.ok) {
       throw new Error(verified.code);
     }
@@ -409,7 +402,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(measurement.ok, true);
     if (!measurement.ok) {
       throw new Error(measurement.error.detail);
     }
@@ -450,7 +442,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(measurement.ok, true);
     if (!measurement.ok) {
       throw new Error(measurement.error.detail);
     }
@@ -479,7 +470,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(measurement.ok, true);
     if (!measurement.ok) {
       throw new Error(measurement.error.detail);
     }
@@ -495,7 +485,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(measurement.ok, true);
     if (!measurement.ok) {
       throw new Error(measurement.error.detail);
     }
@@ -544,7 +533,6 @@ describe('CHUNK-119 canonical unit migration', () => {
       factType: 'ENERGY_PRODUCTION',
       claimType: 'OUTPUT',
     });
-    assert.equal(measurement.ok, true);
     if (!measurement.ok) {
       throw new Error(measurement.error.detail);
     }

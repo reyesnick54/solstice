@@ -333,3 +333,4 @@ export {
   requestConsequentialAction,
   type EventHandlerPorts,
 } from './gate.ts';
+export * from './operation/index.ts';

@@ -66,7 +66,6 @@ function ready(payments: PaymentsService, world: ReturnType<typeof createPayment
   const beneficiary = payments.createBeneficiary(beneficiaryIntent(world, id, 'SAUDI BENEFICIARY'));
   assert.equal(beneficiary.outcome, 'OK');
   const quote = payments.createQuote(quoteIntent(world, id));
-  assert.equal(quote.outcome, 'OK');
   if (quote.outcome !== 'OK') {
     throw new Error('quote');
   }
@@ -171,9 +170,8 @@ describe('treasury liquidity and routing', () => {
     const { world, treasury, payments } = wiredWorld('demoish');
     const quote1 = ready(payments, world, 'd1');
     const payment1 = payments.initiatePayment(payIntent(world, 'd1', 'ben_d1', quote1));
-    assert.equal(payment1.outcome, 'OK');
     if (payment1.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const decision1 = treasury.store.getRouteDecision(payment1.value.paymentId);
     assert.equal(decision1?.selectedRouteId, 'sim-swift-usd-sar');
@@ -191,9 +189,8 @@ describe('treasury liquidity and routing', () => {
     treasury.replenish(TREASURY_SEED_IDS.providerASar, Money.fromMinorUnits(10_000_000n, 'SAR'));
     const quote2 = ready(payments, world, 'd2');
     const payment2 = payments.initiatePayment(payIntent(world, 'd2', 'ben_d2', quote2));
-    assert.equal(payment2.outcome, 'OK');
     if (payment2.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(treasury.store.getRouteDecision(payment2.value.paymentId)?.selectedRouteId, 'sim-gcc-usd-sar');
 
@@ -216,9 +213,8 @@ describe('treasury liquidity and routing', () => {
     assert.equal(kill.outcome, 'OK');
     const quote3 = ready(payments, world, 'd3');
     const payment3 = payments.initiatePayment(payIntent(world, 'd3', 'ben_d3', quote3));
-    assert.equal(payment3.outcome, 'OK');
     if (payment3.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const decision3 = treasury.store.getRouteDecision(payment3.value.paymentId);
     assert.equal(decision3?.selectedRouteId, 'sim-swift-usd-sar');
@@ -270,9 +266,8 @@ describe('treasury liquidity and routing', () => {
         narrative: 'Move 2,500.00 SAR simulation liquidity from B to A',
       },
     });
-    assert.equal(proposed.outcome, 'OK');
     if (proposed.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(proposed.value.state, 'PROPOSED');
     assert.equal(proposed.value.executable, false);
@@ -285,9 +280,8 @@ describe('treasury liquidity and routing', () => {
       purpose: 'TREASURY_OPERATIONS',
       payload: { accountId: world.account.id, proposalId: 'prop_1' },
     });
-    assert.equal(executed.outcome, 'OK');
     if (executed.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(executed.value.state, 'EXECUTED');
   });

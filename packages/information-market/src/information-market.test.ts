@@ -343,9 +343,8 @@ describe('information market', () => {
       purposeRef: 'DATA_CONTRIBUTION_RESEARCH',
       now: NOW,
     });
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(issued.value.sourceRecordRevealed, false);
     const verified = verifyOracleAttestation({ keys, attestation: issued.value, now: NOW });

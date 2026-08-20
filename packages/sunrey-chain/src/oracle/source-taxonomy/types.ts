@@ -79,16 +79,17 @@ export type SourceProductiveMapping = {
   readonly requiresGeography: boolean;
   readonly requiresVerifiedFact: boolean;
   readonly requiresQuorum: boolean;
+  readonly canCreateProductiveClaim: boolean;
 };
 
 export type MappingValidationInput = {
   readonly sourceCategory: string;
   readonly factType: string;
   readonly sourceUnit: string;
-  readonly productiveCategory?: string | null;
-  readonly claimType?: string | null;
-  readonly mappingId?: string | null;
-  readonly mappingVersion?: number | null;
+  readonly productiveCategory?: string | null | undefined;
+  readonly claimType?: string | null | undefined;
+  readonly mappingId?: string | null | undefined;
+  readonly mappingVersion?: number | null | undefined;
 };
 
 export type CompatibleMapping = {

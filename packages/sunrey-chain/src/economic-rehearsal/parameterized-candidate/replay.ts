@@ -17,8 +17,8 @@ export function rehearseReplay(input: {
   readonly moonrey: AssetSupplyBook;
   readonly sunreyBridge: HumanContributionMonetaryBridge;
   readonly moonreyBridge: MoonReyProductiveSettlementBridge;
-  readonly humanReceipt?: ReceiptRecord;
-  readonly productiveReceipt?: ReceiptRecord;
+  readonly humanReceipt?: ReceiptRecord | undefined;
+  readonly productiveReceipt?: ReceiptRecord | undefined;
 }): ReplayResult {
   const hin = emptyHinState(false);
   const humanReplay = input.humanReceipt

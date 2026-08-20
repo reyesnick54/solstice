@@ -867,9 +867,14 @@ This document describes only what is implemented and tested in this tree.
 - SunRey adversarial range (Chunk 57, `packages/sunrey-range`):
   isolated 7-validator cyber-economic test range. Capability
   `sunrey-adversarial-range` is `IMPLEMENTED`. Deterministic
-  replay only. Detector output is not legal guilt. See
-  `docs/architecture/chunk-57-adversarial-range.md` and
-  `docs/assurance/`.
+  replay only. Detector output is not legal guilt. Chunk 157
+  extends the same owner with a production-safety campaign
+  (`--production-safety-smoke` / `--production-safety-extended`).
+  Isolated defensive fixtures only. No live pentest, external
+  targets, or real credentials. See
+  `docs/architecture/chunk-57-adversarial-range.md`,
+  `docs/security/chunk-157-production-adversarial-resilience.md`,
+  and `docs/assurance/`.
 - SunRey developer platform (Chunk 51, `packages/sunrey-sdk`):
   versioned public API `v1`, TypeScript SDK, Rust client crate
   at `packages/sunrey-chain/rust/crates/sdk`, SSE/JSON events,

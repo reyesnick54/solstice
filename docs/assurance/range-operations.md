@@ -26,6 +26,8 @@ sunrey-range run
 sunrey-range scenario <id>
 sunrey-range campaign
 sunrey-range campaign --smoke
+sunrey-range campaign --production-safety-smoke
+sunrey-range campaign --production-safety-extended
 sunrey-range report
 sunrey-range replay [id]
 ```

@@ -1,0 +1,14 @@
+{
+  "id": "PROVIDERS",
+  "title": "Providers",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "provider_sessions",
+    "provider_auth_failures",
+    "provider_circuit_open",
+    "provider_schema_drift",
+    "provider_revalidation_required",
+    "credential_expiry_horizon"
+  ]
+}

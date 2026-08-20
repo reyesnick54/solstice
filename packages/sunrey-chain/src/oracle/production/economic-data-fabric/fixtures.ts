@@ -21,7 +21,7 @@ function commitment(label: string): string {
 }
 
 export function fixtureCandidate(input: {
-  readonly familyHint?: ProviderFamilyId;
+  readonly familyHint?: ProviderFamilyId | undefined;
   readonly providerId: string;
   readonly sourceId: string;
   readonly feedId: string;
@@ -32,26 +32,26 @@ export function fixtureCandidate(input: {
   readonly subjectRef: string;
   readonly mantissa: bigint;
   readonly unit: UnitCode;
-  readonly certificationStatus?: CollectionCandidate['certificationStatus'];
-  readonly certificationId?: string | null;
-  readonly certificationExpired?: boolean;
-  readonly providerSuspended?: boolean;
-  readonly sourceSuspended?: boolean;
-  readonly sourceRegistered?: boolean;
-  readonly endpointApproved?: boolean;
-  readonly connectorResultValid?: boolean;
-  readonly schemaValid?: boolean;
-  readonly claimedFamilyId?: ProviderFamilyId;
-  readonly claimedProductiveCategory?: CollectionCandidate['claimedProductiveCategory'];
-  readonly controllerId?: string;
-  readonly upstreamOrganizationId?: string;
-  readonly sharedControlGroup?: string | null;
-  readonly payload?: unknown;
-  readonly credentialsPresent?: boolean;
-  readonly rawPayloadPresent?: boolean;
-  readonly externalUrl?: string | null;
-  readonly stale?: boolean;
-  readonly contentCommitment?: string;
+  readonly certificationStatus?: CollectionCandidate['certificationStatus'] | undefined;
+  readonly certificationId?: string | null | undefined;
+  readonly certificationExpired?: boolean | undefined;
+  readonly providerSuspended?: boolean | undefined;
+  readonly sourceSuspended?: boolean | undefined;
+  readonly sourceRegistered?: boolean | undefined;
+  readonly endpointApproved?: boolean | undefined;
+  readonly connectorResultValid?: boolean | undefined;
+  readonly schemaValid?: boolean | undefined;
+  readonly claimedFamilyId?: ProviderFamilyId | undefined;
+  readonly claimedProductiveCategory?: CollectionCandidate['claimedProductiveCategory'] | undefined;
+  readonly controllerId?: string | undefined;
+  readonly upstreamOrganizationId?: string | undefined;
+  readonly sharedControlGroup?: string | null | undefined;
+  readonly payload?: unknown | undefined;
+  readonly credentialsPresent?: boolean | undefined;
+  readonly rawPayloadPresent?: boolean | undefined;
+  readonly externalUrl?: string | null | undefined;
+  readonly stale?: boolean | undefined;
+  readonly contentCommitment?: string | undefined;
 }): CollectionCandidate {
   const now = FABRIC_NOW_UNIX;
   return Object.freeze({
@@ -391,31 +391,34 @@ export function conflictingEnergyQuantities(): readonly CollectionCandidate[] {
   ]);
 }
 
+export function overlayCandidate(
+  base: CollectionCandidate,
+  overrides: Partial<CollectionCandidate>,
+): CollectionCandidate {
+  return Object.freeze({ ...base, ...overrides });
+}
+
 export function privacyLeakFixture(): CollectionCandidate {
-  return fixtureCandidate({
-    ...energyProductionFixture(),
+  return overlayCandidate(energyProductionFixture(), {
     payload: { prompt: 'secret user prompt', apiKey: 'sk-live' },
   });
 }
 
 export function credentialFixture(): CollectionCandidate {
-  return fixtureCandidate({
-    ...energyProductionFixture(),
+  return overlayCandidate(energyProductionFixture(), {
     credentialsPresent: true,
   });
 }
 
 export function rawPayloadFixture(): CollectionCandidate {
-  return fixtureCandidate({
-    ...energyProductionFixture(),
+  return overlayCandidate(energyProductionFixture(), {
     rawPayloadPresent: true,
     payload: { meterDump: 'raw' },
   });
 }
 
 export function arbitraryUrlFixture(): CollectionCandidate {
-  return fixtureCandidate({
-    ...energyProductionFixture(),
+  return overlayCandidate(energyProductionFixture(), {
     externalUrl: 'https://example.com/steal',
   });
 }

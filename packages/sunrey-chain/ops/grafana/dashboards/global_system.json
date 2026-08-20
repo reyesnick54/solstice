@@ -1,0 +1,13 @@
+{
+  "id": "GLOBAL_SYSTEM",
+  "title": "Global System",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "postgres_primary_health",
+    "outbox_backlog",
+    "provider_sessions",
+    "oracle_quorum_degradation",
+    "supply_reconciliation"
+  ]
+}

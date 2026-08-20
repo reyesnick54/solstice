@@ -34,7 +34,6 @@ describe('sunrey-agent inference port', () => {
       capabilities: ['VIEW_ACCOUNT'],
     });
     const actor = identity.service.resolveActorContext('operator_1');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       throw new Error('actor');
     }

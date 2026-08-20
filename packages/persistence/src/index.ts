@@ -109,9 +109,16 @@ export type {
   DurableTrade,
   ExchangeDurableSnapshot,
 } from './exchange/durable-store.ts';
+export { DurablePaymentStore } from './payments/durable-store.ts';
+export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
+export { DurableProviderStore } from './provider/durable-store.ts';
+export type { DurableProviderProfile, ProviderDurableSnapshot } from './provider/durable-store.ts';
+export { DurableStoreError } from './production/snapshot-envelope.ts';
 export {
   EVENT_FABRIC_IS_NOT_A_JOURNAL,
   assertNotJournal,
   crashRecoverOutbox,
 } from './production/event-fabric.ts';
 export type { DurableOutboxRecord } from './production/event-fabric.ts';
+export { PostgresOperationStore, insertOperationExecution } from './ledger/pg-operation-store.ts';
+export { persistOperationWithOutbox } from './ledger/operation-unit.ts';

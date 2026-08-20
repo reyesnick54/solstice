@@ -34,3 +34,21 @@ See [`docs/assurance/security-invariants.md`](../assurance/security-invariants.m
 ## Operations
 
 See [`docs/assurance/range-operations.md`](../assurance/range-operations.md).
+
+## Chunk 157 extension
+
+Chunk 157 adds a production-safety campaign on this same owner.
+Capability `sunrey-adversarial-range` is unchanged. New scenario
+families live under `packages/sunrey-range/src/scenarios/` and
+cover credential, provider, payment, compliance, Travel Rule,
+oracle, productive-economy, human-economy, custody, persistence,
+event, distributed-idempotency, economic-constitution, AI
+authority, observability, and control-room failure modes.
+
+```
+npm run sunrey-range -- campaign --production-safety-smoke
+npm run sunrey-range -- campaign --production-safety-extended
+npm run demo:sunrey-production-adversarial-campaign
+```
+
+See [`docs/security/chunk-157-production-adversarial-resilience.md`](../security/chunk-157-production-adversarial-resilience.md).

@@ -70,7 +70,6 @@ describe('Chunk 92 validator operator platform', () => {
     const platform = new ValidatorOperatorPlatform();
     const alpha = fixturePrincipal(OPERATOR_A_ID);
     const enrolled = platform.enroll(alpha, 'val_op_a', 'DOSSIER');
-    assert.equal(enrolled.ok, true);
     if (!enrolled.ok) {
       throw new Error('expected enrollment');
     }
@@ -86,7 +85,6 @@ describe('Chunk 92 validator operator platform', () => {
     const platform = new ValidatorOperatorPlatform();
     const alpha = fixturePrincipal(OPERATOR_A_ID);
     const enrolled = platform.enroll(alpha, 'val_op_a');
-    assert.equal(enrolled.ok, true);
     if (!enrolled.ok) {
       throw new Error('expected enrollment');
     }
@@ -121,7 +119,6 @@ describe('Chunk 92 validator operator platform', () => {
     const platform = new ValidatorOperatorPlatform();
     const alpha = fixturePrincipal(OPERATOR_A_ID);
     const one = platform.planMaintenance(alpha, ['val_op_a'], 'one node');
-    assert.equal(one.ok, true);
     if (!one.ok) {
       throw new Error('expected one-node plan');
     }
@@ -144,12 +141,10 @@ describe('Chunk 92 validator operator platform', () => {
       protocolVersion: '2',
       batch: ['val_op_a'],
     });
-    assert.equal(planned.ok, true);
     if (!planned.ok) {
       throw new Error('expected upgrade plan');
     }
     const deployed = platform.deployUpgradeBatch(alpha, planned.value.planId);
-    assert.equal(deployed.ok, true);
     if (!deployed.ok) {
       throw new Error('expected deploy');
     }
@@ -194,7 +189,6 @@ describe('Chunk 92 validator operator platform', () => {
     const platform = new ValidatorOperatorPlatform();
     const alpha = fixturePrincipal(OPERATOR_A_ID);
     const prepared = platform.prepareRotation(alpha, 'val_op_a', 'next-fp-a', false);
-    assert.equal(prepared.ok, true);
     if (!prepared.ok) {
       throw new Error('expected rotation package');
     }
@@ -259,7 +253,6 @@ describe('Chunk 92 validator operator platform', () => {
       'monitoring alert',
       'ev_monitor',
     );
-    assert.equal(incident.ok, true);
     if (!incident.ok) {
       throw new Error('expected incident');
     }
@@ -275,7 +268,6 @@ describe('Chunk 92 validator operator platform', () => {
     const platform = new ValidatorOperatorPlatform();
     const ai = fixturePrincipal(OPERATOR_A_ID, 'AI_ANALYST', 'AI');
     const prepared = platform.prepareGovernanceVote(ai, 'val_op_a', 'prop_1', 'summary only');
-    assert.equal(prepared.ok, true);
     if (!prepared.ok) {
       throw new Error('expected preparation');
     }

@@ -90,10 +90,13 @@ export function publicInternetIndustrialAccessForbidden(
 }
 
 export function gatewayDoesNotCommandEquipment(profile: ManufacturingGatewayProfile): true {
-  return (
-    profile.readOnly === true &&
-    profile.industrialControlAllowed === false &&
-    profile.commandsPlc === false &&
-    profile.allowedMethods.every((method) => method === 'GET')
-  );
+  if (
+    profile.readOnly !== true ||
+    profile.industrialControlAllowed !== false ||
+    profile.commandsPlc !== false ||
+    !profile.allowedMethods.every((method) => method === 'GET')
+  ) {
+    throw new Error('GATEWAY_COMMANDS_EQUIPMENT');
+  }
+  return true;
 }

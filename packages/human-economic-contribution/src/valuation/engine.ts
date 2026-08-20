@@ -9,7 +9,7 @@ import { computeValuationDigest } from './digest.ts';
 import { actorValuationRejection, validateValuationInput, valuationFirewallRejection } from './invariants.ts';
 import { validateValuationPolicy } from './policy.ts';
 import type {
-  HumanContributionValuationPolicy,
+  SimulationValuationPolicy,
   ValuationComputeResult,
   VerifiedContributionValuationInput,
 } from './types.ts';
@@ -20,7 +20,7 @@ function scaleReference(quantity: bigint, numerator: bigint, denominator: bigint
 
 export function valueVerifiedContribution(input: {
   readonly contribution: VerifiedContributionValuationInput;
-  readonly policy: HumanContributionValuationPolicy;
+  readonly policy: SimulationValuationPolicy;
   readonly actor: string;
   readonly valuationId?: string;
   readonly extra?: Readonly<Record<string, unknown>>;
@@ -97,8 +97,13 @@ export function valueVerifiedContribution(input: {
   };
 }
 
-export function refuseProductionValuation(): ValuationComputeResult {
+export function refuseProductionValuation(): {
+  readonly ok: false;
+  readonly code: 'PRODUCTION_VALUATION_UNAVAILABLE';
+} {
   return { ok: false, code: 'PRODUCTION_VALUATION_UNAVAILABLE' };
+}
+
 import { FORBIDDEN_IDENTITY_FIELDS, FORBIDDEN_SCORE_FIELDS, PROTECTED_TRAIT_FIELDS } from '../taxonomy.ts';
 import {
   applyCap,

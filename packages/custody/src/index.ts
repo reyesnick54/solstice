@@ -78,3 +78,4 @@ export type { ExchangeCustodyPort } from './institutional/exchange.ts';
 export { runCustodyCommand, custodyUsage } from './institutional/cli.ts';
 export * from './regulated/index.ts';
 export * as travelRuleProviderCandidate from './provider-candidate/index.ts';
+export { CustodyWithdrawalRecovery, custodyDigest } from './operation-recovery.ts';

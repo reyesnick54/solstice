@@ -9,23 +9,19 @@ export {
   REFERENCE_VALUE_EQUALS_SUNREY_BY_DEFINITION,
   VALUATION_ACTORS,
   VALUATION_ENVIRONMENTS,
-  VALUATION_METHODS,
   VALUATION_RESULT_STATES,
 } from './types.ts';
 export type {
   ForbiddenValuationActor,
-  HumanContributionValuationPolicy,
-  HumanContributionValuationResult,
+  SimulationValuationPolicy,
   ValuationActor,
   ValuationComputeResult,
   ValuationEnvironment,
-  ValuationFailure,
-  ValuationFailureCode,
-  ValuationMethod,
   ValuationResultState,
   ValuationSuccess,
   VerifiedContributionValuationInput,
 } from './types.ts';
+export type HumanContributionValuationResult = import('./types.ts').ValuationSuccess['result'];
 
 export { computeValuationDigest, sha256Hex, valuationDigestMaterial, valuationDigestOf } from './digest.ts';
 
@@ -46,7 +42,9 @@ export {
   validateValuationPolicy,
 } from './policy.ts';
 
-export { refuseProductionValuation, valueVerifiedContribution } from './engine.ts';
+export { refuseProductionValuation, valueVerifiedContribution, HumanContributionValuationEngine, type EngineEvaluateInput } from './engine.ts';
+
+export {
   applyCap,
   applyFloor,
   BASIS_POINTS_PER_UNIT,
@@ -63,15 +61,21 @@ export { refuseProductionValuation, valueVerifiedContribution } from './engine.t
   type RoundingRule,
 } from './arithmetic.ts';
 export { asVerifiedHumanEconomicContribution, type ValuationContributionSource } from './contribution.ts';
-export { HumanContributionValuationEngine, type EngineEvaluateInput } from './engine.ts';
 export { buildExplanation } from './explanation.ts';
 export {
+  COMMUNITY_CONTRIBUTION_POLICY,
+  CREATIVE_ROYALTY_POLICY,
+  INFORMATION_USAGE_POLICY,
+  PROFESSIONAL_SERVICE_POLICY,
+  RESEARCH_PARTICIPATION_POLICY,
+  SIMULATION_POLICY_FIXTURES,
   engineWith,
   factorRequest,
   METHOD_CLASS,
   METHOD_SOURCE,
   outcomePolicy,
   referenceFor,
+  simulationPolicyFixture,
   VALUATION_NOW,
   VALUATION_OBSERVED_AT,
   verifyFixture,
@@ -82,6 +86,9 @@ export {
   asPolicyRuleRef,
   asValuationDigest,
   asValuationId,
+  asValuationInputRef,
+  asValuationMethodologyId,
+  asValuationPolicyHash,
   asValuationPolicyId,
   asValuationPolicyVersion,
   asValuationReferenceId,
@@ -91,6 +98,9 @@ export {
   VALUATION_ID_PREFIXES,
   valuationDigestFor,
   valuationIdFor,
+  valuationInputRefFor,
+  valuationMethodologyIdFor,
+  valuationPolicyHashFor,
   valuationPolicyIdFor,
   valuationPolicyVersionFor,
   valuationReferenceIdFor,
@@ -98,6 +108,9 @@ export {
   type PolicyRuleRef,
   type ValuationDigest,
   type ValuationId,
+  type ValuationInputRef,
+  type ValuationMethodologyId,
+  type ValuationPolicyHash,
   type ValuationPolicyId,
   type ValuationPolicyVersion,
   type ValuationReferenceId,
@@ -109,6 +122,16 @@ export {
   DEFAULT_VALUATION_POLICY_VERSION,
   defaultMethodForClass,
   requiredReferenceSource,
+  canonicalPolicyMaterial,
+  hashValuationPolicy,
+  policyCannotMint,
+  policyReferenceValue,
+  VALUATION_POLICY_STATUSES,
+  type HumanContributionValuationPolicy,
+  type JurisdictionRule,
+  type RegisterableValuationPolicy,
+  type ValuationBound,
+  type ValuationPolicyStatus,
 } from './policy.ts';
 export { createReferenceDatum, InMemoryValuationReferenceDataPort, type ReferenceFixtureInput } from './reference-data.ts';
 export {
@@ -126,12 +149,11 @@ export {
   VALUATION_REASON_CODES,
   VALUATION_REFERENCE_SOURCE_CLASSES,
   VALUATION_STATES,
+  valuationFailure,
   type CapApplication,
   type ConfidenceClass,
   type FactorRequest,
   type ForbiddenValuationFactorType,
-  type HumanContributionValuationPolicy,
-  type HumanContributionValuationResult,
   type MethodEligibilityRule,
   type PipelineStep,
   type PipelineStepName,
@@ -143,6 +165,8 @@ export {
   type ValuationExplanationReceipt,
   type ValuationFactor,
   type ValuationFactorType,
+  type ValuationFailure,
+  type ValuationFailureCode,
   type ValuationInvariants,
   type ValuationMethod,
   type ValuationReasonCode,
@@ -152,11 +176,11 @@ export {
   type ValuationState,
   type VerifiedHumanEconomicContribution,
 } from './types.ts';
+export {
   AI_FINAL_VALUATION_AUTHORITY_FORBIDDEN,
   HUMAN_CONTRIBUTION_VALUATION_CONSTITUTION,
   HUMAN_CONTRIBUTION_VALUATION_CONSTITUTION_ID,
   HUMAN_CONTRIBUTION_VALUATION_CONSTITUTION_VERSION,
-  HUMAN_CONTRIBUTION_VALUATION_SCHEMA_VERSION,
   PERSON_LEVEL_DESIRABILITY_MULTIPLIER_FORBIDDEN,
   PRODUCTION_VALUATION_POLICY_CONFIGURED,
   PROTECTED_TRAIT_VALUATION_FORBIDDEN,
@@ -183,46 +207,17 @@ export {
   applyMultiplier,
   assertFactorRule,
   assertIntegerMultiplier,
-  BASIS_POINTS_PER_UNIT,
   FORBIDDEN_VALUATION_FACTORS,
   isForbiddenValuationFactor,
   isPermittedValuationFactor,
   PERMITTED_VALUATION_FACTORS,
-  ROUNDING_RULES,
   type ForbiddenValuationFactor,
   type IntegerBasisPoints,
   type PermittedValuationFactor,
   type RationalMultiplier,
-  type RoundingRule,
   type ValuationFactorRule,
   type ValuationMultiplier,
 } from './factors.ts';
-export {
-  COMMUNITY_CONTRIBUTION_POLICY,
-  CREATIVE_ROYALTY_POLICY,
-  INFORMATION_USAGE_POLICY,
-  PROFESSIONAL_SERVICE_POLICY,
-  RESEARCH_PARTICIPATION_POLICY,
-  SIMULATION_POLICY_FIXTURES,
-  simulationPolicyFixture,
-} from './fixtures.ts';
-export {
-  asValuationInputRef,
-  asValuationMethodologyId,
-  asValuationPolicyHash,
-  asValuationPolicyId,
-  asValuationPolicyVersion,
-  VALUATION_ID_PREFIXES,
-  valuationInputRefFor,
-  valuationMethodologyIdFor,
-  valuationPolicyHashFor,
-  valuationPolicyIdFor,
-  type ValuationInputRef,
-  type ValuationMethodologyId,
-  type ValuationPolicyHash,
-  type ValuationPolicyId,
-  type ValuationPolicyVersion,
-} from './ids.ts';
 export {
   ALLOWED_VALUATION_INPUT_TYPES,
   assertTraceableInput,
@@ -248,19 +243,6 @@ export {
   type ValuationMethodRecord,
 } from './methods.ts';
 export {
-  canonicalPolicyMaterial,
-  hashValuationPolicy,
-  policyCannotMint,
-  policyReferenceValue,
-  validateValuationPolicy,
-  VALUATION_POLICY_STATUSES,
-  type HumanContributionValuationPolicy,
-  type JurisdictionRule,
-  type RegisterableValuationPolicy,
-  type ValuationBound,
-  type ValuationPolicyStatus,
-} from './policy.ts';
-export {
   HumanContributionValuationPolicyRegistry,
   type StoredValuationPolicy,
   type ValuationRegistrySnapshot,
@@ -272,7 +254,6 @@ export {
   type ValuationReviewDecision,
   type ValuationReviewState,
 } from './review.ts';
-export { valuationFailure, type ValuationFailure, type ValuationFailureCode } from './types.ts';
 export {
   createContributionReferenceValue,
   REFERENCE_VALUE_CLASSES,

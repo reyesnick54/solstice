@@ -129,7 +129,10 @@ export class ManufacturingDataFabric {
   }
 
   manufacturingFactCannotAutoMint(): true {
-    return oracleFactCreationNeverMintsMoonRey() && this.autoMints === false;
+    if (!oracleFactCreationNeverMintsMoonRey() || this.autoMints !== false) {
+      throw new Error('MANUFACTURING_FACT_AUTO_MINTS');
+    }
+    return true;
   }
 }
 

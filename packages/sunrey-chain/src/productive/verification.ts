@@ -46,10 +46,10 @@ export type VerifiedProductiveContribution = {
   readonly downstreamContributionIds: readonly string[];
   readonly status: ContributionStatus;
   readonly qualityFactor: bigint;
-  readonly normalizationConstitutionVersion?: string;
-  readonly normalizationReceiptId?: string;
-  readonly canonicalUnit?: string;
-  readonly canonicalMeasurement?: CanonicalProductiveMeasurement;
+  readonly normalizationConstitutionVersion?: string | undefined;
+  readonly normalizationReceiptId?: string | undefined;
+  readonly canonicalUnit?: string | undefined;
+  readonly canonicalMeasurement?: CanonicalProductiveMeasurement | undefined;
 };
 
 export type VerificationContext = {
@@ -60,10 +60,10 @@ export type VerificationContext = {
   readonly facts: readonly OracleFact[];
   readonly policy: MoonReyIssuancePolicy;
   readonly knownFingerprints: ReadonlySet<string>;
-  readonly unitRegistry?: UnitRegistry;
-  readonly canonicalMeasurement?: CanonicalProductiveMeasurement;
-  readonly contributionSchema?: 1 | 2;
-  readonly normalizationFamily?: 'LEGACY_NPU_V1' | 'CANONICAL_MEASUREMENT_V2';
+  readonly unitRegistry?: UnitRegistry | undefined;
+  readonly canonicalMeasurement?: CanonicalProductiveMeasurement | undefined;
+  readonly contributionSchema?: 1 | 2 | undefined;
+  readonly normalizationFamily?: 'LEGACY_NPU_V1' | 'CANONICAL_MEASUREMENT_V2' | undefined;
 };
 
 export type VerificationResult =

@@ -124,6 +124,61 @@ const FORMAL_METRICS = [
   'formal_rust_harnesses',
 ] as const;
 
+export const CREDENTIAL_METRICS = [
+  'credential_expiry_horizon',
+  'credential_rotation_required',
+  'credential_scope_rejections',
+  'credential_resolution_failures',
+] as const;
+
+export const PROVIDER_RUNTIME_METRICS = [
+  'provider_sessions',
+  'provider_auth_failures',
+  'provider_circuit_open',
+  'provider_schema_drift',
+  'provider_revalidation_required',
+] as const;
+
+export const PAYMENT_METRICS = [
+  'payment_submission_unknown',
+  'payment_reconciliation_required',
+  'payment_callback_replays',
+  'payment_settlement_lag',
+  'fx_quote_stale_rejections',
+] as const;
+
+export const COMPLIANCE_METRICS = [
+  'kyc_provider_unavailable',
+  'sanctions_provider_unavailable',
+  'aml_provider_unavailable',
+  'compliance_manual_review_queue',
+] as const;
+
+export const CONTROL_ROOM_CUSTODY_METRICS = [
+  'sunrey_custody_reconciliation',
+  'moonrey_custody_reconciliation',
+  'cross_asset_rejection_count',
+  'custody_submission_unknown',
+  'hsm_health',
+] as const;
+
+export const PERSISTENCE_METRICS = [
+  'postgres_primary_health',
+  'replica_lag',
+  'outbox_backlog',
+  'inbox_failed',
+  'dead_letter_count',
+  'recovery_reconciliation_queue',
+  'backup_age',
+] as const;
+
+export const CONTROL_ROOM_ECONOMIC_METRICS = [
+  'oracle_quorum_degradation',
+  'productive_value_review_queue',
+  'human_contribution_review_queue',
+  'supply_reconciliation',
+] as const;
+
 export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...CONSENSUS_METRICS,
   ...NODE_METRICS,
@@ -134,6 +189,16 @@ export const REQUIRED_METRIC_NAMES = Object.freeze([
   ...INTEROP_METRICS,
   ...PERFORMANCE_METRICS,
   ...FORMAL_METRICS,
+]);
+
+export const CONTROL_ROOM_METRIC_NAMES = Object.freeze([
+  ...CREDENTIAL_METRICS,
+  ...PROVIDER_RUNTIME_METRICS,
+  ...PAYMENT_METRICS,
+  ...COMPLIANCE_METRICS,
+  ...CONTROL_ROOM_CUSTODY_METRICS,
+  ...PERSISTENCE_METRICS,
+  ...CONTROL_ROOM_ECONOMIC_METRICS,
 ]);
 
 export class MetricRegistry {
@@ -237,10 +302,24 @@ export class StructuredLogSink {
 }
 
 function securitySeverity(code: SecurityEventCode): LogSeverity {
-  if (code === 'CUSTODY_SECURITY_HALT' || code === 'VALIDATOR_EVIDENCE') {
+  if (
+    code === 'CUSTODY_SECURITY_HALT' ||
+    code === 'VALIDATOR_EVIDENCE' ||
+    code === 'CREDENTIAL_MISUSE' ||
+    code === 'SECRET_LEAK_GUARD' ||
+    code === 'HSM_UNAVAILABLE'
+  ) {
     return 'CRITICAL';
   }
-  if (code === 'SIGNER_REJECTION' || code === 'INTEROP_CLIENT_FREEZE') {
+  if (
+    code === 'SIGNER_REJECTION' ||
+    code === 'INTEROP_CLIENT_FREEZE' ||
+    code === 'AI_AUTHORITY_ATTEMPT' ||
+    code === 'SIGNATURE_FAILURE' ||
+    code === 'SSRF_REJECTION' ||
+    code === 'UNEXPECTED_ENDPOINT' ||
+    code === 'PROVIDER_SCOPE_MISMATCH'
+  ) {
     return 'ERROR';
   }
   return 'WARNING';
@@ -248,4 +327,8 @@ function securitySeverity(code: SecurityEventCode): LogSeverity {
 
 export function requiredMetricCatalog(): readonly string[] {
   return REQUIRED_METRIC_NAMES;
+}
+
+export function controlRoomMetricCatalog(): readonly string[] {
+  return Object.freeze([...REQUIRED_METRIC_NAMES, ...CONTROL_ROOM_METRIC_NAMES]);
 }

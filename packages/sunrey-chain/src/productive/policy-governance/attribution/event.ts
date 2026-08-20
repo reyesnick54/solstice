@@ -191,7 +191,10 @@ export function eventIdentityCannotAuthorizeIssuance(event: ProductiveEconomicEv
 }
 
 export function eventOmitsMoonReyQuantity(event: ProductiveEconomicEvent): true {
-  return !('moonreyQuantity' in event || 'moonReyQuantity' in event);
+  if ('moonreyQuantity' in event || 'moonReyQuantity' in event) {
+    throw new Error('MOONREY_QUANTITY_FORBIDDEN');
+  }
+  return true;
 }
 
 export function claimRefFor(claimId: string): IdentityRef {

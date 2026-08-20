@@ -5,9 +5,9 @@ import { assertWorkloadMayUseKey } from './auth.ts';
 
 export type CustodyHsmKeyProfile = {
   readonly origin: CustodyKeyOrigin;
-  readonly exportable: false;
+  readonly exportable: boolean;
   readonly attestationClass: 'SOFTWARE_FIXTURE' | 'EXTERNAL_HARDWARE_REQUIRED';
-  readonly hardwareAttestationAccepted: false;
+  readonly hardwareAttestationAccepted: boolean;
 };
 
 export function validateHsmKeyProfile(profile: CustodyHsmKeyProfile): CustodyCandidateResult<CustodyHsmKeyProfile> {

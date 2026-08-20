@@ -103,7 +103,6 @@ describe('exchange listing governance and kill switches', () => {
       status: 'SIMULATION_LISTED',
       actorKind: 'HUMAN_OPERATOR',
     });
-    assert.equal(decided.outcome, 'OK');
     if (decided.outcome !== 'OK') {
       throw new Error('listing');
     }

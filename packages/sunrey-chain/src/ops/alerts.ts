@@ -56,6 +56,50 @@ function definitionFor(code: AlertCode): AlertDefinition {
       severity: 'WARNING',
       description: 'An interop light client is approaching expiry.',
     },
+    OUTBOX_BACKLOG: {
+      severity: 'HIGH',
+      description: 'Event outbox backlog exceeded the engineering drain target.',
+    },
+    CREDENTIAL_EXPIRY: {
+      severity: 'WARNING',
+      description: 'A provider credential is approaching the engineering expiry horizon.',
+    },
+    ORACLE_QUORUM_DEGRADATION: {
+      severity: 'HIGH',
+      description: 'Oracle quorum is degraded below the engineering freshness target.',
+    },
+    SUPPLY_RECONCILIATION: {
+      severity: 'CRITICAL',
+      description: 'Native supply reconciliation does not match the monetary constitution book.',
+    },
+    PAYMENT_SUBMISSION_UNKNOWN: {
+      severity: 'HIGH',
+      description: 'Payment submissions entered SUBMISSION_UNKNOWN and require reconciliation.',
+    },
+    FAST_ERROR_BUDGET_BURN: {
+      severity: 'CRITICAL',
+      description: 'Engineering error budget is burning at a fast rate.',
+    },
+    SLOW_ERROR_BUDGET_BURN: {
+      severity: 'WARNING',
+      description: 'Engineering error budget is burning at a slow sustained rate.',
+    },
+    PROVIDER_UNAVAILABLE: {
+      severity: 'HIGH',
+      description: 'A provider-candidate adapter is technically unavailable.',
+    },
+    AI_AUTHORITY_ATTEMPT: {
+      severity: 'HIGH',
+      description: 'An AI proposal attempted a forbidden authority, mint, or production action.',
+    },
+    LEDGER_IMBALANCE: {
+      severity: 'CRITICAL',
+      description: 'A ledger imbalance invariant failed. Balances are not auto-corrected.',
+    },
+    CREDENTIAL_MISUSE: {
+      severity: 'CRITICAL',
+      description: 'A credential scope, leak-guard, or resolution failure was observed.',
+    },
   };
   const row = table[code];
   return Object.freeze({

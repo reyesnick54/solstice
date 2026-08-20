@@ -38,6 +38,66 @@ export function engineeringSlos(): readonly SloDefinition[] {
       description: 'Verified backup plus restore drill succeeds.',
       target: 'manifest and hash verification pass',
     },
+    {
+      id: 'PAYMENT_WORKFLOW_COMPLETION',
+      label: SLO_LABEL,
+      description: 'Payment workflow reaches a terminal engineering state in the drill window.',
+      target: 'completion without SUBMISSION_UNKNOWN remainder',
+    },
+    {
+      id: 'PAYMENT_SUBMISSION_UNKNOWN_RECONCILIATION',
+      label: SLO_LABEL,
+      description: 'SUBMISSION_UNKNOWN payments are reconciled before retry.',
+      target: 'unknown submissions return to 0 after recovery conditions',
+    },
+    {
+      id: 'PROVIDER_AVAILABILITY',
+      label: SLO_LABEL,
+      description: 'Provider technical health answers in the drill clock.',
+      target: 'technical health is TECHNICALLY_HEALTHY',
+    },
+    {
+      id: 'PROVIDER_CREDENTIAL_VALIDITY',
+      label: SLO_LABEL,
+      description: 'Provider credentials remain unexpired in the drill clock.',
+      target: 'expiry horizon above the engineering warning window',
+    },
+    {
+      id: 'ORACLE_QUORUM',
+      label: SLO_LABEL,
+      description: 'Oracle quorum remains available and fresh.',
+      target: 'quorum available and freshness within drill ticks',
+    },
+    {
+      id: 'EVENT_OUTBOX_DELIVERY',
+      label: SLO_LABEL,
+      description: 'Event outbox backlog drains after recovery.',
+      target: 'outbox backlog returns to 0',
+    },
+    {
+      id: 'PERSISTENCE_RECOVERY',
+      label: SLO_LABEL,
+      description: 'Primary health, replica lag, and recovery queue return to engineering targets.',
+      target: 'primary healthy, replica lag 0, recovery queue 0',
+    },
+    {
+      id: 'CUSTODY_RECONCILIATION',
+      label: SLO_LABEL,
+      description: 'SunRey and MoonRey custody reconciliation matches.',
+      target: 'reconciliation mismatch count 0 for both assets',
+    },
+    {
+      id: 'EXCHANGE_SETTLEMENT',
+      label: SLO_LABEL,
+      description: 'Exchange settlement backlog drains after recovery.',
+      target: 'pending settlements return to 0',
+    },
+    {
+      id: 'COMPLIANCE_PROVIDER_AVAILABILITY',
+      label: SLO_LABEL,
+      description: 'KYC, sanctions, and AML provider-candidate adapters remain technically reachable.',
+      target: 'unavailable counters remain 0',
+    },
   ]);
 }
 

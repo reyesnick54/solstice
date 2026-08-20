@@ -22,6 +22,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: JSON / repository integrity preflight
+        run: node scripts/check-json-integrity.mjs
+
       - name: Install from lockfile
         run: npm ci --ignore-scripts
 
@@ -246,6 +249,8 @@ jobs:
         run: npm run demo:custody-unknown
       - name: Custody cold-signing demo
         run: npm run demo:custody-cold
+      - name: SunRey operational persistence recovery demo
+        run: npm run demo:sunrey-operational-persistence-recovery
       - name: Market surveillance demo
         run: npm run demo:market-surveillance
       - name: Listing governance demo
@@ -256,8 +261,12 @@ jobs:
         run: npm run demo:sunrey-bench
       - name: SunRey adversarial range smoke campaign
         run: npm run sunrey-range -- campaign --smoke
+      - name: SunRey production-safety smoke campaign
+        run: npm run sunrey-range -- campaign --production-safety-smoke
       - name: SunRey adversarial range demo
         run: npm run demo:sunrey-range
+      - name: SunRey production adversarial campaign demo
+        run: npm run demo:sunrey-production-adversarial-campaign
       - name: SunRey MoonRey dual-economy simulation demo
         run: npm run demo:sunrey-dual-economy
       - name: SunRey dual-economy baseline CLI
@@ -343,6 +352,9 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: "22"
+
+      - name: JSON / repository integrity preflight
+        run: node scripts/check-json-integrity.mjs
 
       - name: Install from lockfile
         run: npm ci --ignore-scripts
