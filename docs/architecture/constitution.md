@@ -1,4 +1,4 @@
-# Solstice canonical architecture constitution
+# SunRey canonical architecture constitution
 
 This document is the durable architecture specification for the
 consolidated tree on `main`. It describes what the repository actually
@@ -51,7 +51,7 @@ never be two implementations of these systems.
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
-| Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
+| SunRey Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
@@ -1742,6 +1742,17 @@ mint MoonRey. Do not create `packages/goods-oracles`,
 `packages/moonrey-commerce`. See
 [`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md).
 
+Chunk 142 migrates current public runtime and display identity to
+SunRey at `packages/config`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
+the canonical env prefix; `SOLSTICE_*` remains a temporary alias.
+Conflicting values fail with `LEGACY_ENV_CONFLICT`. Historical event
+schema refs, hash domains, protocol IDs, applied migrations, and the
+GitHub repository path are unchanged. `SolsticeIdentityId` is a
+deprecated alias of `SunReyIdentityId`. Do not create
+`packages/branding`, `packages/product-identity`,
+`packages/sunrey-naming`, or `packages/legacy-compat`. See
+[`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
 Chunk 141 implements the canonical SunRey product identity, legacy
 Solstice inventory, and migration guardrails at
 `packages/config/src/product-identity.ts`. Capability

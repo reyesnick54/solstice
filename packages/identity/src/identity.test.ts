@@ -39,7 +39,7 @@ function harness() {
   };
 }
 
-describe('Solstice Identity', () => {
+describe('SunRey Identity', () => {
   it('1. valid session creates a valid ActorContext', () => {
     const { adapter, service } = harness();
     const provisioned = adapter.provisionSimulatedActor({

@@ -766,13 +766,30 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   SurveillanceCaseOpened: 'surveillance',
 };
 
+export const HISTORICAL_EVENT_SCHEMA_PREFIX = 'solstice.' as const;
+export const CANONICAL_EVENT_SCHEMA_PREFIX = 'sunrey.' as const;
+
 export function schemaRefFor(eventType: string, version: number): string {
   const known = EVENT_SCHEMA_REFS[eventType as ImplementedEventTypeName];
   if (known && version === 1) {
     return known;
   }
   const ns = EVENT_NAMESPACES_BY_TYPE[eventType as ImplementedEventTypeName] ?? 'unknown';
-  return `solstice.${ns}.${camelToSnake(eventType)}/${version}`;
+  return `${CANONICAL_EVENT_SCHEMA_PREFIX}${ns}.${camelToSnake(eventType)}/${version}`;
+}
+
+export type EventSchemaRefProjection = {
+  readonly storedSchemaRef: string;
+  readonly historicalPrefix: boolean;
+  readonly displayBrand: 'SunRey';
+};
+
+export function projectEventSchemaRef(schemaRef: string): EventSchemaRefProjection {
+  return Object.freeze({
+    storedSchemaRef: schemaRef,
+    historicalPrefix: schemaRef.startsWith(HISTORICAL_EVENT_SCHEMA_PREFIX),
+    displayBrand: 'SunRey',
+  });
 }
 
 function camelToSnake(value: string): string {

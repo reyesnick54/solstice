@@ -50,6 +50,7 @@ export async function runSunReyDev(argv: readonly string[], context: CliContext 
 
 function helpText(): string {
   return [
+    'SunRey SDK',
     'sunrey-dev app create|list',
     'sunrey-dev key create|revoke',
     'sunrey-dev webhook add|test',

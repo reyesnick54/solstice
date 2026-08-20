@@ -21,6 +21,8 @@ describe('sunrey explorer', () => {
   it('indexes finalized blocks, transactions, and economic views', () => {
     const { queries, indexer } = ready();
     const home = queries.home();
+    assert.equal(home.productName, 'SunRey Explorer');
+    assert.equal(home.productBrand, 'SunRey');
     assert.equal(home.networkLabel, 'DEVELOPMENT');
     assert.equal(home.latestFinalizedHeight, 3);
     assert.equal(home.supplyIsNotMarketCap, true);

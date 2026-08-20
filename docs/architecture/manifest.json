@@ -35,7 +35,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Clock types currently import UtcInstant from packages/domain. That edge is a known layering exception."
+      "notes": "Clock types currently import UtcInstant from packages/domain. That edge is a known layering exception. Chunk 142 canonical product identity and SUNREY_* env resolution live here. Do not add a second config authority."
     },
     {
       "id": "packages/domain",
@@ -112,7 +112,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Solstice Identity domain. Authoritative actor capabilities and ActorContext. No live KYC vendor."
+      "notes": "Canonical SunRey Identity domain. Authoritative actor capabilities and ActorContext. No live KYC vendor. SolsticeIdentityId remains a deprecated alias of SunReyIdentityId."
     },
     {
       "id": "services/identity",
@@ -272,7 +272,8 @@
         "packages/consent",
         "packages/clean-room",
         "packages/information-market",
-        "packages/sunrey-chain"
+        "packages/sunrey-chain",
+        "packages/config"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1781,7 +1782,7 @@
     },
     {
       "id": "solstice-identity",
-      "name": "Solstice Identity",
+      "name": "SunRey Identity",
       "canonicalOwner": "packages/identity",
       "canonicalPath": "packages/identity/src/service.ts",
       "publicInterface": "packages/identity/src/index.ts",
@@ -3035,6 +3036,22 @@
         }
       ],
       "forbiddenAliases": [
+        "packages/water-oracle",
+        "packages/water-data-fabric",
+        "packages/utility-water",
+        "packages/irrigation-oracle",
+        "packages/goods-oracles",
+        "packages/commerce-data-fabric",
+        "packages/services-oracle",
+        "packages/moonrey-commerce",
+        "packages/bandwidth-oracle",
+        "packages/telecom-data-fabric",
+        "packages/network-oracles",
+        "packages/cdn-metering",
+        "packages/real-estate-oracles",
+        "packages/infrastructure-oracles",
+        "packages/property-data-fabric",
+        "packages/facility-data-fabric",
         "packages/economic-data-fabric",
         "packages/unified-oracles",
         "packages/cross-domain-reconciliation",
@@ -3044,6 +3061,34 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
+    },
+    {
+      "id": "sunrey-canonical-product-identity",
+      "name": "SunRey canonical product identity and legacy compatibility",
+      "canonicalOwner": "packages/config",
+      "canonicalPath": "packages/config/src/product-identity.ts",
+      "publicInterface": "packages/config/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "CANONICAL_PRODUCT_IDENTITY",
+          "kind": "const"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/branding",
+        "packages/product-identity",
+        "packages/sunrey-naming",
+        "packages/legacy-compat"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 141/142 canonical SunRey product identity, SUNREY_* env resolution with SOLSTICE_* aliases, and legacy compatibility report. Display branding is not protocol identity. Hash domains, event schema refs, network IDs, chain IDs, and the GitHub repository path stay unchanged. Do not create a second config authority."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -6546,6 +6591,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/config",
       "protected": true,
+      "notes": "Chunk 141/142 canonical SunRey product identity and runtime naming migration at packages/config. SUNREY_* is canonical. SOLSTICE_* remains a temporary alias. Conflicting values fail with LEGACY_ENV_CONFLICT. Protocol IDs, hash domains, and the GitHub repository path are unchanged. Do not create packages/branding, packages/product-identity, packages/sunrey-naming, or packages/legacy-compat."
       "notes": "Chunk 141 canonical SunRey product identity at packages/config/src/product-identity.ts. Legacy Solstice names are inventoried, not current branding. Not a second branding package, repository rename, or protocol rewrite."
     }
   ],

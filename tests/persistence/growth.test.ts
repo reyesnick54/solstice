@@ -23,7 +23,7 @@ const NOW = asUtcInstant('2026-08-15T12:00:00.000Z');
 describe('Growth Orchestrator persistence', () => {
   it('persists mandate versions and reloads planning state', async (t) => {
     if (!persistenceAvailable()) {
-      t.skip('SOLSTICE_PERSISTENCE_TEST is not set');
+      t.skip('SUNREY_PERSISTENCE_TEST is not set');
       return;
     }
     const env = await preparePersistence();

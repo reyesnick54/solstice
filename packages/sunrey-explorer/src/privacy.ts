@@ -189,6 +189,8 @@ const PUBLIC_FIELDS: readonly FieldExposure[] = [
   { path: 'finalizedHeight', classification: 'PUBLIC' },
   { path: 'label', classification: 'PUBLIC_DERIVED' },
   { path: 'id', classification: 'PUBLIC' },
+  { path: 'productName', classification: 'PUBLIC' },
+  { path: 'productBrand', classification: 'PUBLIC' },
   { path: 'networkLabel', classification: 'PUBLIC' },
   { path: 'latestFinalizedHeight', classification: 'PUBLIC_DERIVED' },
   { path: 'latestBlock', classification: 'PUBLIC_DERIVED' },

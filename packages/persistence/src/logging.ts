@@ -36,7 +36,7 @@ export function formatPersistenceDiagnostic(event: PersistenceDiagnostic): strin
   if (event.migrationVersion !== undefined) {
     parts.push(`migrationVersion=${String(event.migrationVersion)}`);
   }
-  return `solstice.persistence ${parts.join(' ')}`;
+  return `sunrey.persistence ${parts.join(' ')}`;
 }
 
 export function logPersistenceEvent(event: PersistenceDiagnostic): void {

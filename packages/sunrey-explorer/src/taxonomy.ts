@@ -6,6 +6,9 @@
  * state, the financial Ledger, or custody workflows.
  */
 
+export const EXPLORER_PRODUCT_NAME = 'SunRey Explorer' as const;
+export const EXPLORER_PRODUCT_BRAND = 'SunRey' as const;
+
 export const EXPLORER_SCHEMA_VERSION = 1 as const;
 export const EXPLORER_INDEXER_SCHEMA_VERSION = 1 as const;
 export const EXPLORER_POLICY_VERSION = 'explorer.exposure.v1' as const;

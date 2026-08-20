@@ -24,6 +24,7 @@ const COMMANDS = ['run', 'index', 'rebuild', 'verify', 'status'] as const;
 
 export function explorerUsage(): string {
   return [
+    'SunRey Explorer',
     'sunrey-explorer run [--listen 127.0.0.1:8787]',
     'sunrey-explorer index [--from-height N]',
     'sunrey-explorer rebuild [--from-height N]',

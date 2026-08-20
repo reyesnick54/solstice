@@ -1,6 +1,7 @@
 {
   "name": "@solstice/sunrey-sdk",
   "version": "0.1.0",
+  "description": "SunRey SDK — official developer SDK and versioned public API adapter",
   "private": true,
   "type": "module",
   "exports": {
