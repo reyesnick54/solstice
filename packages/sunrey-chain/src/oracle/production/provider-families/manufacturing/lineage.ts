@@ -283,10 +283,7 @@ export function factTypesRemainDistinct(
   automated: string,
   goods: string,
 ): boolean {
-  return manufacturing === 'MANUFACTURING_OUTPUT' && automated === 'AUTOMATED_MACHINE_OUTPUT' && goods === 'GOODS_OUTPUT'
-    && manufacturing !== automated
-    && manufacturing !== goods
-    && automated !== goods;
+  return manufacturing === 'MANUFACTURING_OUTPUT' && automated === 'AUTOMATED_MACHINE_OUTPUT' && goods === 'GOODS_OUTPUT';
 }
 
 export function lineageDigest(parts: readonly string[]): string {

@@ -120,6 +120,7 @@ npm run demo:sunrey-machine-economy
 npm run demo:sunrey-wallet
 npm run demo:sunrey-interop
 npm run demo:sunrey-ops
+npm run demo:sunrey-control-room
 npm run demo:sunrey-testnet
 npm run demo:sunrey-mainnet
 npm run demo:sunrey-economics
@@ -163,6 +164,8 @@ npm run demo:institutional-custody
 npm run demo:custody-unknown
 npm run demo:custody-cold
 npm run demo:sunrey-dual-asset-custody-provider-candidate
+npm run demo:sunrey-idempotent-recovery-fabric
+npm run demo:sunrey-operational-persistence-recovery
 npm run demo:market-surveillance
 npm run demo:listing-governance
 npm run demo:explorer

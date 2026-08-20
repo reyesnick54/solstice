@@ -118,6 +118,8 @@ never be two implementations of these systems.
 | Production provider credential plane | `packages/security` | `packages/security/src/regulated/credentials/types.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 | Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
+| Unified production-candidate control room | `packages/sunrey-chain` | `packages/sunrey-chain/src/ops/control-room/index.ts` | IMPLEMENTED |
+| Distributed idempotency recovery | `packages/events` | `packages/events/src/operation/index.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1911,6 +1913,41 @@ create `packages/red-team`, `packages/chaos-v2`,
 `packages/security-range-v2`, `packages/pentest`, or
 `packages/adversarial-v2`. See
 [`docs/security/chunk-157-production-adversarial-resilience.md`](../security/chunk-157-production-adversarial-resilience.md).
+Chunk 156 extends the existing operations owner at
+`packages/sunrey-chain/src/ops` with a unified production-candidate
+control room at `src/ops/control-room`. Capability
+`sunrey-unified-control-room` is `IMPLEMENTED`. It is a
+read/operations plane: observe, alert, report, recommend, and seal
+incident metadata. It cannot post a ledger journal, mint, issue
+Execution Authority, sign custody, modify credentials, clear
+sanctions, change tokenomics, or enable `LIVE_*` flags. Engineering
+SLOs remain `ENGINEERING_TEST_TARGETS`. No real alert provider is
+connected. Do not create `packages/observability`,
+`packages/control-room`, `packages/sunrey-ops`, or `packages/sre`.
+See
+[`docs/operations/chunk-156-sunrey-control-room.md`](../operations/chunk-156-sunrey-control-room.md).
+Chunk 155 hardens distributed idempotency and external side-effect
+recovery at `packages/events/src/operation` with a PostgreSQL adapter
+in `packages/persistence/src/operations`. Capability
+`sunrey-distributed-idempotency-recovery` is `IMPLEMENTED`. The
+canonical model is `EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION`.
+It does not claim magical exactly-once delivery. The coordinator cannot
+post ledger journals, mint, or issue Execution Authority. Do not create
+`packages/saga-engine`, `packages/workflow-v2`,
+`packages/idempotency-service`, `packages/transaction-manager`,
+`packages/distributed-ledger`, or `packages/exactly-once`. See
+[`chunk-155-distributed-idempotency-recovery.md`](./chunk-155-distributed-idempotency-recovery.md).
+Chunk 154 hardens production operational persistence, crash recovery,
+state rehydration, and the repository integrity gate at
+`packages/persistence/src/production/recovery`. Capability
+`sunrey-operational-persistence-recovery` is `IMPLEMENTED` on the
+existing persistence owner. Durable fixture snapshots fail closed on
+corruption. PostgreSQL operational state is not a second ledger and
+cannot mint SunRey or MoonRey or replace `Ledger.postJournal`. Do not
+create `packages/database-v2`, `packages/state-store`,
+`packages/durable-state`, `packages/operational-ledger`,
+`packages/financial-database`, or `packages/persistence-v2`. See
+[`chunk-154-operational-persistence-recovery.md`](./chunk-154-operational-persistence-recovery.md).
 
 ## Agent stop rule
 

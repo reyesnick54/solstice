@@ -15,6 +15,7 @@ import { candidateQuoteIsExpired } from './fx-profile.ts';
 import type { BaasAccountReference, ProviderOperationalBalance } from './types.ts';
 import { PRODUCTION_CANDIDATE_FLAGS } from './types.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
+import { asCurrencyCode } from '../../../domain/src/currency.ts';
 import { asInboundPaymentId, asOpaqueAccountRef } from '../rail-ids.ts';
 
 export type CandidateRouteFacts = {
@@ -202,7 +203,10 @@ export function exposeProviderLiquidityToTreasury(balance: ProviderOperationalBa
 }
 
 export function baasReferenceIsNotLedgerBalance(reference: BaasAccountReference): true {
-  return reference.isCanonicalLedgerBalance === false;
+  if (reference.isCanonicalLedgerBalance) {
+    throw new Error('BAAS_REFERENCE_IS_LEDGER_BALANCE');
+  }
+  return true;
 }
 
 export function inboundNoticeIsNotAutomaticCredit(notice: InboundRailNotice, authenticated: boolean, mapped: boolean, complianceAllowed: boolean, authorized: boolean): {
@@ -222,7 +226,7 @@ export function mapInboundNotice(notice: InboundRailNotice, receivedAt: UtcInsta
     provider: notice.provider,
     rail: notice.rail,
     amount: notice.amount,
-    currency: notice.amount.currency,
+    currency: asCurrencyCode(notice.amount.currency),
     destinationAccountId: null,
     destinationCustomerId: null,
     destinationReference: asOpaqueAccountRef(notice.destinationReference),

@@ -192,10 +192,12 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
+| sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
 | sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
+| sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1536,3 +1538,31 @@ credential plane. Do not create `packages/moonrey-custody`,
 `packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
 `packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
 returns `mustStop: false`.
+Chunk 156 extends `packages/sunrey-chain/src/ops` with a unified
+production-candidate control room at `src/ops/control-room`.
+Capability `sunrey-unified-control-room` is `IMPLEMENTED`. It is a
+read/operations plane and does not post ledger, mint, issue Execution
+Authority, or enable `LIVE_*` flags. Do not create
+`packages/observability`, `packages/control-room`,
+`packages/sunrey-ops`, or `packages/sre`. The evaluator returns
+`mustStop: false`. See
+[`docs/operations/chunk-156-sunrey-control-room.md`](../operations/chunk-156-sunrey-control-room.md).
+Chunk 155 implements distributed idempotency, external side-effect
+recovery, transactional workflow safety, and cross-domain reconciliation
+at `packages/events/src/operation` with persistence in
+`packages/persistence/src/operations`. Capability
+`sunrey-distributed-idempotency-recovery` is `IMPLEMENTED`. The
+canonical model is `EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION`.
+Do not create `packages/saga-engine`, `packages/workflow-v2`,
+`packages/idempotency-service`, `packages/transaction-manager`,
+`packages/distributed-ledger`, or `packages/exactly-once`. The evaluator
+returns `mustStop: false`.
+Chunk 154 hardens operational persistence, crash recovery, state
+rehydration, and the repository integrity gate at
+`packages/persistence/src/production/recovery`. Capability
+`sunrey-operational-persistence-recovery` is `IMPLEMENTED` on
+`packages/persistence`. It does not create a second ledger or mint.
+Do not create `packages/database-v2`, `packages/state-store`,
+`packages/durable-state`, `packages/operational-ledger`,
+`packages/financial-database`, or `packages/persistence-v2`. The
+evaluator returns `mustStop: false`.

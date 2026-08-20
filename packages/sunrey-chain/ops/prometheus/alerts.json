@@ -56,6 +56,61 @@
       "alert": "INTEROP_CLIENT_EXPIRING",
       "expr": "client_age > 100",
       "severity": "WARNING"
+    },
+    {
+      "alert": "OUTBOX_BACKLOG",
+      "expr": "outbox_backlog > 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "CREDENTIAL_EXPIRY",
+      "expr": "credential_expiry_horizon < 7",
+      "severity": "WARNING"
+    },
+    {
+      "alert": "ORACLE_QUORUM_DEGRADATION",
+      "expr": "oracle_quorum_degradation > 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "SUPPLY_RECONCILIATION",
+      "expr": "supply_reconciliation > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "PAYMENT_SUBMISSION_UNKNOWN",
+      "expr": "payment_submission_unknown > 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "FAST_ERROR_BUDGET_BURN",
+      "expr": "error_budget_burn_fast == 1",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "SLOW_ERROR_BUDGET_BURN",
+      "expr": "error_budget_burn_slow == 1",
+      "severity": "WARNING"
+    },
+    {
+      "alert": "PROVIDER_UNAVAILABLE",
+      "expr": "provider_circuit_open > 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "AI_AUTHORITY_ATTEMPT",
+      "expr": "ai_authority_attempt > 0",
+      "severity": "HIGH"
+    },
+    {
+      "alert": "LEDGER_IMBALANCE",
+      "expr": "ledger_imbalance > 0",
+      "severity": "CRITICAL"
+    },
+    {
+      "alert": "CREDENTIAL_MISUSE",
+      "expr": "credential_scope_rejections > 0",
+      "severity": "CRITICAL"
     }
   ]
 }

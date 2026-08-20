@@ -15,16 +15,16 @@ export const SIMULATION_CONVERSION_POLICY_ID = 'sunrey.human-settlement.conversi
 export const SIMULATION_CONVERSION_POLICY_VERSION = '1' as const;
 
 export function simulationConversionPolicy(input?: {
-  readonly policyId?: string;
-  readonly version?: string;
-  readonly environment?: 'DEVELOPMENT' | 'SIMULATION';
-  readonly inputDenomination?: string;
-  readonly conversionNumerator?: bigint;
-  readonly conversionDenominator?: bigint;
-  readonly roundingRule?: ConversionRoundingRule;
-  readonly perContributionCeiling?: bigint;
-  readonly perEpochCeiling?: bigint;
-  readonly jurisdictionPolicyRef?: string;
+  readonly policyId?: string | undefined;
+  readonly version?: string | undefined;
+  readonly environment?: 'DEVELOPMENT' | 'SIMULATION' | undefined;
+  readonly inputDenomination?: string | undefined;
+  readonly conversionNumerator?: bigint | undefined;
+  readonly conversionDenominator?: bigint | undefined;
+  readonly roundingRule?: ConversionRoundingRule | undefined;
+  readonly perContributionCeiling?: bigint | undefined;
+  readonly perEpochCeiling?: bigint | undefined;
+  readonly jurisdictionPolicyRef?: string | undefined;
 }): SunReyHumanSettlementConversionPolicy {
   const conversionDenominator = input?.conversionDenominator ?? 5n;
   if (conversionDenominator <= 0n) {

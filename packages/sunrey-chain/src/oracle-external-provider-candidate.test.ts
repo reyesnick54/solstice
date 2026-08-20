@@ -435,9 +435,10 @@ describe('CHUNK-150 external economic provider candidates', () => {
     assert.equal(routeFamily(fixtureComputeProfile.feedProfiles[0]!).ok, true);
     assert.equal(routeFamily(fixtureManufacturingProfile.feedProfiles[0]!).ok, true);
     assert.equal(routeFamily(fixtureLogisticsProfile.feedProfiles[0]!).ok, true);
-    assert.equal(routeFamily(fixtureReferencePriceFeed).ok, true);
-    if (routeFamily(fixtureReferencePriceFeed).ok) {
-      assert.equal(routeFamily(fixtureReferencePriceFeed).value, 'REFERENCE_DATA');
+    const referenceRouted = routeFamily(fixtureReferencePriceFeed);
+    assert.equal(referenceRouted.ok, true);
+    if (referenceRouted.ok) {
+      assert.equal(referenceRouted.value, 'REFERENCE_DATA');
     }
   });
 

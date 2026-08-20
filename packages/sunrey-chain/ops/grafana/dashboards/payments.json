@@ -1,0 +1,13 @@
+{
+  "id": "PAYMENTS",
+  "title": "Payments",
+  "schemaVersion": 1,
+  "label": "ENGINEERING_TEST_TARGETS",
+  "panels": [
+    "payment_submission_unknown",
+    "payment_reconciliation_required",
+    "payment_callback_replays",
+    "payment_settlement_lag",
+    "fx_quote_stale_rejections"
+  ]
+}

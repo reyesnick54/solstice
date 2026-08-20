@@ -149,9 +149,8 @@ describe('payment orchestration failures', () => {
   it('blocks a payment to an injected sanctioned beneficiary', () => {
     const world = createPaymentWorld('sancp');
     const prepared = readyQuoteAndBeneficiary(world, 'sancp');
-    assert.equal(prepared.beneficiary.outcome, 'OK');
     if (prepared.beneficiary.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     world.payments.getStore().saveBeneficiary(
       freezeBeneficiary({
@@ -180,9 +179,8 @@ describe('payment orchestration failures', () => {
     const pending = world.payments.initiatePayment(
       payIntent(world, 'pend', 'ben_pend', prepared.quote.quoteId),
     );
-    assert.equal(pending.outcome, 'OK');
     if (pending.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(pending.value.status, 'PROCESSING');
     const completed = world.payments.completeSettlement(asPaymentId(pending.value.paymentId));
@@ -228,15 +226,13 @@ describe('payment orchestration failures', () => {
     const settled = world.payments.initiatePayment(
       payIntent(world, 'ret', 'ben_ret', prepared.quote.quoteId),
     );
-    assert.equal(settled.outcome, 'OK');
     if (settled.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const journalsBefore = settled.value.journalIds.length;
     const returned = world.payments.simulateReturn(asPaymentId(settled.value.paymentId));
-    assert.equal(returned.outcome, 'OK');
     if (returned.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(returned.value.status, 'RETURNED');
     assert.ok(returned.value.journalIds.length > journalsBefore);
@@ -251,9 +247,8 @@ describe('payment orchestration failures', () => {
     const settled = world.payments.initiatePayment(
       payIntent(world, 'recon', 'ben_recon', prepared.quote.quoteId),
     );
-    assert.equal(settled.outcome, 'OK');
     if (settled.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const count = world.runtime.ledger.journalCount();
     const result = world.payments.injectMismatchedReport(settled.value.paymentId, {
@@ -287,9 +282,8 @@ describe('payment orchestration failures', () => {
   it('accepts a quote only once and does not mutate the rate', () => {
     const world = createPaymentWorld('acc');
     const created = world.payments.createQuote(quoteIntent(world, 'acc'));
-    assert.equal(created.outcome, 'OK');
     if (created.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const first = world.payments.acceptQuote(acceptIntent(world, 'acc', created.value.quoteId));
     const second = world.payments.acceptQuote(acceptIntent(world, 'acc2', created.value.quoteId));

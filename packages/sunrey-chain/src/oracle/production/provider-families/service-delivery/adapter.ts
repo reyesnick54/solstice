@@ -158,7 +158,10 @@ export class ServicesDataFabric {
   }
 
   serviceFactCannotAutoMint(): true {
-    return oracleFactCreationNeverMintsMoonRey() && this.autoMints === false;
+    if (!oracleFactCreationNeverMintsMoonRey() || this.autoMints !== false) {
+      throw new Error('SERVICE_FACT_AUTO_MINTS');
+    }
+    return true;
   }
 }
 
@@ -169,5 +172,8 @@ export function ingestServiceObservation(
 }
 
 export function serviceObservationNeverMints(_accepted?: AcceptedServiceObservation): true {
-  return oracleFactCreationNeverMintsMoonRey();
+  if (!oracleFactCreationNeverMintsMoonRey()) {
+    throw new Error('SERVICE_FACT_AUTO_MINTS');
+  }
+  return true;
 }

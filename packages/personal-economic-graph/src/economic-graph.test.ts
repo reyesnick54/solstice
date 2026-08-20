@@ -53,7 +53,6 @@ function harness(capabilities: readonly string[] = ['VIEW_ECONOMIC_GRAPH', 'DECL
   });
   assert.equal(provisioned.ok, true);
   const actor = identity.service.resolveActorContext('actor_peg_test');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -183,9 +182,8 @@ describe('Personal Economic Graph', () => {
     peg.ingestAll(source, subjectId);
     peg.materializeRecurring(subjectId);
     const graph = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const kinds = new Set(graph.value.nodes.map((node) => node.kind));
     assert.ok(kinds.has('PERSON'));
@@ -239,9 +237,8 @@ describe('Personal Economic Graph', () => {
       subjectId,
     );
     const graph = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const positions = graph.value.facts.filter((fact) => fact.key === 'derived_position');
     assert.equal(positions.length, 1);
@@ -268,9 +265,8 @@ describe('Personal Economic Graph', () => {
     );
     peg.materializeRecurring(subjectId);
     const income = peg.getIncomeSources(actor, subjectId);
-    assert.equal(income.ok, true);
     if (!income.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(income.value.length, 0);
   });
@@ -297,9 +293,8 @@ describe('Personal Economic Graph', () => {
       label: 'Home loan',
       estimatedBalance: { minorUnits: '35000000', currency: 'USD' },
     });
-    assert.equal(declared.ok, true);
     if (!declared.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(declared.value.confidence, 'USER_DECLARED');
     assert.equal(declared.value.survivesRebuild, true);
@@ -318,9 +313,8 @@ describe('Personal Economic Graph', () => {
     assert.equal(goal.ok, true);
     peg.proposeOpportunities(subjectId);
     const opportunities = peg.getOpportunities(actor, subjectId);
-    assert.equal(opportunities.ok, true);
     if (!opportunities.ok) {
-      return;
+      throw new Error('expected ok');
     }
     for (const item of opportunities.value) {
       assert.equal(item.executable, false);
@@ -343,9 +337,8 @@ describe('Personal Economic Graph', () => {
     });
     peg.proposeOpportunities(subjectId);
     const snapshot = peg.getEconomicSnapshot(actor, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(snapshot.value.crossCurrencyTotal, null);
     assert.equal(snapshot.value.valuationContext, null);
@@ -407,14 +400,12 @@ describe('Personal Economic Graph', () => {
       estimatedBalance: { minorUnits: '35000000', currency: 'USD' },
     });
     const before = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(before.ok, true);
     if (!before.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const rebuilt = peg.rebuildDerivedProjection(subjectId, source);
-    assert.equal(rebuilt.ok, true);
     if (!rebuilt.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const afterKinds = rebuilt.value.nodes.map((node) => `${node.kind}:${node.confidence}`).sort();
     const beforeKinds = before.value.nodes.map((node) => `${node.kind}:${node.confidence}`).sort();

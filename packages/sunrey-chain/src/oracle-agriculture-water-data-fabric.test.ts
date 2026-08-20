@@ -82,7 +82,6 @@ const NOW = 1_700_000_000n;
 describe('CHUNK-134 agriculture / food data fabric', () => {
   it('1. accepts valid harvest output', () => {
     const ingested = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -94,19 +93,16 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
 
   it('2. normalizes kg and tonne exactly', () => {
     const kg = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(kg.ok, true);
     if (!kg.ok) {
       throw new Error(kg.error.detail);
     }
     assert.equal(kg.value.observation.canonicalUnit, 'kg');
     const grams = quantityToGrams(kg.value.observation.canonicalQuantity);
-    assert.equal(grams.ok, true);
     if (!grams.ok) {
       throw new Error(grams.error.detail);
     }
     assert.equal(grams.value, 1_000_000n);
     const tonne = ingestAgricultureRecord(tonneHarvestRecord(NOW), NOW);
-    assert.equal(tonne.ok, true);
     if (!tonne.ok) {
       throw new Error(tonne.error.detail);
     }
@@ -116,7 +112,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
       factType: 'AGRICULTURAL_OUTPUT',
       targetUnit: 'kg',
     });
-    assert.equal(converted.ok, true);
     if (!converted.ok) {
       throw new Error(converted.error.detail);
     }
@@ -157,7 +152,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
   it('5. derives cumulative harvest delta', () => {
     const pair = cumulativeHarvestPair(NOW);
     const ingested = ingestAgricultureRecord(pair.current, NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -174,7 +168,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
       [harvestTelemetryRecord(NOW), grainScaleRecord(NOW), farmSystemRecord(NOW)],
       NOW,
     );
-    assert.equal(batch.ok, true);
     if (!batch.ok) {
       throw new Error(batch.error.detail);
     }
@@ -183,7 +176,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
       NOW,
       NOW + 3_600n,
     );
-    assert.equal(events.ok, true);
     if (!events.ok) {
       throw new Error(events.error.detail);
     }
@@ -205,7 +197,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
       harvest: harvest.value.observation,
       processed: flour.value.observation,
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -216,7 +207,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
 
   it('9. keeps harvest→goods lineage', () => {
     const harvest = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(harvest.ok, true);
     if (!harvest.ok) {
       throw new Error(harvest.error.detail);
     }
@@ -224,7 +214,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
       harvest: harvest.value.observation,
       goodsObservationId: 'goods.flour.88',
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -236,7 +225,6 @@ describe('CHUNK-134 agriculture / food data fabric', () => {
 describe('CHUNK-134 water data fabric', () => {
   it('10. accepts valid water production', () => {
     const ingested = ingestWaterRecord(treatmentMeterRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -247,7 +235,6 @@ describe('CHUNK-134 water data fabric', () => {
 
   it('11. normalizes L and m3 exactly', () => {
     const liters = ingestWaterRecord(literProductionRecord(NOW), NOW);
-    assert.equal(liters.ok, true);
     if (!liters.ok) {
       throw new Error(liters.error.detail);
     }
@@ -258,7 +245,6 @@ describe('CHUNK-134 water data fabric', () => {
       factType: 'WATER_PRODUCTION',
       targetUnit: 'm3',
     });
-    assert.equal(converted.ok, true);
     if (!converted.ok) {
       throw new Error(converted.error.detail);
     }
@@ -269,7 +255,6 @@ describe('CHUNK-134 water data fabric', () => {
 
   it('12. does not treat water availability as output', () => {
     const reserve = ingestWaterRecord(reservoirAvailabilityRecord(NOW), NOW);
-    assert.equal(reserve.ok, true);
     if (!reserve.ok) {
       throw new Error(reserve.error.detail);
     }
@@ -289,7 +274,6 @@ describe('CHUNK-134 water data fabric', () => {
   it('13. derives cumulative water meter interval', () => {
     const pair = cumulativeWaterPair(NOW);
     const ingested = ingestWaterRecord(pair.current, NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -298,7 +282,6 @@ describe('CHUNK-134 water data fabric', () => {
 
   it('14. does not treat irrigation consumption as water production', () => {
     const irrigation = ingestWaterRecord(irrigationConsumptionRecord(NOW), NOW);
-    assert.equal(irrigation.ok, true);
     if (!irrigation.ok) {
       throw new Error(irrigation.error.detail);
     }
@@ -307,7 +290,6 @@ describe('CHUNK-134 water data fabric', () => {
     assert.equal(irrigationConsumptionEqualsWaterProduction(), false);
     assert.equal(IRRIGATION_CONSUMPTION_EQUALS_WATER_PRODUCTION, false);
     const production = ingestWaterRecord(treatmentMeterRecord(NOW), NOW);
-    assert.equal(production.ok, true);
     if (!production.ok) {
       throw new Error(production.error.detail);
     }
@@ -315,7 +297,6 @@ describe('CHUNK-134 water data fabric', () => {
       production: production.value.observation,
       irrigation: irrigation.value.observation,
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -328,14 +309,12 @@ describe('CHUNK-134 water data fabric', () => {
 describe('CHUNK-134 shared agriculture / water invariants', () => {
   it('15. does not treat inventory movement as production', () => {
     const inventory = ingestAgricultureRecord(inventoryMovementRecord(NOW), NOW);
-    assert.equal(inventory.ok, true);
     if (!inventory.ok) {
       throw new Error(inventory.error.detail);
     }
     assert.equal(inventory.value.observation.createsHarvestEvent, false);
     assert.equal(inventory.value.observation.createsInventoryEvidence, true);
     const harvest = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(harvest.ok, true);
     if (!harvest.ok) {
       throw new Error(harvest.error.detail);
     }
@@ -343,7 +322,6 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
       harvest: harvest.value.observation,
       inventory: inventory.value.observation,
     });
-    assert.equal(lineage.ok, true);
     if (!lineage.ok) {
       throw new Error(lineage.error.detail);
     }
@@ -368,14 +346,12 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
 
   it('17. preserves rights references', () => {
     const harvestRights = evaluateHarvestRights(farmSystemRecord(NOW), simulationAgriculturePolicy());
-    assert.equal(harvestRights.ok, true);
     if (!harvestRights.ok) {
       throw new Error(harvestRights.error.detail);
     }
     assert.equal(harvestRights.value[0]?.fixtureOnly, true);
     assert.equal(harvestRights.value[0]?.provesRealAuthorization, false);
     const waterRights = evaluateWaterRights(wellRecord(NOW), simulationWaterPolicy());
-    assert.equal(waterRights.ok, true);
     if (!waterRights.ok) {
       throw new Error(waterRights.error.detail);
     }
@@ -411,7 +387,6 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
 
   it('19. quality evidence does not change physical quantity', () => {
     const harvest = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(harvest.ok, true);
     if (!harvest.ok) {
       throw new Error(harvest.error.detail);
     }
@@ -422,7 +397,6 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
     );
     assert.equal(harvest.value.observation.qualityEvidence?.changesPhysicalQuantity, false);
     const water = ingestWaterRecord(treatmentMeterRecord(NOW), NOW);
-    assert.equal(water.ok, true);
     if (!water.ok) {
       throw new Error(water.error.detail);
     }
@@ -455,7 +429,6 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
 
   it('21. agricultural fact does not auto-mint', () => {
     const ingested = ingestAgricultureRecord(farmSystemRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -486,7 +459,6 @@ describe('CHUNK-134 shared agriculture / water invariants', () => {
 
   it('22. water fact does not auto-mint', () => {
     const ingested = ingestWaterRecord(treatmentMeterRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }

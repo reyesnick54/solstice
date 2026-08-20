@@ -118,10 +118,10 @@ export type AttributionEventObservation = {
   readonly validFromUnixSeconds: bigint;
   readonly validUntilUnixSeconds: bigint;
   readonly oracleFactIds: readonly string[];
-  readonly batchId?: string;
-  readonly lotId?: string;
-  readonly lineage?: AttributionBatchLineage;
-  readonly independentlyEvidenced?: boolean;
+  readonly batchId?: string | undefined;
+  readonly lotId?: string | undefined;
+  readonly lineage?: AttributionBatchLineage | undefined;
+  readonly independentlyEvidenced?: boolean | undefined;
 };
 
 export type AttributionReservationRequest = {

@@ -45,9 +45,8 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_peg_exit');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
 
     const peg = new EconomicGraphService({ clock, events });
@@ -108,9 +107,8 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     peg.proposeOpportunities(subjectId);
 
     const graph = peg.getEconomicGraph(actor.value, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.ok(graph.value.nodes.some((node) => node.kind === 'PERSON'));
     assert.ok(graph.value.nodes.some((node) => node.kind === 'ACCOUNT'));
@@ -122,9 +120,8 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     assert.equal(graph.value.graph.mutatesFinancialState, false);
 
     const snapshot = peg.getEconomicSnapshot(actor.value, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(snapshot.value.crossCurrencyTotal, null);
     assert.equal(snapshot.value.ledgerWins, true);
@@ -133,9 +130,8 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     assert.ok(snapshot.value.economicOpportunities.every((item) => item.executable === false));
 
     const rebuilt = peg.rebuildDerivedProjection(subjectId, source);
-    assert.equal(rebuilt.ok, true);
     if (!rebuilt.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.ok(rebuilt.value.nodes.some((node) => node.kind === 'GOAL' && node.survivesRebuild));
 

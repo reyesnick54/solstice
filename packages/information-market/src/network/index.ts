@@ -71,7 +71,6 @@ export {
   CONSENT_SOURCE_OF_TRUTH,
   HIN_ANCHOR_FAILURE_CODES,
   HIN_ANCHOR_INVARIANTS,
-  HIN_ANCHOR_FAILURE_CODES,
   HIN_ANCHOR_KINDS,
   HIN_CHAIN_ANCHOR_INVARIANTS,
   HIN_CHAIN_ANCHOR_OWNER,
@@ -90,9 +89,6 @@ export {
   scheduleRevocationAnchor,
   scheduleSettlementAnchor,
   scheduleUsageAnchor,
-  createHinChainAnchorAdapter,
-  humanInformationAnchorKey,
-  runHinChainAnchorFoundationDemo,
 } from './chain-anchor/index.ts';
 export type {
   HinAnchorFailure,
@@ -104,8 +100,6 @@ export type {
   HumanInformationChainAnchorRecord,
   HumanInformationUsageAnchorProjection,
   PrivacySafeAnchorStatus,
-  HumanInformationChainAnchorPort,
-  HumanInformationChainAnchorRecord,
 } from './chain-anchor/index.ts';
 export type {
   CleanRoomComputationRequest,

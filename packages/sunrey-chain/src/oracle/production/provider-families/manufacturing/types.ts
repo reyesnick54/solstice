@@ -171,9 +171,9 @@ export type MeasurementWindow = {
 export type MachineCounter = {
   readonly kind: CounterKind;
   readonly reading: bigint;
-  readonly previousReading?: bigint;
-  readonly rolloverMax?: bigint;
-  readonly resetDocumented?: boolean;
+  readonly previousReading?: bigint | undefined;
+  readonly rolloverMax?: bigint | undefined;
+  readonly resetDocumented?: boolean | undefined;
 };
 
 export type DeviceProvenance = {
@@ -220,11 +220,11 @@ export type ManufacturingObservation = {
   readonly controllerId: string;
   readonly upstreamOrganizationId: string;
   readonly sourceSystemId: string;
-  readonly counter?: MachineCounter;
-  readonly quality?: QualityAttestation;
-  readonly deviceProvenance?: DeviceProvenance;
-  readonly massBalance?: MassBalanceEvidence;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly counter?: MachineCounter | undefined;
+  readonly quality?: QualityAttestation | undefined;
+  readonly deviceProvenance?: DeviceProvenance | undefined;
+  readonly massBalance?: MassBalanceEvidence | undefined;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
   readonly rawPayloadPresent: false;
 };
 
@@ -241,9 +241,15 @@ export function industrialControlCommandsAvailable(): false {
 }
 
 export function manufacturingFactCannotAutoMint(): true {
-  return MANUFACTURING_FACT_AUTO_MINTS === false;
+  if (MANUFACTURING_FACT_AUTO_MINTS) {
+    throw new Error('MANUFACTURING_FACT_AUTO_MINTS');
+  }
+  return true;
 }
 
 export function qualitySystemCannotMint(): true {
-  return QUALITY_SYSTEM_CAN_MINT === false;
+  if (QUALITY_SYSTEM_CAN_MINT) {
+    throw new Error('QUALITY_SYSTEM_CAN_MINT');
+  }
+  return true;
 }

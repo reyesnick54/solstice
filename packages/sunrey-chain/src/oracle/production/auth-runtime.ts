@@ -29,7 +29,7 @@ export type PreparedConnectorRequest = {
   readonly method: ConnectorHttpMethod;
   readonly url: string;
   readonly headers: Readonly<Record<string, string>>;
-  readonly body?: string;
+  readonly body?: string | undefined;
   readonly clientCertificatePresent: boolean;
 };
 

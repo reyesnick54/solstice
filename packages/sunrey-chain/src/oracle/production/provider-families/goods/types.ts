@@ -174,14 +174,14 @@ export type GoodsSourceObservation = {
   readonly returnOfObservationId: string | null;
   readonly monetaryAlreadySettled: boolean;
   readonly productSpecificMassEvidence: boolean;
-  readonly extras?: Readonly<Record<string, unknown>>;
-  readonly rawCustomerName?: string;
-  readonly rawShippingAddress?: string;
-  readonly rawEmail?: string;
-  readonly rawPhone?: string;
-  readonly orderNotes?: string;
-  readonly paymentCardData?: string;
-  readonly networkCallAttempted?: boolean;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
+  readonly rawCustomerName?: string | undefined;
+  readonly rawShippingAddress?: string | undefined;
+  readonly rawEmail?: string | undefined;
+  readonly rawPhone?: string | undefined;
+  readonly orderNotes?: string | undefined;
+  readonly paymentCardData?: string | undefined;
+  readonly networkCallAttempted?: boolean | undefined;
 };
 
 export type PublicGoodsEvidence = {
@@ -223,15 +223,24 @@ export function isGoodsDeliveryCompleted(state: FulfillmentState | null): boolea
 }
 
 export function goodsFactCannotAutoMint(): true {
-  return GOODS_FACT_AUTO_MINTS === false;
+  if (GOODS_FACT_AUTO_MINTS) {
+    throw new Error('GOODS_FACT_AUTO_MINTS');
+  }
+  return true;
 }
 
 export function orderDoesNotEqualOutput(): true {
-  return ORDER_EQUALS_OUTPUT === false;
+  if (ORDER_EQUALS_OUTPUT) {
+    throw new Error('ORDER_EQUALS_OUTPUT');
+  }
+  return true;
 }
 
 export function paymentDoesNotEqualOutput(): true {
-  return PAYMENT_EQUALS_PRODUCTIVE_OUTPUT === false;
+  if (PAYMENT_EQUALS_PRODUCTIVE_OUTPUT) {
+    throw new Error('PAYMENT_EQUALS_PRODUCTIVE_OUTPUT');
+  }
+  return true;
 }
 
 export function isGoodsUnit(unit: string): unit is GoodsUnit | UnitCode {

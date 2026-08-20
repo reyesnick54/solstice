@@ -104,7 +104,7 @@ export function resolveResourceTime(
     );
   }
 
-  const sourceUnit =
+  const sourceUnit: string =
     observation.timeBase === 'GENERIC_COMPUTE_SECONDS' && observation.unit === 'compute_s'
       ? 'compute_s'
       : classifiedUnit;

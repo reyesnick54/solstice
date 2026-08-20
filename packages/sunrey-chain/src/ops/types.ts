@@ -63,6 +63,17 @@ export const ALERT_CODES = [
   'CUSTODY_RECONCILIATION_MISMATCH',
   'EXCHANGE_SETTLEMENT_BACKLOG',
   'INTEROP_CLIENT_EXPIRING',
+  'OUTBOX_BACKLOG',
+  'CREDENTIAL_EXPIRY',
+  'ORACLE_QUORUM_DEGRADATION',
+  'SUPPLY_RECONCILIATION',
+  'PAYMENT_SUBMISSION_UNKNOWN',
+  'FAST_ERROR_BUDGET_BURN',
+  'SLOW_ERROR_BUDGET_BURN',
+  'PROVIDER_UNAVAILABLE',
+  'AI_AUTHORITY_ATTEMPT',
+  'LEDGER_IMBALANCE',
+  'CREDENTIAL_MISUSE',
 ] as const;
 export type AlertCode = (typeof ALERT_CODES)[number];
 
@@ -75,6 +86,15 @@ export const SECURITY_EVENT_CODES = [
   'CUSTODY_SECURITY_HALT',
   'ORACLE_PROVIDER_SUSPENSION',
   'INTEROP_CLIENT_FREEZE',
+  'CREDENTIAL_MISUSE',
+  'SECRET_LEAK_GUARD',
+  'HSM_UNAVAILABLE',
+  'WEBHOOK_REPLAY',
+  'SIGNATURE_FAILURE',
+  'SSRF_REJECTION',
+  'UNEXPECTED_ENDPOINT',
+  'PROVIDER_SCOPE_MISMATCH',
+  'AI_AUTHORITY_ATTEMPT',
 ] as const;
 export type SecurityEventCode = (typeof SECURITY_EVENT_CODES)[number];
 
@@ -90,6 +110,16 @@ export const SLO_IDS = [
   'ORACLE_FRESHNESS',
   'SETTLEMENT_PROCESSING',
   'BACKUP_SUCCESS',
+  'PAYMENT_WORKFLOW_COMPLETION',
+  'PAYMENT_SUBMISSION_UNKNOWN_RECONCILIATION',
+  'PROVIDER_AVAILABILITY',
+  'PROVIDER_CREDENTIAL_VALIDITY',
+  'ORACLE_QUORUM',
+  'EVENT_OUTBOX_DELIVERY',
+  'PERSISTENCE_RECOVERY',
+  'CUSTODY_RECONCILIATION',
+  'EXCHANGE_SETTLEMENT',
+  'COMPLIANCE_PROVIDER_AVAILABILITY',
 ] as const;
 export type SloId = (typeof SLO_IDS)[number];
 
@@ -107,6 +137,16 @@ export const DASHBOARD_IDS = [
   'INTEROP',
   'PERFORMANCE',
   'FORMAL_ASSURANCE',
+  'GLOBAL_SYSTEM',
+  'CHAIN',
+  'ECONOMIC_CONSTITUTION',
+  'PAYMENTS',
+  'PROVIDERS',
+  'COMPLIANCE',
+  'ORACLES',
+  'PERSISTENCE',
+  'EVENT_FABRIC',
+  'SECURITY',
 ] as const;
 export type DashboardId = (typeof DASHBOARD_IDS)[number];
 
@@ -145,6 +185,9 @@ export const INCIDENT_EVIDENCE_KINDS = [
   'OPS_VALIDATOR_COMPROMISE',
   'OPS_BACKUP_FAILURE',
   'OPS_CUSTODY_RECONCILIATION_INCIDENT',
+  'OPS_CONTROL_ROOM_INCIDENT',
+  'OPS_SUPPLY_RECONCILIATION_INCIDENT',
+  'OPS_PAYMENT_SUBMISSION_UNKNOWN_INCIDENT',
 ] as const;
 export type IncidentEvidenceKind = (typeof INCIDENT_EVIDENCE_KINDS)[number];
 
@@ -162,6 +205,40 @@ export const FORBIDDEN_TELEMETRY_KEYS = [
   'hsmSecret',
   'hsmSecretReference',
   'validatorConsensusKey',
+  'customerId',
+  'paymentId',
+  'walletAddress',
+  'transactionHash',
+  'email',
+  'phone',
+  'passport',
+  'beneficiary',
+  'secretPath',
+  'apiToken',
+  'promptContent',
+  'fullErrorMessage',
+] as const;
+
+export const HIGH_CARDINALITY_METRIC_LABELS = [
+  'customerId',
+  'paymentId',
+  'walletAddress',
+  'transactionHash',
+  'email',
+  'phone',
+  'passport',
+  'beneficiary',
+  'secretPath',
+  'apiToken',
+  'promptContent',
+  'fullErrorMessage',
+  'intentId',
+  'evidenceId',
+  'eventId',
+  'requestId',
+  'traceId',
+  'correlationId',
+  'operationId',
 ] as const;
 
 export type FailureDomain = {
@@ -249,6 +326,7 @@ export type DashboardDefinition = {
   readonly id: DashboardId;
   readonly title: string;
   readonly panels: readonly string[];
+  readonly drillLinks?: readonly DashboardId[];
 };
 
 export type DisasterRecoveryReport = {

@@ -45,7 +45,6 @@ const NOW = 1_700_000_000n;
 describe('CHUNK-135 real-estate use data fabric', () => {
   it('1. accepts real-estate capacity as m2', () => {
     const ingested = ingestRealEstateRecord(vacantCapacityRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -56,7 +55,6 @@ describe('CHUNK-135 real-estate use data fabric', () => {
 
   it('2. derives realized m2-time usage exactly', () => {
     const ingested = ingestRealEstateRecord(occupiedSpaceRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -107,7 +105,6 @@ describe('CHUNK-135 real-estate use data fabric', () => {
 
   it('6. keeps owner, operator, and use-right holder distinct', () => {
     const ingested = ingestRealEstateRecord(occupiedSpaceRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }
@@ -201,7 +198,6 @@ describe('CHUNK-135 real-estate use data fabric', () => {
 
   it('clusters booking and access-control as one occupancy event', () => {
     const batch = ingestRealEstateRecords([bookingSystemRecord(NOW), accessControlRecord(NOW)], NOW);
-    assert.equal(batch.ok, true);
     if (!batch.ok) {
       throw new Error(batch.error.detail);
     }
@@ -215,7 +211,6 @@ describe('CHUNK-135 real-estate use data fabric', () => {
 
   it('projects only privacy-safe economic-asset metadata', () => {
     const ingested = ingestRealEstateRecord(occupiedSpaceRecord(NOW), NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       throw new Error(ingested.error.detail);
     }

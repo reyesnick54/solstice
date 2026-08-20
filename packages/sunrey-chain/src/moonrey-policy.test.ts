@@ -100,9 +100,8 @@ describe('Chunk 74 MoonRey issuance policy', () => {
 
   it('rejects duplicate governed contributions', () => {
     const first = evaluateContributionEligibility(baseInput());
-    assert.equal(first.ok, true);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const second = evaluateContributionEligibility(
       baseInput({ knownGovernedFingerprints: new Set([first.fingerprint]) }),
@@ -115,9 +114,8 @@ describe('Chunk 74 MoonRey issuance policy', () => {
 
   it('rejects cross-category full credit for one event', () => {
     const first = evaluateContributionEligibility(baseInput());
-    assert.equal(first.ok, true);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const second = evaluateContributionEligibility(
       baseInput({
@@ -219,9 +217,8 @@ describe('Chunk 74 MoonRey issuance policy', () => {
     });
     engine.submitClaim(claim);
     const issued = engine.issueFromClaim(claim.claimId);
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(issued.receipt.policyVersion, 1);
     assert.equal(engine.supplyIsReconciled(), true);

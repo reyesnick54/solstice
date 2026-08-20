@@ -231,9 +231,9 @@ export type SandboxObservation = {
   readonly schemaVersion: number;
   readonly contentType: string;
   readonly responseBytes: number;
-  readonly extras?: Readonly<Record<string, unknown>>;
-  readonly leakedCredentialField?: string;
-  readonly timestampSemantic?: 'SOURCE_EVENT' | 'INGESTION' | 'UNKNOWN';
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
+  readonly leakedCredentialField?: string | undefined;
+  readonly timestampSemantic?: 'SOURCE_EVENT' | 'INGESTION' | 'UNKNOWN' | undefined;
 };
 
 export type CertificationSubject = {
@@ -257,9 +257,9 @@ export type CertificationSubject = {
   readonly connector: ConnectorRuntimeSnapshot;
   readonly observations: readonly SandboxObservation[];
   readonly evidence: CertificationEvidenceStates;
-  readonly prior?: PriorCertificationFingerprint | null;
+  readonly prior?: PriorCertificationFingerprint | null | undefined;
   readonly nowUnix: bigint;
-  readonly createdAtUnix?: bigint;
+  readonly createdAtUnix?: bigint | undefined;
 };
 
 export type RelatedFeedIdentity = {

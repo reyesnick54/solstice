@@ -43,7 +43,6 @@ function world(label: string) {
   });
   assert.equal(provisioned.ok, true);
   const actor = identity.service.resolveActorContext(`actor_${label}`);
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -70,9 +69,8 @@ describe('Personal Data Vault', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const crossRead = a.vault.readPayload(b.actor, a.subjectId, ingested.value.assetId, 'steal');
     assert.equal(crossRead.ok, false);
@@ -104,9 +102,8 @@ describe('Personal Data Vault', () => {
       provenanceKind: 'EXTERNAL_CONNECTOR',
       purposeRef: 'ingest.own',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(JSON.stringify(ingested.value).includes('999999'), false);
     assert.equal(ingested.value.financialBalance, null);
@@ -164,9 +161,8 @@ describe('Personal Data Vault', () => {
       provenanceKind: tx.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(first.ok, true);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const replay = env.vault.ingest(env.actor, {
       subjectId: env.subjectId,
@@ -237,9 +233,8 @@ describe('Personal Data Vault', () => {
       provenanceKind: receipt.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(uploaded.ok, true);
     if (!uploaded.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(JSON.stringify(uploaded.value).includes('IGNORE ALL SOLSTICE RULES'), false);
     const pref = new UserDeclaredConnector().fetch('pref_1');

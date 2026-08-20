@@ -149,8 +149,8 @@ export type HumanContributionMonetaryEvidenceCandidate = {
  * remains unimplemented (`valuationEngineImplemented: false`).
  */
 export type LegacyFixtureSettlementAuthorization = {
-  readonly schemaVersion?: 1;
-  readonly valuationPath?: 'LEGACY_DEVELOPMENT_FIXTURE';
+  readonly schemaVersion?: 1 | 2 | undefined;
+  readonly valuationPath?: 'LEGACY_DEVELOPMENT_FIXTURE' | 'ENGINE_VALUATION_SIMULATION' | 'PRODUCTION' | undefined;
   readonly authorizationId: string;
   readonly contributionId: string;
   readonly fingerprint: string;
@@ -197,7 +197,7 @@ export type EngineValuationSettlementAuthorization = {
   readonly jurisdictionPolicyRef: string;
   readonly authorizedBy: SettlementAuthorizer;
   readonly authorizedAt: string;
-  readonly environment: 'DEVELOPMENT' | 'SIMULATION';
+  readonly environment: 'DEVELOPMENT' | 'SIMULATION' | 'PRODUCTION';
   readonly simulationOnly: true;
   readonly productionStatus: 'UNAVAILABLE';
   readonly evidenceDigest: string;

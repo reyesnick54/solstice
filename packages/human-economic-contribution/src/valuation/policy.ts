@@ -1,4 +1,33 @@
-import { ENGINEERING_SIMULATION_PARAMETERS, PRODUCTION_HUMAN_VALUATION_POLICY, type HumanContributionValuationPolicy } from './types.ts';
+import { err, ok, type Result } from '../../../domain/src/result.ts';
+import { asUtcInstant, isUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { CONTRIBUTION_CLASSES, isContributionClass, type ContributionClass } from '../taxonomy.ts';
+import { isMethodEligibleForClass } from './eligibility.ts';
+import { assertFactorRule, type RoundingRule, type ValuationFactorRule, ROUNDING_RULES } from './factors.ts';
+import { scanForbiddenValuationInputs, isAllowedValuationInputType, type AllowedValuationInputType } from './inputs.ts';
+import { isForbiddenValuationMethod, isPermittedValuationMethod, type PermittedValuationMethod } from './methods.ts';
+import {
+  jurisdictionPolicyRefFor,
+  policyRuleRefFor,
+  valuationPolicyHashFor,
+  valuationPolicyIdFor,
+  valuationPolicyVersionFor,
+  type ValuationPolicyHash,
+  type ValuationPolicyId,
+  type ValuationPolicyVersion,
+} from './ids.ts';
+import { valuationFailure, type ValuationFailure } from './types.ts';
+import {
+  ENGINEERING_SIMULATION_PARAMETERS,
+  PRODUCTION_HUMAN_VALUATION_POLICY,
+  type HumanContributionValuationPolicy as EngineValuationPolicy,
+  type MethodEligibilityRule,
+  type SimulationValuationPolicy,
+  type ValuationFactor,
+  type ValuationMethod,
+  type ValuationReferenceSourceClass,
+} from './types.ts';
+import type { ContributionReferenceValue } from './value.ts';
+import { createContributionReferenceValue } from './value.ts';
 
 export const SIMULATION_VALUATION_POLICY_ID = 'sunrey.human-contribution.valuation.simulation.v1' as const;
 export const SIMULATION_VALUATION_POLICY_VERSION = '1' as const;
@@ -16,7 +45,7 @@ export function simulationValuationPolicy(input?: {
   readonly unitScaleDenominator?: bigint;
   readonly perContributionReferenceCeiling?: bigint;
   readonly jurisdictionPolicyRef?: string;
-}): HumanContributionValuationPolicy {
+}): SimulationValuationPolicy {
   const unitScaleDenominator = input?.unitScaleDenominator ?? 1n;
   if (unitScaleDenominator <= 0n) {
     throw new TypeError('valuation policy denominator must be positive');
@@ -46,7 +75,9 @@ export function productionValuationPolicyUnavailable(): typeof PRODUCTION_HUMAN_
   return PRODUCTION_HUMAN_VALUATION_POLICY;
 }
 
-export function validateValuationPolicy(policy: HumanContributionValuationPolicy): 'VALUATION_POLICY_INVALID' | 'PRODUCTION_VALUATION_UNAVAILABLE' | null {
+function validateSimulationValuationPolicy(
+  policy: SimulationValuationPolicy,
+): 'VALUATION_POLICY_INVALID' | 'PRODUCTION_VALUATION_UNAVAILABLE' | null {
   if (policy.productionActivated) {
     return 'PRODUCTION_VALUATION_UNAVAILABLE';
   }
@@ -69,16 +100,7 @@ export function validateValuationPolicy(policy: HumanContributionValuationPolicy
     return 'VALUATION_POLICY_INVALID';
   }
   return null;
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { CONTRIBUTION_CLASSES, type ContributionClass } from '../taxonomy.ts';
-import { jurisdictionPolicyRefFor, policyRuleRefFor, valuationPolicyIdFor, valuationPolicyVersionFor } from './ids.ts';
-import type {
-  HumanContributionValuationPolicy,
-  MethodEligibilityRule,
-  ValuationFactor,
-  ValuationMethod,
-  ValuationReferenceSourceClass,
-} from './types.ts';
+}
 
 const DEFAULT_SOURCE_BY_METHOD: Readonly<Record<ValuationMethod, ValuationReferenceSourceClass>> = Object.freeze({
   CONTRACTUAL_COMPENSATION: 'CONTRACTUAL_TERM',
@@ -134,8 +156,8 @@ export const DEFAULT_VALUATION_POLICY_ID = valuationPolicyIdFor('sunrey-human-co
 export const DEFAULT_VALUATION_POLICY_VERSION = valuationPolicyVersionFor('sunrey-human-contribution-valuation-v1');
 
 export function createSimulationValuationPolicy(
-  overrides: Partial<HumanContributionValuationPolicy> = {},
-): HumanContributionValuationPolicy {
+  overrides: Partial<EngineValuationPolicy> = {},
+): EngineValuationPolicy {
   return Object.freeze({
     valuationPolicyId: DEFAULT_VALUATION_POLICY_ID,
     valuationPolicyVersion: DEFAULT_VALUATION_POLICY_VERSION,
@@ -184,7 +206,7 @@ export function createSimulationValuationPolicy(
     createsMintAuthority: false,
     createsExecutionAuthority: false,
     ...overrides,
-  }) as HumanContributionValuationPolicy;
+  }) as EngineValuationPolicy;
 }
 
 export const DEFAULT_SIMULATION_VALUATION_POLICY = createSimulationValuationPolicy();
@@ -195,18 +217,7 @@ export function requiredReferenceSource(method: ValuationMethod): ValuationRefer
 
 export function defaultMethodForClass(contributionClass: ContributionClass): ValuationMethod {
   return DEFAULT_METHOD_BY_CLASS[contributionClass];
-import { err, ok, type Result } from '../../../domain/src/result.ts';
-import { isUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
-import type { ContributionClass } from '../taxonomy.ts';
-import { isContributionClass } from '../taxonomy.ts';
-import { isMethodEligibleForClass } from './eligibility.ts';
-import { assertFactorRule, type RoundingRule, type ValuationFactorRule, ROUNDING_RULES } from './factors.ts';
-import { scanForbiddenValuationInputs, isAllowedValuationInputType, type AllowedValuationInputType } from './inputs.ts';
-import { isForbiddenValuationMethod, isPermittedValuationMethod, type PermittedValuationMethod } from './methods.ts';
-import { valuationPolicyHashFor, type ValuationPolicyHash, type ValuationPolicyId, type ValuationPolicyVersion } from './ids.ts';
-import { valuationFailure, type ValuationFailure } from './types.ts';
-import type { ContributionReferenceValue } from './value.ts';
-import { createContributionReferenceValue } from './value.ts';
+}
 
 export const VALUATION_POLICY_STATUSES = ['DEVELOPMENT', 'SIMULATION', 'PRODUCTION_CANDIDATE', 'SUPERSEDED'] as const;
 export type ValuationPolicyStatus = (typeof VALUATION_POLICY_STATUSES)[number];
@@ -258,7 +269,9 @@ function assertBound(bound: ValuationBound | null, label: string): Result<true, 
   return ok(true);
 }
 
-export function validateValuationPolicy(input: RegisterableValuationPolicy): Result<HumanContributionValuationPolicy, ValuationFailure> {
+function validateRegisterableValuationPolicy(
+  input: RegisterableValuationPolicy,
+): Result<HumanContributionValuationPolicy, ValuationFailure> {
   const forbiddenPayload = scanForbiddenValuationInputs(input);
   if (!forbiddenPayload.ok) {
     return forbiddenPayload;
@@ -280,7 +293,7 @@ export function validateValuationPolicy(input: RegisterableValuationPolicy): Res
       ),
     );
   }
-  if (input.productionActivated === true) {
+  if ((input as Omit<RegisterableValuationPolicy, 'productionActivated'> & { readonly productionActivated?: boolean }).productionActivated === true) {
     return err(valuationFailure('PRODUCTION_ACTIVATION_FORBIDDEN', 'production valuation policy cannot be activated'));
   }
   if (!(VALUATION_POLICY_STATUSES as readonly string[]).includes(input.status)) {
@@ -346,6 +359,31 @@ export function validateValuationPolicy(input: RegisterableValuationPolicy): Res
       productionActivated: false,
     }),
   );
+}
+
+function isSimulationValuationPolicy(
+  input: SimulationValuationPolicy | RegisterableValuationPolicy,
+): input is SimulationValuationPolicy {
+  return 'unitScaleNumerator' in input && 'simulationOnly' in input;
+}
+
+export function validateValuationPolicy(
+  policy: SimulationValuationPolicy,
+): 'VALUATION_POLICY_INVALID' | 'PRODUCTION_VALUATION_UNAVAILABLE' | null;
+export function validateValuationPolicy(
+  input: RegisterableValuationPolicy,
+): Result<HumanContributionValuationPolicy, ValuationFailure>;
+export function validateValuationPolicy(
+  input: SimulationValuationPolicy | RegisterableValuationPolicy,
+):
+  | 'VALUATION_POLICY_INVALID'
+  | 'PRODUCTION_VALUATION_UNAVAILABLE'
+  | null
+  | Result<HumanContributionValuationPolicy, ValuationFailure> {
+  if (isSimulationValuationPolicy(input)) {
+    return validateSimulationValuationPolicy(input);
+  }
+  return validateRegisterableValuationPolicy(input);
 }
 
 export function hashValuationPolicy(policy: HumanContributionValuationPolicy): ValuationPolicyHash {

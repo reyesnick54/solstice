@@ -260,7 +260,7 @@ describe('Chunk 143 production economic activation firewall', () => {
       withSnapshot(base, {
         evidence: Object.freeze(
           base.evidence.map((row) =>
-            row.requirementId === 'SHARED.LEGAL_EVIDENCE' ? { ...row, evidenceClass: 'ENGINEERING' } : row,
+            row.requirementId === 'SHARED.LEGAL_EVIDENCE' ? { ...row, evidenceClass: 'ENGINEERING' as const } : row,
           ),
         ),
       }),
@@ -279,7 +279,7 @@ describe('Chunk 143 production economic activation firewall', () => {
           {
             evidenceId: 'ev.human.external',
             requirementId: 'SHARED.HUMAN_AUTHORIZATION',
-            evidenceClass: 'EXTERNAL',
+            evidenceClass: 'EXTERNAL' as const,
             description: 'external attestation of authorization',
             fixture: false,
             fixtureKind: null,

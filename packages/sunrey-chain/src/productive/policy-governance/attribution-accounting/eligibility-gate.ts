@@ -14,12 +14,12 @@ import { ProductiveAttributionBook } from './book.ts';
 export type AttributionEligibilityInput = {
   readonly category: ProductiveCategory;
   readonly claimType: ClaimType;
-  readonly independentlyEvidenced?: boolean;
-  readonly attributionRequired?: boolean;
+  readonly independentlyEvidenced?: boolean | undefined;
+  readonly attributionRequired?: boolean | undefined;
   readonly expectedPolicyVersion: number;
-  readonly decision?: ProductiveAttributionDecision;
-  readonly request?: AttributionReservationRequest;
-  readonly book?: ProductiveAttributionBook;
+  readonly decision?: ProductiveAttributionDecision | undefined;
+  readonly request?: AttributionReservationRequest | undefined;
+  readonly book?: ProductiveAttributionBook | undefined;
 };
 
 export type AttributionEligibilityOk = {
@@ -36,8 +36,8 @@ export type AttributionEligibilityOk = {
  */
 export function routeRequiresAttribution(input: {
   readonly category: ProductiveCategory;
-  readonly independentlyEvidenced?: boolean;
-  readonly attributionRequired?: boolean;
+  readonly independentlyEvidenced?: boolean | undefined;
+  readonly attributionRequired?: boolean | undefined;
 }): boolean {
   if (input.attributionRequired === false) {
     return false;
@@ -76,6 +76,7 @@ export function evaluateAttributionEligibility(
   return {
     ok: true,
     value: {
+      ok: true,
       reservation: reserved.value,
       remainingShare: reserved.value.remainingShareAtCommit,
       proceedsToProductiveValue: false,

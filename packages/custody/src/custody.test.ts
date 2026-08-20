@@ -134,7 +134,6 @@ describe('SunRey custody control plane', () => {
       signatureHex: signSimulationNotice(material),
       notice,
     });
-    assert.equal(ingested.outcome, 'OK');
     if (ingested.outcome !== 'OK') {
       throw new Error('ingest failed');
     }
@@ -222,7 +221,6 @@ describe('SunRey custody control plane', () => {
       address: 'simaddr_high-risk',
       label: 'blocked dest',
     });
-    assert.equal(risky.outcome, 'OK');
     if (risky.outcome !== 'OK') {
       throw new Error('risky dest');
     }
@@ -247,7 +245,6 @@ describe('SunRey custody control plane', () => {
       quantity: coins(1n),
       timeoutAfterBroadcast: true,
     });
-    assert.equal(unknown.outcome, 'OK');
     if (unknown.outcome !== 'OK') {
       throw new Error('unknown');
     }
@@ -255,7 +252,6 @@ describe('SunRey custody control plane', () => {
     assert.equal(unknown.value.submittedOnce, true);
     const firstId = unknown.value.withdrawalId;
     const recovered = h.custody.queryAndReconcileWithdrawal(firstId);
-    assert.equal(recovered.outcome, 'OK');
     if (recovered.outcome !== 'OK') {
       throw new Error('recover');
     }
@@ -369,7 +365,6 @@ describe('SunRey custody control plane', () => {
         finality: 'MEMPOOL',
       },
     });
-    assert.equal(mempool.outcome, 'OK');
     if (mempool.outcome !== 'OK') {
       throw new Error('ingest failed');
     }
@@ -395,7 +390,6 @@ describe('SunRey custody control plane', () => {
         finality: 'BFT_FINALIZED',
       },
     });
-    assert.equal(finalized.outcome, 'OK');
     if (finalized.outcome !== 'OK') {
       throw new Error('final ingest failed');
     }

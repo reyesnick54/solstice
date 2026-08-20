@@ -243,8 +243,8 @@ export type CanonicalCollectedObservation = {
   readonly feedId: string;
   readonly subject: string;
   readonly value: FixedQuantity;
-  readonly sourceValue?: FixedQuantity;
-  readonly canonicalMeasurement?: import('../../units/measurement.ts').CanonicalProductiveMeasurement;
+  readonly sourceValue?: FixedQuantity | undefined;
+  readonly canonicalMeasurement?: import('../../units/measurement.ts').CanonicalProductiveMeasurement | undefined;
   readonly provenance: SourceProvenance;
 };
 

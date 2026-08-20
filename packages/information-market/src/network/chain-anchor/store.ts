@@ -1,5 +1,4 @@
 import type { ChainOperationId } from '../../../../sunrey-chain/src/ids.ts';
-import type { HumanInformationAnchorReconciliationId } from './ids.ts';
 import type {
   HinAnchorKind,
   HumanInformationAnchor,
@@ -50,6 +49,5 @@ export class HumanInformationAnchorStore {
 
   rememberReconciliation(record: HumanInformationAnchorReconciliation): void {
     this.reconciliations.push(record);
-    void record.reconciliationId as HumanInformationAnchorReconciliationId;
   }
 }

@@ -67,6 +67,8 @@ import type {
   ColdSigningPackage,
   CompromiseIncident,
   CustodyVault,
+  CustodyVaultV1,
+  CustodyVaultV2,
   CustodyWallet,
   DerivedPosition,
   InstitutionalDestination,
@@ -174,12 +176,11 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
       };
     }
     const vaultId = newVaultId();
-    const vault: CustodyVault = Object.freeze({
+    const base = {
       vaultId,
       custodyType: input.custodyType,
       network: this.chain.networkId,
-      authorizedAssets: Object.freeze([...requestedAssets]) as CustodyVault['authorizedAssets'],
-      walletIds: Object.freeze([]),
+      walletIds: Object.freeze([]) as readonly never[],
       signingPolicy: Object.freeze({
         providerKind: input.providerKind ?? this.signer.kind,
         requiredSuiteId: SUITE_SUNREY_ED25519_V1,
@@ -202,11 +203,22 @@ export class InstitutionalCustodyService implements ExchangeCustodyPort {
         allowNewWithoutReview: false,
       }),
       securityTier: input.securityTier,
-      status: 'ACTIVE',
+      status: 'ACTIVE' as const,
       providerReference: this.signer.kind,
       createdAt: this.clock.now(),
-      schemaVersion,
-    });
+    };
+    const vault: CustodyVault =
+      schemaVersion === 1
+        ? Object.freeze({
+            ...base,
+            authorizedAssets: Object.freeze(['SUNREY_COIN'] as const),
+            schemaVersion: 1,
+          } satisfies CustodyVaultV1)
+        : Object.freeze({
+            ...base,
+            authorizedAssets: Object.freeze([...requestedAssets]),
+            schemaVersion: 2,
+          } satisfies CustodyVaultV2);
     this.store.putVault(vault);
     void input.classifications;
     this.seal('vault.created', { vaultId, custodyType: input.custodyType, securityTier: input.securityTier });

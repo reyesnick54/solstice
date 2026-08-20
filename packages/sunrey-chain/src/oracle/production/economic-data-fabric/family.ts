@@ -221,7 +221,7 @@ export const CANONICAL_PROVIDER_FAMILIES: readonly EconomicDataProviderFamilyRec
     implementationState: 'ROUTING_INDEX_ONLY',
     adapterOwnerPath: null,
     supportedSourceCategories: ['real_estate_use'],
-    supportedFactTypes: ['REAL_ESTATE_USE_CAPACITY'],
+    supportedFactTypes: ['REAL_ESTATE_USE_CAPACITY', 'REAL_ESTATE_USAGE'],
     supportedProductiveCategories: ['REAL_ESTATE_USE'],
     supportedUnits: ['m2'],
     supportedSchemaIds: [],
