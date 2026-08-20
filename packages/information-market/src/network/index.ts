@@ -90,9 +90,6 @@ export {
   scheduleRevocationAnchor,
   scheduleSettlementAnchor,
   scheduleUsageAnchor,
-  createHinChainAnchorAdapter,
-  humanInformationAnchorKey,
-  runHinChainAnchorFoundationDemo,
 } from './chain-anchor/index.ts';
 export type {
   HinAnchorFailure,

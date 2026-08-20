@@ -120,10 +120,10 @@ describe('Chunk 145 production-candidate valuation policy', () => {
       policy: rehearsalValuationPolicyCandidate(),
       actor: 'PROTOCOL',
     });
-    assert.equal(valued.ok, true);
     if (!valued.ok) {
       throw new Error(valued.code);
     }
+    assert.equal(valued.ok, true);
     // 17 * 5 * 4/5 = 68
     assert.equal(valued.receipt.referenceValue, 68n);
     assert.equal(valued.receipt.sunReyQuantity, null);

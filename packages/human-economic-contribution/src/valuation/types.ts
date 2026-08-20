@@ -17,9 +17,6 @@ export type ValuationEnvironment = (typeof VALUATION_ENVIRONMENTS)[number];
 export const VALUATION_RESULT_STATES = ['ACTIVE', 'SUPERSEDED', 'INVALID'] as const;
 export type ValuationResultState = (typeof VALUATION_RESULT_STATES)[number];
 
-export const VALUATION_METHODS = ['ENGINEERING_SIMULATION_MEASUREMENT_SCALE'] as const;
-export type ValuationMethod = (typeof VALUATION_METHODS)[number];
-
 export const VALUATION_ACTORS = [
   'HUMAN',
   'PROTOCOL',
@@ -39,12 +36,12 @@ export const FORBIDDEN_VALUATION_ACTORS = [
 ] as const;
 export type ForbiddenValuationActor = (typeof FORBIDDEN_VALUATION_ACTORS)[number];
 
-export type HumanContributionValuationPolicy = {
+export type SimulationValuationPolicy = {
   readonly policyId: string;
   readonly version: string;
   readonly environment: 'DEVELOPMENT' | 'SIMULATION';
   readonly referenceDenomination: string;
-  readonly method: ValuationMethod;
+  readonly method: 'ENGINEERING_SIMULATION_MEASUREMENT_SCALE';
   readonly unitScaleNumerator: bigint;
   readonly unitScaleDenominator: bigint;
   readonly perContributionReferenceCeiling: bigint;
@@ -82,58 +79,40 @@ export type VerifiedContributionValuationInput = {
   readonly humanWorthScore: false;
 };
 
-export type HumanContributionValuationResult = {
-  readonly schemaVersion: typeof HUMAN_CONTRIBUTION_VALUATION_SCHEMA_VERSION;
-  readonly valuationId: string;
-  readonly contributionId: string;
-  readonly fingerprint: string;
-  readonly valuationPolicyId: string;
-  readonly valuationPolicyVersion: string;
-  readonly valuationMethod: ValuationMethod;
-  readonly valuationDigest: string;
-  readonly finalReferenceValue: bigint;
-  readonly referenceDenomination: string;
-  readonly jurisdictionPolicyRef: string;
-  readonly status: ValuationResultState;
-  readonly environment: 'DEVELOPMENT' | 'SIMULATION';
-  readonly simulationOnly: true;
-  readonly productionActivated: false;
-  readonly parameterClass: typeof ENGINEERING_SIMULATION_PARAMETERS;
-  readonly peveUsedAsTokenFormula: false;
-  readonly humanWorthUsedAsValue: false;
-  readonly aiAuthorized: false;
-  readonly referenceValueEqualsSunReyByDefinition: false;
-  readonly sunReyQuantity: null;
-};
-
-export type ValuationFailureCode =
-  | 'CONTRIBUTION_NOT_VERIFIED'
-  | 'VALUATION_ACTOR_FORBIDDEN'
-  | 'AI_CANNOT_AUTHORIZE_VALUATION'
-  | 'FINANCIAL_AGENT_CANNOT_AUTHORIZE_VALUATION'
-  | 'S3M_CANNOT_AUTHORIZE_VALUATION'
-  | 'GROK_CANNOT_AUTHORIZE_VALUATION'
-  | 'MODEL_OUTPUT_CANNOT_AUTHORIZE_VALUATION'
-  | 'PEVE_CANNOT_BECOME_REFERENCE_VALUE'
-  | 'HUMAN_WORTH_SCORE_REJECTED'
-  | 'RAW_PERSONAL_DATA_REJECTED'
-  | 'PRODUCTION_VALUATION_UNAVAILABLE'
-  | 'VALUATION_POLICY_INVALID'
-  | 'VALUATION_CAP_EXCEEDED'
-  | 'INVALID_MEASUREMENT'
-  | 'JURISDICTION_POLICY_MISMATCH';
-
-export type ValuationFailure = {
-  readonly ok: false;
-  readonly code: ValuationFailureCode;
-};
-
 export type ValuationSuccess = {
   readonly ok: true;
-  readonly result: HumanContributionValuationResult;
+  readonly result: {
+    readonly schemaVersion: typeof HUMAN_CONTRIBUTION_VALUATION_SCHEMA_VERSION;
+    readonly valuationId: string;
+    readonly contributionId: string;
+    readonly fingerprint: string;
+    readonly valuationPolicyId: string;
+    readonly valuationPolicyVersion: string;
+    readonly valuationMethod: 'ENGINEERING_SIMULATION_MEASUREMENT_SCALE';
+    readonly valuationDigest: string;
+    readonly finalReferenceValue: bigint;
+    readonly referenceDenomination: string;
+    readonly jurisdictionPolicyRef: string;
+    readonly status: ValuationResultState;
+    readonly environment: 'DEVELOPMENT' | 'SIMULATION';
+    readonly simulationOnly: true;
+    readonly productionActivated: false;
+    readonly parameterClass: typeof ENGINEERING_SIMULATION_PARAMETERS;
+    readonly peveUsedAsTokenFormula: false;
+    readonly humanWorthUsedAsValue: false;
+    readonly aiAuthorized: false;
+    readonly referenceValueEqualsSunReyByDefinition: false;
+    readonly sunReyQuantity: null;
+  };
 };
 
-export type ValuationComputeResult = ValuationSuccess | ValuationFailure;
+export type ValuationComputeResult =
+  | ValuationSuccess
+  | {
+      readonly ok: false;
+      readonly code: ValuationFailureCode;
+    };
+
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type {
   ContributionFingerprint,
@@ -518,7 +497,24 @@ export function confidenceClassFromBps(confidenceBps: bigint, minimum: bigint): 
     return 'MEDIUM';
   }
   return 'LOW';
+}
+
 export type ValuationFailureCode =
+  | 'CONTRIBUTION_NOT_VERIFIED'
+  | 'VALUATION_ACTOR_FORBIDDEN'
+  | 'AI_CANNOT_AUTHORIZE_VALUATION'
+  | 'FINANCIAL_AGENT_CANNOT_AUTHORIZE_VALUATION'
+  | 'S3M_CANNOT_AUTHORIZE_VALUATION'
+  | 'GROK_CANNOT_AUTHORIZE_VALUATION'
+  | 'MODEL_OUTPUT_CANNOT_AUTHORIZE_VALUATION'
+  | 'PEVE_CANNOT_BECOME_REFERENCE_VALUE'
+  | 'HUMAN_WORTH_SCORE_REJECTED'
+  | 'RAW_PERSONAL_DATA_REJECTED'
+  | 'PRODUCTION_VALUATION_UNAVAILABLE'
+  | 'VALUATION_POLICY_INVALID'
+  | 'VALUATION_CAP_EXCEEDED'
+  | 'INVALID_MEASUREMENT'
+  | 'JURISDICTION_POLICY_MISMATCH'
   | 'FORBIDDEN_VALUATION_METHOD'
   | 'CLASS_METHOD_NOT_ELIGIBLE'
   | 'FORBIDDEN_VALUATION_INPUT'
