@@ -3284,6 +3284,35 @@
       "notes": "Chunk 144 canonical production economic parameter registry. Typed values behind Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, mint, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED."
     },
     {
+      "id": "sunrey-production-economic-authorization",
+      "name": "Governed production economic parameter authorization and multi-party human approval assembly",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/authorization/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionEconomicAuthorizationPackage",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/tokenomics",
+        "packages/economic-governance-v2",
+        "packages/monetary-policy-v2",
+        "packages/production-authorization",
+        "packages/mint-governance"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 163 governed production economic parameter approval, multi-party human authorization, external-evidence binding, and production authorization assembly. Wrapper over Chunk 144-148 parameter packages under production-activation plus governance-ops orchestration. Does not choose tokenomics, activate production, flip LIVE_* flags, or create a second mint. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Chunk 71 remains the monetary authority."
+    },
+    {
       "id": "moonrey-production-issuance-parameter-package",
       "name": "MoonRey production-candidate issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
@@ -5695,6 +5724,9 @@
     "packages/sunrey-economic-release",
     "packages/economic-policy-freeze",
     "packages/governance-ops",
+    "packages/economic-governance-v2",
+    "packages/production-authorization",
+    "packages/mint-governance",
     "packages/governance-token",
     "packages/sunrey-ceremony",
     "packages/production-genesis",
@@ -6860,6 +6892,13 @@
       "notes": "Chunk 144 canonical production economic parameter registry at packages/sunrey-chain/src/economics/production-activation/parameter-package. Typed values behind Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, or create a second mint. Do not create packages/tokenomics, packages/economic-parameters, packages/monetary-policy-v2, packages/coin-supply, or packages/production-mint."
     },
     {
+      "id": "sunrey-production-economic-authorization",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 163 governed production economic parameter authorization at packages/sunrey-chain/src/economics/production-activation/authorization, orchestrated by packages/sunrey-chain/src/governance-ops. Does not invent tokenomics, activate production, or create a second monetary authority. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Do not create packages/tokenomics, packages/economic-governance-v2, packages/monetary-policy-v2, packages/production-authorization, or packages/mint-governance."
+    },
+    {
       "id": "sunrey-canonical-product-identity",
       "status": "IMPLEMENTED",
       "owner": "packages/config",
@@ -6893,11 +6932,15 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 156 unified production-candidate observability, engineering SLOs, control room, incident correlation, and cross-domain operational health at packages/sunrey-chain/src/ops/control-room. Extends the existing ops owner. Read/operations plane only. Does not post ledger, mint, issue Execution Authority, or enable LIVE_* flags. Do not create packages/observability, packages/control-room, packages/sunrey-ops, or packages/sre."
+    },
+    {
       "id": "sunrey-distributed-idempotency-recovery",
       "status": "IMPLEMENTED",
       "owner": "packages/events",
       "protected": true,
       "notes": "Chunk 155 distributed idempotency, external side-effect recovery, transactional workflow safety, and cross-domain reconciliation. Extends packages/events and packages/persistence. Canonical model is EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. Not magical exactly-once delivery. Coordinator cannot post ledger, mint, or issue Execution Authority. Do not create packages/saga-engine, packages/workflow-v2, packages/idempotency-service, packages/transaction-manager, packages/distributed-ledger, or packages/exactly-once."
+    },
+    {
       "id": "sunrey-operational-persistence-recovery",
       "status": "IMPLEMENTED",
       "owner": "packages/persistence",

@@ -27,6 +27,7 @@ export type {
   GovernanceEvidenceBundle,
   GovernanceNetworkClass,
   GovernanceOfflinePackage,
+  ProductionEconomicAuthorizationOfflinePayload,
   GovernanceOperationPackage,
   GovernanceOperationType,
   GovernanceOperationsAudit,

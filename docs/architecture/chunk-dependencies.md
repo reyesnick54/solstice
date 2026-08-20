@@ -191,6 +191,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-economic-authorization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
@@ -1416,6 +1417,18 @@ flip `LIVE_*` flags, or create a second mint. Do not create
 `packages/tokenomics`, `packages/economic-parameters`,
 `packages/monetary-policy-v2`, `packages/coin-supply`, or
 `packages/production-mint`. The evaluator returns `mustStop: false`.
+Chunk 163 implements governed production economic parameter approval,
+multi-party human authorization, external-evidence binding, and
+production authorization assembly at
+`packages/sunrey-chain/src/economics/production-activation/authorization`
+with orchestration at `packages/sunrey-chain/src/governance-ops`.
+Capability `sunrey-production-economic-authorization` is `IMPLEMENTED`.
+It does not choose production tokenomics, activate production, flip
+`LIVE_*` flags, or create a second mint. `AUTHORIZED_CANDIDATE` is not
+`PRODUCTION_ACTIVE`. Do not create `packages/tokenomics`,
+`packages/economic-governance-v2`, `packages/monetary-policy-v2`,
+`packages/production-authorization`, or `packages/mint-governance`. The
+evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the

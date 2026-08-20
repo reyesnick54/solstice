@@ -38,6 +38,9 @@ const COMPETING_PATHS = [
   'packages/monetary-policy-v2',
   'packages/coin-supply',
   'packages/production-mint',
+  'packages/economic-governance-v2',
+  'packages/production-authorization',
+  'packages/mint-governance',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

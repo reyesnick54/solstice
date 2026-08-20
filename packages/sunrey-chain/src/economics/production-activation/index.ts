@@ -73,6 +73,8 @@ export type {
   VersionBinding,
 } from './types.ts';
 export * as parameterPackage from './parameter-package/index.ts';
+export * as authorization from './authorization/index.ts';
+export type { ProductionEconomicAuthorizationPackage } from './authorization/types.ts';
 export { ACTIVATION_REQUIREMENTS, DOMAIN_TO_MAINNET, requirementById, requirementsFor } from './requirements.ts';
 export {
   FIXTURE_KINDS,

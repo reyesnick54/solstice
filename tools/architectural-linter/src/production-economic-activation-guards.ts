@@ -19,6 +19,9 @@ const COMPETING = [
   'packages/monetary-policy-v2',
   'packages/coin-supply',
   'packages/production-mint',
+  'packages/economic-governance-v2',
+  'packages/production-authorization',
+  'packages/mint-governance',
 ] as const;
 
 const FIREWALL_DIR = 'packages/sunrey-chain/src/economics/production-activation';

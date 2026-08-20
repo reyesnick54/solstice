@@ -287,6 +287,8 @@ jobs:
         run: node scripts/sunrey-release.mjs economic verify
       - name: SunRey economic RC demo
         run: npm run demo:sunrey-economic-rc
+      - name: SunRey production economic authorization demo
+        run: npm run demo:sunrey-production-economic-authorization
       - name: SunRey Mainnet RC smoke qualification
         run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet create --profile smoke --id SUNREY_MAINNET_RC_1
       - name: SunRey Mainnet RC qualify

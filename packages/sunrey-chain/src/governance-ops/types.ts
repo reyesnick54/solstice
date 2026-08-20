@@ -324,16 +324,42 @@ export type GovernanceOperationsAudit = {
   readonly openFindings: readonly string[];
 };
 
+export type GovernanceOfflinePayload = {
+  readonly policyHash: string;
+  readonly releaseHash: string;
+  readonly activation: ActivationCoordinate;
+  readonly approvalRequest: string;
+  readonly publicSignatures: readonly string[];
+};
+
+export type ProductionEconomicAuthorizationOfflinePayload = {
+  readonly hashes: {
+    readonly authorizationHash: string;
+    readonly parameterPackageHash: string;
+    readonly parameterDiffHash: string;
+    readonly evidenceBundleHash: string;
+    readonly operatingScopeHash: string;
+    readonly providerBindingHash: string;
+    readonly economicRcHash: string;
+    readonly fullPlatformCandidateHash: string;
+    readonly architectureManifestHash: string;
+  };
+  readonly versions: {
+    readonly schemaVersion: number;
+    readonly policyVersion: number;
+    readonly toolVersion: string;
+  };
+  readonly networkId: string;
+  readonly chainId: string;
+  readonly parameterDiffSummary: string;
+  readonly activationCandidateReference: string;
+  readonly approvalExpiryUtc: string;
+};
+
 export type GovernanceOfflinePackage = {
   readonly kind: 'SUNREY_GOVERNANCE_OFFLINE_PACKAGE';
-  readonly packageKind: 'APPROVAL_REQUESTS' | 'RELEASE_CANDIDATE_HASHES' | 'POLICY_HASHES';
-  readonly payload: {
-    readonly policyHash: string;
-    readonly releaseHash: string;
-    readonly activation: ActivationCoordinate;
-    readonly approvalRequest: string;
-    readonly publicSignatures: readonly string[];
-  };
+  readonly packageKind: 'APPROVAL_REQUESTS' | 'RELEASE_CANDIDATE_HASHES' | 'POLICY_HASHES' | 'PRODUCTION_ECONOMIC_AUTHORIZATION';
+  readonly payload: GovernanceOfflinePayload | ProductionEconomicAuthorizationOfflinePayload;
   readonly payloadHash: string;
   readonly containsPrivateKeys: false;
 };
