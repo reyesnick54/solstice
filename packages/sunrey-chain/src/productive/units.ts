@@ -89,6 +89,7 @@ const GOODS_UNITS: readonly UnitDefinition[] = [
 
 const SERVICES_UNITS: readonly UnitDefinition[] = [
   { unitId: 'service_hour', category: 'SERVICES', symbol: 'svc·h', baseUnitId: 'service_hour', scaleToBase: 1n },
+  { unitId: 'UNIT', category: 'SERVICES', symbol: 'unit', baseUnitId: 'UNIT', scaleToBase: 1n },
 ];
 
 const AUTOMATED_UNITS: readonly UnitDefinition[] = [

@@ -57,7 +57,13 @@ export {
   defaultCanonicalUnitRegistry,
   NORMALIZATION_CONSTITUTION_VERSION,
 } from '../units/index.ts';
-export { FACT_SCHEMAS, governedSchemaUpgradeOnly, schemaAllowsUnit } from './schemas.ts';
+export {
+  BANDWIDTH_USAGE_SCHEMA_V1,
+  BANDWIDTH_USAGE_SCHEMA_V2,
+  FACT_SCHEMAS,
+  governedSchemaUpgradeOnly,
+  schemaAllowsUnit,
+} from './schemas.ts';
 export {
   defaultOracleCrypto,
   defaultOracleSuiteId,

@@ -13,12 +13,15 @@ export const UNIT_FAMILIES = Object.freeze({
   MASS: ['kg', 'tonne'],
   VOLUME: ['L', 'm3'],
   AREA: ['m2'],
+  AREA_TIME: ['m2_hour'],
   COMPUTE_TIME: ['compute_s', 'gpu_s', 'machine_h'],
   INFERENCE: ['token_inference'],
   COUNT: ['units_produced'],
   FREIGHT: ['tonne_km'],
   STORAGE: ['GB', 'TB'],
+  BANDWIDTH: ['GB_s', 'B_s'],
   BANDWIDTH: ['GB_s'],
+  FACILITY_TIME: ['facility_hour'],
 } as const);
 
 const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonly toBase: bigint }>> =
@@ -31,6 +34,7 @@ const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonl
     L: { family: 'VOLUME', toBase: 1n },
     m3: { family: 'VOLUME', toBase: 1_000n },
     m2: { family: 'AREA', toBase: 1n },
+    m2_hour: { family: 'AREA_TIME', toBase: 3_600n },
     compute_s: { family: 'COMPUTE_TIME', toBase: 1n },
     gpu_s: { family: 'COMPUTE_TIME', toBase: 1n },
     machine_h: { family: 'COMPUTE_TIME', toBase: 3_600n },
@@ -39,7 +43,10 @@ const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonl
     tonne_km: { family: 'FREIGHT', toBase: 1n },
     GB: { family: 'STORAGE', toBase: 1n },
     TB: { family: 'STORAGE', toBase: 1_000n },
+    GB_s: { family: 'BANDWIDTH', toBase: 1_000_000_000n },
+    B_s: { family: 'BANDWIDTH', toBase: 1n },
     GB_s: { family: 'BANDWIDTH', toBase: 1n },
+    facility_hour: { family: 'FACILITY_TIME', toBase: 1n },
   });
 
 export const MAX_QUANTITY_MANTISSA = 10n ** 38n - 1n;

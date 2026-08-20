@@ -23,6 +23,7 @@ export type {
 export {
   CANONICAL_SOURCE_TAXONOMY,
   HISTORICAL_ENERGY_PRODUCTION_MAPPING,
+  HISTORICAL_REAL_ESTATE_CAPACITY_MAPPING,
   activeMappings,
   mappingById,
   registryWithRetiredCategory,
