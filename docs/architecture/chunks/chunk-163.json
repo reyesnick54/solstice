@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-163",
+  "title": "Governed Production Economic Parameter Approval, Multi-Party Human Authorization, External-Evidence Binding, and Production Authorization Assembly",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "sunrey-governance-operations",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-production-economic-parameters",
+    "sunrey-production-issuance-policy-candidate",
+    "moonrey-production-issuance-policy-candidate",
+    "sunrey-economic-rc",
+    "sunrey-mainnet-rc",
+    "sunrey-production-handoff",
+    "sunrey-adversarial-range",
+    "sunrey-production-economic-authorization"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/production-activation/authorization with governance-ops orchestration. Authorization wrapper over Chunk 144-148 parameter packages. Does not choose production tokenomics, activate production, flip LIVE_* flags, or create a second mint. AUTHORIZED_CANDIDATE means the human governance package is complete, not that production is running. Current repository remains PARAMETERS_INCOMPLETE / EXTERNAL_EVIDENCE_REQUIRED / AWAITING_HUMAN_APPROVALS. evaluateChunkRequirements returns mustStop: false. Do not create packages/tokenomics, packages/economic-governance-v2, packages/monetary-policy-v2, packages/production-authorization, or packages/mint-governance."
+}

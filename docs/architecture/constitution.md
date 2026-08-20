@@ -99,6 +99,7 @@ never be two implementations of these systems.
 | Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
+| Production economic authorization | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/authorization/types.ts` | IMPLEMENTED |
 | SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
@@ -1863,6 +1864,20 @@ ACTIVATED`. Do not create `packages/tokenomics`,
 `packages/economic-parameters`, `packages/monetary-policy-v2`,
 `packages/coin-supply`, or `packages/production-mint`. See
 [`docs/economics/chunk-144-production-economic-parameter-registry.md`](../economics/chunk-144-production-economic-parameter-registry.md).
+Chunk 163 implements governed production economic parameter approval,
+multi-party human authorization, external-evidence binding, and
+production authorization assembly at
+`packages/sunrey-chain/src/economics/production-activation/authorization`
+with orchestration at `packages/sunrey-chain/src/governance-ops`.
+Capability `sunrey-production-economic-authorization` is `IMPLEMENTED`
+on those existing owners. It does not choose production tokenomics,
+activate production, flip `LIVE_*` flags, mint, or create a second
+monetary authority. `AUTHORIZED_CANDIDATE` means the human governance
+package is complete, not that production is running. Current production
+parameters remain `UNCONFIGURED`. Do not create `packages/tokenomics`,
+`packages/economic-governance-v2`, `packages/monetary-policy-v2`,
+`packages/production-authorization`, or `packages/mint-governance`. See
+[`docs/economics/chunk-163-production-economic-authorization.md`](../economics/chunk-163-production-economic-authorization.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
