@@ -1812,12 +1812,37 @@
       "protectedSymbols": [],
       "forbiddenAliases": [
         "tools/architecture-linter",
-        "packages/architecture-linter"
+        "packages/architecture-linter",
+        "packages/repository-integrity",
+        "packages/architecture-v2",
+        "packages/merge-manager"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Companion invariant scripts live under scripts/. Do not add a second linter system."
+      "notes": "Companion invariant scripts live under scripts/. Chunk 159 repository merge-integrity lock is check-json-integrity.mjs and check-merge-integrity.mjs. Do not add a second linter or architecture owner."
+    },
+    {
+      "id": "sunrey-repository-integrity",
+      "name": "Repository merge integrity and canonical test-surface lock",
+      "canonicalOwner": "tools/architectural-linter",
+      "canonicalPath": "scripts/check-merge-integrity.mjs",
+      "publicInterface": "scripts/check-json-integrity.mjs",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/repository-integrity",
+        "packages/architecture-v2",
+        "packages/merge-manager"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 159 main-branch integrity lock. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create a mutating auto-fixer that chooses between conflicting owners."
     },
     {
       "id": "persistence-adapter",
@@ -2702,7 +2727,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -5004,6 +5029,11 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/mainnet/operating-scope/types.ts",
       "publicInterface": "packages/sunrey-chain/src/mainnet/operating-scope/index.ts",
+      "id": "sunrey-external-production-evidence",
+      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -5020,11 +5050,22 @@
         "packages/global-regulation",
         "packages/country-law",
         "packages/legal-engine"
+          "name": "ExternalProductionEvidenceRecord",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/legal",
+        "packages/licenses",
+        "packages/external-audit",
+        "packages/compliance-evidence",
+        "packages/evidence-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
+      "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
     }
   ],
   "authorizedMutationPaths": [
@@ -5855,6 +5896,9 @@
     "packages/global-regulation",
     "packages/country-law",
     "packages/legal-engine"
+    "packages/repository-integrity",
+    "packages/architecture-v2",
+    "packages/merge-manager"
   ],
   "capabilities": [
     {
@@ -5922,7 +5966,8 @@
       "id": "architecture-linting",
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
-      "protected": true
+      "protected": true,
+      "notes": "Chunk 159 companion integrity scripts live under scripts/. Not a second architecture owner."
     },
     {
       "id": "persistence",
@@ -6418,7 +6463,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, or packages/activation-control."
+      "notes": "Chunk 65 mainnet readiness evidence, per-capability activation matrix, and deterministic genesis-candidate tooling at packages/sunrey-chain/src/mainnet. Chunk 160 extends the same owner with the external production evidence registry at src/mainnet/external-evidence. Candidate identities only. Does not launch mainnet, enable LIVE_* flags, fabricate external legal/audit evidence, or activate regulated financial products. Do not create packages/mainnet, packages/sunrey-mainnet, packages/genesis-candidate, packages/readiness-registry, packages/activation-control, packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
     },
     {
       "id": "sunrey-audit-readiness",
@@ -6946,6 +6991,16 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 161 jurisdictional operating scope, licensing, regulatory-evidence binding, corridor eligibility, and product activation matrix at packages/sunrey-chain/src/mainnet/operating-scope. Extends sunrey-mainnet-readiness. Not legal advice. Does not issue Execution Authority. Do not create packages/licensing, packages/global-regulation, packages/country-law, or packages/legal-engine."
+      "id": "sunrey-external-production-evidence",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 160 external production evidence registry at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
+      "id": "sunrey-repository-integrity",
+      "status": "IMPLEMENTED",
+      "owner": "tools/architectural-linter",
+      "protected": true,
+      "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
     }
   ],
   "boundedContexts": [
@@ -7462,5 +7517,10 @@
     "packages/global-regulation",
     "packages/country-law",
     "packages/legal-engine"
+    "packages/legal",
+    "packages/licenses",
+    "packages/external-audit",
+    "packages/compliance-evidence",
+    "packages/evidence-v2"
   ]
 }

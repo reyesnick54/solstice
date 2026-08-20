@@ -128,6 +128,20 @@ export type OutagePosture = (typeof OUTAGE_POSTURES)[number];
 
 export type ProviderAcceptanceResultKind = 'PASS' | 'FAIL' | 'NOT_APPLICABLE' | 'EXTERNAL_REQUIRED';
 
+export type ProviderExternalRegistryQuery = {
+  readonly evidenceClass: string;
+  readonly subjectType?: string;
+  readonly subjectId?: string;
+  readonly jurisdiction?: string;
+  readonly providerDomain?: ProviderDomain;
+  readonly nowUtc: string;
+  readonly production?: boolean;
+};
+
+export type ProviderExternalRegistryPort = {
+  readonly productionEligible: (query: ProviderExternalRegistryQuery) => boolean;
+};
+
 export type ProviderAcceptanceError = {
   readonly code: string;
   readonly message: string;

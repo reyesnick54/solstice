@@ -23,7 +23,9 @@ jobs:
           node-version: "22"
 
       - name: JSON / repository integrity preflight
-        run: node scripts/check-json-integrity.mjs
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
 
       - name: Install from lockfile
         run: npm ci --ignore-scripts
@@ -34,6 +36,7 @@ jobs:
       - name: Architectural invariants
         run: |
           node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
           python3 scripts/lint-architectural-invariants.py
           python3 scripts/extraction-dryrun.py
           npm run lint:architecture
@@ -354,7 +357,9 @@ jobs:
           node-version: "22"
 
       - name: JSON / repository integrity preflight
-        run: node scripts/check-json-integrity.mjs
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
 
       - name: Install from lockfile
         run: npm ci --ignore-scripts

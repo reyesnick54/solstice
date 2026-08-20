@@ -383,6 +383,8 @@ export type ProductionEconomicActivationSnapshot = {
   readonly exchangeEngineeringReady: boolean;
   readonly intendedProductionCategories: readonly string[];
   readonly moonreyProductionCandidate: MoonReyProductionCandidateSnapshot;
+  /** Chunk 160 registry snapshot. Optional so existing snapshots stay valid. */
+  readonly externalEvidenceRegistry?: import('../../mainnet/external-evidence/registry.ts').ExternalEvidenceRegistrySnapshot | null;
 };
 
 export type MoonReyProductionCandidateSnapshot = {

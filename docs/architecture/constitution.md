@@ -48,6 +48,7 @@ never be two implementations of these systems.
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
 | Canonical product identity | `packages/config` | `packages/config/src/product-identity.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
+| Repository merge integrity | `tools/architectural-linter` | `scripts/check-merge-integrity.mjs` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
@@ -85,6 +86,7 @@ never be two implementations of these systems.
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
 | SunRey production operating scope | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/operating-scope/types.ts` | IMPLEMENTED |
+| External production evidence registry | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/external-evidence/types.ts` | IMPLEMENTED |
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
@@ -135,8 +137,7 @@ the same architecture-linting system, not a second linter.
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `human-economic-contribution`, `economic-asset-registry`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
-`market-surveillance`.
-`consent`, `clean-room`, `sunrey-sdk`.
+`market-surveillance`, `sunrey-sdk`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`, `strategy-lab`.
@@ -1028,6 +1029,17 @@ audit evidence. Do not create `packages/mainnet`,
 `packages/sunrey-mainnet`, `packages/genesis-candidate`,
 `packages/readiness-registry`, or `packages/activation-control`.
 See [`chunk-65-mainnet-readiness.md`](./chunk-65-mainnet-readiness.md).
+Chunk 160 extends that same owner with the external production
+evidence registry at
+`packages/sunrey-chain/src/mainnet/external-evidence`. Capability
+`sunrey-external-production-evidence` is `IMPLEMENTED`. It registers,
+verifies, expires, revokes, and binds external evidence references.
+It does not fabricate audits or counsel opinions, store confidential
+documents in Git, put raw contracts on-chain, or activate production.
+The Evidence Vault remains the sealing authority. Do not create
+`packages/legal`, `packages/licenses`, `packages/external-audit`,
+`packages/compliance-evidence`, or `packages/evidence-v2`. See
+[`chunk-160-external-evidence-registry.md`](../operations/chunk-160-external-evidence-registry.md).
 Chunk 66 implements provider-neutral production infrastructure,
 secret/KMS/HSM adapters, workload identity, and network zoning at
 `packages/sunrey-chain/src/infra`. Capability
@@ -1974,6 +1986,19 @@ Execution Authority. Do not create `packages/licensing`,
 `packages/global-regulation`, `packages/country-law`, or
 `packages/legal-engine`. See
 [`docs/compliance/chunk-161-operating-scope-matrix.md`](../compliance/chunk-161-operating-scope-matrix.md).
+Chunk 159 locks main-branch JSON, merge-collision, and canonical
+test-surface integrity. Capability `sunrey-repository-integrity` is
+`IMPLEMENTED` on the existing architecture-linting owner
+`tools/architectural-linter`, with companion scripts under `scripts/`.
+It does not create a second architecture authority, change business
+owners, or alter `LIVE_*` flags. Duplicate `package.json` script keys,
+mangled manifest capability records, and Git conflict markers fail
+closed. See
+[`chunk-159-main-branch-integrity-lock.md`](./chunk-159-main-branch-integrity-lock.md)
+and
+[`merge-integrity-policy.md`](./merge-integrity-policy.md).
+Do not create `packages/repository-integrity`,
+`packages/architecture-v2`, or `packages/merge-manager`.
 
 ## Agent stop rule
 

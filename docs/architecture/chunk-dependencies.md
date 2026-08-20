@@ -194,11 +194,13 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
-| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
-| sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
+| sunrey-dual-asset-custody-provider-candidate | IMPLEMENTED | packages/custody |
 | sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-distributed-idempotency-recovery | IMPLEMENTED | packages/events |
+| sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1588,3 +1590,24 @@ and unavailable. Do not create `packages/licensing`,
 `packages/global-regulation`, `packages/country-law`, or
 `packages/legal-engine`. The evaluator returns `mustStop: false`. See
 [`docs/compliance/chunk-161-operating-scope-matrix.md`](../compliance/chunk-161-operating-scope-matrix.md).
+Chunk 160 extends `packages/sunrey-chain/src/mainnet` with the
+external production evidence registry at `src/mainnet/external-evidence`.
+Capability `sunrey-external-production-evidence` is `IMPLEMENTED`.
+It does not fabricate external evidence, store confidential documents
+in Git, or activate production. The Evidence Vault remains the
+sealing authority. The evaluator returns `mustStop: false`. Do not
+create `packages/legal`, `packages/licenses`, `packages/external-audit`,
+`packages/compliance-evidence`, or `packages/evidence-v2`. See
+[`chunk-160-external-evidence-registry.md`](../operations/chunk-160-external-evidence-registry.md).
+Chunk 159 locks main-branch JSON, merge-collision, and canonical
+test-surface integrity. Capability `sunrey-repository-integrity` is
+`IMPLEMENTED` on `tools/architectural-linter`. Companion scripts stay
+under `scripts/`. `manifest.json` remains architecture authority. The
+evaluator returns `mustStop: false`. Do not create
+`packages/repository-integrity`, `packages/architecture-v2`, or
+`packages/merge-manager`. See
+[`chunk-159-main-branch-integrity-lock.md`](./chunk-159-main-branch-integrity-lock.md)
+and [`merge-integrity-policy.md`](./merge-integrity-policy.md).
+Historical note: `sunrey-hin-chain-anchoring` was `PARTIAL` after
+Chunk 139 and is `IMPLEMENTED` after Chunk 140. The current table
+row is the stronger status.

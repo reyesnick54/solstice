@@ -213,7 +213,19 @@ function checkManifestIntegrity(manifest: ArchitectureManifest): Finding[] {
   }
 
   const symbolOwners = new Map<string, string>();
+  const componentIds = new Set<string>();
   for (const component of manifest.components) {
+    if (componentIds.has(component.id)) {
+      findings.push(
+        finding(
+          'duplicate-protected-ownership',
+          MANIFEST_FILE,
+          1,
+          `component id '${component.id}' is registered more than once`,
+        ),
+      );
+    }
+    componentIds.add(component.id);
     if (component.protected && !packageIds.has(component.canonicalOwner) && component.status === 'IMPLEMENTED') {
       findings.push(
         finding(
@@ -239,6 +251,21 @@ function checkManifestIntegrity(manifest: ArchitectureManifest): Finding[] {
       }
       symbolOwners.set(key, component.id);
     }
+  }
+
+  const capabilityIds = new Set<string>();
+  for (const capability of manifest.capabilities) {
+    if (capabilityIds.has(capability.id)) {
+      findings.push(
+        finding(
+          'duplicate-protected-ownership',
+          MANIFEST_FILE,
+          1,
+          `capability id '${capability.id}' is registered more than once`,
+        ),
+      );
+    }
+    capabilityIds.add(capability.id);
   }
   return findings;
 }
