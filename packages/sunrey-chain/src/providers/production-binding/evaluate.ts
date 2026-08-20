@@ -111,7 +111,7 @@ export function evaluateProductionProviderBinding(
   const endpointCheck = validateEndpointProfile(endpoint);
   if (!endpointCheck.ok) {
     blockers.push({ code: endpointCheck.error.code, detail: endpointCheck.error.message });
-  } else if (endpoint.environmentClass !== binding.environmentClass) {
+  } else if (endpointCheck.value.environmentClass !== binding.environmentClass) {
     blockers.push({
       code: 'ENDPOINT_PROFILE_INVALID',
       detail: 'endpoint environment class must match the binding environment class',
@@ -228,5 +228,6 @@ export function evaluateProductionProviderBinding(
     rawSecretPresent: false,
     productionConnectivityEnabled: false,
     realProviderCalled: false,
+    contentHash: binding.contentHash,
   });
 }

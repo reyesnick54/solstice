@@ -102,7 +102,7 @@ export function consumeOperatingScope(input: {
     return bindingErr('UNSUPPORTED_DATA_CLASS', `unsupported data class ${unsupported.join(',')}`);
   }
   if (blockers.length > 0) {
-    const first = blockers[0];
+    const first = blockers[0] ?? { code: 'OPERATING_SCOPE_MISMATCH', detail: 'operating scope mismatch' };
     return bindingErr(first.code, first.detail);
   }
   return bindingOk(true);

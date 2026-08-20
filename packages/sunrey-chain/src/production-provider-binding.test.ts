@@ -49,10 +49,12 @@ function withBinding(
   binding: ProductionProviderBinding,
   patch: Partial<Omit<ProductionProviderBinding, 'contentHash' | 'productionConnectivityEnabled'>>,
 ): ProductionProviderBinding {
+  const { contentHash: _ignoredHash, productionConnectivityEnabled: _ignoredFlag, ...rest } = binding;
+  void _ignoredHash;
+  void _ignoredFlag;
   const sealed = sealProductionProviderBinding({
-    ...binding,
+    ...rest,
     ...patch,
-    productionConnectivityEnabled: undefined as never,
   });
   if (!sealed.ok) {
     throw new Error(sealed.error.message);
@@ -65,7 +67,9 @@ describe('CHUNK-162 production provider binding', () => {
     const first = fixtureKycBinding();
     const second = fixtureKycBinding();
     assert.equal(first.contentHash, second.contentHash);
-    assert.equal(first.contentHash, bindingContentHash({ ...first, contentHash: first.contentHash }));
+    const { contentHash: _hash, ...firstWithoutHash } = first;
+    void _hash;
+    assert.equal(first.contentHash, bindingContentHash(firstWithoutHash));
     const rotated = withBinding(first, { version: 2 });
     assert.notEqual(rotated.contentHash, first.contentHash);
   });
