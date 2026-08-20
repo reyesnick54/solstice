@@ -54,7 +54,7 @@ import type {
   HumanInformationAnchorKey,
   HumanInformationChainAnchorRecord,
 } from './types.ts';
-import { HIN_ANCHOR_KINDS } from './types.ts';
+import { HIN_ANCHOR_FAILURE_CODES, HIN_ANCHOR_KINDS, type HinAnchorFailureCode } from './types.ts';
 
 export type HinChainAnchorAdapterOptions = {
   readonly engine: HumanInformationNetworkEngine;
@@ -368,6 +368,12 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
     HinAnchorFailure
   > {
     if (!result.ok) {
+      if ((HIN_ANCHOR_FAILURE_CODES as readonly string[]).includes(result.error.code)) {
+        return err({
+          code: result.error.code as HinAnchorFailureCode,
+          message: result.error.message,
+        });
+      }
       return err(mapChainFailure(result.error.code, result.error.message));
     }
     return ok(result.value);
