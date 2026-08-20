@@ -1646,6 +1646,21 @@ not `RESOURCE_EXTRACTION` and cannot create OUTPUT or mint MoonRey.
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or a second oracle owner. See
 [`chunk-133-resource-extraction-data-fabric.md`](./chunk-133-resource-extraction-data-fabric.md).
+Chunk 134 implements the agriculture, food, and water economic data
+fabrics at
+`packages/sunrey-chain/src/oracle/production/provider-families/agriculture`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/water`.
+Capabilities `sunrey-agriculture-food-data-fabric` and
+`sunrey-water-data-fabric` are `IMPLEMENTED` on the existing
+`sunrey-production-oracles` owner. Planted area and forecast yield are
+not production. `WATER_AVAILABILITY` is not water production.
+Irrigation consumption is an agricultural input and does not claim the
+utility production event. Facts do not mint MoonRey. Do not create
+`packages/agriculture-oracle`, `packages/food-data-fabric`,
+`packages/water-oracle`, `packages/water-data-fabric`, or a second
+oracle owner. See
+[`chunk-134-agriculture-food-water-data-fabric.md`](./chunk-134-agriculture-food-water-data-fabric.md).
 Chunk 136 implements the bandwidth, telecom, and digital-network
 economic data fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/bandwidth`.

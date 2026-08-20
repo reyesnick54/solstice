@@ -181,6 +181,8 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-resource-extraction-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-agriculture-food-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-water-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
@@ -1257,6 +1259,22 @@ and
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or `packages/resource-data-fabric`.
 The evaluator returns `mustStop: false`.
+Chunk 134 implements the agriculture, food, and water economic data
+fabrics at
+`packages/sunrey-chain/src/oracle/production/provider-families/agriculture`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/water`.
+Capabilities `sunrey-agriculture-food-data-fabric` and
+`sunrey-water-data-fabric` are `IMPLEMENTED` on the existing
+production-oracle owner. See
+[`chunk-134-agriculture-food-water-data-fabric.md`](./chunk-134-agriculture-food-water-data-fabric.md)
+and
+[`docs/economics/chunk-134-agriculture-food-water-data-fabric.md`](../economics/chunk-134-agriculture-food-water-data-fabric.md).
+Planted area and forecast yield are not production.
+`WATER_AVAILABILITY` is not production. Irrigation consumption is not
+water production. Do not create `packages/agriculture-oracle`,
+`packages/food-data-fabric`, `packages/water-oracle`, or
+`packages/water-data-fabric`. The evaluator returns `mustStop: false`.
 Chunk 137 implements the goods, commerce, and service-delivery
 economic data fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/goods`

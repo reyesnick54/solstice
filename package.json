@@ -69,6 +69,7 @@
     "demo:moonrey-compute-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/compute/demo.ts",
     "demo:moonrey-energy-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/energy/demo.ts",
     "demo:moonrey-resource-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/resources/demo.ts",
+    "demo:moonrey-agriculture-water-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/agriculture/demo.ts",
     "demo:moonrey-goods-services-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/goods/demo.ts",
     "demo:moonrey-bandwidth-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/demo.ts",
     "demo:moonrey-real-estate-infrastructure-data-fabric": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/oracle/production/provider-families/real-estate-infrastructure-demo.ts",
