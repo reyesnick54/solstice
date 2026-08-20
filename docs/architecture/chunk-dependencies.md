@@ -192,6 +192,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
+| sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
@@ -1531,3 +1532,12 @@ credential plane. Do not create `packages/moonrey-custody`,
 `packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
 `packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
 returns `mustStop: false`.
+Chunk 154 hardens operational persistence, crash recovery, state
+rehydration, and the repository integrity gate at
+`packages/persistence/src/production/recovery`. Capability
+`sunrey-operational-persistence-recovery` is `IMPLEMENTED` on
+`packages/persistence`. It does not create a second ledger or mint.
+Do not create `packages/database-v2`, `packages/state-store`,
+`packages/durable-state`, `packages/operational-ledger`,
+`packages/financial-database`, or `packages/persistence-v2`. The
+evaluator returns `mustStop: false`.

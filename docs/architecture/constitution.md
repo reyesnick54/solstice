@@ -1898,6 +1898,17 @@ Do not create `packages/moonrey-custody`, `packages/sunrey-custody-v2`,
 `packages/key-vault`, `packages/hsm-v2`, `packages/mpc-v2`, or
 `packages/custody-provider-v2`. See
 [`docs/custody/chunk-153-dual-asset-custody-provider-candidate.md`](../custody/chunk-153-dual-asset-custody-provider-candidate.md).
+Chunk 154 hardens production operational persistence, crash recovery,
+state rehydration, and the repository integrity gate at
+`packages/persistence/src/production/recovery`. Capability
+`sunrey-operational-persistence-recovery` is `IMPLEMENTED` on the
+existing persistence owner. Durable fixture snapshots fail closed on
+corruption. PostgreSQL operational state is not a second ledger and
+cannot mint SunRey or MoonRey or replace `Ledger.postJournal`. Do not
+create `packages/database-v2`, `packages/state-store`,
+`packages/durable-state`, `packages/operational-ledger`,
+`packages/financial-database`, or `packages/persistence-v2`. See
+[`chunk-154-operational-persistence-recovery.md`](./chunk-154-operational-persistence-recovery.md).
 
 ## Agent stop rule
 

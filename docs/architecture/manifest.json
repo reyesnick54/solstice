@@ -6846,6 +6846,13 @@
       "owner": "packages/custody",
       "protected": true,
       "notes": "Chunk 153 dual-native-asset custody hardening and institutional custody provider-candidate framework at packages/custody/src/provider-candidate. Extends packages/custody. HSM/KMS remain packages/security. Native quantity remains SunRey Chain / AssetSupplyBook. productionAuthorized stays false. Do not create packages/moonrey-custody, packages/sunrey-custody-v2, packages/key-vault, packages/hsm-v2, packages/mpc-v2, or packages/custody-provider-v2."
+    },
+    {
+      "id": "sunrey-operational-persistence-recovery",
+      "status": "IMPLEMENTED",
+      "owner": "packages/persistence",
+      "protected": true,
+      "notes": "Chunk 154 production operational persistence, crash recovery, state rehydration, and repository integrity gate at packages/persistence/src/production/recovery. Extends existing PostgreSQL adapters and durable fixture stores. Not a second ledger, mint, or Execution Authority. Do not create packages/database-v2, packages/state-store, packages/durable-state, packages/operational-ledger, packages/financial-database, or packages/persistence-v2."
     }
   ],
   "boundedContexts": [

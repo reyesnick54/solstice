@@ -94,22 +94,30 @@ describe('Chunk 67 PostgreSQL production durability', () => {
     store.createWithdrawal({
       withdrawalId: 'w1',
       customerId: 'cust_1',
+      assetId: 'SUNREY_COIN',
+      quantity: '1',
       state: 'APPROVED',
       submittedOnce: false,
       submissionId: null,
+      providerIdempotencyKey: null,
       approvalIds: ['ap1'],
       journalId: null,
+      revision: 1,
     });
     store.markUnknown('w1', 'sub_unknown');
     assert.throws(() =>
       store.createWithdrawal({
         withdrawalId: 'w1',
         customerId: 'cust_1',
+        assetId: 'SUNREY_COIN',
+        quantity: '1',
         state: 'PENDING',
         submittedOnce: false,
         submissionId: null,
+        providerIdempotencyKey: null,
         approvalIds: [],
         journalId: null,
+        revision: 1,
       }),
     );
     const reopened = store.reopen();
@@ -128,20 +136,29 @@ describe('Chunk 67 PostgreSQL production durability', () => {
       clientIdempotencyKey: 'client-1',
       state: 'RESERVED',
       holdId: 'hold-1',
+      baseAsset: 'SUNREY_COIN',
+      quoteAsset: 'MOONREY_COIN',
+      revision: 1,
     });
-    store.reserve({ reservationId: 'r1', orderId: 'o1', quantity: '10' });
+    store.reserve({ reservationId: 'r1', orderId: 'o1', assetId: 'SUNREY_COIN', quantity: '10', revision: 1 });
     store.recordTrade({ tradeId: 't1', buyOrderId: 'o1', sellOrderId: 'o2' });
     store.recordSettlement({
       intentId: 's1',
       tradeId: 't1',
+      baseAsset: 'SUNREY_COIN',
+      quoteAsset: 'MOONREY_COIN',
       submission: 'SUBMISSION_UNKNOWN',
       journalId: null,
+      revision: 1,
     });
     const again = store.upsertOrder({
       orderId: 'o1-dup',
       clientIdempotencyKey: 'client-1',
       state: 'OPEN',
       holdId: null,
+      baseAsset: 'SUNREY_COIN',
+      quoteAsset: 'MOONREY_COIN',
+      revision: 1,
     });
     assert.equal(again.orderId, 'o1');
     const reopened = store.reopen();
