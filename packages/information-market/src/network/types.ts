@@ -244,6 +244,7 @@ export type HumanInformationRevocation = {
 export type HumanInformationRightsAudit = {
   readonly auditId: HumanInformationRightsAuditId;
   readonly generatedAt: UtcInstant;
+  readonly schemaVersion: 1 | 2;
   readonly activeRights: number;
   readonly consents: number;
   readonly purposes: number;
@@ -252,6 +253,12 @@ export type HumanInformationRightsAudit = {
   readonly compensationInstructions: number;
   readonly cleanRoomResults: number;
   readonly onChainAnchors: number;
+  readonly anchorsCreated: number;
+  readonly anchorsSubmitted: number;
+  readonly anchorsFinalized: number;
+  readonly anchorsPending: number;
+  readonly anchorsReconciliationRequired: number;
+  readonly anchorsReorgObserved: number;
   readonly reconciled: boolean;
 };
 
@@ -332,6 +339,11 @@ export type MobileNotification = {
   readonly legalName: false;
 };
 
+/**
+ * Weak HIN-local evidence projection retained for Chunk 100 audit
+ * counts. Canonical chain-bound records live in
+ * `HumanInformationChainAnchorRecord` at `./chain-anchor`.
+ */
 export type OnChainAnchor = {
   readonly permissionId: string | null;
   readonly consentHash: string | null;
@@ -362,6 +374,14 @@ export type ConsentPreview = {
   readonly revocationTerms: string;
 };
 
+export type PrivacySafeControlCenterAnchorStatus = {
+  readonly presentation: 'FINALIZED' | 'PENDING' | 'REVIEW_REQUIRED';
+  readonly chainState: string;
+  readonly transactionId: string | null;
+  readonly blockReference: string | null;
+  readonly finalized: boolean;
+};
+
 export type ControlCenterProjection = {
   readonly subjectHandle: string;
   readonly categories: readonly InformationCategory[];
@@ -372,6 +392,9 @@ export type ControlCenterProjection = {
   readonly usageHistory: readonly HumanInformationUsageReceipt[];
   readonly revocations: readonly HumanInformationRevocation[];
   readonly pendingRequests: readonly HumanInformationRequest[];
+  readonly consentAnchorStatus: PrivacySafeControlCenterAnchorStatus | null;
+  readonly revocationAnchorStatus: PrivacySafeControlCenterAnchorStatus | null;
+  readonly usageAnchorStatus: PrivacySafeControlCenterAnchorStatus | null;
 };
 
 export type RequesterPortalProjection = {
@@ -386,4 +409,12 @@ export type RequesterPortalProjection = {
   readonly cleanRoomJobs: readonly CleanRoomComputationRequest[];
   readonly results: readonly CleanRoomComputationResult[];
   readonly usageReceipts: readonly HumanInformationUsageReceipt[];
+  readonly authorizedAnchorStatuses: readonly {
+    readonly sourceRecordId: string;
+    readonly kind: string;
+    readonly presentation: 'FINALIZED' | 'PENDING' | 'REVIEW_REQUIRED';
+    readonly transactionId: string | null;
+    readonly blockReference: string | null;
+    readonly finalized: boolean;
+  }[];
 };
