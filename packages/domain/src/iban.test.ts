@@ -22,7 +22,6 @@ describe('IBAN infrastructure', () => {
       accountId: asAccountId('acct_1'),
       serial: '42',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       return;
     }

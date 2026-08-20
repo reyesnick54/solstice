@@ -207,7 +207,7 @@ export type ResourceIdentityRefs = {
 export type ResourceSourceRecord = {
   readonly identifier: string;
   readonly sourceClass: ResourceSourceClass;
-  readonly factType: FactType;
+  readonly factType: FactType | ForbiddenResourceFactType;
   readonly numericValue: string;
   readonly unit: string;
   readonly measurementSemantics: ResourceMeasurementSemantics;

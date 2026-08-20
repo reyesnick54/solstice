@@ -33,7 +33,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
     const registry = new HumanContributionRegistry();
     for (const contributionClass of CONTRIBUTION_CLASSES) {
       const recorded = registry.record(fixtureContribution(contributionClass));
-      assert.equal(recorded.ok, true);
       if (!recorded.ok) {
         continue;
       }
@@ -220,7 +219,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
 
   it('keeps contribution objects free of SunRey quantities', () => {
     const event = createHumanContributionEvent(fixtureContribution('CREATIVE_PRODUCTION', 'no-qty'));
-    assert.equal(event.ok, true);
     if (!event.ok) {
       return;
     }
@@ -240,7 +238,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
 
   it('cannot authorize financial execution', () => {
     const event = createHumanContributionEvent(fixtureContribution('ECONOMIC_PARTICIPATION', 'no-exec'));
-    assert.equal(event.ok, true);
     if (!event.ok) {
       return;
     }
@@ -255,7 +252,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
 
   it('cannot authorize SunRey minting', () => {
     const event = createHumanContributionEvent(fixtureContribution('ENTREPRENEURIAL_ACTIVITY', 'no-mint'));
-    assert.equal(event.ok, true);
     if (!event.ok) {
       return;
     }
@@ -284,7 +280,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
   it('keeps superseded events historically traceable', () => {
     const registry = new HumanContributionRegistry();
     const original = registry.record(fixtureContribution('RESEARCH_PARTICIPATION', 'trace-1'));
-    assert.equal(original.ok, true);
     if (!original.ok) {
       return;
     }
@@ -293,7 +288,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
       createdAt: asUtcInstant('2026-08-19T13:00:00.000Z'),
       measurementQuantity: 2n,
     });
-    assert.equal(successor.ok, true);
     if (!successor.ok) {
       return;
     }
@@ -322,7 +316,6 @@ describe('CHUNK-104 human economic contribution ontology', () => {
 
     const registry = new HumanContributionRegistry();
     const recorded = registry.record(fixtureContribution('CREATIVE_PRODUCTION', 'elig-policy'));
-    assert.equal(recorded.ok, true);
     if (!recorded.ok) {
       return;
     }

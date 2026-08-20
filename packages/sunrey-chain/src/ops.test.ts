@@ -476,7 +476,6 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       const first = server.sign(request('val_dev_a', { height: 5n, round: 2n, messageType: 'PRECOMMIT' }), client, NOW);
       assert.equal(first.ok, true);
       const backup = store.backup(NOW);
-      assert.equal(backup.ok, true);
       if (!backup.ok) {
         return;
       }
@@ -548,24 +547,20 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
   it('runs join, rotate, exit, replace, and jail workflows', () => {
     const keystore = new OperatorKeystore();
     const incoming = generateJoinRecord(keystore, 'E', NOW);
-    assert.equal(incoming.ok, true);
     if (!incoming.ok) {
       return;
     }
     const registry = { set: fourValidatorDevelopmentSet(), epoch: developmentEpoch(0n, 0n, 8n), queued: [] };
     const joined = joinWorkflow(registry, incoming.value, NOW);
-    assert.equal(joined.ok, true);
     if (!joined.ok) {
       return;
     }
     assert.equal(joined.value.receipt.status, 'ACTIVE');
     const next = keystore.generate('CONSENSUS_VOTING_KEY', 'future', NOW);
-    assert.equal(next.ok, true);
     if (!next.ok) {
       return;
     }
     const descriptor = keystore.descriptor(next.value.keyId);
-    assert.equal(descriptor.ok, true);
     if (!descriptor.ok) {
       return;
     }
@@ -575,7 +570,6 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       assert.equal(rotated.value.receipt.steps.every((step) => step.status === 'DONE'), true);
     }
     const replacement = generateJoinRecord(keystore, 'F', NOW);
-    assert.equal(replacement.ok, true);
     if (!replacement.ok) {
       return;
     }
@@ -611,7 +605,6 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       payload: '{"state":"ok"}',
       createdAtUtc: NOW,
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       return;
     }

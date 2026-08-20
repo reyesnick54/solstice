@@ -100,6 +100,4 @@ export {
   type HumanInformationUsageAnchorProjection,
   type PrivacySafeAnchorPresentation,
   type PrivacySafeAnchorStatus,
-  type HumanInformationAnchorKey,
-  type HumanInformationChainAnchorRecord,
 } from './types.ts';

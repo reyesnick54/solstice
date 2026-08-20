@@ -56,7 +56,6 @@ describe('Chunk 64 root-of-trust ceremony', () => {
   it('refuses private-key extraction on the ceremony HSM', () => {
     const hsm = createCeremonySimulationHsm({ fixtureEnv: { SUNREY_FIXTURE_ENV: 'test' } });
     const generated = hsm.generateKey({ purpose: 'GENESIS_SIGNING', suiteId: SUITE_SUNREY_ED25519_V1 });
-    assert.equal(generated.ok, true);
     if (!generated.ok) {
       throw new Error('generate failed');
     }
@@ -115,7 +114,6 @@ describe('Chunk 64 root-of-trust ceremony', () => {
       ownerParticipantId: 'release_signer',
       authority: 'RELEASE_AUTHORITY',
     });
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error('first');
     }
@@ -238,13 +236,11 @@ describe('Chunk 64 root-of-trust ceremony', () => {
       ownerParticipantId: 'release_signer',
       authority: 'RELEASE_AUTHORITY',
     });
-    assert.equal(current.ok, true);
     if (!current.ok) {
       throw new Error('current');
     }
     const digest = sha256Hex('historical-artifact');
     const signature = session.signWithKey(current.value.keyId, 'RELEASE_SIGNING', digest);
-    assert.equal(signature.ok, true);
     if (!signature.ok) {
       throw new Error('sign');
     }
@@ -290,7 +286,6 @@ describe('Chunk 64 root-of-trust ceremony', () => {
       { genesisCandidateHash: sha256Hex('offline') },
       'security_officer',
     );
-    assert.equal(pkg.ok, true);
     if (!pkg.ok) {
       throw new Error('package');
     }

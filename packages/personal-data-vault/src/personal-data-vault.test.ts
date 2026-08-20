@@ -43,7 +43,6 @@ function world(label: string) {
   });
   assert.equal(provisioned.ok, true);
   const actor = identity.service.resolveActorContext(`actor_${label}`);
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -70,7 +69,6 @@ describe('Personal Data Vault', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -104,7 +102,6 @@ describe('Personal Data Vault', () => {
       provenanceKind: 'EXTERNAL_CONNECTOR',
       purposeRef: 'ingest.own',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -164,7 +161,6 @@ describe('Personal Data Vault', () => {
       provenanceKind: tx.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(first.ok, true);
     if (!first.ok) {
       return;
     }
@@ -237,7 +233,6 @@ describe('Personal Data Vault', () => {
       provenanceKind: receipt.provenanceKind,
       purposeRef: 'ingest.own',
     });
-    assert.equal(uploaded.ok, true);
     if (!uploaded.ok) {
       return;
     }

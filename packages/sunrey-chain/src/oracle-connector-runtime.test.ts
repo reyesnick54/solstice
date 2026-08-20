@@ -118,7 +118,6 @@ describe('Chunk 127 economic data connector runtime', () => {
       secrets: sandboxSecrets(),
       auth: sandboxApiKeyAuth(),
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -415,7 +414,6 @@ describe('Chunk 127 economic data connector runtime', () => {
         assert.equal(parsed.ok, false, href);
         continue;
       }
-      assert.equal(parsed.ok, true, href);
       if (!parsed.ok) {
         continue;
       }

@@ -244,6 +244,7 @@ function fixtureVerifiedContribution(claimId: string, objectId: string): Verifie
     rightsReferences: [`right.${objectId}`],
     controller: `ctl.${objectId}`,
     fingerprint: 'fp.energy.1',
+    fingerprintVersion: 'PRODUCTIVE_FINGERPRINT_V1',
     upstreamContributionIds: [],
     downstreamContributionIds: [],
     status: 'ELIGIBLE',

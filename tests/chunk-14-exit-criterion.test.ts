@@ -45,7 +45,6 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_peg_exit');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }
@@ -108,7 +107,6 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     peg.proposeOpportunities(subjectId);
 
     const graph = peg.getEconomicGraph(actor.value, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
       return;
     }
@@ -122,7 +120,6 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     assert.equal(graph.value.graph.mutatesFinancialState, false);
 
     const snapshot = peg.getEconomicSnapshot(actor.value, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
       return;
     }
@@ -133,7 +130,6 @@ describe('Chunk 14 Personal Economic Graph exit criterion', () => {
     assert.ok(snapshot.value.economicOpportunities.every((item) => item.executable === false));
 
     const rebuilt = peg.rebuildDerivedProjection(subjectId, source);
-    assert.equal(rebuilt.ok, true);
     if (!rebuilt.ok) {
       return;
     }

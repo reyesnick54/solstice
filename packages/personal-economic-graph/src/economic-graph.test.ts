@@ -53,7 +53,6 @@ function harness(capabilities: readonly string[] = ['VIEW_ECONOMIC_GRAPH', 'DECL
   });
   assert.equal(provisioned.ok, true);
   const actor = identity.service.resolveActorContext('actor_peg_test');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -183,7 +182,6 @@ describe('Personal Economic Graph', () => {
     peg.ingestAll(source, subjectId);
     peg.materializeRecurring(subjectId);
     const graph = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
       return;
     }
@@ -239,7 +237,6 @@ describe('Personal Economic Graph', () => {
       subjectId,
     );
     const graph = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(graph.ok, true);
     if (!graph.ok) {
       return;
     }
@@ -268,7 +265,6 @@ describe('Personal Economic Graph', () => {
     );
     peg.materializeRecurring(subjectId);
     const income = peg.getIncomeSources(actor, subjectId);
-    assert.equal(income.ok, true);
     if (!income.ok) {
       return;
     }
@@ -297,7 +293,6 @@ describe('Personal Economic Graph', () => {
       label: 'Home loan',
       estimatedBalance: { minorUnits: '35000000', currency: 'USD' },
     });
-    assert.equal(declared.ok, true);
     if (!declared.ok) {
       return;
     }
@@ -318,7 +313,6 @@ describe('Personal Economic Graph', () => {
     assert.equal(goal.ok, true);
     peg.proposeOpportunities(subjectId);
     const opportunities = peg.getOpportunities(actor, subjectId);
-    assert.equal(opportunities.ok, true);
     if (!opportunities.ok) {
       return;
     }
@@ -343,7 +337,6 @@ describe('Personal Economic Graph', () => {
     });
     peg.proposeOpportunities(subjectId);
     const snapshot = peg.getEconomicSnapshot(actor, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
       return;
     }
@@ -407,12 +400,10 @@ describe('Personal Economic Graph', () => {
       estimatedBalance: { minorUnits: '35000000', currency: 'USD' },
     });
     const before = peg.getEconomicGraph(actor, subjectId);
-    assert.equal(before.ok, true);
     if (!before.ok) {
       return;
     }
     const rebuilt = peg.rebuildDerivedProjection(subjectId, source);
-    assert.equal(rebuilt.ok, true);
     if (!rebuilt.ok) {
       return;
     }

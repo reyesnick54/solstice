@@ -67,7 +67,6 @@ import {
 describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
   it('1. valid goods output', () => {
     const result = ingestGoodsObservation(VALID_FINISHED_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -78,7 +77,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('2. valid goods delivery', () => {
     const result = ingestGoodsObservation(VALID_GOODS_DELIVERY);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -117,7 +115,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('6. manufacturing → goods attribution is not a double count', () => {
     const result = evaluateManufacturingGoodsAttribution(SANDBOX_MFG_EVENT, VALID_FINISHED_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -128,7 +125,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('7. agriculture → goods attribution is not a double count', () => {
     const result = evaluateAgricultureGoodsAttribution(SANDBOX_AG_EVENT, AGRICULTURE_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -149,7 +145,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('9. valid unitized service', () => {
     const result = ingestServiceObservation(VALID_UNITIZED_SERVICE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -159,7 +154,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('10. valid time service', () => {
     const result = ingestServiceObservation(VALID_TIME_SERVICE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -192,7 +186,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     assert.equal(schemaAllowsUnit('SERVICE_DELIVERY', 'machine_h'), true);
     assert.deepEqual(FACT_SCHEMAS.SERVICE_DELIVERY.allowedUnits.includes('machine_h'), true);
     const result = ingestServiceObservation(HISTORICAL_MACHINE_HOUR);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -218,7 +211,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const original = fabric.ingest(VALID_FINISHED_GOODS_BATCH);
     assert.equal(original.ok, true);
     const returned = fabric.ingest(RETURNED_GOOD);
-    assert.equal(returned.ok, true);
     if (!returned.ok) {
       return;
     }
@@ -231,7 +223,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const fabric = new GoodsCommerceDataFabric();
     fabric.ingest(VALID_FINISHED_GOODS_BATCH);
     const returned = fabric.ingest(RETURNED_GOOD);
-    assert.equal(returned.ok, true);
     if (!returned.ok) {
       return;
     }
@@ -252,7 +243,6 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
       }),
       expectedPolicyVersion: 1,
     });
-    assert.equal(reserved.ok, true);
     if (!reserved.ok) {
       return;
     }

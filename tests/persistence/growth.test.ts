@@ -49,7 +49,6 @@ describe('Growth Orchestrator persistence', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_growth_pg');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }

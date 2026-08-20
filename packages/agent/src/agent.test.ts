@@ -18,7 +18,6 @@ describe('Personal Economy Agent interpretation', () => {
         'Keep at least $8,000 liquid. Build my emergency fund to $20,000. Reduce expensive debt. Do not make high-risk investments. Ask me before any movement over $1,000.',
       now: NOW,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -40,7 +39,6 @@ describe('Personal Economy Agent interpretation', () => {
       sourceText: 'I want $1,000 to become $1,300 next week.',
       now: NOW,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }

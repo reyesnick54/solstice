@@ -223,15 +223,24 @@ export function isGoodsDeliveryCompleted(state: FulfillmentState | null): boolea
 }
 
 export function goodsFactCannotAutoMint(): true {
-  return GOODS_FACT_AUTO_MINTS === false;
+  if (GOODS_FACT_AUTO_MINTS) {
+    throw new Error('GOODS_FACT_AUTO_MINTS');
+  }
+  return true;
 }
 
 export function orderDoesNotEqualOutput(): true {
-  return ORDER_EQUALS_OUTPUT === false;
+  if (ORDER_EQUALS_OUTPUT) {
+    throw new Error('ORDER_EQUALS_OUTPUT');
+  }
+  return true;
 }
 
 export function paymentDoesNotEqualOutput(): true {
-  return PAYMENT_EQUALS_PRODUCTIVE_OUTPUT === false;
+  if (PAYMENT_EQUALS_PRODUCTIVE_OUTPUT) {
+    throw new Error('PAYMENT_EQUALS_PRODUCTIVE_OUTPUT');
+  }
+  return true;
 }
 
 export function isGoodsUnit(unit: string): unit is GoodsUnit | UnitCode {

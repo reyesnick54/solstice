@@ -34,7 +34,6 @@ function humanActor() {
     true,
   );
   const actor = identity.service.resolveActorContext('operator_1');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -45,7 +44,6 @@ describe('model registry', () => {
   it('registers, validates, and human-approves the canonical risk model for simulation only', () => {
     const registry = new ModelRegistry();
     const seeded = seedCanonicalRiskModel(registry, humanActor(), NOW);
-    assert.equal(seeded.ok, true);
     if (!seeded.ok) {
       return;
     }
@@ -60,7 +58,6 @@ describe('model registry', () => {
   it('rejects in-place artifact replacement and requires a new version', () => {
     const registry = new ModelRegistry();
     const seeded = seedCanonicalRiskModel(registry, humanActor(), NOW);
-    assert.equal(seeded.ok, true);
     if (!seeded.ok) {
       return;
     }

@@ -17,7 +17,6 @@ import type {
   HumanInformationAnchorReconciliationId,
   HumanInformationUsageAnchorProjectionId,
 } from './ids.ts';
-import type { ChainRecordType } from '../../../../sunrey-chain/src/taxonomy.ts';
 
 export const HIN_ANCHOR_KINDS = [
   'CONSENT_GRANT',

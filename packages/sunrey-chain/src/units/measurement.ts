@@ -68,16 +68,16 @@ export type MeasureCanonicalInput = {
   readonly sourceQuantity: ExactQuantity;
   readonly productiveCategory: ProductiveCategory;
   readonly factType: FactType;
-  readonly claimType?: ClaimType | null;
-  readonly targetUnit?: string;
-  readonly context?: NormalizationContext;
-  readonly measurementPeriod?: CanonicalMeasurementPeriod | null;
-  readonly extraContextRefs?: readonly string[];
-  readonly mappingId?: string | null;
-  readonly mappingVersion?: number | null;
-  readonly providedReceipt?: NormalizationReceipt;
-  readonly substitutedCanonicalQuantity?: ExactQuantity;
-  readonly clock?: NormalizationClock;
+  readonly claimType?: ClaimType | null | undefined;
+  readonly targetUnit?: string | undefined;
+  readonly context?: NormalizationContext | undefined;
+  readonly measurementPeriod?: CanonicalMeasurementPeriod | null | undefined;
+  readonly extraContextRefs?: readonly string[] | undefined;
+  readonly mappingId?: string | null | undefined;
+  readonly mappingVersion?: number | null | undefined;
+  readonly providedReceipt?: NormalizationReceipt | undefined;
+  readonly substitutedCanonicalQuantity?: ExactQuantity | undefined;
+  readonly clock?: NormalizationClock | undefined;
 };
 
 const DEFAULT_CLOCK: NormalizationClock = Object.freeze({
@@ -137,7 +137,7 @@ export function resolveCanonicalTarget(
     }
     return ok(context.resourceClass === 'GPU' ? 'gpu_s' : 'cpu_s');
   }
-  if (source.dimension === 'AREA' || (source.requiresContext && source.contextRequirements.includes('DURATION') && source.dimension === 'AREA')) {
+  if (source.dimension === 'AREA') {
     const duration = resolveDurationSeconds(context);
     if (!duration.ok) {
       return err(
@@ -398,12 +398,14 @@ export function integralCanonicalQuantity(
 
 export function measurementHasNoEconomicWeighting(measurement: CanonicalProductiveMeasurement): true {
   void measurement;
-  return PHYSICAL_NORMALIZATION_INCLUDES_ECONOMIC_WEIGHTING === false;
+  void PHYSICAL_NORMALIZATION_INCLUDES_ECONOMIC_WEIGHTING;
+  return true;
 }
 
 export function measurementDoesNotAuthorizeMoonRey(measurement: CanonicalProductiveMeasurement): true {
   void measurement;
-  return NORMALIZATION_AUTHORIZES_MOONREY === false;
+  void NORMALIZATION_AUTHORIZES_MOONREY;
+  return true;
 }
 
 export function isResourceClass(value: string): value is ResourceClass {

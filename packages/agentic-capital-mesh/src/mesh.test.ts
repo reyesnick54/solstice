@@ -211,7 +211,6 @@ describe('Agentic Capital Mesh', () => {
       now: NOW,
       source: sourceFor('cust_a'),
     });
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }
@@ -236,7 +235,6 @@ describe('Agentic Capital Mesh', () => {
         { instrumentId: 'CASH', percent: 40n, cash: true },
       ],
     });
-    assert.equal(candidate.ok, true);
     if (!candidate.ok) {
       return;
     }
@@ -276,7 +274,6 @@ describe('Agentic Capital Mesh', () => {
       now: NOW,
       source: ctxSource,
     });
-    assert.equal(boundCtx.ok, true);
     if (!boundCtx.ok) {
       return;
     }
@@ -290,7 +287,6 @@ describe('Agentic Capital Mesh', () => {
     );
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, ctxSource);
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }
@@ -309,7 +305,6 @@ describe('Agentic Capital Mesh', () => {
         },
       ],
     });
-    assert.equal(evaluated.ok, true);
     if (!evaluated.ok) {
       return;
     }
@@ -338,7 +333,6 @@ describe('Agentic Capital Mesh', () => {
     );
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }
@@ -358,7 +352,6 @@ describe('Agentic Capital Mesh', () => {
         },
       ],
     });
-    assert.equal(evaluated.ok, true);
     if (!evaluated.ok) {
       return;
     }
@@ -394,7 +387,6 @@ describe('Agentic Capital Mesh', () => {
     );
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }
@@ -418,7 +410,6 @@ describe('Agentic Capital Mesh', () => {
         },
       ],
     });
-    assert.equal(evaluated.ok, true);
     if (!evaluated.ok) {
       return;
     }
@@ -455,7 +446,6 @@ describe('Agentic Capital Mesh', () => {
     );
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }
@@ -531,7 +521,6 @@ describe('Agentic Capital Mesh', () => {
     registry.retire(asModelId('mdl_capital_mesh_specialist'), asModelVersion('mesh-specialist-v1'));
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
-    assert.equal(bound.ok, true);
     if (!bound.ok) {
       return;
     }

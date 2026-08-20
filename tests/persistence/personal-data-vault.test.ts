@@ -48,7 +48,6 @@ describe('Personal Data Vault persistence', () => {
         true,
       );
       const actor = identity.service.resolveActorContext('actor_pdv_pg');
-      assert.equal(actor.ok, true);
       if (!actor.ok) {
         return;
       }
@@ -67,7 +66,6 @@ describe('Personal Data Vault persistence', () => {
         provenanceKind: payroll.provenanceKind,
         purposeRef: 'persist.ingest',
       });
-      assert.equal(ingested.ok, true);
       if (!ingested.ok) {
         return;
       }

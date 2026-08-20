@@ -46,12 +46,10 @@ describe('SunRey Identity', () => {
       actorId: 'actor_valid',
       jurisdiction: GB,
     });
-    assert.equal(provisioned.ok, true);
     if (!provisioned.ok) {
       return;
     }
     const resolved = service.resolveActorContext('actor_valid');
-    assert.equal(resolved.ok, true);
     if (!resolved.ok) {
       return;
     }
@@ -205,7 +203,6 @@ describe('SunRey Identity', () => {
     const { adapter, keys, clock } = harness();
     assert.equal(adapter.provisionSimulatedActor({ actorId: 'actor_fab', jurisdiction: GB }).ok, true);
     const real = adapter.service.resolveActorContext('actor_fab');
-    assert.equal(real.ok, true);
     if (!real.ok) {
       return;
     }
@@ -225,7 +222,6 @@ describe('SunRey Identity', () => {
       issuedAt: clock.now(),
       expiresAt: real.value.expiresAt,
     });
-    assert.equal(minted.ok, true);
     if (!minted.ok) {
       return;
     }

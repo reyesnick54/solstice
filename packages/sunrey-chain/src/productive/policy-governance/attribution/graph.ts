@@ -15,11 +15,11 @@ import {
 
 export type AttributionGraphSources = {
   readonly events: readonly ProductiveEconomicEvent[];
-  readonly objectRefs?: readonly IdentityRef[];
-  readonly claimRefs?: readonly IdentityRef[];
-  readonly contributionRefs?: readonly IdentityRef[];
-  readonly economicAssetRefs?: readonly IdentityRef[];
-  readonly relations?: readonly EventRelation[];
+  readonly objectRefs?: readonly IdentityRef[] | undefined;
+  readonly claimRefs?: readonly IdentityRef[] | undefined;
+  readonly contributionRefs?: readonly IdentityRef[] | undefined;
+  readonly economicAssetRefs?: readonly IdentityRef[] | undefined;
+  readonly relations?: readonly EventRelation[] | undefined;
 };
 
 /**
@@ -139,5 +139,8 @@ export function attributionGraphCannotMint(graph: ProductiveAttributionGraph): f
 }
 
 export function attributionGraphIsProjection(graph: ProductiveAttributionGraph): true {
-  return graph.isLedger === false && graph.isMonetaryAuthority === false && graph.canMint === false;
+  if (graph.isLedger !== false || graph.isMonetaryAuthority !== false || graph.canMint !== false) {
+    throw new Error('ATTRIBUTION_GRAPH_NOT_PROJECTION');
+  }
+  return true;
 }

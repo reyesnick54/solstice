@@ -20,7 +20,6 @@ export const UNIT_FAMILIES = Object.freeze({
   FREIGHT: ['tonne_km'],
   STORAGE: ['GB', 'TB'],
   BANDWIDTH: ['GB_s', 'B_s'],
-  BANDWIDTH: ['GB_s'],
   FACILITY_TIME: ['facility_hour'],
 } as const);
 
@@ -45,7 +44,6 @@ const FAMILY_SCALE: Readonly<Record<UnitCode, { readonly family: string; readonl
     TB: { family: 'STORAGE', toBase: 1_000n },
     GB_s: { family: 'BANDWIDTH', toBase: 1_000_000_000n },
     B_s: { family: 'BANDWIDTH', toBase: 1n },
-    GB_s: { family: 'BANDWIDTH', toBase: 1n },
     facility_hour: { family: 'FACILITY_TIME', toBase: 1n },
   });
 

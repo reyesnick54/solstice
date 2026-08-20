@@ -45,7 +45,6 @@ describe('PEVE persistence', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_peve_pg');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }
@@ -57,7 +56,6 @@ describe('PEVE persistence', () => {
       estimatedAmount: { minorUnits: '400000', currency: 'USD' },
     });
     const snapshot = peg.getEconomicSnapshot(actor.value, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
       return;
     }

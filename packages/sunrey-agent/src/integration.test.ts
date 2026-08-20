@@ -144,7 +144,6 @@ describe('agent mandate integrations', () => {
       delegatedSigningKeyId: null,
       createdByActorId: 'user_1',
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -162,7 +161,6 @@ describe('agent mandate integrations', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }

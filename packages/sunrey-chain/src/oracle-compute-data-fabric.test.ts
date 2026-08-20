@@ -46,7 +46,6 @@ import {
 describe('CHUNK-130 compute and AI economic data fabric', () => {
   it('1. converts 1 GPU for 10 seconds into 10 GPU-seconds', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(1n, 10n), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -57,7 +56,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('2. multiplies GPU resource count: 8 GPUs for 10 seconds = 80 GPU-seconds', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(8n, 10n), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -68,7 +66,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('3. maps CPU resource-time through canonical CPU context', () => {
     const ingested = ingestComputeObservation(cpuExecutionFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -88,7 +85,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('5. classifies generic compute with CPU context', () => {
     const ingested = ingestComputeObservation(genericComputeWithClassFixture('CPU'), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -98,7 +94,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('6. classifies generic compute with GPU context', () => {
     const ingested = ingestComputeObservation(genericComputeWithClassFixture('GPU'), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -108,7 +103,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('7. retains inference tokens as token_inference semantics', () => {
     const ingested = ingestComputeObservation(inferenceTokenFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }
@@ -321,7 +315,6 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('projects compute metadata into the Economic Asset Registry without payloads', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }

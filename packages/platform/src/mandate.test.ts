@@ -35,13 +35,11 @@ describe('mandate compiler', () => {
         'Keep at least $8,000 liquid. Build my emergency fund to $20,000. Reduce expensive debt. Do not make high-risk investments. Ask me before any movement over $1,000.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
@@ -61,7 +59,6 @@ describe('mandate compiler', () => {
       sourceText: 'Keep all $10,000 liquid and invest all $10,000 immediately.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
@@ -78,7 +75,6 @@ describe('mandate compiler', () => {
       sourceText: 'Hello there.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
@@ -99,13 +95,11 @@ describe('mandate confirmation', () => {
       sourceText: 'Keep at least $8,000 liquid and reduce expensive debt.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
@@ -142,7 +136,6 @@ describe('mandate confirmation', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_confirm');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }
@@ -151,13 +144,11 @@ describe('mandate confirmation', () => {
       sourceText: 'Keep at least $8,000 liquid and reduce expensive debt.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }

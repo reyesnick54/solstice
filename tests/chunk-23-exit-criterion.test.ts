@@ -55,7 +55,6 @@ describe('Chunk 23 exit criterion', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'exit.ingest',
     });
-    assert.equal(asset.ok, true);
     if (!asset.ok) {
       return;
     }

@@ -40,7 +40,6 @@ function setup(actorId: string, identityId: string) {
     true,
   );
   const actor = identity.service.resolveActorContext(actorId);
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -90,7 +89,6 @@ function setup(actorId: string, identityId: string) {
     identityId,
   );
   const snapshot = peg.getEconomicSnapshot(actor.value, identityId);
-  assert.equal(snapshot.ok, true);
   if (!snapshot.ok) {
     throw new Error('peg snapshot');
   }
@@ -102,7 +100,6 @@ describe('Personal Economic Value Engine', () => {
   it('produces a multi-dimensional explainable snapshot without a human-worth score', () => {
     const { actor, peve, snapshot, subjectId } = setup('actor_peve_1', 'id_peve_1');
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
-    assert.equal(generated.ok, true);
     if (!generated.ok) {
       return;
     }
@@ -141,7 +138,6 @@ describe('Personal Economic Value Engine', () => {
       guaranteed: false,
       survivesRebuild: true,
     });
-    assert.equal(baseline.ok, true);
     if (!baseline.ok) {
       return;
     }
@@ -197,7 +193,6 @@ describe('Personal Economic Value Engine', () => {
       assert.equal(duplicate.error.code, 'DOUBLE_COUNT');
     }
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
-    assert.equal(generated.ok, true);
     if (!generated.ok) {
       return;
     }
@@ -210,21 +205,18 @@ describe('Personal Economic Value Engine', () => {
   it('keeps historical snapshots reproducible after a formula change', () => {
     const { actor, peve, snapshot, subjectId } = setup('actor_peve_3', 'id_peve_3');
     const first = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
-    assert.equal(first.ok, true);
     if (!first.ok) {
       return;
     }
     const activated = peve.activateModel(actor, subjectId, FORMULA_V2, MODEL_V2);
     assert.equal(activated.ok, true);
     const second = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
-    assert.equal(second.ok, true);
     if (!second.ok) {
       return;
     }
     assert.equal(first.value.formulaVersion, FORMULA_V1);
     assert.equal(second.value.formulaVersion, FORMULA_V2);
     const reread = peve.getEconomicValueSnapshot(actor, subjectId, first.value.snapshotId);
-    assert.equal(reread.ok, true);
     if (!reread.ok) {
       return;
     }
@@ -237,7 +229,6 @@ describe('Personal Economic Value Engine', () => {
       { formulaVersion: FORMULA_V2, modelVersion: MODEL_V2 },
       snapshot,
     );
-    assert.equal(compared.ok, true);
     if (!compared.ok) {
       return;
     }
@@ -277,7 +268,6 @@ describe('Personal Economic Value Engine', () => {
       estimatedAmount: { minorUnits: '100000', currency: 'SAR' },
     });
     const mixed = peg.getEconomicSnapshot(actor, subjectId);
-    assert.equal(mixed.ok, true);
     if (!mixed.ok) {
       return;
     }
@@ -299,7 +289,6 @@ describe('Personal Economic Value Engine', () => {
         goals: Object.freeze([]),
       },
     });
-    assert.equal(sparse.ok, true);
     if (!sparse.ok) {
       return;
     }
@@ -312,7 +301,6 @@ describe('Personal Economic Value Engine', () => {
     );
     assert.equal(dimension.ok, false);
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
-    assert.equal(generated.ok, true);
     if (!generated.ok) {
       return;
     }

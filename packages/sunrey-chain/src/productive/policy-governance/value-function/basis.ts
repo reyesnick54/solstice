@@ -125,7 +125,7 @@ export function productionBaseValueScheduleUnconfigured(): ProductionBaseValueSc
   return Object.freeze({
     status: PRODUCTION_BASE_VALUE_SCHEDULE_STATUS,
     productionConfigured: false,
-    entries: [],
+    entries: [] as const,
   });
 }
 

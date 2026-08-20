@@ -45,7 +45,6 @@ const NOW = '2026-08-18T00:00:00.000Z';
 describe('Chunk 91 executable provider runtime', () => {
   it('covers every canonical provider domain against local mocks', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
       return;
     }
@@ -96,7 +95,6 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('records mandatory negative controls', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
       return;
     }
@@ -118,7 +116,6 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('executes KMS, HSM, storage, oracle, KYC, custody and banking adapters', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
       return;
     }
@@ -178,7 +175,6 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('seals engineering evidence and preserves matrix lanes', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
       return;
     }

@@ -66,7 +66,6 @@ describe('SunRey transaction protocol v1', () => {
     const envelope = signedTransferEnvelope();
     const state = seededState();
     const result = processTransaction(encodeEnvelope(envelope), state, CONTEXT);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }

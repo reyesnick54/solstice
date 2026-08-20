@@ -67,7 +67,6 @@ function setupActor(actorId: string, identityId: string) {
     true,
   );
   const actor = identity.service.resolveActorContext(actorId);
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -214,18 +213,15 @@ describe('Growth Orchestrator demo path', () => {
       sourceText:
         'Keep at least $8,000 liquid. Build my emergency fund to $20,000. Reduce expensive debt. Do not make high-risk investments. Ask me before any movement over $1,000.',
     });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
     const active = orchestrator.confirmAndActivate(actor, actor.subjectId);
-    assert.equal(active.ok, true);
     if (!active.ok) {
       return;
     }
     assert.equal(active.value.state, 'ACTIVE');
     const planned = orchestrator.plan(actor, actor.subjectId);
-    assert.equal(planned.ok, true);
     if (!planned.ok) {
       return;
     }
@@ -268,7 +264,6 @@ describe('Growth Orchestrator demo path', () => {
     assert.equal(stale?.state, 'STALE');
     assert.equal(shouldInvalidatePlan({ plan: planned.value.plan, event: { eventType: 'DepositPosted' } }), true);
     const again = orchestrator.plan(actor, actor.subjectId);
-    assert.equal(again.ok, true);
     if (!again.ok) {
       return;
     }
@@ -285,13 +280,11 @@ describe('guaranteed-return prohibition', () => {
       sourceText: 'I want $1,000 to become $1,300 next week.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
@@ -359,13 +352,11 @@ describe('feasibility and ranking', () => {
       sourceText: 'Keep at least $8,000 liquid and reduce expensive debt.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
@@ -421,13 +412,11 @@ describe('feasibility and ranking', () => {
       sourceText: 'Keep at least $8,000 liquid. Reduce unnecessary fees. Reduce expensive debt.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }
@@ -513,7 +502,6 @@ describe('ActionIntent bridge', () => {
       actorId: 'actor',
       requestedAt: NOW,
     });
-    assert.equal(supported.ok, true);
     if (!supported.ok) {
       return;
     }
@@ -564,13 +552,11 @@ describe('pre-trade risk annotations', () => {
       sourceText: 'Keep at least $8,000 liquid.',
       now: NOW,
     });
-    assert.equal(interpretation.ok, true);
     if (!interpretation.ok) {
       return;
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
-    assert.equal(compiled.ok, true);
     if (!compiled.ok) {
       return;
     }

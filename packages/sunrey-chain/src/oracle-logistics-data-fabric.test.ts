@@ -45,7 +45,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('1. valid tonne-km', () => {
     const result = ingestLogisticsObservation(VALID_TONNE_KM);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -61,7 +60,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
       { mantissa: '200', scale: 0, unit: 'km' },
       undefined,
     );
-    assert.equal(receipt.ok, true);
     if (!receipt.ok) {
       throw new Error(receipt.error.detail);
     }
@@ -74,7 +72,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('3. distance-only rejected', () => {
     const result = ingestLogisticsObservation(DISTANCE_WITHOUT_MASS);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -84,7 +81,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('4. mass-only rejected', () => {
     const result = ingestLogisticsObservation(MASS_WITHOUT_DISTANCE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -94,7 +90,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('5. multi-leg attribution', () => {
     const result = ingestLogisticsObservation(MULTI_LEG_SHIPMENT);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -106,7 +101,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('6. whole route + legs cannot over-attribute', () => {
     const result = ingestLogisticsObservation(WHOLE_TRIP_PLUS_LEGS);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -116,7 +110,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('7. delivery completion', () => {
     const result = ingestLogisticsObservation(COMPLETED_DELIVERY);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -127,7 +120,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('8. in-transit not completed', () => {
     const result = ingestLogisticsObservation(IN_TRANSIT_DELIVERY);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -139,7 +131,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
     const first = ingestLogisticsObservation(COMPLETED_DELIVERY);
     const second = ingestLogisticsObservation(DUPLICATE_CARRIER_DELIVERY);
     assert.equal(first.ok && first.value.accepted, true);
-    assert.equal(second.ok, true);
     if (!second.ok) {
       throw new Error(second.error.detail);
     }
@@ -149,7 +140,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('10. manufacturing goods distinct from logistics', () => {
     const result = ingestLogisticsObservation(GOODS_REPLAYED_AS_LOGISTICS);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -160,7 +150,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('11. warehouse capacity not realized service', () => {
     const result = ingestLogisticsObservation(WAREHOUSE_CAPACITY);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -172,7 +161,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('12. storage with duration', () => {
     const result = ingestLogisticsObservation(WAREHOUSE_VOLUME_TIME);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -184,7 +172,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('13. storage without duration rejected', () => {
     const result = ingestLogisticsObservation(STORAGE_MISSING_DURATION);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -210,7 +197,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('15. impossible movement flagged', () => {
     const result = ingestLogisticsObservation(IMPOSSIBLE_MOVEMENT);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -224,7 +210,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('16. digital/physical storage not physically merged', () => {
     const result = ingestLogisticsObservation(DIGITAL_PHYSICAL_MERGE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -234,7 +219,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('17. no real network calls', () => {
     const result = ingestLogisticsObservation(NETWORK_ATTEMPT);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -246,7 +230,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('18. logistics fact cannot auto-mint', () => {
     const result = ingestLogisticsObservation(VALID_TONNE_KM);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -262,7 +245,6 @@ describe('CHUNK-132 logistics, freight, delivery, and storage data fabric', () =
 
   it('19. storage fact cannot auto-mint', () => {
     const result = ingestLogisticsObservation(WAREHOUSE_VOLUME_TIME);
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }

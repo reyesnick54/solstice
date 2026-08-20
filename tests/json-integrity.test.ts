@@ -1,9 +1,18 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { createRequire } from 'node:module';
 import { describe, it } from 'node:test';
 
-import { checkJsonIntegrity, parseJsonStrict } from '../scripts/check-json-integrity.mjs';
+const require = createRequire(import.meta.url);
+const { checkJsonIntegrity, parseJsonStrict } = require('../scripts/check-json-integrity.mjs') as {
+  checkJsonIntegrity: (root: string) => {
+    findings: unknown[];
+    packageJson?: { scripts?: { test?: string } };
+    manifest?: { capabilities?: { id: string }[] };
+  };
+  parseJsonStrict: (text: string, label: string) => unknown;
+};
 
 const ROOT = join(import.meta.dirname, '..');
 

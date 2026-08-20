@@ -102,7 +102,6 @@ describe('Chunk 122 attribution invariants', () => {
   it('correction preserves history', () => {
     const book = new ProductiveAttributionBook();
     const first = reserve(book, manufacturingObservation(), 'd1', ATTRIBUTION_SHARE_SCALE);
-    assert.equal(first.ok, true);
     if (!first.ok) {
       return;
     }

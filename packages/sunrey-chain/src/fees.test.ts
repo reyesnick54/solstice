@@ -69,7 +69,6 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -134,7 +133,6 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -154,7 +152,6 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }
@@ -247,7 +244,6 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       return;
     }

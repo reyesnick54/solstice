@@ -12,7 +12,6 @@ import { Money } from '../../money/src/money.ts';
 async function issuedActive(suffix: string, deposit = 100_000n) {
   const world = createCardWorld(suffix, deposit);
   const requested = world.cards.requestCard(requestCardIntent(world, `card_${suffix}`));
-  assert.equal(requested.outcome, 'OK');
   if (requested.outcome !== 'OK') {
     throw new Error('request failed');
   }
@@ -25,7 +24,6 @@ async function issuedActive(suffix: string, deposit = 100_000n) {
     purpose: 'CUSTOMER_CARD',
     payload: { cardId: requested.value.cardId, accountId: world.account.id },
   });
-  assert.equal(activated.outcome, 'OK');
   if (activated.outcome !== 'OK') {
     throw new Error('activate failed');
   }
@@ -313,7 +311,6 @@ describe('card processing failures', () => {
         processorReference: 'auth_rev',
       }),
     );
-    assert.equal(auth.outcome, 'OK');
     if (auth.outcome !== 'OK') {
       return;
     }

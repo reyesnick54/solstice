@@ -27,7 +27,6 @@ import type { HumanContributionRegistryRecord } from './types.ts';
 const LATER = asUtcInstant('2026-08-19T12:05:00.000Z');
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }): T {
-  assert.equal(result.ok, true, result.ok ? '' : result.error.message);
   if (!result.ok) {
     throw new Error(result.error.message);
   }

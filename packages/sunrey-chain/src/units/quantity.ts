@@ -42,9 +42,9 @@ export function quantityRational(quantity: ExactQuantity): { numerator: bigint; 
 export function exactQuantity(input: {
   readonly mantissa: bigint;
   readonly unitId: string;
-  readonly scale?: number;
-  readonly numerator?: bigint;
-  readonly denominator?: bigint;
+  readonly scale?: number | undefined;
+  readonly numerator?: bigint | undefined;
+  readonly denominator?: bigint | undefined;
 }): Result<ExactQuantity, NormalizationRefusal> {
   const scale = input.scale ?? 0;
   if (!Number.isInteger(scale) || scale < 0 || scale > MAX_QUANTITY_SCALE) {

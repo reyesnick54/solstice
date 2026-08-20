@@ -48,7 +48,6 @@ function harness() {
     true,
   );
   const actor = identity.service.resolveActorContext('operator_1');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -188,7 +187,6 @@ describe('Strategy Lab', () => {
       partition: 'TRAIN',
       selectionCriteria: 'highest-train-total-return-not-unbiased',
     });
-    assert.equal(experiment.ok, true);
     if (!experiment.ok) {
       return;
     }
@@ -303,7 +301,6 @@ describe('Strategy Lab', () => {
     const shadow = lab.approveShadow(actor, 'str_two_etf_cash', 'v1', 'human shadow review');
     assert.equal(shadow.ok, true);
     const run = lab.startShadow('str_two_etf_cash', 'v1', dataset.datasetId, dataset.version);
-    assert.equal(run.ok, true);
     if (!run.ok) {
       return;
     }

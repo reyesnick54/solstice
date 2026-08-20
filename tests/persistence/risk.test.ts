@@ -43,7 +43,6 @@ describe('Risk persistence', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_risk_pg');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }

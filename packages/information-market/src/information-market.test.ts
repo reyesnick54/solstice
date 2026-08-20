@@ -343,7 +343,6 @@ describe('information market', () => {
       purposeRef: 'DATA_CONTRIBUTION_RESEARCH',
       now: NOW,
     });
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       return;
     }

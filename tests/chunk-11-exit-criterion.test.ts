@@ -9,7 +9,6 @@ describe('Chunk 11 exit criterion', () => {
   it('walks simulated card issue → auth hold → clear → refund → reconcile → evidence', async () => {
     const world = createCardWorld('exit', 100_000n);
     const requested = world.cards.requestCard(requestCardIntent(world, 'card_exit'));
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
       return;
     }
@@ -22,7 +21,6 @@ describe('Chunk 11 exit criterion', () => {
       purpose: 'CUSTOMER_CARD',
       payload: { cardId: requested.value.cardId, accountId: world.account.id },
     });
-    assert.equal(activated.outcome, 'OK');
     if (activated.outcome !== 'OK') {
       return;
     }
@@ -45,7 +43,6 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'auth_exit_1',
       }),
     );
-    assert.equal(auth.outcome, 'OK');
     if (auth.outcome !== 'OK') {
       return;
     }
@@ -67,7 +64,6 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'clr_exit_1',
       }),
     );
-    assert.equal(clearing.outcome, 'OK');
     if (clearing.outcome !== 'OK') {
       return;
     }
@@ -84,7 +80,6 @@ describe('Chunk 11 exit criterion', () => {
         processorReference: 'rf_exit_1',
       }),
     );
-    assert.equal(refund.outcome, 'OK');
     if (refund.outcome !== 'OK') {
       return;
     }

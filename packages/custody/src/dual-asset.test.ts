@@ -105,9 +105,8 @@ describe('chunk 153 dual-asset custody hardening', () => {
       authorizedAssets: [SUNREY, MOONREY],
       schemaVersion: 2,
     });
-    assert.equal(vault.outcome, 'OK');
     if (vault.outcome !== 'OK') {
-      throw new Error(vault.outcome === 'REJECTED' ? vault.message : vault.outcome);
+      throw new Error(vault.outcome === 'REJECTED' ? vault.message : String(vault.outcome));
     }
     assert.equal(vault.value.schemaVersion, 2);
     const sunreyWallet = h.custody.createAddress({
@@ -138,9 +137,6 @@ describe('chunk 153 dual-asset custody hardening', () => {
     assert.equal(moonreyPos?.onChain, 200n);
     const rebound = h.custody.rebindWalletAsset();
     assert.equal(rebound.outcome, 'REJECTED');
-    if (rebound.outcome !== 'REJECTED') {
-      throw new Error(rebound.outcome);
-    }
     assert.equal(rebound.code, 'ASSET_IMMUTABLE');
   });
 
@@ -236,7 +232,6 @@ describe('chunk 153 dual-asset custody hardening', () => {
     resetWithdrawals();
     resetKmsKeys();
     const profile = validateCustodyProviderCandidateProfile(fixtureCustodyProviderProfile());
-    assert.equal(profile.ok, true);
     if (!profile.ok) {
       throw new Error('profile');
     }
@@ -247,13 +242,11 @@ describe('chunk 153 dual-asset custody hardening', () => {
       workload: 'custody_worker',
       secretRef: fixtureCustodySecretRef(),
     });
-    assert.equal(binding.ok, true);
     if (!binding.ok) {
       throw new Error('binding');
     }
     assert.equal(binding.value.rawCredentialPresent, false);
     const plane = bindFixtureCustodyCredential({ bindingId: 'bind_plane' });
-    assert.equal(plane.ok, true);
     if (!plane.ok) {
       throw new Error('plane');
     }
@@ -280,7 +273,6 @@ describe('chunk 153 dual-asset custody hardening', () => {
     assert.equal(oracleReuse.error.code, 'CREDENTIAL_DOMAIN_MISMATCH');
     const hsm = createDevelopmentHsmSimulator();
     const handle = generateNonExportableCustodyKey(hsm, SUITE_SUNREY_ED25519_V1);
-    assert.equal(handle.ok, true);
     if (!handle.ok) {
       throw new Error('handle');
     }

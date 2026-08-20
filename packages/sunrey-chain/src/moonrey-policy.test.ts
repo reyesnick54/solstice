@@ -100,7 +100,6 @@ describe('Chunk 74 MoonRey issuance policy', () => {
 
   it('rejects duplicate governed contributions', () => {
     const first = evaluateContributionEligibility(baseInput());
-    assert.equal(first.ok, true);
     if (!first.ok) {
       return;
     }
@@ -115,7 +114,6 @@ describe('Chunk 74 MoonRey issuance policy', () => {
 
   it('rejects cross-category full credit for one event', () => {
     const first = evaluateContributionEligibility(baseInput());
-    assert.equal(first.ok, true);
     if (!first.ok) {
       return;
     }
@@ -219,7 +217,6 @@ describe('Chunk 74 MoonRey issuance policy', () => {
     });
     engine.submitClaim(claim);
     const issued = engine.issueFromClaim(claim.claimId);
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       return;
     }

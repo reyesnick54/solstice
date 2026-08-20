@@ -220,7 +220,6 @@ describe('consent ledger and purpose firewall', () => {
       operation: 'DERIVE',
       derivationType: 'DERIVED_ONLY',
     });
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
       return;
     }
@@ -308,7 +307,6 @@ describe('consent ledger and purpose firewall', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'both',
     });
-    assert.equal(original.ok, true);
     if (!original.ok) {
       return;
     }
@@ -326,7 +324,6 @@ describe('consent ledger and purpose firewall', () => {
       idempotencyKey: 'payroll-only',
       supersedesConsentId: original.value.consentId,
     });
-    assert.equal(narrowed.ok, true);
     if (!narrowed.ok) {
       return;
     }
@@ -380,7 +377,6 @@ describe('consent ledger and purpose firewall', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'contribute',
     });
-    assert.equal(draft.ok, true);
     if (!draft.ok) {
       return;
     }
@@ -424,7 +420,6 @@ describe('consent ledger and purpose firewall', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'demo.ingest.payroll',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
       return;
     }

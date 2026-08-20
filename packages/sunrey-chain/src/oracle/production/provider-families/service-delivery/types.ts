@@ -195,17 +195,29 @@ export function isServiceCompleted(state: ServiceCompletionState): boolean {
 }
 
 export function serviceFactCannotAutoMint(): true {
-  return SERVICE_FACT_AUTO_MINTS === false;
+  if (SERVICE_FACT_AUTO_MINTS) {
+    throw new Error('SERVICE_FACT_AUTO_MINTS');
+  }
+  return true;
 }
 
 export function invoiceDoesNotEqualCompletion(): true {
-  return INVOICE_EQUALS_COMPLETED_SERVICE === false;
+  if (INVOICE_EQUALS_COMPLETED_SERVICE) {
+    throw new Error('INVOICE_EQUALS_COMPLETED_SERVICE');
+  }
+  return true;
 }
 
 export function bookingDoesNotEqualCompletion(): true {
-  return BOOKING_EQUALS_COMPLETED_SERVICE === false;
+  if (BOOKING_EQUALS_COMPLETED_SERVICE) {
+    throw new Error('BOOKING_EQUALS_COMPLETED_SERVICE');
+  }
+  return true;
 }
 
 export function humanWorthScoringAbsent(): true {
-  return HUMAN_WORTH_SCORING === false;
+  if (HUMAN_WORTH_SCORING) {
+    throw new Error('HUMAN_WORTH_SCORING');
+  }
+  return true;
 }

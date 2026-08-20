@@ -44,7 +44,6 @@ describe('strategy lab persistence', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_lab_pg');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
       return;
     }

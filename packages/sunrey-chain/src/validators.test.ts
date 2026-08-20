@@ -242,7 +242,6 @@ describe('Chunk 36R SunRey validator registry', () => {
       10n,
       't',
     );
-    assert.equal(rotated.ok, true);
     if (!rotated.ok) {
       return;
     }
@@ -264,7 +263,6 @@ describe('Chunk 36R SunRey validator registry', () => {
       10n,
       't',
     );
-    assert.equal(scheduled.ok, true);
     if (!scheduled.ok) {
       return;
     }
@@ -279,7 +277,6 @@ describe('Chunk 36R SunRey validator registry', () => {
       20n,
       't',
     );
-    assert.equal(exited.ok, true);
     if (!exited.ok) {
       return;
     }

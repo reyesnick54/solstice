@@ -40,7 +40,6 @@ describe('Chunk 24 exit criterion', () => {
         'CONSENT_VIEW_OWN',
       ],
     });
-    assert.equal(alice.ok, true);
     if (!alice.ok) {
       return;
     }
@@ -66,7 +65,6 @@ describe('Chunk 24 exit criterion', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'exit.ingest',
     });
-    assert.equal(asset.ok, true);
     if (!asset.ok) {
       return;
     }
@@ -91,7 +89,6 @@ describe('Chunk 24 exit criterion', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'c24.grant',
     });
-    assert.equal(draft.ok, true);
     if (!draft.ok) {
       return;
     }

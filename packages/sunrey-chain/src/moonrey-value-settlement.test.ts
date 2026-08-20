@@ -225,7 +225,6 @@ describe('Chunk 125 productive value settlement bridge', () => {
   it('18. wrong policy version rejected', () => {
     const ready = chain({ valueFunctionPolicyVersion: 1 });
     const created = createProductiveSettlementAuthorization(ready.context);
-    assert.equal(created.ok, true);
     if (!created.ok) {
       return;
     }

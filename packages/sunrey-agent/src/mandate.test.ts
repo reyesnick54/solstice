@@ -99,7 +99,6 @@ describe('user agent mandates', () => {
   it('creates an owned mandate and exposes SDK reads', () => {
     const svc = engine();
     const created = createAgentMandate(svc, baseInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -123,7 +122,6 @@ describe('user agent mandates', () => {
   it('enforces budget, asset, market, and destination permissions', () => {
     const svc = engine();
     const created = svc.createMandate(baseInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -192,7 +190,6 @@ describe('user agent mandates', () => {
   it('executes a bounded payment through kernel and wallet ports', () => {
     const svc = engine();
     const created = svc.createMandate(baseInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -210,7 +207,6 @@ describe('user agent mandates', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }
@@ -226,7 +222,6 @@ describe('user agent mandates', () => {
   it('revokes a mandate and makes pending proposals ineligible', () => {
     const svc = engine();
     const created = createAgentMandate(svc, baseInput({ approval: { class: 'MOBILE_CONFIRMATION', highRiskAlwaysHuman: true } }));
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -244,7 +239,6 @@ describe('user agent mandates', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }
@@ -262,7 +256,6 @@ describe('user agent mandates', () => {
   it('keeps SIMULATION_ONLY from submitting real transactions', () => {
     const svc = engine();
     const created = svc.createMandate(baseInput({ mode: 'SIMULATION_ONLY' }));
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -280,7 +273,6 @@ describe('user agent mandates', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }
@@ -291,7 +283,6 @@ describe('user agent mandates', () => {
   it('separates Human Information rights from a generic financial mandate', () => {
     const svc = engine();
     const created = svc.createMandate(baseInput());
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -302,7 +293,6 @@ describe('user agent mandates', () => {
   it('approves a mobile confirmation proposal through the SDK', () => {
     const svc = engine();
     const created = svc.createMandate(baseInput({ approval: { class: 'MOBILE_CONFIRMATION', highRiskAlwaysHuman: true } }));
-    assert.equal(created.ok, true);
     if (!created.ok) {
       throw new Error('expected mandate');
     }
@@ -320,7 +310,6 @@ describe('user agent mandates', () => {
       modelRef: 'model:sim-v1',
       networkId: 'net_sunrey_simulation',
     });
-    assert.equal(proposal.ok, true);
     if (!proposal.ok) {
       throw new Error('expected proposal');
     }

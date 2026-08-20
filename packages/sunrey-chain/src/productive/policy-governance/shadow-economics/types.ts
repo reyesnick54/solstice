@@ -72,22 +72,22 @@ export const ADVERSARIAL_SCENARIO_KINDS = [
 export type AdversarialScenarioKind = (typeof ADVERSARIAL_SCENARIO_KINDS)[number];
 
 export type ShadowFactorEvidence = {
-  readonly quality?: bigint;
-  readonly freshnessAgeEpochs?: bigint;
-  readonly freshnessMaxAgeEpochs?: bigint;
-  readonly sourceIndependence?: bigint;
-  readonly provenanceConfidence?: bigint;
-  readonly utilizationActual?: bigint;
-  readonly utilizationBasis?: bigint;
-  readonly scarcity?: bigint;
-  readonly scarcityEvidenced?: boolean;
-  readonly geography?: bigint;
-  readonly geographyEvidenced?: boolean;
-  readonly delivery?: bigint;
-  readonly category?: bigint;
-  readonly concentration?: bigint;
-  readonly realization?: bigint;
-  readonly claimState?: bigint;
+  readonly quality?: bigint | undefined;
+  readonly freshnessAgeEpochs?: bigint | undefined;
+  readonly freshnessMaxAgeEpochs?: bigint | undefined;
+  readonly sourceIndependence?: bigint | undefined;
+  readonly provenanceConfidence?: bigint | undefined;
+  readonly utilizationActual?: bigint | undefined;
+  readonly utilizationBasis?: bigint | undefined;
+  readonly scarcity?: bigint | undefined;
+  readonly scarcityEvidenced?: boolean | undefined;
+  readonly geography?: bigint | undefined;
+  readonly geographyEvidenced?: boolean | undefined;
+  readonly delivery?: bigint | undefined;
+  readonly category?: bigint | undefined;
+  readonly concentration?: bigint | undefined;
+  readonly realization?: bigint | undefined;
+  readonly claimState?: bigint | undefined;
 };
 
 export type ShadowPoisonFlags = {
@@ -139,9 +139,9 @@ export type MoonReyShadowScenario = {
   readonly v1PolicyVersion: number;
   readonly v1MaximumIssuance: bigint;
   readonly evidence: ShadowFactorEvidence;
-  readonly poison?: ShadowPoisonFlags;
-  readonly batchLineage?: readonly string[];
-  readonly replayAttempt?: number;
+  readonly poison?: ShadowPoisonFlags | undefined;
+  readonly batchLineage?: readonly string[] | undefined;
+  readonly replayAttempt?: number | undefined;
 };
 
 export type PathValuation = {
