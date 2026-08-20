@@ -1225,6 +1225,18 @@ Do not create `packages/production-handoff`, `packages/sunrey-handoff`,
 `packages/day-2-ops`, `packages/production-ops`, or
 `packages/operator-acceptance`. See
 [`chunk-90-production-handoff.md`](./chunk-90-production-handoff.md).
+Chunk 158 extends that same owner with a full-platform
+production-candidate burn-in, cross-system reconciliation, readiness
+evidence bundle, and handoff gate at
+`packages/sunrey-chain/src/production-handoff/full-platform-candidate`.
+It binds existing component evidence by hash. Engineering
+`PRODUCTION_CANDIDATE_REVIEW_READY` is not production authorization.
+`PRODUCTION_ACTIVE` is not an achievable outcome. The Chunk 143
+firewall cannot be overridden. Do not create `packages/full-platform`,
+`packages/mainnet-v2`, `packages/production-ready`,
+`packages/launch-v2`, `packages/system-rc`, or
+`packages/sunrey-production`. See
+[`chunk-158-full-platform-production-candidate.md`](../operations/chunk-158-full-platform-production-candidate.md).
 Chunk 88 implements the SunRey authorized production genesis execution
 engine and launch control room at
 `packages/sunrey-chain/src/genesis-execution`. Capability

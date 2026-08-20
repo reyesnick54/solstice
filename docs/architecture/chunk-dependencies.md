@@ -1531,3 +1531,14 @@ credential plane. Do not create `packages/moonrey-custody`,
 `packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
 `packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
 returns `mustStop: false`.
+Chunk 158 implements the full-platform production-candidate burn-in,
+cross-system reconciliation, readiness evidence bundle, and handoff
+gate at
+`packages/sunrey-chain/src/production-handoff/full-platform-candidate`.
+It extends `sunrey-production-handoff`. It does not create a second
+release authority or activate production. `PRODUCTION_ACTIVE` is not
+an outcome. The evaluator returns `mustStop: false`. Do not create
+`packages/full-platform`, `packages/mainnet-v2`,
+`packages/production-ready`, `packages/launch-v2`,
+`packages/system-rc`, or `packages/sunrey-production`. See
+[`chunk-158-full-platform-production-candidate.md`](../operations/chunk-158-full-platform-production-candidate.md).
