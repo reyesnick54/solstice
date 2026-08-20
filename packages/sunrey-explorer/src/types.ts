@@ -290,6 +290,8 @@ export type FieldExposure = {
 };
 
 export type ExplorerHome = {
+  readonly productName: string;
+  readonly productBrand: string;
   readonly networkClass: NetworkClass;
   readonly networkLabel: string;
   readonly latestFinalizedHeight: number;

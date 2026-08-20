@@ -1,0 +1,13 @@
+{
+  "chunk": "CHUNK-142",
+  "title": "SunRey Runtime/Public Naming Migration and Legacy Compatibility Layer",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "persistence",
+    "event-fabric",
+    "sunrey-canonical-product-identity"
+  ],
+  "notes": "IMPLEMENTED at packages/config. Migrates current public runtime/display identity to SunRey. SUNREY_* is canonical; SOLSTICE_* is a temporary alias. Conflicting values fail with LEGACY_ENV_CONFLICT. Does not rename protocol IDs, hash domains, stored event schema refs, applied migrations, or the GitHub repository. evaluateChunkRequirements returns mustStop: false. Do not create packages/branding, packages/product-identity, packages/sunrey-naming, or packages/legacy-compat."
+}

@@ -24,7 +24,7 @@ const NOW = asUtcInstant('2026-08-15T12:00:00.000Z');
 describe('PEVE persistence', () => {
   it('persists snapshots and attribution without a financial journal table', async (t) => {
     if (!persistenceAvailable()) {
-      t.skip('SOLSTICE_PERSISTENCE_TEST is not set');
+      t.skip('SUNREY_PERSISTENCE_TEST is not set');
       return;
     }
     const env = await preparePersistence();

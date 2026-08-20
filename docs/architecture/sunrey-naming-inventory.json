@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "CHUNK-142",
+  "sourceConstitution": "docs/architecture/sunrey-naming-constitution.md",
+  "currentMasterBrand": "SunRey",
+  "legacyMasterBrand": "Solstice",
+  "legacyMasterBrandActive": false,
+  "githubRepositoryPath": "reyesnick54/solstice",
+  "items": [
+    {
+      "id": "root-package-name",
+      "kind": "PACKAGE_METADATA",
+      "classification": "MUST_MIGRATE",
+      "path": "package.json",
+      "legacyValue": "solstice",
+      "canonicalValue": "sunrey",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "root-package-description",
+      "kind": "PACKAGE_METADATA",
+      "classification": "MUST_MIGRATE",
+      "path": "package.json",
+      "legacyValue": "Solstice digital banking simulation",
+      "canonicalValue": "SunRey digital banking and dual-economy simulation",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "agents-header",
+      "kind": "DOCUMENT",
+      "classification": "MUST_MIGRATE",
+      "path": "AGENTS.md",
+      "legacyValue": "Solstice agent rules",
+      "canonicalValue": "SunRey agent rules",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "readme-heading",
+      "kind": "DOCUMENT",
+      "classification": "MUST_MIGRATE",
+      "path": "README.md",
+      "legacyValue": "# solstice",
+      "canonicalValue": "# SunRey",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "constitution-title",
+      "kind": "DOCUMENT",
+      "classification": "MUST_MIGRATE",
+      "path": "docs/architecture/constitution.md",
+      "legacyValue": "Solstice canonical architecture constitution",
+      "canonicalValue": "SunRey canonical architecture constitution",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "persistence-test-env",
+      "kind": "ENV",
+      "classification": "MIGRATE_WITH_ALIAS",
+      "path": "packages/config/src/env.ts",
+      "legacyValue": "SOLSTICE_PERSISTENCE_TEST",
+      "canonicalValue": "SUNREY_PERSISTENCE_TEST",
+      "surface": "RUNTIME",
+      "status": "ALIASED"
+    },
+    {
+      "id": "persistence-pg-env",
+      "kind": "ENV",
+      "classification": "MIGRATE_WITH_ALIAS",
+      "path": "packages/config/src/env.ts",
+      "legacyValue": "SOLSTICE_PG_*",
+      "canonicalValue": "SUNREY_PG_*",
+      "surface": "RUNTIME",
+      "status": "ALIASED"
+    },
+    {
+      "id": "sunrey-identity-id",
+      "kind": "EXPORTED_SYMBOL",
+      "classification": "MIGRATE_WITH_ALIAS",
+      "path": "packages/identity/src/ids.ts",
+      "legacyValue": "SolsticeIdentityId",
+      "canonicalValue": "SunReyIdentityId",
+      "surface": "PUBLIC_API",
+      "status": "ALIASED"
+    },
+    {
+      "id": "as-sunrey-identity-id",
+      "kind": "EXPORTED_SYMBOL",
+      "classification": "MIGRATE_WITH_ALIAS",
+      "path": "packages/identity/src/ids.ts",
+      "legacyValue": "asSolsticeIdentityId",
+      "canonicalValue": "asSunReyIdentityId",
+      "surface": "PUBLIC_API",
+      "status": "ALIASED"
+    },
+    {
+      "id": "persistence-log-prefix",
+      "kind": "DIAGNOSTIC",
+      "classification": "MUST_MIGRATE",
+      "path": "packages/persistence/src/logging.ts",
+      "legacyValue": "solstice.persistence",
+      "canonicalValue": "sunrey.persistence",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "sdk-display-metadata",
+      "kind": "SDK_METADATA",
+      "classification": "MUST_MIGRATE",
+      "path": "packages/sunrey-sdk/src/ids.ts",
+      "legacyValue": "Solstice SDK",
+      "canonicalValue": "SunRey SDK / SunRey Chain / SunRey Exchange",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "explorer-display-metadata",
+      "kind": "EXPLORER_METADATA",
+      "classification": "MUST_MIGRATE",
+      "path": "packages/sunrey-explorer/src/taxonomy.ts",
+      "legacyValue": "Solstice Explorer",
+      "canonicalValue": "SunRey Explorer",
+      "surface": "PUBLIC_DISPLAY",
+      "status": "MIGRATED"
+    },
+    {
+      "id": "event-schema-refs-v1",
+      "kind": "EVENT",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/events/src/taxonomy.ts",
+      "legacyValue": "solstice.<namespace>.<event>/1",
+      "canonicalValue": "unchanged stored schemaRef",
+      "surface": "PROTOCOL",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "hash-domains",
+      "kind": "HASH_DOMAIN",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/sunrey-chain/src/protocol/constants.ts",
+      "legacyValue": "SUNREY_*",
+      "canonicalValue": "SUNREY_*",
+      "surface": "PROTOCOL",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "network-chain-ids",
+      "kind": "PROTOCOL_ID",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/sunrey-explorer/src/taxonomy.ts",
+      "legacyValue": "net_sunrey_simulation / chn_sunrey_simulation",
+      "canonicalValue": "unchanged",
+      "surface": "PROTOCOL",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "protocol-asset-ids",
+      "kind": "PROTOCOL_ID",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/sunrey-sdk/src/ids.ts",
+      "legacyValue": "SUNREY_COIN / MOONREY_COIN",
+      "canonicalValue": "SUNREY_COIN / MOONREY_COIN",
+      "surface": "PROTOCOL",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "github-repository-path",
+      "kind": "REPOSITORY",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "https://github.com/reyesnick54/solstice",
+      "legacyValue": "reyesnick54/solstice",
+      "canonicalValue": "reyesnick54/solstice",
+      "surface": "REPOSITORY",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "npm-scope",
+      "kind": "PACKAGE_METADATA",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/*/package.json",
+      "legacyValue": "@solstice/*",
+      "canonicalValue": "@solstice/*",
+      "surface": "PACKAGE_IDENTITY",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "database-names",
+      "kind": "DATABASE",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "packages/persistence/src/env.ts",
+      "legacyValue": "solstice_customer / solstice_ledger / solstice_evidence / solstice_security",
+      "canonicalValue": "unchanged",
+      "surface": "DATABASE",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "legal-entity-ids",
+      "kind": "CATALOG_ID",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "services/accounts/src/catalog.ts",
+      "legacyValue": "le_solstice_* / SOLSTICE_UK",
+      "canonicalValue": "unchanged",
+      "surface": "PROTOCOL",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "component-id-solstice-identity",
+      "kind": "ARCHITECTURE_ID",
+      "classification": "PRESERVE_IMMUTABLE",
+      "path": "docs/architecture/manifest.json",
+      "legacyValue": "solstice-identity",
+      "canonicalValue": "solstice-identity",
+      "surface": "ARCHITECTURE",
+      "status": "PRESERVED"
+    },
+    {
+      "id": "legal-entity-display-names",
+      "kind": "CATALOG_COPY",
+      "classification": "MANUAL_REVIEW",
+      "path": "services/accounts/src/catalog.ts",
+      "legacyValue": "Solstice UK Ltd (simulation)",
+      "canonicalValue": "not migrated",
+      "surface": "SIMULATION_CATALOG",
+      "status": "REVIEWED_UNCHANGED"
+    },
+    {
+      "id": "webauthn-rpid",
+      "kind": "CREDENTIAL_ID",
+      "classification": "MANUAL_REVIEW",
+      "path": "packages/identity/src/service.ts",
+      "legacyValue": "simulation.solstice.local",
+      "canonicalValue": "not migrated",
+      "surface": "CREDENTIAL",
+      "status": "REVIEWED_UNCHANGED"
+    },
+    {
+      "id": "pdv-export-format",
+      "kind": "FORMAT_ID",
+      "classification": "MANUAL_REVIEW",
+      "path": "packages/personal-data-vault/src/taxonomy.ts",
+      "legacyValue": "SolsticePersonalDataExportV1",
+      "canonicalValue": "not migrated",
+      "surface": "PERSISTED_FORMAT",
+      "status": "REVIEWED_UNCHANGED"
+    },
+    {
+      "id": "historical-adrs",
+      "kind": "DOCUMENT",
+      "classification": "HISTORICAL_ONLY",
+      "path": "docs/architecture/adr/",
+      "legacyValue": "Solstice",
+      "canonicalValue": "unchanged historical text",
+      "surface": "HISTORICAL",
+      "status": "PRESERVED"
+    }
+  ]
+}

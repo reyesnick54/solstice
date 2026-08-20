@@ -326,9 +326,9 @@ jobs:
           --health-timeout 5s
           --health-retries 10
     env:
-      SOLSTICE_PG_HOST: 127.0.0.1
-      SOLSTICE_PG_PORT: "5432"
-      SOLSTICE_PERSISTENCE_TEST: "1"
+      SUNREY_PG_HOST: 127.0.0.1
+      SUNREY_PG_PORT: "5432"
+      SUNREY_PERSISTENCE_TEST: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2

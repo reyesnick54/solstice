@@ -63,6 +63,7 @@ export {
   asRecoveryRequestId,
   asSessionId,
   asSolsticeIdentityId,
+  asSunReyIdentityId,
   type ActorId,
   type BusinessIdentityId,
   type CapabilityGrantId,
@@ -73,6 +74,7 @@ export {
   type RecoveryRequestId,
   type SessionId,
   type SolsticeIdentityId,
+  type SunReyIdentityId,
 } from './ids.ts';
 export {
   KYC_VERIFICATION_LEVELS,

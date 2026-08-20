@@ -3,7 +3,9 @@ export {
   LOCAL_SIMULATION_PERSISTENCE_ENV,
   isPersistenceTestEnabled,
   persistenceEnvFromProcess,
+  resolvePersistenceEnv,
   type PersistenceEnv,
+  type PersistenceEnvResolution,
 } from './env.ts';
 export {
   formatPersistenceDiagnostic,

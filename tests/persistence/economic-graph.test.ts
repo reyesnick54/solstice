@@ -25,7 +25,7 @@ const NOW = asUtcInstant('2026-07-15T12:00:00.000Z');
 describe('Personal Economic Graph persistence', () => {
   it('persists and reloads a graph projection', async (t) => {
     if (!persistenceAvailable()) {
-      t.skip('SOLSTICE_PERSISTENCE_TEST is not set');
+      t.skip('SUNREY_PERSISTENCE_TEST is not set');
       return;
     }
     const env = await preparePersistence();

@@ -4,6 +4,16 @@
  * Tickers remain NOT_ASSIGNED. Do not hard-code Ed25519 as the only suite.
  */
 
+export const SUNREY_SDK_DISPLAY_NAME = 'SunRey SDK' as const;
+export const SUNREY_CHAIN_DISPLAY_NAME = 'SunRey Chain' as const;
+export const SUNREY_EXCHANGE_DISPLAY_NAME = 'SunRey Exchange' as const;
+
+export const SUNREY_PUBLIC_PRODUCT_METADATA = Object.freeze({
+  sdk: SUNREY_SDK_DISPLAY_NAME,
+  chain: SUNREY_CHAIN_DISPLAY_NAME,
+  exchange: SUNREY_EXCHANGE_DISPLAY_NAME,
+});
+
 export const PUBLIC_NETWORK_ID = 'net_sunrey_simulation' as const;
 export const PUBLIC_CHAIN_ID = 'chn_sunrey_simulation' as const;
 export const LOCAL_DEV_NETWORK_ID = 'net_sunrey_local_dev' as const;

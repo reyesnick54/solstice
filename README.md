@@ -1,4 +1,4 @@
-# solstice
+# SunRey
 
 Simulation-only digital banking. The Compliance Kernel decides. A signed
 Execution Authority executes. The Evidence Vault seals every yes and no.

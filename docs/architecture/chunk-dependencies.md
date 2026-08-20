@@ -1354,3 +1354,11 @@ activation. Do not create `packages/moonrey-value-engine`,
 `packages/productive-valuation`, `packages/moonrey-valuation`, or
 `packages/economic-value-engine`. The evaluator returns
 `mustStop: false`.
+Chunk 142 migrates current public runtime and display identity to
+SunRey at `packages/config`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED`. Canonical env
+names are `SUNREY_*`. Legacy `SOLSTICE_*` aliases remain through the
+single config authority. Protocol IDs, hash domains, stored event
+schema refs, and `reyesnick54/solstice` are unchanged. See
+[`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
+The evaluator returns `mustStop: false`.
