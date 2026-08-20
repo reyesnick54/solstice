@@ -28,26 +28,6 @@ export {
   SUNREY_EXCHANGE_DISPLAY_NAME,
   SUNREY_EXPLORER_DISPLAY_NAME,
   SUNREY_SDK_DISPLAY_NAME,
-} from './product-identity.ts';
-
-export {
-  LEGACY_ENV_CONFLICT,
-  LegacyEnvConflictError,
-  PERSISTENCE_ENV_ALIASES,
-  formatEnvResolutionDiagnostic,
-  isSecretEnvName,
-  requireResolvedEnvValue,
-  resolveCanonicalEnv,
-  type EnvResolution,
-  type EnvValueSource,
-  type LegacyEnvAlias,
-} from './env.ts';
-
-export {
-  buildSunReyLegacyCompatibilityReport,
-  type LegacyCompatibilityEntry,
-  type SunReyLegacyCompatibilityReport,
-} from './legacy-compatibility.ts';
   currentAiAgentName,
   currentApplicationName,
   currentBlockchainName,
@@ -68,6 +48,25 @@ export {
   type LegacyProductName,
   type TickerStatus,
 } from './product-identity.ts';
+
+export {
+  LEGACY_ENV_CONFLICT,
+  LegacyEnvConflictError,
+  PERSISTENCE_ENV_ALIASES,
+  formatEnvResolutionDiagnostic,
+  isSecretEnvName,
+  requireResolvedEnvValue,
+  resolveCanonicalEnv,
+  type EnvResolution,
+  type EnvValueSource,
+  type LegacyEnvAlias,
+} from './env.ts';
+
+export {
+  buildSunReyLegacyCompatibilityReport,
+  type LegacyCompatibilityEntry,
+  type SunReyLegacyCompatibilityReport,
+} from './legacy-compatibility.ts';
 
 export {
   classifyLegacyOccurrence,

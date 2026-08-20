@@ -29,6 +29,11 @@ const COMPETING_PATHS = [
   'packages/mainnet-economics',
   'packages/tokenomics-v2',
   'packages/launch-economics',
+  'packages/tokenomics',
+  'packages/economic-parameters',
+  'packages/monetary-policy-v2',
+  'packages/coin-supply',
+  'packages/production-mint',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

@@ -40,6 +40,8 @@ export const CANONICAL_PRODUCT_IDENTITY = Object.freeze({
   exchangeDisplayName: SUNREY_EXCHANGE_DISPLAY_NAME,
   explorerDisplayName: SUNREY_EXPLORER_DISPLAY_NAME,
 });
+
+/**
  * Chunk 141 — Canonical SunRey product identity.
  *
  * Display names only. Protocol asset IDs stay SUNREY_COIN / MOONREY_COIN.
