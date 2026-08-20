@@ -171,7 +171,7 @@ describe('treasury liquidity and routing', () => {
     const quote1 = ready(payments, world, 'd1');
     const payment1 = payments.initiatePayment(payIntent(world, 'd1', 'ben_d1', quote1));
     if (payment1.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const decision1 = treasury.store.getRouteDecision(payment1.value.paymentId);
     assert.equal(decision1?.selectedRouteId, 'sim-swift-usd-sar');
@@ -190,7 +190,7 @@ describe('treasury liquidity and routing', () => {
     const quote2 = ready(payments, world, 'd2');
     const payment2 = payments.initiatePayment(payIntent(world, 'd2', 'ben_d2', quote2));
     if (payment2.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(treasury.store.getRouteDecision(payment2.value.paymentId)?.selectedRouteId, 'sim-gcc-usd-sar');
 
@@ -214,7 +214,7 @@ describe('treasury liquidity and routing', () => {
     const quote3 = ready(payments, world, 'd3');
     const payment3 = payments.initiatePayment(payIntent(world, 'd3', 'ben_d3', quote3));
     if (payment3.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const decision3 = treasury.store.getRouteDecision(payment3.value.paymentId);
     assert.equal(decision3?.selectedRouteId, 'sim-swift-usd-sar');
@@ -267,7 +267,7 @@ describe('treasury liquidity and routing', () => {
       },
     });
     if (proposed.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(proposed.value.state, 'PROPOSED');
     assert.equal(proposed.value.executable, false);
@@ -281,7 +281,7 @@ describe('treasury liquidity and routing', () => {
       payload: { accountId: world.account.id, proposalId: 'prop_1' },
     });
     if (executed.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(executed.value.state, 'EXECUTED');
   });

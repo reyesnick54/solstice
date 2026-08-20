@@ -38,7 +38,7 @@ describe('Chunk 23 exit criterion', () => {
     });
     assert.equal(alice.ok && bob.ok, true);
     if (!alice.ok || !bob.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const vault = new PersonalDataVault({ clock, keys, evidence, events });
     assert.equal(vault.openVault(alice.value, alice.value.subjectId).ok, true);
@@ -56,7 +56,7 @@ describe('Chunk 23 exit criterion', () => {
       purposeRef: 'exit.ingest',
     });
     if (!asset.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(asset.value.authoritativeForFinancialState, false);
     assert.equal(vault.readPayload(bob.value, alice.value.subjectId, asset.value.assetId, 'exit.cross').ok, false);

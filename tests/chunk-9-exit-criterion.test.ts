@@ -22,7 +22,7 @@ describe('Chunk 9 exit criterion', () => {
 
     const beneficiary = payments.createBeneficiary(beneficiaryIntent(world, 'e2e'));
     if (beneficiary.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(beneficiary.value.status, 'ACTIVE');
     assert.equal(beneficiary.value.screeningStatus, 'CLEAR');
@@ -30,7 +30,7 @@ describe('Chunk 9 exit criterion', () => {
 
     const quote = payments.createQuote(quoteIntent(world, 'e2e'));
     if (quote.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(quote.value.sourceAmount.minorUnits, SOURCE_MINOR);
     assert.equal(quote.value.destinationAmount.minorUnits, DEST_MINOR);
@@ -55,7 +55,7 @@ describe('Chunk 9 exit criterion', () => {
       payIntent(world, 'e2e', beneficiary.value.beneficiaryId, quote.value.quoteId),
     );
     if (payment.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(payment.value.status, 'SETTLED');
     assert.equal(payment.value.routeId, 'sim-gcc-usd-sar');

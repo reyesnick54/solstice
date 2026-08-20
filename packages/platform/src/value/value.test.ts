@@ -101,7 +101,7 @@ describe('Personal Economic Value Engine', () => {
     const { actor, peve, snapshot, subjectId } = setup('actor_peve_1', 'id_peve_1');
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
     if (!generated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(generated.value.vector.dimensions.length, 12);
     assert.equal(generated.value.vector.decomposable, true);
@@ -139,7 +139,7 @@ describe('Personal Economic Value Engine', () => {
       survivesRebuild: true,
     });
     if (!baseline.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const realized = peve.recordAttribution(actor, {
       subjectId,
@@ -194,7 +194,7 @@ describe('Personal Economic Value Engine', () => {
     }
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
     if (!generated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const created = generated.value.vector.dimensions.find((item) => item.kind === 'ATTRIBUTED_VALUE_CREATED');
     assert.equal(created?.moneyCompanion?.amount.minorUnits, '1500');
@@ -206,19 +206,19 @@ describe('Personal Economic Value Engine', () => {
     const { actor, peve, snapshot, subjectId } = setup('actor_peve_3', 'id_peve_3');
     const first = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const activated = peve.activateModel(actor, subjectId, FORMULA_V2, MODEL_V2);
     assert.equal(activated.ok, true);
     const second = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
     if (!second.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(first.value.formulaVersion, FORMULA_V1);
     assert.equal(second.value.formulaVersion, FORMULA_V2);
     const reread = peve.getEconomicValueSnapshot(actor, subjectId, first.value.snapshotId);
     if (!reread.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(reread.value.composite.measure.points, first.value.composite.measure.points);
     assert.equal(reread.value.formulaVersion, FORMULA_V1);
@@ -230,7 +230,7 @@ describe('Personal Economic Value Engine', () => {
       snapshot,
     );
     if (!compared.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(compared.value.formulaChanged, true);
     assert.ok((compared.value.weightsChanged.length ?? 0) > 0);
@@ -245,7 +245,7 @@ describe('Personal Economic Value Engine', () => {
     assert.equal(a.ok, true);
     assert.equal(b.ok, true);
     if (!a.ok || !b.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(a.value.composite.measure.points, b.value.composite.measure.points);
     const poisoned = left.peve.generateSnapshot(left.actor, {
@@ -269,7 +269,7 @@ describe('Personal Economic Value Engine', () => {
     });
     const mixed = peg.getEconomicSnapshot(actor, subjectId);
     if (!mixed.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const refused = peve.generateSnapshot(actor, { subjectId, peg: mixed.value });
     assert.equal(refused.ok, false);
@@ -290,7 +290,7 @@ describe('Personal Economic Value Engine', () => {
       },
     });
     if (!sparse.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(sparse.value.completeness, 'SPARSE');
     assert.ok(sparse.value.warnings.some((item) => item.includes('sparse') || item.includes('PARTIAL') || item.includes('human')));
@@ -302,7 +302,7 @@ describe('Personal Economic Value Engine', () => {
     assert.equal(dimension.ok, false);
     const generated = peve.generateSnapshot(actor, { subjectId, peg: snapshot });
     if (!generated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const found = peve.getEconomicValueDimension(actor, subjectId, generated.value.vector.dimensions[0]!.dimensionId);
     assert.equal(found.ok, true);

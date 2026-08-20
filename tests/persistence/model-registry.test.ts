@@ -42,7 +42,7 @@ describe('Model Registry persistence', () => {
     );
     const actor = identity.service.resolveActorContext('actor_model_pg');
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const registry = new ModelRegistry();
     const seeded = seedCanonicalRiskModel(registry, actor.value, NOW);

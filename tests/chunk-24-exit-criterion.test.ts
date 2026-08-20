@@ -41,7 +41,7 @@ describe('Chunk 24 exit criterion', () => {
       ],
     });
     if (!alice.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const consent = new ConsentService({ clock, keys, evidence, events });
     const vault = new PersonalDataVault({
@@ -66,7 +66,7 @@ describe('Chunk 24 exit criterion', () => {
       purposeRef: 'exit.ingest',
     });
     if (!asset.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const tool = new PurposeScopedVaultTool(consent, vault);
     const denied = tool.readDerivedMonthlyIncome(alice.value, {
@@ -90,7 +90,7 @@ describe('Chunk 24 exit criterion', () => {
       idempotencyKey: 'c24.grant',
     });
     if (!draft.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const granted = consent.confirmConsent(alice.value, draft.value.consentId, 'c24.confirm');
     assert.equal(granted.ok, true);

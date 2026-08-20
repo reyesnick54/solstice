@@ -67,7 +67,7 @@ describe('SunRey transaction protocol v1', () => {
     const state = seededState();
     const result = processTransaction(encodeEnvelope(envelope), state, CONTEXT);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.accepted, true);
     assert.equal(result.value.events[0]?.ledgerSupplyChanged, false);
@@ -107,7 +107,7 @@ describe('SunRey transaction protocol v1', () => {
     });
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'WRONG_NETWORK');
   });
@@ -119,7 +119,7 @@ describe('SunRey transaction protocol v1', () => {
     });
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'WRONG_CHAIN');
   });
@@ -132,7 +132,7 @@ describe('SunRey transaction protocol v1', () => {
     const second = processTransaction(bytes, state, CONTEXT);
     assert.equal(second.ok, false);
     if (second.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(second.error.code, 'REPLAY');
   });
@@ -144,7 +144,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(envelope), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'EXPIRED');
   });
@@ -157,7 +157,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = decode(new Uint8Array(bytes));
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'INVALID_VERSION');
   });
@@ -167,7 +167,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = decode(bytes);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'MALFORMED');
   });
@@ -179,7 +179,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(envelope), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'PURPOSE_NOT_AUTHORIZED');
   });
@@ -197,7 +197,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(envelope), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'CAPABILITY_INVALID');
   });
@@ -245,7 +245,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(envelope), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'INVALID_OBJECT_TYPE');
   });
@@ -260,7 +260,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(envelope), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'TRANSACTION_NOT_ACTIVATED');
   });
@@ -288,7 +288,7 @@ describe('SunRey transaction protocol v1', () => {
     const result = processTransaction(encodeEnvelope(broken), seededState(), CONTEXT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'INVALID_SIGNATURE');
   });

@@ -415,7 +415,7 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
     const book = new ProductiveAttributionBook();
     const first = reserve(book, manufacturingObservation(), 'd1', ATTRIBUTION_SHARE_SCALE);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     book.finalize(first.value.entryId);
     const replacementObs = manufacturingObservation({
@@ -437,7 +437,7 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
       },
     });
     if (!corrected.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const original = book.getEntry(first.value.entryId);
     assert.equal(original?.status, 'SUPERSEDED');
@@ -450,7 +450,7 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
     const book = new ProductiveAttributionBook();
     const first = reserve(book, manufacturingObservation(), 'd1');
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     book.finalize(first.value.entryId);
     book.noteIssuanceStatus(first.value.entryId, 'SETTLED');
@@ -544,12 +544,12 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
     });
     assert.equal(projectedClaim.ok, true);
     if (!projectedClaim.ok || !projectedObject.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const book = new ProductiveAttributionBook();
     const reserved = reserve(book, manufacturingObservation(), 'd-ear');
     if (!reserved.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const reflected = reflectAttributionLineage({
       registry,

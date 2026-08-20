@@ -344,7 +344,7 @@ describe('information market', () => {
       now: NOW,
     });
     if (!issued.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(issued.value.sourceRecordRevealed, false);
     const verified = verifyOracleAttestation({ keys, attestation: issued.value, now: NOW });

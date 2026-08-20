@@ -150,7 +150,7 @@ describe('payment orchestration failures', () => {
     const world = createPaymentWorld('sancp');
     const prepared = readyQuoteAndBeneficiary(world, 'sancp');
     if (prepared.beneficiary.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     world.payments.getStore().saveBeneficiary(
       freezeBeneficiary({
@@ -180,7 +180,7 @@ describe('payment orchestration failures', () => {
       payIntent(world, 'pend', 'ben_pend', prepared.quote.quoteId),
     );
     if (pending.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(pending.value.status, 'PROCESSING');
     const completed = world.payments.completeSettlement(asPaymentId(pending.value.paymentId));
@@ -227,12 +227,12 @@ describe('payment orchestration failures', () => {
       payIntent(world, 'ret', 'ben_ret', prepared.quote.quoteId),
     );
     if (settled.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const journalsBefore = settled.value.journalIds.length;
     const returned = world.payments.simulateReturn(asPaymentId(settled.value.paymentId));
     if (returned.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(returned.value.status, 'RETURNED');
     assert.ok(returned.value.journalIds.length > journalsBefore);
@@ -248,7 +248,7 @@ describe('payment orchestration failures', () => {
       payIntent(world, 'recon', 'ben_recon', prepared.quote.quoteId),
     );
     if (settled.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const count = world.runtime.ledger.journalCount();
     const result = world.payments.injectMismatchedReport(settled.value.paymentId, {
@@ -283,7 +283,7 @@ describe('payment orchestration failures', () => {
     const world = createPaymentWorld('acc');
     const created = world.payments.createQuote(quoteIntent(world, 'acc'));
     if (created.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const first = world.payments.acceptQuote(acceptIntent(world, 'acc', created.value.quoteId));
     const second = world.payments.acceptQuote(acceptIntent(world, 'acc2', created.value.quoteId));

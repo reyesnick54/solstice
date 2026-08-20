@@ -15,7 +15,7 @@ describe('Chunk 91 provider runtime exit criteria', () => {
   it('keeps technical connectivity distinct from production approval', () => {
     const runtime = createProviderRuntime();
     if (!runtime.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const negatives = runNegativeControls(runtime.value);
     assert.equal(negatives.sandboxCannotMarkLegal, true);

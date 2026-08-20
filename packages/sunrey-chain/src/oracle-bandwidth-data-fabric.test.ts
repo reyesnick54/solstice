@@ -50,7 +50,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('1. records bandwidth capacity as a DATA_RATE', () => {
     const ingested = ingestBandwidthObservation(capacityRateFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.factType, 'BANDWIDTH_CAPACITY');
     assert.equal(ingested.value.dimension, 'DATA_RATE');
@@ -63,7 +63,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('2. records transferred GB usage as DATA_VOLUME', () => {
     const ingested = ingestBandwidthObservation(transferredBytesFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.factType, 'BANDWIDTH_USAGE');
     assert.equal(ingested.value.dimension, 'DATA_VOLUME');
@@ -76,7 +76,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('3. normalizes TB usage onto GB exactly', () => {
     const ingested = ingestBandwidthObservation(tbUsageFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'GB');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 3_000n);
@@ -102,14 +102,14 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('5. converts rate × duration into exact transferred volume', () => {
     const ingested = ingestBandwidthObservation(rateOverTimeFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.sourceQuantity.unitId, 'GB_s');
     assert.equal(ingested.value.canonicalUnit, 'GB');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 20n);
     const source = sourceQuantityOf(rateOverTimeFixture());
     if (!source.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const derived = rateTimesDuration({ rate: source.value, durationSeconds: 10n, factType: 'BANDWIDTH_USAGE' });
     assert.equal(derived.ok, true);
@@ -127,7 +127,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
     }
     const source = sourceQuantityOf(rateOverTimeFixture());
     if (!source.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const refused = rateTimesDuration({ rate: source.value, durationSeconds: null, factType: 'BANDWIDTH_USAGE' });
     assert.equal(refused.ok, false);
@@ -141,7 +141,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
     const usage = ingestBandwidthObservation(transferredBytesFixture(), SANDBOX_NOW);
     assert.equal(capacity.ok && usage.ok, true);
     if (!capacity.ok || !usage.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(capacityDoesNotEqualUsage(capacity.value.factType, usage.value.factType), true);
     assert.equal(CAPACITY_EQUALS_REALIZED_USAGE, false);
@@ -153,7 +153,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('8. retains GROSS_NETWORK_BYTES semantics', () => {
     const ingested = ingestBandwidthObservation(grossBytesFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(retainTransferSemantics(ingested.value.transferSemantics!), 'GROSS_NETWORK_BYTES');
     assert.equal(ingested.value.grossEqualsDelivered, false);
@@ -162,7 +162,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
   it('9. retains DELIVERED_BYTES semantics', () => {
     const ingested = ingestBandwidthObservation(deliveredBytesFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(retainTransferSemantics(ingested.value.transferSemantics!), 'DELIVERED_BYTES');
     assert.notEqual(ingested.value.transferSemantics, 'GROSS_NETWORK_BYTES');
@@ -173,7 +173,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
     const delivered = ingestBandwidthObservation(deliveredBytesFixture(), SANDBOX_NOW);
     assert.equal(gross.ok && delivered.ok, true);
     if (!gross.ok || !delivered.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(retransmissionIsNotNewOutput(grossBytesFixture()), true);
     assert.equal(gross.value.transferSemantics, 'GROSS_NETWORK_BYTES');
@@ -233,7 +233,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
     const capacity = ingestBandwidthObservation(capacityRateFixture(), SANDBOX_NOW);
     assert.equal(usage.ok && capacity.ok, true);
     if (!usage.ok || !capacity.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const unsafe = bandwidthUtilization({
       actualVolume: usage.value.canonicalQuantity,
@@ -316,7 +316,7 @@ describe('CHUNK-136 bandwidth network economic data fabric', () => {
     }
     const ingested = ingestBandwidthObservation(transferredBytesFixture(), SANDBOX_NOW);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const projected = projectBandwidthMetadata(new EconomicAssetRegistry(), ingested.value);
     assert.equal(projected.ok, true);

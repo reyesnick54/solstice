@@ -477,7 +477,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       assert.equal(first.ok, true);
       const backup = store.backup(NOW);
       if (!backup.ok) {
-        return;
+        throw new Error('expected ok');
       }
       const current = store.safety.load();
       assert.ok(current);
@@ -548,21 +548,21 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     const keystore = new OperatorKeystore();
     const incoming = generateJoinRecord(keystore, 'E', NOW);
     if (!incoming.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const registry = { set: fourValidatorDevelopmentSet(), epoch: developmentEpoch(0n, 0n, 8n), queued: [] };
     const joined = joinWorkflow(registry, incoming.value, NOW);
     if (!joined.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(joined.value.receipt.status, 'ACTIVE');
     const next = keystore.generate('CONSENSUS_VOTING_KEY', 'future', NOW);
     if (!next.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const descriptor = keystore.descriptor(next.value.keyId);
     if (!descriptor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const rotated = rotateWorkflow(joined.value.registry, incoming.value.validatorId, descriptor.value, NOW);
     assert.equal(rotated.ok, true);
@@ -571,7 +571,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
     }
     const replacement = generateJoinRecord(keystore, 'F', NOW);
     if (!replacement.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const replaced = replaceWorkflow(joined.value.registry, 'val_dev_b', replacement.value, NOW);
     assert.equal(replaced.ok, true);
@@ -606,7 +606,7 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       createdAtUtc: NOW,
     });
     if (!created.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const trust = {
       networkId: 'net_sunrey_local_dev',

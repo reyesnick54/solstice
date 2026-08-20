@@ -22,11 +22,11 @@ describe('Chunk 10 exit criterion', () => {
 
     const beneficiary = payments.createBeneficiary(beneficiaryIntent(world, 'rail_e2e'));
     if (beneficiary.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const quote = payments.createQuote(quoteIntent(world, 'rail_e2e'));
     if (quote.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const accepted = payments.acceptQuote(acceptIntent(world, 'rail_e2e', quote.value.quoteId));
     assert.equal(accepted.outcome, 'OK');
@@ -35,7 +35,7 @@ describe('Chunk 10 exit criterion', () => {
       payIntent(world, 'rail_e2e', beneficiary.value.beneficiaryId, quote.value.quoteId),
     );
     if (payment.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(payment.value.status, 'SETTLED');
     assert.equal(payment.value.routeId, 'sim-gcc-usd-sar');

@@ -312,7 +312,7 @@ describe('card processing failures', () => {
       }),
     );
     if (auth.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const reversed = await world.cards.ingestReversalCallback(
       signedCallback(world, 'REVERSAL', 'rev_1', 'n_rev1', {

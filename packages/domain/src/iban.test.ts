@@ -23,7 +23,7 @@ describe('IBAN infrastructure', () => {
       serial: '42',
     });
     if (!created.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(created.value.synthetic, true);
     assert.equal(created.value.liveAssignable, false);

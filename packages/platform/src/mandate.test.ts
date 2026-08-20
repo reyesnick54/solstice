@@ -36,12 +36,12 @@ describe('mandate compiler', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(compiled.value.state, 'DRAFT');
     assert.equal(compiled.value.planningEligible, false);
@@ -60,7 +60,7 @@ describe('mandate compiler', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const conflicts = detectMandateConflicts(draft.hardConstraints);
@@ -76,13 +76,13 @@ describe('mandate compiler', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     assert.equal(compiled.ok, false);
     if (compiled.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.ok(compiled.error.issues.some((item) => item.code === 'MISSING_GOALS'));
   });
@@ -96,12 +96,12 @@ describe('mandate confirmation', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const refused = recordMandateConfirmation({
       mandate: compiled.value,
@@ -137,7 +137,7 @@ describe('mandate confirmation', () => {
     );
     const actor = identity.service.resolveActorContext('actor_confirm');
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const interpretation = interpretMandateLanguage({
       subjectId: actor.value.subjectId,
@@ -145,12 +145,12 @@ describe('mandate confirmation', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(isHighImpactMandate(compiled.value), false);
     const confirmation = recordMandateConfirmation({

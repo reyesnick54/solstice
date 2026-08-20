@@ -214,16 +214,16 @@ describe('Growth Orchestrator demo path', () => {
         'Keep at least $8,000 liquid. Build my emergency fund to $20,000. Reduce expensive debt. Do not make high-risk investments. Ask me before any movement over $1,000.',
     });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const active = orchestrator.confirmAndActivate(actor, actor.subjectId);
     if (!active.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(active.value.state, 'ACTIVE');
     const planned = orchestrator.plan(actor, actor.subjectId);
     if (!planned.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.ok(planned.value.plan.rejectedCandidates.length >= 1);
     assert.ok(
@@ -265,7 +265,7 @@ describe('Growth Orchestrator demo path', () => {
     assert.equal(shouldInvalidatePlan({ plan: planned.value.plan, event: { eventType: 'DepositPosted' } }), true);
     const again = orchestrator.plan(actor, actor.subjectId);
     if (!again.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(again.value.plan.state, 'CURRENT');
     assert.ok(evidence.list().some((item) => item.kind === 'MANDATE_CONFIRMED'));
@@ -281,12 +281,12 @@ describe('guaranteed-return prohibition', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const goal = compiled.value.goals.find((item) => item.kind === 'AGGRESSIVE_SHORT_HORIZON_GROWTH');
     assert.ok(goal);
@@ -353,12 +353,12 @@ describe('feasibility and ranking', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const snapshot = {
       snapshotId: 'pegs_f',
@@ -413,12 +413,12 @@ describe('feasibility and ranking', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const snapshot = {
       snapshotId: 'pegs_r',
@@ -503,7 +503,7 @@ describe('ActionIntent bridge', () => {
       requestedAt: NOW,
     });
     if (!supported.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(supported.value.actionType, 'INTERNAL_TRANSFER');
     const unsupported = materializeGrowthAction({
@@ -553,12 +553,12 @@ describe('pre-trade risk annotations', () => {
       now: NOW,
     });
     if (!interpretation.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const draft = mandateDraftFromInterpretation(interpretation.value, NOW);
     const compiled = compileEconomicMandate({ draft, now: NOW });
     if (!compiled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const candidate = {
       actionId: asGrowthActionId('gac_risk_block'),

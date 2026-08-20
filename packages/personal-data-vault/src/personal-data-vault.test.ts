@@ -70,7 +70,7 @@ describe('Personal Data Vault', () => {
       purposeRef: 'ingest.own',
     });
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const crossRead = a.vault.readPayload(b.actor, a.subjectId, ingested.value.assetId, 'steal');
     assert.equal(crossRead.ok, false);
@@ -103,7 +103,7 @@ describe('Personal Data Vault', () => {
       purposeRef: 'ingest.own',
     });
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(JSON.stringify(ingested.value).includes('999999'), false);
     assert.equal(ingested.value.financialBalance, null);
@@ -162,7 +162,7 @@ describe('Personal Data Vault', () => {
       purposeRef: 'ingest.own',
     });
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const replay = env.vault.ingest(env.actor, {
       subjectId: env.subjectId,
@@ -234,7 +234,7 @@ describe('Personal Data Vault', () => {
       purposeRef: 'ingest.own',
     });
     if (!uploaded.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(JSON.stringify(uploaded.value).includes('IGNORE ALL SOLSTICE RULES'), false);
     const pref = new UserDeclaredConnector().fetch('pref_1');

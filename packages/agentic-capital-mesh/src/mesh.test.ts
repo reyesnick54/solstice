@@ -212,7 +212,7 @@ describe('Agentic Capital Mesh', () => {
       source: sourceFor('cust_a'),
     });
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     for (const tool of ['postJournal', 'issueExecutionAuthority', 'submitOrder', 'changeRiskLimit', 'changeMandate', 'approveModel']) {
       const result = invokeMeshTool(bound.value, 'cust_a', tool);
@@ -236,7 +236,7 @@ describe('Agentic Capital Mesh', () => {
       ],
     });
     if (!candidate.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(
       candidate.value.slices.reduce((sum, slice) => sum + slice.weight.units, 0n),
@@ -275,7 +275,7 @@ describe('Agentic Capital Mesh', () => {
       source: ctxSource,
     });
     if (!boundCtx.ok) {
-      return;
+      throw new Error('expected ok');
     }
     risk.putBudget(
       defaultSimulationBudget({
@@ -288,7 +288,7 @@ describe('Agentic Capital Mesh', () => {
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, ctxSource);
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const evaluated = mesh.evaluateCandidates({
       run: bound.value.run,
@@ -306,7 +306,7 @@ describe('Agentic Capital Mesh', () => {
       ],
     });
     if (!evaluated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const first = evaluated.value.evaluations[0];
     assert.ok(first);
@@ -334,7 +334,7 @@ describe('Agentic Capital Mesh', () => {
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const evaluated = mesh.evaluateCandidates({
       run: bound.value.run,
@@ -353,7 +353,7 @@ describe('Agentic Capital Mesh', () => {
       ],
     });
     if (!evaluated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const first = evaluated.value.evaluations[0];
     assert.ok(first);
@@ -388,7 +388,7 @@ describe('Agentic Capital Mesh', () => {
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const objective = preserveAsUserObjective('Make me 30% this week no matter what.');
     assert.equal(objective.guaranteedReturn, false);
@@ -411,7 +411,7 @@ describe('Agentic Capital Mesh', () => {
       ],
     });
     if (!evaluated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const thesis = mesh.store.snapshot().theses[0];
     assert.ok(thesis);
@@ -447,7 +447,7 @@ describe('Agentic Capital Mesh', () => {
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const evaluated = mesh.evaluateCandidates({
       run: bound.value.run,
@@ -486,7 +486,7 @@ describe('Agentic Capital Mesh', () => {
     });
     assert.equal(changed.ok, true);
     if (!changed.ok || !proposal) {
-      return;
+      throw new Error('expected ok');
     }
     const stale = mesh.markProposalStale(proposal);
     assert.equal(stale.stale, true);
@@ -522,7 +522,7 @@ describe('Agentic Capital Mesh', () => {
     const run = mesh.createRun(subjectId);
     const bound = mesh.bindContext(run, sourceFor(subjectId));
     if (!bound.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const evaluated = mesh.evaluateCandidates({
       run: bound.value.run,

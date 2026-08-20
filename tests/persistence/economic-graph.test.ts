@@ -47,7 +47,7 @@ describe('Personal Economic Graph persistence', () => {
     );
     const actor = identity.service.resolveActorContext('actor_peg_pg');
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const peg = new EconomicGraphService({ clock, events });
     peg.registerAccountCurrency('acct_pg', 'USD');
@@ -81,7 +81,7 @@ describe('Personal Economic Graph persistence', () => {
     const restoredService = new EconomicGraphService({ clock, store: restored });
     const graph = restoredService.getEconomicGraph(actor.value, subjectId);
     if (!graph.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.ok(graph.value.nodes.some((node) => node.kind === 'GOAL' && node.survivesRebuild));
     assert.ok(graph.value.nodes.some((node) => node.kind === 'ACCOUNT'));

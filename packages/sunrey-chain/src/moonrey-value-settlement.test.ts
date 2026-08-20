@@ -226,7 +226,7 @@ describe('Chunk 125 productive value settlement bridge', () => {
     const ready = chain({ valueFunctionPolicyVersion: 1 });
     const created = createProductiveSettlementAuthorization(ready.context);
     if (!created.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const mismatch = { ...ready.context, valueResult: { ...ready.valueResult, valueFunctionPolicyVersion: 9 } };
     const validated = createProductiveSettlementAuthorization(mismatch);

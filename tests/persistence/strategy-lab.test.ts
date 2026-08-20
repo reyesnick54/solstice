@@ -45,7 +45,7 @@ describe('strategy lab persistence', () => {
     );
     const actor = identity.service.resolveActorContext('actor_lab_pg');
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const registry = new ModelRegistry();
     assert.equal(seedCanonicalRiskModel(registry, actor.value, NOW).ok, true);

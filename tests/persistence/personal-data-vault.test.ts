@@ -49,7 +49,7 @@ describe('Personal Data Vault persistence', () => {
       );
       const actor = identity.service.resolveActorContext('actor_pdv_pg');
       if (!actor.ok) {
-        return;
+        throw new Error('expected ok');
       }
       const vault = new PersonalDataVault({ clock, keys, evidence, events });
       assert.equal(vault.openVault(actor.value, actor.value.subjectId, 'cust_pdv_pg').ok, true);
@@ -67,7 +67,7 @@ describe('Personal Data Vault persistence', () => {
         purposeRef: 'persist.ingest',
       });
       if (!ingested.ok) {
-        return;
+        throw new Error('expected ok');
       }
       await persistPersonalDataVaultState(pools.customer, vault.snapshot());
       const loaded = await loadPersonalDataVaultState(pools.customer);

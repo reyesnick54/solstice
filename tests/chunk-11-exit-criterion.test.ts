@@ -10,7 +10,7 @@ describe('Chunk 11 exit criterion', () => {
     const world = createCardWorld('exit', 100_000n);
     const requested = world.cards.requestCard(requestCardIntent(world, 'card_exit'));
     if (requested.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     const activated = world.cards.activateCard({
       id: asIntentId('act_exit'),
@@ -22,7 +22,7 @@ describe('Chunk 11 exit criterion', () => {
       payload: { cardId: requested.value.cardId, accountId: world.account.id },
     });
     if (activated.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(activated.value.status, 'ACTIVE');
     assert.equal(activated.value.displayHint, 'SIM-CARD');
@@ -44,7 +44,7 @@ describe('Chunk 11 exit criterion', () => {
       }),
     );
     if (auth.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(auth.value.decision, 'APPROVE');
     assert.ok(auth.value.holdId);
@@ -65,7 +65,7 @@ describe('Chunk 11 exit criterion', () => {
       }),
     );
     if (clearing.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(clearing.value.state, 'SETTLED');
     assert.ok(clearing.value.journalId);
@@ -81,7 +81,7 @@ describe('Chunk 11 exit criterion', () => {
       }),
     );
     if (refund.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(refund.value.state, 'POSTED');
 

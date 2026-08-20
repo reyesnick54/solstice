@@ -119,7 +119,7 @@ describe('Chunk 127 economic data connector runtime', () => {
       auth: sandboxApiKeyAuth(),
     });
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.record.numericValue, '100');
     assert.equal(result.value.verifiedEconomicFact, null);

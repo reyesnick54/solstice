@@ -19,7 +19,7 @@ describe('Personal Economy Agent interpretation', () => {
       now: NOW,
     });
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.executable, false);
     assert.equal(result.value.modelTextIsPolicy, false);
@@ -40,7 +40,7 @@ describe('Personal Economy Agent interpretation', () => {
       now: NOW,
     });
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const goal = result.value.goals.find((item) => item.kind === 'AGGRESSIVE_SHORT_HORIZON_GROWTH');
     assert.ok(goal);

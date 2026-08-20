@@ -220,7 +220,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
   it('keeps contribution objects free of SunRey quantities', () => {
     const event = createHumanContributionEvent(fixtureContribution('CREATIVE_PRODUCTION', 'no-qty'));
     if (!event.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(event.value.sunReyQuantity, null);
     assert.equal(event.value.measurement.isSunReyQuantity, false);
@@ -239,7 +239,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
   it('cannot authorize financial execution', () => {
     const event = createHumanContributionEvent(fixtureContribution('ECONOMIC_PARTICIPATION', 'no-exec'));
     if (!event.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const refusal = refuseExecution(event.value);
     assert.equal(refusal.authorized, false);
@@ -253,7 +253,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
   it('cannot authorize SunRey minting', () => {
     const event = createHumanContributionEvent(fixtureContribution('ENTREPRENEURIAL_ACTIVITY', 'no-mint'));
     if (!event.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const refusal = refuseMint(event.value);
     assert.equal(refusal.authorized, false);
@@ -281,7 +281,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
     const registry = new HumanContributionRegistry();
     const original = registry.record(fixtureContribution('RESEARCH_PARTICIPATION', 'trace-1'));
     if (!original.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const successor = registry.supersede(original.value.contributionId, {
       ...fixtureContribution('RESEARCH_PARTICIPATION', 'trace-2'),
@@ -289,7 +289,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
       measurementQuantity: 2n,
     });
     if (!successor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const retired = registry.get(original.value.contributionId);
     assert.ok(retired);
@@ -317,7 +317,7 @@ describe('CHUNK-104 human economic contribution ontology', () => {
     const registry = new HumanContributionRegistry();
     const recorded = registry.record(fixtureContribution('CREATIVE_PRODUCTION', 'elig-policy'));
     if (!recorded.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const marked = registry.applySettlementEligibility(
       recorded.value.contributionId,

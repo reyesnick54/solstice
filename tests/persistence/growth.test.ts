@@ -50,7 +50,7 @@ describe('Growth Orchestrator persistence', () => {
     );
     const actor = identity.service.resolveActorContext('actor_growth_pg');
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const peg = new EconomicGraphService({ clock, events });
     peg.openGraph(actor.value, subjectId);
