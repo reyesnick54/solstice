@@ -1772,6 +1772,19 @@ the monetary authority. Do not create `packages/sunrey-tokenomics`,
 `packages/production-valuation`, `packages/issuance-parameters`, or
 `packages/human-worth-token`. See
 [`docs/economics/chunk-145-sunrey-production-policy-candidate.md`](../economics/chunk-145-sunrey-production-policy-candidate.md).
+Chunk 144 implements the canonical production economic parameter
+registry at
+`packages/sunrey-chain/src/economics/production-activation/parameter-package`.
+Capability `sunrey-production-economic-parameters` is `IMPLEMENTED` on
+the existing monetary/economic owner. It reuses the Chunk 143
+parameter IDs and supplies typed values, packages, hashes, coverage,
+and validation receipts. It does not choose production tokenomics,
+activate production, flip `LIVE_*` flags, mint, or mutate
+`AssetSupplyBook`. `CONFIGURED` candidate is not `PRODUCTION
+ACTIVATED`. Do not create `packages/tokenomics`,
+`packages/economic-parameters`, `packages/monetary-policy-v2`,
+`packages/coin-supply`, or `packages/production-mint`. See
+[`docs/economics/chunk-144-production-economic-parameter-registry.md`](../economics/chunk-144-production-economic-parameter-registry.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is

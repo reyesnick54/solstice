@@ -165,6 +165,8 @@ export type ProductionParameterRecord = {
   readonly valueHash: string | null;
   readonly governed: boolean;
   readonly infrastructureMetadataOnly: boolean;
+  /** Chunk 144 validation receipt. Absent on historical UNCONFIGURED rows. */
+  readonly validationReceiptHash?: string | null;
 };
 
 export type ActivationEvidenceRecord = {

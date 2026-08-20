@@ -67,6 +67,7 @@
     "demo:human-contribution-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/settlement/demo.ts",
     "demo:sunrey-production-economic-firewall": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/demo.ts",
     "demo:sunrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/policy-candidate-demo.ts",
+    "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/parameter-package/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
   },
   "engines": {

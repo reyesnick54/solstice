@@ -189,6 +189,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
@@ -1372,6 +1373,16 @@ or activate issuance. Fixture packages cannot authorize production.
 Do not create `packages/sunrey-tokenomics`,
 `packages/production-valuation`, `packages/issuance-parameters`, or
 `packages/human-worth-token`. The evaluator returns `mustStop: false`.
+Chunk 144 implements the canonical production economic parameter
+registry at
+`packages/sunrey-chain/src/economics/production-activation/parameter-package`.
+Capability `sunrey-production-economic-parameters` is `IMPLEMENTED` on
+the existing monetary/economic owner. It reuses Chunk 143 parameter
+IDs and does not choose production tokenomics, activate production,
+flip `LIVE_*` flags, or create a second mint. Do not create
+`packages/tokenomics`, `packages/economic-parameters`,
+`packages/monetary-policy-v2`, `packages/coin-supply`, or
+`packages/production-mint`. The evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
