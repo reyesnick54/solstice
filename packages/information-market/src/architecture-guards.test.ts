@@ -47,6 +47,11 @@ describe('information market architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/hin-contribution-registry')), false);
     assert.equal(existsSync(join(ROOT, 'packages/information-contribution-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/human-information-contribution')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/hin-chain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/information-blockchain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/privacy-chain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/consent-chain')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/human-data-ledger')), false);
     assert.equal(existsSync(join(ROOT, 'packages/data-marketplace')), false);
     assert.equal(existsSync(join(ROOT, 'packages/sunrey-exchange')), true);
     const agent = walk(join(ROOT, 'packages/agent/src'));

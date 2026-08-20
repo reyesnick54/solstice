@@ -846,12 +846,13 @@
         "packages/platform",
         "packages/sunrey-exchange",
         "packages/human-economic-contribution",
-        "packages/economic-asset-registry"
+        "packages/economic-asset-registry",
+        "packages/sunrey-chain"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Do not implement the Exchange matching engine or SunRey Chain."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139 HIN chain-anchor adapter lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain."
     },
     {
       "id": "packages/sunrey-chain",
@@ -4218,6 +4219,35 @@
       "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
+      "id": "sunrey-hin-chain-anchoring",
+      "name": "Human Information Network to SunRey Chain anchoring foundation",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/network/chain-anchor/adapter.ts",
+      "publicInterface": "packages/information-market/src/network/chain-anchor/index.ts",
+      "status": "PARTIAL",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "HinChainAnchorAdapter",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/hin-chain",
+        "packages/information-blockchain",
+        "packages/privacy-chain",
+        "packages/consent-chain",
+        "packages/human-data-ledger"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records."
+    },
+    {
       "id": "sunrey-human-economic-contributions",
       "name": "SunRey Human Economic Contribution ontology",
       "canonicalOwner": "packages/human-economic-contribution",
@@ -5086,6 +5116,11 @@
     "packages/proof-of-contribution",
     "packages/human-information-network",
     "packages/data-marketplace",
+    "packages/hin-chain",
+    "packages/information-blockchain",
+    "packages/privacy-chain",
+    "packages/consent-chain",
+    "packages/human-data-ledger",
     "packages/exchange-compliance-v2",
     "packages/travel-rule-v2",
     "packages/crypto-aml",
@@ -6232,6 +6267,13 @@
       "owner": "packages/information-market",
       "protected": true,
       "notes": "Chunk 107 HIN to Human Contribution Registry adapter. Privacy-safe evidence only. Compensation is not minting. productionActivated=false."
+    },
+    {
+      "id": "sunrey-hin-chain-anchoring",
+      "status": "PARTIAL",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Chunk 139 HIN to SunRey Chain anchoring foundation at packages/information-market/src/network/chain-anchor. Uses existing SunReyChainService. Not a second chain, consent ledger, or Evidence Vault. Lifecycle completion is Chunk 140. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
     },
     {
       "id": "sunrey-human-economic-contributions",

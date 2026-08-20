@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-139",
+  "title": "Human Information Network → SunRey Chain Anchoring Foundation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "evidence",
+    "consent",
+    "clean-room",
+    "information-market",
+    "sunrey-chain",
+    "sunrey-human-information-network",
+    "sunrey-hin-contribution-integration",
+    "sunrey-economic-asset-registry"
+  ],
+  "notes": "PARTIAL at packages/information-market/src/network/chain-anchor. Narrow privacy-safe HIN adapter over the existing SunReyChainService. Creates schemas, commitments, and ChainWriteIntent records. Chunk 140 completes lifecycle, finality, and reconciliation. Capability sunrey-hin-chain-anchoring is PARTIAL. evaluateChunkRequirements returns mustStop: false because required capabilities are IMPLEMENTED. Do not create packages/hin-chain, packages/information-blockchain, packages/privacy-chain, packages/consent-chain, or packages/human-data-ledger."
+}

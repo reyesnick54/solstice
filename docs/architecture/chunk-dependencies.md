@@ -186,6 +186,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1332,6 +1333,19 @@ engine, economic asset registry, or mint. Do not create
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. The evaluator returns
 `mustStop: false`.
+Chunk 139 implements the Human Information Network → SunRey Chain
+anchoring foundation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
+`IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
+adapter does not create a second chain, consent ledger, or Evidence
+Vault. Chunk 140 completes lifecycle and finality. Do not create
+`packages/hin-chain`, `packages/information-blockchain`,
+`packages/privacy-chain`, `packages/consent-chain`, or
+`packages/human-data-ledger`. See
+[`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md)
+and
+[`docs/economics/chunk-139-hin-chain-anchor-foundation.md`](../economics/chunk-139-hin-chain-anchor-foundation.md).
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
