@@ -1271,6 +1271,19 @@ stays `LEGACY_INFRASTRUCTURE_MACHINE_H_V1`. Do not create
 `packages/real-estate-oracles`, `packages/infrastructure-oracles`,
 `packages/property-data-fabric`, or `packages/facility-data-fabric`.
 The evaluator returns `mustStop: false`.
+Chunk 138 implements the unified multi-provider economic data fabric
+at `packages/sunrey-chain/src/oracle/production/economic-data-fabric`.
+Capability `sunrey-unified-economic-data-fabric` is `IMPLEMENTED` on
+the existing production-oracle owner. See
+[`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md)
+and
+[`docs/economics/chunk-138-unified-economic-data-fabric.md`](../economics/chunk-138-unified-economic-data-fabric.md).
+The fabric is not a second oracle, productive registry, attribution
+engine, economic asset registry, or mint. Do not create
+`packages/economic-data-fabric`, `packages/unified-oracles`,
+`packages/cross-domain-reconciliation`, or
+`packages/moonrey-data-fabric`. The evaluator returns
+`mustStop: false`.
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
