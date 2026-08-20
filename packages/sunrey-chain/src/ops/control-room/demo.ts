@@ -7,11 +7,7 @@ export function runControlRoomDemo(): Record<string, unknown> {
   room.ingest(healthySnapshots());
   const healthy = room.report();
 
-  room.ingest({
-    ...degradedPaymentPath(),
-    economic: degradedEconomic(),
-    aiSafety: [aiAuthorityAttempt()],
-  });
+  room.ingest(degradedPaymentPath());
   const opened = room.openPaymentIncident();
   room.recordHumanAction('operator acknowledged PAYMENT_SUBMISSION_UNKNOWN_SURGE; runbook not auto-executed');
   const degraded = room.report();
@@ -19,6 +15,13 @@ export function runControlRoomDemo(): Record<string, unknown> {
   room.ingest(recoveredPaymentPath());
   const recovering = room.refreshRecovery();
   const resolved = room.resolveCurrent();
+
+  const economicRoom = new ControlRoom();
+  economicRoom.ingest({
+    ...healthySnapshots(),
+    economic: degradedEconomic(),
+    aiSafety: [aiAuthorityAttempt()],
+  });
   const finalReport = room.report();
   const flags = room.flags();
 
@@ -44,8 +47,11 @@ export function runControlRoomDemo(): Record<string, unknown> {
       sunrey: 'healthy',
       moonrey: 'healthy',
     },
-    oracleHealth: 'degraded then recovered',
-    economicIssuanceSafety: 'supply mismatch raised CRITICAL; no mint',
+    oracleHealth: economicRoom.alerts.has('ORACLE_QUORUM_DEGRADATION') ? 'degraded' : 'healthy',
+    economicIssuanceSafety: economicRoom.alerts.has('SUPPLY_RECONCILIATION')
+      ? 'supply mismatch raised CRITICAL; no mint'
+      : 'healthy',
+    aiSafetyAlertOnly: economicRoom.alerts.has('AI_AUTHORITY_ATTEMPT'),
     eventBacklog: 'observed then drained',
     databaseRecoveryHealth: 'primary healthy',
     finalState: finalReport.operationalState,
