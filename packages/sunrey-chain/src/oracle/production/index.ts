@@ -294,6 +294,7 @@ export {
   waterFactCannotAutoMint,
 } from './provider-families/water/index.ts';
 export type { WaterProductionEvidenceRecord } from './provider-families/water/index.ts';
+export {
   GoodsCommerceDataFabric,
   ingestGoodsObservation,
   goodsFactCannotAutoMint,
@@ -305,6 +306,7 @@ export {
   serviceFactCannotAutoMint,
 } from './provider-families/service-delivery/index.ts';
 export type { ServiceSourceObservation } from './provider-families/service-delivery/index.ts';
+export {
   ingestBandwidthObservation,
   bandwidthFactDoesNotMintMoonRey,
   bandwidthAdapterDoesNotMint,
@@ -312,12 +314,14 @@ export type { ServiceSourceObservation } from './provider-families/service-deliv
   bandwidthCertificationDoesNotMint,
 } from './provider-families/bandwidth/index.ts';
 export type { BandwidthEconomicRecord, BandwidthSourceObservation } from './provider-families/bandwidth/index.ts';
+export {
   ingestRealEstateRecord,
   ingestInfrastructureRecord,
   realEstateFactCannotAutoMint,
   infrastructureFactCannotAutoMint,
   runRealEstateInfrastructureDataFabricDemo,
 } from './provider-families/index.ts';
+export {
   CANONICAL_FAMILY_REGISTRY,
   DATA_FABRIC_FINALIZES_FACTS,
   DATA_FABRIC_MINTS_MOONREY,

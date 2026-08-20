@@ -22,6 +22,7 @@ export {
   waterFactCannotAutoMint,
 } from './water/index.ts';
 export type { WaterProductionEvidenceRecord } from './water/index.ts';
+export {
   GoodsCommerceDataFabric,
   ingestGoodsObservation,
   goodsFactCannotAutoMint,
@@ -33,12 +34,14 @@ export {
   serviceFactCannotAutoMint,
 } from './service-delivery/index.ts';
 export type { ServiceSourceObservation } from './service-delivery/index.ts';
+export {
   ingestBandwidthObservation,
   bandwidthFactDoesNotMintMoonRey,
   capacityIsNotRealizedUsage,
   dataRateIsNotDataVolume,
 } from './bandwidth/index.ts';
 export type { BandwidthEconomicRecord, BandwidthSourceObservation } from './bandwidth/index.ts';
+export {
   ingestRealEstateRecord,
   ingestRealEstateRecords,
   identifySpaceUseEvents,
