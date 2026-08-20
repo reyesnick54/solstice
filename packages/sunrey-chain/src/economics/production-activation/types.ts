@@ -136,6 +136,7 @@ export const BINDING_KEYS = [
   'moonreyAttributionPolicy',
   'moonreyProductiveValuePolicy',
   'moonreyGpuvConversionPolicy',
+  'moonreyProductionIssuancePackage',
   'oracleCertificationPolicy',
   'economicDataFabricVersion',
   'hinPolicy',
@@ -378,4 +379,20 @@ export type ProductionEconomicActivationSnapshot = {
   readonly sunreyEngineeringReady: boolean;
   readonly exchangeEngineeringReady: boolean;
   readonly intendedProductionCategories: readonly string[];
+  readonly moonreyProductionCandidate: MoonReyProductionCandidateSnapshot;
+};
+
+export type MoonReyProductionCandidateSnapshot = {
+  readonly packageId: string;
+  readonly packageHash: string;
+  readonly sourceClass: string;
+  readonly fixture: boolean;
+  readonly productionActivated: false;
+  readonly gpuvValuesSelected: false;
+  readonly conversionSelected: false;
+  readonly gpuvEqualsMoonRey: false;
+  readonly legacyV1ProductionEligible: false;
+  readonly fixtureAuthorizesProduction: false;
+  readonly governedValueV2Required: true;
+  readonly chunk71RemainsMonetaryAuthority: true;
 };

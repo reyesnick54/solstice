@@ -18,6 +18,29 @@ export {
   REJECTED_PARAMETER_SOURCES,
   REQUIREMENT_EVIDENCE_CLASSES,
 } from './types.ts';
+export {
+  MOONREY_PRODUCTION_ISSUANCE_PACKAGE_DOMAIN,
+  MOONREY_PRODUCTION_ISSUANCE_PACKAGE_ID,
+  PRODUCTION_PARAMETER_UNCONFIGURED,
+  hashIssuancePackage,
+  rehearsalMoonReyProductionIssuancePackage,
+  unconfiguredMoonReyProductionIssuancePackage,
+} from './moonrey-parameter-package.ts';
+export type {
+  CategoryCapCandidate,
+  ControllerConcentrationControl,
+  MoonReyProductionIssuanceParameterPackage,
+  UnconfiguredQuantity,
+} from './moonrey-parameter-package.ts';
+export {
+  ATTRIBUTION_CORRECTION_REQUIRES_REVIEW,
+  AUTOMATIC_CLAWBACK_FORBIDDEN,
+  CUSTOMER_BALANCE_REWRITE_FORBIDDEN,
+  REVALUATION_DOES_NOT_REMINT,
+  revaluationSafety,
+  validateMoonReySupplySafety,
+} from './moonrey-supply-safety.ts';
+export type { SupplySafetyInput } from './moonrey-supply-safety.ts';
 export type {
   ActivationEvidenceRecord,
   ActivationRequirement,
@@ -34,6 +57,7 @@ export type {
   HumanAuthorizationSlot,
   LegalRegulatoryEvidenceSnapshot,
   LiveFlagSnapshot,
+  MoonReyProductionCandidateSnapshot,
   OracleProductionEvidenceSnapshot,
   PolicyBindingPair,
   ProductionEconomicActivationDecision,
@@ -107,6 +131,7 @@ export {
   bindingKeysComplete,
   candidateReadySnapshot,
   configuredParameter,
+  currentMoonReyProductionCandidateSnapshot,
   currentRepositoryBindings,
   currentRepositorySnapshot,
   humanSlot,

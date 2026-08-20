@@ -1408,6 +1408,20 @@ activation. Do not create `packages/moonrey-value-engine`,
 `packages/productive-valuation`, `packages/moonrey-valuation`, or
 `packages/economic-value-engine`. The evaluator returns
 `mustStop: false`.
+Chunk 146 defines the MoonRey production-candidate Productive Value,
+GPUV conversion, supply, category-cap, and issuance parameter package
+at `packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate`,
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement/production-candidate`,
+and `packages/sunrey-chain/src/economics/production-activation`.
+Capability `moonrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on the existing productive-value and monetary owners.
+The package does not invent GPUV values, conversion rates, or
+tokenomics and does not activate MoonRey issuance. Chunk 71 remains
+the mint. Do not create `packages/moonrey-production-tokenomics`,
+`packages/gpuv-conversion`, `packages/moonrey-issuance-policy`,
+`packages/production-value-function`, or
+`packages/moonrey-production-policy`. The evaluator returns
+`mustStop: false`.
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. Canonical env
