@@ -83,7 +83,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/domain` — Customer, Account, Brand, LegalEntity, Result, time
 - `packages/money` — bigint minor units
 - `packages/permissions` — ActionIntent, HMAC Execution Authority
-- `packages/security` — KeyProvider, secret references, envelope encryption
+- `packages/security` — KeyProvider, secret references, envelope encryption. Chunk 149 production-candidate provider credential plane lives at `src/regulated/credentials`. Raw credentials never enter domain configuration. Not a second Execution Authority, mint, or ledger.
 - `packages/identity` — SunRey Identity, sessions, KYC metadata, ActorContext
 - `packages/kernel` — six proofs, monotonic combine, Kernel submit
 - `packages/ledger` — append-only journals, authority-required
@@ -91,6 +91,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/events` — versioned domain events, durable envelope, outbox/inbox/replay abstractions
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity, SUNREY_* env resolution with SOLSTICE_* aliases
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity
+- `packages/payments` — Cross-border payments, FX, and rail adapters. Chunk 151 banking / payment-rail / FX provider candidates live at `src/production-candidate`. Sandbox conformance only. Not a second ledger, not live bank / rail / FX access.
+- `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity, SUNREY_* env resolution with official legacy env aliases
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only
@@ -99,12 +101,12 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-exchange` — canonical Exchange. Chunk 95 institutional market operations live at `src/ops`. Chunk 99 consumer portfolio, quote, and simple trading APIs live at `src/consumer`. Not a second ledger.
 - `packages/sunrey-agent` — Chunk 98 user-controlled AI agent mandates, transaction proposals, and bounded financial automation. ProposalGate only. Not a second Execution Authority, wallet, Exchange, risk engine, or ledger.
 - `packages/ai-runtime` — Chunk 101 canonical AI inference runtime and Chunk 102 S3M primary intelligence adapter. Inference plane only. S3M-primary. Grok reserved for Chunk 103. Not a second Financial Agent, Execution Authority, wallet, Exchange, ledger, or S3M training system.
-- `packages/ai-runtime` — Chunk 101 canonical AI inference runtime and model provider abstraction. Inference plane only. S3M-primary. Grok reserved for Chunk 103. Not a second Financial Agent, Execution Authority, wallet, Exchange, or ledger.
 - `packages/human-economic-contribution` — Chunk 104 ontology and Chunk 106 canonical verified-contribution registry. Defines contribution classes, provenance, lifecycle, and fingerprints. Not PEVE valuation, not SunRey issuance, not a human-worth score, not a second PEG, HIN, consent, clean-room, ledger, or monetary authority.
 - `packages/economic-asset-registry` — Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry.
 - `packages/sunrey-chain` — Chunk 116/117 MoonRey source taxonomy and source/fact/claim compatibility live at `src/oracle/source-taxonomy` and `src/productive/claim-candidate`. Mapping enforcement only. Not a second oracle, productive registry, or mint.
 - `packages/sunrey-chain` — Chunk 116 MoonRey source-to-productive taxonomy lives at `src/productive/source-taxonomy`. Mapping is not issuance, valuation, or a live provider integration.
 - `packages/sunrey-chain` — Chunk 138 unified multi-provider economic data fabric, coverage, and cross-domain reconciliation lives at `src/oracle/production/economic-data-fabric`. Extends `sunrey-production-oracles`. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production valuation remains inactive.
+- `packages/sunrey-chain` — Chunk 150 external economic oracle provider production-candidate profiles, endpoint blueprints, onboarding packets, and revalidation live at `src/oracle/production/external-provider-candidate`. Extends `sunrey-production-oracles`, `sunrey-provider-certification`, and `sunrey-economic-data-connector-runtime`. Injected/fake transports only. Not a second oracle, connector runtime, certification owner, or mint. Production remains inactive.
 - `packages/sunrey-chain` — Chunk 143 production economic activation firewall lives at `src/economics/production-activation`. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Production remains inactive.
 - `packages/sunrey-chain` — Chunk 147 parameterized dual-economy rehearsal lives at `src/economic-rehearsal/parameterized-candidate`. Extends `sunrey-economic-mainnet-rehearsal`. Rehearsal only. Fixture parameters have no production meaning. Does not create a second rehearsal owner.
 - `packages/sunrey-chain` — Chunk 146 MoonRey production-candidate Productive Value, GPUV conversion, and issuance parameter package live at `src/productive/policy-governance/value-function/production-candidate`, `src/productive/policy-governance/value-settlement/production-candidate`, and `src/economics/production-activation`. Schema only. Does not invent GPUV values, conversion rates, or tokenomics. Does not activate MoonRey issuance. Chunk 71 remains the mint.
@@ -127,7 +129,6 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/sunrey-range` — isolated adversarial cyber-economic test range; not a second ledger or live pentest service
 - `packages/sunrey-economics` — Chunk 75 SunRey/MoonRey dual-economy simulation laboratory; not production monetary policy
 - `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`. Chunk 139/140 HIN → SunRey Chain anchoring lives at `src/network/chain-anchor`. Not a second chain, finality model, consent ledger, Evidence Vault, blockchain node, ledger, or mint.
-- `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`. Chunk 139 HIN → SunRey Chain anchoring foundation lives at `src/network/chain-anchor`. Not a second chain, consent ledger, or Evidence Vault.
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
 - Chunk 152 regulated provider-candidate adapters live at `packages/identity/src/provider-candidate`, `packages/kernel/src/compliance/provider-candidate`, `packages/custody/src/provider-candidate`, and `packages/market-surveillance/src/provider-candidate`. Fixture adapters only. Not a second Kernel, KYC package, AML engine, Travel Rule network, or surveillance engine.

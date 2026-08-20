@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-151",
+  "title": "Banking / BaaS, Payment Rail, Cross-Border Settlement, and FX Provider Production-Candidate Integration",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "payments",
+    "fx",
+    "rail-adapters",
+    "kernel",
+    "ledger",
+    "treasury",
+    "sunrey-production-provider-acceptance",
+    "security"
+  ],
+  "notes": "IMPLEMENTED at packages/payments/src/production-candidate. Extends the existing RailAdapter, PaymentsService, FX, treasury port, and provider-acceptance taxonomy. Sandbox / fixture transport only. Does not connect ACH, FedNow, RTP, SWIFT, SEPA, Faster Payments, Saudi or UAE rails, a real BaaS provider, a real bank, or a real FX provider. Engineering rail class is not named-network membership. evaluateChunkRequirements returns mustStop: false. Do not create packages/banking-v2, packages/baas, packages/payment-provider, packages/swift, packages/ach, packages/fx-v2, or packages/cross-border-core."
+}

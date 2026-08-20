@@ -156,7 +156,9 @@ export class ProviderAcceptanceCatalog {
       domain === 'MARKET_SURVEILLANCE' ||
       domain === 'CASE_MANAGEMENT' ||
       domain === 'CUSTODY_PROVIDER' ||
-      domain === 'BANKING_REFERENCE'
+      domain === 'BANKING_REFERENCE' ||
+      domain === 'PAYMENT_RAIL' ||
+      domain === 'FX_LIQUIDITY'
     ) {
       return 'REGULATED_SERVICE';
     }

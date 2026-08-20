@@ -43,7 +43,11 @@ export function redactProviderLog(value: unknown): unknown {
     if (value.startsWith('secret://')) {
       return 'secret://[REDACTED]';
     }
-    if (/api[_-]?key|client_secret|password|bearer\s+/i.test(value)) {
+    if (
+      /authorization|bearer\s+|api[_-]?key|client_secret|password|private[_-]?key|oauth|mtls|webhook[_-]?secret|session[_-]?token/i.test(
+        value,
+      )
+    ) {
       return '[REDACTED]';
     }
     return value;
@@ -54,7 +58,11 @@ export function redactProviderLog(value: unknown): unknown {
   if (value && typeof value === 'object') {
     const out: Record<string, unknown> = {};
     for (const [key, nested] of Object.entries(value)) {
-      if (/secret|credential|password|token|apiKey|authorization/i.test(key)) {
+      if (
+        /secret|credential|password|token|apiKey|api_key|authorization|bearer|client_secret|private[_-]?key|webhook|session/i.test(
+          key,
+        )
+      ) {
         out[key] = '[REDACTED]';
       } else {
         out[key] = redactProviderLog(nested);

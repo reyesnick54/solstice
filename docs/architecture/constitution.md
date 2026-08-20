@@ -56,6 +56,7 @@ never be two implementations of these systems.
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
 | Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
+| Banking / payment / FX provider candidates | `packages/payments` | `packages/payments/src/production-candidate/index.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |
@@ -98,7 +99,7 @@ never be two implementations of these systems.
 | SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
-| HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
+| HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
@@ -114,6 +115,7 @@ never be two implementations of these systems.
 | Human contribution valuation engine | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/engine.ts` | IMPLEMENTED |
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
+| Production provider credential plane | `packages/security` | `packages/security/src/regulated/credentials/types.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
 | Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
 
@@ -1598,13 +1600,8 @@ anchoring foundation at
 owner. Existing `SunReyChainService` remains the only chain owner.
 The adapter creates privacy-safe `ChainWriteIntent` records. Chunk 140
 completes submit, finality, reorg, and reconciliation. Anchors do not
-mint, transfer ownership, or rewrite historical HIN records. Do not create
-`sunrey-hin-chain-anchoring` is `PARTIAL`. HIN remains the rights
-owner. Existing `SunReyChainService` remains the only chain owner.
-The adapter creates privacy-safe `ChainWriteIntent` records and does
-not mint, transfer ownership, or rewrite historical HIN records.
-Chunk 140 completes lifecycle and finality. Do not create
-`packages/hin-chain`, `packages/information-blockchain`,
+mint, transfer ownership, or rewrite historical HIN records. Do not
+create `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or
 `packages/human-data-ledger`. See
 [`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md).
@@ -1722,6 +1719,18 @@ create `packages/economic-data-fabric`, `packages/unified-oracles`,
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. See
 [`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md).
+Chunk 150 implements external economic oracle provider
+production-candidate profiles, approved endpoint blueprints, injected
+transports, onboarding packets, and revalidation at
+`packages/sunrey-chain/src/oracle/production/external-provider-candidate`.
+It extends `sunrey-production-oracles`, `sunrey-provider-certification`,
+and `sunrey-economic-data-connector-runtime`. It does not create a
+second oracle capability, contact a real provider, flip LIVE_* flags,
+or mint. `productionAuthorized` remains false. Do not create
+`packages/external-oracle-providers`,
+`packages/oracle-provider-candidates`, or
+`packages/external-economic-oracles`. See
+[`chunk-150-external-economic-provider-candidates.md`](./chunk-150-external-economic-provider-candidates.md).
 
 Chunk 135 implements the real-estate use and infrastructure economic
 data fabric at
@@ -1829,11 +1838,12 @@ ACTIVATED`. Do not create `packages/tokenomics`,
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
-the canonical env prefix; `SOLSTICE_*` remains a temporary alias.
-Conflicting values fail with `LEGACY_ENV_CONFLICT`. Historical event
-schema refs, hash domains, protocol IDs, applied migrations, and the
-GitHub repository path are unchanged. `SolsticeIdentityId` is a
-deprecated alias of `SunReyIdentityId`. Do not create
+the canonical env prefix; official legacy environment-name aliases
+remain temporary. Conflicting values fail with `LEGACY_ENV_CONFLICT`.
+Historical event schema refs, hash domains, protocol IDs, applied
+migrations, and the GitHub repository path are unchanged. The reserved
+historical identity-id type alias remains a deprecated alias of
+`SunReyIdentityId`. Do not create
 `packages/branding`, `packages/product-identity`,
 `packages/sunrey-naming`, or `packages/legacy-compat`. See
 [`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
@@ -1850,6 +1860,20 @@ protocol history or rename the GitHub repository. Do not create
 `packages/branding`, `packages/product-identity`, or
 `packages/sunrey-brand`. See
 [`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
+Chunk 149 implements the production-candidate provider credential
+and secret-control plane at
+`packages/security/src/regulated/credentials`. Capability
+`sunrey-production-provider-credential-plane` is `IMPLEMENTED` on the
+existing `packages/security` owner. Provider runtime remains
+`packages/sunrey-chain`. Raw credentials never enter domain
+configuration. A credential is not provider approval, Execution
+Authority, a mint, or a ledger journal. `PRODUCTION_AUTHORIZED`
+remains unavailable while `ENVIRONMENT=simulation` and every
+`LIVE_*` flag stays false. Do not create `packages/secrets`,
+`packages/credentials`, `packages/provider-security`,
+`packages/provider-runtime-v2`, `packages/external-connectivity`, or
+`packages/vendor-runtime`. See
+[`chunk-149-provider-credential-plane.md`](./chunk-149-provider-credential-plane.md).
 
 Chunk 152 connects fixture Identity/KYC, sanctions/PEP, AML,
 Travel Rule, case-management, and market-surveillance

@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-150",
+  "title": "External Economic Oracle Provider Production-Candidate Profiles, Transport Blueprints, Onboarding Packets, and Revalidation",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-data-connector-runtime",
+    "sunrey-provider-certification",
+    "sunrey-unified-economic-data-fabric",
+    "sunrey-provider-runtime",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Extends sunrey-production-oracles, sunrey-provider-certification, and sunrey-economic-data-connector-runtime. Provider-neutral candidate profiles, approved endpoint blueprints, injected fake transports, and onboarding packets. Stops before a real network request. productionAuthorized remains false. evaluateChunkRequirements returns mustStop: false. Do not create packages/external-oracle-providers, packages/oracle-provider-candidates, packages/external-economic-oracles, or a second oracle capability owner."
+}
