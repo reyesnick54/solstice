@@ -7,6 +7,7 @@ echo "==> architectural invariants"
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 npm run lint:architecture
+npm run naming:audit
 
 echo "==> deployment posture"
 python3 scripts/check-deployment-posture.py
@@ -78,6 +79,7 @@ npm run test:formal-smoke
 
 echo "==> end-to-end demo"
 npm run demo
+npm run demo:sunrey-product-identity
 npm run demo:cards
 npm run demo:peg
 npm run demo:wallet

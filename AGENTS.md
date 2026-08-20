@@ -89,7 +89,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/ledger` — append-only journals, authority-required
 - `packages/evidence` — hash-chained Evidence Vault
 - `packages/events` — versioned domain events, durable envelope, outbox/inbox/replay abstractions
-- `packages/config` — clock, ENVIRONMENT, LIVE_* flags
+- `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only

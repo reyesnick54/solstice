@@ -1,0 +1,11 @@
+{
+  "chunk": "CHUNK-141",
+  "title": "Canonical SunRey Naming Constitution, Legacy Inventory, and Migration Guardrails",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "domain",
+    "sunrey-canonical-product-identity"
+  ],
+  "notes": "IMPLEMENTED at packages/config/src/product-identity.ts. Canonical SunRey product identity, legacy Solstice classification, generated inventory, and public-surface guard. Not a second branding package, not a repository rename, not a protocol rewrite, and not Chunk 142 migration. evaluateChunkRequirements returns mustStop: false. Do not create packages/branding, packages/product-identity, or packages/sunrey-brand."
+}

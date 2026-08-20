@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "note": "Frozen Chunk 141 baseline of existing current-public-surface Solstice copy. New entries fail CI. Do not add a public product name here to silence the guard.",
+  "entries": [
+    {
+      "path": "AGENTS.md",
+      "token": "Solstice",
+      "lineText": "- `packages/identity` — Solstice Identity, sessions, KYC metadata, ActorContext"
+    },
+    {
+      "path": "AGENTS.md",
+      "token": "Solstice",
+      "lineText": "# Solstice agent rules"
+    },
+    {
+      "path": "docs/architecture/constitution.md",
+      "token": "Solstice",
+      "lineText": "# Solstice canonical architecture constitution"
+    },
+    {
+      "path": "docs/architecture/constitution.md",
+      "token": "Solstice",
+      "lineText": "| Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |"
+    },
+    {
+      "path": "docs/architecture/constitution.md",
+      "token": "Solstice",
+      "lineText": "and classifies historical Solstice identifiers; it does not rewrite"
+    },
+    {
+      "path": "docs/architecture/constitution.md",
+      "token": "Solstice",
+      "lineText": "Solstice inventory, and migration guardrails at"
+    },
+    {
+      "path": "docs/build-status.md",
+      "token": "Solstice",
+      "lineText": "- Solstice Identity (`packages/identity`, `services/identity`): person/business"
+    },
+    {
+      "path": "package.json",
+      "token": "Solstice",
+      "lineText": "  \"description\": \"Solstice digital banking simulation \\u2014 Compliance Kernel, signed Execution Authority, Evidence Vault\","
+    },
+    {
+      "path": "README.md",
+      "token": "solstice",
+      "lineText": "# solstice"
+    }
+  ]
+}

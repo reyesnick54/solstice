@@ -33,6 +33,7 @@ jobs:
           python3 scripts/lint-architectural-invariants.py
           python3 scripts/extraction-dryrun.py
           npm run lint:architecture
+          npm run naming:audit
 
       - name: Deployment posture
         run: python3 scripts/check-deployment-posture.py
