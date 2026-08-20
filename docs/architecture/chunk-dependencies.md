@@ -192,6 +192,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
+| sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1476,3 +1477,13 @@ single config authority. Protocol IDs, hash domains, stored event
 schema refs, and `reyesnick54/solstice` are unchanged. See
 [`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
 The evaluator returns `mustStop: false`.
+Chunk 152 connects fixture Identity/KYC, sanctions/PEP, AML, Travel
+Rule, case-management, and market-surveillance provider-candidate
+adapters to existing domain ports. Capability
+`sunrey-regulated-provider-candidates` is `IMPLEMENTED`. It does not
+replace `identity`, `compliance-screening`, `custody`, or
+`market-surveillance`. Provider output never issues Execution
+Authority. Do not create `packages/kyc`, `packages/aml`,
+`packages/sanctions`, `packages/compliance-v2`, `packages/regtech`,
+`packages/travel-rule-v2`, or `packages/surveillance-v2`. The
+evaluator returns `mustStop: false`.

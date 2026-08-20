@@ -130,6 +130,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/information-market` — Human Information marketplace and Chunk 100 network. Chunk 107 HIN → Human Contribution Registry adapter lives at `src/network/contribution`. Chunk 139 HIN → SunRey Chain anchoring foundation lives at `src/network/chain-anchor`. Not a second chain, consent ledger, or Evidence Vault.
 - `packages/custody` — provider-neutral simulation custody and Travel Rule
 - `packages/market-surveillance` — deterministic alerts and case proposals
+- Chunk 152 regulated provider-candidate adapters live at `packages/identity/src/provider-candidate`, `packages/kernel/src/compliance/provider-candidate`, `packages/custody/src/provider-candidate`, and `packages/market-surveillance/src/provider-candidate`. Fixture adapters only. Not a second Kernel, KYC package, AML engine, Travel Rule network, or surveillance engine.
 - `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
 - `services/identity` — identity application facade; not a second identity model

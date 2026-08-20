@@ -115,6 +115,7 @@ never be two implementations of these systems.
 | Human contribution valuation constitution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/valuation/registry.ts` | IMPLEMENTED |
 | Human contribution evidence verification | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/verification/engine.ts` | IMPLEMENTED |
 | SunRey mobile wallet sync | `packages/sunrey-chain` | `packages/sunrey-chain/src/wallet/mobile-sync/types.ts` | IMPLEMENTED |
+| Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1849,6 +1850,18 @@ protocol history or rename the GitHub repository. Do not create
 `packages/branding`, `packages/product-identity`, or
 `packages/sunrey-brand`. See
 [`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
+
+Chunk 152 connects fixture Identity/KYC, sanctions/PEP, AML,
+Travel Rule, case-management, and market-surveillance
+provider-candidate adapters to existing domain ports.
+Capability `sunrey-regulated-provider-candidates` is `IMPLEMENTED`.
+It does not replace `identity`, `compliance-screening`, `custody`,
+or `market-surveillance`. Provider output never issues Execution
+Authority. `LIVE_EXTERNAL_KYC` remains `false`. Do not create
+`packages/kyc`, `packages/aml`, `packages/sanctions`,
+`packages/compliance-v2`, `packages/regtech`, `packages/travel-rule-v2`,
+or `packages/surveillance-v2`. See
+[`docs/compliance/chunk-152-regulated-provider-candidates.md`](../compliance/chunk-152-regulated-provider-candidates.md).
 
 ## Agent stop rule
 

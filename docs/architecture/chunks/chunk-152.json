@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-152",
+  "title": "Identity/KYC, Sanctions/PEP, AML Transaction Monitoring, Travel Rule, Case Management, and Market Surveillance Provider Production-Candidate Integration",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "identity",
+    "kernel",
+    "compliance-screening",
+    "custody",
+    "market-surveillance",
+    "security",
+    "evidence",
+    "sunrey-regulated-integration",
+    "sunrey-production-provider-acceptance",
+    "sunrey-provider-runtime"
+  ],
+  "notes": "IMPLEMENTED at packages/identity/src/provider-candidate, packages/kernel/src/compliance/provider-candidate, packages/custody/src/provider-candidate, and packages/market-surveillance/src/provider-candidate. Connects fixture provider-candidate adapters to existing domain ports. Does not connect live vendors, make external network calls, replace the Compliance Kernel, or issue Execution Authority. evaluateChunkRequirements returns mustStop: false. Do not create packages/kyc, packages/aml, packages/sanctions, packages/compliance-v2, packages/regtech, packages/travel-rule-v2, or packages/surveillance-v2."
+}
