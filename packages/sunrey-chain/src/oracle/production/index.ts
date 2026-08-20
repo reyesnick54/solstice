@@ -1,4 +1,9 @@
 export {
+  OracleObservationDedupe,
+  admitCollectedObservation,
+  oracleObservationKey,
+} from './observation-dedupe.ts';
+export {
   AUTHENTICATION_METHODS,
   CATEGORY_TO_FACT_TYPE,
   COLLECTOR_VERSION,

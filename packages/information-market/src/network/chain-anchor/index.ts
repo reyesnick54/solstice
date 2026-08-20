@@ -1,3 +1,5 @@
+export { HinAnchorRecovery } from './operation-recovery.ts';
+export type { HinAnchorDraft } from './operation-recovery.ts';
 export {
   HinChainAnchorAdapter,
   createHinChainAnchorAdapter,

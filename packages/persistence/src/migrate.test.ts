@@ -489,6 +489,16 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
   });
 
+  it('ledger V006 persists operation execution without credentials or raw payloads', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v006 = files.find((file) => file.version === 6);
+    assert.ok(v006);
+    assert.match(v006.sql, /CREATE TABLE ledger\.operation_execution/);
+    assert.match(v006.sql, /CREATE TABLE ledger\.operation_callback/);
+    assert.match(v006.sql, /SUBMISSION_UNKNOWN/);
+    assert.equal(/raw_payload|credential|password|secret/i.test(v006.sql), false);
+  });
+
   it('ledger V004 persists banking-core metadata without a balance column', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v004 = files.find((file) => file.version === 4);
