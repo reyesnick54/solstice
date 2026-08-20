@@ -9,3 +9,7 @@ economic dry run. It does not activate mainnet or enable `LIVE_*` services.
 Do not create `packages/sunrey-economic-rehearsal`,
 `packages/economic-mainnet`, `packages/economic-rehearsal`, or
 `packages/sunrey-economic-mainnet`.
+
+Chunk 147 extends this owner at
+`packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate`.
+See [`docs/economics/chunk-147-parameterized-dual-economy-rehearsal.md`](../economics/chunk-147-parameterized-dual-economy-rehearsal.md).
