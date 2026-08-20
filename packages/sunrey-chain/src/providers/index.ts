@@ -10,3 +10,4 @@ export * from './readiness.ts';
 export * from './audit.ts';
 export * from './fixture.ts';
 export * from './cli.ts';
+export * from './production-binding/index.ts';

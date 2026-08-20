@@ -123,6 +123,7 @@ never be two implementations of these systems.
 | Regulated provider candidates | `packages/kernel` | `packages/kernel/src/compliance/provider-candidate/types.ts` | IMPLEMENTED |
 | Unified production-candidate control room | `packages/sunrey-chain` | `packages/sunrey-chain/src/ops/control-room/index.ts` | IMPLEMENTED |
 | Distributed idempotency recovery | `packages/events` | `packages/events/src/operation/index.ts` | IMPLEMENTED |
+| Production provider binding | `packages/sunrey-chain` | `packages/sunrey-chain/src/providers/production-binding/types.ts` | IMPLEMENTED |
 
 Companion invariant scripts remain under `scripts/`. They are part of
 the same architecture-linting system, not a second linter.
@@ -1999,6 +2000,22 @@ and
 [`merge-integrity-policy.md`](./merge-integrity-policy.md).
 Do not create `packages/repository-integrity`,
 `packages/architecture-v2`, or `packages/merge-manager`.
+
+Chunk 162 implements the production provider binding manifest,
+environment separation, endpoint/credential/contract mapping, and
+connectivity readiness report at
+`packages/sunrey-chain/src/providers/production-binding`. Capability
+`sunrey-production-provider-binding` is `IMPLEMENTED`. It extends
+Chunk 82 provider acceptance and Chunk 91 provider runtime. Bindings
+record which provider would serve a domain; they do not contact that
+provider. `productionConnectivityEnabled` remains `false`. There is
+no `LIVE` binding state. Sandbox credentials cannot satisfy
+production-candidate bindings. External evidence is consumed through
+a Chunk 160 port and operating scope through a Chunk 161 port; this
+chunk does not duplicate those evaluators. Do not create
+`packages/integrations-v2`, `packages/vendor-connectivity`,
+`packages/provider-manager`, or `packages/live-providers`. See
+[`docs/operations/chunk-162-production-provider-binding.md`](../operations/chunk-162-production-provider-binding.md).
 
 ## Agent stop rule
 
