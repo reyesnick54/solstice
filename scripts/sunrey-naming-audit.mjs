@@ -100,6 +100,13 @@ inventory.audit = {
   violations,
 };
 
+function section(classification) {
+  return (inventory.items ?? [])
+    .filter((item) => item.classification === classification)
+    .map((item) => `- \`${item.id}\` — \`${item.legacyValue}\` → \`${item.canonicalValue}\` (\`${item.path}\`)`)
+    .join('\n');
+}
+
 writeFileSync(INVENTORY_JSON, `${JSON.stringify(inventory, null, 2)}\n`);
 writeFileSync(
   INVENTORY_MD,
@@ -111,6 +118,26 @@ Machine copy: [\`sunrey-naming-inventory.json\`](./sunrey-naming-inventory.json)
 
 Current master brand: **SunRey**. Legacy master brand is not active.
 GitHub repository path remains \`reyesnick54/solstice\`.
+
+## MUST_MIGRATE
+
+${section('MUST_MIGRATE')}
+
+## MIGRATE_WITH_ALIAS
+
+${section('MIGRATE_WITH_ALIAS')}
+
+## PRESERVE_IMMUTABLE
+
+${section('PRESERVE_IMMUTABLE')}
+
+## MANUAL_REVIEW
+
+${section('MANUAL_REVIEW')}
+
+## HISTORICAL_ONLY
+
+${section('HISTORICAL_ONLY')}
 
 Public current-product Solstice display names remaining: **${violations.length}**.
 `,

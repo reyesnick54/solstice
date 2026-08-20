@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedBy": "CHUNK-142",
+  "generatedBy": "scripts/sunrey-naming-audit.mjs",
   "sourceConstitution": "docs/architecture/sunrey-naming-constitution.md",
   "currentMasterBrand": "SunRey",
   "legacyMasterBrand": "Solstice",
@@ -257,5 +257,44 @@
       "surface": "HISTORICAL",
       "status": "PRESERVED"
     }
-  ]
+  ],
+  "publicLegacyDisplayNamesRemaining": 0,
+  "audit": {
+    "publicSurfacesChecked": [
+      "package.json",
+      "AGENTS.md",
+      "README.md",
+      "docs/architecture/constitution.md",
+      "packages/sunrey-sdk/package.json",
+      "packages/sunrey-explorer/package.json"
+    ],
+    "reviewedExceptions": [
+      "reyesnick54/solstice",
+      "@solstice/",
+      "solstice-identity",
+      "solstice-architecture-manifest",
+      "SOLSTICE_",
+      "SolsticeIdentityId",
+      "asSolsticeIdentityId",
+      "le_solstice_",
+      "SOLSTICE_UK",
+      "SOLSTICE_US",
+      "solstice_customer",
+      "solstice_ledger",
+      "solstice_evidence",
+      "solstice_security",
+      "solstice_bootstrap",
+      "solstice_migrator",
+      "solstice_dev_only",
+      "simulation.solstice.local",
+      "SolsticePersonalDataExportV1",
+      "SOLSTICE_HOLDING",
+      "SOLSTICE_PAYMENT",
+      "SOLSTICE_CARD",
+      "SOLSTICE_SERVICE",
+      "SOLSTICE_GENERATED",
+      "chunk-5-solstice-identity"
+    ],
+    "violations": []
+  }
 }
