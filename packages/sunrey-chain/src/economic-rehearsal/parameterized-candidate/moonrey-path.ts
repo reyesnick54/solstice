@@ -101,7 +101,7 @@ export function issueMoonReyV2(input: {
   readonly controller?: string;
   readonly objectId?: string;
   readonly productiveValueQuantity?: bigint;
-  readonly oracle?: OracleRehearsalState;
+  readonly oracle?: OracleRehearsalState | undefined;
 }): MoonReyIssueAttempt {
   if (input.oracle?.outage || input.oracle?.stale || input.oracle?.quorumFailure) {
     return {
@@ -224,7 +224,7 @@ export function issueMoonReyV2(input: {
 export function rehearseMoonReyPath(input: {
   readonly pkg: RehearsalParameterPackage;
   readonly book: AssetSupplyBook;
-  readonly oracle?: OracleRehearsalState;
+  readonly oracle?: OracleRehearsalState | undefined;
 }): {
   readonly result: MoonReyPathResult;
   readonly book: AssetSupplyBook;

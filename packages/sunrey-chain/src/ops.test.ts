@@ -476,9 +476,8 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       const first = server.sign(request('val_dev_a', { height: 5n, round: 2n, messageType: 'PRECOMMIT' }), client, NOW);
       assert.equal(first.ok, true);
       const backup = store.backup(NOW);
-      assert.equal(backup.ok, true);
       if (!backup.ok) {
-        return;
+        throw new Error('expected ok');
       }
       const current = store.safety.load();
       assert.ok(current);
@@ -548,26 +547,22 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
   it('runs join, rotate, exit, replace, and jail workflows', () => {
     const keystore = new OperatorKeystore();
     const incoming = generateJoinRecord(keystore, 'E', NOW);
-    assert.equal(incoming.ok, true);
     if (!incoming.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const registry = { set: fourValidatorDevelopmentSet(), epoch: developmentEpoch(0n, 0n, 8n), queued: [] };
     const joined = joinWorkflow(registry, incoming.value, NOW);
-    assert.equal(joined.ok, true);
     if (!joined.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(joined.value.receipt.status, 'ACTIVE');
     const next = keystore.generate('CONSENSUS_VOTING_KEY', 'future', NOW);
-    assert.equal(next.ok, true);
     if (!next.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const descriptor = keystore.descriptor(next.value.keyId);
-    assert.equal(descriptor.ok, true);
     if (!descriptor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const rotated = rotateWorkflow(joined.value.registry, incoming.value.validatorId, descriptor.value, NOW);
     assert.equal(rotated.ok, true);
@@ -575,9 +570,8 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       assert.equal(rotated.value.receipt.steps.every((step) => step.status === 'DONE'), true);
     }
     const replacement = generateJoinRecord(keystore, 'F', NOW);
-    assert.equal(replacement.ok, true);
     if (!replacement.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const replaced = replaceWorkflow(joined.value.registry, 'val_dev_b', replacement.value, NOW);
     assert.equal(replaced.ok, true);
@@ -611,9 +605,8 @@ describe('Chunk 54 SunRey validator operator infrastructure', () => {
       payload: '{"state":"ok"}',
       createdAtUtc: NOW,
     });
-    assert.equal(created.ok, true);
     if (!created.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const trust = {
       networkId: 'net_sunrey_local_dev',

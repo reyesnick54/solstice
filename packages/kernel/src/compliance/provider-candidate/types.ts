@@ -62,11 +62,11 @@ export type ComplianceProviderCandidateProfile = {
 
 export type RawComplianceVendorResponse = {
   readonly scenario: ComplianceTransportScenario;
-  readonly vendorOutcome?: string;
-  readonly vendorScore?: number | string;
-  readonly vendorConfidence?: number | string;
-  readonly copyrightedCopy?: string;
-  readonly matchRef?: string;
+  readonly vendorOutcome?: string | undefined;
+  readonly vendorScore?: number | string | undefined;
+  readonly vendorConfidence?: number | string | undefined;
+  readonly copyrightedCopy?: string | undefined;
+  readonly matchRef?: string | undefined;
 };
 
 export type ComplianceScoreInterpretation = {

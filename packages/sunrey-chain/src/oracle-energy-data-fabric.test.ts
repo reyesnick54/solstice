@@ -101,7 +101,6 @@ describe('CHUNK-129 energy economic data fabric', () => {
     const store = new EnergyObservationStore();
     const first = mustIngest(validCumulativeMeterFeed({ sourceObservationId: 'obs_cum_1' }), store);
     const replay = ingestEnergyObservation(validCumulativeMeterFeed({ sourceObservationId: 'obs_cum_1' }), NOW, store);
-    assert.equal(replay.ok, true);
     if (!replay.ok) {
       throw new Error(replay.error.detail);
     }
@@ -396,7 +395,6 @@ describe('CHUNK-129 energy economic data fabric', () => {
     const store = new EnergyObservationStore();
     const first = mustIngest(validGeneratorIntervalFeed({ sourceObservationId: 'obs_alias' }), store);
     const alias = ingestEnergyObservation(unitAliasRetransmission(validGeneratorIntervalFeed({ sourceObservationId: 'obs_alias' })), NOW, store);
-    assert.equal(alias.ok, true);
     if (!alias.ok) {
       throw new Error(alias.error.detail);
     }
@@ -431,7 +429,6 @@ describe('CHUNK-129 energy economic data fabric', () => {
       commercialAgreementEvidenceReference: null,
       status: 'TESTNET_ACTIVE',
     });
-    assert.equal(onboarding.ok, true);
     if (!onboarding.ok) {
       throw new Error(onboarding.error.detail);
     }

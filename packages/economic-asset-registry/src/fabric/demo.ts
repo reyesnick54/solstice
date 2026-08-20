@@ -291,6 +291,7 @@ export function runEconomicAssetFabricDemo(): {
         rightsReferences: [object.rightsReference],
         controller: object.controller,
         fingerprint: 'fp.energy.demo',
+        fingerprintVersion: 'PRODUCTIVE_FINGERPRINT_V1',
         upstreamContributionIds: [],
         downstreamContributionIds: [],
         status: 'ELIGIBLE',

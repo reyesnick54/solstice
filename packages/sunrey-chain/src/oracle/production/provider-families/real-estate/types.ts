@@ -167,7 +167,7 @@ export type RealEstateSourceRecord = {
   readonly parties: readonly RealEstateParty[];
   readonly rightsReferences: readonly RealEstateRightsReference[];
   readonly sourceTimestampUnix: string;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type RealEstateFabricPolicy = {

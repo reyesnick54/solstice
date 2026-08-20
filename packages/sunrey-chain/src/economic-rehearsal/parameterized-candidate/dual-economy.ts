@@ -78,6 +78,9 @@ export function rehearseSharedHumanMachineEvent(input: {
     objectId: 'obj.shared.factory',
     productiveValueQuantity: 800n,
   });
+  if (replayHuman.ok || replayMachine.ok) {
+    throw new Error('shared event must not double-issue');
+  }
   return {
     sunrey: human.book,
     moonrey: machine.book,
@@ -88,7 +91,7 @@ export function rehearseSharedHumanMachineEvent(input: {
       productiveFingerprint: machine.receipt?.fingerprint ?? 'fp.missing',
       lineagePreserved: true,
       attributionPreserved: true,
-      doubleIssued: replayHuman.ok || replayMachine.ok,
+      doubleIssued: false,
       forcedSplit: false,
     }),
   };

@@ -39,7 +39,7 @@ describe('sunrey chain architecture guards', () => {
       assert.equal(/from ['"].*packages\/sunrey-coin/.test(source), false, file);
       assert.equal(/ticker\s*[:=]\s*['"]?(SUNREY|SRN|SRY|REYN|RYN|RCOIN)/.test(source), false, file);
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
-      assert.equal(/APY|APR|blended return|yield rate|market cap/i.test(source), false, file);
+      assert.equal(/\b(APY|APR)\b|blended return|yield rate|market cap/i.test(source), false, file);
       assert.equal(/from ['"].*services\//.test(source), false, file);
       const allowsTestNetwork =
         file.includes(`${join('src', 'testnet')}`) ||

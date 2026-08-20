@@ -244,7 +244,7 @@ export class ProductiveAttributionBook {
   }): AttributionResult<{
     readonly correction: AttributionCorrectionRecord;
     readonly released: ProductiveAttributionEntry;
-    readonly replacement?: ProductiveAttributionEntry;
+    readonly replacement?: ProductiveAttributionEntry | undefined;
   }> {
     const target = this.entries.get(input.targetEntryId);
     if (!target) {

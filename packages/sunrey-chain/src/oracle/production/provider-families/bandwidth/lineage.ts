@@ -123,7 +123,10 @@ export function bandwidthEventId(observation: BandwidthSourceObservation): strin
 }
 
 export function cacheHitIsNotContentCopy(observation: BandwidthSourceObservation): true {
-  return observation.cacheHit !== true || observation.transferSemantics === 'CACHE_EGRESS_BYTES';
+  if (observation.cacheHit === true && observation.transferSemantics !== 'CACHE_EGRESS_BYTES') {
+    throw new Error('CACHE_HIT_COUNTED_AS_CONTENT_COPY');
+  }
+  return true;
 }
 
 export type BandwidthLineageLink = {

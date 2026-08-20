@@ -45,9 +45,8 @@ describe('PEVE persistence', () => {
       true,
     );
     const actor = identity.service.resolveActorContext('actor_peve_pg');
-    assert.equal(actor.ok, true);
     if (!actor.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const peg = new EconomicGraphService({ clock, events });
     peg.openGraph(actor.value, subjectId);
@@ -57,9 +56,8 @@ describe('PEVE persistence', () => {
       estimatedAmount: { minorUnits: '400000', currency: 'USD' },
     });
     const snapshot = peg.getEconomicSnapshot(actor.value, subjectId);
-    assert.equal(snapshot.ok, true);
     if (!snapshot.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const peve = new PersonalEconomicValueEngine({ clock, events });
     const recorded = peve.recordAttribution(actor.value, {

@@ -59,7 +59,7 @@ export const ENERGY_SCHEMA_FAMILIES: Readonly<Record<EnergySchemaId, EnergySchem
         vendorBound: false as const,
       }),
     ]),
-  ) as Record<EnergySchemaId, EnergySchemaDefinition>,
+  ) as unknown as Record<EnergySchemaId, EnergySchemaDefinition>,
 );
 
 export function energyFeedSchema(schemaId: EnergySchemaId, unit: FeedSchemaDefinition['unit'], factType: FeedSchemaDefinition['factType']): FeedSchemaDefinition {

@@ -215,7 +215,7 @@ function complement(eligible: readonly ValueFactorType[]): readonly ValueFactorT
   return VALUE_FACTOR_TYPES.filter((factor) => !eligible.includes(factor));
 }
 
-const CATEGORY_PLANS = {
+const CATEGORY_PLANS: Readonly<Record<ProductiveCategory, CategoryPlan>> = {
   ENERGY: {
     eligible: [
       'REALIZATION_FACTOR',

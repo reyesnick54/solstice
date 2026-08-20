@@ -35,13 +35,16 @@ export class NodeExternalHttpTransport implements ExternalHttpTransport {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), input.timeoutMs);
     try {
-      const response = await fetch(input.url, {
+      const init: RequestInit = {
         method: input.method,
         headers: { ...input.headers },
-        body: input.body,
         redirect: 'manual',
         signal: controller.signal,
-      });
+      };
+      if (input.body !== undefined) {
+        init.body = input.body;
+      }
+      const response = await fetch(input.url, init);
       const raw = Buffer.from(await response.arrayBuffer());
       if (raw.byteLength > input.maximumResponseBytes) {
         return err({

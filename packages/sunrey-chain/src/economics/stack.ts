@@ -321,11 +321,11 @@ export class IntegratedEconomicStack {
     readonly controller: string;
     readonly epoch: number;
     readonly providerCount: number;
-    readonly productiveValueQuantity?: bigint;
-    readonly conversionNumerator?: bigint;
-    readonly conversionDenominator?: bigint;
-    readonly authorizedBy?: string;
-    readonly production?: boolean;
+    readonly productiveValueQuantity?: bigint | undefined;
+    readonly conversionNumerator?: bigint | undefined;
+    readonly conversionDenominator?: bigint | undefined;
+    readonly authorizedBy?: string | undefined;
+    readonly production?: boolean | undefined;
   }): StackMoonReyResult {
     if (!this.finalityAvailable) {
       this.pendingOperations += 1;

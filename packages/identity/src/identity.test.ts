@@ -46,14 +46,12 @@ describe('SunRey Identity', () => {
       actorId: 'actor_valid',
       jurisdiction: GB,
     });
-    assert.equal(provisioned.ok, true);
     if (!provisioned.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const resolved = service.resolveActorContext('actor_valid');
-    assert.equal(resolved.ok, true);
     if (!resolved.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(resolved.value.actorId, 'actor_valid');
     assert.ok(resolved.value.authorizedCapabilities.includes('ACCOUNT_OPEN_REQUEST'));
@@ -205,9 +203,8 @@ describe('SunRey Identity', () => {
     const { adapter, keys, clock } = harness();
     assert.equal(adapter.provisionSimulatedActor({ actorId: 'actor_fab', jurisdiction: GB }).ok, true);
     const real = adapter.service.resolveActorContext('actor_fab');
-    assert.equal(real.ok, true);
     if (!real.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const forged = {
       ...real.value,
@@ -225,9 +222,8 @@ describe('SunRey Identity', () => {
       issuedAt: clock.now(),
       expiresAt: real.value.expiresAt,
     });
-    assert.equal(minted.ok, true);
     if (!minted.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(minted.value.authorizedCapabilities.includes('MANAGE_BENEFICIARY'), true);
     assert.equal(

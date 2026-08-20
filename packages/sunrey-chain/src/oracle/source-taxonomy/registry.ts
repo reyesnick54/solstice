@@ -53,6 +53,7 @@ function mapping(input: {
     requiresGeography: input.requiresGeography === true,
     requiresVerifiedFact: !referenceDataOnly,
     requiresQuorum: !referenceDataOnly,
+    canCreateProductiveClaim: !referenceDataOnly && input.productiveCategory !== null,
   });
 }
 

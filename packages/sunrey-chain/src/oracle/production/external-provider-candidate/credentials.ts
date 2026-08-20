@@ -32,11 +32,11 @@ export function bindCredentialDescriptor(input: {
   readonly descriptorRef: string;
   readonly providerId: string;
   readonly authenticationMethod: AuthenticationMethod;
-  readonly secretPath?: string;
-  readonly mtlsCertificateRef?: string;
-  readonly oauthClientRef?: string;
-  readonly generation?: number;
-  readonly expiresAtUnix?: bigint | null;
+  readonly secretPath?: string | undefined;
+  readonly mtlsCertificateRef?: string | undefined;
+  readonly oauthClientRef?: string | undefined;
+  readonly generation?: number | undefined;
+  readonly expiresAtUnix?: bigint | null | undefined;
 }): Result<ExternalProviderCredentialBinding, ProviderCandidateRejection> {
   if (input.descriptorRef.length === 0) {
     return err(candidateRejection('PROFILE_INVALID', 'credentialDescriptorRef is required'));

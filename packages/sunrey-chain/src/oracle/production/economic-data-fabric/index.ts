@@ -100,6 +100,7 @@ export {
   energyProductionFixture,
   FABRIC_NOW_UNIX,
   fixtureCandidate,
+  overlayCandidate,
   goodsOutputFixture,
   infrastructureFixture,
   logisticsDeliveryFixture,

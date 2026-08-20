@@ -22,6 +22,7 @@ export type PitrArchive = {
   readonly providerConfigured: false;
   readonly baseBackupSha256: string;
   readonly segments: readonly WalSegment[];
+  readonly includesOperationalState: true;
 };
 
 export type PitrRestoreResult = {
@@ -47,6 +48,7 @@ export function createLocalPitrArchive(baseBackup: string, walPayloads: readonly
     providerConfigured: false,
     baseBackupSha256: sha256(baseBackup),
     segments,
+    includesOperationalState: true,
   });
 }
 
