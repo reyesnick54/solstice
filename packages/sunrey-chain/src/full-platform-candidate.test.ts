@@ -100,7 +100,7 @@ describe('Chunk 158 full-platform production candidate', () => {
     const burnIn = runFullPlatformBurnIn();
     assert.equal(burnIn.paymentRecovered, true);
     assert.equal(burnIn.runtime.payments.get('pay.usd-sar.1')?.status, 'SETTLED');
-    assert.equal(burnIn.runtime.journals.filter((row) => row.idempotencyKey === 'idem.pay.usd-sar.1.settle').length, 1);
+    assert.equal(burnIn.runtime.fiatEntries.filter((row) => row.idempotencyKey === 'idem.pay.usd-sar.1.settle').length, 1);
   });
 
   it('7. custody ambiguous recovery works', () => {
@@ -189,7 +189,7 @@ describe('Chunk 158 full-platform production candidate', () => {
     const burnIn = runFullPlatformBurnIn();
     assert.equal(burnIn.ledgerBalanced, true);
     assert.equal(
-      burnIn.runtime.journals.every((journal) => {
+      burnIn.runtime.fiatEntries.every((journal) => {
         const debit = journal.debits.reduce((sum, row) => sum + row.amount, 0n);
         const credit = journal.credits.reduce((sum, row) => sum + row.amount, 0n);
         return debit === credit;

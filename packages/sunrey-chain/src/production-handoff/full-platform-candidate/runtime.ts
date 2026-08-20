@@ -128,7 +128,7 @@ export type BurnInRuntime = {
   architectureIntegrity: boolean;
   sunrey: AssetSupplyBook;
   moonrey: AssetSupplyBook;
-  journals: FiatJournal[];
+  fiatEntries: FiatJournal[];
   payments: Map<string, PaymentRecord>;
   processedInbox: Set<string>;
   custody: Map<string, CustodyPosition>;
@@ -172,7 +172,7 @@ export function createRuntime(profile: BurnInProfile = 'SMOKE', seed = FULL_PLAT
     architectureIntegrity: true,
     sunrey: emptyBook('SUNREY_COIN', 'rehearsal.chunk71.v1'),
     moonrey: emptyBook('MOONREY_COIN', 'rehearsal.chunk71.v1'),
-    journals: [],
+    fiatEntries: [],
     payments: new Map(),
     processedInbox: new Set(),
     custody: new Map(),
@@ -248,7 +248,7 @@ export function postBalancedJournal(
   if (debit.amount !== credit.amount || debit.currency !== credit.currency) {
     throw new TypeError('unbalanced journal refused');
   }
-  runtime.journals.push(
+  runtime.fiatEntries.push(
     Object.freeze({
       journalId,
       idempotencyKey,
@@ -262,7 +262,7 @@ export function postBalancedJournal(
 }
 
 export function journalsBalance(runtime: BurnInRuntime): boolean {
-  return runtime.journals.every((journal) => {
+  return runtime.fiatEntries.every((journal) => {
     const debit = journal.debits.reduce((sum, row) => sum + row.amount, 0n);
     const credit = journal.credits.reduce((sum, row) => sum + row.amount, 0n);
     return debit === credit;
@@ -290,13 +290,13 @@ export function recordCheckpoint(runtime: BurnInRuntime, id: BurnInCheckpointId)
     sunrey: String(snapshotOf(runtime.sunrey).expectedTotal),
     moonrey: String(snapshotOf(runtime.moonrey).expectedTotal),
     payments: String(runtime.payments.size),
-    journals: String(runtime.journals.length),
+    journals: String(runtime.fiatEntries.length),
     inbox: String(runtime.processedInbox.size),
     chain: runtime.chainFinality,
   });
   const evidenceHash = hashCanonical({
     id,
-    journals: runtime.journals.map((row) => row.idempotencyKey),
+    journals: runtime.fiatEntries.map((row) => row.idempotencyKey),
     payments: [...runtime.payments.values()].map((row) => `${row.paymentId}:${row.status}`),
     custody: [...runtime.custody.values()].map((row) => `${row.ownerId}:${row.assetId}:${row.available}:${row.held}:${row.reserved}`),
   });
@@ -321,7 +321,7 @@ export function snapshotRuntime(runtime: BurnInRuntime): string {
     sequence: runtime.sequence,
     sunrey: snapshotOf(runtime.sunrey),
     moonrey: snapshotOf(runtime.moonrey),
-    journals: runtime.journals,
+    journals: runtime.fiatEntries,
     payments: [...runtime.payments.values()],
     inbox: [...runtime.processedInbox].sort(),
     custody: [...runtime.custody.entries()].sort(([a], [b]) => a.localeCompare(b)),
@@ -343,7 +343,7 @@ export function persistAndRestore(runtime: BurnInRuntime): boolean {
     processedInbox: new Set(runtime.processedInbox),
     custody: new Map(runtime.custody),
     reservations: new Map(runtime.reservations),
-    journals: [...runtime.journals],
+    journals: [...runtime.fiatEntries],
     providers: { ...runtime.providers },
     chainFinality: runtime.chainFinality,
     unfinalizedCredits: runtime.unfinalizedCredits,
@@ -357,7 +357,7 @@ export function persistAndRestore(runtime: BurnInRuntime): boolean {
   runtime.processedInbox = saved.processedInbox;
   runtime.custody = saved.custody;
   runtime.reservations = saved.reservations;
-  runtime.journals = saved.journals;
+  runtime.fiatEntries = saved.journals;
   runtime.providers = saved.providers;
   runtime.chainFinality = saved.chainFinality;
   runtime.unfinalizedCredits = saved.unfinalizedCredits;
@@ -711,7 +711,7 @@ export function dualAssetIsolated(runtime: BurnInRuntime): boolean {
 }
 
 export function duplicatePaymentEffects(runtime: BurnInRuntime): number {
-  return runtime.journals.filter((row) => row.idempotencyKey === 'idem.pay.usd-sar.1.settle').length > 1 ? 1 : 0;
+  return runtime.fiatEntries.filter((row) => row.idempotencyKey === 'idem.pay.usd-sar.1.settle').length > 1 ? 1 : 0;
 }
 
 export function duplicateWithdrawalEffects(runtime: BurnInRuntime): number {
@@ -739,7 +739,7 @@ export function canonicalBurnInHash(runtime: BurnInRuntime): string {
     checkpoints: runtime.checkpoints.map((row) => `${row.id}:${row.stateHash}`).join(','),
     sunrey: String(snapshotOf(runtime.sunrey).expectedTotal),
     moonrey: String(snapshotOf(runtime.moonrey).expectedTotal),
-    journals: String(runtime.journals.length),
+    journals: String(runtime.fiatEntries.length),
     architectureIntegrity: String(runtime.architectureIntegrity),
   });
 }

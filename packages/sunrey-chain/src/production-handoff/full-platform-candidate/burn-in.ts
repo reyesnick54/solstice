@@ -149,7 +149,7 @@ export function runFullPlatformBurnIn(input: {
 function replayConvergedEvents(runtime: BurnInRuntime): void {
   const beforeSunrey = snapshotOf(runtime.sunrey).expectedTotal;
   const beforeMoonrey = snapshotOf(runtime.moonrey).expectedTotal;
-  const beforeJournals = runtime.journals.length;
+  const beforeJournals = runtime.fiatEntries.length;
   runtime.processedInbox.forEach((eventId) => {
     if (eventId.startsWith('journal:')) {
       return;
@@ -164,7 +164,7 @@ function replayConvergedEvents(runtime: BurnInRuntime): void {
   if (snapshotOf(runtime.sunrey).expectedTotal !== beforeSunrey || snapshotOf(runtime.moonrey).expectedTotal !== beforeMoonrey) {
     throw new TypeError('replay mutated supply');
   }
-  if (runtime.journals.length !== beforeJournals) {
+  if (runtime.fiatEntries.length !== beforeJournals) {
     throw new TypeError('replay mutated journals');
   }
 }
