@@ -577,7 +577,6 @@ describe('CHUNK-117 MoonRey source fact claim compatibility', () => {
 
   it('does not let a verified fact or candidate mint MoonRey', () => {
     const built = buildProductiveClaimCandidate(energyBuildInput());
-    assert.equal(built.ok, true);
     if (!built.ok) {
       throw new Error(built.error.detail);
     }
@@ -616,7 +615,6 @@ describe('CHUNK-117 MoonRey source fact claim compatibility', () => {
 
   it('can record optional economic-asset-registry lineage without minting', () => {
     const built = buildProductiveClaimCandidate(energyBuildInput());
-    assert.equal(built.ok, true);
     if (!built.ok) {
       throw new Error(built.error.detail);
     }

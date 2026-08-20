@@ -62,9 +62,9 @@ export function projectEconomicEvent(
   event: ProductiveEconomicEvent,
   at: UtcInstant,
   related?: {
-    readonly claimAssetId?: EconomicAssetDescriptor['assetId'];
-    readonly contributionAssetId?: EconomicAssetDescriptor['assetId'];
-    readonly objectAssetId?: EconomicAssetDescriptor['assetId'];
+    readonly claimAssetId?: EconomicAssetDescriptor['assetId'] | undefined;
+    readonly contributionAssetId?: EconomicAssetDescriptor['assetId'] | undefined;
+    readonly objectAssetId?: EconomicAssetDescriptor['assetId'] | undefined;
   },
 ): Result<EconomicAssetDescriptor, RegistryFailure> {
   const mapped = mapEconomicEventAsset(event, at);

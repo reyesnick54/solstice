@@ -140,11 +140,11 @@ export function provenanceCommitment(material: unknown): string {
 }
 
 function stable(value: unknown): string {
-  if (value === null || typeof value !== 'object') {
-    return JSON.stringify(value);
-  }
   if (typeof value === 'bigint') {
     return value.toString();
+  }
+  if (value === null || typeof value !== 'object') {
+    return JSON.stringify(value);
   }
   if (Array.isArray(value)) {
     return `[${value.map(stable).join(',')}]`;

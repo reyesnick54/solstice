@@ -33,7 +33,6 @@ function humanActor() {
     true,
   );
   const actor = identity.service.resolveActorContext('operator_1');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }

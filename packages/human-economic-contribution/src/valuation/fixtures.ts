@@ -1,6 +1,6 @@
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { fixtureContribution, FIXTURE_NOW } from '../fixtures.ts';
-import { evidenceRefFor } from '../ids.ts';
+import { evidenceRefFor, usageReceiptRefFor } from '../ids.ts';
 import { HumanContributionRegistry } from '../registry.ts';
 import type { ContributionClass, MeasurementUnit } from '../taxonomy.ts';
 import type { HumanContributionRegistryRecord } from '../types.ts';
@@ -49,9 +49,24 @@ export function verifyFixture(
   quantity = 2n,
 ): HumanContributionRegistryRecord {
   const registry = new HumanContributionRegistry();
+  const base = fixtureContribution(contributionClass, seed);
+  const existingReceipts = base.usageReceiptReferences ?? [];
+  const usageReceiptReferences =
+    contributionClass === 'ECONOMIC_PARTICIPATION' && existingReceipts.length === 0
+      ? [usageReceiptRefFor(seed)]
+      : existingReceipts;
   const submitted = registry.submit({
-    ...fixtureContribution(contributionClass, seed),
+    ...base,
     measurementQuantity: quantity,
+    usageReceiptReferences,
+    ...(base.canonicalReferences
+      ? {
+          canonicalReferences: {
+            ...base.canonicalReferences,
+            usageReceiptRefs: usageReceiptReferences,
+          },
+        }
+      : {}),
   });
   if (!submitted.ok) {
     throw new Error(submitted.error.message);
@@ -139,7 +154,6 @@ import { asValuationPolicyVersion, valuationPolicyIdFor } from './ids.ts';
 import type { PermittedValuationMethod } from './methods.ts';
 import type { AllowedValuationInputType } from './inputs.ts';
 import type { RegisterableValuationPolicy } from './policy.ts';
-import type { ContributionClass } from '../taxonomy.ts';
 
 const EFFECTIVE_FROM = asUtcInstant('2026-08-19T00:00:00.000Z');
 

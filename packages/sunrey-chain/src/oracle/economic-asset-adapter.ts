@@ -34,6 +34,7 @@ const CATEGORY_MAP = Object.freeze({
   water: 'WATER',
   compute: 'COMPUTE',
   ai_usage: 'AI_COMPUTE',
+  ai_compute: 'AI_COMPUTE',
   manufacturing: 'MANUFACTURING',
   real_estate_use: 'REAL_ESTATE_USE',
   storage: 'STORAGE',
@@ -42,6 +43,10 @@ const CATEGORY_MAP = Object.freeze({
   resources: 'MINERALS_RAW_MATERIALS',
   minerals_resources: 'MINERALS_RAW_MATERIALS',
   service_delivery: 'SERVICES',
+  services: 'SERVICES',
+  infrastructure: 'INFRASTRUCTURE',
+  goods: 'GOODS',
+  automated_machine_output: 'AUTOMATED_MACHINE_OUTPUT',
   reference_price: 'SHARED_ECONOMIC_REFERENCE',
 } as const);
 
@@ -83,7 +88,7 @@ export class OracleEconomicAssetAdapter {
   projectObservationSet(input: {
     readonly observations: readonly OracleObservation[];
     readonly source: EconomicDataSource;
-    readonly provenance?: SourceProvenance;
+    readonly provenance?: SourceProvenance | undefined;
     readonly sourceAssetId?: EconomicAssetDescriptor['assetId'];
     readonly at: UtcInstant;
   }): Result<EconomicAssetDescriptor, RegistryFailure> {
@@ -201,7 +206,7 @@ export function mapOracleSource(
 export function mapOracleObservationSet(input: {
   readonly observations: readonly OracleObservation[];
   readonly source: EconomicDataSource;
-  readonly provenance?: SourceProvenance;
+  readonly provenance?: SourceProvenance | undefined;
   readonly at: UtcInstant;
 }): Result<RegisterAssetInput, RegistryFailure> {
   const observationIds = input.observations.map((row) => row.observationId).sort().join(',');

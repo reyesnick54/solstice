@@ -39,23 +39,24 @@ export function productionBaseGpuvStatus(): typeof VALUE_UNCONFIGURED {
 }
 
 export function createBaseValueScheduleCandidate(input: {
-  readonly scheduleId?: string;
-  readonly version?: number;
+  readonly scheduleId?: string | undefined;
+  readonly version?: number | undefined;
   readonly productiveCategory: ProductiveCategory;
-  readonly factType?: ProductiveBaseValueScheduleCandidate['factType'];
+  readonly factType?: ProductiveBaseValueScheduleCandidate['factType'] | undefined;
   readonly canonicalUnit: string;
   readonly semanticQualifier: string;
   readonly claimType: ClaimType;
   readonly realizationState: RealizationState;
   readonly baseGpuvNumerator: bigint;
   readonly baseGpuvDenominator: bigint;
-  readonly jurisdictionPolicyRef?: string;
+  readonly jurisdictionPolicyRef?: string | undefined;
   readonly referenceMethodologyRef: string;
   readonly governanceReference: string;
   readonly sourceClass: ProductionCandidateSourceClass;
   readonly fixture: boolean;
-  readonly effectiveHeightCandidate?: number;
-  readonly supersededHeightCandidate?: number | null;
+  readonly effectiveHeightCandidate?: number | undefined;
+  readonly supersededHeightCandidate?: number | null | undefined;
+  readonly productionActivated?: false | undefined;
 }): ProductionCandidateResult<ProductiveBaseValueScheduleCandidate> {
   if (typeof input.baseGpuvNumerator !== 'bigint' || typeof input.baseGpuvDenominator !== 'bigint') {
     return productionCandidateRefuse('FLOAT_MATH_FORBIDDEN', 'base GPUV values must be exact bigint rationals');

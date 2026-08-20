@@ -103,7 +103,10 @@ export function grossIsNotDelivered(
 }
 
 export function retransmissionIsNotNewOutput(observation: BandwidthSourceObservation): true {
-  return observation.retransmissionObserved !== true || observation.transferSemantics !== 'DELIVERED_BYTES';
+  if (observation.retransmissionObserved === true && observation.transferSemantics === 'DELIVERED_BYTES') {
+    throw new Error('RETRANSMISSION_COUNTED_AS_NEW_OUTPUT');
+  }
+  return true;
 }
 
 export function transferSemanticsAreNotInterchangeable(

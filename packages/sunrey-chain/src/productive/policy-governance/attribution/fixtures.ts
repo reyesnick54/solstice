@@ -16,21 +16,21 @@ export const WAREHOUSE_CO = 'controller.warehouse' as const;
 
 export function subject(input: {
   readonly claimId: string;
-  readonly contributionId?: string;
+  readonly contributionId?: string | undefined;
   readonly economicEventId: string;
   readonly category: ProductiveCategory;
-  readonly claimType?: ClaimType;
-  readonly eventClass?: EconomicEventClass;
+  readonly claimType?: ClaimType | undefined;
+  readonly eventClass?: EconomicEventClass | undefined;
   readonly controllerId: string;
-  readonly quantity?: bigint;
-  readonly unitId?: string;
-  readonly measurementSemantics?: string;
-  readonly evidenceRefs?: readonly string[];
-  readonly lineageEventIds?: readonly string[];
-  readonly lineageComplete?: boolean;
-  readonly batchIdentity?: string;
-  readonly relatedEventIds?: readonly string[];
-  readonly relatedClaimIds?: readonly string[];
+  readonly quantity?: bigint | undefined;
+  readonly unitId?: string | undefined;
+  readonly measurementSemantics?: string | undefined;
+  readonly evidenceRefs?: readonly string[] | undefined;
+  readonly lineageEventIds?: readonly string[] | undefined;
+  readonly lineageComplete?: boolean | undefined;
+  readonly batchIdentity?: string | undefined;
+  readonly relatedEventIds?: readonly string[] | undefined;
+  readonly relatedClaimIds?: readonly string[] | undefined;
 }): AttributionSubject {
   return Object.freeze({
     claimId: input.claimId,

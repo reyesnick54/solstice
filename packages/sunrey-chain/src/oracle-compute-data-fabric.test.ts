@@ -46,9 +46,8 @@ import {
 describe('CHUNK-130 compute and AI economic data fabric', () => {
   it('1. converts 1 GPU for 10 seconds into 10 GPU-seconds', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(1n, 10n), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'gpu_s');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 10n);
@@ -57,9 +56,8 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('2. multiplies GPU resource count: 8 GPUs for 10 seconds = 80 GPU-seconds', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(8n, 10n), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalQuantity.mantissa, 80n);
     assert.equal(gpuSecondsOf(8n, 10n), 80n);
@@ -68,9 +66,8 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('3. maps CPU resource-time through canonical CPU context', () => {
     const ingested = ingestComputeObservation(cpuExecutionFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'cpu_s');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 40n);
@@ -81,16 +78,15 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
     const ingested = ingestComputeObservation(genericComputeMissingClassFixture(), SANDBOX_NOW);
     assert.equal(ingested.ok, false);
     if (ingested.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(ingested.error.code, 'NORMALIZATION_CONTEXT_REQUIRED');
   });
 
   it('5. classifies generic compute with CPU context', () => {
     const ingested = ingestComputeObservation(genericComputeWithClassFixture('CPU'), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'cpu_s');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 40n);
@@ -98,9 +94,8 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('6. classifies generic compute with GPU context', () => {
     const ingested = ingestComputeObservation(genericComputeWithClassFixture('GPU'), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'gpu_s');
     assert.equal(ingested.value.canonicalQuantity.mantissa, 80n);
@@ -108,9 +103,8 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('7. retains inference tokens as token_inference semantics', () => {
     const ingested = ingestComputeObservation(inferenceTokenFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(ingested.value.canonicalUnit, 'TOKEN');
     assert.equal(ingested.value.dimension, 'AI_TOKEN_COUNT');
@@ -122,7 +116,7 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
     const ingested = ingestComputeObservation(tokensAsGpuSecondsFixture(), SANDBOX_NOW);
     assert.equal(ingested.ok, false);
     if (ingested.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(ingested.error.code, 'TOKEN_GPU_CONVERSION_FORBIDDEN');
     const conversion = convertExact({
@@ -137,7 +131,7 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
     const ingested = ingestComputeObservation(trainingLabeledInferenceFixture(), SANDBOX_NOW);
     assert.equal(ingested.ok, false);
     if (ingested.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(ingested.error.code, 'TRAINING_INFERENCE_TOKEN_SEMANTIC');
     const training = ingestComputeObservation(trainingGpuFixture(), SANDBOX_NOW);
@@ -154,7 +148,7 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
     assert.equal(capacity.ok, true);
     assert.equal(usage.ok, true);
     if (!capacity.ok || !usage.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(capacity.value.factType, 'AI_COMPUTE_CAPACITY');
     assert.equal(usage.value.factType, 'COMPUTE_USAGE');
@@ -259,7 +253,7 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
     const capacity = ingestComputeObservation(capacityInventoryFixture(), SANDBOX_NOW);
     assert.equal(usage.ok && capacity.ok, true);
     if (!usage.ok || !capacity.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const mismatch = computeUtilization({
       actual: usage.value.canonicalQuantity,
@@ -321,9 +315,8 @@ describe('CHUNK-130 compute and AI economic data fabric', () => {
 
   it('projects compute metadata into the Economic Asset Registry without payloads', () => {
     const ingested = ingestComputeObservation(gpuExecutionFixture(), SANDBOX_NOW);
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const projected = projectComputeMetadata(new EconomicAssetRegistry(), ingested.value);
     assert.equal(projected.ok, true);

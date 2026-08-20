@@ -6884,6 +6884,11 @@
       "owner": "packages/events",
       "protected": true,
       "notes": "Chunk 155 distributed idempotency, external side-effect recovery, transactional workflow safety, and cross-domain reconciliation. Extends packages/events and packages/persistence. Canonical model is EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. Not magical exactly-once delivery. Coordinator cannot post ledger, mint, or issue Execution Authority. Do not create packages/saga-engine, packages/workflow-v2, packages/idempotency-service, packages/transaction-manager, packages/distributed-ledger, or packages/exactly-once."
+      "id": "sunrey-operational-persistence-recovery",
+      "status": "IMPLEMENTED",
+      "owner": "packages/persistence",
+      "protected": true,
+      "notes": "Chunk 154 production operational persistence, crash recovery, state rehydration, and repository integrity gate at packages/persistence/src/production/recovery. Extends existing PostgreSQL adapters and durable fixture stores. Not a second ledger, mint, or Execution Authority. Do not create packages/database-v2, packages/state-store, packages/durable-state, packages/operational-ledger, packages/financial-database, or packages/persistence-v2."
     }
   ],
   "boundedContexts": [

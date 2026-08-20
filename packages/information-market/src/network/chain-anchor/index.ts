@@ -23,7 +23,6 @@ export {
 } from './coordinator.ts';
 export { runHinChainAnchorFoundationDemo } from './demo.ts';
 export { runHumanInformationChainFinalityDemo } from './finality-demo.ts';
-export { runHinChainAnchorFoundationDemo } from './demo.ts';
 export {
   HIN_ANCHOR_NOW,
   createSimulationChain,
@@ -103,6 +102,4 @@ export {
   type HumanInformationUsageAnchorProjection,
   type PrivacySafeAnchorPresentation,
   type PrivacySafeAnchorStatus,
-  type HumanInformationAnchorKey,
-  type HumanInformationChainAnchorRecord,
 } from './types.ts';

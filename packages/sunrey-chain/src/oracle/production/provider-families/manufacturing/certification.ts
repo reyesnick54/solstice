@@ -81,6 +81,9 @@ export const INVALID_MANUFACTURING_CERTIFICATION_CASES: readonly ManufacturingCe
     valid: false,
     evaluate: () => {
       const refused = refuseMachineHoursAsUnit(3n);
+      if (refused.ok) {
+        throw new Error('MACHINE_HOURS_ACCEPTED_AS_UNIT');
+      }
       return { ok: false, code: refused.error.code };
     },
   },

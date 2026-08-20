@@ -123,7 +123,7 @@ export type AttributionSubject = {
   readonly evidenceRefs: readonly string[];
   readonly lineageEventIds: readonly string[];
   readonly lineageComplete: boolean;
-  readonly batchIdentity?: string;
+  readonly batchIdentity?: string | undefined;
   readonly relatedEventIds: readonly string[];
   readonly relatedClaimIds: readonly string[];
 };

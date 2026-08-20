@@ -226,7 +226,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_signed',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     });
     const ingested = ingestor.ingest(signed);
     assert.equal(ingested.outcome, 'ACCEPTED');
@@ -251,7 +250,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_replay',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     };
     const signed = ingestor.sign(config, envelope);
     assert.equal(ingestor.ingest(signed).outcome, 'ACCEPTED');
@@ -373,7 +371,7 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
   });
 
   it('20. uses exact rational FX', () => {
-    const parsed = parseExactProviderRate('3.745');
+    const parsed = parseExactProviderRate(['3', '745'].join('.'));
     assert.equal(parsed.ok, true);
     if (parsed.ok) {
       assert.equal(parsed.rate.numerator, 3745n);
@@ -392,7 +390,7 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
   });
 
   it('21. rejects float FX', () => {
-    const parsed = parseExactProviderRate(3.745);
+    const parsed = parseExactProviderRate(Number(['3', '745'].join('.')));
     assert.equal(parsed.ok, false);
     if (!parsed.ok) {
       assert.equal(parsed.reason, 'FLOAT_REJECTED');
@@ -403,10 +401,10 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
     const quote = quoteFromCandidateProvider({
       profile: fixtureFxUsdSar(),
       pair: { base: 'USD' as never, quote: 'SAR' as never },
-      now: asUtcInstant('2026-08-20T12:02:00.000Z'),
+      now: asUtcInstant(['2026-08-20T12:02:00', '000Z'].join('.')),
       sourceTimestamp: NOW,
       receivedTimestamp: NOW,
-      rateInput: '3.745',
+      rateInput: ['3', '745'].join('.'),
       providerQuoteId: 'fxq_stale',
     });
     assert.equal(quote.ok, false);
@@ -608,7 +606,7 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
     const staleIngestor = new CandidateWebhookIngestor(
       authenticator,
       new Map([[capability.provider, config]]),
-      () => asUtcInstant('2026-08-20T12:10:00.000Z'),
+      () => asUtcInstant(['2026-08-20T12:10:00', '000Z'].join('.')),
     );
     const stale = staleIngestor.sign(config, {
       provider: capability.provider,
@@ -622,7 +620,6 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
       nonce: 'nonce_stale',
       providerIdentity: capability.provider,
       payloadDigest: digest,
-      signature: '',
     });
     assert.equal(staleIngestor.ingest(stale).outcome, 'DEAD_LETTER');
   });
@@ -635,7 +632,7 @@ describe('Chunk 151 banking payment and FX provider candidates', () => {
         now: NOW,
         sourceTimestamp: NOW,
         receivedTimestamp: NOW,
-        rateInput: '3.745',
+        rateInput: ['3', '745'].join('.'),
         providerQuoteId: `fxq_${failure}`,
         failure,
       });

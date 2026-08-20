@@ -26,17 +26,22 @@ import {
   type FabricRejection,
 } from './types.ts';
 
-const MODE_MIN_STATUS: Readonly<Record<AdmissionMode, readonly CertificationStatus[]>> = Object.freeze({
+const MODE_MIN_STATUS = Object.freeze({
   FIXTURE_ONLY: Object.freeze([
     'NOT_EVALUATED',
     'ENGINEERING_SANDBOX',
     'CONFORMANCE_PASSED',
     'TESTNET_ADMISSIBLE',
     'PRODUCTION_CANDIDATE',
-  ]),
-  ENGINEERING_SANDBOX: Object.freeze(['ENGINEERING_SANDBOX', 'CONFORMANCE_PASSED', 'TESTNET_ADMISSIBLE', 'PRODUCTION_CANDIDATE']),
-  TESTNET_ADMISSIBLE: Object.freeze(['TESTNET_ADMISSIBLE', 'PRODUCTION_CANDIDATE']),
-  PRODUCTION_CANDIDATE: Object.freeze(['PRODUCTION_CANDIDATE']),
+  ] as const satisfies readonly CertificationStatus[]),
+  ENGINEERING_SANDBOX: Object.freeze([
+    'ENGINEERING_SANDBOX',
+    'CONFORMANCE_PASSED',
+    'TESTNET_ADMISSIBLE',
+    'PRODUCTION_CANDIDATE',
+  ] as const satisfies readonly CertificationStatus[]),
+  TESTNET_ADMISSIBLE: Object.freeze(['TESTNET_ADMISSIBLE', 'PRODUCTION_CANDIDATE'] as const satisfies readonly CertificationStatus[]),
+  PRODUCTION_CANDIDATE: Object.freeze(['PRODUCTION_CANDIDATE'] as const satisfies readonly CertificationStatus[]),
 });
 
 const FORBIDDEN_PAYLOAD_KEYS = Object.freeze([

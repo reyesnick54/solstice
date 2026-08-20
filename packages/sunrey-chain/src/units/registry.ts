@@ -40,7 +40,7 @@ export class CanonicalUnitRegistry {
   quantity(
     unitId: string,
     mantissa: bigint,
-    options?: { readonly scale?: number; readonly numerator?: bigint; readonly denominator?: bigint },
+    options?: { readonly scale?: number | undefined; readonly numerator?: bigint | undefined; readonly denominator?: bigint | undefined },
   ): Result<ExactQuantity, NormalizationRefusal> {
     if (!this.isKnown(unitId)) {
       return err({ outcome: 'UNKNOWN_UNIT', detail: `unknown unit ${unitId}` });
@@ -64,8 +64,8 @@ export class CanonicalUnitRegistry {
   convert(
     source: ExactQuantity,
     targetUnitId: string,
-    context?: NormalizationContext,
-    clock?: NormalizationClock,
+    context?: NormalizationContext | undefined,
+    clock?: NormalizationClock | undefined,
   ): Result<NormalizationReceipt, NormalizationRefusal> {
     return convertExact({ source, targetUnitId, context, clock });
   }

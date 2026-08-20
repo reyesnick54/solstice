@@ -89,10 +89,9 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/ledger` — append-only journals, authority-required
 - `packages/evidence` — hash-chained Evidence Vault
 - `packages/events` — versioned domain events, durable envelope, outbox/inbox/replay abstractions
-- `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity, SUNREY_* env resolution with SOLSTICE_* aliases
-- `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity
-- `packages/payments` — Cross-border payments, FX, and rail adapters. Chunk 151 banking / payment-rail / FX provider candidates live at `src/production-candidate`. Sandbox conformance only. Not a second ledger, not live bank / rail / FX access.
 - `packages/config` — clock, ENVIRONMENT, LIVE_* flags, canonical SunRey product identity, SUNREY_* env resolution with official legacy env aliases
+- `packages/payments` — Cross-border payments, FX, and rail adapters. Chunk 151 banking / payment-rail / FX provider candidates live at `src/production-candidate`. Sandbox conformance only. Not a second ledger, not live bank / rail / FX access.
+- `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger. Chunk 154 operational persistence, crash recovery, state rehydration, and repository integrity gate live at `src/production/recovery`. Durable fixture snapshots fail closed on corruption. Not a second ledger, mint, or Execution Authority.
 - `packages/persistence` — PostgreSQL adapter behind existing ports; not a second ledger
 - `packages/personal-economic-graph` — Personal Economic Graph; non-authoritative intelligence layer
 - `packages/regulatory-twin` — Regulatory Digital Twin; simulation/counterfactual only

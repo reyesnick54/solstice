@@ -357,7 +357,7 @@ export function validateParameterPackage(input: ProductionEconomicParameterPacka
     const candidate = matches[0];
     const codes: ParameterBlockingCode[] = [...(duplicates.byId.get(id) ?? []), ...(deps.get(id) ?? [])];
     if (!candidate) {
-      rows.push(Object.freeze({ parameterId: id, status: 'MISSING', blockingCodes: Object.freeze(['PARAMETER_UNCONFIGURED']) }));
+      rows.push(Object.freeze({ parameterId: id, status: 'MISSING', blockingCodes: Object.freeze(['PARAMETER_UNCONFIGURED'] as const) }));
       allCodes.push('PARAMETER_UNCONFIGURED');
       continue;
     }

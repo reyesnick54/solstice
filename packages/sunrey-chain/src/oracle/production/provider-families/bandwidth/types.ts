@@ -211,10 +211,10 @@ export type BandwidthSourceObservation = {
   readonly accountControllerId: string;
   readonly measurementStart: bigint;
   readonly measurementEnd: bigint;
-  readonly quality?: BandwidthQualityEvidence;
-  readonly cacheHit?: boolean;
-  readonly retransmissionObserved?: boolean;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly quality?: BandwidthQualityEvidence | undefined;
+  readonly cacheHit?: boolean | undefined;
+  readonly retransmissionObserved?: boolean | undefined;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type BandwidthEconomicRecord = {

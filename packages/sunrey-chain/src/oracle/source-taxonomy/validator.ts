@@ -288,7 +288,7 @@ export function validateSourceRegistrationMapping(input: {
 }
 
 export function validateFeedDefinitionMapping(input: {
-  readonly sourceCategory?: string | null;
+  readonly sourceCategory?: string | null | undefined;
   readonly factType: string;
   readonly measurementUnit: string;
 }): MappingValidationResult {

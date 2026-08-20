@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-154",
+  "title": "Production Operational Persistence, Crash Recovery, State Rehydration, and Repository Integrity Gate",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "persistence",
+    "events",
+    "ledger",
+    "security",
+    "payments",
+    "custody",
+    "sunrey-exchange",
+    "sunrey-production-storage",
+    "sunrey-dual-asset-custody-provider-candidate"
+  ],
+  "notes": "IMPLEMENTED at packages/persistence/src/production/recovery. Extends packages/persistence. Durable fixture snapshots fail closed on corruption. PostgreSQL operational adapters are not a second ledger and cannot mint SunRey or MoonRey. evaluateChunkRequirements returns mustStop: false. Do not create packages/database-v2, packages/state-store, packages/durable-state, packages/operational-ledger, packages/financial-database, or packages/persistence-v2."
+}

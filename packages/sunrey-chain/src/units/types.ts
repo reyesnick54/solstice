@@ -43,14 +43,14 @@ export type ExactConversion = {
 };
 
 export type NormalizationContext = {
-  readonly measurementStart?: bigint;
-  readonly measurementEnd?: bigint;
-  readonly durationSeconds?: bigint;
-  readonly resourceClass?: ResourceClass;
-  readonly resourceCount?: bigint;
-  readonly semanticQualifier?: SemanticQualifier;
-  readonly productiveCategory?: ProductiveCategory;
-  readonly factType?: FactType;
+  readonly measurementStart?: bigint | undefined;
+  readonly measurementEnd?: bigint | undefined;
+  readonly durationSeconds?: bigint | undefined;
+  readonly resourceClass?: ResourceClass | undefined;
+  readonly resourceCount?: bigint | undefined;
+  readonly semanticQualifier?: SemanticQualifier | undefined;
+  readonly productiveCategory?: ProductiveCategory | undefined;
+  readonly factType?: FactType | undefined;
 };
 
 export type NormalizationReceipt = {
@@ -73,7 +73,7 @@ export type NormalizationReceipt = {
 export type NormalizationRefusal = {
   readonly outcome: Exclude<ConversionOutcome, 'SUCCEED_EXACTLY'>;
   readonly detail: string;
-  readonly missingContext?: readonly ContextRequirement[];
+  readonly missingContext?: readonly ContextRequirement[] | undefined;
 };
 
 export type NormalizationClock = {

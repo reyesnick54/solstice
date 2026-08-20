@@ -69,9 +69,8 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.receipt.actualFee <= result.receipt.reservedFee, true);
     assert.equal(result.receipt.reservedFee, result.receipt.actualFee + result.receipt.releasedFee);
@@ -114,7 +113,7 @@ describe('SunRey native fees and resource metering', () => {
     });
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.rejection.code, 'OUT_OF_EXECUTION_UNITS');
     assert.equal(engine.accounts.position('bob', 'SUNREY_COIN').available, before);
@@ -134,9 +133,8 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.applicationApplied, false);
     assert.equal(engine.accounts.position('bob', 'SUNREY_COIN').available, 0n);
@@ -154,9 +152,8 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(dispositionReconciles(result.receipt.disposition), true);
     assert.equal(receiptReconciles(result.receipt), true);
@@ -247,9 +244,8 @@ describe('SunRey native fees and resource metering', () => {
       proposerId: 'val_a',
       validators: FOUR_VALIDATORS,
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.receipt.actualFee, 0n);
     assert.equal(engine.accounts.position('dave', 'SUNREY_COIN').available, 500n);

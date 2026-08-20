@@ -56,5 +56,8 @@ export function replayDvpSettlement(): { readonly rejected: true; readonly trade
   const first = settled.has(dvpId);
   const second = settled.has(dvpId);
   void REHEARSAL_EXCHANGE_PRICE_UNITS;
-  return { rejected: first && second, trades: 1 };
+  if (!(first && second)) {
+    throw new Error('replay must remain rejected');
+  }
+  return { rejected: true, trades: 1 };
 }

@@ -109,7 +109,6 @@ describe('CHUNK-135 infrastructure data fabric', () => {
 
   it('12. treats port terminal usage and ocean freight as distinct services', () => {
     const terminal = ingestInfrastructureRecord(terminalUsageRecord(NOW), NOW);
-    assert.equal(terminal.ok, true);
     if (!terminal.ok) {
       throw new Error(terminal.error.detail);
     }
@@ -127,7 +126,6 @@ describe('CHUNK-135 infrastructure data fabric', () => {
 
   it('13. zeros duplicate terminal-plus-logistics claims of one service', () => {
     const terminal = ingestInfrastructureRecord(terminalUsageRecord(NOW), NOW);
-    assert.equal(terminal.ok, true);
     if (!terminal.ok) {
       throw new Error(terminal.error.detail);
     }
@@ -196,7 +194,6 @@ describe('CHUNK-135 infrastructure data fabric', () => {
       ],
       NOW,
     );
-    assert.equal(batch.ok, true);
     if (!batch.ok) {
       throw new Error(batch.error.detail);
     }

@@ -164,6 +164,7 @@ npm run demo:custody-unknown
 npm run demo:custody-cold
 npm run demo:sunrey-dual-asset-custody-provider-candidate
 npm run demo:sunrey-idempotent-recovery-fabric
+npm run demo:sunrey-operational-persistence-recovery
 npm run demo:market-surveillance
 npm run demo:listing-governance
 npm run demo:explorer

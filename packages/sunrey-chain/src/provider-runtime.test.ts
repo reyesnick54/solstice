@@ -45,9 +45,8 @@ const NOW = '2026-08-18T00:00:00.000Z';
 describe('Chunk 91 executable provider runtime', () => {
   it('covers every canonical provider domain against local mocks', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(runtime.value.reportedMode, 'LOCAL_SIMULATION');
     const tests = runProviderIntegrationTests(runtime.value);
@@ -96,9 +95,8 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('records mandatory negative controls', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const negatives = runNegativeControls(runtime.value);
     assert.equal(negatives.secretValueExcluded, true);
@@ -118,9 +116,8 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('executes KMS, HSM, storage, oracle, KYC, custody and banking adapters', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const adapters = exerciseExecutableAdapters(runtime.value);
     assert.deepEqual(adapters.cloud, [
@@ -178,9 +175,8 @@ describe('Chunk 91 executable provider runtime', () => {
 
   it('seals engineering evidence and preserves matrix lanes', () => {
     const runtime = createProviderRuntime();
-    assert.equal(runtime.ok, true);
     if (!runtime.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const tests = runProviderIntegrationTests(runtime.value);
     const evidence = sealEngineeringEvidence(tests[0]!, NOW);

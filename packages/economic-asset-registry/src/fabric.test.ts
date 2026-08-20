@@ -14,7 +14,6 @@ import { projectDescriptor, reflectSourceLifecycle } from './port.ts';
 import { EconomicAssetRegistry } from './registry.ts';
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }): T {
-  assert.equal(result.ok, true, result.ok ? '' : result.error.message);
   if (!result.ok) {
     throw new Error(result.error.message);
   }

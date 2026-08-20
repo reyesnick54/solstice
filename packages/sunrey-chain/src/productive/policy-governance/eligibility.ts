@@ -83,13 +83,13 @@ export type EligibilityInput = {
   readonly budgetUsage: BudgetUsage;
   readonly issuancePolicy: MoonReyIssuancePolicy;
   readonly bundle: MoonReyIssuancePolicyBundle;
-  readonly attributionBook?: ProductiveAttributionBook;
-  readonly attributionDecision?: ProductiveAttributionDecision;
-  readonly attributionRequest?: AttributionReservationRequest;
-  readonly independentlyEvidenced?: boolean;
-  readonly requireAttributionWhenSensitive?: boolean;
-  readonly canonicalMeasurement?: CanonicalProductiveMeasurement;
-  readonly normalizationFamily?: NormalizationFamily;
+  readonly attributionBook?: ProductiveAttributionBook | undefined;
+  readonly attributionDecision?: ProductiveAttributionDecision | undefined;
+  readonly attributionRequest?: AttributionReservationRequest | undefined;
+  readonly independentlyEvidenced?: boolean | undefined;
+  readonly requireAttributionWhenSensitive?: boolean | undefined;
+  readonly canonicalMeasurement?: CanonicalProductiveMeasurement | undefined;
+  readonly normalizationFamily?: NormalizationFamily | undefined;
 };
 
 export type EligibilityOk = {
