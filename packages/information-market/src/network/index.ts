@@ -63,6 +63,22 @@ export {
   mapInformationAsset,
   mapInformationRight,
 } from './economic-asset-adapter.ts';
+export {
+  HIN_ANCHOR_FAILURE_CODES,
+  HIN_ANCHOR_KINDS,
+  HIN_CHAIN_ANCHOR_INVARIANTS,
+  HIN_CHAIN_ANCHOR_OWNER,
+  HinChainAnchorAdapter,
+  createHinChainAnchorAdapter,
+  humanInformationAnchorKey,
+  runHinChainAnchorFoundationDemo,
+} from './chain-anchor/index.ts';
+export type {
+  HinAnchorFailure,
+  HinAnchorKind,
+  HumanInformationChainAnchorPort,
+  HumanInformationChainAnchorRecord,
+} from './chain-anchor/index.ts';
 export type {
   CleanRoomComputationRequest,
   CleanRoomComputationResult,

@@ -69,7 +69,9 @@ export {
   NON_HIN_CONTRIBUTION_CLASSES,
   HumanInformationNetworkEngine,
   HinContributionAdapter,
+  HinChainAnchorAdapter,
   createHinContributionAdapter,
+  createHinChainAnchorAdapter,
   createInProcessHumanContributionRegistry,
   createInformationApi,
   INFORMATION_CATEGORIES,
@@ -82,12 +84,14 @@ export {
   defaultNetworkPolicy,
   formatInformationCli,
   privacyMinimizedNotification,
+  runHinChainAnchorFoundationDemo,
   runHumanInformationContributionDemo,
   runInformationCommand,
 } from './network/index.ts';
 export type {
   HumanContributionRecord,
   HumanContributionRegistryPort,
+  HumanInformationChainAnchorRecord,
   InformationRightContributionEvidence,
 } from './network/index.ts';
 export type {

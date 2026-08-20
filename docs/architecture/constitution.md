@@ -95,6 +95,7 @@ never be two implementations of these systems.
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
+| HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
@@ -1572,6 +1573,19 @@ create `packages/hin-contribution-registry`,
 `packages/information-contribution-v2`, or
 `packages/human-information-contribution`. See
 [`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md).
+
+Chunk 139 implements the Human Information Network → SunRey Chain
+anchoring foundation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `PARTIAL`. HIN remains the rights
+owner. Existing `SunReyChainService` remains the only chain owner.
+The adapter creates privacy-safe `ChainWriteIntent` records and does
+not mint, transfer ownership, or rewrite historical HIN records.
+Chunk 140 completes lifecycle and finality. Do not create
+`packages/hin-chain`, `packages/information-blockchain`,
+`packages/privacy-chain`, `packages/consent-chain`, or
+`packages/human-data-ledger`. See
+[`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md).
 
 Chunk 128 implements economic data provider certification, the
 conformance sandbox, and the source admission gate at
