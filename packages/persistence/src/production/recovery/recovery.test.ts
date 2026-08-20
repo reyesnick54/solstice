@@ -279,7 +279,7 @@ describe('CHUNK-154 operational persistence recovery', () => {
 
   it('optimistic concurrency rejects a stale writer', () => {
     const memory = new MemoryOperationalStore();
-    memory.putPayment({
+    memory.upsertOperationalPayment({
       paymentId: 'pay_stale',
       customerId: 'cust_1',
       status: 'READY',
@@ -291,7 +291,7 @@ describe('CHUNK-154 operational persistence recovery', () => {
     });
     assert.throws(
       () =>
-        memory.putPayment(
+        memory.upsertOperationalPayment(
           {
             paymentId: 'pay_stale',
             customerId: 'cust_1',
@@ -310,7 +310,7 @@ describe('CHUNK-154 operational persistence recovery', () => {
 
   it('rejects illegal domain transitions', () => {
     const memory = new MemoryOperationalStore();
-    memory.putPayment({
+    memory.upsertOperationalPayment({
       paymentId: 'pay_term',
       customerId: 'cust_1',
       status: 'SETTLED',
@@ -322,7 +322,7 @@ describe('CHUNK-154 operational persistence recovery', () => {
     });
     assert.throws(
       () =>
-        memory.putPayment({
+        memory.upsertOperationalPayment({
           paymentId: 'pay_term',
           customerId: 'cust_1',
           status: 'SUBMITTED',
@@ -433,7 +433,7 @@ describe('CHUNK-154 operational persistence recovery', () => {
     memory.crashBeforeCommit = 'BEFORE_COMMIT';
     assert.throws(
       () =>
-        memory.putPayment({
+        memory.upsertOperationalPayment({
           paymentId: 'crash',
           customerId: 'cust_1',
           status: 'DRAFT',

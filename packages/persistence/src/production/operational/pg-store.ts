@@ -38,7 +38,7 @@ export class PostgresOperationalStore {
     private readonly security?: Pool,
   ) {}
 
-  async putPayment(row: OperationalPayment, expectedRevision?: number): Promise<OperationalPayment> {
+  async upsertOperationalPayment(row: OperationalPayment, expectedRevision?: number): Promise<OperationalPayment> {
     return withTransaction(this.customer, async (client) => {
       const existing = await one<OperationalPayment>(
         client,

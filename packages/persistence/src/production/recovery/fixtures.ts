@@ -136,7 +136,7 @@ export function seedOperationalFixtures(directory: string): {
     revision: 1,
   });
 
-  memory.putPayment({
+  memory.upsertOperationalPayment({
     paymentId: 'pay_1',
     customerId: 'cust_1',
     status: 'SUBMISSION_UNKNOWN',

@@ -55,7 +55,7 @@ export class MemoryOperationalStore {
     this.snapshot = snapshot;
   }
 
-  putPayment(row: OperationalPayment, expectedRevision?: number): OperationalPayment {
+  upsertOperationalPayment(row: OperationalPayment, expectedRevision?: number): OperationalPayment {
     return this.commit((draft) => {
       const existing = draft.payments.find((item) => item.paymentId === row.paymentId);
       if (existing) {

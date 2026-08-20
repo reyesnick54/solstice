@@ -13,7 +13,7 @@ describePersistence('CHUNK-154 PostgreSQL operational persistence', () => {
     const pools = createPersistencePools(env);
     try {
       const store = new PostgresOperationalStore(pools.customer, pools.security);
-      const payment = await store.putPayment({
+      const payment = await store.upsertOperationalPayment({
         paymentId: 'pay_pg_1',
         customerId: 'cust_1',
         status: 'SUBMISSION_UNKNOWN',
