@@ -3950,6 +3950,38 @@
       "notes": "Chunk 82 evidence-driven external production provider acceptance at packages/sunrey-chain/src/providers. Reuses ProductionInfrastructureRegistry, OracleOnboardingRegistry, RegulatedServiceProviderRegistry, and HsmKmsProvider. Does not fabricate contracts, licenses, commercial HSM certification, or human approvals."
     },
     {
+      "id": "sunrey-production-provider-binding",
+      "name": "Production provider binding manifest and connectivity readiness",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/providers/production-binding/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/providers/production-binding/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionProviderBinding",
+          "kind": "type"
+        },
+        {
+          "name": "ConnectivityReadinessReport",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/integrations-v2",
+        "packages/vendor-connectivity",
+        "packages/provider-manager",
+        "packages/live-providers"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 162 production provider binding at packages/sunrey-chain/src/providers/production-binding. Extends provider acceptance and provider runtime. Does not enable real network calls or LIVE_* flags. productionConnectivityEnabled remains false."
+    },
+    {
       "id": "sunrey-audit-remediation",
       "name": "SunRey independent security-review findings remediation",
       "canonicalOwner": "packages/sunrey-chain",
@@ -6531,6 +6563,13 @@
       "notes": "Chunk 82 external production provider onboarding, acceptance testing, and evidence qualification at packages/sunrey-chain/src/providers. Reuses canonical registries. Do not create packages/provider-acceptance, packages/production-providers, packages/external-providers, or packages/sunrey-providers."
     },
     {
+      "id": "sunrey-production-provider-binding",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 162 production provider binding manifest at packages/sunrey-chain/src/providers/production-binding. Extends Chunk 82/91. Connectivity stays disabled. Do not create packages/integrations-v2, packages/vendor-connectivity, packages/provider-manager, or packages/live-providers."
+    },
+    {
       "id": "sunrey-audit-remediation",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6893,11 +6932,15 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 156 unified production-candidate observability, engineering SLOs, control room, incident correlation, and cross-domain operational health at packages/sunrey-chain/src/ops/control-room. Extends the existing ops owner. Read/operations plane only. Does not post ledger, mint, issue Execution Authority, or enable LIVE_* flags. Do not create packages/observability, packages/control-room, packages/sunrey-ops, or packages/sre."
+    },
+    {
       "id": "sunrey-distributed-idempotency-recovery",
       "status": "IMPLEMENTED",
       "owner": "packages/events",
       "protected": true,
       "notes": "Chunk 155 distributed idempotency, external side-effect recovery, transactional workflow safety, and cross-domain reconciliation. Extends packages/events and packages/persistence. Canonical model is EFFECTIVELY_ONCE_BY_IDEMPOTENCY_AND_RECONCILIATION. Not magical exactly-once delivery. Coordinator cannot post ledger, mint, or issue Execution Authority. Do not create packages/saga-engine, packages/workflow-v2, packages/idempotency-service, packages/transaction-manager, packages/distributed-ledger, or packages/exactly-once."
+    },
+    {
       "id": "sunrey-operational-persistence-recovery",
       "status": "IMPLEMENTED",
       "owner": "packages/persistence",
@@ -7414,6 +7457,10 @@
     "packages/sunrey-custody-v2",
     "packages/key-vault",
     "packages/mpc-v2",
-    "packages/custody-provider-v2"
+    "packages/custody-provider-v2",
+    "packages/integrations-v2",
+    "packages/vendor-connectivity",
+    "packages/provider-manager",
+    "packages/live-providers"
   ]
 }

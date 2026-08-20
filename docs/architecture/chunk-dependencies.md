@@ -198,6 +198,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
 | sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 | sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-provider-binding | IMPLEMENTED | packages/sunrey-chain |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1577,3 +1578,11 @@ Do not create `packages/database-v2`, `packages/state-store`,
 `packages/durable-state`, `packages/operational-ledger`,
 `packages/financial-database`, or `packages/persistence-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 162 implements the production provider binding manifest at
+`packages/sunrey-chain/src/providers/production-binding`. Capability
+`sunrey-production-provider-binding` is `IMPLEMENTED`. It extends
+provider acceptance and provider runtime. Connectivity stays
+disabled. The evaluator returns `mustStop: false`. Do not create
+`packages/integrations-v2`, `packages/vendor-connectivity`,
+`packages/provider-manager`, or `packages/live-providers`. See
+[`docs/operations/chunk-162-production-provider-binding.md`](../operations/chunk-162-production-provider-binding.md).
