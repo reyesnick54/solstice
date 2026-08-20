@@ -129,6 +129,9 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-mainnet-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-operating-scope | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
 | sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-audit-remediation | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
@@ -1577,6 +1580,16 @@ Do not create `packages/database-v2`, `packages/state-store`,
 `packages/durable-state`, `packages/operational-ledger`,
 `packages/financial-database`, or `packages/persistence-v2`. The
 evaluator returns `mustStop: false`.
+Chunk 161 implements jurisdictional operating scope, licensing,
+regulatory-evidence binding, corridor eligibility, and the product
+activation matrix at `packages/sunrey-chain/src/mainnet/operating-scope`.
+Capability `sunrey-production-operating-scope` is `IMPLEMENTED` on
+`packages/sunrey-chain`. It is not legal advice and does not issue
+Execution Authority. Unknown jurisdictions remain `RESEARCH_REQUIRED`
+and unavailable. Do not create `packages/licensing`,
+`packages/global-regulation`, `packages/country-law`, or
+`packages/legal-engine`. The evaluator returns `mustStop: false`. See
+[`docs/compliance/chunk-161-operating-scope-matrix.md`](../compliance/chunk-161-operating-scope-matrix.md).
 Chunk 160 extends `packages/sunrey-chain/src/mainnet` with the
 external production evidence registry at `src/mainnet/external-evidence`.
 Capability `sunrey-external-production-evidence` is `IMPLEMENTED`.

@@ -5024,6 +5024,11 @@
       "notes": "Chunk 152 fixture provider-candidate adapters. Identity adapters live at packages/identity/src/provider-candidate. Compliance adapters live at packages/kernel/src/compliance/provider-candidate. Travel Rule candidate lives at packages/custody/src/provider-candidate. Surveillance candidate lives at packages/market-surveillance/src/provider-candidate. Does not replace identity, compliance-screening, custody, or market-surveillance. No live vendors. No Execution Authority from provider output."
     },
     {
+      "id": "sunrey-production-operating-scope",
+      "name": "SunRey jurisdictional operating scope, licensing, and product activation matrix",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/operating-scope/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/operating-scope/index.ts",
       "id": "sunrey-external-production-evidence",
       "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
       "canonicalOwner": "packages/sunrey-chain",
@@ -5036,6 +5041,15 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "OPERATING_SCOPE_ID",
+          "kind": "const"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/licensing",
+        "packages/global-regulation",
+        "packages/country-law",
+        "packages/legal-engine"
           "name": "ExternalProductionEvidenceRecord",
           "kind": "type"
         }
@@ -5050,6 +5064,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
     }
   ],
@@ -5877,6 +5892,10 @@
     "packages/transaction-manager",
     "packages/distributed-ledger",
     "packages/exactly-once",
+    "packages/licensing",
+    "packages/global-regulation",
+    "packages/country-law",
+    "packages/legal-engine"
     "packages/repository-integrity",
     "packages/architecture-v2",
     "packages/merge-manager"
@@ -6967,6 +6986,11 @@
       "notes": "Chunk 154 production operational persistence, crash recovery, state rehydration, and repository integrity gate at packages/persistence/src/production/recovery. Extends existing PostgreSQL adapters and durable fixture stores. Not a second ledger, mint, or Execution Authority. Do not create packages/database-v2, packages/state-store, packages/durable-state, packages/operational-ledger, packages/financial-database, or packages/persistence-v2."
     },
     {
+      "id": "sunrey-production-operating-scope",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 161 jurisdictional operating scope, licensing, regulatory-evidence binding, corridor eligibility, and product activation matrix at packages/sunrey-chain/src/mainnet/operating-scope. Extends sunrey-mainnet-readiness. Not legal advice. Does not issue Execution Authority. Do not create packages/licensing, packages/global-regulation, packages/country-law, or packages/legal-engine."
       "id": "sunrey-external-production-evidence",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -7489,6 +7513,10 @@
     "packages/key-vault",
     "packages/mpc-v2",
     "packages/custody-provider-v2",
+    "packages/licensing",
+    "packages/global-regulation",
+    "packages/country-law",
+    "packages/legal-engine"
     "packages/legal",
     "packages/licenses",
     "packages/external-audit",

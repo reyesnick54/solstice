@@ -1,0 +1,116 @@
+export {
+  AI_CAN_APPROVE_JURISDICTION,
+  CHUNK_161_ID,
+  CONFIRMED_BY_COUNSEL,
+  CUSTODY_SCOPE_EQUALS_ISSUANCE_SCOPE,
+  CUSTOMER_CLASSES,
+  ENGINEERING_TEST_EQUALS_LEGAL_APPROVAL,
+  EXCHANGE_SCOPE_EQUALS_CUSTODY_SCOPE,
+  MODULE_ISSUES_EXECUTION_AUTHORITY,
+  NATIVE_ASSETS,
+  OPERATING_SCOPE_ACTOR_KINDS,
+  OPERATING_SCOPE_ID,
+  OPERATING_SCOPE_REASON_CODES,
+  OPERATING_SCOPE_SCHEMA_VERSION,
+  OPERATING_SCOPE_STATUSES,
+  OPERATING_SCOPE_TOOL_VERSION,
+  PAYMENT_PURPOSE_CLASSES,
+  PRODUCTION_ACTIVE,
+  PROVIDER_DEPENDENCY_KINDS,
+  REGULATORY_TWIN_CAN_EXTERNALLY_VERIFY,
+  SCOPE_EVIDENCE_CLASSES,
+  SCOPE_EVIDENCE_STATES,
+  SUNREY_SCOPE_EQUALS_MOONREY_SCOPE,
+  UNKNOWN_JURISDICTION_ENABLED,
+} from './types.ts';
+export type {
+  CorridorEligibilityRecord,
+  JurisdictionRecord,
+  LegalEntityRef,
+  NativeAssetScope,
+  OperatingCustomerClass,
+  OperatingScopeActorKind,
+  OperatingScopeCatalog,
+  OperatingScopeEvaluation,
+  OperatingScopeFact,
+  OperatingScopeKey,
+  OperatingScopeQuery,
+  OperatingScopeReasonCode,
+  OperatingScopeReport,
+  OperatingScopeStatus,
+  PaymentPurposeClass,
+  ProductScopeRow,
+  ProviderBinding,
+  ProviderDependencyKind,
+  ScopeEvidenceClass,
+  ScopeEvidenceRecord,
+  ScopeEvidenceState,
+  ScopeRequirement,
+} from './types.ts';
+export {
+  FIXTURE_JURISDICTION_XA,
+  FIXTURE_JURISDICTION_XB,
+  findJurisdiction,
+  isKnownJurisdiction,
+  listJurisdictions,
+  unknownJurisdictionRecord,
+} from './jurisdictions.ts';
+export {
+  FIXTURE_ENTITY_XA,
+  FIXTURE_ENTITY_XB,
+  defaultProductRows,
+  domainDoesNotAuthorize,
+  findLegalEntity,
+  listLegalEntities,
+} from './products.ts';
+export { SCOPE_REQUIREMENTS, reasonCodeForClass, requirementsFor } from './requirements.ts';
+export { emptyEvidenceCatalog, findProductRow, matrixDoesNotInherit } from './matrix.ts';
+export {
+  FIXTURE_CORRIDOR_XA_XB,
+  KERNEL_POLICY_REF_RESEARCH,
+  PAYMENTS_CORRIDOR_US_SA,
+  corridorIsUnknown,
+  findCorridor,
+  listCorridors,
+} from './corridors.ts';
+export {
+  FIXTURE_BANK_XA,
+  FIXTURE_FX_XA,
+  FIXTURE_RAIL_XA,
+  engineeringHealthIsLegalEligibility,
+  findProvider,
+  fxBindingAuthorizesPaymentRail,
+  listProviderBindings,
+} from './provider-bindings.ts';
+export {
+  bindChunk160Record,
+  evidenceCoversDomain,
+  evidenceIsExpired,
+  evidenceIsRevoked,
+  evidenceMatchesEntity,
+  engineeringTestIsNotLegal,
+  fixtureCounselIsInsufficient,
+} from './evidence-bindings.ts';
+export type { Chunk160EvidenceReference } from './evidence-bindings.ts';
+export {
+  domainEvaluationDoesNotAuthorize,
+  evaluateOperatingScope,
+  simulateScopeChange,
+  toOperatingScopeFact,
+} from './evaluation.ts';
+export { buildOperatingScopeReport, formatOperatingScopeReport } from './report.ts';
+export {
+  FIXTURE_NOW,
+  OTHER_ENTITY,
+  OTHER_JURISDICTION,
+  corridorEndpointLicense,
+  defaultOperatingScopeCatalog,
+  engineeringTestOnly,
+  evidenceRecord,
+  expiredLicense,
+  fixtureCounselOpinion,
+  fixtureExternalLicense,
+  queryXa,
+  revokedApproval,
+  withEvidence,
+} from './fixtures.ts';

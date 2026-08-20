@@ -19,6 +19,13 @@ export {
 } from './facts.ts';
 export { evaluatePredicate, type PolicyPredicate, type FactPath } from './predicates.ts';
 export {
+  OPERATING_SCOPE_FACT_SCHEMA_VERSION,
+  acceptOperatingScopeFact,
+  operatingScopeBlocks,
+  operatingScopeIssuesExecutionAuthority,
+  type OperatingScopeFact,
+} from './operating-scope-fact.ts';
+export {
   POLICY_PRODUCT_BINDINGS,
   POLICY_SOURCES,
   SIMULATION_CAPABILITIES,
