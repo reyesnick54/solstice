@@ -1,0 +1,23 @@
+{
+  "chunk": "CHUNK-148",
+  "title": "Production Economic Constitution Candidate Bundle, Cross-Policy Reconciliation, and Economic Release-Candidate Gate",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "sunrey-economic-rc",
+    "sunrey-mainnet-rc",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-human-contribution-monetary-bridge",
+    "sunrey-human-economic-contributions",
+    "moonrey-productive-value-function",
+    "moonrey-productive-value-settlement",
+    "moonrey-source-taxonomy",
+    "sunrey-provider-certification",
+    "sunrey-unified-economic-data-fabric",
+    "sunrey-human-information-network",
+    "sunrey-economic-asset-verification"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/release-candidate/economic/production-constitution. Extends sunrey-economic-rc and sunrey-production-economic-activation-firewall. Creates a versioned candidate bundle that reconciles Chunks 71–147 without activating production. Historical Economic RC hashes remain reproducible. evaluateChunkRequirements returns mustStop: false. Do not create packages/economic-constitution, packages/economic-rc-v2, packages/tokenomics-release, or packages/dual-economy-release."
+}

@@ -71,3 +71,19 @@ export {
 } from './report.ts';
 export { consumeEconomicRc, economicRcReadinessRecords } from './readiness.ts';
 export { runSunreyReleaseEconomic } from './cli.ts';
+export {
+  assembleCandidateBundle,
+  freezeCandidateBundle,
+  qualifyProductionEconomicConstitutionCandidate,
+  analyzeEconomicConstitutionChange,
+  currentRepositoryConstitutionSnapshot,
+  currentRepositoryCandidateBundle,
+  runRehearsalOnlyEndToEnd,
+  PRODUCTION_ECONOMIC_CONSTITUTION_BUNDLE_ID,
+  PRODUCTION_ACTIVATED as PRODUCTION_CONSTITUTION_ACTIVATED,
+} from './production-constitution/index.ts';
+export type {
+  ProductionEconomicConstitutionCandidateBundle,
+  ProductionEconomicConstitutionCandidateReport,
+  ProductionEconomicConstitutionQualification,
+} from './production-constitution/index.ts';

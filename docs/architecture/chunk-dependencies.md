@@ -1359,6 +1359,18 @@ or create a second mint. Do not create `packages/production-economics`,
 `packages/monetary-activation`, `packages/mainnet-economics`,
 `packages/tokenomics-v2`, or `packages/launch-economics`. The
 evaluator returns `mustStop: false`.
+Chunk 148 implements the production economic constitution candidate
+bundle at
+`packages/sunrey-chain/src/release-candidate/economic/production-constitution`.
+Capability `sunrey-economic-rc` is `IMPLEMENTED` on the existing
+economic release-candidate owner. The candidate binds Chunk 71, the
+Chunk 143 firewall, and the current parameter / policy / rehearsal
+evidence by exact version and content hash. It does not activate
+production, invent tokenomics, or rewrite historical Economic RC
+hashes. Do not create `packages/economic-constitution`,
+`packages/economic-rc-v2`, `packages/tokenomics-release`, or
+`packages/dual-economy-release`. The evaluator returns
+`mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
