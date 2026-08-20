@@ -166,6 +166,8 @@ export type ProductionParameterRecord = {
   readonly valueHash: string | null;
   readonly governed: boolean;
   readonly infrastructureMetadataOnly: boolean;
+  /** Chunk 144 validation receipt. Absent on historical UNCONFIGURED rows. */
+  readonly validationReceiptHash?: string | null;
 };
 
 export type ActivationEvidenceRecord = {
@@ -362,6 +364,7 @@ export type ProductionEconomicActivationReadinessReport = {
 export type ProductionEconomicActivationSnapshot = {
   readonly bindings: readonly VersionBinding[];
   readonly parameters: readonly ProductionParameterRecord[];
+  readonly sunreyIssuancePackage?: import('./sunrey-package/types.ts').SunReyProductionIssuanceParameterPackage | null;
   readonly evidence: readonly ActivationEvidenceRecord[];
   readonly hinGates: HinProductionGates;
   readonly hinChainAnchor: HinChainAnchorReadiness;

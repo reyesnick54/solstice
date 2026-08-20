@@ -72,6 +72,7 @@ export type {
   SupplySafetySnapshot,
   VersionBinding,
 } from './types.ts';
+export * as parameterPackage from './parameter-package/index.ts';
 export { ACTIVATION_REQUIREMENTS, DOMAIN_TO_MAINNET, requirementById, requirementsFor } from './requirements.ts';
 export {
   FIXTURE_KINDS,
@@ -137,5 +138,36 @@ export {
   humanSlot,
   simulationConversionParameter,
   withSnapshot,
+  withSunReyIssuancePackage,
   withUnconfigured,
 } from './fixtures.ts';
+export {
+  AUTHORIZED_HUMAN_ECONOMIC_CONTRIBUTION,
+  CANDIDATE_PACKAGE_CAN_MINT,
+  CHUNK_71_REMAINS_MONETARY_AUTHORITY as PACKAGE_CHUNK_71_REMAINS_MONETARY_AUTHORITY,
+  CURRENT_PACKAGE_BINDINGS,
+  FIXTURE_GENESIS_SUPPLY,
+  FIXTURE_GLOBAL_GUARD,
+  FIXTURE_MAXIMUM_SUPPLY,
+  FIXTURE_PER_CLASS_CAP,
+  FIXTURE_PER_PERIOD_CAP,
+  PRODUCTION_ACTIVATED as PACKAGE_PRODUCTION_ACTIVATED,
+  SUNREY_PRODUCTION_ISSUANCE_PACKAGE_ID,
+  bindExact,
+  configuredNumeric,
+  createPostGenesisIssuancePolicyCandidate,
+  createSunReyProductionIssuanceParameterPackage,
+  evaluateSunReyProductionPolicyCandidateReadiness,
+  hashIssuanceParameterPackage,
+  parametersFromSunReyPackage,
+  rehearsalSunReyIssuancePackage,
+  unconfiguredNumeric,
+  unconfiguredSunReyIssuancePackage,
+  validateSunReyProductionIssuanceParameterPackage,
+} from './sunrey-package/index.ts';
+export type {
+  PackageValidationResult,
+  SunReyPostGenesisIssuancePolicyCandidate,
+  SunReyProductionIssuanceParameterPackage,
+  SunReyProductionPolicyCandidateReadiness,
+} from './sunrey-package/index.ts';

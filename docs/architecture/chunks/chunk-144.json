@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-144",
+  "title": "Canonical Production Economic Parameter Registry, Typed Parameter Packages, and Governance Validation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "sunrey-protocol-governance",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-production-economic-parameters"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/production-activation/parameter-package. Reuses Chunk 143 ProductionParameterId values. Creates typed parameter values, candidate packages, deterministic hashes, coverage, and validation receipts. Does not choose production tokenomics, activate production, flip LIVE_* flags, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED. evaluateChunkRequirements returns mustStop: false. Do not create packages/tokenomics, packages/economic-parameters, packages/monetary-policy-v2, packages/coin-supply, or packages/production-mint."
+}

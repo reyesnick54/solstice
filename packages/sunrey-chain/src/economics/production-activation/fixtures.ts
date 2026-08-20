@@ -33,7 +33,13 @@ import { encodeString, sha256Hex } from '../../validators/canonical.ts';
 
 import { compatiblePair } from './bindings.ts';
 import { currentLiveFlags } from './invariants.ts';
+import {
+  completeFixturePackageInput,
+  productionParameterRecordsFromPackage,
+} from './parameter-package/index.ts';
 import { currentUnconfiguredParameters, unconfiguredParameter } from './parameters.ts';
+import { parametersFromSunReyPackage } from './sunrey-package/validation.ts';
+import type { SunReyProductionIssuanceParameterPackage } from './sunrey-package/types.ts';
 import {
   BINDING_KEYS,
   PRODUCTION_PARAMETER_IDS,
@@ -209,23 +215,23 @@ export function configuredParameter(
   id: ProductionParameterId,
   value: string,
 ): ProductionParameterRecord {
-  return Object.freeze({
-    id,
-    status: 'CONFIGURED',
-    sourceClass: 'GOVERNED_PRODUCTION_PARAMETER',
-    versionId: `test.${id}.v1`,
-    valueHash: hashOf(`${id}:${value}`),
-    governed: true,
-    infrastructureMetadataOnly: false,
-  });
+  const records = productionParameterRecordsFromPackage(
+    completeFixturePackageInput({ [id]: value }),
+  );
+  const found = records.find((row) => row.id === id);
+  if (!found) {
+    throw new TypeError(`fixture adapter did not produce ${id}`);
+  }
+  return found;
 }
 
 export function allConfiguredParameters(
   overrides: Partial<Record<ProductionParameterId, string>> = {},
 ): readonly ProductionParameterRecord[] {
-  return Object.freeze(
-    PRODUCTION_PARAMETER_IDS.map((id) => configuredParameter(id, overrides[id] ?? `explicit-${id}`)),
+  const byId = new Map(
+    productionParameterRecordsFromPackage(completeFixturePackageInput(overrides)).map((row) => [row.id, row]),
   );
+  return Object.freeze(PRODUCTION_PARAMETER_IDS.map((id) => byId.get(id) ?? unconfiguredParameter(id)));
 }
 
 export function simulationConversionParameter(id: ProductionParameterId): ProductionParameterRecord {
@@ -370,4 +376,18 @@ export function withUnconfigured(id: ProductionParameterId): ProductionEconomicA
 
 export function bindingKeysComplete(): boolean {
   return BINDING_KEYS.every((key) => currentRepositoryBindings().some((row) => row.key === key));
+}
+
+export function withSunReyIssuancePackage(
+  base: ProductionEconomicActivationSnapshot,
+  pkg: SunReyProductionIssuanceParameterPackage,
+): ProductionEconomicActivationSnapshot {
+  const overlay = parametersFromSunReyPackage(pkg);
+  const merged = PRODUCTION_PARAMETER_IDS.map(
+    (id) => overlay.find((row) => row.id === id) ?? base.parameters.find((row) => row.id === id) ?? unconfiguredParameter(id),
+  );
+  return withSnapshot(base, {
+    parameters: Object.freeze(merged),
+    sunreyIssuancePackage: pkg,
+  });
 }
