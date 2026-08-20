@@ -12,3 +12,4 @@ export {
   type ProviderWebhookEnvelope,
   type WebhookValidationResult,
 } from './webhook.ts';
+export * from './credentials/index.ts';

@@ -30,6 +30,7 @@ jobs:
 
       - name: Architectural invariants
         run: |
+          node scripts/check-json-integrity.mjs
           python3 scripts/lint-architectural-invariants.py
           python3 scripts/extraction-dryrun.py
           npm run lint:architecture

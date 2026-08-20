@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, it } from 'node:test';
+
+import { checkJsonIntegrity, parseJsonStrict } from '../scripts/check-json-integrity.mjs';
+
+const ROOT = join(import.meta.dirname, '..');
+
+describe('repository JSON integrity', () => {
+  it('rejects duplicate keys and keeps a single package.json test script', () => {
+    const { findings, packageJson, manifest } = checkJsonIntegrity(ROOT);
+    assert.deepEqual(findings, []);
+    assert.equal(typeof packageJson?.scripts?.test, 'string');
+    const pkgText = readFileSync(join(ROOT, 'package.json'), 'utf8');
+    assert.equal([...pkgText.matchAll(/^\s*"test"\s*:/gm)].length, 1);
+    assert.ok(String(packageJson?.scripts?.test).includes('packages/sunrey-chain/src/release-candidate/economic/**/*.test.ts'));
+    parseJsonStrict(readFileSync(join(ROOT, 'docs/architecture/manifest.json'), 'utf8'), 'manifest');
+    const ids = (manifest?.capabilities ?? []).map((item: { id: string }) => item.id);
+    assert.equal(new Set(ids).size, ids.length);
+  });
+});

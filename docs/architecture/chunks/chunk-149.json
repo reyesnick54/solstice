@@ -1,0 +1,14 @@
+{
+  "chunk": "CHUNK-149",
+  "title": "Production Provider Credential Plane, Secret Lifecycle, Workload Isolation, and Repository Integrity Hardening",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-provider-runtime",
+    "sunrey-production-provider-acceptance",
+    "sunrey-production-provider-credential-plane"
+  ],
+  "notes": "IMPLEMENTED at packages/security/src/regulated/credentials. Extends the existing SecretReference, SecretProvider, and HSM/KMS handle abstractions. Provider runtime remains packages/sunrey-chain/src/provider-runtime. Raw credentials never enter domain configuration. A credential is not provider approval, Execution Authority, a mint, or a ledger journal. PRODUCTION_AUTHORIZED remains unavailable while ENVIRONMENT=simulation and LIVE_* stay false. evaluateChunkRequirements returns mustStop: false. Do not create packages/secrets, packages/credentials, packages/provider-security, packages/provider-runtime-v2, packages/external-connectivity, or packages/vendor-runtime."
+}
