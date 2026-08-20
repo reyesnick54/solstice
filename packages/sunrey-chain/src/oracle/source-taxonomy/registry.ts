@@ -56,6 +56,21 @@ function mapping(input: {
   });
 }
 
+const REAL_ESTATE_CAPACITY_MAPPING = 'spm.real_estate_use.REAL_ESTATE_USE_CAPACITY.REAL_ESTATE_USE';
+
+export const HISTORICAL_REAL_ESTATE_CAPACITY_MAPPING = mapping({
+  mappingId: REAL_ESTATE_CAPACITY_MAPPING,
+  mappingVersion: 1,
+  status: 'SUPERSEDED',
+  supersededBy: `${REAL_ESTATE_CAPACITY_MAPPING}@2`,
+  sourceCategory: 'real_estate_use',
+  factType: 'REAL_ESTATE_USE_CAPACITY',
+  allowedSourceUnits: ['m2'],
+  productiveCategory: 'REAL_ESTATE_USE',
+  allowedClaimTypes: ['CAPACITY', 'USAGE'],
+  requiresGeography: true,
+});
+
 const ENERGY_PRODUCTION_V2 = 'spm.energy.ENERGY_PRODUCTION.ENERGY';
 
 export const HISTORICAL_ENERGY_PRODUCTION_MAPPING = mapping({
@@ -224,12 +239,46 @@ const ACTIVE_MAPPINGS: readonly SourceProductiveMapping[] = Object.freeze([
   }),
   mapping({
     mappingId: 'spm.real_estate_use.REAL_ESTATE_USE_CAPACITY.REAL_ESTATE_USE',
-    mappingVersion: 1,
+    mappingVersion: 2,
     sourceCategory: 'real_estate_use',
     factType: 'REAL_ESTATE_USE_CAPACITY',
     allowedSourceUnits: ['m2'],
     productiveCategory: 'REAL_ESTATE_USE',
-    allowedClaimTypes: ['CAPACITY', 'USAGE'],
+    allowedClaimTypes: ['CAPACITY'],
+    requiresGeography: true,
+  }),
+  mapping({
+    mappingId: 'spm.real_estate_use.REAL_ESTATE_USAGE.REAL_ESTATE_USE',
+    mappingVersion: 1,
+    sourceCategory: 'real_estate_use',
+    factType: 'REAL_ESTATE_USAGE',
+    allowedSourceUnits: ['m2_hour'],
+    productiveCategory: 'REAL_ESTATE_USE',
+    allowedClaimTypes: ['USAGE'],
+    requiresAttributionPolicy: true,
+    overlapRisk: true,
+    requiresGeography: true,
+  }),
+  mapping({
+    mappingId: 'spm.infrastructure.INFRASTRUCTURE_CAPACITY.INFRASTRUCTURE',
+    mappingVersion: 1,
+    sourceCategory: 'infrastructure',
+    factType: 'INFRASTRUCTURE_CAPACITY',
+    allowedSourceUnits: ['machine_h', 'facility_hour'],
+    productiveCategory: 'INFRASTRUCTURE',
+    allowedClaimTypes: ['CAPACITY'],
+    requiresGeography: true,
+  }),
+  mapping({
+    mappingId: 'spm.infrastructure.INFRASTRUCTURE_USAGE.INFRASTRUCTURE',
+    mappingVersion: 1,
+    sourceCategory: 'infrastructure',
+    factType: 'INFRASTRUCTURE_USAGE',
+    allowedSourceUnits: ['machine_h', 'facility_hour'],
+    productiveCategory: 'INFRASTRUCTURE',
+    allowedClaimTypes: ['USAGE'],
+    requiresAttributionPolicy: true,
+    overlapRisk: true,
     requiresGeography: true,
   }),
   mapping({
@@ -350,7 +399,11 @@ const SOURCE_CATEGORY_STATUS: Readonly<Record<DataSourceCategory, SourceCategory
 export const CANONICAL_SOURCE_TAXONOMY: SourceTaxonomyRegistry = Object.freeze({
   taxonomyId: SOURCE_TAXONOMY_ID,
   schemaVersion: SOURCE_TAXONOMY_SCHEMA_VERSION,
-  mappings: Object.freeze([...ACTIVE_MAPPINGS, HISTORICAL_ENERGY_PRODUCTION_MAPPING]),
+  mappings: Object.freeze([
+    ...ACTIVE_MAPPINGS,
+    HISTORICAL_ENERGY_PRODUCTION_MAPPING,
+    HISTORICAL_REAL_ESTATE_CAPACITY_MAPPING,
+  ]),
   sourceCategoryStatus: SOURCE_CATEGORY_STATUS,
 });
 

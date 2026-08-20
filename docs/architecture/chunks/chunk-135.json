@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-135",
+  "title": "Real Estate Use & Infrastructure Economic Data Fabric",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-oracle-network",
+    "sunrey-production-oracles",
+    "sunrey-economic-unit-normalization",
+    "moonrey-source-taxonomy",
+    "moonrey-economic-event-attribution",
+    "sunrey-economic-asset-registry",
+    "sunrey-provider-certification",
+    "sunrey-real-estate-infrastructure-data-fabric"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/oracle/production/provider-families/real-estate and packages/sunrey-chain/src/oracle/production/provider-families/infrastructure. Extends sunrey-production-oracles. Adds governed FactType REAL_ESTATE_USAGE and oracle UnitCodes m2_hour and facility_hour without duplicating Chunk 118 definitions. Historical REAL_ESTATE_USE_CAPACITY and machine_h infrastructure records are not reinterpreted. Vacancy, listing, appraisal, and ownership are not productive use. No named provider integration, production activation, or second oracle owner. evaluateChunkRequirements returns mustStop: false. Do not create packages/real-estate-oracles, packages/infrastructure-oracles, packages/property-data-fabric, or packages/facility-data-fabric."
+}

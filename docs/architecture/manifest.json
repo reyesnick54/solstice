@@ -2746,7 +2746,8 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–135 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -2838,6 +2839,16 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/types.ts",
       "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/index.ts",
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "name": "Real-estate use and infrastructure economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/index.ts",
+      "id": "sunrey-unified-economic-data-fabric",
+      "name": "Unified multi-provider economic data fabric, coverage, and cross-domain reconciliation",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/economic-data-fabric/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -2846,6 +2857,8 @@
       "protectedSymbols": [
         {
           "name": "BandwidthEconomicIdentity",
+          "name": "RealEstateEvidenceRecord",
+          "name": "EconomicDataCollectionEnvelope",
           "kind": "type"
         }
       ],
@@ -2854,11 +2867,21 @@
         "packages/telecom-data-fabric",
         "packages/network-oracles",
         "packages/cdn-metering"
+        "packages/real-estate-oracles",
+        "packages/infrastructure-oracles",
+        "packages/property-data-fabric",
+        "packages/facility-data-fabric"
+        "packages/economic-data-fabric",
+        "packages/unified-oracles",
+        "packages/cross-domain-reconciliation",
+        "packages/moonrey-data-fabric"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 136 provider-neutral bandwidth, telecom, and digital-network economic data fabric. Extends sunrey-production-oracles. BANDWIDTH_USAGE_SCHEMA_V1 remains historical GB_s compatibility. BANDWIDTH_USAGE_SCHEMA_V2 is transferred volume. DATA_RATE is not DATA_VOLUME. Capacity is not realized usage. Facts and certification do not mint MoonRey."
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time; REAL_ESTATE_USE_CAPACITY stays capacity. New infrastructure feeds use facility_hour; historical machine_h is LEGACY_INFRASTRUCTURE_MACHINE_H_V1. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
+      "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -5895,6 +5918,7 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–136 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
@@ -6248,6 +6272,11 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 136 bandwidth, telecom, and digital network economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/bandwidth. Extends sunrey-production-oracles. DATA_RATE is not DATA_VOLUME. Capacity is not realized usage. Do not create packages/bandwidth-oracle, packages/telecom-data-fabric, packages/network-oracles, or packages/cdn-metering."
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/real-estate and packages/sunrey-chain/src/oracle/production/provider-families/infrastructure. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time. Historical machine_h infrastructure evidence is not reinterpreted as facility-hour. No named provider integration, production activation, or second oracle owner. Do not create packages/real-estate-oracles, packages/infrastructure-oracles, packages/property-data-fabric, or packages/facility-data-fabric."
     },
     {
       "id": "moonrey-productive-value-settlement",
@@ -6262,6 +6291,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 131 read-only manufacturing, industrial automation, and robotics economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/manufacturing. Extends sunrey-production-oracles. No industrial control path, no real factory contact, no production activation, and no MoonRey mint. Do not create packages/manufacturing-oracle, packages/industrial-data-fabric, packages/robotics-oracle, or packages/factory-connectors."
+    },
+    {
+      "id": "sunrey-unified-economic-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 138 unified multi-provider economic data fabric at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Not a second oracle, productive registry, attribution engine, economic asset registry, or mint. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
     }
   ],
   "boundedContexts": [

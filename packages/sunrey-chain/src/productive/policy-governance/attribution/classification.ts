@@ -38,6 +38,8 @@ export type ObservationKind =
   | 'STORAGE_HOLDING'
   | 'COMPUTE_USAGE'
   | 'AI_INFERENCE'
+  | 'REAL_ESTATE_OCCUPANCY'
+  | 'INFRASTRUCTURE_FACILITY_USAGE'
   | 'GENERIC';
 
 export function candidateEventClassesFor(category: ProductiveCategory): readonly ProductiveEconomicEventClass[] {
@@ -81,6 +83,9 @@ export function classifyEventClass(input: {
       return 'COMPUTE_EXECUTION_EVENT';
     case 'AI_INFERENCE':
       return 'AI_COMPUTE_EVENT';
+    case 'REAL_ESTATE_OCCUPANCY':
+    case 'INFRASTRUCTURE_FACILITY_USAGE':
+      return 'INFRASTRUCTURE_SERVICE_EVENT';
     default:
       break;
   }

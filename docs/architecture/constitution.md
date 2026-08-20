@@ -90,6 +90,8 @@ never be two implementations of these systems.
 | Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |
 | Minerals / resource extraction data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/resources/types.ts` | IMPLEMENTED |
 | Bandwidth / telecom / digital-network data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/types.ts` | IMPLEMENTED |
+| Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
+| Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1655,6 +1657,36 @@ are not stored. Facts do not mint MoonRey. Do not create
 `packages/bandwidth-oracle`, `packages/telecom-data-fabric`,
 `packages/network-oracles`, or `packages/cdn-metering`. See
 [`chunk-136-bandwidth-network-data-fabric.md`](./chunk-136-bandwidth-network-data-fabric.md).
+Chunk 138 implements the unified multi-provider economic data fabric,
+coverage, and cross-domain reconciliation at
+`packages/sunrey-chain/src/oracle/production/economic-data-fabric`.
+Capability `sunrey-unified-economic-data-fabric` is `IMPLEMENTED` on
+the existing `sunrey-production-oracles` owner. The fabric routes,
+admits, observes, and reconciles envelopes above provider-family
+adapters. It does not finalize oracle facts, mint MoonRey, contact
+live providers, or replace Chunk 116 taxonomy, oracle consensus,
+event identity, attribution, Productive Value, or Chunk 71. Do not
+create `packages/economic-data-fabric`, `packages/unified-oracles`,
+`packages/cross-domain-reconciliation`, or
+`packages/moonrey-data-fabric`. See
+[`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md).
+
+Chunk 135 implements the real-estate use and infrastructure economic
+data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/real-estate`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/infrastructure`.
+Capability `sunrey-real-estate-infrastructure-data-fabric` is
+`IMPLEMENTED` on the existing `sunrey-production-oracles` owner.
+`REAL_ESTATE_USAGE` is the governed realized-use fact; historical
+`REAL_ESTATE_USE_CAPACITY` records stay capacity. New infrastructure
+feeds use `facility_hour` (`INFRASTRUCTURE_FACILITY_TIME_V2`); stored
+`machine_h` remains `LEGACY_INFRASTRUCTURE_MACHINE_H_V1`. Vacancy,
+listing, appraisal, and ownership are not productive use. Do not create
+`packages/real-estate-oracles`, `packages/infrastructure-oracles`,
+`packages/property-data-fabric`, or `packages/facility-data-fabric`.
+See
+[`chunk-135-real-estate-infrastructure-data-fabric.md`](./chunk-135-real-estate-infrastructure-data-fabric.md).
 
 ## Agent stop rule
 
