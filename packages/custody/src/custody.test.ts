@@ -148,7 +148,7 @@ describe('SunRey custody control plane', () => {
     assert.equal(credited.value.state, 'CREDITED');
     assert.ok(credited.value.journalId);
     assert.equal(credited.value.providerBalanceIsTruth, false);
-    assert.equal(h.assets.position(cust.id).available.scaledUnits, 1_000_000n);
+    assert.equal(h.assets.position(cust.id, SUNREY_COIN_ASSET_ID).available.scaledUnits, 1_000_000n);
   });
 
   it('rejects an unauthenticated provider notice and never credits from the webhook', () => {

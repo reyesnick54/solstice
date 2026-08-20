@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-153",
+  "title": "SunRey/MoonRey Dual-Native-Asset Custody Hardening, KMS/HSM Provider Candidate Integration, and Institutional Custody Production-Candidate Framework",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "custody",
+    "sunrey-institutional-custody",
+    "sunrey-chain",
+    "sunrey-native-assets",
+    "sunrey-exchange",
+    "sunrey-exchange-native-settlement",
+    "sunrey-provider-runtime",
+    "sunrey-production-provider-credential-plane",
+    "sunrey-regulated-provider-candidates"
+  ],
+  "notes": "IMPLEMENTED at packages/custody/src/provider-candidate and dual-asset institutional types. Extends packages/custody. HSM/KMS remain packages/security. Native quantity remains SunRey Chain / AssetSupplyBook. schemaVersion 1 stays SunRey-only; schemaVersion 2 authorizes SUNREY_COIN and MOONREY_COIN. Production remains unauthorized. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-custody, packages/sunrey-custody-v2, packages/key-vault, packages/hsm-v2, packages/mpc-v2, or packages/custody-provider-v2."
+}

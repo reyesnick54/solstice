@@ -104,6 +104,8 @@ export type ForbiddenCustodyActor = (typeof FORBIDDEN_CUSTODY_ACTORS)[number];
 export type CustodyActorKind = HumanCustodyActor | ForbiddenCustodyActor;
 
 export const VAULT_SCHEMA_VERSION = 1 as const;
+export const VAULT_SCHEMA_VERSION_V2 = 2 as const;
+export type InstitutionalVaultSchemaVersion = typeof VAULT_SCHEMA_VERSION | typeof VAULT_SCHEMA_VERSION_V2;
 
 export const DEVELOPMENT_TIER_LIMITS = Object.freeze({
   HOT: 1_000_000n,

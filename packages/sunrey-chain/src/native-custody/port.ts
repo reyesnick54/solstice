@@ -5,6 +5,8 @@
  * This port is not a second mutable asset ledger.
  */
 
+import type { NativeAssetId } from '../protocol/assets.ts';
+
 export const NATIVE_CUSTODY_CHAIN_MODE = 'SIMULATION_ONLY' as const;
 
 export type NativeChainTxStatus =
@@ -18,9 +20,9 @@ export type NativeChainTransfer = {
   readonly txId: string;
   readonly source: string;
   readonly destination: string;
-  readonly assetId: 'SUNREY_COIN';
+  readonly assetId: NativeAssetId;
   readonly quantity: bigint;
-  readonly feeAssetId: 'SUNREY_COIN';
+  readonly feeAssetId: NativeAssetId;
   readonly maxFee: bigint;
   readonly nonce: bigint;
   readonly networkId: string;
@@ -56,7 +58,7 @@ export type NativeCustodyChainPort = {
   readonly networkId: string;
   readonly chainId: string;
   addressFromPublicKey(publicKeyHex: string): string;
-  holding(address: string, assetId: 'SUNREY_COIN'): bigint;
+  holding(address: string, assetId: NativeAssetId): bigint;
   submit(tx: NativeChainTransfer): NativeSubmitResult;
   queryByTxId(txId: string): NativeQueryResult;
   discoverUnknown(txId: string): NativeQueryResult;
@@ -64,5 +66,5 @@ export type NativeCustodyChainPort = {
   latestFinalizedHeight(): bigint;
   getFinalizedBlock(height: bigint): FinalizedNativeBlock | null;
   listFinalizedBlocks(): readonly FinalizedNativeBlock[];
-  fundDevelopment(address: string, quantity: bigint): FinalizedNativeBlock;
+  fundDevelopment(address: string, quantity: bigint, assetId?: NativeAssetId): FinalizedNativeBlock;
 };

@@ -1485,6 +1485,7 @@ replace `identity`, `compliance-screening`, `custody`, or
 Authority. Do not create `packages/kyc`, `packages/aml`,
 `packages/sanctions`, `packages/compliance-v2`, `packages/regtech`,
 `packages/travel-rule-v2`, or `packages/surveillance-v2`. The
+evaluator returns `mustStop: false`.
 Chunk 151 implements banking, payment-rail, and FX provider
 production candidates at `packages/payments/src/production-candidate`.
 Capability `sunrey-banking-payment-provider-candidates` is
@@ -1521,3 +1522,12 @@ Execution Authority, a mint, or a ledger journal. Do not create
 `packages/provider-security`, `packages/provider-runtime-v2`,
 `packages/external-connectivity`, or `packages/vendor-runtime`. The
 evaluator returns `mustStop: false`.
+Chunk 153 hardens dual-native-asset custody at `packages/custody` and
+adds `packages/custody/src/provider-candidate`. Capability
+`sunrey-dual-asset-custody-provider-candidate` is `IMPLEMENTED`.
+HSM/KMS remain `packages/security`. Native supply remains Chunk 71
+`AssetSupplyBook`. Provider credentials bind through the Chunk 149
+credential plane. Do not create `packages/moonrey-custody`,
+`packages/sunrey-custody-v2`, `packages/key-vault`, `packages/hsm-v2`,
+`packages/mpc-v2`, or `packages/custody-provider-v2`. The evaluator
+returns `mustStop: false`.

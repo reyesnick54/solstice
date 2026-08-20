@@ -12,7 +12,13 @@ export function buildRecoveryManifest(input: {
 }): RecoveryManifest {
   const encoded = Buffer.from(JSON.stringify(input.configuration), 'utf8');
   return Object.freeze({
-    walletMetadata: Object.freeze(input.wallets.map((wallet) => ({ walletId: wallet.walletId, address: wallet.address }))),
+    walletMetadata: Object.freeze(
+      input.wallets.map((wallet) => ({
+        walletId: wallet.walletId,
+        address: wallet.address,
+        assetId: wallet.assetId,
+      })),
+    ),
     keyHandles: Object.freeze(
       input.wallets
         .filter((wallet) => wallet.signerHandle)

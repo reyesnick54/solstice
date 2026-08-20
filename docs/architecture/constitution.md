@@ -1886,6 +1886,18 @@ Authority. `LIVE_EXTERNAL_KYC` remains `false`. Do not create
 `packages/compliance-v2`, `packages/regtech`, `packages/travel-rule-v2`,
 or `packages/surveillance-v2`. See
 [`docs/compliance/chunk-152-regulated-provider-candidates.md`](../compliance/chunk-152-regulated-provider-candidates.md).
+Chunk 153 hardens dual-native-asset institutional custody and adds a
+custody provider-candidate framework at
+`packages/custody/src/provider-candidate`. Capability
+`sunrey-dual-asset-custody-provider-candidate` is `IMPLEMENTED` on
+`packages/custody`. HSM/KMS remain `packages/security`. Canonical
+native quantity remains SunRey Chain / `AssetSupplyBook`.
+`schemaVersion` 1 stays SunRey-only. `schemaVersion` 2 authorizes
+`SUNREY_COIN` and `MOONREY_COIN`. Production remains unauthorized.
+Do not create `packages/moonrey-custody`, `packages/sunrey-custody-v2`,
+`packages/key-vault`, `packages/hsm-v2`, `packages/mpc-v2`, or
+`packages/custody-provider-v2`. See
+[`docs/custody/chunk-153-dual-asset-custody-provider-candidate.md`](../custody/chunk-153-dual-asset-custody-provider-candidate.md).
 
 ## Agent stop rule
 
