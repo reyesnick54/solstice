@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "==> architectural invariants"
+node scripts/check-json-integrity.mjs
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 npm run lint:architecture
@@ -111,6 +112,7 @@ npm run demo:moonrey-productive
 npm run demo:sunrey-unit-normalization
 npm run demo:sunrey-oracle
 npm run demo:sunrey-production-oracles
+npm run demo:sunrey-provider-credential-plane
 npm run demo:moonrey-source-claim-path
 npm run sunrey-oracle -- readiness
 npm run demo:sunrey-fees

@@ -1,55 +1,88 @@
 #!/usr/bin/env node
 /**
- * Post-migration public naming audit.
+ * Combined SunRey naming audit.
  *
- * Fails if current public display surfaces still say Solstice outside
- * an explicitly reviewed exception. Regenerates the inventory sidecar.
+ * Default invocation is the Chunk 142 public-surface check
+ * (`sunrey-naming-audit: ok`). `--check` / `--write` run the Chunk 141
+ * inventory guard. The two modes stay distinct so callers without
+ * TypeScript strip-types still work.
  */
-
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
+import { spawnSync } from 'node:child_process';
 
 const ROOT = dirname(fileURLToPath(new URL('.', import.meta.url)));
-const INVENTORY_JSON = join(ROOT, 'docs/architecture/sunrey-naming-inventory.json');
-const INVENTORY_MD = join(ROOT, 'docs/architecture/sunrey-naming-inventory.md');
+const HERE = fileURLToPath(import.meta.url);
 
-const PUBLIC_SURFACES = [
-  { path: 'package.json', keys: ['name', 'description'] },
-  { path: 'AGENTS.md', firstLine: true },
-  { path: 'README.md', firstLine: true },
-  { path: 'docs/architecture/constitution.md', firstLine: true },
-  { path: 'packages/sunrey-sdk/package.json', keys: ['description'] },
-  { path: 'packages/sunrey-explorer/package.json', keys: ['description'] },
-];
+const { values } = parseArgs({
+  options: {
+    write: { type: 'boolean', default: false },
+    'write-public-debt': { type: 'boolean', default: false },
+    check: { type: 'boolean', default: false },
+    json: { type: 'boolean', default: false },
+  },
+  strict: true,
+});
 
-const REVIEWED_EXCEPTIONS = [
-  'reyesnick54/solstice',
-  '@solstice/',
-  'solstice-identity',
-  'solstice-architecture-manifest',
-  'SOLSTICE_',
-  'SolsticeIdentityId',
-  'asSolsticeIdentityId',
-  'le_solstice_',
-  'SOLSTICE_UK',
-  'SOLSTICE_US',
-  'solstice_customer',
-  'solstice_ledger',
-  'solstice_evidence',
-  'solstice_security',
-  'solstice_bootstrap',
-  'solstice_migrator',
-  'solstice_dev_only',
-  'simulation.solstice.local',
-  'SolsticePersonalDataExportV1',
-  'SOLSTICE_HOLDING',
-  'SOLSTICE_PAYMENT',
-  'SOLSTICE_CARD',
-  'SOLSTICE_SERVICE',
-  'SOLSTICE_GENERATED',
-  'chunk-5-solstice-identity',
-];
+const wantsInventory = values.write || values['write-public-debt'] || values.check || values.json;
+
+if (wantsInventory) {
+  if (!process.execArgv.some((flag) => flag.includes('strip-types'))) {
+    const result = spawnSync(
+      process.execPath,
+      ['--experimental-strip-types', '--disable-warning=ExperimentalWarning', HERE, ...process.argv.slice(2)],
+      { stdio: 'inherit' },
+    );
+    process.exit(result.status ?? 1);
+  }
+
+  const {
+    loadPublicSurfaceDebt,
+    protocolIdentifiersUnchanged,
+    runNamingAudit,
+    writeNamingInventory,
+    writePublicSurfaceDebt,
+  } = await import('../packages/config/src/naming-audit.ts');
+
+  const result = runNamingAudit(ROOT);
+  const { inventory, publicFindings, ok } = result;
+
+  if (values.write) {
+    writeNamingInventory(ROOT, inventory);
+  }
+  if (values['write-public-debt']) {
+    writePublicSurfaceDebt(ROOT, inventory.occurrences);
+  }
+  if (values.json) {
+    console.log(JSON.stringify({ summary: inventory.summary, publicFindings, ok }, null, 2));
+  } else {
+    console.log(`naming audit: occurrences=${inventory.summary.occurrenceCount}`);
+    console.log(`naming audit: public_must_migrate=${inventory.summary.publicLegacyCount}`);
+    console.log(`naming audit: allowlisted=${inventory.summary.allowlistedCount}`);
+    console.log(`naming audit: protocol_ids_unchanged=${protocolIdentifiersUnchanged(ROOT)}`);
+    if (values.check) {
+      const debt = loadPublicSurfaceDebt(ROOT);
+      console.log(`naming audit: frozen_public_debt=${debt.entries.length}`);
+    }
+  }
+  if (values.check && !ok) {
+    console.error('naming audit failed: new public Solstice branding is forbidden');
+    for (const finding of publicFindings) {
+      console.error(`${finding.path}:${finding.line}: ${finding.token} — ${finding.reason}`);
+    }
+    process.exit(1);
+  }
+  if (values.check && !protocolIdentifiersUnchanged(ROOT)) {
+    console.error('naming audit failed: protocol identifiers must remain unchanged');
+    process.exit(1);
+  }
+  if (values.check) {
+    console.log('naming audit: ok');
+  }
+  process.exit(0);
+}
 
 function read(rel) {
   return readFileSync(join(ROOT, rel), 'utf8');
@@ -90,58 +123,7 @@ function publicViolations() {
   return violations;
 }
 
-const inventory = JSON.parse(readFileSync(INVENTORY_JSON, 'utf8'));
 const violations = publicViolations();
-inventory.generatedBy = 'scripts/sunrey-naming-audit.mjs';
-inventory.publicLegacyDisplayNamesRemaining = violations.length;
-inventory.audit = {
-  publicSurfacesChecked: PUBLIC_SURFACES.map((item) => item.path),
-  reviewedExceptions: REVIEWED_EXCEPTIONS,
-  violations,
-};
-
-function section(classification) {
-  return (inventory.items ?? [])
-    .filter((item) => item.classification === classification)
-    .map((item) => `- \`${item.id}\` — \`${item.legacyValue}\` → \`${item.canonicalValue}\` (\`${item.path}\`)`)
-    .join('\n');
-}
-
-writeFileSync(INVENTORY_JSON, `${JSON.stringify(inventory, null, 2)}\n`);
-writeFileSync(
-  INVENTORY_MD,
-  `# SunRey naming inventory
-
-Generated by \`scripts/sunrey-naming-audit.mjs\` from
-[\`sunrey-naming-constitution.md\`](./sunrey-naming-constitution.md).
-Machine copy: [\`sunrey-naming-inventory.json\`](./sunrey-naming-inventory.json).
-
-Current master brand: **SunRey**. Legacy master brand is not active.
-GitHub repository path remains \`reyesnick54/solstice\`.
-
-## MUST_MIGRATE
-
-${section('MUST_MIGRATE')}
-
-## MIGRATE_WITH_ALIAS
-
-${section('MIGRATE_WITH_ALIAS')}
-
-## PRESERVE_IMMUTABLE
-
-${section('PRESERVE_IMMUTABLE')}
-
-## MANUAL_REVIEW
-
-${section('MANUAL_REVIEW')}
-
-## HISTORICAL_ONLY
-
-${section('HISTORICAL_ONLY')}
-
-Public current-product Solstice display names remaining: **${violations.length}**.
-`,
-);
 
 if (violations.length > 0) {
   console.error('PUBLIC_LEGACY_DISPLAY_REMAINING');
@@ -154,72 +136,3 @@ if (violations.length > 0) {
 console.log('sunrey-naming-audit: ok');
 console.log('CURRENT_MASTER_BRAND=SunRey');
 console.log('publicLegacyDisplayNamesRemaining=0');
- * Scan tracked source/config/docs for legacy Solstice identity tokens,
- * classify each occurrence, and optionally write the inventory.
- *
- * This script does not rewrite files and does not change protocol history.
- */
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { parseArgs } from 'node:util';
-
-import {
-  loadPublicSurfaceDebt,
-  protocolIdentifiersUnchanged,
-  runNamingAudit,
-  writeNamingInventory,
-  writePublicSurfaceDebt,
-} from '../packages/config/src/naming-audit.ts';
-
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-const { values } = parseArgs({
-  options: {
-    write: { type: 'boolean', default: false },
-    'write-public-debt': { type: 'boolean', default: false },
-    check: { type: 'boolean', default: false },
-    json: { type: 'boolean', default: false },
-  },
-  strict: true,
-});
-
-const result = runNamingAudit(root);
-const { inventory, publicFindings, ok } = result;
-
-if (values.write) {
-  writeNamingInventory(root, inventory);
-}
-
-if (values['write-public-debt']) {
-  writePublicSurfaceDebt(root, inventory.occurrences);
-}
-
-if (values.json) {
-  console.log(JSON.stringify({ summary: inventory.summary, publicFindings, ok }, null, 2));
-} else {
-  console.log(`naming audit: occurrences=${inventory.summary.occurrenceCount}`);
-  console.log(`naming audit: public_must_migrate=${inventory.summary.publicLegacyCount}`);
-  console.log(`naming audit: allowlisted=${inventory.summary.allowlistedCount}`);
-  console.log(`naming audit: protocol_ids_unchanged=${protocolIdentifiersUnchanged(root)}`);
-  if (values.check) {
-    const debt = loadPublicSurfaceDebt(root);
-    console.log(`naming audit: frozen_public_debt=${debt.entries.length}`);
-  }
-}
-
-if (values.check && !ok) {
-  console.error('naming audit failed: new public Solstice branding is forbidden');
-  for (const finding of publicFindings) {
-    console.error(`${finding.path}:${finding.line}: ${finding.token} — ${finding.reason}`);
-  }
-  process.exit(1);
-}
-
-if (values.check && !protocolIdentifiersUnchanged(root)) {
-  console.error('naming audit failed: protocol identifiers must remain unchanged');
-  process.exit(1);
-}
-
-if (values.check) {
-  console.log('naming audit: ok');
-}
