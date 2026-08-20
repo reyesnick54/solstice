@@ -1721,6 +1721,18 @@ create `packages/economic-data-fabric`, `packages/unified-oracles`,
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. See
 [`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md).
+Chunk 150 implements external economic oracle provider
+production-candidate profiles, approved endpoint blueprints, injected
+transports, onboarding packets, and revalidation at
+`packages/sunrey-chain/src/oracle/production/external-provider-candidate`.
+It extends `sunrey-production-oracles`, `sunrey-provider-certification`,
+and `sunrey-economic-data-connector-runtime`. It does not create a
+second oracle capability, contact a real provider, flip LIVE_* flags,
+or mint. `productionAuthorized` remains false. Do not create
+`packages/external-oracle-providers`,
+`packages/oracle-provider-candidates`, or
+`packages/external-economic-oracles`. See
+[`chunk-150-external-economic-provider-candidates.md`](./chunk-150-external-economic-provider-candidates.md).
 
 Chunk 135 implements the real-estate use and infrastructure economic
 data fabric at

@@ -1476,3 +1476,17 @@ single config authority. Protocol IDs, hash domains, stored event
 schema refs, and `reyesnick54/solstice` are unchanged. See
 [`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
 The evaluator returns `mustStop: false`.
+Chunk 150 implements external economic oracle provider
+production-candidate profiles, transport blueprints, onboarding
+packets, and revalidation at
+`packages/sunrey-chain/src/oracle/production/external-provider-candidate`.
+It extends `sunrey-production-oracles`,
+`sunrey-provider-certification`, and
+`sunrey-economic-data-connector-runtime`. Injected fake transports
+only. No real network calls. The evaluator returns `mustStop: false`.
+Do not create `packages/external-oracle-providers`,
+`packages/oracle-provider-candidates`, or
+`packages/external-economic-oracles`. See
+[`chunk-150-external-economic-provider-candidates.md`](./chunk-150-external-economic-provider-candidates.md)
+and
+[`docs/economics/chunk-150-external-economic-provider-candidates.md`](../economics/chunk-150-external-economic-provider-candidates.md).
