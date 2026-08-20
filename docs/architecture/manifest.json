@@ -852,6 +852,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
       "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139 HIN chain-anchor adapter lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain."
     },
     {
@@ -2253,7 +2254,10 @@
         "packages/information-market-v2",
         "packages/proof-of-contribution",
         "packages/human-information-network",
-        "packages/data-marketplace"
+        "packages/data-marketplace",
+        "packages/hin-chain-anchor",
+        "packages/hin-finality",
+        "packages/information-chain-node"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -4286,6 +4290,11 @@
     },
     {
       "id": "sunrey-hin-chain-anchoring",
+      "name": "Human Information Network to SunRey Chain anchoring and finality",
+      "canonicalOwner": "packages/information-market",
+      "canonicalPath": "packages/information-market/src/network/chain-anchor/coordinator.ts",
+      "publicInterface": "packages/information-market/src/network/chain-anchor/index.ts",
+      "status": "IMPLEMENTED",
       "name": "Human Information Network to SunRey Chain anchoring foundation",
       "canonicalOwner": "packages/information-market",
       "canonicalPath": "packages/information-market/src/network/chain-anchor/adapter.ts",
@@ -4297,6 +4306,7 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "HumanInformationAnchorCoordinator",
           "name": "HinChainAnchorAdapter",
           "kind": "class"
         }
@@ -4306,11 +4316,17 @@
         "packages/information-blockchain",
         "packages/privacy-chain",
         "packages/consent-chain",
+        "packages/human-data-ledger",
+        "packages/hin-chain-anchor",
+        "packages/hin-finality",
+        "packages/information-chain-node",
+        "packages/hin-blockchain"
         "packages/human-data-ledger"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 139/140 privacy-safe HIN → SunRey Chain anchoring. Uses HumanInformationChainAnchorPort over existing SunReyChainService. Completes intent, submit, finality, reorg, and reconciliation. Does not invent a second finality model, blockchain node, ledger, or mint. Chain finality is evidence, not legal consent authority. Production remains inactive."
       "notes": "Chunk 139 privacy-safe HIN adapter over existing SunReyChainService. Creates schemas and ChainWriteIntent records. HIN remains the rights owner. SunRey Chain remains the only chain owner. Lifecycle and finality complete in Chunk 140. Does not mint, transfer ownership, or rewrite historical HIN records."
     },
     {
@@ -6335,6 +6351,10 @@
     },
     {
       "id": "sunrey-hin-chain-anchoring",
+      "status": "IMPLEMENTED",
+      "owner": "packages/information-market",
+      "protected": true,
+      "notes": "Chunk 139/140 HIN chain-anchor lifecycle at packages/information-market/src/network/chain-anchor. Uses existing SunRey Chain finality through HumanInformationChainAnchorPort. Not a second ledger, mint, or blockchain node. CHAIN_FINALITY_IS_NOT_LEGAL_CONSENT_AUTHORITY=true."
       "status": "PARTIAL",
       "owner": "packages/information-market",
       "protected": true,

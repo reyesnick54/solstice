@@ -164,6 +164,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
+| sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
@@ -985,6 +986,19 @@ Compensation remains `mintRequested: false`. Do not create
 `packages/hin-contribution-registry`,
 `packages/information-contribution-v2`, or
 `packages/human-information-contribution`. The evaluator returns
+`mustStop: false`.
+Chunk 140 completes Human Information chain-anchor finality, reorg
+handling, and reconciliation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED`. See
+[`chunk-140.json`](./chunks/chunk-140.json) and
+[`docs/economics/chunk-140-hin-chain-finality.md`](../economics/chunk-140-hin-chain-finality.md).
+HIN uses the existing SunRey Chain lifecycle through
+`HumanInformationChainAnchorPort`. Chain finality is evidence, not
+legal consent authority. Do not create `packages/hin-chain-anchor`,
+`packages/hin-finality`, `packages/information-chain-node`, or
+`packages/hin-blockchain`. The evaluator returns
+`mustStop: false`.
 Chunk 104 implements the canonical Human Economic Contribution
 ontology at `packages/human-economic-contribution`. Capability
 `sunrey-human-economic-contributions` is `IMPLEMENTED`. See
@@ -1336,6 +1350,11 @@ engine, economic asset registry, or mint. Do not create
 Chunk 139 implements the Human Information Network → SunRey Chain
 anchoring foundation at
 `packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED` after Chunk 140
+completes submit, finality, reorg, and reconciliation. Required
+capabilities are `IMPLEMENTED`, so the evaluator returns
+`mustStop: false`. The adapter does not create a second chain,
+consent ledger, or Evidence Vault. Do not create
 `sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
 `IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
 adapter does not create a second chain, consent ledger, or Evidence

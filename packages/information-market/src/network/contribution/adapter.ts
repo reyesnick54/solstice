@@ -1,6 +1,8 @@
 import type { Result } from '../../../../domain/src/result.ts';
 import { err, ok } from '../../../../domain/src/result.ts';
 import { refuseUncontrolledScraping } from '../connectors.ts';
+import type { HumanInformationAnchorCoordinator } from '../chain-anchor/coordinator.ts';
+import { scheduleContributionAnchor } from '../chain-anchor/schedule.ts';
 import type { HumanInformationNetworkEngine } from '../engine.ts';
 import type { HumanInformationConsentGrantId, HumanInformationAssetDescriptorId } from '../ids.ts';
 import type {
@@ -17,6 +19,7 @@ export type HinContributionAdapterOptions = {
   readonly engine: HumanInformationNetworkEngine;
   readonly registry: HumanContributionRegistryPort;
   readonly dataAssetProjection?: DataAssetContributionProjectionPort;
+  readonly anchorCoordinator?: HumanInformationAnchorCoordinator;
 };
 
 /**
@@ -30,11 +33,13 @@ export class HinContributionAdapter {
   readonly registry: HumanContributionRegistryPort;
   readonly projection = new HinContributionProjection();
   private readonly dataAssetProjection: DataAssetContributionProjectionPort | null;
+  private readonly anchorCoordinator: HumanInformationAnchorCoordinator | null;
 
   constructor(options: HinContributionAdapterOptions) {
     this.engine = options.engine;
     this.registry = options.registry;
     this.dataAssetProjection = options.dataAssetProjection ?? null;
+    this.anchorCoordinator = options.anchorCoordinator ?? options.engine.anchorCoordinator;
   }
 
   submitRealizedUse(input: {
@@ -59,6 +64,18 @@ export class HinContributionAdapter {
       return recorded;
     }
     this.projection.remember(recorded.value);
+    if (this.anchorCoordinator) {
+      const subject = [...this.engine.store.subjects.values()].find(
+        (row) => row.publicHandle === recorded.value.evidence.subjectPseudonymousRef || row.internalRef === recorded.value.evidence.subjectPseudonymousRef,
+      );
+      const prepared = scheduleContributionAnchor(this.anchorCoordinator, {
+        contributionId: recorded.value.contributionId,
+        subjectHandle: subject?.publicHandle ?? recorded.value.evidence.subjectPseudonymousRef,
+      });
+      if (prepared.ok) {
+        this.anchorCoordinator.submit(prepared.value.anchorId);
+      }
+    }
     if (this.dataAssetProjection) {
       this.dataAssetProjection.attachContributionReference({
         descriptorId: recorded.value.evidence.descriptorId,

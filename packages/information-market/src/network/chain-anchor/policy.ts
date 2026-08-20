@@ -5,6 +5,8 @@ export const HIN_CHAIN_ANCHOR_OWNER = Object.freeze({
   HIN_RIGHTS_OWNER: 'packages/information-market',
   CHAIN_OWNER: 'packages/sunrey-chain',
   capability: 'sunrey-hin-chain-anchoring',
+  chunk: 'CHUNK-140',
+  lifecycleComplete: true,
   chunk: 'CHUNK-139',
   lifecycleComplete: false,
 });

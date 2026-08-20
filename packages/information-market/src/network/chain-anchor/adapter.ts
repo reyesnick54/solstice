@@ -9,6 +9,8 @@ import {
   type EconomicAssetChainAnchor,
   type EconomicAssetClass,
 } from '../../../../economic-asset-registry/src/index.ts';
+import { blockIdFor, transactionIdFor } from '../../../../economic-asset-registry/src/ids.ts';
+import { parseChainHeight } from './projections.ts';
 import { commitRecordSchema } from '../../../../sunrey-chain/src/hash.ts';
 import { SunReyChainService, type CreateIntentInput } from '../../../../sunrey-chain/src/service.ts';
 import type {
@@ -70,6 +72,15 @@ function sha256(value: string): string {
 }
 
 function mapChainFailure(code: string, message: string): HinAnchorFailure {
+  if (code === 'CHAIN_UNAVAILABLE' || code === 'CHAIN_HEALTH_DENIED') {
+    return { code: 'HIN_ANCHOR_CHAIN_UNAVAILABLE', message };
+  }
+  if (code === 'CHAIN_SUBMISSION_UNKNOWN') {
+    return { code: 'HIN_ANCHOR_RECONCILIATION_REQUIRED', message };
+  }
+  if (code === 'OPERATION_NOT_FOUND' || code === 'INTENT_NOT_FOUND') {
+    return { code: 'HIN_ANCHOR_OPERATION_NOT_FOUND', message };
+  }
   if (code === 'CHAIN_UNAVAILABLE') {
     return { code: 'HIN_ANCHOR_CHAIN_UNAVAILABLE', message };
   }
@@ -116,6 +127,10 @@ function mapOperationState(operation: ChainOperation): HumanInformationChainAnch
 export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
   readonly engine: HumanInformationNetworkEngine;
   readonly chain: SunReyChainService;
+  readonly clock: Clock;
+  readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
+  readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
+  readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
   readonly rightsOwner = HIN_CHAIN_ANCHOR_OWNER.HIN_RIGHTS_OWNER;
   readonly chainOwner = HIN_CHAIN_ANCHOR_OWNER.CHAIN_OWNER;
   readonly invariants = HIN_CHAIN_ANCHOR_INVARIANTS;
@@ -196,6 +211,28 @@ export class HinChainAnchorAdapter implements HumanInformationChainAnchorPort {
   submitAnchor(anchorId: HumanInformationAnchorId | string): Result<HumanInformationChainAnchorRecord, HinAnchorFailure> {
     const current = this.records.get(anchorId);
     if (!current || !current.intentId) {
+      return err({ code: 'HIN_ANCHOR_OPERATION_NOT_FOUND', message: `anchor ${anchorId} has no stored intent` });
+    }
+    if (current.state === 'FINALIZED') {
+      return ok(current);
+    }
+    if (current.state === 'UNKNOWN') {
+      return err({
+        code: 'HIN_ANCHOR_RECONCILIATION_REQUIRED',
+        message: 'UNKNOWN requires reconcile before any resubmit',
+      });
+    }
+    if (current.state === 'REORG_OBSERVED') {
+      return err({
+        code: 'HIN_ANCHOR_REORG_OBSERVED',
+        message: 'REANCHOR_REVIEW_REQUIRED; HIN history is preserved',
+      });
+    }
+    if (current.state === 'REJECTED') {
+      return err({
+        code: 'HIN_ANCHOR_REJECTED',
+        message: 'rejected anchors are not retried as duplicate submissions',
+      });
       return err({ code: 'HIN_ANCHOR_SOURCE_NOT_FOUND', message: `anchor ${anchorId} has no stored intent` });
     }
     const submitted = this.chain.submit(current.intentId);
@@ -891,6 +928,9 @@ export function hinFinalizedAnchorForRegistry(
   return {
     networkId: networkIdFor('sunrey-simulation'),
     chainId: chainIdFor('net_sunrey_simulation'),
+    transactionId: record.transactionId ? transactionIdFor(record.transactionId) : null,
+    blockHeight: parseChainHeight(record.blockReference),
+    blockId: record.blockReference ? blockIdFor(record.blockReference) : null,
     transactionId: null,
     blockHeight: null,
     blockId: null,

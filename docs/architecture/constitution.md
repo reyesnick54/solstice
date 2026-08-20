@@ -1577,6 +1577,11 @@ create `packages/hin-contribution-registry`,
 Chunk 139 implements the Human Information Network → SunRey Chain
 anchoring foundation at
 `packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED`. HIN remains the rights
+owner. Existing `SunReyChainService` remains the only chain owner.
+The adapter creates privacy-safe `ChainWriteIntent` records. Chunk 140
+completes submit, finality, reorg, and reconciliation. Anchors do not
+mint, transfer ownership, or rewrite historical HIN records. Do not create
 `sunrey-hin-chain-anchoring` is `PARTIAL`. HIN remains the rights
 owner. Existing `SunReyChainService` remains the only chain owner.
 The adapter creates privacy-safe `ChainWriteIntent` records and does

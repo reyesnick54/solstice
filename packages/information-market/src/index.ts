@@ -86,7 +86,10 @@ export {
   privacyMinimizedNotification,
   runHinChainAnchorFoundationDemo,
   runHumanInformationContributionDemo,
+  runHumanInformationChainFinalityDemo,
   runInformationCommand,
+  HumanInformationAnchorCoordinator,
+  createHumanInformationAnchorCoordinator,
 } from './network/index.ts';
 export type {
   HumanContributionRecord,
