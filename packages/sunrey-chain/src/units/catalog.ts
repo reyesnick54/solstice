@@ -18,6 +18,8 @@ const ITEM_FACTS: readonly FactType[] = [
   'MANUFACTURING_CAPACITY',
   'DELIVERY_COMPLETION',
   'SERVICE_DELIVERY',
+  'GOODS_OUTPUT',
+  'GOODS_DELIVERY',
 ];
 
 function define(input: {
@@ -283,7 +285,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     semanticQualifier: 'ITEM_OUTPUT',
     aliases: ['UNIT'],
     allowedFactTypes: ITEM_FACTS,
-    allowedProductiveCategories: ['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT'],
+    allowedProductiveCategories: ['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT', 'SERVICES'],
   }),
   define({
     unitId: 'UNIT',
@@ -294,7 +296,7 @@ export const CANONICAL_UNIT_DEFINITIONS: readonly CanonicalUnitDefinition[] = Ob
     semanticQualifier: 'ITEM_OUTPUT',
     aliases: ['units_produced'],
     allowedFactTypes: ITEM_FACTS,
-    allowedProductiveCategories: ['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT'],
+    allowedProductiveCategories: ['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT', 'SERVICES'],
   }),
   define({
     unitId: 't_km',

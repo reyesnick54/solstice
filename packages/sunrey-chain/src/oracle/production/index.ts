@@ -280,6 +280,17 @@ export {
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
 export {
+  GoodsCommerceDataFabric,
+  ingestGoodsObservation,
+  goodsFactCannotAutoMint,
+} from './provider-families/goods/index.ts';
+export type { GoodsSourceObservation } from './provider-families/goods/index.ts';
+export {
+  ServicesDataFabric,
+  ingestServiceObservation,
+  serviceFactCannotAutoMint,
+} from './provider-families/service-delivery/index.ts';
+export type { ServiceSourceObservation } from './provider-families/service-delivery/index.ts';
   ingestBandwidthObservation,
   bandwidthFactDoesNotMintMoonRey,
   bandwidthAdapterDoesNotMint,

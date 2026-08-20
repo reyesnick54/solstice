@@ -181,6 +181,7 @@ Agents and later CI jobs use that result. They do not guess.
 | moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-resource-extraction-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 
@@ -1256,6 +1257,22 @@ and
 `packages/resource-oracles`, `packages/minerals-data`,
 `packages/extraction-fabric`, or `packages/resource-data-fabric`.
 The evaluator returns `mustStop: false`.
+Chunk 137 implements the goods, commerce, and service-delivery
+economic data fabric at
+`packages/sunrey-chain/src/oracle/production/provider-families/goods`
+and
+`packages/sunrey-chain/src/oracle/production/provider-families/service-delivery`.
+Capability `sunrey-goods-services-data-fabric` is `IMPLEMENTED` on
+the existing production-oracle owner. See
+[`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md)
+and
+[`docs/economics/chunk-137-goods-services-data-fabric.md`](../economics/chunk-137-goods-services-data-fabric.md).
+Order, invoice, and payment are not productive output. Facts cannot
+auto-mint MoonRey. `service_hour` is the governed time-based service
+unit; historical `machine_h` records are preserved. Do not create
+`packages/goods-oracles`, `packages/commerce-data-fabric`,
+`packages/services-oracle`, or `packages/moonrey-commerce`. The
+evaluator returns `mustStop: false`.
 Chunk 136 implements the bandwidth, telecom, and digital-network
 economic data fabric at
 `packages/sunrey-chain/src/oracle/production/provider-families/bandwidth`.

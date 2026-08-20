@@ -31,8 +31,10 @@ const ITEM_COUNT_FACTS = new Set([
   'MANUFACTURING_CAPACITY',
   'DELIVERY_COMPLETION',
   'SERVICE_DELIVERY',
+  'GOODS_OUTPUT',
+  'GOODS_DELIVERY',
 ]);
-const ITEM_COUNT_CATEGORIES = new Set(['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT']);
+const ITEM_COUNT_CATEGORIES = new Set(['MANUFACTURING', 'GOODS', 'AUTOMATED_MACHINE_OUTPUT', 'SERVICES']);
 
 const byId = new Map<string, CanonicalUnitDefinition>();
 const byAlias = new Map<string, CanonicalUnitDefinition>();

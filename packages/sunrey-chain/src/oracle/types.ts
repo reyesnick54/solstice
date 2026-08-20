@@ -106,6 +106,7 @@ export const UNIT_CODES = [
   'GB',
   'TB',
   'GB_s',
+  'service_hour',
   'B_s',
   'm2_hour',
   'facility_hour',
