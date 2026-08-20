@@ -187,6 +187,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
@@ -1348,6 +1349,16 @@ engine, economic asset registry, or mint. Do not create
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. The evaluator returns
 `mustStop: false`.
+Chunk 143 implements the production economic activation firewall at
+`packages/sunrey-chain/src/economics/production-activation`.
+Capability `sunrey-production-economic-activation-firewall` is
+`IMPLEMENTED` on the existing monetary/economic owner. The firewall
+consumes Chunk 65 readiness and Chunk 71 monetary constitution. It
+does not activate production, flip `LIVE_*` flags, invent tokenomics,
+or create a second mint. Do not create `packages/production-economics`,
+`packages/monetary-activation`, `packages/mainnet-economics`,
+`packages/tokenomics-v2`, or `packages/launch-economics`. The
+evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the

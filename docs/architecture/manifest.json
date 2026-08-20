@@ -2791,6 +2791,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family and unified economic data fabrics live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
@@ -3063,6 +3064,11 @@
       "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
     },
     {
+      "id": "sunrey-production-economic-activation-firewall",
+      "name": "SunRey production economic activation firewall and evidence matrix",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/index.ts",
       "id": "sunrey-canonical-product-identity",
       "name": "SunRey canonical product identity and legacy compatibility",
       "canonicalOwner": "packages/config",
@@ -3075,11 +3081,25 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "ProductionEconomicActivationDecision",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionEconomicActivationManifest",
+          "kind": "type"
+        },
+        {
+          "name": "PRODUCTION_ECONOMIC_ACTIVATION_FIREWALL_ID",
           "name": "CANONICAL_PRODUCT_IDENTITY",
           "kind": "const"
         }
       ],
       "forbiddenAliases": [
+        "packages/production-economics",
+        "packages/monetary-activation",
+        "packages/mainnet-economics",
+        "packages/tokenomics-v2",
+        "packages/launch-economics"
         "packages/branding",
         "packages/product-identity",
         "packages/sunrey-naming",
@@ -3088,6 +3108,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
       "notes": "Chunk 141/142 canonical SunRey product identity, SUNREY_* env resolution with SOLSTICE_* aliases, and legacy compatibility report. Display branding is not protocol identity. Hash domains, event schema refs, network IDs, chain IDs, and the GitHub repository path stay unchanged. Do not create a second config authority."
     },
     {
@@ -6170,6 +6191,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family and unified economic data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family data fabrics and the unified economic data fabric extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
@@ -6587,6 +6609,11 @@
       "notes": "Chunk 138 unified multi-provider economic data fabric at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Not a second oracle, productive registry, attribution engine, economic asset registry, or mint. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
     },
     {
+      "id": "sunrey-production-economic-activation-firewall",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
       "id": "sunrey-canonical-product-identity",
       "status": "IMPLEMENTED",
       "owner": "packages/config",

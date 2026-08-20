@@ -24,6 +24,11 @@ const COMPETING_PATHS = [
   'packages/contribution-issuance',
   'packages/human-worth-token',
   'packages/peve-mint',
+  'packages/production-economics',
+  'packages/monetary-activation',
+  'packages/mainnet-economics',
+  'packages/tokenomics-v2',
+  'packages/launch-economics',
 ];
 
 function walk(dir: string, out: string[] = []): string[] {

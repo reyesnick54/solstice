@@ -94,6 +94,7 @@ never be two implementations of these systems.
 | Bandwidth / telecom / digital-network data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/types.ts` | IMPLEMENTED |
 | Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
+| Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
@@ -1742,6 +1743,20 @@ mint MoonRey. Do not create `packages/goods-oracles`,
 `packages/moonrey-commerce`. See
 [`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md).
 
+Chunk 143 implements the production economic activation firewall at
+`packages/sunrey-chain/src/economics/production-activation`.
+Capability `sunrey-production-economic-activation-firewall` is
+`IMPLEMENTED` on the existing monetary/economic owner. The firewall
+evaluates whether engineering systems, external evidence, human
+authorization, and production economic parameters are ready to be
+presented to authorized humans. It does not activate production, flip
+`LIVE_*` flags, invent tokenomics, or create a second mint. Chunk 65
+remains the mainnet readiness owner. Chunk 71 remains the monetary
+constitution. `PRODUCTION_ACTIVE` is not an achievable state. Do not
+create `packages/production-economics`, `packages/monetary-activation`,
+`packages/mainnet-economics`, `packages/tokenomics-v2`, or
+`packages/launch-economics`. See
+[`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
