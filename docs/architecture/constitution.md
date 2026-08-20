@@ -84,6 +84,7 @@ never be two implementations of these systems.
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
 | SunRey fuzzing / property assurance | `packages/sunrey-chain` | `packages/sunrey-chain/src/assurance/index.ts` | IMPLEMENTED |
 | SunRey mainnet readiness | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/types.ts` | IMPLEMENTED |
+| SunRey production operating scope | `packages/sunrey-chain` | `packages/sunrey-chain/src/mainnet/operating-scope/types.ts` | IMPLEMENTED |
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
@@ -1960,6 +1961,19 @@ create `packages/database-v2`, `packages/state-store`,
 `packages/durable-state`, `packages/operational-ledger`,
 `packages/financial-database`, or `packages/persistence-v2`. See
 [`chunk-154-operational-persistence-recovery.md`](./chunk-154-operational-persistence-recovery.md).
+Chunk 161 implements the jurisdictional operating-scope, licensing,
+regulatory-evidence binding, corridor eligibility, and product
+activation matrix at
+`packages/sunrey-chain/src/mainnet/operating-scope`. Capability
+`sunrey-production-operating-scope` is `IMPLEMENTED` on the existing
+mainnet-readiness owner. It is a readiness control plane, not legal
+advice, and does not infer regulatory permission from software
+capability. Unknown jurisdictions and unknown corridors stay disabled.
+The module emits `OperatingScopeFact` for the Kernel and cannot issue
+Execution Authority. Do not create `packages/licensing`,
+`packages/global-regulation`, `packages/country-law`, or
+`packages/legal-engine`. See
+[`docs/compliance/chunk-161-operating-scope-matrix.md`](../compliance/chunk-161-operating-scope-matrix.md).
 
 ## Agent stop rule
 
