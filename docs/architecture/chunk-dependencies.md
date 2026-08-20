@@ -192,7 +192,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
-| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
+| sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
+| sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1423,10 +1424,6 @@ completes submit, finality, reorg, and reconciliation. Required
 capabilities are `IMPLEMENTED`, so the evaluator returns
 `mustStop: false`. The adapter does not create a second chain,
 consent ledger, or Evidence Vault. Do not create
-`sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
-`IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
-adapter does not create a second chain, consent ledger, or Evidence
-Vault. Chunk 140 completes lifecycle and finality. Do not create
 `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or
 `packages/human-data-ledger`. See
@@ -1489,3 +1486,27 @@ create `packages/banking-v2`, `packages/baas`,
 `packages/payment-provider`, `packages/swift`, `packages/ach`,
 `packages/fx-v2`, or `packages/cross-border-core`. The evaluator
 returns `mustStop: false`.
+Chunk 150 implements external economic oracle provider
+production-candidate profiles, transport blueprints, onboarding
+packets, and revalidation at
+`packages/sunrey-chain/src/oracle/production/external-provider-candidate`.
+It extends `sunrey-production-oracles`,
+`sunrey-provider-certification`, and
+`sunrey-economic-data-connector-runtime`. Injected fake transports
+only. No real network calls. The evaluator returns `mustStop: false`.
+Do not create `packages/external-oracle-providers`,
+`packages/oracle-provider-candidates`, or
+`packages/external-economic-oracles`. See
+[`chunk-150-external-economic-provider-candidates.md`](./chunk-150-external-economic-provider-candidates.md)
+and
+[`docs/economics/chunk-150-external-economic-provider-candidates.md`](../economics/chunk-150-external-economic-provider-candidates.md).
+Chunk 149 implements the production-candidate provider credential
+plane at `packages/security/src/regulated/credentials`. Capability
+`sunrey-production-provider-credential-plane` is `IMPLEMENTED` on the
+existing security owner. Provider runtime remains
+`packages/sunrey-chain`. A credential is not provider approval,
+Execution Authority, a mint, or a ledger journal. Do not create
+`packages/secrets`, `packages/credentials`,
+`packages/provider-security`, `packages/provider-runtime-v2`,
+`packages/external-connectivity`, or `packages/vendor-runtime`. The
+evaluator returns `mustStop: false`.

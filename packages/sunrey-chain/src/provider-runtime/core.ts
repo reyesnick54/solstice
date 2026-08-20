@@ -5,6 +5,15 @@
 
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto';
 
+import {
+  ENVIRONMENT,
+  LIVE_BANKING_RAILS,
+  LIVE_EXTERNAL_BANK_CONNECTION,
+  LIVE_EXTERNAL_KYC,
+  LIVE_MONEY_ENABLED,
+  LIVE_PAYMENTS_ENABLED,
+  SIMULATION_MODE,
+} from '../../../config/src/flags.ts';
 import { parseSecretReference, type SecretReference, type SecretProvider } from '../../../security/src/secrets.ts';
 import { SecretValue } from '../../../security/src/redaction.ts';
 import type { ProviderDomain } from '../providers/types.ts';
@@ -426,6 +435,18 @@ export function resolveRuntimeMode(input: {
 }): ProviderRuntimeResult<ProviderRuntimeMode> {
   const requested = input.requested ?? (input.sandboxCredentialPresent ? 'SANDBOX' : 'LOCAL_SIMULATION');
   if (requested === 'PRODUCTION_AUTHORIZED') {
+    const liveEnabled =
+      LIVE_MONEY_ENABLED ||
+      LIVE_PAYMENTS_ENABLED ||
+      LIVE_BANKING_RAILS ||
+      LIVE_EXTERNAL_KYC ||
+      LIVE_EXTERNAL_BANK_CONNECTION;
+    if (ENVIRONMENT === 'simulation' || SIMULATION_MODE === true || !liveEnabled) {
+      return runtimeErr(
+        'PRODUCTION_NOT_AUTHORIZED',
+        'PRODUCTION_AUTHORIZED is unavailable while ENVIRONMENT=simulation and LIVE_* remain disabled',
+      );
+    }
     if (!input.externalEvidencePresent || !input.humanAuthorityPresent) {
       return runtimeErr(
         'PRODUCTION_NOT_AUTHORIZED',
