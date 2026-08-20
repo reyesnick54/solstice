@@ -83,6 +83,10 @@ export {
   type PaymentCorridor,
 } from "./corridor.ts";
 export {
+  corridorLiveFromOperatingScope,
+  fxFactDoesNotAuthorizeRail,
+} from "./corridor-scope.ts";
+export {
   selectRoute,
   simulationRoutesFor,
   type PaymentRoute,

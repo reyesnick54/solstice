@@ -116,4 +116,9 @@ export { RegulatoryTwinStore, type RegulatoryTwinStoreSnapshot } from './store.t
 export { disposeReadiness } from './review.ts';
 export { builtInSuites, suiteIdFor } from './suites.ts';
 export { EXPECTED_BATCH_COUNTS, batchImpactFixture } from './fixtures.ts';
+export {
+  TWIN_CAN_EXTERNALLY_VERIFY,
+  twinCannotUpgradeToExternallyVerified,
+  twinOperatingScopeSimulation,
+} from './operating-scope-sim.ts';
 export { RegulatoryDigitalTwin, type RegulatoryDigitalTwinOptions } from './service.ts';

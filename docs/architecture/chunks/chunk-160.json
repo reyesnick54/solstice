@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-160",
+  "title": "External Evidence, Attestation, Audit, Contract, License, Counsel, and Human-Review Registry",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "evidence",
+    "sunrey-chain",
+    "sunrey-mainnet-readiness",
+    "sunrey-production-provider-acceptance",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-production-handoff",
+    "sunrey-external-production-evidence"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts or audits on-chain, or activate production. The Evidence Vault remains the sealing authority. evaluateChunkRequirements returns mustStop: false. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
+}

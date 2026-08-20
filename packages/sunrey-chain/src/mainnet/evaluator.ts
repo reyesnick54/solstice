@@ -7,6 +7,8 @@
 
 import { isExternalDimension } from './evidence.ts';
 import { requiredHumanRolesPresent } from './authorization.ts';
+import { readinessRecordHasVerifiedRegistryReference } from './external-evidence/bindings.ts';
+import type { ExternalEvidenceRegistry } from './external-evidence/registry.ts';
 import type {
   MainnetAuthorizationRecord,
   MainnetReadinessDimension,
@@ -18,6 +20,12 @@ export type EvaluatorPolicy = {
   readonly requiredDimensions: readonly MainnetReadinessDimension[];
   readonly engineeringAcceptable: readonly ReadinessEvidenceRecord['verificationStatus'][];
   readonly externalAcceptable: readonly ReadinessEvidenceRecord['verificationStatus'][];
+  readonly requireExternalRegistry: boolean;
+};
+
+export type ReadinessEvaluationContext = {
+  readonly registry?: ExternalEvidenceRegistry;
+  readonly nowUtc?: string;
 };
 
 export const DEFAULT_PRODUCTION_POLICY = {
@@ -51,6 +59,7 @@ export const DEFAULT_PRODUCTION_POLICY = {
   ],
   engineeringAcceptable: ['ENGINEERING_VERIFIED', 'HUMAN_VERIFIED', 'NOT_APPLICABLE'],
   externalAcceptable: ['HUMAN_VERIFIED', 'NOT_APPLICABLE'],
+  requireExternalRegistry: true,
 } as const satisfies EvaluatorPolicy;
 
 export const ENGINEERING_ONLY_POLICY = {
@@ -72,6 +81,7 @@ export const ENGINEERING_ONLY_POLICY = {
   ],
   engineeringAcceptable: ['ENGINEERING_VERIFIED', 'HUMAN_VERIFIED', 'NOT_APPLICABLE'],
   externalAcceptable: ['HUMAN_VERIFIED', 'NOT_APPLICABLE', 'ENGINEERING_VERIFIED'],
+  requireExternalRegistry: false,
 } as const satisfies EvaluatorPolicy;
 
 function recordsFor(
@@ -85,25 +95,45 @@ function dimensionSatisfied(
   records: readonly ReadinessEvidenceRecord[],
   dimension: MainnetReadinessDimension,
   policy: EvaluatorPolicy,
+  context: ReadinessEvaluationContext,
 ): boolean {
   const rows = recordsFor(records, dimension);
   if (rows.length === 0) {
     return false;
   }
   const acceptable = isExternalDimension(dimension) ? policy.externalAcceptable : policy.engineeringAcceptable;
-  return rows.every((row) => (acceptable as readonly string[]).includes(row.verificationStatus));
+  const nowUtc = context.nowUtc ?? '1970-01-01T00:00:00.000Z';
+  return rows.every((row) => {
+    if (!(acceptable as readonly string[]).includes(row.verificationStatus)) {
+      return false;
+    }
+    if (
+      policy.requireExternalRegistry &&
+      (isExternalDimension(dimension) || row.externalEvidence) &&
+      row.verificationStatus !== 'NOT_APPLICABLE'
+    ) {
+      if (!context.registry) {
+        return false;
+      }
+      return readinessRecordHasVerifiedRegistryReference(row, context.registry, nowUtc);
+    }
+    return true;
+  });
 }
 
 export function evaluateReadiness(
   records: readonly ReadinessEvidenceRecord[],
   authorizations: readonly MainnetAuthorizationRecord[],
   policy: EvaluatorPolicy = DEFAULT_PRODUCTION_POLICY,
+  context: ReadinessEvaluationContext = {},
 ): ReadinessEvaluatorStatus {
   const required = policy.requiredDimensions;
   const engineeringDims = required.filter((dimension) => !isExternalDimension(dimension));
   const externalDims = required.filter((dimension) => isExternalDimension(dimension));
-  const engineeringComplete = engineeringDims.every((dimension) => dimensionSatisfied(records, dimension, policy));
-  const externalComplete = externalDims.every((dimension) => dimensionSatisfied(records, dimension, policy));
+  const engineeringComplete = engineeringDims.every((dimension) =>
+    dimensionSatisfied(records, dimension, policy, context),
+  );
+  const externalComplete = externalDims.every((dimension) => dimensionSatisfied(records, dimension, policy, context));
   const humans = requiredHumanRolesPresent(authorizations);
 
   if (!engineeringComplete) {
@@ -112,12 +142,26 @@ export function evaluateReadiness(
   if (!externalComplete) {
     const awaitingExternal = externalDims.some((dimension) => {
       const rows = recordsFor(records, dimension);
-      return rows.some(
-        (row) =>
+      return rows.some((row) => {
+        if (
           row.verificationStatus === 'NOT_PROVIDED' ||
           row.verificationStatus === 'EXTERNAL_VERIFICATION_REQUIRED' ||
-          row.verificationStatus === 'PROVIDED_UNVERIFIED',
-      );
+          row.verificationStatus === 'PROVIDED_UNVERIFIED'
+        ) {
+          return true;
+        }
+        if (policy.requireExternalRegistry && row.verificationStatus !== 'NOT_APPLICABLE') {
+          if (!context.registry) {
+            return true;
+          }
+          return !readinessRecordHasVerifiedRegistryReference(
+            row,
+            context.registry,
+            context.nowUtc ?? '1970-01-01T00:00:00.000Z',
+          );
+        }
+        return false;
+      });
     });
     if (awaitingExternal) {
       return 'AWAITING_EXTERNAL_EVIDENCE';
