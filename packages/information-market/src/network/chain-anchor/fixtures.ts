@@ -3,7 +3,7 @@ import { asUtcInstant } from '../../../../domain/src/time.ts';
 import { EvidenceVault } from '../../../../evidence/src/vault.ts';
 import { DomainEventLog } from '../../../../events/src/events.ts';
 import { createSimulationKeyProvider } from '../../../../security/src/simulation.ts';
-import { SunReyChainService } from '../../../../sunrey-chain/src/index.ts';
+import { SunReyChainService } from '../../../../sunrey-chain/src/service.ts';
 import { createHinContributionAdapter } from '../contribution/adapter.ts';
 import { createInProcessHumanContributionRegistry } from '../contribution/registry.ts';
 import { HumanInformationNetworkEngine } from '../engine.ts';

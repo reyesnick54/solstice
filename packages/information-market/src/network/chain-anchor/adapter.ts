@@ -9,15 +9,14 @@ import {
   type EconomicAssetChainAnchor,
   type EconomicAssetClass,
 } from '../../../../economic-asset-registry/src/index.ts';
-import {
-  commitRecordSchema,
-  SunReyChainService,
-  type ChainOperation,
-  type ChainRecordSchema,
-  type ChainWriteIntent,
-  type CreateIntentInput,
-  type ScopedSubjectReference,
-} from '../../../../sunrey-chain/src/index.ts';
+import { commitRecordSchema } from '../../../../sunrey-chain/src/hash.ts';
+import { SunReyChainService, type CreateIntentInput } from '../../../../sunrey-chain/src/service.ts';
+import type {
+  ChainOperation,
+  ChainRecordSchema,
+  ChainWriteIntent,
+  ScopedSubjectReference,
+} from '../../../../sunrey-chain/src/types.ts';
 import type { HumanContributionRegistryPort } from '../contribution/contract.ts';
 import type { HumanInformationNetworkEngine } from '../engine.ts';
 import {

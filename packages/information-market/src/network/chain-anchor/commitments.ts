@@ -1,4 +1,4 @@
-import { commitCanonical } from '../../../../sunrey-chain/src/index.ts';
+import { commitCanonical } from '../../../../sunrey-chain/src/hash.ts';
 import { HIN_ANCHOR_COMMITMENT_DOMAINS } from './policy.ts';
 import type { HinAnchorKind, HumanInformationAnchorKey } from './types.ts';
 

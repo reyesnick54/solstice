@@ -3,7 +3,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
-import { SunReyChainService } from '../../sunrey-chain/src/index.ts';
+import { SunReyChainService } from '../../sunrey-chain/src/service.ts';
 import { runHinChainAnchorFoundationDemo } from './network/chain-anchor/demo.ts';
 import { provisionHinChainAnchorFixture, realizeHinUse, unwrapAnchor } from './network/chain-anchor/fixtures.ts';
 import {

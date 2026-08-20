@@ -3,10 +3,10 @@ import type {
   ChainBlockReference,
   ChainOperationId,
   ChainReceiptId,
-  ChainRecordType,
   ChainTransactionId,
   ChainWriteIntentId,
-} from '../../../../sunrey-chain/src/index.ts';
+} from '../../../../sunrey-chain/src/ids.ts';
+import type { ChainRecordType } from '../../../../sunrey-chain/src/taxonomy.ts';
 
 export const HIN_ANCHOR_KINDS = [
   'CONSENT_GRANT',

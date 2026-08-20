@@ -1,4 +1,4 @@
-import type { ChainRecordType } from '../../../../sunrey-chain/src/index.ts';
+import type { ChainRecordType } from '../../../../sunrey-chain/src/taxonomy.ts';
 import type { HinAnchorKind } from './types.ts';
 
 export const HIN_CHAIN_ANCHOR_OWNER = Object.freeze({

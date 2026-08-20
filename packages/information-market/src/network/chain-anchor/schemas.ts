@@ -1,4 +1,6 @@
-import { classifyWrite, FORBIDDEN_PAYLOAD_KEYS, type ChainRecordSchema } from '../../../../sunrey-chain/src/index.ts';
+import { classifyWrite } from '../../../../sunrey-chain/src/classification.ts';
+import { FORBIDDEN_PAYLOAD_KEYS } from '../../../../sunrey-chain/src/taxonomy.ts';
+import type { ChainRecordSchema } from '../../../../sunrey-chain/src/types.ts';
 import { err, ok, type Result } from '../../../../domain/src/result.ts';
 import { HIN_ANCHOR_FORBIDDEN_KEYS } from './policy.ts';
 import type { HinAnchorFailure } from './types.ts';
