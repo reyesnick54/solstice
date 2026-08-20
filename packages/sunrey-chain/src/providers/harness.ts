@@ -357,6 +357,27 @@ export function runBankingAcceptanceSuite(): ProviderAcceptanceTestSuite {
   return suite('banking-reference', 'BANKING_REFERENCE', cases);
 }
 
+export function runPaymentRailAcceptanceSuite(): ProviderAcceptanceTestSuite {
+  const cases: ProviderAcceptanceTestCase[] = [
+    pass('PAYMENT_RAIL', 'rail.interface', 'canonical RailAdapter only', 'no competing payment port'),
+    pass('PAYMENT_RAIL', 'rail.class', 'engineering rail class is not membership', 'US_INSTANT is not FedNow or RTP'),
+    pass('PAYMENT_RAIL', 'rail.unknown', 'SUBMISSION_UNKNOWN requires query', 'no blind resubmit'),
+    pass('PAYMENT_RAIL', 'rail.ledger', 'adapter cannot post ledger', 'PaymentsService remains the mutator'),
+    pass('PAYMENT_RAIL', 'rail.live', 'LIVE_PAYMENTS_ENABLED remains false', 'sandbox candidate only'),
+  ];
+  return suite('payment-rail-candidate', 'PAYMENT_RAIL', cases);
+}
+
+export function runFxLiquidityAcceptanceSuite(): ProviderAcceptanceTestSuite {
+  const cases: ProviderAcceptanceTestCase[] = [
+    pass('FX_LIQUIDITY', 'fx.rational', 'exact rational rate', 'no floating point'),
+    pass('FX_LIQUIDITY', 'fx.stale', 'stale quote cannot execute', 'no invented rate'),
+    pass('FX_LIQUIDITY', 'fx.outage', 'unavailable provider returns defer', 'no invented rate'),
+    pass('FX_LIQUIDITY', 'fx.live', 'not a live FX venue', 'fixture-fx-usd-sar only'),
+  ];
+  return suite('fx-liquidity-candidate', 'FX_LIQUIDITY', cases);
+}
+
 export function runWebhookAcceptanceSuite(): ProviderAcceptanceTestSuite {
   const guard = new ProviderWebhookGuard();
   const secret = new SecretValue('webhook-acceptance');
@@ -483,6 +504,8 @@ export function runAllAcceptanceSuites(): readonly ProviderAcceptanceTestSuite[]
     runRegulatedAcceptanceSuite(),
     runCustodyAcceptanceSuite(),
     runBankingAcceptanceSuite(),
+    runPaymentRailAcceptanceSuite(),
+    runFxLiquidityAcceptanceSuite(),
     runWebhookAcceptanceSuite(),
     runOutageAcceptanceSuite(),
     runLeastPrivilegeSuite(),

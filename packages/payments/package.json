@@ -10,7 +10,8 @@
     "src"
   ],
   "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts"
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/**/*.test.ts",
+    "demo:sunrey-banking-payment-provider-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/production-candidate/demo.ts"
   },
   "engines": {
     "node": ">=22"

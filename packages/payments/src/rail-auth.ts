@@ -22,6 +22,7 @@ export type ProviderAuthConfig = {
   readonly mechanism: ProviderAuthMechanism;
   readonly credentialRef: SecretReference | null;
   readonly webhookSignatureRef: SecretReference | null;
+  readonly credentialDescriptorId?: string | null;
 };
 
 export type ProviderAuthenticator = {
@@ -36,6 +37,7 @@ export function simulationAuthConfig(provider: ProviderId): ProviderAuthConfig {
     mechanism: 'NONE',
     credentialRef: null,
     webhookSignatureRef: secretRef('simulation', `rail-webhook/${provider}`),
+    credentialDescriptorId: null,
   });
 }
 

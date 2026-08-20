@@ -19,7 +19,9 @@
     "MARKET_SURVEILLANCE",
     "CASE_MANAGEMENT",
     "CUSTODY_PROVIDER",
-    "BANKING_REFERENCE"
+    "BANKING_REFERENCE",
+    "PAYMENT_RAIL",
+    "FX_LIQUIDITY"
   ],
   "notes": "Versioned provider definitions only. Bind credentials through SecretReference at runtime."
 }

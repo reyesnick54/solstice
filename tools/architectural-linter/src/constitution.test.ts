@@ -2231,4 +2231,28 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/moonrey-connectors')), false);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/provider-runtime-v2')), false);
   });
+
+  it('CHUNK-151 implements banking payment and FX provider candidates on payments', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    assert.equal(evaluateCapability(manifest, 'sunrey-banking-payment-provider-candidates').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-banking-payment-provider-candidates').protected, true);
+    assert.equal(evaluateCapability(manifest, 'sunrey-banking-payment-provider-candidates').owner, 'packages/payments');
+    assert.equal(evaluateCapability(manifest, 'payments').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'rail-adapters').status, 'IMPLEMENTED');
+
+    const declared = evaluateDeclaredChunks(REPO_ROOT, manifest).find(
+      (evaluation) => evaluation.chunk === 'CHUNK-151',
+    );
+    assert.ok(declared, 'CHUNK-151 declaration must exist under docs/architecture/chunks/');
+    assert.equal(declared.mustStop, false);
+    assert.deepEqual(declared.missing, []);
+
+    assert.equal(existsSync(join(REPO_ROOT, 'docs/finance/chunk-151-banking-payment-fx-provider-candidates.md')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/payments/src/production-candidate/index.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/banking-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/baas')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/payment-provider')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/fx-v2')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/cross-border-core')), false);
+  });
 });

@@ -1869,6 +1869,32 @@
       "notes": "Simulation connectivity only. Adapters must not post journals or issue Execution Authority."
     },
     {
+      "id": "sunrey-banking-payment-provider-candidates",
+      "name": "Banking, payment-rail, and FX provider production candidates",
+      "canonicalOwner": "packages/payments",
+      "canonicalPath": "packages/payments/src/production-candidate/index.ts",
+      "publicInterface": "packages/payments/src/production-candidate/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/banking-v2",
+        "packages/baas",
+        "packages/payment-provider",
+        "packages/swift",
+        "packages/ach",
+        "packages/fx-v2",
+        "packages/cross-border-core"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 151 sandbox / fixture provider-candidate architecture only. Reuses RailAdapter. Does not connect a real bank, payment network, or FX provider. Engineering rail class is not named-network membership."
+    },
+    {
       "id": "card-platform",
       "name": "Canonical card platform",
       "canonicalOwner": "packages/cards",
@@ -3147,12 +3173,7 @@
       "financialStateMutation": false,
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
-      "protectedSymbols": [
-        {
-          "name": "MoonReyProductiveValuePolicyCandidate",
-          "kind": "type"
-        }
-      ],
+      "protectedSymbols": [],
       "forbiddenAliases": [
         "packages/moonrey-production-tokenomics",
         "packages/gpuv-conversion",
@@ -3169,6 +3190,55 @@
       "id": "sunrey-production-issuance-policy-candidate",
       "name": "SunRey Coin production-candidate valuation, conversion, supply, and issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/sunrey-tokenomics",
+        "packages/production-valuation",
+        "packages/issuance-parameters",
+        "packages/human-worth-token"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 145 SunRey production-candidate valuation, conversion, and issuance parameter package. Does not select production quantities, activate issuance, flip LIVE_* flags, or create a second mint. Fixture packages cannot authorize production."
+    },
+    {
+      "id": "sunrey-production-economic-parameters",
+      "name": "Canonical production economic parameter registry and typed parameter packages",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/parameter-package/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/parameter-package/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [],
+      "forbiddenAliases": [
+        "packages/tokenomics",
+        "packages/economic-parameters",
+        "packages/monetary-policy-v2",
+        "packages/coin-supply",
+        "packages/production-mint"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 144 canonical production economic parameter registry. Typed values behind Chunk 143 parameter IDs. Does not choose production tokenomics, activate production, mint, or mutate AssetSupplyBook. CONFIGURED candidate is not PRODUCTION ACTIVATED."
+    },
+    {
+      "id": "sunrey-production-issuance-policy-candidate",
+      "name": "SunRey Coin production-candidate valuation, conversion, supply, and issuance parameter package",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/parameter-package/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/parameter-package/index.ts",
       "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts",
       "publicInterface": "packages/sunrey-chain/src/economics/production-activation/sunrey-package/index.ts",
       "status": "IMPLEMENTED",
@@ -5880,6 +5950,13 @@
       "owner": "packages/payments",
       "protected": true,
       "notes": "Canonical RailAdapter port and simulated adapters only. No live network membership."
+    },
+    {
+      "id": "sunrey-banking-payment-provider-candidates",
+      "status": "IMPLEMENTED",
+      "owner": "packages/payments",
+      "protected": true,
+      "notes": "Chunk 151 banking / payment-rail / FX provider candidates at packages/payments/src/production-candidate. Sandbox conformance only. Does not create a second payment system. Do not create packages/banking-v2, packages/baas, packages/payment-provider, packages/swift, packages/ach, packages/fx-v2, or packages/cross-border-core."
     },
     {
       "id": "cards",
