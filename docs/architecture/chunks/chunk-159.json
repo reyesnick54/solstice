@@ -1,0 +1,12 @@
+{
+  "chunk": "CHUNK-159",
+  "title": "Main-Branch Integrity Lock, Merge-Collision Hardening, Canonical Test-Surface Preservation, and Architecture Baseline Repair",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-repository-integrity",
+    "sunrey-production-handoff",
+    "sunrey-canonical-product-identity"
+  ],
+  "notes": "IMPLEMENTED on tools/architectural-linter with companion scripts under scripts/. Locks JSON integrity, merge-conflict markers, duplicate architecture IDs, and canonical test-surface families. Does not create a second architecture owner, change business authority, or flip LIVE_* flags. evaluateChunkRequirements returns mustStop: false. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager. THIS CHUNK MUST BE MERGED BEFORE ANY FURTHER FEATURE CHUNKS."
+}
