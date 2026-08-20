@@ -17,11 +17,12 @@ import { validateSourceFactClaimMapping } from '../../../source-taxonomy/validat
 import { OracleEconomicAssetAdapter } from '../../../economic-asset-adapter.ts';
 import type { ExternalSourceRecord } from '../../schema.ts';
 import type { UnitCode } from '../../../types.ts';
-import type {
-  CanonicalCollectedObservation,
-  EconomicDataSource,
-  OracleProviderOnboardingRecord,
-  ProductionOracleRejection,
+import {
+  CONNECTOR_VERSION,
+  type CanonicalCollectedObservation,
+  type EconomicDataSource,
+  type OracleProviderOnboardingRecord,
+  type ProductionOracleRejection,
 } from '../../types.ts';
 import type {
   ConnectorRuntimeContext,
@@ -387,7 +388,7 @@ export class EnergyProviderFamilyAdapter implements OracleSourceAdapterV2 {
       },
       canonicalMeasurement: ingested.value.canonicalMeasurement ?? undefined,
       provenance: {
-        schemaVersion: 1,
+        schemaVersion: 1 as const,
         providerId: input.request.source.providerId,
         sourceId: input.request.source.sourceId,
         sourceObservationId: ingested.value.sourceObservationId,
@@ -400,7 +401,7 @@ export class EnergyProviderFamilyAdapter implements OracleSourceAdapterV2 {
         normalizationVersion: 'sunrey.economic-unit.normalization.v1',
         credentialRefHref: null,
         authMethod: input.request.source.authenticationMethod,
-        collectorVersion: 'sunrey-oracle-connector/1',
+        collectorVersion: CONNECTOR_VERSION,
         contentHash: ingested.value.provenanceCommitment,
       },
     });

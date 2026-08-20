@@ -33,7 +33,7 @@ export function reconcileRail(
   submission: RailSubmission | null,
   journals: readonly Journal[],
   report: ProviderSettlementReport | SettlementReport | null,
-  extras: { readonly duplicateExternal?: boolean } = {},
+  extras: { readonly duplicateExternal?: boolean | undefined } = {},
 ): RailReconciliationResult {
   const mismatches: string[] = [];
   if (extras.duplicateExternal) {

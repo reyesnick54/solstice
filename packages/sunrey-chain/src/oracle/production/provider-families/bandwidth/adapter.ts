@@ -9,6 +9,7 @@
 import { err, ok, type Result } from '../../../../../../domain/src/result.ts';
 import { convertExact, lookupUnit } from '../../../../units/convert.ts';
 import { receiptDigestOf } from '../../../../units/measurement.ts';
+import type { MeasurementDimension } from '../../../../units/constitution.ts';
 import type { ExactQuantity, NormalizationReceipt } from '../../../../units/types.ts';
 import { validateExternalRecord } from '../../schema.ts';
 import type { ExternalSourceRecord } from '../../schema.ts';
@@ -210,7 +211,7 @@ function toRecord(
       sourceUnit: sourceQuantity.unitId,
       canonicalQuantity,
       canonicalUnit,
-      measurementDimension: observation.factType === 'BANDWIDTH_CAPACITY' ? 'DATA_RATE' : 'DATA_VOLUME',
+      measurementDimension: (observation.factType === 'BANDWIDTH_CAPACITY' ? 'DATA_RATE' : 'DATA_VOLUME') as MeasurementDimension,
       semanticQualifier: 'UNQUALIFIED' as const,
       productiveCategory: 'BANDWIDTH_COMMUNICATIONS' as const,
       factType: observation.factType,

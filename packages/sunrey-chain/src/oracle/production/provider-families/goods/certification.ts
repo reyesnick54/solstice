@@ -152,7 +152,7 @@ export const INVALID_GOODS_CERTIFICATION_CASES: readonly GoodsCertificationCase[
   },
 ]);
 
-export function evaluateGoodsCertificationCase(caseId: string): { readonly ok: boolean; readonly code?: string } {
+export function evaluateGoodsCertificationCase(caseId: string): { readonly ok: boolean; readonly code?: string | undefined } {
   const found = [...VALID_GOODS_CERTIFICATION_CASES, ...INVALID_GOODS_CERTIFICATION_CASES].find(
     (row) => row.caseId === caseId,
   );

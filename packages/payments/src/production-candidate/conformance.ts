@@ -15,7 +15,7 @@ import { candidateQuoteIsExpired } from './fx-profile.ts';
 import type { BaasAccountReference, ProviderOperationalBalance } from './types.ts';
 import { PRODUCTION_CANDIDATE_FLAGS } from './types.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
-import { asCurrencyCode } from '../../domain/src/currency.ts';
+import { asCurrencyCode } from '../../../domain/src/currency.ts';
 import { asInboundPaymentId, asOpaqueAccountRef } from '../rail-ids.ts';
 
 export type CandidateRouteFacts = {
