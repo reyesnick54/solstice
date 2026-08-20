@@ -5013,10 +5013,6 @@
         {
           "name": "ExternalProductionEvidenceRecord",
           "kind": "type"
-        },
-        {
-          "name": "ExternalEvidenceRegistry",
-          "kind": "class"
         }
       ],
       "forbiddenAliases": [

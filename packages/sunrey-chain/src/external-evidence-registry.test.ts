@@ -16,6 +16,7 @@ import {
   EXPIRED_EVIDENCE_COUNTS,
   ExternalEvidenceRegistry,
   FIXTURE_COUNTS_AS_EXTERNAL,
+  isExternalProductionEvidenceClass,
   PRODUCTION_ACTIVE,
   REVOKED_EVIDENCE_COUNTS,
   STRING_SLOT_SATISFIES_EXTERNAL_READINESS,
@@ -196,7 +197,7 @@ describe('Chunk 160 external production evidence registry', () => {
     assert.equal(commercial.ok, false);
     const security = must(registry.verify(record.recordId, HUMAN_SECURITY, NOW));
     assert.equal(security.verificationState, 'VERIFIED_EXTERNAL');
-    assert.deepEqual(requiredVerifierRoles('EXTERNAL_SECURITY_AUDIT').sort(), ['EXTERNAL_AUDITOR', 'SECURITY_AUTHORITY']);
+    assert.deepEqual([...requiredVerifierRoles('EXTERNAL_SECURITY_AUDIT')].sort(), ['EXTERNAL_AUDITOR', 'SECURITY_AUTHORITY']);
   });
 
   it('9. counsel opinion needs a proper verifier role', () => {
@@ -387,7 +388,22 @@ describe('Chunk 160 external production evidence registry', () => {
       humanAccepted: true,
       humanReviewerKind: 'HUMAN',
       nowUtc: NOW,
-      externalRegistry: registry,
+      externalRegistry: {
+        productionEligible: (query) => {
+          if (!isExternalProductionEvidenceClass(query.evidenceClass)) {
+            return false;
+          }
+          return registry.productionEligible({
+            evidenceClass: query.evidenceClass,
+            subjectType: query.subjectType as import('./mainnet/external-evidence/types.ts').ExternalEvidenceSubjectType | undefined,
+            subjectId: query.subjectId,
+            jurisdiction: query.jurisdiction,
+            providerDomain: query.providerDomain,
+            nowUtc: query.nowUtc,
+            production: query.production,
+          });
+        },
+      },
     });
     assert.equal(withStaleRegistry.productionEligible, false);
     assert.ok(withStaleRegistry.missingRequirements.some((row) => row.includes('REGISTRY_NOT_CURRENT') || row.includes('MISSING')));

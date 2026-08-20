@@ -62,16 +62,13 @@ export class ExternalEvidenceRegistry {
     if (draft.reference.locator.length === 0 && draft.contentDigest.length === 0) {
       return externalEvidenceErr('REFERENCE_REQUIRED', 'document reference or content digest is required');
     }
-    const scope =
-      'global' in draft.scope || 'label' in draft.scope
-        ? scopeFromParts({
-            label: draft.scope.label,
-            global: 'global' in draft.scope ? draft.scope.global : false,
-            jurisdictions: draft.scope.jurisdictions,
-            activationDomains: draft.scope.activationDomains,
-            providerDomains: draft.scope.providerDomains,
-          })
-        : scopeFromParts(draft.scope);
+    const scope = scopeFromParts({
+      label: draft.scope.label,
+      ...(draft.scope.global !== undefined ? { global: draft.scope.global } : {}),
+      ...(draft.scope.jurisdictions !== undefined ? { jurisdictions: draft.scope.jurisdictions } : {}),
+      ...(draft.scope.activationDomains !== undefined ? { activationDomains: draft.scope.activationDomains } : {}),
+      ...(draft.scope.providerDomains !== undefined ? { providerDomains: draft.scope.providerDomains } : {}),
+    });
     const fixture = draft.fixture === true;
     const engineeringOnly = draft.engineeringOnly === true || fixture;
     const base = {
@@ -190,10 +187,12 @@ export class ExternalEvidenceRegistry {
     if (!previous) {
       return externalEvidenceErr('NOT_FOUND', `record ${previousId} is not registered`);
     }
+    const nextVersion =
+      draft.version !== undefined && draft.version > previous.version ? draft.version : previous.version + 1;
     const registered = this.register({
       ...draft,
       previousVersionId: previousId,
-      version: draft.version ?? previous.version + 1,
+      version: nextVersion,
     });
     if (!registered.ok) {
       return registered;
@@ -229,7 +228,7 @@ export class ExternalEvidenceRegistry {
     const scope = patch.scope
       ? scopeFromParts({
           label: patch.scope.label,
-          global: 'global' in patch.scope ? patch.scope.global : current.scope.global,
+          global: patch.scope.global === true || current.scope.global,
           jurisdictions: patch.scope.jurisdictions ?? patch.jurisdictions ?? current.jurisdictions,
           activationDomains: patch.scope.activationDomains ?? patch.activationDomains ?? current.activationDomains,
           providerDomains: patch.scope.providerDomains ?? patch.providerDomains ?? current.providerDomains,

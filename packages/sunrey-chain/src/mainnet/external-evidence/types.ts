@@ -215,13 +215,13 @@ export type ExternalEvidenceVerifier = {
 
 export type ExternalEvidenceQuery = {
   readonly evidenceClass: ExternalProductionEvidenceClass;
-  readonly subjectType?: ExternalEvidenceSubjectType;
-  readonly subjectId?: string;
-  readonly jurisdiction?: string;
-  readonly activationDomain?: ActivationDomain;
-  readonly providerDomain?: ProviderDomain;
+  readonly subjectType?: ExternalEvidenceSubjectType | undefined;
+  readonly subjectId?: string | undefined;
+  readonly jurisdiction?: string | undefined;
+  readonly activationDomain?: ActivationDomain | undefined;
+  readonly providerDomain?: ProviderDomain | undefined;
   readonly nowUtc: string;
-  readonly production?: boolean;
+  readonly production?: boolean | undefined;
 };
 
 export type ExternalEvidenceRegistryError = {

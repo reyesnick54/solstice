@@ -142,12 +142,26 @@ export function evaluateReadiness(
   if (!externalComplete) {
     const awaitingExternal = externalDims.some((dimension) => {
       const rows = recordsFor(records, dimension);
-      return rows.some(
-        (row) =>
+      return rows.some((row) => {
+        if (
           row.verificationStatus === 'NOT_PROVIDED' ||
           row.verificationStatus === 'EXTERNAL_VERIFICATION_REQUIRED' ||
-          row.verificationStatus === 'PROVIDED_UNVERIFIED',
-      );
+          row.verificationStatus === 'PROVIDED_UNVERIFIED'
+        ) {
+          return true;
+        }
+        if (policy.requireExternalRegistry && row.verificationStatus !== 'NOT_APPLICABLE') {
+          if (!context.registry) {
+            return true;
+          }
+          return !readinessRecordHasVerifiedRegistryReference(
+            row,
+            context.registry,
+            context.nowUtc ?? '1970-01-01T00:00:00.000Z',
+          );
+        }
+        return false;
+      });
     });
     if (awaitingExternal) {
       return 'AWAITING_EXTERNAL_EVIDENCE';
