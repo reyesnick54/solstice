@@ -28,15 +28,18 @@ describe('CHUNK-154 operational persistence recovery', () => {
     assert.equal([...text.matchAll(/^\s*"test"\s*:/gm)].length, 1);
     assert.match(text, /packages\/security\/src\/regulated\/\*\*\/\*\.test\.ts/);
     assert.match(text, /packages\/payments\/src\/\*\*\/\*\.test\.ts/);
+    assert.match(text, /packages\/persistence\/src\/\*\*\/\*\.test\.ts/);
     assert.match(text, /packages\/sunrey-chain\/src\/release-candidate\/economic\/\*\*\/\*\.test\.ts/);
   });
 
   it('CI runs JSON integrity before npm ci', () => {
     const text = readFileSync(join(ROOT, '.github/workflows/ci.yml'), 'utf8');
-    const preflight = text.indexOf('node scripts/check-json-integrity.mjs');
+    const preflightJson = text.indexOf('node scripts/check-json-integrity.mjs');
+    const preflightMerge = text.indexOf('node scripts/check-merge-integrity.mjs');
     const install = text.indexOf('npm ci --ignore-scripts');
-    assert.ok(preflight >= 0 && install >= 0);
-    assert.ok(preflight < install);
+    assert.ok(preflightJson >= 0 && preflightMerge >= 0 && install >= 0);
+    assert.ok(preflightJson < install);
+    assert.ok(preflightMerge < install);
   });
 
   it('missing fixture snapshot initializes safely', () => {

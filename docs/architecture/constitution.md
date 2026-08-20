@@ -48,6 +48,7 @@ never be two implementations of these systems.
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
 | Canonical product identity | `packages/config` | `packages/config/src/product-identity.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
+| Repository merge integrity | `tools/architectural-linter` | `scripts/check-merge-integrity.mjs` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
@@ -134,8 +135,7 @@ the same architecture-linting system, not a second linter.
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `human-economic-contribution`, `economic-asset-registry`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
-`market-surveillance`.
-`consent`, `clean-room`, `sunrey-sdk`.
+`market-surveillance`, `sunrey-sdk`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`, `strategy-lab`.
@@ -1960,6 +1960,19 @@ create `packages/database-v2`, `packages/state-store`,
 `packages/durable-state`, `packages/operational-ledger`,
 `packages/financial-database`, or `packages/persistence-v2`. See
 [`chunk-154-operational-persistence-recovery.md`](./chunk-154-operational-persistence-recovery.md).
+Chunk 159 locks main-branch JSON, merge-collision, and canonical
+test-surface integrity. Capability `sunrey-repository-integrity` is
+`IMPLEMENTED` on the existing architecture-linting owner
+`tools/architectural-linter`, with companion scripts under `scripts/`.
+It does not create a second architecture authority, change business
+owners, or alter `LIVE_*` flags. Duplicate `package.json` script keys,
+mangled manifest capability records, and Git conflict markers fail
+closed. See
+[`chunk-159-main-branch-integrity-lock.md`](./chunk-159-main-branch-integrity-lock.md)
+and
+[`merge-integrity-policy.md`](./merge-integrity-policy.md).
+Do not create `packages/repository-integrity`,
+`packages/architecture-v2`, or `packages/merge-manager`.
 
 ## Agent stop rule
 

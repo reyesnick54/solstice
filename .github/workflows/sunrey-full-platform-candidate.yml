@@ -34,6 +34,11 @@ jobs:
         with:
           node-version: "22"
 
+      - name: JSON / repository integrity preflight
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
       - name: Install from lockfile
         run: npm ci --ignore-scripts
 
