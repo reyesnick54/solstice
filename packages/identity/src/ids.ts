@@ -1,6 +1,8 @@
 import { type Brand, brandAs } from '../../domain/src/brand.ts';
 
-export type SolsticeIdentityId = Brand<string, 'SolsticeIdentityId'>;
+export type SunReyIdentityId = Brand<string, 'SunReyIdentityId'>;
+/** @deprecated Compatibility alias. Same implementation as SunReyIdentityId. */
+export type SolsticeIdentityId = SunReyIdentityId;
 export type ActorId = Brand<string, 'ActorId'>;
 export type SessionId = Brand<string, 'SessionId'>;
 export type DeviceId = Brand<string, 'DeviceId'>;
@@ -18,9 +20,12 @@ function nonEmpty<Name extends string>(value: string, name: Name): Brand<string,
   return brandAs<string, Name>(value);
 }
 
-export function asSolsticeIdentityId(value: string): SolsticeIdentityId {
-  return nonEmpty(value, 'SolsticeIdentityId');
+export function asSunReyIdentityId(value: string): SunReyIdentityId {
+  return nonEmpty(value, 'SunReyIdentityId');
 }
+
+/** @deprecated Compatibility alias. Same implementation as asSunReyIdentityId. */
+export const asSolsticeIdentityId = asSunReyIdentityId;
 
 export function asActorId(value: string): ActorId {
   return nonEmpty(value, 'ActorId');

@@ -1,7 +1,13 @@
 import type { ExplorerIndexer } from './indexer.ts';
 import { explorerExposurePolicy } from './privacy.ts';
 import { searchProjection } from './search.ts';
-import { DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT, NETWORK_ENVIRONMENT_LABEL } from './taxonomy.ts';
+import {
+  DEFAULT_PAGE_LIMIT,
+  EXPLORER_PRODUCT_BRAND,
+  EXPLORER_PRODUCT_NAME,
+  MAX_PAGE_LIMIT,
+  NETWORK_ENVIRONMENT_LABEL,
+} from './taxonomy.ts';
 import type {
   CanonicalProjection,
   ExplorerCursor,
@@ -64,6 +70,8 @@ export class ExplorerQueryService {
     const moonrey = projection.assets.find((row) => row.assetId === 'MOONREY_COIN');
     return this.public({
       ...this.lag(),
+      productName: EXPLORER_PRODUCT_NAME,
+      productBrand: EXPLORER_PRODUCT_BRAND,
       networkClass: 'DEVELOPMENT',
       networkLabel: NETWORK_ENVIRONMENT_LABEL,
       latestFinalizedHeight: latest?.height ?? 0,

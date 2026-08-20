@@ -66,6 +66,13 @@ import {
   type ProcessingClass,
   type SourceClass,
 } from './taxonomy.ts';
+import type { HumanInformationAnchorCoordinator } from './chain-anchor/coordinator.ts';
+import { privacySafeStatus } from './chain-anchor/projections.ts';
+import {
+  scheduleConsentAnchor,
+  scheduleRevocationAnchor,
+  scheduleUsageAnchor,
+} from './chain-anchor/schedule.ts';
 import type {
   AgentMandateContext,
   ApprovedComputation,
@@ -97,6 +104,7 @@ export type HumanInformationNetworkEngineOptions = {
   readonly clock: Clock;
   readonly policy?: HumanInformationNetworkPolicy;
   readonly hmacSecret?: string;
+  readonly anchorCoordinator?: HumanInformationAnchorCoordinator;
 };
 
 function digest(value: string): string {
@@ -113,12 +121,18 @@ export class HumanInformationNetworkEngine {
   readonly store: HumanInformationNetworkStore;
   private readonly hmacSecret: string;
   readonly notifications: MobileNotification[] = [];
+  anchorCoordinator: HumanInformationAnchorCoordinator | null;
 
   constructor(options: HumanInformationNetworkEngineOptions) {
     this.clock = options.clock;
     this.policy = options.policy ?? defaultNetworkPolicy();
     this.store = new HumanInformationNetworkStore();
     this.hmacSecret = options.hmacSecret ?? 'hin-simulation-hmac';
+    this.anchorCoordinator = options.anchorCoordinator ?? null;
+  }
+
+  attachAnchorCoordinator(coordinator: HumanInformationAnchorCoordinator): void {
+    this.anchorCoordinator = coordinator;
   }
 
   report(): HumanInformationNetworkReport {
@@ -489,6 +503,12 @@ export class HumanInformationNetworkEngine {
         purpose: request.purpose,
       }),
     );
+    this.scheduleAnchor(() =>
+      scheduleConsentAnchor(this.anchorCoordinator!, {
+        grant,
+        subjectHandle: subject.publicHandle,
+      }),
+    );
     return ok(Object.freeze({ grant, right, receiptHash: consentHash }));
   }
 
@@ -788,6 +808,15 @@ export class HumanInformationNetworkEngine {
       settlementRef: input.settlementRef,
       revocationRef: null,
     });
+    const usageSubject = this.store.subjects.get(right.subjectId);
+    if (usageSubject) {
+      this.scheduleAnchor(() =>
+        scheduleUsageAnchor(this.anchorCoordinator!, {
+          receipt,
+          subjectHandle: usageSubject.publicHandle,
+        }),
+      );
+    }
     const subject = this.store.subjects.get(right.subjectId);
     if (subject) {
       this.notifications.push(
@@ -847,6 +876,18 @@ export class HumanInformationNetworkEngine {
       settlementRef: null,
       revocationRef: revocation.revocationId,
     });
+    const revokeSubject = this.store.subjects.get(grant.subjectId);
+    if (revokeSubject) {
+      const prior = this.anchorCoordinator?.store.findBySource('CONSENT_GRANT', grant.grantId);
+      this.scheduleAnchor(() =>
+        scheduleRevocationAnchor(this.anchorCoordinator!, {
+          revocation,
+          grant,
+          subjectHandle: revokeSubject.publicHandle,
+          priorConsentCommitment: prior?.payloadCommitment ?? grant.consentHash,
+        }),
+      );
+    }
     const subject = this.store.subjects.get(grant.subjectId);
     if (subject) {
       this.notifications.push(
@@ -883,9 +924,11 @@ export class HumanInformationNetworkEngine {
   }
 
   audit(): HumanInformationRightsAudit {
+    const counters = this.anchorCoordinator?.auditCounters();
     return Object.freeze({
       auditId: newAuditId(),
       generatedAt: asInstant(this.clock),
+      schemaVersion: counters ? 2 : 1,
       activeRights: [...this.store.rights.values()].filter((row) => row.status === 'ACTIVE').length,
       consents: this.store.grants.size,
       purposes: this.store.purposes.size,
@@ -893,7 +936,13 @@ export class HumanInformationNetworkEngine {
       revocations: this.store.revocations.size,
       compensationInstructions: this.store.compensation.size,
       cleanRoomResults: this.store.results.size,
-      onChainAnchors: this.store.anchors.length,
+      onChainAnchors: counters?.onChainAnchors ?? this.store.anchors.length,
+      anchorsCreated: counters?.anchorsCreated ?? this.store.anchors.length,
+      anchorsSubmitted: counters?.anchorsSubmitted ?? 0,
+      anchorsFinalized: counters?.anchorsFinalized ?? 0,
+      anchorsPending: counters?.anchorsPending ?? 0,
+      anchorsReconciliationRequired: counters?.anchorsReconciliationRequired ?? 0,
+      anchorsReorgObserved: counters?.anchorsReorgObserved ?? 0,
       reconciled: true,
     });
   }
@@ -925,7 +974,25 @@ export class HumanInformationNetworkEngine {
     if (!subject) {
       return err({ code: 'SUBJECT_UNKNOWN', message: 'subject is not registered' });
     }
-    return ok(this.store.controlCenter(subject));
+    const base = this.store.controlCenter(subject);
+    if (!this.anchorCoordinator) {
+      return ok(base);
+    }
+    const grant = [...this.store.grants.values()].find((row) => row.subjectId === subjectId);
+    const revocation = [...this.store.revocations.values()].find((row) => row.subjectId === subjectId);
+    const usage = [...this.store.receipts.values()].find((row) =>
+      this.store.rightsFor(subjectId).some((right) => right.rightId === row.rightId),
+    );
+    return ok(
+      Object.freeze({
+        ...base,
+        consentAnchorStatus: grant ? this.toPortalStatus(this.anchorCoordinator.consentStatus(grant.grantId)) : null,
+        revocationAnchorStatus: revocation
+          ? this.toPortalStatus(this.anchorCoordinator.revocationStatus(revocation.revocationId))
+          : null,
+        usageAnchorStatus: usage ? this.toPortalStatus(this.anchorCoordinator.usageStatus(usage.receiptId)) : null,
+      }),
+    );
   }
 
   requesterPortal(requesterId: string): Result<RequesterPortalProjection, NetworkFailure> {
@@ -962,6 +1029,16 @@ export class HumanInformationNetworkEngine {
         ),
         usageReceipts: Object.freeze(
           [...this.store.receipts.values()].filter((row) => row.requesterId === requesterId),
+        ),
+        authorizedAnchorStatuses: Object.freeze(
+          (this.anchorCoordinator?.anchorsForRequester(requesterId) ?? []).map((anchor) => ({
+            sourceRecordId: anchor.sourceRecordId,
+            kind: anchor.kind,
+            presentation: privacySafeStatus(anchor)?.presentation ?? 'PENDING',
+            transactionId: anchor.transactionId,
+            blockReference: anchor.blockReference,
+            finalized: anchor.finalized,
+          })),
         ),
       }),
     );
@@ -1021,6 +1098,33 @@ export class HumanInformationNetworkEngine {
       });
     }
     return ok(true);
+  }
+
+  private scheduleAnchor(factory: () => { readonly ok: boolean }): void {
+    if (!this.anchorCoordinator) {
+      return;
+    }
+    const prepared = factory();
+    if (!prepared.ok || !('value' in prepared)) {
+      return;
+    }
+    const anchor = (prepared as { readonly value: { readonly anchorId: Parameters<HumanInformationAnchorCoordinator['submit']>[0] } }).value;
+    this.anchorCoordinator.submit(anchor.anchorId);
+  }
+
+  private toPortalStatus(
+    status: ReturnType<HumanInformationAnchorCoordinator['consentStatus']>,
+  ): ControlCenterProjection['consentAnchorStatus'] {
+    if (!status) {
+      return null;
+    }
+    return Object.freeze({
+      presentation: status.presentation,
+      chainState: status.chainState,
+      transactionId: status.transactionId,
+      blockReference: status.blockReference,
+      finalized: status.finalized,
+    });
   }
 
   private anchor(input: Omit<OnChainAnchor, 'rawSensitivePersonalInformation'>): void {

@@ -23,7 +23,7 @@ const NOW = asUtcInstant('2026-08-15T12:00:00.000Z');
 describe('Risk persistence', () => {
   it('persists budgets, assessments, and stress runs without a journal table', async (t) => {
     if (!persistenceAvailable()) {
-      t.skip('SOLSTICE_PERSISTENCE_TEST is not set');
+      t.skip('SUNREY_PERSISTENCE_TEST is not set');
       return;
     }
     const env = await preparePersistence();

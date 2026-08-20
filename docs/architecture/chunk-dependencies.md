@@ -164,6 +164,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-hin-contribution-integration | IMPLEMENTED | packages/information-market |
+| sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
@@ -187,6 +188,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
+| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -985,6 +988,19 @@ Compensation remains `mintRequested: false`. Do not create
 `packages/hin-contribution-registry`,
 `packages/information-contribution-v2`, or
 `packages/human-information-contribution`. The evaluator returns
+`mustStop: false`.
+Chunk 140 completes Human Information chain-anchor finality, reorg
+handling, and reconciliation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED`. See
+[`chunk-140.json`](./chunks/chunk-140.json) and
+[`docs/economics/chunk-140-hin-chain-finality.md`](../economics/chunk-140-hin-chain-finality.md).
+HIN uses the existing SunRey Chain lifecycle through
+`HumanInformationChainAnchorPort`. Chain finality is evidence, not
+legal consent authority. Do not create `packages/hin-chain-anchor`,
+`packages/hin-finality`, `packages/information-chain-node`, or
+`packages/hin-blockchain`. The evaluator returns
+`mustStop: false`.
 Chunk 104 implements the canonical Human Economic Contribution
 ontology at `packages/human-economic-contribution`. Capability
 `sunrey-human-economic-contributions` is `IMPLEMENTED`. See
@@ -1343,6 +1359,33 @@ or create a second mint. Do not create `packages/production-economics`,
 `packages/monetary-activation`, `packages/mainnet-economics`,
 `packages/tokenomics-v2`, or `packages/launch-economics`. The
 evaluator returns `mustStop: false`.
+Chunk 141 implements the canonical SunRey product identity and legacy
+naming inventory at `packages/config/src/product-identity.ts`.
+Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
+existing configuration owner. See
+[`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
+This is not a second branding package, not a repository rename, and
+not a protocol rewrite. Do not create `packages/branding`,
+`packages/product-identity`, or `packages/sunrey-brand`. The evaluator
+returns `mustStop: false`.
+Chunk 139 implements the Human Information Network → SunRey Chain
+anchoring foundation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED` after Chunk 140
+completes submit, finality, reorg, and reconciliation. Required
+capabilities are `IMPLEMENTED`, so the evaluator returns
+`mustStop: false`. The adapter does not create a second chain,
+consent ledger, or Evidence Vault. Do not create
+`sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
+`IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
+adapter does not create a second chain, consent ledger, or Evidence
+Vault. Chunk 140 completes lifecycle and finality. Do not create
+`packages/hin-chain`, `packages/information-blockchain`,
+`packages/privacy-chain`, `packages/consent-chain`, or
+`packages/human-data-ledger`. See
+[`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md)
+and
+[`docs/economics/chunk-139-hin-chain-anchor-foundation.md`](../economics/chunk-139-hin-chain-anchor-foundation.md).
 Chunk 126 implements MoonRey governed-value V2 shadow evaluation,
 migration readiness, and economic stress hardening at
 `packages/sunrey-chain/src/productive/policy-governance/shadow-economics`.
@@ -1365,3 +1408,11 @@ activation. Do not create `packages/moonrey-value-engine`,
 `packages/productive-valuation`, `packages/moonrey-valuation`, or
 `packages/economic-value-engine`. The evaluator returns
 `mustStop: false`.
+Chunk 142 migrates current public runtime and display identity to
+SunRey at `packages/config`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED`. Canonical env
+names are `SUNREY_*`. Legacy `SOLSTICE_*` aliases remain through the
+single config authority. Protocol IDs, hash domains, stored event
+schema refs, and `reyesnick54/solstice` are unchanged. See
+[`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
+The evaluator returns `mustStop: false`.

@@ -1,4 +1,4 @@
-# Solstice canonical architecture constitution
+# SunRey canonical architecture constitution
 
 This document is the durable architecture specification for the
 consolidated tree on `main`. It describes what the repository actually
@@ -46,11 +46,12 @@ never be two implementations of these systems.
 | Money movement | `services/accounts` | `services/accounts/src/money-movement.ts` | IMPLEMENTED |
 | Balance projections | `services/accounts` | `services/accounts/src/balances.ts` | IMPLEMENTED |
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
+| Canonical product identity | `packages/config` | `packages/config/src/product-identity.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
 | CryptoSuite registry | `packages/security` | `packages/security/src/crypto-suite.ts` | IMPLEMENTED |
-| Solstice Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
+| SunRey Identity | `packages/identity` | `packages/identity/src/service.ts` | IMPLEMENTED |
 | Compliance screening fabric | `packages/kernel` | `packages/kernel/src/compliance/fabric.ts` | IMPLEMENTED |
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
@@ -96,6 +97,7 @@ never be two implementations of these systems.
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
+| HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
 | SunRey Human Economic Contribution | `packages/human-economic-contribution` | `packages/human-economic-contribution/src/registry.ts` | IMPLEMENTED |
 | SunRey Dataset and Economic Asset Registry | `packages/economic-asset-registry` | `packages/economic-asset-registry/src/registry.ts` | IMPLEMENTED |
@@ -1574,6 +1576,24 @@ create `packages/hin-contribution-registry`,
 `packages/human-information-contribution`. See
 [`chunk-107-hin-contribution-integration.md`](./chunk-107-hin-contribution-integration.md).
 
+Chunk 139 implements the Human Information Network → SunRey Chain
+anchoring foundation at
+`packages/information-market/src/network/chain-anchor`. Capability
+`sunrey-hin-chain-anchoring` is `IMPLEMENTED`. HIN remains the rights
+owner. Existing `SunReyChainService` remains the only chain owner.
+The adapter creates privacy-safe `ChainWriteIntent` records. Chunk 140
+completes submit, finality, reorg, and reconciliation. Anchors do not
+mint, transfer ownership, or rewrite historical HIN records. Do not create
+`sunrey-hin-chain-anchoring` is `PARTIAL`. HIN remains the rights
+owner. Existing `SunReyChainService` remains the only chain owner.
+The adapter creates privacy-safe `ChainWriteIntent` records and does
+not mint, transfer ownership, or rewrite historical HIN records.
+Chunk 140 completes lifecycle and finality. Do not create
+`packages/hin-chain`, `packages/information-blockchain`,
+`packages/privacy-chain`, `packages/consent-chain`, or
+`packages/human-data-ledger`. See
+[`chunk-139-hin-chain-anchor-foundation.md`](./chunk-139-hin-chain-anchor-foundation.md).
+
 Chunk 128 implements economic data provider certification, the
 conformance sandbox, and the source admission gate at
 `packages/sunrey-chain/src/oracle/production/certification`.
@@ -1737,6 +1757,30 @@ create `packages/production-economics`, `packages/monetary-activation`,
 `packages/mainnet-economics`, `packages/tokenomics-v2`, or
 `packages/launch-economics`. See
 [`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
+Chunk 142 migrates current public runtime and display identity to
+SunRey at `packages/config`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
+the canonical env prefix; `SOLSTICE_*` remains a temporary alias.
+Conflicting values fail with `LEGACY_ENV_CONFLICT`. Historical event
+schema refs, hash domains, protocol IDs, applied migrations, and the
+GitHub repository path are unchanged. `SolsticeIdentityId` is a
+deprecated alias of `SunReyIdentityId`. Do not create
+`packages/branding`, `packages/product-identity`,
+`packages/sunrey-naming`, or `packages/legacy-compat`. See
+[`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
+Chunk 141 implements the canonical SunRey product identity, legacy
+Solstice inventory, and migration guardrails at
+`packages/config/src/product-identity.ts`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED` on the existing
+`packages/config` owner. Display names are SunRey / SunRey Blockchain /
+SunRey Coin / MoonRey Coin / SunRey Exchange / SunRey AI Agent.
+Tickers remain `NOT_ASSIGNED`. Protocol IDs `SUNREY_COIN` and
+`MOONREY_COIN` stay distinct from display names. This chunk inventories
+and classifies historical Solstice identifiers; it does not rewrite
+protocol history or rename the GitHub repository. Do not create
+`packages/branding`, `packages/product-identity`, or
+`packages/sunrey-brand`. See
+[`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
 
 ## Agent stop rule
 

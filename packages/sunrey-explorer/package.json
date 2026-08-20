@@ -1,6 +1,7 @@
 {
   "name": "@solstice/sunrey-explorer",
   "version": "0.1.0",
+  "description": "SunRey Explorer — rebuildable projection of finalized SunRey Blockchain state",
   "private": true,
   "type": "module",
   "exports": {

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Architectural invariant linter for Solstice.
+"""Architectural invariant linter for SunRey.
 
 Reports every violation as: <path>:<line>: <RULE>: <message>
 Exit status 1 if any violation is found.

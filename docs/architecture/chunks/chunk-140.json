@@ -1,0 +1,17 @@
+{
+  "chunk": "CHUNK-140",
+  "title": "Human Information Chain Anchor Finality, Reorg Handling, and Reconciliation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "evidence",
+    "events",
+    "information-market",
+    "sunrey-human-information-network",
+    "sunrey-hin-contribution-integration",
+    "sunrey-chain",
+    "sunrey-economic-asset-registry",
+    "sunrey-hin-chain-anchoring"
+  ],
+  "notes": "IMPLEMENTED at packages/information-market/src/network/chain-anchor. Completes HIN Evidence → ChainWriteIntent → submission → receipt → finality → reconciliation → HIN projection. Uses existing SunRey Chain lifecycle via HumanInformationChainAnchorPort. Not a second finality model, blockchain node, ledger, or mint. Chain finality is not legal consent authority. evaluateChunkRequirements returns mustStop: false. Do not create packages/hin-chain-anchor, packages/hin-finality, packages/information-chain-node, or packages/hin-blockchain."
+}
