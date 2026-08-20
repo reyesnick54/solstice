@@ -27,6 +27,7 @@ import {
 import { createOperatorDashboard } from './dashboard.ts';
 import { runProductionLifecycleRehearsal } from './rehearsal.ts';
 import { fixtureOperatorAcceptances } from './handoff.ts';
+import { fullPlatformUsage, runFullPlatformCommand } from './full-platform-candidate/cli.ts';
 
 export type ProductionHandoffCliResult = {
   readonly ok: boolean;
@@ -74,11 +75,16 @@ export function productionUsage(): string {
     'sunrey-ops production evidence-seal',
     'sunrey-ops production handoff',
     'sunrey-ops production readiness',
+    ...fullPlatformUsage().split('\n'),
   ].join('\n');
 }
 
 export function runProductionHandoffCommand(argv: readonly string[], root = process.cwd()): ProductionHandoffCliResult {
   const [command = 'help'] = argv;
+  if (command === 'full-platform') {
+    const result = runFullPlatformCommand(argv.slice(1), root);
+    return { ok: result.ok, command: result.command, payload: result.payload };
+  }
   if (command === 'help' || !(COMMANDS as readonly string[]).includes(command as (typeof COMMANDS)[number])) {
     return {
       ok: true,

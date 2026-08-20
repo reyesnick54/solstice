@@ -511,6 +511,7 @@ export async function main(): Promise<void> {
     return;
   }
   if (head === 'production') {
+    process.env.SUNREY_FIXTURE_ENV ??= 'local';
     const result = runProductionHandoffCommand(argv.slice(1));
     assertNoPrivateKeyMaterial(result);
     const text = JSON.stringify(result, (_key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);

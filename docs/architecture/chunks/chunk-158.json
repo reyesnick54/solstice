@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-158",
+  "title": "Full-Platform Production-Candidate Burn-In, Cross-System Reconciliation, Readiness Evidence Bundle, and Handoff Gate",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-production-handoff",
+    "sunrey-mainnet-rc",
+    "sunrey-economic-rc",
+    "sunrey-production-economic-activation-firewall",
+    "persistence",
+    "event-fabric",
+    "kernel",
+    "ledger",
+    "evidence",
+    "sunrey-adversarial-range",
+    "sunrey-exchange",
+    "custody",
+    "payments",
+    "identity",
+    "sunrey-ai-runtime",
+    "sunrey-user-agent-mandates",
+    "sunrey-production-provider-credential-plane"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Extends sunrey-production-handoff and binds existing component evidence by hash. Does not create a second release authority, activate production, connect real providers, or define PRODUCTION_ACTIVE as an outcome. evaluateChunkRequirements returns mustStop: false. Do not create packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, or packages/sunrey-production."
+}

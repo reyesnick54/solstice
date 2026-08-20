@@ -7,3 +7,4 @@ export * from './handoff.ts';
 export * from './rehearsal.ts';
 export * from './dashboard.ts';
 export * from './cli.ts';
+export * as fullPlatformCandidate from './full-platform-candidate/index.ts';

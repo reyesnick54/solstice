@@ -6584,7 +6584,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 90 production handoff and day-2 operations control plane."
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, or packages/sunrey-production."
     },
     {
       "id": "sunrey-provider-runtime",
