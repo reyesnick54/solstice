@@ -1707,6 +1707,37 @@
       ]
     },
     {
+      "id": "sunrey-canonical-product-identity",
+      "name": "Canonical SunRey product identity and naming constitution",
+      "canonicalOwner": "packages/config",
+      "canonicalPath": "packages/config/src/product-identity.ts",
+      "publicInterface": "packages/config/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "PRODUCT_IDENTITY",
+          "kind": "const"
+        },
+        {
+          "name": "CanonicalProductIdentity",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/branding",
+        "packages/product-identity",
+        "packages/sunrey-brand"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 141 canonical SunRey product identity, legacy Solstice inventory, and migration guardrails. Display names only. Protocol IDs SUNREY_COIN and MOONREY_COIN stay. Tickers stay NOT_ASSIGNED. Not a second branding package and not a repository rename."
+    },
+    {
       "id": "architecture-linting",
       "name": "Architecture linting",
       "canonicalOwner": "tools/architectural-linter",
@@ -2759,6 +2790,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family and unified economic data fabrics live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
@@ -6093,6 +6125,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family and unified economic data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–138 provider-family data fabrics and the unified economic data fabric extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
@@ -6507,6 +6540,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 138 unified multi-provider economic data fabric at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Not a second oracle, productive registry, attribution engine, economic asset registry, or mint. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
+    },
+    {
+      "id": "sunrey-canonical-product-identity",
+      "status": "IMPLEMENTED",
+      "owner": "packages/config",
+      "protected": true,
+      "notes": "Chunk 141 canonical SunRey product identity at packages/config/src/product-identity.ts. Legacy Solstice names are inventoried, not current branding. Not a second branding package, repository rename, or protocol rewrite."
     }
   ],
   "boundedContexts": [

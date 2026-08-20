@@ -46,6 +46,7 @@ never be two implementations of these systems.
 | Money movement | `services/accounts` | `services/accounts/src/money-movement.ts` | IMPLEMENTED |
 | Balance projections | `services/accounts` | `services/accounts/src/balances.ts` | IMPLEMENTED |
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
+| Canonical product identity | `packages/config` | `packages/config/src/product-identity.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
 | PostgreSQL persistence adapter | `packages/persistence` | `packages/persistence/src/index.ts` | IMPLEMENTED |
 | Cryptographic infrastructure | `packages/security` | `packages/security/src/provider.ts` | IMPLEMENTED |
@@ -1740,6 +1741,20 @@ mint MoonRey. Do not create `packages/goods-oracles`,
 `packages/commerce-data-fabric`, `packages/services-oracle`, or
 `packages/moonrey-commerce`. See
 [`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md).
+
+Chunk 141 implements the canonical SunRey product identity, legacy
+Solstice inventory, and migration guardrails at
+`packages/config/src/product-identity.ts`. Capability
+`sunrey-canonical-product-identity` is `IMPLEMENTED` on the existing
+`packages/config` owner. Display names are SunRey / SunRey Blockchain /
+SunRey Coin / MoonRey Coin / SunRey Exchange / SunRey AI Agent.
+Tickers remain `NOT_ASSIGNED`. Protocol IDs `SUNREY_COIN` and
+`MOONREY_COIN` stay distinct from display names. This chunk inventories
+and classifies historical Solstice identifiers; it does not rewrite
+protocol history or rename the GitHub repository. Do not create
+`packages/branding`, `packages/product-identity`, or
+`packages/sunrey-brand`. See
+[`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
 
 ## Agent stop rule
 

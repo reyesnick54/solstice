@@ -187,6 +187,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1347,6 +1348,15 @@ engine, economic asset registry, or mint. Do not create
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. The evaluator returns
 `mustStop: false`.
+Chunk 141 implements the canonical SunRey product identity and legacy
+naming inventory at `packages/config/src/product-identity.ts`.
+Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
+existing configuration owner. See
+[`sunrey-naming-constitution.md`](./sunrey-naming-constitution.md).
+This is not a second branding package, not a repository rename, and
+not a protocol rewrite. Do not create `packages/branding`,
+`packages/product-identity`, or `packages/sunrey-brand`. The evaluator
+returns `mustStop: false`.
 Chunk 139 implements the Human Information Network → SunRey Chain
 anchoring foundation at
 `packages/information-market/src/network/chain-anchor`. Capability
