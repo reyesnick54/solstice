@@ -48,6 +48,7 @@ export type {
   SupplySafetySnapshot,
   VersionBinding,
 } from './types.ts';
+export * as parameterPackage from './parameter-package/index.ts';
 export { ACTIVATION_REQUIREMENTS, DOMAIN_TO_MAINNET, requirementById, requirementsFor } from './requirements.ts';
 export {
   FIXTURE_KINDS,
