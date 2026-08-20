@@ -97,3 +97,5 @@ export type {
 } from './gate.ts';
 
 export { fixtureUnverifiedContribution, fixtureVerifiedContribution } from './fixtures.ts';
+
+export * as productionCandidateConversion from './production-candidate/index.ts';

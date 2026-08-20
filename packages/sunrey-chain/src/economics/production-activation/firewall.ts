@@ -358,6 +358,19 @@ function extraBlockers(
   fixtureBlock: boolean,
 ): readonly RequirementEvaluation[] {
   const extra: RequirementEvaluation[] = [];
+  if (snapshot.sunreyIssuancePackage?.fixture === true) {
+    extra.push(
+      Object.freeze({
+        requirementId: 'SUNREY.FIXTURE_PARAMETER_PACKAGE',
+        domain: 'SUNREY_COIN_ISSUANCE',
+        evidenceClass: 'HUMAN',
+        satisfied: false,
+        blocking: true,
+        blockerCode: 'FIXTURE_EVIDENCE_NOT_PRODUCTION_AUTHORITY',
+        notes: 'fixture SunRey parameter package cannot authorize production issuance',
+      }),
+    );
+  }
   if (fixtureBlock) {
     extra.push(
       Object.freeze({

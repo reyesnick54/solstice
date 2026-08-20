@@ -37,6 +37,8 @@ import {
   productionParameterRecordsFromPackage,
 } from './parameter-package/index.ts';
 import { currentUnconfiguredParameters, unconfiguredParameter } from './parameters.ts';
+import { parametersFromSunReyPackage } from './sunrey-package/validation.ts';
+import type { SunReyProductionIssuanceParameterPackage } from './sunrey-package/types.ts';
 import {
   BINDING_KEYS,
   PRODUCTION_PARAMETER_IDS,
@@ -353,4 +355,18 @@ export function withUnconfigured(id: ProductionParameterId): ProductionEconomicA
 
 export function bindingKeysComplete(): boolean {
   return BINDING_KEYS.every((key) => currentRepositoryBindings().some((row) => row.key === key));
+}
+
+export function withSunReyIssuancePackage(
+  base: ProductionEconomicActivationSnapshot,
+  pkg: SunReyProductionIssuanceParameterPackage,
+): ProductionEconomicActivationSnapshot {
+  const overlay = parametersFromSunReyPackage(pkg);
+  const merged = PRODUCTION_PARAMETER_IDS.map(
+    (id) => overlay.find((row) => row.id === id) ?? base.parameters.find((row) => row.id === id) ?? unconfiguredParameter(id),
+  );
+  return withSnapshot(base, {
+    parameters: Object.freeze(merged),
+    sunreyIssuancePackage: pkg,
+  });
 }

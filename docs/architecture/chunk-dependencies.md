@@ -188,6 +188,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
@@ -1360,6 +1361,18 @@ or create a second mint. Do not create `packages/production-economics`,
 `packages/monetary-activation`, `packages/mainnet-economics`,
 `packages/tokenomics-v2`, or `packages/launch-economics`. The
 evaluator returns `mustStop: false`.
+Chunk 145 implements the SunRey production issuance policy candidate at
+`packages/human-economic-contribution/src/valuation/production-candidate`,
+`packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate`,
+and
+`packages/sunrey-chain/src/economics/production-activation/sunrey-package`.
+Capability `sunrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on the existing valuation, settlement-bridge, and
+production-activation owners. It does not select production quantities
+or activate issuance. Fixture packages cannot authorize production.
+Do not create `packages/sunrey-tokenomics`,
+`packages/production-valuation`, `packages/issuance-parameters`, or
+`packages/human-worth-token`. The evaluator returns `mustStop: false`.
 Chunk 144 implements the canonical production economic parameter
 registry at
 `packages/sunrey-chain/src/economics/production-activation/parameter-package`.
