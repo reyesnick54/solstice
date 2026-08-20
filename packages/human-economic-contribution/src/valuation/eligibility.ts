@@ -55,7 +55,7 @@ export const VALUATION_ELIGIBILITY_MATRIX: Readonly<Record<ContributionClass, re
     ]),
     CREATOR_ROYALTY_EVENT: Object.freeze(['CREATOR_ROYALTY_SCHEDULE', 'CONTRACTUAL_COMPENSATION']),
     OTHER_GOVERNED_HUMAN_CONTRIBUTION: Object.freeze([]),
-  });
+  } as Record<ContributionClass, readonly PermittedValuationMethod[]>);
 
 export function permittedMethodsFor(contributionClass: ContributionClass): readonly PermittedValuationMethod[] {
   return VALUATION_ELIGIBILITY_MATRIX[contributionClass];

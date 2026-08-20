@@ -15,6 +15,7 @@ import {
   runNamingAudit,
   scanLegacyOccurrences,
 } from './naming-audit.ts';
+import { GITHUB_REPOSITORY_PATH, GITHUB_REPOSITORY_RENAMED } from './product-identity.ts';
 
 const REPO_ROOT = join(import.meta.dirname, '../../..');
 
@@ -103,10 +104,12 @@ describe('SunRey naming audit', () => {
   });
 
   it('repo name is not proposed for modification', () => {
-    const occurrences = scanLegacyOccurrences(REPO_ROOT, ['package.json']);
-    const repo = occurrences.find((item) => item.classification === 'REPOSITORY_NAME');
-    assert.ok(repo);
-    assert.equal(repo.recommendedAction, 'HISTORICAL_ONLY');
-    assert.notEqual(repo.recommendedAction, 'MUST_MIGRATE');
+    assert.equal(GITHUB_REPOSITORY_RENAMED, false);
+    assert.equal(GITHUB_REPOSITORY_PATH, 'reyesnick54/solstice');
+    const occurrences = scanLegacyOccurrences(REPO_ROOT, ['packages/config/src/product-identity.ts']);
+    const repoPath = occurrences.find((item) => item.lineText.includes('GITHUB_REPOSITORY_PATH'));
+    assert.ok(repoPath);
+    assert.equal(repoPath.recommendedAction, 'HISTORICAL_ONLY');
+    assert.notEqual(repoPath.recommendedAction, 'MUST_MIGRATE');
   });
 });
