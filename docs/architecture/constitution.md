@@ -95,6 +95,7 @@ never be two implementations of these systems.
 | Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
+| SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
@@ -1757,6 +1758,20 @@ create `packages/production-economics`, `packages/monetary-activation`,
 `packages/mainnet-economics`, `packages/tokenomics-v2`, or
 `packages/launch-economics`. See
 [`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
+Chunk 145 defines the SunRey Coin production-candidate valuation,
+conversion, supply, and issuance parameter package at
+`packages/human-economic-contribution/src/valuation/production-candidate`,
+`packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate`,
+and
+`packages/sunrey-chain/src/economics/production-activation/sunrey-package`.
+Capability `sunrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on those existing owners. It does not select production
+quantities, activate issuance, flip `LIVE_*` flags, or create a second
+mint. Fixture packages cannot authorize production. Chunk 71 remains
+the monetary authority. Do not create `packages/sunrey-tokenomics`,
+`packages/production-valuation`, `packages/issuance-parameters`, or
+`packages/human-worth-token`. See
+[`docs/economics/chunk-145-sunrey-production-policy-candidate.md`](../economics/chunk-145-sunrey-production-policy-candidate.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is

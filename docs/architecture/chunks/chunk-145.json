@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-145",
+  "title": "SunRey Coin Production-Candidate Human Contribution Valuation, Settlement Conversion, Supply, and Issuance Parameter Package",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "sunrey-human-economic-contributions",
+    "sunrey-human-contribution-valuation",
+    "sunrey-human-contribution-monetary-bridge",
+    "sunrey-human-information-network",
+    "sunrey-economic-asset-verification",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-production-issuance-policy-candidate"
+  ],
+  "notes": "IMPLEMENTED at packages/human-economic-contribution/src/valuation/production-candidate, packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate, and packages/sunrey-chain/src/economics/production-activation/sunrey-package. Candidate policies only. Does not select production quantities, activate SunRey issuance, flip LIVE_* flags, or create a second mint. Fixture packages cannot authorize production. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-tokenomics, packages/production-valuation, packages/issuance-parameters, or packages/human-worth-token."
+}

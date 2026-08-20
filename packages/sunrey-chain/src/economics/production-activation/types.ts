@@ -361,6 +361,7 @@ export type ProductionEconomicActivationReadinessReport = {
 export type ProductionEconomicActivationSnapshot = {
   readonly bindings: readonly VersionBinding[];
   readonly parameters: readonly ProductionParameterRecord[];
+  readonly sunreyIssuancePackage?: import('./sunrey-package/types.ts').SunReyProductionIssuanceParameterPackage | null;
   readonly evidence: readonly ActivationEvidenceRecord[];
   readonly hinGates: HinProductionGates;
   readonly hinChainAnchor: HinChainAnchorReadiness;

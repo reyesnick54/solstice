@@ -158,6 +158,7 @@
     "demo:sunrey-human-contribution-monetary-bridge": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/human-contribution-bridge/demo.ts",
     "demo:sunrey-human-contribution-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/human-contribution-bridge/settlement/demo.ts",
     "demo:sunrey-production-economic-firewall": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/demo.ts",
+    "demo:sunrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/policy-candidate-demo.ts",
     "demo:sunrey-protocol-treasury": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/treasury/demo.ts",
     "demo:sunrey-economic-stress": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-economics/src/stress/demo.ts",
     "test:formal-smoke": "FORMAL_PROFILE=FORMAL_SMOKE node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts smoke && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",
