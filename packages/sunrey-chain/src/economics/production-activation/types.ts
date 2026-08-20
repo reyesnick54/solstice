@@ -136,6 +136,7 @@ export const BINDING_KEYS = [
   'moonreyAttributionPolicy',
   'moonreyProductiveValuePolicy',
   'moonreyGpuvConversionPolicy',
+  'moonreyProductionIssuancePackage',
   'oracleCertificationPolicy',
   'economicDataFabricVersion',
   'hinPolicy',
@@ -165,6 +166,8 @@ export type ProductionParameterRecord = {
   readonly valueHash: string | null;
   readonly governed: boolean;
   readonly infrastructureMetadataOnly: boolean;
+  /** Chunk 144 validation receipt. Absent on historical UNCONFIGURED rows. */
+  readonly validationReceiptHash?: string | null;
 };
 
 export type ActivationEvidenceRecord = {
@@ -361,6 +364,7 @@ export type ProductionEconomicActivationReadinessReport = {
 export type ProductionEconomicActivationSnapshot = {
   readonly bindings: readonly VersionBinding[];
   readonly parameters: readonly ProductionParameterRecord[];
+  readonly sunreyIssuancePackage?: import('./sunrey-package/types.ts').SunReyProductionIssuanceParameterPackage | null;
   readonly evidence: readonly ActivationEvidenceRecord[];
   readonly hinGates: HinProductionGates;
   readonly hinChainAnchor: HinChainAnchorReadiness;
@@ -378,4 +382,20 @@ export type ProductionEconomicActivationSnapshot = {
   readonly sunreyEngineeringReady: boolean;
   readonly exchangeEngineeringReady: boolean;
   readonly intendedProductionCategories: readonly string[];
+  readonly moonreyProductionCandidate: MoonReyProductionCandidateSnapshot;
+};
+
+export type MoonReyProductionCandidateSnapshot = {
+  readonly packageId: string;
+  readonly packageHash: string;
+  readonly sourceClass: string;
+  readonly fixture: boolean;
+  readonly productionActivated: false;
+  readonly gpuvValuesSelected: false;
+  readonly conversionSelected: false;
+  readonly gpuvEqualsMoonRey: false;
+  readonly legacyV1ProductionEligible: false;
+  readonly fixtureAuthorizesProduction: false;
+  readonly governedValueV2Required: true;
+  readonly chunk71RemainsMonetaryAuthority: true;
 };

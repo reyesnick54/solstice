@@ -36,6 +36,7 @@
     "demo:moonrey-v2-shadow-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/shadow-economics/demo.ts",
     "demo:moonrey-governed-value-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/value-settlement/demo.ts",
     "demo:moonrey-productive-value-engine": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/value-function/engine-demo.ts",
+    "demo:moonrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/productive/policy-governance/value-function/production-candidate/demo.ts",
     "sunrey-oracle": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/oracle/production/cli.ts",
     "demo:fees": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/fees/demo.ts",
     "demo:interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/interop/demo.ts",
@@ -67,6 +68,8 @@
     "demo:human-contribution-monetary-bridge": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/demo.ts",
     "demo:human-contribution-settlement": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/human-contribution-bridge/settlement/demo.ts",
     "demo:sunrey-production-economic-firewall": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/demo.ts",
+    "demo:sunrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/policy-candidate-demo.ts",
+    "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/parameter-package/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
   },
   "engines": {

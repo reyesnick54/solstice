@@ -95,6 +95,7 @@ never be two implementations of these systems.
 | Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
+| SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | HIN → SunRey Chain anchoring | `packages/information-market` | `packages/information-market/src/network/chain-anchor/adapter.ts` | PARTIAL |
@@ -105,6 +106,7 @@ never be two implementations of these systems.
 | MoonRey Productive Value Function constitution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/registry.ts` | IMPLEMENTED |
 | MoonRey V2 shadow evaluation and migration | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/shadow-economics/evaluator.ts` | IMPLEMENTED |
 | MoonRey productive value settlement bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-settlement/bridge.ts` | IMPLEMENTED |
+| MoonRey production-candidate issuance policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate/index.ts` | IMPLEMENTED |
 | MoonRey Productive Value Function engine | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/value-function/engine.ts` | IMPLEMENTED |
 | MoonRey cross-domain attribution policy | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts` | IMPLEMENTED |
 | MoonRey productive economic event attribution | `packages/sunrey-chain` | `packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts` | IMPLEMENTED |
@@ -1767,6 +1769,46 @@ create `packages/production-economics`, `packages/monetary-activation`,
 `packages/mainnet-economics`, `packages/tokenomics-v2`, or
 `packages/launch-economics`. See
 [`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
+Chunk 146 defines the MoonRey production-candidate Productive Value,
+GPUV conversion, category-cap, and issuance parameter package inside
+the existing value-function, value-settlement, and
+production-activation owners. Capability
+`moonrey-production-issuance-policy-candidate` is `IMPLEMENTED`.
+GPUV remains not physical, not fiat, not market price, not MoonRey,
+and not a guarantee of economic value. Production GPUV values and
+conversion rates stay unconfigured. Chunk 71 remains the mint. Do not
+create `packages/moonrey-production-tokenomics`,
+`packages/gpuv-conversion`, `packages/moonrey-issuance-policy`,
+`packages/production-value-function`, or
+`packages/moonrey-production-policy`. See
+[`docs/economics/chunk-146-moonrey-production-policy-candidate.md`](../economics/chunk-146-moonrey-production-policy-candidate.md).
+Chunk 145 defines the SunRey Coin production-candidate valuation,
+conversion, supply, and issuance parameter package at
+`packages/human-economic-contribution/src/valuation/production-candidate`,
+`packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate`,
+and
+`packages/sunrey-chain/src/economics/production-activation/sunrey-package`.
+Capability `sunrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on those existing owners. It does not select production
+quantities, activate issuance, flip `LIVE_*` flags, or create a second
+mint. Fixture packages cannot authorize production. Chunk 71 remains
+the monetary authority. Do not create `packages/sunrey-tokenomics`,
+`packages/production-valuation`, `packages/issuance-parameters`, or
+`packages/human-worth-token`. See
+[`docs/economics/chunk-145-sunrey-production-policy-candidate.md`](../economics/chunk-145-sunrey-production-policy-candidate.md).
+Chunk 144 implements the canonical production economic parameter
+registry at
+`packages/sunrey-chain/src/economics/production-activation/parameter-package`.
+Capability `sunrey-production-economic-parameters` is `IMPLEMENTED` on
+the existing monetary/economic owner. It reuses the Chunk 143
+parameter IDs and supplies typed values, packages, hashes, coverage,
+and validation receipts. It does not choose production tokenomics,
+activate production, flip `LIVE_*` flags, mint, or mutate
+`AssetSupplyBook`. `CONFIGURED` candidate is not `PRODUCTION
+ACTIVATED`. Do not create `packages/tokenomics`,
+`packages/economic-parameters`, `packages/monetary-policy-v2`,
+`packages/coin-supply`, or `packages/production-mint`. See
+[`docs/economics/chunk-144-production-economic-parameter-registry.md`](../economics/chunk-144-production-economic-parameter-registry.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is

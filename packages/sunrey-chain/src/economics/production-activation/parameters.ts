@@ -3,10 +3,15 @@
  *
  * Zero / placeholder / development values are not production parameters.
  * Hashing is ordered by PRODUCTION_PARAMETER_IDS — never unordered JSON.
+ *
+ * Chunk 144: CONFIGURED requires a registered parameter-package
+ * validation receipt. sourceClass "PRODUCTION" cannot bypass.
  */
 
 import { encodeString, sha256Hex } from '../../validators/canonical.ts';
 
+import { issuedReceipt } from './parameter-package/receipt.ts';
+import { FORBIDDEN_PARAMETER_SOURCE_CLASSES, PARAMETER_SOURCE_CLASSES } from './parameter-package/types.ts';
 import {
   PRODUCTION_PARAMETER_IDS,
   REJECTED_PARAMETER_SOURCES,
@@ -23,7 +28,30 @@ export function parameterSourceRejected(
   if (infrastructureMetadataOnly) {
     return false;
   }
-  return (REJECTED_PARAMETER_SOURCES as readonly string[]).includes(sourceClass);
+  if ((REJECTED_PARAMETER_SOURCES as readonly string[]).includes(sourceClass)) {
+    return true;
+  }
+  if ((FORBIDDEN_PARAMETER_SOURCE_CLASSES as readonly string[]).includes(sourceClass)) {
+    return true;
+  }
+  if (sourceClass !== 'UNCONFIGURED' && !(PARAMETER_SOURCE_CLASSES as readonly string[]).includes(sourceClass)) {
+    return true;
+  }
+  return false;
+}
+
+function recordHasRegisteredReceipt(record: ProductionParameterRecord): boolean {
+  const hash = record.validationReceiptHash ?? null;
+  if (!hash) {
+    return false;
+  }
+  const receipt = issuedReceipt(hash);
+  return (
+    receipt !== undefined &&
+    receipt.parameterId === record.id &&
+    receipt.candidateConfigured &&
+    receipt.productionActivated === false
+  );
 }
 
 export function unconfiguredParameter(id: ProductionParameterId): ProductionParameterRecord {
@@ -35,6 +63,7 @@ export function unconfiguredParameter(id: ProductionParameterId): ProductionPara
     valueHash: null,
     governed: false,
     infrastructureMetadataOnly: false,
+    validationReceiptHash: null,
   });
 }
 
@@ -57,6 +86,9 @@ export function classifyParameter(record: ProductionParameterRecord): Production
   if (record.versionId.toLowerCase() === 'latest') {
     return Object.freeze({ ...record, status: 'UNCONFIGURED' });
   }
+  if (!recordHasRegisteredReceipt(record)) {
+    return Object.freeze({ ...record, status: 'UNCONFIGURED' });
+  }
   return Object.freeze({ ...record, status: 'CONFIGURED' });
 }
 
@@ -73,6 +105,7 @@ export function parameterManifestHash(parameters: readonly ProductionParameterRe
       encodeString(row.valueHash ?? ''),
       encodeString(row.governed ? '1' : '0'),
       encodeString(row.infrastructureMetadataOnly ? '1' : '0'),
+      encodeString(row.validationReceiptHash ?? ''),
     );
   }
   return sha256Hex(Buffer.concat(parts));

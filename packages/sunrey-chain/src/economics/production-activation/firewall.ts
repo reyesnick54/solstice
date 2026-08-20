@@ -358,6 +358,19 @@ function extraBlockers(
   fixtureBlock: boolean,
 ): readonly RequirementEvaluation[] {
   const extra: RequirementEvaluation[] = [];
+  if (snapshot.sunreyIssuancePackage?.fixture === true) {
+    extra.push(
+      Object.freeze({
+        requirementId: 'SUNREY.FIXTURE_PARAMETER_PACKAGE',
+        domain: 'SUNREY_COIN_ISSUANCE',
+        evidenceClass: 'HUMAN',
+        satisfied: false,
+        blocking: true,
+        blockerCode: 'FIXTURE_EVIDENCE_NOT_PRODUCTION_AUTHORITY',
+        notes: 'fixture SunRey parameter package cannot authorize production issuance',
+      }),
+    );
+  }
   if (fixtureBlock) {
     extra.push(
       Object.freeze({
@@ -384,7 +397,50 @@ function extraBlockers(
       }),
     );
   }
+  extra.push(...moonreyCandidatePackageBlockers(snapshot));
   return extra;
+}
+
+function moonreyCandidatePackageBlockers(
+  snapshot: ProductionEconomicActivationSnapshot,
+): readonly RequirementEvaluation[] {
+  const candidate = snapshot.moonreyProductionCandidate;
+  const extra: RequirementEvaluation[] = [];
+  if (candidate.productionActivated) {
+    extra.push(packageBlock('MOONREY.PRODUCTION_CANDIDATE_INACTIVE', 'VALUE_POLICY_NOT_PRODUCTION', 'production-candidate package cannot activate production'));
+  }
+  if (candidate.gpuvEqualsMoonRey) {
+    extra.push(packageBlock('MOONREY.GPUV_NOT_MOONREY', 'VALUE_POLICY_NOT_PRODUCTION', 'GPUV equals MoonRey is forbidden'));
+  }
+  if (candidate.legacyV1ProductionEligible) {
+    extra.push(packageBlock('MOONREY.LEGACY_V1_INELIGIBLE', 'VALUE_POLICY_NOT_PRODUCTION', 'legacy V1 cannot qualify production'));
+  }
+  if (candidate.fixtureAuthorizesProduction || candidate.fixture) {
+    extra.push(packageBlock('MOONREY.FIXTURE_NOT_AUTHORITY', 'FIXTURE_EVIDENCE_NOT_PRODUCTION_AUTHORITY', 'fixture production-candidate package is not production authority'));
+  }
+  if (candidate.gpuvValuesSelected || candidate.conversionSelected) {
+    extra.push(packageBlock('MOONREY.VALUES_NOT_PRODUCTION', 'VALUE_POLICY_NOT_PRODUCTION', 'rehearsal or unconfigured GPUV/conversion cannot qualify production'));
+  }
+  if (!candidate.governedValueV2Required || !candidate.chunk71RemainsMonetaryAuthority) {
+    extra.push(packageBlock('MOONREY.CHUNK_71_GATE', 'VALUE_POLICY_NOT_PRODUCTION', 'Chunk 71 remains the monetary authority'));
+  }
+  return extra;
+}
+
+function packageBlock(
+  requirementId: string,
+  blockerCode: EconomicActivationBlockerCode,
+  notes: string,
+): RequirementEvaluation {
+  return Object.freeze({
+    requirementId,
+    domain: 'MOONREY_COIN_ISSUANCE',
+    evidenceClass: 'ENGINEERING',
+    satisfied: false,
+    blocking: true,
+    blockerCode,
+    notes,
+  });
 }
 
 function mergeExtra(

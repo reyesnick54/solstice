@@ -81,6 +81,22 @@ export {
   fixtureEvent,
   fixtureProductiveValueResult,
 } from './fixtures.ts';
+export * as productionSettlementCandidate from './production-candidate/index.ts';
+export {
+  CANONICAL_MOONREY_ISSUANCE_CLASS,
+  MOONREY_PRODUCTION_CONVERSION_UNCONFIGURED,
+  convertProductionCandidateGpuv,
+  createProductionConversionPolicyCandidate,
+  rehearsalConversionPolicy,
+  rehearsalEvidence,
+  rehearsalUsage,
+  unconfiguredProductionConversionPolicy,
+} from './production-candidate/index.ts';
+export type {
+  MoonReyProductionSettlementConversionPolicyCandidate,
+  ProductionCandidateConversionInput,
+  ProductionCandidateSettlementEvidence,
+} from './production-candidate/index.ts';
 export {
   aiAuthorized,
   gpuvEqualsMoonReyByDefinition,

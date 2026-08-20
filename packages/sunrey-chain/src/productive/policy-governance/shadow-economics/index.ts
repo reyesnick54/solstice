@@ -2,6 +2,7 @@ export {
   CANONICAL_SUPPLY_MUTATED,
   GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2,
   LEGACY_ENGINEERING_SIMULATION_V1,
+  PRODUCTION_CANDIDATE_UNACTIVATED,
   LEGACY_V1_REMOVED,
   PRODUCTION_MIGRATION_APPROVED,
   PRODUCTION_VALUE_PATH,
@@ -17,6 +18,7 @@ export {
   VALUE_PATH_IDENTITIES,
   isGovernedV2,
   isLegacyV1,
+  isProductionCandidateUnactivated,
   isProductionValuePath,
   productionActivationAuthorized,
 } from './identities.ts';
@@ -45,6 +47,8 @@ export type {
   ShadowPoisonFlags,
   ShadowReasonCode,
 } from './types.ts';
+export { inspectProductionCandidatePolicy, inspectRehearsalProductionCandidate } from './production-candidate.ts';
+export type { ProductionCandidateShadowInspection } from './production-candidate.ts';
 export { MoonReyEconomicShadowEvaluator } from './evaluator.ts';
 export { evaluateLegacyV1 } from './v1.ts';
 export type { V1Evaluation } from './v1.ts';

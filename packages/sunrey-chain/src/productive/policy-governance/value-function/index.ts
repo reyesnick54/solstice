@@ -216,6 +216,32 @@ export type {
   ProductiveBaseValueScheduleEntry,
   ProductionBaseValueSchedule,
 } from './basis.ts';
+export * as productionCandidate from './production-candidate/index.ts';
+export {
+  CATEGORY_COVERAGE_STATUSES,
+  GOVERNED_VALUE_V2,
+  GPUV_IS_NOT_MOONREY,
+  PRODUCTION_CANDIDATE_POLICY_ID,
+  VALUE_UNCONFIGURED,
+  applyCandidateBaseValue,
+  createBaseValueScheduleCandidate,
+  evaluateProductionCandidateValue,
+  everyCategoryReported,
+  rehearsalEnergySchedule,
+  rehearsalProductiveValuePolicyCandidate,
+  rehearsalValueInput,
+  reportCategoryCoverage,
+  unconfiguredProductiveValuePolicyCandidate,
+  validateProductionValueInput,
+  validateProductiveValuePolicyCandidate,
+} from './production-candidate/index.ts';
+export type {
+  CategoryCoverageRecord,
+  MoonReyProductiveValuePolicyCandidate,
+  ProductionCandidateValueInput,
+  ProductionCandidateValueReceipt,
+  ProductiveBaseValueScheduleCandidate,
+} from './production-candidate/index.ts';
 export type {
   EvaluateProductiveValueContext,
   ProductiveValueEvaluation,
