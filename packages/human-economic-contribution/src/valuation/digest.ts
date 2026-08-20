@@ -1,7 +1,5 @@
 import { createHash } from 'node:crypto';
 
-import type { HumanContributionValuationResult } from './types.ts';
-
 export function sha256Hex(value: string): string {
   return createHash('sha256').update(value).digest('hex');
 }
@@ -42,16 +40,15 @@ export function computeValuationDigest(input: {
   return sha256Hex(valuationDigestMaterial(input));
 }
 
-export function valuationDigestOf(result: Pick<
-  HumanContributionValuationResult,
-  | 'valuationId'
-  | 'contributionId'
-  | 'fingerprint'
-  | 'valuationPolicyId'
-  | 'valuationPolicyVersion'
-  | 'valuationMethod'
-  | 'finalReferenceValue'
-  | 'referenceDenomination'
->): string {
+export function valuationDigestOf(result: {
+  readonly valuationId: string;
+  readonly contributionId: string;
+  readonly fingerprint: string;
+  readonly valuationPolicyId: string;
+  readonly valuationPolicyVersion: string;
+  readonly valuationMethod: string;
+  readonly finalReferenceValue: bigint;
+  readonly referenceDenomination: string;
+}): string {
   return computeValuationDigest(result);
 }

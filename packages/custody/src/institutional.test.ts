@@ -22,7 +22,6 @@ function dualVault(h: ReturnType<typeof createInstitutionalHarness>) {
     authorizedApproverIds: [opsA.actor.actorId, opsB.actor.actorId],
     classifications: ['SEGREGATED', 'HOT'],
   });
-  assert.equal(vault.outcome, 'OK');
   if (vault.outcome !== 'OK') {
     throw new Error('vault');
   }
@@ -31,7 +30,6 @@ function dualVault(h: ReturnType<typeof createInstitutionalHarness>) {
     vaultId: vault.value.vaultId,
     classifications: ['SEGREGATED', 'HOT'],
   });
-  assert.equal(wallet.outcome, 'OK');
   if (wallet.outcome !== 'OK') {
     throw new Error('wallet');
   }
@@ -51,7 +49,6 @@ function approvedDestination(
     address,
     label: 'test dest',
   });
-  assert.equal(destination.outcome, 'OK');
   if (destination.outcome !== 'OK') {
     throw new Error('dest');
   }
@@ -61,7 +58,6 @@ function approvedDestination(
     destinationId: destination.value.destinationId,
     status: 'APPROVED',
   });
-  assert.equal(verified.outcome, 'OK');
   if (verified.outcome !== 'OK') {
     throw new Error('verify');
   }
@@ -105,7 +101,6 @@ describe('institutional native-asset custody', () => {
       address: 'sr1_not_approved',
       label: 'pending',
     });
-    assert.equal(pending.outcome, 'OK');
     if (pending.outcome !== 'OK') {
       throw new Error('pending');
     }
@@ -145,7 +140,6 @@ describe('institutional native-asset custody', () => {
       destinationId: destination.destinationId,
       quantity: 5_000n,
     });
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
       throw new Error('request');
     }
@@ -155,7 +149,6 @@ describe('institutional native-asset custody', () => {
       withdrawalId: requested.value.withdrawalId,
       decision: 'APPROVE',
     });
-    assert.equal(one.outcome, 'OK');
     if (one.outcome !== 'OK') {
       throw new Error('one');
     }
@@ -168,7 +161,6 @@ describe('institutional native-asset custody', () => {
       withdrawalId: requested.value.withdrawalId,
       decision: 'APPROVE',
     });
-    assert.equal(two.outcome, 'OK');
     if (two.outcome !== 'OK') {
       throw new Error('two');
     }
@@ -192,7 +184,6 @@ describe('institutional native-asset custody', () => {
       destinationId: destination.destinationId,
       quantity: 1_000n,
     });
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
       throw new Error('req');
     }
@@ -232,7 +223,6 @@ describe('institutional native-asset custody', () => {
       destinationId: destination.destinationId,
       quantity: 2_000n,
     });
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
       throw new Error('req');
     }
@@ -253,7 +243,6 @@ describe('institutional native-asset custody', () => {
       actorKind: 'HUMAN_OPERATOR',
       withdrawalId: requested.value.withdrawalId,
     });
-    assert.equal(unknown.outcome, 'OK');
     if (unknown.outcome !== 'OK') {
       throw new Error('unknown');
     }
@@ -271,7 +260,6 @@ describe('institutional native-asset custody', () => {
     h.custody.queryUnknownWithdrawal(requested.value.withdrawalId);
     h.custody.finalizeBlock();
     const recovered = h.custody.recognizeFinality(requested.value.withdrawalId);
-    assert.equal(recovered.outcome, 'OK');
     if (recovered.outcome !== 'OK') {
       throw new Error('recovered');
     }
@@ -293,7 +281,6 @@ describe('institutional native-asset custody', () => {
       destinationId: destination.destinationId,
       quantity: 3_000n,
     });
-    assert.equal(requested.outcome, 'OK');
     if (requested.outcome !== 'OK') {
       throw new Error('req');
     }
@@ -311,7 +298,6 @@ describe('institutional native-asset custody', () => {
     });
     h.custody.simulateWithdrawal(requested.value.withdrawalId);
     const exported = h.custody.exportColdPackage(requested.value.withdrawalId);
-    assert.equal(exported.outcome, 'OK');
     if (exported.outcome !== 'OK') {
       throw new Error('export');
     }
@@ -376,7 +362,6 @@ describe('institutional native-asset custody', () => {
       destinationId: destination.destinationId,
       quantity: 1_000n,
     });
-    assert.equal(second.outcome, 'OK');
     if (second.outcome !== 'OK') {
       throw new Error('second');
     }
@@ -432,7 +417,6 @@ describe('institutional native-asset custody', () => {
     });
     assert.equal(proposal.outcome, 'REJECTED');
     const recovery = h.custody.recoveryManifest(vault.vaultId);
-    assert.equal(recovery.outcome, 'OK');
     if (recovery.outcome !== 'OK') {
       throw new Error('recovery');
     }

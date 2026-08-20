@@ -20,20 +20,20 @@ export const SIMULATION_CONVERSION_POLICY_ID = 'moonrey.productive-settlement.co
 export const SIMULATION_CONVERSION_POLICY_VERSION = '1' as const;
 
 export function simulationConversionPolicy(input?: {
-  readonly policyId?: string;
-  readonly policyVersion?: string;
-  readonly environment?: 'DEVELOPMENT' | 'SIMULATION';
-  readonly conversionNumerator?: bigint;
-  readonly conversionDenominator?: bigint;
-  readonly roundingRule?: ConversionRoundingRule;
-  readonly perContributionCeiling?: bigint;
-  readonly perEventCeiling?: bigint;
-  readonly perObjectCeiling?: bigint;
-  readonly perControllerCeiling?: bigint;
-  readonly perCategoryEpochCeiling?: bigint;
-  readonly globalEpochCeiling?: bigint;
-  readonly effectiveHeight?: number;
-  readonly supersededHeight?: number | null;
+  readonly policyId?: string | undefined;
+  readonly policyVersion?: string | undefined;
+  readonly environment?: 'DEVELOPMENT' | 'SIMULATION' | undefined;
+  readonly conversionNumerator?: bigint | undefined;
+  readonly conversionDenominator?: bigint | undefined;
+  readonly roundingRule?: ConversionRoundingRule | undefined;
+  readonly perContributionCeiling?: bigint | undefined;
+  readonly perEventCeiling?: bigint | undefined;
+  readonly perObjectCeiling?: bigint | undefined;
+  readonly perControllerCeiling?: bigint | undefined;
+  readonly perCategoryEpochCeiling?: bigint | undefined;
+  readonly globalEpochCeiling?: bigint | undefined;
+  readonly effectiveHeight?: number | undefined;
+  readonly supersededHeight?: number | null | undefined;
 }): MoonReyProductiveSettlementConversionPolicy {
   const conversionDenominator = input?.conversionDenominator ?? 5n;
   if (conversionDenominator <= 0n) {

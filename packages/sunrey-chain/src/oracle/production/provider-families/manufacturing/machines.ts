@@ -115,5 +115,8 @@ export function refuseMachineHoursAsUnit(quantity: bigint): Result<never, Manufa
 
 export function machineHoursAreNotProductCount(): true {
   const refused = refuseMachineHoursAsUnit(3n);
-  return !refused.ok && refused.error.code === 'MACHINE_TIME_CANNOT_BECOME_UNIT';
+  if (refused.ok || refused.error.code !== 'MACHINE_TIME_CANNOT_BECOME_UNIT') {
+    throw new Error('MACHINE_HOURS_ACCEPTED_AS_UNIT');
+  }
+  return true;
 }

@@ -48,7 +48,6 @@ function harness() {
     true,
   );
   const actor = identity.service.resolveActorContext('operator_1');
-  assert.equal(actor.ok, true);
   if (!actor.ok) {
     throw new Error('actor');
   }
@@ -87,7 +86,7 @@ describe('Strategy Lab', () => {
     const compiled = lab.compile('str_two_etf_cash', 'v1', budget);
     assert.equal(compiled.ok, true);
     if (!compiled.ok || !draft.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const first = lab.backtest({
       strategyId: 'str_two_etf_cash',
@@ -112,7 +111,7 @@ describe('Strategy Lab', () => {
     assert.equal(first.ok, true);
     assert.equal(second.ok, true);
     if (!first.ok || !second.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(first.value.outputHash, second.value.outputHash);
     assert.equal(first.value.transactionCosts.mode, 'EXPLICIT_COSTS');
@@ -175,7 +174,7 @@ describe('Strategy Lab', () => {
     const grid = expandParameterGrid({ cashBps: ['1000', '2000'], cadence: ['WEEKLY'] });
     assert.equal(grid.ok, true);
     if (!grid.ok || !train.ok || !oos.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const experiment = lab.experiment({
       strategyId: 'str_two_etf_cash',
@@ -188,9 +187,8 @@ describe('Strategy Lab', () => {
       partition: 'TRAIN',
       selectionCriteria: 'highest-train-total-return-not-unbiased',
     });
-    assert.equal(experiment.ok, true);
     if (!experiment.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(experiment.value.resultsRetained, true);
     assert.equal(experiment.value.trials.every((trial) => trial.hidden === false), true);
@@ -243,7 +241,7 @@ describe('Strategy Lab', () => {
     });
     assert.equal(train.ok && oos.ok, true);
     if (!train.ok || !oos.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const report = lab.validate({
       strategyId: 'str_overfit_fixture',
@@ -288,7 +286,7 @@ describe('Strategy Lab', () => {
       partition: 'OUT_OF_SAMPLE_TEST',
     });
     if (!train.ok || !oos.ok) {
-      return;
+      throw new Error('expected ok');
     }
     lab.validate({
       strategyId: 'str_two_etf_cash',
@@ -303,9 +301,8 @@ describe('Strategy Lab', () => {
     const shadow = lab.approveShadow(actor, 'str_two_etf_cash', 'v1', 'human shadow review');
     assert.equal(shadow.ok, true);
     const run = lab.startShadow('str_two_etf_cash', 'v1', dataset.datasetId, dataset.version);
-    assert.equal(run.ok, true);
     if (!run.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const decision = lab.stepShadow({
       run: run.value,

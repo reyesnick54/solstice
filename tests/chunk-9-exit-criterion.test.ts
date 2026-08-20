@@ -21,18 +21,16 @@ describe('Chunk 9 exit criterion', () => {
     const { runtime, payments } = world;
 
     const beneficiary = payments.createBeneficiary(beneficiaryIntent(world, 'e2e'));
-    assert.equal(beneficiary.outcome, 'OK');
     if (beneficiary.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(beneficiary.value.status, 'ACTIVE');
     assert.equal(beneficiary.value.screeningStatus, 'CLEAR');
     assert.equal(beneficiary.value.accountCoordinate.displayHint, '7519');
 
     const quote = payments.createQuote(quoteIntent(world, 'e2e'));
-    assert.equal(quote.outcome, 'OK');
     if (quote.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(quote.value.sourceAmount.minorUnits, SOURCE_MINOR);
     assert.equal(quote.value.destinationAmount.minorUnits, DEST_MINOR);
@@ -56,9 +54,8 @@ describe('Chunk 9 exit criterion', () => {
     const payment = payments.initiatePayment(
       payIntent(world, 'e2e', beneficiary.value.beneficiaryId, quote.value.quoteId),
     );
-    assert.equal(payment.outcome, 'OK');
     if (payment.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(payment.value.status, 'SETTLED');
     assert.equal(payment.value.routeId, 'sim-gcc-usd-sar');

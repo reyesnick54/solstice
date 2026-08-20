@@ -28,7 +28,12 @@ export function collectRightsCodes(
   if (rule.requireSubject && !descriptor.subjectRef) {
     remember('RIGHTS_REFERENCE_REQUIRED');
   }
-  if (rule.requireControllerSubjectSeparation && descriptor.controllerRef && descriptor.subjectRef && descriptor.controllerRef === descriptor.subjectRef) {
+  if (
+    rule.requireControllerSubjectSeparation &&
+    descriptor.controllerRef &&
+    descriptor.subjectRef &&
+    String(descriptor.controllerRef) === String(descriptor.subjectRef)
+  ) {
     remember('CONTROLLER_SUBJECT_SEPARATION_REQUIRED');
   }
   if (rule.requireOperator && !descriptor.operatorRef) {

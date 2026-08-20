@@ -193,11 +193,11 @@ export type ComputeSourceObservation = {
   readonly accountControllerId: string;
   readonly measurementStart: bigint;
   readonly measurementEnd: bigint;
-  readonly tokenBreakdown?: ComputeTokenBreakdown;
-  readonly capacity?: ComputeCapacityInventory;
-  readonly energyConsumptionFactRef?: string;
-  readonly energyProductionFactRef?: string;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly tokenBreakdown?: ComputeTokenBreakdown | undefined;
+  readonly capacity?: ComputeCapacityInventory | undefined;
+  readonly energyConsumptionFactRef?: string | undefined;
+  readonly energyProductionFactRef?: string | undefined;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type ComputeEconomicRecord = {

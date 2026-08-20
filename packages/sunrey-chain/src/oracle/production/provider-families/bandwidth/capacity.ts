@@ -22,7 +22,10 @@ import {
 } from './types.ts';
 
 export function capacityDoesNotEqualUsage(capacityFact: string, usageFact: string): true {
-  return capacityFact !== usageFact;
+  if (capacityFact === usageFact) {
+    throw new Error('CAPACITY_EQUALS_USAGE');
+  }
+  return true;
 }
 
 export function inventoryFrom(observation: BandwidthSourceObservation): Result<BandwidthCapacityInventory, BandwidthRefusal> {

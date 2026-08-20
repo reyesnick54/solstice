@@ -53,8 +53,8 @@ export class ProductiveEconomicAssetAdapter {
 
   projectClaim(input: {
     readonly claim: ProductiveClaim;
-    readonly objectAssetId?: EconomicAssetDescriptor['assetId'];
-    readonly factAssetId?: EconomicAssetDescriptor['assetId'];
+    readonly objectAssetId?: EconomicAssetDescriptor['assetId'] | undefined;
+    readonly factAssetId?: EconomicAssetDescriptor['assetId'] | undefined;
     readonly at: UtcInstant;
   }): Result<EconomicAssetDescriptor, RegistryFailure> {
     const mapped = mapProductiveClaim(input.claim, input.at);

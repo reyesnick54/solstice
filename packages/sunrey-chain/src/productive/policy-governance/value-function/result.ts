@@ -16,14 +16,13 @@ import {
   valueFunctionOk,
   valueFunctionRefuse,
   type ExactRational,
-  type ProductiveCategory,
   type RealizationState,
   type ValueFactorType,
   type ValueFunctionResult,
   type ValuePipelineStage,
   type ValueResultState,
 } from './types.ts';
-import type { ClaimType } from '../../types.ts';
+import type { ClaimType, ProductiveCategory } from '../../types.ts';
 
 export const PRODUCTIVE_VALUE_RESULT_SCHEMA_VERSION = PRODUCTIVE_VALUE_ENGINE_SCHEMA_VERSION;
 

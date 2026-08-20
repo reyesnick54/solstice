@@ -73,10 +73,11 @@ export function moonreySourceCoverageReport(
     })
     .map((row) => `${row.mappingId}@${row.mappingVersion}`);
 
+  const categoryCount: number = PRODUCTIVE_CATEGORIES.length;
   const coveragePercent =
-    PRODUCTIVE_CATEGORIES.length === 0
+    categoryCount === 0
       ? 0
-      : Math.floor(((PRODUCTIVE_CATEGORIES.length - unmappedProductiveCategories.length) * 100) / PRODUCTIVE_CATEGORIES.length);
+      : Math.floor(((categoryCount - unmappedProductiveCategories.length) * 100) / categoryCount);
 
   return Object.freeze({
     taxonomyId: registry.taxonomyId,

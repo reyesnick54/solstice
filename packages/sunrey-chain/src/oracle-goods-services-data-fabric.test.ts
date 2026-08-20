@@ -67,9 +67,8 @@ import {
 describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
   it('1. valid goods output', () => {
     const result = ingestGoodsObservation(VALID_FINISHED_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.publicEvidence.factType, 'GOODS_OUTPUT');
     assert.equal(result.value.publicEvidence.mantissa, '100');
@@ -78,9 +77,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('2. valid goods delivery', () => {
     const result = ingestGoodsObservation(VALID_GOODS_DELIVERY);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.publicEvidence.factType, 'GOODS_DELIVERY');
     assert.equal(result.value.publicEvidence.claimType, 'DELIVERY');
@@ -90,7 +88,7 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const result = ingestGoodsObservation(ORDER_AS_OUTPUT);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'ORDER_IS_NOT_OUTPUT');
     assert.equal(ORDER_EQUALS_OUTPUT, false);
@@ -100,7 +98,7 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const result = ingestServiceObservation(INVOICE_AS_COMPLETION);
     assert.equal(result.ok, false);
     if (result.ok) {
-      return;
+      throw new Error('expected refusal');
     }
     assert.equal(result.error.code, 'INVOICE_IS_NOT_COMPLETION');
     assert.equal(INVOICE_EQUALS_COMPLETED_SERVICE, false);
@@ -117,9 +115,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('6. manufacturing → goods attribution is not a double count', () => {
     const result = evaluateManufacturingGoodsAttribution(SANDBOX_MFG_EVENT, VALID_FINISHED_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const full = result.value.decisions.filter((row) => row.decision === 'FULL_ATTRIBUTION').length;
     assert.equal(full <= 1, true);
@@ -128,9 +125,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('7. agriculture → goods attribution is not a double count', () => {
     const result = evaluateAgricultureGoodsAttribution(SANDBOX_AG_EVENT, AGRICULTURE_GOODS_BATCH);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const full = result.value.decisions.filter((row) => row.decision === 'FULL_ATTRIBUTION').length;
     assert.equal(full <= 1, true);
@@ -149,9 +145,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('9. valid unitized service', () => {
     const result = ingestServiceObservation(VALID_UNITIZED_SERVICE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.publicEvidence.unit, 'units_produced');
     assert.equal(result.value.publicEvidence.serviceKind, 'UNITIZED');
@@ -159,9 +154,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
 
   it('10. valid time service', () => {
     const result = ingestServiceObservation(VALID_TIME_SERVICE);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.publicEvidence.unit, 'service_hour');
     assert.equal(result.value.publicEvidence.durationSeconds, 10_800n);
@@ -192,9 +186,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     assert.equal(schemaAllowsUnit('SERVICE_DELIVERY', 'machine_h'), true);
     assert.deepEqual(FACT_SCHEMAS.SERVICE_DELIVERY.allowedUnits.includes('machine_h'), true);
     const result = ingestServiceObservation(HISTORICAL_MACHINE_HOUR);
-    assert.equal(result.ok, true);
     if (!result.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(result.value.publicEvidence.unit, 'machine_h');
     assert.equal(historicalMachineHourPreserved(HISTORICAL_MACHINE_HOUR), true);
@@ -218,9 +211,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const original = fabric.ingest(VALID_FINISHED_GOODS_BATCH);
     assert.equal(original.ok, true);
     const returned = fabric.ingest(RETURNED_GOOD);
-    assert.equal(returned.ok, true);
     if (!returned.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(returned.value.returnRecord?.historicEvidencePreserved, true);
     assert.equal(returned.value.returnRecord?.historicEventDeleted, false);
@@ -231,9 +223,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const fabric = new GoodsCommerceDataFabric();
     fabric.ingest(VALID_FINISHED_GOODS_BATCH);
     const returned = fabric.ingest(RETURNED_GOOD);
-    assert.equal(returned.ok, true);
     if (!returned.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(returned.value.returnRecord?.clawbackExecuted, false);
     assert.equal(returned.value.returnRecord?.monetaryAdjustmentReviewRequired, true);
@@ -252,9 +243,8 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
       }),
       expectedPolicyVersion: 1,
     });
-    assert.equal(reserved.ok, true);
     if (!reserved.ok) {
-      return;
+      throw new Error('expected ok');
     }
     book.finalize(reserved.value.entryId);
     book.noteIssuanceStatus(reserved.value.entryId, 'SETTLED');
@@ -375,7 +365,7 @@ describe('CHUNK-137 goods, commerce, and service delivery data fabric', () => {
     const service = ingestServiceObservation(VALID_UNITIZED_SERVICE);
     assert.equal(goods.ok && service.ok, true);
     if (!goods.ok || !service.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const registry = new EconomicAssetRegistry();
     const goodsAsset = projectGoodsMetadata(registry, goods.value.publicEvidence);

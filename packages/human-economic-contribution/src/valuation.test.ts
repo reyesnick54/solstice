@@ -1,17 +1,66 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { asUtcInstant } from '../../domain/src/time.ts';
+import { fixtureContribution } from './fixtures.ts';
+import { evidenceRefFor, policyDecisionRefFor } from './ids.ts';
+import { HumanContributionRegistry } from './registry.ts';
+import { CONTRIBUTION_CLASSES } from './taxonomy.ts';
 import {
+  AI_VALUATION_BOUNDARY,
+  COMMUNITY_CONTRIBUTION_POLICY,
+  CREATIVE_ROYALTY_POLICY,
+  HUMAN_CONTRIBUTION_VALUATION_CONSTITUTION,
+  HumanContributionValuationEngine,
+  HumanContributionValuationPolicyRegistry,
+  INFORMATION_USAGE_POLICY,
+  InMemoryValuationReferenceDataPort,
+  PERMITTED_VALUATION_METHODS,
   PRODUCTION_VALUATION_ACTIVATION,
+  PRODUCTION_VALUATION_POLICY_CONFIGURED,
   PRODUCTION_VALUATION_POLICY_STATUS,
+  PROFESSIONAL_SERVICE_POLICY,
   REFERENCE_VALUE_EQUALS_SUNREY_BY_DEFINITION,
+  RESEARCH_PARTICIPATION_POLICY,
+  VALUATION_ELIGIBILITY_MATRIX,
+  VALUATION_INVARIANTS,
+  VALUATION_METHOD_TAXONOMY,
+  VALUATION_NOW,
+  applyMultiplier,
+  asValuationPolicyVersion,
+  assertTraceableInput,
+  compareReferenceValues,
   computeValuationDigest,
+  createContributionReferenceValue,
+  createSimulationValuationPolicy,
+  engineWith,
+  everyContributionClassHasDeliberateMethodRules,
+  factorRequest,
+  hashValuationPolicy,
+  isMethodEligibleForClass,
+  multiplyBasisPoints,
+  multiplyRational,
+  outcomePolicy,
+  policyCannotMint,
   productionValuationPolicyUnavailable,
+  referenceFor,
   refuseProductionValuation,
+  scanForbiddenValuationInputs,
+  selectMethodByPolicyPriority,
+  simulationPolicyFixture,
   simulationValuationPolicy,
+  valuationInputRefFor,
+  valuationPolicyIdFor,
   valueVerifiedContribution,
+  verifyFixture,
+  type RegisterableValuationPolicy,
+  type TraceableValuationInput,
   type VerifiedContributionValuationInput,
 } from './valuation/index.ts';
+import { policyRuleRefFor, valuationPolicyVersionFor } from './valuation/ids.ts';
+import type { FactorRequest } from './valuation/types.ts';
 
 function verified(input?: Partial<VerifiedContributionValuationInput>): VerifiedContributionValuationInput {
   return {
@@ -35,10 +84,10 @@ describe('Chunk 111 human contribution valuation engine', () => {
       policy: simulationValuationPolicy(),
       actor: 'PROTOCOL',
     });
-    assert.equal(valued.ok, true);
     if (!valued.ok) {
       throw new Error(valued.code);
     }
+    assert.equal(valued.ok, true);
     assert.equal(valued.result.finalReferenceValue, 500n);
     assert.equal(valued.result.sunReyQuantity, null);
     assert.equal(valued.result.referenceValueEqualsSunReyByDefinition, false);
@@ -135,26 +184,9 @@ describe('Chunk 111 human contribution valuation engine', () => {
     assert.equal(valued.ok, false);
     if (!valued.ok) {
       assert.equal(valued.code, 'VALUATION_CAP_EXCEEDED');
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { fixtureContribution } from './fixtures.ts';
-import { evidenceRefFor, policyDecisionRefFor } from './ids.ts';
-import { HumanContributionRegistry } from './registry.ts';
-import {
-  createSimulationValuationPolicy,
-  engineWith,
-  factorRequest,
-  HumanContributionValuationEngine,
-  InMemoryValuationReferenceDataPort,
-  multiplyBasisPoints,
-  multiplyRational,
-  outcomePolicy,
-  referenceFor,
-  VALUATION_INVARIANTS,
-  VALUATION_NOW,
-  verifyFixture,
-} from './valuation/index.ts';
-import { policyRuleRefFor, valuationPolicyVersionFor } from './valuation/ids.ts';
-import type { FactorRequest } from './valuation/types.ts';
+    }
+  });
+});
 
 function assertSimulationInvariants(result: { readonly invariants: typeof VALUATION_INVARIANTS; readonly finalReferenceValue: bigint | null }): void {
   assert.equal(result.invariants.isHumanWorthScore, false);
@@ -590,46 +622,13 @@ describe('CHUNK-111 human contribution valuation engine', () => {
     const engine = new HumanContributionValuationEngine(port);
     assert.equal(typeof engine.evaluate, 'function');
     assert.equal(typeof fetch, 'function');
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { describe, it } from 'node:test';
-
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { CONTRIBUTION_CLASSES } from './taxonomy.ts';
-import {
-  AI_VALUATION_BOUNDARY,
-  COMMUNITY_CONTRIBUTION_POLICY,
-  CREATIVE_ROYALTY_POLICY,
-  HUMAN_CONTRIBUTION_VALUATION_CONSTITUTION,
-  HumanContributionValuationPolicyRegistry,
-  INFORMATION_USAGE_POLICY,
-  PERMITTED_VALUATION_METHODS,
-  PRODUCTION_VALUATION_POLICY_CONFIGURED,
-  PROFESSIONAL_SERVICE_POLICY,
-  RESEARCH_PARTICIPATION_POLICY,
-  VALUATION_ELIGIBILITY_MATRIX,
-  VALUATION_METHOD_TAXONOMY,
-  applyMultiplier,
-  asValuationPolicyVersion,
-  assertTraceableInput,
-  compareReferenceValues,
-  createContributionReferenceValue,
-  everyContributionClassHasDeliberateMethodRules,
-  hashValuationPolicy,
-  isMethodEligibleForClass,
-  policyCannotMint,
-  scanForbiddenValuationInputs,
-  selectMethodByPolicyPriority,
-  simulationPolicyFixture,
-  valuationInputRefFor,
-  valuationPolicyIdFor,
-  type RegisterableValuationPolicy,
-  type TraceableValuationInput,
-} from './valuation/index.ts';
+  });
+});
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }): T {
-  assert.equal(result.ok, true, result.ok ? '' : `${result.error.code}: ${result.error.message}`);
   if (!result.ok) {
+    const message = `${result.error.code}: ${result.error.message}`;
+    assert.equal(false, true, message);
     throw new Error(result.error.message);
   }
   return result.value;

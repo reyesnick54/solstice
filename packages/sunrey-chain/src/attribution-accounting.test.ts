@@ -414,9 +414,8 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
   it('18-19. correction and supersession preserve history', () => {
     const book = new ProductiveAttributionBook();
     const first = reserve(book, manufacturingObservation(), 'd1', ATTRIBUTION_SHARE_SCALE);
-    assert.equal(first.ok, true);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     book.finalize(first.value.entryId);
     const replacementObs = manufacturingObservation({
@@ -437,9 +436,8 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
         expectedPolicyVersion: 1,
       },
     });
-    assert.equal(corrected.ok, true);
     if (!corrected.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const original = book.getEntry(first.value.entryId);
     assert.equal(original?.status, 'SUPERSEDED');
@@ -451,9 +449,8 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
   it('20. settled corrections flag monetary review and do not claw back', () => {
     const book = new ProductiveAttributionBook();
     const first = reserve(book, manufacturingObservation(), 'd1');
-    assert.equal(first.ok, true);
     if (!first.ok) {
-      return;
+      throw new Error('expected ok');
     }
     book.finalize(first.value.entryId);
     book.noteIssuanceStatus(first.value.entryId, 'SETTLED');
@@ -547,13 +544,12 @@ describe('Chunk 122 MoonRey attribution accounting', () => {
     });
     assert.equal(projectedClaim.ok, true);
     if (!projectedClaim.ok || !projectedObject.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const book = new ProductiveAttributionBook();
     const reserved = reserve(book, manufacturingObservation(), 'd-ear');
-    assert.equal(reserved.ok, true);
     if (!reserved.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const reflected = reflectAttributionLineage({
       registry,

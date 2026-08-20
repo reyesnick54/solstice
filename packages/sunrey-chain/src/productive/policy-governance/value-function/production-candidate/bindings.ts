@@ -138,7 +138,9 @@ export function semanticMatchesCategory(category: ProductiveCategory, semantic: 
 }
 
 export function exclusiveGroupsFor(category: ProductiveCategory): readonly (readonly ProductiveCategory[])[] {
-  return EXCLUSIVE_ATTRIBUTION_GROUPS.filter((group) => group.includes(category));
+  return EXCLUSIVE_ATTRIBUTION_GROUPS.filter((group) =>
+    (group as readonly ProductiveCategory[]).includes(category),
+  );
 }
 
 export function exclusivePartnerCategories(category: ProductiveCategory): readonly ProductiveCategory[] {

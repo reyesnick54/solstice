@@ -301,8 +301,8 @@ function defaultClock(): NormalizationClock {
 export function convertExact(input: {
   readonly source: ExactQuantity;
   readonly targetUnitId: string;
-  readonly context?: NormalizationContext;
-  readonly clock?: NormalizationClock;
+  readonly context?: NormalizationContext | undefined;
+  readonly clock?: NormalizationClock | undefined;
 }): Result<NormalizationReceipt, NormalizationRefusal> {
   const clock = input.clock ?? defaultClock();
   const contextResult = sanitizeContext(input.context);
@@ -470,9 +470,6 @@ function convertAcrossDimension(input: {
   }
   if (sourceDef.dimension === 'MASS' && targetDef.dimension === 'MASS_DISTANCE') {
     return err(incompatible('mass cannot become tonne-km without an explicit distance factor'));
-  }
-  if (sourceDef.dimension === 'GENERIC_COMPUTE_TIME') {
-    return err(requireContext('generic compute_s requires a resource class before GPU or CPU time', ['RESOURCE_CLASS']));
   }
 
   return err(

@@ -24,7 +24,6 @@ const clock = { nowIso: () => '2026-08-19T00:00:00.000Z' };
 
 function qty(unitId: string, mantissa: bigint) {
   const built = registry.integer(unitId, mantissa);
-  assert.equal(built.ok, true);
   if (!built.ok) {
     throw new Error(built.error.detail);
   }
@@ -33,9 +32,8 @@ function qty(unitId: string, mantissa: bigint) {
 
 function accept(unitId: string, mantissa: bigint, target: string, context?: Parameters<typeof registry.convert>[2]) {
   const result = registry.convert(qty(unitId, mantissa), target, context, clock);
-  assert.equal(result.ok, true, result.ok ? '' : `${result.error.outcome} ${result.error.detail}`);
   if (!result.ok) {
-    throw new Error(result.error.detail);
+    throw new Error(`${result.error.outcome} ${result.error.detail}`);
   }
   assert.equal(result.value.exact, true);
   assert.equal(result.value.roundingApplied, false);
@@ -46,56 +44,62 @@ function accept(unitId: string, mantissa: bigint, target: string, context?: Para
 
 function refuse(unitId: string, mantissa: bigint, target: string, context?: Parameters<typeof registry.convert>[2]) {
   const result = registry.convert(qty(unitId, mantissa), target, context, clock);
-  assert.equal(result.ok, false);
   if (result.ok) {
     throw new Error('expected refusal');
   }
   return result.error;
 }
 
+function integerMantissa(quantity: Parameters<typeof integerMantissaOf>[0]): bigint {
+  const result = integerMantissaOf(quantity);
+  if (!result.ok) {
+    throw new Error(result.error.detail);
+  }
+  return result.value;
+}
+
 describe('CHUNK-118 canonical economic unit normalization', () => {
   it('1. normalizes Wh/kWh/MWh exactly, including large quantities', () => {
     const kwh = accept('kWh', 3n, 'Wh');
-    assert.equal(integerMantissaOf(kwh.targetQuantity).ok && integerMantissaOf(kwh.targetQuantity).ok, true);
-    assert.equal(integerMantissaOf(kwh.targetQuantity).ok ? integerMantissaOf(kwh.targetQuantity).value : 0n, 3_000n);
+    assert.equal(integerMantissa(kwh.targetQuantity), 3_000n);
     const mwh = accept('MWh', 2n, 'kWh');
-    assert.equal(integerMantissaOf(mwh.targetQuantity).ok ? integerMantissaOf(mwh.targetQuantity).value : 0n, 2_000n);
+    assert.equal(integerMantissa(mwh.targetQuantity), 2_000n);
     const large = accept('kWh', 10n ** 18n, 'Wh');
-    assert.equal(integerMantissaOf(large.targetQuantity).ok ? integerMantissaOf(large.targetQuantity).value : 0n, 10n ** 21n);
+    assert.equal(integerMantissa(large.targetQuantity), 10n ** 21n);
   });
 
   it('2. normalizes kg/tonne/t into canonical grams', () => {
     const tonne = accept('tonne', 2n, 'g');
-    assert.equal(integerMantissaOf(tonne.targetQuantity).ok ? integerMantissaOf(tonne.targetQuantity).value : 0n, 2_000_000n);
+    assert.equal(integerMantissa(tonne.targetQuantity), 2_000_000n);
     const alias = accept('t', 1n, 'kg');
-    assert.equal(integerMantissaOf(alias.targetQuantity).ok ? integerMantissaOf(alias.targetQuantity).value : 0n, 1_000n);
+    assert.equal(integerMantissa(alias.targetQuantity), 1_000n);
     const kg = accept('kg', 4n, 'g');
-    assert.equal(integerMantissaOf(kg.targetQuantity).ok ? integerMantissaOf(kg.targetQuantity).value : 0n, 4_000n);
+    assert.equal(integerMantissa(kg.targetQuantity), 4_000n);
   });
 
   it('3. normalizes L/m3 exactly without inventing volume-time', () => {
     const volume = accept('m3', 3n, 'L');
-    assert.equal(integerMantissaOf(volume.targetQuantity).ok ? integerMantissaOf(volume.targetQuantity).value : 0n, 3_000n);
+    assert.equal(integerMantissa(volume.targetQuantity), 3_000n);
     const refusal = refuse('m3', 3n, 'm3_hour');
     assert.equal(refusal.outcome, 'REQUIRE_CONTEXT');
   });
 
   it('4. treats tonne_km and t_km as equivalent mass-distance', () => {
     const receipt = accept('tonne_km', 11n, 't_km');
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 11n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 11n);
     assert.equal(refuse('tonne', 11n, 't_km').outcome, 'INCOMPATIBLE_DIMENSION');
   });
 
   it('5. aliases units_produced to UNIT for item-count/output facts', () => {
     const receipt = accept('units_produced', 9n, 'UNIT', { factType: 'MANUFACTURING_OUTPUT' });
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 9n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 9n);
     assert.equal(receipt.conversionRuleId, 'item-count.alias.v1');
     assert.equal(refuse('units_produced', 9n, 'UNIT', { factType: 'ENERGY_PRODUCTION' }).outcome, 'INCOMPATIBLE_DIMENSION');
   });
 
   it('6. converts gpu_s to GPU time exactly without requiring a 3600 multiple', () => {
     const hour = accept('gpu_s', 3_600n, 'GPU_HOUR');
-    assert.equal(integerMantissaOf(hour.targetQuantity).ok ? integerMantissaOf(hour.targetQuantity).value : 0n, 1n);
+    assert.equal(integerMantissa(hour.targetQuantity), 1n);
     const second = accept('gpu_s', 1n, 'GPU_HOUR');
     const rational = quantityRational(second.targetQuantity);
     assert.equal(rational.numerator, 1n);
@@ -111,7 +115,7 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('8. classifies compute_s as CPU time when resourceClass is CPU', () => {
     const receipt = accept('compute_s', 7_200n, 'CPU_HOUR', { resourceClass: 'CPU' });
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 2n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 2n);
     assert.equal(receipt.dimension, 'CPU_TIME');
     assert.equal(refuse('compute_s', 7_200n, 'GPU_HOUR', { resourceClass: 'CPU' }).outcome, 'INCOMPATIBLE_DIMENSION');
   });
@@ -130,7 +134,7 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('11. converts area × duration into area-time when a period is supplied', () => {
     const receipt = accept('m2', 2n, 'm2_hour', { durationSeconds: 3_600n });
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 2n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 2n);
     const windowed = accept('m2', 1n, 'm2_hour', { measurementStart: 10n, measurementEnd: 1_810n });
     const rational = quantityRational(windowed.targetQuantity);
     assert.equal(rational.numerator, 1n);
@@ -143,7 +147,7 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('13. converts volume × duration into volume-time when a period is supplied', () => {
     const receipt = accept('m3', 1n, 'm3_hour', { durationSeconds: 3_600n });
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 1n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 1n);
     const litres = accept('L', 500n, 'm3_hour', { durationSeconds: 3_600n });
     const rational = quantityRational(litres.targetQuantity);
     assert.equal(rational.numerator, 1n);
@@ -152,9 +156,9 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('14. normalizes GB/TB on the decimal data-volume scale', () => {
     const receipt = accept('TB', 3n, 'GB');
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 3_000n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 3_000n);
     const bytes = accept('GB', 1n, 'B');
-    assert.equal(integerMantissaOf(bytes.targetQuantity).ok ? integerMantissaOf(bytes.targetQuantity).value : 0n, 1_000_000_000n);
+    assert.equal(integerMantissa(bytes.targetQuantity), 1_000_000_000n);
   });
 
   it('15. rejects GB_s → GB without duration', () => {
@@ -163,7 +167,7 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('16. converts data-rate × duration into transferred volume', () => {
     const receipt = accept('GB_s', 2n, 'GB', { durationSeconds: 5n });
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 10n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 10n);
   });
 
   it('17. rejects machine_h → UNIT', () => {
@@ -179,7 +183,7 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('19. validates token_inference ↔ TOKEN as processed inference tokens', () => {
     const receipt = accept('token_inference', 42n, 'TOKEN');
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok ? integerMantissaOf(receipt.targetQuantity).value : 0n, 42n);
+    assert.equal(integerMantissa(receipt.targetQuantity), 42n);
     assert.equal(receipt.conversionRuleId, 'token.inference.alias.v1');
     assert.equal(registry.definitionOf('token_inference')?.semanticQualifier, TOKEN_INFERENCE_QUALIFIER);
     assert.equal(refuse('token_inference', 42n, 'TOKEN', { semanticQualifier: 'TRAINING_TOKENS' }).outcome, 'INCOMPATIBLE_DIMENSION');
@@ -196,15 +200,15 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
 
   it('21. rejects unknown units', () => {
     const unknown = registry.convert(qty('Wh', 1n), 'furlong', undefined, clock);
-    assert.equal(unknown.ok, false);
-    if (!unknown.ok) {
-      assert.equal(unknown.error.outcome, 'UNKNOWN_UNIT');
+    if (unknown.ok) {
+      throw new Error('expected unknown unit');
     }
+    assert.equal(unknown.error.outcome, 'UNKNOWN_UNIT');
     const source = registry.quantity('parsec', 1n);
-    assert.equal(source.ok, false);
-    if (!source.ok) {
-      assert.equal(source.error.outcome, 'UNKNOWN_UNIT');
+    if (source.ok) {
+      throw new Error('expected unknown unit');
     }
+    assert.equal(source.error.outcome, 'UNKNOWN_UNIT');
   });
 
   it('22. uses no JavaScript floating-point conversion', () => {
@@ -224,10 +228,11 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
     const receipt = accept('gpu_s', 1n, 'GPU_HOUR');
     const rational = quantityRational(receipt.targetQuantity);
     assert.equal(rational.numerator === 0n, false);
-    assert.equal(integerMantissaOf(receipt.targetQuantity).ok, false);
-    if (!integerMantissaOf(receipt.targetQuantity).ok) {
-      assert.equal(integerMantissaOf(receipt.targetQuantity).error.outcome, 'LOSSY_CONVERSION_FORBIDDEN');
+    const truncated = integerMantissaOf(receipt.targetQuantity);
+    if (truncated.ok) {
+      throw new Error('expected lossy refusal');
     }
+    assert.equal(truncated.error.outcome, 'LOSSY_CONVERSION_FORBIDDEN');
   });
 
   it('24. issues a deterministic normalization receipt', () => {
@@ -248,7 +253,6 @@ describe('CHUNK-118 canonical economic unit normalization', () => {
   it('26. reproduces a historical receipt under the retained version', () => {
     const original = accept('MWh', 4n, 'Wh');
     const replayed = registry.reproduce(original, clock);
-    assert.equal(replayed.ok, true);
     if (!replayed.ok) {
       throw new Error(replayed.error.detail);
     }

@@ -316,9 +316,8 @@ describe('Chunk 49 universal economic exchange', () => {
     assert.equal(offer.outcome, 'OK');
     assert.equal(bid.outcome, 'OK');
     const cleared = h.exchange.universal.clearCapacityAuction();
-    assert.equal(cleared.outcome, 'OK');
     if (cleared.outcome !== 'OK') {
-      return;
+      throw new Error('expected OK');
     }
     assert.equal(cleared.value.clearing.clearingPrice?.priceUnits, 5n);
     assert.equal(cleared.value.clearing.allocated[0]!.quantity, 400n);

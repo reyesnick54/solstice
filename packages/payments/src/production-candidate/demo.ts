@@ -107,7 +107,6 @@ export function runBankingPaymentProviderCandidateDemo(): void {
     nonce: 'nonce_fixture_1',
     providerIdentity: adapter.capability.provider,
     payloadDigest,
-    signature: '',
   });
   const ingested = webhooks.ingest(callback);
   if (ingested.outcome === 'ACCEPTED') {

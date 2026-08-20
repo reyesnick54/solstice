@@ -24,8 +24,8 @@ import {
   validateCustodyProviderCandidateProfile,
 } from './provider-candidate/index.ts';
 
-const SUNREY = 'SUNREY_COIN';
-const MOONREY = 'MOONREY_COIN';
+const SUNREY = 'SUNREY_COIN' as const;
+const MOONREY = 'MOONREY_COIN' as const;
 
 export function runDualAssetCustodyProviderCandidateDemo(): void {
   const assets = new InMemoryCustomerAssetPort();

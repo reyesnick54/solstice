@@ -113,7 +113,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         currency: asCurrencyCode('USD'),
       },
     });
-    assert.equal(session.outcome, 'OK');
     if (session.outcome !== 'OK') {
       throw new Error('session failed');
     }
@@ -132,7 +131,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         merchantReference: 'sale-50',
       },
     });
-    assert.equal(started.outcome, 'OK');
     if (started.outcome !== 'OK') {
       throw new Error('payment failed');
     }
@@ -152,7 +150,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         providerTransactionRef: started.value.providerTransactionRef ?? '',
       },
     });
-    assert.equal(settled.outcome, 'OK');
     if (settled.outcome !== 'OK') {
       throw new Error('settle failed');
     }
@@ -209,7 +206,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         providerDeviceReference: 'sim_adev_adev_fail',
       },
     });
-    assert.equal(device.outcome, 'OK');
     if (device.outcome !== 'OK') {
       throw new Error('device failed');
     }
@@ -279,7 +275,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         providerDeviceReference: 'sim_adev_adev_cb',
       },
     });
-    assert.equal(device.outcome, 'OK');
     if (device.outcome !== 'OK') {
       throw new Error('device failed');
     }
@@ -298,7 +293,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         currency: asCurrencyCode('USD'),
       },
     });
-    assert.equal(session.outcome, 'OK');
     if (session.outcome !== 'OK') {
       throw new Error('session failed');
     }
@@ -317,7 +311,6 @@ describe('merchant SoftPOS / tap-to-pay', () => {
         merchantReference: 'sale-cb',
       },
     });
-    assert.equal(started.outcome, 'OK');
     if (started.outcome !== 'OK') {
       throw new Error('pay failed');
     }

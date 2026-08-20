@@ -243,7 +243,7 @@ export type AgricultureSourceRecord = {
   readonly documentedMeterReset: boolean;
   readonly equipmentReplacement: boolean;
   readonly sourceOrganization: string | null;
-  readonly extras?: Readonly<Record<string, unknown>>;
+  readonly extras?: Readonly<Record<string, unknown>> | undefined;
 };
 
 export type AgricultureFabricPolicy = {

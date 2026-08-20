@@ -59,11 +59,17 @@ export function evaluateGoodsReturn(
 }
 
 export function returnDoesNotDeleteHistory(record: GoodsReturnRecord): true {
-  return record.historicEvidencePreserved && record.historicEventDeleted === false;
+  if (!record.historicEvidencePreserved || record.historicEventDeleted !== false) {
+    throw new Error('RETURN_DELETED_HISTORY');
+  }
+  return true;
 }
 
 export function returnDoesNotAutoClawback(record: GoodsReturnRecord): true {
-  return record.clawbackExecuted === false;
+  if (record.clawbackExecuted !== false) {
+    throw new Error('RETURN_AUTO_CLAWBACK');
+  }
+  return true;
 }
 
 /**
@@ -76,7 +82,7 @@ export function reviewSettledReturn(
 ): AttributionResult<{
   readonly correction: AttributionCorrectionRecord;
   readonly released: ProductiveAttributionEntry;
-  readonly replacement?: ProductiveAttributionEntry;
+  readonly replacement?: ProductiveAttributionEntry | undefined;
 }> {
   return book.correct({
     targetEntryId: entryId,

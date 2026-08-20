@@ -11,7 +11,6 @@ import { NATIVE_MONETARY_ASSET_CLASSES, REGISTRY_NOT_MINT } from './taxonomy.ts'
 import type { EconomicAssetDescriptor, RegisterAssetInput } from './types.ts';
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }): T {
-  assert.equal(result.ok, true, result.ok ? '' : result.error.message);
   if (!result.ok) {
     throw new Error(result.error.message);
   }

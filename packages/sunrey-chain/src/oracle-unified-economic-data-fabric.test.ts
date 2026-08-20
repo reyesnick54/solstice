@@ -34,7 +34,7 @@ import {
   everyCanonicalFamilyRegistered,
   everyFactTypeHasDeliberateRouting,
   everyProductiveCategoryHasStatus,
-  fixtureCandidate,
+  overlayCandidate,
   goodsOutputFixture,
   ingestBatch,
   liveProviderConnectedCount,
@@ -79,8 +79,7 @@ describe('CHUNK-138 unified economic data fabric', () => {
       assert.equal(admitted.value.canMint, false);
     }
     const claimed = admitCollection(
-      fixtureCandidate({
-        ...referencePriceFixture(),
+      overlayCandidate(referencePriceFixture(), {
         claimedProductiveCategory: 'ENERGY',
       }),
       'FIXTURE_ONLY',
@@ -114,8 +113,7 @@ describe('CHUNK-138 unified economic data fabric', () => {
 
   it('7. expired certification rejected', () => {
     const expired = admitCollection(
-      fixtureCandidate({
-        ...energyProductionFixture(),
+      overlayCandidate(energyProductionFixture(), {
         certificationExpired: true,
         certificationStatus: 'TESTNET_ADMISSIBLE',
       }),
@@ -130,8 +128,7 @@ describe('CHUNK-138 unified economic data fabric', () => {
 
   it('8. suspended provider rejected', () => {
     const suspended = admitCollection(
-      fixtureCandidate({
-        ...energyProductionFixture(),
+      overlayCandidate(energyProductionFixture(), {
         providerSuspended: true,
       }),
       'FIXTURE_ONLY',
@@ -182,7 +179,7 @@ describe('CHUNK-138 unified economic data fabric', () => {
 
   it('11. partial batch failure isolation', () => {
     const batch = ingestBatch(
-      [energyProductionFixture(), fixtureCandidate({ ...energyProductionFixture('prov_bad'), providerSuspended: true })],
+      [energyProductionFixture(), overlayCandidate(energyProductionFixture('prov_bad'), { providerSuspended: true })],
       'FIXTURE_ONLY',
       FABRIC_NOW_UNIX,
     );

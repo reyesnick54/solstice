@@ -259,6 +259,7 @@ export function mapValuationReference(
     contentCommitmentMaterial: `hec-valref:${datum.referenceId}:${datum.provenanceDigest}`.slice(0, 256),
     provenanceMaterial: `hec-valref-prov:${datum.sourceClass}`.slice(0, 256),
     storageClass: 'OFF_CHAIN_PUBLIC_REFERENCE',
+    sensitivityClass: 'INTERNAL',
     createdAt: at,
   };
   const scanned = scanForbiddenPayload(payload);

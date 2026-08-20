@@ -242,9 +242,8 @@ describe('Chunk 36R SunRey validator registry', () => {
       10n,
       't',
     );
-    assert.equal(rotated.ok, true);
     if (!rotated.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const updated = rotated.value.nextValidatorSet.validators.find((row) => row.validatorId === 'val_dev_a')!;
     assert.equal(updated.consensusPublicKey.publicKeyHex, 'aa'.repeat(32));
@@ -264,9 +263,8 @@ describe('Chunk 36R SunRey validator registry', () => {
       10n,
       't',
     );
-    assert.equal(scheduled.ok, true);
     if (!scheduled.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const pending = scheduled.value.nextValidatorSet.validators.find((row) => row.validatorId === 'val_dev_d')!;
     assert.equal(pending.status, 'PENDING_EXIT');
@@ -279,9 +277,8 @@ describe('Chunk 36R SunRey validator registry', () => {
       20n,
       't',
     );
-    assert.equal(exited.ok, true);
     if (!exited.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(exited.value.nextValidatorSet.validators.find((row) => row.validatorId === 'val_dev_d')!.status, 'EXITED');
   });

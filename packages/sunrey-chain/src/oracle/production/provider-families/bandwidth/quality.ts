@@ -20,7 +20,10 @@ export function qualityOf(observation: BandwidthSourceObservation): BandwidthQua
 }
 
 export function qualityIsNotTransferredBytes(quality: BandwidthQualityEvidence | null): true {
-  return quality === null || quality.addedToQuantity === false;
+  if (quality !== null && quality.addedToQuantity !== false) {
+    throw new Error('QUALITY_ADDED_TO_QUANTITY');
+  }
+  return true;
 }
 
 export function scoreBandwidthQuality(observation: BandwidthSourceObservation): number {

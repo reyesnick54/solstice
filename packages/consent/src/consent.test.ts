@@ -220,9 +220,8 @@ describe('consent ledger and purpose firewall', () => {
       operation: 'DERIVE',
       derivationType: 'DERIVED_ONLY',
     });
-    assert.equal(issued.ok, true);
     if (!issued.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(issued.value.permit.purposeVersion, granted.purposeVersion);
     assert.equal(issued.value.permit.recipientId, RECIPIENT_PERSONAL_AGENT);
@@ -308,9 +307,8 @@ describe('consent ledger and purpose firewall', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'both',
     });
-    assert.equal(original.ok, true);
     if (!original.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const confirmed = consent.confirmConsent(actor, original.value.consentId, 'confirm-both');
     assert.equal(confirmed.ok, true);
@@ -326,9 +324,8 @@ describe('consent ledger and purpose firewall', () => {
       idempotencyKey: 'payroll-only',
       supersedesConsentId: original.value.consentId,
     });
-    assert.equal(narrowed.ok, true);
     if (!narrowed.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const next = consent.confirmConsent(actor, narrowed.value.consentId, 'confirm-narrow');
     assert.equal(next.ok, true);
@@ -380,9 +377,8 @@ describe('consent ledger and purpose firewall', () => {
       expiresAt: EXPIRES,
       idempotencyKey: 'contribute',
     });
-    assert.equal(draft.ok, true);
     if (!draft.ok) {
-      return;
+      throw new Error('expected ok');
     }
     assert.equal(draft.value.onwardSharing.state, 'NOT_ALLOWED');
     const confirmed = consent.confirmConsent(actor, draft.value.consentId, 'confirm-contribute');
@@ -424,9 +420,8 @@ describe('consent ledger and purpose firewall', () => {
       provenanceKind: payroll.provenanceKind,
       purposeRef: 'demo.ingest.payroll',
     });
-    assert.equal(ingested.ok, true);
     if (!ingested.ok) {
-      return;
+      throw new Error('expected ok');
     }
     const self = vault.readPayload(actor, actor.subjectId, ingested.value.assetId, 'demo.view.own');
     assert.equal(self.ok, true);
