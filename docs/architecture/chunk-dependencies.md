@@ -191,7 +191,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
-| sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
+| sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
+| sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
@@ -1422,10 +1423,6 @@ completes submit, finality, reorg, and reconciliation. Required
 capabilities are `IMPLEMENTED`, so the evaluator returns
 `mustStop: false`. The adapter does not create a second chain,
 consent ledger, or Evidence Vault. Do not create
-`sunrey-hin-chain-anchoring` is `PARTIAL`. Required capabilities are
-`IMPLEMENTED`, so the evaluator returns `mustStop: false`. The
-adapter does not create a second chain, consent ledger, or Evidence
-Vault. Chunk 140 completes lifecycle and finality. Do not create
 `packages/hin-chain`, `packages/information-blockchain`,
 `packages/privacy-chain`, `packages/consent-chain`, or
 `packages/human-data-ledger`. See
@@ -1476,3 +1473,13 @@ single config authority. Protocol IDs, hash domains, stored event
 schema refs, and `reyesnick54/solstice` are unchanged. See
 [`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
 The evaluator returns `mustStop: false`.
+Chunk 149 implements the production-candidate provider credential
+plane at `packages/security/src/regulated/credentials`. Capability
+`sunrey-production-provider-credential-plane` is `IMPLEMENTED` on the
+existing security owner. Provider runtime remains
+`packages/sunrey-chain`. A credential is not provider approval,
+Execution Authority, a mint, or a ledger journal. Do not create
+`packages/secrets`, `packages/credentials`,
+`packages/provider-security`, `packages/provider-runtime-v2`,
+`packages/external-connectivity`, or `packages/vendor-runtime`. The
+evaluator returns `mustStop: false`.

@@ -35,6 +35,9 @@ import {
   versionedProviderConfig,
 } from './provider-runtime/index.ts';
 import { createAcceptanceMatrix } from './provider-runtime/harness.ts';
+import { openBoundProviderSession, secretReferenceAloneIsInsufficient } from './provider-runtime/credentials.ts';
+import { fixtureKycCredential } from '../../security/src/regulated/credentials/index.ts';
+import { authenticationIsNotAcceptance } from '../../security/src/regulated/credentials/index.ts';
 
 const ROOT = join(import.meta.dirname, '..', '..', '..');
 const NOW = '2026-08-18T00:00:00.000Z';
@@ -67,7 +70,10 @@ describe('Chunk 91 executable provider runtime', () => {
       externalEvidencePresent: true,
       humanAuthorityPresent: true,
     });
-    assert.equal(authorized.ok, true);
+    assert.equal(authorized.ok, false);
+    if (!authorized.ok) {
+      assert.equal(authorized.error.code, 'PRODUCTION_NOT_AUTHORIZED');
+    }
   });
 
   it('enforces least privilege and consensus isolation', () => {
@@ -214,5 +220,34 @@ describe('Chunk 91 executable provider runtime', () => {
     assert.equal(existsSync(join(ROOT, 'packages/executable-providers')), false);
     assert.equal(existsSync(join(ROOT, 'packages/provider-adapters')), false);
     assert.equal(existsSync(join(ROOT, 'docs/providers/chunk-91-provider-runtime.md')), true);
+  });
+
+  it('opens a provider session only after credential binding validation', () => {
+    const kyc = fixtureKycCredential();
+    const session = openBoundProviderSession({
+      sessionId: 'sess_kyc_1',
+      credential: kyc,
+      workload: 'kyc_worker',
+      domain: 'IDENTITY_KYC',
+      operation: 'VERIFY_IDENTITY',
+      environment: 'LOCAL_SIMULATION',
+      configuration: { profile: kyc.endpointProfileRef },
+      now: NOW,
+    });
+    assert.equal(session.ok, true);
+    const cross = openBoundProviderSession({
+      sessionId: 'sess_bad',
+      credential: kyc,
+      workload: 'custody_worker',
+      domain: 'CUSTODY_PROVIDER',
+      operation: 'READ_CUSTODY_POSITION',
+      environment: 'LOCAL_SIMULATION',
+      configuration: { profile: kyc.endpointProfileRef },
+      now: NOW,
+    });
+    assert.equal(cross.ok, false);
+    assert.equal(secretReferenceAloneIsInsufficient(), false);
+    assert.equal(authenticationIsNotAcceptance(true).providerApproved, false);
+    assert.equal(ADAPTER_SUCCESS_IS_NOT_APPROVAL, true);
   });
 });
