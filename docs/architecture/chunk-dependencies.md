@@ -75,6 +75,7 @@ Agents and later CI jobs use that result. They do not guess.
 | payments | IMPLEMENTED | packages/payments |
 | fx | IMPLEMENTED | packages/payments |
 | rail-adapters | IMPLEMENTED | packages/payments |
+| sunrey-banking-payment-provider-candidates | IMPLEMENTED | packages/payments |
 | cards | IMPLEMENTED | packages/cards |
 | personal-economic-graph | IMPLEMENTED | packages/personal-economic-graph |
 | personal-economy-agent | IMPLEMENTED | packages/agent |
@@ -1476,3 +1477,15 @@ single config authority. Protocol IDs, hash domains, stored event
 schema refs, and `reyesnick54/solstice` are unchanged. See
 [`sunrey-naming-migration.md`](./sunrey-naming-migration.md).
 The evaluator returns `mustStop: false`.
+Chunk 151 implements banking, payment-rail, and FX provider
+production candidates at `packages/payments/src/production-candidate`.
+Capability `sunrey-banking-payment-provider-candidates` is
+`IMPLEMENTED` on the existing payments owner. The chunk adds
+`PAYMENT_RAIL` and `FX_LIQUIDITY` to the existing provider-acceptance
+taxonomy and reuses `RailAdapter`. Sandbox / fixture transport only.
+It does not connect a real bank, payment network, or FX provider, and
+an engineering rail class is not named-network membership. Do not
+create `packages/banking-v2`, `packages/baas`,
+`packages/payment-provider`, `packages/swift`, `packages/ach`,
+`packages/fx-v2`, or `packages/cross-border-core`. The evaluator
+returns `mustStop: false`.

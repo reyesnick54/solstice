@@ -206,6 +206,8 @@ export function runProviderIntegrationTests(runtime: ProviderRuntime): readonly 
     CASE_MANAGEMENT: 'case_management',
     CUSTODY_PROVIDER: 'custody_worker',
     BANKING_REFERENCE: 'banking_worker',
+    PAYMENT_RAIL: 'banking_worker',
+    FX_LIQUIDITY: 'banking_worker',
     OTHER_GOVERNED_EXTERNAL_PROVIDER: 'infra_worker',
   };
   for (const domain of PROVIDER_DOMAINS) {

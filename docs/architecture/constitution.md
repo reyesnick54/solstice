@@ -56,6 +56,7 @@ never be two implementations of these systems.
 | Cross-border payments | `packages/payments` | `packages/payments/src/service.ts` | IMPLEMENTED |
 | FX quote engine | `packages/payments` | `packages/payments/src/fx-quote.ts` | IMPLEMENTED |
 | Bank rail adapter framework | `packages/payments` | `packages/payments/src/rail-port.ts` | IMPLEMENTED |
+| Banking / payment / FX provider candidates | `packages/payments` | `packages/payments/src/production-candidate/index.ts` | IMPLEMENTED |
 | Card platform | `packages/cards` | `packages/cards/src/service.ts` | IMPLEMENTED |
 | Personal Economic Graph | `packages/personal-economic-graph` | `packages/personal-economic-graph/src/service.ts` | IMPLEMENTED |
 | Personal Economy Agent | `packages/agent` | `packages/agent/src/service.ts` | IMPLEMENTED |

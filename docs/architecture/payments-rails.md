@@ -151,6 +151,18 @@ Provider authentication ports support future API keys, OAuth, mTLS, signed
 messages, and webhook signatures. Configuration stores `SecretReference`
 only. Simulation adapters use mechanism `NONE`.
 
+## Chunk 151 production candidates
+
+Provider-neutral banking, rail, and FX **candidate** profiles live at
+`packages/payments/src/production-candidate`. They inject
+`FixturePaymentTransport` / `ScriptedSandboxTransport` only. Candidate
+adapters implement this same `RailAdapter` contract. A provider
+callback still cannot post a journal.
+
+`PAYMENT_RAIL` and `FX_LIQUIDITY` were added to the existing
+`packages/sunrey-chain/src/providers` acceptance taxonomy.
+`BANKING_REFERENCE` remains the banking / BaaS relationship domain.
+
 ## Future live-provider checklist
 
 Do **not** treat this chunk as permission to go live. A later authorized

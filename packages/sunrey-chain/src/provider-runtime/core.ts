@@ -54,7 +54,7 @@ const WORKLOAD_ALLOWED_DOMAINS: Readonly<Record<WorkloadIdentity, readonly Provi
   travel_rule_worker: Object.freeze(['TRAVEL_RULE'] as const),
   surveillance_worker: Object.freeze(['MARKET_SURVEILLANCE', 'CASE_MANAGEMENT'] as const),
   custody_worker: Object.freeze(['CUSTODY_PROVIDER'] as const),
-  banking_worker: Object.freeze(['BANKING_REFERENCE'] as const),
+  banking_worker: Object.freeze(['BANKING_REFERENCE', 'PAYMENT_RAIL', 'FX_LIQUIDITY'] as const),
   infra_worker: Object.freeze([
     'CLOUD_INFRASTRUCTURE',
     'SECRET_MANAGER',

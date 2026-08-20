@@ -28,6 +28,8 @@ export const PROVIDER_DOMAINS = [
   'CASE_MANAGEMENT',
   'CUSTODY_PROVIDER',
   'BANKING_REFERENCE',
+  'PAYMENT_RAIL',
+  'FX_LIQUIDITY',
   'OTHER_GOVERNED_EXTERNAL_PROVIDER',
 ] as const;
 export type ProviderDomain = (typeof PROVIDER_DOMAINS)[number];

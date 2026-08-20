@@ -4,7 +4,17 @@ import { join, relative } from 'node:path';
 import type { Finding } from './linter.ts';
 
 const SKIP_DIR = new Set(['node_modules', '.git', 'dist', 'coverage']);
-const COMPETING_RAIL_PATHS = ['packages/rails', 'packages/bank-rails', 'packages/swift', 'packages/ach'];
+const COMPETING_RAIL_PATHS = [
+  'packages/rails',
+  'packages/bank-rails',
+  'packages/swift',
+  'packages/ach',
+  'packages/banking-v2',
+  'packages/baas',
+  'packages/payment-provider',
+  'packages/fx-v2',
+  'packages/cross-border-core',
+];
 
 function walk(dir: string, out: string[] = []): string[] {
   if (!existsSync(dir) || !statSync(dir).isDirectory()) {
@@ -35,7 +45,10 @@ function isRailAdapterFile(rel: string): boolean {
     rel.startsWith('packages/payments/src/rail-network') ||
     rel.startsWith('packages/payments/src/rail-port') ||
     rel.startsWith('packages/payments/src/rail-auth') ||
-    rel.startsWith('packages/payments/src/rail-webhook')
+    rel.startsWith('packages/payments/src/rail-webhook') ||
+    rel.startsWith('packages/payments/src/production-candidate/adapter') ||
+    rel.startsWith('packages/payments/src/production-candidate/transport') ||
+    rel.startsWith('packages/payments/src/production-candidate/auth')
   );
 }
 
