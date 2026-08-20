@@ -65,6 +65,7 @@ export type KernelFacts = {
     readonly modelVersion: string;
     readonly generatedAt: string;
   };
+  readonly operatingScope?: import('./policy/operating-scope-fact.ts').OperatingScopeFact;
 };
 
 export type ProofEvaluator = {
@@ -158,6 +159,10 @@ export const authorityProof: ProofEvaluator = {
 export const jurisdictionProof: ProofEvaluator = {
   proof: 'JURISDICTION',
   evaluate(_intent: ActionIntent, facts: KernelFacts): ProofEvaluation {
+    if (facts.operatingScope && facts.operatingScope.eligibility !== true) {
+      const code = facts.operatingScope.reasonCodes[0] ?? 'JURISDICTION_RESEARCH_REQUIRED';
+      return evalProof('JURISDICTION', 'DEFER', code);
+    }
     const policy = facts.policyResult;
     if (policy) {
       const jurisdictionCodes = [

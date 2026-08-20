@@ -1,0 +1,15 @@
+{
+  "chunk": "CHUNK-162",
+  "title": "Production Provider Binding Manifest, Environment Separation, Endpoint/Credential/Contract Mapping, and Connectivity Readiness",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "security",
+    "sunrey-chain",
+    "sunrey-production-provider-acceptance",
+    "sunrey-provider-runtime",
+    "sunrey-production-provider-credential-plane",
+    "sunrey-production-provider-binding"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/providers/production-binding. Extends Chunk 82 provider acceptance and Chunk 91 provider runtime. Deterministic binding manifests only. productionConnectivityEnabled remains false. Does not enable real network calls, flip LIVE_* flags, or create a LIVE binding state. Consumes Chunk 160 evidence and Chunk 161 operating-scope ports without duplicating those evaluators. evaluateChunkRequirements returns mustStop: false. Do not create packages/integrations-v2, packages/vendor-connectivity, packages/provider-manager, or packages/live-providers."
+}

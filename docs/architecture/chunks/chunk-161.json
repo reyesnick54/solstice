@@ -1,0 +1,13 @@
+{
+  "chunk": "CHUNK-161",
+  "title": "Jurisdictional Operating Scope, Licensing, Regulatory-Evidence Binding, Corridor Eligibility, and Product Activation Matrix",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "kernel",
+    "payments",
+    "sunrey-chain",
+    "sunrey-mainnet-readiness"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/mainnet/operating-scope. Extends sunrey-mainnet-readiness. Evidence-backed operating-scope control plane only. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. evaluateChunkRequirements returns mustStop: false. Do not create packages/licensing, packages/global-regulation, packages/country-law, or packages/legal-engine."
+}

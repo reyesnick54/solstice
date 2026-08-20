@@ -54,6 +54,8 @@
     "sunrey-formal": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/formal/cli.ts",
     "sunrey-mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/cli-main.ts",
     "demo:mainnet": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/demo.ts",
+    "demo:sunrey-operating-scope": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/operating-scope/demo.ts",
+    "demo:external-evidence-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/mainnet/external-evidence/demo.ts",
     "demo:rc": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/demo.ts",
     "sunrey-audit": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/audit/cli.ts",
     "sunrey-launch": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/launch-rehearsal/cli-main.ts",
@@ -74,6 +76,8 @@
     "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/parameter-package/demo.ts",
     "demo:sunrey-production-economic-authorization": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/authorization/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts"
+    "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts",
+    "demo:sunrey-production-provider-binding": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/providers/production-binding/demo.ts"
   },
   "engines": {
     "node": ">=22"

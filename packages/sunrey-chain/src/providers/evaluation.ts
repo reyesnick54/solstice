@@ -7,6 +7,7 @@
  */
 
 import { evidenceIsCurrent, licenseRemainsMissing, contractRemainsMissing } from './evidence.ts';
+import { PROVIDER_CLASS_TO_EXTERNAL } from '../mainnet/external-evidence/bindings.ts';
 import { profileFor } from './profiles.ts';
 import {
   acceptanceErr,
@@ -29,6 +30,7 @@ export type AcceptanceInputs = {
   readonly humanAccepted: boolean;
   readonly humanReviewerKind: ReviewerKind | null;
   readonly nowUtc: string;
+  readonly externalRegistry?: import('./types.ts').ProviderExternalRegistryPort;
 };
 
 export function deriveAcceptanceState(input: AcceptanceInputs): AcceptanceState {
@@ -68,7 +70,25 @@ export function deriveAcceptanceState(input: AcceptanceInputs): AcceptanceState 
   const humanReviewedRequired = profile.requiredEvidenceClasses.every((cls) =>
     input.evidence.some((row) => row.evidenceClass === cls && row.verificationState === 'HUMAN_REVIEWED'),
   );
-  return humanReviewedRequired ? 'PRODUCTION_ELIGIBLE' : 'HUMAN_ACCEPTED';
+  if (!humanReviewedRequired) {
+    return 'HUMAN_ACCEPTED';
+  }
+  if (input.externalRegistry) {
+    const registryOk = profile.requiredEvidenceClasses.every((cls) =>
+      input.externalRegistry!.productionEligible({
+        evidenceClass: PROVIDER_CLASS_TO_EXTERNAL[cls],
+        subjectType: 'PROVIDER',
+        subjectId: input.providerId,
+        providerDomain: input.domain,
+        nowUtc: input.nowUtc,
+        production: true,
+      }),
+    );
+    if (!registryOk) {
+      return 'EXTERNAL_EVIDENCE_REQUIRED';
+    }
+  }
+  return 'PRODUCTION_ELIGIBLE';
 }
 
 export function evaluateEligibility(input: AcceptanceInputs): ProviderProductionEligibilityEvaluation {
@@ -91,6 +111,20 @@ export function evaluateEligibility(input: AcceptanceInputs): ProviderProduction
     }
     if (row.verificationState !== 'HUMAN_REVIEWED') {
       missing.push(`evidence:${cls}:HUMAN_REVIEW_REQUIRED`);
+    }
+    if (input.externalRegistry) {
+      const mapped = PROVIDER_CLASS_TO_EXTERNAL[cls];
+      const registryOk = input.externalRegistry.productionEligible({
+        evidenceClass: mapped,
+        subjectType: 'PROVIDER',
+        subjectId: input.providerId,
+        providerDomain: input.domain,
+        nowUtc: input.nowUtc,
+        production: true,
+      });
+      if (!registryOk) {
+        missing.push(`evidence:${cls}:REGISTRY_NOT_CURRENT`);
+      }
     }
   }
   if (input.evidence.some(contractRemainsMissing)) {
