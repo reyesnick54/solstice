@@ -45,6 +45,7 @@ Chunk 143 does not recreate owners:
 - Chunk 90 production handoff evidence classes
 - Chunk 112 SunRey contribution settlement bridge
 - Chunks 123–126 MoonRey V2 Productive Value architecture
+- Chunk 146 MoonRey production-candidate issuance package metadata
 - Chunk 128 provider certification
 - Chunk 138 unified economic data fabric
 - HIN production gates and chain-anchor engineering requirements

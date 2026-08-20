@@ -1,0 +1,19 @@
+{
+  "chunk": "CHUNK-147",
+  "title": "Parameterized SunRey + MoonRey Economic Activation Rehearsal and Dual-Economy Stress Validation",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-economic-mainnet-rehearsal",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-monetary-constitution",
+    "sunrey-human-contribution-monetary-bridge",
+    "sunrey-human-economic-contributions",
+    "moonrey-productive-value-function",
+    "moonrey-productive-value-settlement",
+    "sunrey-exchange",
+    "sunrey-economic-stress-lab"
+  ],
+  "notes": "IMPLEMENTED as an extension of packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate. Rehearsal only. Exercises the production-candidate parameter framework without converting fixture values into production configuration. Uses the real Chunk 143 / 112 / 125 validators. Chunk 143 firewall remains production-blocked. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-economic-rehearsal, packages/parameterized-rehearsal, packages/dual-economy-rehearsal, or a second economic rehearsal owner."
+}

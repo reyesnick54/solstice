@@ -188,6 +188,8 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-hin-chain-anchoring | PARTIAL | packages/information-market |
 
@@ -1371,6 +1373,38 @@ hashes. Do not create `packages/economic-constitution`,
 `packages/economic-rc-v2`, `packages/tokenomics-release`, or
 `packages/dual-economy-release`. The evaluator returns
 `mustStop: false`.
+Chunk 147 extends the existing economic mainnet rehearsal owner at
+`packages/sunrey-chain/src/economic-rehearsal/parameterized-candidate`.
+Capability `sunrey-economic-mainnet-rehearsal` remains `IMPLEMENTED`.
+The rehearsal feeds a complete `REHEARSAL_FIXTURE` parameter package
+through the production validators, SunRey and MoonRey candidate
+policies, Exchange DVP, and dual-economy stress. Fixture values have
+no production economic meaning. The Chunk 143 firewall remains
+production-blocked. Do not create `packages/parameterized-rehearsal`,
+`packages/dual-economy-rehearsal`, or a second economic rehearsal
+owner. The evaluator returns `mustStop: false`.
+Chunk 145 implements the SunRey production issuance policy candidate at
+`packages/human-economic-contribution/src/valuation/production-candidate`,
+`packages/sunrey-chain/src/economics/human-contribution-bridge/production-candidate`,
+and
+`packages/sunrey-chain/src/economics/production-activation/sunrey-package`.
+Capability `sunrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on the existing valuation, settlement-bridge, and
+production-activation owners. It does not select production quantities
+or activate issuance. Fixture packages cannot authorize production.
+Do not create `packages/sunrey-tokenomics`,
+`packages/production-valuation`, `packages/issuance-parameters`, or
+`packages/human-worth-token`. The evaluator returns `mustStop: false`.
+Chunk 144 implements the canonical production economic parameter
+registry at
+`packages/sunrey-chain/src/economics/production-activation/parameter-package`.
+Capability `sunrey-production-economic-parameters` is `IMPLEMENTED` on
+the existing monetary/economic owner. It reuses Chunk 143 parameter
+IDs and does not choose production tokenomics, activate production,
+flip `LIVE_*` flags, or create a second mint. Do not create
+`packages/tokenomics`, `packages/economic-parameters`,
+`packages/monetary-policy-v2`, `packages/coin-supply`, or
+`packages/production-mint`. The evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
@@ -1419,6 +1453,20 @@ inside that same module. Engineering implementation is not production
 activation. Do not create `packages/moonrey-value-engine`,
 `packages/productive-valuation`, `packages/moonrey-valuation`, or
 `packages/economic-value-engine`. The evaluator returns
+`mustStop: false`.
+Chunk 146 defines the MoonRey production-candidate Productive Value,
+GPUV conversion, supply, category-cap, and issuance parameter package
+at `packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate`,
+`packages/sunrey-chain/src/productive/policy-governance/value-settlement/production-candidate`,
+and `packages/sunrey-chain/src/economics/production-activation`.
+Capability `moonrey-production-issuance-policy-candidate` is
+`IMPLEMENTED` on the existing productive-value and monetary owners.
+The package does not invent GPUV values, conversion rates, or
+tokenomics and does not activate MoonRey issuance. Chunk 71 remains
+the mint. Do not create `packages/moonrey-production-tokenomics`,
+`packages/gpuv-conversion`, `packages/moonrey-issuance-policy`,
+`packages/production-value-function`, or
+`packages/moonrey-production-policy`. The evaluator returns
 `mustStop: false`.
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
