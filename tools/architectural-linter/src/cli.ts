@@ -15,6 +15,7 @@ import { lintInformationMarketBoundary } from './information-market-guards.ts';
 import { lintSunReyChainBoundary } from './sunrey-chain-guards.ts';
 import { lintSunReyBlockchainArchitecture } from './sunrey-blockchain-architecture-guards.ts';
 import { lintSunReyProtocol } from './sunrey-protocol-guards.ts';
+import { lintProductionEconomicActivation } from './production-economic-activation-guards.ts';
 import { lintCustodyBoundary } from './custody-guards.ts';
 import { lintSurveillanceBoundary } from './surveillance-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
@@ -39,6 +40,7 @@ const findings = [
   ...lintSunReyChainBoundary(root),
   ...lintSunReyBlockchainArchitecture(root),
   ...lintSunReyProtocol(root),
+  ...lintProductionEconomicActivation(root),
   ...lintCustodyBoundary(root),
   ...lintSurveillanceBoundary(root),
 ];

@@ -14,3 +14,4 @@ export * from './treasury/index.ts';
 export * from './stack.ts';
 export * from './explorer.ts';
 export * from './human-contribution-bridge/index.ts';
+export * as productionActivation from './production-activation/index.ts';

@@ -93,6 +93,7 @@ never be two implementations of these systems.
 | Bandwidth / telecom / digital-network data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/bandwidth/types.ts` | IMPLEMENTED |
 | Real-estate / infrastructure data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts` | IMPLEMENTED |
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
+| Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
 | Human contribution monetary evidence bridge | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/human-contribution-bridge/gate.ts` | IMPLEMENTED |
@@ -1721,6 +1722,21 @@ mint MoonRey. Do not create `packages/goods-oracles`,
 `packages/commerce-data-fabric`, `packages/services-oracle`, or
 `packages/moonrey-commerce`. See
 [`chunk-137-goods-services-data-fabric.md`](./chunk-137-goods-services-data-fabric.md).
+
+Chunk 143 implements the production economic activation firewall at
+`packages/sunrey-chain/src/economics/production-activation`.
+Capability `sunrey-production-economic-activation-firewall` is
+`IMPLEMENTED` on the existing monetary/economic owner. The firewall
+evaluates whether engineering systems, external evidence, human
+authorization, and production economic parameters are ready to be
+presented to authorized humans. It does not activate production, flip
+`LIVE_*` flags, invent tokenomics, or create a second mint. Chunk 65
+remains the mainnet readiness owner. Chunk 71 remains the monetary
+constitution. `PRODUCTION_ACTIVE` is not an achievable state. Do not
+create `packages/production-economics`, `packages/monetary-activation`,
+`packages/mainnet-economics`, `packages/tokenomics-v2`, or
+`packages/launch-economics`. See
+[`docs/economics/chunk-143-production-economic-activation-firewall.md`](../economics/chunk-143-production-economic-activation-firewall.md).
 
 ## Agent stop rule
 

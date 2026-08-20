@@ -1,0 +1,27 @@
+{
+  "chunk": "CHUNK-143",
+  "title": "SunRey Production Economic Activation Firewall and Evidence Matrix",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "sunrey-mainnet-readiness",
+    "sunrey-economic-rc",
+    "sunrey-mainnet-rc",
+    "sunrey-pregenesis-qualification",
+    "sunrey-production-genesis-execution",
+    "sunrey-production-handoff",
+    "sunrey-human-contribution-monetary-bridge",
+    "sunrey-human-economic-contributions",
+    "moonrey-productive-value-function",
+    "moonrey-productive-value-settlement",
+    "moonrey-v2-shadow-economics",
+    "sunrey-provider-certification",
+    "sunrey-unified-economic-data-fabric",
+    "sunrey-human-information-network",
+    "sunrey-economic-asset-verification",
+    "sunrey-production-economic-activation-firewall"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/economics/production-activation. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state. evaluateChunkRequirements returns mustStop: false. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
+}

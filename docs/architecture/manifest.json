@@ -2754,8 +2754,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–134 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–135 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
@@ -2915,19 +2913,19 @@
         "packages/water-oracle",
         "packages/water-data-fabric",
         "packages/utility-water",
-        "packages/irrigation-oracle"
+        "packages/irrigation-oracle",
         "packages/goods-oracles",
         "packages/commerce-data-fabric",
         "packages/services-oracle",
-        "packages/moonrey-commerce"
+        "packages/moonrey-commerce",
         "packages/bandwidth-oracle",
         "packages/telecom-data-fabric",
         "packages/network-oracles",
-        "packages/cdn-metering"
+        "packages/cdn-metering",
         "packages/real-estate-oracles",
         "packages/infrastructure-oracles",
         "packages/property-data-fabric",
-        "packages/facility-data-fabric"
+        "packages/facility-data-fabric",
         "packages/economic-data-fabric",
         "packages/unified-oracles",
         "packages/cross-domain-reconciliation",
@@ -2936,11 +2934,44 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 134 water economic data fabric. Extends sunrey-production-oracles. WATER_AVAILABILITY is not production. Irrigation consumption is an agricultural input, not a utility production claim. Facts do not mint MoonRey. No named provider integration, valve control, or production activation."
-      "notes": "Chunk 137 provider-neutral goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../service-delivery. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. SERVICE_DELIVERY allows service_hour; historical machine_h is preserved. No named vendor, live provider, production activation, or MoonRey mint."
-      "notes": "Chunk 136 provider-neutral bandwidth, telecom, and digital-network economic data fabric. Extends sunrey-production-oracles. BANDWIDTH_USAGE_SCHEMA_V1 remains historical GB_s compatibility. BANDWIDTH_USAGE_SCHEMA_V2 is transferred volume. DATA_RATE is not DATA_VOLUME. Capacity is not realized usage. Facts and certification do not mint MoonRey."
-      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time; REAL_ESTATE_USE_CAPACITY stays capacity. New infrastructure feeds use facility_hour; historical machine_h is LEGACY_INFRASTRUCTURE_MACHINE_H_V1. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
       "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
+    },
+    {
+      "id": "sunrey-production-economic-activation-firewall",
+      "name": "SunRey production economic activation firewall and evidence matrix",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/economics/production-activation/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/economics/production-activation/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionEconomicActivationDecision",
+          "kind": "type"
+        },
+        {
+          "name": "ProductionEconomicActivationManifest",
+          "kind": "type"
+        },
+        {
+          "name": "PRODUCTION_ECONOMIC_ACTIVATION_FIREWALL_ID",
+          "kind": "const"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/production-economics",
+        "packages/monetary-activation",
+        "packages/mainnet-economics",
+        "packages/tokenomics-v2",
+        "packages/launch-economics"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 143 production economic activation firewall. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. PRODUCTION_ACTIVE is not an achievable state."
     },
     {
       "id": "sunrey-production-infrastructure",
@@ -5976,7 +6007,6 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–136 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
       "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
@@ -6338,16 +6368,22 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 134 water economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/water. Extends sunrey-production-oracles. WATER_AVAILABILITY is not production. Irrigation consumption is not water production. No named provider integration, valve control, or MoonRey mint. Do not create packages/water-oracle, packages/water-data-fabric, packages/utility-water, or packages/irrigation-oracle."
+    },
+    {
       "id": "sunrey-goods-services-data-fabric",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 137 goods, commerce, and service delivery economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/goods and .../service-delivery. Extends sunrey-production-oracles. Order, invoice, and payment are not productive output. service_hour is the governed time-based service unit; historical machine_h records are preserved. No named vendor, live provider, production activation, or MoonRey mint. Do not create packages/goods-oracles, packages/commerce-data-fabric, packages/services-oracle, or packages/moonrey-commerce."
+    },
+    {
       "id": "sunrey-bandwidth-network-data-fabric",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 136 bandwidth, telecom, and digital network economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/bandwidth. Extends sunrey-production-oracles. DATA_RATE is not DATA_VOLUME. Capacity is not realized usage. Do not create packages/bandwidth-oracle, packages/telecom-data-fabric, packages/network-oracles, or packages/cdn-metering."
+    },
+    {
       "id": "sunrey-real-estate-infrastructure-data-fabric",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6374,6 +6410,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 138 unified multi-provider economic data fabric at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Extends sunrey-production-oracles. Not a second oracle, productive registry, attribution engine, economic asset registry, or mint. Do not create packages/economic-data-fabric, packages/unified-oracles, packages/cross-domain-reconciliation, or packages/moonrey-data-fabric."
+    },
+    {
+      "id": "sunrey-production-economic-activation-firewall",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 143 production economic activation firewall at packages/sunrey-chain/src/economics/production-activation. Evaluator only. Consumes Chunk 65 readiness and Chunk 71 monetary constitution. Does not activate production, flip LIVE_* flags, invent tokenomics, or create a second mint. Do not create packages/production-economics, packages/monetary-activation, packages/mainnet-economics, packages/tokenomics-v2, or packages/launch-economics."
     }
   ],
   "boundedContexts": [
