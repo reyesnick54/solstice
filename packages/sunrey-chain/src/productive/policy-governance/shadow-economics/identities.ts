@@ -8,11 +8,13 @@
 
 export const LEGACY_ENGINEERING_SIMULATION_V1 = 'LEGACY_ENGINEERING_SIMULATION_V1' as const;
 export const GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2 = 'GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2' as const;
+export const PRODUCTION_CANDIDATE_UNACTIVATED = 'PRODUCTION_CANDIDATE_UNACTIVATED' as const;
 export const PRODUCTION_VALUE_PATH = 'UNCONFIGURED' as const;
 
 export type MoonReyValuePathIdentity =
   | typeof LEGACY_ENGINEERING_SIMULATION_V1
   | typeof GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2
+  | typeof PRODUCTION_CANDIDATE_UNACTIVATED
   | typeof PRODUCTION_VALUE_PATH;
 
 export const SHADOW_MODE = true as const;
@@ -32,6 +34,7 @@ export const V1_RECEIPT_SCHEMA = 'moonrey.v1.legacy-receipt.v1' as const;
 export const VALUE_PATH_IDENTITIES = Object.freeze({
   v1: LEGACY_ENGINEERING_SIMULATION_V1,
   v2: GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2,
+  productionCandidate: PRODUCTION_CANDIDATE_UNACTIVATED,
   production: PRODUCTION_VALUE_PATH,
   shadowMode: SHADOW_MODE,
   canonicalSupplyMutated: CANONICAL_SUPPLY_MUTATED,
@@ -63,4 +66,10 @@ export function isLegacyV1(path: string): path is typeof LEGACY_ENGINEERING_SIMU
 
 export function isGovernedV2(path: string): path is typeof GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2 {
   return path === GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2;
+}
+
+export function isProductionCandidateUnactivated(
+  path: string,
+): path is typeof PRODUCTION_CANDIDATE_UNACTIVATED {
+  return path === PRODUCTION_CANDIDATE_UNACTIVATED;
 }

@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-146",
+  "title": "MoonRey Coin Production-Candidate Productive Value, GPUV Conversion, Supply, Category Caps, and Issuance Parameter Package",
+  "requires": [
+    "architecture-linting",
+    "sunrey-chain",
+    "sunrey-monetary-constitution",
+    "moonrey-productive-value-function",
+    "moonrey-productive-value-settlement",
+    "moonrey-v2-shadow-economics",
+    "moonrey-economic-event-attribution",
+    "moonrey-source-taxonomy",
+    "sunrey-economic-unit-normalization",
+    "sunrey-provider-certification",
+    "sunrey-unified-economic-data-fabric",
+    "sunrey-production-economic-activation-firewall",
+    "moonrey-production-issuance-policy-candidate"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/productive/policy-governance/value-function/production-candidate, packages/sunrey-chain/src/productive/policy-governance/value-settlement/production-candidate, and packages/sunrey-chain/src/economics/production-activation. Describes future production-candidate policy only. Does not invent GPUV values, conversion rates, or tokenomics. Does not activate MoonRey issuance. Chunk 71 remains the mint. evaluateChunkRequirements returns mustStop: false. Do not create packages/moonrey-production-tokenomics, packages/gpuv-conversion, packages/moonrey-issuance-policy, packages/production-value-function, or packages/moonrey-production-policy."
+}

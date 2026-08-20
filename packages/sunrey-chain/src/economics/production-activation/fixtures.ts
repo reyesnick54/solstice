@@ -22,6 +22,7 @@ import { NORMALIZATION_CONSTITUTION_VERSION } from '../../units/constitution.ts'
 import { DEVELOPMENT_ATTRIBUTION_POLICY_ID } from '../../productive/policy-governance/attribution/policy.ts';
 import { PRODUCTION_VALUE_POLICY_STATUS } from '../../productive/policy-governance/value-function/types.ts';
 import { PRODUCTION_CONVERSION_STATUS } from '../../productive/policy-governance/value-settlement/types.ts';
+import { unconfiguredMoonReyProductionIssuancePackage } from './moonrey-parameter-package.ts';
 import { CERTIFICATION_POLICY_VERSION } from '../../oracle/production/certification/types.ts';
 import {
   ECONOMIC_DATA_FABRIC_ID,
@@ -88,6 +89,7 @@ export function currentRepositoryBindings(): readonly VersionBinding[] {
     bind('moonreyAttributionPolicy', DEVELOPMENT_ATTRIBUTION_POLICY_ID),
     bind('moonreyProductiveValuePolicy', PRODUCTION_VALUE_POLICY_STATUS),
     bind('moonreyGpuvConversionPolicy', PRODUCTION_CONVERSION_STATUS),
+    bind('moonreyProductionIssuancePackage', unconfiguredMoonReyProductionIssuancePackage().packageId),
     bind('oracleCertificationPolicy', CERTIFICATION_POLICY_VERSION),
     bind('economicDataFabricVersion', `${ECONOMIC_DATA_FABRIC_ID}:${String(ECONOMIC_DATA_FABRIC_VERSION)}`),
     bind('hinPolicy', HIN_POLICY_VERSION),
@@ -187,6 +189,25 @@ export function currentRepositorySnapshot(): ProductionEconomicActivationSnapsho
     sunreyEngineeringReady: true,
     exchangeEngineeringReady: true,
     intendedProductionCategories: Object.freeze(coverage.productiveCategories.map((row) => row.productiveCategory)),
+    moonreyProductionCandidate: currentMoonReyProductionCandidateSnapshot(),
+  });
+}
+
+export function currentMoonReyProductionCandidateSnapshot() {
+  const pkg = unconfiguredMoonReyProductionIssuancePackage();
+  return Object.freeze({
+    packageId: pkg.packageId,
+    packageHash: pkg.packageHash,
+    sourceClass: pkg.sourceClass,
+    fixture: pkg.fixture,
+    productionActivated: false as const,
+    gpuvValuesSelected: false as const,
+    conversionSelected: false as const,
+    gpuvEqualsMoonRey: false as const,
+    legacyV1ProductionEligible: false as const,
+    fixtureAuthorizesProduction: false as const,
+    governedValueV2Required: true as const,
+    chunk71RemainsMonetaryAuthority: true as const,
   });
 }
 

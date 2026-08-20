@@ -11,9 +11,11 @@ import {
   CANONICAL_SUPPLY_MUTATED,
   GOVERNED_PRODUCTIVE_VALUE_SIMULATION_V2,
   LEGACY_ENGINEERING_SIMULATION_V1,
+  PRODUCTION_CANDIDATE_UNACTIVATED,
   PRODUCTION_VALUE_PATH,
   V2_PRODUCTION_ACTIVE,
 } from './identities.ts';
+import { inspectProductionCandidatePolicy } from './production-candidate.ts';
 import type { MoonReyShadowScenario, MoonReyValuePathComparison, ShadowReasonCode } from './types.ts';
 import { evaluateLegacyV1 } from './v1.ts';
 import { evaluateGovernedV2 } from './v2.ts';
@@ -100,6 +102,18 @@ export class MoonReyEconomicShadowEvaluator {
 
   canonicalSupply(): NativeAssetSupplyState {
     return this.supplySnapshot;
+  }
+
+  inspectProductionCandidate() {
+    const inspection = inspectProductionCandidatePolicy();
+    if (inspection.candidateActive || inspection.productionActivated) {
+      throw new Error('production-candidate policy must remain unactivated in shadow evaluation');
+    }
+    return inspection;
+  }
+
+  productionCandidatePath(): typeof PRODUCTION_CANDIDATE_UNACTIVATED {
+    return PRODUCTION_CANDIDATE_UNACTIVATED;
   }
 }
 
