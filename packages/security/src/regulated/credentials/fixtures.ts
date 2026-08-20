@@ -107,7 +107,7 @@ export function fixtureCustodyCredential(): ProviderCredentialDescriptor {
   return created.value;
 }
 
-export function fixtureWebhookCredential(version = 2): ProviderCredentialDescriptor {
+export function fixtureWebhookCredential(version = 1): ProviderCredentialDescriptor {
   const created = createProviderCredentialDescriptor({
     credentialId: 'cred_webhook_sim_1',
     providerId: 'fixture-kyc',
@@ -122,7 +122,7 @@ export function fixtureWebhookCredential(version = 2): ProviderCredentialDescrip
     issuedAt: FIXTURE_NOW,
     notBefore: FIXTURE_NOT_BEFORE,
     expiresAt: FIXTURE_EXPIRES,
-    status: 'ROTATING',
+    status: 'ACTIVE',
   });
   if (!created.ok) {
     throw new Error(created.error.reason);

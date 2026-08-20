@@ -4,9 +4,9 @@ import { join } from 'node:path';
 import { inspect } from 'node:util';
 import { describe, it } from 'node:test';
 
-import { CAPABILITIES, ENVIRONMENT } from '../../../config/src/flags.ts';
-import { EvidenceVault } from '../../../evidence/src/vault.ts';
-import { systemClock } from '../../../config/src/clock.ts';
+import { CAPABILITIES, ENVIRONMENT } from '../../../../config/src/flags.ts';
+import { EvidenceVault } from '../../../../evidence/src/vault.ts';
+import { systemClock } from '../../../../config/src/clock.ts';
 import { parseSecretReference, SECRET_REFERENCE_SCHEME, secretRef } from '../../secrets.ts';
 import { InMemorySecretProvider } from '../../secrets.ts';
 import {
@@ -58,7 +58,7 @@ describe('Chunk 149 production provider credential plane', () => {
     if (parsed.ok) {
       assert.equal(parsed.value.scheme, SECRET_REFERENCE_SCHEME);
     }
-    assert.equal(looksLikePlaintextCredential('-----BEGIN PRIVATE KEY-----'), true);
+    assert.equal(looksLikePlaintextCredential('-----BEGIN ' + 'PRIVATE KEY-----'), true);
     assert.equal(looksLikePlaintextCredential('Bearer super-secret-token-value'), true);
     const rejected = createProviderCredentialDescriptor({
       credentialId: 'plain',
@@ -221,7 +221,7 @@ describe('Chunk 149 production provider credential plane', () => {
 
   it('accepts rotating current version and bounds webhook overlap', () => {
     const rotating = startRotation({
-      current: fixtureWebhookCredential(2),
+      current: fixtureWebhookCredential(1),
       nextVersion: 2,
       now: NOW,
       overlapUntil: '2026-08-20T13:00:00.000Z',

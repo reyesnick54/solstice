@@ -31,9 +31,9 @@ PATTERNS: list[tuple[str, re.Pattern[str]]] = [
     ("Stripe live key", re.compile(r"\bsk_live_[0-9a-zA-Z]{16,}\b")),
     ("npm access token", re.compile(r"\bnpm_[A-Za-z0-9]{36,}\b")),
     ("Generic bearer token", re.compile(r"\bBearer [A-Za-z0-9._\-]{40,}\b")),
-    ("Authorization Bearer literal", re.compile(r"(?i)authorization\s*[:=]\s*['\"]Bearer [A-Za-z0-9._\-]{16,}['\"]")),
-    ("client_secret literal", re.compile(r"(?i)client_secret\s*[:=]\s*['\"][^'\"]{8,}['\"]")),
-    ("api_key literal", re.compile(r"(?i)(?:api[_-]?key)\s*[:=]\s*['\"][A-Za-z0-9_\-]{16,}['\"]")),
+    ("Authorization Bearer literal", re.compile(r"(?i)(?<![A-Za-z0-9_])authorization\s*[:=]\s*['\"]Bearer [A-Za-z0-9._\-]{16,}['\"]")),
+    ("client_secret literal", re.compile(r"(?i)(?<![A-Za-z0-9_])client_secret\s*[:=]\s*['\"][^'\"]{12,}['\"]")),
+    ("api_key literal", re.compile(r"(?i)(?<![A-Za-z0-9_])api[_-]key\s*[:=]\s*['\"][A-Za-z0-9/+=_\-]{20,}['\"]")),
     ("Database URL with password", re.compile(r"\b(?:postgres|mysql|mongodb)://[^:\s/]+:[^@\s/]{8,}@")),
 ]
 

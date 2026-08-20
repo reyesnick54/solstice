@@ -70,10 +70,7 @@ export class RegulatedSecretResolver {
       rawCredentialPresent: false as const,
       toString: () => REDACTED,
       toJSON: () => REDACTED,
-    });
-    Object.defineProperty(handle, inspect.custom, {
-      value: () => REDACTED,
-      enumerable: false,
+      [inspect.custom]: () => REDACTED,
     });
     leases.set(handle, resolved.value);
     return credentialOk(handle);
