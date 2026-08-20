@@ -57,6 +57,7 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
     'manufacturing.resource.v1',
   ),
   REAL_ESTATE_USE_CAPACITY: schema('REAL_ESTATE_USE_CAPACITY', 'm2', ['m2'], 'real_estate.use.v1'),
+  REAL_ESTATE_USAGE: schema('REAL_ESTATE_USAGE', 'm2_hour', ['m2_hour'], 'real_estate.usage.v1'),
   STORAGE_CAPACITY: schema('STORAGE_CAPACITY', 'TB', STORAGE_UNITS, 'storage.resource.v1'),
   LOGISTICS_CAPACITY: schema('LOGISTICS_CAPACITY', 'tonne_km', ['tonne_km'], 'logistics.resource.v1'),
   DELIVERY_COMPLETION: schema('DELIVERY_COMPLETION', 'units_produced', ['units_produced'], 'delivery.completion.v1'),
@@ -73,10 +74,15 @@ export const FACT_SCHEMAS: Readonly<Record<FactType, FactSchema>> = Object.freez
   INFRASTRUCTURE_CAPACITY: schema(
     'INFRASTRUCTURE_CAPACITY',
     'machine_h',
-    ['machine_h'],
+    ['machine_h', 'facility_hour'],
     'infrastructure.capacity.v1',
   ),
-  INFRASTRUCTURE_USAGE: schema('INFRASTRUCTURE_USAGE', 'machine_h', ['machine_h'], 'infrastructure.usage.v1'),
+  INFRASTRUCTURE_USAGE: schema(
+    'INFRASTRUCTURE_USAGE',
+    'machine_h',
+    ['machine_h', 'facility_hour'],
+    'infrastructure.usage.v1',
+  ),
   GOODS_OUTPUT: schema('GOODS_OUTPUT', 'units_produced', ['units_produced', 'kg', 'tonne'], 'goods.output.v1'),
   GOODS_DELIVERY: schema('GOODS_DELIVERY', 'units_produced', ['units_produced'], 'goods.delivery.v1'),
   AUTOMATED_MACHINE_OUTPUT: schema(

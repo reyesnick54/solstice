@@ -280,6 +280,12 @@ export {
 } from './provider-families/resources/index.ts';
 export type { ResourceExtractionEvidenceRecord } from './provider-families/resources/index.ts';
 export {
+  ingestRealEstateRecord,
+  ingestInfrastructureRecord,
+  realEstateFactCannotAutoMint,
+  infrastructureFactCannotAutoMint,
+  runRealEstateInfrastructureDataFabricDemo,
+} from './provider-families/index.ts';
   CANONICAL_FAMILY_REGISTRY,
   DATA_FABRIC_FINALIZES_FACTS,
   DATA_FABRIC_MINTS_MOONREY,

@@ -2746,6 +2746,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–135 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
       "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–133 provider-family data fabrics live at packages/sunrey-chain/src/oracle/production/provider-families. Chunk 138 unified economic data fabric lives at packages/sunrey-chain/src/oracle/production/economic-data-fabric. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
@@ -2833,6 +2834,11 @@
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric. Extends sunrey-production-oracles. RESOURCE_RESERVE is not RESOURCE_EXTRACTION. REFERENCE_PRICE stays reference-only. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
     },
     {
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "name": "Real-estate use and infrastructure economic data fabric",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/oracle/production/provider-families/real-estate/index.ts",
       "id": "sunrey-unified-economic-data-fabric",
       "name": "Unified multi-provider economic data fabric, coverage, and cross-domain reconciliation",
       "canonicalOwner": "packages/sunrey-chain",
@@ -2845,11 +2851,16 @@
       "kernelAuthorizationRequired": false,
       "protectedSymbols": [
         {
+          "name": "RealEstateEvidenceRecord",
           "name": "EconomicDataCollectionEnvelope",
           "kind": "type"
         }
       ],
       "forbiddenAliases": [
+        "packages/real-estate-oracles",
+        "packages/infrastructure-oracles",
+        "packages/property-data-fabric",
+        "packages/facility-data-fabric"
         "packages/economic-data-fabric",
         "packages/unified-oracles",
         "packages/cross-domain-reconciliation",
@@ -2858,6 +2869,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time; REAL_ESTATE_USE_CAPACITY stays capacity. New infrastructure feeds use facility_hour; historical machine_h is LEGACY_INFRASTRUCTURE_MACHINE_H_V1. Not a second oracle owner, mint, or named provider integration. Production remains inactive."
       "notes": "Chunk 138 unified off-chain economic data fabric above provider-family adapters. Extends sunrey-production-oracles. Not a second oracle consensus engine, productive registry, attribution engine, economic asset registry, or mint. Production remains inactive. liveProviderConnected is false."
     },
     {
@@ -5894,7 +5906,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–133 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification and Chunk 129–135 provider-family data fabrics extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",
@@ -6241,6 +6253,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 133 minerals, natural resources, and extraction economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/resources. Extends sunrey-production-oracles. RESOURCE_RESERVE is not extraction or OUTPUT. REFERENCE_PRICE cannot create a productive claim. No named provider integration, production activation, or second oracle owner. Do not create packages/resource-oracles, packages/minerals-data, packages/extraction-fabric, or packages/resource-data-fabric."
+    },
+    {
+      "id": "sunrey-real-estate-infrastructure-data-fabric",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 135 real-estate use and infrastructure economic data fabric at packages/sunrey-chain/src/oracle/production/provider-families/real-estate and packages/sunrey-chain/src/oracle/production/provider-families/infrastructure. Extends sunrey-production-oracles. REAL_ESTATE_USAGE is realized area-time. Historical machine_h infrastructure evidence is not reinterpreted as facility-hour. No named provider integration, production activation, or second oracle owner. Do not create packages/real-estate-oracles, packages/infrastructure-oracles, packages/property-data-fabric, or packages/facility-data-fabric."
     },
     {
       "id": "moonrey-productive-value-settlement",
