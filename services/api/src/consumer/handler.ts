@@ -238,6 +238,7 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/fx/quotes/') && method === 'GET') {
     const id = path.slice('/api/v1/fx/quotes/'.length);
     return result(runtime.bff.getFxQuote(principal, id, requestId), headers);
+  }
   if (runtime.payments) {
     const payments = dispatchPayments(runtime.payments, request, principal, requestId, headers);
     if (payments) {
@@ -302,6 +303,12 @@ function dispatchAuthenticated(
 }
 
 function result(body: unknown, headers: Record<string, string>, okStatus = 200): BffResponse {
+  if (isBffError(body)) {
+    return json(statusForError(body as BffErrorEnvelope), body, headers);
+  }
+  return json(okStatus, body, headers);
+}
+
 function dispatchPayments(
   platform: PaymentPlatform,
   request: BffRequest,
@@ -404,13 +411,6 @@ function dispatchPayments(
 
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
-}
-
-function result(body: unknown, headers: Record<string, string>): BffResponse {
-  if (isBffError(body)) {
-    return json(statusForError(body as BffErrorEnvelope), body, headers);
-  }
-  return json(okStatus, body, headers);
 }
 
 function json(status: number, body: unknown, headers: Record<string, string>): BffResponse {

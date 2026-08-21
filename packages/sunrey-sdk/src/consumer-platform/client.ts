@@ -38,7 +38,6 @@ import type {
   RecipientDto,
   TransferDto,
   CardDetailDto,
-  CardDto,
 } from './types.ts';
 
 export type ConsumerAuthProvider = {
@@ -490,32 +489,10 @@ export class SunReyConsumerClient {
       {},
       options,
     );
-  async listCards(options?: ConsumerRequestOptions): Promise<{ readonly items: readonly CardDto[] }> {
-    return this.request('GET', '/api/v1/cards', undefined, options);
   }
 
   async getCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDetailDto> {
-    return this.request('GET', `/api/v1/cards/${encodeURIComponent(cardId)}`, undefined, options);
-  }
-
-  async issueCard(
-    input: {
-      readonly fundingAccountId: string;
-      readonly form?: 'VIRTUAL' | 'PHYSICAL';
-      readonly cardId?: string;
-      readonly idempotencyKey?: string;
-    },
-    options?: ConsumerRequestOptions,
-  ): Promise<CardDto> {
-    return this.request('POST', '/api/v1/cards', input, options);
-  }
-
-  async freezeCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDto> {
-    return this.request('POST', `/api/v1/cards/${encodeURIComponent(cardId)}/freeze`, {}, options);
-  }
-
-  async unfreezeCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDto> {
-    return this.request('POST', `/api/v1/cards/${encodeURIComponent(cardId)}/unfreeze`, {}, options);
+    return this.request('GET', `/v1/consumer/cards/${encodeURIComponent(cardId)}`, undefined, options);
   }
 
   async patchCardControls(
@@ -531,11 +508,11 @@ export class SunReyConsumerClient {
     }>,
     options?: ConsumerRequestOptions,
   ): Promise<CardDto> {
-    return this.request('PATCH', `/api/v1/cards/${encodeURIComponent(cardId)}/controls`, input, options);
+    return this.request('PATCH', `/v1/consumer/cards/${encodeURIComponent(cardId)}/controls`, input, options);
   }
 
   async getCardWallet(cardId: string, options?: ConsumerRequestOptions): Promise<CardDetailDto['wallet']> {
-    return this.request('GET', `/api/v1/cards/${encodeURIComponent(cardId)}/wallet`, undefined, options);
+    return this.request('GET', `/v1/consumer/cards/${encodeURIComponent(cardId)}/wallet`, undefined, options);
   }
 
   async request<T>(

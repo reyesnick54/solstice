@@ -63,7 +63,7 @@ export class SimulatedProductionCardIssuer extends SimulatedCardProcessor implem
     });
     return Object.freeze({
       outcome: provisioned.outcome,
-      status: provisioned.status,
+      status: provisioned.status === 'FAILED' ? 'NOT_ELIGIBLE' : provisioned.status,
       providerReference: provisioned.providerReference,
       ...walletCertificationPosture(),
     });

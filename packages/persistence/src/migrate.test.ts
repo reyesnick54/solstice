@@ -518,15 +518,6 @@ describe('versioned SQL migrations', () => {
     assert.match(v031.sql, /CREATE TABLE platform_api\.idempotency_record/);
     assert.match(v031.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v031.sql), false);
-  it('customer V030 adds platform API stores without becoming a ledger', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v030 = files.find((file) => file.version === 30);
-    assert.ok(v030);
-    assert.equal(v030.filename, 'V030__platform_api.sql');
-    assert.match(v030.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
-    assert.match(v030.sql, /CREATE TABLE platform_api\.idempotency_record/);
-    assert.match(v030.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
   it('security V002 stores credential descriptor references without secret values', () => {

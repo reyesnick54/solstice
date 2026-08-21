@@ -50,8 +50,10 @@ export const CONSUMER_ACTION_TYPES = [
   'INITIATE_PAYMENT',
   'ACCEPT_FX_QUOTE',
   'CARD_ISSUE',
+  'ISSUE_CARD',
+  'FREEZE_CARD',
+  'UNFREEZE_CARD',
 ] as const;
-export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT', 'ISSUE_CARD', 'FREEZE_CARD', 'UNFREEZE_CARD'] as const;
 export type ConsumerActionType = (typeof CONSUMER_ACTION_TYPES)[number];
 
 export const SANDBOX_PERSONA_IDS = [
@@ -373,11 +375,4 @@ export type PaymentDto = {
   readonly status: string;
   readonly source: MoneyDto;
   readonly destination: MoneyDto;
-};
-
-export type CardDto = {
-  readonly card_id: string;
-  readonly status: string;
-  readonly form_factor: string;
-  readonly display_hint: string;
 };

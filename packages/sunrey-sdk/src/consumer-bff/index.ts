@@ -19,6 +19,7 @@ export {
   createSunReyConsumerBffClient,
 } from './client.ts';
 export type { BffAuthProvider, BffRequestOptions, ConsumerBffClientOptions } from './client.ts';
+export {
   CONSUMER_ACTIVITY_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,

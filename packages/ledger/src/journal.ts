@@ -376,10 +376,9 @@ export class Ledger {
         request.actionType === 'ACCEPT_FX_QUOTE' &&
         source.ownerId !== undefined &&
         source.ownerId === credited.ownerId;
-      if (!sameOwnerFx) {
       const walletFxDestinationCredit =
         request.actionType === 'EXECUTE_FX_QUOTE' && request.memo === 'WALLET_FX_DESTINATION_CREDIT';
-      if (!walletFxDestinationCredit) {
+      if (!sameOwnerFx && !walletFxDestinationCredit) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind a posting on this journal',
@@ -419,8 +418,7 @@ export class Ledger {
         customerPosting !== undefined &&
         source.ownerId !== undefined &&
         source.ownerId === this.accounts.get(customerPosting.accountId).ownerId;
-      if (!(systemBookAction && allNonCustomer) && !sameOwnerFx) {
-      if (!(systemBookAction && allNonCustomer) && !walletFxDestinationCredit) {
+      if (!(systemBookAction && allNonCustomer) && !sameOwnerFx && !walletFxDestinationCredit) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind any posting on this journal',

@@ -69,7 +69,6 @@ export type {
   RecipientDto,
   CardControlsDto,
   CardDetailDto,
-  CardDto,
   CardStatus,
   CardWalletStatus,
 } from './types.ts';

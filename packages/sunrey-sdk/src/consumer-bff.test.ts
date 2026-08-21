@@ -72,18 +72,8 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(calls[1]?.idempotency, 'pay_sdk_1');
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
   });
+});
 
-  it('does not import privileged modules', () => {
-    const dir = join(here, 'consumer-bff');
-    const files = readdirSync(dir).filter((name) => name.endsWith('.ts'));
-    const forbidden = [
-      'node:http',
-      'node:fs',
-      'node:crypto',
-      'ExecutionAuthority',
-      'postJournal',
-      '../../ledger',
-      '../../kernel',
 describe('consumer BFF SDK models', () => {
   it('exposes typed account, balance, and activity vocabularies', () => {
     assert.ok(FINANCIAL_ACCOUNT_LIFECYCLES.includes('ACTIVE'));

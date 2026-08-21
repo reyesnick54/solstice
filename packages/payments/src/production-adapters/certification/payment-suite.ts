@@ -82,7 +82,7 @@ export function runPaymentCertificationSuite(): CertificationSuiteResult {
   cases.push(
     caseResult(
       'unknown_status',
-      unknown.canonical === 'REQUIRES_RECONCILIATION' && unknown.railStatus === 'UNKNOWN' && unknown.canonical !== 'SETTLED',
+      unknown.canonical === 'REQUIRES_RECONCILIATION' && unknown.railStatus === 'UNKNOWN',
       unknown.canonical,
     ),
   );
