@@ -22,21 +22,29 @@ export type KybProviderPort = {
 };
 
 export class KybAdapter implements KybProviderPort {
+  readonly #store: IdentityAdapterStore;
+  readonly #profile: IdentityAdapterProfile;
+  readonly #stateFor: (businessId: string) => KybVerificationState;
+
   constructor(
-    private readonly store: IdentityAdapterStore,
-    private readonly profile: IdentityAdapterProfile,
-    private readonly stateFor: (businessId: string) => KybVerificationState,
-  ) {}
+    store: IdentityAdapterStore,
+    profile: IdentityAdapterProfile,
+    stateFor: (businessId: string) => KybVerificationState,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#stateFor = stateFor;
+  }
 
   startBusinessVerification(input: StartKybInput): KybRecord {
-    const state = this.stateFor(input.businessId);
+    const state = this.#stateFor(input.businessId);
     const record: KybRecord = Object.freeze({
       kybId: `kyb_${randomUUID()}`,
       businessId: input.businessId,
       registrationRef: input.registrationRef,
       jurisdiction: input.jurisdiction,
       state,
-      providerRef: `${this.profile.providerId}:kyb:${input.businessId}`,
+      providerRef: `${this.#profile.providerId}:kyb:${input.businessId}`,
       beneficialOwnerRefs: Object.freeze([...(input.beneficialOwnerRefs ?? [])]),
       directorRefs: Object.freeze([...(input.directorRefs ?? [])]),
       documentRefs: Object.freeze([...(input.documentRefs ?? [])]),
@@ -47,16 +55,16 @@ export class KybAdapter implements KybProviderPort {
       observedAt: input.now,
       isIndividualKyc: false,
     });
-    this.store.kyb.set(record.kybId, record);
+    this.#store.kyb.set(record.kybId, record);
     return record;
   }
 
   retrieveBusinessVerification(kybId: string): KybRecord | undefined {
-    return this.store.kyb.get(kybId);
+    return this.#store.kyb.get(kybId);
   }
 
   refreshBusinessMonitoring(input: { readonly kybId: string; readonly now: UtcInstant }): KybRecord {
-    const current = this.store.kyb.get(input.kybId);
+    const current = this.#store.kyb.get(input.kybId);
     if (!current) {
       throw new Error(`unknown KYB record ${input.kybId}`);
     }
@@ -66,7 +74,7 @@ export class KybAdapter implements KybProviderPort {
       ongoingMonitoring: true,
       reasonCodes: Object.freeze([...current.reasonCodes, 'BUSINESS_STATUS_REFRESHED']),
     });
-    this.store.kyb.set(next.kybId, next);
+    this.#store.kyb.set(next.kybId, next);
     return next;
   }
 }

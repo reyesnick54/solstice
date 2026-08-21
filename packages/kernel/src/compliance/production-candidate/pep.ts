@@ -1,11 +1,12 @@
 import type { UtcInstant } from '../../../../domain/src/time.ts';
 import { createFinding } from './findings.ts';
 import type { ComplianceAdapterStore } from './store.ts';
-import type {
-  ComplianceAdapterProfile,
-  NormalizedComplianceFinding,
-  ProviderMatchState,
-  ScreeningSubject,
+import {
+  stricterMatchState,
+  type ComplianceAdapterProfile,
+  type NormalizedComplianceFinding,
+  type ProviderMatchState,
+  type ScreeningSubject,
 } from './types.ts';
 
 export type PepScreenInput = {
@@ -20,19 +21,30 @@ export type PepProviderPort = {
 };
 
 export class PepAdapter implements PepProviderPort {
+  readonly #store: ComplianceAdapterStore;
+  readonly #profile: ComplianceAdapterProfile;
+  readonly #matchFor: (subjectRef: string) => ProviderMatchState;
+
   constructor(
-    private readonly store: ComplianceAdapterStore,
-    private readonly profile: ComplianceAdapterProfile,
-    private readonly matchFor: (subjectRef: string) => ProviderMatchState,
-  ) {}
+    store: ComplianceAdapterStore,
+    profile: ComplianceAdapterProfile,
+    matchFor: (subjectRef: string) => ProviderMatchState,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#matchFor = matchFor;
+  }
 
   screen(input: PepScreenInput): NormalizedComplianceFinding {
-    const matchState = this.matchFor(input.relatedPersonRef ?? input.subjectRef);
+    const subjectMatch = this.#matchFor(input.subjectRef);
+    const matchState = input.relatedPersonRef
+      ? stricterMatchState(subjectMatch, this.#matchFor(input.relatedPersonRef))
+      : subjectMatch;
     const finding = createFinding({
       kind: 'PEP',
       subjectKind: input.subjectKind,
       subjectRef: input.subjectRef,
-      providerId: this.profile.providerId,
+      providerId: this.#profile.providerId,
       matchState,
       severity: matchState === 'NO_MATCH' ? 'INFO' : 'MEDIUM',
       reasonCodes: Object.freeze([
@@ -41,7 +53,7 @@ export class PepAdapter implements PepProviderPort {
       ]),
       now: input.now,
     });
-    this.store.findings.set(finding.findingId, finding);
+    this.#store.findings.set(finding.findingId, finding);
     return finding;
   }
 }

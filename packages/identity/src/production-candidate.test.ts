@@ -154,8 +154,23 @@ describe('Phase D identity verification adapters', () => {
     );
     assert.equal(first.ok, true);
     assert.equal(first.ok && first.duplicate, false);
-    const duplicate = webhook.receiveWebhook(
+    const replayed = webhook.receiveWebhook(
       signed,
+      { verificationId: started.verificationId, state: 'FAILED', now: NOW },
+      Date.parse(NOW),
+    );
+    assert.equal(replayed.ok, false);
+    assert.equal(replayed.ok === false && replayed.code, 'REPLAYED');
+    assert.equal(replayed.ok === false && replayed.stateUnchanged, true);
+    const duplicateSigned = webhook.sign({
+      eventType: 'verification.updated',
+      timestampUtc: NOW,
+      nonce: 'nonce-3',
+      idempotencyKey: 'idemp-2',
+      payload: { verificationId: started.verificationId, state: 'FAILED', now: NOW },
+    });
+    const duplicate = webhook.receiveWebhook(
+      duplicateSigned,
       { verificationId: started.verificationId, state: 'FAILED', now: NOW },
       Date.parse(NOW),
     );
@@ -206,6 +221,27 @@ describe('Phase D identity verification adapters', () => {
     assert.throws(() =>
       assertNoKycDocumentInLog({ documentImage: `data:image/png;base64,${'B'.repeat(100)}` }),
     );
+  });
+
+  it('isolates verification records across identities', () => {
+    const { kyc, store } = adapters();
+    const alice = kyc.createApplicant({
+      identityId: 'idn_verified',
+      jurisdiction: asJurisdiction('GB'),
+      now: NOW,
+    });
+    const bob = kyc.createApplicant({
+      identityId: 'idn_pending',
+      jurisdiction: asJurisdiction('GB'),
+      now: NOW,
+    });
+    const aliceVerification = kyc.startVerification({ applicantId: alice.applicantId, now: NOW });
+    const bobVerification = kyc.startVerification({ applicantId: bob.applicantId, now: NOW });
+    assert.equal(store.latestVerification('idn_verified')?.verificationId, aliceVerification.verificationId);
+    assert.equal(store.latestVerification('idn_pending')?.verificationId, bobVerification.verificationId);
+    assert.notEqual(store.latestVerification('idn_verified')?.identityId, bob.identityId);
+    assert.equal(kyc.retrieveVerification(aliceVerification.verificationId)?.identityId, 'idn_verified');
+    assert.notEqual(kyc.retrieveVerification(aliceVerification.verificationId)?.identityId, 'idn_pending');
   });
 
   it('refreshes screening and returns provider evidence references', () => {

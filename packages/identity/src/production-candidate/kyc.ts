@@ -36,42 +36,50 @@ export type KycProviderPort = {
 };
 
 export class KycAdapter implements KycProviderPort {
+  readonly #store: IdentityAdapterStore;
+  readonly #profile: IdentityAdapterProfile;
+  readonly #scenarioFor: (identityId: string) => IdentityVerificationState;
+
   constructor(
-    private readonly store: IdentityAdapterStore,
-    private readonly profile: IdentityAdapterProfile,
-    private readonly scenarioFor: (identityId: string) => IdentityVerificationState,
-  ) {}
+    store: IdentityAdapterStore,
+    profile: IdentityAdapterProfile,
+    scenarioFor: (identityId: string) => IdentityVerificationState,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#scenarioFor = scenarioFor;
+  }
 
   createApplicant(input: CreateApplicantInput): IdentityApplicant {
     const applicant: IdentityApplicant = Object.freeze({
       applicantId: `apl_${randomUUID()}`,
       identityId: input.identityId,
-      providerRef: `${this.profile.providerId}:applicant`,
+      providerRef: `${this.#profile.providerId}:applicant`,
       createdAt: input.now,
       jurisdiction: input.jurisdiction,
     });
-    this.store.applicants.set(applicant.applicantId, applicant);
+    this.#store.applicants.set(applicant.applicantId, applicant);
     return applicant;
   }
 
   startVerification(input: StartVerificationInput): IdentityVerificationRecord {
     const applicant = this.requireApplicant(input.applicantId);
-    const state = this.scenarioFor(applicant.identityId);
+    const state = this.#scenarioFor(applicant.identityId);
     const record = this.buildRecord(applicant, input.now, state, input.level ?? 'STANDARD');
-    this.store.verifications.set(record.verificationId, record);
+    this.#store.verifications.set(record.verificationId, record);
     return record;
   }
 
   retrieveVerification(verificationId: string): IdentityVerificationRecord | undefined {
-    return this.store.verifications.get(verificationId);
+    return this.#store.verifications.get(verificationId);
   }
 
   retrieveApplicant(applicantId: string): IdentityApplicant | undefined {
-    return this.store.applicants.get(applicantId);
+    return this.#store.applicants.get(applicantId);
   }
 
   refreshScreening(input: { readonly verificationId: string; readonly now: UtcInstant }): IdentityVerificationRecord {
-    const current = this.store.verifications.get(input.verificationId);
+    const current = this.#store.verifications.get(input.verificationId);
     if (!current) {
       throw new Error(`unknown verification ${input.verificationId}`);
     }
@@ -80,13 +88,13 @@ export class KycAdapter implements KycProviderPort {
       observedAt: input.now,
       reasonCodes: Object.freeze([...current.reasonCodes, 'SCREENING_REFRESHED']),
     });
-    this.store.verifications.set(next.verificationId, next);
+    this.#store.verifications.set(next.verificationId, next);
     return next;
   }
 
   retrieveProviderEvidence(verificationId: string): { readonly providerEvidenceRef: string | null } {
     return Object.freeze({
-      providerEvidenceRef: this.store.verifications.get(verificationId)?.providerEvidenceRef ?? null,
+      providerEvidenceRef: this.#store.verifications.get(verificationId)?.providerEvidenceRef ?? null,
     });
   }
 
@@ -94,7 +102,7 @@ export class KycAdapter implements KycProviderPort {
     if (record.environment !== 'SIMULATION' && record.environment !== 'SANDBOX' && record.environment !== 'CERTIFICATION') {
       throw new Error('live identity verification is disabled');
     }
-    this.store.verifications.set(record.verificationId, record);
+    this.#store.verifications.set(record.verificationId, record);
     return record;
   }
 
@@ -132,22 +140,22 @@ export class KycAdapter implements KycProviderPort {
       verificationId: `ver_${randomUUID()}`,
       applicantId: applicant.applicantId,
       identityId: applicant.identityId,
-      providerRef: `${this.profile.providerId}:kyc:${applicant.identityId}`,
+      providerRef: `${this.#profile.providerId}:kyc:${applicant.identityId}`,
       state,
       level,
-      environment: this.profile.environment,
+      environment: this.#profile.environment,
       reasonCodes: Object.freeze(reasonCodesFor(state)),
-      evidenceRefs: Object.freeze([`id-ev:${this.profile.providerId}:${applicant.identityId}`]),
-      providerEvidenceRef: `prov-ev:${this.profile.providerId}:${applicant.identityId}`,
+      evidenceRefs: Object.freeze([`id-ev:${this.#profile.providerId}:${applicant.identityId}`]),
+      providerEvidenceRef: `prov-ev:${this.#profile.providerId}:${applicant.identityId}`,
       observedAt: now,
       expiresAt: state === 'VERIFIED' ? addYear(now) : null,
-      sandboxOnly: this.profile.environment !== 'SIMULATION' ? true : true,
+      sandboxOnly: this.#profile.environment !== 'SIMULATION' ? true : true,
       isProductionKyc: false,
     });
   }
 
   private requireApplicant(applicantId: string): IdentityApplicant {
-    const applicant = this.store.applicants.get(applicantId);
+    const applicant = this.#store.applicants.get(applicantId);
     if (!applicant) {
       throw new Error(`unknown applicant ${applicantId}`);
     }

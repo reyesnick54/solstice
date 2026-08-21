@@ -284,7 +284,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const seeded = seedSimulationCatalog();
-  const payments = new PaymentsService(
   const paymentsService = new PaymentsService(
     runtime.kernel,
     runtime.issuer,

@@ -212,9 +212,20 @@ describe('Phase D compliance provider adapters', () => {
       payload: { findingId: finding.findingId },
     });
     const first = runtime.complianceWebhook.receiveWebhook(signed, () => finding, Date.parse(NOW));
-    const second = runtime.complianceWebhook.receiveWebhook(signed, () => finding, Date.parse(NOW));
+    const replayed = runtime.complianceWebhook.receiveWebhook(signed, () => finding, Date.parse(NOW));
     assert.equal(first.ok, true);
-    assert.equal(second.ok && second.duplicate, true);
+    assert.equal(replayed.ok, false);
+    assert.equal(replayed.ok === false && replayed.code, 'REPLAYED');
+    assert.equal(replayed.ok === false && replayed.stateUnchanged, true);
+    const duplicateSigned = runtime.complianceWebhook.sign({
+      eventType: 'sanctions.updated',
+      timestampUtc: NOW,
+      nonce: 'n3',
+      idempotencyKey: 'k2',
+      payload: { findingId: finding.findingId },
+    });
+    const duplicate = runtime.complianceWebhook.receiveWebhook(duplicateSigned, () => finding, Date.parse(NOW));
+    assert.equal(duplicate.ok && duplicate.duplicate, true);
   });
 
   it('hydrates after restart and keeps production disabled', () => {

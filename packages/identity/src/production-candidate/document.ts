@@ -23,17 +23,25 @@ export type DocumentVerificationPort = {
 };
 
 export class DocumentVerificationAdapter implements DocumentVerificationPort {
+  readonly #store: IdentityAdapterStore;
+  readonly #profile: IdentityAdapterProfile;
+  readonly #authenticityFor: (documentRef: string) => DocumentAuthenticity;
+
   constructor(
-    private readonly store: IdentityAdapterStore,
-    private readonly profile: IdentityAdapterProfile,
-    private readonly authenticityFor: (documentRef: string) => DocumentAuthenticity,
-  ) {}
+    store: IdentityAdapterStore,
+    profile: IdentityAdapterProfile,
+    authenticityFor: (documentRef: string) => DocumentAuthenticity,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#authenticityFor = authenticityFor;
+  }
 
   requestDocumentVerification(input: RequestDocumentVerificationInput): DocumentVerificationRecord {
     if (input.rawPayload !== undefined && containsSensitiveIdentityMaterial(input.rawPayload)) {
       const rejected: DocumentVerificationRecord = Object.freeze({
         documentRef: input.documentRef,
-        providerRef: `${this.profile.providerId}:document:${input.documentRef}`,
+        providerRef: `${this.#profile.providerId}:document:${input.documentRef}`,
         documentType: input.documentType,
         country: input.country,
         authenticity: 'FAILED',
@@ -45,13 +53,13 @@ export class DocumentVerificationAdapter implements DocumentVerificationPort {
         reasonCodes: Object.freeze(['RAW_DOCUMENT_REJECTED']),
         observedAt: input.now,
       });
-      this.store.documents.set(rejected.documentRef, rejected);
+      this.#store.documents.set(rejected.documentRef, rejected);
       return rejected;
     }
-    const authenticity = this.authenticityFor(input.documentRef);
+    const authenticity = this.#authenticityFor(input.documentRef);
     const record: DocumentVerificationRecord = Object.freeze({
       documentRef: input.documentRef,
-      providerRef: `${this.profile.providerId}:document:${input.documentRef}`,
+      providerRef: `${this.#profile.providerId}:document:${input.documentRef}`,
       documentType: input.documentType,
       country: input.country,
       authenticity,
@@ -69,11 +77,11 @@ export class DocumentVerificationAdapter implements DocumentVerificationPort {
       ),
       observedAt: input.now,
     });
-    this.store.documents.set(record.documentRef, record);
+    this.#store.documents.set(record.documentRef, record);
     return record;
   }
 
   retrieveDocumentVerification(documentRef: string): DocumentVerificationRecord | undefined {
-    return this.store.documents.get(documentRef);
+    return this.#store.documents.get(documentRef);
   }
 }

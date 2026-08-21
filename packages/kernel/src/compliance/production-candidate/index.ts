@@ -41,6 +41,7 @@ export {
   findingKindToCaseType,
   findingKindToScreeningType,
   matchStateToScreeningOutcome,
+  stricterMatchState,
   providerFindingIsNotKernelDecision,
   providerMatchIsNotProhibition,
   subjectToFabricKind,

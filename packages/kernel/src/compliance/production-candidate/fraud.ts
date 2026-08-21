@@ -12,14 +12,22 @@ export type FraudProviderPort = {
 };
 
 export class FraudAdapter implements FraudProviderPort {
+  readonly #store: ComplianceAdapterStore;
+  readonly #profile: ComplianceAdapterProfile;
+  readonly #actionFor: (subjectRef: string) => FraudRecommendedAction;
+
   constructor(
-    private readonly store: ComplianceAdapterStore,
-    private readonly profile: ComplianceAdapterProfile,
-    private readonly actionFor: (subjectRef: string) => FraudRecommendedAction,
-  ) {}
+    store: ComplianceAdapterStore,
+    profile: ComplianceAdapterProfile,
+    actionFor: (subjectRef: string) => FraudRecommendedAction,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#actionFor = actionFor;
+  }
 
   evaluate(input: FraudSignalInput): FraudProviderResult {
-    const recommendedAction = this.actionFor(input.subjectRef);
+    const recommendedAction = this.#actionFor(input.subjectRef);
     const riskCategory =
       recommendedAction === 'BLOCK' || recommendedAction === 'HOLD'
         ? 'HIGH'
@@ -30,7 +38,7 @@ export class FraudAdapter implements FraudProviderPort {
       kind: 'FRAUD',
       subjectKind: 'PERSON',
       subjectRef: input.subjectRef,
-      providerId: this.profile.providerId,
+      providerId: this.#profile.providerId,
       matchState: recommendedAction === 'ALLOW' ? 'NO_MATCH' : 'REQUIRES_REVIEW',
       severity: riskCategory === 'HIGH' ? 'HIGH' : riskCategory === 'ELEVATED' ? 'MEDIUM' : 'INFO',
       reasonCodes: Object.freeze([
@@ -43,7 +51,7 @@ export class FraudAdapter implements FraudProviderPort {
       recommendedAction,
       now: input.now,
     });
-    this.store.findings.set(finding.findingId, finding);
+    this.#store.findings.set(finding.findingId, finding);
     return Object.freeze({
       riskScore: finding.score,
       riskCategory,

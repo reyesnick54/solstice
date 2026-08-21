@@ -19,25 +19,33 @@ export type AdverseMediaProviderPort = {
 };
 
 export class AdverseMediaAdapter implements AdverseMediaProviderPort {
+  readonly #store: ComplianceAdapterStore;
+  readonly #profile: ComplianceAdapterProfile;
+  readonly #matchFor: (subjectRef: string) => ProviderMatchState;
+
   constructor(
-    private readonly store: ComplianceAdapterStore,
-    private readonly profile: ComplianceAdapterProfile,
-    private readonly matchFor: (subjectRef: string) => ProviderMatchState,
-  ) {}
+    store: ComplianceAdapterStore,
+    profile: ComplianceAdapterProfile,
+    matchFor: (subjectRef: string) => ProviderMatchState,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#matchFor = matchFor;
+  }
 
   screen(input: AdverseMediaScreenInput): NormalizedComplianceFinding {
-    const matchState = this.matchFor(input.subjectRef);
+    const matchState = this.#matchFor(input.subjectRef);
     const finding = createFinding({
       kind: 'ADVERSE_MEDIA',
       subjectKind: input.subjectKind,
       subjectRef: input.subjectRef,
-      providerId: this.profile.providerId,
+      providerId: this.#profile.providerId,
       matchState,
       severity: matchState === 'NO_MATCH' ? 'INFO' : 'MEDIUM',
       reasonCodes: Object.freeze([`ADVERSE_MEDIA_${matchState}`]),
       now: input.now,
     });
-    this.store.findings.set(finding.findingId, finding);
+    this.#store.findings.set(finding.findingId, finding);
     return finding;
   }
 }

@@ -17,9 +17,9 @@ import {
   type IdentityVerificationClientState,
   type IdentityVerificationRecord,
 } from '../../../../identity/src/production-candidate/index.ts';
-import { escalateFromComplianceFacts, type ComplianceFacts } from '../facts.ts';
+import { escalateFromComplianceFacts, escalateFromFraudFacts, type ComplianceFacts } from '../facts.ts';
+import { DECISION_RANK, type DecisionStatus } from '../../../../permissions/src/decision.ts';
 import { ComplianceFabric } from '../fabric.ts';
-import type { DecisionStatus } from '../../../../permissions/src/decision.ts';
 import { AdverseMediaAdapter } from './adverse-media.ts';
 import { AmlAdapter } from './aml.ts';
 import { openCaseFromFinding, type FindingCaseLink } from './cases.ts';
@@ -66,10 +66,13 @@ export class ComplianceProviderOrchestrator {
   readonly identityLifecycle;
   readonly complianceLifecycle;
 
+  readonly #clock: Clock;
+
   constructor(
-    private readonly clock: Clock,
+    clock: Clock,
     options?: { readonly unavailable?: boolean },
   ) {
+    this.#clock = clock;
     const identityProfile = sandboxIdentityProfile();
     const complianceProfile = options?.unavailable ? unavailableComplianceProfile() : sandboxComplianceProfile();
     this.kyc = new KycAdapter(this.identityStore, identityProfile, identityStateForSubject);
@@ -84,16 +87,16 @@ export class ComplianceProviderOrchestrator {
     this.complianceWebhook = new ComplianceAdapterWebhook(this.complianceStore, complianceProfile);
     this.identityLifecycle = bindIdentityProviderLifecycle(identityProfile);
     this.complianceLifecycle = bindComplianceProviderLifecycle(complianceProfile);
-    this.fabric = new ComplianceFabric({ clock: this.clock });
+    this.fabric = new ComplianceFabric({ clock: this.#clock });
   }
 
   startKyc(input: { readonly identityId: string; readonly jurisdiction: Jurisdiction }): IdentityVerificationRecord {
     const applicant = this.kyc.createApplicant({
       identityId: input.identityId,
       jurisdiction: input.jurisdiction,
-      now: this.clock.now(),
+      now: this.#clock.now(),
     });
-    return this.kyc.startVerification({ applicantId: applicant.applicantId, now: this.clock.now() });
+    return this.kyc.startVerification({ applicantId: applicant.applicantId, now: this.#clock.now() });
   }
 
   clientVerificationState(identityId: string): IdentityVerificationClientState {
@@ -113,11 +116,16 @@ export class ComplianceProviderOrchestrator {
     });
     this.complianceStore.findings.set(withCase.findingId, withCase);
     const facts = this.factsFromFinding(withCase);
-    const escalated = escalateFromComplianceFacts('ALLOW', facts);
+    const fromCompliance = escalateFromComplianceFacts('ALLOW', facts);
+    const fromFraud = escalateFromFraudFacts(fromCompliance.status, facts);
+    const kernelHint =
+      DECISION_RANK[fromFraud.status] > DECISION_RANK[fromCompliance.status]
+        ? fromFraud.status
+        : fromCompliance.status;
     return Object.freeze({
       finding: withCase,
       caseLink,
-      kernelHint: escalated.status,
+      kernelHint,
       facts,
     });
   }
@@ -130,7 +138,7 @@ export class ComplianceProviderOrchestrator {
     const finding = this.sanctions.screen({
       subjectKind: input.subjectKind,
       subjectRef: input.subjectRef,
-      now: this.clock.now(),
+      now: this.#clock.now(),
     });
     this.fabric.screen({
       type: 'SANCTIONS',
@@ -146,7 +154,7 @@ export class ComplianceProviderOrchestrator {
     const finding = this.pep.screen({
       subjectKind: 'PERSON',
       subjectRef: input.subjectRef,
-      now: this.clock.now(),
+      now: this.#clock.now(),
       ...(input.relatedPersonRef ? { relatedPersonRef: input.relatedPersonRef } : {}),
     });
     return this.ingestFinding(finding, input.jurisdiction);
@@ -157,14 +165,14 @@ export class ComplianceProviderOrchestrator {
       this.adverseMedia.screen({
         subjectKind: 'PERSON',
         subjectRef: input.subjectRef,
-        now: this.clock.now(),
+        now: this.#clock.now(),
       }),
       input.jurisdiction,
     );
   }
 
   submitAml(signal: Omit<AmlSignal, 'now'> & { readonly now?: UtcInstant }) {
-    const result = this.aml.submitSignal({ ...signal, now: signal.now ?? this.clock.now() });
+    const result = this.aml.submitSignal({ ...signal, now: signal.now ?? this.#clock.now() });
     if (result.duplicate) {
       return Object.freeze({ ...result, caseLink: null, kernelHint: 'ALLOW' as const });
     }
@@ -173,7 +181,7 @@ export class ComplianceProviderOrchestrator {
   }
 
   evaluateFraud(subjectRef: string) {
-    const result = this.fraud.evaluate({ subjectRef, now: this.clock.now() });
+    const result = this.fraud.evaluate({ subjectRef, now: this.#clock.now() });
     const ingested = this.ingestFinding(result.finding, 'GB');
     return Object.freeze({ ...result, finding: ingested.finding, caseLink: ingested.caseLink, kernelHint: ingested.kernelHint });
   }
@@ -187,7 +195,7 @@ export class ComplianceProviderOrchestrator {
       store: this.complianceStore,
       trigger: input.trigger,
       subjectRef: input.subjectRef,
-      now: this.clock.now(),
+      now: this.#clock.now(),
       policyAllows: input.policyAllows,
     });
   }

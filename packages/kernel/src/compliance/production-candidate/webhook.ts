@@ -13,11 +13,16 @@ export class ComplianceAdapterWebhook {
   readonly #guard = new ProviderWebhookGuard();
   readonly #secret: SecretValue;
 
+  readonly #store: ComplianceAdapterStore;
+  readonly #profile: ComplianceAdapterProfile;
+
   constructor(
-    private readonly store: ComplianceAdapterStore,
-    private readonly profile: ComplianceAdapterProfile,
+    store: ComplianceAdapterStore,
+    profile: ComplianceAdapterProfile,
     secret = 'fixture-compliance-adapter-webhook',
   ) {
+    this.#store = store;
+    this.#profile = profile;
     this.#secret = new SecretValue(secret);
     this.#guard.registerProvider(profile.providerId, this.#secret);
   }
@@ -33,7 +38,7 @@ export class ComplianceAdapterWebhook {
     return this.#guard.sign(
       {
         schemaVersion: WEBHOOK_SCHEMA_VERSION,
-        providerId: this.profile.providerId,
+        providerId: this.#profile.providerId,
         eventType: input.eventType,
         timestampUtc: input.timestampUtc,
         nonce: input.nonce,
@@ -60,10 +65,10 @@ export class ComplianceAdapterWebhook {
       return { ok: false, code: validated.code, stateUnchanged: true };
     }
     const key = `${envelope.providerId}:${envelope.idempotencyKey}`;
-    if (validated.duplicate || this.store.webhookKeys.has(key)) {
+    if (validated.duplicate || this.#store.webhookKeys.has(key)) {
       return { ok: true, duplicate: true, finding: null };
     }
-    this.store.webhookKeys.add(key);
+    this.#store.webhookKeys.add(key);
     return { ok: true, duplicate: false, finding: apply() };
   }
 }

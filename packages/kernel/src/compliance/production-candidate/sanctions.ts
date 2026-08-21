@@ -19,39 +19,47 @@ export type SanctionsProviderPort = {
 };
 
 export class SanctionsAdapter implements SanctionsProviderPort {
+  readonly #store: ComplianceAdapterStore;
+  readonly #profile: ComplianceAdapterProfile;
+  readonly #matchFor: (subjectRef: string) => ProviderMatchState;
+
   constructor(
-    private readonly store: ComplianceAdapterStore,
-    private readonly profile: ComplianceAdapterProfile,
-    private readonly matchFor: (subjectRef: string) => ProviderMatchState,
-  ) {}
+    store: ComplianceAdapterStore,
+    profile: ComplianceAdapterProfile,
+    matchFor: (subjectRef: string) => ProviderMatchState,
+  ) {
+    this.#store = store;
+    this.#profile = profile;
+    this.#matchFor = matchFor;
+  }
 
   screen(input: SanctionsScreenInput): NormalizedComplianceFinding {
-    if (this.profile.health === 'UNAVAILABLE') {
+    if (this.#profile.health === 'UNAVAILABLE') {
       const finding = createFinding({
         kind: 'SANCTIONS',
         subjectKind: input.subjectKind,
         subjectRef: input.subjectRef,
-        providerId: this.profile.providerId,
+        providerId: this.#profile.providerId,
         matchState: 'UNAVAILABLE',
         severity: 'HIGH',
         reasonCodes: ['PROVIDER_UNAVAILABLE'],
         now: input.now,
       });
-      this.store.findings.set(finding.findingId, finding);
+      this.#store.findings.set(finding.findingId, finding);
       return finding;
     }
-    const matchState = this.matchFor(input.subjectRef);
+    const matchState = this.#matchFor(input.subjectRef);
     const finding = createFinding({
       kind: 'SANCTIONS',
       subjectKind: input.subjectKind,
       subjectRef: input.subjectRef,
-      providerId: this.profile.providerId,
+      providerId: this.#profile.providerId,
       matchState,
       severity: matchState === 'CONFIRMED_MATCH' ? 'CRITICAL' : matchState === 'POSSIBLE_MATCH' ? 'HIGH' : 'INFO',
       reasonCodes: Object.freeze([`SANCTIONS_${matchState}`]),
       now: input.now,
     });
-    this.store.findings.set(finding.findingId, finding);
+    this.#store.findings.set(finding.findingId, finding);
     return finding;
   }
 }

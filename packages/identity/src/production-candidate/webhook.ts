@@ -20,11 +20,16 @@ export class IdentityAdapterWebhook {
   readonly #guard = new ProviderWebhookGuard();
   readonly #secret: SecretValue;
 
+  readonly #store: IdentityAdapterStore;
+  readonly #profile: IdentityAdapterProfile;
+
   constructor(
-    private readonly store: IdentityAdapterStore,
-    private readonly profile: IdentityAdapterProfile,
+    store: IdentityAdapterStore,
+    profile: IdentityAdapterProfile,
     secret = 'fixture-identity-adapter-webhook',
   ) {
+    this.#store = store;
+    this.#profile = profile;
     this.#secret = new SecretValue(secret);
     this.#guard.registerProvider(profile.providerId, this.#secret);
   }
@@ -40,7 +45,7 @@ export class IdentityAdapterWebhook {
     return this.#guard.sign(
       {
         schemaVersion: WEBHOOK_SCHEMA_VERSION,
-        providerId: this.profile.providerId,
+        providerId: this.#profile.providerId,
         eventType: input.eventType,
         timestampUtc: input.timestampUtc,
         nonce: input.nonce,
@@ -67,11 +72,11 @@ export class IdentityAdapterWebhook {
       return { ok: false, code: validated.code, stateUnchanged: true };
     }
     const key = `${envelope.providerId}:${envelope.idempotencyKey}`;
-    if (validated.duplicate || this.store.webhookKeys.has(key)) {
+    if (validated.duplicate || this.#store.webhookKeys.has(key)) {
       return { ok: true, duplicate: true, record: null };
     }
-    this.store.webhookKeys.add(key);
-    const current = this.store.verifications.get(payload.verificationId);
+    this.#store.webhookKeys.add(key);
+    const current = this.#store.verifications.get(payload.verificationId);
     if (!current) {
       return { ok: true, duplicate: false, record: null };
     }
@@ -81,7 +86,7 @@ export class IdentityAdapterWebhook {
       observedAt: payload.now,
       reasonCodes: Object.freeze([...current.reasonCodes, 'WEBHOOK_APPLIED']),
     });
-    this.store.verifications.set(next.verificationId, next);
+    this.#store.verifications.set(next.verificationId, next);
     return { ok: true, duplicate: false, record: next };
   }
 }

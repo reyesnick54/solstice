@@ -188,6 +188,18 @@ export function subjectToFabricKind(subject: ScreeningSubject): SubjectKind {
   return subject;
 }
 
+const MATCH_STATE_RANK: { readonly [S in ProviderMatchState]: number } = {
+  NO_MATCH: 0,
+  REQUIRES_REVIEW: 1,
+  POSSIBLE_MATCH: 2,
+  UNAVAILABLE: 3,
+  CONFIRMED_MATCH: 4,
+};
+
+export function stricterMatchState(left: ProviderMatchState, right: ProviderMatchState): ProviderMatchState {
+  return MATCH_STATE_RANK[right] > MATCH_STATE_RANK[left] ? right : left;
+}
+
 export function matchStateToScreeningOutcome(state: ProviderMatchState): ScreeningOutcome {
   switch (state) {
     case 'NO_MATCH':
