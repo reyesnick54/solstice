@@ -170,6 +170,7 @@
     "demo:sunrey-production-economic-firewall": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/demo.ts",
     "demo:sunrey-production-economic-constitution": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/release-candidate/economic/production-constitution/demo.ts",
     "demo:sunrey-full-platform-candidate": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/production-handoff/full-platform-candidate/demo.ts",
+    "demo:sunrey-engineering-closure": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/production-handoff/engineering-closure/demo.ts",
     "demo:sunrey-provider-credential-plane": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/security/src/regulated/credentials/demo.ts",
     "demo:sunrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/policy-candidate-demo.ts",
     "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/parameter-package/demo.ts",

@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-168",
+  "title": "Final SunRey Architecture Reconciliation, Core Engineering Closure, Capability Ownership Audit, Release-Candidate Acceptance, and External-Inputs Handoff",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-production-handoff",
+    "sunrey-repository-integrity",
+    "sunrey-native-assets",
+    "moonrey-issuance-engine",
+    "sunrey-monetary-constitution",
+    "sunrey-external-production-evidence",
+    "sunrey-production-operating-scope",
+    "sunrey-canonical-product-identity"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-handoff/engineering-closure. Extends sunrey-production-handoff and architecture-linting. Final general core-architecture engineering closure only. CORE_CODE_COMPLETE_CANDIDATE is an engineering label. PRODUCTION_READY remains false without external/human inputs. moonrey-coin is classified SUPERSEDED by sunrey-native-assets + moonrey-issuance-engine. evaluateChunkRequirements returns mustStop: false. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, or packages/production-v2."
+}

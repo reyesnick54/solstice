@@ -1,0 +1,73 @@
+# Manual final core-architecture engineering closure.
+# No deployment. No live provider calls.
+name: SunRey engineering closure
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Burn-in profile
+        required: false
+        default: STANDARD
+        type: choice
+        options:
+          - STANDARD
+          - EXTENDED
+
+permissions:
+  contents: read
+
+jobs:
+  engineering-closure:
+    name: engineering-closure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: JSON / repository integrity preflight
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
+      - name: Install from lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Architecture lint, naming, posture, kernel gating
+        run: |
+          python3 scripts/lint-architectural-invariants.py
+          npm run lint:architecture
+          npm run naming:audit
+          python3 scripts/check-deployment-posture.py
+          npm run gate
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Security audit, SBOM, and provenance
+        run: |
+          node scripts/sunrey-release.mjs audit
+          node scripts/sunrey-release.mjs sbom
+          node scripts/sunrey-release.mjs provenance
+
+      - name: Full-platform burn-in
+        env:
+          SUNREY_FIXTURE_ENV: local
+        run: npm run sunrey-ops -- production full-platform rehearse --profile ${{ inputs.profile || 'STANDARD' }}
+
+      - name: Engineering closure report
+        env:
+          SUNREY_FIXTURE_ENV: local
+        run: |
+          npm run sunrey-ops -- production engineering-closure verify
+          npm run demo:sunrey-engineering-closure

@@ -90,6 +90,7 @@ never be two implementations of these systems.
 | SunRey production storage | `packages/sunrey-chain` | `packages/sunrey-chain/rust/crates/storage/src/lib.rs` | IMPLEMENTED |
 | SunRey production infrastructure | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | IMPLEMENTED |
 | SunRey production handoff | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/types.ts` | IMPLEMENTED |
+| SunRey engineering closure | `packages/sunrey-chain` | `packages/sunrey-chain/src/production-handoff/engineering-closure/types.ts` | IMPLEMENTED |
 | Economic data provider certification | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/certification/types.ts` | IMPLEMENTED |
 | Manufacturing robotics data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/types.ts` | IMPLEMENTED |
 | Compute and AI economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/provider-families/compute/types.ts` | IMPLEMENTED |

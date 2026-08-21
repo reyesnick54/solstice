@@ -1820,7 +1820,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Companion invariant scripts live under scripts/. Chunk 159 repository merge-integrity lock is check-json-integrity.mjs and check-merge-integrity.mjs. Do not add a second linter or architecture owner."
+      "notes": "Companion invariant scripts live under scripts/. Chunk 159 repository merge-integrity lock is check-json-integrity.mjs and check-merge-integrity.mjs. Chunk 168 adds protected-owner uniqueness and capability-table uniqueness. Do not add a second linter or architecture owner."
     },
     {
       "id": "sunrey-repository-integrity",
@@ -4321,7 +4321,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
+      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -5090,11 +5090,6 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/mainnet/operating-scope/types.ts",
       "publicInterface": "packages/sunrey-chain/src/mainnet/operating-scope/index.ts",
-      "id": "sunrey-external-production-evidence",
-      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -5111,6 +5106,25 @@
         "packages/global-regulation",
         "packages/country-law",
         "packages/legal-engine"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
+    },
+    {
+      "id": "sunrey-external-production-evidence",
+      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
           "name": "ExternalProductionEvidenceRecord",
           "kind": "type"
         }
@@ -5125,7 +5139,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
     }
   ],
@@ -5959,10 +5972,16 @@
     "packages/licensing",
     "packages/global-regulation",
     "packages/country-law",
-    "packages/legal-engine"
+    "packages/legal-engine",
     "packages/repository-integrity",
     "packages/architecture-v2",
-    "packages/merge-manager"
+    "packages/merge-manager",
+    "packages/sunrey-core",
+    "packages/platform-v2",
+    "packages/final-architecture",
+    "packages/super-app",
+    "packages/everything",
+    "packages/production-v2"
   ],
   "capabilities": [
     {
@@ -6031,7 +6050,7 @@
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
       "protected": true,
-      "notes": "Chunk 159 companion integrity scripts live under scripts/. Not a second architecture owner."
+      "notes": "Chunk 159 companion integrity scripts live under scripts/. Chunk 168 extends this owner with protected-owner uniqueness, capability-table uniqueness, and MoonRey placeholder classification. Not a second architecture owner."
     },
     {
       "id": "persistence",
@@ -6263,7 +6282,8 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Future internal node module of packages/sunrey-chain. Not a workspace package or microservice."
+      "supersededBy": ["sunrey-local-node"],
+      "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-local-node. Do not create a second node package. Production public node operations remain externally gated."
     },
     {
       "id": "blockchain-protocol",
@@ -6278,7 +6298,8 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Future internal P2P module of packages/sunrey-chain. Not a workspace package."
+      "supersededBy": ["sunrey-p2p"],
+      "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-p2p. Do not create packages/p2p or packages/sunrey-p2p."
     },
     {
       "id": "blockchain-consensus",
@@ -6292,14 +6313,15 @@
       "status": "PARTIAL",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 41 implements protocol-native asset handlers inside packages/sunrey-chain. WASM user programs and EVM remain unimplemented. Not a workspace package."
+      "notes": "Chunk 41 implements protocol-native asset handlers inside packages/sunrey-chain. WASM user programs and EVM remain unimplemented by design: SunRey has no Ethereum/EVM dependency. PARTIAL is not a core-architecture gap. Non-blocking for engineering closure."
     },
     {
       "id": "moonrey-coin",
       "status": "PLANNED",
       "owner": null,
       "protected": true,
-      "notes": "Distinct native asset from SunRey Coin. Public ticker NOT_ASSIGNED. Chunk 41 registers MOONREY_COIN as a protocol-native asset inside packages/sunrey-chain. Do not create packages/moonrey-coin. Production economic issuance is later. Not a second fiat ledger."
+      "supersededBy": ["sunrey-native-assets", "moonrey-issuance-engine"],
+      "notes": "Chunk 168 classification A: obsolete public-product placeholder. SUPERSEDED by sunrey-native-assets (protocol-native MOONREY_COIN) and moonrey-issuance-engine. Do not create packages/moonrey-coin. The MoonRey native-asset path is implemented on SunRey Chain. Public ticker remains NOT_ASSIGNED (human decision). Production issuance remains externally gated. Not a missing software owner."
     },
     {
       "id": "sunrey-exchange",
@@ -6384,7 +6406,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 44 development MoonRey issuance from policy-eligible VerifiedProductiveContribution records. Formula moonrey.issuance.formula.v1. Ticker NOT_ASSIGNED. Public MoonRey Coin product remains PLANNED (moonrey-coin). Arbitrary NATIVE_ASSET ISSUE remains inactive. Do not create packages/moonrey or packages/moonrey-coin."
+      "notes": "Chunk 44 development MoonRey issuance from policy-eligible VerifiedProductiveContribution records. Formula moonrey.issuance.formula.v1. Ticker NOT_ASSIGNED. Chunk 168 classifies moonrey-coin as SUPERSEDED by this capability plus sunrey-native-assets. Arbitrary NATIVE_ASSET ISSUE remains inactive. Do not create packages/moonrey or packages/moonrey-coin."
     },
     {
       "id": "sunrey-oracle-network",
@@ -6732,7 +6754,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, or packages/sunrey-production."
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, or packages/production-v2."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -7069,11 +7091,15 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 161 jurisdictional operating scope, licensing, regulatory-evidence binding, corridor eligibility, and product activation matrix at packages/sunrey-chain/src/mainnet/operating-scope. Extends sunrey-mainnet-readiness. Not legal advice. Does not issue Execution Authority. Do not create packages/licensing, packages/global-regulation, packages/country-law, or packages/legal-engine."
+    },
+    {
       "id": "sunrey-external-production-evidence",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 160 external production evidence registry at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
+    },
+    {
       "id": "sunrey-repository-integrity",
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
@@ -7594,15 +7620,21 @@
     "packages/integrations-v2",
     "packages/vendor-connectivity",
     "packages/provider-manager",
-    "packages/live-providers"
+    "packages/live-providers",
     "packages/licensing",
     "packages/global-regulation",
     "packages/country-law",
-    "packages/legal-engine"
+    "packages/legal-engine",
     "packages/legal",
     "packages/licenses",
     "packages/external-audit",
     "packages/compliance-evidence",
-    "packages/evidence-v2"
+    "packages/evidence-v2",
+    "packages/sunrey-core",
+    "packages/platform-v2",
+    "packages/final-architecture",
+    "packages/super-app",
+    "packages/everything",
+    "packages/production-v2"
   ]
 }

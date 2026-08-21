@@ -2,8 +2,8 @@
   "purpose": "Informational structural baseline. manifest.json remains architecture authority.",
   "architectureSchemaVersion": 1,
   "canonicalPackageCount": 49,
-  "canonicalCapabilityCount": 156,
-  "canonicalComponentCount": 129,
-  "chunkDeclarationCount": 157,
+  "canonicalCapabilityCount": 160,
+  "canonicalComponentCount": 133,
+  "chunkDeclarationCount": 162,
   "singleTestScriptInvariant": true
 }
