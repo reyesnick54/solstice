@@ -135,6 +135,7 @@ export {
   CONSUMER_API_VERSION,
   CONSUMER_ERROR_CODES,
 } from './consumer-platform/index.ts';
+export { ConsumerFxClient, createConsumerFxClient } from './consumer-fx.ts';
 export type {
   BootstrapDto,
   HomeDto,

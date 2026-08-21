@@ -40,6 +40,13 @@ export type CurrencyDisplay = {
   readonly minorUnitName: string;
 };
 
+export type CurrencyAvailability = {
+  readonly enabled: boolean;
+  readonly depositAvailable: boolean;
+  readonly withdrawalAvailable: boolean;
+  readonly fxAvailable: boolean;
+};
+
 export type CurrencyRecord = {
   readonly code: CurrencyCode;
   readonly isoNumeric: string;
@@ -48,6 +55,10 @@ export type CurrencyRecord = {
   readonly display: CurrencyDisplay;
   readonly status: CurrencyStatus;
   readonly supportedLegalEntityIds: readonly string[];
+  readonly restrictedProductIds: readonly string[];
+  readonly restrictedJurisdictions: readonly string[];
+  readonly simulation: CurrencyAvailability;
+  readonly live: CurrencyAvailability;
   readonly simulationEnabled: true;
   readonly liveEnabled: false;
 };
@@ -59,10 +70,27 @@ function record(input: {
   readonly minorUnitExponent: number;
   readonly display: CurrencyDisplay;
   readonly supportedLegalEntityIds: readonly string[];
+  readonly restrictedProductIds?: readonly string[];
+  readonly restrictedJurisdictions?: readonly string[];
+  readonly depositAvailable?: boolean;
+  readonly withdrawalAvailable?: boolean;
+  readonly fxAvailable?: boolean;
 }): CurrencyRecord {
   if (!Number.isInteger(input.minorUnitExponent) || input.minorUnitExponent < 0) {
     throw new TypeError('minor-unit exponent must be a non-negative integer');
   }
+  const simulation: CurrencyAvailability = Object.freeze({
+    enabled: true,
+    depositAvailable: input.depositAvailable ?? true,
+    withdrawalAvailable: input.withdrawalAvailable ?? true,
+    fxAvailable: input.fxAvailable ?? true,
+  });
+  const live: CurrencyAvailability = Object.freeze({
+    enabled: false,
+    depositAvailable: false,
+    withdrawalAvailable: false,
+    fxAvailable: false,
+  });
   return Object.freeze({
     code: asCurrencyCode(input.code),
     isoNumeric: input.isoNumeric,
@@ -71,6 +99,10 @@ function record(input: {
     display: Object.freeze({ ...input.display }),
     status: 'SUPPORTED_SIMULATION',
     supportedLegalEntityIds: Object.freeze([...input.supportedLegalEntityIds]),
+    restrictedProductIds: Object.freeze([...(input.restrictedProductIds ?? [])]),
+    restrictedJurisdictions: Object.freeze([...(input.restrictedJurisdictions ?? [])]),
+    simulation,
+    live,
     simulationEnabled: true,
     liveEnabled: false,
   });

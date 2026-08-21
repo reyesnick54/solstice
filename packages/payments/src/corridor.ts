@@ -19,6 +19,8 @@ export type PaymentCorridor = {
 const CORRIDORS: readonly PaymentCorridor[] = [
   corridor('US-SA-USD-SAR', 'US', 'SA', 'USD', 'SAR', 'le_solstice_us_inc', 'ACTIVE_SIMULATION'),
   corridor('SA-US-SAR-USD', 'SA', 'US', 'SAR', 'USD', 'le_solstice_sa_entity', 'ACTIVE_SIMULATION'),
+  corridor('GB-SA-USD-SAR', 'GB', 'SA', 'USD', 'SAR', 'le_solstice_uk_ltd', 'ACTIVE_SIMULATION'),
+  corridor('GB-US-SAR-USD', 'GB', 'US', 'SAR', 'USD', 'le_solstice_uk_ltd', 'ACTIVE_SIMULATION'),
   corridor('US-GB-USD-GBP', 'US', 'GB', 'USD', 'GBP', 'le_solstice_us_inc', 'DISABLED'),
   corridor('GB-US-GBP-USD', 'GB', 'US', 'GBP', 'USD', 'le_solstice_uk_ltd', 'DISABLED'),
   corridor('US-EU-USD-EUR', 'US', 'DE', 'USD', 'EUR', 'le_solstice_us_inc', 'DISABLED'),

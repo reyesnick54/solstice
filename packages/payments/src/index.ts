@@ -41,9 +41,12 @@ export {
 export {
   asRationalRate,
   convertExact,
+  freezeRate,
   invertRate,
   rateLabel,
+  FX_RATE_KINDS,
   type FxRate,
+  type FxRateKind,
   type PricedFxRates,
 } from "./fx-rate.ts";
 export {
@@ -62,8 +65,57 @@ export {
   SIMULATION_RATE_SOURCE,
   SimulationFxProvider,
   type FxLiquidityProvider,
+  type FxProviderResult,
   type QuoteRequest,
+  type ReferenceRateRequest,
+  type ExecuteQuoteRequest,
 } from "./fx-provider.ts";
+export {
+  DEFAULT_PRICING_VERSION,
+  SIMULATION_PRICING_POLICY,
+  applyFixedAndPercentageFee,
+  applySpreadToProviderRate,
+  resolvePairPricing,
+  type FxFeeKind,
+  type FxPairPricing,
+  type FxPricingPolicy,
+  type FxPricingTier,
+  type PricingContext,
+} from "./fx-pricing.ts";
+export {
+  currencyAllowsDeposit,
+  currencyAllowsFx,
+  currencyAllowsWithdrawal,
+  getSupportedCurrency,
+  listSupportedCurrencies,
+  type SupportedCurrency,
+} from "./fx-currency.ts";
+export {
+  FX_EXECUTION_MODES,
+  FX_TRADE_STATUSES,
+  freezeExecution,
+  freezeTrade,
+  type FxExecution,
+  type FxExecutionMode,
+  type FxTrade,
+  type FxTradeStatus,
+} from "./fx-execution.ts";
+export {
+  VALUATION_AUTHORITY,
+  VALUATION_STALE_AFTER_MS,
+  valuePositions,
+  type PresentationValuation,
+  type ValuationLine,
+  type ValuationPosition,
+} from "./fx-valuation.ts";
+export {
+  PAYMENT_FX_COMPOSITION_STATUSES,
+  freezeComposition,
+  nextRecoveryAction,
+  type PaymentFxComposition,
+  type PaymentFxCompositionStatus,
+  type PaymentFxReview,
+} from "./fx-payment.ts";
 export {
   PAYMENT_STATUSES,
   ALLOWED_TRANSITIONS,
@@ -127,6 +179,7 @@ export {
   returnSourceFxPlan,
   settlePlan,
   sourceFxPlan,
+  walletDestinationCreditPlan,
   type PaymentJournalPlan,
 } from "./accounting.ts";
 export {
@@ -146,6 +199,8 @@ export {
 export { PaymentStore } from "./store.ts";
 export {
   disclosureFromQuote,
+  fxQuoteDisclosure,
+  type FxQuoteDisclosure,
   type PaymentDisclosure,
 } from "./responses.ts";
 export {

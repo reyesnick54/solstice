@@ -29,7 +29,9 @@ import { PaymentsService } from '../../../../packages/payments/src/service.ts';
 import { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../../accounts/src/runtime.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
+import { PaymentsService } from '../../../../packages/payments/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
+import { createFxCommandPort } from './fx-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import type {
@@ -138,6 +140,9 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     customerActive: true,
     restricted: false,
     accounts: [
+      { id: 'acct_sandbox_fx_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
+      { id: 'acct_sandbox_fx_gbp', currency: 'GBP', productId: 'prod_demand_gbp_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
+      { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 0n },
       { id: 'acct_sandbox_fx_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 10_000n },
       { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
     ],
@@ -272,6 +277,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const seeded = seedSimulationCatalog();
+  const payments = new PaymentsService(
   const paymentsService = new PaymentsService(
     runtime.kernel,
     runtime.issuer,
@@ -308,6 +314,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     now: () => runtime.clock.now(),
     accounts: createAccountsReadAdapter(runtime),
     preferences: memoryPreferenceStore(),
+    fxEngine: createFxCommandPort(payments, () => runtime.clock.now()),
     actions: {
       list(principal) {
         return pendingActions.get(principal.customerId) ?? [];

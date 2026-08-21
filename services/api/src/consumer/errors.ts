@@ -20,6 +20,7 @@ export const BFF_ERROR_CODES = [
   'INVALID_FILTER',
   'INVALID_PERIOD',
   'FEATURE_UNAVAILABLE',
+  'KERNEL_DENIED',
   'MALFORMED',
   'METHOD_NOT_ALLOWED',
   'STEP_UP_REQUIRED',
@@ -64,6 +65,7 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
+    case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
       return 403;
     case 'STEP_UP_REQUIRED':

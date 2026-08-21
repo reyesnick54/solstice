@@ -94,8 +94,17 @@ describe('Consumer BFF', () => {
     assert.equal(home.cash.value, null);
     const accounts = get(world, '/api/v1/accounts', 'multi_currency');
     const items = (accounts.body as { items: { currency: string; balance: { value: { ledger: { minorUnits: string } } | null } }[] }).items;
-    assert.equal(items.length, 2);
+    assert.equal(items.length, 3);
     const usd = items.find((row) => row.currency === 'USD');
+    const gbp = items.find((row) => row.currency === 'GBP');
+    const sar = items.find((row) => row.currency === 'SAR');
+    assert.equal(usd?.balance.value?.ledger.minorUnits, '200000');
+    assert.equal(gbp?.balance.value?.ledger.minorUnits, '8000');
+    assert.equal(sar?.balance.value?.ledger.minorUnits, '0');
+    const valuation = (res.body as { valuation: { state: string; value: { authority: string; ledgerAuthoritative: boolean; rateTimestamp: string | null } | null } }).valuation;
+    assert.equal(valuation.value?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
+    assert.equal(valuation.value?.ledgerAuthoritative, false);
+    assert.ok(valuation.value?.rateTimestamp);
     const sar = items.find((row) => row.currency === 'SAR');
     assert.equal(usd?.balance.value?.ledger.minorUnits, '10000');
     assert.equal(sar?.balance.value?.ledger.minorUnits, '8000');
@@ -257,6 +266,65 @@ describe('Consumer BFF', () => {
     assert.equal(body.production, false);
     assert.equal(body.label, 'SANDBOX_FIXTURE_NON_PRODUCTION');
     assert.ok(body.items.some((item) => item.id === 'basic_verified'));
+  });
+
+  it('quotes and executes USD→SAR without client-side FX math', () => {
+    const world = createSandboxWorld();
+    const currencies = get(world, '/api/v1/fx/currencies', 'multi_currency');
+    assert.equal(currencies.status, 200);
+    const listed = (currencies.body as { items: { code: string; liveFxAvailable: boolean }[]; liveEnabled: boolean }).items;
+    assert.ok(listed.some((row) => row.code === 'SAR'));
+    assert.equal((currencies.body as { liveEnabled: boolean }).liveEnabled, false);
+
+    const created = handleConsumerBff(
+      { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      {
+        method: 'POST',
+        path: '/api/v1/fx/quotes',
+        query: {},
+        body: {
+          sourceAccountId: 'acct_sandbox_fx_usd',
+          sourceCurrency: 'USD',
+          destinationCurrency: 'SAR',
+          sourceAmountMinorUnits: '100000',
+          quoteId: 'q_bff_usd_sar',
+        },
+        authorization: auth('multi_currency'),
+      },
+    );
+    assert.equal(created.status, 201);
+    const quote = created.body as { quoteId: string; destinationAmountMinorUnits: string; requiredApproval: string; provider: { live: boolean } };
+    assert.equal(quote.destinationAmountMinorUnits, '374500');
+    assert.equal(quote.requiredApproval, 'CUSTOMER_CONFIRMATION');
+    assert.equal(quote.provider.live, false);
+
+    const accepted = handleConsumerBff(
+      { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      {
+        method: 'POST',
+        path: '/api/v1/fx/quotes/q_bff_usd_sar/accept',
+        query: {},
+        body: { accountId: 'acct_sandbox_fx_usd' },
+        authorization: auth('multi_currency'),
+      },
+    );
+    assert.equal(accepted.status, 200);
+
+    const executed = handleConsumerBff(
+      { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      {
+        method: 'POST',
+        path: '/api/v1/fx/quotes/q_bff_usd_sar/execute',
+        query: {},
+        body: {
+          sourceAccountId: 'acct_sandbox_fx_usd',
+          destinationAccountId: 'acct_sandbox_fx_sar',
+        },
+        authorization: auth('multi_currency'),
+      },
+    );
+    assert.equal(executed.status, 200);
+    assert.equal((executed.body as { status: string }).status, 'SETTLED');
   });
 
   it('surfaces agent recommendation counts for the agent-enabled persona', () => {

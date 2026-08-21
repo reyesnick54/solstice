@@ -156,4 +156,11 @@ describe('SunRey TypeScript SDK', () => {
     assert.equal(requireVersionedPublicPath('/v1/chain/status'), true);
     assert.equal(requireVersionedPublicPath('/v2/chain/status'), false);
   });
+
+  it('exposes a consumer FX client that does not perform FX math', () => {
+    const source = readFileSync(join(fileURLToPath(new URL('./consumer-fx.ts', import.meta.url))), 'utf8');
+    assert.match(source, /\/api\/v1\/fx\/quotes/);
+    assert.equal(source.includes('numerator'), false);
+    assert.equal(source.includes('allocate'), false);
+  });
 });

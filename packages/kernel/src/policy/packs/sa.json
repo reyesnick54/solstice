@@ -71,7 +71,7 @@
           "version": "1",
           "jurisdiction": "SA",
           "scope": "cross-border-payment",
-          "actionTypes": ["INITIATE_PAYMENT", "CREATE_FX_QUOTE"],
+          "actionTypes": ["INITIATE_PAYMENT", "CREATE_FX_QUOTE", "EXECUTE_FX_QUOTE"],
           "productTypes": [],
           "customerTypes": [],
           "predicate": { "op": "eq", "fact": "corridor.simulationEnabled", "value": false },

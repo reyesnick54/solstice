@@ -26,6 +26,7 @@ export const ACTION_TYPES = {
   CREATE_BENEFICIARY: 'CREATE_BENEFICIARY',
   CREATE_FX_QUOTE: 'CREATE_FX_QUOTE',
   ACCEPT_FX_QUOTE: 'ACCEPT_FX_QUOTE',
+  EXECUTE_FX_QUOTE: 'EXECUTE_FX_QUOTE',
   INITIATE_PAYMENT: 'INITIATE_PAYMENT',
   CANCEL_PAYMENT: 'CANCEL_PAYMENT',
   ACCEPT_INBOUND_PAYMENT: 'ACCEPT_INBOUND_PAYMENT',
@@ -162,6 +163,13 @@ export type AcceptFxQuotePayload = {
   readonly accountId: AccountId;
 };
 
+export type ExecuteFxQuotePayload = {
+  readonly quoteId: string;
+  readonly accountId: AccountId;
+  readonly sourceAccountId: AccountId;
+  readonly destinationAccountId: AccountId;
+};
+
 export type InitiatePaymentPayload = {
   readonly paymentId: string;
   readonly accountId: AccountId;
@@ -199,6 +207,10 @@ export type CreateFxQuoteIntent = ActionIntent<CreateFxQuotePayload> & {
 
 export type AcceptFxQuoteIntent = ActionIntent<AcceptFxQuotePayload> & {
   readonly actionType: typeof ACTION_TYPES.ACCEPT_FX_QUOTE;
+};
+
+export type ExecuteFxQuoteIntent = ActionIntent<ExecuteFxQuotePayload> & {
+  readonly actionType: typeof ACTION_TYPES.EXECUTE_FX_QUOTE;
 };
 
 export type InitiatePaymentIntent = ActionIntent<InitiatePaymentPayload> & {
@@ -334,6 +346,7 @@ export type PaymentIntent =
   | CreateBeneficiaryIntent
   | CreateFxQuoteIntent
   | AcceptFxQuoteIntent
+  | ExecuteFxQuoteIntent
   | InitiatePaymentIntent
   | CancelPaymentIntent
   | AcceptInboundPaymentIntent;

@@ -370,10 +370,14 @@ export class Ledger {
       );
     }
     if (customerPosting && ea.accountId !== accountId && ea.accountId !== customerPosting.accountId) {
-      throw new LedgerInvariantError(
-        'AUTHORITY',
-        'Execution Authority accountId does not bind a posting on this journal',
-      );
+      const walletFxDestinationCredit =
+        request.actionType === 'EXECUTE_FX_QUOTE' && request.memo === 'WALLET_FX_DESTINATION_CREDIT';
+      if (!walletFxDestinationCredit) {
+        throw new LedgerInvariantError(
+          'AUTHORITY',
+          'Execution Authority accountId does not bind a posting on this journal',
+        );
+      }
     }
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
@@ -381,6 +385,7 @@ export class Ledger {
         request.actionType === 'INITIATE_PAYMENT' ||
         request.actionType === 'CANCEL_PAYMENT' ||
         request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
+        request.actionType === 'EXECUTE_FX_QUOTE' ||
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
@@ -390,13 +395,17 @@ export class Ledger {
         request.actionType === 'ISSUE_SUNREY_COIN' ||
         request.actionType === 'TRANSFER_SUNREY_COIN' ||
         request.actionType === 'BURN_SUNREY_COIN';
+      const walletFxDestinationCredit =
+        request.actionType === 'EXECUTE_FX_QUOTE' &&
+        request.memo === 'WALLET_FX_DESTINATION_CREDIT' &&
+        request.postings.some((posting) => posting.direction === 'CREDIT' && posting.accountId !== ea.accountId);
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>
           account.ownerId === undefined ||
           catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
-      if (!(systemBookAction && allNonCustomer)) {
+      if (!(systemBookAction && allNonCustomer) && !walletFxDestinationCredit) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind any posting on this journal',
@@ -422,6 +431,7 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fee',
   'inbound-pending',
   'inbound-settle',
+  'wallet-credit',
   'internal-transfer',
   'settle-reclass',
   'settle-direct',

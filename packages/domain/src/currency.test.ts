@@ -15,8 +15,15 @@ describe('currency registry', () => {
       const record = CURRENCY_REGISTRY[code];
       assert.equal(record.simulationEnabled, true);
       assert.equal(record.liveEnabled, false);
+      assert.equal(record.live.enabled, false);
+      assert.equal(record.live.fxAvailable, false);
+      assert.equal(record.simulation.fxAvailable, true);
+      assert.equal(record.simulation.depositAvailable, true);
+      assert.equal(record.simulation.withdrawalAvailable, true);
       assert.equal(record.status, 'SUPPORTED_SIMULATION');
       assert.ok(Number.isInteger(record.minorUnitExponent));
+      assert.ok(Array.isArray(record.restrictedProductIds));
+      assert.ok(Array.isArray(record.restrictedJurisdictions));
     }
   });
 

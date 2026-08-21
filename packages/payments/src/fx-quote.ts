@@ -6,7 +6,7 @@ import { Money } from '../../money/src/money.ts';
 import type { CorridorId, QuoteId } from './ids.ts';
 import type { FxRate, PricedFxRates } from './fx-rate.ts';
 
-export const FX_QUOTE_STATUSES = ['OPEN', 'ACCEPTED', 'EXPIRED'] as const;
+export const FX_QUOTE_STATUSES = ['OPEN', 'ACCEPTED', 'EXPIRED', 'EXECUTED', 'CANCELLED'] as const;
 export type FxQuoteStatus = (typeof FX_QUOTE_STATUSES)[number];
 
 /**
@@ -57,6 +57,7 @@ export function withQuoteStatus(quote: FxQuote, status: FxQuoteStatus): FxQuote 
 
 export function pricedRatesOf(quote: FxQuote): PricedFxRates {
   return Object.freeze({
+    reference: quote.marketRate,
     market: quote.marketRate,
     provider: quote.providerRate,
     customer: quote.customerRate,

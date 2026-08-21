@@ -14,6 +14,7 @@ export {
 
 export type {
   CanonicalSimulationCurrency,
+  CurrencyAvailability,
   CurrencyCode,
   CurrencyDisplay,
   CurrencyRecord,

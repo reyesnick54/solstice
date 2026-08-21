@@ -18,6 +18,9 @@ import type {
   PreferenceStore,
   SecurityPort,
 } from './ports.ts';
+import type { FxCommandPort } from './fx-adapter.ts';
+import type { PresentationValuation } from '../../../../packages/payments/src/fx-valuation.ts';
+import type { SupportedCurrency } from '../../../../packages/payments/src/fx-currency.ts';
 import { EMPTY_PREFERENCES } from './ports.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import {
@@ -131,6 +134,18 @@ export type HomeResource = {
   readonly pendingApprovals: ResourceField<readonly ActionStatusResource[]>;
   readonly notifications: ResourceField<{ readonly unreadCount: number }>;
   readonly securityAlerts: ResourceField<readonly { readonly alertId: string; readonly title: string; readonly severity: string }[]>;
+  readonly valuation: ResourceField<{
+    readonly authority: 'PRESENTATION_ONLY_NOT_LEDGER';
+    readonly ledgerAuthoritative: false;
+    readonly targetCurrency: string;
+    readonly asOf: string;
+    readonly stale: boolean;
+    readonly available: boolean;
+    readonly reason: string | null;
+    readonly aggregateMinorUnits: string | null;
+    readonly rateTimestamp: string | null;
+    readonly lines: PresentationValuation['lines'];
+  }>;
 };
 
 export type BootstrapResource = {
@@ -176,6 +191,7 @@ export type ConsumerBffDeps = {
   readonly cards?: OptionalDomainPort;
   readonly vault?: OptionalDomainPort;
   readonly fx?: OptionalDomainPort;
+  readonly fxEngine?: FxCommandPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
 };
 
@@ -546,6 +562,7 @@ export class ConsumerBff {
         availability: 'AVAILABLE_SIMULATION',
         value: alerts,
       }),
+      valuation: this.valuationField(principal, 'USD'),
     });
   }
 
@@ -605,6 +622,138 @@ export class ConsumerBff {
         value: this.listAccounts(principal).items,
       }),
     });
+  }
+
+  listFxCurrencies(): { readonly items: readonly SupportedCurrency[]; readonly liveEnabled: false } {
+    return Object.freeze({
+      items: this.deps.fxEngine?.listCurrencies() ?? [],
+      liveEnabled: false,
+    });
+  }
+
+  getFxQuote(principal: BffPrincipal, quoteId: string, requestId: string) {
+    void principal;
+    const quote = this.deps.fxEngine?.getQuote(quoteId);
+    if (!quote) {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'FX quote not found',
+        retryable: false,
+        requestId,
+      });
+    }
+    return quote;
+  }
+
+  createFxQuote(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
+    if (!this.deps.fxEngine) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'FX engine is not attached to this BFF',
+        retryable: false,
+        requestId,
+      });
+    }
+    const sourceAccountId = stringField(body, 'sourceAccountId') ?? stringField(body, 'accountId');
+    const sourceCurrency = stringField(body, 'sourceCurrency');
+    const destinationCurrency = stringField(body, 'destinationCurrency');
+    const sourceAmountMinorUnits = stringField(body, 'sourceAmountMinorUnits');
+    if (!sourceAccountId || !sourceCurrency || !destinationCurrency || !sourceAmountMinorUnits) {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'sourceAccountId, sourceCurrency, destinationCurrency, and sourceAmountMinorUnits are required',
+        retryable: false,
+        requestId,
+      });
+    }
+    if (!/^-?\d+$/.test(sourceAmountMinorUnits)) {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'sourceAmountMinorUnits must be an integer string of minor units',
+        retryable: false,
+        requestId,
+      });
+    }
+    const owned = this.getAccount(principal, sourceAccountId, requestId);
+    if ('errorCode' in owned) {
+      return owned;
+    }
+    const corridorId = stringField(body, 'corridorId') ?? defaultCorridor(sourceCurrency, destinationCurrency);
+    const quoteId = stringField(body, 'quoteId') ?? `q_${requestId}`;
+    return this.fxOutcome(
+      this.deps.fxEngine.createQuote(principal, {
+        quoteId,
+        accountId: sourceAccountId,
+        sourceCurrency,
+        destinationCurrency,
+        sourceAmountMinorUnits,
+        corridorId,
+      }),
+      requestId,
+    );
+  }
+
+  acceptFxQuote(principal: BffPrincipal, quoteId: string, body: Record<string, unknown>, requestId: string) {
+    if (!this.deps.fxEngine) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'FX engine is not attached to this BFF',
+        retryable: false,
+        requestId,
+      });
+    }
+    const accountId = stringField(body, 'accountId') ?? stringField(body, 'sourceAccountId');
+    if (!accountId) {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'accountId is required to approve a quote',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.fxOutcome(this.deps.fxEngine.acceptQuote(principal, quoteId, accountId), requestId);
+  }
+
+  executeFxQuote(principal: BffPrincipal, quoteId: string, body: Record<string, unknown>, requestId: string) {
+    if (!this.deps.fxEngine) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'FX engine is not attached to this BFF',
+        retryable: false,
+        requestId,
+      });
+    }
+    const sourceAccountId = stringField(body, 'sourceAccountId') ?? stringField(body, 'accountId');
+    const destinationAccountId = stringField(body, 'destinationAccountId');
+    if (!sourceAccountId || !destinationAccountId) {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'sourceAccountId and destinationAccountId are required',
+        retryable: false,
+        requestId,
+      });
+    }
+    const source = this.getAccount(principal, sourceAccountId, requestId);
+    if ('errorCode' in source) {
+      return source;
+    }
+    const dest = this.getAccount(principal, destinationAccountId, requestId);
+    if ('errorCode' in dest) {
+      return dest;
+    }
+    return this.fxOutcome(this.deps.fxEngine.executeQuote(principal, quoteId, sourceAccountId, destinationAccountId), requestId);
+  }
+
+  valuation(principal: BffPrincipal, targetCurrency = 'USD') {
+    return this.valuationField(principal, targetCurrency);
   }
 
   catalog() {
@@ -714,6 +863,80 @@ export class ConsumerBff {
     );
   }
 
+  private valuationField(principal: BffPrincipal, targetCurrency: string) {
+    if (!this.deps.fxEngine) {
+      return resourceField<{
+        readonly authority: 'PRESENTATION_ONLY_NOT_LEDGER';
+        readonly ledgerAuthoritative: false;
+        readonly targetCurrency: string;
+        readonly asOf: string;
+        readonly stale: boolean;
+        readonly available: boolean;
+        readonly reason: string | null;
+        readonly aggregateMinorUnits: string | null;
+        readonly rateTimestamp: string | null;
+        readonly lines: PresentationValuation['lines'];
+      }>({
+        state: 'SERVICE_UNAVAILABLE',
+        availability: 'AVAILABLE_SIMULATION',
+        reason: 'presentation valuation requires the FX engine',
+      });
+    }
+    const positions = this.deps.accounts.listAccounts(principal.customerId).flatMap((account) => {
+      const position = this.deps.accounts.positionOf(account);
+      if ('unavailable' in position) {
+        return [];
+      }
+      return [{ currency: account.currency, minorUnits: position.ledgerBalance.minorUnits }];
+    });
+    const valuation = this.deps.fxEngine.valuePositions(positions, targetCurrency);
+    const rateTimestamp = valuation.lines.find((line) => line.available)?.rateTimestamp ?? null;
+    return resourceField({
+      state: !valuation.available ? 'SERVICE_UNAVAILABLE' : valuation.stale ? 'SIMULATION_ONLY' : 'READY',
+      availability: 'AVAILABLE_SIMULATION',
+      reason: valuation.reason ?? 'presentation/reporting only; not Ledger accounting authority',
+      value: {
+        authority: 'PRESENTATION_ONLY_NOT_LEDGER' as const,
+        ledgerAuthoritative: false as const,
+        targetCurrency: valuation.targetCurrency,
+        asOf: valuation.asOf,
+        stale: valuation.stale,
+        available: valuation.available,
+        reason: valuation.reason,
+        aggregateMinorUnits: valuation.aggregateMinorUnits,
+        rateTimestamp,
+        lines: valuation.lines,
+      },
+    });
+  }
+
+  private fxOutcome<T>(
+    outcome: import('../../../../packages/payments/src/service.ts').PaymentsServiceOutcome<T>,
+    requestId: string,
+  ) {
+    if (outcome.outcome === 'OK') {
+      return outcome.value;
+    }
+    if (outcome.outcome === 'KERNEL_REFUSED') {
+      return bffError({
+        errorCode: 'KERNEL_DENIED',
+        category: 'AUTHORIZATION',
+        message: 'Compliance Kernel refused this FX action',
+        retryable: false,
+        requestId,
+        detailsSafeForClient: { status: outcome.decision.status },
+      });
+    }
+    return bffError({
+      errorCode: 'VALIDATION',
+      category: outcome.code === 'QUOTE_EXPIRED' || outcome.code === 'INSUFFICIENT_FUNDS' ? 'POLICY' : 'VALIDATION',
+      message: outcome.message,
+      retryable: false,
+      requestId,
+      detailsSafeForClient: { code: outcome.code },
+    });
+  }
+
   private optionalSummary(
     summary: ReturnType<NonNullable<OptionalDomainPort['summarize']>> | undefined,
     fallback: string,
@@ -781,6 +1004,21 @@ export function memoryPreferenceStore(): PreferenceStore {
       return next;
     },
   };
+}
+
+function stringField(body: Record<string, unknown>, key: string): string | undefined {
+  const value = body[key];
+  return typeof value === 'string' && value.length > 0 ? value : undefined;
+}
+
+function defaultCorridor(source: string, destination: string): string {
+  if (source === 'USD' && destination === 'SAR') {
+    return 'GB-SA-USD-SAR';
+  }
+  if (source === 'SAR' && destination === 'USD') {
+    return 'GB-US-SAR-USD';
+  }
+  return `${source}-${destination}`;
 }
 
 export { DEFAULT_PAGE_SIZE };

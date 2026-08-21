@@ -222,6 +222,18 @@ export function inboundPendingPlan(amount: Money): PaymentJournalPlan {
   };
 }
 
+export function walletDestinationCreditPlan(destinationAccountId: string, destinationAmount: Money): PaymentJournalPlan {
+  return {
+    suffix: 'wallet-credit',
+    memo: 'WALLET_FX_DESTINATION_CREDIT',
+    classBridge: DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
+    postings: [
+      { accountId: settlementAccountId(destinationAmount.currency), direction: 'DEBIT', amount: destinationAmount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount: destinationAmount },
+    ],
+  };
+}
+
 export function inboundSettlePlan(destinationAccountId: string, amount: Money): PaymentJournalPlan {
   return {
     suffix: 'inbound-settle',

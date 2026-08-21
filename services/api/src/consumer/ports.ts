@@ -85,6 +85,8 @@ export type OptionalDomainPort = {
   summarize(principal: BffPrincipal): OptionalDomainSummary;
 };
 
+export type { FxCommandPort } from './fx-adapter.ts';
+
 export type ActionPort = {
   list(principal: BffPrincipal): readonly ActionStatusResource[];
 };
