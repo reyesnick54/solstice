@@ -73,6 +73,13 @@ The machine-enforceable constitution is `docs/architecture/constitution.md`
 and `docs/architecture/manifest.json`. Each protected component has exactly
 one owner. Older PRs are not automatically canonical.
 
+Productization authority is frozen in
+`docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md` and
+`docs/productization/sunrey-authority-map.json`. Follow
+`docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md` before
+adding a component. Extend the canonical owner. Do not create a parallel
+ledger, Kernel, Agent, Exchange, chain, or compliance plane.
+
 If a task requires a **protected** capability that is not `IMPLEMENTED` on
 `main` (see `docs/architecture/chunk-dependencies.md`), stop. Do not
 reimplement Money, ActionIntent, the Compliance Kernel, Execution Authority,

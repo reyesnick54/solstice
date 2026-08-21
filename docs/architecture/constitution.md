@@ -10,6 +10,12 @@ Machine-enforceable ownership, dependencies, and reservations live in
 [`manifest.json`](./manifest.json). This file must not be treated as a
 second build-status document.
 
+Productization authority boundaries are frozen in
+[`docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md`](../productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md)
+and [`docs/productization/sunrey-authority-map.json`](../productization/sunrey-authority-map.json).
+Those documents extend this constitution. They do not create a second
+architecture owner and they do not authorize production.
+
 Older and currently open feature PRs are **not** automatically canonical.
 See [historical implementation guidance](./historical-implementation.md).
 

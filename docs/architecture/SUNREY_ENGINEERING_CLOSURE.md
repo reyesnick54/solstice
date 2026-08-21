@@ -28,6 +28,14 @@ Future work should normally fall into:
 
 rather than inventing another core authority.
 
+Productization work must extend the owners in
+[`docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md`](../productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md)
+and [`docs/productization/sunrey-authority-map.json`](../productization/sunrey-authority-map.json).
+See also
+[`docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md`](../productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md).
+This pointer does not set `PRODUCTION_READY`, `PRODUCTION_ACTIVE`, or
+`LIVE_CONNECTIVITY_ENABLED`.
+
 ## MoonRey capability decision
 
 Classification **A**: `moonrey-coin` is an obsolete planned public-product placeholder.
