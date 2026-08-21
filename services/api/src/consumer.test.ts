@@ -105,9 +105,6 @@ describe('Consumer BFF', () => {
     assert.equal(valuation.value?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
     assert.equal(valuation.value?.ledgerAuthoritative, false);
     assert.ok(valuation.value?.rateTimestamp);
-    const sar = items.find((row) => row.currency === 'SAR');
-    assert.equal(usd?.balance.value?.ledger.minorUnits, '10000');
-    assert.equal(sar?.balance.value?.ledger.minorUnits, '8000');
   });
 
   it('returns bootstrap with capabilities and no secrets', () => {

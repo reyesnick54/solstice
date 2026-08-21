@@ -2,7 +2,6 @@
   "name": "@solstice/api",
   "version": "0.1.0",
   "description": "SunRey Platform API — canonical application-facing HTTP runtime, gateway, and consumer BFF",
-  "description": "SunRey Platform API — canonical application-facing HTTP runtime and gateway",
   "private": true,
   "type": "module",
   "exports": {

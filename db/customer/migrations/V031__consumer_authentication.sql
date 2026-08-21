@@ -1,4 +1,4 @@
--- V030 consumer authentication: login handles, password/TOTP credentials,
+-- V031 consumer authentication: login handles, password/TOTP credentials,
 -- refresh sessions, auth challenges, and security events.
 -- Extends identity schema. Not a second identity system.
 -- Never store plaintext passwords, TOTP secrets, refresh tokens, or raw PII.
