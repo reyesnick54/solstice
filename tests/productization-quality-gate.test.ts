@@ -51,10 +51,10 @@ describe('Phase A productization quality gate', () => {
   it('production safety remains fail-closed and off', () => {
     const { findings, seen } = checkProductionSafety(ROOT);
     assert.deepEqual(findings, []);
-    assert.ok(seen.PRODUCTION_READY > 0);
-    assert.ok(seen.PRODUCTION_ACTIVE > 0);
-    assert.ok(seen.LIVE_CONNECTIVITY_ENABLED > 0);
-    assert.ok(seen.production_authorized > 0);
+    assert.ok((seen.PRODUCTION_READY ?? 0) > 0);
+    assert.ok((seen.PRODUCTION_ACTIVE ?? 0) > 0);
+    assert.ok((seen.LIVE_CONNECTIVITY_ENABLED ?? 0) > 0);
+    assert.ok((seen.production_authorized ?? 0) > 0);
   });
 
   it('API specs and YAML validate', () => {
