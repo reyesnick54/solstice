@@ -523,13 +523,12 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
 | `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
 | `services/strategy-lab` | `packages/strategy-lab` |
-| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `packages/personal-data-vault` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events` |
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
-| `services/api` | `packages/config`, `packages/domain`, `packages/identity` |
+| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
