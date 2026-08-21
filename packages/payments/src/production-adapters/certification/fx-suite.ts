@@ -1,6 +1,6 @@
-import { FrozenClock } from '../../../config/src/clock.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { Money } from '../../../money/src/money.ts';
+import { FrozenClock } from '../../../../config/src/clock.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '../../../../money/src/money.ts';
 import { asCorridorId, asQuoteId } from '../../ids.ts';
 import { SimulatedProductionFxAdapter } from '../fx/simulated.ts';
 import { verifyProviderQuoteTerms } from '../fx/quote-integrity.ts';

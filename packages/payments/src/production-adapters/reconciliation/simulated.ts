@@ -3,8 +3,8 @@
  * real vendor adapter must implement.
  */
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { Money } from '../../../money/src/money.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '../../../../money/src/money.ts';
 import type {
   FinancialProviderReconciliationPort,
   FinancialReconciliationWindow,
@@ -16,9 +16,19 @@ import type {
 } from './contract.ts';
 
 export class SimulatedFinancialReconciliationAdapter implements FinancialProviderReconciliationPort {
+  private readonly providerId: string;
+  private readonly fixture: {
+    readonly balanceMinor?: bigint;
+    readonly currency?: string;
+    readonly transactions?: readonly FinancialReportedTransaction[];
+    readonly settlements?: readonly FinancialReportedSettlement[];
+    readonly fees?: readonly FinancialReportedFee[];
+    readonly statementPresent?: boolean;
+  };
+
   constructor(
-    private readonly providerId: string,
-    private readonly fixture: {
+    providerId: string,
+    fixture: {
       readonly balanceMinor?: bigint;
       readonly currency?: string;
       readonly transactions?: readonly FinancialReportedTransaction[];
@@ -26,7 +36,10 @@ export class SimulatedFinancialReconciliationAdapter implements FinancialProvide
       readonly fees?: readonly FinancialReportedFee[];
       readonly statementPresent?: boolean;
     } = {},
-  ) {}
+  ) {
+    this.providerId = providerId;
+    this.fixture = fixture;
+  }
 
   fetchBalance(window: FinancialReconciliationWindow): FinancialReportedBalance | null {
     return Object.freeze({

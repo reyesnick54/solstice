@@ -5,8 +5,8 @@
 import {
   ProviderWebhookGuard,
   type ProviderWebhookEnvelope,
-} from '../../security/src/regulated/webhook.ts';
-import type { SecretValue } from '../../security/src/redaction.ts';
+} from '../../../security/src/regulated/webhook.ts';
+import type { SecretValue } from '../../../security/src/redaction.ts';
 import { assertNoSensitiveCardData } from '../pci-boundary.ts';
 
 export const CARD_PRODUCTION_WEBHOOK_EVENTS = [

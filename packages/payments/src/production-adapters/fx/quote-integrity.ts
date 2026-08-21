@@ -5,7 +5,7 @@
 
 import type { FxQuote } from '../../fx-quote.ts';
 import type { FxRate } from '../../fx-rate.ts';
-import type { Money } from '../../../money/src/money.ts';
+import type { Money } from '../../../../money/src/money.ts';
 
 export type ProviderQuoteTerms = {
   readonly providerQuoteId: string;

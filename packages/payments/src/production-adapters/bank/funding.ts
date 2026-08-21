@@ -4,8 +4,8 @@
  * Kernel → Execution Authority → Ledger.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { Money } from '../../../money/src/money.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Money } from '../../../../money/src/money.ts';
 import type { AdapterResult } from '../types.ts';
 import { adapterErr, adapterOk } from '../types.ts';
 

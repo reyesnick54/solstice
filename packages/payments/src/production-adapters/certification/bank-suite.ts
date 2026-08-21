@@ -1,6 +1,6 @@
-import { asCurrencyCode } from '../../../domain/src/currency.ts';
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { Money } from '../../../money/src/money.ts';
+import { asCurrencyCode } from '../../../../domain/src/currency.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '../../../../money/src/money.ts';
 import { SimulatedBankAdapter } from '../bank/simulated.ts';
 import { caseResult, suiteResult, type CertificationSuiteResult } from './harness.ts';
 

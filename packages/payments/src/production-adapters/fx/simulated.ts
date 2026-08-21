@@ -3,8 +3,8 @@
  * Wraps SimulationFxProvider so simulation and production share one port.
  */
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { Money } from '../../../money/src/money.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '../../../../money/src/money.ts';
 import {
   SimulationFxProvider,
   type ExecuteQuoteRequest,
@@ -15,7 +15,7 @@ import {
 import type { FxQuote } from '../../fx-quote.ts';
 import type { FxRate } from '../../fx-rate.ts';
 import type { FxTrade } from '../../fx-execution.ts';
-import type { Clock } from '../../../config/src/clock.ts';
+import type { Clock } from '../../../../config/src/clock.ts';
 import type { AdapterHealth } from '../types.ts';
 import type { FxPricingMode, FxProviderBalance, FxSettlementRecord, ProductionFxAdapter } from './port.ts';
 

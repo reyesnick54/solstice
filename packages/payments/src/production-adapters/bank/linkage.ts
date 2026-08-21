@@ -4,8 +4,8 @@
  * authority.
  */
 
-import type { CurrencyCode } from '../../../domain/src/currency.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
+import type { CurrencyCode } from '../../../../domain/src/currency.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
 
 export const LINKAGE_STATUSES = [
   'PENDING_VERIFICATION',

@@ -5,10 +5,10 @@
  * provider balance as customer Ledger authority.
  */
 
-import type { CurrencyCode } from '../../../domain/src/currency.ts';
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { Money } from '../../../money/src/money.ts';
-import type { SecretReference } from '../../../security/src/secrets.ts';
+import type { CurrencyCode } from '../../../../domain/src/currency.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Money } from '../../../../money/src/money.ts';
+import type { SecretReference } from '../../../../security/src/secrets.ts';
 import type { AdapterHealth, AdapterResult, ProviderLifecycleState } from '../types.ts';
 import type { BankAccountCoordinate } from './identifiers.ts';
 

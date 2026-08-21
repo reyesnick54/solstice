@@ -6,8 +6,8 @@
  * explicitly configured as a provider-rate input.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { Money } from '../../../money/src/money.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Money } from '../../../../money/src/money.ts';
 import type {
   ExecuteQuoteRequest,
   FxLiquidityProvider,

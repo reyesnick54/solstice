@@ -6,7 +6,7 @@
  * or issue Execution Authority.
  */
 
-import type { Money } from '../../../money/src/money.ts';
+import type { Money } from '../../../../money/src/money.ts';
 import type {
   AuthorizedRailCommand,
   RailAdapter,

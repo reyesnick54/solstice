@@ -3,7 +3,7 @@
  * Wraps SimulatedRailAdapter so simulation and production share one port.
  */
 
-import { asUtcInstant } from '../../../domain/src/time.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
 import { SimulatedRailAdapter } from '../../rail-adapters.ts';
 import type { RailCapability } from '../../rail-capability.ts';
 import type { RailReturnMessage } from '../../rail-port.ts';

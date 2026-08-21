@@ -7,8 +7,8 @@
 import {
   ProviderWebhookGuard,
   type ProviderWebhookEnvelope,
-} from '../../../security/src/regulated/webhook.ts';
-import type { SecretValue } from '../../../security/src/redaction.ts';
+} from '../../../../security/src/regulated/webhook.ts';
+import type { SecretValue } from '../../../../security/src/redaction.ts';
 import {
   isFinancialWebhookEvent,
   normalizeWebhookEventType,

@@ -1,5 +1,5 @@
-import { asUtcInstant } from '../../../domain/src/time.ts';
-import { Money } from '../../../money/src/money.ts';
+import { asUtcInstant } from '../../../../domain/src/time.ts';
+import { Money } from '../../../../money/src/money.ts';
 import { asBeneficiaryId, asPaymentId } from '../../ids.ts';
 import { simulationCapabilities } from '../../rail-capability.ts';
 import { createRailSubmission, providerIdempotencyKeyFor } from '../../rail-submission.ts';
@@ -8,8 +8,8 @@ import { SimulatedProductionRailAdapter } from '../rails/simulated.ts';
 import { normalizePaymentProviderStatus } from '../rails/status.ts';
 import { classifySubmissionCertainty, decidePaymentResubmission } from '../rails/idempotency.ts';
 import { FinancialWebhookIngestor } from '../webhooks/ingest.ts';
-import { WEBHOOK_SCHEMA_VERSION } from '../../../security/src/regulated/webhook.ts';
-import { SecretValue } from '../../../security/src/redaction.ts';
+import { WEBHOOK_SCHEMA_VERSION } from '../../../../security/src/regulated/webhook.ts';
+import { SecretValue } from '../../../../security/src/redaction.ts';
 import { incompleteWithoutReconciliation } from '../reconciliation/contract.ts';
 import { SimulatedFinancialReconciliationAdapter } from '../reconciliation/simulated.ts';
 import { caseResult, suiteResult, type CertificationSuiteResult } from './harness.ts';
@@ -109,8 +109,20 @@ export function runPaymentCertificationSuite(): CertificationSuiteResult {
     secret,
   );
   const first = ingestor.ingest({ envelope, payload: { paymentId: submitted.id }, nowMs });
-  const second = ingestor.ingest({ envelope, payload: { paymentId: submitted.id }, nowMs });
-  cases.push(caseResult('webhook_duplicate', first.accepted && second.accepted && second.duplicate === true, 'duplicate'));
+  const duplicateEnvelope = ingestor.sign(
+    {
+      schemaVersion: WEBHOOK_SCHEMA_VERSION,
+      providerId: capability.provider,
+      eventType: 'payment.settled',
+      timestampUtc: NOW,
+      nonce: 'nonce-cert-2',
+      idempotencyKey: 'hook-cert-1',
+      payloadHash: 'abc',
+    },
+    secret,
+  );
+  const second = ingestor.ingest({ envelope: duplicateEnvelope, payload: { paymentId: submitted.id }, nowMs });
+  cases.push(caseResult('webhook_duplicate', first.accepted && second.accepted && second.duplicate === true, second.accepted ? 'duplicate' : 'rejected'));
 
   const recon = new SimulatedFinancialReconciliationAdapter(capability.provider);
   const completeness = incompleteWithoutReconciliation({

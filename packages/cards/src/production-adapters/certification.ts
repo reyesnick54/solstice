@@ -2,10 +2,10 @@ import { asCardId } from '../ids.ts';
 import { runAuthorizationBridge } from './authorization-bridge.ts';
 import { SimulatedProductionCardIssuer } from './simulated.ts';
 import { CardProductionWebhookIngestor } from './webhooks.ts';
-import { WEBHOOK_SCHEMA_VERSION } from '../../security/src/regulated/webhook.ts';
-import { SecretValue } from '../../security/src/redaction.ts';
-import { Money } from '../../money/src/money.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
+import { WEBHOOK_SCHEMA_VERSION } from '../../../security/src/regulated/webhook.ts';
+import { SecretValue } from '../../../security/src/redaction.ts';
+import { Money } from '../../../money/src/money.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
 import { freezeAuthorizationRequest } from '../authorization.ts';
 import { asCardAuthorizationId, asMerchantReference, asProcessorCardReference } from '../ids.ts';
 
@@ -105,8 +105,20 @@ export function runCardCertificationSuite(
     secret,
   );
   const first = ingestor.ingest({ envelope, payload: { cardId }, nowMs });
-  const second = ingestor.ingest({ envelope, payload: { cardId }, nowMs });
-  cases.push(row('duplicate_callback', first.accepted && second.accepted && second.duplicate === true, 'duplicate'));
+  const duplicateEnvelope = ingestor.sign(
+    {
+      schemaVersion: WEBHOOK_SCHEMA_VERSION,
+      providerId: issuer.providerId,
+      eventType: 'card.authorization',
+      timestampUtc: '2026-08-21T00:00:00.000Z',
+      nonce: 'card-nonce-2',
+      idempotencyKey: 'card-hook-1',
+      payloadHash: 'def',
+    },
+    secret,
+  );
+  const second = ingestor.ingest({ envelope: duplicateEnvelope, payload: { cardId }, nowMs });
+  cases.push(row('duplicate_callback', first.accepted && second.accepted && second.duplicate === true, second.accepted ? 'duplicate' : 'rejected'));
 
   const wallet = issuer.evaluateEligibility({
     cardId,

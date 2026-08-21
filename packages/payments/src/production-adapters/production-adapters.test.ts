@@ -236,7 +236,19 @@ describe('Phase D financial provider adapters', () => {
       secret,
     );
     const first = ingestor.ingest({ envelope, payload: { paymentId: 'pay_1' }, nowMs: Date.parse(NOW) });
-    const second = ingestor.ingest({ envelope, payload: { paymentId: 'pay_1' }, nowMs: Date.parse(NOW) });
+    const duplicateEnvelope = ingestor.sign(
+      {
+        schemaVersion: WEBHOOK_SCHEMA_VERSION,
+        providerId: 'SIMULATED_PROVIDER_US_BATCH',
+        eventType: 'payment.settled',
+        timestampUtc: NOW,
+        nonce: 'n3',
+        idempotencyKey: 'k2',
+        payloadHash: 'h',
+      },
+      secret,
+    );
+    const second = ingestor.ingest({ envelope: duplicateEnvelope, payload: { paymentId: 'pay_1' }, nowMs: Date.parse(NOW) });
     assert.equal(first.accepted, true);
     assert.equal(second.accepted && second.duplicate, true);
   });

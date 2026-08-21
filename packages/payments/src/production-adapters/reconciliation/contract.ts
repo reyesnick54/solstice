@@ -7,8 +7,8 @@
  * ReconciliationProviderAdapter without importing packages/treasury.
  */
 
-import type { UtcInstant } from '../../../domain/src/time.ts';
-import type { Money } from '../../../money/src/money.ts';
+import type { UtcInstant } from '../../../../domain/src/time.ts';
+import type { Money } from '../../../../money/src/money.ts';
 
 export type FinancialReconciliationWindow = {
   readonly provider: string;

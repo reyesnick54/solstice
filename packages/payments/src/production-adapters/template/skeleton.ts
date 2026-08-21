@@ -8,7 +8,7 @@
  * No fake vendor-specific code lives here.
  */
 
-import type { SecretReference } from '../../../security/src/secrets.ts';
+import type { SecretReference } from '../../../../security/src/secrets.ts';
 import { adapterErr, type AdapterHealth, type AdapterResult, type ProviderLifecycleState } from '../types.ts';
 import type { BankAdapter, BankAdapterCapabilities } from '../bank/port.ts';
 import type { FinancialProviderReconciliationPort } from '../reconciliation/contract.ts';

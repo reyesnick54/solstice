@@ -2,7 +2,7 @@
  * Card live-gate. Simulation processors cannot produce a production card.
  */
 
-import { LIVE_MONEY_ENABLED, LIVE_PAYMENTS_ENABLED } from '../../config/src/flags.ts';
+import { LIVE_MONEY_ENABLED, LIVE_PAYMENTS_ENABLED } from '../../../config/src/flags.ts';
 import { CARD_ADAPTER_FLAGS, type CardProviderLifecycle } from './types.ts';
 
 export type CardInvocationRequest = {
