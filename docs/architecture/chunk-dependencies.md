@@ -755,6 +755,16 @@ Do not create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/stabilization`, `packages/capability-activation`, or
 `packages/production-activation`. The evaluator returns
 `mustStop: false`.
+Chunk 166 extends `sunrey-post-genesis-stabilization` with a staged
+capability activation plan, domain-scoped canary rehearsal,
+progressive readiness gates, and independent product sequencing at
+`packages/sunrey-chain/src/post-genesis/staged-activation`. It does
+not turn everything on, invent production limits, flip `LIVE_*`
+flags, or activate production. The evaluator returns
+`mustStop: false`. Do not create `packages/activation`,
+`packages/canary`, `packages/mainnet-launch`, or
+`packages/product-switches`. See
+[`docs/operations/chunk-166-staged-capability-activation.md`](../operations/chunk-166-staged-capability-activation.md).
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at
 `packages/sunrey-economics/src/stress` with

@@ -11,6 +11,11 @@ capabilities.
 
 `realProductionCapabilitiesActivated=false`.
 
+Chunk 166 extends this owner at
+`packages/sunrey-chain/src/post-genesis/staged-activation`.
+
 Do not create `packages/post-genesis`, `packages/sunrey-post-genesis`,
-`packages/stabilization`, `packages/capability-activation`, or
-`packages/production-activation`.
+`packages/stabilization`, `packages/capability-activation`,
+`packages/production-activation`, `packages/activation`,
+`packages/canary`, `packages/mainnet-launch`, or
+`packages/product-switches`.

@@ -1,0 +1,20 @@
+{
+  "chunk": "CHUNK-166",
+  "title": "Staged Capability Activation Plan, Domain-Scoped Canary Rehearsal, Progressive Readiness Gates, and Independent Product Activation Sequencing",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-mainnet-readiness",
+    "sunrey-post-genesis-stabilization",
+    "sunrey-production-economic-activation-firewall",
+    "sunrey-production-economic-authorization",
+    "sunrey-production-operating-scope",
+    "sunrey-production-provider-binding",
+    "sunrey-unified-control-room",
+    "sunrey-production-handoff",
+    "sunrey-governance-operations",
+    "sunrey-monetary-constitution"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/post-genesis/staged-activation. Extends sunrey-post-genesis-stabilization. Rehearsal/simulation only. Does not turn everything on, invent production limits, flip LIVE_* flags, launch mainnet, or activate production. evaluateChunkRequirements returns mustStop: false. Do not create packages/activation, packages/canary, packages/mainnet-launch, or packages/product-switches."
+}

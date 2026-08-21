@@ -4279,12 +4279,16 @@
         "packages/sunrey-post-genesis",
         "packages/stabilization",
         "packages/capability-activation",
-        "packages/production-activation"
+        "packages/production-activation",
+        "packages/activation",
+        "packages/canary",
+        "packages/mainnet-launch",
+        "packages/product-switches"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet or activate real production capabilities."
+      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Chunk 166 extends that owner with staged capability activation, domain-scoped canary rehearsal, progressive readiness gates, and independent product sequencing at packages/sunrey-chain/src/post-genesis/staged-activation. Rehearsal networks only. Does not launch mainnet, invent production limits, or activate real production capabilities. Do not create packages/activation, packages/canary, packages/mainnet-launch, or packages/product-switches."
     },
     {
       "id": "sunrey-production-handoff",
@@ -6725,7 +6729,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 89 post-genesis stabilization. Rehearsal networks only."
+      "notes": "Chunk 89 post-genesis stabilization. Chunk 166 staged capability activation lives at packages/sunrey-chain/src/post-genesis/staged-activation. Rehearsal networks only."
     },
     {
       "id": "sunrey-production-handoff",
