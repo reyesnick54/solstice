@@ -1,0 +1,1037 @@
+{
+  "schemaVersion": 1,
+  "name": "sunrey-canonical-implementation-inventory",
+  "purpose": "Machine-readable Phase A Prompt 2 map of what exists versus what is canonical. Not a second architecture manifest.",
+  "generatedAt": "2026-08-21T00:00:00Z",
+  "sourceCommit": "7a2ead2d03461381e117007595f0fee0d1390252",
+  "environment": "simulation",
+  "liveFlagsEnabled": false,
+  "humanDocument": "docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md",
+  "backlogDocument": "docs/productization/SUNREY_PRODUCTIZATION_BACKLOG.md",
+  "constitution": "docs/architecture/constitution.md",
+  "manifest": "docs/architecture/manifest.json",
+  "summary": {
+    "packages": 40,
+    "services": 8,
+    "apps": 1,
+    "tools": 1,
+    "canonicalDomains": 38,
+    "duplicateOrParallelFindings": 12,
+    "simulationOnlyProductionCritical": 12,
+    "providerPlaceholders": 32,
+    "persistenceGaps": 10,
+    "apiGaps": 10,
+    "p0Blockers": 8,
+    "p1Blockers": 12
+  },
+  "counts": {
+    "packages": 40,
+    "services": 8,
+    "apps": 1,
+    "tools": 1,
+    "postgresMigratorDatabases": 4,
+    "unwiredMigrationTrees": 1,
+    "httpSurfaces": 3
+  },
+  "domains": [
+    {
+      "domain": "MONEY",
+      "canonicalPath": "packages/money/src/money.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": [],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "CURRENCIES",
+      "canonicalPath": "packages/domain/src/currency.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/domain"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "LEDGER",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/permissions", "packages/domain", "packages/money", "packages/config"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "LEDGER_BALANCES",
+      "canonicalPath": "services/accounts/src/balances.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/ledger", "services/accounts"],
+      "deprecatedPaths": [
+        "packages/sunrey-exchange/src/adapters.ts",
+        "packages/custody/src/asset-adapter.ts"
+      ],
+      "productizationRequired": true
+    },
+    {
+      "domain": "HOLDS",
+      "canonicalPath": "services/accounts/src/hold-store.ts",
+      "status": "IMPLEMENTED_EPHEMERAL",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["services/accounts"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "SETTLEMENT_ENTRIES",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "status": "PARTIAL",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/ledger", "packages/sunrey-exchange", "packages/permissions"],
+      "deprecatedPaths": [
+        "packages/sunrey-exchange/src/adapters.ts",
+        "packages/sunrey-exchange/src/native-settlement.ts"
+      ],
+      "productizationRequired": true
+    },
+    {
+      "domain": "IDENTITY",
+      "canonicalPath": "packages/identity/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/security", "packages/permissions", "packages/config", "packages/evidence", "packages/events"],
+      "deprecatedPaths": ["services/identity"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "AUTHENTICATION",
+      "canonicalPath": "packages/identity/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/identity", "packages/security"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "AUTHORIZATION",
+      "canonicalPath": "packages/permissions/src/action-intent.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/money", "packages/config", "packages/security"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "KERNEL",
+      "canonicalPath": "packages/kernel/src/kernel.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/config", "packages/evidence", "packages/permissions", "packages/domain", "packages/money", "packages/identity", "packages/security"],
+      "deprecatedPaths": ["packages/regulatory-twin"],
+      "productizationRequired": false
+    },
+    {
+      "domain": "EXECUTION_AUTHORITY",
+      "canonicalPath": "packages/permissions/src/execution-authority.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/permissions", "packages/security", "packages/kernel"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "COMPLIANCE",
+      "canonicalPath": "packages/kernel/src/compliance/fabric.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/kernel", "packages/identity"],
+      "deprecatedPaths": ["services/compliance"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "EVIDENCE",
+      "canonicalPath": "packages/evidence/src/vault.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/config", "packages/security"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "EVENTS",
+      "canonicalPath": "packages/events/src/events.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/permissions"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "PERSISTENCE",
+      "canonicalPath": "packages/persistence/src/index.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/ledger", "packages/evidence", "packages/identity", "packages/kernel"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "ACCOUNTS",
+      "canonicalPath": "services/accounts/src/open-account.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/ledger", "packages/permissions", "packages/identity", "packages/evidence", "packages/events"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "PAYMENTS",
+      "canonicalPath": "packages/payments/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/ledger", "packages/identity", "packages/permissions", "packages/events", "packages/evidence"],
+      "deprecatedPaths": ["packages/payments/src/production-candidate"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "CARDS",
+      "canonicalPath": "packages/cards/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/ledger", "packages/identity", "packages/permissions", "packages/events"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "FX",
+      "canonicalPath": "packages/payments/src/fx-quote.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/payments", "packages/money"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "TREASURY",
+      "canonicalPath": "packages/treasury/src/service.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/ledger", "packages/payments", "packages/identity", "packages/events"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "INVESTMENTS",
+      "canonicalPath": "packages/investments/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/ledger", "packages/risk", "packages/model-registry", "packages/events"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "PERSONAL_ECONOMIC_GRAPH",
+      "canonicalPath": "packages/personal-economic-graph/src/service.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/domain", "packages/identity", "packages/events", "packages/money"],
+      "deprecatedPaths": ["services/economic-graph"],
+      "productizationRequired": false
+    },
+    {
+      "domain": "GROWTH_ORCHESTRATOR",
+      "canonicalPath": "packages/platform/src/service.ts",
+      "status": "IMPLEMENTED_UNDERINTEGRATED",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/agent", "packages/domain", "packages/personal-economic-graph", "packages/events", "packages/evidence", "packages/permissions"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "AI_RUNTIME",
+      "canonicalPath": "packages/ai-runtime/src/runtime.ts",
+      "status": "IMPLEMENTED_INFERENCE_ONLY",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/domain", "packages/security", "packages/model-registry", "packages/identity"],
+      "deprecatedPaths": ["packages/ai-runtime/src/providers/xai-grok.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "SUNREY_AGENT",
+      "canonicalPath": "packages/sunrey-agent/src/engine.ts",
+      "status": "IMPLEMENTED_DISCONNECTED_EXECUTION",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/agent", "packages/ai-runtime", "packages/permissions", "packages/sunrey-chain", "packages/sunrey-exchange"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "PERSONAL_ECONOMY_AGENT",
+      "canonicalPath": "packages/agent/src/service.ts",
+      "status": "IMPLEMENTED_ISOLATED",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/config", "packages/domain", "packages/identity"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "SUNREY_CHAIN",
+      "canonicalPath": "packages/sunrey-chain",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/config", "packages/security", "packages/identity", "packages/evidence", "packages/events", "packages/money"],
+      "deprecatedPaths": ["packages/sunrey-sdk/src/gateway/platform.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "CONSENSUS",
+      "canonicalPath": "packages/sunrey-chain/rust/crates/consensus",
+      "status": "IMPLEMENTED_DISCONNECTED_FROM_TS_WALLET",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain"],
+      "deprecatedPaths": ["packages/sunrey-chain/src/wallet/engine.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "WALLETS",
+      "canonicalPath": "packages/sunrey-chain/src/wallet",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain", "packages/security"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "SUNREY_COIN",
+      "canonicalPath": "packages/sunrey-coin/src/service.ts",
+      "status": "IMPLEMENTED_UNBRIDGED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/kernel", "packages/ledger", "packages/consent", "packages/clean-room", "packages/identity"],
+      "deprecatedPaths": ["packages/sunrey-exchange/src/adapters.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "MOONREY_COIN",
+      "canonicalPath": "packages/sunrey-chain/src/economics",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain", "packages/money", "packages/config"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "ISSUANCE",
+      "canonicalPath": "packages/sunrey-chain/src/economics",
+      "status": "IMPLEMENTED_PRODUCTION_INACTIVE",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "ORACLES",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/engine.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "SUNREY_EXCHANGE",
+      "canonicalPath": "packages/sunrey-exchange/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/kernel", "packages/sunrey-coin", "packages/identity", "packages/permissions"],
+      "deprecatedPaths": ["packages/sunrey-exchange/src/adapters.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "MATCHING",
+      "canonicalPath": "packages/sunrey-exchange/src/matching.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-exchange"],
+      "deprecatedPaths": [],
+      "productizationRequired": false
+    },
+    {
+      "domain": "MARKET_DATA",
+      "canonicalPath": "packages/sunrey-exchange/src/ops/market-data.ts",
+      "status": "IMPLEMENTED",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/sunrey-exchange"],
+      "deprecatedPaths": ["packages/investments/src/market-data.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "SETTLEMENT",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "status": "PARTIAL",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/ledger", "packages/sunrey-exchange", "packages/custody"],
+      "deprecatedPaths": [
+        "packages/sunrey-exchange/src/native-settlement.ts",
+        "packages/sunrey-exchange/src/adapters.ts"
+      ],
+      "productizationRequired": true
+    },
+    {
+      "domain": "CUSTODY",
+      "canonicalPath": "packages/custody/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/kernel", "packages/sunrey-coin", "packages/sunrey-chain", "packages/permissions"],
+      "deprecatedPaths": ["packages/custody/src/asset-adapter.ts"],
+      "productizationRequired": true
+    },
+    {
+      "domain": "HIN_INFORMATION_RIGHTS",
+      "canonicalPath": "packages/information-market/src/network/engine.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "dependencies": ["packages/kernel", "packages/ledger", "packages/sunrey-coin", "packages/platform", "packages/clean-room"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "PERSONAL_DATA",
+      "canonicalPath": "packages/personal-data-vault/src/service.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/domain", "packages/security", "packages/identity", "packages/events", "packages/consent", "packages/clean-room"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "OPERATIONS",
+      "canonicalPath": "packages/sunrey-chain/src/ops",
+      "status": "IMPLEMENTED_REHEARSAL",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    },
+    {
+      "domain": "DEPLOYMENT",
+      "canonicalPath": "deploy/sunrey-testnet",
+      "status": "IMPLEMENTED_REHEARSAL",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["infra/sunrey-production", "packages/sunrey-chain"],
+      "deprecatedPaths": [],
+      "productizationRequired": true
+    }
+  ],
+  "packages": [
+    {
+      "id": "packages/money",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/config",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/domain",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/permissions",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/security",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "metadata-postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/identity",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/kernel",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/ledger",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/evidence",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/events",
+      "canonicalStatus": "canonical",
+      "simulationOnly": false,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/persistence",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/payments",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/cards",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/treasury",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/investments",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/custody",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/personal-economic-graph",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/agent",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "none",
+      "publicApi": false
+    },
+    {
+      "id": "packages/platform",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/personal-data-vault",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/consent",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/clean-room",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/regulatory-twin",
+      "canonicalStatus": "simulation-lab",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/risk",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/model-registry",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": false
+    },
+    {
+      "id": "packages/strategy-lab",
+      "canonicalStatus": "simulation-lab",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/agentic-capital-mesh",
+      "canonicalStatus": "simulation-lab",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/sunrey-chain",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "mixed",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/sunrey-coin",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory-or-postgres",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/sunrey-exchange",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/sunrey-explorer",
+      "canonicalStatus": "projection",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory",
+      "publicApi": "http"
+    },
+    {
+      "id": "packages/sunrey-economics",
+      "canonicalStatus": "simulation-lab",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "none",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/sunrey-sdk",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory",
+      "publicApi": "http"
+    },
+    {
+      "id": "packages/sunrey-agent",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/sunrey-range",
+      "canonicalStatus": "simulation-lab",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "none",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/information-market",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory-or-postgres",
+      "publicApi": "cli"
+    },
+    {
+      "id": "packages/human-economic-contribution",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/economic-asset-registry",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "memory",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/ai-runtime",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": false,
+      "persistence": "none",
+      "publicApi": "demo"
+    },
+    {
+      "id": "packages/market-surveillance",
+      "canonicalStatus": "canonical",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "persistence": "memory",
+      "publicApi": "demo"
+    }
+  ],
+  "services": [
+    {
+      "id": "services/accounts",
+      "canonicalStatus": "canonical-application",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/identity",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/compliance",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/economic-graph",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": false
+    },
+    {
+      "id": "services/cards",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/treasury",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/investments",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": true
+    },
+    {
+      "id": "services/strategy-lab",
+      "canonicalStatus": "facade",
+      "http": false,
+      "simulationOnly": true,
+      "productionCritical": false
+    }
+  ],
+  "parallelArchitectures": [
+    {
+      "id": "exchange-ports-vs-ledger",
+      "severity": "high",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "secondaryPath": "packages/sunrey-exchange/src/adapters.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "custody-memory-vs-ledger",
+      "severity": "high",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "secondaryPath": "packages/custody/src/asset-adapter.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "native-chain-vs-bank-ledger",
+      "severity": "high",
+      "canonicalPath": "packages/sunrey-chain/src/economics/supply.ts",
+      "secondaryPath": "packages/sunrey-exchange/src/native-clearing/chain.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "sunrey-coin-vs-asset-supply-book",
+      "severity": "high",
+      "canonicalPath": "packages/sunrey-chain/src/economics/supply.ts",
+      "secondaryPath": "packages/sunrey-coin/src/service.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "hin-consent-vs-consent-ledger",
+      "severity": "medium",
+      "canonicalPath": "packages/consent/src/ledger.ts",
+      "secondaryPath": "packages/information-market/src/network/store.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    },
+    {
+      "id": "three-http-surfaces",
+      "severity": "high",
+      "canonicalPath": "api/sunrey-chain-v1.openapi.yaml",
+      "secondaryPath": "packages/sunrey-explorer/src/server.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "three-chain-state-machines",
+      "severity": "high",
+      "canonicalPath": "packages/sunrey-chain/rust/crates/storage",
+      "secondaryPath": "packages/sunrey-sdk/src/gateway/platform.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": true
+    },
+    {
+      "id": "agent-runtimes",
+      "severity": "low",
+      "canonicalPath": "packages/sunrey-agent/src/gate.ts",
+      "secondaryPath": "packages/agent/src/service.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    },
+    {
+      "id": "policy-engines",
+      "severity": "low",
+      "canonicalPath": "packages/kernel/src/policy/engine.ts",
+      "secondaryPath": "packages/sunrey-chain/src/productive/policy-governance/registry.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    },
+    {
+      "id": "tx-history-projections",
+      "severity": "low",
+      "canonicalPath": "services/accounts/src/transaction-history.ts",
+      "secondaryPath": "packages/sunrey-sdk/src/gateway/platform.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    },
+    {
+      "id": "dual-economy-lab-vs-constitution",
+      "severity": "low",
+      "canonicalPath": "packages/sunrey-chain/src/economics",
+      "secondaryPath": "packages/sunrey-economics/src/engine.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    },
+    {
+      "id": "execution-authority-vs-other-tokens",
+      "severity": "low",
+      "canonicalPath": "packages/permissions/src/execution-authority.ts",
+      "secondaryPath": "packages/identity/src/actor-context.ts",
+      "intentionallySpecialized": true,
+      "migrationRequired": false
+    }
+  ],
+  "disconnectedFlows": [
+    {
+      "flow": "IDENTITY",
+      "connected": true,
+      "gaps": ["no HTTP identity or banking surface", "explorer not wired to identity"]
+    },
+    {
+      "flow": "MONEY",
+      "connected": true,
+      "gaps": ["public /v1 does not call services/accounts", "live rails disabled"]
+    },
+    {
+      "flow": "AI_ACTION",
+      "connected": false,
+      "gaps": ["ProposalGate ALLOW does not verify EA or postJournal"]
+    },
+    {
+      "flow": "EXCHANGE",
+      "connected": false,
+      "gaps": ["settlement ports are in-memory", "custody not in settle path", "native DVP unwired"]
+    },
+    {
+      "flow": "NATIVE_ASSET",
+      "connected": false,
+      "gaps": ["TS wallet does not call Kernel or Ledger", "sunrey-coin chainAdapter unimplemented"]
+    }
+  ],
+  "providerPlaceholders": [
+    { "id": "SimulatedS3mServer", "domain": "AI", "classification": "EXPECTED_SIMULATION" },
+    { "id": "S3mInferenceProvider", "domain": "AI", "classification": "EXPECTED_SIMULATION" },
+    { "id": "XaiGrokAiProvider", "domain": "AI", "classification": "PRODUCTIZATION_BLOCKER" },
+    { "id": "LocalTestAiProvider", "domain": "AI", "classification": "TEST_ONLY" },
+    { "id": "SimulatedRailAdapter", "domain": "PAYMENTS", "classification": "EXPECTED_SIMULATION" },
+    { "id": "SimulationFxProvider", "domain": "FX", "classification": "EXPECTED_SIMULATION" },
+    { "id": "SimulationScreeningAdapter", "domain": "PAYMENTS", "classification": "EXPECTED_SIMULATION" },
+    { "id": "FixturePaymentTransport", "domain": "PAYMENTS", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "CandidateRailAdapter", "domain": "PAYMENTS", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "SimulatedCardProcessor", "domain": "CARDS", "classification": "EXPECTED_SIMULATION" },
+    { "id": "SimulatedAppleWalletAdapter", "domain": "CARDS", "classification": "EXPECTED_SIMULATION" },
+    { "id": "SimulatedGoogleWalletAdapter", "domain": "CARDS", "classification": "EXPECTED_SIMULATION" },
+    { "id": "SimulatedIdentityAdapter", "domain": "KYC", "classification": "EXPECTED_SIMULATION" },
+    { "id": "FixturePersonVerificationProvider", "domain": "KYC", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "FakeIdentityTransport", "domain": "KYC", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "SimulatedSanctionsProvider", "domain": "AML", "classification": "EXPECTED_SIMULATION" },
+    { "id": "FixtureSanctionsProvider", "domain": "AML", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "SimulationTravelRuleNetwork", "domain": "TRAVEL_RULE", "classification": "EXPECTED_SIMULATION" },
+    { "id": "FixtureTravelRuleCandidate", "domain": "TRAVEL_RULE", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "FakeTravelRuleTransport", "domain": "TRAVEL_RULE", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "InMemoryCustomerAssetPort", "domain": "CUSTODY", "classification": "EXPECTED_SIMULATION" },
+    { "id": "LocalProviderSimulator", "domain": "ORACLES", "classification": "EXPECTED_SIMULATION" },
+    { "id": "NodeExternalHttpTransport", "domain": "ORACLES", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "ExternalProviderCandidateRegistry", "domain": "ORACLES", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "SimulatedMarketDataProvider", "domain": "MARKET_DATA", "classification": "EXPECTED_SIMULATION" },
+    { "id": "DevelopmentHsmSimulator", "domain": "HSM", "classification": "EXPECTED_SIMULATION" },
+    { "id": "CeremonySimulationHsm", "domain": "HSM", "classification": "EXPECTED_SIMULATION" },
+    { "id": "LocalTestPqSigningProvider", "domain": "HSM", "classification": "PROVIDER_PLACEHOLDER" },
+    { "id": "SimulationKeyProvider", "domain": "HSM", "classification": "EXPECTED_SIMULATION" },
+    { "id": "InMemoryCoinPort", "domain": "EXCHANGE", "classification": "EXPECTED_SIMULATION" },
+    { "id": "InMemoryFiatPort", "domain": "EXCHANGE", "classification": "EXPECTED_SIMULATION" },
+    { "id": "UnwiredNativeAssetSettlementAdapter", "domain": "SETTLEMENT", "classification": "PRODUCTIZATION_BLOCKER" }
+  ],
+  "persistenceGaps": [
+    "default createSimulationRuntime is in-memory",
+    "SDK DevelopmentPlatform is in-memory",
+    "ExchangeStore Maps; V025 schema unused",
+    "InMemoryAgentMandateStore has no database",
+    "HoldStore has no postgres adapter",
+    "db/explorer migrations are not in DATABASES",
+    "DeveloperPlatformEngine is in-memory",
+    "HTTP IdempotencyStore is in-memory",
+    "PublicRpcGateway maps are in-memory",
+    "secrets use InMemorySecretProvider"
+  ],
+  "apiGaps": [
+    "developer platform OpenAPI has no HTTP routes",
+    "three incompatible HTTP path conventions",
+    "chain OpenAPI missing securitySchemes",
+    "consumer Authorization header presence-only",
+    "idempotency only on POST /v1/transactions in HTTP",
+    "incomplete error contracts outside SDK envelope",
+    "services/* have no HTTP",
+    "many OpenAPI paths are specification-only",
+    "exchange cancel can succeed without an order",
+    "information and operator routes undocumented"
+  ],
+  "securityBoundaries": {
+    "aiCannotObtainExecutionAuthority": true,
+    "frontendCannotPostLedger": true,
+    "externalProviderCannotIssueAuthority": true,
+    "marketDataCannotPostLedger": true,
+    "soleProductionAuthorityIssuer": "packages/kernel/src/kernel.ts"
+  }
+}

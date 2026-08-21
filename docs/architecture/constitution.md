@@ -6,6 +6,8 @@ contains, which package owns each protected component, and which
 dependency directions are legal.
 
 Implementation inventory lives in [`docs/build-status.md`](../build-status.md).
+Productization audit (what exists vs what is canonical) lives in
+[`docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md`](../productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md).
 Machine-enforceable ownership, dependencies, and reservations live in
 [`manifest.json`](./manifest.json). This file must not be treated as a
 second build-status document.
@@ -141,7 +143,7 @@ the same architecture-linting system, not a second linter.
 `consent`, `clean-room`, `sunrey-coin`, `information-market`,
 `human-economic-contribution`, `economic-asset-registry`,
 `sunrey-chain`, `sunrey-explorer`, `sunrey-exchange`, `sunrey-range`, `custody`,
-`market-surveillance`, `sunrey-sdk`.
+`market-surveillance`, `sunrey-sdk`, `sunrey-economics`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
 `treasury`, `investments`, `strategy-lab`.
