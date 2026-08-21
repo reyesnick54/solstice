@@ -389,12 +389,13 @@ function seedPersonas(runtime: SimulationRuntime): void {
             },
           ]
         : []);
+    const openerId = persona.capabilities.includes('ACCOUNT_OPEN_REQUEST') ? persona.actorId : 'operator_1';
     for (const product of products) {
       const opened = runtime.accountsService.open({
         id: asIntentId(`open_${persona.personaId}_${product.accountIdSuffix}`),
         actionType: ACTION_TYPES.OPEN_ACCOUNT,
         idempotencyKey: `open_${persona.personaId}_${product.accountIdSuffix}`,
-        actorId: persona.actorId,
+        actorId: openerId,
         requestedAt: runtime.clock.now(),
         purpose: 'CUSTOMER_ONBOARDING',
         payload: {

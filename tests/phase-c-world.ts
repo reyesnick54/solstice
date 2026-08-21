@@ -130,10 +130,10 @@ export function createPhaseCWorld(suffix: string, depositMinor = 500_000n): Phas
     payload: {
       accountId: asAccountId(`acct_sar_${suffix}`),
       ownerId: payment.customer.id,
-      productId: asProductId('prod_demand_sar_sa'),
+      productId: asProductId('prod_demand_sar_us'),
       accountClass: 'DEMAND_DEPOSIT',
-      legalEntityId: asLegalEntityId('le_solstice_sa_entity'),
-      jurisdiction: asJurisdiction('SA'),
+      legalEntityId: asLegalEntityId('le_solstice_us_inc'),
+      jurisdiction: asJurisdiction('US'),
       currency: asCurrencyCode('SAR'),
     },
   });

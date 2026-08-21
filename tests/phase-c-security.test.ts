@@ -10,6 +10,7 @@ import { ACTION_TYPES } from '../packages/permissions/src/action-types.ts';
 import { asIntentId } from '../packages/permissions/src/action-intent.ts';
 import { Money } from '../packages/money/src/money.ts';
 import { asAccountId } from '../packages/domain/src/account.ts';
+import { asCustomerId } from '../packages/domain/src/customer.ts';
 
 const ROOT = join(import.meta.dirname, '..');
 
@@ -31,6 +32,7 @@ describe('Phase C security and authority', () => {
     const world = createPhaseCWorld('sec', 200_000n);
     const stranger = world.runtime.identity.provisionSimulatedActor({
       actorId: 'actor_stranger_sec',
+      customerId: asCustomerId('cust_stranger_sec'),
       jurisdiction: world.account.jurisdiction,
       capabilities: ['PAYMENT_REQUEST', 'FX_QUOTE_REQUEST', 'MANAGE_BENEFICIARY'],
     });

@@ -250,6 +250,10 @@ export class PaymentsService {
     }
     const account = this.catalog.accounts.get(intent.payload.accountId);
     const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const ownerDenied = this.rejectUnlessAccountOwner(intent.actorId, account);
+    if (ownerDenied) {
+      return ownerDenied;
+    }
     const corridor = findCorridor(intent.payload.corridorId);
     const gated = this.gate(intent, account, customer, {
       corridorId: intent.payload.corridorId,
@@ -308,6 +312,10 @@ export class PaymentsService {
     const quote = this.store.getQuote(intent.payload.quoteId);
     const account = this.catalog.accounts.get(intent.payload.accountId);
     const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const ownerDenied = this.rejectUnlessAccountOwner(intent.actorId, account);
+    if (ownerDenied) {
+      return ownerDenied;
+    }
     const gated = this.gate(intent, account, customer);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
@@ -351,6 +359,10 @@ export class PaymentsService {
     const source = this.catalog.accounts.get(intent.payload.accountId);
     const destination = this.catalog.accounts.get(destinationAccountId);
     const customer = source ? this.catalog.customers.get(source.ownerId) : undefined;
+    const ownerDenied = this.rejectUnlessAccountOwner(intent.actorId, source);
+    if (ownerDenied) {
+      return ownerDenied;
+    }
     const gated = this.gate(intent, source, customer);
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
@@ -413,6 +425,10 @@ export class PaymentsService {
     }
     const account = this.catalog.accounts.get(intent.payload.sourceAccountId);
     const customer = account ? this.catalog.customers.get(account.ownerId) : undefined;
+    const ownerDenied = this.rejectUnlessAccountOwner(intent.actorId, account);
+    if (ownerDenied) {
+      return ownerDenied;
+    }
     const beneficiary = this.store.getBeneficiary(intent.payload.beneficiaryId);
     const quote = this.store.getQuote(intent.payload.quoteId);
     const corridor = quote
@@ -1362,6 +1378,26 @@ export class PaymentsService {
       };
     }
     return { outcome: 'ALLOWED', decision, authority: verified.value };
+  }
+
+  private rejectUnlessAccountOwner(
+    actorId: string,
+    account: Account | undefined,
+  ): PaymentsServiceOutcome<never> | null {
+    if (!account) {
+      return null;
+    }
+    const facts = this.identity.identityFactsFor(actorId);
+    if (facts.customerId && facts.customerId !== account.ownerId) {
+      return this.reject(
+        'CREATE_FX_QUOTE',
+        actorId,
+        null,
+        'ACCOUNT_NOT_OWNED',
+        'actor is not the account owner',
+      );
+    }
+    return null;
   }
 
   private reject(

@@ -79,6 +79,16 @@ export const PRODUCT_DEMAND_USD_US: Product = freezeProduct({
   status: 'ACTIVE',
 });
 
+export const PRODUCT_DEMAND_SAR_US: Product = freezeProduct({
+  id: asProductId('prod_demand_sar_us'),
+  name: 'Simulated US-entity SAR demand deposit — sandbox multi-currency position only',
+  accountClass: 'DEMAND_DEPOSIT',
+  currency: asCurrencyCode('SAR'),
+  legalEntityId: SOLSTICE_US.id,
+  jurisdiction: asJurisdiction('US'),
+  status: 'ACTIVE',
+});
+
 export const PRODUCT_DEMAND_EUR_EU: Product = freezeProduct({
   id: asProductId('prod_demand_eur_eu'),
   name: 'Simulated EU-entity EUR demand deposit — no insurance claim',
@@ -195,6 +205,7 @@ export function seedSimulationCatalog(): {
   products.put(PRODUCT_SAVINGS_USD_GB.id, PRODUCT_SAVINGS_USD_GB);
   products.put(PRODUCT_DIGITAL_USD_GB.id, PRODUCT_DIGITAL_USD_GB);
   products.put(PRODUCT_DEMAND_USD_US.id, PRODUCT_DEMAND_USD_US);
+  products.put(PRODUCT_DEMAND_SAR_US.id, PRODUCT_DEMAND_SAR_US);
   products.put(PRODUCT_DEMAND_EUR_EU.id, PRODUCT_DEMAND_EUR_EU);
   products.put(PRODUCT_DEMAND_SAR_SA.id, PRODUCT_DEMAND_SAR_SA);
   products.put(PRODUCT_DEMAND_AED_AE.id, PRODUCT_DEMAND_AED_AE);

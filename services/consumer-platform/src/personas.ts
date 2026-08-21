@@ -118,9 +118,9 @@ export const PERSONA_DEFINITIONS: readonly PersonaDefinition[] = Object.freeze([
       },
       {
         accountIdSuffix: 'sar',
-        productId: 'prod_demand_sar_sa',
-        legalEntityId: 'le_solstice_sa_entity',
-        jurisdiction: 'SA',
+        productId: 'prod_demand_sar_us',
+        legalEntityId: 'le_solstice_us_inc',
+        jurisdiction: 'US',
         currency: 'SAR',
       },
     ],

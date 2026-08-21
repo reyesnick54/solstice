@@ -285,10 +285,18 @@ export class Ledger {
       );
     }
     if (customerPosting && ea.accountId !== accountId && ea.accountId !== customerPosting.accountId) {
-      throw new LedgerInvariantError(
-        'AUTHORITY',
-        'Execution Authority accountId does not bind a posting on this journal',
-      );
+      const source = this.accounts.get(ea.accountId);
+      const credited = this.accounts.get(customerPosting.accountId);
+      const sameOwnerFx =
+        request.actionType === 'ACCEPT_FX_QUOTE' &&
+        source.ownerId !== undefined &&
+        source.ownerId === credited.ownerId;
+      if (!sameOwnerFx) {
+        throw new LedgerInvariantError(
+          'AUTHORITY',
+          'Execution Authority accountId does not bind a posting on this journal',
+        );
+      }
     }
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
@@ -296,6 +304,7 @@ export class Ledger {
         request.actionType === 'INITIATE_PAYMENT' ||
         request.actionType === 'CANCEL_PAYMENT' ||
         request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
+        request.actionType === 'ACCEPT_FX_QUOTE' ||
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
@@ -311,7 +320,13 @@ export class Ledger {
           account.ownerId === undefined ||
           catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
-      if (!(systemBookAction && allNonCustomer)) {
+      const source = this.accounts.get(ea.accountId);
+      const sameOwnerFx =
+        request.actionType === 'ACCEPT_FX_QUOTE' &&
+        customerPosting !== undefined &&
+        source.ownerId !== undefined &&
+        source.ownerId === this.accounts.get(customerPosting.accountId).ownerId;
+      if (!(systemBookAction && allNonCustomer) && !sameOwnerFx) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind any posting on this journal',
@@ -328,6 +343,7 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'fee-income',
   'fx-debit',
   'fx-credit',
+  'fx-customer-credit',
   'settle',
   'release',
   'return-principal',

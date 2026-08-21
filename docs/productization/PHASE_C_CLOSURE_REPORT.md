@@ -119,8 +119,11 @@ virtual card.
 ## Persistence status
 
 **PRODUCTIZED_INTERNAL** for the in-memory control store plus
-PostgreSQL snapshot `V030__treasury_financial_control.sql`. Durable
-fixture snapshots fail closed on corruption. Not a second ledger.
+PostgreSQL snapshot `V030__treasury_financial_control.sql`. Parallel
+Phase B collision `V029__platform_api.sql` is sequenced as
+`V031__platform_api.sql` so customer migrations stay strictly
+increasing. Durable fixture snapshots fail closed on corruption. Not a
+second ledger.
 
 ## Security/authority status
 

@@ -101,7 +101,6 @@ describe('Phase C money and banking acceptance', () => {
     const pending = world.payments.initiatePayment(
       payIntent(world, 'e2e_pay', 'ben_e2e', payQuote.value.quoteId),
     );
-    assert.equal(pending.outcome, 'OK');
     if (pending.outcome !== 'OK') {
       throw new Error(`pay ${pending.outcome}`);
     }

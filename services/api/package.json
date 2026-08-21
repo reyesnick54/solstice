@@ -1,18 +1,12 @@
 {
   "name": "@solstice/api",
   "version": "0.1.0",
+  "description": "SunRey Platform API — canonical application-facing HTTP runtime and gateway",
   "private": true,
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
     "./consumer": "./src/consumer/index.ts"
-  "name": "@solstice/platform-api",
-  "version": "0.1.0",
-  "description": "SunRey Platform API — canonical application-facing HTTP runtime and gateway",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
   },
   "files": [
     "src"
