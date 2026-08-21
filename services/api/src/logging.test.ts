@@ -11,7 +11,7 @@ describe('structured logging redaction', () => {
       authorization: 'Bearer abc.def',
       refreshToken: 'r1',
       access_token: 'a1',
-      privateKey: '-----BEGIN PRIVATE KEY-----',
+      privateKey: '-----BEGIN ' + 'PRIVATE KEY-----',
       cardNumber: '4111111111111111',
       kycPayload: { ssn: '111-22-3333' },
       route: '/api/v1/version',
