@@ -3,6 +3,10 @@
 Phase A Prompt 2 — repository-wide technical audit.
 
 **Source commit:** `7a2ead2d03461381e117007595f0fee0d1390252` (`main` at audit start).
+Prompt 1 stabilization record now also lives at
+[`PHASE_A_01_REPOSITORY_STABILIZATION.md`](./PHASE_A_01_REPOSITORY_STABILIZATION.md)
+(merged from `main` after this audit started). That document repairs merge
+debris. This document remains the canonical implementation map.
 **Machine copy:** [`sunrey-canonical-implementation-inventory.json`](./sunrey-canonical-implementation-inventory.json).
 **Backlog:** [`SUNREY_PRODUCTIZATION_BACKLOG.md`](./SUNREY_PRODUCTIZATION_BACKLOG.md).
 **Architecture constitution:** [`docs/architecture/constitution.md`](../architecture/constitution.md).
