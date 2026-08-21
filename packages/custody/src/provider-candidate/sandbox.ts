@@ -27,7 +27,7 @@ export type CustodySandboxScenario =
   | 'duplicate_webhook'
   | 'wrong_environment';
 
-type StoredWallet = NormalizedCustodyWallet & { readonly balance: bigint };
+type StoredWallet = Omit<NormalizedCustodyWallet, 'balance'> & { balance: bigint };
 type StoredTx = NormalizedCustodyTransaction;
 
 export class DeterministicCustodyAdapter implements CustodyProviderContract {

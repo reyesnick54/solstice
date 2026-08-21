@@ -188,7 +188,7 @@ export function runBlockchainAnalyticsContractSuite(
     tx.outcome === 'CLEAR' &&
     exposure.outcome === 'REVIEW' &&
     signals.signals.length > 0 &&
-    compliance.isKernelDecision !== true &&
+    address.isKernelDecision === false &&
     compliance.outcome === 'CLEAR';
   return Object.freeze({
     outcome: passed ? 'CONTRACT_TEST_PASS' : 'CONTRACT_TEST_FAIL',

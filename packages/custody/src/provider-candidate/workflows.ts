@@ -71,8 +71,7 @@ export function runWithdrawalWorkflow(input: {
   readonly quantity: bigint;
 }): CustodyCandidateResult<WithdrawalWorkflowRecord> {
   if (input.actorKind === 'AI_AGENT') {
-    const refused = rejectAiCustodyBypass();
-    return candidateErr(refused.error.code, refused.error.message);
+    return rejectAiCustodyBypass();
   }
   const completed: WithdrawalWorkflowStep[] = ['user_request'];
   const gates: readonly { readonly step: WithdrawalWorkflowStep; readonly ok: boolean }[] = [
@@ -130,8 +129,7 @@ export function runDepositWorkflow(input: {
   readonly mappingKnown: boolean;
 }): CustodyCandidateResult<DepositWorkflowRecord> {
   if (!input.signatureVerified) {
-    const refused = rejectUnverifiedDepositCredit();
-    return candidateErr(refused.error.code, refused.error.message);
+    return rejectUnverifiedDepositCredit();
   }
   if (!input.mappingKnown) {
     return candidateOk(
