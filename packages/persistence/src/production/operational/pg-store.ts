@@ -33,10 +33,13 @@ import type {
 } from './types.ts';
 
 export class PostgresOperationalStore {
-  constructor(
-    private readonly customer: Pool,
-    private readonly security?: Pool,
-  ) {}
+  private readonly customer: Pool;
+  private readonly security: Pool | undefined;
+
+  constructor(customer: Pool, security?: Pool) {
+    this.customer = customer;
+    this.security = security;
+  }
 
   async upsertOperationalPayment(row: OperationalPayment, expectedRevision?: number): Promise<OperationalPayment> {
     return withTransaction(this.customer, async (client) => {

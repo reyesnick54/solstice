@@ -76,6 +76,7 @@
     "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/parameter-package/demo.ts",
     "demo:sunrey-production-economic-authorization": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/economics/production-activation/authorization/demo.ts",
     "demo:sunrey-production-launch-freeze": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/release-candidate/mainnet/launch-freeze/demo.ts",
+    "demo:sunrey-launch-authorization-ceremony": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning src/production-ceremony/launch-candidate/demo.ts",
     "demo:infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning src/infra/demo.ts",
     "demo:sunrey-production-provider-binding": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/providers/production-binding/demo.ts"
   },

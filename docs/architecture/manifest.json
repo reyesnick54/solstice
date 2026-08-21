@@ -4161,12 +4161,16 @@
         "packages/production-genesis",
         "packages/genesis-ceremony",
         "packages/launch-authorization",
-        "packages/production-ceremony"
+        "packages/production-ceremony",
+        "packages/ceremony-v2",
+        "packages/launch-signing",
+        "packages/genesis-authority",
+        "packages/mainnet-ceremony"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package at packages/sunrey-chain/src/production-ceremony. Dress rehearsal only in CI. Does not launch mainnet or create real production private keys."
+      "notes": "Chunk 85 production genesis ceremony and Chunk 165 frozen-candidate launch authorization rehearsal at packages/sunrey-chain/src/production-ceremony and launch-candidate/. Dress rehearsal only in CI. Binds the exact Chunk 164 freeze hash. Does not launch mainnet, create real production private keys, or treat LAUNCH_AUTHORIZATION_CANDIDATE as MAINNET_ACTIVE."
     },
     {
       "id": "sunrey-production-provisioning",
@@ -5880,6 +5884,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/genesis-execution",
     "packages/sunrey-genesis-execution",
     "packages/production-genesis-execution",
@@ -5901,6 +5909,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/production-handoff",
     "packages/sunrey-handoff",
     "packages/day-2-ops",
@@ -6743,7 +6755,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, or packages/production-ceremony."
+      "notes": "Chunk 85 production genesis ceremony and Chunk 165 frozen-candidate launch authorization rehearsal. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, packages/production-ceremony, packages/ceremony-v2, packages/launch-signing, packages/genesis-authority, or packages/mainnet-ceremony."
     },
     {
       "id": "sunrey-production-provisioning",
@@ -7563,6 +7575,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/genesis-execution",
     "packages/sunrey-genesis-execution",
     "packages/production-genesis-execution",
