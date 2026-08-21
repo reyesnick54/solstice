@@ -30,3 +30,14 @@ runs. Treat the JSON as the latest local observation, not a contract.
 - Multi-tenant production traffic
 
 Do not invent SLAs from these numbers.
+
+## Latest local observation
+
+Recorded by `tests/phase-c-performance.test.ts` on this Phase C branch:
+
+| Path | n | median_ms | max_ms |
+| --- | ---: | ---: | ---: |
+| balance_reads | 20 | 0.003 | 0.136 |
+| fx_quotes | 20 | 0.234 | 1.146 |
+| reconciliation_batch | 10 | 0.074 | 0.768 |
+| transfer_samples | 5 | 0.314 | 2.845 |
