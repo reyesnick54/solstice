@@ -152,11 +152,7 @@ It is SUPERSEDED by `sunrey-native-assets` (protocol-native `MOONREY_COIN`) and
 
 ## Closure hashes
 
-- sourceCommit: `7acfd5453de0a41bd19f3d043fe8ba65f1708224`
+- sourceCommit: `a7dcdcecc94bc1d3771b0dd5b16ff9a39160c6e6`
 - architectureManifestHash: `5b759fa4d44c2303b9054ccee4abe89a535a2c7d09e6f1a24527f2d79c2542ac`
 - launchCandidateFreezeHash: `a747fc79123ac5bfa7ce7e232d57d47dfa78487def33c2f2eb7edccf4da9314a`
-- closureHash: `78dce7b7055ce4f94b2021e5f8a625461f2a52a84840968f4538d3b1b674ae8d`
-- sourceCommit: `a0bfa39e40d29cc1c74c857ce8107c4b82e1d2f8`
-- architectureManifestHash: `e9b1e1733518c6a758001fae119995d1efcbb180a83dbfbf282a46c15e79954c`
-- launchCandidateFreezeHash: `a747fc79123ac5bfa7ce7e232d57d47dfa78487def33c2f2eb7edccf4da9314a`
-- closureHash: `7d9a0af8889e196f74c9536b176982845bcfc8cfbed5df05bcbe9166a508eaa5`
+- closureHash: `26876a743013650e1bd29a8b757563378f9da3d713119a50eb3516e3f02cd7c5`

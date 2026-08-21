@@ -256,6 +256,29 @@ Commands and results:
 | `npm run lint:architecture` | architectural-linter: ok |
 | `npm run naming:audit` | ok (protocol_ids_unchanged=true) |
 
+## 11a. Post-merge collision from `main` (#208)
+
+After the first two commits, GitHub merged `main` into this branch
+(`a7dcdcec`). `main` had landed `#208` (`c2113ff0`), which independently
+repaired the same mashed keys. The merge restacked:
+
+- two `"notes"` keys on the `sunrey-production-handoff` capability
+- two `const material` declarations in the launch-freeze PEM fixture
+- two engineering-closure hash lists / JSON documents
+
+Repair:
+
+- kept the **superset** capability note (includes
+  `Binds existing component evidence by hash` and
+  `PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization`)
+- kept `#208`'s simulation PEM marker
+  (`-----BEGIN SIMULATION PRIVATE KEY-----fixture`) so the secret scanner
+  stays quiet while private-key rejection still fails closed
+- regenerated closure docs with `engineering-closure write`
+
+Integrity preflight, typecheck, secret scan, repository-integrity tests,
+and launch-freeze tests were re-run after this repair.
+
 ## 11. Remaining known issues
 
 These are **not** claimed as repaired:
