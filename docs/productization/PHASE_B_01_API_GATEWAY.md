@@ -131,6 +131,7 @@ Interface: `IdempotencyRepository`.
 Intended production implementation: `PostgresIdempotencyRepository`
 against `platform_api.idempotency_record` (customer DB migration
 `V031__platform_api.sql`).
+`V030__platform_api.sql`).
 
 Scope = authenticated identity or anonymous client/IP + route.
 Fingerprint = SHA-256 of method, path, and body. Same key + same

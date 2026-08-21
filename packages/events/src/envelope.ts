@@ -167,7 +167,15 @@ export function assertSafeEventPayload(payload: unknown): void {
 
 export function inferAggregate(eventType: string, payload: unknown): AggregateRef {
   const body = payload !== null && typeof payload === 'object' ? (payload as Record<string, unknown>) : {};
-  if (eventType === 'AccountOpened' || eventType === 'DepositPosted' || eventType === 'WithdrawalPosted') {
+  if (
+    eventType === 'AccountOpened' ||
+    eventType === 'AccountActivated' ||
+    eventType === 'AccountRestricted' ||
+    eventType === 'AccountClosed' ||
+    eventType === 'CustomerActivityRecorded' ||
+    eventType === 'DepositPosted' ||
+    eventType === 'WithdrawalPosted'
+  ) {
     return { type: 'account', id: String(body.accountId ?? 'unknown') };
   }
   if (eventType === 'InternalTransferPosted') {

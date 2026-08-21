@@ -7,7 +7,7 @@ export const PROCESSOR_CALLBACK_MAX_SKEW_MS = 5n * 60n * 1000n;
 
 export type ProcessorCallbackEnvelope = {
   readonly providerId: string;
-  readonly eventType: 'AUTHORIZATION' | 'CLEARING' | 'REFUND' | 'REVERSAL';
+  readonly eventType: 'AUTHORIZATION' | 'CLEARING' | 'CAPTURE' | 'REFUND' | 'REVERSAL' | 'CARD_STATUS';
   readonly idempotencyKey: string;
   readonly nonce: string;
   readonly timestampMs: bigint;

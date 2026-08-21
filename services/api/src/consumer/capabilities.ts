@@ -108,13 +108,13 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
   });
   const cards = feature({
     key: 'cards',
-    availability: 'EXTERNAL_PROVIDER_REQUIRED',
-    provider: down.cards === true ? 'UNAVAILABLE' : 'NOT_CONNECTED',
-    eligible: !restricted,
+    availability: 'AVAILABLE_SIMULATION',
+    provider: CAPABILITIES.LIVE_MONEY_ENABLED ? 'SANDBOX' : 'SIMULATED',
+    eligible: !restricted && principal.capabilities.includes('CARD_MANAGE_REQUEST'),
     pendingVerification: pending,
     providerDown: down.cards === true,
     productized: true,
-    reasonIfDisabled: 'cards require an external processor',
+    reasonIfDisabled: 'cards are not productized',
   });
   const grow = feature({
     key: 'grow',

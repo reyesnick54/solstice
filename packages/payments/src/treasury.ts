@@ -1,3 +1,4 @@
+import { CANONICAL_SIMULATION_CURRENCIES } from '../../domain/src/currency.ts';
 import type { AccountRegister } from '../../ledger/src/accounts.ts';
 import type { LedgerAccount } from '../../ledger/src/types.ts';
 
@@ -25,23 +26,19 @@ export const TREASURY_ACCOUNT_IDS = {
 } as const;
 
 export function registerPaymentTreasuryBooks(register: AccountRegister): void {
-  const books: readonly LedgerAccount[] = [
-    sys(TREASURY_ACCOUNT_IDS.pendingUsd, 'Pending settlement USD', 'PENDING_SETTLEMENT', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.pendingSar, 'Pending settlement SAR', 'PENDING_SETTLEMENT', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.treasuryUsd, 'Simulation USD funding treasury', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.treasurySar, 'Simulation SAR funding treasury', 'SIMULATED_FUNDING_SOURCE', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.fxClearingUsd, 'Simulation FX clearing USD', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.fxClearingSar, 'Simulation FX clearing SAR', 'SIMULATED_FUNDING_SOURCE', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.settlementUsd, 'Simulation USD settlement', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.settlementSar, 'Simulation SAR settlement', 'SIMULATED_FUNDING_SOURCE', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.feeClearingUsd, 'Simulation USD fee clearing', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.feeClearingSar, 'Simulation SAR fee clearing', 'SIMULATED_FUNDING_SOURCE', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.feeIncomeUsd, 'Corporate USD fee income', 'CORPORATE_OPERATING', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.feeIncomeSar, 'Corporate SAR fee income', 'CORPORATE_OPERATING', 'SAR'),
-    sys(TREASURY_ACCOUNT_IDS.fxDifferenceUsd, 'Simulation FX difference USD', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.beneficiaryPayableUsd, 'Simulation USD beneficiary payable', 'SIMULATED_FUNDING_SOURCE', 'USD'),
-    sys(TREASURY_ACCOUNT_IDS.beneficiaryPayableSar, 'Simulation SAR beneficiary payable', 'SIMULATED_FUNDING_SOURCE', 'SAR'),
-  ];
+  const books: LedgerAccount[] = [];
+  for (const currency of CANONICAL_SIMULATION_CURRENCIES) {
+    books.push(
+      sys(pendingAccountId(currency), `Pending settlement ${currency}`, 'PENDING_SETTLEMENT', currency),
+      sys(treasuryAccountId(currency), `Simulation ${currency} funding treasury`, 'SIMULATED_FUNDING_SOURCE', currency),
+      sys(fxClearingAccountId(currency), `Simulation FX clearing ${currency}`, 'SIMULATED_FUNDING_SOURCE', currency),
+      sys(settlementAccountId(currency), `Simulation ${currency} settlement`, 'SIMULATED_FUNDING_SOURCE', currency),
+      sys(feeClearingAccountId(currency), `Simulation ${currency} fee clearing`, 'SIMULATED_FUNDING_SOURCE', currency),
+      sys(feeIncomeAccountId(currency), `Corporate ${currency} fee income`, 'CORPORATE_OPERATING', currency),
+      sys(beneficiaryPayableAccountId(currency), `Simulation ${currency} beneficiary payable`, 'SIMULATED_FUNDING_SOURCE', currency),
+    );
+  }
+  books.push(sys(TREASURY_ACCOUNT_IDS.fxDifferenceUsd, 'Simulation FX difference USD', 'SIMULATED_FUNDING_SOURCE', 'USD'));
   for (const book of books) {
     register.registerSystemAccount(book);
   }
@@ -57,31 +54,29 @@ function sys(
 }
 
 export function pendingAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.pendingSar : TREASURY_ACCOUNT_IDS.pendingUsd;
+  return `SIMULATION.PENDING_SETTLEMENT.${currency}`;
 }
 
 export function treasuryAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.treasurySar : TREASURY_ACCOUNT_IDS.treasuryUsd;
+  return `SIMULATION.TREASURY.${currency}`;
 }
 
 export function fxClearingAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.fxClearingSar : TREASURY_ACCOUNT_IDS.fxClearingUsd;
+  return `SIMULATION.FX_CLEARING.${currency}`;
 }
 
 export function settlementAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.settlementSar : TREASURY_ACCOUNT_IDS.settlementUsd;
+  return `SIMULATION.SETTLEMENT.${currency}`;
 }
 
 export function feeClearingAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.feeClearingSar : TREASURY_ACCOUNT_IDS.feeClearingUsd;
+  return `SIMULATION.FEE_CLEARING.${currency}`;
 }
 
 export function feeIncomeAccountId(currency: string): string {
-  return currency === 'SAR' ? TREASURY_ACCOUNT_IDS.feeIncomeSar : TREASURY_ACCOUNT_IDS.feeIncomeUsd;
+  return `CORPORATE.FEE_INCOME.${currency}`;
 }
 
 export function beneficiaryPayableAccountId(currency: string): string {
-  return currency === 'SAR'
-    ? TREASURY_ACCOUNT_IDS.beneficiaryPayableSar
-    : TREASURY_ACCOUNT_IDS.beneficiaryPayableUsd;
+  return `SIMULATION.BENEFICIARY_PAYABLE.${currency}`;
 }

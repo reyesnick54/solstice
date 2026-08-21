@@ -18,6 +18,7 @@ import type {
   CancelPaymentIntent,
   CreateBeneficiaryIntent,
   CreateFxQuoteIntent,
+  ExecuteFxQuoteIntent,
   InitiatePaymentIntent,
 } from '../../permissions/src/action-types.ts';
 import type { AuthorizationDecision } from '../../permissions/src/decision.ts';
@@ -40,6 +41,7 @@ import {
   settlePlan,
   SIMULATION_RETURN_POLICY,
   sourceFxPlan,
+  walletDestinationCreditPlan,
   type PaymentJournalPlan,
 } from './accounting.ts';
 import { freezeBeneficiary, isUsableBeneficiary, type Beneficiary } from './beneficiary.ts';
@@ -55,6 +57,15 @@ import {
 } from './corridor.ts';
 import { quoteCanExecute, quoteIsExpired, withQuoteStatus, type FxQuote } from './fx-quote.ts';
 import { SimulationFxProvider, type FxLiquidityProvider } from './fx-provider.ts';
+import { freezeExecution, type FxExecution } from './fx-execution.ts';
+import { listSupportedCurrencies, type SupportedCurrency } from './fx-currency.ts';
+import {
+  freezeComposition,
+  nextRecoveryAction,
+  type PaymentFxComposition,
+  type PaymentFxReview,
+} from './fx-payment.ts';
+import { valuePositions, type PresentationValuation, type ValuationPosition } from './fx-valuation.ts';
 import { asHoldId, asPaymentId, asSettlementRef, type PaymentId } from './ids.ts';
 import { postPaymentJournal } from './journals.ts';
 import { freezePayment, transitionPayment, type PaymentOrder } from './payment.ts';
@@ -110,7 +121,7 @@ export class PaymentsService {
   private readonly store: PaymentStore;
   private readonly validator: BeneficiaryValidationPort;
   private readonly screening: ScreeningPort;
-  private readonly fx: FxLiquidityProvider;
+  readonly fx: FxLiquidityProvider;
   readonly rail: SimulatedSettlementRail & {
     setMode?(paymentId: string, mode: import('./rail-adapters.ts').SimulatedAdapterMode | import('./settlement.ts').RailMode): void;
   };
@@ -277,7 +288,7 @@ export class PaymentsService {
     ) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'quote currencies do not match corridor');
     }
-    const quote = this.fx.quote({
+    const quoted = this.fx.getQuote({
       quoteId: intent.payload.quoteId as FxQuote['quoteId'],
       baseCurrency: intent.payload.baseCurrency,
       quoteCurrency: intent.payload.quoteCurrency,
@@ -286,7 +297,15 @@ export class PaymentsService {
       corridorId: corridor.corridorId,
       legalEntityId: corridor.servingLegalEntityId,
       now: this.clock.now(),
+      pricingContext: {
+        ...(customer?.id === undefined ? {} : { customerId: customer.id }),
+        ...(account?.productId === undefined ? {} : { productId: account.productId }),
+      },
     });
+    if (!quoted.ok) {
+      return this.reject(intent.actionType, intent.id, gated.decision, quoted.code, quoted.message);
+    }
+    const quote = quoted.value;
     this.store.saveQuote(quote);
     this.emit('FxQuoteCreated', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
       quoteId: quote.quoteId,
@@ -382,11 +401,122 @@ export class PaymentsService {
     }
     if (source.currency !== quote.baseCurrency || destination.currency !== quote.quoteCurrency) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'account currencies do not match quote');
+  listCurrencies(): readonly SupportedCurrency[] {
+    return listSupportedCurrencies();
+  }
+
+  getQuote(quoteId: string): FxQuote | undefined {
+    return this.store.getQuote(quoteId);
+  }
+
+  getExecution(quoteId: string): FxExecution | undefined {
+    return this.store.getExecutionByQuote(quoteId);
+  }
+
+  valuePositions(positions: readonly ValuationPosition[], targetCurrency: string): PresentationValuation {
+    return valuePositions({
+      positions,
+      targetCurrency,
+      now: this.clock.now(),
+      rates: {
+        getReferenceRate: (base, quote, at) => {
+          const result = this.fx.getReferenceRate({ baseCurrency: base, quoteCurrency: quote, at });
+          return result.ok ? result.value : undefined;
+        },
+      },
+    });
+  }
+
+  executeQuote(intent: ExecuteFxQuoteIntent): PaymentsServiceOutcome<FxExecution> {
+    const replayed = this.store.getExecutionByIdempotency(intent.idempotencyKey);
+    if (replayed) {
+      return { outcome: 'OK', value: replayed, decision: this.emptyDecision(intent.actionType, intent.id), replay: true };
+    }
+    const existing = this.store.getExecutionByQuote(intent.payload.quoteId);
+    if (existing && existing.status === 'SETTLED') {
+      return { outcome: 'OK', value: existing, decision: this.emptyDecision(intent.actionType, intent.id), replay: true };
+    }
+    const source = this.catalog.accounts.get(intent.payload.sourceAccountId);
+    const destination = this.catalog.accounts.get(intent.payload.destinationAccountId);
+    const customer = source ? this.catalog.customers.get(source.ownerId) : undefined;
+    const quote = this.store.getQuote(intent.payload.quoteId);
+    const corridor = quote ? findCorridor(quote.corridorId) : undefined;
+    const gated = this.gate(intent, source, customer, {
+      ...(corridor ? { corridorId: corridor.corridorId } : {}),
+      corridorSimulationEnabled: corridor ? corridorIsSimulationEnabled(corridor) : false,
+      ...(quote === undefined ? {} : { amount: quote.amountDebited }),
+    });
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    if (!quote) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_NOT_FOUND', 'quote does not exist');
+    }
+    if (quoteIsExpired(quote, this.clock.now())) {
+      this.store.saveQuote(withQuoteStatus(quote, 'EXPIRED'));
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_EXPIRED', 'expired quote cannot execute');
+    }
+    if (!quoteCanExecute(quote, this.clock.now())) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_NOT_APPROVED', 'execution references the exact approved quote');
+    }
+    if (!source || !destination || !customer) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'ACCOUNT_NOT_FOUND', 'source and destination accounts are required');
+    }
+    if (source.currency !== quote.baseCurrency || destination.currency !== quote.quoteCurrency) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'account currencies do not match the approved quote');
     }
     if (this.availableFunds(source).cmp(quote.amountDebited) < 0) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'INSUFFICIENT_FUNDS', 'available funds are below amount debited');
     }
     const journals = this.postPlans(gated.authority, intent.actionType, [
+    const trade = this.fx.executeQuote({
+      quote,
+      now: this.clock.now(),
+      tradeId: `fxtr_${quote.quoteId}`,
+    });
+    if (!trade.ok) {
+      const failed = freezeExecution({
+        executionId: `fxex_${quote.quoteId}`,
+        quoteId: quote.quoteId,
+        tradeId: `fxtr_${quote.quoteId}`,
+        sourceAccountId: source.id,
+        destinationAccountId: destination.id,
+        status: trade.code === 'RATE_MOVED' ? 'RATE_MOVED' : trade.code === 'PROVIDER_UNAVAILABLE' ? 'PROVIDER_UNAVAILABLE' : 'FAILED',
+        journalIds: [],
+        evidenceId: null,
+        reconciliationRef: null,
+        createdAt: this.clock.now(),
+        updatedAt: this.clock.now(),
+        idempotencyKey: intent.idempotencyKey,
+      });
+      this.store.saveExecution(failed);
+      this.evidence.seal('FX_EXECUTION_FAILED', {
+        intentId: intent.id,
+        quoteId: quote.quoteId,
+        code: trade.code,
+      });
+      return this.reject(intent.actionType, intent.id, gated.decision, trade.code, trade.message);
+    }
+    if (trade.value.status === 'PENDING') {
+      const pending = freezeExecution({
+        executionId: `fxex_${quote.quoteId}`,
+        quoteId: quote.quoteId,
+        tradeId: trade.value.tradeId,
+        sourceAccountId: source.id,
+        destinationAccountId: destination.id,
+        status: 'PENDING',
+        journalIds: [],
+        evidenceId: null,
+        reconciliationRef: null,
+        createdAt: this.clock.now(),
+        updatedAt: this.clock.now(),
+        idempotencyKey: intent.idempotencyKey,
+      });
+      this.store.saveExecution(pending);
+      this.evidence.seal('FX_EXECUTION_PENDING', { intentId: intent.id, quoteId: quote.quoteId, tradeId: trade.value.tradeId });
+      return { outcome: 'OK', value: pending, decision: gated.decision };
+    }
+    const journals = this.postPlans(gated.authority!, intent.actionType, [
       reservePlan(source.id, quote.amountDebited),
       capturePrincipalPlan(quote.sourceAmount),
       captureFeePlan(quote.fee),
@@ -402,6 +532,26 @@ export class PaymentsService {
       journalIds,
     });
     this.emit('FxConversionExecuted', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
+      walletDestinationCreditPlan(destination.id, quote.destinationAmount),
+    ]);
+    const executedQuote = withQuoteStatus(quote, 'EXECUTED');
+    this.store.saveQuote(executedQuote);
+    const settled = freezeExecution({
+      executionId: `fxex_${quote.quoteId}`,
+      quoteId: quote.quoteId,
+      tradeId: trade.value.tradeId,
+      sourceAccountId: source.id,
+      destinationAccountId: destination.id,
+      status: 'SETTLED',
+      journalIds: journals.map((row) => row.id),
+      evidenceId: gated.decision.evidenceRecordId,
+      reconciliationRef: trade.value.reconciliationRef,
+      createdAt: this.clock.now(),
+      updatedAt: this.clock.now(),
+      idempotencyKey: intent.idempotencyKey,
+    });
+    this.store.saveExecution(settled);
+    this.emit('FxQuoteExecuted', 'fx_execution', settled.executionId, intent.id, gated.decision, {
       quoteId: quote.quoteId,
       sourceAccountId: source.id,
       destinationAccountId: destination.id,
@@ -416,6 +566,119 @@ export class PaymentsService {
       journalIds,
     });
     return { outcome: 'OK', value: { quote, journalIds }, decision: gated.decision };
+      feeMinorUnits: quote.fee.minorUnits.toString(),
+      reconciliationRef: settled.reconciliationRef,
+    });
+    this.evidence.seal('FX_QUOTE_EXECUTED', {
+      intentId: intent.id,
+      quoteId: quote.quoteId,
+      executionId: settled.executionId,
+      journalIds: settled.journalIds,
+      authorityId: gated.authority!.authorityId,
+      reconciliationRef: settled.reconciliationRef,
+    });
+    return { outcome: 'OK', value: settled, decision: gated.decision };
+  }
+
+  composePaymentFx(input: {
+    readonly compositionId: string;
+    readonly quoteId: string;
+    readonly sourceAccountId: string;
+    readonly beneficiaryId: string;
+    readonly purposeReference: string;
+    readonly idempotencyKey: string;
+  }): PaymentsServiceOutcome<PaymentFxReview> {
+    const replayed = this.store.getCompositionByIdempotency(input.idempotencyKey);
+    if (replayed) {
+      const quote = this.store.getQuote(replayed.quoteId);
+      if (!quote) {
+        return { outcome: 'REJECTED', code: 'QUOTE_NOT_FOUND', message: 'bound quote is missing', decision: null };
+      }
+      return {
+        outcome: 'OK',
+        value: this.reviewOf(replayed, quote),
+        decision: this.emptyDecision('CREATE_FX_QUOTE', input.compositionId),
+        replay: true,
+      };
+    }
+    const quote = this.store.getQuote(input.quoteId);
+    if (!quote) {
+      return { outcome: 'REJECTED', code: 'QUOTE_NOT_FOUND', message: 'FX quote must exist before a payment composition', decision: null };
+    }
+    const beneficiary = this.store.getBeneficiary(input.beneficiaryId);
+    if (!beneficiary) {
+      return { outcome: 'REJECTED', code: 'BENEFICIARY_NOT_FOUND', message: 'beneficiary must exist before a payment composition', decision: null };
+    }
+    const composition = freezeComposition({
+      compositionId: input.compositionId,
+      quoteId: quote.quoteId,
+      paymentId: null,
+      sourceAccountId: input.sourceAccountId,
+      beneficiaryId: input.beneficiaryId,
+      purposeReference: input.purposeReference,
+      status: quote.status === 'ACCEPTED' ? 'APPROVED' : 'REVIEW',
+      requiredApproval: 'CUSTOMER_CONFIRMATION',
+      recovery: { stranded: false, nextAction: nextRecoveryAction(quote.status === 'ACCEPTED' ? 'APPROVED' : 'REVIEW') },
+      createdAt: this.clock.now(),
+      updatedAt: this.clock.now(),
+      idempotencyKey: input.idempotencyKey,
+    });
+    this.store.saveComposition(composition);
+    this.evidence.seal('PAYMENT_FX_COMPOSITION_CREATED', {
+      compositionId: composition.compositionId,
+      quoteId: quote.quoteId,
+      beneficiaryId: beneficiary.beneficiaryId,
+    });
+    return {
+      outcome: 'OK',
+      value: this.reviewOf(composition, quote),
+      decision: this.emptyDecision('CREATE_FX_QUOTE', input.compositionId),
+    };
+  }
+
+  executePaymentFx(
+    compositionId: string,
+    acceptIntent: AcceptFxQuoteIntent,
+    payIntent: InitiatePaymentIntent,
+  ): PaymentsServiceOutcome<PaymentFxReview> {
+    const composition = this.store.getComposition(compositionId);
+    if (!composition) {
+      return { outcome: 'REJECTED', code: 'COMPOSITION_NOT_FOUND', message: 'payment+FX composition does not exist', decision: null };
+    }
+    if (composition.quoteId !== acceptIntent.payload.quoteId || composition.quoteId !== payIntent.payload.quoteId) {
+      return { outcome: 'REJECTED', code: 'QUOTE_MISMATCH', message: 'execution must reference the bound quote', decision: null };
+    }
+    const accepted = this.acceptQuote(acceptIntent);
+    if (accepted.outcome !== 'OK') {
+      this.saveCompositionStatus(composition, 'FAILED');
+      return accepted;
+    }
+    this.saveCompositionStatus(composition, 'APPROVED', { paymentId: composition.paymentId });
+    const paid = this.initiatePayment(payIntent);
+    if (paid.outcome !== 'OK') {
+      this.saveCompositionStatus(composition, paid.outcome === 'KERNEL_REFUSED' ? 'FAILED' : 'RECOVERABLE', {
+        paymentId: composition.paymentId,
+      });
+      return paid;
+    }
+    const settled = paid.value.status === 'SETTLED';
+    this.saveCompositionStatus(
+      composition,
+      settled ? 'SETTLED' : paid.value.status === 'PROCESSING' || paid.value.status === 'SUBMITTED' ? 'PAYMENT_EXECUTING' : 'RECOVERABLE',
+      { paymentId: paid.value.paymentId },
+    );
+    const quote = this.store.getQuote(composition.quoteId)!;
+    return { outcome: 'OK', value: this.reviewOf(this.store.getComposition(compositionId)!, quote, paid.value), decision: paid.decision };
+  }
+
+  getPaymentFx(compositionId: string): PaymentFxReview | undefined {
+    const composition = this.store.getComposition(compositionId);
+    const quote = composition ? this.store.getQuote(composition.quoteId) : undefined;
+    if (!composition || !quote) {
+      return undefined;
+    }
+    const payment = composition.paymentId ? this.store.getPayment(composition.paymentId) : undefined;
+    return this.reviewOf(composition, quote, payment);
   }
 
   initiatePayment(intent: InitiatePaymentIntent): PaymentsServiceOutcome<PaymentOrder> {
@@ -1298,8 +1561,33 @@ export class PaymentsService {
     return next.value;
   }
 
+  private reviewOf(composition: PaymentFxComposition, quote: FxQuote, payment?: PaymentOrder): PaymentFxReview {
+    return Object.freeze({
+      composition,
+      fxQuote: quote,
+      paymentDisclosure: disclosureFromQuote(quote, payment),
+      payment: payment ?? null,
+    });
+  }
+
+  private saveCompositionStatus(
+    composition: PaymentFxComposition,
+    status: PaymentFxComposition['status'],
+    patch: { readonly paymentId?: string | null } = {},
+  ): void {
+    this.store.saveComposition(
+      freezeComposition({
+        ...composition,
+        status,
+        paymentId: patch.paymentId !== undefined ? patch.paymentId : composition.paymentId,
+        recovery: { stranded: false, nextAction: nextRecoveryAction(status) },
+        updatedAt: this.clock.now(),
+      }),
+    );
+  }
+
   private gate(
-    intent: CreateBeneficiaryIntent | CreateFxQuoteIntent | AcceptFxQuoteIntent | InitiatePaymentIntent | CancelPaymentIntent | AcceptInboundPaymentIntent,
+    intent: CreateBeneficiaryIntent | CreateFxQuoteIntent | AcceptFxQuoteIntent | ExecuteFxQuoteIntent | InitiatePaymentIntent | CancelPaymentIntent | AcceptInboundPaymentIntent,
     account: Account | undefined,
     customer: Customer | undefined,
     extra: Partial<KernelFacts> = {},

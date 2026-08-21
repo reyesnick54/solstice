@@ -54,6 +54,7 @@ import {
   type TokenResponse,
 } from '../../../packages/sunrey-sdk/src/consumer-platform/index.ts';
 import { balanceOfAccount, projectCustomerPosition } from '../../accounts/src/balances.ts';
+import { projectBankingPosition } from '../../accounts/src/available-funds.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../accounts/src/runtime.ts';
 import { PERSONA_DEFINITIONS, personaById, sandboxPersonasAllowed } from './personas.ts';
 import { ConsumerWorkflowStore, assertSimulationWebhookUrl } from './workflows.ts';
@@ -348,14 +349,34 @@ function accountDto(runtime: SimulationRuntime, accountId: string): AccountDto |
   }
   const balance = balanceOfAccount(runtime.ledger, account);
   const amount = balance.ok ? balance.value : null;
+  const banking = projectBankingPosition(runtime.ledger, account, runtime.holds, runtime.clock.now());
+  const product = runtime.accountProduct.get(account.id);
+  const posted = amount ? moneyDto(amount.minorUnits, amount.currency) : emptyMoney(account.currency);
   return Object.freeze({
     account_id: account.id,
     account_class: account.accountClass,
-    status: account.status,
+    status: product?.status ?? account.status,
+    lifecycle: product?.status ?? account.status,
+    product_type: product?.productType ?? 'CASH_ACCOUNT',
     currency: account.currency,
     jurisdiction: account.jurisdiction,
     opened_at: account.openedAt,
-    balance: amount ? moneyDto(amount.minorUnits, amount.currency) : emptyMoney(account.currency),
+    closed_at: product?.closedAt ?? null,
+    restrictions: product?.restrictions.filter((row) => row.state === 'ACTIVE').map((row) => row.code) ?? [],
+    balance: posted,
+    balances: banking.ok
+      ? {
+          posted: moneyDto(banking.value.posted.minorUnits, banking.value.posted.currency),
+          pending: moneyDto(banking.value.pending.minorUnits, banking.value.pending.currency),
+          held: moneyDto(banking.value.held.minorUnits, banking.value.held.currency),
+          available: moneyDto(banking.value.available.minorUnits, banking.value.available.currency),
+        }
+      : {
+          posted,
+          pending: emptyMoney(account.currency),
+          held: emptyMoney(account.currency),
+          available: posted,
+        },
   });
 }
 

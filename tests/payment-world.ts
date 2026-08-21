@@ -86,6 +86,7 @@ export function createPaymentWorld(
       'TRANSFER_REQUEST',
       'MANAGE_BENEFICIARY',
       'PAYMENT_REQUEST',
+      'TRANSFER_REQUEST',
       'FX_QUOTE_REQUEST',
       'HOLD_REQUEST',
       'CARD_MANAGE_REQUEST',

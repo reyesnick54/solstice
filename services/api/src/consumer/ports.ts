@@ -1,8 +1,12 @@
 import type { Account } from '../../../../packages/domain/src/account.ts';
 import type { Customer } from '../../../../packages/domain/src/customer.ts';
-import type { TransactionHistoryItem } from '../../../../packages/domain/src/transaction-history.ts';
-import type { CustomerPosition } from '../../../accounts/src/balances.ts';
+import type { CustomerStatement } from '../../../../packages/domain/src/statement.ts';
+import type { CustomerActivityItem } from '../../../../packages/domain/src/customer-activity.ts';
+import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
 import type { BankingPosition } from '../../../accounts/src/available-funds.ts';
+import type { CustomerFinancialAccount } from '../../../accounts/src/product-account.ts';
+import type { ActivityFilter } from '../../../accounts/src/activity.ts';
+import type { WealthValuation } from '../../../accounts/src/wealth.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import type {
   ClientResourceState,
@@ -56,12 +60,17 @@ export type AccountsReadPort = {
   getCustomer(customerId: string): Customer | null;
   listAccounts(customerId: string): readonly Account[];
   getAccount(accountId: string): Account | null;
+  financialAccount(accountId: string): CustomerFinancialAccount | null;
+  listFinancialAccounts(customerId: string): readonly CustomerFinancialAccount[];
+  authorizeRead(
+    accountId: string,
+    customerId: string,
+    subjectId: string | null,
+  ): CustomerFinancialAccount | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
   positionOf(account: Account): BankingPosition | { readonly unavailable: 'MIXED_CURRENCY' | 'SERVICE_UNAVAILABLE' };
-  customerPosition(customerId: string):
-    | { readonly kind: 'POSITION'; readonly position: CustomerPosition }
-    | { readonly kind: 'CURRENCY_INDEXED'; readonly currencies: readonly string[] }
-    | { readonly kind: 'UNAVAILABLE'; readonly reason: string };
-  activity(customerId: string, accountId?: string): readonly TransactionHistoryItem[];
+  wealth(customerId: string, valuationCurrency: string): WealthValuation;
+  activity(customerId: string, accountId?: string, filter?: ActivityFilter): readonly CustomerActivityItem[];
+  statement(accountId: string, periodStart: UtcInstant, periodEnd: UtcInstant): CustomerStatement | { readonly error: string };
 };
 
 export type OptionalDomainSummary = {
@@ -75,6 +84,59 @@ export type OptionalDomainSummary = {
 export type OptionalDomainPort = {
   summarize(principal: BffPrincipal): OptionalDomainSummary;
 };
+
+export type CardsMutationPort = {
+  list(customerId: string): readonly unknown[];
+  detail(
+    customerId: string,
+    cardId: string,
+  ):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  issue(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly accountId: string;
+    readonly form: 'VIRTUAL' | 'PHYSICAL';
+    readonly cardId: string;
+    readonly idempotencyKey: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  freeze(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  unfreeze(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  updateControls(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+    readonly patch: Record<string, unknown>;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  walletStatus(
+    customerId: string,
+    cardId: string,
+  ):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+};
+export type { FxCommandPort } from './fx-adapter.ts';
 
 export type ActionPort = {
   list(principal: BffPrincipal): readonly ActionStatusResource[];

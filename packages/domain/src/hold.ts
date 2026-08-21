@@ -84,3 +84,11 @@ export function canTransitionHold(from: HoldState, to: HoldState): boolean {
   }
   return TERMINAL.has(to);
 }
+
+/**
+ * Adjust is not a state change. The hold stays ACTIVE and the reserved
+ * amount changes. A hold is still not a posting.
+ */
+export function canAdjustHold(hold: FundsHold, now: UtcInstant): boolean {
+  return isActiveHold(hold, now);
+}

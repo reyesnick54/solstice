@@ -31,9 +31,18 @@ paths:
     get:
       operationId: getMeHome
       summary: Home aggregation contract
+      parameters:
+        - in: query
+          name: valuationCurrency
+          required: false
+          schema: { type: string, minLength: 3, maxLength: 3 }
+          description: Explicit valuation currency. Different currencies are never summed without FX.
       responses:
         "200":
           description: Home resource
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HomeResource" }
   /api/v1/me/bootstrap:
     get:
       operationId: getMeBootstrap
@@ -62,6 +71,15 @@ paths:
       responses:
         "200":
           description: Account read models
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/ConsumerAccount" }
   /api/v1/accounts/{id}:
     get:
       operationId: getAccount
@@ -74,6 +92,9 @@ paths:
       responses:
         "200":
           description: Account read model
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConsumerAccount" }
         "403":
           description: Resource not owned
   /api/v1/accounts/{id}/activity:
@@ -85,9 +106,66 @@ paths:
           name: id
           required: true
           schema: { type: string }
+        - in: query
+          name: cursor
+          schema: { type: string }
+          description: Opaque pagination cursor
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+        - in: query
+          name: from
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          schema: { type: string, format: date-time }
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PENDING, PROCESSING, COMPLETED, FAILED, REVERSED, CANCELLED, ACTION_REQUIRED]
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: currency
+          schema: { type: string, minLength: 3, maxLength: 3 }
       responses:
         "200":
           description: Activity page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActivityPage" }
+        "400":
+          description: Invalid filter or cursor
+  /api/v1/accounts/{id}/statement:
+    get:
+      operationId: getAccountStatement
+      summary: Authoritative statement data for a period
+      description: Opening and closing balances are derived from the Ledger. No PDF renderer.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: query
+          name: periodStart
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: periodEnd
+          required: true
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Statement data
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccountStatement" }
+        "400":
+          description: Invalid period
+        "403":
+          description: Resource not owned
   /api/v1/catalog/resources:
     get:
       operationId: listConsumerResources
@@ -111,25 +189,259 @@ paths:
           description: Sandbox persona list
   /api/v1/payments:
     get:
-      operationId: getPayments
-      summary: Payments resource stub
+      operationId: listPayments
+      summary: List the authenticated customer's payments
+      description: Backend owns authoritative status. Production money movement stays disabled.
       responses:
         "200":
-          description: Honest availability
+          description: Payment list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentList"
+        "401":
+          description: Authentication required
+    post:
+      operationId: createPayment
+      summary: Create a payment from a quote or destination
+      description: >
+        Internal SunRey transfers settle atomically on the canonical Ledger.
+        External rails stay simulation-only. Requires Idempotency-Key.
+      responses:
+        "200":
+          description: Payment resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "401":
+          description: Step-up or authentication required
+        "403":
+          description: Kernel refused or resource not owned
+  /api/v1/payments/quote:
+    post:
+      operationId: quotePayment
+      summary: Preview a payment without executing
+      description: Does not promise settlement time. FX and rail fees are simulation-only.
+      responses:
+        "200":
+          description: Payment quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentQuote"
+        "401":
+          description: Authentication required
+  /api/v1/payments/{id}:
+    get:
+      operationId: getPayment
+      summary: Get one owned payment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Payment resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Not found
+  /api/v1/payments/{id}/approve:
+    post:
+      operationId: approvePayment
+      summary: Approve a payment that is awaiting customer confirmation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Updated payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Approval not found
   /api/v1/fx:
     get:
       operationId: getFx
-      summary: FX resource stub
+      summary: FX availability catalog
       responses:
         "200":
           description: Honest availability
+  /api/v1/fx/currencies:
+    get:
+      operationId: listFxCurrencies
+      summary: Supported simulation currency metadata
+      description: Metadata existence does not imply live deposit, withdrawal, or FX.
+      responses:
+        "200":
+          description: Currency catalog
+  /api/v1/fx/valuation:
+    get:
+      operationId: getFxValuation
+      summary: Presentation-only multi-currency valuation
+      description: Not Ledger accounting authority. Includes rate timestamps and stale indication.
+      parameters:
+        - name: targetCurrency
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Presentation valuation
+  /api/v1/fx/quotes:
+    post:
+      operationId: createFxQuote
+      summary: Request a server-priced FX quote
+      description: >
+        Client sends source amount and currencies only. The server applies
+        rates, spread, and fees. Frontend must not implement FX math.
+      responses:
+        "201":
+          description: Immutable quote
+        "403":
+          description: Kernel denied
+  /api/v1/fx/quotes/{id}:
+    get:
+      operationId: getFxQuote
+      summary: Read an issued FX quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Quote
+        "404":
+          description: Not found
+  /api/v1/fx/quotes/{id}/accept:
+    post:
+      operationId: acceptFxQuote
+      summary: Approve the exact issued quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approved quote
+  /api/v1/fx/quotes/{id}/execute:
+    post:
+      operationId: executeFxQuote
+      summary: Execute the exact approved quote
+      description: Expired quotes cannot execute. Execution posts Ledger journals through Execution Authority.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Execution result
   /api/v1/cards:
     get:
       operationId: getCards
-      summary: Cards resource stub
+      summary: List simulated cards for the authenticated customer
+      description: PCI-minimized. last4 and expiry only. No PAN, CVV, or provider credentials. Live issuing is not connected.
       responses:
         "200":
-          description: Honest availability
+          description: Card list
+    post:
+      operationId: issueCard
+      summary: Request a simulated virtual or physical debit card
+      description: Kernel-gated. Requires step-up. Simulated issuer only.
+      responses:
+        "201":
+          description: Issued card
+        "403":
+          description: Step-up or policy refusal
+  /api/v1/cards/{id}:
+    get:
+      operationId: getCard
+      summary: Card detail with funding available balance, controls, activity, and wallet status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Card detail
+        "403":
+          description: Resource not owned
+  /api/v1/cards/{id}/freeze:
+    post:
+      operationId: freezeCard
+      summary: Freeze a card
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Frozen card
+  /api/v1/cards/{id}/unfreeze:
+    post:
+      operationId: unfreezeCard
+      summary: Unfreeze a card
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Active card
+  /api/v1/cards/{id}/controls:
+    patch:
+      operationId: patchCardControls
+      summary: Update server-enforced spending controls
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Updated card
+  /api/v1/cards/{id}/wallet:
+    get:
+      operationId: getCardWallet
+      summary: Apple/Google wallet provisioning eligibility and status
+      description: Not Apple Pay or Google Pay certification.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Wallet status
+  /api/v1/webhooks/cards:
+    post:
+      operationId: ingestCardWebhook
+      summary: Simulated card processor webhook ingestion
+      description: Phase B HMAC verification. Real schemes arrive in Phase D.
+      responses:
+        "200":
+          description: Ingest result
   /api/v1/grow:
     get:
       operationId: getGrow
@@ -153,11 +465,54 @@ paths:
           description: Honest availability
   /api/v1/recipients:
     get:
-      operationId: getRecipients
-      summary: Recipients resource stub
+      operationId: listRecipients
+      summary: List the authenticated customer's recipients
       responses:
         "200":
-          description: Honest availability
+          description: Recipient list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipientList"
+        "401":
+          description: Authentication required
+    post:
+      operationId: createRecipient
+      summary: Create a recipient
+      description: >
+        Frontend cannot mark a recipient verified. Agents cannot add
+        beneficiaries. Kernel, step-up, device risk, and screening apply.
+      responses:
+        "200":
+          description: Recipient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipient"
+        "401":
+          description: Step-up or authentication required
+        "403":
+          description: Cross-user denied
+  /api/v1/recipients/{id}:
+    get:
+      operationId: getRecipient
+      summary: Get one owned recipient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Recipient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipient"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Not found
   /api/v1/goals:
     get:
       operationId: getGoals
@@ -200,3 +555,276 @@ paths:
       responses:
         "200":
           description: Honest availability
+components:
+  schemas:
+    MoneyResource:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    PaymentStatus:
+      type: string
+      enum:
+        - DRAFT
+        - QUOTED
+        - AWAITING_APPROVAL
+        - AWAITING_STEP_UP_AUTH
+        - AWAITING_COMPLIANCE
+        - AUTHORIZED
+        - QUEUED
+        - SUBMITTED
+        - PROCESSING
+        - SETTLED
+        - FAILED
+        - CANCELLED
+        - RETURNED
+        - REVERSED
+    Recipient:
+      type: object
+      required: [id, ownerId, displayName, destinationType, country, currency, displayHint, verificationStatus, createdAt]
+      properties:
+        id: { type: string }
+        ownerId: { type: string }
+        displayName: { type: string }
+        destinationType:
+          type: string
+          enum: [SUNREY_USER, DOMESTIC_BANK, INTERNATIONAL_BANK, WALLET]
+        country: { type: string }
+        currency: { type: string }
+        displayHint: { type: string }
+        relationship: { type: string, nullable: true }
+        purpose: { type: string, nullable: true }
+        verificationStatus:
+          type: string
+          enum: [PENDING, ACTIVE, REVIEW, BLOCKED, DISABLED]
+        screeningStatus: { type: string }
+        createdAt: { type: string }
+    RecipientList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recipient"
+    PaymentQuote:
+      type: object
+      required: [quoteId, sourceAmount, currency, fees, estimatedDeliveryClass, settlementTimePromise, complianceState, productionMoneyMovement]
+      properties:
+        quoteId: { type: string }
+        sourceAmount:
+          $ref: "#/components/schemas/MoneyResource"
+        destinationAmount:
+          $ref: "#/components/schemas/MoneyResource"
+        currency: { type: string }
+        fees:
+          type: array
+          items:
+            type: object
+        estimatedDeliveryClass: { type: string }
+        settlementTimePromise: { type: "null" }
+        complianceState: { type: string }
+        expiresAt: { type: string }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    Payment:
+      type: object
+      required: [paymentId, payerId, sourceAccountId, amount, currency, paymentType, status, productionMoneyMovement]
+      properties:
+        paymentId: { type: string }
+        payerId: { type: string }
+        sourceAccountId: { type: string }
+        beneficiaryId: { type: string, nullable: true }
+        amount:
+          $ref: "#/components/schemas/MoneyResource"
+        currency: { type: string }
+        paymentType: { type: string }
+        railPreference: { type: string }
+        purpose: { type: string }
+        status:
+          $ref: "#/components/schemas/PaymentStatus"
+        approvalId: { type: string, nullable: true }
+        workflowId: { type: string, nullable: true }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    PaymentList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payment"
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    PaymentApproval:
+      type: object
+      required: [approvalId, paymentId, status, createdAt]
+      properties:
+        approvalId: { type: string }
+        paymentId: { type: string }
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+        createdAt: { type: string }
+        decidedAt: { type: string, nullable: true }
+    MoneyView:
+      type: object
+      required: [currency, minorUnits]
+      properties:
+        currency: { type: string, minLength: 3, maxLength: 3 }
+        minorUnits: { type: string, description: Integer minor units as a decimal string. Never floating-point. }
+    AccountBalanceView:
+      type: object
+      required: [posted, ledger, available, held, pending, currency]
+      properties:
+        posted: { $ref: "#/components/schemas/MoneyView" }
+        ledger: { $ref: "#/components/schemas/MoneyView" }
+        available: { $ref: "#/components/schemas/MoneyView" }
+        held: { $ref: "#/components/schemas/MoneyView" }
+        pending: { $ref: "#/components/schemas/MoneyView" }
+        currency: { type: string }
+    ResourceField:
+      type: object
+      required: [state, availability, value, reason]
+      properties:
+        state:
+          type: string
+          enum:
+            - READY
+            - EMPTY
+            - FEATURE_DISABLED
+            - SIMULATION_ONLY
+            - USER_INELIGIBLE
+            - PENDING_VERIFICATION
+            - PROVIDER_UNAVAILABLE
+            - SERVICE_UNAVAILABLE
+            - MIXED_CURRENCY_WITHOUT_CONVERSION
+            - VALUATION_UNAVAILABLE
+        availability:
+          type: string
+          enum: [IMPLEMENTED, AVAILABLE_SIMULATION, NOT_YET_PRODUCTIZED, EXTERNAL_PROVIDER_REQUIRED]
+        value: { nullable: true }
+        reason: { type: string, nullable: true }
+    ConsumerAccount:
+      type: object
+      required: [id, productType, status, currency, openedAt, restrictions, productConfiguration]
+      properties:
+        id: { type: string }
+        productType:
+          type: string
+          enum: [CASH_ACCOUNT, CHECKING_PAYMENT, SAVINGS, MULTI_CURRENCY, INVESTMENT_CASH, EXCHANGE_CASH]
+        status:
+          type: string
+          enum: [PENDING, ACTIVE, RESTRICTED, FROZEN, CLOSING, CLOSED]
+          description: Server-derived lifecycle. Clients cannot POST status=ACTIVE.
+        domainStatus: { type: string }
+        currency: { type: string }
+        openedAt: { type: string, format: date-time }
+        closedAt: { type: string, format: date-time, nullable: true }
+        restrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - DEBIT_BLOCKED
+              - CREDIT_BLOCKED
+              - WITHDRAWAL_BLOCKED
+              - TRANSFER_BLOCKED
+              - TRADING_BLOCKED
+              - CARD_BLOCKED
+              - COMPLIANCE_REVIEW
+        productConfiguration:
+          type: object
+          required: [licensingClaim, environment, liveBanking]
+          properties:
+            licensingClaim: { type: string, enum: [NOT_A_LICENSED_BANK_ACCOUNT] }
+            environment: { type: string, enum: [simulation] }
+            liveBanking: { type: boolean, enum: [false] }
+        balance:
+          allOf:
+            - { $ref: "#/components/schemas/ResourceField" }
+            - properties:
+                value: { $ref: "#/components/schemas/AccountBalanceView", nullable: true }
+    ConsumerActivity:
+      type: object
+      required: [activityId, type, direction, amount, currency, status, description, occurredAt]
+      properties:
+        activityId: { type: string }
+        type: { type: string }
+        direction: { type: string, enum: [IN, OUT, HOLD] }
+        amount: { $ref: "#/components/schemas/MoneyView" }
+        currency: { type: string }
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, REVERSED, CANCELLED, ACTION_REQUIRED]
+        counterpartyDisplay: { type: string, nullable: true }
+        description: { type: string }
+        occurredAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+        category: { type: string }
+        relatedActionId: { type: string, nullable: true }
+        fee: { $ref: "#/components/schemas/MoneyView", nullable: true }
+    ActivityPage:
+      allOf:
+        - { $ref: "#/components/schemas/ResourceField" }
+        - properties:
+            value:
+              type: object
+              nullable: true
+              properties:
+                items:
+                  type: array
+                  items: { $ref: "#/components/schemas/ConsumerActivity" }
+                nextCursor: { type: string, nullable: true }
+                hasMore: { type: boolean }
+    AccountStatement:
+      allOf:
+        - { $ref: "#/components/schemas/ResourceField" }
+        - properties:
+            value:
+              type: object
+              nullable: true
+              properties:
+                statementId: { type: string }
+                accountId: { type: string }
+                currency: { type: string }
+                periodStart: { type: string, format: date-time }
+                periodEnd: { type: string, format: date-time }
+                opening: { $ref: "#/components/schemas/MoneyView" }
+                closing: { $ref: "#/components/schemas/MoneyView" }
+                fees: { $ref: "#/components/schemas/MoneyView" }
+                transactions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      postedAt: { type: string, format: date-time }
+                      direction: { type: string }
+                      amount: { $ref: "#/components/schemas/MoneyView" }
+                      description: { type: string }
+                      reference: { type: string }
+    HomeResource:
+      type: object
+      required: [schema, generatedAt, wealth, accounts]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.home.v1] }
+        generatedAt: { type: string, format: date-time }
+        wealth:
+          type: object
+          properties:
+            state: { type: string }
+            availability: { type: string }
+            value: { nullable: true }
+            reason: { type: string, nullable: true }
+            valuation:
+              type: object
+              required: [currency, status, currencies]
+              properties:
+                currency: { type: string }
+                status: { type: string, enum: [AVAILABLE, NOT_REQUIRED, UNAVAILABLE] }
+                currencies:
+                  type: array
+                  items: { type: string }
+                reason: { type: string, nullable: true }
+        accounts:
+          allOf:
+            - { $ref: "#/components/schemas/ResourceField" }

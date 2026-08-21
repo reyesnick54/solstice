@@ -48,7 +48,8 @@ Send `Authorization: Bearer <access_token>` and `X-Request-Id`.
 
 ## SDK installation / use
 
-Workspace package `@solstice/sunrey-sdk` export `./consumer`.
+Workspace package `@solstice/sunrey-sdk` export `./consumer`
+(auth/home/accounts) and `./bff` (Consumer BFF `/api/v1` payments).
 
 Supported:
 
@@ -115,6 +116,12 @@ internal services.
 
 Sandbox persona `fin-ready` has USD and SAR accounts, a funded USD
 balance, recipient/payment/FX capabilities, and a virtual card.
+`investments` and `exchange_trading` on the `/v1/consumer` platform
+surface remain feature-flagged. Consumer BFF `/api/v1/cards` is
+AVAILABLE_SIMULATION: list, detail, freeze, unfreeze, controls, and
+wallet eligibility. Live issuing is not connected. Lovable must use
+server capability/eligibility responses and must not require PAN/CVV
+to render the card dashboard.
 
 ## Approval states
 
@@ -143,6 +150,29 @@ Bootstrap includes `degraded`. Health is `/health` and
 `/v1/consumer/health`. Treat `PROVIDER_UNAVAILABLE` and
 `INTERNAL_ERROR` as retryable degraded states. Do not invent balances
 while degraded.
+
+## Payments (Consumer BFF `/api/v1`)
+
+Use `@solstice/sunrey-sdk/bff` (`SunReyConsumerBffClient`). This is
+not the chain `/v1` client.
+
+Journey:
+
+1. `GET /api/v1/recipients` — select recipient, or `POST` to add one
+2. Enter amount (integer minor units)
+3. `POST /api/v1/payments/quote` — fees, route, compliance state
+4. Review. `settlementTimePromise` is always `null`
+5. Step-up if the BFF returns `STEP_UP_REQUIRED`
+6. `POST /api/v1/payments` with `Idempotency-Key`
+7. `POST /api/v1/payments/{id}/approve` when the quote required confirmation
+8. Poll `GET /api/v1/payments/{id}` — backend owns `status`
+
+Do not mark a recipient verified from the client. Do not promise
+settlement time. `productionMoneyMovement` is always `false`.
+
+BFF sandbox personas (`basic_verified`, `restricted`, …) use
+`sandbox.<persona_id>` tokens against `/api/v1`. They are distinct from
+the `/v1/consumer` personas below.
 
 ## Sandbox personas
 

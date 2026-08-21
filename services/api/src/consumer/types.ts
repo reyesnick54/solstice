@@ -25,15 +25,18 @@ export const CLIENT_RESOURCE_STATES = [
   'PROVIDER_UNAVAILABLE',
   'SERVICE_UNAVAILABLE',
   'MIXED_CURRENCY_WITHOUT_CONVERSION',
+  'VALUATION_UNAVAILABLE',
 ] as const;
 export type ClientResourceState = (typeof CLIENT_RESOURCE_STATES)[number];
 
 export const CONSUMER_TRANSACTION_STATUSES = [
   'PENDING',
+  'PROCESSING',
   'COMPLETED',
-  'RETURNED',
-  'REVERSED',
   'FAILED',
+  'REVERSED',
+  'CANCELLED',
+  'ACTION_REQUIRED',
 ] as const;
 export type ConsumerTransactionStatus = (typeof CONSUMER_TRANSACTION_STATUSES)[number];
 
@@ -56,6 +59,34 @@ export const CONSUMER_ACCOUNT_TYPES = [
   'REWARDS',
   'PENDING',
   'OTHER',
+] as const;
+
+export const FINANCIAL_ACCOUNT_LIFECYCLES = [
+  'PENDING',
+  'ACTIVE',
+  'RESTRICTED',
+  'FROZEN',
+  'CLOSING',
+  'CLOSED',
+] as const;
+
+export const FINANCIAL_PRODUCT_TYPES = [
+  'CASH_ACCOUNT',
+  'CHECKING_PAYMENT',
+  'SAVINGS',
+  'MULTI_CURRENCY',
+  'INVESTMENT_CASH',
+  'EXCHANGE_CASH',
+] as const;
+
+export const ACCOUNT_RESTRICTION_CODES = [
+  'DEBIT_BLOCKED',
+  'CREDIT_BLOCKED',
+  'WITHDRAWAL_BLOCKED',
+  'TRANSFER_BLOCKED',
+  'TRADING_BLOCKED',
+  'CARD_BLOCKED',
+  'COMPLIANCE_REVIEW',
 ] as const;
 export type ConsumerAccountType = (typeof CONSUMER_ACCOUNT_TYPES)[number];
 
@@ -96,6 +127,27 @@ export const PROVIDER_AVAILABILITIES = [
   'EXTERNAL_REQUIRED',
 ] as const;
 export type ProviderAvailability = (typeof PROVIDER_AVAILABILITIES)[number];
+
+export const CARD_STATUSES = [
+  'REQUESTED',
+  'PENDING',
+  'ACTIVE',
+  'FROZEN',
+  'SUSPENDED',
+  'REPLACED',
+  'CLOSED',
+  'EXPIRED',
+] as const;
+export type CardStatus = (typeof CARD_STATUSES)[number];
+
+export const CARD_WALLET_STATUSES = [
+  'NOT_ELIGIBLE',
+  'ELIGIBLE',
+  'PROVISIONING',
+  'ACTIVE',
+  'FAILED',
+  'SUSPENDED',
+] as const;
 
 export const CONSUMER_RESOURCE_GROUPS = [
   'ME',
@@ -142,7 +194,8 @@ export function resourceField<T>(input: {
     input.state === 'FEATURE_DISABLED' ||
     input.state === 'USER_INELIGIBLE' ||
     input.state === 'PENDING_VERIFICATION' ||
-    input.state === 'MIXED_CURRENCY_WITHOUT_CONVERSION';
+    input.state === 'MIXED_CURRENCY_WITHOUT_CONVERSION' ||
+    input.state === 'VALUATION_UNAVAILABLE';
   return Object.freeze({
     state: input.state,
     availability: input.availability,

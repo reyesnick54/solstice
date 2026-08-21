@@ -14,7 +14,12 @@ PIN, and track data inside a separately assessed PCI-sensitive processor
 boundary. That boundary is not implemented here and is not claimed.
 
 Simulation values are unmistakably synthetic (`sim_tok_`, `sim_ntok_`,
-`SIM-CARD`).
+`SIM-CARD`, last4 `0000`, expiry `12/2099`). Application records may
+store provider-supplied last4 and month/year expiry only.
+
+Lifecycle states: `REQUESTED`, `PENDING`, `ACTIVE`, `FROZEN`,
+`SUSPENDED`, `REPLACED`, `CLOSED`, `EXPIRED`. User actions request a
+change; Kernel + provider confirmation are authoritative.
 
 ## Authorization path
 

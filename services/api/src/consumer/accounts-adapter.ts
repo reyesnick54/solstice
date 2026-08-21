@@ -1,15 +1,11 @@
 import type { Account } from '../../../../packages/domain/src/account.ts';
 import { ACCOUNT_CLASS_CATALOG } from '../../../../packages/domain/src/account-class.ts';
 import type { CustomerId } from '../../../../packages/domain/src/customer.ts';
-import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import { isOk } from '../../../../packages/domain/src/result.ts';
+import type { UtcInstant } from '../../../../packages/domain/src/time.ts';
 import type { SimulationRuntime } from '../../../accounts/src/runtime.ts';
-import {
-  projectCurrencyIndexedPosition,
-  projectCustomerPosition,
-} from '../../../accounts/src/balances.ts';
 import { projectBankingPosition } from '../../../accounts/src/available-funds.ts';
-import { projectTransactionHistory } from '../../../accounts/src/transaction-history.ts';
+import type { ActivityFilter } from '../../../accounts/src/activity.ts';
 import type { AccountsReadPort } from './ports.ts';
 
 export function createAccountsReadAdapter(runtime: SimulationRuntime): AccountsReadPort {
@@ -26,6 +22,19 @@ export function createAccountsReadAdapter(runtime: SimulationRuntime): AccountsR
     getAccount(accountId) {
       return runtime.accounts.get(accountId as Account['id']) ?? null;
     },
+    financialAccount(accountId) {
+      return runtime.accountProduct.get(accountId) ?? null;
+    },
+    listFinancialAccounts(customerId) {
+      return runtime.accountProduct.listForCustomer(customerId);
+    },
+    authorizeRead(accountId, customerId, subjectId) {
+      const authorized = runtime.accountProduct.authorizeRead(accountId, customerId, subjectId);
+      if (!isOk(authorized)) {
+        return { error: authorized.error.code === 'NOT_FOUND' ? 'NOT_FOUND' : 'RESOURCE_NOT_OWNED' };
+      }
+      return authorized.value;
+    },
     positionOf(account) {
       const projected = projectBankingPosition(runtime.ledger, account, runtime.holds, runtime.clock.now());
       if (!isOk(projected)) {
@@ -33,30 +42,22 @@ export function createAccountsReadAdapter(runtime: SimulationRuntime): AccountsR
       }
       return projected.value;
     },
-    customerPosition(customerId) {
-      const owned = runtime.accounts.list().filter((account) => account.ownerId === customerId);
-      const blended = projectCustomerPosition(runtime.ledger, customerId as CustomerId, owned);
-      if (isOk(blended)) {
-        return { kind: 'POSITION', position: blended.value };
-      }
-      const indexed = projectCurrencyIndexedPosition(runtime.ledger, customerId as CustomerId, owned);
-      if (isOk(indexed) && indexed.value.currencies.length > 0) {
-        return { kind: 'CURRENCY_INDEXED', currencies: indexed.value.currencies };
-      }
-      return { kind: 'UNAVAILABLE', reason: blended.error.message };
+    wealth(customerId, valuationCurrency) {
+      return runtime.accountProduct.wealth(customerId, valuationCurrency);
     },
-    activity(customerId, accountId) {
-      const owned = runtime.accounts.list().filter((account) => account.ownerId === customerId);
-      const items = projectTransactionHistory({
-        ledger: runtime.ledger,
-        customerId: customerId as CustomerId,
-        accounts: owned,
-        holds: owned.flatMap((account) => runtime.holds.listByAccount(account.id)),
-        pending: [],
-        now: asUtcInstant(runtime.clock.now()),
+    activity(customerId, accountId, filter?: ActivityFilter) {
+      return runtime.accountProduct.activity(customerId, accountId, filter ?? {});
+    },
+    statement(accountId, periodStart, periodEnd) {
+      const generated = runtime.accountProduct.statement({
+        accountId,
+        periodStart,
+        periodEnd,
       });
-      const filtered = accountId ? items.filter((item) => item.accountId === accountId) : items;
-      return [...filtered].sort((a, b) => (a.occurredAt < b.occurredAt ? 1 : a.occurredAt > b.occurredAt ? -1 : 0));
+      if (!isOk(generated)) {
+        return { error: generated.error.message };
+      }
+      return generated.value;
     },
   };
 }
@@ -81,3 +82,5 @@ export function consumerAccountTypeOf(account: Account): 'CASH' | 'SAVINGS' | 'I
       return 'OTHER';
   }
 }
+
+export type { UtcInstant };
