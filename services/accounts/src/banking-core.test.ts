@@ -440,4 +440,85 @@ describe('multi-currency banking core', () => {
       assert.equal(first.value.id, second.value.id);
     }
   });
+
+  it('adjusts an active hold without posting and refuses a second full reversal', async () => {
+    const runtime = createSimulationRuntime();
+    const customer = activateCustomer(runtime, 'cust_adj');
+    const opened = runtime.accountsService.open(
+      openIntent({ id: 'open_adj', accountId: 'acct_adj', ownerId: customer.id }),
+    );
+    assert.equal(opened.outcome, 'OPENED');
+    if (opened.outcome !== 'OPENED') return;
+    const funded = deposit(runtime, opened.account.id, 20_000n, 'USD', 'dep_adj');
+    assert.equal(funded.outcome, 'POSTED');
+    if (funded.outcome !== 'POSTED') return;
+    const created = await runtime.banking.createHold({
+      id: asIntentId('hold_adj'),
+      actionType: ACTION_TYPES.CREATE_HOLD,
+      idempotencyKey: 'hold_adj',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_HOLD',
+      payload: {
+        holdId: asHoldId('hold_adj'),
+        accountId: opened.account.id,
+        amount: Money.fromMinorUnits(8_000n, 'USD'),
+        holdPurpose: 'WITHDRAWAL',
+      },
+    });
+    assert.equal(created.outcome, 'COMPLETED');
+    const adjusted = await runtime.banking.adjustHold({
+      id: asIntentId('hold_adj_up'),
+      actionType: ACTION_TYPES.ADJUST_HOLD,
+      idempotencyKey: 'hold_adj_up',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_HOLD',
+      payload: {
+        holdId: asHoldId('hold_adj'),
+        accountId: opened.account.id,
+        amount: Money.fromMinorUnits(12_000n, 'USD'),
+      },
+    });
+    assert.equal(adjusted.outcome, 'COMPLETED');
+    if (adjusted.outcome !== 'COMPLETED') return;
+    assert.equal(adjusted.value.state, 'ACTIVE');
+    assert.equal(adjusted.value.amountMinorUnits, 12_000n);
+    const held = projectBankingPosition(runtime.ledger, opened.account, runtime.holds, NOW);
+    assert.equal(isOk(held), true);
+    if (isOk(held)) {
+      assert.equal(held.value.ledgerBalance.minorUnits, 20_000n);
+      assert.equal(held.value.held.minorUnits, 12_000n);
+      assert.equal(held.value.available.minorUnits, 8_000n);
+    }
+
+    const firstRev = runtime.banking.postReversal({
+      id: asIntentId('rev_adj_1'),
+      actionType: ACTION_TYPES.POST_REVERSAL,
+      idempotencyKey: 'rev_adj_1',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_REVERSAL',
+      payload: {
+        accountId: opened.account.id,
+        originalJournalId: funded.journal.id,
+        reason: 'deposit returned',
+      },
+    });
+    assert.equal(firstRev.outcome, 'COMPLETED');
+    const secondRev = runtime.banking.postReversal({
+      id: asIntentId('rev_adj_2'),
+      actionType: ACTION_TYPES.POST_REVERSAL,
+      idempotencyKey: 'rev_adj_2',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_REVERSAL',
+      payload: {
+        accountId: opened.account.id,
+        originalJournalId: funded.journal.id,
+        reason: 'deposit returned again',
+      },
+    });
+    assert.equal(secondRev.outcome, 'REJECTED');
+  });
 });

@@ -311,7 +311,24 @@ export type BankingAmountPayload = {
   readonly pendingId?: string;
 };
 
+export type JournalPostedV1 = VersionedEvent<
+  'JournalPosted',
+  1,
+  {
+    readonly journalId: string;
+    readonly actionType: string;
+    readonly asset: string;
+    readonly amountMinorUnits: string;
+    readonly currency: string;
+    readonly reference?: string;
+    readonly sourceDomain?: string;
+    readonly evidenceRecordId?: string;
+    readonly reversesJournalId?: string;
+  }
+>;
 export type HoldCreatedV1 = VersionedEvent<'HoldCreated', 1, BankingAmountPayload>;
+export type HoldAdjustedV1 = VersionedEvent<'HoldAdjusted', 1, BankingAmountPayload>;
+export type HoldExpiredV1 = VersionedEvent<'HoldExpired', 1, BankingAmountPayload>;
 export type HoldReleasedV1 = VersionedEvent<'HoldReleased', 1, BankingAmountPayload>;
 export type HoldCapturedV1 = VersionedEvent<'HoldCaptured', 1, BankingAmountPayload>;
 export type HoldCancelledV1 = VersionedEvent<'HoldCancelled', 1, BankingAmountPayload>;
@@ -1057,6 +1074,7 @@ export type DomainEvent =
   | DepositPostedV1
   | WithdrawalPostedV1
   | InternalTransferPostedV1
+  | JournalPostedV1
   | CustomerStatusChangedV1
   | KernelDecisionRecordedV1
   | PolicyPackActivatedV1
@@ -1089,6 +1107,8 @@ export type DomainEvent =
   | FxQuoteAcceptedV1
   | FxQuoteExpiredV1
   | HoldCreatedV1
+  | HoldAdjustedV1
+  | HoldExpiredV1
   | HoldReleasedV1
   | HoldCapturedV1
   | HoldCancelledV1

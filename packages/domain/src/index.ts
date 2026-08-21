@@ -22,10 +22,13 @@ export type {
 export {
   asCurrencyCode,
   CANONICAL_SIMULATION_CURRENCIES,
+  RESERVED_ISO_CURRENCIES,
   CURRENCY_REGISTRY,
   CURRENCY_STATUSES,
   currencyRecord,
   isCanonicalSimulationCurrency,
+  isRecognizedIsoCurrency,
+  isReservedIsoCurrency,
   isCurrencyCode,
   majorUnitsToMinorUnits,
   requireCurrencyRecord,
@@ -106,6 +109,7 @@ export { BANKING_POSITION_SEMANTICS, BANKING_POSITION_STATES } from './banking-p
 export type { FundsHold, HoldId, HoldPurpose, HoldState } from './hold.ts';
 export {
   asHoldId,
+  canAdjustHold,
   canTransitionHold,
   freezeHold,
   HOLD_PURPOSES,
@@ -177,7 +181,7 @@ export {
   PENDING_SETTLEMENT_STATES,
 } from './pending-settlement.ts';
 
-export type { ReversalId, ReversalRecord } from './reversal.ts';
+export type { ReversalId, ReversalKind, ReversalRecord } from './reversal.ts';
 export { asReversalId, freezeReversal } from './reversal.ts';
 
 export type { TransactionHistoryItem, TransactionHistoryStatus } from './transaction-history.ts';

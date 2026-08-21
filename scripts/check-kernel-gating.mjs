@@ -58,6 +58,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'settlePayment', file: 'packages/cards/src/acceptance/service.ts' },
   { symbol: 'ingestAcceptanceCallback', file: 'packages/cards/src/acceptance/service.ts' },
   { symbol: 'createHold', file: 'services/accounts/src/banking-operations.ts' },
+  { symbol: 'adjustHold', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'releaseHold', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'captureHold', file: 'services/accounts/src/banking-operations.ts' },
   { symbol: 'cancelHold', file: 'services/accounts/src/banking-operations.ts' },

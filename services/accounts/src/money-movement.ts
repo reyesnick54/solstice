@@ -20,6 +20,7 @@ import {
   type ClassBridge,
   type Journal,
 } from '../../../packages/ledger/src/types.ts';
+import { ledgerScaledUnits } from '../../../packages/money/src/ledger-amount.ts';
 import { Money } from '../../../packages/money/src/money.ts';
 import type {
   InternalTransferIntent,
@@ -521,6 +522,33 @@ export class MoneyMovementService {
       actionType: input.intent.actionType,
       postings: built.postings,
       ...(built.classBridge ? { classBridge: built.classBridge } : {}),
+      reference: input.intent.id,
+      correlationId: input.intent.id,
+      causationId: decision.evidenceRecordId,
+      sourceDomain: 'accounts',
+      evidenceRecordId: decision.evidenceRecordId,
+    });
+
+    this.events.append({
+      eventType: 'JournalPosted',
+      schemaVersion: 1,
+      occurredAt: journal.createdAt as typeof input.intent.requestedAt,
+      intentId: input.intent.id,
+      correlationId: input.intent.id,
+      causationId: decision.evidenceRecordId,
+      evidenceId: decision.evidenceRecordId,
+      aggregateType: 'journal',
+      aggregateId: journal.id,
+      payload: {
+        journalId: journal.id,
+        actionType: journal.actionType,
+        asset: journal.asset,
+        amountMinorUnits: ledgerScaledUnits(journal.postings[0]!.amount).toString(),
+        currency: journal.asset,
+        ...(journal.reference ? { reference: journal.reference } : {}),
+        ...(journal.sourceDomain ? { sourceDomain: journal.sourceDomain } : {}),
+        ...(journal.evidenceRecordId ? { evidenceRecordId: journal.evidenceRecordId } : {}),
+      },
     });
 
     input.onPosted(journal, input.amount, decision);
