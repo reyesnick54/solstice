@@ -28,6 +28,12 @@ import { ACTION_TYPES, type OpenAccountIntent, type PostDepositIntent } from '..
 import { PaymentsService } from '../../../../packages/payments/src/service.ts';
 import { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../../accounts/src/runtime.ts';
+import { InMemorySecretProvider } from '../../../../packages/security/src/secrets.ts';
+import { CardsService } from '../../../../packages/cards/src/service.ts';
+import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/program.ts';
+import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
+import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
+import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { PaymentsService } from '../../../../packages/payments/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
@@ -77,6 +83,7 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'MANAGE_BENEFICIARY',
   'PAYMENT_APPROVE',
   'POST_WITHDRAWAL_REQUEST',
+  'CARD_MANAGE_REQUEST',
 ];
 
 export type SandboxWorld = {
@@ -362,21 +369,10 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     exchange: simulationPort('consumer Exchange APIs are simulation-only', 0),
     payments: simulationPort('payments rails are simulated', 0),
     fx: simulationPort('FX quotes are indicative simulation only', 0),
-    cards: {
-      summarize() {
-        return Object.freeze({
-          availability: 'EXTERNAL_PROVIDER_REQUIRED',
-          state: options.providerDown ? 'PROVIDER_UNAVAILABLE' : 'FEATURE_DISABLED',
-          provider: options.providerDown ? 'UNAVAILABLE' : 'NOT_CONNECTED',
-          reason: options.providerDown
-            ? 'card processor is unavailable'
-            : 'live card issuing requires an external processor',
-          count: 0,
-        });
-      },
-    },
+    cards: simulationPort('simulated card issuing; live processors are not connected', 1),
+    cardFacade: options.providerDown ? undefined : attachSandboxCards(runtime, personas.basic_verified),
     vault: simulationPort('Personal Data Vault is subject-bound and simulated', 0),
-    providerDown: options.providerDown ? { cards: true, payments: true, fx: true } : { cards: true },
+    providerDown: options.providerDown ? { cards: true, payments: true, fx: true } : {},
   });
 
   return Object.freeze({
@@ -581,4 +577,74 @@ export function listSandboxPersonas(): readonly {
 
 export function capabilitiesFor(world: SandboxWorld, persona: SandboxPersonaId): FeatureCapabilityMap {
   return world.bff.capabilities(world.personas[persona]);
+}
+
+function attachSandboxCards(runtime: SimulationRuntime, principal: BffPrincipal): ConsumerCardsFacade {
+  const processorActorId = 'actor_sandbox_card_processor';
+  const operationsActorId = 'actor_sandbox_card_ops';
+  const processor = runtime.identity.provisionSimulatedActor({
+    actorId: processorActorId,
+    identityId: 'idn_sandbox_card_processor',
+    jurisdiction: asJurisdiction('GB'),
+    capabilities: ['CARD_AUTHORIZE_REQUEST', 'CARD_CLEAR_REQUEST'],
+  });
+  const operations = runtime.identity.provisionSimulatedActor({
+    actorId: operationsActorId,
+    identityId: 'idn_sandbox_card_ops',
+    jurisdiction: asJurisdiction('GB'),
+    capabilities: ['HOLD_REQUEST', 'CARD_MANAGE_REQUEST'],
+    stepUp: true,
+  });
+  if (!processor.ok || !operations.ok) {
+    throw new Error('sandbox card actors failed');
+  }
+  const secrets = new InMemorySecretProvider('simulation', {
+    'card-processor-callback': 'sim-card-processor-hmac-not-a-production-secret',
+  });
+  const seeded = seedSimulationCatalog();
+  const cards = new CardsService(
+    runtime.kernel,
+    runtime.issuer,
+    runtime.ledger,
+    runtime.evidence,
+    runtime.events,
+    runtime.clock,
+    {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    runtime.identity.service,
+    createCardHoldGateway(runtime.banking, runtime.ledger, runtime.clock),
+    secrets,
+    { processorActorId, operationsActorId },
+  );
+  const requested = cards.requestCard({
+    id: asIntentId('sandbox_card_basic'),
+    actionType: ACTION_TYPES.REQUEST_CARD,
+    idempotencyKey: 'sandbox_card_basic',
+    actorId: principal.actorId,
+    requestedAt: NOW,
+    purpose: 'CUSTOMER_CARD',
+    payload: {
+      cardId: 'card_sandbox_basic_virtual',
+      accountId: asAccountId('acct_sandbox_basic_usd'),
+      ownerId: asCustomerId(principal.customerId),
+      programId: SIMULATION_GB_VIRTUAL_PROGRAM.programId,
+      formFactor: 'VIRTUAL',
+    },
+  });
+  if (requested.outcome === 'OK' && requested.value.status === 'PENDING') {
+    cards.activateCard({
+      id: asIntentId('sandbox_card_basic_act'),
+      actionType: ACTION_TYPES.ACTIVATE_CARD,
+      idempotencyKey: 'sandbox_card_basic_act',
+      actorId: principal.actorId,
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_CARD',
+      payload: { cardId: requested.value.cardId, accountId: requested.value.fundingAccountId },
+    });
+  }
+  return new ConsumerCardsFacade(cards, runtime.identity.service, () => runtime.clock.now());
 }

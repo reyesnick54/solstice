@@ -9,6 +9,21 @@ import type { CardNetworkToken } from './token.ts';
 import type { CardReconciliationResult } from './reconciliation.ts';
 import { simulationPrograms } from './program.ts';
 
+export type CardStoreSnapshot = {
+  readonly cards: readonly Card[];
+  readonly cardsByKey: readonly (readonly [string, Card])[];
+  readonly authorizations: readonly CardAuthorizationRecord[];
+  readonly authorizationsByCallback: readonly (readonly [string, CardAuthorizationRecord])[];
+  readonly clearings: readonly CardClearingRecord[];
+  readonly clearingsByCallback: readonly (readonly [string, CardClearingRecord])[];
+  readonly refunds: readonly CardRefundRecord[];
+  readonly refundsByCallback: readonly (readonly [string, CardRefundRecord])[];
+  readonly disputes: readonly CardDispute[];
+  readonly tokens: readonly CardNetworkToken[];
+  readonly fees: readonly CardFeeAssessment[];
+  readonly reconciliations: readonly CardReconciliationResult[];
+};
+
 export class CardStore {
   private readonly cards = new Map<string, Card>();
   private readonly cardsByKey = new Map<string, Card>();
@@ -80,6 +95,78 @@ export class CardStore {
 
   listRefundsByCard(cardId: string): readonly CardRefundRecord[] {
     return [...this.refunds.values()].filter((row) => row.cardId === cardId);
+  }
+
+  listDisputesByCard(cardId: string): readonly CardDispute[] {
+    return [...this.disputes.values()].filter((row) => row.cardId === cardId);
+  }
+
+  snapshot(): CardStoreSnapshot {
+    return Object.freeze({
+      cards: [...this.cards.values()],
+      cardsByKey: [...this.cardsByKey.entries()],
+      authorizations: [...this.authorizations.values()],
+      authorizationsByCallback: [...this.authorizationsByCallback.entries()],
+      clearings: [...this.clearings.values()],
+      clearingsByCallback: [...this.clearingsByCallback.entries()],
+      refunds: [...this.refunds.values()],
+      refundsByCallback: [...this.refundsByCallback.entries()],
+      disputes: [...this.disputes.values()],
+      tokens: [...this.tokens.values()],
+      fees: [...this.fees.values()],
+      reconciliations: [...this.reconciliations.values()],
+    });
+  }
+
+  restore(snapshot: CardStoreSnapshot): void {
+    this.cards.clear();
+    this.cardsByKey.clear();
+    this.authorizations.clear();
+    this.authorizationsByCallback.clear();
+    this.clearings.clear();
+    this.clearingsByCallback.clear();
+    this.refunds.clear();
+    this.refundsByCallback.clear();
+    this.disputes.clear();
+    this.tokens.clear();
+    this.fees.clear();
+    this.reconciliations.clear();
+    for (const card of snapshot.cards) {
+      this.cards.set(card.cardId, card);
+    }
+    for (const [key, card] of snapshot.cardsByKey) {
+      this.cardsByKey.set(key, card);
+    }
+    for (const row of snapshot.authorizations) {
+      this.authorizations.set(row.authorizationId, row);
+    }
+    for (const [key, row] of snapshot.authorizationsByCallback) {
+      this.authorizationsByCallback.set(key, row);
+    }
+    for (const row of snapshot.clearings) {
+      this.clearings.set(row.clearingId, row);
+    }
+    for (const [key, row] of snapshot.clearingsByCallback) {
+      this.clearingsByCallback.set(key, row);
+    }
+    for (const row of snapshot.refunds) {
+      this.refunds.set(row.refundId, row);
+    }
+    for (const [key, row] of snapshot.refundsByCallback) {
+      this.refundsByCallback.set(key, row);
+    }
+    for (const row of snapshot.disputes) {
+      this.disputes.set(row.disputeId, row);
+    }
+    for (const row of snapshot.tokens) {
+      this.tokens.set(row.tokenRef, row);
+    }
+    for (const row of snapshot.fees) {
+      this.fees.set(row.feeId, row);
+    }
+    for (const row of snapshot.reconciliations) {
+      this.reconciliations.set(row.subjectId, row);
+    }
   }
 
   saveClearing(record: CardClearingRecord): void {

@@ -7,6 +7,8 @@ import {
   CONSUMER_ACCOUNT_TYPES,
   CONSUMER_ACTION_STATUSES,
   CONSUMER_ASSET_TYPES,
+  CARD_STATUSES,
+  CARD_WALLET_STATUSES,
   CONSUMER_TRANSACTION_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,
@@ -47,6 +49,7 @@ export type ConsumerBffRuntime = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly identity?: IdentityService;
+  readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
 };
 
@@ -76,6 +79,22 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     'x-sunrey-environment': 'simulation',
   };
 
+  if (request.path === '/api/v1/webhooks/cards' && request.method === 'POST') {
+    if (!runtime.ingestCardWebhook) {
+      return json(
+        503,
+        bffError({
+          errorCode: 'FEATURE_UNAVAILABLE',
+          category: 'TEMPORARY_UNAVAILABLE',
+          message: 'card webhook ingestion is not connected',
+          retryable: true,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, runtime.ingestCardWebhook(request.body, requestId), headers);
+  }
   if (request.path === '/api/v1/sandbox/personas' && request.method === 'GET') {
     return json(200, { label: 'SANDBOX_FIXTURE_NON_PRODUCTION', production: false, items: listSandboxPersonas() }, headers);
   }
@@ -87,6 +106,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     return json(
       200,
       {
+        cardStatus: CARD_STATUSES,
+        cardWalletStatus: CARD_WALLET_STATUSES,
         transactionStatus: CONSUMER_TRANSACTION_STATUSES,
         actionStatus: CONSUMER_ACTION_STATUSES,
         accountLifecycle: FINANCIAL_ACCOUNT_LIFECYCLES,
@@ -173,6 +194,29 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/accounts/') && method === 'GET') {
     const id = path.slice('/api/v1/accounts/'.length);
     return result(runtime.bff.getAccount(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/cards' && method === 'POST') {
+    return result(runtime.bff.issueCard(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/freeze') && method === 'POST') {
+    const id = path.slice('/api/v1/cards/'.length, -'/freeze'.length);
+    return result(runtime.bff.freezeCard(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/unfreeze') && method === 'POST') {
+    const id = path.slice('/api/v1/cards/'.length, -'/unfreeze'.length);
+    return result(runtime.bff.unfreezeCard(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/controls') && method === 'PATCH') {
+    const id = path.slice('/api/v1/cards/'.length, -'/controls'.length);
+    return result(runtime.bff.patchCardControls(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/wallet') && method === 'GET') {
+    const id = path.slice('/api/v1/cards/'.length, -'/wallet'.length);
+    return result(runtime.bff.cardWallet(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && method === 'GET') {
+    const id = path.slice('/api/v1/cards/'.length);
+    return result(runtime.bff.getCard(principal, id, requestId), headers);
   }
   if (path === '/api/v1/fx/currencies' && method === 'GET') {
     return json(200, runtime.bff.listFxCurrencies(), headers);
@@ -407,6 +451,12 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/fx/quotes/{id}/accept',
   'POST /api/v1/fx/quotes/{id}/execute',
   'GET /api/v1/cards',
+  'POST /api/v1/cards',
+  'GET /api/v1/cards/{id}',
+  'POST /api/v1/cards/{id}/freeze',
+  'POST /api/v1/cards/{id}/unfreeze',
+  'PATCH /api/v1/cards/{id}/controls',
+  'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
@@ -419,4 +469,5 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/catalog/resources',
   'GET /api/v1/catalog/enums',
   'GET /api/v1/sandbox/personas',
+  'POST /api/v1/webhooks/cards',
 ] as const;

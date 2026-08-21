@@ -14,6 +14,7 @@ import type {
   ConsumerPreferences,
   FeatureCapabilityMap,
   NotificationPort,
+  CardsMutationPort,
   OptionalDomainPort,
   PreferenceStore,
   SecurityPort,
@@ -134,6 +135,7 @@ export type HomeResource = {
   readonly pendingApprovals: ResourceField<readonly ActionStatusResource[]>;
   readonly notifications: ResourceField<{ readonly unreadCount: number }>;
   readonly securityAlerts: ResourceField<readonly { readonly alertId: string; readonly title: string; readonly severity: string }[]>;
+  readonly cards: ResourceField<{ readonly count: number; readonly items: readonly unknown[] }>;
   readonly valuation: ResourceField<{
     readonly authority: 'PRESENTATION_ONLY_NOT_LEDGER';
     readonly ledgerAuthoritative: false;
@@ -189,6 +191,7 @@ export type ConsumerBffDeps = {
   readonly exchange?: OptionalDomainPort;
   readonly payments?: OptionalDomainPort;
   readonly cards?: OptionalDomainPort;
+  readonly cardFacade?: CardsMutationPort | undefined;
   readonly vault?: OptionalDomainPort;
   readonly fx?: OptionalDomainPort;
   readonly fxEngine?: FxCommandPort;
@@ -562,6 +565,7 @@ export class ConsumerBff {
         availability: 'AVAILABLE_SIMULATION',
         value: alerts,
       }),
+      cards: this.cardsHomeField(principal),
       valuation: this.valuationField(principal, 'USD'),
     });
   }
@@ -772,6 +776,9 @@ export class ConsumerBff {
     readonly items: readonly unknown[];
   } {
     const capabilities = this.capabilities(principal);
+    if (group === 'cards') {
+      return this.listCards(principal);
+    }
     const mapped = stubAvailability(group, capabilities);
     return Object.freeze({
       group,
@@ -779,6 +786,201 @@ export class ConsumerBff {
       state: mapped.state,
       reason: mapped.reason,
       items: Object.freeze([] as const),
+    });
+  }
+
+  listCards(principal: BffPrincipal): {
+    readonly group: 'cards';
+    readonly schema: 'sunrey.consumer.cards.v1';
+    readonly availability: ProductAvailability;
+    readonly state: ClientResourceState;
+    readonly reason: string;
+    readonly productionIssuing: false;
+    readonly items: readonly unknown[];
+  } {
+    const capabilities = this.capabilities(principal);
+    const detail = capabilities.details.cards;
+    if (!this.deps.cardFacade || !detail || !detail.enabled) {
+      return Object.freeze({
+        group: 'cards',
+        schema: 'sunrey.consumer.cards.v1',
+        availability: detail?.availability ?? 'AVAILABLE_SIMULATION',
+        state: detail?.state ?? 'FEATURE_DISABLED',
+        reason: detail?.reason ?? 'cards are not connected',
+        productionIssuing: false,
+        items: Object.freeze([] as const),
+      });
+    }
+    const items = this.deps.cardFacade.list(principal.customerId);
+    return Object.freeze({
+      group: 'cards',
+      schema: 'sunrey.consumer.cards.v1',
+      availability: 'AVAILABLE_SIMULATION',
+      state: items.length === 0 ? 'EMPTY' : 'SIMULATION_ONLY',
+      reason: 'simulated card issuing; live processors are not connected',
+      productionIssuing: false,
+      items,
+    });
+  }
+
+  getCard(principal: BffPrincipal, cardId: string, requestId: string) {
+    if (!this.deps.cardFacade) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'cards are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    const result = this.deps.cardFacade.detail(principal.customerId, cardId);
+    return this.mutationResult(result, requestId);
+  }
+
+  issueCard(principal: BffPrincipal, body: Record<string, unknown>, requestId: string) {
+    if (!this.deps.cardFacade) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'cards are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    const accountId = typeof body.fundingAccountId === 'string' ? body.fundingAccountId : '';
+    const form = body.form === 'PHYSICAL' ? 'PHYSICAL' : 'VIRTUAL';
+    if (!accountId) {
+      return bffError({
+        errorCode: 'VALIDATION',
+        category: 'VALIDATION',
+        message: 'fundingAccountId is required',
+        retryable: false,
+        requestId,
+      });
+    }
+    const owned = this.deps.accounts.getAccount(accountId);
+    if (!owned || owned.ownerId !== principal.customerId) {
+      return bffError({
+        errorCode: 'RESOURCE_NOT_OWNED',
+        category: 'AUTHORIZATION',
+        message: 'funding account is not owned by the authenticated customer',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.mutationResult(
+      this.deps.cardFacade.issue({
+        actorId: principal.actorId,
+        customerId: principal.customerId,
+        accountId,
+        form,
+        cardId: typeof body.cardId === 'string' && body.cardId.length > 0 ? body.cardId : `card_${requestId}`,
+        idempotencyKey: typeof body.idempotencyKey === 'string' ? body.idempotencyKey : `issue_${requestId}`,
+        requestId,
+      }),
+      requestId,
+    );
+  }
+
+  freezeCard(principal: BffPrincipal, cardId: string, requestId: string) {
+    return this.cardAction(principal, cardId, requestId, (facade) =>
+      facade.freeze({ actorId: principal.actorId, customerId: principal.customerId, cardId, requestId }),
+    );
+  }
+
+  unfreezeCard(principal: BffPrincipal, cardId: string, requestId: string) {
+    return this.cardAction(principal, cardId, requestId, (facade) =>
+      facade.unfreeze({ actorId: principal.actorId, customerId: principal.customerId, cardId, requestId }),
+    );
+  }
+
+  patchCardControls(principal: BffPrincipal, cardId: string, body: Record<string, unknown>, requestId: string) {
+    return this.cardAction(principal, cardId, requestId, (facade) =>
+      facade.updateControls({
+        actorId: principal.actorId,
+        customerId: principal.customerId,
+        cardId,
+        requestId,
+        patch: body,
+      }),
+    );
+  }
+
+  cardWallet(principal: BffPrincipal, cardId: string, requestId: string) {
+    if (!this.deps.cardFacade) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'cards are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.mutationResult(this.deps.cardFacade.walletStatus(principal.customerId, cardId), requestId);
+  }
+
+  private cardAction(
+    principal: BffPrincipal,
+    cardId: string,
+    requestId: string,
+    run: (facade: CardsMutationPort) =>
+      | { readonly ok: true; readonly value: unknown }
+      | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number },
+  ) {
+    if (!this.deps.cardFacade) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'POLICY',
+        message: 'cards are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    void cardId;
+    return this.mutationResult(run(this.deps.cardFacade), requestId);
+  }
+
+  private mutationResult(
+    result:
+      | { readonly ok: true; readonly value: unknown }
+      | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number },
+    requestId: string,
+  ) {
+    if (result.ok) {
+      return result.value;
+    }
+    const errorCode =
+      result.code === 'RESOURCE_NOT_OWNED'
+        ? 'RESOURCE_NOT_OWNED'
+        : result.code === 'STEP_UP_REQUIRED'
+          ? 'STEP_UP_REQUIRED'
+          : result.code === 'NOT_FOUND'
+            ? 'NOT_FOUND'
+            : result.httpStatus === 403
+              ? 'KERNEL_REFUSED'
+              : 'VALIDATION';
+    return bffError({
+      errorCode,
+      category:
+        errorCode === 'RESOURCE_NOT_OWNED' || errorCode === 'STEP_UP_REQUIRED' || errorCode === 'KERNEL_REFUSED'
+          ? 'AUTHORIZATION'
+          : errorCode === 'NOT_FOUND'
+            ? 'NOT_FOUND'
+            : 'VALIDATION',
+      message: result.message,
+      retryable: false,
+      requestId,
+      detailsSafeForClient: { code: result.code },
+    });
+  }
+
+  private cardsHomeField(principal: BffPrincipal) {
+    const listed = this.listCards(principal);
+    return resourceField({
+      state: listed.state,
+      availability: listed.availability,
+      reason: listed.reason,
+      value: { count: listed.items.length, items: listed.items },
     });
   }
 

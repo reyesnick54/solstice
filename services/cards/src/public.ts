@@ -11,10 +11,15 @@ export {
   SimulatedTapToPayAdapter,
   signWalletCallback,
   signAcceptanceCallback,
+  ingestProviderWebhook,
+  toConsumerCard,
+  CARD_WEBHOOK_EVENT_TYPES,
   type CardHoldGateway,
   type CardsServiceOutcome,
   type ProcessorCallbackEnvelope,
   type WalletServiceOutcome,
   type AcceptanceServiceOutcome,
+  type ConsumerCardResource,
 } from '../../../packages/cards/src/index.ts';
 export { createCardHoldGateway } from './hold-gateway.ts';
+export { ConsumerCardsFacade, type ConsumerCardDetail, type ConsumerCardsOutcome } from './consumer.ts';

@@ -92,9 +92,12 @@ growth-rate field.
 ## Feature capabilities
 
 `GET /v1/consumer/capabilities` and `GET /v1/consumer/features/{id}`.
-`investments`, `cards`, and `exchange_trading` are disabled and return
-`FEATURE_UNAVAILABLE`. Lovable must use server capability/eligibility
-responses.
+`investments` and `exchange_trading` on the `/v1/consumer` platform
+surface remain feature-flagged. Consumer BFF `/api/v1/cards` is
+AVAILABLE_SIMULATION: list, detail, freeze, unfreeze, controls, and
+wallet eligibility. Live issuing is not connected. Lovable must use
+server capability/eligibility responses and must not require PAN/CVV
+to render the card dashboard.
 
 ## Approval states
 

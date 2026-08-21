@@ -156,6 +156,16 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe|emv_data|tokenized_pan)\b/i.test(v008.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V031 extends cards with PCI-minimized display metadata only', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v031 = files.find((file) => file.version === 31);
+    assert.ok(v031);
+    assert.equal(v031.filename, 'V031__cards_productization.sql');
+    assert.match(v031.sql, /wallet_provisioning_status/);
+    assert.match(v031.sql, /last4/);
+    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v031.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('customer V007 stores card records without PAN or CVV', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v007 = files.find((file) => file.version === 7);

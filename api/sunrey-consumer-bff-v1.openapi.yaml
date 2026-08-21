@@ -357,10 +357,91 @@ paths:
   /api/v1/cards:
     get:
       operationId: getCards
-      summary: Cards resource stub
+      summary: List simulated cards for the authenticated customer
+      description: PCI-minimized. last4 and expiry only. No PAN, CVV, or provider credentials. Live issuing is not connected.
       responses:
         "200":
-          description: Honest availability
+          description: Card list
+    post:
+      operationId: issueCard
+      summary: Request a simulated virtual or physical debit card
+      description: Kernel-gated. Requires step-up. Simulated issuer only.
+      responses:
+        "201":
+          description: Issued card
+        "403":
+          description: Step-up or policy refusal
+  /api/v1/cards/{id}:
+    get:
+      operationId: getCard
+      summary: Card detail with funding available balance, controls, activity, and wallet status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Card detail
+        "403":
+          description: Resource not owned
+  /api/v1/cards/{id}/freeze:
+    post:
+      operationId: freezeCard
+      summary: Freeze a card
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Frozen card
+  /api/v1/cards/{id}/unfreeze:
+    post:
+      operationId: unfreezeCard
+      summary: Unfreeze a card
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Active card
+  /api/v1/cards/{id}/controls:
+    patch:
+      operationId: patchCardControls
+      summary: Update server-enforced spending controls
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Updated card
+  /api/v1/cards/{id}/wallet:
+    get:
+      operationId: getCardWallet
+      summary: Apple/Google wallet provisioning eligibility and status
+      description: Not Apple Pay or Google Pay certification.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Wallet status
+  /api/v1/webhooks/cards:
+    post:
+      operationId: ingestCardWebhook
+      summary: Simulated card processor webhook ingestion
+      description: Phase B HMAC verification. Real schemes arrive in Phase D.
+      responses:
+        "200":
+          description: Ingest result
   /api/v1/grow:
     get:
       operationId: getGrow

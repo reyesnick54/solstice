@@ -1,4 +1,6 @@
 {
+  "name": "@solstice/platform-api",
+  "version": "0.1.0",
   "name": "@solstice/api",
   "version": "0.1.0",
   "description": "SunRey Platform API — canonical application-facing HTTP runtime, gateway, and consumer BFF",

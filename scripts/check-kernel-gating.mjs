@@ -47,6 +47,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'ingestReversalCallback', file: 'packages/cards/src/service.ts' },
   { symbol: 'ingestClearingCallback', file: 'packages/cards/src/service.ts' },
   { symbol: 'ingestRefundCallback', file: 'packages/cards/src/service.ts' },
+  { symbol: 'ingestCardStatusCallback', file: 'packages/cards/src/service.ts' },
   { symbol: 'openDispute', file: 'packages/cards/src/service.ts' },
   { symbol: 'decideDispute', file: 'packages/cards/src/service.ts' },
   { symbol: 'assessFee', file: 'packages/cards/src/service.ts' },
