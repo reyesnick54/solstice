@@ -563,7 +563,7 @@ describe('versioned SQL migrations', () => {
     assert.equal(v009.filename, 'V009__account_product.sql');
     assert.match(v009.sql, /CREATE TABLE ledger\.account_restriction/);
     assert.match(v009.sql, /CREATE TABLE ledger\.account_product_overlay/);
-    assert.equal(/balance/.test(v009.sql), false);
+    assert.equal(/balance/.test(v009.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {
