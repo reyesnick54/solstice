@@ -47,6 +47,7 @@ never be two implementations of these systems.
 | Evidence Vault | `packages/evidence` | `packages/evidence/src/vault.ts` | IMPLEMENTED |
 | Domain events | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
 | Event fabric (outbox / inbox / replay) | `packages/events` | `packages/events/src/events.ts` | IMPLEMENTED |
+| Job queue / workflow / webhook fabric | `packages/events` | `packages/events/src/jobs.ts` | IMPLEMENTED |
 | Ledger | `packages/ledger` | `packages/ledger/src/journal.ts` | IMPLEMENTED |
 | Journals / postings | `packages/ledger` | `packages/ledger/src/journal.ts` | IMPLEMENTED |
 | Class bridges | `packages/ledger` | `packages/ledger/src/types.ts` | IMPLEMENTED |

@@ -1,4 +1,4 @@
-import { asEventId, asCorrelationId, assertSafeEventPayload } from '../../../events/src/envelope.ts';
+import { assertSafeEventPayload, sealEnvelope } from '../../../events/src/envelope.ts';
 import type { DurableEventEnvelope } from '../../../events/src/envelope.ts';
 import { resolveEventSchema } from '../../../events/src/schema.ts';
 import { checkAggregateOrder } from '../../../events/src/ordering.ts';
@@ -38,25 +38,21 @@ export const eventAttackScenarios: readonly AttackScenario[] = [
 );
 
 function envelope(sequence: number, version = 1): DurableEventEnvelope {
-  return {
-    eventId: asEventId('evt_range_1'),
-    eventType: 'AccountOpened',
-    eventVersion: version,
-    schemaVersion: version,
-    occurredAt: asUtcInstant('2026-08-20T00:00:00.000Z'),
-    aggregateType: 'account',
-    aggregateId: 'acct_1',
-    aggregateSequence: sequence,
-    correlationId: asCorrelationId('corr_1'),
-    causationId: null,
-    intentId: null,
-    evidenceId: null,
-    jurisdiction: null,
-    cellId: null,
-    schemaRef: 'AccountOpened/1',
-    payload: { accountId: 'acct_1' },
-    metadata: { producer: 'range' },
-  };
+  return sealEnvelope(
+    {
+      eventId: 'evt_range_1',
+      eventType: 'AccountOpened',
+      schemaVersion: version,
+      occurredAt: asUtcInstant('2026-08-20T00:00:00.000Z'),
+      aggregateType: 'account',
+      aggregateId: 'acct_1',
+      aggregateSequence: sequence,
+      correlationId: 'corr_1',
+      producer: 'range',
+      payload: { accountId: 'acct_1' },
+    },
+    sequence,
+  );
 }
 
 export function runEventAttack(env: RangeEnvironment, scenario: AttackScenario): AttackResult {

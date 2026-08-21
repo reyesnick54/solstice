@@ -882,6 +882,31 @@ export type SurveillanceAuditPayload = {
 export type SurveillanceAlertRaisedV1 = VersionedEvent<'SurveillanceAlertRaised', 1, SurveillanceAuditPayload>;
 export type SurveillanceCaseOpenedV1 = VersionedEvent<'SurveillanceCaseOpened', 1, SurveillanceAuditPayload>;
 
+export type AsyncFabricAuditPayload = {
+  readonly workflowId?: string;
+  readonly workflowType?: string;
+  readonly workflowState?: string;
+  readonly currentStep?: string;
+  readonly jobId?: string;
+  readonly jobType?: string;
+  readonly jobState?: string;
+  readonly receiptId?: string;
+  readonly deliveryId?: string;
+  readonly providerId?: string;
+  readonly providerEventId?: string;
+  readonly subscriptionId?: string;
+};
+
+export type WorkflowStartedV1 = VersionedEvent<'WorkflowStarted', 1, AsyncFabricAuditPayload>;
+export type WorkflowCompletedV1 = VersionedEvent<'WorkflowCompleted', 1, AsyncFabricAuditPayload>;
+export type WorkflowFailedV1 = VersionedEvent<'WorkflowFailed', 1, AsyncFabricAuditPayload>;
+export type JobEnqueuedV1 = VersionedEvent<'JobEnqueued', 1, AsyncFabricAuditPayload>;
+export type JobDeadLetteredV1 = VersionedEvent<'JobDeadLettered', 1, AsyncFabricAuditPayload>;
+export type ProviderWebhookAcceptedV1 = VersionedEvent<'ProviderWebhookAccepted', 1, AsyncFabricAuditPayload>;
+export type ProviderWebhookRejectedV1 = VersionedEvent<'ProviderWebhookRejected', 1, AsyncFabricAuditPayload>;
+export type OutboundWebhookDeliveredV1 = VersionedEvent<'OutboundWebhookDelivered', 1, AsyncFabricAuditPayload>;
+export type OutboundWebhookFailedV1 = VersionedEvent<'OutboundWebhookFailed', 1, AsyncFabricAuditPayload>;
+
 export type EconomicGraphAuditPayload = {
   readonly graphId?: string;
   readonly nodeId?: string;
@@ -1257,7 +1282,16 @@ export type DomainEvent =
   | CustodyWithdrawalUnknownV1
   | CustodyWithdrawalSettledV1
   | SurveillanceAlertRaisedV1
-  | SurveillanceCaseOpenedV1;
+  | SurveillanceCaseOpenedV1
+  | WorkflowStartedV1
+  | WorkflowCompletedV1
+  | WorkflowFailedV1
+  | JobEnqueuedV1
+  | JobDeadLetteredV1
+  | ProviderWebhookAcceptedV1
+  | ProviderWebhookRejectedV1
+  | OutboundWebhookDeliveredV1
+  | OutboundWebhookFailedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
@@ -1332,6 +1366,11 @@ export class DomainEventLog {
         cellId: event.cellId,
         schemaRef: event.schemaRef,
         metadata: event.metadata,
+        producer: event.producer,
+        actor: event.actor,
+        subject: event.subject,
+        environment: event.environment,
+        requestId: event.requestId,
       },
       next,
     ) as SealedDomainEvent;

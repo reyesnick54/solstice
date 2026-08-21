@@ -73,7 +73,7 @@
     {
       "id": "events",
       "authority": "Events",
-      "role": "versioned domain events",
+      "role": "versioned domain events, jobs, workflows, webhooks",
       "owner": "packages/events",
       "authoritativePath": "packages/events/src/events.ts",
       "unique": true
@@ -402,7 +402,7 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "versioned-event-fabric",
-      "deprecatedAlternatives": ["packages/events-v2", "packages/event-bus"]
+      "deprecatedAlternatives": ["packages/events-v2", "packages/event-bus", "packages/jobs", "packages/workflow", "packages/webhooks"]
     },
     {
       "domain": "PERSISTENCE",

@@ -45,6 +45,10 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'exchange',
   'custody',
   'surveillance',
+  'workflow',
+  'job',
+  'provider',
+  'webhook',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -290,6 +294,15 @@ export const EVENT_TYPE_NAMES = [
   'CustodyWithdrawalSettled',
   'SurveillanceAlertRaised',
   'SurveillanceCaseOpened',
+  'WorkflowStarted',
+  'WorkflowCompleted',
+  'WorkflowFailed',
+  'JobEnqueued',
+  'JobDeadLettered',
+  'ProviderWebhookAccepted',
+  'ProviderWebhookRejected',
+  'OutboundWebhookDelivered',
+  'OutboundWebhookFailed',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -527,6 +540,15 @@ export const EVENT_SCHEMA_REFS = {
   CustodyWithdrawalSettled: 'solstice.custody.withdrawal.settled/1',
   SurveillanceAlertRaised: 'solstice.surveillance.alert.raised/1',
   SurveillanceCaseOpened: 'solstice.surveillance.case.opened/1',
+  WorkflowStarted: 'solstice.workflow.started/1',
+  WorkflowCompleted: 'solstice.workflow.completed/1',
+  WorkflowFailed: 'solstice.workflow.failed/1',
+  JobEnqueued: 'solstice.job.enqueued/1',
+  JobDeadLettered: 'solstice.job.dead_lettered/1',
+  ProviderWebhookAccepted: 'solstice.provider.webhook.accepted/1',
+  ProviderWebhookRejected: 'solstice.provider.webhook.rejected/1',
+  OutboundWebhookDelivered: 'solstice.webhook.outbound.delivered/1',
+  OutboundWebhookFailed: 'solstice.webhook.outbound.failed/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -764,6 +786,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   CustodyWithdrawalSettled: 'custody',
   SurveillanceAlertRaised: 'surveillance',
   SurveillanceCaseOpened: 'surveillance',
+  WorkflowStarted: 'workflow',
+  WorkflowCompleted: 'workflow',
+  WorkflowFailed: 'workflow',
+  JobEnqueued: 'job',
+  JobDeadLettered: 'job',
+  ProviderWebhookAccepted: 'provider',
+  ProviderWebhookRejected: 'provider',
+  OutboundWebhookDelivered: 'webhook',
+  OutboundWebhookFailed: 'webhook',
 };
 
 export const HISTORICAL_EVENT_SCHEMA_PREFIX = 'solstice.' as const;
