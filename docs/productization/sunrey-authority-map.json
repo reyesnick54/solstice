@@ -1,0 +1,734 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.productization.authority-map.v1",
+  "status": "FROZEN_FOR_PRODUCTIZATION",
+  "source": "docs/architecture/constitution.md + packages/sunrey-chain/src/production-handoff/engineering-closure/authority.ts",
+  "productionPosture": {
+    "CORE_CODE_COMPLETE_CANDIDATE": true,
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "production_authorized": false,
+    "ENVIRONMENT": "simulation"
+  },
+  "nonNegotiable": {
+    "LEDGER": "authoritative financial journal",
+    "KERNEL": "policy/regulatory control",
+    "EXECUTION_AUTHORITY": "regulated execution boundary",
+    "AI": "analysis/proposal system, not autonomous financial authority",
+    "FRONTEND": "client of controlled APIs, never balance authority",
+    "SUNREY_CHAIN": "native blockchain authority",
+    "SUNREY_COIN_MOONREY_COIN": "proprietary SunRey Chain assets",
+    "PROVIDERS": "adapters behind SunRey domain interfaces",
+    "PRODUCTION": "disabled until explicit external/human gates are satisfied"
+  },
+  "authorities": [
+    {
+      "id": "money",
+      "authority": "Money",
+      "role": "bigint minor-unit monetary type",
+      "owner": "packages/money",
+      "authoritativePath": "packages/money/src/money.ts",
+      "unique": true
+    },
+    {
+      "id": "identity",
+      "authority": "Identity",
+      "role": "SunRey Identity and ActorContext",
+      "owner": "packages/identity",
+      "authoritativePath": "packages/identity/src/service.ts",
+      "unique": true
+    },
+    {
+      "id": "kernel",
+      "authority": "Kernel",
+      "role": "policy/regulatory control",
+      "owner": "packages/kernel",
+      "authoritativePath": "packages/kernel/src/kernel.ts",
+      "unique": true
+    },
+    {
+      "id": "execution-authority",
+      "authority": "Execution Authority",
+      "role": "regulated execution boundary",
+      "owner": "packages/permissions",
+      "authoritativePath": "packages/permissions/src/execution-authority.ts",
+      "unique": true
+    },
+    {
+      "id": "ledger",
+      "authority": "Ledger",
+      "role": "authoritative financial journal",
+      "owner": "packages/ledger",
+      "authoritativePath": "packages/ledger/src/journal.ts",
+      "unique": true
+    },
+    {
+      "id": "evidence-vault",
+      "authority": "Evidence Vault",
+      "role": "hash-chained evidence",
+      "owner": "packages/evidence",
+      "authoritativePath": "packages/evidence/src/vault.ts",
+      "unique": true
+    },
+    {
+      "id": "events",
+      "authority": "Events",
+      "role": "versioned domain events",
+      "owner": "packages/events",
+      "authoritativePath": "packages/events/src/events.ts",
+      "unique": true
+    },
+    {
+      "id": "persistence",
+      "authority": "Persistence",
+      "role": "PostgreSQL adapter; not a second ledger",
+      "owner": "packages/persistence",
+      "authoritativePath": "packages/persistence/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "sunrey-chain-consensus",
+      "authority": "SunRey Chain consensus",
+      "role": "native blockchain authority",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/rust/crates/consensus",
+      "unique": true
+    },
+    {
+      "id": "native-asset-supply",
+      "authority": "native asset supply",
+      "role": "SUNREY_COIN / MOONREY_COIN supply book",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/supply.ts",
+      "unique": true
+    },
+    {
+      "id": "monetary-issuance",
+      "authority": "Chunk 71 monetary issuance",
+      "role": "canonical mint / monetary constitution",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/constitution.ts",
+      "unique": true
+    },
+    {
+      "id": "asset-supply-book",
+      "authority": "AssetSupplyBook",
+      "role": "canonical supply authority",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/supply.ts",
+      "unique": true
+    },
+    {
+      "id": "hin-rights",
+      "authority": "HIN rights",
+      "role": "Human Information Network rights",
+      "owner": "packages/information-market",
+      "authoritativePath": "packages/information-market/src/network/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "human-contribution-registry",
+      "authority": "Human Contribution Registry",
+      "role": "verified contribution registry",
+      "owner": "packages/human-economic-contribution",
+      "authoritativePath": "packages/human-economic-contribution/src/registry.ts",
+      "unique": true
+    },
+    {
+      "id": "human-contribution-valuation",
+      "authority": "Human Contribution Valuation",
+      "role": "valuation constitution; not human-worth",
+      "owner": "packages/human-economic-contribution",
+      "authoritativePath": "packages/human-economic-contribution/src/valuation/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "oracle-consensus",
+      "authority": "Oracle consensus",
+      "role": "verified economic facts; not money",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/oracle/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "productive-event-identity",
+      "authority": "Productive Event Identity",
+      "role": "canonical productive event identity",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts",
+      "unique": true
+    },
+    {
+      "id": "attribution",
+      "authority": "Attribution",
+      "role": "governed MoonRey attribution",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "productive-value-gpuv",
+      "authority": "Productive Value / GPUV",
+      "role": "GPUV is not MoonRey",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/value-function/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "exchange",
+      "authority": "Exchange",
+      "role": "canonical Exchange; not a second ledger",
+      "owner": "packages/sunrey-exchange",
+      "authoritativePath": "packages/sunrey-exchange/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "custody",
+      "authority": "Custody",
+      "role": "provider-neutral custody control plane",
+      "owner": "packages/custody",
+      "authoritativePath": "packages/custody/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "payments",
+      "authority": "Payments",
+      "role": "cross-border payments, FX, rails",
+      "owner": "packages/payments",
+      "authoritativePath": "packages/payments/src/service.ts",
+      "unique": true
+    },
+    {
+      "id": "compliance",
+      "authority": "Compliance",
+      "role": "screening fabric inside the Kernel",
+      "owner": "packages/kernel",
+      "authoritativePath": "packages/kernel/src/compliance/fabric.ts",
+      "unique": true
+    },
+    {
+      "id": "ai-runtime",
+      "authority": "AI runtime",
+      "role": "analysis/proposal inference plane",
+      "owner": "packages/ai-runtime",
+      "authoritativePath": "packages/ai-runtime/src/runtime.ts",
+      "unique": true
+    },
+    {
+      "id": "sunrey-agent",
+      "authority": "SunRey Agent",
+      "role": "ProposalGate only; not autonomous financial authority",
+      "owner": "packages/sunrey-agent",
+      "authoritativePath": "packages/sunrey-agent/src/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "frontend",
+      "authority": "Frontend",
+      "role": "client of controlled APIs, never balance authority",
+      "owner": "apps/explorer",
+      "authoritativePath": "apps/explorer/app.js",
+      "unique": true
+    }
+  ],
+  "requiredAuthorityIds": [
+    "ledger",
+    "kernel",
+    "execution-authority",
+    "ai-runtime",
+    "sunrey-agent",
+    "frontend",
+    "sunrey-chain-consensus",
+    "native-asset-supply",
+    "monetary-issuance",
+    "payments",
+    "exchange"
+  ],
+  "name": "sunrey-authority-map",
+  "purpose": "Machine-readable architectural authority map for SunRey productization. Not a second constitution, ledger, kernel, or production authorization.",
+  "freezeDocument": "docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md",
+  "engineeringRulesDocument": "docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md",
+  "inventorySource": {
+    "prompt2InventoryPath": "docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md",
+    "prompt2InventoryPresent": false,
+    "canonicalSources": [
+      "docs/architecture/constitution.md",
+      "docs/architecture/manifest.json",
+      "docs/architecture/SUNREY_ENGINEERING_CLOSURE.md",
+      "docs/architecture/sunrey-chain-authority-matrix.md",
+      "docs/architecture/native-asset-authority-boundary.md"
+    ]
+  },
+  "deprecationStates": [
+    "ACTIVE_CANONICAL",
+    "ACTIVE_SPECIALIZED",
+    "DEPRECATED",
+    "COMPATIBILITY_ONLY",
+    "MIGRATION_PENDING",
+    "TEST_ONLY",
+    "SIMULATION_ONLY",
+    "REMOVE_AFTER_MIGRATION"
+  ],
+  "providerLifecycleStates": [
+    "SIMULATED",
+    "SANDBOX",
+    "CERTIFICATION",
+    "PREPRODUCTION",
+    "LIMITED_LIVE",
+    "PRODUCTION"
+  ],
+  "domains": [
+    {
+      "domain": "MONEY_REPRESENTATION",
+      "canonicalPath": "packages/money/src/money.ts",
+      "canonicalOwner": "packages/money",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": false,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "bigint-minor-units",
+      "deprecatedAlternatives": ["packages/money-v2", "packages/currency"]
+    },
+    {
+      "domain": "LEDGER",
+      "canonicalPath": "packages/ledger/src/journal.ts",
+      "canonicalOwner": "packages/ledger",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "append-only-journals",
+      "deprecatedAlternatives": ["packages/ledger-v2", "packages/financial-ledger", "packages/double-entry"]
+    },
+    {
+      "domain": "BALANCES",
+      "canonicalPath": "services/accounts/src/balances.ts",
+      "canonicalOwner": "services/accounts",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": false,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "ledger-projection",
+      "deprecatedAlternatives": ["packages/balances", "packages/account-balance"]
+    },
+    {
+      "domain": "IDENTITY",
+      "canonicalPath": "packages/identity/src/service.ts",
+      "canonicalOwner": "packages/identity",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "identity-actor-context",
+      "deprecatedAlternatives": ["packages/identity-v2", "packages/kyc"]
+    },
+    {
+      "domain": "AUTHENTICATION",
+      "canonicalPath": "packages/identity/src/auth.ts",
+      "canonicalOwner": "packages/identity",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "session-credential-metadata",
+      "deprecatedAlternatives": ["packages/auth", "packages/authentication"]
+    },
+    {
+      "domain": "AUTHORIZATION",
+      "canonicalPath": "packages/identity/src/capability.ts",
+      "canonicalOwner": "packages/identity",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "actor-capabilities",
+      "deprecatedAlternatives": ["packages/authorization", "packages/rbac"]
+    },
+    {
+      "domain": "KERNEL_POLICY",
+      "canonicalPath": "packages/kernel/src/kernel.ts",
+      "canonicalOwner": "packages/kernel",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "policy-packs-and-decisions",
+      "deprecatedAlternatives": ["packages/kernel-v2", "packages/policy-engine", "packages/compliance-kernel"]
+    },
+    {
+      "domain": "EXECUTION_AUTHORITY",
+      "canonicalPath": "packages/permissions/src/execution-authority.ts",
+      "canonicalOwner": "packages/permissions",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "signed-execution-authority",
+      "deprecatedAlternatives": ["packages/execution-authority", "packages/authority-issuer"]
+    },
+    {
+      "domain": "COMPLIANCE",
+      "canonicalPath": "packages/kernel/src/compliance/fabric.ts",
+      "canonicalOwner": "packages/kernel",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "compliance-cases",
+      "deprecatedAlternatives": ["packages/compliance", "packages/aml", "packages/kyc-engine"]
+    },
+    {
+      "domain": "EVIDENCE",
+      "canonicalPath": "packages/evidence/src/vault.ts",
+      "canonicalOwner": "packages/evidence",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "hash-chained-evidence-vault",
+      "deprecatedAlternatives": ["packages/evidence-v2", "packages/audit-log"]
+    },
+    {
+      "domain": "EVENTS",
+      "canonicalPath": "packages/events/src/events.ts",
+      "canonicalOwner": "packages/events",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "versioned-event-fabric",
+      "deprecatedAlternatives": ["packages/events-v2", "packages/event-bus"]
+    },
+    {
+      "domain": "PERSISTENCE",
+      "canonicalPath": "packages/persistence/src/index.ts",
+      "canonicalOwner": "packages/persistence",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "postgres-adapter",
+      "deprecatedAlternatives": ["packages/database", "packages/orm", "packages/sunrey-db"]
+    },
+    {
+      "domain": "ACCOUNTS",
+      "canonicalPath": "packages/domain/src/account.ts",
+      "canonicalOwner": "packages/domain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "account-entities",
+      "deprecatedAlternatives": ["packages/accounts", "packages/account-core"]
+    },
+    {
+      "domain": "PAYMENTS",
+      "canonicalPath": "packages/payments/src/service.ts",
+      "canonicalOwner": "packages/payments",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "payment-instructions",
+      "deprecatedAlternatives": ["packages/payments-v2", "packages/rails"]
+    },
+    {
+      "domain": "CARDS",
+      "canonicalPath": "packages/cards/src/service.ts",
+      "canonicalOwner": "packages/cards",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "card-platform",
+      "deprecatedAlternatives": ["packages/card-processing", "packages/card-core", "packages/issuer"]
+    },
+    {
+      "domain": "FX",
+      "canonicalPath": "packages/payments/src/fx-quote.ts",
+      "canonicalOwner": "packages/payments",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "fx-quotes",
+      "deprecatedAlternatives": ["packages/fx", "packages/fx-engine"]
+    },
+    {
+      "domain": "TREASURY",
+      "canonicalPath": "packages/treasury/src/service.ts",
+      "canonicalOwner": "packages/treasury",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "treasury-operations",
+      "deprecatedAlternatives": ["packages/treasury-v2", "packages/reserve-bank"]
+    },
+    {
+      "domain": "INVESTMENTS",
+      "canonicalPath": "packages/investments/src/service.ts",
+      "canonicalOwner": "packages/investments",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "investment-accounts-and-lots",
+      "deprecatedAlternatives": ["packages/investments-v2", "packages/broker"]
+    },
+    {
+      "domain": "PERSONAL_ECONOMIC_GRAPH",
+      "canonicalPath": "packages/personal-economic-graph/src/service.ts",
+      "canonicalOwner": "packages/personal-economic-graph",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "derived-financial-profile",
+      "deprecatedAlternatives": ["packages/peg-v2", "packages/financial-graph"]
+    },
+    {
+      "domain": "GROWTH_ORCHESTRATOR",
+      "canonicalPath": "packages/platform/src/service.ts",
+      "canonicalOwner": "packages/platform",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "growth-plans",
+      "deprecatedAlternatives": ["packages/platform-v2", "packages/growth-engine"]
+    },
+    {
+      "domain": "AI_MODEL_GATEWAY",
+      "canonicalPath": "packages/ai-runtime/src/runtime.ts",
+      "canonicalOwner": "packages/ai-runtime",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "inference-traces",
+      "deprecatedAlternatives": ["packages/ai-gateway", "packages/llm-runtime", "packages/model-gateway"]
+    },
+    {
+      "domain": "SUNREY_AGENT",
+      "canonicalPath": "packages/sunrey-agent/src/engine.ts",
+      "canonicalOwner": "packages/sunrey-agent",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "mandates-and-proposals",
+      "deprecatedAlternatives": ["packages/agent-v2", "packages/user-agent-v2", "packages/financial-automation"]
+    },
+    {
+      "domain": "PERSONAL_ECONOMY_AGENT",
+      "canonicalPath": "packages/agent/src/service.ts",
+      "canonicalOwner": "packages/agent",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": false,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "advisory-proposals",
+      "deprecatedAlternatives": ["packages/personal-agent", "packages/pea-v2"]
+    },
+    {
+      "domain": "AGENT_TOOLS",
+      "canonicalPath": "packages/sunrey-exchange/src/agent-tool.ts",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": false,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "tool-invocations",
+      "deprecatedAlternatives": ["packages/agent-tools", "packages/tool-runtime"]
+    },
+    {
+      "domain": "AGENT_APPROVALS",
+      "canonicalPath": "packages/sunrey-agent/src/policy.ts",
+      "canonicalOwner": "packages/sunrey-agent",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "human-approval-records",
+      "deprecatedAlternatives": ["packages/approvals", "packages/agent-approvals"]
+    },
+    {
+      "domain": "SUNREY_EXCHANGE",
+      "canonicalPath": "packages/sunrey-exchange/src/index.ts",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "orders-and-fills",
+      "deprecatedAlternatives": ["packages/sunrey-exchange-v2", "packages/exchange", "packages/matching-engine"]
+    },
+    {
+      "domain": "MATCHING",
+      "canonicalPath": "packages/sunrey-exchange/src/matching.ts",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "exchange-order-book",
+      "deprecatedAlternatives": ["packages/matching", "packages/order-book"]
+    },
+    {
+      "domain": "SETTLEMENT",
+      "canonicalPath": "packages/sunrey-exchange/src/native-settlement.ts",
+      "canonicalOwner": "packages/sunrey-exchange",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "clearing-via-ledger-and-chain-ports",
+      "deprecatedAlternatives": ["packages/settlement", "packages/clearing"]
+    },
+    {
+      "domain": "CUSTODY",
+      "canonicalPath": "packages/custody/src/index.ts",
+      "canonicalOwner": "packages/custody",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "custody-operational-state",
+      "deprecatedAlternatives": ["packages/custody-v2", "packages/wallet"]
+    },
+    {
+      "domain": "SUNREY_CHAIN",
+      "canonicalPath": "packages/sunrey-chain/src/index.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "protocol-native-chain-state",
+      "deprecatedAlternatives": ["packages/sunrey-chain-v2", "packages/blockchain", "packages/sunrey-blockchain"]
+    },
+    {
+      "domain": "CONSENSUS",
+      "canonicalPath": "packages/sunrey-chain/rust/crates/consensus",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "development-bft",
+      "deprecatedAlternatives": ["packages/consensus", "packages/consensus-engine", "packages/tendermint"]
+    },
+    {
+      "domain": "NATIVE_ASSET_SUPPLY",
+      "canonicalPath": "packages/sunrey-chain/src/economics/supply.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "asset-supply-book",
+      "deprecatedAlternatives": ["packages/native-mint", "packages/asset-supply", "packages/coin-supply"]
+    },
+    {
+      "domain": "SUNREY_COIN",
+      "canonicalPath": "packages/sunrey-coin/src/service.ts",
+      "canonicalOwner": "packages/sunrey-coin",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "application-coin-journals",
+      "deprecatedAlternatives": ["packages/sunrey-coin-v2", "packages/coin"]
+    },
+    {
+      "domain": "MOONREY_COIN",
+      "canonicalPath": "packages/sunrey-chain/src/economics/supply.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "protocol-native-moonrey",
+      "deprecatedAlternatives": ["packages/moonrey-coin", "packages/moonrey"]
+    },
+    {
+      "domain": "ORACLES",
+      "canonicalPath": "packages/sunrey-chain/src/oracle/engine.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "signed-oracle-facts",
+      "deprecatedAlternatives": ["packages/oracles", "packages/oracle-v2"]
+    },
+    {
+      "domain": "HIN",
+      "canonicalPath": "packages/information-market/src/network/engine.ts",
+      "canonicalOwner": "packages/information-market",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "information-rights",
+      "deprecatedAlternatives": ["packages/hin", "packages/information-market-v2"]
+    },
+    {
+      "domain": "PERSONAL_DATA",
+      "canonicalPath": "packages/personal-data-vault/src/service.ts",
+      "canonicalOwner": "packages/personal-data-vault",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "subject-bound-encrypted-store",
+      "deprecatedAlternatives": ["packages/pdv-v2", "packages/personal-data"]
+    },
+    {
+      "domain": "CONSENT",
+      "canonicalPath": "packages/consent/src/service.ts",
+      "canonicalOwner": "packages/consent",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "consent-ledger",
+      "deprecatedAlternatives": ["packages/consent-v2", "packages/purpose-firewall"]
+    },
+    {
+      "domain": "PROVIDER_INTEGRATIONS",
+      "canonicalPath": "packages/sunrey-chain/src/providers/production-binding/types.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "provider-adapter-records",
+      "deprecatedAlternatives": ["packages/providers", "packages/integrations", "packages/provider-runtime"]
+    },
+    {
+      "domain": "OPERATIONS",
+      "canonicalPath": "packages/sunrey-chain/src/ops/index.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "ops-control-room",
+      "deprecatedAlternatives": ["packages/sunrey-ops", "packages/operations"]
+    },
+    {
+      "domain": "DEPLOYMENT",
+      "canonicalPath": "packages/sunrey-chain/src/infra/provider.ts",
+      "canonicalOwner": "packages/sunrey-chain",
+      "authorityType": "ACTIVE_CANONICAL",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "simulation-infra-posture",
+      "deprecatedAlternatives": ["packages/deploy", "packages/infrastructure"]
+    }
+  ]
+}

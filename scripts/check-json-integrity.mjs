@@ -199,6 +199,14 @@ export function collectIntegrityTargets(root = ROOT) {
       }
     }
   }
+  const productizationDir = join(root, 'docs/productization');
+  if (existsSync(productizationDir)) {
+    for (const entry of readdirSync(productizationDir).sort()) {
+      if (entry.endsWith('.json')) {
+        targets.push(join(productizationDir, entry));
+      }
+    }
+  }
   return targets;
 }
 
