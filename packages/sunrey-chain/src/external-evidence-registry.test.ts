@@ -37,7 +37,7 @@ import {
   stringSlotSatisfiesExternalReadiness,
   supersededPreservesHistory,
   verificationSurvivesSemanticChange,
-} from './mainnet/index.ts';
+} from './mainnet/external-evidence/index.ts';
 import { activationFirewallConsumesRegistryOnly, currentRepositorySnapshot, evaluateProductionEconomicActivation, withSnapshot } from './economics/production-activation/index.ts';
 import { evaluateEligibility, runHsmContractSuite } from './providers/index.ts';
 
