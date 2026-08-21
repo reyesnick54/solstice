@@ -18,20 +18,27 @@ import { runLaunchAbortRecoveryRehearsal } from './rehearsals.ts';
 
 export function runLaunchAbortRecoveryDemo(): Record<string, unknown> {
   const rehearsal = runLaunchAbortRecoveryRehearsal();
+  const staged = rehearsal.stagedActivation;
   return {
     environment: ENVIRONMENT,
-    stagedActivation: rehearsal.stagedActivation,
-    oracleProviderSuspended: rehearsal.oracle.suspend.accepted,
-    moonreyIssuanceRestricted: rehearsal.oracle.issuance.accepted,
+    stagedActivation: {
+      composed: staged.staged,
+      moonreyPaused: staged.moonreyPaused,
+      sunreyIssuanceIndependent: staged.sunreyIssuanceIndependent,
+      productionActive: staged.productionActive,
+    },
+    oracleProviderSuspended: staged.oracleProviderSuspended,
+    moonreyIssuanceRestricted: staged.moonreyIssuanceRestricted,
     unrelatedDomainsAvailable: {
-      exchange: rehearsal.oracle.exchangeStillAvailable,
-      payments: rehearsal.oracle.paymentsStillAvailable,
+      exchange: staged.exchangeStillAvailable,
+      payments: staged.paymentsStillAvailable,
     },
     reconciliationRequired: rehearsal.resume.gate.state,
-    incidentEndAutoResumes: rehearsal.resume.incidentEndEnabledRuntime,
-    humanApprovedResumption: rehearsal.resume.humanResumed,
-    hsmSigningRestricted: rehearsal.hsm.signingBlocked,
-    hsmMovedFunds: rehearsal.hsm.fundsMoved,
+    reconciliationClean: staged.reconciliationClean,
+    incidentEndAutoResumes: staged.incidentEndAutoResumes,
+    humanApprovedResumption: staged.humanApprovedResumption,
+    hsmSigningRestricted: staged.hsmSigningRestricted,
+    hsmMovedFunds: staged.hsmMovedFunds,
     liveFlags: {
       LIVE_MONEY_ENABLED,
       LIVE_PAYMENTS_ENABLED,

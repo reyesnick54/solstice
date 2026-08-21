@@ -36,6 +36,7 @@ import {
   assembleResumptionCandidate,
   attemptProtocolRollback,
   availableUnrelatedCapabilities,
+  composeStagedActivationAbortRecovery,
   expireRestrictionWithoutResume,
   mismatchedSupplyBook,
   planApplicationRollback,
@@ -363,5 +364,28 @@ describe('CHUNK-167 launch abort and recovery', () => {
     assert.equal(existsSync(join(ROOT, 'packages/rollback-engine')), false);
     assert.equal(existsSync(join(ROOT, 'packages/incident-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/recovery-v2')), false);
+  });
+
+  it('25. staged activation composes with abort and recovery', () => {
+    const composed = composeStagedActivationAbortRecovery();
+    assert.equal(composed.staged, true);
+    assert.equal(composed.moonreyPaused, true);
+    assert.equal(composed.oracleProviderSuspended, true);
+    assert.equal(composed.moonreyIssuanceRestricted, true);
+    assert.equal(composed.sunreyIssuanceIndependent, true);
+    assert.equal(composed.exchangeStillAvailable, true);
+    assert.equal(composed.paymentsStillAvailable, true);
+    assert.equal(composed.reconciliationClean, true);
+    assert.equal(composed.overwrite.bookOverwritten, false);
+    assert.equal(composed.incidentEndAutoResumes, false);
+    assert.equal(composed.humanApprovedResumption, true);
+    assert.equal(composed.hsmSigningRestricted, true);
+    assert.equal(composed.hsmMovedFunds, false);
+    assert.equal(composed.pauseCannotMint, true);
+    assert.equal(composed.pauseCannotRewriteHistory, true);
+    assert.equal(composed.productionActive, false);
+    const rehearsal = runLaunchAbortRecoveryRehearsal();
+    assert.equal(rehearsal.stagedActivation.moonreyPaused, true);
+    assert.equal(rehearsal.stagedActivation.hsmSigningRestricted, true);
   });
 });

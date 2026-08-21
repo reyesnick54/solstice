@@ -1667,10 +1667,12 @@ restrictions, rollback semantics, recovery gates, and resumption
 authorization rehearsal by extending
 `packages/sunrey-chain/src/governance-ops`,
 `packages/sunrey-chain/src/post-genesis`, and
-`packages/sunrey-chain/src/production-handoff`. It does not create a
-second emergency authority. Application rollback is not chain-history
-rollback. Resumption is independently authorized. The evaluator
-returns `mustStop: false`. Do not create `packages/kill-switch`,
-`packages/emergency-admin`, `packages/rollback-engine`,
-`packages/incident-v2`, or `packages/recovery-v2`. See
+`packages/sunrey-chain/src/production-handoff`. It composes with
+Chunk 166 staged-activation pause and readiness gates. It does not
+create a second emergency authority. Application rollback is not
+chain-history rollback. Resumption is independently authorized. The
+evaluator returns `mustStop: false`. Do not create
+`packages/kill-switch`, `packages/emergency-admin`,
+`packages/rollback-engine`, `packages/incident-v2`, or
+`packages/recovery-v2`. See
 [`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).

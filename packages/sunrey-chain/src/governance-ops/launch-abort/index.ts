@@ -32,6 +32,7 @@ export {
   recommendEmergencyAction,
   refuseAiEmergencyApproval,
 } from './resumption.ts';
+export { composeStagedActivationAbortRecovery } from './compose-staged.ts';
 export {
   rehearseAiBoundary,
   rehearseApplicationReleaseRegression,

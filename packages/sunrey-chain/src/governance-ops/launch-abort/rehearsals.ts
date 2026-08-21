@@ -29,6 +29,7 @@ import {
   refuseAiEmergencyApproval,
 } from './resumption.ts';
 import type { IndependentCapability } from '../../post-genesis/types.ts';
+import { composeStagedActivationAbortRecovery } from './compose-staged.ts';
 
 function emergencyPackage(packageId: string): GovernanceOperationPackage {
   return buildOperationPackage({
@@ -409,11 +410,7 @@ export function rehearseForbiddenEmergencyPowers() {
 }
 
 export function runLaunchAbortRecoveryRehearsal() {
-  const stagedActivation = Object.freeze({
-    capability: 'MOONREY_COIN_NATIVE_ASSET' as const,
-    staged: true,
-    productionActive: false,
-  });
+  const stagedActivation = composeStagedActivationAbortRecovery();
   const oracle = rehearseOracleProviderCompromise();
   const resume = rehearseResumptionIndependence();
   const hsm = rehearseHsmCompromise();

@@ -38,10 +38,29 @@ AI / S3M / Grok may detect, summarize, recommend, and draft. They may
 not activate emergency authority, resume a capability, rewrite a
 balance, mint, or sign a governance action.
 
+## Composition with Chunk 166
+
+The launch-abort rehearsal composes with the Chunk 166 staged
+activation owner at
+`packages/sunrey-chain/src/post-genesis/staged-activation`. Pause and
+readiness gates stay on that owner. Emergency restriction and
+resumption stay on governance-ops.
+
+The required rehearsal path is:
+
+1. Staged activation observation
+2. Oracle integrity incident
+3. Domain-scoped pause plus provider suspension
+4. MoonRey issuance restriction
+5. Unrelated domains remain available
+6. Supply reconciliation (no overwrite)
+7. Human-approved resumption
+8. HSM signing restriction
+
 ## Owners
 
 - Emergency governance: `packages/sunrey-chain/src/governance-ops`
-- Post-genesis restrictions and recovery gates: `packages/sunrey-chain/src/post-genesis`
+- Post-genesis restrictions, staged-activation pause/gates, and recovery gates: `packages/sunrey-chain/src/post-genesis`
 - Production change / rollback records: `packages/sunrey-chain/src/production-handoff`
 
 Do not create `packages/kill-switch`, `packages/emergency-admin`,
