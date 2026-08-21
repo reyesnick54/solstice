@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.productization.architecture-freeze.v1",
+  "status": "FROZEN_FOR_PRODUCTIZATION",
+  "authorityMap": "docs/productization/sunrey-authority-map.json",
+  "productionPosture": {
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "production_authorized": false
+  },
+  "forbiddenPackages": [
+    "packages/sunrey-core",
+    "packages/platform-v2",
+    "packages/final-architecture",
+    "packages/super-app",
+    "packages/everything",
+    "packages/production-v2",
+    "packages/moonrey-coin",
+    "packages/ledger-v2",
+    "packages/second-ledger",
+    "packages/licensing",
+    "packages/global-regulation",
+    "packages/country-law",
+    "packages/legal-engine",
+    "packages/kill-switch",
+    "packages/emergency-admin",
+    "packages/rollback-engine",
+    "packages/incident-v2",
+    "packages/recovery-v2",
+    "packages/activation",
+    "packages/canary",
+    "packages/mainnet-launch",
+    "packages/product-switches",
+    "packages/ai-authority",
+    "packages/agent-authority",
+    "packages/agent-execution"
+  ],
+  "alternateLedgerOwners": [
+    "packages/ledger-v2",
+    "packages/second-ledger",
+    "packages/financial-journal",
+    "packages/accounting-v2"
+  ],
+  "deprecatedDependencies": [
+    {
+      "id": "packages/moonrey-coin",
+      "reason": "SUPERSEDED by sunrey-native-assets and moonrey-issuance-engine"
+    },
+    {
+      "id": "packages/blockchain-node",
+      "reason": "placeholder capability; canonical node lives in packages/sunrey-chain"
+    }
+  ],
+  "agentPrivilege": {
+    "packages": [
+      "packages/agent",
+      "packages/sunrey-agent",
+      "packages/ai-runtime"
+    ],
+    "forbiddenImportSubstrings": [
+      "AuthorityIssuer",
+      "packages/ledger/src/journal",
+      "new AuthorityIssuer"
+    ],
+    "forbiddenCallPatterns": [
+      "postJournal(",
+      "AuthorityIssuer.issue",
+      "issuer.issue("
+    ],
+    "allowMentionInIsolationFiles": true
+  },
+  "liveFlagFiles": [
+    "packages/config/src/flags.ts",
+    "packages/sunrey-chain/src/production-handoff/engineering-closure/types.ts",
+    "infra/sunrey-production/environments/production.tfvars.json"
+  ]
+}
