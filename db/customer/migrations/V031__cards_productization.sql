@@ -1,4 +1,4 @@
--- V030 Phase C Prompt 5 card productization columns.
+-- V031 Phase C Prompt 5 card productization columns.
 -- last4 and expiry month/year only. Never PAN, CVV, PIN, or track data.
 
 ALTER TABLE cards.card

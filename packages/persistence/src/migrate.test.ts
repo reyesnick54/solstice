@@ -156,13 +156,14 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe|emv_data|tokenized_pan)\b/i.test(v008.sql.replace(/--[^\n]*/g, '')), false);
   });
 
-  it('customer V030 extends cards with PCI-minimized display metadata only', () => {
+  it('customer V031 extends cards with PCI-minimized display metadata only', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v030 = files.find((file) => file.version === 30);
-    assert.ok(v030);
-    assert.match(v030.sql, /wallet_provisioning_status/);
-    assert.match(v030.sql, /last4/);
-    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v030.sql.replace(/--[^\n]*/g, '')), false);
+    const v031 = files.find((file) => file.version === 31);
+    assert.ok(v031);
+    assert.equal(v031.filename, 'V031__cards_productization.sql');
+    assert.match(v031.sql, /wallet_provisioning_status/);
+    assert.match(v031.sql, /last4/);
+    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v031.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('customer V007 stores card records without PAN or CVV', () => {
@@ -496,15 +497,15 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE/i.test(v028.sql), false);
   });
 
-  it('customer V029 adds platform API stores without becoming a ledger', () => {
+  it('customer V030 adds platform API stores without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v029 = files.find((file) => file.version === 29);
-    assert.ok(v029);
-    assert.equal(v029.filename, 'V029__platform_api.sql');
-    assert.match(v029.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
-    assert.match(v029.sql, /CREATE TABLE platform_api\.idempotency_record/);
-    assert.match(v029.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v029.sql), false);
+    const v030 = files.find((file) => file.version === 30);
+    assert.ok(v030);
+    assert.equal(v030.filename, 'V030__platform_api.sql');
+    assert.match(v030.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
+    assert.match(v030.sql, /CREATE TABLE platform_api\.idempotency_record/);
+    assert.match(v030.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
   it('security V002 stores credential descriptor references without secret values', () => {
