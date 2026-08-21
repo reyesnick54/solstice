@@ -19,7 +19,7 @@ export function sandboxIdentityProfile(): IdentityAdapterProfile {
     version: 'phase-d-03/1',
     lifecycle: 'SANDBOX',
     environment: 'SANDBOX',
-    capabilities: Object.freeze(['IDENTITY_VERIFICATION', 'DOCUMENT_VERIFICATION', 'KYC', 'KYB', 'ONGOING_MONITORING']),
+    capabilities: Object.freeze(['IDENTITY_VERIFICATION', 'DOCUMENT_VERIFICATION', 'KYC', 'KYB', 'ONGOING_MONITORING'] as const),
     health: 'HEALTHY',
     certified: false,
     credentialRef: secretRef('simulation', 'kyc-worker-credential'),

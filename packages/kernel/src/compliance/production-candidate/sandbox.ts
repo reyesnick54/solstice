@@ -9,7 +9,7 @@ export function sandboxComplianceProfile(): ComplianceAdapterProfile {
     version: 'phase-d-03/1',
     lifecycle: 'SANDBOX',
     environment: 'SANDBOX',
-    capabilities: Object.freeze(['SANCTIONS', 'PEP', 'ADVERSE_MEDIA', 'AML', 'FRAUD', 'BLOCKCHAIN_RISK']),
+    capabilities: Object.freeze(['SANCTIONS', 'PEP', 'ADVERSE_MEDIA', 'AML', 'FRAUD', 'BLOCKCHAIN_RISK'] as const),
     health: 'HEALTHY',
     certified: false,
     credentialRef: secretRef('simulation', 'screening-worker-credential'),
