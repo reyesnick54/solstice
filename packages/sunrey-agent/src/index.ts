@@ -24,6 +24,11 @@ export { createAgentSandboxScenario } from './sandbox.ts';
 export { AGENT_MANDATE_SAFETY, createAgentMandateSafetyModel, exploreAgentMandateSafety } from './formal.ts';
 export { runSunReyAgent, agentCliUsage, AGENT_CLI_COMMANDS } from './cli.ts';
 export { SUNREY_AGENT_ISOLATION } from './isolation.ts';
+export {
+  assertAgentCannotSelfApprove,
+  evaluateAgentHumanApproval,
+  type AgentSafetyActors,
+} from './safety.ts';
 export { InMemoryAgentMandateStore } from './store.ts';
 export {
   AGENT_ACTION_CLASSES,

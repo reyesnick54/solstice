@@ -252,6 +252,10 @@ The only action types on this tree are declared in
 - `CANCEL_EXCHANGE_ORDER`
 - `SETTLE_EXCHANGE_TRADE`
 - `HALT_EXCHANGE`
+- `REHEARSE_AUTHORITY_PATH`
+
+`REHEARSE_AUTHORITY_PATH` is TEST_ONLY. It rehearses the authority
+path and records evidence. It does not post a journal or move money.
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.

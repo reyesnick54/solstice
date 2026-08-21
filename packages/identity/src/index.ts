@@ -51,6 +51,57 @@ export {
   type CapabilityGrant,
   type IdentityCapability,
 } from './capability.ts';
+export {
+  STAFF_ONLY_CAPABILITIES,
+  STAFF_ROLES,
+  STAFF_ROLE_CAPABILITIES,
+  isStaffOnlyCapability,
+  isStaffRole,
+  staffRolesFromCapabilities,
+  type StaffRole,
+} from './admin-roles.ts';
+export {
+  PRINCIPAL_KINDS,
+  assertCapability,
+  deriveAuthorizationContext,
+  type AuthorizationAgentBinding,
+  type AuthorizationContext,
+  type AuthorizationDevice,
+  type AuthorizationRequestMetadata,
+  type AuthorizationUser,
+  type PrincipalKind,
+} from './authorization-context.ts';
+export {
+  CLIENT_DENIAL_CODES,
+  CLIENT_SAFE_DENIAL_MESSAGES,
+  PRIVILEGED_CLIENT_CLAIM_KEYS,
+  clientDenial,
+  privilegedClientClaims,
+  type ClientDenial,
+  type ClientDenialCode,
+} from './client-denial.ts';
+export {
+  FRONTEND_AUTHORITY_STATES,
+  frontendAuthorityView,
+  type FrontendAuthorityState,
+  type FrontendAuthorityView,
+} from './frontend-authority-contract.ts';
+export {
+  PRODUCT_CAPABILITIES,
+  PRODUCT_TO_IDENTITY_CAPABILITY,
+  actionTypesForProductCapability,
+  hasProductCapability,
+  identityCapabilitiesForProduct,
+  isProductCapability,
+  type ProductCapability,
+} from './product-capability.ts';
+export {
+  OWNED_RESOURCE_KINDS,
+  ResourceOwnershipRegistry,
+  isOwnedResourceKind,
+  type OwnedResource,
+  type OwnedResourceKind,
+} from './resource-ownership.ts';
 export type { IdentityFacts } from './facts.ts';
 export {
   asActorId,
