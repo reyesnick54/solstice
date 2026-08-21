@@ -33,6 +33,7 @@ export const MAX_ABS_MINOR_UNITS = 10n ** 28n;
 
 const INTEGER_STRING = /^-?\d+$/;
 const ISO_4217_ALPHA = /^[A-Z]{3}$/;
+const BOOK_CURRENCY = /^[A-Z]{3,16}$/;
 
 export function assertSafeMinorUnits(minorUnits: bigint, label = 'money'): void {
   if (typeof minorUnits !== 'bigint') {
@@ -47,7 +48,15 @@ export function assertSafeMinorUnits(minorUnits: bigint, label = 'money'): void 
 export function assertIsoCurrencyCode(currency: string): void {
   if (typeof currency !== 'string' || !ISO_4217_ALPHA.test(currency)) {
     throw new TypeError(
-      'Money requires an ISO 4217 alphabetic currency code (exactly three A-Z letters)',
+      'ISO 4217 alphabetic currency codes are exactly three A-Z letters',
+    );
+  }
+}
+
+export function assertCurrencyCode(currency: string): void {
+  if (typeof currency !== 'string' || !BOOK_CURRENCY.test(currency)) {
+    throw new TypeError(
+      'Money requires an uppercase alphabetic currency code (ISO 4217 three-letter or a longer simulation book code)',
     );
   }
 }
@@ -58,7 +67,7 @@ export class Money {
 
   private constructor(minorUnits: bigint, currency: string) {
     assertSafeMinorUnits(minorUnits);
-    assertIsoCurrencyCode(currency);
+    assertCurrencyCode(currency);
     this.minorUnits = minorUnits;
     this.currency = currency;
     Object.freeze(this);

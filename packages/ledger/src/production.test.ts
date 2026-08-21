@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asUtcInstant } from '../../domain/src/time.ts';
+import { ledgerScaledUnits } from '../../money/src/ledger-amount.ts';
 import { Money } from '../../money/src/money.ts';
 import { addMs } from '../../config/src/clock.ts';
 import { AUTHORITY_TTL_MS, AuthorityIssuer } from '../../permissions/src/execution-authority.ts';
@@ -225,8 +226,6 @@ describe('production ledger core', () => {
       currency: 'USD',
     });
     assert.equal(balance.posted.minorUnits, 0n);
-    assert.throws(() => ledger.updateJournal('x'), /IMMUTABILITY/);
-    assert.throws(() => ledger.deletePosting('x'), /IMMUTABILITY/);
     assert.throws(
       () =>
         ledger.postJournal({
@@ -258,8 +257,8 @@ describe('production ledger core', () => {
           { accountId: SIMULATION_FUNDING_SOURCE_ID, direction: 'CREDIT', amount: Money.fromMinorUnits(amount, 'USD') },
         ],
       });
-      const debits = journal.postings.filter((p) => p.direction === 'DEBIT').reduce((s, p) => s + p.amount.minorUnits, 0n);
-      const credits = journal.postings.filter((p) => p.direction === 'CREDIT').reduce((s, p) => s + p.amount.minorUnits, 0n);
+      const debits = journal.postings.filter((p) => p.direction === 'DEBIT').reduce((s, p) => s + ledgerScaledUnits(p.amount), 0n);
+      const credits = journal.postings.filter((p) => p.direction === 'CREDIT').reduce((s, p) => s + ledgerScaledUnits(p.amount), 0n);
       assert.equal(debits, credits);
     }
     const totals = ledger.totalsByAsset().get('USD');

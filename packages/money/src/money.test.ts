@@ -54,12 +54,13 @@ describe('Money', () => {
     assert.throws(() => near.plus(Money.fromMinorUnits(1n, 'USD')), /overflow/);
   });
 
-  it('accepts any ISO 4217 alphabetic code and rejects non-ISO codes', () => {
+  it('accepts ISO 4217 codes and uppercase simulation book codes', () => {
     assert.equal(Money.fromMinorUnits(1n, 'JPY').currency, 'JPY');
     assert.equal(Money.fromMinorUnits(1n, 'KWD').currency, 'KWD');
-    assert.throws(() => Money.fromMinorUnits(1n, 'usd'), /ISO 4217/);
-    assert.throws(() => Money.fromMinorUnits(1n, 'US'), /ISO 4217/);
-    assert.throws(() => Money.fromMinorUnits(1n, 'USDT'), /ISO 4217/);
+    assert.equal(Money.fromMinorUnits(1n, 'SUNREY').currency, 'SUNREY');
+    assert.throws(() => Money.fromMinorUnits(1n, 'usd'), /uppercase alphabetic/);
+    assert.throws(() => Money.fromMinorUnits(1n, 'US'), /uppercase alphabetic/);
+    assert.throws(() => Money.fromMinorUnits(1n, 'usd1'), /uppercase alphabetic/);
   });
 
   it('serializes minor units as a decimal-free string', () => {

@@ -545,9 +545,9 @@ export class MoneyMovementService {
         asset: journal.asset,
         amountMinorUnits: ledgerScaledUnits(journal.postings[0]!.amount).toString(),
         currency: journal.asset,
-        reference: journal.reference,
-        sourceDomain: journal.sourceDomain,
-        evidenceRecordId: journal.evidenceRecordId,
+        ...(journal.reference ? { reference: journal.reference } : {}),
+        ...(journal.sourceDomain ? { sourceDomain: journal.sourceDomain } : {}),
+        ...(journal.evidenceRecordId ? { evidenceRecordId: journal.evidenceRecordId } : {}),
       },
     });
 

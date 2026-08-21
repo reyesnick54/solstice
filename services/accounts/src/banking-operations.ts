@@ -48,6 +48,7 @@ import {
   simulationInterestSourceId,
   type ClassBridge,
   type Journal,
+  type ProposedPosting,
 } from '../../../packages/ledger/src/types.ts';
 import { asMoney } from '../../../packages/money/src/ledger-amount.ts';
 import { Money, RoundingMode } from '../../../packages/money/src/money.ts';
@@ -1006,11 +1007,7 @@ export class BankingOperationsService {
     readonly idempotencyKey: string;
     readonly actionType: string;
     readonly authority: import('../../../packages/permissions/src/execution-authority.ts').VerifiedExecutionAuthority;
-    readonly postings: readonly {
-      accountId: string;
-      direction: 'DEBIT' | 'CREDIT';
-      amount: Money;
-    }[];
+    readonly postings: readonly ProposedPosting[];
     readonly classBridge?: import('../../../packages/ledger/src/types.ts').ClassBridge;
     readonly memo?: string;
     readonly reversesJournalId?: string;
@@ -1063,10 +1060,10 @@ export class BankingOperationsService {
         asset: journal.asset,
         amountMinorUnits: asMoney(journal.postings[0]!.amount).minorUnits.toString(),
         currency: journal.asset,
-        reference: journal.reference,
-        sourceDomain: journal.sourceDomain,
-        evidenceRecordId: journal.evidenceRecordId,
-        reversesJournalId: journal.reversesJournalId,
+        ...(journal.reference ? { reference: journal.reference } : {}),
+        ...(journal.sourceDomain ? { sourceDomain: journal.sourceDomain } : {}),
+        ...(journal.evidenceRecordId ? { evidenceRecordId: journal.evidenceRecordId } : {}),
+        ...(journal.reversesJournalId ? { reversesJournalId: journal.reversesJournalId } : {}),
       },
     });
     return journal;

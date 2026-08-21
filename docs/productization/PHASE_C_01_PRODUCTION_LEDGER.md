@@ -61,7 +61,8 @@ Posted journals are append-only. Corrections are compensating journals.
 ## 3. Money representation
 
 - Integer minor units (`bigint`)
-- Explicit ISO 4217 alphabetic currency (`^[A-Z]{3}$`)
+- Explicit uppercase currency / book code (`^[A-Z]{3,16}$`): ISO 4217
+  three-letter codes and longer simulation book codes such as `SUNREY`
 - No binary floating-point authoritative arithmetic
 - Safe JSON serialization (`minorUnits` as a decimal-free string)
 - Overflow bound `MAX_ABS_MINOR_UNITS = 10^28` (fits `NUMERIC(38, 0)`)
@@ -207,6 +208,10 @@ construct a Ledger.
 See `docs/productization/SUNREY_LEDGER_PERFORMANCE_BASELINE.md`.
 Local in-process posting and lookup are measured to catch severe
 regressions. No SLA is claimed.
+
+Representative samples on this host (Node v22.14.0, n=80, in-process):
+posting 0.016 ms median, lookup 0.002 ms, history 0.001 ms,
+balance projection 0.195 ms.
 
 ---
 

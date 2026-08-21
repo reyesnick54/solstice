@@ -28,5 +28,14 @@ failure thresholds for the median sample.
 
 ## Representative local samples
 
-Filled after the Phase C Prompt 1 performance test runs on this host.
-Not an SLA.
+Host: linux, Node v22.14.0, in-process simulation, n=80.
+
+| Operation | Median sample on this host |
+| --- | --- |
+| posting | 0.016 ms |
+| journal lookup | 0.002 ms |
+| history pagination | 0.001 ms |
+| balance projection | 0.195 ms |
+
+These numbers are an engineering baseline for this workspace only.
+They are not a production SLA and must not be cited as capacity.
