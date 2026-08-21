@@ -56,7 +56,7 @@ function writeTree(root: string, files: Record<string, string>): void {
 }
 
 const COVERING_TEST =
-  'node --test packages/security/src/regulated/**/*.test.ts packages/payments/src/**/*.test.ts packages/persistence/src/**/*.test.ts packages/sunrey-chain/src/release-candidate/economic/**/*.test.ts';
+  'node --test packages/security/src/regulated/**/*.test.ts packages/payments/src/**/*.test.ts packages/persistence/src/**/*.test.ts packages/sunrey-chain/src/release-candidate/economic/**/*.test.ts packages/sunrey-chain/src/native-assets/*.test.ts packages/sunrey-chain/src/production-ceremony/*.test.ts packages/sunrey-chain/src/release-candidate/mainnet/*.test.ts';
 
 const MINIMAL_MANIFEST = `{
   "schemaVersion": 1,
