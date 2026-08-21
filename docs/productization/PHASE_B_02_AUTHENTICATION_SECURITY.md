@@ -246,7 +246,7 @@ Errors use the canonical envelope (`error_code`, `category`, `message`,
 
 ## 14. Persistence
 
-Migration: `db/customer/migrations/V029__consumer_authentication.sql`
+Migration: `db/customer/migrations/V030__consumer_authentication.sql`
 
 Tables: `login_handle`, `password_credential`, `totp_credential`,
 `refresh_session`, `auth_challenge`, `security_event`,
