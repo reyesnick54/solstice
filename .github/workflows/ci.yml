@@ -294,6 +294,8 @@ jobs:
         run: npm run demo:sunrey-production-economic-authorization
       - name: SunRey engineering closure demo
         run: npm run demo:sunrey-engineering-closure
+      - name: SunRey production launch freeze demo
+        run: npm run demo:sunrey-production-launch-freeze
       - name: SunRey Mainnet RC smoke qualification
         run: SUNREY_FIXTURE_ENV=local node scripts/sunrey-release.mjs mainnet create --profile smoke --id SUNREY_MAINNET_RC_1
       - name: SunRey Mainnet RC qualify

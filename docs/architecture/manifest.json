@@ -3338,6 +3338,35 @@
       "notes": "Chunk 163 governed production economic parameter approval, multi-party human authorization, external-evidence binding, and production authorization assembly. Wrapper over Chunk 144-148 parameter packages under production-activation plus governance-ops orchestration. Does not choose tokenomics, activate production, flip LIVE_* flags, or create a second mint. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Chunk 71 remains the monetary authority."
     },
     {
+      "id": "sunrey-production-launch-freeze",
+      "name": "Immutable production launch candidate freeze and release bill of materials",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/mainnet/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionLaunchCandidateFreeze",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/launch-candidate",
+        "packages/release-v2",
+        "packages/mainnet-v2",
+        "packages/production-release",
+        "packages/production-manifest"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 164 immutable production launch candidate freeze, release bill of materials, exact-version binding, and staleness detection at packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Extends the existing mainnet release candidate. Freeze is not approval, authorization, or activation. Does not invent production parameters, enable mainnet, flip LIVE_* flags, mint, or issue Execution Authority."
+    },
+    {
       "id": "moonrey-production-issuance-parameter-package",
       "name": "MoonRey production-candidate issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
@@ -3877,12 +3906,15 @@
         "packages/reserve-bank",
         "packages/monetary-policy",
         "packages/tokenomics",
-        "packages/genesis-economy"
+        "packages/genesis-economy",
+        "packages/kill-switch",
+        "packages/emergency-admin",
+        "packages/rollback-engine"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 79 operational orchestration around canonical Chunk 40 protocol governance. No governance token, AI voting, or finalized-history rewrite."
+      "notes": "Chunk 79 operational orchestration around canonical Chunk 40 protocol governance. Chunk 167 extends this owner with launch abort, domain-scoped emergency restrictions, recovery gates, and resumption authorization at packages/sunrey-chain/src/governance-ops/launch-abort. No governance token, AI voting, finalized-history rewrite, global kill switch, or second emergency authority."
     },
     {
       "id": "sunrey-economic-mainnet-rehearsal",
@@ -4132,12 +4164,16 @@
         "packages/production-genesis",
         "packages/genesis-ceremony",
         "packages/launch-authorization",
-        "packages/production-ceremony"
+        "packages/production-ceremony",
+        "packages/ceremony-v2",
+        "packages/launch-signing",
+        "packages/genesis-authority",
+        "packages/mainnet-ceremony"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package at packages/sunrey-chain/src/production-ceremony. Dress rehearsal only in CI. Does not launch mainnet or create real production private keys."
+      "notes": "Chunk 85 production genesis ceremony and Chunk 165 frozen-candidate launch authorization rehearsal at packages/sunrey-chain/src/production-ceremony and launch-candidate/. Dress rehearsal only in CI. Binds the exact Chunk 164 freeze hash. Does not launch mainnet, create real production private keys, or treat LAUNCH_AUTHORIZATION_CANDIDATE as MAINNET_ACTIVE."
     },
     {
       "id": "sunrey-production-provisioning",
@@ -4279,12 +4315,16 @@
         "packages/sunrey-post-genesis",
         "packages/stabilization",
         "packages/capability-activation",
-        "packages/production-activation"
+        "packages/production-activation",
+        "packages/activation",
+        "packages/canary",
+        "packages/mainnet-launch",
+        "packages/product-switches"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet or activate real production capabilities."
+      "notes": "Chunk 89 post-genesis stabilization, safe-mode operations, and progressive production capability activation at packages/sunrey-chain/src/post-genesis. Chunk 166 extends that owner with staged capability activation, domain-scoped canary rehearsal, progressive readiness gates, and independent product sequencing at packages/sunrey-chain/src/post-genesis/staged-activation. Chunk 167 adds recovery gates and domain-scoped operational restrictions on this owner and composes launch abort with those pause and readiness gates. Rehearsal networks only. Does not launch mainnet, invent production limits, or activate real production capabilities. Incident end does not auto-resume a capability. Do not create packages/activation, packages/canary, packages/mainnet-launch, or packages/product-switches."
     },
     {
       "id": "sunrey-production-handoff",
@@ -4316,12 +4356,15 @@
         "packages/sunrey-handoff",
         "packages/day-2-ops",
         "packages/production-ops",
-        "packages/operator-acceptance"
+        "packages/operator-acceptance",
+        "packages/incident-v2",
+        "packages/recovery-v2"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
       "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
+      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -5840,6 +5883,10 @@
     "packages/governance-ops",
     "packages/economic-governance-v2",
     "packages/production-authorization",
+    "packages/launch-candidate",
+    "packages/release-v2",
+    "packages/production-release",
+    "packages/production-manifest",
     "packages/mint-governance",
     "packages/governance-token",
     "packages/sunrey-ceremony",
@@ -5847,6 +5894,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/genesis-execution",
     "packages/sunrey-genesis-execution",
     "packages/production-genesis-execution",
@@ -5868,6 +5919,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/production-handoff",
     "packages/sunrey-handoff",
     "packages/day-2-ops",
@@ -6670,7 +6725,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 79 production governance operations, economic policy change control, and bounded emergency authority at packages/sunrey-chain/src/governance-ops. Orchestrates existing Chunk 40 protocol governance. No governance token, AI voting, history rewrite, or competing governance engine. Do not create packages/governance-ops, packages/sunrey-governance, or packages/governance-token."
+      "notes": "Chunk 79 production governance operations, economic policy change control, and bounded emergency authority at packages/sunrey-chain/src/governance-ops. Chunk 167 launch abort and recovery rehearsal extends the same owner at packages/sunrey-chain/src/governance-ops/launch-abort. Orchestrates existing Chunk 40 protocol governance. No governance token, AI voting, history rewrite, competing governance engine, global kill switch, or second emergency authority. Do not create packages/governance-ops, packages/sunrey-governance, packages/governance-token, packages/kill-switch, packages/emergency-admin, or packages/rollback-engine."
     },
     {
       "id": "sunrey-economic-mainnet-rehearsal",
@@ -6719,7 +6774,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 85 production genesis ceremony, validator onboarding, and launch-authorization package. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, or packages/production-ceremony."
+      "notes": "Chunk 85 production genesis ceremony and Chunk 165 frozen-candidate launch authorization rehearsal. Owner: packages/sunrey-chain/src/production-ceremony. CI uses rehearsal/simulation credentials only. Does not launch mainnet or create real production private keys. Do not create packages/sunrey-ceremony, packages/production-genesis, packages/genesis-ceremony, packages/launch-authorization, packages/production-ceremony, packages/ceremony-v2, packages/launch-signing, packages/genesis-authority, or packages/mainnet-ceremony."
     },
     {
       "id": "sunrey-production-provisioning",
@@ -6747,7 +6802,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 89 post-genesis stabilization. Rehearsal networks only."
+      "notes": "Chunk 89 post-genesis stabilization. Chunk 166 staged capability activation lives at packages/sunrey-chain/src/post-genesis/staged-activation. Chunk 167 recovery gates and domain-scoped restrictions extend this owner and compose launch abort with those pause and readiness gates. Rehearsal networks only. Incident end does not auto-resume a capability."
     },
     {
       "id": "sunrey-production-handoff",
@@ -6755,6 +6810,7 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, or packages/production-v2."
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -7035,6 +7091,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 163 governed production economic parameter authorization at packages/sunrey-chain/src/economics/production-activation/authorization, orchestrated by packages/sunrey-chain/src/governance-ops. Does not invent tokenomics, activate production, or create a second monetary authority. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Do not create packages/tokenomics, packages/economic-governance-v2, packages/monetary-policy-v2, packages/production-authorization, or packages/mint-governance."
+    },
+    {
+      "id": "sunrey-production-launch-freeze",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 164 immutable production launch candidate freeze at packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Extends the existing mainnet release candidate. Freeze is not approval, authorization, or activation. Does not invent production parameters, enable mainnet, or create a second release owner. Do not create packages/launch-candidate, packages/release-v2, packages/mainnet-v2, packages/production-release, or packages/production-manifest."
     },
     {
       "id": "sunrey-canonical-product-identity",
@@ -7532,6 +7595,10 @@
     "packages/genesis-ceremony",
     "packages/launch-authorization",
     "packages/production-ceremony",
+    "packages/ceremony-v2",
+    "packages/launch-signing",
+    "packages/genesis-authority",
+    "packages/mainnet-ceremony",
     "packages/genesis-execution",
     "packages/sunrey-genesis-execution",
     "packages/production-genesis-execution",

@@ -11,6 +11,15 @@ capabilities.
 
 `realProductionCapabilitiesActivated=false`.
 
+Chunk 166 extends this owner at
+`packages/sunrey-chain/src/post-genesis/staged-activation`.
+
+Chunk 167 adds recovery gates on this owner. Incident resolution does
+not resume a restricted capability. Launch abort composes with the
+Chunk 166 pause and readiness gates.
+
 Do not create `packages/post-genesis`, `packages/sunrey-post-genesis`,
-`packages/stabilization`, `packages/capability-activation`, or
-`packages/production-activation`.
+`packages/stabilization`, `packages/capability-activation`,
+`packages/production-activation`, `packages/activation`,
+`packages/canary`, `packages/mainnet-launch`, or
+`packages/product-switches`.

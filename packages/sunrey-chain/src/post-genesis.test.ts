@@ -197,6 +197,10 @@ describe('Chunk 89 post-genesis stabilization', () => {
     assert.equal(existsSync(join(ROOT, 'packages/stabilization')), false);
     assert.equal(existsSync(join(ROOT, 'packages/capability-activation')), false);
     assert.equal(existsSync(join(ROOT, 'packages/production-activation')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/activation')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/canary')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/mainnet-launch')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/product-switches')), false);
   });
 
   it('model-checks CAPABILITY_ACTIVATION_SAFETY within stated bounds', () => {

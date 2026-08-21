@@ -59,3 +59,4 @@ export { buildMainnetCompatibilityReport, buildMainnetQualificationReport } from
 export { consumeMainnetRc, mainnetRcReadinessRecords } from './readiness.ts';
 export { MANUAL_EXTENDED_WORKFLOWS, listExtendedWorkflows } from './workflows.ts';
 export { runSunreyReleaseMainnet } from './cli.ts';
+export * as launchFreeze from './launch-freeze/index.ts';

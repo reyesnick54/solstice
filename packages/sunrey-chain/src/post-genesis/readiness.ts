@@ -105,5 +105,21 @@ export function postGenesisReadinessRecords(): readonly ReadinessEvidenceRecord[
       externalEvidence: true,
       chunkReference: 'CHUNK-89',
     },
+    {
+      requirementId: 'REQ-POST-GENESIS-006',
+      dimension: 'POST_GENESIS_OPERATIONS',
+      description: 'Chunk 166 staged capability activation plan, domain-scoped canary rehearsal, and independent product sequencing',
+      scope: 'SUNREY_CHAIN',
+      evidenceType: 'ENGINEERING_ARTIFACT',
+      evidenceHash: null,
+      evidenceReference: 'packages/sunrey-chain/src/post-genesis/staged-activation',
+      source: 'packages/sunrey-chain/src/post-genesis/staged-activation',
+      verificationStatus: 'ENGINEERING_VERIFIED',
+      authorizedVerifierRole: 'OPERATIONS',
+      expirationOrReviewDateUtc: null,
+      notes: 'Extends post-genesis stabilization. Rehearsal only. Does not turn everything on or activate production.',
+      externalEvidence: false,
+      chunkReference: 'CHUNK-166',
+    },
   ]);
 }

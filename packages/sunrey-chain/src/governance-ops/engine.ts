@@ -640,8 +640,16 @@ export function applyEmergencyAction(input: {
   let rejection: string | null = null;
   if (!permitted) {
     rejection = 'EMERGENCY_OVERREACH';
-  } else if (forbidden || input.requestedPower === 'MINT_NATIVE_ASSETS' || input.requestedPower === 'REWRITE_SUPPLY') {
-    rejection = input.requestedPower === 'REWRITE_SUPPLY' ? 'EMERGENCY_SUPPLY_REWRITE' : 'EMERGENCY_CANNOT_MINT';
+  } else if (input.requestedPower === 'MINT_NATIVE_ASSETS') {
+    rejection = 'EMERGENCY_CANNOT_MINT';
+  } else if (input.requestedPower === 'REWRITE_SUPPLY') {
+    rejection = 'EMERGENCY_SUPPLY_REWRITE';
+  } else if (input.requestedPower === 'CONFISCATE_CUSTOMER_WALLETS') {
+    rejection = 'EMERGENCY_CANNOT_CONFISCATE';
+  } else if (input.requestedPower === 'REWRITE_FINALIZED_BLOCKS') {
+    rejection = 'EMERGENCY_CANNOT_REWRITE_FINALIZED_HISTORY';
+  } else if (forbidden) {
+    rejection = 'EMERGENCY_OVERREACH';
   } else if (actors.size < input.policy.minimumDistinctActors || !input.policy.requiredRoles.every((role) => roles.has(role))) {
     rejection = 'INSUFFICIENT_APPROVAL';
   } else if (input.approvals.some((record) => record.actorKind !== 'HUMAN' && record.accepted)) {

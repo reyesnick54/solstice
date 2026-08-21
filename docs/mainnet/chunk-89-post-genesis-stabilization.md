@@ -57,3 +57,7 @@ activation. One package cannot be reused for a different network, chain,
 release, capability, or policy version.
 
 `realProductionCapabilitiesActivated=false`.
+
+Chunk 166 extends this owner with a staged capability activation
+plan at `packages/sunrey-chain/src/post-genesis/staged-activation`.
+See [`docs/operations/chunk-166-staged-capability-activation.md`](../operations/chunk-166-staged-capability-activation.md).

@@ -217,6 +217,7 @@ Historical discussion remains below the table.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-authorization | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-launch-freeze | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | moonrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
@@ -779,6 +780,16 @@ Do not create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/stabilization`, `packages/capability-activation`, or
 `packages/production-activation`. The evaluator returns
 `mustStop: false`.
+Chunk 166 extends `sunrey-post-genesis-stabilization` with a staged
+capability activation plan, domain-scoped canary rehearsal,
+progressive readiness gates, and independent product sequencing at
+`packages/sunrey-chain/src/post-genesis/staged-activation`. It does
+not turn everything on, invent production limits, flip `LIVE_*`
+flags, or activate production. The evaluator returns
+`mustStop: false`. Do not create `packages/activation`,
+`packages/canary`, `packages/mainnet-launch`, or
+`packages/product-switches`. See
+[`docs/operations/chunk-166-staged-capability-activation.md`](../operations/chunk-166-staged-capability-activation.md).
 Chunk 76 reconciles the merged Chunk 71–75 economic stack and
 implements the adversarial economic stress laboratory at
 `packages/sunrey-economics/src/stress` with
@@ -866,6 +877,13 @@ It binds the actual Chunk 81 Candidate V2 and Chunk 84 Mainnet RC.
 Do not create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. The evaluator returns `mustStop: false`.
+Chunk 165 extends that same ceremony owner with frozen-candidate
+launch authorization rehearsal at
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+It binds the exact Chunk 164 freeze hash. See
+[`docs/operations/chunk-165-launch-authorization-ceremony.md`](../operations/chunk-165-launch-authorization-ceremony.md).
+It does not create a second genesis ceremony, generate real production
+keys, or activate mainnet. The evaluator returns `mustStop: false`.
 Chunk 86 implements the production-environment provisioning control
 plane at `packages/sunrey-chain/src/infra/provisioning`. Capability
 `sunrey-production-provisioning` is `IMPLEMENTED`. See
@@ -1457,6 +1475,17 @@ It does not choose production tokenomics, activate production, flip
 `packages/economic-governance-v2`, `packages/monetary-policy-v2`,
 `packages/production-authorization`, or `packages/mint-governance`. The
 evaluator returns `mustStop: false`.
+Chunk 164 implements immutable production launch candidate freeze,
+release bill of materials, exact-version binding, and staleness
+detection at
+`packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze`.
+Capability `sunrey-production-launch-freeze` is `IMPLEMENTED`. Freeze
+is not approval, authorization, or activation. It does not invent
+production parameters, enable mainnet, flip `LIVE_*` flags, mint, or
+issue Execution Authority. Do not create `packages/launch-candidate`,
+`packages/release-v2`, `packages/mainnet-v2`,
+`packages/production-release`, or `packages/production-manifest`. The
+evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.
 Capability `sunrey-canonical-product-identity` is `IMPLEMENTED` on the
@@ -1674,3 +1703,17 @@ The evaluator returns `mustStop: false`. Do not create
 `packages/sunrey-core`, `packages/platform-v2`,
 `packages/final-architecture`, `packages/super-app`,
 `packages/everything`, or `packages/production-v2`.
+Chunk 167 implements launch abort, domain-scoped emergency
+restrictions, rollback semantics, recovery gates, and resumption
+authorization rehearsal by extending
+`packages/sunrey-chain/src/governance-ops`,
+`packages/sunrey-chain/src/post-genesis`, and
+`packages/sunrey-chain/src/production-handoff`. It composes with Chunk 165 ceremony abort and
+Chunk 166 staged-activation pause and readiness gates. It does not
+create a second emergency authority. Application rollback is not
+chain-history rollback. Resumption is independently authorized. The
+evaluator returns `mustStop: false`. Do not create
+`packages/kill-switch`, `packages/emergency-admin`,
+`packages/rollback-engine`, `packages/incident-v2`, or
+`packages/recovery-v2`. See
+[`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).

@@ -144,6 +144,12 @@ This document describes only what is implemented and tested in this tree.
   a mainnet launch. `realProductionKeysCreated=false`.
   `mainnetEnabled=false`. See
   `docs/mainnet/chunk-85-production-genesis-ceremony.md`.
+  Chunk 165 extends the same owner with frozen-candidate launch
+  authorization rehearsal at
+  `packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+  Current repository remains `REHEARSAL_COMPLETE`.
+  `realHumanSignaturesCollected=false`. `mainnetEnabled=false`. See
+  `docs/operations/chunk-165-launch-authorization-ceremony.md`.
 - SunRey Mainnet release-candidate freeze and qualification
   (Chunk 84, `packages/sunrey-chain/src/release-candidate/mainnet`):
   versioned `SUNREY_MAINNET_RC_*` identity, source/protocol/economic/
@@ -330,9 +336,12 @@ This document describes only what is implemented and tested in this tree.
   height/epoch/finalized-state checkpoints, independent capability
   packages, bounded restrictions, and rehearsal-only activation
   negatives. Capability `sunrey-post-genesis-stabilization` is
-  `IMPLEMENTED`. `realProductionCapabilitiesActivated=false`. This is
+  `IMPLEMENTED`. Chunk 166 extends that owner with staged capability
+  activation at `packages/sunrey-chain/src/post-genesis/staged-activation`.
+  `realProductionCapabilitiesActivated=false`. This is
   not mainnet. `LIVE_*` flags remain false. See
-  `docs/mainnet/chunk-89-post-genesis-stabilization.md`.
+  `docs/mainnet/chunk-89-post-genesis-stabilization.md` and
+  `docs/operations/chunk-166-staged-capability-activation.md`.
 - SunRey root-of-trust and key-ceremony architecture (Chunk 64,
   `packages/security/src/ceremony`): authority registry, key-purpose
   matrix, extended HSM contract, simulation ceremony provider,
