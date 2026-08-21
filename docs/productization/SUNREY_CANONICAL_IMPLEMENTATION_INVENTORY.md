@@ -508,6 +508,10 @@ Verified: **no path** for AI model, explorer frontend, external provider adapter
 | Added `sunrey-economics` to constitution workspace inventory | Package already exists as Chunk 75 owner in the manifest |
 | Linked this inventory from the constitution | Documentation pointer only |
 | Merged duplicate `solstice_customer` rows in `docs/architecture/persistence.md` | Same database documented twice |
+| Merged duplicate `notes` keys on `sunrey-production-handoff` in `manifest.json` | JSON integrity rejected the file; both Chunk 167 and Chunk 168 facts kept |
+| Deduplicated `docs/architecture/integrity-baseline.json` counts | Duplicate keys; rewritten from current manifest/chunk totals |
+| `compose-ceremony.ts` `privateKeysReused === true` | Type is literal `false`; comparison was a merge leftover that failed `tsc` |
+| Launch-freeze test PEM header split | Secret-scan false positive; detector still exercises `BEGIN PRIVATE KEY` at runtime |
 
 No architectural migrations. No provider activation. No `LIVE_*` or `ENVIRONMENT` changes.
 
