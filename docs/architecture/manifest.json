@@ -1151,6 +1151,29 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
+    },
+    {
+      "id": "services/api",
+      "npmName": "@solstice/api",
+      "path": "services/api",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "services/accounts",
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/identity",
+        "packages/permissions"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B Consumer Backend-for-Frontend. Orchestration/presentation only. Calls canonical domain services. Not a ledger, Exchange, Agent runtime, Kernel, investment engine, or payment processor. Mountable on the Phase B API runtime. Do not create packages/bff, packages/lovable, or a second API authority."
     }
   ],
   "components": [
@@ -4363,7 +4386,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
       "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
     },
     {
@@ -5183,6 +5205,38 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
+    },
+    {
+      "id": "consumer-bff",
+      "name": "SunRey Consumer Backend-for-Frontend",
+      "canonicalOwner": "services/api",
+      "canonicalPath": "services/api/src/consumer/orchestrator.ts",
+      "publicInterface": "services/api/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ConsumerBff",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/bff",
+        "packages/lovable",
+        "packages/consumer-bff",
+        "packages/frontend-api",
+        "services/bff",
+        "services/lovable",
+        "apps/lovable",
+        "apps/consumer-bff"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B Prompt 4 Lovable integration layer. Aggregates customer-oriented resources from canonical services. Never recalculates authoritative balances from activity arrays. Never issues Execution Authority or posts journals."
     }
   ],
   "authorizedMutationPaths": [
@@ -5941,6 +5995,14 @@
     "packages/app-registry",
     "packages/webhook-service",
     "packages/developer-platform-v2",
+    "packages/bff",
+    "packages/lovable",
+    "packages/consumer-bff",
+    "packages/frontend-api",
+    "services/bff",
+    "services/lovable",
+    "apps/lovable",
+    "apps/consumer-bff",
     "packages/provider-runtime",
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
@@ -6809,10 +6871,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
       "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -7170,6 +7229,13 @@
       "owner": "tools/architectural-linter",
       "protected": true,
       "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
+    },
+    {
+      "id": "sunrey-consumer-bff",
+      "status": "IMPLEMENTED",
+      "owner": "services/api",
+      "protected": true,
+      "notes": "Phase B Consumer BFF for mobile, responsive web, and Lovable. Orchestration only. Not a second ledger, Kernel, Exchange, Agent runtime, or payment processor. Do not create packages/bff, packages/lovable, or services/bff."
     }
   ],
   "boundedContexts": [
@@ -7495,12 +7561,13 @@
     },
     {
       "id": "API_INTEGRATION",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
         "services/api"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Consumer BFF is implemented at services/api. Broader platform API runtime, auth foundation, and integration platform remain Phase B companions. Not apps/explorer and not packages/sunrey-sdk DevelopmentPlatform."
     },
     {
       "id": "SOVEREIGN_CELLS",

@@ -1,0 +1,78 @@
+import {
+  CONSUMER_RESOURCE_GROUPS,
+  type ConsumerResourceGroup,
+  type ProductAvailability,
+} from './types.ts';
+
+export type ConsumerResourceDescriptor = {
+  readonly group: ConsumerResourceGroup;
+  readonly path: string;
+  readonly methods: readonly string[];
+  readonly availability: ProductAvailability;
+  readonly domainDependency: string;
+  readonly providerDependency: string;
+  readonly notes: string;
+};
+
+export const CONSUMER_RESOURCE_CATALOG: readonly ConsumerResourceDescriptor[] = Object.freeze(
+  CONSUMER_RESOURCE_GROUPS.map((group) => descriptorFor(group)),
+);
+
+function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor {
+  switch (group) {
+    case 'ME':
+      return row(group, '/api/v1/me', ['GET', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/identity + packages/domain Customer', 'none', 'Profile reads; PATCH is preference-only.');
+    case 'HOME':
+      return row(group, '/api/v1/me/home', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts balance + activity read models', 'none', 'Aggregates only canonical reads.');
+    case 'ACCOUNTS':
+      return row(group, '/api/v1/accounts', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts + Ledger-derived balances', 'none', 'Never recalculated from activity arrays.');
+    case 'ACTIVITY':
+      return row(group, '/api/v1/accounts/{id}/activity', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts projectTransactionHistory', 'none', 'Cursor-paginated; not a balance authority.');
+    case 'PAYMENTS':
+      return row(group, '/api/v1/payments', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments', 'EXTERNAL_PROVIDER_REQUIRED for live rails', 'Simulation catalog only.');
+    case 'RECIPIENTS':
+      return row(group, '/api/v1/recipients', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/domain beneficiary (when productized)', 'none', 'Agents cannot add beneficiaries. BFF has no write path.');
+    case 'FX':
+      return row(group, '/api/v1/fx', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Indicative simulation quotes only.');
+    case 'CARDS':
+      return row(group, '/api/v1/cards', ['GET'], 'EXTERNAL_PROVIDER_REQUIRED', 'packages/cards + services/cards', 'card processor / wallet adapters', 'Live issuing is not connected.');
+    case 'GROW':
+      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
+    case 'GOALS':
+      return row(group, '/api/v1/goals', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/platform goals (when productized)', 'none', 'No honest productized goal store yet.');
+    case 'PORTFOLIO':
+      return row(group, '/api/v1/portfolio', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts investments bucket + packages/sunrey-exchange consumer', 'none', 'Class breakdown only; no yield field.');
+    case 'AGENT':
+      return row(group, '/api/v1/agent', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate', 'none', 'Recommendations are proposals. BFF cannot execute.');
+    case 'EXCHANGE':
+      return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
+    case 'WALLETS':
+      return row(group, '/api/v1/wallets', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/cards wallet + packages/sunrey-chain mobile-sync', 'wallet providers', 'No consumer wallet product path yet.');
+    case 'DATA':
+      return row(group, '/api/v1/data', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault metadata only.');
+    case 'SECURITY':
+      return row(group, '/api/v1/security', ['GET'], 'AVAILABLE_SIMULATION', 'packages/identity sessions/devices', 'none', 'Session and device summary.');
+    case 'NOTIFICATIONS':
+      return row(group, '/api/v1/notifications', ['GET'], 'NOT_YET_PRODUCTIZED', 'none', 'none', 'No productized notification store.');
+  }
+}
+
+function row(
+  group: ConsumerResourceGroup,
+  path: string,
+  methods: readonly string[],
+  availability: ProductAvailability,
+  domainDependency: string,
+  providerDependency: string,
+  notes: string,
+): ConsumerResourceDescriptor {
+  return Object.freeze({
+    group,
+    path,
+    methods,
+    availability,
+    domainDependency,
+    providerDependency,
+    notes,
+  });
+}
