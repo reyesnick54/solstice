@@ -100,6 +100,7 @@ never be two implementations of these systems.
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
 | Production economic authorization | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/authorization/types.ts` | IMPLEMENTED |
+| Production launch candidate freeze | `packages/sunrey-chain` | `packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze/types.ts` | IMPLEMENTED |
 | SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
@@ -1889,6 +1890,19 @@ parameters remain `UNCONFIGURED`. Do not create `packages/tokenomics`,
 `packages/economic-governance-v2`, `packages/monetary-policy-v2`,
 `packages/production-authorization`, or `packages/mint-governance`. See
 [`docs/economics/chunk-163-production-economic-authorization.md`](../economics/chunk-163-production-economic-authorization.md).
+Chunk 164 implements immutable production launch candidate freeze,
+release bill of materials, exact-version binding, and staleness
+detection at
+`packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze`.
+Capability `sunrey-production-launch-freeze` is `IMPLEMENTED` on the
+existing mainnet release-candidate owner. Freeze is not approval,
+authorization, or activation. It does not invent production
+parameters, enable mainnet, flip `LIVE_*` flags, mint, or issue
+Execution Authority. Current production parameters remain
+`UNCONFIGURED`. Do not create `packages/launch-candidate`,
+`packages/release-v2`, `packages/mainnet-v2`,
+`packages/production-release`, or `packages/production-manifest`. See
+[`docs/operations/chunk-164-production-launch-freeze.md`](../operations/chunk-164-production-launch-freeze.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is

@@ -3338,6 +3338,35 @@
       "notes": "Chunk 163 governed production economic parameter approval, multi-party human authorization, external-evidence binding, and production authorization assembly. Wrapper over Chunk 144-148 parameter packages under production-activation plus governance-ops orchestration. Does not choose tokenomics, activate production, flip LIVE_* flags, or create a second mint. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Chunk 71 remains the monetary authority."
     },
     {
+      "id": "sunrey-production-launch-freeze",
+      "name": "Immutable production launch candidate freeze and release bill of materials",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/release-candidate/mainnet/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "ProductionLaunchCandidateFreeze",
+          "kind": "type"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/launch-candidate",
+        "packages/release-v2",
+        "packages/mainnet-v2",
+        "packages/production-release",
+        "packages/production-manifest"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 164 immutable production launch candidate freeze, release bill of materials, exact-version binding, and staleness detection at packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Extends the existing mainnet release candidate. Freeze is not approval, authorization, or activation. Does not invent production parameters, enable mainnet, flip LIVE_* flags, mint, or issue Execution Authority."
+    },
+    {
       "id": "moonrey-production-issuance-parameter-package",
       "name": "MoonRey production-candidate issuance parameter package",
       "canonicalOwner": "packages/sunrey-chain",
@@ -5844,6 +5873,10 @@
     "packages/governance-ops",
     "packages/economic-governance-v2",
     "packages/production-authorization",
+    "packages/launch-candidate",
+    "packages/release-v2",
+    "packages/production-release",
+    "packages/production-manifest",
     "packages/mint-governance",
     "packages/governance-token",
     "packages/sunrey-ceremony",
@@ -7038,6 +7071,13 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 163 governed production economic parameter authorization at packages/sunrey-chain/src/economics/production-activation/authorization, orchestrated by packages/sunrey-chain/src/governance-ops. Does not invent tokenomics, activate production, or create a second monetary authority. AUTHORIZED_CANDIDATE is not PRODUCTION_ACTIVE. Do not create packages/tokenomics, packages/economic-governance-v2, packages/monetary-policy-v2, packages/production-authorization, or packages/mint-governance."
+    },
+    {
+      "id": "sunrey-production-launch-freeze",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-chain",
+      "protected": true,
+      "notes": "Chunk 164 immutable production launch candidate freeze at packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Extends the existing mainnet release candidate. Freeze is not approval, authorization, or activation. Does not invent production parameters, enable mainnet, or create a second release owner. Do not create packages/launch-candidate, packages/release-v2, packages/mainnet-v2, packages/production-release, or packages/production-manifest."
     },
     {
       "id": "sunrey-canonical-product-identity",
