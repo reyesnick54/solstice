@@ -16,5 +16,3 @@ export {
   type HumanDecision,
 } from '../../../packages/kernel/src/compliance/index.ts';
 export * as complianceProductionCandidate from '../../../packages/kernel/src/compliance/production-candidate/index.ts';
-export * as identityProductionCandidate from '../../../packages/identity/src/production-candidate/index.ts';
-export * as travelRuleProductionCandidate from '../../../packages/custody/src/production-candidate/index.ts';

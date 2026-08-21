@@ -1,8 +1,15 @@
 import { randomUUID } from 'node:crypto';
 
-import type { JobDraft } from '../../../../events/src/jobs.ts';
 import type { ComplianceAdapterStore } from './store.ts';
 import type { ComplianceJobType, MonitoringTrigger } from './types.ts';
+
+/** Phase B job draft shape. Kernel does not import packages/events. */
+export type ComplianceJobDraft = {
+  readonly jobId: string;
+  readonly jobType: string;
+  readonly payload: Readonly<Record<string, string>>;
+  readonly runAt: string;
+};
 
 export const MONITORING_POLICY = Object.freeze({
   continuousExpensiveRescreen: false,
@@ -16,7 +23,7 @@ export function scheduleRescreen(input: {
   readonly subjectRef: string;
   readonly now: string;
   readonly policyAllows: boolean;
-}): JobDraft | { readonly ok: false; readonly reasonCode: 'POLICY_FORBIDS_RESCREEN' } {
+}): ComplianceJobDraft | { readonly ok: false; readonly reasonCode: 'POLICY_FORBIDS_RESCREEN' } {
   if (!input.policyAllows || MONITORING_POLICY.continuousExpensiveRescreen) {
     return { ok: false, reasonCode: 'POLICY_FORBIDS_RESCREEN' };
   }
