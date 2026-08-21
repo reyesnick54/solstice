@@ -414,10 +414,10 @@ export class ConsumerBff {
     const activityPage = 'error' in activity ? { items: [], nextCursor: null, hasMore: false } : activity;
     const accountItems = this.listAccounts(principal).items;
 
-    const wealthField =
+    const wealthField: HomeResource['wealth'] =
       wealth.kind !== 'POSITION'
-        ? Object.assign(
-            resourceField<{
+        ? Object.freeze({
+            ...resourceField<{
               readonly total: MoneyView;
               readonly currency: string;
               readonly classBreakdown: {
@@ -432,17 +432,15 @@ export class ConsumerBff {
               availability: 'AVAILABLE_SIMULATION',
               reason: wealth.reason,
             }),
-            {
-              valuation: {
-                currency: wealth.valuationCurrency,
-                status: wealth.valuationStatus,
-                currencies: wealth.currencies,
-                reason: wealth.reason,
-              },
-            },
-          )
-        : Object.assign(
-            resourceField({
+            valuation: Object.freeze({
+              currency: wealth.valuationCurrency,
+              status: wealth.valuationStatus,
+              currencies: wealth.currencies,
+              reason: wealth.reason,
+            }),
+          })
+        : Object.freeze({
+            ...resourceField({
               state: 'READY' as const,
               availability: 'AVAILABLE_SIMULATION' as const,
               value: {
@@ -457,15 +455,13 @@ export class ConsumerBff {
                 },
               },
             }),
-            {
-              valuation: {
-                currency: wealth.valuationCurrency,
-                status: wealth.valuationStatus,
-                currencies: [wealth.valuationCurrency],
-                reason: null,
-              },
-            },
-          );
+            valuation: Object.freeze({
+              currency: wealth.valuationCurrency,
+              status: wealth.valuationStatus,
+              currencies: [wealth.valuationCurrency],
+              reason: null,
+            }),
+          });
 
     const bucketField = (bucket: 'deposits' | 'investments' | 'digital_assets'): ResourceField<MoneyView> => {
       if (wealth.kind !== 'POSITION') {

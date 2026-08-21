@@ -414,7 +414,7 @@ export class AccountProductService {
       aggregateType: 'account',
       aggregateId: account.id,
       payload,
-    } as DomainEvent);
+    } as unknown as DomainEvent);
   }
 }
 

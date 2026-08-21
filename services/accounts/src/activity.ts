@@ -95,13 +95,23 @@ export function parseActivityFilter(query: Readonly<Record<string, string>>): Ac
   if (to && Number.isNaN(Date.parse(to))) {
     return { error: 'to must be an ISO-8601 instant' };
   }
-  return {
-    ...(status ? { status } : {}),
-    ...(type && isConsumerActivityType(type) ? { type } : {}),
-    ...(currency ? { currency } : {}),
-    ...(from ? { from } : {}),
-    ...(to ? { to } : {}),
-  };
+  const filter: ActivityFilter = {};
+  if (status && isConsumerActivityStatus(status)) {
+    Object.assign(filter, { status });
+  }
+  if (type && isConsumerActivityType(type)) {
+    Object.assign(filter, { type });
+  }
+  if (currency) {
+    Object.assign(filter, { currency });
+  }
+  if (from) {
+    Object.assign(filter, { from });
+  }
+  if (to) {
+    Object.assign(filter, { to });
+  }
+  return filter;
 }
 
 function typeOf(item: TransactionHistoryItem): ConsumerActivityType {
