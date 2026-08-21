@@ -23,7 +23,6 @@ export function formatLaunchFreezeReport(
     `FREEZE_EQUALS_ACTIVATION=false`,
     `LIVE_CONNECTIVITY_ENABLED=false`,
     `PRODUCTION_ACTIVE=false`,
-    `LAUNCH_FREEZE_MAINNET_ENABLED=false`,
     `mainnetEnabled=false`,
   ].join('\n');
 }
