@@ -7683,7 +7683,8 @@
       "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
-        "services/api"
+        "services/api",
+        "services/consumer-platform"
       ],
       "protected": true,
       "notes": "Phase B Platform API runtime and Consumer BFF live at services/api. services/consumer-platform is the consumer platform HTTP composition root. apps/api remains unused and must not become a second API owner. Not a second ledger, Execution Authority, or packages/sunrey-sdk DevelopmentPlatform."
