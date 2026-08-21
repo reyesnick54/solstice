@@ -76,19 +76,19 @@ export type MarketReferenceRate = {
   readonly source: string;
 };
 
-export type MarketDataProviderResult<T> =
+export type MarketQuoteResult<T> =
   | { readonly ok: true; readonly value: T }
   | { readonly ok: false; readonly code: string; readonly message: string };
 
-export type MarketDataProvider = {
+export type MarketQuoteSource = {
   readonly providerId: string;
   readonly productionAuthorized: false;
   readonly liveProviderConnected: false;
-  getInstrument(instrumentId: string): MarketDataProviderResult<MarketInstrument>;
-  getSpotPrice(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketPriceQuote>;
-  getTicker(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketTicker>;
-  getCandles(instrumentId: string, nowUtc: string): MarketDataProviderResult<readonly MarketCandle[]>;
-  getHistorical(instrumentId: string, nowUtc: string): MarketDataProviderResult<readonly MarketCandle[]>;
-  getReferenceRate(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketReferenceRate>;
-  getMarketStatus(instrumentId: string): MarketDataProviderResult<MarketDataStatus>;
+  getInstrument(instrumentId: string): MarketQuoteResult<MarketInstrument>;
+  getSpotPrice(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketPriceQuote>;
+  getTicker(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketTicker>;
+  getCandles(instrumentId: string, nowUtc: string): MarketQuoteResult<readonly MarketCandle[]>;
+  getHistorical(instrumentId: string, nowUtc: string): MarketQuoteResult<readonly MarketCandle[]>;
+  getReferenceRate(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketReferenceRate>;
+  getMarketStatus(instrumentId: string): MarketQuoteResult<MarketDataStatus>;
 };

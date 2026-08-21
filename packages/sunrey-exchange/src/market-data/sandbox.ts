@@ -5,8 +5,8 @@
 import { labelFreshness } from './aggregation.ts';
 import type {
   MarketCandle,
-  MarketDataProvider,
-  MarketDataProviderResult,
+  MarketQuoteSource,
+  MarketQuoteResult,
   MarketDataQuality,
   MarketDataStatus,
   MarketInstrument,
@@ -30,7 +30,7 @@ const SUNREY_USD: MarketInstrument = Object.freeze({
   quoteScale: 2,
 });
 
-export class DeterministicMarketDataAdapter implements MarketDataProvider {
+export class DeterministicMarketDataAdapter implements MarketQuoteSource {
   readonly productionAuthorized = false as const;
   readonly liveProviderConnected = false as const;
   #scenario: MarketDataSandboxScenario = 'normal';
@@ -47,14 +47,14 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
     this.#scenario = scenario;
   }
 
-  getInstrument(instrumentId: string): MarketDataProviderResult<MarketInstrument> {
+  getInstrument(instrumentId: string): MarketQuoteResult<MarketInstrument> {
     if (instrumentId !== SUNREY_USD.instrumentId) {
       return { ok: false, code: 'UNKNOWN_INSTRUMENT', message: 'instrument not in sandbox book' };
     }
     return { ok: true, value: SUNREY_USD };
   }
 
-  getSpotPrice(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketPriceQuote> {
+  getSpotPrice(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketPriceQuote> {
     if (this.#scenario === 'unavailable') {
       return { ok: false, code: 'PROVIDER_UNAVAILABLE', message: 'market data provider unavailable' };
     }
@@ -84,7 +84,7 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
     };
   }
 
-  getTicker(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketTicker> {
+  getTicker(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketTicker> {
     const last = this.getSpotPrice(instrumentId, nowUtc);
     if (!last.ok) return last;
     return {
@@ -99,7 +99,7 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
     };
   }
 
-  getCandles(instrumentId: string, nowUtc: string): MarketDataProviderResult<readonly MarketCandle[]> {
+  getCandles(instrumentId: string, nowUtc: string): MarketQuoteResult<readonly MarketCandle[]> {
     const spot = this.getSpotPrice(instrumentId, nowUtc);
     if (!spot.ok) return spot;
     return {
@@ -121,11 +121,11 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
     };
   }
 
-  getHistorical(instrumentId: string, nowUtc: string): MarketDataProviderResult<readonly MarketCandle[]> {
+  getHistorical(instrumentId: string, nowUtc: string): MarketQuoteResult<readonly MarketCandle[]> {
     return this.getCandles(instrumentId, nowUtc);
   }
 
-  getReferenceRate(instrumentId: string, nowUtc: string): MarketDataProviderResult<MarketReferenceRate> {
+  getReferenceRate(instrumentId: string, nowUtc: string): MarketQuoteResult<MarketReferenceRate> {
     const spot = this.getSpotPrice(instrumentId, nowUtc);
     if (!spot.ok) return spot;
     return {
@@ -143,7 +143,7 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
     };
   }
 
-  getMarketStatus(instrumentId: string): MarketDataProviderResult<MarketDataStatus> {
+  getMarketStatus(instrumentId: string): MarketQuoteResult<MarketDataStatus> {
     if (this.#scenario === 'unavailable') {
       return { ok: false, code: 'PROVIDER_UNAVAILABLE', message: 'market data provider unavailable' };
     }
@@ -153,16 +153,16 @@ export class DeterministicMarketDataAdapter implements MarketDataProvider {
   }
 }
 
-export function createMarketDataProviderA(): DeterministicMarketDataAdapter {
+export function createMarketQuoteSourceA(): DeterministicMarketDataAdapter {
   return new DeterministicMarketDataAdapter('fixture-market-data-a', 10_000n);
 }
 
-export function createMarketDataProviderB(): DeterministicMarketDataAdapter {
+export function createMarketQuoteSourceB(): DeterministicMarketDataAdapter {
   return new DeterministicMarketDataAdapter('fixture-market-data-b', 10_050n);
 }
 
 export function runMarketDataContractSuite(
-  provider: DeterministicMarketDataAdapter = createMarketDataProviderA(),
+  provider: DeterministicMarketDataAdapter = createMarketQuoteSourceA(),
 ): {
   readonly outcome: 'CONTRACT_TEST_PASS' | 'CONTRACT_TEST_FAIL';
   readonly cases: readonly string[];

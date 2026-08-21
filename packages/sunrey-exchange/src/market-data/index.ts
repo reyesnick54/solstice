@@ -7,8 +7,8 @@ export {
 } from './aggregation.ts';
 export {
   DeterministicMarketDataAdapter,
-  createMarketDataProviderA,
-  createMarketDataProviderB,
+  createMarketQuoteSourceA,
+  createMarketQuoteSourceB,
   runMarketDataContractSuite,
 } from './sandbox.ts';
 export {
@@ -19,8 +19,8 @@ export {
 } from './types.ts';
 export type {
   MarketCandle,
-  MarketDataProvider,
-  MarketDataProviderResult,
+  MarketQuoteSource,
+  MarketQuoteResult,
   MarketDataQuality,
   MarketDataSelectionPolicy,
   MarketDataStatus,

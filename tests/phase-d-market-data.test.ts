@@ -3,8 +3,8 @@ import { describe, it } from 'node:test';
 
 import { selectMarketPrice } from '../packages/sunrey-exchange/src/market-data/aggregation.ts';
 import {
-  createMarketDataProviderA,
-  createMarketDataProviderB,
+  createMarketQuoteSourceA,
+  createMarketQuoteSourceB,
   runMarketDataContractSuite,
 } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
 
@@ -12,7 +12,7 @@ describe('Phase D market data', () => {
   it('passes the market-data contract suite and labels stale prices', () => {
     const report = runMarketDataContractSuite();
     assert.equal(report.outcome, 'CONTRACT_TEST_PASS');
-    const provider = createMarketDataProviderA();
+    const provider = createMarketQuoteSourceA();
     provider.setScenario('stale');
     const stale = provider.getSpotPrice('SUNREY_COIN/USD', '2026-08-21T16:00:00.000Z');
     assert.equal(stale.ok, true);
@@ -23,8 +23,8 @@ describe('Phase D market data', () => {
 
   it('fails over without averaging incompatible prices', () => {
     const now = '2026-08-21T16:00:00.000Z';
-    const primary = createMarketDataProviderA();
-    const secondary = createMarketDataProviderB();
+    const primary = createMarketQuoteSourceA();
+    const secondary = createMarketQuoteSourceB();
     primary.setScenario('unavailable');
     const failover = selectMarketPrice({
       policy: 'SECONDARY_FAILOVER',

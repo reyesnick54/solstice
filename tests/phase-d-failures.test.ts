@@ -11,7 +11,7 @@ import { FakeIdentityTransport } from '../packages/identity/src/provider-candida
 import { FixturePersonVerificationProvider } from '../packages/identity/src/provider-candidate/person.ts';
 import { FakeComplianceTransport } from '../packages/kernel/src/compliance/provider-candidate/transport.ts';
 import { FixtureSanctionsProvider } from '../packages/kernel/src/compliance/provider-candidate/sanctions.ts';
-import { createMarketDataProviderA } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
+import { createMarketQuoteSourceA } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
 import { createOracleProviderA } from '../packages/sunrey-chain/src/oracle/production/productization.ts';
 import { runProviderPreflight } from '../scripts/phase-d-provider-harness.ts';
 import { CandidateRailAdapter } from '../packages/payments/src/production-candidate/adapter.ts';
@@ -104,7 +104,7 @@ describe('Phase D controlled failure scenarios', () => {
     custody.setScenario('wrong_environment');
     assert.equal(custody.createWallet({ vaultId: 'v', walletId: 'w', assetId: 'SUNREY_COIN', network: 'sim' }).ok, false);
 
-    const market = createMarketDataProviderA();
+    const market = createMarketQuoteSourceA();
     market.setScenario('stale');
     const stale = market.getSpotPrice('SUNREY_COIN/USD', '2026-08-21T16:00:00.000Z');
     assert.equal(stale.ok, true);

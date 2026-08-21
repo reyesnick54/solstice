@@ -4,8 +4,8 @@
  */
 
 import type {
-  MarketDataProvider,
-  MarketDataProviderResult,
+  MarketQuoteSource,
+  MarketQuoteResult,
   MarketDataSelectionPolicy,
   MarketPriceQuote,
 } from './types.ts';
@@ -35,10 +35,10 @@ export function quotesCompatible(left: MarketPriceQuote, right: MarketPriceQuote
 
 export function selectMarketPrice(input: {
   readonly policy: MarketDataSelectionPolicy;
-  readonly primary: MarketDataProviderResult<MarketPriceQuote>;
-  readonly secondary: MarketDataProviderResult<MarketPriceQuote>;
+  readonly primary: MarketQuoteResult<MarketPriceQuote>;
+  readonly secondary: MarketQuoteResult<MarketPriceQuote>;
   readonly nowUtc: string;
-}): MarketDataProviderResult<MarketPriceQuote> {
+}): MarketQuoteResult<MarketPriceQuote> {
   const primary = input.primary.ok ? labelFreshness(input.primary.value, input.nowUtc) : null;
   const secondary = input.secondary.ok ? labelFreshness(input.secondary.value, input.nowUtc) : null;
 
@@ -102,9 +102,9 @@ export function selectMarketPrice(input: {
 }
 
 export function quoteFromProvider(
-  provider: MarketDataProvider,
+  provider: MarketQuoteSource,
   instrumentId: string,
   nowUtc: string,
-): MarketDataProviderResult<MarketPriceQuote> {
+): MarketQuoteResult<MarketPriceQuote> {
   return provider.getSpotPrice(instrumentId, nowUtc);
 }

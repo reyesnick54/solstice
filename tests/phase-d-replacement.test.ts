@@ -10,7 +10,7 @@ import {
   runPaymentDomainWorkflow,
 } from '../packages/payments/src/production-candidate/interchangeable.ts';
 import { createKycProviderA, createKycProviderB, runKycDomainWorkflow } from '../packages/identity/src/provider-candidate/interchangeable.ts';
-import { createMarketDataProviderA, createMarketDataProviderB } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
+import { createMarketQuoteSourceA, createMarketQuoteSourceB } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
 import { quoteFromProvider } from '../packages/sunrey-exchange/src/market-data/aggregation.ts';
 
 describe('Phase D provider replacement', () => {
@@ -46,8 +46,8 @@ describe('Phase D provider replacement', () => {
 
   it('runs the same market-data domain workflow against providers A and B', () => {
     const now = '2026-08-21T16:00:00.000Z';
-    const a = quoteFromProvider(createMarketDataProviderA(), 'SUNREY_COIN/USD', now);
-    const b = quoteFromProvider(createMarketDataProviderB(), 'SUNREY_COIN/USD', now);
+    const a = quoteFromProvider(createMarketQuoteSourceA(), 'SUNREY_COIN/USD', now);
+    const b = quoteFromProvider(createMarketQuoteSourceB(), 'SUNREY_COIN/USD', now);
     assert.equal(a.ok, true);
     assert.equal(b.ok, true);
     if (!a.ok || !b.ok) throw new Error('quotes');

@@ -9,7 +9,7 @@ import { SIMULATION_US_VIRTUAL_PROGRAM } from '../packages/cards/src/program.ts'
 import { createCustodyProviderA } from '../packages/custody/src/provider-candidate/sandbox.ts';
 import { runDepositWorkflow, runWithdrawalWorkflow, creditDepositAfterConfirmation } from '../packages/custody/src/provider-candidate/workflows.ts';
 import { createBlockchainAnalyticsA } from '../packages/kernel/src/compliance/provider-candidate/blockchain-analytics.ts';
-import { createMarketDataProviderA } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
+import { createMarketQuoteSourceA } from '../packages/sunrey-exchange/src/market-data/sandbox.ts';
 import { createOracleProviderA } from '../packages/sunrey-chain/src/oracle/production/productization.ts';
 import { acceptIntent, beneficiaryIntent, payIntent, quoteIntent } from './payment-world.ts';
 import { createPhaseCWorld, ledgerBalance, signedCallback } from './phase-c-world.ts';
@@ -147,7 +147,7 @@ describe('Phase D sandbox provider journey', () => {
     assert.equal(withdrawal.value.adapterInvoked, true);
     assert.equal(custody.approveWithdrawal('wd_d').ok, true);
 
-    const market = createMarketDataProviderA().getSpotPrice('SUNREY_COIN/USD', '2026-08-21T16:00:00.000Z');
+    const market = createMarketQuoteSourceA().getSpotPrice('SUNREY_COIN/USD', '2026-08-21T16:00:00.000Z');
     assert.equal(market.ok, true);
     const oracle = createOracleProviderA().observe('energy', '2026-08-21T16:00:00.000Z');
     assert.equal(oracle.ok, true);
