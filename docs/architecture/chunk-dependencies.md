@@ -842,6 +842,12 @@ It binds the actual Chunk 81 Candidate V2 and Chunk 84 Mainnet RC.
 Do not create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. The evaluator returns `mustStop: false`.
+Chunk 165 extends that same ceremony owner with frozen-candidate
+launch authorization rehearsal at
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+See [`docs/operations/chunk-165-launch-authorization-ceremony.md`](../operations/chunk-165-launch-authorization-ceremony.md).
+It does not create a second genesis ceremony, generate real production
+keys, or activate mainnet. The evaluator returns `mustStop: false`.
 Chunk 86 implements the production-environment provisioning control
 plane at `packages/sunrey-chain/src/infra/provisioning`. Capability
 `sunrey-production-provisioning` is `IMPLEMENTED`. See

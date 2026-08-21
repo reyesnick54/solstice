@@ -1232,6 +1232,17 @@ create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. See
 [`chunk-85-production-genesis-ceremony.md`](./chunk-85-production-genesis-ceremony.md).
+Chunk 165 extends that same owner with frozen-candidate launch
+authorization, multi-party offline signing rehearsal, transcript
+integrity, and abort-safe human ceremony flow at
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+It binds one exact freeze hash. A changed freeze, genesis, economic
+authorization, or expired/revoked evidence aborts and requires a new
+session. Fixture signatures are not real human authorization.
+`LAUNCH_AUTHORIZATION_CANDIDATE` is not `MAINNET_ACTIVE`. Do not
+create `packages/ceremony-v2`, `packages/launch-signing`,
+`packages/genesis-authority`, or `packages/mainnet-ceremony`. See
+[`docs/operations/chunk-165-launch-authorization-ceremony.md`](../operations/chunk-165-launch-authorization-ceremony.md).
 
 Chunk 90 implements the SunRey production handoff and day-2 operations
 control plane at `packages/sunrey-chain/src/production-handoff`.
