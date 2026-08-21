@@ -275,6 +275,8 @@ export class IdentityService implements IdentityAuthorityPort {
     readonly assurance: AuthenticationAssurance;
     readonly factors: IdentitySession['factors'];
     readonly deviceId: DeviceId | null;
+    readonly ipHash?: string | null;
+    readonly userAgentHash?: string | null;
   }): IdentitySession {
     const now = this.clock.now();
     const session: IdentitySession = Object.freeze({
@@ -286,9 +288,12 @@ export class IdentityService implements IdentityAuthorityPort {
       issuedAt: now,
       expiresAt: addMs(now, SESSION_TTL_MS),
       lastUsedAt: now,
+      revokedAt: null,
       deviceId: input.deviceId,
       riskState: 'CLEAR',
       revocationState: 'ACTIVE',
+      ipHash: input.ipHash ?? null,
+      userAgentHash: input.userAgentHash ?? null,
     });
     this.store.sessions.set(session.sessionId, session);
     const list = this.store.sessionsByActor.get(input.actorId) ?? [];
@@ -311,7 +316,13 @@ export class IdentityService implements IdentityAuthorityPort {
     if (!session) {
       return fail('SESSION_NOT_FOUND', 'session does not exist');
     }
-    const next = Object.freeze({ ...session, revocationState: 'REVOKED' as const, lastUsedAt: this.clock.now() });
+    const now = this.clock.now();
+    const next = Object.freeze({
+      ...session,
+      revocationState: 'REVOKED' as const,
+      lastUsedAt: now,
+      revokedAt: now,
+    });
     this.store.sessions.set(sessionId, next);
     this.emit('IdentitySessionRevoked', session.subjectId, {
       identityId: session.subjectId,
@@ -353,7 +364,14 @@ export class IdentityService implements IdentityAuthorityPort {
     );
     const now = this.clock.now();
     if (existing) {
-      const next = Object.freeze({ ...existing, lastSeenAt: now, authenticationMethod: method });
+      const next = Object.freeze({
+        ...existing,
+        lastSeenAt: now,
+        authenticationMethod: method,
+        revokedAt: existing.revokedAt ?? null,
+        riskState: existing.riskState ?? 'CLEAR',
+        authenticationStrength: existing.authenticationStrength ?? null,
+      });
       this.store.devices.set(existing.deviceId, next);
       return next;
     }
@@ -363,8 +381,11 @@ export class IdentityService implements IdentityAuthorityPort {
       deviceRef,
       firstSeenAt: now,
       lastSeenAt: now,
+      revokedAt: null,
       authenticationMethod: method,
+      authenticationStrength: null,
       trustState: 'KNOWN',
+      riskState: 'CLEAR',
     });
     this.store.devices.set(device.deviceId, device);
     this.emit('IdentityDeviceRegistered', identityId, {
@@ -379,7 +400,14 @@ export class IdentityService implements IdentityAuthorityPort {
     if (!device) {
       return fail('DEVICE_NOT_FOUND', 'device does not exist');
     }
-    const next = Object.freeze({ ...device, trustState, lastSeenAt: this.clock.now() });
+    const now = this.clock.now();
+    const next = Object.freeze({
+      ...device,
+      trustState,
+      lastSeenAt: now,
+      revokedAt: trustState === 'BLOCKED' ? now : device.revokedAt,
+      riskState: trustState === 'BLOCKED' ? ('BLOCKED' as const) : device.riskState,
+    });
     this.store.devices.set(deviceId, next);
     this.emit('IdentityDeviceTrustChanged', device.identityId, {
       identityId: device.identityId,
@@ -740,7 +768,11 @@ export class IdentityService implements IdentityAuthorityPort {
       return fail('SESSION_REVOKED', 'session has been revoked');
     }
     if (isExpired(session.expiresAt, this.clock.now())) {
-      const expired = Object.freeze({ ...session, revocationState: 'EXPIRED' as const });
+      const expired = Object.freeze({
+        ...session,
+        revocationState: 'EXPIRED' as const,
+        revokedAt: session.revokedAt ?? this.clock.now(),
+      });
       this.store.sessions.set(session.sessionId, expired);
       return fail('SESSION_EXPIRED', 'session has expired');
     }

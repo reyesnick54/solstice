@@ -462,6 +462,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
+  it('customer V029 persists consumer authentication state without plaintext secrets', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v029 = files.find((file) => file.version === 29);
+    assert.ok(v029);
+    assert.equal(v029.filename, 'V029__consumer_authentication.sql');
+    assert.match(v029.sql, /CREATE TABLE identity.login_handle/);
+    assert.match(v029.sql, /CREATE TABLE identity.password_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.totp_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.refresh_session/);
+    assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
+    assert.match(v029.sql, /CREATE TABLE identity.security_event/);
+    assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
+    assert.equal(/plaintext/i.test(v029.sql.replace(/--[^\n]*/g, '').replace(/NOT \(secret_envelope \? 'plaintext'\)/g, '')), false);
+  });
+
   it('customer V028 grants payments schema usage for operational recovery', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v028 = files.find((file) => file.version === 28);
