@@ -330,3 +330,17 @@ Regenerated closure hashes (write command after unmash; `sourceCommit` is
 - closureHash: `080fbe58892ec7ee122aa03a4b36b29ee6b2fa46b5a1eafd5e3c53e4ca81f937`
 
 Productization files already on `main` were not deleted.
+
+Local verification after this remash (repo root):
+
+| Command | Result |
+| --- | --- |
+| `npm run integrity:check` / `integrity:report` | ok; JSON_INTEGRITY=true; one `"test"` key |
+| `npm run typecheck` | ok |
+| `python3 scripts/secret-scan.py` (+ self-test) | ok |
+| architecture lint, extraction dry-run, posture, kernel gating, naming audit, authority-map, freeze | ok |
+| `npm test` | 3087 pass / 0 fail / 1 skipped |
+| `packages/sunrey-chain/rust` cargo fmt/check/clippy/test | ok |
+| `packages/sunrey-chain/node` cargo fmt/check/clippy/test | ok on rerun; one exchange-settlement readiness timeout on first pass (pre-existing flake, not this remash) |
+
+Persistence integration and the full GitHub Actions tail (demo/fuzz/SBOM) were not re-run locally.
