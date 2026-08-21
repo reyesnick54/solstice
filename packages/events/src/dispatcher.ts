@@ -10,6 +10,7 @@ import {
 } from './delivery.ts';
 import type { EventTransport } from './transport.ts';
 import { parseEnvelope } from './envelope.ts';
+import { classifyFailure, holdsForOperator, shouldRetry } from './retry.ts';
 
 export type OutboxStore = {
   enqueue(record: OutboxRecord): Promise<void>;
@@ -99,8 +100,12 @@ export class OutboxDispatcher {
       } catch (error) {
         const attemptCount = row.attemptCount + 1;
         const safe = safeFailureMessage(error);
-        if (shouldDeadLetter(attemptCount, this.policy)) {
+        const classified = classifyFailure(error);
+        const stop =
+          !shouldRetry(classified) || holdsForOperator(classified) || shouldDeadLetter(attemptCount, this.policy);
+        if (stop) {
           await this.outbox.markDeadLetter(row.eventId, this.options.clock.now());
+          const envelope = safeParseTrace(row.envelopeJson);
           await this.deadLetters.record({
             eventId: row.eventId,
             eventType: extractEventType(row.envelopeJson),
@@ -109,6 +114,10 @@ export class OutboxDispatcher {
             attemptCount,
             reasonCode: safe.code,
             reasonSafe: safe.message,
+            errorClass: classified.retryClass,
+            correlationId: envelope.correlationId,
+            requestId: envelope.requestId,
+            lastAttemptAt: this.options.clock.now(),
             createdAt: this.options.clock.now(),
             replayedAt: null,
           });
@@ -150,4 +159,16 @@ function extractEventVersion(envelopeJson: string): number {
 
 export function envelopeFromOutbox(row: OutboxRecord): DurableEventEnvelope {
   return parseEnvelope(row.envelopeJson);
+}
+
+function safeParseTrace(envelopeJson: string): { correlationId: string | null; requestId: string | null } {
+  try {
+    const raw = JSON.parse(envelopeJson) as { correlationId?: string; requestId?: string };
+    return {
+      correlationId: raw.correlationId ?? null,
+      requestId: raw.requestId ?? null,
+    };
+  } catch {
+    return { correlationId: null, requestId: null };
+  }
 }

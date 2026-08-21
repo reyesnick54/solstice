@@ -244,7 +244,24 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'CustodyWithdrawalSettled', version: 1, status: 'current' },
   { eventType: 'SurveillanceAlertRaised', version: 1, status: 'current' },
   { eventType: 'SurveillanceCaseOpened', version: 1, status: 'current' },
+  { eventType: 'WorkflowStarted', version: 1, status: 'current' },
+  { eventType: 'WorkflowCompleted', version: 1, status: 'current' },
+  { eventType: 'WorkflowFailed', version: 1, status: 'current' },
+  { eventType: 'JobEnqueued', version: 1, status: 'current' },
+  { eventType: 'JobDeadLettered', version: 1, status: 'current' },
+  { eventType: 'ProviderWebhookAccepted', version: 1, status: 'current' },
+  { eventType: 'ProviderWebhookRejected', version: 1, status: 'current' },
+  { eventType: 'OutboundWebhookDelivered', version: 1, status: 'current' },
+  { eventType: 'OutboundWebhookFailed', version: 1, status: 'current' },
 ];
+
+export const EVENT_COMPATIBILITY_POLICY = Object.freeze({
+  optionalFieldSameVersion: true,
+  breakingChangeRequiresNewVersion: true,
+  silentPayloadSemanticChangeForbidden: true,
+  deprecatedVersionsRemainReadable: true,
+  unsupportedFailsClosed: true,
+});
 
 export class UnsupportedEventVersionError extends Error {
   readonly eventType: string;

@@ -28,12 +28,14 @@ export async function insertSealedDomainEvent(
        event_type, schema_version, occurred_at, payload_canonical,
        event_id, event_version, aggregate_type, aggregate_id, aggregate_sequence,
        correlation_id, causation_id, intent_id, evidence_id, jurisdiction, cell_id,
-       schema_ref, metadata_canonical, envelope_canonical
+       schema_ref, metadata_canonical, envelope_canonical,
+       producer, actor_type, actor_id, subject_type, subject_id, environment, request_id
      ) VALUES (
        $1, $2, $3, $4::jsonb,
        $5, $6, $7, $8, $9,
        $10, $11, $12, $13, $14, $15,
-       $16, $17::jsonb, $18::jsonb
+       $16, $17::jsonb, $18::jsonb,
+       $19, $20, $21, $22, $23, $24, $25
      )
      ON CONFLICT (event_id) DO NOTHING`,
     [
@@ -55,6 +57,13 @@ export async function insertSealedDomainEvent(
       event.schemaRef,
       canonicalJson(event.metadata),
       envelopeJson,
+      event.producer,
+      event.actor?.type ?? null,
+      event.actor?.id ?? null,
+      event.subject?.type ?? null,
+      event.subject?.id ?? null,
+      event.environment,
+      event.requestId,
     ],
   );
   await client.query(
@@ -335,8 +344,8 @@ export class PostgresDeadLetterStore implements DeadLetterStore {
     const result = await this.pool.query<{ id: string }>(
       `INSERT INTO ledger.dead_letter (
          event_id, event_type, event_version, consumer_id, attempt_count,
-         reason_code, reason_safe, created_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::timestamptz)
+         reason_code, reason_safe, created_at, error_class, correlation_id, request_id, last_attempt_at
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8::timestamptz, $9, $10, $11, $12::timestamptz)
        RETURNING id::text`,
       [
         row.eventId,
@@ -347,6 +356,10 @@ export class PostgresDeadLetterStore implements DeadLetterStore {
         row.reasonCode,
         row.reasonSafe,
         row.createdAt,
+        row.errorClass ?? null,
+        row.correlationId ?? null,
+        row.requestId ?? null,
+        row.lastAttemptAt ?? row.createdAt,
       ],
     );
     return { ...row, id: result.rows[0]!.id };
@@ -355,7 +368,8 @@ export class PostgresDeadLetterStore implements DeadLetterStore {
   async list(): Promise<readonly DeadLetterRecord[]> {
     const result = await this.pool.query(
       `SELECT id::text AS id, event_id, event_type, event_version, consumer_id,
-              attempt_count, reason_code, reason_safe, created_at, replayed_at
+              attempt_count, reason_code, reason_safe, created_at, replayed_at,
+              error_class, correlation_id, request_id, last_attempt_at
          FROM ledger.dead_letter ORDER BY id`,
     );
     return result.rows.map(mapDeadLetter);
@@ -371,7 +385,8 @@ export class PostgresDeadLetterStore implements DeadLetterStore {
   async getByEventId(eventId: string): Promise<DeadLetterRecord | undefined> {
     const result = await this.pool.query(
       `SELECT id::text AS id, event_id, event_type, event_version, consumer_id,
-              attempt_count, reason_code, reason_safe, created_at, replayed_at
+              attempt_count, reason_code, reason_safe, created_at, replayed_at,
+              error_class, correlation_id, request_id, last_attempt_at
          FROM ledger.dead_letter WHERE event_id = $1 ORDER BY id DESC LIMIT 1`,
       [eventId],
     );
@@ -390,6 +405,10 @@ function mapDeadLetter(row: {
   reason_safe: string;
   created_at: Date;
   replayed_at: Date | null;
+  error_class?: string | null;
+  correlation_id?: string | null;
+  request_id?: string | null;
+  last_attempt_at?: Date | null;
 }): DeadLetterRecord {
   return {
     id: row.id,
@@ -400,6 +419,10 @@ function mapDeadLetter(row: {
     attemptCount: row.attempt_count,
     reasonCode: row.reason_code,
     reasonSafe: row.reason_safe,
+    errorClass: row.error_class ?? null,
+    correlationId: row.correlation_id ?? null,
+    requestId: row.request_id ?? null,
+    lastAttemptAt: row.last_attempt_at?.toISOString() ?? null,
     createdAt: row.created_at.toISOString(),
     replayedAt: row.replayed_at?.toISOString() ?? null,
   };

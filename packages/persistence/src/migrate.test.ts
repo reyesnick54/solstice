@@ -525,6 +525,23 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
   });
 
+  it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v007 = files.find((file) => file.version === 7);
+    assert.ok(v007);
+    assert.equal(v007.filename, 'V007__async_fabric.sql');
+    assert.match(v007.sql, /CREATE TABLE ledger\.async_job/);
+    assert.match(v007.sql, /CREATE TABLE ledger\.async_workflow/);
+    assert.match(v007.sql, /CREATE TABLE ledger\.inbound_webhook/);
+    assert.match(v007.sql, /CREATE TABLE ledger\.outbound_webhook_subscription/);
+    assert.match(v007.sql, /CREATE TABLE ledger\.outbound_webhook_delivery/);
+    assert.match(v007.sql, /environment = 'simulation'/);
+    assert.match(v007.sql, /async_job_not_authority/);
+    assert.match(v007.sql, /secret_ref/);
+    assert.equal(/CREATE TABLE ledger\.journal/.test(v007.sql), false);
+    assert.equal(/api_key_value|private_key|hmac_secret\b/i.test(v007.sql), false);
+  });
+
   it('ledger V006 persists operation execution without credentials or raw payloads', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v006 = files.find((file) => file.version === 6);
