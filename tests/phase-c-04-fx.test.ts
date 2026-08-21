@@ -174,7 +174,7 @@ function walletAccept(world: ReturnType<typeof createWalletWorld>, id: string, q
     actorId: world.actorId,
     requestedAt: world.clock.now(),
     purpose: 'CUSTOMER_FX',
-    payload: { quoteId, accountId },
+    payload: { quoteId, accountId: asAccountId(accountId) },
   });
 }
 
@@ -194,9 +194,9 @@ function walletExecute(
     purpose: 'CUSTOMER_FX',
     payload: {
       quoteId,
-      accountId: sourceId,
-      sourceAccountId: sourceId,
-      destinationAccountId: destId,
+      accountId: asAccountId(sourceId),
+      sourceAccountId: asAccountId(sourceId),
+      destinationAccountId: asAccountId(destId),
     },
   };
 }

@@ -292,7 +292,10 @@ export class PaymentsService {
       corridorId: corridor.corridorId,
       legalEntityId: corridor.servingLegalEntityId,
       now: this.clock.now(),
-      pricingContext: { customerId: customer?.id, productId: account?.productId },
+      pricingContext: {
+        ...(customer?.id === undefined ? {} : { customerId: customer.id }),
+        ...(account?.productId === undefined ? {} : { productId: account.productId }),
+      },
     });
     if (!quoted.ok) {
       return this.reject(intent.actionType, intent.id, gated.decision, quoted.code, quoted.message);
@@ -395,7 +398,7 @@ export class PaymentsService {
     const gated = this.gate(intent, source, customer, {
       ...(corridor ? { corridorId: corridor.corridorId } : {}),
       corridorSimulationEnabled: corridor ? corridorIsSimulationEnabled(corridor) : false,
-      amount: quote?.amountDebited,
+      ...(quote === undefined ? {} : { amount: quote.amountDebited }),
     });
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;

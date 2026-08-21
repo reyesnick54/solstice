@@ -74,7 +74,7 @@ export function convertExact(
 
 export function invertRate(rate: FxRate): FxRate {
   return freezeRate({
-    kind: rate.kind,
+    ...(rate.kind === undefined ? {} : { kind: rate.kind }),
     base: rate.quote,
     quote: rate.base,
     numerator: rate.denominator,

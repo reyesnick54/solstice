@@ -5,7 +5,7 @@ import type { CurrencyCode } from '../../domain/src/currency.ts';
 import type { LegalEntityId } from '../../domain/src/legal-entity.ts';
 import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
 import { Money, RoundingMode } from '../../money/src/money.ts';
-import { convertExact, freezeRate, type FxRate } from './fx-rate.ts';
+import { convertExact, freezeRate, invertRate, type FxRate } from './fx-rate.ts';
 import { freezeQuote, type FxQuote } from './fx-quote.ts';
 import { asCorridorId, asQuoteId, type CorridorId, type QuoteId } from './ids.ts';
 import {
@@ -313,13 +313,5 @@ function resolveSource(request: QuoteRequest, customer: FxRate): Money {
   if (request.destinationAmount.currency !== request.quoteCurrency) {
     throw new TypeError('destination amount currency must match quote currency');
   }
-  return convertExact(request.destinationAmount, {
-    kind: customer.kind,
-    base: customer.quote,
-    quote: customer.base,
-    numerator: customer.denominator,
-    denominator: customer.numerator,
-    timestamp: customer.timestamp,
-    source: customer.source,
-  });
+  return convertExact(request.destinationAmount, invertRate(customer));
 }
