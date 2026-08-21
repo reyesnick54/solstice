@@ -45,6 +45,7 @@ export function composeCeremonyLaunchAbort() {
       aborted.productionActivated || launchAbort.createdGenesisBlock || preGenesis.createdGenesisBlock,
     wroteChainHistory: launchAbort.createdChainHistory || preGenesis.createdChainHistory,
     privateKeysReused: Boolean(aborted.abort?.privateKeysReused),
+    privateKeysReused: aborted.abort?.privateKeysReused ?? false,
     restartRequired: aborted.abort?.restartRequired === true,
     freezeHashBound: aborted.binding.launchFreezeHash.length > 0,
     productionActive: aborted.productionActivated,
