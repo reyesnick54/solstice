@@ -124,6 +124,7 @@ Resolved on inspection:
 | PROVIDER_INTEGRATIONS | existing owner packages | `packages/sunrey-chain/src/providers/production-binding/types.ts` | ACTIVE_SPECIALIZED | adapter records; not SoR |
 | OPERATIONS | `packages/sunrey-chain` | `packages/sunrey-chain/src/ops/index.ts` | ACTIVE_CANONICAL | ops / control room |
 | DEPLOYMENT | `packages/sunrey-chain` | `packages/sunrey-chain/src/infra/provider.ts` | ACTIVE_CANONICAL | simulation infra posture |
+| PLATFORM_API | `services/api` | `services/api/src/app.ts` | ACTIVE_SPECIALIZED | HTTP runtime; not books |
 
 Machine-readable companion: `docs/productization/sunrey-authority-map.json`.
 

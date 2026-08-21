@@ -228,6 +228,7 @@ Historical discussion remains below the table.
 | sunrey-production-operating-scope | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
+| sunrey-platform-api | IMPLEMENTED | services/api |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint
