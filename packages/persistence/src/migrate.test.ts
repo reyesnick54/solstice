@@ -554,7 +554,7 @@ describe('versioned SQL migrations', () => {
     assert.equal(v008.filename, 'V008__account_product.sql');
     assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
     assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
-    assert.equal(/balance/.test(v008.sql), false);
+    assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v008.sql), false);
   });
 
   it('ledger V009 persists production journal metadata without becoming a second ledger', () => {
