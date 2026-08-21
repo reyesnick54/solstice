@@ -273,7 +273,7 @@ describe('Chunk 165 frozen launch authorization ceremony', () => {
           publicContribution: 'BEGIN PRIVATE KEY',
           occurredAtUtc: LAUNCH_AUTH_REHEARSAL_NOW,
         }),
-      /secret cannot enter transcript|private key cannot enter/,
+      /secret string value rejected in transcript|private key cannot enter/,
     );
   });
 

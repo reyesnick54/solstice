@@ -8,6 +8,7 @@
 
 import { SUITE_SUNREY_ED25519_V1 } from '../../../../security/src/index.ts';
 import { rejectSimulationHsmForExternalRequirement } from '../hsm.ts';
+import type { ProductionHsmAttestation } from '../types.ts';
 import { CeremonyCandidateMismatchError, abortCeremony } from './abort.ts';
 import { verifyLaunchSignature } from './approvals.ts';
 import { assertBindingMatches } from './plan.ts';
@@ -21,7 +22,6 @@ import type {
   LaunchAuthorizationCeremonySession,
   LaunchCeremonyParticipant,
   LaunchOfflineSigningPackage,
-  ProductionHsmAttestation,
   ProductionLaunchCeremonyBinding,
 } from './types.ts';
 

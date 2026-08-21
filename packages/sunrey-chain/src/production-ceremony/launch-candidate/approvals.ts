@@ -73,11 +73,7 @@ export function verifyLaunchSignature(
   signatureHex: string,
 ): boolean {
   const provider = createEd25519SignatureProvider();
-  const verified = provider.verifyRaw(
-    publicKeyHex,
-    Buffer.from(payloadHash, 'hex'),
-    Buffer.from(signatureHex, 'hex'),
-  );
+  const verified = provider.verifyRaw(publicKeyHex, Buffer.from(payloadHash, 'hex'), signatureHex);
   return verified.ok;
 }
 

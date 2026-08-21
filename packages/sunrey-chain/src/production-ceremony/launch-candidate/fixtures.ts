@@ -94,7 +94,7 @@ export function fixtureLaunchParticipants(): readonly LaunchCeremonyParticipant[
   );
 }
 
-export function openFixtureLaunchSession(sessionId = LAUNCH_AUTH_SESSION_A) {
+export function openFixtureLaunchSession(sessionId: string = LAUNCH_AUTH_SESSION_A) {
   const binding = fixtureLaunchFreezeBinding();
   const plan = createLaunchCeremonyPlan({ binding });
   return openLaunchCeremonySession({

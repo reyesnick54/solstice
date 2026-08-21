@@ -52,7 +52,7 @@ export function abortCeremony(
     code: input.code,
     reason: input.reason,
     session,
-    affectedArtifacts: input.affectedArtifacts,
+    affectedArtifacts: input.affectedArtifacts ?? Object.freeze([]),
     abortedAtUtc: input.occurredAtUtc,
   });
   const transcript = appendLaunchTranscript(session.transcript, {

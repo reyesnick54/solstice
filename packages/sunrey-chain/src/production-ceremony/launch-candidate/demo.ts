@@ -5,7 +5,7 @@
  * then modifies the freeze hash and shows ceremony rejection.
  */
 
-import { ENVIRONMENT, LIVE_MONEY_ENABLED } from '../../../../../config/src/flags.ts';
+import { ENVIRONMENT, LIVE_MONEY_ENABLED } from '../../../../config/src/flags.ts';
 import { runLaunchAuthorizationDressRehearsal } from './fixtures.ts';
 
 export function runLaunchAuthorizationCeremonyDemo(): void {

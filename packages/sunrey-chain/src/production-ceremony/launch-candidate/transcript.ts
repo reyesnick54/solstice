@@ -6,7 +6,7 @@
  * invalidate the transcript. Secret material is rejected.
  */
 
-import { findPrivateKeyLeakage } from '../../../../security/src/crypto-leakage.ts';
+import { findPrivateKeyLeakage, looksLikePrivateKeyField } from '../../../../security/src/crypto-leakage.ts';
 import { appendTranscriptEntry, verifyTranscript } from '../transcript.ts';
 import type {
   CeremonyTranscriptAction,
@@ -31,14 +31,46 @@ export const LAUNCH_TRANSCRIPT_ACTIONS = [
   'AUTHORIZATION_CANDIDATE_SEALED',
 ] as const satisfies readonly CeremonyTranscriptAction[];
 
+function walkSecretStrings(value: unknown, seen: WeakSet<object>): void {
+  if (typeof value === 'string') {
+    if (SECRET_TEXT.test(value)) {
+      throw new TypeError('secret string value rejected');
+    }
+    return;
+  }
+  if (value === null || typeof value !== 'object') {
+    return;
+  }
+  if (seen.has(value)) {
+    return;
+  }
+  seen.add(value);
+  if (Array.isArray(value)) {
+    for (const entry of value) {
+      walkSecretStrings(entry, seen);
+    }
+    return;
+  }
+  for (const [key, entry] of Object.entries(value)) {
+    if (looksLikePrivateKeyField(key) && typeof entry !== 'boolean') {
+      throw new TypeError(`private key cannot enter field ${key}`);
+    }
+    walkSecretStrings(entry, seen);
+  }
+}
+
 export function assertNoSecretMaterial(value: unknown, context: string): void {
   const hits = findPrivateKeyLeakage(value);
   if (hits.length > 0) {
     throw new TypeError(`private key cannot enter ${context}`);
   }
-  const encoded = JSON.stringify(value).toLowerCase();
-  if (SECRET_TEXT.test(encoded)) {
-    throw new TypeError(`secret cannot enter ${context}`);
+  try {
+    walkSecretStrings(value, new WeakSet());
+  } catch (error) {
+    if (error instanceof TypeError && /secret|private key/.test(error.message)) {
+      throw new TypeError(`${error.message} in ${context}`);
+    }
+    throw error;
   }
 }
 
