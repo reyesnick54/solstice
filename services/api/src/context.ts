@@ -55,7 +55,7 @@ export type Authenticator = {
 
 /**
  * Default authenticator. Does not trust client-supplied identity headers.
- * Session validation is a later Phase B prompt.
+ * Inject AuthenticationService via createPlatformApi to validate sessions.
  */
 export const nullAuthenticator: Authenticator = {
   async authenticate(): Promise<AuthenticatedPrincipal | null> {

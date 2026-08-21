@@ -7,10 +7,10 @@ was productized, what was extended, and what remains blocked.
 `PRODUCTION_READY=false`. Authentication is not KYC and does not issue
 Execution Authority.
 
-Phase B Prompt 1 (`docs/productization/PHASE_B_01_API_GATEWAY.md`) was
-**not present on `main`** when this work landed. Auth HTTP is therefore a
-**mountable dispatcher**, not a second API runtime. Prompt 3 should mount
-`dispatchAuthHttp` on the canonical gateway when that runtime merges.
+The Prompt 1 Platform API (`services/api`) is the canonical HTTP runtime.
+`dispatchAuthHttp` is mounted there via `createAuthRoutes`. This is not a
+second API runtime. Prompt 3 should add authorization / Kernel / Execution
+Authority middleware on the same gateway.
 
 ---
 
@@ -167,7 +167,8 @@ Passwords, emails, TOTP secrets, and refresh tokens are not written.
 
 ## 10. API endpoints
 
-Mount with `dispatchAuthHttp(auth, request)`.
+Mounted on `services/api` through `createAuthRoutes`. Tests and other
+hosts may still call `dispatchAuthHttp(auth, request)` directly.
 
 | Method | Path |
 | --- | --- |
@@ -195,8 +196,10 @@ Mount with `dispatchAuthHttp(auth, request)`.
 | GET | `/api/v1/auth/me` |
 | POST | `/api/v1/auth/step-up/evaluate` |
 
-Errors use the canonical envelope (`error_code`, `category`, `message`,
+The identity dispatcher uses (`error_code`, `category`, `message`,
 `retryable`, `details_safe_for_client`, `request_id`, `api_version`).
+When mounted on the Platform API, failures are mapped to the Prompt 1
+envelope (`error.code`, `requestId`).
 
 ---
 
@@ -239,14 +242,15 @@ Errors use the canonical envelope (`error_code`, `category`, `message`,
 | `@simplewebauthn/server` + `@simplewebauthn/browser` | Production passkeys |
 | Email / SMS provider | Out-of-band recovery and handle verification |
 | Distributed rate-limit / risk engine | Cross-instance and risk-aware policies |
-| Phase B Prompt 1 API runtime | Mount `dispatchAuthHttp` on the gateway |
+| Phase B Prompt 1 API runtime | Mounted. Session validation uses `AuthenticationService` |
 | Prompt 3 authorization middleware | Capability / Kernel / Execution Authority |
 
 ---
 
 ## 14. Persistence
 
-Migration: `db/customer/migrations/V029__consumer_authentication.sql`
+Migration: `db/customer/migrations/V030__consumer_authentication.sql`
+(Prompt 1 claimed customer `V029` for `platform_api`.)
 
 Tables: `login_handle`, `password_credential`, `totp_credential`,
 `refresh_session`, `auth_challenge`, `security_event`,

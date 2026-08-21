@@ -51,6 +51,7 @@ export {
 } from './rate-limit.ts';
 export { resolveCors } from './cors.ts';
 export { evaluateReadiness } from './readiness.ts';
+export { createAuthRoutes, createIdentityAuthenticator } from './auth-bridge.ts';
 export { FUTURE_NAMESPACES, createRoutes } from './routes.ts';
 export { startPlatformApi, type RunningPlatformApi } from './server.ts';
 export { validateRequest } from './validation.ts';

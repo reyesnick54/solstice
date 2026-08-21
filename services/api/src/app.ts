@@ -6,6 +6,7 @@
  */
 
 import type { Clock } from '../../../packages/config/src/clock.ts';
+import type { AuthenticationService } from '../../../packages/identity/src/index.ts';
 
 import {
   loadValidatedPlatformApiConfig,
@@ -13,6 +14,7 @@ import {
   type PlatformApiConfig,
   type PlatformApiConfigInput,
 } from './config.ts';
+import { createIdentityAuthenticator } from './auth-bridge.ts';
 import { type Authenticator, nullAuthenticator } from './context.ts';
 import {
   MemoryIdempotencyRepository,
@@ -31,6 +33,7 @@ export type PlatformApiAppOptions = {
   readonly idempotency?: IdempotencyRepository;
   readonly rateLimit?: RateLimitRepository;
   readonly authenticator?: Authenticator;
+  readonly authentication?: AuthenticationService;
   readonly clock?: Clock;
   readonly sql?: SqlClient;
   readonly persistenceProbe?: () => Promise<boolean>;
@@ -59,10 +62,13 @@ export async function createPlatformApi(options: PlatformApiAppOptions = {}): Pr
     routes: createRoutes({
       config,
       readiness: () => evaluateReadiness(config, checks),
+      ...(options.authentication ? { authentication: options.authentication } : {}),
     }),
     idempotency,
     rateLimit,
-    authenticator: options.authenticator ?? nullAuthenticator,
+    authenticator:
+      options.authenticator ??
+      (options.authentication ? createIdentityAuthenticator(options.authentication) : nullAuthenticator),
     ...(options.clock ? { clock: options.clock } : {}),
     ...(options.logSink ? { logSink: options.logSink } : {}),
   });

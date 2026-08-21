@@ -1,7 +1,10 @@
+import type { AuthenticationService } from '../../../packages/identity/src/index.ts';
+
 import {
   API_VERSION,
   type RequestContext,
 } from './context.ts';
+import { createAuthRoutes } from './auth-bridge.ts';
 import type { PlatformApiConfig } from './config.ts';
 import { PlatformApiError } from './errors.ts';
 import type { ReadinessReport } from './readiness.ts';
@@ -25,6 +28,7 @@ export const FUTURE_NAMESPACES = [
 export type RouteDependencies = {
   readonly config: PlatformApiConfig;
   readonly readiness: () => Promise<ReadinessReport>;
+  readonly authentication?: AuthenticationService;
 };
 
 export function createRoutes(deps: RouteDependencies): readonly RouteDefinition[] {
@@ -89,6 +93,10 @@ export function createRoutes(deps: RouteDependencies): readonly RouteDefinition[
       handler: async ({ ctx }) => meHandler(ctx),
     },
   ];
+
+  if (deps.authentication) {
+    routes.push(...createAuthRoutes(deps.authentication));
+  }
 
   if (deps.config.featureFlags.testRoutes) {
     routes.push(
