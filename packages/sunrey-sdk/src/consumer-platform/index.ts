@@ -64,12 +64,12 @@ export type {
   VersionDto,
   WebhookEndpointDto,
   CardDto,
+  CardResourceDto,
   FxQuoteDto,
   PaymentDto,
   RecipientDto,
   CardControlsDto,
   CardDetailDto,
-  CardDto,
   CardStatus,
   CardWalletStatus,
 } from './types.ts';

@@ -37,7 +37,7 @@ export function normalizeProviderFailure(input: {
   const code = VENDOR_CODE_MAP[raw] ?? 'PROVIDER_UNKNOWN_STATUS';
   return universalErr(code, `provider ${input.providerId} returned ${code}`, {
     providerId: input.providerId,
-    providerReference: input.providerReference,
+    ...(input.providerReference ? { providerReference: input.providerReference } : {}),
   });
 }
 

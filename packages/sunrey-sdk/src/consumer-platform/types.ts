@@ -50,8 +50,10 @@ export const CONSUMER_ACTION_TYPES = [
   'INITIATE_PAYMENT',
   'ACCEPT_FX_QUOTE',
   'CARD_ISSUE',
+  'ISSUE_CARD',
+  'FREEZE_CARD',
+  'UNFREEZE_CARD',
 ] as const;
-export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT', 'ISSUE_CARD', 'FREEZE_CARD', 'UNFREEZE_CARD'] as const;
 export type ConsumerActionType = (typeof CONSUMER_ACTION_TYPES)[number];
 
 export const SANDBOX_PERSONA_IDS = [
@@ -266,7 +268,7 @@ export type CardControlsDto = {
   readonly dailyLimitMinor: string | null;
 };
 
-export type CardDto = {
+export type CardResourceDto = {
   readonly schema: 'sunrey.consumer.card.v1';
   readonly cardId: string;
   readonly ownerCustomerId: string;
@@ -284,7 +286,7 @@ export type CardDto = {
 };
 
 export type CardDetailDto = {
-  readonly card: CardDto;
+  readonly card: CardResourceDto;
   readonly fundingAccountId: string;
   readonly available: MoneyDto;
   readonly held: MoneyDto;

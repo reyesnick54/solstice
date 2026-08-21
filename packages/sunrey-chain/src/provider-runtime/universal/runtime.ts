@@ -175,8 +175,8 @@ export class UniversalProviderRuntime {
         applyHealthObservation(current, {
           success: input.success,
           latencyMs: input.latencyMs,
-          rateLimited: input.rateLimited,
-          maintenance: input.maintenance,
+          ...(input.rateLimited !== undefined ? { rateLimited: input.rateLimited } : {}),
+          ...(input.maintenance !== undefined ? { maintenance: input.maintenance } : {}),
           circuitState,
           nowUtc: input.nowUtc,
         }),

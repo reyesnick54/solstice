@@ -13,6 +13,15 @@ real secrets, or claim external certification.
 
 `SAFE_TO_PROCEED_TO_PHASE_D_PROMPT_2=true`
 
+Validation for this prompt: provider-runtime 15/15, Phase D gate 4/4,
+durable store 1/1, Chunk 91 11/11, Phase C FX 7/7, Phase C money 1/1,
+Phase C crash/retry 5/5, Phase C security 4/4, Consumer BFF 18/18,
+Phase C SDK e2e 1/1. Typecheck, architecture lint, JSON integrity,
+secret scan, production-safety, authority-map, and migration ordering
+pass. Production remains disabled.
+
+PostgreSQL was not available here for `db:migrate` / `test:persistence`.
+
 ## Canonical owner
 
 Chunk 91 already implemented `sunrey-provider-runtime` at

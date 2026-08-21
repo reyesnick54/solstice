@@ -59,13 +59,13 @@ describe('Phase D Prompt 1 productization gate', () => {
     seedSimulationProviders(runtime, NOW);
     const sandbox = computeCapabilities({ principal: base, providerRuntime: runtime });
     assert.equal(sandbox.paymentsEnabled, true);
-    assert.equal(sandbox.details.payments.provider, 'SIMULATED');
+    assert.equal(sandbox.details.payments?.provider, 'SIMULATED');
     runtime.observeHealth({ providerId: 'sim-payments', success: false, latencyMs: null, nowUtc: NOW });
     runtime.observeHealth({ providerId: 'sim-payments', success: false, latencyMs: null, nowUtc: NOW });
     runtime.observeHealth({ providerId: 'sim-payments', success: false, latencyMs: null, nowUtc: NOW });
     const down = computeCapabilities({ principal: base, providerRuntime: runtime });
     assert.equal(down.paymentsEnabled, false);
-    assert.equal(down.details.payments.state, 'PROVIDER_UNAVAILABLE');
+    assert.equal(down.details.payments?.state, 'PROVIDER_UNAVAILABLE');
   });
 
   it('sandbox world still exposes safe feature availability', () => {

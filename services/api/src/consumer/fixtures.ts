@@ -344,7 +344,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     now: () => runtime.clock.now(),
     accounts: createAccountsReadAdapter(runtime),
     preferences: memoryPreferenceStore(),
-    fxEngine: createFxCommandPort(payments, () => runtime.clock.now()),
+    fxEngine: createFxCommandPort(paymentsService, () => runtime.clock.now()),
     actions: {
       list(principal) {
         return pendingActions.get(principal.customerId) ?? [];

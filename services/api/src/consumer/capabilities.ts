@@ -89,8 +89,10 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     (principal.verification !== 'VERIFIED' ||
       principal.customerStatus === 'PENDING_VERIFICATION' ||
       principal.customerStatus === 'PROSPECT');
-  const runtimeDown = input.providerRuntime ? providerDownFromRuntime(input.providerRuntime) : {};
-  const down = { ...runtimeDown, ...input.providerDown };
+  const down: Readonly<Record<string, boolean>> = {
+    ...(input.providerRuntime ? providerDownFromRuntime(input.providerRuntime) : {}),
+    ...input.providerDown,
+  };
 
   const payments = feature({
     key: 'payments',
