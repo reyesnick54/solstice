@@ -32,6 +32,7 @@ export {
   recommendEmergencyAction,
   refuseAiEmergencyApproval,
 } from './resumption.ts';
+export { composeCeremonyLaunchAbort } from './compose-ceremony.ts';
 export { composeStagedActivationAbortRecovery } from './compose-staged.ts';
 export {
   rehearseAiBoundary,

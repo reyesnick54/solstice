@@ -1,9 +1,10 @@
 /**
  * demo:sunrey-launch-abort-recovery
  *
- * Rehearses staged activation, an oracle integrity incident, provider
- * suspension, MoonRey issuance restriction, unrelated-domain availability,
- * reconciliation, human-approved resumption, then HSM signing restriction.
+ * Rehearses ceremony abort, staged activation, an oracle integrity
+ * incident, provider suspension, MoonRey issuance restriction,
+ * unrelated-domain availability, reconciliation, human-approved
+ * resumption, then HSM signing restriction.
  */
 
 import {
@@ -21,6 +22,12 @@ export function runLaunchAbortRecoveryDemo(): Record<string, unknown> {
   const staged = rehearsal.stagedActivation;
   return {
     environment: ENVIRONMENT,
+    ceremonyAbort: {
+      transcriptPreserved: rehearsal.ceremony.transcriptPreserved,
+      wroteGenesis: rehearsal.ceremony.wroteGenesis,
+      privateKeysReused: rehearsal.ceremony.privateKeysReused,
+      restartRequired: rehearsal.ceremony.restartRequired,
+    },
     stagedActivation: {
       composed: staged.staged,
       moonreyPaused: staged.moonreyPaused,

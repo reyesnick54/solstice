@@ -91,6 +91,10 @@ describe('CHUNK-167 launch abort and recovery', () => {
     const result = rehearseCeremonyAbort();
     assert.equal(result.transcriptPreserved, true);
     assert.equal(result.wroteGenesis, false);
+    assert.equal(result.privateKeysReused, false);
+    assert.equal(result.restartRequired, true);
+    assert.equal(result.freezeHashBound, true);
+    assert.equal(result.session.state, 'ABORTED');
     const abort = abortCeremony({
       phase: 'DURING_CEREMONY',
       reason: 'CEREMONY_DEFECT',

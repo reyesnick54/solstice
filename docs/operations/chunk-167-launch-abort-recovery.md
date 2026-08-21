@@ -38,6 +38,15 @@ AI / S3M / Grok may detect, summarize, recommend, and draft. They may
 not activate emergency authority, resume a capability, rewrite a
 balance, mint, or sign a governance action.
 
+## Composition with Chunk 165
+
+Ceremony abort stays on
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+Launch-abort records the operational evidence and binds the Chunk 164
+freeze hash already sealed on the ceremony session. Abort preserves
+the transcript and signatures, does not reuse private keys, and does
+not write genesis.
+
 ## Composition with Chunk 166
 
 The launch-abort rehearsal composes with the Chunk 166 staged

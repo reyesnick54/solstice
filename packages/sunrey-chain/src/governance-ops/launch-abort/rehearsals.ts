@@ -29,6 +29,7 @@ import {
   refuseAiEmergencyApproval,
 } from './resumption.ts';
 import type { IndependentCapability } from '../../post-genesis/types.ts';
+import { composeCeremonyLaunchAbort } from './compose-ceremony.ts';
 import { composeStagedActivationAbortRecovery } from './compose-staged.ts';
 
 function emergencyPackage(packageId: string): GovernanceOperationPackage {
@@ -78,16 +79,15 @@ export function rehearsePreGenesisAbort() {
 }
 
 export function rehearseCeremonyAbort() {
-  const abort = abortCeremony({
-    phase: 'DURING_CEREMONY',
-    reason: 'CEREMONY_DEFECT',
-    ceremonyTranscriptHash: 'transcript_rehearsal_167',
-    candidateFreezeHash: 'freeze_rehearsal_167',
-  });
+  const composed = composeCeremonyLaunchAbort();
   return Object.freeze({
-    abort,
-    transcriptPreserved: abort.transcriptPreserved,
-    wroteGenesis: abort.createdGenesisBlock,
+    abort: composed.launchAbort,
+    session: composed.session,
+    transcriptPreserved: composed.transcriptPreserved,
+    wroteGenesis: composed.wroteGenesis,
+    privateKeysReused: composed.privateKeysReused,
+    restartRequired: composed.restartRequired,
+    freezeHashBound: composed.freezeHashBound,
   });
 }
 
@@ -410,11 +410,13 @@ export function rehearseForbiddenEmergencyPowers() {
 }
 
 export function runLaunchAbortRecoveryRehearsal() {
+  const ceremony = composeCeremonyLaunchAbort();
   const stagedActivation = composeStagedActivationAbortRecovery();
   const oracle = rehearseOracleProviderCompromise();
   const resume = rehearseResumptionIndependence();
   const hsm = rehearseHsmCompromise();
   return Object.freeze({
+    ceremony,
     stagedActivation,
     oracle,
     resume,

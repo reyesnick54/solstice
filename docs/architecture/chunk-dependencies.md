@@ -1667,7 +1667,7 @@ restrictions, rollback semantics, recovery gates, and resumption
 authorization rehearsal by extending
 `packages/sunrey-chain/src/governance-ops`,
 `packages/sunrey-chain/src/post-genesis`, and
-`packages/sunrey-chain/src/production-handoff`. It composes with
+`packages/sunrey-chain/src/production-handoff`. It composes with Chunk 165 ceremony abort and
 Chunk 166 staged-activation pause and readiness gates. It does not
 create a second emergency authority. Application rollback is not
 chain-history rollback. Resumption is independently authorized. The
