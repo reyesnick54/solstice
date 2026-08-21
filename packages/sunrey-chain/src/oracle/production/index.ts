@@ -1,4 +1,14 @@
 export {
+  ORACLE_OBSERVATION_CANNOT_MINT,
+  ORACLE_PROVIDER_CONTRACT_VERSION,
+  DeterministicOracleAdapter,
+  createOracleProviderA,
+  createOracleProviderB,
+  observationCannotMint,
+  rejectUnverifiedProductiveValue,
+  runOracleContractSuite,
+} from './productization.ts';
+export {
   OracleObservationDedupe,
   admitCollectedObservation,
   oracleObservationKey,

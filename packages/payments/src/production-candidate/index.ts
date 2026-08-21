@@ -58,6 +58,16 @@ export {
   baasReferenceIsNotLedgerBalance,
 } from './conformance.ts';
 export {
+  createFxProviderA,
+  createFxProviderB,
+  createPaymentProviderA,
+  createPaymentProviderB,
+  runFxContractSuite,
+  runFxDomainWorkflow,
+  runPaymentContractSuite,
+  runPaymentDomainWorkflow,
+} from './interchangeable.ts';
+export {
   fixtureBankUs,
   fixtureBankGcc,
   fixtureRailInternational,
