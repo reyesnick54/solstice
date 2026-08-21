@@ -21,7 +21,12 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
 | SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
 | FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
-| CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
+| CARDS | `/api/v1/cards` | GET, POST | required + step-up on POST | PCI-minimized card list / issue | `packages/cards` + `services/cards` | AVAILABLE_SIMULATION | simulated processor; live issuer is Phase D |
+| CARD detail | `/api/v1/cards/{id}` | GET | required + owner | status, last4, funding available, controls, activity, wallet | `packages/cards` | AVAILABLE_SIMULATION | none in simulation |
+| CARD freeze | `/api/v1/cards/{id}/freeze` | POST | required + step-up | updated card | Kernel-gated `FREEZE_CARD` | AVAILABLE_SIMULATION | none in simulation |
+| CARD unfreeze | `/api/v1/cards/{id}/unfreeze` | POST | required + step-up | updated card | Kernel-gated `UNFREEZE_CARD` | AVAILABLE_SIMULATION | none in simulation |
+| CARD controls | `/api/v1/cards/{id}/controls` | PATCH | required + step-up | server-enforced controls | Kernel-gated `UPDATE_CARD_CONTROLS` | AVAILABLE_SIMULATION | none in simulation |
+| CARD wallet | `/api/v1/cards/{id}/wallet` | GET | required + owner | eligibility/status | cards wallet module | AVAILABLE_SIMULATION | Apple/Google certification is Phase D |
 | GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |

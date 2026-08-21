@@ -134,7 +134,8 @@ describe('Consumer BFF', () => {
     assert.equal(p.details.withdrawals.state, 'PENDING_VERIFICATION');
     assert.equal(v.growEnabled, true);
     assert.equal(v.details.grow.state, 'SIMULATION_ONLY');
-    assert.equal(v.details.cards.availability, 'EXTERNAL_PROVIDER_REQUIRED');
+    assert.equal(v.details.cards.availability, 'AVAILABLE_SIMULATION');
+    assert.equal(v.details.cards.state, 'SIMULATION_ONLY');
   });
 
   it('reads account balances from the ledger projection, not activity sums', () => {

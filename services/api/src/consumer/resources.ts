@@ -35,7 +35,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'FX':
       return row(group, '/api/v1/fx', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Indicative simulation quotes only.');
     case 'CARDS':
-      return row(group, '/api/v1/cards', ['GET'], 'EXTERNAL_PROVIDER_REQUIRED', 'packages/cards + services/cards', 'card processor / wallet adapters', 'Live issuing is not connected.');
+      return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'simulated processor only; live issuer is Phase D', 'PCI-minimized card dashboard. last4/expiry only. No PAN/CVV.');
     case 'GROW':
       return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
     case 'GOALS':

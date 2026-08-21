@@ -40,7 +40,7 @@ export const CONSUMER_FEATURE_IDS = [
 ] as const;
 export type ConsumerFeatureId = (typeof CONSUMER_FEATURE_IDS)[number];
 
-export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT'] as const;
+export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT', 'ISSUE_CARD', 'FREEZE_CARD', 'UNFREEZE_CARD'] as const;
 export type ConsumerActionType = (typeof CONSUMER_ACTION_TYPES)[number];
 
 export const SANDBOX_PERSONA_IDS = [
@@ -201,6 +201,80 @@ export type WebhookEndpointDto = {
   readonly url: string;
   readonly event_types: readonly string[];
   readonly created_at: string;
+};
+
+export const CARD_STATUSES = [
+  'REQUESTED',
+  'PENDING',
+  'ACTIVE',
+  'FROZEN',
+  'SUSPENDED',
+  'REPLACED',
+  'CLOSED',
+  'EXPIRED',
+] as const;
+export type CardStatus = (typeof CARD_STATUSES)[number];
+
+export const CARD_WALLET_STATUSES = [
+  'NOT_ELIGIBLE',
+  'ELIGIBLE',
+  'PROVISIONING',
+  'ACTIVE',
+  'FAILED',
+  'SUSPENDED',
+] as const;
+export type CardWalletStatus = (typeof CARD_WALLET_STATUSES)[number];
+
+export type CardControlsDto = {
+  readonly frozen: boolean;
+  readonly onlineTransactions: boolean;
+  readonly internationalTransactions: boolean;
+  readonly cashWithdrawal: boolean;
+  readonly contactless: boolean;
+  readonly blockedMerchantCategories: readonly string[];
+  readonly blockedCountries: readonly string[];
+  readonly transactionLimitMinor: string | null;
+  readonly dailyLimitMinor: string | null;
+};
+
+export type CardDto = {
+  readonly schema: 'sunrey.consumer.card.v1';
+  readonly cardId: string;
+  readonly ownerCustomerId: string;
+  readonly fundingAccountId: string;
+  readonly type: 'DEBIT';
+  readonly form: 'VIRTUAL' | 'PHYSICAL';
+  readonly status: CardStatus | string;
+  readonly last4: string | null;
+  readonly expiry: { readonly month: number; readonly year: number } | null;
+  readonly displayHint: 'SIM-CARD';
+  readonly walletProvisioningStatus: CardWalletStatus | string;
+  readonly controls: CardControlsDto;
+  readonly createdAt: string;
+  readonly productionIssuing: false;
+};
+
+export type CardDetailDto = {
+  readonly card: CardDto;
+  readonly fundingAccountId: string;
+  readonly available: MoneyDto;
+  readonly held: MoneyDto;
+  readonly recentTransactions: readonly {
+    readonly id: string;
+    readonly kind: string;
+    readonly lifecycle: string;
+    readonly merchant: string | null;
+    readonly amountMinorUnits: string;
+    readonly currency: string;
+    readonly occurredAt: string;
+  }[];
+  readonly wallet: {
+    readonly status: CardWalletStatus | string;
+    readonly apple: CardWalletStatus | string;
+    readonly google: CardWalletStatus | string;
+    readonly certification: 'NOT_CERTIFIED';
+    readonly productionReady: false;
+  };
 };
 
 export type HealthDto = {

@@ -64,6 +64,7 @@ import { classifyClearing, freezeClearing, type CardClearingRecord } from './cle
 import { DEFAULT_CARD_CONTROLS, evaluateCardControls, mergeCardControls } from './controls.ts';
 import { freezeDispute, transitionDispute, type CardDispute, type DisputeReasonCategory } from './dispute.ts';
 import { freezeCardFee, type CardFeeType } from './fees.ts';
+import { cardTransactionActivity } from './activity.ts';
 import { cardTransactionHistory, type CardHistoryEntry } from './history.ts';
 import {
   asCardAuthorizationId,
@@ -207,12 +208,34 @@ export class CardsService {
     if (account.accountClass !== program.fundingAccountClass) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'POLICY_BLOCK', 'funding account class is not permitted for this program');
     }
-    const created = this.processor.createCard({
-      cardId: asCardId(intent.payload.cardId),
-      formFactor: intent.payload.formFactor,
-      programId: program.programId,
-    });
+    const created =
+      intent.payload.formFactor === 'PHYSICAL'
+        ? this.processor.issuePhysicalCard({
+            cardId: asCardId(intent.payload.cardId),
+            formFactor: 'PHYSICAL',
+            programId: program.programId,
+            cardType: 'DEBIT',
+          })
+        : this.processor.issueVirtualCard({
+            cardId: asCardId(intent.payload.cardId),
+            formFactor: 'VIRTUAL',
+            programId: program.programId,
+            cardType: 'DEBIT',
+          });
+    if (created.issueOutcome === 'FAILURE') {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'ISSUE_FAILED', 'simulated issuer refused the card request');
+    }
     const now = this.clock.now();
+    const status = created.issueOutcome === 'PENDING' ? 'REQUESTED' : created.status === 'PENDING' ? 'PENDING' : 'REQUESTED';
+    const walletProvisioningStatus =
+      status === 'ACTIVE' && program.supportedCapabilities.includes('WALLET_PROVISION') ? 'ELIGIBLE' : 'NOT_ELIGIBLE';
+    const previous = intent.payload.replaceCardId ? this.store.getCard(intent.payload.replaceCardId) : undefined;
+    if (intent.payload.replaceCardId && !previous) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'CARD_NOT_FOUND', 'card to replace does not exist');
+    }
+    if (previous && previous.customerId !== intent.payload.ownerId) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'CARD_NOT_OWNED', 'card to replace is not owned by this customer');
+    }
     const card = freezeCard({
       cardId: asCardId(intent.payload.cardId),
       customerId: intent.payload.ownerId,
@@ -220,17 +243,42 @@ export class CardsService {
       currency: account.currency,
       programId: program.programId,
       processorCardRef: created.processorCardRef,
+      providerReference: created.processorCardRef,
+      cardType: 'DEBIT',
       formFactor: intent.payload.formFactor,
-      status: 'PENDING',
+      status,
+      last4: created.last4,
+      expiry:
+        created.expiryMonth !== null && created.expiryYear !== null
+          ? { month: created.expiryMonth, year: created.expiryYear }
+          : null,
+      walletProvisioningStatus,
       controls: DEFAULT_CARD_CONTROLS,
       displayHint: SYNTHETIC_CARD_DISPLAY,
       requestedByActorId: intent.actorId,
+      replacedByCardId: null,
       createdAt: now,
       activatedAt: null,
       updatedAt: now,
     });
     this.store.saveCard(card);
     this.store.markCardIdempotency(intent.idempotencyKey, card);
+    if (previous) {
+      const replaced = transitionCard(previous, 'REPLACED', now, { replacedByCardId: card.cardId });
+      if (isOk(replaced)) {
+        this.processor.replaceCard(previous.processorCardRef, {
+          cardId: card.cardId,
+          formFactor: card.formFactor,
+          programId: card.programId,
+        });
+        this.store.saveCard(replaced.value);
+        this.evidence.seal('CARD_REPLACED', {
+          intentId: intent.id,
+          cardId: previous.cardId,
+          replacementCardId: card.cardId,
+        });
+      }
+    }
     this.store.saveToken(
       freezeNetworkToken({
         tokenRef: asNetworkTokenReference(`sim_ntok_${card.cardId}`),
@@ -262,6 +310,12 @@ export class CardsService {
   activateCard(intent: CardIntent & { readonly payload: { readonly cardId: string; readonly accountId: Account['id'] } }): CardsServiceOutcome<Card> {
     return this.lifecycle(intent, 'ACTIVE', 'CardActivated', 'CARD_ACTIVATED', (card) => {
       this.processor.activateCard(card.processorCardRef);
+    }, (card) => {
+      const program = this.store.getProgram(card.programId);
+      return {
+        walletProvisioningStatus:
+          program?.supportedCapabilities.includes('WALLET_PROVISION') === true ? 'ELIGIBLE' : 'NOT_ELIGIBLE',
+      };
     });
   }
 
@@ -506,7 +560,7 @@ export class CardsService {
   }
 
   async ingestClearingCallback(envelope: ProcessorCallbackEnvelope): Promise<CardsServiceOutcome<CardClearingRecord>> {
-    const verified = this.verifyEnvelope(envelope, 'CLEARING');
+    const verified = this.verifyEnvelope(envelope, envelope.eventType === 'CAPTURE' ? 'CAPTURE' : 'CLEARING');
     if (!verified.ok) {
       return verified.result;
     }
@@ -739,6 +793,39 @@ export class CardsService {
     return { outcome: 'OK', value: refund, decision: gated.decision };
   }
 
+  ingestCardStatusCallback(envelope: ProcessorCallbackEnvelope): CardsServiceOutcome<Card> {
+    const verified = this.verifyEnvelope(envelope, 'CARD_STATUS');
+    if (!verified.ok) {
+      return verified.result;
+    }
+    const cardId = String(envelope.payload.cardId ?? '');
+    const processorCardRef = String(envelope.payload.processorCardRef ?? '');
+    const nextStatus = String(envelope.payload.status ?? '') as Card['status'];
+    const card = this.store.getCard(cardId) ?? this.store.getCardByProcessorRef(processorCardRef);
+    if (!card) {
+      return this.reject('CARD_STATUS', envelope.idempotencyKey, null, 'CARD_NOT_FOUND', 'card does not exist');
+    }
+    const actionType = actionTypeForStatus(nextStatus);
+    const intent: CardIntent & { readonly payload: { readonly cardId: string; readonly accountId: Account['id'] } } = {
+      id: asIntentId(`status_int_${envelope.idempotencyKey}`),
+      actionType,
+      idempotencyKey: envelope.idempotencyKey,
+      actorId: this.operationsActorId,
+      requestedAt: this.clock.now(),
+      purpose: 'CARD_NETWORK',
+      payload: { cardId: card.cardId, accountId: card.fundingAccountId },
+    };
+    return this.lifecycle(intent, nextStatus, 'CardStatusUpdated', 'CARD_STATUS_UPDATED', (updated) => {
+      if (nextStatus === 'ACTIVE') {
+        this.processor.activateCard(updated.processorCardRef);
+      } else if (nextStatus === 'FROZEN') {
+        this.processor.freezeCard(updated.processorCardRef);
+      } else if (nextStatus === 'CLOSED' || nextStatus === 'REPLACED') {
+        this.processor.closeCard(updated.processorCardRef);
+      }
+    });
+  }
+
   openDispute(intent: OpenCardDisputeIntent): CardsServiceOutcome<CardDispute> {
     const existing = this.store.getDispute(intent.payload.disputeId);
     if (existing) {
@@ -870,6 +957,23 @@ export class CardsService {
     });
   }
 
+  activity(cardId: string) {
+    return cardTransactionActivity({
+      authorizations: this.store.listAuthorizationsByCard(cardId),
+      clearings: this.store.listClearingsByCard(cardId),
+      refunds: this.store.listRefundsByCard(cardId),
+      disputes: this.store.listDisputesByCard(cardId),
+    });
+  }
+
+  listCards(customerId: string): readonly Card[] {
+    return this.store.listCardsByCustomer(customerId);
+  }
+
+  getCard(cardId: string): Card | undefined {
+    return this.store.getCard(cardId);
+  }
+
   available(accountId: Account['id']): ReturnType<CardHoldGateway['projectAvailable']> {
     const account = this.catalog.accounts.get(accountId);
     if (!account) {
@@ -898,6 +1002,7 @@ export class CardsService {
     eventType: string,
     evidenceType: string,
     after: (card: Card) => void,
+    patch: (card: Card) => Partial<Pick<Card, 'controls' | 'activatedAt' | 'replacedByCardId' | 'walletProvisioningStatus'>> = () => ({}),
   ): CardsServiceOutcome<Card> {
     const card = this.store.getCard(intent.payload.cardId);
     const account = this.catalog.accounts.get(intent.payload.accountId);
@@ -909,10 +1014,13 @@ export class CardsService {
     if (!card) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'CARD_NOT_FOUND', 'card does not exist');
     }
+    if (card.customerId !== (customer?.id ?? card.customerId)) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'CARD_NOT_OWNED', 'card is not owned by this customer');
+    }
     if (card.status === to) {
       return { outcome: 'OK', value: card, decision: gated.decision, replay: true };
     }
-    const next = transitionCard(card, to, this.clock.now());
+    const next = transitionCard(card, to, this.clock.now(), patch(card));
     if (isErr(next)) {
       return this.reject(intent.actionType, intent.id, gated.decision, next.error.code, `${next.error.from} cannot become ${next.error.to}`);
     }
@@ -934,10 +1042,15 @@ export class CardsService {
     if (!card) {
       return 'CARD_NOT_ACTIVE';
     }
-    if (card.status === 'CLOSED' || card.status === 'EXPIRED') {
+    if (card.status === 'CLOSED' || card.status === 'EXPIRED' || card.status === 'REPLACED') {
       return 'CARD_CLOSED';
     }
-    if (card.status === 'FROZEN' || card.status === 'SUSPENDED' || card.status === 'PENDING') {
+    if (
+      card.status === 'FROZEN' ||
+      card.status === 'SUSPENDED' ||
+      card.status === 'PENDING' ||
+      card.status === 'REQUESTED'
+    ) {
       return card.status === 'FROZEN' ? 'CARD_FROZEN' : 'CARD_NOT_ACTIVE';
     }
     if (!account) {
@@ -955,14 +1068,17 @@ export class CardsService {
       return 'INSUFFICIENT_FUNDS';
     }
     const dayPrefix = this.clock.now().slice(0, 10);
+    const homeCountry = program?.region ?? (typeof account.jurisdiction === 'string' ? account.jurisdiction : 'US');
     const controls = evaluateCardControls({
       controls: card.controls,
       cardStatus: card.status,
       amount: request.amount,
       merchantCategory: request.merchantCategory,
       country: request.country,
+      homeCountry,
       ecommerce: request.ecommerce,
       cashAtm: request.cashAtm,
+      contactless: request.cardPresent === true && request.ecommerce !== true && request.cashAtm !== true,
       dailySpentMinor: this.store.dailyApprovedMinor(card.cardId, dayPrefix),
     });
     if (controls.outcome === 'DECLINE') {
@@ -1210,5 +1326,22 @@ export class CardsService {
       aggregateId,
       payload,
     } as never);
+  }
+}
+
+function actionTypeForStatus(status: Card['status']): CardIntent['actionType'] {
+  switch (status) {
+    case 'ACTIVE':
+      return ACTION_TYPES.ACTIVATE_CARD;
+    case 'FROZEN':
+    case 'SUSPENDED':
+      return ACTION_TYPES.FREEZE_CARD;
+    case 'CLOSED':
+    case 'REPLACED':
+    case 'EXPIRED':
+      return ACTION_TYPES.CLOSE_CARD;
+    case 'PENDING':
+    case 'REQUESTED':
+      return ACTION_TYPES.ACTIVATE_CARD;
   }
 }

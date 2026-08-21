@@ -97,6 +97,27 @@ export const PROVIDER_AVAILABILITIES = [
 ] as const;
 export type ProviderAvailability = (typeof PROVIDER_AVAILABILITIES)[number];
 
+export const CARD_STATUSES = [
+  'REQUESTED',
+  'PENDING',
+  'ACTIVE',
+  'FROZEN',
+  'SUSPENDED',
+  'REPLACED',
+  'CLOSED',
+  'EXPIRED',
+] as const;
+export type CardStatus = (typeof CARD_STATUSES)[number];
+
+export const CARD_WALLET_STATUSES = [
+  'NOT_ELIGIBLE',
+  'ELIGIBLE',
+  'PROVISIONING',
+  'ACTIVE',
+  'FAILED',
+  'SUSPENDED',
+] as const;
+
 export const CONSUMER_RESOURCE_GROUPS = [
   'ME',
   'HOME',

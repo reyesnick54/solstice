@@ -11,6 +11,7 @@ export type CardControls = {
   readonly ecommerceEnabled: boolean;
   readonly cashAtmEnabled: boolean;
   readonly contactlessEnabled: boolean;
+  readonly internationalEnabled: boolean;
 };
 
 export const DEFAULT_CARD_CONTROLS: CardControls = Object.freeze({
@@ -24,6 +25,7 @@ export const DEFAULT_CARD_CONTROLS: CardControls = Object.freeze({
   ecommerceEnabled: true,
   cashAtmEnabled: false,
   contactlessEnabled: true,
+  internationalEnabled: true,
 });
 
 export type ControlDecision =
@@ -37,7 +39,9 @@ export type ControlDeclineReason =
   | 'AMOUNT_LIMIT'
   | 'VELOCITY_LIMIT'
   | 'ECOMMERCE_DISABLED'
-  | 'CASH_ATM_DISABLED';
+  | 'CASH_ATM_DISABLED'
+  | 'CONTACTLESS_DISABLED'
+  | 'INTERNATIONAL_DISABLED';
 
 export type ControlEvaluationInput = {
   readonly controls: CardControls;
@@ -45,14 +49,17 @@ export type ControlEvaluationInput = {
   readonly amount: Money;
   readonly merchantCategory: string;
   readonly country: string;
+  readonly homeCountry: string;
   readonly ecommerce: boolean;
   readonly cashAtm: boolean;
+  readonly contactless: boolean;
   readonly dailySpentMinor: bigint;
 };
 
 /**
- * Customer-configurable controls. Policy and hard regulatory blocks
- * always outrank these preferences and are evaluated by the Kernel.
+ * Server-owned spending controls. UI cannot override these.
+ * Policy and hard regulatory blocks always outrank these preferences
+ * and are evaluated by the Kernel.
  */
 export function evaluateCardControls(input: ControlEvaluationInput): ControlDecision {
   if (input.cardStatus === 'FROZEN' || input.controls.frozen) {
@@ -63,6 +70,12 @@ export function evaluateCardControls(input: ControlEvaluationInput): ControlDeci
   }
   if (input.ecommerce && !input.controls.ecommerceEnabled) {
     return { outcome: 'DECLINE', reason: 'ECOMMERCE_DISABLED' };
+  }
+  if (input.contactless && !input.controls.contactlessEnabled) {
+    return { outcome: 'DECLINE', reason: 'CONTACTLESS_DISABLED' };
+  }
+  if (input.country !== input.homeCountry && !input.controls.internationalEnabled) {
+    return { outcome: 'DECLINE', reason: 'INTERNATIONAL_DISABLED' };
   }
   if (input.controls.blockedMerchantCategories.includes(input.merchantCategory)) {
     return { outcome: 'DECLINE', reason: 'MERCHANT_CATEGORY_BLOCKED' };
@@ -118,5 +131,6 @@ export function mergeCardControls(base: CardControls, patch: Partial<CardControl
     ecommerceEnabled: patch.ecommerceEnabled ?? base.ecommerceEnabled,
     cashAtmEnabled: patch.cashAtmEnabled ?? base.cashAtmEnabled,
     contactlessEnabled: patch.contactlessEnabled ?? base.contactlessEnabled,
+    internationalEnabled: patch.internationalEnabled ?? base.internationalEnabled,
   });
 }

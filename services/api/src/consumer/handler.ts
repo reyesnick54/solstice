@@ -6,6 +6,8 @@ import {
   CONSUMER_ACCOUNT_TYPES,
   CONSUMER_ACTION_STATUSES,
   CONSUMER_ASSET_TYPES,
+  CARD_STATUSES,
+  CARD_WALLET_STATUSES,
   CONSUMER_TRANSACTION_STATUSES,
   PRODUCT_AVAILABILITIES,
   PROVIDER_AVAILABILITIES,
@@ -40,6 +42,7 @@ export type ConsumerBffRuntime = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly identity?: IdentityService;
+  readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
 };
 
 const STUB_GROUPS = [
@@ -68,6 +71,22 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     'x-sunrey-environment': 'simulation',
   };
 
+  if (request.path === '/api/v1/webhooks/cards' && request.method === 'POST') {
+    if (!runtime.ingestCardWebhook) {
+      return json(
+        503,
+        bffError({
+          errorCode: 'FEATURE_UNAVAILABLE',
+          category: 'TEMPORARY_UNAVAILABLE',
+          message: 'card webhook ingestion is not connected',
+          retryable: true,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, runtime.ingestCardWebhook(request.body, requestId), headers);
+  }
   if (request.path === '/api/v1/sandbox/personas' && request.method === 'GET') {
     return json(200, { label: 'SANDBOX_FIXTURE_NON_PRODUCTION', production: false, items: listSandboxPersonas() }, headers);
   }
@@ -79,6 +98,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
     return json(
       200,
       {
+        cardStatus: CARD_STATUSES,
+        cardWalletStatus: CARD_WALLET_STATUSES,
         transactionStatus: CONSUMER_TRANSACTION_STATUSES,
         actionStatus: CONSUMER_ACTION_STATUSES,
         accountType: CONSUMER_ACCOUNT_TYPES,
@@ -158,6 +179,29 @@ function dispatchAuthenticated(
     const id = path.slice('/api/v1/accounts/'.length);
     return result(runtime.bff.getAccount(principal, id, requestId), headers);
   }
+  if (path === '/api/v1/cards' && method === 'POST') {
+    return result(runtime.bff.issueCard(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/freeze') && method === 'POST') {
+    const id = path.slice('/api/v1/cards/'.length, -'/freeze'.length);
+    return result(runtime.bff.freezeCard(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/unfreeze') && method === 'POST') {
+    const id = path.slice('/api/v1/cards/'.length, -'/unfreeze'.length);
+    return result(runtime.bff.unfreezeCard(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/controls') && method === 'PATCH') {
+    const id = path.slice('/api/v1/cards/'.length, -'/controls'.length);
+    return result(runtime.bff.patchCardControls(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && path.endsWith('/wallet') && method === 'GET') {
+    const id = path.slice('/api/v1/cards/'.length, -'/wallet'.length);
+    return result(runtime.bff.cardWallet(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/cards/') && method === 'GET') {
+    const id = path.slice('/api/v1/cards/'.length);
+    return result(runtime.bff.getCard(principal, id, requestId), headers);
+  }
   if (path === '/api/v1/me/actions' && method === 'GET') {
     const home = runtime.bff.home(principal, requestId);
     if (isBffError(home)) {
@@ -199,11 +243,11 @@ function dispatchAuthenticated(
   );
 }
 
-function result(body: unknown, headers: Record<string, string>): BffResponse {
+function result(body: unknown, headers: Record<string, string>, okStatus = 200): BffResponse {
   if (isBffError(body)) {
     return json(statusForError(body as BffErrorEnvelope), body, headers);
   }
-  return json(200, body, headers);
+  return json(okStatus, body, headers);
 }
 
 function json(status: number, body: unknown, headers: Record<string, string>): BffResponse {
@@ -231,6 +275,12 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/recipients',
   'GET /api/v1/fx',
   'GET /api/v1/cards',
+  'POST /api/v1/cards',
+  'GET /api/v1/cards/{id}',
+  'POST /api/v1/cards/{id}/freeze',
+  'POST /api/v1/cards/{id}/unfreeze',
+  'PATCH /api/v1/cards/{id}/controls',
+  'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
@@ -243,4 +293,5 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/catalog/resources',
   'GET /api/v1/catalog/enums',
   'GET /api/v1/sandbox/personas',
+  'POST /api/v1/webhooks/cards',
 ] as const;
