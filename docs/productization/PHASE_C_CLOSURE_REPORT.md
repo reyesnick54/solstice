@@ -137,13 +137,31 @@ quotes are refused.
 
 ## Test status
 
-Covered by `tests/phase-c-*.test.ts`, `packages/treasury/src/product.test.ts`,
-and existing Phase B / payments / cards / ledger tests.
+Executed in this environment:
+
+- `npm test`: 3212 tests, 3211 pass, 0 fail, 1 skipped
+- Phase C money E2E, crash/retry, SDK-only E2E, security, performance, and
+  treasury financial-control tests: pass
+- `npm run typecheck`: pass
+- architecture lint, authority-map, kernel gating, OpenAPI, generated
+  drift, secret scan, lockfiles, deployment posture, production safety,
+  static-security-lint, container pins: pass
+- `sunrey-release.mjs audit`: ok (first-party license_issue reports only;
+  no known advisories)
+- Rust `cargo fmt --check`, `clippy -D warnings`, and workspace tests:
+  pass
+- PostgreSQL `db:migrate` / `test:persistence`: not executed here (no
+  Docker / `pg_isready`). Migration ordering check passed. Snapshot
+  `V030__treasury_financial_control.sql` and sequenced
+  `V031__platform_api.sql` are present.
 
 ## Performance baseline
 
-See `docs/productization/PHASE_C_PERFORMANCE_BASELINE.md`.
-In-process sandbox timings only. No SLA is claimed.
+See `docs/productization/PHASE_C_PERFORMANCE_BASELINE.md` and
+`PHASE_C_PERFORMANCE_BASELINE.json`. Latest in-process sandbox samples
+(not an SLA): balance-read median 0.003 ms (n=20); FX quote median
+0.234 ms (n=20); reconciliation batch median 0.074 ms (n=10); transfer
+median 0.314 ms (n=5).
 
 ## P0 blockers
 
@@ -157,6 +175,8 @@ None for sandbox Phase C completeness. Production remains disabled.
    ownership.
 4. Consumer webhooks still do not deliver off-box.
 5. TOTP MFA and completed recovery remain unimplemented.
+6. This environment did not apply PostgreSQL migrations; CI persistence
+   job remains the empty-database apply path.
 
 ## Phase D provider requirements
 
