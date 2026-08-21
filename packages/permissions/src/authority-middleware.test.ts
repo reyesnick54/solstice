@@ -66,7 +66,6 @@ describe('proposal approval and Execution Authority gate', () => {
     let current = proposal;
     for (const state of ['PROPOSED', 'POLICY_REVIEW', 'APPROVED'] as const) {
       const moved = advanceProposal(current, state, clock);
-      assert.equal(moved.ok, true);
       if (!moved.ok) {
         throw new Error(moved.error.message);
       }
@@ -135,7 +134,11 @@ describe('proposal approval and Execution Authority gate', () => {
         requestedAt: NOW,
         purpose: 'CUSTOMER_ONBOARDING',
       },
-      { products: { get: () => undefined, asCatalog: () => ({ products: new Map(), legalEntities: { get: () => undefined } }) } as never, legalEntities: { get: () => undefined }, accounts: { get: () => undefined, list: () => [] } },
+      {
+        products: { get: () => undefined, list: () => [] },
+        legalEntities: { get: () => undefined },
+        accounts: { get: () => undefined },
+      },
     );
     assert.equal(result.ok, true);
   });

@@ -110,7 +110,6 @@ function pipeline(input: {
     capabilities,
     stepUp: input.stepUp === true,
   });
-  assert.equal(provisioned.ok, true);
   if (!provisioned.ok) {
     throw new Error(provisioned.error.message);
   }

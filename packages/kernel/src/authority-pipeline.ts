@@ -332,12 +332,6 @@ export class AuthorityPipeline {
     proposal = approved.value;
     this.proposals.put(proposal);
 
-    const executing = advanceProposal(proposal, 'EXECUTING', this.clock);
-    if (!executing.ok) {
-      return this.failProposal(context, proposal, 'DENIED', requestId);
-    }
-    proposal = executing.value;
-
     const prior = this.executedKeys.get(idempotencyKey) ?? null;
     const gated = submitRegulatedCommand(
       {
@@ -366,6 +360,10 @@ export class AuthorityPipeline {
       },
     );
     if (!gated.ok) {
+      const executing = advanceProposal(proposal, 'EXECUTING', this.clock);
+      if (executing.ok) {
+        proposal = executing.value;
+      }
       const failed = advanceProposal(proposal, 'FAILED', this.clock);
       if (failed.ok) {
         this.proposals.put(failed.value);
@@ -387,6 +385,11 @@ export class AuthorityPipeline {
       );
     }
 
+    const executing = advanceProposal(proposal, 'EXECUTING', this.clock);
+    if (!executing.ok) {
+      return this.failProposal(context, proposal, 'DENIED', requestId);
+    }
+    proposal = executing.value;
     const executed = advanceProposal(proposal, 'EXECUTED', this.clock, {
       executionAuthorityId: gated.value.verified.authorityId,
       policyDecisionRef: evaluated.kernel.policySnapshot ?? null,
@@ -409,7 +412,7 @@ export class AuthorityPipeline {
     }
     if (input.approverContext.principalKind === 'AGENT') {
       const evidence = this.sealDenial('AUTHORITY_AGENT_SELF_APPROVE', {
-        proposalId,
+        proposalId: input.proposalId,
         agentActorId: input.approverContext.user.actorId,
       });
       return err(clientDenial('AGENT_CANNOT_SELF_APPROVE', {
