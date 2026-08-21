@@ -3,12 +3,28 @@
   "id": "sunrey.productization.authority-map.v1",
   "status": "FROZEN_FOR_PRODUCTIZATION",
   "source": "docs/architecture/constitution.md + packages/sunrey-chain/src/production-handoff/engineering-closure/authority.ts",
+  "name": "sunrey-authority-map",
+  "purpose": "Machine-readable architectural authority map for SunRey productization. Not a second constitution, ledger, kernel, or production authorization.",
+  "freezeDocument": "docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md",
+  "engineeringRulesDocument": "docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md",
+  "inventorySource": {
+    "prompt2InventoryPath": "docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md",
+    "prompt2InventoryPresent": true,
+    "canonicalSources": [
+      "docs/architecture/constitution.md",
+      "docs/architecture/manifest.json",
+      "docs/architecture/SUNREY_ENGINEERING_CLOSURE.md",
+      "docs/architecture/sunrey-chain-authority-matrix.md",
+      "docs/architecture/native-asset-authority-boundary.md"
+    ]
+  },
   "productionPosture": {
     "CORE_CODE_COMPLETE_CANDIDATE": true,
     "PRODUCTION_READY": false,
     "PRODUCTION_ACTIVE": false,
     "LIVE_CONNECTIVITY_ENABLED": false,
-    "production_authorized": false
+    "production_authorized": false,
+    "ENVIRONMENT": "simulation"
   },
   "nonNegotiable": {
     "LEDGER": "authoritative financial journal",
@@ -243,27 +259,7 @@
     "monetary-issuance",
     "payments",
     "exchange"
-  "name": "sunrey-authority-map",
-  "purpose": "Machine-readable architectural authority map for SunRey productization. Not a second constitution, ledger, kernel, or production authorization.",
-  "freezeDocument": "docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md",
-  "engineeringRulesDocument": "docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md",
-  "inventorySource": {
-    "prompt2InventoryPath": "docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md",
-    "prompt2InventoryPresent": false,
-    "canonicalSources": [
-      "docs/architecture/constitution.md",
-      "docs/architecture/manifest.json",
-      "docs/architecture/SUNREY_ENGINEERING_CLOSURE.md",
-      "docs/architecture/sunrey-chain-authority-matrix.md",
-      "docs/architecture/native-asset-authority-boundary.md"
-    ]
-  },
-  "productionPosture": {
-    "PRODUCTION_READY": false,
-    "PRODUCTION_ACTIVE": false,
-    "LIVE_CONNECTIVITY_ENABLED": false,
-    "ENVIRONMENT": "simulation"
-  },
+  ],
   "deprecationStates": [
     "ACTIVE_CANONICAL",
     "ACTIVE_SPECIALIZED",
@@ -292,7 +288,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "bigint-minor-units",
-      "deprecatedAlternatives": ["packages/money-v2", "packages/currency"]
+      "deprecatedAlternatives": [
+        "packages/money-v2",
+        "packages/currency"
+      ]
     },
     {
       "domain": "LEDGER",
@@ -303,7 +302,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "append-only-journals",
-      "deprecatedAlternatives": ["packages/ledger-v2", "packages/financial-ledger", "packages/double-entry"]
+      "deprecatedAlternatives": [
+        "packages/ledger-v2",
+        "packages/financial-ledger",
+        "packages/double-entry"
+      ]
     },
     {
       "domain": "BALANCES",
@@ -314,7 +317,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "ledger-projection",
-      "deprecatedAlternatives": ["packages/balances", "packages/account-balance"]
+      "deprecatedAlternatives": [
+        "packages/balances",
+        "packages/account-balance"
+      ]
     },
     {
       "domain": "IDENTITY",
@@ -325,7 +331,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "identity-actor-context",
-      "deprecatedAlternatives": ["packages/identity-v2", "packages/kyc"]
+      "deprecatedAlternatives": [
+        "packages/identity-v2",
+        "packages/kyc"
+      ]
     },
     {
       "domain": "AUTHENTICATION",
@@ -336,7 +345,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "session-credential-metadata",
-      "deprecatedAlternatives": ["packages/auth", "packages/authentication"]
+      "deprecatedAlternatives": [
+        "packages/auth",
+        "packages/authentication"
+      ]
     },
     {
       "domain": "AUTHORIZATION",
@@ -347,7 +359,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "actor-capabilities",
-      "deprecatedAlternatives": ["packages/authorization", "packages/rbac"]
+      "deprecatedAlternatives": [
+        "packages/authorization",
+        "packages/rbac"
+      ]
     },
     {
       "domain": "KERNEL_POLICY",
@@ -358,7 +373,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "policy-packs-and-decisions",
-      "deprecatedAlternatives": ["packages/kernel-v2", "packages/policy-engine", "packages/compliance-kernel"]
+      "deprecatedAlternatives": [
+        "packages/kernel-v2",
+        "packages/policy-engine",
+        "packages/compliance-kernel"
+      ]
     },
     {
       "domain": "EXECUTION_AUTHORITY",
@@ -369,7 +388,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "signed-execution-authority",
-      "deprecatedAlternatives": ["packages/execution-authority", "packages/authority-issuer"]
+      "deprecatedAlternatives": [
+        "packages/execution-authority",
+        "packages/authority-issuer"
+      ]
     },
     {
       "domain": "COMPLIANCE",
@@ -380,7 +402,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "compliance-cases",
-      "deprecatedAlternatives": ["packages/compliance", "packages/aml", "packages/kyc-engine"]
+      "deprecatedAlternatives": [
+        "packages/compliance",
+        "packages/aml",
+        "packages/kyc-engine"
+      ]
     },
     {
       "domain": "EVIDENCE",
@@ -391,7 +417,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "hash-chained-evidence-vault",
-      "deprecatedAlternatives": ["packages/evidence-v2", "packages/audit-log"]
+      "deprecatedAlternatives": [
+        "packages/evidence-v2",
+        "packages/audit-log"
+      ]
     },
     {
       "domain": "EVENTS",
@@ -402,7 +431,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "versioned-event-fabric",
-      "deprecatedAlternatives": ["packages/events-v2", "packages/event-bus"]
+      "deprecatedAlternatives": [
+        "packages/events-v2",
+        "packages/event-bus"
+      ]
     },
     {
       "domain": "PERSISTENCE",
@@ -413,7 +445,11 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "postgres-adapter",
-      "deprecatedAlternatives": ["packages/database", "packages/orm", "packages/sunrey-db"]
+      "deprecatedAlternatives": [
+        "packages/database",
+        "packages/orm",
+        "packages/sunrey-db"
+      ]
     },
     {
       "domain": "ACCOUNTS",
@@ -424,7 +460,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "account-entities",
-      "deprecatedAlternatives": ["packages/accounts", "packages/account-core"]
+      "deprecatedAlternatives": [
+        "packages/accounts",
+        "packages/account-core"
+      ]
     },
     {
       "domain": "PAYMENTS",
@@ -435,7 +474,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "payment-instructions",
-      "deprecatedAlternatives": ["packages/payments-v2", "packages/rails"]
+      "deprecatedAlternatives": [
+        "packages/payments-v2",
+        "packages/rails"
+      ]
     },
     {
       "domain": "CARDS",
@@ -446,7 +488,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "card-platform",
-      "deprecatedAlternatives": ["packages/card-processing", "packages/card-core", "packages/issuer"]
+      "deprecatedAlternatives": [
+        "packages/card-processing",
+        "packages/card-core",
+        "packages/issuer"
+      ]
     },
     {
       "domain": "FX",
@@ -457,7 +503,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "fx-quotes",
-      "deprecatedAlternatives": ["packages/fx", "packages/fx-engine"]
+      "deprecatedAlternatives": [
+        "packages/fx",
+        "packages/fx-engine"
+      ]
     },
     {
       "domain": "TREASURY",
@@ -468,7 +517,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "treasury-operations",
-      "deprecatedAlternatives": ["packages/treasury-v2", "packages/reserve-bank"]
+      "deprecatedAlternatives": [
+        "packages/treasury-v2",
+        "packages/reserve-bank"
+      ]
     },
     {
       "domain": "INVESTMENTS",
@@ -479,7 +531,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "investment-accounts-and-lots",
-      "deprecatedAlternatives": ["packages/investments-v2", "packages/broker"]
+      "deprecatedAlternatives": [
+        "packages/investments-v2",
+        "packages/broker"
+      ]
     },
     {
       "domain": "PERSONAL_ECONOMIC_GRAPH",
@@ -490,7 +545,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "derived-financial-profile",
-      "deprecatedAlternatives": ["packages/peg-v2", "packages/financial-graph"]
+      "deprecatedAlternatives": [
+        "packages/peg-v2",
+        "packages/financial-graph"
+      ]
     },
     {
       "domain": "GROWTH_ORCHESTRATOR",
@@ -501,7 +559,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "growth-plans",
-      "deprecatedAlternatives": ["packages/platform-v2", "packages/growth-engine"]
+      "deprecatedAlternatives": [
+        "packages/platform-v2",
+        "packages/growth-engine"
+      ]
     },
     {
       "domain": "AI_MODEL_GATEWAY",
@@ -512,7 +573,11 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "inference-traces",
-      "deprecatedAlternatives": ["packages/ai-gateway", "packages/llm-runtime", "packages/model-gateway"]
+      "deprecatedAlternatives": [
+        "packages/ai-gateway",
+        "packages/llm-runtime",
+        "packages/model-gateway"
+      ]
     },
     {
       "domain": "SUNREY_AGENT",
@@ -523,7 +588,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "mandates-and-proposals",
-      "deprecatedAlternatives": ["packages/agent-v2", "packages/user-agent-v2", "packages/financial-automation"]
+      "deprecatedAlternatives": [
+        "packages/agent-v2",
+        "packages/user-agent-v2",
+        "packages/financial-automation"
+      ]
     },
     {
       "domain": "PERSONAL_ECONOMY_AGENT",
@@ -534,7 +603,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "advisory-proposals",
-      "deprecatedAlternatives": ["packages/personal-agent", "packages/pea-v2"]
+      "deprecatedAlternatives": [
+        "packages/personal-agent",
+        "packages/pea-v2"
+      ]
     },
     {
       "domain": "AGENT_TOOLS",
@@ -545,7 +617,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "tool-invocations",
-      "deprecatedAlternatives": ["packages/agent-tools", "packages/tool-runtime"]
+      "deprecatedAlternatives": [
+        "packages/agent-tools",
+        "packages/tool-runtime"
+      ]
     },
     {
       "domain": "AGENT_APPROVALS",
@@ -556,7 +631,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "human-approval-records",
-      "deprecatedAlternatives": ["packages/approvals", "packages/agent-approvals"]
+      "deprecatedAlternatives": [
+        "packages/approvals",
+        "packages/agent-approvals"
+      ]
     },
     {
       "domain": "SUNREY_EXCHANGE",
@@ -567,7 +645,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "orders-and-fills",
-      "deprecatedAlternatives": ["packages/sunrey-exchange-v2", "packages/exchange", "packages/matching-engine"]
+      "deprecatedAlternatives": [
+        "packages/sunrey-exchange-v2",
+        "packages/exchange",
+        "packages/matching-engine"
+      ]
     },
     {
       "domain": "MATCHING",
@@ -578,7 +660,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "exchange-order-book",
-      "deprecatedAlternatives": ["packages/matching", "packages/order-book"]
+      "deprecatedAlternatives": [
+        "packages/matching",
+        "packages/order-book"
+      ]
     },
     {
       "domain": "SETTLEMENT",
@@ -589,7 +674,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "clearing-via-ledger-and-chain-ports",
-      "deprecatedAlternatives": ["packages/settlement", "packages/clearing"]
+      "deprecatedAlternatives": [
+        "packages/settlement",
+        "packages/clearing"
+      ]
     },
     {
       "domain": "CUSTODY",
@@ -600,7 +688,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "custody-operational-state",
-      "deprecatedAlternatives": ["packages/custody-v2", "packages/wallet"]
+      "deprecatedAlternatives": [
+        "packages/custody-v2",
+        "packages/wallet"
+      ]
     },
     {
       "domain": "SUNREY_CHAIN",
@@ -611,7 +702,11 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "protocol-native-chain-state",
-      "deprecatedAlternatives": ["packages/sunrey-chain-v2", "packages/blockchain", "packages/sunrey-blockchain"]
+      "deprecatedAlternatives": [
+        "packages/sunrey-chain-v2",
+        "packages/blockchain",
+        "packages/sunrey-blockchain"
+      ]
     },
     {
       "domain": "CONSENSUS",
@@ -622,7 +717,11 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "development-bft",
-      "deprecatedAlternatives": ["packages/consensus", "packages/consensus-engine", "packages/tendermint"]
+      "deprecatedAlternatives": [
+        "packages/consensus",
+        "packages/consensus-engine",
+        "packages/tendermint"
+      ]
     },
     {
       "domain": "NATIVE_ASSET_SUPPLY",
@@ -633,7 +732,11 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "asset-supply-book",
-      "deprecatedAlternatives": ["packages/native-mint", "packages/asset-supply", "packages/coin-supply"]
+      "deprecatedAlternatives": [
+        "packages/native-mint",
+        "packages/asset-supply",
+        "packages/coin-supply"
+      ]
     },
     {
       "domain": "SUNREY_COIN",
@@ -644,7 +747,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": true,
       "canonicalStore": "application-coin-journals",
-      "deprecatedAlternatives": ["packages/sunrey-coin-v2", "packages/coin"]
+      "deprecatedAlternatives": [
+        "packages/sunrey-coin-v2",
+        "packages/coin"
+      ]
     },
     {
       "domain": "MOONREY_COIN",
@@ -655,7 +761,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "protocol-native-moonrey",
-      "deprecatedAlternatives": ["packages/moonrey-coin", "packages/moonrey"]
+      "deprecatedAlternatives": [
+        "packages/moonrey-coin",
+        "packages/moonrey"
+      ]
     },
     {
       "domain": "ORACLES",
@@ -666,7 +775,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "signed-oracle-facts",
-      "deprecatedAlternatives": ["packages/oracles", "packages/oracle-v2"]
+      "deprecatedAlternatives": [
+        "packages/oracles",
+        "packages/oracle-v2"
+      ]
     },
     {
       "domain": "HIN",
@@ -677,7 +789,10 @@
       "mustUseKernel": true,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "information-rights",
-      "deprecatedAlternatives": ["packages/hin", "packages/information-market-v2"]
+      "deprecatedAlternatives": [
+        "packages/hin",
+        "packages/information-market-v2"
+      ]
     },
     {
       "domain": "PERSONAL_DATA",
@@ -688,7 +803,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "subject-bound-encrypted-store",
-      "deprecatedAlternatives": ["packages/pdv-v2", "packages/personal-data"]
+      "deprecatedAlternatives": [
+        "packages/pdv-v2",
+        "packages/personal-data"
+      ]
     },
     {
       "domain": "CONSENT",
@@ -699,7 +817,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "consent-ledger",
-      "deprecatedAlternatives": ["packages/consent-v2", "packages/purpose-firewall"]
+      "deprecatedAlternatives": [
+        "packages/consent-v2",
+        "packages/purpose-firewall"
+      ]
     },
     {
       "domain": "PROVIDER_INTEGRATIONS",
@@ -710,7 +831,11 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "provider-adapter-records",
-      "deprecatedAlternatives": ["packages/providers", "packages/integrations", "packages/provider-runtime"]
+      "deprecatedAlternatives": [
+        "packages/providers",
+        "packages/integrations",
+        "packages/provider-runtime"
+      ]
     },
     {
       "domain": "OPERATIONS",
@@ -721,7 +846,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "ops-control-room",
-      "deprecatedAlternatives": ["packages/sunrey-ops", "packages/operations"]
+      "deprecatedAlternatives": [
+        "packages/sunrey-ops",
+        "packages/operations"
+      ]
     },
     {
       "domain": "DEPLOYMENT",
@@ -732,7 +860,10 @@
       "mustUseKernel": false,
       "mustUseExecutionAuthority": false,
       "canonicalStore": "simulation-infra-posture",
-      "deprecatedAlternatives": ["packages/deploy", "packages/infrastructure"]
+      "deprecatedAlternatives": [
+        "packages/deploy",
+        "packages/infrastructure"
+      ]
     }
   ]
 }
