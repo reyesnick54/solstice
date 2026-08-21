@@ -85,4 +85,15 @@ and counsel review remain outstanding. See
 - Human review remains required for hard sanctions matches
 - Country-specific regulatory logic stays in the Kernel, not adapters
 
+## Validation
+
+Prompt 3 adapter, Kernel, identity, and Exchange eligibility suites
+pass in this revision. Production remains disabled.
+
+Pre-existing `main` breakage outside this prompt still blocks a full
+productization preflight (`docs/architecture/manifest.json` duplicate
+`npmName`) and some consumer/payments files that do not parse. Those
+are not a second compliance engine and are not required to use these
+adapter contracts.
+
 `SAFE_TO_PROCEED_TO_PHASE_D_PROMPT_4=true`

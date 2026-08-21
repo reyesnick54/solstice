@@ -34,8 +34,6 @@ import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/pr
 import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
-import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
-import { PaymentsService } from '../../../../packages/payments/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
