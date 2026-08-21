@@ -18,6 +18,7 @@ describe('CHUNK-165 launch authorization ceremony constitution', () => {
     };
     assert.equal(declaration.chunk, 'CHUNK-165');
     assert.ok(declaration.requires.includes('sunrey-production-genesis-ceremony'));
+    assert.ok(declaration.requires.includes('sunrey-production-launch-freeze'));
     assert.ok(declaration.requires.includes('sunrey-production-economic-authorization'));
 
     const manifest = loadManifest(REPO_ROOT);

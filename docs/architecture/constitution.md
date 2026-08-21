@@ -1237,9 +1237,9 @@ Chunk 165 extends that same owner with frozen-candidate launch
 authorization, multi-party offline signing rehearsal, transcript
 integrity, and abort-safe human ceremony flow at
 `packages/sunrey-chain/src/production-ceremony/launch-candidate`.
-It binds one exact freeze hash. A changed freeze, genesis, economic
-authorization, or expired/revoked evidence aborts and requires a new
-session. Fixture signatures are not real human authorization.
+It binds the exact Chunk 164 `freezeHash`. A changed freeze, genesis,
+economic authorization, or expired/revoked evidence aborts and requires
+a new session. Fixture signatures are not real human authorization.
 `LAUNCH_AUTHORIZATION_CANDIDATE` is not `MAINNET_ACTIVE`. Do not
 create `packages/ceremony-v2`, `packages/launch-signing`,
 `packages/genesis-authority`, or `packages/mainnet-ceremony`. See

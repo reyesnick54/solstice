@@ -7,6 +7,7 @@
     "security",
     "sunrey-chain",
     "sunrey-production-genesis-ceremony",
+    "sunrey-production-launch-freeze",
     "sunrey-production-economic-authorization",
     "sunrey-governance-operations",
     "sunrey-mainnet-rc",
@@ -14,5 +15,5 @@
     "sunrey-production-operating-scope",
     "sunrey-production-provider-binding"
   ],
-  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-ceremony/launch-candidate. Extends Chunk 85 sunrey-production-genesis-ceremony. Binds the exact frozen launch candidate. Does not create a second genesis ceremony, generate real production private keys, flip LIVE_* flags, or activate production. Current repository remains REHEARSAL_COMPLETE. LAUNCH_AUTHORIZATION_CANDIDATE is not MAINNET_ACTIVE. evaluateChunkRequirements returns mustStop: false. Do not create packages/ceremony-v2, packages/launch-signing, packages/genesis-authority, or packages/mainnet-ceremony."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/production-ceremony/launch-candidate. Extends Chunk 85 sunrey-production-genesis-ceremony. Binds the exact Chunk 164 freeze hash from packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Does not create a second genesis ceremony, generate real production private keys, flip LIVE_* flags, or activate production. Current repository remains REHEARSAL_COMPLETE. LAUNCH_AUTHORIZATION_CANDIDATE is not MAINNET_ACTIVE. evaluateChunkRequirements returns mustStop: false. Do not create packages/ceremony-v2, packages/launch-signing, packages/genesis-authority, or packages/mainnet-ceremony."
 }

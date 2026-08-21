@@ -1,7 +1,9 @@
 # Chunk 165 — Frozen-candidate launch authorization ceremony
 
-This chunk binds the existing production genesis ceremony to one exact
-frozen launch candidate and rehearses multi-party offline approval.
+This chunk binds the existing production genesis ceremony to the exact
+Chunk 164 frozen launch candidate and rehearses multi-party offline
+approval. `launchFreezeHash` is Chunk 164's `freezeHash`. The ceremony
+does not invent a second freeze hash.
 
 It does **not** start validators, write genesis, generate real
 production private keys, flip `LIVE_*` flags, connect providers, or
@@ -49,9 +51,12 @@ Launch Authorization Candidate
   `providerBindingSnapshotHash`
 - `sourceCommit`
 
+`bindingFromLaunchFreeze` maps `ProductionLaunchCandidateFreeze` from
+`packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze`.
 Any mismatch is `CEREMONY_CANDIDATE_MISMATCH` and aborts. The session
-does not recompute a hash and continue. A new freeze, new session, and
-new signatures are required.
+does not recompute a hash and continue. A stale freeze, expired or
+revoked external evidence, or a changed genesis/economic authorization
+requires a new freeze, new session, and new signatures.
 
 ## Economic vs genesis approvals
 

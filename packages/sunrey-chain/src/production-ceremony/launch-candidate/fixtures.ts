@@ -6,6 +6,14 @@
  * a real HSM. No production private keys are created.
  */
 
+import type {
+  ProductionLaunchCandidateFreeze,
+  ProductionLaunchCandidateFreezeInput,
+} from '../../release-candidate/mainnet/launch-freeze/types.ts';
+import {
+  evaluateCurrentRepositoryLaunchFreeze,
+  withLaunchFreezeOverrides,
+} from '../../release-candidate/mainnet/launch-freeze/index.ts';
 import { createSimulationAttestation } from '../hsm.ts';
 import { CeremonyCandidateMismatchError } from './abort.ts';
 import { abortPreservesAuditHistory } from './abort.ts';
@@ -38,24 +46,43 @@ export const LAUNCH_AUTH_EXPIRES = '2026-08-28T00:00:00.000Z' as const;
 export const LAUNCH_AUTH_SESSION_A = 'sess_launch_auth_rehearsal_a' as const;
 export const LAUNCH_AUTH_SESSION_B = 'sess_launch_auth_rehearsal_b' as const;
 
-export function fixtureLaunchFreezeFields() {
-  return {
-    launchFreezeId: 'freeze.sunrey.launch-candidate.rehearsal.v1',
-    mainnetRcHash: 'a'.repeat(64),
-    economicRcHash: 'b'.repeat(64),
-    economicAuthorizationHash: 'c'.repeat(64),
-    genesisHash: 'd'.repeat(64),
-    validatorSetHash: 'e'.repeat(64),
-    cryptoPolicyHash: 'f'.repeat(64),
-    externalEvidenceSnapshotHash: '1'.repeat(64),
-    operatingScopeSnapshotHash: '2'.repeat(64),
-    providerBindingSnapshotHash: '3'.repeat(64),
-    sourceCommit: 'fixture-not-a-production-commit',
-  };
+export const LAUNCH_AUTH_FIXTURE_SOURCE_COMMIT = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as const;
+
+let cachedFreeze: ProductionLaunchCandidateFreeze | undefined;
+
+export function fixtureLaunchCandidateFreeze(): ProductionLaunchCandidateFreeze {
+  cachedFreeze ??= evaluateCurrentRepositoryLaunchFreeze(process.cwd(), {
+    sourceCommit: LAUNCH_AUTH_FIXTURE_SOURCE_COMMIT,
+  }).freeze;
+  return cachedFreeze;
 }
 
 export function fixtureLaunchFreezeBinding(): ProductionLaunchCeremonyBinding {
-  return bindingFromLaunchFreeze(fixtureLaunchFreezeFields());
+  return bindingFromLaunchFreeze(fixtureLaunchCandidateFreeze());
+}
+
+export function changedLaunchFreezeBinding(
+  overrides: Partial<ProductionLaunchCandidateFreezeInput>,
+): ProductionLaunchCeremonyBinding {
+  return bindingFromLaunchFreeze(withLaunchFreezeOverrides(fixtureLaunchCandidateFreeze(), overrides));
+}
+
+export function fixtureLaunchFreezeFields() {
+  const freeze = fixtureLaunchCandidateFreeze();
+  return {
+    launchFreezeId: freeze.freezeId,
+    launchFreezeHash: freeze.freezeHash,
+    mainnetRcHash: freeze.mainnetRcHash,
+    economicRcHash: freeze.economicRcHash,
+    economicAuthorizationHash: freeze.productionEconomicAuthorizationHash,
+    genesisHash: freeze.genesisCandidateHash,
+    validatorSetHash: freeze.validatorCandidateSetHash,
+    cryptoPolicyHash: freeze.cryptographicPolicyHash,
+    externalEvidenceSnapshotHash: freeze.externalEvidenceSnapshotHash,
+    operatingScopeSnapshotHash: freeze.operatingScopeSnapshotHash,
+    providerBindingSnapshotHash: freeze.providerBindingSnapshotHash,
+    sourceCommit: freeze.sourceCommit,
+  };
 }
 
 export function fixtureEvidenceWatch(
@@ -144,9 +171,8 @@ export function runLaunchAuthorizationDressRehearsal(): LaunchAuthorizationDress
   }
   session = sealRehearsalAuthorization(session, LAUNCH_AUTH_REHEARSAL_NOW);
 
-  const mutated = bindingFromLaunchFreeze({
-    ...fixtureLaunchFreezeFields(),
-    genesisHash: '9'.repeat(64),
+  const mutated = changedLaunchFreezeBinding({
+    genesisCandidateHash: '9'.repeat(64),
   });
   let changedFreezeRejection;
   try {

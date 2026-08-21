@@ -7,11 +7,19 @@
  */
 
 import { SUITE_SUNREY_ED25519_V1 } from '../../../../security/src/index.ts';
+import {
+  evaluateLaunchCandidateStaleness,
+  observationFromFreeze,
+} from '../../release-candidate/mainnet/launch-freeze/index.ts';
+import type {
+  LaunchFreezeObservation,
+  ProductionLaunchCandidateFreeze,
+} from '../../release-candidate/mainnet/launch-freeze/types.ts';
 import { rejectSimulationHsmForExternalRequirement } from '../hsm.ts';
 import type { ProductionHsmAttestation } from '../types.ts';
 import { CeremonyCandidateMismatchError, abortCeremony } from './abort.ts';
 import { verifyLaunchSignature } from './approvals.ts';
-import { assertBindingMatches } from './plan.ts';
+import { assertBindingMatches, bindingFromLaunchFreeze } from './plan.ts';
 import { assertDistinctIndependentActors, assertHumanRoleEligible } from './participants.ts';
 import { payloadBindsGenesis } from './offline.ts';
 import { appendLaunchTranscript, launchTranscriptIntegrity } from './transcript.ts';
@@ -62,6 +70,72 @@ export function observeCurrentCandidate(
     });
     throw new CeremonyCandidateMismatchError(aborted, aborted.abort!);
   }
+}
+
+export function observeFrozenLaunchCandidate(
+  session: LaunchAuthorizationCeremonySession,
+  freeze: ProductionLaunchCandidateFreeze,
+  occurredAtUtc: string,
+): LaunchAuthorizationCeremonySession {
+  if (freeze.status === 'STALE' || freeze.status === 'SUPERSEDED' || freeze.status === 'REJECTED') {
+    const aborted = abortCeremony(session, {
+      code: 'CEREMONY_CANDIDATE_MISMATCH',
+      reason: `CEREMONY_CANDIDATE_MISMATCH: freeze is ${freeze.status}; new freeze, session, and signatures required`,
+      affectedArtifacts: Object.freeze([session.binding.launchFreezeHash, freeze.freezeHash]),
+      occurredAtUtc,
+    });
+    throw new CeremonyCandidateMismatchError(aborted, aborted.abort!);
+  }
+  return observeCurrentCandidate(session, bindingFromLaunchFreeze(freeze), occurredAtUtc);
+}
+
+export function observeLaunchFreezeStaleness(
+  session: LaunchAuthorizationCeremonySession,
+  freeze: ProductionLaunchCandidateFreeze,
+  observation: LaunchFreezeObservation,
+  occurredAtUtc: string,
+): LaunchAuthorizationCeremonySession {
+  assertSessionOpen(session);
+  const staleness = evaluateLaunchCandidateStaleness(freeze, observation);
+  if (staleness.reasons.includes('EXTERNAL_EVIDENCE_REVOKED')) {
+    return abortCeremony(session, {
+      code: 'EXTERNAL_EVIDENCE_REVOKED',
+      reason: 'external evidence revoked mid-ceremony',
+      affectedArtifacts: Object.freeze([freeze.externalEvidenceSnapshotHash, ...staleness.reasons]),
+      occurredAtUtc,
+    });
+  }
+  if (staleness.reasons.includes('EXTERNAL_EVIDENCE_EXPIRED')) {
+    return abortCeremony(session, {
+      code: 'EXTERNAL_EVIDENCE_EXPIRED',
+      reason: 'external evidence expired mid-ceremony',
+      affectedArtifacts: Object.freeze([freeze.externalEvidenceSnapshotHash, ...staleness.reasons]),
+      occurredAtUtc,
+    });
+  }
+  if (staleness.stale) {
+    const aborted = abortCeremony(session, {
+      code: 'CEREMONY_CANDIDATE_MISMATCH',
+      reason:
+        'CEREMONY_CANDIDATE_MISMATCH: freeze became stale mid-ceremony; do not recompute and continue',
+      affectedArtifacts: Object.freeze([
+        session.binding.launchFreezeHash,
+        freeze.freezeHash,
+        ...staleness.reasons,
+      ]),
+      occurredAtUtc,
+    });
+    throw new CeremonyCandidateMismatchError(aborted, aborted.abort!);
+  }
+  return observeFrozenLaunchCandidate(session, freeze, occurredAtUtc);
+}
+
+export function observeSelfConsistentFreeze(
+  session: LaunchAuthorizationCeremonySession,
+  freeze: ProductionLaunchCandidateFreeze,
+  occurredAtUtc: string,
+): LaunchAuthorizationCeremonySession {
+  return observeLaunchFreezeStaleness(session, freeze, observationFromFreeze(freeze), occurredAtUtc);
 }
 
 export function observeEvidenceWatch(

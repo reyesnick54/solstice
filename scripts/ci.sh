@@ -145,6 +145,7 @@ SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- pregenesis verify
 npm run demo:sunrey-economic-mainnet-rehearsal
 npm run demo:sunrey-production-economic-authorization
 npm run demo:sunrey-production-launch-freeze
+npm run demo:sunrey-launch-authorization-ceremony
 npm run sunrey-launch -- economic-verify
 npm run sunrey-launch -- economic-audit
 npm run demo:sunrey-dual-economy

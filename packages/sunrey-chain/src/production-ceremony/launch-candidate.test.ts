@@ -13,9 +13,10 @@ import {
   fixtureSignatureIsRealHumanAuthorization,
 } from './launch-candidate/approvals.ts';
 import {
+  changedLaunchFreezeBinding,
   fixtureEvidenceWatch,
+  fixtureLaunchCandidateFreeze,
   fixtureLaunchFreezeBinding,
-  fixtureLaunchFreezeFields,
   fixtureLaunchParticipants,
   LAUNCH_AUTH_EXPIRES,
   LAUNCH_AUTH_REHEARSAL_NOW,
@@ -25,7 +26,8 @@ import {
   runLaunchAuthorizationDressRehearsal,
 } from './launch-candidate/fixtures.ts';
 import { exportOfflineSigningPackage } from './launch-candidate/offline.ts';
-import { bindingFromLaunchFreeze, createLaunchCeremonyPlan } from './launch-candidate/plan.ts';
+import { createLaunchCeremonyPlan } from './launch-candidate/plan.ts';
+import { observationFromFreeze } from '../release-candidate/mainnet/launch-freeze/index.ts';
 import { registerLaunchParticipant } from './launch-candidate/participants.ts';
 import { appendLaunchTranscript } from './launch-candidate/transcript.ts';
 import {
@@ -36,6 +38,7 @@ import {
   importLaunchSignature,
   observeCurrentCandidate,
   observeEvidenceWatch,
+  observeLaunchFreezeStaleness,
   productionRemainsInactive,
   recordOfflineExport,
   simulationHsmIsRealHsm,
@@ -44,18 +47,22 @@ import {
 
 describe('Chunk 165 frozen launch authorization ceremony', () => {
   it('1. binds the freeze hash', () => {
+    const freeze = fixtureLaunchCandidateFreeze();
     const binding = fixtureLaunchFreezeBinding();
     const session = bindFrozenCandidate(openFixtureLaunchSession(), LAUNCH_AUTH_REHEARSAL_NOW);
-    assert.equal(session.binding.launchFreezeHash, binding.launchFreezeHash);
+    assert.equal(binding.launchFreezeHash, freeze.freezeHash);
+    assert.equal(session.binding.launchFreezeHash, freeze.freezeHash);
+    assert.equal(session.binding.genesisHash, freeze.genesisCandidateHash);
+    assert.equal(session.binding.economicAuthorizationHash, freeze.productionEconomicAuthorizationHash);
     assert.equal(session.transcript.entries[0]?.action, 'CANDIDATE_FREEZE_BOUND');
   });
 
   it('2. aborts when the freeze changes mid-ceremony', () => {
     const session = bindFrozenCandidate(openFixtureLaunchSession(), LAUNCH_AUTH_REHEARSAL_NOW);
-    const changed = bindingFromLaunchFreeze({
-      ...fixtureLaunchFreezeFields(),
-      sourceCommit: 'different-fixture-commit',
+    const changed = changedLaunchFreezeBinding({
+      sourceCommit: 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     });
+    assert.notEqual(changed.launchFreezeHash, session.binding.launchFreezeHash);
     assert.throws(
       () => observeCurrentCandidate(session, changed, LAUNCH_AUTH_REHEARSAL_NOW),
       (error: unknown) =>
@@ -65,20 +72,32 @@ describe('Chunk 165 frozen launch authorization ceremony', () => {
 
   it('3. aborts when genesis changes', () => {
     const session = bindFrozenCandidate(openFixtureLaunchSession(), LAUNCH_AUTH_REHEARSAL_NOW);
-    const changed = bindingFromLaunchFreeze({
-      ...fixtureLaunchFreezeFields(),
-      genesisHash: '9'.repeat(64),
-    });
+    const changed = changedLaunchFreezeBinding({ genesisCandidateHash: '9'.repeat(64) });
     assert.throws(() => observeCurrentCandidate(session, changed, LAUNCH_AUTH_REHEARSAL_NOW), /CEREMONY_CANDIDATE_MISMATCH/);
   });
 
   it('4. aborts when economic authorization changes', () => {
     const session = bindFrozenCandidate(openFixtureLaunchSession(), LAUNCH_AUTH_REHEARSAL_NOW);
-    const changed = bindingFromLaunchFreeze({
-      ...fixtureLaunchFreezeFields(),
-      economicAuthorizationHash: '8'.repeat(64),
+    const changed = changedLaunchFreezeBinding({
+      productionEconomicAuthorizationHash: '8'.repeat(64),
     });
     assert.throws(() => observeCurrentCandidate(session, changed, LAUNCH_AUTH_REHEARSAL_NOW), /CEREMONY_CANDIDATE_MISMATCH/);
+  });
+
+  it('does not recompute a stale freeze and continue', () => {
+    const freeze = fixtureLaunchCandidateFreeze();
+    const session = bindFrozenCandidate(openFixtureLaunchSession(), LAUNCH_AUTH_REHEARSAL_NOW);
+    const staleObservation = {
+      ...observationFromFreeze(freeze),
+      genesisCandidateHash: '9'.repeat(64),
+    };
+    assert.throws(
+      () => observeLaunchFreezeStaleness(session, freeze, staleObservation, LAUNCH_AUTH_REHEARSAL_NOW),
+      (error: unknown) =>
+        error instanceof CeremonyCandidateMismatchError &&
+        error.session.binding.launchFreezeHash === freeze.freezeHash &&
+        error.session.state === 'ABORTED',
+    );
   });
 
   it('5. aborts when external evidence expires', () => {

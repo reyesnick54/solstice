@@ -6,11 +6,11 @@
  * signatures. The session does not recompute a hash and continue.
  */
 
+import type { ProductionLaunchCandidateFreeze } from '../../release-candidate/mainnet/launch-freeze/types.ts';
 import { encodeString, sha256Hex } from '../../validators/canonical.ts';
 import { rehearsalGenesisTimePolicy } from '../plan.ts';
 import { emptyTranscript } from '../transcript.ts';
 import {
-  LAUNCH_CEREMONY_BINDING_DOMAIN,
   LAUNCH_CEREMONY_PLAN_DOMAIN,
   LAUNCH_CEREMONY_SCHEMA_VERSION,
   REQUIRED_LAUNCH_HUMAN_ROLES,
@@ -26,44 +26,16 @@ export const LAUNCH_CEREMONY_REHEARSAL_PLAN_ID = 'plan.sunrey.launch-authorizati
 export const LAUNCH_CEREMONY_REHEARSAL_NETWORK_ID = 'net_sunrey_launch_authorization_ceremony_rehearsal_1' as const;
 export const LAUNCH_CEREMONY_REHEARSAL_CHAIN_ID = 'chn_sunrey_launch_authorization_ceremony_rehearsal_1' as const;
 
-const BINDING_FIELD_ORDER = [
-  'launchFreezeId',
-  'mainnetRcHash',
-  'economicRcHash',
-  'economicAuthorizationHash',
-  'genesisHash',
-  'validatorSetHash',
-  'cryptoPolicyHash',
-  'externalEvidenceSnapshotHash',
-  'operatingScopeSnapshotHash',
-  'providerBindingSnapshotHash',
-  'sourceCommit',
-] as const;
-
-export function computeLaunchFreezeHash(
-  input: Omit<ProductionLaunchCeremonyBinding, 'schemaVersion' | 'launchFreezeHash'>,
-): string {
-  return sha256Hex(
-    Buffer.concat([
-      encodeString(LAUNCH_CEREMONY_BINDING_DOMAIN),
-      ...BINDING_FIELD_ORDER.map((key) => encodeString(input[key])),
-    ]),
-  );
-}
-
 export function freezeLaunchCeremonyBinding(
-  input: Omit<ProductionLaunchCeremonyBinding, 'schemaVersion' | 'launchFreezeHash'> & {
-    readonly launchFreezeHash?: string;
-  },
+  input: Omit<ProductionLaunchCeremonyBinding, 'schemaVersion'>,
 ): ProductionLaunchCeremonyBinding {
-  const computed = computeLaunchFreezeHash(input);
-  if (input.launchFreezeHash && input.launchFreezeHash !== computed) {
-    throw new TypeError('CEREMONY_CANDIDATE_MISMATCH: presented launchFreezeHash does not match bound fields');
+  if (!/^[0-9a-f]{64}$/i.test(input.launchFreezeHash)) {
+    throw new TypeError('CEREMONY_CANDIDATE_MISMATCH: launchFreezeHash must be the Chunk 164 freeze hash');
   }
   return Object.freeze({
     schemaVersion: LAUNCH_CEREMONY_SCHEMA_VERSION,
     launchFreezeId: input.launchFreezeId,
-    launchFreezeHash: computed,
+    launchFreezeHash: input.launchFreezeHash,
     mainnetRcHash: input.mainnetRcHash,
     economicRcHash: input.economicRcHash,
     economicAuthorizationHash: input.economicAuthorizationHash,
@@ -77,31 +49,29 @@ export function freezeLaunchCeremonyBinding(
   });
 }
 
-export function bindingFromLaunchFreeze(freeze: {
-  readonly launchFreezeId: string;
-  readonly launchFreezeHash?: string;
-  readonly mainnetRcHash: string;
-  readonly economicRcHash: string;
-  readonly economicAuthorizationHash: string;
-  readonly genesisHash: string;
-  readonly validatorSetHash: string;
-  readonly cryptoPolicyHash: string;
-  readonly externalEvidenceSnapshotHash: string;
-  readonly operatingScopeSnapshotHash: string;
-  readonly providerBindingSnapshotHash: string;
-  readonly sourceCommit: string;
-}): ProductionLaunchCeremonyBinding {
-  return freezeLaunchCeremonyBinding(freeze);
+export function bindingFromLaunchFreeze(
+  freeze: ProductionLaunchCandidateFreeze,
+): ProductionLaunchCeremonyBinding {
+  return freezeLaunchCeremonyBinding({
+    launchFreezeId: freeze.freezeId,
+    launchFreezeHash: freeze.freezeHash,
+    mainnetRcHash: freeze.mainnetRcHash,
+    economicRcHash: freeze.economicRcHash,
+    economicAuthorizationHash: freeze.productionEconomicAuthorizationHash,
+    genesisHash: freeze.genesisCandidateHash,
+    validatorSetHash: freeze.validatorCandidateSetHash,
+    cryptoPolicyHash: freeze.cryptographicPolicyHash,
+    externalEvidenceSnapshotHash: freeze.externalEvidenceSnapshotHash,
+    operatingScopeSnapshotHash: freeze.operatingScopeSnapshotHash,
+    providerBindingSnapshotHash: freeze.providerBindingSnapshotHash,
+    sourceCommit: freeze.sourceCommit,
+  });
 }
 
 export function assertBindingMatches(
   bound: ProductionLaunchCeremonyBinding,
   current: ProductionLaunchCeremonyBinding,
 ): void {
-  const expected = computeLaunchFreezeHash(current);
-  if (current.launchFreezeHash !== expected) {
-    throw new TypeError('CEREMONY_CANDIDATE_MISMATCH: current freeze hash is stale or tampered');
-  }
   if (
     bound.launchFreezeHash !== current.launchFreezeHash ||
     bound.launchFreezeId !== current.launchFreezeId ||
@@ -118,6 +88,13 @@ export function assertBindingMatches(
   ) {
     throw new TypeError('CEREMONY_CANDIDATE_MISMATCH');
   }
+}
+
+export function assertBindingMatchesFreeze(
+  bound: ProductionLaunchCeremonyBinding,
+  freeze: ProductionLaunchCandidateFreeze,
+): void {
+  assertBindingMatches(bound, bindingFromLaunchFreeze(freeze));
 }
 
 export function launchCeremonyPlanHash(plan: Omit<LaunchCeremonyPlan, 'planHash'>): string {
@@ -144,8 +121,7 @@ export function createLaunchCeremonyPlan(input: {
   readonly environmentClass?: 'DRESS_REHEARSAL' | 'PRODUCTION';
   readonly roleOverlapPolicy?: RoleOverlapPolicy;
 }): LaunchCeremonyPlan {
-  const expected = computeLaunchFreezeHash(input.binding);
-  if (input.binding.launchFreezeHash !== expected) {
+  if (!/^[0-9a-f]{64}$/i.test(input.binding.launchFreezeHash)) {
     throw new TypeError('CEREMONY_CANDIDATE_MISMATCH: freeze hash unbound or stale');
   }
   const draft: Omit<LaunchCeremonyPlan, 'planHash'> = {
