@@ -120,6 +120,7 @@ export {
   reservePlan,
   inboundPendingPlan,
   inboundSettlePlan,
+  internalTransferPlan,
   returnDestinationFxPlan,
   returnDestinationSettlePlan,
   returnPrincipalPlan,
@@ -227,3 +228,4 @@ export {
   paymentDigest,
   paymentProviderIdempotencyKey,
 } from "./operation-recovery.ts";
+export * from "./platform/index.ts";

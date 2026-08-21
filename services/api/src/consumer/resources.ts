@@ -29,9 +29,9 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'ACTIVITY':
       return row(group, '/api/v1/accounts/{id}/activity', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts projectTransactionHistory', 'none', 'Cursor-paginated; not a balance authority.');
     case 'PAYMENTS':
-      return row(group, '/api/v1/payments', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments', 'EXTERNAL_PROVIDER_REQUIRED for live rails', 'Simulation catalog only.');
+      return row(group, '/api/v1/payments', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments PaymentPlatform', 'EXTERNAL_PROVIDER_REQUIRED for live rails', 'Simulation orchestration; production money movement disabled.');
     case 'RECIPIENTS':
-      return row(group, '/api/v1/recipients', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/domain beneficiary (when productized)', 'none', 'Agents cannot add beneficiaries. BFF has no write path.');
+      return row(group, '/api/v1/recipients', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments beneficiaries', 'none', 'Agents cannot add beneficiaries. Frontend cannot mark a recipient verified.');
     case 'FX':
       return row(group, '/api/v1/fx', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Indicative simulation quotes only.');
     case 'CARDS':

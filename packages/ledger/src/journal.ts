@@ -422,6 +422,7 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fee',
   'inbound-pending',
   'inbound-settle',
+  'internal-transfer',
   'settle-reclass',
   'settle-direct',
   'refund',

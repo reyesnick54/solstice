@@ -189,11 +189,89 @@ paths:
           description: Sandbox persona list
   /api/v1/payments:
     get:
-      operationId: getPayments
-      summary: Payments resource stub
+      operationId: listPayments
+      summary: List the authenticated customer's payments
+      description: Backend owns authoritative status. Production money movement stays disabled.
       responses:
         "200":
-          description: Honest availability
+          description: Payment list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentList"
+        "401":
+          description: Authentication required
+    post:
+      operationId: createPayment
+      summary: Create a payment from a quote or destination
+      description: >
+        Internal SunRey transfers settle atomically on the canonical Ledger.
+        External rails stay simulation-only. Requires Idempotency-Key.
+      responses:
+        "200":
+          description: Payment resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "401":
+          description: Step-up or authentication required
+        "403":
+          description: Kernel refused or resource not owned
+  /api/v1/payments/quote:
+    post:
+      operationId: quotePayment
+      summary: Preview a payment without executing
+      description: Does not promise settlement time. FX and rail fees are simulation-only.
+      responses:
+        "200":
+          description: Payment quote
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentQuote"
+        "401":
+          description: Authentication required
+  /api/v1/payments/{id}:
+    get:
+      operationId: getPayment
+      summary: Get one owned payment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Payment resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Not found
+  /api/v1/payments/{id}/approve:
+    post:
+      operationId: approvePayment
+      summary: Approve a payment that is awaiting customer confirmation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Updated payment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Payment"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Approval not found
   /api/v1/fx:
     get:
       operationId: getFx
@@ -231,11 +309,54 @@ paths:
           description: Honest availability
   /api/v1/recipients:
     get:
-      operationId: getRecipients
-      summary: Recipients resource stub
+      operationId: listRecipients
+      summary: List the authenticated customer's recipients
       responses:
         "200":
-          description: Honest availability
+          description: Recipient list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecipientList"
+        "401":
+          description: Authentication required
+    post:
+      operationId: createRecipient
+      summary: Create a recipient
+      description: >
+        Frontend cannot mark a recipient verified. Agents cannot add
+        beneficiaries. Kernel, step-up, device risk, and screening apply.
+      responses:
+        "200":
+          description: Recipient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipient"
+        "401":
+          description: Step-up or authentication required
+        "403":
+          description: Cross-user denied
+  /api/v1/recipients/{id}:
+    get:
+      operationId: getRecipient
+      summary: Get one owned recipient
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Recipient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Recipient"
+        "403":
+          description: Resource not owned
+        "404":
+          description: Not found
   /api/v1/goals:
     get:
       operationId: getGoals
@@ -280,6 +401,115 @@ paths:
           description: Honest availability
 components:
   schemas:
+    MoneyResource:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    PaymentStatus:
+      type: string
+      enum:
+        - DRAFT
+        - QUOTED
+        - AWAITING_APPROVAL
+        - AWAITING_STEP_UP_AUTH
+        - AWAITING_COMPLIANCE
+        - AUTHORIZED
+        - QUEUED
+        - SUBMITTED
+        - PROCESSING
+        - SETTLED
+        - FAILED
+        - CANCELLED
+        - RETURNED
+        - REVERSED
+    Recipient:
+      type: object
+      required: [id, ownerId, displayName, destinationType, country, currency, displayHint, verificationStatus, createdAt]
+      properties:
+        id: { type: string }
+        ownerId: { type: string }
+        displayName: { type: string }
+        destinationType:
+          type: string
+          enum: [SUNREY_USER, DOMESTIC_BANK, INTERNATIONAL_BANK, WALLET]
+        country: { type: string }
+        currency: { type: string }
+        displayHint: { type: string }
+        relationship: { type: string, nullable: true }
+        purpose: { type: string, nullable: true }
+        verificationStatus:
+          type: string
+          enum: [PENDING, ACTIVE, REVIEW, BLOCKED, DISABLED]
+        screeningStatus: { type: string }
+        createdAt: { type: string }
+    RecipientList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Recipient"
+    PaymentQuote:
+      type: object
+      required: [quoteId, sourceAmount, currency, fees, estimatedDeliveryClass, settlementTimePromise, complianceState, productionMoneyMovement]
+      properties:
+        quoteId: { type: string }
+        sourceAmount:
+          $ref: "#/components/schemas/MoneyResource"
+        destinationAmount:
+          $ref: "#/components/schemas/MoneyResource"
+        currency: { type: string }
+        fees:
+          type: array
+          items:
+            type: object
+        estimatedDeliveryClass: { type: string }
+        settlementTimePromise: { type: "null" }
+        complianceState: { type: string }
+        expiresAt: { type: string }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    Payment:
+      type: object
+      required: [paymentId, payerId, sourceAccountId, amount, currency, paymentType, status, productionMoneyMovement]
+      properties:
+        paymentId: { type: string }
+        payerId: { type: string }
+        sourceAccountId: { type: string }
+        beneficiaryId: { type: string, nullable: true }
+        amount:
+          $ref: "#/components/schemas/MoneyResource"
+        currency: { type: string }
+        paymentType: { type: string }
+        railPreference: { type: string }
+        purpose: { type: string }
+        status:
+          $ref: "#/components/schemas/PaymentStatus"
+        approvalId: { type: string, nullable: true }
+        workflowId: { type: string, nullable: true }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    PaymentList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payment"
+        productionMoneyMovement: { type: boolean, enum: [false] }
+    PaymentApproval:
+      type: object
+      required: [approvalId, paymentId, status, createdAt]
+      properties:
+        approvalId: { type: string }
+        paymentId: { type: string }
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+        createdAt: { type: string }
+        decidedAt: { type: string, nullable: true }
     MoneyView:
       type: object
       required: [currency, minorUnits]

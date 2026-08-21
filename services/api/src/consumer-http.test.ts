@@ -8,7 +8,12 @@ describe('Consumer BFF HTTP adapter', () => {
   it('serves authenticated Home with no-store cache headers', async () => {
     const world = createSandboxWorld();
     const server = await startConsumerBff({
-      runtime: { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      runtime: {
+        bff: world.bff,
+        sessions: world.sessions,
+        identity: world.runtime.identity.service,
+        payments: world.payments,
+      },
     });
     try {
       const res = await fetch(`${server.url}/api/v1/me/home`, {

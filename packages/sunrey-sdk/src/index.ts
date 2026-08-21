@@ -164,3 +164,16 @@ export {
   getWalletPolicies,
   getRecoveryState,
 } from './wallet-security.ts';
+export {
+  SunReyConsumerBffClient,
+  createSunReyConsumerBffClient,
+  BFF_PAYMENT_STATUSES,
+  RECIPIENT_DESTINATION_TYPES,
+} from './consumer-bff/index.ts';
+export type {
+  Recipient,
+  PaymentQuote,
+  Payment,
+  PaymentStatus,
+  PaymentApproval,
+} from './consumer-bff/index.ts';

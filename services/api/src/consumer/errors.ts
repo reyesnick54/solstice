@@ -22,6 +22,8 @@ export const BFF_ERROR_CODES = [
   'FEATURE_UNAVAILABLE',
   'MALFORMED',
   'METHOD_NOT_ALLOWED',
+  'STEP_UP_REQUIRED',
+  'KERNEL_REFUSED',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -62,7 +64,10 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
+    case 'KERNEL_REFUSED':
       return 403;
+    case 'STEP_UP_REQUIRED':
+      return 401;
     case 'NOT_FOUND':
       return 404;
     case 'METHOD_NOT_ALLOWED':
