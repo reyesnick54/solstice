@@ -41,6 +41,9 @@ export const REQUIRED_TEST_FAMILIES = Object.freeze([
   { id: 'payments-nested', needle: 'packages/payments/src/**/*.test.ts' },
   { id: 'persistence-nested', needle: 'packages/persistence/src/**/*.test.ts' },
   { id: 'economic-rc-nested', needle: 'packages/sunrey-chain/src/release-candidate/economic/' },
+  { id: 'native-assets', needle: 'packages/sunrey-chain/src/native-assets/' },
+  { id: 'production-ceremony', needle: 'packages/sunrey-chain/src/production-ceremony/' },
+  { id: 'mainnet-freeze', needle: 'packages/sunrey-chain/src/release-candidate/mainnet/' },
 ]);
 
 const CONFLICT_START = /^<<<<<<<($| )/;
