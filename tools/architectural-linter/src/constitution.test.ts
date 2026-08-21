@@ -572,7 +572,7 @@ describe('architecture constitution', () => {
     const context = manifest.boundedContexts.find((row) => row.id === 'API_INTEGRATION');
     assert.ok(context);
     assert.equal(context.status, 'PARTIAL');
-    assert.deepEqual(context.reservedPaths, ['apps/api', 'services/api']);
+    assert.deepEqual(context.reservedPaths, ['apps/api', 'services/api', 'services/consumer-platform']);
     assert.equal(existsSync(join(REPO_ROOT, 'services/api/src/app.ts')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'services/api/src/server.ts')), true);
     assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-api')), false);

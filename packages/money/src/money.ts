@@ -25,21 +25,49 @@ export const RoundingMode = {
 
 export type RoundingMode = (typeof RoundingMode)[keyof typeof RoundingMode];
 
+/**
+ * Application overflow bound. Fits PostgreSQL NUMERIC(38, 0) with headroom.
+ * Not a business limit. Arithmetic that would exceed this fails closed.
+ */
+export const MAX_ABS_MINOR_UNITS = 10n ** 28n;
+
 const INTEGER_STRING = /^-?\d+$/;
+const ISO_4217_ALPHA = /^[A-Z]{3}$/;
+const BOOK_CURRENCY = /^[A-Z]{3,16}$/;
+
+export function assertSafeMinorUnits(minorUnits: bigint, label = 'money'): void {
+  if (typeof minorUnits !== 'bigint') {
+    throw new TypeError(`${label} admits only bigint minor units; floating-point is forbidden`);
+  }
+  const abs = minorUnits < 0n ? -minorUnits : minorUnits;
+  if (abs > MAX_ABS_MINOR_UNITS) {
+    throw new RangeError(`${label} overflow: absolute minor units exceed ${MAX_ABS_MINOR_UNITS}`);
+  }
+}
+
+export function assertIsoCurrencyCode(currency: string): void {
+  if (typeof currency !== 'string' || !ISO_4217_ALPHA.test(currency)) {
+    throw new TypeError(
+      'ISO 4217 alphabetic currency codes are exactly three A-Z letters',
+    );
+  }
+}
+
+export function assertCurrencyCode(currency: string): void {
+  if (typeof currency !== 'string' || !BOOK_CURRENCY.test(currency)) {
+    throw new TypeError(
+      'Money requires an uppercase alphabetic currency code (ISO 4217 three-letter or a longer simulation book code)',
+    );
+  }
+}
 
 export class Money {
   readonly minorUnits: bigint;
   readonly currency: string;
 
   private constructor(minorUnits: bigint, currency: string) {
-    if (typeof minorUnits !== 'bigint') {
-      throw new TypeError(
-        'Money admits only bigint minor units; floating-point is forbidden',
-      );
-    }
-    if (typeof currency !== 'string' || currency.length === 0) {
-      throw new TypeError('Money requires a non-empty currency code');
-    }
+    assertSafeMinorUnits(minorUnits);
+    assertCurrencyCode(currency);
     this.minorUnits = minorUnits;
     this.currency = currency;
     Object.freeze(this);
@@ -73,12 +101,16 @@ export class Money {
 
   plus(other: Money): Money {
     this.assertSameCurrency(other);
-    return new Money(this.minorUnits + other.minorUnits, this.currency);
+    const sum = this.minorUnits + other.minorUnits;
+    assertSafeMinorUnits(sum, 'money addition');
+    return new Money(sum, this.currency);
   }
 
   minus(other: Money): Money {
     this.assertSameCurrency(other);
-    return new Money(this.minorUnits - other.minorUnits, this.currency);
+    const difference = this.minorUnits - other.minorUnits;
+    assertSafeMinorUnits(difference, 'money subtraction');
+    return new Money(difference, this.currency);
   }
 
   negate(): Money {
@@ -120,7 +152,9 @@ export class Money {
       throw new RangeError('allocate denominator must be non-zero');
     }
     const product = this.minorUnits * numerator;
+    assertSafeMinorUnits(product, 'money allocate product');
     const rounded = roundQuotient(product, denominator, mode);
+    assertSafeMinorUnits(rounded, 'money allocate result');
     return new Money(rounded, this.currency);
   }
 
@@ -200,10 +234,13 @@ export function applyFxConversion(amount: Money, conversion: FxConversion): Mone
   if (conversion.rate.denominator === 0n) {
     throw new RangeError('FX rate denominator cannot be zero');
   }
+  const product = amount.minorUnits * conversion.rate.numerator;
+  assertSafeMinorUnits(product, 'FX conversion product');
   const converted = roundQuotient(
-    amount.minorUnits * conversion.rate.numerator,
+    product,
     conversion.rate.denominator,
     RoundingMode.HALF_EVEN,
   );
+  assertSafeMinorUnits(converted, 'FX conversion result');
   return Money.fromMinorUnits(converted, conversion.to);
 }

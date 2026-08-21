@@ -5,6 +5,8 @@
  * ISO currency, and must never be summed with Money in one journal.
  */
 
+import { assertSafeMinorUnits } from './money.ts';
+
 const INTEGER_STRING = /^-?\d+$/;
 
 export class AssetQuantity {
@@ -12,11 +14,7 @@ export class AssetQuantity {
   readonly assetId: string;
 
   private constructor(scaledUnits: bigint, assetId: string) {
-    if (typeof scaledUnits !== 'bigint') {
-      throw new TypeError(
-        'AssetQuantity admits only bigint scaled units; floating-point is forbidden',
-      );
-    }
+    assertSafeMinorUnits(scaledUnits, 'asset quantity');
     if (typeof assetId !== 'string' || assetId.length === 0) {
       throw new TypeError('AssetQuantity requires a non-empty asset id');
     }
@@ -49,12 +47,16 @@ export class AssetQuantity {
 
   plus(other: AssetQuantity): AssetQuantity {
     this.assertSameAsset(other);
-    return new AssetQuantity(this.scaledUnits + other.scaledUnits, this.assetId);
+    const sum = this.scaledUnits + other.scaledUnits;
+    assertSafeMinorUnits(sum, 'asset quantity addition');
+    return new AssetQuantity(sum, this.assetId);
   }
 
   minus(other: AssetQuantity): AssetQuantity {
     this.assertSameAsset(other);
-    return new AssetQuantity(this.scaledUnits - other.scaledUnits, this.assetId);
+    const difference = this.scaledUnits - other.scaledUnits;
+    assertSafeMinorUnits(difference, 'asset quantity subtraction');
+    return new AssetQuantity(difference, this.assetId);
   }
 
   isZero(): boolean {

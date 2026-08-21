@@ -238,6 +238,7 @@ describe('Chunk 164 production launch candidate freeze', () => {
   it('16. private key is rejected', () => {
     const evaluation = currentFreeze();
     const materials = [
+      { privateKey: '-----BEGIN ' + 'PRIVATE KEY-----abc-----END ' + 'PRIVATE KEY-----' },
       { privateKey: '-----BEGIN ' + 'PRIVATE KEY-----abc-----END PRIVATE KEY-----' },
       { privateKey: `-----BEGIN ${'PRIVATE'} KEY-----abc-----END ${'PRIVATE'} KEY-----` },
       { privateKey: '-----BEGIN SIMULATION PRIVATE KEY-----fixture' },

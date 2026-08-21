@@ -1,5 +1,6 @@
 import {
   asHoldId,
+  canAdjustHold,
   canTransitionHold,
   freezeHold,
   isActiveHold,
@@ -71,6 +72,52 @@ export class HoldStore implements HoldView {
    * Compare-and-swap reserve. `expectedEpoch` must match the current
    * account epoch or the reservation fails. On success the epoch advances.
    */
+  hydrate(holds: readonly FundsHold[]): void {
+    this.byId.clear();
+    this.byIdempotency.clear();
+    this.epochs.clear();
+    for (const hold of holds) {
+      this.put(hold);
+      const current = this.epochs.get(hold.accountId) ?? 0;
+      if (hold.epoch > current) {
+        this.epochs.set(hold.accountId, hold.epoch);
+      }
+    }
+  }
+
+  adjust(
+    id: HoldId,
+    amountMinorUnits: bigint,
+    now: UtcInstant,
+    expectedEpoch: number,
+  ): Result<FundsHold, HoldStoreRejection> {
+    const current = this.byId.get(id);
+    if (!current) {
+      return err({ code: 'HOLD_NOT_FOUND', message: 'hold does not exist' });
+    }
+    if (!canAdjustHold(current, now)) {
+      return err({
+        code: current.expiresAt !== null && current.expiresAt <= now ? 'HOLD_EXPIRED' : 'HOLD_ILLEGAL_TRANSITION',
+        message: 'only an ACTIVE unexpired hold can be adjusted',
+      });
+    }
+    if (this.accountEpoch(current.accountId) !== expectedEpoch) {
+      return err({
+        code: 'HOLD_CONFLICT',
+        message: 'account reservation epoch changed; retry available-funds check',
+      });
+    }
+    const next = freezeHold({
+      ...current,
+      amountMinorUnits,
+      updatedAt: now,
+      epoch: expectedEpoch + 1,
+    });
+    this.epochs.set(current.accountId, expectedEpoch + 1);
+    this.put(next);
+    return ok(next);
+  }
+
   reserve(hold: FundsHold, expectedEpoch: number): Result<FundsHold, HoldStoreRejection> {
     const existing = this.byIdempotency.get(hold.idempotencyKey);
     if (existing) {

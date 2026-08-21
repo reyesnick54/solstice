@@ -9,6 +9,7 @@ export {
   type CustomerStatusChangedV1,
   type DepositPostedV1,
   type DomainEvent,
+  type JournalPostedV1,
   type EventPersistSink,
   type InternalTransferPostedV1,
   type KernelDecisionRecordedV1,
