@@ -204,6 +204,7 @@ The only action types on this tree are declared in
 - `CREATE_BENEFICIARY`
 - `CREATE_FX_QUOTE`
 - `ACCEPT_FX_QUOTE`
+- `EXECUTE_FX_QUOTE`
 - `INITIATE_PAYMENT`
 - `CANCEL_PAYMENT`
 - `ACCEPT_INBOUND_PAYMENT`

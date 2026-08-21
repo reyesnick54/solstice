@@ -472,20 +472,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
-  it('customer V029 persists consumer authentication state without plaintext secrets', () => {
+  it('customer V030 persists consumer authentication state without plaintext secrets', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v029 = files.find((file) => file.version === 29);
-    assert.ok(v029);
-    assert.equal(v029.filename, 'V029__consumer_authentication.sql');
-    assert.match(v029.sql, /CREATE TABLE identity.login_handle/);
-    assert.match(v029.sql, /CREATE TABLE identity.password_credential/);
-    assert.match(v029.sql, /CREATE TABLE identity.totp_credential/);
-    assert.match(v029.sql, /CREATE TABLE identity.refresh_session/);
-    assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
-    assert.match(v029.sql, /CREATE TABLE identity.security_event/);
-    assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
-    assert.equal(/\bplaintext_password\b/i.test(v029.sql), false);
-    assert.match(v029.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
+    const v030 = files.find((file) => file.version === 30);
+    assert.ok(v030);
+    assert.equal(v030.filename, 'V030__consumer_authentication.sql');
+    assert.match(v030.sql, /CREATE TABLE identity.login_handle/);
+    assert.match(v030.sql, /CREATE TABLE identity.password_credential/);
+    assert.match(v030.sql, /CREATE TABLE identity.totp_credential/);
+    assert.match(v030.sql, /CREATE TABLE identity.refresh_session/);
+    assert.match(v030.sql, /CREATE TABLE identity.auth_challenge/);
+    assert.match(v030.sql, /CREATE TABLE identity.security_event/);
+    assert.equal(/\bpassword_hash\b/i.test(v030.sql), false);
+    assert.equal(/\bplaintext_password\b/i.test(v030.sql), false);
+    assert.match(v030.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
   });
 
   it('customer V028 grants payments schema usage for operational recovery', () => {
@@ -533,6 +533,16 @@ describe('versioned SQL migrations', () => {
     const v003 = files.find((file) => file.version === 3);
     assert.ok(v003);
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
+  });
+
+  it('ledger V008 persists account product overlay and restrictions without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v008 = files.find((file) => file.version === 8);
+    assert.ok(v008);
+    assert.equal(v008.filename, 'V008__account_product.sql');
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
+    assert.equal(/balance/.test(v008.sql), false);
   });
 
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {

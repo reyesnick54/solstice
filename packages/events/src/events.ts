@@ -38,6 +38,55 @@ export type AccountOpenedV1 = VersionedEvent<
   }
 >;
 
+export type AccountActivatedV1 = VersionedEvent<
+  'AccountActivated',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly fromStatus: string;
+    readonly toStatus: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type AccountRestrictedV1 = VersionedEvent<
+  'AccountRestricted',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly restriction: string;
+    readonly reason: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type AccountClosedV1 = VersionedEvent<
+  'AccountClosed',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly fromStatus: string;
+    readonly toStatus: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type CustomerActivityRecordedV1 = VersionedEvent<
+  'CustomerActivityRecorded',
+  1,
+  {
+    readonly activityId: string;
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly type: string;
+    readonly status: string;
+    readonly currency: string;
+  }
+>;
+
 export type DepositPostedV1 = VersionedEvent<
   'DepositPosted',
   1,
@@ -311,7 +360,24 @@ export type BankingAmountPayload = {
   readonly pendingId?: string;
 };
 
+export type JournalPostedV1 = VersionedEvent<
+  'JournalPosted',
+  1,
+  {
+    readonly journalId: string;
+    readonly actionType: string;
+    readonly asset: string;
+    readonly amountMinorUnits: string;
+    readonly currency: string;
+    readonly reference?: string;
+    readonly sourceDomain?: string;
+    readonly evidenceRecordId?: string;
+    readonly reversesJournalId?: string;
+  }
+>;
 export type HoldCreatedV1 = VersionedEvent<'HoldCreated', 1, BankingAmountPayload>;
+export type HoldAdjustedV1 = VersionedEvent<'HoldAdjusted', 1, BankingAmountPayload>;
+export type HoldExpiredV1 = VersionedEvent<'HoldExpired', 1, BankingAmountPayload>;
 export type HoldReleasedV1 = VersionedEvent<'HoldReleased', 1, BankingAmountPayload>;
 export type HoldCapturedV1 = VersionedEvent<'HoldCaptured', 1, BankingAmountPayload>;
 export type HoldCancelledV1 = VersionedEvent<'HoldCancelled', 1, BankingAmountPayload>;
@@ -1054,9 +1120,14 @@ export type RailReconciliationMismatchV1 = VersionedEvent<'RailReconciliationMis
 
 export type DomainEvent =
   | AccountOpenedV1
+  | AccountActivatedV1
+  | AccountRestrictedV1
+  | AccountClosedV1
+  | CustomerActivityRecordedV1
   | DepositPostedV1
   | WithdrawalPostedV1
   | InternalTransferPostedV1
+  | JournalPostedV1
   | CustomerStatusChangedV1
   | KernelDecisionRecordedV1
   | PolicyPackActivatedV1
@@ -1089,6 +1160,8 @@ export type DomainEvent =
   | FxQuoteAcceptedV1
   | FxQuoteExpiredV1
   | HoldCreatedV1
+  | HoldAdjustedV1
+  | HoldExpiredV1
   | HoldReleasedV1
   | HoldCapturedV1
   | HoldCancelledV1

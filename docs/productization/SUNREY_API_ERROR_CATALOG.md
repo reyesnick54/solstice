@@ -123,4 +123,5 @@ Kernel decisions map to `state`:
 - `DEFER` — nothing posted; wait
 - `BLOCK` — nothing posted; show refusal
 - `FEATURE_UNAVAILABLE` — capability/feature is off
+- `KERNEL_DENIED` — Compliance Kernel refused the action
 - `UNAUTHENTICATED` — no session

@@ -4,6 +4,9 @@ import type { LegalEntity } from '../../../domain/src/legal-entity.ts';
 import type { Product } from '../../../domain/src/product.ts';
 import type { EvidenceRecord } from '../../../evidence/src/vault.ts';
 import type { DomainEvent } from '../../../events/src/events.ts';
+import type { FeeAssessment } from '../../../domain/src/fee.ts';
+import type { FundsHold } from '../../../domain/src/hold.ts';
+import type { ReversalRecord } from '../../../domain/src/reversal.ts';
 import type { Journal, LedgerAccount } from '../../../ledger/src/types.ts';
 import type { PersistedPolicyState } from '../policy/store.ts';
 import type { ActionIntent } from '../../../permissions/src/action-intent.ts';
@@ -45,4 +48,7 @@ export type LoadedPersistence = {
   readonly authorities: readonly AuthorityAudit[];
   readonly openOutcomes: readonly PersistedOpenOutcome[];
   readonly policy: PersistedPolicyState;
+  readonly holds: readonly FundsHold[];
+  readonly reversals: readonly ReversalRecord[];
+  readonly fees: readonly FeeAssessment[];
 };

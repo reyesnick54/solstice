@@ -153,14 +153,26 @@ export type HomeDto = {
   readonly features: readonly FeatureFlagDto[];
 };
 
+export type AccountBalanceBreakdownDto = {
+  readonly posted: MoneyDto;
+  readonly pending: MoneyDto;
+  readonly held: MoneyDto;
+  readonly available: MoneyDto;
+};
+
 export type AccountDto = {
   readonly account_id: string;
   readonly account_class: string;
   readonly status: string;
+  readonly lifecycle?: string;
+  readonly product_type?: string;
   readonly currency: string;
   readonly jurisdiction: string;
   readonly opened_at: string;
+  readonly closed_at?: string | null;
+  readonly restrictions?: readonly string[];
   readonly balance: MoneyDto;
+  readonly balances?: AccountBalanceBreakdownDto;
 };
 
 export type ActivityItemDto = {
@@ -168,6 +180,11 @@ export type ActivityItemDto = {
   readonly event_type: string;
   readonly occurred_at: string;
   readonly summary: string;
+  readonly activity_id?: string;
+  readonly status?: string;
+  readonly direction?: string;
+  readonly amount?: MoneyDto;
+  readonly currency?: string;
 };
 
 export type ActionDecisionDto = {

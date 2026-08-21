@@ -4,7 +4,19 @@ import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import type { EvidencePersistSink } from '../../../packages/evidence/src/vault.ts';
 import type { EventPersistSink } from '../../../packages/events/src/events.ts';
-import type { InternalTransferIntent, PostDepositIntent, PostWithdrawalIntent } from '../../../packages/permissions/src/action-types.ts';
+import type {
+  AdjustHoldIntent,
+  CreateHoldIntent,
+  InternalTransferIntent,
+  PostDepositIntent,
+  PostFeeIntent,
+  PostReversalIntent,
+  PostWithdrawalIntent,
+} from '../../../packages/permissions/src/action-types.ts';
+import type { BankingOutcome } from './banking-operations.ts';
+import type { FeeAssessment } from '../../../packages/domain/src/fee.ts';
+import type { FundsHold } from '../../../packages/domain/src/hold.ts';
+import type { ReversalRecord } from '../../../packages/domain/src/reversal.ts';
 import type { ActionIntent } from '../../../packages/permissions/src/action-intent.ts';
 import type { ExecutionAuthority } from '../../../packages/permissions/src/execution-authority.ts';
 import type { OpenAccountIntent } from '../../../packages/permissions/src/action-types.ts';
@@ -20,10 +32,16 @@ import {
   persistEvidenceUnit,
   persistIdentitySnapshot,
   persistLedgerUnit,
+  loadAccountProductState,
+  upsertAccountRestriction,
+  upsertAccountProductOverlay,
+  upsertHold,
   type PersistenceEnv,
   type PersistenceSession,
   type PersistedOpenOutcome,
 } from '../../../packages/persistence/src/index.ts';
+import { withTransaction } from '../../../packages/persistence/src/postgres/write.ts';
+import type { FinancialAccountLifecycle } from './product-account.ts';
 import { seedSimulationCatalog } from './catalog.ts';
 import type { MoneyMovementOutcome } from './money-movement.ts';
 import type { OpenAccountOutcome } from './open-account.ts';
@@ -40,11 +58,16 @@ export type DurableSimulationRuntime = {
   readonly runtime: SimulationRuntime;
   readonly authentication: AuthenticationService;
   persistAuthentication(): Promise<void>;
+  persistProductState(): Promise<void>;
   saveCustomer(customer: Customer): Promise<void>;
   open(intent: OpenAccountIntent): Promise<OpenAccountOutcome>;
   postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
   postWithdrawal(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome>;
   postTransfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome>;
+  createHold(intent: CreateHoldIntent): Promise<BankingOutcome<FundsHold>>;
+  adjustHold(intent: AdjustHoldIntent): Promise<BankingOutcome<FundsHold>>;
+  postFee(intent: PostFeeIntent): Promise<BankingOutcome<FeeAssessment>>;
+  postReversal(intent: PostReversalIntent): Promise<BankingOutcome<ReversalRecord>>;
   close(): Promise<void>;
   restart(): Promise<DurableSimulationRuntime>;
 };
@@ -111,6 +134,9 @@ export async function createPostgresSimulationRuntime(
   runtime.ledger.hydrateFromPersisted(loaded.journals);
   runtime.evidence.hydrateFromPersisted(loaded.evidence);
   runtime.events.hydrateFromPersisted(loaded.events);
+  runtime.banking.hydrateHolds(loaded.holds);
+  runtime.banking.hydrateReversals(loaded.reversals);
+  runtime.banking.hydrateFees(loaded.fees);
   if (loaded.policy.versions.length > 0) {
     runtime.kernel.policy.registry.hydrate(loaded.policy);
     runtime.kernel.policy.reviews.hydrate(loaded.policy.reviews);
@@ -162,6 +188,25 @@ export async function createPostgresSimulationRuntime(
   }
   runtime.accountsService.hydrateOpenOutcomes(openOutcomes);
 
+  const productState = await loadAccountProductState(session.pools.ledger);
+  runtime.restrictions.hydrate(productState.restrictions);
+  runtime.holds.hydrate(productState.holds);
+  for (const overlay of productState.overlays) {
+    runtime.accountProduct.overlays.put({
+      accountId: overlay.accountId as Account['id'],
+      lifecycle: overlay.lifecycle as FinancialAccountLifecycle | null,
+      closedAt: overlay.closedAt ? asUtcInstant(overlay.closedAt) : null,
+      providerLink:
+        overlay.providerId && overlay.providerExternalRef
+          ? { providerId: overlay.providerId, externalRef: overlay.providerExternalRef, status: 'RESERVED' }
+          : null,
+      metadata: overlay.metadata,
+    });
+  }
+  for (const account of loaded.accounts) {
+    runtime.accountProduct.registerOwnership(account, 'operator_1');
+  }
+
   await persistCustomerUnit(session, {
     legalEntities: legalEntities.list(),
     policy: {
@@ -201,6 +246,10 @@ class DurableRuntime implements DurableSimulationRuntime {
   async persistAuthentication(): Promise<void> {
     await persistIdentitySnapshot(this.session.pools.customer, this.runtime.identity.service.snapshot());
     await persistAuthenticationSnapshot(this.session.pools.customer, this.authentication.snapshot());
+  }
+
+  async persistProductState(): Promise<void> {
+    await persistAccountProductState(this.session, this.runtime);
   }
 
   async saveCustomer(customer: Customer): Promise<void> {
@@ -249,6 +298,22 @@ class DurableRuntime implements DurableSimulationRuntime {
     );
   }
 
+  async createHold(intent: CreateHoldIntent): Promise<BankingOutcome<FundsHold>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.createHold(intent));
+  }
+
+  async adjustHold(intent: AdjustHoldIntent): Promise<BankingOutcome<FundsHold>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.adjustHold(intent));
+  }
+
+  async postFee(intent: PostFeeIntent): Promise<BankingOutcome<FeeAssessment>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.postFee(intent));
+  }
+
+  async postReversal(intent: PostReversalIntent): Promise<BankingOutcome<ReversalRecord>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.postReversal(intent));
+  }
+
   async close(): Promise<void> {
     await this.session.close();
   }
@@ -275,10 +340,16 @@ class DurableRuntime implements DurableSimulationRuntime {
         const committed = await this.session.load();
         this.runtime.ledger.reloadFromPersisted(committed.journals);
         this.runtime.events.reloadFromPersisted(committed.events);
+        this.runtime.banking.hydrateHolds(committed.holds);
+        this.runtime.banking.hydrateReversals(committed.reversals);
+        this.runtime.banking.hydrateFees(committed.fees);
         for (const account of committed.accounts) {
           this.runtime.accounts.put(account.id, account);
           this.runtime.ledger.accounts.registerOpenedAccount(account);
         }
+        const productState = await loadAccountProductState(this.session.pools.ledger);
+        this.runtime.restrictions.hydrate(productState.restrictions);
+        this.runtime.holds.hydrate(productState.holds);
         const beforeEvidence = this.runtime.evidence.count();
         const beforeEvents = this.runtime.events.list().length;
         const result = fn();
@@ -305,7 +376,11 @@ class DurableRuntime implements DurableSimulationRuntime {
           authorities: authority ? [authority] : [],
           openOutcomes: openOutcome ? [openOutcome] : [],
           events: newEvents,
+          holds: this.runtime.holds.list(),
+          reversals: this.runtime.banking.listReversals(),
+          fees: this.runtime.banking.listFees(),
         });
+        await persistAccountProductState(this.session, this.runtime);
         await persistEvidenceOnClient(evidenceClient, newEvidence);
         await evidenceClient.query('COMMIT');
         return result;
@@ -324,6 +399,41 @@ class DurableRuntime implements DurableSimulationRuntime {
       }
     }
     throw lastError;
+  }
+
+  private async runBanking<T>(
+    intent: ActionIntent,
+    lockAccountId: string,
+    fn: () => T | Promise<T>,
+  ): Promise<T> {
+    const beforeEvidence = this.runtime.evidence.count();
+    const beforeEvents = this.runtime.events.list().length;
+    const result = await fn();
+    const newEvidence = this.runtime.evidence.list().slice(beforeEvidence);
+    const newEvents = this.runtime.events.list().slice(beforeEvents);
+    const authority =
+      result &&
+      typeof result === 'object' &&
+      'decision' in result &&
+      result.decision &&
+      typeof result.decision === 'object' &&
+      'executionAuthority' in result.decision
+        ? (result.decision.executionAuthority as ExecutionAuthority | null)
+        : null;
+    await persistLedgerUnit(this.session, {
+      lockAccountId,
+      ledgerAccounts: this.runtime.ledger.accounts.list(),
+      intents: [intent],
+      authorities: authority ? [authority] : [],
+      events: newEvents,
+      holds: this.runtime.holds.list(),
+      reversals: this.runtime.banking.listReversals(),
+      fees: this.runtime.banking.listFees(),
+    });
+    if (newEvidence.length > 0) {
+      await persistEvidenceUnit(this.session, newEvidence);
+    }
+    return result;
   }
 }
 
@@ -432,6 +542,30 @@ function reviveOpenOutcome(
     decision: null,
     evidenceId: row.evidenceRecordId,
   };
+}
+
+async function persistAccountProductState(
+  session: PersistenceSession,
+  runtime: SimulationRuntime,
+): Promise<void> {
+  await withTransaction(session.pools.ledger, async (client) => {
+    for (const restriction of runtime.restrictions.list()) {
+      await upsertAccountRestriction(client, restriction);
+    }
+    for (const overlay of runtime.accountProduct.overlays.list()) {
+      await upsertAccountProductOverlay(client, {
+        accountId: overlay.accountId,
+        lifecycle: overlay.lifecycle,
+        closedAt: overlay.closedAt,
+        providerId: overlay.providerLink?.providerId ?? null,
+        providerExternalRef: overlay.providerLink?.externalRef ?? null,
+        metadata: overlay.metadata,
+      });
+    }
+    for (const hold of runtime.holds.list()) {
+      await upsertHold(client, hold);
+    }
+  });
 }
 
 export type { Account };

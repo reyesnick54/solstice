@@ -31,6 +31,7 @@ export {
   CARD_WALLET_STATUSES,
 } from './types.ts';
 export type {
+  AccountBalanceBreakdownDto,
   AccountDto,
   ActionDecisionDto,
   ActionState,

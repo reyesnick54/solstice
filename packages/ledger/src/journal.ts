@@ -18,6 +18,14 @@ import {
   journalFingerprint,
 } from './invariants.ts';
 import {
+  journalHistory,
+  lookupJournal,
+  lookupJournalByReference,
+  projectPostedBalance,
+  type JournalHistoryPage,
+  type LedgerBalanceProjection,
+} from './read-model.ts';
+import {
   LedgerInvariantError,
   type Journal,
   type LedgerAccount,
@@ -53,6 +61,8 @@ export type JournalPersistSink = {
 export class Ledger {
   private readonly journals: Journal[] = [];
   private readonly byIdempotency = new Map<string, Journal>();
+  private readonly fullReversalByOriginal = new Map<string, string>();
+  private readonly reversedScaledByOriginal = new Map<string, bigint>();
   readonly accounts: AccountRegister;
   private readonly authorityIssuer: AuthorityIssuer;
   private readonly clock: Clock;
@@ -96,10 +106,25 @@ export class Ledger {
   }
 
   private replacePersistedJournals(journals: readonly Journal[]): void {
+    this.fullReversalByOriginal.clear();
+    this.reversedScaledByOriginal.clear();
     for (const journal of journals) {
       const frozen = freezeJournal(journal);
       this.journals.push(frozen);
       this.byIdempotency.set(frozen.idempotencyKey, frozen);
+      this.noteReversal(frozen);
+    }
+  }
+
+  private noteReversal(journal: Journal): void {
+    if (!journal.reversesJournalId) {
+      return;
+    }
+    const previous = this.reversedScaledByOriginal.get(journal.reversesJournalId) ?? 0n;
+    const added = journal.postings[0] ? ledgerScaledUnits(journal.postings[0].amount) : 0n;
+    this.reversedScaledByOriginal.set(journal.reversesJournalId, previous + added);
+    if (journal.reversalKind === 'FULL') {
+      this.fullReversalByOriginal.set(journal.reversesJournalId, journal.id);
     }
   }
 
@@ -145,10 +170,12 @@ export class Ledger {
     assertNoCommingling(resolved);
     const { asset } = assertBalanced(request.postings);
     const classBridgeName = assertClassBridge(resolved, request.classBridge);
+    this.assertReversal(request);
 
     this.assertAuthority(request);
 
     const journalId = randomUUID();
+    const createdAt = this.clock.now();
     const postings: Posting[] = request.postings.map((p) =>
       Object.freeze({
         id: randomUUID(),
@@ -165,13 +192,24 @@ export class Ledger {
       actionType: request.actionType,
       asset,
       postings,
+      status: 'POSTED',
+      createdAt,
+      effectiveAt: request.effectiveAt ?? createdAt,
+      requestFingerprint: journalFingerprint(request),
       ...(classBridgeName !== undefined ? { classBridgeName } : {}),
       ...(request.memo !== undefined ? { memo: request.memo } : {}),
-      createdAt: this.clock.now(),
+      ...(request.reference !== undefined ? { reference: request.reference } : {}),
+      ...(request.correlationId !== undefined ? { correlationId: request.correlationId } : {}),
+      ...(request.causationId !== undefined ? { causationId: request.causationId } : {}),
+      ...(request.sourceDomain !== undefined ? { sourceDomain: request.sourceDomain } : {}),
+      ...(request.evidenceRecordId !== undefined ? { evidenceRecordId: request.evidenceRecordId } : {}),
+      ...(request.reversesJournalId !== undefined ? { reversesJournalId: request.reversesJournalId } : {}),
+      ...(request.reversalKind !== undefined ? { reversalKind: request.reversalKind } : {}),
     });
 
     this.journals.push(journal);
     this.byIdempotency.set(request.idempotencyKey, journal);
+    this.noteReversal(journal);
     this.persist?.queueAcceptedJournal(journal, request.executionAuthority);
     return journal;
   }
@@ -190,6 +228,27 @@ export class Ledger {
 
   journalCount(): number {
     return this.journals.length;
+  }
+
+  projectAccountBalance(accountId: string): LedgerBalanceProjection {
+    const account = this.accounts.get(accountId);
+    return projectPostedBalance(this.journals, account);
+  }
+
+  lookupByReference(reference: string): Journal | undefined {
+    return lookupJournalByReference(this.journals, reference) ?? lookupJournal(this.journals, reference);
+  }
+
+  history(input: { readonly accountId?: string; readonly cursor?: string; readonly limit?: number } = {}): JournalHistoryPage {
+    return journalHistory(this.journals, input);
+  }
+
+  isFullyReversed(journalId: string): boolean {
+    return this.fullReversalByOriginal.has(journalId);
+  }
+
+  reversedScaled(journalId: string): bigint {
+    return this.reversedScaledByOriginal.get(journalId) ?? 0n;
   }
 
   listPostingsForAccount(accountId: string): readonly Posting[] {
@@ -252,6 +311,32 @@ export class Ledger {
     );
   }
 
+  private assertReversal(request: PostJournalRequest): void {
+    if (!request.reversesJournalId) {
+      return;
+    }
+    const original = this.getJournal(request.reversesJournalId);
+    if (!original) {
+      throw new LedgerInvariantError('REVERSAL', 'original journal does not exist');
+    }
+    if (this.fullReversalByOriginal.has(original.id)) {
+      throw new LedgerInvariantError('REVERSAL', 'original journal has already been fully reversed');
+    }
+    const kind = request.reversalKind ?? 'FULL';
+    const incoming = ledgerScaledUnits(request.postings[0]!.amount);
+    const already = this.reversedScaledByOriginal.get(original.id) ?? 0n;
+    const originalTotal = ledgerScaledUnits(original.postings[0]!.amount);
+    if (kind === 'FULL' && already > 0n) {
+      throw new LedgerInvariantError(
+        'REVERSAL',
+        'cannot post a full reversal after a partial reversal; post another explicit partial or a remaining-amount reversal',
+      );
+    }
+    if (already + incoming > originalTotal) {
+      throw new LedgerInvariantError('REVERSAL', 'reversal amount exceeds the remaining original amount');
+    }
+  }
+
   private assertAuthority(request: PostJournalRequest): void {
     const ea = request.executionAuthority;
     const scopedAccount = request.postings[0]!.accountId;
@@ -285,10 +370,14 @@ export class Ledger {
       );
     }
     if (customerPosting && ea.accountId !== accountId && ea.accountId !== customerPosting.accountId) {
-      throw new LedgerInvariantError(
-        'AUTHORITY',
-        'Execution Authority accountId does not bind a posting on this journal',
-      );
+      const walletFxDestinationCredit =
+        request.actionType === 'EXECUTE_FX_QUOTE' && request.memo === 'WALLET_FX_DESTINATION_CREDIT';
+      if (!walletFxDestinationCredit) {
+        throw new LedgerInvariantError(
+          'AUTHORITY',
+          'Execution Authority accountId does not bind a posting on this journal',
+        );
+      }
     }
     const bound = request.postings.some((p) => p.accountId === ea.accountId);
     if (!bound) {
@@ -296,6 +385,7 @@ export class Ledger {
         request.actionType === 'INITIATE_PAYMENT' ||
         request.actionType === 'CANCEL_PAYMENT' ||
         request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
+        request.actionType === 'EXECUTE_FX_QUOTE' ||
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
         request.actionType === 'ASSESS_CARD_FEE' ||
@@ -305,13 +395,17 @@ export class Ledger {
         request.actionType === 'ISSUE_SUNREY_COIN' ||
         request.actionType === 'TRANSFER_SUNREY_COIN' ||
         request.actionType === 'BURN_SUNREY_COIN';
+      const walletFxDestinationCredit =
+        request.actionType === 'EXECUTE_FX_QUOTE' &&
+        request.memo === 'WALLET_FX_DESTINATION_CREDIT' &&
+        request.postings.some((posting) => posting.direction === 'CREDIT' && posting.accountId !== ea.accountId);
       const journalAccounts = request.postings.map((p) => this.accounts.get(p.accountId));
       const allNonCustomer = journalAccounts.every(
         (account) =>
           account.ownerId === undefined ||
           catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
-      if (!(systemBookAction && allNonCustomer)) {
+      if (!(systemBookAction && allNonCustomer) && !walletFxDestinationCredit) {
         throw new LedgerInvariantError(
           'AUTHORITY',
           'Execution Authority accountId does not bind any posting on this journal',
@@ -337,6 +431,8 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'return-fee',
   'inbound-pending',
   'inbound-settle',
+  'wallet-credit',
+  'internal-transfer',
   'settle-reclass',
   'settle-direct',
   'refund',

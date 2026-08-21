@@ -96,6 +96,12 @@ export {
   upsertReconciliation,
 } from './ledger/banking-writes.ts';
 export {
+  upsertAccountRestriction,
+  upsertAccountProductOverlay,
+  type PersistedAccountOverlay,
+} from './ledger/account-product-writes.ts';
+export { loadAccountProductState, type LoadedAccountProductState } from './ledger/account-product-load.ts';
+export {
   PostgresDeadLetterStore,
   PostgresEventCatalog,
   PostgresInboxStore,

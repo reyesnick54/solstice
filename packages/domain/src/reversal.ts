@@ -14,6 +14,8 @@ export function asReversalId(value: string): ReversalId {
  * A compensating journal reference. The original journal is never mutated
  * or deleted. The compensating journal inverts the original postings.
  */
+export type ReversalKind = 'FULL' | 'PARTIAL';
+
 export type ReversalRecord = {
   readonly id: ReversalId;
   readonly originalJournalId: string;
@@ -21,6 +23,9 @@ export type ReversalRecord = {
   readonly reason: string;
   readonly idempotencyKey: string;
   readonly createdAt: UtcInstant;
+  readonly kind: ReversalKind;
+  readonly originalScaledUnits: bigint;
+  readonly reversedScaledUnits: bigint;
 };
 
 export function freezeReversal(record: ReversalRecord): ReversalRecord {

@@ -67,12 +67,15 @@ export async function serve(runtime: ConsumerBffRuntime, req: IncomingMessage, r
   for (const [key, value] of url.searchParams.entries()) {
     query[key] = value;
   }
+  const idempotencyKey =
+    typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'] : undefined;
   const result = handleConsumerBff(runtime, {
     method,
     path: url.pathname,
     query,
     body,
     authorization,
+    ...(idempotencyKey ? { idempotencyKey } : {}),
   });
   write(res, result.status, result.body, result.headers);
 }

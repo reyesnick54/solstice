@@ -28,6 +28,70 @@ export type PaymentDisclosure = {
   readonly paymentId: string | null;
 };
 
+export type FxQuoteDisclosure = {
+  readonly quoteId: string;
+  readonly sourceAmountMinorUnits: string;
+  readonly sourceCurrency: string;
+  readonly destinationAmountMinorUnits: string;
+  readonly destinationCurrency: string;
+  readonly rateNumerator: string;
+  readonly rateDenominator: string;
+  readonly rateKind: 'CUSTOMER';
+  readonly referenceRate: string;
+  readonly providerRate: string;
+  readonly customerRate: string;
+  readonly feeMinorUnits: string;
+  readonly feeCurrency: string;
+  readonly spreadDisclosed: boolean;
+  readonly spread: string | null;
+  readonly expiresAt: string;
+  readonly createdAt: string;
+  readonly pricingVersion: string;
+  readonly rateSource: string;
+  readonly rateTimestamp: string;
+  readonly status: string;
+  readonly requiredApproval: 'CUSTOMER_CONFIRMATION';
+  readonly provider: {
+    readonly state: 'SIMULATED';
+    readonly live: false;
+    readonly simulation: true;
+  };
+  readonly corridorId: string;
+};
+
+export function fxQuoteDisclosure(quote: FxQuote): FxQuoteDisclosure {
+  const spreadDisclosed = quote.providerRate.numerator !== quote.customerRate.numerator
+    || quote.providerRate.denominator !== quote.customerRate.denominator;
+  return Object.freeze({
+    quoteId: quote.quoteId,
+    sourceAmountMinorUnits: quote.sourceAmount.minorUnits.toString(),
+    sourceCurrency: quote.sourceAmount.currency,
+    destinationAmountMinorUnits: quote.destinationAmount.minorUnits.toString(),
+    destinationCurrency: quote.destinationAmount.currency,
+    rateNumerator: quote.customerRate.numerator.toString(),
+    rateDenominator: quote.customerRate.denominator.toString(),
+    rateKind: 'CUSTOMER',
+    referenceRate: rateLabel(quote.marketRate),
+    providerRate: rateLabel(quote.providerRate),
+    customerRate: rateLabel(quote.customerRate),
+    feeMinorUnits: quote.fee.minorUnits.toString(),
+    feeCurrency: quote.fee.currency,
+    spreadDisclosed,
+    spread: spreadDisclosed
+      ? `${quote.providerRate.numerator.toString()}/${quote.providerRate.denominator.toString()}→${quote.customerRate.numerator.toString()}/${quote.customerRate.denominator.toString()}`
+      : null,
+    expiresAt: quote.expiresAt,
+    createdAt: quote.createdAt,
+    pricingVersion: quote.pricingVersion,
+    rateSource: quote.rateSource,
+    rateTimestamp: quote.customerRate.timestamp,
+    status: quote.status,
+    requiredApproval: 'CUSTOMER_CONFIRMATION',
+    provider: Object.freeze({ state: 'SIMULATED' as const, live: false, simulation: true }),
+    corridorId: quote.corridorId,
+  });
+}
+
 export function disclosureFromQuote(
   quote: FxQuote,
   payment?: PaymentOrder,

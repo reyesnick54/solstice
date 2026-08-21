@@ -16,6 +16,7 @@ import {
   type IdentityAuthorityPort,
 } from '../../../packages/identity/src/index.ts';
 import { recordKernelDecisionEvent } from './event-trace.ts';
+import type { AccountProductService } from './account-product-service.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
 export type OpenAccountOutcome =
@@ -63,6 +64,7 @@ export class AccountsService {
   private readonly legalEntities: LegalEntityStore;
   private readonly identity: IdentityAuthorityPort;
   private readonly compliance: ComplianceFabric | undefined;
+  private product: AccountProductService | undefined;
 
   constructor(
     kernel: ComplianceKernel,
@@ -77,6 +79,7 @@ export class AccountsService {
     legalEntities: LegalEntityStore,
     identity: IdentityAuthorityPort,
     compliance?: ComplianceFabric,
+    product?: AccountProductService,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -90,6 +93,15 @@ export class AccountsService {
     this.legalEntities = legalEntities;
     this.identity = identity;
     this.compliance = compliance;
+    this.product = product;
+  }
+
+  /**
+   * Bind the product layer after construction. Runtime creates both
+   * services and wires this so open can register ownership/lifecycle.
+   */
+  attachProductLayer(product: AccountProductService): void {
+    this.product = product;
   }
 
   /**
@@ -304,6 +316,7 @@ export class AccountsService {
       executionAuthorityId: verified.value.authorityId,
       kernelEvidenceId: decision.evidenceRecordId,
     });
+    this.product?.noteOpened(constructed.value, intent.actorId);
 
     const opened: OpenAccountOutcome = Object.freeze({
       outcome: 'OPENED',

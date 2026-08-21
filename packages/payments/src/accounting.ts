@@ -222,6 +222,18 @@ export function inboundPendingPlan(amount: Money): PaymentJournalPlan {
   };
 }
 
+export function walletDestinationCreditPlan(destinationAccountId: string, destinationAmount: Money): PaymentJournalPlan {
+  return {
+    suffix: 'wallet-credit',
+    memo: 'WALLET_FX_DESTINATION_CREDIT',
+    classBridge: DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
+    postings: [
+      { accountId: settlementAccountId(destinationAmount.currency), direction: 'DEBIT', amount: destinationAmount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount: destinationAmount },
+    ],
+  };
+}
+
 export function inboundSettlePlan(destinationAccountId: string, amount: Money): PaymentJournalPlan {
   return {
     suffix: 'inbound-settle',
@@ -229,6 +241,27 @@ export function inboundSettlePlan(destinationAccountId: string, amount: Money): 
     classBridge: DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT,
     postings: [
       { accountId: pendingAccountId(amount.currency), direction: 'DEBIT', amount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount },
+    ],
+  };
+}
+
+/**
+ * Same-currency SunRey ledger transfer. No FX, no rail, no pending
+ * settlement. Class bridge is attached only when the accounts differ.
+ */
+export function internalTransferPlan(
+  sourceAccountId: string,
+  destinationAccountId: string,
+  amount: Money,
+  classBridge?: ClassBridge,
+): PaymentJournalPlan {
+  return {
+    suffix: 'internal-transfer',
+    memo: 'INTERNAL_SUNREY_TRANSFER',
+    ...(classBridge ? { classBridge } : {}),
+    postings: [
+      { accountId: sourceAccountId, direction: 'DEBIT', amount },
       { accountId: destinationAccountId, direction: 'CREDIT', amount },
     ],
   };
