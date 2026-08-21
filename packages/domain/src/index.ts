@@ -23,10 +23,13 @@ export type {
 export {
   asCurrencyCode,
   CANONICAL_SIMULATION_CURRENCIES,
+  RESERVED_ISO_CURRENCIES,
   CURRENCY_REGISTRY,
   CURRENCY_STATUSES,
   currencyRecord,
   isCanonicalSimulationCurrency,
+  isRecognizedIsoCurrency,
+  isReservedIsoCurrency,
   isCurrencyCode,
   majorUnitsToMinorUnits,
   requireCurrencyRecord,
@@ -107,6 +110,7 @@ export { BANKING_POSITION_SEMANTICS, BANKING_POSITION_STATES } from './banking-p
 export type { FundsHold, HoldId, HoldPurpose, HoldState } from './hold.ts';
 export {
   asHoldId,
+  canAdjustHold,
   canTransitionHold,
   freezeHold,
   HOLD_PURPOSES,
@@ -178,8 +182,41 @@ export {
   PENDING_SETTLEMENT_STATES,
 } from './pending-settlement.ts';
 
-export type { ReversalId, ReversalRecord } from './reversal.ts';
+export type { ReversalId, ReversalKind, ReversalRecord } from './reversal.ts';
 export { asReversalId, freezeReversal } from './reversal.ts';
 
 export type { TransactionHistoryItem, TransactionHistoryStatus } from './transaction-history.ts';
 export { freezeHistoryItem, TRANSACTION_HISTORY_STATUSES } from './transaction-history.ts';
+
+export type {
+  AccountRestriction,
+  AccountRestrictionCode,
+  AccountRestrictionId,
+  AccountRestrictionState,
+} from './account-restriction.ts';
+export {
+  ACCOUNT_RESTRICTION_CODES,
+  ACCOUNT_RESTRICTION_STATES,
+  asAccountRestrictionId,
+  freezeAccountRestriction,
+  isAccountRestrictionCode,
+} from './account-restriction.ts';
+
+export type {
+  ConsumerActivityCategory,
+  ConsumerActivityDirection,
+  ConsumerActivityStatus,
+  ConsumerActivityType,
+  CustomerActivityId,
+  CustomerActivityItem,
+} from './customer-activity.ts';
+export {
+  CONSUMER_ACTIVITY_CATEGORIES,
+  CONSUMER_ACTIVITY_DIRECTIONS,
+  CONSUMER_ACTIVITY_STATUSES,
+  CONSUMER_ACTIVITY_TYPES,
+  asCustomerActivityId,
+  freezeCustomerActivityItem,
+  isConsumerActivityStatus,
+  isConsumerActivityType,
+} from './customer-activity.ts';

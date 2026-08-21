@@ -141,7 +141,21 @@ export type {
   HomeDto,
   TokenResponse,
   ConsumerErrorEnvelope,
+  AccountDto,
+  AccountBalanceBreakdownDto,
+  ActivityItemDto,
 } from './consumer-platform/index.ts';
+export {
+  FINANCIAL_ACCOUNT_LIFECYCLES,
+  FINANCIAL_PRODUCT_TYPES,
+  CONSUMER_ACTIVITY_STATUSES,
+} from './consumer-bff/index.ts';
+export type {
+  ConsumerAccount,
+  ConsumerActivity,
+  AccountBalanceView,
+  AccountStatementData,
+} from './consumer-bff/index.ts';
 export {
   WalletSecurityClient,
   getWalletSecurityProfile,
@@ -151,3 +165,16 @@ export {
   getWalletPolicies,
   getRecoveryState,
 } from './wallet-security.ts';
+export {
+  SunReyConsumerBffClient,
+  createSunReyConsumerBffClient,
+  BFF_PAYMENT_STATUSES,
+  RECIPIENT_DESTINATION_TYPES,
+} from './consumer-bff/index.ts';
+export type {
+  Recipient,
+  PaymentQuote,
+  Payment,
+  PaymentStatus,
+  PaymentApproval,
+} from './consumer-bff/index.ts';

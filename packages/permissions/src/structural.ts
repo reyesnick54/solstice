@@ -13,6 +13,7 @@ import {
   type CancelPaymentIntent,
   type CaptureHoldIntent,
   type CancelHoldIntent,
+  type AdjustHoldIntent,
   type CreateBeneficiaryIntent,
   type CreateFxQuoteIntent,
   type ExecuteFxQuoteIntent,
@@ -138,6 +139,9 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.CREATE_HOLD) {
     return validateCreateHold(intent as CreateHoldIntent, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.ADJUST_HOLD) {
+    return validateAdjustHold(intent as AdjustHoldIntent, catalog);
   }
   if (
     intent.actionType === ACTION_TYPES.RELEASE_HOLD ||
@@ -521,6 +525,13 @@ function validateCreateHold(
   if (!isHoldPurpose(intent.payload.holdPurpose)) {
     return reject('holdPurpose', 'hold purpose is not recognized');
   }
+  return validateOutgoingAccountMoney(intent.payload.accountId, intent.payload.amount, catalog);
+}
+
+function validateAdjustHold(
+  intent: AdjustHoldIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
   return validateOutgoingAccountMoney(intent.payload.accountId, intent.payload.amount, catalog);
 }
 

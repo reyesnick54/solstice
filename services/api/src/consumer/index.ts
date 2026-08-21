@@ -26,4 +26,11 @@ export {
   SANDBOX_PERSONA_IDS,
 } from './fixtures.ts';
 export { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './handler.ts';
+export type {
+  Recipient,
+  PaymentQuote,
+  Payment,
+  PaymentStatus,
+  PaymentApproval,
+} from '../../../../packages/payments/src/platform/resources.ts';
 export { startConsumerBff, serve } from './http.ts';

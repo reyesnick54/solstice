@@ -933,10 +933,23 @@ components:
         account_id: { type: string }
         account_class: { type: string }
         status: { type: string }
+        lifecycle: { type: string, description: Derived consumer lifecycle. Not client-writable. }
+        product_type: { type: string }
         currency: { type: string }
         jurisdiction: { type: string }
         opened_at: { type: string }
-        balance: { $ref: "#/components/schemas/MoneyDto" }
+        closed_at: { type: string, nullable: true }
+        restrictions:
+          type: array
+          items: { type: string }
+        balance: { $ref: "#/components/schemas/MoneyDto", description: Posted ledger balance. Not a stored field. }
+        balances:
+          type: object
+          properties:
+            posted: { $ref: "#/components/schemas/MoneyDto" }
+            pending: { $ref: "#/components/schemas/MoneyDto" }
+            held: { $ref: "#/components/schemas/MoneyDto" }
+            available: { $ref: "#/components/schemas/MoneyDto" }
     AccountPage:
       type: object
       required: [items, next_cursor, page_size]
@@ -954,6 +967,11 @@ components:
         event_type: { type: string }
         occurred_at: { type: string }
         summary: { type: string }
+        activity_id: { type: string }
+        status: { type: string, enum: [PENDING, PROCESSING, COMPLETED, FAILED, REVERSED, CANCELLED, ACTION_REQUIRED] }
+        direction: { type: string, enum: [IN, OUT, HOLD] }
+        amount: { $ref: "#/components/schemas/MoneyDto" }
+        currency: { type: string }
     ActivityPage:
       type: object
       required: [items, next_cursor, page_size]

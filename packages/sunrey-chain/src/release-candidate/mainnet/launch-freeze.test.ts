@@ -247,6 +247,9 @@ describe('Chunk 164 production launch candidate freeze', () => {
       assert.equal(launchFreezeContainsPrivateKey(material), true);
       assert.throws(() => rejectPrivateKey(material));
     }
+    const simulationMaterial = { privateKey: '-----BEGIN SIMULATION PRIVATE KEY-----fixture' };
+    assert.equal(launchFreezeContainsPrivateKey(simulationMaterial), true);
+    assert.throws(() => rejectPrivateKey(simulationMaterial));
     const rejected = assembleLaunchCandidateFreeze({
       ...inputFromFreeze(evaluation.freeze),
       sourceCommit: 'privateKey-mnemonic-seedphrase',

@@ -16,7 +16,9 @@ export async function upsertHold(client: PoolClient, hold: FundsHold): Promise<v
      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
      ON CONFLICT (id) DO UPDATE SET
        state = EXCLUDED.state,
+       amount_minor_units = EXCLUDED.amount_minor_units,
        updated_at = EXCLUDED.updated_at,
+       expires_at = EXCLUDED.expires_at,
        capture_journal_id = EXCLUDED.capture_journal_id,
        epoch = EXCLUDED.epoch`,
     [
@@ -94,8 +96,9 @@ export async function insertFeeAssessment(client: PoolClient, fee: FeeAssessment
 export async function insertReversal(client: PoolClient, record: ReversalRecord): Promise<void> {
   await client.query(
     `INSERT INTO ledger.reversal_record (
-       id, original_journal_id, compensating_journal_id, reason, idempotency_key, created_at
-     ) VALUES ($1, $2, $3, $4, $5, $6)
+       id, original_journal_id, compensating_journal_id, reason, idempotency_key, created_at,
+       kind, original_scaled_units, reversed_scaled_units
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
      ON CONFLICT (id) DO NOTHING`,
     [
       record.id,
@@ -104,6 +107,9 @@ export async function insertReversal(client: PoolClient, record: ReversalRecord)
       record.reason,
       record.idempotencyKey,
       record.createdAt,
+      record.kind,
+      record.originalScaledUnits.toString(),
+      record.reversedScaledUnits.toString(),
     ],
   );
 }

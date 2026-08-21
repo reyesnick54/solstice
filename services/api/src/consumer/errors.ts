@@ -17,10 +17,14 @@ export const BFF_ERROR_CODES = [
   'VALIDATION',
   'FORBIDDEN_PROFILE_FIELD',
   'INVALID_PAGINATION_CURSOR',
+  'INVALID_FILTER',
+  'INVALID_PERIOD',
   'FEATURE_UNAVAILABLE',
   'KERNEL_DENIED',
   'MALFORMED',
   'METHOD_NOT_ALLOWED',
+  'STEP_UP_REQUIRED',
+  'KERNEL_REFUSED',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -62,13 +66,18 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':
+    case 'KERNEL_REFUSED':
       return 403;
+    case 'STEP_UP_REQUIRED':
+      return 401;
     case 'NOT_FOUND':
       return 404;
     case 'METHOD_NOT_ALLOWED':
       return 405;
     case 'VALIDATION':
     case 'INVALID_PAGINATION_CURSOR':
+    case 'INVALID_FILTER':
+    case 'INVALID_PERIOD':
     case 'MALFORMED':
       return 400;
     default:

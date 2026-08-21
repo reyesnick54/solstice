@@ -21,18 +21,21 @@ import {
   createSimulationKeyProvider,
   SimulationKeyProvider,
 } from '../../../packages/security/src/simulation.ts';
+import { AccountProductService } from './account-product-service.ts';
 import { BankingOperationsService } from './banking-operations.ts';
 import { seedSimulationCatalog } from './catalog.ts';
 import { HoldStore } from './hold-store.ts';
 import { securityEventSink, securityEvidenceSink } from './security-audit.ts';
 import { MoneyMovementService } from './money-movement.ts';
 import { AccountsService } from './open-account.ts';
+import { RestrictionStore, FinancialAccountOverlayStore } from './restriction-store.ts';
 import {
   AccountStore,
   CustomerStore,
   LegalEntityStore,
   ProductStore,
 } from './stores.ts';
+import { ResourceOwnershipRegistry } from '../../../packages/identity/src/index.ts';
 
 export type SimulationRuntime = {
   readonly capabilities: typeof CAPABILITIES;
@@ -52,6 +55,9 @@ export type SimulationRuntime = {
   readonly holds: HoldStore;
   readonly identity: SimulatedIdentityAdapter;
   readonly compliance: ComplianceFabric;
+  readonly restrictions: RestrictionStore;
+  readonly accountProduct: AccountProductService;
+  readonly ownership: ResourceOwnershipRegistry;
 };
 
 export type SimulationRuntimeOptions = {
@@ -140,6 +146,9 @@ export function createSimulationRuntime(
     compliance,
   );
   const holds = new HoldStore();
+  const restrictions = new RestrictionStore();
+  const overlays = new FinancialAccountOverlayStore();
+  const ownership = new ResourceOwnershipRegistry();
   const money = new MoneyMovementService(
     kernel,
     issuer,
@@ -154,6 +163,8 @@ export function createSimulationRuntime(
     legalEntities,
     identity.service,
     holds,
+    compliance,
+    restrictions,
   );
   const banking = new BankingOperationsService(
     kernel,
@@ -169,7 +180,21 @@ export function createSimulationRuntime(
     legalEntities,
     identity.service,
     holds,
+    restrictions,
   );
+  const accountProduct = new AccountProductService({
+    accounts,
+    ledger,
+    holds,
+    clock,
+    evidence,
+    events,
+    restrictions,
+    overlays,
+    ownership,
+    identity: identity.service,
+  });
+  accountsService.attachProductLayer(accountProduct);
   return {
     capabilities: CAPABILITIES,
     clock,
@@ -188,6 +213,9 @@ export function createSimulationRuntime(
     holds,
     identity,
     compliance,
+    restrictions,
+    accountProduct,
+    ownership,
   };
 }
 

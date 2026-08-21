@@ -22,6 +22,12 @@ export function isCurrencyCode(value: unknown): value is CurrencyCode {
  */
 export const CANONICAL_SIMULATION_CURRENCIES = ['USD', 'EUR', 'GBP', 'SAR', 'AED'] as const;
 
+/**
+ * Additional ISO 4217 codes SunRey recognizes without enabling simulation books.
+ * Live settlement remains disabled. Money already admits any ISO alphabetic code.
+ */
+export const RESERVED_ISO_CURRENCIES = ['JPY', 'CHF', 'CAD', 'AUD', 'CNY', 'KWD', 'INR', 'SGD'] as const;
+
 export type CanonicalSimulationCurrency = (typeof CANONICAL_SIMULATION_CURRENCIES)[number];
 
 export const CURRENCY_STATUSES = ['SUPPORTED_SIMULATION', 'RESERVED', 'DISABLED'] as const;
@@ -158,6 +164,14 @@ export function isCanonicalSimulationCurrency(
     typeof value === 'string' &&
     (CANONICAL_SIMULATION_CURRENCIES as readonly string[]).includes(value)
   );
+}
+
+export function isReservedIsoCurrency(value: unknown): boolean {
+  return typeof value === 'string' && (RESERVED_ISO_CURRENCIES as readonly string[]).includes(value);
+}
+
+export function isRecognizedIsoCurrency(value: unknown): boolean {
+  return isCurrencyCode(value) && (isCanonicalSimulationCurrency(value) || isReservedIsoCurrency(value));
 }
 
 export function currencyRecord(code: string): CurrencyRecord | undefined {

@@ -21,7 +21,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 
 function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'GET',
       path,
@@ -34,7 +34,7 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
 
 function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'PATCH',
       path,
@@ -105,6 +105,9 @@ describe('Consumer BFF', () => {
     assert.equal(valuation.value?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
     assert.equal(valuation.value?.ledgerAuthoritative, false);
     assert.ok(valuation.value?.rateTimestamp);
+    const sar = items.find((row) => row.currency === 'SAR');
+    assert.equal(usd?.balance.value?.ledger.minorUnits, '10000');
+    assert.equal(sar?.balance.value?.ledger.minorUnits, '8000');
   });
 
   it('returns bootstrap with capabilities and no secrets', () => {

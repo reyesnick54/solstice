@@ -245,3 +245,24 @@ export function inboundSettlePlan(destinationAccountId: string, amount: Money): 
     ],
   };
 }
+
+/**
+ * Same-currency SunRey ledger transfer. No FX, no rail, no pending
+ * settlement. Class bridge is attached only when the accounts differ.
+ */
+export function internalTransferPlan(
+  sourceAccountId: string,
+  destinationAccountId: string,
+  amount: Money,
+  classBridge?: ClassBridge,
+): PaymentJournalPlan {
+  return {
+    suffix: 'internal-transfer',
+    memo: 'INTERNAL_SUNREY_TRANSFER',
+    ...(classBridge ? { classBridge } : {}),
+    postings: [
+      { accountId: sourceAccountId, direction: 'DEBIT', amount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount },
+    ],
+  };
+}

@@ -157,6 +157,8 @@ export function freezeJournal(journal: Journal): Journal {
   const postings: Posting[] = journal.postings.map((p) => Object.freeze({ ...p }));
   return Object.freeze({
     ...journal,
+    status: journal.status ?? 'POSTED',
+    effectiveAt: journal.effectiveAt ?? journal.createdAt,
     postings: Object.freeze(postings),
   });
 }

@@ -20,10 +20,13 @@ import { asLegalEntityId } from '../../../../packages/domain/src/legal-entity.ts
 import { asProductId, type ProductId } from '../../../../packages/domain/src/product.ts';
 import { isOk } from '../../../../packages/domain/src/result.ts';
 import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
+import { asHoldId, freezeHold } from '../../../../packages/domain/src/hold.ts';
 import type { IdentityCapability } from '../../../../packages/identity/src/capability.ts';
 import { Money } from '../../../../packages/money/src/money.ts';
 import { asIntentId } from '../../../../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES, type OpenAccountIntent, type PostDepositIntent } from '../../../../packages/permissions/src/action-types.ts';
+import { PaymentsService } from '../../../../packages/payments/src/service.ts';
+import { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../../accounts/src/runtime.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { PaymentsService } from '../../../../packages/payments/src/service.ts';
@@ -50,6 +53,8 @@ export const SANDBOX_PERSONA_IDS = [
   'exchange',
   'restricted',
   'provider_down',
+  'pending_activity',
+  'zero_balance',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
@@ -68,6 +73,9 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'EXCHANGE_VIEW',
   'PAYMENT_REQUEST',
   'FX_QUOTE_REQUEST',
+  'TRANSFER_REQUEST',
+  'MANAGE_BENEFICIARY',
+  'PAYMENT_APPROVE',
   'POST_WITHDRAWAL_REQUEST',
 ];
 
@@ -78,6 +86,7 @@ export type SandboxWorld = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
+  readonly payments: PaymentPlatform;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -134,6 +143,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       { id: 'acct_sandbox_fx_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
       { id: 'acct_sandbox_fx_gbp', currency: 'GBP', productId: 'prod_demand_gbp_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
       { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 0n },
+      { id: 'acct_sandbox_fx_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 10_000n },
+      { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
     ],
   });
   personas.multi_currency = multi.principal;
@@ -198,6 +209,50 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
   personas.restricted = restricted.principal;
   sessions.set(sandboxToken('restricted'), restricted.principal);
+  runtime.accountProduct.applyRestriction({
+    accountId: 'acct_sandbox_restricted_usd',
+    code: 'COMPLIANCE_REVIEW',
+    reason: 'sandbox restricted persona',
+    actorId: 'operator_1',
+  });
+
+  const pendingActivity = provisionPersona(runtime, {
+    persona: 'pending_activity',
+    customerId: 'cust_sandbox_pending',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [{ id: 'acct_sandbox_pending_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 15_000n }],
+  });
+  personas.pending_activity = pendingActivity.principal;
+  sessions.set(sandboxToken('pending_activity'), pendingActivity.principal);
+  runtime.holds.put(
+    freezeHold({
+      id: asHoldId('hold_sandbox_pending'),
+      accountId: asAccountId('acct_sandbox_pending_usd'),
+      currency: asCurrencyCode('USD'),
+      amountMinorUnits: 2_500n,
+      purpose: 'OUTGOING_TRANSFER',
+      state: 'ACTIVE',
+      idempotencyKey: 'hold_sandbox_pending',
+      createdAt: NOW,
+      updatedAt: NOW,
+      expiresAt: null,
+      captureJournalId: null,
+      epoch: 1,
+    }),
+  );
+
+  const zero = provisionPersona(runtime, {
+    persona: 'zero_balance',
+    customerId: 'cust_sandbox_zero',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [{ id: 'acct_sandbox_zero_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 0n }],
+  });
+  personas.zero_balance = zero.principal;
+  sessions.set(sandboxToken('zero_balance'), zero.principal);
 
   const providerDown = provisionPersona(runtime, {
     persona: 'provider_down',
@@ -223,6 +278,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const seeded = seedSimulationCatalog();
   const payments = new PaymentsService(
+  const paymentsService = new PaymentsService(
     runtime.kernel,
     runtime.issuer,
     runtime.ledger,
@@ -237,6 +293,22 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     },
     runtime.identity.service,
   );
+  const payments = new PaymentPlatform(paymentsService, {
+    kernel: runtime.kernel,
+    issuer: runtime.issuer,
+    ledger: runtime.ledger,
+    evidence: runtime.evidence,
+    events: runtime.events,
+    clock: runtime.clock,
+    catalog: {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    identity: runtime.identity.service,
+    sessionFor: (actorId) => runtime.identity.service.activeSessionForActor(actorId),
+  });
 
   const bff = new ConsumerBff({
     now: () => runtime.clock.now(),
@@ -314,6 +386,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     bff,
     sessions,
     personas: Object.freeze(personas),
+    payments,
   });
 }
 
