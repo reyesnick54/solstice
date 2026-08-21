@@ -152,7 +152,11 @@ It is SUPERSEDED by `sunrey-native-assets` (protocol-native `MOONREY_COIN`) and
 
 ## Closure hashes
 
-- sourceCommit: `aa3331c9a058009f08073f8a40360d353ddc114c`
-- architectureManifestHash: `ee95d4f86502fe4a3a3d41f7e199b083083db559f5a87f371ef389d9c439a9ef`
+- sourceCommit: `7acfd5453de0a41bd19f3d043fe8ba65f1708224`
+- architectureManifestHash: `5b759fa4d44c2303b9054ccee4abe89a535a2c7d09e6f1a24527f2d79c2542ac`
 - launchCandidateFreezeHash: `a747fc79123ac5bfa7ce7e232d57d47dfa78487def33c2f2eb7edccf4da9314a`
-- closureHash: `d30f4a4c9793d4f4dcb7ea104e280460c97c07f8420712a63dbdd100d85ddc80`
+- closureHash: `78dce7b7055ce4f94b2021e5f8a625461f2a52a84840968f4538d3b1b674ae8d`
+- sourceCommit: `a0bfa39e40d29cc1c74c857ce8107c4b82e1d2f8`
+- architectureManifestHash: `e9b1e1733518c6a758001fae119995d1efcbb180a83dbfbf282a46c15e79954c`
+- launchCandidateFreezeHash: `a747fc79123ac5bfa7ce7e232d57d47dfa78487def33c2f2eb7edccf4da9314a`
+- closureHash: `7d9a0af8889e196f74c9536b176982845bcfc8cfbed5df05bcbe9166a508eaa5`
