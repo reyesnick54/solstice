@@ -118,8 +118,10 @@ describe('Consumer BFF', () => {
       schema: string;
       capabilities: { paymentsEnabled: boolean; details: Record<string, { enabled: boolean }> };
       application: { environment: string; productionActivated: boolean; liveMoneyEnabled: boolean };
+      profile: { value: { verification: string; identityVerification: string } };
     };
     assert.equal(body.schema, 'sunrey.consumer.bootstrap.v1');
+    assert.equal(body.profile.value.identityVerification, 'VERIFIED');
     assert.equal(body.application.environment, 'simulation');
     assert.equal(body.application.productionActivated, false);
     assert.equal(body.application.liveMoneyEnabled, false);

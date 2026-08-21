@@ -1,6 +1,7 @@
 import { CAPABILITIES, ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { ACCOUNT_CLASS_CATALOG } from '../../../../packages/domain/src/account-class.ts';
 import { computeCapabilities } from './capabilities.ts';
+import { mapIdentityVerificationClientState } from './session.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { DEFAULT_PAGE_SIZE, paginate, type CursorPage } from './pagination.ts';
 import { consumerAccountTypeOf } from './accounts-adapter.ts';
@@ -228,6 +229,7 @@ export class ConsumerBff {
       identityId: principal.identityId,
       status: customer?.status ?? principal.customerStatus,
       verification: principal.verification,
+      identityVerification: mapIdentityVerificationClientState(principal.verification),
       jurisdiction: principal.jurisdiction,
       residency: customer?.residency ?? null,
       editable: Object.freeze({
@@ -514,6 +516,7 @@ export class ConsumerBff {
           customerId: principal.customerId,
           displayLabel: prefs.displayLabel,
           verification: principal.verification,
+          identityVerification: mapIdentityVerificationClientState(principal.verification),
           jurisdiction: principal.jurisdiction,
         },
       }),
@@ -584,6 +587,7 @@ export class ConsumerBff {
           customerId: principal.customerId,
           identityId: principal.identityId,
           verification: principal.verification,
+          identityVerification: mapIdentityVerificationClientState(principal.verification),
           jurisdiction: principal.jurisdiction,
           displayLabel: prefs.displayLabel,
         },

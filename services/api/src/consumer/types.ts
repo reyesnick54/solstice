@@ -119,6 +119,19 @@ export const VERIFICATION_DISPLAY_STATES = [
 ] as const;
 export type VerificationDisplayState = (typeof VERIFICATION_DISPLAY_STATES)[number];
 
+/**
+ * Lovable-safe identity verification. Internal match scores and secret
+ * screening rules are never returned on this surface.
+ */
+export const IDENTITY_VERIFICATION_CLIENT_STATES = [
+  'NOT_STARTED',
+  'IN_PROGRESS',
+  'ACTION_REQUIRED',
+  'VERIFIED',
+  'REVIEW',
+] as const;
+export type IdentityVerificationClientState = (typeof IDENTITY_VERIFICATION_CLIENT_STATES)[number];
+
 export const PROVIDER_AVAILABILITIES = [
   'SIMULATED',
   'SANDBOX',
