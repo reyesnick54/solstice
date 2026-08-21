@@ -8,7 +8,8 @@
     "PRODUCTION_READY": false,
     "PRODUCTION_ACTIVE": false,
     "LIVE_CONNECTIVITY_ENABLED": false,
-    "production_authorized": false
+    "production_authorized": false,
+    "ENVIRONMENT": "simulation"
   },
   "nonNegotiable": {
     "LEDGER": "authoritative financial journal",
