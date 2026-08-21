@@ -33,7 +33,7 @@ function source(id: string, controller: string, upstream: string): EconomicDataS
     feedId: `feed_${id}`,
     subject: 'plant_sim',
     category: 'ENERGY',
-  } as EconomicDataSource;
+  } as unknown as EconomicDataSource;
 }
 
 export const oracleAdversarialScenarios: readonly AttackScenario[] = [

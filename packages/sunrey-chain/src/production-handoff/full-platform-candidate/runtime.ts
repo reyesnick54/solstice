@@ -163,7 +163,10 @@ export type BurnInRuntime = {
   artifacts: unknown[];
 };
 
-export function createRuntime(profile: BurnInProfile = 'SMOKE', seed = FULL_PLATFORM_DEFAULT_SEED): BurnInRuntime {
+export function createRuntime(
+  profile: BurnInProfile = 'SMOKE',
+  seed: string = FULL_PLATFORM_DEFAULT_SEED,
+): BurnInRuntime {
   return {
     profile,
     seed,

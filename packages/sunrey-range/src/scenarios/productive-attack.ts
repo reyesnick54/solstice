@@ -53,7 +53,7 @@ export function runProductiveAttack(env: RangeEnvironment, scenario: AttackScena
       subjects: pair.subjects,
       relationships: pair.relationships,
     });
-    const noAdditive = evaluation.decisions.some((row) => row.decision === 'ZERO_DUPLICATE_ATTRIBUTION' || row.decision === 'REVIEW_REQUIRED' || row.decision === 'REJECTED' || row.share < 1_000_000n)
+    const noAdditive = evaluation.decisions.some((row) => row.decision === 'ZERO_DUPLICATE_ATTRIBUTION' || row.decision === 'REVIEW_REQUIRED' || row.decision === 'REJECTED' || row.attributionShare < 1_000_000n)
       || evaluation.rejected
       || evaluation.reviewRequired;
     const blocked =

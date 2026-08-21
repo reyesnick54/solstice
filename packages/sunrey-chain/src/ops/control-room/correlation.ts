@@ -33,7 +33,7 @@ export function buildAuthorityLineage(input: {
   readonly eventId: string;
   readonly providerSubmissionRef?: string;
 }): AuthorityLineage {
-  return Object.freeze({
+  const lineage: AuthorityLineage = {
     readOnly: true,
     canIssueOrRenewAuthority: false,
     requestId: input.requestId,
@@ -54,5 +54,6 @@ export function buildAuthorityLineage(input: {
       'EVENT',
       ...(input.providerSubmissionRef !== undefined ? (['EXTERNAL_SUBMISSION'] as const) : []),
     ],
-  });
+  };
+  return Object.freeze(lineage);
 }

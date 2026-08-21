@@ -47,7 +47,7 @@ export const complianceAttackScenarios: readonly AttackScenario[] = [
 
 function request(): ScreeningRequest {
   return {
-    subjectKind: 'CUSTOMER',
+    subjectKind: 'PERSON',
     subjectRef: 'cus_range_1',
     jurisdiction: 'US',
     now: asUtcInstant('2026-08-20T00:00:00.000Z'),

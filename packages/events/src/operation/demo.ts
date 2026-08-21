@@ -62,10 +62,14 @@ async function demonstratePaymentRecovery(): Promise<{
     },
   });
   const restarted = await store.get(prepared.operationId);
-  const refused = await refuseBlindRetry(restarted ?? unknown.record);
+  if (!unknown.ok || unknown.record === undefined) {
+    throw new Error(unknown.ok ? 'missing unknown record' : unknown.code);
+  }
+  const unknownRecord = unknown.record;
+  const refused = await refuseBlindRetry(restarted ?? unknownRecord);
   const coordinator = new ReconciliationCoordinator(store);
   const recovered = await coordinator.queryAndPropose(
-    restarted ?? unknown.record,
+    restarted ?? unknownRecord,
     {
       query: async (): Promise<ProviderQueryOutcome> =>
         provider.confirmed
@@ -76,7 +80,7 @@ async function demonstratePaymentRecovery(): Promise<{
   );
   return {
     duplicatePayment: provider.received !== 1,
-    blindRetry: refused.ok === true || refused.code !== QUERY_REQUIRED_BEFORE_RETRY,
+    blindRetry: refused.code !== QUERY_REQUIRED_BEFORE_RETRY,
     confirmed: recovered.record.state === 'CONFIRMED',
   } as { readonly duplicatePayment: boolean; readonly blindRetry: boolean; readonly confirmed?: boolean };
 }

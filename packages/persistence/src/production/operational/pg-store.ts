@@ -34,7 +34,7 @@ import type {
 
 export class PostgresOperationalStore {
   private readonly customer: Pool;
-  private readonly security?: Pool;
+  private readonly security: Pool | undefined;
 
   constructor(customer: Pool, security?: Pool) {
     this.customer = customer;

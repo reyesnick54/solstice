@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { asAccountId } from '../../packages/domain/src/account.ts';
 import { asUtcInstant } from '../../packages/domain/src/time.ts';
 import { DomainEventLog } from '../../packages/events/src/index.ts';
 import {
@@ -70,7 +71,7 @@ describePersistence('CHUNK-155 postgres operation execution', () => {
       eventType: 'DepositPosted',
       schemaVersion: 1,
       occurredAt: NOW,
-      payload: { journalId: 'j1', accountId: 'acct_1', amountMinorUnits: '1', currency: 'USD' },
+      payload: { journalId: 'j1', accountId: asAccountId('acct_1'), amountMinorUnits: '1', currency: 'USD' },
     });
     await persistOperationWithOutbox(session, { record, events: [event] });
     const loaded = await store.get('op_pg_1');

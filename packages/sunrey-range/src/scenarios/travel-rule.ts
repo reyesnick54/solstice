@@ -44,8 +44,8 @@ export function runTravelRule(env: RangeEnvironment, scenario: AttackScenario): 
       amountMinor: '1000',
       currency: 'USD',
     });
-    if ('ok' in prepared && prepared.ok === false) {
-      return { blocked: false, safetyHeld: false, detail: prepared.reasonCode };
+    if (!('messageId' in prepared)) {
+      return { blocked: false, safetyHeld: false, detail: 'ok' in prepared ? prepared.reasonCode : 'missing_message' };
     }
     const message = prepared;
     const wrong = candidate.acknowledge({ messageId: message.messageId, recipientBinding: 'vasp_wrong' });

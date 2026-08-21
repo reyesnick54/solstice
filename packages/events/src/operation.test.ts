@@ -37,6 +37,7 @@ import {
   refuseAutonomousFinancialResolution,
   refuseBlindRetry,
   startProviderFailover,
+  type ExternalSubmitResult,
   type OperationExecutionRecord,
   type ProviderQueryOutcome,
   type ProviderSubmitOutcome,
@@ -45,6 +46,13 @@ import {
 
 const NOW = asUtcInstant('2026-08-20T11:00:00.000Z');
 const LATER = asUtcInstant('2026-08-20T11:00:05.000Z');
+
+function submittedRecord(result: ExternalSubmitResult): OperationExecutionRecord {
+  if (!result.ok || result.record === undefined) {
+    throw new Error(result.ok ? 'missing submit record' : result.code);
+  }
+  return result.record;
+}
 
 function paymentDigest(overrides: Partial<RequestDigestFields> = {}): RequestDigestFields {
   return {
@@ -232,8 +240,8 @@ describe('CHUNK-155 distributed idempotency recovery', () => {
         safeErrorMessage: 'response_lost',
       }),
     });
-    assert.equal(unknown.record.state, 'SUBMISSION_UNKNOWN');
-    const refused = await refuseBlindRetry(unknown.record);
+    assert.equal(submittedRecord(unknown).state, 'SUBMISSION_UNKNOWN');
+    const refused = await refuseBlindRetry(submittedRecord(unknown));
     assert.equal(refused.ok, false);
     assert.equal(refused.code, QUERY_REQUIRED_BEFORE_RETRY);
     assert.equal(refused.providerCalled, false);
@@ -262,7 +270,7 @@ describe('CHUNK-155 distributed idempotency recovery', () => {
         safeErrorMessage: 'chain_or_provider_ambiguous',
       }),
     });
-    const second = await dispatchExternalSideEffect(unknown.record, {
+    const second = await dispatchExternalSideEffect(submittedRecord(unknown), {
       store,
       now: () => LATER,
       submit: async () => ({ kind: 'ACCEPTED', providerOperationRef: 'should_not_run' }),
@@ -382,7 +390,7 @@ describe('CHUNK-155 distributed idempotency recovery', () => {
       submit: async () => ({ kind: 'ACCEPTED', providerOperationRef: 'rail_ref_late' }),
     });
     const afterCallback = applyCallbackOrResponse(
-      dispatched.record,
+      submittedRecord(dispatched),
       {
         providerId: 'rail_sim_a',
         providerEventId: 'cb_1',
@@ -794,7 +802,7 @@ describe('CHUNK-155 crash matrix', () => {
       (error: Error) => error.name === QUERY_REQUIRED_BEFORE_RETRY || error instanceof SimulatedCrash,
     );
     const callback = applyCallbackOrResponse(
-      submitted.record,
+      submittedRecord(submitted),
       {
         providerId: 'rail_sim_a',
         providerEventId: 'cb',

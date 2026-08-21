@@ -16,11 +16,12 @@ const FORBIDDEN_SUPER_PACKAGES = [
 export function parseCapabilityTable(markdown: string): readonly string[] {
   const section = markdown.split('## Current capabilities')[1] ?? '';
   const match = section.match(/(\| Capability \| Status \| Owner \|\n\| --- \| --- \| --- \|\n(?:\|.+\n)+)/);
-  if (!match) {
+  const table = match?.[1];
+  if (!table) {
     return [];
   }
   const ids: string[] = [];
-  for (const line of match[1].split('\n').slice(2)) {
+  for (const line of table.split('\n').slice(2)) {
     if (!line.startsWith('|')) continue;
     const id = line.split('|')[1]?.trim();
     if (id && id !== '---' && id !== 'Capability') {
