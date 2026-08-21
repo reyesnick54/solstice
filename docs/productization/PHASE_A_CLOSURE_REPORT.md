@@ -16,16 +16,22 @@ turning production on.
 
 ## REPOSITORY STATUS
 
-`main` at the start of Prompt 4 still carried merge leftovers that the
-integrity lock is designed to catch:
+Prompt 4 first repaired leftover merge collisions that the integrity
+lock is designed to catch:
 
 - duplicate `package.json` `test` keys (native-asset vs ceremony/mainnet globs)
 - duplicate `notes` keys on `sunrey-production-handoff` in `docs/architecture/manifest.json`
 - duplicate counts in `docs/architecture/integrity-baseline.json`
 
-Prompt 4 repaired those so the integrity gate fails closed on the next
-collision instead of silently keeping the last JSON key. The canonical
-`test` script is now the union of both surfaces.
+Prompts 1–3 then landed on `main` and were merged into this branch.
+That remashed `docs/productization/sunrey-authority-map.json` (Prompt 4
+`authorities[]` + Prompt 3 `domains[]`) and reintroduced duplicate
+`notes` on `sunrey-production-handoff`. Both files are now one valid
+JSON document again. The authority map keeps Prompt 3 domains and
+Prompt 4 authorities in a single object. Production posture stays
+closed (`PRODUCTION_READY/ACTIVE=false`, `LIVE_CONNECTIVITY_ENABLED=false`,
+`ENVIRONMENT=simulation`). The canonical `test` script remains the
+union of both surfaces.
 
 Canonical inventory remains:
 
@@ -171,7 +177,7 @@ Execution Authority, or mint, and it must not flip production flags.
 
 | Prompt | Outcome |
 | --- | --- |
-| 1 Stabilize merge | Integrity lock remains; leftover duplicate keys repaired on this branch |
-| 2 Canonical inventory | Constitution, manifest, engineering closure, build-status |
-| 3 Architecture freeze + authority map | `docs/productization/sunrey-authority-map.json` and freeze guardrails |
-| 4 Production-grade CI | Named quality-gate groups, production-safety, API, migrations, preflight |
+| 1 Stabilize merge | `docs/productization/PHASE_A_01_REPOSITORY_STABILIZATION.md`; integrity lock remains |
+| 2 Canonical inventory | `docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md` plus JSON inventory |
+| 3 Architecture freeze + authority map | Freeze markdown (headings 1–18), engineering rules, Prompt 3 `domains[]` |
+| 4 Production-grade CI | Named quality-gate groups, production-safety, API, migrations, preflight; unified authority map |
