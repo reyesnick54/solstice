@@ -147,3 +147,11 @@ does not embed presentation layout.
 The BFF cannot bypass Kernel, Execution Authority, or the Ledger.
 Mutating money remains `services/accounts` after a verified authority.
 Agent ALLOW remains “fit for a human to consider.”
+
+## Validation
+
+Local BFF tests, architecture lint, kernel gating, authority map,
+integrity, API specs, production safety, and typecheck pass on this
+prompt. Typecheck required unmashing pre-existing `main` collisions in
+`compose-ceremony.ts` and `launch-freeze.test.ts` (not a second abort
+or freeze owner). Production remains disabled.
