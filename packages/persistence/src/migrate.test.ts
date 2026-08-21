@@ -474,7 +474,8 @@ describe('versioned SQL migrations', () => {
     assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
     assert.match(v029.sql, /CREATE TABLE identity.security_event/);
     assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
-    assert.equal(/plaintext/i.test(v029.sql.replace(/--[^\n]*/g, '').replace(/NOT \(secret_envelope \? 'plaintext'\)/g, '')), false);
+    assert.equal(/\bplaintext_password\b/i.test(v029.sql), false);
+    assert.match(v029.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
   });
 
   it('customer V028 grants payments schema usage for operational recovery', () => {

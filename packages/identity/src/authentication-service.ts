@@ -43,7 +43,7 @@ import {
 } from './auth-store.ts';
 import {
   asAuthChallengeId,
-  asLoginHandleId;
+  asLoginHandleId,
   asPasswordCredentialId,
   asRefreshTokenId,
   asSecurityEventId,
