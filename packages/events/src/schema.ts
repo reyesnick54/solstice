@@ -34,6 +34,7 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'IdentityDeviceRegistered', version: 1, status: 'current' },
   { eventType: 'IdentityDeviceTrustChanged', version: 1, status: 'current' },
   { eventType: 'IdentityRecoveryRequested', version: 1, status: 'current' },
+  { eventType: 'IdentitySecurityRecorded', version: 1, status: 'current' },
   { eventType: 'BeneficiaryCreated', version: 1, status: 'current' },
   { eventType: 'PaymentInitiated', version: 1, status: 'current' },
   { eventType: 'PaymentHeld', version: 1, status: 'current' },

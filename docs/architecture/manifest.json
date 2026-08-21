@@ -1151,6 +1151,25 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
+    },
+    {
+      "id": "services/api",
+      "npmName": "@solstice/platform-api",
+      "path": "services/api",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/config",
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "SunRey Platform API. Canonical application-facing HTTP runtime and BFF entry. Orchestrates existing services. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Production remains inactive."
     }
   ],
   "components": [
@@ -5182,6 +5201,37 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
+    },
+    {
+      "id": "sunrey-platform-api",
+      "name": "SunRey Platform API runtime and gateway",
+      "canonicalOwner": "services/api",
+      "canonicalPath": "services/api/src/app.ts",
+      "publicInterface": "services/api/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "createPlatformApi",
+          "kind": "function"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-api",
+        "packages/api-gateway",
+        "packages/bff",
+        "packages/sunrey-bff",
+        "packages/http-gateway",
+        "packages/platform-api-v2",
+        "services/platform-api"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B application-facing HTTP runtime. Versioned /api/v1. Orchestration only. Does not post journals, issue Execution Authority, or activate production. The SDK /v1 DevelopmentPlatform gateway remains a simulation developer surface."
     }
   ],
   "authorizedMutationPaths": [
@@ -7166,6 +7216,13 @@
       "owner": "tools/architectural-linter",
       "protected": true,
       "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
+    },
+    {
+      "id": "sunrey-platform-api",
+      "status": "IMPLEMENTED",
+      "owner": "services/api",
+      "protected": true,
+      "notes": "Phase B Platform API runtime at services/api. Canonical /api/v1 application entry. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Do not create packages/sunrey-api, packages/api-gateway, packages/bff, or services/platform-api."
     }
   ],
   "boundedContexts": [
@@ -7491,12 +7548,13 @@
     },
     {
       "id": "API_INTEGRATION",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
         "services/api"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Phase B Platform API runtime lives at services/api. apps/api remains unused. Business endpoints land in later Phase B prompts. Not a second ledger or Execution Authority."
     },
     {
       "id": "SOVEREIGN_CELLS",
@@ -7700,6 +7758,13 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/sunrey-api",
+    "packages/api-gateway",
+    "packages/bff",
+    "packages/sunrey-bff",
+    "packages/http-gateway",
+    "packages/platform-api-v2",
+    "services/platform-api"
   ]
 }
