@@ -1,6 +1,6 @@
 import { launchFreezeContainsPrivateKey, launchFreezeContainsSecret } from './hash.ts';
-import { summarizeLaunchFreezeDiff, type LaunchFreezeDiff } from './diff.ts';
-import type { LaunchFreezeOfflinePackage, ProductionLaunchCandidateFreeze } from './types.ts';
+import { summarizeLaunchFreezeDiff } from './diff.ts';
+import type { LaunchFreezeDiff, LaunchFreezeOfflinePackage, ProductionLaunchCandidateFreeze } from './types.ts';
 
 export function buildLaunchFreezeOfflinePackage(
   freeze: ProductionLaunchCandidateFreeze,

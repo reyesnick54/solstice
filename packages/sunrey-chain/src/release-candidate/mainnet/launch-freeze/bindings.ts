@@ -182,7 +182,9 @@ export function snapshotExternalEvidence(
   registry: ExternalEvidenceRegistry | ExternalEvidenceRegistrySnapshot,
   nowUtc: string,
 ): ExternalEvidenceFreezeSnapshot {
-  const records = 'snapshot' in registry && typeof registry.snapshot === 'function' ? registry.snapshot(nowUtc).records : registry.records;
+  const snapshot =
+    registry instanceof ExternalEvidenceRegistry ? registry.snapshot(nowUtc) : registry;
+  const records = snapshot.records;
   const safe: readonly ExternalEvidenceSnapshotRecord[] = Object.freeze(
     records.map((record) => {
       const view = publicSafeView(record, nowUtc);
