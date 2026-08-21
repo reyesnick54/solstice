@@ -741,6 +741,28 @@ export class IdentityService implements IdentityAuthorityPort {
     });
   }
 
+  getSession(sessionId: SessionId): IdentitySession | undefined {
+    return this.store.sessions.get(sessionId);
+  }
+
+  getIdentity(identityId: SolsticeIdentityId): PersonIdentity | undefined {
+    return this.store.identities.get(identityId);
+  }
+
+  resolveFromSession(sessionId: SessionId): Result<VerifiedActorContext, IdentityFailure> {
+    const session = this.store.sessions.get(sessionId);
+    if (!session) {
+      return fail('SESSION_NOT_FOUND', 'session does not exist');
+    }
+    const usable = this.usableSession(session);
+    if (!usable.ok) {
+      return usable;
+    }
+    const touched = Object.freeze({ ...usable.value, lastUsedAt: this.clock.now() });
+    this.store.sessions.set(touched.sessionId, touched);
+    return this.issueContext(touched);
+  }
+
   activeSessionForActor(actorId: string): IdentitySession | null {
     const ids = this.store.sessionsByActor.get(actorId) ?? [];
     const now = this.clock.now();

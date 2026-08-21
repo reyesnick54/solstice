@@ -61,6 +61,16 @@ export const IDENTITY_CAPABILITIES = [
   'EXCHANGE_OPERATE_REQUEST',
   'CUSTODY_OPERATE_REQUEST',
   'ADD_WITHDRAWAL_DESTINATION',
+  'AGENT_USE',
+  'AGENT_ACTION_APPROVE',
+  'PAYMENT_APPROVE',
+  'INVESTMENT_PROPOSE',
+  'AUTHORITY_PATH_REHEARSE',
+  'ADMIN_COMPLIANCE',
+  'ADMIN_SUPPORT',
+  'ADMIN_TREASURY',
+  'ADMIN_EXCHANGE_SURVEILLANCE',
+  'ADMIN_SECURITY',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -158,6 +168,16 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
     'INITIATE_ASSET_WITHDRAWAL',
   ],
   ADD_WITHDRAWAL_DESTINATION: ['ADD_WITHDRAWAL_DESTINATION'],
+  AGENT_USE: [],
+  AGENT_ACTION_APPROVE: [],
+  PAYMENT_APPROVE: [],
+  INVESTMENT_PROPOSE: [],
+  AUTHORITY_PATH_REHEARSE: ['REHEARSE_AUTHORITY_PATH'],
+  ADMIN_COMPLIANCE: [],
+  ADMIN_SUPPORT: [],
+  ADMIN_TREASURY: [],
+  ADMIN_EXCHANGE_SURVEILLANCE: [],
+  ADMIN_SECURITY: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -285,9 +305,18 @@ export function requiredAssuranceFor(capability: IdentityCapability): Authentica
     capability === 'MANAGE_BENEFICIARY' ||
     capability === 'VAULT_EXPORT_OWN' ||
     capability === 'VAULT_DELETE_OWN' ||
-    capability === 'OPERATE_PERSONAL_DATA_VAULT'
+    capability === 'OPERATE_PERSONAL_DATA_VAULT' ||
+    capability === 'AGENT_ACTION_APPROVE' ||
+    capability === 'PAYMENT_APPROVE' ||
+    capability === 'ADMIN_COMPLIANCE' ||
+    capability === 'ADMIN_TREASURY' ||
+    capability === 'ADMIN_EXCHANGE_SURVEILLANCE' ||
+    capability === 'ADMIN_SECURITY'
   ) {
     return 'STRONG';
+  }
+  if (capability === 'AUTHORITY_PATH_REHEARSE') {
+    return 'HIGH_ASSURANCE';
   }
   return 'STANDARD';
 }
