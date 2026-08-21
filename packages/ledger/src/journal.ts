@@ -370,6 +370,13 @@ export class Ledger {
       );
     }
     if (customerPosting && ea.accountId !== accountId && ea.accountId !== customerPosting.accountId) {
+      const source = this.accounts.get(ea.accountId);
+      const credited = this.accounts.get(customerPosting.accountId);
+      const sameOwnerFx =
+        request.actionType === 'ACCEPT_FX_QUOTE' &&
+        source.ownerId !== undefined &&
+        source.ownerId === credited.ownerId;
+      if (!sameOwnerFx) {
       const walletFxDestinationCredit =
         request.actionType === 'EXECUTE_FX_QUOTE' && request.memo === 'WALLET_FX_DESTINATION_CREDIT';
       if (!walletFxDestinationCredit) {
@@ -385,6 +392,7 @@ export class Ledger {
         request.actionType === 'INITIATE_PAYMENT' ||
         request.actionType === 'CANCEL_PAYMENT' ||
         request.actionType === 'ACCEPT_INBOUND_PAYMENT' ||
+        request.actionType === 'ACCEPT_FX_QUOTE' ||
         request.actionType === 'EXECUTE_FX_QUOTE' ||
         request.actionType === 'CLEAR_CARD_TRANSACTION' ||
         request.actionType === 'REFUND_CARD_TRANSACTION' ||
@@ -405,6 +413,13 @@ export class Ledger {
           account.ownerId === undefined ||
           catalogFor(account.accountClass).fundOwnership !== 'CUSTOMER',
       );
+      const source = this.accounts.get(ea.accountId);
+      const sameOwnerFx =
+        request.actionType === 'ACCEPT_FX_QUOTE' &&
+        customerPosting !== undefined &&
+        source.ownerId !== undefined &&
+        source.ownerId === this.accounts.get(customerPosting.accountId).ownerId;
+      if (!(systemBookAction && allNonCustomer) && !sameOwnerFx) {
       if (!(systemBookAction && allNonCustomer) && !walletFxDestinationCredit) {
         throw new LedgerInvariantError(
           'AUTHORITY',
@@ -422,6 +437,7 @@ const PAYMENT_JOURNAL_SUFFIXES = new Set([
   'fee-income',
   'fx-debit',
   'fx-credit',
+  'fx-customer-credit',
   'settle',
   'release',
   'return-principal',

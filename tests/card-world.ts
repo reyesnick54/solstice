@@ -207,7 +207,7 @@ export function requestCardIntent(world: CardWorld, cardId: string): RequestCard
 }
 
 export function signedCallback(
-  world: CardWorld,
+  world: Pick<CardWorld, 'secrets' | 'clock'>,
   eventType: ProcessorCallbackEnvelope['eventType'],
   idempotencyKey: string,
   nonce: string,

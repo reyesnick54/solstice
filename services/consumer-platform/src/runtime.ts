@@ -27,9 +27,11 @@ import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { isOk } from '../../../packages/domain/src/result.ts';
 import type { IdentitySession } from '../../../packages/identity/src/auth.ts';
 import { asChallengeId, asSessionId, asDeviceId, asSolsticeIdentityId } from '../../../packages/identity/src/ids.ts';
+import { Money } from '../../../packages/money/src/money.ts';
 import { ACTION_TYPES, type OpenAccountIntent } from '../../../packages/permissions/src/action-types.ts';
 import { asIntentId } from '../../../packages/permissions/src/action-intent.ts';
 import { newSecurityToken } from '../../../packages/security/src/random.ts';
+import { SIMULATION_US_VIRTUAL_PROGRAM } from '../../../packages/cards/src/program.ts';
 import {
   CONSUMER_API_VERSION,
   CONSUMER_FEATURE_IDS,
@@ -56,11 +58,24 @@ import { projectBankingPosition } from '../../accounts/src/available-funds.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../accounts/src/runtime.ts';
 import { PERSONA_DEFINITIONS, personaById, sandboxPersonasAllowed } from './personas.ts';
 import { ConsumerWorkflowStore, assertSimulationWebhookUrl } from './workflows.ts';
+import { createConsumerMoneySurface } from './money-surface.ts';
+import { handleConsumerMoneyRoute, MONEY_ROUTES } from './money-routes.ts';
 
 const ACTOR_CONTEXT_TTL_SEC = 15 * 60;
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
-const ENABLED_FEATURES = new Set(['home', 'accounts', 'activity', 'capabilities', 'approvals', 'webhooks']);
+const ENABLED_FEATURES = new Set([
+  'home',
+  'accounts',
+  'activity',
+  'capabilities',
+  'approvals',
+  'webhooks',
+  'send',
+  'recipients',
+  'fx',
+  'cards',
+]);
 
 export type ConsumerPlatformOptions = {
   readonly host?: string;
@@ -208,13 +223,17 @@ function pageSizeOf(raw: string | undefined): number | 'INVALID' {
   return parsed;
 }
 
-function activateCustomer(runtime: SimulationRuntime, id: string) {
+function activateCustomer(
+  runtime: SimulationRuntime,
+  id: string,
+  input: { readonly legalEntityId: string; readonly jurisdiction: string },
+) {
   const now = runtime.clock.now();
   let customer = createProspect({
     id: asCustomerId(id),
-    legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
-    jurisdiction: asJurisdiction('GB'),
-    residency: asResidency('GB'),
+    legalEntityId: asLegalEntityId(input.legalEntityId),
+    jurisdiction: asJurisdiction(input.jurisdiction),
+    residency: asResidency(input.jurisdiction),
     verification: notStartedVerification(asUtcInstant('2027-08-13T00:00:00.000Z')),
     createdAt: now,
   });
@@ -363,39 +382,120 @@ function accountDto(runtime: SimulationRuntime, accountId: string): AccountDto |
 
 function seedPersonas(runtime: SimulationRuntime): void {
   for (const persona of PERSONA_DEFINITIONS) {
-    const customer = activateCustomer(runtime, persona.customerId);
+    const jurisdiction = persona.homeJurisdiction ?? 'GB';
+    const legalEntityId = persona.legalEntityId ?? 'le_solstice_uk_ltd';
+    const customer = activateCustomer(runtime, persona.customerId, { legalEntityId, jurisdiction });
     const provisioned = runtime.identity.provisionSimulatedActor({
       actorId: persona.actorId,
       identityId: persona.identityId,
       customerId: customer.id,
-      jurisdiction: asJurisdiction('GB'),
+      jurisdiction: asJurisdiction(jurisdiction),
       capabilities: persona.capabilities,
-      stepUp: persona.capabilities.includes('ACCOUNT_OPEN_REQUEST'),
+      stepUp:
+        persona.capabilities.includes('ACCOUNT_OPEN_REQUEST') ||
+        persona.capabilities.includes('PAYMENT_REQUEST'),
     });
     if (!provisioned.ok) {
       throw new Error(`persona ${persona.personaId} failed: ${provisioned.error.message}`);
     }
-    if (persona.seedAccount) {
+    const products = persona.products ??
+      (persona.seedAccount
+        ? [
+            {
+              accountIdSuffix: 'primary',
+              productId: 'prod_demand_usd_gb',
+              legalEntityId: 'le_solstice_uk_ltd',
+              jurisdiction: 'GB',
+              currency: 'USD',
+            },
+          ]
+        : []);
+    const openerId = persona.capabilities.includes('ACCOUNT_OPEN_REQUEST') ? persona.actorId : 'operator_1';
+    for (const product of products) {
       const opened = runtime.accountsService.open({
-        id: asIntentId(`open_${persona.personaId}`),
+        id: asIntentId(`open_${persona.personaId}_${product.accountIdSuffix}`),
         actionType: ACTION_TYPES.OPEN_ACCOUNT,
-        idempotencyKey: `open_${persona.personaId}`,
-        actorId: 'operator_1',
+        idempotencyKey: `open_${persona.personaId}_${product.accountIdSuffix}`,
+        actorId: openerId,
         requestedAt: runtime.clock.now(),
         purpose: 'CUSTOMER_ONBOARDING',
         payload: {
-          accountId: asAccountId(`acct_${persona.personaId}`),
+          accountId: asAccountId(`acct_${persona.personaId}_${product.accountIdSuffix}`),
           ownerId: customer.id,
-          productId: asProductId('prod_demand_usd_gb'),
+          productId: asProductId(product.productId),
           accountClass: 'DEMAND_DEPOSIT',
-          legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
-          jurisdiction: asJurisdiction('GB'),
-          currency: asCurrencyCode('USD'),
+          legalEntityId: asLegalEntityId(product.legalEntityId),
+          jurisdiction: asJurisdiction(product.jurisdiction),
+          currency: asCurrencyCode(product.currency),
         },
       });
       if (opened.outcome !== 'OPENED') {
-        throw new Error(`persona account seed failed for ${persona.personaId}`);
+        throw new Error(`persona account seed failed for ${persona.personaId} ${product.accountIdSuffix}: ${opened.outcome}`);
       }
+      if (persona.depositUsdMinor && product.currency === 'USD' && persona.depositUsdMinor > 0n) {
+        const deposited = runtime.money.deposit({
+          id: asIntentId(`dep_${persona.personaId}`),
+          actionType: ACTION_TYPES.POST_DEPOSIT,
+          idempotencyKey: `dep_${persona.personaId}`,
+          actorId: persona.actorId,
+          requestedAt: runtime.clock.now(),
+          purpose: 'CUSTOMER_FUNDING',
+          payload: {
+            accountId: opened.account.id,
+            amount: Money.fromMinorUnits(persona.depositUsdMinor, 'USD'),
+          },
+        });
+        if (deposited.outcome !== 'POSTED') {
+          throw new Error(`persona deposit failed for ${persona.personaId}: ${deposited.outcome}`);
+        }
+      }
+    }
+  }
+}
+
+function seedPersonaCards(
+  runtime: SimulationRuntime,
+  money: ReturnType<typeof createConsumerMoneySurface>,
+): void {
+  for (const persona of PERSONA_DEFINITIONS) {
+    if (!persona.issueCard) {
+      continue;
+    }
+    const usd = runtime.accountsService
+      .listAccounts()
+      .find((account) => account.ownerId === persona.customerId && account.currency === 'USD');
+    if (!usd) {
+      throw new Error(`persona card seed missing USD account for ${persona.personaId}`);
+    }
+    const requested = money.cards.requestCard({
+      id: asIntentId(`card_${persona.personaId}`),
+      actionType: ACTION_TYPES.REQUEST_CARD,
+      idempotencyKey: `card_${persona.personaId}`,
+      actorId: persona.actorId,
+      requestedAt: runtime.clock.now(),
+      purpose: 'CUSTOMER_CARD',
+      payload: {
+        cardId: `card_${persona.personaId}`,
+        accountId: usd.id,
+        ownerId: asCustomerId(persona.customerId),
+        programId: SIMULATION_US_VIRTUAL_PROGRAM.programId,
+        formFactor: 'VIRTUAL',
+      },
+    });
+    if (requested.outcome !== 'OK') {
+      throw new Error(`persona card request failed for ${persona.personaId}`);
+    }
+    const activated = money.cards.activateCard({
+      id: asIntentId(`card_act_${persona.personaId}`),
+      actionType: ACTION_TYPES.ACTIVATE_CARD,
+      idempotencyKey: `card_act_${persona.personaId}`,
+      actorId: persona.actorId,
+      requestedAt: runtime.clock.now(),
+      purpose: 'CUSTOMER_CARD',
+      payload: { cardId: requested.value.cardId, accountId: usd.id },
+    });
+    if (activated.outcome !== 'OK') {
+      throw new Error(`persona card activate failed for ${persona.personaId}`);
     }
   }
 }
@@ -453,6 +553,7 @@ export const CONSUMER_PLATFORM_ROUTES = [
   'POST /v1/consumer/webhooks',
   'GET /v1/consumer/webhooks',
   'POST /v1/consumer/webhooks/{endpointId}/test',
+  ...MONEY_ROUTES,
 ] as const;
 
 export function createConsumerPlatformRuntime(options: ConsumerPlatformOptions = {}): SimulationRuntime {
@@ -469,6 +570,10 @@ export async function startConsumerPlatform(
   const integrationEnvironment = options.integrationEnvironment ?? 'TEST';
   const allowSandbox = options.allowSandboxPersonas === true;
   const runtime = createConsumerPlatformRuntime(options);
+  const money = createConsumerMoneySurface(runtime);
+  if (sandboxPersonasAllowed(allowSandbox)) {
+    seedPersonaCards(runtime, money);
+  }
   const tokens = new Map<string, TokenRecord>();
   const actions = new Map<string, ActionDecisionDto>();
   const approvals = new Map<string, ApprovalDto>();
@@ -1410,6 +1515,49 @@ export async function startConsumerPlatform(
         const job = workflows.createJob('WEBHOOK_DELIVERY', runtime.clock.now(), 'test_enqueued');
         sendJson(res, 200, job, requestId);
         return;
+      }
+
+      if (
+        path.startsWith('/v1/consumer/transfers') ||
+        path.startsWith('/v1/consumer/recipients') ||
+        path.startsWith('/v1/consumer/payments') ||
+        path.startsWith('/v1/consumer/fx') ||
+        path.startsWith('/v1/consumer/cards')
+      ) {
+        const auth = requireAuth(req, res, requestId);
+        if (!auth) return;
+        const handled = await handleConsumerMoneyRoute(
+          {
+            runtime,
+            money,
+            sendJson,
+            fail,
+            readBody,
+            parseJsonBody,
+            asString,
+            recordActivity: (actorId, eventType, summary) => {
+              const items = [...(activityByActor.get(actorId) ?? [])];
+              items.push(
+                Object.freeze({
+                  event_id: `evt_${newSecurityToken()}`,
+                  event_type: eventType,
+                  occurred_at: runtime.clock.now(),
+                  summary,
+                }),
+              );
+              activityByActor.set(actorId, items);
+            },
+          },
+          {
+            method,
+            path,
+            actorId: auth.session.actorId,
+            requestId,
+            req,
+            res,
+          },
+        );
+        if (handled) return;
       }
 
       fail(res, 404, requestId, 'RESOURCE_NOT_FOUND', 'route was not found');

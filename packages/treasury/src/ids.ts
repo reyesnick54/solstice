@@ -60,3 +60,44 @@ export function asReconciliationId(value: string): ReconciliationId {
 export function asTreasuryPositionId(value: string): TreasuryPositionId {
   return value as TreasuryPositionId;
 }
+
+export type ProviderBalanceId = Brand<string, 'ProviderBalanceId'>;
+export type SettlementRecordId = Brand<string, 'SettlementRecordId'>;
+export type ReconciliationRunId = Brand<string, 'ReconciliationRunId'>;
+export type ReconciliationBreakId = Brand<string, 'ReconciliationBreakId'>;
+export type SuspenseItemId = Brand<string, 'SuspenseItemId'>;
+export type DailyCloseId = Brand<string, 'DailyCloseId'>;
+export type OperationalAlertId = Brand<string, 'OperationalAlertId'>;
+export type LiquidityViewId = Brand<string, 'LiquidityViewId'>;
+
+export function asProviderBalanceId(value: string): ProviderBalanceId {
+  return value as ProviderBalanceId;
+}
+
+export function asSettlementRecordId(value: string): SettlementRecordId {
+  return value as SettlementRecordId;
+}
+
+export function asReconciliationRunId(value: string): ReconciliationRunId {
+  return value as ReconciliationRunId;
+}
+
+export function asReconciliationBreakId(value: string): ReconciliationBreakId {
+  return value as ReconciliationBreakId;
+}
+
+export function asSuspenseItemId(value: string): SuspenseItemId {
+  return value as SuspenseItemId;
+}
+
+export function asDailyCloseId(value: string): DailyCloseId {
+  return value as DailyCloseId;
+}
+
+export function asOperationalAlertId(value: string): OperationalAlertId {
+  return value as OperationalAlertId;
+}
+
+export function asLiquidityViewId(value: string): LiquidityViewId {
+  return value as LiquidityViewId;
+}

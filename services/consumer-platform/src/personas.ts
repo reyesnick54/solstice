@@ -11,6 +11,14 @@ import {
   type SandboxPersonaId,
 } from '../../../packages/sunrey-sdk/src/consumer-platform/index.ts';
 
+export type PersonaProductSeed = {
+  readonly accountIdSuffix: string;
+  readonly productId: string;
+  readonly legalEntityId: string;
+  readonly jurisdiction: string;
+  readonly currency: string;
+};
+
 export type PersonaDefinition = {
   readonly personaId: SandboxPersonaId;
   readonly label: string;
@@ -20,6 +28,11 @@ export type PersonaDefinition = {
   readonly capabilities: readonly IdentityCapability[];
   readonly seedAccount: boolean;
   readonly activityCount: number;
+  readonly homeJurisdiction?: 'GB' | 'US';
+  readonly legalEntityId?: string;
+  readonly products?: readonly PersonaProductSeed[];
+  readonly depositUsdMinor?: bigint;
+  readonly issueCard?: boolean;
 };
 
 export const PERSONA_DEFINITIONS: readonly PersonaDefinition[] = Object.freeze([
@@ -72,6 +85,47 @@ export const PERSONA_DEFINITIONS: readonly PersonaDefinition[] = Object.freeze([
     capabilities: ['VIEW_ACCOUNT', 'MANAGE_PROFILE'],
     seedAccount: false,
     activityCount: 25,
+  },
+  {
+    personaId: 'fin-ready',
+    label: 'US money sandbox with USD/SAR, send, FX, and cards',
+    actorId: 'actor_fin_ready',
+    identityId: 'idn_fin_ready',
+    customerId: 'cust_fin_ready',
+    capabilities: [
+      'VIEW_ACCOUNT',
+      'MANAGE_PROFILE',
+      'ACCOUNT_OPEN_REQUEST',
+      'TRANSFER_REQUEST',
+      'MANAGE_BENEFICIARY',
+      'PAYMENT_REQUEST',
+      'FX_QUOTE_REQUEST',
+      'POST_DEPOSIT_REQUEST',
+      'CARD_MANAGE_REQUEST',
+      'HOLD_REQUEST',
+    ],
+    seedAccount: false,
+    activityCount: 2,
+    homeJurisdiction: 'US',
+    legalEntityId: 'le_solstice_us_inc',
+    products: [
+      {
+        accountIdSuffix: 'usd',
+        productId: 'prod_demand_usd_us',
+        legalEntityId: 'le_solstice_us_inc',
+        jurisdiction: 'US',
+        currency: 'USD',
+      },
+      {
+        accountIdSuffix: 'sar',
+        productId: 'prod_demand_sar_us',
+        legalEntityId: 'le_solstice_us_inc',
+        jurisdiction: 'US',
+        currency: 'SAR',
+      },
+    ],
+    depositUsdMinor: 500_000n,
+    issueCard: true,
   },
 ]);
 

@@ -1,9 +1,13 @@
 # SunRey Lovable ↔ Consumer BFF mapping
 
-Phase B Prompt 4. Maps future consumer screens to the canonical
-Backend-for-Frontend at `services/api`.
+Phase B mapped screens to `services/api`. Phase C productizes the
+Lovable-facing money surface on the consumer platform
+(`services/consumer-platform`, `/v1/consumer/*`) and the browser-safe
+SDK `@solstice/sunrey-sdk/consumer`.
 
-Lovable must not call internal package topology. It talks to `/api/v1`.
+Lovable must not call internal package topology. Prefer the consumer
+platform contract in `api/sunrey-consumer-platform-v1.openapi.yaml`.
+`services/api` `/api/v1` stubs are not a second ledger or money plane.
 
 This is not production authorization. `ENVIRONMENT` stays `simulation`.
 `LIVE_*` stays `false`.
@@ -19,6 +23,10 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY | `/api/v1/accounts` | GET | required | account read models | `services/accounts` + Ledger-derived balances | AVAILABLE_SIMULATION | none |
 | MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | account + ledger/available/held | `projectBankingPosition` | AVAILABLE_SIMULATION | none |
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
+| SEND | `/v1/consumer/transfers` and `/v1/consumer/payments` | POST | required | transfer / payment DTOs | `services/accounts` + `packages/payments` | SANDBOX_FUNCTIONAL | live rails = PROVIDER_ADAPTER_REQUIRED |
+| RECIPIENTS | `/v1/consumer/recipients` | GET, POST | required | recipient DTOs | `packages/payments` beneficiaries | SANDBOX_FUNCTIONAL | none in simulation |
+| FX | `/v1/consumer/fx/quotes` | POST | required | server-owned quote | `packages/payments` FX engine | SANDBOX_FUNCTIONAL | live FX = PROVIDER_ADAPTER_REQUIRED |
+| CARDS | `/v1/consumer/cards` | GET, POST | required | simulated card DTOs | `packages/cards` | SANDBOX_FUNCTIONAL | live processor = PROVIDER_ADAPTER_REQUIRED |
 | SEND recipients | `/api/v1/recipients` | GET, POST | required | Recipient list / create | `packages/payments` beneficiaries + PaymentPlatform | AVAILABLE_SIMULATION | frontend cannot mark verified; agents cannot add |
 | SEND recipient | `/api/v1/recipients/{id}` | GET | required + owner | Recipient | same | AVAILABLE_SIMULATION | cross-user denied |
 | SEND quote | `/api/v1/payments/quote` | POST | required | PaymentQuote | PaymentPlatform quote preview | AVAILABLE_SIMULATION | `settlementTimePromise` is always null until Phase D rails |

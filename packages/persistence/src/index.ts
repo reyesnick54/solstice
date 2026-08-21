@@ -73,6 +73,10 @@ export {
   persistTreasurySnapshot,
   reserveTreasuryLiquidityPg,
 } from './treasury/pg-treasury-store.ts';
+export {
+  loadFinancialControlSnapshot,
+  persistFinancialControlSnapshot,
+} from './treasury/pg-financial-control-store.ts';
 export { persistInvestmentSnapshot } from './investments/pg-investments-store.ts';
 export { persistRiskState } from './risk/pg-risk-store.ts';
 export { persistModelRegistryState } from './model-registry/pg-model-registry-store.ts';
