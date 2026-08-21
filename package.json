@@ -200,6 +200,7 @@
     "demo:market-surveillance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/market-surveillance/src/demo.ts",
     "demo:sunrey-regulated-provider-candidates": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/demo-sunrey-regulated-provider-candidates.ts",
     "demo:sunrey-production-provider-binding": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/providers/production-binding/demo.ts",
+    "demo:sunrey-launch-abort-recovery": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/governance-ops/launch-abort/demo.ts",
     "demo:listing-governance": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-exchange/src/listing-demo.ts",
     "lint:architecture": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/architectural-linter/src/cli.ts",
     "lint:invariants": "python3 scripts/lint-architectural-invariants.py",

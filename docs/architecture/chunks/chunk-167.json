@@ -1,0 +1,21 @@
+{
+  "chunk": "CHUNK-167",
+  "title": "Launch Abort, Domain-Scoped Emergency Restrictions, Rollback Semantics, Recovery Gates, and Resumption Authorization Rehearsal",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-governance-operations",
+    "sunrey-post-genesis-stabilization",
+    "sunrey-production-handoff",
+    "sunrey-production-genesis-ceremony",
+    "sunrey-production-genesis-execution",
+    "sunrey-unified-control-room",
+    "sunrey-operational-persistence-recovery",
+    "event-fabric",
+    "payments",
+    "custody",
+    "sunrey-monetary-constitution"
+  ],
+  "notes": "IMPLEMENTED by extending packages/sunrey-chain/src/governance-ops, packages/sunrey-chain/src/post-genesis, and packages/sunrey-chain/src/production-handoff. Launch-abort rehearsal lives at packages/sunrey-chain/src/governance-ops/launch-abort. Composes with Chunk 165 ceremony abort and Chunk 166 staged-activation pause and readiness gates. Does not create a second emergency authority, global kill switch, or super-admin. Application rollback is not chain-history rollback. Resumption is independently authorized. evaluateChunkRequirements returns mustStop: false. Do not create packages/kill-switch, packages/emergency-admin, packages/rollback-engine, packages/incident-v2, or packages/recovery-v2."
+}

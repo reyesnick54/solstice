@@ -72,3 +72,8 @@ export {
   rehearseTreasuryBudgetChange,
 } from './rehearsals.ts';
 export { governanceOpsUsage, runGovernanceOpsCli, runGovernanceOpsCommand } from './cli.ts';
+export * as launchAbort from './launch-abort/index.ts';
+export type {
+  CapabilityResumptionCandidate,
+  PreGenesisAbortRecord,
+} from './launch-abort/types.ts';

@@ -1197,10 +1197,18 @@ policy change control, and bounded emergency authority at
 `sunrey-governance-operations` is `IMPLEMENTED`. It orchestrates
 existing Chunk 40 protocol governance and does not introduce a
 governance token, AI voting, a competing governance engine, or an
-authority that can rewrite finalized history. Do not create
-`packages/governance-ops`, `packages/sunrey-governance`, or
-`packages/governance-token`. See
-[`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md).
+authority that can rewrite finalized history. Chunk 167 extends this
+owner with launch abort, domain-scoped emergency restrictions,
+recovery gates, and resumption authorization at
+`packages/sunrey-chain/src/governance-ops/launch-abort`. It does not
+create a second emergency authority, a global kill switch, or a
+super-admin. Do not create `packages/governance-ops`,
+`packages/sunrey-governance`, `packages/governance-token`,
+`packages/kill-switch`, `packages/emergency-admin`, or
+`packages/rollback-engine`. See
+[`chunk-79-governance-operations.md`](./chunk-79-governance-operations.md)
+and
+[`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).
 Chunk 77 implements the blockchain-native SunRey protocol treasury
 and reserve architecture at
 `packages/sunrey-chain/src/economics/treasury`. Capability
@@ -1266,6 +1274,11 @@ firewall cannot be overridden. Do not create `packages/full-platform`,
 `packages/launch-v2`, `packages/system-rc`, or
 `packages/sunrey-production`. See
 [`chunk-158-full-platform-production-candidate.md`](../operations/chunk-158-full-platform-production-candidate.md).
+Chunk 167 further extends the same handoff owner with application
+rollback records. Application rollback is not chain-history rollback.
+Protocol recovery remains a governed upgrade. Do not create
+`packages/incident-v2` or `packages/recovery-v2`. See
+[`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).
 Chunk 88 implements the SunRey authorized production genesis execution
 engine and launch control room at
 `packages/sunrey-chain/src/genesis-execution`. Capability
@@ -1306,8 +1319,11 @@ operations, and progressive production capability activation at
 `sunrey-post-genesis-stabilization` is `IMPLEMENTED`. Automated tests
 use rehearsal networks. It does not launch mainnet, enable `LIVE_*`
 flags, or activate real production capabilities. Genesis does not
-automatically enable regulated or high-risk financial services. Do not
-create `packages/post-genesis`, `packages/sunrey-post-genesis`,
+automatically enable regulated or high-risk financial services. Chunk
+167 adds recovery gates on this owner: incident resolution does not
+resume a restricted capability, and restored application state is not
+native supply or finalized chain history. Do not create
+`packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/stabilization`, `packages/capability-activation`, or
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
@@ -1322,6 +1338,10 @@ MoonRey issuance stay independent. Fixture canaries are
 `packages/activation`, `packages/canary`, `packages/mainnet-launch`,
 or `packages/product-switches`. See
 [`docs/operations/chunk-166-staged-capability-activation.md`](../operations/chunk-166-staged-capability-activation.md).
+Chunk 167 adds recovery gates on the same owner and composes launch
+abort with those pause and readiness gates. Incident resolution does
+not resume a restricted capability. See
+[`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).
 Chunk 94 implements the SunRey developer application platform,
 credentials, signed webhooks, Testnet/sandbox, and local developer
 environment at `packages/sunrey-sdk/src/developer-platform`. Capability
