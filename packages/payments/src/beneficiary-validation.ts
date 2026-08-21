@@ -35,6 +35,8 @@ const COORDINATE_SCHEMES: Readonly<Record<string, RegExp>> = {
   GB_SORT: /^\d{6}:\d{8}$/,
   AE_IBAN: /^AE\d{21}$/,
   IBAN: /^[A-Z]{2}\d{2}[A-Z0-9]{10,30}$/,
+  SUNREY_ACCOUNT: /^[A-Za-z0-9_.:-]{4,128}$/,
+  WALLET_REF: /^[A-Z]{2,12}:[A-Za-z0-9_-]{4,64}$/,
 };
 
 /**
@@ -75,7 +77,7 @@ export class SimulationBeneficiaryValidator implements BeneficiaryValidationPort
       Object.freeze({
         scheme,
         coordinateRef: sha256Hex(`coord:${scheme}:${value}`),
-        displayHint: value.slice(-4),
+        displayHint: scheme === 'SUNREY_ACCOUNT' ? value : value.slice(-4),
       }),
     );
   }

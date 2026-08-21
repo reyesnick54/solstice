@@ -21,7 +21,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 
 function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0] | null, query: Record<string, string> = {}) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'GET',
       path,
@@ -34,7 +34,7 @@ function get(world: ReturnType<typeof createSandboxWorld>, path: string, persona
 
 function patch(world: ReturnType<typeof createSandboxWorld>, path: string, persona: Parameters<typeof sandboxToken>[0], body: Record<string, unknown>) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
     {
       method: 'PATCH',
       path,

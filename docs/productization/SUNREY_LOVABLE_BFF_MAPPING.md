@@ -19,7 +19,12 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY | `/api/v1/accounts` | GET | required | account read models | `services/accounts` + Ledger-derived balances | AVAILABLE_SIMULATION | none |
 | MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | account + ledger/available/held | `projectBankingPosition` | AVAILABLE_SIMULATION | none |
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
-| SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
+| SEND recipients | `/api/v1/recipients` | GET, POST | required | Recipient list / create | `packages/payments` beneficiaries + PaymentPlatform | AVAILABLE_SIMULATION | frontend cannot mark verified; agents cannot add |
+| SEND recipient | `/api/v1/recipients/{id}` | GET | required + owner | Recipient | same | AVAILABLE_SIMULATION | cross-user denied |
+| SEND quote | `/api/v1/payments/quote` | POST | required | PaymentQuote | PaymentPlatform quote preview | AVAILABLE_SIMULATION | `settlementTimePromise` is always null until Phase D rails |
+| SEND | `/api/v1/payments` | GET, POST | required | Payment list / create | PaymentPlatform + canonical Ledger | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
+| SEND detail | `/api/v1/payments/{id}` | GET | required + owner | Payment | PaymentPlatform | AVAILABLE_SIMULATION | backend owns status |
+| SEND approve | `/api/v1/payments/{id}/approve` | POST | required + owner | Payment | PaymentPlatform approval | AVAILABLE_SIMULATION | used when quote requires CUSTOMER_CONFIRMATION |
 | FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
 | GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |

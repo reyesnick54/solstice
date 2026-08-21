@@ -24,7 +24,10 @@ import type { IdentityCapability } from '../../../../packages/identity/src/capab
 import { Money } from '../../../../packages/money/src/money.ts';
 import { asIntentId } from '../../../../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES, type OpenAccountIntent, type PostDepositIntent } from '../../../../packages/permissions/src/action-types.ts';
+import { PaymentsService } from '../../../../packages/payments/src/service.ts';
+import { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { createSimulationRuntime, type SimulationRuntime } from '../../../accounts/src/runtime.ts';
+import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
@@ -65,6 +68,9 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'EXCHANGE_VIEW',
   'PAYMENT_REQUEST',
   'FX_QUOTE_REQUEST',
+  'TRANSFER_REQUEST',
+  'MANAGE_BENEFICIARY',
+  'PAYMENT_APPROVE',
   'POST_WITHDRAWAL_REQUEST',
 ];
 
@@ -75,6 +81,7 @@ export type SandboxWorld = {
   readonly bff: ConsumerBff;
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
+  readonly payments: PaymentPlatform;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -217,6 +224,39 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       } satisfies OptionalDomainSummary),
   });
 
+  const seeded = seedSimulationCatalog();
+  const paymentsService = new PaymentsService(
+    runtime.kernel,
+    runtime.issuer,
+    runtime.ledger,
+    runtime.evidence,
+    runtime.events,
+    runtime.clock,
+    {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    runtime.identity.service,
+  );
+  const payments = new PaymentPlatform(paymentsService, {
+    kernel: runtime.kernel,
+    issuer: runtime.issuer,
+    ledger: runtime.ledger,
+    evidence: runtime.evidence,
+    events: runtime.events,
+    clock: runtime.clock,
+    catalog: {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    identity: runtime.identity.service,
+    sessionFor: (actorId) => runtime.identity.service.activeSessionForActor(actorId),
+  });
+
   const bff = new ConsumerBff({
     now: () => runtime.clock.now(),
     accounts: createAccountsReadAdapter(runtime),
@@ -292,6 +332,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     bff,
     sessions,
     personas: Object.freeze(personas),
+    payments,
   });
 }
 

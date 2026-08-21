@@ -5430,6 +5430,12 @@
       "requiresKernel": true
     },
     {
+      "symbol": "transferInternal",
+      "file": "packages/payments/src/platform/orchestrator.ts",
+      "requiresExecutionAuthority": true,
+      "requiresKernel": true
+    },
+    {
       "symbol": "postPaymentJournal",
       "file": "packages/payments/src/journals.ts",
       "requiresExecutionAuthority": true,

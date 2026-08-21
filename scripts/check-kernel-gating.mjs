@@ -34,6 +34,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'initiatePayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'cancelPayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'acceptInboundPayment', file: 'packages/payments/src/service.ts' },
+  { symbol: 'transferInternal', file: 'packages/payments/src/platform/orchestrator.ts' },
   { symbol: 'postPaymentJournal', file: 'packages/payments/src/journals.ts' },
   { symbol: 'requestCard', file: 'packages/cards/src/service.ts' },
   { symbol: 'activateCard', file: 'packages/cards/src/service.ts' },
