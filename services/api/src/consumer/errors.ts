@@ -17,6 +17,8 @@ export const BFF_ERROR_CODES = [
   'VALIDATION',
   'FORBIDDEN_PROFILE_FIELD',
   'INVALID_PAGINATION_CURSOR',
+  'INVALID_FILTER',
+  'INVALID_PERIOD',
   'FEATURE_UNAVAILABLE',
   'MALFORMED',
   'METHOD_NOT_ALLOWED',
@@ -72,6 +74,8 @@ export function statusForError(error: BffErrorEnvelope): number {
       return 405;
     case 'VALIDATION':
     case 'INVALID_PAGINATION_CURSOR':
+    case 'INVALID_FILTER':
+    case 'INVALID_PERIOD':
     case 'MALFORMED':
       return 400;
     default:

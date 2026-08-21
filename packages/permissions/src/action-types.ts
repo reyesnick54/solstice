@@ -30,6 +30,7 @@ export const ACTION_TYPES = {
   CANCEL_PAYMENT: 'CANCEL_PAYMENT',
   ACCEPT_INBOUND_PAYMENT: 'ACCEPT_INBOUND_PAYMENT',
   CREATE_HOLD: 'CREATE_HOLD',
+  ADJUST_HOLD: 'ADJUST_HOLD',
   RELEASE_HOLD: 'RELEASE_HOLD',
   CAPTURE_HOLD: 'CAPTURE_HOLD',
   CANCEL_HOLD: 'CANCEL_HOLD',
@@ -225,6 +226,12 @@ export type HoldLifecyclePayload = {
   readonly accountId: AccountId;
 };
 
+export type AdjustHoldPayload = {
+  readonly holdId: HoldId;
+  readonly accountId: AccountId;
+  readonly amount: Money;
+};
+
 export type PostFeePayload = {
   readonly accountId: AccountId;
   readonly amount: Money;
@@ -237,6 +244,8 @@ export type PostReversalPayload = {
   readonly accountId: AccountId;
   readonly originalJournalId: string;
   readonly reason: string;
+  readonly reversalKind?: 'FULL' | 'PARTIAL';
+  readonly amount?: Money;
 };
 
 export type PostInterestPayload = {
@@ -262,6 +271,10 @@ export type PendingSettlementLifecyclePayload = {
 
 export type CreateHoldIntent = ActionIntent<CreateHoldPayload> & {
   readonly actionType: typeof ACTION_TYPES.CREATE_HOLD;
+};
+
+export type AdjustHoldIntent = ActionIntent<AdjustHoldPayload> & {
+  readonly actionType: typeof ACTION_TYPES.ADJUST_HOLD;
 };
 
 export type ReleaseHoldIntent = ActionIntent<HoldLifecyclePayload> & {
@@ -306,6 +319,7 @@ export type BankingIntent =
   | PostWithdrawalIntent
   | InternalTransferIntent
   | CreateHoldIntent
+  | AdjustHoldIntent
   | ReleaseHoldIntent
   | CaptureHoldIntent
   | CancelHoldIntent

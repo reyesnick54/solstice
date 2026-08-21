@@ -3,6 +3,9 @@ import type { Pool } from 'pg';
 import { asAccountId, type Account } from '../../../domain/src/account.ts';
 import type { AccountClass } from '../../../domain/src/account-class.ts';
 import { asCurrencyCode } from '../../../domain/src/currency.ts';
+import { asFeeId, freezeFee, type FeeAssessment, type FeeType } from '../../../domain/src/fee.ts';
+import { asHoldId, freezeHold, type FundsHold, type HoldPurpose, type HoldState } from '../../../domain/src/hold.ts';
+import { asReversalId, freezeReversal, type ReversalKind, type ReversalRecord } from '../../../domain/src/reversal.ts';
 import {
   asCustomerId,
   type Customer,
@@ -106,8 +109,11 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
   intents: ActionIntent[];
   authorities: AuthorityAudit[];
   openOutcomes: PersistedOpenOutcome[];
+  holds: FundsHold[];
+  reversals: ReversalRecord[];
+  fees: FeeAssessment[];
 }> {
-  const [products, accounts, ledgerAccounts, journals, postings, events, intents, authorities, outcomes] =
+  const [products, accounts, ledgerAccounts, journals, postings, events, intents, authorities, outcomes, holds, reversals, fees] =
     await Promise.all([
       pool.query<{
         id: string;
@@ -153,9 +159,21 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         class_bridge_name: string | null;
         memo: string | null;
         created_at: Date;
+        status: 'POSTED' | null;
+        effective_at: Date | null;
+        reference: string | null;
+        correlation_id: string | null;
+        causation_id: string | null;
+        source_domain: Journal['sourceDomain'] | null;
+        evidence_record_id: string | null;
+        reverses_journal_id: string | null;
+        reversal_kind: Journal['reversalKind'] | null;
+        request_fingerprint: string | null;
       }>(
         `SELECT id, idempotency_key, execution_authority_id, action_type, asset,
-                class_bridge_name, memo, created_at
+                class_bridge_name, memo, created_at, status, effective_at, reference,
+                correlation_id, causation_id, source_domain, evidence_record_id,
+                reverses_journal_id, reversal_kind, request_fingerprint
            FROM ledger.journal
           ORDER BY created_at, id`,
       ),
@@ -223,6 +241,57 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         `SELECT intent_id, outcome, account_id, decision_status, evidence_record_id, code, message
            FROM ledger.account_open_outcome`,
       ),
+      pool.query<{
+        id: string;
+        account_id: string;
+        currency: string;
+        amount_minor_units: string;
+        purpose: HoldPurpose;
+        state: HoldState;
+        idempotency_key: string;
+        created_at: Date;
+        updated_at: Date;
+        expires_at: Date | null;
+        capture_journal_id: string | null;
+        epoch: number;
+      }>(
+        `SELECT id, account_id, currency, amount_minor_units::text, purpose, state,
+                idempotency_key, created_at, updated_at, expires_at, capture_journal_id, epoch
+           FROM ledger.funds_hold`,
+      ),
+      pool.query<{
+        id: string;
+        original_journal_id: string;
+        compensating_journal_id: string;
+        reason: string;
+        idempotency_key: string;
+        created_at: Date;
+        kind: ReversalKind;
+        original_scaled_units: string;
+        reversed_scaled_units: string;
+      }>(
+        `SELECT id, original_journal_id, compensating_journal_id, reason, idempotency_key,
+                created_at, kind, original_scaled_units::text, reversed_scaled_units::text
+           FROM ledger.reversal_record`,
+      ),
+      pool.query<{
+        id: string;
+        account_id: string;
+        fee_type: FeeType;
+        currency: string;
+        assessed_minor_units: string;
+        fixed_minor_units: string | null;
+        basis_points_numerator: string | null;
+        basis_points_denominator: string | null;
+        journal_id: string | null;
+        idempotency_key: string;
+        created_at: Date;
+      }>(
+        `SELECT id, account_id, fee_type, currency, assessed_minor_units::text,
+                fixed_minor_units::text, basis_points_numerator::text, basis_points_denominator::text,
+                journal_id, idempotency_key, created_at
+           FROM ledger.fee_assessment`,
+      ),
     ]);
 
   const postingsByJournal = new Map<string, Posting[]>();
@@ -284,8 +353,18 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         asset: row.asset.trim(),
         postings: Object.freeze(postingsByJournal.get(row.id) ?? []),
         createdAt: row.created_at.toISOString(),
+        status: row.status ?? 'POSTED',
+        effectiveAt: (row.effective_at ?? row.created_at).toISOString(),
         ...(row.class_bridge_name ? { classBridgeName: row.class_bridge_name } : {}),
         ...(row.memo ? { memo: row.memo } : {}),
+        ...(row.reference ? { reference: row.reference } : {}),
+        ...(row.correlation_id ? { correlationId: row.correlation_id } : {}),
+        ...(row.causation_id ? { causationId: row.causation_id } : {}),
+        ...(row.source_domain ? { sourceDomain: row.source_domain } : {}),
+        ...(row.evidence_record_id ? { evidenceRecordId: row.evidence_record_id } : {}),
+        ...(row.reverses_journal_id ? { reversesJournalId: row.reverses_journal_id } : {}),
+        ...(row.reversal_kind ? { reversalKind: row.reversal_kind } : {}),
+        ...(row.request_fingerprint ? { requestFingerprint: row.request_fingerprint } : {}),
       };
       return Object.freeze(journal);
     }),
@@ -324,6 +403,52 @@ async function loadLedgerDatabase(pool: Pool): Promise<{
         evidenceRecordId: row.evidence_record_id,
         code: row.code,
         message: row.message,
+      }),
+    ),
+    holds: holds.rows.map((row) =>
+      freezeHold({
+        id: asHoldId(row.id),
+        accountId: asAccountId(row.account_id),
+        currency: asCurrencyCode(row.currency.trim()),
+        amountMinorUnits: BigInt(row.amount_minor_units),
+        purpose: row.purpose,
+        state: row.state,
+        idempotencyKey: row.idempotency_key,
+        createdAt: asUtcInstant(row.created_at.toISOString()),
+        updatedAt: asUtcInstant(row.updated_at.toISOString()),
+        expiresAt: row.expires_at ? asUtcInstant(row.expires_at.toISOString()) : null,
+        captureJournalId: row.capture_journal_id,
+        epoch: row.epoch,
+      }),
+    ),
+    reversals: reversals.rows.map((row) =>
+      freezeReversal({
+        id: asReversalId(row.id),
+        originalJournalId: row.original_journal_id,
+        compensatingJournalId: row.compensating_journal_id,
+        reason: row.reason,
+        idempotencyKey: row.idempotency_key,
+        createdAt: asUtcInstant(row.created_at.toISOString()),
+        kind: row.kind ?? 'FULL',
+        originalScaledUnits: BigInt(row.original_scaled_units ?? '0'),
+        reversedScaledUnits: BigInt(row.reversed_scaled_units ?? '0'),
+      }),
+    ),
+    fees: fees.rows.map((row) =>
+      freezeFee({
+        id: asFeeId(row.id),
+        accountId: asAccountId(row.account_id),
+        feeType: row.fee_type,
+        currency: asCurrencyCode(row.currency.trim()),
+        assessedMinorUnits: BigInt(row.assessed_minor_units),
+        fixedMinorUnits: row.fixed_minor_units === null ? null : BigInt(row.fixed_minor_units),
+        basisPointsNumerator:
+          row.basis_points_numerator === null ? null : BigInt(row.basis_points_numerator),
+        basisPointsDenominator:
+          row.basis_points_denominator === null ? null : BigInt(row.basis_points_denominator),
+        journalId: row.journal_id,
+        idempotencyKey: row.idempotency_key,
+        createdAt: asUtcInstant(row.created_at.toISOString()),
       }),
     ),
   };

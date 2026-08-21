@@ -4,6 +4,8 @@ import { computeCapabilities } from './capabilities.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { DEFAULT_PAGE_SIZE, paginate, type CursorPage } from './pagination.ts';
 import { consumerAccountTypeOf } from './accounts-adapter.ts';
+import { parseActivityFilter } from '../../../accounts/src/activity.ts';
+import { asUtcInstant } from '../../../../packages/domain/src/time.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import type {
   AccountsReadPort,
@@ -44,27 +46,51 @@ const FORBIDDEN_PROFILE_FIELDS = [
 ] as const;
 
 export type ConsumerActivityItem = {
+  readonly activityId: string;
   readonly reference: string;
   readonly accountId: string;
+  readonly type: string;
   readonly status: string;
   readonly direction: string;
   readonly amount: MoneyView;
+  readonly currency: string;
   readonly description: string;
+  readonly counterpartyDisplay: string | null;
+  readonly category: string;
+  readonly relatedActionId: string | null;
   readonly occurredAt: string;
+  readonly completedAt: string | null;
+  readonly fee: MoneyView | null;
 };
 
 export type ConsumerAccountResource = {
   readonly id: string;
   readonly type: ConsumerAccountType;
+  readonly productType: string;
   readonly accountClass: string;
   readonly status: string;
+  readonly domainStatus: string;
   readonly currency: string;
   readonly productId: string;
+  readonly openedAt: string;
+  readonly closedAt: string | null;
+  readonly jurisdiction: string;
+  readonly owner: { readonly customerId: string; readonly ownershipKind: 'INDIVIDUAL' };
+  readonly restrictions: readonly string[];
+  readonly ledgerAccountReferences: readonly string[];
+  readonly providerLink: { readonly providerId: string; readonly externalRef: string; readonly status: string } | null;
+  readonly productConfiguration: {
+    readonly licensingClaim: 'NOT_A_LICENSED_BANK_ACCOUNT';
+    readonly environment: 'simulation';
+    readonly liveBanking: false;
+  };
   readonly balance: ResourceField<{
+    readonly posted: MoneyView;
     readonly ledger: MoneyView;
     readonly available: MoneyView;
     readonly held: MoneyView;
     readonly pending: MoneyView;
+    readonly currency: string;
   }>;
 };
 
@@ -87,7 +113,15 @@ export type HomeResource = {
       readonly rewards: MoneyView;
       readonly pending: MoneyView;
     };
-  }>;
+  }> & {
+    readonly valuation: {
+      readonly currency: string;
+      readonly status: 'AVAILABLE' | 'NOT_REQUIRED' | 'UNAVAILABLE';
+      readonly currencies: readonly string[];
+      readonly reason: string | null;
+    };
+  };
+  readonly accounts: ResourceField<readonly ConsumerAccountResource[]>;
   readonly cash: ResourceField<MoneyView>;
   readonly investments: ResourceField<MoneyView>;
   readonly digitalAssets: ResourceField<MoneyView>;
@@ -125,6 +159,7 @@ export type BootstrapResource = {
     readonly supportedCurrencies: readonly string[];
     readonly supportedAssets: readonly string[];
   };
+  readonly accounts: ResourceField<readonly ConsumerAccountResource[]>;
 };
 
 export type ConsumerBffDeps = {
@@ -244,9 +279,11 @@ export class ConsumerBff {
   }
 
   listAccounts(principal: BffPrincipal): { readonly items: readonly ConsumerAccountResource[] } {
-    const accounts = this.deps.accounts.listAccounts(principal.customerId);
+    const accounts = this.deps.accounts.listFinancialAccounts(principal.customerId);
     return Object.freeze({
-      items: accounts.map((account) => this.accountResource(principal, account.id)).filter((row) => row !== null),
+      items: accounts
+        .map((account) => this.accountResource(principal, account.accountId))
+        .filter((row): row is ConsumerAccountResource => row !== null),
     });
   }
 
@@ -255,21 +292,15 @@ export class ConsumerBff {
     accountId: string,
     requestId: string,
   ): ConsumerAccountResource | BffErrorEnvelope {
-    const account = this.deps.accounts.getAccount(accountId);
-    if (!account) {
+    const authorized = this.deps.accounts.authorizeRead(accountId, principal.customerId, principal.identityId);
+    if ('error' in authorized) {
       return bffError({
-        errorCode: 'NOT_FOUND',
-        category: 'NOT_FOUND',
-        message: 'account not found',
-        retryable: false,
-        requestId,
-      });
-    }
-    if (account.ownerId !== principal.customerId) {
-      return bffError({
-        errorCode: 'RESOURCE_NOT_OWNED',
-        category: 'AUTHORIZATION',
-        message: 'account is not owned by the authenticated customer',
+        errorCode: authorized.error,
+        category: authorized.error === 'NOT_FOUND' ? 'NOT_FOUND' : 'AUTHORIZATION',
+        message:
+          authorized.error === 'NOT_FOUND'
+            ? 'account not found'
+            : 'account is not owned by the authenticated customer',
         retryable: false,
         requestId,
       });
@@ -283,12 +314,23 @@ export class ConsumerBff {
     requestId: string,
     cursor: string | undefined,
     pageSize: number,
+    query: Readonly<Record<string, string>> = {},
   ): ResourceField<CursorPage<ConsumerActivityItem>> | BffErrorEnvelope {
     const owned = this.getAccount(principal, accountId, requestId);
     if ('errorCode' in owned) {
       return owned;
     }
-    const items = this.activityItems(principal, accountId);
+    const filter = parseActivityFilter(query);
+    if ('error' in filter) {
+      return bffError({
+        errorCode: 'INVALID_FILTER',
+        category: 'VALIDATION',
+        message: filter.error,
+        retryable: false,
+        requestId,
+      });
+    }
+    const items = this.activityItems(principal, accountId, filter);
     const page = paginate(items, `activity:${accountId}`, cursor, pageSize);
     if ('error' in page) {
       return bffError({
@@ -306,58 +348,130 @@ export class ConsumerBff {
     });
   }
 
-  home(principal: BffPrincipal, requestId: string): HomeResource | BffErrorEnvelope {
+  accountStatement(
+    principal: BffPrincipal,
+    accountId: string,
+    requestId: string,
+    periodStart: string | undefined,
+    periodEnd: string | undefined,
+  ) {
+    const owned = this.getAccount(principal, accountId, requestId);
+    if ('errorCode' in owned) {
+      return owned;
+    }
+    if (!periodStart || !periodEnd || Number.isNaN(Date.parse(periodStart)) || Number.isNaN(Date.parse(periodEnd))) {
+      return bffError({
+        errorCode: 'INVALID_PERIOD',
+        category: 'VALIDATION',
+        message: 'statement requires periodStart and periodEnd as ISO-8601 instants',
+        retryable: false,
+        requestId,
+      });
+    }
+    const statement = this.deps.accounts.statement(accountId, asUtcInstant(periodStart), asUtcInstant(periodEnd));
+    if ('error' in statement) {
+      return bffError({
+        errorCode: 'INVALID_PERIOD',
+        category: 'VALIDATION',
+        message: statement.error,
+        retryable: false,
+        requestId,
+      });
+    }
+    return resourceField({
+      state: 'READY',
+      availability: 'AVAILABLE_SIMULATION',
+      value: {
+        statementId: statement.id,
+        accountId: statement.accountId,
+        currency: statement.currency,
+        periodStart: statement.periodStart,
+        periodEnd: statement.periodEnd,
+        opening: moneyView(statement.currency, statement.openingMinorUnits),
+        closing: moneyView(statement.currency, statement.closingMinorUnits),
+        credits: moneyView(statement.currency, statement.creditsMinorUnits),
+        debits: moneyView(statement.currency, statement.debitsMinorUnits),
+        fees: moneyView(statement.currency, 0n),
+        transactions: statement.lines.map((line) =>
+          Object.freeze({
+            postedAt: line.postedAt,
+            direction: line.direction,
+            amount: moneyView(line.currency, line.amountMinorUnits),
+            description: line.description,
+            reference: line.transactionReference,
+          }),
+        ),
+        generatedAt: statement.generatedAt,
+      },
+    });
+  }
+
+  home(principal: BffPrincipal, requestId: string, valuationCurrency = 'USD'): HomeResource | BffErrorEnvelope {
     void requestId;
     const prefs = this.deps.preferences.get(principal.customerId);
-    const position = this.deps.accounts.customerPosition(principal.customerId);
+    const wealth = this.deps.accounts.wealth(principal.customerId, valuationCurrency);
     const activity = paginate(this.activityItems(principal), `home:${principal.customerId}`, undefined, 5);
     const activityPage = 'error' in activity ? { items: [], nextCursor: null, hasMore: false } : activity;
+    const accountItems = this.listAccounts(principal).items;
 
-    const wealthUnavailable =
-      position.kind !== 'POSITION'
-        ? resourceField<{
-            readonly total: MoneyView;
-            readonly currency: string;
-            readonly classBreakdown: {
-              readonly cash: MoneyView;
-              readonly investments: MoneyView;
-              readonly digitalAssets: MoneyView;
-              readonly rewards: MoneyView;
-              readonly pending: MoneyView;
-            };
-          }>({
-            state: position.kind === 'CURRENCY_INDEXED' ? 'MIXED_CURRENCY_WITHOUT_CONVERSION' : 'SERVICE_UNAVAILABLE',
-            availability: 'AVAILABLE_SIMULATION',
-            reason:
-              position.kind === 'CURRENCY_INDEXED'
-                ? `mixed currencies ${position.currencies.join(',')} without an explicit conversion`
-                : position.reason,
+    const wealthField: HomeResource['wealth'] =
+      wealth.kind !== 'POSITION'
+        ? Object.freeze({
+            ...resourceField<{
+              readonly total: MoneyView;
+              readonly currency: string;
+              readonly classBreakdown: {
+                readonly cash: MoneyView;
+                readonly investments: MoneyView;
+                readonly digitalAssets: MoneyView;
+                readonly rewards: MoneyView;
+                readonly pending: MoneyView;
+              };
+            }>({
+              state: wealth.currencies.length > 1 ? 'MIXED_CURRENCY_WITHOUT_CONVERSION' : 'VALUATION_UNAVAILABLE',
+              availability: 'AVAILABLE_SIMULATION',
+              reason: wealth.reason,
+            }),
+            valuation: Object.freeze({
+              currency: wealth.valuationCurrency,
+              status: wealth.valuationStatus,
+              currencies: wealth.currencies,
+              reason: wealth.reason,
+            }),
           })
-        : resourceField({
-            state: 'READY',
-            availability: 'AVAILABLE_SIMULATION',
-            value: {
-              total: moneyView(position.position.grandTotal.currency, position.position.grandTotal.minorUnits),
-              currency: position.position.grandTotal.currency,
-              classBreakdown: {
-                cash: moneyView(position.position.breakdown.deposits.total.currency, position.position.breakdown.deposits.total.minorUnits),
-                investments: moneyView(position.position.breakdown.investments.total.currency, position.position.breakdown.investments.total.minorUnits),
-                digitalAssets: moneyView(position.position.breakdown.digital_assets.total.currency, position.position.breakdown.digital_assets.total.minorUnits),
-                rewards: moneyView(position.position.breakdown.rewards.total.currency, position.position.breakdown.rewards.total.minorUnits),
-                pending: moneyView(position.position.breakdown.pending.total.currency, position.position.breakdown.pending.total.minorUnits),
+        : Object.freeze({
+            ...resourceField({
+              state: 'READY' as const,
+              availability: 'AVAILABLE_SIMULATION' as const,
+              value: {
+                total: moneyView(wealth.position.grandTotal.currency, wealth.position.grandTotal.minorUnits),
+                currency: wealth.position.grandTotal.currency,
+                classBreakdown: {
+                  cash: moneyView(wealth.position.breakdown.deposits.total.currency, wealth.position.breakdown.deposits.total.minorUnits),
+                  investments: moneyView(wealth.position.breakdown.investments.total.currency, wealth.position.breakdown.investments.total.minorUnits),
+                  digitalAssets: moneyView(wealth.position.breakdown.digital_assets.total.currency, wealth.position.breakdown.digital_assets.total.minorUnits),
+                  rewards: moneyView(wealth.position.breakdown.rewards.total.currency, wealth.position.breakdown.rewards.total.minorUnits),
+                  pending: moneyView(wealth.position.breakdown.pending.total.currency, wealth.position.breakdown.pending.total.minorUnits),
+                },
               },
-            },
+            }),
+            valuation: Object.freeze({
+              currency: wealth.valuationCurrency,
+              status: wealth.valuationStatus,
+              currencies: [wealth.valuationCurrency],
+              reason: null,
+            }),
           });
 
     const bucketField = (bucket: 'deposits' | 'investments' | 'digital_assets'): ResourceField<MoneyView> => {
-      if (position.kind !== 'POSITION') {
+      if (wealth.kind !== 'POSITION') {
         return resourceField({
-          state: position.kind === 'CURRENCY_INDEXED' ? 'MIXED_CURRENCY_WITHOUT_CONVERSION' : 'SERVICE_UNAVAILABLE',
+          state: wealth.currencies.length > 1 ? 'MIXED_CURRENCY_WITHOUT_CONVERSION' : 'VALUATION_UNAVAILABLE',
           availability: 'AVAILABLE_SIMULATION',
-          reason: position.kind === 'CURRENCY_INDEXED' ? 'refusing a blended class total across currencies' : position.reason,
+          reason: wealth.reason,
         });
       }
-      const money = position.position.breakdown[bucket].total;
+      const money = wealth.position.breakdown[bucket].total;
       return resourceField({
         state: 'READY',
         availability: 'AVAILABLE_SIMULATION',
@@ -384,7 +498,12 @@ export class ConsumerBff {
           jurisdiction: principal.jurisdiction,
         },
       }),
-      wealth: wealthUnavailable,
+      wealth: wealthField,
+      accounts: resourceField({
+        state: accountItems.length === 0 ? 'EMPTY' : 'READY',
+        availability: 'AVAILABLE_SIMULATION',
+        value: accountItems,
+      }),
       cash: bucketField('deposits'),
       investments: bucketField('investments'),
       digitalAssets: bucketField('digital_assets'),
@@ -480,6 +599,11 @@ export class ConsumerBff {
         supportedCurrencies: Object.freeze(['USD', 'GBP', 'EUR', 'SAR', 'AED']),
         supportedAssets: Object.freeze(['FIAT', 'SUNREY_COIN', 'MOONREY_COIN']),
       }),
+      accounts: resourceField({
+        state: this.listAccounts(principal).items.length === 0 ? 'EMPTY' : 'READY',
+        availability: 'AVAILABLE_SIMULATION',
+        value: this.listAccounts(principal).items,
+      }),
     });
   }
 
@@ -510,8 +634,9 @@ export class ConsumerBff {
   }
 
   private accountResource(principal: BffPrincipal, accountId: string): ConsumerAccountResource | null {
+    const financial = this.deps.accounts.financialAccount(accountId);
     const account = this.deps.accounts.getAccount(accountId);
-    if (!account || account.ownerId !== principal.customerId) {
+    if (!financial || !account || account.ownerId !== principal.customerId) {
       return null;
     }
     const position = this.deps.accounts.positionOf(account);
@@ -519,10 +644,12 @@ export class ConsumerBff {
     void ACCOUNT_CLASS_CATALOG;
     const balance = 'unavailable' in position
       ? resourceField<{
+          readonly posted: MoneyView;
           readonly ledger: MoneyView;
           readonly available: MoneyView;
           readonly held: MoneyView;
           readonly pending: MoneyView;
+          readonly currency: string;
         }>({
           state: position.unavailable === 'MIXED_CURRENCY' ? 'MIXED_CURRENCY_WITHOUT_CONVERSION' : 'SERVICE_UNAVAILABLE',
           availability: 'AVAILABLE_SIMULATION',
@@ -532,33 +659,57 @@ export class ConsumerBff {
           state: 'READY',
           availability: 'AVAILABLE_SIMULATION',
           value: {
+            posted: moneyView(position.posted.currency, position.posted.minorUnits),
             ledger: moneyView(position.ledgerBalance.currency, position.ledgerBalance.minorUnits),
             available: moneyView(position.available.currency, position.available.minorUnits),
             held: moneyView(position.held.currency, position.held.minorUnits),
             pending: moneyView(position.pending.currency, position.pending.minorUnits),
+            currency: position.currency,
           },
         });
     return Object.freeze({
-      id: account.id,
+      id: financial.accountId,
       type,
-      accountClass: account.accountClass,
-      status: account.status,
-      currency: account.currency,
-      productId: account.productId,
+      productType: financial.productType,
+      accountClass: financial.accountClass,
+      status: financial.status,
+      domainStatus: financial.domainStatus,
+      currency: financial.currency,
+      productId: financial.productId,
+      openedAt: financial.openedAt,
+      closedAt: financial.closedAt,
+      jurisdiction: financial.jurisdiction,
+      owner: financial.owner,
+      restrictions: financial.restrictions.filter((row) => row.state === 'ACTIVE').map((row) => row.code),
+      ledgerAccountReferences: financial.ledgerAccountReferences,
+      providerLink: financial.providerLink,
+      productConfiguration: financial.productConfiguration,
       balance,
     });
   }
 
-  private activityItems(principal: BffPrincipal, accountId?: string): readonly ConsumerActivityItem[] {
-    return this.deps.accounts.activity(principal.customerId, accountId).map((item) =>
+  private activityItems(
+    principal: BffPrincipal,
+    accountId?: string,
+    filter?: import('../../../accounts/src/activity.ts').ActivityFilter,
+  ): readonly ConsumerActivityItem[] {
+    return this.deps.accounts.activity(principal.customerId, accountId, filter).map((item) =>
       Object.freeze({
+        activityId: item.activityId,
         reference: item.reference,
         accountId: item.accountId,
+        type: item.type,
         status: item.status,
         direction: item.direction,
         amount: moneyView(item.currency, item.amountMinorUnits),
+        currency: item.currency,
         description: item.description,
+        counterpartyDisplay: item.counterpartyDisplay,
+        category: item.category,
+        relatedActionId: item.relatedActionId,
         occurredAt: item.occurredAt,
+        completedAt: item.completedAt,
+        fee: item.feeMinorUnits !== null && item.feeCurrency ? moneyView(item.feeCurrency, item.feeMinorUnits) : null,
       }),
     );
   }

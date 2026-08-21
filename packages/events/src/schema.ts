@@ -12,9 +12,14 @@ export type EventSchemaRecord = {
 
 const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'AccountOpened', version: 1, status: 'current' },
+  { eventType: 'AccountActivated', version: 1, status: 'current' },
+  { eventType: 'AccountRestricted', version: 1, status: 'current' },
+  { eventType: 'AccountClosed', version: 1, status: 'current' },
+  { eventType: 'CustomerActivityRecorded', version: 1, status: 'current' },
   { eventType: 'DepositPosted', version: 1, status: 'current' },
   { eventType: 'WithdrawalPosted', version: 1, status: 'current' },
   { eventType: 'InternalTransferPosted', version: 1, status: 'current' },
+  { eventType: 'JournalPosted', version: 1, status: 'current' },
   { eventType: 'CustomerStatusChanged', version: 1, status: 'current' },
   { eventType: 'KernelDecisionRecorded', version: 1, status: 'current' },
   { eventType: 'PolicyPackActivated', version: 1, status: 'current' },
@@ -47,6 +52,8 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'FxQuoteAccepted', version: 1, status: 'current' },
   { eventType: 'FxQuoteExpired', version: 1, status: 'current' },
   { eventType: 'HoldCreated', version: 1, status: 'current' },
+  { eventType: 'HoldAdjusted', version: 1, status: 'current' },
+  { eventType: 'HoldExpired', version: 1, status: 'current' },
   { eventType: 'HoldReleased', version: 1, status: 'current' },
   { eventType: 'HoldCaptured', version: 1, status: 'current' },
   { eventType: 'HoldCancelled', version: 1, status: 'current' },

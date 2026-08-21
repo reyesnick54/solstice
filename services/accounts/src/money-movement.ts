@@ -20,6 +20,7 @@ import {
   type ClassBridge,
   type Journal,
 } from '../../../packages/ledger/src/types.ts';
+import { ledgerScaledUnits } from '../../../packages/money/src/ledger-amount.ts';
 import { Money } from '../../../packages/money/src/money.ts';
 import type {
   InternalTransferIntent,
@@ -36,6 +37,8 @@ import {
 import { assertSufficientAvailable, projectBankingPosition } from './available-funds.ts';
 import { recordKernelDecisionEvent } from './event-trace.ts';
 import { HoldStore } from './hold-store.ts';
+import { assertMovementAllowed } from './restriction-enforcement.ts';
+import type { RestrictionStore } from './restriction-store.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
 export type MoneyMovementOutcome =
@@ -77,6 +80,7 @@ export class MoneyMovementService {
   private readonly identity: IdentityAuthorityPort;
   private readonly holds: HoldStore;
   private readonly compliance: ComplianceFabric | undefined;
+  private readonly restrictions: RestrictionStore | undefined;
 
   constructor(
     kernel: ComplianceKernel,
@@ -93,6 +97,7 @@ export class MoneyMovementService {
     identity: IdentityAuthorityPort,
     holds: HoldStore = new HoldStore(),
     compliance?: ComplianceFabric,
+    restrictions?: RestrictionStore,
   ) {
     this.kernel = kernel;
     this.issuer = issuer;
@@ -108,6 +113,7 @@ export class MoneyMovementService {
     this.identity = identity;
     this.holds = holds;
     this.compliance = compliance;
+    this.restrictions = restrictions;
   }
 
   deposit(intent: PostDepositIntent): MoneyMovementOutcome {
@@ -458,6 +464,34 @@ export class MoneyMovementService {
       };
     }
 
+    if (this.restrictions) {
+      const destination =
+        input.kind === 'INTERNAL_TRANSFER' && 'destinationAccountId' in input.intent.payload
+          ? this.accounts.get(input.intent.payload.destinationAccountId)
+          : undefined;
+      const blocked = assertMovementAllowed(
+        this.restrictions,
+        customerAccount,
+        input.kind,
+        destination,
+      );
+      if (isErr(blocked)) {
+        const evidence = this.evidence.seal(`${input.kind}_RESTRICTED`, {
+          intentId: input.intent.id,
+          restriction: blocked.error.restriction,
+          message: blocked.error.message,
+          posted: false,
+        });
+        return {
+          outcome: 'REJECTED',
+          code: blocked.error.code,
+          message: blocked.error.message,
+          decision,
+          evidenceId: evidence.evidenceId,
+        };
+      }
+    }
+
     const pre = input.precheck?.() ?? null;
     if (pre) {
       const evidence = this.evidence.seal(`${input.kind}_REJECTED`, {
@@ -521,6 +555,33 @@ export class MoneyMovementService {
       actionType: input.intent.actionType,
       postings: built.postings,
       ...(built.classBridge ? { classBridge: built.classBridge } : {}),
+      reference: input.intent.id,
+      correlationId: input.intent.id,
+      causationId: decision.evidenceRecordId,
+      sourceDomain: 'accounts',
+      evidenceRecordId: decision.evidenceRecordId,
+    });
+
+    this.events.append({
+      eventType: 'JournalPosted',
+      schemaVersion: 1,
+      occurredAt: journal.createdAt as typeof input.intent.requestedAt,
+      intentId: input.intent.id,
+      correlationId: input.intent.id,
+      causationId: decision.evidenceRecordId,
+      evidenceId: decision.evidenceRecordId,
+      aggregateType: 'journal',
+      aggregateId: journal.id,
+      payload: {
+        journalId: journal.id,
+        actionType: journal.actionType,
+        asset: journal.asset,
+        amountMinorUnits: ledgerScaledUnits(journal.postings[0]!.amount).toString(),
+        currency: journal.asset,
+        ...(journal.reference ? { reference: journal.reference } : {}),
+        ...(journal.sourceDomain ? { sourceDomain: journal.sourceDomain } : {}),
+        ...(journal.evidenceRecordId ? { evidenceRecordId: journal.evidenceRecordId } : {}),
+      },
     });
 
     input.onPosted(journal, input.amount, decision);

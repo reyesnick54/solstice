@@ -1,7 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { applyFxConversion, Money, RoundingMode, roundQuotient } from './money.ts';
+import {
+  applyFxConversion,
+  MAX_ABS_MINOR_UNITS,
+  Money,
+  RoundingMode,
+  roundQuotient,
+} from './money.ts';
 
 describe('Money', () => {
   it('stores bigint minor units and rejects number construction', () => {
@@ -40,6 +46,26 @@ describe('Money', () => {
 
   it('FLOOR toward -infinity', () => {
     assert.equal(roundQuotient(-5n, 2n, RoundingMode.FLOOR), -3n);
+  });
+
+  it('rejects overflow beyond the safe minor-unit bound', () => {
+    assert.throws(() => Money.fromMinorUnits(MAX_ABS_MINOR_UNITS + 1n, 'USD'), /overflow/);
+    const near = Money.fromMinorUnits(MAX_ABS_MINOR_UNITS, 'USD');
+    assert.throws(() => near.plus(Money.fromMinorUnits(1n, 'USD')), /overflow/);
+  });
+
+  it('accepts ISO 4217 codes and uppercase simulation book codes', () => {
+    assert.equal(Money.fromMinorUnits(1n, 'JPY').currency, 'JPY');
+    assert.equal(Money.fromMinorUnits(1n, 'KWD').currency, 'KWD');
+    assert.equal(Money.fromMinorUnits(1n, 'SUNREY').currency, 'SUNREY');
+    assert.throws(() => Money.fromMinorUnits(1n, 'usd'), /uppercase alphabetic/);
+    assert.throws(() => Money.fromMinorUnits(1n, 'US'), /uppercase alphabetic/);
+    assert.throws(() => Money.fromMinorUnits(1n, 'usd1'), /uppercase alphabetic/);
+  });
+
+  it('serializes minor units as a decimal-free string', () => {
+    const amount = Money.fromMinorUnits(12345n, 'EUR');
+    assert.deepEqual(amount.toJSON(), { minorUnits: '12345', currency: 'EUR' });
   });
 
   it('applies FX with bigint rate and timestamp', () => {

@@ -29,6 +29,7 @@ export {
   SANDBOX_PERSONA_IDS,
 } from './types.ts';
 export type {
+  AccountBalanceBreakdownDto,
   AccountDto,
   ActionDecisionDto,
   ActionState,

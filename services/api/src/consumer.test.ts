@@ -96,9 +96,9 @@ describe('Consumer BFF', () => {
     const items = (accounts.body as { items: { currency: string; balance: { value: { ledger: { minorUnits: string } } | null } }[] }).items;
     assert.equal(items.length, 2);
     const usd = items.find((row) => row.currency === 'USD');
-    const gbp = items.find((row) => row.currency === 'GBP');
+    const sar = items.find((row) => row.currency === 'SAR');
     assert.equal(usd?.balance.value?.ledger.minorUnits, '10000');
-    assert.equal(gbp?.balance.value?.ledger.minorUnits, '8000');
+    assert.equal(sar?.balance.value?.ledger.minorUnits, '8000');
   });
 
   it('returns bootstrap with capabilities and no secrets', () => {

@@ -11,6 +11,7 @@ export type BankingPosition = {
   readonly accountId: Account['id'];
   readonly currency: string;
   readonly ledgerBalance: Money;
+  readonly posted: Money;
   readonly settled: Money;
   readonly pending: Money;
   readonly held: Money;
@@ -65,6 +66,7 @@ export function projectBankingPosition(
       accountId: account.id,
       currency: account.currency,
       ledgerBalance: ledgerBalance.value,
+      posted: ledgerBalance.value,
       settled,
       pending,
       held,

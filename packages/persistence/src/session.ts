@@ -1,4 +1,7 @@
 import type { Account } from '../../domain/src/account.ts';
+import type { FeeAssessment } from '../../domain/src/fee.ts';
+import type { FundsHold } from '../../domain/src/hold.ts';
+import type { ReversalRecord } from '../../domain/src/reversal.ts';
 import type { Customer } from '../../domain/src/customer.ts';
 import type { LegalEntity } from '../../domain/src/legal-entity.ts';
 import type { Product } from '../../domain/src/product.ts';
@@ -28,6 +31,7 @@ import {
   lockAccountForUpdate,
   upsertProduct,
 } from './ledger/writes.ts';
+import { insertFeeAssessment, insertReversal, upsertHold } from './ledger/banking-writes.ts';
 import { persistPolicyState } from './policy/store.ts';
 import type { PersistedPolicyState } from './policy/store.ts';
 import {
@@ -172,6 +176,9 @@ export async function persistLedgerUnit(
     readonly openOutcomes?: readonly PersistedOpenOutcome[];
     readonly events?: readonly DomainEvent[];
     readonly lockAccountId?: string;
+    readonly holds?: readonly FundsHold[];
+    readonly reversals?: readonly ReversalRecord[];
+    readonly fees?: readonly FeeAssessment[];
   },
 ): Promise<void> {
   const inner = session as Session;
@@ -198,6 +205,15 @@ export async function persistLedgerUnit(
       await insertOpenOutcome(client, outcome);
     }
     await inner.journalStore.flush(client);
+    for (const hold of input.holds ?? []) {
+      await upsertHold(client, hold);
+    }
+    for (const reversal of input.reversals ?? []) {
+      await insertReversal(client, reversal);
+    }
+    for (const fee of input.fees ?? []) {
+      await insertFeeAssessment(client, fee);
+    }
     for (const event of input.events ?? []) {
       await insertDomainEvent(client, event);
     }

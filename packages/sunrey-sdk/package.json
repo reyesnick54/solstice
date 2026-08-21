@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./consumer": "./src/consumer-platform/index.ts",
     "./bff": "./src/consumer-bff/index.ts"
+    "./consumer-bff": "./src/consumer-bff/index.ts"
   },
   "files": [
     "src",

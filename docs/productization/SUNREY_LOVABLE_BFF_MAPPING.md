@@ -25,6 +25,12 @@ authentication foundation; the BFF only consumes a verified session.
 | SEND | `/api/v1/payments` | GET, POST | required | Payment list / create | PaymentPlatform + canonical Ledger | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
 | SEND detail | `/api/v1/payments/{id}` | GET | required + owner | Payment | PaymentPlatform | AVAILABLE_SIMULATION | backend owns status |
 | SEND approve | `/api/v1/payments/{id}/approve` | POST | required + owner | Payment | PaymentPlatform approval | AVAILABLE_SIMULATION | used when quote requires CUSTOMER_CONFIRMATION |
+| HOME | `/api/v1/me/home` | GET | required | `sunrey.consumer.home.v1` | Account Service wealth + accounts; `valuationCurrency` query; mixed FX is `UNAVAILABLE` | AVAILABLE_SIMULATION | FX conversion = Phase C Prompt 4 |
+| MONEY | `/api/v1/accounts` | GET | required | account read models | Account Service product overlay + Ledger-derived posted/pending/held/available | AVAILABLE_SIMULATION | none |
+| MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | lifecycle, restrictions, posted/available/held | `AccountProductService` + `projectBankingPosition` | AVAILABLE_SIMULATION | none |
+| MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page + safe filters | `AccountProductService.activity` | AVAILABLE_SIMULATION | none |
+| STATEMENTS | `/api/v1/accounts/{id}/statement` | GET | required + owner | opening/closing/transactions/fees | `AccountProductService.statement` (data only, no PDF) | AVAILABLE_SIMULATION | PDF renderer not productized |
+| SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
 | FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
 | GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
@@ -53,3 +59,15 @@ Lovable must not decide whether a regulated feature is available.
 
 Unavailable fields use `state` + `availability` + `reason` and a null
 `value`. Provider failure is never a zero balance.
+
+Phase C Prompt 2 account notes:
+
+- Account balances are Ledger-derived. There is no client-writable
+  `balance` and no `POST /api/v1/accounts` live-banking open.
+- Home never sums USD + SAR minor units. Mixed-currency wealth is
+  `MIXED_CURRENCY_WITHOUT_CONVERSION` until FX is productized.
+- Activity filters: `from`, `to`, `status`, `type`, `currency` only.
+- Sandbox personas include `basic_verified` (USD), `multi_currency`
+  (USD + SAR), `pending_activity` (hold), `restricted`
+  (`COMPLIANCE_REVIEW`), `investment` (multiple accounts), and
+  `zero_balance` (posted 0).
