@@ -4,6 +4,7 @@ import type { ChallengeId, CredentialId, DeviceId, SessionId, SolsticeIdentityId
 
 export const AUTHENTICATION_FACTORS = [
   'PASSKEY',
+  'PASSWORD',
   'TOTP',
   'RECOVERY',
   'HARDWARE_KEY',
@@ -101,9 +102,12 @@ export type IdentitySession = {
   readonly issuedAt: UtcInstant;
   readonly expiresAt: UtcInstant;
   readonly lastUsedAt: UtcInstant;
+  readonly revokedAt: UtcInstant | null;
   readonly deviceId: DeviceId | null;
   readonly riskState: SessionRiskState;
   readonly revocationState: SessionRevocationState;
+  readonly ipHash: string | null;
+  readonly userAgentHash: string | null;
 };
 
 export const DEVICE_TRUST_STATES = ['KNOWN', 'TRUSTED', 'REVIEW_REQUIRED', 'BLOCKED'] as const;
@@ -115,8 +119,11 @@ export type RegisteredDevice = {
   readonly deviceRef: string;
   readonly firstSeenAt: UtcInstant;
   readonly lastSeenAt: UtcInstant;
+  readonly revokedAt: UtcInstant | null;
   readonly authenticationMethod: AuthenticationFactor | null;
+  readonly authenticationStrength: AuthenticationAssurance | null;
   readonly trustState: DeviceTrustState;
+  readonly riskState: SessionRiskState;
 };
 
 export type DeviceRiskSignal = {

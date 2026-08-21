@@ -1,0 +1,246 @@
+import { randomUUID } from 'node:crypto';
+
+import {
+  APPROVAL_REQUIREMENTS,
+  CLIENT_RESOURCE_STATES,
+  CONSUMER_ACCOUNT_TYPES,
+  CONSUMER_ACTION_STATUSES,
+  CONSUMER_ASSET_TYPES,
+  CONSUMER_TRANSACTION_STATUSES,
+  PRODUCT_AVAILABILITIES,
+  PROVIDER_AVAILABILITIES,
+  RISK_DISPLAY_LEVELS,
+  VERIFICATION_DISPLAY_STATES,
+} from './types.ts';
+import { bffError, isBffError, statusForError, type BffErrorEnvelope } from './errors.ts';
+import { pageSizeOf } from './pagination.ts';
+import { cachePolicyForPath } from './cache.ts';
+import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
+import type { ConsumerBff } from './orchestrator.ts';
+import { resolvePrincipal, type SessionDirectory } from './session.ts';
+import { listSandboxPersonas } from './fixtures.ts';
+import type { IdentityService } from '../../../../packages/identity/src/service.ts';
+
+export type BffRequest = {
+  readonly method: string;
+  readonly path: string;
+  readonly query: Readonly<Record<string, string>>;
+  readonly body: unknown;
+  readonly authorization: string | undefined;
+  readonly requestId?: string;
+};
+
+export type BffResponse = {
+  readonly status: number;
+  readonly body: unknown;
+  readonly headers: Readonly<Record<string, string>>;
+};
+
+export type ConsumerBffRuntime = {
+  readonly bff: ConsumerBff;
+  readonly sessions: SessionDirectory;
+  readonly identity?: IdentityService;
+};
+
+const STUB_GROUPS = [
+  'payments',
+  'recipients',
+  'fx',
+  'cards',
+  'grow',
+  'goals',
+  'portfolio',
+  'agent',
+  'exchange',
+  'wallets',
+  'data',
+  'security',
+  'notifications',
+] as const;
+
+export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffRequest): BffResponse {
+  const requestId = request.requestId ?? `req_${randomUUID()}`;
+  const headers = {
+    'cache-control': cachePolicyForPath(request.path).cacheControl,
+    vary: 'Authorization',
+    'x-sunrey-api-version': 'v1',
+    'x-sunrey-surface': 'CONSUMER_BFF',
+    'x-sunrey-environment': 'simulation',
+  };
+
+  if (request.path === '/api/v1/sandbox/personas' && request.method === 'GET') {
+    return json(200, { label: 'SANDBOX_FIXTURE_NON_PRODUCTION', production: false, items: listSandboxPersonas() }, headers);
+  }
+
+  if (request.path === '/api/v1/catalog/resources' && request.method === 'GET') {
+    return json(200, { items: CONSUMER_RESOURCE_CATALOG }, headers);
+  }
+  if (request.path === '/api/v1/catalog/enums' && request.method === 'GET') {
+    return json(
+      200,
+      {
+        transactionStatus: CONSUMER_TRANSACTION_STATUSES,
+        actionStatus: CONSUMER_ACTION_STATUSES,
+        accountType: CONSUMER_ACCOUNT_TYPES,
+        assetType: CONSUMER_ASSET_TYPES,
+        riskDisplay: RISK_DISPLAY_LEVELS,
+        approvalRequirement: APPROVAL_REQUIREMENTS,
+        verificationState: VERIFICATION_DISPLAY_STATES,
+        providerAvailability: PROVIDER_AVAILABILITIES,
+        productAvailability: PRODUCT_AVAILABILITIES,
+        clientResourceState: CLIENT_RESOURCE_STATES,
+      },
+      headers,
+    );
+  }
+
+  const principal = resolvePrincipal({
+    authorization: request.authorization,
+    requestId,
+    directory: runtime.sessions,
+    ...(runtime.identity ? { identity: runtime.identity } : {}),
+  });
+  if (isBffError(principal)) {
+    return json(statusForError(principal), principal, headers);
+  }
+
+  try {
+    return dispatchAuthenticated(runtime, request, principal, requestId, headers);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'request failed';
+    return json(
+      500,
+      bffError({
+        errorCode: 'MALFORMED',
+        category: 'INTERNAL',
+        message,
+        retryable: true,
+        requestId,
+      }),
+      headers,
+    );
+  }
+}
+
+function dispatchAuthenticated(
+  runtime: ConsumerBffRuntime,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse {
+  const { method, path, query, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+
+  if (path === '/api/v1/me' && method === 'GET') {
+    return json(200, runtime.bff.profile(principal), headers);
+  }
+  if (path === '/api/v1/me' && method === 'PATCH') {
+    return result(runtime.bff.patchProfile(principal, rec, requestId), headers);
+  }
+  if (path === '/api/v1/me/home' && method === 'GET') {
+    return result(runtime.bff.home(principal, requestId), headers);
+  }
+  if (path === '/api/v1/me/bootstrap' && method === 'GET') {
+    return json(200, runtime.bff.bootstrap(principal), headers);
+  }
+  if (path === '/api/v1/me/capabilities' && method === 'GET') {
+    return json(200, runtime.bff.capabilities(principal), headers);
+  }
+  if (path === '/api/v1/accounts' && method === 'GET') {
+    return json(200, runtime.bff.listAccounts(principal), headers);
+  }
+  if (path.startsWith('/api/v1/accounts/') && path.endsWith('/activity') && method === 'GET') {
+    const id = path.slice('/api/v1/accounts/'.length, -'/activity'.length);
+    return result(runtime.bff.accountActivity(principal, id, requestId, query.cursor, pageSizeOf(query.pageSize ?? query.page_size)), headers);
+  }
+  if (path.startsWith('/api/v1/accounts/') && method === 'GET') {
+    const id = path.slice('/api/v1/accounts/'.length);
+    return result(runtime.bff.getAccount(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/me/actions' && method === 'GET') {
+    const home = runtime.bff.home(principal, requestId);
+    if (isBffError(home)) {
+      return json(statusForError(home), home, headers);
+    }
+    return json(200, home.pendingApprovals, headers);
+  }
+
+  for (const group of STUB_GROUPS) {
+    if (path === `/api/v1/${group}` && method === 'GET') {
+      return json(200, runtime.bff.featureStub(group, principal), headers);
+    }
+  }
+
+  if (method !== 'GET' && method !== 'PATCH') {
+    return json(
+      405,
+      bffError({
+        errorCode: 'METHOD_NOT_ALLOWED',
+        category: 'VALIDATION',
+        message: 'method is not allowed on this consumer resource',
+        retryable: false,
+        requestId,
+      }),
+      headers,
+    );
+  }
+
+  return json(
+    404,
+    bffError({
+      errorCode: 'NOT_FOUND',
+      category: 'NOT_FOUND',
+      message: 'consumer resource not found',
+      retryable: false,
+      requestId,
+    }),
+    headers,
+  );
+}
+
+function result(body: unknown, headers: Record<string, string>): BffResponse {
+  if (isBffError(body)) {
+    return json(statusForError(body as BffErrorEnvelope), body, headers);
+  }
+  return json(200, body, headers);
+}
+
+function json(status: number, body: unknown, headers: Record<string, string>): BffResponse {
+  return Object.freeze({
+    status,
+    body,
+    headers: Object.freeze({
+      ...headers,
+      'content-type': 'application/json',
+    }),
+  });
+}
+
+export const CONSUMER_BFF_ROUTES = [
+  'GET /api/v1/me',
+  'PATCH /api/v1/me',
+  'GET /api/v1/me/home',
+  'GET /api/v1/me/bootstrap',
+  'GET /api/v1/me/capabilities',
+  'GET /api/v1/me/actions',
+  'GET /api/v1/accounts',
+  'GET /api/v1/accounts/{id}',
+  'GET /api/v1/accounts/{id}/activity',
+  'GET /api/v1/payments',
+  'GET /api/v1/recipients',
+  'GET /api/v1/fx',
+  'GET /api/v1/cards',
+  'GET /api/v1/grow',
+  'GET /api/v1/goals',
+  'GET /api/v1/portfolio',
+  'GET /api/v1/agent',
+  'GET /api/v1/exchange',
+  'GET /api/v1/wallets',
+  'GET /api/v1/data',
+  'GET /api/v1/security',
+  'GET /api/v1/notifications',
+  'GET /api/v1/catalog/resources',
+  'GET /api/v1/catalog/enums',
+  'GET /api/v1/sandbox/personas',
+] as const;

@@ -99,12 +99,16 @@ export async function persistIdentitySnapshot(pool: Pool, snapshot: IdentitySnap
         await client.query(
           `INSERT INTO identity.session
              (session_id, subject_id, actor_id, authentication_strength, factors, issued_at,
-              expires_at, last_used_at, device_id, risk_state, revocation_state)
-           VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11)
+              expires_at, last_used_at, device_id, risk_state, revocation_state,
+              revoked_at, ip_hash, user_agent_hash)
+           VALUES ($1,$2,$3,$4,$5::jsonb,$6,$7,$8,$9,$10,$11,$12,$13,$14)
            ON CONFLICT (session_id) DO UPDATE SET
              last_used_at = EXCLUDED.last_used_at,
              risk_state = EXCLUDED.risk_state,
-             revocation_state = EXCLUDED.revocation_state`,
+             revocation_state = EXCLUDED.revocation_state,
+             revoked_at = EXCLUDED.revoked_at,
+             ip_hash = EXCLUDED.ip_hash,
+             user_agent_hash = EXCLUDED.user_agent_hash`,
           [
             session.sessionId,
             session.subjectId,
@@ -117,6 +121,9 @@ export async function persistIdentitySnapshot(pool: Pool, snapshot: IdentitySnap
             session.deviceId,
             session.riskState,
             session.revocationState,
+            session.revokedAt ?? null,
+            session.ipHash ?? null,
+            session.userAgentHash ?? null,
           ],
         );
       }
@@ -124,12 +131,15 @@ export async function persistIdentitySnapshot(pool: Pool, snapshot: IdentitySnap
         await client.query(
           `INSERT INTO identity.device
              (device_id, identity_id, device_ref, first_seen_at, last_seen_at,
-              authentication_method, trust_state)
-           VALUES ($1,$2,$3,$4,$5,$6,$7)
+              authentication_method, trust_state, revoked_at, risk_state, authentication_strength)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
            ON CONFLICT (device_id) DO UPDATE SET
              last_seen_at = EXCLUDED.last_seen_at,
              authentication_method = EXCLUDED.authentication_method,
-             trust_state = EXCLUDED.trust_state`,
+             trust_state = EXCLUDED.trust_state,
+             revoked_at = EXCLUDED.revoked_at,
+             risk_state = EXCLUDED.risk_state,
+             authentication_strength = EXCLUDED.authentication_strength`,
           [
             device.deviceId,
             device.identityId,
@@ -138,6 +148,9 @@ export async function persistIdentitySnapshot(pool: Pool, snapshot: IdentitySnap
             device.lastSeenAt,
             device.authenticationMethod,
             device.trustState,
+            device.revokedAt ?? null,
+            device.riskState ?? 'CLEAR',
+            device.authenticationStrength ?? null,
           ],
         );
       }
@@ -317,9 +330,12 @@ function rowToSession(row: Record<string, unknown>): IdentitySession {
     issuedAt: asIso(row.issued_at as string | Date) as IdentitySession['issuedAt'],
     expiresAt: asIso(row.expires_at as string | Date) as IdentitySession['expiresAt'],
     lastUsedAt: asIso(row.last_used_at as string | Date) as IdentitySession['lastUsedAt'],
+    revokedAt: asIso((row.revoked_at as string | Date | null) ?? null) as IdentitySession['revokedAt'],
     deviceId: (row.device_id as IdentitySession['deviceId'] | null) ?? null,
     riskState: row.risk_state as IdentitySession['riskState'],
     revocationState: row.revocation_state as IdentitySession['revocationState'],
+    ipHash: (row.ip_hash as string | null) ?? null,
+    userAgentHash: (row.user_agent_hash as string | null) ?? null,
   });
 }
 
@@ -330,8 +346,11 @@ function rowToDevice(row: Record<string, unknown>): RegisteredDevice {
     deviceRef: row.device_ref as string,
     firstSeenAt: asIso(row.first_seen_at as string | Date) as RegisteredDevice['firstSeenAt'],
     lastSeenAt: asIso(row.last_seen_at as string | Date) as RegisteredDevice['lastSeenAt'],
+    revokedAt: asIso((row.revoked_at as string | Date | null) ?? null) as RegisteredDevice['revokedAt'],
     authenticationMethod: (row.authentication_method as RegisteredDevice['authenticationMethod'] | null) ?? null,
+    authenticationStrength: (row.authentication_strength as RegisteredDevice['authenticationStrength'] | null) ?? null,
     trustState: row.trust_state as RegisteredDevice['trustState'],
+    riskState: ((row.risk_state as RegisteredDevice['riskState'] | null) ?? 'CLEAR'),
   });
 }
 

@@ -16,6 +16,8 @@
 
 # Phase 1 accounts service — the Kernel decides; this service must not grow a bypass.
 /services/accounts/ @reyesnick54
+/services/consumer-platform/ @reyesnick54
+/services/api/ @reyesnick54
 
 # Authorization spine.
 /packages/kernel/ @reyesnick54

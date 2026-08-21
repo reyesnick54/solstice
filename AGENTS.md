@@ -147,6 +147,8 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - Chunk 152 regulated provider-candidate adapters live at `packages/identity/src/provider-candidate`, `packages/kernel/src/compliance/provider-candidate`, `packages/custody/src/provider-candidate`, and `packages/market-surveillance/src/provider-candidate`. Fixture adapters only. Not a second Kernel, KYC package, AML engine, Travel Rule network, or surveillance engine.
 - `db/` — versioned SQL migrations per bounded database
 - `services/accounts` — Kernel-gated open, deposit, withdraw, transfer, balances
+- `services/api` — Phase B Consumer BFF / Lovable integration layer. Orchestration only. Not a ledger, Exchange, Agent runtime, or Kernel.
+- `services/api` — SunRey Platform API; canonical `/api/v1` HTTP runtime. Orchestration only. Not a second ledger, Kernel, or Execution Authority.
 - `services/identity` — identity application facade; not a second identity model
 - `services/economic-graph` — PEG application facade; not a second graph model
 - `tools/architectural-linter` — Phase 1 invariant linter plus constitution checks. Chunk 159 repository merge-integrity lock lives with the companion scripts `scripts/check-json-integrity.mjs` and `scripts/check-merge-integrity.mjs`. Not a second architecture owner.

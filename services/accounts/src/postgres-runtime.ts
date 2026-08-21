@@ -8,10 +8,13 @@ import type { InternalTransferIntent, PostDepositIntent, PostWithdrawalIntent } 
 import type { ActionIntent } from '../../../packages/permissions/src/action-intent.ts';
 import type { ExecutionAuthority } from '../../../packages/permissions/src/execution-authority.ts';
 import type { OpenAccountIntent } from '../../../packages/permissions/src/action-types.ts';
+import { AuthenticationService } from '../../../packages/identity/src/authentication-service.ts';
 import {
+  loadAuthenticationSnapshot,
   loadEvidenceRecords,
   loadIdentitySnapshot,
   openPersistenceSession,
+  persistAuthenticationSnapshot,
   persistCustomerUnit,
   persistEvidenceOnClient,
   persistEvidenceUnit,
@@ -35,6 +38,8 @@ export type DurableSimulationRuntime = {
   readonly env: PersistenceEnv;
   readonly session: PersistenceSession;
   readonly runtime: SimulationRuntime;
+  readonly authentication: AuthenticationService;
+  persistAuthentication(): Promise<void>;
   saveCustomer(customer: Customer): Promise<void>;
   open(intent: OpenAccountIntent): Promise<OpenAccountOutcome>;
   postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
@@ -114,6 +119,14 @@ export async function createPostgresSimulationRuntime(
     runtime.ledger.accounts.registerOpenedAccount(account);
   }
 
+  const authentication = new AuthenticationService({
+    identity: runtime.identity.service,
+    clock: runtime.clock,
+    keys: runtime.keyProvider,
+    events: runtime.events,
+    evidence: runtime.evidence,
+  });
+
   const identitySnapshot = await loadIdentitySnapshot(session.pools.customer);
   if (identitySnapshot) {
     runtime.identity.service.hydrate(identitySnapshot);
@@ -138,6 +151,10 @@ export async function createPostgresSimulationRuntime(
       await persistLedgerUnit(session, { events: newEvents });
     }
   }
+  const authSnapshot = await loadAuthenticationSnapshot(session.pools.customer);
+  if (authSnapshot) {
+    authentication.hydrate(authSnapshot);
+  }
 
   const openOutcomes: Array<readonly [string, OpenAccountOutcome]> = [];
   for (const row of loaded.openOutcomes) {
@@ -157,13 +174,14 @@ export async function createPostgresSimulationRuntime(
     ledgerAccounts: runtime.ledger.accounts.list(),
   });
 
-  return new DurableRuntime(env, session, runtime, options);
+  return new DurableRuntime(env, session, runtime, options, authentication);
 }
 
 class DurableRuntime implements DurableSimulationRuntime {
   readonly env: PersistenceEnv;
   readonly session: PersistenceSession;
   readonly runtime: SimulationRuntime;
+  readonly authentication: AuthenticationService;
   private readonly options: Omit<SimulationRuntimeOptions, 'persist' | 'customers' | 'accounts'>;
 
   constructor(
@@ -171,11 +189,18 @@ class DurableRuntime implements DurableSimulationRuntime {
     session: PersistenceSession,
     runtime: SimulationRuntime,
     options: Omit<SimulationRuntimeOptions, 'persist' | 'customers' | 'accounts'>,
+    authentication: AuthenticationService,
   ) {
     this.env = env;
     this.session = session;
     this.runtime = runtime;
     this.options = options;
+    this.authentication = authentication;
+  }
+
+  async persistAuthentication(): Promise<void> {
+    await persistIdentitySnapshot(this.session.pools.customer, this.runtime.identity.service.snapshot());
+    await persistAuthenticationSnapshot(this.session.pools.customer, this.authentication.snapshot());
   }
 
   async saveCustomer(customer: Customer): Promise<void> {

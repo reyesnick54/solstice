@@ -133,6 +133,30 @@
       "notes": "Application facade for packages/identity. Not a second identity model."
     },
     {
+      "id": "services/consumer-platform",
+      "npmName": "@solstice/consumer-platform",
+      "path": "services/consumer-platform",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": true,
+      "executionAuthorityRequired": true,
+      "kernelAuthorizationRequired": true,
+      "allowedDependencies": [
+        "packages/config",
+        "packages/domain",
+        "packages/identity",
+        "packages/permissions",
+        "packages/security",
+        "packages/sunrey-sdk",
+        "services/accounts"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B consumer HTTP composition root. Fronts Identity, Kernel, and services/accounts. Not a second ledger, Kernel, or SDK."
+    },
+    {
       "id": "packages/kernel",
       "npmName": "@solstice/kernel",
       "path": "packages/kernel",
@@ -1151,6 +1175,33 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
+    },
+    {
+      "id": "services/api",
+      "npmName": "@solstice/api",
+      "npmName": "@solstice/platform-api",
+      "path": "services/api",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "services/accounts",
+        "packages/domain",
+        "packages/money",
+        "packages/config",
+        "packages/identity",
+        "packages/permissions"
+        "packages/config",
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B Consumer Backend-for-Frontend. Orchestration/presentation only. Calls canonical domain services. Not a ledger, Exchange, Agent runtime, Kernel, investment engine, or payment processor. Mountable on the Phase B API runtime. Do not create packages/bff, packages/lovable, or a second API authority."
+      "notes": "SunRey Platform API. Canonical application-facing HTTP runtime and BFF entry. Orchestrates existing services. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Production remains inactive."
     }
   ],
   "components": [
@@ -5182,6 +5233,67 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
+    },
+    {
+      "id": "sunrey-consumer-platform",
+      "name": "SunRey consumer platform API, BFF, and frontend SDK",
+      "canonicalOwner": "packages/sunrey-sdk",
+      "canonicalPath": "packages/sunrey-sdk/src/consumer-platform/client.ts",
+      "publicInterface": "packages/sunrey-sdk/src/consumer-platform/index.ts",
+      "id": "consumer-bff",
+      "name": "SunRey Consumer Backend-for-Frontend",
+      "canonicalOwner": "services/api",
+      "canonicalPath": "services/api/src/consumer/orchestrator.ts",
+      "id": "sunrey-platform-api",
+      "name": "SunRey Platform API runtime and gateway",
+      "canonicalOwner": "services/api",
+      "canonicalPath": "services/api/src/app.ts",
+      "publicInterface": "services/api/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "SunReyConsumerClient",
+          "name": "ConsumerBff",
+          "kind": "class"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-consumer-client",
+        "packages/consumer-bff",
+        "packages/lovable-sdk",
+        "packages/frontend-api",
+        "services/bff-v2"
+        "packages/bff",
+        "packages/lovable",
+        "packages/consumer-bff",
+        "packages/frontend-api",
+        "services/bff",
+        "services/lovable",
+        "apps/lovable",
+        "apps/consumer-bff"
+          "name": "createPlatformApi",
+          "kind": "function"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-api",
+        "packages/api-gateway",
+        "packages/bff",
+        "packages/sunrey-bff",
+        "packages/http-gateway",
+        "packages/platform-api-v2",
+        "services/platform-api"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B consumer/platform OpenAPI and browser-safe SDK. HTTP composition root is services/consumer-platform. Not a second ledger, Kernel, Exchange, or developer platform. Production remains disabled."
+      "notes": "Phase B Prompt 4 Lovable integration layer. Aggregates customer-oriented resources from canonical services. Never recalculates authoritative balances from activity arrays. Never issues Execution Authority or posts journals."
+      "notes": "Phase B application-facing HTTP runtime. Versioned /api/v1. Orchestration only. Does not post journals, issue Execution Authority, or activate production. The SDK /v1 DevelopmentPlatform gateway remains a simulation developer surface."
     }
   ],
   "authorizedMutationPaths": [
@@ -5940,6 +6052,14 @@
     "packages/app-registry",
     "packages/webhook-service",
     "packages/developer-platform-v2",
+    "packages/bff",
+    "packages/lovable",
+    "packages/consumer-bff",
+    "packages/frontend-api",
+    "services/bff",
+    "services/lovable",
+    "apps/lovable",
+    "apps/consumer-bff",
     "packages/provider-runtime",
     "packages/sunrey-provider-runtime",
     "packages/executable-providers",
@@ -6564,6 +6684,13 @@
       "notes": "Chunk 51 official developer platform: versioned public API v1, TypeScript SDK, Rust client SDK, event subscriptions. Adapter only. Canonical owners remain packages/sunrey-chain and packages/sunrey-exchange. Do not create packages/blockchain-v2, packages/sunrey-chain-sdk-ledger, packages/sdk-ledger, or packages/exchange-v2."
     },
     {
+      "id": "sunrey-consumer-platform",
+      "status": "IMPLEMENTED",
+      "owner": "packages/sunrey-sdk",
+      "protected": true,
+      "notes": "Phase B consumer/platform API and browser-safe SDK at packages/sunrey-sdk/src/consumer-platform. HTTP composition root at services/consumer-platform. Not a second ledger, Kernel, Exchange, or developer platform."
+    },
+    {
       "id": "sunrey-supply-chain",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
@@ -6808,6 +6935,8 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Binds existing component evidence by hash. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
       "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
     },
     {
@@ -7166,6 +7295,18 @@
       "owner": "tools/architectural-linter",
       "protected": true,
       "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
+    },
+    {
+      "id": "sunrey-consumer-bff",
+      "status": "IMPLEMENTED",
+      "owner": "services/api",
+      "protected": true,
+      "notes": "Phase B Consumer BFF for mobile, responsive web, and Lovable. Orchestration only. Not a second ledger, Kernel, Exchange, Agent runtime, or payment processor. Do not create packages/bff, packages/lovable, or services/bff."
+      "id": "sunrey-platform-api",
+      "status": "IMPLEMENTED",
+      "owner": "services/api",
+      "protected": true,
+      "notes": "Phase B Platform API runtime at services/api. Canonical /api/v1 application entry. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Do not create packages/sunrey-api, packages/api-gateway, packages/bff, or services/platform-api."
     }
   ],
   "boundedContexts": [
@@ -7491,12 +7632,16 @@
     },
     {
       "id": "API_INTEGRATION",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
-        "services/api"
+        "services/api",
+        "services/consumer-platform"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Phase B consumer platform HTTP lives at services/consumer-platform. apps/api and services/api remain reserved and must not be created as a second API owner."
+      "notes": "Consumer BFF is implemented at services/api. Broader platform API runtime, auth foundation, and integration platform remain Phase B companions. Not apps/explorer and not packages/sunrey-sdk DevelopmentPlatform."
+      "notes": "Phase B Platform API runtime lives at services/api. apps/api remains unused. Business endpoints land in later Phase B prompts. Not a second ledger or Execution Authority."
     },
     {
       "id": "SOVEREIGN_CELLS",
@@ -7700,6 +7845,18 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/sunrey-consumer-client",
+    "packages/consumer-bff",
+    "packages/lovable-sdk",
+    "packages/frontend-api",
+    "services/bff-v2"
+    "packages/sunrey-api",
+    "packages/api-gateway",
+    "packages/bff",
+    "packages/sunrey-bff",
+    "packages/http-gateway",
+    "packages/platform-api-v2",
+    "services/platform-api"
   ]
 }

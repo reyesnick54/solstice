@@ -54,6 +54,7 @@ never be two implementations of these systems.
 | Account opening | `services/accounts` | `services/accounts/src/open-account.ts` | IMPLEMENTED |
 | Money movement | `services/accounts` | `services/accounts/src/money-movement.ts` | IMPLEMENTED |
 | Balance projections | `services/accounts` | `services/accounts/src/balances.ts` | IMPLEMENTED |
+| Consumer BFF | `services/api` | `services/api/src/consumer/orchestrator.ts` | IMPLEMENTED |
 | Configuration | `packages/config` | `packages/config/src/flags.ts` | IMPLEMENTED |
 | Canonical product identity | `packages/config` | `packages/config/src/product-identity.ts` | IMPLEMENTED |
 | Architecture linting | `tools/architectural-linter` | `tools/architectural-linter/src/linter.ts` | IMPLEMENTED |
@@ -89,6 +90,8 @@ never be two implementations of these systems.
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
 | SunRey developer application platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/developer-platform/index.ts` | IMPLEMENTED |
+| SunRey consumer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/consumer-platform/client.ts` | IMPLEMENTED |
+| SunRey Platform API | `services/api` | `services/api/src/app.ts` | IMPLEMENTED |
 | SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
@@ -153,7 +156,8 @@ the same architecture-linting system, not a second linter.
 `market-surveillance`, `sunrey-sdk`, `sunrey-economics`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
-`treasury`, `investments`, `strategy-lab`.
+`treasury`, `investments`, `strategy-lab`, `consumer-platform`.
+`treasury`, `investments`, `strategy-lab`, `api`.
 
 **Applications:** `apps/explorer` is the functional SunRey explorer
 web interface. It is a projection UI, not an authoritative ledger.
@@ -253,6 +257,10 @@ The only action types on this tree are declared in
 - `CANCEL_EXCHANGE_ORDER`
 - `SETTLE_EXCHANGE_TRADE`
 - `HALT_EXCHANGE`
+- `REHEARSE_AUTHORITY_PATH`
+
+`REHEARSE_AUTHORITY_PATH` is TEST_ONLY. It rehearses the authority
+path and records evidence. It does not post a journal or move money.
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -518,11 +526,13 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
 | `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
 | `services/strategy-lab` | `packages/strategy-lab` |
+| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `packages/personal-data-vault` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events` |
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
+| `services/api` | `packages/config`, `packages/domain` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -531,8 +541,13 @@ must be added to `manifest.json` before they appear on disk.
   services. `packages/domain/src/demo.ts` is a runner, not library
   surface, and is the only documented exception that imports
   `services/accounts`.
-- Ledger must not depend on UI or API layers. There is no UI/API layer
-  on this tree.
+- Ledger must not depend on UI or API layers. The Consumer BFF at
+  `services/api` is an orchestration/presentation layer only. It reads
+  Ledger-derived account models and never posts journals.
+- Ledger must not depend on UI or API layers. The application HTTP
+  runtime is `services/api` and may only orchestrate existing services.
+  It must not import Ledger internals, construct an AuthorityIssuer, or
+  post journals.
 - Domain objects must not call external providers. There are no
   provider adapters on this tree. Future adapters sit behind ports.
 - Agents added later must not import Execution Authority issuance,
@@ -764,7 +779,7 @@ phase is absent.
 | SUNREY CHAIN | IMPLEMENTED | `packages/sunrey-chain` |
 | CUSTODY | IMPLEMENTED | `packages/custody` |
 | MARKET SURVEILLANCE | IMPLEMENTED | `packages/market-surveillance` |
-| API / INTEGRATION | PLANNED | `apps/api`, `services/api` |
+| API / INTEGRATION | PARTIAL | `apps/api`, `services/api` |
 | SOVEREIGN CELLS | PLANNED | `packages/cells` |
 
 Product branding for the digital-asset context is **SunRey** /
@@ -987,6 +1002,14 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Phase B extends that owner with the consumer/platform client at
+`packages/sunrey-sdk/src/consumer-platform` and the HTTP composition
+root at `services/consumer-platform`. Capability
+`sunrey-consumer-platform` is `IMPLEMENTED`. It fronts Identity,
+Kernel, accounts, evidence, and events. It is not a second ledger,
+Kernel, Exchange, or developer platform. Do not create
+`packages/sunrey-consumer-client`, `packages/consumer-bff`,
+`packages/lovable-sdk`, `packages/frontend-api`, or `services/bff-v2`.
 Chunk 59 implements software supply-chain security at
 `packages/sunrey-chain/src/supply-chain`. Capability
 `sunrey-supply-chain` is `IMPLEMENTED`. `ReleaseAuthority` signs

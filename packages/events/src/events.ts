@@ -179,6 +179,7 @@ export type IdentitySessionRevokedV1 = VersionedEvent<'IdentitySessionRevoked', 
 export type IdentityDeviceRegisteredV1 = VersionedEvent<'IdentityDeviceRegistered', 1, IdentityAuditPayload>;
 export type IdentityDeviceTrustChangedV1 = VersionedEvent<'IdentityDeviceTrustChanged', 1, IdentityAuditPayload>;
 export type IdentityRecoveryRequestedV1 = VersionedEvent<'IdentityRecoveryRequested', 1, IdentityAuditPayload>;
+export type IdentitySecurityRecordedV1 = VersionedEvent<'IdentitySecurityRecorded', 1, IdentityAuditPayload>;
 
 export type BeneficiaryCreatedV1 = VersionedEvent<
   'BeneficiaryCreated',
@@ -1075,6 +1076,7 @@ export type DomainEvent =
   | IdentityDeviceRegisteredV1
   | IdentityDeviceTrustChangedV1
   | IdentityRecoveryRequestedV1
+  | IdentitySecurityRecordedV1
   | BeneficiaryCreatedV1
   | PaymentInitiatedV1
   | PaymentHeldV1

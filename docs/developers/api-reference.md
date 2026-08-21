@@ -71,7 +71,20 @@ Generated from the in-repo OpenAPI definitions and SDK route table.
 - `GET /v1/machines`
 - `GET /v1/interop/packets`
 - `GET /v1/exchange/markets`
+- `GET /v1/exchange/market-data`
 - `POST /v1/exchange/orders`
+- `POST /v1/exchange/sandbox/orders`
+- `GET /v1/exchange/orders/{id}`
+- `GET /v1/exchange/trading-sessions/{id}`
+- `GET /v1/consumer/exchange/markets`
+- `GET /v1/consumer/exchange/portfolio`
+- `POST /v1/consumer/exchange/quotes`
+- `POST /v1/consumer/exchange/preview`
+- `POST /v1/consumer/exchange/orders`
+- `POST /v1/consumer/exchange/orders/{id}/cancel`
+- `GET /v1/consumer/exchange/orders/{id}`
+- `GET /v1/consumer/exchange/receipts/{id}`
+- `POST /v1/consumer/exchange/alerts`
 - `POST /v1/transactions`
 - `GET /v1/events`
 - `POST /v1/dev/faucet`
@@ -117,8 +130,5 @@ Canonical specifications:
 - `api/sunrey-exchange-v1.openapi.yaml`
 - `api/sunrey-events-v1.md`
 - `api/sunrey-developer-platform-v1.openapi.yaml`
+- `api/sunrey-consumer-platform-v1.openapi.yaml`
 - `api/sunrey-webhooks-v1.json`
-
-Human Information Network (Chunk 100) routes stay privacy-minimized.
-A developer API key is not sufficient by itself. Production remains
-unactivated.

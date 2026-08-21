@@ -56,13 +56,25 @@
       "id": "passkeys",
       "owner": "packages/identity (reserved)",
       "purpose": "SESSION_SIGNING / future WebAuthn",
-      "algorithm": "not selected; WebAuthn/passkeys are not implemented",
-      "provider": "none",
+      "algorithm": "simulation HMAC adapter; production FIDO2 blocked on @simplewebauthn/server",
+      "provider": "packages/identity SimulatedWebAuthnRelyingParty",
       "keyLifecycle": "n/a",
       "quantumExposure": "future authenticator-dependent",
       "migrationPriority": "research",
-      "targetArchitecture": "identity stack + CryptoSuite registry",
-      "currentStatus": "NOT_IMPLEMENTED"
+      "targetArchitecture": "identity stack + @simplewebauthn/server",
+      "currentStatus": "PARTIAL"
+    },
+    {
+      "id": "password-kdf",
+      "owner": "packages/identity",
+      "purpose": "consumer password credentials",
+      "algorithm": "scrypt N=16384 r=8 p=1 dkLen=32 via node:crypto",
+      "provider": "packages/identity/src/password.ts",
+      "keyLifecycle": "unique salt per credential; digest only",
+      "quantumExposure": "offline dictionary if digest leaked",
+      "migrationPriority": "medium",
+      "targetArchitecture": "scrypt now; Argon2id if a vetted library is admitted",
+      "currentStatus": "IMPLEMENTED"
     },
     {
       "id": "data-encryption",

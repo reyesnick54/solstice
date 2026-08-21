@@ -729,6 +729,22 @@
       "mustUseExecutionAuthority": false,
       "canonicalStore": "simulation-infra-posture",
       "deprecatedAlternatives": ["packages/deploy", "packages/infrastructure"]
+    },
+    {
+      "domain": "PLATFORM_API",
+      "canonicalPath": "services/api/src/app.ts",
+      "canonicalOwner": "services/api",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": false,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": true,
+      "canonicalStore": "http-request-context",
+      "deprecatedAlternatives": [
+        "packages/sunrey-api",
+        "packages/api-gateway",
+        "packages/bff",
+        "services/platform-api"
+      ]
     }
   ]
 }

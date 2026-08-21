@@ -85,6 +85,7 @@ export const ACTION_TYPES = {
   DECIDE_ASSET_LISTING: 'DECIDE_ASSET_LISTING',
   RESTRICT_EXCHANGE_PARTICIPANT: 'RESTRICT_EXCHANGE_PARTICIPANT',
   SET_EXCHANGE_CONTROL: 'SET_EXCHANGE_CONTROL',
+  REHEARSE_AUTHORITY_PATH: 'REHEARSE_AUTHORITY_PATH',
 } as const;
 
 export type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
@@ -860,6 +861,19 @@ export type RestrictExchangeParticipantIntent = ActionIntent<RestrictExchangePar
 
 export type SetExchangeControlIntent = ActionIntent<SetExchangeControlPayload> & {
   readonly actionType: typeof ACTION_TYPES.SET_EXCHANGE_CONTROL;
+};
+
+/**
+ * TEST_ONLY rehearsal of the authority path. Not a money movement.
+ * Execution records evidence only. Never posts a journal.
+ */
+export type RehearseAuthorityPathPayload = {
+  readonly accountId: string;
+  readonly rehearsalId: string;
+};
+
+export type RehearseAuthorityPathIntent = ActionIntent<RehearseAuthorityPathPayload> & {
+  readonly actionType: typeof ACTION_TYPES.REHEARSE_AUTHORITY_PATH;
 };
 
 export type SunReyExchangeIntent =

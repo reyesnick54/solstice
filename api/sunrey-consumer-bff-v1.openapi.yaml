@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: SunRey Consumer Backend-for-Frontend
+  version: v1
+  description: >
+    Lovable / mobile / responsive-web orchestration API.
+    Not a ledger, Exchange, Agent runtime, Kernel, or payment processor.
+    Financial fields are integer minor-unit strings. Production remains disabled.
+servers:
+  - url: http://127.0.0.1:8080
+paths:
+  /api/v1/me:
+    get:
+      operationId: getMe
+      summary: Get the authenticated customer profile
+      responses:
+        "200":
+          description: Controlled profile
+        "401":
+          description: Authentication required
+    patch:
+      operationId: patchMe
+      summary: Update authorized preference fields only
+      description: KYC and legal-identity fields are rejected.
+      responses:
+        "200":
+          description: Updated profile
+        "403":
+          description: Forbidden profile field
+  /api/v1/me/home:
+    get:
+      operationId: getMeHome
+      summary: Home aggregation contract
+      responses:
+        "200":
+          description: Home resource
+  /api/v1/me/bootstrap:
+    get:
+      operationId: getMeBootstrap
+      summary: Authenticated frontend bootstrap
+      responses:
+        "200":
+          description: Bootstrap resource
+  /api/v1/me/capabilities:
+    get:
+      operationId: getMeCapabilities
+      summary: Server-computed feature capabilities
+      responses:
+        "200":
+          description: Capability map
+  /api/v1/me/actions:
+    get:
+      operationId: getMeActions
+      summary: Pending regulated actions
+      responses:
+        "200":
+          description: Action status list
+  /api/v1/accounts:
+    get:
+      operationId: listAccounts
+      summary: List customer accounts
+      responses:
+        "200":
+          description: Account read models
+  /api/v1/accounts/{id}:
+    get:
+      operationId: getAccount
+      summary: Get one owned account
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Account read model
+        "403":
+          description: Resource not owned
+  /api/v1/accounts/{id}/activity:
+    get:
+      operationId: getAccountActivity
+      summary: Cursor-paginated account activity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Activity page
+  /api/v1/catalog/resources:
+    get:
+      operationId: listConsumerResources
+      summary: Consumer resource catalog
+      responses:
+        "200":
+          description: Resource descriptors
+  /api/v1/catalog/enums:
+    get:
+      operationId: listConsumerEnums
+      summary: Client-safe enumerations
+      responses:
+        "200":
+          description: Enumerations
+  /api/v1/sandbox/personas:
+    get:
+      operationId: listSandboxPersonas
+      summary: Non-production sandbox personas
+      responses:
+        "200":
+          description: Sandbox persona list
+  /api/v1/payments:
+    get:
+      operationId: getPayments
+      summary: Payments resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/fx:
+    get:
+      operationId: getFx
+      summary: FX resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/cards:
+    get:
+      operationId: getCards
+      summary: Cards resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/grow:
+    get:
+      operationId: getGrow
+      summary: Grow My Money resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/agent:
+    get:
+      operationId: getAgent
+      summary: Agent resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/exchange:
+    get:
+      operationId: getExchange
+      summary: Exchange resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/recipients:
+    get:
+      operationId: getRecipients
+      summary: Recipients resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/goals:
+    get:
+      operationId: getGoals
+      summary: Goals resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/portfolio:
+    get:
+      operationId: getPortfolio
+      summary: Portfolio resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/wallets:
+    get:
+      operationId: getWallets
+      summary: Wallets resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/data:
+    get:
+      operationId: getDataVault
+      summary: Data vault resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/security:
+    get:
+      operationId: getSecurity
+      summary: Security resource stub
+      responses:
+        "200":
+          description: Honest availability
+  /api/v1/notifications:
+    get:
+      operationId: getNotifications
+      summary: Notifications resource stub
+      responses:
+        "200":
+          description: Honest availability
