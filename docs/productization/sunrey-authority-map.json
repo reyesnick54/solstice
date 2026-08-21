@@ -8,7 +8,8 @@
     "PRODUCTION_READY": false,
     "PRODUCTION_ACTIVE": false,
     "LIVE_CONNECTIVITY_ENABLED": false,
-    "production_authorized": false
+    "production_authorized": false,
+    "ENVIRONMENT": "simulation"
   },
   "nonNegotiable": {
     "LEDGER": "authoritative financial journal",
@@ -243,6 +244,7 @@
     "monetary-issuance",
     "payments",
     "exchange"
+  ],
   "name": "sunrey-authority-map",
   "purpose": "Machine-readable architectural authority map for SunRey productization. Not a second constitution, ledger, kernel, or production authorization.",
   "freezeDocument": "docs/productization/SUNREY_PRODUCTION_ARCHITECTURE_FREEZE.md",
@@ -257,12 +259,6 @@
       "docs/architecture/sunrey-chain-authority-matrix.md",
       "docs/architecture/native-asset-authority-boundary.md"
     ]
-  },
-  "productionPosture": {
-    "PRODUCTION_READY": false,
-    "PRODUCTION_ACTIVE": false,
-    "LIVE_CONNECTIVITY_ENABLED": false,
-    "ENVIRONMENT": "simulation"
   },
   "deprecationStates": [
     "ACTIVE_CANONICAL",
