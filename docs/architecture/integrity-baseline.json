@@ -3,7 +3,7 @@
   "architectureSchemaVersion": 1,
   "canonicalPackageCount": 50,
   "canonicalCapabilityCount": 163,
-  "canonicalComponentCount": 135,
+  "canonicalComponentCount": 136,
   "chunkDeclarationCount": 166,
   "singleTestScriptInvariant": true
 }
