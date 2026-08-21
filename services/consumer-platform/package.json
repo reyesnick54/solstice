@@ -1,0 +1,19 @@
+{
+  "name": "@solstice/consumer-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "SunRey consumer platform HTTP composition root. Not a second ledger, Kernel, or SDK.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/dev.ts"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

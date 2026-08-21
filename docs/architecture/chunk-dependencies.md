@@ -229,6 +229,7 @@ Historical discussion remains below the table.
 | sunrey-production-operating-scope | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
+| sunrey-consumer-platform | IMPLEMENTED | packages/sunrey-sdk |
 | sunrey-platform-api | IMPLEMENTED | services/api |
 
 Chunk 111 implements engineering-simulation reference valuation at
