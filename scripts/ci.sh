@@ -3,24 +3,36 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-echo "==> architectural invariants"
+echo "==> [INTEGRITY] architectural invariants"
 node scripts/check-json-integrity.mjs
 node scripts/check-merge-integrity.mjs
+node scripts/check-yaml-integrity.mjs
 python3 scripts/lint-architectural-invariants.py
 python3 scripts/extraction-dryrun.py
 npm run lint:architecture
 npm run naming:audit
 
-echo "==> deployment posture"
-python3 scripts/check-deployment-posture.py
+echo "==> [ARCHITECTURE] authority map and freeze"
+node scripts/check-authority-map.mjs
+node scripts/check-architecture-freeze.mjs
 
-echo "==> kernel gating"
+echo "==> [PRODUCTION SAFETY] deployment posture"
+python3 scripts/check-deployment-posture.py
+node scripts/check-production-safety.mjs
+
+echo "==> [ARCHITECTURE] kernel gating"
 npm run gate
 
-echo "==> lockfile enforcement"
+echo "==> [API] OpenAPI and contract specs"
+node scripts/check-api-specs.mjs
+
+echo "==> [DATABASE] migration ordering"
+node scripts/check-migration-quality.mjs
+
+echo "==> [INTEGRITY] lockfile enforcement"
 node scripts/check-lockfiles.mjs
 
-echo "==> rust (sunrey local node)"
+echo "==> [RUST] sunrey local node"
 (
   cd packages/sunrey-chain/rust
   cargo fmt --check
@@ -28,7 +40,7 @@ echo "==> rust (sunrey local node)"
   cargo test --workspace --locked
 )
 
-echo "==> supply-chain audit / sbom / provenance / two-builder / sign-verify"
+echo "==> [SECURITY] supply-chain audit / sbom / provenance / two-builder / sign-verify"
 node scripts/sunrey-release.mjs audit
 node scripts/sunrey-release.mjs sbom
 node scripts/sunrey-release.mjs provenance
@@ -42,7 +54,7 @@ node scripts/check-generated-drift.mjs
 node scripts/static-security-lint.mjs
 node scripts/check-container-pins.mjs
 
-echo "==> tests"
+echo "==> [TEST] suite"
 npm run test:sunrey-node
 npm test
 npm run sunrey-ceremony -- rehearse
@@ -187,10 +199,10 @@ SUNREY_FIXTURE_ENV="${SUNREY_FIXTURE_ENV:-local}" npm run demo:sunrey-rc
 npm run demo:universal-exchange
 npm run demo:sunrey-audit
 
-echo "==> typecheck"
+echo "==> [TYPECHECK] TypeScript"
 npm run typecheck
 
-echo "==> secret scan"
+echo "==> [SECURITY] secret scan"
 python3 scripts/secret-scan.py
 python3 scripts/secret-scan.py --self-test
 

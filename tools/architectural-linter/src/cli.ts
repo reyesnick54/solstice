@@ -20,6 +20,7 @@ import { lintProductionEconomicConstitution } from './production-economic-consti
 import { lintCustodyBoundary } from './custody-guards.ts';
 import { lintSurveillanceBoundary } from './surveillance-guards.ts';
 import { lintEngineeringClosure } from './engineering-closure-guards.ts';
+import { lintProductizationFreeze } from './productization-guards.ts';
 import { lintTree, formatFindings } from './linter.ts';
 
 const root = process.cwd();
@@ -47,6 +48,7 @@ const findings = [
   ...lintCustodyBoundary(root),
   ...lintSurveillanceBoundary(root),
   ...lintEngineeringClosure(root),
+  ...lintProductizationFreeze(root),
 ];
 if (findings.length > 0) {
   console.error(formatFindings(findings));

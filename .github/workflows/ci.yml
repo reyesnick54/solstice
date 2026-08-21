@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   ci:
-    name: architectural-invariants → deployment-posture → kernel-gating → tests → e2e-demo → typecheck → secret-scan
+    name: "[ARCHITECTURE] → [PRODUCTION SAFETY] → [RUST] → [TEST] → [TYPECHECK] → [SECURITY]"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -22,18 +22,21 @@ jobs:
         with:
           node-version: "22"
 
-      - name: JSON / repository integrity preflight
+      - name: "[INTEGRITY] JSON / repository integrity preflight"
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/check-merge-integrity.mjs
 
-      - name: Install from lockfile
+      - name: "[TYPECHECK] Install from lockfile"
         run: npm ci --ignore-scripts
 
-      - name: Lockfile enforcement
+      - name: "[INTEGRITY] Lockfile enforcement"
         run: node scripts/check-lockfiles.mjs
 
-      - name: Architectural invariants
+      - name: "[INTEGRITY] YAML validation"
+        run: node scripts/check-yaml-integrity.mjs
+
+      - name: "[ARCHITECTURE] Architectural invariants"
         run: |
           node scripts/check-json-integrity.mjs
           node scripts/check-merge-integrity.mjs
@@ -42,11 +45,26 @@ jobs:
           npm run lint:architecture
           npm run naming:audit
 
-      - name: Deployment posture
+      - name: "[ARCHITECTURE] Authority map"
+        run: node scripts/check-authority-map.mjs
+
+      - name: "[ARCHITECTURE] Architecture freeze"
+        run: node scripts/check-architecture-freeze.mjs
+
+      - name: "[PRODUCTION SAFETY] Deployment posture"
         run: python3 scripts/check-deployment-posture.py
 
-      - name: Kernel gating
+      - name: "[PRODUCTION SAFETY] Production-off defaults"
+        run: node scripts/check-production-safety.mjs
+
+      - name: "[ARCHITECTURE] Kernel gating"
         run: npm run gate
+
+      - name: "[API] OpenAPI and contract specs"
+        run: node scripts/check-api-specs.mjs
+
+      - name: "[DATABASE] Migration ordering"
+        run: node scripts/check-migration-quality.mjs
 
       - name: Setup Rust 1.83
         uses: dtolnay/rust-toolchain@1.83.0
@@ -58,43 +76,43 @@ jobs:
         with:
           components: rustfmt, clippy
 
-      - name: Rust fmt / clippy / test (local node)
+      - name: "[RUST] fmt / clippy / test (local node)"
         working-directory: packages/sunrey-chain/rust
         run: |
           cargo +1.83.0 fmt --check
           cargo +1.83.0 clippy --all-targets --locked -- -D warnings
           cargo +1.83.0 test --workspace --locked
 
-      - name: Dependency audit and license inventory
+      - name: "[SECURITY] Dependency audit and license inventory"
         run: node scripts/sunrey-release.mjs audit
 
-      - name: SBOM and provenance
+      - name: "[SECURITY] SBOM and provenance"
         run: |
           node scripts/sunrey-release.mjs sbom
           node scripts/sunrey-release.mjs provenance
           node scripts/sunrey-testnet-sbom.mjs
 
-      - name: Two-builder reproducibility
+      - name: "[SECURITY] Two-builder reproducibility"
         run: node scripts/sunrey-release.mjs compare-builds
 
-      - name: Artifact sign and verify
+      - name: "[SECURITY] Artifact sign and verify"
         run: |
           node scripts/sunrey-release.mjs sign
           node scripts/sunrey-release.mjs verify
 
-      - name: Independent security-review bundle
+      - name: "[SECURITY] Independent security-review bundle"
         run: |
           node scripts/sunrey-audit.mjs generate
           node scripts/sunrey-audit.mjs verify dist/sunrey-audit
           node scripts/sunrey-audit.mjs reproduce
 
-      - name: Generated-code drift
+      - name: "[GENERATED DRIFT] Generated-code drift"
         run: node scripts/check-generated-drift.mjs
 
-      - name: Static analysis (Rust clippy already -D warnings; TS security lint)
+      - name: "[TYPECHECK] Static analysis (Rust clippy already -D warnings; TS security lint)"
         run: node scripts/static-security-lint.mjs
 
-      - name: Tests
+      - name: "[TEST] Unit, financial invariants, and package suites"
         run: |
           npm run test:sunrey-node
           npm test
@@ -118,13 +136,13 @@ jobs:
           npm run sunrey-launch -- production verify
           npm run sunrey-bench -- sanity
 
-      - name: Fuzz smoke
+      - name: "[TEST] Fuzz smoke"
         run: npm run test:fuzz-smoke
 
-      - name: Formal smoke
+      - name: "[TEST] Formal smoke"
         run: npm run test:formal-smoke
 
-      - name: End-to-end demo
+      - name: "[TEST] End-to-end demo"
         run: npm run demo
       - name: Card simulation demo
         run: npm run demo:cards
@@ -317,21 +335,21 @@ jobs:
       - name: SunRey independent security-review demo
         run: npm run demo:sunrey-audit
 
-      - name: Typecheck
+      - name: "[TYPECHECK] TypeScript"
         run: npm run typecheck
 
-      - name: Secret scan
+      - name: "[SECURITY] Secret scan"
         run: |
           python3 scripts/secret-scan.py
           python3 scripts/secret-scan.py --self-test
           if [ -d dist/testnet-release ]; then python3 scripts/secret-scan.py --root dist/testnet-release; fi
           if [ -d dist/sunrey-audit ]; then python3 scripts/secret-scan.py --root dist/sunrey-audit; fi
 
-      - name: Container pin check
+      - name: "[SECURITY] Container pin check"
         run: node scripts/check-container-pins.mjs
 
   persistence:
-    name: postgres → migrate → persistence-integration
+    name: "[DATABASE] postgres → migrate → persistence-integration"
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -370,8 +388,101 @@ jobs:
       - name: Install from lockfile
         run: npm ci --ignore-scripts
 
-      - name: Bootstrap and migrate empty databases
+      - name: "[DATABASE] Migration ordering"
+        run: node scripts/check-migration-quality.mjs
+
+      - name: "[DATABASE] Bootstrap and migrate empty databases"
         run: npm run db:migrate
 
-      - name: Persistence integration tests
+      - name: "[DATABASE] Persistence integration tests"
         run: npm run test:persistence
+
+  architecture-freeze:
+    name: "[ARCHITECTURE] authority-map + freeze + kernel + posture"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: "[INTEGRITY] JSON / repository integrity preflight"
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
+      - name: "[ARCHITECTURE] Authority map"
+        run: node scripts/check-authority-map.mjs
+
+      - name: "[ARCHITECTURE] Architecture freeze"
+        run: node scripts/check-architecture-freeze.mjs
+
+      - name: "[ARCHITECTURE] Architectural linter"
+        run: npm run lint:architecture
+
+      - name: "[ARCHITECTURE] Kernel gating"
+        run: npm run gate
+
+      - name: "[PRODUCTION SAFETY] Deployment posture"
+        run: python3 scripts/check-deployment-posture.py
+
+      - name: "[PRODUCTION SAFETY] Production-off defaults"
+        run: node scripts/check-production-safety.mjs
+
+  api-contracts:
+    name: "[API] OpenAPI parse, refs, operation IDs"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: "[INTEGRITY] JSON / repository integrity preflight"
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
+      - name: "[INTEGRITY] YAML validation"
+        run: node scripts/check-yaml-integrity.mjs
+
+      - name: "[API] OpenAPI and contract specs"
+        run: node scripts/check-api-specs.mjs
+
+  production-safety:
+    name: "[PRODUCTION SAFETY] PRODUCTION_* and live connectivity remain off"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: "[INTEGRITY] JSON / repository integrity preflight"
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
+      - name: "[PRODUCTION SAFETY] Production-off defaults"
+        run: node scripts/check-production-safety.mjs
+
+      - name: "[PRODUCTION SAFETY] Deployment posture"
+        run: python3 scripts/check-deployment-posture.py

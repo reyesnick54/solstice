@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.productization.authority-map.v1",
+  "status": "FROZEN_FOR_PRODUCTIZATION",
+  "source": "docs/architecture/constitution.md + packages/sunrey-chain/src/production-handoff/engineering-closure/authority.ts",
+  "productionPosture": {
+    "CORE_CODE_COMPLETE_CANDIDATE": true,
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "production_authorized": false
+  },
+  "nonNegotiable": {
+    "LEDGER": "authoritative financial journal",
+    "KERNEL": "policy/regulatory control",
+    "EXECUTION_AUTHORITY": "regulated execution boundary",
+    "AI": "analysis/proposal system, not autonomous financial authority",
+    "FRONTEND": "client of controlled APIs, never balance authority",
+    "SUNREY_CHAIN": "native blockchain authority",
+    "SUNREY_COIN_MOONREY_COIN": "proprietary SunRey Chain assets",
+    "PROVIDERS": "adapters behind SunRey domain interfaces",
+    "PRODUCTION": "disabled until explicit external/human gates are satisfied"
+  },
+  "authorities": [
+    {
+      "id": "money",
+      "authority": "Money",
+      "role": "bigint minor-unit monetary type",
+      "owner": "packages/money",
+      "authoritativePath": "packages/money/src/money.ts",
+      "unique": true
+    },
+    {
+      "id": "identity",
+      "authority": "Identity",
+      "role": "SunRey Identity and ActorContext",
+      "owner": "packages/identity",
+      "authoritativePath": "packages/identity/src/service.ts",
+      "unique": true
+    },
+    {
+      "id": "kernel",
+      "authority": "Kernel",
+      "role": "policy/regulatory control",
+      "owner": "packages/kernel",
+      "authoritativePath": "packages/kernel/src/kernel.ts",
+      "unique": true
+    },
+    {
+      "id": "execution-authority",
+      "authority": "Execution Authority",
+      "role": "regulated execution boundary",
+      "owner": "packages/permissions",
+      "authoritativePath": "packages/permissions/src/execution-authority.ts",
+      "unique": true
+    },
+    {
+      "id": "ledger",
+      "authority": "Ledger",
+      "role": "authoritative financial journal",
+      "owner": "packages/ledger",
+      "authoritativePath": "packages/ledger/src/journal.ts",
+      "unique": true
+    },
+    {
+      "id": "evidence-vault",
+      "authority": "Evidence Vault",
+      "role": "hash-chained evidence",
+      "owner": "packages/evidence",
+      "authoritativePath": "packages/evidence/src/vault.ts",
+      "unique": true
+    },
+    {
+      "id": "events",
+      "authority": "Events",
+      "role": "versioned domain events",
+      "owner": "packages/events",
+      "authoritativePath": "packages/events/src/events.ts",
+      "unique": true
+    },
+    {
+      "id": "persistence",
+      "authority": "Persistence",
+      "role": "PostgreSQL adapter; not a second ledger",
+      "owner": "packages/persistence",
+      "authoritativePath": "packages/persistence/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "sunrey-chain-consensus",
+      "authority": "SunRey Chain consensus",
+      "role": "native blockchain authority",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/rust/crates/consensus",
+      "unique": true
+    },
+    {
+      "id": "native-asset-supply",
+      "authority": "native asset supply",
+      "role": "SUNREY_COIN / MOONREY_COIN supply book",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/supply.ts",
+      "unique": true
+    },
+    {
+      "id": "monetary-issuance",
+      "authority": "Chunk 71 monetary issuance",
+      "role": "canonical mint / monetary constitution",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/constitution.ts",
+      "unique": true
+    },
+    {
+      "id": "asset-supply-book",
+      "authority": "AssetSupplyBook",
+      "role": "canonical supply authority",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/economics/supply.ts",
+      "unique": true
+    },
+    {
+      "id": "hin-rights",
+      "authority": "HIN rights",
+      "role": "Human Information Network rights",
+      "owner": "packages/information-market",
+      "authoritativePath": "packages/information-market/src/network/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "human-contribution-registry",
+      "authority": "Human Contribution Registry",
+      "role": "verified contribution registry",
+      "owner": "packages/human-economic-contribution",
+      "authoritativePath": "packages/human-economic-contribution/src/registry.ts",
+      "unique": true
+    },
+    {
+      "id": "human-contribution-valuation",
+      "authority": "Human Contribution Valuation",
+      "role": "valuation constitution; not human-worth",
+      "owner": "packages/human-economic-contribution",
+      "authoritativePath": "packages/human-economic-contribution/src/valuation/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "oracle-consensus",
+      "authority": "Oracle consensus",
+      "role": "verified economic facts; not money",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/oracle/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "productive-event-identity",
+      "authority": "Productive Event Identity",
+      "role": "canonical productive event identity",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/attribution/store.ts",
+      "unique": true
+    },
+    {
+      "id": "attribution",
+      "authority": "Attribution",
+      "role": "governed MoonRey attribution",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/attribution/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "productive-value-gpuv",
+      "authority": "Productive Value / GPUV",
+      "role": "GPUV is not MoonRey",
+      "owner": "packages/sunrey-chain",
+      "authoritativePath": "packages/sunrey-chain/src/productive/policy-governance/value-function/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "exchange",
+      "authority": "Exchange",
+      "role": "canonical Exchange; not a second ledger",
+      "owner": "packages/sunrey-exchange",
+      "authoritativePath": "packages/sunrey-exchange/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "custody",
+      "authority": "Custody",
+      "role": "provider-neutral custody control plane",
+      "owner": "packages/custody",
+      "authoritativePath": "packages/custody/src/index.ts",
+      "unique": true
+    },
+    {
+      "id": "payments",
+      "authority": "Payments",
+      "role": "cross-border payments, FX, rails",
+      "owner": "packages/payments",
+      "authoritativePath": "packages/payments/src/service.ts",
+      "unique": true
+    },
+    {
+      "id": "compliance",
+      "authority": "Compliance",
+      "role": "screening fabric inside the Kernel",
+      "owner": "packages/kernel",
+      "authoritativePath": "packages/kernel/src/compliance/fabric.ts",
+      "unique": true
+    },
+    {
+      "id": "ai-runtime",
+      "authority": "AI runtime",
+      "role": "analysis/proposal inference plane",
+      "owner": "packages/ai-runtime",
+      "authoritativePath": "packages/ai-runtime/src/runtime.ts",
+      "unique": true
+    },
+    {
+      "id": "sunrey-agent",
+      "authority": "SunRey Agent",
+      "role": "ProposalGate only; not autonomous financial authority",
+      "owner": "packages/sunrey-agent",
+      "authoritativePath": "packages/sunrey-agent/src/engine.ts",
+      "unique": true
+    },
+    {
+      "id": "frontend",
+      "authority": "Frontend",
+      "role": "client of controlled APIs, never balance authority",
+      "owner": "apps/explorer",
+      "authoritativePath": "apps/explorer/app.js",
+      "unique": true
+    }
+  ],
+  "requiredAuthorityIds": [
+    "ledger",
+    "kernel",
+    "execution-authority",
+    "ai-runtime",
+    "sunrey-agent",
+    "frontend",
+    "sunrey-chain-consensus",
+    "native-asset-supply",
+    "monetary-issuance",
+    "payments",
+    "exchange"
+  ]
+}
