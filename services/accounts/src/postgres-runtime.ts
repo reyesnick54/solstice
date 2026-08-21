@@ -32,10 +32,16 @@ import {
   persistEvidenceUnit,
   persistIdentitySnapshot,
   persistLedgerUnit,
+  loadAccountProductState,
+  upsertAccountRestriction,
+  upsertAccountProductOverlay,
+  upsertHold,
   type PersistenceEnv,
   type PersistenceSession,
   type PersistedOpenOutcome,
 } from '../../../packages/persistence/src/index.ts';
+import { withTransaction } from '../../../packages/persistence/src/postgres/write.ts';
+import type { FinancialAccountLifecycle } from './product-account.ts';
 import { seedSimulationCatalog } from './catalog.ts';
 import type { MoneyMovementOutcome } from './money-movement.ts';
 import type { OpenAccountOutcome } from './open-account.ts';
@@ -52,6 +58,7 @@ export type DurableSimulationRuntime = {
   readonly runtime: SimulationRuntime;
   readonly authentication: AuthenticationService;
   persistAuthentication(): Promise<void>;
+  persistProductState(): Promise<void>;
   saveCustomer(customer: Customer): Promise<void>;
   open(intent: OpenAccountIntent): Promise<OpenAccountOutcome>;
   postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
@@ -181,6 +188,25 @@ export async function createPostgresSimulationRuntime(
   }
   runtime.accountsService.hydrateOpenOutcomes(openOutcomes);
 
+  const productState = await loadAccountProductState(session.pools.ledger);
+  runtime.restrictions.hydrate(productState.restrictions);
+  runtime.holds.hydrate(productState.holds);
+  for (const overlay of productState.overlays) {
+    runtime.accountProduct.overlays.put({
+      accountId: overlay.accountId as Account['id'],
+      lifecycle: overlay.lifecycle as FinancialAccountLifecycle | null,
+      closedAt: overlay.closedAt ? asUtcInstant(overlay.closedAt) : null,
+      providerLink:
+        overlay.providerId && overlay.providerExternalRef
+          ? { providerId: overlay.providerId, externalRef: overlay.providerExternalRef, status: 'RESERVED' }
+          : null,
+      metadata: overlay.metadata,
+    });
+  }
+  for (const account of loaded.accounts) {
+    runtime.accountProduct.registerOwnership(account, 'operator_1');
+  }
+
   await persistCustomerUnit(session, {
     legalEntities: legalEntities.list(),
     policy: {
@@ -220,6 +246,10 @@ class DurableRuntime implements DurableSimulationRuntime {
   async persistAuthentication(): Promise<void> {
     await persistIdentitySnapshot(this.session.pools.customer, this.runtime.identity.service.snapshot());
     await persistAuthenticationSnapshot(this.session.pools.customer, this.authentication.snapshot());
+  }
+
+  async persistProductState(): Promise<void> {
+    await persistAccountProductState(this.session, this.runtime);
   }
 
   async saveCustomer(customer: Customer): Promise<void> {
@@ -317,6 +347,9 @@ class DurableRuntime implements DurableSimulationRuntime {
           this.runtime.accounts.put(account.id, account);
           this.runtime.ledger.accounts.registerOpenedAccount(account);
         }
+        const productState = await loadAccountProductState(this.session.pools.ledger);
+        this.runtime.restrictions.hydrate(productState.restrictions);
+        this.runtime.holds.hydrate(productState.holds);
         const beforeEvidence = this.runtime.evidence.count();
         const beforeEvents = this.runtime.events.list().length;
         const result = fn();
@@ -347,6 +380,7 @@ class DurableRuntime implements DurableSimulationRuntime {
           reversals: this.runtime.banking.listReversals(),
           fees: this.runtime.banking.listFees(),
         });
+        await persistAccountProductState(this.session, this.runtime);
         await persistEvidenceOnClient(evidenceClient, newEvidence);
         await evidenceClient.query('COMMIT');
         return result;
@@ -508,6 +542,30 @@ function reviveOpenOutcome(
     decision: null,
     evidenceId: row.evidenceRecordId,
   };
+}
+
+async function persistAccountProductState(
+  session: PersistenceSession,
+  runtime: SimulationRuntime,
+): Promise<void> {
+  await withTransaction(session.pools.ledger, async (client) => {
+    for (const restriction of runtime.restrictions.list()) {
+      await upsertAccountRestriction(client, restriction);
+    }
+    for (const overlay of runtime.accountProduct.overlays.list()) {
+      await upsertAccountProductOverlay(client, {
+        accountId: overlay.accountId,
+        lifecycle: overlay.lifecycle,
+        closedAt: overlay.closedAt,
+        providerId: overlay.providerLink?.providerId ?? null,
+        providerExternalRef: overlay.providerLink?.externalRef ?? null,
+        metadata: overlay.metadata,
+      });
+    }
+    for (const hold of runtime.holds.list()) {
+      await upsertHold(client, hold);
+    }
+  });
 }
 
 export type { Account };

@@ -186,3 +186,36 @@ export { asReversalId, freezeReversal } from './reversal.ts';
 
 export type { TransactionHistoryItem, TransactionHistoryStatus } from './transaction-history.ts';
 export { freezeHistoryItem, TRANSACTION_HISTORY_STATUSES } from './transaction-history.ts';
+
+export type {
+  AccountRestriction,
+  AccountRestrictionCode,
+  AccountRestrictionId,
+  AccountRestrictionState,
+} from './account-restriction.ts';
+export {
+  ACCOUNT_RESTRICTION_CODES,
+  ACCOUNT_RESTRICTION_STATES,
+  asAccountRestrictionId,
+  freezeAccountRestriction,
+  isAccountRestrictionCode,
+} from './account-restriction.ts';
+
+export type {
+  ConsumerActivityCategory,
+  ConsumerActivityDirection,
+  ConsumerActivityStatus,
+  ConsumerActivityType,
+  CustomerActivityId,
+  CustomerActivityItem,
+} from './customer-activity.ts';
+export {
+  CONSUMER_ACTIVITY_CATEGORIES,
+  CONSUMER_ACTIVITY_DIRECTIONS,
+  CONSUMER_ACTIVITY_STATUSES,
+  CONSUMER_ACTIVITY_TYPES,
+  asCustomerActivityId,
+  freezeCustomerActivityItem,
+  isConsumerActivityStatus,
+  isConsumerActivityType,
+} from './customer-activity.ts';

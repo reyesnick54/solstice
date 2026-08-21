@@ -63,6 +63,10 @@ export type ReservedEventNamespace = (typeof RESERVED_EVENT_NAMESPACES)[number];
 
 export const EVENT_TYPE_NAMES = [
   'AccountOpened',
+  'AccountActivated',
+  'AccountRestricted',
+  'AccountClosed',
+  'CustomerActivityRecorded',
   'DepositPosted',
   'WithdrawalPosted',
   'InternalTransferPosted',
@@ -313,6 +317,10 @@ export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
 
 export const EVENT_SCHEMA_REFS = {
   AccountOpened: 'solstice.account.opened/1',
+  AccountActivated: 'solstice.account.activated/1',
+  AccountRestricted: 'solstice.account.restricted/1',
+  AccountClosed: 'solstice.account.closed/1',
+  CustomerActivityRecorded: 'solstice.account.activity.recorded/1',
   DepositPosted: 'solstice.ledger.deposit_posted/1',
   WithdrawalPosted: 'solstice.ledger.withdrawal_posted/1',
   InternalTransferPosted: 'solstice.ledger.internal_transfer_posted/1',
@@ -563,6 +571,10 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   readonly [K in ImplementedEventTypeName]: ImplementedEventNamespace;
 } = {
   AccountOpened: 'account',
+  AccountActivated: 'account',
+  AccountRestricted: 'account',
+  AccountClosed: 'account',
+  CustomerActivityRecorded: 'account',
   DepositPosted: 'ledger',
   WithdrawalPosted: 'ledger',
   InternalTransferPosted: 'ledger',

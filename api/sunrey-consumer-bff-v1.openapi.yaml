@@ -31,9 +31,18 @@ paths:
     get:
       operationId: getMeHome
       summary: Home aggregation contract
+      parameters:
+        - in: query
+          name: valuationCurrency
+          required: false
+          schema: { type: string, minLength: 3, maxLength: 3 }
+          description: Explicit valuation currency. Different currencies are never summed without FX.
       responses:
         "200":
           description: Home resource
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HomeResource" }
   /api/v1/me/bootstrap:
     get:
       operationId: getMeBootstrap
@@ -62,6 +71,15 @@ paths:
       responses:
         "200":
           description: Account read models
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items: { $ref: "#/components/schemas/ConsumerAccount" }
   /api/v1/accounts/{id}:
     get:
       operationId: getAccount
@@ -74,6 +92,9 @@ paths:
       responses:
         "200":
           description: Account read model
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ConsumerAccount" }
         "403":
           description: Resource not owned
   /api/v1/accounts/{id}/activity:
@@ -85,9 +106,66 @@ paths:
           name: id
           required: true
           schema: { type: string }
+        - in: query
+          name: cursor
+          schema: { type: string }
+          description: Opaque pagination cursor
+        - in: query
+          name: pageSize
+          schema: { type: integer, minimum: 1, maximum: 100 }
+        - in: query
+          name: from
+          schema: { type: string, format: date-time }
+        - in: query
+          name: to
+          schema: { type: string, format: date-time }
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [PENDING, PROCESSING, COMPLETED, FAILED, REVERSED, CANCELLED, ACTION_REQUIRED]
+        - in: query
+          name: type
+          schema: { type: string }
+        - in: query
+          name: currency
+          schema: { type: string, minLength: 3, maxLength: 3 }
       responses:
         "200":
           description: Activity page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActivityPage" }
+        "400":
+          description: Invalid filter or cursor
+  /api/v1/accounts/{id}/statement:
+    get:
+      operationId: getAccountStatement
+      summary: Authoritative statement data for a period
+      description: Opening and closing balances are derived from the Ledger. No PDF renderer.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: query
+          name: periodStart
+          required: true
+          schema: { type: string, format: date-time }
+        - in: query
+          name: periodEnd
+          required: true
+          schema: { type: string, format: date-time }
+      responses:
+        "200":
+          description: Statement data
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccountStatement" }
+        "400":
+          description: Invalid period
+        "403":
+          description: Resource not owned
   /api/v1/catalog/resources:
     get:
       operationId: listConsumerResources
@@ -200,3 +278,167 @@ paths:
       responses:
         "200":
           description: Honest availability
+components:
+  schemas:
+    MoneyView:
+      type: object
+      required: [currency, minorUnits]
+      properties:
+        currency: { type: string, minLength: 3, maxLength: 3 }
+        minorUnits: { type: string, description: Integer minor units as a decimal string. Never floating-point. }
+    AccountBalanceView:
+      type: object
+      required: [posted, ledger, available, held, pending, currency]
+      properties:
+        posted: { $ref: "#/components/schemas/MoneyView" }
+        ledger: { $ref: "#/components/schemas/MoneyView" }
+        available: { $ref: "#/components/schemas/MoneyView" }
+        held: { $ref: "#/components/schemas/MoneyView" }
+        pending: { $ref: "#/components/schemas/MoneyView" }
+        currency: { type: string }
+    ResourceField:
+      type: object
+      required: [state, availability, value, reason]
+      properties:
+        state:
+          type: string
+          enum:
+            - READY
+            - EMPTY
+            - FEATURE_DISABLED
+            - SIMULATION_ONLY
+            - USER_INELIGIBLE
+            - PENDING_VERIFICATION
+            - PROVIDER_UNAVAILABLE
+            - SERVICE_UNAVAILABLE
+            - MIXED_CURRENCY_WITHOUT_CONVERSION
+            - VALUATION_UNAVAILABLE
+        availability:
+          type: string
+          enum: [IMPLEMENTED, AVAILABLE_SIMULATION, NOT_YET_PRODUCTIZED, EXTERNAL_PROVIDER_REQUIRED]
+        value: { nullable: true }
+        reason: { type: string, nullable: true }
+    ConsumerAccount:
+      type: object
+      required: [id, productType, status, currency, openedAt, restrictions, productConfiguration]
+      properties:
+        id: { type: string }
+        productType:
+          type: string
+          enum: [CASH_ACCOUNT, CHECKING_PAYMENT, SAVINGS, MULTI_CURRENCY, INVESTMENT_CASH, EXCHANGE_CASH]
+        status:
+          type: string
+          enum: [PENDING, ACTIVE, RESTRICTED, FROZEN, CLOSING, CLOSED]
+          description: Server-derived lifecycle. Clients cannot POST status=ACTIVE.
+        domainStatus: { type: string }
+        currency: { type: string }
+        openedAt: { type: string, format: date-time }
+        closedAt: { type: string, format: date-time, nullable: true }
+        restrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - DEBIT_BLOCKED
+              - CREDIT_BLOCKED
+              - WITHDRAWAL_BLOCKED
+              - TRANSFER_BLOCKED
+              - TRADING_BLOCKED
+              - CARD_BLOCKED
+              - COMPLIANCE_REVIEW
+        productConfiguration:
+          type: object
+          required: [licensingClaim, environment, liveBanking]
+          properties:
+            licensingClaim: { type: string, enum: [NOT_A_LICENSED_BANK_ACCOUNT] }
+            environment: { type: string, enum: [simulation] }
+            liveBanking: { type: boolean, enum: [false] }
+        balance:
+          allOf:
+            - { $ref: "#/components/schemas/ResourceField" }
+            - properties:
+                value: { $ref: "#/components/schemas/AccountBalanceView", nullable: true }
+    ConsumerActivity:
+      type: object
+      required: [activityId, type, direction, amount, currency, status, description, occurredAt]
+      properties:
+        activityId: { type: string }
+        type: { type: string }
+        direction: { type: string, enum: [IN, OUT, HOLD] }
+        amount: { $ref: "#/components/schemas/MoneyView" }
+        currency: { type: string }
+        status:
+          type: string
+          enum: [PENDING, PROCESSING, COMPLETED, FAILED, REVERSED, CANCELLED, ACTION_REQUIRED]
+        counterpartyDisplay: { type: string, nullable: true }
+        description: { type: string }
+        occurredAt: { type: string, format: date-time }
+        completedAt: { type: string, format: date-time, nullable: true }
+        category: { type: string }
+        relatedActionId: { type: string, nullable: true }
+        fee: { $ref: "#/components/schemas/MoneyView", nullable: true }
+    ActivityPage:
+      allOf:
+        - { $ref: "#/components/schemas/ResourceField" }
+        - properties:
+            value:
+              type: object
+              nullable: true
+              properties:
+                items:
+                  type: array
+                  items: { $ref: "#/components/schemas/ConsumerActivity" }
+                nextCursor: { type: string, nullable: true }
+                hasMore: { type: boolean }
+    AccountStatement:
+      allOf:
+        - { $ref: "#/components/schemas/ResourceField" }
+        - properties:
+            value:
+              type: object
+              nullable: true
+              properties:
+                statementId: { type: string }
+                accountId: { type: string }
+                currency: { type: string }
+                periodStart: { type: string, format: date-time }
+                periodEnd: { type: string, format: date-time }
+                opening: { $ref: "#/components/schemas/MoneyView" }
+                closing: { $ref: "#/components/schemas/MoneyView" }
+                fees: { $ref: "#/components/schemas/MoneyView" }
+                transactions:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      postedAt: { type: string, format: date-time }
+                      direction: { type: string }
+                      amount: { $ref: "#/components/schemas/MoneyView" }
+                      description: { type: string }
+                      reference: { type: string }
+    HomeResource:
+      type: object
+      required: [schema, generatedAt, wealth, accounts]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.home.v1] }
+        generatedAt: { type: string, format: date-time }
+        wealth:
+          type: object
+          properties:
+            state: { type: string }
+            availability: { type: string }
+            value: { nullable: true }
+            reason: { type: string, nullable: true }
+            valuation:
+              type: object
+              required: [currency, status, currencies]
+              properties:
+                currency: { type: string }
+                status: { type: string, enum: [AVAILABLE, NOT_REQUIRED, UNAVAILABLE] }
+                currencies:
+                  type: array
+                  items: { type: string }
+                reason: { type: string, nullable: true }
+        accounts:
+          allOf:
+            - { $ref: "#/components/schemas/ResourceField" }
