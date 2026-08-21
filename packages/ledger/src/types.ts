@@ -5,6 +5,29 @@ import type { ExecutionAuthority } from '../../permissions/src/execution-authori
 
 export type DebitCredit = 'DEBIT' | 'CREDIT';
 
+/**
+ * Status of a committed journal. Posted journals are never rewritten.
+ * REVERSED is a derived read of the original after a compensating journal.
+ */
+export const JOURNAL_STATUSES = ['POSTED'] as const;
+export type JournalStatus = (typeof JOURNAL_STATUSES)[number];
+
+export const REVERSAL_KINDS = ['FULL', 'PARTIAL'] as const;
+export type ReversalKind = (typeof REVERSAL_KINDS)[number];
+
+export const LEDGER_SOURCE_DOMAINS = [
+  'accounts',
+  'payments',
+  'cards',
+  'fx',
+  'exchange',
+  'custody',
+  'treasury',
+  'investments',
+  'ledger',
+] as const;
+export type LedgerSourceDomain = (typeof LEDGER_SOURCE_DOMAINS)[number];
+
 export type LedgerAccount = {
   readonly id: string;
   readonly name: string;
@@ -30,6 +53,16 @@ export type Journal = {
   readonly classBridgeName?: string;
   readonly memo?: string;
   readonly createdAt: string;
+  readonly status?: JournalStatus;
+  readonly effectiveAt?: string;
+  readonly reference?: string;
+  readonly correlationId?: string;
+  readonly causationId?: string;
+  readonly sourceDomain?: LedgerSourceDomain;
+  readonly evidenceRecordId?: string;
+  readonly reversesJournalId?: string;
+  readonly reversalKind?: ReversalKind;
+  readonly requestFingerprint?: string;
 };
 
 /**
@@ -62,6 +95,14 @@ export type PostJournalRequest = {
   readonly postings: readonly ProposedPosting[];
   readonly classBridge?: ClassBridge;
   readonly memo?: string;
+  readonly reference?: string;
+  readonly correlationId?: string;
+  readonly causationId?: string;
+  readonly sourceDomain?: LedgerSourceDomain;
+  readonly evidenceRecordId?: string;
+  readonly effectiveAt?: string;
+  readonly reversesJournalId?: string;
+  readonly reversalKind?: ReversalKind;
 };
 
 export const SIMULATION_FUNDING_SOURCE_ID = 'SIMULATION.FUNDING_SOURCE' as AccountId;
@@ -234,7 +275,8 @@ export type LedgerInvariantName =
   | 'AUTHORITY'
   | 'CLASS_BRIDGE'
   | 'NO_COMMINGLING'
-  | 'IDEMPOTENCY';
+  | 'IDEMPOTENCY'
+  | 'REVERSAL';
 
 export class LedgerInvariantError extends Error {
   readonly invariant: LedgerInvariantName;

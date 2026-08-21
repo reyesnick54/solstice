@@ -9,6 +9,9 @@ export {
 } from './ledger-amount.ts';
 export {
   applyFxConversion,
+  assertIsoCurrencyCode,
+  assertSafeMinorUnits,
+  MAX_ABS_MINOR_UNITS,
   Money,
   RoundingMode,
   roundQuotient,

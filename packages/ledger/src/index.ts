@@ -1,6 +1,30 @@
 export { AccountRegister } from './accounts.ts';
+export {
+  bookRoleForAccountClass,
+  bookRoleForLedgerAccount,
+  isCustomerFacingBook,
+  LEDGER_BOOK_ROLES,
+  type LedgerBookRole,
+} from './book-role.ts';
 export { GrowthAttributionLedger } from './growth.ts';
 export { Ledger, type JournalPersistSink } from './journal.ts';
+export {
+  FINANCIAL_COMMAND_STATES,
+  isFinancialCommandState,
+  journalReadStatus,
+  type FinancialCommandState,
+} from './lifecycle.ts';
+export {
+  derivedJournalStatus,
+  journalHistory,
+  lookupJournal,
+  lookupJournalByReference,
+  postingsForAccount,
+  projectPostedBalance,
+  type JournalHistoryPage,
+  type LedgerBalanceProjection,
+} from './read-model.ts';
+export { planReversal, type ReversalPlan } from './reversal.ts';
 export {
   DEPOSIT_INTERNAL_BRIDGE,
   DEFINED_CLASS_BRIDGES,
@@ -23,12 +47,18 @@ export {
   simulationFeeCollectorId,
   simulationFundingSourceId,
   simulationInterestSourceId,
+  JOURNAL_STATUSES,
+  LEDGER_SOURCE_DOMAINS,
+  REVERSAL_KINDS,
   type ClassBridge,
   type DebitCredit,
   type Journal,
+  type JournalStatus,
   type LedgerAccount,
   type LedgerInvariantName,
+  type LedgerSourceDomain,
   type Posting,
   type PostJournalRequest,
   type ProposedPosting,
+  type ReversalKind,
 } from './types.ts';

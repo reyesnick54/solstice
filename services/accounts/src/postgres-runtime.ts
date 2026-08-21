@@ -4,7 +4,19 @@ import { asJurisdiction } from '../../../packages/domain/src/jurisdiction.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import type { EvidencePersistSink } from '../../../packages/evidence/src/vault.ts';
 import type { EventPersistSink } from '../../../packages/events/src/events.ts';
-import type { InternalTransferIntent, PostDepositIntent, PostWithdrawalIntent } from '../../../packages/permissions/src/action-types.ts';
+import type {
+  AdjustHoldIntent,
+  CreateHoldIntent,
+  InternalTransferIntent,
+  PostDepositIntent,
+  PostFeeIntent,
+  PostReversalIntent,
+  PostWithdrawalIntent,
+} from '../../../packages/permissions/src/action-types.ts';
+import type { BankingOutcome } from './banking-operations.ts';
+import type { FeeAssessment } from '../../../packages/domain/src/fee.ts';
+import type { FundsHold } from '../../../packages/domain/src/hold.ts';
+import type { ReversalRecord } from '../../../packages/domain/src/reversal.ts';
 import type { ActionIntent } from '../../../packages/permissions/src/action-intent.ts';
 import type { ExecutionAuthority } from '../../../packages/permissions/src/execution-authority.ts';
 import type { OpenAccountIntent } from '../../../packages/permissions/src/action-types.ts';
@@ -45,6 +57,10 @@ export type DurableSimulationRuntime = {
   postDeposit(intent: PostDepositIntent): Promise<MoneyMovementOutcome>;
   postWithdrawal(intent: PostWithdrawalIntent): Promise<MoneyMovementOutcome>;
   postTransfer(intent: InternalTransferIntent): Promise<MoneyMovementOutcome>;
+  createHold(intent: CreateHoldIntent): Promise<BankingOutcome<FundsHold>>;
+  adjustHold(intent: AdjustHoldIntent): Promise<BankingOutcome<FundsHold>>;
+  postFee(intent: PostFeeIntent): Promise<BankingOutcome<FeeAssessment>>;
+  postReversal(intent: PostReversalIntent): Promise<BankingOutcome<ReversalRecord>>;
   close(): Promise<void>;
   restart(): Promise<DurableSimulationRuntime>;
 };
@@ -111,6 +127,9 @@ export async function createPostgresSimulationRuntime(
   runtime.ledger.hydrateFromPersisted(loaded.journals);
   runtime.evidence.hydrateFromPersisted(loaded.evidence);
   runtime.events.hydrateFromPersisted(loaded.events);
+  runtime.banking.hydrateHolds(loaded.holds);
+  runtime.banking.hydrateReversals(loaded.reversals);
+  runtime.banking.hydrateFees(loaded.fees);
   if (loaded.policy.versions.length > 0) {
     runtime.kernel.policy.registry.hydrate(loaded.policy);
     runtime.kernel.policy.reviews.hydrate(loaded.policy.reviews);
@@ -249,6 +268,22 @@ class DurableRuntime implements DurableSimulationRuntime {
     );
   }
 
+  async createHold(intent: CreateHoldIntent): Promise<BankingOutcome<FundsHold>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.createHold(intent));
+  }
+
+  async adjustHold(intent: AdjustHoldIntent): Promise<BankingOutcome<FundsHold>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.adjustHold(intent));
+  }
+
+  async postFee(intent: PostFeeIntent): Promise<BankingOutcome<FeeAssessment>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.postFee(intent));
+  }
+
+  async postReversal(intent: PostReversalIntent): Promise<BankingOutcome<ReversalRecord>> {
+    return this.runBanking(intent, intent.payload.accountId, () => this.runtime.banking.postReversal(intent));
+  }
+
   async close(): Promise<void> {
     await this.session.close();
   }
@@ -275,6 +310,9 @@ class DurableRuntime implements DurableSimulationRuntime {
         const committed = await this.session.load();
         this.runtime.ledger.reloadFromPersisted(committed.journals);
         this.runtime.events.reloadFromPersisted(committed.events);
+        this.runtime.banking.hydrateHolds(committed.holds);
+        this.runtime.banking.hydrateReversals(committed.reversals);
+        this.runtime.banking.hydrateFees(committed.fees);
         for (const account of committed.accounts) {
           this.runtime.accounts.put(account.id, account);
           this.runtime.ledger.accounts.registerOpenedAccount(account);
@@ -305,6 +343,9 @@ class DurableRuntime implements DurableSimulationRuntime {
           authorities: authority ? [authority] : [],
           openOutcomes: openOutcome ? [openOutcome] : [],
           events: newEvents,
+          holds: this.runtime.holds.list(),
+          reversals: this.runtime.banking.listReversals(),
+          fees: this.runtime.banking.listFees(),
         });
         await persistEvidenceOnClient(evidenceClient, newEvidence);
         await evidenceClient.query('COMMIT');
@@ -324,6 +365,41 @@ class DurableRuntime implements DurableSimulationRuntime {
       }
     }
     throw lastError;
+  }
+
+  private async runBanking<T>(
+    intent: ActionIntent,
+    lockAccountId: string,
+    fn: () => T | Promise<T>,
+  ): Promise<T> {
+    const beforeEvidence = this.runtime.evidence.count();
+    const beforeEvents = this.runtime.events.list().length;
+    const result = await fn();
+    const newEvidence = this.runtime.evidence.list().slice(beforeEvidence);
+    const newEvents = this.runtime.events.list().slice(beforeEvents);
+    const authority =
+      result &&
+      typeof result === 'object' &&
+      'decision' in result &&
+      result.decision &&
+      typeof result.decision === 'object' &&
+      'executionAuthority' in result.decision
+        ? (result.decision.executionAuthority as ExecutionAuthority | null)
+        : null;
+    await persistLedgerUnit(this.session, {
+      lockAccountId,
+      ledgerAccounts: this.runtime.ledger.accounts.list(),
+      intents: [intent],
+      authorities: authority ? [authority] : [],
+      events: newEvents,
+      holds: this.runtime.holds.list(),
+      reversals: this.runtime.banking.listReversals(),
+      fees: this.runtime.banking.listFees(),
+    });
+    if (newEvidence.length > 0) {
+      await persistEvidenceUnit(this.session, newEvidence);
+    }
+    return result;
   }
 }
 

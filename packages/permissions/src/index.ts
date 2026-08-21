@@ -18,6 +18,8 @@ export type {
   CreateFxQuotePayload,
   CreateHoldIntent,
   CreateHoldPayload,
+  AdjustHoldIntent,
+  AdjustHoldPayload,
   HoldLifecyclePayload,
   InitiatePaymentIntent,
   InitiatePaymentPayload,

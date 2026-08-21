@@ -53,8 +53,10 @@ async function insertAuthorizedJournal(
     await client.query(
       `INSERT INTO ledger.journal (
          id, idempotency_key, execution_authority_id, action_type, asset,
-         class_bridge_name, memo, created_at
-       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         class_bridge_name, memo, created_at, status, effective_at, reference,
+         correlation_id, causation_id, source_domain, evidence_record_id,
+         reverses_journal_id, reversal_kind, request_fingerprint
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)`,
       [
         journal.id,
         journal.idempotencyKey,
@@ -63,6 +65,28 @@ async function insertAuthorizedJournal(
         journal.asset,
         journal.classBridgeName ?? null,
         journal.memo ?? null,
+        journal.createdAt,
+        journal.status ?? 'POSTED',
+        journal.effectiveAt ?? journal.createdAt,
+        journal.reference ?? null,
+        journal.correlationId ?? null,
+        journal.causationId ?? null,
+        journal.sourceDomain ?? null,
+        journal.evidenceRecordId ?? null,
+        journal.reversesJournalId ?? null,
+        journal.reversalKind ?? null,
+        journal.requestFingerprint ?? null,
+      ],
+    );
+    await client.query(
+      `INSERT INTO ledger.journal_idempotency (
+         idempotency_key, request_fingerprint, journal_id, created_at
+       ) VALUES ($1, $2, $3, $4)
+       ON CONFLICT (idempotency_key) DO NOTHING`,
+      [
+        journal.idempotencyKey,
+        journal.requestFingerprint ?? journal.id,
+        journal.id,
         journal.createdAt,
       ],
     );
