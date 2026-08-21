@@ -1,4 +1,8 @@
 import { CAPABILITIES, ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
+import {
+  providerDownFromRuntime,
+  type UniversalProviderRuntime,
+} from '../../../../packages/sunrey-chain/src/provider-runtime/universal/index.ts';
 import type { BffPrincipal, FeatureCapability, FeatureCapabilityMap, OptionalDomainPort } from './ports.ts';
 import type { ClientResourceState, ProductAvailability, ProviderAvailability } from './types.ts';
 
@@ -12,6 +16,7 @@ export type CapabilityInputs = {
   readonly vault?: OptionalDomainPort;
   readonly fx?: OptionalDomainPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
+  readonly providerRuntime?: UniversalProviderRuntime;
 };
 
 function feature(input: {
@@ -84,7 +89,8 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     (principal.verification !== 'VERIFIED' ||
       principal.customerStatus === 'PENDING_VERIFICATION' ||
       principal.customerStatus === 'PROSPECT');
-  const down = input.providerDown ?? {};
+  const runtimeDown = input.providerRuntime ? providerDownFromRuntime(input.providerRuntime) : {};
+  const down = { ...runtimeDown, ...input.providerDown };
 
   const payments = feature({
     key: 'payments',

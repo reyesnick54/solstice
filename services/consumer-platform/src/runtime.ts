@@ -60,6 +60,11 @@ import { PERSONA_DEFINITIONS, personaById, sandboxPersonasAllowed } from './pers
 import { ConsumerWorkflowStore, assertSimulationWebhookUrl } from './workflows.ts';
 import { createConsumerMoneySurface } from './money-surface.ts';
 import { handleConsumerMoneyRoute, MONEY_ROUTES } from './money-routes.ts';
+import {
+  bffFeatureMap,
+  createUniversalProviderRuntime,
+  seedSimulationProviders,
+} from '../../../packages/sunrey-chain/src/provider-runtime/universal/index.ts';
 
 const ACTOR_CONTEXT_TTL_SEC = 15 * 60;
 const DEFAULT_PAGE_SIZE = 20;
@@ -279,15 +284,29 @@ function tokenResponse(accessToken: string, session: IdentitySession): TokenResp
   });
 }
 
+const providerRuntime = createUniversalProviderRuntime();
+seedSimulationProviders(providerRuntime);
+
 function featureFlags(): readonly FeatureFlagDto[] {
+  const providerFeatures = bffFeatureMap(providerRuntime);
   return Object.freeze(
-    CONSUMER_FEATURE_IDS.map((featureId) =>
-      Object.freeze({
+    CONSUMER_FEATURE_IDS.map((featureId) => {
+      let available = ENABLED_FEATURES.has(featureId);
+      if (featureId === 'send') {
+        available = available && providerFeatures.payments.enabled;
+      }
+      if (featureId === 'fx') {
+        available = available && providerFeatures.fx.enabled;
+      }
+      if (featureId === 'cards') {
+        available = available && providerFeatures.cards.enabled;
+      }
+      return Object.freeze({
         feature_id: featureId,
-        available: ENABLED_FEATURES.has(featureId),
-        reason_code: ENABLED_FEATURES.has(featureId) ? null : 'FEATURE_UNAVAILABLE',
-      }),
-    ),
+        available,
+        reason_code: available ? null : 'FEATURE_UNAVAILABLE',
+      });
+    }),
   );
 }
 
