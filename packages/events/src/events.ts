@@ -38,6 +38,55 @@ export type AccountOpenedV1 = VersionedEvent<
   }
 >;
 
+export type AccountActivatedV1 = VersionedEvent<
+  'AccountActivated',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly fromStatus: string;
+    readonly toStatus: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type AccountRestrictedV1 = VersionedEvent<
+  'AccountRestricted',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly restriction: string;
+    readonly reason: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type AccountClosedV1 = VersionedEvent<
+  'AccountClosed',
+  1,
+  {
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly fromStatus: string;
+    readonly toStatus: string;
+    readonly accountVersion: number;
+  }
+>;
+
+export type CustomerActivityRecordedV1 = VersionedEvent<
+  'CustomerActivityRecorded',
+  1,
+  {
+    readonly activityId: string;
+    readonly accountId: AccountId;
+    readonly ownerId: CustomerId;
+    readonly type: string;
+    readonly status: string;
+    readonly currency: string;
+  }
+>;
+
 export type DepositPostedV1 = VersionedEvent<
   'DepositPosted',
   1,
@@ -1054,6 +1103,10 @@ export type RailReconciliationMismatchV1 = VersionedEvent<'RailReconciliationMis
 
 export type DomainEvent =
   | AccountOpenedV1
+  | AccountActivatedV1
+  | AccountRestrictedV1
+  | AccountClosedV1
+  | CustomerActivityRecordedV1
   | DepositPostedV1
   | WithdrawalPostedV1
   | InternalTransferPostedV1

@@ -12,6 +12,10 @@ export type EventSchemaRecord = {
 
 const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'AccountOpened', version: 1, status: 'current' },
+  { eventType: 'AccountActivated', version: 1, status: 'current' },
+  { eventType: 'AccountRestricted', version: 1, status: 'current' },
+  { eventType: 'AccountClosed', version: 1, status: 'current' },
+  { eventType: 'CustomerActivityRecorded', version: 1, status: 'current' },
   { eventType: 'DepositPosted', version: 1, status: 'current' },
   { eventType: 'WithdrawalPosted', version: 1, status: 'current' },
   { eventType: 'InternalTransferPosted', version: 1, status: 'current' },

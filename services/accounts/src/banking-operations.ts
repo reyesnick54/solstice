@@ -71,6 +71,8 @@ import {
   projectBankingPosition,
 } from './available-funds.ts';
 import { HoldStore } from './hold-store.ts';
+import { assertMovementAllowed } from './restriction-enforcement.ts';
+import type { RestrictionStore } from './restriction-store.ts';
 import { generateAccountStatement } from './statements.ts';
 import type { AccountStore, CustomerStore, LegalEntityStore, ProductStore } from './stores.ts';
 
@@ -114,6 +116,7 @@ export class BankingOperationsService {
   private readonly statements = new Map<string, CustomerStatement>();
   private readonly reconciliations = new Map<string, ReconciliationItem>();
   private readonly coordinates = new Map<string, readonly import('../../../packages/domain/src/coordinates.ts').ExternalAccountCoordinate[]>();
+  private readonly restrictions: RestrictionStore | undefined;
 
   constructor(
     kernel: ComplianceKernel,
@@ -129,6 +132,7 @@ export class BankingOperationsService {
     legalEntities: LegalEntityStore,
     identity: IdentityAuthorityPort,
     holds = new HoldStore(),
+    restrictions?: RestrictionStore,
   ) {
     this.ports = {
       kernel,
@@ -145,6 +149,7 @@ export class BankingOperationsService {
     this.ledger = ledger;
     this.growth = growth;
     this.holds = holds;
+    this.restrictions = restrictions;
   }
 
   async createHold(intent: CreateHoldIntent): Promise<BankingOutcome<FundsHold>> {
@@ -186,6 +191,18 @@ export class BankingOperationsService {
           'ACCOUNT_NOT_OPEN',
           'FROZEN or CLOSED account cannot initiate outgoing movement',
         );
+      }
+      if (this.restrictions) {
+        const blocked = assertMovementAllowed(this.restrictions, account, 'HOLD');
+        if (isErr(blocked)) {
+          return this.reject(
+            intent.actionType,
+            intent.id,
+            authorized.decision,
+            blocked.error.code,
+            blocked.error.message,
+          );
+        }
       }
       const now = this.ports.clock.now();
       const position = projectBankingPosition(this.ledger, account, this.holds, now);

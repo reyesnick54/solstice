@@ -1,12 +1,15 @@
 import { randomUUID } from 'node:crypto';
 
 import {
+  ACCOUNT_RESTRICTION_CODES,
   APPROVAL_REQUIREMENTS,
   CLIENT_RESOURCE_STATES,
   CONSUMER_ACCOUNT_TYPES,
   CONSUMER_ACTION_STATUSES,
   CONSUMER_ASSET_TYPES,
   CONSUMER_TRANSACTION_STATUSES,
+  FINANCIAL_ACCOUNT_LIFECYCLES,
+  FINANCIAL_PRODUCT_TYPES,
   PRODUCT_AVAILABILITIES,
   PROVIDER_AVAILABILITIES,
   RISK_DISPLAY_LEVELS,
@@ -81,6 +84,9 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
       {
         transactionStatus: CONSUMER_TRANSACTION_STATUSES,
         actionStatus: CONSUMER_ACTION_STATUSES,
+        accountLifecycle: FINANCIAL_ACCOUNT_LIFECYCLES,
+        accountProductType: FINANCIAL_PRODUCT_TYPES,
+        accountRestriction: ACCOUNT_RESTRICTION_CODES,
         accountType: CONSUMER_ACCOUNT_TYPES,
         assetType: CONSUMER_ASSET_TYPES,
         riskDisplay: RISK_DISPLAY_LEVELS,
@@ -139,7 +145,7 @@ function dispatchAuthenticated(
     return result(runtime.bff.patchProfile(principal, rec, requestId), headers);
   }
   if (path === '/api/v1/me/home' && method === 'GET') {
-    return result(runtime.bff.home(principal, requestId), headers);
+    return result(runtime.bff.home(principal, requestId, query.valuationCurrency ?? query.valuation_currency ?? 'USD'), headers);
   }
   if (path === '/api/v1/me/bootstrap' && method === 'GET') {
     return json(200, runtime.bff.bootstrap(principal), headers);
@@ -152,7 +158,11 @@ function dispatchAuthenticated(
   }
   if (path.startsWith('/api/v1/accounts/') && path.endsWith('/activity') && method === 'GET') {
     const id = path.slice('/api/v1/accounts/'.length, -'/activity'.length);
-    return result(runtime.bff.accountActivity(principal, id, requestId, query.cursor, pageSizeOf(query.pageSize ?? query.page_size)), headers);
+    return result(runtime.bff.accountActivity(principal, id, requestId, query.cursor, pageSizeOf(query.pageSize ?? query.page_size), query), headers);
+  }
+  if (path.startsWith('/api/v1/accounts/') && path.endsWith('/statement') && method === 'GET') {
+    const id = path.slice('/api/v1/accounts/'.length, -'/statement'.length);
+    return result(runtime.bff.accountStatement(principal, id, requestId, query.periodStart ?? query.from, query.periodEnd ?? query.to), headers);
   }
   if (path.startsWith('/api/v1/accounts/') && method === 'GET') {
     const id = path.slice('/api/v1/accounts/'.length);
@@ -227,6 +237,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/accounts',
   'GET /api/v1/accounts/{id}',
   'GET /api/v1/accounts/{id}/activity',
+  'GET /api/v1/accounts/{id}/statement',
   'GET /api/v1/payments',
   'GET /api/v1/recipients',
   'GET /api/v1/fx',

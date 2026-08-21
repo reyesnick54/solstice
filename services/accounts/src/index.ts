@@ -3,6 +3,21 @@ export { AccountsService, type OpenAccountOutcome } from './open-account.ts';
 export { MoneyMovementService, type MoneyMovementOutcome } from './money-movement.ts';
 export { BankingOperationsService, type BankingOutcome } from './banking-operations.ts';
 export { HoldStore } from './hold-store.ts';
+export { AccountProductService } from './account-product-service.ts';
+export {
+  assembleFinancialAccount,
+  deriveLifecycle,
+  productTypeOf,
+  FINANCIAL_ACCOUNT_LIFECYCLES,
+  FINANCIAL_PRODUCT_TYPES,
+  type CustomerFinancialAccount,
+  type FinancialAccountLifecycle,
+  type FinancialProductType,
+} from './product-account.ts';
+export { RestrictionStore, FinancialAccountOverlayStore } from './restriction-store.ts';
+export { assertMovementAllowed } from './restriction-enforcement.ts';
+export { filterActivity, normalizeActivityItem, parseActivityFilter } from './activity.ts';
+export { projectCustomerWealth, unavailableFxValuation, type FxValuationPort, type WealthValuation } from './wealth.ts';
 export {
   activeHeldAmount,
   assertSufficientAvailable,

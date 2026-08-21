@@ -525,6 +525,16 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
   });
 
+  it('ledger V008 persists account product overlay and restrictions without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v008 = files.find((file) => file.version === 8);
+    assert.ok(v008);
+    assert.equal(v008.filename, 'V008__account_product.sql');
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
+    assert.equal(/balance/.test(v008.sql), false);
+  });
+
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v007 = files.find((file) => file.version === 7);
