@@ -5094,11 +5094,6 @@
       "canonicalOwner": "packages/sunrey-chain",
       "canonicalPath": "packages/sunrey-chain/src/mainnet/operating-scope/types.ts",
       "publicInterface": "packages/sunrey-chain/src/mainnet/operating-scope/index.ts",
-      "id": "sunrey-external-production-evidence",
-      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
-      "canonicalOwner": "packages/sunrey-chain",
-      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
-      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
       "status": "IMPLEMENTED",
       "protected": true,
       "financialStateMutation": false,
@@ -5115,6 +5110,25 @@
         "packages/global-regulation",
         "packages/country-law",
         "packages/legal-engine"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
+    },
+    {
+      "id": "sunrey-external-production-evidence",
+      "name": "External production evidence, attestation, audit, contract, license, counsel, and human-review registry",
+      "canonicalOwner": "packages/sunrey-chain",
+      "canonicalPath": "packages/sunrey-chain/src/mainnet/external-evidence/types.ts",
+      "publicInterface": "packages/sunrey-chain/src/mainnet/external-evidence/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
           "name": "ExternalProductionEvidenceRecord",
           "kind": "type"
         }
@@ -5129,7 +5143,6 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 161 evidence-backed operating-scope control plane under mainnet readiness. Not legal advice. Does not infer regulatory permission from software capability. Does not issue Execution Authority. Unknown jurisdictions and unknown corridors stay disabled. Consumes Chunk 160 evidence references when present."
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
     }
   ],
@@ -5963,7 +5976,7 @@
     "packages/licensing",
     "packages/global-regulation",
     "packages/country-law",
-    "packages/legal-engine"
+    "packages/legal-engine",
     "packages/repository-integrity",
     "packages/architecture-v2",
     "packages/merge-manager"
@@ -7073,11 +7086,15 @@
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 161 jurisdictional operating scope, licensing, regulatory-evidence binding, corridor eligibility, and product activation matrix at packages/sunrey-chain/src/mainnet/operating-scope. Extends sunrey-mainnet-readiness. Not legal advice. Does not issue Execution Authority. Do not create packages/licensing, packages/global-regulation, packages/country-law, or packages/legal-engine."
+    },
+    {
       "id": "sunrey-external-production-evidence",
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
       "notes": "Chunk 160 external production evidence registry at packages/sunrey-chain/src/mainnet/external-evidence. Extends sunrey-mainnet-readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Do not create packages/legal, packages/licenses, packages/external-audit, packages/compliance-evidence, or packages/evidence-v2."
+    },
+    {
       "id": "sunrey-repository-integrity",
       "status": "IMPLEMENTED",
       "owner": "tools/architectural-linter",
@@ -7598,11 +7615,11 @@
     "packages/integrations-v2",
     "packages/vendor-connectivity",
     "packages/provider-manager",
-    "packages/live-providers"
+    "packages/live-providers",
     "packages/licensing",
     "packages/global-regulation",
     "packages/country-law",
-    "packages/legal-engine"
+    "packages/legal-engine",
     "packages/legal",
     "packages/licenses",
     "packages/external-audit",

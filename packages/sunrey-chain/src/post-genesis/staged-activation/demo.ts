@@ -20,7 +20,7 @@ import {
   initialSequencerState,
 } from './advance.ts';
 import { evaluateDomainGates, failedGates } from './gates.ts';
-import { healthyChainObservation, withOracleDegraded } from './fixtures.ts';
+import { healthyChainObservation, withMoonreyIssuanceAuthorized, withOracleDegraded } from './fixtures.ts';
 import { evaluateStagedActivation, rehearsalFlags } from './report.ts';
 
 export function runStagedActivationDemo(): void {
@@ -51,7 +51,7 @@ export function runStagedActivationDemo(): void {
   );
   state = stage1.state;
 
-  const degraded = withOracleDegraded(healthy);
+  const degraded = withOracleDegraded(withMoonreyIssuanceAuthorized(healthy));
   const moonrey = failedGates(evaluateDomainGates('MOONREY_COIN_ISSUANCE', degraded));
   const report = evaluateStagedActivation(degraded, state);
   const chain = report.domains.find((row) => row.domain === 'SUNREY_CHAIN');

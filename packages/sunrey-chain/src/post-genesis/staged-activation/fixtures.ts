@@ -197,7 +197,6 @@ export function withOracleDegraded(observation: StagedActivationObservation): St
       ...observation.issuance,
       moonreyOracleReady: false,
       moonreyProductiveValueReady: false,
-      moonreyEconomicAuthorization: false,
     }),
     productive: Object.freeze({
       ...observation.productive,

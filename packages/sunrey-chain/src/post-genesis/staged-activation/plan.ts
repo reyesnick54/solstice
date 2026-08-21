@@ -15,21 +15,33 @@ import {
   type StagedActivationStage,
 } from './types.ts';
 
-const DOMAINS_BY_STAGE: Readonly<Record<StagedActivationStage, readonly StagedActivationDomain[]>> = Object.freeze({
-  STAGE_0_GENESIS_AND_CONSENSUS: Object.freeze(['SUNREY_CHAIN']),
-  STAGE_1_READ_ONLY_PUBLIC_SURFACES: Object.freeze(['SUNREY_CHAIN']),
-  STAGE_2_NATIVE_ASSET_BASE: Object.freeze(['SUNREY_COIN_NATIVE_ASSET', 'MOONREY_COIN_NATIVE_ASSET']),
-  STAGE_3_ECONOMIC_EVIDENCE_READ_ONLY: Object.freeze(['PRODUCTIVE_ECONOMIC_DATA']),
-  STAGE_4_CUSTODY_CANDIDATE: Object.freeze(['INSTITUTIONAL_CUSTODY']),
-  STAGE_5_EXCHANGE_CANDIDATE: Object.freeze(['SUNREY_EXCHANGE', 'SUNREY_EXCHANGE_SETTLEMENT']),
-  STAGE_6_GOVERNED_NATIVE_ISSUANCE: Object.freeze(['SUNREY_COIN_ISSUANCE', 'MOONREY_COIN_ISSUANCE']),
-  STAGE_7_REGULATED_FINANCIAL_SERVICES: Object.freeze(['FIAT_BANKING', 'PAYMENT_RAILS', 'CARDS', 'INVESTMENTS']),
-  STAGE_8_HIN_AND_PRODUCTIVE_MARKETS: Object.freeze([
-    'HUMAN_INFORMATION_MARKET',
-    'PRODUCTIVE_CAPACITY_MARKET',
-    'INTEROPERABILITY',
-  ]),
-});
+const DOMAINS_BY_STAGE = Object.freeze({
+  STAGE_0_GENESIS_AND_CONSENSUS: Object.freeze(['SUNREY_CHAIN'] as const satisfies readonly StagedActivationDomain[]),
+  STAGE_1_READ_ONLY_PUBLIC_SURFACES: Object.freeze(['SUNREY_CHAIN'] as const satisfies readonly StagedActivationDomain[]),
+  STAGE_2_NATIVE_ASSET_BASE: Object.freeze(
+    ['SUNREY_COIN_NATIVE_ASSET', 'MOONREY_COIN_NATIVE_ASSET'] as const satisfies readonly StagedActivationDomain[],
+  ),
+  STAGE_3_ECONOMIC_EVIDENCE_READ_ONLY: Object.freeze(
+    ['PRODUCTIVE_ECONOMIC_DATA'] as const satisfies readonly StagedActivationDomain[],
+  ),
+  STAGE_4_CUSTODY_CANDIDATE: Object.freeze(['INSTITUTIONAL_CUSTODY'] as const satisfies readonly StagedActivationDomain[]),
+  STAGE_5_EXCHANGE_CANDIDATE: Object.freeze(
+    ['SUNREY_EXCHANGE', 'SUNREY_EXCHANGE_SETTLEMENT'] as const satisfies readonly StagedActivationDomain[],
+  ),
+  STAGE_6_GOVERNED_NATIVE_ISSUANCE: Object.freeze(
+    ['SUNREY_COIN_ISSUANCE', 'MOONREY_COIN_ISSUANCE'] as const satisfies readonly StagedActivationDomain[],
+  ),
+  STAGE_7_REGULATED_FINANCIAL_SERVICES: Object.freeze(
+    ['FIAT_BANKING', 'PAYMENT_RAILS', 'CARDS', 'INVESTMENTS'] as const satisfies readonly StagedActivationDomain[],
+  ),
+  STAGE_8_HIN_AND_PRODUCTIVE_MARKETS: Object.freeze(
+    [
+      'HUMAN_INFORMATION_MARKET',
+      'PRODUCTIVE_CAPACITY_MARKET',
+      'INTEROPERABILITY',
+    ] as const satisfies readonly StagedActivationDomain[],
+  ),
+}) satisfies Readonly<Record<StagedActivationStage, readonly StagedActivationDomain[]>>;
 
 const STAGE_ORDER = new Map<StagedActivationStage, number>(
   STAGED_ACTIVATION_STAGES.map((stage, index) => [stage, index]),
@@ -62,7 +74,7 @@ export function nextStage(stage: StagedActivationStage): StagedActivationStage |
 }
 
 export function domainsForStage(stage: StagedActivationStage): readonly StagedActivationDomain[] {
-  return DOMAINS_BY_STAGE[stage];
+  return DOMAINS_BY_STAGE[stage] as readonly StagedActivationDomain[];
 }
 
 export function homeStage(domain: StagedActivationDomain): StagedActivationStage {
@@ -70,7 +82,8 @@ export function homeStage(domain: StagedActivationDomain): StagedActivationStage
     return 'STAGE_0_GENESIS_AND_CONSENSUS';
   }
   for (const stage of STAGED_ACTIVATION_STAGES) {
-    if (DOMAINS_BY_STAGE[stage].includes(domain)) {
+    const assigned = DOMAINS_BY_STAGE[stage] as readonly StagedActivationDomain[];
+    if (assigned.includes(domain)) {
       return stage;
     }
   }
