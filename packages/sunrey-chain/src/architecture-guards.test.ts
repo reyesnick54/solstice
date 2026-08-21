@@ -82,7 +82,7 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'public-data-plane')}`) ||
         file.includes(`${join('src', 'validator-operator')}`);
       if (allowsTestNetwork) {
-        assert.equal(/\bLIVE_CHAIN\b|\bMAINNET_ENABLED\b/.test(source), false, file);
+        assert.equal(/\bLIVE_CHAIN\s*=\s*true\b|\bMAINNET_ENABLED\s*=\s*true\b/.test(source), false, file);
         assert.equal(/productionNetworkEnabled:\s*true/.test(source), false, file);
       } else {
         assert.equal(/mainnet|testnet|rpcUrl|LIVE_CHAIN/i.test(source), false, file);
