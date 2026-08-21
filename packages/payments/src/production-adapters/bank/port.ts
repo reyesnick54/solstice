@@ -113,7 +113,7 @@ export type BankAdapter = {
   readonly canIssueExecutionAuthority: false;
   createCustomerProfile(input: CreateBankCustomerInput): AdapterResult<BankCustomerProfile>;
   updateCustomerProfile(input: UpdateBankCustomerInput): AdapterResult<BankCustomerProfile>;
-  createAccount(input: CreateBankAccountInput): AdapterResult<BankAccountRecord>;
+  createProviderAccount(input: CreateBankAccountInput): AdapterResult<BankAccountRecord>;
   getAccount(providerAccountId: string): AdapterResult<BankAccountRecord>;
   getBalance(providerAccountId: string): AdapterResult<BankBalanceSnapshot>;
   getTransactions(providerAccountId: string): AdapterResult<readonly BankTransactionRecord[]>;

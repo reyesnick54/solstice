@@ -11,7 +11,7 @@ export function runBankCertificationSuite(adapter: SimulatedBankAdapter = new Si
   if (!customer.ok) {
     return suiteResult('BANK', cases);
   }
-  const opened = adapter.createAccount({
+  const opened = adapter.createProviderAccount({
     providerCustomerId: customer.value.providerCustomerId,
     currency: asCurrencyCode('USD'),
     jurisdiction: 'US',

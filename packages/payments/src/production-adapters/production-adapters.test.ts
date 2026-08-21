@@ -57,7 +57,7 @@ describe('Phase D financial provider adapters', () => {
     if (!customer.ok) {
       return;
     }
-    const account = bank.createAccount({
+    const account = bank.createProviderAccount({
       providerCustomerId: customer.value.providerCustomerId,
       currency: asCurrencyCode('USD'),
       jurisdiction: 'US',

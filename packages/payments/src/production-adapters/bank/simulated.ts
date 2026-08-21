@@ -84,7 +84,7 @@ export class SimulatedBankAdapter implements BankAdapter {
     return adapterOk(next);
   }
 
-  createAccount(input: CreateBankAccountInput): AdapterResult<BankAccountRecord> {
+  createProviderAccount(input: CreateBankAccountInput): AdapterResult<BankAccountRecord> {
     if (!this.customers.has(input.providerCustomerId)) {
       return adapterErr('BANK_CUSTOMER_NOT_FOUND', 'cannot open account without provider customer');
     }

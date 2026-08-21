@@ -54,7 +54,7 @@ Do not redesign SunRey domain types around a vendor API.
 
 ## Bank / BaaS
 
-`BankAdapter` supports customer profile, account create/get/status,
+`BankAdapter` supports customer profile, provider-account create/get/status,
 balance, transactions, statement, and close/restrict. Identifiers
 (IBAN, routing+account, sort code, local) are sealed into a fingerprint
 plus display mask. Raw values are not returned.
