@@ -1,4 +1,4 @@
--- V030 Phase C treasury financial control: provider balances, settlement
+-- V032 Phase C treasury financial control: provider balances, settlement
 -- records, reconciliation runs/breaks, suspense, daily close, alerts.
 -- Not a second ledger. Externally reported balances are never applied
 -- automatically to Ledger balances.
