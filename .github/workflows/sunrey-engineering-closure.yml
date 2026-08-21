@@ -60,6 +60,14 @@ jobs:
           node scripts/sunrey-release.mjs sbom
           node scripts/sunrey-release.mjs provenance
 
+      - name: Build reproducibility
+        run: node scripts/sunrey-release.mjs compare-builds
+
+      - name: Extended adversarial campaign
+        env:
+          SUNREY_FIXTURE_ENV: local
+        run: npm run demo:sunrey-production-adversarial-campaign
+
       - name: Full-platform burn-in
         env:
           SUNREY_FIXTURE_ENV: local
