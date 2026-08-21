@@ -41,6 +41,10 @@ export type DeadLetterRecord = {
   readonly attemptCount: number;
   readonly reasonCode: string;
   readonly reasonSafe: string;
+  readonly errorClass?: string | null;
+  readonly correlationId?: string | null;
+  readonly requestId?: string | null;
+  readonly lastAttemptAt?: string | null;
   readonly createdAt: string;
   readonly replayedAt: string | null;
 };

@@ -41,10 +41,25 @@ export type AggregateRef = {
 
 export type EventMetadata = Readonly<Record<string, string>>;
 
+export type EventPartyRef = {
+  readonly type: string;
+  readonly id: string;
+};
+
+/** Compiled environment on every envelope. Never LIVE. */
+export const ENVELOPE_ENVIRONMENT = 'simulation' as const;
+export type EnvelopeEnvironment = typeof ENVELOPE_ENVIRONMENT;
+
+export const DEFAULT_EVENT_PRODUCER = 'sunrey.events' as const;
+
 /**
  * Canonical durable envelope. This extends VersionedEvent; it is not a
  * second event model. schemaVersion remains the payload version.
  * eventVersion is the same integer, named for the envelope contract.
+ *
+ * producer / actor / subject / environment / requestId are additive
+ * observability fields. Missing values on historical envelopes are
+ * filled with simulation defaults at parse time.
  */
 export type DurableEventEnvelope<T extends string = string, V extends number = number, P = unknown> = {
   readonly eventId: EventId;
@@ -52,6 +67,11 @@ export type DurableEventEnvelope<T extends string = string, V extends number = n
   readonly eventVersion: V;
   readonly schemaVersion: V;
   readonly occurredAt: UtcInstant;
+  readonly producer: string;
+  readonly actor: EventPartyRef | null;
+  readonly subject: EventPartyRef | null;
+  readonly environment: EnvelopeEnvironment;
+  readonly requestId: string | null;
   readonly aggregateType: string;
   readonly aggregateId: string;
   readonly aggregateSequence: number;
@@ -68,6 +88,11 @@ export type DurableEventEnvelope<T extends string = string, V extends number = n
 
 export type EnvelopeHints = {
   readonly eventId?: string | undefined;
+  readonly producer?: string | undefined;
+  readonly actor?: EventPartyRef | null | undefined;
+  readonly subject?: EventPartyRef | null | undefined;
+  readonly environment?: EnvelopeEnvironment | undefined;
+  readonly requestId?: string | null | undefined;
   readonly aggregateType?: string | undefined;
   readonly aggregateId?: string | undefined;
   readonly aggregateSequence?: number | undefined;
@@ -329,6 +354,18 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.operationId ?? body.intentId ?? body.correlationId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('Workflow')) {
+    return { type: 'workflow', id: String(body.workflowId ?? 'unknown') };
+  }
+  if (eventType.startsWith('Job')) {
+    return { type: 'job', id: String(body.jobId ?? 'unknown') };
+  }
+  if (eventType.startsWith('ProviderWebhook') || eventType.startsWith('OutboundWebhook')) {
+    return {
+      type: 'webhook',
+      id: String(body.receiptId ?? body.deliveryId ?? body.providerEventId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 
@@ -339,13 +376,24 @@ export function sealEnvelope<T extends string, V extends number, P>(
   assertSafeEventPayload(input.payload);
   const inferred = inferAggregate(input.eventType, input.payload);
   const eventId = asEventId(input.eventId ?? randomUUID());
-  const correlation = asCorrelationId(input.correlationId ?? input.intentId ?? eventId);
+  const correlation = asCorrelationId(input.correlationId ?? input.intentId ?? input.requestId ?? eventId);
+  const environment = input.environment ?? ENVELOPE_ENVIRONMENT;
+  if (environment !== ENVELOPE_ENVIRONMENT) {
+    throw new Error('event envelope environment must remain simulation');
+  }
+  const actor = normalizeParty(input.actor ?? null);
+  const subject = normalizeParty(input.subject ?? inferredParty(inferred));
   return Object.freeze({
     eventId,
     eventType: input.eventType,
     eventVersion: input.schemaVersion,
     schemaVersion: input.schemaVersion,
     occurredAt: input.occurredAt,
+    producer: input.producer ?? DEFAULT_EVENT_PRODUCER,
+    actor,
+    subject,
+    environment,
+    requestId: input.requestId ?? null,
     aggregateType: input.aggregateType ?? inferred.type,
     aggregateId: input.aggregateId ?? inferred.id,
     aggregateSequence: input.aggregateSequence ?? sequence,
@@ -361,6 +409,20 @@ export function sealEnvelope<T extends string, V extends number, P>(
   });
 }
 
+function normalizeParty(value: EventPartyRef | null | undefined): EventPartyRef | null {
+  if (!value || value.type.length === 0 || value.id.length === 0) {
+    return null;
+  }
+  return Object.freeze({ type: value.type, id: value.id });
+}
+
+function inferredParty(inferred: AggregateRef): EventPartyRef | null {
+  if (inferred.id === 'unknown') {
+    return null;
+  }
+  return Object.freeze({ type: inferred.type, id: inferred.id });
+}
+
 export function serializeEnvelope(envelope: DurableEventEnvelope): string {
   return JSON.stringify({
     eventId: envelope.eventId,
@@ -368,6 +430,11 @@ export function serializeEnvelope(envelope: DurableEventEnvelope): string {
     eventVersion: envelope.eventVersion,
     schemaVersion: envelope.schemaVersion,
     occurredAt: envelope.occurredAt,
+    producer: envelope.producer,
+    actor: envelope.actor,
+    subject: envelope.subject,
+    environment: envelope.environment,
+    requestId: envelope.requestId,
     aggregateType: envelope.aggregateType,
     aggregateId: envelope.aggregateId,
     aggregateSequence: envelope.aggregateSequence,
@@ -399,6 +466,11 @@ export function parseEnvelope(serialized: string): DurableEventEnvelope {
       occurredAt: raw.occurredAt,
       payload: raw.payload,
       eventId: raw.eventId,
+      producer: raw.producer,
+      actor: raw.actor,
+      subject: raw.subject,
+      environment: raw.environment ?? ENVELOPE_ENVIRONMENT,
+      requestId: raw.requestId ?? null,
       aggregateType: raw.aggregateType,
       aggregateId: raw.aggregateId,
       aggregateSequence: raw.aggregateSequence,

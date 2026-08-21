@@ -2,6 +2,7 @@ import type { DurableEventEnvelope, EventId } from './envelope.ts';
 import { assertSupportedEventVersion, UnsupportedEventVersionError } from './schema.ts';
 import { assertInOrder, OutOfOrderEventError } from './ordering.ts';
 import { safeFailureMessage, type InboxRecord, type InboxState } from './delivery.ts';
+import { classifyFailure } from './retry.ts';
 
 export type EventConsumer = {
   readonly consumerId: string;
@@ -126,12 +127,26 @@ export class InboxProcessor {
       await this.inbox.complete(consumer.consumerId, envelope.eventId, this.options.now());
       return 'applied';
     } catch (error) {
+      const classified = classifyFailure(error);
       const safe = safeFailureMessage(error);
-      await this.inbox.fail(consumer.consumerId, envelope.eventId, safe.code, safe.message);
+      await this.inbox.fail(
+        consumer.consumerId,
+        envelope.eventId,
+        classified.code || safe.code,
+        safe.message,
+      );
       if (error instanceof UnsupportedEventVersionError || error instanceof OutOfOrderEventError) {
         throw error;
       }
       throw error;
     }
   }
+}
+
+export async function withIdempotentHandler(
+  processor: InboxProcessor,
+  consumer: EventConsumer,
+  envelope: DurableEventEnvelope,
+): Promise<'applied' | 'duplicate' | 'failed'> {
+  return processor.process(consumer, envelope);
 }

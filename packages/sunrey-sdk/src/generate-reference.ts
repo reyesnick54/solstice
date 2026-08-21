@@ -42,6 +42,7 @@ Canonical specifications:
 - \`api/sunrey-exchange-v1.openapi.yaml\`
 - \`api/sunrey-events-v1.md\`
 - \`api/sunrey-developer-platform-v1.openapi.yaml\`
+- \`api/sunrey-consumer-platform-v1.openapi.yaml\`
 - \`api/sunrey-webhooks-v1.json\`
 `;
 

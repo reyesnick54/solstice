@@ -1,0 +1,1033 @@
+openapi: 3.1.0
+info:
+  title: SunRey consumer platform API
+  version: v1
+  description: >
+    Canonical consumer/platform HTTP contract for frontend and Lovable
+    integration. Documents implemented Phase B endpoints only. Specialized
+    chain, Exchange, developer-platform, event, and webhook contracts remain
+    in their own specifications. Simulation only. Balances are ledger
+    projections. Clients never write the ledger or treat Agent text as
+    authorization.
+servers:
+  - url: http://127.0.0.1:18580
+    description: Local consumer platform (not hardcoded in the SDK)
+tags:
+  - name: HEALTH
+  - name: AUTH
+  - name: SESSIONS
+  - name: DEVICES
+  - name: ME
+  - name: HOME
+  - name: ACCOUNTS
+  - name: ACTIVITY
+  - name: CAPABILITIES
+  - name: ACTIONS
+  - name: APPROVALS
+  - name: WORKFLOWS
+  - name: WEBHOOKS
+  - name: SANDBOX
+security:
+  - ConsumerBearer: []
+paths:
+  /health:
+    get:
+      operationId: getConsumerHealthRoot
+      tags: [HEALTH]
+      security: []
+      summary: Process health
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HealthDto" }
+              example:
+                status: ok
+                api_version: v1
+                surface: CONSUMER_PLATFORM
+                environment: simulation
+                production_active: false
+  /ready:
+    get:
+      operationId: getConsumerReady
+      tags: [HEALTH]
+      security: []
+      summary: Readiness
+      responses:
+        "200":
+          description: Ready
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HealthDto" }
+  /v1/consumer/health:
+    get:
+      operationId: getConsumerHealth
+      tags: [HEALTH]
+      security: []
+      summary: Versioned health
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HealthDto" }
+  /v1/consumer/version:
+    get:
+      operationId: getConsumerVersion
+      tags: [HEALTH]
+      security: []
+      summary: API version and integration environment
+      responses:
+        "200":
+          description: Version
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/VersionDto" }
+              example:
+                api_version: v1
+                product: SunRey consumer platform
+                integration_environment: LOCAL
+  /v1/consumer/auth/register:
+    post:
+      operationId: registerConsumerIdentity
+      tags: [AUTH]
+      security: []
+      summary: Create and activate a person identity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+            example:
+              home_jurisdiction: GB
+      responses:
+        "200":
+          description: Identity created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RegisterResponse" }
+        "400":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/passkey/register/begin:
+    post:
+      operationId: beginConsumerPasskeyRegistration
+      tags: [AUTH]
+      security: []
+      summary: Begin passkey registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IdentityIdRequest" }
+      responses:
+        "200":
+          description: Challenge
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PasskeyChallengeDto" }
+        "400":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/passkey/register/complete:
+    post:
+      operationId: completeConsumerPasskeyRegistration
+      tags: [AUTH]
+      security: []
+      summary: Complete passkey registration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasskeyRegisterCompleteRequest" }
+            example:
+              challenge_id: chal_example
+              credential_id: cred_example
+              public_key_material: sim-public-material
+              transports: [internal]
+              device_ref: browser-1
+      responses:
+        "200":
+          description: Credential registered
+        "401":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/passkey/login/begin:
+    post:
+      operationId: beginConsumerPasskeyLogin
+      tags: [AUTH]
+      security: []
+      summary: Begin passkey login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IdentityIdRequest" }
+      responses:
+        "200":
+          description: Challenge
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PasskeyChallengeDto" }
+  /v1/consumer/auth/passkey/login/complete:
+    post:
+      operationId: completeConsumerPasskeyLogin
+      tags: [AUTH]
+      security: []
+      summary: Complete passkey login and issue a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PasskeyLoginCompleteRequest" }
+      responses:
+        "200":
+          description: Session token
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenResponse" }
+        "401":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/refresh:
+    post:
+      operationId: refreshConsumerSession
+      tags: [AUTH]
+      summary: Re-issue an access token while the session is active
+      responses:
+        "200":
+          description: Refreshed token
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenResponse" }
+        "401":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/logout:
+    post:
+      operationId: logoutConsumerSession
+      tags: [AUTH]
+      summary: Revoke the current session
+      responses:
+        "200":
+          description: Revoked
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [revoked]
+                properties:
+                  revoked: { type: boolean, enum: [true] }
+        "401":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/recovery:
+    post:
+      operationId: requestConsumerRecovery
+      tags: [AUTH]
+      security: []
+      summary: Start account recovery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/IdentityIdRequest" }
+      responses:
+        "200":
+          description: Recovery requested
+  /v1/consumer/auth/mfa:
+    get:
+      operationId: getConsumerMfaStatus
+      tags: [AUTH]
+      summary: MFA factor status. TOTP is not implemented.
+      responses:
+        "200":
+          description: MFA status
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MfaStatusDto" }
+  /v1/consumer/auth/sandbox/personas:
+    get:
+      operationId: listSandboxPersonas
+      tags: [SANDBOX]
+      security: []
+      summary: List fail-closed sandbox personas
+      description: Requires SUNREY_SANDBOX_PERSONAS=1 and ENVIRONMENT=simulation.
+      responses:
+        "200":
+          description: Personas
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/sandbox/personas/{personaId}/session:
+    post:
+      operationId: loginSandboxPersona
+      tags: [SANDBOX]
+      security: []
+      summary: Create a session for a sandbox persona
+      parameters:
+        - $ref: "#/components/parameters/personaId"
+      responses:
+        "200":
+          description: Session
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TokenResponse" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/auth/sandbox/expire-session:
+    post:
+      operationId: expireSandboxSession
+      tags: [SANDBOX]
+      summary: Expire the current session for harness tests
+      responses:
+        "200":
+          description: Expired
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/sessions:
+    get:
+      operationId: listConsumerSessions
+      tags: [SESSIONS]
+      summary: List sessions for the authenticated identity
+      responses:
+        "200":
+          description: Sessions
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SessionList" }
+  /v1/consumer/sessions/{sessionId}:
+    delete:
+      operationId: revokeConsumerSession
+      tags: [SESSIONS]
+      summary: Revoke a session
+      parameters:
+        - $ref: "#/components/parameters/sessionId"
+      responses:
+        "200":
+          description: Revoked
+        "404":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/devices:
+    get:
+      operationId: listConsumerDevices
+      tags: [DEVICES]
+      summary: List registered devices
+      responses:
+        "200":
+          description: Devices
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeviceList" }
+  /v1/consumer/devices/{deviceId}/trust:
+    post:
+      operationId: setConsumerDeviceTrust
+      tags: [DEVICES]
+      summary: Update device trust
+      parameters:
+        - $ref: "#/components/parameters/deviceId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/DeviceTrustRequest" }
+      responses:
+        "200":
+          description: Updated device
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/DeviceDto" }
+  /v1/consumer/me:
+    get:
+      operationId: getConsumerMe
+      tags: [ME]
+      summary: Current actor
+      responses:
+        "200":
+          description: Me
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeDto" }
+  /v1/consumer/bootstrap:
+    get:
+      operationId: getConsumerBootstrap
+      tags: [HOME]
+      summary: Client bootstrap contract
+      responses:
+        "200":
+          description: Bootstrap
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BootstrapDto" }
+  /v1/consumer/home:
+    get:
+      operationId: getConsumerHome
+      tags: [HOME]
+      summary: Home screen contract
+      responses:
+        "200":
+          description: Home
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/HomeDto" }
+  /v1/consumer/accounts:
+    get:
+      operationId: listConsumerAccounts
+      tags: [ACCOUNTS]
+      summary: List customer accounts with ledger balances
+      parameters:
+        - $ref: "#/components/parameters/cursor"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: Account page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccountPage" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/accounts/{accountId}:
+    get:
+      operationId: getConsumerAccount
+      tags: [ACCOUNTS]
+      summary: Read one account. Balance is a ledger projection.
+      parameters:
+        - $ref: "#/components/parameters/accountId"
+      responses:
+        "200":
+          description: Account
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AccountDto" }
+        "404":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/activity:
+    get:
+      operationId: listConsumerActivity
+      tags: [ACTIVITY]
+      summary: Paginated activity
+      parameters:
+        - $ref: "#/components/parameters/cursor"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          description: Activity page
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActivityPage" }
+  /v1/consumer/capabilities:
+    get:
+      operationId: listConsumerCapabilities
+      tags: [CAPABILITIES]
+      summary: Server-derived capabilities. Clients must not invent grants.
+      responses:
+        "200":
+          description: Capabilities
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CapabilityList" }
+  /v1/consumer/features/{featureId}:
+    get:
+      operationId: getConsumerFeature
+      tags: [CAPABILITIES]
+      summary: Feature availability. Disabled features return FEATURE_UNAVAILABLE.
+      parameters:
+        - $ref: "#/components/parameters/featureId"
+      responses:
+        "200":
+          description: Feature enabled
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FeatureFlagDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/actions:
+    post:
+      operationId: submitConsumerAction
+      tags: [ACTIONS]
+      summary: Submit an implemented action through Kernel
+      description: >
+        Implemented action_type is OPEN_ACCOUNT only. The handler submits an
+        ActionIntent to services/accounts. Kernel refusals are returned
+        unchanged. Execution Authority is never issued by this API.
+      parameters:
+        - $ref: "#/components/parameters/idempotencyKey"
+        - $ref: "#/components/parameters/requestId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ActionRequest" }
+            example:
+              action_type: OPEN_ACCOUNT
+              idempotency_key: open-demo-1
+              account_id: acct_demo_1
+      responses:
+        "200":
+          description: Kernel ALLOW and account opened
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionDecisionDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/actions/{actionId}:
+    get:
+      operationId: getConsumerAction
+      tags: [ACTIONS]
+      parameters:
+        - $ref: "#/components/parameters/actionId"
+      responses:
+        "200":
+          description: Action
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ActionDecisionDto" }
+  /v1/consumer/approvals:
+    get:
+      operationId: listConsumerApprovals
+      tags: [APPROVALS]
+      summary: Pending Kernel review states
+      responses:
+        "200":
+          description: Approvals
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApprovalList" }
+  /v1/consumer/approvals/{approvalId}:
+    get:
+      operationId: getConsumerApproval
+      tags: [APPROVALS]
+      parameters:
+        - $ref: "#/components/parameters/approvalId"
+      responses:
+        "200":
+          description: Approval
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApprovalDto" }
+  /v1/consumer/approvals/{approvalId}/acknowledge:
+    post:
+      operationId: acknowledgeConsumerApproval
+      tags: [APPROVALS]
+      parameters:
+        - $ref: "#/components/parameters/approvalId"
+      responses:
+        "200":
+          description: Acknowledged
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ApprovalDto" }
+  /v1/consumer/jobs/{jobId}:
+    get:
+      operationId: getConsumerJob
+      tags: [WORKFLOWS]
+      parameters:
+        - $ref: "#/components/parameters/jobId"
+      responses:
+        "200":
+          description: Job
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JobDto" }
+  /v1/consumer/webhooks:
+    get:
+      operationId: listConsumerWebhooks
+      tags: [WEBHOOKS]
+      summary: List consumer webhook endpoints
+      responses:
+        "200":
+          description: Endpoints
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WebhookList" }
+    post:
+      operationId: createConsumerWebhook
+      tags: [WEBHOOKS]
+      summary: Register a simulation webhook. Hosts other than localhost are rejected.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/WebhookCreateRequest" }
+            example:
+              url: http://127.0.0.1:9/hooks
+              event_types: [consumer.action.completed]
+      responses:
+        "200":
+          description: Endpoint
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/WebhookEndpointDto" }
+  /v1/consumer/webhooks/{endpointId}/test:
+    post:
+      operationId: testConsumerWebhook
+      tags: [WEBHOOKS]
+      parameters:
+        - $ref: "#/components/parameters/endpointId"
+      responses:
+        "200":
+          description: Delivery job
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/JobDto" }
+components:
+  securitySchemes:
+    ConsumerBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque-session
+      description: Opaque access token from login or sandbox persona session. Not an Execution Authority.
+  parameters:
+    requestId:
+      in: header
+      name: X-Request-Id
+      schema: { type: string }
+    idempotencyKey:
+      in: header
+      name: Idempotency-Key
+      schema: { type: string }
+    cursor:
+      in: query
+      name: cursor
+      schema: { type: string }
+    pageSize:
+      in: query
+      name: page_size
+      schema: { type: integer, minimum: 1, maximum: 100 }
+    personaId:
+      in: path
+      name: personaId
+      required: true
+      schema:
+        type: string
+        enum: [alex-ready, blair-restricted, casey-capable, drew-empty, evan-paged]
+    sessionId:
+      in: path
+      name: sessionId
+      required: true
+      schema: { type: string }
+    deviceId:
+      in: path
+      name: deviceId
+      required: true
+      schema: { type: string }
+    accountId:
+      in: path
+      name: accountId
+      required: true
+      schema: { type: string }
+    featureId:
+      in: path
+      name: featureId
+      required: true
+      schema:
+        type: string
+        enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading]
+    actionId:
+      in: path
+      name: actionId
+      required: true
+      schema: { type: string }
+    approvalId:
+      in: path
+      name: approvalId
+      required: true
+      schema: { type: string }
+    jobId:
+      in: path
+      name: jobId
+      required: true
+      schema: { type: string }
+    endpointId:
+      in: path
+      name: endpointId
+      required: true
+      schema: { type: string }
+  responses:
+    Error:
+      description: Stable consumer error envelope
+      headers:
+        X-Request-Id:
+          schema: { type: string }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+          example:
+            error_code: AUTH_REQUIRED
+            category: AUTHENTICATION
+            message: authentication is required
+            retryable: false
+            user_action_required: true
+            safe_to_display: true
+            details_safe_for_client: {}
+            request_id: req_example
+            api_version: v1
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required: [error_code, category, message, retryable, user_action_required, safe_to_display, details_safe_for_client, request_id, api_version]
+      properties:
+        error_code:
+          type: string
+          enum:
+            - AUTH_REQUIRED
+            - INVALID_CREDENTIALS
+            - SESSION_EXPIRED
+            - SESSION_REVOKED
+            - MFA_REQUIRED
+            - PASSKEY_CHALLENGE_INVALID
+            - DEVICE_NOT_TRUSTED
+            - DEVICE_BLOCKED
+            - RECOVERY_REQUIRED
+            - CAPABILITY_DENIED
+            - FEATURE_UNAVAILABLE
+            - KERNEL_REFUSED
+            - VALIDATION_FAILED
+            - INVALID_PAGINATION_CURSOR
+            - PAGE_SIZE_EXCEEDED
+            - IDEMPOTENCY_CONFLICT
+            - POLICY_DENIED
+            - COMPLIANCE_HOLD
+            - APPROVAL_REQUIRED
+            - APPROVAL_PENDING
+            - APPROVAL_NOT_FOUND
+            - RESOURCE_NOT_FOUND
+            - RESOURCE_CONFLICT
+            - RATE_LIMITED
+            - PROVIDER_UNAVAILABLE
+            - WORKFLOW_FAILED
+            - SANDBOX_PERSONA_FORBIDDEN
+            - OVERSIZED_REQUEST
+            - INTERNAL_ERROR
+        category:
+          type: string
+          enum: [AUTHENTICATION, AUTHORIZATION, VALIDATION, POLICY, COMPLIANCE, APPROVAL, RESOURCE, CONFLICT, RATE_LIMIT, PROVIDER, WORKFLOW, INTERNAL]
+        message: { type: string }
+        retryable: { type: boolean }
+        user_action_required: { type: boolean }
+        safe_to_display: { type: boolean }
+        details_safe_for_client:
+          type: object
+          additionalProperties: { type: string }
+        request_id: { type: string }
+        api_version: { type: string, enum: [v1] }
+    HealthDto:
+      type: object
+      required: [status, api_version, surface, environment, production_active]
+      properties:
+        status: { type: string, enum: [ok] }
+        api_version: { type: string, enum: [v1] }
+        surface: { type: string, enum: [CONSUMER_PLATFORM] }
+        environment: { type: string, enum: [simulation] }
+        production_active: { type: boolean, enum: [false] }
+    VersionDto:
+      type: object
+      required: [api_version, product, integration_environment]
+      properties:
+        api_version: { type: string, enum: [v1] }
+        product: { type: string }
+        integration_environment:
+          type: string
+          enum: [LOCAL, TEST, SANDBOX, STAGING, PREPRODUCTION, PRODUCTION]
+    RegisterRequest:
+      type: object
+      properties:
+        home_jurisdiction: { type: string }
+    RegisterResponse:
+      type: object
+      required: [identity_id, status, next_step]
+      properties:
+        identity_id: { type: string }
+        status: { type: string, enum: [ACTIVE] }
+        next_step: { type: string, enum: [PASSKEY_REGISTER] }
+    IdentityIdRequest:
+      type: object
+      required: [identity_id]
+      properties:
+        identity_id: { type: string }
+    PasskeyChallengeDto:
+      type: object
+      required: [challenge_id, challenge, rp_id, origin, expires_at]
+      properties:
+        challenge_id: { type: string }
+        challenge: { type: string }
+        rp_id: { type: string }
+        origin: { type: string }
+        expires_at: { type: string }
+    PasskeyRegisterCompleteRequest:
+      type: object
+      required: [challenge_id, credential_id, public_key_material, transports]
+      properties:
+        challenge_id: { type: string }
+        credential_id: { type: string }
+        public_key_material: { type: string }
+        transports:
+          type: array
+          items: { type: string }
+        device_ref: { type: string }
+    PasskeyLoginCompleteRequest:
+      type: object
+      required: [challenge_id, credential_id, authenticator_data, client_data_json, signature, sign_count, actor_id]
+      properties:
+        challenge_id: { type: string }
+        credential_id: { type: string }
+        authenticator_data: { type: string }
+        client_data_json: { type: string }
+        signature: { type: string }
+        sign_count: { type: integer }
+        actor_id: { type: string }
+        device_ref: { type: string }
+    TokenResponse:
+      type: object
+      required: [access_token, token_type, expires_in, session, api_version]
+      properties:
+        access_token: { type: string }
+        token_type: { type: string, enum: [Bearer] }
+        expires_in: { type: integer }
+        session: { $ref: "#/components/schemas/SessionDto" }
+        api_version: { type: string, enum: [v1] }
+    SessionDto:
+      type: object
+      required: [session_id, actor_id, identity_id, expires_at, device_id, assurance, revocation_state]
+      properties:
+        session_id: { type: string }
+        actor_id: { type: string }
+        identity_id: { type: string }
+        expires_at: { type: string }
+        device_id: { type: string, nullable: true }
+        assurance: { type: string }
+        revocation_state: { type: string, enum: [ACTIVE, REVOKED, EXPIRED] }
+    SessionList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/SessionDto" }
+    MfaStatusDto:
+      type: object
+      required: [factors, totp_enrolled, passkey_available]
+      properties:
+        factors:
+          type: array
+          items: { type: string }
+        totp_enrolled: { type: boolean, enum: [false] }
+        passkey_available: { type: boolean }
+    DeviceDto:
+      type: object
+      required: [device_id, device_ref, trust_state, last_seen_at]
+      properties:
+        device_id: { type: string }
+        device_ref: { type: string }
+        trust_state: { type: string, enum: [KNOWN, TRUSTED, REVIEW_REQUIRED, BLOCKED] }
+        last_seen_at: { type: string }
+    DeviceList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/DeviceDto" }
+    DeviceTrustRequest:
+      type: object
+      required: [trust_state]
+      properties:
+        trust_state: { type: string, enum: [KNOWN, TRUSTED, REVIEW_REQUIRED, BLOCKED] }
+    MeDto:
+      type: object
+      required: [actor_id, identity_id, customer_id, assurance, jurisdiction]
+      properties:
+        actor_id: { type: string }
+        identity_id: { type: string }
+        customer_id: { type: string, nullable: true }
+        assurance: { type: string }
+        jurisdiction: { type: string, nullable: true }
+    MoneyDto:
+      type: object
+      required: [minor_units, currency]
+      properties:
+        minor_units: { type: string, description: Integer minor units as a decimal string. Never a float. }
+        currency: { type: string }
+    PositionBreakdownDto:
+      type: object
+      required: [deposits, investments, digital_assets, rewards, pending]
+      properties:
+        deposits: { $ref: "#/components/schemas/MoneyDto" }
+        investments: { $ref: "#/components/schemas/MoneyDto" }
+        digital_assets: { $ref: "#/components/schemas/MoneyDto" }
+        rewards: { $ref: "#/components/schemas/MoneyDto" }
+        pending: { $ref: "#/components/schemas/MoneyDto" }
+    CustomerPositionDto:
+      type: object
+      required: [customer_id, grand_total, breakdown]
+      properties:
+        customer_id: { type: string }
+        grand_total: { $ref: "#/components/schemas/MoneyDto" }
+        breakdown: { $ref: "#/components/schemas/PositionBreakdownDto" }
+    FeatureFlagDto:
+      type: object
+      required: [feature_id, available, reason_code]
+      properties:
+        feature_id:
+          type: string
+          enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading]
+        available: { type: boolean }
+        reason_code: { type: string, nullable: true }
+    CapabilityDto:
+      type: object
+      required: [capability, granted]
+      properties:
+        capability: { type: string }
+        granted: { type: boolean }
+    CapabilityList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/CapabilityDto" }
+    BootstrapDto:
+      type: object
+      required: [api_version, integration_environment, environment, production_ready, production_active, live_connectivity_enabled, me, session, capabilities, features, degraded]
+      properties:
+        api_version: { type: string, enum: [v1] }
+        integration_environment:
+          type: string
+          enum: [LOCAL, TEST, SANDBOX, STAGING, PREPRODUCTION, PRODUCTION]
+        environment: { type: string, enum: [simulation] }
+        production_ready: { type: boolean, enum: [false] }
+        production_active: { type: boolean, enum: [false] }
+        live_connectivity_enabled: { type: boolean, enum: [false] }
+        me: { $ref: "#/components/schemas/MeDto" }
+        session: { $ref: "#/components/schemas/SessionDto" }
+        capabilities:
+          type: array
+          items: { $ref: "#/components/schemas/CapabilityDto" }
+        features:
+          type: array
+          items: { $ref: "#/components/schemas/FeatureFlagDto" }
+        degraded:
+          type: array
+          items: { type: string }
+    HomeAttentionDto:
+      type: object
+      required: [kind, message, reference_id]
+      properties:
+        kind: { type: string, enum: [APPROVAL_REQUIRED, SESSION_EXPIRING, FEATURE_UNAVAILABLE, NONE] }
+        message: { type: string }
+        reference_id: { type: string, nullable: true }
+    HomeDto:
+      type: object
+      required: [greeting, environment_banner, account_count, position, attention, features]
+      properties:
+        greeting: { type: string }
+        environment_banner: { type: string, enum: [SIMULATION] }
+        account_count: { type: integer }
+        position: { $ref: "#/components/schemas/CustomerPositionDto", nullable: true }
+        attention:
+          type: array
+          items: { $ref: "#/components/schemas/HomeAttentionDto" }
+        features:
+          type: array
+          items: { $ref: "#/components/schemas/FeatureFlagDto" }
+    AccountDto:
+      type: object
+      required: [account_id, account_class, status, currency, jurisdiction, opened_at, balance]
+      properties:
+        account_id: { type: string }
+        account_class: { type: string }
+        status: { type: string }
+        currency: { type: string }
+        jurisdiction: { type: string }
+        opened_at: { type: string }
+        balance: { $ref: "#/components/schemas/MoneyDto" }
+    AccountPage:
+      type: object
+      required: [items, next_cursor, page_size]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/AccountDto" }
+        next_cursor: { type: string, nullable: true }
+        page_size: { type: integer }
+    ActivityItemDto:
+      type: object
+      required: [event_id, event_type, occurred_at, summary]
+      properties:
+        event_id: { type: string }
+        event_type: { type: string }
+        occurred_at: { type: string }
+        summary: { type: string }
+    ActivityPage:
+      type: object
+      required: [items, next_cursor, page_size]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ActivityItemDto" }
+        next_cursor: { type: string, nullable: true }
+        page_size: { type: integer }
+    ActionRequest:
+      type: object
+      required: [action_type, idempotency_key]
+      properties:
+        action_type: { type: string, enum: [OPEN_ACCOUNT] }
+        idempotency_key: { type: string }
+        account_id: { type: string }
+    ActionDecisionDto:
+      type: object
+      required: [action_id, action_type, state, evidence_record_id, approval_id, account_id, message]
+      properties:
+        action_id: { type: string }
+        action_type: { type: string, enum: [OPEN_ACCOUNT] }
+        state: { type: string, enum: [ALLOW, REQUIRE_MANUAL_REVIEW, DEFER, BLOCK, FEATURE_UNAVAILABLE, UNAUTHENTICATED] }
+        evidence_record_id: { type: string, nullable: true }
+        approval_id: { type: string, nullable: true }
+        account_id: { type: string, nullable: true }
+        message: { type: string }
+    ApprovalDto:
+      type: object
+      required: [approval_id, action_id, state, created_at, message]
+      properties:
+        approval_id: { type: string }
+        action_id: { type: string }
+        state: { type: string, enum: [REQUIRE_MANUAL_REVIEW, DEFER] }
+        created_at: { type: string }
+        message: { type: string }
+    ApprovalList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ApprovalDto" }
+    JobDto:
+      type: object
+      required: [job_id, kind, status, created_at, result_safe]
+      properties:
+        job_id: { type: string }
+        kind: { type: string, enum: [WEBHOOK_DELIVERY, EVENT_DISPATCH] }
+        status: { type: string, enum: [PENDING, SUCCEEDED, FAILED] }
+        created_at: { type: string }
+        result_safe: { type: string, nullable: true }
+    WebhookCreateRequest:
+      type: object
+      required: [url, event_types]
+      properties:
+        url: { type: string }
+        event_types:
+          type: array
+          items: { type: string }
+    WebhookEndpointDto:
+      type: object
+      required: [endpoint_id, url, event_types, created_at]
+      properties:
+        endpoint_id: { type: string }
+        url: { type: string }
+        event_types:
+          type: array
+          items: { type: string }
+        created_at: { type: string }
+    WebhookList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/WebhookEndpointDto" }

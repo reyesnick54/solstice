@@ -129,6 +129,19 @@ export {
 } from './mobile-sync.ts';
 export type { MobileSyncClient, SunReyPaymentRequest } from './mobile-sync.ts';
 export {
+  SunReyConsumerClient,
+  createSunReyConsumerClient,
+  createMemoryTokenStore,
+  CONSUMER_API_VERSION,
+  CONSUMER_ERROR_CODES,
+} from './consumer-platform/index.ts';
+export type {
+  BootstrapDto,
+  HomeDto,
+  TokenResponse,
+  ConsumerErrorEnvelope,
+} from './consumer-platform/index.ts';
+export {
   WalletSecurityClient,
   getWalletSecurityProfile,
   getWalletDevices,

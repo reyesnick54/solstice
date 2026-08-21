@@ -126,3 +126,9 @@ export {
 export type { DurableOutboxRecord } from './production/event-fabric.ts';
 export { PostgresOperationStore, insertOperationExecution } from './ledger/pg-operation-store.ts';
 export { persistOperationWithOutbox } from './ledger/operation-unit.ts';
+export {
+  PostgresInboundWebhookStore,
+  PostgresJobStore,
+  PostgresOutboundWebhookStore,
+  PostgresWorkflowStore,
+} from './ledger/async-fabric.ts';
