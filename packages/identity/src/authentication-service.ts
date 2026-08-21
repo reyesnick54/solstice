@@ -86,13 +86,13 @@ export type AuthFailure = {
 };
 
 export type RegisterInput = {
-  readonly email?: string;
-  readonly phone?: string;
+  readonly email?: string | undefined;
+  readonly phone?: string | undefined;
   readonly password: string;
   readonly homeJurisdiction: Jurisdiction;
   readonly termsVersion: string;
-  readonly ip?: string;
-  readonly userAgent?: string;
+  readonly ip?: string | undefined;
+  readonly userAgent?: string | undefined;
 };
 
 export type RegisterResult = {
@@ -104,12 +104,12 @@ export type RegisterResult = {
 };
 
 export type AuthenticateInput = {
-  readonly email?: string;
-  readonly phone?: string;
+  readonly email?: string | undefined;
+  readonly phone?: string | undefined;
   readonly password: string;
-  readonly deviceRef?: string;
-  readonly ip?: string;
-  readonly userAgent?: string;
+  readonly deviceRef?: string | undefined;
+  readonly ip?: string | undefined;
+  readonly userAgent?: string | undefined;
 };
 
 export type TokenBundle = {
@@ -349,8 +349,8 @@ export class AuthenticationService {
 
   refreshSession(input: {
     readonly refreshToken: string;
-    readonly ip?: string;
-    readonly userAgent?: string;
+    readonly ip?: string | undefined;
+    readonly userAgent?: string | undefined;
   }): Result<TokenBundle, AuthFailure> {
     const limited = this.limit('refresh', this.ipKey(input.ip));
     if (!limited.ok) {
@@ -486,9 +486,9 @@ export class AuthenticationService {
   async verifyMfa(input: {
     readonly mfaToken: string;
     readonly code: string;
-    readonly deviceRef?: string;
-    readonly ip?: string;
-    readonly userAgent?: string;
+    readonly deviceRef?: string | undefined;
+    readonly ip?: string | undefined;
+    readonly userAgent?: string | undefined;
   }): Promise<Result<TokenBundle, AuthFailure>> {
     const limited = this.limit('mfa', this.ipKey(input.ip));
     if (!limited.ok) {
@@ -640,7 +640,7 @@ export class AuthenticationService {
     return ok(registered.value);
   }
 
-  beginPasskeyAuthentication(identityHint: { readonly email?: string; readonly phone?: string }, rpId?: string, origin?: string, ip?: string): Result<WebAuthnChallenge, AuthFailure> {
+  beginPasskeyAuthentication(identityHint: { readonly email?: string | undefined; readonly phone?: string | undefined }, rpId?: string, origin?: string, ip?: string): Result<WebAuthnChallenge, AuthFailure> {
     const limited = this.limit('passkey', this.ipKey(ip));
     if (!limited.ok) {
       return limited;
@@ -661,9 +661,9 @@ export class AuthenticationService {
 
   verifyPasskey(input: {
     readonly response: WebAuthnAuthenticationResponse;
-    readonly deviceRef?: string;
-    readonly ip?: string;
-    readonly userAgent?: string;
+    readonly deviceRef?: string | undefined;
+    readonly ip?: string | undefined;
+    readonly userAgent?: string | undefined;
     readonly stepUp?: boolean;
   }): Result<TokenBundle, AuthFailure> {
     const actorId = `actor_passkey_${secureRandomHex(8)}`;
@@ -719,7 +719,7 @@ export class AuthenticationService {
     return ok(updated.value);
   }
 
-  beginRecovery(input: { readonly email?: string; readonly phone?: string; readonly ip?: string; readonly userAgent?: string }): Result<
+  beginRecovery(input: { readonly email?: string | undefined; readonly phone?: string | undefined; readonly ip?: string | undefined; readonly userAgent?: string | undefined }): Result<
     { readonly accepted: true },
     AuthFailure
   > {
@@ -773,9 +773,9 @@ export class AuthenticationService {
   async completeRecovery(input: {
     readonly recoveryToken: string;
     readonly newPassword: string;
-    readonly totpCode?: string;
-    readonly ip?: string;
-    readonly userAgent?: string;
+    readonly totpCode?: string | undefined;
+    readonly ip?: string | undefined;
+    readonly userAgent?: string | undefined;
   }): Promise<Result<{ readonly recovered: true }, AuthFailure>> {
     const limited = this.limit('recovery', this.ipKey(input.ip));
     if (!limited.ok) {
@@ -996,9 +996,9 @@ export class AuthenticationService {
   private completeAuthenticatedSession(input: {
     readonly identityId: SolsticeIdentityId;
     readonly factors: readonly AuthenticationFactor[];
-    readonly deviceRef?: string;
-    readonly ip?: string;
-    readonly userAgent?: string;
+    readonly deviceRef?: string | undefined;
+    readonly ip?: string | undefined;
+    readonly userAgent?: string | undefined;
     readonly stepUp: boolean;
   }): Result<TokenBundle, AuthFailure> {
     const actorId = this.actorIdFor(input.identityId);
@@ -1050,7 +1050,7 @@ export class AuthenticationService {
   private elevateSession(
     sessionId: SessionId,
     factors: readonly AuthenticationFactor[],
-    input: { readonly ip?: string; readonly userAgent?: string },
+    input: { readonly ip?: string | undefined; readonly userAgent?: string | undefined },
   ): Result<TokenBundle, AuthFailure> {
     const session = this.identity.store.sessions.get(sessionId);
     if (!session) {
@@ -1113,8 +1113,8 @@ export class AuthenticationService {
     readonly purpose: AuthChallenge['purpose'];
     readonly ttlMs: bigint;
     readonly factors: readonly AuthenticationFactor[];
-    readonly sessionId?: SessionId;
-    readonly deviceRef?: string;
+    readonly sessionId?: SessionId | undefined;
+    readonly deviceRef?: string | undefined;
   }): { readonly token: string; readonly challenge: AuthChallenge } {
     const token = `sr_ch_${secureRandomHex(24)}`;
     const challenge: AuthChallenge = Object.freeze({
@@ -1200,8 +1200,8 @@ export class AuthenticationService {
       readonly sessionId?: SessionId | null;
       readonly deviceId?: DeviceId | null;
       readonly reasonCode: string;
-      readonly ip?: string;
-      readonly userAgent?: string;
+      readonly ip?: string | undefined;
+      readonly userAgent?: string | undefined;
       readonly authenticationStrength?: AuthenticationAssurance | null;
     },
   ): void {
@@ -1226,11 +1226,10 @@ export class AuthenticationService {
       aggregateId: event.identityId ?? 'identity:unknown',
       payload: {
         identityId: event.identityId ?? 'unknown',
-        sessionId: event.sessionId ?? undefined,
-        deviceId: event.deviceId ?? undefined,
         kind,
         reason: input.reasonCode,
-        trustState: undefined,
+        ...(event.sessionId ? { sessionId: event.sessionId } : {}),
+        ...(event.deviceId ? { deviceId: event.deviceId } : {}),
       },
     });
     this.evidence?.seal('IDENTITY_SECURITY_EVENT', {

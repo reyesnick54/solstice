@@ -22,7 +22,6 @@ describePersistence('consumer authentication persistence', () => {
         homeJurisdiction: asJurisdiction('GB'),
         termsVersion: 'tos-persist',
       });
-      assert.equal(registered.ok, true);
       if (!registered.ok) {
         throw new Error(registered.error.message);
       }
@@ -47,13 +46,11 @@ describePersistence('consumer authentication persistence', () => {
     const second = await createDurableRuntime(env);
     try {
       const refreshed = second.authentication.refreshSession({ refreshToken });
-      assert.equal(refreshed.ok, true);
       if (!refreshed.ok) {
         throw new Error(refreshed.error.message);
       }
       assert.equal(refreshed.value.session.subjectId, identityId);
       const ctx = second.authentication.authenticateRequest(refreshed.value.accessToken);
-      assert.equal(ctx.ok, true);
       if (!ctx.ok) {
         throw new Error(ctx.error.message);
       }

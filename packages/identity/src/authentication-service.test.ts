@@ -115,7 +115,6 @@ describe('AuthenticationService', () => {
       throw new Error('expected session');
     }
     const ctx = auth.authenticateRequest(login.value.accessToken);
-    assert.equal(ctx.ok, true);
     if (!ctx.ok) {
       throw new Error(ctx.error.message);
     }
@@ -151,7 +150,6 @@ describe('AuthenticationService', () => {
       throw new Error('expected session');
     }
     const ctx = auth.authenticateRequest(login.value.accessToken);
-    assert.equal(ctx.ok, true);
     if (!ctx.ok) {
       throw new Error(ctx.error.message);
     }
@@ -171,7 +169,6 @@ describe('AuthenticationService', () => {
       throw new Error('expected session');
     }
     const first = auth.refreshSession({ refreshToken: login.value.refreshToken });
-    assert.equal(first.ok, true);
     if (!first.ok) {
       throw new Error(first.error.message);
     }
@@ -197,7 +194,6 @@ describe('AuthenticationService', () => {
       throw new Error(ctx.error.message);
     }
     const enrolled = auth.enrollTotp(ctx.value);
-    assert.equal(enrolled.ok, true);
     if (!enrolled.ok) {
       throw new Error(enrolled.error.message);
     }

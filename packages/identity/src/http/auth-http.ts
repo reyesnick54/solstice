@@ -26,8 +26,8 @@ export type AuthHttpRequest = {
   readonly path: string;
   readonly headers: Readonly<Record<string, string | undefined>>;
   readonly body: unknown;
-  readonly ip?: string;
-  readonly requestId?: string;
+  readonly ip?: string | undefined;
+  readonly requestId?: string | undefined;
 };
 
 export type AuthApiError = {

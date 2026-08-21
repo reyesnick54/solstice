@@ -5,11 +5,25 @@
  */
 
 import { scrypt, timingSafeEqual } from 'node:crypto';
-import { promisify } from 'node:util';
 
 import { secureRandomBytes } from '../../security/src/random.ts';
 
-const scryptAsync = promisify(scrypt);
+function scryptAsync(
+  password: string,
+  salt: Buffer,
+  keylen: number,
+  options: { readonly N: number; readonly r: number; readonly p: number },
+): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    scrypt(password, salt, keylen, options, (error, derived) => {
+      if (error) {
+        reject(error);
+        return;
+      }
+      resolve(derived);
+    });
+  });
+}
 
 export const PASSWORD_KDF = 'scrypt' as const;
 export const PASSWORD_MIN_LENGTH = 12;
