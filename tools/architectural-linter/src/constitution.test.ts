@@ -561,6 +561,24 @@ describe('architecture constitution', () => {
     assert.equal(existsSync(join(REPO_ROOT, 'packages/algo-trading')), false);
   });
 
+  it('registers the Phase B Platform API at the reserved services/api path', () => {
+    const manifest = loadManifest(REPO_ROOT);
+    const api = manifest.packages.find((pkg) => pkg.id === 'services/api');
+    assert.ok(api);
+    assert.equal(api.status, 'IMPLEMENTED');
+    assert.equal(api.financialStateMutation, false);
+    assert.equal(evaluateCapability(manifest, 'sunrey-platform-api').status, 'IMPLEMENTED');
+    assert.equal(evaluateCapability(manifest, 'sunrey-platform-api').owner, 'services/api');
+    const context = manifest.boundedContexts.find((row) => row.id === 'API_INTEGRATION');
+    assert.ok(context);
+    assert.equal(context.status, 'PARTIAL');
+    assert.deepEqual(context.reservedPaths, ['apps/api', 'services/api']);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/api/src/app.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/api/src/server.ts')), true);
+    assert.equal(existsSync(join(REPO_ROOT, 'packages/sunrey-api')), false);
+    assert.equal(existsSync(join(REPO_ROOT, 'services/platform-api')), false);
+  });
+
   it('CHUNK-23 Personal Data Vault is IMPLEMENTED at the reserved path', () => {
     const manifest = loadManifest(REPO_ROOT);
     assert.equal(evaluateCapability(manifest, 'personal-data-vault').status, 'IMPLEMENTED');

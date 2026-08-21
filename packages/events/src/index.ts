@@ -26,6 +26,7 @@ export {
   type IdentityDeviceRegisteredV1,
   type IdentityDeviceTrustChangedV1,
   type IdentityRecoveryRequestedV1,
+  type IdentitySecurityRecordedV1,
   type BeneficiaryCreatedV1,
   type PaymentInitiatedV1,
   type PaymentHeldV1,

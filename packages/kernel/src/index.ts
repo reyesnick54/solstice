@@ -1,5 +1,19 @@
 export { ComplianceKernel } from './kernel.ts';
 export {
+  PRODUCT_POLICY_OUTCOMES,
+  evaluateThroughKernel,
+  mapKernelStatus,
+  type ProductPolicyDecision,
+  type ProductPolicyOutcome,
+} from './middleware.ts';
+export {
+  AuthorityPipeline,
+  productOutcomeToFrontend,
+  type AuthorityHttpRequest,
+  type AuthorityHttpResponse,
+  type AuthorityPipelineCatalog,
+} from './authority-pipeline.ts';
+export {
   authorityProof,
   complianceProof,
   DEFAULT_PROOFS,

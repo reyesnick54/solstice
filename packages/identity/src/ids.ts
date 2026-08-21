@@ -12,6 +12,12 @@ export type ChallengeId = Brand<string, 'ChallengeId'>;
 export type RecoveryRequestId = Brand<string, 'RecoveryRequestId'>;
 export type CapabilityGrantId = Brand<string, 'CapabilityGrantId'>;
 export type BusinessIdentityId = Brand<string, 'BusinessIdentityId'>;
+export type LoginHandleId = Brand<string, 'LoginHandleId'>;
+export type RefreshTokenId = Brand<string, 'RefreshTokenId'>;
+export type AuthChallengeId = Brand<string, 'AuthChallengeId'>;
+export type SecurityEventId = Brand<string, 'SecurityEventId'>;
+export type PasswordCredentialId = Brand<string, 'PasswordCredentialId'>;
+export type TotpCredentialId = Brand<string, 'TotpCredentialId'>;
 
 function nonEmpty<Name extends string>(value: string, name: Name): Brand<string, Name> {
   if (value.length === 0) {
@@ -61,4 +67,28 @@ export function asCapabilityGrantId(value: string): CapabilityGrantId {
 
 export function asBusinessIdentityId(value: string): BusinessIdentityId {
   return nonEmpty(value, 'BusinessIdentityId');
+}
+
+export function asLoginHandleId(value: string): LoginHandleId {
+  return nonEmpty(value, 'LoginHandleId');
+}
+
+export function asRefreshTokenId(value: string): RefreshTokenId {
+  return nonEmpty(value, 'RefreshTokenId');
+}
+
+export function asAuthChallengeId(value: string): AuthChallengeId {
+  return nonEmpty(value, 'AuthChallengeId');
+}
+
+export function asSecurityEventId(value: string): SecurityEventId {
+  return nonEmpty(value, 'SecurityEventId');
+}
+
+export function asPasswordCredentialId(value: string): PasswordCredentialId {
+  return nonEmpty(value, 'PasswordCredentialId');
+}
+
+export function asTotpCredentialId(value: string): TotpCredentialId {
+  return nonEmpty(value, 'TotpCredentialId');
 }

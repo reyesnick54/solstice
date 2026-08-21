@@ -89,6 +89,7 @@ never be two implementations of these systems.
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
 | SunRey developer application platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/developer-platform/index.ts` | IMPLEMENTED |
+| SunRey Platform API | `services/api` | `services/api/src/app.ts` | IMPLEMENTED |
 | SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
@@ -253,6 +254,10 @@ The only action types on this tree are declared in
 - `CANCEL_EXCHANGE_ORDER`
 - `SETTLE_EXCHANGE_TRADE`
 - `HALT_EXCHANGE`
+- `REHEARSE_AUTHORITY_PATH`
+
+`REHEARSE_AUTHORITY_PATH` is TEST_ONLY. It rehearses the authority
+path and records evidence. It does not post a journal or move money.
 
 New action types add a payload that uses the `ActionIntent` envelope.
 They do not invent a parallel envelope.
@@ -524,6 +529,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
+| `services/api` | `packages/config`, `packages/domain` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -535,6 +541,10 @@ must be added to `manifest.json` before they appear on disk.
 - Ledger must not depend on UI or API layers. The Consumer BFF at
   `services/api` is an orchestration/presentation layer only. It reads
   Ledger-derived account models and never posts journals.
+- Ledger must not depend on UI or API layers. The application HTTP
+  runtime is `services/api` and may only orchestrate existing services.
+  It must not import Ledger internals, construct an AuthorityIssuer, or
+  post journals.
 - Domain objects must not call external providers. There are no
   provider adapters on this tree. Future adapters sit behind ports.
 - Agents added later must not import Execution Authority issuance,
