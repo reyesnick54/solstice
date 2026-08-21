@@ -141,7 +141,7 @@ export type ConsumerBffDeps = {
   readonly exchange?: OptionalDomainPort;
   readonly payments?: OptionalDomainPort;
   readonly cards?: OptionalDomainPort;
-  readonly cardFacade?: CardsMutationPort;
+  readonly cardFacade?: CardsMutationPort | undefined;
   readonly vault?: OptionalDomainPort;
   readonly fx?: OptionalDomainPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
@@ -527,13 +527,13 @@ export class ConsumerBff {
   } {
     const capabilities = this.capabilities(principal);
     const detail = capabilities.details.cards;
-    if (!this.deps.cardFacade || !detail.enabled) {
+    if (!this.deps.cardFacade || !detail || !detail.enabled) {
       return Object.freeze({
         group: 'cards',
         schema: 'sunrey.consumer.cards.v1',
-        availability: detail.availability,
-        state: detail.state,
-        reason: detail.reason,
+        availability: detail?.availability ?? 'AVAILABLE_SIMULATION',
+        state: detail?.state ?? 'FEATURE_DISABLED',
+        reason: detail?.reason ?? 'cards are not connected',
         productionIssuing: false,
         items: Object.freeze([] as const),
       });

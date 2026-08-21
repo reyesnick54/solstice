@@ -127,7 +127,7 @@ describe('Consumer BFF', () => {
     const verified = get(world, '/api/v1/me/capabilities', 'basic_verified');
     const r = restricted.body as { paymentsEnabled: boolean; withdrawalsEnabled: boolean; details: { payments: { state: string } } };
     const p = pending.body as { withdrawalsEnabled: boolean; details: { withdrawals: { state: string } } };
-    const v = verified.body as { growEnabled: boolean; details: { grow: { state: string }; cards: { availability: string } } };
+    const v = verified.body as { growEnabled: boolean; details: { grow: { state: string }; cards: { availability: string; state: string } } };
     assert.equal(r.paymentsEnabled, false);
     assert.equal(r.details.payments.state, 'USER_INELIGIBLE');
     assert.equal(p.withdrawalsEnabled, false);

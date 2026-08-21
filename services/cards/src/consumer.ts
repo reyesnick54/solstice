@@ -47,11 +47,15 @@ export type ConsumerCardsOutcome<T> =
  * CardsService calls. Not a second card model.
  */
 export class ConsumerCardsFacade {
-  constructor(
-    private readonly cards: CardsService,
-    private readonly identity: IdentityService,
-    private readonly nowFn: () => string,
-  ) {}
+  private readonly cards: CardsService;
+  private readonly identity: IdentityService;
+  private readonly nowFn: () => string;
+
+  constructor(cards: CardsService, identity: IdentityService, nowFn: () => string) {
+    this.cards = cards;
+    this.identity = identity;
+    this.nowFn = nowFn;
+  }
 
   list(customerId: string): readonly ConsumerCardResource[] {
     return this.cards.listCards(customerId).map(toConsumerCard);
@@ -137,7 +141,9 @@ export class ConsumerCardsFacade {
       }
       return { ok: true, value: toConsumerCard(activated.value) };
     }
-    return { ok: true, value: toConsumerCard(requested.value), replay: requested.replay };
+    return requested.replay === true
+      ? { ok: true, value: toConsumerCard(requested.value), replay: true }
+      : { ok: true, value: toConsumerCard(requested.value) };
   }
 
   freeze(input: {
@@ -260,7 +266,12 @@ export class ConsumerCardsFacade {
       return owned;
     }
     const result = run(owned.value);
-    return result.outcome === 'OK' ? { ok: true, value: toConsumerCard(result.value), replay: result.replay } : fromService(result);
+    if (result.outcome !== 'OK') {
+      return fromService(result);
+    }
+    return result.replay === true
+      ? { ok: true, value: toConsumerCard(result.value), replay: true }
+      : { ok: true, value: toConsumerCard(result.value) };
   }
 
   private owned(customerId: string, cardId: string): ConsumerCardsOutcome<Card> {
@@ -322,7 +333,10 @@ function fromService<T>(result: CardsServiceOutcome<T>): ConsumerCardsOutcome<ne
   if (result.outcome === 'KERNEL_REFUSED') {
     return fail(result.decision.status, 'compliance kernel refused the card action', 403);
   }
-  return fail(result.code, result.message, result.code === 'CARD_NOT_FOUND' ? 404 : 400);
+  if (result.outcome === 'REJECTED') {
+    return fail(result.code, result.message, result.code === 'CARD_NOT_FOUND' ? 404 : 400);
+  }
+  return fail('UNEXPECTED', 'card action did not complete', 400);
 }
 
 function fail(code: string, message: string, httpStatus: number): ConsumerCardsOutcome<never> {

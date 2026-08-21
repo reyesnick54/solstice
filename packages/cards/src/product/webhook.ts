@@ -131,7 +131,7 @@ async function dispatch(
   }
   return {
     accepted: result.outcome === 'OK',
-    duplicate: result.replay === true,
+    duplicate: result.outcome === 'OK' && result.replay === true,
     eventType,
     outcome: result.outcome,
     ...(result.outcome === 'REJECTED' ? { code: result.code } : {}),

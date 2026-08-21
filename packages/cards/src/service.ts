@@ -226,9 +226,8 @@ export class CardsService {
       return this.reject(intent.actionType, intent.id, gated.decision, 'ISSUE_FAILED', 'simulated issuer refused the card request');
     }
     const now = this.clock.now();
-    const status = created.issueOutcome === 'PENDING' ? 'REQUESTED' : created.status === 'PENDING' ? 'PENDING' : 'REQUESTED';
-    const walletProvisioningStatus =
-      status === 'ACTIVE' && program.supportedCapabilities.includes('WALLET_PROVISION') ? 'ELIGIBLE' : 'NOT_ELIGIBLE';
+    const status = created.issueOutcome === 'PENDING' ? 'REQUESTED' : 'PENDING';
+    const walletProvisioningStatus = 'NOT_ELIGIBLE' as const;
     const previous = intent.payload.replaceCardId ? this.store.getCard(intent.payload.replaceCardId) : undefined;
     if (intent.payload.replaceCardId && !previous) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'CARD_NOT_FOUND', 'card to replace does not exist');
@@ -806,15 +805,15 @@ export class CardsService {
       return this.reject('CARD_STATUS', envelope.idempotencyKey, null, 'CARD_NOT_FOUND', 'card does not exist');
     }
     const actionType = actionTypeForStatus(nextStatus);
-    const intent: CardIntent & { readonly payload: { readonly cardId: string; readonly accountId: Account['id'] } } = {
+    const intent = {
       id: asIntentId(`status_int_${envelope.idempotencyKey}`),
       actionType,
       idempotencyKey: envelope.idempotencyKey,
       actorId: this.operationsActorId,
       requestedAt: this.clock.now(),
-      purpose: 'CARD_NETWORK',
+      purpose: 'CARD_NETWORK' as const,
       payload: { cardId: card.cardId, accountId: card.fundingAccountId },
-    };
+    } as CardIntent & { readonly payload: { readonly cardId: string; readonly accountId: Account['id'] } };
     return this.lifecycle(intent, nextStatus, 'CardStatusUpdated', 'CARD_STATUS_UPDATED', (updated) => {
       if (nextStatus === 'ACTIVE') {
         this.processor.activateCard(updated.processorCardRef);
