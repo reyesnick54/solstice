@@ -32,8 +32,10 @@ async function issuedActive(suffix: string, deposit = 100_000n) {
 
 describe('card domain', () => {
   it('defines legal card transitions and forbids a balance', () => {
+    assert.equal(canTransitionCard('REQUESTED', 'PENDING'), true);
     assert.equal(canTransitionCard('PENDING', 'ACTIVE'), true);
     assert.equal(canTransitionCard('ACTIVE', 'FROZEN'), true);
+    assert.equal(canTransitionCard('ACTIVE', 'REPLACED'), true);
     assert.equal(canTransitionCard('CLOSED', 'ACTIVE'), false);
     assert.throws(() => assertNoSensitiveCardData({ pan: '4111111111111111' }));
   });

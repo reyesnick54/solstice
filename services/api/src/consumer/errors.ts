@@ -65,6 +65,7 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
+    case 'STEP_UP_REQUIRED':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
       return 403;

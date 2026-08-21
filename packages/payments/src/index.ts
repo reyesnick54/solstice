@@ -172,6 +172,7 @@ export {
   reservePlan,
   inboundPendingPlan,
   inboundSettlePlan,
+  customerConversionSettlePlan,
   internalTransferPlan,
   returnDestinationFxPlan,
   returnDestinationSettlePlan,

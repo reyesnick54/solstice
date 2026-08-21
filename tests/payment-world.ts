@@ -83,10 +83,13 @@ export function createPaymentWorld(
     capabilities: [
       'ACCOUNT_OPEN_REQUEST',
       'POST_DEPOSIT_REQUEST',
+      'TRANSFER_REQUEST',
       'MANAGE_BENEFICIARY',
       'PAYMENT_REQUEST',
       'TRANSFER_REQUEST',
       'FX_QUOTE_REQUEST',
+      'HOLD_REQUEST',
+      'CARD_MANAGE_REQUEST',
       'VIEW_ACCOUNT',
       'MANAGE_PROFILE',
       'TREASURY_OPERATE_REQUEST',

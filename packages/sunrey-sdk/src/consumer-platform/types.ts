@@ -37,10 +37,23 @@ export const CONSUMER_FEATURE_IDS = [
   'investments',
   'cards',
   'exchange_trading',
+  'send',
+  'recipients',
+  'fx',
 ] as const;
 export type ConsumerFeatureId = (typeof CONSUMER_FEATURE_IDS)[number];
 
-export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT'] as const;
+export const CONSUMER_ACTION_TYPES = [
+  'OPEN_ACCOUNT',
+  'TRANSFER',
+  'ADD_BENEFICIARY',
+  'INITIATE_PAYMENT',
+  'ACCEPT_FX_QUOTE',
+  'CARD_ISSUE',
+  'ISSUE_CARD',
+  'FREEZE_CARD',
+  'UNFREEZE_CARD',
+] as const;
 export type ConsumerActionType = (typeof CONSUMER_ACTION_TYPES)[number];
 
 export const SANDBOX_PERSONA_IDS = [
@@ -49,6 +62,7 @@ export const SANDBOX_PERSONA_IDS = [
   'casey-capable',
   'drew-empty',
   'evan-paged',
+  'fin-ready',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
@@ -220,6 +234,83 @@ export type WebhookEndpointDto = {
   readonly created_at: string;
 };
 
+export const CARD_STATUSES = [
+  'REQUESTED',
+  'PENDING',
+  'ACTIVE',
+  'FROZEN',
+  'SUSPENDED',
+  'REPLACED',
+  'CLOSED',
+  'EXPIRED',
+] as const;
+export type CardStatus = (typeof CARD_STATUSES)[number];
+
+export const CARD_WALLET_STATUSES = [
+  'NOT_ELIGIBLE',
+  'ELIGIBLE',
+  'PROVISIONING',
+  'ACTIVE',
+  'FAILED',
+  'SUSPENDED',
+] as const;
+export type CardWalletStatus = (typeof CARD_WALLET_STATUSES)[number];
+
+export type CardControlsDto = {
+  readonly frozen: boolean;
+  readonly onlineTransactions: boolean;
+  readonly internationalTransactions: boolean;
+  readonly cashWithdrawal: boolean;
+  readonly contactless: boolean;
+  readonly blockedMerchantCategories: readonly string[];
+  readonly blockedCountries: readonly string[];
+  readonly transactionLimitMinor: string | null;
+  readonly dailyLimitMinor: string | null;
+};
+
+export type CardDto = {
+  readonly schema: 'sunrey.consumer.card.v1';
+  readonly cardId: string;
+  readonly card_id: string;
+  readonly ownerCustomerId: string;
+  readonly fundingAccountId: string;
+  readonly type: 'DEBIT';
+  readonly form: 'VIRTUAL' | 'PHYSICAL';
+  readonly form_factor: string;
+  readonly status: CardStatus | string;
+  readonly last4: string | null;
+  readonly expiry: { readonly month: number; readonly year: number } | null;
+  readonly displayHint: 'SIM-CARD';
+  readonly display_hint: string;
+  readonly walletProvisioningStatus: CardWalletStatus | string;
+  readonly controls: CardControlsDto;
+  readonly createdAt: string;
+  readonly productionIssuing: false;
+};
+
+export type CardDetailDto = {
+  readonly card: CardDto;
+  readonly fundingAccountId: string;
+  readonly available: MoneyDto;
+  readonly held: MoneyDto;
+  readonly recentTransactions: readonly {
+    readonly id: string;
+    readonly kind: string;
+    readonly lifecycle: string;
+    readonly merchant: string | null;
+    readonly amountMinorUnits: string;
+    readonly currency: string;
+    readonly occurredAt: string;
+  }[];
+  readonly wallet: {
+    readonly status: CardWalletStatus | string;
+    readonly apple: CardWalletStatus | string;
+    readonly google: CardWalletStatus | string;
+    readonly certification: 'NOT_CERTIFIED';
+    readonly productionReady: false;
+  };
+};
+
 export type HealthDto = {
   readonly status: 'ok';
   readonly api_version: typeof CONSUMER_API_VERSION;
@@ -252,4 +343,39 @@ export type PasskeyChallengeDto = {
   readonly rp_id: string;
   readonly origin: string;
   readonly expires_at: string;
+};
+
+export type TransferDto = {
+  readonly transfer_id: string;
+  readonly state: ActionState;
+  readonly source_account_id: string;
+  readonly destination_account_id: string;
+  readonly amount: MoneyDto;
+  readonly message: string;
+};
+
+export type RecipientDto = {
+  readonly recipient_id: string;
+  readonly legal_name: string;
+  readonly currency: string;
+  readonly destination_country: string;
+  readonly status: string;
+};
+
+export type FxQuoteDto = {
+  readonly quote_id: string;
+  readonly status: string;
+  readonly source: MoneyDto;
+  readonly destination: MoneyDto;
+  readonly fee: MoneyDto;
+  readonly expires_at: string;
+  readonly rate_source: 'SIMULATION_REF_NOT_LIVE_MARKET';
+  readonly journal_ids?: readonly string[];
+};
+
+export type PaymentDto = {
+  readonly payment_id: string;
+  readonly status: string;
+  readonly source: MoneyDto;
+  readonly destination: MoneyDto;
 };

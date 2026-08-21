@@ -357,6 +357,7 @@ export type RequestCardPayload = {
   readonly ownerId: CustomerId;
   readonly programId: string;
   readonly formFactor: 'VIRTUAL' | 'PHYSICAL';
+  readonly replaceCardId?: string;
 };
 
 export type CardLifecyclePayload = {
@@ -378,6 +379,7 @@ export type UpdateCardControlsPayload = {
     readonly ecommerceEnabled?: boolean;
     readonly cashAtmEnabled?: boolean;
     readonly contactlessEnabled?: boolean;
+    readonly internationalEnabled?: boolean;
   };
 };
 

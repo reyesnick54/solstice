@@ -149,7 +149,12 @@
         "packages/permissions",
         "packages/security",
         "packages/sunrey-sdk",
-        "services/accounts"
+        "packages/money",
+        "packages/cards",
+        "packages/payments",
+        "packages/treasury",
+        "services/accounts",
+        "services/cards"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1188,17 +1193,20 @@
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
         "services/accounts",
+        "services/cards",
+        "packages/cards",
         "packages/domain",
         "packages/money",
         "packages/config",
         "packages/identity",
         "packages/permissions",
+        "packages/security",
         "packages/payments"
       ],
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Phase B Consumer Backend-for-Frontend and SunRey Platform API. Canonical application-facing HTTP runtime and BFF entry. Orchestration/presentation only. Calls canonical domain services. Not a ledger, Exchange, Agent runtime, Kernel, investment engine, or payment processor. Mountable on the Phase B API runtime. Do not create packages/bff, packages/lovable, or a second API authority. Production remains inactive."
+      "notes": "SunRey Platform API and Phase B Consumer BFF. Canonical application-facing HTTP runtime. Orchestrates existing services. Not a second ledger, Kernel, Execution Authority, Agent runtime, Exchange, or payment processor. Production remains inactive."
     }
   ],
   "components": [
@@ -5323,6 +5331,7 @@
       "notes": "Phase B application-facing HTTP runtime. Versioned /api/v1. Orchestration only. Does not post journals, issue Execution Authority, or activate production. The SDK /v1 DevelopmentPlatform gateway remains a simulation developer surface."
     }
   ],
+
   "authorizedMutationPaths": [
     {
       "symbol": "postJournal",
@@ -6974,7 +6983,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Binds existing component evidence by hash. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. Binds existing component evidence by hash. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
     },
     {
       "id": "sunrey-provider-runtime",

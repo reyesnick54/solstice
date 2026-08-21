@@ -27,6 +27,8 @@ export {
   DEVICE_TRUST_STATES,
   INTEGRATION_ENVIRONMENTS,
   SANDBOX_PERSONA_IDS,
+  CARD_STATUSES,
+  CARD_WALLET_STATUSES,
 } from './types.ts';
 export type {
   AccountBalanceBreakdownDto,
@@ -58,8 +60,17 @@ export type {
   SandboxPersonaId,
   SessionDto,
   TokenResponse,
+  TransferDto,
   VersionDto,
   WebhookEndpointDto,
+  CardDto,
+  FxQuoteDto,
+  PaymentDto,
+  RecipientDto,
+  CardControlsDto,
+  CardDetailDto,
+  CardStatus,
+  CardWalletStatus,
 } from './types.ts';
 export {
   SunReyConsumerClient,

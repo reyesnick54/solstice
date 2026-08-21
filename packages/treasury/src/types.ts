@@ -15,6 +15,15 @@ export const TREASURY_ACCOUNT_KINDS = [
   'CORRIDOR_PREFUNDING',
   'LIQUIDITY',
   'CARD_SETTLEMENT_REF',
+  'OPERATING',
+  'CUSTOMER_FUNDS',
+  'SETTLEMENT',
+  'CLEARING',
+  'PROVIDER_PREFUNDING',
+  'FX_LIQUIDITY',
+  'CARD_SETTLEMENT',
+  'FEE',
+  'SUSPENSE',
 ] as const;
 
 export type TreasuryAccountKind = (typeof TREASURY_ACCOUNT_KINDS)[number];

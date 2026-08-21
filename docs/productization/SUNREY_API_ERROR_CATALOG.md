@@ -114,6 +114,19 @@ a successful write.
 | --- | --- | --- | --- |
 | `INTERNAL_ERROR` | yes | retry later | no |
 
+## Money / transaction status (Phase C)
+
+These are domain statuses on payment and card resources, not extra
+error codes. Lovable must read the resource:
+
+| Observation | Where | Client action |
+| --- | --- | --- |
+| Account balance | `AccountDto.balance` | Display integer minor units; never invent a figure |
+| Payment pending | `PaymentDto.status` in `PROCESSING`, `SUBMITTED`, `SUBMISSION_UNKNOWN`, `FUNDS_RESERVED` | Poll `getPayment`; do not assume success |
+| Payment failed | `PaymentDto.status` `FAILED` or `RESOURCE_CONFLICT` / `KERNEL_REFUSED` | Show failure; do not retry as success |
+| FX pending | quote not yet `ACCEPTED` | Call accept then execute |
+| Card action failed | `RESOURCE_CONFLICT` or `CAPABILITY_DENIED` | Reload card list |
+
 ## Action states
 
 Kernel decisions map to `state`:

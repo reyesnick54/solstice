@@ -1,9 +1,13 @@
 # SunRey Lovable ↔ Consumer BFF mapping
 
-Phase B Prompt 4. Maps future consumer screens to the canonical
-Backend-for-Frontend at `services/api`.
+Phase B mapped screens to `services/api`. Phase C productizes the
+Lovable-facing money surface on the consumer platform
+(`services/consumer-platform`, `/v1/consumer/*`) and the browser-safe
+SDK `@solstice/sunrey-sdk/consumer`.
 
-Lovable must not call internal package topology. It talks to `/api/v1`.
+Lovable must not call internal package topology. Prefer the consumer
+platform contract in `api/sunrey-consumer-platform-v1.openapi.yaml`.
+`services/api` `/api/v1` stubs are not a second ledger or money plane.
 
 This is not production authorization. `ENVIRONMENT` stays `simulation`.
 `LIVE_*` stays `false`.
@@ -19,6 +23,10 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY | `/api/v1/accounts` | GET | required | account read models | `services/accounts` + Ledger-derived balances | AVAILABLE_SIMULATION | none |
 | MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | account + ledger/available/held | `projectBankingPosition` | AVAILABLE_SIMULATION | none |
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
+| SEND | `/v1/consumer/transfers` and `/v1/consumer/payments` | POST | required | transfer / payment DTOs | `services/accounts` + `packages/payments` | SANDBOX_FUNCTIONAL | live rails = PROVIDER_ADAPTER_REQUIRED |
+| RECIPIENTS | `/v1/consumer/recipients` | GET, POST | required | recipient DTOs | `packages/payments` beneficiaries | SANDBOX_FUNCTIONAL | none in simulation |
+| FX | `/v1/consumer/fx/quotes` | POST | required | server-owned quote | `packages/payments` FX engine | SANDBOX_FUNCTIONAL | live FX = PROVIDER_ADAPTER_REQUIRED |
+| CARDS | `/v1/consumer/cards` | GET, POST | required | simulated card DTOs | `packages/cards` | SANDBOX_FUNCTIONAL | live processor = PROVIDER_ADAPTER_REQUIRED |
 | SEND recipients | `/api/v1/recipients` | GET, POST | required | Recipient list / create | `packages/payments` beneficiaries + PaymentPlatform | AVAILABLE_SIMULATION | frontend cannot mark verified; agents cannot add |
 | SEND recipient | `/api/v1/recipients/{id}` | GET | required + owner | Recipient | same | AVAILABLE_SIMULATION | cross-user denied |
 | SEND quote | `/api/v1/payments/quote` | POST | required | PaymentQuote | PaymentPlatform quote preview | AVAILABLE_SIMULATION | `settlementTimePromise` is always null until Phase D rails |
@@ -31,6 +39,13 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page + safe filters | `AccountProductService.activity` | AVAILABLE_SIMULATION | none |
 | STATEMENTS | `/api/v1/accounts/{id}/statement` | GET | required + owner | opening/closing/transactions/fees | `AccountProductService.statement` (data only, no PDF) | AVAILABLE_SIMULATION | PDF renderer not productized |
 | SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
+| FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
+| CARDS | `/api/v1/cards` | GET, POST | required + step-up on POST | PCI-minimized card list / issue | `packages/cards` + `services/cards` | AVAILABLE_SIMULATION | simulated processor; live issuer is Phase D |
+| CARD detail | `/api/v1/cards/{id}` | GET | required + owner | status, last4, funding available, controls, activity, wallet | `packages/cards` | AVAILABLE_SIMULATION | none in simulation |
+| CARD freeze | `/api/v1/cards/{id}/freeze` | POST | required + step-up | updated card | Kernel-gated `FREEZE_CARD` | AVAILABLE_SIMULATION | none in simulation |
+| CARD unfreeze | `/api/v1/cards/{id}/unfreeze` | POST | required + step-up | updated card | Kernel-gated `UNFREEZE_CARD` | AVAILABLE_SIMULATION | none in simulation |
+| CARD controls | `/api/v1/cards/{id}/controls` | PATCH | required + step-up | server-enforced controls | Kernel-gated `UPDATE_CARD_CONTROLS` | AVAILABLE_SIMULATION | none in simulation |
+| CARD wallet | `/api/v1/cards/{id}/wallet` | GET | required + owner | eligibility/status | cards wallet module | AVAILABLE_SIMULATION | Apple/Google certification is Phase D |
 | FX | `/api/v1/fx` | GET | required | availability catalog | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
 | FX currencies | `/api/v1/fx/currencies` | GET | required | supported-currency metadata | `packages/domain` currency registry | AVAILABLE_SIMULATION | metadata ≠ live |
 | FX quote | `/api/v1/fx/quotes` | POST | required | server-priced quote | `CREATE_FX_QUOTE` | AVAILABLE_SIMULATION | client must not compute the rate |

@@ -3,6 +3,7 @@ import {
   DEMAND_DEPOSIT_TO_SIMULATED_FUNDING,
   PENDING_SETTLEMENT_TO_SIMULATED_FUNDING,
   SIMULATED_FUNDING_TO_CORPORATE_OPERATING,
+  SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
   SIMULATED_FUNDING_TO_PENDING_SETTLEMENT,
   type ClassBridge,
   type ProposedPosting,
@@ -241,6 +242,18 @@ export function inboundSettlePlan(destinationAccountId: string, amount: Money): 
     classBridge: DEMAND_DEPOSIT_TO_PENDING_SETTLEMENT,
     postings: [
       { accountId: pendingAccountId(amount.currency), direction: 'DEBIT', amount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount },
+    ],
+  };
+}
+
+export function customerConversionSettlePlan(destinationAccountId: string, amount: Money): PaymentJournalPlan {
+  return {
+    suffix: 'fx-customer-credit',
+    memo: 'FX_CONVERSION_CREDIT_CUSTOMER',
+    classBridge: SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
+    postings: [
+      { accountId: settlementAccountId(amount.currency), direction: 'DEBIT', amount },
       { accountId: destinationAccountId, direction: 'CREDIT', amount },
     ],
   };

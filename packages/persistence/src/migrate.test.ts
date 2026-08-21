@@ -156,6 +156,16 @@ describe('versioned SQL migrations', () => {
     assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe|emv_data|tokenized_pan)\b/i.test(v008.sql.replace(/--[^\n]*/g, '')), false);
   });
 
+  it('customer V031 extends cards with PCI-minimized display metadata only', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v031 = files.find((file) => file.version === 31);
+    assert.ok(v031);
+    assert.equal(v031.filename, 'V031__cards_productization.sql');
+    assert.match(v031.sql, /wallet_provisioning_status/);
+    assert.match(v031.sql, /last4/);
+    assert.equal(/\b(pan|cvv|cvc|pin|track_data|magstripe)\b/i.test(v031.sql.replace(/--[^\n]*/g, '')), false);
+  });
+
   it('customer V007 stores card records without PAN or CVV', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v007 = files.find((file) => file.version === 7);
@@ -462,20 +472,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
-  it('customer V031 persists consumer authentication state without plaintext secrets', () => {
+  it('customer V029 persists consumer authentication state without plaintext secrets', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v031 = files.find((file) => file.version === 31);
-    assert.ok(v031);
-    assert.equal(v031.filename, 'V031__consumer_authentication.sql');
-    assert.match(v031.sql, /CREATE TABLE identity.login_handle/);
-    assert.match(v031.sql, /CREATE TABLE identity.password_credential/);
-    assert.match(v031.sql, /CREATE TABLE identity.totp_credential/);
-    assert.match(v031.sql, /CREATE TABLE identity.refresh_session/);
-    assert.match(v031.sql, /CREATE TABLE identity.auth_challenge/);
-    assert.match(v031.sql, /CREATE TABLE identity.security_event/);
-    assert.equal(/\bpassword_hash\b/i.test(v031.sql), false);
-    assert.equal(/\bplaintext_password\b/i.test(v031.sql), false);
-    assert.match(v031.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
+    const v029 = files.find((file) => file.version === 29);
+    assert.ok(v029);
+    assert.equal(v029.filename, 'V029__consumer_authentication.sql');
+    assert.match(v029.sql, /CREATE TABLE identity.login_handle/);
+    assert.match(v029.sql, /CREATE TABLE identity.password_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.totp_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.refresh_session/);
+    assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
+    assert.match(v029.sql, /CREATE TABLE identity.security_event/);
+    assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
+    assert.equal(/\bplaintext_password\b/i.test(v029.sql), false);
+    assert.match(v029.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
   });
 
   it('customer V028 grants payments schema usage for operational recovery', () => {
@@ -496,6 +506,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v030.sql, /CREATE TABLE platform_api\.idempotency_record/);
     assert.match(v030.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
+  });
+
+  it('customer V032 persists treasury financial control without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v032 = files.find((file) => file.version === 32);
+    assert.ok(v032);
+    assert.equal(v032.filename, 'V032__treasury_financial_control.sql');
+    assert.match(v032.sql, /CREATE TABLE treasury\.provider_balance/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.settlement_record/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.reconciliation_run/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.reconciliation_break/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v032.sql), false);
   });
 
   it('security V002 stores credential descriptor references without secret values', () => {

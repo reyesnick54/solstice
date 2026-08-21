@@ -31,13 +31,16 @@ export {
 export {
   CARD_FORM_FACTORS,
   CARD_STATUSES,
+  CARD_TYPES,
   canTransitionCard,
   cardCanAuthorize,
   freezeCard,
   transitionCard,
   type Card,
+  type CardExpiryMetadata,
   type CardFormFactor,
   type CardStatus,
+  type CardType,
   type IllegalCardTransition,
 } from './card.ts';
 export {
@@ -98,7 +101,31 @@ export {
   type CardNetworkToken,
   type NetworkTokenStatus,
 } from './token.ts';
-export type { CardProcessor, SafeCardMetadata } from './processor.ts';
+export type {
+  CardProcessor,
+  ProcessorAuthorizationDecision,
+  ProcessorCreateCardInput,
+  SafeCardMetadata,
+  SensitiveDetailsRefusal,
+  SimulatedIssueOutcome,
+  WalletProvisionProviderResult,
+} from './processor.ts';
+export { cardTransactionActivity, CARD_TRANSACTION_LIFECYCLE, type CardTransactionActivity, type CardTransactionLifecycle } from './activity.ts';
+export {
+  WALLET_PROVISIONING_STATUSES,
+  walletStatusFromDeviceToken,
+  walletStatusFromEligibility,
+  summarizeWalletProvisioningStatus,
+  freezeWalletProvisioningView,
+  type WalletProvisioningStatus,
+} from './wallet/provisioning.ts';
+export { toConsumerCard, type ConsumerCardResource, type ConsumerCardControls } from './product/consumer.ts';
+export {
+  ingestProviderWebhook,
+  CARD_WEBHOOK_EVENT_TYPES,
+  type CardWebhookIngestResult,
+} from './product/webhook.ts';
+export type { CardStoreSnapshot } from './store.ts';
 export { SimulatedCardProcessor } from './simulated-processor.ts';
 export {
   InMemoryCallbackReplayStore,

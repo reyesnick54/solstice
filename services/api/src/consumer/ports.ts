@@ -85,6 +85,57 @@ export type OptionalDomainPort = {
   summarize(principal: BffPrincipal): OptionalDomainSummary;
 };
 
+export type CardsMutationPort = {
+  list(customerId: string): readonly unknown[];
+  detail(
+    customerId: string,
+    cardId: string,
+  ):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  issue(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly accountId: string;
+    readonly form: 'VIRTUAL' | 'PHYSICAL';
+    readonly cardId: string;
+    readonly idempotencyKey: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  freeze(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  unfreeze(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  updateControls(input: {
+    readonly actorId: string;
+    readonly customerId: string;
+    readonly cardId: string;
+    readonly requestId: string;
+    readonly patch: Record<string, unknown>;
+  }):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+  walletStatus(
+    customerId: string,
+    cardId: string,
+  ):
+    | { readonly ok: true; readonly value: unknown }
+    | { readonly ok: false; readonly code: string; readonly message: string; readonly httpStatus: number };
+};
 export type { FxCommandPort } from './fx-adapter.ts';
 
 export type ActionPort = {
