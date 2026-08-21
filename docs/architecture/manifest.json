@@ -7668,11 +7668,10 @@
       "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
-        "services/api",
-        "services/consumer-platform"
+        "services/api"
       ],
       "protected": true,
-      "notes": "Phase B consumer platform HTTP lives at services/consumer-platform. Consumer BFF and Platform API runtime live at services/api. apps/api remains unused. Not a second ledger, Kernel, or Execution Authority."
+      "notes": "Consumer BFF and Platform API runtime live at services/api. Phase B consumer HTTP also exists at services/consumer-platform as a registered workspace. apps/api remains unused. Not a second ledger, Kernel, or Execution Authority."
     },
     {
       "id": "SOVEREIGN_CELLS",
