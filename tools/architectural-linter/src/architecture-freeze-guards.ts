@@ -69,6 +69,7 @@ const REQUIRED_DOMAINS = [
   'PROVIDER_INTEGRATIONS',
   'OPERATIONS',
   'DEPLOYMENT',
+  'PLATFORM_API',
 ] as const;
 
 const AUTHORITY_TYPES = new Set([
@@ -101,6 +102,11 @@ const COMPETING_PATHS = [
   'packages/moonrey-coin',
   'packages/native-mint',
   'packages/asset-authority',
+  'packages/sunrey-api',
+  'packages/api-gateway',
+  'packages/bff',
+  'packages/sunrey-bff',
+  'services/platform-api',
 ] as const;
 
 const DEPRECATED_PACKAGE_NAMES = [

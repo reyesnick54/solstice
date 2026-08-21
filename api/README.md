@@ -9,6 +9,7 @@ Canonical machine-readable definitions for the developer platform.
 - `sunrey-consumer-platform-v1.openapi.yaml` — consumer/platform BFF for frontend and Lovable (Phase B)
 - `sunrey-webhooks-v1.json` — versioned webhook event and signing schema
 - `sunrey-sdk-vectors-v1.json` — cross-language identifiers
+- `sunrey-consumer-bff-v1.openapi.yaml` — Consumer BFF / Lovable orchestration API (`/api/v1`). Not the chain `/v1` gateway.
 
 Public API version: **v1**
 

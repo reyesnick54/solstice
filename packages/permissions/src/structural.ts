@@ -384,6 +384,16 @@ export function validateIntentStructure(
     }
     return ok(true);
   }
+  if (intent.actionType === ACTION_TYPES.REHEARSE_AUTHORITY_PATH) {
+    const payload = intent.payload as { accountId?: unknown; rehearsalId?: unknown };
+    if (typeof payload.accountId !== 'string' || payload.accountId.length === 0) {
+      return reject('accountId', 'rehearsal accountId is required');
+    }
+    if (typeof payload.rehearsalId !== 'string' || payload.rehearsalId.length === 0) {
+      return reject('rehearsalId', 'rehearsalId is required');
+    }
+    return ok(true);
+  }
   return reject('actionType', `unknown actionType ${intent.actionType}`);
 }
 

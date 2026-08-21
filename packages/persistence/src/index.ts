@@ -41,6 +41,10 @@ export {
   persistIdentitySnapshot,
 } from './identity/pg-identity-store.ts';
 export {
+  loadAuthenticationSnapshot,
+  persistAuthenticationSnapshot,
+} from './identity/pg-auth-store.ts';
+export {
   openPersistenceSession,
   persistCustomerUnit,
   persistEvidenceOnClient,

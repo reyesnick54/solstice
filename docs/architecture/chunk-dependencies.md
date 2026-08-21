@@ -142,6 +142,7 @@ Historical discussion remains below the table.
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-consumer-bff | IMPLEMENTED | services/api |
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
@@ -229,6 +230,7 @@ Historical discussion remains below the table.
 | sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
 | sunrey-consumer-platform | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-platform-api | IMPLEMENTED | services/api |
 
 Chunk 111 implements engineering-simulation reference valuation at
 `packages/human-economic-contribution/src/valuation`. It does not mint

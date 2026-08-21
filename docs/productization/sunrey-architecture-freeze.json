@@ -39,6 +39,11 @@
     "packages/consumer-bff",
     "packages/lovable-sdk",
     "packages/frontend-api"
+    "packages/sunrey-api",
+    "packages/api-gateway",
+    "packages/bff",
+    "packages/sunrey-bff",
+    "services/platform-api"
   ],
   "alternateLedgerOwners": [
     "packages/ledger-v2",

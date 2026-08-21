@@ -80,14 +80,30 @@ export class IdentityStore {
       this.challenges.set(challenge.challengeId, challenge);
     }
     for (const session of snapshot.sessions) {
-      this.sessions.set(session.sessionId, session);
+      this.sessions.set(
+        session.sessionId,
+        Object.freeze({
+          ...session,
+          revokedAt: session.revokedAt ?? null,
+          ipHash: session.ipHash ?? null,
+          userAgentHash: session.userAgentHash ?? null,
+        }),
+      );
       const list = this.sessionsByActor.get(session.actorId) ?? [];
       list.push(session.sessionId);
       this.sessionsByActor.set(session.actorId, list);
       this.identityByActor.set(session.actorId, session.subjectId);
     }
     for (const device of snapshot.devices) {
-      this.devices.set(device.deviceId, device);
+      this.devices.set(
+        device.deviceId,
+        Object.freeze({
+          ...device,
+          revokedAt: device.revokedAt ?? null,
+          authenticationStrength: device.authenticationStrength ?? null,
+          riskState: device.riskState ?? 'CLEAR',
+        }),
+      );
     }
     for (const record of snapshot.kycRecords) {
       this.kycRecords.set(record.id, record);

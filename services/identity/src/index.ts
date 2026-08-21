@@ -5,14 +5,18 @@
  */
 export {
   IdentityService,
+  AuthenticationService,
   SimulatedIdentityAdapter,
   SimulatedWebAuthnRelyingParty,
   SimulatedAuthenticator,
   ActorContextIssuer,
   isVerifiedActorContext,
   actionTypesFromCapabilities,
+  dispatchAuthHttp,
+  authenticateRequestMiddleware,
   type IdentityAuthorityPort,
   type VerifiedActorContext,
   type ActorContext,
   type IdentityFacts,
+  type AuthenticatedRequestContext,
 } from '../../../packages/identity/src/index.ts';
