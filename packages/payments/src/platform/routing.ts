@@ -73,7 +73,7 @@ export const SimulationPaymentRouter: PaymentRouter = {
       available: true,
       countries: Object.freeze(['US', 'GB', 'SA', 'AE', 'DE', 'FR', 'IE']),
       currencies: Object.freeze(['USD', 'GBP', 'SAR', 'AED', 'EUR']),
-      rails: Object.freeze(['ACH', 'WIRE', 'RTP', 'SEPA', 'SWIFT'] as RailClass[]),
+      rails: Object.freeze(['US_BATCH', 'US_INSTANT', 'EU_SEPA', 'INTERNATIONAL_CORRESPONDENT', 'SA_DOMESTIC'] as const satisfies readonly RailClass[]),
       limits: Object.freeze({ minMinorUnits: '1', maxMinorUnits: '100000000' }),
       estimatedFees: 'PROVIDER_DEFINED',
       cancellationSupported: true,

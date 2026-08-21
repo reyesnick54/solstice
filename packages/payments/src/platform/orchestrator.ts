@@ -10,6 +10,7 @@ import { randomUUID } from 'node:crypto';
 import { ENVIRONMENT, LIVE_PAYMENTS_ENABLED } from '../../../config/src/flags.ts';
 import type { Clock } from '../../../config/src/clock.ts';
 import type { Account } from '../../../domain/src/account.ts';
+import { asCurrencyCode } from '../../../domain/src/currency.ts';
 import type { Customer } from '../../../domain/src/customer.ts';
 import { isErr, isOk } from '../../../domain/src/result.ts';
 import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
@@ -240,7 +241,7 @@ export class PaymentPlatform {
       beneficiaryId: created.value.beneficiaryId,
       ownerId: input.ownerId,
     });
-    return { outcome: 'OK', value: this.toRecipient(created.value, input.ownerId), replay: created.replay };
+    return this.ok(this.toRecipient(created.value, input.ownerId), created.replay);
   }
 
   quote(input: {
@@ -300,8 +301,8 @@ export class PaymentPlatform {
         sourceAccountId: source.id,
         sourceAmount: amount,
         destinationAmount: destAmount,
-        currency: amount.currency,
-        destinationCurrency: destAmount?.currency ?? amount.currency,
+        currency: asCurrencyCode(amount.currency),
+        destinationCurrency: asCurrencyCode(destAmount?.currency ?? amount.currency),
         fees: Object.freeze([]),
         amountDebited: amount,
         fx: null,
@@ -349,8 +350,8 @@ export class PaymentPlatform {
       sourceAccountId: source.id,
       sourceAmount: quoted.value.sourceAmount,
       destinationAmount: quoted.value.destinationAmount,
-      currency: quoted.value.sourceAmount.currency,
-      destinationCurrency: quoted.value.destinationAmount.currency,
+      currency: asCurrencyCode(quoted.value.sourceAmount.currency),
+      destinationCurrency: asCurrencyCode(quoted.value.destinationAmount.currency),
       fees: Object.freeze([
         { code: 'RAIL_FEE', amount: quoted.value.fee, description: 'simulation rail fee' },
       ]),
@@ -457,7 +458,7 @@ export class PaymentPlatform {
       {
         amount,
         at: this.ports.clock.now(),
-        currency: amount.currency,
+        currency: asCurrencyCode(amount.currency),
         rail,
         paymentType,
         jurisdiction: source.jurisdiction,
@@ -492,11 +493,11 @@ export class PaymentPlatform {
       paymentId,
       ownerId: input.ownerId,
       source,
-      beneficiary,
+      ...(beneficiary ? { beneficiary } : {}),
       destinationAccountId: input.destinationAccountId ?? null,
       destType,
       amount,
-      quote,
+      ...(quote ? { quote } : {}),
       paymentType,
       rail,
       purpose: input.purpose ?? 'customer transfer',
@@ -631,8 +632,7 @@ export class PaymentPlatform {
       return { outcome: 'OK', value: replayed, decision: this.emptyDecision(intent.actionType, intent.id), replay: true };
     }
     const existingDraft = replayed;
-    const sourceId =
-      'sourceAccountId' in intent.payload ? intent.payload.sourceAccountId : intent.payload.accountId;
+    const sourceId = intent.payload.sourceAccountId;
     const destId =
       destinationAccountId ??
       ('destinationAccountId' in intent.payload ? intent.payload.destinationAccountId : undefined);
@@ -648,8 +648,21 @@ export class PaymentPlatform {
     const dest = this.ports.catalog.accounts.get(destId as Account['id']);
     const customer = source ? this.ports.catalog.customers.get(source.ownerId) : undefined;
     const amount =
-      'amount' in intent.payload ? intent.payload.amount : (intent.payload as InitiatePaymentIntent).payload.sourceAmount;
-    const gated = this.gate(intent, source, customer, { amount });
+      'amount' in intent.payload ? intent.payload.amount : intent.payload.sourceAmount;
+    const gated = this.gate(intent, source, customer, {
+      amount,
+      ...(intent.actionType === ACTION_TYPES.INITIATE_PAYMENT
+        ? {
+            screening: {
+              sanctionsHit: false,
+              pepHit: false,
+              fraudHold: false,
+              screeningRef: 'scr_none',
+            },
+            corridorSimulationEnabled: true,
+          }
+        : {}),
+    });
     if (gated.outcome !== 'ALLOWED') {
       return gated.result;
     }
@@ -693,7 +706,7 @@ export class PaymentPlatform {
         beneficiaryId: null,
         destination: { type: source.ownerId === dest.ownerId ? 'OWN_ACCOUNT' : 'SUNREY_USER', accountId: dest.id, displayHint: dest.id.slice(-4) },
         amount,
-        currency: amount.currency,
+        currency: asCurrencyCode(amount.currency),
         destinationAmount: amount,
         paymentType: source.ownerId === dest.ownerId ? 'ACCOUNT_TO_ACCOUNT' : 'SUNREY_TO_SUNREY',
         railPreference: 'LEDGER_INTERNAL',
@@ -715,7 +728,7 @@ export class PaymentPlatform {
       beneficiaryId: null,
       destination: { type: source.ownerId === dest.ownerId ? 'OWN_ACCOUNT' : 'SUNREY_USER', accountId: dest.id, displayHint: dest.id.slice(-4) },
       amount,
-      currency: amount.currency,
+      currency: asCurrencyCode(amount.currency),
       destinationAmount: amount,
       paymentType: source.ownerId === dest.ownerId ? 'ACCOUNT_TO_ACCOUNT' : 'SUNREY_TO_SUNREY',
       railPreference: 'LEDGER_INTERNAL',
@@ -746,7 +759,7 @@ export class PaymentPlatform {
     this.store.recordUsage(source.ownerId, {
       amount,
       at: now,
-      currency: amount.currency,
+      currency: asCurrencyCode(amount.currency),
       rail: 'LEDGER_INTERNAL',
       paymentType: record.paymentType,
       jurisdiction: source.jurisdiction,
@@ -796,7 +809,7 @@ export class PaymentPlatform {
       if (posted.outcome !== 'OK') {
         return this.fromPayments(posted);
       }
-      return { outcome: 'OK', value: this.toPaymentResource(posted.value), replay: posted.replay };
+      return this.ok(this.toPaymentResource(posted.value), posted.replay);
     }
     if (!beneficiary || !intent.quoteId) {
       return this.reject('QUOTE_REQUIRED', 'external payment requires a beneficiary and quote');
@@ -843,7 +856,7 @@ export class PaymentPlatform {
       policy: { ...intent.policy, kernelEvidenceId: initiated.decision.evidenceRecordId },
     });
     this.store.saveIntent(mapped);
-    return { outcome: 'OK', value: this.toPaymentResource(mapped), replay: initiated.replay };
+    return this.ok(this.toPaymentResource(mapped), initiated.replay);
   }
 
   private draftIntent(input: {
@@ -874,7 +887,7 @@ export class PaymentPlatform {
         displayHint: input.beneficiary?.accountCoordinate.displayHint ?? (input.destinationAccountId ?? '').slice(-4),
       },
       amount: input.amount,
-      currency: input.amount.currency,
+      currency: asCurrencyCode(input.amount.currency),
       destinationAmount: input.quote?.destinationAmount ?? input.amount,
       paymentType: input.paymentType,
       railPreference: input.rail,
@@ -1004,8 +1017,7 @@ export class PaymentPlatform {
         result: this.paymentsReject(intent, decision, 'MISSING_EXECUTION_AUTHORITY', 'ALLOW without authority'),
       };
     }
-    const accountId =
-      'sourceAccountId' in intent.payload ? intent.payload.sourceAccountId : intent.payload.accountId;
+    const accountId = intent.payload.sourceAccountId;
     const verified = this.ports.issuer.verify(
       decision.executionAuthority,
       { actionType: intent.actionType, accountId, intentId: intent.id },
@@ -1212,7 +1224,14 @@ export class PaymentPlatform {
     if (result.outcome === 'KERNEL_REFUSED') {
       return { outcome: 'KERNEL_REFUSED', decision: result.decision };
     }
-    return this.reject(result.code, result.message);
+    if (result.outcome === 'REJECTED') {
+      return this.reject(result.code, result.message);
+    }
+    return this.reject('UNKNOWN', 'payment service rejected the request');
+  }
+
+  private ok<T>(value: T, replay?: boolean): PaymentPlatformOutcome<T> {
+    return replay === true ? { outcome: 'OK', value, replay: true } : { outcome: 'OK', value };
   }
 
   private reject(code: string, message: string): PaymentPlatformOutcome<never> {

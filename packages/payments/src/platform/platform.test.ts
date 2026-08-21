@@ -12,6 +12,7 @@ import { Money } from '../../../money/src/money.ts';
 import { asIntentId } from '../../../permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../../permissions/src/action-types.ts';
 import {
+  activateUsCustomer,
   createPaymentWorld,
   PAY_NOW,
   type PaymentWorld,
@@ -241,6 +242,46 @@ describe('payment platform productization', () => {
     assert.equal(concurrent.outcome, 'REJECTED');
   });
 
+  it('posts a SunRey-to-SunRey ledger transfer', () => {
+    const world = createPaymentWorld('plat_xuser', 50_000n);
+    const counterparty = activateUsCustomer(world.runtime, 'cust_plat_xuser_dest');
+    const dest = world.runtime.accountsService.open({
+      id: asIntentId('open_plat_xuser_dest'),
+      actionType: ACTION_TYPES.OPEN_ACCOUNT,
+      idempotencyKey: 'open_plat_xuser_dest',
+      actorId: world.actorId,
+      requestedAt: world.clock.now(),
+      purpose: 'CUSTOMER_ONBOARDING',
+      payload: {
+        accountId: asAccountId('acct_plat_xuser_dest'),
+        ownerId: counterparty.id,
+        productId: asProductId('prod_demand_usd_us'),
+        accountClass: 'DEMAND_DEPOSIT',
+        legalEntityId: asLegalEntityId('le_solstice_us_inc'),
+        jurisdiction: world.account.jurisdiction,
+        currency: asCurrencyCode('USD'),
+      },
+    });
+    if (dest.outcome !== 'OPENED') {
+      throw new Error(`expected OPENED, got ${dest.outcome}`);
+    }
+    const platform = platformOf(world);
+    const paid = platform.createPayment({
+      actorId: world.actorId,
+      ownerId: world.customer.id,
+      sourceAccountId: world.account.id,
+      destinationAccountId: dest.account.id,
+      amountMinorUnits: '2500',
+      currency: 'USD',
+      idempotencyKey: 'xuser_pay',
+    });
+    assert.equal(paid.outcome, 'OK');
+    if (paid.outcome === 'OK') {
+      assert.equal(paid.value.status, 'SETTLED');
+      assert.equal(paid.value.paymentType, 'SUNREY_TO_SUNREY');
+    }
+  });
+
   it('holds and captures once, and releases on failure', () => {
     const world = createPaymentWorld('plat_hold');
     const holds = new LedgerFundsReservation(world.runtime.ledger);
@@ -263,7 +304,7 @@ describe('payment platform productization', () => {
       idempotencyKey: 'hold_auth',
       actorId: world.actorId,
       requestedAt: world.clock.now(),
-      purpose: 'CUSTOMER_CROSS_BORDER_PAYMENT',
+      purpose: 'CUSTOMER_CROSS_BORDER_PAYMENT' as const,
       payload: {
         paymentId: 'pay_hold',
         accountId: world.account.id,
@@ -528,7 +569,7 @@ describe('payment platform productization', () => {
       {
         amount: Money.fromMinorUnits(99_000_000n, 'USD'),
         at: asUtcInstant('2026-08-21T12:00:00.000Z'),
-        currency: 'USD',
+        currency: asCurrencyCode('USD'),
         rail: 'WIRE',
         paymentType: 'WIRE',
         jurisdiction: 'US',
