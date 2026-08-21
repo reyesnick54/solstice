@@ -462,6 +462,22 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
+  it('customer V029 persists consumer authentication state without plaintext secrets', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v029 = files.find((file) => file.version === 29);
+    assert.ok(v029);
+    assert.equal(v029.filename, 'V029__consumer_authentication.sql');
+    assert.match(v029.sql, /CREATE TABLE identity.login_handle/);
+    assert.match(v029.sql, /CREATE TABLE identity.password_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.totp_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.refresh_session/);
+    assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
+    assert.match(v029.sql, /CREATE TABLE identity.security_event/);
+    assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
+    assert.equal(/\bplaintext_password\b/i.test(v029.sql), false);
+    assert.match(v029.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
+  });
+
   it('customer V028 grants payments schema usage for operational recovery', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v028 = files.find((file) => file.version === 28);
@@ -469,6 +485,17 @@ describe('versioned SQL migrations', () => {
     assert.equal(v028.filename, 'V028__operational_schema_usage.sql');
     assert.match(v028.sql, /GRANT USAGE ON SCHEMA payments TO customer_app/);
     assert.equal(/CREATE TABLE/i.test(v028.sql), false);
+  });
+
+  it('customer V029 adds platform API stores without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v029 = files.find((file) => file.version === 29);
+    assert.ok(v029);
+    assert.equal(v029.filename, 'V029__platform_api.sql');
+    assert.match(v029.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
+    assert.match(v029.sql, /CREATE TABLE platform_api\.idempotency_record/);
+    assert.match(v029.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v029.sql), false);
   });
 
   it('security V002 stores credential descriptor references without secret values', () => {

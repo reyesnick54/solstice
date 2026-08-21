@@ -1151,6 +1151,25 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 113 master metadata/rights/provenance/lineage/policy registry for datasets and economic evidence assets. Sits above HIN, PDV, PEG, Human Economic Contribution Registry, oracles, productive registries, and the monetary constitution. Not a blob store, mint, or second source-specific registry. Simulation only."
+    },
+    {
+      "id": "services/api",
+      "npmName": "@solstice/platform-api",
+      "path": "services/api",
+      "kind": "service",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "allowedDependencies": [
+        "packages/config",
+        "packages/domain"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "SunRey Platform API. Canonical application-facing HTTP runtime and BFF entry. Orchestrates existing services. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Production remains inactive."
     }
   ],
   "components": [
@@ -4364,6 +4383,7 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
+      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
     },
     {
       "id": "sunrey-provider-runtime",
@@ -5182,6 +5202,37 @@
         "@reyesnick54"
       ],
       "notes": "Chunk 160 external production evidence registry under existing mainnet readiness. Registers, verifies, expires, revokes, and binds external evidence references. Does not fabricate evidence, store confidential documents in Git, put raw contracts on-chain, or activate production. Evidence Vault remains the sealing authority."
+    },
+    {
+      "id": "sunrey-platform-api",
+      "name": "SunRey Platform API runtime and gateway",
+      "canonicalOwner": "services/api",
+      "canonicalPath": "services/api/src/app.ts",
+      "publicInterface": "services/api/src/index.ts",
+      "status": "IMPLEMENTED",
+      "protected": true,
+      "financialStateMutation": false,
+      "executionAuthorityRequired": false,
+      "kernelAuthorizationRequired": false,
+      "protectedSymbols": [
+        {
+          "name": "createPlatformApi",
+          "kind": "function"
+        }
+      ],
+      "forbiddenAliases": [
+        "packages/sunrey-api",
+        "packages/api-gateway",
+        "packages/bff",
+        "packages/sunrey-bff",
+        "packages/http-gateway",
+        "packages/platform-api-v2",
+        "services/platform-api"
+      ],
+      "codeowners": [
+        "@reyesnick54"
+      ],
+      "notes": "Phase B application-facing HTTP runtime. Versioned /api/v1. Orchestration only. Does not post journals, issue Execution Authority, or activate production. The SDK /v1 DevelopmentPlatform gateway remains a simulation developer surface."
     }
   ],
   "authorizedMutationPaths": [
@@ -6808,6 +6859,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
+      "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Binds existing component evidence by hash. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
       "notes": "Chunk 90 production handoff and day-2 operations control plane. Chunk 158 extends that owner with a full-platform production-candidate burn-in and readiness evidence bundle at packages/sunrey-chain/src/production-handoff/full-platform-candidate. Chunk 167 extends application-rollback records on the same owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 extends the same owner with final engineering closure, capability-ownership audit, and external-inputs handoff at packages/sunrey-chain/src/production-handoff/engineering-closure. CORE_CODE_COMPLETE_CANDIDATE is an engineering label only. PRODUCTION_READY remains false without external/human inputs. Binds existing component evidence by hash. PRODUCTION_CANDIDATE_REVIEW_READY is not production authorization. Do not create packages/sunrey-core, packages/platform-v2, packages/final-architecture, packages/super-app, packages/everything, packages/production-v2, packages/full-platform, packages/mainnet-v2, packages/production-ready, packages/launch-v2, packages/system-rc, packages/sunrey-production, packages/incident-v2, or packages/recovery-v2."
     },
     {
@@ -7166,6 +7218,13 @@
       "owner": "tools/architectural-linter",
       "protected": true,
       "notes": "Chunk 159 main-branch integrity lock. Companion scripts under scripts/. Detects duplicate JSON keys, merge conflict markers, duplicate architecture IDs, and silent test-surface replacement. manifest.json remains architecture authority. Do not create packages/repository-integrity, packages/architecture-v2, or packages/merge-manager."
+    },
+    {
+      "id": "sunrey-platform-api",
+      "status": "IMPLEMENTED",
+      "owner": "services/api",
+      "protected": true,
+      "notes": "Phase B Platform API runtime at services/api. Canonical /api/v1 application entry. Not a second ledger, Kernel, Execution Authority, Agent runtime, or Exchange. Do not create packages/sunrey-api, packages/api-gateway, packages/bff, or services/platform-api."
     }
   ],
   "boundedContexts": [
@@ -7491,12 +7550,13 @@
     },
     {
       "id": "API_INTEGRATION",
-      "status": "PLANNED",
+      "status": "PARTIAL",
       "reservedPaths": [
         "apps/api",
         "services/api"
       ],
-      "protected": true
+      "protected": true,
+      "notes": "Phase B Platform API runtime lives at services/api. apps/api remains unused. Business endpoints land in later Phase B prompts. Not a second ledger or Execution Authority."
     },
     {
       "id": "SOVEREIGN_CELLS",
@@ -7700,6 +7760,13 @@
     "packages/final-architecture",
     "packages/super-app",
     "packages/everything",
-    "packages/production-v2"
+    "packages/production-v2",
+    "packages/sunrey-api",
+    "packages/api-gateway",
+    "packages/bff",
+    "packages/sunrey-bff",
+    "packages/http-gateway",
+    "packages/platform-api-v2",
+    "services/platform-api"
   ]
 }

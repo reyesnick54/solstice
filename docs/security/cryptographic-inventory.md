@@ -38,7 +38,8 @@ Not quantum-proof. Not mainnet.
 | evidence-hashing | evidence + security | EVIDENCE_INTEGRITY | SHA-256 / node:crypto | hash-only | collision/preimage | vault ADR later | unchanged SHA-256 | IMPLEMENTED |
 | consent-permits | consent + security | DATA_USE_PERMIT_SIGNING | HMAC-SHA256 | ACTIVE / DEPRECATED verify | application MAC | medium | sunrey-app-hmac-v1 | IMPLEMENTED |
 | hmac-webhooks | security | WEBHOOK_SIGNING | HMAC-SHA256 | ACTIVE / DEPRECATED verify | application MAC | medium | sunrey-app-hmac-v1 | IMPLEMENTED |
-| passkeys | identity (reserved) | SESSION_SIGNING / WebAuthn | not selected | n/a | authenticator-dependent | research | identity + CryptoSuite | NOT_IMPLEMENTED |
+| passkeys | identity | SESSION_SIGNING / WebAuthn | simulation HMAC; production blocked on @simplewebauthn/server | n/a | authenticator-dependent | research | identity + @simplewebauthn/server | PARTIAL |
+| password-kdf | identity | consumer passwords | scrypt N=16384 r=8 p=1 via node:crypto | unique salt; digest only | offline dictionary if leaked | medium | scrypt now; Argon2id later | IMPLEMENTED |
 | data-encryption | security | DATA_ENCRYPTION | AES-256-GCM envelopes | ACTIVE encrypt | harvest-now-decrypt-later | high | ML-KEM wrap DRAFT | IMPLEMENTED |
 | backup-encryption | security | BACKUP_ENCRYPTION | AES-256-GCM envelopes | ACTIVE encrypt | harvest-now-decrypt-later | high | ML-KEM wrap DRAFT | IMPLEMENTED |
 | custody | custody + security | DATA_ENCRYPTION | simulation envelopes | simulation | simulation payloads | later | KeyProvider + suite | IMPLEMENTED (simulation) |

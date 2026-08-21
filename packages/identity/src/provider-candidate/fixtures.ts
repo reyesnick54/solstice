@@ -58,6 +58,9 @@ export function fixtureDevice(now: UtcInstant): RegisteredDevice {
     firstSeenAt: now,
     lastSeenAt: now,
     authenticationMethod: 'PASSKEY',
+    authenticationStrength: 'STRONG',
     trustState: 'KNOWN',
+    riskState: 'CLEAR',
+    revokedAt: null,
   });
 }
