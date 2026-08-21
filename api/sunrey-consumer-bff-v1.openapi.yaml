@@ -119,10 +119,85 @@ paths:
   /api/v1/fx:
     get:
       operationId: getFx
-      summary: FX resource stub
+      summary: FX availability catalog
       responses:
         "200":
           description: Honest availability
+  /api/v1/fx/currencies:
+    get:
+      operationId: listFxCurrencies
+      summary: Supported simulation currency metadata
+      description: Metadata existence does not imply live deposit, withdrawal, or FX.
+      responses:
+        "200":
+          description: Currency catalog
+  /api/v1/fx/valuation:
+    get:
+      operationId: getFxValuation
+      summary: Presentation-only multi-currency valuation
+      description: Not Ledger accounting authority. Includes rate timestamps and stale indication.
+      parameters:
+        - name: targetCurrency
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Presentation valuation
+  /api/v1/fx/quotes:
+    post:
+      operationId: createFxQuote
+      summary: Request a server-priced FX quote
+      description: >
+        Client sends source amount and currencies only. The server applies
+        rates, spread, and fees. Frontend must not implement FX math.
+      responses:
+        "201":
+          description: Immutable quote
+        "403":
+          description: Kernel denied
+  /api/v1/fx/quotes/{id}:
+    get:
+      operationId: getFxQuote
+      summary: Read an issued FX quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Quote
+        "404":
+          description: Not found
+  /api/v1/fx/quotes/{id}/accept:
+    post:
+      operationId: acceptFxQuote
+      summary: Approve the exact issued quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Approved quote
+  /api/v1/fx/quotes/{id}/execute:
+    post:
+      operationId: executeFxQuote
+      summary: Execute the exact approved quote
+      description: Expired quotes cannot execute. Execution posts Ledger journals through Execution Authority.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Execution result
   /api/v1/cards:
     get:
       operationId: getCards

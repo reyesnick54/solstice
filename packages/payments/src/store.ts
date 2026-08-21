@@ -1,4 +1,6 @@
 import type { Beneficiary } from './beneficiary.ts';
+import type { FxExecution } from './fx-execution.ts';
+import type { PaymentFxComposition } from './fx-payment.ts';
 import type { FxQuote } from './fx-quote.ts';
 import type { PaymentOrder } from './payment.ts';
 import type { ReconciliationResult } from './reconciliation.ts';
@@ -9,6 +11,11 @@ export class PaymentStore {
   private readonly payments = new Map<string, PaymentOrder>();
   private readonly byIdempotency = new Map<string, PaymentOrder>();
   private readonly acceptedQuotes = new Map<string, string>();
+  private readonly executions = new Map<string, FxExecution>();
+  private readonly executionsByIdempotency = new Map<string, FxExecution>();
+  private readonly executionsByQuote = new Map<string, FxExecution>();
+  private readonly compositions = new Map<string, PaymentFxComposition>();
+  private readonly compositionsByIdempotency = new Map<string, PaymentFxComposition>();
   private readonly reconciliations = new Map<string, ReconciliationResult>();
 
   saveBeneficiary(beneficiary: Beneficiary): void {
@@ -58,5 +65,36 @@ export class PaymentStore {
 
   getReconciliation(paymentId: string): ReconciliationResult | undefined {
     return this.reconciliations.get(paymentId);
+  }
+
+  saveExecution(execution: FxExecution): void {
+    this.executions.set(execution.executionId, execution);
+    this.executionsByIdempotency.set(execution.idempotencyKey, execution);
+    this.executionsByQuote.set(execution.quoteId, execution);
+  }
+
+  getExecution(id: string): FxExecution | undefined {
+    return this.executions.get(id);
+  }
+
+  getExecutionByQuote(quoteId: string): FxExecution | undefined {
+    return this.executionsByQuote.get(quoteId);
+  }
+
+  getExecutionByIdempotency(key: string): FxExecution | undefined {
+    return this.executionsByIdempotency.get(key);
+  }
+
+  saveComposition(composition: PaymentFxComposition): void {
+    this.compositions.set(composition.compositionId, composition);
+    this.compositionsByIdempotency.set(composition.idempotencyKey, composition);
+  }
+
+  getComposition(id: string): PaymentFxComposition | undefined {
+    return this.compositions.get(id);
+  }
+
+  getCompositionByIdempotency(key: string): PaymentFxComposition | undefined {
+    return this.compositionsByIdempotency.get(key);
   }
 }

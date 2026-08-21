@@ -20,7 +20,13 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | account + ledger/available/held | `projectBankingPosition` | AVAILABLE_SIMULATION | none |
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
 | SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
-| FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
+| FX | `/api/v1/fx` | GET | required | availability catalog | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
+| FX currencies | `/api/v1/fx/currencies` | GET | required | supported-currency metadata | `packages/domain` currency registry | AVAILABLE_SIMULATION | metadata ≠ live |
+| FX quote | `/api/v1/fx/quotes` | POST | required | server-priced quote | `CREATE_FX_QUOTE` | AVAILABLE_SIMULATION | client must not compute the rate |
+| FX quote read | `/api/v1/fx/quotes/{id}` | GET | required | immutable quote | `packages/payments` | AVAILABLE_SIMULATION | none |
+| FX approve | `/api/v1/fx/quotes/{id}/accept` | POST | required | approved quote | `ACCEPT_FX_QUOTE` | AVAILABLE_SIMULATION | required approval |
+| FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
+| FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
 | GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
@@ -48,3 +54,15 @@ Lovable must not decide whether a regulated feature is available.
 
 Unavailable fields use `state` + `availability` + `reason` and a null
 `value`. Provider failure is never a zero balance.
+
+USD 1,000 → SAR Lovable flow (no client FX math):
+
+1. `POST /api/v1/fx/quotes` with `sourceAccountId`, `sourceCurrency=USD`,
+   `destinationCurrency=SAR`, `sourceAmountMinorUnits="100000"`.
+2. Review the returned quote (`destinationAmountMinorUnits`, `feeMinorUnits`,
+   `expiresAt`, `requiredApproval`).
+3. `POST /api/v1/fx/quotes/{id}/accept` with the source `accountId`.
+4. `POST /api/v1/fx/quotes/{id}/execute` with source and SAR destination
+   account ids.
+5. Home `valuation` is presentation-only and includes `rateTimestamp`.
+   Mixed-currency `wealth` remains `MIXED_CURRENCY_WITHOUT_CONVERSION`.

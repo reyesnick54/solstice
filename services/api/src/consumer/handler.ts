@@ -158,6 +158,28 @@ function dispatchAuthenticated(
     const id = path.slice('/api/v1/accounts/'.length);
     return result(runtime.bff.getAccount(principal, id, requestId), headers);
   }
+  if (path === '/api/v1/fx/currencies' && method === 'GET') {
+    return json(200, runtime.bff.listFxCurrencies(), headers);
+  }
+  if (path === '/api/v1/fx/valuation' && method === 'GET') {
+    return json(200, runtime.bff.valuation(principal, query.targetCurrency ?? query.target ?? 'USD'), headers);
+  }
+  if (path === '/api/v1/fx/quotes' && method === 'POST') {
+    return result(runtime.bff.createFxQuote(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/fx/quotes/') && path.endsWith('/accept') && method === 'POST') {
+    const id = path.slice('/api/v1/fx/quotes/'.length, -'/accept'.length);
+    return result(runtime.bff.acceptFxQuote(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/fx/quotes/') && path.endsWith('/execute') && method === 'POST') {
+    const id = path.slice('/api/v1/fx/quotes/'.length, -'/execute'.length);
+    return result(runtime.bff.executeFxQuote(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/fx/quotes/') && method === 'GET') {
+    const id = path.slice('/api/v1/fx/quotes/'.length);
+    return result(runtime.bff.getFxQuote(principal, id, requestId), headers);
+  }
+
   if (path === '/api/v1/me/actions' && method === 'GET') {
     const home = runtime.bff.home(principal, requestId);
     if (isBffError(home)) {
@@ -199,11 +221,11 @@ function dispatchAuthenticated(
   );
 }
 
-function result(body: unknown, headers: Record<string, string>): BffResponse {
+function result(body: unknown, headers: Record<string, string>, okStatus = 200): BffResponse {
   if (isBffError(body)) {
     return json(statusForError(body as BffErrorEnvelope), body, headers);
   }
-  return json(200, body, headers);
+  return json(okStatus, body, headers);
 }
 
 function json(status: number, body: unknown, headers: Record<string, string>): BffResponse {
@@ -230,6 +252,12 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/payments',
   'GET /api/v1/recipients',
   'GET /api/v1/fx',
+  'GET /api/v1/fx/currencies',
+  'GET /api/v1/fx/valuation',
+  'POST /api/v1/fx/quotes',
+  'GET /api/v1/fx/quotes/{id}',
+  'POST /api/v1/fx/quotes/{id}/accept',
+  'POST /api/v1/fx/quotes/{id}/execute',
   'GET /api/v1/cards',
   'GET /api/v1/grow',
   'GET /api/v1/goals',

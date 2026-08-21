@@ -33,7 +33,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'RECIPIENTS':
       return row(group, '/api/v1/recipients', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/domain beneficiary (when productized)', 'none', 'Agents cannot add beneficiaries. BFF has no write path.');
     case 'FX':
-      return row(group, '/api/v1/fx', ['GET'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Indicative simulation quotes only.');
+      return row(group, '/api/v1/fx', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Quotes, execution, and presentation valuation. Live FX is not connected.');
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET'], 'EXTERNAL_PROVIDER_REQUIRED', 'packages/cards + services/cards', 'card processor / wallet adapters', 'Live issuing is not connected.');
     case 'GROW':

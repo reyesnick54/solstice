@@ -16,6 +16,8 @@ export type {
   CreateBeneficiaryPayload,
   CreateFxQuoteIntent,
   CreateFxQuotePayload,
+  ExecuteFxQuoteIntent,
+  ExecuteFxQuotePayload,
   CreateHoldIntent,
   CreateHoldPayload,
   HoldLifecyclePayload,

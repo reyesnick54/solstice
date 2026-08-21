@@ -18,6 +18,7 @@ export const BFF_ERROR_CODES = [
   'FORBIDDEN_PROFILE_FIELD',
   'INVALID_PAGINATION_CURSOR',
   'FEATURE_UNAVAILABLE',
+  'KERNEL_DENIED',
   'MALFORMED',
   'METHOD_NOT_ALLOWED',
 ] as const;
@@ -60,6 +61,7 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
+    case 'KERNEL_DENIED':
       return 403;
     case 'NOT_FOUND':
       return 404;

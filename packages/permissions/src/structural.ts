@@ -15,6 +15,7 @@ import {
   type CancelHoldIntent,
   type CreateBeneficiaryIntent,
   type CreateFxQuoteIntent,
+  type ExecuteFxQuoteIntent,
   type CreateHoldIntent,
   type InitiatePaymentIntent,
   type InitiatePendingSettlementIntent,
@@ -122,6 +123,9 @@ export function validateIntentStructure(
   }
   if (intent.actionType === ACTION_TYPES.ACCEPT_FX_QUOTE) {
     return validateAccountOnly((intent as AcceptFxQuoteIntent).payload.accountId, catalog);
+  }
+  if (intent.actionType === ACTION_TYPES.EXECUTE_FX_QUOTE) {
+    return validateExecuteFxQuote(intent as ExecuteFxQuoteIntent, catalog);
   }
   if (intent.actionType === ACTION_TYPES.INITIATE_PAYMENT) {
     return validateInitiatePayment(intent as InitiatePaymentIntent, catalog);
@@ -683,6 +687,41 @@ function validateCreateFxQuote(
   }
   if (typeof amount.minorUnits !== 'bigint') {
     return reject('amount', 'amount minor units must be bigint; floating-point is forbidden');
+  }
+  return ok(true);
+}
+
+function validateExecuteFxQuote(
+  intent: ExecuteFxQuoteIntent,
+  catalog: StructuralCatalog,
+): StructuralValidationResult {
+  if (intent.payload.accountId !== intent.payload.sourceAccountId) {
+    return reject('accountId', 'accountId must equal sourceAccountId');
+  }
+  if (intent.payload.sourceAccountId === intent.payload.destinationAccountId) {
+    return reject('destinationAccountId', 'source and destination accounts must differ');
+  }
+  const sourceCheck = validateAccountOnly(intent.payload.sourceAccountId, catalog);
+  if (!sourceCheck.ok) {
+    return sourceCheck;
+  }
+  const destinationCheck = validateAccountOnly(intent.payload.destinationAccountId, catalog);
+  if (!destinationCheck.ok) {
+    return destinationCheck;
+  }
+  const source = catalog.accounts.get(intent.payload.sourceAccountId);
+  const destination = catalog.accounts.get(intent.payload.destinationAccountId);
+  if (!source || !destination) {
+    return reject('accountId', 'source and destination accounts must exist');
+  }
+  if (source.ownerId !== destination.ownerId) {
+    return reject('destinationAccountId', 'wallet FX destination must be owned by the same customer');
+  }
+  if (source.currency === destination.currency) {
+    return reject('currency', 'wallet FX requires distinct source and destination currencies');
+  }
+  if (!isCustomerFundedClass(source.accountClass) || !isCustomerFundedClass(destination.accountClass)) {
+    return reject('accountClass', 'wallet FX requires customer-funded account classes');
   }
   return ok(true);
 }
