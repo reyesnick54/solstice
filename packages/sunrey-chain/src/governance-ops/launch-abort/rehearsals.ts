@@ -10,7 +10,7 @@ import {
   fixtureHumanApprovals,
   signApproval,
 } from '../engine.ts';
-import type { EmergencyActionClass, GovernanceOperationPackage } from '../types.ts';
+import type { EmergencyActionClass, EmergencyActionRecord, GovernanceOperationPackage } from '../types.ts';
 import { abortCeremony, recordPreGenesisAbort, refuseUndoGenesis } from './abort.ts';
 import { attemptProtocolRollback, planApplicationRollback } from './rollback.ts';
 import { availableUnrelatedCapabilities, restrictionPlanFor } from './restrictions.ts';

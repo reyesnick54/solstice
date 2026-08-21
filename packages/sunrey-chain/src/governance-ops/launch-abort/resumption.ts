@@ -4,14 +4,13 @@
  * AI may recommend only.
  */
 
-import {
-  applyEmergencyAction,
-  developmentEmergencyPolicy,
-  reviewEmergencyRestriction,
-  signApproval,
-  type GovernanceApprovalRecord,
-} from '../engine.ts';
-import type { EmergencyActionClass, EmergencyActionRecord, GovernanceOpsActorKind } from '../types.ts';
+import { reviewEmergencyRestriction } from '../engine.ts';
+import type {
+  EmergencyActionClass,
+  EmergencyActionRecord,
+  GovernanceApprovalRecord,
+  GovernanceOpsActorKind,
+} from '../types.ts';
 import type { IndependentCapability } from '../../post-genesis/types.ts';
 import type { CapabilityResumptionCandidate, EmergencyRecommendation, ResumptionState } from './types.ts';
 
@@ -109,5 +108,3 @@ export function authorizeHumanResumption(input: {
     actorKind: 'HUMAN',
   });
 }
-
-export { applyEmergencyAction, developmentEmergencyPolicy, signApproval };

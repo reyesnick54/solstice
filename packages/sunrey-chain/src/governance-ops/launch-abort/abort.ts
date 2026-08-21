@@ -50,7 +50,7 @@ export function recordPreGenesisAbort(input: {
     bindLaunchAbortEvidence({
       incidentId: `INC-PREGENESIS-${input.reason}`,
       candidateFreezeHash: input.candidateFreezeHash,
-      operatorActions: input.operatorActions,
+      ...(input.operatorActions ? { operatorActions: input.operatorActions } : {}),
       reconciliationState: 'NOT_APPLICABLE',
     });
   const abortId = commitGovernance({
