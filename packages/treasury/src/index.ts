@@ -49,3 +49,4 @@ export type { TreasurySnapshot } from './store.ts';
 export { seedTreasuryStore, registerTreasuryLedgerBooks, TREASURY_SEED_IDS, TREASURY_LEDGER_BOOKS } from './seed.ts';
 export { TreasuryService } from './service.ts';
 export type { TreasuryServiceOutcome, TreasuryCatalogPorts } from './service.ts';
+export * from './product/index.ts';

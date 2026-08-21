@@ -120,6 +120,7 @@ export {
   reservePlan,
   inboundPendingPlan,
   inboundSettlePlan,
+  customerConversionSettlePlan,
   returnDestinationFxPlan,
   returnDestinationSettlePlan,
   returnPrincipalPlan,

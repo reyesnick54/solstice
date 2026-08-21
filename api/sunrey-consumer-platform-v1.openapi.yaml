@@ -4,11 +4,11 @@ info:
   version: v1
   description: >
     Canonical consumer/platform HTTP contract for frontend and Lovable
-    integration. Documents implemented Phase B endpoints only. Specialized
-    chain, Exchange, developer-platform, event, and webhook contracts remain
-    in their own specifications. Simulation only. Balances are ledger
-    projections. Clients never write the ledger or treat Agent text as
-    authorization.
+    integration. Documents implemented Phase B plus Phase C sandbox money
+    endpoints. Specialized chain, Exchange, developer-platform, event, and
+    webhook contracts remain in their own specifications. Simulation only.
+    Balances are ledger projections. Clients never write the ledger, choose
+    exchange rates, or treat Agent text as authorization.
 servers:
   - url: http://127.0.0.1:18580
     description: Local consumer platform (not hardcoded in the SDK)
@@ -27,6 +27,11 @@ tags:
   - name: WORKFLOWS
   - name: WEBHOOKS
   - name: SANDBOX
+  - name: TRANSFERS
+  - name: RECIPIENTS
+  - name: PAYMENTS
+  - name: FX
+  - name: CARDS
 security:
   - ConsumerBearer: []
 paths:
@@ -566,6 +571,238 @@ paths:
           content:
             application/json:
               schema: { $ref: "#/components/schemas/JobDto" }
+  /v1/consumer/transfers:
+    post:
+      operationId: createConsumerTransfer
+      tags: [TRANSFERS]
+      summary: Internal transfer between the caller's accounts
+      description: >
+        Submits INTERNAL_TRANSFER through Kernel. The client never posts a
+        journal. Simulation only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransferRequest" }
+            example:
+              source_account_id: acct_fin-ready_usd
+              destination_account_id: acct_fin-ready_sar
+              amount: { minor_units: "1000", currency: USD }
+              idempotency_key: xfer-demo-1
+      responses:
+        "200":
+          description: Transfer posted after Kernel ALLOW
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TransferDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/recipients:
+    get:
+      operationId: listConsumerRecipients
+      tags: [RECIPIENTS]
+      summary: List saved recipients (beneficiaries)
+      responses:
+        "200":
+          description: Recipients
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RecipientList" }
+    post:
+      operationId: createConsumerRecipient
+      tags: [RECIPIENTS]
+      summary: Create a recipient. Requires MANAGE_BENEFICIARY.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RecipientCreateRequest" }
+            example:
+              legal_name: Ahmed Ali
+              destination_country: SA
+              currency: SAR
+              account_coordinate: SA0380000000608010167519
+              idempotency_key: recip-demo-1
+      responses:
+        "200":
+          description: Recipient
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/RecipientDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/payments/quotes:
+    post:
+      operationId: createConsumerPaymentQuote
+      tags: [PAYMENTS]
+      summary: Quote an outbound payment. Rate is server-owned simulation reference.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FxQuoteRequest" }
+            example:
+              source_currency: USD
+              destination_currency: SAR
+              amount: { minor_units: "100000", currency: USD }
+              corridor_id: US-SA-USD-SAR
+      responses:
+        "200":
+          description: Quote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FxQuoteDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/payments:
+    post:
+      operationId: submitConsumerPayment
+      tags: [PAYMENTS]
+      summary: Submit a quoted sandbox payment
+      description: >
+        Accepts the quote and initiates the payment. Status is observed with
+        GET. Clients cannot choose rates or self-approve restricted payments.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PaymentSubmitRequest" }
+      responses:
+        "200":
+          description: Payment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/payments/{paymentId}:
+    get:
+      operationId: getConsumerPayment
+      tags: [PAYMENTS]
+      summary: Payment status. Pending and failed are first-class states.
+      parameters:
+        - $ref: "#/components/parameters/paymentId"
+      responses:
+        "200":
+          description: Payment
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/PaymentDto" }
+        "404":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/fx/quotes:
+    post:
+      operationId: createConsumerFxQuote
+      tags: [FX]
+      summary: Request a USD→SAR (or reverse) FX quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FxQuoteRequest" }
+      responses:
+        "200":
+          description: Quote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FxQuoteDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/fx/quotes/{quoteId}/accept:
+    post:
+      operationId: acceptConsumerFxQuote
+      tags: [FX]
+      summary: Accept a server-issued FX quote
+      parameters:
+        - $ref: "#/components/parameters/quoteId"
+      responses:
+        "200":
+          description: Accepted quote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FxQuoteDto" }
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/fx/quotes/{quoteId}/execute:
+    post:
+      operationId: executeConsumerFxQuote
+      tags: [FX]
+      summary: Execute an accepted FX conversion onto a destination account
+      parameters:
+        - $ref: "#/components/parameters/quoteId"
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/FxExecuteRequest" }
+      responses:
+        "200":
+          description: Executed quote
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/FxQuoteDto" }
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/cards:
+    get:
+      operationId: listConsumerCards
+      tags: [CARDS]
+      summary: List the caller's simulated cards
+      responses:
+        "200":
+          description: Cards
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CardList" }
+    post:
+      operationId: issueConsumerCard
+      tags: [CARDS]
+      summary: Issue and activate a simulated virtual card
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CardIssueRequest" }
+      responses:
+        "200":
+          description: Card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CardDto" }
+        "403":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/cards/{cardId}/freeze:
+    post:
+      operationId: freezeConsumerCard
+      tags: [CARDS]
+      summary: Freeze a simulated card
+      parameters:
+        - $ref: "#/components/parameters/cardId"
+      responses:
+        "200":
+          description: Frozen card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CardDto" }
+        "409":
+          $ref: "#/components/responses/Error"
+  /v1/consumer/cards/{cardId}/unfreeze:
+    post:
+      operationId: unfreezeConsumerCard
+      tags: [CARDS]
+      summary: Unfreeze a simulated card
+      parameters:
+        - $ref: "#/components/parameters/cardId"
+      responses:
+        "200":
+          description: Active card
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CardDto" }
+        "409":
+          $ref: "#/components/responses/Error"
 components:
   securitySchemes:
     ConsumerBearer:
@@ -596,7 +833,7 @@ components:
       required: true
       schema:
         type: string
-        enum: [alex-ready, blair-restricted, casey-capable, drew-empty, evan-paged]
+        enum: [alex-ready, blair-restricted, casey-capable, drew-empty, evan-paged, fin-ready]
     sessionId:
       in: path
       name: sessionId
@@ -618,7 +855,7 @@ components:
       required: true
       schema:
         type: string
-        enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading]
+        enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading, send, recipients, fx]
     actionId:
       in: path
       name: actionId
@@ -637,6 +874,21 @@ components:
     endpointId:
       in: path
       name: endpointId
+      required: true
+      schema: { type: string }
+    paymentId:
+      in: path
+      name: paymentId
+      required: true
+      schema: { type: string }
+    quoteId:
+      in: path
+      name: quoteId
+      required: true
+      schema: { type: string }
+    cardId:
+      in: path
+      name: cardId
       required: true
       schema: { type: string }
   responses:
@@ -866,7 +1118,7 @@ components:
       properties:
         feature_id:
           type: string
-          enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading]
+          enum: [home, accounts, activity, capabilities, approvals, webhooks, investments, cards, exchange_trading, send, recipients, fx]
         available: { type: boolean }
         reason_code: { type: string, nullable: true }
     CapabilityDto:
@@ -1031,3 +1283,109 @@ components:
         items:
           type: array
           items: { $ref: "#/components/schemas/WebhookEndpointDto" }
+    TransferRequest:
+      type: object
+      required: [source_account_id, destination_account_id, amount]
+      properties:
+        source_account_id: { type: string }
+        destination_account_id: { type: string }
+        amount: { $ref: "#/components/schemas/MoneyDto" }
+        idempotency_key: { type: string }
+    TransferDto:
+      type: object
+      required: [transfer_id, state, source_account_id, destination_account_id, amount, message]
+      properties:
+        transfer_id: { type: string }
+        state: { type: string, enum: [ALLOW, REQUIRE_MANUAL_REVIEW, DEFER, BLOCK, FEATURE_UNAVAILABLE, UNAUTHENTICATED] }
+        source_account_id: { type: string }
+        destination_account_id: { type: string }
+        amount: { $ref: "#/components/schemas/MoneyDto" }
+        message: { type: string }
+    RecipientCreateRequest:
+      type: object
+      required: [legal_name]
+      properties:
+        legal_name: { type: string }
+        destination_country: { type: string }
+        currency: { type: string }
+        account_coordinate: { type: string }
+        scheme: { type: string }
+        idempotency_key: { type: string }
+    RecipientDto:
+      type: object
+      required: [recipient_id, legal_name, currency, destination_country, status]
+      properties:
+        recipient_id: { type: string }
+        legal_name: { type: string }
+        currency: { type: string }
+        destination_country: { type: string }
+        status: { type: string }
+    RecipientList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/RecipientDto" }
+    FxQuoteRequest:
+      type: object
+      properties:
+        account_id: { type: string }
+        source_currency: { type: string }
+        destination_currency: { type: string }
+        amount: { $ref: "#/components/schemas/MoneyDto" }
+        corridor_id: { type: string }
+        idempotency_key: { type: string }
+    FxQuoteDto:
+      type: object
+      required: [quote_id, status, source, destination, fee, expires_at, rate_source]
+      properties:
+        quote_id: { type: string }
+        status: { type: string }
+        source: { $ref: "#/components/schemas/MoneyDto" }
+        destination: { $ref: "#/components/schemas/MoneyDto" }
+        fee: { $ref: "#/components/schemas/MoneyDto" }
+        expires_at: { type: string }
+        rate_source: { type: string, enum: [SIMULATION_REF_NOT_LIVE_MARKET] }
+        journal_ids:
+          type: array
+          items: { type: string }
+    PaymentSubmitRequest:
+      type: object
+      required: [quote_id, recipient_id]
+      properties:
+        quote_id: { type: string }
+        recipient_id: { type: string }
+        purpose: { type: string }
+        idempotency_key: { type: string }
+    PaymentDto:
+      type: object
+      required: [payment_id, status, source, destination]
+      properties:
+        payment_id: { type: string }
+        status: { type: string }
+        source: { $ref: "#/components/schemas/MoneyDto" }
+        destination: { $ref: "#/components/schemas/MoneyDto" }
+    FxExecuteRequest:
+      type: object
+      properties:
+        destination_account_id: { type: string }
+    CardIssueRequest:
+      type: object
+      properties:
+        idempotency_key: { type: string }
+    CardDto:
+      type: object
+      required: [card_id, status, form_factor, display_hint]
+      properties:
+        card_id: { type: string }
+        status: { type: string }
+        form_factor: { type: string }
+        display_hint: { type: string }
+    CardList:
+      type: object
+      required: [items]
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/CardDto" }

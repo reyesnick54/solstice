@@ -26,6 +26,7 @@ import { validateIntentStructure, type StructuralCatalog } from '../../permissio
 import {
   captureFeePlan,
   capturePrincipalPlan,
+  customerConversionSettlePlan,
   destinationFxPlan,
   feeIncomePlan,
   inboundPendingPlan,
@@ -336,6 +337,75 @@ export class PaymentsService {
     return { outcome: 'OK', value: accepted, decision: gated.decision };
   }
 
+  executeInternalConversion(
+    intent: AcceptFxQuoteIntent,
+    destinationAccountId: Account['id'],
+  ): PaymentsServiceOutcome<{ readonly quote: FxQuote; readonly journalIds: readonly string[] }> {
+    const replayed = this.store.getConversion(intent.idempotencyKey);
+    if (replayed) {
+      const quote = this.store.getQuote(replayed.quoteId);
+      if (quote) {
+        return { outcome: 'OK', value: { quote, journalIds: replayed.journalIds }, decision: this.emptyDecision(intent.actionType, intent.id), replay: true };
+      }
+    }
+    const source = this.catalog.accounts.get(intent.payload.accountId);
+    const destination = this.catalog.accounts.get(destinationAccountId);
+    const customer = source ? this.catalog.customers.get(source.ownerId) : undefined;
+    const gated = this.gate(intent, source, customer);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const quote = this.store.getQuote(intent.payload.quoteId);
+    if (!quote) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_NOT_FOUND', 'quote does not exist');
+    }
+    if (!this.store.acceptedIntentFor(quote.quoteId) || !quoteCanExecute(quote, this.clock.now())) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'QUOTE_NOT_EXECUTABLE', 'quote must be accepted and unexpired');
+    }
+    if (!source || !destination) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'ACCOUNT_NOT_FOUND', 'source or destination account missing');
+    }
+    if (source.ownerId !== destination.ownerId) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'OWNER_MISMATCH', 'conversion requires the same owner');
+    }
+    if (source.currency !== quote.baseCurrency || destination.currency !== quote.quoteCurrency) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'account currencies do not match quote');
+    }
+    if (this.availableFunds(source).cmp(quote.amountDebited) < 0) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'INSUFFICIENT_FUNDS', 'available funds are below amount debited');
+    }
+    const journals = this.postPlans(gated.authority, intent.actionType, [
+      reservePlan(source.id, quote.amountDebited),
+      capturePrincipalPlan(quote.sourceAmount),
+      captureFeePlan(quote.fee),
+      feeIncomePlan(quote.fee),
+      sourceFxPlan(quote.sourceAmount),
+      destinationFxPlan(quote.destinationAmount),
+      customerConversionSettlePlan(destination.id, quote.destinationAmount),
+    ]);
+    const journalIds = journals.map((row) => row.id);
+    this.store.saveConversion(intent.idempotencyKey, {
+      quoteId: quote.quoteId,
+      destinationAccountId: destination.id,
+      journalIds,
+    });
+    this.emit('FxConversionExecuted', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
+      quoteId: quote.quoteId,
+      sourceAccountId: source.id,
+      destinationAccountId: destination.id,
+      sourceMinorUnits: quote.sourceAmount.minorUnits.toString(),
+      destinationMinorUnits: quote.destinationAmount.minorUnits.toString(),
+    });
+    this.evidence.seal('FX_CONVERSION_EXECUTED', {
+      intentId: intent.id,
+      quoteId: quote.quoteId,
+      sourceAccountId: source.id,
+      destinationAccountId: destination.id,
+      journalIds,
+    });
+    return { outcome: 'OK', value: { quote, journalIds }, decision: gated.decision };
+  }
+
   initiatePayment(intent: InitiatePaymentIntent): PaymentsServiceOutcome<PaymentOrder> {
     const replayed = this.store.getPaymentByIdempotency(intent.idempotencyKey);
     if (replayed) {
@@ -607,6 +677,19 @@ export class PaymentsService {
     const payment = this.store.getPayment(paymentId);
     if (!payment) {
       return { outcome: 'REJECTED', code: 'PAYMENT_NOT_FOUND', message: 'payment does not exist', decision: null };
+    }
+    if (
+      payment.status === 'SETTLED' ||
+      payment.status === 'FAILED' ||
+      payment.status === 'CANCELLED' ||
+      payment.status === 'RETURNED'
+    ) {
+      return {
+        outcome: 'OK',
+        value: payment,
+        decision: this.emptyDecision('INITIATE_PAYMENT', payment.paymentId),
+        replay: true,
+      };
     }
     const authority = this.authorities.get(paymentId);
     const account = this.catalog.accounts.get(payment.sourceAccountId);

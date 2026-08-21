@@ -32,6 +32,11 @@ import type {
   TokenResponse,
   VersionDto,
   WebhookEndpointDto,
+  CardDto,
+  FxQuoteDto,
+  PaymentDto,
+  RecipientDto,
+  TransferDto,
 } from './types.ts';
 
 export type ConsumerAuthProvider = {
@@ -353,6 +358,133 @@ export class SunReyConsumerClient {
     return this.request(
       'POST',
       `/v1/consumer/webhooks/${encodeURIComponent(endpointId)}/test`,
+      {},
+      options,
+    );
+  }
+
+  async createTransfer(
+    input: {
+      readonly source_account_id: string;
+      readonly destination_account_id: string;
+      readonly amount: { readonly minor_units: string; readonly currency: string };
+      readonly idempotency_key?: string;
+    },
+    options?: ConsumerRequestOptions,
+  ): Promise<TransferDto> {
+    return this.request('POST', '/v1/consumer/transfers', input, options);
+  }
+
+  async listRecipients(options?: ConsumerRequestOptions): Promise<{
+    readonly items: readonly RecipientDto[];
+  }> {
+    return this.request('GET', '/v1/consumer/recipients', undefined, options);
+  }
+
+  async createRecipient(
+    input: {
+      readonly legal_name: string;
+      readonly destination_country?: string;
+      readonly currency?: string;
+      readonly account_coordinate?: string;
+      readonly scheme?: string;
+      readonly idempotency_key?: string;
+    },
+    options?: ConsumerRequestOptions,
+  ): Promise<RecipientDto> {
+    return this.request('POST', '/v1/consumer/recipients', input, options);
+  }
+
+  async createPaymentQuote(
+    input: {
+      readonly account_id?: string;
+      readonly source_currency?: string;
+      readonly destination_currency?: string;
+      readonly amount?: { readonly minor_units: string; readonly currency: string };
+      readonly corridor_id?: string;
+      readonly idempotency_key?: string;
+    },
+    options?: ConsumerRequestOptions,
+  ): Promise<FxQuoteDto> {
+    return this.request('POST', '/v1/consumer/payments/quotes', input, options);
+  }
+
+  async submitPayment(
+    input: {
+      readonly quote_id: string;
+      readonly recipient_id: string;
+      readonly purpose?: string;
+      readonly idempotency_key?: string;
+    },
+    options?: ConsumerRequestOptions,
+  ): Promise<PaymentDto> {
+    return this.request('POST', '/v1/consumer/payments', input, options);
+  }
+
+  async getPayment(paymentId: string, options?: ConsumerRequestOptions): Promise<PaymentDto> {
+    return this.request('GET', `/v1/consumer/payments/${encodeURIComponent(paymentId)}`, undefined, options);
+  }
+
+  async createFxQuote(
+    input: {
+      readonly account_id?: string;
+      readonly source_currency?: string;
+      readonly destination_currency?: string;
+      readonly amount?: { readonly minor_units: string; readonly currency: string };
+      readonly corridor_id?: string;
+      readonly idempotency_key?: string;
+    },
+    options?: ConsumerRequestOptions,
+  ): Promise<FxQuoteDto> {
+    return this.request('POST', '/v1/consumer/fx/quotes', input, options);
+  }
+
+  async acceptFxQuote(quoteId: string, options?: ConsumerRequestOptions): Promise<FxQuoteDto> {
+    return this.request(
+      'POST',
+      `/v1/consumer/fx/quotes/${encodeURIComponent(quoteId)}/accept`,
+      {},
+      options,
+    );
+  }
+
+  async executeFxQuote(
+    quoteId: string,
+    input: { readonly destination_account_id?: string } = {},
+    options?: ConsumerRequestOptions,
+  ): Promise<FxQuoteDto> {
+    return this.request(
+      'POST',
+      `/v1/consumer/fx/quotes/${encodeURIComponent(quoteId)}/execute`,
+      input,
+      options,
+    );
+  }
+
+  async listCards(options?: ConsumerRequestOptions): Promise<{ readonly items: readonly CardDto[] }> {
+    return this.request('GET', '/v1/consumer/cards', undefined, options);
+  }
+
+  async issueCard(
+    input: { readonly idempotency_key?: string } = {},
+    options?: ConsumerRequestOptions,
+  ): Promise<CardDto> {
+    return this.request('POST', '/v1/consumer/cards', input, options);
+  }
+
+  async freezeCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDto> {
+    return this.request(
+      'POST',
+      `/v1/consumer/cards/${encodeURIComponent(cardId)}/freeze`,
+      {},
+      options,
+    );
+  }
+
+  async unfreezeCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDto> {
+    return this.request(
+      'POST',
+      `/v1/consumer/cards/${encodeURIComponent(cardId)}/unfreeze`,
       {},
       options,
     );

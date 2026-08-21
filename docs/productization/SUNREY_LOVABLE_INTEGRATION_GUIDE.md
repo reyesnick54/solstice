@@ -3,8 +3,9 @@
 Primary frontend handoff. A Lovable or frontend team should not need
 internal packages.
 
-Phase B creates a production-quality platform interface. It does not
-connect live banking providers.
+Phase B created the consumer platform interface. Phase C adds sandbox
+money flows (accounts, send, recipients, FX, cards) on the same
+surface. It does not connect live banking, card, or FX providers.
 
 `CORE_CODE_COMPLETE_CANDIDATE=true`
 `PRODUCTION_READY=false`
@@ -91,9 +92,29 @@ growth-rate field.
 ## Feature capabilities
 
 `GET /v1/consumer/capabilities` and `GET /v1/consumer/features/{id}`.
-`investments`, `cards`, and `exchange_trading` are disabled and return
-`FEATURE_UNAVAILABLE`. Lovable must use server capability/eligibility
-responses.
+Sandbox money features `send`, `recipients`, `fx`, and `cards` are
+enabled. `investments` and `exchange_trading` remain disabled and
+return `FEATURE_UNAVAILABLE`. Lovable must use server
+capability/eligibility responses.
+
+## Money flows (Phase C sandbox)
+
+Use the public consumer SDK. Do not import Ledger, Kernel, or
+internal services.
+
+| Flow | SDK | Notes |
+| --- | --- | --- |
+| Account balance | `listAccounts` / `getAccount` | `balance.minor_units` is a ledger projection |
+| Send money (internal) | `createTransfer` | Kernel-gated; client never posts journals |
+| Recipient | `createRecipient` / `listRecipients` | Requires `MANAGE_BENEFICIARY` |
+| Payment quote / submit / status | `createPaymentQuote` / `submitPayment` / `getPayment` | Observe `status` for pending or failed |
+| FX quote / accept / execute | `createFxQuote` / `acceptFxQuote` / `executeFxQuote` | Rate is server-owned simulation reference |
+| Card | `listCards` / `issueCard` / `freezeCard` / `unfreezeCard` | Display hint is synthetic `SIM-CARD` |
+| Activity | `listActivity` | Includes money events recorded by the BFF |
+| Pending / failed action | payment `status` plus `SunReyConsumerError` | Do not treat HTTP 200 on a failed domain status as success |
+
+Sandbox persona `fin-ready` has USD and SAR accounts, a funded USD
+balance, recipient/payment/FX capabilities, and a virtual card.
 
 ## Approval states
 
@@ -132,6 +153,7 @@ while degraded.
 | `casey-capable` | May open an account through Kernel |
 | `drew-empty` | View-capable, no accounts |
 | `evan-paged` | Paginated activity |
+| `fin-ready` | USD/SAR money sandbox: send, recipients, FX, cards |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.

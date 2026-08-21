@@ -9,6 +9,7 @@ export class PaymentStore {
   private readonly payments = new Map<string, PaymentOrder>();
   private readonly byIdempotency = new Map<string, PaymentOrder>();
   private readonly acceptedQuotes = new Map<string, string>();
+  private readonly conversions = new Map<string, { readonly quoteId: string; readonly destinationAccountId: string; readonly journalIds: readonly string[] }>();
   private readonly reconciliations = new Map<string, ReconciliationResult>();
 
   saveBeneficiary(beneficiary: Beneficiary): void {
@@ -37,6 +38,14 @@ export class PaymentStore {
 
   acceptedIntentFor(quoteId: string): string | undefined {
     return this.acceptedQuotes.get(quoteId);
+  }
+
+  saveConversion(key: string, value: { readonly quoteId: string; readonly destinationAccountId: string; readonly journalIds: readonly string[] }): void {
+    this.conversions.set(key, value);
+  }
+
+  getConversion(key: string): { readonly quoteId: string; readonly destinationAccountId: string; readonly journalIds: readonly string[] } | undefined {
+    return this.conversions.get(key);
   }
 
   savePayment(payment: PaymentOrder): void {

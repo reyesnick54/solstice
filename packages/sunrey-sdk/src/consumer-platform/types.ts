@@ -37,10 +37,20 @@ export const CONSUMER_FEATURE_IDS = [
   'investments',
   'cards',
   'exchange_trading',
+  'send',
+  'recipients',
+  'fx',
 ] as const;
 export type ConsumerFeatureId = (typeof CONSUMER_FEATURE_IDS)[number];
 
-export const CONSUMER_ACTION_TYPES = ['OPEN_ACCOUNT'] as const;
+export const CONSUMER_ACTION_TYPES = [
+  'OPEN_ACCOUNT',
+  'TRANSFER',
+  'ADD_BENEFICIARY',
+  'INITIATE_PAYMENT',
+  'ACCEPT_FX_QUOTE',
+  'CARD_ISSUE',
+] as const;
 export type ConsumerActionType = (typeof CONSUMER_ACTION_TYPES)[number];
 
 export const SANDBOX_PERSONA_IDS = [
@@ -49,6 +59,7 @@ export const SANDBOX_PERSONA_IDS = [
   'casey-capable',
   'drew-empty',
   'evan-paged',
+  'fin-ready',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
@@ -235,4 +246,46 @@ export type PasskeyChallengeDto = {
   readonly rp_id: string;
   readonly origin: string;
   readonly expires_at: string;
+};
+
+export type TransferDto = {
+  readonly transfer_id: string;
+  readonly state: ActionState;
+  readonly source_account_id: string;
+  readonly destination_account_id: string;
+  readonly amount: MoneyDto;
+  readonly message: string;
+};
+
+export type RecipientDto = {
+  readonly recipient_id: string;
+  readonly legal_name: string;
+  readonly currency: string;
+  readonly destination_country: string;
+  readonly status: string;
+};
+
+export type FxQuoteDto = {
+  readonly quote_id: string;
+  readonly status: string;
+  readonly source: MoneyDto;
+  readonly destination: MoneyDto;
+  readonly fee: MoneyDto;
+  readonly expires_at: string;
+  readonly rate_source: 'SIMULATION_REF_NOT_LIVE_MARKET';
+  readonly journal_ids?: readonly string[];
+};
+
+export type PaymentDto = {
+  readonly payment_id: string;
+  readonly status: string;
+  readonly source: MoneyDto;
+  readonly destination: MoneyDto;
+};
+
+export type CardDto = {
+  readonly card_id: string;
+  readonly status: string;
+  readonly form_factor: string;
+  readonly display_hint: string;
 };

@@ -57,8 +57,13 @@ export type {
   SandboxPersonaId,
   SessionDto,
   TokenResponse,
+  TransferDto,
   VersionDto,
   WebhookEndpointDto,
+  CardDto,
+  FxQuoteDto,
+  PaymentDto,
+  RecipientDto,
 } from './types.ts';
 export {
   SunReyConsumerClient,

@@ -1,9 +1,13 @@
 # SunRey Lovable ↔ Consumer BFF mapping
 
-Phase B Prompt 4. Maps future consumer screens to the canonical
-Backend-for-Frontend at `services/api`.
+Phase B mapped screens to `services/api`. Phase C productizes the
+Lovable-facing money surface on the consumer platform
+(`services/consumer-platform`, `/v1/consumer/*`) and the browser-safe
+SDK `@solstice/sunrey-sdk/consumer`.
 
-Lovable must not call internal package topology. It talks to `/api/v1`.
+Lovable must not call internal package topology. Prefer the consumer
+platform contract in `api/sunrey-consumer-platform-v1.openapi.yaml`.
+`services/api` `/api/v1` stubs are not a second ledger or money plane.
 
 This is not production authorization. `ENVIRONMENT` stays `simulation`.
 `LIVE_*` stays `false`.
@@ -19,9 +23,10 @@ authentication foundation; the BFF only consumes a verified session.
 | MONEY | `/api/v1/accounts` | GET | required | account read models | `services/accounts` + Ledger-derived balances | AVAILABLE_SIMULATION | none |
 | MONEY detail | `/api/v1/accounts/{id}` | GET | required + owner | account + ledger/available/held | `projectBankingPosition` | AVAILABLE_SIMULATION | none |
 | MONEY activity | `/api/v1/accounts/{id}/activity` | GET | required + owner | cursor page | `projectTransactionHistory` | AVAILABLE_SIMULATION | none |
-| SEND | `/api/v1/payments` | GET | required | availability stub | `packages/payments` | AVAILABLE_SIMULATION | live rails = EXTERNAL_PROVIDER_REQUIRED |
-| FX | `/api/v1/fx` | GET | required | availability stub | `packages/payments` FX engine | AVAILABLE_SIMULATION | live FX = EXTERNAL_PROVIDER_REQUIRED |
-| CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
+| SEND | `/v1/consumer/transfers` and `/v1/consumer/payments` | POST | required | transfer / payment DTOs | `services/accounts` + `packages/payments` | SANDBOX_FUNCTIONAL | live rails = PROVIDER_ADAPTER_REQUIRED |
+| RECIPIENTS | `/v1/consumer/recipients` | GET, POST | required | recipient DTOs | `packages/payments` beneficiaries | SANDBOX_FUNCTIONAL | none in simulation |
+| FX | `/v1/consumer/fx/quotes` | POST | required | server-owned quote | `packages/payments` FX engine | SANDBOX_FUNCTIONAL | live FX = PROVIDER_ADAPTER_REQUIRED |
+| CARDS | `/v1/consumer/cards` | GET, POST | required | simulated card DTOs | `packages/cards` | SANDBOX_FUNCTIONAL | live processor = PROVIDER_ADAPTER_REQUIRED |
 | GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |

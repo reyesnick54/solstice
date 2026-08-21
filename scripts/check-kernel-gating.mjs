@@ -31,6 +31,7 @@ const STATE_CHANGING_PATHS = [
   { symbol: 'createBeneficiary', file: 'packages/payments/src/service.ts' },
   { symbol: 'createQuote', file: 'packages/payments/src/service.ts' },
   { symbol: 'acceptQuote', file: 'packages/payments/src/service.ts' },
+  { symbol: 'executeInternalConversion', file: 'packages/payments/src/service.ts' },
   { symbol: 'initiatePayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'cancelPayment', file: 'packages/payments/src/service.ts' },
   { symbol: 'acceptInboundPayment', file: 'packages/payments/src/service.ts' },
