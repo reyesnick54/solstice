@@ -127,6 +127,7 @@ export {
 } from './product/webhook.ts';
 export type { CardStoreSnapshot } from './store.ts';
 export { SimulatedCardProcessor } from './simulated-processor.ts';
+export * from './production-adapters/index.ts';
 export {
   InMemoryCallbackReplayStore,
   PROCESSOR_CALLBACK_MAX_SKEW_MS,

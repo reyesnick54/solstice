@@ -48,7 +48,11 @@ function isRailAdapterFile(rel: string): boolean {
     rel.startsWith('packages/payments/src/rail-webhook') ||
     rel.startsWith('packages/payments/src/production-candidate/adapter') ||
     rel.startsWith('packages/payments/src/production-candidate/transport') ||
-    rel.startsWith('packages/payments/src/production-candidate/auth')
+    rel.startsWith('packages/payments/src/production-candidate/auth') ||
+    rel.startsWith('packages/payments/src/production-adapters/rails/simulated') ||
+    rel.startsWith('packages/payments/src/production-adapters/bank/simulated') ||
+    rel.startsWith('packages/payments/src/production-adapters/fx/simulated') ||
+    rel.startsWith('packages/payments/src/production-adapters/template/skeleton')
   );
 }
 
