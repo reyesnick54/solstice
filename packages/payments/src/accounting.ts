@@ -254,6 +254,11 @@ export function customerConversionSettlePlan(destinationAccountId: string, amoun
     classBridge: SIMULATED_FUNDING_TO_DEMAND_DEPOSIT,
     postings: [
       { accountId: settlementAccountId(amount.currency), direction: 'DEBIT', amount },
+      { accountId: destinationAccountId, direction: 'CREDIT', amount },
+    ],
+  };
+}
+
 /**
  * Same-currency SunRey ledger transfer. No FX, no rail, no pending
  * settlement. Class bridge is attached only when the accounts differ.

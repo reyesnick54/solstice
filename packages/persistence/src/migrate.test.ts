@@ -472,20 +472,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
-  it('customer V030 persists consumer authentication state without plaintext secrets', () => {
+  it('customer V029 persists consumer authentication state without plaintext secrets', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v030 = files.find((file) => file.version === 30);
-    assert.ok(v030);
-    assert.equal(v030.filename, 'V030__consumer_authentication.sql');
-    assert.match(v030.sql, /CREATE TABLE identity.login_handle/);
-    assert.match(v030.sql, /CREATE TABLE identity.password_credential/);
-    assert.match(v030.sql, /CREATE TABLE identity.totp_credential/);
-    assert.match(v030.sql, /CREATE TABLE identity.refresh_session/);
-    assert.match(v030.sql, /CREATE TABLE identity.auth_challenge/);
-    assert.match(v030.sql, /CREATE TABLE identity.security_event/);
-    assert.equal(/\bpassword_hash\b/i.test(v030.sql), false);
-    assert.equal(/\bplaintext_password\b/i.test(v030.sql), false);
-    assert.match(v030.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
+    const v029 = files.find((file) => file.version === 29);
+    assert.ok(v029);
+    assert.equal(v029.filename, 'V029__consumer_authentication.sql');
+    assert.match(v029.sql, /CREATE TABLE identity.login_handle/);
+    assert.match(v029.sql, /CREATE TABLE identity.password_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.totp_credential/);
+    assert.match(v029.sql, /CREATE TABLE identity.refresh_session/);
+    assert.match(v029.sql, /CREATE TABLE identity.auth_challenge/);
+    assert.match(v029.sql, /CREATE TABLE identity.security_event/);
+    assert.equal(/\bpassword_hash\b/i.test(v029.sql), false);
+    assert.equal(/\bplaintext_password\b/i.test(v029.sql), false);
+    assert.match(v029.sql, /NOT \(secret_envelope \? 'plaintext'\)/);
   });
 
   it('customer V028 grants payments schema usage for operational recovery', () => {
@@ -497,27 +497,6 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE/i.test(v028.sql), false);
   });
 
-  it('customer V030 persists treasury financial control without becoming a ledger', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v030 = files.find((file) => file.version === 30);
-    assert.ok(v030);
-    assert.equal(v030.filename, 'V030__treasury_financial_control.sql');
-    assert.match(v030.sql, /CREATE TABLE treasury\.provider_balance/);
-    assert.match(v030.sql, /CREATE TABLE treasury\.settlement_record/);
-    assert.match(v030.sql, /CREATE TABLE treasury\.reconciliation_run/);
-    assert.match(v030.sql, /CREATE TABLE treasury\.reconciliation_break/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
-  });
-
-  it('customer V031 adds platform API stores without becoming a ledger', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v031 = files.find((file) => file.version === 31);
-    assert.ok(v031);
-    assert.equal(v031.filename, 'V031__platform_api.sql');
-    assert.match(v031.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
-    assert.match(v031.sql, /CREATE TABLE platform_api\.idempotency_record/);
-    assert.match(v031.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v031.sql), false);
   it('customer V030 adds platform API stores without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v030 = files.find((file) => file.version === 30);
@@ -527,6 +506,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v030.sql, /CREATE TABLE platform_api\.idempotency_record/);
     assert.match(v030.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
+  });
+
+  it('customer V032 persists treasury financial control without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v032 = files.find((file) => file.version === 32);
+    assert.ok(v032);
+    assert.equal(v032.filename, 'V032__treasury_financial_control.sql');
+    assert.match(v032.sql, /CREATE TABLE treasury\.provider_balance/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.settlement_record/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.reconciliation_run/);
+    assert.match(v032.sql, /CREATE TABLE treasury\.reconciliation_break/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v032.sql), false);
   });
 
   it('security V002 stores credential descriptor references without secret values', () => {
@@ -556,14 +547,23 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
   });
 
-  it('ledger V008 persists account product overlay and restrictions without a balance column', () => {
+  it('ledger V008 persists production journal metadata without becoming a second ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v008 = files.find((file) => file.version === 8);
     assert.ok(v008);
-    assert.equal(v008.filename, 'V008__account_product.sql');
-    assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
-    assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
-    assert.equal(/balance/.test(v008.sql), false);
+    assert.equal(v008.filename, 'V008__production_journal.sql');
+    assert.match(v008.sql, /ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'POSTED'/);
+    assert.equal(/CREATE TABLE ledger\.journal/.test(v008.sql), false);
+  });
+
+  it('ledger V009 persists account product overlay and restrictions without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v009 = files.find((file) => file.version === 9);
+    assert.ok(v009);
+    assert.equal(v009.filename, 'V009__account_product.sql');
+    assert.match(v009.sql, /CREATE TABLE ledger\.account_restriction/);
+    assert.match(v009.sql, /CREATE TABLE ledger\.account_product_overlay/);
+    assert.equal(/\bbalance\b/i.test(v009.sql.replace(/--[^\n]*/g, '')), false);
   });
 
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {
