@@ -103,6 +103,13 @@ export const EMERGENCY_ACTION_CLASSES = [
   'SUSPEND_ORACLE_PROVIDER',
   'RESTRICT_INTEROP_CHANNEL',
   'RESTRICT_SPECIFIC_PROTOCOL_FEATURE',
+  // Chunk 167 — version-safe narrowing classes only. None mint, confiscate,
+  // rewrite supply, or rewrite finalized history.
+  'RESTRICT_NEW_SUNREY_ISSUANCE',
+  'RESTRICT_PAYMENT_SUBMISSIONS',
+  'RESTRICT_BANKING_RAILS',
+  'RESTRICT_HUMAN_INFORMATION_MARKET',
+  'SUSPEND_PROVIDER_DOMAIN',
 ] as const;
 export type EmergencyActionClass = (typeof EMERGENCY_ACTION_CLASSES)[number];
 

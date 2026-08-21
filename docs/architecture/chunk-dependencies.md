@@ -1662,3 +1662,15 @@ and [`merge-integrity-policy.md`](./merge-integrity-policy.md).
 Historical note: `sunrey-hin-chain-anchoring` was `PARTIAL` after
 Chunk 139 and is `IMPLEMENTED` after Chunk 140. The current table
 row is the stronger status.
+Chunk 167 implements launch abort, domain-scoped emergency
+restrictions, rollback semantics, recovery gates, and resumption
+authorization rehearsal by extending
+`packages/sunrey-chain/src/governance-ops`,
+`packages/sunrey-chain/src/post-genesis`, and
+`packages/sunrey-chain/src/production-handoff`. It does not create a
+second emergency authority. Application rollback is not chain-history
+rollback. Resumption is independently authorized. The evaluator
+returns `mustStop: false`. Do not create `packages/kill-switch`,
+`packages/emergency-admin`, `packages/rollback-engine`,
+`packages/incident-v2`, or `packages/recovery-v2`. See
+[`chunk-167-launch-abort-recovery.md`](../operations/chunk-167-launch-abort-recovery.md).

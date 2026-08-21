@@ -10,6 +10,16 @@
 - `SUSPEND_ORACLE_PROVIDER`
 - `RESTRICT_INTEROP_CHANNEL`
 - `RESTRICT_SPECIFIC_PROTOCOL_FEATURE`
+- `RESTRICT_NEW_SUNREY_ISSUANCE`
+- `RESTRICT_PAYMENT_SUBMISSIONS`
+- `RESTRICT_BANKING_RAILS`
+- `RESTRICT_HUMAN_INFORMATION_MARKET`
+- `SUSPEND_PROVIDER_DOMAIN`
+
+Chunk 167 added the last five classes. They only narrow future activity.
+They do not mint, confiscate, rewrite supply, or rewrite finalized
+history. Restrictions remain domain-scoped. Provider suspension suspends
+a route, not the canonical domain owner.
 
 Where a canonical kill switch already exists (oracle suspension, Exchange
 controls, custody withdrawal halt, treasury halt), emergency operations
@@ -23,4 +33,6 @@ approval, or convert a testnet into mainnet.
 High-impact emergency actions require the configured security/human
 approval set. AI cannot approve. Temporary restrictions have an explicit
 review or expiry height. Silent restoration is refused; resumption
-requires the same class of human authority.
+requires the same class of human authority. Restriction expiry enters
+`EXPIRED_AWAITING_AUTHORITY` and does not auto-resume a capability.
+See [chunk-167-launch-abort-recovery.md](../operations/chunk-167-launch-abort-recovery.md).
