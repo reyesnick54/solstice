@@ -193,6 +193,7 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-authorization | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-launch-freeze | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
 | sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
@@ -852,6 +853,13 @@ It binds the actual Chunk 81 Candidate V2 and Chunk 84 Mainnet RC.
 Do not create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. The evaluator returns `mustStop: false`.
+Chunk 165 extends that same ceremony owner with frozen-candidate
+launch authorization rehearsal at
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+It binds the exact Chunk 164 freeze hash. See
+[`docs/operations/chunk-165-launch-authorization-ceremony.md`](../operations/chunk-165-launch-authorization-ceremony.md).
+It does not create a second genesis ceremony, generate real production
+keys, or activate mainnet. The evaluator returns `mustStop: false`.
 Chunk 86 implements the production-environment provisioning control
 plane at `packages/sunrey-chain/src/infra/provisioning`. Capability
 `sunrey-production-provisioning` is `IMPLEMENTED`. See
@@ -1442,6 +1450,17 @@ It does not choose production tokenomics, activate production, flip
 `PRODUCTION_ACTIVE`. Do not create `packages/tokenomics`,
 `packages/economic-governance-v2`, `packages/monetary-policy-v2`,
 `packages/production-authorization`, or `packages/mint-governance`. The
+evaluator returns `mustStop: false`.
+Chunk 164 implements immutable production launch candidate freeze,
+release bill of materials, exact-version binding, and staleness
+detection at
+`packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze`.
+Capability `sunrey-production-launch-freeze` is `IMPLEMENTED`. Freeze
+is not approval, authorization, or activation. It does not invent
+production parameters, enable mainnet, flip `LIVE_*` flags, mint, or
+issue Execution Authority. Do not create `packages/launch-candidate`,
+`packages/release-v2`, `packages/mainnet-v2`,
+`packages/production-release`, or `packages/production-manifest`. The
 evaluator returns `mustStop: false`.
 Chunk 141 implements the canonical SunRey product identity and legacy
 naming inventory at `packages/config/src/product-identity.ts`.

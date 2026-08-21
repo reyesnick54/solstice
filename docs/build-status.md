@@ -144,6 +144,12 @@ This document describes only what is implemented and tested in this tree.
   a mainnet launch. `realProductionKeysCreated=false`.
   `mainnetEnabled=false`. See
   `docs/mainnet/chunk-85-production-genesis-ceremony.md`.
+  Chunk 165 extends the same owner with frozen-candidate launch
+  authorization rehearsal at
+  `packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+  Current repository remains `REHEARSAL_COMPLETE`.
+  `realHumanSignaturesCollected=false`. `mainnetEnabled=false`. See
+  `docs/operations/chunk-165-launch-authorization-ceremony.md`.
 - SunRey Mainnet release-candidate freeze and qualification
   (Chunk 84, `packages/sunrey-chain/src/release-candidate/mainnet`):
   versioned `SUNREY_MAINNET_RC_*` identity, source/protocol/economic/

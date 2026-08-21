@@ -14,3 +14,4 @@ export * from './report.ts';
 export * from './readiness.ts';
 export * from './dress-rehearsal.ts';
 export * from './cli.ts';
+export * from './launch-candidate/index.ts';

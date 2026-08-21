@@ -100,6 +100,7 @@ never be two implementations of these systems.
 | Unified economic data fabric | `packages/sunrey-chain` | `packages/sunrey-chain/src/oracle/production/economic-data-fabric/types.ts` | IMPLEMENTED |
 | Production economic activation firewall | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/types.ts` | IMPLEMENTED |
 | Production economic authorization | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/authorization/types.ts` | IMPLEMENTED |
+| Production launch candidate freeze | `packages/sunrey-chain` | `packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze/types.ts` | IMPLEMENTED |
 | SunRey production issuance policy candidate | `packages/sunrey-chain` | `packages/sunrey-chain/src/economics/production-activation/sunrey-package/types.ts` | IMPLEMENTED |
 | SunRey public data plane | `packages/sunrey-chain` | `packages/sunrey-chain/src/public-data-plane/types.ts` | IMPLEMENTED |
 | SunRey Human Information Network | `packages/information-market` | `packages/information-market/src/network/engine.ts` | IMPLEMENTED |
@@ -1232,6 +1233,17 @@ create `packages/sunrey-ceremony`, `packages/production-genesis`,
 `packages/genesis-ceremony`, `packages/launch-authorization`, or
 `packages/production-ceremony`. See
 [`chunk-85-production-genesis-ceremony.md`](./chunk-85-production-genesis-ceremony.md).
+Chunk 165 extends that same owner with frozen-candidate launch
+authorization, multi-party offline signing rehearsal, transcript
+integrity, and abort-safe human ceremony flow at
+`packages/sunrey-chain/src/production-ceremony/launch-candidate`.
+It binds the exact Chunk 164 `freezeHash`. A changed freeze, genesis,
+economic authorization, or expired/revoked evidence aborts and requires
+a new session. Fixture signatures are not real human authorization.
+`LAUNCH_AUTHORIZATION_CANDIDATE` is not `MAINNET_ACTIVE`. Do not
+create `packages/ceremony-v2`, `packages/launch-signing`,
+`packages/genesis-authority`, or `packages/mainnet-ceremony`. See
+[`docs/operations/chunk-165-launch-authorization-ceremony.md`](../operations/chunk-165-launch-authorization-ceremony.md).
 
 Chunk 90 implements the SunRey production handoff and day-2 operations
 control plane at `packages/sunrey-chain/src/production-handoff`.
@@ -1889,6 +1901,19 @@ parameters remain `UNCONFIGURED`. Do not create `packages/tokenomics`,
 `packages/economic-governance-v2`, `packages/monetary-policy-v2`,
 `packages/production-authorization`, or `packages/mint-governance`. See
 [`docs/economics/chunk-163-production-economic-authorization.md`](../economics/chunk-163-production-economic-authorization.md).
+Chunk 164 implements immutable production launch candidate freeze,
+release bill of materials, exact-version binding, and staleness
+detection at
+`packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze`.
+Capability `sunrey-production-launch-freeze` is `IMPLEMENTED` on the
+existing mainnet release-candidate owner. Freeze is not approval,
+authorization, or activation. It does not invent production
+parameters, enable mainnet, flip `LIVE_*` flags, mint, or issue
+Execution Authority. Current production parameters remain
+`UNCONFIGURED`. Do not create `packages/launch-candidate`,
+`packages/release-v2`, `packages/mainnet-v2`,
+`packages/production-release`, or `packages/production-manifest`. See
+[`docs/operations/chunk-164-production-launch-freeze.md`](../operations/chunk-164-production-launch-freeze.md).
 Chunk 142 migrates current public runtime and display identity to
 SunRey at `packages/config`. Capability
 `sunrey-canonical-product-identity` is `IMPLEMENTED`. `SUNREY_*` is
