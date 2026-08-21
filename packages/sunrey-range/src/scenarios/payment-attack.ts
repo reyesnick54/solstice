@@ -1,3 +1,4 @@
+import { asCurrencyCode } from '../../../domain/src/currency.ts';
 import { Money } from '../../../money/src/money.ts';
 import { IdempotencyStore, bindIdempotencyKey } from '../../../sunrey-sdk/src/idempotency.ts';
 import { decideRetry } from '../../../payments/src/rail-retry.ts';
@@ -116,7 +117,7 @@ export function runPaymentAttack(env: RangeEnvironment, scenario: AttackScenario
     });
     const staleFx = quoteFromCandidateProvider({
       profile: fixtureFxUsdSar(),
-      pair: { base: 'USD', quote: 'SAR' },
+      pair: { base: asCurrencyCode('USD'), quote: asCurrencyCode('SAR') },
       now: FIXTURE_NOW,
       sourceTimestamp: FIXTURE_NOW,
       receivedTimestamp: FIXTURE_NOW,
@@ -132,6 +133,7 @@ export function runPaymentAttack(env: RangeEnvironment, scenario: AttackScenario
       unknown.retryClass === 'DO_NOT_RETRY_WITHOUT_QUERY' &&
       disabled !== null &&
       regulatory !== null &&
+      'ok' in failover &&
       failover.ok === false &&
       staleFx.ok === false;
     return {

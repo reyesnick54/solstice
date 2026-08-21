@@ -111,7 +111,7 @@ export function runCompoundProduction(env: RangeEnvironment, scenario: AttackSce
     }) : snapshot;
     const room = emptyControlRoom({ sessionId: 'sess_compound', mode: 'REHEARSAL' });
     const req: ScreeningRequest = {
-      subjectKind: 'CUSTOMER',
+      subjectKind: 'PERSON',
       subjectRef: 'cus_compound',
       jurisdiction: 'US',
       now: asUtcInstant('2026-08-20T00:00:00.000Z'),

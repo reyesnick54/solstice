@@ -39,7 +39,11 @@ import {
   scanArtifacts,
 } from './production-handoff/full-platform-candidate/index.ts';
 
-function qualifyCurrent(overlay: Parameters<typeof qualifyFullPlatformCandidate>[0] = {}) {
+type QualifyOverlay = Partial<
+  Omit<Parameters<typeof qualifyFullPlatformCandidate>[0], 'hashes'>
+>;
+
+function qualifyCurrent(overlay: QualifyOverlay = {}) {
   const assembled = currentRepositoryBundleInput(process.cwd(), 'SMOKE');
   return {
     assembled,

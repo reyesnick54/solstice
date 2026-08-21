@@ -127,7 +127,7 @@ describe('CHUNK-156 unified production-candidate control room', () => {
       'supply_reconciliation',
     ];
     for (const name of required) {
-      assert.equal(CONTROL_ROOM_METRIC_NAMES.includes(name), true, name);
+      assert.equal((CONTROL_ROOM_METRIC_NAMES as readonly string[]).includes(name), true, name);
       assert.equal(newMetricCatalog().includes(name), true, name);
       assert.equal(unifiedMetricCatalog().includes(name), true, name);
     }

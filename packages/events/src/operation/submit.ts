@@ -17,7 +17,7 @@ export type ExternalSubmitPorts = {
   readonly store: OperationStore;
   readonly now: () => string;
   readonly submit: () => Promise<ProviderSubmitOutcome>;
-  readonly crashAt?: CrashPoint;
+  readonly crashAt?: CrashPoint | undefined;
 };
 
 export type ExternalSubmitResult =
@@ -121,7 +121,7 @@ export async function dispatchExternalSideEffect(
 
 export async function refuseBlindRetry(
   record: OperationExecutionRecord,
-): Promise<ExternalSubmitResult> {
+): Promise<Extract<ExternalSubmitResult, { readonly ok: false }>> {
   return {
     ok: false,
     code: record.state === 'SUBMISSION_UNKNOWN' ? QUERY_REQUIRED_BEFORE_RETRY : BLIND_RETRY_FORBIDDEN,

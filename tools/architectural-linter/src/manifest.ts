@@ -56,6 +56,8 @@ export type ManifestCapability = {
   readonly owner: string | null;
   readonly protected: boolean;
   readonly adr?: string;
+  readonly notes?: string;
+  readonly supersededBy?: readonly string[];
 };
 
 export type ManifestBoundedContext = {
@@ -147,6 +149,17 @@ export function evaluateCapability(
   };
 }
 
+export function capabilitySupersessionResolved(
+  manifest: ArchitectureManifest,
+  capabilityId: string,
+): boolean {
+  const capability = manifest.capabilities.find((item) => item.id === capabilityId);
+  if (!capability?.supersededBy?.length) {
+    return false;
+  }
+  return capability.supersededBy.every((id) => evaluateCapability(manifest, id).status === 'IMPLEMENTED');
+}
+
 export function evaluateChunkRequirements(
   manifest: ArchitectureManifest,
   requires: readonly string[],
@@ -154,7 +167,12 @@ export function evaluateChunkRequirements(
 ): ChunkEvaluation {
   const requirements = requires.map((id) => evaluateCapability(manifest, id));
   const missing = requirements
-    .filter((item) => item.protected && item.status !== 'IMPLEMENTED')
+    .filter((item) => {
+      if (!item.protected || item.status === 'IMPLEMENTED') {
+        return false;
+      }
+      return !capabilitySupersessionResolved(manifest, item.id);
+    })
     .map((item) => item.id);
   return {
     chunk,

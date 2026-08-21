@@ -462,6 +462,15 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v027.sql) && /Ledger\.postJournal/.test(v027.sql), false);
   });
 
+  it('customer V028 grants payments schema usage for operational recovery', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v028 = files.find((file) => file.version === 28);
+    assert.ok(v028);
+    assert.equal(v028.filename, 'V028__operational_schema_usage.sql');
+    assert.match(v028.sql, /GRANT USAGE ON SCHEMA payments TO customer_app/);
+    assert.equal(/CREATE TABLE/i.test(v028.sql), false);
+  });
+
   it('security V002 stores credential descriptor references without secret values', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v002 = files.find((file) => file.version === 2);

@@ -292,6 +292,8 @@ jobs:
         run: npm run demo:sunrey-economic-rc
       - name: SunRey production economic authorization demo
         run: npm run demo:sunrey-production-economic-authorization
+      - name: SunRey engineering closure demo
+        run: npm run demo:sunrey-engineering-closure
       - name: SunRey production launch freeze demo
         run: npm run demo:sunrey-production-launch-freeze
       - name: SunRey Mainnet RC smoke qualification

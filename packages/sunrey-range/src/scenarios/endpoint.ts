@@ -27,8 +27,8 @@ function publicProfile(): ProviderEndpointProfile {
     hostname: 'approved.example.test',
     port: 443,
     pathPrefix: '/energy/v1/',
-    allowedMethods: ['GET'],
-    authenticationClass: 'API_KEY_HEADER',
+    allowedMethods: ['GET'] as const,
+    authenticationClass: 'API_KEY_REFERENCE',
     tlsPolicy: 'REQUIRE_VALID_CERTIFICATE',
     maximumResponseBytes: 4_096,
     timeoutMs: 1_000,
@@ -113,7 +113,7 @@ export function runEndpoint(env: RangeEnvironment, scenario: AttackScenario): At
         blocked = profile.maximumResponseBytes < 10_000 && noInternet;
         break;
       case 'ENDPOINT-WRONG-CONTENT-TYPE':
-        blocked = !ALLOWED_CONTENT_TYPES.includes('text/html') && noInternet;
+        blocked = !(ALLOWED_CONTENT_TYPES as readonly string[]).includes('text/html') && noInternet;
         break;
       default:
         blocked = false;

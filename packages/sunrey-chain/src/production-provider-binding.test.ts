@@ -85,7 +85,7 @@ describe('CHUNK-162 production provider binding', () => {
     }
     const sealed = sealProductionProviderBinding({
       ...fixtureKycBinding(),
-      credentialDescriptorRef: '-----BEGIN PRIVATE KEY-----abc',
+      credentialDescriptorRef: '-----BEGIN SIMULATION PRIVATE KEY-----fixture',
     });
     assert.equal(sealed.ok, false);
   });

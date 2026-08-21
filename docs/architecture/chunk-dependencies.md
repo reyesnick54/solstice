@@ -53,6 +53,18 @@ Agents and later CI jobs use that result. They do not guess.
 
 ## Current capabilities
 
+Chunk 168 reconciled this table against `manifest.json` canonical capability IDs.
+There is one current row per capability. Duplicate historical rows
+(`sunrey-ops-resilience`, `sunrey-pqc-testnet`) were collapsed, not deleted as
+capabilities. `moonrey-coin` is classified **SUPERSEDED** by
+`sunrey-native-assets` + `moonrey-issuance-engine` (decision A: obsolete
+public-product placeholder). Do not create `packages/moonrey-coin`.
+`blockchain-node` and `blockchain-network` are likewise superseded placeholders.
+`blockchain-runtime` remains PARTIAL because WASM/EVM are deliberately
+unimplemented (no Ethereum dependency); that is not a core-architecture gap.
+
+Historical discussion remains below the table.
+
 | Capability | Status | Owner |
 | --- | --- | --- |
 | money | IMPLEMENTED | packages/money |
@@ -68,6 +80,8 @@ Agents and later CI jobs use that result. They do not guess.
 | architecture-linting | IMPLEMENTED | tools/architectural-linter |
 | persistence | IMPLEMENTED | packages/persistence |
 | security | IMPLEMENTED | packages/security |
+| sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
+| crypto-suite-registry | IMPLEMENTED | packages/security |
 | identity | IMPLEMENTED | packages/identity |
 | policy-engine | IMPLEMENTED | packages/kernel |
 | banking-core | IMPLEMENTED | services/accounts |
@@ -83,23 +97,28 @@ Agents and later CI jobs use that result. They do not guess.
 | personal-economic-value-engine | IMPLEMENTED | packages/platform |
 | treasury | IMPLEMENTED | packages/treasury |
 | investments | IMPLEMENTED | packages/investments |
-| regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
-| personal-data-vault | IMPLEMENTED | packages/personal-data-vault |
 | risk | IMPLEMENTED | packages/risk |
 | model-registry | IMPLEMENTED | packages/model-registry |
+| regulatory-digital-twin | IMPLEMENTED | packages/regulatory-twin |
 | agentic-capital-mesh | IMPLEMENTED | packages/agentic-capital-mesh |
 | strategy-lab | IMPLEMENTED | packages/strategy-lab |
+| personal-data-vault | IMPLEMENTED | packages/personal-data-vault |
 | consent | IMPLEMENTED | packages/consent |
 | purpose-firewall | IMPLEMENTED | packages/consent |
 | clean-room | IMPLEMENTED | packages/clean-room |
-| custody | IMPLEMENTED | packages/custody |
-| market-surveillance | IMPLEMENTED | packages/market-surveillance |
 | sunrey-coin | IMPLEMENTED | packages/sunrey-coin |
 | information-market | IMPLEMENTED | packages/information-market |
 | sunrey-chain | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-blockchain-architecture | IMPLEMENTED | packages/sunrey-chain |
-| moonrey-coin | PLANNED | none |
+| blockchain-node | SUPERSEDED | none (via sunrey-local-node) |
+| blockchain-protocol | IMPLEMENTED | packages/sunrey-chain |
+| blockchain-network | SUPERSEDED | none (via sunrey-p2p) |
+| blockchain-consensus | IMPLEMENTED | packages/sunrey-chain |
+| blockchain-runtime | PARTIAL | packages/sunrey-chain |
+| moonrey-coin | SUPERSEDED | none (via sunrey-native-assets + moonrey-issuance-engine) |
 | sunrey-exchange | IMPLEMENTED | packages/sunrey-exchange |
+| custody | IMPLEMENTED | packages/custody |
+| market-surveillance | IMPLEMENTED | packages/market-surveillance |
 | sunrey-local-node | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-p2p | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validators | IMPLEMENTED | packages/sunrey-chain |
@@ -117,51 +136,57 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-exchange-native-settlement | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-institutional-custody | IMPLEMENTED | packages/custody |
 | sunrey-sovereign-wallets | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
+| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-validator-operations | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-public-testnet | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-explorer | IMPLEMENTED | packages/sunrey-explorer |
 | sunrey-developer-sdk | IMPLEMENTED | packages/sunrey-sdk |
-| sunrey-developer-platform | IMPLEMENTED | packages/sunrey-sdk |
 | sunrey-supply-chain | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-adversarial-range | IMPLEMENTED | packages/sunrey-range |
 | sunrey-assurance | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-performance-engineering | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
-| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-mainnet-readiness | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-production-operating-scope | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-ops-resilience | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-pqc-testnet | IMPLEMENTED | packages/security |
-| sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-audit-remediation | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-formal-assurance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mainnet-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-audit-readiness | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-root-of-trust | IMPLEMENTED | packages/security |
+| sunrey-testnet-rc | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-regulated-integration | IMPLEMENTED | packages/sunrey-exchange |
 | sunrey-production-oracles | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-compute-ai-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-storage | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-infrastructure | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-launch-rehearsal | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
-| sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-mainnet-rc | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-policy-governance | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-dual-economy-simulator | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-monetary-constitution | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-stress-lab | IMPLEMENTED | packages/sunrey-economics |
+| sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-economic-rc | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-governance-operations | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-mainnet-rehearsal | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-protocol-treasury | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-post-genesis-stabilization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-network-candidate | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-production-handoff | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provider-acceptance | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-provider-runtime | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-provider-binding | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-audit-remediation | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-mainnet-rc | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-genesis-ceremony | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-provisioning | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-pregenesis-qualification | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-genesis-execution | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-post-genesis-stabilization | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-production-handoff | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-provider-runtime | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-validator-operator-platform | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-public-data-plane | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-human-information-network | IMPLEMENTED | packages/information-market |
-| sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
+| sunrey-developer-platform | IMPLEMENTED | packages/sunrey-sdk |
+| sunrey-exchange-market-operations | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-wallet-security | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-mobile-wallet-sync | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-user-agent-mandates | IMPLEMENTED | packages/sunrey-agent |
+| sunrey-exchange-consumer-trading | IMPLEMENTED | packages/sunrey-exchange |
+| sunrey-human-information-network | IMPLEMENTED | packages/information-market |
 | sunrey-ai-runtime | IMPLEMENTED | packages/ai-runtime |
 | sunrey-s3m-provider | IMPLEMENTED | packages/ai-runtime |
 | sunrey-human-contribution-monetary-bridge | IMPLEMENTED | packages/sunrey-chain |
@@ -169,40 +194,39 @@ Agents and later CI jobs use that result. They do not guess.
 | sunrey-hin-chain-anchoring | IMPLEMENTED | packages/information-market |
 | sunrey-human-economic-contributions | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-asset-registry | IMPLEMENTED | packages/economic-asset-registry |
-| sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
 | sunrey-human-contribution-valuation | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-human-contribution-verification | IMPLEMENTED | packages/human-economic-contribution |
 | sunrey-economic-unit-normalization | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-source-taxonomy | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-economic-asset-verification | IMPLEMENTED | packages/economic-asset-registry |
 | moonrey-productive-value-function | IMPLEMENTED | packages/sunrey-chain |
-| moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
 | moonrey-economic-event-attribution | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-provider-certification | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-economic-data-connector-runtime | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-logistics-storage-data-fabric | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-compute-ai-data-fabric | IMPLEMENTED | packages/sunrey-chain |
-| moonrey-v2-shadow-economics | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-resource-extraction-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-agriculture-food-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-water-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-goods-services-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-bandwidth-network-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-real-estate-infrastructure-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| moonrey-productive-value-settlement | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-manufacturing-robotics-data-fabric | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-unified-economic-data-fabric | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-activation-firewall | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-parameters | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-economic-authorization | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-production-launch-freeze | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-canonical-product-identity | IMPLEMENTED | packages/config |
-| sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
+| moonrey-production-issuance-policy-candidate | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-regulated-provider-candidates | IMPLEMENTED | packages/kernel |
-| sunrey-production-provider-credential-plane | IMPLEMENTED | packages/security |
 | sunrey-dual-asset-custody-provider-candidate | IMPLEMENTED | packages/custody |
 | sunrey-unified-control-room | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-production-provider-binding | IMPLEMENTED | packages/sunrey-chain |
-| sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-distributed-idempotency-recovery | IMPLEMENTED | packages/events |
+| sunrey-operational-persistence-recovery | IMPLEMENTED | packages/persistence |
+| sunrey-production-operating-scope | IMPLEMENTED | packages/sunrey-chain |
+| sunrey-external-production-evidence | IMPLEMENTED | packages/sunrey-chain |
 | sunrey-repository-integrity | IMPLEMENTED | tools/architectural-linter |
 
 Chunk 111 implements engineering-simulation reference valuation at
@@ -1662,6 +1686,23 @@ and [`merge-integrity-policy.md`](./merge-integrity-policy.md).
 Historical note: `sunrey-hin-chain-anchoring` was `PARTIAL` after
 Chunk 139 and is `IMPLEMENTED` after Chunk 140. The current table
 row is the stronger status.
+
+Chunk 168 is the final general core-architecture engineering closure.
+It extends `sunrey-production-handoff` at
+`packages/sunrey-chain/src/production-handoff/engineering-closure` and
+`architecture-linting`. It does not create a new architecture authority.
+`moonrey-coin` remains a reserved capability id whose public-product
+placeholder is SUPERSEDED by `sunrey-native-assets` +
+`moonrey-issuance-engine`. Older notes that the public MoonRey product
+"remains PLANNED" describe ticker assignment and production issuance
+parameters (human/external gates), not a missing software owner.
+`CORE_CODE_COMPLETE_CANDIDATE` is an engineering label.
+`PRODUCTION_READY` remains false. See
+[`SUNREY_ENGINEERING_CLOSURE.md`](./SUNREY_ENGINEERING_CLOSURE.md).
+The evaluator returns `mustStop: false`. Do not create
+`packages/sunrey-core`, `packages/platform-v2`,
+`packages/final-architecture`, `packages/super-app`,
+`packages/everything`, or `packages/production-v2`.
 Chunk 167 implements launch abort, domain-scoped emergency
 restrictions, rollback semantics, recovery gates, and resumption
 authorization rehearsal by extending
