@@ -1311,6 +1311,17 @@ create `packages/post-genesis`, `packages/sunrey-post-genesis`,
 `packages/stabilization`, `packages/capability-activation`, or
 `packages/production-activation`. See
 [`chunk-89-post-genesis-stabilization.md`](./chunk-89-post-genesis-stabilization.md).
+Chunk 166 extends that owner with a staged capability activation
+plan, domain-scoped canary rehearsal, progressive readiness gates,
+and independent product sequencing at
+`packages/sunrey-chain/src/post-genesis/staged-activation`. Launch is
+not designed as turning everything on. Each domain remains
+independently gated and may stay disabled indefinitely. SunRey and
+MoonRey issuance stay independent. Fixture canaries are
+`REHEARSAL_ONLY`. There is no LIVE state. Do not create
+`packages/activation`, `packages/canary`, `packages/mainnet-launch`,
+or `packages/product-switches`. See
+[`docs/operations/chunk-166-staged-capability-activation.md`](../operations/chunk-166-staged-capability-activation.md).
 Chunk 94 implements the SunRey developer application platform,
 credentials, signed webhooks, Testnet/sandbox, and local developer
 environment at `packages/sunrey-sdk/src/developer-platform`. Capability

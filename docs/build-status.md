@@ -336,9 +336,12 @@ This document describes only what is implemented and tested in this tree.
   height/epoch/finalized-state checkpoints, independent capability
   packages, bounded restrictions, and rehearsal-only activation
   negatives. Capability `sunrey-post-genesis-stabilization` is
-  `IMPLEMENTED`. `realProductionCapabilitiesActivated=false`. This is
+  `IMPLEMENTED`. Chunk 166 extends that owner with staged capability
+  activation at `packages/sunrey-chain/src/post-genesis/staged-activation`.
+  `realProductionCapabilitiesActivated=false`. This is
   not mainnet. `LIVE_*` flags remain false. See
-  `docs/mainnet/chunk-89-post-genesis-stabilization.md`.
+  `docs/mainnet/chunk-89-post-genesis-stabilization.md` and
+  `docs/operations/chunk-166-staged-capability-activation.md`.
 - SunRey root-of-trust and key-ceremony architecture (Chunk 64,
   `packages/security/src/ceremony`): authority registry, key-purpose
   matrix, extended HSM contract, simulation ceremony provider,

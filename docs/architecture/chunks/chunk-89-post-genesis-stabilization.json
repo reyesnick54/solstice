@@ -17,5 +17,5 @@
     "sunrey-regulated-integration",
     "sunrey-post-genesis-stabilization"
   ],
-  "notes": "IMPLEMENTED at packages/sunrey-chain/src/post-genesis. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. evaluateChunkRequirements returns mustStop: false. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, or packages/production-activation."
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/post-genesis. Chunk 166 extends that owner at packages/sunrey-chain/src/post-genesis/staged-activation. Rehearsal networks only. Does not launch mainnet, enable LIVE_* flags, or activate real production capabilities. evaluateChunkRequirements returns mustStop: false. Do not create packages/post-genesis, packages/sunrey-post-genesis, packages/stabilization, packages/capability-activation, packages/production-activation, packages/activation, packages/canary, packages/mainnet-launch, or packages/product-switches."
 }
