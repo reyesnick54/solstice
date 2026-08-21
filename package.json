@@ -174,6 +174,7 @@
     "demo:sunrey-production-policy-candidate": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/policy-candidate-demo.ts",
     "demo:sunrey-production-parameter-registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/parameter-package/demo.ts",
     "demo:sunrey-production-economic-authorization": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/production-activation/authorization/demo.ts",
+    "demo:sunrey-production-launch-freeze": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze/demo.ts",
     "demo:sunrey-protocol-treasury": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/economics/treasury/demo.ts",
     "demo:sunrey-economic-stress": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-economics/src/stress/demo.ts",
     "test:formal-smoke": "FORMAL_PROFILE=FORMAL_SMOKE node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/formal/cli.ts smoke && bash -lc 'cd packages/sunrey-chain/rust && cargo test -p sunrey-formal --locked'",

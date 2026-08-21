@@ -1,0 +1,18 @@
+{
+  "chunk": "CHUNK-164",
+  "title": "Immutable Production Launch Candidate Freeze, Release Bill of Materials, Exact-Version Binding, and Staleness Detection",
+  "requires": [
+    "architecture-linting",
+    "config",
+    "sunrey-chain",
+    "sunrey-mainnet-rc",
+    "sunrey-economic-rc",
+    "sunrey-production-handoff",
+    "sunrey-production-economic-authorization",
+    "sunrey-external-production-evidence",
+    "sunrey-production-operating-scope",
+    "sunrey-production-provider-binding",
+    "sunrey-production-launch-freeze"
+  ],
+  "notes": "IMPLEMENTED at packages/sunrey-chain/src/release-candidate/mainnet/launch-freeze. Extends the existing mainnet release candidate. Freeze is not approval, authorization, or activation. Does not invent production parameters, enable mainnet, flip LIVE_* flags, mint, or issue Execution Authority. Current repository remains AWAITING_PRODUCTION_PARAMETERS / AWAITING_EXTERNAL_EVIDENCE / AWAITING_HUMAN_AUTHORIZATION. evaluateChunkRequirements returns mustStop: false. Do not create packages/launch-candidate, packages/release-v2, packages/mainnet-v2, packages/production-release, or packages/production-manifest."
+}
