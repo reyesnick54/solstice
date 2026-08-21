@@ -554,6 +554,8 @@ describe('versioned SQL migrations', () => {
     assert.equal(v008.filename, 'V008__account_product.sql');
     assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
     assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
+    assert.match(v008.sql, /GRANT SELECT, INSERT, UPDATE ON TABLE ledger\.account_restriction TO ledger_writer/);
+    assert.match(v008.sql, /GRANT SELECT ON TABLE ledger\.account_restriction TO ledger_reader/);
     assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v008.sql), false);
   });
 
