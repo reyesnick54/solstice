@@ -135,8 +135,36 @@ export type {
   FreezeCardIntent,
   UnfreezeCardIntent,
   CloseCardIntent,
+  RehearseAuthorityPathIntent,
+  RehearseAuthorityPathPayload,
 } from './action-types.ts';
 export { ACTION_TYPES } from './action-types.ts';
+
+export {
+  APPROVAL_STATES,
+  TERMINAL_APPROVAL_STATES,
+  canTransitionApproval,
+  isApprovalState,
+  isTerminalApprovalState,
+  transitionApproval,
+  type ApprovalState,
+  type ApprovalTransitionFailure,
+} from './approval.ts';
+export {
+  InMemoryProposalStore,
+  advanceProposal,
+  createExecutionProposal,
+  type ExecutionProposal,
+  type ExecutionProposalAmount,
+  type ExecutionProposalResource,
+  type ProposalFailure,
+} from './proposal.ts';
+export {
+  rejectClientExecutionAuthority,
+  submitRegulatedCommand,
+  type ExecutionGateFailure,
+  type ExecutionGateInput,
+} from './execution-gate.ts';
 
 export type {
   AuthorizationDecision,

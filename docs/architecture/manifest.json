@@ -4382,6 +4382,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
+      "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
       "notes": "Chunk 90 production handoff, day-2 operations, final launch evidence and operator acceptance architecture at packages/sunrey-chain/src/production-handoff. Chunk 167 extends application-rollback records on this owner. APPLICATION_ROLLBACK_IS_NOT_CHAIN_HISTORY_ROLLBACK remains true. Chunk 168 engineering closure lives at packages/sunrey-chain/src/production-handoff/engineering-closure. Rehearsal/isolated only. Does not launch mainnet, convert rehearsal into observed production, or let AI satisfy human accountability roles."
     },
     {
