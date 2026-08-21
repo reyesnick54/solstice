@@ -88,6 +88,7 @@ never be two implementations of these systems.
 | SunRey explorer | `packages/sunrey-explorer` | `packages/sunrey-explorer/src/indexer.ts` | IMPLEMENTED |
 | SunRey developer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/index.ts` | IMPLEMENTED |
 | SunRey developer application platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/developer-platform/index.ts` | IMPLEMENTED |
+| SunRey consumer platform | `packages/sunrey-sdk` | `packages/sunrey-sdk/src/consumer-platform/client.ts` | IMPLEMENTED |
 | SunRey software supply chain | `packages/sunrey-chain` | `packages/sunrey-chain/src/supply-chain/index.ts` | IMPLEMENTED |
 | SunRey performance engineering | `packages/sunrey-chain` | `packages/sunrey-chain/src/perf/runner.ts` | IMPLEMENTED |
 | SunRey adversarial range | `packages/sunrey-range` | `packages/sunrey-range/src/types.ts` | IMPLEMENTED |
@@ -152,7 +153,7 @@ the same architecture-linting system, not a second linter.
 `market-surveillance`, `sunrey-sdk`, `sunrey-economics`.
 
 **Services:** `accounts`, `identity`, `compliance`, `cards`, `economic-graph`,
-`treasury`, `investments`, `strategy-lab`.
+`treasury`, `investments`, `strategy-lab`, `consumer-platform`.
 
 **Applications:** `apps/explorer` is the functional SunRey explorer
 web interface. It is a projection UI, not an authoritative ledger.
@@ -986,6 +987,14 @@ Do not create `packages/blockchain-v2`,
 `packages/sunrey-chain-sdk-ledger`, `packages/sdk-ledger`, or
 `packages/exchange-v2`. See
 [`chunk-51-developer-platform.md`](./chunk-51-developer-platform.md).
+Phase B extends that owner with the consumer/platform client at
+`packages/sunrey-sdk/src/consumer-platform` and the HTTP composition
+root at `services/consumer-platform`. Capability
+`sunrey-consumer-platform` is `IMPLEMENTED`. It fronts Identity,
+Kernel, accounts, evidence, and events. It is not a second ledger,
+Kernel, Exchange, or developer platform. Do not create
+`packages/sunrey-consumer-client`, `packages/consumer-bff`,
+`packages/lovable-sdk`, `packages/frontend-api`, or `services/bff-v2`.
 Chunk 59 implements software supply-chain security at
 `packages/sunrey-chain/src/supply-chain`. Capability
 `sunrey-supply-chain` is `IMPLEMENTED`. `ReleaseAuthority` signs

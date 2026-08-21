@@ -34,7 +34,11 @@
     "packages/product-switches",
     "packages/ai-authority",
     "packages/agent-authority",
-    "packages/agent-execution"
+    "packages/agent-execution",
+    "packages/sunrey-consumer-client",
+    "packages/consumer-bff",
+    "packages/lovable-sdk",
+    "packages/frontend-api"
   ],
   "alternateLedgerOwners": [
     "packages/ledger-v2",
