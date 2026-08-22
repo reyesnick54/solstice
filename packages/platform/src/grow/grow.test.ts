@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../config/src/clock.ts';
-import { asCustomerId } from '../../domain/src/customer.ts';
-import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
-import { asUtcInstant } from '../../domain/src/time.ts';
-import { EvidenceVault } from '../../evidence/src/vault.ts';
-import { DomainEventLog } from '../../events/src/events.ts';
-import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
-import { createSimulationKeyProvider } from '../../security/src/simulation.ts';
+import { FrozenClock } from '../../../config/src/clock.ts';
+import { asCustomerId } from '../../../domain/src/customer.ts';
+import { asJurisdiction } from '../../../domain/src/jurisdiction.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
+import { EvidenceVault } from '../../../evidence/src/vault.ts';
+import { DomainEventLog } from '../../../events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../../../identity/src/simulation.ts';
+import { createSimulationKeyProvider } from '../../../security/src/simulation.ts';
 import { asGrowthActionId, asGrowthPlanId, asGrowthPlanVersion } from '../ids.ts';
 import type { GrowthActionCandidate, GrowthPlan } from '../growth/types.ts';
 import { containsGuaranteedReturnClaim } from './no-guaranteed-returns.ts';

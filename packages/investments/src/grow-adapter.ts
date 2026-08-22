@@ -14,11 +14,41 @@ import type { UtcInstant } from '../../domain/src/time.ts';
 import { Money } from '../../money/src/money.ts';
 import { asIntentId } from '../../permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../permissions/src/action-types.ts';
-import type { GrowExecutionCommand } from '../../platform/src/grow/types.ts';
-import type { UniversalProviderRuntime } from '../../sunrey-chain/src/provider-runtime/universal/runtime.ts';
-import { asInstrumentId, asInvestmentAccountId } from './ids.ts';
+import { asInstrumentId } from './ids.ts';
 import type { InvestmentsService, InvestmentsServiceOutcome } from './service.ts';
 import { wholeShares } from './quantity.ts';
+
+/** Structural command. Defined here so investments does not import platform. */
+export type GrowInvestmentCommand = {
+  readonly commandId: string;
+  readonly idempotencyKey: string;
+  readonly customerId: string;
+  readonly domain: string;
+  readonly proposalType: string;
+  readonly financialResource: {
+    readonly sourceAccountId: string;
+    readonly destinationAccountId: string | null;
+    readonly instrumentId: string | null;
+    readonly amount: { readonly minorUnits: string; readonly currency: string };
+  };
+};
+
+/** Structural Provider Runtime port. Investments does not import sunrey-chain. */
+export type GrowInvestmentProviderPort = {
+  route(inquiry: {
+    readonly capability: 'INVESTMENT.PAPER_ORDER';
+    readonly jurisdiction: string;
+    readonly currency: string;
+    readonly product: string;
+    readonly environment: 'SANDBOX';
+    readonly nowUtc: string;
+  }): { readonly ok: true; readonly value: { readonly selectedProviderId: string } } | { readonly ok: false };
+  get(providerId: string): {
+    readonly providerId: string;
+    readonly environment: string;
+    readonly lifecycleState: string;
+  } | null;
+};
 
 export type GrowInvestmentAccounts = {
   readonly investmentAccountId: string;
@@ -41,7 +71,7 @@ export type GrowInvestmentExecutionResult = {
 };
 
 export function selectSandboxInvestmentProvider(
-  runtime: UniversalProviderRuntime,
+  runtime: GrowInvestmentProviderPort,
   jurisdiction: string,
   nowUtc: string,
 ): { readonly ok: true; readonly providerId: string } | { readonly ok: false; readonly code: 'PROVIDER_UNAVAILABLE'; readonly message: string } {
@@ -73,7 +103,7 @@ export function selectSandboxInvestmentProvider(
 
 export function executeGrowInvestmentCommand(input: {
   readonly investments: InvestmentsService;
-  readonly command: GrowExecutionCommand;
+  readonly command: GrowInvestmentCommand;
   readonly actorId: string;
   readonly now: UtcInstant;
   readonly accounts: GrowInvestmentAccounts;
@@ -133,7 +163,12 @@ export function executeGrowInvestmentCommand(input: {
   if (funded.outcome !== 'OK') {
     return fail(funded.code, funded.message);
   }
-  const quantityUnits = wholeShareUnitsForNotional(input.command.financialResource.amount.minorUnits, '10000');
+  const priceMinor = '10000';
+  const quantityUnits = wholeShareUnitsForNotional(input.command.financialResource.amount.minorUnits, priceMinor);
+  const filledNotional = filledNotionalForUnits(quantityUnits, priceMinor);
+  if (quantityUnits === '0') {
+    return fail('INVALID_QUANTITY', 'notional is below one whole sandbox share after concentration buffer');
+  }
   const ordered = input.investments.createPaperOrder({
     id: asIntentId(`I-grow-ord-${input.command.commandId}`),
     actionType: ACTION_TYPES.CREATE_PAPER_ORDER,
@@ -157,16 +192,21 @@ export function executeGrowInvestmentCommand(input: {
   if (ordered.outcome !== 'OK') {
     return fail(ordered.code, ordered.message);
   }
+  const complete = Boolean(ordered.value.fillId) && filledNotional === input.command.financialResource.amount.minorUnits;
   return {
-    outcome: ordered.value.fillId ? 'COMPLETED' : 'PARTIAL',
+    outcome: !ordered.value.fillId || !complete ? 'PARTIAL' : 'COMPLETED',
     providerId: input.providerId,
     orderId: ordered.value.orderId,
     fillId: ordered.value.fillId,
     journalId: funded.value.journalId,
     authorityId: ordered.decision.executionAuthority?.authorityId ?? funded.decision.executionAuthority?.authorityId ?? null,
-    filledMinorUnits: ordered.value.fillId ? input.command.financialResource.amount.minorUnits : '0',
+    filledMinorUnits: ordered.value.fillId ? filledNotional : '0',
     code: 'OK',
-    message: ordered.value.fillId ? 'sandbox paper order filled' : 'order submitted without fill',
+    message: ordered.value.fillId
+      ? complete
+        ? 'sandbox paper order filled'
+        : 'sandbox paper order partially filled; leftover cash remains for concentration limits'
+      : 'order submitted without fill',
   };
 }
 
@@ -185,9 +225,18 @@ function wholeShareUnitsForNotional(notionalMinor: string, priceMinor: string): 
   if (price <= 0n) {
     return '0';
   }
-  const shares = notional / price;
+  // Leave cash in brokerage so a first paper lot stays under the
+  // engineering 60% single-instrument concentration budget.
+  const deployable = notional / 2n;
+  const shares = deployable / price;
   const qty = wholeShares(shares);
   return qty.ok ? qty.value.units.toString() : '0';
+}
+
+function filledNotionalForUnits(quantityUnits: string, priceMinor: string): string {
+  const units = BigInt(quantityUnits);
+  const price = BigInt(priceMinor);
+  return ((units / 100_000_000n) * price).toString();
 }
 
 function fail(code: string, message: string): GrowInvestmentExecutionResult {

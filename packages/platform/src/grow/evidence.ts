@@ -1,4 +1,4 @@
-import type { EvidenceVault } from '../../evidence/src/vault.ts';
+import type { EvidenceVault } from '../../../evidence/src/vault.ts';
 import type { GrowEvidenceTrace } from './types.ts';
 
 export function sealGrowEvidence(vault: EvidenceVault | undefined, kind: string, trace: GrowEvidenceTrace): void {

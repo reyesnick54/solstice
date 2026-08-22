@@ -9,7 +9,7 @@ import { Money } from '../../../../packages/money/src/money.ts';
 import type { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
 import type { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import type { GrowLifecycleService } from '../../../../packages/platform/src/grow/service.ts';
-import type { SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
+import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
 import type { FinancialProposal } from '../../../../packages/platform/src/grow/types.ts';
 import type { InvestmentsService } from '../../../../packages/investments/src/service.ts';
 import { asInvestmentAccountId } from '../../../../packages/investments/src/ids.ts';
@@ -168,7 +168,7 @@ export class GrowBffSurface {
     }
     const planned = this.deps.orchestrator.plan(actor, principal.identityId);
     if (!planned.ok) {
-      return this.fail(requestId, 'VALIDATION', planned.error.message);
+      return this.fail(requestId, 'VALIDATION', failureMessage(planned.error));
     }
     return this.projectPlan(planned.value.plan);
   }
@@ -325,7 +325,7 @@ export class GrowBffSurface {
       availableMinorUnits: availableMinor,
       productAvailable: true,
       providerAvailable: provider.ok,
-      suitability: this.deps.suitabilityFor(principal),
+      suitability: evaluateGrowSuitability(this.deps.suitabilityFor(principal)),
       kernelPolicy: 'ALLOW',
       complianceClear: principal.verification === 'VERIFIED',
       marketQuoteValid: true,
@@ -434,7 +434,7 @@ export class GrowBffSurface {
           kind: 'ACTUAL_RESULT',
           depositsAreNotPerformance: true,
         },
-        risk: risk.status,
+        risk: risk.simulationOnly ? 'SIMULATION' : 'UNKNOWN',
         liveInvestmentExecution: false,
       };
     } catch {
@@ -583,10 +583,12 @@ export class GrowBffSurface {
     const accounts = this.deps.investmentAccountsFor(principal.customerId);
     const proposed = candidate.proposedAmount;
     const zeroOrMissing = !proposed || proposed.minorUnits === '0';
+    const destinationAccountId = candidate.destinationAccountId ?? accounts?.brokerageCashAccountId;
+    const sourceAccountId = candidate.sourceAccountId ?? accounts?.demandAccountId;
     return {
       ...candidate,
-      sourceAccountId: candidate.sourceAccountId || accounts?.demandAccountId || '',
-      destinationAccountId: candidate.destinationAccountId || accounts?.brokerageCashAccountId,
+      ...(sourceAccountId ? { sourceAccountId } : {}),
+      ...(destinationAccountId ? { destinationAccountId } : {}),
       proposedAmount: zeroOrMissing
         ? { minorUnits: '20000', currency: proposed?.currency ?? 'USD' }
         : proposed,
@@ -672,6 +674,14 @@ function mapGrowError(code: string): { readonly code: BffErrorEnvelope['errorCod
 
 function isErr(value: unknown): value is BffErrorEnvelope {
   return Boolean(value && typeof value === 'object' && 'errorCode' in value);
+}
+
+function failureMessage(error: { readonly code: string; readonly message?: string; readonly issues?: readonly { readonly message?: string }[] }): string {
+  if (typeof error.message === 'string') {
+    return error.message;
+  }
+  const issue = error.issues?.[0]?.message;
+  return issue ?? error.code;
 }
 
 export function availableMinorUnits(ledger: Ledger, account: Account | undefined): string {

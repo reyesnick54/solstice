@@ -1,6 +1,6 @@
-import type { Clock } from '../../config/src/clock.ts';
-import { err, ok, type Result } from '../../domain/src/result.ts';
-import type { EvidenceVault } from '../../evidence/src/vault.ts';
+import type { Clock } from '../../../config/src/clock.ts';
+import { err, ok, type Result } from '../../../domain/src/result.ts';
+import type { EvidenceVault } from '../../../evidence/src/vault.ts';
 import { authorizeConfirmMandate, authorizeViewGrowthPlan } from '../access.ts';
 import type { GrowthActionCandidate, GrowthPlan } from '../growth/types.ts';
 import {

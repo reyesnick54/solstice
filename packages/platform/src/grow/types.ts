@@ -1,4 +1,4 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { SerializedMoney } from '../mandate/types.ts';
 import type { GrowthActionId, GrowthPlanId, GrowthPlanVersion } from '../ids.ts';
 import type {

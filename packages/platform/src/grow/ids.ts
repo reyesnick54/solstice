@@ -1,4 +1,4 @@
-import { type Brand, brandAs } from '../../domain/src/brand.ts';
+import { type Brand, brandAs } from '../../../domain/src/brand.ts';
 
 export type FinancialProposalId = Brand<string, 'FinancialProposalId'>;
 export type FinancialProposalVersion = Brand<number, 'FinancialProposalVersion'>;

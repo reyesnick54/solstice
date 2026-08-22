@@ -1,6 +1,6 @@
-import { addMs } from '../../config/src/clock.ts';
-import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
-import { Money } from '../../money/src/money.ts';
+import { addMs } from '../../../config/src/clock.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { Money } from '../../../money/src/money.ts';
 import {
   approvalIdFor,
   asGrowApprovalId,
@@ -215,16 +215,16 @@ export function initialExecutionRecord(command: GrowExecutionCommand, now: UtcIn
 }
 
 const LEGAL_EXECUTION: Readonly<Record<GrowExecutionState, readonly GrowExecutionState[]>> = Object.freeze({
-  AUTHORIZED: Object.freeze(['QUEUED', 'CANCELLED', 'REQUIRES_REVIEW']),
-  QUEUED: Object.freeze(['AUTHORIZED', 'SUBMITTED', 'CANCELLED', 'FAILED', 'REQUIRES_REVIEW']),
-  SUBMITTED: Object.freeze(['PROCESSING', 'PARTIALLY_COMPLETED', 'COMPLETED', 'FAILED', 'REQUIRES_REVIEW']),
-  PROCESSING: Object.freeze(['PARTIALLY_COMPLETED', 'COMPLETED', 'FAILED', 'REQUIRES_REVIEW']),
-  PARTIALLY_COMPLETED: Object.freeze(['COMPLETED', 'FAILED', 'REQUIRES_REVIEW', 'REVERSED']),
-  COMPLETED: Object.freeze(['REVERSED']),
-  FAILED: Object.freeze(['REVERSED', 'REQUIRES_REVIEW']),
-  CANCELLED: Object.freeze([]),
-  REVERSED: Object.freeze([]),
-  REQUIRES_REVIEW: Object.freeze(['QUEUED', 'CANCELLED', 'FAILED']),
+  AUTHORIZED: Object.freeze(['QUEUED', 'CANCELLED', 'REQUIRES_REVIEW'] as const),
+  QUEUED: Object.freeze(['AUTHORIZED', 'SUBMITTED', 'CANCELLED', 'FAILED', 'REQUIRES_REVIEW'] as const),
+  SUBMITTED: Object.freeze(['PROCESSING', 'PARTIALLY_COMPLETED', 'COMPLETED', 'FAILED', 'REQUIRES_REVIEW'] as const),
+  PROCESSING: Object.freeze(['PARTIALLY_COMPLETED', 'COMPLETED', 'FAILED', 'REQUIRES_REVIEW'] as const),
+  PARTIALLY_COMPLETED: Object.freeze(['COMPLETED', 'FAILED', 'REQUIRES_REVIEW', 'REVERSED'] as const),
+  COMPLETED: Object.freeze(['REVERSED'] as const),
+  FAILED: Object.freeze(['REVERSED', 'REQUIRES_REVIEW'] as const),
+  CANCELLED: Object.freeze([] as const),
+  REVERSED: Object.freeze([] as const),
+  REQUIRES_REVIEW: Object.freeze(['QUEUED', 'CANCELLED', 'FAILED'] as const),
 });
 
 export function transitionExecution(

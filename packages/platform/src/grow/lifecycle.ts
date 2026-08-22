@@ -1,5 +1,5 @@
-import type { UtcInstant } from '../../domain/src/time.ts';
-import { Money } from '../../money/src/money.ts';
+import type { UtcInstant } from '../../../domain/src/time.ts';
+import { Money } from '../../../money/src/money.ts';
 import {
   activatedPlanIdFor,
   asRecurringMandateId,

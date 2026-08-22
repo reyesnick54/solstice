@@ -45,7 +45,13 @@ export type PhaseEWorld = {
   readonly providers: ReturnType<typeof createUniversalProviderRuntime>;
   readonly demand: Account;
   readonly brokerage: Account;
-  readonly handle: (request: Omit<BffRequest, 'authorization'> & { readonly authorization?: string }) => BffResponse;
+  readonly handle: (
+    request: Omit<BffRequest, 'authorization' | 'body' | 'query'> & {
+      readonly authorization?: string;
+      readonly body?: unknown;
+      readonly query?: Readonly<Record<string, string>>;
+    },
+  ) => BffResponse;
   readonly startHttp: () => ReturnType<typeof startConsumerBff>;
 };
 
@@ -143,7 +149,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
     customerStatus: 'ACTIVE',
     identityStatus: 'ACTIVE',
     capabilities: facts.authorizedCapabilities,
-    risk: 'MODERATE',
+    risk: 'STANDARD',
     restricted: false,
     sandboxPersona: 'investment',
     deviceSummary: Object.freeze({ deviceId: session?.deviceId ?? null, trustState: 'KNOWN' }),
@@ -160,11 +166,11 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
       'Keep at least $500 liquid. Build my emergency fund. Invest eligible surplus later. Ask me before any movement over $100.',
   });
   if (!compiled.ok) {
-    throw new Error(`mandate compile failed: ${compiled.error.message}`);
+    throw new Error(`mandate compile failed: ${'message' in compiled.error ? compiled.error.message : compiled.error.code}`);
   }
   const activated = orchestrator.confirmAndActivate(actor, principal.identityId);
   if (!activated.ok) {
-    throw new Error(`mandate activate failed: ${activated.error.message}`);
+    throw new Error(`mandate activate failed: ${'message' in activated.error ? activated.error.message : activated.error.code}`);
   }
   const grow = new GrowLifecycleService({ clock, evidence });
   const investments = new InvestmentsService(

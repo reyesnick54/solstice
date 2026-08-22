@@ -1,4 +1,4 @@
-import { Money } from '../../money/src/money.ts';
+import { Money } from '../../../money/src/money.ts';
 import { assertNoGuaranteedReturnClaim } from './no-guaranteed-returns.ts';
 import type { ScenarioBand } from './types.ts';
 

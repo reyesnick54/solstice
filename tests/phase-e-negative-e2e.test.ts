@@ -170,7 +170,9 @@ describe('Phase E Grow negative E2E', () => {
 
   it('refuses restricted and incomplete KYC suitability', () => {
     const world = createPhaseEWorld('kyc');
-    const planned = world.orchestrator.store.latestPlanFor(world.principal.identityId);
+    const plannedResult = world.orchestrator.plan(world.actor, world.principal.identityId);
+    assert.equal(plannedResult.ok, true);
+    const planned = plannedResult.ok ? plannedResult.value.plan : world.orchestrator.store.latestPlanFor(world.principal.identityId);
     assert.ok(planned);
     const candidate = planned.candidateActions[0];
     assert.ok(candidate);

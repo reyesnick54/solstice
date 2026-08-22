@@ -1,6 +1,6 @@
-import { addMs } from '../../config/src/clock.ts';
-import { asUtcInstant, type UtcInstant } from '../../domain/src/time.ts';
-import { sha256Hex } from '../../security/src/hash.ts';
+import { addMs } from '../../../config/src/clock.ts';
+import { asUtcInstant, type UtcInstant } from '../../../domain/src/time.ts';
+import { sha256Hex } from '../../../security/src/hash.ts';
 import type { GrowthActionCandidate, GrowthPlan } from '../growth/types.ts';
 import {
   asFinancialProposalId,
@@ -165,7 +165,14 @@ export function modifyProposalAmount(
 }
 
 export function isProposalCurrent(proposal: FinancialProposal, now: UtcInstant): boolean {
-  return proposal.state === 'AWAITING_APPROVAL' || proposal.state === 'AWAITING_STEP_UP' || proposal.state === 'APPROVED'
-    ? proposal.expiresAt > now && proposal.state !== 'SUPERSEDED' && proposal.state !== 'EXPIRED'
-    : proposal.state === 'APPROVED';
+  if (
+    proposal.state === 'SUPERSEDED' ||
+    proposal.state === 'EXPIRED' ||
+    proposal.state === 'CANCELLED' ||
+    proposal.state === 'REJECTED' ||
+    proposal.state === 'DRAFT'
+  ) {
+    return false;
+  }
+  return proposal.expiresAt > now;
 }
