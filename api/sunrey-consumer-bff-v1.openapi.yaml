@@ -445,10 +445,76 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
-      summary: Grow My Money resource stub
+      summary: Grow My Money availability
       responses:
         "200":
           description: Honest availability
+  /api/v1/grow/portfolio:
+    get:
+      operationId: getGrowPortfolio
+      summary: Simulation portfolio summary
+      description: >
+        Authoritative values come from packages/investments.
+        Frontend math is not authoritative. Not a live securities brokerage.
+      responses:
+        "200":
+          description: Portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPortfolio"
+        "401":
+          description: Authentication required
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Portfolio not found
+  /api/v1/grow/portfolio/holdings:
+    get:
+      operationId: getGrowPortfolioHoldings
+      summary: Simulation holdings
+      responses:
+        "200":
+          description: Holdings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowHoldings"
+  /api/v1/grow/portfolio/performance:
+    get:
+      operationId: getGrowPortfolioPerformance
+      summary: Simulation performance
+      description: Server-calculated TWR or Modified Dietz. LLMs are not authoritative.
+      responses:
+        "200":
+          description: Performance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPerformance"
+  /api/v1/grow/portfolio/allocation:
+    get:
+      operationId: getGrowPortfolioAllocation
+      summary: Actual and target allocation
+      responses:
+        "200":
+          description: Allocation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowAllocation"
+  /api/v1/grow/portfolio/risk:
+    get:
+      operationId: getGrowPortfolioRisk
+      summary: Portfolio risk metrics
+      description: Does not fabricate statistics when history is insufficient.
+      responses:
+        "200":
+          description: Risk
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowRisk"
   /api/v1/agent:
     get:
       operationId: getAgent
@@ -828,3 +894,189 @@ components:
         accounts:
           allOf:
             - { $ref: "#/components/schemas/ResourceField" }
+    GrowMoney:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    GrowPortfolio:
+      type: object
+      required: [schema, portfolioId, ownerId, status, baseCurrency, displayCurrency, cash, invested, total, environment, liveState, securitiesBrokerageLive, authoritativeCalculator, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.portfolio.v1] }
+        portfolioId: { type: string }
+        ownerId: { type: string }
+        status: { type: string }
+        baseCurrency: { type: string }
+        displayCurrency: { type: string }
+        strategyRef: { type: string, nullable: true }
+        riskProfileRef: { type: string, nullable: true }
+        goalLinks:
+          type: array
+          items: { type: string }
+        restrictions:
+          type: array
+          items: { type: string }
+        cash: { $ref: "#/components/schemas/GrowMoney" }
+        invested: { $ref: "#/components/schemas/GrowMoney" }
+        total: { $ref: "#/components/schemas/GrowMoney" }
+        environment: { type: string, enum: [simulation] }
+        liveState: { type: boolean, enum: [false] }
+        securitiesBrokerageLive: { type: boolean, enum: [false] }
+        authoritativeCalculator: { type: string, enum: [INVESTMENT_PLATFORM] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowHoldings:
+      type: object
+      required: [schema, portfolioId, holdings, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.holdings.v1] }
+        portfolioId: { type: string }
+        holdings:
+          type: array
+          items:
+            type: object
+            required: [instrumentId, identifier, displayName, assetClass, quantityUnits, averageCost, remainingCost, realized, income, currency, valuation]
+            properties:
+              instrumentId: { type: string }
+              identifier: { type: string }
+              displayName: { type: string }
+              assetClass: { type: string }
+              quantityUnits: { type: string }
+              averageCost: { $ref: "#/components/schemas/GrowMoney" }
+              remainingCost: { $ref: "#/components/schemas/GrowMoney" }
+              marketPriceMinorUnits: { type: string, nullable: true }
+              marketValue: { $ref: "#/components/schemas/GrowMoney", nullable: true }
+              unrealized: { $ref: "#/components/schemas/GrowMoney", nullable: true }
+              realized: { $ref: "#/components/schemas/GrowMoney" }
+              income: { $ref: "#/components/schemas/GrowMoney" }
+              currency: { type: string }
+              valuation:
+                type: object
+                required: [source, timestamp, freshnessMs, quality, stale]
+                properties:
+                  source: { type: string }
+                  timestamp: { type: string, format: date-time }
+                  freshnessMs: { type: string }
+                  quality: { type: string }
+                  stale: { type: boolean }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowPerformance:
+      type: object
+      required: [schema, methodology, formula, absoluteReturn, realized, unrealized, income, cashFlows, insufficientData, llmAuthoritative, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.performance.v1] }
+        methodology: { type: string, enum: [TWR_LINKED_SUBPERIODS, MODIFIED_DIETZ] }
+        formula: { type: string }
+        absoluteReturn: { $ref: "#/components/schemas/GrowMoney" }
+        periodReturnBps: { type: string, nullable: true }
+        realized: { $ref: "#/components/schemas/GrowMoney" }
+        unrealized: { $ref: "#/components/schemas/GrowMoney" }
+        income: { $ref: "#/components/schemas/GrowMoney" }
+        cashFlows:
+          type: array
+          items:
+            type: object
+            properties:
+              at: { type: string, format: date-time }
+              kind: { type: string }
+              amount: { $ref: "#/components/schemas/GrowMoney" }
+        benchmark:
+          type: object
+          nullable: true
+          properties:
+            benchmarkId: { type: string }
+            periodReturnBps: { type: string }
+            deltaBps: { type: string, nullable: true }
+        insufficientData: { type: boolean }
+        llmAuthoritative: { type: boolean, enum: [false] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowAllocation:
+      type: object
+      required: [schema, actual, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.allocation.v1] }
+        actual:
+          type: object
+          properties:
+            byAssetClass:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byInstrument:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byCurrency:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byRiskClass:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+        target:
+          type: object
+          nullable: true
+          properties:
+            cashTargetBps: { type: string }
+            weights:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowRisk:
+      type: object
+      required: [schema, concentration, fabricatedStatistics, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.risk.v1] }
+        concentration:
+          type: object
+          properties:
+            largestInstrumentId: { type: string, nullable: true }
+            largestWeightBps: { type: string }
+        drawdownBps: { type: string, nullable: true }
+        volatilityBps: { type: string, nullable: true }
+        volatilityAvailable: { type: boolean }
+        currencyExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              currency: { type: string }
+              weightBps: { type: string }
+        liquidityExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              liquidity: { type: string }
+              weightBps: { type: string }
+        assetClassExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              assetClass: { type: string }
+              weightBps: { type: string }
+        fabricatedStatistics: { type: boolean, enum: [false] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }

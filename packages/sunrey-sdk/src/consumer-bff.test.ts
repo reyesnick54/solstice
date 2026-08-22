@@ -72,6 +72,43 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(calls[1]?.idempotency, 'pay_sdk_1');
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
   });
+
+  it('reads Grow My Money portfolio views without execution methods', async () => {
+    const calls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.investment',
+      generateRequestId: () => 'req_grow',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        calls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.grow.portfolio.v1',
+            frontendMathAuthoritative: false,
+            liveState: false,
+            securitiesBrokerageLive: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const portfolio = await client.getGrowPortfolio();
+    assert.equal(portfolio.frontendMathAuthoritative, false);
+    assert.equal(portfolio.liveState, false);
+    await client.getGrowHoldings();
+    await client.getGrowPerformance();
+    await client.getGrowAllocation();
+    await client.getGrowRisk();
+    assert.deepEqual(calls, [
+      'GET http://example.test/api/v1/grow/portfolio',
+      'GET http://example.test/api/v1/grow/portfolio/holdings',
+      'GET http://example.test/api/v1/grow/portfolio/performance',
+      'GET http://example.test/api/v1/grow/portfolio/allocation',
+      'GET http://example.test/api/v1/grow/portfolio/risk',
+    ]);
+    assert.equal('submitGrowOrder' in client, false);
+  });
 });
 
 describe('consumer BFF SDK models', () => {

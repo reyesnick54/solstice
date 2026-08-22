@@ -24,6 +24,12 @@ export type {
   FinancialAccountLifecycle,
   FinancialProductType,
   MoneyView,
+  GrowMoney,
+  GrowPortfolio,
+  GrowHoldings,
+  GrowPerformance,
+  GrowAllocation,
+  GrowRisk,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

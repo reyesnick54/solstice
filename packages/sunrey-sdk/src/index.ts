@@ -155,6 +155,12 @@ export type {
   ConsumerActivity,
   AccountBalanceView,
   AccountStatementData,
+  GrowMoney,
+  GrowPortfolio,
+  GrowHoldings,
+  GrowPerformance,
+  GrowAllocation,
+  GrowRisk,
 } from './consumer-bff/index.ts';
 export {
   WalletSecurityClient,

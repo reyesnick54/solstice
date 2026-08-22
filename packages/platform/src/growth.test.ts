@@ -634,3 +634,68 @@ describe('pre-trade risk annotations', () => {
     assert.equal(result.reasons.includes('RISK_LIMIT'), true);
   });
 });
+
+describe('investment review opportunities', () => {
+  it('surfaces rebalance, diversify, and deploy-cash as proposal-only', () => {
+    const { clock, events, evidence, actor } = setupActor('actor_growth_invest', 'id_growth_invest');
+    const peg = new EconomicGraphService({ clock, events });
+    seedPeg(peg, actor, actor.subjectId, `cust_${actor.subjectId}`);
+    const orchestrator = new GrowthOrchestrator({ clock, events, peg, evidence });
+    const compiled = orchestrator.interpretAndCompile(actor, {
+      subjectId: actor.subjectId,
+      sourceText: 'Keep at least $8,000 liquid. Invest surplus later. Ask me before any movement over $1,000.',
+    });
+    if (!compiled.ok) {
+      throw new Error('expected ok');
+    }
+    const active = orchestrator.confirmAndActivate(actor, actor.subjectId);
+    if (!active.ok) {
+      throw new Error('expected ok');
+    }
+    const planned = orchestrator.plan(actor, actor.subjectId, {
+      investmentReview: {
+        portfolioId: 'pf_inv_growth',
+        opportunities: Object.freeze([
+          {
+            kind: 'REBALANCE_PORTFOLIO_PROPOSAL',
+            title: 'Rebalance toward the target allocation',
+            detail: '1 candidate trade. User confirmation and Kernel are required.',
+          },
+          {
+            kind: 'DIVERSIFY_CONCENTRATION_PROPOSAL',
+            title: 'Review concentrated holding',
+            detail: 'Largest instrument weight is 8000 bps.',
+          },
+          {
+            kind: 'DEPLOY_INVESTMENT_CASH_PROPOSAL',
+            title: 'Deploy available investment cash',
+            detail: 'Idle brokerage cash is above the cash sleeve.',
+            amountMinorUnits: '5000',
+          },
+        ]),
+      },
+    });
+    if (!planned.ok) {
+      throw new Error(planned.error.message);
+    }
+    const kinds = planned.value.plan.candidateActions.map((item) => item.action);
+    assert.ok(kinds.includes('REBALANCE_PORTFOLIO_PROPOSAL'));
+    assert.ok(kinds.includes('DIVERSIFY_CONCENTRATION_PROPOSAL'));
+    assert.ok(kinds.includes('DEPLOY_INVESTMENT_CASH_PROPOSAL'));
+    const rebalance = planned.value.plan.candidateActions.find(
+      (item) => item.action === 'REBALANCE_PORTFOLIO_PROPOSAL',
+    );
+    assert.equal(rebalance?.executionCapability, 'PROPOSAL_ONLY');
+    const explained = planned.value.plan.orderedProposedActions.find(
+      (item) => item.action === 'REBALANCE_PORTFOLIO_PROPOSAL',
+    );
+    assert.ok(explained);
+    const blocked = orchestrator.materializeApprovedAction(
+      actor,
+      actor.subjectId,
+      rebalance?.actionId ?? 'gac_none',
+      true,
+    );
+    assert.equal(blocked.ok, false);
+  });
+});
