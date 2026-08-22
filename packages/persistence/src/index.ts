@@ -127,6 +127,8 @@ export { DurablePaymentStore } from './payments/durable-store.ts';
 export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
 export { DurableProviderStore } from './provider/durable-store.ts';
 export type { DurableProviderProfile, ProviderDurableSnapshot } from './provider/durable-store.ts';
+export { DurableUniversalProviderStore } from './provider/universal-store.ts';
+export type { DurableUniversalProviderSnapshot } from './provider/universal-store.ts';
 export { DurableStoreError } from './production/snapshot-envelope.ts';
 export {
   EVENT_FABRIC_IS_NOT_A_JOURNAL,
