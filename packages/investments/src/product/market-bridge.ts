@@ -1,12 +1,5 @@
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import { err, ok, type Result } from '../../../domain/src/result.ts';
-import {
-  labelFreshness,
-  STALE_AFTER_MS,
-  type MarketPriceQuote,
-  type MarketQuoteResult,
-  type MarketQuoteSource,
-} from '../../../sunrey-exchange/src/market-data/index.ts';
 import type { InstrumentId, MarketId } from '../ids.ts';
 import {
   type MarketDataFailure,
@@ -17,6 +10,56 @@ import {
 import { priceFromMinorUnits } from '../price.ts';
 import type { MarketStatus } from '../types.ts';
 import type { PriceFreshness } from './holdings.ts';
+
+/**
+ * Phase D market-data contract, expressed locally so investments does
+ * not import Exchange. Field names match
+ * packages/sunrey-exchange/src/market-data.
+ */
+export const STALE_AFTER_MS = 60_000n;
+
+export type ExternalMarketQuoteResult<T> =
+  | { readonly ok: true; readonly value: T }
+  | { readonly ok: false; readonly code: string; readonly message: string };
+
+export type ExternalMarketPriceQuote = {
+  readonly instrument: { readonly instrumentId: string; readonly quoteCurrency: string; readonly quoteScale: number };
+  readonly priceUnits: bigint;
+  readonly currency: string;
+  readonly source: string;
+  readonly timestampUtc: string;
+  readonly freshnessMs: bigint;
+  readonly provider: string;
+  readonly quality: 'FRESH' | 'STALE' | 'OUTLIER' | 'UNAVAILABLE' | 'CONFLICTING';
+  readonly status: string;
+  readonly staleMasqueradingAsCurrent: false;
+};
+
+export type ExternalMarketQuoteSource = {
+  getSpotPrice(instrumentId: string, nowUtc: string): ExternalMarketQuoteResult<ExternalMarketPriceQuote>;
+  getMarketStatus(marketId: string): ExternalMarketQuoteResult<string>;
+};
+
+export function labelFreshness(
+  quote: ExternalMarketPriceQuote,
+  nowUtc: string,
+  maxAgeMs = STALE_AFTER_MS,
+): ExternalMarketPriceQuote {
+  const ageMs = ageBetween(quote.timestampUtc, nowUtc);
+  const stale = ageMs > maxAgeMs || quote.quality === 'STALE';
+  return Object.freeze({
+    ...quote,
+    freshnessMs: ageMs,
+    quality: stale ? 'STALE' : quote.quality === 'OUTLIER' || quote.quality === 'UNAVAILABLE' ? quote.quality : 'FRESH',
+    staleMasqueradingAsCurrent: false,
+  });
+}
+
+function ageBetween(fromUtc: string, toUtc: string): bigint {
+  const from = parseUtcMs(fromUtc);
+  const to = parseUtcMs(toUtc);
+  return to > from ? (to - from) * 1000n : 0n;
+}
 
 function parseUtcMs(instant: string): bigint {
   if (instant.length < 20) {
@@ -57,7 +100,7 @@ export function freshnessFromQuote(quote: MarketQuote, at: UtcInstant): PriceFre
   });
 }
 
-export function freshnessFromPhaseD(quote: MarketPriceQuote, nowUtc: string): PriceFreshness {
+export function freshnessFromPhaseD(quote: ExternalMarketPriceQuote, nowUtc: string): PriceFreshness {
   const labeled = labelFreshness(quote, nowUtc);
   return Object.freeze({
     source: labeled.source,
@@ -69,14 +112,17 @@ export function freshnessFromPhaseD(quote: MarketPriceQuote, nowUtc: string): Pr
 }
 
 /**
- * Adapts a Phase D MarketQuoteSource into the investments MarketDataProvider.
+ * Adapts a Phase D-compatible quote source into the investments MarketDataProvider.
  * Stale quotes stay labeled stale. Unavailable providers fail closed.
  */
 export class PhaseDMarketDataBridge implements MarketDataProvider {
-  constructor(
-    private readonly source: MarketQuoteSource,
-    private readonly fallback?: SimulatedMarketDataProvider,
-  ) {}
+  private readonly source: ExternalMarketQuoteSource;
+  private readonly fallback: SimulatedMarketDataProvider | undefined;
+
+  constructor(source: ExternalMarketQuoteSource, fallback?: SimulatedMarketDataProvider) {
+    this.source = source;
+    this.fallback = fallback;
+  }
 
   getQuote(instrumentId: InstrumentId, at: UtcInstant): Result<MarketQuote, MarketDataFailure> {
     const spot = this.source.getSpotPrice(instrumentId, at);
@@ -112,7 +158,7 @@ export class PhaseDMarketDataBridge implements MarketDataProvider {
   private toQuote(
     instrumentId: InstrumentId,
     at: UtcInstant,
-    spot: MarketQuoteResult<MarketPriceQuote>,
+    spot: ExternalMarketQuoteResult<ExternalMarketPriceQuote>,
   ): Result<MarketQuote, MarketDataFailure> {
     if (!spot.ok) {
       if (this.fallback) {
@@ -176,12 +222,16 @@ function civilFromDays(z: bigint): { year: bigint; month: bigint; day: bigint } 
   return { year: y + (m <= 2n ? 1n : 0n), month: m, day: d };
 }
 
-export class InvestmentMarketQuoteSource implements MarketQuoteSource {
+export class InvestmentMarketQuoteSource implements ExternalMarketQuoteSource {
   readonly productionAuthorized = false as const;
   readonly liveProviderConnected = false as const;
   readonly providerId = 'sunrey-investment-simulation';
 
-  constructor(private readonly inner: SimulatedMarketDataProvider) {}
+  private readonly inner: SimulatedMarketDataProvider;
+
+  constructor(inner: SimulatedMarketDataProvider) {
+    this.inner = inner;
+  }
 
   getInstrument(instrumentId: string) {
     const quote = this.inner.getQuote(instrumentId as InstrumentId, '2026-01-01T00:00:00.000Z' as UtcInstant);

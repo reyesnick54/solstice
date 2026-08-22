@@ -16,6 +16,7 @@ export {
   QUANTITY_SCALE,
   PRODUCT_ASSET_CLASSES,
   INVESTMENT_ORDER_STATES,
+  asInvestmentAccountId,
   type InvestmentsServiceOutcome,
   type InstrumentProduct,
   type ProductAssetClass,

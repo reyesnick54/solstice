@@ -73,7 +73,8 @@ export class SandboxInvestmentExecutionProvider implements InvestmentExecutionAd
         : fillQty;
     const parsed = quantityFromScaledString(half.units.toString());
     const quantity = parsed.ok ? parsed.value : half;
-    const notional = order.amount ?? Money.zero(order.amount?.currency ?? 'USD');
+    const currency = order.amount ? order.amount.currency : 'USD';
+    const notional = order.amount ?? Money.zero(currency);
     const fillNotional =
       this.scenario === 'PARTIAL_FILL' && order.amount
         ? Money.fromMinorUnits(order.amount.minorUnits / 2n, order.amount.currency)

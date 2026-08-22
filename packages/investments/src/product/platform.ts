@@ -67,16 +67,18 @@ export class InvestmentPlatform {
   readonly proposals = new Map<string, InvestmentOrderProposal>();
   readonly reservations = new Map<string, CashReservation>();
   readonly cashFlows = new Map<string, PerformanceCashFlow[]>();
+  readonly investments: InvestmentsService;
   readonly execution: InvestmentExecutionAdapter;
   private readonly sandbox: SandboxInvestmentExecutionProvider | undefined;
 
   constructor(
-    readonly investments: InvestmentsService,
+    investments: InvestmentsService,
     options: {
       readonly execution?: InvestmentExecutionAdapter;
       readonly seedProducts?: boolean;
     } = {},
   ) {
+    this.investments = investments;
     if (LIVE_INVESTMENT_EXECUTION !== false) {
       throw new Error('live investment execution is forbidden');
     }

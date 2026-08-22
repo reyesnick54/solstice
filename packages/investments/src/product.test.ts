@@ -273,7 +273,7 @@ describe('performance engine', () => {
     assert.equal(twr.authoritativeCalculator, 'INVESTMENT_PERFORMANCE_ENGINE');
     assert.equal(twr.externalCashFlow.minorUnits, 40_000n);
     assert.equal(twr.absoluteReturn.minorUnits, 20_000n);
-    assert.equal(twr.periodReturnBps, 2100n);
+    assert.equal(twr.periodReturnBps, 1733n);
     const dietz = computePerformance({
       from: start,
       to: end,
@@ -439,9 +439,8 @@ describe('order proposal and sandbox execution', () => {
       jurisdiction: 'GB',
       identityVerified: true,
     });
-    assert.equal(proposed.outcome, 'OK');
     if (proposed.outcome !== 'OK') {
-      throw new Error(proposed.message);
+      throw new Error('expected proposed order');
     }
     assert.equal(proposed.value.status, 'PROPOSED');
     assert.equal(proposed.value.liveExecution, false);
@@ -503,12 +502,7 @@ describe('order proposal and sandbox execution', () => {
 
     const down = new SandboxInvestmentExecutionProvider();
     down.setScenario('MARKET_UNAVAILABLE');
-    const unavailable = down.submitOrder(
-      proposed.outcome === 'OK'
-        ? { ...proposed.value, status: 'AUTHORIZED' }
-        : proposed.value,
-      world.clock.now(),
-    );
+    const unavailable = down.submitOrder({ ...proposed.value, status: 'AUTHORIZED' }, world.clock.now());
     assert.equal(unavailable.ok, false);
     if (!unavailable.ok) {
       assert.equal(unavailable.error.code, 'MARKET_UNAVAILABLE');

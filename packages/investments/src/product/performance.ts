@@ -211,7 +211,7 @@ function twrBps(
   const events = [
     ...points.map((point) => ({ at: point.at, kind: 'VALUE' as const, value: totalValue(point) })),
     ...flows.map((flow) => ({ at: flow.at, kind: 'FLOW' as const, value: signedExternal(flow) })),
-  ].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : a.kind === 'FLOW' ? -1 : 1));
+  ].sort((a, b) => (a.at < b.at ? -1 : a.at > b.at ? 1 : a.kind === 'VALUE' ? -1 : 1));
   let linked: Ratio = ratio(1n, 1n);
   let periods = 0n;
   let current: Money | null = null;

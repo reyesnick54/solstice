@@ -676,7 +676,7 @@ describe('investment review opportunities', () => {
       },
     });
     if (!planned.ok) {
-      throw new Error(planned.error.message);
+      throw new Error('expected investment review plan');
     }
     const kinds = planned.value.plan.candidateActions.map((item) => item.action);
     assert.ok(kinds.includes('REBALANCE_PORTFOLIO_PROPOSAL'));

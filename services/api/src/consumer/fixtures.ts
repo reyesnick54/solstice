@@ -49,9 +49,11 @@ import type {
   OptionalDomainPort,
   OptionalDomainSummary,
 } from './ports.ts';
-import { InvestmentsService } from '../../../../packages/investments/src/service.ts';
-import { InvestmentPlatform } from '../../../../packages/investments/src/product/platform.ts';
-import { asInvestmentAccountId } from '../../../../packages/investments/src/ids.ts';
+import {
+  asInvestmentAccountId,
+  InvestmentPlatform,
+  InvestmentsService,
+} from '../../../investments/src/index.ts';
 import type { SessionDirectory } from './session.ts';
 
 export const SANDBOX_LABEL = 'SANDBOX_FIXTURE_NON_PRODUCTION' as const;
