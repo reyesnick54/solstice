@@ -54,7 +54,14 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
-| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| GROW | `/api/v1/grow` | GET | required | catalog + latest Grow My Money experience | `packages/platform` product Growth Plan | AVAILABLE_SIMULATION | illustrations only; not guaranteed |
+| GROW plan create | `/api/v1/grow/plans` | POST | required | server-issued plan + primary proposal | `ProductGrowthService` | AVAILABLE_SIMULATION | client cannot issue proposal JSON |
+| GROW plan read | `/api/v1/grow/plans/{id}` | GET | required + owner | Growth Plan | `packages/platform` | AVAILABLE_SIMULATION | cross-user denied |
+| GROW proposals | `/api/v1/grow/proposals` | GET | required + owner | structured Financial Proposals | `packages/platform` | AVAILABLE_SIMULATION | unknown ids are not executable |
+| GROW proposal read | `/api/v1/grow/proposals/{id}` | GET | required + owner | immutable proposal | `packages/platform` | AVAILABLE_SIMULATION | fabricated ids fail closed |
+| GROW modify | `/api/v1/grow/proposals/{id}/modify` | POST | required + owner | new proposal version | `ProductGrowthService` | AVAILABLE_SIMULATION | supersedes prior terms |
+| GROW approve | `/api/v1/grow/proposals/{id}/approve` | POST | required + owner + step-up when required | Phase B approval | `transitionApproval` | AVAILABLE_SIMULATION | no Execution Authority, no journal |
+| GROW reject | `/api/v1/grow/proposals/{id}/reject` | POST | required + owner | rejected proposal | Phase B approval | AVAILABLE_SIMULATION | none |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |

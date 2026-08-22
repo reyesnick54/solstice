@@ -170,6 +170,9 @@ export {
   createSunReyConsumerBffClient,
   BFF_PAYMENT_STATUSES,
   RECIPIENT_DESTINATION_TYPES,
+  GROW_PLAN_STATUSES,
+  GROW_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
 } from './consumer-bff/index.ts';
 export type {
   Recipient,
@@ -177,4 +180,6 @@ export type {
   Payment,
   PaymentStatus,
   PaymentApproval,
+  GrowPlan,
+  GrowProposal,
 } from './consumer-bff/index.ts';

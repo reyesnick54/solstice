@@ -11,6 +11,8 @@ import {
   CONSUMER_ACTIVITY_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,
+  GROW_PLAN_STATUSES,
+  GROW_PROPOSAL_STATUSES,
 } from './consumer-bff/index.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -71,6 +73,51 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(payment.status, 'SETTLED');
     assert.equal(calls[1]?.idempotency, 'pay_sdk_1');
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
+  });
+});
+
+describe('consumer BFF grow SDK', () => {
+  it('exposes grow statuses and calls grow routes', async () => {
+    assert.ok(GROW_PLAN_STATUSES.includes('PROPOSED'));
+    assert.ok(GROW_PROPOSAL_STATUSES.includes('AWAITING_STEP_UP'));
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      fetchImpl: async (input) => {
+        const url = typeof input === 'string' ? input : String(input);
+        if (url.endsWith('/api/v1/grow/plans')) {
+          return new Response(
+            JSON.stringify({
+              planId: 'gmp_1',
+              status: 'PROPOSED',
+              guaranteedOutcome: false,
+              productionActive: false,
+              primaryProposal: { proposalId: 'fpr_1' },
+            }),
+            { status: 201, headers: { 'content-type': 'application/json' } },
+          );
+        }
+        return new Response(
+          JSON.stringify({
+            proposalId: 'fpr_1',
+            status: 'APPROVED',
+            guaranteedOutcome: false,
+            executionAuthorityId: null,
+            serverIssued: true,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const plan = await client.createGrowPlan({
+      startingCapitalMinorUnits: '1000000',
+      currency: 'USD',
+      timeHorizonMonths: 12,
+      riskProfile: 'BALANCED',
+    });
+    assert.equal(plan.guaranteedOutcome, false);
+    const approved = await client.approveGrowProposal('fpr_1', { stepUpSatisfied: true });
+    assert.equal(approved.executionAuthorityId, null);
   });
 });
 
