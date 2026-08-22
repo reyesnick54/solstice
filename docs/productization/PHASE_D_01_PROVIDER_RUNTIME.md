@@ -86,8 +86,8 @@ behavior. Source existence alone does not enable a feature.
 ## Persistence remapping
 
 Customer migrations were remapped so versions stay unique and
-contiguous: `V029` consumer authentication, `V030` treasury financial
-control, `V031` cards productization, `V032` platform API, `V033`
+contiguous: `V029` consumer authentication, `V030` platform API,
+`V031` cards productization, `V032` treasury financial control, `V033`
 provider runtime.
 
 ## Production posture
