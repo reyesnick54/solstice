@@ -229,6 +229,37 @@ export type ConsumerActivity = {
   readonly fee?: MoneyView | null;
 };
 
+export const GROW_EXECUTION_STATES = [
+  'AUTHORIZED',
+  'QUEUED',
+  'SUBMITTED',
+  'PROCESSING',
+  'PARTIALLY_COMPLETED',
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+  'REVERSED',
+  'REQUIRES_REVIEW',
+] as const;
+export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
+
+export type GrowProposal = {
+  readonly proposalId: string;
+  readonly version: number;
+  readonly state: string;
+  readonly amount: MoneyResource;
+  readonly serverOwned: true;
+  readonly clientInstructionsTrusted: false;
+  readonly productionMoneyMovement: false;
+};
+
+export type GrowExecution = {
+  readonly executionId: string;
+  readonly state: GrowExecutionState | string;
+  readonly submittedIsNotCompleted: boolean;
+  readonly productionMoneyMovement: false;
+};
+
 export type AccountStatementData = {
   readonly statementId: string;
   readonly accountId: string;

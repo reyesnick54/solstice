@@ -227,6 +227,15 @@ export function buildProviderReadinessReport(nowUtc = '2026-08-21T16:00:00.000Z'
         webhooksConfigured: false,
         reconciliationConfigured: false,
       }),
+      row({
+        type: 'INVESTMENTS',
+        adapter: 'sim-investments',
+        capabilities: ['paper_order', 'fund', 'settle'],
+        contractTests: 'CONTRACT_TEST_PASS',
+        credentialsConfigured: true,
+        webhooksConfigured: false,
+        reconciliationConfigured: true,
+      }),
     ]),
     secretValuePresent: false,
   });

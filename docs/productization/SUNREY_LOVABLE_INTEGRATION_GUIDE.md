@@ -123,6 +123,36 @@ wallet eligibility. Live issuing is not connected. Lovable must use
 server capability/eligibility responses and must not require PAN/CVV
 to render the card dashboard.
 
+## Grow My Money (Consumer BFF `/api/v1/grow`)
+
+Use `@solstice/sunrey-sdk/bff` (`SunReyConsumerBffClient`). Lovable
+only renders server state and collects decisions. It never calculates
+authoritative balances, never forges proposal content, and never
+treats Agent text as authorization.
+
+Complete sandbox journey:
+
+1. Authenticate (`Authorization: Bearer sandbox.phase_e_grow` in the
+   Phase E harness, or a Grow-capable sandbox session)
+2. `GET /api/v1/accounts` — load accounts
+3. `GET /api/v1/grow` — GROW HOME
+4. `POST /api/v1/grow/goals` — create a goal (integer minor units)
+5. `GET /api/v1/grow/snapshot` — financial snapshot (`ledgerWins: true`)
+6. `GET /api/v1/grow/opportunities`
+7. `GET /api/v1/grow/plan` — Growth Plan (`achievementPromised: false`)
+8. `GET /api/v1/grow/scenarios` — projection/estimate bands only
+9. `POST /api/v1/grow/proposals` — server-owned proposal
+10. `GET /api/v1/grow/proposals/{id}` — explainability
+11. `POST /api/v1/grow/proposals/{id}/modify` — new version
+12. `POST /api/v1/grow/proposals/{id}/approve` with step-up when required
+13. `POST /api/v1/grow/proposals/{id}/execute` with idempotency key
+14. `GET /api/v1/grow/executions/{id}` — submitted is not completed
+15. `GET /api/v1/grow/portfolio` / `performance` / `plan/progress`
+
+Do not send `clientIntent` as trusted proposal state. Do not encode
+guaranteed returns. `productionMoneyMovement` is always `false`.
+Live investment execution is disabled.
+
 ## Approval states
 
 `POST /v1/consumer/actions` currently implements `OPEN_ACCOUNT` only.
@@ -184,6 +214,8 @@ the `/v1/consumer` personas below.
 | `drew-empty` | View-capable, no accounts |
 | `evan-paged` | Paginated activity |
 | `fin-ready` | USD/SAR money sandbox: send, recipients, FX, cards |
+| `investment` (BFF `sandbox.investment`) | Multi-account investment fixture |
+| `phase_e_grow` (harness `sandbox.phase_e_grow`) | Phase E Grow My Money E2E persona |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.

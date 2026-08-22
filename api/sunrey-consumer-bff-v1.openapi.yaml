@@ -445,10 +445,214 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
-      summary: Grow My Money resource stub
+      summary: Grow My Money home
+      description: Structured Grow home. Lovable only renders server state.
       responses:
         "200":
-          description: Honest availability
+          description: Grow home
+  /api/v1/grow/snapshot:
+    get:
+      operationId: getGrowSnapshot
+      summary: Financial snapshot from the Personal Economic Graph
+      responses:
+        "200":
+          description: Snapshot
+  /api/v1/grow/goals:
+    get:
+      operationId: listGrowGoals
+      summary: List financial goals
+      responses:
+        "200":
+          description: Goals
+    post:
+      operationId: createGrowGoal
+      summary: Create a financial goal
+      responses:
+        "201":
+          description: Goal
+  /api/v1/grow/opportunities:
+    get:
+      operationId: listGrowOpportunities
+      summary: List opportunities
+      responses:
+        "200":
+          description: Opportunities
+  /api/v1/grow/opportunities/{id}/dismiss:
+    post:
+      operationId: dismissGrowOpportunity
+      summary: Dismiss an opportunity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Dismissed
+  /api/v1/grow/plan:
+    get:
+      operationId: getGrowthPlan
+      summary: Current Growth Plan
+      responses:
+        "200":
+          description: Plan
+  /api/v1/grow/plan/request:
+    post:
+      operationId: requestNewGrowthPlan
+      summary: Request a new Growth Plan
+      responses:
+        "200":
+          description: Plan
+  /api/v1/grow/plan/pause:
+    post:
+      operationId: pauseGrowthPlan
+      summary: Pause an activated Growth Plan
+      responses:
+        "200":
+          description: Paused
+  /api/v1/grow/plan/resume:
+    post:
+      operationId: resumeGrowthPlan
+      summary: Resume an activated Growth Plan
+      responses:
+        "200":
+          description: Resumed
+  /api/v1/grow/plan/progress:
+    get:
+      operationId: getGrowthPlanProgress
+      summary: Activated plan component progress
+      responses:
+        "200":
+          description: Progress
+  /api/v1/grow/scenarios:
+    get:
+      operationId: getGrowScenarios
+      summary: Scenario bands
+      description: Projection and estimate only. Not guaranteed returns.
+      responses:
+        "200":
+          description: Scenarios
+  /api/v1/grow/proposals:
+    post:
+      operationId: createGrowthProposal
+      summary: Create a server-owned Financial Proposal
+      responses:
+        "201":
+          description: Proposal
+  /api/v1/grow/proposals/{id}:
+    get:
+      operationId: getGrowthProposal
+      summary: Proposal detail and explainability
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal
+  /api/v1/grow/proposals/{id}/modify:
+    post:
+      operationId: modifyGrowthProposal
+      summary: Create a new proposal version
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: New version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowthProposal
+      summary: Customer approval with step-up when required
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved
+        "401":
+          description: Step-up required
+  /api/v1/grow/proposals/{id}/execute:
+    post:
+      operationId: executeGrowthProposal
+      summary: Execute an approved proposal through Kernel and Provider Runtime
+      description: Frontend financial instructions are not trusted proposal state.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/executions/{id}:
+    get:
+      operationId: getGrowExecution
+      summary: Normalized execution status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/portfolio:
+    get:
+      operationId: getGrowPortfolio
+      summary: Holdings, allocation, and risk
+      responses:
+        "200":
+          description: Portfolio
+  /api/v1/grow/performance:
+    get:
+      operationId: getGrowPerformance
+      summary: Planned versus executed versus current
+      description: Deposits are not market performance.
+      responses:
+        "200":
+          description: Performance
+  /api/v1/grow/recurring:
+    post:
+      operationId: createGrowRecurring
+      summary: Create a recurring contribution mandate
+      responses:
+        "201":
+          description: Mandate
+  /api/v1/grow/recurring/{id}/cancel:
+    post:
+      operationId: cancelGrowRecurring
+      summary: Revoke a recurring mandate
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked
+  /api/v1/grow/monitor:
+    post:
+      operationId: runGrowMonitor
+      summary: Run a monitoring cycle
+      responses:
+        "200":
+          description: Findings
+  /api/v1/grow/agent-tools:
+    post:
+      operationId: invokeGrowAgentTool
+      summary: Phase F agent tool hook
+      description: Agent may propose. Agent cannot execute or self-approve.
+      responses:
+        "200":
+          description: Tool result
+        "403":
+          description: Privileged execution refused
   /api/v1/agent:
     get:
       operationId: getAgent
@@ -516,17 +720,17 @@ paths:
   /api/v1/goals:
     get:
       operationId: getGoals
-      summary: Goals resource stub
+      summary: Goals alias for Grow goals
       responses:
         "200":
-          description: Honest availability
+          description: Goals
   /api/v1/portfolio:
     get:
       operationId: getPortfolio
-      summary: Portfolio resource stub
+      summary: Portfolio alias for Grow portfolio
       responses:
         "200":
-          description: Honest availability
+          description: Portfolio
   /api/v1/wallets:
     get:
       operationId: getWallets
