@@ -45,9 +45,15 @@ import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import type {
   BffPrincipal,
   FeatureCapabilityMap,
+  GrowPortfolioPort,
   OptionalDomainPort,
   OptionalDomainSummary,
 } from './ports.ts';
+import {
+  asInvestmentAccountId,
+  InvestmentPlatform,
+  InvestmentsService,
+} from '../../../investments/src/index.ts';
 import type { SessionDirectory } from './session.ts';
 
 export const SANDBOX_LABEL = 'SANDBOX_FIXTURE_NON_PRODUCTION' as const;
@@ -190,10 +196,13 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     accounts: [
       { id: 'acct_sandbox_invest_cash', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 40_000n },
       { id: 'acct_sandbox_invest_sec', currency: 'USD', productId: 'prod_securities_usd_gb', accountClass: 'SECURITIES', deposit: 0n },
+      { id: 'acct_sandbox_invest_brokerage', currency: 'USD', productId: 'prod_brokerage_cash_usd_gb', accountClass: 'BROKERAGE_CASH', deposit: 0n },
+      { id: 'acct_sandbox_invest_pending', currency: 'USD', productId: 'prod_pending_usd_gb', accountClass: 'PENDING_SETTLEMENT', deposit: 0n },
     ],
   });
   personas.investment = invest.principal;
   sessions.set(sandboxToken('investment'), invest.principal);
+  const growPortfolio = attachSandboxGrow(runtime, invest.principal);
 
   const agent = provisionPersona(runtime, {
     persona: 'agent_enabled',
@@ -376,7 +385,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', 0),
+    grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
+    growPortfolio,
     agent: {
       summarize(principal) {
         const count = agentCounts.get(principal.customerId) ?? 0;
@@ -601,6 +611,126 @@ export function listSandboxPersonas(): readonly {
 
 export function capabilitiesFor(world: SandboxWorld, persona: SandboxPersonaId): FeatureCapabilityMap {
   return world.bff.capabilities(world.personas[persona]);
+}
+
+function attachSandboxGrow(runtime: SimulationRuntime, principal: BffPrincipal): GrowPortfolioPort {
+  const seeded = seedSimulationCatalog();
+  const investments = new InvestmentsService(
+    runtime.kernel,
+    runtime.issuer,
+    runtime.evidence,
+    runtime.events,
+    runtime.clock,
+    {
+      customers: runtime.customers,
+      accounts: runtime.accounts,
+      products: seeded.products.asCatalog(),
+      legalEntities: seeded.legalEntities,
+    },
+    runtime.identity.service,
+    runtime.ledger,
+  );
+  const opened = investments.openInvestmentAccount({
+    id: asIntentId('sandbox_inv_open'),
+    actionType: ACTION_TYPES.OPEN_INVESTMENT_ACCOUNT,
+    idempotencyKey: 'sandbox_inv_open',
+    actorId: 'operator_1',
+    requestedAt: NOW,
+    purpose: 'CUSTOMER_INVESTMENT',
+    payload: {
+      accountId: asAccountId('acct_sandbox_invest_cash'),
+      investmentAccountId: 'inv_sandbox_invest',
+      customerId: asCustomerId(principal.customerId),
+      brokerageCashAccountId: asAccountId('acct_sandbox_invest_brokerage'),
+      securitiesAccountId: asAccountId('acct_sandbox_invest_sec'),
+      pendingSettlementAccountId: asAccountId('acct_sandbox_invest_pending'),
+      productId: asProductId('prod_brokerage_cash_usd_gb'),
+      legalEntityId: asLegalEntityId('le_solstice_uk_ltd'),
+      jurisdiction: asJurisdiction('GB'),
+      currency: asCurrencyCode('USD'),
+    },
+  });
+  if (opened.outcome === 'OK') {
+    investments.fundBrokerageCash({
+      id: asIntentId('sandbox_inv_fund'),
+      actionType: ACTION_TYPES.FUND_BROKERAGE_CASH,
+      idempotencyKey: 'sandbox_inv_fund',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_INVESTMENT',
+      payload: {
+        accountId: asAccountId('acct_sandbox_invest_brokerage'),
+        sourceAccountId: asAccountId('acct_sandbox_invest_cash'),
+        amount: Money.fromMinorUnits(20_000n, 'USD'),
+      },
+    });
+    investments.createPaperOrder({
+      id: asIntentId('sandbox_inv_buy'),
+      actionType: ACTION_TYPES.CREATE_PAPER_ORDER,
+      idempotencyKey: 'sandbox_inv_buy',
+      actorId: 'operator_1',
+      requestedAt: NOW,
+      purpose: 'CUSTOMER_INVESTMENT',
+      payload: {
+        accountId: asAccountId('acct_sandbox_invest_brokerage'),
+        investmentAccountId: 'inv_sandbox_invest',
+        orderId: 'ord_sandbox_invest',
+        instrumentId: 'SIM-ETF-1',
+        side: 'BUY',
+        quantityUnits: '100000000',
+        orderType: 'MARKET_SIMULATION',
+      },
+    });
+    investments.valuePortfolio(asInvestmentAccountId('inv_sandbox_invest'));
+  }
+  const platform = new InvestmentPlatform(investments);
+  if (opened.outcome === 'OK') {
+    const portfolio = platform.attachFromInvestmentAccount(asInvestmentAccountId('inv_sandbox_invest'), {
+      strategyRef: 'sandbox-balanced',
+      riskProfileRef: 'moderate',
+      goalLinks: Object.freeze(['grow-my-money']),
+    });
+    if (portfolio) {
+      platform.recordCashFlow(portfolio.portfolioId, {
+        at: NOW,
+        amount: Money.fromMinorUnits(20_000n, 'USD'),
+        kind: 'DEPOSIT',
+      });
+    }
+  }
+  const deny = (principalRow: BffPrincipal) => {
+    if (principalRow.customerId !== principal.customerId) {
+      return { error: 'RESOURCE_NOT_OWNED' as const };
+    }
+    return null;
+  };
+  const map = <T>(principalRow: BffPrincipal, read: () => { readonly outcome: 'OK'; readonly value: T } | { readonly outcome: 'DENIED'; readonly code: string }) => {
+    const cross = deny(principalRow);
+    if (cross) {
+      return cross;
+    }
+    const result = read();
+    if (result.outcome !== 'OK') {
+      return { error: result.code === 'RESOURCE_NOT_OWNED' ? ('RESOURCE_NOT_OWNED' as const) : ('NOT_FOUND' as const) };
+    }
+    return result.value;
+  };
+  return {
+    summarize() {
+      return Object.freeze({
+        availability: 'AVAILABLE_SIMULATION',
+        state: 'SIMULATION_ONLY',
+        provider: 'SIMULATED',
+        reason: 'Grow My Money portfolio is a simulation laboratory path',
+        count: 1,
+      });
+    },
+    portfolio: (row) => map(row, () => platform.growPortfolio(row.customerId)),
+    holdings: (row) => map(row, () => platform.growHoldings(row.customerId, runtime.clock.now())),
+    performance: (row) => map(row, () => platform.growPerformance(row.customerId, NOW, runtime.clock.now())),
+    allocation: (row) => map(row, () => platform.growAllocation(row.customerId)),
+    risk: (row) => map(row, () => platform.growRisk(row.customerId, runtime.clock.now())),
+  };
 }
 
 function attachSandboxCards(runtime: SimulationRuntime, principal: BffPrincipal): ConsumerCardsFacade {

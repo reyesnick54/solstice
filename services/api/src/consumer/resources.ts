@@ -37,7 +37,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
-      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
+      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/investments InvestmentPlatform + packages/platform Growth Orchestrator', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Simulation portfolio/holdings/performance/allocation/risk. No privileged execution APIs. Not a live securities broker.');
     case 'GOALS':
       return row(group, '/api/v1/goals', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/platform goals (when productized)', 'none', 'No honest productized goal store yet.');
     case 'PORTFOLIO':

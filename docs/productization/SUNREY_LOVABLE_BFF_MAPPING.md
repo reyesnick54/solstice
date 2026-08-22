@@ -54,7 +54,12 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
-| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | not a live broker |
+| GROW portfolio | `/api/v1/grow/portfolio` | GET | required + owner | `sunrey.grow.portfolio.v1` | `packages/investments` InvestmentPlatform | AVAILABLE_SIMULATION | licensed broker + custody required for live |
+| GROW holdings | `/api/v1/grow/portfolio/holdings` | GET | required + owner | `sunrey.grow.holdings.v1` | lots + Phase D market-data freshness | AVAILABLE_SIMULATION | stale prices identified; no frontend math |
+| GROW performance | `/api/v1/grow/portfolio/performance` | GET | required + owner | `sunrey.grow.performance.v1` | TWR / Modified Dietz engine | AVAILABLE_SIMULATION | LLMs are not authoritative |
+| GROW allocation | `/api/v1/grow/portfolio/allocation` | GET | required + owner | `sunrey.grow.allocation.v1` | actual vs target weights in bps | AVAILABLE_SIMULATION | none |
+| GROW risk | `/api/v1/grow/portfolio/risk` | GET | required + owner | `sunrey.grow.risk.v1` | concentration / exposure / fail-closed volatility | AVAILABLE_SIMULATION | no fabricated statistics |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
