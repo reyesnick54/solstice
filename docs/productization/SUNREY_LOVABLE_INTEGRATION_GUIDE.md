@@ -200,6 +200,22 @@ errors. The SDK generates one when the caller does not.
 - No privileged server secrets in Lovable
 - Webhook URLs are localhost-only in this simulation
 
+## Grow My Money (Consumer BFF `/api/v1/grow`)
+
+Lovable can render:
+
+`I HAVE / MY GOAL / TIME HORIZON / RISK` → `YOUR GROWTH PLAN` with
+cash reserve, investments, recurring contributions, and conservative /
+base / upside ranges.
+
+Use `POST /api/v1/grow/plans` then display the returned `experience`
+(`sunrey.lovable.grow-my-money.v1`). Proposals are server-issued.
+Approve with `POST /api/v1/grow/proposals/{id}/approve`. Approval is
+not Execution Authority and not a guaranteed outcome.
+
+See `docs/productization/PHASE_E_04_GROWTH_PLANS_PROPOSALS.md` and
+`docs/productization/SUNREY_LOVABLE_BFF_MAPPING.md`.
+
 ## What Lovable must never do
 
 Lovable never calculates authoritative balances.

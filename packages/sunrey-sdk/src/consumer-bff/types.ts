@@ -229,6 +229,71 @@ export type ConsumerActivity = {
   readonly fee?: MoneyView | null;
 };
 
+export const GROW_PLAN_STATUSES = [
+  'DRAFT',
+  'PROPOSED',
+  'ACTIVE',
+  'PAUSED',
+  'SUPERSEDED',
+  'COMPLETED',
+  'CANCELLED',
+] as const;
+export type GrowPlanStatus = (typeof GROW_PLAN_STATUSES)[number];
+
+export const GROW_PROPOSAL_STATUSES = [
+  'DRAFT',
+  'READY',
+  'PRESENTED',
+  'AWAITING_APPROVAL',
+  'AWAITING_STEP_UP',
+  'AWAITING_COMPLIANCE',
+  'APPROVED',
+  'EXECUTING',
+  'EXECUTED',
+  'REJECTED',
+  'EXPIRED',
+  'FAILED',
+  'CANCELLED',
+  'SUPERSEDED',
+] as const;
+export type GrowProposalStatus = (typeof GROW_PROPOSAL_STATUSES)[number];
+
+export const GROW_RISK_PROFILES = ['CONSERVATIVE', 'BALANCED', 'GROWTH'] as const;
+export type GrowRiskProfile = (typeof GROW_RISK_PROFILES)[number];
+
+export type GrowPlanCreateInput = {
+  readonly startingCapitalMinorUnits: string;
+  readonly currency: string;
+  readonly timeHorizonMonths: number;
+  readonly riskProfile: GrowRiskProfile;
+  readonly goalTargetMinorUnits?: string;
+  readonly recurringContributionMinorUnits?: string;
+  readonly liquidityRequirementMinorUnits?: string;
+  readonly sourceAccountId?: string;
+  readonly goalRefs?: readonly string[];
+};
+
+export type GrowPlan = {
+  readonly planId: string;
+  readonly ownerId: string;
+  readonly status: GrowPlanStatus;
+  readonly riskProfile: GrowRiskProfile;
+  readonly timeHorizonMonths: number;
+  readonly guaranteedOutcome: false;
+  readonly productionActive: false;
+  readonly primaryProposal?: { readonly proposalId: string } | null;
+};
+
+export type GrowProposal = {
+  readonly proposalId: string;
+  readonly planId: string;
+  readonly status: GrowProposalStatus;
+  readonly amount: MoneyResource;
+  readonly guaranteedOutcome: false;
+  readonly executionAuthorityId: null;
+  readonly serverIssued: true;
+};
+
 export type AccountStatementData = {
   readonly statementId: string;
   readonly accountId: string;

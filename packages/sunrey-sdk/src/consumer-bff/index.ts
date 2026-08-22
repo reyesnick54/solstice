@@ -4,6 +4,9 @@ export {
   CONSUMER_ACTIVITY_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,
+  GROW_PLAN_STATUSES,
+  GROW_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
 } from './types.ts';
 export type {
   MoneyResource,
@@ -24,6 +27,12 @@ export type {
   FinancialAccountLifecycle,
   FinancialProductType,
   MoneyView,
+  GrowPlan,
+  GrowPlanCreateInput,
+  GrowPlanStatus,
+  GrowProposal,
+  GrowProposalStatus,
+  GrowRiskProfile,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,
