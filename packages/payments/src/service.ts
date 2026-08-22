@@ -551,7 +551,7 @@ export class PaymentsService {
       this.evidence.seal('FX_EXECUTION_PENDING', { intentId: intent.id, quoteId: quote.quoteId, tradeId: trade.value.tradeId });
       return { outcome: 'OK', value: pending, decision: gated.decision };
     }
-    const journals = this.postPlans(gated.authority!, intent.actionType, [
+    const journals = this.postPlans(gated.authority, intent.actionType, [
       reservePlan(source.id, quote.amountDebited),
       capturePrincipalPlan(quote.sourceAmount),
       captureFeePlan(quote.fee),

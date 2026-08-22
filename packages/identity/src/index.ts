@@ -199,6 +199,7 @@ export {
 } from './simulation.ts';
 export { IdentityStore, type IdentitySnapshot } from './store.ts';
 export * as identityProviderCandidate from './provider-candidate/index.ts';
+export * as identityProductionCandidate from './production-candidate/index.ts';
 export {
   PASSWORD_KDF,
   PASSWORD_MIN_LENGTH,

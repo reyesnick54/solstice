@@ -15,3 +15,4 @@ export {
   type ComplianceCase,
   type HumanDecision,
 } from '../../../packages/kernel/src/compliance/index.ts';
+export * as complianceProductionCandidate from '../../../packages/kernel/src/compliance/production-candidate/index.ts';

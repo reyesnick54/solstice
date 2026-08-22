@@ -34,7 +34,7 @@ Prompt 1 does not start Prompt 2.
 | Banking operations | `services/accounts/src/banking-operations.ts` |
 | Balance projection | `services/accounts/src/balances.ts`, `available-funds.ts` |
 | Persistence adapter | `packages/persistence/src/ledger/` |
-| Migration | `db/ledger/migrations/V008__production_journal.sql` |
+| Migration | `db/ledger/migrations/V009__production_journal.sql` |
 
 Do not create `packages/ledger-v2`, `packages/financial-ledger`, or a
 parallel balance store. Persistence stores journals the Ledger already

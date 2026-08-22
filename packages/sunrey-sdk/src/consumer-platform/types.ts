@@ -268,28 +268,30 @@ export type CardControlsDto = {
   readonly dailyLimitMinor: string | null;
 };
 
-export type CardDto = {
-  readonly schema?: 'sunrey.consumer.card.v1';
+export type CardResourceDto = {
+  readonly schema: 'sunrey.consumer.card.v1';
+  readonly cardId: string;
   readonly card_id: string;
-  readonly cardId?: string;
-  readonly ownerCustomerId?: string;
-  readonly fundingAccountId?: string;
-  readonly type?: 'DEBIT';
-  readonly form?: 'VIRTUAL' | 'PHYSICAL';
-  readonly form_factor?: string;
+  readonly ownerCustomerId: string;
+  readonly fundingAccountId: string;
+  readonly type: 'DEBIT';
+  readonly form: 'VIRTUAL' | 'PHYSICAL';
+  readonly form_factor: string;
   readonly status: CardStatus | string;
-  readonly last4?: string | null;
-  readonly expiry?: { readonly month: number; readonly year: number } | null;
-  readonly displayHint?: 'SIM-CARD';
-  readonly display_hint?: string;
-  readonly walletProvisioningStatus?: CardWalletStatus | string;
-  readonly controls?: CardControlsDto;
-  readonly createdAt?: string;
-  readonly productionIssuing?: false;
+  readonly last4: string | null;
+  readonly expiry: { readonly month: number; readonly year: number } | null;
+  readonly displayHint: 'SIM-CARD';
+  readonly display_hint: string;
+  readonly walletProvisioningStatus: CardWalletStatus | string;
+  readonly controls: CardControlsDto;
+  readonly createdAt: string;
+  readonly productionIssuing: false;
 };
 
+export type CardDto = CardResourceDto;
+
 export type CardDetailDto = {
-  readonly card: CardDto;
+  readonly card: CardResourceDto;
   readonly fundingAccountId: string;
   readonly available: MoneyDto;
   readonly held: MoneyDto;
@@ -379,4 +381,3 @@ export type PaymentDto = {
   readonly source: MoneyDto;
   readonly destination: MoneyDto;
 };
-

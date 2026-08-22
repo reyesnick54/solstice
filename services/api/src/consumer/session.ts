@@ -1,14 +1,27 @@
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal } from './ports.ts';
-import type { RiskDisplayLevel, VerificationDisplayState } from './types.ts';
+import type { IdentityVerificationClientState, RiskDisplayLevel, VerificationDisplayState } from './types.ts';
 
 export type SessionDirectory = Map<string, BffPrincipal>;
 
 function mapVerification(state: string | null | undefined): VerificationDisplayState {
+  if (state === 'REQUIRES_REVIEW') {
+    return 'IN_PROGRESS';
+  }
   if (state === 'VERIFIED' || state === 'IN_PROGRESS' || state === 'FAILED' || state === 'EXPIRED') {
     return state;
   }
+  return 'NOT_STARTED';
+}
+
+export function mapIdentityVerificationClientState(
+  state: string | null | undefined,
+): IdentityVerificationClientState {
+  if (state === 'VERIFIED') return 'VERIFIED';
+  if (state === 'IN_PROGRESS') return 'IN_PROGRESS';
+  if (state === 'REQUIRES_REVIEW') return 'REVIEW';
+  if (state === 'FAILED' || state === 'EXPIRED') return 'ACTION_REQUIRED';
   return 'NOT_STARTED';
 }
 

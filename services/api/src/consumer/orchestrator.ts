@@ -1,6 +1,8 @@
 import { CAPABILITIES, ENVIRONMENT } from '../../../../packages/config/src/flags.ts';
 import { ACCOUNT_CLASS_CATALOG } from '../../../../packages/domain/src/account-class.ts';
+import type { UniversalProviderRuntime } from '../../../../packages/sunrey-chain/src/provider-runtime/universal/runtime.ts';
 import { computeCapabilities } from './capabilities.ts';
+import { mapIdentityVerificationClientState } from './session.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import { DEFAULT_PAGE_SIZE, paginate, type CursorPage } from './pagination.ts';
 import { consumerAccountTypeOf } from './accounts-adapter.ts';
@@ -196,6 +198,7 @@ export type ConsumerBffDeps = {
   readonly fx?: OptionalDomainPort;
   readonly fxEngine?: FxCommandPort;
   readonly providerDown?: Readonly<Record<string, boolean>>;
+  readonly providerRuntime?: UniversalProviderRuntime;
 };
 
 export class ConsumerBff {
@@ -216,6 +219,7 @@ export class ConsumerBff {
       ...(this.deps.vault ? { vault: this.deps.vault } : {}),
       ...(this.deps.fx ? { fx: this.deps.fx } : {}),
       ...(this.deps.providerDown ? { providerDown: this.deps.providerDown } : {}),
+      ...(this.deps.providerRuntime ? { providerRuntime: this.deps.providerRuntime } : {}),
     });
   }
 
@@ -228,6 +232,7 @@ export class ConsumerBff {
       identityId: principal.identityId,
       status: customer?.status ?? principal.customerStatus,
       verification: principal.verification,
+      identityVerification: mapIdentityVerificationClientState(principal.verification),
       jurisdiction: principal.jurisdiction,
       residency: customer?.residency ?? null,
       editable: Object.freeze({
@@ -514,6 +519,7 @@ export class ConsumerBff {
           customerId: principal.customerId,
           displayLabel: prefs.displayLabel,
           verification: principal.verification,
+          identityVerification: mapIdentityVerificationClientState(principal.verification),
           jurisdiction: principal.jurisdiction,
         },
       }),
@@ -584,6 +590,7 @@ export class ConsumerBff {
           customerId: principal.customerId,
           identityId: principal.identityId,
           verification: principal.verification,
+          identityVerification: mapIdentityVerificationClientState(principal.verification),
           jurisdiction: principal.jurisdiction,
           displayLabel: prefs.displayLabel,
         },

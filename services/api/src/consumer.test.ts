@@ -100,7 +100,7 @@ describe('Consumer BFF', () => {
     const sar = items.find((row) => row.currency === 'SAR');
     assert.equal(usd?.balance.value?.ledger.minorUnits, '200000');
     assert.equal(gbp?.balance.value?.ledger.minorUnits, '8000');
-    assert.equal(sar?.balance.value?.ledger.minorUnits, '0');
+    assert.equal(sar?.balance.value?.ledger.minorUnits, '8000');
     const valuation = (res.body as { valuation: { state: string; value: { authority: string; ledgerAuthoritative: boolean; rateTimestamp: string | null } | null } }).valuation;
     assert.equal(valuation.value?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
     assert.equal(valuation.value?.ledgerAuthoritative, false);
@@ -115,8 +115,10 @@ describe('Consumer BFF', () => {
       schema: string;
       capabilities: { paymentsEnabled: boolean; details: Record<string, { enabled: boolean }> };
       application: { environment: string; productionActivated: boolean; liveMoneyEnabled: boolean };
+      profile: { value: { verification: string; identityVerification: string } };
     };
     assert.equal(body.schema, 'sunrey.consumer.bootstrap.v1');
+    assert.equal(body.profile.value.identityVerification, 'VERIFIED');
     assert.equal(body.application.environment, 'simulation');
     assert.equal(body.application.productionActivated, false);
     assert.equal(body.application.liveMoneyEnabled, false);

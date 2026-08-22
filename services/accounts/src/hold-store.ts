@@ -55,10 +55,6 @@ export class HoldStore implements HoldView {
     this.byIdempotency.set(frozen.idempotencyKey, frozen);
   }
 
-  /**
-   * Compare-and-swap reserve. `expectedEpoch` must match the current
-   * account epoch or the reservation fails. On success the epoch advances.
-   */
   hydrate(holds: readonly FundsHold[]): void {
     this.byId.clear();
     this.byIdempotency.clear();
@@ -105,6 +101,10 @@ export class HoldStore implements HoldView {
     return ok(next);
   }
 
+  /**
+   * Compare-and-swap reserve. `expectedEpoch` must match the current
+   * account epoch or the reservation fails. On success the epoch advances.
+   */
   reserve(hold: FundsHold, expectedEpoch: number): Result<FundsHold, HoldStoreRejection> {
     const existing = this.byIdempotency.get(hold.idempotencyKey);
     if (existing) {

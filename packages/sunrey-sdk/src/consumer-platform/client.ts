@@ -33,6 +33,7 @@ import type {
   VersionDto,
   WebhookEndpointDto,
   CardDto,
+  CardDetailDto,
   FxQuoteDto,
   PaymentDto,
   RecipientDto,
@@ -488,6 +489,30 @@ export class SunReyConsumerClient {
       {},
       options,
     );
+  }
+
+  async getCard(cardId: string, options?: ConsumerRequestOptions): Promise<CardDetailDto> {
+    return this.request('GET', `/v1/consumer/cards/${encodeURIComponent(cardId)}`, undefined, options);
+  }
+
+  async patchCardControls(
+    cardId: string,
+    input: Partial<{
+      readonly frozen: boolean;
+      readonly onlineTransactions: boolean;
+      readonly internationalTransactions: boolean;
+      readonly cashWithdrawal: boolean;
+      readonly contactless: boolean;
+      readonly transactionLimitMinor: string | null;
+      readonly dailyLimitMinor: string | null;
+    }>,
+    options?: ConsumerRequestOptions,
+  ): Promise<CardDto> {
+    return this.request('PATCH', `/v1/consumer/cards/${encodeURIComponent(cardId)}/controls`, input, options);
+  }
+
+  async getCardWallet(cardId: string, options?: ConsumerRequestOptions): Promise<CardDetailDto['wallet']> {
+    return this.request('GET', `/v1/consumer/cards/${encodeURIComponent(cardId)}/wallet`, undefined, options);
   }
 
   async request<T>(

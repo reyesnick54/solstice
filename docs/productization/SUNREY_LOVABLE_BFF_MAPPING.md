@@ -59,7 +59,7 @@ authentication foundation; the BFF only consumes a verified session.
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
-| PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile | identity + BFF preference store | AVAILABLE_SIMULATION | none |
+| PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |
 
 Bootstrap (every authenticated launch):

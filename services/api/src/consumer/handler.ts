@@ -15,6 +15,7 @@ import {
   PRODUCT_AVAILABILITIES,
   PROVIDER_AVAILABILITIES,
   RISK_DISPLAY_LEVELS,
+  IDENTITY_VERIFICATION_CLIENT_STATES,
   VERIFICATION_DISPLAY_STATES,
 } from './types.ts';
 import { PAYMENT_LIFECYCLE_STATUSES } from '../../../../packages/payments/src/platform/lifecycle.ts';
@@ -118,6 +119,7 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         riskDisplay: RISK_DISPLAY_LEVELS,
         approvalRequirement: APPROVAL_REQUIREMENTS,
         verificationState: VERIFICATION_DISPLAY_STATES,
+        identityVerification: IDENTITY_VERIFICATION_CLIENT_STATES,
         providerAvailability: PROVIDER_AVAILABILITIES,
         productAvailability: PRODUCT_AVAILABILITIES,
         clientResourceState: CLIENT_RESOURCE_STATES,
