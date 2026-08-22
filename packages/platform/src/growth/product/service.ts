@@ -200,7 +200,13 @@ export class ProductGrowthService {
     if (policy.decision === 'REVIEW' || current.suitability.decision === 'INSUFFICIENT_DATA') {
       return this.move(current, 'AWAITING_COMPLIANCE');
     }
-    if (requiresStepUp(current)) {
+    if (
+      requiresStepUp({
+        actionType: current.actionType,
+        amountMinorUnits: current.amount.minorUnits,
+        requiredApprovals: current.requiredApprovals,
+      })
+    ) {
       return this.move(current, 'AWAITING_STEP_UP');
     }
     return this.move(current, 'AWAITING_APPROVAL');

@@ -181,7 +181,7 @@ function freezeProjection(input: {
       input.availability === 'AVAILABLE'
         ? 'Range around the catalog sleeve using published volatility. Not a confidence interval of a real-world forecast.'
         : 'Investment sleeve unavailable; cash path uses zero market return and is still not a promise.',
-    risk: input.riskProfile,
+    risk: input.risk,
     possibleLoss: input.possibleLoss,
     fees: Object.freeze([
       Object.freeze({

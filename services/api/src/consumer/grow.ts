@@ -70,22 +70,19 @@ export function parseCreatePlan(principal: BffPrincipal, body: Record<string, un
       requestId: 'req_grow_validate',
     });
   }
+  const goal = stringifyMinor(body.goalTargetMinorUnits ?? body.myGoalMinorUnits);
+  const liquidity = stringifyMinor(body.liquidityRequirementMinorUnits);
+  const recurring = stringifyMinor(body.recurringContributionMinorUnits);
   return {
     ownerId: principal.customerId,
     startingCapitalMinorUnits: starting,
     currency,
     timeHorizonMonths: horizon,
-    riskProfile: risk as GrowRiskProfile,
-    ...(stringifyMinor(body.goalTargetMinorUnits ?? body.myGoalMinorUnits)
-      ? { goalTargetMinorUnits: stringifyMinor(body.goalTargetMinorUnits ?? body.myGoalMinorUnits) }
-      : {}),
+    riskProfile: risk,
+    ...(goal ? { goalTargetMinorUnits: goal } : {}),
     ...(Array.isArray(body.goalRefs) ? { goalRefs: body.goalRefs.filter((item): item is string => typeof item === 'string') } : {}),
-    ...(stringifyMinor(body.liquidityRequirementMinorUnits)
-      ? { liquidityRequirementMinorUnits: stringifyMinor(body.liquidityRequirementMinorUnits) }
-      : {}),
-    ...(stringifyMinor(body.recurringContributionMinorUnits)
-      ? { recurringContributionMinorUnits: stringifyMinor(body.recurringContributionMinorUnits) }
-      : {}),
+    ...(liquidity ? { liquidityRequirementMinorUnits: liquidity } : {}),
+    ...(recurring ? { recurringContributionMinorUnits: recurring } : {}),
     ...(typeof body.sourceAccountId === 'string' ? { sourceAccountId: body.sourceAccountId } : {}),
     ...(typeof body.opportunityId === 'string' ? { opportunityId: body.opportunityId } : {}),
   };

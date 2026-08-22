@@ -109,9 +109,9 @@ function buildComponents(input: {
       assumption: input.assumption,
       executionMethod: 'PROPOSAL_ONLY',
       requiredApproval: ['CUSTOMER_CONFIRMATION'],
-      sourceAccountId: input.request.sourceAccountId,
       destination: 'CASH_RESERVE',
       dependencies: reserve.isZero() ? ['liquidity_requirement_not_supplied'] : [],
+      ...(input.request.sourceAccountId ? { sourceAccountId: input.request.sourceAccountId } : {}),
     }),
   );
   if (!input.recurring.isZero()) {
@@ -125,8 +125,8 @@ function buildComponents(input: {
         assumption: input.assumption,
         executionMethod: 'USER_CONFIRMATION_REQUIRED',
         requiredApproval: ['CUSTOMER_CONFIRMATION'],
-        sourceAccountId: input.request.sourceAccountId,
         destination: 'SAVINGS',
+        ...(input.request.sourceAccountId ? { sourceAccountId: input.request.sourceAccountId } : {}),
       }),
     );
   }
@@ -141,9 +141,9 @@ function buildComponents(input: {
       assumption: input.assumption,
       executionMethod: 'KERNEL_AUTHORIZATION_REQUIRED',
       requiredApproval: ['CUSTOMER_CONFIRMATION', 'STEP_UP_AUTH'],
-      sourceAccountId: input.request.sourceAccountId,
       destination: input.assumption.assetSleeve ?? 'UNAVAILABLE_SLEEVE',
-      instrument: input.assumption.assetSleeve,
+      ...(input.request.sourceAccountId ? { sourceAccountId: input.request.sourceAccountId } : {}),
+      ...(input.assumption.assetSleeve ? { instrument: input.assumption.assetSleeve } : {}),
       dependencies:
         input.assumption.availability === 'AVAILABLE'
           ? ['kernel_authorization', 'customer_approval']
