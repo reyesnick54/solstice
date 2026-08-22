@@ -520,6 +520,21 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
+  it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v033 = files.find((file) => file.version === 33);
+    assert.ok(v033);
+    assert.equal(v033.filename, 'V033__provider_runtime.sql');
+    assert.match(v033.sql, /CREATE SCHEMA IF NOT EXISTS provider_runtime/);
+    assert.match(v033.sql, /CREATE TABLE provider_runtime\.registration/);
+    assert.match(v033.sql, /CREATE TABLE provider_runtime\.health_summary/);
+    assert.match(v033.sql, /CREATE TABLE provider_runtime\.certification/);
+    assert.match(v033.sql, /CREATE TABLE provider_runtime\.kill_switch/);
+    assert.match(v033.sql, /raw_credential_present BOOLEAN NOT NULL CHECK \(raw_credential_present = FALSE\)/);
+    assert.match(v033.sql, /frontend_exposed BOOLEAN NOT NULL CHECK \(frontend_exposed = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v033.sql), false);
+  });
+
   it('security V002 stores credential descriptor references without secret values', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'security'));
     const v002 = files.find((file) => file.version === 2);
@@ -547,14 +562,28 @@ describe('versioned SQL migrations', () => {
     assert.match(v003.sql, /DROP CONSTRAINT IF EXISTS inbox_event_id_fkey/);
   });
 
-  it('ledger V009 persists account product overlay and restrictions without a balance column', () => {
+  it('ledger V008 persists account product overlay and restrictions without a balance column', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
+    const v008 = files.find((file) => file.version === 8);
+    assert.ok(v008);
+    assert.equal(v008.filename, 'V008__account_product.sql');
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_restriction/);
+    assert.match(v008.sql, /CREATE TABLE ledger\.account_product_overlay/);
+    assert.match(v008.sql, /GRANT SELECT, INSERT, UPDATE ON TABLE ledger\.account_restriction TO ledger_writer/);
+    assert.match(v008.sql, /GRANT SELECT ON TABLE ledger\.account_restriction TO ledger_reader/);
+    assert.equal(/\bCREATE TABLE[\s\S]*\bbalance\b/i.test(v008.sql), false);
+  });
+
+  it('ledger V009 persists production journal metadata without becoming a second ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v009 = files.find((file) => file.version === 9);
     assert.ok(v009);
-    assert.equal(v009.filename, 'V009__account_product.sql');
-    assert.match(v009.sql, /CREATE TABLE ledger\.account_restriction/);
-    assert.match(v009.sql, /CREATE TABLE ledger\.account_product_overlay/);
-    assert.equal(/balance/.test(v009.sql.replace(/--[^\n]*/g, '')), false);
+    assert.equal(v009.filename, 'V009__production_journal.sql');
+    assert.match(v009.sql, /CREATE TABLE IF NOT EXISTS ledger\.journal_idempotency/);
+    assert.match(v009.sql, /journal_full_reversal_unique/);
+    assert.match(v009.sql, /ALTER TABLE ledger\.journal/);
+    assert.match(v009.sql, /reverses_journal_id/);
+    assert.equal(/CREATE TABLE ledger\.journal\b/.test(v009.sql), false);
   });
 
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {

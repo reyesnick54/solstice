@@ -72,6 +72,7 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(calls[1]?.idempotency, 'pay_sdk_1');
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
   });
+});
 
   it('does not import privileged modules', () => {
     const dir = join(here, 'consumer-bff');

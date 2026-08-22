@@ -78,9 +78,9 @@ describe('Phase C SDK-only money E2E', () => {
       const cards = await client.listCards();
       assert.ok(cards.items.length >= 1);
       const card = cards.items[0]!;
-      const frozen = await client.freezeCard(card.card_id);
+      const frozen = await client.freezeCard(card.cardId);
       assert.equal(frozen.status, 'FROZEN');
-      const thawed = await client.unfreezeCard(card.card_id);
+      const thawed = await client.unfreezeCard(card.cardId);
       assert.equal(thawed.status, 'ACTIVE');
     } finally {
       await platform.close();

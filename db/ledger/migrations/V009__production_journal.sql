@@ -1,4 +1,4 @@
--- V008 production journal metadata, reversal uniqueness, and hold amount adjust.
+-- V009 production journal metadata, reversal uniqueness, and hold amount adjust.
 -- Journals and postings remain append-only. This is not a second ledger.
 
 ALTER TABLE ledger.journal

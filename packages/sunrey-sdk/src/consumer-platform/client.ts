@@ -508,11 +508,11 @@ export class SunReyConsumerClient {
     }>,
     options?: ConsumerRequestOptions,
   ): Promise<CardDto> {
-    return this.request('PATCH', `/api/v1/cards/${encodeURIComponent(cardId)}/controls`, input, options);
+    return this.request('PATCH', `/v1/consumer/cards/${encodeURIComponent(cardId)}/controls`, input, options);
   }
 
   async getCardWallet(cardId: string, options?: ConsumerRequestOptions): Promise<CardDetailDto['wallet']> {
-    return this.request('GET', `/api/v1/cards/${encodeURIComponent(cardId)}/wallet`, undefined, options);
+    return this.request('GET', `/v1/consumer/cards/${encodeURIComponent(cardId)}/wallet`, undefined, options);
   }
 
   async request<T>(

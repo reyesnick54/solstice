@@ -7,6 +7,7 @@ import { Money } from '../../../packages/money/src/money.ts';
 import { asIntentId } from '../../../packages/permissions/src/action-intent.ts';
 import { ACTION_TYPES } from '../../../packages/permissions/src/action-types.ts';
 import { newSecurityToken } from '../../../packages/security/src/random.ts';
+import { toConsumerCard } from '../../../packages/cards/src/product/consumer.ts';
 import { SIMULATION_US_VIRTUAL_PROGRAM } from '../../../packages/cards/src/program.ts';
 import type { ConsumerErrorCode } from '../../../packages/sunrey-sdk/src/consumer-platform/index.ts';
 import type { SimulationRuntime } from '../../accounts/src/runtime.ts';
@@ -483,16 +484,6 @@ function paymentDto(payment: { readonly paymentId: string; readonly status: stri
   };
 }
 
-function cardDto(card: {
-  readonly cardId: string;
-  readonly status: string;
-  readonly formFactor: string;
-  readonly displayHint?: string;
-}): Record<string, unknown> {
-  return {
-    card_id: card.cardId,
-    status: card.status,
-    form_factor: card.formFactor,
-    display_hint: card.displayHint ?? 'SIM-CARD',
-  };
+function cardDto(card: Parameters<typeof toConsumerCard>[0]): ReturnType<typeof toConsumerCard> {
+  return toConsumerCard(card);
 }

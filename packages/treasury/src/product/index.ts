@@ -48,3 +48,4 @@ export { FinancialControlStore } from './store.ts';
 export type { FinancialControlSnapshot } from './store.ts';
 export { FinancialControlService } from './service.ts';
 export type { FinancialClosePorts } from './service.ts';
+export { treasuryAdapterFromFinancialSnapshot, type FinancialProviderSnapshot } from './financial-provider-bridge.ts';

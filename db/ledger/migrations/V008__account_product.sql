@@ -1,4 +1,4 @@
--- V009 customer financial account product overlay and restrictions.
+-- V008 customer financial account product overlay and restrictions.
 -- Ledger journals remain the accounting authority. This table is not a balance.
 
 CREATE TABLE ledger.account_restriction (
@@ -38,6 +38,8 @@ CREATE TABLE ledger.account_product_overlay (
   metadata JSONB NOT NULL DEFAULT '{}'::jsonb
 );
 
+REVOKE ALL ON TABLE ledger.account_restriction FROM PUBLIC;
+REVOKE ALL ON TABLE ledger.account_product_overlay FROM PUBLIC;
 GRANT SELECT, INSERT, UPDATE ON TABLE ledger.account_restriction TO ledger_writer;
 GRANT SELECT, INSERT, UPDATE ON TABLE ledger.account_product_overlay TO ledger_writer;
 GRANT SELECT ON TABLE ledger.account_restriction TO ledger_reader;
