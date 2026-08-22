@@ -302,6 +302,13 @@ function dispatchAuthenticated(
   );
 }
 
+function result(body: unknown, headers: Record<string, string>, okStatus = 200): BffResponse {
+  if (isBffError(body)) {
+    return json(statusForError(body as BffErrorEnvelope), body, headers);
+  }
+  return json(okStatus, body, headers);
+}
+
 function dispatchPayments(
   platform: PaymentPlatform,
   request: BffRequest,

@@ -68,6 +68,10 @@ export class HoldStore implements HoldView {
     }
   }
 
+  /**
+   * Compare-and-swap reserve. `expectedEpoch` must match the current
+   * account epoch or the reservation fails. On success the epoch advances.
+   */
   adjust(
     id: HoldId,
     amountMinorUnits: bigint,

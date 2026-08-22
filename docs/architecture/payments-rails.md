@@ -163,6 +163,18 @@ callback still cannot post a journal.
 `packages/sunrey-chain/src/providers` acceptance taxonomy.
 `BANKING_REFERENCE` remains the banking / BaaS relationship domain.
 
+## Phase D production adapter contracts
+
+Bank / BaaS, funding, rail, FX, webhook, reconciliation, certification,
+and integration-template contracts live at
+`packages/payments/src/production-adapters`. Card issuer, authorization
+bridge, wallet hooks, and the card certification suite live at
+`packages/cards/src/production-adapters`. Simulation adapters implement
+those same contracts. Production activation remains impossible without
+explicit gates.
+
+See `docs/productization/PHASE_D_02_FINANCIAL_PROVIDER_ADAPTERS.md`.
+
 ## Future live-provider checklist
 
 Do **not** treat this chunk as permission to go live. A later authorized

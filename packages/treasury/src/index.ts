@@ -50,3 +50,4 @@ export { seedTreasuryStore, registerTreasuryLedgerBooks, TREASURY_SEED_IDS, TREA
 export { TreasuryService } from './service.ts';
 export type { TreasuryServiceOutcome, TreasuryCatalogPorts } from './service.ts';
 export * from './product/index.ts';
+export { treasuryAdapterFromFinancialSnapshot } from './product/financial-provider-bridge.ts';

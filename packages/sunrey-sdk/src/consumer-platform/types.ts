@@ -376,10 +376,3 @@ export type PaymentDto = {
   readonly source: MoneyDto;
   readonly destination: MoneyDto;
 };
-
-export type CardDto = {
-  readonly card_id: string;
-  readonly status: string;
-  readonly form_factor: string;
-  readonly display_hint: string;
-};

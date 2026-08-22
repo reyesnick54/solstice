@@ -29,13 +29,13 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'ACTIVITY':
       return row(group, '/api/v1/accounts/{id}/activity', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts projectTransactionHistory', 'none', 'Cursor-paginated; not a balance authority.');
     case 'PAYMENTS':
-      return row(group, '/api/v1/payments', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments PaymentPlatform', 'EXTERNAL_PROVIDER_REQUIRED for live rails', 'Simulation orchestration; production money movement disabled.');
+      return row(group, '/api/v1/payments', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments PaymentPlatform', 'EXTERNAL_PROVIDER_REQUIRED for live rails', 'Provider-neutral. Lovable calls SunRey; SunRey routes the adapter. Production money movement disabled.');
     case 'RECIPIENTS':
       return row(group, '/api/v1/recipients', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments beneficiaries', 'none', 'Agents cannot add beneficiaries. Frontend cannot mark a recipient verified.');
     case 'FX':
-      return row(group, '/api/v1/fx', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Quotes, execution, and presentation valuation. Live FX is not connected.');
+      return row(group, '/api/v1/fx', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/payments FX quote engine', 'EXTERNAL_PROVIDER_REQUIRED for live FX', 'Provider-neutral quotes and execution. Live FX is not connected.');
     case 'CARDS':
-      return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'simulated processor only; live issuer is Phase D', 'PCI-minimized card dashboard. last4/expiry only. No PAN/CVV.');
+      return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
       return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
     case 'GOALS':
