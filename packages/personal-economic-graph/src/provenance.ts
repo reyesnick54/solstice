@@ -1,6 +1,7 @@
 import type { UtcInstant } from '../../domain/src/time.ts';
 import { err, ok, type Result } from '../../domain/src/result.ts';
 import type { EconomicSourceId } from './ids.ts';
+import type { FactKind, VerificationState } from './taxonomy.ts';
 
 export const SOURCE_TYPES = [
   'CANONICAL_LEDGER',
@@ -98,6 +99,54 @@ export function assertFactConfidence(
     });
   }
   return ok(undefined);
+}
+
+export const VERIFICATION_FROM_SOURCE: Readonly<Record<SourceType, VerificationState>> = {
+  CANONICAL_LEDGER: 'LEDGER_BACKED',
+  SOLSTICE_PAYMENT: 'SOURCE_VERIFIED',
+  SOLSTICE_CARD: 'SOURCE_VERIFIED',
+  USER_DECLARED: 'USER_DECLARED',
+  IDENTITY: 'SOURCE_VERIFIED',
+  EXTERNAL_CONNECTOR: 'UNVERIFIED',
+  DERIVED: 'UNVERIFIED',
+  MODEL_INFERENCE_FUTURE: 'UNVERIFIED',
+};
+
+export function factKindOf(sourceType: SourceType, confidence: FactConfidence): FactKind {
+  if (sourceType === 'MODEL_INFERENCE_FUTURE' || confidence === 'INFERRED') {
+    return 'AI_INFERENCE';
+  }
+  if (sourceType === 'USER_DECLARED' || confidence === 'USER_DECLARED') {
+    return 'USER_DECLARATION';
+  }
+  if (sourceType === 'DERIVED' || confidence === 'DERIVED') {
+    return 'DERIVED_INSIGHT';
+  }
+  return 'FACT';
+}
+
+export type MaterialFactProvenance = Provenance & {
+  readonly source: SourceType;
+  readonly sourceReference: string;
+  readonly updatedAt: UtcInstant;
+  readonly verificationState: VerificationState;
+  readonly userDeclared: boolean;
+  readonly derived: boolean;
+  readonly factKind: FactKind;
+};
+
+export function materializeProvenance(input: Provenance, updatedAt?: UtcInstant): MaterialFactProvenance {
+  const factKind = factKindOf(input.sourceType, input.confidence);
+  return Object.freeze({
+    ...input,
+    source: input.sourceType,
+    sourceReference: input.sourceRef,
+    updatedAt: updatedAt ?? input.observedAt,
+    verificationState: VERIFICATION_FROM_SOURCE[input.sourceType],
+    userDeclared: input.sourceType === 'USER_DECLARED' || input.confidence === 'USER_DECLARED',
+    derived: input.sourceType === 'DERIVED' || input.confidence === 'DERIVED' || factKind === 'DERIVED_INSIGHT',
+    factKind,
+  });
 }
 
 export function freezeProvenance(input: Provenance): Provenance {

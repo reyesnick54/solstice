@@ -229,6 +229,82 @@ export type ConsumerActivity = {
   readonly fee?: MoneyView | null;
 };
 
+export type GrowMoney = {
+  readonly minorUnits: string;
+  readonly currency: string;
+};
+
+export type GrowProfile = {
+  readonly schema: 'sunrey.grow.profile.v1';
+  readonly subjectId: string;
+  readonly generatedAt: string;
+  readonly netPositionByCurrency: readonly { readonly amount: GrowMoney }[];
+  readonly cash: readonly { readonly amount: GrowMoney }[];
+  readonly investments: readonly unknown[];
+  readonly income: readonly { readonly amount: GrowMoney }[];
+  readonly expenses: readonly { readonly amount: GrowMoney }[];
+  readonly goals: readonly GrowGoal[];
+  readonly riskProfile: GrowSuitability | null;
+  readonly liquidity: readonly { readonly amount: GrowMoney }[];
+  readonly financialStrengths: readonly string[];
+  readonly areasToImprove: readonly string[];
+  readonly authoritativeBalance: false;
+  readonly ledgerWins: true;
+};
+
+export type GrowGoal = {
+  readonly goalId: string;
+  readonly name: string;
+  readonly goalKind: string;
+  readonly targetAmount: GrowMoney;
+  readonly currency: string;
+  readonly targetDate: string | null;
+  readonly priority: number;
+  readonly status: 'ACTIVE' | 'PAUSED' | 'ACHIEVED' | 'CANCELLED';
+};
+
+export type GrowGoalCreateInput = {
+  readonly goalKind: string;
+  readonly name: string;
+  readonly targetMinorUnits: string;
+  readonly currency: string;
+  readonly priority?: number;
+  readonly targetDate?: string;
+};
+
+export type GrowInsight = {
+  readonly insightId: string;
+  readonly type: string;
+  readonly severity: string;
+  readonly evidence: readonly string[];
+  readonly calculatedAt: string;
+  readonly confidence: 'DERIVED';
+  readonly recommendation: null;
+};
+
+export type GrowSuitability = {
+  readonly questionnaireVersion: string;
+  readonly riskTolerance: string;
+  readonly riskCapacity: string;
+  readonly timeHorizon: string;
+  readonly liquidityNeed: string;
+  readonly method: 'DETERMINISTIC_QUESTIONNAIRE';
+  readonly llmFabricated: false;
+};
+
+export type GrowSnapshot = {
+  readonly snapshotId: string;
+  readonly subjectId: string;
+  readonly generatedAt: string;
+  readonly cash: readonly { readonly amount: GrowMoney }[];
+  readonly financialGoals: readonly GrowGoal[];
+  readonly insights: readonly GrowInsight[];
+  readonly crossCurrencyTotal: null;
+  readonly authoritativeBalance: false;
+  readonly ledgerWins: true;
+  readonly guaranteedReturn: false;
+};
+
 export type AccountStatementData = {
   readonly statementId: string;
   readonly accountId: string;
