@@ -6,10 +6,12 @@ import type { EconomicGraph } from '../../../personal-economic-graph/src/graph.t
 import type { EconomicNode } from '../../../personal-economic-graph/src/node.ts';
 import type { EconomicOpportunity } from '../../../personal-economic-graph/src/opportunity.ts';
 import type {
+  ClassifiedActivityOverlay,
   EconomicActivity,
   EconomicGraphSnapshotState,
   StoredSnapshot,
 } from '../../../personal-economic-graph/src/store.ts';
+import type { ActivityClassification } from '../../../personal-economic-graph/src/taxonomy.ts';
 import { withClient } from '../postgres/pools.ts';
 
 export async function persistEconomicGraphState(
@@ -357,13 +359,13 @@ export async function loadEconomicGraphState(pool: Pool): Promise<EconomicGraphS
         overlays.rows.map((row) => ({
           sourceEventId: String(row.source_event_id),
           subjectId: String(row.subject_id),
-          classification: String(row.classification),
+          classification: String(row.classification) as ActivityClassification,
           ...(row.counterpart_canonical ? { counterpart: JSON.parse(String(row.counterpart_canonical)) } : {}),
           ...(row.user_corrected ? { userCorrected: true } : {}),
           ...(row.account_id ? { accountId: String(row.account_id) } : {}),
           ...(row.amount_canonical ? { amount: JSON.parse(String(row.amount_canonical)) } : {}),
           ...(row.direction ? { direction: String(row.direction) } : {}),
-        })),
+        })) as ClassifiedActivityOverlay[],
       ),
       accountCurrencies: Object.freeze(
         currencies.rows.map((row) => ({
@@ -402,7 +404,7 @@ export async function loadEconomicGraphState(pool: Pool): Promise<EconomicGraphS
           sourceSnapshotId: row.source_snapshot_id ? String(row.source_snapshot_id) : null,
         })),
       ),
-    });
+    } as EconomicGraphSnapshotState);
   });
 }
 

@@ -17,7 +17,8 @@ import {
 } from './privacy.ts';
 import { assessSuitability, type SuitabilityAnswers, type SuitabilityProfile } from './suitability.ts';
 import type { ClassifiedActivityOverlay, HistoryPoint } from './store.ts';
-import type { ActivityClassification, GrowDataCategory, PreferenceAttributes } from './taxonomy.ts';
+import type { PreferenceAttributes } from './node.ts';
+import type { ActivityClassification, GrowDataCategory } from './taxonomy.ts';
 import type { EconomicEdge } from './edge.ts';
 import type { EconomicFact } from './fact.ts';
 import type { EconomicGraph } from './graph.ts';
@@ -890,16 +891,8 @@ export class EconomicGraphService {
         ...(patch.targetDate !== undefined ? { targetDate: patch.targetDate } : {}),
         ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
         ...(patch.status ? { status: patch.status } : {}),
-        ...(patch.minimumLiquidity !== undefined
-          ? patch.minimumLiquidity
-            ? { minimumLiquidity: patch.minimumLiquidity }
-            : { minimumLiquidity: undefined }
-          : {}),
-        ...(patch.currentAllocatedValue !== undefined
-          ? patch.currentAllocatedValue
-            ? { currentAllocatedValue: patch.currentAllocatedValue }
-            : { currentAllocatedValue: undefined }
-          : {}),
+        ...(patch.minimumLiquidity ? { minimumLiquidity: patch.minimumLiquidity } : {}),
+        ...(patch.currentAllocatedValue ? { currentAllocatedValue: patch.currentAllocatedValue } : {}),
       },
       provenance: this.userProvenance(subjectId, at),
     });
@@ -1001,14 +994,13 @@ export class EconomicGraphService {
     if (!graph) {
       return err({ code: 'GRAPH_NOT_FOUND', message: 'no economic graph for subject' });
     }
+    const quoteCurrency = valuationCurrency ?? this.valuationCurrency;
     const snapshot = buildFinancialSnapshot({
       store: this.store,
       graphId: graph.graphId,
       subjectId,
       at: this.clock.now(),
-      ...(valuationCurrency ?? this.valuationCurrency
-        ? { valuationCurrency: valuationCurrency ?? this.valuationCurrency }
-        : {}),
+      ...(quoteCurrency ? { valuationCurrency: quoteCurrency } : {}),
       ...(this.valuation ? { valuation: this.valuation } : {}),
     });
     this.store.putSnapshot({

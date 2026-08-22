@@ -78,20 +78,28 @@ export class PegUpdatePipeline {
   }
 
   private handleIngest(job: JobRecord): void {
-    const subjectId = job.payload.subjectId;
+    const subjectId = requireSubjectId(job);
     const event = JSON.parse(job.payload.eventJson ?? '{}') as DomainEvent;
     this.peg.ingest(event, subjectId);
     this.peg.materializeRecurring(subjectId);
   }
 
   private handleRefresh(job: JobRecord): void {
-    const subjectId = job.payload.subjectId;
+    const subjectId = requireSubjectId(job);
     this.peg.materializeRecurring(subjectId);
     this.peg.refreshDerivedIntelligence(subjectId);
   }
 
   private handleRebuild(job: JobRecord): void {
-    const subjectId = job.payload.subjectId;
+    const subjectId = requireSubjectId(job);
     this.peg.rebuildDerivedProjection(subjectId, this.sourceRecords(subjectId));
   }
+}
+
+function requireSubjectId(job: JobRecord): string {
+  const subjectId = job.payload.subjectId;
+  if (typeof subjectId !== 'string' || subjectId.length === 0) {
+    throw new Error('PEG job is missing subjectId');
+  }
+  return subjectId;
 }

@@ -352,14 +352,14 @@ export function toGrowProfile(snapshot: FinancialIntelligenceSnapshot, allowed?:
       'riskQuestionnaire',
       'preferences',
       'activityClassifications',
-    ]),
+    ] as const),
     serverAuthoritative: Object.freeze([
       'cash',
       'sunreyAccountBalances',
       'investmentsFromService',
       'derivedInsights',
       'suitabilityAssessment',
-    ]),
+    ] as const),
   });
 }
 

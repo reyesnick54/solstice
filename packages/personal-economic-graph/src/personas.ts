@@ -50,7 +50,7 @@ function salaryRentMonths(
 ): { readonly events: DomainEvent[]; readonly overlays: PegPersonaSeed['overlays'] } {
   const months = ['2026-05-01', '2026-06-01', '2026-07-01', '2026-08-01'] as const;
   const events: DomainEvent[] = [];
-  const overlays: PegPersonaSeed['overlays'] = [];
+  const overlays: Array<PegPersonaSeed['overlays'][number]> = [];
   for (const [index, day] of months.entries()) {
     const n = String(index + 1);
     events.push(
@@ -96,7 +96,7 @@ function position(eventId: string, accountId: string, minor: string, currency: s
   return event('AccountPositionChanged', at, { accountId, amountMinorUnits: minor, currency }, eventId);
 }
 
-export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
+export const PEG_PERSONA_SEEDS = Object.freeze([
   Object.freeze({
     personaId: 'NEW_USER',
     label: 'New user with an empty graph',
@@ -124,7 +124,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     overlays: Object.freeze(salaryRentMonths('saver', 'acct_peg_saver', '400000', '120000').overlays),
     goals: Object.freeze([
       {
-        goalKind: 'EMERGENCY_FUND',
+        goalKind: 'EMERGENCY_FUND' as const,
         label: 'Emergency fund',
         target: { minorUnits: '1200000', currency: 'USD' },
         priority: 1,
@@ -243,14 +243,14 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     overlays: Object.freeze([]),
     goals: Object.freeze([
       {
-        goalKind: 'HOME',
+        goalKind: 'HOME' as const,
         label: 'House deposit',
         target: { minorUnits: '8000000', currency: 'USD' },
         priority: 1,
         currentAllocatedValue: { minorUnits: '1500000', currency: 'USD' },
       },
       {
-        goalKind: 'EDUCATION',
+        goalKind: 'EDUCATION' as const,
         label: 'Tuition',
         target: { minorUnits: '3000000', currency: 'USD' },
         priority: 2,
@@ -322,7 +322,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
       jurisdiction: 'US',
     },
   }),
-]);
+]) as readonly PegPersonaSeed[];
 
 export function personaSeed(id: PegPersonaId): PegPersonaSeed {
   const seed = PEG_PERSONA_SEEDS.find((row) => row.personaId === id);

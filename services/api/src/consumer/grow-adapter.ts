@@ -6,6 +6,7 @@ import {
   type GoalStatus,
   type SnapshotPresentationValuation,
 } from '../../../economic-graph/src/index.ts';
+import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal, GrowCommandPort } from './ports.ts';
@@ -44,7 +45,7 @@ export function createGrowCommandPort(input: {
     });
   }
 
-  function actorOf(principal: BffPrincipal, requestId: string): ReturnType<IdentityService['resolveActorContext']> | BffErrorEnvelope {
+  function actorOf(principal: BffPrincipal, requestId: string): VerifiedActorContext | BffErrorEnvelope {
     const actor = identity.resolveActorContext(principal.actorId);
     if (!actor.ok) {
       return bffError({
@@ -55,7 +56,7 @@ export function createGrowCommandPort(input: {
         requestId,
       });
     }
-    return actor;
+    return actor.value;
   }
 
   function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
@@ -117,8 +118,8 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      peg.openGraph(actor.value, principal.identityId, principal.customerId);
-      const profile = unwrap(peg.getGrowProfile(actor.value, principal.identityId, valuationCurrency), 'grow_profile');
+      peg.openGraph(actor, principal.identityId, principal.customerId);
+      const profile = unwrap(peg.getGrowProfile(actor, principal.identityId, valuationCurrency), 'grow_profile');
       if (profile && typeof profile === 'object' && 'errorCode' in profile) {
         return profile;
       }
@@ -129,9 +130,9 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      peg.openGraph(actor.value, principal.identityId, principal.customerId);
+      peg.openGraph(actor, principal.identityId, principal.customerId);
       const snapshot = unwrap(
-        peg.getFinancialSnapshot(actor.value, principal.identityId, valuationCurrency),
+        peg.getFinancialSnapshot(actor, principal.identityId, valuationCurrency),
         'grow_snapshot',
       );
       if (snapshot && typeof snapshot === 'object' && 'errorCode' in snapshot) {
@@ -144,8 +145,8 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      peg.openGraph(actor.value, principal.identityId, principal.customerId);
-      const snapshot = peg.getFinancialSnapshot(actor.value, principal.identityId);
+      peg.openGraph(actor, principal.identityId, principal.customerId);
+      const snapshot = peg.getFinancialSnapshot(actor, principal.identityId);
       if (!snapshot.ok) {
         return mapFailure(snapshot.error, 'grow_goals');
       }
@@ -167,7 +168,7 @@ export function createGrowCommandPort(input: {
         ...(typeof body.targetDate === 'string' ? { targetDate: body.targetDate as never } : {}),
         ...(typeof body.status === 'string' ? { status: body.status as GoalStatus } : {}),
       };
-      return unwrap(peg.declareGoal(actor.value, principal.identityId, input), requestId);
+      return unwrap(peg.declareGoal(actor, principal.identityId, input), requestId);
     },
     patchGoal(principal, goalId, body, requestId) {
       const actor = actorOf(principal, requestId);
@@ -175,7 +176,7 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       return unwrap(
-        peg.updateGoal(actor.value, principal.identityId, asEconomicNodeId(goalId), {
+        peg.updateGoal(actor, principal.identityId, asEconomicNodeId(goalId), {
           ...(typeof body.name === 'string' ? { name: body.name } : {}),
           ...(typeof body.status === 'string' ? { status: body.status as GoalStatus } : {}),
           ...(typeof body.priority === 'number' ? { priority: body.priority } : {}),
@@ -188,8 +189,8 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      peg.openGraph(actor.value, principal.identityId, principal.customerId);
-      const rows = peg.getInsights(actor.value, principal.identityId);
+      peg.openGraph(actor, principal.identityId, principal.customerId);
+      const rows = peg.getInsights(actor, principal.identityId);
       if (!rows.ok) {
         return mapFailure(rows.error, 'grow_insights');
       }
@@ -200,7 +201,7 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      return unwrap(peg.getSuitability(actor.value, principal.identityId), 'grow_suitability');
+      return unwrap(peg.getSuitability(actor, principal.identityId), 'grow_suitability');
     },
     submitSuitability(principal, body, requestId) {
       const actor = actorOf(principal, requestId);
@@ -208,7 +209,7 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       return unwrap(
-        peg.recordSuitability(actor.value, principal.identityId, {
+        peg.recordSuitability(actor, principal.identityId, {
           riskTolerance: (body.riskTolerance as never) ?? 'MODERATE',
           liquidReserveMonths: typeof body.liquidReserveMonths === 'number' ? body.liquidReserveMonths : 3,
           knownNearTermNeed: body.knownNearTermNeed === true,
@@ -231,7 +232,7 @@ export function createGrowCommandPort(input: {
       }
       const kind = String(body.kind ?? '');
       if (kind === 'BALANCE_OVERRIDE' || kind === 'ACCOUNT_BALANCE') {
-        return peg.overrideAuthoritativeBalance(actor.value, principal.identityId, {
+        return peg.overrideAuthoritativeBalance(actor, principal.identityId, {
           accountId: String(body.accountId ?? ''),
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
@@ -240,7 +241,7 @@ export function createGrowCommandPort(input: {
       }
       if (kind === 'INCOME') {
         return unwrap(
-          peg.declareIncomeSource(actor.value, principal.identityId, {
+          peg.declareIncomeSource(actor, principal.identityId, {
             incomeKind: (body.incomeKind as never) ?? 'OTHER',
             label: String(body.label ?? 'Income'),
             ...(body.estimatedAmount ? { estimatedAmount: body.estimatedAmount as never } : {}),
@@ -250,7 +251,7 @@ export function createGrowCommandPort(input: {
       }
       if (kind === 'ASSET') {
         return unwrap(
-          peg.declareAsset(actor.value, principal.identityId, {
+          peg.declareAsset(actor, principal.identityId, {
             assetKind: (body.assetKind as never) ?? 'OTHER',
             label: String(body.label ?? 'Asset'),
             ...(body.estimatedValue ? { estimatedValue: body.estimatedValue as never } : {}),
@@ -260,7 +261,7 @@ export function createGrowCommandPort(input: {
       }
       if (kind === 'LIABILITY') {
         return unwrap(
-          peg.declareLiability(actor.value, principal.identityId, {
+          peg.declareLiability(actor, principal.identityId, {
             liabilityKind: (body.liabilityKind as never) ?? 'OTHER',
             label: String(body.label ?? 'Liability'),
             ...(body.estimatedBalance ? { estimatedBalance: body.estimatedBalance as never } : {}),
@@ -269,7 +270,7 @@ export function createGrowCommandPort(input: {
         );
       }
       return unwrap(
-        peg.declarePreference(actor.value, principal.identityId, {
+        peg.declarePreference(actor, principal.identityId, {
           key: String(body.key ?? 'preference'),
           value: String(body.value ?? ''),
         }),
@@ -282,7 +283,7 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       return unwrap(
-        peg.correctActivityClassification(actor.value, principal.identityId, {
+        peg.correctActivityClassification(actor, principal.identityId, {
           sourceEventId: String(body.sourceEventId ?? ''),
           classification: (body.classification as never) ?? 'UNKNOWN',
           ...(body.counterpart ? { counterpart: body.counterpart as never } : {}),
@@ -295,7 +296,7 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      const rows = peg.getHistory(actor.value, principal.identityId, series as never);
+      const rows = peg.getHistory(actor, principal.identityId, series as never);
       if (!rows.ok) {
         return mapFailure(rows.error, 'grow_history');
       }
@@ -306,7 +307,7 @@ export function createGrowCommandPort(input: {
       if ('errorCode' in actor) {
         return actor;
       }
-      return unwrap(peg.getAgentProfile(actor.value, principal.identityId, null), 'grow_agent');
+      return unwrap(peg.getAgentProfile(actor, principal.identityId, null), 'grow_agent');
     },
   };
 }
