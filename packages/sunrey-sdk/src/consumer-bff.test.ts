@@ -72,6 +72,42 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(calls[1]?.idempotency, 'pay_sdk_1');
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
   });
+
+  it('calls Grow opportunity routes without privileged imports', async () => {
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.grow',
+      fetchImpl: async (input) => {
+        const url = typeof input === 'string' ? input : String(input);
+        if (url.endsWith('/api/v1/grow/opportunities')) {
+          return new Response(
+            JSON.stringify({
+              schema: 'sunrey.consumer.grow.opportunities.v1',
+              productionMoneyMovement: false,
+              items: [],
+              suppressedCount: 0,
+            }),
+            { status: 200, headers: { 'content-type': 'application/json' } },
+          );
+        }
+        return new Response(
+          JSON.stringify({
+            opportunityId: 'gop_1',
+            proposalId: 'gpr_1',
+            status: 'ACCEPTED_FOR_PROPOSAL',
+            executesMoney: false,
+            issuesExecutionAuthority: false,
+            productionMoneyMovement: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const feed = await client.listGrowOpportunities();
+    assert.equal(feed.productionMoneyMovement, false);
+    const started = await client.startGrowProposal('gop_1');
+    assert.equal(started.executesMoney, false);
+  });
 });
 
 describe('consumer BFF SDK models', () => {

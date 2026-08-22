@@ -38,8 +38,11 @@ import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/pr
 import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
+import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
+import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
+import { createGrowOpportunityPort } from './grow-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import type {
@@ -63,6 +66,7 @@ export const SANDBOX_PERSONA_IDS = [
   'provider_down',
   'pending_activity',
   'zero_balance',
+  'grow',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
@@ -76,6 +80,7 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'VIEW_ACCOUNT',
   'MANAGE_PROFILE',
   'VIEW_GROWTH_PLAN',
+  'VIEW_ECONOMIC_GRAPH',
   'VIEW_ECONOMIC_VALUE',
   'VAULT_VIEW_OWN',
   'EXCHANGE_VIEW',
@@ -296,6 +301,20 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.provider_down = providerDown.principal;
   sessions.set(sandboxToken('provider_down'), providerDown.principal);
 
+  const grow = provisionPersona(runtime, {
+    persona: 'grow',
+    customerId: 'cust_sandbox_grow',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [
+      { id: 'acct_sandbox_grow_checking', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
+      { id: 'acct_sandbox_grow_savings', currency: 'USD', productId: 'prod_savings_usd_gb', accountClass: 'SAVINGS_DEPOSIT', deposit: 0n },
+    ],
+  });
+  personas.grow = grow.principal;
+  sessions.set(sandboxToken('grow'), grow.principal);
+
   const simulationPort = (reason: string, count = 0): OptionalDomainPort => ({
     summarize: () =>
       Object.freeze({
@@ -376,7 +395,18 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', 0),
+    grow: createGrowOpportunityPort({
+      orchestrator: new GrowthOrchestrator({
+        clock: runtime.clock,
+        events: runtime.events,
+        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+      }),
+      accounts: createAccountsReadAdapter(runtime),
+      actorFor(principal) {
+        const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+        return actor.ok ? actor.value : principal;
+      },
+    }),
     agent: {
       summarize(principal) {
         const count = agentCounts.get(principal.customerId) ?? 0;

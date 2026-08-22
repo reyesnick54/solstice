@@ -10,6 +10,7 @@ export type GrowthActionId = Brand<string, 'GrowthActionId'>;
 export type GrowthCycleId = Brand<string, 'GrowthCycleId'>;
 export type MandateDraftId = Brand<string, 'MandateDraftId'>;
 export type MandateConfirmationId = Brand<string, 'MandateConfirmationId'>;
+export type OpportunityId = Brand<string, 'OpportunityId'>;
 
 const PREFIX = {
   EconomicMandateId: 'emd_',
@@ -20,6 +21,7 @@ const PREFIX = {
   GrowthCycleId: 'gcy_',
   MandateDraftId: 'emdft_',
   MandateConfirmationId: 'emcf_',
+  OpportunityId: 'gop_',
 } as const;
 
 function brandPrefixed<Name extends keyof typeof PREFIX>(value: string, name: Name): Brand<string, Name> {
@@ -59,6 +61,14 @@ export function asMandateDraftId(value: string): MandateDraftId {
 
 export function asMandateConfirmationId(value: string): MandateConfirmationId {
   return brandPrefixed(value, 'MandateConfirmationId');
+}
+
+export function asOpportunityId(value: string): OpportunityId {
+  return brandPrefixed(value, 'OpportunityId');
+}
+
+export function opportunityIdFor(detector: string, key: string): OpportunityId {
+  return asOpportunityId(`gop_${detector.toLowerCase()}_${key}`);
 }
 
 export function asMandateVersion(value: number): MandateVersion {
