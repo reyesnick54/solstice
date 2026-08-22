@@ -30,6 +30,50 @@ export const RECIPIENT_DESTINATION_TYPES = [
 ] as const;
 export type RecipientDestinationType = (typeof RECIPIENT_DESTINATION_TYPES)[number];
 
+export const GROW_OPPORTUNITY_STATUSES = [
+  'DETECTED',
+  'ELIGIBLE',
+  'INELIGIBLE',
+  'PRESENTED',
+  'DISMISSED',
+  'ACCEPTED_FOR_PROPOSAL',
+  'EXPIRED',
+  'SUPERSEDED',
+  'COMPLETED',
+] as const;
+export type GrowOpportunityStatus = (typeof GROW_OPPORTUNITY_STATUSES)[number];
+
+export type GrowOpportunityCard = {
+  readonly card: string;
+  readonly opportunityId: string;
+  readonly title: string;
+  readonly summary: string;
+  readonly category: string;
+  readonly status: GrowOpportunityStatus;
+  readonly eligible: boolean;
+  readonly priority: number;
+  readonly currency: string;
+  readonly achievementPromised: false;
+  readonly immediatelyExecutable: false;
+};
+
+export type GrowOpportunityFeed = {
+  readonly schema: 'sunrey.consumer.grow.opportunities.v1';
+  readonly generatedAt: string;
+  readonly rankingVersion: string;
+  readonly productionMoneyMovement: false;
+  readonly items: readonly GrowOpportunityCard[];
+  readonly suppressedCount: number;
+};
+
+export type GrowProposalReceipt = {
+  readonly opportunityId: string;
+  readonly proposalId: string;
+  readonly status: 'ACCEPTED_FOR_PROPOSAL';
+  readonly executesMoney: false;
+  readonly productionMoneyMovement: false;
+};
+
 export type MoneyResource = {
   readonly minorUnits: string;
   readonly currency: string;

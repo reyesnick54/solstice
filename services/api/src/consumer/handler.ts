@@ -14,6 +14,8 @@ import {
   FINANCIAL_PRODUCT_TYPES,
   PRODUCT_AVAILABILITIES,
   PROVIDER_AVAILABILITIES,
+  GROW_OPPORTUNITY_STATUSES,
+  GROW_OPPORTUNITY_CATEGORIES,
   RISK_DISPLAY_LEVELS,
   IDENTITY_VERIFICATION_CLIENT_STATES,
   VERIFICATION_DISPLAY_STATES,
@@ -124,6 +126,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         productAvailability: PRODUCT_AVAILABILITIES,
         clientResourceState: CLIENT_RESOURCE_STATES,
         paymentStatus: PAYMENT_LIFECYCLE_STATUSES,
+        growOpportunityStatus: GROW_OPPORTUNITY_STATUSES,
+        growOpportunityCategory: GROW_OPPORTUNITY_CATEGORIES,
       },
       headers,
     );
@@ -261,6 +265,22 @@ function dispatchAuthenticated(
       }),
       headers,
     );
+  }
+
+  if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
+    return result(runtime.bff.listGrowOpportunities(principal), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
+    return result(runtime.bff.dismissGrowOpportunity(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/start-proposal') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/start-proposal'.length);
+    return result(runtime.bff.startGrowProposal(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length);
+    return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -460,6 +480,10 @@ export const CONSUMER_BFF_ROUTES = [
   'PATCH /api/v1/cards/{id}/controls',
   'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
+  'GET /api/v1/grow/opportunities',
+  'GET /api/v1/grow/opportunities/{id}',
+  'POST /api/v1/grow/opportunities/{id}/dismiss',
+  'POST /api/v1/grow/opportunities/{id}/start-proposal',
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',

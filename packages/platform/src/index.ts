@@ -180,3 +180,39 @@ export type {
   OpportunityCapacityView,
 } from './value/types.ts';
 export type { PevePlanningSignals } from './growth/types.ts';
+export {
+  asOpportunityId,
+  opportunityIdFor,
+  type OpportunityId,
+} from './ids.ts';
+export {
+  OPPORTUNITY_CATEGORIES,
+  OPPORTUNITY_DETECTORS,
+  OPPORTUNITY_STATUSES,
+  IMPACT_KINDS,
+  RANKING_VERSION,
+} from './growth/opportunity/taxonomy.ts';
+export type {
+  OpportunityCategory,
+  OpportunityDetectorKind,
+  OpportunityStatus,
+  ImpactKind,
+} from './growth/opportunity/taxonomy.ts';
+export { discoverOpportunities } from './growth/opportunity/discover.ts';
+export { runOpportunityDetectors } from './growth/opportunity/detectors.ts';
+export { evaluateOpportunityEligibility } from './growth/opportunity/eligibility.ts';
+export { rankOpportunity, assignPriorities, rankingWeights } from './growth/opportunity/ranking.ts';
+export { explanationInputFor, explanationFactsText } from './growth/opportunity/explain.ts';
+export { shouldRecalculateOpportunities } from './growth/opportunity/recompute.ts';
+export { defaultOpportunityPreferences, mergeOpportunityPreferences } from './growth/opportunity/preferences.ts';
+export { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from './growth/opportunity/products.ts';
+export { opportunityFeed } from './growth/opportunity/feed.ts';
+export { transitionOpportunity } from './growth/opportunity/lifecycle.ts';
+export type {
+  Opportunity,
+  OpportunityFeed,
+  OpportunityPreferences,
+  OpportunityExplanationInput,
+  OpportunityProposalReceipt,
+  OpportunityDiscoveryContext,
+} from './growth/opportunity/types.ts';

@@ -1203,7 +1203,9 @@
         "packages/permissions",
         "packages/security",
         "packages/payments",
-        "packages/sunrey-chain"
+        "packages/sunrey-chain",
+        "packages/platform",
+        "packages/personal-economic-graph"
       ],
       "codeowners": [
         "@reyesnick54"

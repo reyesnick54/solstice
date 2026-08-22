@@ -767,6 +767,52 @@ export class ConsumerBff {
     return this.valuationField(principal, targetCurrency);
   }
 
+  listGrowOpportunities(principal: BffPrincipal): unknown {
+    if (!this.deps.grow?.list) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.grow.list(principal);
+  }
+
+  getGrowOpportunity(principal: BffPrincipal, opportunityId: string, requestId: string): unknown {
+    if (!this.deps.grow?.get) {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'growth opportunities are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.grow.get(principal, opportunityId);
+  }
+
+  dismissGrowOpportunity(principal: BffPrincipal, opportunityId: string, requestId: string): unknown {
+    if (!this.deps.grow?.dismiss) {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'growth opportunities are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.grow.dismiss(principal, opportunityId);
+  }
+
+  startGrowProposal(principal: BffPrincipal, opportunityId: string, requestId: string): unknown {
+    if (!this.deps.grow?.startProposal) {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'growth opportunities are not connected',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.grow.startProposal(principal, opportunityId);
+  }
+
   catalog() {
     return Object.freeze({
       resources: CONSUMER_RESOURCE_CATALOG,
@@ -785,6 +831,22 @@ export class ConsumerBff {
     const capabilities = this.capabilities(principal);
     if (group === 'cards') {
       return this.listCards(principal);
+    }
+    if (group === 'grow' && this.deps.grow?.list) {
+      const listed = this.deps.grow.list(principal);
+      if (listed && typeof listed === 'object' && 'schema' in listed && !('errorCode' in listed)) {
+        const items =
+          'items' in listed && Array.isArray((listed as { items: unknown }).items)
+            ? (listed as { items: readonly unknown[] }).items
+            : Object.freeze([]);
+        return Object.freeze({
+          group: 'grow',
+          availability: 'AVAILABLE_SIMULATION' as const,
+          state: 'SIMULATION_ONLY' as const,
+          reason: 'Growth opportunities are simulation reviews, not executable investments',
+          items,
+        });
+      }
     }
     const mapped = stubAvailability(group, capabilities);
     return Object.freeze({
