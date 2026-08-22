@@ -144,6 +144,9 @@ export type PaymentCreateInput = {
   readonly paymentId?: string;
   readonly approveNow?: boolean;
   readonly stepUpSatisfied?: boolean;
+};
+
+/**
  * Typed Consumer BFF account / balance / activity models.
  * Matches services/api Consumer BFF and api/sunrey-consumer-bff-v1.openapi.yaml.
  * Browser-safe. No Ledger, Kernel, or Execution Authority types.

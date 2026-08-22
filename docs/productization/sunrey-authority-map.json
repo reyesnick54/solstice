@@ -271,12 +271,14 @@
     "REMOVE_AFTER_MIGRATION"
   ],
   "providerLifecycleStates": [
+    "DISABLED",
     "SIMULATED",
     "SANDBOX",
     "CERTIFICATION",
     "PREPRODUCTION",
     "LIMITED_LIVE",
-    "PRODUCTION"
+    "PRODUCTION",
+    "SUSPENDED"
   ],
   "domains": [
     {

@@ -401,6 +401,42 @@ export class PaymentsService {
     }
     if (source.currency !== quote.baseCurrency || destination.currency !== quote.quoteCurrency) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'UNSUPPORTED_CURRENCY', 'account currencies do not match quote');
+    }
+    if (this.availableFunds(source).cmp(quote.amountDebited) < 0) {
+      return this.reject(intent.actionType, intent.id, gated.decision, 'INSUFFICIENT_FUNDS', 'available funds are below amount debited');
+    }
+    const journals = this.postPlans(gated.authority, intent.actionType, [
+      reservePlan(source.id, quote.amountDebited),
+      capturePrincipalPlan(quote.sourceAmount),
+      captureFeePlan(quote.fee),
+      feeIncomePlan(quote.fee),
+      sourceFxPlan(quote.sourceAmount),
+      destinationFxPlan(quote.destinationAmount),
+      customerConversionSettlePlan(destination.id, quote.destinationAmount),
+    ]);
+    const journalIds = journals.map((row) => row.id);
+    this.store.saveConversion(intent.idempotencyKey, {
+      quoteId: quote.quoteId,
+      destinationAccountId: destination.id,
+      journalIds,
+    });
+    this.emit('FxConversionExecuted', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
+      quoteId: quote.quoteId,
+      sourceAccountId: source.id,
+      destinationAccountId: destination.id,
+      sourceMinorUnits: quote.sourceAmount.minorUnits.toString(),
+      destinationMinorUnits: quote.destinationAmount.minorUnits.toString(),
+    });
+    this.evidence.seal('FX_CONVERSION_EXECUTED', {
+      intentId: intent.id,
+      quoteId: quote.quoteId,
+      sourceAccountId: source.id,
+      destinationAccountId: destination.id,
+      journalIds,
+    });
+    return { outcome: 'OK', value: { quote, journalIds }, decision: gated.decision };
+  }
+
   listCurrencies(): readonly SupportedCurrency[] {
     return listSupportedCurrencies();
   }
@@ -468,7 +504,6 @@ export class PaymentsService {
     if (this.availableFunds(source).cmp(quote.amountDebited) < 0) {
       return this.reject(intent.actionType, intent.id, gated.decision, 'INSUFFICIENT_FUNDS', 'available funds are below amount debited');
     }
-    const journals = this.postPlans(gated.authority, intent.actionType, [
     const trade = this.fx.executeQuote({
       quote,
       now: this.clock.now(),
@@ -523,15 +558,6 @@ export class PaymentsService {
       feeIncomePlan(quote.fee),
       sourceFxPlan(quote.sourceAmount),
       destinationFxPlan(quote.destinationAmount),
-      customerConversionSettlePlan(destination.id, quote.destinationAmount),
-    ]);
-    const journalIds = journals.map((row) => row.id);
-    this.store.saveConversion(intent.idempotencyKey, {
-      quoteId: quote.quoteId,
-      destinationAccountId: destination.id,
-      journalIds,
-    });
-    this.emit('FxConversionExecuted', 'fx_quote', quote.quoteId, intent.id, gated.decision, {
       walletDestinationCreditPlan(destination.id, quote.destinationAmount),
     ]);
     const executedQuote = withQuoteStatus(quote, 'EXECUTED');
@@ -557,15 +583,6 @@ export class PaymentsService {
       destinationAccountId: destination.id,
       sourceMinorUnits: quote.sourceAmount.minorUnits.toString(),
       destinationMinorUnits: quote.destinationAmount.minorUnits.toString(),
-    });
-    this.evidence.seal('FX_CONVERSION_EXECUTED', {
-      intentId: intent.id,
-      quoteId: quote.quoteId,
-      sourceAccountId: source.id,
-      destinationAccountId: destination.id,
-      journalIds,
-    });
-    return { outcome: 'OK', value: { quote, journalIds }, decision: gated.decision };
       feeMinorUnits: quote.fee.minorUnits.toString(),
       reconciliationRef: settled.reconciliationRef,
     });
