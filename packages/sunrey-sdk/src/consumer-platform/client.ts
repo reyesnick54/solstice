@@ -33,11 +33,11 @@ import type {
   VersionDto,
   WebhookEndpointDto,
   CardDto,
+  CardDetailDto,
   FxQuoteDto,
   PaymentDto,
   RecipientDto,
   TransferDto,
-  CardDetailDto,
 } from './types.ts';
 
 export type ConsumerAuthProvider = {

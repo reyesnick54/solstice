@@ -509,24 +509,15 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v032.sql), false);
   });
 
-  it('customer V029 adds platform API stores without becoming a ledger', () => {
+  it('customer V030 adds platform API stores without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v029 = files.find((file) => file.version === 29);
-    assert.ok(v029);
-    assert.equal(v029.filename, 'V029__platform_api.sql');
-    assert.match(v029.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
-    assert.match(v029.sql, /CREATE TABLE platform_api\.idempotency_record/);
-    assert.match(v029.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v029.sql), false);
-  it('customer V032 adds platform API stores without becoming a ledger', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v032 = files.find((file) => file.version === 32);
-    assert.ok(v032);
-    assert.equal(v032.filename, 'V032__platform_api.sql');
-    assert.match(v032.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
-    assert.match(v032.sql, /CREATE TABLE platform_api\.idempotency_record/);
-    assert.match(v032.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v032.sql), false);
+    const v030 = files.find((file) => file.version === 30);
+    assert.ok(v030);
+    assert.equal(v030.filename, 'V030__platform_api.sql');
+    assert.match(v030.sql, /CREATE SCHEMA IF NOT EXISTS platform_api/);
+    assert.match(v030.sql, /CREATE TABLE platform_api\.idempotency_record/);
+    assert.match(v030.sql, /CREATE TABLE platform_api\.rate_limit_bucket/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
   it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {
@@ -584,20 +575,15 @@ describe('versioned SQL migrations', () => {
   });
 
   it('ledger V009 persists production journal metadata without becoming a second ledger', () => {
-    assert.equal(/\bbalance\b/.test(v008.sql.replace(/--[^\n]*/g, '')), false);
-  });
-
-  it('ledger V009 extends journal metadata without becoming a second ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'ledger'));
     const v009 = files.find((file) => file.version === 9);
     assert.ok(v009);
     assert.equal(v009.filename, 'V009__production_journal.sql');
     assert.match(v009.sql, /CREATE TABLE IF NOT EXISTS ledger\.journal_idempotency/);
     assert.match(v009.sql, /journal_full_reversal_unique/);
-    assert.equal(/CREATE TABLE ledger\.journal\b/.test(v009.sql), false);
     assert.match(v009.sql, /ALTER TABLE ledger\.journal/);
     assert.match(v009.sql, /reverses_journal_id/);
-    assert.equal(/CREATE TABLE ledger\.journal/.test(v009.sql), false);
+    assert.equal(/CREATE TABLE ledger\.journal\b/.test(v009.sql), false);
   });
 
   it('ledger V007 persists jobs, workflows, and webhooks without secrets or journals', () => {

@@ -175,7 +175,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     accounts: [
       { id: 'acct_sandbox_fx_usd', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
       { id: 'acct_sandbox_fx_gbp', currency: 'GBP', productId: 'prod_demand_gbp_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
-      { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 0n },
       { id: 'acct_sandbox_fx_sar', currency: 'SAR', productId: 'prod_demand_sar_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 8_000n },
     ],
   });

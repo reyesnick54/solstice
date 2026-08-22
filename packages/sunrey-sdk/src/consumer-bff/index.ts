@@ -16,18 +16,6 @@ export type {
   PaymentStatus,
   PaymentApproval,
   PaymentCreateInput,
-} from './types.ts';
-export {
-  SunReyConsumerBffClient,
-  createSunReyConsumerBffClient,
-} from './client.ts';
-export type { BffAuthProvider, BffRequestOptions, ConsumerBffClientOptions } from './client.ts';
-export {
-  CONSUMER_ACTIVITY_STATUSES,
-  FINANCIAL_ACCOUNT_LIFECYCLES,
-  FINANCIAL_PRODUCT_TYPES,
-} from './types.ts';
-export type {
   AccountBalanceView,
   AccountStatementData,
   ConsumerAccount,

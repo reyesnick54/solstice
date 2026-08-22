@@ -271,19 +271,24 @@ export type CardControlsDto = {
 export type CardResourceDto = {
   readonly schema: 'sunrey.consumer.card.v1';
   readonly cardId: string;
+  readonly card_id: string;
   readonly ownerCustomerId: string;
   readonly fundingAccountId: string;
   readonly type: 'DEBIT';
   readonly form: 'VIRTUAL' | 'PHYSICAL';
+  readonly form_factor: string;
   readonly status: CardStatus | string;
   readonly last4: string | null;
   readonly expiry: { readonly month: number; readonly year: number } | null;
   readonly displayHint: 'SIM-CARD';
+  readonly display_hint: string;
   readonly walletProvisioningStatus: CardWalletStatus | string;
   readonly controls: CardControlsDto;
   readonly createdAt: string;
   readonly productionIssuing: false;
 };
+
+export type CardDto = CardResourceDto;
 
 export type CardDetailDto = {
   readonly card: CardResourceDto;
