@@ -46,7 +46,7 @@ import {
   EconomicGraphService,
   PEG_PERSONA_SEEDS,
   type PegPersonaId,
-} from '../../../../packages/personal-economic-graph/src/index.ts';
+} from '../../../economic-graph/src/index.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import type {
@@ -430,7 +430,11 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       },
     },
     grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
-    growCommands: createGrowCommandPort({ peg, identity: runtime.identity.service }),
+    growCommands: createGrowCommandPort({
+      peg,
+      identity: runtime.identity.service,
+      valuePositions: (positions, target) => paymentsService.valuePositions(positions, target),
+    }),
     agent: {
       summarize(principal) {
         const count = agentCounts.get(principal.customerId) ?? 0;

@@ -1,5 +1,4 @@
 import type { UtcInstant } from '../../domain/src/time.ts';
-import { valuePositions, type PresentationValuation, type ReferenceRateLookup } from '../../payments/src/fx-valuation.ts';
 import { analyzeCashFlow, type CurrencyCashFlowAnalysis } from './cash-flow-analysis.ts';
 import {
   freezeFinancialSnapshot,
@@ -10,6 +9,8 @@ import {
   type SnapshotAsset,
   type SnapshotGoalView,
   type SnapshotLiability,
+  type SnapshotPresentationValuation,
+  type SnapshotValuationPort,
 } from './financial-snapshot.ts';
 import { deterministicSnapshotId, type EconomicGraphId } from './ids.ts';
 import { deriveInsights, type DerivedInsight } from './insights.ts';
@@ -24,7 +25,7 @@ export type SnapshotBuildInput = {
   readonly subjectId: string;
   readonly at: UtcInstant;
   readonly valuationCurrency?: string;
-  readonly rates?: ReferenceRateLookup;
+  readonly valuation?: SnapshotValuationPort;
 };
 
 function position(
@@ -181,21 +182,18 @@ function netByCurrency(
 function valuationOf(
   cash: readonly CurrencyPosition[],
   target: string | undefined,
-  at: UtcInstant,
-  rates: ReferenceRateLookup | undefined,
-): PresentationValuation | null {
-  if (!target || !rates) {
+  valuation: SnapshotValuationPort | undefined,
+): SnapshotPresentationValuation | null {
+  if (!target || !valuation) {
     return null;
   }
-  return valuePositions({
-    positions: cash.map((row) => ({
+  return valuation.valuePositions(
+    cash.map((row) => ({
       currency: row.amount.currency,
       minorUnits: BigInt(row.amount.minorUnits),
     })),
-    targetCurrency: target,
-    now: at,
-    rates,
-  });
+    target,
+  );
 }
 
 export function buildFinancialSnapshot(input: SnapshotBuildInput): FinancialIntelligenceSnapshot {
@@ -219,7 +217,7 @@ export function buildFinancialSnapshot(input: SnapshotBuildInput): FinancialInte
     cashFlow,
     suitability,
   });
-  const presentation = valuationOf(cash, input.valuationCurrency, input.at, input.rates);
+  const presentation = valuationOf(cash, input.valuationCurrency, input.valuation);
   const snapshot = freezeFinancialSnapshot({
     snapshotId: deterministicSnapshotId(input.graphId, input.at),
     graphId: input.graphId,

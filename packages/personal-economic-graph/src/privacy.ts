@@ -1,8 +1,6 @@
 import { err, ok, type Result } from '../../domain/src/result.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
 import type { AuthenticationAssurance } from '../../identity/src/assurance.ts';
-import type { PurposeFirewall } from '../../consent/src/firewall.ts';
-import type { ConsentRecord, PurposeRecord, RecipientRecord } from '../../consent/src/types.ts';
 import type { GrowDataCategory } from './taxonomy.ts';
 
 export const GROW_PURPOSES = ['GROW_PROFILE', 'AGENT_ANALYSIS', 'REGULATED_OPERATION'] as const;
@@ -111,14 +109,38 @@ export function authorizeAgentCategories(
   return ok(allowed);
 }
 
+export type GrowConsentFirewall = {
+  evaluate(
+    request: {
+      readonly subjectId: string;
+      readonly actorSubjectId: string;
+      readonly actorAssurance: AuthenticationAssurance;
+      readonly recipient: unknown;
+      readonly purpose: unknown;
+      readonly resourceId: string;
+      readonly category: null;
+      readonly fields: readonly string[];
+      readonly windowFrom: null;
+      readonly windowTo: null;
+      readonly operation: 'READ';
+      readonly derivationType: 'DERIVED_ONLY';
+      readonly onwardSharing: false;
+      readonly requestedRetentionDays: null;
+      readonly sensitivity: 'SENSITIVE';
+      readonly now: UtcInstant;
+    },
+    consents: readonly unknown[],
+  ): { readonly decision: string; readonly reason: string };
+};
+
 export function evaluateGrowConsent(input: {
-  readonly firewall: PurposeFirewall;
+  readonly firewall: GrowConsentFirewall;
   readonly subjectId: string;
   readonly actorSubjectId: string;
   readonly actorAssurance: AuthenticationAssurance;
-  readonly recipient: RecipientRecord;
-  readonly purpose: PurposeRecord;
-  readonly consents: readonly ConsentRecord[];
+  readonly recipient: unknown;
+  readonly purpose: unknown;
+  readonly consents: readonly unknown[];
   readonly now: UtcInstant;
 }): Result<void, PrivacyGateFailure> {
   const decision = input.firewall.evaluate(

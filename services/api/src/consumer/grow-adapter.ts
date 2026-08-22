@@ -1,19 +1,48 @@
-import { asEconomicNodeId } from '../../../../packages/personal-economic-graph/src/ids.ts';
 import {
-  EconomicGraphService,
+  asEconomicNodeId,
   type DeclaredGoalInput,
+  type EconomicGraphService,
   type GoalKind,
   type GoalStatus,
-} from '../../../../packages/personal-economic-graph/src/index.ts';
+  type SnapshotPresentationValuation,
+} from '../../../economic-graph/src/index.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import { bffError, type BffErrorEnvelope } from './errors.ts';
 import type { BffPrincipal, GrowCommandPort } from './ports.ts';
 
+type ValuedBody = {
+  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
+  readonly presentationValuation?: SnapshotPresentationValuation | null;
+  readonly valuationContext?: SnapshotPresentationValuation | null;
+};
+
 export function createGrowCommandPort(input: {
   readonly peg: EconomicGraphService;
   readonly identity: IdentityService;
+  readonly valuePositions?: (
+    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
+    targetCurrency: string,
+  ) => SnapshotPresentationValuation | null;
 }): GrowCommandPort {
-  const { peg, identity } = input;
+  const { peg, identity, valuePositions } = input;
+
+  function attachValuation<T extends ValuedBody>(body: T, valuationCurrency?: string): T {
+    if (!valuationCurrency || !valuePositions || !body.cash || body.cash.length === 0) {
+      return body;
+    }
+    const valuation = valuePositions(
+      body.cash.map((row) => ({
+        currency: row.amount.currency,
+        minorUnits: BigInt(row.amount.minorUnits),
+      })),
+      valuationCurrency,
+    );
+    return Object.freeze({
+      ...body,
+      presentationValuation: valuation,
+      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
+    });
+  }
 
   function actorOf(principal: BffPrincipal, requestId: string): ReturnType<IdentityService['resolveActorContext']> | BffErrorEnvelope {
     const actor = identity.resolveActorContext(principal.actorId);
@@ -89,7 +118,11 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       peg.openGraph(actor.value, principal.identityId, principal.customerId);
-      return unwrap(peg.getGrowProfile(actor.value, principal.identityId, valuationCurrency), 'grow_profile');
+      const profile = unwrap(peg.getGrowProfile(actor.value, principal.identityId, valuationCurrency), 'grow_profile');
+      if (profile && typeof profile === 'object' && 'errorCode' in profile) {
+        return profile;
+      }
+      return attachValuation(profile as ValuedBody, valuationCurrency);
     },
     snapshot(principal, valuationCurrency) {
       const actor = actorOf(principal, 'grow_snapshot');
@@ -97,7 +130,14 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       peg.openGraph(actor.value, principal.identityId, principal.customerId);
-      return unwrap(peg.getFinancialSnapshot(actor.value, principal.identityId, valuationCurrency), 'grow_snapshot');
+      const snapshot = unwrap(
+        peg.getFinancialSnapshot(actor.value, principal.identityId, valuationCurrency),
+        'grow_snapshot',
+      );
+      if (snapshot && typeof snapshot === 'object' && 'errorCode' in snapshot) {
+        return snapshot;
+      }
+      return attachValuation(snapshot as ValuedBody, valuationCurrency);
     },
     listGoals(principal) {
       const actor = actorOf(principal, 'grow_goals');

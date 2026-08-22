@@ -18,6 +18,11 @@ Owner: `packages/personal-economic-graph`
 Facade: `services/economic-graph`
 Service: `EconomicGraphService` at `packages/personal-economic-graph/src/service.ts`
 
+The Consumer BFF orchestrates through `services/economic-graph`. PEG
+allowed dependencies stay `domain`, `money`, `identity`, `events`, and
+`config`. Presentation FX uses a Phase C valuation port injected by the
+BFF.
+
 Do not create `packages/economic-graph`, a second profile store, or a
 parallel goal engine.
 
@@ -74,7 +79,8 @@ of that state. Overlays survive rebuild and process restart.
 - monthly income, recurring expenses, discretionary cash flow
 - liquidity, goals, risk profile, investment horizon
 - currency exposure (not an FX-converted share)
-- Phase C `PresentationValuation` when rates are supplied
+- Phase C presentation valuation when an injected valuation port is supplied
+  (PEG does not import `packages/payments`; the BFF attaches `valuePositions`)
 - `crossCurrencyTotal: null`
 
 Unlike currencies are never summed directly.

@@ -83,7 +83,7 @@ function salaryRentMonths(
   return { events, overlays };
 }
 
-function openAccount(eventId: string, accountId: string, ownerId: string, accountClass: string): DomainEvent {
+function accountOpenedEvent(eventId: string, accountId: string, ownerId: string, accountClass: string): DomainEvent {
   return event(
     'AccountOpened',
     '2026-05-01T00:00:00.000Z',
@@ -117,7 +117,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_saver', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_saver_open', 'acct_peg_saver', 'cust_peg_healthy_saver', 'SAVINGS_DEPOSIT'),
+      accountOpenedEvent('e_saver_open', 'acct_peg_saver', 'cust_peg_healthy_saver', 'SAVINGS_DEPOSIT'),
       position('e_saver_pos', 'acct_peg_saver', '9000000', 'USD'),
       ...salaryRentMonths('saver', 'acct_peg_saver', '400000', '120000').events,
     ]),
@@ -151,7 +151,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_idle', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_idle_open', 'acct_peg_idle', 'cust_peg_idle_cash', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_idle_open', 'acct_peg_idle', 'cust_peg_idle_cash', 'DEMAND_DEPOSIT'),
       position('e_idle_pos', 'acct_peg_idle', '25000000', 'USD'),
       ...salaryRentMonths('idle', 'acct_peg_idle', '300000', '80000').events,
     ]),
@@ -166,7 +166,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_spend', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_spend_open', 'acct_peg_spend', 'cust_peg_spender', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_spend_open', 'acct_peg_spend', 'cust_peg_spender', 'DEMAND_DEPOSIT'),
       position('e_spend_pos', 'acct_peg_spend', '40000', 'USD'),
       ...salaryRentMonths('spend', 'acct_peg_spend', '200000', '250000').events,
     ]),
@@ -181,7 +181,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_inv_cash', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_inv_open', 'acct_peg_inv_cash', 'cust_peg_investor', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_inv_open', 'acct_peg_inv_cash', 'cust_peg_investor', 'DEMAND_DEPOSIT'),
       position('e_inv_pos', 'acct_peg_inv_cash', '500000', 'USD'),
       event(
         'InvestmentAccountOpened',
@@ -221,8 +221,8 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
       { accountId: 'acct_peg_fx_sar', currency: 'SAR' },
     ]),
     events: Object.freeze([
-      openAccount('e_fx_usd_open', 'acct_peg_fx_usd', 'cust_peg_multi_fx', 'DEMAND_DEPOSIT'),
-      openAccount('e_fx_sar_open', 'acct_peg_fx_sar', 'cust_peg_multi_fx', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_fx_usd_open', 'acct_peg_fx_usd', 'cust_peg_multi_fx', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_fx_sar_open', 'acct_peg_fx_sar', 'cust_peg_multi_fx', 'DEMAND_DEPOSIT'),
       position('e_fx_usd_pos', 'acct_peg_fx_usd', '100000', 'USD'),
       position('e_fx_sar_pos', 'acct_peg_fx_sar', '400000', 'SAR'),
     ]),
@@ -237,7 +237,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_goals', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_goal_open', 'acct_peg_goals', 'cust_peg_goals', 'SAVINGS_DEPOSIT'),
+      accountOpenedEvent('e_goal_open', 'acct_peg_goals', 'cust_peg_goals', 'SAVINGS_DEPOSIT'),
       position('e_goal_pos', 'acct_peg_goals', '2500000', 'USD'),
     ]),
     overlays: Object.freeze([]),
@@ -267,7 +267,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_liq', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_liq_open', 'acct_peg_liq', 'cust_peg_liquidity', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_liq_open', 'acct_peg_liq', 'cust_peg_liquidity', 'DEMAND_DEPOSIT'),
       position('e_liq_pos', 'acct_peg_liq', '25000', 'USD'),
       ...salaryRentMonths('liq', 'acct_peg_liq', '250000', '200000').events,
     ]),
@@ -299,7 +299,7 @@ export const PEG_PERSONA_SEEDS: readonly PegPersonaSeed[] = Object.freeze([
     jurisdiction: 'US',
     accountCurrencies: Object.freeze([{ accountId: 'acct_peg_conc', currency: 'USD' }]),
     events: Object.freeze([
-      openAccount('e_conc_open', 'acct_peg_conc', 'cust_peg_concentrated', 'DEMAND_DEPOSIT'),
+      accountOpenedEvent('e_conc_open', 'acct_peg_conc', 'cust_peg_concentrated', 'DEMAND_DEPOSIT'),
       position('e_conc_pos', 'acct_peg_conc', '100000', 'USD'),
     ]),
     overlays: Object.freeze([]),

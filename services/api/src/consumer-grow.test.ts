@@ -66,6 +66,17 @@ describe('Consumer BFF Grow / PEG', () => {
     const currencies = new Set(body.cash.map((row) => row.amount.currency));
     assert.ok(currencies.has('USD'));
     assert.ok(currencies.has('SAR'));
+    const valued = get(world, '/api/v1/grow/snapshot', 'grow_multi_currency', { valuationCurrency: 'USD' });
+    assert.equal(valued.status, 200);
+    const valuedBody = valued.body as {
+      crossCurrencyTotal: null;
+      presentationValuation: { authority: string; targetCurrency: string; lines: { rateTimestamp: string }[] } | null;
+    };
+    assert.equal(valuedBody.crossCurrencyTotal, null);
+    assert.equal(valuedBody.presentationValuation?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
+    assert.equal(valuedBody.presentationValuation?.targetCurrency, 'USD');
+    assert.ok((valuedBody.presentationValuation?.lines.length ?? 0) >= 1);
+    assert.ok(valuedBody.presentationValuation?.lines.every((line) => typeof line.rateTimestamp === 'string'));
   });
 
   it('creates a goal and lists it', () => {

@@ -91,6 +91,54 @@ describe('Phase E PEG productization', () => {
     assert.ok(currencies.has('SAR'));
   });
 
+  it('attaches Phase C presentation valuation through an injected port', () => {
+    const clock = new FrozenClock(NOW);
+    const peg = new EconomicGraphService({
+      clock,
+      valuationCurrency: 'USD',
+      valuation: {
+        valuePositions(positions, targetCurrency) {
+          return {
+            authority: 'PRESENTATION_ONLY_NOT_LEDGER',
+            ledgerAuthoritative: false,
+            targetCurrency,
+            asOf: NOW,
+            stale: false,
+            available: true,
+            reason: null,
+            aggregateMinorUnits: positions
+              .filter((row) => row.currency === targetCurrency)
+              .reduce((sum, row) => sum + row.minorUnits, 0n)
+              .toString(),
+            lines: positions.map((row) => ({
+              currency: row.currency,
+              sourceMinorUnits: row.minorUnits.toString(),
+              convertedMinorUnits: row.currency === targetCurrency ? row.minorUnits.toString() : '0',
+              targetCurrency,
+              rateNumerator: '1',
+              rateDenominator: '1',
+              rateKind: 'REFERENCE' as const,
+              rateTimestamp: NOW,
+              stale: row.currency !== targetCurrency,
+              available: row.currency === targetCurrency,
+            })),
+          };
+        },
+      },
+    });
+    const { actor } = harness();
+    applyPersonaSeed(peg, actor, personaSeed('MULTI_CURRENCY_USER'));
+    const snapshot = peg.getFinancialSnapshot(actor, 'idn_peg_multi_fx', 'USD');
+    assert.equal(snapshot.ok, true);
+    if (!snapshot.ok) {
+      throw new Error('valued snapshot');
+    }
+    assert.equal(snapshot.value.crossCurrencyTotal, null);
+    assert.equal(snapshot.value.presentationValuation?.authority, 'PRESENTATION_ONLY_NOT_LEDGER');
+    assert.equal(snapshot.value.presentationValuation?.targetCurrency, 'USD');
+    assert.ok(snapshot.value.presentationValuation?.lines.every((line) => line.rateTimestamp === NOW));
+  });
+
   it('derives cash-flow surplus, deficit, and recurring confidence', () => {
     const { peg, actor } = harness();
     applyPersonaSeed(peg, actor, personaSeed('HIGH_SPENDER'));

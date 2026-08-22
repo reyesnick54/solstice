@@ -13,6 +13,8 @@ export {
   strengthsAndImprovements,
   type FinancialIntelligenceSnapshot,
   type GrowProfileView,
+  type SnapshotPresentationValuation,
+  type SnapshotValuationPort,
 } from './financial-snapshot.ts';
 export { deriveInsights, type DerivedInsight } from './insights.ts';
 export {
@@ -131,6 +133,7 @@ export {
   type EconomicNodeKind,
   type FactKind,
   type GoalKind,
+  type GoalStatus,
   type GrowDataCategory,
   type InsightType,
   type OpportunityKind,

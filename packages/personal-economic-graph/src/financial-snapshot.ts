@@ -1,6 +1,36 @@
 import type { UtcInstant } from '../../domain/src/time.ts';
-import type { PresentationValuation } from '../../payments/src/fx-valuation.ts';
 import type { CurrencyCashFlowAnalysis } from './cash-flow-analysis.ts';
+
+/** Phase C presentation valuation shape. PEG does not import payments. */
+export type SnapshotPresentationValuation = {
+  readonly authority: 'PRESENTATION_ONLY_NOT_LEDGER';
+  readonly ledgerAuthoritative: false;
+  readonly targetCurrency: string;
+  readonly asOf: string;
+  readonly stale: boolean;
+  readonly available: boolean;
+  readonly reason: string | null;
+  readonly aggregateMinorUnits: string | null;
+  readonly lines: readonly {
+    readonly currency: string;
+    readonly sourceMinorUnits: string;
+    readonly convertedMinorUnits: string;
+    readonly targetCurrency: string;
+    readonly rateNumerator: string;
+    readonly rateDenominator: string;
+    readonly rateKind: 'REFERENCE';
+    readonly rateTimestamp: string;
+    readonly stale: boolean;
+    readonly available: boolean;
+  }[];
+};
+
+export type SnapshotValuationPort = {
+  valuePositions(
+    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
+    targetCurrency: string,
+  ): SnapshotPresentationValuation | null;
+};
 import type { EconomicGraphId, EconomicSnapshotId } from './ids.ts';
 import type { DerivedInsight } from './insights.ts';
 import type { SuitabilityProfile } from './suitability.ts';
@@ -80,8 +110,8 @@ export type FinancialIntelligenceSnapshot = {
   readonly currencyExposure: readonly CurrencyExposure[];
   readonly cashFlow: readonly CurrencyCashFlowAnalysis[];
   readonly insights: readonly DerivedInsight[];
-  readonly presentationValuation: PresentationValuation | null;
-  readonly valuationContext: PresentationValuation | null;
+  readonly presentationValuation: SnapshotPresentationValuation | null;
+  readonly valuationContext: SnapshotPresentationValuation | null;
   readonly crossCurrencyTotal: null;
   readonly authoritativeBalance: false;
   readonly ledgerWins: true;
@@ -129,7 +159,7 @@ export type GrowProfileView = {
   readonly liquidity: readonly CurrencyPosition[];
   readonly financialStrengths: readonly string[];
   readonly areasToImprove: readonly string[];
-  readonly presentationValuation: PresentationValuation | null;
+  readonly presentationValuation: SnapshotPresentationValuation | null;
   readonly authoritativeBalance: false;
   readonly ledgerWins: true;
   readonly userEditable: readonly ['goals', 'incomeAssumptions', 'declaredAssets', 'declaredLiabilities', 'riskQuestionnaire', 'preferences', 'activityClassifications'];

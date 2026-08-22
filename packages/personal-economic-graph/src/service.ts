@@ -7,7 +7,7 @@ import { authorizeGraphDeclare, authorizeGraphRead, type GraphAccessFailure } fr
 import { analyzeCashFlow } from './cash-flow-analysis.ts';
 import { deriveCashFlow, monthlyWindowContaining, type CurrencyCashFlow } from './cash-flow.ts';
 import { buildFinancialSnapshot, recordHistoryFromSnapshot, toGrowProfile } from './intelligence.ts';
-import type { FinancialIntelligenceSnapshot, GrowProfileView } from './financial-snapshot.ts';
+import type { FinancialIntelligenceSnapshot, GrowProfileView, SnapshotValuationPort } from './financial-snapshot.ts';
 import type { DerivedInsight } from './insights.ts';
 import {
   authorizeAgentCategories,
@@ -16,7 +16,6 @@ import {
   type GrowPurpose,
 } from './privacy.ts';
 import { assessSuitability, type SuitabilityAnswers, type SuitabilityProfile } from './suitability.ts';
-import type { ReferenceRateLookup } from '../../payments/src/fx-valuation.ts';
 import type { ClassifiedActivityOverlay, HistoryPoint } from './store.ts';
 import type { ActivityClassification, GrowDataCategory, PreferenceAttributes } from './taxonomy.ts';
 import type { EconomicEdge } from './edge.ts';
@@ -141,20 +140,20 @@ export class EconomicGraphService {
   readonly projector: EconomicGraphProjector;
   private readonly clock: Clock;
   private readonly events: DomainEventLog | undefined;
-  private readonly rates: ReferenceRateLookup | undefined;
+  private readonly valuation: SnapshotValuationPort | undefined;
   private readonly valuationCurrency: string | undefined;
 
   constructor(input: {
     readonly clock: Clock;
     readonly store?: InMemoryEconomicGraphStore;
     readonly events?: DomainEventLog;
-    readonly rates?: ReferenceRateLookup;
+    readonly valuation?: SnapshotValuationPort;
     readonly valuationCurrency?: string;
   }) {
     this.clock = input.clock;
     this.store = input.store ?? new InMemoryEconomicGraphStore();
     this.events = input.events;
-    this.rates = input.rates;
+    this.valuation = input.valuation;
     this.valuationCurrency = input.valuationCurrency;
     this.projector = new EconomicGraphProjector({
       store: this.store,
@@ -1010,7 +1009,7 @@ export class EconomicGraphService {
       ...(valuationCurrency ?? this.valuationCurrency
         ? { valuationCurrency: valuationCurrency ?? this.valuationCurrency }
         : {}),
-      ...(this.rates ? { rates: this.rates } : {}),
+      ...(this.valuation ? { valuation: this.valuation } : {}),
     });
     this.store.putSnapshot({
       snapshotId: snapshot.snapshotId,
@@ -1130,7 +1129,7 @@ export class EconomicGraphService {
       subjectId,
       at: this.clock.now(),
       ...(this.valuationCurrency ? { valuationCurrency: this.valuationCurrency } : {}),
-      ...(this.rates ? { rates: this.rates } : {}),
+      ...(this.valuation ? { valuation: this.valuation } : {}),
     });
     this.store.putSnapshot({
       snapshotId: snapshot.snapshotId,
