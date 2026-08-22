@@ -37,9 +37,9 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
-      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
+      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + Grow lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Sandbox Grow home. Execution uses Kernel, Execution Authority, and Provider Runtime. Live investment is disabled.');
     case 'GOALS':
-      return row(group, '/api/v1/goals', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/platform goals (when productized)', 'none', 'No honest productized goal store yet.');
+      return row(group, '/api/v1/goals', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'Server-owned goals from PEG. Not a promised-return engine.');
     case 'PORTFOLIO':
       return row(group, '/api/v1/portfolio', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts investments bucket + packages/sunrey-exchange consumer', 'none', 'Class breakdown only; no yield field.');
     case 'AGENT':

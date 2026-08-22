@@ -31,6 +31,12 @@ export {
 } from './safety.ts';
 export { InMemoryAgentMandateStore } from './store.ts';
 export {
+  GROW_AGENT_TOOL_NAMES,
+  invokeGrowAgentTool,
+  refusePrivilegedGrowExecution,
+} from './grow-tools.ts';
+export type { GrowAgentToolName, GrowAgentToolPort } from './grow-tools.ts';
+export {
   AGENT_ACTION_CLASSES,
   AGENT_APPROVAL_CLASSES,
   AGENT_ASSET_IDS,

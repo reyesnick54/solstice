@@ -180,3 +180,18 @@ export type {
   OpportunityCapacityView,
 } from './value/types.ts';
 export type { PevePlanningSignals } from './growth/types.ts';
+export {
+  GrowLifecycleService,
+  InMemoryGrowStore,
+  containsGuaranteedReturnClaim,
+  evaluateGrowSuitability,
+  routeProposalType,
+  GROW_EXECUTION_STATES,
+  FINANCIAL_PROPOSAL_TYPES,
+} from './grow/index.ts';
+export type {
+  FinancialProposal,
+  GrowExecutionCommand,
+  GrowExecutionRecord,
+  GrowFailure,
+} from './grow/index.ts';
