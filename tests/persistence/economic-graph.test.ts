@@ -74,6 +74,21 @@ describe('Personal Economic Graph persistence', () => {
       target: { minorUnits: '2000000', currency: 'USD' },
       priority: 1,
     });
+    peg.recordSuitability(actor.value, subjectId, {
+      riskTolerance: 'MODERATE',
+      liquidReserveMonths: 6,
+      knownNearTermNeed: false,
+      investmentHorizonYears: 8,
+      expectedWithdrawalYears: 10,
+      investmentExperience: 'LIMITED',
+      lossSensitivity: 'MODERATE',
+      jurisdiction: 'US',
+    });
+    peg.correctActivityClassification(actor.value, subjectId, {
+      sourceEventId: 'pg_open',
+      classification: 'UNKNOWN',
+    });
+    peg.getFinancialSnapshot(actor.value, subjectId);
     await persistEconomicGraphState(pools.customer, peg.store.exportState());
     const loaded = await loadEconomicGraphState(pools.customer);
     const restored = new InMemoryEconomicGraphStore();
@@ -85,6 +100,8 @@ describe('Personal Economic Graph persistence', () => {
     }
     assert.ok(graph.value.nodes.some((node) => node.kind === 'GOAL' && node.survivesRebuild));
     assert.ok(graph.value.nodes.some((node) => node.kind === 'ACCOUNT'));
+    assert.equal(restored.getOverlay('pg_open')?.classification, 'UNKNOWN');
+    assert.equal(restored.getSuitability(subjectId)?.method, 'DETERMINISTIC_QUESTIONNAIRE');
     await closePersistencePools(pools);
   });
 });

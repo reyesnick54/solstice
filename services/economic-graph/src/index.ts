@@ -5,7 +5,11 @@
 export {
   EconomicGraphService,
   InMemoryEconomicGraphStore,
+  PegUpdatePipeline,
+  applyPersonaSeed,
   authorizeGraphRead,
+  type FinancialIntelligenceSnapshot,
   type GraphView,
+  type GrowProfileView,
   type PersonalEconomicSnapshot,
 } from '../../../packages/personal-economic-graph/src/index.ts';

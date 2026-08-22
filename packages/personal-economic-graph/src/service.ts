@@ -4,7 +4,21 @@ import type { UtcInstant } from '../../domain/src/time.ts';
 import type { DomainEvent, DomainEventLog } from '../../events/src/events.ts';
 import { Money } from '../../money/src/money.ts';
 import { authorizeGraphDeclare, authorizeGraphRead, type GraphAccessFailure } from './access.ts';
+import { analyzeCashFlow } from './cash-flow-analysis.ts';
 import { deriveCashFlow, monthlyWindowContaining, type CurrencyCashFlow } from './cash-flow.ts';
+import { buildFinancialSnapshot, recordHistoryFromSnapshot, toGrowProfile } from './intelligence.ts';
+import type { FinancialIntelligenceSnapshot, GrowProfileView } from './financial-snapshot.ts';
+import type { DerivedInsight } from './insights.ts';
+import {
+  authorizeAgentCategories,
+  type AccessEvidence,
+  type GrowAccessMandate,
+  type GrowPurpose,
+} from './privacy.ts';
+import { assessSuitability, type SuitabilityAnswers, type SuitabilityProfile } from './suitability.ts';
+import type { ReferenceRateLookup } from '../../payments/src/fx-valuation.ts';
+import type { ClassifiedActivityOverlay, HistoryPoint } from './store.ts';
+import type { ActivityClassification, GrowDataCategory, PreferenceAttributes } from './taxonomy.ts';
 import type { EconomicEdge } from './edge.ts';
 import type { EconomicFact } from './fact.ts';
 import type { EconomicGraph } from './graph.ts';
@@ -20,7 +34,7 @@ import {
 import type { EconomicNode } from './node.ts';
 import type { EconomicOpportunity } from './opportunity.ts';
 import { freezeProvenance, type FactConfidence, type Provenance, type SourceType } from './provenance.ts';
-import { EconomicGraphProjector, type ClassifiedActivityOverlay } from './projection.ts';
+import { EconomicGraphProjector } from './projection.ts';
 import { detectRecurringPatterns, incomeKindFromClassification } from './recurring.ts';
 import {
   freezeSnapshot,
@@ -43,7 +57,19 @@ import type {
   SerializedMoney,
 } from './taxonomy.ts';
 
-export type EconomicGraphFailure = GraphAccessFailure | { readonly code: 'INVALID_FACT'; readonly message: string };
+export type EconomicGraphFailure =
+  | GraphAccessFailure
+  | {
+      readonly code:
+        | 'INVALID_FACT'
+        | 'AUTHORITATIVE_FACT_IMMUTABLE'
+        | 'GOAL_NOT_FOUND'
+        | 'CONSENT_DENIED'
+        | 'MANDATE_REQUIRED'
+        | 'CATEGORY_DENIED'
+        | 'PURPOSE_DENIED';
+      readonly message: string;
+    };
 
 export type DeclaredAssetInput = {
   readonly assetKind: AssetKind;
@@ -66,10 +92,23 @@ export type DeclaredDebtInput = {
 export type DeclaredGoalInput = {
   readonly goalKind: GoalKind;
   readonly label: string;
+  readonly name?: string;
   readonly target: SerializedMoney;
   readonly targetDate?: UtcInstant;
   readonly priority: number;
   readonly status?: GoalStatus;
+  readonly minimumLiquidity?: SerializedMoney;
+  readonly currentAllocatedValue?: SerializedMoney;
+};
+
+export type GoalPatchInput = {
+  readonly name?: string;
+  readonly target?: SerializedMoney;
+  readonly targetDate?: UtcInstant | null;
+  readonly priority?: number;
+  readonly status?: GoalStatus;
+  readonly minimumLiquidity?: SerializedMoney | null;
+  readonly currentAllocatedValue?: SerializedMoney | null;
 };
 
 export type DeclaredIncomeInput = {
@@ -102,20 +141,27 @@ export class EconomicGraphService {
   readonly projector: EconomicGraphProjector;
   private readonly clock: Clock;
   private readonly events: DomainEventLog | undefined;
+  private readonly rates: ReferenceRateLookup | undefined;
+  private readonly valuationCurrency: string | undefined;
 
   constructor(input: {
     readonly clock: Clock;
     readonly store?: InMemoryEconomicGraphStore;
     readonly events?: DomainEventLog;
+    readonly rates?: ReferenceRateLookup;
+    readonly valuationCurrency?: string;
   }) {
     this.clock = input.clock;
     this.store = input.store ?? new InMemoryEconomicGraphStore();
     this.events = input.events;
+    this.rates = input.rates;
+    this.valuationCurrency = input.valuationCurrency;
     this.projector = new EconomicGraphProjector({
       store: this.store,
       now: () => this.clock.now(),
       ...(input.events ? { events: input.events } : {}),
     });
+    this.projector.hydrateOverlays();
   }
 
   registerOverlay(overlay: ClassifiedActivityOverlay): void {
@@ -413,6 +459,9 @@ export class EconomicGraphService {
         targetDate: input.targetDate ?? null,
         priority: input.priority,
         status: input.status ?? 'ACTIVE',
+        ...(input.name ? { name: input.name } : {}),
+        ...(input.minimumLiquidity ? { minimumLiquidity: input.minimumLiquidity } : {}),
+        ...(input.currentAllocatedValue ? { currentAllocatedValue: input.currentAllocatedValue } : {}),
       },
       quality: 'CURRENT',
       confidence: 'USER_DECLARED',
@@ -797,15 +846,336 @@ export class EconomicGraphService {
       return err({ code: 'GRAPH_NOT_FOUND', message: 'no economic graph for subject' });
     }
     this.store.destroyDerived(graph.graphId);
+    this.projector.hydrateOverlays();
     this.projector.ensureGraph(subjectId, graph.customerId, this.clock.now());
     this.projector.ingestAll(events, subjectId);
     this.materializeRecurring(subjectId);
     this.proposeOpportunities(subjectId);
+    this.refreshDerivedIntelligence(subjectId);
     return ok({
       graph: this.store.getGraph(graph.graphId) ?? graph,
       nodes: this.store.nodesFor(graph.graphId),
       edges: this.store.edgesFor(graph.graphId),
       facts: this.store.currentFactsFor(graph.graphId, this.clock.now()),
+    });
+  }
+
+  updateGoal(
+    actor: unknown,
+    subjectId: string,
+    goalId: EconomicNodeId,
+    patch: GoalPatchInput,
+  ): Result<EconomicNode, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const node = this.store.getNode(goalId);
+    if (!node || node.kind !== 'GOAL' || node.attributes.kind !== 'GOAL') {
+      return err({ code: 'GOAL_NOT_FOUND', message: 'goal not found' });
+    }
+    if (patch.target) {
+      const money = this.parseMoney(patch.target);
+      if (!money.ok) {
+        return money;
+      }
+    }
+    const attrs = node.attributes;
+    const at = this.clock.now();
+    const updated = this.store.putNode({
+      ...node,
+      attributes: {
+        ...attrs,
+        ...(patch.name ? { name: patch.name, label: patch.name } : {}),
+        ...(patch.target ? { target: patch.target } : {}),
+        ...(patch.targetDate !== undefined ? { targetDate: patch.targetDate } : {}),
+        ...(patch.priority !== undefined ? { priority: patch.priority } : {}),
+        ...(patch.status ? { status: patch.status } : {}),
+        ...(patch.minimumLiquidity !== undefined
+          ? patch.minimumLiquidity
+            ? { minimumLiquidity: patch.minimumLiquidity }
+            : { minimumLiquidity: undefined }
+          : {}),
+        ...(patch.currentAllocatedValue !== undefined
+          ? patch.currentAllocatedValue
+            ? { currentAllocatedValue: patch.currentAllocatedValue }
+            : { currentAllocatedValue: undefined }
+          : {}),
+      },
+      provenance: this.userProvenance(subjectId, at),
+    });
+    return ok(updated);
+  }
+
+  correctActivityClassification(
+    actor: unknown,
+    subjectId: string,
+    input: {
+      readonly sourceEventId: string;
+      readonly classification: ActivityClassification;
+      readonly counterpart?: ClassifiedActivityOverlay['counterpart'];
+    },
+  ): Result<ClassifiedActivityOverlay, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const overlay: ClassifiedActivityOverlay = {
+      sourceEventId: input.sourceEventId,
+      subjectId,
+      classification: input.classification,
+      ...(input.counterpart ? { counterpart: input.counterpart } : {}),
+      userCorrected: true,
+    };
+    this.projector.registerOverlay(overlay);
+    return ok(overlay);
+  }
+
+  overrideAuthoritativeBalance(
+    _actor: unknown,
+    _subjectId: string,
+    _input: { readonly accountId: string; readonly amount: SerializedMoney },
+  ): Result<never, EconomicGraphFailure> {
+    return err({
+      code: 'AUTHORITATIVE_FACT_IMMUTABLE',
+      message: 'user cannot change a SunRey account balance; the ledger wins',
+    });
+  }
+
+  recordSuitability(
+    actor: unknown,
+    subjectId: string,
+    answers: SuitabilityAnswers,
+  ): Result<SuitabilityProfile, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const at = this.clock.now();
+    const profile = assessSuitability(answers, at);
+    this.store.putSuitability(subjectId, profile);
+    const graphId = this.projector.ensureGraph(subjectId, undefined, at);
+    this.store.putNode({
+      nodeId: deterministicNodeId('RISK_PROFILE', subjectId),
+      graphId,
+      kind: 'RISK_PROFILE',
+      attributes: {
+        kind: 'RISK_PROFILE',
+        riskTolerance: profile.riskTolerance,
+        riskCapacity: profile.riskCapacity,
+        timeHorizon: profile.timeHorizon,
+        liquidityNeed: profile.liquidityNeed,
+        investmentExperience: profile.investmentExperience,
+        lossSensitivity: profile.lossSensitivity,
+        concentration: profile.concentration,
+        jurisdictionalEligibility: profile.jurisdictionalEligibility,
+        questionnaireVersion: profile.questionnaireVersion,
+      },
+      quality: 'CURRENT',
+      confidence: 'USER_DECLARED',
+      provenance: this.userProvenance(subjectId, at),
+      createdAt: at,
+      survivesRebuild: true,
+    });
+    this.linkPerson(graphId, subjectId, deterministicNodeId('RISK_PROFILE', subjectId), 'ASSOCIATED_WITH', at);
+    return ok(profile);
+  }
+
+  getSuitability(actor: unknown, subjectId: string): Result<SuitabilityProfile | null, EconomicGraphFailure> {
+    const allowed = authorizeGraphRead(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    return ok(this.store.getSuitability(subjectId) ?? null);
+  }
+
+  getFinancialSnapshot(
+    actor: unknown,
+    subjectId: string,
+    valuationCurrency?: string,
+  ): Result<FinancialIntelligenceSnapshot, EconomicGraphFailure> {
+    const allowed = authorizeGraphRead(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const graph = this.store.getGraphBySubject(subjectId);
+    if (!graph) {
+      return err({ code: 'GRAPH_NOT_FOUND', message: 'no economic graph for subject' });
+    }
+    const snapshot = buildFinancialSnapshot({
+      store: this.store,
+      graphId: graph.graphId,
+      subjectId,
+      at: this.clock.now(),
+      ...(valuationCurrency ?? this.valuationCurrency
+        ? { valuationCurrency: valuationCurrency ?? this.valuationCurrency }
+        : {}),
+      ...(this.rates ? { rates: this.rates } : {}),
+    });
+    this.store.putSnapshot({
+      snapshotId: snapshot.snapshotId,
+      graphId: graph.graphId,
+      generatedAt: snapshot.generatedAt,
+      bodyCanonical: JSON.stringify(snapshot),
+    });
+    recordHistoryFromSnapshot(this.store, snapshot);
+    this.store.replaceInsights(graph.graphId, snapshot.insights);
+    return ok(snapshot);
+  }
+
+  getGrowProfile(
+    actor: unknown,
+    subjectId: string,
+    valuationCurrency?: string,
+  ): Result<GrowProfileView, EconomicGraphFailure> {
+    const snapshot = this.getFinancialSnapshot(actor, subjectId, valuationCurrency);
+    if (!snapshot.ok) {
+      return snapshot;
+    }
+    return ok(toGrowProfile(snapshot.value));
+  }
+
+  getInsights(actor: unknown, subjectId: string): Result<readonly DerivedInsight[], EconomicGraphFailure> {
+    const snapshot = this.getFinancialSnapshot(actor, subjectId);
+    if (!snapshot.ok) {
+      return snapshot;
+    }
+    return ok(snapshot.value.insights);
+  }
+
+  getHistory(
+    actor: unknown,
+    subjectId: string,
+    series?: HistoryPoint['series'],
+  ): Result<readonly HistoryPoint[], EconomicGraphFailure> {
+    const allowed = authorizeGraphRead(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const graph = this.store.getGraphBySubject(subjectId);
+    if (!graph) {
+      return err({ code: 'GRAPH_NOT_FOUND', message: 'no economic graph for subject' });
+    }
+    return ok(this.store.historyFor(graph.graphId, series));
+  }
+
+  getAgentProfile(
+    actor: unknown,
+    subjectId: string,
+    mandate: GrowAccessMandate | null,
+  ): Result<GrowProfileView, EconomicGraphFailure> {
+    const allowed = authorizeGraphRead(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const requested: GrowDataCategory[] = [
+      'CASH_POSITION',
+      'INVESTMENT_POSITION',
+      'GOAL',
+      'RISK_PROFILE',
+      'INSIGHT',
+      'CASH_FLOW',
+      'INCOME',
+      'EXPENSE',
+    ];
+    const scoped = authorizeAgentCategories(mandate, requested, this.clock.now());
+    this.recordAccess(subjectId, allowed.value.actorId, 'AGENT_ANALYSIS', scoped.ok ? scoped.value : [], scoped.ok);
+    if (!scoped.ok) {
+      return err({ code: scoped.error.code, message: scoped.error.message });
+    }
+    const snapshot = this.getFinancialSnapshot(actor, subjectId);
+    if (!snapshot.ok) {
+      return snapshot;
+    }
+    return ok(toGrowProfile(snapshot.value, scoped.value));
+  }
+
+  declarePreference(
+    actor: unknown,
+    subjectId: string,
+    input: { readonly key: string; readonly value: string },
+  ): Result<EconomicNode, EconomicGraphFailure> {
+    const allowed = authorizeGraphDeclare(actor, subjectId);
+    if (!allowed.ok) {
+      return allowed;
+    }
+    const at = this.clock.now();
+    const graphId = this.projector.ensureGraph(subjectId, undefined, at);
+    const nodeId = deterministicNodeId('PREFERENCE', `${input.key}`.toLowerCase());
+    const attributes: PreferenceAttributes = { kind: 'PREFERENCE', key: input.key, value: input.value };
+    const node = this.store.putNode({
+      nodeId,
+      graphId,
+      kind: 'PREFERENCE',
+      attributes,
+      quality: 'CURRENT',
+      confidence: 'USER_DECLARED',
+      provenance: this.userProvenance(subjectId, at),
+      createdAt: at,
+      survivesRebuild: true,
+    });
+    this.linkPerson(graphId, subjectId, nodeId, 'ASSOCIATED_WITH', at);
+    return ok(node);
+  }
+
+  refreshDerivedIntelligence(subjectId: string): FinancialIntelligenceSnapshot | null {
+    const graph = this.store.getGraphBySubject(subjectId);
+    if (!graph) {
+      return null;
+    }
+    this.materializeRecurring(subjectId);
+    const snapshot = buildFinancialSnapshot({
+      store: this.store,
+      graphId: graph.graphId,
+      subjectId,
+      at: this.clock.now(),
+      ...(this.valuationCurrency ? { valuationCurrency: this.valuationCurrency } : {}),
+      ...(this.rates ? { rates: this.rates } : {}),
+    });
+    this.store.putSnapshot({
+      snapshotId: snapshot.snapshotId,
+      graphId: graph.graphId,
+      generatedAt: snapshot.generatedAt,
+      bodyCanonical: JSON.stringify(snapshot),
+    });
+    recordHistoryFromSnapshot(this.store, snapshot);
+    this.store.replaceInsights(graph.graphId, snapshot.insights);
+    return snapshot;
+  }
+
+  cashFlowAnalysisFor(subjectId: string) {
+    const graph = this.store.getGraphBySubject(subjectId);
+    if (!graph) {
+      return Object.freeze([]);
+    }
+    return analyzeCashFlow({
+      activities: this.store.activitiesFor(graph.graphId),
+      at: this.clock.now(),
+    });
+  }
+
+  accessEvidenceFor(subjectId: string): readonly AccessEvidence[] {
+    return this.store.accessEvidenceFor(subjectId);
+  }
+
+  private recordAccess(
+    subjectId: string,
+    actorId: string,
+    purpose: GrowPurpose,
+    categories: readonly GrowDataCategory[],
+    allowed: boolean,
+  ): void {
+    const graph = this.store.getGraphBySubject(subjectId);
+    this.store.putAccessEvidence({
+      evidenceId: `peg_ae_${actorId}_${this.clock.now().replace(/[:.]/g, '')}`,
+      graphId: graph?.graphId ?? `peg_g_${subjectId}`,
+      actorId,
+      subjectId,
+      purpose,
+      categories,
+      decision: allowed ? 'ALLOW' : 'DENY',
+      reason: allowed ? 'mandate categories granted' : 'agent mandate denied',
+      at: this.clock.now(),
     });
   }
 
@@ -907,7 +1277,7 @@ export class EconomicGraphService {
     graphId: EconomicGraphId,
     subjectId: string,
     to: EconomicNodeId,
-    kind: 'OWNS' | 'OWES' | 'RECEIVES_FROM' | 'PAYS_TO' | 'SUPPORTS_GOAL' | 'GENERATES_INCOME' | 'INCURS_COST' | 'HOLDS',
+    kind: 'OWNS' | 'OWES' | 'RECEIVES_FROM' | 'PAYS_TO' | 'SUPPORTS_GOAL' | 'GENERATES_INCOME' | 'INCURS_COST' | 'HOLDS' | 'ASSOCIATED_WITH',
     at: UtcInstant,
     sourceType: SourceType = 'USER_DECLARED',
   ): void {

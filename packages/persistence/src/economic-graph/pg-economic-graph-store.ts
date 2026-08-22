@@ -173,6 +173,100 @@ export async function persistEconomicGraphState(
           [eventId],
         );
       }
+      for (const overlay of state.overlays ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.overlay
+             (source_event_id, subject_id, classification, counterpart_canonical, user_corrected, account_id, amount_canonical, direction)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+           ON CONFLICT (source_event_id) DO UPDATE SET
+             classification = EXCLUDED.classification,
+             counterpart_canonical = EXCLUDED.counterpart_canonical,
+             user_corrected = EXCLUDED.user_corrected`,
+          [
+            overlay.sourceEventId,
+            overlay.subjectId,
+            overlay.classification,
+            overlay.counterpart ? JSON.stringify(overlay.counterpart) : null,
+            overlay.userCorrected === true,
+            overlay.accountId ?? null,
+            overlay.amount ? JSON.stringify(overlay.amount) : null,
+            overlay.direction ?? null,
+          ],
+        );
+      }
+      for (const row of state.accountCurrencies ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.account_currency (account_id, currency)
+           VALUES ($1,$2)
+           ON CONFLICT (account_id) DO UPDATE SET currency = EXCLUDED.currency`,
+          [row.accountId, row.currency],
+        );
+      }
+      for (const insight of state.insights ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.insight
+             (insight_id, graph_id, insight_type, severity, body_canonical, calculated_at)
+           VALUES ($1,$2,$3,$4,$5,$6)
+           ON CONFLICT (insight_id) DO UPDATE SET
+             severity = EXCLUDED.severity,
+             body_canonical = EXCLUDED.body_canonical,
+             calculated_at = EXCLUDED.calculated_at`,
+          [
+            insight.insightId,
+            insight.graphId,
+            insight.type,
+            insight.severity,
+            JSON.stringify(insight),
+            insight.calculatedAt,
+          ],
+        );
+      }
+      for (const row of state.suitability ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.suitability (subject_id, body_canonical, assessed_at)
+           VALUES ($1,$2,$3)
+           ON CONFLICT (subject_id) DO UPDATE SET
+             body_canonical = EXCLUDED.body_canonical,
+             assessed_at = EXCLUDED.assessed_at`,
+          [row.subjectId, JSON.stringify(row.profile), row.profile.assessedAt],
+        );
+      }
+      for (const row of state.accessEvidence ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.access_evidence
+             (evidence_id, graph_id, actor_id, subject_id, purpose, categories_canonical, decision, reason, occurred_at)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+           ON CONFLICT (evidence_id) DO NOTHING`,
+          [
+            row.evidenceId,
+            row.graphId,
+            row.actorId,
+            row.subjectId,
+            row.purpose,
+            JSON.stringify(row.categories),
+            row.decision,
+            row.reason,
+            row.at,
+          ],
+        );
+      }
+      for (const row of state.history ?? []) {
+        await client.query(
+          `INSERT INTO economic_graph.history_point
+             (history_id, graph_id, captured_at, series, currency, minor_units, source_snapshot_id)
+           VALUES ($1,$2,$3,$4,$5,$6,$7)
+           ON CONFLICT (history_id) DO NOTHING`,
+          [
+            row.historyId,
+            row.graphId,
+            row.capturedAt,
+            row.series,
+            row.currency,
+            row.minorUnits,
+            row.sourceSnapshotId,
+          ],
+        );
+      }
       await client.query('COMMIT');
     } catch (error) {
       await client.query('ROLLBACK');
@@ -208,6 +302,12 @@ export async function loadEconomicGraphState(pool: Pool): Promise<EconomicGraphS
     const opportunities = await client.query('SELECT * FROM economic_graph.opportunity');
     const snapshots = await client.query('SELECT * FROM economic_graph.snapshot');
     const processed = await client.query<{ event_id: string }>('SELECT event_id FROM economic_graph.processed_event');
+    const overlays = await client.query('SELECT * FROM economic_graph.overlay');
+    const currencies = await client.query('SELECT * FROM economic_graph.account_currency');
+    const insights = await client.query('SELECT * FROM economic_graph.insight');
+    const suitability = await client.query('SELECT * FROM economic_graph.suitability');
+    const access = await client.query('SELECT * FROM economic_graph.access_evidence');
+    const history = await client.query('SELECT * FROM economic_graph.history_point');
 
     return Object.freeze({
       graphs: Object.freeze(
@@ -253,6 +353,55 @@ export async function loadEconomicGraphState(pool: Pool): Promise<EconomicGraphS
       opportunities: Object.freeze(opportunities.rows.map(rowToOpportunity)) as readonly EconomicOpportunity[],
       snapshots: Object.freeze(snapshots.rows.map(rowToSnapshot)) as readonly StoredSnapshot[],
       processedEventIds: Object.freeze(processed.rows.map((row) => row.event_id)),
+      overlays: Object.freeze(
+        overlays.rows.map((row) => ({
+          sourceEventId: String(row.source_event_id),
+          subjectId: String(row.subject_id),
+          classification: String(row.classification),
+          ...(row.counterpart_canonical ? { counterpart: JSON.parse(String(row.counterpart_canonical)) } : {}),
+          ...(row.user_corrected ? { userCorrected: true } : {}),
+          ...(row.account_id ? { accountId: String(row.account_id) } : {}),
+          ...(row.amount_canonical ? { amount: JSON.parse(String(row.amount_canonical)) } : {}),
+          ...(row.direction ? { direction: String(row.direction) } : {}),
+        })),
+      ),
+      accountCurrencies: Object.freeze(
+        currencies.rows.map((row) => ({
+          accountId: String(row.account_id),
+          currency: String(row.currency),
+        })),
+      ),
+      insights: Object.freeze(insights.rows.map((row) => JSON.parse(String(row.body_canonical)))),
+      suitability: Object.freeze(
+        suitability.rows.map((row) => ({
+          subjectId: String(row.subject_id),
+          profile: JSON.parse(String(row.body_canonical)),
+        })),
+      ),
+      accessEvidence: Object.freeze(
+        access.rows.map((row) => ({
+          evidenceId: String(row.evidence_id),
+          graphId: String(row.graph_id),
+          actorId: String(row.actor_id),
+          subjectId: String(row.subject_id),
+          purpose: String(row.purpose),
+          categories: JSON.parse(String(row.categories_canonical)),
+          decision: String(row.decision),
+          reason: String(row.reason),
+          at: new Date(String(row.occurred_at)).toISOString(),
+        })),
+      ),
+      history: Object.freeze(
+        history.rows.map((row) => ({
+          historyId: String(row.history_id),
+          graphId: String(row.graph_id),
+          capturedAt: new Date(String(row.captured_at)).toISOString(),
+          series: String(row.series),
+          currency: String(row.currency),
+          minorUnits: String(row.minor_units),
+          sourceSnapshotId: row.source_snapshot_id ? String(row.source_snapshot_id) : null,
+        })),
+      ),
     });
   });
 }

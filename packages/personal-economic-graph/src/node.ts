@@ -13,7 +13,15 @@ import type {
   LiabilityKind,
   OpportunityKind,
   RecurringCadence,
+  RiskCapacityLevel,
+  RiskToleranceLevel,
   SerializedMoney,
+  TimeHorizonBand,
+  LiquidityNeedLevel,
+  InvestmentExperienceLevel,
+  LossSensitivityLevel,
+  ConcentrationLevel,
+  ProductEligibilityState,
 } from './taxonomy.ts';
 
 export type PersonNodeAttributes = {
@@ -112,10 +120,13 @@ export type GoalAttributes = {
   readonly kind: 'GOAL';
   readonly goalKind: GoalKind;
   readonly label: string;
+  readonly name?: string;
   readonly target: SerializedMoney;
   readonly targetDate: UtcInstant | null;
   readonly priority: number;
   readonly status: GoalStatus;
+  readonly minimumLiquidity?: SerializedMoney;
+  readonly currentAllocatedValue?: SerializedMoney;
 };
 
 export type BenefitAttributes = {
@@ -147,6 +158,45 @@ export type OpportunityAttributes = {
   readonly executable: false;
 };
 
+export type RiskProfileAttributes = {
+  readonly kind: 'RISK_PROFILE';
+  readonly riskTolerance: RiskToleranceLevel;
+  readonly riskCapacity: RiskCapacityLevel;
+  readonly timeHorizon: TimeHorizonBand;
+  readonly liquidityNeed: LiquidityNeedLevel;
+  readonly investmentExperience: InvestmentExperienceLevel;
+  readonly lossSensitivity: LossSensitivityLevel;
+  readonly concentration: ConcentrationLevel;
+  readonly jurisdictionalEligibility: ProductEligibilityState;
+  readonly questionnaireVersion: string;
+};
+
+export type PreferenceAttributes = {
+  readonly kind: 'PREFERENCE';
+  readonly key: string;
+  readonly value: string;
+};
+
+export type RestrictionAttributes = {
+  readonly kind: 'RESTRICTION';
+  readonly code: string;
+  readonly label: string;
+};
+
+export type HouseholdObligationAttributes = {
+  readonly kind: 'HOUSEHOLD_OBLIGATION';
+  readonly label: string;
+  readonly relationship?: string;
+  readonly estimatedAmount?: SerializedMoney;
+};
+
+export type DigitalAssetAttributes = {
+  readonly kind: 'DIGITAL_ASSET';
+  readonly label: string;
+  readonly holdingKind: HoldingKind;
+  readonly estimatedValue?: SerializedMoney;
+};
+
 export type EconomicNodeAttributes =
   | PersonNodeAttributes
   | AccountNodeAttributes
@@ -165,7 +215,12 @@ export type EconomicNodeAttributes =
   | BenefitAttributes
   | CashFlowAttributes
   | DataAssetAttributes
-  | OpportunityAttributes;
+  | OpportunityAttributes
+  | RiskProfileAttributes
+  | PreferenceAttributes
+  | RestrictionAttributes
+  | HouseholdObligationAttributes
+  | DigitalAssetAttributes;
 
 export type EconomicNode = {
   readonly nodeId: EconomicNodeId;

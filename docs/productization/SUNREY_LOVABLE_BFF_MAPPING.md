@@ -54,7 +54,12 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
-| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| GROW | `/api/v1/grow` | GET | required | availability catalog | `packages/personal-economic-graph` + Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| FINANCIAL PROFILE | `/api/v1/grow/profile` | GET | required + owner | `sunrey.grow.profile.v1` | PEG snapshot + suitability + insights | AVAILABLE_SIMULATION | not Ledger authority; no guaranteed return |
+| FINANCIAL SNAPSHOT | `/api/v1/grow/snapshot` | GET | required + owner | `FinancialIntelligenceSnapshot` | PEG + Phase C presentation valuation | AVAILABLE_SIMULATION | `crossCurrencyTotal` is always null |
+| GOALS | `/api/v1/grow/goals` | GET, POST, PATCH | required + owner | goal resources | PEG user-declared goals | AVAILABLE_SIMULATION | cannot override Ledger balances |
+| INSIGHTS | `/api/v1/grow/insights` | GET | required + owner | derived insights | deterministic PEG insights | AVAILABLE_SIMULATION | Prompt 2 owns recommendations |
+| RISK PROFILE | `/api/v1/grow/suitability` | GET, POST | required + owner | suitability profile | deterministic questionnaire | AVAILABLE_SIMULATION | LLM must not fabricate scores |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
