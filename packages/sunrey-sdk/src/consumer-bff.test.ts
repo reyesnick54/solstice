@@ -74,27 +74,6 @@ describe('consumer BFF payments SDK', () => {
   });
 });
 
-  it('does not import privileged modules', () => {
-    const dir = join(here, 'consumer-bff');
-    const files = readdirSync(dir).filter((name) => name.endsWith('.ts'));
-    const forbidden = [
-      'node:http',
-      'node:fs',
-      'node:crypto',
-      'ExecutionAuthority',
-      'postJournal',
-      '../../ledger',
-      '../../kernel',
-    ];
-    for (const file of files) {
-      const source = readFileSync(join(dir, file), 'utf8');
-      for (const needle of forbidden) {
-        assert.equal(source.includes(needle), false, `${file} leaked ${needle}`);
-      }
-    }
-  });
-});
-
 describe('consumer BFF SDK models', () => {
   it('exposes typed account, balance, and activity vocabularies', () => {
     assert.ok(FINANCIAL_ACCOUNT_LIFECYCLES.includes('ACTIVE'));

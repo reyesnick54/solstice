@@ -413,13 +413,6 @@ function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
-function result(body: unknown, headers: Record<string, string>, okStatus = 200): BffResponse {
-  if (isBffError(body)) {
-    return json(statusForError(body as BffErrorEnvelope), body, headers);
-  }
-  return json(okStatus, body, headers);
-}
-
 function json(status: number, body: unknown, headers: Record<string, string>): BffResponse {
   return Object.freeze({
     status,
