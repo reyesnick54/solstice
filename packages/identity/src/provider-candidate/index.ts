@@ -1,3 +1,9 @@
+export {
+  createKycProviderA,
+  createKycProviderB,
+  runKycContractSuite,
+  runKycDomainWorkflow,
+} from './interchangeable.ts';
 export { FixtureBeneficialOwnershipProvider } from './beneficial-ownership.ts';
 export { FixtureBusinessVerificationProvider } from './business.ts';
 export {

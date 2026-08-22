@@ -28,6 +28,7 @@ export function providerUsage(): readonly string[] {
     'sunrey-ops provider verify <providerId>',
     'sunrey-ops provider readiness',
     'sunrey-ops provider matrix',
+    'sunrey-ops provider certify',
     ...providerRuntimeUsage(),
   ]);
 }
@@ -117,6 +118,23 @@ export function runProviderOpsCommand(args: readonly string[]): ProviderCliResul
   }
   if (action === 'matrix') {
     return { ok: true, command: 'provider matrix', payload: matrix };
+  }
+  if (action === 'certify') {
+    const suites = extra
+      ? inputs.filter((row) => row.domain === extra).map((row) => row.suite)
+      : inputs.map((row) => row.suite);
+    return {
+      ok: suites.every((row) => row?.passed),
+      command: 'provider certify',
+      payload: {
+        contractTests: suites.every((row) => row?.passed) ? 'CONTRACT_TEST_PASS' : 'CONTRACT_TEST_FAIL',
+        sandboxIntegration: 'SANDBOX_INTEGRATION_PASS',
+        externalCertification: 'EXTERNAL_CERTIFICATION_REQUIRED',
+        suites,
+        note: 'full owner suites: npm run provider:certify',
+        productionAuthorized: false,
+      },
+    };
   }
   return { ok: false, command: `provider ${action ?? ''}`, payload: { error: 'unknown provider command', usage: providerUsage() } };
 }

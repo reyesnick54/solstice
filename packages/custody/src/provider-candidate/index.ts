@@ -54,6 +54,45 @@ export {
   ScriptedCustodySandboxTransport,
 } from './transport.ts';
 export {
+  CUSTODY_CONTRACT_VERSION,
+  CUSTODY_PROVIDER_CAPABILITIES,
+  CUSTODY_PROVIDER_IS_NOT_CHAIN,
+  CUSTODY_PROVIDER_IS_NOT_LEDGER,
+  mapProviderDepositLifecycle,
+  mapProviderWithdrawalLifecycle,
+  rejectAiCustodyBypass,
+  rejectUnverifiedDepositCredit,
+  type CustodyProviderCapability,
+  type CustodyProviderContract,
+  type NormalizedCustodyBalance,
+  type NormalizedCustodyTransaction,
+  type NormalizedCustodyWallet,
+  type ProviderDepositLifecycle,
+  type ProviderWithdrawalLifecycle,
+} from './contract.ts';
+export {
+  DIGITAL_ASSET_STATE_PLANES,
+  custodyBalanceCannotBecomeLedger,
+  planeSnapshot,
+  reconcileDigitalAssetPlanes,
+  type CustodyAuthorityReconciliation,
+  type DigitalAssetStatePlane,
+} from './authority.ts';
+export {
+  DEPOSIT_WORKFLOW_STEPS,
+  WITHDRAWAL_WORKFLOW_STEPS,
+  creditDepositAfterConfirmation,
+  runDepositWorkflow,
+  runWithdrawalWorkflow,
+} from './workflows.ts';
+export { CUSTODY_WEBHOOK_KINDS, ingestCustodyWebhook, resetCustodyWebhooks } from './webhook-events.ts';
+export {
+  DeterministicCustodyAdapter,
+  createCustodyProviderA,
+  createCustodyProviderB,
+} from './sandbox.ts';
+export { runCustodyContractSuite } from './certification.ts';
+export {
   CUSTODY_CANDIDATE_WORKLOADS,
   CUSTODY_KEY_LIFECYCLES,
   CUSTODY_KEY_ORIGINS,

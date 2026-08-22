@@ -119,10 +119,9 @@ virtual card.
 ## Persistence status
 
 **PRODUCTIZED_INTERNAL** for the in-memory control store plus
-PostgreSQL snapshot `V030__treasury_financial_control.sql`. Parallel
-Phase B collision `V029__platform_api.sql` is sequenced as
-`V031__platform_api.sql` so customer migrations stay strictly
-increasing. Durable fixture snapshots fail closed on corruption. Not a
+PostgreSQL snapshot `V032__treasury_financial_control.sql`. Parallel
+Phase B platform API remains `V030__platform_api.sql` so customer
+migrations stay strictly increasing. Durable fixture snapshots fail closed on corruption. Not a
 second ledger.
 
 ## Security/authority status
@@ -152,8 +151,8 @@ Executed in this environment:
   pass
 - PostgreSQL `db:migrate` / `test:persistence`: not executed here (no
   Docker / `pg_isready`). Migration ordering check passed. Snapshot
-  `V030__treasury_financial_control.sql` and sequenced
-  `V031__platform_api.sql` are present.
+  `V032__treasury_financial_control.sql` and sequenced
+  `V030__platform_api.sql` are present.
 
 ## Performance baseline
 

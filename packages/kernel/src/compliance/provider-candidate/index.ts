@@ -1,3 +1,12 @@
+export {
+  BLOCKCHAIN_ANALYTICS_CONTRACT_VERSION,
+  FixtureBlockchainAnalyticsProvider,
+  analyticsCannotDecideWithdrawal,
+  createBlockchainAnalyticsA,
+  createBlockchainAnalyticsB,
+  findingToCompliance,
+  runBlockchainAnalyticsContractSuite,
+} from './blockchain-analytics.ts';
 export { FixtureAdverseMediaProvider } from './adverse-media.ts';
 export { caseProviderIsCanonicalAuthority, FixtureCaseManagementAdapter } from './cases.ts';
 export {
