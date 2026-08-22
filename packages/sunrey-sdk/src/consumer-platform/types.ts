@@ -285,6 +285,8 @@ export type CardResourceDto = {
   readonly productionIssuing: false;
 };
 
+export type CardDto = CardResourceDto;
+
 export type CardDetailDto = {
   readonly card: CardResourceDto;
   readonly fundingAccountId: string;
