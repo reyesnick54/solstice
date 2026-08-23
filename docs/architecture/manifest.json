@@ -1212,6 +1212,7 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/consent",
         "packages/personal-data-vault",
         "packages/sunrey-exchange",
         "services/investments",

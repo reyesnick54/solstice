@@ -135,6 +135,16 @@ authentication foundation; the BFF only consumes a verified session.
 | EXCHANGE fills / holdings / status | `/api/v1/exchange/fills` `/holdings` | GET | required + owner | fills with clearing state | same | AVAILABLE_SIMULATION | FILLED is not SETTLED |
 | EXCHANGE stream | `/api/v1/exchange/stream` | GET | required | SSE ticker/trade/book/order-status | same | AVAILABLE_SIMULATION | privileged topics are not exposed |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
+| DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
+| DATA PERMISSIONS | `/api/v1/data/permissions` | GET | required | `sunrey.consumer.data.permissions.v1` | `packages/consent` product engine | AVAILABLE_SIMULATION | `implicitMonetizationOptIn` is always false |
+| WHO CAN USE MY DATA | `/api/v1/data/who` | GET | required | recipient-class view | same | AVAILABLE_SIMULATION | none |
+| WHAT SUNREY USES / CONSENT HISTORY | `/api/v1/data/consents` | GET, POST | required | granular grants | Consent Ledger + product overlay | AVAILABLE_SIMULATION | no silent monetization default |
+| AGENT ACCESS | `/api/v1/data/consents` bundle `AGENT_SPENDING_DATA` | POST | required | agent-assistance grant | mandate remains `packages/sunrey-agent` | AVAILABLE_SIMULATION | mandate ≠ vault consent |
+| ECONOMIC DATA SHARING | `/api/v1/data/consents` purpose `data-licensing` | POST | required | OPTIONAL_COMPENSATED grant | same | AVAILABLE_SIMULATION | explicit ECONOMIC_LICENSING only |
+| CONSENT revoke | `/api/v1/data/consents/{id}/revoke` | POST | required + owner | revocation workflow | same | AVAILABLE_SIMULATION | history retained |
+| ACCESS HISTORY | `/api/v1/data/access-history` | GET | required | decisions without raw values | same | AVAILABLE_SIMULATION | none |
+| DOWNLOAD / DELETE / CORRECT / RESTRICT | `/api/v1/data/rights/requests` | GET, POST | required | configurable rights workflow | jurisdiction pack | AVAILABLE_SIMULATION | not every right applies in every jurisdiction |
+| HIN PARTICIPATION | `/api/v1/hin/participation` plus `/enroll` `/pause` `/withdraw` | GET, POST | required | participation state | same | AVAILABLE_SIMULATION | withdraw does not close financial services |
 | DATA VAULT home | `/api/v1/data` `/api/v1/data/vault` | GET | required + owner | `sunrey.consumer.vault.home.v1` | `packages/personal-data-vault` | AVAILABLE_SIMULATION | SunRey does not own user data |
 | YOUR DATA / categories | `/api/v1/data/vault/records` `/categories` | GET | required + owner + purpose | typed records and registry | same | AVAILABLE_SIMULATION | no getAllUserData; highly sensitive classes are not ingested by default |
 | DATA SOURCES / access | `/api/v1/data/vault/sources` `/access` | GET | required + owner | sources and access audit | same | AVAILABLE_SIMULATION | payloads omitted |

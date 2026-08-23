@@ -348,6 +348,13 @@ describe('consumer BFF native economy SDK', () => {
   });
 });
 
+describe('consumer BFF data-rights SDK', () => {
+  it('calls consent and HIN participation routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_data',
 describe('consumer BFF vault SDK', () => {
   it('calls vault home and category routes', async () => {
     const urls: string[] = [];
@@ -360,6 +367,10 @@ describe('consumer BFF vault SDK', () => {
         urls.push(`${init?.method ?? 'GET'} ${url}`);
         return new Response(
           JSON.stringify({
+            schema: 'sunrey.consumer.data.permissions.v1',
+            implicitMonetizationOptIn: false,
+            financialServicesRemainOpen: true,
+            items: [],
             schema: 'sunrey.consumer.vault.home.v1',
             productionActive: false,
             liveMonetizationEnabled: false,
@@ -369,6 +380,13 @@ describe('consumer BFF vault SDK', () => {
         );
       },
     });
+    await client.getDataPermissions();
+    await client.listDataConsents();
+    await client.getHinParticipation();
+    await client.submitDataRightsRequest({ type: 'EXPORT' });
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/permissions')));
+    assert.ok(urls.some((row) => row.includes('/api/v1/hin/participation')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/data/rights/requests')));
     const home = await client.getVaultHome();
     await client.listVaultCategories();
     await client.listVaultRecords();

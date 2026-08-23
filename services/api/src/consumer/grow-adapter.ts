@@ -2,9 +2,14 @@ import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts
 import type { OpportunityDiscoveryContext } from '../../../../packages/platform/src/growth/opportunity/types.ts';
 import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from '../../../../packages/platform/src/growth/opportunity/products.ts';
 import { simulationPolicyPort } from '../../../../packages/platform/src/policy-port.ts';
-import type { BffErrorEnvelope } from './errors.ts';
-import { bffError } from './errors.ts';
-import type { AccountsReadPort, BffPrincipal, GrowCommandPort, OptionalDomainPort, OptionalDomainSummary } from './ports.ts';
+import { bffError, type BffErrorEnvelope } from './errors.ts';
+import type {
+  AccountsReadPort,
+  BffPrincipal,
+  GrowCommandPort,
+  OptionalDomainPort,
+  OptionalDomainSummary,
+} from './ports.ts';
 import type { Opportunity } from '../../../../packages/platform/src/growth/opportunity/types.ts';
 import {
   asEconomicNodeId,
@@ -16,19 +21,6 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
-import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
-import type { OpportunityDiscoveryContext } from '../../../../packages/platform/src/growth/opportunity/types.ts';
-import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from '../../../../packages/platform/src/growth/opportunity/products.ts';
-import { simulationPolicyPort } from '../../../../packages/platform/src/policy-port.ts';
-import type { Opportunity } from '../../../../packages/platform/src/growth/opportunity/types.ts';
-import { bffError, type BffErrorEnvelope } from './errors.ts';
-import type {
-  AccountsReadPort,
-  BffPrincipal,
-  GrowCommandPort,
-  OptionalDomainPort,
-  OptionalDomainSummary,
-} from './ports.ts';
 
 export type GrowOpportunityPort = OptionalDomainPort & {
   list(principal: BffPrincipal): unknown | BffErrorEnvelope;
@@ -316,7 +308,10 @@ export function createGrowCommandPort(input: {
     });
   }
 
-  function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }, requestId: string): T | BffErrorEnvelope {
+  function unwrap<T>(
+    result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } },
+    requestId: string,
+  ): T | BffErrorEnvelope {
     if (!result.ok) {
       return mapCommandFailure(result.error, requestId);
     }
@@ -448,7 +443,10 @@ export function createGrowCommandPort(input: {
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
           ? { ok: true }
-          : mapCommandFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
+          : mapCommandFailure(
+              { code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' },
+              requestId,
+            );
       }
       if (kind === 'INCOME') {
         return unwrap(
@@ -521,83 +519,6 @@ export function createGrowCommandPort(input: {
       return unwrap(peg.getAgentProfile(actor, principal.identityId, null), 'grow_agent');
     },
   };
-}
-
-
-export type GrowOpportunityPort = OptionalDomainPort & {
-  list(principal: BffPrincipal): unknown | BffErrorEnvelope;
-  get(principal: BffPrincipal, opportunityId: string): unknown | BffErrorEnvelope;
-  dismiss(principal: BffPrincipal, opportunityId: string): unknown | BffErrorEnvelope;
-  startProposal(principal: BffPrincipal, opportunityId: string): unknown | BffErrorEnvelope;
-};
-
-function contextFrom(principal: BffPrincipal, accounts: AccountsReadPort): Partial<OpportunityDiscoveryContext> {
-  const positions = accounts.listAccounts(principal.customerId).map((account) => {
-    const position = accounts.positionOf(account);
-    const minor =
-      'unavailable' in position ? '0' : position.available.minorUnits.toString();
-    return {
-      accountRef: account.id,
-      currency: account.currency,
-      minorUnits: minor,
-      accountClass: account.accountClass,
-      restricted: principal.restricted,
-      frozen: account.status === 'FROZEN',
-    };
-  });
-  const products = SIMULATION_GROWTH_PRODUCTS.map((item) =>
-    principal.restricted ? { ...item, available: false, providerAvailable: false } : item,
-  );
-  return {
-    jurisdiction: principal.jurisdiction,
-    kycState:
-      principal.verification === 'VERIFIED'
-        ? 'VERIFIED'
-        : principal.restricted
-          ? 'RESTRICTED'
-          : principal.verification === 'IN_PROGRESS'
-            ? 'PENDING'
-            : 'UNVERIFIED',
-    customerRestricted: principal.restricted,
-    riskProfile: principal.risk === 'ELEVATED' ? 'GROWTH' : principal.risk === 'LOW' ? 'CONSERVATIVE' : 'BALANCED',
-    suitabilityMaxRisk: principal.risk === 'ELEVATED' ? 'HIGH' : principal.risk === 'LOW' ? 'LOW' : 'MODERATE',
-    products,
-    ledgerPositions: Object.freeze(positions),
-    rateCatalog: SIMULATION_RATE_CATALOG,
-    policy: simulationPolicyPort,
-  };
-}
-
-function failureMessage(error: { readonly code: string; readonly message?: string }): string {
-  return error.message ?? error.code;
-}
-
-function mapFailure(code: string, message: string, requestId: string): BffErrorEnvelope {
-  if (code === 'CROSS_USER_DENIED' || code === 'SUBJECT_MISMATCH' || code === 'CAPABILITY_DENIED') {
-    return bffError({
-      errorCode: 'RESOURCE_NOT_OWNED',
-      category: 'AUTHORIZATION',
-      message,
-      retryable: false,
-      requestId,
-    });
-  }
-  if (code === 'OPPORTUNITY_NOT_FOUND') {
-    return bffError({
-      errorCode: 'NOT_FOUND',
-      category: 'NOT_FOUND',
-      message,
-      retryable: false,
-      requestId,
-    });
-  }
-  return bffError({
-    errorCode: 'VALIDATION',
-    category: 'VALIDATION',
-    message,
-    retryable: false,
-    requestId,
-  });
 }
 
 function publicOpportunity(item: Opportunity): unknown {
@@ -712,4 +633,3 @@ export function createGrowOpportunityPort(input: {
     },
   };
 }
-

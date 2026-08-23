@@ -95,6 +95,11 @@ export type {
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
+  DataPermissionCatalog,
+  DataConsentGrant,
+  DataConsentList,
+  HinParticipation,
+  DataRightsRequestResource,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

@@ -186,6 +186,11 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         permissions,
         untrustedExternalContentCannotRedefinePolicy: true,
       }), []);
+    case 'getHinParticipation':
+      return mapPort(ctx.ports.data.hinParticipation(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (participation) => ({
+        participation,
+        financialServicesRemainOpen: true,
+      }), []);
     case 'getVaultRecords': {
       const categoryIds = typeof ctx.input.categoryIds === 'string' && ctx.input.categoryIds.length > 0
         ? ctx.input.categoryIds.split(',').map((row) => row.trim()).filter(Boolean)

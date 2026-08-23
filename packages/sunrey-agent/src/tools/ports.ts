@@ -245,6 +245,11 @@ export type CardsPort = {
 export type DataPort = {
   consent(ownerId: string): PortResult<ConsentSummary>;
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
+  hinParticipation(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+    readonly financialServicesRemainOpen: true;
+  }>;
   vaultRecords(
     ownerId: string,
     input: { readonly purpose: string; readonly categoryIds?: readonly string[]; readonly recordIds?: readonly string[] },

@@ -72,6 +72,8 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
+import { ConsentService } from '../../../../packages/consent/src/service.ts';
+import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
 import {
   PersonalDataVaultProduct,
@@ -116,6 +118,9 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'CARD_MANAGE_REQUEST',
   'CUSTODY_OPERATE_REQUEST',
   'ADD_WITHDRAWAL_DESTINATION',
+  'CONSENT_GRANT_OWN',
+  'CONSENT_REVOKE_OWN',
+  'CONSENT_VIEW_OWN',
 ];
 
 export type SandboxWorld = {
@@ -132,6 +137,7 @@ export type SandboxWorld = {
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
+  readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
 };
 
@@ -537,6 +543,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
+  const dataRights = attachSandboxDataRights(runtime);
   const vault = attachSandboxVault(runtime, personas);
 
   return Object.freeze({
@@ -553,6 +560,22 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     exchange: createExchangeBffSurface(),
+    dataRights,
+  });
+}
+
+function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsEngine {
+  const consent = new ConsentService({
+    clock: runtime.clock,
+    keys: runtime.keyProvider,
+    evidence: runtime.evidence,
+    events: runtime.events,
+  });
+  return new ConsentDataRightsEngine({
+    clock: runtime.clock,
+    consent,
+    evidence: runtime.evidence,
+    events: runtime.events,
     vault,
   });
 }

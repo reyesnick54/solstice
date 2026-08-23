@@ -98,6 +98,7 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | getConsentSummary | Active permits | none | summary | READ | READ_FINANCIAL_STATE | read-only | consent | no |
 | getDataPermissions | Authorized scopes | none | scopes | READ | READ_FINANCIAL_STATE | read-only | consent / PDV | no |
+| getHinParticipation | Optional HIN state | none | participation | READ | READ_FINANCIAL_STATE | read-only | consent product | no |
 
 ## NATIVE ECONOMY
 
