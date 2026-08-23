@@ -28,7 +28,10 @@ export function explainCandidate(
       canExecuteToday &&
       candidate.action !== 'REVIEW_INVESTMENT_OPPORTUNITY_FUTURE' &&
       candidate.action !== 'INVESTMENT_ACCOUNT_AVAILABLE' &&
-      candidate.action !== 'PAPER_INVESTMENT_REVIEW_AVAILABLE'
+      candidate.action !== 'PAPER_INVESTMENT_REVIEW_AVAILABLE' &&
+      candidate.action !== 'REBALANCE_PORTFOLIO_PROPOSAL' &&
+      candidate.action !== 'DIVERSIFY_CONCENTRATION_PROPOSAL' &&
+      candidate.action !== 'DEPLOY_INVESTMENT_CASH_PROPOSAL'
         ? true
         : false,
   };

@@ -13,8 +13,23 @@ import type {
 } from './ids.ts';
 import { freezeNode, type EconomicNode } from './node.ts';
 import { freezeOpportunity, type EconomicOpportunity } from './opportunity.ts';
+import type { AccessEvidence } from './privacy.ts';
 import { sourcesDisagree, type DataQualityState, type SourceType } from './provenance.ts';
+import type { DerivedInsight } from './insights.ts';
+import type { SuitabilityProfile } from './suitability.ts';
 import type { ActivityClassification, Counterpart, SerializedMoney } from './taxonomy.ts';
+
+export type ClassifiedActivityOverlay = {
+  readonly sourceEventId: string;
+  readonly classification: ActivityClassification;
+  readonly counterpart?: Counterpart;
+  readonly subjectId: string;
+  readonly accountId?: string;
+  readonly amount?: SerializedMoney;
+  readonly direction?: 'INFLOW' | 'OUTFLOW';
+  readonly occurredAt?: UtcInstant;
+  readonly userCorrected?: boolean;
+};
 
 export type EconomicActivity = {
   readonly activityId: EconomicActivityId;
@@ -39,6 +54,16 @@ export type StoredSnapshot = {
   readonly bodyCanonical: string;
 };
 
+export type HistoryPoint = {
+  readonly historyId: string;
+  readonly graphId: EconomicGraphId;
+  readonly capturedAt: UtcInstant;
+  readonly series: 'NET_POSITION' | 'CASH_FLOW' | 'GOAL_PROGRESS' | 'PORTFOLIO_PROGRESS';
+  readonly currency: string;
+  readonly minorUnits: string;
+  readonly sourceSnapshotId: EconomicSnapshotId | null;
+};
+
 export type EconomicGraphSnapshotState = {
   readonly graphs: readonly EconomicGraph[];
   readonly nodes: readonly EconomicNode[];
@@ -48,6 +73,12 @@ export type EconomicGraphSnapshotState = {
   readonly opportunities: readonly EconomicOpportunity[];
   readonly snapshots: readonly StoredSnapshot[];
   readonly processedEventIds: readonly string[];
+  readonly overlays: readonly ClassifiedActivityOverlay[];
+  readonly accountCurrencies: readonly { readonly accountId: string; readonly currency: string }[];
+  readonly insights: readonly DerivedInsight[];
+  readonly suitability: readonly { readonly subjectId: string; readonly profile: SuitabilityProfile }[];
+  readonly accessEvidence: readonly AccessEvidence[];
+  readonly history: readonly HistoryPoint[];
 };
 
 export class InMemoryEconomicGraphStore {
@@ -59,6 +90,12 @@ export class InMemoryEconomicGraphStore {
   private readonly opportunities = new Map<string, EconomicOpportunity>();
   private readonly snapshots = new Map<string, StoredSnapshot>();
   private readonly processedEventIds = new Set<string>();
+  private readonly overlays = new Map<string, ClassifiedActivityOverlay>();
+  private readonly accountCurrencies = new Map<string, string>();
+  private readonly insights = new Map<string, DerivedInsight>();
+  private readonly suitability = new Map<string, SuitabilityProfile>();
+  private readonly accessEvidence = new Map<string, AccessEvidence>();
+  private readonly history = new Map<string, HistoryPoint>();
 
   putGraph(graph: EconomicGraph): EconomicGraph {
     const frozen = freezeGraph(graph);
@@ -176,7 +213,83 @@ export class InMemoryEconomicGraphStore {
   }
 
   snapshotsFor(graphId: EconomicGraphId): readonly StoredSnapshot[] {
-    return [...this.snapshots.values()].filter((item) => item.graphId === graphId);
+    return [...this.snapshots.values()]
+      .filter((item) => item.graphId === graphId)
+      .sort((a, b) => (a.generatedAt < b.generatedAt ? -1 : a.generatedAt > b.generatedAt ? 1 : 0));
+  }
+
+  putOverlay(overlay: ClassifiedActivityOverlay): ClassifiedActivityOverlay {
+    const frozen = Object.freeze({ ...overlay });
+    this.overlays.set(frozen.sourceEventId, frozen);
+    return frozen;
+  }
+
+  getOverlay(sourceEventId: string): ClassifiedActivityOverlay | undefined {
+    return this.overlays.get(sourceEventId);
+  }
+
+  overlaysFor(subjectId?: string): readonly ClassifiedActivityOverlay[] {
+    const rows = [...this.overlays.values()];
+    return subjectId ? rows.filter((row) => row.subjectId === subjectId) : rows;
+  }
+
+  putAccountCurrency(accountId: string, currency: string): void {
+    this.accountCurrencies.set(accountId, currency);
+  }
+
+  getAccountCurrency(accountId: string): string | undefined {
+    return this.accountCurrencies.get(accountId);
+  }
+
+  putInsight(insight: DerivedInsight): DerivedInsight {
+    const frozen = Object.freeze({ ...insight });
+    this.insights.set(frozen.insightId, frozen);
+    return frozen;
+  }
+
+  replaceInsights(graphId: EconomicGraphId, rows: readonly DerivedInsight[]): readonly DerivedInsight[] {
+    for (const [id, row] of [...this.insights.entries()]) {
+      if (row.graphId === graphId) {
+        this.insights.delete(id);
+      }
+    }
+    return Object.freeze(rows.map((row) => this.putInsight(row)));
+  }
+
+  insightsFor(graphId: EconomicGraphId): readonly DerivedInsight[] {
+    return [...this.insights.values()].filter((row) => row.graphId === graphId);
+  }
+
+  putSuitability(subjectId: string, profile: SuitabilityProfile): SuitabilityProfile {
+    const frozen = Object.freeze({ ...profile });
+    this.suitability.set(subjectId, frozen);
+    return frozen;
+  }
+
+  getSuitability(subjectId: string): SuitabilityProfile | undefined {
+    return this.suitability.get(subjectId);
+  }
+
+  putAccessEvidence(row: AccessEvidence): AccessEvidence {
+    const frozen = Object.freeze({ ...row, categories: Object.freeze([...row.categories]) });
+    this.accessEvidence.set(frozen.evidenceId, frozen);
+    return frozen;
+  }
+
+  accessEvidenceFor(subjectId: string): readonly AccessEvidence[] {
+    return [...this.accessEvidence.values()].filter((row) => row.subjectId === subjectId);
+  }
+
+  putHistory(point: HistoryPoint): HistoryPoint {
+    const frozen = Object.freeze({ ...point });
+    this.history.set(frozen.historyId, frozen);
+    return frozen;
+  }
+
+  historyFor(graphId: EconomicGraphId, series?: HistoryPoint['series']): readonly HistoryPoint[] {
+    return [...this.history.values()]
+      .filter((row) => row.graphId === graphId && (!series || row.series === series))
+      .sort((a, b) => (a.capturedAt < b.capturedAt ? -1 : a.capturedAt > b.capturedAt ? 1 : 0));
   }
 
   markProcessed(eventId: string): void {
@@ -222,6 +335,16 @@ export class InMemoryEconomicGraphStore {
         this.snapshots.delete(id);
       }
     }
+    for (const [id, insight] of [...this.insights.entries()]) {
+      if (insight.graphId === graphId) {
+        this.insights.delete(id);
+      }
+    }
+    for (const [id, point] of [...this.history.entries()]) {
+      if (point.graphId === graphId) {
+        this.history.delete(id);
+      }
+    }
     this.processedEventIds.clear();
   }
 
@@ -235,6 +358,16 @@ export class InMemoryEconomicGraphStore {
       opportunities: Object.freeze([...this.opportunities.values()]),
       snapshots: Object.freeze([...this.snapshots.values()]),
       processedEventIds: Object.freeze([...this.processedEventIds]),
+      overlays: Object.freeze([...this.overlays.values()]),
+      accountCurrencies: Object.freeze(
+        [...this.accountCurrencies.entries()].map(([accountId, currency]) => Object.freeze({ accountId, currency })),
+      ),
+      insights: Object.freeze([...this.insights.values()]),
+      suitability: Object.freeze(
+        [...this.suitability.entries()].map(([subjectId, profile]) => Object.freeze({ subjectId, profile })),
+      ),
+      accessEvidence: Object.freeze([...this.accessEvidence.values()]),
+      history: Object.freeze([...this.history.values()]),
     });
   }
 
@@ -247,6 +380,12 @@ export class InMemoryEconomicGraphStore {
     this.opportunities.clear();
     this.snapshots.clear();
     this.processedEventIds.clear();
+    this.overlays.clear();
+    this.accountCurrencies.clear();
+    this.insights.clear();
+    this.suitability.clear();
+    this.accessEvidence.clear();
+    this.history.clear();
     for (const graph of state.graphs) {
       this.putGraph(graph);
     }
@@ -270,6 +409,24 @@ export class InMemoryEconomicGraphStore {
     }
     for (const eventId of state.processedEventIds) {
       this.processedEventIds.add(eventId);
+    }
+    for (const overlay of state.overlays ?? []) {
+      this.putOverlay(overlay);
+    }
+    for (const row of state.accountCurrencies ?? []) {
+      this.putAccountCurrency(row.accountId, row.currency);
+    }
+    for (const insight of state.insights ?? []) {
+      this.putInsight(insight);
+    }
+    for (const row of state.suitability ?? []) {
+      this.putSuitability(row.subjectId, row.profile);
+    }
+    for (const row of state.accessEvidence ?? []) {
+      this.putAccessEvidence(row);
+    }
+    for (const row of state.history ?? []) {
+      this.putHistory(row);
     }
   }
 

@@ -445,10 +445,528 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
-      summary: Grow My Money resource stub
+      summary: Grow My Money home
+      description: Structured Grow home. Lovable only renders server state.
+      responses:
+        "200":
+          description: Grow home
+  /api/v1/grow/snapshot:
+    get:
+      operationId: getGrowSnapshot
+      summary: Financial snapshot from the Personal Economic Graph
+      responses:
+        "200":
+          description: Snapshot
+  /api/v1/grow/goals:
+    get:
+      operationId: listGrowGoals
+      summary: List financial goals
+      responses:
+        "200":
+          description: Goals
+    post:
+      operationId: createGrowGoal
+      summary: Create a financial goal
+      responses:
+        "201":
+          description: Goal
+  /api/v1/grow/opportunities:
+    get:
+      operationId: listGrowOpportunities
+      summary: List opportunities
+      responses:
+        "200":
+          description: Opportunities
+  /api/v1/grow/opportunities/{id}/dismiss:
+    post:
+      operationId: dismissGrowOpportunity
+      summary: Dismiss an opportunity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Dismissed
+  /api/v1/grow/plan:
+    get:
+      operationId: getGrowthPlan
+      summary: Current Growth Plan
+      responses:
+        "200":
+          description: Plan
+  /api/v1/grow/plan/request:
+    post:
+      operationId: requestNewGrowthPlan
+      summary: Request a new Growth Plan
+      responses:
+        "200":
+          description: Plan
+  /api/v1/grow/plan/pause:
+    post:
+      operationId: pauseGrowthPlan
+      summary: Pause an activated Growth Plan
+      responses:
+        "200":
+          description: Paused
+  /api/v1/grow/plan/resume:
+    post:
+      operationId: resumeGrowthPlan
+      summary: Resume an activated Growth Plan
+      responses:
+        "200":
+          description: Resumed
+  /api/v1/grow/plan/progress:
+    get:
+      operationId: getGrowthPlanProgress
+      summary: Activated plan component progress
+      responses:
+        "200":
+          description: Progress
+  /api/v1/grow/scenarios:
+    get:
+      operationId: getGrowScenarios
+      summary: Scenario bands
+      description: Projection and estimate only. Not guaranteed returns.
+      responses:
+        "200":
+          description: Scenarios
+  /api/v1/grow/proposals:
+    post:
+      operationId: createGrowthProposal
+      summary: Create a server-owned Financial Proposal
+      responses:
+        "201":
+          description: Proposal
+  /api/v1/grow/proposals/{id}:
+    get:
+      operationId: getGrowthProposal
+      summary: Proposal detail and explainability
+      summary: Grow My Money catalog and latest plan experience
+      description: >
+        Simulation illustrations only. Conservative, base, and upside
+        ranges are not guaranteed outcomes. Production remains disabled.
+      responses:
+        "200":
+          description: Grow catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowCatalog"
+  /api/v1/grow/plans:
+    get:
+      operationId: listGrowPlans
+      summary: List the authenticated customer's growth plans
+      responses:
+        "200":
+          description: Plan list
+    post:
+      operationId: createGrowPlan
+      summary: Create a Grow My Money plan
+      description: >
+        Server issues the plan and a structured primary proposal.
+        The client cannot submit proposal JSON as if the server issued it.
+      responses:
+        "201":
+          description: Created plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPlan"
+  /api/v1/grow/plans/{id}:
+    get:
+      operationId: getGrowPlan
+      summary: Get one owned growth plan
+      summary: Grow My Money availability
       responses:
         "200":
           description: Honest availability
+  /api/v1/grow/portfolio:
+    get:
+      operationId: getGrowPortfolio
+      summary: Simulation portfolio summary
+      description: >
+        Authoritative values come from packages/investments.
+        Frontend math is not authoritative. Not a live securities brokerage.
+      responses:
+        "200":
+          description: Portfolio
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPortfolio"
+      summary: Grow My Money opportunity feed
+      description: >
+        Deterministic Growth Orchestrator cards. Does not execute money
+        or promise a return.
+      responses:
+        "200":
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+  /api/v1/grow/opportunities:
+    get:
+      operationId: listGrowOpportunities
+      summary: List ranked growth opportunities
+      responses:
+        "200":
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+        "401":
+          description: Authentication required
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Portfolio not found
+  /api/v1/grow/portfolio/holdings:
+    get:
+      operationId: getGrowPortfolioHoldings
+      summary: Simulation holdings
+      responses:
+        "200":
+          description: Holdings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowHoldings"
+  /api/v1/grow/portfolio/performance:
+    get:
+      operationId: getGrowPortfolioPerformance
+      summary: Simulation performance
+      description: Server-calculated TWR or Modified Dietz. LLMs are not authoritative.
+      responses:
+        "200":
+          description: Performance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPerformance"
+  /api/v1/grow/portfolio/allocation:
+    get:
+      operationId: getGrowPortfolioAllocation
+      summary: Actual and target allocation
+      responses:
+        "200":
+          description: Allocation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowAllocation"
+  /api/v1/grow/portfolio/risk:
+    get:
+      operationId: getGrowPortfolioRisk
+      summary: Portfolio risk metrics
+      description: Does not fabricate statistics when history is insufficient.
+      responses:
+        "200":
+          description: Risk
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowRisk"
+  /api/v1/grow/opportunities/{id}:
+    get:
+      operationId: getGrowOpportunity
+      summary: Get one owned growth opportunity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Growth plan
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Unknown plan
+  /api/v1/grow/proposals:
+    get:
+      operationId: listGrowProposals
+      summary: List structured financial proposals
+      responses:
+        "200":
+          description: Proposal list
+    post:
+      operationId: createGrowProposal
+      summary: Create a structured financial proposal from a plan component
+      responses:
+        "201":
+          description: Financial proposal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposal"
+  /api/v1/grow/proposals/{id}:
+    get:
+      operationId: getGrowProposal
+      summary: Get one owned financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal
+  /api/v1/grow/proposals/{id}/modify:
+    post:
+      operationId: modifyGrowthProposal
+      summary: Create a new proposal version
+          description: Financial proposal
+        "404":
+          description: Unknown or fabricated proposal id
+  /api/v1/grow/proposals/{id}/modify:
+    post:
+      operationId: modifyGrowProposal
+      summary: Recalculate a new proposal version
+      description: Material terms on a presented proposal are not edited in place.
+          description: Opportunity
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Not found
+  /api/v1/grow/opportunities/{id}/dismiss:
+    post:
+      operationId: dismissGrowOpportunity
+      summary: Dismiss an opportunity
+      description: A dismissed fingerprint is not re-presented unchanged.
+      summary: Grow My Money catalog
+      responses:
+        "200":
+          description: Availability plus simulation posture
+  /api/v1/grow/profile:
+    get:
+      operationId: getGrowProfile
+      summary: Client-safe financial intelligence profile
+      description: >
+        Derived from the Personal Economic Graph. Not the Ledger.
+        Does not promise guaranteed returns. Unlike currencies are not summed.
+      responses:
+        "200":
+          description: Grow profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProfile"
+  /api/v1/grow/snapshot:
+    get:
+      operationId: getGrowSnapshot
+      summary: Financial snapshot
+      responses:
+        "200":
+          description: Snapshot with per-currency positions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowSnapshot"
+  /api/v1/grow/goals:
+    get:
+      operationId: listGrowGoals
+      summary: List user-declared goals
+      responses:
+        "200":
+          description: Goal list
+    post:
+      operationId: createGrowGoal
+      summary: Create a user-declared goal
+      responses:
+        "201":
+          description: Created goal
+  /api/v1/grow/goals/{id}:
+    patch:
+      operationId: patchGrowGoal
+      summary: Update a user-declared goal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: New version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowthProposal
+      summary: Customer approval with step-up when required
+          description: New proposal version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowProposal
+      summary: Approve a structured financial proposal
+      description: >
+        Uses the Phase B approval state machine. Approval does not issue
+        Execution Authority and does not post a ledger journal.
+          description: Dismissed opportunity
+  /api/v1/grow/opportunities/{id}/start-proposal:
+    post:
+      operationId: startGrowOpportunityProposal
+      summary: Accept an opportunity for proposal
+      description: >
+        Does not execute money, issue Execution Authority, or post a
+        ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved
+        "401":
+          description: Step-up required
+  /api/v1/grow/proposals/{id}/execute:
+    post:
+      operationId: executeGrowthProposal
+      summary: Execute an approved proposal through Kernel and Provider Runtime
+      description: Frontend financial instructions are not trusted proposal state.
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Policy, suitability, or cross-user denial
+  /api/v1/grow/proposals/{id}/reject:
+    post:
+      operationId: rejectGrowProposal
+      summary: Reject a structured financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/executions/{id}:
+    get:
+      operationId: getGrowExecution
+      summary: Normalized execution status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/portfolio:
+    get:
+      operationId: getGrowPortfolio
+      summary: Holdings, allocation, and risk
+      responses:
+        "200":
+          description: Portfolio
+  /api/v1/grow/performance:
+    get:
+      operationId: getGrowPerformance
+      summary: Planned versus executed versus current
+      description: Deposits are not market performance.
+      responses:
+        "200":
+          description: Performance
+  /api/v1/grow/recurring:
+    post:
+      operationId: createGrowRecurring
+      summary: Create a recurring contribution mandate
+      responses:
+        "201":
+          description: Mandate
+  /api/v1/grow/recurring/{id}/cancel:
+    post:
+      operationId: cancelGrowRecurring
+      summary: Revoke a recurring mandate
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked
+  /api/v1/grow/monitor:
+    post:
+      operationId: runGrowMonitor
+      summary: Run a monitoring cycle
+      responses:
+        "200":
+          description: Findings
+  /api/v1/grow/agent-tools:
+    post:
+      operationId: invokeGrowAgentTool
+      summary: Phase F agent tool hook
+      description: Agent may propose. Agent cannot execute or self-approve.
+      responses:
+        "200":
+          description: Tool result
+        "403":
+          description: Privileged execution refused
+          description: Rejected proposal
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
+          description: Updated goal
+  /api/v1/grow/insights:
+    get:
+      operationId: listGrowInsights
+      summary: Deterministic derived insights
+      responses:
+        "200":
+          description: Insight list
+  /api/v1/grow/suitability:
+    get:
+      operationId: getGrowSuitability
+      summary: Deterministic risk and suitability profile
+      responses:
+        "200":
+          description: Suitability or null
+    post:
+      operationId: submitGrowSuitability
+      summary: Submit questionnaire answers
+      responses:
+        "201":
+          description: Assessed profile
+  /api/v1/grow/assumptions:
+    post:
+      operationId: declareGrowAssumption
+      summary: Declare or correct user-editable assumptions
+      description: Cannot override Ledger-backed SunRey account balances.
+      responses:
+        "201":
+          description: Accepted declaration
+        "403":
+          description: Authoritative fact immutable
+  /api/v1/grow/classifications:
+    post:
+      operationId: correctGrowClassification
+      summary: Correct a derived activity classification
+      responses:
+        "200":
+          description: Overlay stored
+  /api/v1/grow/history:
+    get:
+      operationId: getGrowHistory
+      summary: Compact historical snapshot series
+      responses:
+        "200":
+          description: History points
+  /api/v1/grow/agent:
+    get:
+      operationId: getGrowAgentProfile
+      summary: Agent-scoped PEG read
+      description: An Agent does not automatically receive every personal category.
+      responses:
+        "200":
+          description: Scoped profile
+        "403":
+          description: Mandate required
   /api/v1/agent:
     get:
       operationId: getAgent
@@ -534,17 +1052,17 @@ paths:
   /api/v1/goals:
     get:
       operationId: getGoals
-      summary: Goals resource stub
+      summary: Goals alias for Grow goals
       responses:
         "200":
-          description: Honest availability
+          description: Goals
   /api/v1/portfolio:
     get:
       operationId: getPortfolio
-      summary: Portfolio resource stub
+      summary: Portfolio alias for Grow portfolio
       responses:
         "200":
-          description: Honest availability
+          description: Portfolio
   /api/v1/wallets:
     get:
       operationId: getWallets
@@ -575,6 +1093,38 @@ paths:
           description: Honest availability
 components:
   schemas:
+    GrowMoney:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    GrowProfile:
+      type: object
+      required: [schema, subjectId, generatedAt, authoritativeBalance, ledgerWins]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.profile.v1] }
+        subjectId: { type: string }
+        generatedAt: { type: string }
+        financialStrengths:
+          type: array
+          items: { type: string }
+        areasToImprove:
+          type: array
+          items: { type: string }
+        authoritativeBalance: { type: boolean, enum: [false] }
+        ledgerWins: { type: boolean, enum: [true] }
+    GrowSnapshot:
+      type: object
+      required: [snapshotId, subjectId, generatedAt, crossCurrencyTotal, authoritativeBalance, ledgerWins]
+      properties:
+        snapshotId: { type: string }
+        subjectId: { type: string }
+        generatedAt: { type: string }
+        crossCurrencyTotal: { type: "null" }
+        authoritativeBalance: { type: boolean, enum: [false] }
+        ledgerWins: { type: boolean, enum: [true] }
+        guaranteedReturn: { type: boolean, enum: [false] }
     MoneyResource:
       type: object
       required: [minorUnits, currency]
@@ -820,6 +1370,44 @@ components:
                       amount: { $ref: "#/components/schemas/MoneyView" }
                       description: { type: string }
                       reference: { type: string }
+    GrowProposalReceipt:
+      type: object
+      required: [opportunityId, proposalId, status, executesMoney, issuesExecutionAuthority, productionMoneyMovement]
+      properties:
+        opportunityId: { type: string }
+        proposalId: { type: string }
+        status: { type: string, enum: [ACCEPTED_FOR_PROPOSAL] }
+        executesMoney: { type: boolean, enum: [false] }
+        issuesExecutionAuthority: { type: boolean, enum: [false] }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+        nextStep: { type: string }
+    GrowOpportunityFeed:
+      type: object
+      required: [schema, productionMoneyMovement, items]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.opportunities.v1] }
+        generatedAt: { type: string, format: date-time }
+        rankingVersion: { type: string }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+        suppressedCount: { type: integer }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              card: { type: string }
+              opportunityId: { type: string }
+              title: { type: string }
+              summary: { type: string }
+              category: { type: string }
+              status: { type: string }
+              eligible: { type: boolean }
+              priority: { type: integer }
+              currency: { type: string }
+              impactKind: { type: string }
+              riskLevel: { type: string }
+              achievementPromised: { type: boolean, enum: [false] }
+              immediatelyExecutable: { type: boolean, enum: [false] }
     HomeResource:
       type: object
       required: [schema, generatedAt, wealth, accounts]
@@ -846,3 +1434,242 @@ components:
         accounts:
           allOf:
             - { $ref: "#/components/schemas/ResourceField" }
+    GrowCatalog:
+      type: object
+      required: [group, availability, productionActive, guaranteedOutcome]
+      properties:
+        group: { type: string, enum: [grow] }
+        schema: { type: string }
+        availability: { type: string, enum: [AVAILABLE_SIMULATION] }
+        state: { type: string }
+        reason: { type: string }
+        productionActive: { type: boolean, enum: [false] }
+        guaranteedOutcome: { type: boolean, enum: [false] }
+    GrowPlan:
+      type: object
+      required: [planId, ownerId, status, guaranteedOutcome, productionActive]
+      properties:
+        planId: { type: string }
+        ownerId: { type: string }
+        status:
+          type: string
+          enum: [DRAFT, PROPOSED, ACTIVE, PAUSED, SUPERSEDED, COMPLETED, CANCELLED]
+        guaranteedOutcome: { type: boolean, enum: [false] }
+        productionActive: { type: boolean, enum: [false] }
+        primaryProposal:
+          nullable: true
+          type: object
+          properties:
+            proposalId: { type: string }
+    GrowProposal:
+      type: object
+      required: [proposalId, planId, status, guaranteedOutcome, executionAuthorityId, serverIssued]
+      properties:
+        proposalId: { type: string }
+        planId: { type: string }
+        status:
+          type: string
+          enum:
+            - DRAFT
+            - READY
+            - PRESENTED
+            - AWAITING_APPROVAL
+            - AWAITING_STEP_UP
+            - AWAITING_COMPLIANCE
+            - APPROVED
+            - EXECUTING
+            - EXECUTED
+            - REJECTED
+            - EXPIRED
+            - FAILED
+            - CANCELLED
+            - SUPERSEDED
+        guaranteedOutcome: { type: boolean, enum: [false] }
+        executionAuthorityId: { type: string, nullable: true, enum: [null] }
+        serverIssued: { type: boolean, enum: [true] }
+    GrowMoney:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    GrowPortfolio:
+      type: object
+      required: [schema, portfolioId, ownerId, status, baseCurrency, displayCurrency, cash, invested, total, environment, liveState, securitiesBrokerageLive, authoritativeCalculator, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.portfolio.v1] }
+        portfolioId: { type: string }
+        ownerId: { type: string }
+        status: { type: string }
+        baseCurrency: { type: string }
+        displayCurrency: { type: string }
+        strategyRef: { type: string, nullable: true }
+        riskProfileRef: { type: string, nullable: true }
+        goalLinks:
+          type: array
+          items: { type: string }
+        restrictions:
+          type: array
+          items: { type: string }
+        cash: { $ref: "#/components/schemas/GrowMoney" }
+        invested: { $ref: "#/components/schemas/GrowMoney" }
+        total: { $ref: "#/components/schemas/GrowMoney" }
+        environment: { type: string, enum: [simulation] }
+        liveState: { type: boolean, enum: [false] }
+        securitiesBrokerageLive: { type: boolean, enum: [false] }
+        authoritativeCalculator: { type: string, enum: [INVESTMENT_PLATFORM] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowHoldings:
+      type: object
+      required: [schema, portfolioId, holdings, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.holdings.v1] }
+        portfolioId: { type: string }
+        holdings:
+          type: array
+          items:
+            type: object
+            required: [instrumentId, identifier, displayName, assetClass, quantityUnits, averageCost, remainingCost, realized, income, currency, valuation]
+            properties:
+              instrumentId: { type: string }
+              identifier: { type: string }
+              displayName: { type: string }
+              assetClass: { type: string }
+              quantityUnits: { type: string }
+              averageCost: { $ref: "#/components/schemas/GrowMoney" }
+              remainingCost: { $ref: "#/components/schemas/GrowMoney" }
+              marketPriceMinorUnits: { type: string, nullable: true }
+              marketValue: { $ref: "#/components/schemas/GrowMoney", nullable: true }
+              unrealized: { $ref: "#/components/schemas/GrowMoney", nullable: true }
+              realized: { $ref: "#/components/schemas/GrowMoney" }
+              income: { $ref: "#/components/schemas/GrowMoney" }
+              currency: { type: string }
+              valuation:
+                type: object
+                required: [source, timestamp, freshnessMs, quality, stale]
+                properties:
+                  source: { type: string }
+                  timestamp: { type: string, format: date-time }
+                  freshnessMs: { type: string }
+                  quality: { type: string }
+                  stale: { type: boolean }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowPerformance:
+      type: object
+      required: [schema, methodology, formula, absoluteReturn, realized, unrealized, income, cashFlows, insufficientData, llmAuthoritative, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.performance.v1] }
+        methodology: { type: string, enum: [TWR_LINKED_SUBPERIODS, MODIFIED_DIETZ] }
+        formula: { type: string }
+        absoluteReturn: { $ref: "#/components/schemas/GrowMoney" }
+        periodReturnBps: { type: string, nullable: true }
+        realized: { $ref: "#/components/schemas/GrowMoney" }
+        unrealized: { $ref: "#/components/schemas/GrowMoney" }
+        income: { $ref: "#/components/schemas/GrowMoney" }
+        cashFlows:
+          type: array
+          items:
+            type: object
+            properties:
+              at: { type: string, format: date-time }
+              kind: { type: string }
+              amount: { $ref: "#/components/schemas/GrowMoney" }
+        benchmark:
+          type: object
+          nullable: true
+          properties:
+            benchmarkId: { type: string }
+            periodReturnBps: { type: string }
+            deltaBps: { type: string, nullable: true }
+        insufficientData: { type: boolean }
+        llmAuthoritative: { type: boolean, enum: [false] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowAllocation:
+      type: object
+      required: [schema, actual, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.allocation.v1] }
+        actual:
+          type: object
+          properties:
+            byAssetClass:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byInstrument:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byCurrency:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+            byRiskClass:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+                  marketValue: { $ref: "#/components/schemas/GrowMoney" }
+        target:
+          type: object
+          nullable: true
+          properties:
+            cashTargetBps: { type: string }
+            weights:
+              type: array
+              items:
+                type: object
+                properties:
+                  key: { type: string }
+                  weightBps: { type: string }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }
+    GrowRisk:
+      type: object
+      required: [schema, concentration, fabricatedStatistics, frontendMathAuthoritative]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.risk.v1] }
+        concentration:
+          type: object
+          properties:
+            largestInstrumentId: { type: string, nullable: true }
+            largestWeightBps: { type: string }
+        drawdownBps: { type: string, nullable: true }
+        volatilityBps: { type: string, nullable: true }
+        volatilityAvailable: { type: boolean }
+        currencyExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              currency: { type: string }
+              weightBps: { type: string }
+        liquidityExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              liquidity: { type: string }
+              weightBps: { type: string }
+        assetClassExposure:
+          type: array
+          items:
+            type: object
+            properties:
+              assetClass: { type: string }
+              weightBps: { type: string }
+        fabricatedStatistics: { type: boolean, enum: [false] }
+        frontendMathAuthoritative: { type: boolean, enum: [false] }

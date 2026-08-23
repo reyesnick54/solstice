@@ -327,6 +327,23 @@ describe('Consumer BFF', () => {
     assert.equal((executed.body as { status: string }).status, 'SETTLED');
   });
 
+  it('lists grow opportunities with structured cards and denies cross-user access', () => {
+    const world = createSandboxWorld();
+    const listed = get(world, '/api/v1/grow/opportunities', 'grow');
+    assert.equal(listed.status, 200);
+    const body = listed.body as {
+      schema: string;
+      productionMoneyMovement: boolean;
+      items: readonly { readonly opportunityId: string; readonly achievementPromised: boolean }[];
+    };
+    assert.equal(body.schema, 'sunrey.consumer.grow.opportunities.v1');
+    assert.equal(body.productionMoneyMovement, false);
+    assert.ok(body.items.length > 0);
+    assert.equal(body.items.every((item) => item.achievementPromised === false), true);
+    const other = get(world, `/api/v1/grow/opportunities/${body.items[0]?.opportunityId ?? 'gop_x'}`, 'basic_verified');
+    assert.equal(other.status === 403 || other.status === 404, true);
+  });
+
   it('surfaces agent recommendation counts for the agent-enabled persona', () => {
     const world = createSandboxWorld();
     const home = get(world, '/api/v1/me/home', 'agent_enabled');

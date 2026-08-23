@@ -217,6 +217,32 @@ export function resourceField<T>(input: {
   });
 }
 
+export const GROW_OPPORTUNITY_STATUSES = [
+  'DETECTED',
+  'ELIGIBLE',
+  'INELIGIBLE',
+  'PRESENTED',
+  'DISMISSED',
+  'ACCEPTED_FOR_PROPOSAL',
+  'EXPIRED',
+  'SUPERSEDED',
+  'COMPLETED',
+] as const;
+
+export const GROW_OPPORTUNITY_CATEGORIES = [
+  'CASH_OPTIMIZATION',
+  'EMERGENCY_RESERVE',
+  'RECURRING_SAVING',
+  'INVESTMENT_ALLOCATION',
+  'PORTFOLIO_REBALANCE',
+  'DIVERSIFICATION',
+  'CURRENCY_OPTIMIZATION',
+  'DEBT_OPTIMIZATION',
+  'GOAL_FUNDING',
+  'EXPENSE_OPTIMIZATION',
+  'INCOME_ALLOCATION',
+] as const;
+
 export function moneyView(currency: string, minorUnits: bigint): MoneyView {
   return Object.freeze({
     currency,

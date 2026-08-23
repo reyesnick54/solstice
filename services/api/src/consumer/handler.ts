@@ -14,6 +14,8 @@ import {
   FINANCIAL_PRODUCT_TYPES,
   PRODUCT_AVAILABILITIES,
   PROVIDER_AVAILABILITIES,
+  GROW_OPPORTUNITY_STATUSES,
+  GROW_OPPORTUNITY_CATEGORIES,
   RISK_DISPLAY_LEVELS,
   IDENTITY_VERIFICATION_CLIENT_STATES,
   VERIFICATION_DISPLAY_STATES,
@@ -30,6 +32,15 @@ import type { IdentityService } from '../../../../packages/identity/src/service.
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
 import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
+import type { GrowBffSurface } from './grow.ts';
+import {
+  actorFromPrincipal,
+  growCatalog,
+  mapGrowFailure,
+  parseCreatePlan,
+  toLovableExperience,
+} from './grow.ts';
+import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/index.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -54,6 +65,8 @@ export type ConsumerBffRuntime = {
   readonly identity?: IdentityService;
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
+  readonly grow?: GrowBffSurface;
+  readonly grow?: ProductGrowthService;
 };
 
 const STUB_GROUPS = [
@@ -126,6 +139,35 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         productAvailability: PRODUCT_AVAILABILITIES,
         clientResourceState: CLIENT_RESOURCE_STATES,
         paymentStatus: PAYMENT_LIFECYCLE_STATUSES,
+        growPlanStatus: [
+          'DRAFT',
+          'PROPOSED',
+          'ACTIVE',
+          'PAUSED',
+          'SUPERSEDED',
+          'COMPLETED',
+          'CANCELLED',
+        ],
+        growProposalStatus: [
+          'DRAFT',
+          'READY',
+          'PRESENTED',
+          'AWAITING_APPROVAL',
+          'AWAITING_STEP_UP',
+          'AWAITING_COMPLIANCE',
+          'APPROVED',
+          'EXECUTING',
+          'EXECUTED',
+          'REJECTED',
+          'EXPIRED',
+          'FAILED',
+          'CANCELLED',
+          'SUPERSEDED',
+        ],
+        growRiskProfile: ['CONSERVATIVE', 'BALANCED', 'GROWTH'],
+        growScenario: ['CONSERVATIVE', 'BASE', 'UPSIDE'],
+        growOpportunityStatus: GROW_OPPORTUNITY_STATUSES,
+        growOpportunityCategory: GROW_OPPORTUNITY_CATEGORIES,
       },
       headers,
     );
@@ -243,6 +285,12 @@ function dispatchAuthenticated(
     const id = path.slice('/api/v1/fx/quotes/'.length);
     return result(runtime.bff.getFxQuote(principal, id, requestId), headers);
   }
+  if (runtime.grow) {
+    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    if (grow) {
+      return grow;
+    }
+  }
   if (runtime.payments) {
     const payments = dispatchPayments(runtime.payments, request, principal, requestId, headers);
     if (payments) {
@@ -295,6 +343,75 @@ function dispatchAuthenticated(
       });
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
+  if (runtime.grow) {
+    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    if (grow) {
+      return grow;
+    }
+  if (path === '/api/v1/grow/portfolio' && method === 'GET') {
+    return result(runtime.bff.growPortfolio(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/holdings' && method === 'GET') {
+    return result(runtime.bff.growHoldings(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
+    return result(runtime.bff.growPerformance(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/allocation' && method === 'GET') {
+    return result(runtime.bff.growAllocation(principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
+    return result(runtime.bff.growRisk(principal, requestId), headers);
+  if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
+    return result(runtime.bff.listGrowOpportunities(principal), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
+    return result(runtime.bff.dismissGrowOpportunity(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/start-proposal') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/start-proposal'.length);
+    return result(runtime.bff.startGrowProposal(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length);
+    return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  if (path === '/api/v1/grow/profile' && method === 'GET') {
+    return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
+  }
+  if (path === '/api/v1/grow/snapshot' && method === 'GET') {
+    return result(runtime.bff.growSnapshot(principal, query.valuationCurrency ?? query.valuation_currency), headers);
+  }
+  if (path === '/api/v1/grow/goals' && method === 'GET') {
+    return result(runtime.bff.growGoals(principal), headers);
+  }
+  if (path === '/api/v1/grow/goals' && method === 'POST') {
+    return result(runtime.bff.createGrowGoal(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/grow/goals/') && method === 'PATCH') {
+    const id = path.slice('/api/v1/grow/goals/'.length);
+    return result(runtime.bff.patchGrowGoal(principal, id, rec, requestId), headers);
+  }
+  if (path === '/api/v1/grow/insights' && method === 'GET') {
+    return result(runtime.bff.growInsights(principal), headers);
+  }
+  if (path === '/api/v1/grow/suitability' && method === 'GET') {
+    return result(runtime.bff.growSuitability(principal), headers);
+  }
+  if (path === '/api/v1/grow/suitability' && method === 'POST') {
+    return result(runtime.bff.submitGrowSuitability(principal, rec, requestId), headers, 201);
+  }
+  if (path === '/api/v1/grow/assumptions' && method === 'POST') {
+    return result(runtime.bff.declareGrowAssumption(principal, rec, requestId), headers, 201);
+  }
+  if (path === '/api/v1/grow/classifications' && method === 'POST') {
+    return result(runtime.bff.correctGrowClassification(principal, rec, requestId), headers);
+  }
+  if (path === '/api/v1/grow/history' && method === 'GET') {
+    return result(runtime.bff.growHistory(principal, query.series), headers);
+  }
+  if (path === '/api/v1/grow/agent' && method === 'GET') {
+    return result(runtime.bff.growAgentProfile(principal), headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -438,6 +555,168 @@ function dispatchPayments(
   return null;
 }
 
+function dispatchGrow(
+  grow: GrowBffSurface,
+  grow: ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if (path === '/api/v1/grow' && method === 'GET') return result(grow.home(principal, requestId), headers);
+  if (path === '/api/v1/grow/snapshot' && method === 'GET') return result(grow.snapshot(principal, requestId), headers);
+  if (path === '/api/v1/grow/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+  if (path === '/api/v1/grow/goals' && method === 'POST') return result(grow.createGoal(principal, rec, requestId), headers, 201);
+  if (path === '/api/v1/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+  if (path === '/api/v1/grow/opportunities' && method === 'GET') return result(grow.opportunities(principal, requestId), headers);
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
+    return result(grow.dismissOpportunity(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/grow/plan' && method === 'GET') return result(grow.plan(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/request' && method === 'POST') return result(grow.requestNewPlan(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/pause' && method === 'POST') return result(grow.pause(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/resume' && method === 'POST') return result(grow.resume(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/progress' && method === 'GET') return result(grow.planProgress(principal, requestId), headers);
+  if (path === '/api/v1/grow/scenarios' && method === 'GET') return result(grow.scenarios(principal, requestId), headers);
+  if (path === '/api/v1/grow/proposals' && method === 'POST') return result(grow.createProposal(principal, rec, requestId), headers, 201);
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/modify') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/modify'.length);
+    return result(grow.modifyProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/approve') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/approve'.length);
+    return result(grow.approveProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/execute') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/execute'.length);
+    return result(grow.executeProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && method === 'GET') {
+    return result(grow.getProposal(principal, path.slice('/api/v1/grow/proposals/'.length), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/executions/') && method === 'GET') {
+    return result(grow.executionStatus(principal, path.slice('/api/v1/grow/executions/'.length), requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+  if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+  if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+  if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
+  if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
+    return result(grow.cancelRecurring(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
+  if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+  const actor = actorFromPrincipal(principal);
+
+  if (path === '/api/v1/grow' && method === 'GET') {
+    return json(200, growCatalog(grow, principal, requestId), headers);
+  }
+  if (path === '/api/v1/grow/plans' && method === 'POST') {
+    const parsed = parseCreatePlan(principal, rec);
+    if (isBffError(parsed)) {
+      return json(statusForError(parsed), { ...parsed, requestId }, headers);
+    }
+    const created = grow.createPlan(actor, parsed);
+    if (!created.ok) {
+      return json(statusForError(mapGrowFailure(created.error, requestId)), mapGrowFailure(created.error, requestId), headers);
+    }
+    const proposal = grow.createProposal(actor, { planId: created.value.planId });
+    return json(
+      201,
+      {
+        ...created.value,
+        primaryProposal: proposal.ok ? proposal.value : null,
+        experience: toLovableExperience(created.value),
+      },
+      headers,
+    );
+  }
+  if (path === '/api/v1/grow/plans' && method === 'GET') {
+    const listed = grow.listPlans(actor, principal.customerId);
+    if (!listed.ok) {
+      return json(statusForError(mapGrowFailure(listed.error, requestId)), mapGrowFailure(listed.error, requestId), headers);
+    }
+    return json(200, { items: listed.value, productionActive: false, guaranteedOutcome: false }, headers);
+  }
+  if (path.startsWith('/api/v1/grow/plans/') && method === 'GET') {
+    const id = path.slice('/api/v1/grow/plans/'.length);
+    const loaded = grow.getPlan(actor, id);
+    if (!loaded.ok) {
+      return json(statusForError(mapGrowFailure(loaded.error, requestId)), mapGrowFailure(loaded.error, requestId), headers);
+    }
+    return json(200, loaded.value, headers);
+  }
+  if (path === '/api/v1/grow/proposals' && method === 'POST') {
+    const planId = typeof rec.planId === 'string' ? rec.planId : '';
+    const created = grow.createProposal(actor, {
+      planId,
+      ...(typeof rec.componentKind === 'string' ? { componentKind: rec.componentKind as never } : {}),
+      ...(typeof rec.opportunityId === 'string' ? { opportunityId: rec.opportunityId } : {}),
+    });
+    if (!created.ok) {
+      return json(statusForError(mapGrowFailure(created.error, requestId)), mapGrowFailure(created.error, requestId), headers);
+    }
+    return json(201, created.value, headers);
+  }
+  if (path === '/api/v1/grow/proposals' && method === 'GET') {
+    const listed = grow.listProposals(actor, principal.customerId, request.query.planId);
+    if (!listed.ok) {
+      return json(statusForError(mapGrowFailure(listed.error, requestId)), mapGrowFailure(listed.error, requestId), headers);
+    }
+    return json(200, { items: listed.value, productionActive: false }, headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/modify') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/modify'.length);
+    const modified = grow.modifyProposal(
+      actor,
+      id,
+      {
+        ...(typeof rec.amountMinorUnits === 'string' ? { amountMinorUnits: rec.amountMinorUnits } : {}),
+        ...(typeof rec.goalAllocationMinorUnits === 'string'
+          ? { goalAllocationMinorUnits: rec.goalAllocationMinorUnits }
+          : {}),
+        ...(typeof rec.riskProfile === 'string' ? { riskProfile: rec.riskProfile as never } : {}),
+      },
+      rec,
+    );
+    if (!modified.ok) {
+      return json(statusForError(mapGrowFailure(modified.error, requestId)), mapGrowFailure(modified.error, requestId), headers);
+    }
+    return json(200, modified.value, headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/approve') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/approve'.length);
+    const approved = grow.approveProposal(actor, id, {
+      ...(rec.stepUpSatisfied === true ? { stepUpSatisfied: true } : {}),
+    });
+    if (!approved.ok) {
+      return json(statusForError(mapGrowFailure(approved.error, requestId)), mapGrowFailure(approved.error, requestId), headers);
+    }
+    return json(200, approved.value, headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/reject') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/reject'.length);
+    const rejected = grow.rejectProposal(actor, id);
+    if (!rejected.ok) {
+      return json(statusForError(mapGrowFailure(rejected.error, requestId)), mapGrowFailure(rejected.error, requestId), headers);
+    }
+    return json(200, rejected.value, headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && method === 'GET') {
+    const id = path.slice('/api/v1/grow/proposals/'.length);
+    const loaded = grow.getProposal(actor, id);
+    if (!loaded.ok) {
+      return json(statusForError(mapGrowFailure(loaded.error, requestId)), mapGrowFailure(loaded.error, requestId), headers);
+    }
+    return json(200, loaded.value, headers);
+  }
+  return null;
+}
+
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
@@ -494,6 +773,55 @@ export const CONSUMER_BFF_ROUTES = [
   'PATCH /api/v1/cards/{id}/controls',
   'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
+  'GET /api/v1/grow/snapshot',
+  'GET /api/v1/grow/goals',
+  'POST /api/v1/grow/goals',
+  'GET /api/v1/grow/opportunities',
+  'POST /api/v1/grow/opportunities/{id}/dismiss',
+  'GET /api/v1/grow/plan',
+  'POST /api/v1/grow/plan/request',
+  'POST /api/v1/grow/plan/pause',
+  'POST /api/v1/grow/plan/resume',
+  'GET /api/v1/grow/plan/progress',
+  'GET /api/v1/grow/scenarios',
+  'POST /api/v1/grow/plans',
+  'GET /api/v1/grow/plans',
+  'GET /api/v1/grow/plans/{id}',
+  'GET /api/v1/grow/proposals',
+  'POST /api/v1/grow/proposals',
+  'GET /api/v1/grow/proposals/{id}',
+  'POST /api/v1/grow/proposals/{id}/modify',
+  'POST /api/v1/grow/proposals/{id}/approve',
+  'POST /api/v1/grow/proposals/{id}/execute',
+  'GET /api/v1/grow/executions/{id}',
+  'GET /api/v1/grow/portfolio',
+  'GET /api/v1/grow/performance',
+  'POST /api/v1/grow/recurring',
+  'POST /api/v1/grow/recurring/{id}/cancel',
+  'POST /api/v1/grow/monitor',
+  'POST /api/v1/grow/agent-tools',
+  'POST /api/v1/grow/proposals/{id}/reject',
+  'GET /api/v1/grow/portfolio',
+  'GET /api/v1/grow/portfolio/holdings',
+  'GET /api/v1/grow/portfolio/performance',
+  'GET /api/v1/grow/portfolio/allocation',
+  'GET /api/v1/grow/portfolio/risk',
+  'GET /api/v1/grow/opportunities',
+  'GET /api/v1/grow/opportunities/{id}',
+  'POST /api/v1/grow/opportunities/{id}/dismiss',
+  'POST /api/v1/grow/opportunities/{id}/start-proposal',
+  'GET /api/v1/grow/profile',
+  'GET /api/v1/grow/snapshot',
+  'GET /api/v1/grow/goals',
+  'POST /api/v1/grow/goals',
+  'PATCH /api/v1/grow/goals/{id}',
+  'GET /api/v1/grow/insights',
+  'GET /api/v1/grow/suitability',
+  'POST /api/v1/grow/suitability',
+  'POST /api/v1/grow/assumptions',
+  'POST /api/v1/grow/classifications',
+  'GET /api/v1/grow/history',
+  'GET /api/v1/grow/agent',
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',

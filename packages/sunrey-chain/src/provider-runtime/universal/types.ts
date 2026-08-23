@@ -53,6 +53,7 @@ export const PROVIDER_CATEGORIES = [
   'BLOCKCHAIN_ANALYTICS',
   'MARKET_DATA',
   'ORACLE',
+  'INVESTMENTS',
 ] as const;
 export type ProviderCategory = (typeof PROVIDER_CATEGORIES)[number];
 
@@ -90,6 +91,9 @@ export const PROVIDER_CAPABILITIES = [
   'BLOCKCHAIN_ANALYTICS.SCREEN',
   'MARKET_DATA.QUOTE',
   'ORACLE.FACT_INGEST',
+  'INVESTMENT.PAPER_ORDER',
+  'INVESTMENT.FUND',
+  'INVESTMENT.SETTLE',
 ] as const;
 export type ProviderCapabilityId = (typeof PROVIDER_CAPABILITIES)[number];
 
@@ -421,7 +425,7 @@ export type OperationsProviderView = {
   readonly customerBffExposed: false;
 };
 
-export type BffFeatureKey = 'payments' | 'fx' | 'cards';
+export type BffFeatureKey = 'payments' | 'fx' | 'cards' | 'investments';
 
 export type FeatureAvailability = {
   readonly feature: BffFeatureKey;

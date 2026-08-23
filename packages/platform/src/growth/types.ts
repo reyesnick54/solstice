@@ -146,10 +146,24 @@ export type PlanningRiskAnnotation = {
   readonly reason: string;
 };
 
+export type InvestmentReviewOpportunity = {
+  readonly kind:
+    | 'REBALANCE_PORTFOLIO_PROPOSAL'
+    | 'DIVERSIFY_CONCENTRATION_PROPOSAL'
+    | 'DEPLOY_INVESTMENT_CASH_PROPOSAL';
+  readonly title: string;
+  readonly detail: string;
+  readonly amountMinorUnits?: string;
+};
+
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
-  readonly investmentExecutionImplemented: false;
+  readonly investmentExecutionImplemented: boolean;
   readonly peve?: PevePlanningSignals;
   readonly riskAnnotations?: readonly PlanningRiskAnnotation[];
+  readonly investmentReview?: {
+    readonly portfolioId: string;
+    readonly opportunities: readonly InvestmentReviewOpportunity[];
+  };
 };

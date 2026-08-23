@@ -37,9 +37,15 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
-      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Lab/demo path; not a product investment engine.');
+      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + Grow lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Sandbox Grow home. Execution uses Kernel, Execution Authority, and Provider Runtime. Live investment is disabled.');
     case 'GOALS':
-      return row(group, '/api/v1/goals', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/platform goals (when productized)', 'none', 'No honest productized goal store yet.');
+      return row(group, '/api/v1/goals', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'Server-owned goals from PEG. Not a promised-return engine.');
+      return row(group, '/api/v1/grow', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator product plans/proposals', 'none', 'Grow My Money plans and structured proposals. Illustrations only. Production remains disabled.');
+      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/investments InvestmentPlatform + packages/platform Growth Orchestrator', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Simulation portfolio/holdings/performance/allocation/risk. No privileged execution APIs. Not a live securities broker.');
+      return row(group, '/api/v1/grow/opportunities', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Deterministic opportunity feed. Starting a proposal does not move money.');
+      return row(group, '/api/v1/grow/profile', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph EconomicGraphService', 'none', 'Client-safe PEG profile, snapshot, goals, insights, and suitability. Not the Ledger. Not guaranteed returns.');
+    case 'GOALS':
+      return row(group, '/api/v1/grow/goals', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'User-declared goals. Ledger balances cannot be overridden.');
     case 'PORTFOLIO':
       return row(group, '/api/v1/portfolio', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts investments bucket + packages/sunrey-exchange consumer', 'none', 'Class breakdown only; no yield field.');
     case 'AGENT':
