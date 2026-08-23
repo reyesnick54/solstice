@@ -59,7 +59,6 @@ authentication foundation; the BFF only consumes a verified session.
 | GROW detail | `/api/v1/grow/opportunities/{id}` | GET | required + owner | Opportunity | same | AVAILABLE_SIMULATION | cross-user denied |
 | GROW dismiss | `/api/v1/grow/opportunities/{id}/dismiss` | POST | required + owner | Opportunity | lifecycle; fingerprint suppressed | AVAILABLE_SIMULATION | none |
 | GROW start | `/api/v1/grow/opportunities/{id}/start-proposal` | POST | required + owner | proposal receipt | does not execute money | AVAILABLE_SIMULATION | none |
-| GROW | `/api/v1/grow` | GET | required | availability catalog | `packages/personal-economic-graph` + Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | FINANCIAL PROFILE | `/api/v1/grow/profile` | GET | required + owner | `sunrey.grow.profile.v1` | PEG snapshot + suitability + insights | AVAILABLE_SIMULATION | not Ledger authority; no guaranteed return |
 | FINANCIAL SNAPSHOT | `/api/v1/grow/snapshot` | GET | required + owner | `FinancialIntelligenceSnapshot` | PEG + Phase C presentation valuation | AVAILABLE_SIMULATION | `crossCurrencyTotal` is always null |
 | GOALS | `/api/v1/grow/goals` | GET, POST, PATCH | required + owner | goal resources | PEG user-declared goals | AVAILABLE_SIMULATION | cannot override Ledger balances |

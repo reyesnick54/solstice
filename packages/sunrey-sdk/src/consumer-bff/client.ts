@@ -101,6 +101,8 @@ export class SunReyConsumerBffClient {
 
   async startGrowProposal(id: string, options?: BffRequestOptions): Promise<import('./types.ts').GrowProposalReceipt> {
     return this.request('POST', `/api/v1/grow/opportunities/${encodeURIComponent(id)}/start-proposal`, {}, options);
+  }
+
   async getGrowProfile(options?: BffRequestOptions): Promise<GrowProfile> {
     return this.request('GET', '/api/v1/grow/profile', undefined, options);
   }

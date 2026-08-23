@@ -38,12 +38,10 @@ import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/pr
 import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
-import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
 import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
-import { createGrowCommandPort } from './grow-adapter.ts';
+import { createGrowCommandPort, createGrowOpportunityPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
-import { createGrowOpportunityPort } from './grow-adapter.ts';
 import {
   applyPersonaSeed,
   EconomicGraphService,
@@ -451,14 +449,14 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       orchestrator: new GrowthOrchestrator({
         clock: runtime.clock,
         events: runtime.events,
-        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+        peg,
       }),
       accounts: createAccountsReadAdapter(runtime),
       actorFor(principal) {
         const actor = runtime.identity.service.resolveActorContext(principal.actorId);
         return actor.ok ? actor.value : principal;
       },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
+    }),
     growCommands: createGrowCommandPort({
       peg,
       identity: runtime.identity.service,

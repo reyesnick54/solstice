@@ -281,6 +281,7 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
     const id = path.slice('/api/v1/grow/opportunities/'.length);
     return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  }
   if (path === '/api/v1/grow/profile' && method === 'GET') {
     return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
   }

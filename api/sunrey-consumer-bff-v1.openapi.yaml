@@ -492,10 +492,33 @@ paths:
       operationId: dismissGrowOpportunity
       summary: Dismiss an opportunity
       description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
       responses:
         "200":
-          description: Availability plus simulation posture
+          description: Dismissed opportunity
+  /api/v1/grow/opportunities/{id}/start-proposal:
+    post:
+      operationId: startGrowOpportunityProposal
+      summary: Accept an opportunity for proposal
+      description: >
+        Does not execute money, issue Execution Authority, or post a
+        ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -545,26 +568,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Dismissed opportunity
-  /api/v1/grow/opportunities/{id}/start-proposal:
-    post:
-      operationId: startGrowOpportunityProposal
-      summary: Accept an opportunity for proposal
-      description: >
-        Does not execute money, issue Execution Authority, or post a
-        ledger journal.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Proposal receipt
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowProposalReceipt"
           description: Updated goal
   /api/v1/grow/insights:
     get:
