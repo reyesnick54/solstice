@@ -98,6 +98,11 @@ function mapFailure(code: string, message: string, requestId: string): BffErrorE
   });
 }
 
+type ValuedBody = {
+  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
+  readonly presentationValuation?: SnapshotPresentationValuation | null;
+  readonly valuationContext?: SnapshotPresentationValuation | null;
+};
 function publicOpportunity(item: Opportunity): unknown {
   return Object.freeze({
     opportunityId: item.opportunityId,
@@ -210,12 +215,6 @@ export function createGrowOpportunityPort(input: {
     },
   };
 }
-
-type ValuedBody = {
-  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
-  readonly presentationValuation?: SnapshotPresentationValuation | null;
-  readonly valuationContext?: SnapshotPresentationValuation | null;
-};
 
 export function createGrowCommandPort(input: {
   readonly peg: EconomicGraphService;

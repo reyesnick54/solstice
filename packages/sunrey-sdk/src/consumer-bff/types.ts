@@ -370,8 +370,11 @@ export type GrowPlanProposal = {
   readonly amount: MoneyResource;
   readonly guaranteedOutcome: false;
   readonly issuedAuthority: null;
+  readonly executionAuthorityId: null;
   readonly serverIssued: true;
 };
+export type GrowProductProposal = GrowPlanProposal;
+export type GrowProposal = GrowPlanProposal;
 
 export type GrowMoney = {
   readonly minorUnits: string;
@@ -535,6 +538,7 @@ export type GrowPortfolio = {
   readonly securitiesBrokerageLive: false;
   readonly authoritativeCalculator: 'INVESTMENT_PLATFORM';
   readonly frontendMathAuthoritative: false;
+  readonly liveInvestmentExecution: false;
 };
 
 export type GrowHoldings = {
@@ -579,6 +583,7 @@ export type GrowPerformance = {
   readonly insufficientData: boolean;
   readonly llmAuthoritative: false;
   readonly frontendMathAuthoritative: false;
+  readonly depositsAreNotPerformance: true;
 };
 
 export type GrowAllocation = {

@@ -80,7 +80,12 @@ export class ExchangeBffSurface {
     if (quantity === null) {
       return this.fail(requestId, 'VALIDATION', 'INVALID_QUANTITY');
     }
-    const preview = this.worldFor(principal).preview({ side, quantity, notionalUsdMinor: str(body.notionalUsdMinor) });
+    const notionalUsdMinor = str(body.notionalUsdMinor);
+    const preview = this.worldFor(principal).preview({
+      side,
+      quantity,
+      ...(notionalUsdMinor ? { notionalUsdMinor } : {}),
+    });
     if ('ok' in preview && preview.ok === false) {
       return this.fail(requestId, 'POLICY', preview.reason);
     }

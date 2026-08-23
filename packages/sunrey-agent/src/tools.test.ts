@@ -28,7 +28,6 @@ function mandateInput(overrides: Partial<CreateMandateInput> = {}): CreateMandat
         'READ_FINANCIAL_STATE',
         'PREPARE_PAYMENT',
         'PREPARE_EXCHANGE_ORDER',
-        'PREPARE_REBALANCE',
         'REBALANCE_WITHIN_POLICY',
         'REQUEST_HUMAN_APPROVAL',
       ],
@@ -90,7 +89,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'hin'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
     now: frozen.now(),
@@ -107,6 +106,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
+    assert.equal(CANONICAL_TOOL_COUNT, 48);
     assert.equal(CANONICAL_TOOL_COUNT, 45);
     assert.equal(CANONICAL_TOOL_COUNT, CANONICAL_AGENT_TOOLS.length);
     const again = createCanonicalToolRegistry();
@@ -169,6 +169,10 @@ describe('tool contract matrix', () => {
       getNativeAsset: { assetId: 'SUNREY_COIN' },
       getNativeSupply: {},
       getNativeEconomy: {},
+      getHinContributions: {},
+      getHinMetrics: {},
+      getHinSummary: {},
+      getHinValuationMethodologies: {},
     };
     for (const tool of CANONICAL_AGENT_TOOLS) {
       const result = runtime.invoke({ ...session, turnId: `valid_${tool.toolId}` }, { toolId: tool.toolId, input: samples[tool.toolId] ?? {} });
@@ -275,5 +279,13 @@ describe('tool contract matrix', () => {
     assert.equal(read.status, 'SUCCESS');
     assert.equal(read.executed, false);
     assert.equal(CANONICAL_AGENT_TOOLS.some((tool) => tool.toolId.includes('mint') || tool.toolId.includes('burn')), false);
+    for (const toolId of ['verifyHinContribution', 'mintFromHin', 'approveHinIssuance']) {
+      const result = runtime.invoke(session, { toolId, input: {} });
+      assert.equal(result.executed, false, toolId);
+      assert.ok(result.status === 'FAILED' || result.status === 'NOT_ELIGIBLE', toolId);
+    }
+    const hin = runtime.invoke(session, { toolId: 'getHinMetrics', input: {} });
+    assert.equal(hin.status, 'SUCCESS');
+    assert.equal(hin.executed, false);
   });
 });

@@ -83,8 +83,8 @@ export class ExchangeProductPlatform {
       sellerParticipantId: input.sellerParticipantId,
       buyerCashAccountId: input.buyerCashAccountId,
       sellerCashAccountId: input.sellerCashAccountId,
-      buyerCustodyRef: input.buyerCustodyRef,
-      sellerCustodyRef: input.sellerCustodyRef,
+      ...(input.buyerCustodyRef !== undefined ? { buyerCustodyRef: input.buyerCustodyRef } : {}),
+      ...(input.sellerCustodyRef !== undefined ? { sellerCustodyRef: input.sellerCustodyRef } : {}),
       baseAssetId: trade.quantity.assetId,
       quoteAssetId: trade.price.quoteAssetId,
       quoteKind: trade.price.quoteKind,
@@ -96,8 +96,8 @@ export class ExchangeProductPlatform {
       currency: trade.quoteAmount.currency,
       makerOrderId: trade.makerOrderId,
       takerOrderId: trade.takerOrderId,
-      makerHoldId: input.makerHoldId,
-      takerHoldId: input.takerHoldId,
+      ...(input.makerHoldId !== undefined ? { makerHoldId: input.makerHoldId } : {}),
+      ...(input.takerHoldId !== undefined ? { takerHoldId: input.takerHoldId } : {}),
       quoteRail: input.quoteRail,
       baseRail: input.baseRail,
       at: input.at,
@@ -127,7 +127,7 @@ export class ExchangeProductPlatform {
       at: input.at,
       authority: input.authority,
       actorId: input.actorId,
-      kind: input.kind,
+      ...(input.kind !== undefined ? { kind: input.kind } : {}),
     });
     this.clearing.set(input.obligationId, next);
     return next;
@@ -152,7 +152,7 @@ export class ExchangeProductPlatform {
       next = transitionClearing(next, 'SETTLING', input.at, { incrementAttempt: true });
     }
     next = transitionClearing(next, input.state, input.at, {
-      refs: input.refs,
+      ...(input.refs !== undefined ? { refs: input.refs } : {}),
       failureCode: input.failureCode ?? null,
     });
     this.clearing.set(input.obligationId, next);
@@ -173,9 +173,9 @@ export class ExchangeProductPlatform {
     const next = this.coordinator.applyVerifiedFinality({
       clearing: current,
       at: input.at,
-      custodyConfirmation: input.custodyConfirmation,
-      chainFinality: input.chainFinality,
-      fromWebhookAlone: input.fromWebhookAlone,
+      ...(input.custodyConfirmation !== undefined ? { custodyConfirmation: input.custodyConfirmation } : {}),
+      ...(input.chainFinality !== undefined ? { chainFinality: input.chainFinality } : {}),
+      ...(input.fromWebhookAlone !== undefined ? { fromWebhookAlone: input.fromWebhookAlone } : {}),
     });
     this.clearing.set(input.obligationId, next);
     return next;

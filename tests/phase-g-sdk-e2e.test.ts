@@ -47,7 +47,7 @@ describe('Phase G SDK-only digital-asset E2E', () => {
       assert.ok(['OPEN', 'PARTIALLY_FILLED', 'FILLED', 'SUBMITTED'].includes(sold.view));
 
       const wallets = await sdk.listWallets();
-      assert.equal((wallets as { schema: string }).schema, 'sunrey.consumer.wallet.v1');
+      assert.equal((wallets as unknown as { schema: string }).schema, 'sunrey.consumer.wallet.v1');
       const deposit = await sdk.simulateWalletDeposit({ quantity: '3' });
       assert.equal((deposit as { credited: boolean }).credited, true);
       const quote = await sdk.createWithdrawalQuote({

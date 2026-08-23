@@ -1,4 +1,5 @@
 import { applyFill, matchIncoming, sortBook } from '../matching.ts';
+import type { SelfTradePolicy } from '../taxonomy.ts';
 import type { DigitalOrder, ImmutableTrade } from '../types.ts';
 import { toTrade } from '../matching.ts';
 import type { ProductizedFeeSchedule } from './fees.ts';
@@ -22,7 +23,7 @@ export function replayAcceptedOrders(input: {
   readonly accepted: readonly DigitalOrder[];
   readonly feeSchedule: ProductizedFeeSchedule;
   readonly quoteCurrency: ImmutableTrade['quoteAmount']['currency'];
-  readonly selfTrade?: 'CANCEL_INCOMING' | 'PREVENT';
+  readonly selfTrade?: SelfTradePolicy;
   readonly knownTradeKeys?: ReadonlySet<string>;
 }): ReplayResult {
   const working = new Map<string, DigitalOrder>();

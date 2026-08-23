@@ -1505,13 +1505,67 @@ paths:
         "401":
           description: Authentication required
           description: Honest availability; production trading remains disabled
-  /api/v1/exchange/markets:
+  /api/v1/hin/contributions:
     get:
-      operationId: listExchangeMarkets
-      summary: List simulation markets
+      operationId: listHinContributions
+      summary: List owner HIN contributions
+      description: >
+        Client-safe contribution records. No raw personal data. Economic
+        value inputs are not mint amounts. Privileged verification and
+        issuance operations are not exposed.
       responses:
         "200":
-          description: Markets with productionTradingEnabled=false
+          description: Contribution list
+        "401":
+          description: Authentication required
+  /api/v1/hin/contributions/{contributionId}:
+    get:
+      operationId: getHinContribution
+      summary: Read one HIN contribution
+      parameters:
+        - in: path
+          name: contributionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Contribution resource
+        "404":
+          description: Unknown contribution
+        "401":
+          description: Authentication required
+  /api/v1/hin/metrics:
+    get:
+      operationId: getHinMetrics
+      summary: Privacy-safe aggregate HIN metrics
+      responses:
+        "200":
+          description: Aggregate metrics with k-anonymity suppression
+        "401":
+          description: Authentication required
+  /api/v1/hin/me/summary:
+    get:
+      operationId: getHinMySummary
+      summary: Customer contribution summary
+      description: >
+        Your Contributions, verified, pending, economic value inputs,
+        data rights, and compensation if any. Token issuance is not
+        promised unless authorized protocol policy defines it.
+      responses:
+        "200":
+          description: Customer HIN summary
+        "401":
+          description: Authentication required
+  /api/v1/hin/valuation-methodologies:
+    get:
+      operationId: listHinValuationMethodologies
+      summary: Safe HIN valuation methodology metadata
+      description: Versioned methodologies. Not a mint formula. Production unauthorized.
+      responses:
+        "200":
+          description: Methodology metadata
+        "401":
+          description: Authentication required
   /api/v1/exchange/markets/{instrument}:
     get:
       operationId: getExchangeMarket
@@ -1535,7 +1589,7 @@ paths:
           description: Market
   /api/v1/exchange/markets/{instrument}/ticker:
     get:
-      operationId: getExchangeTicker
+      operationId: getExchangeTickerByInstrument
       summary: Ticker with freshness
       parameters:
         - in: path
@@ -1614,13 +1668,6 @@ paths:
       responses:
         "200":
           description: Candles
-  /api/v1/exchange/eligibility:
-    get:
-      operationId: getExchangeEligibility
-      summary: CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW
-      responses:
-        "200":
-          description: Server-controlled eligibility
   /api/v1/exchange/preview:
     post:
       operationId: previewExchangeOrder
@@ -1693,20 +1740,6 @@ paths:
       responses:
         "200":
           description: Order / fill
-  /api/v1/exchange/orders:
-    get:
-      operationId: listExchangeOrders
-      summary: Open orders and history
-      responses:
-        "200":
-          description: Orders
-  /api/v1/exchange/fills:
-    get:
-      operationId: listExchangeFills
-      summary: Fills
-      responses:
-        "200":
-          description: Fills
   /api/v1/exchange/stream:
     get:
       operationId: getExchangeStream
@@ -1896,7 +1929,7 @@ paths:
           description: Not owned
   /api/v1/wallets/{id}/deposit-address:
     get:
-      operationId: getWalletDepositAddress
+      operationId: getWalletDepositAddressById
       summary: Deposit / receive address
       parameters:
         - name: id
@@ -1920,7 +1953,7 @@ paths:
           description: Transactions with client-safe finality
   /api/v1/wallets/{id}/withdrawal-quote:
     post:
-      operationId: quoteWalletWithdrawal
+      operationId: quoteWalletWithdrawalById
       summary: Withdrawal quote
       parameters:
         - name: id

@@ -49,5 +49,8 @@ export function mainnetGenesisFailsClosed(): true {
     economicParametersApproved: true,
     counselConfirmed: true,
   });
-  return result.ok === false;
+  if (result.ok) {
+    throw new Error('mainnet genesis must fail closed');
+  }
+  return true;
 }

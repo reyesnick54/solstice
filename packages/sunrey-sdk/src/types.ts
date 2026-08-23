@@ -32,6 +32,7 @@ export const API_NAMESPACES = [
   'EXCHANGE',
   'MONETARY',
   'INFORMATION',
+  'HIN',
 ] as const;
 export type ApiNamespace = (typeof API_NAMESPACES)[number];
 

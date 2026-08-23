@@ -72,6 +72,7 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
+
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
