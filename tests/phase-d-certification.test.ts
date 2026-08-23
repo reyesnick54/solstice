@@ -36,6 +36,7 @@ describe('Phase D certification harness', () => {
       'BLOCKCHAIN_ANALYTICS',
       'MARKET_DATA',
       'ORACLE',
+      'INVESTMENTS',
     ]) {
       assert.ok(types.includes(required), required);
     }

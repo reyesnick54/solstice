@@ -159,7 +159,7 @@ export type InvestmentReviewOpportunity = {
 export type PlanningContext = {
   readonly frozenAccountIds?: readonly string[];
   readonly eligibleAccounts?: readonly EligibleAccount[];
-  readonly investmentExecutionImplemented: false;
+  readonly investmentExecutionImplemented: boolean;
   readonly peve?: PevePlanningSignals;
   readonly riskAnnotations?: readonly PlanningRiskAnnotation[];
   readonly investmentReview?: {

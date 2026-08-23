@@ -31,6 +31,7 @@ import { listSandboxPersonas } from './fixtures.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
+import type { GrowBffSurface } from './grow.ts';
 import {
   actorFromPrincipal,
   growCatalog,
@@ -62,6 +63,7 @@ export type ConsumerBffRuntime = {
   readonly identity?: IdentityService;
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
+  readonly grow?: GrowBffSurface;
   readonly grow?: ProductGrowthService;
 };
 
@@ -309,6 +311,11 @@ function dispatchAuthenticated(
     );
   }
 
+  if (runtime.grow) {
+    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    if (grow) {
+      return grow;
+    }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);
   }
@@ -517,6 +524,7 @@ function dispatchPayments(
 }
 
 function dispatchGrow(
+  grow: GrowBffSurface,
   grow: ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -525,6 +533,51 @@ function dispatchGrow(
 ): BffResponse | null {
   const { method, path, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if (path === '/api/v1/grow' && method === 'GET') return result(grow.home(principal, requestId), headers);
+  if (path === '/api/v1/grow/snapshot' && method === 'GET') return result(grow.snapshot(principal, requestId), headers);
+  if (path === '/api/v1/grow/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+  if (path === '/api/v1/grow/goals' && method === 'POST') return result(grow.createGoal(principal, rec, requestId), headers, 201);
+  if (path === '/api/v1/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+  if (path === '/api/v1/grow/opportunities' && method === 'GET') return result(grow.opportunities(principal, requestId), headers);
+  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
+    return result(grow.dismissOpportunity(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/grow/plan' && method === 'GET') return result(grow.plan(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/request' && method === 'POST') return result(grow.requestNewPlan(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/pause' && method === 'POST') return result(grow.pause(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/resume' && method === 'POST') return result(grow.resume(principal, requestId), headers);
+  if (path === '/api/v1/grow/plan/progress' && method === 'GET') return result(grow.planProgress(principal, requestId), headers);
+  if (path === '/api/v1/grow/scenarios' && method === 'GET') return result(grow.scenarios(principal, requestId), headers);
+  if (path === '/api/v1/grow/proposals' && method === 'POST') return result(grow.createProposal(principal, rec, requestId), headers, 201);
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/modify') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/modify'.length);
+    return result(grow.modifyProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/approve') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/approve'.length);
+    return result(grow.approveProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/execute') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/proposals/'.length, -'/execute'.length);
+    return result(grow.executeProposal(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/proposals/') && method === 'GET') {
+    return result(grow.getProposal(principal, path.slice('/api/v1/grow/proposals/'.length), requestId), headers);
+  }
+  if (path.startsWith('/api/v1/grow/executions/') && method === 'GET') {
+    return result(grow.executionStatus(principal, path.slice('/api/v1/grow/executions/'.length), requestId), headers);
+  }
+  if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+  if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+  if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+  if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
+  if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
+    return result(grow.cancelRecurring(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
+  if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
   const actor = actorFromPrincipal(principal);
 
   if (path === '/api/v1/grow' && method === 'GET') {
@@ -688,6 +741,17 @@ export const CONSUMER_BFF_ROUTES = [
   'PATCH /api/v1/cards/{id}/controls',
   'GET /api/v1/cards/{id}/wallet',
   'GET /api/v1/grow',
+  'GET /api/v1/grow/snapshot',
+  'GET /api/v1/grow/goals',
+  'POST /api/v1/grow/goals',
+  'GET /api/v1/grow/opportunities',
+  'POST /api/v1/grow/opportunities/{id}/dismiss',
+  'GET /api/v1/grow/plan',
+  'POST /api/v1/grow/plan/request',
+  'POST /api/v1/grow/plan/pause',
+  'POST /api/v1/grow/plan/resume',
+  'GET /api/v1/grow/plan/progress',
+  'GET /api/v1/grow/scenarios',
   'POST /api/v1/grow/plans',
   'GET /api/v1/grow/plans',
   'GET /api/v1/grow/plans/{id}',
@@ -696,6 +760,14 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/grow/proposals/{id}',
   'POST /api/v1/grow/proposals/{id}/modify',
   'POST /api/v1/grow/proposals/{id}/approve',
+  'POST /api/v1/grow/proposals/{id}/execute',
+  'GET /api/v1/grow/executions/{id}',
+  'GET /api/v1/grow/portfolio',
+  'GET /api/v1/grow/performance',
+  'POST /api/v1/grow/recurring',
+  'POST /api/v1/grow/recurring/{id}/cancel',
+  'POST /api/v1/grow/monitor',
+  'POST /api/v1/grow/agent-tools',
   'POST /api/v1/grow/proposals/{id}/reject',
   'GET /api/v1/grow/portfolio',
   'GET /api/v1/grow/portfolio/holdings',

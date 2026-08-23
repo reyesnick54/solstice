@@ -520,6 +520,20 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
+  it('customer V034 persists Grow execution records without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v034 = files.find((file) => file.version === 34);
+    assert.ok(v034);
+    assert.equal(v034.filename, 'V034__grow_execution.sql');
+    assert.match(v034.sql, /CREATE TABLE growth\.financial_proposal/);
+    assert.match(v034.sql, /CREATE TABLE growth\.execution_record/);
+    assert.match(v034.sql, /CREATE TABLE growth\.recurring_mandate/);
+    assert.match(v034.sql, /agent_may_increase_amount BOOLEAN NOT NULL CHECK \(agent_may_increase_amount = FALSE\)/);
+    assert.match(v034.sql, /perpetual_authorization BOOLEAN NOT NULL CHECK \(perpetual_authorization = FALSE\)/);
+    assert.match(v034.sql, /deposits_are_not_performance BOOLEAN NOT NULL CHECK \(deposits_are_not_performance = TRUE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v034.sql), false);
+  });
+
   it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v033 = files.find((file) => file.version === 33);
