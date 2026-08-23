@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
-import { PRODUCTION_HSM_KMS_CONFIGURED as CONFIG_HSM_GATE } from '../config/src/flags.ts';
+import { PRODUCTION_HSM_KMS_CONFIGURED as CONFIG_HSM_GATE } from '../../config/src/flags.ts';
 import { sha256Hex } from './hash.ts';
 import { SecretValue } from './redaction.ts';
 import { ProviderWebhookGuard } from './regulated/webhook.ts';
