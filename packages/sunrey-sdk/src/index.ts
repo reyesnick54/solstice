@@ -186,6 +186,10 @@ export type {
   Payment,
   PaymentStatus,
   PaymentApproval,
+  AgentResource,
+  AgentConversationResource,
+  AgentMemoryResource,
+  AgentMessageResponse,
   GrowPlan,
   GrowProposal,
 } from './consumer-bff/index.ts';

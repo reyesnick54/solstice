@@ -79,6 +79,15 @@ export async function serve(runtime: ConsumerBffRuntime, req: IncomingMessage, r
     ...(idempotencyKey ? { idempotencyKey } : {}),
     ...(accept ? { accept } : {}),
   });
+  if (result.eventStream) {
+    res.writeHead(result.status, {
+      ...result.headers,
+      'content-type': 'text/event-stream',
+      'cache-control': 'no-cache',
+    });
+    res.end(result.eventStream);
+    return;
+  }
   write(res, result.status, result.body, result.headers);
 }
 
@@ -95,7 +104,7 @@ function write(res: ServerResponse, status: number, body: unknown, headers: Read
   const json = JSON.stringify(body, (_key, value) => (typeof value === 'bigint' ? value.toString() : value));
   res.writeHead(status, {
     ...headers,
-    'content-type': 'application/json',
+    'content-type': headers['content-type'] ?? 'application/json',
     'content-length': Buffer.byteLength(json),
   });
   res.end(json);

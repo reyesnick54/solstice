@@ -22,6 +22,7 @@ import type {
   AiProviderHealth,
   AiRoutingDecision,
   AiRuntimePolicy,
+  AiStreamChunk,
 } from './types.ts';
 
 const PROMPT_INJECTION =
@@ -76,6 +77,41 @@ export class AiRuntime {
 
   tracesSnapshot(): readonly AiInferenceTrace[] {
     return Object.freeze([...this.traces]);
+  }
+
+  *inferStream(request: AiInferenceRequest): Generator<AiStreamChunk, Result<AiRuntimeResult, AiProviderFailure>, void> {
+    const result = this.infer(request);
+    if (!result.ok) {
+      yield {
+        kind: 'refused',
+        text: result.error.detail,
+        requestId: request.requestId,
+        grantsExecutionAuthority: false,
+        executedFinancialMutation: false,
+      };
+      return result;
+    }
+    const text = result.value.response?.text ?? '';
+    for (const token of text.split(/(\s+)/)) {
+      if (token.length === 0) {
+        continue;
+      }
+      yield {
+        kind: 'token',
+        text: token,
+        requestId: request.requestId,
+        grantsExecutionAuthority: false,
+        executedFinancialMutation: false,
+      };
+    }
+    yield {
+      kind: 'done',
+      text: '',
+      requestId: request.requestId,
+      grantsExecutionAuthority: false,
+      executedFinancialMutation: false,
+    };
+    return result;
   }
 
   infer(request: AiInferenceRequest): Result<AiRuntimeResult, AiProviderFailure> {

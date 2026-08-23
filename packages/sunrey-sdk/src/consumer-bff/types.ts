@@ -458,6 +458,44 @@ export type AccountStatementData = {
   }[];
 };
 
+export type AgentResource = {
+  readonly agentId: string;
+  readonly ownerId: string;
+  readonly agentType: string;
+  readonly name: string;
+  readonly status: string;
+  readonly createdAt: string;
+  readonly mandateId: string | null;
+  readonly isCustomer: false;
+  readonly isExecutionAuthority: false;
+};
+
+export type AgentConversationResource = {
+  readonly conversationId: string;
+  readonly agentId: string;
+  readonly title: string;
+  readonly status: string;
+  readonly createdAt: string;
+  readonly updatedAt: string;
+  readonly contextVersion: number;
+  readonly isFinancialRecord: false;
+};
+
+export type AgentMemoryResource = {
+  readonly memoryId: string;
+  readonly category: string;
+  readonly content: string;
+  readonly source: string;
+  readonly userEditable: boolean;
+};
+
+export type AgentMessageResponse = {
+  readonly conversationId: string;
+  readonly userMessage: { readonly role: string; readonly content: string };
+  readonly agentMessage: { readonly role: string; readonly content: string } | null;
+  readonly stream: readonly { readonly kind: string; readonly text: string }[];
+  readonly financialStateChanged: false;
+  readonly executionCompleted: false;
 /**
  * Grow My Money portfolio views. Authoritative values come from
  * packages/investments. Frontend math is not authoritative.

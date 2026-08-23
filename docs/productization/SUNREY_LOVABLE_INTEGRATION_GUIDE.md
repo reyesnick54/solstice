@@ -214,11 +214,30 @@ the `/v1/consumer` personas below.
 | `drew-empty` | View-capable, no accounts |
 | `evan-paged` | Paginated activity |
 | `fin-ready` | USD/SAR money sandbox: send, recipients, FX, cards |
+| `agent_enabled` | BFF Agent Home, conversations, streaming chat (`sandbox.agent_enabled`) |
 | `investment` (BFF `sandbox.investment`) | Multi-account investment fixture |
 | `phase_e_grow` (harness `sandbox.phase_e_grow`) | Phase E Grow My Money E2E persona |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.
+
+## Agent chat (Phase F)
+
+Use the Consumer BFF client. The Agent is an actor for the customer.
+It is not the customer and not Execution Authority.
+
+```ts
+const agents = await bff.listAgents();
+const conversation = await bff.createConversation(agents.items[0].agentId, { title: 'Home' });
+const reply = await bff.postMessage(agents.items[0].agentId, conversation.conversationId, {
+  text: 'Explain my goals',
+});
+// reply.financialStateChanged === false
+// reply.executionCompleted === false
+```
+
+Settings, memories, pause, and revoke are also on `/api/v1/agents/{id}`.
+Do not treat streamed Agent text as a completed payment, FX, or trade.
 
 ## Request IDs
 

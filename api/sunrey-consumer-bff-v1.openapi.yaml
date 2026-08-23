@@ -974,6 +974,215 @@ paths:
       responses:
         "200":
           description: Honest availability
+  /api/v1/agents:
+    get:
+      operationId: listAgents
+      summary: List Agents owned by the authenticated customer
+      description: The Agent is an actor for the customer. It is not the customer and not Execution Authority.
+      responses:
+        "200":
+          description: Agent list
+        "401":
+          description: Authentication required
+  /api/v1/agents/{id}:
+    get:
+      operationId: getAgentById
+      summary: Get one owned Agent
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Agent identity
+        "403":
+          description: Cross-user denied
+  /api/v1/agents/{id}/pause:
+    post:
+      operationId: pauseAgent
+      summary: Owner pause
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paused Agent
+  /api/v1/agents/{id}/revoke:
+    post:
+      operationId: revokeAgent
+      summary: Owner revoke
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked Agent
+  /api/v1/agents/{id}/settings:
+    get:
+      operationId: getAgentSettings
+      summary: Personalization settings
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Settings
+    patch:
+      operationId: patchAgentSettings
+      summary: Update personalization that cannot alter financial mathematics
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Settings
+  /api/v1/agents/{id}/permissions:
+    get:
+      operationId: getAgentPermissions
+      summary: Mandate assist scopes and proposal limits
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Permissions
+  /api/v1/agents/{id}/memories:
+    get:
+      operationId: listAgentMemories
+      summary: List customer-visible Agent memories
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Memories
+    post:
+      operationId: createAgentMemory
+      summary: Create a user-declared memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Memory
+  /api/v1/agents/{id}/memories/{memoryId}:
+    patch:
+      operationId: correctAgentMemory
+      summary: Correct a user-editable memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: memoryId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Corrected memory
+    delete:
+      operationId: deleteAgentMemory
+      summary: Delete a user-editable memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: memoryId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+  /api/v1/agents/{id}/conversations:
+    get:
+      operationId: listAgentConversations
+      summary: List conversations
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Conversation list
+    post:
+      operationId: createAgentConversation
+      summary: Create a conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Conversation
+  /api/v1/agents/{id}/conversations/{conversationId}:
+    get:
+      operationId: getAgentConversation
+      summary: Get one conversation and its messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Conversation
+        "403":
+          description: Cross-user denied
+  /api/v1/agents/{id}/conversations/{conversationId}/messages:
+    post:
+      operationId: postAgentMessage
+      summary: Post a user message and receive a streamed Agent reply
+      description: >
+        Conversational state only. Tool calls that would mutate financial
+        state are not executed because text generation requested them.
+        Query stream=1 returns text/event-stream chunks.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: stream
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Message plus stream chunks
+          content:
+            application/json:
+              schema:
+                type: object
+            text/event-stream:
+              schema:
+                type: string
   /api/v1/agent/conversations/{conversationId}/messages:
     post:
       operationId: postAgentConversationMessage

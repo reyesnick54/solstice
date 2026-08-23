@@ -182,4 +182,13 @@ describe('SunRey AI runtime', () => {
     assert.equal(unavailable.ok, false);
     assert.equal(svc.latestTrace()?.success, false);
   });
+
+  it('streams a completed inference without granting execution authority', () => {
+    const svc = runtime();
+    const chunks = [...svc.inferStream(localTestRequest({ fixture: 'normal' }))];
+    assert.ok(chunks.some((chunk) => chunk.kind === 'token'));
+    assert.equal(chunks.at(-1)?.kind, 'done');
+    assert.ok(chunks.every((chunk) => chunk.grantsExecutionAuthority === false));
+    assert.ok(chunks.every((chunk) => chunk.executedFinancialMutation === false));
+  });
 });

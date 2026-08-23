@@ -303,7 +303,8 @@
         "packages/clean-room",
         "packages/information-market",
         "packages/sunrey-chain",
-        "packages/config"
+        "packages/config",
+        "packages/sunrey-agent"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1204,6 +1205,7 @@
         "packages/security",
         "packages/payments",
         "packages/sunrey-chain",
+        "packages/sunrey-agent"
         "packages/personal-economic-graph",
         "packages/platform",
         "packages/investments",

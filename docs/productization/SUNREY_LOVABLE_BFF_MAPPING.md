@@ -54,6 +54,8 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
+| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| AGENT | `/api/v1/agents` | GET, POST | required | Agent Home, conversations, streaming messages, settings, memory, pause/revoke | `packages/sunrey-agent` runtime + ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute; Agent text is not authorization |
 | GROW | `/api/v1/grow` | GET | required | `sunrey.consumer.grow.home.v1` | PEG + Growth Orchestrator + Grow lifecycle | SANDBOX_FUNCTIONAL | live brokerage = PROVIDER_ADAPTER_REQUIRED |
 | GROW snapshot | `/api/v1/grow/snapshot` | GET | required | financial snapshot | `packages/personal-economic-graph` | SANDBOX_FUNCTIONAL | Ledger wins; PEG is not balances |
 | GROW goals | `/api/v1/grow/goals` | GET, POST | required | goal list / create | PEG `declareGoal` | SANDBOX_FUNCTIONAL | none |
