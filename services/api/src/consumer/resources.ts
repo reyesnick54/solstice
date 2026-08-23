@@ -55,6 +55,9 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
       return row(group, '/api/v1/agents', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent runtime + ProposalGate', 'none', 'Conversations and proposals only. BFF cannot execute or issue Execution Authority.');
       return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + packages/ai-runtime Model Gateway', 'none', 'Lovable calls Agent endpoints. The Agent calls the Model Gateway. BFF cannot execute.');
     case 'EXCHANGE':
+      return row(group, '/api/v1/exchange', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer + productization lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live custody/market-data', 'Sandbox Exchange home, markets, preview, proposal, fill, and settlement. Live Exchange remains blocked.');
+    case 'WALLETS':
+      return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange native clearing + packages/custody ports', 'EXTERNAL_PROVIDER_REQUIRED for real custody', 'Sandbox wallet, deposit, withdrawal, and transaction history. Production signing is disabled.');
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
     case 'ECONOMY':
       return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');

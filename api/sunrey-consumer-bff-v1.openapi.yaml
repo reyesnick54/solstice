@@ -1437,6 +1437,18 @@ paths:
   /api/v1/exchange:
     get:
       operationId: getExchange
+      summary: Exchange home for Lovable screens
+      responses:
+        "200":
+          description: Exchange home, eligibility, and supported screens
+  /api/v1/exchange/markets:
+    get:
+      operationId: listExchangeMarkets
+      summary: List sandbox Exchange markets
+      responses:
+        "200":
+          description: Markets including SunRey Coin
+  /api/v1/exchange/markets/{marketId}:
       summary: Exchange catalog
       responses:
         "200":
@@ -1506,11 +1518,20 @@ paths:
       summary: Market detail
       parameters:
         - in: path
+          name: marketId
           name: instrument
           required: true
           schema: { type: string }
       responses:
         "200":
+          description: Market detail
+  /api/v1/exchange/markets/{marketId}/ticker:
+    get:
+      operationId: getExchangeTicker
+      summary: Ticker
+      parameters:
+        - in: path
+          name: marketId
           description: Market
   /api/v1/exchange/markets/{instrument}/ticker:
     get:
@@ -1523,6 +1544,8 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Indicative ticker
+  /api/v1/exchange/markets/{marketId}/order-book:
           description: Ticker
   /api/v1/exchange/markets/{instrument}/orderbook:
     get:
@@ -1530,11 +1553,20 @@ paths:
       summary: Order book
       parameters:
         - in: path
+          name: marketId
           name: instrument
           required: true
           schema: { type: string }
       responses:
         "200":
+          description: Depth
+  /api/v1/exchange/markets/{marketId}/chart:
+    get:
+      operationId: getExchangeChart
+      summary: Asset chart
+      parameters:
+        - in: path
+          name: marketId
           description: Order book
   /api/v1/exchange/markets/{instrument}/trades:
     get:
@@ -1547,6 +1579,28 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Candles when history exists
+  /api/v1/exchange/eligibility:
+    get:
+      operationId: getExchangeEligibility
+      summary: KYC / Exchange eligibility
+      responses:
+        "200":
+          description: Server-owned eligibility
+  /api/v1/exchange/holdings:
+    get:
+      operationId: getExchangeHoldings
+      summary: Wallet / holdings
+      responses:
+        "200":
+          description: Holdings
+  /api/v1/exchange/fund:
+    post:
+      operationId: fundExchangeSandbox
+      summary: Fund sandbox quote account
+      responses:
+        "200":
+          description: Sandbox faucet
           description: Trades
   /api/v1/exchange/markets/{instrument}/candles:
     get:
@@ -1571,6 +1625,22 @@ paths:
     post:
       operationId: previewExchangeOrder
       summary: Order preview
+      responses:
+        "200":
+          description: Preview
+        "400":
+          description: Invalid quantity
+  /api/v1/exchange/proposals:
+    post:
+      operationId: createExchangeProposal
+      summary: Create Exchange order proposal
+      responses:
+        "201":
+          description: Proposal
+  /api/v1/exchange/proposals/{id}/approve:
+    post:
+      operationId: approveExchangeProposal
+      summary: Human approval and step-up
       description: Estimated price is not a guaranteed execution price.
       responses:
         "200":
@@ -1600,6 +1670,15 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Agent self-approval refused
+  /api/v1/exchange/proposals/{id}/submit:
+    post:
+      operationId: submitExchangeProposal
+      summary: Submit after Execution Authority
           description: Order
         "403":
           description: Cross-user denied
@@ -1613,6 +1692,28 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Order / fill
+  /api/v1/exchange/orders:
+    get:
+      operationId: listExchangeOrders
+      summary: Open orders and history
+      responses:
+        "200":
+          description: Orders
+  /api/v1/exchange/fills:
+    get:
+      operationId: listExchangeFills
+      summary: Fills
+      responses:
+        "200":
+          description: Fills
+  /api/v1/exchange/stream:
+    get:
+      operationId: getExchangeStream
+      summary: Market-data stream status
+      responses:
+        "200":
+          description: Snapshot-then-increment support
           description: Cancelled
   /api/v1/exchange/fills:
     get:
@@ -1703,6 +1804,75 @@ paths:
   /api/v1/wallets:
     get:
       operationId: getWallets
+      summary: Wallet home
+      responses:
+        "200":
+          description: Wallet and holdings
+  /api/v1/wallets/deposit-address:
+    get:
+      operationId: getWalletDepositAddress
+      summary: Retrieve deposit address
+      responses:
+        "200":
+          description: Canonical custody address
+  /api/v1/wallets/deposits/simulate:
+    post:
+      operationId: simulateWalletDeposit
+      summary: Simulate native-chain deposit
+      responses:
+        "200":
+          description: Detected and finalized after test finality
+  /api/v1/wallets/withdrawals/quote:
+    post:
+      operationId: quoteWalletWithdrawal
+      summary: Withdrawal quote with destination and Travel Rule
+      responses:
+        "200":
+          description: Quote
+        "403":
+          description: Travel Rule pending or destination invalid
+  /api/v1/wallets/withdrawals:
+    post:
+      operationId: submitWalletWithdrawal
+      summary: Approved withdrawal
+      responses:
+        "200":
+          description: Finalized withdrawal
+  /api/v1/wallets/transactions:
+    get:
+      operationId: listWalletTransactions
+      summary: Wallet transaction history
+      responses:
+        "200":
+          description: Activity
+  /api/v1/economy:
+    get:
+      operationId: getEconomy
+      summary: SunRey economy information
+      responses:
+        "200":
+          description: Configured sources only
+  /api/v1/economy/sunrey-coin:
+    get:
+      operationId: getSunreyCoinEconomy
+      summary: SunRey Coin detail and HIN metrics
+      responses:
+        "200":
+          description: Asset + configured HIN metrics
+  /api/v1/economy/moonrey-coin:
+    get:
+      operationId: getMoonreyCoinEconomy
+      summary: MoonRey Coin productive-economy metrics
+      responses:
+        "200":
+          description: Configured productive categories only
+  /api/v1/economy/status:
+    get:
+      operationId: getEconomyStatus
+      summary: LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE
+      responses:
+        "200":
+          description: Client-safe freshness vocabulary
       summary: List customer wallets
       description: >
         Client-safe wallet list. No signing material. Balances are read
