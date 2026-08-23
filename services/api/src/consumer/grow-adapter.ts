@@ -106,108 +106,6 @@ function mapFailure(code: string, message: string, requestId: string): BffErrorE
   });
 }
 
-type ValuedBody = {
-  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
-  readonly presentationValuation?: SnapshotPresentationValuation | null;
-  readonly valuationContext?: SnapshotPresentationValuation | null;
-};
-
-export function createGrowCommandPort(input: {
-  readonly peg: EconomicGraphService;
-  readonly identity: IdentityService;
-  readonly valuePositions?: (
-    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
-    targetCurrency: string,
-  ) => SnapshotPresentationValuation | null;
-}): GrowCommandPort {
-  const { peg, identity, valuePositions } = input;
-
-  function attachValuation<T extends ValuedBody>(body: T, valuationCurrency?: string): T {
-    if (!valuationCurrency || !valuePositions || !body.cash || body.cash.length === 0) {
-      return body;
-    }
-    const valuation = valuePositions(
-      body.cash.map((row) => ({
-        currency: row.amount.currency,
-        minorUnits: BigInt(row.amount.minorUnits),
-      })),
-      valuationCurrency,
-    );
-    return Object.freeze({
-      ...body,
-      presentationValuation: valuation,
-      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
-    });
-  }
-
-  function actorOf(principal: BffPrincipal, requestId: string): VerifiedActorContext | BffErrorEnvelope {
-    const actor = identity.resolveActorContext(principal.actorId);
-    if (!actor.ok) {
-      return bffError({
-        errorCode: 'SESSION_INVALID',
-        category: 'AUTHENTICATION',
-        message: actor.error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    return actor.value;
-  }
-
-  function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
-    if (error.code === 'SUBJECT_MISMATCH' || error.code === 'CAPABILITY_DENIED') {
-      return bffError({
-        errorCode: 'RESOURCE_NOT_OWNED',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'AUTHORITATIVE_FACT_IMMUTABLE') {
-      return bffError({
-        errorCode: 'FORBIDDEN_PROFILE_FIELD',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'GRAPH_NOT_FOUND' || error.code === 'GOAL_NOT_FOUND') {
-      return bffError({
-        errorCode: 'NOT_FOUND',
-        category: 'NOT_FOUND',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'MANDATE_REQUIRED' || error.code === 'CATEGORY_DENIED' || error.code === 'CONSENT_DENIED') {
-      return bffError({
-        errorCode: 'FEATURE_UNAVAILABLE',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    return bffError({
-      errorCode: 'VALIDATION',
-      category: 'VALIDATION',
-      message: error.message,
-      retryable: false,
-      requestId,
-    });
-  }
-  return bffError({
-    errorCode: 'VALIDATION',
-    category: 'VALIDATION',
-    message,
-    retryable: false,
-    requestId,
-  });
-}
-
 function publicOpportunity(item: Opportunity): unknown {
   return Object.freeze({
     opportunityId: item.opportunityId,
@@ -351,7 +249,6 @@ export function createGrowCommandPort(input: {
     return Object.freeze({
       ...body,
       presentationValuation: valuation,
-      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
       ...('valuationContext' in body ? { valuationContext: valuation } : {}),
     });
   }
@@ -370,7 +267,6 @@ export function createGrowCommandPort(input: {
     return actor.value;
   }
 
-  function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
   function mapCommandFailure(
     error: { readonly code: string; readonly message: string },
     requestId: string,

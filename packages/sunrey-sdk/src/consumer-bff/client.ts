@@ -22,6 +22,11 @@ import type {
   ConversationTurn,
   NativeEconomyOverview,
   NativeEconomySupply,
+  VaultCategories,
+  VaultExportJob,
+  VaultHome,
+  VaultRecord,
+  VaultRecords,
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
@@ -655,6 +660,57 @@ export class SunReyConsumerBffClient {
 
   async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
     return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
+  }
+
+  async getVaultHome(options?: BffRequestOptions): Promise<VaultHome> {
+    return this.request('GET', '/api/v1/data/vault', undefined, options);
+  }
+
+  async listVaultCategories(options?: BffRequestOptions): Promise<VaultCategories> {
+    return this.request('GET', '/api/v1/data/vault/categories', undefined, options);
+  }
+
+  async listVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
+    return this.request('GET', '/api/v1/data/vault/records', undefined, options);
+  }
+
+  async getVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {
+    return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}`, undefined, options);
+  }
+
+  async getVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}/history`, undefined, options);
+  }
+
+  async requestVaultCorrection(
+    recordId: string,
+    input: { readonly reason: string; readonly proposedPayload?: unknown },
+    options?: BffRequestOptions,
+  ): Promise<unknown> {
+    return this.request(
+      'POST',
+      `/api/v1/data/vault/records/${encodeURIComponent(recordId)}/corrections`,
+      input,
+      options,
+    );
+  }
+
+  async listVaultSources(options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', '/api/v1/data/vault/sources', undefined, options);
+  }
+
+  async listVaultAccess(options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', '/api/v1/data/vault/access', undefined, options);
+  }
+
+  async requestVaultExport(options?: BffRequestOptions): Promise<VaultExportJob> {
+    return this.request('POST', '/api/v1/data/vault/export', {}, options);
+  }
+
+  async getVaultExportStatus(options?: BffRequestOptions): Promise<readonly VaultExportJob[]> {
+    return this.request('GET', '/api/v1/data/vault/export/status', undefined, options);
+  }
+
   async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
     return this.request('GET', '/api/v1/exchange/markets', undefined, options);
   }

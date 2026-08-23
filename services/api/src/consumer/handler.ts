@@ -64,6 +64,8 @@ import {
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
+import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
+import { dispatchVault } from './vault.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -96,6 +98,7 @@ export type ConsumerBffRuntime = {
   readonly wallets?: WalletProductService;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly exchange?: ExchangeBffSurface;
+  readonly vault?: PersonalDataVaultProduct;
 };
 
 const STUB_GROUPS = [
@@ -358,6 +361,19 @@ function dispatchAuthenticated(
     );
     if (wallets) {
       return wallets;
+    }
+  }
+  if (runtime.vault && runtime.identity) {
+    const vault = dispatchVault(
+      runtime.vault,
+      request,
+      principal,
+      requestId,
+      headers,
+      { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
+    );
+    if (vault) {
+      return vault;
     }
   }
   if (runtime.payments) {
@@ -1470,6 +1486,19 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/data',
+  'GET /api/v1/data/vault',
+  'GET /api/v1/data/vault/categories',
+  'GET /api/v1/data/vault/records',
+  'GET /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/records/{id}/history',
+  'POST /api/v1/data/vault/records/{id}/corrections',
+  'PATCH /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/sources',
+  'GET /api/v1/data/vault/access',
+  'GET /api/v1/data/vault/corrections',
+  'POST /api/v1/data/vault/export',
+  'GET /api/v1/data/vault/export/status',
+  'GET /api/v1/data/vault/export/{id}',
   'GET /api/v1/security',
   'GET /api/v1/notifications',
   'GET /api/v1/catalog/resources',

@@ -294,10 +294,18 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.modelId ?? body.validationId ?? body.artifactRef ?? 'unknown'),
     };
   }
-  if (eventType.startsWith('DataVault')) {
+  if (eventType.startsWith('DataVault') || eventType.startsWith('Vault')) {
     return {
       type: 'data_vault',
-      id: String(body.vaultId ?? body.assetId ?? body.exportId ?? body.derivationId ?? 'unknown'),
+      id: String(
+        body.vaultId ??
+          body.assetId ??
+          body.dataRecordId ??
+          body.exportId ??
+          body.correctionId ??
+          body.derivationId ??
+          'unknown',
+      ),
     };
   }
   if (eventType.startsWith('Strategy')) {

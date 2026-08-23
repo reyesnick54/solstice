@@ -348,6 +348,35 @@ describe('consumer BFF native economy SDK', () => {
   });
 });
 
+describe('consumer BFF vault SDK', () => {
+  it('calls vault home and category routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.vault_financial',
+      generateRequestId: () => 'req_vault',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.vault.home.v1',
+            productionActive: false,
+            liveMonetizationEnabled: false,
+            sunreyOwnsUserData: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const home = await client.getVaultHome();
+    await client.listVaultCategories();
+    await client.listVaultRecords();
+    assert.equal(home.schema, 'sunrey.consumer.vault.home.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/vault/categories')));
+  });
+});
+
 describe('consumer BFF SDK browser boundary', () => {
   it('does not import privileged or Node-only modules', () => {
     const dir = join(here, 'consumer-bff');

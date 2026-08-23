@@ -245,6 +245,10 @@ export type CardsPort = {
 export type DataPort = {
   consent(ownerId: string): PortResult<ConsentSummary>;
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
+  vaultRecords(
+    ownerId: string,
+    input: { readonly purpose: string; readonly categoryIds?: readonly string[]; readonly recordIds?: readonly string[] },
+  ): PortResult<readonly { readonly dataRecordId: string; readonly categoryId: string; readonly label: string }[]>;
 };
 
 export type NativeEconomyRecord = {
