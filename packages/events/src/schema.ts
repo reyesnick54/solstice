@@ -199,6 +199,8 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ConsentPermitIssued', version: 1, status: 'current' },
   { eventType: 'ConsentAccessDenied', version: 1, status: 'current' },
   { eventType: 'ConsentPurposeVersioned', version: 1, status: 'current' },
+  { eventType: 'DataRightsRequestSubmitted', version: 1, status: 'current' },
+  { eventType: 'HinParticipationChanged', version: 1, status: 'current' },
   { eventType: 'CleanRoomSessionCreated', version: 1, status: 'current' },
   { eventType: 'CleanRoomSessionAuthorized', version: 1, status: 'current' },
   { eventType: 'CleanRoomSessionDenied', version: 1, status: 'current' },

@@ -186,6 +186,11 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         permissions,
         untrustedExternalContentCannotRedefinePolicy: true,
       }), []);
+    case 'getHinParticipation':
+      return mapPort(ctx.ports.data.hinParticipation(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (participation) => ({
+        participation,
+        financialServicesRemainOpen: true,
+      }), []);
     case 'getNativeAsset':
       return mapPort(ctx.ports.nativeEconomy.asset(str(ctx.input.assetId)), ctx, 'TRADE_PROPOSAL', (asset) => ({
         asset,

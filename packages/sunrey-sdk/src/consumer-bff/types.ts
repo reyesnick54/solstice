@@ -361,7 +361,7 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProductProposal = {
+export type GrowProductProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
@@ -795,6 +795,8 @@ export type WithdrawalCreateInput = {
   readonly amountMinorUnits?: string;
   readonly stepUpSatisfied?: boolean;
   readonly originatedFromAgent?: boolean;
+};
+
 export type NativeEconomyOverview = {
   readonly schema: 'sunrey.consumer.native-economy.v1';
   readonly tickerStatus: 'NOT_ASSIGNED';
@@ -828,6 +830,8 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;
@@ -858,6 +862,44 @@ export type ExchangeOrderSubmit = {
   readonly accepted: true;
   readonly requiresExecution: true;
   readonly proposalId: string | null;
+};
+
+export type DataPermissionCatalog = {
+  readonly schema: 'sunrey.consumer.data.permissions.v1';
+  readonly termsVersion: string;
+  readonly implicitMonetizationOptIn: false;
+  readonly purposes: readonly {
+    readonly purposeId: string;
+    readonly necessity: 'REQUIRED_FOR_CORE_SERVICE' | 'OPTIONAL' | 'OPTIONAL_COMPENSATED';
+    readonly granted: boolean;
+    readonly requiredForBasicAccount: boolean;
+  }[];
+};
+
+export type DataConsentGrant = {
+  readonly grantId: string;
+  readonly consentId: string;
+  readonly purposeId: string;
+  readonly dataCategories: readonly string[];
+  readonly status: string;
+  readonly termsVersion: string;
+};
+
+export type DataConsentList = {
+  readonly schema: 'sunrey.consumer.data.consents.v1';
+  readonly items: readonly DataConsentGrant[];
+};
+
+export type HinParticipation = {
+  readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+  readonly financialServicesRemainOpen: true;
+};
+
+export type DataRightsRequestResource = {
+  readonly requestId: string;
+  readonly type: string;
+  readonly state: string;
+  readonly applicable: boolean;
 };
 
 export type ActionCenterList = {
