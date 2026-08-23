@@ -228,10 +228,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
-  async getGrowSnapshot(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/snapshot', undefined, options);
-  }
-
   async getGoals(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/goals', undefined, options);
   }
@@ -297,14 +293,6 @@ export class SunReyConsumerBffClient {
 
   async getGrowExecution(id: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/grow/executions/${encodeURIComponent(id)}`, undefined, options);
-  }
-
-  async getGrowPortfolio(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
-  }
-
-  async getGrowPerformance(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/performance', undefined, options);
   }
 
   async getPlanProgress(options?: BffRequestOptions): Promise<Record<string, unknown>> {

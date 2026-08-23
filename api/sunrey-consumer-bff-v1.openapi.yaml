@@ -609,7 +609,7 @@ paths:
                 $ref: "#/components/schemas/GrowOpportunityFeed"
   /api/v1/grow/opportunities:
     get:
-      operationId: listGrowOpportunities
+      operationId: listGrowOpportunitiesRanked
       summary: List ranked growth opportunities
       responses:
         "200":
@@ -734,7 +734,7 @@ paths:
           description: Not found
   /api/v1/grow/opportunities/{id}/dismiss:
     post:
-      operationId: dismissGrowOpportunity
+      operationId: dismissGrowOpportunityFingerprint
       summary: Dismiss an opportunity
       description: A dismissed fingerprint is not re-presented unchanged.
       summary: Grow My Money catalog
@@ -757,7 +757,7 @@ paths:
                 $ref: "#/components/schemas/GrowProfile"
   /api/v1/grow/snapshot:
     get:
-      operationId: getGrowSnapshot
+      operationId: getGrowSnapshotPositions
       summary: Financial snapshot
       responses:
         "200":
@@ -768,13 +768,13 @@ paths:
                 $ref: "#/components/schemas/GrowSnapshot"
   /api/v1/grow/goals:
     get:
-      operationId: listGrowGoals
+      operationId: listGrowGoalsDeclared
       summary: List user-declared goals
       responses:
         "200":
           description: Goal list
     post:
-      operationId: createGrowGoal
+      operationId: createGrowGoalDeclared
       summary: Create a user-declared goal
       responses:
         "201":
@@ -857,7 +857,7 @@ paths:
           description: Execution
   /api/v1/grow/portfolio:
     get:
-      operationId: getGrowPortfolio
+      operationId: getGrowPortfolioLab
       summary: Holdings, allocation, and risk
       responses:
         "200":

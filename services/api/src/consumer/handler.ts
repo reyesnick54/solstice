@@ -323,7 +323,7 @@ function dispatchAuthenticated(
     }
   }
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    const grow = dispatchGrow(runtime.grow as GrowBffSurface & ProductGrowthService, request, principal, requestId, headers);
     if (grow) {
       return grow;
     }
@@ -401,7 +401,7 @@ function dispatchAuthenticated(
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
   }
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    const grow = dispatchGrow(runtime.grow as GrowBffSurface & ProductGrowthService, request, principal, requestId, headers);
     if (grow) {
       return grow;
     }
@@ -830,7 +830,7 @@ function dispatchPayments(
 }
 
 function dispatchGrow(
-  grow: GrowBffSurface | ProductGrowthService,
+  grow: GrowBffSurface & ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,

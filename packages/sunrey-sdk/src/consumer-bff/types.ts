@@ -295,6 +295,8 @@ export type GrowProposal = {
   readonly serverOwned: true;
   readonly clientInstructionsTrusted: false;
   readonly productionMoneyMovement: false;
+  readonly executionAuthorityId: null;
+  readonly guaranteedOutcome?: false;
 };
 
 export type GrowExecution = {

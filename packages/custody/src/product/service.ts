@@ -113,7 +113,7 @@ export class WalletProductService {
   private readonly withdrawals = new Map<string, StoredWithdrawal>();
   private readonly deposits = new Map<string, StoredDeposit>();
   private readonly destinationByAddress = new Map<string, DestinationId>();
-  private readonly breaks: WalletReconciliationBreak[] = [];
+  private readonly breakRecords: WalletReconciliationBreak[] = [];
   private readonly deps: WalletProductDeps;
 
   constructor(deps: WalletProductDeps) {
@@ -291,7 +291,7 @@ export class WalletProductService {
     const resource = wallet ? this.toWallet(wallet) : null;
     return ok(
       Object.freeze({
-        schema: 'sunrey.consumer.asset-detail.v1',
+        schema: 'sunrey.consumer.asset-detail.v1' as const,
         assetId,
         displayName: assetId === 'MOONREY_COIN' ? 'MoonRey Coin' : 'SunRey Coin',
         networkId: 'SUNREY_CHAIN',
@@ -300,7 +300,7 @@ export class WalletProductService {
           label: 'SANDBOX_INDICATIVE',
           source: 'sandbox-fixture',
           asOf: this.deps.marketAsOf ?? this.now(),
-          indicative: true,
+          indicative: true as const,
         },
         marketData: { freshness: 'SANDBOX_FIXTURE', commercialPricing: false },
         supplyData: { circulating: null, reason: 'supply is protocol-owned; this view is not a mint' },
@@ -315,8 +315,8 @@ export class WalletProductService {
             this.deps.custodyAvailable !== false,
           exchangeAvailable: resource !== null,
         },
-        productionMoneyMovement: false,
-      }),
+        productionMoneyMovement: false as const,
+      } satisfies AssetDetail),
     );
   }
 
@@ -346,7 +346,7 @@ export class WalletProductService {
     const analytics = this.deps.analytics.screenTransaction(input.txRef, this.deps.clock.now());
     const review = input.review === true || analytics.outcome === 'REVIEW';
     const finality = mapNativeFinality({
-      native: input.nativeFinality,
+      ...(input.nativeFinality !== undefined ? { native: input.nativeFinality } : {}),
       confirmations: input.confirmations,
       review,
     });
@@ -477,7 +477,7 @@ export class WalletProductService {
   }
 
   breaks(): readonly WalletReconciliationBreak[] {
-    return Object.freeze([...this.breaks]);
+    return Object.freeze([...this.breakRecords]);
   }
 
   private executeWithdrawal(
@@ -674,7 +674,7 @@ export class WalletProductService {
       networkId,
       assetId: wallet.value.assetId,
     });
-    if ('ok' in destination && destination.ok === false) {
+    if ('ok' in destination) {
       return fail(destination.code, destination.message);
     }
     const available = this.deps.assets.position(ownerId, wallet.value.assetId).available.scaledUnits;
@@ -849,7 +849,7 @@ export class WalletProductService {
       autoCorrected: false,
       createdAt: this.now(),
     });
-    this.breaks.push(row);
+    this.breakRecords.push(row);
     return row;
   }
 

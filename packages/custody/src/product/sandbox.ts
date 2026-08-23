@@ -175,9 +175,9 @@ export function createWalletProductSandbox(options: {
     identity: identity.service,
     keyProvider: keys,
     customers: { get: (id) => customers.get(id) },
-    chainAvailable: options.chainAvailable,
-    custodyAvailable: options.custodyAvailable,
-    exchangeMismatch: options.exchangeMismatch,
+    ...(options.chainAvailable !== undefined ? { chainAvailable: options.chainAvailable } : {}),
+    ...(options.custodyAvailable !== undefined ? { custodyAvailable: options.custodyAvailable } : {}),
+    ...(options.exchangeMismatch !== undefined ? { exchangeMismatch: options.exchangeMismatch } : {}),
   });
   return {
     product: wired.product,

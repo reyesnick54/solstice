@@ -221,11 +221,11 @@ export {
   FINANCIAL_PROPOSAL_TYPES,
 } from './grow/index.ts';
 export type {
-  FinancialProposal,
   GrowExecutionCommand,
   GrowExecutionRecord,
   GrowFailure,
 } from './grow/index.ts';
+export {
   asOpportunityId,
   opportunityIdFor,
   type OpportunityId,

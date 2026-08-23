@@ -30,7 +30,7 @@ describe('wallet product — model and ownership', () => {
     });
     assert.equal(created.ok, true);
     if (!created.ok) {
-      throw new Error(created.message);
+      throw new Error('expected wallet provision to succeed');
     }
     assert.equal(created.value.schema, 'sunrey.consumer.wallet.v1');
     assert.equal(created.value.status, 'ACTIVE');
@@ -61,14 +61,14 @@ describe('wallet product — model and ownership', () => {
     const restricted = sandbox.product.setWalletStatus(ownerId, 'wal_status', 'RESTRICTED');
     assert.equal(restricted.ok, true);
     if (!restricted.ok) {
-      throw new Error(restricted.message);
+      throw new Error('expected success');
     }
     assert.equal(restricted.value.status, 'RESTRICTED');
     assert.equal(restricted.value.withdrawalEnabled, false);
     const frozen = sandbox.product.setWalletStatus(ownerId, 'wal_status', 'ACTIVE', false);
     assert.equal(frozen.ok, true);
     if (!frozen.ok) {
-      throw new Error(frozen.message);
+      throw new Error('expected success');
     }
     assert.equal(frozen.value.status, 'ACTIVE');
     assert.equal(frozen.value.withdrawalEnabled, false);
@@ -90,7 +90,7 @@ describe('wallet product — model and ownership', () => {
     });
     assert.equal(approved.ok, true);
     if (!approved.ok) {
-      throw new Error(approved.message);
+      throw new Error('expected success');
     }
     assert.equal(approved.value.withdrawalEnabled, false);
   });
@@ -164,13 +164,13 @@ describe('wallet product — deposit finality', () => {
     });
     assert.equal(pending.ok, true);
     if (!pending.ok) {
-      throw new Error(pending.message);
+      throw new Error('expected success');
     }
     assert.equal(pending.value.finality, 'BROADCAST');
     const before = sandbox.product.getWallet(ownerId, 'wal_dep');
     assert.equal(before.ok, true);
     if (!before.ok) {
-      throw new Error(before.message);
+      throw new Error('expected success');
     }
     assert.equal(before.value.balance.availableMinorUnits, '0');
     const final = sandbox.product.ingestDeposit({
@@ -184,13 +184,13 @@ describe('wallet product — deposit finality', () => {
     });
     assert.equal(final.ok, true);
     if (!final.ok) {
-      throw new Error(final.message);
+      throw new Error('expected success');
     }
     assert.equal(final.value.finality, 'FINALIZED');
     const after = sandbox.product.getWallet(ownerId, 'wal_dep');
     assert.equal(after.ok, true);
     if (!after.ok) {
-      throw new Error(after.message);
+      throw new Error('expected success');
     }
     assert.equal(after.value.balance.availableMinorUnits, '1000000');
   });
@@ -230,7 +230,7 @@ describe('wallet product — deposit finality', () => {
     const wallet = sandbox.product.getWallet(ownerId, 'wal_dup');
     assert.equal(wallet.ok, true);
     if (!wallet.ok) {
-      throw new Error(wallet.message);
+      throw new Error('expected success');
     }
     assert.equal(wallet.value.balance.availableMinorUnits, '500000');
   });
@@ -261,7 +261,7 @@ describe('wallet product — withdrawal proposal and execution', () => {
     );
     assert.equal(quoted.ok, true);
     if (!quoted.ok) {
-      throw new Error(quoted.message);
+      throw new Error('expected success');
     }
     assert.equal(quoted.value.estimate, true);
     assert.equal(quoted.value.fees.estimate, true);
@@ -279,7 +279,7 @@ describe('wallet product — withdrawal proposal and execution', () => {
     const executed = sandbox.product.createWithdrawal(ownerId, 'wal_wd', { quoteId: quoted.value.quoteId }, actor);
     assert.equal(executed.ok, true);
     if (!executed.ok) {
-      throw new Error(executed.message);
+      throw new Error('expected success');
     }
     assert.equal(executed.value.finality, 'FINALIZED');
     assert.equal(executed.value.productionSigningAuthorized, false);
@@ -326,7 +326,7 @@ describe('wallet product — withdrawal proposal and execution', () => {
     );
     assert.equal(proposal.ok, true);
     if (!proposal.ok) {
-      throw new Error(proposal.message);
+      throw new Error('expected success');
     }
     assert.equal(proposal.value.status, 'PROPOSED');
     assert.equal(proposal.value.originatedFromAgent, true);
@@ -359,7 +359,7 @@ describe('wallet product — analytics, Travel Rule, fees, reconciliation', () =
     );
     assert.equal(quoted.ok, true);
     if (!quoted.ok) {
-      throw new Error(quoted.message);
+      throw new Error('expected success');
     }
     assert.equal(quoted.value.risk, 'REVIEW');
     assert.equal(quoted.value.requiredApproval, 'MANUAL_REVIEW');
@@ -382,7 +382,7 @@ describe('wallet product — analytics, Travel Rule, fees, reconciliation', () =
     );
     assert.equal(quoted.ok, true);
     if (!quoted.ok) {
-      throw new Error(quoted.message);
+      throw new Error('expected success');
     }
     assert.equal(quoted.value.travelRuleRequired, true);
     assert.equal(quoted.value.travelRule, 'ADDITIONAL_INFORMATION_REQUIRED');
@@ -411,7 +411,7 @@ describe('wallet product — analytics, Travel Rule, fees, reconciliation', () =
     const broken = sandbox.product.reconcileWallet('cust_recon', 'wal_recon');
     assert.equal(broken.ok, true);
     if (!broken.ok) {
-      throw new Error(broken.message);
+      throw new Error('expected success');
     }
     assert.equal(broken.value.length > 0, true);
     for (const row of broken.value) {

@@ -74,13 +74,14 @@ export function mapWalletOutcome<T>(
 
 function actorFrom(principal: BffPrincipal, body: Record<string, unknown>, identity?: { resolveActorContext(actorId: string): { ok: boolean; value?: unknown } }): WalletActorInput {
   const resolved = identity?.resolveActorContext(principal.actorId);
-  return {
+  const verified = resolved?.ok === true ? resolved.value : undefined;
+  const actor: WalletActorInput = {
     actorId: principal.actorId,
     customerId: principal.customerId,
-    ...(resolved?.ok === true && resolved.value ? { verified: resolved.value as WalletActorInput['verified'] } : {}),
     stepUpSatisfied: body.stepUpSatisfied === true,
     originatedFromAgent: body.originatedFromAgent === true,
   };
+  return verified ? { ...actor, verified: verified as NonNullable<WalletActorInput['verified']> } : actor;
 }
 
 export function dispatchWallets(
