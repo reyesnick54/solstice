@@ -1,4 +1,4 @@
--- V034 Growth opportunity discovery (Phase E Prompt 2).
+-- V035 Growth opportunity discovery (Phase E Prompt 2).
 -- Planning / recommendation state only. Does not post journals,
 -- store balances, or encode a guaranteed return.
 

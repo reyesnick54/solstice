@@ -19,6 +19,7 @@ function mandate(): UserAgentMandate {
     agentId: asUserAgentId('agt_1'),
     owner: { kind: 'USER', ownerId: 'user_1', walletId: 'wallet_1', accountId: 'acct_1' },
     state: 'ACTIVE',
+    assistScopes: ['READ_ACCOUNTS'],
     policy: {
       policyVersion: asMandatePolicyVersion(1),
       mode: 'PRODUCTION',

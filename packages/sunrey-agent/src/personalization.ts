@@ -49,5 +49,8 @@ export function applyPersonalizationStyle(text: string, prefs: AgentPersonalizat
 }
 
 export function personalizationCannotAlterMath(prefs: AgentPersonalization): true {
-  return prefs.altersFinancialMathematics === false && prefs.altersRegulatoryDisclosures === false;
+  if (prefs.altersFinancialMathematics !== false || prefs.altersRegulatoryDisclosures !== false) {
+    throw new Error('personalization altered financial mathematics');
+  }
+  return true;
 }

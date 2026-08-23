@@ -520,18 +520,52 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
-  it('customer V034 persists Grow execution records without becoming a ledger', () => {
+  it('customer V034 persists PEG productization overlays without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v034 = files.find((file) => file.version === 34);
     assert.ok(v034);
-    assert.equal(v034.filename, 'V034__grow_execution.sql');
-    assert.match(v034.sql, /CREATE TABLE growth\.financial_proposal/);
-    assert.match(v034.sql, /CREATE TABLE growth\.execution_record/);
-    assert.match(v034.sql, /CREATE TABLE growth\.recurring_mandate/);
-    assert.match(v034.sql, /agent_may_increase_amount BOOLEAN NOT NULL CHECK \(agent_may_increase_amount = FALSE\)/);
-    assert.match(v034.sql, /perpetual_authorization BOOLEAN NOT NULL CHECK \(perpetual_authorization = FALSE\)/);
-    assert.match(v034.sql, /deposits_are_not_performance BOOLEAN NOT NULL CHECK \(deposits_are_not_performance = TRUE\)/);
+    assert.equal(v034.filename, 'V034__economic_graph_productization.sql');
+    assert.match(v034.sql, /CREATE TABLE economic_graph\.overlay/);
+    assert.match(v034.sql, /CREATE TABLE economic_graph\.insight/);
+    assert.match(v034.sql, /CREATE TABLE economic_graph\.history_point/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v034.sql), false);
+  });
+
+  it('customer V035 persists Growth opportunity records without a guaranteed return', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v035 = files.find((file) => file.version === 35);
+    assert.ok(v035);
+    assert.equal(v035.filename, 'V035__growth_opportunities.sql');
+    assert.match(v035.sql, /CREATE TABLE growth\.opportunity/);
+    assert.match(v035.sql, /CREATE TABLE growth\.opportunity_preference/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v035.sql), false);
+  });
+
+  it('customer V036 persists Grow execution records without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v036 = files.find((file) => file.version === 36);
+    assert.ok(v036);
+    assert.equal(v036.filename, 'V036__grow_execution.sql');
+    assert.match(v036.sql, /CREATE TABLE growth\.financial_proposal/);
+    assert.match(v036.sql, /CREATE TABLE growth\.execution_record/);
+    assert.match(v036.sql, /CREATE TABLE growth\.recurring_mandate/);
+    assert.match(v036.sql, /agent_may_increase_amount BOOLEAN NOT NULL CHECK \(agent_may_increase_amount = FALSE\)/);
+    assert.match(v036.sql, /perpetual_authorization BOOLEAN NOT NULL CHECK \(perpetual_authorization = FALSE\)/);
+    assert.match(v036.sql, /deposits_are_not_performance BOOLEAN NOT NULL CHECK \(deposits_are_not_performance = TRUE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v036.sql), false);
+  });
+
+  it('customer V037 persists Agent runtime conversations without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v037 = files.find((file) => file.version === 37);
+    assert.ok(v037);
+    assert.equal(v037.filename, 'V037__agent_runtime.sql');
+    assert.match(v037.sql, /CREATE SCHEMA IF NOT EXISTS agent_runtime/);
+    assert.match(v037.sql, /CREATE TABLE agent_runtime\.conversation/);
+    assert.match(v037.sql, /CREATE TABLE agent_runtime\.memory/);
+    assert.match(v037.sql, /GRANT USAGE ON SCHEMA agent_runtime TO customer_app/);
+    assert.match(v037.sql, /is_execution_authority BOOLEAN NOT NULL CHECK \(is_execution_authority = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
   });
 
   it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {

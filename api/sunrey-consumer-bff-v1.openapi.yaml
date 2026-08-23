@@ -607,17 +607,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowOpportunityFeed"
-  /api/v1/grow/opportunities:
-    get:
-      operationId: listGrowOpportunities
-      summary: List ranked growth opportunities
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
         "401":
           description: Authentication required
         "403":
@@ -732,15 +721,6 @@ paths:
           description: Cross-user denied
         "404":
           description: Not found
-  /api/v1/grow/opportunities/{id}/dismiss:
-    post:
-      operationId: dismissGrowOpportunity
-      summary: Dismiss an opportunity
-      description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
-      responses:
-        "200":
-          description: Availability plus simulation posture
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -755,30 +735,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowProfile"
-  /api/v1/grow/snapshot:
-    get:
-      operationId: getGrowSnapshot
-      summary: Financial snapshot
-      responses:
-        "200":
-          description: Snapshot with per-currency positions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowSnapshot"
-  /api/v1/grow/goals:
-    get:
-      operationId: listGrowGoals
-      summary: List user-declared goals
-      responses:
-        "200":
-          description: Goal list
-    post:
-      operationId: createGrowGoal
-      summary: Create a user-declared goal
-      responses:
-        "201":
-          description: Created goal
   /api/v1/grow/goals/{id}:
     patch:
       operationId: patchGrowGoal
@@ -855,13 +811,6 @@ paths:
       responses:
         "200":
           description: Execution
-  /api/v1/grow/portfolio:
-    get:
-      operationId: getGrowPortfolio
-      summary: Holdings, allocation, and risk
-      responses:
-        "200":
-          description: Portfolio
   /api/v1/grow/performance:
     get:
       operationId: getGrowPerformance
@@ -974,21 +923,6 @@ paths:
       description: >
         Lovable Agent home. Recommendations are proposals. The BFF cannot
         execute. Ordinary account APIs remain available if the Agent is paused.
-      responses:
-        "200":
-          description: Honest availability
-  /api/v1/agent/conversations:
-    post:
-      operationId: createAgentConversation
-      summary: Open an Agent conversation
-      responses:
-        "201":
-          description: Conversation
-  /api/v1/agent/conversations/{id}/messages:
-    post:
-      operationId: postAgentMessage
-      summary: Send a chat turn
-      summary: Agent resource stub
       responses:
         "200":
           description: Honest availability
@@ -1154,11 +1088,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Turn result with optional Action Cards
-  /api/v1/agent/conversations/{id}/stream:
-    get:
-      operationId: streamAgentConversation
-      summary: Stream tokens and tool progress
           description: Settings
   /api/v1/agents/{id}/permissions:
     get:
@@ -1171,11 +1100,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Stream events
-  /api/v1/agent/conversations/{id}/close:
-    post:
-      operationId: closeAgentConversation
-      summary: Close a conversation
           description: Permissions
   /api/v1/agents/{id}/memories:
     get:
@@ -1188,18 +1112,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Closed conversation
-  /api/v1/agent/actions:
-    get:
-      operationId: listAgentActions
-      summary: Action Center
-      responses:
-        "200":
-          description: Action cards
-  /api/v1/agent/actions/{id}:
-    get:
-      operationId: getAgentAction
-      summary: Action and execution status
           description: Memories
     post:
       operationId: createAgentMemory
@@ -1210,12 +1122,6 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
-          description: Action card
-  /api/v1/agent/actions/{id}/revise:
-    post:
-      operationId: reviseAgentAction
-      summary: Revise a draft proposal
         "201":
           description: Memory
   /api/v1/agents/{id}/memories/{memoryId}:
@@ -1227,14 +1133,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Revised Action Card
-  /api/v1/agent/actions/{id}/approve:
-    post:
-      operationId: approveAgentAction
-      summary: Human approval
-      description: An Agent principal cannot approve.
         - in: path
           name: memoryId
           required: true
@@ -1250,13 +1148,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Approved pending step-up
-  /api/v1/agent/actions/{id}/step-up:
-    post:
-      operationId: stepUpAgentAction
-      summary: Step-up authentication
         - in: path
           name: memoryId
           required: true
@@ -1275,14 +1166,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Step-up satisfied
-  /api/v1/agent/actions/{id}/execute:
-    post:
-      operationId: executeAgentAction
-      summary: Human execution path
-      description: >
-        Submits a Kernel-bound intent. Does not let the Agent issue
-        Execution Authority or post a ledger journal.
           description: Conversation list
     post:
       operationId: createAgentConversation
@@ -1293,13 +1176,6 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
-          description: Submitted for domain execution
-  /api/v1/agent/actions/{id}/outcome:
-    post:
-      operationId: recordAgentActionOutcome
-      summary: Record domain execution status
-      description: Only the domain outcome may mark a financial action complete.
         "201":
           description: Conversation
   /api/v1/agents/{id}/conversations/{conversationId}:
@@ -1311,64 +1187,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Domain-sourced status
-  /api/v1/agent/memory:
-    get:
-      operationId: listAgentMemory
-      summary: Eligible preferences
-      responses:
-        "200":
-          description: Memory records
-    post:
-      operationId: storeAgentMemory
-      summary: Store an eligible preference
-      responses:
-        "200":
-          description: Stored or rejected
-  /api/v1/agent/settings:
-    get:
-      operationId: getAgentSettings
-      summary: Agent settings
-      responses:
-        "200":
-          description: Settings
-    patch:
-      operationId: patchAgentSettings
-      summary: Update Agent settings
-      responses:
-        "200":
-          description: Settings
-  /api/v1/agent/pause:
-    post:
-      operationId: pauseAgent
-      summary: Pause this Agent
-      description: Does not disable ordinary account access.
-      responses:
-        "200":
-          description: Paused
-  /api/v1/agent/revoke:
-    post:
-      operationId: revokeAgent
-      summary: Revoke this Agent
-      responses:
-        "200":
-          description: Revoked
-  /api/v1/agent/escalations:
-    post:
-      operationId: createAgentEscalation
-      summary: Escalate to authorized staff
-      responses:
-        "201":
-          description: Escalation
-  /api/v1/agent/audit/{actionId}:
-    get:
-      operationId: getAgentAudit
-      summary: Agent action audit package
-      parameters:
-        - in: path
-          name: actionId
         - in: path
           name: conversationId
           required: true
@@ -1424,10 +1242,145 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Audit package
           description: Agent stream events or SSE
         "401":
           description: Authentication required
+  /api/v1/agent/conversations/{id}/stream:
+    get:
+      operationId: streamAgentConversation
+      summary: Stream tokens and tool progress
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Stream events
+  /api/v1/agent/conversations/{id}/close:
+    post:
+      operationId: closeAgentConversation
+      summary: Close a conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Closed conversation
+  /api/v1/agent/actions/{id}/revise:
+    post:
+      operationId: reviseAgentAction
+      summary: Revise a draft proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revised Action Card
+  /api/v1/agent/actions/{id}/step-up:
+    post:
+      operationId: stepUpAgentAction
+      summary: Step-up authentication
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Step-up satisfied
+  /api/v1/agent/actions/{id}/execute:
+    post:
+      operationId: executeAgentAction
+      summary: Human execution path
+      description: >
+        Submits a Kernel-bound intent. Does not let the Agent issue
+        Execution Authority or post a ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Submitted for domain execution
+  /api/v1/agent/actions/{id}/outcome:
+    post:
+      operationId: recordAgentActionOutcome
+      summary: Record domain execution status
+      description: Only the domain outcome may mark a financial action complete.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Domain-sourced status
+  /api/v1/agent/memory:
+    get:
+      operationId: listAgentSessionMemory
+      summary: Eligible session-scoped preferences
+      responses:
+        "200":
+          description: Memory records
+    post:
+      operationId: storeAgentSessionMemory
+      summary: Store an eligible preference
+      responses:
+        "200":
+          description: Stored or rejected
+  /api/v1/agent/settings:
+    get:
+      operationId: getCurrentAgentSettings
+      summary: Session Agent settings
+      responses:
+        "200":
+          description: Settings
+    patch:
+      operationId: patchCurrentAgentSettings
+      summary: Update session Agent settings
+      responses:
+        "200":
+          description: Settings
+  /api/v1/agent/pause:
+    post:
+      operationId: pauseCurrentAgent
+      summary: Pause this Agent
+      description: Does not disable ordinary account access.
+      responses:
+        "200":
+          description: Paused
+  /api/v1/agent/revoke:
+    post:
+      operationId: revokeCurrentAgent
+      summary: Revoke this Agent
+      responses:
+        "200":
+          description: Revoked
+  /api/v1/agent/escalations:
+    post:
+      operationId: createAgentEscalation
+      summary: Escalate to authorized staff
+      responses:
+        "201":
+          description: Escalation
+  /api/v1/agent/audit/{actionId}:
+    get:
+      operationId: getAgentAudit
+      summary: Agent action audit package
+      parameters:
+        - in: path
+          name: actionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Audit package
   /api/v1/exchange:
     get:
       operationId: getExchange

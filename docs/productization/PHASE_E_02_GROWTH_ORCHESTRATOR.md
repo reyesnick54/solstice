@@ -13,7 +13,7 @@ orchestrator. Not an investment engine. Not production authorization.
 | Opportunity model | `packages/platform/src/growth/opportunity/` |
 | Existing plans / mandates | `packages/platform/src/growth/` and `src/mandate/` |
 | PEG facts | `packages/personal-economic-graph` (non-authoritative) |
-| Persistence | `packages/persistence/src/growth/` + `db/customer/migrations/V034__growth_opportunities.sql` |
+| Persistence | `packages/persistence/src/growth/` + `db/customer/migrations/V035__growth_opportunities.sql` |
 | Consumer BFF | `services/api/src/consumer/grow-adapter.ts` |
 | OpenAPI | `api/sunrey-consumer-bff-v1.openapi.yaml` |
 | SDK | `packages/sunrey-sdk/src/consumer-bff/` |

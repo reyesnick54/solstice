@@ -287,7 +287,7 @@ export const GROW_EXECUTION_STATES = [
 ] as const;
 export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
 
-export type GrowProposal = {
+export type GrowExecutionProposal = {
   readonly proposalId: string;
   readonly version: number;
   readonly state: string;
@@ -367,6 +367,8 @@ export type GrowProposal = {
   readonly guaranteedOutcome: false;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
+};
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -498,16 +500,13 @@ export type AgentMessageResponse = {
   readonly stream: readonly { readonly kind: string; readonly text: string }[];
   readonly financialStateChanged: false;
   readonly executionCompleted: false;
+};
+
 /**
  * Grow My Money portfolio views. Authoritative values come from
  * packages/investments. Frontend math is not authoritative.
  * Not a live securities brokerage.
  */
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
-};
-
 export type GrowPortfolio = {
   readonly schema: 'sunrey.grow.portfolio.v1';
   readonly portfolioId: string;

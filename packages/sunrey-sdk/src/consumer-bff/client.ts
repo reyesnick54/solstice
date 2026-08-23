@@ -166,12 +166,10 @@ export class SunReyConsumerBffClient {
     options?: BffRequestOptions,
   ): Promise<{ readonly items: readonly AgentMemoryResource[] }> {
     return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/memories`, undefined, options);
-  async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
-  async getGrowSnapshot(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/snapshot', undefined, options);
+  async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
   async getGoals(options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -241,11 +239,7 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/grow/executions/${encodeURIComponent(id)}`, undefined, options);
   }
 
-  async getGrowPortfolio(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
-  }
-
-  async getGrowPerformance(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getGrowPlanPerformance(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/performance', undefined, options);
   }
 
@@ -442,7 +436,6 @@ export class SunReyConsumerBffClient {
 
   async request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
-    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,
     options?: BffRequestOptions,
