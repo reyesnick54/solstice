@@ -49,5 +49,5 @@ export function applyPersonalizationStyle(text: string, prefs: AgentPersonalizat
 }
 
 export function personalizationCannotAlterMath(prefs: AgentPersonalization): true {
-  return prefs.altersFinancialMathematics === false && prefs.altersRegulatoryDisclosures === false;
+  return (prefs.altersFinancialMathematics === false && prefs.altersRegulatoryDisclosures === false) as true;
 }

@@ -92,7 +92,7 @@ export class AgentConversationRuntime {
     }
     const may = this.engine.assertAgentMayConverse(owned.value.agentId);
     if (!may.ok) {
-      return err(may);
+      return may;
     }
     const now = this.clock.now();
     const title = input.title ?? 'Conversation';
@@ -200,7 +200,7 @@ export class AgentConversationRuntime {
     }
     const may = this.engine.assertAgentMayConverse(input.agentId);
     if (!may.ok) {
-      return err(may);
+      return may;
     }
     if (detectPromptInjection(input.text)) {
       return err({ ok: false, code: 'PROMPT_INJECTION', detail: 'prompt-injection content cannot enter the conversation' });
@@ -513,11 +513,11 @@ export class AgentConversationRuntime {
   }
 
   agentCannotAssumeUserAuthority(agent: UserAgent): true {
-    return agent.isCustomer === false && agent.riskPolicy.mayAssumeUserAuthority === false;
+    return (agent.isCustomer === false && agent.riskPolicy.mayAssumeUserAuthority === false) as true;
   }
 
   agentCannotBecomeExecutionAuthority(agent: UserAgent): true {
-    return agent.isExecutionAuthority === false && agent.riskPolicy.mayBecomeExecutionAuthority === false;
+    return (agent.isExecutionAuthority === false && agent.riskPolicy.mayBecomeExecutionAuthority === false) as true;
   }
 
   private infer(agent: UserAgent, context: ConversationContext, prompt: string): AiInferenceResponse | null {
@@ -536,7 +536,7 @@ export class AgentConversationRuntime {
     }
     const request: AiInferenceRequest = {
       requestId: asAiRequestId(`air_${contentHash(prompt).slice(0, 24)}`),
-      taskClass: 'EXPLAIN',
+      taskClass: 'FINANCIAL_EXPLANATION',
       mode: 'S3M_PRIMARY',
       modelRef: { modelId: 'sunrey.s3m.primary' as never, version: 'sim-1' as never },
       dataClass: 'SYNTHETIC',
@@ -584,7 +584,7 @@ export class AgentConversationRuntime {
     let proposalId: string | null = null;
     let toolEventId: string | null = null;
     for (const intent of response.toolIntents) {
-      if (intent.executes || intent.name.startsWith('EXECUTE_') || intent.name === 'DIRECT_LEDGER_WRITE') {
+      if (intent.executes || intent.name.startsWith('EXECUTE_') || (intent.name as string) === 'DIRECT_LEDGER_WRITE') {
         continue;
       }
       toolEventId = `ate_${contentHash(`${conversation.conversationId}:${intent.name}:${at}`).slice(0, 24)}`;

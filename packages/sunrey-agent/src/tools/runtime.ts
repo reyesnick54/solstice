@@ -120,7 +120,7 @@ export class AgentToolRuntime {
       session,
       agent,
       mandate,
-      rationale: typeof validated.value.purpose === 'string' ? validated.value.purpose : undefined,
+      ...(typeof validated.value.purpose === 'string' ? { rationale: validated.value.purpose } : {}),
     });
     if (!authorized.ok || !mandate) {
       return this.finish(session, call, startedAt, startedMs, {
