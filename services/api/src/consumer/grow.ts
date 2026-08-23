@@ -37,6 +37,8 @@ import {
 } from '../../../../packages/platform/src/growth/product/index.ts';
 import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
 
+export { toLovableExperience };
+
 export type GrowBffDeps = {
   readonly peg: EconomicGraphService;
   readonly orchestrator: GrowthOrchestrator;
@@ -703,19 +705,6 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
 }
 
 export { Money };
-import {
-  ProductGrowthService,
-  type CreateGrowPlanInput,
-  type FinancialProposal as ProductFinancialProposal,
-  type GrowProductFailure,
-  type GrowRiskProfile,
-  type GrowthProductActor,
-  type ProductGrowthPlan,
-  isGrowRiskProfile,
-} from '../../../../packages/platform/src/growth/product/index.ts';
-import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
-
-export { toLovableExperience };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {
@@ -814,7 +803,7 @@ export function publicPlan(plan: ProductGrowthPlan): ProductGrowthPlan {
   return plan;
 }
 
-export function publicProposal(proposal: ProductFinancialProposal): ProductFinancialProposal {
+export function publicProposal(proposal: FinancialProposal): FinancialProposal {
   return proposal;
 }
 

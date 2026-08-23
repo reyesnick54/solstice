@@ -1449,7 +1449,14 @@ paths:
         "200":
           description: Markets including SunRey Coin
   /api/v1/exchange/markets/{marketId}:
+    get:
+      operationId: getExchangeMarketById
       summary: Exchange catalog
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
       responses:
         "200":
           description: Honest availability
@@ -1558,8 +1565,6 @@ paths:
           description: Economic-input summary
         "401":
           description: Authentication required
-  /api/v1/exchange/markets:
-          description: Honest availability; production trading remains disabled
   /api/v1/hin/contributions:
     get:
       operationId: listHinContributions
@@ -2144,7 +2149,7 @@ paths:
           description: Simulated connectors only
   /api/v1/data/records:
     get:
-      operationId: listVaultRecords
+      operationId: listDataRecords
       summary: Your data metadata
       responses:
         "200":
@@ -2177,21 +2182,21 @@ paths:
           description: Confirmed grant
   /api/v1/data/hin:
     get:
-      operationId: getHinParticipation
+      operationId: getDataHinParticipation
       summary: HIN participation
       responses:
         "200":
           description: Participation state
   /api/v1/data/contributions:
     get:
-      operationId: listHinContributions
+      operationId: listDataContributions
       summary: Human contributions
       responses:
         "200":
           description: Contribution list without mint quantities
   /api/v1/data/earnings:
     get:
-      operationId: getHinEarnings
+      operationId: getDataEarnings
       summary: Compensation instructions
       responses:
         "200":
@@ -2230,13 +2235,6 @@ paths:
       responses:
         "200":
           description: No individual records
-  /api/v1/economy/productive:
-    get:
-      operationId: getProductiveEconomy
-      summary: Productive-economy overview
-      responses:
-        "200":
-          description: Sandbox observations only
   /api/v1/economy/productive/observe:
     post:
       operationId: observeProductive
@@ -2251,13 +2249,9 @@ paths:
       responses:
         "200":
           description: Proposal only. No supply change.
-      summary: Personal Data Vault home
-      responses:
-        "200":
-          description: Honest availability
   /api/v1/data/permissions:
     get:
-      operationId: getDataPermissions
+      operationId: getDataPermissionCatalog
       summary: Purpose catalog and granted optional uses
       responses:
         "200":

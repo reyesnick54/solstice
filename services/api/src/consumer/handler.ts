@@ -108,12 +108,10 @@ export type ConsumerBffRuntime = {
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
-  readonly hin?: InformationRightsMarketplace;
+  readonly hin?: InformationRightsMarketplace | HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
-  readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
-  readonly exchange?: ExchangeBffSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
@@ -383,16 +381,15 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
-  if (runtime.hin) {
+  if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
+    }
+  }
   if (runtime.dataRights) {
     const dataRights = dispatchDataRights(
       runtime.dataRights,
-  if (runtime.vault && runtime.identity) {
-    const vault = dispatchVault(
-      runtime.vault,
       request,
       principal,
       requestId,
@@ -401,6 +398,15 @@ function dispatchAuthenticated(
     );
     if (dataRights) {
       return dataRights;
+    }
+  }
+  if (runtime.vault && runtime.identity) {
+    const vault = dispatchVault(
+      runtime.vault,
+      request,
+      principal,
+      requestId,
+      headers,
       { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
     );
     if (vault) {
@@ -664,15 +670,16 @@ function dispatchAuthenticated(
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
   }
 
+  const hinContributions = runtime.hin && !isRightsMarketplace(runtime.hin) ? runtime.hin : undefined;
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
-    const surface = runtime.hin;
+    const surface = hinContributions;
     if (!surface) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
-    const surface = runtime.hin;
+    const surface = hinContributions;
     if (!surface) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
@@ -694,21 +701,21 @@ function dispatchAuthenticated(
     return json(200, item, headers);
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
-    const surface = runtime.hin;
+    const surface = hinContributions;
     if (!surface) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
-    const surface = runtime.hin;
+    const surface = hinContributions;
     if (!surface) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
-    const surface = runtime.hin;
+    const surface = hinContributions;
     if (!surface) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
@@ -1052,10 +1059,14 @@ function isLifecycleExchange(
     && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
 }
 
+function isRightsMarketplace(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is InformationRightsMarketplace {
+  return typeof (hin as InformationRightsMarketplace).earningsFor === 'function';
+}
+
 function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
-function dispatchExchange(
-  exchange: ExchangeBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1150,7 +1161,6 @@ function dispatchExchange(
     const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/ticker'.length);
     return result(exchange.ticker(principal, instrument, requestId), headers);
   }
-  if (path.startsWith('/api/v1/exchange/markets/') && (path.endsWith('/order-book') || path.endsWith('/orderbook')) && method === 'GET') {
   if (
     path.startsWith('/api/v1/exchange/markets/') &&
     (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&
@@ -1246,6 +1256,9 @@ function dispatchGrow(
     if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+    if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
+      return result(grow.performance(principal, requestId), headers);
+    }
     if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
     if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
       const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
