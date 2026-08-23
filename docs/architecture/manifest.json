@@ -951,7 +951,10 @@
         "packages/events",
         "packages/permissions",
         "packages/kernel",
-        "packages/sunrey-coin"
+        "packages/sunrey-coin",
+        "packages/ledger",
+        "packages/custody",
+        "packages/market-surveillance"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1212,6 +1215,12 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/sunrey-exchange",
+        "packages/information-market",
+        "packages/human-economic-contribution",
+        "packages/consent",
+        "packages/personal-data-vault",
+        "packages/sunrey-exchange",
         "services/investments",
         "services/economic-graph"
       ],
@@ -2344,7 +2353,10 @@
         "packages/privacy-vault",
         "packages/personal-data-v2",
         "packages/data-vault",
-        "packages/pii-store"
+        "packages/pii-store",
+        "packages/personal-data-fabric",
+        "packages/data-fabric",
+        "packages/vault-v2"
       ],
       "codeowners": [
         "@reyesnick54"

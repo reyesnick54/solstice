@@ -243,6 +243,8 @@ the `/v1/consumer` personas below.
 | `agent_enabled` | BFF Agent Home, conversations, streaming chat (`sandbox.agent_enabled`) |
 | `investment` (BFF `sandbox.investment`) | Multi-account investment fixture |
 | `phase_e_grow` (harness `sandbox.phase_e_grow`) | Phase E Grow My Money E2E persona |
+| `basic_verified` (BFF `sandbox.basic_verified`) | Phase G Exchange / wallet / economy E2E |
+| `exchange` (BFF `sandbox.exchange`) | Exchange-capable sandbox persona |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.
@@ -354,6 +356,48 @@ SDK: `startAgentConversation`, `sendAgentMessage`, `streamAgentEvents`,
 
 See `docs/productization/PHASE_F_04_CONVERSATIONAL_ACTIONS.md`.
 
+## Exchange, wallets, and economy (Phase G)
+
+Use `@solstice/sunrey-sdk/bff` (`SunReyConsumerBffClient`). Lovable
+renders server state only. It never mints, never modifies supply, never
+bypasses eligibility, and never treats Agent text as an executed trade.
+
+Complete sandbox digital-asset journey:
+
+1. Authenticate (`Authorization: Bearer sandbox.basic_verified` or
+   `sandbox.exchange`)
+2. `GET /api/v1/exchange` — EXCHANGE HOME (`liveExchangeEnabled: false`)
+3. `GET /api/v1/exchange/eligibility` — KYC / Exchange eligibility
+4. `GET /api/v1/exchange/markets` — MARKETS including SunRey Coin
+5. `GET /api/v1/exchange/markets/{id}/ticker` and `/order-book` and `/chart`
+6. `GET /api/v1/exchange/holdings` and `GET /api/v1/wallets`
+7. `POST /api/v1/exchange/fund` — sandbox quote faucet only
+8. `POST /api/v1/exchange/preview` — ORDER PREVIEW (server-owned)
+9. `POST /api/v1/exchange/proposals` — create BUY or SELL proposal
+10. `POST /api/v1/exchange/proposals/{id}/approve` with `stepUpSatisfied`
+11. `POST /api/v1/exchange/proposals/{id}/submit` — ORDER CONFIRMATION
+12. `GET /api/v1/exchange/orders` and `/fills`
+13. `GET /api/v1/wallets/deposit-address` then
+    `POST /api/v1/wallets/deposits/simulate`
+14. `POST /api/v1/wallets/withdrawals/quote` then `/withdrawals`
+    with human `approved: true`
+15. `GET /api/v1/economy`, `/sunrey-coin`, `/moonrey-coin`, `/status`
+
+Freshness on externally sourced information is one of `LIVE`,
+`DELAYED`, `SANDBOX`, `UNAVAILABLE`, `STALE`. Sandbox fixtures report
+`SANDBOX`. Do not invent global economic values.
+
+Agent path: `"Buy $500 of SunRey Coin."` → EXCHANGE Action Card →
+human approve. The Agent cannot self-approve.
+
+`productionMoneyMovement` stays false. Mainnet and live Exchange stay
+blocked.
+
+SDK helpers: `getExchangeHome`, `listExchangeMarkets`,
+`previewExchangeOrder`, `createExchangeProposal`,
+`approveExchangeProposal`, `submitExchangeProposal`, `getWallet`,
+`simulateWalletDeposit`, `createWithdrawalQuote`, `getEconomyHome`,
+`getSunreyCoinEconomy`, `getMoonreyCoinEconomy`, `getEconomyStatus`.
 ## Wallets, deposits, and withdrawals (Phase G Prompt 5)
 
 Use the Consumer BFF. Lovable never holds server-controlled signing
@@ -397,3 +441,36 @@ Do not ask the backend for a private key.
 Do not let the Agent sign or broadcast.
 Do not mark a deposit available before `FINALIZED`.
 See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.
+
+## Personal Data Vault (Phase H Prompt 1)
+
+Use the Consumer BFF. Lovable must not implement privacy, consent,
+classification, or retention logic. The Vault is not PEG and not a
+dump of every personal field.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Vault Home | `GET /api/v1/data/vault` | Counts, production flags false, `sunreyOwnsUserData: false` |
+| Your Data | `GET /api/v1/data/vault/records` | Filter with `categoryId`, `kind`, `status` |
+| Data Categories | `GET /api/v1/data/vault/categories` | Versioned registry. Health/biometric/genetic are not ingested by default |
+| Data Sources | `GET /api/v1/data/vault/sources` | Distinct sources plus ownership roles |
+| Verified / user-declared / derived | records `verificationState` / `dataKind` | AI inference is never a verified personal fact |
+| Who can access | `GET /api/v1/data/vault/access` | Audit metadata only |
+| Data History | `GET /api/v1/data/vault/records/{id}/history` | Versions. Current profile state stays separate |
+| Export | `POST /api/v1/data/vault/export` then `/export/status` | Portable bundle. No secrets or other users |
+| Correct / Dispute | `PATCH .../records/{id}` or `POST .../corrections` | User-declared overwrite; derived/provider stay review-pending |
+
+SDK: `getVaultHome`, `listVaultCategories`, `listVaultRecords`,
+`getVaultRecord`, `getVaultRecordHistory`, `requestVaultCorrection`,
+`listVaultSources`, `listVaultAccess`, `requestVaultExport`,
+`getVaultExportStatus`.
+
+Sandbox tokens: `sandbox.vault_minimal`, `sandbox.vault_financial`,
+`sandbox.vault_employment`, `sandbox.vault_multi_source`,
+`sandbox.vault_derived`, `sandbox.vault_disputed`,
+`sandbox.vault_revoked`, `sandbox.vault_restricted_agent`.
+
+Do not call a generic get-all-user-data API. There is not one.
+Do not treat Agent conversation as consent.
+Do not store KYC images, bank credentials, or private keys in the Vault.
+See `docs/productization/PHASE_H_01_PERSONAL_DATA_VAULT.md`.

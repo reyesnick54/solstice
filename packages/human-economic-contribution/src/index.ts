@@ -86,6 +86,27 @@ export {
 } from './ids.ts';
 export { HUMAN_CONTRIBUTION_ISOLATION } from './isolation.ts';
 export {
+  HIN_AI_ROLE,
+  HIN_CATEGORY_REGISTRY,
+  HIN_ECONOMIC_VALUE_INPUT_UNIT,
+  HIN_PRODUCT_CATEGORIES,
+  HIN_VERIFICATION_STATES,
+  HinEconomicValueEngine,
+  HinValuationMethodologyRegistry,
+  createHinEconomicValueEngine,
+  createHinIssuanceBasisProposal,
+  refuseHinMint,
+} from './hin-value/index.ts';
+export type {
+  HinAggregateMetrics,
+  HinContributionRecord,
+  HinCustomerSummary,
+  HinEconomicValueInput,
+  HinIssuanceBasisProposal,
+  HinProductCategory,
+  HinVerificationState,
+} from './hin-value/index.ts';
+export {
   assertEligibilityNotAutomatic,
   assertInformationRights,
   assertMeasurement,

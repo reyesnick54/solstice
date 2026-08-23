@@ -43,10 +43,14 @@ export { ConsentLedger } from './ledger.ts';
 export { issueDataUsePermit, permitPayload, verifyDataUsePermit } from './permit.ts';
 export { PurposeRegistry, simulationPurposes } from './purpose-registry.ts';
 export {
+  RECIPIENT_CORE_SERVICE,
   RECIPIENT_EXTERNAL_RESEARCH,
   RECIPIENT_EXTERNAL_RESEARCH_BETA,
+  RECIPIENT_HIN_NETWORK,
+  RECIPIENT_LICENSEE_SIM,
   RECIPIENT_PEG,
   RECIPIENT_PERSONAL_AGENT,
+  RECIPIENT_PERSONALIZATION,
   RECIPIENT_PEVE,
   RECIPIENT_PRODUCT_RESEARCH,
   RecipientRegistry,
@@ -104,3 +108,22 @@ export type {
   RecipientRecord,
   RetentionInstruction,
 } from './types.ts';
+export {
+  ConsentDataRightsEngine,
+  CURRENT_DATA_TERMS_VERSION,
+  PRODUCT_PURPOSE_CATALOG,
+  expandPermissionBundle,
+  listProductPurposes,
+} from './product/index.ts';
+export type {
+  AccessDecisionOutcome,
+  AccessDecisionRequest,
+  AccessDecisionResult,
+  ConsentGrantView,
+  DataRightsActor,
+  DataRightsRequest,
+  HinParticipationRecord,
+  LicenseGrant,
+  PermissionBundle,
+  ProductPurpose,
+} from './product/index.ts';

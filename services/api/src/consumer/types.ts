@@ -178,6 +178,7 @@ export const CONSUMER_RESOURCE_GROUPS = [
   'EXCHANGE',
   'WALLETS',
   'ECONOMY',
+  'HIN',
   'DATA',
   'SECURITY',
   'NOTIFICATIONS',

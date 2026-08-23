@@ -245,6 +245,33 @@ export type CardsPort = {
 export type DataPort = {
   consent(ownerId: string): PortResult<ConsentSummary>;
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
+  hinRights(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly items: readonly { readonly rightId: string; readonly category: string; readonly status: string; readonly ownershipTransferred: false }[];
+  }>;
+  hinPermissions(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly purposes: readonly string[];
+  }>;
+  hinEarnings(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly settledMinorUnits: string;
+    readonly guaranteed: false;
+  }>;
+  hinLicense(ownerId: string, licenseId: string): PortResult<{
+    readonly licenseId: string;
+    readonly purpose: string;
+    readonly status: string;
+  }>;
+  hinParticipation(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+    readonly financialServicesRemainOpen: true;
+  }>;
+  vaultRecords(
+    ownerId: string,
+    input: { readonly purpose: string; readonly categoryIds?: readonly string[]; readonly recordIds?: readonly string[] },
+  ): PortResult<readonly { readonly dataRecordId: string; readonly categoryId: string; readonly label: string }[]>;
 };
 
 export type NativeEconomyRecord = {
@@ -305,6 +332,13 @@ export type ToolCompliancePort = {
   }): { readonly status: 'ALLOW' | 'BLOCK' | 'HOLD' | 'REQUIRE_MANUAL_REVIEW'; readonly detail: string };
 };
 
+export type HinContributionPort = {
+  contributions(ownerId: string): PortResult<readonly { readonly contributionId: string; readonly category: string; readonly verification: string }[]>;
+  metrics(): PortResult<{ readonly verifiedContributors: number; readonly individualRecordsExposed: false; readonly isMintAmount: false }>;
+  summary(ownerId: string): PortResult<{ readonly issuancePromised: false; readonly compensation: { readonly mintRequested: false } }>;
+  methodologies(): PortResult<readonly { readonly methodologyId: string; readonly isMintFormula: false }[]>;
+};
+
 export type AgentToolDomainPorts = {
   readonly accounts: AccountsPort;
   readonly payments: PaymentsPort;
@@ -317,5 +351,6 @@ export type AgentToolDomainPorts = {
   readonly data: DataPort;
   readonly nativeEconomy: NativeEconomyPort;
   readonly productiveEconomy: ProductiveEconomyPort;
+  readonly hin: HinContributionPort;
   readonly compliance: ToolCompliancePort;
 };

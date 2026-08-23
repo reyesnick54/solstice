@@ -361,15 +361,22 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
+export type GrowProductProposal = GrowPlanProposal;
+export type GrowProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
   readonly status: GrowProposalStatus;
   readonly amount: MoneyResource;
   readonly guaranteedOutcome: false;
+  readonly issuedAuthority: null;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
 };
+export type GrowProductProposal = GrowPlanProposal;
+export type GrowProposal = GrowPlanProposal;
+
+export type GrowProposal = GrowPlanProposal;
 
 /** Alias used by Grow execution APIs. Same resource as GrowPlanProposal. */
 export type GrowProposal = GrowPlanProposal;
@@ -476,7 +483,7 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isExecutionAuthority: false;
+  readonly isFinancialAuthority: false;
 };
 
 export type AgentConversationResource = {
@@ -536,6 +543,7 @@ export type GrowPortfolio = {
   readonly securitiesBrokerageLive: false;
   readonly authoritativeCalculator: 'INVESTMENT_PLATFORM';
   readonly frontendMathAuthoritative: false;
+  readonly liveInvestmentExecution: false;
 };
 
 export type GrowHoldings = {
@@ -580,6 +588,7 @@ export type GrowPerformance = {
   readonly insufficientData: boolean;
   readonly llmAuthoritative: false;
   readonly frontendMathAuthoritative: false;
+  readonly depositsAreNotPerformance: true;
 };
 
 export type GrowAllocation = {
@@ -799,6 +808,63 @@ export type WithdrawalCreateInput = {
   readonly originatedFromAgent?: boolean;
 };
 
+export type VaultHome = {
+  readonly schema: 'sunrey.consumer.vault.home.v1';
+  readonly fabric: string;
+  readonly ownerSubjectId: string;
+  readonly recordCount: number;
+  readonly categoryCount: number;
+  readonly sourceCount: number;
+  readonly disputedCount: number;
+  readonly productionActive: false;
+  readonly liveMonetizationEnabled: false;
+  readonly sunreyOwnsUserData: false;
+};
+
+export type VaultCategory = {
+  readonly categoryId: string;
+  readonly label: string;
+  readonly classification: string;
+  readonly availability: string;
+  readonly ingestEnabled: boolean;
+  readonly agentAccessEligible: boolean;
+  readonly shareability: string;
+  readonly liveMonetizationEnabled: false;
+};
+
+export type VaultCategories = {
+  readonly schema: 'sunrey.consumer.vault.categories.v1';
+  readonly version: string;
+  readonly productionActive: false;
+  readonly liveMonetizationEnabled: false;
+  readonly items: readonly VaultCategory[];
+};
+
+export type VaultRecord = {
+  readonly schema: 'sunrey.vault.data-record.v1';
+  readonly dataRecordId: string;
+  readonly ownerSubjectId: string;
+  readonly dataCategory: string;
+  readonly dataKind: string;
+  readonly verificationState: string;
+  readonly classification: string;
+  readonly status: string;
+  readonly productionActive: false;
+};
+
+export type VaultRecords = {
+  readonly schema: 'sunrey.consumer.vault.records.v1';
+  readonly items: readonly VaultRecord[];
+  readonly productionActive: false;
+};
+
+export type VaultExportJob = {
+  readonly exportId: string;
+  readonly subjectId: string;
+  readonly status: 'REQUESTED' | 'COMPLETED' | 'FAILED';
+  readonly legalPortabilityClaim: false;
+};
+
 export type NativeEconomyOverview = {
   readonly schema: 'sunrey.consumer.native-economy.v1';
   readonly tickerStatus: 'NOT_ASSIGNED';
@@ -883,6 +949,104 @@ export type ExchangeOrderSubmit = {
   readonly accepted: true;
   readonly requiresExecution: true;
   readonly proposalId: string | null;
+};
+
+export type HinRight = {
+  readonly rightId: string;
+  readonly category: string;
+  readonly scope: string;
+  readonly eligiblePurposes: readonly string[];
+  readonly prohibitedPurposes: readonly string[];
+  readonly status: string;
+  readonly ownershipTransferred: false;
+  readonly usageRightOnly: true;
+  readonly termsVersion: string;
+};
+
+export type HinRights = {
+  readonly schema: 'sunrey.consumer.hin.rights.v1';
+  readonly items: readonly HinRight[];
+  readonly productionActivated: false;
+};
+
+export type HinLicense = {
+  readonly licenseId: string;
+  readonly purpose: string;
+  readonly scope: string;
+  readonly status: string;
+  readonly expiresAt: string | null;
+  readonly redistribution: 'PROHIBITED';
+};
+
+export type HinLicenses = {
+  readonly schema: 'sunrey.consumer.hin.licenses.v1';
+  readonly items: readonly HinLicense[];
+  readonly productionActivated: false;
+};
+
+export type HinEarnings = {
+  readonly schema: 'sunrey.consumer.hin.earnings.v1';
+  readonly rightsHolder: string;
+  readonly settledMinorUnits: string;
+  readonly currency: string;
+  readonly guaranteed: false;
+  readonly compensationGuaranteed: false;
+};
+
+export type HinEarningsActivity = {
+  readonly schema: 'sunrey.consumer.hin.earnings-activity.v1';
+  readonly items: readonly {
+    readonly settlementId: string;
+    readonly licenseId: string;
+    readonly occurredAt: string;
+    readonly journalId: string | null;
+    readonly nativeTransferId: string | null;
+    readonly guaranteed: false;
+  }[];
+  readonly guaranteed: false;
+};
+
+export type HinParticipation = {
+  readonly schema: 'sunrey.consumer.hin.participation.v1';
+  readonly status: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
+  readonly compensationGuaranteed: false;
+  readonly productionActivated: false;
+export type DataPermissionCatalog = {
+  readonly schema: 'sunrey.consumer.data.permissions.v1';
+  readonly termsVersion: string;
+  readonly implicitMonetizationOptIn: false;
+  readonly purposes: readonly {
+    readonly purposeId: string;
+    readonly necessity: 'REQUIRED_FOR_CORE_SERVICE' | 'OPTIONAL' | 'OPTIONAL_COMPENSATED';
+    readonly granted: boolean;
+    readonly requiredForBasicAccount: boolean;
+  }[];
+};
+
+export type DataConsentGrant = {
+  readonly grantId: string;
+  readonly consentId: string;
+  readonly purposeId: string;
+  readonly dataCategories: readonly string[];
+  readonly status: string;
+  readonly termsVersion: string;
+};
+
+export type DataConsentList = {
+  readonly schema: 'sunrey.consumer.data.consents.v1';
+  readonly items: readonly DataConsentGrant[];
+};
+
+export type HinParticipation = {
+  readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+  readonly financialServicesRemainOpen: true;
+};
+
+export type DataRightsRequestResource = {
+  readonly requestId: string;
+  readonly type: string;
+  readonly state: string;
+  readonly applicable: boolean;
 };
 
 export type ActionCenterList = {

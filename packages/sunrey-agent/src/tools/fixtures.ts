@@ -259,6 +259,25 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
     data: {
       consent: (ownerId) => ok({ ownerId, activePermits: 1, purposes: ['FINANCIAL_EXPLANATION'] }),
       permissions: (ownerId) => ok({ ownerId, scopes: ['derived_income', 'vault_metadata'] }),
+      hinRights: (ownerId) =>
+        ok({
+          ownerId,
+          items: [{ rightId: 'irr_sim', category: 'FINANCIAL_ACTIVITY_METADATA', status: 'ACTIVE', ownershipTransferred: false }],
+        }),
+      hinPermissions: (ownerId) => ok({ ownerId, purposes: ['RESEARCH'] }),
+      hinEarnings: (ownerId) => ok({ ownerId, settledMinorUnits: '0', guaranteed: false }),
+      hinLicense: (_ownerId, licenseId) => ok({ licenseId, purpose: 'RESEARCH', status: 'ACTIVE' }),
+      hinParticipation: (ownerId) =>
+        ok({ ownerId, state: 'NOT_ENROLLED', financialServicesRemainOpen: true }),
+      vaultRecords(ownerId, input) {
+        if (ownerId !== owner) return fail('NOT_OWNED', 'vault records are not visible for that owner');
+        if ((!input.categoryIds || input.categoryIds.length === 0) && (!input.recordIds || input.recordIds.length === 0)) {
+          return fail('NOT_ELIGIBLE', 'agent wildcard vault access is forbidden');
+        }
+        return ok([
+          { dataRecordId: 'pda_fixture_pref', categoryId: 'goals_preferences', label: 'USER_DECLARED_DATA:pdsch_preference' },
+        ]);
+      },
     },
     nativeEconomy: {
       asset(assetId) {
@@ -330,6 +349,11 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
       freshness() {
         return ok({ freshness: 'FRESH', usableForTimeSensitiveValuation: true });
       },
+    hin: {
+      contributions: (ownerId) => ok([{ contributionId: 'hec_sim_1', category: 'RESEARCH_CONTRIBUTION', verification: 'SYSTEM_VERIFIED', ownerId }]),
+      metrics: () => ok({ verifiedContributors: 1, individualRecordsExposed: false, isMintAmount: false }),
+      summary: (ownerId) => ok({ ownerId, issuancePromised: false, compensation: { mintRequested: false } }),
+      methodologies: () => ok([{ methodologyId: 'hin-evi-governed-schedule', isMintFormula: false }]),
     },
     compliance: {
       evaluate: () => ({ status: overrides.kernelStatus ?? 'ALLOW', detail: overrides.kernelStatus ?? 'ALLOW' }),

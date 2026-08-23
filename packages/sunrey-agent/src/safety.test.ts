@@ -40,6 +40,7 @@ function mandate(): UserAgentMandate {
       humanInformationAccess: false,
       allowWildcardAssets: false,
     },
+    assistScopes: ['CREATE_PAYMENT_PROPOSAL'],
     budget: {
       perTransaction: 10n,
       perPeriod: 10n,

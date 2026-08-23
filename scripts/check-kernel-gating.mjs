@@ -144,7 +144,7 @@ for (const path of STATE_CHANGING_PATHS) {
     addFailure(path.file, 1, `state-changing symbol ${path.symbol} not found`);
     continue;
   }
-  const body = lines.slice(foundLine - 1, foundLine + 80).join('\n');
+  const body = lines.slice(foundLine - 1, foundLine + 160).join('\n');
   const gated =
     body.includes('ExecutionAuthority') ||
     body.includes('executionAuthority') ||

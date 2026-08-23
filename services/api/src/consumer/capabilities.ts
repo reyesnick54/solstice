@@ -182,7 +182,17 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     pendingVerification: false,
     providerDown: down.vault === true,
     productized: true,
-    reasonIfDisabled: 'data vault is not productized',
+    reasonIfDisabled: 'data vault requires VAULT_VIEW_OWN',
+  });
+  const hin = feature({
+    key: 'hin',
+    availability: 'AVAILABLE_SIMULATION',
+    provider: 'SIMULATED',
+    eligible: !restricted,
+    pendingVerification: false,
+    providerDown: false,
+    productized: true,
+    reasonIfDisabled: 'information rights marketplace is not productized',
   });
 
   void input.grow;
@@ -203,6 +213,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     withdrawalsEnabled: withdrawals.enabled,
     walletsEnabled: wallets.enabled,
     dataVaultEnabled: dataVault.enabled,
+    hinEnabled: hin.enabled,
     details: Object.freeze({
       payments,
       fx,
@@ -213,6 +224,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
       withdrawals,
       wallets,
       dataVault,
+      hin,
     }),
   });
 }
