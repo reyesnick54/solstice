@@ -287,16 +287,6 @@ export const GROW_EXECUTION_STATES = [
 ] as const;
 export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
 
-export type GrowProposal = {
-  readonly proposalId: string;
-  readonly version: number;
-  readonly state: string;
-  readonly amount: MoneyResource;
-  readonly serverOwned: true;
-  readonly clientInstructionsTrusted: false;
-  readonly productionMoneyMovement: false;
-};
-
 export type GrowExecution = {
   readonly executionId: string;
   readonly state: GrowExecutionState | string;
@@ -367,9 +357,6 @@ export type GrowProposal = {
   readonly guaranteedOutcome: false;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
 };
 
 export type GrowProfile = {
@@ -498,6 +485,8 @@ export type AgentMessageResponse = {
   readonly stream: readonly { readonly kind: string; readonly text: string }[];
   readonly financialStateChanged: false;
   readonly executionCompleted: false;
+};
+
 /**
  * Grow My Money portfolio views. Authoritative values come from
  * packages/investments. Frontend math is not authoritative.

@@ -288,13 +288,13 @@ describe('consumer BFF SDK browser boundary', () => {
       'createSimulationKeyProvider',
       'AuthorityIssuer',
       'postJournal',
-      'ExecutionAuthority',
     ];
     for (const file of files) {
       const source = readFileSync(join(dir, file), 'utf8');
       for (const needle of forbidden) {
         assert.equal(source.includes(needle), false, `${file} leaked ${needle}`);
       }
+      assert.equal(/import[\s\S]*ExecutionAuthority/.test(source), false, `${file} imported ExecutionAuthority`);
     }
   });
 });

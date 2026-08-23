@@ -27,7 +27,7 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
-import { listSandboxPersonas } from './fixtures.ts';
+import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
@@ -79,8 +79,7 @@ export type ConsumerBffRuntime = {
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
-  readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly nativeEconomy?: NativeEconomySurface;
 };
@@ -310,6 +309,8 @@ function dispatchAuthenticated(
     const agents = dispatchAgents(runtime.agentRuntime, request, principal, requestId, headers);
     if (agents) {
       return agents;
+    }
+  }
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
@@ -374,11 +375,6 @@ function dispatchAuthenticated(
       });
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
-  if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-    if (grow) {
-      return grow;
-    }
   }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);

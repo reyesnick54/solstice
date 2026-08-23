@@ -1,14 +1,47 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { handleConsumerBff } from './consumer/handler.ts';
-import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+import { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/handler.ts';
 import { createNativeEconomySurface } from './consumer/native-economy-adapter.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
-import { CONSUMER_BFF_ROUTES } from './consumer/handler.ts';
+import type { ConsumerBff } from './consumer/orchestrator.ts';
+import type { BffPrincipal } from './consumer/ports.ts';
+import type { SessionDirectory } from './consumer/session.ts';
 
-function auth(persona: Parameters<typeof sandboxToken>[0]) {
-  return `Bearer ${sandboxToken(persona)}`;
+const TOKEN = 'sandbox.basic_verified';
+
+function principal(): BffPrincipal {
+  return {
+    actorId: 'actor_basic',
+    customerId: 'cust_basic',
+    identityId: 'idn_basic',
+    sessionId: 'sess_basic',
+    jurisdiction: 'GB',
+    verification: 'VERIFIED',
+    customerStatus: 'ACTIVE',
+    identityStatus: 'VERIFIED',
+    capabilities: ['VIEW_ACCOUNT'],
+    risk: 'LOW',
+    restricted: false,
+    sandboxPersona: 'basic_verified',
+    deviceSummary: { deviceId: 'dev_basic', trustState: 'TRUSTED' },
+  };
+}
+
+function economyRuntime(): ConsumerBffRuntime {
+  const sessions: SessionDirectory = new Map([[TOKEN, principal()]]);
+  return {
+    bff: {
+      featureStub: (group: string) =>
+        Object.freeze({
+          group,
+          availability: 'AVAILABLE_SIMULATION',
+          productionActive: false,
+        }),
+    } as unknown as ConsumerBff,
+    sessions,
+    nativeEconomy: createNativeEconomySurface(),
+  };
 }
 
 describe('Consumer BFF native economy', () => {
@@ -22,22 +55,13 @@ describe('Consumer BFF native economy', () => {
   });
 
   it('returns protocol-native SunRey and MoonRey supply without fabricating HIN metrics', () => {
-    const world = createSandboxWorld();
-    const res = handleConsumerBff(
-      {
-        bff: world.bff,
-        sessions: world.sessions,
-        identity: world.runtime.identity.service,
-        nativeEconomy: createNativeEconomySurface(),
-      },
-      {
-        method: 'GET',
-        path: '/api/v1/economy',
-        query: {},
-        body: {},
-        authorization: auth('basic_verified'),
-      },
-    );
+    const res = handleConsumerBff(economyRuntime(), {
+      method: 'GET',
+      path: '/api/v1/economy',
+      query: {},
+      body: {},
+      authorization: `Bearer ${TOKEN}`,
+    });
     assert.equal(res.status, 200);
     const body = res.body as {
       schema: string;
@@ -56,19 +80,13 @@ describe('Consumer BFF native economy', () => {
   });
 
   it('rejects unknown assets and privileged POST issuance', () => {
-    const world = createSandboxWorld();
-    const runtime = {
-      bff: world.bff,
-      sessions: world.sessions,
-      identity: world.runtime.identity.service,
-      nativeEconomy: createNativeEconomySurface(),
-    };
+    const runtime = economyRuntime();
     const missing = handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/economy/assets/USDT',
       query: {},
       body: {},
-      authorization: auth('basic_verified'),
+      authorization: `Bearer ${TOKEN}`,
     });
     assert.equal(missing.status, 404);
     const mint = handleConsumerBff(runtime, {
@@ -76,7 +94,7 @@ describe('Consumer BFF native economy', () => {
       path: '/api/v1/economy/issuance',
       query: {},
       body: { amount: '1' },
-      authorization: auth('basic_verified'),
+      authorization: `Bearer ${TOKEN}`,
     });
     assert.ok(mint.status === 404 || mint.status === 405);
   });

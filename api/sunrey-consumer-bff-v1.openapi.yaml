@@ -596,34 +596,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowPortfolio"
-      summary: Grow My Money opportunity feed
-      description: >
-        Deterministic Growth Orchestrator cards. Does not execute money
-        or promise a return.
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-  /api/v1/grow/opportunities:
-    get:
-      operationId: listGrowOpportunities
-      summary: List ranked growth opportunities
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-        "401":
-          description: Authentication required
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Portfolio not found
   /api/v1/grow/portfolio/holdings:
     get:
       operationId: getGrowPortfolioHoldings
@@ -732,15 +704,6 @@ paths:
           description: Cross-user denied
         "404":
           description: Not found
-  /api/v1/grow/opportunities/{id}/dismiss:
-    post:
-      operationId: dismissGrowOpportunity
-      summary: Dismiss an opportunity
-      description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
-      responses:
-        "200":
-          description: Availability plus simulation posture
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -755,30 +718,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowProfile"
-  /api/v1/grow/snapshot:
-    get:
-      operationId: getGrowSnapshot
-      summary: Financial snapshot
-      responses:
-        "200":
-          description: Snapshot with per-currency positions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowSnapshot"
-  /api/v1/grow/goals:
-    get:
-      operationId: listGrowGoals
-      summary: List user-declared goals
-      responses:
-        "200":
-          description: Goal list
-    post:
-      operationId: createGrowGoal
-      summary: Create a user-declared goal
-      responses:
-        "201":
-          description: Created goal
   /api/v1/grow/goals/{id}:
     patch:
       operationId: patchGrowGoal
@@ -855,13 +794,6 @@ paths:
       responses:
         "200":
           description: Execution
-  /api/v1/grow/portfolio:
-    get:
-      operationId: getGrowPortfolio
-      summary: Holdings, allocation, and risk
-      responses:
-        "200":
-          description: Portfolio
   /api/v1/grow/performance:
     get:
       operationId: getGrowPerformance

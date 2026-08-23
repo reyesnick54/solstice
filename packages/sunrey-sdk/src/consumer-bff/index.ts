@@ -42,7 +42,6 @@ export type {
   AgentConversationResource,
   AgentMemoryResource,
   AgentMessageResponse,
-  GrowProposal,
   GrowExecution,
   GrowExecutionState,
   GrowPlan,
