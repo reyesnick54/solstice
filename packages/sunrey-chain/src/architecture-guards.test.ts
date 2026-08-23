@@ -81,6 +81,7 @@ describe('sunrey chain architecture guards', () => {
         file.includes(`${join('src', 'wallet', 'security')}`) ||
         file.includes(`${join('src', 'public-data-plane')}`) ||
         file.includes(`${join('src', 'validator-operator')}`) ||
+        file.includes(`${join('src', 'native-assets')}`);
         file.includes(`${join('src', 'runtime')}`);
       if (allowsTestNetwork) {
         assert.equal(/\bLIVE_CHAIN\s*=\s*true\b|\bMAINNET_ENABLED\s*=\s*true\b/.test(source), false, file);

@@ -1434,6 +1434,58 @@ paths:
       summary: Exchange catalog
       responses:
         "200":
+          description: Honest availability
+  /api/v1/economy:
+    get:
+      operationId: getNativeEconomy
+      summary: Protocol-native SunRey Coin and MoonRey Coin economy overview
+      description: >
+        Read-only Lovable contract. Supply is protocol-native. Market price
+        is Exchange last trade when present and is never derived from
+        internal valuation. No issuance, mint, or burn endpoints.
+      responses:
+        "200":
+          description: Native economy overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NativeEconomyOverview"
+        "401":
+          description: Authentication required
+  /api/v1/economy/supply:
+    get:
+      operationId: getNativeSupply
+      summary: Read-only native-asset supply
+      responses:
+        "200":
+          description: Supply snapshots
+        "401":
+          description: Authentication required
+  /api/v1/economy/assets:
+    get:
+      operationId: listNativeAssets
+      summary: List protocol-native assets
+      responses:
+        "200":
+          description: SUNREY_COIN and MOONREY_COIN metadata
+        "401":
+          description: Authentication required
+  /api/v1/economy/assets/{assetId}:
+    get:
+      operationId: getNativeAsset
+      summary: Read one protocol-native asset
+      parameters:
+        - in: path
+          name: assetId
+          required: true
+          schema: { type: string, enum: [SUNREY_COIN, MOONREY_COIN] }
+      responses:
+        "200":
+          description: Native asset resource
+        "404":
+          description: Unknown asset
+        "401":
+          description: Authentication required
           description: Honest availability; production trading remains disabled
   /api/v1/exchange/markets:
     get:
@@ -1672,6 +1724,15 @@ paths:
           description: Honest availability
 components:
   schemas:
+    NativeEconomyOverview:
+      type: object
+      required: [schema, tickerStatus, productionActive, valuationIsNotMarketPrice]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.native-economy.v1] }
+        tickerStatus: { type: string, enum: [NOT_ASSIGNED] }
+        productionActive: { type: boolean, enum: [false] }
+        valuationIsNotMarketPrice: { type: boolean, enum: [true] }
+        privilegedIssuanceExposed: { type: boolean, enum: [false] }
     GrowMoney:
       type: object
       required: [minorUnits, currency]

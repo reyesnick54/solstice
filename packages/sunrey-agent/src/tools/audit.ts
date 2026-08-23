@@ -48,6 +48,12 @@ export const EXISTING_AGENT_TOOL_AUDIT: readonly ExistingToolAuditRow[] = Object
     notes: 'Position/eligibility explanation. No issue/transfer/burn.',
   },
   {
+    path: 'packages/sunrey-chain/src/native-assets/client-surface.ts',
+    name: 'authorizeAgentNativeEconomyAction',
+    classification: 'CANONICAL',
+    notes: 'Read-only native economy. Agent cannot mint, burn, or modify policy.',
+  },
+  {
     path: 'packages/clean-room/src/agent-tool.ts',
     name: 'SubjectScopedCleanRoomTool',
     classification: 'SIMULATION',

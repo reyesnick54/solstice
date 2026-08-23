@@ -260,6 +260,35 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
       consent: (ownerId) => ok({ ownerId, activePermits: 1, purposes: ['FINANCIAL_EXPLANATION'] }),
       permissions: (ownerId) => ok({ ownerId, scopes: ['derived_income', 'vault_metadata'] }),
     },
+    nativeEconomy: {
+      asset(assetId) {
+        if (assetId !== 'SUNREY_COIN' && assetId !== 'MOONREY_COIN') {
+          return fail('NOT_FOUND', 'native asset not found');
+        }
+        return ok({
+          assetId,
+          canonicalName: assetId === 'SUNREY_COIN' ? 'SunRey Coin' : 'MoonRey Coin',
+          tickerStatus: 'NOT_ASSIGNED',
+          totalSupply: '0',
+          circulatingSupply: '0',
+          protocolNative: true,
+          lastTradeMinorUnits: assetId === 'SUNREY_COIN' ? '100' : null,
+          valuationIsNotMarketPrice: true,
+        });
+      },
+      supply() {
+        const sunrey = this.asset('SUNREY_COIN');
+        const moonrey = this.asset('MOONREY_COIN');
+        if (!sunrey.ok || !moonrey.ok) return fail('PRODUCT_UNAVAILABLE', 'native supply is unavailable');
+        return ok([sunrey.value, moonrey.value]);
+      },
+      overview() {
+        const sunrey = this.asset('SUNREY_COIN');
+        const moonrey = this.asset('MOONREY_COIN');
+        if (!sunrey.ok || !moonrey.ok) return fail('PRODUCT_UNAVAILABLE', 'native economy is unavailable');
+        return ok({ sunrey: sunrey.value, moonrey: moonrey.value, productionActive: false });
+      },
+    },
     compliance: {
       evaluate: () => ({ status: overrides.kernelStatus ?? 'ALLOW', detail: overrides.kernelStatus ?? 'ALLOW' }),
     },

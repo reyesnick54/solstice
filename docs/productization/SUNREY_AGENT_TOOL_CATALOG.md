@@ -96,6 +96,16 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getConsentSummary | Active permits | none | summary | READ | READ_FINANCIAL_STATE | read-only | consent | no |
 | getDataPermissions | Authorized scopes | none | scopes | READ | READ_FINANCIAL_STATE | read-only | consent / PDV | no |
 
+## NATIVE ECONOMY
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getNativeAsset | Protocol-native asset metadata | `assetId` | asset | READ | READ_FINANCIAL_STATE | read-only | sunrey-chain native-assets | no |
+| getNativeSupply | Issued / circulating supply | optional `assetId` | supply | READ | READ_FINANCIAL_STATE | read-only | AssetSupplyBook | no |
+| getNativeEconomy | Approved explanation + last trade if any | none | overview | READ | READ_FINANCIAL_STATE | read-only | native-assets client surface | no |
+
+Agents cannot mint, burn, modify policy, change supply, or declare a future price.
+
 ## Not created
 
 Tools were not created for unsupported or forbidden capabilities:
@@ -106,3 +116,4 @@ Tools were not created for unsupported or forbidden capabilities:
 - Execution Authority issuance
 - provider credential access
 - `sendMoneyImmediately` / `executeProposal` / `selfApprove`
+- native-asset mint / burn / policy change / future-price declaration

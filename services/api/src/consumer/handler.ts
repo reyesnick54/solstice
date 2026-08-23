@@ -27,7 +27,7 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
-import { listSandboxPersonas } from './fixtures.ts';
+import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
@@ -54,6 +54,7 @@ import {
 import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/index.ts';
 import { AgentConversationSurface } from './conversation.ts';
 import { CONVERSATION_INTENTS, ACTION_CARD_STATUSES, ACTION_CARD_TYPES, ACTION_CENTER_VIEWS, AVAILABLE_ACTION_CONTROLS } from '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts';
+import type { NativeEconomySurface } from './native-economy-adapter.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -83,6 +84,7 @@ export type ConsumerBffRuntime = {
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
+  readonly nativeEconomy?: NativeEconomySurface;
   readonly exchange?: ExchangeBffSurface;
 };
 
@@ -488,6 +490,50 @@ function dispatchAuthenticated(
       },
       headers,
     );
+  }
+
+  if (path === '/api/v1/economy' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, surface.overview(), headers);
+  }
+  if (path === '/api/v1/economy/supply' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, surface.supply(), headers);
+  }
+  if (path.startsWith('/api/v1/economy/assets/') && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    const assetId = path.slice('/api/v1/economy/assets/'.length);
+    const asset = surface.asset(assetId);
+    if ('error' in asset) {
+      return json(
+        404,
+        bffError({
+          errorCode: 'NOT_FOUND',
+          category: 'NOT_FOUND',
+          message: 'native asset not found',
+          retryable: false,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, asset, headers);
+  }
+  if (path === '/api/v1/economy/assets' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, { items: surface.supply().assets }, headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -1282,6 +1328,10 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/agents/{id}/conversations/{conversationId}/messages',
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
+  'GET /api/v1/economy',
+  'GET /api/v1/economy/assets',
+  'GET /api/v1/economy/assets/{id}',
+  'GET /api/v1/economy/supply',
   'GET /api/v1/exchange/markets',
   'GET /api/v1/exchange/markets/{instrument}',
   'GET /api/v1/exchange/markets/{instrument}/ticker',

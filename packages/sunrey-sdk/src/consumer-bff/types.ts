@@ -664,6 +664,39 @@ export type ConversationTurn = {
   readonly productionMoneyMovement: false;
 };
 
+export type NativeEconomyOverview = {
+  readonly schema: 'sunrey.consumer.native-economy.v1';
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly productionActive: false;
+  readonly valuationIsNotMarketPrice: true;
+  readonly sunrey: {
+    readonly name: 'SunRey Coin';
+    readonly protocolNative: true;
+    readonly economicModel: string;
+    readonly hinMetrics: { readonly available: false; readonly reason: string };
+  };
+  readonly moonrey: {
+    readonly name: 'MoonRey Coin';
+    readonly protocolNative: true;
+    readonly economicModel: string;
+    readonly approvedUnderlyingMetrics: readonly unknown[];
+  };
+};
+
+export type NativeEconomySupply = {
+  readonly schema: 'sunrey.consumer.native-economy.v1';
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly network: string;
+  readonly policyVersion: string;
+  readonly privilegedIssuanceEndpoints: readonly never[];
+  readonly assets: readonly {
+    readonly protocolStatus: string;
+    readonly supply: {
+      readonly totalSupply: string;
+      readonly circulatingSupply: string;
+      readonly issuedSupply: string;
+    };
+  }[];
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;

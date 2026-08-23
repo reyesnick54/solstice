@@ -105,6 +105,10 @@ authentication foundation; the BFF only consumes a verified session.
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
 | AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
+| EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
+| ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
+| ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
+| ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
 | EXCHANGE | `/api/v1/exchange` | GET | required | catalog + screens | `packages/sunrey-exchange` product API | AVAILABLE_SIMULATION | production trading disabled |
 | EXCHANGE Home / Markets | `/api/v1/exchange/markets` | GET | required | market list | same | AVAILABLE_SIMULATION | none |
 | EXCHANGE Asset Detail / Chart / Book / History | `/api/v1/exchange/markets/{instrument}` plus `/ticker` `/orderbook` `/trades` `/candles` | GET | required | ticker, book, trades, OHLC | same | AVAILABLE_SIMULATION | freshness is explicit; last trade is not a guaranteed price |
