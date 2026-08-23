@@ -1437,6 +1437,18 @@ paths:
   /api/v1/exchange:
     get:
       operationId: getExchange
+      summary: Exchange home for Lovable screens
+      responses:
+        "200":
+          description: Exchange home, eligibility, and supported screens
+  /api/v1/exchange/markets:
+    get:
+      operationId: listExchangeMarkets
+      summary: List sandbox Exchange markets
+      responses:
+        "200":
+          description: Markets including SunRey Coin
+  /api/v1/exchange/markets/{marketId}:
       summary: Exchange catalog
       responses:
         "200":
@@ -1493,28 +1505,91 @@ paths:
         "401":
           description: Authentication required
           description: Honest availability; production trading remains disabled
-  /api/v1/exchange/markets:
+  /api/v1/hin/contributions:
     get:
-      operationId: listExchangeMarkets
-      summary: List simulation markets
+      operationId: listHinContributions
+      summary: List owner HIN contributions
+      description: >
+        Client-safe contribution records. No raw personal data. Economic
+        value inputs are not mint amounts. Privileged verification and
+        issuance operations are not exposed.
       responses:
         "200":
-          description: Markets with productionTradingEnabled=false
+          description: Contribution list
+        "401":
+          description: Authentication required
+  /api/v1/hin/contributions/{contributionId}:
+    get:
+      operationId: getHinContribution
+      summary: Read one HIN contribution
+      parameters:
+        - in: path
+          name: contributionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Contribution resource
+        "404":
+          description: Unknown contribution
+        "401":
+          description: Authentication required
+  /api/v1/hin/metrics:
+    get:
+      operationId: getHinMetrics
+      summary: Privacy-safe aggregate HIN metrics
+      responses:
+        "200":
+          description: Aggregate metrics with k-anonymity suppression
+        "401":
+          description: Authentication required
+  /api/v1/hin/me/summary:
+    get:
+      operationId: getHinMySummary
+      summary: Customer contribution summary
+      description: >
+        Your Contributions, verified, pending, economic value inputs,
+        data rights, and compensation if any. Token issuance is not
+        promised unless authorized protocol policy defines it.
+      responses:
+        "200":
+          description: Customer HIN summary
+        "401":
+          description: Authentication required
+  /api/v1/hin/valuation-methodologies:
+    get:
+      operationId: listHinValuationMethodologies
+      summary: Safe HIN valuation methodology metadata
+      description: Versioned methodologies. Not a mint formula. Production unauthorized.
+      responses:
+        "200":
+          description: Methodology metadata
+        "401":
+          description: Authentication required
   /api/v1/exchange/markets/{instrument}:
     get:
       operationId: getExchangeMarket
       summary: Market detail
       parameters:
         - in: path
+          name: marketId
           name: instrument
           required: true
           schema: { type: string }
       responses:
         "200":
+          description: Market detail
+  /api/v1/exchange/markets/{marketId}/ticker:
+    get:
+      operationId: getExchangeTicker
+      summary: Ticker
+      parameters:
+        - in: path
+          name: marketId
           description: Market
   /api/v1/exchange/markets/{instrument}/ticker:
     get:
-      operationId: getExchangeTicker
+      operationId: getExchangeTickerByInstrument
       summary: Ticker with freshness
       parameters:
         - in: path
@@ -1523,6 +1598,8 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Indicative ticker
+  /api/v1/exchange/markets/{marketId}/order-book:
           description: Ticker
   /api/v1/exchange/markets/{instrument}/orderbook:
     get:
@@ -1530,11 +1607,20 @@ paths:
       summary: Order book
       parameters:
         - in: path
+          name: marketId
           name: instrument
           required: true
           schema: { type: string }
       responses:
         "200":
+          description: Depth
+  /api/v1/exchange/markets/{marketId}/chart:
+    get:
+      operationId: getExchangeChart
+      summary: Asset chart
+      parameters:
+        - in: path
+          name: marketId
           description: Order book
   /api/v1/exchange/markets/{instrument}/trades:
     get:
@@ -1547,6 +1633,28 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Candles when history exists
+  /api/v1/exchange/eligibility:
+    get:
+      operationId: getExchangeEligibility
+      summary: KYC / Exchange eligibility
+      responses:
+        "200":
+          description: Server-owned eligibility
+  /api/v1/exchange/holdings:
+    get:
+      operationId: getExchangeHoldings
+      summary: Wallet / holdings
+      responses:
+        "200":
+          description: Holdings
+  /api/v1/exchange/fund:
+    post:
+      operationId: fundExchangeSandbox
+      summary: Fund sandbox quote account
+      responses:
+        "200":
+          description: Sandbox faucet
           description: Trades
   /api/v1/exchange/markets/{instrument}/candles:
     get:
@@ -1560,17 +1668,26 @@ paths:
       responses:
         "200":
           description: Candles
-  /api/v1/exchange/eligibility:
-    get:
-      operationId: getExchangeEligibility
-      summary: CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW
-      responses:
-        "200":
-          description: Server-controlled eligibility
   /api/v1/exchange/preview:
     post:
       operationId: previewExchangeOrder
       summary: Order preview
+      responses:
+        "200":
+          description: Preview
+        "400":
+          description: Invalid quantity
+  /api/v1/exchange/proposals:
+    post:
+      operationId: createExchangeProposal
+      summary: Create Exchange order proposal
+      responses:
+        "201":
+          description: Proposal
+  /api/v1/exchange/proposals/{id}/approve:
+    post:
+      operationId: approveExchangeProposal
+      summary: Human approval and step-up
       description: Estimated price is not a guaranteed execution price.
       responses:
         "200":
@@ -1600,6 +1717,15 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Agent self-approval refused
+  /api/v1/exchange/proposals/{id}/submit:
+    post:
+      operationId: submitExchangeProposal
+      summary: Submit after Execution Authority
           description: Order
         "403":
           description: Cross-user denied
@@ -1613,6 +1739,14 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Order / fill
+  /api/v1/exchange/stream:
+    get:
+      operationId: getExchangeStream
+      summary: Market-data stream status
+      responses:
+        "200":
+          description: Snapshot-then-increment support
           description: Cancelled
   /api/v1/exchange/fills:
     get:
@@ -1703,6 +1837,75 @@ paths:
   /api/v1/wallets:
     get:
       operationId: getWallets
+      summary: Wallet home
+      responses:
+        "200":
+          description: Wallet and holdings
+  /api/v1/wallets/deposit-address:
+    get:
+      operationId: getWalletDepositAddress
+      summary: Retrieve deposit address
+      responses:
+        "200":
+          description: Canonical custody address
+  /api/v1/wallets/deposits/simulate:
+    post:
+      operationId: simulateWalletDeposit
+      summary: Simulate native-chain deposit
+      responses:
+        "200":
+          description: Detected and finalized after test finality
+  /api/v1/wallets/withdrawals/quote:
+    post:
+      operationId: quoteWalletWithdrawal
+      summary: Withdrawal quote with destination and Travel Rule
+      responses:
+        "200":
+          description: Quote
+        "403":
+          description: Travel Rule pending or destination invalid
+  /api/v1/wallets/withdrawals:
+    post:
+      operationId: submitWalletWithdrawal
+      summary: Approved withdrawal
+      responses:
+        "200":
+          description: Finalized withdrawal
+  /api/v1/wallets/transactions:
+    get:
+      operationId: listWalletTransactions
+      summary: Wallet transaction history
+      responses:
+        "200":
+          description: Activity
+  /api/v1/economy:
+    get:
+      operationId: getEconomy
+      summary: SunRey economy information
+      responses:
+        "200":
+          description: Configured sources only
+  /api/v1/economy/sunrey-coin:
+    get:
+      operationId: getSunreyCoinEconomy
+      summary: SunRey Coin detail and HIN metrics
+      responses:
+        "200":
+          description: Asset + configured HIN metrics
+  /api/v1/economy/moonrey-coin:
+    get:
+      operationId: getMoonreyCoinEconomy
+      summary: MoonRey Coin productive-economy metrics
+      responses:
+        "200":
+          description: Configured productive categories only
+  /api/v1/economy/status:
+    get:
+      operationId: getEconomyStatus
+      summary: LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE
+      responses:
+        "200":
+          description: Client-safe freshness vocabulary
       summary: List customer wallets
       description: >
         Client-safe wallet list. No signing material. Balances are read
@@ -1726,7 +1929,7 @@ paths:
           description: Not owned
   /api/v1/wallets/{id}/deposit-address:
     get:
-      operationId: getWalletDepositAddress
+      operationId: getWalletDepositAddressById
       summary: Deposit / receive address
       parameters:
         - name: id
@@ -1750,7 +1953,7 @@ paths:
           description: Transactions with client-safe finality
   /api/v1/wallets/{id}/withdrawal-quote:
     post:
-      operationId: quoteWalletWithdrawal
+      operationId: quoteWalletWithdrawalById
       summary: Withdrawal quote
       parameters:
         - name: id
@@ -1887,10 +2090,210 @@ paths:
   /api/v1/data:
     get:
       operationId: getDataVault
-      summary: Data vault resource stub
+      summary: Personal Data Vault home
       responses:
         "200":
           description: Honest availability
+  /api/v1/data/permissions:
+    get:
+      operationId: getDataPermissions
+      summary: Purpose catalog and granted optional uses
+      responses:
+        "200":
+          description: Necessity-classed purposes; implicitMonetizationOptIn is always false
+  /api/v1/data/consents:
+    get:
+      operationId: listDataConsents
+      summary: Granular consent grants
+      responses:
+        "200":
+          description: Subject-bound consent list
+    post:
+      operationId: grantDataConsent
+      summary: Grant a purpose or permission bundle
+      responses:
+        "201":
+          description: Granular grant and receipt reference
+  /api/v1/data/consents/{id}/revoke:
+    post:
+      operationId: revokeDataConsent
+      summary: Revoke optional consent immediately
+          description: Owner vault summary. SunRey does not own user data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultHome'
+  /api/v1/data/vault:
+    get:
+      operationId: getVaultHome
+      summary: Personal Data Vault home
+      responses:
+        "200":
+          description: Same as /api/v1/data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultHome'
+  /api/v1/data/vault/categories:
+    get:
+      operationId: listVaultCategories
+      summary: Versioned vault category registry
+      responses:
+        "200":
+          description: Client-safe categories. Highly sensitive classes are not ingested by default.
+  /api/v1/data/vault/records:
+    get:
+      operationId: listVaultRecords
+      summary: List owner vault records
+      parameters:
+        - name: categoryId
+          in: query
+          schema: { type: string }
+        - name: kind
+          in: query
+          schema: { type: string }
+        - name: purpose
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Metadata records. No getAllUserData shortcut.
+  /api/v1/data/vault/records/{id}:
+    get:
+      operationId: getVaultRecord
+      summary: Vault record detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Downstream access disabled; historical processing retained
+  /api/v1/data/access-history:
+    get:
+      operationId: getDataAccessHistory
+      summary: Access decisions without raw values
+      responses:
+        "200":
+          description: Actor, purpose, category, decision, resource refs
+  /api/v1/data/rights/requests:
+    get:
+      operationId: listDataRightsRequests
+      summary: Data-rights request list
+      responses:
+        "200":
+          description: Configurable workflow states
+    post:
+      operationId: submitDataRightsRequest
+      summary: Submit ACCESS, EXPORT, CORRECTION, DELETION, RESTRICTION, OBJECTION, or CONSENT_WITHDRAWAL
+      responses:
+        "201":
+          description: Request accepted under the jurisdiction pack
+  /api/v1/hin/participation:
+    get:
+      operationId: getHinParticipation
+      summary: Optional HIN participation state
+      responses:
+        "200":
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseHinParticipation
+      summary: Pause optional HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawHinParticipation
+      summary: Withdraw from optional HIN participation
+      responses:
+        "200":
+          description: Withdrawn without closing ordinary SunRey financial services
+          description: Record metadata. Payload is redacted unless explicitly requested.
+    patch:
+      operationId: correctVaultRecord
+      summary: Correct user-declared data or open a dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Correction or review-pending dispute
+  /api/v1/data/vault/records/{id}/history:
+    get:
+      operationId: getVaultRecordHistory
+      summary: Historical versions for a vault record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Version identifiers and change reasons. Current user-facing state stays separate.
+  /api/v1/data/vault/records/{id}/corrections:
+    post:
+      operationId: requestVaultCorrection
+      summary: Request a correction or dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Applied for user-declared data; review for derived or provider-sourced records
+  /api/v1/data/vault/sources:
+    get:
+      operationId: listVaultSources
+      summary: Distinct data sources for the owner
+      responses:
+        "200":
+          description: Source identifiers and ownership roles
+  /api/v1/data/vault/access:
+    get:
+      operationId: listVaultAccess
+      summary: Who can access
+      responses:
+        "200":
+          description: Access audit metadata. No payloads.
+  /api/v1/data/vault/export:
+    post:
+      operationId: requestVaultExport
+      summary: Request a portable export
+      responses:
+        "202":
+          description: Export job. Legal portability is not claimed.
+  /api/v1/data/vault/export/status:
+    get:
+      operationId: getVaultExportStatus
+      summary: Export job list
+      responses:
+        "200":
+          description: Owner export jobs
+  /api/v1/data/vault/export/{id}:
+    get:
+      operationId: getVaultExport
+      summary: Completed export bundle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Structured portable export. Omits secrets and other users.
   /api/v1/security:
     get:
       operationId: getSecurity
@@ -1907,6 +2310,20 @@ paths:
           description: Honest availability
 components:
   schemas:
+    VaultHome:
+      type: object
+      required: [schema, productionActive, liveMonetizationEnabled, sunreyOwnsUserData]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.vault.home.v1] }
+        fabric: { type: string }
+        ownerSubjectId: { type: string }
+        recordCount: { type: integer }
+        categoryCount: { type: integer }
+        sourceCount: { type: integer }
+        disputedCount: { type: integer }
+        productionActive: { type: boolean, enum: [false] }
+        liveMonetizationEnabled: { type: boolean, enum: [false] }
+        sunreyOwnsUserData: { type: boolean, enum: [false] }
     NativeEconomyOverview:
       type: object
       required: [schema, tickerStatus, productionActive, valuationIsNotMarketPrice]

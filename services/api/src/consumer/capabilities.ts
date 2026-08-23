@@ -182,7 +182,7 @@ export function computeCapabilities(input: CapabilityInputs): FeatureCapabilityM
     pendingVerification: false,
     providerDown: down.vault === true,
     productized: true,
-    reasonIfDisabled: 'data vault is not productized',
+    reasonIfDisabled: 'data vault requires VAULT_VIEW_OWN',
   });
   const hin = feature({
     key: 'hin',

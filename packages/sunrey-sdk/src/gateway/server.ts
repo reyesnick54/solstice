@@ -830,6 +830,20 @@ function dispatch(
       productionActivated: false,
       reason: 'ENGINEERING_INSUFFICIENT_WITHOUT_PRIVACY_LEGAL_AUTH',
     });
+  if (method === 'GET' && path === '/v1/hin/contributions') {
+    return json(200, { items: [], issuancePromised: false, containsRawPersonalData: false, productionActivated: false });
+  }
+  if (method === 'GET' && path.startsWith('/v1/hin/contributions/')) {
+    return json(200, { contributionId: path.slice('/v1/hin/contributions/'.length), issuancePromised: false, containsRawPersonalData: false });
+  }
+  if (method === 'GET' && path === '/v1/hin/metrics') {
+    return json(200, { verifiedContributors: 0, individualRecordsExposed: false, isMintAmount: false, productionActivated: false });
+  }
+  if (method === 'GET' && path === '/v1/hin/me/summary') {
+    return json(200, { contributions: [], issuancePromised: false, compensation: { mintRequested: false } });
+  }
+  if (method === 'GET' && path === '/v1/hin/valuation-methodologies') {
+    return json(200, { items: [], isMintFormula: false, productionAuthorized: false });
   }
 
   if (method === 'POST' && path === '/v1/dev/faucet') {
@@ -977,6 +991,11 @@ export const PUBLIC_ROUTES = [
   'GET /v1/information/marketplace/products',
   'GET /v1/information/marketplace/licenses',
   'POST /v1/information/marketplace/licenses',
+  'GET /v1/hin/contributions',
+  'GET /v1/hin/contributions/{id}',
+  'GET /v1/hin/metrics',
+  'GET /v1/hin/me/summary',
+  'GET /v1/hin/valuation-methodologies',
 ] as const;
 
 export const OPERATOR_ROUTES = ['POST /operator/v1/produce-block', 'GET /operator/v1/status'] as const;

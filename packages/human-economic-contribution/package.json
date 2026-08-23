@@ -10,7 +10,7 @@
     "src"
   ],
   "scripts": {
-    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/*.test.ts src/valuation/*.test.ts",
+    "test": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test src/*.test.ts src/valuation/*.test.ts src/hin-value.test.ts",
     "demo": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/demo.ts",
     "demo:registry": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/registry-demo.ts",
     "demo:valuation": "node --experimental-strip-types --disable-warning=ExperimentalWarning src/valuation-demo.ts",

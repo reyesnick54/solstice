@@ -105,6 +105,17 @@ authentication foundation; the BFF only consumes a verified session.
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
 | AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
+| EXCHANGE HOME | `/api/v1/exchange` | GET | required | `sunrey.consumer.exchange.home.v1` | `packages/sunrey-exchange` productization lifecycle | SANDBOX_FUNCTIONAL | live Exchange = EXTERNAL_PROVIDER_REQUIRED |
+| MARKETS | `/api/v1/exchange/markets` | GET | required | market list | consumer engine | SANDBOX_FUNCTIONAL | USD pair is informational only |
+| SUNREY / MOONREY DETAIL | `/api/v1/exchange/markets/{id}` `/ticker` `/order-book` `/chart` | GET | required | ticker / book / chart | ops market data | SANDBOX_FUNCTIONAL | freshness `SANDBOX` |
+| BUY / SELL / PREVIEW | `/api/v1/exchange/preview` `/proposals` | POST | required | server-owned preview / proposal | DigitalAssetLifecycle | SANDBOX_FUNCTIONAL | client instructions untrusted |
+| ORDER CONFIRMATION | `/api/v1/exchange/proposals/{id}/approve` `/submit` | POST | required + owner + step-up | order / fill | matching + clearing + DVP | SANDBOX_FUNCTIONAL | Agent cannot self-approve |
+| OPEN ORDERS / HISTORY / FILLS | `/api/v1/exchange/orders` `/fills` `/stream` | GET | required | orders / fills / stream status | consumer engine | SANDBOX_FUNCTIONAL | stream is snapshot-then-increment |
+| WALLETS | `/api/v1/wallets` | GET | required | wallet + holdings | native clearing + custody ports | SANDBOX_FUNCTIONAL | production signing disabled |
+| DEPOSIT | `/api/v1/wallets/deposit-address` `/deposits/simulate` | GET, POST | required | address / finalized deposit | simulation chain observe | SANDBOX_FUNCTIONAL | not a live chain deposit |
+| WITHDRAW | `/api/v1/wallets/withdrawals/quote` `/withdrawals` | POST | required + owner + approval | quote / withdrawal | Travel Rule + clearing | SANDBOX_FUNCTIONAL | Travel Rule pending refuses |
+| TRANSACTIONS | `/api/v1/wallets/transactions` | GET | required | activity | lifecycle evidence | SANDBOX_FUNCTIONAL | none |
+| ASSET ECONOMY | `/api/v1/economy` `/sunrey-coin` `/moonrey-coin` `/status` | GET | required | configured metrics only | HIN / productive fixtures | SANDBOX_FUNCTIONAL | no fabricated globals |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | `sunrey.consumer.wallet.v1` list | `packages/custody` product | AVAILABLE_SIMULATION | no signing material; production signing disabled |
 | WALLET detail | `/api/v1/wallets/{id}` | GET | required + owner | wallet + balances | same | AVAILABLE_SIMULATION | cross-user denied |
@@ -116,6 +127,11 @@ authentication foundation; the BFF only consumes a verified session.
 | ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
 | ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
 | ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
+| HIN contributions | `/api/v1/hin/contributions` | GET | required + owner | contribution list | `packages/human-economic-contribution` hin-value | AVAILABLE_SIMULATION | no raw personal data; no verify/mint |
+| HIN contribution | `/api/v1/hin/contributions/{id}` | GET | required + owner | contribution resource | same | AVAILABLE_SIMULATION | invented ids 404 |
+| HIN metrics | `/api/v1/hin/metrics` | GET | required | privacy-safe aggregates | same | AVAILABLE_SIMULATION | k-anonymity; not individual records |
+| HIN me | `/api/v1/hin/me/summary` | GET | required + owner | Your Contributions / verified / pending / value inputs / rights | same | AVAILABLE_SIMULATION | issuancePromised=false |
+| HIN methodologies | `/api/v1/hin/valuation-methodologies` | GET | required | safe methodology metadata | same | AVAILABLE_SIMULATION | not a mint formula |
 | EXCHANGE | `/api/v1/exchange` | GET | required | catalog + screens | `packages/sunrey-exchange` product API | AVAILABLE_SIMULATION | production trading disabled |
 | EXCHANGE Home / Markets | `/api/v1/exchange/markets` | GET | required | market list | same | AVAILABLE_SIMULATION | none |
 | EXCHANGE Asset Detail / Chart / Book / History | `/api/v1/exchange/markets/{instrument}` plus `/ticker` `/orderbook` `/trades` `/candles` | GET | required | ticker, book, trades, OHLC | same | AVAILABLE_SIMULATION | freshness is explicit; last trade is not a guaranteed price |
@@ -133,6 +149,20 @@ authentication foundation; the BFF only consumes a verified session.
 | PAYMENT HISTORY | `/api/v1/hin/earnings/activity` | GET | required | settlement activity | Ledger / native-asset refs | AVAILABLE_SIMULATION | not a second mint |
 | PAUSE / WITHDRAW | `/api/v1/hin/participation/pause` `/withdraw` | POST | required + owner | participation lifecycle | same | AVAILABLE_SIMULATION | future access stops after withdraw |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
+| DATA PERMISSIONS | `/api/v1/data/permissions` | GET | required | `sunrey.consumer.data.permissions.v1` | `packages/consent` product engine | AVAILABLE_SIMULATION | `implicitMonetizationOptIn` is always false |
+| WHO CAN USE MY DATA | `/api/v1/data/who` | GET | required | recipient-class view | same | AVAILABLE_SIMULATION | none |
+| WHAT SUNREY USES / CONSENT HISTORY | `/api/v1/data/consents` | GET, POST | required | granular grants | Consent Ledger + product overlay | AVAILABLE_SIMULATION | no silent monetization default |
+| AGENT ACCESS | `/api/v1/data/consents` bundle `AGENT_SPENDING_DATA` | POST | required | agent-assistance grant | mandate remains `packages/sunrey-agent` | AVAILABLE_SIMULATION | mandate ≠ vault consent |
+| ECONOMIC DATA SHARING | `/api/v1/data/consents` purpose `data-licensing` | POST | required | OPTIONAL_COMPENSATED grant | same | AVAILABLE_SIMULATION | explicit ECONOMIC_LICENSING only |
+| CONSENT revoke | `/api/v1/data/consents/{id}/revoke` | POST | required + owner | revocation workflow | same | AVAILABLE_SIMULATION | history retained |
+| ACCESS HISTORY | `/api/v1/data/access-history` | GET | required | decisions without raw values | same | AVAILABLE_SIMULATION | none |
+| DOWNLOAD / DELETE / CORRECT / RESTRICT | `/api/v1/data/rights/requests` | GET, POST | required | configurable rights workflow | jurisdiction pack | AVAILABLE_SIMULATION | not every right applies in every jurisdiction |
+| HIN PARTICIPATION | `/api/v1/hin/participation` plus `/enroll` `/pause` `/withdraw` | GET, POST | required | participation state | same | AVAILABLE_SIMULATION | withdraw does not close financial services |
+| DATA VAULT home | `/api/v1/data` `/api/v1/data/vault` | GET | required + owner | `sunrey.consumer.vault.home.v1` | `packages/personal-data-vault` | AVAILABLE_SIMULATION | SunRey does not own user data |
+| YOUR DATA / categories | `/api/v1/data/vault/records` `/categories` | GET | required + owner + purpose | typed records and registry | same | AVAILABLE_SIMULATION | no getAllUserData; highly sensitive classes are not ingested by default |
+| DATA SOURCES / access | `/api/v1/data/vault/sources` `/access` | GET | required + owner | sources and access audit | same | AVAILABLE_SIMULATION | payloads omitted |
+| HISTORY / correct / dispute | `/api/v1/data/vault/records/{id}/history` `/corrections` | GET, POST, PATCH | required + owner | versions and correction workflow | same | AVAILABLE_SIMULATION | user edit cannot falsify provider records |
+| EXPORT | `/api/v1/data/vault/export` `/export/status` | POST, GET | required + owner + VAULT_EXPORT_OWN | portable bundle + job status | same | AVAILABLE_SIMULATION | omits secrets, other users, internal security metadata |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |
 
@@ -173,7 +203,8 @@ Phase C Prompt 2 account notes:
 - Home never sums USD + SAR minor units. Mixed-currency wealth is
   `MIXED_CURRENCY_WITHOUT_CONVERSION` until FX is productized.
 - Activity filters: `from`, `to`, `status`, `type`, `currency` only.
-- Sandbox personas include `basic_verified` (USD), `multi_currency`
+- Sandbox personas include `basic_verified` (USD + Phase G Exchange),
+  `exchange` (Exchange-capable), `multi_currency`
   (USD + SAR), `pending_activity` (hold), `restricted`
   (`COMPLIANCE_REVIEW`), `investment` (multiple accounts), and
   `zero_balance` (posted 0).

@@ -18,9 +18,11 @@ export const FUTURE_NAMESPACES = [
   '/api/v1/agents',
   '/api/v1/exchange',
   '/api/v1/wallets',
+  '/api/v1/economy',
   '/api/v1/assets',
   '/api/v1/hin',
   '/api/v1/data',
+  '/api/v1/hin',
 ] as const;
 
 export type RouteDependencies = {

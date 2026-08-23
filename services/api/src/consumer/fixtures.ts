@@ -74,6 +74,14 @@ import { createWalletProductFromKernel } from '../../../../packages/custody/src/
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
+
+import { ConsentService } from '../../../../packages/consent/src/service.ts';
+import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
+import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
+import {
+  PersonalDataVaultProduct,
+  type VaultPersonaId,
+} from '../../../../packages/personal-data-vault/src/product/index.ts';
 import {
   SANDBOX_LABEL,
   SANDBOX_PERSONA_IDS,
@@ -100,6 +108,9 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'VIEW_ECONOMIC_GRAPH',
   'VIEW_ECONOMIC_VALUE',
   'VAULT_VIEW_OWN',
+  'VAULT_INGEST_OWN',
+  'VAULT_EXPORT_OWN',
+  'VAULT_DELETE_OWN',
   'EXCHANGE_VIEW',
   'PAYMENT_REQUEST',
   'FX_QUOTE_REQUEST',
@@ -110,6 +121,9 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'CARD_MANAGE_REQUEST',
   'CUSTODY_OPERATE_REQUEST',
   'ADD_WITHDRAWAL_DESTINATION',
+  'CONSENT_GRANT_OWN',
+  'CONSENT_REVOKE_OWN',
+  'CONSENT_VIEW_OWN',
 ];
 
 export type SandboxWorld = {
@@ -127,6 +141,8 @@ export type SandboxWorld = {
   readonly wallets: WalletProductService;
   readonly hin: InformationRightsMarketplace;
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
+  readonly dataRights: ConsentDataRightsEngine;
+  readonly vault: PersonalDataVaultProduct;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -380,6 +396,30 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     applyPersonaSeed(peg, actor.value, seed);
   }
 
+  const vaultPersonaMap: Readonly<Record<string, VaultPersonaId>> = {
+    vault_minimal: 'MINIMAL',
+    vault_financial: 'FINANCIAL',
+    vault_employment: 'EMPLOYMENT_SKILLS',
+    vault_multi_source: 'MULTI_SOURCE',
+    vault_derived: 'DERIVED',
+    vault_disputed: 'DISPUTED',
+    vault_revoked: 'REVOKED',
+    vault_restricted_agent: 'RESTRICTED_AGENT',
+  };
+  for (const [sandboxId, personaId] of Object.entries(vaultPersonaMap)) {
+    const provisioned = provisionPersona(runtime, {
+      persona: sandboxId as SandboxPersonaId,
+      customerId: `cust_sandbox_${sandboxId}`,
+      kyc: 'VERIFIED',
+      customerActive: true,
+      restricted: false,
+      accounts: [],
+    });
+    personas[sandboxId as SandboxPersonaId] = provisioned.principal;
+    sessions.set(sandboxToken(sandboxId as SandboxPersonaId), provisioned.principal);
+    void personaId;
+  }
+
   const simulationPort = (reason: string, count = 0): OptionalDomainPort => ({
     summarize: () =>
       Object.freeze({
@@ -508,6 +548,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
+  const dataRights = attachSandboxDataRights(runtime);
+  const vault = attachSandboxVault(runtime, personas);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -524,7 +566,67 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     wallets,
     hin,
     exchange: createExchangeBffSurface(),
+    dataRights,
   });
+}
+
+function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsEngine {
+  const consent = new ConsentService({
+    clock: runtime.clock,
+    keys: runtime.keyProvider,
+    evidence: runtime.evidence,
+    events: runtime.events,
+  });
+  return new ConsentDataRightsEngine({
+    clock: runtime.clock,
+    consent,
+    evidence: runtime.evidence,
+    events: runtime.events,
+    vault,
+  });
+}
+
+function attachSandboxVault(
+  runtime: SimulationRuntime,
+  personas: Record<SandboxPersonaId, BffPrincipal>,
+): PersonalDataVaultProduct {
+  const core = new PersonalDataVault({
+    clock: runtime.clock,
+    keys: runtime.keyProvider,
+    evidence: runtime.evidence,
+    events: runtime.events,
+  });
+  const product = new PersonalDataVaultProduct({
+    clock: runtime.clock,
+    events: runtime.events,
+    vault: core,
+  });
+  const seeds: readonly { sandboxId: SandboxPersonaId; personaId: VaultPersonaId }[] = [
+    { sandboxId: 'basic_verified', personaId: 'MINIMAL' },
+    { sandboxId: 'vault_minimal', personaId: 'MINIMAL' },
+    { sandboxId: 'vault_financial', personaId: 'FINANCIAL' },
+    { sandboxId: 'vault_employment', personaId: 'EMPLOYMENT_SKILLS' },
+    { sandboxId: 'vault_multi_source', personaId: 'MULTI_SOURCE' },
+    { sandboxId: 'vault_derived', personaId: 'DERIVED' },
+    { sandboxId: 'vault_disputed', personaId: 'DISPUTED' },
+    { sandboxId: 'vault_revoked', personaId: 'REVOKED' },
+    { sandboxId: 'vault_restricted_agent', personaId: 'RESTRICTED_AGENT' },
+  ];
+  for (const seed of seeds) {
+    const principal = personas[seed.sandboxId];
+    if (!principal) {
+      continue;
+    }
+    const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+    if (!actor.ok) {
+      throw new Error(`vault actor missing for ${seed.sandboxId}`);
+    }
+    const seeded = product.seedPersona(actor.value, actor.value.subjectId, seed.personaId);
+    if (!seeded.ok) {
+      throw new Error(`vault seed failed for ${seed.sandboxId}: ${seeded.error.message}`);
+    }
+  }
+  return product;
 }
 
 function attachSandboxWallets(

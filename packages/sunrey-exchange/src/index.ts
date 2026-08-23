@@ -257,6 +257,7 @@ export type {
   ConsumerPriceAlert,
   ConsumerExchangeReport,
 } from './consumer/index.ts';
+export * from './productization/index.ts';
 export { ExchangeSettlementRecovery } from './operation-recovery.ts';
 export type { ExchangeSettlementDraft, SettlementPhase } from './operation-recovery.ts';
 export * from './product/index.ts';

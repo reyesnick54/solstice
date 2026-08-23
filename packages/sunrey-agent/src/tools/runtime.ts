@@ -115,12 +115,13 @@ export class AgentToolRuntime {
     }
     const agent = this.engine.getAgent(session.agentId);
     const mandate = this.engine.getMandate(session.mandateId);
+    const rationale = typeof validated.value.purpose === 'string' ? validated.value.purpose : undefined;
     const authorized = authorizeToolCall({
       tool,
       session,
       agent,
       mandate,
-      rationale: typeof validated.value.purpose === 'string' ? validated.value.purpose : undefined,
+      ...(rationale !== undefined ? { rationale } : {}),
     });
     if (!authorized.ok || !mandate) {
       return this.finish(session, call, startedAt, startedMs, {

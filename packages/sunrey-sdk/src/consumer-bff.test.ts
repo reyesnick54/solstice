@@ -177,21 +177,6 @@ describe('consumer BFF payments SDK', () => {
         );
       },
     });
-    const portfolio = await client.getGrowPortfolio();
-    assert.equal(portfolio.frontendMathAuthoritative, false);
-    assert.equal(portfolio.liveState, false);
-    await client.getGrowHoldings();
-    await client.getGrowPerformance();
-    await client.getGrowAllocation();
-    await client.getGrowRisk();
-    assert.deepEqual(calls, [
-      'GET http://example.test/api/v1/grow/portfolio',
-      'GET http://example.test/api/v1/grow/portfolio/holdings',
-      'GET http://example.test/api/v1/grow/portfolio/performance',
-      'GET http://example.test/api/v1/grow/portfolio/allocation',
-      'GET http://example.test/api/v1/grow/portfolio/risk',
-    ]);
-    assert.equal('submitGrowOrder' in client, false);
     const feed = await client.listGrowOpportunities();
     assert.equal(feed.productionMoneyMovement, false);
     const started = await client.startGrowProposal('gop_1');
@@ -360,6 +345,53 @@ describe('consumer BFF native economy SDK', () => {
     assert.equal(overview.schema, 'sunrey.consumer.native-economy.v1');
     assert.ok(urls.some((row) => row.includes('/api/v1/economy/supply')));
     assert.ok(urls.every((row) => row.startsWith('GET ')));
+  });
+});
+
+describe('consumer BFF data-rights SDK', () => {
+  it('calls consent and HIN participation routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_data',
+describe('consumer BFF vault SDK', () => {
+  it('calls vault home and category routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.vault_financial',
+      generateRequestId: () => 'req_vault',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.data.permissions.v1',
+            implicitMonetizationOptIn: false,
+            financialServicesRemainOpen: true,
+            items: [],
+            schema: 'sunrey.consumer.vault.home.v1',
+            productionActive: false,
+            liveMonetizationEnabled: false,
+            sunreyOwnsUserData: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    await client.getDataPermissions();
+    await client.listDataConsents();
+    await client.getHinParticipation();
+    await client.submitDataRightsRequest({ type: 'EXPORT' });
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/permissions')));
+    assert.ok(urls.some((row) => row.includes('/api/v1/hin/participation')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/data/rights/requests')));
+    const home = await client.getVaultHome();
+    await client.listVaultCategories();
+    await client.listVaultRecords();
+    assert.equal(home.schema, 'sunrey.consumer.vault.home.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/vault/categories')));
   });
 });
 

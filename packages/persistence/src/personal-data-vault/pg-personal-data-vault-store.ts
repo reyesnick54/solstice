@@ -1,15 +1,39 @@
 import type { Pool } from 'pg';
 
 import type { PersonalDataVaultStoreSnapshot } from '../../../personal-data-vault/src/types.ts';
+import type { ProductVaultSnapshot } from '../../../personal-data-vault/src/product/service.ts';
+import type { VaultCorrectionRequest } from '../../../personal-data-vault/src/product/correction.ts';
 import { withClient } from '../postgres/pools.ts';
+
+export type PersistableVaultState = PersonalDataVaultStoreSnapshot & {
+  readonly recordMetadata?: ProductVaultSnapshot['recordMetadata'];
+  readonly corrections?: ProductVaultSnapshot['corrections'];
+  readonly exportJobs?: ProductVaultSnapshot['exportJobs'];
+  readonly agentCategories?: ProductVaultSnapshot['agentCategories'];
+};
 
 function canonicalJson(value: unknown): string {
   return JSON.stringify(value);
 }
 
+function correctionBody(row: VaultCorrectionRequest): string {
+  return canonicalJson({
+    correctionId: row.correctionId,
+    dataRecordId: row.dataRecordId,
+    subjectId: row.subjectId,
+    kind: row.kind,
+    status: row.status,
+    reason: row.reason,
+    requestedAt: row.requestedAt,
+    resolvedAt: row.resolvedAt,
+    outcome: row.outcome,
+    proposedPayloadPresent: row.proposedPayload !== null && row.proposedPayload !== undefined,
+  });
+}
+
 export async function persistPersonalDataVaultState(
   pool: Pool,
-  state: PersonalDataVaultStoreSnapshot,
+  state: PersistableVaultState,
 ): Promise<void> {
   await withClient(pool, async (client) => {
     await client.query('BEGIN');
@@ -181,6 +205,91 @@ export async function persistPersonalDataVaultState(
           ],
         );
       }
+      for (const meta of state.recordMetadata ?? []) {
+        await client.query(
+          `INSERT INTO personal_data_vault.record_metadata
+             (asset_id, subject_id, registry_category, data_kind, verification_state,
+              consent_reference, disputed, object_ref, change_reason, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+           ON CONFLICT (asset_id) DO UPDATE SET
+             registry_category = EXCLUDED.registry_category,
+             data_kind = EXCLUDED.data_kind,
+             verification_state = EXCLUDED.verification_state,
+             disputed = EXCLUDED.disputed,
+             object_ref = EXCLUDED.object_ref,
+             change_reason = EXCLUDED.change_reason,
+             body_canonical = EXCLUDED.body_canonical`,
+          [
+            meta.assetId,
+            state.assets.find((row) => row.assetId === meta.assetId)?.subjectId ?? 'unknown',
+            meta.registryCategory,
+            meta.dataKind,
+            meta.verificationState,
+            meta.consentReference,
+            meta.disputed,
+            meta.objectRef,
+            meta.changeReason,
+            canonicalJson(meta),
+          ],
+        );
+      }
+      for (const correction of state.corrections ?? []) {
+        await client.query(
+          `INSERT INTO personal_data_vault.correction
+             (correction_id, asset_id, subject_id, kind, status, requested_at, resolved_at,
+              proposed_payload_present, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+           ON CONFLICT (correction_id) DO UPDATE SET
+             status = EXCLUDED.status,
+             resolved_at = EXCLUDED.resolved_at,
+             body_canonical = EXCLUDED.body_canonical`,
+          [
+            correction.correctionId,
+            correction.dataRecordId,
+            correction.subjectId,
+            correction.kind,
+            correction.status,
+            correction.requestedAt,
+            correction.resolvedAt,
+            correction.proposedPayload !== null && correction.proposedPayload !== undefined,
+            correctionBody(correction),
+          ],
+        );
+      }
+      for (const job of state.exportJobs ?? []) {
+        await client.query(
+          `INSERT INTO personal_data_vault.export_job
+             (export_id, subject_id, status, requested_at, completed_at, manifest_sha256,
+              record_count, legal_portability_claim, body_canonical)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,FALSE,$8)
+           ON CONFLICT (export_id) DO UPDATE SET
+             status = EXCLUDED.status,
+             completed_at = EXCLUDED.completed_at,
+             manifest_sha256 = EXCLUDED.manifest_sha256,
+             record_count = EXCLUDED.record_count,
+             body_canonical = EXCLUDED.body_canonical`,
+          [
+            job.exportId,
+            job.subjectId,
+            job.status,
+            job.requestedAt,
+            job.completedAt,
+            job.manifestSha256,
+            job.recordCount,
+            canonicalJson(job),
+          ],
+        );
+      }
+      for (const row of state.agentCategories ?? []) {
+        for (const categoryId of row.categories) {
+          await client.query(
+            `INSERT INTO personal_data_vault.agent_category (subject_id, category_id)
+             VALUES ($1,$2)
+             ON CONFLICT (subject_id, category_id) DO NOTHING`,
+            [row.subjectId, categoryId],
+          );
+        }
+      }
       for (const deletion of state.deletions) {
         await client.query(
           `INSERT INTO personal_data_vault.deletion_request
@@ -211,7 +320,7 @@ export async function persistPersonalDataVaultState(
   });
 }
 
-export async function loadPersonalDataVaultState(pool: Pool): Promise<PersonalDataVaultStoreSnapshot> {
+export async function loadPersonalDataVaultState(pool: Pool): Promise<PersistableVaultState> {
   return withClient(pool, async (client) => {
     const vaults = await client.query('SELECT body_canonical FROM personal_data_vault.vault');
     const assets = await client.query('SELECT body_canonical FROM personal_data_vault.asset');
@@ -224,6 +333,24 @@ export async function loadPersonalDataVaultState(pool: Pool): Promise<PersonalDa
     const access = await client.query('SELECT body_canonical FROM personal_data_vault.access_audit');
     const exports = await client.query('SELECT body_canonical FROM personal_data_vault.export_manifest');
     const deletions = await client.query('SELECT body_canonical FROM personal_data_vault.deletion_request');
+    const metadata = await client.query('SELECT body_canonical FROM personal_data_vault.record_metadata').catch(() => ({
+      rows: [],
+    }));
+    const corrections = await client.query('SELECT body_canonical FROM personal_data_vault.correction').catch(() => ({
+      rows: [],
+    }));
+    const exportJobs = await client.query('SELECT body_canonical FROM personal_data_vault.export_job').catch(() => ({
+      rows: [],
+    }));
+    const agentCategories = await client
+      .query('SELECT subject_id, category_id FROM personal_data_vault.agent_category')
+      .catch(() => ({ rows: [] }));
+    const agentMap = new Map<string, string[]>();
+    for (const row of agentCategories.rows as { subject_id: string; category_id: string }[]) {
+      const current = agentMap.get(row.subject_id) ?? [];
+      current.push(row.category_id);
+      agentMap.set(row.subject_id, current);
+    }
     return Object.freeze({
       vaults: Object.freeze(vaults.rows.map((row) => JSON.parse(row.body_canonical))),
       assets: Object.freeze(assets.rows.map((row) => JSON.parse(row.body_canonical))),
@@ -243,6 +370,12 @@ export async function loadPersonalDataVaultState(pool: Pool): Promise<PersonalDa
             envelope: JSON.parse(row.envelope_canonical),
           }),
         ),
+      ),
+      recordMetadata: Object.freeze(metadata.rows.map((row) => JSON.parse(row.body_canonical))),
+      corrections: Object.freeze(corrections.rows.map((row) => JSON.parse(row.body_canonical))),
+      exportJobs: Object.freeze(exportJobs.rows.map((row) => JSON.parse(row.body_canonical))),
+      agentCategories: Object.freeze(
+        [...agentMap.entries()].map(([subjectId, categories]) => Object.freeze({ subjectId, categories })),
       ),
     });
   });

@@ -612,6 +612,24 @@ export class InformationClient {
 
   requestMarketplaceLicense(input: Record<string, unknown>): Promise<unknown> {
     return this.http.post('/v1/information/marketplace/licenses', input);
+  listHinContributions(): Promise<unknown> {
+    return this.http.get('/v1/hin/contributions');
+  }
+
+  getHinContribution(contributionId: string): Promise<unknown> {
+    return this.http.get(`/v1/hin/contributions/${encodeURIComponent(contributionId)}`);
+  }
+
+  getHinMetrics(): Promise<unknown> {
+    return this.http.get('/v1/hin/metrics');
+  }
+
+  getHinMySummary(): Promise<unknown> {
+    return this.http.get('/v1/hin/me/summary');
+  }
+
+  listHinValuationMethodologies(): Promise<unknown> {
+    return this.http.get('/v1/hin/valuation-methodologies');
   }
 }
 
