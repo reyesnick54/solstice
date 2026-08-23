@@ -1,4 +1,4 @@
--- V038 Phase H Prompt 1 — Personal Data Vault productization metadata.
+-- V039 Phase H Prompt 1 — Personal Data Vault productization metadata.
 -- Canonical JSON / identifiers only. No plaintext personal payload.
 -- Not a second vault, fabric, ledger, or Execution Authority.
 

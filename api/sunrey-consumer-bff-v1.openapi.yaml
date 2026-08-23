@@ -2198,21 +2198,21 @@ paths:
           description: Confirmed grant
   /api/v1/data/hin:
     get:
-      operationId: getHinParticipation
+      operationId: getDataPlaneHinParticipation
       summary: HIN participation
       responses:
         "200":
           description: Participation state
   /api/v1/data/contributions:
     get:
-      operationId: listHinContributions
+      operationId: listDataPlaneHinContributions
       summary: Human contributions
       responses:
         "200":
           description: Contribution list without mint quantities
   /api/v1/data/earnings:
     get:
-      operationId: getHinEarnings
+      operationId: getDataPlaneHinEarnings
       summary: Compensation instructions
       responses:
         "200":
@@ -2253,7 +2253,7 @@ paths:
           description: No individual records
   /api/v1/economy/productive:
     get:
-      operationId: getProductiveEconomy
+      operationId: getSandboxProductiveEconomy
       summary: Productive-economy overview
       responses:
         "200":
@@ -2325,7 +2325,7 @@ paths:
           description: Client-safe categories. Highly sensitive classes are not ingested by default.
   /api/v1/data/vault/records:
     get:
-      operationId: listVaultRecords
+      operationId: listPersonalVaultRecords
       summary: List owner vault records
       parameters:
         - name: categoryId
@@ -2374,7 +2374,7 @@ paths:
           description: Request accepted under the jurisdiction pack
   /api/v1/hin/participation:
     get:
-      operationId: getHinParticipation
+      operationId: getOptionalHinParticipation
       summary: Optional HIN participation state
       responses:
         "200":
@@ -2388,14 +2388,14 @@ paths:
           description: Enrolled; not a financial-account open
   /api/v1/hin/participation/pause:
     post:
-      operationId: pauseHinParticipation
+      operationId: pauseOptionalHinParticipation
       summary: Pause optional HIN participation
       responses:
         "200":
           description: Paused
   /api/v1/hin/participation/withdraw:
     post:
-      operationId: withdrawHinParticipation
+      operationId: withdrawOptionalHinParticipation
       summary: Withdraw from optional HIN participation
       responses:
         "200":
