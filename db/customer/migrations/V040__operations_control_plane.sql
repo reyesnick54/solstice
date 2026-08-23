@@ -1,4 +1,4 @@
--- V039 Phase I Prompt 1 operations control plane.
+-- V040 Phase I Prompt 1 operations control plane.
 -- Staff cases, assignments, operator actions, approvals, notes, and
 -- evidence references. Not a second ledger, Kernel, or case engine.
 -- Simulation only. Production remains disabled.

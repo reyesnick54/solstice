@@ -17,7 +17,6 @@ import {
   newLicenseRequestId,
   newLicenseSettlementId,
   newUsageEventId,
-  type InformationRightId,
 } from './ids.ts';
 import { enforceAggregation, privacyControlsFor, suppressIfBelowThreshold } from './privacy.ts';
 import { simulationCompensationPolicyV1, simulationPricingPolicyV1, validatePricingPolicy } from './policy.ts';
@@ -196,7 +195,6 @@ export class InformationRightsMarketplace {
     const sensitive = rights.some((right) => (SENSITIVE_CATEGORIES as readonly string[]).includes(right.underlyingCategory));
     const draft = {
       form: input.form,
-      rightIds: input.rightIds as readonly InformationRightId[],
       rightIds: input.rightIds as DataProduct['rightIds'],
       classification: input.classification,
       eligiblePurposes: input.eligiblePurposes,
@@ -323,7 +321,6 @@ export class InformationRightsMarketplace {
     }
     const now = this.now();
     const expiresAt = addDays(now, request.durationDays);
-    const fiat = pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat;
     const license: InformationLicense = Object.freeze({
       licenseId: newInformationLicenseId(),
       requestId: request.requestId,
@@ -337,12 +334,10 @@ export class InformationRightsMarketplace {
       redistribution: 'PROHIBITED',
       retentionDays: product.retentionDays,
       compensation: Object.freeze({
-        asset: 'FIAT_MONEY' as const,
         ...(pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat
           ? { fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat }
           : {}),
-        asset: 'FIAT_MONEY',
-        ...(fiat ? { fiat } : {}),
+        asset: 'FIAT_MONEY' as const,
         pricingPolicyId: pricing.policyId,
         compensationPolicyId: policy.policyId,
       }),
@@ -532,11 +527,6 @@ export class InformationRightsMarketplace {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
       this.nativeAsset.mint();
-      const minted = this.nativeAsset.mint();
-      if ((minted as { readonly outcome: string }).outcome === 'OK') {
-      if ((minted.outcome as string) === 'OK') {
-        return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
-      }
       const transfer = this.nativeAsset.transfer({
         actorId: input.actorId,
         fromOwnerId: input.sponsorOwnerId ?? input.sponsorCustomerId,
