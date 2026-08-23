@@ -27,6 +27,17 @@ export type SerializedAgentRuntimeSnapshot = {
   })[];
 };
 
+function omitBudgetAmounts<T extends { readonly perTransaction: unknown; readonly perPeriod: unknown }>(
+  budget: T,
+): Omit<T, 'perTransaction' | 'perPeriod' | 'maxProposalAmount' | 'dailyProposalAggregate'> {
+  const { perTransaction: _perTransaction, perPeriod: _perPeriod, ...rest } = budget as T & {
+    readonly maxProposalAmount?: unknown;
+    readonly dailyProposalAggregate?: unknown;
+  };
+  const { maxProposalAmount: _max, dailyProposalAggregate: _daily, ...kept } = rest;
+  return kept as Omit<T, 'perTransaction' | 'perPeriod' | 'maxProposalAmount' | 'dailyProposalAggregate'>;
+}
+
 export function serializeAgentRuntimeSnapshot(snapshot: AgentRuntimeSnapshot): SerializedAgentRuntimeSnapshot {
   return Object.freeze({
     agents: snapshot.agents,
@@ -59,7 +70,7 @@ export function serializeAgentRuntimeSnapshot(snapshot: AgentRuntimeSnapshot): S
         Object.freeze({
           ...row,
           budget: Object.freeze({
-            ...row.budget,
+            ...omitBudgetAmounts(row.budget),
             perTransaction: row.budget.perTransaction.toString(),
             perPeriod: row.budget.perPeriod.toString(),
             ...(row.budget.maxProposalAmount !== undefined
@@ -108,7 +119,7 @@ export function deserializeAgentRuntimeSnapshot(raw: SerializedAgentRuntimeSnaps
         Object.freeze({
           ...row,
           budget: Object.freeze({
-            ...row.budget,
+            ...omitBudgetAmounts(row.budget),
             perTransaction: BigInt(row.budget.perTransaction),
             perPeriod: BigInt(row.budget.perPeriod),
             ...(row.budget.maxProposalAmount !== undefined

@@ -193,7 +193,7 @@ describe('Phase F Agent runtime', () => {
     });
     assert.equal(posted.ok, true);
     if (!posted.ok) {
-      throw new Error(posted.error.detail);
+      throw new Error('post failed');
     }
     assert.equal(posted.value.userMessage.role, 'USER');
     assert.equal(posted.value.agentMessage?.role, 'AGENT');

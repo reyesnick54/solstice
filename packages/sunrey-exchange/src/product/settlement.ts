@@ -194,7 +194,7 @@ export class ExchangeSettlementCoordinator {
             chain: {
               txId: base.txId,
               height: base.height,
-              finality: base.finality === 'BFT_FINALIZED' ? 'BFT_FINALIZED' : 'PENDING_PROPOSAL',
+              finality: String(base.finality) === 'BFT_FINALIZED' ? 'BFT_FINALIZED' : 'PENDING_PROPOSAL',
             },
           },
           failureCode: base.finality === 'PENDING' ? 'PROVIDER_PENDING' : 'PROVIDER_UNKNOWN',
@@ -267,12 +267,12 @@ export class ExchangeSettlementCoordinator {
     if (custodyOk && chainOk) {
       return transitionClearing(input.clearing, 'SETTLED', input.at, {
         refs: {
-          custody: input.custodyConfirmation
-            ? { ...input.clearing.refs.custody, confirmation: input.custodyConfirmation }
-            : undefined,
-          chain: input.chainFinality
-            ? { ...input.clearing.refs.chain, finality: input.chainFinality }
-            : undefined,
+          ...(input.custodyConfirmation
+            ? { custody: { ...input.clearing.refs.custody, confirmation: input.custodyConfirmation } }
+            : {}),
+          ...(input.chainFinality
+            ? { chain: { ...input.clearing.refs.chain, finality: input.chainFinality } }
+            : {}),
         },
         failureCode: null,
         reviewReason: null,

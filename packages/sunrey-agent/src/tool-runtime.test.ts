@@ -97,18 +97,6 @@ describe('tool runtime safety', () => {
     assert.equal(third.status, 'FAILED');
     assert.equal(third.error?.code, 'IDENTICAL_CALL_LIMIT');
 
-    const tight = engineAndSession();
-    tight.session.turnId = 'turn_max';
-    const limited = createAgentToolRuntime({
-      engine: new UserAgentMandateEngine({
-        clock: new FrozenClock(asUtcInstant('2026-08-23T00:00:00.000Z')),
-        kernel: { submit: () => ({ status: 'ALLOW', evidenceRecordId: 'ev' }) },
-      }),
-      ports: createFixtureToolPorts(),
-      clock: new FrozenClock(asUtcInstant('2026-08-23T00:00:00.000Z')),
-      limits: { maxToolCalls: 1, maxIdenticalCalls: 2, maxProposalCreates: 1, maxRecursiveProposals: 1 },
-    });
-    void limited;
     const many = runtime.invoke({ ...session, turnId: 'turn_many' }, { toolId: 'getAccounts', input: {} });
     assert.equal(many.status, 'SUCCESS');
   });

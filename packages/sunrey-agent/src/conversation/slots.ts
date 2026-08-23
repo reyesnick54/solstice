@@ -101,7 +101,7 @@ export function parseAmountToMinorUnits(raw: string): string | null {
   const [whole, fraction = ''] = cleaned.split('.');
   const frac = (fraction + '00').slice(0, 2);
   try {
-    return (BigInt(whole) * 100n + BigInt(frac)).toString();
+    return (BigInt(whole ?? '0') * 100n + BigInt(frac)).toString();
   } catch {
     return null;
   }

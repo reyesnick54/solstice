@@ -48,6 +48,7 @@ function mandate(): UserAgentMandate {
       perMarket: {},
       perActionClass: {},
     },
+    assistScopes: [],
     createdByActorId: 'user_1',
     createdAt: NOW,
     mandateHash: 'hash_1',

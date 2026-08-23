@@ -116,8 +116,8 @@ export function economicPolicyDocument(input: {
         ? 'TESTNET_ACTIVE'
         : 'DEVELOPMENT_ACTIVE');
   const constitution = nativeAssetConstitution(policyState);
-  const mainnetEconomics =
-    input.network === 'MAINNET' ? ECONOMIC_PARAMETER_NOT_AUTHORIZED : 'UNRESOLVED';
+  const mainnetEconomics: VersionedEconomicPolicyDocument['mainnetEconomics'] =
+    input.network === 'MAINNET' ? ECONOMIC_PARAMETER_NOT_AUTHORIZED : ECONOMIC_PARAMETER_UNRESOLVED;
   const draft = {
     schema: 'sunrey.native-asset.economic-policy.v1' as const,
     versionId: constitution.assets[0]!.policyVersion.versionId,

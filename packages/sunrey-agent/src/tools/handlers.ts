@@ -463,7 +463,9 @@ function createProposal(
     return refuse(ctx, 'NOT_ELIGIBLE', created.error.code, created.error.detail);
   }
   return {
-    status: ctx.tool.requiresUserApproval ? 'APPROVAL_REQUIRED' : 'ACTION_REQUIRED',
+    status: (ctx.tool.requiresUserApproval ? 'APPROVAL_REQUIRED' : 'ACTION_REQUIRED') as
+      | 'APPROVAL_REQUIRED'
+      | 'ACTION_REQUIRED',
     toolId: ctx.tool.toolId,
     version: ctx.tool.version,
     executed: false as const,
