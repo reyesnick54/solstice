@@ -291,6 +291,95 @@ export class SunReyExchangeService {
     if (account.customerId !== input.customerId) {
       return this.rejectOrder('OWNERSHIP_MISMATCH', 'actor does not own the exchange account', input.clientIdempotencyKey);
     }
+    const refused = this.refuseDigitalOrderPlacement(input, account);
+    if (refused) {
+      return refused;
+    }
+    const market = this.store.markets.get(input.marketId);
+    if (!market || market.family !== 'DIGITAL_ASSET') {
+      return { outcome: 'REJECTED', code: 'FAMILY_MISMATCH', message: 'digital-asset orders require a DIGITAL_ASSET market' };
+    }
+    const intent = this.intent(input.actorId, ACTION_TYPES.PLACE_EXCHANGE_ORDER, {
+      accountId: account.cashAccountId,
+      orderId: input.clientIdempotencyKey,
+      side: input.side,
+      quantity: input.quantity,
+    });
+    const gated = this.authorizeIntent(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
+    const reserved = this.reserveForOrder(account, market, input.side, input.quantity, input.limitPrice ?? input.protectionPrice ?? null);
+    if (!reserved.ok) {
+      return { outcome: 'REJECTED', code: reserved.error.code, message: reserved.error.message, decision: gated.decision };
+    }
+    const order: DigitalOrder = Object.freeze({
+      orderId: reserved.value.orderId,
+      version: 1 as DigitalOrder['version'],
+      exchangeAccountId: account.accountId,
+      beneficialParticipantId: account.customerId,
+      marketId: market.marketId,
+      family: 'DIGITAL_ASSET',
+      side: input.side,
+      orderType: input.orderType,
+      quantity: input.quantity,
+      remaining: input.quantity,
+      limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
+      createdAt: this.clock.now(),
+      timeInForce:
+        input.timeInForce ??
+        (input.orderType === 'IOC' || input.orderType === 'FOK' || input.orderType === 'POST_ONLY'
+          ? input.orderType
+          : 'GTC'),
+      status: 'OPEN',
+      clientIdempotencyKey: input.clientIdempotencyKey,
+      authorizationRef: gated.decision.executionAuthority?.authorityId ?? intent.id,
+      holdId: reserved.value.hold.holdId,
+      coinHoldId: reserved.value.hold.coinHoldId,
+      sourceAccountId: input.side === 'SELL' ? account.custodyAccountId : account.cashAccountId,
+      sequence: this.store.nextOrderSequence(),
+      filledQuantity: AssetQuantity.zero(input.quantity.assetId),
+      complianceRef: gated.decision.evidenceRecordId ?? intent.id,
+      feeContext: {
+        scheduleId: this.feeScheduleState.scheduleId,
+        makerBps: this.feeScheduleState.makerBps,
+        takerBps: this.feeScheduleState.takerBps,
+        clientOverrideForbidden: true as const,
+      },
+    });
+    this.store.putOrder(order);
+    this.store.putHold(reserved.value.hold);
+    this.recordBook({ sequence: order.sequence, kind: 'ACCEPT', orderId: order.orderId, at: this.clock.now() });
+    this.emit('ExchangeOrderAccepted', order.orderId, { orderId: order.orderId, status: order.status });
+    this.persistCore();
+    this.emit('ExchangeOrderOpened', order.orderId, { orderId: order.orderId });
+    this.seal('order.opened', {
+      orderId: order.orderId,
+      intentId: intent.id,
+      holdId: reserved.value.hold.holdId,
+      marketId: market.marketId,
+    });
+    this.matchAndSettle(order, input.actorId, input.customerId);
+    return { outcome: 'OK', value: this.store.order(order.orderId) ?? order, decision: gated.decision };
+  }
+
+  private refuseDigitalOrderPlacement(
+    input: {
+      readonly customerId: CustomerId;
+      readonly exchangeAccountId: ExchangeAccountId;
+      readonly marketId: ExchangeMarketId;
+      readonly side: 'BUY' | 'SELL';
+      readonly orderType: 'LIMIT' | 'MARKET' | 'IOC' | 'FOK' | 'POST_ONLY';
+      readonly quantity: AssetQuantity;
+      readonly limitPrice?: ExchangePrice;
+      readonly clientIdempotencyKey: string;
+      readonly protectionPrice?: ExchangePrice;
+      readonly feeOverride?: unknown;
+      readonly agentGenerated?: boolean;
+      readonly agentMandateValid?: boolean;
+    },
+    account: ExchangeAccount,
+  ): ExchangeOutcome<DigitalOrder> | null {
     const feeGate = rejectClientFeeOverride({ feeOverride: input.feeOverride });
     if (!feeGate.ok) {
       return this.rejectOrder('CLIENT_FEE_OVERRIDE_FORBIDDEN', 'frontend cannot specify a fee', input.clientIdempotencyKey);
@@ -387,68 +476,7 @@ export class SunReyExchangeService {
         return { outcome: 'REJECTED', code: protection.error.code, message: protection.error.message };
       }
     }
-    const intent = this.intent(input.actorId, ACTION_TYPES.PLACE_EXCHANGE_ORDER, {
-      accountId: account.cashAccountId,
-      orderId: input.clientIdempotencyKey,
-      side: input.side,
-      quantity: input.quantity,
-    });
-    const gated = this.authorizeIntent(intent, input.customerId);
-    if (gated.outcome !== 'ALLOWED') {
-      return gated.result;
-    }
-    const reserved = this.reserveForOrder(account, market, input.side, input.quantity, input.limitPrice ?? input.protectionPrice ?? null);
-    if (!reserved.ok) {
-      return { outcome: 'REJECTED', code: reserved.error.code, message: reserved.error.message, decision: gated.decision };
-    }
-    const order: DigitalOrder = Object.freeze({
-      orderId: reserved.value.orderId,
-      version: 1 as DigitalOrder['version'],
-      exchangeAccountId: account.accountId,
-      beneficialParticipantId: account.customerId,
-      marketId: market.marketId,
-      family: 'DIGITAL_ASSET',
-      side: input.side,
-      orderType: input.orderType,
-      quantity: input.quantity,
-      remaining: input.quantity,
-      limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
-      createdAt: this.clock.now(),
-      timeInForce:
-        input.timeInForce ??
-        (input.orderType === 'IOC' || input.orderType === 'FOK' || input.orderType === 'POST_ONLY'
-          ? input.orderType
-          : 'GTC'),
-      status: 'OPEN',
-      clientIdempotencyKey: input.clientIdempotencyKey,
-      authorizationRef: gated.decision.executionAuthority?.authorityId ?? intent.id,
-      holdId: reserved.value.hold.holdId,
-      coinHoldId: reserved.value.hold.coinHoldId,
-      sourceAccountId: input.side === 'SELL' ? account.custodyAccountId : account.cashAccountId,
-      sequence: this.store.nextOrderSequence(),
-      filledQuantity: AssetQuantity.zero(input.quantity.assetId),
-      complianceRef: gated.decision.evidenceRecordId ?? intent.id,
-      feeContext: {
-        scheduleId: this.feeScheduleState.scheduleId,
-        makerBps: this.feeScheduleState.makerBps,
-        takerBps: this.feeScheduleState.takerBps,
-        clientOverrideForbidden: true as const,
-      },
-    });
-    this.store.putOrder(order);
-    this.store.putHold(reserved.value.hold);
-    this.recordBook({ sequence: order.sequence, kind: 'ACCEPT', orderId: order.orderId, at: this.clock.now() });
-    this.emit('ExchangeOrderAccepted', order.orderId, { orderId: order.orderId, status: order.status });
-    this.persistCore();
-    this.emit('ExchangeOrderOpened', order.orderId, { orderId: order.orderId });
-    this.seal('order.opened', {
-      orderId: order.orderId,
-      intentId: intent.id,
-      holdId: reserved.value.hold.holdId,
-      marketId: market.marketId,
-    });
-    this.matchAndSettle(order, input.actorId, input.customerId);
-    return { outcome: 'OK', value: this.store.order(order.orderId) ?? order, decision: gated.decision };
+    return null;
   }
 
   cancelDigitalOrder(input: {
