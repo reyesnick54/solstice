@@ -90,7 +90,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'productiveEconomy'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
     now: frozen.now(),
@@ -107,8 +107,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
-    assert.equal(CANONICAL_TOOL_COUNT, 40);
-    assert.equal(CANONICAL_TOOL_COUNT, 41);
+    assert.equal(CANONICAL_TOOL_COUNT, 45);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -167,6 +166,10 @@ describe('tool contract matrix', () => {
       getNativeAsset: { assetId: 'SUNREY_COIN' },
       getNativeSupply: {},
       getNativeEconomy: {},
+      getProductiveEconomy: {},
+      getProductiveCategory: { category: 'ENERGY' },
+      getProductiveMethodology: { category: 'ENERGY' },
+      getProductiveFreshness: { category: 'ENERGY' },
     };
     for (const tool of CANONICAL_AGENT_TOOLS) {
       const result = runtime.invoke({ ...session, turnId: `valid_${tool.toolId}` }, { toolId: tool.toolId, input: samples[tool.toolId] ?? {} });

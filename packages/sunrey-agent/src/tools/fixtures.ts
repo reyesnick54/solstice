@@ -289,6 +289,48 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
         return ok({ sunrey: sunrey.value, moonrey: moonrey.value, productionActive: false });
       },
     },
+    productiveEconomy: {
+      overview() {
+        return ok({
+          categories: [
+            {
+              category: 'ENERGY',
+              metric: 'ENERGY_PRODUCTION',
+              value: '120000000',
+              unit: 'Wh',
+              freshness: 'FRESH',
+              verification: 'MULTI_SOURCE_CORROBORATED',
+              sourceClass: 'SANDBOX_FIXTURE',
+            },
+          ],
+          productionActive: false,
+          minted: false,
+        });
+      },
+      category(category) {
+        if (!category) return fail('NOT_FOUND', 'category is required');
+        return ok({
+          category,
+          metric: 'APPROVED_METRIC',
+          value: '1',
+          unit: 'SIM',
+          freshness: 'FRESH',
+          verification: 'SINGLE_SOURCE_VERIFIED',
+          sourceClass: 'SANDBOX_FIXTURE',
+        });
+      },
+      methodology() {
+        return ok({
+          methodologyId: 'pvm.energy.sim',
+          version: '1',
+          gpuvIsNotMoonRey: true,
+          hardcodedIssuanceRatio: false,
+        });
+      },
+      freshness() {
+        return ok({ freshness: 'FRESH', usableForTimeSensitiveValuation: true });
+      },
+    },
     compliance: {
       evaluate: () => ({ status: overrides.kernelStatus ?? 'ALLOW', detail: overrides.kernelStatus ?? 'ALLOW' }),
     },

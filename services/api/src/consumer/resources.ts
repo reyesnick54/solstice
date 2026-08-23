@@ -57,7 +57,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'EXCHANGE':
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
     case 'ECONOMY':
-      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');
+      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets + productive/economy-data', 'none', 'Read-only native-asset supply and MoonRey productive-economy metrics. No issuance endpoints. Observations do not mint.');
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange product APIs', 'none', 'Markets, preview, orders, fills, holdings, stream. Not a second ledger. Production trading disabled.');
     case 'WALLETS':
       return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/custody product wallet', 'custody / chain adapters', 'Customer wallet, deposit address, withdrawal quote/execute. No signing material. Production signing disabled.');

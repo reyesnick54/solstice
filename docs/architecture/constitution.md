@@ -1828,6 +1828,14 @@ create `packages/economic-data-fabric`, `packages/unified-oracles`,
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. See
 [`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md).
+Phase H productizes the MoonRey productive-economy data platform at
+`packages/sunrey-chain/src/productive/economy-data`. It composes the
+existing productive registry, canonical units, oracle verification,
+GPUV Productive Value Function, and Chunk 71 issuance interface. It
+does not create `packages/productive-economy-data`,
+`packages/moonrey-data-fabric`, or a second oracle. Observations are
+economic inputs. They do not mint MoonRey and do not set Exchange
+price. Production remains inactive.
 Chunk 150 implements external economic oracle provider
 production-candidate profiles, approved endpoint blueprints, injected
 transports, onboarding packets, and revalidation at

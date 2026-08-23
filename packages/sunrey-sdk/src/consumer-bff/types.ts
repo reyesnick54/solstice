@@ -794,6 +794,8 @@ export type WithdrawalCreateInput = {
   readonly amountMinorUnits?: string;
   readonly stepUpSatisfied?: boolean;
   readonly originatedFromAgent?: boolean;
+};
+
 export type NativeEconomyOverview = {
   readonly schema: 'sunrey.consumer.native-economy.v1';
   readonly tickerStatus: 'NOT_ASSIGNED';
@@ -827,6 +829,27 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
+export type ProductiveEconomyOverview = {
+  readonly schema: 'sunrey.consumer.productive-economy.v1';
+  readonly productionActive: false;
+  readonly simulation: true;
+  readonly categories: readonly {
+    readonly id: string;
+    readonly connected: boolean;
+    readonly metric: string | null;
+    readonly value: string | null;
+    readonly unit: string | null;
+    readonly freshness: string | null;
+  }[];
+  readonly moonreyInput: {
+    readonly minted: false;
+    readonly marketPriceSet: false;
+    readonly gpuvInput: string;
+  };
+};
+
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;

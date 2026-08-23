@@ -103,6 +103,7 @@ Historical GitHub path remains `reyesnick54/solstice`. Public product name is Su
 | MOONREY COIN | `packages/sunrey-chain` productive / monetary constitution | Do not create `packages/moonrey-coin` | IMPLEMENTED schema / sim | Production valuation inactive |
 | ISSUANCE | Chunk 71 `packages/sunrey-chain/src/economics` | App coin issuance via Kernel+Ledger; production-candidate packages | IMPLEMENTED, production inactive | Firewall blocks activation |
 | ORACLES | `packages/sunrey-chain/src/oracle` | Fixture families; `NodeExternalHttpTransport` gated | IMPLEMENTED_SIMULATION_ONLY | Production inactive |
+| PRODUCTIVE ECONOMY DATA | `packages/sunrey-chain/src/productive/economy-data` | BFF `/api/v1/economy/productive*` | IMPLEMENTED_SIMULATION_ONLY | GPUV input only; no mint; no second fabric |
 | SUNREY EXCHANGE | `packages/sunrey-exchange` | SDK gateway mock; V025 SQL unused | IMPLEMENTED_SIMULATION_ONLY | Settlement not ledger-backed |
 | MATCHING | `packages/sunrey-exchange/src/matching.ts` | None | IMPLEMENTED in-process | Deterministic; no live liquidity |
 | MARKET DATA | `packages/sunrey-exchange/src/ops/market-data.ts` | `SimulatedMarketDataProvider` (investments) | IMPLEMENTED read projection | Cannot obtain EA |

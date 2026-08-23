@@ -22,6 +22,7 @@ import type {
   ConversationTurn,
   NativeEconomyOverview,
   NativeEconomySupply,
+  ProductiveEconomyOverview,
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
@@ -509,6 +510,29 @@ export class SunReyConsumerBffClient {
 
   async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
     return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
+  }
+
+  async getProductiveEconomy(options?: BffRequestOptions): Promise<ProductiveEconomyOverview> {
+    return this.request('GET', '/api/v1/economy/productive', undefined, options);
+  }
+
+  async getProductiveCategories(options?: BffRequestOptions): Promise<{ readonly items: ProductiveEconomyOverview['categories'] }> {
+    return this.request('GET', '/api/v1/economy/productive/categories', undefined, options);
+  }
+
+  async getProductiveHistory(category?: string, options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    const suffix = category ? `?category=${encodeURIComponent(category)}` : '';
+    return this.request('GET', `/api/v1/economy/productive/history${suffix}`, undefined, options);
+  }
+
+  async getProductiveSources(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/economy/productive/sources', undefined, options);
+  }
+
+  async getMoonReyEconomicInput(options?: BffRequestOptions): Promise<ProductiveEconomyOverview['moonreyInput']> {
+    return this.request('GET', '/api/v1/economy/productive/moonrey-input', undefined, options);
+  }
+
   async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
     return this.request('GET', '/api/v1/exchange/markets', undefined, options);
   }

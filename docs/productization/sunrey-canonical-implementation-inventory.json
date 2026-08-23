@@ -15,7 +15,7 @@
     "services": 8,
     "apps": 1,
     "tools": 1,
-    "canonicalDomains": 38,
+    "canonicalDomains": 39,
     "duplicateOrParallelFindings": 12,
     "simulationOnlyProductionCritical": 12,
     "providerPlaceholders": 32,
@@ -369,6 +369,16 @@
       "dependencies": ["packages/sunrey-chain"],
       "deprecatedPaths": [],
       "productizationRequired": true
+    },
+    {
+      "domain": "PRODUCTIVE_ECONOMY_DATA",
+      "canonicalPath": "packages/sunrey-chain/src/productive/economy-data/platform.ts",
+      "status": "IMPLEMENTED_SIMULATION_ONLY",
+      "simulationOnly": true,
+      "productionCritical": true,
+      "dependencies": ["packages/sunrey-chain"],
+      "deprecatedPaths": ["packages/productive-economy-data", "packages/moonrey-data-fabric"],
+      "productizationRequired": false
     },
     {
       "domain": "SUNREY_EXCHANGE",

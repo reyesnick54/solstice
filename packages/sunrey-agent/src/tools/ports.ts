@@ -268,6 +268,35 @@ export type NativeEconomyPort = {
   }>;
 };
 
+export type ProductiveEconomyMetric = {
+  readonly category: string;
+  readonly metric: string;
+  readonly value: string;
+  readonly unit: string;
+  readonly freshness: string;
+  readonly verification: string;
+  readonly sourceClass: string;
+};
+
+export type ProductiveEconomyPort = {
+  overview(): PortResult<{
+    readonly categories: readonly ProductiveEconomyMetric[];
+    readonly productionActive: false;
+    readonly minted: false;
+  }>;
+  category(category: string): PortResult<ProductiveEconomyMetric>;
+  methodology(category?: string): PortResult<{
+    readonly methodologyId: string;
+    readonly version: string;
+    readonly gpuvIsNotMoonRey: true;
+    readonly hardcodedIssuanceRatio: false;
+  }>;
+  freshness(category?: string): PortResult<{
+    readonly freshness: string;
+    readonly usableForTimeSensitiveValuation: boolean;
+  }>;
+};
+
 export type ToolCompliancePort = {
   evaluate(input: {
     readonly toolId: string;
@@ -287,5 +316,6 @@ export type AgentToolDomainPorts = {
   readonly cards: CardsPort;
   readonly data: DataPort;
   readonly nativeEconomy: NativeEconomyPort;
+  readonly productiveEconomy: ProductiveEconomyPort;
   readonly compliance: ToolCompliancePort;
 };

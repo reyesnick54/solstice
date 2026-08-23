@@ -63,6 +63,7 @@ import {
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
+import type { ProductiveEconomySurface } from './productive-economy-adapter.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -94,6 +95,7 @@ export type ConsumerBffRuntime = {
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
   readonly nativeEconomy?: NativeEconomySurface;
+  readonly productiveEconomy?: ProductiveEconomySurface;
   readonly exchange?: ExchangeBffSurface;
 };
 
@@ -560,6 +562,42 @@ function dispatchAuthenticated(
       return json(200, runtime.bff.featureStub('economy', principal), headers);
     }
     return json(200, { items: surface.supply().assets }, headers);
+  }
+  if (path === '/api/v1/economy/productive' && method === 'GET') {
+    const surface = runtime.productiveEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, surface.overview(), headers);
+  }
+  if (path === '/api/v1/economy/productive/categories' && method === 'GET') {
+    const surface = runtime.productiveEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, { schema: 'sunrey.consumer.productive-economy.v1', items: surface.categories() }, headers);
+  }
+  if (path === '/api/v1/economy/productive/history' && method === 'GET') {
+    const surface = runtime.productiveEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    const category = typeof request.query.category === 'string' ? request.query.category : undefined;
+    return json(200, { schema: 'sunrey.consumer.productive-economy.v1', items: surface.history(category) }, headers);
+  }
+  if (path === '/api/v1/economy/productive/sources' && method === 'GET') {
+    const surface = runtime.productiveEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, { schema: 'sunrey.consumer.productive-economy.v1', items: surface.sources() }, headers);
+  }
+  if (path === '/api/v1/economy/productive/moonrey-input' && method === 'GET') {
+    const surface = runtime.productiveEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -1359,6 +1397,11 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/assets',
   'GET /api/v1/economy/assets/{id}',
   'GET /api/v1/economy/supply',
+  'GET /api/v1/economy/productive',
+  'GET /api/v1/economy/productive/categories',
+  'GET /api/v1/economy/productive/history',
+  'GET /api/v1/economy/productive/sources',
+  'GET /api/v1/economy/productive/moonrey-input',
   'GET /api/v1/exchange/markets',
   'GET /api/v1/exchange/markets/{instrument}',
   'GET /api/v1/exchange/markets/{instrument}/ticker',

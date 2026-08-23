@@ -106,6 +106,17 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 
 Agents cannot mint, burn, modify policy, change supply, or declare a future price.
 
+## PRODUCTIVE ECONOMY
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getProductiveEconomy | Approved productive-economy overview | none | categories + no-mint flags | READ | READ_FINANCIAL_STATE | read-only | productive/economy-data | no |
+| getProductiveCategory | Compare one configured category | `category` | metric / unit / freshness | READ | READ_FINANCIAL_STATE | read-only | productive/economy-data | no |
+| getProductiveMethodology | Explain versioned methodology | optional `category` | GPUV input methodology | READ | READ_FINANCIAL_STATE | read-only | value methodology registry | no |
+| getProductiveFreshness | Explain freshness | optional `category` | freshness + valuation usability | READ | READ_FINANCIAL_STATE | read-only | freshness policy | no |
+
+Agents cannot invent data, change methodology, mint MoonRey, or predict a guaranteed MoonRey price.
+
 ## Not created
 
 Tools were not created for unsupported or forbidden capabilities:

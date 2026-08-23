@@ -83,6 +83,7 @@ export type {
   TravelRuleCustomerState,
   NativeEconomyOverview,
   NativeEconomySupply,
+  ProductiveEconomyOverview,
   ExchangeMarket,
   ExchangeMarkets,
   ExchangeOrderPreview,
