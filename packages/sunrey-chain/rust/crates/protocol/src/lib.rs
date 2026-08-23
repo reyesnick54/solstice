@@ -8,7 +8,9 @@
 mod block;
 mod codec;
 mod commitments;
+mod finality;
 mod genesis;
+mod network;
 mod reject;
 mod transaction;
 mod vectors;
@@ -25,10 +27,20 @@ pub use commitments::{
     block_id, domain_payload, genesis_hash, merkle_root, state_root, transaction_id,
     transaction_root, unsigned_signature_payload, DomainHasher, HASH_SIZE,
 };
+pub use finality::{
+    classify_finality, observe, FinalitySource, TransactionFinality, TransactionObservation,
+};
 pub use genesis::{
-    local_dev_genesis, testnet_1_genesis, GenesisV1, NativeAssetDefinition, LOCAL_DEV_CHAIN_ID,
+    generate_genesis, local_dev_genesis, mainnet_genesis, preproduction_genesis, testnet_1_genesis,
+    GenesisGenerationInput, GenesisV1, NativeAssetDefinition, LOCAL_DEV_CHAIN_ID,
     LOCAL_DEV_NETWORK_ID, PROTOCOL_VERSION, SCHEMA_REGISTRY_DOCUMENT, SCHEMA_VERSION,
     SRCB_CODEC_ID, TESTNET_1_CHAIN_ID, TESTNET_1_NETWORK_ID,
+};
+pub use network::{
+    assert_same_network, canonical_identity, environment_for_network, identity_for,
+    reject_cross_network_replay, replay_binding, NetworkEnvironment, NetworkIdentity,
+    DEVNET_CHAIN_ID, DEVNET_NETWORK_ID, LOCAL_CHAIN_ID, LOCAL_NETWORK_ID, MAINNET_CHAIN_ID,
+    MAINNET_NETWORK_ID, NETWORK_REGISTRY, PREPRODUCTION_CHAIN_ID, PREPRODUCTION_NETWORK_ID,
 };
 pub use reject::RejectReason;
 pub use transaction::{

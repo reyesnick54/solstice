@@ -12,6 +12,9 @@ data:
   protocolVersion: "1"
   environment: simulation
   productionNetworkEnabled: "false"
+  networkEnvironment: TESTNET
+  rpcPlane: PUBLIC_RPC
+  mainnetActive: "false"
   tickerStatus: NOT_ASSIGNED
   sdkNetworkName: SUNREY_TESTNET_1
   rpcUrl: ""
