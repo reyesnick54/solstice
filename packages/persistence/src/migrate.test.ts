@@ -520,7 +520,7 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v030.sql), false);
   });
 
-  it('customer V034 persists PEG productization overlays without becoming a ledger', () => {
+  it('customer V034 extends the economic graph without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v034 = files.find((file) => file.version === 34);
     assert.ok(v034);
@@ -529,28 +529,13 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v034.sql), false);
   });
 
-  it('customer V037 persists Agent runtime tables and grants customer_app access', () => {
+  it('customer V035 persists growth opportunities without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v037 = files.find((file) => file.version === 37);
-    assert.ok(v037);
-    assert.equal(v037.filename, 'V037__agent_runtime.sql');
-    assert.match(v037.sql, /CREATE SCHEMA IF NOT EXISTS agent_runtime/);
-    assert.match(v037.sql, /GRANT USAGE ON SCHEMA agent_runtime TO customer_app/);
-    assert.match(v037.sql, /GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
-  });
-
-  it('customer V038 persists consent data-rights overlays without a second ledger or raw payload', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v038 = files.find((file) => file.version === 38);
-    assert.ok(v038);
-    assert.equal(v038.filename, 'V038__consent_data_rights.sql');
-    assert.match(v038.sql, /CREATE TABLE IF NOT EXISTS consent.rights_request/);
-    assert.match(v038.sql, /CREATE TABLE IF NOT EXISTS consent.hin_participation/);
-    assert.match(v038.sql, /financial_services_remain_open BOOLEAN NOT NULL CHECK \(financial_services_remain_open = TRUE\)/);
-    assert.match(v038.sql, /unrestricted_database_access BOOLEAN NOT NULL CHECK \(unrestricted_database_access = FALSE\)/);
-    assert.match(v038.sql, /raw_value_logged BOOLEAN NOT NULL CHECK \(raw_value_logged = FALSE\)/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v038.sql), false);
+    const v035 = files.find((file) => file.version === 35);
+    assert.ok(v035);
+    assert.equal(v035.filename, 'V035__growth_opportunities.sql');
+    assert.match(v035.sql, /CREATE TABLE growth\.opportunity/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v035.sql), false);
   });
 
   it('customer V036 persists Grow execution records without becoming a ledger', () => {
@@ -567,20 +552,43 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v036.sql), false);
   });
 
-  it('customer V035-V037 keep Phase E/F productization files contiguous', () => {
+  it('customer V037 persists Agent runtime records without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v035 = files.find((file) => file.version === 35);
-    const v036 = files.find((file) => file.version === 36);
     const v037 = files.find((file) => file.version === 37);
-    assert.ok(v035);
-    assert.ok(v036);
     assert.ok(v037);
-    assert.equal(v035.filename, 'V035__growth_opportunities.sql');
-    assert.equal(v036.filename, 'V036__grow_execution.sql');
     assert.equal(v037.filename, 'V037__agent_runtime.sql');
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v035.sql), false);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v036.sql), false);
+    assert.match(v037.sql, /CREATE SCHEMA IF NOT EXISTS agent_runtime/);
+    assert.match(v037.sql, /CREATE TABLE agent_runtime\.agent/);
+    assert.match(v037.sql, /is_execution_authority BOOLEAN NOT NULL CHECK \(is_execution_authority = FALSE\)/);
+    assert.match(v037.sql, /GRANT USAGE ON SCHEMA agent_runtime TO customer_app/);
+    assert.match(v037.sql, /GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
+  });
+
+  it('customer V038 persists Personal Data Vault productization metadata without becoming a ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v038 = files.find((file) => file.version === 38);
+    assert.ok(v038);
+    assert.equal(v038.filename, 'V038__personal_data_vault_productization.sql');
+    assert.match(v038.sql, /CREATE TABLE personal_data_vault\.record_metadata/);
+    assert.match(v038.sql, /CREATE TABLE personal_data_vault\.correction/);
+    assert.match(v038.sql, /CREATE TABLE personal_data_vault\.export_job/);
+    assert.match(v038.sql, /legal_portability_claim BOOLEAN NOT NULL CHECK \(legal_portability_claim = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v038.sql), false);
+  });
+
+
+  it('customer V039 persists consent data-rights overlays without a second ledger or raw payload', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v039 = files.find((file) => file.version === 39);
+    assert.ok(v039);
+    assert.equal(v039.filename, 'V039__consent_data_rights.sql');
+    assert.match(v039.sql, /CREATE TABLE IF NOT EXISTS consent.rights_request/);
+    assert.match(v039.sql, /CREATE TABLE IF NOT EXISTS consent.hin_participation/);
+    assert.match(v039.sql, /financial_services_remain_open BOOLEAN NOT NULL CHECK \(financial_services_remain_open = TRUE\)/);
+    assert.match(v039.sql, /unrestricted_database_access BOOLEAN NOT NULL CHECK \(unrestricted_database_access = FALSE\)/);
+    assert.match(v039.sql, /raw_value_logged BOOLEAN NOT NULL CHECK \(raw_value_logged = FALSE\)/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
   });
 
   it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {

@@ -1219,7 +1219,6 @@
         "packages/human-economic-contribution",
         "packages/consent",
         "packages/personal-data-vault",
-        "packages/sunrey-exchange",
         "services/investments",
         "services/economic-graph"
       ],

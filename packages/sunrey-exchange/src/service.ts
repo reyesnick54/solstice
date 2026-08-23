@@ -291,6 +291,16 @@ export class SunReyExchangeService {
     if (account.customerId !== input.customerId) {
       return this.rejectOrder('OWNERSHIP_MISMATCH', 'actor does not own the exchange account', input.clientIdempotencyKey);
     }
+    const intent = this.intent(input.actorId, ACTION_TYPES.PLACE_EXCHANGE_ORDER, {
+      accountId: account.cashAccountId,
+      orderId: input.clientIdempotencyKey,
+      side: input.side,
+      quantity: input.quantity,
+    });
+    const gated = this.authorizeIntent(intent, input.customerId);
+    if (gated.outcome !== 'ALLOWED') {
+      return gated.result;
+    }
     const feeGate = rejectClientFeeOverride({ feeOverride: input.feeOverride });
     if (!feeGate.ok) {
       return this.rejectOrder('CLIENT_FEE_OVERRIDE_FORBIDDEN', 'frontend cannot specify a fee', input.clientIdempotencyKey);
@@ -386,16 +396,6 @@ export class SunReyExchangeService {
       if (!protection.ok) {
         return { outcome: 'REJECTED', code: protection.error.code, message: protection.error.message };
       }
-    }
-    const intent = this.intent(input.actorId, ACTION_TYPES.PLACE_EXCHANGE_ORDER, {
-      accountId: account.cashAccountId,
-      orderId: input.clientIdempotencyKey,
-      side: input.side,
-      quantity: input.quantity,
-    });
-    const gated = this.authorizeIntent(intent, input.customerId);
-    if (gated.outcome !== 'ALLOWED') {
-      return gated.result;
     }
     const reserved = this.reserveForOrder(account, market, input.side, input.quantity, input.limitPrice ?? input.protectionPrice ?? null);
     if (!reserved.ok) {

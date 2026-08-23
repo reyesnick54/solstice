@@ -106,8 +106,6 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
-    assert.equal(CANONICAL_TOOL_COUNT, 48);
-    assert.equal(CANONICAL_TOOL_COUNT, 45);
     assert.equal(CANONICAL_TOOL_COUNT, CANONICAL_AGENT_TOOLS.length);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {

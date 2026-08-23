@@ -10,7 +10,17 @@ import type { EconomicGraphService } from '../../../../packages/personal-economi
 import type { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import type { GrowLifecycleService } from '../../../../packages/platform/src/grow/service.ts';
 import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
-import type { FinancialProposal as GrowLifecycleProposal } from '../../../../packages/platform/src/grow/types.ts';
+import type { FinancialProposal } from '../../../../packages/platform/src/grow/types.ts';
+import {
+  ProductGrowthService,
+  type CreateGrowPlanInput,
+  type FinancialProposal as ProductFinancialProposal,
+  type GrowProductFailure,
+  type GrowthProductActor,
+  type ProductGrowthPlan,
+  isGrowRiskProfile,
+} from '../../../../packages/platform/src/growth/product/index.ts';
+import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
 import type { InvestmentsService } from '../../../../packages/investments/src/service.ts';
 import { asInvestmentAccountId } from '../../../../packages/investments/src/ids.ts';
 import {
@@ -26,16 +36,6 @@ import type { BffPrincipal } from './ports.ts';
 import { balanceOfAccount } from '../../../accounts/src/balances.ts';
 import type { Ledger } from '../../../../packages/ledger/src/journal.ts';
 import type { Account } from '../../../../packages/domain/src/account.ts';
-import {
-  ProductGrowthService,
-  type CreateGrowPlanInput,
-  type FinancialProposal,
-  type GrowProductFailure,
-  type GrowthProductActor,
-  type ProductGrowthPlan,
-  isGrowRiskProfile,
-} from '../../../../packages/platform/src/growth/product/index.ts';
-import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
 
 export type GrowBffDeps = {
   readonly peg: EconomicGraphService;
@@ -625,7 +625,7 @@ export class GrowBffSurface {
     };
   }
 
-  private projectProposal(proposal: GrowLifecycleProposal) {
+  private projectProposal(proposal: FinancialProposal) {
     return {
       proposalId: proposal.proposalId,
       version: proposal.version,
@@ -702,20 +702,7 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
   return balance.ok ? balance.value.minorUnits.toString() : '0';
 }
 
-export { Money };
-import {
-  ProductGrowthService,
-  type CreateGrowPlanInput,
-  type FinancialProposal as ProductFinancialProposal,
-  type GrowProductFailure,
-  type GrowRiskProfile,
-  type GrowthProductActor,
-  type ProductGrowthPlan,
-  isGrowRiskProfile,
-} from '../../../../packages/platform/src/growth/product/index.ts';
-import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
-
-export { toLovableExperience };
+export { Money, toLovableExperience, ProductGrowthService };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {

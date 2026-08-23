@@ -361,20 +361,15 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProductProposal = GrowPlanProposal;
-export type GrowProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
   readonly status: GrowProposalStatus;
   readonly amount: MoneyResource;
   readonly guaranteedOutcome: false;
-  readonly issuedAuthority: null;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
 };
-export type GrowProductProposal = GrowPlanProposal;
-export type GrowProposal = GrowPlanProposal;
 
 export type GrowMoney = {
   readonly minorUnits: string;
@@ -478,7 +473,7 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isFinancialAuthority: false;
+  readonly isExecutionAuthority: false;
 };
 
 export type AgentConversationResource = {
@@ -538,7 +533,6 @@ export type GrowPortfolio = {
   readonly securitiesBrokerageLive: false;
   readonly authoritativeCalculator: 'INVESTMENT_PLATFORM';
   readonly frontendMathAuthoritative: false;
-  readonly liveInvestmentExecution: false;
 };
 
 export type GrowHoldings = {
@@ -583,7 +577,6 @@ export type GrowPerformance = {
   readonly insufficientData: boolean;
   readonly llmAuthoritative: false;
   readonly frontendMathAuthoritative: false;
-  readonly depositsAreNotPerformance: true;
 };
 
 export type GrowAllocation = {
@@ -803,6 +796,7 @@ export type WithdrawalCreateInput = {
   readonly originatedFromAgent?: boolean;
 };
 
+
 export type VaultHome = {
   readonly schema: 'sunrey.consumer.vault.home.v1';
   readonly fabric: string;
@@ -926,6 +920,7 @@ export type ExchangeOrderSubmit = {
   readonly requiresExecution: true;
   readonly proposalId: string | null;
 };
+
 
 export type DataPermissionCatalog = {
   readonly schema: 'sunrey.consumer.data.permissions.v1';

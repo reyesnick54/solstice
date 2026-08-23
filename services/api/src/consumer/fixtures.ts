@@ -53,6 +53,7 @@ import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
 import { createExchangeBffSurface } from './exchange-bff.ts';
+import { createHinContributionSurface } from './hin-adapter.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -72,7 +73,6 @@ import { ProductGrowthService } from '../../../../packages/platform/src/growth/p
 import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 import { createWalletProductFromKernel } from '../../../../packages/custody/src/product/sandbox.ts';
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
-
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
 import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
@@ -138,6 +138,7 @@ export type SandboxWorld = {
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
+  readonly hin: ReturnType<typeof createHinContributionSurface>;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
 };
@@ -544,8 +545,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   });
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
-  const dataRights = attachSandboxDataRights(runtime);
   const vault = attachSandboxVault(runtime, personas);
+  const dataRights = attachSandboxDataRights(runtime);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -561,7 +562,9 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     exchange: createExchangeBffSurface(),
+    hin: createHinContributionSurface(),
     dataRights,
+    vault,
   });
 }
 
@@ -577,7 +580,6 @@ function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsE
     consent,
     evidence: runtime.evidence,
     events: runtime.events,
-    vault,
   });
 }
 

@@ -456,31 +456,72 @@ paths:
       summary: Financial snapshot from the Personal Economic Graph
       responses:
         "200":
-          description: Snapshot
+          description: Snapshot with per-currency positions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowSnapshot"
   /api/v1/grow/goals:
     get:
       operationId: listGrowGoals
-      summary: List financial goals
+      summary: List user-declared goals
       responses:
         "200":
-          description: Goals
+          description: Goal list
     post:
       operationId: createGrowGoal
-      summary: Create a financial goal
+      summary: Create a user-declared goal
       responses:
         "201":
-          description: Goal
+          description: Created goal
+  /api/v1/grow/goals/{id}:
+    patch:
+      operationId: patchGrowGoal
+      summary: Update a user-declared goal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: New version
   /api/v1/grow/opportunities:
     get:
       operationId: listGrowOpportunities
-      summary: List opportunities
+      summary: List ranked growth opportunities
       responses:
         "200":
-          description: Opportunities
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+        "401":
+          description: Authentication required
+        "403":
+          description: Cross-user denied
+  /api/v1/grow/opportunities/{id}:
+    get:
+      operationId: getGrowOpportunity
+      summary: Get one owned growth opportunity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Opportunity
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Not found
   /api/v1/grow/opportunities/{id}/dismiss:
     post:
       operationId: dismissGrowOpportunity
       summary: Dismiss an opportunity
+      description: A dismissed fingerprint is not re-presented unchanged.
       parameters:
         - in: path
           name: id
@@ -489,6 +530,25 @@ paths:
       responses:
         "200":
           description: Dismissed
+  /api/v1/grow/opportunities/{id}/start-proposal:
+    post:
+      operationId: startGrowOpportunityProposal
+      summary: Accept an opportunity for proposal
+      description: >
+        Does not execute money, issue Execution Authority, or post a
+        ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
   /api/v1/grow/plan:
     get:
       operationId: getGrowthPlan
@@ -533,27 +593,99 @@ paths:
         "200":
           description: Scenarios
   /api/v1/grow/proposals:
-    post:
-      operationId: createGrowthProposal
-      summary: Create a server-owned Financial Proposal
-      responses:
-        "201":
-          description: Proposal
-  /api/v1/grow/proposals/{id}:
     get:
-      operationId: getGrowthProposal
-      summary: Proposal detail and explainability
-      summary: Grow My Money catalog and latest plan experience
-      description: >
-        Simulation illustrations only. Conservative, base, and upside
-        ranges are not guaranteed outcomes. Production remains disabled.
+      operationId: listGrowProposals
+      summary: List structured financial proposals
       responses:
         "200":
-          description: Grow catalog
+          description: Proposal list
+    post:
+      operationId: createGrowProposal
+      summary: Create a structured financial proposal from a plan component
+      responses:
+        "201":
+          description: Financial proposal
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GrowCatalog"
+                $ref: "#/components/schemas/GrowProposal"
+  /api/v1/grow/proposals/{id}:
+    get:
+      operationId: getGrowProposal
+      summary: Get one owned financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Unknown or fabricated proposal id
+  /api/v1/grow/proposals/{id}/modify:
+    post:
+      operationId: modifyGrowProposal
+      summary: Recalculate a new proposal version
+      description: Material terms on a presented proposal are not edited in place.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: New proposal version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowProposal
+      summary: Approve a structured financial proposal
+      description: >
+        Uses the Phase B approval state machine. Approval does not issue
+        Execution Authority and does not post a ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Policy, suitability, or cross-user denial
+  /api/v1/grow/proposals/{id}/execute:
+    post:
+      operationId: executeGrowthProposal
+      summary: Execute an approved proposal through Kernel and Provider Runtime
+      description: Frontend financial instructions are not trusted proposal state.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+        "401":
+          description: Step-up required
+        "403":
+          description: Policy, suitability, or cross-user denial
+  /api/v1/grow/proposals/{id}/reject:
+    post:
+      operationId: rejectGrowProposal
+      summary: Reject a structured financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Rejected proposal
   /api/v1/grow/plans:
     get:
       operationId: listGrowPlans
@@ -578,10 +710,18 @@ paths:
     get:
       operationId: getGrowPlan
       summary: Get one owned growth plan
-      summary: Grow My Money availability
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
       responses:
         "200":
-          description: Honest availability
+          description: Growth plan
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Unknown plan
   /api/v1/grow/portfolio:
     get:
       operationId: getGrowPortfolio
@@ -596,35 +736,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowPortfolio"
-      summary: Grow My Money opportunity feed
-      description: >
-        Deterministic Growth Orchestrator cards. Does not execute money
-        or promise a return.
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-  /api/v1/grow/opportunities:
-    get:
-      operationId: listGrowOpportunitiesRanked
-      operationId: listGrowOpportunityFeed
-      summary: List ranked growth opportunities
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-        "401":
-          description: Authentication required
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Portfolio not found
   /api/v1/grow/portfolio/holdings:
     get:
       operationId: getGrowPortfolioHoldings
@@ -671,78 +782,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowRisk"
-  /api/v1/grow/opportunities/{id}:
-    get:
-      operationId: getGrowOpportunity
-      summary: Get one owned growth opportunity
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Growth plan
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Unknown plan
-  /api/v1/grow/proposals:
-    get:
-      operationId: listGrowProposals
-      summary: List structured financial proposals
-      responses:
-        "200":
-          description: Proposal list
-    post:
-      operationId: createGrowProposal
-      summary: Create a structured financial proposal from a plan component
-      responses:
-        "201":
-          description: Financial proposal
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowProposal"
-  /api/v1/grow/proposals/{id}:
-    get:
-      operationId: getGrowProposal
-      summary: Get one owned financial proposal
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Proposal
-  /api/v1/grow/proposals/{id}/modify:
-    post:
-      operationId: modifyGrowthProposal
-      summary: Create a new proposal version
-          description: Financial proposal
-        "404":
-          description: Unknown or fabricated proposal id
-  /api/v1/grow/proposals/{id}/modify:
-    post:
-      operationId: modifyGrowProposal
-      summary: Recalculate a new proposal version
-      description: Material terms on a presented proposal are not edited in place.
-          description: Opportunity
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Not found
-  /api/v1/grow/opportunities/{id}/dismiss:
-    post:
-      operationId: dismissGrowOpportunityFingerprint
-      operationId: dismissGrowOpportunityCard
-      summary: Dismiss an opportunity
-      description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
-      responses:
-        "200":
-          description: Availability plus simulation posture
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -757,97 +796,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowProfile"
-  /api/v1/grow/snapshot:
+  /api/v1/grow/performance:
     get:
-      operationId: getGrowSnapshotPositions
-      operationId: getGrowFinancialSnapshot
-      summary: Financial snapshot
+      operationId: getGrowPerformance
+      summary: Planned versus executed versus current
+      description: Deposits are not market performance.
       responses:
         "200":
-          description: Snapshot with per-currency positions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowSnapshot"
-  /api/v1/grow/goals:
-    get:
-      operationId: listGrowGoalsDeclared
-      operationId: listDeclaredGrowGoals
-      summary: List user-declared goals
-      responses:
-        "200":
-          description: Goal list
-    post:
-      operationId: createGrowGoalDeclared
-      operationId: createDeclaredGrowGoal
-      summary: Create a user-declared goal
-      responses:
-        "201":
-          description: Created goal
-  /api/v1/grow/goals/{id}:
-    patch:
-      operationId: patchGrowGoal
-      summary: Update a user-declared goal
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: New version
-  /api/v1/grow/proposals/{id}/approve:
-    post:
-      operationId: approveGrowthProposal
-      summary: Customer approval with step-up when required
-          description: New proposal version
-  /api/v1/grow/proposals/{id}/approve:
-    post:
-      operationId: approveGrowProposal
-      summary: Approve a structured financial proposal
-      description: >
-        Uses the Phase B approval state machine. Approval does not issue
-        Execution Authority and does not post a ledger journal.
-          description: Dismissed opportunity
-  /api/v1/grow/opportunities/{id}/start-proposal:
-    post:
-      operationId: startGrowOpportunityProposal
-      summary: Accept an opportunity for proposal
-      description: >
-        Does not execute money, issue Execution Authority, or post a
-        ledger journal.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Approved
-        "401":
-          description: Step-up required
-  /api/v1/grow/proposals/{id}/execute:
-    post:
-      operationId: executeGrowthProposal
-      summary: Execute an approved proposal through Kernel and Provider Runtime
-      description: Frontend financial instructions are not trusted proposal state.
-          description: Approved proposal
-        "401":
-          description: Step-up required
-        "403":
-          description: Policy, suitability, or cross-user denial
-  /api/v1/grow/proposals/{id}/reject:
-    post:
-      operationId: rejectGrowProposal
-      summary: Reject a structured financial proposal
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Execution
+          description: Performance
   /api/v1/grow/executions/{id}:
     get:
       operationId: getGrowExecution
@@ -860,22 +816,6 @@ paths:
       responses:
         "200":
           description: Execution
-  /api/v1/grow/portfolio:
-    get:
-      operationId: getGrowPortfolioLab
-      operationId: getGrowPortfolioSummary
-      summary: Holdings, allocation, and risk
-      responses:
-        "200":
-          description: Portfolio
-  /api/v1/grow/performance:
-    get:
-      operationId: getGrowPerformance
-      summary: Planned versus executed versus current
-      description: Deposits are not market performance.
-      responses:
-        "200":
-          description: Performance
   /api/v1/grow/recurring:
     post:
       operationId: createGrowRecurring
@@ -912,13 +852,6 @@ paths:
           description: Tool result
         "403":
           description: Privileged execution refused
-          description: Rejected proposal
-          description: Proposal receipt
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowProposalReceipt"
-          description: Updated goal
   /api/v1/grow/insights:
     get:
       operationId: listGrowInsights
@@ -976,24 +909,6 @@ paths:
   /api/v1/agent:
     get:
       operationId: getAgent
-      summary: Agent home and availability
-      description: >
-        Lovable Agent home. Recommendations are proposals. The BFF cannot
-        execute. Ordinary account APIs remain available if the Agent is paused.
-      responses:
-        "200":
-          description: Honest availability
-  /api/v1/agent/conversations:
-    post:
-      operationId: createAgentConversation
-      summary: Open an Agent conversation
-      responses:
-        "201":
-          description: Conversation
-  /api/v1/agent/conversations/{id}/messages:
-    post:
-      operationId: postAgentMessage
-      summary: Send a chat turn
       summary: Agent resource stub
       responses:
         "200":
@@ -1160,11 +1075,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Turn result with optional Action Cards
-  /api/v1/agent/conversations/{id}/stream:
-    get:
-      operationId: streamAgentConversation
-      summary: Stream tokens and tool progress
           description: Settings
   /api/v1/agents/{id}/permissions:
     get:
@@ -1177,11 +1087,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Stream events
-  /api/v1/agent/conversations/{id}/close:
-    post:
-      operationId: closeAgentConversation
-      summary: Close a conversation
           description: Permissions
   /api/v1/agents/{id}/memories:
     get:
@@ -1194,18 +1099,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Closed conversation
-  /api/v1/agent/actions:
-    get:
-      operationId: listAgentActionCenterFeed
-      summary: Action Center
-      responses:
-        "200":
-          description: Action cards
-  /api/v1/agent/actions/{id}:
-    get:
-      operationId: getAgentActionStatus
-      summary: Action and execution status
           description: Memories
     post:
       operationId: createAgentMemory
@@ -1216,12 +1109,6 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
-          description: Action card
-  /api/v1/agent/actions/{id}/revise:
-    post:
-      operationId: reviseAgentAction
-      summary: Revise a draft proposal
         "201":
           description: Memory
   /api/v1/agents/{id}/memories/{memoryId}:
@@ -1233,14 +1120,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Revised Action Card
-  /api/v1/agent/actions/{id}/approve:
-    post:
-      operationId: confirmAgentAction
-      summary: Human approval
-      description: An Agent principal cannot approve.
         - in: path
           name: memoryId
           required: true
@@ -1256,13 +1135,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Approved pending step-up
-  /api/v1/agent/actions/{id}/step-up:
-    post:
-      operationId: stepUpAgentAction
-      summary: Step-up authentication
         - in: path
           name: memoryId
           required: true
@@ -1281,17 +1153,9 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Step-up satisfied
-  /api/v1/agent/actions/{id}/execute:
-    post:
-      operationId: executeAgentAction
-      summary: Human execution path
-      description: >
-        Submits a Kernel-bound intent. Does not let the Agent issue
-        Execution Authority or post a ledger journal.
           description: Conversation list
     post:
-      operationId: createOwnedAgentConversation
+      operationId: createAgentConversation
       summary: Create a conversation
       parameters:
         - in: path
@@ -1299,13 +1163,6 @@ paths:
           required: true
           schema: { type: string }
       responses:
-        "200":
-          description: Submitted for domain execution
-  /api/v1/agent/actions/{id}/outcome:
-    post:
-      operationId: recordAgentActionOutcome
-      summary: Record domain execution status
-      description: Only the domain outcome may mark a financial action complete.
         "201":
           description: Conversation
   /api/v1/agents/{id}/conversations/{conversationId}:
@@ -1317,64 +1174,6 @@ paths:
           name: id
           required: true
           schema: { type: string }
-      responses:
-        "200":
-          description: Domain-sourced status
-  /api/v1/agent/memory:
-    get:
-      operationId: listAgentMemory
-      summary: Eligible preferences
-      responses:
-        "200":
-          description: Memory records
-    post:
-      operationId: storeAgentMemory
-      summary: Store an eligible preference
-      responses:
-        "200":
-          description: Stored or rejected
-  /api/v1/agent/settings:
-    get:
-      operationId: getCurrentAgentSettings
-      summary: Agent settings
-      responses:
-        "200":
-          description: Settings
-    patch:
-      operationId: patchCurrentAgentSettings
-      summary: Update Agent settings
-      responses:
-        "200":
-          description: Settings
-  /api/v1/agent/pause:
-    post:
-      operationId: pauseCurrentAgent
-      summary: Pause this Agent
-      description: Does not disable ordinary account access.
-      responses:
-        "200":
-          description: Paused
-  /api/v1/agent/revoke:
-    post:
-      operationId: revokeCurrentAgent
-      summary: Revoke this Agent
-      responses:
-        "200":
-          description: Revoked
-  /api/v1/agent/escalations:
-    post:
-      operationId: createAgentEscalation
-      summary: Escalate to authorized staff
-      responses:
-        "201":
-          description: Escalation
-  /api/v1/agent/audit/{actionId}:
-    get:
-      operationId: getAgentAudit
-      summary: Agent action audit package
-      parameters:
-        - in: path
-          name: actionId
         - in: path
           name: conversationId
           required: true
@@ -1386,7 +1185,7 @@ paths:
           description: Cross-user denied
   /api/v1/agents/{id}/conversations/{conversationId}/messages:
     post:
-      operationId: postOwnedAgentMessage
+      operationId: postAgentMessage
       summary: Post a user message and receive a streamed Agent reply
       description: >
         Conversational state only. Tool calls that would mutate financial
@@ -1430,37 +1229,163 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Audit package
           description: Agent stream events or SSE
         "401":
           description: Authentication required
   /api/v1/exchange:
     get:
       operationId: getExchange
-      summary: Exchange home for Lovable screens
-      responses:
-        "200":
-          description: Exchange home, eligibility, and supported screens
-  /api/v1/exchange/markets:
-    get:
-      operationId: listExchangeMarkets
-      summary: List sandbox Exchange markets
-      responses:
-        "200":
-          description: Markets including SunRey Coin
-  /api/v1/exchange/markets/{marketId}:
       summary: Exchange catalog
       responses:
         "200":
-          description: Honest availability
+          description: Honest availability; production trading remains disabled
+  /api/v1/exchange/markets:
+    get:
+      operationId: listExchangeMarkets
+      summary: List simulation markets
+      responses:
+        "200":
+          description: Markets with productionTradingEnabled=false
+  /api/v1/exchange/markets/{instrument}:
+    get:
+      operationId: getExchangeMarket
+      summary: Market detail
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Market
+  /api/v1/exchange/markets/{instrument}/ticker:
+    get:
+      operationId: getExchangeTicker
+      summary: Ticker with freshness
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Ticker
+  /api/v1/exchange/markets/{instrument}/orderbook:
+    get:
+      operationId: getExchangeOrderBook
+      summary: Order book
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order book
+  /api/v1/exchange/markets/{instrument}/trades:
+    get:
+      operationId: getExchangeTrades
+      summary: Recent trades
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Trades
+  /api/v1/exchange/markets/{instrument}/candles:
+    get:
+      operationId: getExchangeCandles
+      summary: OHLC candles
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Candles
+  /api/v1/exchange/eligibility:
+    get:
+      operationId: getExchangeEligibility
+      summary: CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW
+      responses:
+        "200":
+          description: Server-controlled eligibility
+  /api/v1/exchange/preview:
+    post:
+      operationId: previewExchangeOrder
+      summary: Order preview
+      description: Estimated price is not a guaranteed execution price.
+      responses:
+        "200":
+          description: Preview
+  /api/v1/exchange/orders:
+    get:
+      operationId: listExchangeOrders
+      summary: Owner orders
+      responses:
+        "200":
+          description: Orders
+    post:
+      operationId: submitExchangeOrder
+      summary: Submit an approved exchange order
+      description: Agent-generated orders must reference an approved proposal. Production trading remains disabled.
+      responses:
+        "201":
+          description: Accepted for domain execution
+  /api/v1/exchange/orders/{id}:
+    get:
+      operationId: getExchangeOrder
+      summary: Owner order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order
+        "403":
+          description: Cross-user denied
+    delete:
+      operationId: cancelExchangeOrder
+      summary: Cancel an owned order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled
+  /api/v1/exchange/fills:
+    get:
+      operationId: listExchangeFills
+      summary: Owner fills with clearing state
+      responses:
+        "200":
+          description: Fills; filled is not settled unless clearing is SETTLED
+  /api/v1/exchange/holdings:
+    get:
+      operationId: listExchangeHoldings
+      summary: Owner holdings projection
+      responses:
+        "200":
+          description: Holdings
+  /api/v1/exchange/stream:
+    get:
+      operationId: streamExchangeMarket
+      summary: SSE market stream
+      description: ticker, trade, order-book, and order-status only. Privileged internal topics are not exposed.
+      responses:
+        "200":
+          description: SSE or cursor page
   /api/v1/economy:
     get:
       operationId: getNativeEconomy
       summary: Protocol-native SunRey Coin and MoonRey Coin economy overview
-      description: >
-        Read-only Lovable contract. Supply is protocol-native. Market price
-        is Exchange last trade when present and is never derived from
-        internal valuation. No issuance, mint, or burn endpoints.
       responses:
         "200":
           description: Native economy overview
@@ -1504,272 +1429,104 @@ paths:
           description: Unknown asset
         "401":
           description: Authentication required
-          description: Honest availability; production trading remains disabled
-  /api/v1/hin/contributions:
+  /api/v1/wallets:
     get:
-      operationId: listHinContributions
-      summary: List owner HIN contributions
+      operationId: getWallets
+      summary: List customer wallets
       description: >
-        Client-safe contribution records. No raw personal data. Economic
-        value inputs are not mint amounts. Privileged verification and
-        issuance operations are not exposed.
+        Client-safe wallet list. No signing material. Balances are read
+        models. Production signing remains disabled.
       responses:
         "200":
-          description: Contribution list
-        "401":
-          description: Authentication required
-  /api/v1/hin/contributions/{contributionId}:
+          description: Wallet list
+  /api/v1/wallets/{id}:
     get:
-      operationId: getHinContribution
-      summary: Read one HIN contribution
+      operationId: getWallet
+      summary: Wallet detail
       parameters:
-        - in: path
-          name: contributionId
+        - name: id
+          in: path
           required: true
           schema: { type: string }
       responses:
         "200":
-          description: Contribution resource
-        "404":
-          description: Unknown contribution
-        "401":
-          description: Authentication required
-  /api/v1/hin/metrics:
+          description: Wallet
+        "403":
+          description: Not owned
+  /api/v1/wallets/{id}/deposit-address:
     get:
-      operationId: getHinMetrics
-      summary: Privacy-safe aggregate HIN metrics
-      responses:
-        "200":
-          description: Aggregate metrics with k-anonymity suppression
-        "401":
-          description: Authentication required
-  /api/v1/hin/me/summary:
-    get:
-      operationId: getHinMySummary
-      summary: Customer contribution summary
-      description: >
-        Your Contributions, verified, pending, economic value inputs,
-        data rights, and compensation if any. Token issuance is not
-        promised unless authorized protocol policy defines it.
-      responses:
-        "200":
-          description: Customer HIN summary
-        "401":
-          description: Authentication required
-  /api/v1/hin/valuation-methodologies:
-    get:
-      operationId: listHinValuationMethodologies
-      summary: Safe HIN valuation methodology metadata
-      description: Versioned methodologies. Not a mint formula. Production unauthorized.
-      responses:
-        "200":
-          description: Methodology metadata
-        "401":
-          description: Authentication required
-  /api/v1/exchange/markets/{instrument}:
-    get:
-      operationId: getExchangeMarket
-      summary: Market detail
+      operationId: getWalletDepositAddress
+      summary: Deposit / receive address
       parameters:
-        - in: path
-          name: marketId
-          name: instrument
+        - name: id
+          in: path
           required: true
           schema: { type: string }
       responses:
         "200":
-          description: Market detail
-  /api/v1/exchange/markets/{marketId}/ticker:
+          description: Address bound to the wallet asset and network
+  /api/v1/wallets/{id}/transactions:
     get:
-      operationId: getExchangeTicker
-      summary: Ticker
+      operationId: getWalletTransactions
+      summary: Wallet transaction history
       parameters:
-        - in: path
-          name: marketId
-          description: Market
-  /api/v1/exchange/markets/{instrument}/ticker:
-    get:
-      operationId: getExchangeTickerByInstrument
-      summary: Ticker with freshness
-      parameters:
-        - in: path
-          name: instrument
+        - name: id
+          in: path
           required: true
           schema: { type: string }
       responses:
         "200":
-          description: Indicative ticker
-  /api/v1/exchange/markets/{marketId}/order-book:
-          description: Ticker
-  /api/v1/exchange/markets/{instrument}/orderbook:
-    get:
-      operationId: getExchangeOrderBook
-      summary: Order book
-      parameters:
-        - in: path
-          name: marketId
-          name: instrument
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Depth
-  /api/v1/exchange/markets/{marketId}/chart:
-    get:
-      operationId: getExchangeChart
-      summary: Asset chart
-      parameters:
-        - in: path
-          name: marketId
-          description: Order book
-  /api/v1/exchange/markets/{instrument}/trades:
-    get:
-      operationId: getExchangeTrades
-      summary: Recent trades
-      parameters:
-        - in: path
-          name: instrument
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Candles when history exists
-  /api/v1/exchange/eligibility:
-    get:
-      operationId: getExchangeEligibility
-      summary: KYC / Exchange eligibility
-      responses:
-        "200":
-          description: Server-owned eligibility
-  /api/v1/exchange/holdings:
-    get:
-      operationId: getExchangeHoldings
-      summary: Wallet / holdings
-      responses:
-        "200":
-          description: Holdings
-  /api/v1/exchange/fund:
+          description: Transactions with client-safe finality
+  /api/v1/wallets/{id}/withdrawal-quote:
     post:
-      operationId: fundExchangeSandbox
-      summary: Fund sandbox quote account
-      responses:
-        "200":
-          description: Sandbox faucet
-          description: Trades
-  /api/v1/exchange/markets/{instrument}/candles:
-    get:
-      operationId: getExchangeCandles
-      summary: OHLC candles
+      operationId: quoteWalletWithdrawal
+      summary: Withdrawal quote
       parameters:
-        - in: path
-          name: instrument
+        - name: id
+          in: path
           required: true
           schema: { type: string }
       responses:
         "200":
-          description: Candles
-  /api/v1/exchange/preview:
-    post:
-      operationId: previewExchangeOrder
-      summary: Order preview
-      responses:
-        "200":
-          description: Preview
+          description: Fee estimate and Travel Rule applicability
         "400":
-          description: Invalid quantity
-  /api/v1/exchange/proposals:
+          description: Invalid destination or amount
+  /api/v1/wallets/{id}/withdrawals:
     post:
-      operationId: createExchangeProposal
-      summary: Create Exchange order proposal
-      responses:
-        "201":
-          description: Proposal
-  /api/v1/exchange/proposals/{id}/approve:
-    post:
-      operationId: approveExchangeProposal
-      summary: Human approval and step-up
-      description: Estimated price is not a guaranteed execution price.
-      responses:
-        "200":
-          description: Preview
-  /api/v1/exchange/orders:
-    get:
-      operationId: listExchangeOrders
-      summary: Owner orders
-      responses:
-        "200":
-          description: Orders
-    post:
-      operationId: submitExchangeOrder
-      summary: Submit an approved exchange order
-      description: Agent-generated orders must reference an approved proposal. Production trading remains disabled.
-      responses:
-        "201":
-          description: Accepted for domain execution
-  /api/v1/exchange/orders/{id}:
-    get:
-      operationId: getExchangeOrder
-      summary: Owner order
+      operationId: createWalletWithdrawal
+      summary: Create withdrawal or Agent proposal
+      description: >
+        Human execution requires step-up. Agent requests with
+        originatedFromAgent=true create a proposal only. Clients cannot
+        select compliance approval, provider override, or a signing key.
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
           required: true
           schema: { type: string }
       responses:
-        "200":
-          description: Approved proposal
+        "201":
+          description: Withdrawal or proposal
         "401":
           description: Step-up required
         "403":
-          description: Agent self-approval refused
-  /api/v1/exchange/proposals/{id}/submit:
-    post:
-      operationId: submitExchangeProposal
-      summary: Submit after Execution Authority
-          description: Order
-        "403":
-          description: Cross-user denied
-    delete:
-      operationId: cancelExchangeOrder
-      summary: Cancel an owned order
+          description: Kernel or ownership refusal
+  /api/v1/wallets/{id}/withdrawals/{withdrawalId}:
+    get:
+      operationId: getWalletWithdrawal
+      summary: Withdrawal status
       parameters:
-        - in: path
-          name: id
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: withdrawalId
+          in: path
           required: true
           schema: { type: string }
       responses:
         "200":
-          description: Order / fill
-  /api/v1/exchange/stream:
-    get:
-      operationId: getExchangeStream
-      summary: Market-data stream status
-      responses:
-        "200":
-          description: Snapshot-then-increment support
-          description: Cancelled
-  /api/v1/exchange/fills:
-    get:
-      operationId: listExchangeFills
-      summary: Owner fills with clearing state
-      responses:
-        "200":
-          description: Fills; filled is not settled unless clearing is SETTLED
-  /api/v1/exchange/holdings:
-    get:
-      operationId: listExchangeHoldings
-      summary: Owner holdings projection
-      responses:
-        "200":
-          description: Holdings
-  /api/v1/exchange/stream:
-    get:
-      operationId: streamExchangeMarket
-      summary: SSE market stream
-      description: ticker, trade, order-book, and order-status only. Privileged internal topics are not exposed.
-      responses:
-        "200":
-          description: SSE or cursor page
+          description: Withdrawal
   /api/v1/recipients:
     get:
       operationId: listRecipients
@@ -1834,199 +1591,17 @@ paths:
       responses:
         "200":
           description: Portfolio
-  /api/v1/wallets:
-    get:
-      operationId: getWallets
-      summary: Wallet home
-      responses:
-        "200":
-          description: Wallet and holdings
-  /api/v1/wallets/deposit-address:
-    get:
-      operationId: getWalletDepositAddress
-      summary: Retrieve deposit address
-      responses:
-        "200":
-          description: Canonical custody address
-  /api/v1/wallets/deposits/simulate:
-    post:
-      operationId: simulateWalletDeposit
-      summary: Simulate native-chain deposit
-      responses:
-        "200":
-          description: Detected and finalized after test finality
-  /api/v1/wallets/withdrawals/quote:
-    post:
-      operationId: quoteWalletWithdrawal
-      summary: Withdrawal quote with destination and Travel Rule
-      responses:
-        "200":
-          description: Quote
-        "403":
-          description: Travel Rule pending or destination invalid
-  /api/v1/wallets/withdrawals:
-    post:
-      operationId: submitWalletWithdrawal
-      summary: Approved withdrawal
-      responses:
-        "200":
-          description: Finalized withdrawal
-  /api/v1/wallets/transactions:
-    get:
-      operationId: listWalletTransactions
-      summary: Wallet transaction history
-      responses:
-        "200":
-          description: Activity
-  /api/v1/economy:
-    get:
-      operationId: getEconomy
-      summary: SunRey economy information
-      responses:
-        "200":
-          description: Configured sources only
-  /api/v1/economy/sunrey-coin:
-    get:
-      operationId: getSunreyCoinEconomy
-      summary: SunRey Coin detail and HIN metrics
-      responses:
-        "200":
-          description: Asset + configured HIN metrics
-  /api/v1/economy/moonrey-coin:
-    get:
-      operationId: getMoonreyCoinEconomy
-      summary: MoonRey Coin productive-economy metrics
-      responses:
-        "200":
-          description: Configured productive categories only
-  /api/v1/economy/status:
-    get:
-      operationId: getEconomyStatus
-      summary: LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE
-      responses:
-        "200":
-          description: Client-safe freshness vocabulary
-      summary: List customer wallets
-      description: >
-        Client-safe wallet list. No signing material. Balances are read
-        models. Production signing remains disabled.
-      responses:
-        "200":
-          description: Wallet list
-  /api/v1/wallets/{id}:
-    get:
-      operationId: getWallet
-      summary: Wallet detail
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Wallet
-        "403":
-          description: Not owned
-  /api/v1/wallets/{id}/deposit-address:
-    get:
-      operationId: getWalletDepositAddressById
-      summary: Deposit / receive address
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Address bound to the wallet asset and network
-  /api/v1/wallets/{id}/transactions:
-    get:
-      operationId: getWalletTransactions
-      summary: Wallet transaction history
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Transactions with client-safe finality
-  /api/v1/wallets/{id}/withdrawal-quote:
-    post:
-      operationId: quoteWalletWithdrawalById
-      summary: Withdrawal quote
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Fee estimate and Travel Rule applicability
-        "400":
-          description: Invalid destination or amount
-  /api/v1/wallets/{id}/withdrawals:
-    post:
-      operationId: createWalletWithdrawal
-      summary: Create withdrawal or Agent proposal
-      description: >
-        Human execution requires step-up. Agent requests with
-        originatedFromAgent=true create a proposal only. Clients cannot
-        select compliance approval, provider override, or a signing key.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "201":
-          description: Withdrawal or proposal
-        "401":
-          description: Step-up required
-        "403":
-          description: Kernel or ownership refusal
-  /api/v1/wallets/{id}/withdrawals/{withdrawalId}:
-    get:
-      operationId: getWalletWithdrawal
-      summary: Withdrawal status
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-        - name: withdrawalId
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Withdrawal
-  /api/v1/assets:
-    get:
-      operationId: getAssets
-      summary: Asset catalog for Lovable
-      responses:
-        "200":
-          description: SunRey Coin and MoonRey Coin detail
-  /api/v1/assets/{assetId}:
-    get:
-      operationId: getAssetDetail
-      summary: Aggregated asset detail
-      parameters:
-        - name: assetId
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Metadata, wallet balance, eligibility, recent activity
   /api/v1/data:
     get:
       operationId: getDataVault
       summary: Personal Data Vault home
       responses:
         "200":
-          description: Honest availability
+          description: Owner vault summary. SunRey does not own user data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultHome'
   /api/v1/data/permissions:
     get:
       operationId: getDataPermissions
@@ -2051,11 +1626,123 @@ paths:
     post:
       operationId: revokeDataConsent
       summary: Revoke optional consent immediately
-          description: Owner vault summary. SunRey does not own user data.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VaultHome'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Downstream access disabled; historical processing retained
+  /api/v1/data/access-history:
+    get:
+      operationId: getDataAccessHistory
+      summary: Access decisions without raw values
+      responses:
+        "200":
+          description: Actor, purpose, category, decision, resource refs
+  /api/v1/data/rights/requests:
+    get:
+      operationId: listDataRightsRequests
+      summary: Data-rights request list
+      responses:
+        "200":
+          description: Configurable workflow states
+    post:
+      operationId: submitDataRightsRequest
+      summary: Submit ACCESS, EXPORT, CORRECTION, DELETION, RESTRICTION, OBJECTION, or CONSENT_WITHDRAWAL
+      responses:
+        "201":
+          description: Request accepted under the jurisdiction pack
+  /api/v1/hin/contributions:
+    get:
+      operationId: listHinContributions
+      summary: List owner HIN contributions
+      description: >
+        Client-safe contribution records. No raw personal data. Economic
+        value inputs are not mint amounts. Privileged verification and
+        issuance operations are not exposed.
+      responses:
+        "200":
+          description: Contribution list
+        "401":
+          description: Authentication required
+  /api/v1/hin/contributions/{contributionId}:
+    get:
+      operationId: getHinContribution
+      summary: Read one HIN contribution
+      parameters:
+        - in: path
+          name: contributionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Contribution resource
+        "404":
+          description: Unknown contribution
+        "401":
+          description: Authentication required
+  /api/v1/hin/metrics:
+    get:
+      operationId: getHinMetrics
+      summary: Privacy-safe aggregate HIN metrics
+      responses:
+        "200":
+          description: Aggregate metrics with k-anonymity suppression
+        "401":
+          description: Authentication required
+  /api/v1/hin/me/summary:
+    get:
+      operationId: getHinMySummary
+      summary: Customer contribution summary
+      description: >
+        Your Contributions, verified, pending, economic value inputs,
+        data rights, and compensation if any. Token issuance is not
+        promised unless authorized protocol policy defines it.
+      responses:
+        "200":
+          description: Customer HIN summary
+        "401":
+          description: Authentication required
+  /api/v1/hin/valuation-methodologies:
+    get:
+      operationId: listHinValuationMethodologies
+      summary: Safe HIN valuation methodology metadata
+      description: Versioned methodologies. Not a mint formula. Production unauthorized.
+      responses:
+        "200":
+          description: Methodology metadata
+        "401":
+          description: Authentication required
+  /api/v1/hin/participation:
+    get:
+      operationId: getHinParticipation
+      summary: Optional HIN participation state
+      responses:
+        "200":
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseHinParticipation
+      summary: Pause optional HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawHinParticipation
+      summary: Withdraw optional HIN participation
+      responses:
+        "200":
+          description: Withdrawn; financial services remain open
   /api/v1/data/vault:
     get:
       operationId: getVaultHome
@@ -2102,55 +1789,6 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Downstream access disabled; historical processing retained
-  /api/v1/data/access-history:
-    get:
-      operationId: getDataAccessHistory
-      summary: Access decisions without raw values
-      responses:
-        "200":
-          description: Actor, purpose, category, decision, resource refs
-  /api/v1/data/rights/requests:
-    get:
-      operationId: listDataRightsRequests
-      summary: Data-rights request list
-      responses:
-        "200":
-          description: Configurable workflow states
-    post:
-      operationId: submitDataRightsRequest
-      summary: Submit ACCESS, EXPORT, CORRECTION, DELETION, RESTRICTION, OBJECTION, or CONSENT_WITHDRAWAL
-      responses:
-        "201":
-          description: Request accepted under the jurisdiction pack
-  /api/v1/hin/participation:
-    get:
-      operationId: getHinParticipation
-      summary: Optional HIN participation state
-      responses:
-        "200":
-          description: NOT_ENROLLED by default; financial services stay open
-  /api/v1/hin/participation/enroll:
-    post:
-      operationId: enrollHinParticipation
-      summary: Explicit optional HIN enrollment
-      responses:
-        "201":
-          description: Enrolled; not a financial-account open
-  /api/v1/hin/participation/pause:
-    post:
-      operationId: pauseHinParticipation
-      summary: Pause optional HIN participation
-      responses:
-        "200":
-          description: Paused
-  /api/v1/hin/participation/withdraw:
-    post:
-      operationId: withdrawHinParticipation
-      summary: Withdraw from optional HIN participation
-      responses:
-        "200":
-          description: Withdrawn without closing ordinary SunRey financial services
           description: Record metadata. Payload is redacted unless explicitly requested.
     patch:
       operationId: correctVaultRecord
@@ -2241,6 +1879,299 @@ paths:
       responses:
         "200":
           description: Honest availability
+  /api/v1/agent/conversations/{id}/stream:
+    get:
+      operationId: streamAgentConversation
+      summary: Stream tokens and tool progress
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Token and tool-progress stream
+  /api/v1/agent/conversations/{id}/close:
+    post:
+      operationId: closeAgentConversation
+      summary: Close a conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Conversation closed
+  /api/v1/agent/actions/{id}/revise:
+    post:
+      operationId: reviseAgentAction
+      summary: Revise a draft proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revised draft
+  /api/v1/agent/actions/{id}/step-up:
+    post:
+      operationId: stepUpAgentAction
+      summary: Step-up authentication
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Step-up recorded
+  /api/v1/agent/actions/{id}/execute:
+    post:
+      operationId: executeAgentAction
+      summary: Human execution path
+      description: >
+        Submits a Kernel-bound intent. Does not let the Agent issue
+        Execution Authority or post a ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Submitted for domain execution
+  /api/v1/agent/actions/{id}/outcome:
+    post:
+      operationId: recordAgentActionOutcome
+      summary: Record domain execution status
+      description: Only the domain outcome may mark a financial action complete.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Domain outcome recorded
+  /api/v1/agent/memory:
+    get:
+      operationId: listAgentMemory
+      summary: Eligible preferences
+      responses:
+        "200":
+          description: Memory records
+    post:
+      operationId: storeAgentMemory
+      summary: Store an eligible preference
+      responses:
+        "200":
+          description: Stored or rejected
+  /api/v1/agent/settings:
+    get:
+      operationId: getCurrentAgentSettings
+      summary: Agent settings
+      responses:
+        "200":
+          description: Settings
+    patch:
+      operationId: patchCurrentAgentSettings
+      summary: Update Agent settings
+      responses:
+        "200":
+          description: Settings
+  /api/v1/agent/pause:
+    post:
+      operationId: pauseCurrentAgent
+      summary: Pause this Agent
+      description: Does not disable ordinary account access.
+      responses:
+        "200":
+          description: Paused
+  /api/v1/agent/revoke:
+    post:
+      operationId: revokeCurrentAgent
+      summary: Revoke this Agent
+      responses:
+        "200":
+          description: Revoked
+  /api/v1/agent/escalations:
+    post:
+      operationId: createAgentEscalation
+      summary: Escalate to authorized staff
+      responses:
+        "201":
+          description: Escalation
+  /api/v1/agent/audit/{actionId}:
+    get:
+      operationId: getAgentAudit
+      summary: Agent action audit package
+      parameters:
+        - in: path
+          name: actionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Audit package
+        "403":
+          description: Cross-user denied
+  /api/v1/exchange/markets/{marketId}:
+    get:
+      operationId: getExchangeMarketQualification
+      summary: Qualification market detail
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Market
+  /api/v1/exchange/markets/{marketId}/ticker:
+    get:
+      operationId: getExchangeTickerQualification
+      summary: Ticker
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Ticker
+  /api/v1/exchange/markets/{marketId}/order-book:
+    get:
+      operationId: getExchangeOrderBookQualification
+      summary: Order book
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order book
+  /api/v1/exchange/markets/{marketId}/chart:
+    get:
+      operationId: getExchangeChart
+      summary: Asset chart
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Chart
+  /api/v1/exchange/fund:
+    post:
+      operationId: fundExchangeSandbox
+      summary: Fund sandbox quote account
+      responses:
+        "200":
+          description: Sandbox faucet
+  /api/v1/exchange/proposals:
+    post:
+      operationId: createExchangeProposal
+      summary: Create Exchange order proposal
+      responses:
+        "201":
+          description: Proposal
+  /api/v1/exchange/proposals/{id}/approve:
+    post:
+      operationId: approveExchangeProposal
+      summary: Human approval and step-up
+      responses:
+        "200":
+          description: Approval
+  /api/v1/exchange/proposals/{id}/submit:
+    post:
+      operationId: submitExchangeProposal
+      summary: Submit after Execution Authority
+      responses:
+        "200":
+          description: Order
+        "403":
+          description: Cross-user denied
+  /api/v1/wallets/deposit-address:
+    get:
+      operationId: getWalletDepositAddressQualification
+      summary: Retrieve deposit address
+      responses:
+        "200":
+          description: Canonical custody address
+  /api/v1/wallets/deposits/simulate:
+    post:
+      operationId: simulateWalletDeposit
+      summary: Simulate native-chain deposit
+      responses:
+        "200":
+          description: Detected and finalized after test finality
+  /api/v1/wallets/withdrawals/quote:
+    post:
+      operationId: quoteWalletWithdrawalQualification
+      summary: Withdrawal quote with destination and Travel Rule
+      responses:
+        "200":
+          description: Quote
+        "403":
+          description: Travel Rule pending or destination invalid
+  /api/v1/wallets/withdrawals:
+    post:
+      operationId: submitWalletWithdrawal
+      summary: Approved withdrawal
+      responses:
+        "200":
+          description: Finalized withdrawal
+  /api/v1/wallets/transactions:
+    get:
+      operationId: listWalletTransactions
+      summary: Wallet transaction history
+      responses:
+        "200":
+          description: Activity
+  /api/v1/economy/sunrey-coin:
+    get:
+      operationId: getSunreyCoinEconomy
+      summary: SunRey Coin detail and HIN metrics
+      responses:
+        "200":
+          description: Asset + configured HIN metrics
+  /api/v1/economy/moonrey-coin:
+    get:
+      operationId: getMoonreyCoinEconomy
+      summary: MoonRey Coin productive-economy metrics
+      responses:
+        "200":
+          description: Configured productive categories only
+  /api/v1/economy/status:
+    get:
+      operationId: getEconomyStatus
+      summary: LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE
+      responses:
+        "200":
+          description: Client-safe freshness vocabulary
+  /api/v1/assets:
+    get:
+      operationId: getAssets
+      summary: Asset catalog for Lovable
+      responses:
+        "200":
+          description: SunRey Coin and MoonRey Coin detail
+  /api/v1/assets/{assetId}:
+    get:
+      operationId: getAssetDetail
+      summary: Aggregated asset detail
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Metadata, wallet balance, eligibility, recent activity
 components:
   schemas:
     VaultHome:
