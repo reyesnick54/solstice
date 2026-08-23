@@ -463,7 +463,7 @@ describe('SunRey Exchange service', () => {
     });
     assert.equal(zero.outcome, 'REJECTED');
     if (zero.outcome === 'REJECTED') {
-      assert.equal(zero.code, 'INVALID_QUANTITY');
+      assert.equal(zero.code, 'STRUCTURAL_INVALID');
     }
     const noPrice = h.exchange.placeDigitalOrder({
       actorId: seller.actor.actorId,
