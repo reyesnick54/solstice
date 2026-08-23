@@ -5,6 +5,7 @@ import { createSunReyConsumerBffClient } from '../packages/sunrey-sdk/src/consum
 import { createSandboxWorld, sandboxToken } from '../services/api/src/consumer/fixtures.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 import type { ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
+import { createPhaseHWorld, PHASE_H_TOKEN } from './phase-h-world.ts';
 
 describe('Phase H SDK-only Vault / HIN / productive-data E2E', () => {
   it('reads vault, consent, HIN rights, and productive input without issuance', async () => {
@@ -44,7 +45,11 @@ describe('Phase H SDK-only Vault / HIN / productive-data E2E', () => {
       assert.ok(productive);
       const input = await hinClient.getMoonReyEconomicInput();
       assert.equal((input as { issuanceEndpoint?: boolean }).issuanceEndpoint ?? false, false);
-import { createPhaseHWorld, PHASE_H_TOKEN } from './phase-h-world.ts';
+    } finally {
+      await server.close();
+    }
+  });
+});
 
 describe('Phase H SDK-only E2E', () => {
   it('completes Vault/HIN/economy flows through the public Consumer BFF client', async () => {

@@ -104,7 +104,6 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
       'productiveEconomy',
       'hin',
     ],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'productiveEconomy', 'hin'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
     now: frozen.now(),
