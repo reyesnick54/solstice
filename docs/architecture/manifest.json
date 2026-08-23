@@ -885,7 +885,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation — not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
+      "notes": "Canonical Human Information Network marketplace foundation. Public brand SunRey Exchange. Sells permission, proof, and computation \u2014 not raw people-data. Personal Oracle is a module here. Chunk 100 production-candidate interfaces live at src/network. Chunk 107 HIN contribution adapter lives at src/network/contribution and uses the Chunk 109 verifier. Chunk 139/140 HIN chain-anchor lifecycle lives at src/network/chain-anchor and uses existing SunReyChainService. Do not implement a second chain, matching engine, or mint."
     },
     {
       "id": "packages/sunrey-chain",
@@ -942,15 +942,18 @@
       "executionAuthorityRequired": true,
       "kernelAuthorizationRequired": true,
       "allowedDependencies": [
-        "packages/domain",
-        "packages/money",
         "packages/config",
-        "packages/security",
-        "packages/identity",
-        "packages/evidence",
+        "packages/custody",
+        "packages/domain",
         "packages/events",
-        "packages/permissions",
+        "packages/evidence",
+        "packages/identity",
         "packages/kernel",
+        "packages/ledger",
+        "packages/market-surveillance",
+        "packages/money",
+        "packages/permissions",
+        "packages/security",
         "packages/sunrey-coin"
       ],
       "codeowners": [
@@ -1195,28 +1198,28 @@
       "executionAuthorityRequired": false,
       "kernelAuthorizationRequired": false,
       "allowedDependencies": [
-        "services/accounts",
-        "services/cards",
         "packages/cards",
-        "packages/domain",
-        "packages/money",
         "packages/config",
+        "packages/consent",
+        "packages/custody",
+        "packages/domain",
         "packages/identity",
-        "packages/permissions",
-        "packages/security",
-        "packages/payments",
-        "packages/sunrey-chain",
-        "packages/sunrey-agent",
-        "packages/personal-economic-graph",
-        "packages/platform",
         "packages/investments",
         "packages/ledger",
-        "packages/custody",
-        "packages/consent",
+        "packages/money",
+        "packages/payments",
+        "packages/permissions",
         "packages/personal-data-vault",
+        "packages/personal-economic-graph",
+        "packages/platform",
+        "packages/security",
+        "packages/sunrey-agent",
+        "packages/sunrey-chain",
         "packages/sunrey-exchange",
-        "services/investments",
-        "services/economic-graph"
+        "services/accounts",
+        "services/cards",
+        "services/economic-graph",
+        "services/investments"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -2530,7 +2533,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016–ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
+      "notes": "One SunRey Chain owner. Append-only simulation receipts and anchors. Not a second ledger, wallet, exchange, or live network. Settlement anchors happen after canonical ledger transfers. Chunk 31 freezes production architecture (ADR-0016\u2013ADR-0033) without implementing a production node. Chunk 37 implements a development Tendermint-class ConsensusEngine at packages/sunrey-chain/rust/crates/consensus. Chunk 36R/38/39 implement the development validator set, networked BFT, and simulation accountability. Runtime/storage/P2P/validators remain internal modules, not competing packages. Production consensus is not implemented."
     },
     {
       "id": "sunrey-explorer",
@@ -2801,7 +2804,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76–81 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
+      "notes": "Chunk 65 readiness evidence, activation matrix, and genesis-candidate tooling. Consumes exact Chunk 76\u201381 engineering evidence hashes without overwriting external evidence status. Chunk 160 adds the external production evidence registry at src/mainnet/external-evidence. Does not launch mainnet or enable LIVE_* services. External legal/audit evidence remains explicit and unfabricated."
     },
     {
       "id": "sunrey-launch-rehearsal",
@@ -2983,7 +2986,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129–138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
+      "notes": "Chunk 68 production-candidate oracle onboarding and collection. Chunk 128 provider certification lives at packages/sunrey-chain/src/oracle/production/certification. Chunk 129\u2013138 provider-family data fabrics and the unified economic data fabric live at packages/sunrey-chain/src/oracle/production. Chunk 150 external provider candidates live at packages/sunrey-chain/src/oracle/production/external-provider-candidate. Consensus never calls HTTP. Certification is not a verified fact, productive contribution, or MoonRey mint. No PRODUCTION_APPROVED state."
     },
     {
       "id": "sunrey-provider-certification",
@@ -4795,7 +4798,7 @@
       "codeowners": [
         "@reyesnick54"
       ],
-      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN → HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
+      "notes": "Chunk 107 narrow HIN adapter to the Human Economic Contribution Registry evidence contract. HIN \u2192 HumanContributionRegistryPort. Does not reimplement HIN, consent, or the clean room. Compensation remains mintRequested=false. No automatic SunRey mint."
     },
     {
       "id": "sunrey-hin-chain-anchoring",
@@ -6521,7 +6524,9 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "supersededBy": ["sunrey-local-node"],
+      "supersededBy": [
+        "sunrey-local-node"
+      ],
       "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-local-node. Do not create a second node package. Production public node operations remain externally gated."
     },
     {
@@ -6537,7 +6542,9 @@
       "status": "PLANNED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "supersededBy": ["sunrey-p2p"],
+      "supersededBy": [
+        "sunrey-p2p"
+      ],
       "notes": "Chunk 168 classification: obsolete planned placeholder. SUPERSEDED by sunrey-p2p. Do not create packages/p2p or packages/sunrey-p2p."
     },
     {
@@ -6559,7 +6566,10 @@
       "status": "PLANNED",
       "owner": null,
       "protected": true,
-      "supersededBy": ["sunrey-native-assets", "moonrey-issuance-engine"],
+      "supersededBy": [
+        "sunrey-native-assets",
+        "moonrey-issuance-engine"
+      ],
       "notes": "Chunk 168 classification A: obsolete public-product placeholder. SUPERSEDED by sunrey-native-assets (protocol-native MOONREY_COIN) and moonrey-issuance-engine. Do not create packages/moonrey-coin. The MoonRey native-asset path is implemented on SunRey Chain. Public ticker remains NOT_ASSIGNED (human decision). Production issuance remains externally gated. Not a missing software owner."
     },
     {
@@ -6837,7 +6847,7 @@
       "status": "IMPLEMENTED",
       "owner": "packages/sunrey-chain",
       "protected": true,
-      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification, Chunk 129–138 provider-family and unified economic data fabrics, and Chunk 150 external provider candidates extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
+      "notes": "Chunk 68 production-candidate oracle onboarding, off-chain collection, provenance, independence, quorum, and MoonRey eligibility at packages/sunrey-chain/src/oracle. Chunk 128 certification, Chunk 129\u2013138 provider-family and unified economic data fabrics, and Chunk 150 external provider candidates extend the same owner at packages/sunrey-chain/src/oracle/production. Consensus never calls HTTP. No fabricated provider agreements. Do not create packages/production-oracles, packages/oracle-onboarding, packages/oracle-collector, or a second oracle consensus system."
     },
     {
       "id": "sunrey-provider-certification",

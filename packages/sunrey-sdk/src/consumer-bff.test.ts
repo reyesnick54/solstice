@@ -348,6 +348,8 @@ describe('consumer BFF native economy SDK', () => {
   });
 });
 
+
+
 describe('consumer BFF data-rights SDK', () => {
   it('calls consent and HIN participation routes', async () => {
     const urls: string[] = [];
@@ -355,13 +357,6 @@ describe('consumer BFF data-rights SDK', () => {
       baseUrl: 'http://example.test',
       getAccessToken: () => 'sandbox.basic_verified',
       generateRequestId: () => 'req_data',
-describe('consumer BFF vault SDK', () => {
-  it('calls vault home and category routes', async () => {
-    const urls: string[] = [];
-    const client = createSunReyConsumerBffClient({
-      baseUrl: 'http://example.test',
-      getAccessToken: () => 'sandbox.vault_financial',
-      generateRequestId: () => 'req_vault',
       fetchImpl: async (input, init) => {
         const url = typeof input === 'string' ? input : String(input);
         urls.push(`${init?.method ?? 'GET'} ${url}`);
@@ -371,10 +366,6 @@ describe('consumer BFF vault SDK', () => {
             implicitMonetizationOptIn: false,
             financialServicesRemainOpen: true,
             items: [],
-            schema: 'sunrey.consumer.vault.home.v1',
-            productionActive: false,
-            liveMonetizationEnabled: false,
-            sunreyOwnsUserData: false,
           }),
           { status: 200, headers: { 'content-type': 'application/json' } },
         );
@@ -387,6 +378,30 @@ describe('consumer BFF vault SDK', () => {
     assert.ok(urls.some((row) => row.includes('/api/v1/data/permissions')));
     assert.ok(urls.some((row) => row.includes('/api/v1/hin/participation')));
     assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/data/rights/requests')));
+  });
+});
+
+describe('consumer BFF vault SDK', () => {
+  it('calls vault home and category routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.vault_financial',
+      generateRequestId: () => 'req_vault',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.vault.home.v1',
+            productionActive: false,
+            liveMonetizationEnabled: false,
+            sunreyOwnsUserData: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
     const home = await client.getVaultHome();
     await client.listVaultCategories();
     await client.listVaultRecords();

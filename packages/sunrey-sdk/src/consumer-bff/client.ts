@@ -20,11 +20,6 @@ import type {
   ActionCenterList,
   ActionCenterView,
   ConversationTurn,
-  DataConsentGrant,
-  DataConsentList,
-  DataPermissionCatalog,
-  DataRightsRequestResource,
-  HinParticipation,
   NativeEconomyOverview,
   NativeEconomySupply,
   VaultCategories,
@@ -32,6 +27,11 @@ import type {
   VaultHome,
   VaultRecord,
   VaultRecords,
+  DataPermissionCatalog,
+  DataConsentGrant,
+  DataConsentList,
+  DataRightsRequestResource,
+  HinParticipation,
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
@@ -144,62 +144,6 @@ export class SunReyConsumerBffClient {
 
   async getAssetDetail(assetId: string, options?: BffRequestOptions): Promise<AssetDetail> {
     return this.request('GET', `/api/v1/assets/${encodeURIComponent(assetId)}`, undefined, options);
-  }
-
-  async getDataPermissions(options?: BffRequestOptions): Promise<DataPermissionCatalog> {
-    return this.request('GET', '/api/v1/data/permissions', undefined, options);
-  }
-
-  async listDataConsents(options?: BffRequestOptions): Promise<DataConsentList> {
-    return this.request('GET', '/api/v1/data/consents', undefined, options);
-  }
-
-  async grantDataConsent(
-    input: {
-      readonly purposeId?: string;
-      readonly bundleId?: string;
-      readonly expiresAt: string;
-      readonly dataCategories?: readonly string[];
-      readonly economicUseClass?: string;
-    },
-    options?: BffRequestOptions,
-  ): Promise<DataConsentGrant> {
-    return this.request('POST', '/api/v1/data/consents', input, options);
-  }
-
-  async revokeDataConsent(consentId: string, reason?: string, options?: BffRequestOptions): Promise<unknown> {
-    return this.request('POST', `/api/v1/data/consents/${encodeURIComponent(consentId)}/revoke`, { reason }, options);
-  }
-
-  async getDataAccessHistory(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
-    return this.request('GET', '/api/v1/data/access-history', undefined, options);
-  }
-
-  async submitDataRightsRequest(
-    input: { readonly type: string; readonly jurisdiction?: string },
-    options?: BffRequestOptions,
-  ): Promise<DataRightsRequestResource> {
-    return this.request('POST', '/api/v1/data/rights/requests', input, options);
-  }
-
-  async listDataRightsRequests(options?: BffRequestOptions): Promise<{ readonly items: readonly DataRightsRequestResource[] }> {
-    return this.request('GET', '/api/v1/data/rights/requests', undefined, options);
-  }
-
-  async getHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
-    return this.request('GET', '/api/v1/hin/participation', undefined, options);
-  }
-
-  async enrollHinParticipation(expiresAt: string, options?: BffRequestOptions): Promise<HinParticipation> {
-    return this.request('POST', '/api/v1/hin/participation/enroll', { expiresAt }, options);
-  }
-
-  async pauseHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
-    return this.request('POST', '/api/v1/hin/participation/pause', {}, options);
-  }
-
-  async withdrawHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
-    return this.request('POST', '/api/v1/hin/participation/withdraw', {}, options);
   }
 
   async listRecipients(options?: BffRequestOptions): Promise<{ readonly items: readonly Recipient[] }> {
@@ -561,24 +505,102 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow/portfolio/risk', undefined, options);
   }
 
-  async getExchangeHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/exchange', undefined, options);
+  async getNativeEconomy(options?: BffRequestOptions): Promise<NativeEconomyOverview> {
+    return this.request('GET', '/api/v1/economy', undefined, options);
+  }
+
+  async getNativeSupply(options?: BffRequestOptions): Promise<NativeEconomySupply> {
+    return this.request('GET', '/api/v1/economy/supply', undefined, options);
+  }
+
+  async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
   }
 
   async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
     return this.request('GET', '/api/v1/exchange/markets', undefined, options);
   }
 
-  async getExchangeMarket(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}`, undefined, options);
+  async getExchangeMarket(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}`, undefined, options);
   }
 
-  async getExchangeTicker(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/ticker`, undefined, options);
+  async getExchangeTicker(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/ticker`, undefined, options);
   }
 
-  async getExchangeOrderBook(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/order-book`, undefined, options);
+  async getExchangeOrderBook(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request(
+      'GET',
+      `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/orderbook`,
+      undefined,
+      options,
+    );
+  }
+
+  async getExchangeTrades(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/trades`, undefined, options);
+  }
+
+  async previewExchangeOrder(
+    input: { readonly marketId: string; readonly instrument: string; readonly side: 'BUY' | 'SELL'; readonly quantity: string },
+    options?: BffRequestOptions,
+  ): Promise<ExchangeOrderPreview> {
+    return this.request('POST', '/api/v1/exchange/preview', input, options);
+  }
+
+  async listExchangeOrders(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/exchange/orders', undefined, options);
+  }
+
+  async submitExchangeOrder(
+    input: {
+      readonly marketId: string;
+      readonly side: 'BUY' | 'SELL';
+      readonly quantity: string;
+      readonly proposalId?: string;
+    },
+    options?: BffRequestOptions,
+  ): Promise<ExchangeOrderSubmit> {
+    return this.request('POST', '/api/v1/exchange/orders', input, options);
+  }
+
+  async cancelExchangeOrder(orderId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('DELETE', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}`, undefined, options);
+  }
+
+  async listExchangeFills(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/exchange/fills', undefined, options);
+  }
+
+  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
+  }
+
+  async getExchangeHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange', undefined, options);
+  }
+
+  async fundExchangeSandbox(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/exchange/fund', {}, options);
+  }
+
+  async getEconomyHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy', undefined, options);
+  }
+
+  async simulateWalletDeposit(
+    input: { readonly quantity?: string } = {},
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/wallets/deposits/simulate', input, options);
+  }
+
+  async createWithdrawalQuote(
+    input: { readonly assetId?: string; readonly quantity: string; readonly destination?: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/wallets/withdrawals/quote', input, options);
   }
 
   async getExchangeChart(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -589,29 +611,12 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/exchange/eligibility', undefined, options);
   }
 
-  async getExchangeHoldings(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
-  }
-
-  async fundExchangeSandbox(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('POST', '/api/v1/exchange/fund', {}, options);
-  }
-
-  async previewExchangeOrder(
-    input: {
-      readonly marketId?: string;
-      readonly instrument?: string;
-      readonly side: 'BUY' | 'SELL';
-      readonly quantity: string;
-      readonly notionalUsdMinor?: string;
-    },
-    options?: BffRequestOptions,
-  ): Promise<ExchangeOrderPreview> {
-    return this.request('POST', '/api/v1/exchange/preview', input, options);
+  async getExchangeStream(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/stream', undefined, options);
   }
 
   async createExchangeProposal(
-    input: { readonly side: 'BUY' | 'SELL'; readonly quantity: string; readonly notionalUsdMinor?: string },
+    input: { readonly side: 'BUY' | 'SELL'; readonly quantity: string; readonly origin?: 'HUMAN' | 'AGENT' },
     options?: BffRequestOptions,
   ): Promise<Record<string, unknown>> {
     return this.request('POST', '/api/v1/exchange/proposals', input, options);
@@ -633,62 +638,8 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/exchange/proposals/${encodeURIComponent(proposalId)}/submit`, input, options);
   }
 
-  async listExchangeOrders(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/exchange/orders', undefined, options);
-  }
-
-  async listExchangeFills(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/exchange/fills', undefined, options);
-  }
-
-  async getExchangeStream(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/exchange/stream', undefined, options);
-  }
-
   async getWalletDepositAddress(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/wallets/deposit-address', undefined, options);
-  }
-
-  async simulateWalletDeposit(
-    input: { readonly quantity?: string } = {},
-    options?: BffRequestOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.request('POST', '/api/v1/wallets/deposits/simulate', input, options);
-  }
-
-  async quoteWalletWithdrawal(
-    input: { readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN'; readonly quantity: string; readonly destination: string },
-    options?: BffRequestOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.request('POST', '/api/v1/wallets/withdrawals/quote', input, options);
-  }
-
-  async createWithdrawalQuote(
-    input: { readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN'; readonly quantity: string; readonly destination: string },
-    options?: BffRequestOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.quoteWalletWithdrawal(input, options);
-  }
-
-  async submitWalletWithdrawal(
-    input: {
-      readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN';
-      readonly quantity: string;
-      readonly destination: string;
-      readonly approved?: boolean;
-      readonly actor?: 'HUMAN' | 'AGENT';
-    },
-    options?: BffRequestOptions,
-  ): Promise<Record<string, unknown>> {
-    return this.request('POST', '/api/v1/wallets/withdrawals', input, options);
-  }
-
-  async getEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/economy', undefined, options);
-  }
-
-  async getEconomyHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.getEconomy(options);
   }
 
   async getSunreyCoinEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -703,16 +654,62 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/economy/status', undefined, options);
   }
 
-  async getNativeEconomy(options?: BffRequestOptions): Promise<NativeEconomyOverview> {
-    return this.request('GET', '/api/v1/economy', undefined, options);
+
+
+  async getDataPermissions(options?: BffRequestOptions): Promise<DataPermissionCatalog> {
+    return this.request('GET', '/api/v1/data/permissions', undefined, options);
   }
 
-  async getNativeSupply(options?: BffRequestOptions): Promise<NativeEconomySupply> {
-    return this.request('GET', '/api/v1/economy/supply', undefined, options);
+  async listDataConsents(options?: BffRequestOptions): Promise<DataConsentList> {
+    return this.request('GET', '/api/v1/data/consents', undefined, options);
   }
 
-  async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
-    return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
+  async grantDataConsent(
+    input: {
+      readonly purposeId?: string;
+      readonly bundleId?: string;
+      readonly expiresAt: string;
+      readonly dataCategories?: readonly string[];
+      readonly economicUseClass?: string;
+    },
+    options?: BffRequestOptions,
+  ): Promise<DataConsentGrant> {
+    return this.request('POST', '/api/v1/data/consents', input, options);
+  }
+
+  async revokeDataConsent(consentId: string, reason?: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', `/api/v1/data/consents/${encodeURIComponent(consentId)}/revoke`, { reason }, options);
+  }
+
+  async getDataAccessHistory(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/data/access-history', undefined, options);
+  }
+
+  async submitDataRightsRequest(
+    input: { readonly type: string; readonly jurisdiction?: string },
+    options?: BffRequestOptions,
+  ): Promise<DataRightsRequestResource> {
+    return this.request('POST', '/api/v1/data/rights/requests', input, options);
+  }
+
+  async listDataRightsRequests(options?: BffRequestOptions): Promise<{ readonly items: readonly DataRightsRequestResource[] }> {
+    return this.request('GET', '/api/v1/data/rights/requests', undefined, options);
+  }
+
+  async getHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
+    return this.request('GET', '/api/v1/hin/participation', undefined, options);
+  }
+
+  async enrollHinParticipation(expiresAt: string, options?: BffRequestOptions): Promise<HinParticipation> {
+    return this.request('POST', '/api/v1/hin/participation/enroll', { expiresAt }, options);
+  }
+
+  async pauseHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
+    return this.request('POST', '/api/v1/hin/participation/pause', {}, options);
+  }
+
+  async withdrawHinParticipation(options?: BffRequestOptions): Promise<HinParticipation> {
+    return this.request('POST', '/api/v1/hin/participation/withdraw', {}, options);
   }
 
   async getVaultHome(options?: BffRequestOptions): Promise<VaultHome> {
@@ -762,51 +759,6 @@ export class SunReyConsumerBffClient {
 
   async getVaultExportStatus(options?: BffRequestOptions): Promise<readonly VaultExportJob[]> {
     return this.request('GET', '/api/v1/data/vault/export/status', undefined, options);
-  }
-
-  async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
-    return this.request('GET', '/api/v1/exchange/markets', undefined, options);
-  }
-
-  async getExchangeMarket(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}`, undefined, options);
-  }
-
-  async getExchangeTicker(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/ticker`, undefined, options);
-  }
-
-  async getExchangeOrderBook(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request(
-      'GET',
-      `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/orderbook`,
-      undefined,
-      options,
-    );
-  }
-
-  async getExchangeTrades(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/trades`, undefined, options);
-  }
-
-  async submitExchangeOrder(
-    input: {
-      readonly marketId: string;
-      readonly side: 'BUY' | 'SELL';
-      readonly quantity: string;
-      readonly proposalId?: string;
-    },
-    options?: BffRequestOptions,
-  ): Promise<ExchangeOrderSubmit> {
-    return this.request('POST', '/api/v1/exchange/orders', input, options);
-  }
-
-  async cancelExchangeOrder(orderId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('DELETE', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}`, undefined, options);
-  }
-
-  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
-    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
   async request<T>(

@@ -1,4 +1,4 @@
--- V038 Consent and data-rights productization overlays.
+-- V039 Consent and data-rights productization overlays.
 -- Extends the Consent Ledger. Not a second consent system, ledger, or mint.
 -- No raw personal payloads. Historical processing is retained.
 
