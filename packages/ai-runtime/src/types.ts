@@ -22,6 +22,8 @@ export type AiProviderUsage = {
   readonly promptTokens: number | null;
   readonly completionTokens: number | null;
   readonly totalTokens: number | null;
+  readonly latencyMs?: number | null;
+  readonly estimatedCostMicros?: string | null;
 };
 
 export type AiProviderHealth = {
@@ -30,14 +32,17 @@ export type AiProviderHealth = {
   readonly healthy: boolean;
   readonly reason: string | null;
   readonly checkedAt: UtcInstant;
-  readonly networkEnabled: false;
+  readonly networkEnabled: boolean;
+  readonly liveConnectivity?: false;
 };
 
 export type AiProviderCapabilities = {
   readonly kind: AiProviderKind;
   readonly supportsStructuredOutput: boolean;
   readonly supportsToolIntents: boolean;
-  readonly externalNetwork: false;
+  readonly supportsStreaming: boolean;
+  readonly supportsCancellation: boolean;
+  readonly externalNetwork: boolean;
   readonly mayReceivePrivateKeys: false;
   readonly mayExecuteFinancialActions: false;
   readonly mayIssueExecutionAuthority: false;
@@ -206,6 +211,16 @@ export type AiContextReleaseDecision = {
   readonly failClosed: true;
 };
 
+export type AiChatMessage = {
+  readonly role: 'system' | 'user' | 'assistant' | 'tool';
+  readonly content: string;
+};
+
+export type AiCancellationToken = {
+  cancelled: boolean;
+  cancel(): void;
+};
+
 export type CanonicalProviderRequest = {
   readonly requestId: AiRequestId;
   readonly taskClass: AiTaskClass;
@@ -213,6 +228,17 @@ export type CanonicalProviderRequest = {
   readonly promptHash: string;
   readonly releasedContext: readonly AiContextObject[];
   readonly fixture?: LocalTestFixture;
+  readonly messages?: readonly AiChatMessage[];
+  readonly systemPolicy?: string;
+  readonly tools?: readonly string[];
+  readonly responseSchema?: 'EXPLANATION' | 'FINANCIAL_PROPOSAL' | null;
+  readonly temperatureMilli?: number | null;
+  readonly maxOutputTokens?: number | null;
+  readonly correlationId?: string;
+  readonly agentId?: string | null;
+  readonly purpose?: string;
+  readonly cancel?: AiCancellationToken;
+  readonly repairAttempt?: number;
 };
 
 export type { AiStructuredKind };

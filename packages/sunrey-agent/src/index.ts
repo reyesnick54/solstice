@@ -13,6 +13,13 @@ export {
   proposalInputFromToolIntent,
   type AiRuntimePort,
 } from './inference.ts';
+export {
+  bindAgentModelGateway,
+  agentSafeStream,
+  agentModelOutageIsNotFinancial,
+  refuseRawPublicLlm,
+  type AgentModelGatewayPort,
+} from './model-gateway.ts';
 export { ProposalGate, type KernelSubmitPort } from './gate.ts';
 export { explainProposal } from './explain.ts';
 export {

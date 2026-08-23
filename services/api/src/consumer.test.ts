@@ -350,4 +350,48 @@ describe('Consumer BFF', () => {
     const agent = (home.body as { agent: { value: { recommendationCount: number } | null } }).agent;
     assert.equal(agent.value?.recommendationCount, 2);
   });
+
+  it('streams Agent conversation events and refuses raw public LLM routes', () => {
+    const world = createSandboxWorld();
+    const posted = handleConsumerBff(
+      { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      {
+        method: 'POST',
+        path: '/api/v1/agent/conversations/convo_1/messages',
+        query: {},
+        body: { text: 'Explain my sandbox balance' },
+        authorization: auth('agent_enabled'),
+      },
+    );
+    assert.equal(posted.status, 200);
+    const body = posted.body as {
+      rawLlm: boolean;
+      financialExecuted: boolean;
+      events: { type: string; hiddenReasoning: boolean }[];
+      sse: string;
+    };
+    assert.equal(body.rawLlm, false);
+    assert.equal(body.financialExecuted, false);
+    assert.equal(body.events.some((event) => event.type === 'message.started'), true);
+    assert.equal(body.events.every((event) => event.hiddenReasoning === false), true);
+    assert.equal(body.sse.includes('event: message.completed'), true);
+
+    const sse = handleConsumerBff(
+      { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+      {
+        method: 'POST',
+        path: '/api/v1/agent/conversations/convo_1/messages',
+        query: {},
+        body: { text: 'Explain my sandbox balance' },
+        authorization: auth('agent_enabled'),
+        accept: 'text/event-stream',
+      },
+    );
+    assert.equal(sse.status, 200);
+    assert.equal(String(sse.headers['content-type']).startsWith('text/event-stream'), true);
+    assert.equal(typeof sse.body, 'string');
+
+    const raw = get(world, '/api/v1/llm', 'agent_enabled');
+    assert.equal(raw.status, 404);
+  });
 });

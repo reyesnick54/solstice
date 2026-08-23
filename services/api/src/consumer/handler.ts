@@ -31,6 +31,7 @@ import { listSandboxPersonas } from './fixtures.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
+import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
 import type { GrowBffSurface } from './grow.ts';
 import {
   actorFromPrincipal,
@@ -49,6 +50,7 @@ export type BffRequest = {
   readonly authorization: string | undefined;
   readonly requestId?: string;
   readonly idempotencyKey?: string;
+  readonly accept?: string;
 };
 
 export type BffResponse = {
@@ -311,6 +313,36 @@ function dispatchAuthenticated(
     );
   }
 
+  if ((FORBIDDEN_PUBLIC_LLM_PATHS as readonly string[]).includes(path)) {
+    return json(
+      404,
+      bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'raw LLM inference is not a public consumer endpoint; use Agent conversation routes',
+        retryable: false,
+        requestId,
+      }),
+      headers,
+    );
+  }
+
+  if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/messages') && method === 'POST') {
+    const conversationId = path.slice('/api/v1/agent/conversations/'.length, -'/messages'.length);
+    const text = typeof rec.text === 'string' ? rec.text : typeof rec.message === 'string' ? rec.message : '';
+    const reply = agentConversationReply({ conversationId, requestId, text });
+    if ((request.accept ?? '').includes('text/event-stream')) {
+      return Object.freeze({
+        status: 200,
+        body: reply.sse,
+        headers: Object.freeze({
+          ...headers,
+          'cache-control': 'no-store, no-cache, private',
+          'content-type': 'text/event-stream; charset=utf-8',
+        }),
+      });
+    }
+    return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
@@ -793,6 +825,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
+  'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
   'GET /api/v1/wallets',
   'GET /api/v1/data',
