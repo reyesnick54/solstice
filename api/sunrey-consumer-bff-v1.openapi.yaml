@@ -2121,27 +2121,6 @@ paths:
       responses:
         "200":
           description: Purpose-scoped usage view
-  /api/v1/hin/participation:
-    get:
-      operationId: getHinParticipation
-      summary: HIN participation
-      responses:
-        "200":
-          description: Participation status
-  /api/v1/hin/participation/pause:
-    post:
-      operationId: pauseHinParticipation
-      summary: Pause HIN participation
-      responses:
-        "200":
-          description: Paused
-  /api/v1/hin/participation/withdraw:
-    post:
-      operationId: withdrawHinParticipation
-      summary: Withdraw HIN participation
-      responses:
-        "200":
-          description: Withdrawn
   /api/v1/data:
     get:
       operationId: getDataVault
@@ -2173,11 +2152,9 @@ paths:
     post:
       operationId: revokeDataConsent
       summary: Revoke optional consent immediately
-          description: Owner vault summary. SunRey does not own user data.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VaultHome'
+      responses:
+        "200":
+          description: Optional consent revoked; financial services remain open
   /api/v1/data/vault:
     get:
       operationId: getVaultHome
@@ -2225,6 +2202,17 @@ paths:
       responses:
         "200":
           description: Downstream access disabled; historical processing retained
+    patch:
+      operationId: correctVaultRecord
+      summary: Correct user-declared data or open a dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Correction or review-pending dispute
   /api/v1/data/access-history:
     get:
       operationId: getDataAccessHistory
@@ -2273,18 +2261,6 @@ paths:
       responses:
         "200":
           description: Withdrawn without closing ordinary SunRey financial services
-          description: Record metadata. Payload is redacted unless explicitly requested.
-    patch:
-      operationId: correctVaultRecord
-      summary: Correct user-declared data or open a dispute
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Correction or review-pending dispute
   /api/v1/data/vault/records/{id}/history:
     get:
       operationId: getVaultRecordHistory
