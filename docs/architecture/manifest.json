@@ -1215,6 +1215,15 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/evidence",
+        "packages/events",
+        "packages/kernel",
+        "packages/personal-data-vault",
+        "packages/consent",
+        "packages/information-market",
+        "packages/clean-room",
+        "packages/sunrey-coin",
+        "packages/human-economic-contribution",
         "packages/sunrey-exchange",
         "packages/information-market",
         "packages/human-economic-contribution",
@@ -7781,6 +7790,22 @@
     },
     {
       "name": "LIVE_INVESTMENT_EXECUTION",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_INFORMATION_RIGHTS_MARKETPLACE",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_DATA_MONETIZATION_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_HIN_BASED_ISSUANCE_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED",
       "requiredValue": false
     }
   ],
