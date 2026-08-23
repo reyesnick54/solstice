@@ -83,6 +83,25 @@ export type OptionalDomainSummary = {
 
 export type OptionalDomainPort = {
   summarize(principal: BffPrincipal): OptionalDomainSummary;
+  list?(principal: BffPrincipal): unknown;
+  get?(principal: BffPrincipal, id: string): unknown;
+  dismiss?(principal: BffPrincipal, id: string): unknown;
+  startProposal?(principal: BffPrincipal, id: string): unknown;
+};
+
+export type GrowCommandPort = {
+  profile(principal: BffPrincipal, valuationCurrency?: string): unknown;
+  snapshot(principal: BffPrincipal, valuationCurrency?: string): unknown;
+  listGoals(principal: BffPrincipal): unknown;
+  createGoal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): unknown;
+  patchGoal(principal: BffPrincipal, goalId: string, body: Record<string, unknown>, requestId: string): unknown;
+  insights(principal: BffPrincipal): unknown;
+  suitability(principal: BffPrincipal): unknown;
+  submitSuitability(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): unknown;
+  declareAssumption(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): unknown;
+  correctClassification(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): unknown;
+  history(principal: BffPrincipal, series?: string): unknown;
+  agentProfile(principal: BffPrincipal): unknown;
 };
 
 export type GrowPortfolioPort = {

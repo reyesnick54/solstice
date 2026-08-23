@@ -38,8 +38,18 @@ import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/pr
 import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
+import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
+import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
+import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
+import { createGrowOpportunityPort } from './grow-adapter.ts';
+import {
+  applyPersonaSeed,
+  EconomicGraphService,
+  PEG_PERSONA_SEEDS,
+  type PegPersonaId,
+} from '../../../economic-graph/src/index.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import type {
@@ -69,6 +79,16 @@ export const SANDBOX_PERSONA_IDS = [
   'provider_down',
   'pending_activity',
   'zero_balance',
+  'grow',
+  'grow_new_user',
+  'grow_healthy_saver',
+  'grow_high_idle_cash',
+  'grow_high_spender',
+  'grow_investor',
+  'grow_multi_currency',
+  'grow_goal_oriented',
+  'grow_liquidity_constrained',
+  'grow_high_concentration',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
@@ -81,7 +101,10 @@ const NOW = asUtcInstant('2026-08-21T09:00:00.000Z');
 const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'VIEW_ACCOUNT',
   'MANAGE_PROFILE',
+  'VIEW_ECONOMIC_GRAPH',
+  'DECLARE_ECONOMIC_FACT',
   'VIEW_GROWTH_PLAN',
+  'VIEW_ECONOMIC_GRAPH',
   'VIEW_ECONOMIC_VALUE',
   'VAULT_VIEW_OWN',
   'EXCHANGE_VIEW',
@@ -305,6 +328,54 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.provider_down = providerDown.principal;
   sessions.set(sandboxToken('provider_down'), providerDown.principal);
 
+  const grow = provisionPersona(runtime, {
+    persona: 'grow',
+    customerId: 'cust_sandbox_grow',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [
+      { id: 'acct_sandbox_grow_checking', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
+      { id: 'acct_sandbox_grow_savings', currency: 'USD', productId: 'prod_savings_usd_gb', accountClass: 'SAVINGS_DEPOSIT', deposit: 0n },
+    ],
+  });
+  personas.grow = grow.principal;
+  sessions.set(sandboxToken('grow'), grow.principal);
+  const peg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });
+  const growPersonaMap: Readonly<Record<string, PegPersonaId>> = {
+    grow_new_user: 'NEW_USER',
+    grow_healthy_saver: 'HEALTHY_SAVER',
+    grow_high_idle_cash: 'HIGH_IDLE_CASH',
+    grow_high_spender: 'HIGH_SPENDER',
+    grow_investor: 'INVESTOR',
+    grow_multi_currency: 'MULTI_CURRENCY_USER',
+    grow_goal_oriented: 'GOAL_ORIENTED_USER',
+    grow_liquidity_constrained: 'LIQUIDITY_CONSTRAINED_USER',
+    grow_high_concentration: 'HIGH_CONCENTRATION_USER',
+  };
+  for (const [sandboxId, personaId] of Object.entries(growPersonaMap)) {
+    const seed = PEG_PERSONA_SEEDS.find((row) => row.personaId === personaId);
+    if (!seed) {
+      throw new Error(`missing PEG seed ${personaId}`);
+    }
+    const provisioned = provisionPersona(runtime, {
+      persona: sandboxId as SandboxPersonaId,
+      identityId: seed.subjectId,
+      customerId: seed.customerId,
+      kyc: 'VERIFIED',
+      customerActive: true,
+      restricted: false,
+      accounts: [],
+    });
+    personas[sandboxId as SandboxPersonaId] = provisioned.principal;
+    sessions.set(sandboxToken(sandboxId as SandboxPersonaId), provisioned.principal);
+    const actor = runtime.identity.service.resolveActorContext(provisioned.principal.actorId);
+    if (!actor.ok) {
+      throw new Error(`grow actor missing for ${sandboxId}`);
+    }
+    applyPersonaSeed(peg, actor.value, seed);
+  }
+
   const simulationPort = (reason: string, count = 0): OptionalDomainPort => ({
     summarize: () =>
       Object.freeze({
@@ -387,6 +458,23 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     },
     grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
     growPortfolio,
+    grow: createGrowOpportunityPort({
+      orchestrator: new GrowthOrchestrator({
+        clock: runtime.clock,
+        events: runtime.events,
+        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+      }),
+      accounts: createAccountsReadAdapter(runtime),
+      actorFor(principal) {
+        const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+        return actor.ok ? actor.value : principal;
+      },
+    grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
+    growCommands: createGrowCommandPort({
+      peg,
+      identity: runtime.identity.service,
+      valuePositions: (positions, target) => paymentsService.valuePositions(positions, target),
+    }),
     agent: {
       summarize(principal) {
         const count = agentCounts.get(principal.customerId) ?? 0;
@@ -424,6 +512,7 @@ function provisionPersona(
   runtime: SimulationRuntime,
   input: {
     readonly persona: SandboxPersonaId;
+    readonly identityId?: string;
     readonly customerId: string;
     readonly kyc: 'VERIFIED' | 'IN_PROGRESS';
     readonly customerActive: boolean;
@@ -441,7 +530,7 @@ function provisionPersona(
   const actorId = `actor_sandbox_${input.persona}`;
   const provisioned = runtime.identity.provisionSimulatedActor({
     actorId,
-    identityId: `idn_sandbox_${input.persona}`,
+    identityId: input.identityId ?? `idn_sandbox_${input.persona}`,
     jurisdiction: asJurisdiction('GB'),
     customerId: customer.id,
     capabilities: READ_CAPABILITIES,
@@ -450,7 +539,7 @@ function provisionPersona(
   if (!provisioned.ok) {
     throw new Error(`sandbox identity failed: ${provisioned.error.message}`);
   }
-  const identity = runtime.identity.service.store.identities.get(`idn_sandbox_${input.persona}`);
+  const identity = runtime.identity.service.store.identities.get(input.identityId ?? `idn_sandbox_${input.persona}`);
   if (!identity) {
     throw new Error('sandbox identity missing after provision');
   }

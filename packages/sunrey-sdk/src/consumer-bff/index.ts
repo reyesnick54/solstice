@@ -4,8 +4,15 @@ export {
   CONSUMER_ACTIVITY_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,
+  GROW_OPPORTUNITY_STATUSES,
 } from './types.ts';
 export type {
+  GrowGoal,
+  GrowGoalCreateInput,
+  GrowInsight,
+  GrowProfile,
+  GrowSnapshot,
+  GrowSuitability,
   MoneyResource,
   Recipient,
   RecipientDestinationType,
@@ -30,6 +37,10 @@ export type {
   GrowPerformance,
   GrowAllocation,
   GrowRisk,
+  GrowOpportunityFeed,
+  GrowOpportunityCard,
+  GrowOpportunityStatus,
+  GrowProposalReceipt,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,
