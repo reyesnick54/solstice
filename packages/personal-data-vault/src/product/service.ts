@@ -672,16 +672,16 @@ export class PersonalDataVaultProduct {
   }
 
   private project(asset: DataAsset): VaultDataRecord {
+    const metadata = this.metadata.get(asset.assetId);
+    const category = metadata ? this.categories.get(metadata.registryCategory) : undefined;
     return projectVaultDataRecord({
       asset,
       versions: this.vault.snapshot().versions.filter((row) => row.assetId === asset.assetId),
       derivations: this.vault.snapshot().derivations.filter(
         (row) => row.outputAssetId === asset.assetId || row.sourceAssetIds.includes(asset.assetId as DataAssetId),
       ),
-      metadata: this.metadata.get(asset.assetId),
-      ...(this.metadata.get(asset.assetId)
-        ? { category: this.categories.get(this.metadata.get(asset.assetId)!.registryCategory) }
-        : {}),
+      ...(metadata ? { metadata } : {}),
+      ...(category ? { category } : {}),
     });
   }
 

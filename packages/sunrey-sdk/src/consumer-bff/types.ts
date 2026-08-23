@@ -361,8 +361,6 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProductProposal = GrowPlanProposal;
-export type GrowProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
@@ -374,10 +372,6 @@ export type GrowPlanProposal = {
   readonly serverIssued: true;
 };
 export type GrowProductProposal = GrowPlanProposal;
-export type GrowProposal = GrowPlanProposal;
-
-export type GrowProposal = GrowPlanProposal;
-
 /** Alias used by Grow execution APIs. Same resource as GrowPlanProposal. */
 export type GrowProposal = GrowPlanProposal;
 
@@ -943,6 +937,7 @@ export type ExchangeOrderPreview = {
   readonly estimatedPriceUnits: string | null;
   readonly guaranteedExecutionPrice: false;
   readonly productionTradingEnabled: false;
+  readonly humanReadableIntent?: string;
 };
 
 export type ExchangeOrderSubmit = {

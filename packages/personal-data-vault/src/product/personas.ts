@@ -264,7 +264,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
       },
     ]),
   }),
-]);
+] as readonly VaultPersonaSeed[]);
 
 export function vaultPersonaSeed(id: VaultPersonaId): VaultPersonaSeed {
   const found = VAULT_PERSONA_SEEDS.find((row) => row.personaId === id);

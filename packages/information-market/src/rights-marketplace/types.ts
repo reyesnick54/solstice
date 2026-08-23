@@ -156,8 +156,8 @@ export type PricingPolicy = {
   readonly usageUnitFiat?: Money;
   readonly subscriptionFiat?: Money;
   readonly negotiatedFiat?: Money;
-  readonly auctionEnabled: false;
-  readonly llmInvented: false;
+  readonly auctionEnabled: boolean;
+  readonly llmInvented: boolean;
 };
 
 export type CompensationAllocation = {

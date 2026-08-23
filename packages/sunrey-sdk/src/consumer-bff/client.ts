@@ -952,27 +952,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/vault/export/status', undefined, options);
   }
 
-  async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
-    return this.request('GET', '/api/v1/exchange/markets', undefined, options);
-  }
-
-  async getExchangeMarket(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}`, undefined, options);
-  }
-
-  async getExchangeTicker(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/ticker`, undefined, options);
-  }
-
-  async getExchangeOrderBook(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request(
-      'GET',
-      `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/orderbook`,
-      undefined,
-      options,
-    );
-  }
-
   async getExchangeTrades(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/trades`, undefined, options);
   }

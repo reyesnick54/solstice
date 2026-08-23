@@ -327,7 +327,6 @@ describe('Information Rights Marketplace', () => {
         ...license.compensation,
         asset: 'SUNREY_COIN',
         coin: AssetQuantity.fromScaledUnits(1000n, 'SUNREY_COIN'),
-        fiat: undefined,
       },
     });
     const usage = unwrap(

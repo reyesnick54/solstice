@@ -581,12 +581,12 @@ function attachSandboxDataRights(
     evidence: runtime.evidence,
     events: runtime.events,
   });
+  void vault;
   return new ConsentDataRightsEngine({
     clock: runtime.clock,
     consent,
     evidence: runtime.evidence,
     events: runtime.events,
-    vault,
   });
 }
 

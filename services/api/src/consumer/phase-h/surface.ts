@@ -42,6 +42,12 @@ import {
   RECIPIENT_PERSONAL_AGENT,
 } from '../../../../../packages/consent/src/recipients.ts';
 import { HumanInformationNetworkEngine } from '../../../../../packages/information-market/src/network/engine.ts';
+import type {
+  ApprovedComputationId,
+  HumanInformationAssetDescriptorId,
+  HumanInformationRequestId,
+  HumanInformationSubjectId,
+} from '../../../../../packages/information-market/src/network/ids.ts';
 import { HinContributionAdapter } from '../../../../../packages/information-market/src/network/contribution/adapter.ts';
 import { createInProcessHumanContributionRegistry } from '../../../../../packages/information-market/src/network/contribution/registry.ts';
 import { InformationMarketService } from '../../../../../packages/information-market/src/service.ts';
@@ -95,12 +101,16 @@ const CAPS = [
   'CLEAN_ROOM_REQUEST',
 ] as const;
 
-const SCHEMA_FOR_KIND: Record<string, { schemaId: string; schemaVersion: string }> = {
+const SCHEMA_FOR_KIND = {
   USER_DECLARED: { schemaId: 'pdsch_preference', schemaVersion: '1' },
   PAYROLL: { schemaId: 'pdsch_payroll', schemaVersion: '1' },
   TRANSACTIONS: { schemaId: 'pdsch_transactions', schemaVersion: '1' },
   RECEIPT: { schemaId: 'pdsch_receipt', schemaVersion: '1' },
-};
+} as const;
+
+function asHinSubject(id: string): HumanInformationSubjectId {
+  return id as HumanInformationSubjectId;
+}
 
 function fail(code: string, message: string): PhaseHResult<never> {
   return { ok: false, code, message };
@@ -197,7 +207,7 @@ export class PhaseHProductSurface {
   readonly fiat: ReturnType<typeof createSimulationFiatPort>;
   private readonly bound = new Map<string, CustomerBound>();
   private readonly licenseeRequesterId = 'req_sandbox_licensee';
-  private hinComputationId: string | null = null;
+  private hinComputationId: ApprovedComputationId | null = null;
   private usageCount = 0;
   private compensationJournalIds: string[] = [];
   readonly productive = {
@@ -534,7 +544,7 @@ export class PhaseHProductSurface {
       payload: { key: input.key ?? 'preferred_currency', value: input.value ?? 'EUR' },
       provenanceKind: 'USER_DECLARED',
       purposeRef: 'correct.own',
-      expectedCurrentVersionId: meta.value.currentVersionId ?? undefined,
+      ...(meta.value.currentVersionId ? { expectedCurrentVersionId: meta.value.currentVersionId } : {}),
     });
     if (!updated.ok) {
       return fail(updated.error.code, updated.error.message);
@@ -616,7 +626,9 @@ export class PhaseHProductSurface {
       categories: input.categories as never,
       operations: input.purpose === 'DATA_CONTRIBUTION_RESEARCH' ? ['CONTRIBUTE', 'AGGREGATE'] : ['READ', 'DERIVE', 'AGGREGATE'],
       derivationTypes: input.purpose === 'PERSONAL_AGENT_ANALYSIS' ? ['DERIVED_ONLY'] : ['AGGREGATE_ONLY'],
-      fields: input.purpose === 'PERSONAL_AGENT_ANALYSIS' ? ['netMinor', 'currency', 'periodStart', 'periodEnd'] : undefined,
+      ...(input.purpose === 'PERSONAL_AGENT_ANALYSIS'
+        ? { fields: ['netMinor', 'currency', 'periodStart', 'periodEnd'] }
+        : {}),
       effectiveFrom: NOW,
       expiresAt: EXPIRES,
       requestedRetentionDays: 30,
@@ -729,9 +741,9 @@ export class PhaseHProductSurface {
 
   hinHome(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const rights = bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : [];
-    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(bound.hinSubjectId) : [];
-    const usage = bound.hinSubjectId ? this.hin.getInformationUsage(bound.hinSubjectId) : [];
+    const rights = bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : [];
+    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(asHinSubject(bound.hinSubjectId)) : [];
+    const usage = bound.hinSubjectId ? this.hin.getInformationUsage(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.v1',
       participating: bound.hinParticipation,
@@ -931,7 +943,7 @@ export class PhaseHProductSurface {
       requesterId: this.licenseeRequesterId,
       requestedRight: 'ONE_TIME_COMPUTATION',
       purpose: 'AGGREGATED_RESEARCH',
-      computationId: this.hinComputationId ?? undefined,
+      ...(this.hinComputationId ? { computationId: this.hinComputationId } : {}),
       duration: 'P30D',
       compensationAsset: 'APPROVED_FIAT',
       compensationMinor: 1000n,
@@ -942,8 +954,8 @@ export class PhaseHProductSurface {
     }
     const preview = this.hin.previewInformationConsent({
       requestId: request.value.requestId,
-      subjectId: bound.hinSubjectId,
-      descriptorId: bound.hinDescriptorId,
+      subjectId: asHinSubject(bound.hinSubjectId),
+      descriptorId: bound.hinDescriptorId as HumanInformationAssetDescriptorId,
     });
     if (!preview.ok) {
       return fail(preview.error.code, preview.error.message);
@@ -967,9 +979,9 @@ export class PhaseHProductSurface {
       return fail('HIN_PARTICIPATION_REQUIRED', 'HIN subject is required');
     }
     const approved = this.hin.approveInformationConsent({
-      requestId: licenseId,
-      subjectId: bound.hinSubjectId,
-      descriptorId: bound.hinDescriptorId,
+      requestId: licenseId as HumanInformationRequestId,
+      subjectId: asHinSubject(bound.hinSubjectId),
+      descriptorId: bound.hinDescriptorId as HumanInformationAssetDescriptorId,
       processingClass: 'CLEAN_ROOM_COMPUTATION',
       outputClass: 'AGGREGATE_STATISTIC',
       expiresAt: EXPIRES,
@@ -997,7 +1009,7 @@ export class PhaseHProductSurface {
       return fail('NOT_FOUND', 'license request not found');
     }
     const right = bound.hinSubjectId
-      ? this.hin.getInformationRights(bound.hinSubjectId).find((row) => row.status === 'ACTIVE')
+      ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)).find((row) => row.status === 'ACTIVE')
       : undefined;
     if (!right) {
       return fail('LICENSE_NOT_ACTIVE', 'license is not active');
@@ -1005,7 +1017,7 @@ export class PhaseHProductSurface {
     const usage = this.hin.recordUsage({
       rightId: right.rightId,
       requesterId: this.licenseeRequesterId,
-      computationId: this.hinComputationId ?? 'cmp_missing',
+      computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:${licenseId}:${this.usageCount + 1}`,
     });
@@ -1014,7 +1026,7 @@ export class PhaseHProductSurface {
     }
     this.usageCount += 1;
     const compensation = this.hin.authorizeCompensation({
-      subjectId: bound.hinSubjectId ?? '',
+      subjectId: asHinSubject(bound.hinSubjectId ?? ''),
       requesterId: this.licenseeRequesterId,
       asset: 'APPROVED_FIAT',
       amountMinor: 1000n,
@@ -1054,7 +1066,7 @@ export class PhaseHProductSurface {
     if (!grant || !grantId) {
       return fail('NOT_FOUND', 'license grant not found');
     }
-    const right = (bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : []).find(
+    const right = (bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : []).find(
       (row) => row.consentGrantId === grant.grantId,
     );
     const revoked = this.hin.revokeInformationConsent({ grantId: grant.grantId });
@@ -1064,7 +1076,7 @@ export class PhaseHProductSurface {
     const future = this.hin.recordUsage({
       rightId: right?.rightId ?? (grantId as never),
       requesterId: this.licenseeRequesterId,
-      computationId: this.hinComputationId ?? 'cmp_missing',
+      computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:revoked:${licenseId}`,
     });
@@ -1080,7 +1092,7 @@ export class PhaseHProductSurface {
 
   licenses(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const rights = bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : [];
+    const rights = bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.licenses.v1',
       items: rights.map((row) => ({ rightId: row.rightId, status: row.status, purpose: row.purpose })),
@@ -1090,7 +1102,7 @@ export class PhaseHProductSurface {
 
   earnings(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(bound.hinSubjectId) : [];
+    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.earnings.v1',
       items: compensation.map((row) => ({

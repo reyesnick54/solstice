@@ -25,6 +25,7 @@ export const BFF_ERROR_CODES = [
   'METHOD_NOT_ALLOWED',
   'STEP_UP_REQUIRED',
   'KERNEL_REFUSED',
+  'FORBIDDEN',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -68,6 +69,7 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
     case 'STEP_UP_REQUIRED':
+    case 'FORBIDDEN':
       return 403;
     case 'NOT_FOUND':
       return 404;
