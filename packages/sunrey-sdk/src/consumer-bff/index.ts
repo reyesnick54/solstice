@@ -87,6 +87,13 @@ export type {
   ExchangeMarkets,
   ExchangeOrderPreview,
   ExchangeOrderSubmit,
+  HinRight,
+  HinRights,
+  HinLicense,
+  HinLicenses,
+  HinEarnings,
+  HinEarningsActivity,
+  HinParticipation,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

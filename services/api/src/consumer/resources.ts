@@ -61,6 +61,8 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange product APIs', 'none', 'Markets, preview, orders, fills, holdings, stream. Not a second ledger. Production trading disabled.');
     case 'WALLETS':
       return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/custody product wallet', 'custody / chain adapters', 'Customer wallet, deposit address, withdrawal quote/execute. No signing material. Production signing disabled.');
+    case 'HIN':
+      return row(group, '/api/v1/hin', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/information-market rights-marketplace', 'none', 'Information rights, active licenses, and approved earnings. Compensation is not guaranteed. Licensee controls are not on this BFF.');
     case 'DATA':
       return row(group, '/api/v1/data', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault metadata only.');
     case 'SECURITY':

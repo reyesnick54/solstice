@@ -859,6 +859,68 @@ export type ExchangeOrderSubmit = {
   readonly proposalId: string | null;
 };
 
+export type HinRight = {
+  readonly rightId: string;
+  readonly category: string;
+  readonly scope: string;
+  readonly eligiblePurposes: readonly string[];
+  readonly prohibitedPurposes: readonly string[];
+  readonly status: string;
+  readonly ownershipTransferred: false;
+  readonly usageRightOnly: true;
+  readonly termsVersion: string;
+};
+
+export type HinRights = {
+  readonly schema: 'sunrey.consumer.hin.rights.v1';
+  readonly items: readonly HinRight[];
+  readonly productionActivated: false;
+};
+
+export type HinLicense = {
+  readonly licenseId: string;
+  readonly purpose: string;
+  readonly scope: string;
+  readonly status: string;
+  readonly expiresAt: string | null;
+  readonly redistribution: 'PROHIBITED';
+};
+
+export type HinLicenses = {
+  readonly schema: 'sunrey.consumer.hin.licenses.v1';
+  readonly items: readonly HinLicense[];
+  readonly productionActivated: false;
+};
+
+export type HinEarnings = {
+  readonly schema: 'sunrey.consumer.hin.earnings.v1';
+  readonly rightsHolder: string;
+  readonly settledMinorUnits: string;
+  readonly currency: string;
+  readonly guaranteed: false;
+  readonly compensationGuaranteed: false;
+};
+
+export type HinEarningsActivity = {
+  readonly schema: 'sunrey.consumer.hin.earnings-activity.v1';
+  readonly items: readonly {
+    readonly settlementId: string;
+    readonly licenseId: string;
+    readonly occurredAt: string;
+    readonly journalId: string | null;
+    readonly nativeTransferId: string | null;
+    readonly guaranteed: false;
+  }[];
+  readonly guaranteed: false;
+};
+
+export type HinParticipation = {
+  readonly schema: 'sunrey.consumer.hin.participation.v1';
+  readonly status: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
+  readonly compensationGuaranteed: false;
+  readonly productionActivated: false;
+};
+
 export type ActionCenterList = {
   readonly schema: 'sunrey.consumer.action-center.v1';
   readonly view: string;

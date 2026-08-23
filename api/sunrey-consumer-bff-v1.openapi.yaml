@@ -1817,6 +1817,73 @@ paths:
       responses:
         "200":
           description: Metadata, wallet balance, eligibility, recent activity
+  /api/v1/hin/rights:
+    get:
+      operationId: getHinRights
+      summary: Your information rights
+      description: >
+        Usage rights only. Ownership is not transferred. This is not an
+        unrestricted sale of personal data.
+      responses:
+        "200":
+          description: Subject-scoped information rights
+  /api/v1/hin/licenses:
+    get:
+      operationId: getHinLicenses
+      summary: Active licenses
+      responses:
+        "200":
+          description: Purpose-scoped licenses for the authenticated subject
+  /api/v1/hin/earnings:
+    get:
+      operationId: getHinEarnings
+      summary: Approved earnings
+      description: Compensation is not guaranteed.
+      responses:
+        "200":
+          description: Settled earnings with guaranteed=false
+  /api/v1/hin/earnings/activity:
+    get:
+      operationId: getHinEarningsActivity
+      summary: Payment history for information compensation
+      responses:
+        "200":
+          description: Settlement activity
+  /api/v1/hin/permissions:
+    get:
+      operationId: getHinPermissions
+      summary: Active data permissions
+      responses:
+        "200":
+          description: How information is used
+  /api/v1/hin/usage:
+    get:
+      operationId: getHinUsage
+      summary: How your information is used
+      responses:
+        "200":
+          description: Purpose-scoped usage view
+  /api/v1/hin/participation:
+    get:
+      operationId: getHinParticipation
+      summary: HIN participation
+      responses:
+        "200":
+          description: Participation status
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseHinParticipation
+      summary: Pause HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawHinParticipation
+      summary: Withdraw HIN participation
+      responses:
+        "200":
+          description: Withdrawn
   /api/v1/data:
     get:
       operationId: getDataVault

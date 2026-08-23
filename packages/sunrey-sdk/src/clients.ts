@@ -601,6 +601,18 @@ export class InformationClient {
   getCleanRoomResult(computationRequestId: string): Promise<unknown> {
     return this.http.get(`/v1/information/clean-room/${encodeURIComponent(computationRequestId)}`);
   }
+
+  getMarketplaceProducts(): Promise<unknown> {
+    return this.http.get('/v1/information/marketplace/products');
+  }
+
+  getMarketplaceLicenses(): Promise<unknown> {
+    return this.http.get('/v1/information/marketplace/licenses');
+  }
+
+  requestMarketplaceLicense(input: Record<string, unknown>): Promise<unknown> {
+    return this.http.post('/v1/information/marketplace/licenses', input);
+  }
 }
 
 export class EventClient {

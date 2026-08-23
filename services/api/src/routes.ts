@@ -19,6 +19,7 @@ export const FUTURE_NAMESPACES = [
   '/api/v1/exchange',
   '/api/v1/wallets',
   '/api/v1/assets',
+  '/api/v1/hin',
   '/api/v1/data',
 ] as const;
 

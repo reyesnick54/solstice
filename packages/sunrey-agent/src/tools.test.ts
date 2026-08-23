@@ -90,7 +90,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'hin'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
     now: frozen.now(),
@@ -107,8 +107,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
-    assert.equal(CANONICAL_TOOL_COUNT, 40);
-    assert.equal(CANONICAL_TOOL_COUNT, 41);
+    assert.equal(CANONICAL_TOOL_COUNT, 49);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -164,6 +163,11 @@ describe('tool contract matrix', () => {
       createCardControlProposal: { cardId: 'card_1', control: 'FREEZE' },
       getConsentSummary: {},
       getDataPermissions: {},
+      getInformationRights: {},
+      getActiveDataPermissions: {},
+      getApprovedEarnings: {},
+      explainLicense: { licenseId: 'irl_sim' },
+      initiateConsentChange: {},
       getNativeAsset: { assetId: 'SUNREY_COIN' },
       getNativeSupply: {},
       getNativeEconomy: {},

@@ -805,6 +805,32 @@ function dispatch(
   if (method === 'GET' && path.startsWith('/v1/information/clean-room/')) {
     return json(200, { result: null, rawRows: false, productionActivated: false });
   }
+  if (method === 'GET' && path === '/v1/information/marketplace/products') {
+    return json(200, {
+      products: [],
+      surface: 'DEVELOPER_MARKETPLACE',
+      consumerBff: false,
+      rawDatabaseAccess: false,
+      productionActivated: false,
+    });
+  }
+  if (method === 'GET' && path === '/v1/information/marketplace/licenses') {
+    return json(200, {
+      licenses: [],
+      surface: 'DEVELOPER_MARKETPLACE',
+      consumerBff: false,
+      productionActivated: false,
+    });
+  }
+  if (method === 'POST' && path === '/v1/information/marketplace/licenses') {
+    return json(200, {
+      accepted: false,
+      surface: 'DEVELOPER_MARKETPLACE',
+      consumerBff: false,
+      productionActivated: false,
+      reason: 'ENGINEERING_INSUFFICIENT_WITHOUT_PRIVACY_LEGAL_AUTH',
+    });
+  }
 
   if (method === 'POST' && path === '/v1/dev/faucet') {
     const accountId = String(rec.account_id ?? '');
@@ -948,6 +974,9 @@ export const PUBLIC_ROUTES = [
   'POST /v1/information/requests',
   'POST /v1/information/clean-room',
   'GET /v1/information/clean-room/{id}',
+  'GET /v1/information/marketplace/products',
+  'GET /v1/information/marketplace/licenses',
+  'POST /v1/information/marketplace/licenses',
 ] as const;
 
 export const OPERATOR_ROUTES = ['POST /operator/v1/produce-block', 'GET /operator/v1/status'] as const;

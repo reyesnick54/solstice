@@ -62,6 +62,8 @@ import {
   WALLET_STATUSES,
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
+import { dispatchHin } from './hin.ts';
+import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
 
 export type BffRequest = {
@@ -93,6 +95,7 @@ export type ConsumerBffRuntime = {
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
+  readonly hin?: InformationRightsMarketplace;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly exchange?: ExchangeBffSurface;
 };
@@ -108,6 +111,7 @@ const STUB_GROUPS = [
   'agent',
   'exchange',
   'wallets',
+  'hin',
   'data',
   'security',
   'notifications',
@@ -205,6 +209,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         custodyModel: CUSTODY_MODELS,
         walletFinality: CLIENT_FINALITY_STATES,
         travelRuleCustomer: TRAVEL_RULE_CUSTOMER_STATES,
+        hinLicenseStatus: ['PROPOSED', 'ACTIVE', 'SUSPENDED', 'REVOKED', 'EXPIRED', 'TERMINATED'],
+        hinPurpose: ['RESEARCH', 'PRODUCT_IMPROVEMENT', 'AGGREGATED_ANALYTICS', 'STATISTICAL_INSIGHT', 'MODEL_EVALUATION', 'MARKETING', 'CREDIT_DECISIONING'],
       },
       headers,
     );
@@ -351,6 +357,12 @@ function dispatchAuthenticated(
     );
     if (wallets) {
       return wallets;
+    }
+  }
+  if (runtime.hin) {
+    const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
+    if (hin) {
+      return hin;
     }
   }
   if (runtime.payments) {
@@ -893,9 +905,6 @@ function dispatchPayments(
 
 function dispatchExchange(
   exchange: ExchangeBffSurface,
-function dispatchGrow(
-  grow: GrowBffSurface & ProductGrowthService,
-  grow: GrowBffSurface | ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1383,6 +1392,15 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}',
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
+  'GET /api/v1/hin/rights',
+  'GET /api/v1/hin/licenses',
+  'GET /api/v1/hin/earnings',
+  'GET /api/v1/hin/earnings/activity',
+  'GET /api/v1/hin/permissions',
+  'GET /api/v1/hin/usage',
+  'GET /api/v1/hin/participation',
+  'POST /api/v1/hin/participation/pause',
+  'POST /api/v1/hin/participation/withdraw',
   'GET /api/v1/data',
   'GET /api/v1/security',
   'GET /api/v1/notifications',
