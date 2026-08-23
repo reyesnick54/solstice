@@ -392,12 +392,6 @@ function dispatchAuthenticated(
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
   }
-  if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-    if (grow) {
-      return grow;
-    }
-  }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);
   }
@@ -867,8 +861,6 @@ function dispatchPayments(
 
 function dispatchExchange(
   exchange: ExchangeBffSurface,
-function dispatchGrow(
-  grow: GrowBffSurface | ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
