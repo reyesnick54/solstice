@@ -527,7 +527,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
 | `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
 | `services/strategy-lab` | `packages/strategy-lab` |
-| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/sunrey-agent` |
+| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/sunrey-agent`, `packages/sunrey-exchange`, `packages/human-economic-contribution` |
 | `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/platform` |
 | `services/api` | `services/accounts`, `services/investments`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `services/api` | `services/accounts`, `services/economic-graph`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |

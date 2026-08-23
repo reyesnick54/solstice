@@ -361,7 +361,6 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProductProposal = {
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
@@ -371,6 +370,7 @@ export type GrowPlanProposal = {
   readonly issuedAuthority: null;
   readonly serverIssued: true;
 };
+export type GrowProductProposal = GrowPlanProposal;
 
 export type GrowMoney = {
   readonly minorUnits: string;
@@ -795,6 +795,8 @@ export type WithdrawalCreateInput = {
   readonly amountMinorUnits?: string;
   readonly stepUpSatisfied?: boolean;
   readonly originatedFromAgent?: boolean;
+};
+
 export type NativeEconomyOverview = {
   readonly schema: 'sunrey.consumer.native-economy.v1';
   readonly tickerStatus: 'NOT_ASSIGNED';
@@ -828,6 +830,8 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;

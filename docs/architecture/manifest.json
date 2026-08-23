@@ -951,7 +951,10 @@
         "packages/events",
         "packages/permissions",
         "packages/kernel",
-        "packages/sunrey-coin"
+        "packages/sunrey-coin",
+        "packages/ledger",
+        "packages/custody",
+        "packages/market-surveillance"
       ],
       "codeowners": [
         "@reyesnick54"
@@ -1212,6 +1215,8 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/sunrey-exchange",
+        "packages/human-economic-contribution",
         "services/investments",
         "services/economic-graph"
       ],
