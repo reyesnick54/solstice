@@ -186,6 +186,46 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         permissions,
         untrustedExternalContentCannotRedefinePolicy: true,
       }), []);
+    case 'getInformationRights':
+      return mapPort(ctx.ports.data.hinRights(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (rights) => ({
+        rights,
+        ownershipTransferred: false,
+        unrestrictedPersonalDataSale: false,
+      }), []);
+    case 'getActiveDataPermissions':
+      return mapPort(ctx.ports.data.hinPermissions(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (permissions) => ({
+        permissions,
+      }), []);
+    case 'getApprovedEarnings':
+      return mapPort(ctx.ports.data.hinEarnings(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (earnings) => ({
+        earnings,
+        guaranteed: false,
+        fabricated: false,
+      }), ['earnings.settledMinorUnits']);
+    case 'explainLicense':
+      return mapPort(
+        ctx.ports.data.hinLicense(ctx.session.ownerId, str(ctx.input.licenseId)),
+        ctx,
+        'APPROVAL_CARD',
+        (license) => ({ license, acceptsTerms: false }),
+        [],
+      );
+    case 'initiateConsentChange':
+      return {
+        status: 'APPROVAL_REQUIRED' as const,
+        toolId: ctx.tool.toolId,
+        version: ctx.tool.version,
+        executed: false as const,
+        payload: Object.freeze({
+          proposalOnly: true,
+          executesTerms: false,
+          acceptsMaterialTerms: false,
+        }),
+        rendering: hint('APPROVAL_CARD', []),
+        error: null,
+        proposalId: null,
+        workflowId: null,
+      };
     case 'getHinParticipation':
       return mapPort(ctx.ports.data.hinParticipation(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (participation) => ({
         participation,

@@ -34,11 +34,19 @@ function callConversation(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
+  personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
   body: Record<string, unknown> = {},
+  query: Record<string, string> = {},
 ) {
+  const persona =
+    typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
+  const payload = typeof personaOrBody === 'object' ? personaOrBody : body;
   return handleConsumerBff(runtime(world), {
     method,
     path,
+    query,
+    body: payload,
+    authorization: `Bearer ${sandboxToken(persona)}`,
     query: {},
     body,
     authorization: auth('agent_enabled'),

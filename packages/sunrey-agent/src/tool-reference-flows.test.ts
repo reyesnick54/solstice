@@ -76,7 +76,7 @@ function sessionFor(label: string) {
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE'],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'hin'],
     approvedToolVersions: {},
     modelText: '',
     now: frozen.now(),

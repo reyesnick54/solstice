@@ -245,6 +245,24 @@ export type CardsPort = {
 export type DataPort = {
   consent(ownerId: string): PortResult<ConsentSummary>;
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
+  hinRights(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly items: readonly { readonly rightId: string; readonly category: string; readonly status: string; readonly ownershipTransferred: false }[];
+  }>;
+  hinPermissions(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly purposes: readonly string[];
+  }>;
+  hinEarnings(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly settledMinorUnits: string;
+    readonly guaranteed: false;
+  }>;
+  hinLicense(ownerId: string, licenseId: string): PortResult<{
+    readonly licenseId: string;
+    readonly purpose: string;
+    readonly status: string;
+  }>;
   hinParticipation(ownerId: string): PortResult<{
     readonly ownerId: string;
     readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';

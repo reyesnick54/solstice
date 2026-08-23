@@ -98,6 +98,35 @@ export class SunReyConsumerBffClient {
     this.fetchImpl = options.fetchImpl ?? fetch;
   }
 
+  async listHinRights(options?: BffRequestOptions): Promise<import('./types.ts').HinRights> {
+    return this.request('GET', '/api/v1/hin/rights', undefined, options);
+  }
+
+  async listHinLicenses(options?: BffRequestOptions): Promise<import('./types.ts').HinLicenses> {
+    return this.request('GET', '/api/v1/hin/licenses', undefined, options);
+  }
+
+  async getHinEarnings(options?: BffRequestOptions): Promise<import('./types.ts').HinEarnings> {
+    return this.request('GET', '/api/v1/hin/earnings', undefined, options);
+  }
+
+  async getHinEarningsActivity(options?: BffRequestOptions): Promise<import('./types.ts').HinEarningsActivity> {
+    return this.request('GET', '/api/v1/hin/earnings/activity', undefined, options);
+  }
+
+  async getHinParticipation(options?: BffRequestOptions): Promise<import('./types.ts').HinParticipation> {
+    return this.request('GET', '/api/v1/hin/participation', undefined, options);
+  }
+
+  async pauseHinParticipation(options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', '/api/v1/hin/participation/pause', {}, options);
+  }
+
+  async withdrawHinParticipation(options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', '/api/v1/hin/participation/withdraw', {}, options);
+  }
+
+  async listWallets(options?: BffRequestOptions): Promise<{ readonly items: readonly ConsumerWallet[] }> {
   async listWallets(
     options?: BffRequestOptions,
   ): Promise<{ readonly items?: readonly ConsumerWallet[]; readonly schema?: string } & Record<string, unknown>> {
