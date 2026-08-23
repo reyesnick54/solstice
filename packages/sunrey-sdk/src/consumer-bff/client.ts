@@ -5,6 +5,20 @@
  */
 
 import type {
+  GrowPlan,
+  GrowPlanCreateInput,
+  GrowProposal,
+  GrowAllocation,
+  GrowHoldings,
+  GrowPerformance,
+  GrowPortfolio,
+  GrowRisk,
+  GrowGoal,
+  GrowGoalCreateInput,
+  GrowInsight,
+  GrowProfile,
+  GrowSnapshot,
+  GrowSuitability,
   Payment,
   PaymentApproval,
   PaymentCreateInput,
@@ -196,6 +210,54 @@ export class SunReyConsumerBffClient {
 
   async cancelRecurringContribution(id: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', `/api/v1/grow/recurring/${encodeURIComponent(id)}/cancel`, {}, options);
+  async listGrowOpportunities(options?: BffRequestOptions): Promise<import('./types.ts').GrowOpportunityFeed> {
+    return this.request('GET', '/api/v1/grow/opportunities', undefined, options);
+  }
+
+  async getGrowOpportunity(id: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', `/api/v1/grow/opportunities/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async dismissGrowOpportunity(id: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', `/api/v1/grow/opportunities/${encodeURIComponent(id)}/dismiss`, {}, options);
+  }
+
+  async startGrowProposal(id: string, options?: BffRequestOptions): Promise<import('./types.ts').GrowProposalReceipt> {
+    return this.request('POST', `/api/v1/grow/opportunities/${encodeURIComponent(id)}/start-proposal`, {}, options);
+  async getGrowProfile(options?: BffRequestOptions): Promise<GrowProfile> {
+    return this.request('GET', '/api/v1/grow/profile', undefined, options);
+  }
+
+  async getGrowSnapshot(options?: BffRequestOptions): Promise<GrowSnapshot> {
+    return this.request('GET', '/api/v1/grow/snapshot', undefined, options);
+  }
+
+  async listGrowGoals(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowGoal[] }> {
+    return this.request('GET', '/api/v1/grow/goals', undefined, options);
+  }
+
+  async createGrowGoal(input: GrowGoalCreateInput, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('POST', '/api/v1/grow/goals', input, options);
+  }
+
+  async patchGrowGoal(
+    id: string,
+    input: { readonly name?: string; readonly status?: GrowGoal['status']; readonly priority?: number },
+    options?: BffRequestOptions,
+  ): Promise<unknown> {
+    return this.request('PATCH', `/api/v1/grow/goals/${encodeURIComponent(id)}`, input, options);
+  }
+
+  async listGrowInsights(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowInsight[] }> {
+    return this.request('GET', '/api/v1/grow/insights', undefined, options);
+  }
+
+  async getGrowSuitability(options?: BffRequestOptions): Promise<GrowSuitability | null> {
+    return this.request('GET', '/api/v1/grow/suitability', undefined, options);
+  }
+
+  async submitGrowSuitability(input: Record<string, unknown>, options?: BffRequestOptions): Promise<GrowSuitability> {
+    return this.request('POST', '/api/v1/grow/suitability', input, options);
   }
 
   async approvePayment(
@@ -206,8 +268,62 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/payments/${encodeURIComponent(id)}/approve`, input, options);
   }
 
+  async createGrowPlan(input: GrowPlanCreateInput, options?: BffRequestOptions): Promise<GrowPlan> {
+    return this.request('POST', '/api/v1/grow/plans', input, options);
+  }
+
+  async getGrowPlan(id: string, options?: BffRequestOptions): Promise<GrowPlan> {
+    return this.request('GET', `/api/v1/grow/plans/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async listGrowProposals(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowProposal[] }> {
+    return this.request('GET', '/api/v1/grow/proposals', undefined, options);
+  }
+
+  async getGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
+    return this.request('GET', `/api/v1/grow/proposals/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async modifyGrowProposal(
+    id: string,
+    input: { readonly amountMinorUnits?: string; readonly riskProfile?: string },
+    options?: BffRequestOptions,
+  ): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/modify`, input, options);
+  }
+
+  async approveGrowProposal(
+    id: string,
+    input: { readonly stepUpSatisfied?: boolean } = {},
+    options?: BffRequestOptions,
+  ): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/approve`, input, options);
+  }
+
+  async rejectGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/reject`, {}, options);
+  async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
+    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
+  }
+
+  async getGrowHoldings(options?: BffRequestOptions): Promise<GrowHoldings> {
+    return this.request('GET', '/api/v1/grow/portfolio/holdings', undefined, options);
+  }
+
+  async getGrowPerformance(options?: BffRequestOptions): Promise<GrowPerformance> {
+    return this.request('GET', '/api/v1/grow/portfolio/performance', undefined, options);
+  }
+
+  async getGrowAllocation(options?: BffRequestOptions): Promise<GrowAllocation> {
+    return this.request('GET', '/api/v1/grow/portfolio/allocation', undefined, options);
+  }
+
+  async getGrowRisk(options?: BffRequestOptions): Promise<GrowRisk> {
+    return this.request('GET', '/api/v1/grow/portfolio/risk', undefined, options);
+  }
+
   async request<T>(
-    method: 'GET' | 'POST',
+    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,
     options?: BffRequestOptions,

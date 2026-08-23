@@ -105,6 +105,37 @@ export {
 export { GrowthOrchestrator, type GrowthFailure } from './service.ts';
 export { InMemoryGrowthStore, type GrowthStoreSnapshot } from './store.ts';
 export {
+  ASSUMPTION_CATALOG_ID,
+  FINANCIAL_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
+  ILLUSTRATION_DISCLAIMER,
+  PRODUCT_GROWTH_PLAN_STATUSES,
+  ProductGrowthService,
+  actorFromVerified,
+  compareAlternatives,
+  conservativeOnlyPolicy,
+  defaultScenarioSeed,
+  explainProposal,
+  getGrowthPlan,
+  getProposal,
+  lookupReturnAssumption,
+  materialTermsHash,
+  projectScenarios,
+  requestProposalModification,
+  simulationGrowPolicy,
+  toLovableExperience,
+  transitionProductProposal,
+} from './growth/product/index.ts';
+export type {
+  CreateGrowPlanInput,
+  FinancialProposal,
+  GrowProductFailure,
+  GrowthProductActor,
+  LovableGrowExperience,
+  ProductGrowthPlan,
+  ProposalExplanation,
+} from './growth/product/index.ts';
+export {
   absentTreasuryContextPort,
   type TreasuryContextPort,
 } from './treasury-port.ts';
@@ -195,3 +226,38 @@ export type {
   GrowExecutionRecord,
   GrowFailure,
 } from './grow/index.ts';
+  asOpportunityId,
+  opportunityIdFor,
+  type OpportunityId,
+} from './ids.ts';
+export {
+  OPPORTUNITY_CATEGORIES,
+  OPPORTUNITY_DETECTORS,
+  OPPORTUNITY_STATUSES,
+  IMPACT_KINDS,
+  RANKING_VERSION,
+} from './growth/opportunity/taxonomy.ts';
+export type {
+  OpportunityCategory,
+  OpportunityDetectorKind,
+  OpportunityStatus,
+  ImpactKind,
+} from './growth/opportunity/taxonomy.ts';
+export { discoverOpportunities } from './growth/opportunity/discover.ts';
+export { runOpportunityDetectors } from './growth/opportunity/detectors.ts';
+export { evaluateOpportunityEligibility } from './growth/opportunity/eligibility.ts';
+export { rankOpportunity, assignPriorities, rankingWeights } from './growth/opportunity/ranking.ts';
+export { explanationInputFor, explanationFactsText } from './growth/opportunity/explain.ts';
+export { shouldRecalculateOpportunities } from './growth/opportunity/recompute.ts';
+export { defaultOpportunityPreferences, mergeOpportunityPreferences } from './growth/opportunity/preferences.ts';
+export { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from './growth/opportunity/products.ts';
+export { opportunityFeed } from './growth/opportunity/feed.ts';
+export { transitionOpportunity } from './growth/opportunity/lifecycle.ts';
+export type {
+  Opportunity,
+  OpportunityFeed,
+  OpportunityPreferences,
+  OpportunityExplanationInput,
+  OpportunityProposalReceipt,
+  OpportunityDiscoveryContext,
+} from './growth/opportunity/types.ts';
