@@ -1,0 +1,115 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-default-deny
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-public-api
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      sunrey.zone: PUBLIC_EDGE
+  ingress:
+    - from:
+        - namespaceSelector: {}
+      ports:
+        - protocol: TCP
+          port: 8443
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: DATA_PRIVATE
+    - to:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: OPERATIONS_PRIVATE
+    - to:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: PUBLIC_RPC
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-database-isolation
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      app: postgres
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: DATA_PRIVATE
+        - podSelector:
+            matchLabels:
+              sunrey.zone: OPERATIONS_PRIVATE
+        - podSelector:
+            matchLabels:
+              app: migration
+  egress: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-ops-isolation
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      sunrey.zone: OPERATIONS_PRIVATE
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: PUBLIC_EDGE
+        - podSelector:
+            matchLabels:
+              sunrey.zone: OBSERVABILITY
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-validator-rpc-separation
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      sunrey.zone: VALIDATOR_PRIVATE
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: SENTRY
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: SIGNER_PRIVATE
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: sunrey-key-service-isolation
+  namespace: {{ .Values.namespace }}
+spec:
+  podSelector:
+    matchLabels:
+      sunrey.zone: SIGNER_PRIVATE
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              sunrey.zone: VALIDATOR_PRIVATE
+  egress: []

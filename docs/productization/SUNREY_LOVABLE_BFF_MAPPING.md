@@ -154,6 +154,22 @@ authentication foundation; the BFF only consumes a verified session.
 | PAYMENT HISTORY | `/api/v1/hin/earnings/activity` | GET | required | settlement activity | Ledger / native-asset refs | AVAILABLE_SIMULATION | not a second mint |
 | PAUSE / WITHDRAW | `/api/v1/hin/participation/pause` `/withdraw` | POST | required + owner | participation lifecycle | same | AVAILABLE_SIMULATION | future access stops after withdraw |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
+| VAULT HOME | `/api/v1/data` | GET | required | vault home + encryption posture | `packages/personal-data-vault` | AVAILABLE_SIMULATION | sandbox labeled SANDBOX |
+| YOUR DATA | `/api/v1/data/records` | GET, POST | required + owner | metadata records | same | AVAILABLE_SIMULATION | payloads not listed |
+| DATA SOURCES | `/api/v1/data/sources` | GET | required | connector catalog | same | AVAILABLE_SIMULATION | liveConnection=false |
+| PERMISSIONS | `/api/v1/data/permissions` | GET, POST | required + owner | grants | `packages/consent` | AVAILABLE_SIMULATION | no wildcards |
+| CONSENT | `/api/v1/data/consent` + `/receipt` | GET | required + owner | grants + immutable receipt | same | AVAILABLE_SIMULATION | none |
+| AGENT ACCESS | `/api/v1/data/agent-access` | GET, POST | required + owner | purpose-limited reads | consent + PDV | AVAILABLE_SIMULATION | wildcard denied |
+| HIN PARTICIPATION | `/api/v1/data/hin` | GET, POST | required + owner | participate / stop | `packages/information-market` | AVAILABLE_SIMULATION | stop not implied |
+| INFORMATION RIGHTS | `/api/v1/data/licenses` | GET, POST | required + owner | rights + licenses | HIN engine | AVAILABLE_SIMULATION | live marketplace off |
+| CONTRIBUTIONS | `/api/v1/data/contributions` | GET, POST | required + owner | verified contributions | `packages/human-economic-contribution` | AVAILABLE_SIMULATION | no mint |
+| EARNINGS | `/api/v1/data/earnings` | GET | required + owner | compensation instructions | HIN + ledger instruction | AVAILABLE_SIMULATION | not yield |
+| LICENSES | `/api/v1/data/licenses/{id}/*` | POST | required + owner | approve / pay / revoke | HIN | AVAILABLE_SIMULATION | purpose enforced |
+| ACCESS HISTORY | `/api/v1/data/access-history` | GET | required + owner | access audit | PDV | AVAILABLE_SIMULATION | no payloads |
+| EXPORT | `/api/v1/data/export` | POST | required + owner | export bundle receipt | PDV | AVAILABLE_SIMULATION | not legal portability claim |
+| CORRECT / DELETE / RESTRICT | `/api/v1/data/rights` + record actions | POST | required + owner | rights workflows | PDV + consent | AVAILABLE_SIMULATION | hold blocks delete |
+| SUNREY ECONOMY DETAIL | `/api/v1/economy/sunrey` | GET | required | HIN metrics + supply + market price | chain + HIN | AVAILABLE_SIMULATION | HIN ≠ price ≠ mint |
+| MOONREY ECONOMY DETAIL | `/api/v1/economy/moonrey` | GET | required | productive metrics + supply + market price | oracles + chain | AVAILABLE_SIMULATION | productive ≠ price ≠ mint |
 | DATA PERMISSIONS | `/api/v1/data/permissions` | GET | required | `sunrey.consumer.data.permissions.v1` | `packages/consent` product engine | AVAILABLE_SIMULATION | `implicitMonetizationOptIn` is always false |
 | WHO CAN USE MY DATA | `/api/v1/data/who` | GET | required | recipient-class view | same | AVAILABLE_SIMULATION | none |
 | WHAT SUNREY USES / CONSENT HISTORY | `/api/v1/data/consents` | GET, POST | required | granular grants | Consent Ledger + product overlay | AVAILABLE_SIMULATION | no silent monetization default |

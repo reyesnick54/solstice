@@ -1,0 +1,26 @@
+{
+  "schema": "sunrey.phase-h.production-data-gates.v1",
+  "gate": "PRODUCTION_DATA_ECONOMIC_ACTIVITY",
+  "allSatisfied": false,
+  "liveActivityAuthorized": false,
+  "placeholderCompletionForbidden": true,
+  "requirements": [
+    { "id": "privacy_policy_and_terms", "satisfied": false, "evidence": null },
+    { "id": "jurisdictional_privacy_analysis", "satisfied": false, "evidence": null },
+    { "id": "data_processing_agreements", "satisfied": false, "evidence": null },
+    { "id": "provider_contracts", "satisfied": false, "evidence": null },
+    { "id": "consent_language_approval", "satisfied": false, "evidence": null },
+    { "id": "retention_policy_approval", "satisfied": false, "evidence": null },
+    { "id": "security_review", "satisfied": false, "evidence": null },
+    { "id": "external_penetration_test", "satisfied": false, "evidence": null },
+    { "id": "hsm_kms", "satisfied": false, "evidence": null },
+    { "id": "production_infrastructure", "satisfied": false, "evidence": null },
+    { "id": "operational_data_governance_staff", "satisfied": false, "evidence": null },
+    { "id": "incident_response", "satisfied": false, "evidence": null },
+    { "id": "rights_request_operations", "satisfied": false, "evidence": null },
+    { "id": "approved_hin_valuation_methodology", "satisfied": false, "evidence": null },
+    { "id": "approved_compensation_methodology", "satisfied": false, "evidence": null },
+    { "id": "approved_productive_value_methodology", "satisfied": false, "evidence": null },
+    { "id": "approved_sunrey_moonrey_governance_parameters", "satisfied": false, "evidence": null }
+  ]
+}

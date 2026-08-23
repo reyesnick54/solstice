@@ -32,6 +32,7 @@ import {
   type FinancialProposal,
   type FinancialProposal as ProductFinancialProposal,
   type GrowProductFailure,
+  type GrowRiskProfile,
   type GrowthProductActor,
   type ProductGrowthPlan,
   isGrowRiskProfile,
@@ -706,6 +707,7 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
 }
 
 export { Money };
+export { toLovableExperience };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {
@@ -734,11 +736,13 @@ export function mapGrowFailure(error: GrowProductFailure, requestId: string): Bf
               ? 'VALIDATION'
               : 'VALIDATION';
   const category =
-    code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED' || code === 'STEP_UP_REQUIRED'
-      ? 'AUTHORIZATION'
-      : code === 'NOT_FOUND'
-        ? 'NOT_FOUND'
-        : 'VALIDATION';
+    code === 'STEP_UP_REQUIRED'
+      ? 'AUTHENTICATION'
+      : code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED'
+        ? 'AUTHORIZATION'
+        : code === 'NOT_FOUND'
+          ? 'NOT_FOUND'
+          : 'VALIDATION';
   return bffError({
     errorCode: code,
     category,
@@ -804,7 +808,7 @@ export function publicPlan(plan: ProductGrowthPlan): ProductGrowthPlan {
   return plan;
 }
 
-export function publicProposal(proposal: ProductFinancialProposal): ProductFinancialProposal {
+export function publicProposal(proposal: FinancialProposal): FinancialProposal {
   return proposal;
 }
 

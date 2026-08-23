@@ -89,6 +89,21 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
+    productCapabilities: [
+      'accounts',
+      'payments',
+      'fx',
+      'grow',
+      'peg',
+      'portfolio',
+      'exchange',
+      'custody',
+      'cards',
+      'consent',
+      'nativeEconomy',
+      'productiveEconomy',
+      'hin',
+    ],
     productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'productiveEconomy', 'hin'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
@@ -108,6 +123,7 @@ describe('canonical agent tool registry', () => {
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
     assert.equal(CANONICAL_TOOL_COUNT, CANONICAL_AGENT_TOOLS.length);
     assert.equal(new Set(CANONICAL_AGENT_TOOLS.map((tool) => tool.toolId)).size, CANONICAL_TOOL_COUNT);
+    assert.ok(CANONICAL_TOOL_COUNT >= 45);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -163,6 +179,9 @@ describe('tool contract matrix', () => {
       createCardControlProposal: { cardId: 'card_1', control: 'FREEZE' },
       getConsentSummary: {},
       getDataPermissions: {},
+      getVaultSummary: {},
+      getHinContributionSummary: {},
+      requestHinConsentChange: {},
       getInformationRights: {},
       getActiveDataPermissions: {},
       getApprovedEarnings: {},

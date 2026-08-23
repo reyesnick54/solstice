@@ -1087,7 +1087,10 @@ secret/KMS/HSM adapters, workload identity, and network zoning at
 launch mainnet, enable `LIVE_*` flags, or couple consensus to a
 cloud vendor. Do not create `packages/sunrey-infra`,
 `packages/infrastructure`, `packages/production-infrastructure`,
-`packages/cloud-adapters`, or `packages/sunrey-cloud`. See
+`packages/cloud-adapters`, or `packages/sunrey-cloud`. Phase I Prompt 4
+extends that same owner with the preproduction platform at
+`packages/sunrey-chain/src/infra/preproduction` and deployable
+artifacts under `infra/sunrey-production`. See
 [`chunk-66-production-infrastructure.md`](./chunk-66-production-infrastructure.md).
 Chunk 68 implements production-candidate oracle provider onboarding,
 off-chain collection, provenance, independence, and MoonRey
@@ -2018,6 +2021,16 @@ remains unavailable while `ENVIRONMENT=simulation` and every
 `packages/provider-runtime-v2`, `packages/external-connectivity`, or
 `packages/vendor-runtime`. See
 [`chunk-149-provider-credential-plane.md`](./chunk-149-provider-credential-plane.md).
+Phase I Prompt 2 extends the same `packages/security` owner at
+`packages/security/src/productization` with the production HSM/KMS
+gate (`PRODUCTION_HSM_KMS_CONFIGURED=false`), secret-class policy,
+key-domain separation, service identity / mTLS references, privileged
+access, network surfaces, and the security baseline. It does not
+connect an external HSM or KMS, does not claim an independent audit,
+and does not enable mainnet. Do not create `packages/hsm`,
+`packages/kms`, `packages/pki`, `packages/zero-trust`,
+`packages/security-baseline`, or `packages/security-v2`. See
+[`docs/productization/PHASE_I_02_SECURITY_HARDENING.md`](../productization/PHASE_I_02_SECURITY_HARDENING.md).
 
 Chunk 152 connects fixture Identity/KYC, sanctions/PEP, AML,
 Travel Rule, case-management, and market-surveillance

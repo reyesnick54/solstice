@@ -66,6 +66,8 @@ import { dispatchWallets } from './wallets.ts';
 import { dispatchHin } from './hin.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
+import { DATA_SOURCE_STATUSES, RIGHTS_REQUEST_KINDS, RIGHTS_REQUEST_STATES, dispatchPhaseH } from './phase-h/index.ts';
+import type { PhaseHProductSurface } from './phase-h/index.ts';
 import type { ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import type { HinContributionSurface } from './hin-adapter.ts';
 import {
@@ -111,6 +113,11 @@ export type ConsumerBffRuntime = {
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
+  readonly hin?: InformationRightsMarketplace | HinContributionSurface;
+  readonly nativeEconomy?: NativeEconomySurface;
+  readonly productiveEconomy?: ProductiveEconomySurface;
+  readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
+  readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
 };
@@ -224,6 +231,9 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         custodyModel: CUSTODY_MODELS,
         walletFinality: CLIENT_FINALITY_STATES,
         travelRuleCustomer: TRAVEL_RULE_CUSTOMER_STATES,
+        dataSourceStatus: DATA_SOURCE_STATUSES,
+        rightsRequestKind: RIGHTS_REQUEST_KINDS,
+        rightsRequestState: RIGHTS_REQUEST_STATES,
         hinLicenseStatus: ['PROPOSED', 'ACTIVE', 'SUSPENDED', 'REVOKED', 'EXPIRED', 'TERMINATED'],
         hinPurpose: ['RESEARCH', 'PRODUCT_IMPROVEMENT', 'AGGREGATED_ANALYTICS', 'STATISTICAL_INSIGHT', 'MODEL_EVALUATION', 'MARKETING', 'CREDIT_DECISIONING'],
         hinCategory: HIN_PRODUCT_CATEGORIES,
@@ -376,7 +386,9 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
-  if (runtime.hin) {
+  if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
+    const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
+  if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
@@ -575,6 +587,18 @@ function dispatchAuthenticated(
     );
   }
 
+  if (runtime.phaseH) {
+    const phaseH = dispatchPhaseH(
+      runtime.phaseH,
+      { method: request.method, path: request.path, body: request.body },
+      principal,
+      requestId,
+    );
+    if (phaseH) {
+      return json(phaseH.status, phaseH.body, headers);
+    }
+  }
+
   if (path === '/api/v1/economy' && method === 'GET') {
     const surface = runtime.nativeEconomy;
     if (!surface) {
@@ -655,16 +679,23 @@ function dispatchAuthenticated(
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
   }
 
+  const hinContributions = runtime.hin && !isRightsMarketplace(runtime.hin) ? runtime.hin : undefined;
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
     const surface = runtime.hinContributions;
+    const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
     const surface = runtime.hinContributions;
+    const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     const contributionId = path.slice('/api/v1/hin/contributions/'.length);
@@ -686,21 +717,30 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
     const surface = runtime.hinContributions;
+    const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
     const surface = runtime.hinContributions;
+    const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
     const surface = runtime.hinContributions;
+    const surface = hinContributions;
     if (!surface) {
+    const surface = runtime.hin;
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, { items: surface.methodologies(), isMintFormula: false }, headers);
@@ -1035,12 +1075,25 @@ function dispatchPayments(
   return null;
 }
 
+function isHinContributionSurface(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is HinContributionSurface {
+  return typeof (hin as HinContributionSurface).list === 'function'
+    && typeof (hin as HinContributionSurface).metrics === 'function';
+}
+
 function isLifecycleExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
 ): exchange is ExchangeLifecycleSurface {
   return typeof (exchange as ExchangeLifecycleSurface).home === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).createProposal === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
+}
+
+function isRightsMarketplace(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is InformationRightsMarketplace {
+  return typeof (hin as InformationRightsMarketplace).earningsFor === 'function';
 }
 
 function dispatchExchange(
@@ -1415,6 +1468,18 @@ function dispatchConversation(
   return null;
 }
 
+function isRightsMarketplace(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is InformationRightsMarketplace {
+  return typeof (value as InformationRightsMarketplace).earningsFor === 'function';
+}
+
+function isHinContributionSurface(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is HinContributionSurface {
+  return typeof (value as HinContributionSurface).methodologies === 'function';
+}
+
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
@@ -1598,6 +1663,13 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/assets',
   'GET /api/v1/economy/assets/{id}',
   'GET /api/v1/economy/supply',
+  'GET /api/v1/economy/sunrey',
+  'GET /api/v1/economy/moonrey',
+  'GET /api/v1/economy/hin',
+  'GET /api/v1/economy/productive',
+  'GET /api/v1/economy/productive/{category}',
+  'POST /api/v1/economy/productive/observe',
+  'POST /api/v1/economy/basis-proposal',
   'GET /api/v1/economy/productive',
   'GET /api/v1/economy/productive/categories',
   'GET /api/v1/economy/productive/history',
@@ -1642,6 +1714,44 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/hin/participation/pause',
   'POST /api/v1/hin/participation/withdraw',
   'GET /api/v1/data',
+  'GET /api/v1/data/categories',
+  'GET /api/v1/data/sources',
+  'GET /api/v1/data/records',
+  'POST /api/v1/data/records',
+  'POST /api/v1/data/records/ingest',
+  'GET /api/v1/data/records/{id}',
+  'POST /api/v1/data/records/{id}/derive',
+  'GET /api/v1/data/records/{id}/history',
+  'POST /api/v1/data/records/{id}/correct',
+  'POST /api/v1/data/records/{id}/dispute',
+  'POST /api/v1/data/records/{id}/delete',
+  'GET /api/v1/data/access-history',
+  'GET /api/v1/data/permissions',
+  'POST /api/v1/data/permissions',
+  'POST /api/v1/data/permissions/{id}/revoke',
+  'GET /api/v1/data/consent',
+  'GET /api/v1/data/consent/{id}/receipt',
+  'GET /api/v1/data/agent-access',
+  'POST /api/v1/data/agent-access/read',
+  'GET /api/v1/data/agent-access/summary',
+  'GET /api/v1/data/hin',
+  'POST /api/v1/data/hin/participate',
+  'POST /api/v1/data/hin/stop/request',
+  'POST /api/v1/data/hin/stop',
+  'GET /api/v1/data/contributions',
+  'POST /api/v1/data/contributions',
+  'GET /api/v1/data/earnings',
+  'GET /api/v1/data/licenses',
+  'POST /api/v1/data/licenses',
+  'POST /api/v1/data/licenses/{id}/approve',
+  'POST /api/v1/data/licenses/{id}/pay',
+  'POST /api/v1/data/licenses/{id}/revoke',
+  'GET /api/v1/data/rights',
+  'POST /api/v1/data/rights',
+  'POST /api/v1/data/export',
+  'GET /api/v1/data/retention',
+  'GET /api/v1/data/gates',
+  'GET /api/v1/data/statuses',
   'GET /api/v1/data/permissions',
   'GET /api/v1/data/consents',
   'POST /api/v1/data/consents',

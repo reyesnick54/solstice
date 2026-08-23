@@ -540,6 +540,15 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
   });
 
+  it('customer V039 persists Personal Data Vault productization metadata without a second ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v039 = files.find((file) => file.version === 39);
+    assert.ok(v039);
+    assert.equal(v039.filename, 'V039__personal_data_vault_productization.sql');
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault\.record_metadata/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
+  });
+
   it('customer V038 persists consent data-rights overlays without a second ledger or raw payload', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v038 = files.find((file) => file.version === 38);
@@ -554,12 +563,20 @@ describe('versioned SQL migrations', () => {
   });
 
   it('customer V039 persists Personal Data Vault productization metadata without a second vault', () => {
+  it('customer V039 persists Personal Data Vault productization overlays without a second ledger', () => {
+  it('customer V039 persists Personal Data Vault productization metadata without a second ledger or raw payload', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v039 = files.find((file) => file.version === 39);
     assert.ok(v039);
     assert.equal(v039.filename, 'V039__personal_data_vault_productization.sql');
     assert.match(v039.sql, /CREATE TABLE personal_data_vault.record_metadata/);
     assert.match(v039.sql, /pdv_meta_no_plaintext/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.correction/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.export_job/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault\.record_metadata/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault\.correction/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault\.export_job/);
+    assert.match(v039.sql, /legal_portability_claim BOOLEAN NOT NULL CHECK \(legal_portability_claim = FALSE\)/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
   });
 

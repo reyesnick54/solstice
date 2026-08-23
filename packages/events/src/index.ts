@@ -278,6 +278,16 @@ export {
   type AgentMemoryCreatedV1,
   type AgentMemoryChangedV1,
   type AgentMandateChangedV1,
+  type OperationsAuditPayload,
+  type OperationsCaseCreatedV1,
+  type OperationsCaseAssignedV1,
+  type OperationsCaseEscalatedV1,
+  type OperationsCaseResolvedV1,
+  type OperationsOperatorActionV1,
+  type OperationsProviderDisabledV1,
+  type OperationsMarketHaltedV1,
+  type OperationsAccountRestrictedV1,
+  type OperationsSupportViewOpenedV1,
 } from './events.ts';
 export {
   asCausationId,

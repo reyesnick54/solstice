@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: queue
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: queue
+    sunrey.zone: DATA_PRIVATE
+spec:
+  serviceName: queue
+  replicas: 2
+  selector:
+    matchLabels:
+      app: queue
+  template:
+    metadata:
+      labels:
+        app: queue
+        sunrey.zone: DATA_PRIVATE
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: queue
+          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          env:
+            - name: SUNREY_SERVICE
+              value: queue
+            - name: QUEUE_CHANNELS
+              value: events,jobs,workflows,dead-letters
+            - name: QUEUE_PERSISTENT
+              value: "true"
+            - name: QUEUE_CREDENTIAL_REF
+              value: secret://sunrey-preproduction/queue/events
+          ports:
+            - containerPort: 5671
+              name: amqps
+          resources:
+            requests:
+              cpu: 150m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: cache
+    sunrey.zone: DATA_PRIVATE
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cache
+  template:
+    metadata:
+      labels:
+        app: cache
+        sunrey.zone: DATA_PRIVATE
+    spec:
+      containers:
+        - name: cache
+          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          env:
+            - name: SUNREY_SERVICE
+              value: cache
+            - name: CACHE_TLS
+              value: "true"
+          ports:
+            - containerPort: 6380
+              name: rediss
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 400m
+              memory: 512Mi

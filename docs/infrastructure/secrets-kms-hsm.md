@@ -27,6 +27,16 @@ disable, metadata, attestation/evidence reference, and health.
 
 There is no generic production private-key export.
 
+## Production HSM gate
+
+`PRODUCTION_HSM_KMS_CONFIGURED` is compiled `false` in
+`packages/config/src/flags.ts` and
+`packages/security/src/productization/posture.ts`.
+
+Production signing fails closed while the gate is false. The software
+`HsmKmsProvider` / `KeyProvider` interfaces may be complete. An
+external commercial HSM or cloud KMS is **not** connected.
+
 ## HSM readiness
 
 - `SIMULATION_HSM`

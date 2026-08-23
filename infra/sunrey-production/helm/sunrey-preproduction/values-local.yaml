@@ -1,0 +1,8 @@
+platformEnvironment: LOCAL
+namespace: sunrey-local
+productionAuthorized: false
+mainnetEnabled: false
+liveProviders: false
+database:
+  replicaCount: 0
+  haModel: SINGLE_NODE_REHEARSAL

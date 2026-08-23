@@ -626,6 +626,7 @@ export class SunReyConsumerBffClient {
     },
     options?: BffRequestOptions,
   ): Promise<Record<string, unknown> & { readonly guaranteedExecutionPrice?: false }> {
+  ): Promise<ExchangeOrderPreview> {
     return this.request('POST', '/api/v1/exchange/preview', input, options);
   }
 
@@ -742,6 +743,149 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
   }
 
+  async getDataVault(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data', undefined, options);
+  }
+
+  async getDataCategories(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/categories', undefined, options);
+  }
+
+  async getDataSources(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/sources', undefined, options);
+  }
+
+  async listDataRecords(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/records', undefined, options);
+  }
+
+  async createVaultRecord(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/records', input, options);
+  }
+
+  async ingestVaultRecord(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/records/ingest', input, options);
+  }
+
+  async getDataRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}`, undefined, options);
+  }
+
+  async deriveVaultRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/derive`, {}, options);
+  }
+
+  async getDataRecordHistory(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}/history`, undefined, options);
+  }
+
+  async correctVaultRecord(recordId: string, input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/correct`, input, options);
+  }
+
+  async disputeVaultRecord(recordId: string, reason: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/dispute`, { reason }, options);
+  }
+
+  async getAccessHistory(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/access-history', undefined, options);
+  }
+
+  async grantDataPermission(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/permissions', input, options);
+  }
+
+  async revokeDataPermission(permissionId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/permissions/${encodeURIComponent(permissionId)}/revoke`, {}, options);
+  }
+
+  async getConsentReceipt(consentId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/data/consent/${encodeURIComponent(consentId)}/receipt`, undefined, options);
+  }
+
+  async getAgentAccess(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/agent-access', undefined, options);
+  }
+
+  async agentReadVault(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/agent-access/read', input, options);
+  }
+
+  async getDataHinParticipation(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/hin', undefined, options);
+  }
+
+  async participateHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/hin/participate', {}, options);
+  }
+
+  async requestHinStop(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/hin/stop/request', {}, options);
+  }
+
+  async confirmHinStop(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/hin/stop', {}, options);
+  }
+
+  async listContributions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/contributions', undefined, options);
+  }
+
+  async createContribution(input: Record<string, unknown> = {}, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/contributions', input, options);
+  }
+
+  async getEarnings(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/earnings', undefined, options);
+  }
+
+  async listLicenses(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/licenses', undefined, options);
+  }
+
+  async requestLicense(input: Record<string, unknown> = {}, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/licenses', input, options);
+  }
+
+  async approveLicense(licenseId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/licenses/${encodeURIComponent(licenseId)}/approve`, {}, options);
+  }
+
+  async payLicense(licenseId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/licenses/${encodeURIComponent(licenseId)}/pay`, {}, options);
+  }
+
+  async revokeLicense(licenseId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/data/licenses/${encodeURIComponent(licenseId)}/revoke`, {}, options);
+  }
+
+  async createRightsRequest(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/data/rights', input, options);
+  }
+
+  async getSunreyEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/sunrey', undefined, options);
+  }
+
+  async getMoonreyEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/moonrey', undefined, options);
+  }
+
+  async getHinAggregateMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getEconomyHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/hin', undefined, options);
+  }
+
+  async observeProductive(kind: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/economy/productive/observe', { kind }, options);
+  }
+
+  async createIssuanceBasis(kind: 'HIN' | 'MOONREY', options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/economy/basis-proposal', { kind }, options);
+  }
+
   async getProductiveEconomy(options?: BffRequestOptions): Promise<ProductiveEconomyOverview> {
     return this.request('GET', '/api/v1/economy/productive', undefined, options);
   }
@@ -771,15 +915,15 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/vault/categories', undefined, options);
   }
 
-  async listVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
+  async listDataVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
     return this.request('GET', '/api/v1/data/vault/records', undefined, options);
   }
 
-  async getVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {
+  async getDataVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {
     return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}`, undefined, options);
   }
 
-  async getVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<unknown> {
+  async getDataVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<unknown> {
     return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}/history`, undefined, options);
   }
 
@@ -832,10 +976,6 @@ export class SunReyConsumerBffClient {
     return this.request('DELETE', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}`, undefined, options);
   }
 
-  async listExchangeHoldings(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.getExchangeHoldings(options);
-  }
-
   async listHinContributions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/contributions', undefined, options);
   }
@@ -844,16 +984,16 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/hin/contributions/${encodeURIComponent(contributionId)}`, undefined, options);
   }
 
-  async getHinMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/hin/metrics', undefined, options);
-  }
-
   async getHinMySummary(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/me/summary', undefined, options);
   }
 
   async listHinValuationMethodologies(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/valuation-methodologies', undefined, options);
+  }
+
+  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
   async request<T>(

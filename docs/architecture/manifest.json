@@ -1215,6 +1215,15 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/evidence",
+        "packages/events",
+        "packages/kernel",
+        "packages/personal-data-vault",
+        "packages/consent",
+        "packages/information-market",
+        "packages/clean-room",
+        "packages/sunrey-coin",
+        "packages/human-economic-contribution",
         "packages/sunrey-exchange",
         "packages/information-market",
         "packages/human-economic-contribution",
@@ -6308,7 +6317,8 @@
       "id": "security",
       "status": "IMPLEMENTED",
       "owner": "packages/security",
-      "protected": true
+      "protected": true,
+      "notes": "Phase I Prompt 2 productization at packages/security/src/productization. PRODUCTION_HSM_KMS_CONFIGURED=false. External HSM/KMS is not connected. Independent audit remains EXTERNAL. Do not create packages/hsm, packages/pki, packages/zero-trust, or packages/security-v2."
     },
     {
       "id": "sunrey-production-provider-credential-plane",
@@ -7781,6 +7791,22 @@
     },
     {
       "name": "LIVE_INVESTMENT_EXECUTION",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_INFORMATION_RIGHTS_MARKETPLACE",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_DATA_MONETIZATION_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_HIN_BASED_ISSUANCE_ENABLED",
+      "requiredValue": false
+    },
+    {
+      "name": "LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED",
       "requiredValue": false
     }
   ],

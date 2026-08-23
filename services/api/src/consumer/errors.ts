@@ -25,6 +25,7 @@ export const BFF_ERROR_CODES = [
   'METHOD_NOT_ALLOWED',
   'STEP_UP_REQUIRED',
   'KERNEL_REFUSED',
+  'FORBIDDEN',
 ] as const;
 export type BffErrorCode = (typeof BFF_ERROR_CODES)[number];
 
@@ -61,13 +62,17 @@ export function statusForError(error: BffErrorEnvelope): number {
   switch (error.errorCode) {
     case 'AUTH_REQUIRED':
     case 'SESSION_INVALID':
+    case 'STEP_UP_REQUIRED':
       return 401;
+    case 'STEP_UP_REQUIRED':
+      return error.category === 'AUTHENTICATION' ? 401 : 403;
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
     case 'STEP_UP_REQUIRED':
+    case 'FORBIDDEN':
       return 403;
     case 'NOT_FOUND':
       return 404;

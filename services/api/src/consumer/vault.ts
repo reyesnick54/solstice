@@ -39,6 +39,7 @@ function mapVaultFailure(
       ? 'RESOURCE_NOT_OWNED'
       : code === 'GET_ALL_FORBIDDEN' || code === 'AGENT_CATEGORY_DENIED' || code === 'PURPOSE_DENIED'
         ? 'RESOURCE_NOT_OWNED'
+        ? 'FORBIDDEN_PROFILE_FIELD'
         : code === 'EXPORT_NOT_FOUND'
           ? 'NOT_FOUND'
           : 'VALIDATION';
@@ -46,6 +47,7 @@ function mapVaultFailure(
     errorCode,
     category:
       errorCode === 'RESOURCE_NOT_OWNED'
+      errorCode === 'RESOURCE_NOT_OWNED' || errorCode === 'FORBIDDEN_PROFILE_FIELD'
         ? 'AUTHORIZATION'
         : errorCode === 'NOT_FOUND'
           ? 'NOT_FOUND'
@@ -61,6 +63,7 @@ function result(body: unknown, headers: Record<string, string>, okStatus = 200):
   if (isBffError(body)) {
     const status =
       body.errorCode === 'RESOURCE_NOT_OWNED'
+      body.errorCode === 'RESOURCE_NOT_OWNED' || body.errorCode === 'FORBIDDEN_PROFILE_FIELD'
         ? 403
         : body.errorCode === 'NOT_FOUND'
           ? 404

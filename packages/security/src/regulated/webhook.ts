@@ -13,6 +13,7 @@ export type ProviderWebhookEnvelope = {
   readonly idempotencyKey: string;
   readonly payloadHash: string;
   readonly signatureHex: string;
+  readonly environment?: string;
 };
 
 export type WebhookValidationResult =
@@ -24,16 +25,21 @@ export type WebhookValidationResult =
         | 'INVALID_SIGNATURE'
         | 'STALE_TIMESTAMP'
         | 'REPLAYED'
-        | 'SCHEMA_INVALID';
+        | 'SCHEMA_INVALID'
+        | 'ENVIRONMENT_MISMATCH';
     };
 
 export class ProviderWebhookGuard {
   readonly #secrets = new Map<string, SecretValue>();
+  readonly #environments = new Map<string, string>();
   readonly #seenNonces = new Map<string, number>();
   readonly #seenIdempotency = new Set<string>();
 
-  registerProvider(providerId: string, secret: SecretValue): void {
+  registerProvider(providerId: string, secret: SecretValue, environment?: string): void {
     this.#secrets.set(providerId, secret);
+    if (environment) {
+      this.#environments.set(providerId, environment);
+    }
   }
 
   sign(input: Omit<ProviderWebhookEnvelope, 'signatureHex'>, secret: SecretValue): ProviderWebhookEnvelope {
@@ -51,6 +57,10 @@ export class ProviderWebhookGuard {
     const secret = this.#secrets.get(envelope.providerId);
     if (!secret) {
       return { ok: false, code: 'UNKNOWN_PROVIDER' };
+    }
+    const registeredEnvironment = this.#environments.get(envelope.providerId);
+    if (registeredEnvironment && envelope.environment !== registeredEnvironment) {
+      return { ok: false, code: 'ENVIRONMENT_MISMATCH' };
     }
     const timestampMs = Date.parse(envelope.timestampUtc);
     if (!Number.isFinite(timestampMs) || Math.abs(nowMs - timestampMs) > WEBHOOK_REPLAY_WINDOW_MS) {
@@ -82,5 +92,6 @@ function canonicalWebhook(envelope: Omit<ProviderWebhookEnvelope, 'signatureHex'
     envelope.nonce,
     envelope.idempotencyKey,
     envelope.payloadHash,
+    envelope.environment ?? '',
   ].join('\n');
 }

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ .Values.namespace }}
+  labels:
+    sunrey.environment: {{ .Values.platformEnvironment }}
+    sunrey.simulation: "true"
+    sunrey.production-authorized: "false"
+    sunrey.mainnet-enabled: "false"
+    sunrey.banner: SUNREY-PREPRODUCTION

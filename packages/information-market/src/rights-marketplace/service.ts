@@ -17,6 +17,7 @@ import {
   newLicenseRequestId,
   newLicenseSettlementId,
   newUsageEventId,
+  type InformationRightId,
 } from './ids.ts';
 import { enforceAggregation, privacyControlsFor, suppressIfBelowThreshold } from './privacy.ts';
 import { simulationCompensationPolicyV1, simulationPricingPolicyV1, validatePricingPolicy } from './policy.ts';
@@ -195,7 +196,8 @@ export class InformationRightsMarketplace {
     const sensitive = rights.some((right) => (SENSITIVE_CATEGORIES as readonly string[]).includes(right.underlyingCategory));
     const draft = {
       form: input.form,
-      rightIds: input.rightIds,
+      rightIds: input.rightIds as readonly InformationRightId[],
+      rightIds: input.rightIds as DataProduct['rightIds'],
       classification: input.classification,
       eligiblePurposes: input.eligiblePurposes,
       sensitiveCategory: sensitive,
@@ -210,7 +212,7 @@ export class InformationRightsMarketplace {
       rights,
       consentActive,
       purpose: input.purpose,
-      cohortSize: input.cohortSize,
+      ...(input.cohortSize !== undefined ? { cohortSize: input.cohortSize } : {}),
     });
     if (blocked) return err(blocked);
     const product: DataProduct = Object.freeze({
@@ -321,6 +323,7 @@ export class InformationRightsMarketplace {
     }
     const now = this.now();
     const expiresAt = addDays(now, request.durationDays);
+    const fiat = pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat;
     const license: InformationLicense = Object.freeze({
       licenseId: newInformationLicenseId(),
       requestId: request.requestId,
@@ -334,8 +337,12 @@ export class InformationRightsMarketplace {
       redistribution: 'PROHIBITED',
       retentionDays: product.retentionDays,
       compensation: Object.freeze({
+        asset: 'FIAT_MONEY' as const,
+        ...(pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat
+          ? { fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat }
+          : {}),
         asset: 'FIAT_MONEY',
-        fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat,
+        ...(fiat ? { fiat } : {}),
         pricingPolicyId: pricing.policyId,
         compensationPolicyId: policy.policyId,
       }),
@@ -524,8 +531,10 @@ export class InformationRightsMarketplace {
       if (!this.nativeAsset) {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
+      this.nativeAsset.mint();
       const minted = this.nativeAsset.mint();
-      if (minted.outcome === 'OK') {
+      if ((minted as { readonly outcome: string }).outcome === 'OK') {
+      if ((minted.outcome as string) === 'OK') {
         return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
       }
       const transfer = this.nativeAsset.transfer({
@@ -544,8 +553,8 @@ export class InformationRightsMarketplace {
       licenseId: license.licenseId,
       usageId: usage.usageId,
       policyVersion: policy.version,
-      revenueFiat: license.compensation.fiat,
-      revenueCoin: license.compensation.coin,
+      ...(license.compensation.fiat ? { revenueFiat: license.compensation.fiat } : {}),
+      ...(license.compensation.coin ? { revenueCoin: license.compensation.coin } : {}),
       allocations: allocated.allocations,
       journalId,
       nativeTransferId,

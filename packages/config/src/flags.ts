@@ -21,6 +21,14 @@ export const LIVE_CRYPTO_ENABLED = false as const;
 export const LIVE_EXCHANGE_ENABLED = false as const;
 export const LIVE_DATA_MARKET_ENABLED = false as const;
 export const LIVE_INVESTMENT_EXECUTION = false as const;
+/** Phase H — information-rights marketplace economics stay disabled. */
+export const LIVE_INFORMATION_RIGHTS_MARKETPLACE = false as const;
+export const LIVE_DATA_MONETIZATION_ENABLED = false as const;
+export const LIVE_HIN_BASED_ISSUANCE_ENABLED = false as const;
+export const LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED = false as const;
+
+/** External production HSM/KMS remains absent. Software ports may be complete. */
+export const PRODUCTION_HSM_KMS_CONFIGURED = false as const;
 
 export const CAPABILITIES = Object.freeze({
   ENVIRONMENT,
@@ -36,6 +44,11 @@ export const CAPABILITIES = Object.freeze({
   LIVE_EXCHANGE_ENABLED,
   LIVE_DATA_MARKET_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
+  PRODUCTION_HSM_KMS_CONFIGURED,
+  LIVE_INFORMATION_RIGHTS_MARKETPLACE,
+  LIVE_DATA_MONETIZATION_ENABLED,
+  LIVE_HIN_BASED_ISSUANCE_ENABLED,
+  LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED,
 });
 
 export function assertSimulationOnly(): void {
@@ -53,7 +66,11 @@ export function assertSimulationOnly(): void {
     LIVE_CRYPTO_ENABLED !== false ||
     LIVE_EXCHANGE_ENABLED !== false ||
     LIVE_DATA_MARKET_ENABLED !== false ||
-    LIVE_INVESTMENT_EXECUTION !== false
+    LIVE_INVESTMENT_EXECUTION !== false ||
+    LIVE_INFORMATION_RIGHTS_MARKETPLACE !== false ||
+    LIVE_DATA_MONETIZATION_ENABLED !== false ||
+    LIVE_HIN_BASED_ISSUANCE_ENABLED !== false ||
+    LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED !== false
   ) {
     throw new Error('every LIVE_* flag must remain false; real-world movement is not authorised');
   }

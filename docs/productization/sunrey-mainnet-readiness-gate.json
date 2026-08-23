@@ -86,7 +86,7 @@
       "kind": "EXTERNAL_PROVIDER",
       "status": "MISSING",
       "satisfiableByPlaceholder": false,
-      "notes": "Development HSM simulator is not a launch key."
+      "notes": "PRODUCTION_HSM_KMS_CONFIGURED=false. Development HSM simulator is not a launch key. External HSM/KMS is not connected."
     },
     {
       "id": "validator_operators",

@@ -1449,7 +1449,14 @@ paths:
         "200":
           description: Markets including SunRey Coin
   /api/v1/exchange/markets/{marketId}:
+    get:
+      operationId: getExchangeMarketById
       summary: Exchange catalog
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
       responses:
         "200":
           description: Honest availability
@@ -1558,8 +1565,6 @@ paths:
           description: Economic-input summary
         "401":
           description: Authentication required
-  /api/v1/exchange/markets:
-          description: Honest availability; production trading remains disabled
   /api/v1/hin/contributions:
     get:
       operationId: listHinContributions
@@ -2124,7 +2129,7 @@ paths:
   /api/v1/hin/participation:
     get:
       operationId: getHinParticipation
-      summary: HIN participation
+      summary: Optional HIN participation state
       responses:
         "200":
           description: NOT_ENROLLED by default; financial services stay open
@@ -2138,27 +2143,157 @@ paths:
   /api/v1/hin/participation/pause:
     post:
       operationId: pauseHinParticipation
-      summary: Pause HIN participation
+      summary: Pause optional HIN participation
       responses:
         "200":
           description: Paused
   /api/v1/hin/participation/withdraw:
     post:
       operationId: withdrawHinParticipation
-      summary: Withdraw HIN participation
+      summary: Withdraw from optional HIN participation
       responses:
         "200":
           description: Withdrawn without closing ordinary SunRey financial services
   /api/v1/data:
     get:
       operationId: getDataVault
-      summary: Personal Data Vault home
+      summary: Vault home
       responses:
         "200":
-          description: Honest availability
+          description: Subject-bound vault home. Sandbox data is labeled SANDBOX.
+  /api/v1/data/categories:
+    get:
+      operationId: getDataCategories
+      summary: Data classification catalog
+      responses:
+        "200":
+          description: Server-owned categories
+  /api/v1/data/sources:
+    get:
+      operationId: getDataSources
+      summary: Data sources
+      responses:
+        "200":
+          description: Simulated connectors only
+  /api/v1/data/records:
+    get:
+      operationId: listDataRecords
+      summary: Your data metadata
+      responses:
+        "200":
+          description: Metadata only
+    post:
+      operationId: createVaultRecord
+      summary: Create a user-declared record
+      responses:
+        "201":
+          description: Created metadata
+  /api/v1/data/records/ingest:
+    post:
+      operationId: ingestVaultRecord
+      summary: Ingest an approved source-backed sandbox record
+      responses:
+        "201":
+          description: Created metadata
   /api/v1/data/permissions:
     get:
-      operationId: getDataPermissions
+      operationId: listDataPermissions
+      summary: Permissions
+      responses:
+        "200":
+          description: Grants
+    post:
+      operationId: grantDataPermission
+      summary: Grant optional permission
+      responses:
+        "201":
+          description: Confirmed grant
+  /api/v1/data/hin:
+    get:
+      operationId: getDataHinParticipation
+      operationId: getDataPlaneHinParticipation
+      summary: HIN participation
+      operationId: getDataHinHome
+      summary: Phase H data-plane HIN home
+      responses:
+        "200":
+          description: Participation state on the data surface; not a second HIN system
+  /api/v1/data/contributions:
+    get:
+      operationId: listDataContributions
+      operationId: listDataPlaneHinContributions
+      summary: Human contributions
+      operationId: listDataContributions
+      summary: Human contributions on the data surface
+      responses:
+        "200":
+          description: Contribution list without mint quantities
+  /api/v1/data/earnings:
+    get:
+      operationId: getDataPlaneHinEarnings
+      operationId: getDataEarnings
+      summary: Compensation instructions
+      responses:
+        "200":
+          description: Not a yield
+  /api/v1/data/licenses:
+    get:
+      operationId: listInformationLicenses
+      summary: Information-rights licenses
+      responses:
+        "200":
+          description: Sandbox licenses
+    post:
+      operationId: requestInformationLicense
+      summary: Request a sandbox license
+      responses:
+        "201":
+          description: Purpose-scoped request
+  /api/v1/economy/sunrey:
+    get:
+      operationId: getSunreyEconomy
+      summary: SunRey Coin detail with HIN metrics
+      responses:
+        "200":
+          description: HIN input is not market price
+  /api/v1/economy/moonrey:
+    get:
+      operationId: getMoonreyEconomy
+      summary: MoonRey Coin detail with productive metrics
+      responses:
+        "200":
+          description: Productive input is not market price
+  /api/v1/economy/hin:
+    get:
+      operationId: getHinAggregateMetrics
+      summary: Aggregate HIN metrics
+      responses:
+        "200":
+          description: No individual records
+  /api/v1/economy/productive:
+    get:
+      operationId: getSandboxProductiveEconomy
+      summary: Productive-economy overview
+      responses:
+        "200":
+          description: Sandbox observations only
+  /api/v1/economy/productive/observe:
+    post:
+      operationId: observeProductive
+      summary: Ingest a sandbox productive observation
+      responses:
+        "200":
+          description: Observation accepted or rejected
+  /api/v1/economy/basis-proposal:
+    post:
+      operationId: createEconomicBasisProposal
+      summary: Draft issuance-basis proposal that stops before mint
+      responses:
+        "200":
+          description: Proposal only. No supply change.
+  /api/v1/data/permissions:
+    get:
+      operationId: getDataPermissionCatalog
       summary: Purpose catalog and granted optional uses
       responses:
         "200":
@@ -2180,11 +2315,10 @@ paths:
     post:
       operationId: revokeDataConsent
       summary: Revoke optional consent immediately
-          description: Owner vault summary. SunRey does not own user data.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VaultHome'
+      responses:
+        "200":
+          description: Optional consent revoked; financial services remain open
+          description: Consent revoked; optional uses stop immediately
   /api/v1/data/vault:
     get:
       operationId: getVaultHome
@@ -2205,7 +2339,7 @@ paths:
           description: Client-safe categories. Highly sensitive classes are not ingested by default.
   /api/v1/data/vault/records:
     get:
-      operationId: listVaultRecords
+      operationId: listPersonalVaultRecords
       summary: List owner vault records
       parameters:
         - name: categoryId
@@ -2263,6 +2397,34 @@ paths:
       responses:
         "201":
           description: Request accepted under the jurisdiction pack
+  /api/v1/hin/participation:
+    get:
+      operationId: getOptionalHinParticipation
+      summary: Optional HIN participation state
+      responses:
+        "200":
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseOptionalHinParticipation
+      summary: Pause optional HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawOptionalHinParticipation
+      summary: Withdraw from optional HIN participation
+      responses:
+        "200":
+          description: Withdrawn without closing ordinary SunRey financial services
   /api/v1/data/vault/records/{id}/history:
     get:
       operationId: getVaultRecordHistory

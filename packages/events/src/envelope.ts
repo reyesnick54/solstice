@@ -388,6 +388,12 @@ export function inferAggregate(eventType: string, payload: unknown): AggregateRe
       id: String(body.agentId ?? body.conversationId ?? body.memoryId ?? body.mandateId ?? 'unknown'),
     };
   }
+  if (eventType.startsWith('Operations')) {
+    return {
+      type: 'operations',
+      id: String(body.caseId ?? body.actionId ?? body.providerId ?? body.accountId ?? body.customerId ?? 'unknown'),
+    };
+  }
   return { type: 'unknown', id: String(body.id ?? eventType) };
 }
 
