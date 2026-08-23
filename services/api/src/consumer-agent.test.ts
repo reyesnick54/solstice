@@ -11,9 +11,9 @@ function runtime(world: ReturnType<typeof createSandboxWorld>): ConsumerBffRunti
     identity: world.runtime.identity.service,
     payments: world.payments,
     agent: world.agent,
+    agentRuntime: world.agentRuntime,
   };
-import { handleConsumerBff } from './consumer/handler.ts';
-import { createSandboxWorld, sandboxToken } from './consumer/fixtures.ts';
+}
 
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
   return `Bearer ${sandboxToken(persona)}`;
@@ -23,14 +23,18 @@ function call(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
-  body: Record<string, unknown> = {},
+  personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
+  body: unknown = {},
+  query: Record<string, string> = {},
 ) {
+  const persona = typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
+  const actualBody = typeof personaOrBody === 'string' ? body : personaOrBody;
   return handleConsumerBff(runtime(world), {
     method,
     path,
-    query: {},
-    body,
-    authorization: `Bearer ${sandboxToken('agent_enabled')}`,
+    query,
+    body: actualBody,
+    authorization: auth(persona),
     requestId: `req_${method}_${path}`,
   });
 }
@@ -69,27 +73,8 @@ describe('Consumer BFF Agent productization', () => {
       authorization: `Bearer ${sandboxToken('basic_verified')}`,
     });
     assert.equal(other.status, 403);
-  persona: Parameters<typeof sandboxToken>[0],
-  body: unknown = {},
-  query: Record<string, string> = {},
-) {
-  return handleConsumerBff(
-    {
-      bff: world.bff,
-      sessions: world.sessions,
-      identity: world.runtime.identity.service,
-      payments: world.payments,
-      agentRuntime: world.agentRuntime,
-    },
-    {
-      method,
-      path,
-      query,
-      body,
-      authorization: auth(persona),
-    },
-  );
-}
+  });
+});
 
 describe('Consumer BFF Agent runtime', () => {
   it('lists the sandbox agent and denies cross-user access', () => {
