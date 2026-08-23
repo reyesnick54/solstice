@@ -122,6 +122,7 @@ describe('canonical agent tool registry', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
     assert.equal(CANONICAL_TOOL_COUNT, CANONICAL_AGENT_TOOLS.length);
+    assert.equal(new Set(CANONICAL_AGENT_TOOLS.map((tool) => tool.toolId)).size, CANONICAL_TOOL_COUNT);
     assert.ok(CANONICAL_TOOL_COUNT >= 45);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {

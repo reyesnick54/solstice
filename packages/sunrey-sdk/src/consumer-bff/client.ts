@@ -625,6 +625,7 @@ export class SunReyConsumerBffClient {
       readonly instrument?: string;
     },
     options?: BffRequestOptions,
+  ): Promise<Record<string, unknown> & { readonly guaranteedExecutionPrice?: false }> {
   ): Promise<ExchangeOrderPreview> {
     return this.request('POST', '/api/v1/exchange/preview', input, options);
   }

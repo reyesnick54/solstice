@@ -22,6 +22,7 @@
     "check:api": "node scripts/check-api-specs.mjs",
     "check:migrations": "node scripts/check-migration-quality.mjs",
     "productization:preflight": "node scripts/productization-preflight.mjs",
+    "qualify:backend-rc": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/qualify-backend-rc.mjs",
     "test:phase-f": "node --experimental-strip-types --disable-warning=ExperimentalWarning --test --test-reporter=spec packages/sunrey-agent/src/productization*.test.ts packages/sunrey-sdk/src/agent-productization.test.ts services/api/src/consumer-agent.test.ts",
     "provider:test": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-test.ts",
     "provider:certify": "node --experimental-strip-types --disable-warning=ExperimentalWarning scripts/provider-certify.ts",

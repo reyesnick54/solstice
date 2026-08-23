@@ -824,6 +824,7 @@ export const CANONICAL_AGENT_TOOLS: readonly AgentToolDefinition[] = Object.free
     required: [],
     properties: {},
     requiredMandate: 'READ_FINANCIAL_STATE',
+    requiredCapabilities: ['consent'],
     requiredCapabilities: ['hin'],
     riskClass: 'READ',
     readOnly: true,

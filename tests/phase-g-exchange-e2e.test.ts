@@ -58,6 +58,7 @@ describe('Phase G Exchange / wallet / coin E2E', () => {
       body: { stepUpSatisfied: false },
     });
     assert.equal(stepUp.status, 403);
+    assert.equal((stepUp.body as { errorCode?: string }).errorCode, 'STEP_UP_REQUIRED');
 
     const approved = world.handle({
       method: 'POST',

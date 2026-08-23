@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.backend.rc.evaluation.v1",
+  "evaluatedAtUtc": "2026-08-23T09:28:57.661Z",
+  "version": "sunrey-backend-v1.0.0-rc.1",
+  "commit": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
+  "findings": [],
+  "environment": {
+    "node": "v22.14.0",
+    "docker": false,
+    "postgresClient": false,
+    "rustc": true,
+    "cargo": true
+  },
+  "status": {
+    "CORE_CODE_COMPLETE_CANDIDATE": true,
+    "BACKEND_PRODUCTION_RELEASE_CANDIDATE": true,
+    "LOVABLE_BACKEND_READY": true,
+    "PROVIDER_INTEGRATION_READY": true,
+    "PREPRODUCTION_DEPLOYABLE": true,
+    "TESTNET_DEPLOYABLE": true,
+    "EXTERNAL_SECURITY_REVIEW_READY": true,
+    "REGULATORY_REVIEW_READY": true,
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "MAINNET_ACTIVE": false,
+    "LIVE_EXCHANGE_ENABLED": false,
+    "LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED": false,
+    "LIVE_DATA_MARKETPLACE_ENABLED": false
+  }
+}

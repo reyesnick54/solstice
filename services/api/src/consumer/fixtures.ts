@@ -74,6 +74,8 @@ import { createWalletProductFromKernel } from '../../../../packages/custody/src/
 import type { WalletProductService } from '../../../../packages/custody/src/product/service.ts';
 import { createSandboxRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
+import { createHinContributionSurface, type HinContributionSurface } from './hin-adapter.ts';
+import { createProductiveEconomySurface, type ProductiveEconomySurface } from './productive-economy-adapter.ts';
 
 import { ConsentService } from '../../../../packages/consent/src/service.ts';
 import { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
@@ -140,6 +142,8 @@ export type SandboxWorld = {
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
   readonly hin: InformationRightsMarketplace;
+  readonly hinContributions: HinContributionSurface;
+  readonly productiveEconomy: ProductiveEconomySurface;
   readonly exchange: ReturnType<typeof createExchangeBffSurface>;
   readonly dataRights: ConsentDataRightsEngine;
   readonly vault: PersonalDataVaultProduct;
@@ -548,6 +552,10 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
+  const hinContributions = createHinContributionSurface();
+  const productiveEconomy = createProductiveEconomySurface();
+  const vault = attachSandboxVault(runtime, personas);
+  const dataRights = attachSandboxDataRights(runtime);
   const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
 
@@ -565,6 +573,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     hin,
+    hinContributions,
+    productiveEconomy,
     vault,
     exchange: createExchangeBffSurface(),
     dataRights,

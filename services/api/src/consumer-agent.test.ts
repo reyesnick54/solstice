@@ -29,6 +29,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
   return `Bearer ${sandboxToken(persona)}`;
 }
 
+function callConversation(
 function callProductization(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
@@ -43,6 +44,7 @@ function callProductization(
   return handleConsumerBff(runtime(world), {
     method,
     path,
+    query,
     query: {},
     body,
     authorization: `Bearer ${sandboxToken('agent_enabled')}`,

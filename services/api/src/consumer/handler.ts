@@ -108,6 +108,11 @@ export type ConsumerBffRuntime = {
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
+  readonly hin?: InformationRightsMarketplace;
+  readonly hinContributions?: HinContributionSurface;
+  readonly nativeEconomy?: NativeEconomySurface;
+  readonly productiveEconomy?: ProductiveEconomySurface;
+  readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly hin?: InformationRightsMarketplace | HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
@@ -676,6 +681,7 @@ function dispatchAuthenticated(
 
   const hinContributions = runtime.hin && !isRightsMarketplace(runtime.hin) ? runtime.hin : undefined;
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
+    const surface = runtime.hinContributions;
     const surface = hinContributions;
     if (!surface) {
     const surface = runtime.hin;
@@ -685,6 +691,7 @@ function dispatchAuthenticated(
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
+    const surface = runtime.hinContributions;
     const surface = hinContributions;
     if (!surface) {
     const surface = runtime.hin;
@@ -709,6 +716,7 @@ function dispatchAuthenticated(
     return json(200, item, headers);
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
+    const surface = runtime.hinContributions;
     const surface = hinContributions;
     if (!surface) {
     const surface = runtime.hin;
@@ -718,6 +726,7 @@ function dispatchAuthenticated(
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
+    const surface = runtime.hinContributions;
     const surface = hinContributions;
     if (!surface) {
     const surface = runtime.hin;
@@ -727,6 +736,7 @@ function dispatchAuthenticated(
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
+    const surface = runtime.hinContributions;
     const surface = hinContributions;
     if (!surface) {
     const surface = runtime.hin;
@@ -1279,6 +1289,15 @@ function dispatchGrow(
     if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
     if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
       return result(grow.performance(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/portfolio/holdings' && method === 'GET') {
+      return result(grow.portfolio(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/portfolio/allocation' && method === 'GET') {
+      return result(grow.portfolio(principal, requestId), headers);
+    }
+    if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
+      return result(grow.portfolio(principal, requestId), headers);
     }
     if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
     if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
