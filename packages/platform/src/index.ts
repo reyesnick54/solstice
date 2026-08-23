@@ -221,6 +221,7 @@ export {
   FINANCIAL_PROPOSAL_TYPES,
 } from './grow/index.ts';
 export type {
+  FinancialProposal as GrowExecutionProposal,
   GrowExecutionCommand,
   GrowExecutionRecord,
   GrowFailure,

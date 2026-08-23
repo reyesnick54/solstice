@@ -287,7 +287,7 @@ export const GROW_EXECUTION_STATES = [
 ] as const;
 export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
 
-export type GrowProposal = {
+export type GrowExecutionProposal = {
   readonly proposalId: string;
   readonly version: number;
   readonly state: string;
@@ -794,6 +794,69 @@ export type WithdrawalCreateInput = {
   readonly amountMinorUnits?: string;
   readonly stepUpSatisfied?: boolean;
   readonly originatedFromAgent?: boolean;
+export type NativeEconomyOverview = {
+  readonly schema: 'sunrey.consumer.native-economy.v1';
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly productionActive: false;
+  readonly valuationIsNotMarketPrice: true;
+  readonly sunrey: {
+    readonly name: 'SunRey Coin';
+    readonly protocolNative: true;
+    readonly economicModel: string;
+    readonly hinMetrics: { readonly available: false; readonly reason: string };
+  };
+  readonly moonrey: {
+    readonly name: 'MoonRey Coin';
+    readonly protocolNative: true;
+    readonly economicModel: string;
+    readonly approvedUnderlyingMetrics: readonly unknown[];
+  };
+};
+
+export type NativeEconomySupply = {
+  readonly schema: 'sunrey.consumer.native-economy.v1';
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly network: string;
+  readonly policyVersion: string;
+  readonly privilegedIssuanceEndpoints: readonly never[];
+  readonly assets: readonly {
+    readonly protocolStatus: string;
+    readonly supply: {
+      readonly totalSupply: string;
+      readonly circulatingSupply: string;
+      readonly issuedSupply: string;
+    };
+  }[];
+export type ExchangeMarket = {
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly baseAssetId: string;
+  readonly quoteAssetId: string;
+  readonly state: string;
+};
+
+export type ExchangeMarkets = {
+  readonly schema: 'sunrey.consumer.exchange.markets.v1';
+  readonly productionTradingEnabled: false;
+  readonly items: readonly ExchangeMarket[];
+  readonly screens?: readonly string[];
+};
+
+export type ExchangeOrderPreview = {
+  readonly previewId: string;
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantity: string;
+  readonly estimatedPriceUnits: string | null;
+  readonly guaranteedExecutionPrice: false;
+  readonly productionTradingEnabled: false;
+};
+
+export type ExchangeOrderSubmit = {
+  readonly accepted: true;
+  readonly requiresExecution: true;
+  readonly proposalId: string | null;
 };
 
 export type ActionCenterList = {

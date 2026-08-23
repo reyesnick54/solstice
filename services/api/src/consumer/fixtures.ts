@@ -51,6 +51,8 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
+import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
+import { createExchangeBffSurface } from './exchange-bff.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -100,6 +102,20 @@ export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 export function sandboxToken(persona: SandboxPersonaId): string {
   return `sandbox.${persona}`;
 }
+import {
+  SANDBOX_LABEL,
+  SANDBOX_PERSONA_IDS,
+  sandboxToken,
+  type SandboxPersonaId,
+} from './sandbox-personas.ts';
+
+export {
+  SANDBOX_LABEL,
+  SANDBOX_PERSONA_IDS,
+  sandboxToken,
+  listSandboxPersonas,
+} from './sandbox-personas.ts';
+export type { SandboxPersonaId } from './sandbox-personas.ts';
 
 const NOW = asUtcInstant('2026-08-21T09:00:00.000Z');
 
@@ -132,10 +148,12 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly agent: AgentBffFacade;
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly conversation: AgentConversationSurface;
   readonly wallets: WalletProductService;
+  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -525,10 +543,12 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    agent: createAgentBffFacade(NOW),
     agentRuntime,
     grow,
     conversation: createAgentConversationSurface(),
     wallets,
+    exchange: createExchangeBffSurface(),
   });
 }
 
@@ -745,20 +765,6 @@ function openAndFund(
   if (posted.outcome !== 'POSTED') {
     throw new Error(`sandbox deposit failed for ${account.id}: ${posted.outcome}`);
   }
-}
-
-export function listSandboxPersonas(): readonly {
-  readonly id: SandboxPersonaId;
-  readonly token: string;
-  readonly label: typeof SANDBOX_LABEL;
-}[] {
-  return SANDBOX_PERSONA_IDS.map((id) =>
-    Object.freeze({
-      id,
-      token: sandboxToken(id),
-      label: SANDBOX_LABEL,
-    }),
-  );
 }
 
 export function capabilitiesFor(world: SandboxWorld, persona: SandboxPersonaId): FeatureCapabilityMap {

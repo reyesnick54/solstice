@@ -112,6 +112,12 @@ export {
   revokeAgentMandate,
   UserAgentMandateEngine,
 } from './agent-mandates.ts';
+export {
+  createSunReyAgentClient,
+  AgentQualificationPlatform,
+  PHASE_F_FLAGS,
+  LOVABLE_AGENT_CONTRACT,
+} from './agent-productization.ts';
 export type {
   AgentActivityReport,
   AgentTransactionProposal,

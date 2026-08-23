@@ -160,6 +160,7 @@ export {
   memoryIdFor,
   messageIdFor,
 } from './ids.ts';
+export * from './productization/index.ts';
 export {
   ACTION_CARD_STATUSES,
   ACTION_CARD_TYPES,

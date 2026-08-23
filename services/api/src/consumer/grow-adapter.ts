@@ -186,10 +186,230 @@ export function createGrowCommandPort(input: {
       requestId,
     });
   }
+  return bffError({
+    errorCode: 'VALIDATION',
+    category: 'VALIDATION',
+    message,
+    retryable: false,
+    requestId,
+  });
+}
+
+function publicOpportunity(item: Opportunity): unknown {
+  return Object.freeze({
+    opportunityId: item.opportunityId,
+    type: item.type,
+    title: item.title,
+    summary: item.summary,
+    source: item.source,
+    eligible: item.eligible,
+    priority: item.priority,
+    estimatedImpact: item.estimatedImpact ?? null,
+    impactRange: item.impactRange ?? null,
+    impactKind: item.impact.kind,
+    assumptions: item.impact.assumptions,
+    rateSource: item.impact.rateSource ?? null,
+    taxDisclaimer: item.impact.taxDisclaimer,
+    riskLevel: item.riskLevel,
+    liquidityImpact: item.liquidityImpact,
+    timeHorizon: item.timeHorizon,
+    fees: item.fees,
+    dependencies: item.dependencies,
+    goalLinks: item.goalLinks,
+    evidence: { detector: item.evidence.detector, notes: item.evidence.notes },
+    expiresAt: item.expiresAt,
+    status: item.status,
+    immediatelyExecutable: false,
+    achievementPromised: false,
+    returnGuaranteed: false,
+    productionMoneyMovement: false,
+  });
+}
+
+export function createGrowOpportunityPort(input: {
+  readonly orchestrator: GrowthOrchestrator;
+  readonly accounts: AccountsReadPort;
+  readonly actorFor: (principal: BffPrincipal) => unknown;
+  readonly requestId?: string;
+}): GrowOpportunityPort {
+  const requestId = input.requestId ?? 'grow';
+  return {
+    summarize(principal): OptionalDomainSummary {
+      const listed = input.orchestrator.listOpportunities(
+        input.actorFor(principal),
+        principal.identityId,
+        contextFrom(principal, input.accounts),
+      );
+      const count = listed.ok ? listed.value.cards.length : 0;
+      return Object.freeze({
+        availability: 'AVAILABLE_SIMULATION',
+        state: 'SIMULATION_ONLY',
+        provider: 'SIMULATED',
+        reason: 'Growth opportunities are simulation reviews, not executable investments',
+        count,
+      });
+    },
+    list(principal) {
+      const listed = input.orchestrator.listOpportunities(
+        input.actorFor(principal),
+        principal.identityId,
+        contextFrom(principal, input.accounts),
+      );
+      if (!listed.ok) {
+        return mapFailure(listed.error.code, failureMessage(listed.error), requestId);
+      }
+      return Object.freeze({
+        schema: listed.value.schema,
+        generatedAt: listed.value.generatedAt,
+        rankingVersion: listed.value.rankingVersion,
+        productionMoneyMovement: false,
+        items: listed.value.cards.map((card) =>
+          Object.freeze({
+            ...card,
+            productionMoneyMovement: false,
+          }),
+        ),
+        opportunities: listed.value.items.map(publicOpportunity),
+        suppressedCount: listed.value.suppressedCount,
+      });
+    },
+    get(principal, opportunityId) {
+      const found = input.orchestrator.getOpportunity(input.actorFor(principal), principal.identityId, opportunityId);
+      if (!found.ok) {
+        return mapFailure(found.error.code, failureMessage(found.error), requestId);
+      }
+      return publicOpportunity(found.value);
+    },
+    dismiss(principal, opportunityId) {
+      const dismissed = input.orchestrator.dismissOpportunity(
+        input.actorFor(principal),
+        principal.identityId,
+        opportunityId,
+      );
+      if (!dismissed.ok) {
+        return mapFailure(dismissed.error.code, failureMessage(dismissed.error), requestId);
+      }
+      return publicOpportunity(dismissed.value);
+    },
+    startProposal(principal, opportunityId) {
+      const started = input.orchestrator.startOpportunityProposal(
+        input.actorFor(principal),
+        principal.identityId,
+        opportunityId,
+      );
+      if (!started.ok) {
+        return mapFailure(started.error.code, failureMessage(started.error), requestId);
+      }
+      return Object.freeze({
+        ...started.value,
+        productionMoneyMovement: false,
+      });
+    },
+  };
+}
+
+type ValuedBody = {
+  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
+  readonly presentationValuation?: SnapshotPresentationValuation | null;
+  readonly valuationContext?: SnapshotPresentationValuation | null;
+};
+
+export function createGrowCommandPort(input: {
+  readonly peg: EconomicGraphService;
+  readonly identity: IdentityService;
+  readonly valuePositions?: (
+    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
+    targetCurrency: string,
+  ) => SnapshotPresentationValuation | null;
+}): GrowCommandPort {
+  const { peg, identity, valuePositions } = input;
+
+  function attachValuation<T extends ValuedBody>(body: T, valuationCurrency?: string): T {
+    if (!valuationCurrency || !valuePositions || !body.cash || body.cash.length === 0) {
+      return body;
+    }
+    const valuation = valuePositions(
+      body.cash.map((row) => ({
+        currency: row.amount.currency,
+        minorUnits: BigInt(row.amount.minorUnits),
+      })),
+      valuationCurrency,
+    );
+    return Object.freeze({
+      ...body,
+      presentationValuation: valuation,
+      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
+      ...('valuationContext' in body ? { valuationContext: valuation } : {}),
+    });
+  }
+
+  function actorOf(principal: BffPrincipal, requestId: string): VerifiedActorContext | BffErrorEnvelope {
+    const actor = identity.resolveActorContext(principal.actorId);
+    if (!actor.ok) {
+      return bffError({
+        errorCode: 'SESSION_INVALID',
+        category: 'AUTHENTICATION',
+        message: actor.error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    return actor.value;
+  }
+
+  function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
+  function mapCommandFailure(
+    error: { readonly code: string; readonly message: string },
+    requestId: string,
+  ): BffErrorEnvelope {
+    if (error.code === 'SUBJECT_MISMATCH' || error.code === 'CAPABILITY_DENIED') {
+      return bffError({
+        errorCode: 'RESOURCE_NOT_OWNED',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'AUTHORITATIVE_FACT_IMMUTABLE') {
+      return bffError({
+        errorCode: 'FORBIDDEN_PROFILE_FIELD',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'GRAPH_NOT_FOUND' || error.code === 'GOAL_NOT_FOUND') {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'MANDATE_REQUIRED' || error.code === 'CATEGORY_DENIED' || error.code === 'CONSENT_DENIED') {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    return bffError({
+      errorCode: 'VALIDATION',
+      category: 'VALIDATION',
+      message: error.message,
+      retryable: false,
+      requestId,
+    });
+  }
 
   function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }, requestId: string): T | BffErrorEnvelope {
     if (!result.ok) {
-      return mapFailure(result.error, requestId);
+      return mapCommandFailure(result.error, requestId);
     }
     return result.value;
   }
@@ -230,7 +450,7 @@ export function createGrowCommandPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const snapshot = peg.getFinancialSnapshot(actor, principal.identityId);
       if (!snapshot.ok) {
-        return mapFailure(snapshot.error, 'grow_goals');
+        return mapCommandFailure(snapshot.error, 'grow_goals');
       }
       return Object.freeze({ items: snapshot.value.financialGoals });
     },
@@ -274,7 +494,7 @@ export function createGrowCommandPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const rows = peg.getInsights(actor, principal.identityId);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_insights');
+        return mapCommandFailure(rows.error, 'grow_insights');
       }
       return Object.freeze({ items: rows.value });
     },
@@ -319,7 +539,7 @@ export function createGrowCommandPort(input: {
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
           ? { ok: true }
-          : mapFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
+          : mapCommandFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
       }
       if (kind === 'INCOME') {
         return unwrap(
@@ -380,7 +600,7 @@ export function createGrowCommandPort(input: {
       }
       const rows = peg.getHistory(actor, principal.identityId, series as never);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_history');
+        return mapCommandFailure(rows.error, 'grow_history');
       }
       return Object.freeze({ items: rows.value });
     },

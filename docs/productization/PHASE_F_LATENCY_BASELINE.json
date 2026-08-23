@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.phase-f.latency-baseline.v1",
+  "environment": "simulation",
+  "productionSlaClaimed": false,
+  "notes": "In-process fixture observations on this tree. Date.now() millisecond resolution. Not a production SLA.",
+  "measuredAtUtc": "2026-08-23T00:00:00.000Z",
+  "observations": [
+    { "name": "first_streaming_token", "elapsedMs": 1 },
+    { "name": "simple_financial_question", "elapsedMs": 0 },
+    { "name": "peg_lookup", "elapsedMs": 1 },
+    { "name": "payment_proposal", "elapsedMs": 0 },
+    { "name": "fx_proposal", "elapsedMs": 0 },
+    { "name": "growth_proposal", "elapsedMs": 0 },
+    { "name": "portfolio_explanation", "elapsedMs": 0 }
+  ]
+}

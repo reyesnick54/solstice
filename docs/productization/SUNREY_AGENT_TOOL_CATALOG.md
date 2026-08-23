@@ -66,6 +66,10 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getAsset | Listed asset | `assetId` | asset | READ | READ_FINANCIAL_STATE | read-only | exchange / coin tool | no |
 | getMarketPrice | Last trade, not guaranteed | `marketId` | price units | READ | READ_FINANCIAL_STATE | read-only | SubjectScopedSunReyExchangeTool | no |
 | getOrders | Owner orders | none | orders | READ | READ_FINANCIAL_STATE | read-only | consumer orders | no |
+| getExchangeEligibility | CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW | optional `marketId` | eligibility | READ | READ_FINANCIAL_STATE | read-only | exchange product eligibility | no |
+| getExchangeHoldings | Holdings projection | none | holdings | READ | READ_FINANCIAL_STATE | read-only | exchange product holdings | no |
+| previewExchangeOrder | Order preview, not a guaranteed price | `marketId`, `side`, `quantity` | preview | READ | READ_FINANCIAL_STATE | read-only | exchange product preview | no |
+| getExchangeOrderStatus | Order and clearing status | optional `orderId` | orders | READ | READ_FINANCIAL_STATE | read-only | exchange product clearing | no |
 | createExchangeOrderProposal | Propose a trade | `marketId`, `side`, `quantity`, `assetId` | proposal id | PROPOSAL | PREPARE_EXCHANGE_ORDER | proposal | exchange + ProposalGate | yes |
 
 ## WALLETS / CUSTODY
@@ -92,6 +96,16 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getConsentSummary | Active permits | none | summary | READ | READ_FINANCIAL_STATE | read-only | consent | no |
 | getDataPermissions | Authorized scopes | none | scopes | READ | READ_FINANCIAL_STATE | read-only | consent / PDV | no |
 
+## NATIVE ECONOMY
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getNativeAsset | Protocol-native asset metadata | `assetId` | asset | READ | READ_FINANCIAL_STATE | read-only | sunrey-chain native-assets | no |
+| getNativeSupply | Issued / circulating supply | optional `assetId` | supply | READ | READ_FINANCIAL_STATE | read-only | AssetSupplyBook | no |
+| getNativeEconomy | Approved explanation + last trade if any | none | overview | READ | READ_FINANCIAL_STATE | read-only | native-assets client surface | no |
+
+Agents cannot mint, burn, modify policy, change supply, or declare a future price.
+
 ## Not created
 
 Tools were not created for unsupported or forbidden capabilities:
@@ -102,3 +116,4 @@ Tools were not created for unsupported or forbidden capabilities:
 - Execution Authority issuance
 - provider credential access
 - `sendMoneyImmediately` / `executeProposal` / `selfApprove`
+- native-asset mint / burn / policy change / future-price declaration

@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunrey-sentry
+  namespace: sunrey-testnet-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: sunrey-sentry
+  template:
+    metadata:
+      labels:
+        app: sunrey-sentry
+        sunrey.role: sentry
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+      containers:
+        - name: sentry
+          image: sunrey-node:testnet-1
+          env:
+            - name: SUNREY_ROLE
+              value: SENTRY
+            - name: SUNREY_NETWORK_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: sunrey-testnet-1-public
+                  key: networkId
+            - name: SUNREY_RPC_PLANE
+              value: VALIDATOR_RPC
+          ports:
+            - name: p2p
+              containerPort: 26656
+            - name: private-rpc
+              containerPort: 26657
+          readinessProbe:
+            tcpSocket:
+              port: 26656
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sunrey-sentry
+  namespace: sunrey-testnet-1
+spec:
+  selector:
+    app: sunrey-sentry
+  ports:
+    - name: p2p
+      port: 26656
+    - name: private-rpc
+      port: 26657

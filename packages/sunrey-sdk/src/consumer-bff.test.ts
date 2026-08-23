@@ -146,6 +146,102 @@ describe('consumer BFF payments SDK', () => {
     ]);
     assert.equal('submitGrowOrder' in client, false);
   });
+
+  it('calls Grow opportunity routes without privileged imports', async () => {
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.grow',
+      fetchImpl: async (input) => {
+        const url = typeof input === 'string' ? input : String(input);
+        if (url.endsWith('/api/v1/grow/opportunities')) {
+          return new Response(
+            JSON.stringify({
+              schema: 'sunrey.consumer.grow.opportunities.v1',
+              productionMoneyMovement: false,
+              items: [],
+              suppressedCount: 0,
+            }),
+            { status: 200, headers: { 'content-type': 'application/json' } },
+          );
+        }
+        return new Response(
+          JSON.stringify({
+            opportunityId: 'gop_1',
+            proposalId: 'gpr_1',
+            status: 'ACCEPTED_FOR_PROPOSAL',
+            executesMoney: false,
+            issuesExecutionAuthority: false,
+            productionMoneyMovement: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const portfolio = await client.getGrowPortfolio();
+    assert.equal(portfolio.frontendMathAuthoritative, false);
+    assert.equal(portfolio.liveState, false);
+    await client.getGrowHoldings();
+    await client.getGrowPerformance();
+    await client.getGrowAllocation();
+    await client.getGrowRisk();
+    assert.deepEqual(calls, [
+      'GET http://example.test/api/v1/grow/portfolio',
+      'GET http://example.test/api/v1/grow/portfolio/holdings',
+      'GET http://example.test/api/v1/grow/portfolio/performance',
+      'GET http://example.test/api/v1/grow/portfolio/allocation',
+      'GET http://example.test/api/v1/grow/portfolio/risk',
+    ]);
+    assert.equal('submitGrowOrder' in client, false);
+    const feed = await client.listGrowOpportunities();
+    assert.equal(feed.productionMoneyMovement, false);
+    const started = await client.startGrowProposal('gop_1');
+    assert.equal(started.executesMoney, false);
+  });
+});
+
+describe('consumer BFF exchange SDK', () => {
+  it('calls Exchange market, preview, and proposal-required order routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.exchange',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            productionTradingEnabled: false,
+            guaranteedExecutionPrice: false,
+            requiresExecution: true,
+            items: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const markets = await client.listExchangeMarkets();
+    assert.equal(markets.productionTradingEnabled, false);
+    await client.getExchangeTicker('SUNREY_COIN-USD');
+    const preview = await client.previewExchangeOrder({
+      marketId: 'market:sunrey-coin-usd-simulation',
+      instrument: 'SUNREY_COIN-USD',
+      side: 'BUY',
+      quantity: '1',
+    });
+    assert.equal(preview.guaranteedExecutionPrice, false);
+    const submitted = await client.submitExchangeOrder({
+      marketId: 'market:sunrey-coin-usd-simulation',
+      side: 'BUY',
+      quantity: '1',
+      proposalId: 'prop_1',
+    });
+    assert.equal(submitted.requiresExecution, true);
+    await client.listExchangeFills();
+    await client.listExchangeHoldings();
+    assert.ok(urls.some((row) => row.includes('/api/v1/exchange/markets')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/exchange/preview')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/exchange/orders')));
+  });
 });
 
 describe('consumer BFF grow SDK', () => {
@@ -237,6 +333,36 @@ describe('consumer BFF SDK models', () => {
   });
 });
 
+describe('consumer BFF native economy SDK', () => {
+  it('calls read-only economy supply routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_econ',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.native-economy.v1',
+            tickerStatus: 'NOT_ASSIGNED',
+            productionActive: false,
+            privilegedIssuanceEndpoints: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const overview = await client.getNativeEconomy();
+    await client.getNativeSupply();
+    await client.getNativeAsset('SUNREY_COIN');
+    assert.equal(overview.schema, 'sunrey.consumer.native-economy.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/economy/supply')));
+    assert.ok(urls.every((row) => row.startsWith('GET ')));
+  });
+});
+
 describe('consumer BFF SDK browser boundary', () => {
   it('does not import privileged or Node-only modules', () => {
     const dir = join(here, 'consumer-bff');
@@ -260,12 +386,15 @@ describe('consumer BFF SDK browser boundary', () => {
       'import { ExecutionAuthority',
       'import type { ExecutionAuthority',
       'verifyExecutionAuthority',
+      'import type { ExecutionAuthority',
+      'export type ExecutionAuthority',
     ];
     for (const file of files) {
       const source = readFileSync(join(dir, file), 'utf8');
       for (const needle of forbidden) {
         assert.equal(source.includes(needle), false, `${file} leaked ${needle}`);
       }
+      assert.equal(/import[\s\S]*ExecutionAuthority/.test(source), false, `${file} imported ExecutionAuthority`);
     }
   });
 });

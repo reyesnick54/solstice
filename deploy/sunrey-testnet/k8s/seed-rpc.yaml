@@ -52,6 +52,10 @@ spec:
           env:
             - name: SUNREY_ROLE
               value: PUBLIC_RPC
+            - name: SUNREY_RPC_PLANE
+              value: PUBLIC_RPC
+            - name: SUNREY_MAINNET_ACTIVE
+              value: "false"
           ports:
             - containerPort: 26657
           livenessProbe:

@@ -46,7 +46,6 @@ export type {
   AgentConversationResource,
   AgentMemoryResource,
   AgentMessageResponse,
-  GrowProposal,
   GrowExecution,
   GrowExecutionState,
   GrowPlan,
@@ -82,6 +81,12 @@ export type {
   CustodyModel,
   ClientFinalityState,
   TravelRuleCustomerState,
+  NativeEconomyOverview,
+  NativeEconomySupply,
+  ExchangeMarket,
+  ExchangeMarkets,
+  ExchangeOrderPreview,
+  ExchangeOrderSubmit,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

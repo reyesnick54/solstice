@@ -27,10 +27,11 @@ import { cachePolicyForPath } from './cache.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './resources.ts';
 import type { ConsumerBff } from './orchestrator.ts';
 import { resolvePrincipal, type SessionDirectory } from './session.ts';
-import { listSandboxPersonas } from './fixtures.ts';
+import { listSandboxPersonas } from './sandbox-personas.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
+import { dispatchAgent, type AgentBffFacade } from './agent-dispatch.ts';
 import { createCanonicalToolRegistry } from '../../../../packages/sunrey-agent/src/tools/catalog.ts';
 import {
   agentError,
@@ -41,6 +42,7 @@ import {
 } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
+import type { ExchangeBffSurface } from './exchange-bff.ts';
 import type { GrowBffSurface } from './grow.ts';
 import {
   actorFromPrincipal,
@@ -60,6 +62,7 @@ import {
   WALLET_STATUSES,
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
+import type { NativeEconomySurface } from './native-economy-adapter.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -85,10 +88,13 @@ export type ConsumerBffRuntime = {
   readonly identity?: IdentityService;
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
+  readonly agent?: AgentBffFacade;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
+  readonly nativeEconomy?: NativeEconomySurface;
+  readonly exchange?: ExchangeBffSurface;
 };
 
 const STUB_GROUPS = [
@@ -322,6 +328,12 @@ function dispatchAuthenticated(
       return agents;
     }
   }
+  if (runtime.exchange) {
+    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers);
+    if (exchange) {
+      return exchange;
+    }
+  }
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow as GrowBffSurface & ProductGrowthService, request, principal, requestId, headers);
     if (grow) {
@@ -363,6 +375,12 @@ function dispatchAuthenticated(
     );
   }
 
+  if (runtime.agent) {
+    const agent = dispatchAgent(runtime.agent, request, principal, requestId, headers);
+    if (agent) {
+      return agent;
+    }
+  }
   if (runtime.conversation) {
     const conversation = dispatchConversation(runtime.conversation, request, principal, requestId, headers);
     if (conversation) {
@@ -498,6 +516,50 @@ function dispatchAuthenticated(
       },
       headers,
     );
+  }
+
+  if (path === '/api/v1/economy' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, surface.overview(), headers);
+  }
+  if (path === '/api/v1/economy/supply' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, surface.supply(), headers);
+  }
+  if (path.startsWith('/api/v1/economy/assets/') && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    const assetId = path.slice('/api/v1/economy/assets/'.length);
+    const asset = surface.asset(assetId);
+    if ('error' in asset) {
+      return json(
+        404,
+        bffError({
+          errorCode: 'NOT_FOUND',
+          category: 'NOT_FOUND',
+          message: 'native asset not found',
+          retryable: false,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, asset, headers);
+  }
+  if (path === '/api/v1/economy/assets' && method === 'GET') {
+    const surface = runtime.nativeEconomy;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('economy', principal), headers);
+    }
+    return json(200, { items: surface.supply().assets }, headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -829,8 +891,101 @@ function dispatchPayments(
   return null;
 }
 
+function dispatchExchange(
+  exchange: ExchangeBffSurface,
 function dispatchGrow(
   grow: GrowBffSurface & ProductGrowthService,
+  grow: GrowBffSurface | ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, query, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if ((path === '/api/v1/exchange' || path === '/api/v1/exchange/markets') && method === 'GET') {
+    return result(exchange.markets(principal, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/eligibility' && method === 'GET') {
+    return result(exchange.eligibility(principal, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/preview' && method === 'POST') {
+    return result(exchange.preview(principal, rec, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/orders' && method === 'GET') {
+    return result(exchange.orders(principal, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/orders' && method === 'POST') {
+    return result(exchange.submitOrder(principal, rec, requestId), headers, 201);
+  }
+  if (path === '/api/v1/exchange/fills' && method === 'GET') {
+    return result(exchange.fills(principal, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/holdings' && method === 'GET') {
+    return result(exchange.holdings(principal, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/stream' && method === 'GET') {
+    const after = Number(query.after ?? '0');
+    const stream = exchange.stream(principal, Number.isFinite(after) ? after : 0, requestId);
+    if (isBffError(stream)) {
+      return result(stream, headers);
+    }
+    if ((request.accept ?? '').includes('text/event-stream')) {
+      return Object.freeze({
+        status: 200,
+        body: (stream as { sse: string }).sse,
+        headers: Object.freeze({
+          ...headers,
+          'cache-control': 'no-store, no-cache, private',
+          'content-type': 'text/event-stream; charset=utf-8',
+        }),
+      });
+    }
+    return result(stream, headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/ticker') && method === 'GET') {
+    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/ticker'.length);
+    return result(exchange.ticker(principal, instrument, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/orderbook') && method === 'GET') {
+    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/orderbook'.length);
+    return result(exchange.orderBook(principal, instrument, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/trades') && method === 'GET') {
+    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/trades'.length);
+    return result(exchange.trades(principal, instrument, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/candles') && method === 'GET') {
+    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/candles'.length);
+    return result(exchange.candles(principal, instrument, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
+    const instrument = path.slice('/api/v1/exchange/markets/'.length);
+    if (instrument.length > 0 && !instrument.includes('/')) {
+      return result(exchange.market(principal, instrument, requestId), headers);
+    }
+  }
+  if (path.startsWith('/api/v1/exchange/orders/') && method === 'GET') {
+    const id = path.slice('/api/v1/exchange/orders/'.length);
+    return result(exchange.order(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/orders/') && method === 'DELETE') {
+    const id = path.slice('/api/v1/exchange/orders/'.length);
+    return result(exchange.cancelOrder(principal, id, requestId), headers);
+  }
+  return null;
+}
+
+function isGrowBffSurface(grow: GrowBffSurface | ProductGrowthService): grow is GrowBffSurface {
+  return typeof (grow as GrowBffSurface).home === 'function';
+}
+
+function isProductGrowthService(grow: GrowBffSurface | ProductGrowthService): grow is ProductGrowthService {
+  return typeof (grow as ProductGrowthService).createPlan === 'function';
+}
+
+function dispatchGrow(
+  grow: GrowBffSurface | ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -838,51 +993,56 @@ function dispatchGrow(
 ): BffResponse | null {
   const { method, path, body } = request;
   const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
-  if (path === '/api/v1/grow' && method === 'GET') return result(grow.home(principal, requestId), headers);
-  if (path === '/api/v1/grow/snapshot' && method === 'GET') return result(grow.snapshot(principal, requestId), headers);
-  if (path === '/api/v1/grow/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
-  if (path === '/api/v1/grow/goals' && method === 'POST') return result(grow.createGoal(principal, rec, requestId), headers, 201);
-  if (path === '/api/v1/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
-  if (path === '/api/v1/grow/opportunities' && method === 'GET') return result(grow.opportunities(principal, requestId), headers);
-  if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
-    const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
-    return result(grow.dismissOpportunity(principal, id, requestId), headers);
+  if (isGrowBffSurface(grow)) {
+    if (path === '/api/v1/grow' && method === 'GET') return result(grow.home(principal, requestId), headers);
+    if (path === '/api/v1/grow/snapshot' && method === 'GET') return result(grow.snapshot(principal, requestId), headers);
+    if (path === '/api/v1/grow/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+    if (path === '/api/v1/grow/goals' && method === 'POST') return result(grow.createGoal(principal, rec, requestId), headers, 201);
+    if (path === '/api/v1/goals' && method === 'GET') return result(grow.goals(principal, requestId), headers);
+    if (path === '/api/v1/grow/opportunities' && method === 'GET') return result(grow.opportunities(principal, requestId), headers);
+    if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
+      const id = path.slice('/api/v1/grow/opportunities/'.length, -'/dismiss'.length);
+      return result(grow.dismissOpportunity(principal, id, requestId), headers);
+    }
+    if (path === '/api/v1/grow/plan' && method === 'GET') return result(grow.plan(principal, requestId), headers);
+    if (path === '/api/v1/grow/plan/request' && method === 'POST') return result(grow.requestNewPlan(principal, requestId), headers);
+    if (path === '/api/v1/grow/plan/pause' && method === 'POST') return result(grow.pause(principal, requestId), headers);
+    if (path === '/api/v1/grow/plan/resume' && method === 'POST') return result(grow.resume(principal, requestId), headers);
+    if (path === '/api/v1/grow/plan/progress' && method === 'GET') return result(grow.planProgress(principal, requestId), headers);
+    if (path === '/api/v1/grow/scenarios' && method === 'GET') return result(grow.scenarios(principal, requestId), headers);
+    if (path === '/api/v1/grow/proposals' && method === 'POST') return result(grow.createProposal(principal, rec, requestId), headers, 201);
+    if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/modify') && method === 'POST') {
+      const id = path.slice('/api/v1/grow/proposals/'.length, -'/modify'.length);
+      return result(grow.modifyProposal(principal, id, rec, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/approve') && method === 'POST') {
+      const id = path.slice('/api/v1/grow/proposals/'.length, -'/approve'.length);
+      return result(grow.approveProposal(principal, id, rec, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/execute') && method === 'POST') {
+      const id = path.slice('/api/v1/grow/proposals/'.length, -'/execute'.length);
+      return result(grow.executeProposal(principal, id, rec, requestId), headers);
+    }
+    if (path.startsWith('/api/v1/grow/proposals/') && method === 'GET') {
+      return result(grow.getProposal(principal, path.slice('/api/v1/grow/proposals/'.length), requestId), headers);
+    }
+    if (path.startsWith('/api/v1/grow/executions/') && method === 'GET') {
+      return result(grow.executionStatus(principal, path.slice('/api/v1/grow/executions/'.length), requestId), headers);
+    }
+    if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+    if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
+    if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+    if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
+    if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
+      const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
+      return result(grow.cancelRecurring(principal, id, requestId), headers);
+    }
+    if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
+    if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
   }
-  if (path === '/api/v1/grow/plan' && method === 'GET') return result(grow.plan(principal, requestId), headers);
-  if (path === '/api/v1/grow/plan/request' && method === 'POST') return result(grow.requestNewPlan(principal, requestId), headers);
-  if (path === '/api/v1/grow/plan/pause' && method === 'POST') return result(grow.pause(principal, requestId), headers);
-  if (path === '/api/v1/grow/plan/resume' && method === 'POST') return result(grow.resume(principal, requestId), headers);
-  if (path === '/api/v1/grow/plan/progress' && method === 'GET') return result(grow.planProgress(principal, requestId), headers);
-  if (path === '/api/v1/grow/scenarios' && method === 'GET') return result(grow.scenarios(principal, requestId), headers);
-  if (path === '/api/v1/grow/proposals' && method === 'POST') return result(grow.createProposal(principal, rec, requestId), headers, 201);
-  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/modify') && method === 'POST') {
-    const id = path.slice('/api/v1/grow/proposals/'.length, -'/modify'.length);
-    return result(grow.modifyProposal(principal, id, rec, requestId), headers);
+  if (!isProductGrowthService(grow)) {
+    return null;
   }
-  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/approve') && method === 'POST') {
-    const id = path.slice('/api/v1/grow/proposals/'.length, -'/approve'.length);
-    return result(grow.approveProposal(principal, id, rec, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/grow/proposals/') && path.endsWith('/execute') && method === 'POST') {
-    const id = path.slice('/api/v1/grow/proposals/'.length, -'/execute'.length);
-    return result(grow.executeProposal(principal, id, rec, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/grow/proposals/') && method === 'GET') {
-    return result(grow.getProposal(principal, path.slice('/api/v1/grow/proposals/'.length), requestId), headers);
-  }
-  if (path.startsWith('/api/v1/grow/executions/') && method === 'GET') {
-    return result(grow.executionStatus(principal, path.slice('/api/v1/grow/executions/'.length), requestId), headers);
-  }
-  if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
-  if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
-  if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
-  if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
-  if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
-    const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
-    return result(grow.cancelRecurring(principal, id, requestId), headers);
-  }
-  if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
-  if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
   const actor = actorFromPrincipal(principal);
 
   if (path === '/api/v1/grow' && method === 'GET') {
@@ -1150,6 +1310,24 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
   'POST /api/v1/agent/conversations',
+  'POST /api/v1/agent/conversations/{id}/messages',
+  'GET /api/v1/agent/conversations/{id}/stream',
+  'POST /api/v1/agent/conversations/{id}/close',
+  'GET /api/v1/agent/actions',
+  'GET /api/v1/agent/actions/{id}',
+  'POST /api/v1/agent/actions/{id}/revise',
+  'POST /api/v1/agent/actions/{id}/approve',
+  'POST /api/v1/agent/actions/{id}/step-up',
+  'POST /api/v1/agent/actions/{id}/execute',
+  'POST /api/v1/agent/actions/{id}/outcome',
+  'GET /api/v1/agent/memory',
+  'POST /api/v1/agent/memory',
+  'GET /api/v1/agent/settings',
+  'PATCH /api/v1/agent/settings',
+  'POST /api/v1/agent/pause',
+  'POST /api/v1/agent/revoke',
+  'POST /api/v1/agent/escalations',
+  'GET /api/v1/agent/audit/{actionId}',
   'GET /api/v1/agent/conversations/{id}',
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/agent/conversations/{id}/events',
@@ -1177,6 +1355,25 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/agents/{id}/conversations/{conversationId}/messages',
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
+  'GET /api/v1/economy',
+  'GET /api/v1/economy/assets',
+  'GET /api/v1/economy/assets/{id}',
+  'GET /api/v1/economy/supply',
+  'GET /api/v1/exchange/markets',
+  'GET /api/v1/exchange/markets/{instrument}',
+  'GET /api/v1/exchange/markets/{instrument}/ticker',
+  'GET /api/v1/exchange/markets/{instrument}/orderbook',
+  'GET /api/v1/exchange/markets/{instrument}/trades',
+  'GET /api/v1/exchange/markets/{instrument}/candles',
+  'GET /api/v1/exchange/eligibility',
+  'POST /api/v1/exchange/preview',
+  'GET /api/v1/exchange/orders',
+  'POST /api/v1/exchange/orders',
+  'GET /api/v1/exchange/orders/{id}',
+  'DELETE /api/v1/exchange/orders/{id}',
+  'GET /api/v1/exchange/fills',
+  'GET /api/v1/exchange/holdings',
+  'GET /api/v1/exchange/stream',
   'GET /api/v1/wallets',
   'GET /api/v1/wallets/{id}',
   'GET /api/v1/wallets/{id}/deposit-address',

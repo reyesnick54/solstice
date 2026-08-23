@@ -113,6 +113,10 @@ describe('Consumer BFF grow plans and proposals', () => {
   });
 });
 
+function auth(persona: Parameters<typeof sandboxToken>[0]) {
+  return `Bearer ${sandboxToken(persona)}`;
+}
+
 function get(
   world: ReturnType<typeof createSandboxWorld>,
   path: string,
@@ -124,7 +128,7 @@ function get(
     {
       method: 'GET',
       path,
-      query: {},
+      query,
       body: {},
       authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
     },
