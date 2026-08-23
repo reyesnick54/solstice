@@ -106,7 +106,7 @@ Resolved on inspection:
 | AI_MODEL_GATEWAY | `packages/ai-runtime` | `packages/ai-runtime/src/runtime.ts` | ACTIVE_CANONICAL | inference traces |
 | SUNREY_AGENT | `packages/sunrey-agent` | `packages/sunrey-agent/src/engine.ts` | ACTIVE_CANONICAL | mandates / proposals |
 | PERSONAL_ECONOMY_AGENT | `packages/agent` | `packages/agent/src/service.ts` | ACTIVE_SPECIALIZED | advisory proposals only |
-| AGENT_TOOLS | domain packages via Agent ports | `packages/sunrey-exchange/src/agent-tool.ts` | ACTIVE_SPECIALIZED | read / propose tools |
+| AGENT_TOOLS | `packages/sunrey-agent` | `packages/sunrey-agent/src/tools/registry.ts` | ACTIVE_CANONICAL | schema-validated read / propose tools |
 | AGENT_APPROVALS | `packages/sunrey-agent` | `packages/sunrey-agent/src/policy.ts` | ACTIVE_CANONICAL | human approval records |
 | SUNREY_EXCHANGE | `packages/sunrey-exchange` | `packages/sunrey-exchange/src/index.ts` | ACTIVE_CANONICAL | orders / fills |
 | MATCHING | `packages/sunrey-exchange` | `packages/sunrey-exchange/src/matching.ts` | ACTIVE_SPECIALIZED | matching engine |

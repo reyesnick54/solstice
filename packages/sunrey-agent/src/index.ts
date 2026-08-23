@@ -98,3 +98,21 @@ export {
   contentHash,
   mandateIdFor,
 } from './ids.ts';
+export {
+  AgentToolRuntime,
+  createAgentToolRuntime,
+  createCanonicalToolRegistry,
+  CANONICAL_AGENT_TOOLS,
+  CANONICAL_TOOL_COUNT,
+  EXISTING_AGENT_TOOL_AUDIT,
+  REFERENCE_FLOWS,
+  runReferenceFlow,
+  createFixtureToolPorts,
+} from './tools/index.ts';
+export type {
+  AgentToolDefinition,
+  AgentToolResult,
+  StructuredToolCall,
+  ToolSession,
+  AgentToolDomainPorts,
+} from './tools/index.ts';

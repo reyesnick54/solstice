@@ -118,6 +118,19 @@ export type {
   UserAgentMandate,
 } from './agent-mandates.ts';
 export {
+  AgentToolRuntime,
+  createAgentToolRuntime,
+  createCanonicalToolRegistry,
+  CANONICAL_AGENT_TOOLS,
+  CANONICAL_TOOL_COUNT,
+} from './agent-tools.ts';
+export type {
+  AgentToolDefinition,
+  AgentToolResult,
+  StructuredToolCall,
+  ToolSession,
+} from './agent-tools.ts';
+export {
   connectMobileWallet,
   syncWallet,
   subscribeWallet,
