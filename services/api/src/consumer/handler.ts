@@ -108,12 +108,10 @@ export type ConsumerBffRuntime = {
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
-  readonly hin?: InformationRightsMarketplace;
+  readonly hin?: InformationRightsMarketplace | HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
-  readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
-  readonly exchange?: ExchangeBffSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
@@ -383,7 +381,7 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
-  if (runtime.hin) {
+  if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
@@ -676,14 +674,14 @@ function dispatchAuthenticated(
 
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     const contributionId = path.slice('/api/v1/hin/contributions/'.length);
@@ -705,21 +703,21 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, { items: surface.methodologies(), isMintFormula: false }, headers);
@@ -1423,6 +1421,18 @@ function dispatchConversation(
     return result(surface.getAction(principal, id, requestId), headers);
   }
   return null;
+}
+
+function isRightsMarketplace(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is InformationRightsMarketplace {
+  return typeof (value as InformationRightsMarketplace).earningsFor === 'function';
+}
+
+function isHinContributionSurface(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is HinContributionSurface {
+  return typeof (value as HinContributionSurface).methodologies === 'function';
 }
 
 function str(value: unknown): string | undefined {

@@ -38,14 +38,14 @@ function mapVaultFailure(
     code === 'CROSS_SUBJECT_DENIED' || code === 'SUBJECT_MISMATCH' || code === 'CAPABILITY_DENIED'
       ? 'RESOURCE_NOT_OWNED'
       : code === 'GET_ALL_FORBIDDEN' || code === 'AGENT_CATEGORY_DENIED' || code === 'PURPOSE_DENIED'
-        ? 'FORBIDDEN'
+        ? 'FORBIDDEN_PROFILE_FIELD'
         : code === 'EXPORT_NOT_FOUND'
           ? 'NOT_FOUND'
           : 'VALIDATION';
   return bffError({
     errorCode,
     category:
-      errorCode === 'RESOURCE_NOT_OWNED' || errorCode === 'FORBIDDEN'
+      errorCode === 'RESOURCE_NOT_OWNED' || errorCode === 'FORBIDDEN_PROFILE_FIELD'
         ? 'AUTHORIZATION'
         : errorCode === 'NOT_FOUND'
           ? 'NOT_FOUND'
@@ -60,7 +60,7 @@ function mapVaultFailure(
 function result(body: unknown, headers: Record<string, string>, okStatus = 200): VaultDispatchResponse {
   if (isBffError(body)) {
     const status =
-      body.errorCode === 'RESOURCE_NOT_OWNED' || body.errorCode === 'FORBIDDEN'
+      body.errorCode === 'RESOURCE_NOT_OWNED' || body.errorCode === 'FORBIDDEN_PROFILE_FIELD'
         ? 403
         : body.errorCode === 'NOT_FOUND'
           ? 404

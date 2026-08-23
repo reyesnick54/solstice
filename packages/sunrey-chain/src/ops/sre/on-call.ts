@@ -33,25 +33,30 @@ const ESCALATION: readonly EscalationStep[] = Object.freeze([
   {
     severity: 'SEV1',
     primary: 'INCIDENT_COMMANDER',
-    escalateTo: Object.freeze(['OPERATIONS_AUTHORITY', 'SECURITY_AUTHORITY', 'TREASURY', 'PROTOCOL_AUTHORITY']),
+    escalateTo: Object.freeze([
+      'OPERATIONS_AUTHORITY',
+      'SECURITY_AUTHORITY',
+      'TREASURY',
+      'PROTOCOL_AUTHORITY',
+    ] as const),
     page: true,
   },
   {
     severity: 'SEV2',
     primary: 'OPERATIONS_AUTHORITY',
-    escalateTo: Object.freeze(['INCIDENT_COMMANDER', 'EXCHANGE', 'CUSTODY', 'VALIDATOR_OPERATIONS']),
+    escalateTo: Object.freeze(['INCIDENT_COMMANDER', 'EXCHANGE', 'CUSTODY', 'VALIDATOR_OPERATIONS'] as const),
     page: true,
   },
   {
     severity: 'SEV3',
     primary: 'OPERATIONS_AUTHORITY',
-    escalateTo: Object.freeze(['DATABASE', 'INFRASTRUCTURE', 'TREASURY']),
+    escalateTo: Object.freeze(['DATABASE', 'INFRASTRUCTURE', 'TREASURY'] as const),
     page: false,
   },
   {
     severity: 'SEV4',
     primary: 'OPERATIONS_AUTHORITY',
-    escalateTo: Object.freeze([]),
+    escalateTo: Object.freeze([] as const),
     page: false,
   },
 ]);

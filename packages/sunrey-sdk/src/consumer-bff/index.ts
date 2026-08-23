@@ -46,7 +46,6 @@ export type {
   AgentConversationResource,
   AgentMemoryResource,
   AgentMessageResponse,
-  GrowProposal,
   GrowProductProposal,
   GrowExecution,
   GrowExecutionState,
@@ -107,7 +106,6 @@ export type {
   DataPermissionCatalog,
   DataConsentGrant,
   DataConsentList,
-  HinParticipation,
   DataRightsRequestResource,
 } from './types.ts';
 export {

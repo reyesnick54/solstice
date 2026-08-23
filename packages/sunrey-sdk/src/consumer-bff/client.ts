@@ -766,7 +766,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', '/api/v1/data/records/ingest', input, options);
   }
 
-  async getVaultRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}`, undefined, options);
   }
 
@@ -774,7 +774,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/derive`, {}, options);
   }
 
-  async getVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataRecordHistory(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}/history`, undefined, options);
   }
 
@@ -788,10 +788,6 @@ export class SunReyConsumerBffClient {
 
   async getAccessHistory(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/access-history', undefined, options);
-  }
-
-  async getDataPermissions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/data/permissions', undefined, options);
   }
 
   async grantDataPermission(input: Record<string, unknown>, options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -874,7 +870,7 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/economy/moonrey', undefined, options);
   }
 
-  async getHinMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getEconomyHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/economy/hin', undefined, options);
   }
 
@@ -956,27 +952,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/vault/export/status', undefined, options);
   }
 
-  async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
-    return this.request('GET', '/api/v1/exchange/markets', undefined, options);
-  }
-
-  async getExchangeMarket(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}`, undefined, options);
-  }
-
-  async getExchangeTicker(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/ticker`, undefined, options);
-  }
-
-  async getExchangeOrderBook(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request(
-      'GET',
-      `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/orderbook`,
-      undefined,
-      options,
-    );
-  }
-
   async getExchangeTrades(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/trades`, undefined, options);
   }
@@ -1019,10 +994,6 @@ export class SunReyConsumerBffClient {
 
   async listHinValuationMethodologies(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/valuation-methodologies', undefined, options);
-  }
-
-  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
-    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
   async request<T>(

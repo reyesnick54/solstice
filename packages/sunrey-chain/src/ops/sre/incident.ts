@@ -60,8 +60,8 @@ export function createIncident(input: {
       {
         sequence: 1n,
         atUtc: input.detectedAt,
-        status: 'DETECTED',
-        actorRole: 'SYSTEM',
+        status: 'DETECTED' as const,
+        actorRole: 'SYSTEM' as const,
         summary: input.summary,
       },
     ]),
