@@ -42,6 +42,8 @@ import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
+import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
+import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
   BffPrincipal,
   FeatureCapabilityMap,
@@ -96,6 +98,7 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly agentRuntime: AgentConversationRuntime;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -206,6 +209,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.agent_enabled = agent.principal;
   sessions.set(sandboxToken('agent_enabled'), agent.principal);
   agentCounts.set(agent.principal.customerId, 2);
+  const agentRuntime = createSandboxAgentRuntime(NOW);
+  provisionSandboxAgent(agentRuntime, agent.principal, 'acct_sandbox_agent_usd');
   pendingActions.set(agent.principal.customerId, [
     Object.freeze({
       actionId: 'act_agent_proposal_1',
@@ -407,6 +412,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    agentRuntime,
   });
 }
 

@@ -186,6 +186,14 @@ export type AiInferenceTrace = {
   readonly storedSecrets: false;
 };
 
+export type AiStreamChunk = {
+  readonly kind: 'token' | 'done' | 'refused';
+  readonly text: string;
+  readonly requestId: AiRequestId;
+  readonly grantsExecutionAuthority: false;
+  readonly executedFinancialMutation: false;
+};
+
 export type AiRuntimePolicy = {
   readonly mode: AiRuntimeMode;
   readonly allowLocalTestFallback: boolean;

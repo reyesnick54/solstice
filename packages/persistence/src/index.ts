@@ -125,6 +125,9 @@ export type {
 } from './exchange/durable-store.ts';
 export { DurablePaymentStore } from './payments/durable-store.ts';
 export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
+export { DurableAgentRuntimeStore } from './agent/durable-store.ts';
+export type { AgentDurableSnapshot } from './agent/durable-store.ts';
+export { loadAgentRuntimeState, persistAgentRuntimeState } from './agent/pg-agent-runtime-store.ts';
 export { DurableProviderStore } from './provider/durable-store.ts';
 export type { DurableProviderProfile, ProviderDurableSnapshot } from './provider/durable-store.ts';
 export { DurableUniversalProviderStore } from './provider/universal-store.ts';

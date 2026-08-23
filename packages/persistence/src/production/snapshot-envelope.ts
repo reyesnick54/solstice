@@ -11,7 +11,7 @@ import { canonicalJson } from '../canonical.ts';
 
 export const SNAPSHOT_ENVELOPE_VERSION = 1 as const;
 
-export const STORE_KINDS = ['CUSTODY', 'EXCHANGE', 'PAYMENT', 'PROVIDER'] as const;
+export const STORE_KINDS = ['CUSTODY', 'EXCHANGE', 'PAYMENT', 'PROVIDER', 'AGENT'] as const;
 export type DurableStoreKind = (typeof STORE_KINDS)[number];
 
 export const DURABLE_FAILURE_CODES = [

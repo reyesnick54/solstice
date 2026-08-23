@@ -24,6 +24,10 @@ export type {
   FinancialAccountLifecycle,
   FinancialProductType,
   MoneyView,
+  AgentResource,
+  AgentConversationResource,
+  AgentMemoryResource,
+  AgentMessageResponse,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

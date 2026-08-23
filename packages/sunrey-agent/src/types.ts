@@ -1,10 +1,14 @@
 import type { UtcInstant } from '../../domain/src/time.ts';
 import type {
   AgentApprovalId,
+  AgentConversationId,
   AgentExecutionRequestId,
+  AgentMemoryId,
+  AgentMessageId,
   AgentProposalRefId,
   AgentReceiptId,
   AgentRevocationId,
+  AgentRuntimeEventId,
   AgentSafetyEventId,
   MandatePolicyVersion,
   UserAgentId,
@@ -14,10 +18,22 @@ import type {
   AgentActionClass,
   AgentApprovalClass,
   AgentAssetId,
+  AgentAssistScope,
+  AgentIdentityKind,
+  AgentLifecycleState,
   AgentMandateRefusalCode,
+  AgentRuntimeEventKind,
+  AgentType,
+  ConversationStatus,
   ExpectedOutcomeClass,
+  ExplanationComplexity,
   MandateMode,
   MandateState,
+  MemoryCategory,
+  MemoryClassification,
+  MemorySource,
+  MessageRole,
+  PersonalizationVerbosity,
   ProposalState,
   RevocationScope,
   SafetyEventKind,
@@ -33,15 +49,48 @@ export type MandateOwner = {
   readonly organizationId?: string;
 };
 
+export type AgentModelPolicy = {
+  readonly modelRef: string;
+  readonly allowExternalProviders: false;
+  readonly storeHiddenReasoning: false;
+};
+
+export type AgentToolPolicy = {
+  readonly entitledTools: readonly string[];
+  readonly mutatingFinancialToolsForbidden: true;
+};
+
+export type AgentRiskPolicy = {
+  readonly riskPolicyId: string;
+  readonly mayAssumeUserAuthority: false;
+  readonly mayBecomeExecutionAuthority: false;
+};
+
 export type UserAgent = {
   readonly agentId: UserAgentId;
   readonly owner: MandateOwner;
+  readonly ownerId: string;
+  readonly identityKind: AgentIdentityKind;
+  readonly agentType: AgentType;
+  readonly name: string;
   readonly label: string;
   readonly modelRef: string;
   readonly policyRef: string;
+  readonly modelPolicy: AgentModelPolicy;
+  readonly toolPolicy: AgentToolPolicy;
+  readonly mandateId: UserAgentMandateId | null;
+  readonly jurisdiction: string | null;
+  readonly riskPolicy: AgentRiskPolicy;
   readonly createdAt: UtcInstant;
-  readonly status: 'ACTIVE' | 'REVOKED';
+  readonly status: AgentLifecycleState;
   readonly receivesMasterKey: false;
+  readonly isCustomer: false;
+  readonly isExecutionAuthority: false;
+};
+
+export type AgentTimeWindow = {
+  readonly startHourUtc: number;
+  readonly endHourUtc: number;
 };
 
 export type AgentBudget = {
@@ -51,6 +100,13 @@ export type AgentBudget = {
   readonly perAsset: Readonly<Record<string, string>>;
   readonly perMarket: Readonly<Record<string, string>>;
   readonly perActionClass: Readonly<Record<string, string>>;
+  readonly maxProposalAmount?: bigint;
+  readonly dailyProposalAggregate?: bigint;
+  readonly perToolBudget?: Readonly<Record<string, string>>;
+  readonly allowedCurrencies?: readonly string[];
+  readonly allowedAssetClasses?: readonly string[];
+  readonly jurisdiction?: string | null;
+  readonly timeWindows?: readonly AgentTimeWindow[];
 };
 
 export type AgentAssetPermission = {
@@ -103,6 +159,7 @@ export type UserAgentMandate = {
   readonly state: MandateState;
   readonly policy: AgentMandatePolicy;
   readonly permissions: AgentPermission;
+  readonly assistScopes: readonly AgentAssistScope[];
   readonly budget: AgentBudget;
   readonly createdByActorId: string;
   readonly createdAt: UtcInstant;
@@ -267,4 +324,126 @@ export type RiskRestrictionView = {
 export type JurisdictionView = {
   readonly packId: string | null;
   readonly actionAvailable: boolean;
+};
+
+export type AgentConversation = {
+  readonly conversationId: AgentConversationId;
+  readonly ownerId: string;
+  readonly agentId: UserAgentId;
+  readonly createdAt: UtcInstant;
+  readonly updatedAt: UtcInstant;
+  readonly status: ConversationStatus;
+  readonly title: string;
+  readonly contextVersion: number;
+  readonly proposalRefs: readonly string[];
+  readonly isFinancialRecord: false;
+};
+
+export type AgentMessage = {
+  readonly messageId: AgentMessageId;
+  readonly conversationId: AgentConversationId;
+  readonly role: MessageRole;
+  readonly content: string;
+  readonly createdAt: UtcInstant;
+  readonly visible: boolean;
+  readonly proposalRef: string | null;
+  readonly toolEventId: string | null;
+  readonly hiddenReasoning: false;
+};
+
+export type AgentToolEvent = {
+  readonly toolEventId: string;
+  readonly conversationId: AgentConversationId;
+  readonly messageId: AgentMessageId | null;
+  readonly toolName: string;
+  readonly ok: boolean;
+  readonly summary: string;
+  readonly proposalRef: string | null;
+  readonly executedFinancialMutation: false;
+  readonly createdAt: UtcInstant;
+};
+
+export type AgentMemory = {
+  readonly memoryId: AgentMemoryId;
+  readonly agentId: UserAgentId;
+  readonly ownerId: string;
+  readonly category: MemoryCategory;
+  readonly content: string;
+  readonly source: MemorySource;
+  readonly confidence: 'USER_DECLARED' | 'CONFIRMED' | 'REFERENCED';
+  readonly createdAt: UtcInstant;
+  readonly updatedAt: UtcInstant;
+  readonly expiresAt: UtcInstant | null;
+  readonly userEditable: boolean;
+  readonly dataClassification: MemoryClassification;
+  readonly personalization: boolean;
+};
+
+export type AgentPersonalization = {
+  readonly ownerId: string;
+  readonly agentId: UserAgentId;
+  readonly verbosity: PersonalizationVerbosity;
+  readonly displayCurrency: string;
+  readonly language: string;
+  readonly explanationComplexity: ExplanationComplexity;
+  readonly personalizationMemoryEnabled: boolean;
+  readonly altersFinancialMathematics: false;
+  readonly altersRegulatoryDisclosures: false;
+};
+
+export type AgentRuntimeEvent = {
+  readonly eventId: AgentRuntimeEventId;
+  readonly kind: AgentRuntimeEventKind;
+  readonly agentId: UserAgentId | null;
+  readonly ownerId: string | null;
+  readonly conversationId: AgentConversationId | null;
+  readonly memoryId: AgentMemoryId | null;
+  readonly mandateId: UserAgentMandateId | null;
+  readonly at: UtcInstant;
+  readonly detail: string;
+  readonly containsConversationContent: false;
+};
+
+export type PegReadView = {
+  readonly subjectId: string;
+  readonly authoritativeBalance: false;
+  readonly ledgerWins: true;
+  readonly goalLabels: readonly string[];
+  readonly incomeLabels: readonly string[];
+  readonly obligationLabels: readonly string[];
+  readonly opportunityTitles: readonly string[];
+};
+
+export type ConversationContext = {
+  readonly conversationId: AgentConversationId;
+  readonly contextVersion: number;
+  readonly recentMessages: readonly AgentMessage[];
+  readonly activeProposalId: string | null;
+  readonly currentUserRequest: string;
+  readonly financialContext: PegReadView | null;
+  readonly toolResults: readonly AgentToolEvent[];
+  readonly tokenBudget: number;
+  readonly assembledChars: number;
+  readonly omittedLifetimeHistory: true;
+};
+
+export type ContextAuthorizationDecision = {
+  readonly allowed: boolean;
+  readonly releasedObjectIds: readonly string[];
+  readonly deniedObjectIds: readonly string[];
+  readonly code: AgentMandateRefusalCode | null;
+  readonly detail: string;
+};
+
+export type AgentRuntimeSnapshot = {
+  readonly agents: readonly UserAgent[];
+  readonly mandates: readonly UserAgentMandate[];
+  readonly proposals: readonly AgentTransactionProposal[];
+  readonly usage: readonly AgentMandateUsage[];
+  readonly conversations: readonly AgentConversation[];
+  readonly messages: readonly AgentMessage[];
+  readonly toolEvents: readonly AgentToolEvent[];
+  readonly memories: readonly AgentMemory[];
+  readonly personalization: readonly AgentPersonalization[];
+  readonly runtimeEvents: readonly AgentRuntimeEvent[];
 };

@@ -65,6 +65,7 @@ export type {
   AiInferenceResponse,
   AiInferenceTrace,
   AiModelReference,
+  AiStreamChunk,
   AiProviderFailure,
   AiProviderHealth,
   AiRoutingDecision,

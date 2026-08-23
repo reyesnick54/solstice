@@ -260,6 +260,15 @@ const REGISTRY: readonly EventSchemaRecord[] = [
   { eventType: 'ProviderWebhookRejected', version: 1, status: 'current' },
   { eventType: 'OutboundWebhookDelivered', version: 1, status: 'current' },
   { eventType: 'OutboundWebhookFailed', version: 1, status: 'current' },
+  { eventType: 'AgentCreated', version: 1, status: 'current' },
+  { eventType: 'AgentPaused', version: 1, status: 'current' },
+  { eventType: 'AgentRevoked', version: 1, status: 'current' },
+  { eventType: 'AgentConversationCreated', version: 1, status: 'current' },
+  { eventType: 'AgentMessageReceived', version: 1, status: 'current' },
+  { eventType: 'AgentMessageCompleted', version: 1, status: 'current' },
+  { eventType: 'AgentMemoryCreated', version: 1, status: 'current' },
+  { eventType: 'AgentMemoryChanged', version: 1, status: 'current' },
+  { eventType: 'AgentMandateChanged', version: 1, status: 'current' },
 ];
 
 export const EVENT_COMPATIBILITY_POLICY = Object.freeze({

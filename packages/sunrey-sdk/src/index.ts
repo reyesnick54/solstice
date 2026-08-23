@@ -177,4 +177,8 @@ export type {
   Payment,
   PaymentStatus,
   PaymentApproval,
+  AgentResource,
+  AgentConversationResource,
+  AgentMemoryResource,
+  AgentMessageResponse,
 } from './consumer-bff/index.ts';
