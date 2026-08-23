@@ -1007,10 +1007,14 @@ export type HinEarningsActivity = {
 };
 
 export type HinParticipation = {
-  readonly schema: 'sunrey.consumer.hin.participation.v1';
-  readonly status: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
-  readonly compensationGuaranteed: false;
-  readonly productionActivated: false;
+  readonly schema?: 'sunrey.consumer.hin.participation.v1';
+  readonly status?: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
+  readonly state?: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+  readonly compensationGuaranteed?: false;
+  readonly productionActivated?: false;
+  readonly financialServicesRemainOpen?: true;
+};
+
 export type DataPermissionCatalog = {
   readonly schema: 'sunrey.consumer.data.permissions.v1';
   readonly termsVersion: string;
@@ -1035,11 +1039,6 @@ export type DataConsentGrant = {
 export type DataConsentList = {
   readonly schema: 'sunrey.consumer.data.consents.v1';
   readonly items: readonly DataConsentGrant[];
-};
-
-export type HinParticipation = {
-  readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
-  readonly financialServicesRemainOpen: true;
 };
 
 export type DataRightsRequestResource = {

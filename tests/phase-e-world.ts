@@ -26,7 +26,7 @@ import { createAccountsReadAdapter } from '../services/api/src/consumer/accounts
 import { GrowBffSurface } from '../services/api/src/consumer/grow.ts';
 import { handleConsumerBff, type BffRequest, type BffResponse, type ConsumerBffRuntime } from '../services/api/src/consumer/handler.ts';
 import { ConsumerBff, memoryPreferenceStore } from '../services/api/src/consumer/orchestrator.ts';
-import type { BffPrincipal } from '../services/api/src/consumer/ports.ts';
+import type { BffPrincipal, GrowPortfolioPort } from '../services/api/src/consumer/ports.ts';
 import { startConsumerBff } from '../services/api/src/consumer/http.ts';
 
 export const PHASE_E_NOW = asUtcInstant('2026-08-22T12:00:00.000Z');
@@ -245,6 +245,30 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
       proposalRiskClass: 'MODERATE',
     }),
   });
+  const growPortfolio: GrowPortfolioPort = {
+    summarize: () =>
+      Object.freeze({
+        availability: 'AVAILABLE_SIMULATION',
+        state: 'SIMULATION_ONLY',
+        provider: 'SIMULATED',
+        reason: 'Grow My Money sandbox productization',
+        count: 1,
+      }),
+    portfolio: (row) => growBff.portfolio(row, 'req_phase_e'),
+    holdings: (row) => {
+      const view = growBff.portfolio(row, 'req_phase_e');
+      return view && typeof view === 'object' && 'holdings' in view ? view.holdings : view;
+    },
+    performance: (row) => growBff.performance(row, 'req_phase_e'),
+    allocation: (row) => {
+      const view = growBff.portfolio(row, 'req_phase_e');
+      return view && typeof view === 'object' && 'allocation' in view ? view.allocation : view;
+    },
+    risk: (row) => {
+      const view = growBff.portfolio(row, 'req_phase_e');
+      return view && typeof view === 'object' && 'risk' in view ? view.risk : view;
+    },
+  };
   const bff = new ConsumerBff({
     now: () => clock.now(),
     accounts: createAccountsReadAdapter(runtime),
@@ -259,6 +283,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
           count: 1,
         }),
     },
+    growPortfolio,
     providerRuntime: providers,
   });
   const sessions = new Map([[PHASE_E_TOKEN, principal]]);

@@ -108,12 +108,10 @@ export type ConsumerBffRuntime = {
   readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
-  readonly hin?: InformationRightsMarketplace;
+  readonly hin?: InformationRightsMarketplace | HinContributionSurface;
   readonly nativeEconomy?: NativeEconomySurface;
   readonly productiveEconomy?: ProductiveEconomySurface;
-  readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
-  readonly exchange?: ExchangeBffSurface;
   readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
@@ -383,13 +381,27 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
-  if (runtime.hin) {
-    const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
+  if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
+    const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
     if (hin) {
       return hin;
+    }
+  }
   if (runtime.dataRights) {
     const dataRights = dispatchDataRights(
       runtime.dataRights,
+      request,
+      principal,
+      requestId,
+      headers,
+      runtime.identity
+        ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) }
+        : undefined,
+    );
+    if (dataRights) {
+      return dataRights;
+    }
+  }
   if (runtime.vault && runtime.identity) {
     const vault = dispatchVault(
       runtime.vault,
@@ -397,10 +409,6 @@ function dispatchAuthenticated(
       principal,
       requestId,
       headers,
-      runtime.identity ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) } : undefined,
-    );
-    if (dataRights) {
-      return dataRights;
       { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
     );
     if (vault) {
@@ -666,14 +674,14 @@ function dispatchAuthenticated(
 
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     const contributionId = path.slice('/api/v1/hin/contributions/'.length);
@@ -695,21 +703,21 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
     const surface = runtime.hin;
-    if (!surface) {
+    if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
     }
     return json(200, { items: surface.methodologies(), isMintFormula: false }, headers);
@@ -1044,6 +1052,13 @@ function dispatchPayments(
   return null;
 }
 
+function isHinContributionSurface(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is HinContributionSurface {
+  return typeof (hin as HinContributionSurface).list === 'function'
+    && typeof (hin as HinContributionSurface).metrics === 'function';
+}
+
 function isLifecycleExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
 ): exchange is ExchangeLifecycleSurface {
@@ -1054,8 +1069,6 @@ function isLifecycleExchange(
 
 function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
-function dispatchExchange(
-  exchange: ExchangeBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1150,7 +1163,6 @@ function dispatchExchange(
     const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/ticker'.length);
     return result(exchange.ticker(principal, instrument, requestId), headers);
   }
-  if (path.startsWith('/api/v1/exchange/markets/') && (path.endsWith('/order-book') || path.endsWith('/orderbook')) && method === 'GET') {
   if (
     path.startsWith('/api/v1/exchange/markets/') &&
     (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&

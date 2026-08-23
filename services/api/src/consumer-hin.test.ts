@@ -4,9 +4,13 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../../packages/config/src/clock.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { createSandboxRightsMarketplace } from '../../../packages/information-market/src/rights-marketplace/index.ts';
-import { handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { CONSUMER_BFF_ROUTES, handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { createHinContributionSurface } from './consumer/hin-adapter.ts';
+import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
+import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
 import { sandboxToken } from './consumer/sandbox-personas.ts';
+import type { SessionDirectory } from './consumer/session.ts';
 
 const NOW = asUtcInstant('2026-08-23T08:00:00.000Z');
 
@@ -96,16 +100,12 @@ describe('Consumer BFF HIN rights marketplace', () => {
     const body = participation.body as { status: string; compensationGuaranteed: boolean };
     assert.equal(body.status, 'PAUSED');
     assert.equal(body.compensationGuaranteed, false);
-import { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/handler.ts';
-import { createHinContributionSurface } from './consumer/hin-adapter.ts';
-import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
-import type { ConsumerBff } from './consumer/orchestrator.ts';
-import type { BffPrincipal } from './consumer/ports.ts';
-import type { SessionDirectory } from './consumer/session.ts';
+  });
+});
 
 const TOKEN = 'sandbox.basic_verified';
 
-function principal(): BffPrincipal {
+function contributionPrincipal(): BffPrincipal {
   return {
     actorId: 'actor_basic',
     customerId: 'cust_basic',
@@ -123,8 +123,8 @@ function principal(): BffPrincipal {
   };
 }
 
-function hinRuntime(): ConsumerBffRuntime {
-  const sessions: SessionDirectory = new Map([[TOKEN, principal()]]);
+function contributionRuntime(): ConsumerBffRuntime {
+  const sessions: SessionDirectory = new Map([[TOKEN, contributionPrincipal()]]);
   return {
     bff: {
       featureStub: (group: string) =>
@@ -152,7 +152,7 @@ describe('Consumer BFF HIN contributions', () => {
   });
 
   it('returns customer contributions and aggregate metrics without raw personal data', () => {
-    const runtime = hinRuntime();
+    const runtime = contributionRuntime();
     const list = handleConsumerBff(runtime, {
       method: 'GET',
       path: '/api/v1/hin/contributions',
@@ -192,7 +192,7 @@ describe('Consumer BFF HIN contributions', () => {
   });
 
   it('rejects privileged verify and mint posts', () => {
-    const runtime = hinRuntime();
+    const runtime = contributionRuntime();
     const verify = handleConsumerBff(runtime, {
       method: 'POST',
       path: '/api/v1/hin/contributions/hec_1/verify',

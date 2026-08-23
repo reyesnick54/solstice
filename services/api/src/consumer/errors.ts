@@ -61,13 +61,13 @@ export function statusForError(error: BffErrorEnvelope): number {
   switch (error.errorCode) {
     case 'AUTH_REQUIRED':
     case 'SESSION_INVALID':
+    case 'STEP_UP_REQUIRED':
       return 401;
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
-    case 'STEP_UP_REQUIRED':
       return 403;
     case 'NOT_FOUND':
       return 404;

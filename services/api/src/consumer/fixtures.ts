@@ -567,6 +567,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     hin,
     exchange: createExchangeBffSurface(),
     dataRights,
+    vault,
   });
 }
 
@@ -582,7 +583,6 @@ function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsE
     consent,
     evidence: runtime.evidence,
     events: runtime.events,
-    vault,
   });
 }
 
