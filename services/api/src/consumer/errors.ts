@@ -15,6 +15,7 @@ export const BFF_ERROR_CODES = [
   'RESOURCE_NOT_OWNED',
   'NOT_FOUND',
   'VALIDATION',
+  'FORBIDDEN',
   'FORBIDDEN_PROFILE_FIELD',
   'INVALID_PAGINATION_CURSOR',
   'INVALID_FILTER',
@@ -63,6 +64,7 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'SESSION_INVALID':
       return 401;
     case 'RESOURCE_NOT_OWNED':
+    case 'FORBIDDEN':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':

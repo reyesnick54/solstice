@@ -29,13 +29,23 @@ import type { Account } from '../../../../packages/domain/src/account.ts';
 import {
   ProductGrowthService,
   type CreateGrowPlanInput,
-  type FinancialProposal,
+  type FinancialProposal as ProductFinancialProposal,
   type GrowProductFailure,
   type GrowthProductActor,
   type ProductGrowthPlan,
   isGrowRiskProfile,
 } from '../../../../packages/platform/src/growth/product/index.ts';
 import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
+
+export {
+  ProductGrowthService,
+  type CreateGrowPlanInput,
+  type GrowProductFailure,
+  type GrowthProductActor,
+  type ProductGrowthPlan,
+  isGrowRiskProfile,
+};
+export { toLovableExperience };
 
 export type GrowBffDeps = {
   readonly peg: EconomicGraphService;
@@ -703,19 +713,6 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
 }
 
 export { Money };
-import {
-  ProductGrowthService,
-  type CreateGrowPlanInput,
-  type FinancialProposal as ProductFinancialProposal,
-  type GrowProductFailure,
-  type GrowRiskProfile,
-  type GrowthProductActor,
-  type ProductGrowthPlan,
-  isGrowRiskProfile,
-} from '../../../../packages/platform/src/growth/product/index.ts';
-import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
-
-export { toLovableExperience };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {

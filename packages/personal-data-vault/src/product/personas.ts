@@ -38,7 +38,7 @@ export type VaultPersonaSeed = {
   readonly records: readonly VaultPersonaSeedRecord[];
 };
 
-export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
+export const VAULT_PERSONA_SEEDS = Object.freeze([
   Object.freeze({
     personaId: 'MINIMAL',
     label: 'Minimal vault',
@@ -264,7 +264,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
       },
     ]),
   }),
-]);
+]) as readonly VaultPersonaSeed[];
 
 export function vaultPersonaSeed(id: VaultPersonaId): VaultPersonaSeed {
   const found = VAULT_PERSONA_SEEDS.find((row) => row.personaId === id);

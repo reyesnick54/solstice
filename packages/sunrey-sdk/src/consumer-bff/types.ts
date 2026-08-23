@@ -361,8 +361,6 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProductProposal = GrowPlanProposal;
-export type GrowProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
