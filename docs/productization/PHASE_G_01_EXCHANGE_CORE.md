@@ -250,8 +250,7 @@ Preserved:
 2. Customer productization migrations are now contiguous V034–V037.
    Exchange-core persistence still reuses V025/V027 rather than adding
    a new Exchange table.
-3. `PHASE_F_CLOSURE_REPORT.md` is not on this tree. Phase F Prompts 1–4
-   exist and this prompt extends that work.
+3. `PHASE_F_CLOSURE_REPORT.md` is now on this tree after merging main.
 4. No live Exchange, custody, or bank is connected.
 
 `SAFE_TO_PROCEED_TO_PHASE_G_PROMPT_2=true` after tests in this prompt
