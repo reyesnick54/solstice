@@ -42,9 +42,8 @@ import {
 } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
-import type { ExchangeBffSurface } from './exchange-bff.ts';
 import type { GrowBffSurface } from './grow.ts';
-import type { ExchangeBffSurface } from './exchange.ts';
+import { ExchangeBffSurface } from './exchange.ts';
 import {
   actorFromPrincipal,
   growCatalog,
@@ -337,16 +336,8 @@ function dispatchAuthenticated(
       return agents;
     }
   }
-  if (runtime.grow && 'home' in runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-  if (runtime.exchange) {
-    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers);
-    if (exchange) {
-      return exchange;
-    }
-  }
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow as GrowBffSurface & ProductGrowthService, request, principal, requestId, headers);
+    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
     }
@@ -355,6 +346,8 @@ function dispatchAuthenticated(
     const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers);
     if (exchange) {
       return exchange;
+    }
+  }
   if (runtime.wallets) {
     const wallets = dispatchWallets(
       runtime.wallets,
@@ -433,10 +426,8 @@ function dispatchAuthenticated(
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
   }
-  if (runtime.grow && 'home' in runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow as GrowBffSurface & ProductGrowthService, request, principal, requestId, headers);
+    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
     }
@@ -1008,91 +999,6 @@ function dispatchExchange(
   if (path === '/api/v1/economy/sunrey-coin' && method === 'GET') return result(exchange.sunreyCoin(principal, requestId), headers);
   if (path === '/api/v1/economy/moonrey-coin' && method === 'GET') return result(exchange.moonreyCoin(principal, requestId), headers);
   if (path === '/api/v1/economy/status' && method === 'GET') return result(exchange.economyStatus(principal, requestId), headers);
-  return null;
-}
-
-function dispatchGrow(
-  grow: GrowBffSurface,
-function dispatchGrow(
-  grow: GrowBffSurface & ProductGrowthService,
-  grow: GrowBffSurface | ProductGrowthService,
-  request: BffRequest,
-  principal: import('./ports.ts').BffPrincipal,
-  requestId: string,
-  headers: Record<string, string>,
-): BffResponse | null {
-  const { method, path, query, body } = request;
-  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
-  if ((path === '/api/v1/exchange' || path === '/api/v1/exchange/markets') && method === 'GET') {
-    return result(exchange.markets(principal, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/eligibility' && method === 'GET') {
-    return result(exchange.eligibility(principal, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/preview' && method === 'POST') {
-    return result(exchange.preview(principal, rec, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/orders' && method === 'GET') {
-    return result(exchange.orders(principal, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/orders' && method === 'POST') {
-    return result(exchange.submitOrder(principal, rec, requestId), headers, 201);
-  }
-  if (path === '/api/v1/exchange/fills' && method === 'GET') {
-    return result(exchange.fills(principal, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/holdings' && method === 'GET') {
-    return result(exchange.holdings(principal, requestId), headers);
-  }
-  if (path === '/api/v1/exchange/stream' && method === 'GET') {
-    const after = Number(query.after ?? '0');
-    const stream = exchange.stream(principal, Number.isFinite(after) ? after : 0, requestId);
-    if (isBffError(stream)) {
-      return result(stream, headers);
-    }
-    if ((request.accept ?? '').includes('text/event-stream')) {
-      return Object.freeze({
-        status: 200,
-        body: (stream as { sse: string }).sse,
-        headers: Object.freeze({
-          ...headers,
-          'cache-control': 'no-store, no-cache, private',
-          'content-type': 'text/event-stream; charset=utf-8',
-        }),
-      });
-    }
-    return result(stream, headers);
-  }
-  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/ticker') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/ticker'.length);
-    return result(exchange.ticker(principal, instrument, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/orderbook') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/orderbook'.length);
-    return result(exchange.orderBook(principal, instrument, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/trades') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/trades'.length);
-    return result(exchange.trades(principal, instrument, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/candles') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/candles'.length);
-    return result(exchange.candles(principal, instrument, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length);
-    if (instrument.length > 0 && !instrument.includes('/')) {
-      return result(exchange.market(principal, instrument, requestId), headers);
-    }
-  }
-  if (path.startsWith('/api/v1/exchange/orders/') && method === 'GET') {
-    const id = path.slice('/api/v1/exchange/orders/'.length);
-    return result(exchange.order(principal, id, requestId), headers);
-  }
-  if (path.startsWith('/api/v1/exchange/orders/') && method === 'DELETE') {
-    const id = path.slice('/api/v1/exchange/orders/'.length);
-    return result(exchange.cancelOrder(principal, id, requestId), headers);
-  }
   return null;
 }
 
