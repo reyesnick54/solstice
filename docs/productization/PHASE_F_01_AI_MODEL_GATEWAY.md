@@ -11,9 +11,12 @@ This prompt productizes one canonical AI Model Gateway. It does not
 start Prompt 2. It does not activate live model vendors, flip `LIVE_*`
 flags, or give the AI financial authority.
 
-Phase E closure was not present on this tree. Phase D reported
-`READY_FOR_PHASE_E=true`. This prompt extends the existing Chunk 101/102
-inference plane rather than inventing a second one.
+Phase E closure is present after merging `main`
+(`docs/productization/PHASE_E_CLOSURE_REPORT.md`). This prompt extends
+the existing Chunk 101/102 inference plane rather than inventing a
+second one. The Phase E merge mashed `services/api.allowedDependencies`
+and the constitution import table; this prompt repairs those to one
+valid allow-list. It does not create a second API owner.
 
 `SAFE_TO_PROCEED_TO_PHASE_F_PROMPT_2=true`
 
