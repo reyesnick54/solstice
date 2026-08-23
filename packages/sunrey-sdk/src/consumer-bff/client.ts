@@ -754,7 +754,7 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/sources', undefined, options);
   }
 
-  async listVaultRecords(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async listDataRecords(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/records', undefined, options);
   }
 
@@ -766,7 +766,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', '/api/v1/data/records/ingest', input, options);
   }
 
-  async getVaultRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataRecord(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}`, undefined, options);
   }
 
@@ -774,7 +774,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/data/records/${encodeURIComponent(recordId)}/derive`, {}, options);
   }
 
-  async getVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataRecordHistory(recordId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/data/records/${encodeURIComponent(recordId)}/history`, undefined, options);
   }
 
@@ -811,6 +811,7 @@ export class SunReyConsumerBffClient {
   }
 
   async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/hin', undefined, options);
   }
 
@@ -870,7 +871,7 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/economy/moonrey', undefined, options);
   }
 
-  async getHinMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getEconomyHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/economy/hin', undefined, options);
   }
 

@@ -8,6 +8,15 @@ export const SERVICE_ROLES = [
   'EVIDENCE_SEALER',
   'EVENT_DISPATCHER',
   'SECURITY_CONTROL_PLANE',
+  'API_GATEWAY',
+  'IDENTITY_SERVICE',
+  'PAYMENTS_SERVICE',
+  'EXCHANGE_SERVICE',
+  'CUSTODY_SERVICE',
+  'AGENT_RUNTIME',
+  'ADMIN_OPERATIONS',
+  'CHAIN_RPC',
+  'VALIDATOR',
 ] as const;
 
 export type ServiceRole = (typeof SERVICE_ROLES)[number];
@@ -19,6 +28,10 @@ export const SERVICE_CAPABILITIES = [
   'SEAL_EVIDENCE',
   'DISPATCH_EVENTS',
   'MANAGE_KEYS',
+  'AUTHENTICATE_PEER',
+  'READ_FINALIZED_CHAIN',
+  'ADMINISTER',
+  'PROPOSE_ONLY',
 ] as const;
 
 export type ServiceCapability = (typeof SERVICE_CAPABILITIES)[number];

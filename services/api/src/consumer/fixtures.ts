@@ -548,8 +548,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
   const wallets = attachSandboxWallets(runtime, personas, { providerDown: options.providerDown === true });
   const hin = createSandboxRightsMarketplace(runtime.clock, personas.basic_verified.customerId);
-  const dataRights = attachSandboxDataRights(runtime);
   const vault = attachSandboxVault(runtime, personas);
+  const dataRights = attachSandboxDataRights(runtime, vault);
 
   return Object.freeze({
     label: SANDBOX_LABEL,
@@ -565,13 +565,17 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     conversation: createAgentConversationSurface(),
     wallets,
     hin,
+    vault,
     exchange: createExchangeBffSurface(),
     dataRights,
     vault,
   });
 }
 
-function attachSandboxDataRights(runtime: SimulationRuntime): ConsentDataRightsEngine {
+function attachSandboxDataRights(
+  runtime: SimulationRuntime,
+  _vault: PersonalDataVaultProduct,
+): ConsentDataRightsEngine {
   const consent = new ConsentService({
     clock: runtime.clock,
     keys: runtime.keyProvider,

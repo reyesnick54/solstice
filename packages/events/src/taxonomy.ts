@@ -50,6 +50,7 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'provider',
   'webhook',
   'agent',
+  'operations',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
@@ -334,6 +335,15 @@ export const EVENT_TYPE_NAMES = [
   'AgentMemoryCreated',
   'AgentMemoryChanged',
   'AgentMandateChanged',
+  'OperationsCaseCreated',
+  'OperationsCaseAssigned',
+  'OperationsCaseEscalated',
+  'OperationsCaseResolved',
+  'OperationsOperatorAction',
+  'OperationsProviderDisabled',
+  'OperationsMarketHalted',
+  'OperationsAccountRestricted',
+  'OperationsSupportViewOpened',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -611,6 +621,15 @@ export const EVENT_SCHEMA_REFS = {
   AgentMemoryCreated: 'solstice.agent.memory.created/1',
   AgentMemoryChanged: 'solstice.agent.memory.changed/1',
   AgentMandateChanged: 'solstice.agent.mandate.changed/1',
+  OperationsCaseCreated: 'solstice.operations.case.created/1',
+  OperationsCaseAssigned: 'solstice.operations.case.assigned/1',
+  OperationsCaseEscalated: 'solstice.operations.case.escalated/1',
+  OperationsCaseResolved: 'solstice.operations.case.resolved/1',
+  OperationsOperatorAction: 'solstice.operations.operator.action/1',
+  OperationsProviderDisabled: 'solstice.operations.provider.disabled/1',
+  OperationsMarketHalted: 'solstice.operations.market.halted/1',
+  OperationsAccountRestricted: 'solstice.operations.account.restricted/1',
+  OperationsSupportViewOpened: 'solstice.operations.support.view_opened/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -888,6 +907,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   AgentMemoryCreated: 'agent',
   AgentMemoryChanged: 'agent',
   AgentMandateChanged: 'agent',
+  OperationsCaseCreated: 'operations',
+  OperationsCaseAssigned: 'operations',
+  OperationsCaseEscalated: 'operations',
+  OperationsCaseResolved: 'operations',
+  OperationsOperatorAction: 'operations',
+  OperationsProviderDisabled: 'operations',
+  OperationsMarketHalted: 'operations',
+  OperationsAccountRestricted: 'operations',
+  OperationsSupportViewOpened: 'operations',
 };
 
 export const HISTORICAL_EVENT_SCHEMA_PREFIX = 'solstice.' as const;

@@ -11,6 +11,7 @@ import {
   assertNotJournal,
   crashRecoverOutbox,
 } from './production/event-fabric.ts';
+import { assertProductionDatabaseSecurity } from './production/database-security.ts';
 import { postgresReadiness } from './production/health.ts';
 import { assertMigrationSafe, planDomainMigration } from './production/migration-control.ts';
 import { evaluateCapacity, loggingBounded } from './production/monitoring.ts';
@@ -36,6 +37,9 @@ describe('Chunk 67 PostgreSQL production durability', () => {
     assertNoInlineProductionPassword(profile);
     assert.equal(simulationEnvRemainsLocal(), true);
     assert.equal(postgresReadiness(profile).ready, true);
+    const dbSecurity = assertProductionDatabaseSecurity();
+    assert.equal(dbSecurity.applicationSuperuserForbidden, true);
+    assert.equal(dbSecurity.tlsRequired, true);
   });
 
   it('routes financial writes to primary and rejects stale replica mutation', () => {

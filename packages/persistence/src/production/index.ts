@@ -27,6 +27,7 @@ export { createLocalPitrArchive, restoreLocalPitr, PITR_MODES } from './pitr.ts'
 export type { PitrArchive, PitrMode, PitrRestoreResult, WalSegment } from './pitr.ts';
 export { assertMigrationSafe, planDomainMigration } from './migration-control.ts';
 export type { SchemaMigrationPlan } from './migration-control.ts';
+export { assertProductionDatabaseSecurity } from './database-security.ts';
 export { postgresReadiness } from './health.ts';
 export type { PostgresHealth } from './health.ts';
 export { evaluateCapacity, loggingBounded, operationalBackupScope } from './monitoring.ts';

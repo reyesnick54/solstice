@@ -383,6 +383,8 @@ function dispatchAuthenticated(
   }
   if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
     const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
+  if (runtime.hin && isRightsMarketplace(runtime.hin)) {
+    const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
     }
@@ -1258,6 +1260,9 @@ function dispatchGrow(
     if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+    if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
+      return result(grow.performance(principal, requestId), headers);
+    }
     if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
     if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
       const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
@@ -1425,6 +1430,18 @@ function dispatchConversation(
     return result(surface.getAction(principal, id, requestId), headers);
   }
   return null;
+}
+
+function isRightsMarketplace(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is InformationRightsMarketplace {
+  return typeof (value as InformationRightsMarketplace).earningsFor === 'function';
+}
+
+function isHinContributionSurface(
+  value: InformationRightsMarketplace | HinContributionSurface,
+): value is HinContributionSurface {
+  return typeof (value as HinContributionSurface).methodologies === 'function';
 }
 
 function str(value: unknown): string | undefined {

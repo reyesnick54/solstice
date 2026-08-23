@@ -90,7 +90,7 @@ the Evidence Vault, the ledger, or the account-class taxonomy.
 - `packages/domain` — Customer, Account, Brand, LegalEntity, Result, time
 - `packages/money` — bigint minor units
 - `packages/permissions` — ActionIntent, HMAC Execution Authority
-- `packages/security` — KeyProvider, secret references, envelope encryption. Chunk 149 production-candidate provider credential plane lives at `src/regulated/credentials`. Raw credentials never enter domain configuration. Not a second Execution Authority, mint, or ledger.
+- `packages/security` — KeyProvider, secret references, envelope encryption. Chunk 149 production-candidate provider credential plane lives at `src/regulated/credentials`. Phase I Prompt 2 security productization lives at `src/productization`. `PRODUCTION_HSM_KMS_CONFIGURED` remains `false`. Raw credentials never enter domain configuration. Not a second Execution Authority, mint, or ledger. Do not create `packages/hsm`, `packages/pki`, `packages/zero-trust`, or `packages/security-v2`.
 - `packages/identity` — SunRey Identity, sessions, KYC metadata, ActorContext
 - `packages/kernel` — six proofs, monotonic combine, Kernel submit
 - `packages/ledger` — append-only journals, authority-required

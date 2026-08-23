@@ -24,6 +24,7 @@ const FLAG_NAMES = [
   'PRODUCTION_READY_DEFAULT',
   'PRODUCTION_ACTIVE',
   'LIVE_CONNECTIVITY_ENABLED',
+  'PRODUCTION_HSM_KMS_CONFIGURED',
   'production_authorized',
   'productionAuthorized',
 ];
@@ -37,6 +38,7 @@ const REQUIRED_FALSE_DEFAULTS = {
   PRODUCTION_READY: false,
   PRODUCTION_ACTIVE: false,
   LIVE_CONNECTIVITY_ENABLED: false,
+  PRODUCTION_HSM_KMS_CONFIGURED: false,
   production_authorized: false,
 };
 
@@ -77,6 +79,7 @@ export function checkProductionSafety(root = ROOT) {
     PRODUCTION_READY: 0,
     PRODUCTION_ACTIVE: 0,
     LIVE_CONNECTIVITY_ENABLED: 0,
+    PRODUCTION_HSM_KMS_CONFIGURED: 0,
     production_authorized: 0,
   };
 

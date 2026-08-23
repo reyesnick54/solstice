@@ -707,6 +707,7 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
 }
 
 export { Money };
+export { toLovableExperience };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {
