@@ -259,6 +259,17 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
     data: {
       consent: (ownerId) => ok({ ownerId, activePermits: 1, purposes: ['FINANCIAL_EXPLANATION'] }),
       permissions: (ownerId) => ok({ ownerId, scopes: ['derived_income', 'vault_metadata'] }),
+      hinParticipation: (ownerId) =>
+        ok({ ownerId, state: 'NOT_ENROLLED', financialServicesRemainOpen: true }),
+      vaultRecords(ownerId, input) {
+        if (ownerId !== owner) return fail('NOT_OWNED', 'vault records are not visible for that owner');
+        if ((!input.categoryIds || input.categoryIds.length === 0) && (!input.recordIds || input.recordIds.length === 0)) {
+          return fail('NOT_ELIGIBLE', 'agent wildcard vault access is forbidden');
+        }
+        return ok([
+          { dataRecordId: 'pda_fixture_pref', categoryId: 'goals_preferences', label: 'USER_DECLARED_DATA:pdsch_preference' },
+        ]);
+      },
     },
     nativeEconomy: {
       asset(assetId) {

@@ -348,6 +348,53 @@ describe('consumer BFF native economy SDK', () => {
   });
 });
 
+describe('consumer BFF data-rights SDK', () => {
+  it('calls consent and HIN participation routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_data',
+describe('consumer BFF vault SDK', () => {
+  it('calls vault home and category routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.vault_financial',
+      generateRequestId: () => 'req_vault',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.data.permissions.v1',
+            implicitMonetizationOptIn: false,
+            financialServicesRemainOpen: true,
+            items: [],
+            schema: 'sunrey.consumer.vault.home.v1',
+            productionActive: false,
+            liveMonetizationEnabled: false,
+            sunreyOwnsUserData: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    await client.getDataPermissions();
+    await client.listDataConsents();
+    await client.getHinParticipation();
+    await client.submitDataRightsRequest({ type: 'EXPORT' });
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/permissions')));
+    assert.ok(urls.some((row) => row.includes('/api/v1/hin/participation')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/data/rights/requests')));
+    const home = await client.getVaultHome();
+    await client.listVaultCategories();
+    await client.listVaultRecords();
+    assert.equal(home.schema, 'sunrey.consumer.vault.home.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/vault/categories')));
+  });
+});
+
 describe('consumer BFF SDK browser boundary', () => {
   it('does not import privileged or Node-only modules', () => {
     const dir = join(here, 'consumer-bff');

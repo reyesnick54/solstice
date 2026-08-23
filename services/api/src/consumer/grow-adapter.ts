@@ -2,9 +2,14 @@ import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts
 import type { OpportunityDiscoveryContext } from '../../../../packages/platform/src/growth/opportunity/types.ts';
 import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from '../../../../packages/platform/src/growth/opportunity/products.ts';
 import { simulationPolicyPort } from '../../../../packages/platform/src/policy-port.ts';
-import type { BffErrorEnvelope } from './errors.ts';
-import { bffError } from './errors.ts';
-import type { AccountsReadPort, BffPrincipal, GrowCommandPort, OptionalDomainPort, OptionalDomainSummary } from './ports.ts';
+import { bffError, type BffErrorEnvelope } from './errors.ts';
+import type {
+  AccountsReadPort,
+  BffPrincipal,
+  GrowCommandPort,
+  OptionalDomainPort,
+  OptionalDomainSummary,
+} from './ports.ts';
 import type { Opportunity } from '../../../../packages/platform/src/growth/opportunity/types.ts';
 import {
   asEconomicNodeId,
@@ -16,6 +21,7 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
+
 export type GrowOpportunityPort = OptionalDomainPort & {
   list(principal: BffPrincipal): unknown | BffErrorEnvelope;
   get(principal: BffPrincipal, opportunityId: string): unknown | BffErrorEnvelope;
@@ -234,7 +240,6 @@ export function createGrowCommandPort(input: {
     return Object.freeze({
       ...body,
       presentationValuation: valuation,
-      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
       ...('valuationContext' in body ? { valuationContext: valuation } : {}),
     });
   }
@@ -302,7 +307,10 @@ export function createGrowCommandPort(input: {
     });
   }
 
-  function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }, requestId: string): T | BffErrorEnvelope {
+  function unwrap<T>(
+    result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } },
+    requestId: string,
+  ): T | BffErrorEnvelope {
     if (!result.ok) {
       return mapCommandFailure(result.error, requestId);
     }
@@ -434,7 +442,10 @@ export function createGrowCommandPort(input: {
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
           ? { ok: true }
-          : mapCommandFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
+          : mapCommandFailure(
+              { code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' },
+              requestId,
+            );
       }
       if (kind === 'INCOME') {
         return unwrap(
@@ -505,6 +516,119 @@ export function createGrowCommandPort(input: {
         return actor;
       }
       return unwrap(peg.getAgentProfile(actor, principal.identityId, null), 'grow_agent');
+    },
+  };
+}
+
+function publicOpportunity(item: Opportunity): unknown {
+  return Object.freeze({
+    opportunityId: item.opportunityId,
+    type: item.type,
+    title: item.title,
+    summary: item.summary,
+    source: item.source,
+    eligible: item.eligible,
+    priority: item.priority,
+    estimatedImpact: item.estimatedImpact ?? null,
+    impactRange: item.impactRange ?? null,
+    impactKind: item.impact.kind,
+    assumptions: item.impact.assumptions,
+    rateSource: item.impact.rateSource ?? null,
+    taxDisclaimer: item.impact.taxDisclaimer,
+    riskLevel: item.riskLevel,
+    liquidityImpact: item.liquidityImpact,
+    timeHorizon: item.timeHorizon,
+    fees: item.fees,
+    dependencies: item.dependencies,
+    goalLinks: item.goalLinks,
+    evidence: { detector: item.evidence.detector, notes: item.evidence.notes },
+    expiresAt: item.expiresAt,
+    status: item.status,
+    immediatelyExecutable: false,
+    achievementPromised: false,
+    returnGuaranteed: false,
+    productionMoneyMovement: false,
+  });
+}
+
+export function createGrowOpportunityPort(input: {
+  readonly orchestrator: GrowthOrchestrator;
+  readonly accounts: AccountsReadPort;
+  readonly actorFor: (principal: BffPrincipal) => unknown;
+  readonly requestId?: string;
+}): GrowOpportunityPort {
+  const requestId = input.requestId ?? 'grow';
+  return {
+    summarize(principal): OptionalDomainSummary {
+      const listed = input.orchestrator.listOpportunities(
+        input.actorFor(principal),
+        principal.identityId,
+        contextFrom(principal, input.accounts),
+      );
+      const count = listed.ok ? listed.value.cards.length : 0;
+      return Object.freeze({
+        availability: 'AVAILABLE_SIMULATION',
+        state: 'SIMULATION_ONLY',
+        provider: 'SIMULATED',
+        reason: 'Growth opportunities are simulation reviews, not executable investments',
+        count,
+      });
+    },
+    list(principal) {
+      const listed = input.orchestrator.listOpportunities(
+        input.actorFor(principal),
+        principal.identityId,
+        contextFrom(principal, input.accounts),
+      );
+      if (!listed.ok) {
+        return mapFailure(listed.error.code, failureMessage(listed.error), requestId);
+      }
+      return Object.freeze({
+        schema: listed.value.schema,
+        generatedAt: listed.value.generatedAt,
+        rankingVersion: listed.value.rankingVersion,
+        productionMoneyMovement: false,
+        items: listed.value.cards.map((card) =>
+          Object.freeze({
+            ...card,
+            productionMoneyMovement: false,
+          }),
+        ),
+        opportunities: listed.value.items.map(publicOpportunity),
+        suppressedCount: listed.value.suppressedCount,
+      });
+    },
+    get(principal, opportunityId) {
+      const found = input.orchestrator.getOpportunity(input.actorFor(principal), principal.identityId, opportunityId);
+      if (!found.ok) {
+        return mapFailure(found.error.code, failureMessage(found.error), requestId);
+      }
+      return publicOpportunity(found.value);
+    },
+    dismiss(principal, opportunityId) {
+      const dismissed = input.orchestrator.dismissOpportunity(
+        input.actorFor(principal),
+        principal.identityId,
+        opportunityId,
+      );
+      if (!dismissed.ok) {
+        return mapFailure(dismissed.error.code, failureMessage(dismissed.error), requestId);
+      }
+      return publicOpportunity(dismissed.value);
+    },
+    startProposal(principal, opportunityId) {
+      const started = input.orchestrator.startOpportunityProposal(
+        input.actorFor(principal),
+        principal.identityId,
+        opportunityId,
+      );
+      if (!started.ok) {
+        return mapFailure(started.error.code, failureMessage(started.error), requestId);
+      }
+      return Object.freeze({
+        ...started.value,
+        productionMoneyMovement: false,
+      });
     },
   };
 }

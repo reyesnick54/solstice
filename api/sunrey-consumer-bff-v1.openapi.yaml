@@ -2023,10 +2023,210 @@ paths:
   /api/v1/data:
     get:
       operationId: getDataVault
-      summary: Data vault resource stub
+      summary: Personal Data Vault home
       responses:
         "200":
           description: Honest availability
+  /api/v1/data/permissions:
+    get:
+      operationId: getDataPermissions
+      summary: Purpose catalog and granted optional uses
+      responses:
+        "200":
+          description: Necessity-classed purposes; implicitMonetizationOptIn is always false
+  /api/v1/data/consents:
+    get:
+      operationId: listDataConsents
+      summary: Granular consent grants
+      responses:
+        "200":
+          description: Subject-bound consent list
+    post:
+      operationId: grantDataConsent
+      summary: Grant a purpose or permission bundle
+      responses:
+        "201":
+          description: Granular grant and receipt reference
+  /api/v1/data/consents/{id}/revoke:
+    post:
+      operationId: revokeDataConsent
+      summary: Revoke optional consent immediately
+          description: Owner vault summary. SunRey does not own user data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultHome'
+  /api/v1/data/vault:
+    get:
+      operationId: getVaultHome
+      summary: Personal Data Vault home
+      responses:
+        "200":
+          description: Same as /api/v1/data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VaultHome'
+  /api/v1/data/vault/categories:
+    get:
+      operationId: listVaultCategories
+      summary: Versioned vault category registry
+      responses:
+        "200":
+          description: Client-safe categories. Highly sensitive classes are not ingested by default.
+  /api/v1/data/vault/records:
+    get:
+      operationId: listVaultRecords
+      summary: List owner vault records
+      parameters:
+        - name: categoryId
+          in: query
+          schema: { type: string }
+        - name: kind
+          in: query
+          schema: { type: string }
+        - name: purpose
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: Metadata records. No getAllUserData shortcut.
+  /api/v1/data/vault/records/{id}:
+    get:
+      operationId: getVaultRecord
+      summary: Vault record detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Downstream access disabled; historical processing retained
+  /api/v1/data/access-history:
+    get:
+      operationId: getDataAccessHistory
+      summary: Access decisions without raw values
+      responses:
+        "200":
+          description: Actor, purpose, category, decision, resource refs
+  /api/v1/data/rights/requests:
+    get:
+      operationId: listDataRightsRequests
+      summary: Data-rights request list
+      responses:
+        "200":
+          description: Configurable workflow states
+    post:
+      operationId: submitDataRightsRequest
+      summary: Submit ACCESS, EXPORT, CORRECTION, DELETION, RESTRICTION, OBJECTION, or CONSENT_WITHDRAWAL
+      responses:
+        "201":
+          description: Request accepted under the jurisdiction pack
+  /api/v1/hin/participation:
+    get:
+      operationId: getHinParticipation
+      summary: Optional HIN participation state
+      responses:
+        "200":
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
+  /api/v1/hin/participation/pause:
+    post:
+      operationId: pauseHinParticipation
+      summary: Pause optional HIN participation
+      responses:
+        "200":
+          description: Paused
+  /api/v1/hin/participation/withdraw:
+    post:
+      operationId: withdrawHinParticipation
+      summary: Withdraw from optional HIN participation
+      responses:
+        "200":
+          description: Withdrawn without closing ordinary SunRey financial services
+          description: Record metadata. Payload is redacted unless explicitly requested.
+    patch:
+      operationId: correctVaultRecord
+      summary: Correct user-declared data or open a dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Correction or review-pending dispute
+  /api/v1/data/vault/records/{id}/history:
+    get:
+      operationId: getVaultRecordHistory
+      summary: Historical versions for a vault record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Version identifiers and change reasons. Current user-facing state stays separate.
+  /api/v1/data/vault/records/{id}/corrections:
+    post:
+      operationId: requestVaultCorrection
+      summary: Request a correction or dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Applied for user-declared data; review for derived or provider-sourced records
+  /api/v1/data/vault/sources:
+    get:
+      operationId: listVaultSources
+      summary: Distinct data sources for the owner
+      responses:
+        "200":
+          description: Source identifiers and ownership roles
+  /api/v1/data/vault/access:
+    get:
+      operationId: listVaultAccess
+      summary: Who can access
+      responses:
+        "200":
+          description: Access audit metadata. No payloads.
+  /api/v1/data/vault/export:
+    post:
+      operationId: requestVaultExport
+      summary: Request a portable export
+      responses:
+        "202":
+          description: Export job. Legal portability is not claimed.
+  /api/v1/data/vault/export/status:
+    get:
+      operationId: getVaultExportStatus
+      summary: Export job list
+      responses:
+        "200":
+          description: Owner export jobs
+  /api/v1/data/vault/export/{id}:
+    get:
+      operationId: getVaultExport
+      summary: Completed export bundle
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Structured portable export. Omits secrets and other users.
   /api/v1/security:
     get:
       operationId: getSecurity
@@ -2043,6 +2243,20 @@ paths:
           description: Honest availability
 components:
   schemas:
+    VaultHome:
+      type: object
+      required: [schema, productionActive, liveMonetizationEnabled, sunreyOwnsUserData]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.vault.home.v1] }
+        fabric: { type: string }
+        ownerSubjectId: { type: string }
+        recordCount: { type: integer }
+        categoryCount: { type: integer }
+        sourceCount: { type: integer }
+        disputedCount: { type: integer }
+        productionActive: { type: boolean, enum: [false] }
+        liveMonetizationEnabled: { type: boolean, enum: [false] }
+        sunreyOwnsUserData: { type: boolean, enum: [false] }
     NativeEconomyOverview:
       type: object
       required: [schema, tickerStatus, productionActive, valuationIsNotMarketPrice]

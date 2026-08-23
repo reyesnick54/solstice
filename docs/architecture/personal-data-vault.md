@@ -3,8 +3,10 @@
 Canonical owner: `packages/personal-data-vault`.
 
 The vault is the subject-bound encrypted store for user-controlled
-personal data. It is not a financial asset, Consent Ledger, Clean Room,
-data marketplace, or Sol Coin.
+personal data. It is the Personal Data Fabric. It is not a financial
+asset, Consent Ledger, Clean Room, data marketplace, PEG, or Sol Coin.
+Product types live at `src/product/`. Phase H documentation:
+`docs/productization/PHASE_H_01_PERSONAL_DATA_VAULT.md`.
 
 Chunk 100 Human Information descriptors and connectors reference vault
 metadata only. Raw vault contents are never exported to the blockchain

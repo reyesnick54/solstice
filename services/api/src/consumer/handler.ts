@@ -69,6 +69,10 @@ import {
   HIN_PRODUCT_CATEGORIES,
   HIN_VERIFICATION_STATES,
 } from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
+import { dispatchDataRights } from './data-rights.ts';
+import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
+import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
+import { dispatchVault } from './vault.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -102,6 +106,9 @@ export type ConsumerBffRuntime = {
   readonly nativeEconomy?: NativeEconomySurface;
   readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
+  readonly exchange?: ExchangeBffSurface;
+  readonly dataRights?: ConsentDataRightsEngine;
+  readonly vault?: PersonalDataVaultProduct;
 };
 
 const STUB_GROUPS = [
@@ -360,6 +367,26 @@ function dispatchAuthenticated(
     );
     if (wallets) {
       return wallets;
+    }
+  }
+  if (runtime.dataRights) {
+    const dataRights = dispatchDataRights(
+      runtime.dataRights,
+  if (runtime.vault && runtime.identity) {
+    const vault = dispatchVault(
+      runtime.vault,
+      request,
+      principal,
+      requestId,
+      headers,
+      runtime.identity ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) } : undefined,
+    );
+    if (dataRights) {
+      return dataRights;
+      { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
+    );
+    if (vault) {
+      return vault;
     }
   }
   if (runtime.payments) {
@@ -961,6 +988,8 @@ function isLifecycleExchange(
 
 function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
+function dispatchExchange(
+  exchange: ExchangeBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1056,6 +1085,11 @@ function dispatchExchange(
     return result(exchange.ticker(principal, instrument, requestId), headers);
   }
   if (path.startsWith('/api/v1/exchange/markets/') && (path.endsWith('/order-book') || path.endsWith('/orderbook')) && method === 'GET') {
+  if (
+    path.startsWith('/api/v1/exchange/markets/') &&
+    (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&
+    method === 'GET'
+  ) {
     const suffix = path.endsWith('/order-book') ? '/order-book' : '/orderbook';
     const instrument = path.slice('/api/v1/exchange/markets/'.length, -suffix.length);
     return result(exchange.orderBook(principal, instrument, requestId), headers);
@@ -1064,8 +1098,13 @@ function dispatchExchange(
     const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/trades'.length);
     return result(exchange.trades(principal, instrument, requestId), headers);
   }
-  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/candles') && method === 'GET') {
-    const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/candles'.length);
+  if (
+    path.startsWith('/api/v1/exchange/markets/') &&
+    (path.endsWith('/candles') || path.endsWith('/chart')) &&
+    method === 'GET'
+  ) {
+    const suffix = path.endsWith('/chart') ? '/chart' : '/candles';
+    const instrument = path.slice('/api/v1/exchange/markets/'.length, -suffix.length);
     return result(exchange.candles(principal, instrument, requestId), headers);
   }
   if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
@@ -1523,6 +1562,31 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/assets',
   'GET /api/v1/assets/{assetId}',
   'GET /api/v1/data',
+  'GET /api/v1/data/permissions',
+  'GET /api/v1/data/consents',
+  'POST /api/v1/data/consents',
+  'POST /api/v1/data/consents/{id}/revoke',
+  'GET /api/v1/data/access-history',
+  'GET /api/v1/data/who',
+  'POST /api/v1/data/rights/requests',
+  'GET /api/v1/data/rights/requests',
+  'GET /api/v1/hin/participation',
+  'POST /api/v1/hin/participation/enroll',
+  'POST /api/v1/hin/participation/pause',
+  'POST /api/v1/hin/participation/withdraw',
+  'GET /api/v1/data/vault',
+  'GET /api/v1/data/vault/categories',
+  'GET /api/v1/data/vault/records',
+  'GET /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/records/{id}/history',
+  'POST /api/v1/data/vault/records/{id}/corrections',
+  'PATCH /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/sources',
+  'GET /api/v1/data/vault/access',
+  'GET /api/v1/data/vault/corrections',
+  'POST /api/v1/data/vault/export',
+  'GET /api/v1/data/vault/export/status',
+  'GET /api/v1/data/vault/export/{id}',
   'GET /api/v1/security',
   'GET /api/v1/notifications',
   'GET /api/v1/catalog/resources',

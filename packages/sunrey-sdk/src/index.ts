@@ -221,4 +221,9 @@ export type {
   WithdrawalQuote,
   WithdrawalResource,
   AssetDetail,
+  DataPermissionCatalog,
+  DataConsentGrant,
+  DataConsentList,
+  HinParticipation,
+  DataRightsRequestResource,
 } from './consumer-bff/index.ts';

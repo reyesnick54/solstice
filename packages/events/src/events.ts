@@ -665,6 +665,28 @@ export type DataVaultAccessDeniedV1 = VersionedEvent<'DataVaultAccessDenied', 1,
 export type DataVaultExportCreatedV1 = VersionedEvent<'DataVaultExportCreated', 1, DataVaultAuditPayload>;
 export type DataVaultDerivationCreatedV1 = VersionedEvent<'DataVaultDerivationCreated', 1, DataVaultAuditPayload>;
 export type DataVaultKeyRotatedV1 = VersionedEvent<'DataVaultKeyRotated', 1, DataVaultAuditPayload>;
+
+export type VaultProductAuditPayload = {
+  readonly dataRecordId?: string;
+  readonly subjectId?: string;
+  readonly categoryId?: string;
+  readonly dataKind?: string;
+  readonly integrityHash?: string;
+  readonly reason?: string;
+  readonly previousVersionId?: string;
+  readonly correctionId?: string;
+  readonly kind?: string;
+  readonly status?: string;
+  readonly exportId?: string;
+  readonly deletionRequestId?: string;
+};
+
+export type VaultRecordCreatedV1 = VersionedEvent<'VaultRecordCreated', 1, VaultProductAuditPayload>;
+export type VaultRecordUpdatedV1 = VersionedEvent<'VaultRecordUpdated', 1, VaultProductAuditPayload>;
+export type VaultRecordSupersededV1 = VersionedEvent<'VaultRecordSuperseded', 1, VaultProductAuditPayload>;
+export type VaultRecordDeletedV1 = VersionedEvent<'VaultRecordDeleted', 1, VaultProductAuditPayload>;
+export type VaultCorrectionRequestedV1 = VersionedEvent<'VaultCorrectionRequested', 1, VaultProductAuditPayload>;
+export type VaultExportRequestedV1 = VersionedEvent<'VaultExportRequested', 1, VaultProductAuditPayload>;
 export type StrategyAuditPayload = {
   readonly strategyId?: string;
   readonly version?: string;
@@ -1319,6 +1341,12 @@ export type DomainEvent =
   | DataVaultExportCreatedV1
   | DataVaultDerivationCreatedV1
   | DataVaultKeyRotatedV1
+  | VaultRecordCreatedV1
+  | VaultRecordUpdatedV1
+  | VaultRecordSupersededV1
+  | VaultRecordDeletedV1
+  | VaultCorrectionRequestedV1
+  | VaultExportRequestedV1
   | StrategyCreatedV1
   | StrategyCompiledV1
   | StrategyBacktestStartedV1
