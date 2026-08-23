@@ -735,11 +735,13 @@ export function mapGrowFailure(error: GrowProductFailure, requestId: string): Bf
               ? 'VALIDATION'
               : 'VALIDATION';
   const category =
-    code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED' || code === 'STEP_UP_REQUIRED'
-      ? 'AUTHORIZATION'
-      : code === 'NOT_FOUND'
-        ? 'NOT_FOUND'
-        : 'VALIDATION';
+    code === 'STEP_UP_REQUIRED'
+      ? 'AUTHENTICATION'
+      : code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED'
+        ? 'AUTHORIZATION'
+        : code === 'NOT_FOUND'
+          ? 'NOT_FOUND'
+          : 'VALIDATION';
   return bffError({
     errorCode: code,
     category,
