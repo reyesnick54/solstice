@@ -88,6 +88,11 @@ export {
   persistPersonalDataVaultState,
 } from './personal-data-vault/pg-personal-data-vault-store.ts';
 export { persistConsentState } from './consent/pg-consent-store.ts';
+export { MemoryOperationsControlStore } from './operations-control/memory-store.ts';
+export {
+  loadOperationsSnapshot,
+  persistOperationsSnapshot,
+} from './operations-control/pg-store.ts';
 export { persistCleanRoomState } from './clean-room/pg-clean-room-store.ts';
 export { persistInformationMarketState } from './information-market/pg-information-market-store.ts';
 export { persistSunReyChainState } from './sunrey-chain/pg-sunrey-chain-store.ts';

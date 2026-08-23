@@ -70,6 +70,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'HIN':
       return row(group, '/api/v1/hin', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/information-market rights-marketplace', 'none', 'Information rights, active licenses, and approved earnings. Compensation is not guaranteed. Licensee controls are not on this BFF.');
     case 'DATA':
+      return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault + packages/consent + packages/information-market + packages/human-economic-contribution', 'EXTERNAL_PROVIDER_REQUIRED for live data monetization', 'Vault, consent, HIN, contributions, licenses, earnings, and data-rights. Live marketplace remains disabled.');
       return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/consent + packages/personal-data-vault', 'none', 'Granular consent, purpose catalog, rights requests, HIN participation. No implicit monetization opt-in.');
       return row(group, '/api/v1/data', ['GET', 'PATCH', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault home, categories, records, history, correction, and export. No raw storage paths.');
     case 'SECURITY':

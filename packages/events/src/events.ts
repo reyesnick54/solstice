@@ -1179,6 +1179,32 @@ export type AgentMemoryCreatedV1 = VersionedEvent<'AgentMemoryCreated', 1, Agent
 export type AgentMemoryChangedV1 = VersionedEvent<'AgentMemoryChanged', 1, AgentRuntimeAuditPayload>;
 export type AgentMandateChangedV1 = VersionedEvent<'AgentMandateChanged', 1, AgentRuntimeAuditPayload>;
 
+export type OperationsAuditPayload = {
+  readonly caseId?: string | null;
+  readonly actionId?: string | null;
+  readonly operatorId?: string | null;
+  readonly domain?: string | null;
+  readonly owner?: string | null;
+  readonly outcome?: string | null;
+  readonly action?: string | null;
+  readonly providerId?: string | null;
+  readonly marketId?: string | null;
+  readonly accountId?: string | null;
+  readonly customerId?: string | null;
+  readonly evidenceId?: string | null;
+  readonly sensitive?: boolean;
+};
+
+export type OperationsCaseCreatedV1 = VersionedEvent<'OperationsCaseCreated', 1, OperationsAuditPayload>;
+export type OperationsCaseAssignedV1 = VersionedEvent<'OperationsCaseAssigned', 1, OperationsAuditPayload>;
+export type OperationsCaseEscalatedV1 = VersionedEvent<'OperationsCaseEscalated', 1, OperationsAuditPayload>;
+export type OperationsCaseResolvedV1 = VersionedEvent<'OperationsCaseResolved', 1, OperationsAuditPayload>;
+export type OperationsOperatorActionV1 = VersionedEvent<'OperationsOperatorAction', 1, OperationsAuditPayload>;
+export type OperationsProviderDisabledV1 = VersionedEvent<'OperationsProviderDisabled', 1, OperationsAuditPayload>;
+export type OperationsMarketHaltedV1 = VersionedEvent<'OperationsMarketHalted', 1, OperationsAuditPayload>;
+export type OperationsAccountRestrictedV1 = VersionedEvent<'OperationsAccountRestricted', 1, OperationsAuditPayload>;
+export type OperationsSupportViewOpenedV1 = VersionedEvent<'OperationsSupportViewOpened', 1, OperationsAuditPayload>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | AccountActivatedV1
@@ -1448,7 +1474,16 @@ export type DomainEvent =
   | AgentMessageCompletedV1
   | AgentMemoryCreatedV1
   | AgentMemoryChangedV1
-  | AgentMandateChangedV1;
+  | AgentMandateChangedV1
+  | OperationsCaseCreatedV1
+  | OperationsCaseAssignedV1
+  | OperationsCaseEscalatedV1
+  | OperationsCaseResolvedV1
+  | OperationsOperatorActionV1
+  | OperationsProviderDisabledV1
+  | OperationsMarketHaltedV1
+  | OperationsAccountRestrictedV1
+  | OperationsSupportViewOpenedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
