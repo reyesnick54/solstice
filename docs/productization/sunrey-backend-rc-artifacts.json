@@ -6,7 +6,7 @@
   "notAProductionRelease": true,
   "publishedToRegistry": false,
   "generatedAtUtc": "2026-08-23T15:52:46.888Z",
-  "sourceCommit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+  "sourceCommit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
   "sourceHashes": {
     "package-lock.json": "sha256:a145a555256c96d7c833a7cea3198bf89bee452bc907e2b93d2c8c0592d40232",
     "package.json": "sha256:c8eb2fdbc5f20010cd72658aebac7e9d652735c5c58abc890b3012371ac6a08c",
@@ -47,7 +47,7 @@
     "imageRef": "sunrey.local/platform:sunrey-backend-v1.0.0-rc.2",
     "imageId": "sha256:c7095c1354f57fa86f3e91c8668530989ca74de076b4165a43256d83555f9f00",
     "savedArchiveSha256": "sha256:d2a9c09260a725d558e428d94f88b0f34ce4b5b2f2e5e95566c56a9d7c38c768",
-    "sourceCommit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+    "sourceCommit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
     "note": "Local/CI OCI image. Not a published ghcr.io registry digest."
   },
   "rehearsalPlaceholder": {

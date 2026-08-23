@@ -9,7 +9,7 @@
   "source": {
     "repository": "reyesnick54/solstice",
     "branchPolicy": "document the commit that created this RC; do not treat a feature branch as mainnet",
-    "commit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+    "commit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
     "packageVersion": "0.1.0"
   },
   "buildArtifacts": {

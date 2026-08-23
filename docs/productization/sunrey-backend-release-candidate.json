@@ -6,7 +6,7 @@
   "notAProductionRelease": true,
   "evaluatedAtPolicy": "FAIL_CLOSED",
   "recommendation": "BACKEND_RC_READY_PENDING_EXTERNAL_GATES",
-  "commit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+  "commit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
   "sourceCommitPolicy": "record a real git object SHA used for this RC; do not invent a mainnet SHA or registry digest",
   "qualifiedFromMain": "287bafc4e21190393ba21c8718a8721da1214cb2",
   "buildArtifacts": {

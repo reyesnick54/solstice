@@ -3,7 +3,7 @@
   "id": "sunrey.backend.rc.evaluation.v1",
   "evaluatedAtUtc": "2026-08-23T15:53:18.150Z",
   "version": "sunrey-backend-v1.0.0-rc.2",
-  "commit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+  "commit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
   "findings": [],
   "environment": {
     "node": "v22.14.0",
