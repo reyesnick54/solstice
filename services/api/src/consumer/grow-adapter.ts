@@ -4,8 +4,18 @@ import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from '../../../..
 import { simulationPolicyPort } from '../../../../packages/platform/src/policy-port.ts';
 import type { BffErrorEnvelope } from './errors.ts';
 import { bffError } from './errors.ts';
-import type { AccountsReadPort, BffPrincipal, OptionalDomainPort, OptionalDomainSummary } from './ports.ts';
+import type { AccountsReadPort, BffPrincipal, GrowCommandPort, OptionalDomainPort, OptionalDomainSummary } from './ports.ts';
 import type { Opportunity } from '../../../../packages/platform/src/growth/opportunity/types.ts';
+import {
+  asEconomicNodeId,
+  type DeclaredGoalInput,
+  type EconomicGraphService,
+  type GoalKind,
+  type GoalStatus,
+  type SnapshotPresentationValuation,
+} from '../../../economic-graph/src/index.ts';
+import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
+import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 
 export type GrowOpportunityPort = OptionalDomainPort & {
   list(principal: BffPrincipal): unknown | BffErrorEnvelope;
@@ -70,108 +80,6 @@ function mapFailure(code: string, message: string, requestId: string): BffErrorE
       errorCode: 'NOT_FOUND',
       category: 'NOT_FOUND',
       message,
-import {
-  asEconomicNodeId,
-  type DeclaredGoalInput,
-  type EconomicGraphService,
-  type GoalKind,
-  type GoalStatus,
-  type SnapshotPresentationValuation,
-} from '../../../economic-graph/src/index.ts';
-import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
-import type { IdentityService } from '../../../../packages/identity/src/service.ts';
-import { bffError, type BffErrorEnvelope } from './errors.ts';
-import type { BffPrincipal, GrowCommandPort } from './ports.ts';
-
-type ValuedBody = {
-  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
-  readonly presentationValuation?: SnapshotPresentationValuation | null;
-  readonly valuationContext?: SnapshotPresentationValuation | null;
-};
-
-export function createGrowCommandPort(input: {
-  readonly peg: EconomicGraphService;
-  readonly identity: IdentityService;
-  readonly valuePositions?: (
-    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
-    targetCurrency: string,
-  ) => SnapshotPresentationValuation | null;
-}): GrowCommandPort {
-  const { peg, identity, valuePositions } = input;
-
-  function attachValuation<T extends ValuedBody>(body: T, valuationCurrency?: string): T {
-    if (!valuationCurrency || !valuePositions || !body.cash || body.cash.length === 0) {
-      return body;
-    }
-    const valuation = valuePositions(
-      body.cash.map((row) => ({
-        currency: row.amount.currency,
-        minorUnits: BigInt(row.amount.minorUnits),
-      })),
-      valuationCurrency,
-    );
-    return Object.freeze({
-      ...body,
-      presentationValuation: valuation,
-      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
-    });
-  }
-
-  function actorOf(principal: BffPrincipal, requestId: string): VerifiedActorContext | BffErrorEnvelope {
-    const actor = identity.resolveActorContext(principal.actorId);
-    if (!actor.ok) {
-      return bffError({
-        errorCode: 'SESSION_INVALID',
-        category: 'AUTHENTICATION',
-        message: actor.error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    return actor.value;
-  }
-
-  function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
-    if (error.code === 'SUBJECT_MISMATCH' || error.code === 'CAPABILITY_DENIED') {
-      return bffError({
-        errorCode: 'RESOURCE_NOT_OWNED',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'AUTHORITATIVE_FACT_IMMUTABLE') {
-      return bffError({
-        errorCode: 'FORBIDDEN_PROFILE_FIELD',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'GRAPH_NOT_FOUND' || error.code === 'GOAL_NOT_FOUND') {
-      return bffError({
-        errorCode: 'NOT_FOUND',
-        category: 'NOT_FOUND',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    if (error.code === 'MANDATE_REQUIRED' || error.code === 'CATEGORY_DENIED' || error.code === 'CONSENT_DENIED') {
-      return bffError({
-        errorCode: 'FEATURE_UNAVAILABLE',
-        category: 'AUTHORIZATION',
-        message: error.message,
-        retryable: false,
-        requestId,
-      });
-    }
-    return bffError({
-      errorCode: 'VALIDATION',
-      category: 'VALIDATION',
-      message: error.message,
       retryable: false,
       requestId,
     });
@@ -294,10 +202,110 @@ export function createGrowOpportunityPort(input: {
         ...started.value,
         productionMoneyMovement: false,
       });
+    },
+  };
+}
+
+type ValuedBody = {
+  readonly cash?: readonly { readonly amount: { readonly currency: string; readonly minorUnits: string } }[];
+  readonly presentationValuation?: SnapshotPresentationValuation | null;
+  readonly valuationContext?: SnapshotPresentationValuation | null;
+};
+
+export function createGrowCommandPort(input: {
+  readonly peg: EconomicGraphService;
+  readonly identity: IdentityService;
+  readonly valuePositions?: (
+    positions: readonly { readonly currency: string; readonly minorUnits: bigint }[],
+    targetCurrency: string,
+  ) => SnapshotPresentationValuation | null;
+}): GrowCommandPort {
+  const { peg, identity, valuePositions } = input;
+
+  function attachValuation<T extends ValuedBody>(body: T, valuationCurrency?: string): T {
+    if (!valuationCurrency || !valuePositions || !body.cash || body.cash.length === 0) {
+      return body;
+    }
+    const valuation = valuePositions(
+      body.cash.map((row) => ({
+        currency: row.amount.currency,
+        minorUnits: BigInt(row.amount.minorUnits),
+      })),
+      valuationCurrency,
+    );
+    return Object.freeze({
+      ...body,
+      presentationValuation: valuation,
+      ...('valuationContext' in body ? { valuationContext: valuation } : {}),
+    });
+  }
+
+  function actorOf(principal: BffPrincipal, requestId: string): VerifiedActorContext | BffErrorEnvelope {
+    const actor = identity.resolveActorContext(principal.actorId);
+    if (!actor.ok) {
+      return bffError({
+        errorCode: 'SESSION_INVALID',
+        category: 'AUTHENTICATION',
+        message: actor.error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    return actor.value;
+  }
+
+  function mapCommandFailure(
+    error: { readonly code: string; readonly message: string },
+    requestId: string,
+  ): BffErrorEnvelope {
+    if (error.code === 'SUBJECT_MISMATCH' || error.code === 'CAPABILITY_DENIED') {
+      return bffError({
+        errorCode: 'RESOURCE_NOT_OWNED',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'AUTHORITATIVE_FACT_IMMUTABLE') {
+      return bffError({
+        errorCode: 'FORBIDDEN_PROFILE_FIELD',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'GRAPH_NOT_FOUND' || error.code === 'GOAL_NOT_FOUND') {
+      return bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    if (error.code === 'MANDATE_REQUIRED' || error.code === 'CATEGORY_DENIED' || error.code === 'CONSENT_DENIED') {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'AUTHORIZATION',
+        message: error.message,
+        retryable: false,
+        requestId,
+      });
+    }
+    return bffError({
+      errorCode: 'VALIDATION',
+      category: 'VALIDATION',
+      message: error.message,
+      retryable: false,
+      requestId,
+    });
+  }
 
   function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }, requestId: string): T | BffErrorEnvelope {
     if (!result.ok) {
-      return mapFailure(result.error, requestId);
+      return mapCommandFailure(result.error, requestId);
     }
     return result.value;
   }
@@ -338,7 +346,7 @@ export function createGrowOpportunityPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const snapshot = peg.getFinancialSnapshot(actor, principal.identityId);
       if (!snapshot.ok) {
-        return mapFailure(snapshot.error, 'grow_goals');
+        return mapCommandFailure(snapshot.error, 'grow_goals');
       }
       return Object.freeze({ items: snapshot.value.financialGoals });
     },
@@ -382,7 +390,7 @@ export function createGrowOpportunityPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const rows = peg.getInsights(actor, principal.identityId);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_insights');
+        return mapCommandFailure(rows.error, 'grow_insights');
       }
       return Object.freeze({ items: rows.value });
     },
@@ -427,7 +435,7 @@ export function createGrowOpportunityPort(input: {
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
           ? { ok: true }
-          : mapFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
+          : mapCommandFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
       }
       if (kind === 'INCOME') {
         return unwrap(
@@ -488,7 +496,7 @@ export function createGrowOpportunityPort(input: {
       }
       const rows = peg.getHistory(actor, principal.identityId, series as never);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_history');
+        return mapCommandFailure(rows.error, 'grow_history');
       }
       return Object.freeze({ items: rows.value });
     },

@@ -124,6 +124,8 @@ export type {
   DurableTrade,
   ExchangeDurableSnapshot,
 } from './exchange/durable-store.ts';
+export { DurableExchangeCoreStore } from './exchange/durable-core-store.ts';
+export { persistExchangeCoreSnapshot } from './exchange/pg-exchange-core-store.ts';
 export { DurablePaymentStore } from './payments/durable-store.ts';
 export type { DurablePayment, DurableRailSubmission, PaymentDurableSnapshot } from './payments/durable-store.ts';
 export { DurableAgentRuntimeStore } from './agent/durable-store.ts';
