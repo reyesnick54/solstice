@@ -540,15 +540,6 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
   });
 
-  it('customer V039 persists Personal Data Vault productization metadata without a second ledger', () => {
-    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
-    const v039 = files.find((file) => file.version === 39);
-    assert.ok(v039);
-    assert.equal(v039.filename, 'V039__personal_data_vault_productization.sql');
-    assert.match(v039.sql, /CREATE TABLE personal_data_vault\.record_metadata/);
-    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
-  });
-
   it('customer V038 persists consent data-rights overlays without a second ledger or raw payload', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v038 = files.find((file) => file.version === 38);
@@ -572,6 +563,18 @@ describe('versioned SQL migrations', () => {
     assert.match(v039.sql, /CREATE TABLE personal_data_vault\.export_job/);
     assert.match(v039.sql, /legal_portability_claim BOOLEAN NOT NULL CHECK \(legal_portability_claim = FALSE\)/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
+  });
+
+  it('customer V040 persists operations control-plane tables without a second ledger', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v040 = files.find((file) => file.version === 40);
+    assert.ok(v040);
+    assert.equal(v040.filename, 'V040__operations_control_plane.sql');
+    assert.match(v040.sql, /CREATE SCHEMA IF NOT EXISTS operations/);
+    assert.match(v040.sql, /CREATE TABLE operations\.case_record/);
+    assert.match(v040.sql, /CREATE TABLE operations\.operator_action/);
+    assert.match(v040.sql, /CREATE TABLE operations\.approval/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v040.sql), false);
   });
 
   it('customer V036 persists Grow execution records without becoming a ledger', () => {

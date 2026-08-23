@@ -84,4 +84,4 @@ Not mounted on the consumer BFF. Not a Lovable client surface.
 
 Operator actions seal `OPERATIONS_OPERATOR_ACTION` evidence. Cases,
 assignments, approvals, notes, and action records persist in
-`operations.*` (`V039`). Restart must not drop the audit trail.
+`operations.*` (`V040`). Restart must not drop the audit trail.

@@ -31,7 +31,7 @@ ledger, Kernel, or operations package.
 | --- | --- |
 | Staff roles / SoD | `packages/identity/src/admin-roles.ts`, `packages/identity/src/staff` |
 | Operational case + privileged actions | `packages/kernel/src/operations` |
-| Persistence | `packages/persistence/src/operations-control`, `db/customer/migrations/V039__operations_control_plane.sql` |
+| Persistence | `packages/persistence/src/operations-control`, `db/customer/migrations/V040__operations_control_plane.sql` |
 | Internal HTTP | `packages/kernel/src/operations/http.ts` mounted conceptually at `/internal/v1`; `services/api/src/internal` is the consumer-BFF isolation contract only |
 | Events | `OperationsCaseCreated`, `OperationsCaseAssigned`, `OperationsCaseEscalated`, `OperationsCaseResolved`, `OperationsOperatorAction`, `OperationsProviderDisabled`, `OperationsMarketHalted`, `OperationsAccountRestricted`, `OperationsSupportViewOpened` |
 

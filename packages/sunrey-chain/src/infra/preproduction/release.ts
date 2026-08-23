@@ -201,7 +201,7 @@ export function rehearsalRelease(environment: PlatformDeploymentEnvironment): Ve
     environment,
     applicationVersion: '0.1.0-preproduction',
     containerDigest: REHEARSAL_CONTAINER_DIGEST,
-    databaseMigrationVersion: 'V039',
+    databaseMigrationVersion: 'V040',
     policyVersions: Object.freeze({
       kernel: 'kernel-policy/1',
       payments: 'payments-sandbox/1',
