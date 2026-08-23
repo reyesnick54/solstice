@@ -349,6 +349,191 @@ export type GrowSnapshot = {
   readonly guaranteedReturn: false;
 };
 
+
+export const GROW_EXECUTION_STATES = [
+  'AUTHORIZED',
+  'QUEUED',
+  'SUBMITTED',
+  'PROCESSING',
+  'PARTIALLY_COMPLETED',
+  'COMPLETED',
+  'FAILED',
+  'CANCELLED',
+  'REVERSED',
+  'REQUIRES_REVIEW',
+] as const;
+export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
+
+export type GrowExecution = {
+  readonly executionId: string;
+  readonly state: GrowExecutionState | string;
+  readonly submittedIsNotCompleted: boolean;
+  readonly productionMoneyMovement: false;
+};
+
+export const GROW_PLAN_STATUSES = [
+  'DRAFT',
+  'PROPOSED',
+  'ACTIVE',
+  'PAUSED',
+  'SUPERSEDED',
+  'COMPLETED',
+  'CANCELLED',
+] as const;
+export type GrowPlanStatus = (typeof GROW_PLAN_STATUSES)[number];
+
+export const GROW_PROPOSAL_STATUSES = [
+  'DRAFT',
+  'READY',
+  'PRESENTED',
+  'AWAITING_APPROVAL',
+  'AWAITING_STEP_UP',
+  'AWAITING_COMPLIANCE',
+  'APPROVED',
+  'EXECUTING',
+  'EXECUTED',
+  'REJECTED',
+  'EXPIRED',
+  'FAILED',
+  'CANCELLED',
+  'SUPERSEDED',
+] as const;
+export type GrowProposalStatus = (typeof GROW_PROPOSAL_STATUSES)[number];
+
+export const GROW_RISK_PROFILES = ['CONSERVATIVE', 'BALANCED', 'GROWTH'] as const;
+export type GrowRiskProfile = (typeof GROW_RISK_PROFILES)[number];
+
+export type GrowPlanCreateInput = {
+  readonly startingCapitalMinorUnits: string;
+  readonly currency: string;
+  readonly timeHorizonMonths: number;
+  readonly riskProfile: GrowRiskProfile;
+  readonly goalTargetMinorUnits?: string;
+  readonly recurringContributionMinorUnits?: string;
+  readonly liquidityRequirementMinorUnits?: string;
+  readonly sourceAccountId?: string;
+  readonly goalRefs?: readonly string[];
+};
+
+export type GrowPlan = {
+  readonly planId: string;
+  readonly ownerId: string;
+  readonly status: GrowPlanStatus;
+  readonly riskProfile: GrowRiskProfile;
+  readonly timeHorizonMonths: number;
+  readonly guaranteedOutcome: false;
+  readonly productionActive: false;
+  readonly primaryProposal?: { readonly proposalId: string } | null;
+};
+
+export type GrowProposal = {
+  readonly proposalId: string;
+  readonly planId?: string;
+  readonly version?: number;
+  readonly state?: string;
+  readonly status?: GrowProposalStatus | string;
+  readonly amount?: MoneyResource;
+  readonly guaranteedOutcome?: false;
+  readonly executionAuthorityId?: null;
+  readonly serverIssued?: true;
+  readonly serverOwned?: true;
+  readonly clientInstructionsTrusted?: false;
+  readonly productionMoneyMovement?: false;
+};
+
+export type GrowPortfolio = {
+  readonly schema: 'sunrey.grow.portfolio.v1';
+  readonly portfolioId: string;
+  readonly ownerId: string;
+  readonly status: string;
+  readonly baseCurrency: string;
+  readonly displayCurrency: string;
+  readonly strategyRef: string | null;
+  readonly riskProfileRef: string | null;
+  readonly goalLinks: readonly string[];
+  readonly restrictions: readonly string[];
+  readonly cash: GrowMoney;
+  readonly invested: GrowMoney;
+  readonly total: GrowMoney;
+  readonly environment: 'simulation';
+  readonly liveState: false;
+  readonly securitiesBrokerageLive: false;
+  readonly authoritativeCalculator: 'INVESTMENT_PLATFORM';
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowHoldings = {
+  readonly schema: 'sunrey.grow.holdings.v1';
+  readonly portfolioId: string;
+  readonly holdings: readonly {
+    readonly instrumentId: string;
+    readonly identifier: string;
+    readonly displayName: string;
+    readonly assetClass: string;
+    readonly quantityUnits: string;
+    readonly averageCost: GrowMoney;
+    readonly remainingCost: GrowMoney;
+    readonly marketPriceMinorUnits: string | null;
+    readonly marketValue: GrowMoney | null;
+    readonly unrealized: GrowMoney | null;
+    readonly realized: GrowMoney;
+    readonly income: GrowMoney;
+    readonly currency: string;
+    readonly valuation: {
+      readonly source: string;
+      readonly timestamp: string;
+      readonly freshnessMs: string;
+      readonly quality: string;
+      readonly stale: boolean;
+    };
+  }[];
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowPerformance = {
+  readonly schema: 'sunrey.grow.performance.v1';
+  readonly methodology: string;
+  readonly formula: string;
+  readonly absoluteReturn: GrowMoney;
+  readonly periodReturnBps: string | null;
+  readonly realized: GrowMoney;
+  readonly unrealized: GrowMoney;
+  readonly income: GrowMoney;
+  readonly cashFlows: readonly { readonly at: string; readonly kind: string; readonly amount: GrowMoney }[];
+  readonly benchmark: { readonly benchmarkId: string; readonly periodReturnBps: string; readonly deltaBps: string | null } | null;
+  readonly insufficientData: boolean;
+  readonly llmAuthoritative: false;
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowAllocation = {
+  readonly schema: 'sunrey.grow.allocation.v1';
+  readonly actual: {
+    readonly byAssetClass: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byInstrument: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byCurrency: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+    readonly byRiskClass: readonly { readonly key: string; readonly weightBps: string; readonly marketValue: GrowMoney }[];
+  };
+  readonly target: {
+    readonly cashTargetBps: string;
+    readonly weights: readonly { readonly key: string; readonly weightBps: string }[];
+  } | null;
+  readonly frontendMathAuthoritative: false;
+};
+
+export type GrowRisk = {
+  readonly schema: 'sunrey.grow.risk.v1';
+  readonly concentration: { readonly largestInstrumentId: string | null; readonly largestWeightBps: string };
+  readonly drawdownBps: string | null;
+  readonly volatilityBps: string | null;
+  readonly volatilityAvailable: boolean;
+  readonly currencyExposure: readonly { readonly currency: string; readonly weightBps: string }[];
+  readonly liquidityExposure: readonly { readonly liquidity: string; readonly weightBps: string }[];
+  readonly assetClassExposure: readonly { readonly assetClass: string; readonly weightBps: string }[];
+  readonly fabricatedStatistics: false;
+  readonly frontendMathAuthoritative: false;
+};
+
 export type AccountStatementData = {
   readonly statementId: string;
   readonly accountId: string;

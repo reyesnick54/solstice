@@ -16,6 +16,9 @@ const COMPLEXITY: Record<GrowthActionCandidate['action'], number> = {
   REVIEW_INVESTMENT_OPPORTUNITY_FUTURE: 9,
   INVESTMENT_ACCOUNT_AVAILABLE: 8,
   PAPER_INVESTMENT_REVIEW_AVAILABLE: 8,
+  REBALANCE_PORTFOLIO_PROPOSAL: 7,
+  DIVERSIFY_CONCENTRATION_PROPOSAL: 7,
+  DEPLOY_INVESTMENT_CASH_PROPOSAL: 7,
 };
 
 function userPriority(candidate: GrowthActionCandidate, mandate: CompiledEconomicMandate): number {

@@ -336,7 +336,13 @@ export class UniversalProviderRuntime {
 
   featureAvailability(feature: BffFeatureKey): FeatureAvailability {
     const capability =
-      feature === 'payments' ? 'PAYMENT.ACH' : feature === 'fx' ? 'FX.QUOTE' : 'CARD.VIRTUAL_ISSUING';
+      feature === 'payments'
+        ? 'PAYMENT.ACH'
+        : feature === 'fx'
+          ? 'FX.QUOTE'
+          : feature === 'investments'
+            ? 'INVESTMENT.PAPER_ORDER'
+            : 'CARD.VIRTUAL_ISSUING';
     const matches = this.#store.list().filter((row) => row.capabilities.includes(capability));
     const configured = matches.length > 0;
     const lifecycleOk = matches.some((row) => lifecycleSufficientForSandbox(row.lifecycleState));

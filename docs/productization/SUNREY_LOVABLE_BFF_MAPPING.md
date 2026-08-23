@@ -54,6 +54,41 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
+| GROW | `/api/v1/grow` | GET | required | `sunrey.consumer.grow.home.v1` | PEG + Growth Orchestrator + Grow lifecycle | SANDBOX_FUNCTIONAL | live brokerage = PROVIDER_ADAPTER_REQUIRED |
+| GROW snapshot | `/api/v1/grow/snapshot` | GET | required | financial snapshot | `packages/personal-economic-graph` | SANDBOX_FUNCTIONAL | Ledger wins; PEG is not balances |
+| GROW goals | `/api/v1/grow/goals` | GET, POST | required | goal list / create | PEG `declareGoal` | SANDBOX_FUNCTIONAL | none |
+| GROW opportunities | `/api/v1/grow/opportunities` | GET | required | opportunity list | PEG + orchestrator detectors | SANDBOX_FUNCTIONAL | not executable |
+| GROW dismiss | `/api/v1/grow/opportunities/{id}/dismiss` | POST | required | dismissed flag | Grow BFF | SANDBOX_FUNCTIONAL | none |
+| GROW plan | `/api/v1/grow/plan` | GET | required | Growth Plan | `packages/platform` orchestrator | SANDBOX_FUNCTIONAL | `achievementPromised: false` |
+| GROW plan request | `/api/v1/grow/plan/request` | POST | required | new plan | orchestrator invalidation | SANDBOX_FUNCTIONAL | none |
+| GROW plan pause/resume | `/api/v1/grow/plan/pause` `/resume` | POST | required | lifecycle | activated plan | SANDBOX_FUNCTIONAL | not perpetual authority |
+| GROW plan progress | `/api/v1/grow/plan/progress` | GET | required | component states | Grow lifecycle | SANDBOX_FUNCTIONAL | none |
+| GROW scenarios | `/api/v1/grow/scenarios` | GET | required | projection/estimate bands | Grow scenario engine | SANDBOX_FUNCTIONAL | never a promised outcome |
+| GROW proposal create | `/api/v1/grow/proposals` | POST | required | server-owned proposal | Grow proposal engine | SANDBOX_FUNCTIONAL | client instructions untrusted |
+| GROW proposal detail | `/api/v1/grow/proposals/{id}` | GET | required + owner | explainability | Grow store | SANDBOX_FUNCTIONAL | none |
+| GROW proposal modify | `/api/v1/grow/proposals/{id}/modify` | POST | required + owner | new version | supersedes prior | SANDBOX_FUNCTIONAL | forged hash refused |
+| GROW approval | `/api/v1/grow/proposals/{id}/approve` | POST | required + owner + step-up | approval id | human only | SANDBOX_FUNCTIONAL | Agent cannot self-approve |
+| GROW execute | `/api/v1/grow/proposals/{id}/execute` | POST | required + owner | execution state | Kernel + investments + Provider Runtime | SANDBOX_FUNCTIONAL | live investment disabled |
+| GROW execution | `/api/v1/grow/executions/{id}` | GET | required + owner | normalized state | Grow execution record | SANDBOX_FUNCTIONAL | submitted ≠ completed |
+| GROW portfolio | `/api/v1/grow/portfolio` | GET | required | holdings/allocation/risk | `packages/investments` | SANDBOX_FUNCTIONAL | PROVIDER_ADAPTER_REQUIRED for live |
+| GROW performance | `/api/v1/grow/performance` | GET | required | planned/executed/current | Grow performance read model | SANDBOX_FUNCTIONAL | deposits are not performance |
+| GROW recurring | `/api/v1/grow/recurring` | POST | required | mandate | each occurrence revalidated | SANDBOX_FUNCTIONAL | Agent cannot increase amount |
+| GROW recurring cancel | `/api/v1/grow/recurring/{id}/cancel` | POST | required | REVOKED | Grow lifecycle | SANDBOX_FUNCTIONAL | none |
+| GROW monitor | `/api/v1/grow/monitor` | POST | required | findings | monitoring cycle | SANDBOX_FUNCTIONAL | no silent trade |
+| GROW | `/api/v1/grow` | GET | required | catalog + latest Grow My Money experience | `packages/platform` product Growth Plan | AVAILABLE_SIMULATION | illustrations only; not guaranteed |
+| GROW plan create | `/api/v1/grow/plans` | POST | required | server-issued plan + primary proposal | `ProductGrowthService` | AVAILABLE_SIMULATION | client cannot issue proposal JSON |
+| GROW plan read | `/api/v1/grow/plans/{id}` | GET | required + owner | Growth Plan | `packages/platform` | AVAILABLE_SIMULATION | cross-user denied |
+| GROW proposals | `/api/v1/grow/proposals` | GET | required + owner | structured Financial Proposals | `packages/platform` | AVAILABLE_SIMULATION | unknown ids are not executable |
+| GROW proposal read | `/api/v1/grow/proposals/{id}` | GET | required + owner | immutable proposal | `packages/platform` | AVAILABLE_SIMULATION | fabricated ids fail closed |
+| GROW modify | `/api/v1/grow/proposals/{id}/modify` | POST | required + owner | new proposal version | `ProductGrowthService` | AVAILABLE_SIMULATION | supersedes prior terms |
+| GROW approve | `/api/v1/grow/proposals/{id}/approve` | POST | required + owner + step-up when required | Phase B approval | `transitionApproval` | AVAILABLE_SIMULATION | no Execution Authority, no journal |
+| GROW reject | `/api/v1/grow/proposals/{id}/reject` | POST | required + owner | rejected proposal | Phase B approval | AVAILABLE_SIMULATION | none |
+| GROW | `/api/v1/grow` | GET | required | availability stub | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | not a live broker |
+| GROW portfolio | `/api/v1/grow/portfolio` | GET | required + owner | `sunrey.grow.portfolio.v1` | `packages/investments` InvestmentPlatform | AVAILABLE_SIMULATION | licensed broker + custody required for live |
+| GROW holdings | `/api/v1/grow/portfolio/holdings` | GET | required + owner | `sunrey.grow.holdings.v1` | lots + Phase D market-data freshness | AVAILABLE_SIMULATION | stale prices identified; no frontend math |
+| GROW performance | `/api/v1/grow/portfolio/performance` | GET | required + owner | `sunrey.grow.performance.v1` | TWR / Modified Dietz engine | AVAILABLE_SIMULATION | LLMs are not authoritative |
+| GROW allocation | `/api/v1/grow/portfolio/allocation` | GET | required + owner | `sunrey.grow.allocation.v1` | actual vs target weights in bps | AVAILABLE_SIMULATION | none |
+| GROW risk | `/api/v1/grow/portfolio/risk` | GET | required + owner | `sunrey.grow.risk.v1` | concentration / exposure / fail-closed volatility | AVAILABLE_SIMULATION | no fabricated statistics |
 | GROW | `/api/v1/grow` | GET | required | opportunity feed | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | GROW feed | `/api/v1/grow/opportunities` | GET | required | ranked cards | Growth Orchestrator detectors + eligibility | AVAILABLE_SIMULATION | none |
 | GROW detail | `/api/v1/grow/opportunities/{id}` | GET | required + owner | Opportunity | same | AVAILABLE_SIMULATION | cross-user denied |

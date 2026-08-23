@@ -104,6 +104,15 @@ export type GrowCommandPort = {
   agentProfile(principal: BffPrincipal): unknown;
 };
 
+export type GrowPortfolioPort = {
+  summarize(principal: BffPrincipal): OptionalDomainSummary;
+  portfolio(principal: BffPrincipal): unknown | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
+  holdings(principal: BffPrincipal): unknown | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
+  performance(principal: BffPrincipal): unknown | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
+  allocation(principal: BffPrincipal): unknown | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
+  risk(principal: BffPrincipal): unknown | { readonly error: 'NOT_FOUND' | 'RESOURCE_NOT_OWNED' };
+};
+
 export type CardsMutationPort = {
   list(customerId: string): readonly unknown[];
   detail(

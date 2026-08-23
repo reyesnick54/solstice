@@ -15,6 +15,15 @@ export {
 } from './inference.ts';
 export { ProposalGate, type KernelSubmitPort } from './gate.ts';
 export { explainProposal } from './explain.ts';
+export {
+  agentCannotExecuteProposal,
+  compareAlternatives as compareGrowthProposalAlternatives,
+  explainProposal as explainGrowthProposal,
+  getGrowthPlan,
+  getProposal as getFinancialProposal,
+  requestProposalModification,
+  type GrowthToolPort,
+} from './growth-tools.ts';
 export { evaluateBudget, emptyUsage, recordUsage, rolloverUsage } from './budget.ts';
 export { approvalSatisfied, detectPromptInjection, evaluateMandateForProposal } from './policy.ts';
 export { authorizeWithWallet, walletAuthorizationView } from './wallet.ts';
@@ -30,6 +39,12 @@ export {
   type AgentSafetyActors,
 } from './safety.ts';
 export { InMemoryAgentMandateStore } from './store.ts';
+export {
+  GROW_AGENT_TOOL_NAMES,
+  invokeGrowAgentTool,
+  refusePrivilegedGrowExecution,
+} from './grow-tools.ts';
+export type { GrowAgentToolName, GrowAgentToolPort } from './grow-tools.ts';
 export {
   AGENT_ACTION_CLASSES,
   AGENT_APPROVAL_CLASSES,

@@ -105,6 +105,37 @@ export {
 export { GrowthOrchestrator, type GrowthFailure } from './service.ts';
 export { InMemoryGrowthStore, type GrowthStoreSnapshot } from './store.ts';
 export {
+  ASSUMPTION_CATALOG_ID,
+  FINANCIAL_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
+  ILLUSTRATION_DISCLAIMER,
+  PRODUCT_GROWTH_PLAN_STATUSES,
+  ProductGrowthService,
+  actorFromVerified,
+  compareAlternatives,
+  conservativeOnlyPolicy,
+  defaultScenarioSeed,
+  explainProposal,
+  getGrowthPlan,
+  getProposal,
+  lookupReturnAssumption,
+  materialTermsHash,
+  projectScenarios,
+  requestProposalModification,
+  simulationGrowPolicy,
+  toLovableExperience,
+  transitionProductProposal,
+} from './growth/product/index.ts';
+export type {
+  CreateGrowPlanInput,
+  FinancialProposal,
+  GrowProductFailure,
+  GrowthProductActor,
+  LovableGrowExperience,
+  ProductGrowthPlan,
+  ProposalExplanation,
+} from './growth/product/index.ts';
+export {
   absentTreasuryContextPort,
   type TreasuryContextPort,
 } from './treasury-port.ts';
@@ -180,6 +211,21 @@ export type {
   OpportunityCapacityView,
 } from './value/types.ts';
 export type { PevePlanningSignals } from './growth/types.ts';
+export {
+  GrowLifecycleService,
+  InMemoryGrowStore,
+  containsGuaranteedReturnClaim,
+  evaluateGrowSuitability,
+  routeProposalType,
+  GROW_EXECUTION_STATES,
+  FINANCIAL_PROPOSAL_TYPES,
+} from './grow/index.ts';
+export type {
+  FinancialProposal as GrowLifecycleProposal,
+  GrowExecutionCommand,
+  GrowExecutionRecord,
+  GrowFailure,
+} from './grow/index.ts';
 export {
   asOpportunityId,
   opportunityIdFor,

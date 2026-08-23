@@ -47,6 +47,15 @@ const SEEDS: readonly SandboxSeed[] = Object.freeze([
     currencies: Object.freeze(['USD']),
     products: Object.freeze(['cards']),
   },
+  {
+    providerId: 'sim-investments',
+    providerType: 'INVESTMENTS',
+    displayName: 'SunRey simulated paper brokerage',
+    capabilities: Object.freeze(['INVESTMENT.PAPER_ORDER', 'INVESTMENT.FUND', 'INVESTMENT.SETTLE'] as const),
+    environment: 'LOCAL',
+    currencies: Object.freeze(['USD']),
+    products: Object.freeze(['invest']),
+  },
 ]);
 
 export function seedSimulationProviders(runtime: UniversalProviderRuntime, nowUtc = NOW): void {
@@ -68,7 +77,7 @@ export function seedSimulationProviders(runtime: UniversalProviderRuntime, nowUt
       capabilities: seed.capabilities,
       environment: seed.environment,
       lifecycleState: 'DISABLED',
-      enabledJurisdictions: Object.freeze(['US', 'SA']),
+      enabledJurisdictions: Object.freeze(['US', 'SA', 'GB']),
       supportedCurrencies: seed.currencies,
       supportedProducts: seed.products,
       credentialReference: credential.ok ? credential.value : null,

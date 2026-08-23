@@ -91,9 +91,9 @@ Historical GitHub path remains `reyesnick54/solstice`. Public product name is Su
 | CARDS | `packages/cards` | `services/cards` facade | IMPLEMENTED_SIMULATION_ONLY | Simulated processor |
 | FX | `packages/payments/src/fx-quote.ts` | `SimulationFxProvider` | IMPLEMENTED_SIMULATION_ONLY | No live FX source |
 | TREASURY | `packages/treasury` | Protocol treasury under `sunrey-chain/src/economics/treasury` | IMPLEMENTED (app) + chain lab | Customer balances stay on banking ledger |
-| INVESTMENTS | `packages/investments` | Paper broker; `SimulatedMarketDataProvider` | IMPLEMENTED_SIMULATION_ONLY | `LIVE_INVESTMENT_EXECUTION` false |
+| INVESTMENTS | `packages/investments` (`InvestmentPlatform`) | `services/investments` facade; sandbox execution adapter | IMPLEMENTED_SIMULATION_ONLY | `LIVE_INVESTMENT_EXECUTION` / `LIVE_SECURITIES_BROKERAGE` false |
 | PERSONAL ECONOMIC GRAPH | `packages/personal-economic-graph` | `services/economic-graph` facade | IMPLEMENTED non-authoritative | Ledger wins on balances |
-| GROWTH ORCHESTRATOR | `packages/platform` | Demo/tests only | IMPLEMENTED, **under-integrated** | No service facade; does not issue EA |
+| GROWTH ORCHESTRATOR | `packages/platform` | Consumes investment opportunities as `PROPOSAL_ONLY` | IMPLEMENTED_SIMULATION_ONLY | Does not execute; does not issue EA |
 | AI RUNTIME | `packages/ai-runtime` | Grok reserved (`GROK_NOT_IMPLEMENTED`) | IMPLEMENTED inference-only | S3M simulator; cannot execute |
 | SUNREY AGENT | `packages/sunrey-agent` (ProposalGate) | `packages/agent` (Personal Economy Agent) | IMPLEMENTED isolation | Execution path disconnected from ledger |
 | SUNREY CHAIN | `packages/sunrey-chain` | SDK `DevelopmentPlatform`; explorer projection | IMPLEMENTED simulation | Production inactive |
