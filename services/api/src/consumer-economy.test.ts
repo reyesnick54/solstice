@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 
 import { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/handler.ts';
 import { createNativeEconomySurface } from './consumer/native-economy-adapter.ts';
+import { createProductiveEconomySurface } from './consumer/productive-economy-adapter.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
 import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
@@ -41,6 +42,7 @@ function economyRuntime(): ConsumerBffRuntime {
     } as unknown as ConsumerBff,
     sessions,
     nativeEconomy: createNativeEconomySurface(),
+    productiveEconomy: createProductiveEconomySurface(),
   };
 }
 
@@ -51,6 +53,8 @@ describe('Consumer BFF native economy', () => {
     assert.deepEqual(economy?.methods, ['GET']);
     assert.ok(CONSUMER_BFF_ROUTES.includes('GET /api/v1/economy'));
     assert.ok(CONSUMER_BFF_ROUTES.includes('GET /api/v1/economy/supply'));
+    assert.ok(CONSUMER_BFF_ROUTES.includes('GET /api/v1/economy/productive'));
+    assert.ok(CONSUMER_BFF_ROUTES.includes('GET /api/v1/economy/productive/moonrey-input'));
     assert.ok(!CONSUMER_BFF_ROUTES.some((row) => row.includes('issuance') || row.includes('mint') || row.includes('burn')));
   });
 
@@ -97,5 +101,38 @@ describe('Consumer BFF native economy', () => {
       authorization: `Bearer ${TOKEN}`,
     });
     assert.ok(mint.status === 404 || mint.status === 405);
+  });
+
+  it('returns verified productive-economy metrics without minting', () => {
+    const res = handleConsumerBff(economyRuntime(), {
+      method: 'GET',
+      path: '/api/v1/economy/productive',
+      query: {},
+      body: {},
+      authorization: `Bearer ${TOKEN}`,
+    });
+    assert.equal(res.status, 200);
+    const body = res.body as {
+      schema: string;
+      productionActive: boolean;
+      categories: { id: string; connected: boolean; metric: string | null }[];
+      moonreyInput: { minted: boolean; marketPriceSet: boolean };
+    };
+    assert.equal(body.schema, 'sunrey.consumer.productive-economy.v1');
+    assert.equal(body.productionActive, false);
+    assert.ok(body.categories.some((row) => row.id === 'ENERGY' && row.connected && row.metric === 'ENERGY_PRODUCTION'));
+    assert.equal(body.moonreyInput.minted, false);
+    assert.equal(body.moonreyInput.marketPriceSet, false);
+
+    const sources = handleConsumerBff(economyRuntime(), {
+      method: 'GET',
+      path: '/api/v1/economy/productive/sources',
+      query: {},
+      body: {},
+      authorization: `Bearer ${TOKEN}`,
+    });
+    assert.equal(sources.status, 200);
+    const sourceBody = sources.body as { items: { rawWithheld: boolean }[] };
+    assert.ok(sourceBody.items.some((row) => row.rawWithheld));
   });
 });

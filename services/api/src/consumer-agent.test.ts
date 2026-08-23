@@ -35,6 +35,11 @@ function callConversation(
   method: string,
   path: string,
   personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
+  body: unknown = {},
+  query: Record<string, string> = {},
+) {
+  const persona = typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
+  const actualBody = typeof personaOrBody === 'string' ? body : personaOrBody;
   body: Record<string, unknown> = {},
   query: Record<string, string> = {},
 ) {
@@ -45,6 +50,8 @@ function callConversation(
     method,
     path,
     query,
+    body: actualBody,
+    authorization: auth(persona),
     body: payload,
     authorization: `Bearer ${sandboxToken(persona)}`,
     query: {},

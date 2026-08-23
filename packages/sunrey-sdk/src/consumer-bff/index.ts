@@ -86,6 +86,7 @@ export type {
   TravelRuleCustomerState,
   NativeEconomyOverview,
   NativeEconomySupply,
+  ProductiveEconomyOverview,
   VaultHome,
   VaultCategory,
   VaultCategories,

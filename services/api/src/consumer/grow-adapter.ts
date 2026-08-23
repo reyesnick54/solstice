@@ -240,6 +240,7 @@ export function createGrowCommandPort(input: {
     return Object.freeze({
       ...body,
       presentationValuation: valuation,
+      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
       ...('valuationContext' in body ? { valuationContext: valuation } : {}),
     });
   }
@@ -519,7 +520,6 @@ export function createGrowCommandPort(input: {
     },
   };
 }
-
 function publicOpportunity(item: Opportunity): unknown {
   return Object.freeze({
     opportunityId: item.opportunityId,

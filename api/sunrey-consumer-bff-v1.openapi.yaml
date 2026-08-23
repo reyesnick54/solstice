@@ -1504,6 +1504,61 @@ paths:
           description: Unknown asset
         "401":
           description: Authentication required
+  /api/v1/economy/productive:
+    get:
+      operationId: getProductiveEconomy
+      summary: MoonRey productive-economy overview
+      description: >
+        Read-only Lovable contract for verified/configured productive
+        observations. GPUV is not MoonRey. Observations do not mint.
+        Licensed raw data may be withheld.
+      responses:
+        "200":
+          description: Productive economy overview
+        "401":
+          description: Authentication required
+  /api/v1/economy/productive/categories:
+    get:
+      operationId: getProductiveCategories
+      summary: Category breakdown
+      responses:
+        "200":
+          description: Verified category cards
+        "401":
+          description: Authentication required
+  /api/v1/economy/productive/history:
+    get:
+      operationId: getProductiveHistory
+      summary: Metric history
+      parameters:
+        - in: query
+          name: category
+          schema: { type: string }
+      responses:
+        "200":
+          description: Client-safe observation history
+        "401":
+          description: Authentication required
+  /api/v1/economy/productive/sources:
+    get:
+      operationId: getProductiveSources
+      summary: Source and freshness summary
+      responses:
+        "200":
+          description: Source class and freshness
+        "401":
+          description: Authentication required
+  /api/v1/economy/productive/moonrey-input:
+    get:
+      operationId: getMoonReyEconomicInput
+      summary: MoonRey economic-input summary
+      description: Verified productive input only. Not supply policy and not Exchange price.
+      responses:
+        "200":
+          description: Economic-input summary
+        "401":
+          description: Authentication required
+  /api/v1/exchange/markets:
           description: Honest availability; production trading remains disabled
   /api/v1/hin/contributions:
     get:

@@ -60,6 +60,8 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
       return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange native clearing + packages/custody ports', 'EXTERNAL_PROVIDER_REQUIRED for real custody', 'Sandbox wallet, deposit, withdrawal, and transaction history. Production signing is disabled.');
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
     case 'ECONOMY':
+      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets + productive/economy-data', 'none', 'Read-only native-asset supply and MoonRey productive-economy metrics. No issuance endpoints. Observations do not mint.');
+      return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange product APIs', 'none', 'Markets, preview, orders, fills, holdings, stream. Not a second ledger. Production trading disabled.');
       return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');
     case 'HIN':
       return row(group, '/api/v1/hin', ['GET'], 'AVAILABLE_SIMULATION', 'packages/human-economic-contribution hin-value + Human Contribution Registry', 'none', 'Read-only HIN contributions, metrics, and valuation methodology metadata. No verification or issuance endpoints.');

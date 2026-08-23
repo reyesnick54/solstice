@@ -378,6 +378,9 @@ export type GrowProposal = GrowPlanProposal;
 
 export type GrowProposal = GrowPlanProposal;
 
+/** Alias used by Grow execution APIs. Same resource as GrowPlanProposal. */
+export type GrowProposal = GrowPlanProposal;
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -895,6 +898,25 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
+export type ProductiveEconomyOverview = {
+  readonly schema: 'sunrey.consumer.productive-economy.v1';
+  readonly productionActive: false;
+  readonly simulation: true;
+  readonly categories: readonly {
+    readonly id: string;
+    readonly connected: boolean;
+    readonly metric: string | null;
+    readonly value: string | null;
+    readonly unit: string | null;
+    readonly freshness: string | null;
+  }[];
+  readonly moonreyInput: {
+    readonly minted: false;
+    readonly marketPriceSet: false;
+    readonly gpuvInput: string;
+  };
 };
 
 export type ExchangeMarket = {

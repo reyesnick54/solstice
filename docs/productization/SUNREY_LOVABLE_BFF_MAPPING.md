@@ -127,6 +127,11 @@ authentication foundation; the BFF only consumes a verified session.
 | ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
 | ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
 | ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
+| ECONOMY productive | `/api/v1/economy/productive` | GET | required | `sunrey.consumer.productive-economy.v1` | `packages/sunrey-chain/src/productive/economy-data` | AVAILABLE_SIMULATION | verified metrics only; no mint; licensed raw data withheld |
+| ECONOMY categories | `/api/v1/economy/productive/categories` | GET | required | ENERGY / COMPUTE / MANUFACTURING / FOOD / RESOURCES / REAL ESTATE / LOGISTICS | productive economy platform | AVAILABLE_SIMULATION | disconnected categories stay `connected: false` |
+| ECONOMY history | `/api/v1/economy/productive/history` | GET | required | metric history | observation registry | AVAILABLE_SIMULATION | query `category` optional |
+| ECONOMY sources | `/api/v1/economy/productive/sources` | GET | required | source class + freshness | oracle verification + license | AVAILABLE_SIMULATION | no provider credentials |
+| ECONOMY MoonRey input | `/api/v1/economy/productive/moonrey-input` | GET | required | verified GPUV input summary | Productive Value methodology | AVAILABLE_SIMULATION | not Exchange price; not an issuance endpoint |
 | HIN contributions | `/api/v1/hin/contributions` | GET | required + owner | contribution list | `packages/human-economic-contribution` hin-value | AVAILABLE_SIMULATION | no raw personal data; no verify/mint |
 | HIN contribution | `/api/v1/hin/contributions/{id}` | GET | required + owner | contribution resource | same | AVAILABLE_SIMULATION | invented ids 404 |
 | HIN metrics | `/api/v1/hin/metrics` | GET | required | privacy-safe aggregates | same | AVAILABLE_SIMULATION | k-anonymity; not individual records |

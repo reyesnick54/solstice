@@ -273,6 +273,35 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         valuationIsNotMarketPrice: true,
         futurePriceDeclared: false,
       }), ['sunrey.totalSupply', 'moonrey.totalSupply']);
+    case 'getProductiveEconomy':
+      return mapPort(ctx.ports.productiveEconomy.overview(), ctx, 'TRADE_PROPOSAL', (overview) => ({
+        ...overview,
+        invented: false,
+        minted: false,
+        guaranteedPrice: false,
+      }), ['categories.*.value']);
+    case 'getProductiveCategory':
+      return mapPort(ctx.ports.productiveEconomy.category(str(ctx.input.category)), ctx, 'TRADE_PROPOSAL', (category) => ({
+        category,
+        comparisonOnly: true,
+      }), ['category.value']);
+    case 'getProductiveMethodology':
+      return mapPort(
+        ctx.ports.productiveEconomy.methodology(typeof ctx.input.category === 'string' ? ctx.input.category : undefined),
+        ctx, 'TRADE_PROPOSAL', (methodology) => ({
+          ...methodology,
+          gpuvIsNotMoonRey: true,
+          agentCannotChangeMethodology: true,
+        }), [],
+      );
+    case 'getProductiveFreshness':
+      return mapPort(
+        ctx.ports.productiveEconomy.freshness(typeof ctx.input.category === 'string' ? ctx.input.category : undefined),
+        ctx, 'TRADE_PROPOSAL', (freshness) => ({
+          ...freshness,
+          staleIsNotTimeSensitiveValuation: true,
+        }), [],
+      );
     case 'getHinContributions':
       return mapPort(ctx.ports.hin.contributions(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (contributions) => ({
         contributions,

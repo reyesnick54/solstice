@@ -27,6 +27,7 @@ import type {
   HinParticipation,
   NativeEconomyOverview,
   NativeEconomySupply,
+  ProductiveEconomyOverview,
   VaultCategories,
   VaultExportJob,
   VaultHome,
@@ -762,6 +763,25 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
   }
 
+  async getProductiveEconomy(options?: BffRequestOptions): Promise<ProductiveEconomyOverview> {
+    return this.request('GET', '/api/v1/economy/productive', undefined, options);
+  }
+
+  async getProductiveCategories(options?: BffRequestOptions): Promise<{ readonly items: ProductiveEconomyOverview['categories'] }> {
+    return this.request('GET', '/api/v1/economy/productive/categories', undefined, options);
+  }
+
+  async getProductiveHistory(category?: string, options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    const suffix = category ? `?category=${encodeURIComponent(category)}` : '';
+    return this.request('GET', `/api/v1/economy/productive/history${suffix}`, undefined, options);
+  }
+
+  async getProductiveSources(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/economy/productive/sources', undefined, options);
+  }
+
+  async getMoonReyEconomicInput(options?: BffRequestOptions): Promise<ProductiveEconomyOverview['moonreyInput']> {
+    return this.request('GET', '/api/v1/economy/productive/moonrey-input', undefined, options);
   async getVaultHome(options?: BffRequestOptions): Promise<VaultHome> {
     return this.request('GET', '/api/v1/data/vault', undefined, options);
   }

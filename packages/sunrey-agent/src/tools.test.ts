@@ -89,6 +89,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'productiveEconomy'],
     productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy', 'hin'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
@@ -106,6 +107,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
+    assert.equal(CANONICAL_TOOL_COUNT, 48);
     assert.equal(CANONICAL_TOOL_COUNT, 49);
     assert.equal(CANONICAL_TOOL_COUNT, 48);
     assert.equal(CANONICAL_TOOL_COUNT, 45);
@@ -175,6 +177,10 @@ describe('tool contract matrix', () => {
       getNativeAsset: { assetId: 'SUNREY_COIN' },
       getNativeSupply: {},
       getNativeEconomy: {},
+      getProductiveEconomy: {},
+      getProductiveCategory: { category: 'ENERGY' },
+      getProductiveMethodology: { category: 'ENERGY' },
+      getProductiveFreshness: { category: 'ENERGY' },
       getHinContributions: {},
       getHinMetrics: {},
       getHinSummary: {},

@@ -417,6 +417,26 @@ SDK: `listWallets`, `getWallet`, `getDepositAddress`,
 `listWalletTransactions`, `quoteWithdrawal`, `createWithdrawal`,
 `getWithdrawal`, `getAssetDetail`.
 
+## MoonRey productive economy (Phase H Prompt 5)
+
+Use the Consumer BFF. Observations are economic inputs. They do not
+set MoonRey Exchange price and do not mint MoonRey.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| MoonRey economy | `GET /api/v1/economy/productive` | ENERGY, AI / COMPUTE, MANUFACTURING, FOOD / AGRICULTURE, RESOURCES, REAL ESTATE / INFRASTRUCTURE, LOGISTICS, OTHER |
+| Category breakdown | `GET /api/v1/economy/productive/categories` | Show only `connected: true` verified/configured cards |
+| Metric history | `GET /api/v1/economy/productive/history?category=` | Value, unit, freshness, verification |
+| Source / freshness | `GET /api/v1/economy/productive/sources` | Source class only. No credentials or raw licensed feeds |
+| MoonRey input | `GET /api/v1/economy/productive/moonrey-input` | Verified GPUV input. Not supply policy and not last trade |
+
+SDK: `getProductiveEconomy`, `getProductiveCategories`,
+`getProductiveHistory`, `getProductiveSources`, `getMoonReyEconomicInput`.
+
+Do not treat GPUV as a token amount.
+Do not render withheld licensed raw values as zero.
+See `docs/productization/PHASE_H_05_MOONREY_PRODUCTIVE_DATA.md`.
+
 Do not ask the backend for a private key.
 Do not let the Agent sign or broadcast.
 Do not mark a deposit available before `FINALIZED`.
