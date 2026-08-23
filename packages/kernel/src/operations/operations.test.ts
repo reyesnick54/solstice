@@ -429,7 +429,7 @@ describe('operations control plane', () => {
     assert.equal(second.plane.exportSnapshot().cases.length, 1);
     assert.ok(second.plane.exportSnapshot().actions.length >= 1);
     assert.ok(first.evidence.list().some((row) => row.kind === 'OPERATIONS_OPERATOR_ACTION'));
-    assert.ok(first.events.list().some((row) => row.eventType === 'OperationsCaseCreated'));
+    assert.ok(first.events.some((row) => row.eventType === 'OperationsCaseCreated'));
   });
 
   it('searches only by controlled identifiers', () => {
