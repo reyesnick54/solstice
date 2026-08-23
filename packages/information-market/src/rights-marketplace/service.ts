@@ -321,7 +321,6 @@ export class InformationRightsMarketplace {
     }
     const now = this.now();
     const expiresAt = addDays(now, request.durationDays);
-    const fiat = pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat;
     const license: InformationLicense = Object.freeze({
       licenseId: newInformationLicenseId(),
       requestId: request.requestId,
@@ -339,8 +338,6 @@ export class InformationRightsMarketplace {
         ...(pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat
           ? { fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat }
           : {}),
-        asset: 'FIAT_MONEY',
-        ...(fiat ? { fiat } : {}),
         pricingPolicyId: pricing.policyId,
         compensationPolicyId: policy.policyId,
       }),
@@ -530,10 +527,6 @@ export class InformationRightsMarketplace {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
       this.nativeAsset.mint();
-      const minted = this.nativeAsset.mint();
-      if ((minted.outcome as string) === 'OK') {
-        return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
-      }
       const transfer = this.nativeAsset.transfer({
         actorId: input.actorId,
         fromOwnerId: input.sponsorOwnerId ?? input.sponsorCustomerId,

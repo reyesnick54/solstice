@@ -1021,7 +1021,6 @@ export class PhaseHProductSurface {
       rightId: right.rightId,
       requesterId: this.licenseeRequesterId,
       computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
-      computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:${licenseId}:${this.usageCount + 1}`,
     });
@@ -1034,7 +1033,6 @@ export class PhaseHProductSurface {
     }
     const compensation = this.hin.authorizeCompensation({
       subjectId: bound.hinSubjectId,
-      subjectId: (bound.hinSubjectId ?? '') as HumanInformationSubjectId,
       requesterId: this.licenseeRequesterId,
       asset: 'APPROVED_FIAT',
       amountMinor: 1000n,
@@ -1085,7 +1083,6 @@ export class PhaseHProductSurface {
       rightId: right?.rightId ?? (grantId as never),
       requesterId: this.licenseeRequesterId,
       computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
-      computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:revoked:${licenseId}`,
     });

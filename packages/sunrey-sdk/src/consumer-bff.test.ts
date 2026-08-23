@@ -435,7 +435,7 @@ describe('consumer BFF vault SDK', () => {
     });
     const home = await client.getVaultHome();
     await client.listVaultCategories();
-    await client.listVaultRecords();
+    await client.listDataVaultRecords();
     assert.equal(home.schema, 'sunrey.consumer.vault.home.v1');
     assert.ok(urls.some((row) => row.includes('/api/v1/data/vault/categories')));
   });

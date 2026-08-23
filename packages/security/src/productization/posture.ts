@@ -64,13 +64,13 @@ export function requireProductionSigningProvider(
   if (!gate.ok) {
     return gate;
   }
-  if (isProductionSigningPurpose(purpose) && PRODUCTION_HSM_KMS_CONFIGURED !== true) {
+  if (isProductionSigningPurpose(purpose)) {
     return securityErr(
       'PRODUCTION_HSM_REQUIRED',
       `production signing of ${purpose} fails closed: PRODUCTION_HSM_KMS_CONFIGURED=false and no external HSM/KMS is connected`,
     );
   }
-  if ('simulation' in provider && provider.simulation === true && PRODUCTION_HSM_KMS_CONFIGURED !== true) {
+  if ('simulation' in provider && provider.simulation === true) {
     return securityErr(
       'PRODUCTION_HSM_REQUIRED',
       'simulation HSM/KMS cannot satisfy a production signing request',

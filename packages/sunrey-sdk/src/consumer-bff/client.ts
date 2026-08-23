@@ -811,6 +811,9 @@ export class SunReyConsumerBffClient {
   }
 
   async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/data/hin', undefined, options);
+  }
+
   async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/hin', undefined, options);
   }

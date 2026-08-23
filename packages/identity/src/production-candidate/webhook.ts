@@ -64,7 +64,7 @@ export class IdentityAdapterWebhook {
     | { readonly ok: true; readonly duplicate: boolean; readonly record: IdentityVerificationRecord | null }
     | {
         readonly ok: false;
-        readonly code: 'SCHEMA_INVALID' | 'UNKNOWN_PROVIDER' | 'INVALID_SIGNATURE' | 'STALE_TIMESTAMP' | 'REPLAYED';
+        readonly code: 'SCHEMA_INVALID' | 'UNKNOWN_PROVIDER' | 'INVALID_SIGNATURE' | 'STALE_TIMESTAMP' | 'REPLAYED' | 'ENVIRONMENT_MISMATCH';
         readonly stateUnchanged: true;
       } {
     const validated = this.#guard.validate(envelope, nowMs);

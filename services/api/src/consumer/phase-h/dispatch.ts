@@ -35,13 +35,6 @@ function present<T extends Record<string, unknown>>(value: T): { [K in keyof T]?
   for (const [key, item] of Object.entries(value)) {
     if (item !== undefined) {
       out[key] = item;
-function present<T extends Record<string, string | undefined>>(
-  fields: T,
-): { [K in keyof T]?: Exclude<T[K], undefined> } {
-  const out: Record<string, string> = {};
-  for (const [key, value] of Object.entries(fields)) {
-    if (typeof value === 'string') {
-      out[key] = value;
     }
   }
   return out as { [K in keyof T]?: Exclude<T[K], undefined> };
@@ -110,8 +103,6 @@ export function dispatchPhaseH(
         kind: kind === 'TRANSACTIONS' || kind === 'RECEIPT' || kind === 'PAYROLL' ? kind : 'PAYROLL',
         idempotencyKey: str(input.idempotencyKey),
       })),
-        ...present({ idempotencyKey: str(input.idempotencyKey) }),
-      }),
       201,
     );
   }
@@ -134,7 +125,6 @@ export function dispatchPhaseH(
       }),
       201,
     );
-    return mapResult(requestId, surface.grantPermission(principal, { purpose, categories, ...present({ idempotencyKey: str(input.idempotencyKey) }) }), 201);
   }
   if (path === '/api/v1/data/consent' && method === 'GET') {
     return json(200, surface.permissions(principal));
