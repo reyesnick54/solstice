@@ -321,3 +321,84 @@ export function staffHoldsLedgerMutator(capabilities: readonly IdentityCapabilit
 export function staffHoldsCustodySigning(capabilities: readonly IdentityCapability[]): boolean {
   return capabilities.includes('CUSTODY_OPERATE_REQUEST');
 }
+
+export const OPS_READ_SURFACES = [
+  'payments',
+  'treasury',
+  'reconciliation',
+  'surveillance',
+  'custody',
+  'providers',
+  'agents',
+  'security',
+  'cases',
+] as const;
+
+export type OpsReadSurface = (typeof OPS_READ_SURFACES)[number];
+
+export const OPS_READ_CAPABILITIES: Readonly<Record<OpsReadSurface, readonly IdentityCapability[]>> = {
+  payments: ['ADMIN_PAYMENTS', 'ADMIN_RECONCILIATION', 'ADMIN_TREASURY', 'ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_FRAUD', 'ADMIN_AUDIT'],
+  treasury: ['ADMIN_TREASURY', 'ADMIN_RECONCILIATION', 'ADMIN_AUDIT'],
+  reconciliation: ['ADMIN_RECONCILIATION', 'ADMIN_TREASURY', 'ADMIN_AUDIT'],
+  surveillance: ['ADMIN_EXCHANGE_SURVEILLANCE', 'ADMIN_SECURITY', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_AUDIT'],
+  custody: ['ADMIN_CUSTODY', 'ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_AUDIT'],
+  providers: ['ADMIN_SRE', 'ADMIN_SECURITY', 'ADMIN_PLATFORM', 'ADMIN_AUDIT'],
+  agents: ['ADMIN_AGENT', 'ADMIN_SECURITY', 'ADMIN_SUPPORT', 'ADMIN_AUDIT'],
+  security: ['ADMIN_SECURITY', 'ADMIN_AUDIT'],
+  cases: [
+    'ADMIN_COMPLIANCE',
+    'ADMIN_COMPLIANCE_APPROVE',
+    'ADMIN_FRAUD',
+    'ADMIN_PAYMENTS',
+    'ADMIN_TREASURY',
+    'ADMIN_RECONCILIATION',
+    'ADMIN_EXCHANGE_SURVEILLANCE',
+    'ADMIN_CUSTODY',
+    'ADMIN_SECURITY',
+    'ADMIN_SRE',
+    'ADMIN_AGENT',
+    'ADMIN_SUPPORT',
+    'ADMIN_AUDIT',
+  ],
+};
+
+export const DOMAIN_WRITE_CAPABILITIES: Readonly<Record<string, readonly IdentityCapability[]>> = {
+  KYC: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE'],
+  KYB: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE'],
+  AML: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE'],
+  SANCTIONS: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE'],
+  TRAVEL_RULE: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_CUSTODY'],
+  DATA_RIGHTS: ['ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_SUPPORT'],
+  FRAUD: ['ADMIN_FRAUD', 'ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE', 'ADMIN_SECURITY'],
+  PAYMENT: ['ADMIN_PAYMENTS', 'ADMIN_RECONCILIATION', 'ADMIN_COMPLIANCE'],
+  TREASURY: ['ADMIN_TREASURY', 'ADMIN_RECONCILIATION'],
+  RECONCILIATION: ['ADMIN_RECONCILIATION', 'ADMIN_TREASURY'],
+  EXCHANGE_SURVEILLANCE: ['ADMIN_EXCHANGE_SURVEILLANCE', 'ADMIN_SECURITY'],
+  CUSTODY: ['ADMIN_CUSTODY', 'ADMIN_COMPLIANCE'],
+  AGENT: ['ADMIN_AGENT', 'ADMIN_SECURITY', 'ADMIN_SUPPORT'],
+  SECURITY: ['ADMIN_SECURITY'],
+  PROVIDER: ['ADMIN_SRE', 'ADMIN_SECURITY', 'ADMIN_PLATFORM'],
+  CUSTOMER_SUPPORT: ['ADMIN_SUPPORT', 'ADMIN_COMPLIANCE', 'ADMIN_COMPLIANCE_APPROVE'],
+};
+
+export function operatorMayReadSurface(
+  capabilities: readonly IdentityCapability[],
+  surface: OpsReadSurface,
+): boolean {
+  return OPS_READ_CAPABILITIES[surface].some((capability) => capabilities.includes(capability));
+}
+
+export function operatorMayAccessDomain(
+  capabilities: readonly IdentityCapability[],
+  domain: string,
+  mode: 'read' | 'write',
+): boolean {
+  if (capabilities.includes('ADMIN_AUDIT') && mode === 'read') {
+    return true;
+  }
+  const required = DOMAIN_WRITE_CAPABILITIES[domain];
+  if (!required) {
+    return false;
+  }
+  return required.some((capability) => capabilities.includes(capability));
+}

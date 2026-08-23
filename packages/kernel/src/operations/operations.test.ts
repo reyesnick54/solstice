@@ -4,7 +4,6 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../../config/src/clock.ts';
 import { asUtcInstant } from '../../../domain/src/time.ts';
 import { EvidenceVault } from '../../../evidence/src/vault.ts';
-import { DomainEventLog } from '../../../events/src/events.ts';
 import { staffOperatorFromRoles, type StaffOperator } from '../../../identity/src/staff/operator.ts';
 import { MemoryOperationsControlStore } from '../../../persistence/src/operations-control/memory-store.ts';
 import { OperationsControlPlane } from './service.ts';
@@ -15,12 +14,16 @@ const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 function plane() {
   const clock = new FrozenClock(NOW);
   const evidence = new EvidenceVault(clock);
-  const events = new DomainEventLog();
+  const events: Array<{ eventType: string }> = [];
   return {
     clock,
     evidence,
     events,
-    plane: new OperationsControlPlane({ clock, evidence, events }),
+    plane: new OperationsControlPlane({
+      clock,
+      evidence,
+      events: { record(event) { events.push({ eventType: event.eventType }); } },
+    }),
   };
 }
 
@@ -42,9 +45,9 @@ describe('operations control plane', () => {
     assert.equal(ops.flags.PRODUCTION_ACTIVE, false);
     assert.equal(ops.flags.LIVE_CONNECTIVITY_ENABLED, false);
     assert.equal(OPERATIONS_CONTROL_FLAGS.staffCanPostJournal, false);
-    assert.throws(() => ops.postJournal(), /cannot post a ledger journal/);
-    assert.throws(() => ops.issueExecutionAuthority(), /cannot issue Execution Authority/);
-    assert.throws(() => ops.custodyPrivateKey(), /cannot access custody private keys/);
+    assert.throws(() => ops.refuseStaffLedgerWrite(), /cannot post a ledger journal/);
+    assert.throws(() => ops.refuseStaffAuthorityIssue(), /cannot issue Execution Authority/);
+    assert.throws(() => ops.refuseStaffCustodyKeyAccess(), /cannot access custody private keys/);
   });
 
   it('enforces least privilege and cross-role denial', () => {
@@ -59,9 +62,20 @@ describe('operations control plane', () => {
       source: 'PROVIDER',
       reason: 'open sanctions review',
     });
-    assert.equal(denied.ok, true);
-    const created = denied.ok ? denied.value : null;
-    assert.ok(created);
+    assert.equal(denied.ok, false);
+    if (!denied.ok) {
+      assert.equal(denied.error.code, 'ROLE_DENIED');
+    }
+    const created = ops.createCase({
+      operator: support,
+      domain: 'CUSTOMER_SUPPORT',
+      type: 'SUPPORT',
+      subject: 'cust_1',
+      severity: 'LOW',
+      source: 'CUSTOMER',
+      reason: 'customer cannot see a payment',
+    });
+    assert.equal(created.ok, true);
     const restrict = ops.privilegedAction({
       operator: support,
       action: 'ACCOUNT_RESTRICT',

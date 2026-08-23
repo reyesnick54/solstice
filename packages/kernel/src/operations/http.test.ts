@@ -1,13 +1,12 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { FrozenClock } from '../../../packages/config/src/clock.ts';
-import { asUtcInstant } from '../../../packages/domain/src/time.ts';
-import { EvidenceVault } from '../../../packages/evidence/src/vault.ts';
-import { DomainEventLog } from '../../../packages/events/src/events.ts';
-import { staffOperatorFromRoles, type StaffOperator } from '../../../packages/identity/src/staff/operator.ts';
-import { OperationsControlPlane } from '../../../packages/kernel/src/operations/service.ts';
-import { handleInternalOps, type StaffDirectory } from './internal/handler.ts';
+import { FrozenClock } from '../../../config/src/clock.ts';
+import { asUtcInstant } from '../../../domain/src/time.ts';
+import { EvidenceVault } from '../../../evidence/src/vault.ts';
+import { staffOperatorFromRoles, type StaffOperator } from '../../../identity/src/staff/operator.ts';
+import { handleInternalOps, type StaffDirectory } from './http.ts';
+import { OperationsControlPlane } from './service.ts';
 
 const NOW = asUtcInstant('2026-08-23T12:00:00.000Z');
 
@@ -34,14 +33,13 @@ function directory(operators: readonly StaffOperator[]): StaffDirectory {
 function runtime(operators: readonly StaffOperator[]) {
   const clock = new FrozenClock(NOW);
   const evidence = new EvidenceVault(clock);
-  const events = new DomainEventLog();
   return {
-    plane: new OperationsControlPlane({ clock, evidence, events }),
+    plane: new OperationsControlPlane({ clock, evidence }),
     staff: directory(operators),
   };
 }
 
-describe('internal operations API', () => {
+describe('internal operations HTTP', () => {
   it('is served only under /internal/v1 and requires staff auth', () => {
     const api = runtime([staff('COMPLIANCE_ANALYST', 'analyst_http')]);
     const wrongNs = handleInternalOps(api, {
@@ -96,6 +94,28 @@ describe('internal operations API', () => {
       authorization: 'Bearer support_http',
     });
     assert.equal(restricted.status, 403);
+  });
+
+  it('denies support custody reads and refuses ledger writes', () => {
+    const support = staff('CUSTOMER_SUPPORT', 'support_http_2');
+    const api = runtime([support]);
+    const custody = handleInternalOps(api, {
+      method: 'GET',
+      path: '/internal/v1/custody',
+      query: {},
+      body: {},
+      authorization: 'Bearer support_http_2',
+    });
+    assert.equal(custody.status, 403);
+    const ledger = handleInternalOps(api, {
+      method: 'POST',
+      path: '/internal/v1/staff/ledger-write-attempt',
+      query: {},
+      body: {},
+      authorization: 'Bearer support_http_2',
+    });
+    assert.equal(ledger.status, 403);
+    assert.equal((ledger.body as { errorCode: string }).errorCode, 'LEDGER_MUTATION_FORBIDDEN');
   });
 
   it('health reports production remains disabled', () => {

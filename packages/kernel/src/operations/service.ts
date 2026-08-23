@@ -5,15 +5,17 @@ import { addMs } from '../../../config/src/clock.ts';
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import type { UtcInstant } from '../../../domain/src/time.ts';
 import type { EvidenceVault } from '../../../evidence/src/vault.ts';
-import type { DomainEventLog } from '../../../events/src/events.ts';
 import { assuranceAtLeast } from '../../../identity/src/assurance.ts';
 import type { StaffOperator } from '../../../identity/src/staff/operator.ts';
 import {
   DUAL_CONTROL_ACTIONS,
   STEP_UP_ACTIONS,
   evaluateSegregationOfDuties,
+  operatorMayAccessDomain,
+  operatorMayReadSurface,
   staffHoldsCustodySigning,
   staffHoldsLedgerMutator,
+  type OpsReadSurface,
   type PrivilegedStaffAction,
 } from '../../../identity/src/staff/sod.ts';
 import { decideCase } from '../compliance/cases.ts';
@@ -62,6 +64,17 @@ export type OperationsDenial = {
   readonly message: string;
 };
 
+export type OperationsEventRecord = {
+  readonly eventType: string;
+  readonly payload: Readonly<Record<string, unknown>>;
+  readonly occurredAt: UtcInstant;
+  readonly evidenceId: string;
+};
+
+export type OperationsEventSink = {
+  record(event: OperationsEventRecord): void;
+};
+
 export type PrivilegedActionInput = {
   readonly operator: StaffOperator;
   readonly action: PrivilegedStaffAction;
@@ -83,12 +96,12 @@ export class OperationsControlPlane {
   readonly store: OperationsStore;
   readonly #clock: Clock;
   readonly #evidence: EvidenceVault;
-  readonly #events: DomainEventLog | null;
+  readonly #events: OperationsEventSink | null;
 
   constructor(input: {
     readonly clock: Clock;
     readonly evidence: EvidenceVault;
-    readonly events?: DomainEventLog;
+    readonly events?: OperationsEventSink;
     readonly snapshot?: OperationsSnapshot;
   }) {
     this.#clock = input.clock;
@@ -128,6 +141,9 @@ export class OperationsControlPlane {
     if (!gated.ok) return gated;
     if (!isOperationalCaseDomain(input.domain)) {
       return err({ code: 'UNKNOWN_DOMAIN', message: 'unknown operational case domain' });
+    }
+    if (!operatorMayAccessDomain(input.operator.capabilities, input.domain, 'write')) {
+      return err({ code: 'ROLE_DENIED', message: 'role cannot open a case in this domain' });
     }
     const now = this.#clock.now();
     const opened = openOperationalCase({
@@ -428,6 +444,13 @@ export class OperationsControlPlane {
     return ok({ session, profile });
   }
 
+  listCases(operator: StaffOperator): Result<readonly OperationalCase[], OperationsDenial> {
+    if (!operatorMayReadSurface(operator.capabilities, 'cases')) {
+      return err({ code: 'ROLE_DENIED', message: 'role cannot list operational cases' });
+    }
+    return ok(this.#visibleCases(operator, [...this.store.cases.values()]));
+  }
+
   search(operator: StaffOperator, query: OperationsSearchQuery): Result<readonly OperationalCase[], OperationsDenial> {
     if (operator.roles.length === 0) {
       return err({ code: 'ROLE_DENIED', message: 'staff role is required' });
@@ -455,7 +478,17 @@ export class OperationsControlPlane {
       }
       return false;
     });
-    return ok(Object.freeze(matches));
+    return ok(this.#visibleCases(operator, matches));
+  }
+
+  authorizeRead(
+    operator: StaffOperator,
+    surface: OpsReadSurface,
+  ): Result<true, OperationsDenial> {
+    if (!operatorMayReadSurface(operator.capabilities, surface)) {
+      return err({ code: 'ROLE_DENIED', message: `role cannot read ${surface} operations` });
+    }
+    return ok(true);
   }
 
   timeline(ref: string): readonly TimelineEntry[] {
@@ -519,15 +552,21 @@ export class OperationsControlPlane {
     });
   }
 
-  postJournal(): never {
+  #visibleCases(operator: StaffOperator, cases: readonly OperationalCase[]): readonly OperationalCase[] {
+    return Object.freeze(
+      cases.filter((row) => operatorMayAccessDomain(operator.capabilities, row.domain, 'read')),
+    );
+  }
+
+  refuseStaffLedgerWrite(): never {
     throw new Error('staff operations cannot post a ledger journal');
   }
 
-  issueExecutionAuthority(): never {
+  refuseStaffAuthorityIssue(): never {
     throw new Error('staff operations cannot issue Execution Authority');
   }
 
-  custodyPrivateKey(): never {
+  refuseStaffCustodyKeyAccess(): never {
     throw new Error('staff operations cannot access custody private keys');
   }
 
@@ -668,12 +707,11 @@ export class OperationsControlPlane {
     if (!this.#events) {
       return;
     }
-    this.#events.append({
-      eventType: eventType as never,
-      schemaVersion: 1,
+    this.#events.record({
+      eventType,
+      payload: Object.freeze({ ...payload }),
       occurredAt,
       evidenceId,
-      payload,
     });
   }
 }

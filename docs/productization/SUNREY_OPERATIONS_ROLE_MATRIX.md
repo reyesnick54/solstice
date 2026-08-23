@@ -66,12 +66,17 @@ event. Support-view sessions are read-limited, audited, time-bounded
 
 ## Internal APIs
 
-Base: `/internal/v1`
+Base: `/internal/v1` (`packages/kernel/src/operations/http.ts`)
 
-Health, staff identity, cases, search (case / customer / payment /
-transaction / order / wallet / provider / correlation IDs only),
-timeline, payments, treasury, reconciliation, surveillance, custody,
-providers, agents, security, privileged actions, support view.
+Health, staff identity, cases (domain-filtered), search (case /
+customer / payment / transaction / order / wallet / provider /
+correlation IDs only), timeline, payments, treasury, reconciliation,
+surveillance, custody, providers, agents, security, privileged
+actions, support view, and explicit ledger / Execution Authority /
+custody-key refusal routes.
+
+Read surfaces are capability-gated. Support cannot read custody,
+treasury, or surveillance. Auditors may read but not write.
 
 Not mounted on the consumer BFF. Not a Lovable client surface.
 

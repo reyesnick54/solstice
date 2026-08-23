@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { capabilitiesForStaffRoles, staffRolesFromCapabilities } from './admin-roles.ts';
-import { evaluateSegregationOfDuties } from './staff/sod.ts';
+import { evaluateSegregationOfDuties, operatorMayAccessDomain, operatorMayReadSurface } from './staff/sod.ts';
 
 describe('staff roles and segregation of duties', () => {
   it('does not give PLATFORM_ADMIN every operational role', () => {
@@ -11,6 +11,10 @@ describe('staff roles and segregation of duties', () => {
     assert.equal(capabilitiesForStaffRoles(['PLATFORM_ADMIN']).includes('ADMIN_COMPLIANCE_APPROVE'), false);
     assert.equal(capabilitiesForStaffRoles(['CUSTOMER_SUPPORT']).includes('CUSTODY_OPERATE_REQUEST'), false);
     assert.equal(capabilitiesForStaffRoles(['CUSTOMER_SUPPORT']).includes('TREASURY_OPERATE_REQUEST'), false);
+    assert.equal(operatorMayReadSurface(capabilitiesForStaffRoles(['CUSTOMER_SUPPORT']), 'custody'), false);
+    assert.equal(operatorMayAccessDomain(capabilitiesForStaffRoles(['CUSTOMER_SUPPORT']), 'SANCTIONS', 'write'), false);
+    assert.equal(operatorMayAccessDomain(capabilitiesForStaffRoles(['AUDITOR']), 'AML', 'read'), true);
+    assert.equal(operatorMayAccessDomain(capabilitiesForStaffRoles(['AUDITOR']), 'AML', 'write'), false);
   });
 
   it('blocks support custody signing, agent ledger mutation, and provider production activation', () => {

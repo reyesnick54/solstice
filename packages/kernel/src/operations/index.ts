@@ -50,9 +50,22 @@ export type {
   SurveillanceOpsView,
   TreasuryOpsView,
 } from './reads.ts';
-export { OperationsControlPlane, type OperationsDenial, type PrivilegedActionInput } from './service.ts';
+export {
+  OperationsControlPlane,
+  type OperationsDenial,
+  type OperationsEventRecord,
+  type OperationsEventSink,
+  type PrivilegedActionInput,
+} from './service.ts';
 export {
   INTERNAL_API_BASE,
   INTERNAL_API_POSTURE,
   INTERNAL_API_ROUTES,
 } from './internal-api.ts';
+export {
+  handleInternalOps,
+  type InternalOpsRuntime,
+  type InternalRequest,
+  type InternalResponse,
+  type StaffDirectory,
+} from './http.ts';

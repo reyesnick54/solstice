@@ -26,6 +26,9 @@ export const INTERNAL_API_ROUTES = [
   'GET /internal/v1/security',
   'POST /internal/v1/actions',
   'POST /internal/v1/support/view',
+  'POST /internal/v1/staff/ledger-write-attempt',
+  'POST /internal/v1/staff/authority-issue-attempt',
+  'POST /internal/v1/staff/custody-key-attempt',
 ] as const;
 
 export const INTERNAL_API_POSTURE = Object.freeze({

@@ -1,14 +1,14 @@
-import type { StaffOperator } from '../../../../packages/identity/src/staff/operator.ts';
+import type { StaffOperator } from '../../../identity/src/staff/operator.ts';
+import type { PrivilegedStaffAction } from '../../../identity/src/staff/sod.ts';
+import { INTERNAL_API_POSTURE } from './internal-api.ts';
+import type { OperationsControlPlane } from './service.ts';
 import {
   isOperationalCaseDomain,
   isOperationalCaseState,
   type OperationalCaseDomain,
   type OperationalSeverity,
   type OperationalSource,
-} from '../../../../packages/kernel/src/operations/types.ts';
-import type { OperationsControlPlane } from '../../../../packages/kernel/src/operations/service.ts';
-import { INTERNAL_API_POSTURE } from '../../../../packages/kernel/src/operations/internal-api.ts';
-import type { PrivilegedStaffAction } from '../../../../packages/identity/src/staff/sod.ts';
+} from './types.ts';
 
 export type InternalRequest = {
   readonly method: string;
@@ -91,7 +91,8 @@ export function handleInternalOps(runtime: InternalOpsRuntime, req: InternalRequ
     });
   }
   if (req.method === 'GET' && req.path === '/internal/v1/cases') {
-    return ok({ cases: runtime.plane.exportSnapshot().cases });
+    const listed = runtime.plane.listCases(operator);
+    return listed.ok ? ok({ cases: listed.value }) : deny(403, listed.error.code, listed.error.message);
   }
   if (req.method === 'POST' && req.path === '/internal/v1/cases') {
     const body = bodyOf(req.body);
@@ -115,7 +116,11 @@ export function handleInternalOps(runtime: InternalOpsRuntime, req: InternalRequ
     const caseId = decodeURIComponent(caseMatch[1] ?? '');
     const verb = caseMatch[2];
     if (req.method === 'GET' && !verb) {
-      const found = runtime.plane.exportSnapshot().cases.find((row) => row.caseId === caseId);
+      const listed = runtime.plane.listCases(operator);
+      if (!listed.ok) {
+        return deny(403, listed.error.code, listed.error.message);
+      }
+      const found = listed.value.find((row) => row.caseId === caseId);
       return found ? ok(found) : deny(404, 'CASE_NOT_FOUND', 'case does not exist');
     }
     const body = bodyOf(req.body);
@@ -157,21 +162,58 @@ export function handleInternalOps(runtime: InternalOpsRuntime, req: InternalRequ
     const ref = decodeURIComponent(req.path.slice('/internal/v1/timeline/'.length));
     return ok({ timeline: runtime.plane.timeline(ref) });
   }
-  if (req.method === 'GET' && req.path === '/internal/v1/payments') return ok({ payments: runtime.plane.paymentOps() });
-  if (req.method === 'GET' && req.path === '/internal/v1/treasury') return ok({ treasury: runtime.plane.treasuryOps() });
+  if (req.method === 'GET' && req.path === '/internal/v1/payments') {
+    const gated = runtime.plane.authorizeRead(operator, 'payments');
+    return gated.ok ? ok({ payments: runtime.plane.paymentOps() }) : deny(403, gated.error.code, gated.error.message);
+  }
+  if (req.method === 'GET' && req.path === '/internal/v1/treasury') {
+    const gated = runtime.plane.authorizeRead(operator, 'treasury');
+    return gated.ok ? ok({ treasury: runtime.plane.treasuryOps() }) : deny(403, gated.error.code, gated.error.message);
+  }
   if (req.method === 'GET' && req.path === '/internal/v1/reconciliation') {
-    return ok({ breaks: runtime.plane.reconciliationOps() });
+    const gated = runtime.plane.authorizeRead(operator, 'reconciliation');
+    return gated.ok ? ok({ breaks: runtime.plane.reconciliationOps() }) : deny(403, gated.error.code, gated.error.message);
   }
   if (req.method === 'GET' && req.path === '/internal/v1/surveillance') {
-    return ok({ alerts: runtime.plane.surveillanceOps() });
+    const gated = runtime.plane.authorizeRead(operator, 'surveillance');
+    return gated.ok ? ok({ alerts: runtime.plane.surveillanceOps() }) : deny(403, gated.error.code, gated.error.message);
   }
-  if (req.method === 'GET' && req.path === '/internal/v1/custody') return ok({ wallets: runtime.plane.custodyOps() });
+  if (req.method === 'GET' && req.path === '/internal/v1/custody') {
+    const gated = runtime.plane.authorizeRead(operator, 'custody');
+    return gated.ok ? ok({ wallets: runtime.plane.custodyOps() }) : deny(403, gated.error.code, gated.error.message);
+  }
   if (req.method === 'GET' && req.path === '/internal/v1/providers') {
-    return ok({ providers: runtime.plane.providerOps() });
+    const gated = runtime.plane.authorizeRead(operator, 'providers');
+    return gated.ok ? ok({ providers: runtime.plane.providerOps() }) : deny(403, gated.error.code, gated.error.message);
   }
-  if (req.method === 'GET' && req.path === '/internal/v1/agents') return ok({ agents: runtime.plane.agentOps() });
+  if (req.method === 'GET' && req.path === '/internal/v1/agents') {
+    const gated = runtime.plane.authorizeRead(operator, 'agents');
+    return gated.ok ? ok({ agents: runtime.plane.agentOps() }) : deny(403, gated.error.code, gated.error.message);
+  }
   if (req.method === 'GET' && req.path === '/internal/v1/security') {
-    return ok({ events: runtime.plane.securityOps() });
+    const gated = runtime.plane.authorizeRead(operator, 'security');
+    return gated.ok ? ok({ events: runtime.plane.securityOps() }) : deny(403, gated.error.code, gated.error.message);
+  }
+  if (req.method === 'POST' && req.path === '/internal/v1/staff/ledger-write-attempt') {
+    try {
+      runtime.plane.refuseStaffLedgerWrite();
+    } catch (error) {
+      return deny(403, 'LEDGER_MUTATION_FORBIDDEN', error instanceof Error ? error.message : 'ledger write refused');
+    }
+  }
+  if (req.method === 'POST' && req.path === '/internal/v1/staff/authority-issue-attempt') {
+    try {
+      runtime.plane.refuseStaffAuthorityIssue();
+    } catch (error) {
+      return deny(403, 'AUTHORITY_ISSUE_FORBIDDEN', error instanceof Error ? error.message : 'authority issue refused');
+    }
+  }
+  if (req.method === 'POST' && req.path === '/internal/v1/staff/custody-key-attempt') {
+    try {
+      runtime.plane.refuseStaffCustodyKeyAccess();
+    } catch (error) {
+      return deny(403, 'CUSTODY_KEY_FORBIDDEN', error instanceof Error ? error.message : 'custody key access refused');
+    }
   }
   if (req.method === 'POST' && req.path === '/internal/v1/actions') {
     const body = bodyOf(req.body);
