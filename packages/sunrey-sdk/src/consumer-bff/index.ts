@@ -6,6 +6,12 @@ export {
   FINANCIAL_PRODUCT_TYPES,
 } from './types.ts';
 export type {
+  GrowGoal,
+  GrowGoalCreateInput,
+  GrowInsight,
+  GrowProfile,
+  GrowSnapshot,
+  GrowSuitability,
   MoneyResource,
   Recipient,
   RecipientDestinationType,
