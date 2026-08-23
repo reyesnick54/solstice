@@ -80,8 +80,7 @@ export type ConsumerBffRuntime = {
   readonly payments?: PaymentPlatform;
   readonly agent?: AgentBffFacade;
   readonly agentRuntime?: AgentConversationRuntime;
-  readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
 };
 
@@ -812,8 +811,24 @@ function dispatchPayments(
   return null;
 }
 
+function isProductGrowthService(grow: GrowBffSurface | ProductGrowthService): grow is ProductGrowthService {
+  return typeof (grow as ProductGrowthService).createPlan === 'function';
+}
+
 function dispatchGrow(
   grow: GrowBffSurface | ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  return isProductGrowthService(grow)
+    ? dispatchProductGrowth(grow, request, principal, requestId, headers)
+    : dispatchGrowSurface(grow, request, principal, requestId, headers);
+}
+
+function dispatchGrowSurface(
+  grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -866,6 +881,18 @@ function dispatchGrow(
   }
   if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
   if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+  return null;
+}
+
+function dispatchProductGrowth(
+  grow: ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   const actor = actorFromPrincipal(principal);
 
   if (path === '/api/v1/grow' && method === 'GET') {

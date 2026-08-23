@@ -50,7 +50,7 @@ describe('Phase E SDK-only Grow E2E', () => {
       assert.equal((status as { executionId: string }).executionId, executed.executionId);
       const portfolio = await client.getGrowPortfolio();
       assert.equal((portfolio as { liveInvestmentExecution: boolean }).liveInvestmentExecution, false);
-      const performance = await client.getGrowPerformance();
+      const performance = await client.getGrowPlanPerformance();
       assert.equal((performance as { depositsAreNotPerformance: boolean }).depositsAreNotPerformance, true);
       await client.getPlanProgress();
       const monitor = await client.runGrowMonitor();
