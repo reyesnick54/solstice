@@ -467,7 +467,7 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isExecutionAuthority: false;
+  readonly canIssueAuthority: false;
 };
 
 export type AgentConversationResource = {

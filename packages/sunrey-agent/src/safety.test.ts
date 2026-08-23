@@ -51,6 +51,7 @@ function mandate(): UserAgentMandate {
     createdByActorId: 'user_1',
     createdAt: NOW,
     mandateHash: 'hash_1',
+    assistScopes: Object.freeze(['CREATE_PAYMENT_PROPOSAL']),
   };
 }
 

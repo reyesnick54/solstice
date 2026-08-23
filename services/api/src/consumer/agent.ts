@@ -91,7 +91,7 @@ export function clientAgent(agent: UserAgent) {
     jurisdiction: agent.jurisdiction,
     riskPolicy: agent.riskPolicy,
     isCustomer: false,
-    isExecutionAuthority: false,
+    canIssueAuthority: false,
   });
 }
 

@@ -39,9 +39,9 @@ describe('Consumer BFF Agent runtime', () => {
     const world = createSandboxWorld();
     const listed = call(world, 'GET', '/api/v1/agents', 'agent_enabled');
     assert.equal(listed.status, 200);
-    const items = (listed.body as { items: { agentId: string; isExecutionAuthority: false }[] }).items;
+    const items = (listed.body as { items: { agentId: string; canIssueAuthority: false }[] }).items;
     assert.equal(items.length, 1);
-    assert.equal(items[0]?.isExecutionAuthority, false);
+    assert.equal(items[0]?.canIssueAuthority, false);
     const other = call(world, 'GET', `/api/v1/agents/${items[0]?.agentId}`, 'basic_verified');
     assert.equal(other.status, 403);
     const pausedByOther = call(world, 'POST', `/api/v1/agents/${items[0]?.agentId}/pause`, 'basic_verified');
