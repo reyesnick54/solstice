@@ -462,5 +462,51 @@ export function generateGrowthCandidates(input: {
     });
   }
 
+  const review = input.planning.investmentReview;
+  if (review) {
+    for (const opportunity of review.opportunities) {
+      const amount = opportunity.amountMinorUnits
+        ? { minorUnits: opportunity.amountMinorUnits, currency }
+        : zero(currency);
+      candidates.push({
+        actionId: actionIdFor(opportunity.kind, `${input.mandate.mandateId}:${review.portfolioId}`),
+        action: opportunity.kind,
+        source: 'PEG',
+        title: opportunity.title,
+        expectedEffect: {
+          kind: 'UNCERTAIN_MARKET_OUTCOME',
+          scenario: opportunity.kind,
+          low: zero(currency),
+          high: amount,
+          assumptions: Object.freeze([
+            opportunity.detail,
+            'Growth Orchestrator cannot execute investment trades.',
+          ]),
+          confidenceScore: 40,
+          horizonDays: 0,
+          riskClass: 'UNCERTAIN_MARKET',
+          achievementPromised: false,
+        },
+        confidenceScore: 40,
+        assumptions: Object.freeze(['Proposal only. User confirmation and Kernel are required.']),
+        liquidityImpact: zero(currency),
+        riskClass: 'UNCERTAIN_MARKET',
+        mandateEvaluation: {
+          satisfied: true,
+          violatedConstraintKinds: Object.freeze([]),
+          notes: Object.freeze(['Investment opportunities remain proposals.']),
+        },
+        userConfirmationRequired: true,
+        policyRequirement: 'KERNEL_AUTHORIZATION_REQUIRED',
+        complianceRequirement: 'PROPOSAL_ONLY',
+        executionCapability: 'PROPOSAL_ONLY',
+        supportingFactRefs: Object.freeze([review.portfolioId]),
+        supportingGoalIds: Object.freeze(goalIds(input.mandate, ['INVEST_ELIGIBLE_LONG_TERM_SURPLUS_LATER'])),
+        agentProposalIds: Object.freeze([]),
+        pegOpportunityIds: Object.freeze([]),
+      });
+    }
+  }
+
   return Object.freeze(candidates);
 }

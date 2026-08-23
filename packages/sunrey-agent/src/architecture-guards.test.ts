@@ -43,5 +43,10 @@ describe('chunk 98 architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/eval-platform')), false);
     assert.equal(existsSync(join(ROOT, 'packages/agent-observability')), false);
     assert.equal(existsSync(join(ROOT, 'packages/kill-switch')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/conversation')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/action-center')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/agent-chat')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/agent-tools')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/tool-runtime')), false);
   });
 });

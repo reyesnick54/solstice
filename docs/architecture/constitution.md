@@ -507,7 +507,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/kernel` | `packages/config`, `packages/evidence`, `packages/permissions`, `packages/domain`, `packages/money`, `packages/identity`, `packages/security` |
 | `services/compliance` | `packages/kernel` |
 | `packages/ledger` | `packages/config`, `packages/permissions`, `packages/domain`, `packages/money` |
-| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent`, `packages/clean-room` |
+| `packages/persistence` | `packages/domain`, `packages/evidence`, `packages/events`, `packages/kernel`, `packages/ledger`, `packages/permissions`, `packages/money`, `packages/security`, `packages/identity`, `packages/personal-economic-graph`, `packages/platform`, `packages/treasury`, `packages/investments`, `packages/regulatory-twin`, `packages/risk`, `packages/model-registry`, `packages/agentic-capital-mesh`, `packages/strategy-lab`, `packages/personal-data-vault`, `packages/consent`, `packages/clean-room`, `packages/sunrey-agent` |
 | `packages/agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config` |
 | `packages/sunrey-agent` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/permissions`, `packages/kernel`, `packages/security`, `packages/risk`, `packages/model-registry`, `packages/sunrey-chain`, `packages/sunrey-exchange`, `packages/custody`, `packages/ai-runtime` |
 | `packages/ai-runtime` | `packages/domain`, `packages/money`, `packages/config`, `packages/security`, `packages/identity`, `packages/model-registry` |
@@ -528,6 +528,9 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
 | `services/strategy-lab` | `packages/strategy-lab` |
 | `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/sunrey-agent` |
+| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/platform` |
+| `services/api` | `services/accounts`, `services/investments`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
+| `services/api` | `services/accounts`, `services/economic-graph`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `packages/personal-data-vault` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events` |
 | `packages/consent` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault` |
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |

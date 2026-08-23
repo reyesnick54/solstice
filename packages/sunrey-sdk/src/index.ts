@@ -124,6 +124,19 @@ export type {
   UserAgentMandate,
 } from './agent-mandates.ts';
 export {
+  AgentToolRuntime,
+  createAgentToolRuntime,
+  createCanonicalToolRegistry,
+  CANONICAL_AGENT_TOOLS,
+  CANONICAL_TOOL_COUNT,
+} from './agent-tools.ts';
+export type {
+  AgentToolDefinition,
+  AgentToolResult,
+  StructuredToolCall,
+  ToolSession,
+} from './agent-tools.ts';
+export {
   connectMobileWallet,
   syncWallet,
   subscribeWallet,
@@ -161,6 +174,12 @@ export type {
   ConsumerActivity,
   AccountBalanceView,
   AccountStatementData,
+  GrowMoney,
+  GrowPortfolio,
+  GrowHoldings,
+  GrowPerformance,
+  GrowAllocation,
+  GrowRisk,
 } from './consumer-bff/index.ts';
 export {
   WalletSecurityClient,
@@ -176,6 +195,9 @@ export {
   createSunReyConsumerBffClient,
   BFF_PAYMENT_STATUSES,
   RECIPIENT_DESTINATION_TYPES,
+  GROW_PLAN_STATUSES,
+  GROW_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
 } from './consumer-bff/index.ts';
 export type {
   Recipient,
@@ -183,4 +205,10 @@ export type {
   Payment,
   PaymentStatus,
   PaymentApproval,
+  AgentResource,
+  AgentConversationResource,
+  AgentMemoryResource,
+  AgentMessageResponse,
+  GrowPlan,
+  GrowProposal,
 } from './consumer-bff/index.ts';

@@ -14,6 +14,7 @@ describe('Consumer BFF HTTP adapter', () => {
         identity: world.runtime.identity.service,
         payments: world.payments,
         agent: world.agent,
+        grow: world.grow,
       },
     });
     try {

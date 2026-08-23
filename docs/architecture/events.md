@@ -141,6 +141,14 @@ Implemented Personal Economic Graph events (ids and kinds only):
 - `growth.plan.created` → `GrowthPlanCreated`
 - `growth.plan.stale` → `GrowthPlanStale`
 - `growth.action.proposed` → `GrowthActionProposed`
+- `growth.opportunity.detected` → `GrowthOpportunityDetected`
+- `growth.opportunity.lifecycle.changed` → `GrowthOpportunityLifecycleChanged`
+- `growth.opportunity.preferences.updated` → `GrowthOpportunityPreferencesUpdated`
+- `growth.opportunities.recomputed` → `GrowthOpportunitiesRecomputed`
+
+Phase E product Growth Plans and Financial Proposals reuse
+`GrowthPlanCreated` and `GrowthActionProposed`. They do not add a
+second event taxonomy or a second Growth Orchestrator owner.
 
 Implemented Regulatory Digital Twin events (hashes and ids only; no raw customer facts):
 

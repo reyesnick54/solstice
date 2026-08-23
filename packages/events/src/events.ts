@@ -1037,12 +1037,30 @@ export type GrowthAuditPayload = {
   readonly executionCapability?: string;
   readonly proposedCount?: number;
   readonly reason?: string;
+  readonly opportunityId?: string;
+  readonly detector?: string;
+  readonly status?: string;
+  readonly proposalId?: string;
+  readonly presentedCount?: number;
+  readonly detectedCount?: number;
 };
 
 export type GrowthCycleStartedV1 = VersionedEvent<'GrowthCycleStarted', 1, GrowthAuditPayload>;
 export type GrowthPlanCreatedV1 = VersionedEvent<'GrowthPlanCreated', 1, GrowthAuditPayload>;
 export type GrowthPlanStaleV1 = VersionedEvent<'GrowthPlanStale', 1, GrowthAuditPayload>;
 export type GrowthActionProposedV1 = VersionedEvent<'GrowthActionProposed', 1, GrowthAuditPayload>;
+export type GrowthOpportunityDetectedV1 = VersionedEvent<'GrowthOpportunityDetected', 1, GrowthAuditPayload>;
+export type GrowthOpportunityLifecycleChangedV1 = VersionedEvent<
+  'GrowthOpportunityLifecycleChanged',
+  1,
+  GrowthAuditPayload
+>;
+export type GrowthOpportunityPreferencesUpdatedV1 = VersionedEvent<
+  'GrowthOpportunityPreferencesUpdated',
+  1,
+  GrowthAuditPayload
+>;
+export type GrowthOpportunitiesRecomputedV1 = VersionedEvent<'GrowthOpportunitiesRecomputed', 1, GrowthAuditPayload>;
 
 export type EconomicValueAuditPayload = {
   readonly snapshotId?: string;
@@ -1117,6 +1135,25 @@ export type RailPaymentRejectedV1 = VersionedEvent<'RailPaymentRejected', 1, Rai
 export type RailPaymentReturnedV1 = VersionedEvent<'RailPaymentReturned', 1, RailAuditPayload>;
 export type RailProviderDegradedV1 = VersionedEvent<'RailProviderDegraded', 1, RailAuditPayload>;
 export type RailReconciliationMismatchV1 = VersionedEvent<'RailReconciliationMismatch', 1, RailAuditPayload>;
+
+export type AgentRuntimeAuditPayload = {
+  readonly agentId: string | null;
+  readonly ownerId: string | null;
+  readonly conversationId?: string | null;
+  readonly memoryId?: string | null;
+  readonly mandateId?: string | null;
+  readonly containsConversationContent: false;
+};
+
+export type AgentCreatedV1 = VersionedEvent<'AgentCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentPausedV1 = VersionedEvent<'AgentPaused', 1, AgentRuntimeAuditPayload>;
+export type AgentRevokedV1 = VersionedEvent<'AgentRevoked', 1, AgentRuntimeAuditPayload>;
+export type AgentConversationCreatedV1 = VersionedEvent<'AgentConversationCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentMessageReceivedV1 = VersionedEvent<'AgentMessageReceived', 1, AgentRuntimeAuditPayload>;
+export type AgentMessageCompletedV1 = VersionedEvent<'AgentMessageCompleted', 1, AgentRuntimeAuditPayload>;
+export type AgentMemoryCreatedV1 = VersionedEvent<'AgentMemoryCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentMemoryChangedV1 = VersionedEvent<'AgentMemoryChanged', 1, AgentRuntimeAuditPayload>;
+export type AgentMandateChangedV1 = VersionedEvent<'AgentMandateChanged', 1, AgentRuntimeAuditPayload>;
 
 export type DomainEvent =
   | AccountOpenedV1
@@ -1227,6 +1264,10 @@ export type DomainEvent =
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
   | GrowthActionProposedV1
+  | GrowthOpportunityDetectedV1
+  | GrowthOpportunityLifecycleChangedV1
+  | GrowthOpportunityPreferencesUpdatedV1
+  | GrowthOpportunitiesRecomputedV1
   | EconomicValueSnapshotCreatedV1
   | EconomicValueDimensionChangedV1
   | EconomicValueAttributionRecordedV1
@@ -1366,7 +1407,16 @@ export type DomainEvent =
   | ProviderWebhookAcceptedV1
   | ProviderWebhookRejectedV1
   | OutboundWebhookDeliveredV1
-  | OutboundWebhookFailedV1;
+  | OutboundWebhookFailedV1
+  | AgentCreatedV1
+  | AgentPausedV1
+  | AgentRevokedV1
+  | AgentConversationCreatedV1
+  | AgentMessageReceivedV1
+  | AgentMessageCompletedV1
+  | AgentMemoryCreatedV1
+  | AgentMemoryChangedV1
+  | AgentMandateChangedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 

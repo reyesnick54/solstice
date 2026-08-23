@@ -5,6 +5,7 @@ import type { SecretProvider } from '../../security/src/secrets.ts';
 import { sha256Canonical } from './ids.ts';
 import { evaluateContextRelease } from './policy.ts';
 import type { AiInferenceProvider } from './provider.ts';
+import { HttpsGenericAiProvider } from './providers/https-generic.ts';
 import { LocalTestAiProvider } from './providers/local-test.ts';
 import { S3mAiProvider } from './providers/s3m.ts';
 import { XaiGrokAiProvider } from './providers/xai-grok.ts';
@@ -21,6 +22,7 @@ import type {
   AiProviderHealth,
   AiRoutingDecision,
   AiRuntimePolicy,
+  AiStreamChunk,
 } from './types.ts';
 
 const PROMPT_INJECTION =
@@ -56,6 +58,7 @@ export class AiRuntime {
       S3M: providers?.S3M ?? new S3mAiProvider(clock),
       XAI_GROK: providers?.XAI_GROK ?? new XaiGrokAiProvider(clock),
       LOCAL_TEST: providers?.LOCAL_TEST ?? new LocalTestAiProvider(clock),
+      HTTPS_GENERIC: providers?.HTTPS_GENERIC ?? new HttpsGenericAiProvider(clock),
     });
   }
 
@@ -64,6 +67,7 @@ export class AiRuntime {
       S3M: this.providers.S3M.health(),
       XAI_GROK: this.providers.XAI_GROK.health(),
       LOCAL_TEST: this.providers.LOCAL_TEST.health(),
+      HTTPS_GENERIC: this.providers.HTTPS_GENERIC.health(),
     });
   }
 
@@ -73,6 +77,41 @@ export class AiRuntime {
 
   tracesSnapshot(): readonly AiInferenceTrace[] {
     return Object.freeze([...this.traces]);
+  }
+
+  *inferStream(request: AiInferenceRequest): Generator<AiStreamChunk, Result<AiRuntimeResult, AiProviderFailure>, void> {
+    const result = this.infer(request);
+    if (!result.ok) {
+      yield {
+        kind: 'refused',
+        text: result.error.detail,
+        requestId: request.requestId,
+        grantsExecutionAuthority: false,
+        executedFinancialMutation: false,
+      };
+      return result;
+    }
+    const text = result.value.response?.text ?? '';
+    for (const token of text.split(/(\s+)/)) {
+      if (token.length === 0) {
+        continue;
+      }
+      yield {
+        kind: 'token',
+        text: token,
+        requestId: request.requestId,
+        grantsExecutionAuthority: false,
+        executedFinancialMutation: false,
+      };
+    }
+    yield {
+      kind: 'done',
+      text: '',
+      requestId: request.requestId,
+      grantsExecutionAuthority: false,
+      executedFinancialMutation: false,
+    };
+    return result;
   }
 
   infer(request: AiInferenceRequest): Result<AiRuntimeResult, AiProviderFailure> {

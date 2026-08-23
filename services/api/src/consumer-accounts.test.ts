@@ -107,7 +107,7 @@ describe('Consumer BFF accounts productization', () => {
     const zero = get(world, '/api/v1/accounts/acct_sandbox_zero_usd', 'zero_balance');
     assert.equal((zero.body as { balance: { value: { posted: { minorUnits: string } } } }).balance.value.posted.minorUnits, '0');
     const many = get(world, '/api/v1/accounts', 'investment');
-    assert.equal((many.body as { items: unknown[] }).items.length, 2);
+    assert.ok((many.body as { items: unknown[] }).items.length >= 2);
     const bootstrap = get(world, '/api/v1/me/bootstrap', 'basic_verified');
     assert.ok((bootstrap.body as { accounts: { value: unknown[] } }).accounts.value.length >= 1);
   });

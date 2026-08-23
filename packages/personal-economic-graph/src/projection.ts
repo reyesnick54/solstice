@@ -21,7 +21,7 @@ import {
   type Provenance,
   type SourceType,
 } from './provenance.ts';
-import type { InMemoryEconomicGraphStore } from './store.ts';
+import type { ClassifiedActivityOverlay, InMemoryEconomicGraphStore } from './store.ts';
 import type {
   ActivityClassification,
   CanonicalRef,
@@ -30,16 +30,7 @@ import type {
   SerializedMoney,
 } from './taxonomy.ts';
 
-export type ClassifiedActivityOverlay = {
-  readonly sourceEventId: string;
-  readonly classification: ActivityClassification;
-  readonly counterpart?: Counterpart;
-  readonly subjectId: string;
-  readonly accountId?: string;
-  readonly amount?: SerializedMoney;
-  readonly direction?: 'INFLOW' | 'OUTFLOW';
-  readonly occurredAt?: UtcInstant;
-};
+export type { ClassifiedActivityOverlay };
 
 export type ProjectionPorts = {
   readonly store: InMemoryEconomicGraphStore;
@@ -91,10 +82,21 @@ export class EconomicGraphProjector {
 
   registerOverlay(overlay: ClassifiedActivityOverlay): void {
     this.overlays.set(overlay.sourceEventId, overlay);
+    this.store.putOverlay(overlay);
   }
 
   registerAccountCurrency(accountId: string, currency: string): void {
     this.accountCurrencies.set(accountId, currency);
+    this.store.putAccountCurrency(accountId, currency);
+  }
+
+  hydrateOverlays(): void {
+    for (const overlay of this.store.overlaysFor()) {
+      this.overlays.set(overlay.sourceEventId, overlay);
+    }
+    for (const row of this.store.exportState().accountCurrencies) {
+      this.accountCurrencies.set(row.accountId, row.currency);
+    }
   }
 
   ingest(event: DomainEvent, subjectHint?: string): void {

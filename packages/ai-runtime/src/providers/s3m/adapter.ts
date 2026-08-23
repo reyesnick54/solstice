@@ -2,6 +2,7 @@ import type { Clock } from '../../../../config/src/clock.ts';
 import type { SecretProvider } from '../../../../security/src/secrets.ts';
 import { sha256Canonical } from '../../ids.ts';
 import type { AiInferenceProvider } from '../../provider.ts';
+import { streamEventsFromResponse, type AiStreamEvent } from '../../streaming.ts';
 import { resolveProviderCredential } from '../../secrets.ts';
 import type {
   AiProviderCapabilities,
@@ -92,6 +93,8 @@ export class S3mInferenceProvider implements AiInferenceProvider {
       kind: 'S3M',
       supportsStructuredOutput: true,
       supportsToolIntents: true,
+      supportsStreaming: true,
+      supportsCancellation: false,
       externalNetwork: false,
       mayReceivePrivateKeys: false,
       mayExecuteFinancialActions: false,
@@ -156,6 +159,14 @@ export class S3mInferenceProvider implements AiInferenceProvider {
 
   safetyEvents(): readonly S3mSafetyEvent[] {
     return this.safety.snapshot();
+  }
+
+  stream(request: CanonicalProviderRequest): Result<readonly AiStreamEvent[], AiProviderFailure> {
+    const inferred = this.infer(request);
+    if (!inferred.ok) {
+      return inferred;
+    }
+    return ok(streamEventsFromResponse(request.requestId, inferred.value));
   }
 
   infer(request: CanonicalProviderRequest): Result<AiInferenceResponse, AiProviderFailure> {

@@ -28,6 +28,8 @@ export {
 } from './fixtures.ts';
 export { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './handler.ts';
 export { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
+export { GrowBffSurface } from './grow.ts';
+export { AgentConversationSurface, createAgentConversationSurface } from './conversation.ts';
 export type {
   Recipient,
   PaymentQuote,
