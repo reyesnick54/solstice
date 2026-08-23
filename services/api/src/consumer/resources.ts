@@ -37,7 +37,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
-      return row(group, '/api/v1/grow', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + packages/investments + packages/personal-economic-graph', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Grow My Money plans, structured proposals, opportunity feed, simulation portfolio, and PEG profile. Illustrations only. Production remains disabled.');
+      return row(group, '/api/v1/grow', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + Grow lifecycle + packages/investments + packages/personal-economic-graph', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Grow My Money home, plans, structured proposals, opportunity feed, simulation portfolio, and PEG profile. Execution uses Kernel and Provider Runtime. Live investment is disabled.');
     case 'GOALS':
       return row(group, '/api/v1/grow/goals', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'User-declared goals. Ledger balances cannot be overridden.');
     case 'PORTFOLIO':

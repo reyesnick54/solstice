@@ -445,13 +445,15 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
-      summary: Grow My Money catalog and latest plan experience
+      summary: Grow My Money home and catalog
       description: >
-        Simulation illustrations only. Conservative, base, and upside
-        ranges are not guaranteed outcomes. Production remains disabled.
+        Structured Grow home when the lifecycle surface is attached.
+        Otherwise the Prompt 4 plan catalog. Simulation illustrations only.
+        Conservative, base, and upside ranges are not guaranteed outcomes.
+        Production remains disabled.
       responses:
         "200":
-          description: Grow catalog
+          description: Grow home or catalog
           content:
             application/json:
               schema:
@@ -459,13 +461,13 @@ paths:
   /api/v1/grow/plans:
     get:
       operationId: listGrowPlans
-      summary: List the authenticated customer's growth plans
+      summary: List the authenticated customer's product growth plans
       responses:
         "200":
           description: Plan list
     post:
       operationId: createGrowPlan
-      summary: Create a Grow My Money plan
+      summary: Create a Grow My Money product plan
       description: >
         Server issues the plan and a structured primary proposal.
         The client cannot submit proposal JSON as if the server issued it.
@@ -479,7 +481,7 @@ paths:
   /api/v1/grow/plans/{id}:
     get:
       operationId: getGrowPlan
-      summary: Get one owned growth plan
+      summary: Get one owned product growth plan
       parameters:
         - in: path
           name: id
@@ -492,6 +494,49 @@ paths:
           description: Cross-user denied
         "404":
           description: Unknown plan
+  /api/v1/grow/plan:
+    get:
+      operationId: getGrowLifecyclePlan
+      summary: Current Growth Orchestrator plan
+      responses:
+        "200":
+          description: Orchestrator plan
+  /api/v1/grow/plan/request:
+    post:
+      operationId: requestGrowLifecyclePlan
+      summary: Request a new orchestrator planning cycle
+      responses:
+        "200":
+          description: Requested
+  /api/v1/grow/plan/pause:
+    post:
+      operationId: pauseGrowLifecyclePlan
+      summary: Pause the current orchestrator plan
+      responses:
+        "200":
+          description: Paused
+  /api/v1/grow/plan/resume:
+    post:
+      operationId: resumeGrowLifecyclePlan
+      summary: Resume the current orchestrator plan
+      responses:
+        "200":
+          description: Resumed
+  /api/v1/grow/plan/progress:
+    get:
+      operationId: getGrowLifecyclePlanProgress
+      summary: Plan progress against declared goals
+      responses:
+        "200":
+          description: Progress
+  /api/v1/grow/scenarios:
+    get:
+      operationId: getGrowScenarios
+      summary: Conservative, base, and upside illustration ranges
+      description: Ranges are not guaranteed outcomes.
+      responses:
+        "200":
+          description: Scenario ranges
   /api/v1/grow/portfolio:
     get:
       operationId: getGrowPortfolio
@@ -526,7 +571,7 @@ paths:
   /api/v1/grow/portfolio/performance:
     get:
       operationId: getGrowPortfolioPerformance
-      summary: Simulation performance
+      summary: Simulation portfolio performance
       description: Server-calculated TWR or Modified Dietz. LLMs are not authoritative.
       responses:
         "200":
@@ -558,6 +603,14 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowRisk"
+  /api/v1/grow/performance:
+    get:
+      operationId: getGrowLifecyclePerformance
+      summary: Planned versus executed versus current
+      description: Deposits are not market performance.
+      responses:
+        "200":
+          description: Lifecycle performance
   /api/v1/grow/opportunities:
     get:
       operationId: listGrowOpportunities
@@ -633,7 +686,8 @@ paths:
           description: Proposal list
     post:
       operationId: createGrowProposal
-      summary: Create a structured financial proposal from a plan component
+      summary: Create a structured financial proposal
+      description: Server-issued. Frontend financial instructions are not trusted state.
       responses:
         "201":
           description: Financial proposal
@@ -673,8 +727,8 @@ paths:
       operationId: approveGrowProposal
       summary: Approve a structured financial proposal
       description: >
-        Uses the Phase B approval state machine. Approval does not issue
-        Execution Authority and does not post a ledger journal.
+        Uses the Phase B approval state machine. Approval does not by itself
+        issue Execution Authority or post a ledger journal.
       parameters:
         - in: path
           name: id
@@ -699,6 +753,67 @@ paths:
       responses:
         "200":
           description: Rejected proposal
+  /api/v1/grow/proposals/{id}/execute:
+    post:
+      operationId: executeGrowProposal
+      summary: Execute an approved proposal through Kernel and Provider Runtime
+      description: Frontend financial instructions are not trusted proposal state.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/executions/{id}:
+    get:
+      operationId: getGrowExecution
+      summary: Normalized execution status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Execution
+  /api/v1/grow/recurring:
+    post:
+      operationId: createGrowRecurring
+      summary: Create a recurring contribution mandate
+      responses:
+        "201":
+          description: Mandate
+  /api/v1/grow/recurring/{id}/cancel:
+    post:
+      operationId: cancelGrowRecurring
+      summary: Revoke a recurring mandate
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked
+  /api/v1/grow/monitor:
+    post:
+      operationId: runGrowMonitor
+      summary: Run a monitoring cycle
+      responses:
+        "200":
+          description: Findings
+  /api/v1/grow/agent-tools:
+    post:
+      operationId: invokeGrowAgentTool
+      summary: Phase F agent tool hook
+      description: Agent may propose. Agent cannot execute or self-approve.
+      responses:
+        "200":
+          description: Tool result
+        "403":
+          description: Privileged execution refused
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -870,17 +985,17 @@ paths:
   /api/v1/goals:
     get:
       operationId: getGoals
-      summary: Goals resource stub
+      summary: Goals alias for Grow goals
       responses:
         "200":
-          description: Honest availability
+          description: Goals
   /api/v1/portfolio:
     get:
       operationId: getPortfolio
-      summary: Portfolio resource stub
+      summary: Portfolio alias for Grow portfolio
       responses:
         "200":
-          description: Honest availability
+          description: Portfolio
   /api/v1/wallets:
     get:
       operationId: getWallets

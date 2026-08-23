@@ -10,7 +10,7 @@ function runtime(world: ReturnType<typeof createSandboxWorld>) {
     sessions: world.sessions,
     identity: world.runtime.identity.service,
     payments: world.payments,
-    grow: world.grow,
+    productGrow: world.grow,
   };
 }
 
@@ -83,7 +83,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     });
     const proposalId = (created.body as { primaryProposal: { proposalId: string } }).primaryProposal.proposalId;
     const blocked = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {});
-    assert.equal(blocked.status, 403);
+    assert.equal(blocked.status, 401);
     const approved = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {
       stepUpSatisfied: true,
     });

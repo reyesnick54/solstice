@@ -123,6 +123,28 @@ describe('consumer BFF payments SDK', () => {
             frontendMathAuthoritative: false,
             liveState: false,
             securitiesBrokerageLive: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const portfolio = await client.getGrowPortfolio();
+    assert.equal(portfolio.frontendMathAuthoritative, false);
+    assert.equal(portfolio.liveState, false);
+    await client.getGrowHoldings();
+    await client.getGrowPortfolioPerformance();
+    await client.getGrowAllocation();
+    await client.getGrowRisk();
+    assert.deepEqual(calls, [
+      'GET http://example.test/api/v1/grow/portfolio',
+      'GET http://example.test/api/v1/grow/portfolio/holdings',
+      'GET http://example.test/api/v1/grow/portfolio/performance',
+      'GET http://example.test/api/v1/grow/portfolio/allocation',
+      'GET http://example.test/api/v1/grow/portfolio/risk',
+    ]);
+    assert.equal('submitGrowOrder' in client, false);
+  });
+
   it('calls Grow opportunity routes without privileged imports', async () => {
     const client = createSunReyConsumerBffClient({
       baseUrl: 'http://example.test',
@@ -153,21 +175,6 @@ describe('consumer BFF payments SDK', () => {
         );
       },
     });
-    const portfolio = await client.getGrowPortfolio();
-    assert.equal(portfolio.frontendMathAuthoritative, false);
-    assert.equal(portfolio.liveState, false);
-    await client.getGrowHoldings();
-    await client.getGrowPerformance();
-    await client.getGrowAllocation();
-    await client.getGrowRisk();
-    assert.deepEqual(calls, [
-      'GET http://example.test/api/v1/grow/portfolio',
-      'GET http://example.test/api/v1/grow/portfolio/holdings',
-      'GET http://example.test/api/v1/grow/portfolio/performance',
-      'GET http://example.test/api/v1/grow/portfolio/allocation',
-      'GET http://example.test/api/v1/grow/portfolio/risk',
-    ]);
-    assert.equal('submitGrowOrder' in client, false);
     const feed = await client.listGrowOpportunities();
     assert.equal(feed.productionMoneyMovement, false);
     const started = await client.startGrowProposal('gop_1');

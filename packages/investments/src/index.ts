@@ -33,6 +33,11 @@ export { simulationPeveConsumer, simulationRdtPort } from './ports.ts';
 export type { PeveInvestmentView, RdtInvestmentReadiness, InvestmentPegPublisher } from './ports.ts';
 export { InvestmentStore } from './store.ts';
 export { InvestmentsService } from './service.ts';
+export {
+  executeGrowInvestmentCommand,
+  selectSandboxInvestmentProvider,
+  refuseGrowthOrchestratorAutoTrade,
+} from './grow-adapter.ts';
 export type { InvestmentsServiceOutcome, InvestmentCatalogPorts } from './service.ts';
 export { SIM_ETF_1, seedSimulationInstruments } from './seed.ts';
 export { consumeLotsFifo, openLot } from './lot.ts';
