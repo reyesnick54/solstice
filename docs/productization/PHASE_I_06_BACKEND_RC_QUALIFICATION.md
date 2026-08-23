@@ -2,7 +2,7 @@
 
 Qualification record. Not a new architecture layer.
 
-RC: `sunrey-backend-v1.0.0-rc.1`
+RC: `sunrey-backend-v1.0.0-rc.2` (supersedes `sunrey-backend-v1.0.0-rc.1`)
 
 `BACKEND_PRODUCTION_RELEASE_CANDIDATE=true`
 `PRODUCTION_READY=false`
@@ -35,14 +35,41 @@ HIN `packages/information-market`.
 
 ## Environment limitations (not faked)
 
-- Docker / PostgreSQL were not available in the qualification VM.
-- Container digests were not built.
+- Hosted preproduction cluster apply is not performed here.
 - Full-duration soak was not run.
 - No live credentials, licenses, or external audit reports exist.
+- Container images are built locally / in CI and are not published to a registry.
+
+## RC.2 clean qualification
+
+Prompt 2 of the final deployment workflow re-qualifies the existing backend
+from clean `main` after Prompt 1. It does not invent Phase J.
+
+- Real PostgreSQL: empty → latest, prior schema → latest, restart, persistence,
+  ledger invariants, duplicate-version check, migration-failure rollout gate.
+- Real local OCI image for `deploy/sunrey-preproduction/docker/sunrey-platform.Dockerfile`.
+- SBOM and provenance via `scripts/sunrey-release.mjs`.
+- Rehearsal digest `sha256:6f1c2e8a…` remains a labeled
+  `SIMULATION_REHEARSAL_PLACEHOLDER` in Helm/release fixtures.
+
+## RC.2 measured results
+
+- `npm test`: 3754 run, 3753 passed, 0 failed, 1 skipped
+- TypeScript `tsc --noEmit`: PASS
+- Rust `cargo +1.83.0 fmt/clippy/test --locked`: PASS
+- PostgreSQL 16 from-zero, prior-schema upgrade, restart, ledger invariants: PASS
+- Persistence integration: 38 passed, 0 failed
+- Local OCI image + docker-save archive: real sha256 in
+  `docs/productization/sunrey-backend-rc-artifacts.json` (`publishedToRegistry=false`)
+- SBOM + provenance: generated
+- Production flags: remain off
 
 ## Commands
 
 ```
+npm ci --ignore-scripts
+npm run build:backend-rc-artifacts -- --require-container
+npm run qualify:backend-db
 npm run qualify:backend-rc
 npm test
 ```

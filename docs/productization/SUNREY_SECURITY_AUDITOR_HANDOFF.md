@@ -52,13 +52,13 @@ These are engineering results, not an external attestation.
 
 - TypeScript workspace + Rust `--locked` crates
 - SBOM / provenance / sign-verify via `scripts/sunrey-release.mjs`
-- RC identifier `sunrey-backend-v1.0.0-rc.1`
+- RC identifier `sunrey-backend-v1.0.0-rc.2`
 
 ## Known risks for the assessor
 
 - Simulation HSM is not a production HSM.
 - No live provider webhook secret material is present (correct for this RC).
-- Docker image digests were not produced in the Phase I Prompt 6 VM.
+- Local/CI OCI image digests are recorded in `docs/productization/sunrey-backend-rc-artifacts.json`. They are not published registry digests.
 - Mainnet, live Exchange, live Agent execution, and live data marketplace stay disabled.
 
 ## Suggested pentest scope (external, not run here)

@@ -16,6 +16,9 @@ import {
   type VersionedReleaseConfiguration,
 } from './types.ts';
 
+/** Simulation/rehearsal fixture only. Not a published registry digest. */
+export const REHEARSAL_CONTAINER_DIGEST_KIND = 'SIMULATION_REHEARSAL_PLACEHOLDER' as const;
+
 export const REHEARSAL_CONTAINER_DIGEST =
   'sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f';
 

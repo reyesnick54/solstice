@@ -20,7 +20,10 @@ import { checkMergeIntegrity } from './check-merge-integrity.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const RC_MANIFEST_REL = 'docs/productization/sunrey-backend-release-candidate.json';
 export const RC_CONFIG_REL = 'docs/productization/sunrey-backend-rc-configuration.json';
-export const RC_VERSION = 'sunrey-backend-v1.0.0-rc.1';
+export const RC_ARTIFACTS_REL = 'docs/productization/sunrey-backend-rc-artifacts.json';
+export const RC_VERSION = 'sunrey-backend-v1.0.0-rc.2';
+export const REHEARSAL_PLACEHOLDER_DIGEST =
+  'sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f';
 
 const REQUIRED_SCREEN_IDS = [
   'ONBOARDING',
@@ -92,6 +95,14 @@ function commandAvailable(name) {
 function gitRev() {
   const result = spawnSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' });
   return result.status === 0 ? result.stdout.trim() : 'unknown';
+}
+
+function gitObjectExists(sha) {
+  if (!/^[0-9a-f]{40}$/.test(sha)) {
+    return false;
+  }
+  const result = spawnSync('git', ['cat-file', '-e', sha], { cwd: ROOT, encoding: 'utf8' });
+  return result.status === 0;
 }
 
 export function evaluateBackendReleaseCandidate(root = ROOT) {
@@ -178,6 +189,108 @@ export function evaluateBackendReleaseCandidate(root = ROOT) {
     const missingExternal = manifest.externalGates?.missing ?? [];
     if (!Array.isArray(missingExternal) || missingExternal.length === 0) {
       findings.push(`${RC_MANIFEST_REL}: externalGates.missing must list remaining blockers`);
+    }
+    if (!gitObjectExists(String(manifest.commit ?? ''))) {
+      findings.push(`${RC_MANIFEST_REL}: commit must be a real git object SHA, not a placeholder`);
+    }
+    if (manifest.buildArtifacts?.containerDigests === REHEARSAL_PLACEHOLDER_DIGEST) {
+      findings.push(`${RC_MANIFEST_REL}: rehearsal placeholder must not be recorded as a completed container digest`);
+    }
+  }
+
+  if (!existsSync(join(root, RC_ARTIFACTS_REL))) {
+    findings.push(`missing ${RC_ARTIFACTS_REL}`);
+  } else {
+    try {
+      const artifacts = loadJson(RC_ARTIFACTS_REL);
+      if (artifacts.rcVersion !== RC_VERSION) {
+        findings.push(`${RC_ARTIFACTS_REL}: rcVersion must be ${RC_VERSION}`);
+      }
+      if (artifacts.publishedToRegistry !== false) {
+        findings.push(`${RC_ARTIFACTS_REL}: publishedToRegistry must remain false`);
+      }
+      const hashes = artifacts.sourceHashes ?? {};
+      if (Object.keys(hashes).length === 0) {
+        findings.push(`${RC_ARTIFACTS_REL}: sourceHashes must contain real file digests`);
+      }
+      for (const [rel, digest] of Object.entries(hashes)) {
+        if (!/^sha256:[0-9a-f]{64}$/.test(String(digest))) {
+          findings.push(`${RC_ARTIFACTS_REL}: ${rel} is not a sha256 digest`);
+        }
+        if (digest === REHEARSAL_PLACEHOLDER_DIGEST) {
+          findings.push(`${RC_ARTIFACTS_REL}: ${rel} uses the rehearsal placeholder`);
+        }
+      }
+      if (!artifacts.sbom?.generated || !Array.isArray(artifacts.sbom?.digests) || artifacts.sbom.digests.length === 0) {
+        findings.push(`${RC_ARTIFACTS_REL}: SBOM evidence is missing`);
+      }
+      if (!artifacts.provenance?.generated || !artifacts.provenance?.digest) {
+        findings.push(`${RC_ARTIFACTS_REL}: provenance evidence is missing`);
+      }
+      const container = artifacts.container ?? {};
+      if (container.built === true) {
+        if (container.imageId === REHEARSAL_PLACEHOLDER_DIGEST) {
+          findings.push(`${RC_ARTIFACTS_REL}: container.imageId must not be the rehearsal placeholder`);
+        }
+        if (!/^sha256:[0-9a-f]{64}$/.test(String(container.imageId ?? ''))) {
+          findings.push(`${RC_ARTIFACTS_REL}: container.imageId must be a real sha256 digest`);
+        }
+        if (container.publishedToRegistry !== false) {
+          findings.push(`${RC_ARTIFACTS_REL}: container must not claim a registry publish`);
+        }
+      } else if (environment.docker) {
+        findings.push(`${RC_ARTIFACTS_REL}: docker is available so a real local OCI image must be built`);
+      }
+    } catch (error) {
+      findings.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  const releaseRel = 'infra/sunrey-production/releases/preproduction-release.json';
+  if (existsSync(join(root, releaseRel))) {
+    try {
+      const release = loadJson(releaseRel);
+      if (release.containerDigest === REHEARSAL_PLACEHOLDER_DIGEST) {
+        if (release.containerDigestKind !== 'SIMULATION_REHEARSAL_PLACEHOLDER') {
+          findings.push(`${releaseRel}: rehearsal digest must be labeled SIMULATION_REHEARSAL_PLACEHOLDER`);
+        }
+      }
+      if (release.productionAuthorized !== false || release.mainnetEnabled !== false) {
+        findings.push(`${releaseRel}: productionAuthorized and mainnetEnabled must remain false`);
+      }
+      if (release.databaseMigrationVersion !== 'V040') {
+        findings.push(`${releaseRel}: databaseMigrationVersion must be the latest customer version V040`);
+      }
+    } catch (error) {
+      findings.push(error instanceof Error ? error.message : String(error));
+    }
+  }
+
+  if (existsSync(join(root, RC_CONFIG_REL))) {
+    try {
+      const config = loadJson(RC_CONFIG_REL);
+      if (config.rcVersion !== RC_VERSION) {
+        findings.push(`${RC_CONFIG_REL}: rcVersion must be ${RC_VERSION}`);
+      }
+      if (config.buildArtifacts?.containerDigests?.status === 'COMPLETED' && !config.buildArtifacts.containerDigests.digest) {
+        findings.push(`${RC_CONFIG_REL}: completed container digest is missing`);
+      }
+      const flags = config.featureFlags ?? {};
+      for (const name of [
+        'PRODUCTION_READY',
+        'PRODUCTION_ACTIVE',
+        'LIVE_CONNECTIVITY_ENABLED',
+        'MAINNET_ACTIVE',
+        'LIVE_EXCHANGE_ENABLED',
+        'LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED',
+        'LIVE_DATA_MARKETPLACE_ENABLED',
+      ]) {
+        if (flags[name] !== false) {
+          findings.push(`${RC_CONFIG_REL}: featureFlags.${name} must be false`);
+        }
+      }
+    } catch (error) {
+      findings.push(error instanceof Error ? error.message : String(error));
     }
   }
 

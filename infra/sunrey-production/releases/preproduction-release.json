@@ -4,6 +4,8 @@
   "environment": "PREPRODUCTION",
   "applicationVersion": "0.1.0-preproduction",
   "containerDigest": "sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f",
+  "containerDigestKind": "SIMULATION_REHEARSAL_PLACEHOLDER",
+  "containerDigestNote": "Rehearsal/simulation fixture only. Not a published registry digest and not RC.2 image evidence. Real local OCI digests live in docs/productization/sunrey-backend-rc-artifacts.json.",
   "databaseMigrationVersion": "V040",
   "policyVersions": {
     "kernel": "kernel-policy/1",

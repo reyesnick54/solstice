@@ -1,14 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "sunrey.backend.rc.evaluation.v1",
-  "evaluatedAtUtc": "2026-08-23T09:28:57.661Z",
-  "version": "sunrey-backend-v1.0.0-rc.1",
-  "commit": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
+  "evaluatedAtUtc": "2026-08-23T15:53:18.150Z",
+  "version": "sunrey-backend-v1.0.0-rc.2",
+  "commit": "44f88c5796b3e61d17f00020ecd13e1395b7f706",
   "findings": [],
   "environment": {
     "node": "v22.14.0",
-    "docker": false,
-    "postgresClient": false,
+    "docker": true,
+    "postgresClient": true,
     "rustc": true,
     "cargo": true
   },

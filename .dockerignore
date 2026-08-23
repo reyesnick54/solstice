@@ -1,0 +1,14 @@
+.git
+.github
+**/.git
+**/node_modules
+**/target
+**/dist
+**/.solstice-dev-keys
+**/__pycache__
+**/*.tsbuildinfo
+coverage
+artifacts
+infra/postgres/.env
+*.log
+.DS_Store
