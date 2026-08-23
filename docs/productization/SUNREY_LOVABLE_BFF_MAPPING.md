@@ -101,6 +101,8 @@ authentication foundation; the BFF only consumes a verified session.
 | INSIGHTS | `/api/v1/grow/insights` | GET | required + owner | derived insights | deterministic PEG insights | AVAILABLE_SIMULATION | Prompt 2 owns recommendations |
 | RISK PROFILE | `/api/v1/grow/suitability` | GET, POST | required + owner | suitability profile | deterministic questionnaire | AVAILABLE_SIMULATION | LLM must not fabricate scores |
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
+| AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
+| AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |

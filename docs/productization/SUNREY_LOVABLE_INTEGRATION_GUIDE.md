@@ -290,3 +290,21 @@ Grow sandbox tokens: `sandbox.grow_new_user`,
 Do not treat snapshot figures as guaranteed investment returns.
 Do not sum unlike currencies on the client.
 Do not let Agent text move money.
+
+## Agent conversation and Action Cards (Phase F Prompt 4)
+
+Use the Consumer BFF. The Agent never approves.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Conversation | `POST /api/v1/agent/conversations` then `POST .../messages` | Intent is routing only. Missing financial fields are asked, not guessed. |
+| Streaming | `GET /api/v1/agent/conversations/{id}/events?after=` | Tool progress, Action Cards, status. Do not poll domain services. |
+| Action Card | embedded on the turn (`sunrey.consumer.action-card.v1`) | Render `availableActions` from the server. |
+| Approve / modify / reject | `POST /api/v1/agent/actions/{id}/approve\|modify\|reject` | Human session only. Step-up uses Phase B MFA/passkey, never chat secrets. |
+| Action Center | `GET /api/v1/agent/actions?view=` | Awaiting Approval, Processing, Completed, Rejected, Expired, Requires Attention. |
+
+SDK: `startAgentConversation`, `sendAgentMessage`, `streamAgentEvents`,
+`listAgentActions`, `getAgentAction`, `approveAgentAction`,
+`modifyAgentAction`, `rejectAgentAction`.
+
+See `docs/productization/PHASE_F_04_CONVERSATIONAL_ACTIONS.md`.

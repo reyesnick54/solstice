@@ -302,6 +302,8 @@ export type GrowExecution = {
   readonly state: GrowExecutionState | string;
   readonly submittedIsNotCompleted: boolean;
   readonly productionMoneyMovement: false;
+};
+
 export const GROW_PLAN_STATUSES = [
   'DRAFT',
   'PROPOSED',
@@ -559,4 +561,82 @@ export type GrowRisk = {
   readonly assetClassExposure: readonly { readonly assetClass: string; readonly weightBps: string }[];
   readonly fabricatedStatistics: false;
   readonly frontendMathAuthoritative: false;
+};
+
+export const CONVERSATION_INTENTS = [
+  'INFORMATION_REQUEST',
+  'FINANCIAL_ANALYSIS',
+  'PAYMENT_REQUEST',
+  'FX_REQUEST',
+  'GROWTH_REQUEST',
+  'INVESTMENT_REQUEST',
+  'EXCHANGE_REQUEST',
+  'WITHDRAWAL_REQUEST',
+  'CARD_MANAGEMENT',
+  'GOAL_MANAGEMENT',
+  'DATA_PERMISSION_REQUEST',
+  'SUPPORT_REQUEST',
+  'PROPOSAL_MODIFICATION',
+] as const;
+export type ConversationIntent = (typeof CONVERSATION_INTENTS)[number];
+
+export const ACTION_CARD_TYPES = [
+  'PAYMENT',
+  'FX',
+  'GROWTH',
+  'INVESTMENT',
+  'EXCHANGE',
+  'WITHDRAWAL',
+  'CARD_CONTROL',
+] as const;
+export type ActionCardType = (typeof ACTION_CARD_TYPES)[number];
+
+export const ACTION_CENTER_VIEWS = [
+  'AWAITING_APPROVAL',
+  'PROCESSING',
+  'COMPLETED',
+  'REJECTED',
+  'EXPIRED',
+  'REQUIRES_ATTENTION',
+] as const;
+export type ActionCenterView = (typeof ACTION_CENTER_VIEWS)[number];
+
+export type ActionCard = {
+  readonly schema: 'sunrey.consumer.action-card.v1';
+  readonly actionId: string;
+  readonly proposalId: string | null;
+  readonly type: ActionCardType | string;
+  readonly title: string;
+  readonly summary: string;
+  readonly status: string;
+  readonly availableActions: readonly string[];
+  readonly stepUpRequirement: boolean;
+  readonly productionMoneyMovement: false;
+  readonly agentIsApprover: false;
+};
+
+export type ConversationTurn = {
+  readonly schema: 'sunrey.consumer.conversation-turn.v1';
+  readonly conversationId: string;
+  readonly languagePhase: string;
+  readonly questions: readonly { readonly slot: string; readonly prompt: string }[];
+  readonly card: ActionCard | null;
+  readonly action: { readonly actionId: string; readonly status: string; readonly proposalId: string | null } | null;
+  readonly explanation: Readonly<Record<string, unknown>> | null;
+  readonly agentIsApprover: false;
+  readonly productionMoneyMovement: false;
+};
+
+export type ActionCenterList = {
+  readonly schema: 'sunrey.consumer.action-center.v1';
+  readonly view: string;
+  readonly items: readonly {
+    readonly actionId: string;
+    readonly type: string;
+    readonly title: string;
+    readonly status: string;
+    readonly view: string;
+    readonly availableActions: readonly string[];
+  }[];
+  readonly productionMoneyMovement: false;
 };

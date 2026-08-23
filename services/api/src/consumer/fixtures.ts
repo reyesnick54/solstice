@@ -46,7 +46,6 @@ import { createFxCommandPort } from './fx-adapter.ts';
 import { createGrowOpportunityPort } from './grow-adapter.ts';
 import {
   applyPersonaSeed,
-  EconomicGraphService,
   PEG_PERSONA_SEEDS,
   type PegPersonaId,
 } from '../../../economic-graph/src/index.ts';
@@ -66,6 +65,7 @@ import {
 } from '../../../investments/src/index.ts';
 import type { SessionDirectory } from './session.ts';
 import { ProductGrowthService } from '../../../../packages/platform/src/growth/product/service.ts';
+import { createAgentConversationSurface, type AgentConversationSurface } from './conversation.ts';
 
 export const SANDBOX_LABEL = 'SANDBOX_FIXTURE_NON_PRODUCTION' as const;
 
@@ -127,6 +127,7 @@ export type SandboxWorld = {
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
   readonly grow: ProductGrowthService;
+  readonly conversation: AgentConversationSurface;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -330,7 +331,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.provider_down = providerDown.principal;
   sessions.set(sandboxToken('provider_down'), providerDown.principal);
 
-  const grow = provisionPersona(runtime, {
+  const growPersona = provisionPersona(runtime, {
     persona: 'grow',
     customerId: 'cust_sandbox_grow',
     kyc: 'VERIFIED',
@@ -341,8 +342,8 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
       { id: 'acct_sandbox_grow_savings', currency: 'USD', productId: 'prod_savings_usd_gb', accountClass: 'SAVINGS_DEPOSIT', deposit: 0n },
     ],
   });
-  personas.grow = grow.principal;
-  sessions.set(sandboxToken('grow'), grow.principal);
+  personas.grow = growPersona.principal;
+  sessions.set(sandboxToken('grow'), growPersona.principal);
   const peg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });
   const growPersonaMap: Readonly<Record<string, PegPersonaId>> = {
     grow_new_user: 'NEW_USER',
@@ -477,7 +478,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         const actor = runtime.identity.service.resolveActorContext(principal.actorId);
         return actor.ok ? actor.value : principal;
       },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
+    }),
     growCommands: createGrowCommandPort({
       peg,
       identity: runtime.identity.service,
@@ -514,6 +515,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     personas: Object.freeze(personas),
     payments,
     grow,
+    conversation: createAgentConversationSurface(),
   });
 }
 
