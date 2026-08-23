@@ -830,6 +830,7 @@ function dispatch(
       productionActivated: false,
       reason: 'ENGINEERING_INSUFFICIENT_WITHOUT_PRIVACY_LEGAL_AUTH',
     });
+  }
   if (method === 'GET' && path === '/v1/hin/contributions') {
     return json(200, { items: [], issuancePromised: false, containsRawPersonalData: false, productionActivated: false });
   }

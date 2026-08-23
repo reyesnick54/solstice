@@ -110,6 +110,11 @@ Existing Phase B–G SDK/E2E suites plus Phase H Vault/HIN SDK and
 Phase I concurrency/ops suites compose the full-system path. All
 accounting invariants in those suites are fail-closed.
 
+Workspace `npm test` in this qualification VM: **3658** tests, **3657**
+passed, **0** failed, **1** skipped (`RANGE_FULL_CAMPAIGN` not set).
+`npm run qualify:backend-rc` passed. Docker/PostgreSQL-from-zero and
+container digests were not produced here.
+
 ## SECURITY
 
 Combined Exchange red team + range smoke: unauthorized financial

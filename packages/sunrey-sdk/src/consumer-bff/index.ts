@@ -54,7 +54,6 @@ export type {
   GrowPlanCreateInput,
   GrowPlanStatus,
   GrowPlanProposal,
-  GrowProposal,
   GrowProposalStatus,
   GrowRiskProfile,
   GrowMoney,
@@ -107,7 +106,6 @@ export type {
   DataPermissionCatalog,
   DataConsentGrant,
   DataConsentList,
-  HinParticipation,
   DataRightsRequestResource,
 } from './types.ts';
 export {

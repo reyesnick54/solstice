@@ -612,6 +612,8 @@ export class InformationClient {
 
   requestMarketplaceLicense(input: Record<string, unknown>): Promise<unknown> {
     return this.http.post('/v1/information/marketplace/licenses', input);
+  }
+
   listHinContributions(): Promise<unknown> {
     return this.http.get('/v1/hin/contributions');
   }

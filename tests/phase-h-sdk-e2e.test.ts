@@ -33,7 +33,7 @@ describe('Phase H SDK-only Vault / HIN / productive-data E2E', () => {
       assert.equal(home.productionActive, false);
       assert.equal(home.sunreyOwnsUserData, false);
       const records = await vaultClient.listVaultRecords();
-      assert.ok(Array.isArray((records as { items: unknown[] }).items));
+      assert.ok(Array.isArray((records as unknown as { items: unknown[] }).items));
       const rights = await hinClient.listHinRights();
       assert.equal((rights as { productionActivated?: boolean }).productionActivated ?? false, false);
       const licenses = await hinClient.listHinLicenses();

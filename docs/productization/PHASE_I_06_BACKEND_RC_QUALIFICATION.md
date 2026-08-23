@@ -31,6 +31,7 @@ HIN `packages/information-market`.
 8. Repaired Consumer BFF merge remnants: HIN/data-rights/vault dispatch, duplicate `hin`/`exchange` runtime fields, broken `dispatchExchange`, duplicate Grow opportunity adapter, mid-file Grow re-imports, concatenated HIN tests.
 9. Routed `/api/v1/grow/portfolio/performance` (and sibling portfolio reads) through the existing Grow BFF surface.
 10. Fixed the Phase I concurrency transfer fixture so the destination open no longer reused the source-account idempotency key.
+11. Restored merged Agent/Grow/Exchange/HIN/Vault/SDK/catalog sources and the chain architecture-guard `src/runtime` allow-list so `npm test` is 3657 passed / 0 failed / 1 skipped.
 
 ## Environment limitations (not faked)
 

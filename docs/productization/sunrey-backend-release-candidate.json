@@ -6,7 +6,7 @@
   "notAProductionRelease": true,
   "evaluatedAtPolicy": "FAIL_CLOSED",
   "recommendation": "BACKEND_RC_READY_PENDING_EXTERNAL_GATES",
-  "commit": "pending-qualification-commit",
+  "commit": "d5d1b0f9d4d7d963c9102c3155f0932b688bd8bf",
   "sourceCommitPolicy": "record the git SHA of the RC commit; do not invent a mainnet SHA",
   "buildArtifacts": {
     "sdk": "@solstice/sunrey-sdk@0.1.0",
@@ -64,10 +64,12 @@
     "productionOffPosture": true,
     "handoffPackagePresent": true,
     "externalGatesExplicit": true,
-    "cleanBuildInThisEnvironment": "RECORDED_AFTER_QUALIFICATION_RUN",
+    "cleanBuildInThisEnvironment": "npm test 3658 run, 3657 passed, 0 failed, 1 skipped; qualify:backend-rc ok",
+    "typecheckInThisEnvironment": "tsc reports remaining exactOptionalPropertyTypes findings in information-market rights-marketplace and personal-data-vault product personas; runtime tests for those packages passed",
     "postgresFromZeroInThisEnvironment": "NOT_RUN_DOCKER_UNAVAILABLE",
     "containerBuildInThisEnvironment": "NOT_RUN_DOCKER_UNAVAILABLE",
-    "fullDurationSoakInThisEnvironment": "NOT_RUN_ENVIRONMENT_LIMITATION"
+    "fullDurationSoakInThisEnvironment": "NOT_RUN_ENVIRONMENT_LIMITATION",
+    "rustInThisEnvironment": "rustc/cargo present; full cargo --locked workspace not claimed unless separately recorded"
   },
   "externalGateResult": {
     "passed": false,

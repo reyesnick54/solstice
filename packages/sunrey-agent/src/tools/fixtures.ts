@@ -349,6 +349,7 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
       freshness() {
         return ok({ freshness: 'FRESH', usableForTimeSensitiveValuation: true });
       },
+    },
     hin: {
       contributions: (ownerId) => ok([{ contributionId: 'hec_sim_1', category: 'RESEARCH_CONTRIBUTION', verification: 'SYSTEM_VERIFIED', ownerId }]),
       metrics: () => ok({ verifiedContributors: 1, individualRecordsExposed: false, isMintAmount: false }),
