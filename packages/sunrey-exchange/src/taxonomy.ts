@@ -60,7 +60,9 @@ export type TimeInForce = (typeof TIME_IN_FORCE)[number];
 
 export const ORDER_STATUSES = [
   'CREATED',
+  'VALIDATING',
   'AUTHORIZED',
+  'ACCEPTED',
   'OPEN',
   'PARTIALLY_FILLED',
   'FILLED',
@@ -89,6 +91,7 @@ export const MARKET_STATES = [
   'CLOSE_ONLY',
   'CANCEL_ONLY',
   'RESTRICTED',
+  'SUSPENDED',
   'CLOSED',
 ] as const;
 export type MarketState = (typeof MARKET_STATES)[number];

@@ -41,6 +41,32 @@ import {
 } from './ids.ts';
 import { applyFill, matchIncoming, sortBook, toTrade } from './matching.ts';
 import { comparePrice, exchangePrice, quoteMoney, type ExchangePrice } from './price.ts';
+import {
+    InMemoryExchangeCorePersistence,
+  MatchingSequencer,
+  ProductizedInstrumentRegistry,
+  assessTradeFees,
+  captureExchangeCore,
+  controlBlocksNewOrders,
+  expectedTakerFeeBuffer,
+  hydrateExchangeStore,
+  mapMarketStateToProductized,
+  priceWithinBand,
+  productizeFeeSchedule,
+  productizedInstrumentFromMarket,
+  recordOrderRate,
+  rateAllows,
+  rejectClientFeeOverride,
+  replayAcceptedOrders,
+  tripCircuitBreaker,
+  validatePreTrade,
+  type CircuitBreaker,
+  type ExchangeCorePersistencePort,
+  type ExchangeCoreSnapshot,
+  type PriceBand,
+  type ProductizedFeeSchedule,
+  type RateWindow,
+} from './production-core/index.ts';
 import type {
   ChainAnchorPort,
   CleanRoomPort,
@@ -118,7 +144,10 @@ export class SunReyExchangeService {
   private readonly store = new ExchangeStore();
   readonly product: ExchangeProductPlatform;
   readonly universal: UniversalExchangeEngine;
-  readonly feeSchedule: FeeSchedule = Object.freeze({
+  readonly instruments: ProductizedInstrumentRegistry = new ProductizedInstrumentRegistry();
+  readonly sequencer = new MatchingSequencer();
+  private readonly persistence: ExchangeCorePersistencePort;
+  private feeScheduleState: ProductizedFeeSchedule = productizeFeeSchedule({
     scheduleId: SIMULATION_FEE_SCHEDULE_ID,
     version: 1,
     makerFeeMinor: 0n,
@@ -127,6 +156,12 @@ export class SunReyExchangeService {
     computeFeeMinor: 0n,
     commercialPermanence: 'SIMULATION_CONFIGURATION',
   });
+  private readonly rateWindows = new Map<string, RateWindow>();
+  private readonly priceBands = new Map<string, PriceBand>();
+  private readonly circuitBreakers = new Map<string, CircuitBreaker>();
+  get feeSchedule(): FeeSchedule {
+    return this.feeScheduleState;
+  }
 
   constructor(input: {
     readonly kernel: ComplianceKernel;
@@ -145,6 +180,8 @@ export class SunReyExchangeService {
     readonly oracle?: OraclePort;
     readonly productive?: ProductiveGraphPort;
     readonly machines?: MachineCapabilityPort;
+    readonly persistence?: ExchangeCorePersistencePort;
+    readonly feeSchedule?: FeeSchedule;
   }) {
     if (LIVE_EXCHANGE_ENABLED !== false || LIVE_CRYPTO_ENABLED !== false) {
       throw new Error('live exchange and live crypto paths are forbidden');
@@ -163,6 +200,13 @@ export class SunReyExchangeService {
     this.product = new ExchangeProductPlatform({
       application: { kind: 'APPLICATION_PORT', coin: this.coin, fiat: this.fiat },
     });
+    this.persistence = input.persistence ?? new InMemoryExchangeCorePersistence();
+    if (input.feeSchedule) {
+      this.feeScheduleState = productizeFeeSchedule(input.feeSchedule, {
+        ...(input.feeSchedule.makerBps !== undefined ? { makerBps: input.feeSchedule.makerBps } : {}),
+        ...(input.feeSchedule.takerBps !== undefined ? { takerBps: input.feeSchedule.takerBps } : {}),
+      });
+    }
     this.seedSimulationRegistry();
     this.universal = new UniversalExchangeEngine(
       this.store,
@@ -229,6 +273,9 @@ export class SunReyExchangeService {
     readonly clientIdempotencyKey: string;
     readonly timeInForce?: 'GTC' | 'IOC';
     readonly protectionPrice?: ExchangePrice;
+    readonly feeOverride?: unknown;
+    readonly agentGenerated?: boolean;
+    readonly agentMandateValid?: boolean;
   }): ExchangeOutcome<DigitalOrder> {
     const existingId = this.store.ordersByIdempotency.get(input.clientIdempotencyKey);
     if (existingId) {
@@ -239,10 +286,17 @@ export class SunReyExchangeService {
     }
     const account = this.store.account(input.exchangeAccountId);
     if (!account) {
-      return { outcome: 'REJECTED', code: 'UNKNOWN_ACCOUNT', message: 'exchange account not found' };
+      return this.rejectOrder('UNKNOWN_ACCOUNT', 'exchange account not found', input.clientIdempotencyKey);
+    }
+    if (account.customerId !== input.customerId) {
+      return this.rejectOrder('OWNERSHIP_MISMATCH', 'actor does not own the exchange account', input.clientIdempotencyKey);
+    }
+    const feeGate = rejectClientFeeOverride({ feeOverride: input.feeOverride });
+    if (!feeGate.ok) {
+      return this.rejectOrder('CLIENT_FEE_OVERRIDE_FORBIDDEN', 'frontend cannot specify a fee', input.clientIdempotencyKey);
     }
     if (account.status !== 'ACTIVE_SIMULATION') {
-      return { outcome: 'REJECTED', code: 'RESTRICTED_PARTICIPANT', message: `account status ${account.status}` };
+      return this.rejectOrder('RESTRICTED_PARTICIPANT', `account status ${account.status}`, input.clientIdempotencyKey);
     }
     if (this.isHalted(input.marketId, account.accountId, input.quantity.assetId)) {
       return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: 'halt is active' };
@@ -254,8 +308,17 @@ export class SunReyExchangeService {
     if (!market || market.family !== 'DIGITAL_ASSET') {
       return { outcome: 'REJECTED', code: 'FAMILY_MISMATCH', message: 'digital-asset orders require a DIGITAL_ASSET market' };
     }
-    if (market.state !== 'OPEN' || this.controlActive('CANCEL_ONLY', market.marketId)) {
-      return { outcome: 'REJECTED', code: 'MARKET_HALTED', message: `market state ${market.state}` };
+    if (this.controlActive('CANCEL_ONLY', market.marketId)) {
+      return this.rejectOrder('MARKET_HALTED', `market state ${market.state}`, input.clientIdempotencyKey);
+    }
+    if (market.state === 'CLOSE_ONLY') {
+      return this.rejectOrder('MARKET_CLOSE_ONLY', 'market is close-only; new orders are refused', input.clientIdempotencyKey);
+    }
+    if (market.state === 'SUSPENDED') {
+      return this.rejectOrder('MARKET_SUSPENDED', 'instrument is suspended', input.clientIdempotencyKey);
+    }
+    if (market.state !== 'OPEN' && market.state !== 'AUCTION') {
+      return this.rejectOrder('MARKET_HALTED', `market state ${market.state}`, input.clientIdempotencyKey);
     }
     const listing = this.store.listings.get(market.baseListingId);
     if (!listing || listing.status !== 'SIMULATION_LISTED') {
@@ -277,10 +340,46 @@ export class SunReyExchangeService {
       return { outcome: 'REJECTED', code: 'INVALID_QUANTITY', message: 'above maximum listing quantity' };
     }
     if ((input.orderType === 'LIMIT' || input.orderType === 'IOC' || input.orderType === 'FOK' || input.orderType === 'POST_ONLY') && !input.limitPrice) {
-      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'governed order requires a price' };
+      return this.rejectOrder('INVALID_PRICE', 'governed order requires a price', input.clientIdempotencyKey);
     }
     if (input.limitPrice && input.limitPrice.priceUnits <= 0n) {
-      return { outcome: 'REJECTED', code: 'INVALID_PRICE', message: 'price must be positive' };
+      return this.rejectOrder('INVALID_PRICE', 'price must be positive', input.clientIdempotencyKey);
+    }
+    const instrument = this.instruments.forMarket(market.marketId);
+    const band = this.priceBands.get(market.marketId);
+    const rateKey = `${account.accountId}:${market.marketId}`;
+    const rateWindow = recordOrderRate(this.rateWindows.get(rateKey) ?? { orders: 0, windowStartedMs: 0, maxOrders: 1_000 }, Date.parse(this.clock.now()));
+    this.rateWindows.set(rateKey, rateWindow);
+    const preTrade = validatePreTrade({
+      actorAuthenticated: true,
+      actorOwnsAccount: account.customerId === input.customerId,
+      account,
+      customer: this.catalog.customers.get(input.customerId),
+      instrument,
+      side: input.side,
+      orderType: input.orderType,
+      quantity: input.quantity,
+      limitPrice: input.limitPrice ?? input.protectionPrice ?? null,
+      feeSchedule: this.feeScheduleState,
+      ...(input.feeOverride !== undefined ? { feeOverride: input.feeOverride } : {}),
+      ...(input.agentGenerated !== undefined ? { agentGenerated: input.agentGenerated } : {}),
+      ...(input.agentMandateValid !== undefined ? { agentMandateValid: input.agentMandateValid } : {}),
+      priceBandOk: input.limitPrice && band ? priceWithinBand(input.limitPrice.priceUnits, band) : true,
+      rateLimitOk: rateAllows(rateWindow),
+    });
+    if (!preTrade.ok) {
+      return this.rejectOrder(preTrade.code, preTrade.message, input.clientIdempotencyKey);
+    }
+    const blocked = controlBlocksNewOrders({
+      status: instrument?.status ?? mapMarketStateToProductized(market.state),
+      halts: this.store.halts,
+      marketId: market.marketId,
+      accountId: account.accountId,
+      assetId: input.quantity.assetId,
+      circuitActive: this.circuitBreakers.get(market.marketId)?.active === true,
+    });
+    if (blocked.blocked) {
+      return this.rejectOrder(blocked.code ?? 'MARKET_HALTED', 'market control refused the order', input.clientIdempotencyKey);
     }
     if (input.orderType === 'MARKET') {
       const protection = this.protectMarketOrder(market, input.side, input.quantity, input.protectionPrice);
@@ -327,11 +426,20 @@ export class SunReyExchangeService {
       coinHoldId: reserved.value.hold.coinHoldId,
       sourceAccountId: input.side === 'SELL' ? account.custodyAccountId : account.cashAccountId,
       sequence: this.store.nextOrderSequence(),
+      filledQuantity: AssetQuantity.zero(input.quantity.assetId),
+      complianceRef: gated.decision.evidenceRecordId ?? intent.id,
+      feeContext: {
+        scheduleId: this.feeScheduleState.scheduleId,
+        makerBps: this.feeScheduleState.makerBps,
+        takerBps: this.feeScheduleState.takerBps,
+        clientOverrideForbidden: true as const,
+      },
     });
     this.store.putOrder(order);
     this.store.putHold(reserved.value.hold);
     this.recordBook({ sequence: order.sequence, kind: 'ACCEPT', orderId: order.orderId, at: this.clock.now() });
     this.emit('ExchangeOrderAccepted', order.orderId, { orderId: order.orderId, status: order.status });
+    this.persistCore();
     this.emit('ExchangeOrderOpened', order.orderId, { orderId: order.orderId });
     this.seal('order.opened', {
       orderId: order.orderId,
@@ -353,11 +461,26 @@ export class SunReyExchangeService {
     if (!order) {
       return { outcome: 'REJECTED', code: 'UNKNOWN_ORDER', message: 'order not found' };
     }
+    const owner = this.store.account(order.exchangeAccountId);
+    if (owner && owner.customerId !== input.customerId) {
+      return { outcome: 'REJECTED', code: 'OWNERSHIP_MISMATCH', message: 'actor does not own the order' };
+    }
     if (order.status === 'CANCELLED' || order.status === 'FILLED') {
       return { outcome: 'OK', value: order };
     }
-    if (order.status !== 'OPEN' && order.status !== 'PARTIALLY_FILLED') {
+    if (order.status !== 'OPEN' && order.status !== 'PARTIALLY_FILLED' && order.status !== 'CANCEL_PENDING') {
       return { outcome: 'REJECTED', code: 'NOT_CANCELLABLE', message: `status ${order.status}` };
+    }
+    const race = this.sequencer.requestCancel(order.orderId);
+    if (race.deferred) {
+      const pending: DigitalOrder = Object.freeze({
+        ...order,
+        status: 'CANCEL_PENDING',
+        version: (order.version + 1) as DigitalOrder['version'],
+      });
+      this.store.putOrder(pending);
+      this.persistCore();
+      return { outcome: 'OK', value: pending };
     }
     const intent = this.intent(input.actorId, ACTION_TYPES.CANCEL_EXCHANGE_ORDER, {
       accountId: order.sourceAccountId,
@@ -383,6 +506,7 @@ export class SunReyExchangeService {
     this.emit('ExchangeOrderCancelled', cancelled.orderId, { orderId: cancelled.orderId });
     this.seal('order.cancelled', { orderId: cancelled.orderId, intentId: intent.id });
     this.refreshMarketData(cancelled.marketId);
+    this.persistCore();
     return { outcome: 'OK', value: cancelled, decision: gated.decision };
   }
 
@@ -412,6 +536,7 @@ export class SunReyExchangeService {
       const market = this.store.markets.get(input.targetId);
       if (market) {
         this.store.putMarket({ ...market, state: 'HALTED' });
+        this.instruments.setStatus(market.marketId, 'HALTED');
       }
     }
     if (input.scope === 'CANCEL_ONLY') {
@@ -422,6 +547,7 @@ export class SunReyExchangeService {
     }
     this.emit('ExchangeMarketHalted', input.targetId, { scope: input.scope, targetId: input.targetId });
     this.seal('market.halted', { ...record, intentId: intent.id });
+    this.persistCore();
     return { outcome: 'OK', value: record, decision: gated.decision };
   }
 
@@ -562,6 +688,7 @@ export class SunReyExchangeService {
     const market = this.store.markets.get(marketId);
     if (market) {
       this.store.putMarket({ ...market, state });
+      this.instruments.setStatus(marketId, mapMarketStateToProductized(state));
     }
     for (let i = 0; i < this.store.halts.length; i += 1) {
       const halt = this.store.halts[i]!;
@@ -584,6 +711,10 @@ export class SunReyExchangeService {
     const listing = this.store.listings.get(listingId);
     if (listing) {
       this.store.putListing({ ...listing, status: 'SUSPENDED' });
+      const market = [...this.store.markets.values()].find((row) => row.baseListingId === listing.listingId);
+      if (market) {
+        this.instruments.setStatus(market.marketId, 'SUSPENDED');
+      }
     }
   }
 
@@ -701,7 +832,7 @@ export class SunReyExchangeService {
   markets(): readonly ExchangeMarket[] {
     return [...this.store.markets.values()];
   }
-  instruments() {
+  listUniversalInstruments() {
     return this.universal.instruments.list();
   }
   auctions() {
@@ -746,11 +877,85 @@ export class SunReyExchangeService {
     return [...this.store.bookEvents];
   }
 
+  productizedInstruments() {
+    return this.instruments.list();
+  }
+
+  configureFeeSchedule(schedule: FeeSchedule, extras?: { readonly makerBps?: bigint; readonly takerBps?: bigint }): ProductizedFeeSchedule {
+    this.feeScheduleState = productizeFeeSchedule(schedule, extras);
+    this.persistCore();
+    return this.feeScheduleState;
+  }
+
+  setPriceBand(band: PriceBand): void {
+    this.priceBands.set(String(band.marketId), band);
+  }
+
+  setCircuitBreaker(breaker: CircuitBreaker): void {
+    this.circuitBreakers.set(String(breaker.marketId), breaker);
+  }
+
+  setAuthoritativeMarketState(marketId: ExchangeMarketId, state: MarketState): void {
+    const market = this.store.markets.get(marketId);
+    if (market) {
+      this.store.putMarket({ ...market, state });
+      this.instruments.setStatus(marketId, mapMarketStateToProductized(state));
+      this.persistCore();
+    }
+  }
+
+  exportCoreSnapshot(): ExchangeCoreSnapshot {
+    return captureExchangeCore({
+      store: this.store,
+      instruments: this.instruments.list(),
+      feeSchedule: this.feeScheduleState,
+    });
+  }
+
+  restoreCoreSnapshot(snapshot: ExchangeCoreSnapshot): void {
+    hydrateExchangeStore(snapshot, this.store);
+    for (const instrument of snapshot.instruments) {
+      this.instruments.put(instrument);
+    }
+    this.feeScheduleState = snapshot.feeSchedule;
+    this.refreshMarketData(SUNREY_COIN_USD_MARKET_ID);
+  }
+
+  persistCore(): void {
+    this.persistence.save(this.exportCoreSnapshot());
+  }
+
+  recoverFromPersistence(): boolean {
+    const loaded = this.persistence.load();
+    if (!loaded) {
+      return false;
+    }
+    this.restoreCoreSnapshot(loaded);
+    return true;
+  }
+
+  replayMarket(marketId: ExchangeMarketId) {
+    const accepted = [...this.store.orders.values()]
+      .filter((order) => order.marketId === marketId)
+      .sort((a, b) => a.sequence - b.sequence);
+    return replayAcceptedOrders({
+      accepted,
+      feeSchedule: this.feeScheduleState,
+      quoteCurrency: 'USD',
+      selfTrade: this.store.markets.get(marketId)?.selfTradePolicy ?? 'CANCEL_INCOMING',
+    });
+  }
+
+  assessFeesForQuote(quote: import('../../money/src/money.ts').Money) {
+    return assessTradeFees({ schedule: this.feeScheduleState, quote });
+  }
+
   private matchAndSettle(incoming: DigitalOrder, actorId: string, customerId: CustomerId): void {
     const market = this.store.markets.get(incoming.marketId);
     if (!market || market.state !== 'OPEN') {
       return;
     }
+    this.sequencer.beginMatch(incoming.orderId);
     const resting = this.store.openOrders(incoming.marketId).filter((order) => order.orderId !== incoming.orderId);
     const result = matchIncoming(incoming, resting, { selfTrade: market.selfTradePolicy });
     if (result.rejectIncoming) {
@@ -803,6 +1008,22 @@ export class SunReyExchangeService {
         baseRail: 'APPLICATION_PORT',
         at: this.clock.now(),
       });
+      this.emit('ExchangeFillCreated', trade.tradeId, {
+        tradeId: trade.tradeId,
+        makerOrderId: trade.makerOrderId,
+        takerOrderId: trade.takerOrderId,
+      });
+      const breaker = this.circuitBreakers.get(incoming.marketId);
+      if (breaker) {
+        const tripped = tripCircuitBreaker(trade.price.priceUnits, breaker);
+        this.circuitBreakers.set(incoming.marketId, tripped);
+        if (tripped.active) {
+          this.store.putMarket({ ...market, state: 'HALTED' });
+          this.instruments.setStatus(incoming.marketId, 'HALTED');
+          this.emit('ExchangeMarketHalted', incoming.marketId, { marketId: incoming.marketId, reason: tripped.reason });
+          this.seal('market.circuit_breaker', { marketId: incoming.marketId, reason: tripped.reason });
+        }
+      }
       const settled = this.settleTrade(trade, match.maker, taker, actorId, customerId);
       if (settled.outcome !== 'OK') {
         this.product.attachOutcome({
@@ -841,7 +1062,9 @@ export class SunReyExchangeService {
     }
     const latest = this.store.order(incoming.orderId);
     if (latest) {
-      if (latest.timeInForce === 'IOC' && latest.status !== 'FILLED') {
+      const cancelRemainder =
+        (latest.timeInForce === 'IOC' || latest.orderType === 'MARKET') && latest.status !== 'FILLED';
+      if (cancelRemainder) {
         this.releaseHold(latest);
         const cancelled: DigitalOrder = Object.freeze({
           ...latest,
@@ -855,12 +1078,27 @@ export class SunReyExchangeService {
           orderId: cancelled.orderId,
           at: this.clock.now(),
         });
-        this.emit('ExchangeOrderCancelled', cancelled.orderId, { orderId: cancelled.orderId, reason: 'IOC' });
+        this.emit('ExchangeOrderCancelled', cancelled.orderId, {
+          orderId: cancelled.orderId,
+          reason: latest.orderType === 'MARKET' ? 'MARKET_UNFILLED' : 'IOC',
+        });
       } else if (latest.status === 'FILLED') {
         this.releaseHold(latest);
       }
     }
+    const pendingCancel = this.sequencer.endMatch(incoming.orderId);
+    const afterMatch = this.store.order(incoming.orderId);
+    if (pendingCancel && afterMatch && (afterMatch.status === 'OPEN' || afterMatch.status === 'PARTIALLY_FILLED' || afterMatch.status === 'CANCEL_PENDING')) {
+      this.releaseHold(afterMatch);
+      this.store.putOrder({
+        ...afterMatch,
+        status: 'CANCELLED',
+        version: (afterMatch.version + 1) as DigitalOrder['version'],
+      });
+      this.emit('ExchangeOrderCancelled', afterMatch.orderId, { orderId: afterMatch.orderId, reason: 'CANCEL_FILL_RACE' });
+    }
     this.refreshMarketData(incoming.marketId);
+    this.persistCore();
   }
 
   private settleTrade(
@@ -1014,7 +1252,7 @@ export class SunReyExchangeService {
       return err({ code: 'INVALID_PRICE', message: 'buy reservation requires a limit or protection price' });
     }
     const quote = quoteMoney(limitPrice, quantity, 'USD');
-    const feeBuffer = Money.fromMinorUnits(this.feeSchedule.takerFeeMinor, 'USD');
+    const feeBuffer = expectedTakerFeeBuffer(this.feeScheduleState, quote);
     const reserved = quote.plus(feeBuffer);
     const available = this.fiat.available(account.cashAccountId);
     if (available.minorUnits < reserved.minorUnits) {
@@ -1380,6 +1618,26 @@ export class SunReyExchangeService {
         maxNotionalMinor: null,
       }),
     );
+    this.seedProductizedInstruments();
+  }
+
+  private seedProductizedInstruments(): void {
+    for (const market of this.store.markets.values()) {
+      const listing = this.store.listings.get(market.baseListingId);
+      this.instruments.put(
+        productizedInstrumentFromMarket({
+          market,
+          listing,
+          feeSchedule: this.feeScheduleState,
+        }),
+      );
+    }
+  }
+
+  private rejectOrder(code: string, message: string, correlationId: string): ExchangeOutcome<never> {
+    this.emit('ExchangeOrderRejected', correlationId, { code, message, correlationId });
+    this.seal('order.rejected', { code, message, correlationId });
+    return { outcome: 'REJECTED', code, message };
   }
 
   private intent(actorId: string, actionType: string, payload: Record<string, unknown>): ActionIntent {

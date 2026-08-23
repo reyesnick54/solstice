@@ -154,7 +154,7 @@ Domain events in `packages/events` carry ids only
 
 In-memory store snapshots hydrate after restart. File durable store:
 `packages/persistence/src/agent/durable-store.ts`. PostgreSQL:
-`db/customer/migrations/V034__agent_runtime.sql`.
+`db/customer/migrations/V037__agent_runtime.sql`.
 
 ## BFF / Lovable contract
 

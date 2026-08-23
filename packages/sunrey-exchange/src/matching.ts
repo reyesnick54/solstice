@@ -17,10 +17,19 @@ export type Match = {
 };
 
 /**
- * Deterministic price-time priority.
- * Bids: highest price first, then earliest sequence.
- * Asks: lowest price first, then earliest sequence.
- * Trades execute at the resting (maker) price.
+ * Deterministic price-time priority. AI cannot influence matching.
+ *
+ * Rules:
+ * 1. Bids sort highest price first, then earliest sequence.
+ * 2. Asks sort lowest price first, then earliest sequence.
+ * 3. Trades execute at the resting (maker) price, never the taker price.
+ * 4. Arithmetic is bigint only. No floating-point authoritative prices.
+ * 5. Incoming MARKET with a protection price is capped like a limit.
+ * 6. POST_ONLY that would take is rejected; FOK that cannot fill fully is rejected.
+ * 7. Self-trade CANCEL_INCOMING / PREVENT rejects the incoming order.
+ * 8. Partial fills walk the opposite book in the sorted order until remaining is 0
+ *    or prices no longer cross.
+ * 9. Replay of the same accepted sequence produces the same prices and quantities.
  */
 export function sortBook(orders: readonly DigitalOrder[]): {
   readonly bids: DigitalOrder[];
@@ -86,10 +95,12 @@ export function matchIncoming(
     if (!makerPrice) {
       continue;
     }
-    if (
-      (incoming.orderType === 'LIMIT' || incoming.orderType === 'MARKET_WITH_PROTECTION') &&
-      incoming.limitPrice
-    ) {
+    const limitCap =
+      incoming.limitPrice &&
+      (incoming.orderType === 'LIMIT' ||
+        incoming.orderType === 'MARKET_WITH_PROTECTION' ||
+        incoming.orderType === 'MARKET');
+    if (limitCap && incoming.limitPrice) {
       if (incoming.side === 'BUY' && !pricesCross(incoming.limitPrice, makerPrice)) {
         break;
       }
@@ -127,6 +138,10 @@ export function toTrade(
   quoteCurrency: Money['currency'],
 ): ImmutableTrade {
   const quoteAmount = quoteMoney(match.price, match.quantity, quoteCurrency);
+  const makerBps = fees.makerBps ?? 0n;
+  const takerBps = fees.takerBps ?? 0n;
+  const makerFeeMinor = (quoteAmount.minorUnits * makerBps) / 10_000n + fees.makerFeeMinor;
+  const takerFeeMinor = (quoteAmount.minorUnits * takerBps) / 10_000n + fees.takerFeeMinor;
   return Object.freeze({
     tradeId: newTradeId(),
     executionId: newExecutionId(),
@@ -136,8 +151,8 @@ export function toTrade(
     quantity: match.quantity,
     price: match.price,
     quoteAmount,
-    makerFee: Money.fromMinorUnits(fees.makerFeeMinor, quoteCurrency),
-    takerFee: Money.fromMinorUnits(fees.takerFeeMinor, quoteCurrency),
+    makerFee: Money.fromMinorUnits(makerFeeMinor, quoteCurrency),
+    takerFee: Money.fromMinorUnits(takerFeeMinor, quoteCurrency),
     feeScheduleId: fees.scheduleId,
     matchedAt,
     sequence: sequence as MarketDataSequence,
@@ -152,6 +167,7 @@ export function applyFill(order: DigitalOrder, fill: AssetQuantity): DigitalOrde
   return Object.freeze({
     ...order,
     remaining,
+    filledQuantity: order.quantity.minus(remaining),
     version: (order.version + 1) as DigitalOrder['version'],
     status: remaining.isZero() ? 'FILLED' : 'PARTIALLY_FILLED',
   });

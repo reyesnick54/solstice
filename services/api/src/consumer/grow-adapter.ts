@@ -237,6 +237,7 @@ export function createGrowCommandPort(input: {
       ...body,
       presentationValuation: valuation,
       ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
+      ...('valuationContext' in body ? { valuationContext: valuation } : {}),
     });
   }
 
@@ -255,6 +256,10 @@ export function createGrowCommandPort(input: {
   }
 
   function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
+  function mapCommandFailure(
+    error: { readonly code: string; readonly message: string },
+    requestId: string,
+  ): BffErrorEnvelope {
     if (error.code === 'SUBJECT_MISMATCH' || error.code === 'CAPABILITY_DENIED') {
       return bffError({
         errorCode: 'RESOURCE_NOT_OWNED',
@@ -302,7 +307,7 @@ export function createGrowCommandPort(input: {
 
   function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: { code: string; message: string } }, requestId: string): T | BffErrorEnvelope {
     if (!result.ok) {
-      return mapFailure(result.error, requestId);
+      return mapCommandFailure(result.error, requestId);
     }
     return result.value;
   }
@@ -343,7 +348,7 @@ export function createGrowCommandPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const snapshot = peg.getFinancialSnapshot(actor, principal.identityId);
       if (!snapshot.ok) {
-        return mapFailure(snapshot.error, 'grow_goals');
+        return mapCommandFailure(snapshot.error, 'grow_goals');
       }
       return Object.freeze({ items: snapshot.value.financialGoals });
     },
@@ -387,7 +392,7 @@ export function createGrowCommandPort(input: {
       peg.openGraph(actor, principal.identityId, principal.customerId);
       const rows = peg.getInsights(actor, principal.identityId);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_insights');
+        return mapCommandFailure(rows.error, 'grow_insights');
       }
       return Object.freeze({ items: rows.value });
     },
@@ -432,7 +437,7 @@ export function createGrowCommandPort(input: {
           amount: { minorUnits: String(body.minorUnits ?? '0'), currency: String(body.currency ?? 'USD') },
         }).ok
           ? { ok: true }
-          : mapFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
+          : mapCommandFailure({ code: 'AUTHORITATIVE_FACT_IMMUTABLE', message: 'user cannot change a SunRey account balance' }, requestId);
       }
       if (kind === 'INCOME') {
         return unwrap(
@@ -493,7 +498,7 @@ export function createGrowCommandPort(input: {
       }
       const rows = peg.getHistory(actor, principal.identityId, series as never);
       if (!rows.ok) {
-        return mapFailure(rows.error, 'grow_history');
+        return mapCommandFailure(rows.error, 'grow_history');
       }
       return Object.freeze({ items: rows.value });
     },

@@ -33,6 +33,56 @@ export class SubjectScopedSunReyExchangeTool {
     );
   }
 
+  listMarkets(
+    actor: unknown,
+  ): Result<{ readonly markets: ReturnType<SunReyExchangeService['productizedInstruments']> }, ExchangeFailure> {
+    if (!isVerifiedActorContext(actor)) {
+      return err({ code: 'ACTOR_CONTEXT_REQUIRED', message: 'agent tool requires a verified ActorContext' });
+    }
+    return ok({ markets: this.exchange.productizedInstruments() });
+  }
+
+  createOrderProposal(
+    actor: unknown,
+    input: {
+      readonly marketId: string;
+      readonly side: 'BUY' | 'SELL';
+      readonly quantityScaled: string;
+    },
+  ): Result<
+    {
+      readonly kind: 'EXCHANGE_ORDER_PROPOSAL';
+      readonly executed: false;
+      readonly marketId: string;
+      readonly side: 'BUY' | 'SELL';
+      readonly quantityScaled: string;
+      readonly requiresHumanApproval: true;
+    },
+    ExchangeFailure
+  > {
+    if (!isVerifiedActorContext(actor)) {
+      return err({ code: 'ACTOR_CONTEXT_REQUIRED', message: 'agent tool requires a verified ActorContext' });
+    }
+    return ok({
+      kind: 'EXCHANGE_ORDER_PROPOSAL',
+      executed: false,
+      marketId: input.marketId,
+      side: input.side,
+      quantityScaled: input.quantityScaled,
+      requiresHumanApproval: true,
+    });
+  }
+
+  explainProposal(proposal: { readonly kind: 'EXCHANGE_ORDER_PROPOSAL'; readonly executed: false }): Result<string, ExchangeFailure> {
+    return ok(
+      `This is a ${proposal.kind}. It is not an order. A human must approve it before Execution Authority can reach the Exchange API.`,
+    );
+  }
+
+  matchIncoming(): Result<never, ExchangeFailure> {
+    return err({ code: 'AGENT_CANNOT_EXECUTE', message: 'the Agent cannot call matching internals' });
+  }
+
   placeDigitalOrder(): Result<never, ExchangeFailure> {
     return err({ code: 'AGENT_CANNOT_EXECUTE', message: 'the Personal Economy Agent cannot place an exchange order' });
   }

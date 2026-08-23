@@ -260,3 +260,4 @@ export type {
 export { ExchangeSettlementRecovery } from './operation-recovery.ts';
 export type { ExchangeSettlementDraft, SettlementPhase } from './operation-recovery.ts';
 export * from './product/index.ts';
+export * from './production-core/index.ts';

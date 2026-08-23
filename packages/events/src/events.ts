@@ -904,10 +904,12 @@ export type ExchangeAuditPayload = {
 
 export type ExchangeAccountCreatedV1 = VersionedEvent<'ExchangeAccountCreated', 1, ExchangeAuditPayload>;
 export type ExchangeOrderAcceptedV1 = VersionedEvent<'ExchangeOrderAccepted', 1, ExchangeAuditPayload>;
+export type ExchangeOrderRejectedV1 = VersionedEvent<'ExchangeOrderRejected', 1, ExchangeAuditPayload & { readonly code?: string; readonly message?: string; readonly correlationId?: string }>;
 export type ExchangeOrderOpenedV1 = VersionedEvent<'ExchangeOrderOpened', 1, ExchangeAuditPayload>;
 export type ExchangeOrderPartiallyFilledV1 = VersionedEvent<'ExchangeOrderPartiallyFilled', 1, ExchangeAuditPayload>;
 export type ExchangeOrderFilledV1 = VersionedEvent<'ExchangeOrderFilled', 1, ExchangeAuditPayload>;
 export type ExchangeOrderCancelledV1 = VersionedEvent<'ExchangeOrderCancelled', 1, ExchangeAuditPayload>;
+export type ExchangeFillCreatedV1 = VersionedEvent<'ExchangeFillCreated', 1, ExchangeAuditPayload & { readonly makerOrderId?: string; readonly takerOrderId?: string }>;
 export type ExchangeTradeMatchedV1 = VersionedEvent<'ExchangeTradeMatched', 1, ExchangeAuditPayload>;
 export type ExchangeTradeSettledV1 = VersionedEvent<'ExchangeTradeSettled', 1, ExchangeAuditPayload>;
 export type ExchangeMarketHaltedV1 = VersionedEvent<'ExchangeMarketHalted', 1, ExchangeAuditPayload>;
@@ -1381,10 +1383,12 @@ export type DomainEvent =
   | SunReyChainHealthDegradedV1
   | ExchangeAccountCreatedV1
   | ExchangeOrderAcceptedV1
+  | ExchangeOrderRejectedV1
   | ExchangeOrderOpenedV1
   | ExchangeOrderPartiallyFilledV1
   | ExchangeOrderFilledV1
   | ExchangeOrderCancelledV1
+  | ExchangeFillCreatedV1
   | ExchangeTradeMatchedV1
   | ExchangeTradeSettledV1
   | ExchangeMarketHaltedV1
