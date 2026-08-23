@@ -24,6 +24,7 @@ pub mod mempool;
 pub mod messages;
 pub mod metrics;
 pub mod native_assets;
+pub mod network_identity;
 pub mod node;
 pub mod operator;
 pub mod ops;

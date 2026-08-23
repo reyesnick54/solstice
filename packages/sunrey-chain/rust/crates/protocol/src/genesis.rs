@@ -4,6 +4,10 @@ use crate::codec::{
     decode_bool, decode_bytes, decode_string, decode_u32, decode_u64, encode_bool, encode_bytes,
     encode_string, encode_u32, encode_u64,
 };
+use crate::network::{
+    NetworkEnvironment, DEVNET_CHAIN_ID, DEVNET_NETWORK_ID, PREPRODUCTION_CHAIN_ID,
+    PREPRODUCTION_NETWORK_ID,
+};
 use crate::transaction::TransactionFamily;
 use crate::RejectReason;
 
@@ -204,6 +208,68 @@ pub fn testnet_1_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String
     genesis
 }
 
+pub fn devnet_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String) -> GenesisV1 {
+    let mut genesis = local_dev_genesis(schema_registry_hash, crypto_policy_id);
+    genesis.network_id = DEVNET_NETWORK_ID.to_string();
+    genesis.chain_id = DEVNET_CHAIN_ID.to_string();
+    genesis.validator_placeholder = "DEVNET_FOUR_VALIDATOR_SET".to_string();
+    genesis
+}
+
+pub fn preproduction_genesis(schema_registry_hash: Vec<u8>, crypto_policy_id: String) -> GenesisV1 {
+    let mut genesis = testnet_1_genesis(schema_registry_hash, crypto_policy_id);
+    genesis.network_id = PREPRODUCTION_NETWORK_ID.to_string();
+    genesis.chain_id = PREPRODUCTION_CHAIN_ID.to_string();
+    genesis.validator_placeholder = "PREPRODUCTION_NOT_PRODUCTION".to_string();
+    genesis
+}
+
+/// MAINNET genesis is fail-closed until required human-governance fields
+/// are supplied. Those fields are never satisfied by fixtures.
+pub fn mainnet_genesis(
+    _schema_registry_hash: Vec<u8>,
+    _crypto_policy_id: String,
+) -> Result<GenesisV1, RejectReason> {
+    Err(RejectReason::GovernanceRejected)
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct GenesisGenerationInput {
+    pub environment: NetworkEnvironment,
+    pub schema_registry_hash: Vec<u8>,
+    pub crypto_policy_id: String,
+    pub governance_fields_complete: bool,
+    pub economic_parameters_approved: bool,
+    pub counsel_confirmed: bool,
+}
+
+pub fn generate_genesis(input: GenesisGenerationInput) -> Result<GenesisV1, RejectReason> {
+    match input.environment {
+        NetworkEnvironment::Local => {
+            Ok(local_dev_genesis(input.schema_registry_hash, input.crypto_policy_id))
+        }
+        NetworkEnvironment::Devnet => {
+            Ok(devnet_genesis(input.schema_registry_hash, input.crypto_policy_id))
+        }
+        NetworkEnvironment::Testnet => {
+            Ok(testnet_1_genesis(input.schema_registry_hash, input.crypto_policy_id))
+        }
+        NetworkEnvironment::Preproduction => {
+            Ok(preproduction_genesis(input.schema_registry_hash, input.crypto_policy_id))
+        }
+        NetworkEnvironment::Mainnet => {
+            if !input.governance_fields_complete
+                || !input.economic_parameters_approved
+                || !input.counsel_confirmed
+            {
+                return Err(RejectReason::GovernanceRejected);
+            }
+            // Even with fields present, decode rejects production_network_enabled.
+            mainnet_genesis(input.schema_registry_hash, input.crypto_policy_id)
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -219,5 +285,38 @@ mod tests {
         assert_eq!(a.environment, "simulation");
         assert_eq!(a.native_assets.len(), 2);
         assert!(a.native_assets.iter().all(|asset| asset.ticker_status == "NOT_ASSIGNED"));
+    }
+
+    #[test]
+    fn mainnet_genesis_fails_closed_without_required_inputs() {
+        let missing = generate_genesis(GenesisGenerationInput {
+            environment: NetworkEnvironment::Mainnet,
+            schema_registry_hash: vec![1],
+            crypto_policy_id: "cs_ed25519_sha256_v1".into(),
+            governance_fields_complete: false,
+            economic_parameters_approved: false,
+            counsel_confirmed: false,
+        })
+        .unwrap_err();
+        assert_eq!(missing, RejectReason::GovernanceRejected);
+        let still_closed = generate_genesis(GenesisGenerationInput {
+            environment: NetworkEnvironment::Mainnet,
+            schema_registry_hash: vec![1],
+            crypto_policy_id: "cs_ed25519_sha256_v1".into(),
+            governance_fields_complete: true,
+            economic_parameters_approved: true,
+            counsel_confirmed: true,
+        })
+        .unwrap_err();
+        assert_eq!(still_closed, RejectReason::GovernanceRejected);
+        assert!(mainnet_genesis(vec![1], "cs".into()).is_err());
+    }
+
+    #[test]
+    fn testnet_values_are_marked_non_production() {
+        let genesis = testnet_1_genesis(vec![9], "cs_ed25519_sha256_v1".into());
+        assert!(!genesis.production_network_enabled);
+        assert_eq!(genesis.environment, "simulation");
+        assert_eq!(genesis.native_assets[0].ticker_status, "NOT_ASSIGNED");
     }
 }

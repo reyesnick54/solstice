@@ -705,6 +705,38 @@ impl LocalNode {
         development_fixture_secret()
     }
 
+    pub fn queue_contains(&self, tx_id_hex: &str) -> bool {
+        self.queue.iter().any(|queued| hash_to_hex(&queued.tx_id) == tx_id_hex)
+    }
+
+    pub fn observe_transaction(&self, tx_id_hex: &str) -> sunrey_protocol::TransactionObservation {
+        if self.queue_contains(tx_id_hex) {
+            return sunrey_protocol::observe(
+                tx_id_hex,
+                sunrey_protocol::FinalitySource::Mempool,
+                None,
+            );
+        }
+        match self.lookup_tx(tx_id_hex) {
+            Ok((height, _, _)) => sunrey_protocol::observe(
+                tx_id_hex,
+                sunrey_protocol::FinalitySource::LocalBlockObservation,
+                Some(height),
+            ),
+            Err(_) => sunrey_protocol::observe(
+                tx_id_hex,
+                sunrey_protocol::FinalitySource::Rejection,
+                None,
+            ),
+        }
+    }
+
+    pub fn prioritize_queue(&mut self) {
+        let mut items: Vec<_> = self.queue.drain(..).collect();
+        items.sort_by(|left, right| fee_priority(&right.tx).cmp(&fee_priority(&left.tx)));
+        self.queue.extend(items);
+    }
+
     pub fn lookup_tx(
         &self,
         tx_id_hex: &str,
@@ -858,6 +890,14 @@ fn native_fee_plan(
 
 pub fn parent_genesis_hash(node: &LocalNode) -> Hash32 {
     node.genesis_hash
+}
+
+fn fee_priority(tx: &SignedTransaction) -> u64 {
+    match tx.unsigned.family {
+        TransactionFamily::NativeAsset => 2,
+        TransactionFamily::System => 1,
+        _ => 0,
+    }
 }
 
 fn persist_queue(dir: &Path, queue: &VecDeque<QueuedTx>) -> Result<(), RejectReason> {

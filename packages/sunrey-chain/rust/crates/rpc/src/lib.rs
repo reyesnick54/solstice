@@ -2,6 +2,7 @@
 
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time::Duration;
@@ -11,17 +12,49 @@ use sunrey_node::{LocalNode, NODE_ROLE};
 use sunrey_protocol::{hash_to_hex, transaction_id, BlockHeader, RejectReason};
 use tracing::{info, warn};
 
+mod security;
+mod v1;
+
+pub use security::{RpcPlane, RpcSecurityConfig, FORBIDDEN_PUBLIC_METHODS, PUBLIC_METHODS};
+
 pub struct RpcServer {
     listener: TcpListener,
     node: Arc<Mutex<LocalNode>>,
+    config: RpcSecurityConfig,
+    limiter: Arc<Mutex<security::RateLimiter>>,
+    request_ids: Arc<AtomicU64>,
 }
 
 impl RpcServer {
     pub fn bind(addr: &str, node: LocalNode) -> Result<Self, RejectReason> {
+        Self::bind_plane(addr, node, RpcPlane::SimulationCombined)
+    }
+
+    pub fn bind_plane(addr: &str, node: LocalNode, plane: RpcPlane) -> Result<Self, RejectReason> {
+        Self::bind_with_config(addr, node, RpcSecurityConfig::for_plane(plane))
+    }
+
+    pub fn bind_with_config(
+        addr: &str,
+        node: LocalNode,
+        config: RpcSecurityConfig,
+    ) -> Result<Self, RejectReason> {
         let listener = TcpListener::bind(addr).map_err(|_| RejectReason::PersistenceFailure)?;
         listener.set_nonblocking(false).ok();
-        info!(event = "rpc_listen", addr, role = NODE_ROLE, "local development API listening");
-        Ok(Self { listener, node: Arc::new(Mutex::new(node)) })
+        info!(
+            event = "rpc_listen",
+            addr,
+            role = NODE_ROLE,
+            plane = config.plane.as_str(),
+            "local development API listening"
+        );
+        Ok(Self {
+            listener,
+            node: Arc::new(Mutex::new(node)),
+            config,
+            limiter: Arc::new(Mutex::new(security::RateLimiter::default())),
+            request_ids: Arc::new(AtomicU64::new(1)),
+        })
     }
 
     pub fn local_addr(&self) -> String {
@@ -33,8 +66,13 @@ impl RpcServer {
             match stream {
                 Ok(stream) => {
                     let node = Arc::clone(&self.node);
+                    let config = self.config.clone();
+                    let limiter = Arc::clone(&self.limiter);
+                    let request_ids = Arc::clone(&self.request_ids);
                     thread::spawn(move || {
-                        if let Err(err) = handle_client(stream, &node) {
+                        if let Err(err) =
+                            handle_client(stream, &node, &config, &limiter, &request_ids)
+                        {
                             warn!(event = "rpc_error", reason = err.as_str(), "request failed");
                         }
                     });
@@ -46,29 +84,130 @@ impl RpcServer {
     }
 }
 
-fn handle_client(mut stream: TcpStream, node: &Mutex<LocalNode>) -> Result<(), RejectReason> {
-    let mut buf = vec![0u8; 65536];
+fn handle_client(
+    mut stream: TcpStream,
+    node: &Mutex<LocalNode>,
+    config: &RpcSecurityConfig,
+    limiter: &Mutex<security::RateLimiter>,
+    request_ids: &AtomicU64,
+) -> Result<(), RejectReason> {
+    let mut buf = vec![0u8; config.max_request_bytes];
     let n = stream.read(&mut buf).map_err(|_| RejectReason::DecodeFailed)?;
+    if n >= config.max_request_bytes {
+        return write_json(
+            &mut stream,
+            "413 Payload Too Large",
+            json!({"error": "SIZE_EXCEEDED"}),
+            "oversized",
+            None,
+        );
+    }
     let request = String::from_utf8_lossy(&buf[..n]);
-    let (method, path, body) = parse_http(&request);
-    let (status, payload) = dispatch(node, &method, &path, body);
-    let body_bytes = payload.to_string();
-    let response = format!(
-        "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body_bytes}",
-        body_bytes.len()
-    );
-    stream.write_all(response.as_bytes()).map_err(|_| RejectReason::PersistenceFailure)?;
-    Ok(())
+    let parsed = parse_http_full(&request);
+    let request_id = parsed
+        .request_id
+        .unwrap_or_else(|| security::next_request_id(request_ids.fetch_add(1, Ordering::Relaxed)));
+    let peer =
+        stream.peer_addr().map(|addr| addr.ip().to_string()).unwrap_or_else(|_| "unknown".into());
+    if !security::method_allowed(config.plane, &parsed.method, &parsed.path) {
+        return write_json(
+            &mut stream,
+            "403 Forbidden",
+            json!({"error": "METHOD_NOT_ALLOWED", "plane": config.plane.as_str()}),
+            &request_id,
+            security::cors_header(config, parsed.origin.as_deref()),
+        );
+    }
+    let allowed = limiter
+        .lock()
+        .map(|mut guard| {
+            guard.allow(&peer, security::now_ms(), config.rate_per_window, config.window_ms)
+        })
+        .unwrap_or(true);
+    if !allowed {
+        return write_json(
+            &mut stream,
+            "429 Too Many Requests",
+            json!({"error": "RATE_LIMITED", "request_id": request_id}),
+            &request_id,
+            security::cors_header(config, parsed.origin.as_deref()),
+        );
+    }
+    if parsed.method == "OPTIONS" {
+        return write_json(
+            &mut stream,
+            "204 No Content",
+            json!({}),
+            &request_id,
+            security::cors_header(config, parsed.origin.as_deref()),
+        );
+    }
+    let (path, query) = split_query(&parsed.path);
+    let (status, payload) = v1::dispatch_v1(node, &parsed.method, path, query, parsed.body)
+        .unwrap_or_else(|| dispatch(node, &parsed.method, path, parsed.body));
+    write_json(
+        &mut stream,
+        status,
+        payload,
+        &request_id,
+        security::cors_header(config, parsed.origin.as_deref()),
+    )
 }
 
-fn parse_http(request: &str) -> (String, String, &str) {
+struct ParsedHttp<'a> {
+    method: String,
+    path: String,
+    body: &'a str,
+    request_id: Option<String>,
+    origin: Option<String>,
+}
+
+fn parse_http_full(request: &str) -> ParsedHttp<'_> {
     let mut lines = request.split("\r\n");
     let start = lines.next().unwrap_or("");
     let mut parts = start.split_whitespace();
     let method = parts.next().unwrap_or("GET").to_string();
     let path = parts.next().unwrap_or("/").to_string();
+    let mut request_id = None;
+    let mut origin = None;
+    for line in lines {
+        if let Some((key, value)) = line.split_once(':') {
+            if key.eq_ignore_ascii_case("x-request-id") {
+                request_id = Some(value.trim().to_string());
+            }
+            if key.eq_ignore_ascii_case("origin") {
+                origin = Some(value.trim().to_string());
+            }
+        }
+    }
     let body = request.split("\r\n\r\n").nth(1).unwrap_or("");
-    (method, path, body)
+    ParsedHttp { method, path, body, request_id, origin }
+}
+
+fn split_query(path: &str) -> (&str, &str) {
+    match path.split_once('?') {
+        Some((route, query)) => (route, query),
+        None => (path, ""),
+    }
+}
+
+fn write_json(
+    stream: &mut TcpStream,
+    status: &str,
+    payload: Value,
+    request_id: &str,
+    cors: Option<String>,
+) -> Result<(), RejectReason> {
+    let body_bytes = if status.starts_with("204") { String::new() } else { payload.to_string() };
+    let cors_line = cors
+        .map(|origin| format!("Access-Control-Allow-Origin: {origin}\r\nAccess-Control-Allow-Headers: content-type,x-request-id\r\n"))
+        .unwrap_or_default();
+    let response = format!(
+        "HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: {}\r\nX-Request-Id: {request_id}\r\n{cors_line}Connection: close\r\n\r\n{body_bytes}",
+        body_bytes.len()
+    );
+    stream.write_all(response.as_bytes()).map_err(|_| RejectReason::PersistenceFailure)?;
+    Ok(())
 }
 
 fn dispatch(
@@ -121,7 +260,7 @@ fn dispatch(
     }
 }
 
-fn status_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
+pub(crate) fn status_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     match node.lock() {
         Ok(guard) => {
             ("200 OK", serde_json::to_value(guard.status()).unwrap_or(json!({"error": "ENCODE"})))
@@ -234,7 +373,7 @@ fn protocol_json(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     }
 }
 
-fn submit(node: &Mutex<LocalNode>, body: &str) -> (&'static str, Value) {
+pub(crate) fn submit(node: &Mutex<LocalNode>, body: &str) -> (&'static str, Value) {
     let parsed: Value = match serde_json::from_str(body) {
         Ok(value) => value,
         Err(_) => return ("400 Bad Request", json!({"error": "DECODE_FAILED"})),
@@ -263,7 +402,7 @@ fn produce(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     }
 }
 
-fn block_by_height(node: &Mutex<LocalNode>, height: &str) -> (&'static str, Value) {
+pub(crate) fn block_by_height(node: &Mutex<LocalNode>, height: &str) -> (&'static str, Value) {
     let Ok(height) = height.parse::<u64>() else {
         return ("400 Bad Request", json!({"error": "SCHEMA_INVALID"}));
     };
@@ -300,7 +439,7 @@ fn block_json(node: &LocalNode, header: &BlockHeader, tx_count: usize) -> Value 
     })
 }
 
-fn tx_lookup(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+pub(crate) fn tx_lookup(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
     match node.lock() {
         Ok(guard) => match guard.lookup_tx(id) {
             Ok((height, tx, block_id)) => (
@@ -330,7 +469,9 @@ fn wallet_finality(node: &Mutex<LocalNode>) -> (&'static str, Value) {
                     "latest_block_id": status.latest_block_id,
                     "app_hash": status.app_hash,
                     "environment": "simulation",
-                    "note": "finality is development BFT; production is not implemented"
+                    "local_observation_is_not_finality": true,
+                    "statuses": ["PENDING", "INCLUDED", "FINALIZED", "FAILED"],
+                    "note": "FINALIZED requires a BFT commit certificate; local height is INCLUDED only"
                 }),
             )
         }
@@ -351,7 +492,7 @@ fn wallet_crypto_policy(node: &Mutex<LocalNode>) -> (&'static str, Value) {
     }
 }
 
-fn wallet_fee_estimate(node: &Mutex<LocalNode>, path: &str) -> (&'static str, Value) {
+pub(crate) fn wallet_fee_estimate(node: &Mutex<LocalNode>, path: &str) -> (&'static str, Value) {
     let bytes = path
         .split("bytes=")
         .nth(1)
@@ -379,7 +520,7 @@ fn wallet_fee_estimate(node: &Mutex<LocalNode>, path: &str) -> (&'static str, Va
     }
 }
 
-fn wallet_account(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
+pub(crate) fn wallet_account(node: &Mutex<LocalNode>, id: &str) -> (&'static str, Value) {
     let parsed = sunrey_wallet::parse_address(id, None).ok();
     match node.lock() {
         Ok(guard) => match guard.native_assets() {
