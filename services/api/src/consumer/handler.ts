@@ -64,6 +64,11 @@ import {
 } from '../../../../packages/custody/src/product/taxonomy.ts';
 import { dispatchWallets } from './wallets.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
+import type { HinContributionSurface } from './hin-adapter.ts';
+import {
+  HIN_PRODUCT_CATEGORIES,
+  HIN_VERIFICATION_STATES,
+} from '../../../../packages/human-economic-contribution/src/hin-value/index.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -95,6 +100,7 @@ export type ConsumerBffRuntime = {
   readonly conversation?: AgentConversationSurface;
   readonly wallets?: WalletProductService;
   readonly nativeEconomy?: NativeEconomySurface;
+  readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeBffSurface;
 };
 
@@ -206,6 +212,8 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         custodyModel: CUSTODY_MODELS,
         walletFinality: CLIENT_FINALITY_STATES,
         travelRuleCustomer: TRAVEL_RULE_CUSTOMER_STATES,
+        hinCategory: HIN_PRODUCT_CATEGORIES,
+        hinVerification: HIN_VERIFICATION_STATES,
       },
       headers,
     );
@@ -569,6 +577,57 @@ function dispatchAuthenticated(
       return json(200, runtime.bff.featureStub('economy', principal), headers);
     }
     return json(200, { items: surface.supply().assets }, headers);
+  }
+
+  if (path === '/api/v1/hin/contributions' && method === 'GET') {
+    const surface = runtime.hin;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('hin', principal), headers);
+    }
+    return json(200, surface.list(principal.customerId), headers);
+  }
+  if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
+    const surface = runtime.hin;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('hin', principal), headers);
+    }
+    const contributionId = path.slice('/api/v1/hin/contributions/'.length);
+    const item = surface.get(contributionId);
+    if ('error' in item) {
+      return json(
+        404,
+        bffError({
+          errorCode: 'NOT_FOUND',
+          category: 'NOT_FOUND',
+          message: 'contribution not found',
+          retryable: false,
+          requestId,
+        }),
+        headers,
+      );
+    }
+    return json(200, item, headers);
+  }
+  if (path === '/api/v1/hin/metrics' && method === 'GET') {
+    const surface = runtime.hin;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('hin', principal), headers);
+    }
+    return json(200, surface.metrics(), headers);
+  }
+  if (path === '/api/v1/hin/me/summary' && method === 'GET') {
+    const surface = runtime.hin;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('hin', principal), headers);
+    }
+    return json(200, surface.me(principal.customerId), headers);
+  }
+  if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
+    const surface = runtime.hin;
+    if (!surface) {
+      return json(200, runtime.bff.featureStub('hin', principal), headers);
+    }
+    return json(200, { items: surface.methodologies(), isMintFormula: false }, headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -1445,6 +1504,11 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/assets',
   'GET /api/v1/economy/assets/{id}',
   'GET /api/v1/economy/supply',
+  'GET /api/v1/hin/contributions',
+  'GET /api/v1/hin/contributions/{id}',
+  'GET /api/v1/hin/metrics',
+  'GET /api/v1/hin/me/summary',
+  'GET /api/v1/hin/valuation-methodologies',
   'GET /api/v1/exchange/markets',
   'GET /api/v1/exchange/markets/{instrument}',
   'GET /api/v1/exchange/markets/{instrument}/ticker',

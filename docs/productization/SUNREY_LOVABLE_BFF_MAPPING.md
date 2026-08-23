@@ -127,6 +127,11 @@ authentication foundation; the BFF only consumes a verified session.
 | ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
 | ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
 | ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
+| HIN contributions | `/api/v1/hin/contributions` | GET | required + owner | contribution list | `packages/human-economic-contribution` hin-value | AVAILABLE_SIMULATION | no raw personal data; no verify/mint |
+| HIN contribution | `/api/v1/hin/contributions/{id}` | GET | required + owner | contribution resource | same | AVAILABLE_SIMULATION | invented ids 404 |
+| HIN metrics | `/api/v1/hin/metrics` | GET | required | privacy-safe aggregates | same | AVAILABLE_SIMULATION | k-anonymity; not individual records |
+| HIN me | `/api/v1/hin/me/summary` | GET | required + owner | Your Contributions / verified / pending / value inputs / rights | same | AVAILABLE_SIMULATION | issuancePromised=false |
+| HIN methodologies | `/api/v1/hin/valuation-methodologies` | GET | required | safe methodology metadata | same | AVAILABLE_SIMULATION | not a mint formula |
 | EXCHANGE | `/api/v1/exchange` | GET | required | catalog + screens | `packages/sunrey-exchange` product API | AVAILABLE_SIMULATION | production trading disabled |
 | EXCHANGE Home / Markets | `/api/v1/exchange/markets` | GET | required | market list | same | AVAILABLE_SIMULATION | none |
 | EXCHANGE Asset Detail / Chart / Book / History | `/api/v1/exchange/markets/{instrument}` plus `/ticker` `/orderbook` `/trades` `/candles` | GET | required | ticker, book, trades, OHLC | same | AVAILABLE_SIMULATION | freshness is explicit; last trade is not a guaranteed price |

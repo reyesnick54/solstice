@@ -805,6 +805,21 @@ function dispatch(
   if (method === 'GET' && path.startsWith('/v1/information/clean-room/')) {
     return json(200, { result: null, rawRows: false, productionActivated: false });
   }
+  if (method === 'GET' && path === '/v1/hin/contributions') {
+    return json(200, { items: [], issuancePromised: false, containsRawPersonalData: false, productionActivated: false });
+  }
+  if (method === 'GET' && path.startsWith('/v1/hin/contributions/')) {
+    return json(200, { contributionId: path.slice('/v1/hin/contributions/'.length), issuancePromised: false, containsRawPersonalData: false });
+  }
+  if (method === 'GET' && path === '/v1/hin/metrics') {
+    return json(200, { verifiedContributors: 0, individualRecordsExposed: false, isMintAmount: false, productionActivated: false });
+  }
+  if (method === 'GET' && path === '/v1/hin/me/summary') {
+    return json(200, { contributions: [], issuancePromised: false, compensation: { mintRequested: false } });
+  }
+  if (method === 'GET' && path === '/v1/hin/valuation-methodologies') {
+    return json(200, { items: [], isMintFormula: false, productionAuthorized: false });
+  }
 
   if (method === 'POST' && path === '/v1/dev/faucet') {
     const accountId = String(rec.account_id ?? '');
@@ -948,6 +963,11 @@ export const PUBLIC_ROUTES = [
   'POST /v1/information/requests',
   'POST /v1/information/clean-room',
   'GET /v1/information/clean-room/{id}',
+  'GET /v1/hin/contributions',
+  'GET /v1/hin/contributions/{id}',
+  'GET /v1/hin/metrics',
+  'GET /v1/hin/me/summary',
+  'GET /v1/hin/valuation-methodologies',
 ] as const;
 
 export const OPERATOR_ROUTES = ['POST /operator/v1/produce-block', 'GET /operator/v1/status'] as const;

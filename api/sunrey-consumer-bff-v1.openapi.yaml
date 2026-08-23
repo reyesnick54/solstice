@@ -1505,6 +1505,67 @@ paths:
         "401":
           description: Authentication required
           description: Honest availability; production trading remains disabled
+  /api/v1/hin/contributions:
+    get:
+      operationId: listHinContributions
+      summary: List owner HIN contributions
+      description: >
+        Client-safe contribution records. No raw personal data. Economic
+        value inputs are not mint amounts. Privileged verification and
+        issuance operations are not exposed.
+      responses:
+        "200":
+          description: Contribution list
+        "401":
+          description: Authentication required
+  /api/v1/hin/contributions/{contributionId}:
+    get:
+      operationId: getHinContribution
+      summary: Read one HIN contribution
+      parameters:
+        - in: path
+          name: contributionId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Contribution resource
+        "404":
+          description: Unknown contribution
+        "401":
+          description: Authentication required
+  /api/v1/hin/metrics:
+    get:
+      operationId: getHinMetrics
+      summary: Privacy-safe aggregate HIN metrics
+      responses:
+        "200":
+          description: Aggregate metrics with k-anonymity suppression
+        "401":
+          description: Authentication required
+  /api/v1/hin/me/summary:
+    get:
+      operationId: getHinMySummary
+      summary: Customer contribution summary
+      description: >
+        Your Contributions, verified, pending, economic value inputs,
+        data rights, and compensation if any. Token issuance is not
+        promised unless authorized protocol policy defines it.
+      responses:
+        "200":
+          description: Customer HIN summary
+        "401":
+          description: Authentication required
+  /api/v1/hin/valuation-methodologies:
+    get:
+      operationId: listHinValuationMethodologies
+      summary: Safe HIN valuation methodology metadata
+      description: Versioned methodologies. Not a mint formula. Production unauthorized.
+      responses:
+        "200":
+          description: Methodology metadata
+        "401":
+          description: Authentication required
   /api/v1/exchange/markets:
     get:
       operationId: listExchangeMarkets

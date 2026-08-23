@@ -289,6 +289,12 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
         return ok({ sunrey: sunrey.value, moonrey: moonrey.value, productionActive: false });
       },
     },
+    hin: {
+      contributions: (ownerId) => ok([{ contributionId: 'hec_sim_1', category: 'RESEARCH_CONTRIBUTION', verification: 'SYSTEM_VERIFIED', ownerId }]),
+      metrics: () => ok({ verifiedContributors: 1, individualRecordsExposed: false, isMintAmount: false }),
+      summary: (ownerId) => ok({ ownerId, issuancePromised: false, compensation: { mintRequested: false } }),
+      methodologies: () => ok([{ methodologyId: 'hin-evi-governed-schedule', isMintFormula: false }]),
+    },
     compliance: {
       evaluate: () => ({ status: overrides.kernelStatus ?? 'ALLOW', detail: overrides.kernelStatus ?? 'ALLOW' }),
     },

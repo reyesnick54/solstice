@@ -206,6 +206,28 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         valuationIsNotMarketPrice: true,
         futurePriceDeclared: false,
       }), ['sunrey.totalSupply', 'moonrey.totalSupply']);
+    case 'getHinContributions':
+      return mapPort(ctx.ports.hin.contributions(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (contributions) => ({
+        contributions,
+        issuancePromised: false,
+        containsRawPersonalData: false,
+      }), []);
+    case 'getHinMetrics':
+      return mapPort(ctx.ports.hin.metrics(), ctx, 'APPROVAL_CARD', (metrics) => ({
+        ...metrics,
+        individualRecordsExposed: false,
+        isMintAmount: false,
+      }), []);
+    case 'getHinSummary':
+      return mapPort(ctx.ports.hin.summary(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (summary) => ({
+        ...summary,
+        issuancePromised: false,
+      }), []);
+    case 'getHinValuationMethodologies':
+      return mapPort(ctx.ports.hin.methodologies(), ctx, 'APPROVAL_CARD', (methodologies) => ({
+        methodologies,
+        isMintFormula: false,
+      }), []);
     default:
       return refuse(ctx, 'FAILED', 'UNKNOWN_TOOL', 'That tool is not registered.');
   }

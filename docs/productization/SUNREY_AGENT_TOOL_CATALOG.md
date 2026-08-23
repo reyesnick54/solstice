@@ -109,6 +109,17 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 
 Agents cannot mint, burn, modify policy, change supply, or declare a future price.
 
+## HIN / HUMAN CONTRIBUTION
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getHinContributions | Owner contribution list | none | contributions | READ | READ_FINANCIAL_STATE | read-only | human-economic-contribution hin-value | no |
+| getHinMetrics | Privacy-safe aggregates | none | metrics | READ | READ_FINANCIAL_STATE | read-only | hin-value metrics | no |
+| getHinSummary | Customer contribution view | none | summary | READ | READ_FINANCIAL_STATE | read-only | hin-value customer view | no |
+| getHinValuationMethodologies | Safe methodology metadata | none | methodologies | READ | READ_FINANCIAL_STATE | read-only | hin-value methodologies | no |
+
+Agents cannot verify contributions, set HIN economic policy, set a mint amount, or approve issuance.
+
 ## Not created
 
 Tools were not created for unsupported or forbidden capabilities:
@@ -120,3 +131,4 @@ Tools were not created for unsupported or forbidden capabilities:
 - provider credential access
 - `sendMoneyImmediately` / `executeProposal` / `selfApprove`
 - native-asset mint / burn / policy change / future-price declaration
+- HIN contribution verification / mint / issuance approval

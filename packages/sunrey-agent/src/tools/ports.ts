@@ -276,6 +276,13 @@ export type ToolCompliancePort = {
   }): { readonly status: 'ALLOW' | 'BLOCK' | 'HOLD' | 'REQUIRE_MANUAL_REVIEW'; readonly detail: string };
 };
 
+export type HinContributionPort = {
+  contributions(ownerId: string): PortResult<readonly { readonly contributionId: string; readonly category: string; readonly verification: string }[]>;
+  metrics(): PortResult<{ readonly verifiedContributors: number; readonly individualRecordsExposed: false; readonly isMintAmount: false }>;
+  summary(ownerId: string): PortResult<{ readonly issuancePromised: false; readonly compensation: { readonly mintRequested: false } }>;
+  methodologies(): PortResult<readonly { readonly methodologyId: string; readonly isMintFormula: false }[]>;
+};
+
 export type AgentToolDomainPorts = {
   readonly accounts: AccountsPort;
   readonly payments: PaymentsPort;
@@ -287,5 +294,6 @@ export type AgentToolDomainPorts = {
   readonly cards: CardsPort;
   readonly data: DataPort;
   readonly nativeEconomy: NativeEconomyPort;
+  readonly hin: HinContributionPort;
   readonly compliance: ToolCompliancePort;
 };
