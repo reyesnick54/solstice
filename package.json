@@ -108,6 +108,7 @@
     "demo:sunrey-interop": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/interop/demo.ts",
     "demo:sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/demo.ts",
     "demo:sunrey-control-room": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/control-room/demo.ts",
+    "demo:sunrey-sre-dr": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/sre/demo.ts",
     "demo:sunrey-staged-activation": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/post-genesis/staged-activation/demo.ts",
     "sunrey-ops": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/ops/cli-dispatch.ts",
     "demo:sunrey-pregenesis": "SUNREY_FIXTURE_ENV=local node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/pregenesis/demo.ts",
