@@ -106,6 +106,9 @@ authentication foundation; the BFF only consumes a verified session.
 | AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
 | AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
+| ECONOMY | `/api/v1/economy` | GET | required | `sunrey.consumer.native-economy.v1` | `packages/sunrey-chain` native-assets + AssetSupplyBook | AVAILABLE_SIMULATION | read-only; no mint/burn; valuation is not market price |
+| ECONOMY supply | `/api/v1/economy/supply` | GET | required | total/issued/circulating supply | singular protocol supply authority | AVAILABLE_SIMULATION | not market cap; tickers NOT_ASSIGNED |
+| ECONOMY asset | `/api/v1/economy/assets/{id}` | GET | required | SUNREY_COIN or MOONREY_COIN metadata | native asset registry | AVAILABLE_SIMULATION | invented assets 404 |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |

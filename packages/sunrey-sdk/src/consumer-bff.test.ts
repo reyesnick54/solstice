@@ -231,6 +231,36 @@ describe('consumer BFF SDK models', () => {
   });
 });
 
+describe('consumer BFF native economy SDK', () => {
+  it('calls read-only economy supply routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_econ',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.native-economy.v1',
+            tickerStatus: 'NOT_ASSIGNED',
+            productionActive: false,
+            privilegedIssuanceEndpoints: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const overview = await client.getNativeEconomy();
+    await client.getNativeSupply();
+    await client.getNativeAsset('SUNREY_COIN');
+    assert.equal(overview.schema, 'sunrey.consumer.native-economy.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/economy/supply')));
+    assert.ok(urls.every((row) => row.startsWith('GET ')));
+  });
+});
+
 describe('consumer BFF SDK browser boundary', () => {
   it('does not import privileged or Node-only modules', () => {
     const dir = join(here, 'consumer-bff');

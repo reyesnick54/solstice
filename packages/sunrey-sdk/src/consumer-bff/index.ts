@@ -66,6 +66,8 @@ export type {
   ActionCenterView,
   ConversationIntent,
   ConversationTurn,
+  NativeEconomyOverview,
+  NativeEconomySupply,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

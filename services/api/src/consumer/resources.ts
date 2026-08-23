@@ -55,6 +55,8 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
       return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + packages/ai-runtime Model Gateway', 'none', 'Lovable calls Agent endpoints. The Agent calls the Model Gateway. BFF cannot execute.');
     case 'EXCHANGE':
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
+    case 'ECONOMY':
+      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');
     case 'WALLETS':
       return row(group, '/api/v1/wallets', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/cards wallet + packages/sunrey-chain mobile-sync', 'wallet providers', 'No consumer wallet product path yet.');
     case 'DATA':

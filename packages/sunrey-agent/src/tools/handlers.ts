@@ -156,6 +156,26 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         permissions,
         untrustedExternalContentCannotRedefinePolicy: true,
       }), []);
+    case 'getNativeAsset':
+      return mapPort(ctx.ports.nativeEconomy.asset(str(ctx.input.assetId)), ctx, 'TRADE_PROPOSAL', (asset) => ({
+        asset,
+        protocolNative: true,
+        tickerStatus: 'NOT_ASSIGNED',
+      }), ['asset.totalSupply', 'asset.circulatingSupply']);
+    case 'getNativeSupply':
+      return mapPort(
+        ctx.ports.nativeEconomy.supply(typeof ctx.input.assetId === 'string' ? ctx.input.assetId : undefined),
+        ctx,
+        'TRADE_PROPOSAL',
+        (assets) => ({ assets, supplyIsNotMarketCap: true }),
+        ['assets.*.totalSupply', 'assets.*.circulatingSupply'],
+      );
+    case 'getNativeEconomy':
+      return mapPort(ctx.ports.nativeEconomy.overview(), ctx, 'TRADE_PROPOSAL', (overview) => ({
+        ...overview,
+        valuationIsNotMarketPrice: true,
+        futurePriceDeclared: false,
+      }), ['sunrey.totalSupply', 'moonrey.totalSupply']);
     default:
       return refuse(ctx, 'FAILED', 'UNKNOWN_TOOL', 'That tool is not registered.');
   }

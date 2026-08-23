@@ -90,7 +90,7 @@ function setup(overrides: Parameters<typeof createFixtureToolPorts>[0] = {}, man
     jurisdictionAvailable: true,
     purpose: 'FINANCIAL_EXPLANATION',
     allowedDataClasses: ['PUBLIC', 'FINANCIAL_PRIVATE', 'PERSONAL_SENSITIVE', 'REGULATORY_SENSITIVE'],
-    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent'],
+    productCapabilities: ['accounts', 'payments', 'fx', 'grow', 'peg', 'portfolio', 'exchange', 'custody', 'cards', 'consent', 'nativeEconomy'],
     approvedToolVersions: {},
     modelText: 'help me with my finances',
     now: frozen.now(),
@@ -107,7 +107,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
-    assert.equal(CANONICAL_TOOL_COUNT, 37);
+    assert.equal(CANONICAL_TOOL_COUNT, 40);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -159,6 +159,9 @@ describe('tool contract matrix', () => {
       createCardControlProposal: { cardId: 'card_1', control: 'FREEZE' },
       getConsentSummary: {},
       getDataPermissions: {},
+      getNativeAsset: { assetId: 'SUNREY_COIN' },
+      getNativeSupply: {},
+      getNativeEconomy: {},
     };
     for (const tool of CANONICAL_AGENT_TOOLS) {
       const result = runtime.invoke({ ...session, turnId: `valid_${tool.toolId}` }, { toolId: tool.toolId, input: samples[tool.toolId] ?? {} });
@@ -252,5 +255,18 @@ describe('tool contract matrix', () => {
     assert.equal(payment.status, 'APPROVAL_REQUIRED');
     assert.ok(payment.proposalId);
     assert.equal(payment.rendering?.modelMayAlterAuthoritativeNumbers, false);
+  });
+
+  it('cannot mint, burn, or modify native-asset policy', () => {
+    const { runtime, session } = setup();
+    for (const toolId of ['mintNativeAsset', 'burnNativeAsset', 'modifyEconomicPolicy', 'issueSunRey', 'issueMoonRey']) {
+      const result = runtime.invoke(session, { toolId, input: { assetId: 'SUNREY_COIN', amount: '1' } });
+      assert.equal(result.executed, false, toolId);
+      assert.ok(result.status === 'FAILED' || result.status === 'NOT_ELIGIBLE', toolId);
+    }
+    const read = runtime.invoke(session, { toolId: 'getNativeSupply', input: {} });
+    assert.equal(read.status, 'SUCCESS');
+    assert.equal(read.executed, false);
+    assert.equal(CANONICAL_AGENT_TOOLS.some((tool) => tool.toolId.includes('mint') || tool.toolId.includes('burn')), false);
   });
 });

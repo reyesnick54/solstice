@@ -20,6 +20,8 @@ import type {
   ActionCenterList,
   ActionCenterView,
   ConversationTurn,
+  NativeEconomyOverview,
+  NativeEconomySupply,
   GrowRisk,
   GrowGoal,
   GrowGoalCreateInput,
@@ -438,6 +440,18 @@ export class SunReyConsumerBffClient {
 
   async getGrowRisk(options?: BffRequestOptions): Promise<GrowRisk> {
     return this.request('GET', '/api/v1/grow/portfolio/risk', undefined, options);
+  }
+
+  async getNativeEconomy(options?: BffRequestOptions): Promise<NativeEconomyOverview> {
+    return this.request('GET', '/api/v1/economy', undefined, options);
+  }
+
+  async getNativeSupply(options?: BffRequestOptions): Promise<NativeEconomySupply> {
+    return this.request('GET', '/api/v1/economy/supply', undefined, options);
+  }
+
+  async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
   }
 
   async request<T>(

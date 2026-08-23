@@ -216,6 +216,27 @@ export type DataPort = {
   permissions(ownerId: string): PortResult<{ readonly ownerId: string; readonly scopes: readonly string[] }>;
 };
 
+export type NativeEconomyRecord = {
+  readonly assetId: string;
+  readonly canonicalName: string;
+  readonly tickerStatus: 'NOT_ASSIGNED';
+  readonly totalSupply: string;
+  readonly circulatingSupply: string;
+  readonly protocolNative: true;
+  readonly lastTradeMinorUnits: string | null;
+  readonly valuationIsNotMarketPrice: true;
+};
+
+export type NativeEconomyPort = {
+  asset(assetId: string): PortResult<NativeEconomyRecord>;
+  supply(assetId?: string): PortResult<readonly NativeEconomyRecord[]>;
+  overview(): PortResult<{
+    readonly sunrey: NativeEconomyRecord;
+    readonly moonrey: NativeEconomyRecord;
+    readonly productionActive: false;
+  }>;
+};
+
 export type ToolCompliancePort = {
   evaluate(input: {
     readonly toolId: string;
@@ -234,5 +255,6 @@ export type AgentToolDomainPorts = {
   readonly custody: CustodyPort;
   readonly cards: CardsPort;
   readonly data: DataPort;
+  readonly nativeEconomy: NativeEconomyPort;
   readonly compliance: ToolCompliancePort;
 };
