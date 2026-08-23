@@ -54,6 +54,11 @@ authentication foundation; the BFF only consumes a verified session.
 | FX execute | `/api/v1/fx/quotes/{id}/execute` | POST | required | conversion result | `EXECUTE_FX_QUOTE` + Ledger | AVAILABLE_SIMULATION | expired quotes cannot execute |
 | FX valuation | `/api/v1/fx/valuation` | GET | required | presentation total | reference rates | AVAILABLE_SIMULATION | not Ledger authority |
 | CARDS | `/api/v1/cards` | GET | required | availability stub | `packages/cards` | EXTERNAL_PROVIDER_REQUIRED | card processor |
+| GROW | `/api/v1/grow` | GET | required | opportunity feed | `packages/platform` Growth Orchestrator | AVAILABLE_SIMULATION | none |
+| GROW feed | `/api/v1/grow/opportunities` | GET | required | ranked cards | Growth Orchestrator detectors + eligibility | AVAILABLE_SIMULATION | none |
+| GROW detail | `/api/v1/grow/opportunities/{id}` | GET | required + owner | Opportunity | same | AVAILABLE_SIMULATION | cross-user denied |
+| GROW dismiss | `/api/v1/grow/opportunities/{id}/dismiss` | POST | required + owner | Opportunity | lifecycle; fingerprint suppressed | AVAILABLE_SIMULATION | none |
+| GROW start | `/api/v1/grow/opportunities/{id}/start-proposal` | POST | required + owner | proposal receipt | does not execute money | AVAILABLE_SIMULATION | none |
 | GROW | `/api/v1/grow` | GET | required | availability catalog | `packages/personal-economic-graph` + Growth Orchestrator | AVAILABLE_SIMULATION | none |
 | FINANCIAL PROFILE | `/api/v1/grow/profile` | GET | required + owner | `sunrey.grow.profile.v1` | PEG snapshot + suitability + insights | AVAILABLE_SIMULATION | not Ledger authority; no guaranteed return |
 | FINANCIAL SNAPSHOT | `/api/v1/grow/snapshot` | GET | required + owner | `FinancialIntelligenceSnapshot` | PEG + Phase C presentation valuation | AVAILABLE_SIMULATION | `crossCurrencyTotal` is always null |

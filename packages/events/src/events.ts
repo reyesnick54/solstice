@@ -1037,12 +1037,30 @@ export type GrowthAuditPayload = {
   readonly executionCapability?: string;
   readonly proposedCount?: number;
   readonly reason?: string;
+  readonly opportunityId?: string;
+  readonly detector?: string;
+  readonly status?: string;
+  readonly proposalId?: string;
+  readonly presentedCount?: number;
+  readonly detectedCount?: number;
 };
 
 export type GrowthCycleStartedV1 = VersionedEvent<'GrowthCycleStarted', 1, GrowthAuditPayload>;
 export type GrowthPlanCreatedV1 = VersionedEvent<'GrowthPlanCreated', 1, GrowthAuditPayload>;
 export type GrowthPlanStaleV1 = VersionedEvent<'GrowthPlanStale', 1, GrowthAuditPayload>;
 export type GrowthActionProposedV1 = VersionedEvent<'GrowthActionProposed', 1, GrowthAuditPayload>;
+export type GrowthOpportunityDetectedV1 = VersionedEvent<'GrowthOpportunityDetected', 1, GrowthAuditPayload>;
+export type GrowthOpportunityLifecycleChangedV1 = VersionedEvent<
+  'GrowthOpportunityLifecycleChanged',
+  1,
+  GrowthAuditPayload
+>;
+export type GrowthOpportunityPreferencesUpdatedV1 = VersionedEvent<
+  'GrowthOpportunityPreferencesUpdated',
+  1,
+  GrowthAuditPayload
+>;
+export type GrowthOpportunitiesRecomputedV1 = VersionedEvent<'GrowthOpportunitiesRecomputed', 1, GrowthAuditPayload>;
 
 export type EconomicValueAuditPayload = {
   readonly snapshotId?: string;
@@ -1227,6 +1245,10 @@ export type DomainEvent =
   | GrowthPlanCreatedV1
   | GrowthPlanStaleV1
   | GrowthActionProposedV1
+  | GrowthOpportunityDetectedV1
+  | GrowthOpportunityLifecycleChangedV1
+  | GrowthOpportunityPreferencesUpdatedV1
+  | GrowthOpportunitiesRecomputedV1
   | EconomicValueSnapshotCreatedV1
   | EconomicValueDimensionChangedV1
   | EconomicValueAttributionRecordedV1

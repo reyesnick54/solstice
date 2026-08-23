@@ -38,9 +38,12 @@ import { SIMULATION_GB_VIRTUAL_PROGRAM } from '../../../../packages/cards/src/pr
 import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
+import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
+import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
+import { createGrowOpportunityPort } from './grow-adapter.ts';
 import {
   applyPersonaSeed,
   EconomicGraphService,
@@ -70,6 +73,7 @@ export const SANDBOX_PERSONA_IDS = [
   'provider_down',
   'pending_activity',
   'zero_balance',
+  'grow',
   'grow_new_user',
   'grow_healthy_saver',
   'grow_high_idle_cash',
@@ -94,6 +98,7 @@ const READ_CAPABILITIES: readonly IdentityCapability[] = [
   'VIEW_ECONOMIC_GRAPH',
   'DECLARE_ECONOMIC_FACT',
   'VIEW_GROWTH_PLAN',
+  'VIEW_ECONOMIC_GRAPH',
   'VIEW_ECONOMIC_VALUE',
   'VAULT_VIEW_OWN',
   'EXCHANGE_VIEW',
@@ -314,6 +319,19 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   personas.provider_down = providerDown.principal;
   sessions.set(sandboxToken('provider_down'), providerDown.principal);
 
+  const grow = provisionPersona(runtime, {
+    persona: 'grow',
+    customerId: 'cust_sandbox_grow',
+    kyc: 'VERIFIED',
+    customerActive: true,
+    restricted: false,
+    accounts: [
+      { id: 'acct_sandbox_grow_checking', currency: 'USD', productId: 'prod_demand_usd_gb', accountClass: 'DEMAND_DEPOSIT', deposit: 200_000n },
+      { id: 'acct_sandbox_grow_savings', currency: 'USD', productId: 'prod_savings_usd_gb', accountClass: 'SAVINGS_DEPOSIT', deposit: 0n },
+    ],
+  });
+  personas.grow = grow.principal;
+  sessions.set(sandboxToken('grow'), grow.principal);
   const peg = new EconomicGraphService({ clock: new FrozenClock(NOW), events: runtime.events });
   const growPersonaMap: Readonly<Record<string, PegPersonaId>> = {
     grow_new_user: 'NEW_USER',
@@ -429,6 +447,17 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
+    grow: createGrowOpportunityPort({
+      orchestrator: new GrowthOrchestrator({
+        clock: runtime.clock,
+        events: runtime.events,
+        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+      }),
+      accounts: createAccountsReadAdapter(runtime),
+      actorFor(principal) {
+        const actor = runtime.identity.service.resolveActorContext(principal.actorId);
+        return actor.ok ? actor.value : principal;
+      },
     grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
     growCommands: createGrowCommandPort({
       peg,

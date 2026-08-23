@@ -445,6 +445,53 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
+      summary: Grow My Money opportunity feed
+      description: >
+        Deterministic Growth Orchestrator cards. Does not execute money
+        or promise a return.
+      responses:
+        "200":
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+  /api/v1/grow/opportunities:
+    get:
+      operationId: listGrowOpportunities
+      summary: List ranked growth opportunities
+      responses:
+        "200":
+          description: Opportunity feed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowOpportunityFeed"
+        "401":
+          description: Authentication required
+        "403":
+          description: Cross-user denied
+  /api/v1/grow/opportunities/{id}:
+    get:
+      operationId: getGrowOpportunity
+      summary: Get one owned growth opportunity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Opportunity
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Not found
+  /api/v1/grow/opportunities/{id}/dismiss:
+    post:
+      operationId: dismissGrowOpportunity
+      summary: Dismiss an opportunity
+      description: A dismissed fingerprint is not re-presented unchanged.
       summary: Grow My Money catalog
       responses:
         "200":
@@ -498,6 +545,26 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Dismissed opportunity
+  /api/v1/grow/opportunities/{id}/start-proposal:
+    post:
+      operationId: startGrowOpportunityProposal
+      summary: Accept an opportunity for proposal
+      description: >
+        Does not execute money, issue Execution Authority, or post a
+        ledger journal.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
           description: Updated goal
   /api/v1/grow/insights:
     get:
@@ -938,6 +1005,44 @@ components:
                       amount: { $ref: "#/components/schemas/MoneyView" }
                       description: { type: string }
                       reference: { type: string }
+    GrowProposalReceipt:
+      type: object
+      required: [opportunityId, proposalId, status, executesMoney, issuesExecutionAuthority, productionMoneyMovement]
+      properties:
+        opportunityId: { type: string }
+        proposalId: { type: string }
+        status: { type: string, enum: [ACCEPTED_FOR_PROPOSAL] }
+        executesMoney: { type: boolean, enum: [false] }
+        issuesExecutionAuthority: { type: boolean, enum: [false] }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+        nextStep: { type: string }
+    GrowOpportunityFeed:
+      type: object
+      required: [schema, productionMoneyMovement, items]
+      properties:
+        schema: { type: string, enum: [sunrey.consumer.grow.opportunities.v1] }
+        generatedAt: { type: string, format: date-time }
+        rankingVersion: { type: string }
+        productionMoneyMovement: { type: boolean, enum: [false] }
+        suppressedCount: { type: integer }
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              card: { type: string }
+              opportunityId: { type: string }
+              title: { type: string }
+              summary: { type: string }
+              category: { type: string }
+              status: { type: string }
+              eligible: { type: boolean }
+              priority: { type: integer }
+              currency: { type: string }
+              impactKind: { type: string }
+              riskLevel: { type: string }
+              achievementPromised: { type: boolean, enum: [false] }
+              immediatelyExecutable: { type: boolean, enum: [false] }
     HomeResource:
       type: object
       required: [schema, generatedAt, wealth, accounts]

@@ -83,6 +83,10 @@ export type OptionalDomainSummary = {
 
 export type OptionalDomainPort = {
   summarize(principal: BffPrincipal): OptionalDomainSummary;
+  list?(principal: BffPrincipal): unknown;
+  get?(principal: BffPrincipal, id: string): unknown;
+  dismiss?(principal: BffPrincipal, id: string): unknown;
+  startProposal?(principal: BffPrincipal, id: string): unknown;
 };
 
 export type GrowCommandPort = {
