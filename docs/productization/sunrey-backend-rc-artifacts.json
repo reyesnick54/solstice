@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.backend.rc.artifacts.v1",
+  "rcVersion": "sunrey-backend-v1.0.0-rc.2",
+  "kind": "BACKEND_PRODUCTION_RELEASE_CANDIDATE_ARTIFACTS",
+  "notAProductionRelease": true,
+  "publishedToRegistry": false,
+  "generatedAtUtc": "2026-08-23T15:52:46.888Z",
+  "sourceCommit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+  "sourceHashes": {
+    "package-lock.json": "sha256:a145a555256c96d7c833a7cea3198bf89bee452bc907e2b93d2c8c0592d40232",
+    "package.json": "sha256:c8eb2fdbc5f20010cd72658aebac7e9d652735c5c58abc890b3012371ac6a08c",
+    "deploy/sunrey-preproduction/docker/sunrey-platform.Dockerfile": "sha256:8e4d10d9ac70bb98df8f4b68dbd7101b0c26684a7f7c44d246d3278c5745dae1",
+    "deploy/sunrey-testnet/docker/sunrey-node.Dockerfile": "sha256:3e55aced88d26344bbe358feae7f96f821491697ff28ef203324b5d72ea19927",
+    "deploy/sunrey-testnet/docker/sunrey-rpc.Dockerfile": "sha256:c71eeb1faffa02435f7f8efa03ef6521cdcdcf7af6f2727c01d33669261e3ca8",
+    "deploy/sunrey-testnet/docker/sunrey-explorer.Dockerfile": "sha256:3ae2cf5b8bbe4b538c7c9de645ce832b21148af150e1775edd7fd4dc789e2415",
+    "deploy/sunrey-testnet/docker/sunrey-relayer.Dockerfile": "sha256:4539127297f4b38ce4b49feb153778e21baa1f4852f7bcf18cd812b111ab81c7",
+    "deploy/sunrey-testnet/docker/sunrey-faucet.Dockerfile": "sha256:03e2ef88419a050b07181e0e8922f709f15616c1612337507d28322c537b4833",
+    "infra/sunrey-production/releases/preproduction-release.json": "sha256:7ba8d09d5ed98b1a86e598bc148935b5a69e976cce26f10e3601d5fa4b5f88be",
+    "packages/sunrey-chain/rust/Cargo.lock": "sha256:1022f717e8b9e4a947d9a9ca67127e3979bd3b8bf4442f1d5cce479fe109e945",
+    "packages/sunrey-chain/node/Cargo.lock": "sha256:1d1a199f13178cc5984f1582fc476e901e26cfa594358b255f0dd4b46c5dfe7b"
+  },
+  "sbom": {
+    "generated": true,
+    "command": "node scripts/sunrey-release.mjs sbom",
+    "count": 8,
+    "digests": [
+      "5b30adb32cddc5b181a49978d56c2997841a4efbf92965ab09e22cf57ee9edfd",
+      "8c0871fa2444b59970abf0aba39374efaab80d5c9aa8d15a5c99a1b854fa8879",
+      "b248f03d25b0adf70b81bca990098a4caa50af8de8a8608d34818534b8bd828f",
+      "decba8195eeb619b6e90487966b6fbc718d1be97ab7052c5d083b344db71cb72",
+      "608daed67975d24eff59a3a552ea43f40ad961e86bd46a871106a63120c1330a",
+      "e6505cab7e6f9325fb31e96d2f48bf68bf91dff7cc6561a6511fb9b90e53625c",
+      "e1f23907e86e02690d0ae155d6dff24cc6cf041f0fb94c2f42216fd252fcc295",
+      "268e3292b239dc259eed8dec436f804f1e2f7ff6fb28f4108008644f5e2b711f"
+    ]
+  },
+  "provenance": {
+    "generated": true,
+    "command": "node scripts/sunrey-release.mjs provenance",
+    "digest": "c30281cf4f90903615a6b92c10b98e796cd04ffefec9eaa0400ca720b3ca1721"
+  },
+  "container": {
+    "built": true,
+    "publishedToRegistry": false,
+    "dockerfile": "deploy/sunrey-preproduction/docker/sunrey-platform.Dockerfile",
+    "imageRef": "sunrey.local/platform:sunrey-backend-v1.0.0-rc.2",
+    "imageId": "sha256:c7095c1354f57fa86f3e91c8668530989ca74de076b4165a43256d83555f9f00",
+    "savedArchiveSha256": "sha256:d2a9c09260a725d558e428d94f88b0f34ce4b5b2f2e5e95566c56a9d7c38c768",
+    "sourceCommit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+    "note": "Local/CI OCI image. Not a published ghcr.io registry digest."
+  },
+  "rehearsalPlaceholder": {
+    "digest": "sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f",
+    "kind": "SIMULATION_REHEARSAL_PLACEHOLDER",
+    "usedAsCompletedRcEvidence": false
+  }
+}

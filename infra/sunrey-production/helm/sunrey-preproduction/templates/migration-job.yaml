@@ -24,7 +24,8 @@ spec:
         runAsUser: 65532
       containers:
         - name: migrate
-          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          # SIMULATION_REHEARSAL_PLACEHOLDER — not a published registry digest
+          image: {{ .Values.image.repository }}@{{ .Values.image.digest }}
           command: ["node", "scripts/postgres-migrate.mjs"]
           env:
             - name: DATABASE_CREDENTIAL_REF

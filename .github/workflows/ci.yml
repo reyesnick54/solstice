@@ -350,6 +350,9 @@ jobs:
       - name: "[SECURITY] Container pin check"
         run: node scripts/check-container-pins.mjs
 
+      - name: "[BACKEND RC] Qualify release candidate"
+        run: npm run qualify:backend-rc
+
   persistence:
     name: "[DATABASE] postgres → migrate → persistence-integration"
     runs-on: ubuntu-latest
@@ -398,6 +401,9 @@ jobs:
 
       - name: "[DATABASE] Persistence integration tests"
         run: npm run test:persistence
+
+      - name: "[DATABASE] From-zero, prior-schema, restart, ledger, failure gate"
+        run: npm run qualify:backend-db -- --skip-persistence
 
   architecture-freeze:
     name: "[ARCHITECTURE] authority-map + freeze + kernel + posture"
@@ -488,3 +494,37 @@ jobs:
 
       - name: "[PRODUCTION SAFETY] Deployment posture"
         run: python3 scripts/check-deployment-posture.py
+
+  backend-rc:
+    name: "[BACKEND RC] local OCI artifacts + qualify"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+
+      - name: "[INTEGRITY] JSON / repository integrity preflight"
+        run: |
+          node scripts/check-json-integrity.mjs
+          node scripts/check-merge-integrity.mjs
+
+      - name: "[TYPECHECK] Install from lockfile"
+        run: npm ci --ignore-scripts
+
+      - name: "[BACKEND RC] Build local OCI image, SBOM, and provenance"
+        run: npm run build:backend-rc-artifacts -- --require-container
+
+      - name: "[BACKEND RC] Qualify release candidate"
+        run: npm run qualify:backend-rc
+
+      - name: "[PRODUCTION SAFETY] Production-off defaults"
+        run: node scripts/check-production-safety.mjs
+
+      - name: "[SECURITY] Secret scan"
+        run: python3 scripts/secret-scan.py

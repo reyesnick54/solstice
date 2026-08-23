@@ -2,14 +2,14 @@
   "schemaVersion": 1,
   "id": "sunrey.backend.rc.configuration.v1",
   "status": "FROZEN_FOR_RELEASE_CANDIDATE",
-  "rcVersion": "sunrey-backend-v1.0.0-rc.1",
+  "rcVersion": "sunrey-backend-v1.0.0-rc.2",
   "kind": "BACKEND_PRODUCTION_RELEASE_CANDIDATE",
   "notAProductionRelease": true,
   "environment": "simulation",
   "source": {
-    "repository": "reyesnick54/sunrey",
+    "repository": "reyesnick54/solstice",
     "branchPolicy": "document the commit that created this RC; do not treat a feature branch as mainnet",
-    "commitPlaceholder": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
+    "commit": "287bafc4e21190393ba21c8718a8721da1214cb2",
     "packageVersion": "0.1.0"
   },
   "buildArtifacts": {
@@ -17,10 +17,13 @@
     "rustWorkspace": "packages/sunrey-chain/rust cargo --locked",
     "nodeLocal": "packages/sunrey-chain/node",
     "sdkPackage": "@solstice/sunrey-sdk@0.1.0",
+    "evidence": "docs/productization/sunrey-backend-rc-artifacts.json",
     "containerDigests": {
-      "status": "NOT_BUILT_IN_THIS_ENVIRONMENT",
-      "reason": "docker is not available in the Phase I Prompt 6 qualification VM",
+      "status": "LOCAL_OCI_NOT_PUBLISHED",
+      "publishedToRegistry": false,
+      "evidence": "docs/productization/sunrey-backend-rc-artifacts.json",
       "dockerfiles": [
+        "deploy/sunrey-preproduction/docker/sunrey-platform.Dockerfile",
         "deploy/sunrey-testnet/docker/sunrey-node.Dockerfile",
         "deploy/sunrey-testnet/docker/sunrey-rpc.Dockerfile",
         "deploy/sunrey-testnet/docker/sunrey-explorer.Dockerfile",
@@ -40,7 +43,9 @@
     "owner": "db/",
     "apply": "npm run db:migrate",
     "fromZero": "blank PostgreSQL + every versioned SQL file; no hand-created tables",
-    "qualityGate": "scripts/check-migration-quality.mjs"
+    "qualityGate": "scripts/check-migration-quality.mjs",
+    "qualification": "scripts/qualify-backend-db.mjs",
+    "latestCustomerVersion": "V040"
   },
   "agentPolicies": {
     "owner": "packages/sunrey-agent",

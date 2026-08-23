@@ -1,13 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "sunrey.backend.release-candidate.v1",
-  "version": "sunrey-backend-v1.0.0-rc.1",
+  "version": "sunrey-backend-v1.0.0-rc.2",
   "kind": "BACKEND_PRODUCTION_RELEASE_CANDIDATE",
   "notAProductionRelease": true,
   "evaluatedAtPolicy": "FAIL_CLOSED",
   "recommendation": "BACKEND_RC_READY_PENDING_EXTERNAL_GATES",
-  "commit": "c5274daeb3fc830c92c719f41a711aa36eebda8b",
-  "sourceCommitPolicy": "record the git SHA of the RC commit; do not invent a mainnet SHA",
+  "commit": "287bafc4e21190393ba21c8718a8721da1214cb2",
+  "sourceCommitPolicy": "record a real git object SHA used for this RC; do not invent a mainnet SHA or registry digest",
+  "qualifiedFromMain": "287bafc4e21190393ba21c8718a8721da1214cb2",
   "buildArtifacts": {
     "sdk": "@solstice/sunrey-sdk@0.1.0",
     "workspaceVersion": "0.1.0",
@@ -19,8 +20,10 @@
       "api/sunrey-developer-platform-v1.openapi.yaml"
     ],
     "migrationsOwner": "db/",
-    "containerDigests": null,
-    "containerDigestsReason": "docker unavailable in this qualification environment"
+    "databaseMigrationVersion": "V040",
+    "containerDigests": "docs/productization/sunrey-backend-rc-artifacts.json",
+    "containerDigestsReason": "local/CI OCI image id and docker-save archive hash; not a published registry digest",
+    "artifactEvidence": "docs/productization/sunrey-backend-rc-artifacts.json"
   },
   "schemas": {
     "authorityMap": "docs/productization/sunrey-authority-map.json",
@@ -64,12 +67,13 @@
     "productionOffPosture": true,
     "handoffPackagePresent": true,
     "externalGatesExplicit": true,
-    "cleanBuildInThisEnvironment": "npm test 3658 run, 3657 passed, 0 failed, 1 skipped; qualify:backend-rc ok",
-    "typecheckInThisEnvironment": "tsc reports remaining exactOptionalPropertyTypes findings in information-market rights-marketplace and personal-data-vault product personas; runtime tests for those packages passed",
-    "postgresFromZeroInThisEnvironment": "NOT_RUN_DOCKER_UNAVAILABLE",
-    "containerBuildInThisEnvironment": "NOT_RUN_DOCKER_UNAVAILABLE",
+    "cleanBuildInThisEnvironment": "npm test 3754 run, 3753 passed, 0 failed, 1 skipped; qualify:backend-rc ok",
+    "typecheckInThisEnvironment": "tsc --noEmit -p tsconfig.json: PASS",
+    "postgresFromZeroInThisEnvironment": "PASS — real PostgreSQL 16 empty → V040 customer / V009 ledger; prior-schema upgrade PASS; restart PASS; migration failure rolled back",
+    "persistenceIntegrationInThisEnvironment": "PASS — npm run test:persistence 38 passed, 0 failed",
+    "containerBuildInThisEnvironment": "PASS — sunrey.local/platform:sunrey-backend-v1.0.0-rc.2 imageId and docker-save archive recorded in sunrey-backend-rc-artifacts.json; publishedToRegistry=false",
     "fullDurationSoakInThisEnvironment": "NOT_RUN_ENVIRONMENT_LIMITATION",
-    "rustInThisEnvironment": "rustc/cargo present; full cargo --locked workspace not claimed unless separately recorded"
+    "rustInThisEnvironment": "PASS — cargo +1.83.0 fmt --check, clippy --all-targets --locked -D warnings, test --workspace --locked"
   },
   "externalGateResult": {
     "passed": false,
@@ -185,14 +189,14 @@
     "No external security audit or pentest report is present. Range campaigns are not a live pentest.",
     "No production HSM/KMS evidence. Software HsmKmsProvider is simulation-ready only.",
     "No counsel-confirmed corridor. Unknown corridors remain RESEARCH_REQUIRED.",
-    "Docker/PostgreSQL were unavailable in the Phase I Prompt 6 cloud VM, so migrate-from-zero and container digests were not produced here.",
+    "RC.1 could not produce migrate-from-zero or container digests. RC.2 re-runs those on real PostgreSQL and a local OCI build.",
     "Full-duration soak was not run in this environment.",
     "PRODUCTION_READY remains false until every required external production gate is verified."
   ],
   "environmentLimitations": {
-    "docker": false,
     "hostedPreproductionCluster": false,
     "fullDurationSoak": false,
-    "liveCredentials": false
+    "liveCredentials": false,
+    "registryPublish": false
   }
 }

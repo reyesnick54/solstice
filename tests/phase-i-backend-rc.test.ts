@@ -5,7 +5,13 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 const require = createRequire(import.meta.url);
-const { evaluateBackendReleaseCandidate, RC_MANIFEST_REL, RC_VERSION } = require('../scripts/qualify-backend-rc.mjs') as {
+const {
+  evaluateBackendReleaseCandidate,
+  RC_MANIFEST_REL,
+  RC_VERSION,
+  RC_ARTIFACTS_REL,
+  REHEARSAL_PLACEHOLDER_DIGEST,
+} = require('../scripts/qualify-backend-rc.mjs') as {
   evaluateBackendReleaseCandidate: (root?: string) => {
     findings: string[];
     status: Record<string, boolean>;
@@ -14,6 +20,8 @@ const { evaluateBackendReleaseCandidate, RC_MANIFEST_REL, RC_VERSION } = require
   };
   RC_MANIFEST_REL: string;
   RC_VERSION: string;
+  RC_ARTIFACTS_REL: string;
+  REHEARSAL_PLACEHOLDER_DIGEST: string;
 };
 const { checkAuthorityMap } = require('../scripts/check-authority-map.mjs') as {
   checkAuthorityMap: (root: string) => { findings: string[]; map: { authorities: { id: string; owner: string; unique: boolean }[] } };
@@ -95,5 +103,38 @@ describe('Phase I backend production release candidate', () => {
     for (const id of report.screens) {
       assert.ok(manifest.lovable.screens.some((row) => row.id === id), id);
     }
+  });
+
+  it('records real artifact evidence and labels the rehearsal digest', () => {
+    assert.equal(RC_VERSION, 'sunrey-backend-v1.0.0-rc.2');
+    const artifacts = JSON.parse(readFileSync(join(ROOT, RC_ARTIFACTS_REL), 'utf8')) as {
+      rcVersion: string;
+      publishedToRegistry: boolean;
+      sourceHashes: Record<string, string>;
+      sbom: { generated: boolean; digests: string[] };
+      provenance: { generated: boolean; digest: string };
+      container: { built: boolean; imageId?: string; publishedToRegistry?: boolean };
+    };
+    assert.equal(artifacts.rcVersion, RC_VERSION);
+    assert.equal(artifacts.publishedToRegistry, false);
+    assert.equal(artifacts.sbom.generated, true);
+    assert.ok(artifacts.sbom.digests.length > 0);
+    assert.equal(artifacts.provenance.generated, true);
+    assert.match(artifacts.provenance.digest, /^[0-9a-f]{64}$/);
+    for (const digest of Object.values(artifacts.sourceHashes)) {
+      assert.match(digest, /^sha256:[0-9a-f]{64}$/);
+      assert.notEqual(digest, REHEARSAL_PLACEHOLDER_DIGEST);
+    }
+    if (artifacts.container.built) {
+      assert.match(String(artifacts.container.imageId), /^sha256:[0-9a-f]{64}$/);
+      assert.notEqual(artifacts.container.imageId, REHEARSAL_PLACEHOLDER_DIGEST);
+      assert.equal(artifacts.container.publishedToRegistry, false);
+    }
+    const release = JSON.parse(
+      readFileSync(join(ROOT, 'infra/sunrey-production/releases/preproduction-release.json'), 'utf8'),
+    ) as { containerDigest: string; containerDigestKind: string; databaseMigrationVersion: string };
+    assert.equal(release.containerDigest, REHEARSAL_PLACEHOLDER_DIGEST);
+    assert.equal(release.containerDigestKind, 'SIMULATION_REHEARSAL_PLACEHOLDER');
+    assert.equal(release.databaseMigrationVersion, 'V040');
   });
 });

@@ -68,7 +68,7 @@ achieved production result.
 
 ## Launch checklist
 
-1. RC identifier `sunrey-backend-v1.0.0-rc.1` matches the intended commit.
+1. RC identifier `sunrey-backend-v1.0.0-rc.2` matches the intended commit.
 2. Production flags remain false until a separate authorized launch.
 3. External gates in `docs/productization/sunrey-backend-release-candidate.json` are still listed as missing unless independently verified.
 4. `sunrey-ops production readiness` and launch rehearsal stay fail-closed.

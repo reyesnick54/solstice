@@ -98,7 +98,13 @@ export function chartValues(environment: PlatformDeploymentEnvironment): Record<
     image: {
       repository: 'ghcr.io/sunrey/platform',
       digest: REHEARSAL_CONTAINER_DIGEST,
+      digestKind: 'SIMULATION_REHEARSAL_PLACEHOLDER',
       tag: '',
+    },
+    postgresImage: {
+      repository: 'docker.io/library/postgres',
+      digest: REHEARSAL_CONTAINER_DIGEST,
+      digestKind: 'SIMULATION_REHEARSAL_PLACEHOLDER',
     },
     tls,
     secrets,
