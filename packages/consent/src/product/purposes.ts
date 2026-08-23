@@ -36,7 +36,7 @@ export type PermissionBundle = {
   readonly economicUseClass: EconomicUseClass;
 };
 
-const CATALOG: readonly ProductPurpose[] = Object.freeze([
+const CATALOG = Object.freeze([
   Object.freeze({
     purposeId: 'core-account-service',
     ledgerCode: 'CORE_ACCOUNT_SERVICE',
@@ -209,9 +209,9 @@ const CATALOG: readonly ProductPurpose[] = Object.freeze([
   }),
 ]);
 
-export const PRODUCT_PURPOSE_CATALOG: readonly ProductPurpose[] = CATALOG;
+export const PRODUCT_PURPOSE_CATALOG = CATALOG as readonly ProductPurpose[];
 
-export const PERMISSION_BUNDLES: readonly PermissionBundle[] = Object.freeze([
+export const PERMISSION_BUNDLES = Object.freeze([
   Object.freeze({
     bundleId: 'AGENT_SPENDING_DATA',
     label: 'Allow SunRey Agent to use my spending data',
@@ -262,7 +262,7 @@ export const PERMISSION_BUNDLES: readonly PermissionBundle[] = Object.freeze([
     necessity: 'OPTIONAL',
     economicUseClass: 'AGGREGATED_RESEARCH',
   }),
-]);
+]) as readonly PermissionBundle[];
 
 export function listProductPurposes(): readonly ProductPurpose[] {
   return PRODUCT_PURPOSE_CATALOG;

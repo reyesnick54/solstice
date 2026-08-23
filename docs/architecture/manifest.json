@@ -1212,6 +1212,7 @@
         "packages/investments",
         "packages/ledger",
         "packages/custody",
+        "packages/consent",
         "services/investments",
         "services/economic-graph"
       ],

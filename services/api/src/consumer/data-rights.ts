@@ -120,15 +120,19 @@ export function dispatchDataRights(
     );
   }
   if (path === '/api/v1/data/consents' && method === 'POST') {
+    const purposeId = str(rec.purposeId);
+    const bundleId = str(rec.bundleId);
+    const economicUseClass = str(rec.economicUseClass);
+    const recipientClass = str(rec.recipientClass);
     const granted = engine.grantConsent(actor, {
-      ...(str(rec.purposeId) ? { purposeId: str(rec.purposeId) } : {}),
-      ...(str(rec.bundleId) ? { bundleId: str(rec.bundleId) } : {}),
+      ...(purposeId ? { purposeId } : {}),
+      ...(bundleId ? { bundleId } : {}),
       expiresAt,
       idempotencyKey,
       sessionId: principal.sessionId,
       ...(Array.isArray(rec.dataCategories) ? { dataCategories: rec.dataCategories as never } : {}),
-      ...(str(rec.economicUseClass) ? { economicUseClass: rec.economicUseClass as never } : {}),
-      ...(str(rec.recipientClass) ? { recipientClass: rec.recipientClass as never } : {}),
+      ...(economicUseClass ? { economicUseClass: economicUseClass as never } : {}),
+      ...(recipientClass ? { recipientClass: recipientClass as never } : {}),
     });
     return result(mapDataRightsOutcome(granted, requestId), headers, 201);
   }
@@ -166,10 +170,11 @@ export function dispatchDataRights(
     );
   }
   if (path === '/api/v1/data/rights/requests' && method === 'POST') {
+    const jurisdiction = str(rec.jurisdiction);
     const submitted = engine.submitRightsRequest(actor, {
       type: (str(rec.type) ?? 'ACCESS') as never,
       idempotencyKey,
-      ...(str(rec.jurisdiction) ? { jurisdiction: str(rec.jurisdiction) } : {}),
+      ...(jurisdiction ? { jurisdiction } : {}),
     });
     return result(mapDataRightsOutcome(submitted, requestId), headers, 201);
   }

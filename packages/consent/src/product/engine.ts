@@ -312,7 +312,7 @@ export class ConsentDataRightsEngine {
     }
     const receipt = this.consent.getConsentReceipt(verified, confirmed.value.consentId);
     const now = this.clock.now();
-    const grant: ConsentGrantView = Object.freeze({
+    const grant = Object.freeze({
       grantId: newProductGrantId(),
       consentId: confirmed.value.consentId,
       receiptId: receipt.ok ? receipt.value.receiptId : null,
@@ -340,7 +340,7 @@ export class ConsentDataRightsEngine {
       economicUseClass: economic,
       bundleId: (bundle?.bundleId ?? null) as PermissionBundleId | null,
       evidenceRef: confirmed.value.evidenceRef,
-    });
+    }) as ConsentGrantView;
     this.store.grants.set(grant.grantId, grant);
     this.store.grantIdempotency.set(input.idempotencyKey, grant.grantId);
     this.emit('ConsentGranted', grant.consentId, {
@@ -517,7 +517,7 @@ export class ConsentDataRightsEngine {
       });
     }
     const now = this.clock.now();
-    const needsIdentity = actor.verified?.authenticationAssurance === 'BASELINE';
+    const needsIdentity = actor.verified?.authenticationAssurance === 'LOW';
     const request: DataRightsRequest = Object.freeze({
       requestId: newRightsRequestId(),
       subjectId: actor.subjectId,
@@ -591,7 +591,7 @@ export class ConsentDataRightsEngine {
   ): Result<HinParticipationRecord, DataRightsFailure> {
     const granted = this.grantConsent(actor, {
       purposeId: 'hin-participation',
-      dataCategories: input.categories,
+      ...(input.categories ? { dataCategories: input.categories } : {}),
       expiresAt: input.expiresAt,
       idempotencyKey: input.idempotencyKey,
       recipientClass: 'HIN_NETWORK',

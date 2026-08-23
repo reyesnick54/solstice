@@ -362,6 +362,7 @@ export type GrowPlan = {
 };
 
 export type GrowProductProposal = GrowPlanProposal;
+export type GrowProposal = GrowPlanProposal;
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;

@@ -696,7 +696,7 @@ export { Money };
 import {
   ProductGrowthService,
   type CreateGrowPlanInput,
-  type FinancialProposal,
+  type FinancialProposal as ProductFinancialProposal,
   type GrowProductFailure,
   type GrowRiskProfile,
   type GrowthProductActor,
@@ -804,7 +804,7 @@ export function publicPlan(plan: ProductGrowthPlan): ProductGrowthPlan {
   return plan;
 }
 
-export function publicProposal(proposal: FinancialProposal): FinancialProposal {
+export function publicProposal(proposal: ProductFinancialProposal): ProductFinancialProposal {
   return proposal;
 }
 
