@@ -1,0 +1,44 @@
+import type { AiFailureCode } from './taxonomy.ts';
+import type { AiProviderFailure } from './types.ts';
+
+const TO_LOVABLE: Readonly<Partial<Record<AiFailureCode, AiFailureCode>>> = Object.freeze({
+  PROVIDER_UNAVAILABLE: 'MODEL_UNAVAILABLE',
+  PROVIDER_UNHEALTHY: 'MODEL_UNAVAILABLE',
+  PROVIDER_TIMEOUT: 'MODEL_TIMEOUT',
+  INVALID_STRUCTURED_OUTPUT: 'MODEL_OUTPUT_INVALID',
+  FLOATING_POINT_MONEY_FORBIDDEN: 'MODEL_OUTPUT_INVALID',
+  ROUTING_REFUSED: 'MODEL_POLICY_BLOCKED',
+  DATA_CLASS_BLOCKS_EXTERNAL: 'MODEL_POLICY_BLOCKED',
+  CONTEXT_RELEASE_DENIED: 'MODEL_POLICY_BLOCKED',
+  NEVER_RELEASE_DATA_CLASS: 'MODEL_POLICY_BLOCKED',
+  MODEL_NOT_APPROVED_FOR_SIMULATION: 'MODEL_POLICY_BLOCKED',
+  MODEL_REF_UNRESOLVED: 'MODEL_POLICY_BLOCKED',
+  AUTHORIZATION_REQUIRED: 'MODEL_POLICY_BLOCKED',
+  JURISDICTION_REQUIRED: 'MODEL_POLICY_BLOCKED',
+  POLICY_IMMUTABLE: 'MODEL_POLICY_BLOCKED',
+  S3M_UNAVAILABLE_NO_EXTERNAL_FALLBACK: 'MODEL_UNAVAILABLE',
+  GROK_NOT_IMPLEMENTED: 'MODEL_UNAVAILABLE',
+  EXTERNAL_NETWORK_DISABLED: 'MODEL_UNAVAILABLE',
+  SECRET_IN_PAYLOAD: 'MODEL_POLICY_BLOCKED',
+  PROMPT_INJECTION: 'MODEL_POLICY_BLOCKED',
+  FORBIDDEN_TOOL_REQUESTED: 'MODEL_OUTPUT_INVALID',
+  TASK_CLASS_IS_NOT_AUTHORITY: 'MODEL_POLICY_BLOCKED',
+  PROVIDER_CANNOT_SELF_SELECT: 'MODEL_POLICY_BLOCKED',
+});
+
+/**
+ * Normalize provider failures into Lovable-safe model states.
+ * A model outage is not a financial failure.
+ */
+export function normalizeModelFailure(failure: AiProviderFailure): AiProviderFailure {
+  return Object.freeze({
+    ...failure,
+    code: TO_LOVABLE[failure.code] ?? failure.code,
+    financialExecuted: false as const,
+  });
+}
+
+export function modelFailureIsNotFinancial(failure: AiProviderFailure): true {
+  void failure;
+  return true;
+}

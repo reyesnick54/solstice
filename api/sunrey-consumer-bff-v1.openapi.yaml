@@ -456,6 +456,24 @@ paths:
       responses:
         "200":
           description: Honest availability
+  /api/v1/agent/conversations/{conversationId}/messages:
+    post:
+      operationId: postAgentConversationMessage
+      summary: Agent conversation message (not a raw LLM endpoint)
+      description: >
+        Lovable calls Agent endpoints. The Agent runtime calls the Model
+        Gateway. This route is not unrestricted model inference and cannot
+        execute payments or post journals.
+      parameters:
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Agent stream events or SSE
+        "401":
+          description: Authentication required
   /api/v1/exchange:
     get:
       operationId: getExchange
