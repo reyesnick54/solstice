@@ -2,6 +2,7 @@ import type { Clock } from '../../../config/src/clock.ts';
 import { err, ok, type Result } from '../../../domain/src/result.ts';
 import { asAiProviderId } from '../ids.ts';
 import type { AiInferenceProvider } from '../provider.ts';
+import { streamEventsFromResponse, type AiStreamEvent } from '../streaming.ts';
 import { parseStructuredOutput, parseToolIntents, structuredProposalToToolIntent } from '../structured.ts';
 import type {
   AiInferenceResponse,
@@ -27,9 +28,15 @@ type LocalAdapterResponse = {
 
 export class LocalTestAiProvider implements AiInferenceProvider {
   private readonly clock: Clock;
+  private readonly cancelled = new Set<string>();
 
   constructor(clock: Clock) {
     this.clock = clock;
+  }
+
+  cancel(requestId: CanonicalProviderRequest['requestId']): boolean {
+    this.cancelled.add(requestId);
+    return true;
   }
 
   providerMetadata(): AiProviderMetadata {
@@ -47,6 +54,8 @@ export class LocalTestAiProvider implements AiInferenceProvider {
       kind: 'LOCAL_TEST',
       supportsStructuredOutput: true,
       supportsToolIntents: true,
+      supportsStreaming: true,
+      supportsCancellation: true,
       externalNetwork: false,
       mayReceivePrivateKeys: false,
       mayExecuteFinancialActions: false,
@@ -65,7 +74,23 @@ export class LocalTestAiProvider implements AiInferenceProvider {
     });
   }
 
+  stream(request: CanonicalProviderRequest): Result<readonly AiStreamEvent[], AiProviderFailure> {
+    const inferred = this.infer(request);
+    if (!inferred.ok) {
+      return inferred;
+    }
+    return ok(streamEventsFromResponse(request.requestId, inferred.value));
+  }
+
   infer(request: CanonicalProviderRequest): Result<AiInferenceResponse, AiProviderFailure> {
+    if (this.cancelled.has(request.requestId) || request.cancel?.cancelled || request.fixture === 'cancelled') {
+      return err({
+        ok: false,
+        code: 'MODEL_CANCELLED',
+        detail: 'LocalTest request was cancelled',
+        providerKind: 'LOCAL_TEST',
+      });
+    }
     const adapterRequest: LocalAdapterRequest = {
       fixture: request.fixture ?? 'normal',
       requestId: request.requestId,
@@ -92,6 +117,26 @@ export class LocalTestAiProvider implements AiInferenceProvider {
           code: 'PROVIDER_UNAVAILABLE',
           detail: 'LocalTest fixture unavailable',
           providerKind: 'LOCAL_TEST',
+        });
+      case 'rate_limited':
+        return err({
+          ok: false,
+          code: 'MODEL_RATE_LIMITED',
+          detail: 'LocalTest fixture rate-limited',
+          providerKind: 'LOCAL_TEST',
+        });
+      case 'context_too_large':
+        return err({
+          ok: false,
+          code: 'MODEL_CONTEXT_TOO_LARGE',
+          detail: 'LocalTest fixture context too large',
+          providerKind: 'LOCAL_TEST',
+        });
+      case 'repairable':
+        return ok({
+          text: 'not-json',
+          structured: { kind: 'UNKNOWN', amount: 12.5 },
+          toolIntents: [],
         });
       case 'malformed':
         return ok({

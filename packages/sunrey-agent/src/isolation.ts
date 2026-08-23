@@ -40,6 +40,8 @@ export const SUNREY_AGENT_ISOLATION = {
     'packages/conversation',
     'packages/action-center',
     'packages/agent-chat',
+    'packages/agent-tools',
+    'packages/tool-runtime',
   ] as const,
   personalEconomyAgentRemainsProposalOnly: true,
   aiIdentityCannotSign: true,

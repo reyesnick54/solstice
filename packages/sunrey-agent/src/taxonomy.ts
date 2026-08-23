@@ -1,3 +1,43 @@
+export const AGENT_IDENTITY_KINDS = ['SUNREY_AGENT'] as const;
+export type AgentIdentityKind = (typeof AGENT_IDENTITY_KINDS)[number];
+
+export const AGENT_TYPES = ['PERSONAL_ASSISTANT', 'HOUSEHOLD', 'READ_ONLY', 'PROPOSAL_ONLY'] as const;
+export type AgentType = (typeof AGENT_TYPES)[number];
+
+export const AGENT_LIFECYCLE_STATES = [
+  'CREATED',
+  'ACTIVE',
+  'PAUSED',
+  'RESTRICTED',
+  'REVOKED',
+  'ARCHIVED',
+] as const;
+export type AgentLifecycleState = (typeof AGENT_LIFECYCLE_STATES)[number];
+
+/** What the Agent may assist with. Execution remains separately governed. */
+export const AGENT_ASSIST_SCOPES = [
+  'READ_ACCOUNTS',
+  'ANALYZE_SPENDING',
+  'READ_PEG',
+  'READ_GOALS',
+  'READ_PORTFOLIO',
+  'CREATE_PAYMENT_PROPOSAL',
+  'CREATE_FX_PROPOSAL',
+  'CREATE_GROWTH_PROPOSAL',
+  'CREATE_INVESTMENT_PROPOSAL',
+  'CREATE_EXCHANGE_PROPOSAL',
+  'MANAGE_NON_FINANCIAL_PREFERENCES',
+] as const;
+export type AgentAssistScope = (typeof AGENT_ASSIST_SCOPES)[number];
+
+export const FORBIDDEN_ASSIST_SCOPES = [
+  'DIRECT_LEDGER_WRITE',
+  'BYPASS_KERNEL',
+  'SELF_APPROVE',
+  'MASTER_SIGNING_KEY',
+] as const;
+export type ForbiddenAssistScope = (typeof FORBIDDEN_ASSIST_SCOPES)[number];
+
 export const AGENT_ACTION_CLASSES = [
   'READ_FINANCIAL_STATE',
   'PREPARE_PAYMENT',
@@ -95,8 +135,73 @@ export const FORBIDDEN_STRATEGY_CLAIMS = [
 ] as const;
 export type ForbiddenStrategyClaim = (typeof FORBIDDEN_STRATEGY_CLAIMS)[number];
 
+export const CONVERSATION_STATUSES = ['ACTIVE', 'ARCHIVED', 'DELETED', 'REDACTED'] as const;
+export type ConversationStatus = (typeof CONVERSATION_STATUSES)[number];
+
+export const MESSAGE_ROLES = ['USER', 'AGENT', 'SYSTEM', 'TOOL'] as const;
+export type MessageRole = (typeof MESSAGE_ROLES)[number];
+
+export const MEMORY_CATEGORIES = [
+  'USER_PREFERENCE',
+  'FINANCIAL_GOAL_REFERENCE',
+  'COMMUNICATION_PREFERENCE',
+  'DECLARED_CONSTRAINT',
+  'CONFIRMED_FACT_REFERENCE',
+] as const;
+export type MemoryCategory = (typeof MEMORY_CATEGORIES)[number];
+
+export const MEMORY_SOURCES = [
+  'USER_DECLARED',
+  'USER_CORRECTED',
+  'CONFIRMED_SYSTEM_FACT',
+  'PEG_REFERENCE',
+] as const;
+export type MemorySource = (typeof MEMORY_SOURCES)[number];
+
+export const MEMORY_CLASSIFICATIONS = ['PERSONALIZATION', 'OPERATIONAL_AUDIT', 'PUBLIC_SYNTHETIC'] as const;
+export type MemoryClassification = (typeof MEMORY_CLASSIFICATIONS)[number];
+
+export const PERSONALIZATION_VERBOSITY = ['BRIEF', 'NORMAL', 'DETAILED'] as const;
+export type PersonalizationVerbosity = (typeof PERSONALIZATION_VERBOSITY)[number];
+
+export const EXPLANATION_COMPLEXITY = ['SIMPLE', 'STANDARD', 'TECHNICAL'] as const;
+export type ExplanationComplexity = (typeof EXPLANATION_COMPLEXITY)[number];
+
+export const AGENT_RUNTIME_EVENT_KINDS = [
+  'agent.created',
+  'agent.paused',
+  'agent.revoked',
+  'conversation.created',
+  'message.received',
+  'message.completed',
+  'memory.created',
+  'memory.changed',
+  'mandate.changed',
+] as const;
+export type AgentRuntimeEventKind = (typeof AGENT_RUNTIME_EVENT_KINDS)[number];
+
 export const AGENT_MANDATE_REFUSAL_CODES = [
   'ORPHAN_AGENT',
+  'AGENT_NOT_ACTIVE',
+  'AGENT_PAUSED',
+  'AGENT_RESTRICTED',
+  'AGENT_REVOKED',
+  'AGENT_ARCHIVED',
+  'IDENTITY_COLLISION',
+  'FORBIDDEN_ASSIST_SCOPE',
+  'ASSIST_SCOPE_NOT_PERMITTED',
+  'CONTEXT_UNAUTHORIZED',
+  'MEMORY_SPECULATION_FORBIDDEN',
+  'MEMORY_NOT_USER_EDITABLE',
+  'PERSONALIZATION_DISABLED',
+  'CONVERSATION_NOT_OWNED',
+  'CONVERSATION_CLOSED',
+  'CROSS_USER_DENIED',
+  'TIME_WINDOW_CLOSED',
+  'CURRENCY_NOT_PERMITTED',
+  'ASSET_CLASS_NOT_PERMITTED',
+  'TOOL_BUDGET_EXCEEDED',
+  'DAILY_AGGREGATE_EXCEEDED',
   'MANDATE_EXPIRED',
   'MANDATE_REVOKED',
   'ACTION_CLASS_NOT_PERMITTED',
@@ -146,4 +251,56 @@ export function isAgentActionClass(value: unknown): value is AgentActionClass {
 
 export function isHighRiskAction(value: string): boolean {
   return (HIGH_RISK_ACTION_CLASSES as readonly string[]).includes(value);
+}
+
+export function isAgentAssistScope(value: unknown): value is AgentAssistScope {
+  return typeof value === 'string' && (AGENT_ASSIST_SCOPES as readonly string[]).includes(value);
+}
+
+export function isForbiddenAssistScope(value: unknown): value is ForbiddenAssistScope {
+  return typeof value === 'string' && (FORBIDDEN_ASSIST_SCOPES as readonly string[]).includes(value);
+}
+
+export function isAgentLifecycleState(value: unknown): value is AgentLifecycleState {
+  return typeof value === 'string' && (AGENT_LIFECYCLE_STATES as readonly string[]).includes(value);
+}
+
+export const ASSIST_SCOPE_TO_ACTION: Readonly<Record<AgentAssistScope, AgentActionClass | null>> = {
+  READ_ACCOUNTS: 'READ_FINANCIAL_STATE',
+  ANALYZE_SPENDING: 'READ_FINANCIAL_STATE',
+  READ_PEG: 'READ_FINANCIAL_STATE',
+  READ_GOALS: 'READ_FINANCIAL_STATE',
+  READ_PORTFOLIO: 'READ_FINANCIAL_STATE',
+  CREATE_PAYMENT_PROPOSAL: 'PREPARE_PAYMENT',
+  CREATE_FX_PROPOSAL: 'PREPARE_PAYMENT',
+  CREATE_GROWTH_PROPOSAL: 'REBALANCE_WITHIN_POLICY',
+  CREATE_INVESTMENT_PROPOSAL: 'REBALANCE_WITHIN_POLICY',
+  CREATE_EXCHANGE_PROPOSAL: 'PREPARE_EXCHANGE_ORDER',
+  MANAGE_NON_FINANCIAL_PREFERENCES: null,
+};
+
+export const READ_ASSIST_SCOPES = new Set<AgentAssistScope>([
+  'READ_ACCOUNTS',
+  'ANALYZE_SPENDING',
+  'READ_PEG',
+  'READ_GOALS',
+  'READ_PORTFOLIO',
+]);
+
+export function defaultAssistScopesForActions(actions: readonly AgentActionClass[]): readonly AgentAssistScope[] {
+  const scopes: AgentAssistScope[] = [];
+  if (actions.includes('READ_FINANCIAL_STATE')) {
+    scopes.push('READ_ACCOUNTS', 'ANALYZE_SPENDING', 'READ_PEG', 'READ_GOALS', 'READ_PORTFOLIO');
+  }
+  if (actions.includes('PREPARE_PAYMENT')) {
+    scopes.push('CREATE_PAYMENT_PROPOSAL', 'CREATE_FX_PROPOSAL');
+  }
+  if (actions.includes('PREPARE_EXCHANGE_ORDER')) {
+    scopes.push('CREATE_EXCHANGE_PROPOSAL');
+  }
+  if (actions.includes('REBALANCE_WITHIN_POLICY')) {
+    scopes.push('CREATE_GROWTH_PROPOSAL', 'CREATE_INVESTMENT_PROPOSAL');
+  }
+  scopes.push('MANAGE_NON_FINANCIAL_PREFERENCES');
+  return Object.freeze([...new Set(scopes)]);
 }

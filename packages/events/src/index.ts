@@ -259,6 +259,16 @@ export {
   type ProviderWebhookRejectedV1,
   type OutboundWebhookDeliveredV1,
   type OutboundWebhookFailedV1,
+  type AgentRuntimeAuditPayload,
+  type AgentCreatedV1,
+  type AgentPausedV1,
+  type AgentRevokedV1,
+  type AgentConversationCreatedV1,
+  type AgentMessageReceivedV1,
+  type AgentMessageCompletedV1,
+  type AgentMemoryCreatedV1,
+  type AgentMemoryChangedV1,
+  type AgentMandateChangedV1,
 } from './events.ts';
 export {
   asCausationId,

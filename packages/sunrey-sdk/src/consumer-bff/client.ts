@@ -5,6 +5,10 @@
  */
 
 import type {
+  AgentConversationResource,
+  AgentMemoryResource,
+  AgentMessageResponse,
+  AgentResource,
   GrowPlan,
   GrowPlanCreateInput,
   GrowProposal,
@@ -99,6 +103,69 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/payments/${encodeURIComponent(id)}`, undefined, options);
   }
 
+  async listAgents(options?: BffRequestOptions): Promise<{ readonly items: readonly AgentResource[] }> {
+    return this.request('GET', '/api/v1/agents', undefined, options);
+  }
+
+  async getAgent(id: string, options?: BffRequestOptions): Promise<AgentResource> {
+    return this.request('GET', `/api/v1/agents/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async listConversations(
+    agentId: string,
+    options?: BffRequestOptions,
+  ): Promise<{ readonly items: readonly AgentConversationResource[] }> {
+    return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/conversations`, undefined, options);
+  }
+
+  async createConversation(
+    agentId: string,
+    input: { readonly title?: string } = {},
+    options?: BffRequestOptions,
+  ): Promise<AgentConversationResource> {
+    return this.request('POST', `/api/v1/agents/${encodeURIComponent(agentId)}/conversations`, input, options);
+  }
+
+  async getConversation(
+    agentId: string,
+    conversationId: string,
+    options?: BffRequestOptions,
+  ): Promise<AgentConversationResource> {
+    return this.request(
+      'GET',
+      `/api/v1/agents/${encodeURIComponent(agentId)}/conversations/${encodeURIComponent(conversationId)}`,
+      undefined,
+      options,
+    );
+  }
+
+  async postMessage(
+    agentId: string,
+    conversationId: string,
+    input: { readonly text: string },
+    options?: BffRequestOptions,
+  ): Promise<AgentMessageResponse> {
+    return this.request(
+      'POST',
+      `/api/v1/agents/${encodeURIComponent(agentId)}/conversations/${encodeURIComponent(conversationId)}/messages`,
+      input,
+      options,
+    );
+  }
+
+  async pauseAgent(id: string, options?: BffRequestOptions): Promise<AgentResource> {
+    return this.request('POST', `/api/v1/agents/${encodeURIComponent(id)}/pause`, {}, options);
+  }
+
+  async revokeAgent(id: string, options?: BffRequestOptions): Promise<AgentResource> {
+    return this.request('POST', `/api/v1/agents/${encodeURIComponent(id)}/revoke`, {}, options);
+  }
+
+  async listMemories(
+    agentId: string,
+    options?: BffRequestOptions,
+  ): Promise<{ readonly items: readonly AgentMemoryResource[] }> {
+    return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/memories`, undefined, options);
   async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
@@ -374,6 +441,7 @@ export class SunReyConsumerBffClient {
   }
 
   async request<T>(
+    method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
     method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,

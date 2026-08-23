@@ -4,6 +4,7 @@ export { AI_RUNTIME_ISOLATION } from './isolation.ts';
 export { createDefaultAiRuntimePolicy, evaluateContextRelease, externalProviderEligible } from './policy.ts';
 export type { AiInferenceProvider } from './provider.ts';
 export { LocalTestAiProvider } from './providers/local-test.ts';
+export { HttpsGenericAiProvider } from './providers/https-generic.ts';
 export { S3mAiProvider, S3mInferenceProvider } from './providers/s3m.ts';
 export {
   ConfigurableS3mTransport,
@@ -31,23 +32,64 @@ export {
 } from './registry.ts';
 export { AiRuntimeRouter } from './router.ts';
 export { AiRuntime, type AiRuntimeResult } from './runtime.ts';
+export { AiModelGateway, type AiGatewayRequest, type AiGatewayResult } from './gateway.ts';
+export { InferenceModelCatalog } from './catalog.ts';
+export type { InferenceModelRecord, InferenceModelStatus } from './catalog.ts';
+export {
+  CANONICAL_HTTPS_GENERIC_MODEL_ID,
+  CANONICAL_HTTPS_GENERIC_MODEL_VERSION,
+  seedInferenceModelCatalog,
+} from './catalog-seed.ts';
+export { routeInferenceModel, fallbackCompatible } from './routing-policy.ts';
+export { PromptPolicyRegistry, seedCanonicalPromptPolicies } from './prompt-policy.ts';
+export { minimizeContext } from './envelope.ts';
+export { assertPrivacyBoundary, modelMayReceivePrivacy } from './privacy.ts';
+export {
+  FixtureHttpsTransport,
+  httpsFail,
+  httpsOk,
+  classifyHttpsStatus,
+  isIdempotentSafeRetry,
+} from './transport.ts';
+export type { HttpsInferenceTransport, HttpsTransportRequest } from './transport.ts';
+export { encodeSse, streamEventsFromResponse, publicStreamEvent } from './streaming.ts';
+export type { AiStreamEvent, AiStreamEventType } from './streaming.ts';
+export { UsageAccountant, estimateCostMicros } from './usage.ts';
+export { ModelHealthTracker } from './health-tracker.ts';
+export { resolveCachePolicy, DEFAULT_AGENT_CACHE_POLICY } from './cache.ts';
+export { normalizeModelFailure, modelFailureIsNotFinancial } from './failures.ts';
+export {
+  AI_PRODUCTION_ACTIVE,
+  AI_PRODUCTION_READY,
+  AI_LIVE_CONNECTIVITY_ENABLED,
+  AI_PRODUCTION_AUTHORIZED,
+  AI_ENVIRONMENT,
+} from './posture.ts';
 export { redactSecrets } from './secrets.ts';
 export { parseStructuredOutput, parseToolIntents } from './structured.ts';
 export {
   AI_DATA_CLASSES,
+  AI_PRIVACY_CLASSES,
+  AI_APPROVED_PURPOSES,
   AI_PROVIDER_KINDS,
   AI_RUNTIME_MODES,
   AI_TASK_CLASSES,
   AI_TOOL_INTENTS,
   FORBIDDEN_AI_TOOLS,
   NEVER_RELEASE_DATA_CLASSES,
+  NEVER_RELEASE_PRIVACY_CLASSES,
+  PRIVILEGED_AI_PURPOSES,
   isForbiddenAiTool,
   isAiToolIntentName,
   taskClassGrantsExecutionAuthority,
+  privacyClassToDataClass,
+  dataClassToPrivacyClass,
 } from './taxonomy.ts';
 export type {
+  AiApprovedPurpose,
   AiDataClass,
   AiFailureCode,
+  AiPrivacyClass,
   AiProviderKind,
   AiRuntimeMode,
   AiTaskClass,
@@ -65,6 +107,7 @@ export type {
   AiInferenceResponse,
   AiInferenceTrace,
   AiModelReference,
+  AiStreamChunk,
   AiProviderFailure,
   AiProviderHealth,
   AiRoutingDecision,

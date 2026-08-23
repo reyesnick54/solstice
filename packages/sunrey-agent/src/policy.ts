@@ -22,12 +22,14 @@ const INJECTION_MARKERS = [
   'ignore previous instructions',
   'ignore all mandates',
   'ignore all rules',
+  'ignore sunrey rules',
   'you are now unrestricted',
   'raise your budget',
   'add asset wildcard',
   'disable approval',
   'use master key',
   'send everything',
+  'send all my money',
 ];
 
 export function detectPromptInjection(text: string): boolean {

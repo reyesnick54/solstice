@@ -1051,6 +1051,248 @@ paths:
       responses:
         "200":
           description: Rejected action
+  /api/v1/agent/tools:
+    get:
+      operationId: listAgentTools
+      summary: Canonical Agent Tool catalog
+      description: >
+        Read-only catalog of approved Financial Agent tools.
+        Frontend does not invoke privileged tools. The path is
+        Lovable → Agent message API → Agent Runtime → Tool Runtime.
+      responses:
+        "200":
+          description: Tool catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentToolCatalog"
+  /api/v1/agents:
+    get:
+      operationId: listAgents
+      summary: List Agents owned by the authenticated customer
+      description: The Agent is an actor for the customer. It is not the customer and not Execution Authority.
+      responses:
+        "200":
+          description: Agent list
+        "401":
+          description: Authentication required
+  /api/v1/agents/{id}:
+    get:
+      operationId: getAgentById
+      summary: Get one owned Agent
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Agent identity
+        "403":
+          description: Cross-user denied
+  /api/v1/agents/{id}/pause:
+    post:
+      operationId: pauseAgent
+      summary: Owner pause
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Paused Agent
+  /api/v1/agents/{id}/revoke:
+    post:
+      operationId: revokeAgent
+      summary: Owner revoke
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Revoked Agent
+  /api/v1/agents/{id}/settings:
+    get:
+      operationId: getAgentSettings
+      summary: Personalization settings
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Settings
+    patch:
+      operationId: patchAgentSettings
+      summary: Update personalization that cannot alter financial mathematics
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Settings
+  /api/v1/agents/{id}/permissions:
+    get:
+      operationId: getAgentPermissions
+      summary: Mandate assist scopes and proposal limits
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Permissions
+  /api/v1/agents/{id}/memories:
+    get:
+      operationId: listAgentMemories
+      summary: List customer-visible Agent memories
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Memories
+    post:
+      operationId: createAgentMemory
+      summary: Create a user-declared memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Memory
+  /api/v1/agents/{id}/memories/{memoryId}:
+    patch:
+      operationId: correctAgentMemory
+      summary: Correct a user-editable memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: memoryId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Corrected memory
+    delete:
+      operationId: deleteAgentMemory
+      summary: Delete a user-editable memory
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: memoryId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+  /api/v1/agents/{id}/conversations:
+    get:
+      operationId: listAgentConversations
+      summary: List conversations
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Conversation list
+    post:
+      operationId: createAgentConversation
+      summary: Create a conversation
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Conversation
+  /api/v1/agents/{id}/conversations/{conversationId}:
+    get:
+      operationId: getAgentConversation
+      summary: Get one conversation and its messages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Conversation
+        "403":
+          description: Cross-user denied
+  /api/v1/agents/{id}/conversations/{conversationId}/messages:
+    post:
+      operationId: postAgentMessage
+      summary: Post a user message and receive a streamed Agent reply
+      description: >
+        Conversational state only. Tool calls that would mutate financial
+        state are not executed because text generation requested them.
+        Query stream=1 returns text/event-stream chunks.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+        - in: query
+          name: stream
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Message plus stream chunks
+          content:
+            application/json:
+              schema:
+                type: object
+            text/event-stream:
+              schema:
+                type: string
+  /api/v1/agent/conversations/{conversationId}/messages:
+    post:
+      operationId: postAgentConversationMessage
+      summary: Agent conversation message (not a raw LLM endpoint)
+      description: >
+        Lovable calls Agent endpoints. The Agent runtime calls the Model
+        Gateway. This route is not unrestricted model inference and cannot
+        execute payments or post journals.
+      parameters:
+        - in: path
+          name: conversationId
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Agent stream events or SSE
+        "401":
+          description: Authentication required
   /api/v1/exchange:
     get:
       operationId: getExchange
@@ -1732,3 +1974,74 @@ components:
               weightBps: { type: string }
         fabricatedStatistics: { type: boolean, enum: [false] }
         frontendMathAuthoritative: { type: boolean, enum: [false] }
+    AgentToolCatalog:
+      type: object
+      required: [tools, invocationPath, privilegedInvokeForbidden, productionEnabled]
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentToolDescriptor"
+        invocationPath:
+          type: string
+        privilegedInvokeForbidden:
+          type: boolean
+          enum: [true]
+        productionEnabled:
+          type: boolean
+          enum: [false]
+    AgentToolDescriptor:
+      type: object
+      required: [toolId, version, description, category, riskClass, readOnly, createsProposal, frontendMayInvokeDirectly]
+      properties:
+        toolId: { type: string }
+        version: { type: string }
+        description: { type: string }
+        category: { type: string }
+        riskClass:
+          type: string
+          enum: [READ, PROPOSAL, SAFE_USER_PREFERENCE, PRIVILEGED_FINANCIAL_MUTATION]
+        readOnly: { type: boolean }
+        createsProposal: { type: boolean }
+        requiresUserApproval: { type: boolean }
+        requiredMandate: { type: string }
+        domainDependency: { type: string }
+        frontendMayInvokeDirectly:
+          type: boolean
+          enum: [false]
+    AgentToolResult:
+      type: object
+      required: [status, toolId, version, executed, payload]
+      description: Structured Tool Runtime result. The model must not invent missing financial numbers.
+      properties:
+        status:
+          type: string
+          enum: [SUCCESS, ACTION_REQUIRED, APPROVAL_REQUIRED, NOT_ELIGIBLE, UNAVAILABLE, FAILED]
+        toolId: { type: string }
+        version: { type: string }
+        executed:
+          type: boolean
+          enum: [false]
+        payload:
+          type: object
+        proposalId: { type: string, nullable: true }
+        workflowId: { type: string, nullable: true }
+        rendering:
+          type: object
+          nullable: true
+          properties:
+            component:
+              type: string
+              enum:
+                - ACCOUNT_CARD
+                - PAYMENT_QUOTE
+                - FX_QUOTE
+                - GROWTH_OPPORTUNITY
+                - GROWTH_PROPOSAL
+                - PORTFOLIO_CARD
+                - TRADE_PROPOSAL
+                - APPROVAL_CARD
+                - TRANSACTION_STATUS
+            modelMayAlterAuthoritativeNumbers:
+              type: boolean
+              enum: [false]

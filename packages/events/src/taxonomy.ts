@@ -49,10 +49,10 @@ export const IMPLEMENTED_EVENT_NAMESPACES = [
   'job',
   'provider',
   'webhook',
+  'agent',
 ] as const;
 
 export const RESERVED_EVENT_NAMESPACES = [
-  'agent',
   'pyr',
   'notification',
   'analytics',
@@ -315,6 +315,15 @@ export const EVENT_TYPE_NAMES = [
   'ProviderWebhookRejected',
   'OutboundWebhookDelivered',
   'OutboundWebhookFailed',
+  'AgentCreated',
+  'AgentPaused',
+  'AgentRevoked',
+  'AgentConversationCreated',
+  'AgentMessageReceived',
+  'AgentMessageCompleted',
+  'AgentMemoryCreated',
+  'AgentMemoryChanged',
+  'AgentMandateChanged',
 ] as const;
 
 export type ImplementedEventTypeName = (typeof EVENT_TYPE_NAMES)[number];
@@ -573,6 +582,15 @@ export const EVENT_SCHEMA_REFS = {
   ProviderWebhookRejected: 'solstice.provider.webhook.rejected/1',
   OutboundWebhookDelivered: 'solstice.webhook.outbound.delivered/1',
   OutboundWebhookFailed: 'solstice.webhook.outbound.failed/1',
+  AgentCreated: 'solstice.agent.created/1',
+  AgentPaused: 'solstice.agent.paused/1',
+  AgentRevoked: 'solstice.agent.revoked/1',
+  AgentConversationCreated: 'solstice.agent.conversation.created/1',
+  AgentMessageReceived: 'solstice.agent.message.received/1',
+  AgentMessageCompleted: 'solstice.agent.message.completed/1',
+  AgentMemoryCreated: 'solstice.agent.memory.created/1',
+  AgentMemoryChanged: 'solstice.agent.memory.changed/1',
+  AgentMandateChanged: 'solstice.agent.mandate.changed/1',
 } as const;
 
 export const EVENT_NAMESPACES_BY_TYPE: {
@@ -831,6 +849,15 @@ export const EVENT_NAMESPACES_BY_TYPE: {
   ProviderWebhookRejected: 'provider',
   OutboundWebhookDelivered: 'webhook',
   OutboundWebhookFailed: 'webhook',
+  AgentCreated: 'agent',
+  AgentPaused: 'agent',
+  AgentRevoked: 'agent',
+  AgentConversationCreated: 'agent',
+  AgentMessageReceived: 'agent',
+  AgentMessageCompleted: 'agent',
+  AgentMemoryCreated: 'agent',
+  AgentMemoryChanged: 'agent',
+  AgentMandateChanged: 'agent',
 };
 
 export const HISTORICAL_EVENT_SCHEMA_PREFIX = 'solstice.' as const;
