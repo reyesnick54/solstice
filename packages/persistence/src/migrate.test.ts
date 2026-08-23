@@ -563,6 +563,7 @@ describe('versioned SQL migrations', () => {
     assert.match(v037.sql, /CREATE SCHEMA IF NOT EXISTS agent_runtime/);
     assert.match(v037.sql, /CREATE TABLE agent_runtime\.conversation/);
     assert.match(v037.sql, /CREATE TABLE agent_runtime\.memory/);
+    assert.match(v037.sql, /GRANT USAGE ON SCHEMA agent_runtime TO customer_app/);
     assert.match(v037.sql, /is_execution_authority BOOLEAN NOT NULL CHECK \(is_execution_authority = FALSE\)/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
   });
