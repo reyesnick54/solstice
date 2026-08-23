@@ -383,8 +383,6 @@ function dispatchAuthenticated(
   }
   if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
     const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
-  if (runtime.hin && isRightsMarketplace(runtime.hin)) {
-    const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
     }
@@ -1430,18 +1428,6 @@ function dispatchConversation(
     return result(surface.getAction(principal, id, requestId), headers);
   }
   return null;
-}
-
-function isRightsMarketplace(
-  value: InformationRightsMarketplace | HinContributionSurface,
-): value is InformationRightsMarketplace {
-  return typeof (value as InformationRightsMarketplace).earningsFor === 'function';
-}
-
-function isHinContributionSurface(
-  value: InformationRightsMarketplace | HinContributionSurface,
-): value is HinContributionSurface {
-  return typeof (value as HinContributionSurface).methodologies === 'function';
 }
 
 function str(value: unknown): string | undefined {
