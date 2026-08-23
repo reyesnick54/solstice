@@ -191,10 +191,10 @@ describe('Phase F Agent runtime', () => {
       text: 'Explain my goals please',
       actorId: 'user_1',
     });
-    assert.equal(posted.ok, true);
     if (!posted.ok) {
       throw new Error(posted.error.detail);
     }
+    assert.equal(posted.ok, true);
     assert.equal(posted.value.userMessage.role, 'USER');
     assert.equal(posted.value.agentMessage?.role, 'AGENT');
     assert.equal(posted.value.agentMessage?.hiddenReasoning, false);

@@ -46,7 +46,7 @@ export function observeExchangeSnapshot(input: {
     marketId: input.marketId,
     orders: input.orders,
     trades: input.trades,
-    linkedAccounts: input.linkedAccounts,
+    ...(input.linkedAccounts !== undefined ? { linkedAccounts: input.linkedAccounts } : {}),
     family: 'DIGITAL_ASSET',
   };
   return detectSurveillanceAlerts(snapshot, input.now);
