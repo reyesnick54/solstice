@@ -1209,7 +1209,9 @@
         "packages/platform",
         "packages/investments",
         "packages/sunrey-agent",
-        "packages/ledger"
+        "packages/ledger",
+        "services/investments",
+        "services/economic-graph"
       ],
       "codeowners": [
         "@reyesnick54"

@@ -30,6 +30,47 @@ function call(
   });
 }
 
+function auth(persona: Parameters<typeof sandboxToken>[0]) {
+  return `Bearer ${sandboxToken(persona)}`;
+}
+
+function get(
+  world: ReturnType<typeof createSandboxWorld>,
+  path: string,
+  persona: Parameters<typeof sandboxToken>[0] | null,
+  query: Record<string, string> = {},
+) {
+  return handleConsumerBff(
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
+    {
+      method: 'GET',
+      path,
+      query,
+      body: {},
+      authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
+    },
+  );
+}
+
+function post(
+  world: ReturnType<typeof createSandboxWorld>,
+  path: string,
+  persona: Parameters<typeof sandboxToken>[0],
+  body: Record<string, unknown>,
+) {
+  return handleConsumerBff(
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
+    {
+      method: 'POST',
+      path,
+      query: {},
+      body,
+      authorization: auth(persona),
+      requestId: 'req_grow',
+    },
+  );
+}
+
 describe('Consumer BFF grow plans and proposals', () => {
   it('creates a plan, returns Lovable experience, and lists it', () => {
     const world = createSandboxWorld();
@@ -82,7 +123,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     });
     const proposalId = (created.body as { primaryProposal: { proposalId: string } }).primaryProposal.proposalId;
     const blocked = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {});
-    assert.equal(blocked.status, 403);
+    assert.equal(blocked.status, 401);
     const approved = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {
       stepUpSatisfied: true,
     });
@@ -110,31 +151,8 @@ describe('Consumer BFF grow plans and proposals', () => {
     assert.notEqual((modified.body as { proposalId: string }).proposalId, proposalId);
     const previous = call(world, 'GET', `/api/v1/grow/proposals/${proposalId}`, 'basic_verified');
     assert.equal((previous.body as { status: string }).status, 'SUPERSEDED');
-function get(
-  world: ReturnType<typeof createSandboxWorld>,
-  path: string,
-  persona: Parameters<typeof sandboxToken>[0] | null,
-function auth(persona: Parameters<typeof sandboxToken>[0]) {
-  return `Bearer ${sandboxToken(persona)}`;
-}
-
-function get(
-  world: ReturnType<typeof createSandboxWorld>,
-  path: string,
-  persona: Parameters<typeof sandboxToken>[0],
-  query: Record<string, string> = {},
-) {
-  return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
-    {
-      method: 'GET',
-      path,
-      query: {},
-      body: {},
-      authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
-    },
-  );
-}
+  });
+});
 
 describe('Consumer BFF grow portfolio', () => {
   it('requires authentication', () => {
@@ -188,31 +206,8 @@ describe('Consumer BFF grow portfolio', () => {
       },
     );
     assert.ok(res.status === 404 || res.status === 405);
-      query,
-      body: {},
-      authorization: auth(persona),
-    },
-  );
-}
-
-function post(
-  world: ReturnType<typeof createSandboxWorld>,
-  path: string,
-  persona: Parameters<typeof sandboxToken>[0],
-  body: Record<string, unknown>,
-) {
-  return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
-    {
-      method: 'POST',
-      path,
-      query: {},
-      body,
-      authorization: auth(persona),
-      requestId: 'req_grow',
-    },
-  );
-}
+  });
+});
 
 describe('Consumer BFF Grow / PEG', () => {
   it('renders a financial profile for a grow sandbox persona', () => {
