@@ -115,7 +115,9 @@ export function parseActivityFilter(query: Readonly<Record<string, string>>): Ac
 }
 
 function typeOf(item: TransactionHistoryItem): ConsumerActivityType {
-  const text = `${item.description} ${item.reference}`.toUpperCase();
+  // Classify from the posting description only. Journal/posting ids are
+  // random UUIDs whose hex can contain "fee" and must not change type.
+  const text = item.description.toUpperCase();
   if (item.direction === 'HOLD' || item.holdId) {
     return 'HOLD';
   }

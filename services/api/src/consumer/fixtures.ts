@@ -555,8 +555,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
   const hinContributions = createHinContributionSurface();
   const productiveEconomy = createProductiveEconomySurface();
   const vault = attachSandboxVault(runtime, personas);
-  const dataRights = attachSandboxDataRights(runtime);
-  const vault = attachSandboxVault(runtime, personas);
   const dataRights = attachSandboxDataRights(runtime, vault);
 
   return Object.freeze({
@@ -578,14 +576,12 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     vault,
     exchange: createExchangeBffSurface(),
     dataRights,
-    vault,
   });
 }
 
 function attachSandboxDataRights(
   runtime: SimulationRuntime,
   vault: PersonalDataVaultProduct,
-  _vault: PersonalDataVaultProduct,
 ): ConsentDataRightsEngine {
   const consent = new ConsentService({
     clock: runtime.clock,

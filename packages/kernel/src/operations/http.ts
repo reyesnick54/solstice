@@ -224,9 +224,9 @@ export function handleInternalOps(runtime: InternalOpsRuntime, req: InternalRequ
       operator,
       action: String(body.action ?? '') as PrivilegedStaffAction,
       reason: String(body.reason ?? ''),
-      subjectRef: typeof body.subjectRef === 'string' ? body.subjectRef : undefined,
-      caseId: typeof body.caseId === 'string' ? body.caseId : undefined,
-      secondApprover: second ?? undefined,
+      ...(typeof body.subjectRef === 'string' ? { subjectRef: body.subjectRef } : {}),
+      ...(typeof body.caseId === 'string' ? { caseId: body.caseId } : {}),
+      ...(second ? { secondApprover: second } : {}),
     });
     return result.ok ? ok(result.value) : deny(403, result.error.code, result.error.message);
   }

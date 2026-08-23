@@ -152,8 +152,8 @@ export class OperationsControlPlane {
       subject: input.subject,
       severity: input.severity,
       source: input.source,
-      references: input.references,
-      findings: input.findings,
+      ...(input.references ? { references: input.references } : {}),
+      ...(input.findings ? { findings: input.findings } : {}),
       createdAt: now,
     });
     const withEvidence = addEvidence(opened.operational, gated.value.evidenceId, now);
@@ -285,7 +285,7 @@ export class OperationsControlPlane {
       reason,
       caseId,
       priorActorId: current.investigatorId,
-      secondApprover,
+      ...(secondApprover ? { secondApprover } : {}),
     });
     if (!gated.ok) return gated;
     const now = this.#clock.now();
@@ -342,10 +342,10 @@ export class OperationsControlPlane {
       operator: input.operator,
       action: input.action,
       reason: input.reason,
-      caseId: input.caseId,
-      subjectRef: input.subjectRef,
+      ...(input.caseId ? { caseId: input.caseId } : {}),
+      ...(input.subjectRef ? { subjectRef: input.subjectRef } : {}),
       priorActorId: current?.investigatorId ?? null,
-      secondApprover: input.secondApprover,
+      ...(input.secondApprover ? { secondApprover: input.secondApprover } : {}),
     });
     if (!gated.ok) return gated;
     const now = input.now ?? this.#clock.now();

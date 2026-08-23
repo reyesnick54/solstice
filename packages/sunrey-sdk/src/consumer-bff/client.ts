@@ -625,7 +625,6 @@ export class SunReyConsumerBffClient {
       readonly instrument?: string;
     },
     options?: BffRequestOptions,
-  ): Promise<Record<string, unknown> & { readonly guaranteedExecutionPrice?: false }> {
   ): Promise<ExchangeOrderPreview> {
     return this.request('POST', '/api/v1/exchange/preview', input, options);
   }
@@ -812,7 +811,13 @@ export class SunReyConsumerBffClient {
   }
 
   async getDataHinParticipation(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.getDataHinHome(options);
+  }
+
   async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.getDataHinHome(options);
+  }
+
   async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/hin', undefined, options);
   }
@@ -874,6 +879,9 @@ export class SunReyConsumerBffClient {
   }
 
   async getHinAggregateMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.getEconomyHin(options);
+  }
+
   async getEconomyHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/economy/hin', undefined, options);
   }
@@ -917,6 +925,10 @@ export class SunReyConsumerBffClient {
 
   async listDataVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
     return this.request('GET', '/api/v1/data/vault/records', undefined, options);
+  }
+
+  async listVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
+    return this.listDataVaultRecords(options);
   }
 
   async getDataVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {

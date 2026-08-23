@@ -1008,12 +1008,6 @@ export type HinParticipation = {
   readonly productionActivated: false;
   readonly financialServicesRemainOpen: true;
   readonly state?: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
-  readonly schema?: 'sunrey.consumer.hin.participation.v1';
-  readonly status?: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
-  readonly state?: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
-  readonly compensationGuaranteed?: false;
-  readonly productionActivated?: false;
-  readonly financialServicesRemainOpen?: true;
 };
 
 export type DataPermissionCatalog = {

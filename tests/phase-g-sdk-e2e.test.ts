@@ -16,8 +16,7 @@ describe('Phase G SDK-only digital-asset E2E', () => {
       const home = await sdk.getExchangeHome();
       assert.equal((home as { schema: string }).schema, 'sunrey.consumer.exchange.home.v1');
       const markets = await sdk.listExchangeMarkets();
-      const marketId = markets.items[0]?.marketId;
-      const marketId = (markets as unknown as { items: { marketId: string }[] }).items[0]?.marketId;
+      const marketId = markets.items[0]?.marketId ?? (markets as unknown as { items: { marketId: string }[] }).items[0]?.marketId;
       assert.ok(marketId);
       await sdk.fundExchangeSandbox();
       const preview = await sdk.previewExchangeOrder({
@@ -26,7 +25,6 @@ describe('Phase G SDK-only digital-asset E2E', () => {
         notionalUsdMinor: '50000',
       });
       assert.match(String(preview.humanReadableIntent), /Review before authorization/);
-      assert.match(String((preview as unknown as { humanReadableIntent: string }).humanReadableIntent), /Review before authorization/);
       const proposal = (await sdk.createExchangeProposal({
         side: 'BUY',
         quantity: '2',
