@@ -442,6 +442,28 @@ Do not let the Agent sign or broadcast.
 Do not mark a deposit available before `FINALIZED`.
 See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.
 
+## Vault, HIN, and economy data (Phase H)
+
+Use the Consumer BFF. Lovable never imports Vault, Consent, or HIN
+internals. Sandbox data is labeled `SANDBOX` and is not live.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Vault Home | `GET /api/v1/data` | Categories, record count, encryption posture |
+| Your Data | `GET/POST /api/v1/data/records` | Metadata only on list |
+| Data Sources | `GET /api/v1/data/sources` | Simulated connectors; `liveConnection=false` |
+| Permissions / Consent | `GET/POST /api/v1/data/permissions` | Receipt at `GET /api/v1/data/consent/{id}/receipt` |
+| Agent Access | `GET /api/v1/data/agent-access` | Purpose limited. No entire-Vault read |
+| HIN Participation | `POST /api/v1/data/hin/participate` and `/stop` | Agent stop is a request until `/stop` confirms |
+| Contributions / Earnings / Licenses | `/api/v1/data/contributions` `/earnings` `/licenses` | Not a mint. Not a yield |
+| Access History / Export / Rights | `/access-history` `/export` `/rights` | Deletion is technical, not a backup-erasure claim |
+| SunRey Coin detail | `GET /api/v1/economy/sunrey` | HIN metrics ≠ Exchange price ≠ mint |
+| MoonRey Coin detail | `GET /api/v1/economy/moonrey` | Productive metrics ≠ Exchange price ≠ mint |
+
+Sandbox personas: `sandbox.hin_ready`, `sandbox.vault_ready`,
+`sandbox.data_licensee`.
+
+See `docs/productization/PHASE_H_CLOSURE_REPORT.md`.
 ## Personal Data Vault (Phase H Prompt 1)
 
 Use the Consumer BFF. Lovable must not implement privacy, consent,

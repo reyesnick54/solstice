@@ -1,0 +1,21 @@
+{
+  "schema": "sunrey.phase-h.marketplace-gate.v1",
+  "gate": "LIVE_INFORMATION_RIGHTS_MARKETPLACE",
+  "allSatisfied": false,
+  "marketplaceEconomicsAuthorized": false,
+  "technicalReadinessDoesNotActivate": true,
+  "relatedFlags": {
+    "LIVE_INFORMATION_RIGHTS_MARKETPLACE": false,
+    "LIVE_DATA_MONETIZATION_ENABLED": false,
+    "LIVE_DATA_MARKET_ENABLED": false
+  },
+  "requirements": [
+    { "id": "legal_structure", "satisfied": false, "evidence": null },
+    { "id": "privacy_review", "satisfied": false, "evidence": null },
+    { "id": "security_review", "satisfied": false, "evidence": null },
+    { "id": "commercial_agreements", "satisfied": false, "evidence": null },
+    { "id": "operational_staff", "satisfied": false, "evidence": null },
+    { "id": "consent_language_approval", "satisfied": false, "evidence": null },
+    { "id": "payment_settlement_authorization", "satisfied": false, "evidence": null }
+  ]
+}

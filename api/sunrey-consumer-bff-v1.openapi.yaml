@@ -2124,6 +2124,133 @@ paths:
   /api/v1/data:
     get:
       operationId: getDataVault
+      summary: Vault home
+      responses:
+        "200":
+          description: Subject-bound vault home. Sandbox data is labeled SANDBOX.
+  /api/v1/data/categories:
+    get:
+      operationId: getDataCategories
+      summary: Data classification catalog
+      responses:
+        "200":
+          description: Server-owned categories
+  /api/v1/data/sources:
+    get:
+      operationId: getDataSources
+      summary: Data sources
+      responses:
+        "200":
+          description: Simulated connectors only
+  /api/v1/data/records:
+    get:
+      operationId: listVaultRecords
+      summary: Your data metadata
+      responses:
+        "200":
+          description: Metadata only
+    post:
+      operationId: createVaultRecord
+      summary: Create a user-declared record
+      responses:
+        "201":
+          description: Created metadata
+  /api/v1/data/records/ingest:
+    post:
+      operationId: ingestVaultRecord
+      summary: Ingest an approved source-backed sandbox record
+      responses:
+        "201":
+          description: Created metadata
+  /api/v1/data/permissions:
+    get:
+      operationId: listDataPermissions
+      summary: Permissions
+      responses:
+        "200":
+          description: Grants
+    post:
+      operationId: grantDataPermission
+      summary: Grant optional permission
+      responses:
+        "201":
+          description: Confirmed grant
+  /api/v1/data/hin:
+    get:
+      operationId: getHinParticipation
+      summary: HIN participation
+      responses:
+        "200":
+          description: Participation state
+  /api/v1/data/contributions:
+    get:
+      operationId: listHinContributions
+      summary: Human contributions
+      responses:
+        "200":
+          description: Contribution list without mint quantities
+  /api/v1/data/earnings:
+    get:
+      operationId: getHinEarnings
+      summary: Compensation instructions
+      responses:
+        "200":
+          description: Not a yield
+  /api/v1/data/licenses:
+    get:
+      operationId: listInformationLicenses
+      summary: Information-rights licenses
+      responses:
+        "200":
+          description: Sandbox licenses
+    post:
+      operationId: requestInformationLicense
+      summary: Request a sandbox license
+      responses:
+        "201":
+          description: Purpose-scoped request
+  /api/v1/economy/sunrey:
+    get:
+      operationId: getSunreyEconomy
+      summary: SunRey Coin detail with HIN metrics
+      responses:
+        "200":
+          description: HIN input is not market price
+  /api/v1/economy/moonrey:
+    get:
+      operationId: getMoonreyEconomy
+      summary: MoonRey Coin detail with productive metrics
+      responses:
+        "200":
+          description: Productive input is not market price
+  /api/v1/economy/hin:
+    get:
+      operationId: getHinAggregateMetrics
+      summary: Aggregate HIN metrics
+      responses:
+        "200":
+          description: No individual records
+  /api/v1/economy/productive:
+    get:
+      operationId: getProductiveEconomy
+      summary: Productive-economy overview
+      responses:
+        "200":
+          description: Sandbox observations only
+  /api/v1/economy/productive/observe:
+    post:
+      operationId: observeProductive
+      summary: Ingest a sandbox productive observation
+      responses:
+        "200":
+          description: Observation accepted or rejected
+  /api/v1/economy/basis-proposal:
+    post:
+      operationId: createEconomicBasisProposal
+      summary: Draft issuance-basis proposal that stops before mint
+      responses:
+        "200":
+          description: Proposal only. No supply change.
       summary: Personal Data Vault home
       responses:
         "200":

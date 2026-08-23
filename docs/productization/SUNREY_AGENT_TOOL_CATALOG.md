@@ -98,6 +98,9 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | getConsentSummary | Active permits | none | summary | READ | READ_FINANCIAL_STATE | read-only | consent | no |
 | getDataPermissions | Authorized scopes | none | scopes | READ | READ_FINANCIAL_STATE | read-only | consent / PDV | no |
+| getVaultSummary | Approved categories/sources | none | summary | READ | READ_FINANCIAL_STATE | read-only | PDV | no |
+| getHinContributionSummary | Verified contributions + rights | none | summary | READ | READ_FINANCIAL_STATE | read-only | HIN + contribution | no |
+| requestHinConsentChange | Start HIN stop; does not revoke | none | request | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | consent + HIN | yes |
 | getInformationRights | Usage rights for the owner | none | rights | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
 | getActiveDataPermissions | Licensed purposes | none | permissions | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
 | getApprovedEarnings | Settled earnings only | none | earnings | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
