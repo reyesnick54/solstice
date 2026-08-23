@@ -19,6 +19,7 @@ export type RecurringPattern = {
   readonly sourceRefs: readonly string[];
   readonly occurrenceCount: number;
   readonly confidence: 'DERIVED';
+  readonly patternConfidence: 'LOW' | 'MEDIUM' | 'HIGH';
 };
 
 function intervalDays(from: UtcInstant, to: UtcInstant): bigint {
@@ -154,6 +155,7 @@ export function detectRecurringPatterns(activities: readonly EconomicActivity[])
         sourceRefs: Object.freeze(ordered.map((item) => item.sourceRef)),
         occurrenceCount: ordered.length,
         confidence: 'DERIVED',
+        patternConfidence: ordered.length >= 4 ? 'HIGH' : ordered.length >= 3 ? 'MEDIUM' : 'LOW',
       }),
     );
   }

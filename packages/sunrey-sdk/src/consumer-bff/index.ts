@@ -7,6 +7,12 @@ export {
   GROW_OPPORTUNITY_STATUSES,
 } from './types.ts';
 export type {
+  GrowGoal,
+  GrowGoalCreateInput,
+  GrowInsight,
+  GrowProfile,
+  GrowSnapshot,
+  GrowSuitability,
   MoneyResource,
   Recipient,
   RecipientDestinationType,

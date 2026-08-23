@@ -15,6 +15,39 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 
+describe('consumer BFF grow SDK', () => {
+  it('calls Grow profile and goal routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.grow_healthy_saver',
+      generateRequestId: () => 'req_grow',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.grow.profile.v1',
+            authoritativeBalance: false,
+            ledgerWins: true,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const profile = await client.getGrowProfile();
+    assert.equal(profile.schema, 'sunrey.grow.profile.v1');
+    await client.createGrowGoal({
+      goalKind: 'TRAVEL',
+      name: 'Trip',
+      targetMinorUnits: '1000',
+      currency: 'USD',
+    });
+    assert.ok(urls.some((row) => row.includes('/api/v1/grow/profile')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/grow/goals')));
+  });
+});
+
 describe('consumer BFF payments SDK', () => {
   it('exposes typed payment and recipient statuses', () => {
     assert.ok(BFF_PAYMENT_STATUSES.includes('SETTLED'));

@@ -17,6 +17,7 @@ import type {
   FeatureCapabilityMap,
   NotificationPort,
   CardsMutationPort,
+  GrowCommandPort,
   OptionalDomainPort,
   PreferenceStore,
   SecurityPort,
@@ -189,6 +190,7 @@ export type ConsumerBffDeps = {
   readonly notifications?: NotificationPort;
   readonly security?: SecurityPort;
   readonly grow?: OptionalDomainPort;
+  readonly growCommands?: GrowCommandPort;
   readonly agent?: OptionalDomainPort;
   readonly exchange?: OptionalDomainPort;
   readonly payments?: OptionalDomainPort;
@@ -856,6 +858,137 @@ export class ConsumerBff {
       reason: mapped.reason,
       items: Object.freeze([] as const),
     });
+  }
+
+  growProfile(principal: BffPrincipal, valuationCurrency?: string): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.growCommands.profile(principal, valuationCurrency);
+  }
+
+  growSnapshot(principal: BffPrincipal, valuationCurrency?: string): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.growCommands.snapshot(principal, valuationCurrency);
+  }
+
+  growGoals(principal: BffPrincipal): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('goals', principal);
+    }
+    return this.deps.growCommands.listGoals(principal);
+  }
+
+  createGrowGoal(principal: BffPrincipal, body: Record<string, unknown>, requestId: string): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'VALIDATION',
+        message: 'Grow goals are not attached',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.growCommands.createGoal(principal, body, requestId);
+  }
+
+  patchGrowGoal(
+    principal: BffPrincipal,
+    goalId: string,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'VALIDATION',
+        message: 'Grow goals are not attached',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.growCommands.patchGoal(principal, goalId, body, requestId);
+  }
+
+  growInsights(principal: BffPrincipal): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.growCommands.insights(principal);
+  }
+
+  growSuitability(principal: BffPrincipal): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.growCommands.suitability(principal);
+  }
+
+  submitGrowSuitability(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'VALIDATION',
+        message: 'Grow suitability is not attached',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.growCommands.submitSuitability(principal, body, requestId);
+  }
+
+  declareGrowAssumption(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'VALIDATION',
+        message: 'Grow declarations are not attached',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.growCommands.declareAssumption(principal, body, requestId);
+  }
+
+  correctGrowClassification(
+    principal: BffPrincipal,
+    body: Record<string, unknown>,
+    requestId: string,
+  ): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return bffError({
+        errorCode: 'FEATURE_UNAVAILABLE',
+        category: 'VALIDATION',
+        message: 'Grow corrections are not attached',
+        retryable: false,
+        requestId,
+      });
+    }
+    return this.deps.growCommands.correctClassification(principal, body, requestId);
+  }
+
+  growHistory(principal: BffPrincipal, series?: string): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('grow', principal);
+    }
+    return this.deps.growCommands.history(principal, series);
+  }
+
+  growAgentProfile(principal: BffPrincipal): unknown | BffErrorEnvelope {
+    if (!this.deps.growCommands) {
+      return this.featureStub('agent', principal);
+    }
+    return this.deps.growCommands.agentProfile(principal);
   }
 
   listCards(principal: BffPrincipal): {

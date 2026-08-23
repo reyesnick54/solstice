@@ -492,6 +492,52 @@ paths:
       operationId: dismissGrowOpportunity
       summary: Dismiss an opportunity
       description: A dismissed fingerprint is not re-presented unchanged.
+      summary: Grow My Money catalog
+      responses:
+        "200":
+          description: Availability plus simulation posture
+  /api/v1/grow/profile:
+    get:
+      operationId: getGrowProfile
+      summary: Client-safe financial intelligence profile
+      description: >
+        Derived from the Personal Economic Graph. Not the Ledger.
+        Does not promise guaranteed returns. Unlike currencies are not summed.
+      responses:
+        "200":
+          description: Grow profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProfile"
+  /api/v1/grow/snapshot:
+    get:
+      operationId: getGrowSnapshot
+      summary: Financial snapshot
+      responses:
+        "200":
+          description: Snapshot with per-currency positions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowSnapshot"
+  /api/v1/grow/goals:
+    get:
+      operationId: listGrowGoals
+      summary: List user-declared goals
+      responses:
+        "200":
+          description: Goal list
+    post:
+      operationId: createGrowGoal
+      summary: Create a user-declared goal
+      responses:
+        "201":
+          description: Created goal
+  /api/v1/grow/goals/{id}:
+    patch:
+      operationId: patchGrowGoal
+      summary: Update a user-declared goal
       parameters:
         - in: path
           name: id
@@ -519,6 +565,61 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowProposalReceipt"
+          description: Updated goal
+  /api/v1/grow/insights:
+    get:
+      operationId: listGrowInsights
+      summary: Deterministic derived insights
+      responses:
+        "200":
+          description: Insight list
+  /api/v1/grow/suitability:
+    get:
+      operationId: getGrowSuitability
+      summary: Deterministic risk and suitability profile
+      responses:
+        "200":
+          description: Suitability or null
+    post:
+      operationId: submitGrowSuitability
+      summary: Submit questionnaire answers
+      responses:
+        "201":
+          description: Assessed profile
+  /api/v1/grow/assumptions:
+    post:
+      operationId: declareGrowAssumption
+      summary: Declare or correct user-editable assumptions
+      description: Cannot override Ledger-backed SunRey account balances.
+      responses:
+        "201":
+          description: Accepted declaration
+        "403":
+          description: Authoritative fact immutable
+  /api/v1/grow/classifications:
+    post:
+      operationId: correctGrowClassification
+      summary: Correct a derived activity classification
+      responses:
+        "200":
+          description: Overlay stored
+  /api/v1/grow/history:
+    get:
+      operationId: getGrowHistory
+      summary: Compact historical snapshot series
+      responses:
+        "200":
+          description: History points
+  /api/v1/grow/agent:
+    get:
+      operationId: getGrowAgentProfile
+      summary: Agent-scoped PEG read
+      description: An Agent does not automatically receive every personal category.
+      responses:
+        "200":
+          description: Scoped profile
+        "403":
+          description: Mandate required
   /api/v1/agent:
     get:
       operationId: getAgent
@@ -627,6 +728,38 @@ paths:
           description: Honest availability
 components:
   schemas:
+    GrowMoney:
+      type: object
+      required: [minorUnits, currency]
+      properties:
+        minorUnits: { type: string }
+        currency: { type: string }
+    GrowProfile:
+      type: object
+      required: [schema, subjectId, generatedAt, authoritativeBalance, ledgerWins]
+      properties:
+        schema: { type: string, enum: [sunrey.grow.profile.v1] }
+        subjectId: { type: string }
+        generatedAt: { type: string }
+        financialStrengths:
+          type: array
+          items: { type: string }
+        areasToImprove:
+          type: array
+          items: { type: string }
+        authoritativeBalance: { type: boolean, enum: [false] }
+        ledgerWins: { type: boolean, enum: [true] }
+    GrowSnapshot:
+      type: object
+      required: [snapshotId, subjectId, generatedAt, crossCurrencyTotal, authoritativeBalance, ledgerWins]
+      properties:
+        snapshotId: { type: string }
+        subjectId: { type: string }
+        generatedAt: { type: string }
+        crossCurrencyTotal: { type: "null" }
+        authoritativeBalance: { type: boolean, enum: [false] }
+        ledgerWins: { type: boolean, enum: [true] }
+        guaranteedReturn: { type: boolean, enum: [false] }
     MoneyResource:
       type: object
       required: [minorUnits, currency]

@@ -281,6 +281,42 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
     const id = path.slice('/api/v1/grow/opportunities/'.length);
     return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  if (path === '/api/v1/grow/profile' && method === 'GET') {
+    return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
+  }
+  if (path === '/api/v1/grow/snapshot' && method === 'GET') {
+    return result(runtime.bff.growSnapshot(principal, query.valuationCurrency ?? query.valuation_currency), headers);
+  }
+  if (path === '/api/v1/grow/goals' && method === 'GET') {
+    return result(runtime.bff.growGoals(principal), headers);
+  }
+  if (path === '/api/v1/grow/goals' && method === 'POST') {
+    return result(runtime.bff.createGrowGoal(principal, rec, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/grow/goals/') && method === 'PATCH') {
+    const id = path.slice('/api/v1/grow/goals/'.length);
+    return result(runtime.bff.patchGrowGoal(principal, id, rec, requestId), headers);
+  }
+  if (path === '/api/v1/grow/insights' && method === 'GET') {
+    return result(runtime.bff.growInsights(principal), headers);
+  }
+  if (path === '/api/v1/grow/suitability' && method === 'GET') {
+    return result(runtime.bff.growSuitability(principal), headers);
+  }
+  if (path === '/api/v1/grow/suitability' && method === 'POST') {
+    return result(runtime.bff.submitGrowSuitability(principal, rec, requestId), headers, 201);
+  }
+  if (path === '/api/v1/grow/assumptions' && method === 'POST') {
+    return result(runtime.bff.declareGrowAssumption(principal, rec, requestId), headers, 201);
+  }
+  if (path === '/api/v1/grow/classifications' && method === 'POST') {
+    return result(runtime.bff.correctGrowClassification(principal, rec, requestId), headers);
+  }
+  if (path === '/api/v1/grow/history' && method === 'GET') {
+    return result(runtime.bff.growHistory(principal, query.series), headers);
+  }
+  if (path === '/api/v1/grow/agent' && method === 'GET') {
+    return result(runtime.bff.growAgentProfile(principal), headers);
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -484,6 +520,18 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/grow/opportunities/{id}',
   'POST /api/v1/grow/opportunities/{id}/dismiss',
   'POST /api/v1/grow/opportunities/{id}/start-proposal',
+  'GET /api/v1/grow/profile',
+  'GET /api/v1/grow/snapshot',
+  'GET /api/v1/grow/goals',
+  'POST /api/v1/grow/goals',
+  'PATCH /api/v1/grow/goals/{id}',
+  'GET /api/v1/grow/insights',
+  'GET /api/v1/grow/suitability',
+  'POST /api/v1/grow/suitability',
+  'POST /api/v1/grow/assumptions',
+  'POST /api/v1/grow/classifications',
+  'GET /api/v1/grow/history',
+  'GET /api/v1/grow/agent',
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
