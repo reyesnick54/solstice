@@ -5,6 +5,9 @@ info:
   description: >
     Official public developer API for SunRey Blockchain. Simulation only.
     Public tickers remain NOT_ASSIGNED. Private keys must never be sent.
+    Lovable wallet / economy screens use Consumer BFF `/api/v1/wallets`
+    and `/api/v1/economy`. This RPC surface is not a mint and does not
+    activate mainnet.
 servers:
   - url: http://127.0.0.1:18480
     description: Local development RPC

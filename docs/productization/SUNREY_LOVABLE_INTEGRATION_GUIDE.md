@@ -217,6 +217,8 @@ the `/v1/consumer` personas below.
 | `agent_enabled` | BFF Agent Home, conversations, streaming chat (`sandbox.agent_enabled`) |
 | `investment` (BFF `sandbox.investment`) | Multi-account investment fixture |
 | `phase_e_grow` (harness `sandbox.phase_e_grow`) | Phase E Grow My Money E2E persona |
+| `basic_verified` (BFF `sandbox.basic_verified`) | Phase G Exchange / wallet / economy E2E |
+| `exchange` (BFF `sandbox.exchange`) | Exchange-capable sandbox persona |
 
 Enable only with `SUNREY_SANDBOX_PERSONAS=1` in simulation. Fail closed
 otherwise.
@@ -327,3 +329,46 @@ SDK: `startAgentConversation`, `sendAgentMessage`, `streamAgentEvents`,
 `modifyAgentAction`, `rejectAgentAction`.
 
 See `docs/productization/PHASE_F_04_CONVERSATIONAL_ACTIONS.md`.
+
+## Exchange, wallets, and economy (Phase G)
+
+Use `@solstice/sunrey-sdk/bff` (`SunReyConsumerBffClient`). Lovable
+renders server state only. It never mints, never modifies supply, never
+bypasses eligibility, and never treats Agent text as an executed trade.
+
+Complete sandbox digital-asset journey:
+
+1. Authenticate (`Authorization: Bearer sandbox.basic_verified` or
+   `sandbox.exchange`)
+2. `GET /api/v1/exchange` — EXCHANGE HOME (`liveExchangeEnabled: false`)
+3. `GET /api/v1/exchange/eligibility` — KYC / Exchange eligibility
+4. `GET /api/v1/exchange/markets` — MARKETS including SunRey Coin
+5. `GET /api/v1/exchange/markets/{id}/ticker` and `/order-book` and `/chart`
+6. `GET /api/v1/exchange/holdings` and `GET /api/v1/wallets`
+7. `POST /api/v1/exchange/fund` — sandbox quote faucet only
+8. `POST /api/v1/exchange/preview` — ORDER PREVIEW (server-owned)
+9. `POST /api/v1/exchange/proposals` — create BUY or SELL proposal
+10. `POST /api/v1/exchange/proposals/{id}/approve` with `stepUpSatisfied`
+11. `POST /api/v1/exchange/proposals/{id}/submit` — ORDER CONFIRMATION
+12. `GET /api/v1/exchange/orders` and `/fills`
+13. `GET /api/v1/wallets/deposit-address` then
+    `POST /api/v1/wallets/deposits/simulate`
+14. `POST /api/v1/wallets/withdrawals/quote` then `/withdrawals`
+    with human `approved: true`
+15. `GET /api/v1/economy`, `/sunrey-coin`, `/moonrey-coin`, `/status`
+
+Freshness on externally sourced information is one of `LIVE`,
+`DELAYED`, `SANDBOX`, `UNAVAILABLE`, `STALE`. Sandbox fixtures report
+`SANDBOX`. Do not invent global economic values.
+
+Agent path: `"Buy $500 of SunRey Coin."` → EXCHANGE Action Card →
+human approve. The Agent cannot self-approve.
+
+`productionMoneyMovement` stays false. Mainnet and live Exchange stay
+blocked.
+
+SDK helpers: `getExchangeHome`, `listExchangeMarkets`,
+`previewExchangeOrder`, `createExchangeProposal`,
+`approveExchangeProposal`, `submitExchangeProposal`, `getWallet`,
+`simulateWalletDeposit`, `createWithdrawalQuote`, `getEconomyHome`,
+`getSunreyCoinEconomy`, `getMoonreyCoinEconomy`, `getEconomyStatus`.

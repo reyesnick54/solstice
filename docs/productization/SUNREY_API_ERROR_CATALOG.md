@@ -132,6 +132,28 @@ treat a submitted execution as completed.
 Do not display guaranteed-return language. Scenario fields are
 projection, estimate, assumption, or actual result.
 
+## Exchange / wallets (Phase G)
+
+Exchange-specific reasons are returned in
+`detailsSafeForClient.reason`. The public `errorCode` stays in the
+catalog above. Lovable must not treat a submitted order as a
+guaranteed fill.
+
+| reason | Public errorCode | Client action |
+| --- | --- | --- |
+| `STEP_UP_REQUIRED` | `STEP_UP_REQUIRED` | complete step-up, then approve again |
+| `AGENT_CANNOT_SELF_APPROVE` | `KERNEL_REFUSED` | stop; the Agent is not the approver |
+| `EXECUTION_AUTHORITY_REQUIRED` | `KERNEL_REFUSED` | require human approval first |
+| `INVALID_QUANTITY` / `INVALID_PRICE` | `VALIDATION` | fix the request |
+| `INSUFFICIENT_BALANCE` | `KERNEL_REFUSED` | change quantity or fund sandbox quote |
+| `STALE_MARKET_DATA` | `KERNEL_REFUSED` | refresh ticker / book from the server |
+| `TRAVEL_RULE_PENDING` / `COMPLIANCE_BLOCKED` | `KERNEL_REFUSED` | show blocked / pending; do not retry as success |
+| `CHAIN_UNAVAILABLE` / `CUSTODY_UNAVAILABLE` / `SETTLEMENT_FAILURE` | `FEATURE_UNAVAILABLE` | degrade; do not fake a fill |
+| `UNAUTHORIZED_ISSUANCE` | `KERNEL_REFUSED` | frontend cannot mint |
+
+Market-data freshness is not an error. Render `LIVE`, `DELAYED`,
+`SANDBOX`, `UNAVAILABLE`, or `STALE` from `/api/v1/economy/status`.
+
 ## Money / transaction status (Phase C)
 
 These are domain statuses on payment and card resources, not extra

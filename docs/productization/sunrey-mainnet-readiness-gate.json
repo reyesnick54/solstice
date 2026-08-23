@@ -1,0 +1,175 @@
+{
+  "schema": "sunrey.mainnet.readiness.gate.v1",
+  "id": "sunrey-mainnet-readiness-gate",
+  "evaluatedAtPolicy": "FAIL_CLOSED",
+  "passed": false,
+  "softwareCompleteInternally": true,
+  "activationSeparatedFromBuild": true,
+  "productionActivated": false,
+  "liveFlagsRemainDisabled": true,
+  "requirements": [
+    {
+      "id": "final_economic_parameters",
+      "label": "Final economic parameters",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "EXTERNAL_REQUIRED",
+      "satisfiableByPlaceholder": false,
+      "notes": "Chunk 71 remains the mint. Fixture packages cannot authorize production."
+    },
+    {
+      "id": "human_governance_signatures",
+      "label": "Human governance signatures",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Launch authorization candidate is not MAINNET_ACTIVE."
+    },
+    {
+      "id": "external_security_audit",
+      "label": "External security audit",
+      "kind": "EXTERNAL_AUDIT",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "No fabricated audit evidence."
+    },
+    {
+      "id": "protocol_audit",
+      "label": "Protocol audit",
+      "kind": "EXTERNAL_AUDIT",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "External protocol review is not present."
+    },
+    {
+      "id": "penetration_test",
+      "label": "Penetration test",
+      "kind": "EXTERNAL_AUDIT",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Range work is not a live pentest report."
+    },
+    {
+      "id": "legal_counsel_review",
+      "label": "Legal / counsel review",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Do not mark CONFIRMED_BY_COUNSEL here."
+    },
+    {
+      "id": "licenses_regulatory_approvals",
+      "label": "Licenses / regulatory approvals",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Unknown corridors stay RESEARCH_REQUIRED."
+    },
+    {
+      "id": "custody_provider",
+      "label": "Production custody provider",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Fixture adapters only."
+    },
+    {
+      "id": "travel_rule_provider",
+      "label": "Travel Rule provider",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Simulation Travel Rule is not a network membership."
+    },
+    {
+      "id": "production_hsm_kms",
+      "label": "Production HSM / KMS",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Development HSM simulator is not a launch key."
+    },
+    {
+      "id": "validator_operators",
+      "label": "Validator operators",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Testnet lifecycle is not production operator acceptance."
+    },
+    {
+      "id": "production_infrastructure",
+      "label": "Production infrastructure",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Simulation hosts are not production."
+    },
+    {
+      "id": "dns_certificates",
+      "label": "DNS / certificates",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Not present in this repository."
+    },
+    {
+      "id": "monitoring_oncall",
+      "label": "Monitoring / on-call",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Operational staffing is an external slot."
+    },
+    {
+      "id": "incident_response",
+      "label": "Incident response",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Runbooks exist; staffing does not."
+    },
+    {
+      "id": "genesis_approvals",
+      "label": "Genesis approvals",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Ceremony candidate is not genesis."
+    },
+    {
+      "id": "mainnet_ceremony_approval",
+      "label": "Mainnet ceremony approval",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "LAUNCH_AUTHORIZATION_CANDIDATE is not MAINNET_ACTIVE."
+    },
+    {
+      "id": "software_runtime",
+      "label": "SunRey Chain runtime (internal)",
+      "kind": "INTERNAL_SOFTWARE",
+      "status": "RECORDED_INTERNAL",
+      "satisfiableByPlaceholder": false,
+      "notes": "Testnet-deployable runtime exists. This does not activate mainnet."
+    }
+  ],
+  "missingRequirementIds": [
+    "final_economic_parameters",
+    "human_governance_signatures",
+    "external_security_audit",
+    "protocol_audit",
+    "penetration_test",
+    "legal_counsel_review",
+    "licenses_regulatory_approvals",
+    "custody_provider",
+    "travel_rule_provider",
+    "production_hsm_kms",
+    "validator_operators",
+    "production_infrastructure",
+    "dns_certificates",
+    "monitoring_oncall",
+    "incident_response",
+    "genesis_approvals",
+    "mainnet_ceremony_approval"
+  ]
+}

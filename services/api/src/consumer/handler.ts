@@ -42,6 +42,7 @@ import {
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
 import type { GrowBffSurface } from './grow.ts';
+import type { ExchangeBffSurface } from './exchange.ts';
 import {
   actorFromPrincipal,
   growCatalog,
@@ -78,9 +79,9 @@ export type ConsumerBffRuntime = {
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
-  readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
+  readonly exchange?: ExchangeBffSurface;
 };
 
 const STUB_GROUPS = [
@@ -308,10 +309,18 @@ function dispatchAuthenticated(
     const agents = dispatchAgents(runtime.agentRuntime, request, principal, requestId, headers);
     if (agents) {
       return agents;
-  if (runtime.grow) {
+    }
+  }
+  if (runtime.grow && 'home' in runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.exchange) {
+    const exchange = dispatchExchange(runtime.exchange, request, principal, requestId, headers);
+    if (exchange) {
+      return exchange;
     }
   }
   if (runtime.payments) {
@@ -372,7 +381,8 @@ function dispatchAuthenticated(
       });
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
-  if (runtime.grow) {
+  }
+  if (runtime.grow && 'home' in runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
@@ -801,8 +811,59 @@ function dispatchPayments(
   return null;
 }
 
+function dispatchExchange(
+  exchange: ExchangeBffSurface,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if (path === '/api/v1/exchange' && method === 'GET') return result(exchange.home(principal, requestId), headers);
+  if (path === '/api/v1/exchange/markets' && method === 'GET') return result(exchange.markets(principal, requestId), headers);
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/ticker') && method === 'GET') {
+    return result(exchange.ticker(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/order-book') && method === 'GET') {
+    return result(exchange.orderBook(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && path.endsWith('/chart') && method === 'GET') {
+    return result(exchange.chart(principal, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/markets/') && method === 'GET') {
+    return result(exchange.market(principal, path.slice('/api/v1/exchange/markets/'.length), requestId), headers);
+  }
+  if (path === '/api/v1/exchange/eligibility' && method === 'GET') return result(exchange.eligibility(principal, requestId), headers);
+  if (path === '/api/v1/exchange/holdings' && method === 'GET') return result(exchange.holdings(principal, requestId), headers);
+  if (path === '/api/v1/exchange/fund' && method === 'POST') return result(exchange.fund(principal, requestId), headers);
+  if (path === '/api/v1/exchange/preview' && method === 'POST') return result(exchange.preview(principal, rec, requestId), headers);
+  if (path === '/api/v1/exchange/proposals' && method === 'POST') return result(exchange.createProposal(principal, rec, requestId), headers, 201);
+  if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/approve') && method === 'POST') {
+    const id = path.slice('/api/v1/exchange/proposals/'.length, -'/approve'.length);
+    return result(exchange.approve(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/exchange/proposals/') && path.endsWith('/submit') && method === 'POST') {
+    const id = path.slice('/api/v1/exchange/proposals/'.length, -'/submit'.length);
+    return result(exchange.submit(principal, id, rec, requestId), headers);
+  }
+  if (path === '/api/v1/exchange/orders' && method === 'GET') return result(exchange.orders(principal, requestId), headers);
+  if (path === '/api/v1/exchange/fills' && method === 'GET') return result(exchange.fills(principal, requestId), headers);
+  if (path === '/api/v1/exchange/stream' && method === 'GET') return result(exchange.stream(principal, requestId), headers);
+  if (path === '/api/v1/wallets' && method === 'GET') return result(exchange.wallets(principal, requestId), headers);
+  if (path === '/api/v1/wallets/deposit-address' && method === 'GET') return result(exchange.depositAddress(principal, requestId), headers);
+  if (path === '/api/v1/wallets/deposits/simulate' && method === 'POST') return result(exchange.simulateDeposit(principal, rec, requestId), headers);
+  if (path === '/api/v1/wallets/withdrawals/quote' && method === 'POST') return result(exchange.withdrawalQuote(principal, rec, requestId), headers);
+  if (path === '/api/v1/wallets/withdrawals' && method === 'POST') return result(exchange.withdraw(principal, rec, requestId), headers);
+  if (path === '/api/v1/wallets/transactions' && method === 'GET') return result(exchange.transactions(principal, requestId), headers);
+  if (path === '/api/v1/economy' && method === 'GET') return result(exchange.economy(principal, requestId), headers);
+  if (path === '/api/v1/economy/sunrey-coin' && method === 'GET') return result(exchange.sunreyCoin(principal, requestId), headers);
+  if (path === '/api/v1/economy/moonrey-coin' && method === 'GET') return result(exchange.moonreyCoin(principal, requestId), headers);
+  if (path === '/api/v1/economy/status' && method === 'GET') return result(exchange.economyStatus(principal, requestId), headers);
+  return null;
+}
+
 function dispatchGrow(
-  grow: GrowBffSurface | ProductGrowthService,
   grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -1150,7 +1211,31 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/agents/{id}/conversations/{conversationId}/messages',
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
+  'GET /api/v1/exchange/markets',
+  'GET /api/v1/exchange/markets/{id}',
+  'GET /api/v1/exchange/markets/{id}/ticker',
+  'GET /api/v1/exchange/markets/{id}/order-book',
+  'GET /api/v1/exchange/markets/{id}/chart',
+  'GET /api/v1/exchange/eligibility',
+  'GET /api/v1/exchange/holdings',
+  'POST /api/v1/exchange/fund',
+  'POST /api/v1/exchange/preview',
+  'POST /api/v1/exchange/proposals',
+  'POST /api/v1/exchange/proposals/{id}/approve',
+  'POST /api/v1/exchange/proposals/{id}/submit',
+  'GET /api/v1/exchange/orders',
+  'GET /api/v1/exchange/fills',
+  'GET /api/v1/exchange/stream',
   'GET /api/v1/wallets',
+  'GET /api/v1/wallets/deposit-address',
+  'POST /api/v1/wallets/deposits/simulate',
+  'POST /api/v1/wallets/withdrawals/quote',
+  'POST /api/v1/wallets/withdrawals',
+  'GET /api/v1/wallets/transactions',
+  'GET /api/v1/economy',
+  'GET /api/v1/economy/sunrey-coin',
+  'GET /api/v1/economy/moonrey-coin',
+  'GET /api/v1/economy/status',
   'GET /api/v1/data',
   'GET /api/v1/security',
   'GET /api/v1/notifications',

@@ -440,9 +440,156 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow/portfolio/risk', undefined, options);
   }
 
+  async getExchangeHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange', undefined, options);
+  }
+
+  async listExchangeMarkets(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/markets', undefined, options);
+  }
+
+  async getExchangeMarket(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}`, undefined, options);
+  }
+
+  async getExchangeTicker(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/ticker`, undefined, options);
+  }
+
+  async getExchangeOrderBook(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/order-book`, undefined, options);
+  }
+
+  async getExchangeChart(marketId: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(marketId)}/chart`, undefined, options);
+  }
+
+  async getExchangeEligibility(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/eligibility', undefined, options);
+  }
+
+  async getExchangeHoldings(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
+  }
+
+  async fundExchangeSandbox(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/exchange/fund', {}, options);
+  }
+
+  async previewExchangeOrder(
+    input: { readonly side: 'BUY' | 'SELL'; readonly quantity: string; readonly notionalUsdMinor?: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/exchange/preview', input, options);
+  }
+
+  async createExchangeProposal(
+    input: { readonly side: 'BUY' | 'SELL'; readonly quantity: string; readonly notionalUsdMinor?: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/exchange/proposals', input, options);
+  }
+
+  async approveExchangeProposal(
+    proposalId: string,
+    input: { readonly stepUpSatisfied?: boolean; readonly actor?: 'HUMAN' | 'AGENT' } = {},
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/exchange/proposals/${encodeURIComponent(proposalId)}/approve`, input, options);
+  }
+
+  async submitExchangeProposal(
+    proposalId: string,
+    input: { readonly clientOrderId?: string } = {},
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', `/api/v1/exchange/proposals/${encodeURIComponent(proposalId)}/submit`, input, options);
+  }
+
+  async listExchangeOrders(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/orders', undefined, options);
+  }
+
+  async listExchangeFills(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/fills', undefined, options);
+  }
+
+  async getExchangeStream(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/exchange/stream', undefined, options);
+  }
+
+  async getWallet(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/wallets', undefined, options);
+  }
+
+  async listWallets(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.getWallet(options);
+  }
+
+  async getWalletDepositAddress(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/wallets/deposit-address', undefined, options);
+  }
+
+  async simulateWalletDeposit(
+    input: { readonly quantity?: string } = {},
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/wallets/deposits/simulate', input, options);
+  }
+
+  async quoteWalletWithdrawal(
+    input: { readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN'; readonly quantity: string; readonly destination: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/wallets/withdrawals/quote', input, options);
+  }
+
+  async createWithdrawalQuote(
+    input: { readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN'; readonly quantity: string; readonly destination: string },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.quoteWalletWithdrawal(input, options);
+  }
+
+  async submitWalletWithdrawal(
+    input: {
+      readonly assetId: 'SUNREY_COIN' | 'MOONREY_COIN';
+      readonly quantity: string;
+      readonly destination: string;
+      readonly approved?: boolean;
+      readonly actor?: 'HUMAN' | 'AGENT';
+    },
+    options?: BffRequestOptions,
+  ): Promise<Record<string, unknown>> {
+    return this.request('POST', '/api/v1/wallets/withdrawals', input, options);
+  }
+
+  async listWalletTransactions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/wallets/transactions', undefined, options);
+  }
+
+  async getEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy', undefined, options);
+  }
+
+  async getEconomyHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.getEconomy(options);
+  }
+
+  async getSunreyCoinEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/sunrey-coin', undefined, options);
+  }
+
+  async getMoonreyCoinEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/moonrey-coin', undefined, options);
+  }
+
+  async getEconomyStatus(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+    return this.request('GET', '/api/v1/economy/status', undefined, options);
+  }
+
   async request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
-    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,
     options?: BffRequestOptions,

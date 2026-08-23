@@ -67,6 +67,9 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getMarketPrice | Last trade, not guaranteed | `marketId` | price units | READ | READ_FINANCIAL_STATE | read-only | SubjectScopedSunReyExchangeTool | no |
 | getOrders | Owner orders | none | orders | READ | READ_FINANCIAL_STATE | read-only | consumer orders | no |
 | createExchangeOrderProposal | Propose a trade | `marketId`, `side`, `quantity`, `assetId` | proposal id | PROPOSAL | PREPARE_EXCHANGE_ORDER | proposal | exchange + ProposalGate | yes |
+| checkExchangeEligibility | KYC / Exchange eligibility | none | eligibility | READ | READ_FINANCIAL_STATE | read-only | exchange eligibility | no |
+| getMarketData | Ticker / book (not guaranteed) | `marketId` | market data | READ | READ_FINANCIAL_STATE | read-only | exchange market data | no |
+| getEconomyStatus | LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE | none | freshness | READ | READ_FINANCIAL_STATE | read-only | economy BFF | no |
 
 ## WALLETS / CUSTODY
 
