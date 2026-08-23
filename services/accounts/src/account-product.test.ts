@@ -168,7 +168,7 @@ describe('Account product service', () => {
     if (opened.outcome !== 'OPENED') {
       return;
     }
-    runtime.money.deposit({
+    const deposited = runtime.money.deposit({
       id: asIntentId('dep_act'),
       actionType: ACTION_TYPES.POST_DEPOSIT,
       idempotencyKey: 'dep_act',
@@ -177,6 +177,7 @@ describe('Account product service', () => {
       purpose: 'CUSTOMER_FUNDING',
       payload: { accountId: opened.account.id, amount: Money.fromMinorUnits(4_000n, 'USD') },
     });
+    assert.equal(deposited.outcome, 'POSTED');
     const items = runtime.accountProduct.activity(customer.id, 'acct_act', { type: 'DEPOSIT', status: 'COMPLETED' });
     assert.ok(items.length >= 1);
     assert.equal(items.every((item) => item.type === 'DEPOSIT'), true);
