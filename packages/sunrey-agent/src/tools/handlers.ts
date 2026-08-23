@@ -205,6 +205,73 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         confirmed: false,
         agentMustNotImplyRevocation: true,
       }), []);
+    case 'getInformationRights':
+      return mapPort(ctx.ports.data.hinRights(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (rights) => ({
+        rights,
+        ownershipTransferred: false,
+        unrestrictedPersonalDataSale: false,
+      }), []);
+    case 'getActiveDataPermissions':
+      return mapPort(ctx.ports.data.hinPermissions(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (permissions) => ({
+        permissions,
+      }), []);
+    case 'getApprovedEarnings':
+      return mapPort(ctx.ports.data.hinEarnings(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (earnings) => ({
+        earnings,
+        guaranteed: false,
+        fabricated: false,
+      }), ['earnings.settledMinorUnits']);
+    case 'explainLicense':
+      return mapPort(
+        ctx.ports.data.hinLicense(ctx.session.ownerId, str(ctx.input.licenseId)),
+        ctx,
+        'APPROVAL_CARD',
+        (license) => ({ license, acceptsTerms: false }),
+        [],
+      );
+    case 'initiateConsentChange':
+      return {
+        status: 'APPROVAL_REQUIRED' as const,
+        toolId: ctx.tool.toolId,
+        version: ctx.tool.version,
+        executed: false as const,
+        payload: Object.freeze({
+          proposalOnly: true,
+          executesTerms: false,
+          acceptsMaterialTerms: false,
+        }),
+        rendering: hint('APPROVAL_CARD', []),
+        error: null,
+        proposalId: null,
+        workflowId: null,
+      };
+    case 'getHinParticipation':
+      return mapPort(ctx.ports.data.hinParticipation(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (participation) => ({
+        participation,
+        financialServicesRemainOpen: true,
+      }), []);
+    case 'getVaultRecords': {
+      const categoryIds = typeof ctx.input.categoryIds === 'string' && ctx.input.categoryIds.length > 0
+        ? ctx.input.categoryIds.split(',').map((row) => row.trim()).filter(Boolean)
+        : [];
+      const recordIds = typeof ctx.input.recordIds === 'string' && ctx.input.recordIds.length > 0
+        ? ctx.input.recordIds.split(',').map((row) => row.trim()).filter(Boolean)
+        : [];
+      if (categoryIds.length === 0 && recordIds.length === 0) {
+        return refuse(ctx, 'FAILED', 'INVALID_SCHEMA', 'agent wildcard vault access is forbidden');
+      }
+      return mapPort(
+        ctx.ports.data.vaultRecords(ctx.session.ownerId, {
+          purpose: str(ctx.input.purpose),
+          ...(categoryIds.length > 0 ? { categoryIds } : {}),
+          ...(recordIds.length > 0 ? { recordIds } : {}),
+        }),
+        ctx,
+        'APPROVAL_CARD',
+        (records) => ({ records, entireVaultForbidden: true, consentUnchanged: true }),
+        [],
+      );
+    }
     case 'getNativeAsset':
       return mapPort(ctx.ports.nativeEconomy.asset(str(ctx.input.assetId)), ctx, 'TRADE_PROPOSAL', (asset) => ({
         asset,
@@ -225,6 +292,57 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         valuationIsNotMarketPrice: true,
         futurePriceDeclared: false,
       }), ['sunrey.totalSupply', 'moonrey.totalSupply']);
+    case 'getProductiveEconomy':
+      return mapPort(ctx.ports.productiveEconomy.overview(), ctx, 'TRADE_PROPOSAL', (overview) => ({
+        ...overview,
+        invented: false,
+        minted: false,
+        guaranteedPrice: false,
+      }), ['categories.*.value']);
+    case 'getProductiveCategory':
+      return mapPort(ctx.ports.productiveEconomy.category(str(ctx.input.category)), ctx, 'TRADE_PROPOSAL', (category) => ({
+        category,
+        comparisonOnly: true,
+      }), ['category.value']);
+    case 'getProductiveMethodology':
+      return mapPort(
+        ctx.ports.productiveEconomy.methodology(typeof ctx.input.category === 'string' ? ctx.input.category : undefined),
+        ctx, 'TRADE_PROPOSAL', (methodology) => ({
+          ...methodology,
+          gpuvIsNotMoonRey: true,
+          agentCannotChangeMethodology: true,
+        }), [],
+      );
+    case 'getProductiveFreshness':
+      return mapPort(
+        ctx.ports.productiveEconomy.freshness(typeof ctx.input.category === 'string' ? ctx.input.category : undefined),
+        ctx, 'TRADE_PROPOSAL', (freshness) => ({
+          ...freshness,
+          staleIsNotTimeSensitiveValuation: true,
+        }), [],
+      );
+    case 'getHinContributions':
+      return mapPort(ctx.ports.hin.contributions(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (contributions) => ({
+        contributions,
+        issuancePromised: false,
+        containsRawPersonalData: false,
+      }), []);
+    case 'getHinMetrics':
+      return mapPort(ctx.ports.hin.metrics(), ctx, 'APPROVAL_CARD', (metrics) => ({
+        ...metrics,
+        individualRecordsExposed: false,
+        isMintAmount: false,
+      }), []);
+    case 'getHinSummary':
+      return mapPort(ctx.ports.hin.summary(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (summary) => ({
+        ...summary,
+        issuancePromised: false,
+      }), []);
+    case 'getHinValuationMethodologies':
+      return mapPort(ctx.ports.hin.methodologies(), ctx, 'APPROVAL_CARD', (methodologies) => ({
+        methodologies,
+        isMintFormula: false,
+      }), []);
     default:
       return refuse(ctx, 'FAILED', 'UNKNOWN_TOOL', 'That tool is not registered.');
   }
@@ -453,7 +571,7 @@ function createProposal(
   draft: Omit<CreateProposalInput, 'mandateId' | 'modelRef' | 'networkId'>,
   component: LovableComponentHint,
   extra: Readonly<Record<string, unknown>>,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   const compliance = ctx.ports.compliance.evaluate({
     toolId: ctx.tool.toolId,
     ownerId: ctx.session.ownerId,
@@ -507,7 +625,7 @@ function mapPort<T>(
   component: LovableComponentHint,
   payload: (value: T) => Readonly<Record<string, unknown>>,
   numericPaths: readonly string[],
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   if (!result.ok) {
     return fromPortFailure(ctx, result);
   }
@@ -535,7 +653,7 @@ function success(
   component: LovableComponentHint,
   payload: Readonly<Record<string, unknown>>,
   numericPaths: readonly string[],
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status: 'SUCCESS' as const,
     toolId: ctx.tool.toolId,
@@ -554,7 +672,7 @@ function refuse(
   status: AgentToolResult['status'],
   code: string,
   safeMessage: string,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status,
     toolId: ctx.tool.toolId,

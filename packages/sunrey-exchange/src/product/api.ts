@@ -39,7 +39,7 @@ export class ExchangeApplicationApi {
       readonly baseAssetId: string;
       readonly quoteAssetId: string;
       readonly state: string;
-    };
+    }[];
     snapshot(marketId: string): MarketDataSnapshot | null;
     trades(marketId: string): readonly ImmutableTrade[];
     ordersFor(ownerId: string): readonly DigitalOrder[];
@@ -48,7 +48,7 @@ export class ExchangeApplicationApi {
       readonly quantity: bigint;
       readonly reserved: bigint;
       readonly pendingSettlement: bigint;
-    };
+    }[];
     now(): UtcInstant;
   };
 
@@ -61,7 +61,7 @@ export class ExchangeApplicationApi {
         readonly baseAssetId: string;
         readonly quoteAssetId: string;
         readonly state: string;
-      };
+      }[];
       snapshot(marketId: string): MarketDataSnapshot | null;
       trades(marketId: string): readonly ImmutableTrade[];
       ordersFor(ownerId: string): readonly DigitalOrder[];
@@ -70,7 +70,7 @@ export class ExchangeApplicationApi {
         readonly quantity: bigint;
         readonly reserved: bigint;
         readonly pendingSettlement: bigint;
-      };
+      }[];
       now(): UtcInstant;
     },
   ) {

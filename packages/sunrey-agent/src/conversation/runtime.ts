@@ -151,7 +151,7 @@ export class ConversationalActionRuntime {
     if (!resolved.ok) {
       return this.ask(
         next,
-        resolved.questions.map((item) => item.question),
+        resolved.questions.flatMap((item) => (item.ok ? [] : [item.question])),
         input.now,
       );
     }
@@ -213,7 +213,7 @@ export class ConversationalActionRuntime {
       actor: input.actor,
       now: input.now,
       acknowledgements: input.acknowledgements ?? [],
-      conversationalYes: input.conversationalYes,
+      ...(input.conversationalYes !== undefined ? { conversationalYes: input.conversationalYes } : {}),
     });
     if (!recorded.ok) {
       if (recorded.code === 'STEP_UP_REQUIRED') {
@@ -359,14 +359,16 @@ export class ConversationalActionRuntime {
       actionId,
       card,
       proposal: input.proposal,
-      snapshotBalance: snapshot.ok
+      ...(snapshot.ok
         ? {
-            currency: String(snapshot.value.currency ?? 'USD'),
-            minorUnits: String(snapshot.value.minorUnits ?? '0'),
-            uncertainty: snapshot.uncertainty,
-            source: snapshot.source,
+            snapshotBalance: {
+              currency: String(snapshot.value.currency ?? 'USD'),
+              minorUnits: String(snapshot.value.minorUnits ?? '0'),
+              uncertainty: snapshot.uncertainty,
+              source: snapshot.source,
+            },
           }
-        : undefined,
+        : {}),
     });
     const action: ConversationalAction = Object.freeze({
       actionId,

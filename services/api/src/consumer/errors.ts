@@ -67,9 +67,8 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
-      return 403;
     case 'STEP_UP_REQUIRED':
-      return 401;
+      return 403;
     case 'NOT_FOUND':
       return 404;
     case 'METHOD_NOT_ALLOWED':

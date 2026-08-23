@@ -71,6 +71,9 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | previewExchangeOrder | Order preview, not a guaranteed price | `marketId`, `side`, `quantity` | preview | READ | READ_FINANCIAL_STATE | read-only | exchange product preview | no |
 | getExchangeOrderStatus | Order and clearing status | optional `orderId` | orders | READ | READ_FINANCIAL_STATE | read-only | exchange product clearing | no |
 | createExchangeOrderProposal | Propose a trade | `marketId`, `side`, `quantity`, `assetId` | proposal id | PROPOSAL | PREPARE_EXCHANGE_ORDER | proposal | exchange + ProposalGate | yes |
+| checkExchangeEligibility | KYC / Exchange eligibility | none | eligibility | READ | READ_FINANCIAL_STATE | read-only | exchange eligibility | no |
+| getMarketData | Ticker / book (not guaranteed) | `marketId` | market data | READ | READ_FINANCIAL_STATE | read-only | exchange market data | no |
+| getEconomyStatus | LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE | none | freshness | READ | READ_FINANCIAL_STATE | read-only | economy BFF | no |
 
 ## WALLETS / CUSTODY
 
@@ -98,6 +101,12 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getVaultSummary | Approved categories/sources | none | summary | READ | READ_FINANCIAL_STATE | read-only | PDV | no |
 | getHinContributionSummary | Verified contributions + rights | none | summary | READ | READ_FINANCIAL_STATE | read-only | HIN + contribution | no |
 | requestHinConsentChange | Start HIN stop; does not revoke | none | request | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | consent + HIN | yes |
+| getInformationRights | Usage rights for the owner | none | rights | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| getActiveDataPermissions | Licensed purposes | none | permissions | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| getApprovedEarnings | Settled earnings only | none | earnings | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| explainLicense | Explain one license | `licenseId` | license | READ | READ_FINANCIAL_STATE | read-only | information-market rights-marketplace | no |
+| initiateConsentChange | Propose a consent change | none | proposal-only | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | information-market + consent | yes |
+| getHinParticipation | Optional HIN state | none | participation | READ | READ_FINANCIAL_STATE | read-only | consent product | no |
 
 ## NATIVE ECONOMY
 
@@ -108,6 +117,27 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getNativeEconomy | Approved explanation + last trade if any | none | overview | READ | READ_FINANCIAL_STATE | read-only | native-assets client surface | no |
 
 Agents cannot mint, burn, modify policy, change supply, or declare a future price.
+
+## PRODUCTIVE ECONOMY
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getProductiveEconomy | Approved productive-economy overview | none | categories + no-mint flags | READ | READ_FINANCIAL_STATE | read-only | productive/economy-data | no |
+| getProductiveCategory | Compare one configured category | `category` | metric / unit / freshness | READ | READ_FINANCIAL_STATE | read-only | productive/economy-data | no |
+| getProductiveMethodology | Explain versioned methodology | optional `category` | GPUV input methodology | READ | READ_FINANCIAL_STATE | read-only | value methodology registry | no |
+| getProductiveFreshness | Explain freshness | optional `category` | freshness + valuation usability | READ | READ_FINANCIAL_STATE | read-only | freshness policy | no |
+
+Agents cannot invent data, change methodology, mint MoonRey, or predict a guaranteed MoonRey price.
+## HIN / HUMAN CONTRIBUTION
+
+| Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| getHinContributions | Owner contribution list | none | contributions | READ | READ_FINANCIAL_STATE | read-only | human-economic-contribution hin-value | no |
+| getHinMetrics | Privacy-safe aggregates | none | metrics | READ | READ_FINANCIAL_STATE | read-only | hin-value metrics | no |
+| getHinSummary | Customer contribution view | none | summary | READ | READ_FINANCIAL_STATE | read-only | hin-value customer view | no |
+| getHinValuationMethodologies | Safe methodology metadata | none | methodologies | READ | READ_FINANCIAL_STATE | read-only | hin-value methodologies | no |
+
+Agents cannot verify contributions, set HIN economic policy, set a mint amount, or approve issuance.
 
 ## Not created
 
@@ -120,3 +150,4 @@ Tools were not created for unsupported or forbidden capabilities:
 - provider credential access
 - `sendMoneyImmediately` / `executeProposal` / `selfApprove`
 - native-asset mint / burn / policy change / future-price declaration
+- HIN contribution verification / mint / issuance approval

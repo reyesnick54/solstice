@@ -83,6 +83,7 @@ export type {
 export { buildProductiveCapacityGraph } from './graph.ts';
 export type { GraphEdge, GraphNode, GraphSources, ProductiveCapacityGraph } from './graph.ts';
 export { ProductiveEconomyEngine, replicaFromSnapshot } from './engine.ts';
+export * as productiveEconomyData from './economy-data/index.ts';
 export type { EngineClock, ProductiveSnapshot } from './engine.ts';
 export { runProductiveCommand } from './cli.ts';
 export { fourValidatorsAgree, runAllDemos, runComputeDemo, runEnergyDemo, runManufacturingDemo } from './demo.ts';

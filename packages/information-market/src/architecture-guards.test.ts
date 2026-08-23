@@ -38,7 +38,7 @@ describe('information market architecture guards', () => {
       assert.equal(/AuthorityIssuer\.issue|this\.issuer\.issue\(/.test(source), false, file);
       assert.equal(/ticker\s*[:=]\s*['"]?(SUNREY|SRN|SRY|REYN|RYN|RCOIN)/.test(source), false, file);
       assert.equal(/\b(SRN|SRY|RYN|RCOIN)\b/.test(source), false, file);
-      assert.equal(/APY|APR|blended return|yield rate|market cap/i.test(source), false, file);
+      assert.equal(/\bAPY\b|\bAPR\b|blended return|yield rate|market cap/i.test(source), false, file);
       assert.equal(/from ['"].*services\//.test(source), false, file);
     }
     assert.equal(existsSync(join(ROOT, 'packages/pyramid-data-exchange')), false);
@@ -57,6 +57,9 @@ describe('information market architecture guards', () => {
     assert.equal(existsSync(join(ROOT, 'packages/consent-chain')), false);
     assert.equal(existsSync(join(ROOT, 'packages/human-data-ledger')), false);
     assert.equal(existsSync(join(ROOT, 'packages/data-marketplace')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/licensing')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/information-rights-v2')), false);
+    assert.equal(existsSync(join(ROOT, 'packages/data-licensing')), false);
     assert.equal(existsSync(join(ROOT, 'packages/hin-chain-anchor')), false);
     assert.equal(existsSync(join(ROOT, 'packages/hin-finality')), false);
     assert.equal(existsSync(join(ROOT, 'packages/information-chain-node')), false);

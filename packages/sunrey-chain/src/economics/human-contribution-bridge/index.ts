@@ -97,5 +97,7 @@ export type {
 } from './gate.ts';
 
 export { fixtureUnverifiedContribution, fixtureVerifiedContribution } from './fixtures.ts';
+export { acceptHinIssuanceBasis, hinCannotMint } from './hin-issuance-basis.ts';
+export type { HinIssuanceAcceptance, HinIssuanceBasisShape } from './hin-issuance-basis.ts';
 
 export * as productionCandidateConversion from './production-candidate/index.ts';

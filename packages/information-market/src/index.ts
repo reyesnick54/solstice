@@ -111,6 +111,25 @@ export type {
   HumanInformationSubject,
   HumanInformationUsageReceipt,
 } from './network/index.ts';
+export {
+  InformationRightsMarketplace,
+  InformationRightsMarketplaceAgentSurface,
+  createSandboxRightsMarketplace,
+  projectLicenses,
+  projectParticipation,
+  projectPermissions,
+  projectRights,
+  LICENSE_PURPOSES,
+  LICENSE_STATUSES,
+  MARKETPLACE_LEGAL_STATUS as RIGHTS_MARKETPLACE_LEGAL_STATUS,
+  PRODUCTION_ACTIVE as RIGHTS_MARKETPLACE_PRODUCTION_ACTIVE,
+} from './rights-marketplace/index.ts';
+export type {
+  InformationLicense,
+  InformationRight,
+  LicenseSettlement,
+  UsageEvent,
+} from './rights-marketplace/index.ts';
 export type {
   BillingBreakdown,
   CompensationAgreement,

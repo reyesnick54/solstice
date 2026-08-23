@@ -1,14 +1,19 @@
 import { contentHash } from '../ids.ts';
 import type { StructuredToolCall } from './types.ts';
 
-export const DEFAULT_TURN_LIMITS = Object.freeze({
+export type TurnLimits = {
+  readonly maxToolCalls: number;
+  readonly maxIdenticalCalls: number;
+  readonly maxProposalCreates: number;
+  readonly maxRecursiveProposals: number;
+};
+
+export const DEFAULT_TURN_LIMITS: TurnLimits = Object.freeze({
   maxToolCalls: 8,
   maxIdenticalCalls: 2,
   maxProposalCreates: 3,
   maxRecursiveProposals: 1,
 });
-
-export type TurnLimits = typeof DEFAULT_TURN_LIMITS;
 
 export type LoopGuardFailure = {
   readonly ok: false;

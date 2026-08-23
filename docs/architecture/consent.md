@@ -25,6 +25,19 @@ remains unimplemented.
 
 This is not GDPR, CCPA, or PDPL legal approval.
 
+## Productization (Phase H Prompt 2)
+
+`ConsentDataRightsEngine` at `packages/consent/src/product/engine.ts`
+is the customer control plane: purpose catalog, granular grants,
+receipts, revocation workflow, `mayAccessData`, Agent mandate + consent
+dual gate, licensee scopes, data-rights requests, HIN participation,
+and access audit without raw values.
+
+It wraps this ledger. It is not a second consent system.
+`OPTIONAL_COMPENSATED` purposes are never defaulted on.
+Withdrawing optional HIN participation does not close financial
+services.
+
 ## Concurrency
 
 In-memory and PostgreSQL adapters serialize permit issuance and

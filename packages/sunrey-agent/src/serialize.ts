@@ -55,22 +55,23 @@ export function serializeAgentRuntimeSnapshot(snapshot: AgentRuntimeSnapshot): S
       ),
     ),
     mandates: Object.freeze(
-      snapshot.mandates.map((row) =>
-        Object.freeze({
-          ...row,
+      snapshot.mandates.map((row) => {
+        const { maxProposalAmount, dailyProposalAggregate, ...budgetRest } = row.budget;
+        const { economicMandateRef, ...mandateRest } = row;
+        return Object.freeze({
+          ...mandateRest,
+          ...(economicMandateRef !== undefined ? { economicMandateRef } : {}),
           budget: Object.freeze({
-            ...row.budget,
-            perTransaction: row.budget.perTransaction.toString(),
-            perPeriod: row.budget.perPeriod.toString(),
-            ...(row.budget.maxProposalAmount !== undefined
-              ? { maxProposalAmount: row.budget.maxProposalAmount.toString() }
-              : {}),
-            ...(row.budget.dailyProposalAggregate !== undefined
-              ? { dailyProposalAggregate: row.budget.dailyProposalAggregate.toString() }
+            ...budgetRest,
+            perTransaction: budgetRest.perTransaction.toString(),
+            perPeriod: budgetRest.perPeriod.toString(),
+            ...(maxProposalAmount !== undefined ? { maxProposalAmount: maxProposalAmount.toString() } : {}),
+            ...(dailyProposalAggregate !== undefined
+              ? { dailyProposalAggregate: dailyProposalAggregate.toString() }
               : {}),
           }),
-        }),
-      ),
+        });
+      }),
     ),
   });
 }
@@ -104,22 +105,23 @@ export function deserializeAgentRuntimeSnapshot(raw: SerializedAgentRuntimeSnaps
       ),
     ),
     mandates: Object.freeze(
-      raw.mandates.map((row) =>
-        Object.freeze({
-          ...row,
+      raw.mandates.map((row) => {
+        const { maxProposalAmount, dailyProposalAggregate, ...budgetRest } = row.budget;
+        const { economicMandateRef, ...mandateRest } = row;
+        return Object.freeze({
+          ...mandateRest,
+          ...(economicMandateRef !== undefined ? { economicMandateRef } : {}),
           budget: Object.freeze({
-            ...row.budget,
-            perTransaction: BigInt(row.budget.perTransaction),
-            perPeriod: BigInt(row.budget.perPeriod),
-            ...(row.budget.maxProposalAmount !== undefined
-              ? { maxProposalAmount: BigInt(row.budget.maxProposalAmount) }
-              : {}),
-            ...(row.budget.dailyProposalAggregate !== undefined
-              ? { dailyProposalAggregate: BigInt(row.budget.dailyProposalAggregate) }
+            ...budgetRest,
+            perTransaction: BigInt(budgetRest.perTransaction),
+            perPeriod: BigInt(budgetRest.perPeriod),
+            ...(maxProposalAmount !== undefined ? { maxProposalAmount: BigInt(maxProposalAmount) } : {}),
+            ...(dailyProposalAggregate !== undefined
+              ? { dailyProposalAggregate: BigInt(dailyProposalAggregate) }
               : {}),
           }),
-        }),
-      ),
+        });
+      }),
     ),
   });
 }

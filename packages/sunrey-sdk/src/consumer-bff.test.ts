@@ -346,6 +346,86 @@ describe('consumer BFF native economy SDK', () => {
     assert.ok(urls.some((row) => row.includes('/api/v1/economy/supply')));
     assert.ok(urls.every((row) => row.startsWith('GET ')));
   });
+
+  it('calls read-only productive-economy routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_pedp',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.productive-economy.v1',
+            productionActive: false,
+            simulation: true,
+            minted: false,
+            marketPriceSet: false,
+            gpuvInput: '0',
+            items: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const overview = await client.getProductiveEconomy();
+    await client.getProductiveCategories();
+    await client.getProductiveHistory('ENERGY');
+    await client.getProductiveSources();
+    await client.getMoonReyEconomicInput();
+    assert.equal(overview.schema, 'sunrey.consumer.productive-economy.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/economy/productive/moonrey-input')));
+    assert.ok(urls.every((row) => row.startsWith('GET ')));
+  });
+});
+
+describe('consumer BFF data-rights SDK', () => {
+  it('calls consent and HIN participation routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_data',
+describe('consumer BFF vault SDK', () => {
+  it('calls vault home and category routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.vault_financial',
+      generateRequestId: () => 'req_vault',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.data.permissions.v1',
+            implicitMonetizationOptIn: false,
+            financialServicesRemainOpen: true,
+            items: [],
+            schema: 'sunrey.consumer.vault.home.v1',
+            productionActive: false,
+            liveMonetizationEnabled: false,
+            sunreyOwnsUserData: false,
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    await client.getDataPermissions();
+    await client.listDataConsents();
+    await client.getHinParticipation();
+    await client.submitDataRightsRequest({ type: 'EXPORT' });
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/permissions')));
+    assert.ok(urls.some((row) => row.includes('/api/v1/hin/participation')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/data/rights/requests')));
+    const home = await client.getVaultHome();
+    await client.listVaultCategories();
+    await client.listVaultRecords();
+    assert.equal(home.schema, 'sunrey.consumer.vault.home.v1');
+    assert.ok(urls.some((row) => row.includes('/api/v1/data/vault/categories')));
+  });
 });
 
 describe('consumer BFF SDK browser boundary', () => {

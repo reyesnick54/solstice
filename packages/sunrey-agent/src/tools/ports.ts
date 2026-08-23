@@ -262,6 +262,33 @@ export type DataPort = {
     readonly confirmed: false;
     readonly requiresExplicitUserAction: true;
   }>;
+  hinRights(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly items: readonly { readonly rightId: string; readonly category: string; readonly status: string; readonly ownershipTransferred: false }[];
+  }>;
+  hinPermissions(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly purposes: readonly string[];
+  }>;
+  hinEarnings(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly settledMinorUnits: string;
+    readonly guaranteed: false;
+  }>;
+  hinLicense(ownerId: string, licenseId: string): PortResult<{
+    readonly licenseId: string;
+    readonly purpose: string;
+    readonly status: string;
+  }>;
+  hinParticipation(ownerId: string): PortResult<{
+    readonly ownerId: string;
+    readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
+    readonly financialServicesRemainOpen: true;
+  }>;
+  vaultRecords(
+    ownerId: string,
+    input: { readonly purpose: string; readonly categoryIds?: readonly string[]; readonly recordIds?: readonly string[] },
+  ): PortResult<readonly { readonly dataRecordId: string; readonly categoryId: string; readonly label: string }[]>;
 };
 
 export type NativeEconomyRecord = {
@@ -285,12 +312,48 @@ export type NativeEconomyPort = {
   }>;
 };
 
+export type ProductiveEconomyMetric = {
+  readonly category: string;
+  readonly metric: string;
+  readonly value: string;
+  readonly unit: string;
+  readonly freshness: string;
+  readonly verification: string;
+  readonly sourceClass: string;
+};
+
+export type ProductiveEconomyPort = {
+  overview(): PortResult<{
+    readonly categories: readonly ProductiveEconomyMetric[];
+    readonly productionActive: false;
+    readonly minted: false;
+  }>;
+  category(category: string): PortResult<ProductiveEconomyMetric>;
+  methodology(category?: string): PortResult<{
+    readonly methodologyId: string;
+    readonly version: string;
+    readonly gpuvIsNotMoonRey: true;
+    readonly hardcodedIssuanceRatio: false;
+  }>;
+  freshness(category?: string): PortResult<{
+    readonly freshness: string;
+    readonly usableForTimeSensitiveValuation: boolean;
+  }>;
+};
+
 export type ToolCompliancePort = {
   evaluate(input: {
     readonly toolId: string;
     readonly ownerId: string;
     readonly amountMinorUnits?: string;
   }): { readonly status: 'ALLOW' | 'BLOCK' | 'HOLD' | 'REQUIRE_MANUAL_REVIEW'; readonly detail: string };
+};
+
+export type HinContributionPort = {
+  contributions(ownerId: string): PortResult<readonly { readonly contributionId: string; readonly category: string; readonly verification: string }[]>;
+  metrics(): PortResult<{ readonly verifiedContributors: number; readonly individualRecordsExposed: false; readonly isMintAmount: false }>;
+  summary(ownerId: string): PortResult<{ readonly issuancePromised: false; readonly compensation: { readonly mintRequested: false } }>;
+  methodologies(): PortResult<readonly { readonly methodologyId: string; readonly isMintFormula: false }[]>;
 };
 
 export type AgentToolDomainPorts = {
@@ -304,5 +367,7 @@ export type AgentToolDomainPorts = {
   readonly cards: CardsPort;
   readonly data: DataPort;
   readonly nativeEconomy: NativeEconomyPort;
+  readonly productiveEconomy: ProductiveEconomyPort;
+  readonly hin: HinContributionPort;
   readonly compliance: ToolCompliancePort;
 };

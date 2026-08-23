@@ -527,7 +527,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/agentic-capital-mesh` | `packages/domain`, `packages/money`, `packages/identity`, `packages/config`, `packages/events`, `packages/evidence`, `packages/agent`, `packages/risk`, `packages/model-registry`, `packages/investments` |
 | `packages/strategy-lab` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/risk`, `packages/model-registry`, `packages/regulatory-twin` |
 | `services/strategy-lab` | `packages/strategy-lab` |
-| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/sunrey-agent` |
+| `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/sunrey-agent`, `packages/sunrey-exchange`, `packages/human-economic-contribution` |
 | `services/api` | `services/accounts`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions`, `packages/platform` |
 | `services/api` | `services/accounts`, `services/investments`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
 | `services/api` | `services/accounts`, `services/economic-graph`, `packages/domain`, `packages/money`, `packages/config`, `packages/identity`, `packages/permissions` |
@@ -536,7 +536,7 @@ must be added to `manifest.json` before they appear on disk.
 | `packages/clean-room` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/personal-data-vault`, `packages/consent`, `packages/personal-economic-graph` |
 | `packages/regulatory-twin` | `packages/domain`, `packages/money`, `packages/permissions`, `packages/config`, `packages/kernel`, `packages/evidence`, `packages/events`, `packages/identity`, `packages/security` |
 | `packages/sunrey-chain` | `packages/domain`, `packages/config`, `packages/security`, `packages/identity`, `packages/evidence`, `packages/events`, `packages/money` |
-| `services/api` | `packages/config`, `packages/domain` |
+| `services/api` | `packages/config`, `packages/domain`, `packages/consent` |
 | `tools/architectural-linter` | nothing |
 
 ### Hard direction rules
@@ -1828,6 +1828,14 @@ create `packages/economic-data-fabric`, `packages/unified-oracles`,
 `packages/cross-domain-reconciliation`, or
 `packages/moonrey-data-fabric`. See
 [`chunk-138-unified-economic-data-fabric.md`](./chunk-138-unified-economic-data-fabric.md).
+Phase H productizes the MoonRey productive-economy data platform at
+`packages/sunrey-chain/src/productive/economy-data`. It composes the
+existing productive registry, canonical units, oracle verification,
+GPUV Productive Value Function, and Chunk 71 issuance interface. It
+does not create `packages/productive-economy-data`,
+`packages/moonrey-data-fabric`, or a second oracle. Observations are
+economic inputs. They do not mint MoonRey and do not set Exchange
+price. Production remains inactive.
 Chunk 150 implements external economic oracle provider
 production-candidate profiles, approved endpoint blueprints, injected
 transports, onboarding packets, and revalidation at
