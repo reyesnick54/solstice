@@ -849,7 +849,6 @@ function dispatchPayments(
 
 function dispatchGrow(
   grow: GrowBffSurface | ProductGrowthService,
-  grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,

@@ -243,14 +243,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/grow/executions/${encodeURIComponent(id)}`, undefined, options);
   }
 
-  async getGrowPortfolio(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
-  }
-
-  async getGrowPerformance(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow/performance', undefined, options);
-  }
-
   async getPlanProgress(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/plan/progress', undefined, options);
   }
@@ -456,7 +448,6 @@ export class SunReyConsumerBffClient {
 
   async request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
-    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,
     options?: BffRequestOptions,
