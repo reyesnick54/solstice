@@ -66,6 +66,8 @@ import { dispatchWallets } from './wallets.ts';
 import { dispatchHin } from './hin.ts';
 import type { InformationRightsMarketplace } from '../../../../packages/information-market/src/rights-marketplace/index.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
+import { DATA_SOURCE_STATUSES, RIGHTS_REQUEST_KINDS, RIGHTS_REQUEST_STATES, dispatchPhaseH } from './phase-h/index.ts';
+import type { PhaseHProductSurface } from './phase-h/index.ts';
 import type { ProductiveEconomySurface } from './productive-economy-adapter.ts';
 import type { HinContributionSurface } from './hin-adapter.ts';
 import {
@@ -112,6 +114,7 @@ export type ConsumerBffRuntime = {
   readonly hin?: HinContributionSurface;
   readonly exchange?: ExchangeLifecycleSurface | ExchangeProductSurface;
   readonly exchange?: ExchangeBffSurface;
+  readonly phaseH?: PhaseHProductSurface;
   readonly dataRights?: ConsentDataRightsEngine;
   readonly vault?: PersonalDataVaultProduct;
 };
@@ -225,6 +228,9 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         custodyModel: CUSTODY_MODELS,
         walletFinality: CLIENT_FINALITY_STATES,
         travelRuleCustomer: TRAVEL_RULE_CUSTOMER_STATES,
+        dataSourceStatus: DATA_SOURCE_STATUSES,
+        rightsRequestKind: RIGHTS_REQUEST_KINDS,
+        rightsRequestState: RIGHTS_REQUEST_STATES,
         hinLicenseStatus: ['PROPOSED', 'ACTIVE', 'SUSPENDED', 'REVOKED', 'EXPIRED', 'TERMINATED'],
         hinPurpose: ['RESEARCH', 'PRODUCT_IMPROVEMENT', 'AGGREGATED_ANALYTICS', 'STATISTICAL_INSIGHT', 'MODEL_EVALUATION', 'MARKETING', 'CREDIT_DECISIONING'],
         hinCategory: HIN_PRODUCT_CATEGORIES,
@@ -564,6 +570,18 @@ function dispatchAuthenticated(
       },
       headers,
     );
+  }
+
+  if (runtime.phaseH) {
+    const phaseH = dispatchPhaseH(
+      runtime.phaseH,
+      { method: request.method, path: request.path, body: request.body },
+      principal,
+      requestId,
+    );
+    if (phaseH) {
+      return json(phaseH.status, phaseH.body, headers);
+    }
   }
 
   if (path === '/api/v1/economy' && method === 'GET') {
@@ -1580,6 +1598,13 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/assets',
   'GET /api/v1/economy/assets/{id}',
   'GET /api/v1/economy/supply',
+  'GET /api/v1/economy/sunrey',
+  'GET /api/v1/economy/moonrey',
+  'GET /api/v1/economy/hin',
+  'GET /api/v1/economy/productive',
+  'GET /api/v1/economy/productive/{category}',
+  'POST /api/v1/economy/productive/observe',
+  'POST /api/v1/economy/basis-proposal',
   'GET /api/v1/economy/productive',
   'GET /api/v1/economy/productive/categories',
   'GET /api/v1/economy/productive/history',
@@ -1624,6 +1649,44 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/hin/participation/pause',
   'POST /api/v1/hin/participation/withdraw',
   'GET /api/v1/data',
+  'GET /api/v1/data/categories',
+  'GET /api/v1/data/sources',
+  'GET /api/v1/data/records',
+  'POST /api/v1/data/records',
+  'POST /api/v1/data/records/ingest',
+  'GET /api/v1/data/records/{id}',
+  'POST /api/v1/data/records/{id}/derive',
+  'GET /api/v1/data/records/{id}/history',
+  'POST /api/v1/data/records/{id}/correct',
+  'POST /api/v1/data/records/{id}/dispute',
+  'POST /api/v1/data/records/{id}/delete',
+  'GET /api/v1/data/access-history',
+  'GET /api/v1/data/permissions',
+  'POST /api/v1/data/permissions',
+  'POST /api/v1/data/permissions/{id}/revoke',
+  'GET /api/v1/data/consent',
+  'GET /api/v1/data/consent/{id}/receipt',
+  'GET /api/v1/data/agent-access',
+  'POST /api/v1/data/agent-access/read',
+  'GET /api/v1/data/agent-access/summary',
+  'GET /api/v1/data/hin',
+  'POST /api/v1/data/hin/participate',
+  'POST /api/v1/data/hin/stop/request',
+  'POST /api/v1/data/hin/stop',
+  'GET /api/v1/data/contributions',
+  'POST /api/v1/data/contributions',
+  'GET /api/v1/data/earnings',
+  'GET /api/v1/data/licenses',
+  'POST /api/v1/data/licenses',
+  'POST /api/v1/data/licenses/{id}/approve',
+  'POST /api/v1/data/licenses/{id}/pay',
+  'POST /api/v1/data/licenses/{id}/revoke',
+  'GET /api/v1/data/rights',
+  'POST /api/v1/data/rights',
+  'POST /api/v1/data/export',
+  'GET /api/v1/data/retention',
+  'GET /api/v1/data/gates',
+  'GET /api/v1/data/statuses',
   'GET /api/v1/data/permissions',
   'GET /api/v1/data/consents',
   'POST /api/v1/data/consents',
