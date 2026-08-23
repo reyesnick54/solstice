@@ -17,14 +17,14 @@ describe('Phase I concurrency matrix', () => {
   it('posts simultaneous transfers without duplicating money', async () => {
     const world = createPhaseCWorld('i_conc', 400_000n);
     const opened = world.runtime.accountsService.open({
-      id: asIntentId('open_i_conc'),
+      id: asIntentId('open_i_conc_dest'),
       actionType: ACTION_TYPES.OPEN_ACCOUNT,
-      idempotencyKey: 'open_i_conc',
+      idempotencyKey: 'open_i_conc_dest',
       actorId: world.actorId,
       requestedAt: world.clock.now(),
       purpose: 'CUSTOMER_ONBOARDING',
       payload: {
-        accountId: asAccountId('acct_i_conc_b'),
+        accountId: asAccountId('acct_i_conc_dest'),
         ownerId: world.customer.id,
         productId: asProductId('prod_demand_usd_us'),
         accountClass: 'DEMAND_DEPOSIT',
@@ -37,6 +37,7 @@ describe('Phase I concurrency matrix', () => {
     if (opened.outcome !== 'OPENED') {
       throw new Error('open');
     }
+    const before = ledgerBalance(world, world.account);
     const results = await Promise.all(
       [1, 2].map((n) =>
         Promise.resolve(
@@ -57,8 +58,11 @@ describe('Phase I concurrency matrix', () => {
       ),
     );
     assert.ok(results.every((row) => row.outcome === 'POSTED'));
-    assert.equal(ledgerBalance(world, world.account), 380_000n);
-    assert.equal(ledgerBalance(world, opened.account), 20_000n);
+    const source = ledgerBalance(world, world.account);
+    const destination = ledgerBalance(world, opened.account);
+    assert.equal(source + destination, before);
+    assert.equal(source, before - 20_000n);
+    assert.equal(destination, 20_000n);
   });
 
   it('replays a duplicate settlement without a second journal', () => {

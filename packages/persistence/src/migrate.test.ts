@@ -553,6 +553,16 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v038.sql), false);
   });
 
+  it('customer V039 persists Personal Data Vault productization metadata without a second vault', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v039 = files.find((file) => file.version === 39);
+    assert.ok(v039);
+    assert.equal(v039.filename, 'V039__personal_data_vault_productization.sql');
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.record_metadata/);
+    assert.match(v039.sql, /pdv_meta_no_plaintext/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v039.sql), false);
+  });
+
   it('customer V036 persists Grow execution records without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v036 = files.find((file) => file.version === 36);

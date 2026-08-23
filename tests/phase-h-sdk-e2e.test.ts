@@ -15,6 +15,8 @@ describe('Phase H SDK-only Vault / HIN / productive-data E2E', () => {
       identity: world.runtime.identity.service,
       vault: world.vault,
       hin: world.hin,
+      hinContributions: world.hinContributions,
+      productiveEconomy: world.productiveEconomy,
     };
     const server = await startConsumerBff({ runtime });
     const vaultClient = createSunReyConsumerBffClient({

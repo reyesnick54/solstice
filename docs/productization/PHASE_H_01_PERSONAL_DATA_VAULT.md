@@ -21,7 +21,7 @@ Live data monetization and live native-asset issuance stay disabled.
 | --- | --- | --- |
 | Canonical store | `packages/personal-data-vault/src/service.ts` | Encrypted ingest, version, derive, export, delete |
 | Product facade | `packages/personal-data-vault/src/product/service.ts` | Typed Vault Data Record, categories, correction, export jobs |
-| Persistence | `packages/persistence/src/personal-data-vault` + `db/customer/migrations/V019` / `V038` | PostgreSQL metadata and ciphertext envelopes |
+| Persistence | `packages/persistence/src/personal-data-vault` + `db/customer/migrations/V019` / `V039` | PostgreSQL metadata and ciphertext envelopes |
 | Consumer BFF | `services/api/src/consumer/vault.ts` | Lovable-safe `/api/v1/data/vault*` |
 | Agent tool | `packages/sunrey-agent` `getVaultRecords` | Required purpose + category or record ids. No wildcard |
 

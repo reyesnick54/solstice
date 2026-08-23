@@ -27,6 +27,10 @@ HIN `packages/information-market`.
 4. Returned the sandbox Personal Data Vault from `createSandboxWorld`.
 5. Removed an invalid `vault` argument from `ConsentDataRightsEngine`.
 6. Closed a missing brace on `getMoonReyEconomicInput` in the consumer SDK.
+7. Renamed the second `V038` customer migration to `V039` (vault productization).
+8. Repaired Consumer BFF merge remnants: HIN/data-rights/vault dispatch, duplicate `hin`/`exchange` runtime fields, broken `dispatchExchange`, duplicate Grow opportunity adapter, mid-file Grow re-imports, concatenated HIN tests.
+9. Routed `/api/v1/grow/portfolio/performance` (and sibling portfolio reads) through the existing Grow BFF surface.
+10. Fixed the Phase I concurrency transfer fixture so the destination open no longer reused the source-account idempotency key.
 
 ## Environment limitations (not faked)
 
