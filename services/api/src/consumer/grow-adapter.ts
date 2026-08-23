@@ -236,6 +236,7 @@ export function createGrowCommandPort(input: {
     return Object.freeze({
       ...body,
       presentationValuation: valuation,
+      ...( 'valuationContext' in body ? { valuationContext: valuation } : {}),
       ...('valuationContext' in body ? { valuationContext: valuation } : {}),
     });
   }
@@ -254,6 +255,7 @@ export function createGrowCommandPort(input: {
     return actor.value;
   }
 
+  function mapFailure(error: { readonly code: string; readonly message: string }, requestId: string): BffErrorEnvelope {
   function mapCommandFailure(
     error: { readonly code: string; readonly message: string },
     requestId: string,

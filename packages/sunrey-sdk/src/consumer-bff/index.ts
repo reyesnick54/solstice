@@ -65,6 +65,10 @@ export type {
   ActionCenterView,
   ConversationIntent,
   ConversationTurn,
+  ExchangeMarket,
+  ExchangeMarkets,
+  ExchangeOrderPreview,
+  ExchangeOrderSubmit,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

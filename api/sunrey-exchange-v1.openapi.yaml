@@ -95,6 +95,26 @@ paths:
       responses:
         "200":
           description: Market data
+  /v1/exchange/fills:
+    get:
+      summary: listFills
+      description: Owner fills with explicit clearing state. A fill is not final settlement.
+      responses:
+        "200":
+          description: Fills
+  /v1/exchange/holdings:
+    get:
+      summary: listHoldings
+      responses:
+        "200":
+          description: Holdings projection
+  /v1/exchange/stream:
+    get:
+      summary: streamMarket
+      description: Public ticker, trade, order-book, and order-status events only.
+      responses:
+        "200":
+          description: Stream
   /v1/consumer/exchange/markets:
     get:
       summary: getConsumerMarket

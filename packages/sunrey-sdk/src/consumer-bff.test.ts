@@ -182,6 +182,51 @@ describe('consumer BFF payments SDK', () => {
   });
 });
 
+describe('consumer BFF exchange SDK', () => {
+  it('calls Exchange market, preview, and proposal-required order routes', async () => {
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.exchange',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            productionTradingEnabled: false,
+            guaranteedExecutionPrice: false,
+            requiresExecution: true,
+            items: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    const markets = await client.listExchangeMarkets();
+    assert.equal(markets.productionTradingEnabled, false);
+    await client.getExchangeTicker('SUNREY_COIN-USD');
+    const preview = await client.previewExchangeOrder({
+      marketId: 'market:sunrey-coin-usd-simulation',
+      instrument: 'SUNREY_COIN-USD',
+      side: 'BUY',
+      quantity: '1',
+    });
+    assert.equal(preview.guaranteedExecutionPrice, false);
+    const submitted = await client.submitExchangeOrder({
+      marketId: 'market:sunrey-coin-usd-simulation',
+      side: 'BUY',
+      quantity: '1',
+      proposalId: 'prop_1',
+    });
+    assert.equal(submitted.requiresExecution, true);
+    await client.listExchangeFills();
+    await client.listExchangeHoldings();
+    assert.ok(urls.some((row) => row.includes('/api/v1/exchange/markets')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/exchange/preview')));
+    assert.ok(urls.some((row) => row.startsWith('POST ') && row.includes('/api/v1/exchange/orders')));
+  });
+});
+
 describe('consumer BFF grow SDK', () => {
   it('exposes grow statuses and calls grow routes', async () => {
     assert.ok(GROW_PLAN_STATUSES.includes('PROPOSED'));
@@ -258,7 +303,8 @@ describe('consumer BFF SDK browser boundary', () => {
       'createSimulationKeyProvider',
       'AuthorityIssuer',
       'postJournal',
-      'ExecutionAuthority',
+      'import type { ExecutionAuthority',
+      'export type ExecutionAuthority',
     ];
     for (const file of files) {
       const source = readFileSync(join(dir, file), 'utf8');

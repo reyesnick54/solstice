@@ -31,7 +31,7 @@ export type MarketOperationsPolicy = {
   };
   readonly sessionModeByMarket: Readonly<Record<string, MarketSessionMode>>;
   readonly orderTypes: readonly OperationalOrderType[];
-  readonly selfTradePolicy: 'CANCEL_INCOMING' | 'PREVENT';
+  readonly selfTradePolicy: import('../taxonomy.ts').SelfTradePolicy;
   readonly priceCollarBps: bigint;
   readonly protectionCollarBps: bigint;
   readonly volatilityTriggerBps: bigint;

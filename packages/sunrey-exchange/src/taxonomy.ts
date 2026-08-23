@@ -96,7 +96,13 @@ export const MARKET_STATES = [
 ] as const;
 export type MarketState = (typeof MARKET_STATES)[number];
 
-export const SELF_TRADE_POLICIES = ['CANCEL_INCOMING', 'PREVENT'] as const;
+export const SELF_TRADE_POLICIES = [
+  'CANCEL_INCOMING',
+  'CANCEL_NEWEST',
+  'CANCEL_OLDEST',
+  'PREVENT',
+  'REJECT',
+] as const;
 export type SelfTradePolicy = (typeof SELF_TRADE_POLICIES)[number];
 
 export const RECONCILIATION_OUTCOMES = [

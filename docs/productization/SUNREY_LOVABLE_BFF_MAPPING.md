@@ -105,7 +105,13 @@ authentication foundation; the BFF only consumes a verified session.
 | AGENT | `/api/v1/agent` | GET | required | availability stub + Home recommendation count | `packages/sunrey-agent` ProposalGate | AVAILABLE_SIMULATION | none; BFF cannot execute |
 | AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
 | AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
-| EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
+| EXCHANGE | `/api/v1/exchange` | GET | required | catalog + screens | `packages/sunrey-exchange` product API | AVAILABLE_SIMULATION | production trading disabled |
+| EXCHANGE Home / Markets | `/api/v1/exchange/markets` | GET | required | market list | same | AVAILABLE_SIMULATION | none |
+| EXCHANGE Asset Detail / Chart / Book / History | `/api/v1/exchange/markets/{instrument}` plus `/ticker` `/orderbook` `/trades` `/candles` | GET | required | ticker, book, trades, OHLC | same | AVAILABLE_SIMULATION | freshness is explicit; last trade is not a guaranteed price |
+| EXCHANGE Buy / Sell preview | `/api/v1/exchange/preview` | POST | required | order preview | same | AVAILABLE_SIMULATION | no frontend math; no guaranteed execution price |
+| EXCHANGE orders | `/api/v1/exchange/orders` | GET, POST, DELETE | required + owner | orders | Kernel / approved proposal | AVAILABLE_SIMULATION | agent orders require `proposalId` |
+| EXCHANGE fills / holdings / status | `/api/v1/exchange/fills` `/holdings` | GET | required + owner | fills with clearing state | same | AVAILABLE_SIMULATION | FILLED is not SETTLED |
+| EXCHANGE stream | `/api/v1/exchange/stream` | GET | required | SSE ticker/trade/book/order-status | same | AVAILABLE_SIMULATION | privileged topics are not exposed |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
