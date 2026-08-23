@@ -1,5 +1,13 @@
 # Phase F closure report
 
+Closure identity (Prompt 5 of 5):
+
+- Branch: `cursor/phase-f-agent-qualification-4690`
+- SHA: `4987b41345479fa348b9ea073b054a237ebb7f5f`
+- Follow-up PR: https://github.com/reyesnick54/solstice/pull/255
+- CI: green on this SHA (10/10)
+- Prompts 1–4 owners are on this tree after the `main` merge and unmash.
+
 PHASE F does not mean SunRey is production ready.
 
 PHASE F means the Agent platform can be treated as a **backend
@@ -39,11 +47,12 @@ ledger is written only by authorized domain services.
 Safety does not depend on one vendor's refusal. The same evaluation
 suite runs against two fixture providers.
 
-Parallel Phase F prompts (gateway, runtime, tools, conversational
-lifecycle) may still land additional persistence and HTTP polish. This
-closure qualifies the canonical owners on this tree:
+Prompts 1–4 (gateway, runtime/memory, tool runtime, conversational
+actions) are present on this tree and share the same canonical owners:
 `packages/ai-runtime`, `packages/sunrey-agent`, `packages/model-registry`,
-and `services/api` consumer BFF.
+and `services/api` consumer BFF. Qualification (Prompt 5) extends those
+owners. It does not create a second Agent, eval platform, or kill-switch
+package.
 
 ## Model Gateway
 
@@ -72,9 +81,10 @@ error/degraded. First-token observation is simulation-only.
 ## Agent runtime
 
 **SANDBOX_FUNCTIONAL.** Identity is owner/wallet/account bound. Mandates
-are enforced by `UserAgentMandateEngine`. Persistence in this closure is
-in-memory / process-scoped. Durable PostgreSQL Agent stores remain a
-later productization increment, not a second Agent package.
+are enforced by `UserAgentMandateEngine`. Conversational state persists
+in `db/customer/migrations/V037__agent_runtime.sql` via
+`packages/persistence/src/agent`. That store is not a ledger and is not
+a production Agent database.
 
 ## Mandates
 
@@ -98,10 +108,9 @@ tools. Secrets never enter inference.
 
 ## Tool runtime
 
-22 typed tools across identity, account, payment, FX, growth,
-portfolio, exchange, custody, compliance, memory, escalation, and
-conversation categories. Mutation tools create proposals only.
-`executesFinancialAction=false`.
+Qualification catalog: 22 typed tools (`agent-tools.phase-f.v1`).
+Canonical Tool Runtime catalog: 37 tools (`CANONICAL_TOOL_COUNT`).
+Mutation tools create proposals only. `executesFinancialAction=false`.
 
 ## Financial tools
 
@@ -200,11 +209,9 @@ Remaining before any live Agent:
 
 ## P1 blockers
 
-1. Merge of parallel Phase F runtime/tool/gateway PRs if they add
-   durable stores — extend these owners, do not fork.
-2. Phase E Growth / portfolio productization merge for richer sandbox
-   investment execution.
-3. Operator UI for kill switches (API exists; console is later).
+1. Operator UI for kill switches (API exists; console is later).
+2. Real-provider transport remains unconnected; fixture adapters only.
+3. Counsel-confirmed corridor policy remains `RESEARCH_REQUIRED`.
 
 ## Current production flags
 

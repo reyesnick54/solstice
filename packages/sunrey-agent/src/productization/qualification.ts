@@ -26,7 +26,7 @@ export const AGENT_DOMAIN_QUALIFICATION: readonly AgentDomainQualification[] = O
   {
     domain: 'AGENT_RUNTIME',
     classification: 'SANDBOX_FUNCTIONAL',
-    notes: 'Mandates, identity, and in-memory persistence. Durable production store remains a later gate.',
+    notes: 'Mandates, identity, and V037 sandbox conversational persistence. Durable production store remains a later gate.',
   },
   {
     domain: 'MEMORY',
