@@ -102,7 +102,7 @@ const ROWS: readonly TelemetryInventoryRow[] = Object.freeze([
     logs: 'PARTIAL',
     traces: 'BLIND',
     notes: 'Growth Orchestrator is proposal-only. Productization counts proposal throughput, never a return-rate field.',
-    blindSpot: 'No percentage-return, APY, or blended-yield metric is permitted.',
+    blindSpot: 'No percentage-return, blended-yield, or growth-rate metric is permitted.',
   },
   {
     system: 'AGENT',

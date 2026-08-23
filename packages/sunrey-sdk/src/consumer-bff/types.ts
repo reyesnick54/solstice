@@ -1011,6 +1011,8 @@ export type HinParticipation = {
   readonly status: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
   readonly compensationGuaranteed: false;
   readonly productionActivated: false;
+};
+
 export type DataPermissionCatalog = {
   readonly schema: 'sunrey.consumer.data.permissions.v1';
   readonly termsVersion: string;

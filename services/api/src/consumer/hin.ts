@@ -107,15 +107,5 @@ export function dispatchHin(
       headers,
     );
   }
-  return json(
-    404,
-    bffError({
-      errorCode: 'NOT_FOUND',
-      category: 'NOT_FOUND',
-      message: 'HIN route not found',
-      retryable: false,
-      requestId,
-    }),
-    headers,
-  );
+  return null;
 }

@@ -387,9 +387,23 @@ function dispatchAuthenticated(
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
       return hin;
+    }
+  }
   if (runtime.dataRights) {
     const dataRights = dispatchDataRights(
       runtime.dataRights,
+      request,
+      principal,
+      requestId,
+      headers,
+      runtime.identity
+        ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) }
+        : undefined,
+    );
+    if (dataRights) {
+      return dataRights;
+    }
+  }
   if (runtime.vault && runtime.identity) {
     const vault = dispatchVault(
       runtime.vault,
@@ -397,10 +411,6 @@ function dispatchAuthenticated(
       principal,
       requestId,
       headers,
-      runtime.identity ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) } : undefined,
-    );
-    if (dataRights) {
-      return dataRights;
       { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
     );
     if (vault) {
@@ -1054,8 +1064,6 @@ function isLifecycleExchange(
 
 function dispatchExchange(
   exchange: ExchangeLifecycleSurface | ExchangeProductSurface,
-function dispatchExchange(
-  exchange: ExchangeBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1150,7 +1158,6 @@ function dispatchExchange(
     const instrument = path.slice('/api/v1/exchange/markets/'.length, -'/ticker'.length);
     return result(exchange.ticker(principal, instrument, requestId), headers);
   }
-  if (path.startsWith('/api/v1/exchange/markets/') && (path.endsWith('/order-book') || path.endsWith('/orderbook')) && method === 'GET') {
   if (
     path.startsWith('/api/v1/exchange/markets/') &&
     (path.endsWith('/orderbook') || path.endsWith('/order-book')) &&
