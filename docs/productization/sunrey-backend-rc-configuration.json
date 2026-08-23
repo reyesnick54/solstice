@@ -1,0 +1,81 @@
+{
+  "schemaVersion": 1,
+  "id": "sunrey.backend.rc.configuration.v1",
+  "status": "FROZEN_FOR_RELEASE_CANDIDATE",
+  "rcVersion": "sunrey-backend-v1.0.0-rc.1",
+  "kind": "BACKEND_PRODUCTION_RELEASE_CANDIDATE",
+  "notAProductionRelease": true,
+  "environment": "simulation",
+  "source": {
+    "repository": "reyesnick54/sunrey",
+    "branchPolicy": "document the commit that created this RC; do not treat a feature branch as mainnet",
+    "commitPlaceholder": "filled-at-tag-time",
+    "packageVersion": "0.1.0"
+  },
+  "buildArtifacts": {
+    "typescript": "tsc --noEmit -p tsconfig.json",
+    "rustWorkspace": "packages/sunrey-chain/rust cargo --locked",
+    "nodeLocal": "packages/sunrey-chain/node",
+    "sdkPackage": "@solstice/sunrey-sdk@0.1.0",
+    "containerDigests": {
+      "status": "NOT_BUILT_IN_THIS_ENVIRONMENT",
+      "reason": "docker is not available in the Phase I Prompt 6 qualification VM",
+      "dockerfiles": [
+        "deploy/sunrey-testnet/docker/sunrey-node.Dockerfile",
+        "deploy/sunrey-testnet/docker/sunrey-rpc.Dockerfile",
+        "deploy/sunrey-testnet/docker/sunrey-explorer.Dockerfile",
+        "deploy/sunrey-testnet/docker/sunrey-relayer.Dockerfile",
+        "deploy/sunrey-testnet/docker/sunrey-faucet.Dockerfile"
+      ]
+    }
+  },
+  "schemas": {
+    "consumerPlatformOpenApi": "api/sunrey-consumer-platform-v1.openapi.yaml",
+    "consumerBffOpenApi": "api/sunrey-consumer-bff-v1.openapi.yaml",
+    "exchangeOpenApi": "api/sunrey-exchange-v1.openapi.yaml",
+    "chainOpenApi": "api/sunrey-chain-v1.openapi.yaml",
+    "developerPlatformOpenApi": "api/sunrey-developer-platform-v1.openapi.yaml"
+  },
+  "migrations": {
+    "owner": "db/",
+    "apply": "npm run db:migrate",
+    "fromZero": "blank PostgreSQL + every versioned SQL file; no hand-created tables",
+    "qualityGate": "scripts/check-migration-quality.mjs"
+  },
+  "agentPolicies": {
+    "owner": "packages/sunrey-agent",
+    "proposalGateOnly": true,
+    "executionAuthorityImportable": false,
+    "selfApprovalForbidden": true
+  },
+  "economicPolicy": {
+    "state": "TEST_PENDING",
+    "mintOwner": "packages/sunrey-chain/src/economics",
+    "fixturePackagesAuthorizeProduction": false,
+    "productionValuationActive": false
+  },
+  "providerRuntime": {
+    "lifecycleCeilingInThisRc": "SANDBOX",
+    "liveCredentialsPresent": false,
+    "credentialPlane": "packages/security/src/regulated/credentials"
+  },
+  "chainTestnet": {
+    "mainnetActive": false,
+    "testnetDeployable": true,
+    "configOwner": "packages/sunrey-chain/src/testnet"
+  },
+  "featureFlags": {
+    "ENVIRONMENT": "simulation",
+    "PRODUCTION_READY": false,
+    "PRODUCTION_ACTIVE": false,
+    "LIVE_CONNECTIVITY_ENABLED": false,
+    "LIVE_EXCHANGE_ENABLED": false,
+    "LIVE_AGENT_FINANCIAL_EXECUTION_ENABLED": false,
+    "LIVE_DATA_MARKETPLACE_ENABLED": false,
+    "MAINNET_ACTIVE": false
+  },
+  "secrets": {
+    "realSecretValuesIncluded": false,
+    "note": "RC freeze references secret purposes only. Raw credentials never enter this file."
+  }
+}

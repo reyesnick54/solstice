@@ -236,6 +236,8 @@
     "ledger",
     "kernel",
     "execution-authority",
+    "identity",
+    "compliance",
     "ai-runtime",
     "sunrey-agent",
     "frontend",
@@ -243,7 +245,9 @@
     "native-asset-supply",
     "monetary-issuance",
     "payments",
-    "exchange"
+    "exchange",
+    "hin-rights",
+    "custody"
   ],
   "name": "sunrey-authority-map",
   "purpose": "Machine-readable architectural authority map for SunRey productization. Not a second constitution, ledger, kernel, or production authorization.",
@@ -251,7 +255,7 @@
   "engineeringRulesDocument": "docs/productization/SUNREY_PRODUCTIZATION_ENGINEERING_RULES.md",
   "inventorySource": {
     "prompt2InventoryPath": "docs/productization/SUNREY_CANONICAL_IMPLEMENTATION_INVENTORY.md",
-    "prompt2InventoryPresent": false,
+    "prompt2InventoryPresent": true,
     "canonicalSources": [
       "docs/architecture/constitution.md",
       "docs/architecture/manifest.json",

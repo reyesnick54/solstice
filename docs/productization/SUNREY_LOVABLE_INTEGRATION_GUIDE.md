@@ -442,6 +442,14 @@ Do not let the Agent sign or broadcast.
 Do not mark a deposit available before `FINALIZED`.
 See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.
 
+## Phase I screen readiness
+
+The definitive table for ONBOARDING through SUPPORT is
+`docs/productization/SUNREY_LOVABLE_SCREEN_READINESS.md`.
+
+`LOVABLE_BACKEND_READY=true` for sandbox/public APIs.
+`PRODUCTION_READY=false`. Live money movement stays disabled.
+
 ## Personal Data Vault (Phase H Prompt 1)
 
 Use the Consumer BFF. Lovable must not implement privacy, consent,

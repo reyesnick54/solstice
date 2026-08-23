@@ -115,19 +115,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/hin/earnings/activity', undefined, options);
   }
 
-  async getHinParticipation(options?: BffRequestOptions): Promise<import('./types.ts').HinParticipation> {
-    return this.request('GET', '/api/v1/hin/participation', undefined, options);
-  }
-
-  async pauseHinParticipation(options?: BffRequestOptions): Promise<unknown> {
-    return this.request('POST', '/api/v1/hin/participation/pause', {}, options);
-  }
-
-  async withdrawHinParticipation(options?: BffRequestOptions): Promise<unknown> {
-    return this.request('POST', '/api/v1/hin/participation/withdraw', {}, options);
-  }
-
-  async listWallets(options?: BffRequestOptions): Promise<{ readonly items: readonly ConsumerWallet[] }> {
   async listWallets(
     options?: BffRequestOptions,
   ): Promise<{ readonly items?: readonly ConsumerWallet[]; readonly schema?: string } & Record<string, unknown>> {
@@ -782,6 +769,8 @@ export class SunReyConsumerBffClient {
 
   async getMoonReyEconomicInput(options?: BffRequestOptions): Promise<ProductiveEconomyOverview['moonreyInput']> {
     return this.request('GET', '/api/v1/economy/productive/moonrey-input', undefined, options);
+  }
+
   async getVaultHome(options?: BffRequestOptions): Promise<VaultHome> {
     return this.request('GET', '/api/v1/data/vault', undefined, options);
   }
@@ -831,27 +820,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/vault/export/status', undefined, options);
   }
 
-  async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
-    return this.request('GET', '/api/v1/exchange/markets', undefined, options);
-  }
-
-  async getExchangeMarket(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}`, undefined, options);
-  }
-
-  async getExchangeTicker(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/ticker`, undefined, options);
-  }
-
-  async getExchangeOrderBook(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request(
-      'GET',
-      `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/orderbook`,
-      undefined,
-      options,
-    );
-  }
-
   async getExchangeTrades(instrument: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', `/api/v1/exchange/markets/${encodeURIComponent(instrument)}/trades`, undefined, options);
   }
@@ -894,8 +862,6 @@ export class SunReyConsumerBffClient {
 
   async listHinValuationMethodologies(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/valuation-methodologies', undefined, options);
-  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
-    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
   async request<T>(

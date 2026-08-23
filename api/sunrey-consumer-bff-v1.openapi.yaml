@@ -2127,7 +2127,14 @@ paths:
       summary: HIN participation
       responses:
         "200":
-          description: Participation status
+          description: NOT_ENROLLED by default; financial services stay open
+  /api/v1/hin/participation/enroll:
+    post:
+      operationId: enrollHinParticipation
+      summary: Explicit optional HIN enrollment
+      responses:
+        "201":
+          description: Enrolled; not a financial-account open
   /api/v1/hin/participation/pause:
     post:
       operationId: pauseHinParticipation
@@ -2141,7 +2148,7 @@ paths:
       summary: Withdraw HIN participation
       responses:
         "200":
-          description: Withdrawn
+          description: Withdrawn without closing ordinary SunRey financial services
   /api/v1/data:
     get:
       operationId: getDataVault
@@ -2225,6 +2232,17 @@ paths:
       responses:
         "200":
           description: Downstream access disabled; historical processing retained
+    patch:
+      operationId: correctVaultRecord
+      summary: Correct user-declared data or open a dispute
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Correction or review-pending dispute
   /api/v1/data/access-history:
     get:
       operationId: getDataAccessHistory
@@ -2245,46 +2263,6 @@ paths:
       responses:
         "201":
           description: Request accepted under the jurisdiction pack
-  /api/v1/hin/participation:
-    get:
-      operationId: getHinParticipation
-      summary: Optional HIN participation state
-      responses:
-        "200":
-          description: NOT_ENROLLED by default; financial services stay open
-  /api/v1/hin/participation/enroll:
-    post:
-      operationId: enrollHinParticipation
-      summary: Explicit optional HIN enrollment
-      responses:
-        "201":
-          description: Enrolled; not a financial-account open
-  /api/v1/hin/participation/pause:
-    post:
-      operationId: pauseHinParticipation
-      summary: Pause optional HIN participation
-      responses:
-        "200":
-          description: Paused
-  /api/v1/hin/participation/withdraw:
-    post:
-      operationId: withdrawHinParticipation
-      summary: Withdraw from optional HIN participation
-      responses:
-        "200":
-          description: Withdrawn without closing ordinary SunRey financial services
-          description: Record metadata. Payload is redacted unless explicitly requested.
-    patch:
-      operationId: correctVaultRecord
-      summary: Correct user-declared data or open a dispute
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Correction or review-pending dispute
   /api/v1/data/vault/records/{id}/history:
     get:
       operationId: getVaultRecordHistory
