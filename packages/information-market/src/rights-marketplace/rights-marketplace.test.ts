@@ -12,6 +12,7 @@ import { InformationRightsMarketplace, type ConsentPort, type NativeAssetTransfe
 import { MARKETPLACE_LEGAL_STATUS, PRODUCTION_ACTIVE } from './taxonomy.ts';
 import { createSandboxRightsMarketplace } from './sandbox.ts';
 import { simulationCompensationPolicyV1, simulationPricingPolicyV1 } from './policy.ts';
+import type { PricingPolicy } from './types.ts';
 
 const NOW = asUtcInstant('2026-08-23T08:00:00.000Z');
 
@@ -327,7 +328,6 @@ describe('Information Rights Marketplace', () => {
         ...license.compensation,
         asset: 'SUNREY_COIN',
         coin: AssetQuantity.fromScaledUnits(1000n, 'SUNREY_COIN'),
-        fiat: undefined,
       },
     });
     const usage = unwrap(
@@ -400,7 +400,7 @@ describe('Information Rights Marketplace', () => {
     const invalid = instance.registerPricingPolicy({
       ...simulationPricingPolicyV1(),
       auctionEnabled: true,
-    });
+    } as unknown as PricingPolicy);
     assert.equal(invalid.ok, false);
     const fixture = simulationCompensationPolicyV1();
     assert.equal(fixture.approvedEconomicPolicy, false);

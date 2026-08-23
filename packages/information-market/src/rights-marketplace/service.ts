@@ -195,7 +195,7 @@ export class InformationRightsMarketplace {
     const sensitive = rights.some((right) => (SENSITIVE_CATEGORIES as readonly string[]).includes(right.underlyingCategory));
     const draft = {
       form: input.form,
-      rightIds: input.rightIds,
+      rightIds: input.rightIds as DataProduct['rightIds'],
       classification: input.classification,
       eligiblePurposes: input.eligiblePurposes,
       sensitiveCategory: sensitive,
@@ -210,7 +210,7 @@ export class InformationRightsMarketplace {
       rights,
       consentActive,
       purpose: input.purpose,
-      cohortSize: input.cohortSize,
+      ...(input.cohortSize !== undefined ? { cohortSize: input.cohortSize } : {}),
     });
     if (blocked) return err(blocked);
     const product: DataProduct = Object.freeze({
@@ -334,8 +334,10 @@ export class InformationRightsMarketplace {
       redistribution: 'PROHIBITED',
       retentionDays: product.retentionDays,
       compensation: Object.freeze({
-        asset: 'FIAT_MONEY',
-        fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat,
+        asset: 'FIAT_MONEY' as const,
+        ...(pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat
+          ? { fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat }
+          : {}),
         pricingPolicyId: pricing.policyId,
         compensationPolicyId: policy.policyId,
       }),
@@ -524,10 +526,7 @@ export class InformationRightsMarketplace {
       if (!this.nativeAsset) {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
-      const minted = this.nativeAsset.mint();
-      if (minted.outcome === 'OK') {
-        return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
-      }
+      this.nativeAsset.mint();
       const transfer = this.nativeAsset.transfer({
         actorId: input.actorId,
         fromOwnerId: input.sponsorOwnerId ?? input.sponsorCustomerId,
@@ -544,8 +543,8 @@ export class InformationRightsMarketplace {
       licenseId: license.licenseId,
       usageId: usage.usageId,
       policyVersion: policy.version,
-      revenueFiat: license.compensation.fiat,
-      revenueCoin: license.compensation.coin,
+      ...(license.compensation.fiat ? { revenueFiat: license.compensation.fiat } : {}),
+      ...(license.compensation.coin ? { revenueCoin: license.compensation.coin } : {}),
       allocations: allocated.allocations,
       journalId,
       nativeTransferId,

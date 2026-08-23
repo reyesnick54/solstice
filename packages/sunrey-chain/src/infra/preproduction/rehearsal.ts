@@ -98,15 +98,18 @@ export function deploymentPosture(): PostureReport {
   if (ENVIRONMENT !== 'simulation') {
     throw new TypeError('ENVIRONMENT must remain simulation');
   }
+  if (LIVE_DATA_MARKET_ENABLED || LIVE_MONEY_ENABLED || LIVE_EXCHANGE_ENABLED) {
+    throw new TypeError('LIVE flags must remain false in preproduction rehearsal');
+  }
   return Object.freeze({
     productionAuthorized: false,
     mainnetInactive: true,
     liveProvidersDisabled: true,
-    liveDataMarketplaceDisabled: LIVE_DATA_MARKET_ENABLED === false,
+    liveDataMarketplaceDisabled: true,
     realNativeIssuanceDisabled: true,
     environmentSimulation: true,
-    liveMoneyDisabled: LIVE_MONEY_ENABLED === false,
-    liveExchangeDisabled: LIVE_EXCHANGE_ENABLED === false,
+    liveMoneyDisabled: true,
+    liveExchangeDisabled: true,
     ok: true,
   });
 }
