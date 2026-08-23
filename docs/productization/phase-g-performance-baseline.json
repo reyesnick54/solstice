@@ -1,0 +1,69 @@
+{
+  "schema": "sunrey.phase-g.performance.v1",
+  "environment": "simulation",
+  "productionSlaInvented": false,
+  "productionSlaClaimed": false,
+  "methodology": "In-process DigitalAssetLifecycle on a single sandbox participant. Each named sample times sequential local calls. No external provider, no invented production SLA.",
+  "samples": [
+    {
+      "name": "market_list",
+      "iterations": 40,
+      "elapsedMs": 1.0841719999999953,
+      "perOpMs": 0.02710429999999988
+    },
+    {
+      "name": "ticker",
+      "iterations": 40,
+      "elapsedMs": 0.5134150000000091,
+      "perOpMs": 0.012835375000000227
+    },
+    {
+      "name": "order_book",
+      "iterations": 40,
+      "elapsedMs": 0.20888800000000174,
+      "perOpMs": 0.005222200000000043
+    },
+    {
+      "name": "order_preview",
+      "iterations": 20,
+      "elapsedMs": 0.5910480000000007,
+      "perOpMs": 0.029552400000000034
+    },
+    {
+      "name": "order_submission_matching_settlement",
+      "iterations": 1,
+      "elapsedMs": 9.387607000000003,
+      "perOpMs": 9.387607000000003
+    },
+    {
+      "name": "wallet_read",
+      "iterations": 40,
+      "elapsedMs": 0.38722699999999577,
+      "perOpMs": 0.009680674999999894
+    },
+    {
+      "name": "chain_rpc_and_explorer",
+      "iterations": 20,
+      "elapsedMs": 3.5956860000000006,
+      "perOpMs": 0.17978430000000004
+    },
+    {
+      "name": "transaction_submission",
+      "iterations": 1,
+      "elapsedMs": 0.16857299999998077,
+      "perOpMs": 0.16857299999998077
+    },
+    {
+      "name": "market_stream_connections:8",
+      "iterations": 8,
+      "elapsedMs": 0.020394000000010237,
+      "perOpMs": 0.0025492500000012797
+    },
+    {
+      "name": "rpc_reads:16",
+      "iterations": 16,
+      "elapsedMs": 0.02940399999999954,
+      "perOpMs": 0.0018377499999999714
+    }
+  ]
+}

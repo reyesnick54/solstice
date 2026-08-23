@@ -1,0 +1,121 @@
+{
+  "schema": "sunrey.exchange.production.gate.v1",
+  "id": "sunrey-exchange-production-gate",
+  "evaluatedAtPolicy": "FAIL_CLOSED",
+  "passed": false,
+  "softwareCompleteInternally": true,
+  "activationSeparatedFromBuild": true,
+  "productionActivated": false,
+  "liveFlagsRemainDisabled": true,
+  "requirements": [
+    {
+      "id": "licenses_permissions",
+      "label": "Exchange licenses / permissions",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Unlicensed activation remains incomplete."
+    },
+    {
+      "id": "custody",
+      "label": "Qualified custody",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Simulation custody is not a qualified custodian."
+    },
+    {
+      "id": "market_surveillance_operations",
+      "label": "Market surveillance operations",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Detectors exist; an operations desk does not."
+    },
+    {
+      "id": "compliance_provider",
+      "label": "Compliance provider",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Kernel fixtures are not a live AML vendor."
+    },
+    {
+      "id": "travel_rule",
+      "label": "Travel Rule where required",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Pending Travel Rule blocks withdrawal. No network is connected."
+    },
+    {
+      "id": "banking_settlement",
+      "label": "Banking / settlement",
+      "kind": "EXTERNAL_PROVIDER",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "LIVE_BANKING_RAILS stays false."
+    },
+    {
+      "id": "approved_listings",
+      "label": "Approved listings",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Simulation listings are not counsel-approved."
+    },
+    {
+      "id": "market_rules",
+      "label": "Market rules",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Internal policy is not an approved rulebook."
+    },
+    {
+      "id": "operational_staff",
+      "label": "Operational staff",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Staffing is an external input."
+    },
+    {
+      "id": "security_review",
+      "label": "Security review",
+      "kind": "EXTERNAL_AUDIT",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Internal red-team tests are not an external review."
+    },
+    {
+      "id": "incident_procedures",
+      "label": "Incident procedures",
+      "kind": "EXTERNAL_HUMAN",
+      "status": "MISSING",
+      "satisfiableByPlaceholder": false,
+      "notes": "Procedures require named operators."
+    },
+    {
+      "id": "exchange_core_software",
+      "label": "Exchange core (internal)",
+      "kind": "INTERNAL_SOFTWARE",
+      "status": "RECORDED_INTERNAL",
+      "satisfiableByPlaceholder": false,
+      "notes": "Matching, clearing, settlement, and consumer APIs are productized internally."
+    }
+  ],
+  "missingRequirementIds": [
+    "licenses_permissions",
+    "custody",
+    "market_surveillance_operations",
+    "compliance_provider",
+    "travel_rule",
+    "banking_settlement",
+    "approved_listings",
+    "market_rules",
+    "operational_staff",
+    "security_review",
+    "incident_procedures"
+  ]
+}

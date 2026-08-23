@@ -361,13 +361,14 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
+export type GrowProductProposal = {
 export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
   readonly status: GrowProposalStatus;
   readonly amount: MoneyResource;
   readonly guaranteedOutcome: false;
-  readonly executionAuthorityId: null;
+  readonly issuedAuthority: null;
   readonly serverIssued: true;
 };
 
@@ -473,7 +474,7 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isExecutionAuthority: false;
+  readonly isFinancialAuthority: false;
 };
 
 export type AgentConversationResource = {

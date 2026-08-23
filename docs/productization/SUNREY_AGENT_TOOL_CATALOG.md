@@ -71,6 +71,9 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | previewExchangeOrder | Order preview, not a guaranteed price | `marketId`, `side`, `quantity` | preview | READ | READ_FINANCIAL_STATE | read-only | exchange product preview | no |
 | getExchangeOrderStatus | Order and clearing status | optional `orderId` | orders | READ | READ_FINANCIAL_STATE | read-only | exchange product clearing | no |
 | createExchangeOrderProposal | Propose a trade | `marketId`, `side`, `quantity`, `assetId` | proposal id | PROPOSAL | PREPARE_EXCHANGE_ORDER | proposal | exchange + ProposalGate | yes |
+| checkExchangeEligibility | KYC / Exchange eligibility | none | eligibility | READ | READ_FINANCIAL_STATE | read-only | exchange eligibility | no |
+| getMarketData | Ticker / book (not guaranteed) | `marketId` | market data | READ | READ_FINANCIAL_STATE | read-only | exchange market data | no |
+| getEconomyStatus | LIVE / DELAYED / SANDBOX / UNAVAILABLE / STALE | none | freshness | READ | READ_FINANCIAL_STATE | read-only | economy BFF | no |
 
 ## WALLETS / CUSTODY
 
