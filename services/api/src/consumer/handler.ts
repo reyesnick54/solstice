@@ -79,7 +79,7 @@ export type ConsumerBffRuntime = {
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly growProduct?: ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
 };
 
@@ -308,10 +308,18 @@ function dispatchAuthenticated(
     const agents = dispatchAgents(runtime.agentRuntime, request, principal, requestId, headers);
     if (agents) {
       return agents;
+    }
+  }
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
+    const grow = dispatchGrowSurface(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.growProduct) {
+    const growProduct = dispatchGrowProduct(runtime.growProduct, request, principal, requestId, headers);
+    if (growProduct) {
+      return growProduct;
     }
   }
   if (runtime.payments) {
@@ -372,11 +380,6 @@ function dispatchAuthenticated(
       });
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
-  if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-    if (grow) {
-      return grow;
-    }
   }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);
@@ -801,8 +804,7 @@ function dispatchPayments(
   return null;
 }
 
-function dispatchGrow(
-  grow: GrowBffSurface | ProductGrowthService,
+function dispatchGrowSurface(
   grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -856,6 +858,18 @@ function dispatchGrow(
   }
   if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
   if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+  return null;
+}
+
+function dispatchGrowProduct(
+  grow: ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   const actor = actorFromPrincipal(principal);
 
   if (path === '/api/v1/grow' && method === 'GET') {

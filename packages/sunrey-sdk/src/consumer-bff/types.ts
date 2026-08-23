@@ -289,12 +289,17 @@ export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
 
 export type GrowProposal = {
   readonly proposalId: string;
-  readonly version: number;
-  readonly state: string;
-  readonly amount: MoneyResource;
-  readonly serverOwned: true;
-  readonly clientInstructionsTrusted: false;
-  readonly productionMoneyMovement: false;
+  readonly version?: number;
+  readonly state?: string;
+  readonly planId?: string;
+  readonly status?: GrowProposalStatus | string;
+  readonly amount?: MoneyResource;
+  readonly serverOwned?: true;
+  readonly clientInstructionsTrusted?: false;
+  readonly productionMoneyMovement?: false;
+  readonly guaranteedOutcome?: false;
+  readonly executionAuthorityId?: null;
+  readonly serverIssued?: true;
 };
 
 export type GrowExecution = {
@@ -359,14 +364,6 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProposal = {
-  readonly proposalId: string;
-  readonly planId: string;
-  readonly status: GrowProposalStatus;
-  readonly amount: MoneyResource;
-  readonly guaranteedOutcome: false;
-  readonly executionAuthorityId: null;
-  readonly serverIssued: true;
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -498,16 +495,13 @@ export type AgentMessageResponse = {
   readonly stream: readonly { readonly kind: string; readonly text: string }[];
   readonly financialStateChanged: false;
   readonly executionCompleted: false;
+};
+
 /**
  * Grow My Money portfolio views. Authoritative values come from
  * packages/investments. Frontend math is not authoritative.
  * Not a live securities brokerage.
  */
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
-};
-
 export type GrowPortfolio = {
   readonly schema: 'sunrey.grow.portfolio.v1';
   readonly portfolioId: string;

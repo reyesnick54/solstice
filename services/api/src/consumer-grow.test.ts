@@ -10,7 +10,7 @@ function runtime(world: ReturnType<typeof createSandboxWorld>) {
     sessions: world.sessions,
     identity: world.runtime.identity.service,
     payments: world.payments,
-    grow: world.grow,
+    growProduct: world.grow,
   };
 }
 
@@ -110,10 +110,9 @@ describe('Consumer BFF grow plans and proposals', () => {
     assert.notEqual((modified.body as { proposalId: string }).proposalId, proposalId);
     const previous = call(world, 'GET', `/api/v1/grow/proposals/${proposalId}`, 'basic_verified');
     assert.equal((previous.body as { status: string }).status, 'SUPERSEDED');
-function get(
-  world: ReturnType<typeof createSandboxWorld>,
-  path: string,
-  persona: Parameters<typeof sandboxToken>[0] | null,
+  });
+});
+
 function auth(persona: Parameters<typeof sandboxToken>[0]) {
   return `Bearer ${sandboxToken(persona)}`;
 }
@@ -121,7 +120,7 @@ function auth(persona: Parameters<typeof sandboxToken>[0]) {
 function get(
   world: ReturnType<typeof createSandboxWorld>,
   path: string,
-  persona: Parameters<typeof sandboxToken>[0],
+  persona: Parameters<typeof sandboxToken>[0] | null,
   query: Record<string, string> = {},
 ) {
   return handleConsumerBff(
@@ -129,7 +128,7 @@ function get(
     {
       method: 'GET',
       path,
-      query: {},
+      query,
       body: {},
       authorization: persona ? `Bearer ${sandboxToken(persona)}` : undefined,
     },
@@ -188,12 +187,8 @@ describe('Consumer BFF grow portfolio', () => {
       },
     );
     assert.ok(res.status === 404 || res.status === 405);
-      query,
-      body: {},
-      authorization: auth(persona),
-    },
-  );
-}
+  });
+});
 
 function post(
   world: ReturnType<typeof createSandboxWorld>,

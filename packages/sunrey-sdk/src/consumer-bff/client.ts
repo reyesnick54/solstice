@@ -166,11 +166,13 @@ export class SunReyConsumerBffClient {
     options?: BffRequestOptions,
   ): Promise<{ readonly items: readonly AgentMemoryResource[] }> {
     return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/memories`, undefined, options);
+  }
+
   async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
-  async getGrowSnapshot(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getGrowSnapshot(options?: BffRequestOptions): Promise<GrowSnapshot | Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/snapshot', undefined, options);
   }
 
@@ -303,10 +305,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow/profile', undefined, options);
   }
 
-  async getGrowSnapshot(options?: BffRequestOptions): Promise<GrowSnapshot> {
-    return this.request('GET', '/api/v1/grow/snapshot', undefined, options);
-  }
-
   async listGrowGoals(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowGoal[] }> {
     return this.request('GET', '/api/v1/grow/goals', undefined, options);
   }
@@ -420,15 +418,11 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/agent/actions/${encodeURIComponent(actionId)}/reject`, {}, options);
   }
 
-  async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
-    return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
-  }
-
   async getGrowHoldings(options?: BffRequestOptions): Promise<GrowHoldings> {
     return this.request('GET', '/api/v1/grow/portfolio/holdings', undefined, options);
   }
 
-  async getGrowPerformance(options?: BffRequestOptions): Promise<GrowPerformance> {
+  async getGrowPortfolioPerformance(options?: BffRequestOptions): Promise<GrowPerformance> {
     return this.request('GET', '/api/v1/grow/portfolio/performance', undefined, options);
   }
 
@@ -442,7 +436,6 @@ export class SunReyConsumerBffClient {
 
   async request<T>(
     method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
-    method: 'GET' | 'POST' | 'PATCH',
     path: string,
     body?: unknown,
     options?: BffRequestOptions,

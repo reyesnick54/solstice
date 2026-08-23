@@ -470,7 +470,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
     growPortfolio,
     grow: createGrowOpportunityPort({
       orchestrator: new GrowthOrchestrator({
