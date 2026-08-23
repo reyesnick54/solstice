@@ -31,10 +31,6 @@ import {
 } from './categories.ts';
 import { customerHinSummary } from './customer.ts';
 import { hinReplayKey, isAnonymousSubject } from './duplicate.ts';
-
-const FORBIDDEN_ANONYMOUS_SUBJECTS = new Set(
-  ['anonymous', 'unknown', 'anon', 'null', 'undefined'].map((seed) => subjectRefFor(seed)),
-);
 import { createHinIssuanceBasisProposal, refuseHinMint } from './issuance-basis.ts';
 import { HinValuationMethodologyRegistry } from './methodologies.ts';
 import { aggregateHinMetrics } from './metrics.ts';
@@ -54,6 +50,10 @@ import {
 } from './types.ts';
 import { computeHinEconomicValueInput } from './value-input.ts';
 import { mapRegistryToHinVerification, type HinVerificationState } from './verification.ts';
+
+const FORBIDDEN_ANONYMOUS_SUBJECTS = new Set(
+  ['anonymous', 'unknown', 'anon', 'null', 'undefined'].map((seed) => subjectRefFor(seed)),
+);
 
 const CATEGORY_SOURCE: Readonly<Record<HinProductCategory, SourceClass>> = Object.freeze({
   KNOWLEDGE: 'VERIFIED_RESEARCH_ATTESTATION',
