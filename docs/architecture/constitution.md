@@ -1087,7 +1087,10 @@ secret/KMS/HSM adapters, workload identity, and network zoning at
 launch mainnet, enable `LIVE_*` flags, or couple consensus to a
 cloud vendor. Do not create `packages/sunrey-infra`,
 `packages/infrastructure`, `packages/production-infrastructure`,
-`packages/cloud-adapters`, or `packages/sunrey-cloud`. See
+`packages/cloud-adapters`, or `packages/sunrey-cloud`. Phase I Prompt 4
+extends that same owner with the preproduction platform at
+`packages/sunrey-chain/src/infra/preproduction` and deployable
+artifacts under `infra/sunrey-production`. See
 [`chunk-66-production-infrastructure.md`](./chunk-66-production-infrastructure.md).
 Chunk 68 implements production-candidate oracle provider onboarding,
 off-chain collection, provenance, independence, and MoonRey

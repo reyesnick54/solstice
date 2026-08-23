@@ -1,0 +1,90 @@
+{{- range .Values.workloads }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  namespace: sunrey-preproduction
+  labels:
+    app: {{ .name }}
+    sunrey.zone: {{ .zone }}
+    sunrey.public: "{{ .public }}"
+    sunrey.strategy: {{ .strategy }}
+spec:
+  replicas: {{ .replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+        sunrey.zone: {{ .zone }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        fsGroup: 65532
+      containers:
+        - name: {{ .name }}
+          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8443
+              name: https
+          env:
+            - name: SUNREY_SERVICE
+              value: {{ .name }}
+            - name: ENVIRONMENT
+              value: simulation
+            - name: PRODUCTION_AUTHORIZED
+              value: "false"
+          readinessProbe:
+            httpGet:
+              path: {{ .readyPath }}
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: {{ .healthPath }}
+              port: https
+              scheme: HTTPS
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: {{ .cpuRequest }}
+              memory: {{ .memoryRequest }}
+            limits:
+              cpu: {{ .cpuLimit }}
+              memory: {{ .memoryLimit }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .name }}
+  namespace: sunrey-preproduction
+  labels:
+    app: {{ .name }}
+    sunrey.zone: {{ .zone }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .name }}
+  ports:
+    - name: https
+      port: 8443
+      targetPort: https
+{{- end }}

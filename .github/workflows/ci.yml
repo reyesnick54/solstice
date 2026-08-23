@@ -228,6 +228,8 @@ jobs:
         run: npm run demo:sunrey-mainnet
       - name: SunRey production infrastructure harness
         run: npm run demo:sunrey-infra
+      - name: SunRey preproduction platform rehearsal
+        run: npm run demo:sunrey-preproduction
       - name: SunRey production environment plan
         run: SUNREY_FIXTURE_ENV=local npm run sunrey-ops -- production plan
       - name: SunRey production environment verify-plan

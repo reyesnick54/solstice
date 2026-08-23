@@ -130,6 +130,8 @@
     "sunrey-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-economics/src/cli-main.ts",
     "demo:sunrey-validator-economics": "node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/validator-economics/demo.ts",
     "demo:sunrey-infra": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/infra/demo.ts",
+    "demo:sunrey-preproduction": "SUNREY_FIXTURE_ENV=test node --experimental-strip-types --disable-warning=ExperimentalWarning packages/sunrey-chain/src/infra/preproduction/demo.ts",
+    "sunrey-preproduction": "node scripts/sunrey-preproduction.mjs",
     "testnet:validate": "node scripts/sunrey-testnet-validate-manifests.mjs",
     "testnet:sbom": "node scripts/sunrey-testnet-sbom.mjs",
     "sunrey-release": "node scripts/sunrey-release.mjs",

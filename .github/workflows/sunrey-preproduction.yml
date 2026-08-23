@@ -1,0 +1,109 @@
+# Controlled promotion rehearsal. Production remains human-gated.
+# This workflow does not apply live cloud infrastructure.
+name: SunRey preproduction
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "infra/sunrey-production/**"
+      - "packages/sunrey-chain/src/infra/**"
+      - "deploy/sunrey-preproduction/**"
+      - "docs/productization/PHASE_I_04_PRODUCTION_INFRASTRUCTURE.md"
+      - "docs/productization/SUNREY_PREPRODUCTION_DEPLOYMENT_GUIDE.md"
+      - "docs/productization/SUNREY_RELEASE_PROMOTION_POLICY.md"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: BUILD
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+      - run: node scripts/check-json-integrity.mjs
+      - run: node scripts/check-production-safety.mjs
+      - run: node --experimental-strip-types --disable-warning=ExperimentalWarning --test packages/sunrey-chain/src/infra-preproduction.test.ts
+
+  test:
+    name: TEST
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+      - run: npm run demo:sunrey-preproduction
+      - run: python3 scripts/secret-scan.py
+
+  sign:
+    name: SIGN
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+      - run: node scripts/check-container-pins.mjs
+      - run: test -f infra/sunrey-production/releases/preproduction-release.json
+
+  staging:
+    name: STAGING
+    needs: sign
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+      - run: npm run demo:sunrey-preproduction
+
+  preproduction:
+    name: PREPRODUCTION
+    needs: staging
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: "22"
+      - run: npm ci --ignore-scripts
+      - run: npm run sunrey-preproduction -- rehearse
+      - name: Optional helm lint
+        run: |
+          if command -v helm >/dev/null 2>&1; then
+            helm lint infra/sunrey-production/helm/sunrey-preproduction
+            helm template sunrey-pp infra/sunrey-production/helm/sunrey-preproduction
+          else
+            echo "helm not installed; TypeScript renderer already validated templates"
+          fi
+
+  human-approval:
+    name: HUMAN APPROVAL
+    needs: preproduction
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record production gate
+        run: |
+          echo "HUMAN_APPROVAL is required before FUTURE_PRODUCTION."
+          echo "This workflow does not deploy production."
+          echo "production_authorized=false"
+          echo "mainnet_enabled=false"
+
+  future-production:
+    name: FUTURE PRODUCTION
+    needs: human-approval
+    runs-on: ubuntu-latest
+    if: false
+    steps:
+      - run: echo "Production deploy is disabled. production_authorized remains false."
