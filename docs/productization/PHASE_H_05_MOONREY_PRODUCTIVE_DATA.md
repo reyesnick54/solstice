@@ -56,6 +56,28 @@ automatically trusted.
 
 Lovable may render verified/configured category cards only.
 
+## Validation (this revision)
+
+| Suite | Result |
+| --- | --- |
+| Productive-economy data | 12/12 pass |
+| Oracle / fabric | 345/345 pass |
+| MoonRey issuance (native-assets) | 17/17 pass |
+| Exchange / market-data | 98/98 pass |
+| Agent | 85/85 pass |
+| SDK | 57/57 pass |
+| Consumer BFF (economy, agent, accounts, cards, exchange, HTTP, payments, wallets, home) | pass |
+| Consumer BFF grow approve-without-step-up | 1 pre-existing fail (401 vs expected 403) |
+| Privacy / security | 34/34 pass |
+| Integrity + Python architecture extraction | pass |
+| `lint:architecture` | 5 pre-existing exchange/API dependency violations |
+| Repo-wide `tsc --noEmit` | still red on pre-existing Agent/Exchange/Grow merge types |
+| PostgreSQL persistence | not run (no Docker / psql in this environment) |
+
+Phase H Prompts 1–4 documents are not present in this tree.
+`SAFE_TO_PROCEED_TO_PHASE_H_PROMPT_6=false` until those prompts exist
+and repo-wide typecheck / architecture lint are green.
+
 ## Remaining gates
 
 Real licensed energy, compute, manufacturing, agriculture, and
