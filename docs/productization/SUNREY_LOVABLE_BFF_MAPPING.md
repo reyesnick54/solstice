@@ -106,7 +106,13 @@ authentication foundation; the BFF only consumes a verified session.
 | AGENT conversation | `/api/v1/agent/conversations` | POST | required | conversation + Action Card turns | `packages/sunrey-agent` conversation runtime | AVAILABLE_SIMULATION | Agent cannot approve; step-up is Phase B MFA |
 | AGENT Action Center | `/api/v1/agent/actions` | GET, POST | required + owner | Action Cards, history, availableActions | conversation Action Center | AVAILABLE_SIMULATION | frontend cannot invent transitions |
 | EXCHANGE | `/api/v1/exchange` | GET | required | availability stub | `packages/sunrey-exchange` consumer | AVAILABLE_SIMULATION | none |
-| WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
+| WALLET | `/api/v1/wallets` | GET | required | `sunrey.consumer.wallet.v1` list | `packages/custody` product | AVAILABLE_SIMULATION | no signing material; production signing disabled |
+| WALLET detail | `/api/v1/wallets/{id}` | GET | required + owner | wallet + balances | same | AVAILABLE_SIMULATION | cross-user denied |
+| WALLET receive | `/api/v1/wallets/{id}/deposit-address` | GET | required + owner | address + QR payload | same | AVAILABLE_SIMULATION | network/asset bound |
+| WALLET history | `/api/v1/wallets/{id}/transactions` | GET | required + owner | client-safe finality | same | AVAILABLE_SIMULATION | none |
+| WALLET quote | `/api/v1/wallets/{id}/withdrawal-quote` | POST | required + owner | fee estimate + Travel Rule | same | AVAILABLE_SIMULATION | estimates only |
+| WALLET withdraw | `/api/v1/wallets/{id}/withdrawals` | POST | required + owner + step-up | withdrawal or Agent proposal | Kernel-gated custody | AVAILABLE_SIMULATION | Agent cannot execute |
+| ASSET detail | `/api/v1/assets/{assetId}` | GET | required | SunRey / MoonRey aggregate | custody + market fixture | AVAILABLE_SIMULATION | supply is not a mint |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |

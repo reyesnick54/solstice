@@ -359,7 +359,7 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProposal = {
+export type GrowPlanProposal = {
   readonly proposalId: string;
   readonly planId: string;
   readonly status: GrowProposalStatus;
@@ -367,6 +367,8 @@ export type GrowProposal = {
   readonly guaranteedOutcome: false;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
+};
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -498,12 +500,14 @@ export type AgentMessageResponse = {
   readonly stream: readonly { readonly kind: string; readonly text: string }[];
   readonly financialStateChanged: false;
   readonly executionCompleted: false;
+};
+
 /**
  * Grow My Money portfolio views. Authoritative values come from
  * packages/investments. Frontend math is not authoritative.
  * Not a live securities brokerage.
  */
-export type GrowMoney = {
+export type GrowPortfolioMoney = {
   readonly minorUnits: string;
   readonly currency: string;
 };
@@ -663,6 +667,131 @@ export type ConversationTurn = {
   readonly explanation: Readonly<Record<string, unknown>> | null;
   readonly agentIsApprover: false;
   readonly productionMoneyMovement: false;
+};
+
+export const WALLET_STATUSES = ['PENDING', 'ACTIVE', 'RESTRICTED', 'FROZEN', 'CLOSED'] as const;
+export type WalletStatus = (typeof WALLET_STATUSES)[number];
+
+export const CUSTODY_MODELS = ['SUNREY_NATIVE', 'EXTERNAL_CUSTODY', 'INTERNAL_OPERATIONAL'] as const;
+export type CustodyModel = (typeof CUSTODY_MODELS)[number];
+
+export const CLIENT_FINALITY_STATES = [
+  'PENDING',
+  'BROADCAST',
+  'CONFIRMING',
+  'FINALIZED',
+  'FAILED',
+  'REVIEW',
+] as const;
+export type ClientFinalityState = (typeof CLIENT_FINALITY_STATES)[number];
+
+export const TRAVEL_RULE_CUSTOMER_STATES = [
+  'NOT_REQUIRED',
+  'ADDITIONAL_INFORMATION_REQUIRED',
+  'PROCESSING',
+  'COMPLETE',
+  'REVIEW',
+] as const;
+export type TravelRuleCustomerState = (typeof TRAVEL_RULE_CUSTOMER_STATES)[number];
+
+export type ConsumerWallet = {
+  readonly schema: 'sunrey.consumer.wallet.v1';
+  readonly walletId: string;
+  readonly ownerId: string;
+  readonly assetId: string;
+  readonly networkId: string;
+  readonly custodyModel: CustodyModel;
+  readonly status: WalletStatus;
+  readonly withdrawalEnabled: boolean;
+  readonly addressRefs: readonly string[];
+  readonly balance: {
+    readonly totalMinorUnits: string;
+    readonly availableMinorUnits: string;
+    readonly pendingMinorUnits: string;
+    readonly assetId: string;
+    readonly providerBalanceIsTruth: false;
+    readonly blendedReturn: null;
+  };
+  readonly providerRef: string | null;
+  readonly createdAt: string;
+  readonly productionSigningAuthorized: false;
+  readonly productionMoneyMovement: false;
+};
+
+export type DepositAddress = {
+  readonly schema: 'sunrey.consumer.deposit-address.v1';
+  readonly addressId: string;
+  readonly walletId: string;
+  readonly address: string;
+  readonly networkId: string;
+  readonly assetId: string;
+  readonly qrPayload: string;
+  readonly createdAt: string;
+};
+
+export type WalletTransaction = {
+  readonly schema: 'sunrey.consumer.wallet-transaction.v1';
+  readonly transactionId: string;
+  readonly walletId: string;
+  readonly kind: string;
+  readonly amountMinorUnits: string;
+  readonly finality: ClientFinalityState;
+  readonly travelRule: TravelRuleCustomerState;
+  readonly createdAt: string;
+  readonly txRef: string | null;
+};
+
+export type WithdrawalQuote = {
+  readonly schema: 'sunrey.consumer.withdrawal-quote.v1';
+  readonly quoteId: string;
+  readonly walletId: string;
+  readonly destination: string;
+  readonly amountMinorUnits: string;
+  readonly travelRule: TravelRuleCustomerState;
+  readonly requiredApproval: string;
+  readonly expiresAt: string;
+  readonly estimate: true;
+  readonly productionMoneyMovement: false;
+};
+
+export type WithdrawalResource = {
+  readonly schema: 'sunrey.consumer.withdrawal.v1';
+  readonly withdrawalId: string;
+  readonly walletId: string;
+  readonly amountMinorUnits: string;
+  readonly finality: ClientFinalityState;
+  readonly travelRule: TravelRuleCustomerState;
+  readonly status: string;
+  readonly originatedFromAgent: boolean;
+  readonly productionSigningAuthorized: false;
+  readonly productionMoneyMovement: false;
+};
+
+export type AssetDetail = {
+  readonly schema: 'sunrey.consumer.asset-detail.v1';
+  readonly assetId: string;
+  readonly displayName: string;
+  readonly wallet: ConsumerWallet | null;
+  readonly eligibility: {
+    readonly depositAvailable: boolean;
+    readonly withdrawalAvailable: boolean;
+    readonly exchangeAvailable: boolean;
+  };
+  readonly productionMoneyMovement: false;
+};
+
+export type WithdrawalQuoteInput = {
+  readonly destination: string;
+  readonly amountMinorUnits: string;
+  readonly networkId?: string;
+};
+
+export type WithdrawalCreateInput = {
+  readonly quoteId?: string;
+  readonly destination?: string;
+  readonly amountMinorUnits?: string;
+  readonly stepUpSatisfied?: boolean;
+  readonly originatedFromAgent?: boolean;
 };
 
 export type ActionCenterList = {

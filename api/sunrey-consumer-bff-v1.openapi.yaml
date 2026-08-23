@@ -1367,10 +1367,120 @@ paths:
   /api/v1/wallets:
     get:
       operationId: getWallets
-      summary: Wallets resource stub
+      summary: List customer wallets
+      description: >
+        Client-safe wallet list. No signing material. Balances are read
+        models. Production signing remains disabled.
       responses:
         "200":
-          description: Honest availability
+          description: Wallet list
+  /api/v1/wallets/{id}:
+    get:
+      operationId: getWallet
+      summary: Wallet detail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Wallet
+        "403":
+          description: Not owned
+  /api/v1/wallets/{id}/deposit-address:
+    get:
+      operationId: getWalletDepositAddress
+      summary: Deposit / receive address
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Address bound to the wallet asset and network
+  /api/v1/wallets/{id}/transactions:
+    get:
+      operationId: getWalletTransactions
+      summary: Wallet transaction history
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Transactions with client-safe finality
+  /api/v1/wallets/{id}/withdrawal-quote:
+    post:
+      operationId: quoteWalletWithdrawal
+      summary: Withdrawal quote
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Fee estimate and Travel Rule applicability
+        "400":
+          description: Invalid destination or amount
+  /api/v1/wallets/{id}/withdrawals:
+    post:
+      operationId: createWalletWithdrawal
+      summary: Create withdrawal or Agent proposal
+      description: >
+        Human execution requires step-up. Agent requests with
+        originatedFromAgent=true create a proposal only. Clients cannot
+        select compliance approval, provider override, or a signing key.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Withdrawal or proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Kernel or ownership refusal
+  /api/v1/wallets/{id}/withdrawals/{withdrawalId}:
+    get:
+      operationId: getWalletWithdrawal
+      summary: Withdrawal status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: withdrawalId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Withdrawal
+  /api/v1/assets:
+    get:
+      operationId: getAssets
+      summary: Asset catalog for Lovable
+      responses:
+        "200":
+          description: SunRey Coin and MoonRey Coin detail
+  /api/v1/assets/{assetId}:
+    get:
+      operationId: getAssetDetail
+      summary: Aggregated asset detail
+      parameters:
+        - name: assetId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Metadata, wallet balance, eligibility, recent activity
   /api/v1/data:
     get:
       operationId: getDataVault

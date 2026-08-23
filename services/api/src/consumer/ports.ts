@@ -52,6 +52,7 @@ export type FeatureCapabilityMap = {
   readonly agentEnabled: boolean;
   readonly exchangeEnabled: boolean;
   readonly withdrawalsEnabled: boolean;
+  readonly walletsEnabled: boolean;
   readonly dataVaultEnabled: boolean;
   readonly details: Readonly<Record<string, FeatureCapability>>;
 };

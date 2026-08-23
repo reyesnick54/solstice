@@ -12,6 +12,10 @@ export {
   CONVERSATION_INTENTS,
   ACTION_CARD_TYPES,
   ACTION_CENTER_VIEWS,
+  WALLET_STATUSES,
+  CUSTODY_MODELS,
+  CLIENT_FINALITY_STATES,
+  TRAVEL_RULE_CUSTOMER_STATES,
 } from './types.ts';
 export type {
   GrowGoal,
@@ -48,7 +52,7 @@ export type {
   GrowPlan,
   GrowPlanCreateInput,
   GrowPlanStatus,
-  GrowProposal,
+  GrowPlanProposal,
   GrowProposalStatus,
   GrowRiskProfile,
   GrowMoney,
@@ -66,6 +70,18 @@ export type {
   ActionCenterView,
   ConversationIntent,
   ConversationTurn,
+  ConsumerWallet,
+  DepositAddress,
+  WalletTransaction,
+  WithdrawalQuote,
+  WithdrawalResource,
+  AssetDetail,
+  WithdrawalQuoteInput,
+  WithdrawalCreateInput,
+  WalletStatus,
+  CustodyModel,
+  ClientFinalityState,
+  TravelRuleCustomerState,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

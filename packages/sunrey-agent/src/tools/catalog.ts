@@ -560,7 +560,7 @@ export const CANONICAL_AGENT_TOOLS: readonly AgentToolDefinition[] = Object.free
     requiredDataClasses: ['FINANCIAL_PRIVATE'],
     timeoutMs: 2_000,
     domainDependency: 'packages/custody via port',
-    purpose: 'List wallets. Consumer wallet product path remains limited.',
+    purpose: 'List subject-scoped customer wallets. Read-only. No signing material.',
   }),
   def({
     toolId: 'getWalletBalance',
@@ -577,7 +577,7 @@ export const CANONICAL_AGENT_TOOLS: readonly AgentToolDefinition[] = Object.free
     requiredDataClasses: ['FINANCIAL_PRIVATE'],
     timeoutMs: 2_000,
     domainDependency: 'packages/custody via port',
-    purpose: 'Read wallet quantity. Not a second ledger.',
+    purpose: 'Read owned wallet quantity. Not a second ledger. No signing material.',
   }),
   def({
     toolId: 'getDepositStatus',

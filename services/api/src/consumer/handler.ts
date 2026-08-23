@@ -52,6 +52,14 @@ import {
 import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/index.ts';
 import { AgentConversationSurface } from './conversation.ts';
 import { CONVERSATION_INTENTS, ACTION_CARD_STATUSES, ACTION_CARD_TYPES, ACTION_CENTER_VIEWS, AVAILABLE_ACTION_CONTROLS } from '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts';
+import type { WalletProductService } from '../../../../packages/custody/src/product/index.ts';
+import {
+  CLIENT_FINALITY_STATES,
+  CUSTODY_MODELS,
+  TRAVEL_RULE_CUSTOMER_STATES,
+  WALLET_STATUSES,
+} from '../../../../packages/custody/src/product/taxonomy.ts';
+import { dispatchWallets } from './wallets.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -78,9 +86,9 @@ export type ConsumerBffRuntime = {
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
-  readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly grow?: GrowBffSurface | ProductGrowthService;
   readonly conversation?: AgentConversationSurface;
+  readonly wallets?: WalletProductService;
 };
 
 const STUB_GROUPS = [
@@ -187,6 +195,10 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         actionCardStatus: ACTION_CARD_STATUSES,
         actionCenterView: ACTION_CENTER_VIEWS,
         availableActionControl: AVAILABLE_ACTION_CONTROLS,
+        walletStatus: WALLET_STATUSES,
+        custodyModel: CUSTODY_MODELS,
+        walletFinality: CLIENT_FINALITY_STATES,
+        travelRuleCustomer: TRAVEL_RULE_CUSTOMER_STATES,
       },
       headers,
     );
@@ -308,10 +320,25 @@ function dispatchAuthenticated(
     const agents = dispatchAgents(runtime.agentRuntime, request, principal, requestId, headers);
     if (agents) {
       return agents;
+    }
+  }
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
       return grow;
+    }
+  }
+  if (runtime.wallets) {
+    const wallets = dispatchWallets(
+      runtime.wallets,
+      request,
+      principal,
+      requestId,
+      headers,
+      runtime.identity ? { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) } : undefined,
+    );
+    if (wallets) {
+      return wallets;
     }
   }
   if (runtime.payments) {
@@ -372,6 +399,7 @@ function dispatchAuthenticated(
       });
     }
     return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
+  }
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
@@ -803,7 +831,6 @@ function dispatchPayments(
 
 function dispatchGrow(
   grow: GrowBffSurface | ProductGrowthService,
-  grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1151,6 +1178,14 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
   'GET /api/v1/wallets',
+  'GET /api/v1/wallets/{id}',
+  'GET /api/v1/wallets/{id}/deposit-address',
+  'GET /api/v1/wallets/{id}/transactions',
+  'POST /api/v1/wallets/{id}/withdrawal-quote',
+  'POST /api/v1/wallets/{id}/withdrawals',
+  'GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}',
+  'GET /api/v1/assets',
+  'GET /api/v1/assets/{assetId}',
   'GET /api/v1/data',
   'GET /api/v1/security',
   'GET /api/v1/notifications',

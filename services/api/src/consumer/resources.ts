@@ -56,7 +56,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'EXCHANGE':
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
     case 'WALLETS':
-      return row(group, '/api/v1/wallets', ['GET'], 'NOT_YET_PRODUCTIZED', 'packages/cards wallet + packages/sunrey-chain mobile-sync', 'wallet providers', 'No consumer wallet product path yet.');
+      return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/custody product wallet', 'custody / chain adapters', 'Customer wallet, deposit address, withdrawal quote/execute. No signing material. Production signing disabled.');
     case 'DATA':
       return row(group, '/api/v1/data', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault metadata only.');
     case 'SECURITY':

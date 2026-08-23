@@ -1425,7 +1425,7 @@ function stubAvailability(
   if (detail) {
     return { availability: detail.availability, state: detail.state, reason: detail.reason };
   }
-  if (key === 'recipients' || key === 'goals' || key === 'wallets' || key === 'notifications') {
+  if (key === 'recipients' || key === 'goals' || key === 'notifications') {
     return {
       availability: 'NOT_YET_PRODUCTIZED',
       state: 'FEATURE_DISABLED',

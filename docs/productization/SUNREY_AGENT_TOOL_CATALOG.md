@@ -72,10 +72,10 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 
 | Tool | Purpose | Input | Output | Risk | Mandate | Mode | Domain | Approval |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| getWallets | Subject-scoped wallets | none | wallets | READ | READ_FINANCIAL_STATE | read-only | custody | no |
-| getWalletBalance | One owned wallet | `walletId` | wallet | READ | READ_FINANCIAL_STATE | read-only | custody | no |
-| getDepositStatus | Owned deposit | `depositId` | deposit | READ | READ_FINANCIAL_STATE | read-only | custody | no |
-| createWithdrawalProposal | Propose withdrawal to an approved destination | `walletId`, `destinationId`, `amount`, `assetId` | proposal id | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | custody + ProposalGate | yes |
+| getWallets | Subject-scoped customer wallets | none | wallets | READ | READ_FINANCIAL_STATE | read-only | packages/custody product | no |
+| getWalletBalance | One owned wallet | `walletId` | wallet | READ | READ_FINANCIAL_STATE | read-only | packages/custody product | no |
+| getDepositStatus | Owned deposit | `depositId` | deposit | READ | READ_FINANCIAL_STATE | read-only | packages/custody getDeposit | no |
+| createWithdrawalProposal | Propose withdrawal. Cannot sign, broadcast, add destinations, or bypass step-up | `walletId`, `destinationId`, `amount`, `assetId` | proposal id | PROPOSAL | REQUEST_HUMAN_APPROVAL | proposal | packages/custody + ProposalGate | yes |
 
 ## CARDS
 
