@@ -1,7 +1,8 @@
 /**
- * Phase F Financial Agent tool hooks for Grow My Money.
- * The Agent can create or request a proposal. It cannot invoke
- * privileged execution or self-approve.
+ * Phase E Grow hook names. The canonical Tool Runtime lives at
+ * packages/sunrey-agent/src/tools. These hooks stay as a specialized
+ * Grow adapter: the Agent can create or request a proposal and cannot
+ * invoke privileged execution or self-approve.
  */
 
 import { assertAgentCannotSelfApprove } from './safety.ts';

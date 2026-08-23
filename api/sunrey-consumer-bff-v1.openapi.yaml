@@ -974,6 +974,98 @@ paths:
       responses:
         "200":
           description: Honest availability
+  /api/v1/agent/conversations:
+    post:
+      operationId: startAgentConversation
+      summary: Start an Agent conversation
+      description: Intent is routing metadata. The Agent cannot approve or execute.
+      responses:
+        "201":
+          description: Conversation created
+        "401":
+          description: Authentication required
+  /api/v1/agent/conversations/{id}/messages:
+    post:
+      operationId: sendAgentMessage
+      summary: Send a conversational turn
+      description: Missing financial fields are requested. Proposal JSON is server-issued.
+      responses:
+        "200":
+          description: Conversation turn with optional Action Card
+        "400":
+          description: Policy refusal
+  /api/v1/agent/conversations/{id}/events:
+    get:
+      operationId: streamAgentEvents
+      summary: Conversation event cursor
+      description: Status and tool progress. Lovable should not poll domain services.
+      parameters:
+        - in: query
+          name: after
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Incremental events
+  /api/v1/agent/actions:
+    get:
+      operationId: listAgentActions
+      summary: Agent Action Center
+      parameters:
+        - in: query
+          name: view
+          schema:
+            type: string
+            enum: [AWAITING_APPROVAL, PROCESSING, COMPLETED, REJECTED, EXPIRED, REQUIRES_ATTENTION]
+      responses:
+        "200":
+          description: Action Center list
+  /api/v1/agent/actions/{id}:
+    get:
+      operationId: getAgentAction
+      summary: Action detail, explanation, and history
+      responses:
+        "200":
+          description: Action detail
+  /api/v1/agent/actions/{id}/approve:
+    post:
+      operationId: approveAgentAction
+      summary: Human approval
+      description: Requires authenticated human session. Step-up uses Phase B MFA/passkey.
+      responses:
+        "200":
+          description: Approval and execution status
+        "401":
+          description: Step-up required
+  /api/v1/agent/actions/{id}/modify:
+    post:
+      operationId: modifyAgentAction
+      summary: Request a server-issued proposal revision
+      responses:
+        "200":
+          description: New Action Card
+  /api/v1/agent/actions/{id}/reject:
+    post:
+      operationId: rejectAgentAction
+      summary: Reject a proposal
+      responses:
+        "200":
+          description: Rejected action
+  /api/v1/agent/tools:
+    get:
+      operationId: listAgentTools
+      summary: Canonical Agent Tool catalog
+      description: >
+        Read-only catalog of approved Financial Agent tools.
+        Frontend does not invoke privileged tools. The path is
+        Lovable → Agent message API → Agent Runtime → Tool Runtime.
+      responses:
+        "200":
+          description: Tool catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentToolCatalog"
   /api/v1/agents:
     get:
       operationId: listAgents
@@ -1882,3 +1974,74 @@ components:
               weightBps: { type: string }
         fabricatedStatistics: { type: boolean, enum: [false] }
         frontendMathAuthoritative: { type: boolean, enum: [false] }
+    AgentToolCatalog:
+      type: object
+      required: [tools, invocationPath, privilegedInvokeForbidden, productionEnabled]
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentToolDescriptor"
+        invocationPath:
+          type: string
+        privilegedInvokeForbidden:
+          type: boolean
+          enum: [true]
+        productionEnabled:
+          type: boolean
+          enum: [false]
+    AgentToolDescriptor:
+      type: object
+      required: [toolId, version, description, category, riskClass, readOnly, createsProposal, frontendMayInvokeDirectly]
+      properties:
+        toolId: { type: string }
+        version: { type: string }
+        description: { type: string }
+        category: { type: string }
+        riskClass:
+          type: string
+          enum: [READ, PROPOSAL, SAFE_USER_PREFERENCE, PRIVILEGED_FINANCIAL_MUTATION]
+        readOnly: { type: boolean }
+        createsProposal: { type: boolean }
+        requiresUserApproval: { type: boolean }
+        requiredMandate: { type: string }
+        domainDependency: { type: string }
+        frontendMayInvokeDirectly:
+          type: boolean
+          enum: [false]
+    AgentToolResult:
+      type: object
+      required: [status, toolId, version, executed, payload]
+      description: Structured Tool Runtime result. The model must not invent missing financial numbers.
+      properties:
+        status:
+          type: string
+          enum: [SUCCESS, ACTION_REQUIRED, APPROVAL_REQUIRED, NOT_ELIGIBLE, UNAVAILABLE, FAILED]
+        toolId: { type: string }
+        version: { type: string }
+        executed:
+          type: boolean
+          enum: [false]
+        payload:
+          type: object
+        proposalId: { type: string, nullable: true }
+        workflowId: { type: string, nullable: true }
+        rendering:
+          type: object
+          nullable: true
+          properties:
+            component:
+              type: string
+              enum:
+                - ACCOUNT_CARD
+                - PAYMENT_QUOTE
+                - FX_QUOTE
+                - GROWTH_OPPORTUNITY
+                - GROWTH_PROPOSAL
+                - PORTFOLIO_CARD
+                - TRADE_PROPOSAL
+                - APPROVAL_CARD
+                - TRANSACTION_STATUS
+            modelMayAlterAuthoritativeNumbers:
+              type: boolean
+              enum: [false]
