@@ -63,12 +63,13 @@ export function statusForError(error: BffErrorEnvelope): number {
     case 'AUTH_REQUIRED':
     case 'SESSION_INVALID':
       return 401;
+    case 'STEP_UP_REQUIRED':
+      return error.category === 'AUTHENTICATION' ? 401 : 403;
     case 'RESOURCE_NOT_OWNED':
     case 'FORBIDDEN_PROFILE_FIELD':
     case 'FEATURE_UNAVAILABLE':
     case 'KERNEL_DENIED':
     case 'KERNEL_REFUSED':
-    case 'STEP_UP_REQUIRED':
     case 'FORBIDDEN':
       return 403;
     case 'NOT_FOUND':

@@ -57,7 +57,7 @@ describe('Phase G Exchange / wallet / coin E2E', () => {
       path: `/api/v1/exchange/proposals/${proposalId}/approve`,
       body: { stepUpSatisfied: false },
     });
-    assert.equal(stepUp.status, 403);
+    assert.equal(stepUp.status, 401);
     assert.equal((stepUp.body as { errorCode?: string }).errorCode, 'STEP_UP_REQUIRED');
 
     const approved = world.handle({
