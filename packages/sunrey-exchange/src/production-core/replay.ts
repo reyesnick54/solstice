@@ -22,7 +22,7 @@ export function replayAcceptedOrders(input: {
   readonly accepted: readonly DigitalOrder[];
   readonly feeSchedule: ProductizedFeeSchedule;
   readonly quoteCurrency: ImmutableTrade['quoteAmount']['currency'];
-  readonly selfTrade?: 'CANCEL_INCOMING' | 'PREVENT';
+  readonly selfTrade?: import('../taxonomy.ts').SelfTradePolicy;
   readonly knownTradeKeys?: ReadonlySet<string>;
 }): ReplayResult {
   const working = new Map<string, DigitalOrder>();

@@ -21,8 +21,8 @@ export type SerializedAgentRuntimeSnapshot = {
     readonly budget: Omit<AgentRuntimeSnapshot['mandates'][number]['budget'], 'perTransaction' | 'perPeriod' | 'maxProposalAmount' | 'dailyProposalAggregate'> & {
       readonly perTransaction: string;
       readonly perPeriod: string;
-      readonly maxProposalAmount?: string;
-      readonly dailyProposalAggregate?: string;
+      readonly maxProposalAmount?: string | undefined;
+      readonly dailyProposalAggregate?: string | undefined;
     };
   })[];
 };
@@ -58,17 +58,18 @@ export function serializeAgentRuntimeSnapshot(snapshot: AgentRuntimeSnapshot): S
       snapshot.mandates.map((row) =>
         Object.freeze({
           ...row,
-          budget: Object.freeze({
-            ...row.budget,
-            perTransaction: row.budget.perTransaction.toString(),
-            perPeriod: row.budget.perPeriod.toString(),
-            ...(row.budget.maxProposalAmount !== undefined
-              ? { maxProposalAmount: row.budget.maxProposalAmount.toString() }
-              : {}),
-            ...(row.budget.dailyProposalAggregate !== undefined
-              ? { dailyProposalAggregate: row.budget.dailyProposalAggregate.toString() }
-              : {}),
-          }),
+          budget: Object.freeze((() => {
+            const { maxProposalAmount, dailyProposalAggregate, perTransaction, perPeriod, ...rest } = row.budget;
+            return {
+              ...rest,
+              perTransaction: perTransaction.toString(),
+              perPeriod: perPeriod.toString(),
+              ...(maxProposalAmount !== undefined ? { maxProposalAmount: maxProposalAmount.toString() } : {}),
+              ...(dailyProposalAggregate !== undefined
+                ? { dailyProposalAggregate: dailyProposalAggregate.toString() }
+                : {}),
+            };
+          })()),
         }),
       ),
     ),
@@ -107,17 +108,16 @@ export function deserializeAgentRuntimeSnapshot(raw: SerializedAgentRuntimeSnaps
       raw.mandates.map((row) =>
         Object.freeze({
           ...row,
-          budget: Object.freeze({
-            ...row.budget,
-            perTransaction: BigInt(row.budget.perTransaction),
-            perPeriod: BigInt(row.budget.perPeriod),
-            ...(row.budget.maxProposalAmount !== undefined
-              ? { maxProposalAmount: BigInt(row.budget.maxProposalAmount) }
-              : {}),
-            ...(row.budget.dailyProposalAggregate !== undefined
-              ? { dailyProposalAggregate: BigInt(row.budget.dailyProposalAggregate) }
-              : {}),
-          }),
+          budget: Object.freeze((() => {
+            const { maxProposalAmount, dailyProposalAggregate, perTransaction, perPeriod, ...rest } = row.budget;
+            return {
+              ...rest,
+              perTransaction: BigInt(perTransaction),
+              perPeriod: BigInt(perPeriod),
+              ...(maxProposalAmount !== undefined ? { maxProposalAmount: BigInt(maxProposalAmount) } : {}),
+              ...(dailyProposalAggregate !== undefined ? { dailyProposalAggregate: BigInt(dailyProposalAggregate) } : {}),
+            };
+          })()),
         }),
       ),
     ),

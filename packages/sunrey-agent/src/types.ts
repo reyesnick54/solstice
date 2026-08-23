@@ -100,13 +100,13 @@ export type AgentBudget = {
   readonly perAsset: Readonly<Record<string, string>>;
   readonly perMarket: Readonly<Record<string, string>>;
   readonly perActionClass: Readonly<Record<string, string>>;
-  readonly maxProposalAmount?: bigint;
-  readonly dailyProposalAggregate?: bigint;
-  readonly perToolBudget?: Readonly<Record<string, string>>;
-  readonly allowedCurrencies?: readonly string[];
-  readonly allowedAssetClasses?: readonly string[];
-  readonly jurisdiction?: string | null;
-  readonly timeWindows?: readonly AgentTimeWindow[];
+  readonly maxProposalAmount?: bigint | undefined;
+  readonly dailyProposalAggregate?: bigint | undefined;
+  readonly perToolBudget?: Readonly<Record<string, string>> | undefined;
+  readonly allowedCurrencies?: readonly string[] | undefined;
+  readonly allowedAssetClasses?: readonly string[] | undefined;
+  readonly jurisdiction?: string | null | undefined;
+  readonly timeWindows?: readonly AgentTimeWindow[] | undefined;
 };
 
 export type AgentAssetPermission = {

@@ -39,11 +39,9 @@ import { createCardHoldGateway } from '../../../cards/src/hold-gateway.ts';
 import { ConsumerCardsFacade } from '../../../cards/src/consumer.ts';
 import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
-import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
-import { createGrowOpportunityPort } from './grow-adapter.ts';
 import {
   applyPersonaSeed,
   PEG_PERSONA_SEEDS,
@@ -460,18 +458,6 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     },
     grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
     growPortfolio,
-    grow: createGrowOpportunityPort({
-      orchestrator: new GrowthOrchestrator({
-        clock: runtime.clock,
-        events: runtime.events,
-        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
-      }),
-      accounts: createAccountsReadAdapter(runtime),
-      actorFor(principal) {
-        const actor = runtime.identity.service.resolveActorContext(principal.actorId);
-        return actor.ok ? actor.value : principal;
-      },
-    }),
     growCommands: createGrowCommandPort({
       peg,
       identity: runtime.identity.service,

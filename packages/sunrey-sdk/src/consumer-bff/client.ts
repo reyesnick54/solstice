@@ -177,10 +177,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
-  async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow', undefined, options);
-  }
-
   async getGoals(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/goals', undefined, options);
   }

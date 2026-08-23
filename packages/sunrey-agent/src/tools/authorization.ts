@@ -14,7 +14,7 @@ export function authorizeToolCall(input: {
   readonly session: ToolSession;
   readonly agent: UserAgent | undefined;
   readonly mandate: UserAgentMandate | undefined;
-  readonly rationale?: string;
+  readonly rationale?: string | undefined;
 }): { readonly ok: true } | ToolAuthorizationFailure {
   const { tool, session } = input;
   if (detectPromptInjection(session.modelText) || (input.rationale && detectPromptInjection(input.rationale))) {

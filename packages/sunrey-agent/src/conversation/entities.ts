@@ -1,4 +1,4 @@
-import type { ConversationCatalog, EntityResolution, ResolvableEntity, SlotName, SlotValue } from './types.ts';
+import type { ConversationCatalog, EntityResolution, ResolvableEntity, SlotName, SlotQuestion, SlotValue } from './types.ts';
 
 export function resolveEntityReference(
   catalog: ConversationCatalog,
@@ -61,9 +61,9 @@ export function resolveRequiredEntities(
   names: readonly SlotName[],
 ):
   | { readonly ok: true; readonly slots: Readonly<Record<string, SlotValue>> }
-  | { readonly ok: false; readonly questions: readonly EntityResolution[] } {
+  | { readonly ok: false; readonly questions: readonly SlotQuestion[] } {
   const next: Record<string, SlotValue> = { ...slots };
-  const failures: EntityResolution[] = [];
+  const failures: SlotQuestion[] = [];
   for (const name of names) {
     const current = slots[name];
     if (!current) {
@@ -74,7 +74,7 @@ export function resolveRequiredEntities(
     }
     const resolved = resolveEntityReference(catalog, subjectId, name, current.raw);
     if (!resolved.ok) {
-      failures.push(resolved);
+      failures.push(resolved.question);
       continue;
     }
     next[name] = Object.freeze({

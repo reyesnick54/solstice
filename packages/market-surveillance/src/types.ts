@@ -33,7 +33,7 @@ export type MarketSnapshot = {
   readonly marketId: string;
   readonly orders: readonly ObservedOrder[];
   readonly trades: readonly ObservedTrade[];
-  readonly linkedAccounts?: Readonly<Record<string, string>>;
+  readonly linkedAccounts?: Readonly<Record<string, string>> | undefined;
   readonly family?: 'DIGITAL_ASSET' | 'HUMAN_INFORMATION_RIGHT' | 'INTELLIGENCE_COMPUTE' | 'PRODUCTIVE_CAPACITY' | 'INFORMATION_ASSET';
   readonly deniedAccessCount?: number;
   readonly unauthorizedPurposeAttempts?: readonly string[];

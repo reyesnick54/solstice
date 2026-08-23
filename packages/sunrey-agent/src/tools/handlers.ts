@@ -434,7 +434,7 @@ function createProposal(
   draft: Omit<CreateProposalInput, 'mandateId' | 'modelRef' | 'networkId'>,
   component: LovableComponentHint,
   extra: Readonly<Record<string, unknown>>,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   const compliance = ctx.ports.compliance.evaluate({
     toolId: ctx.tool.toolId,
     ownerId: ctx.session.ownerId,
@@ -463,7 +463,7 @@ function createProposal(
     return refuse(ctx, 'NOT_ELIGIBLE', created.error.code, created.error.detail);
   }
   return {
-    status: ctx.tool.requiresUserApproval ? 'APPROVAL_REQUIRED' : 'ACTION_REQUIRED',
+    status: ctx.tool.requiresUserApproval ? 'APPROVAL_REQUIRED' as const : 'ACTION_REQUIRED' as const,
     toolId: ctx.tool.toolId,
     version: ctx.tool.version,
     executed: false as const,
@@ -516,7 +516,7 @@ function success(
   component: LovableComponentHint,
   payload: Readonly<Record<string, unknown>>,
   numericPaths: readonly string[],
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status: 'SUCCESS' as const,
     toolId: ctx.tool.toolId,
@@ -532,15 +532,15 @@ function success(
 
 function refuse(
   ctx: HandlerContext,
-  status: AgentToolResult['status'],
+  status: Exclude<AgentToolResult['status'], 'SUCCESS'>,
   code: string,
   safeMessage: string,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status,
     toolId: ctx.tool.toolId,
     version: ctx.tool.version,
-    executed: false as const,
+    executed: false,
     payload: Object.freeze({}),
     rendering: null,
     error: Object.freeze({ code, safeMessage, inventingNumbersForbidden: true as const }),

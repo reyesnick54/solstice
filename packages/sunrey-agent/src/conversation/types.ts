@@ -106,7 +106,7 @@ export type DomainProposalRef = {
   readonly clientFabricated: false;
   readonly amount: MoneyTerm;
   readonly fees: MoneyTerm;
-  readonly rate?: MoneyTerm;
+  readonly rate?: MoneyTerm | undefined;
   readonly destinationLabel: string;
   readonly sourceLabel: string;
   readonly assetLabel: string;

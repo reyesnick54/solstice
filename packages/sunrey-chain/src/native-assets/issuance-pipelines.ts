@@ -186,6 +186,7 @@ export function createIssuanceProposal(input: {
 
 export type PipelineRefusal =
   | IssuanceRejection
+  | import('./economic-controls.ts').SupplyInvariantFailure
   | 'UNVERIFIED_CONTRIBUTION'
   | 'RAW_USER_DATA'
   | 'AI_VALUATION_CANNOT_MINT'
@@ -194,6 +195,7 @@ export type PipelineRefusal =
   | 'UNAUTHORIZED_ACTOR'
   | 'ORACLE_STALE'
   | 'ORACLE_INVALID'
+  | 'ORACLE_DISPUTED'
   | 'SINGLE_ORACLE_CANNOT_MINT'
   | 'PRODUCTIVE_SOURCE_NOT_CONNECTED';
 

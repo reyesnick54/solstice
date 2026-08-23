@@ -72,11 +72,11 @@ export function transitionClearing(
   next: ClearingState,
   at: UtcInstant,
   patch: {
-    readonly refs?: Partial<SettlementReferences>;
-    readonly failureCode?: SettlementFailureCode | null;
-    readonly reviewReason?: string | null;
-    readonly incrementAttempt?: boolean;
-    readonly duplicateTransferBlocked?: boolean;
+    readonly refs?: Partial<SettlementReferences> | undefined;
+    readonly failureCode?: SettlementFailureCode | null | undefined;
+    readonly reviewReason?: string | null | undefined;
+    readonly incrementAttempt?: boolean | undefined;
+    readonly duplicateTransferBlocked?: boolean | undefined;
   } = {},
 ): ClearingRecord {
   if (record.state === 'SETTLED' && next === 'SETTLED') {

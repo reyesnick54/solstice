@@ -74,8 +74,8 @@ export function createFillObligation(input: {
   readonly sellerParticipantId: string;
   readonly buyerCashAccountId: string;
   readonly sellerCashAccountId: string;
-  readonly buyerCustodyRef?: string | null;
-  readonly sellerCustodyRef?: string | null;
+  readonly buyerCustodyRef?: string | null | undefined;
+  readonly sellerCustodyRef?: string | null | undefined;
   readonly baseAssetId: string;
   readonly quoteAssetId: string;
   readonly quoteKind: 'FIAT_MONEY' | 'ASSET';
@@ -87,12 +87,12 @@ export function createFillObligation(input: {
   readonly currency: string;
   readonly makerOrderId: string;
   readonly takerOrderId: string;
-  readonly makerHoldId?: string | null;
-  readonly takerHoldId?: string | null;
+  readonly makerHoldId?: string | null | undefined;
+  readonly takerHoldId?: string | null | undefined;
   readonly quoteRail: SettlementRail;
   readonly baseRail: SettlementRail;
   readonly at: UtcInstant;
-  readonly atomicSettledNow?: boolean;
+  readonly atomicSettledNow?: boolean | undefined;
 }): FillObligation {
   return Object.freeze({
     obligationId: `xobl_${randomUUID().replace(/-/g, '')}`,
@@ -149,7 +149,7 @@ export class ExchangeSettlementCoordinator {
     readonly at: UtcInstant;
     readonly authority: ExecutionAuthority | null;
     readonly actorId: string;
-    readonly kind?: 'SETTLE' | 'RETRY' | 'REPAIR';
+    readonly kind?: 'SETTLE' | 'RETRY' | 'REPAIR' | undefined;
   }): ClearingRecord {
     const kind = input.kind ?? 'SETTLE';
     if (input.clearing.state === 'SETTLED') {
@@ -194,7 +194,7 @@ export class ExchangeSettlementCoordinator {
             chain: {
               txId: base.txId,
               height: base.height,
-              finality: base.finality === 'BFT_FINALIZED' ? 'BFT_FINALIZED' : 'PENDING_PROPOSAL',
+              finality: 'PENDING_PROPOSAL',
             },
           },
           failureCode: base.finality === 'PENDING' ? 'PROVIDER_PENDING' : 'PROVIDER_UNKNOWN',
@@ -249,9 +249,9 @@ export class ExchangeSettlementCoordinator {
   applyVerifiedFinality(input: {
     readonly clearing: ClearingRecord;
     readonly at: UtcInstant;
-    readonly custodyConfirmation?: 'CONFIRMED' | 'PENDING' | 'UNKNOWN' | 'UNAVAILABLE';
-    readonly chainFinality?: 'PENDING_PROPOSAL' | 'BFT_FINALIZED' | 'UNAVAILABLE';
-    readonly fromWebhookAlone?: boolean;
+    readonly custodyConfirmation?: 'CONFIRMED' | 'PENDING' | 'UNKNOWN' | 'UNAVAILABLE' | undefined;
+    readonly chainFinality?: 'PENDING_PROPOSAL' | 'BFT_FINALIZED' | 'UNAVAILABLE' | undefined;
+    readonly fromWebhookAlone?: boolean | undefined;
   }): ClearingRecord {
     if (input.fromWebhookAlone === true) {
       return transitionClearing(input.clearing, 'REQUIRES_REVIEW', input.at, {
@@ -267,12 +267,12 @@ export class ExchangeSettlementCoordinator {
     if (custodyOk && chainOk) {
       return transitionClearing(input.clearing, 'SETTLED', input.at, {
         refs: {
-          custody: input.custodyConfirmation
-            ? { ...input.clearing.refs.custody, confirmation: input.custodyConfirmation }
-            : undefined,
-          chain: input.chainFinality
-            ? { ...input.clearing.refs.chain, finality: input.chainFinality }
-            : undefined,
+          ...(input.custodyConfirmation
+            ? { custody: { ...input.clearing.refs.custody, confirmation: input.custodyConfirmation } }
+            : {}),
+          ...(input.chainFinality
+            ? { chain: { ...input.clearing.refs.chain, finality: input.chainFinality } }
+            : {}),
         },
         failureCode: null,
         reviewReason: null,

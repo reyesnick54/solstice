@@ -114,7 +114,7 @@ export class ExchangeProductPlatform {
     readonly at: UtcInstant;
     readonly authority: ExecutionAuthority | null;
     readonly actorId: string;
-    readonly kind?: 'SETTLE' | 'RETRY' | 'REPAIR';
+    readonly kind?: 'SETTLE' | 'RETRY' | 'REPAIR' | undefined;
   }): ClearingRecord {
     const obligation = this.obligations.get(input.obligationId);
     const current = this.clearing.get(input.obligationId);
@@ -137,8 +137,8 @@ export class ExchangeProductPlatform {
     readonly obligationId: string;
     readonly at: UtcInstant;
     readonly state: 'SETTLED' | 'FAILED' | 'REQUIRES_REVIEW';
-    readonly refs?: Partial<SettlementReferences>;
-    readonly failureCode?: SettlementFailureCode | null;
+    readonly refs?: Partial<SettlementReferences> | undefined;
+    readonly failureCode?: SettlementFailureCode | null | undefined;
   }): ClearingRecord {
     const current = this.clearing.get(input.obligationId);
     if (!current) {
@@ -162,9 +162,9 @@ export class ExchangeProductPlatform {
   confirmFinality(input: {
     readonly obligationId: string;
     readonly at: UtcInstant;
-    readonly custodyConfirmation?: 'CONFIRMED' | 'PENDING' | 'UNKNOWN' | 'UNAVAILABLE';
-    readonly chainFinality?: 'PENDING_PROPOSAL' | 'BFT_FINALIZED' | 'UNAVAILABLE';
-    readonly fromWebhookAlone?: boolean;
+    readonly custodyConfirmation?: 'CONFIRMED' | 'PENDING' | 'UNKNOWN' | 'UNAVAILABLE' | undefined;
+    readonly chainFinality?: 'PENDING_PROPOSAL' | 'BFT_FINALIZED' | 'UNAVAILABLE' | undefined;
+    readonly fromWebhookAlone?: boolean | undefined;
   }): ClearingRecord {
     const current = this.clearing.get(input.obligationId);
     if (!current) {
