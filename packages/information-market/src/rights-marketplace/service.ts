@@ -210,7 +210,7 @@ export class InformationRightsMarketplace {
       rights,
       consentActive,
       purpose: input.purpose,
-      cohortSize: input.cohortSize,
+      ...(input.cohortSize !== undefined ? { cohortSize: input.cohortSize } : {}),
     });
     if (blocked) return err(blocked);
     const product: DataProduct = Object.freeze({
