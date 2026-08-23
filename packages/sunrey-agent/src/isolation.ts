@@ -37,6 +37,8 @@ export const SUNREY_AGENT_ISOLATION = {
     'packages/agent-execution',
     'packages/financial-automation',
     'packages/mandate-v2',
+    'packages/agent-tools',
+    'packages/tool-runtime',
   ] as const,
   personalEconomyAgentRemainsProposalOnly: true,
   aiIdentityCannotSign: true,

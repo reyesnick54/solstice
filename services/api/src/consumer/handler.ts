@@ -31,6 +31,7 @@ import { listSandboxPersonas } from './fixtures.ts';
 import type { IdentityService } from '../../../../packages/identity/src/service.ts';
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
+import { createCanonicalToolRegistry } from '../../../../packages/sunrey-agent/src/tools/catalog.ts';
 import {
   agentError,
   clientAgent,
@@ -48,7 +49,6 @@ import {
   parseCreatePlan,
   toLovableExperience,
 } from './grow.ts';
-import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/index.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -76,7 +76,6 @@ export type ConsumerBffRuntime = {
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
 };
 
 const STUB_GROUPS = [
@@ -362,6 +361,7 @@ function dispatchAuthenticated(
     if (grow) {
       return grow;
     }
+  }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);
   }
@@ -376,6 +376,7 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
     return result(runtime.bff.growRisk(principal, requestId), headers);
+  }
   if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
     return result(runtime.bff.listGrowOpportunities(principal), headers);
   }
@@ -390,6 +391,7 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
     const id = path.slice('/api/v1/grow/opportunities/'.length);
     return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  }
   if (path === '/api/v1/grow/profile' && method === 'GET') {
     return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
   }
@@ -426,6 +428,32 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/grow/agent' && method === 'GET') {
     return result(runtime.bff.growAgentProfile(principal), headers);
+  }
+
+  if (path === '/api/v1/agent/tools' && method === 'GET') {
+    const tools = createCanonicalToolRegistry().list().map((tool) => ({
+      toolId: tool.toolId,
+      version: tool.version,
+      description: tool.description,
+      category: tool.category,
+      riskClass: tool.riskClass,
+      readOnly: tool.readOnly,
+      createsProposal: tool.createsProposal,
+      requiresUserApproval: tool.requiresUserApproval,
+      requiredMandate: tool.requiredMandate,
+      domainDependency: tool.domainDependency,
+      frontendMayInvokeDirectly: false,
+    }));
+    return json(
+      200,
+      {
+        tools,
+        invocationPath: 'Lovable → Agent message API → Agent Runtime → Tool Runtime',
+        privilegedInvokeForbidden: true,
+        productionEnabled: false,
+      },
+      headers,
+    );
   }
 
   if (path === '/api/v1/me/actions' && method === 'GET') {
@@ -759,7 +787,6 @@ function dispatchPayments(
 
 function dispatchGrow(
   grow: GrowBffSurface,
-  grow: ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1027,6 +1054,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
+  'GET /api/v1/agent/tools',
   'GET /api/v1/agents',
   'GET /api/v1/agents/{id}',
   'POST /api/v1/agents/{id}/pause',

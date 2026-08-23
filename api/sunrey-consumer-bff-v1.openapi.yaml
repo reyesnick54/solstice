@@ -974,6 +974,21 @@ paths:
       responses:
         "200":
           description: Honest availability
+  /api/v1/agent/tools:
+    get:
+      operationId: listAgentTools
+      summary: Canonical Agent Tool catalog
+      description: >
+        Read-only catalog of approved Financial Agent tools.
+        Frontend does not invoke privileged tools. The path is
+        Lovable → Agent message API → Agent Runtime → Tool Runtime.
+      responses:
+        "200":
+          description: Tool catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentToolCatalog"
   /api/v1/agents:
     get:
       operationId: listAgents
@@ -1882,3 +1897,74 @@ components:
               weightBps: { type: string }
         fabricatedStatistics: { type: boolean, enum: [false] }
         frontendMathAuthoritative: { type: boolean, enum: [false] }
+    AgentToolCatalog:
+      type: object
+      required: [tools, invocationPath, privilegedInvokeForbidden, productionEnabled]
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgentToolDescriptor"
+        invocationPath:
+          type: string
+        privilegedInvokeForbidden:
+          type: boolean
+          enum: [true]
+        productionEnabled:
+          type: boolean
+          enum: [false]
+    AgentToolDescriptor:
+      type: object
+      required: [toolId, version, description, category, riskClass, readOnly, createsProposal, frontendMayInvokeDirectly]
+      properties:
+        toolId: { type: string }
+        version: { type: string }
+        description: { type: string }
+        category: { type: string }
+        riskClass:
+          type: string
+          enum: [READ, PROPOSAL, SAFE_USER_PREFERENCE, PRIVILEGED_FINANCIAL_MUTATION]
+        readOnly: { type: boolean }
+        createsProposal: { type: boolean }
+        requiresUserApproval: { type: boolean }
+        requiredMandate: { type: string }
+        domainDependency: { type: string }
+        frontendMayInvokeDirectly:
+          type: boolean
+          enum: [false]
+    AgentToolResult:
+      type: object
+      required: [status, toolId, version, executed, payload]
+      description: Structured Tool Runtime result. The model must not invent missing financial numbers.
+      properties:
+        status:
+          type: string
+          enum: [SUCCESS, ACTION_REQUIRED, APPROVAL_REQUIRED, NOT_ELIGIBLE, UNAVAILABLE, FAILED]
+        toolId: { type: string }
+        version: { type: string }
+        executed:
+          type: boolean
+          enum: [false]
+        payload:
+          type: object
+        proposalId: { type: string, nullable: true }
+        workflowId: { type: string, nullable: true }
+        rendering:
+          type: object
+          nullable: true
+          properties:
+            component:
+              type: string
+              enum:
+                - ACCOUNT_CARD
+                - PAYMENT_QUOTE
+                - FX_QUOTE
+                - GROWTH_OPPORTUNITY
+                - GROWTH_PROPOSAL
+                - PORTFOLIO_CARD
+                - TRADE_PROPOSAL
+                - APPROVAL_CARD
+                - TRANSACTION_STATUS
+            modelMayAlterAuthoritativeNumbers:
+              type: boolean
+              enum: [false]
