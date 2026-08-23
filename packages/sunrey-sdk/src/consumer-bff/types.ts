@@ -371,6 +371,9 @@ export type GrowPlanProposal = {
   readonly serverIssued: true;
 };
 
+/** Alias used by Grow execution APIs. Same resource as GrowPlanProposal. */
+export type GrowProposal = GrowPlanProposal;
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;

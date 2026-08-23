@@ -69,7 +69,7 @@ export class ProductiveEconomyDataPlatform {
       nowUtc: SANDBOX_NOW_UTC,
       resource,
       independentSourceCount: extras?.independentSourceCount ?? 1,
-      peerValues: extras?.peerValues,
+      ...(extras?.peerValues ? { peerValues: extras.peerValues } : {}),
     });
     if (result.ok) {
       this.#observations.push(result.value);
