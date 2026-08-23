@@ -1253,6 +1253,9 @@ function dispatchGrow(
     if (path === '/api/v1/grow/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/portfolio' && method === 'GET') return result(grow.portfolio(principal, requestId), headers);
     if (path === '/api/v1/grow/performance' && method === 'GET') return result(grow.performance(principal, requestId), headers);
+    if (path === '/api/v1/grow/portfolio/performance' && method === 'GET') {
+      return result(grow.performance(principal, requestId), headers);
+    }
     if (path === '/api/v1/grow/recurring' && method === 'POST') return result(grow.createRecurring(principal, rec, requestId), headers, 201);
     if (path.startsWith('/api/v1/grow/recurring/') && path.endsWith('/cancel') && method === 'POST') {
       const id = path.slice('/api/v1/grow/recurring/'.length, -'/cancel'.length);
