@@ -41,7 +41,6 @@ export type {
   GrowPlan,
   GrowPlanCreateInput,
   GrowPlanStatus,
-  GrowProposal,
   GrowProposalStatus,
   GrowRiskProfile,
   GrowMoney,

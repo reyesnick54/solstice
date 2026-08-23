@@ -1,4 +1,4 @@
--- V034 Phase E Prompt 5 — Grow execution, proposals, recurring mandates,
+-- V036 Phase E Prompt 5 — Grow execution, proposals, recurring mandates,
 -- monitoring, and performance read models.
 -- Planning and execution records only. Not a second ledger, mint, or
 -- Execution Authority. Production remains inactive.

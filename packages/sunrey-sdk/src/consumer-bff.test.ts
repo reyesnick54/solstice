@@ -108,21 +108,6 @@ describe('consumer BFF payments SDK', () => {
     assert.equal(calls[0]?.url, 'http://example.test/api/v1/payments/quote');
   });
 
-  it('reads Grow My Money portfolio views without execution methods', async () => {
-    const calls: string[] = [];
-    const client = createSunReyConsumerBffClient({
-      baseUrl: 'http://example.test',
-      getAccessToken: () => 'sandbox.investment',
-      generateRequestId: () => 'req_grow',
-      fetchImpl: async (input, init) => {
-        const url = typeof input === 'string' ? input : String(input);
-        calls.push(`${init?.method ?? 'GET'} ${url}`);
-        return new Response(
-          JSON.stringify({
-            schema: 'sunrey.grow.portfolio.v1',
-            frontendMathAuthoritative: false,
-            liveState: false,
-            securitiesBrokerageLive: false,
   it('calls Grow opportunity routes without privileged imports', async () => {
     const client = createSunReyConsumerBffClient({
       baseUrl: 'http://example.test',
@@ -153,21 +138,6 @@ describe('consumer BFF payments SDK', () => {
         );
       },
     });
-    const portfolio = await client.getGrowPortfolio();
-    assert.equal(portfolio.frontendMathAuthoritative, false);
-    assert.equal(portfolio.liveState, false);
-    await client.getGrowHoldings();
-    await client.getGrowPerformance();
-    await client.getGrowAllocation();
-    await client.getGrowRisk();
-    assert.deepEqual(calls, [
-      'GET http://example.test/api/v1/grow/portfolio',
-      'GET http://example.test/api/v1/grow/portfolio/holdings',
-      'GET http://example.test/api/v1/grow/portfolio/performance',
-      'GET http://example.test/api/v1/grow/portfolio/allocation',
-      'GET http://example.test/api/v1/grow/portfolio/risk',
-    ]);
-    assert.equal('submitGrowOrder' in client, false);
     const feed = await client.listGrowOpportunities();
     assert.equal(feed.productionMoneyMovement, false);
     const started = await client.startGrowProposal('gop_1');
@@ -175,7 +145,7 @@ describe('consumer BFF payments SDK', () => {
   });
 });
 
-describe('consumer BFF grow SDK', () => {
+describe('consumer BFF grow plan SDK', () => {
   it('exposes grow statuses and calls grow routes', async () => {
     assert.ok(GROW_PLAN_STATUSES.includes('PROPOSED'));
     assert.ok(GROW_PROPOSAL_STATUSES.includes('AWAITING_STEP_UP'));

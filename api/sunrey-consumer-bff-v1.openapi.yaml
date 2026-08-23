@@ -607,23 +607,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowOpportunityFeed"
-  /api/v1/grow/opportunities:
-    get:
-      operationId: listGrowOpportunities
-      summary: List ranked growth opportunities
-      responses:
-        "200":
-          description: Opportunity feed
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowOpportunityFeed"
-        "401":
-          description: Authentication required
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Portfolio not found
   /api/v1/grow/portfolio/holdings:
     get:
       operationId: getGrowPortfolioHoldings
@@ -686,35 +669,6 @@ paths:
           description: Cross-user denied
         "404":
           description: Unknown plan
-  /api/v1/grow/proposals:
-    get:
-      operationId: listGrowProposals
-      summary: List structured financial proposals
-      responses:
-        "200":
-          description: Proposal list
-    post:
-      operationId: createGrowProposal
-      summary: Create a structured financial proposal from a plan component
-      responses:
-        "201":
-          description: Financial proposal
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowProposal"
-  /api/v1/grow/proposals/{id}:
-    get:
-      operationId: getGrowProposal
-      summary: Get one owned financial proposal
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Proposal
   /api/v1/grow/proposals/{id}/modify:
     post:
       operationId: modifyGrowthProposal
@@ -722,25 +676,6 @@ paths:
           description: Financial proposal
         "404":
           description: Unknown or fabricated proposal id
-  /api/v1/grow/proposals/{id}/modify:
-    post:
-      operationId: modifyGrowProposal
-      summary: Recalculate a new proposal version
-      description: Material terms on a presented proposal are not edited in place.
-          description: Opportunity
-        "403":
-          description: Cross-user denied
-        "404":
-          description: Not found
-  /api/v1/grow/opportunities/{id}/dismiss:
-    post:
-      operationId: dismissGrowOpportunity
-      summary: Dismiss an opportunity
-      description: A dismissed fingerprint is not re-presented unchanged.
-      summary: Grow My Money catalog
-      responses:
-        "200":
-          description: Availability plus simulation posture
   /api/v1/grow/profile:
     get:
       operationId: getGrowProfile
@@ -755,30 +690,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GrowProfile"
-  /api/v1/grow/snapshot:
-    get:
-      operationId: getGrowSnapshot
-      summary: Financial snapshot
-      responses:
-        "200":
-          description: Snapshot with per-currency positions
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GrowSnapshot"
-  /api/v1/grow/goals:
-    get:
-      operationId: listGrowGoals
-      summary: List user-declared goals
-      responses:
-        "200":
-          description: Goal list
-    post:
-      operationId: createGrowGoal
-      summary: Create a user-declared goal
-      responses:
-        "201":
-          description: Created goal
   /api/v1/grow/goals/{id}:
     patch:
       operationId: patchGrowGoal
@@ -795,15 +706,17 @@ paths:
     post:
       operationId: approveGrowthProposal
       summary: Customer approval with step-up when required
-          description: New proposal version
-  /api/v1/grow/proposals/{id}/approve:
-    post:
-      operationId: approveGrowProposal
-      summary: Approve a structured financial proposal
-      description: >
-        Uses the Phase B approval state machine. Approval does not issue
-        Execution Authority and does not post a ledger journal.
-          description: Dismissed opportunity
+      description: Uses the Phase B approval state machine. Approval does not issue Execution Authority.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Approved
+        "401":
+          description: Step-up required
   /api/v1/grow/opportunities/{id}/start-proposal:
     post:
       operationId: startGrowOpportunityProposal
@@ -818,14 +731,27 @@ paths:
           schema: { type: string }
       responses:
         "200":
-          description: Approved
-        "401":
-          description: Step-up required
+          description: Proposal receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposalReceipt"
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Not found
   /api/v1/grow/proposals/{id}/execute:
     post:
       operationId: executeGrowthProposal
       summary: Execute an approved proposal through Kernel and Provider Runtime
       description: Frontend financial instructions are not trusted proposal state.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
           description: Approved proposal
         "401":
           description: Step-up required
@@ -855,13 +781,6 @@ paths:
       responses:
         "200":
           description: Execution
-  /api/v1/grow/portfolio:
-    get:
-      operationId: getGrowPortfolio
-      summary: Holdings, allocation, and risk
-      responses:
-        "200":
-          description: Portfolio
   /api/v1/grow/performance:
     get:
       operationId: getGrowPerformance
