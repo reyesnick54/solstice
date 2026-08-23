@@ -17,7 +17,7 @@ function call(
   idempotencyKey?: string,
 ) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, payments: world.payments, agent: world.agent },
     {
       method,
       path,

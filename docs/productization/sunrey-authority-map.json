@@ -557,6 +557,39 @@
       "deprecatedAlternatives": ["packages/approvals", "packages/agent-approvals"]
     },
     {
+      "domain": "AGENT_SAFETY",
+      "canonicalPath": "packages/sunrey-agent/src/productization/invariants.ts",
+      "canonicalOwner": "packages/sunrey-agent",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": false,
+      "mustUseKernel": true,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "agent-safety-invariants",
+      "deprecatedAlternatives": ["packages/agent-safety", "packages/eval-platform"]
+    },
+    {
+      "domain": "AGENT_EVALUATION",
+      "canonicalPath": "packages/sunrey-agent/src/productization/evaluations.ts",
+      "canonicalOwner": "packages/sunrey-agent",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": false,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "agent-eval-results",
+      "deprecatedAlternatives": ["packages/agent-evals", "packages/eval-platform"]
+    },
+    {
+      "domain": "AGENT_OPERATIONS",
+      "canonicalPath": "packages/sunrey-agent/src/productization/ops.ts",
+      "canonicalOwner": "packages/sunrey-agent",
+      "authorityType": "ACTIVE_SPECIALIZED",
+      "mayWrite": true,
+      "mustUseKernel": false,
+      "mustUseExecutionAuthority": false,
+      "canonicalStore": "agent-ops-telemetry",
+      "deprecatedAlternatives": ["packages/agent-observability", "packages/kill-switch"]
+    },
+    {
       "domain": "SUNREY_EXCHANGE",
       "canonicalPath": "packages/sunrey-exchange/src/index.ts",
       "canonicalOwner": "packages/sunrey-exchange",
