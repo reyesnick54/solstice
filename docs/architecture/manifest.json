@@ -2344,7 +2344,10 @@
         "packages/privacy-vault",
         "packages/personal-data-v2",
         "packages/data-vault",
-        "packages/pii-store"
+        "packages/pii-store",
+        "packages/personal-data-fabric",
+        "packages/data-fabric",
+        "packages/vault-v2"
       ],
       "codeowners": [
         "@reyesnick54"

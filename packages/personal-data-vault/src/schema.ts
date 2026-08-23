@@ -95,6 +95,59 @@ export const BUILTIN_SCHEMAS: readonly DataSchemaRecord[] = Object.freeze([
     ]),
     description: 'Minimized derived spending summary. Lineage required.',
   }),
+  Object.freeze({
+    schemaId: asDataSchemaId('pdsch_employment'),
+    version: asDataSchemaVersion('1'),
+    contentType: 'application/json',
+    category: 'USER_DECLARED_DATA',
+    sensitivityDefault: 'PERSONAL',
+    allowedMetadata: Object.freeze(['employerLabel']),
+    validationRules: Object.freeze([
+      { name: 'employer', type: 'string' as const, required: true },
+      { name: 'title', type: 'string' as const, required: true },
+      { name: 'startedOn', type: 'string' as const, required: true },
+    ]),
+    description: 'User-declared employment. Not payroll truth and not a ledger balance.',
+  }),
+  Object.freeze({
+    schemaId: asDataSchemaId('pdsch_skills'),
+    version: asDataSchemaVersion('1'),
+    contentType: 'application/json',
+    category: 'USER_DECLARED_DATA',
+    sensitivityDefault: 'PERSONAL',
+    allowedMetadata: Object.freeze(['skillKey']),
+    validationRules: Object.freeze([
+      { name: 'skill', type: 'string' as const, required: true },
+      { name: 'level', type: 'string' as const, required: true },
+    ]),
+    description: 'User-declared skill. Not a verified credential.',
+  }),
+  Object.freeze({
+    schemaId: asDataSchemaId('pdsch_education'),
+    version: asDataSchemaVersion('1'),
+    contentType: 'application/json',
+    category: 'USER_DECLARED_DATA',
+    sensitivityDefault: 'PERSONAL',
+    allowedMetadata: Object.freeze(['institutionLabel']),
+    validationRules: Object.freeze([
+      { name: 'institution', type: 'string' as const, required: true },
+      { name: 'credential', type: 'string' as const, required: true },
+    ]),
+    description: 'User-declared education. Not a verified transcript.',
+  }),
+  Object.freeze({
+    schemaId: asDataSchemaId('pdsch_inference'),
+    version: asDataSchemaVersion('1'),
+    contentType: 'application/json',
+    category: 'USER_DECLARED_DATA',
+    sensitivityDefault: 'PERSONAL',
+    allowedMetadata: Object.freeze(['modelLabel']),
+    validationRules: Object.freeze([
+      { name: 'statement', type: 'string' as const, required: true },
+      { name: 'modelRef', type: 'string' as const, required: true },
+    ]),
+    description: 'AI inference about the subject. Never a verified personal fact.',
+  }),
 ]);
 
 export class DataSchemaRegistry {

@@ -377,3 +377,36 @@ Do not ask the backend for a private key.
 Do not let the Agent sign or broadcast.
 Do not mark a deposit available before `FINALIZED`.
 See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.
+
+## Personal Data Vault (Phase H Prompt 1)
+
+Use the Consumer BFF. Lovable must not implement privacy, consent,
+classification, or retention logic. The Vault is not PEG and not a
+dump of every personal field.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Vault Home | `GET /api/v1/data/vault` | Counts, production flags false, `sunreyOwnsUserData: false` |
+| Your Data | `GET /api/v1/data/vault/records` | Filter with `categoryId`, `kind`, `status` |
+| Data Categories | `GET /api/v1/data/vault/categories` | Versioned registry. Health/biometric/genetic are not ingested by default |
+| Data Sources | `GET /api/v1/data/vault/sources` | Distinct sources plus ownership roles |
+| Verified / user-declared / derived | records `verificationState` / `dataKind` | AI inference is never a verified personal fact |
+| Who can access | `GET /api/v1/data/vault/access` | Audit metadata only |
+| Data History | `GET /api/v1/data/vault/records/{id}/history` | Versions. Current profile state stays separate |
+| Export | `POST /api/v1/data/vault/export` then `/export/status` | Portable bundle. No secrets or other users |
+| Correct / Dispute | `PATCH .../records/{id}` or `POST .../corrections` | User-declared overwrite; derived/provider stay review-pending |
+
+SDK: `getVaultHome`, `listVaultCategories`, `listVaultRecords`,
+`getVaultRecord`, `getVaultRecordHistory`, `requestVaultCorrection`,
+`listVaultSources`, `listVaultAccess`, `requestVaultExport`,
+`getVaultExportStatus`.
+
+Sandbox tokens: `sandbox.vault_minimal`, `sandbox.vault_financial`,
+`sandbox.vault_employment`, `sandbox.vault_multi_source`,
+`sandbox.vault_derived`, `sandbox.vault_disputed`,
+`sandbox.vault_revoked`, `sandbox.vault_restricted_agent`.
+
+Do not call a generic get-all-user-data API. There is not one.
+Do not treat Agent conversation as consent.
+Do not store KYC images, bank credentials, or private keys in the Vault.
+See `docs/productization/PHASE_H_01_PERSONAL_DATA_VAULT.md`.

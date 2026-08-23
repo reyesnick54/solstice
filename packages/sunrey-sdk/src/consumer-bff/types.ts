@@ -794,6 +794,65 @@ export type WithdrawalCreateInput = {
   readonly amountMinorUnits?: string;
   readonly stepUpSatisfied?: boolean;
   readonly originatedFromAgent?: boolean;
+};
+
+export type VaultHome = {
+  readonly schema: 'sunrey.consumer.vault.home.v1';
+  readonly fabric: string;
+  readonly ownerSubjectId: string;
+  readonly recordCount: number;
+  readonly categoryCount: number;
+  readonly sourceCount: number;
+  readonly disputedCount: number;
+  readonly productionActive: false;
+  readonly liveMonetizationEnabled: false;
+  readonly sunreyOwnsUserData: false;
+};
+
+export type VaultCategory = {
+  readonly categoryId: string;
+  readonly label: string;
+  readonly classification: string;
+  readonly availability: string;
+  readonly ingestEnabled: boolean;
+  readonly agentAccessEligible: boolean;
+  readonly shareability: string;
+  readonly liveMonetizationEnabled: false;
+};
+
+export type VaultCategories = {
+  readonly schema: 'sunrey.consumer.vault.categories.v1';
+  readonly version: string;
+  readonly productionActive: false;
+  readonly liveMonetizationEnabled: false;
+  readonly items: readonly VaultCategory[];
+};
+
+export type VaultRecord = {
+  readonly schema: 'sunrey.vault.data-record.v1';
+  readonly dataRecordId: string;
+  readonly ownerSubjectId: string;
+  readonly dataCategory: string;
+  readonly dataKind: string;
+  readonly verificationState: string;
+  readonly classification: string;
+  readonly status: string;
+  readonly productionActive: false;
+};
+
+export type VaultRecords = {
+  readonly schema: 'sunrey.consumer.vault.records.v1';
+  readonly items: readonly VaultRecord[];
+  readonly productionActive: false;
+};
+
+export type VaultExportJob = {
+  readonly exportId: string;
+  readonly subjectId: string;
+  readonly status: 'REQUESTED' | 'COMPLETED' | 'FAILED';
+  readonly legalPortabilityClaim: false;
+};
+
 export type NativeEconomyOverview = {
   readonly schema: 'sunrey.consumer.native-economy.v1';
   readonly tickerStatus: 'NOT_ASSIGNED';
@@ -827,6 +886,8 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+};
+
 export type ExchangeMarket = {
   readonly marketId: string;
   readonly instrument: string;

@@ -26,6 +26,14 @@ export const SANDBOX_PERSONA_IDS = [
   'grow_goal_oriented',
   'grow_liquidity_constrained',
   'grow_high_concentration',
+  'vault_minimal',
+  'vault_financial',
+  'vault_employment',
+  'vault_multi_source',
+  'vault_derived',
+  'vault_disputed',
+  'vault_revoked',
+  'vault_restricted_agent',
 ] as const;
 export type SandboxPersonaId = (typeof SANDBOX_PERSONA_IDS)[number];
 
