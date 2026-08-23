@@ -1,8 +1,7 @@
-import { Money } from '../../../../money/src/money.ts';
-import { assertBalanced } from '../../../../ledger/src/invariants.ts';
 import { ENVIRONMENT, LIVE_MONEY_ENABLED, LIVE_PAYMENTS_ENABLED } from '../../../../config/src/flags.ts';
 import { runChaosScenario } from '../chaos.ts';
 import { SimulatedResilienceNetwork } from '../network.ts';
+import { fixtureJournalsBalanced } from './integrity.ts';
 import { CHAOS_SCENARIOS, type ChaosScenario } from './types.ts';
 
 export type ChaosResult = {
@@ -55,17 +54,7 @@ export function runAllChaosScenarios(): readonly ChaosResult[] {
 }
 
 function assertIntegrity(state: FinancialIntegrityState, scenario: ChaosScenario): boolean {
-  try {
-    for (const journal of state.journals) {
-      assertBalanced(
-        journal.postings.map((posting, index) => ({
-          accountId: `acct_${index === 0 ? 'debit' : 'credit'}`,
-          direction: posting.direction,
-          amount: Money.fromMinorUnits(posting.minorUnits, 'USD'),
-        })),
-      );
-    }
-  } catch {
+  if (!fixtureJournalsBalanced(state.journals)) {
     return false;
   }
   if (scenario === 'DATABASE_CONNECTION_INTERRUPTION' || scenario === 'PROVIDER_TIMEOUT') {

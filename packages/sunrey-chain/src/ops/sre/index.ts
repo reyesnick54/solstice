@@ -1,6 +1,7 @@
 export { evaluateProductizationAlerts, mapToExistingAlertEngine, productizationAlert, productizationAlerts } from './alerts.ts';
 export { backupCatalogAligned, backupClaim, backupSchedules, configurationBackupPolicy, objectStorageBackupPolicies } from './backup.ts';
 export { applyChaos, runAllChaosScenarios } from './chaos.ts';
+export { fixtureJournalsBalanced } from './integrity.ts';
 export { chainRecoveryPlan, rehearseChainRecovery } from './chain-recovery.ts';
 export { degradedMode, degradedModeCatalogComplete, degradedModes } from './continuity.ts';
 export {

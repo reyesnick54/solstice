@@ -1,8 +1,7 @@
 import { createHash } from 'node:crypto';
 
-import { Money } from '../../../../money/src/money.ts';
-import { assertBalanced } from '../../../../ledger/src/invariants.ts';
 import { createSimulationKeyProvider } from '../../../../security/src/simulation.ts';
+import { fixtureJournalsBalanced } from './integrity.ts';
 import {
   decryptBackup,
   dumpApplicationDatabase,
@@ -65,20 +64,7 @@ export function runRestoreTest(nowUtc = '2026-08-23T09:00:00.000Z'): RestoreTest
     restored.tables.accounts?.[0]?.account_id === 'acct_restore_1' &&
     restored.tables.outbox?.[0]?.not_a_journal === 'true';
 
-  let ledgerInvariantsPassed = true;
-  try {
-    for (const journal of LEDGER_FIXTURE.journals) {
-      assertBalanced(
-        journal.postings.map((posting, index) => ({
-          accountId: `acct_${index === 0 ? 'debit' : 'credit'}`,
-          direction: posting.direction,
-          amount: Money.fromMinorUnits(posting.minorUnits, 'USD'),
-        })),
-      );
-    }
-  } catch {
-    ledgerInvariantsPassed = false;
-  }
+  const ledgerInvariantsPassed = fixtureJournalsBalanced(LEDGER_FIXTURE.journals);
 
   const inventedJournals = false;
   const result =
