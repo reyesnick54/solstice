@@ -261,10 +261,6 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
-  async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow', undefined, options);
-  }
-
   async getGoals(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow/goals', undefined, options);
   }
@@ -537,6 +533,8 @@ export class SunReyConsumerBffClient {
 
   async getNativeAsset(assetId: string, options?: BffRequestOptions): Promise<unknown> {
     return this.request('GET', `/api/v1/economy/assets/${encodeURIComponent(assetId)}`, undefined, options);
+  }
+
   async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {
     return this.request('GET', '/api/v1/exchange/markets', undefined, options);
   }

@@ -83,7 +83,7 @@ export function dispatchHin(
     return json(200, projectPermissions(market, holder), headers);
   }
   if (path === '/api/v1/hin/usage' && method === 'GET') {
-    return json(200, { schema: 'sunrey.consumer.hin.usage.v1', ...projectPermissions(market, holder) }, headers);
+    return json(200, { ...projectPermissions(market, holder), schema: 'sunrey.consumer.hin.usage.v1' }, headers);
   }
   if (path === '/api/v1/hin/participation' && method === 'GET') {
     return json(200, projectParticipation(market, holder), headers);
