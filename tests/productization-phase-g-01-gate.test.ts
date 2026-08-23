@@ -3,6 +3,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { ENVIRONMENT, LIVE_EXCHANGE_ENABLED, LIVE_TRADING_ENABLED } from '../packages/config/src/flags.ts';
+
 const ROOT = join(import.meta.dirname, '..');
 
 describe('Phase G Prompt 1 Exchange core gate', () => {
@@ -27,10 +29,9 @@ describe('Phase G Prompt 1 Exchange core gate', () => {
     assert.match(doc, /Do not begin Prompt 2/);
     assert.equal(existsSync(join(ROOT, 'packages/exchange-v2')), false);
     assert.equal(existsSync(join(ROOT, 'packages/matching-engine')), false);
-    const flags = readFileSync(join(ROOT, 'packages/config/src/flags.ts'), 'utf8');
-    assert.equal(flags.includes("ENVIRONMENT = 'simulation'"), true);
-    assert.equal(/LIVE_EXCHANGE_ENABLED = true/.test(flags), false);
-    assert.equal(/LIVE_TRADING_ENABLED = true/.test(flags), false);
+    assert.equal(ENVIRONMENT, 'simulation');
+    assert.equal(LIVE_EXCHANGE_ENABLED, false);
+    assert.equal(LIVE_TRADING_ENABLED, false);
     const core = readFileSync(join(ROOT, 'packages/sunrey-exchange/src/production-core/posture.ts'), 'utf8');
     assert.match(core, /EXCHANGE_LIVE_TRADING_ENABLED = false/);
   });

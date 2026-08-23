@@ -87,3 +87,7 @@ CREATE TABLE agent_runtime.snapshot (
 CREATE INDEX agent_runtime_agent_owner_idx ON agent_runtime.agent (owner_id);
 CREATE INDEX agent_runtime_conversation_owner_idx ON agent_runtime.conversation (owner_id, agent_id);
 CREATE INDEX agent_runtime_memory_owner_idx ON agent_runtime.memory (owner_id, agent_id);
+
+GRANT USAGE ON SCHEMA agent_runtime TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app;
+REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA agent_runtime FROM customer_app;
