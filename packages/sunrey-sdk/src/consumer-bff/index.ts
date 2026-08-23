@@ -4,6 +4,9 @@ export {
   CONSUMER_ACTIVITY_STATUSES,
   FINANCIAL_ACCOUNT_LIFECYCLES,
   FINANCIAL_PRODUCT_TYPES,
+  GROW_PLAN_STATUSES,
+  GROW_PROPOSAL_STATUSES,
+  GROW_RISK_PROFILES,
   GROW_OPPORTUNITY_STATUSES,
 } from './types.ts';
 export type {
@@ -31,6 +34,12 @@ export type {
   FinancialAccountLifecycle,
   FinancialProductType,
   MoneyView,
+  GrowPlan,
+  GrowPlanCreateInput,
+  GrowPlanStatus,
+  GrowProposal,
+  GrowProposalStatus,
+  GrowRiskProfile,
   GrowMoney,
   GrowPortfolio,
   GrowHoldings,

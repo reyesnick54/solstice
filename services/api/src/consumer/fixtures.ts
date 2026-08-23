@@ -65,6 +65,7 @@ import {
   InvestmentsService,
 } from '../../../investments/src/index.ts';
 import type { SessionDirectory } from './session.ts';
+import { ProductGrowthService } from '../../../../packages/platform/src/growth/product/service.ts';
 
 export const SANDBOX_LABEL = 'SANDBOX_FIXTURE_NON_PRODUCTION' as const;
 
@@ -125,6 +126,7 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly grow: ProductGrowthService;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -420,6 +422,12 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessionFor: (actorId) => runtime.identity.service.activeSessionForActor(actorId),
   });
 
+  const grow = new ProductGrowthService({
+    clock: runtime.clock,
+    events: runtime.events,
+    evidence: runtime.evidence,
+  });
+
   const bff = new ConsumerBff({
     now: () => runtime.clock.now(),
     accounts: createAccountsReadAdapter(runtime),
@@ -505,6 +513,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    grow,
   });
 }
 

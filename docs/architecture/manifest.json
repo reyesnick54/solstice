@@ -1204,6 +1204,7 @@
         "packages/security",
         "packages/payments",
         "packages/sunrey-chain",
+        "packages/platform"
         "services/investments"
         "packages/platform",
         "packages/personal-economic-graph"

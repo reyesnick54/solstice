@@ -445,6 +445,41 @@ paths:
   /api/v1/grow:
     get:
       operationId: getGrow
+      summary: Grow My Money catalog and latest plan experience
+      description: >
+        Simulation illustrations only. Conservative, base, and upside
+        ranges are not guaranteed outcomes. Production remains disabled.
+      responses:
+        "200":
+          description: Grow catalog
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowCatalog"
+  /api/v1/grow/plans:
+    get:
+      operationId: listGrowPlans
+      summary: List the authenticated customer's growth plans
+      responses:
+        "200":
+          description: Plan list
+    post:
+      operationId: createGrowPlan
+      summary: Create a Grow My Money plan
+      description: >
+        Server issues the plan and a structured primary proposal.
+        The client cannot submit proposal JSON as if the server issued it.
+      responses:
+        "201":
+          description: Created plan
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowPlan"
+  /api/v1/grow/plans/{id}:
+    get:
+      operationId: getGrowPlan
+      summary: Get one owned growth plan
       summary: Grow My Money availability
       responses:
         "200":
@@ -548,6 +583,47 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Growth plan
+        "403":
+          description: Cross-user denied
+        "404":
+          description: Unknown plan
+  /api/v1/grow/proposals:
+    get:
+      operationId: listGrowProposals
+      summary: List structured financial proposals
+      responses:
+        "200":
+          description: Proposal list
+    post:
+      operationId: createGrowProposal
+      summary: Create a structured financial proposal from a plan component
+      responses:
+        "201":
+          description: Financial proposal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GrowProposal"
+  /api/v1/grow/proposals/{id}:
+    get:
+      operationId: getGrowProposal
+      summary: Get one owned financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Financial proposal
+        "404":
+          description: Unknown or fabricated proposal id
+  /api/v1/grow/proposals/{id}/modify:
+    post:
+      operationId: modifyGrowProposal
+      summary: Recalculate a new proposal version
+      description: Material terms on a presented proposal are not edited in place.
           description: Opportunity
         "403":
           description: Cross-user denied
@@ -611,6 +687,14 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: New proposal version
+  /api/v1/grow/proposals/{id}/approve:
+    post:
+      operationId: approveGrowProposal
+      summary: Approve a structured financial proposal
+      description: >
+        Uses the Phase B approval state machine. Approval does not issue
+        Execution Authority and does not post a ledger journal.
           description: Dismissed opportunity
   /api/v1/grow/opportunities/{id}/start-proposal:
     post:
@@ -626,6 +710,23 @@ paths:
           schema: { type: string }
       responses:
         "200":
+          description: Approved proposal
+        "401":
+          description: Step-up required
+        "403":
+          description: Policy, suitability, or cross-user denial
+  /api/v1/grow/proposals/{id}/reject:
+    post:
+      operationId: rejectGrowProposal
+      summary: Reject a structured financial proposal
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Rejected proposal
           description: Proposal receipt
           content:
             application/json:
@@ -1135,6 +1236,59 @@ components:
         accounts:
           allOf:
             - { $ref: "#/components/schemas/ResourceField" }
+    GrowCatalog:
+      type: object
+      required: [group, availability, productionActive, guaranteedOutcome]
+      properties:
+        group: { type: string, enum: [grow] }
+        schema: { type: string }
+        availability: { type: string, enum: [AVAILABLE_SIMULATION] }
+        state: { type: string }
+        reason: { type: string }
+        productionActive: { type: boolean, enum: [false] }
+        guaranteedOutcome: { type: boolean, enum: [false] }
+    GrowPlan:
+      type: object
+      required: [planId, ownerId, status, guaranteedOutcome, productionActive]
+      properties:
+        planId: { type: string }
+        ownerId: { type: string }
+        status:
+          type: string
+          enum: [DRAFT, PROPOSED, ACTIVE, PAUSED, SUPERSEDED, COMPLETED, CANCELLED]
+        guaranteedOutcome: { type: boolean, enum: [false] }
+        productionActive: { type: boolean, enum: [false] }
+        primaryProposal:
+          nullable: true
+          type: object
+          properties:
+            proposalId: { type: string }
+    GrowProposal:
+      type: object
+      required: [proposalId, planId, status, guaranteedOutcome, executionAuthorityId, serverIssued]
+      properties:
+        proposalId: { type: string }
+        planId: { type: string }
+        status:
+          type: string
+          enum:
+            - DRAFT
+            - READY
+            - PRESENTED
+            - AWAITING_APPROVAL
+            - AWAITING_STEP_UP
+            - AWAITING_COMPLIANCE
+            - APPROVED
+            - EXECUTING
+            - EXECUTED
+            - REJECTED
+            - EXPIRED
+            - FAILED
+            - CANCELLED
+            - SUPERSEDED
+        guaranteedOutcome: { type: boolean, enum: [false] }
+        executionAuthorityId: { type: string, nullable: true, enum: [null] }
+        serverIssued: { type: boolean, enum: [true] }
     GrowMoney:
       type: object
       required: [minorUnits, currency]

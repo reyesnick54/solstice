@@ -5,6 +5,9 @@
  */
 
 import type {
+  GrowPlan,
+  GrowPlanCreateInput,
+  GrowProposal,
   GrowAllocation,
   GrowHoldings,
   GrowPerformance,
@@ -150,6 +153,40 @@ export class SunReyConsumerBffClient {
     return this.request('POST', `/api/v1/payments/${encodeURIComponent(id)}/approve`, input, options);
   }
 
+  async createGrowPlan(input: GrowPlanCreateInput, options?: BffRequestOptions): Promise<GrowPlan> {
+    return this.request('POST', '/api/v1/grow/plans', input, options);
+  }
+
+  async getGrowPlan(id: string, options?: BffRequestOptions): Promise<GrowPlan> {
+    return this.request('GET', `/api/v1/grow/plans/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async listGrowProposals(options?: BffRequestOptions): Promise<{ readonly items: readonly GrowProposal[] }> {
+    return this.request('GET', '/api/v1/grow/proposals', undefined, options);
+  }
+
+  async getGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
+    return this.request('GET', `/api/v1/grow/proposals/${encodeURIComponent(id)}`, undefined, options);
+  }
+
+  async modifyGrowProposal(
+    id: string,
+    input: { readonly amountMinorUnits?: string; readonly riskProfile?: string },
+    options?: BffRequestOptions,
+  ): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/modify`, input, options);
+  }
+
+  async approveGrowProposal(
+    id: string,
+    input: { readonly stepUpSatisfied?: boolean } = {},
+    options?: BffRequestOptions,
+  ): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/approve`, input, options);
+  }
+
+  async rejectGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
+    return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/reject`, {}, options);
   async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
     return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
   }
