@@ -186,6 +186,25 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         permissions,
         untrustedExternalContentCannotRedefinePolicy: true,
       }), []);
+    case 'getVaultSummary':
+      return mapPort(ctx.ports.data.vaultSummary(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (summary) => ({
+        summary,
+        payloadsIncluded: false,
+        unauthorizedSensitiveRecords: false,
+      }), []);
+    case 'getHinContributionSummary':
+      return mapPort(ctx.ports.data.hinSummary(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (summary) => ({
+        summary,
+        hinValueIsNotMarketPrice: true,
+        hinCannotMint: true,
+      }), []);
+    case 'requestHinConsentChange':
+      return mapPort(ctx.ports.data.requestHinStop(ctx.session.ownerId), ctx, 'APPROVAL_CARD', (request) => ({
+        ...request,
+        revoked: false,
+        confirmed: false,
+        agentMustNotImplyRevocation: true,
+      }), []);
     case 'getNativeAsset':
       return mapPort(ctx.ports.nativeEconomy.asset(str(ctx.input.assetId)), ctx, 'TRADE_PROPOSAL', (asset) => ({
         asset,

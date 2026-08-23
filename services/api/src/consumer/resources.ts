@@ -62,7 +62,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'WALLETS':
       return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/custody product wallet', 'custody / chain adapters', 'Customer wallet, deposit address, withdrawal quote/execute. No signing material. Production signing disabled.');
     case 'DATA':
-      return row(group, '/api/v1/data', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault metadata only.');
+      return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault + packages/consent + packages/information-market + packages/human-economic-contribution', 'EXTERNAL_PROVIDER_REQUIRED for live data monetization', 'Vault, consent, HIN, contributions, licenses, earnings, and data-rights. Live marketplace remains disabled.');
     case 'SECURITY':
       return row(group, '/api/v1/security', ['GET'], 'AVAILABLE_SIMULATION', 'packages/identity sessions/devices', 'none', 'Session and device summary.');
     case 'NOTIFICATIONS':

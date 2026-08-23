@@ -259,6 +259,28 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
     data: {
       consent: (ownerId) => ok({ ownerId, activePermits: 1, purposes: ['FINANCIAL_EXPLANATION'] }),
       permissions: (ownerId) => ok({ ownerId, scopes: ['derived_income', 'vault_metadata'] }),
+      vaultSummary: (ownerId) =>
+        ok({
+          ownerId,
+          categories: ['PREFERENCE_DATA', 'PAYROLL_DATA'],
+          recordCount: 2,
+          payloadsIncluded: false,
+          unauthorizedSensitiveRecords: false,
+        }),
+      hinSummary: (ownerId) =>
+        ok({
+          ownerId,
+          participating: true,
+          verifiedContributions: 1,
+          economicInputsExplained: true,
+          rightsExplained: true,
+        }),
+      requestHinStop: () =>
+        ok({
+          revoked: false,
+          confirmed: false,
+          requiresExplicitUserAction: true,
+        }),
     },
     nativeEconomy: {
       asset(assetId) {

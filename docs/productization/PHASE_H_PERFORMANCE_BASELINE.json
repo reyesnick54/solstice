@@ -1,0 +1,7 @@
+{
+  "schema": "sunrey.phase-h.performance-baseline.v1",
+  "productionSlaClaimed": false,
+  "environment": "simulation",
+  "notes": "Filled by tests/phase-h-performance.test.ts. Not an SLA.",
+  "samples": []
+}

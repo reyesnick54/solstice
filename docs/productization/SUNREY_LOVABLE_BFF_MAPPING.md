@@ -125,6 +125,22 @@ authentication foundation; the BFF only consumes a verified session.
 | EXCHANGE stream | `/api/v1/exchange/stream` | GET | required | SSE ticker/trade/book/order-status | same | AVAILABLE_SIMULATION | privileged topics are not exposed |
 | WALLET | `/api/v1/wallets` | GET | required | availability stub | cards wallet / chain mobile-sync | NOT_YET_PRODUCTIZED | wallet providers |
 | DATA VAULT | `/api/v1/data` | GET | required | availability stub | `packages/personal-data-vault` | AVAILABLE_SIMULATION | none |
+| VAULT HOME | `/api/v1/data` | GET | required | vault home + encryption posture | `packages/personal-data-vault` | AVAILABLE_SIMULATION | sandbox labeled SANDBOX |
+| YOUR DATA | `/api/v1/data/records` | GET, POST | required + owner | metadata records | same | AVAILABLE_SIMULATION | payloads not listed |
+| DATA SOURCES | `/api/v1/data/sources` | GET | required | connector catalog | same | AVAILABLE_SIMULATION | liveConnection=false |
+| PERMISSIONS | `/api/v1/data/permissions` | GET, POST | required + owner | grants | `packages/consent` | AVAILABLE_SIMULATION | no wildcards |
+| CONSENT | `/api/v1/data/consent` + `/receipt` | GET | required + owner | grants + immutable receipt | same | AVAILABLE_SIMULATION | none |
+| AGENT ACCESS | `/api/v1/data/agent-access` | GET, POST | required + owner | purpose-limited reads | consent + PDV | AVAILABLE_SIMULATION | wildcard denied |
+| HIN PARTICIPATION | `/api/v1/data/hin` | GET, POST | required + owner | participate / stop | `packages/information-market` | AVAILABLE_SIMULATION | stop not implied |
+| INFORMATION RIGHTS | `/api/v1/data/licenses` | GET, POST | required + owner | rights + licenses | HIN engine | AVAILABLE_SIMULATION | live marketplace off |
+| CONTRIBUTIONS | `/api/v1/data/contributions` | GET, POST | required + owner | verified contributions | `packages/human-economic-contribution` | AVAILABLE_SIMULATION | no mint |
+| EARNINGS | `/api/v1/data/earnings` | GET | required + owner | compensation instructions | HIN + ledger instruction | AVAILABLE_SIMULATION | not yield |
+| LICENSES | `/api/v1/data/licenses/{id}/*` | POST | required + owner | approve / pay / revoke | HIN | AVAILABLE_SIMULATION | purpose enforced |
+| ACCESS HISTORY | `/api/v1/data/access-history` | GET | required + owner | access audit | PDV | AVAILABLE_SIMULATION | no payloads |
+| EXPORT | `/api/v1/data/export` | POST | required + owner | export bundle receipt | PDV | AVAILABLE_SIMULATION | not legal portability claim |
+| CORRECT / DELETE / RESTRICT | `/api/v1/data/rights` + record actions | POST | required + owner | rights workflows | PDV + consent | AVAILABLE_SIMULATION | hold blocks delete |
+| SUNREY ECONOMY DETAIL | `/api/v1/economy/sunrey` | GET | required | HIN metrics + supply + market price | chain + HIN | AVAILABLE_SIMULATION | HIN ≠ price ≠ mint |
+| MOONREY ECONOMY DETAIL | `/api/v1/economy/moonrey` | GET | required | productive metrics + supply + market price | oracles + chain | AVAILABLE_SIMULATION | productive ≠ price ≠ mint |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |
 
