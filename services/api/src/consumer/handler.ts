@@ -911,9 +911,6 @@ function dispatchPayments(
 
 function dispatchExchange(
   exchange: ExchangeBffSurface,
-function dispatchGrow(
-  grow: GrowBffSurface & ProductGrowthService,
-  grow: GrowBffSurface | ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -1383,7 +1380,7 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/economy/productive',
   'GET /api/v1/economy/productive/{category}',
   'POST /api/v1/economy/productive/observe',
-  'POST /api/v1/economy/issuance-basis',
+  'POST /api/v1/economy/basis-proposal',
   'GET /api/v1/exchange/markets',
   'GET /api/v1/exchange/markets/{instrument}',
   'GET /api/v1/exchange/markets/{instrument}/ticker',

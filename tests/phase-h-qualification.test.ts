@@ -135,7 +135,7 @@ describe('Phase H qualification', () => {
     const stale = world.handle({ method: 'POST', path: '/api/v1/economy/productive/observe', body: { kind: 'stale' } });
     assert.equal(stale.status, 400);
     const basis = body<{ mainnetIssuance: false; hinCannotModifySupply: true }>(
-      world.handle({ method: 'POST', path: '/api/v1/economy/issuance-basis', body: { kind: 'HIN' } }),
+      world.handle({ method: 'POST', path: '/api/v1/economy/basis-proposal', body: { kind: 'HIN' } }),
     );
     assert.equal(basis.mainnetIssuance, false);
 
@@ -196,7 +196,7 @@ describe('Phase H qualification', () => {
     const moonreyMint = world.handle({ method: 'POST', path: '/api/v1/economy/issuance', body: { asset: 'MOONREY', amount: '1' } });
     assert.ok(moonreyMint.status === 404 || moonreyMint.status === 405);
     const basis = body<{ mainnetIssuance: false; hinCannotModifySupply: true }>(
-      world.handle({ method: 'POST', path: '/api/v1/economy/issuance-basis', body: { kind: 'MOONREY' } }),
+      world.handle({ method: 'POST', path: '/api/v1/economy/basis-proposal', body: { kind: 'MOONREY' } }),
     );
     assert.equal(basis.mainnetIssuance, false);
     assert.equal(basis.hinCannotModifySupply, true);

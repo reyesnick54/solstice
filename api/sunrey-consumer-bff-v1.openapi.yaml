@@ -1919,6 +1919,34 @@ paths:
       responses:
         "200":
           description: Productive input is not market price
+  /api/v1/economy/hin:
+    get:
+      operationId: getHinAggregateMetrics
+      summary: Aggregate HIN metrics
+      responses:
+        "200":
+          description: No individual records
+  /api/v1/economy/productive:
+    get:
+      operationId: getProductiveEconomy
+      summary: Productive-economy overview
+      responses:
+        "200":
+          description: Sandbox observations only
+  /api/v1/economy/productive/observe:
+    post:
+      operationId: observeProductive
+      summary: Ingest a sandbox productive observation
+      responses:
+        "200":
+          description: Observation accepted or rejected
+  /api/v1/economy/basis-proposal:
+    post:
+      operationId: createEconomicBasisProposal
+      summary: Draft issuance-basis proposal that stops before mint
+      responses:
+        "200":
+          description: Proposal only. No supply change.
   /api/v1/security:
     get:
       operationId: getSecurity

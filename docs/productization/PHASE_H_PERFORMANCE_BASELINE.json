@@ -2,6 +2,39 @@
   "schema": "sunrey.phase-h.performance-baseline.v1",
   "productionSlaClaimed": false,
   "environment": "simulation",
-  "notes": "Filled by tests/phase-h-performance.test.ts. Not an SLA.",
-  "samples": []
+  "notes": "Non-production Cloud Agent harness. Not an SLA.",
+  "samples": [
+    {
+      "label": "vault_summary",
+      "ns": "127401"
+    },
+    {
+      "label": "permissions",
+      "ns": "131977"
+    },
+    {
+      "label": "access_history",
+      "ns": "97255"
+    },
+    {
+      "label": "hin_contribution_summary",
+      "ns": "57424"
+    },
+    {
+      "label": "aggregate_hin_metrics",
+      "ns": "55440"
+    },
+    {
+      "label": "earnings",
+      "ns": "43018"
+    },
+    {
+      "label": "productive_overview",
+      "ns": "113386"
+    },
+    {
+      "label": "category_metric_history",
+      "ns": "163909"
+    }
+  ]
 }

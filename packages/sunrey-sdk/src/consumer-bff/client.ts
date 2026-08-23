@@ -656,7 +656,7 @@ export class SunReyConsumerBffClient {
   }
 
   async createIssuanceBasis(kind: 'HIN' | 'MOONREY', options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('POST', '/api/v1/economy/issuance-basis', { kind }, options);
+    return this.request('POST', '/api/v1/economy/basis-proposal', { kind }, options);
   }
 
   async listExchangeMarkets(options?: BffRequestOptions): Promise<ExchangeMarkets> {

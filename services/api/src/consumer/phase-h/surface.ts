@@ -5,70 +5,70 @@
  * Does not mint. Does not activate live data monetization.
  */
 
-import { FrozenClock } from '../../../../packages/config/src/clock.ts';
+import { FrozenClock } from '../../../../../packages/config/src/clock.ts';
 import {
   LIVE_DATA_MARKET_ENABLED,
   LIVE_DATA_MONETIZATION_ENABLED,
   LIVE_HIN_BASED_ISSUANCE_ENABLED,
   LIVE_INFORMATION_RIGHTS_MARKETPLACE,
   LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED,
-} from '../../../../packages/config/src/flags.ts';
-import { asCustomerId } from '../../../../packages/domain/src/customer.ts';
-import { asJurisdiction, asResidency } from '../../../../packages/domain/src/jurisdiction.ts';
-import { asUtcInstant, type UtcInstant } from '../../../../packages/domain/src/time.ts';
-import { EvidenceVault } from '../../../../packages/evidence/src/vault.ts';
-import { DomainEventLog } from '../../../../packages/events/src/events.ts';
-import { SimulatedIdentityAdapter } from '../../../../packages/identity/src/simulation.ts';
-import type { VerifiedActorContext } from '../../../../packages/identity/src/actor-context.ts';
-import { ComplianceKernel } from '../../../../packages/kernel/src/kernel.ts';
-import { Ledger } from '../../../../packages/ledger/src/journal.ts';
-import { Money } from '../../../../packages/money/src/money.ts';
-import { AuthorityIssuer } from '../../../../packages/permissions/src/execution-authority.ts';
-import { createSimulationKeyProvider } from '../../../../packages/security/src/simulation.ts';
-import { PersonalDataVault } from '../../../../packages/personal-data-vault/src/service.ts';
+} from '../../../../../packages/config/src/flags.ts';
+import { asCustomerId, type Customer } from '../../../../../packages/domain/src/customer.ts';
+import { asJurisdiction, asResidency } from '../../../../../packages/domain/src/jurisdiction.ts';
+import { asUtcInstant, type UtcInstant } from '../../../../../packages/domain/src/time.ts';
+import { EvidenceVault } from '../../../../../packages/evidence/src/vault.ts';
+import { DomainEventLog } from '../../../../../packages/events/src/events.ts';
+import { SimulatedIdentityAdapter } from '../../../../../packages/identity/src/simulation.ts';
+import type { VerifiedActorContext } from '../../../../../packages/identity/src/actor-context.ts';
+import { ComplianceKernel } from '../../../../../packages/kernel/src/kernel.ts';
+import { Ledger } from '../../../../../packages/ledger/src/journal.ts';
+import { Money } from '../../../../../packages/money/src/money.ts';
+import { AuthorityIssuer } from '../../../../../packages/permissions/src/execution-authority.ts';
+import { createSimulationKeyProvider } from '../../../../../packages/security/src/simulation.ts';
+import { PersonalDataVault } from '../../../../../packages/personal-data-vault/src/service.ts';
 import {
   SimulatedPayrollConnector,
   SimulatedTransactionConnector,
   UserDeclaredConnector,
   UserUploadConnector,
-} from '../../../../packages/personal-data-vault/src/connectors.ts';
-import { DATA_CATEGORIES } from '../../../../packages/personal-data-vault/src/taxonomy.ts';
-import type { DataAsset, DataAssetId } from '../../../../packages/personal-data-vault/src/index.ts';
-import { ConsentDataUseAuthorization } from '../../../../packages/consent/src/authorization.ts';
-import { ConsentService } from '../../../../packages/consent/src/service.ts';
-import { PurposeScopedVaultTool } from '../../../../packages/consent/src/agent-tool.ts';
+} from '../../../../../packages/personal-data-vault/src/connectors.ts';
+import { DATA_CATEGORIES } from '../../../../../packages/personal-data-vault/src/taxonomy.ts';
+import type { DataAsset, DataAssetId } from '../../../../../packages/personal-data-vault/src/index.ts';
+import { ConsentDataUseAuthorization } from '../../../../../packages/consent/src/authorization.ts';
+import { ConsentService } from '../../../../../packages/consent/src/service.ts';
+import { PurposeScopedVaultTool } from '../../../../../packages/consent/src/agent-tool.ts';
 import {
   RECIPIENT_EXTERNAL_RESEARCH,
   RECIPIENT_PERSONAL_AGENT,
-} from '../../../../packages/consent/src/recipients.ts';
-import { HumanInformationNetworkEngine } from '../../../../packages/information-market/src/network/engine.ts';
-import { HinContributionAdapter } from '../../../../packages/information-market/src/network/contribution/adapter.ts';
-import { createInProcessHumanContributionRegistry } from '../../../../packages/information-market/src/network/contribution/registry.ts';
-import { InformationMarketService } from '../../../../packages/information-market/src/service.ts';
-import { createSimulationFiatPort } from '../../../../packages/information-market/src/fiat.ts';
-import { CleanRoomService } from '../../../../packages/clean-room/src/service.ts';
-import { SunReyCoinService } from '../../../../packages/sunrey-coin/src/service.ts';
-import { SIMULATION_DIGITAL_CUSTODY_GB, SIMULATION_SOLSTICE_UK } from '../../../../packages/sunrey-coin/src/simulation-catalog.ts';
-import { HumanContributionRegistry } from '../../../../packages/human-economic-contribution/src/registry.ts';
-import { fixtureContribution } from '../../../../packages/human-economic-contribution/src/fixtures.ts';
-import { DEFAULT_VERIFICATION_POLICY_VERSION } from '../../../../packages/human-economic-contribution/src/fingerprint.ts';
-import { subjectRefFor } from '../../../../packages/human-economic-contribution/src/ids.ts';
-import { valueVerifiedContribution } from '../../../../packages/human-economic-contribution/src/valuation/engine.ts';
-import { simulationValuationPolicy } from '../../../../packages/human-economic-contribution/src/valuation/policy.ts';
+} from '../../../../../packages/consent/src/recipients.ts';
+import { HumanInformationNetworkEngine } from '../../../../../packages/information-market/src/network/engine.ts';
+import { HinContributionAdapter } from '../../../../../packages/information-market/src/network/contribution/adapter.ts';
+import { createInProcessHumanContributionRegistry } from '../../../../../packages/information-market/src/network/contribution/registry.ts';
+import { InformationMarketService } from '../../../../../packages/information-market/src/service.ts';
+import { createSimulationFiatPort } from '../../../../../packages/information-market/src/fiat.ts';
+import { CleanRoomService } from '../../../../../packages/clean-room/src/service.ts';
+import { SunReyCoinService } from '../../../../../packages/sunrey-coin/src/service.ts';
+import { SIMULATION_DIGITAL_CUSTODY_GB, SIMULATION_SOLSTICE_UK } from '../../../../../packages/sunrey-coin/src/simulation-catalog.ts';
+import { HumanContributionRegistry } from '../../../../../packages/human-economic-contribution/src/registry.ts';
+import { fixtureContribution } from '../../../../../packages/human-economic-contribution/src/fixtures.ts';
+import { DEFAULT_VERIFICATION_POLICY_VERSION } from '../../../../../packages/human-economic-contribution/src/fingerprint.ts';
+import { subjectRefFor } from '../../../../../packages/human-economic-contribution/src/ids.ts';
+import { valueVerifiedContribution } from '../../../../../packages/human-economic-contribution/src/valuation/engine.ts';
+import { simulationValuationPolicy } from '../../../../../packages/human-economic-contribution/src/valuation/policy.ts';
 import {
   EnergyObservationStore,
   ingestEnergyObservation,
-} from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/adapter.ts';
+} from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/adapter.ts';
 import {
   staleReadingFixture,
   validGeneratorIntervalFeed,
-} from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/fixtures.ts';
-import { ENERGY_NOW_UNIX } from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/fixtures.ts';
-import { ingestComputeObservation } from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/compute/adapter.ts';
-import { gpuExecutionFixture } from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/compute/fixtures.ts';
-import { ManufacturingDataFabric } from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/adapter.ts';
-import { validMesUnitOutput } from '../../../../packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/fixtures.ts';
-import { lovableNativeEconomyContract } from '../../../../packages/sunrey-chain/src/native-assets/client-surface.ts';
+} from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/fixtures.ts';
+import { ENERGY_NOW_UNIX } from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/energy/fixtures.ts';
+import { ingestComputeObservation } from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/compute/adapter.ts';
+import { gpuExecutionFixture } from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/compute/fixtures.ts';
+import { ManufacturingDataFabric } from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/adapter.ts';
+import { validMesUnitOutput } from '../../../../../packages/sunrey-chain/src/oracle/production/provider-families/manufacturing/fixtures.ts';
+import { ProtocolNativeSupplyAuthority, lovableNativeEconomyContract } from '../../../../../packages/sunrey-chain/src/native-assets/index.ts';
 import type { BffPrincipal } from '../ports.ts';
 import { evaluateInformationRightsMarketplaceGate, evaluateProductionDataGates } from './gates.ts';
 import {
@@ -187,10 +187,11 @@ export class PhaseHProductSurface {
   readonly contributions = new HumanContributionRegistry();
   readonly manufacturing = new ManufacturingDataFabric();
   readonly energyStore = new EnergyObservationStore();
+  readonly nativeAuthority = new ProtocolNativeSupplyAuthority();
   readonly issuer = new AuthorityIssuer('phase-h-qualification');
   readonly kernel = new ComplianceKernel(this.issuer, this.evidence, this.clock);
   readonly ledger = new Ledger(this.issuer, this.clock);
-  readonly customers = new Map<string, import('../../../../packages/domain/src/customer.ts').Customer>();
+  readonly customers = new Map<string, Customer>();
   private readonly coin: SunReyCoinService;
   readonly market: InformationMarketService;
   readonly fiat: ReturnType<typeof createSimulationFiatPort>;
@@ -356,8 +357,8 @@ export class PhaseHProductSurface {
     const bound = this.bindPrincipal(principal);
     const assets = unwrap(bound.vault.listAssets(bound.actor, bound.subjectId, 'view.own'));
     return {
-      schema: 'sunrey.consumer.vault.home.v1',
       ...PHASE_H_POSTURE,
+      schema: 'sunrey.consumer.vault.home.v1',
       vaultId: `vault:${bound.subjectId}`,
       categories: DATA_CATEGORIES,
       recordCount: assets.length,
@@ -1205,7 +1206,7 @@ export class PhaseHProductSurface {
   }
 
   sunreyEconomy() {
-    const native = lovableNativeEconomyContract();
+    const native = lovableNativeEconomyContract({ authority: this.nativeAuthority });
     const aggregate = this.aggregateHin();
     return {
       schema: 'sunrey.consumer.economy.sunrey.v1',
@@ -1228,7 +1229,7 @@ export class PhaseHProductSurface {
   }
 
   moonreyEconomy() {
-    const native = lovableNativeEconomyContract();
+    const native = lovableNativeEconomyContract({ authority: this.nativeAuthority });
     const productive = this.productiveOverview();
     return {
       schema: 'sunrey.consumer.economy.moonrey.v1',

@@ -185,7 +185,7 @@ export function dispatchPhaseH(
       ),
     );
   }
-  if (path === '/api/v1/economy/issuance-basis' && method === 'POST') {
+  if (path === '/api/v1/economy/basis-proposal' && method === 'POST') {
     return json(200, surface.issuanceBasisProposal(str(input.kind) === 'MOONREY' ? 'MOONREY' : 'HIN'));
   }
   if (path === '/api/v1/data/gates' && method === 'GET') {
