@@ -2018,6 +2018,16 @@ remains unavailable while `ENVIRONMENT=simulation` and every
 `packages/provider-runtime-v2`, `packages/external-connectivity`, or
 `packages/vendor-runtime`. See
 [`chunk-149-provider-credential-plane.md`](./chunk-149-provider-credential-plane.md).
+Phase I Prompt 2 extends the same `packages/security` owner at
+`packages/security/src/productization` with the production HSM/KMS
+gate (`PRODUCTION_HSM_KMS_CONFIGURED=false`), secret-class policy,
+key-domain separation, service identity / mTLS references, privileged
+access, network surfaces, and the security baseline. It does not
+connect an external HSM or KMS, does not claim an independent audit,
+and does not enable mainnet. Do not create `packages/hsm`,
+`packages/kms`, `packages/pki`, `packages/zero-trust`,
+`packages/security-baseline`, or `packages/security-v2`. See
+[`docs/productization/PHASE_I_02_SECURITY_HARDENING.md`](../productization/PHASE_I_02_SECURITY_HARDENING.md).
 
 Chunk 152 connects fixture Identity/KYC, sanctions/PEP, AML,
 Travel Rule, case-management, and market-surveillance

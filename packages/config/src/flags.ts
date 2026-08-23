@@ -22,6 +22,9 @@ export const LIVE_EXCHANGE_ENABLED = false as const;
 export const LIVE_DATA_MARKET_ENABLED = false as const;
 export const LIVE_INVESTMENT_EXECUTION = false as const;
 
+/** External production HSM/KMS remains absent. Software ports may be complete. */
+export const PRODUCTION_HSM_KMS_CONFIGURED = false as const;
+
 export const CAPABILITIES = Object.freeze({
   ENVIRONMENT,
   SIMULATION_MODE,
@@ -36,6 +39,7 @@ export const CAPABILITIES = Object.freeze({
   LIVE_EXCHANGE_ENABLED,
   LIVE_DATA_MARKET_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
+  PRODUCTION_HSM_KMS_CONFIGURED,
 });
 
 export function assertSimulationOnly(): void {

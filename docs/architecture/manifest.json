@@ -6308,7 +6308,8 @@
       "id": "security",
       "status": "IMPLEMENTED",
       "owner": "packages/security",
-      "protected": true
+      "protected": true,
+      "notes": "Phase I Prompt 2 productization at packages/security/src/productization. PRODUCTION_HSM_KMS_CONFIGURED=false. External HSM/KMS is not connected. Independent audit remains EXTERNAL. Do not create packages/hsm, packages/pki, packages/zero-trust, or packages/security-v2."
     },
     {
       "id": "sunrey-production-provider-credential-plane",

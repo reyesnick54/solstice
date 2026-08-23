@@ -25,6 +25,11 @@ Unknown corridors and unverified hardware claims remain
 | `ORACLE_SIGNING` | `ORACLE_SIGNING_AUTHORITY` | Ed25519 | ONLINE | required | SIMULATION_ONLY |
 | `BACKUP_ENCRYPTION` | wrap-only | AES-256-GCM | OFFLINE | required | SIMULATION_ONLY |
 
+Phase I Prompt 2 adds application purposes `PROVIDER_AUTHENTICATION`
+and `ADMINISTRATION_SIGNING`, and a trust-domain crossing check at
+`packages/security/src/productization/keys.ts`. TLS private keys stay
+in the `TLS_PRIVATE_KEY` secret class (certificate references only).
+
 `BACKUP_ENCRYPTION` is the existing application purpose used when the
 repository records encrypted backup *references*. Plaintext key bytes
 are never stored.
