@@ -145,6 +145,11 @@ authentication foundation; the BFF only consumes a verified session.
 | ACCESS HISTORY | `/api/v1/data/access-history` | GET | required | decisions without raw values | same | AVAILABLE_SIMULATION | none |
 | DOWNLOAD / DELETE / CORRECT / RESTRICT | `/api/v1/data/rights/requests` | GET, POST | required | configurable rights workflow | jurisdiction pack | AVAILABLE_SIMULATION | not every right applies in every jurisdiction |
 | HIN PARTICIPATION | `/api/v1/hin/participation` plus `/enroll` `/pause` `/withdraw` | GET, POST | required | participation state | same | AVAILABLE_SIMULATION | withdraw does not close financial services |
+| DATA VAULT home | `/api/v1/data` `/api/v1/data/vault` | GET | required + owner | `sunrey.consumer.vault.home.v1` | `packages/personal-data-vault` | AVAILABLE_SIMULATION | SunRey does not own user data |
+| YOUR DATA / categories | `/api/v1/data/vault/records` `/categories` | GET | required + owner + purpose | typed records and registry | same | AVAILABLE_SIMULATION | no getAllUserData; highly sensitive classes are not ingested by default |
+| DATA SOURCES / access | `/api/v1/data/vault/sources` `/access` | GET | required + owner | sources and access audit | same | AVAILABLE_SIMULATION | payloads omitted |
+| HISTORY / correct / dispute | `/api/v1/data/vault/records/{id}/history` `/corrections` | GET, POST, PATCH | required + owner | versions and correction workflow | same | AVAILABLE_SIMULATION | user edit cannot falsify provider records |
+| EXPORT | `/api/v1/data/vault/export` `/export/status` | POST, GET | required + owner + VAULT_EXPORT_OWN | portable bundle + job status | same | AVAILABLE_SIMULATION | omits secrets, other users, internal security metadata |
 | PROFILE | `/api/v1/me` | GET, PATCH | required | controlled profile + `identityVerification` | identity + BFF preference store | AVAILABLE_SIMULATION | none; client-safe KYC only |
 | SECURITY | `/api/v1/security` | GET | required | availability + Home security alerts | identity sessions/devices | AVAILABLE_SIMULATION | none |
 

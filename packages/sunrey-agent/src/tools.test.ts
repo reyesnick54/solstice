@@ -108,6 +108,7 @@ describe('canonical agent tool registry', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
     assert.equal(CANONICAL_TOOL_COUNT, 45);
+    assert.equal(CANONICAL_TOOL_COUNT, CANONICAL_AGENT_TOOLS.length);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -164,6 +165,7 @@ describe('tool contract matrix', () => {
       getConsentSummary: {},
       getDataPermissions: {},
       getHinParticipation: {},
+      getVaultRecords: { purpose: 'AGENT_ANALYSIS', categoryIds: 'goals_preferences' },
       getNativeAsset: { assetId: 'SUNREY_COIN' },
       getNativeSupply: {},
       getNativeEconomy: {},

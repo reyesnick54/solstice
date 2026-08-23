@@ -250,6 +250,10 @@ export type DataPort = {
     readonly state: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
     readonly financialServicesRemainOpen: true;
   }>;
+  vaultRecords(
+    ownerId: string,
+    input: { readonly purpose: string; readonly categoryIds?: readonly string[]; readonly recordIds?: readonly string[] },
+  ): PortResult<readonly { readonly dataRecordId: string; readonly categoryId: string; readonly label: string }[]>;
 };
 
 export type NativeEconomyRecord = {

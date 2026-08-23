@@ -191,6 +191,28 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
         participation,
         financialServicesRemainOpen: true,
       }), []);
+    case 'getVaultRecords': {
+      const categoryIds = typeof ctx.input.categoryIds === 'string' && ctx.input.categoryIds.length > 0
+        ? ctx.input.categoryIds.split(',').map((row) => row.trim()).filter(Boolean)
+        : [];
+      const recordIds = typeof ctx.input.recordIds === 'string' && ctx.input.recordIds.length > 0
+        ? ctx.input.recordIds.split(',').map((row) => row.trim()).filter(Boolean)
+        : [];
+      if (categoryIds.length === 0 && recordIds.length === 0) {
+        return refuse(ctx, 'FAILED', 'INVALID_SCHEMA', 'agent wildcard vault access is forbidden');
+      }
+      return mapPort(
+        ctx.ports.data.vaultRecords(ctx.session.ownerId, {
+          purpose: str(ctx.input.purpose),
+          ...(categoryIds.length > 0 ? { categoryIds } : {}),
+          ...(recordIds.length > 0 ? { recordIds } : {}),
+        }),
+        ctx,
+        'APPROVAL_CARD',
+        (records) => ({ records, entireVaultForbidden: true, consentUnchanged: true }),
+        [],
+      );
+    }
     case 'getNativeAsset':
       return mapPort(ctx.ports.nativeEconomy.asset(str(ctx.input.assetId)), ctx, 'TRADE_PROPOSAL', (asset) => ({
         asset,

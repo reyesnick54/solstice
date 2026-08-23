@@ -1213,6 +1213,8 @@
         "packages/ledger",
         "packages/custody",
         "packages/consent",
+        "packages/personal-data-vault",
+        "packages/sunrey-exchange",
         "services/investments",
         "services/economic-graph"
       ],
@@ -2345,7 +2347,10 @@
         "packages/privacy-vault",
         "packages/personal-data-v2",
         "packages/data-vault",
-        "packages/pii-store"
+        "packages/pii-store",
+        "packages/personal-data-fabric",
+        "packages/data-fabric",
+        "packages/vault-v2"
       ],
       "codeowners": [
         "@reyesnick54"

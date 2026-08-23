@@ -65,6 +65,8 @@ import { dispatchWallets } from './wallets.ts';
 import type { NativeEconomySurface } from './native-economy-adapter.ts';
 import { dispatchDataRights } from './data-rights.ts';
 import type { ConsentDataRightsEngine } from '../../../../packages/consent/src/product/engine.ts';
+import type { PersonalDataVaultProduct } from '../../../../packages/personal-data-vault/src/product/index.ts';
+import { dispatchVault } from './vault.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -98,6 +100,7 @@ export type ConsumerBffRuntime = {
   readonly nativeEconomy?: NativeEconomySurface;
   readonly exchange?: ExchangeBffSurface;
   readonly dataRights?: ConsentDataRightsEngine;
+  readonly vault?: PersonalDataVaultProduct;
 };
 
 const STUB_GROUPS = [
@@ -359,6 +362,9 @@ function dispatchAuthenticated(
   if (runtime.dataRights) {
     const dataRights = dispatchDataRights(
       runtime.dataRights,
+  if (runtime.vault && runtime.identity) {
+    const vault = dispatchVault(
+      runtime.vault,
       request,
       principal,
       requestId,
@@ -367,6 +373,10 @@ function dispatchAuthenticated(
     );
     if (dataRights) {
       return dataRights;
+      { resolveActorContext: (actorId) => runtime.identity!.resolveActorContext(actorId) },
+    );
+    if (vault) {
+      return vault;
     }
   }
   if (runtime.payments) {
@@ -1438,6 +1448,19 @@ export const CONSUMER_BFF_ROUTES = [
   'POST /api/v1/hin/participation/enroll',
   'POST /api/v1/hin/participation/pause',
   'POST /api/v1/hin/participation/withdraw',
+  'GET /api/v1/data/vault',
+  'GET /api/v1/data/vault/categories',
+  'GET /api/v1/data/vault/records',
+  'GET /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/records/{id}/history',
+  'POST /api/v1/data/vault/records/{id}/corrections',
+  'PATCH /api/v1/data/vault/records/{id}',
+  'GET /api/v1/data/vault/sources',
+  'GET /api/v1/data/vault/access',
+  'GET /api/v1/data/vault/corrections',
+  'POST /api/v1/data/vault/export',
+  'GET /api/v1/data/vault/export/status',
+  'GET /api/v1/data/vault/export/{id}',
   'GET /api/v1/security',
   'GET /api/v1/notifications',
   'GET /api/v1/catalog/resources',
