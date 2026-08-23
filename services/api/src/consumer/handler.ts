@@ -64,7 +64,7 @@ export type ConsumerBffRuntime = {
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
   readonly grow?: GrowBffSurface;
-  readonly grow?: ProductGrowthService;
+  readonly productGrow?: ProductGrowthService;
 };
 
 const STUB_GROUPS = [
@@ -283,10 +283,23 @@ function dispatchAuthenticated(
     const id = path.slice('/api/v1/fx/quotes/'.length);
     return result(runtime.bff.getFxQuote(principal, id, requestId), headers);
   }
+  if (runtime.productGrow) {
+    const product = dispatchProductGrow(
+      runtime.productGrow,
+      request,
+      principal,
+      requestId,
+      headers,
+      runtime.grow === undefined,
+    );
+    if (product) {
+      return product;
+    }
+  }
   if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-    if (grow) {
-      return grow;
+    const lifecycle = dispatchGrowLifecycle(runtime.grow, request, principal, requestId, headers);
+    if (lifecycle) {
+      return lifecycle;
     }
   }
   if (runtime.payments) {
@@ -311,11 +324,6 @@ function dispatchAuthenticated(
     );
   }
 
-  if (runtime.grow) {
-    const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
-    if (grow) {
-      return grow;
-    }
   if (path === '/api/v1/grow/portfolio' && method === 'GET') {
     return result(runtime.bff.growPortfolio(principal, requestId), headers);
   }
@@ -330,7 +338,8 @@ function dispatchAuthenticated(
   }
   if (path === '/api/v1/grow/portfolio/risk' && method === 'GET') {
     return result(runtime.bff.growRisk(principal, requestId), headers);
-  if ((path === '/api/v1/grow' || path === '/api/v1/grow/opportunities') && method === 'GET') {
+  }
+  if (path === '/api/v1/grow/opportunities' && method === 'GET') {
     return result(runtime.bff.listGrowOpportunities(principal), headers);
   }
   if (path.startsWith('/api/v1/grow/opportunities/') && path.endsWith('/dismiss') && method === 'POST') {
@@ -344,6 +353,7 @@ function dispatchAuthenticated(
   if (path.startsWith('/api/v1/grow/opportunities/') && method === 'GET') {
     const id = path.slice('/api/v1/grow/opportunities/'.length);
     return result(runtime.bff.getGrowOpportunity(principal, id, requestId), headers);
+  }
   if (path === '/api/v1/grow/profile' && method === 'GET') {
     return result(runtime.bff.growProfile(principal, query.valuationCurrency ?? query.valuation_currency), headers);
   }
@@ -523,9 +533,8 @@ function dispatchPayments(
   return null;
 }
 
-function dispatchGrow(
+function dispatchGrowLifecycle(
   grow: GrowBffSurface,
-  grow: ProductGrowthService,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
   requestId: string,
@@ -578,9 +587,22 @@ function dispatchGrow(
   }
   if (path === '/api/v1/grow/monitor' && method === 'POST') return json(200, grow.monitor(principal), headers);
   if (path === '/api/v1/grow/agent-tools' && method === 'POST') return result(grow.invokeAgentTool(principal, rec, requestId), headers);
+  return null;
+}
+
+function dispatchProductGrow(
+  grow: ProductGrowthService,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+  ownsCatalogAndProposals: boolean,
+): BffResponse | null {
+  const { method, path, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
   const actor = actorFromPrincipal(principal);
 
-  if (path === '/api/v1/grow' && method === 'GET') {
+  if (ownsCatalogAndProposals && path === '/api/v1/grow' && method === 'GET') {
     return json(200, growCatalog(grow, principal, requestId), headers);
   }
   if (path === '/api/v1/grow/plans' && method === 'POST') {
@@ -617,6 +639,9 @@ function dispatchGrow(
       return json(statusForError(mapGrowFailure(loaded.error, requestId)), mapGrowFailure(loaded.error, requestId), headers);
     }
     return json(200, loaded.value, headers);
+  }
+  if (!ownsCatalogAndProposals) {
+    return null;
   }
   if (path === '/api/v1/grow/proposals' && method === 'POST') {
     const planId = typeof rec.planId === 'string' ? rec.planId : '';

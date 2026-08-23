@@ -41,12 +41,10 @@ import { seedSimulationCatalog } from '../../../accounts/src/catalog.ts';
 import { EconomicGraphService } from '../../../../packages/personal-economic-graph/src/service.ts';
 import { GrowthOrchestrator } from '../../../../packages/platform/src/service.ts';
 import { createAccountsReadAdapter } from './accounts-adapter.ts';
-import { createGrowCommandPort } from './grow-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
-import { createGrowOpportunityPort } from './grow-adapter.ts';
+import { createGrowCommandPort, createGrowOpportunityPort } from './grow-adapter.ts';
 import {
   applyPersonaSeed,
-  EconomicGraphService,
   PEG_PERSONA_SEEDS,
   type PegPersonaId,
 } from '../../../economic-graph/src/index.ts';
@@ -422,7 +420,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessionFor: (actorId) => runtime.identity.service.activeSessionForActor(actorId),
   });
 
-  const grow = new ProductGrowthService({
+  const productGrow = new ProductGrowthService({
     clock: runtime.clock,
     events: runtime.events,
     evidence: runtime.evidence,
@@ -464,20 +462,19 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
         return [];
       },
     },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', 1),
-    growPortfolio,
     grow: createGrowOpportunityPort({
       orchestrator: new GrowthOrchestrator({
         clock: runtime.clock,
         events: runtime.events,
-        peg: new EconomicGraphService({ clock: runtime.clock, events: runtime.events }),
+        peg,
       }),
       accounts: createAccountsReadAdapter(runtime),
       actorFor(principal) {
         const actor = runtime.identity.service.resolveActorContext(principal.actorId);
         return actor.ok ? actor.value : principal;
       },
-    grow: simulationPort('Grow My Money is a simulation laboratory path', PEG_PERSONA_SEEDS.length),
+    }),
+    growPortfolio,
     growCommands: createGrowCommandPort({
       peg,
       identity: runtime.identity.service,
@@ -513,7 +510,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
-    grow,
+    grow: productGrow,
   });
 }
 

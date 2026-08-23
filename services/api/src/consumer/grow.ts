@@ -11,6 +11,18 @@ import type { GrowthOrchestrator } from '../../../../packages/platform/src/servi
 import type { GrowLifecycleService } from '../../../../packages/platform/src/grow/service.ts';
 import { evaluateGrowSuitability, type SuitabilityFacts } from '../../../../packages/platform/src/grow/suitability.ts';
 import type { FinancialProposal } from '../../../../packages/platform/src/grow/types.ts';
+import {
+  ProductGrowthService,
+  type CreateGrowPlanInput,
+  type FinancialProposal as ProductFinancialProposal,
+  type GrowProductFailure,
+  type GrowthProductActor,
+  type ProductGrowthPlan,
+  isGrowRiskProfile,
+} from '../../../../packages/platform/src/growth/product/index.ts';
+import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
+
+export { toLovableExperience };
 import type { InvestmentsService } from '../../../../packages/investments/src/service.ts';
 import { asInvestmentAccountId } from '../../../../packages/investments/src/ids.ts';
 import {
@@ -693,21 +705,6 @@ export function availableMinorUnits(ledger: Ledger, account: Account | undefined
 }
 
 export { Money };
-import { bffError, type BffErrorEnvelope } from './errors.ts';
-import type { BffPrincipal } from './ports.ts';
-import {
-  ProductGrowthService,
-  type CreateGrowPlanInput,
-  type FinancialProposal,
-  type GrowProductFailure,
-  type GrowRiskProfile,
-  type GrowthProductActor,
-  type ProductGrowthPlan,
-  isGrowRiskProfile,
-} from '../../../../packages/platform/src/growth/product/index.ts';
-import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
-
-export { toLovableExperience };
 
 export function actorFromPrincipal(principal: BffPrincipal, kind: 'HUMAN' | 'AGENT' = 'HUMAN'): GrowthProductActor {
   return {
@@ -806,7 +803,7 @@ export function publicPlan(plan: ProductGrowthPlan): ProductGrowthPlan {
   return plan;
 }
 
-export function publicProposal(proposal: FinancialProposal): FinancialProposal {
+export function publicProposal(proposal: ProductFinancialProposal): ProductFinancialProposal {
   return proposal;
 }
 
