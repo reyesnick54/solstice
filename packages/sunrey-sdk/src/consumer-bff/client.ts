@@ -16,6 +16,10 @@ import type {
   GrowHoldings,
   GrowPerformance,
   GrowPortfolio,
+  ActionCard,
+  ActionCenterList,
+  ActionCenterView,
+  ConversationTurn,
   GrowRisk,
   GrowGoal,
   GrowGoalCreateInput,
@@ -277,6 +281,8 @@ export class SunReyConsumerBffClient {
 
   async cancelRecurringContribution(id: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', `/api/v1/grow/recurring/${encodeURIComponent(id)}/cancel`, {}, options);
+  }
+
   async listGrowOpportunities(options?: BffRequestOptions): Promise<import('./types.ts').GrowOpportunityFeed> {
     return this.request('GET', '/api/v1/grow/opportunities', undefined, options);
   }
@@ -291,6 +297,8 @@ export class SunReyConsumerBffClient {
 
   async startGrowProposal(id: string, options?: BffRequestOptions): Promise<import('./types.ts').GrowProposalReceipt> {
     return this.request('POST', `/api/v1/grow/opportunities/${encodeURIComponent(id)}/start-proposal`, {}, options);
+  }
+
   async getGrowProfile(options?: BffRequestOptions): Promise<GrowProfile> {
     return this.request('GET', '/api/v1/grow/profile', undefined, options);
   }
@@ -369,6 +377,49 @@ export class SunReyConsumerBffClient {
 
   async rejectGrowProposal(id: string, options?: BffRequestOptions): Promise<GrowProposal> {
     return this.request('POST', `/api/v1/grow/proposals/${encodeURIComponent(id)}/reject`, {}, options);
+  }
+
+  async startAgentConversation(options?: BffRequestOptions): Promise<{ readonly conversationId: string }> {
+    return this.request('POST', '/api/v1/agent/conversations', {}, options);
+  }
+
+  async sendAgentMessage(conversationId: string, text: string, options?: BffRequestOptions): Promise<ConversationTurn> {
+    return this.request('POST', `/api/v1/agent/conversations/${encodeURIComponent(conversationId)}/messages`, { text }, options);
+  }
+
+  async getAgentConversation(conversationId: string, options?: BffRequestOptions): Promise<unknown> {
+    return this.request('GET', `/api/v1/agent/conversations/${encodeURIComponent(conversationId)}`, undefined, options);
+  }
+
+  async streamAgentEvents(conversationId: string, after = 0, options?: BffRequestOptions): Promise<{ readonly events: readonly unknown[] }> {
+    return this.request('GET', `/api/v1/agent/conversations/${encodeURIComponent(conversationId)}/events?after=${String(after)}`, undefined, options);
+  }
+
+  async listAgentActions(view?: ActionCenterView, options?: BffRequestOptions): Promise<ActionCenterList> {
+    const suffix = view ? `?view=${encodeURIComponent(view)}` : '';
+    return this.request('GET', `/api/v1/agent/actions${suffix}`, undefined, options);
+  }
+
+  async getAgentAction(actionId: string, options?: BffRequestOptions): Promise<{ readonly card: ActionCard }> {
+    return this.request('GET', `/api/v1/agent/actions/${encodeURIComponent(actionId)}`, undefined, options);
+  }
+
+  async approveAgentAction(
+    actionId: string,
+    input: { readonly stepUpSatisfied?: boolean; readonly acknowledgements?: readonly string[] } = {},
+    options?: BffRequestOptions,
+  ): Promise<ConversationTurn> {
+    return this.request('POST', `/api/v1/agent/actions/${encodeURIComponent(actionId)}/approve`, input, options);
+  }
+
+  async modifyAgentAction(actionId: string, amount: string, options?: BffRequestOptions): Promise<ConversationTurn> {
+    return this.request('POST', `/api/v1/agent/actions/${encodeURIComponent(actionId)}/modify`, { amount }, options);
+  }
+
+  async rejectAgentAction(actionId: string, options?: BffRequestOptions): Promise<ConversationTurn> {
+    return this.request('POST', `/api/v1/agent/actions/${encodeURIComponent(actionId)}/reject`, {}, options);
+  }
+
   async getGrowPortfolio(options?: BffRequestOptions): Promise<GrowPortfolio> {
     return this.request('GET', '/api/v1/grow/portfolio', undefined, options);
   }

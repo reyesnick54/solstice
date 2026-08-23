@@ -49,6 +49,9 @@ import {
   parseCreatePlan,
   toLovableExperience,
 } from './grow.ts';
+import type { ProductGrowthService } from '../../../../packages/platform/src/growth/product/index.ts';
+import { AgentConversationSurface } from './conversation.ts';
+import { CONVERSATION_INTENTS, ACTION_CARD_STATUSES, ACTION_CARD_TYPES, ACTION_CENTER_VIEWS, AVAILABLE_ACTION_CONTROLS } from '../../../../packages/sunrey-agent/src/conversation/taxonomy.ts';
 
 export type BffRequest = {
   readonly method: string;
@@ -76,6 +79,8 @@ export type ConsumerBffRuntime = {
   readonly payments?: PaymentPlatform;
   readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface;
+  readonly grow?: ProductGrowthService;
+  readonly conversation?: AgentConversationSurface;
 };
 
 const STUB_GROUPS = [
@@ -177,6 +182,11 @@ export function handleConsumerBff(runtime: ConsumerBffRuntime, request: BffReque
         growScenario: ['CONSERVATIVE', 'BASE', 'UPSIDE'],
         growOpportunityStatus: GROW_OPPORTUNITY_STATUSES,
         growOpportunityCategory: GROW_OPPORTUNITY_CATEGORIES,
+        conversationIntent: CONVERSATION_INTENTS,
+        actionCardType: ACTION_CARD_TYPES,
+        actionCardStatus: ACTION_CARD_STATUSES,
+        actionCenterView: ACTION_CENTER_VIEWS,
+        availableActionControl: AVAILABLE_ACTION_CONTROLS,
       },
       headers,
     );
@@ -326,6 +336,12 @@ function dispatchAuthenticated(
     );
   }
 
+  if (runtime.conversation) {
+    const conversation = dispatchConversation(runtime.conversation, request, principal, requestId, headers);
+    if (conversation) {
+      return conversation;
+    }
+  }
   if ((FORBIDDEN_PUBLIC_LLM_PATHS as readonly string[]).includes(path)) {
     return json(
       404,
@@ -786,6 +802,7 @@ function dispatchPayments(
 }
 
 function dispatchGrow(
+  grow: GrowBffSurface | ProductGrowthService,
   grow: GrowBffSurface,
   request: BffRequest,
   principal: import('./ports.ts').BffPrincipal,
@@ -946,6 +963,57 @@ function dispatchGrow(
   return null;
 }
 
+function dispatchConversation(
+  surface: AgentConversationSurface,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, query, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  if (path === '/api/v1/agent/conversations' && method === 'POST') {
+    return result(surface.start(principal, requestId), headers, 201);
+  }
+  if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/messages') && method === 'POST') {
+    const id = path.slice('/api/v1/agent/conversations/'.length, -'/messages'.length);
+    return result(surface.message(principal, id, typeof rec.text === 'string' ? rec.text : '', requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/events') && method === 'GET') {
+    const id = path.slice('/api/v1/agent/conversations/'.length, -'/events'.length);
+    const after = Number(query.after ?? '0');
+    return result(surface.stream(principal, id, Number.isFinite(after) ? after : 0, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/conversations/') && method === 'GET') {
+    const id = path.slice('/api/v1/agent/conversations/'.length);
+    return result(surface.getConversation(principal, id, requestId), headers);
+  }
+  if (path === '/api/v1/agent/actions' && method === 'GET') {
+    return result(surface.listActions(principal, query.view, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/actions/') && path.endsWith('/approve') && method === 'POST') {
+    const id = path.slice('/api/v1/agent/actions/'.length, -'/approve'.length);
+    return result(surface.approve(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/actions/') && path.endsWith('/modify') && method === 'POST') {
+    const id = path.slice('/api/v1/agent/actions/'.length, -'/modify'.length);
+    return result(surface.modify(principal, id, rec, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/actions/') && path.endsWith('/reject') && method === 'POST') {
+    const id = path.slice('/api/v1/agent/actions/'.length, -'/reject'.length);
+    return result(surface.reject(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/actions/') && path.endsWith('/cancel') && method === 'POST') {
+    const id = path.slice('/api/v1/agent/actions/'.length, -'/cancel'.length);
+    return result(surface.cancel(principal, id, requestId), headers);
+  }
+  if (path.startsWith('/api/v1/agent/actions/') && method === 'GET') {
+    const id = path.slice('/api/v1/agent/actions/'.length);
+    return result(surface.getAction(principal, id, requestId), headers);
+  }
+  return null;
+}
+
 function str(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
@@ -1054,6 +1122,16 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/goals',
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
+  'POST /api/v1/agent/conversations',
+  'GET /api/v1/agent/conversations/{id}',
+  'POST /api/v1/agent/conversations/{id}/messages',
+  'GET /api/v1/agent/conversations/{id}/events',
+  'GET /api/v1/agent/actions',
+  'GET /api/v1/agent/actions/{id}',
+  'POST /api/v1/agent/actions/{id}/approve',
+  'POST /api/v1/agent/actions/{id}/modify',
+  'POST /api/v1/agent/actions/{id}/reject',
+  'POST /api/v1/agent/actions/{id}/cancel',
   'GET /api/v1/agent/tools',
   'GET /api/v1/agents',
   'GET /api/v1/agents/{id}',
