@@ -37,36 +37,21 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'CARDS':
       return row(group, '/api/v1/cards', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/cards + services/cards', 'EXTERNAL_PROVIDER_REQUIRED for live issuer', 'Provider-neutral PCI-minimized dashboard. last4/expiry only. No PAN/CVV. Live issuer is not connected.');
     case 'GROW':
-      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + Grow lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Sandbox Grow home. Execution uses Kernel, Execution Authority, and Provider Runtime. Live investment is disabled.');
-    case 'GOALS':
-      return row(group, '/api/v1/goals', ['GET'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'Server-owned goals from PEG. Not a promised-return engine.');
-      return row(group, '/api/v1/grow', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator product plans/proposals', 'none', 'Grow My Money plans and structured proposals. Illustrations only. Production remains disabled.');
-      return row(group, '/api/v1/grow', ['GET'], 'AVAILABLE_SIMULATION', 'packages/investments InvestmentPlatform + packages/platform Growth Orchestrator', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Simulation portfolio/holdings/performance/allocation/risk. No privileged execution APIs. Not a live securities broker.');
-      return row(group, '/api/v1/grow/opportunities', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator', 'none', 'Deterministic opportunity feed. Starting a proposal does not move money.');
-      return row(group, '/api/v1/grow/profile', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph EconomicGraphService', 'none', 'Client-safe PEG profile, snapshot, goals, insights, and suitability. Not the Ledger. Not guaranteed returns.');
+      return row(group, '/api/v1/grow', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/platform Growth Orchestrator + packages/personal-economic-graph', 'EXTERNAL_PROVIDER_REQUIRED for live brokerage', 'Opportunity feed, PEG profile, plans, proposals, and simulation portfolio. Starting a proposal does not move money. Live investment is disabled. Not the Ledger. Not guaranteed returns.');
     case 'GOALS':
       return row(group, '/api/v1/grow/goals', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-economic-graph goals', 'none', 'User-declared goals. Ledger balances cannot be overridden.');
     case 'PORTFOLIO':
       return row(group, '/api/v1/portfolio', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts investments bucket + packages/sunrey-exchange consumer', 'none', 'Class breakdown only; no yield field.');
     case 'AGENT':
-      return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + Phase F qualification platform', 'EXTERNAL_PROVIDER_REQUIRED for a real model', 'Recommendations are proposals. BFF cannot execute. Human approval and Execution Authority stay outside the Agent.');
-      return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent conversation + ProposalGate', 'none', 'Conversation, Action Cards, and Action Center. The Agent never approves. Frontend cannot invent allowed transitions.');
-      return row(group, '/api/v1/agent', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + tools/registry.ts', 'none', 'Recommendations are proposals. Frontend lists tools via GET /api/v1/agent/tools and does not invoke privileged tools directly.');
-      return row(group, '/api/v1/agents', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent runtime + ProposalGate', 'none', 'Conversations and proposals only. BFF cannot execute or issue Execution Authority.');
-      return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + packages/ai-runtime Model Gateway', 'none', 'Lovable calls Agent endpoints. The Agent calls the Model Gateway. BFF cannot execute.');
+      return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent conversation + ProposalGate + Phase F qualification platform + packages/ai-runtime Model Gateway', 'EXTERNAL_PROVIDER_REQUIRED for a real model', 'Conversation, Action Cards, Action Center, tools, runtime, and qualification. The Agent never approves. BFF cannot execute or issue Execution Authority. Frontend lists tools via GET /api/v1/agent/tools and does not invoke privileged tools directly.');
     case 'EXCHANGE':
-      return row(group, '/api/v1/exchange', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer + productization lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live custody/market-data', 'Sandbox Exchange home, markets, preview, proposal, fill, and settlement. Live Exchange remains blocked.');
-    case 'WALLETS':
-      return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange native clearing + packages/custody ports', 'EXTERNAL_PROVIDER_REQUIRED for real custody', 'Sandbox wallet, deposit, withdrawal, and transaction history. Production signing is disabled.');
-      return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
-    case 'ECONOMY':
-      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');
-      return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange product APIs', 'none', 'Markets, preview, orders, fills, holdings, stream. Not a second ledger. Production trading disabled.');
+      return row(group, '/api/v1/exchange', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange product APIs + productization lifecycle', 'EXTERNAL_PROVIDER_REQUIRED for live custody/market-data', 'Markets, preview, orders, fills, holdings, stream, eligibility, and qualification proposals. Not a second ledger. Production trading disabled.');
     case 'WALLETS':
       return row(group, '/api/v1/wallets', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/custody product wallet', 'custody / chain adapters', 'Customer wallet, deposit address, withdrawal quote/execute. No signing material. Production signing disabled.');
+    case 'ECONOMY':
+      return row(group, '/api/v1/economy', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-chain/src/economics/supply.ts + native-assets productization', 'none', 'Read-only SunRey Coin and MoonRey Coin metadata and supply. No issuance endpoints.');
     case 'DATA':
-      return row(group, '/api/v1/data', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/consent + packages/personal-data-vault', 'none', 'Granular consent, purpose catalog, rights requests, HIN participation. No implicit monetization opt-in.');
-      return row(group, '/api/v1/data', ['GET', 'PATCH', 'POST'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault', 'none', 'Subject-bound vault home, categories, records, history, correction, and export. No raw storage paths.');
+      return row(group, '/api/v1/data', ['GET', 'POST', 'PATCH'], 'AVAILABLE_SIMULATION', 'packages/personal-data-vault product + packages/consent product', 'none', 'Subject-bound vault home, consents, data-rights requests, and export. No getAllUserData. Optional HIN participation. SunRey does not own user data.');
     case 'SECURITY':
       return row(group, '/api/v1/security', ['GET'], 'AVAILABLE_SIMULATION', 'packages/identity sessions/devices', 'none', 'Session and device summary.');
     case 'NOTIFICATIONS':
