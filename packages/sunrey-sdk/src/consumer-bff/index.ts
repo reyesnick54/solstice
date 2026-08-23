@@ -7,8 +7,15 @@ export {
   GROW_PLAN_STATUSES,
   GROW_PROPOSAL_STATUSES,
   GROW_RISK_PROFILES,
+  GROW_OPPORTUNITY_STATUSES,
 } from './types.ts';
 export type {
+  GrowGoal,
+  GrowGoalCreateInput,
+  GrowInsight,
+  GrowProfile,
+  GrowSnapshot,
+  GrowSuitability,
   MoneyResource,
   Recipient,
   RecipientDestinationType,
@@ -33,6 +40,16 @@ export type {
   GrowProposal,
   GrowProposalStatus,
   GrowRiskProfile,
+  GrowMoney,
+  GrowPortfolio,
+  GrowHoldings,
+  GrowPerformance,
+  GrowAllocation,
+  GrowRisk,
+  GrowOpportunityFeed,
+  GrowOpportunityCard,
+  GrowOpportunityStatus,
+  GrowProposalReceipt,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

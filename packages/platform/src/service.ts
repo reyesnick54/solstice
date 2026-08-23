@@ -3,6 +3,7 @@ import { PersonalEconomyAgent } from '../../agent/src/service.ts';
 import type { AgentRuntimePorts } from '../../agent/src/ports.ts';
 import type { Clock } from '../../config/src/clock.ts';
 import { err, ok, type Result } from '../../domain/src/result.ts';
+import { asUtcInstant } from '../../domain/src/time.ts';
 import type { EvidenceVault } from '../../evidence/src/vault.ts';
 import { DomainEventLog, type DomainEvent } from '../../events/src/events.ts';
 import { Money } from '../../money/src/money.ts';
@@ -10,7 +11,24 @@ import type { ActionIntent } from '../../permissions/src/action-intent.ts';
 import type { EconomicGraphService } from '../../personal-economic-graph/src/service.ts';
 import type { PersonalEconomicSnapshot } from '../../personal-economic-graph/src/snapshot.ts';
 import { authorizeConfirmMandate, authorizeViewGrowthPlan } from './access.ts';
+import { discoverOpportunities } from './growth/opportunity/discover.ts';
+import { explanationFactsText, explanationInputFor } from './growth/opportunity/explain.ts';
+import { opportunityFeed } from './growth/opportunity/feed.ts';
+import { transitionOpportunity } from './growth/opportunity/lifecycle.ts';
+import { defaultOpportunityPreferences, mergeOpportunityPreferences } from './growth/opportunity/preferences.ts';
+import { SIMULATION_GROWTH_PRODUCTS, SIMULATION_RATE_CATALOG } from './growth/opportunity/products.ts';
+import { shouldRecalculateOpportunities } from './growth/opportunity/recompute.ts';
+import { snapshotFromLedgerPositions } from './growth/opportunity/snapshot.ts';
+import type {
+  Opportunity,
+  OpportunityDiscoveryContext,
+  OpportunityExplanationInput,
+  OpportunityFeed,
+  OpportunityPreferences,
+  OpportunityProposalReceipt,
+} from './growth/opportunity/types.ts';
 import { generateGrowthCandidates } from './growth/candidates.ts';
+import { asOpportunityId } from './ids.ts';
 import { transitionCycle } from './growth/cycle.ts';
 import { explainPlan } from './growth/explainability.ts';
 import { evaluateCandidateFeasibility } from './growth/feasibility.ts';
@@ -56,7 +74,10 @@ export type GrowthFailure =
   | { readonly code: 'PLAN_STALE'; readonly message: string }
   | { readonly code: 'GRAPH_UNAVAILABLE'; readonly message: string }
   | { readonly code: 'AGENT_FAILED'; readonly message: string }
-  | { readonly code: 'INTERPRETATION_FAILED'; readonly message: string };
+  | { readonly code: 'INTERPRETATION_FAILED'; readonly message: string }
+  | { readonly code: 'OPPORTUNITY_NOT_FOUND'; readonly message: string }
+  | { readonly code: 'INVALID_OPPORTUNITY_TRANSITION'; readonly message: string }
+  | { readonly code: 'CROSS_USER_DENIED'; readonly message: string };
 
 export class GrowthOrchestrator {
   private readonly clock: Clock;
@@ -270,6 +291,9 @@ export class GrowthOrchestrator {
   plan(
     actor: unknown,
     subjectId: string,
+    options: {
+      readonly investmentReview?: PlanningContext['investmentReview'];
+    } = {},
   ): Result<{ readonly cycle: GrowthCycle; readonly plan: GrowthPlan }, GrowthFailure> {
     const access = authorizeViewGrowthPlan(actor, subjectId);
     if (!access.ok) {
@@ -306,6 +330,7 @@ export class GrowthOrchestrator {
     const planning: PlanningContext = {
       eligibleAccounts: this.eligibleAccounts(actor, subjectId),
       investmentExecutionImplemented: false,
+      ...(options.investmentReview ? { investmentReview: options.investmentReview } : {}),
     };
     this.treasury.readPublicContext();
     const generated = generateGrowthCandidates({
@@ -469,6 +494,303 @@ export class GrowthOrchestrator {
     });
   }
 
+  discoverCustomerOpportunities(
+    actor: unknown,
+    subjectId: string,
+    context?: Partial<OpportunityDiscoveryContext>,
+  ): Result<{ readonly feed: OpportunityFeed; readonly all: readonly Opportunity[] }, GrowthFailure> {
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    const snapshotResult = this.peg.getEconomicSnapshot(actor, subjectId);
+    const resolved = this.resolveDiscoveryContext(subjectId, context);
+    const snapshot = snapshotResult.ok
+      ? snapshotResult.value
+      : resolved.ledgerPositions && resolved.ledgerPositions.length > 0
+        ? snapshotFromLedgerPositions(subjectId, resolved)
+        : undefined;
+    if (!snapshot) {
+      return err({
+        code: 'GRAPH_UNAVAILABLE',
+        message: snapshotResult.ok ? 'snapshot unavailable' : snapshotResult.error.message,
+      });
+    }
+    const mandate = this.store.activeMandateFor(subjectId);
+    const discovered = discoverOpportunities({
+      subjectId,
+      snapshot,
+      ...(mandate ? { mandate } : {}),
+      context: resolved,
+    });
+    this.store.replaceOpportunities(subjectId, discovered.all);
+    this.store.markOpportunityRecompute(subjectId, resolved.now);
+    this.emit('GrowthOpportunitiesRecomputed', {
+      subjectId,
+      presentedCount: discovered.presented.length,
+      detectedCount: discovered.all.length,
+    });
+    for (const item of discovered.presented) {
+      this.emit('GrowthOpportunityDetected', {
+        subjectId,
+        opportunityId: item.opportunityId,
+        detector: item.detector,
+        status: item.status,
+      });
+    }
+    return ok({
+      all: discovered.all,
+      feed: opportunityFeed({
+        subjectId,
+        generatedAt: resolved.now,
+        presented: discovered.presented,
+        suppressedCount: discovered.suppressedCount,
+      }),
+    });
+  }
+
+  listOpportunities(
+    actor: unknown,
+    subjectId: string,
+    context?: Partial<OpportunityDiscoveryContext>,
+  ): Result<OpportunityFeed, GrowthFailure> {
+    const existing = this.store.opportunitiesFor(subjectId);
+    if (existing.length === 0) {
+      const discovered = this.discoverCustomerOpportunities(actor, subjectId, context);
+      if (!discovered.ok) {
+        return discovered;
+      }
+      return ok(discovered.value.feed);
+    }
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    const presented = existing.filter((item) => item.status === 'PRESENTED' || item.status === 'ELIGIBLE');
+    return ok(
+      opportunityFeed({
+        subjectId,
+        generatedAt: this.clock.now(),
+        presented,
+        suppressedCount: existing.length - presented.length,
+      }),
+    );
+  }
+
+  getOpportunity(
+    actor: unknown,
+    subjectId: string,
+    opportunityId: string,
+  ): Result<Opportunity, GrowthFailure> {
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    const found = this.store.getOpportunity(asOpportunityId(opportunityId));
+    if (!found || found.subjectId !== subjectId) {
+      return err({ code: 'OPPORTUNITY_NOT_FOUND', message: 'opportunity not found for subject' });
+    }
+    return ok(found);
+  }
+
+  dismissOpportunity(
+    actor: unknown,
+    subjectId: string,
+    opportunityId: string,
+    reason = 'user_dismissed',
+  ): Result<Opportunity, GrowthFailure> {
+    const current = this.getOpportunity(actor, subjectId, opportunityId);
+    if (!current.ok) {
+      return current;
+    }
+    const nextStatus = transitionOpportunity(current.value.status, 'DISMISSED');
+    if (!nextStatus.ok) {
+      return err({ code: 'INVALID_OPPORTUNITY_TRANSITION', message: nextStatus.error.message });
+    }
+    const next: Opportunity = {
+      ...current.value,
+      status: nextStatus.value,
+      dismissalReason: reason,
+      updatedAt: this.clock.now(),
+    };
+    this.store.putOpportunity(next);
+    this.emit('GrowthOpportunityLifecycleChanged', {
+      subjectId,
+      opportunityId: next.opportunityId,
+      status: next.status,
+      reason,
+    });
+    return ok(next);
+  }
+
+  startOpportunityProposal(
+    actor: unknown,
+    subjectId: string,
+    opportunityId: string,
+  ): Result<OpportunityProposalReceipt, GrowthFailure> {
+    const current = this.getOpportunity(actor, subjectId, opportunityId);
+    if (!current.ok) {
+      return current;
+    }
+    const nextStatus = transitionOpportunity(current.value.status, 'ACCEPTED_FOR_PROPOSAL');
+    if (!nextStatus.ok) {
+      return err({ code: 'INVALID_OPPORTUNITY_TRANSITION', message: nextStatus.error.message });
+    }
+    const proposalId = `gpr_${current.value.opportunityId}`;
+    const next: Opportunity = {
+      ...current.value,
+      status: nextStatus.value,
+      proposalId,
+      updatedAt: this.clock.now(),
+    };
+    this.store.putOpportunity(next);
+    this.emit('GrowthOpportunityLifecycleChanged', {
+      subjectId,
+      opportunityId: next.opportunityId,
+      status: next.status,
+      proposalId,
+    });
+    return ok({
+      opportunityId: next.opportunityId,
+      proposalId,
+      status: 'ACCEPTED_FOR_PROPOSAL',
+      executesMoney: false,
+      issuesExecutionAuthority: false,
+      nextStep: 'USER_CONFIRMATION_THEN_KERNEL',
+      acceptedAt: next.updatedAt,
+    });
+  }
+
+  getOpportunityPreferences(actor: unknown, subjectId: string): Result<OpportunityPreferences, GrowthFailure> {
+    const access = authorizeViewGrowthPlan(actor, subjectId);
+    if (!access.ok) {
+      return access.error.code === 'SUBJECT_MISMATCH'
+        ? err({ code: 'CROSS_USER_DENIED', message: access.error.message })
+        : access;
+    }
+    return ok(this.store.opportunityPreferencesFor(subjectId) ?? defaultOpportunityPreferences(subjectId, this.clock.now()));
+  }
+
+  setOpportunityPreferences(
+    actor: unknown,
+    subjectId: string,
+    patch: Parameters<typeof mergeOpportunityPreferences>[0]['patch'],
+    suitabilityMaxRisk: OpportunityPreferences['maxRiskLevel'] = 'MODERATE',
+  ): Result<OpportunityPreferences, GrowthFailure> {
+    const current = this.getOpportunityPreferences(actor, subjectId);
+    if (!current.ok) {
+      return current;
+    }
+    const next = mergeOpportunityPreferences({
+      current: current.value,
+      patch,
+      suitabilityMaxRisk,
+      now: this.clock.now(),
+    });
+    this.store.putOpportunityPreferences(next);
+    this.emit('GrowthOpportunityPreferencesUpdated', { subjectId });
+    return ok(next);
+  }
+
+  explainOpportunity(
+    actor: unknown,
+    subjectId: string,
+    opportunityId: string,
+  ): Result<{ readonly explanation: OpportunityExplanationInput; readonly agent: AgentProposal }, GrowthFailure> {
+    const current = this.getOpportunity(actor, subjectId, opportunityId);
+    if (!current.ok) {
+      return current;
+    }
+    const explanation = explanationInputFor(current.value);
+    const explained = this.agent.explainPlan(actor, {
+      subjectId,
+      planSummary: explanationFactsText(explanation),
+    });
+    if (!explained.ok) {
+      return err({ code: 'AGENT_FAILED', message: explained.error.message });
+    }
+    return ok({ explanation, agent: explained.value });
+  }
+
+  ingestOpportunityEvent(
+    subjectId: string,
+    event: DomainEvent,
+    context?: Partial<OpportunityDiscoveryContext>,
+  ): OpportunityFeed | undefined {
+    const lastRecomputeAt = this.store.lastOpportunityRecompute(subjectId);
+    const decision = shouldRecalculateOpportunities({
+      event,
+      now: this.clock.now(),
+      ...(lastRecomputeAt ? { lastRecomputeAt } : {}),
+    });
+    if (!decision.recalculate) {
+      const existing = this.store.opportunitiesFor(subjectId);
+      if (existing.length === 0) {
+        return undefined;
+      }
+      return opportunityFeed({
+        subjectId,
+        generatedAt: this.clock.now(),
+        presented: existing.filter((item) => item.status === 'PRESENTED'),
+        suppressedCount: existing.length,
+      });
+    }
+    const resolved = this.resolveDiscoveryContext(subjectId, context);
+    const used =
+      resolved.ledgerPositions && resolved.ledgerPositions.length > 0
+        ? snapshotFromLedgerPositions(subjectId, resolved)
+        : undefined;
+    if (!used) {
+      return undefined;
+    }
+    const mandate = this.store.activeMandateFor(subjectId);
+    const discovered = discoverOpportunities({
+      subjectId,
+      snapshot: used,
+      ...(mandate ? { mandate } : {}),
+      context: resolved,
+    });
+    this.store.replaceOpportunities(subjectId, discovered.all);
+    this.store.markOpportunityRecompute(subjectId, resolved.now);
+    return opportunityFeed({
+      subjectId,
+      generatedAt: resolved.now,
+      presented: discovered.presented,
+      suppressedCount: discovered.suppressedCount,
+    });
+  }
+
+  scheduledRecalculateOpportunities(
+    subjectId: string,
+    context?: Partial<OpportunityDiscoveryContext>,
+  ): OpportunityFeed | undefined {
+    const lastRecomputeAt = this.store.lastOpportunityRecompute(subjectId);
+    const decision = shouldRecalculateOpportunities({
+      scheduled: true,
+      now: this.clock.now(),
+      ...(lastRecomputeAt ? { lastRecomputeAt } : {}),
+    });
+    if (!decision.recalculate) {
+      return undefined;
+    }
+    return this.ingestOpportunityEvent(
+      subjectId,
+      {
+        eventType: 'EconomicGraphSnapshotCreated',
+        schemaVersion: 1,
+        occurredAt: this.clock.now(),
+        payload: { subjectId, reason: 'scheduled' },
+      } as DomainEvent,
+      context,
+    );
+  }
+
   explainWithAgent(actor: unknown, subjectId: string): Result<AgentProposal, GrowthFailure> {
     const access = authorizeViewGrowthPlan(actor, subjectId);
     if (!access.ok) {
@@ -602,6 +924,35 @@ export class GrowthOrchestrator {
           softPreferenceSummaries: mandate.softPreferences.map((item) => item.kind),
         },
       ]),
+    };
+  }
+
+  private resolveDiscoveryContext(
+    subjectId: string,
+    overlay?: Partial<OpportunityDiscoveryContext>,
+  ): OpportunityDiscoveryContext {
+    const now = this.clock.now();
+    const storedRecompute = this.store.lastOpportunityRecompute(subjectId);
+    const lastRecomputeAt = overlay?.lastRecomputeAt ?? (storedRecompute ? asUtcInstant(storedRecompute) : undefined);
+    return {
+      now,
+      jurisdiction: overlay?.jurisdiction ?? 'US',
+      kycState: overlay?.kycState ?? 'VERIFIED',
+      customerRestricted: overlay?.customerRestricted ?? false,
+      riskProfile: overlay?.riskProfile ?? 'BALANCED',
+      suitabilityMaxRisk: overlay?.suitabilityMaxRisk ?? 'MODERATE',
+      products: overlay?.products ?? SIMULATION_GROWTH_PRODUCTS,
+      ...(overlay?.ledgerPositions ? { ledgerPositions: overlay.ledgerPositions } : {}),
+      ...(overlay?.portfolio ? { portfolio: overlay.portfolio } : {}),
+      rateCatalog: overlay?.rateCatalog ?? SIMULATION_RATE_CATALOG,
+      ...(overlay?.feeComparisons ? { feeComparisons: overlay.feeComparisons } : {}),
+      policy: overlay?.policy ?? this.policy,
+      preferences:
+        overlay?.preferences ??
+        this.store.opportunityPreferencesFor(subjectId) ??
+        defaultOpportunityPreferences(subjectId, now),
+      previous: overlay?.previous ?? this.store.opportunitiesFor(subjectId),
+      ...(lastRecomputeAt ? { lastRecomputeAt } : {}),
     };
   }
 

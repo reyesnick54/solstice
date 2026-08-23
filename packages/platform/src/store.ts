@@ -1,6 +1,7 @@
 import type { CompiledEconomicMandate, MandateConfirmation, MandateDraft } from './mandate/types.ts';
 import type { FeasibilityResult, GrowthCycle, GrowthPlan } from './growth/types.ts';
-import type { EconomicMandateId, GrowthCycleId, GrowthPlanId } from './ids.ts';
+import type { Opportunity, OpportunityPreferences } from './growth/opportunity/types.ts';
+import type { EconomicMandateId, GrowthCycleId, GrowthPlanId, OpportunityId } from './ids.ts';
 
 export type GrowthStoreSnapshot = {
   readonly drafts: readonly MandateDraft[];
@@ -9,6 +10,9 @@ export type GrowthStoreSnapshot = {
   readonly cycles: readonly GrowthCycle[];
   readonly plans: readonly GrowthPlan[];
   readonly feasibility: readonly FeasibilityResult[];
+  readonly opportunities: readonly Opportunity[];
+  readonly opportunityPreferences: readonly OpportunityPreferences[];
+  readonly lastOpportunityRecomputeAt: Readonly<Record<string, string>>;
 };
 
 export class InMemoryGrowthStore {
@@ -18,6 +22,9 @@ export class InMemoryGrowthStore {
   private readonly cycles = new Map<string, GrowthCycle>();
   private readonly plans = new Map<string, GrowthPlan>();
   private readonly feasibility = new Map<string, FeasibilityResult>();
+  private readonly opportunities = new Map<string, Opportunity>();
+  private readonly opportunityPreferences = new Map<string, OpportunityPreferences>();
+  private readonly lastOpportunityRecomputeAt = new Map<string, string>();
 
   putDraft(draft: MandateDraft): MandateDraft {
     this.drafts.set(draft.draftId, draft);
@@ -47,6 +54,47 @@ export class InMemoryGrowthStore {
   putFeasibility(result: FeasibilityResult): FeasibilityResult {
     this.feasibility.set(result.actionId, result);
     return result;
+  }
+
+  putOpportunity(opportunity: Opportunity): Opportunity {
+    this.opportunities.set(opportunity.opportunityId, opportunity);
+    return opportunity;
+  }
+
+  getOpportunity(opportunityId: OpportunityId): Opportunity | undefined {
+    return this.opportunities.get(opportunityId);
+  }
+
+  opportunitiesFor(subjectId: string): readonly Opportunity[] {
+    return Object.freeze([...this.opportunities.values()].filter((item) => item.subjectId === subjectId));
+  }
+
+  replaceOpportunities(subjectId: string, next: readonly Opportunity[]): void {
+    for (const [id, item] of this.opportunities) {
+      if (item.subjectId === subjectId) {
+        this.opportunities.delete(id);
+      }
+    }
+    for (const item of next) {
+      this.putOpportunity(item);
+    }
+  }
+
+  putOpportunityPreferences(preferences: OpportunityPreferences): OpportunityPreferences {
+    this.opportunityPreferences.set(preferences.subjectId, preferences);
+    return preferences;
+  }
+
+  opportunityPreferencesFor(subjectId: string): OpportunityPreferences | undefined {
+    return this.opportunityPreferences.get(subjectId);
+  }
+
+  markOpportunityRecompute(subjectId: string, at: string): void {
+    this.lastOpportunityRecomputeAt.set(subjectId, at);
+  }
+
+  lastOpportunityRecompute(subjectId: string): string | undefined {
+    return this.lastOpportunityRecomputeAt.get(subjectId);
   }
 
   getMandate(mandateId: EconomicMandateId, version: number): CompiledEconomicMandate | undefined {
@@ -92,6 +140,9 @@ export class InMemoryGrowthStore {
       cycles: Object.freeze([...this.cycles.values()]),
       plans: Object.freeze([...this.plans.values()]),
       feasibility: Object.freeze([...this.feasibility.values()]),
+      opportunities: Object.freeze([...this.opportunities.values()]),
+      opportunityPreferences: Object.freeze([...this.opportunityPreferences.values()]),
+      lastOpportunityRecomputeAt: Object.freeze(Object.fromEntries(this.lastOpportunityRecomputeAt)),
     };
   }
 
@@ -102,6 +153,9 @@ export class InMemoryGrowthStore {
     this.cycles.clear();
     this.plans.clear();
     this.feasibility.clear();
+    this.opportunities.clear();
+    this.opportunityPreferences.clear();
+    this.lastOpportunityRecomputeAt.clear();
     for (const draft of state.drafts) {
       this.putDraft(draft);
     }
@@ -119,6 +173,15 @@ export class InMemoryGrowthStore {
     }
     for (const result of state.feasibility) {
       this.putFeasibility(result);
+    }
+    for (const opportunity of state.opportunities ?? []) {
+      this.putOpportunity(opportunity);
+    }
+    for (const preferences of state.opportunityPreferences ?? []) {
+      this.putOpportunityPreferences(preferences);
+    }
+    for (const [subjectId, at] of Object.entries(state.lastOpportunityRecomputeAt ?? {})) {
+      this.markOpportunityRecompute(subjectId, at);
     }
   }
 }
