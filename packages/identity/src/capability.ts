@@ -67,10 +67,20 @@ export const IDENTITY_CAPABILITIES = [
   'INVESTMENT_PROPOSE',
   'AUTHORITY_PATH_REHEARSE',
   'ADMIN_COMPLIANCE',
+  'ADMIN_COMPLIANCE_APPROVE',
   'ADMIN_SUPPORT',
+  'ADMIN_SUPPORT_SENSITIVE',
   'ADMIN_TREASURY',
+  'ADMIN_PAYMENTS',
+  'ADMIN_RECONCILIATION',
   'ADMIN_EXCHANGE_SURVEILLANCE',
+  'ADMIN_CUSTODY',
   'ADMIN_SECURITY',
+  'ADMIN_FRAUD',
+  'ADMIN_SRE',
+  'ADMIN_AUDIT',
+  'ADMIN_PLATFORM',
+  'ADMIN_AGENT',
 ] as const;
 
 export type IdentityCapability = (typeof IDENTITY_CAPABILITIES)[number];
@@ -174,10 +184,20 @@ export const ACTION_TYPE_FOR_CAPABILITY: Readonly<Record<IdentityCapability, rea
   INVESTMENT_PROPOSE: [],
   AUTHORITY_PATH_REHEARSE: ['REHEARSE_AUTHORITY_PATH'],
   ADMIN_COMPLIANCE: [],
+  ADMIN_COMPLIANCE_APPROVE: [],
   ADMIN_SUPPORT: [],
+  ADMIN_SUPPORT_SENSITIVE: [],
   ADMIN_TREASURY: [],
+  ADMIN_PAYMENTS: [],
+  ADMIN_RECONCILIATION: [],
   ADMIN_EXCHANGE_SURVEILLANCE: [],
+  ADMIN_CUSTODY: [],
   ADMIN_SECURITY: [],
+  ADMIN_FRAUD: [],
+  ADMIN_SRE: [],
+  ADMIN_AUDIT: [],
+  ADMIN_PLATFORM: [],
+  ADMIN_AGENT: [],
 };
 
 export const ACTION_TYPES_FOR_CAPABILITY = ACTION_TYPE_FOR_CAPABILITY;
@@ -309,9 +329,18 @@ export function requiredAssuranceFor(capability: IdentityCapability): Authentica
     capability === 'AGENT_ACTION_APPROVE' ||
     capability === 'PAYMENT_APPROVE' ||
     capability === 'ADMIN_COMPLIANCE' ||
+    capability === 'ADMIN_COMPLIANCE_APPROVE' ||
+    capability === 'ADMIN_SUPPORT_SENSITIVE' ||
     capability === 'ADMIN_TREASURY' ||
+    capability === 'ADMIN_PAYMENTS' ||
+    capability === 'ADMIN_RECONCILIATION' ||
     capability === 'ADMIN_EXCHANGE_SURVEILLANCE' ||
-    capability === 'ADMIN_SECURITY'
+    capability === 'ADMIN_CUSTODY' ||
+    capability === 'ADMIN_SECURITY' ||
+    capability === 'ADMIN_FRAUD' ||
+    capability === 'ADMIN_SRE' ||
+    capability === 'ADMIN_PLATFORM' ||
+    capability === 'ADMIN_AGENT'
   ) {
     return 'STRONG';
   }
