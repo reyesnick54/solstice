@@ -52,6 +52,7 @@ import {
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
 import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
+import { createExchangeBffSurface } from './exchange-bff.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -133,6 +134,7 @@ export type SandboxWorld = {
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly conversation: AgentConversationSurface;
+  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -525,6 +527,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     agentRuntime,
     grow,
     conversation: createAgentConversationSurface(),
+    exchange: createExchangeBffSurface(),
   });
 }
 

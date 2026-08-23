@@ -153,6 +153,32 @@ Do not send `clientIntent` as trusted proposal state. Do not encode
 guaranteed returns. `productionMoneyMovement` is always `false`.
 Live investment execution is disabled.
 
+## Exchange (Consumer BFF `/api/v1/exchange`)
+
+Use `@solstice/sunrey-sdk/bff`. Lovable must not implement Exchange
+mathematics, matching, or settlement. Last trade is not a guaranteed
+price. `FILLED` is not `SETTLED`. Production trading remains disabled.
+
+| Screen | Method | Path |
+| --- | --- | --- |
+| Exchange Home / Markets | GET | `/api/v1/exchange/markets` |
+| Asset Detail | GET | `/api/v1/exchange/markets/{instrument}` |
+| Ticker | GET | `/api/v1/exchange/markets/{instrument}/ticker` |
+| Chart | GET | `/api/v1/exchange/markets/{instrument}/candles` |
+| Order Book | GET | `/api/v1/exchange/markets/{instrument}/orderbook` |
+| Trade History | GET | `/api/v1/exchange/markets/{instrument}/trades` |
+| Order Preview | POST | `/api/v1/exchange/preview` |
+| Open / History | GET | `/api/v1/exchange/orders` |
+| Buy / Sell submit | POST | `/api/v1/exchange/orders` with approved `proposalId` |
+| Cancel | DELETE | `/api/v1/exchange/orders/{id}` |
+| Fills | GET | `/api/v1/exchange/fills` |
+| Holdings | GET | `/api/v1/exchange/holdings` |
+| Transaction Status | GET | `/api/v1/exchange/orders/{id}` plus clearing state |
+| Stream | GET | `/api/v1/exchange/stream` (`Accept: text/event-stream`) |
+
+Agent-generated orders must reference an approved proposal. The BFF
+does not expose privileged internal event topics.
+
 ## Approval states
 
 `POST /v1/consumer/actions` currently implements `OPEN_ACCOUNT` only.

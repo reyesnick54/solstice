@@ -194,11 +194,42 @@ export type PortfolioPort = {
   get(ownerId: string): PortResult<PortfolioRecord>;
 };
 
+export type ExchangeEligibilityRecord = {
+  readonly ownerId: string;
+  readonly canTrade: boolean;
+  readonly canDeposit: boolean;
+  readonly canWithdraw: boolean;
+  readonly reasonCodes: readonly string[];
+};
+
+export type ExchangeHoldingRecord = {
+  readonly assetId: string;
+  readonly quantityMinorUnits: string;
+  readonly reservedMinorUnits: string;
+};
+
+export type ExchangePreviewRecord = {
+  readonly previewId: string;
+  readonly marketId: string;
+  readonly side: string;
+  readonly quantityMinorUnits: string;
+  readonly estimatedPriceUnits: string | null;
+  readonly guaranteedExecutionPrice: false;
+};
+
 export type ExchangePort = {
   markets(): PortResult<readonly MarketRecord[]>;
   asset(assetId: string): PortResult<{ readonly assetId: string; readonly listed: boolean }>;
   price(marketId: string): PortResult<{ readonly marketId: string; readonly lastPriceUnits: string | null; readonly eligible: boolean }>;
   orders(ownerId: string): PortResult<readonly ExchangeOrderRecord[]>;
+  eligibility(ownerId: string, marketId?: string): PortResult<ExchangeEligibilityRecord>;
+  holdings(ownerId: string): PortResult<readonly ExchangeHoldingRecord[]>;
+  preview(input: {
+    readonly ownerId: string;
+    readonly marketId: string;
+    readonly side: string;
+    readonly quantityMinorUnits: string;
+  }): PortResult<ExchangePreviewRecord>;
 };
 
 export type CustodyPort = {

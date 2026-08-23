@@ -665,6 +665,38 @@ export type ConversationTurn = {
   readonly productionMoneyMovement: false;
 };
 
+export type ExchangeMarket = {
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly baseAssetId: string;
+  readonly quoteAssetId: string;
+  readonly state: string;
+};
+
+export type ExchangeMarkets = {
+  readonly schema: 'sunrey.consumer.exchange.markets.v1';
+  readonly productionTradingEnabled: false;
+  readonly items: readonly ExchangeMarket[];
+  readonly screens?: readonly string[];
+};
+
+export type ExchangeOrderPreview = {
+  readonly previewId: string;
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantity: string;
+  readonly estimatedPriceUnits: string | null;
+  readonly guaranteedExecutionPrice: false;
+  readonly productionTradingEnabled: false;
+};
+
+export type ExchangeOrderSubmit = {
+  readonly accepted: true;
+  readonly requiresExecution: true;
+  readonly proposalId: string | null;
+};
+
 export type ActionCenterList = {
   readonly schema: 'sunrey.consumer.action-center.v1';
   readonly view: string;

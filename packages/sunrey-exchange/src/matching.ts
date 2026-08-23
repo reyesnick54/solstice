@@ -1,5 +1,7 @@
 import { AssetQuantity } from '../../money/src/asset-quantity.ts';
 import type { DigitalOrder, ImmutableTrade } from './types.ts';
+import type { SelfTradePolicy } from './taxonomy.ts';
+import type { OrderId } from './ids.ts';
 import { comparePrice, type ExchangePrice } from './price.ts';
 import { newExecutionId, newTradeId, type MarketDataSequence } from './ids.ts';
 import type { UtcInstant } from '../../domain/src/time.ts';
@@ -47,22 +49,37 @@ export function pricesCross(bid: ExchangePrice, ask: ExchangePrice): boolean {
 export function matchIncoming(
   incoming: DigitalOrder,
   resting: readonly DigitalOrder[],
-  policy: { readonly selfTrade: 'CANCEL_INCOMING' | 'PREVENT' },
-): { readonly matches: Match[]; readonly rejectIncoming: boolean; readonly reason?: string } {
+  policy: { readonly selfTrade: SelfTradePolicy },
+): {
+  readonly matches: Match[];
+  readonly rejectIncoming: boolean;
+  readonly cancelledRestingIds: readonly OrderId[];
+  readonly reason?: string;
+} {
   if (incoming.family !== 'DIGITAL_ASSET') {
-    return { matches: [], rejectIncoming: true, reason: 'FAMILY_MISMATCH' };
+    return { matches: [], rejectIncoming: true, cancelledRestingIds: [], reason: 'FAMILY_MISMATCH' };
   }
   const book = sortBook(resting);
   const opposite = incoming.side === 'BUY' ? book.asks : book.bids;
   const matches: Match[] = [];
+  const cancelledRestingIds: OrderId[] = [];
   let remaining = incoming.remaining.scaledUnits;
   for (const maker of opposite) {
     if (remaining <= 0n) {
       break;
     }
     if (maker.beneficialParticipantId === incoming.beneficialParticipantId) {
-      if (policy.selfTrade === 'PREVENT' || policy.selfTrade === 'CANCEL_INCOMING') {
-        return { matches: [], rejectIncoming: true, reason: 'SELF_TRADE' };
+      if (policy.selfTrade === 'CANCEL_OLDEST') {
+        cancelledRestingIds.push(maker.orderId);
+        continue;
+      }
+      if (
+        policy.selfTrade === 'PREVENT' ||
+        policy.selfTrade === 'REJECT' ||
+        policy.selfTrade === 'CANCEL_INCOMING' ||
+        policy.selfTrade === 'CANCEL_NEWEST'
+      ) {
+        return { matches: [], rejectIncoming: true, cancelledRestingIds: [], reason: 'SELF_TRADE' };
       }
     }
     const makerPrice = maker.limitPrice;
@@ -91,15 +108,15 @@ export function matchIncoming(
   }
   if (incoming.orderType === 'POST_ONLY' || incoming.timeInForce === 'POST_ONLY') {
     if (matches.length > 0) {
-      return { matches: [], rejectIncoming: true, reason: 'POST_ONLY_WOULD_TAKE' };
+      return { matches: [], rejectIncoming: true, cancelledRestingIds: [], reason: 'POST_ONLY_WOULD_TAKE' };
     }
   }
   if (incoming.orderType === 'FOK' || incoming.timeInForce === 'FOK') {
     if (remaining > 0n) {
-      return { matches: [], rejectIncoming: true, reason: 'FOK_UNFILLED' };
+      return { matches: [], rejectIncoming: true, cancelledRestingIds: [], reason: 'FOK_UNFILLED' };
     }
   }
-  return { matches, rejectIncoming: false };
+  return { matches, rejectIncoming: false, cancelledRestingIds };
 }
 
 export function toTrade(

@@ -461,6 +461,18 @@ export class ExchangeClient {
     return this.http.get(`/v1/exchange/trading-sessions/${sessionId}`);
   }
 
+  listFills(): Promise<unknown> {
+    return this.http.get('/v1/exchange/fills');
+  }
+
+  listHoldings(): Promise<unknown> {
+    return this.http.get('/v1/exchange/holdings');
+  }
+
+  streamMarket(): Promise<unknown> {
+    return this.http.get('/v1/exchange/stream');
+  }
+
   getConsumerPortfolio(participantId: string): Promise<unknown> {
     return this.http.get(`/v1/consumer/exchange/portfolio?participant_id=${encodeURIComponent(participantId)}`);
   }

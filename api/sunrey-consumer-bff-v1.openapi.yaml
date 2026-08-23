@@ -1431,10 +1431,153 @@ paths:
   /api/v1/exchange:
     get:
       operationId: getExchange
-      summary: Exchange resource stub
+      summary: Exchange catalog
       responses:
         "200":
-          description: Honest availability
+          description: Honest availability; production trading remains disabled
+  /api/v1/exchange/markets:
+    get:
+      operationId: listExchangeMarkets
+      summary: List simulation markets
+      responses:
+        "200":
+          description: Markets with productionTradingEnabled=false
+  /api/v1/exchange/markets/{instrument}:
+    get:
+      operationId: getExchangeMarket
+      summary: Market detail
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Market
+  /api/v1/exchange/markets/{instrument}/ticker:
+    get:
+      operationId: getExchangeTicker
+      summary: Ticker with freshness
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Ticker
+  /api/v1/exchange/markets/{instrument}/orderbook:
+    get:
+      operationId: getExchangeOrderBook
+      summary: Order book
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order book
+  /api/v1/exchange/markets/{instrument}/trades:
+    get:
+      operationId: getExchangeTrades
+      summary: Recent trades
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Trades
+  /api/v1/exchange/markets/{instrument}/candles:
+    get:
+      operationId: getExchangeCandles
+      summary: OHLC candles
+      parameters:
+        - in: path
+          name: instrument
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Candles
+  /api/v1/exchange/eligibility:
+    get:
+      operationId: getExchangeEligibility
+      summary: CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW
+      responses:
+        "200":
+          description: Server-controlled eligibility
+  /api/v1/exchange/preview:
+    post:
+      operationId: previewExchangeOrder
+      summary: Order preview
+      description: Estimated price is not a guaranteed execution price.
+      responses:
+        "200":
+          description: Preview
+  /api/v1/exchange/orders:
+    get:
+      operationId: listExchangeOrders
+      summary: Owner orders
+      responses:
+        "200":
+          description: Orders
+    post:
+      operationId: submitExchangeOrder
+      summary: Submit an approved exchange order
+      description: Agent-generated orders must reference an approved proposal. Production trading remains disabled.
+      responses:
+        "201":
+          description: Accepted for domain execution
+  /api/v1/exchange/orders/{id}:
+    get:
+      operationId: getExchangeOrder
+      summary: Owner order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Order
+        "403":
+          description: Cross-user denied
+    delete:
+      operationId: cancelExchangeOrder
+      summary: Cancel an owned order
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Cancelled
+  /api/v1/exchange/fills:
+    get:
+      operationId: listExchangeFills
+      summary: Owner fills with clearing state
+      responses:
+        "200":
+          description: Fills; filled is not settled unless clearing is SETTLED
+  /api/v1/exchange/holdings:
+    get:
+      operationId: listExchangeHoldings
+      summary: Owner holdings projection
+      responses:
+        "200":
+          description: Holdings
+  /api/v1/exchange/stream:
+    get:
+      operationId: streamExchangeMarket
+      summary: SSE market stream
+      description: ticker, trade, order-book, and order-status only. Privileged internal topics are not exposed.
+      responses:
+        "200":
+          description: SSE or cursor page
   /api/v1/recipients:
     get:
       operationId: listRecipients

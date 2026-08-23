@@ -107,7 +107,7 @@ describe('canonical agent tool registry', () => {
   it('registers a deterministic identity for every product tool', () => {
     const registry = createCanonicalToolRegistry();
     assert.equal(registry.list().length, CANONICAL_TOOL_COUNT);
-    assert.equal(CANONICAL_TOOL_COUNT, 37);
+    assert.equal(CANONICAL_TOOL_COUNT, 41);
     const again = createCanonicalToolRegistry();
     for (const tool of CANONICAL_AGENT_TOOLS) {
       assert.equal(registry.require(tool.toolId).identityHash, again.require(tool.toolId).identityHash);
@@ -149,6 +149,10 @@ describe('tool contract matrix', () => {
       getAsset: { assetId: 'SUNREY_COIN' },
       getMarketPrice: { marketId: FIXTURE_MARKET },
       getOrders: {},
+      getExchangeEligibility: {},
+      getExchangeHoldings: {},
+      previewExchangeOrder: { marketId: FIXTURE_MARKET, side: 'BUY', quantity: '10' },
+      getExchangeOrderStatus: {},
       createExchangeOrderProposal: { marketId: FIXTURE_MARKET, side: 'BUY', quantity: '10', assetId: 'SUNREY_COIN' },
       getWallets: {},
       getWalletBalance: { walletId: 'wallet_1' },

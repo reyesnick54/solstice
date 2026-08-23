@@ -209,6 +209,31 @@ export function createFixtureToolPorts(overrides: FixtureOverrides = {}): AgentT
         if (ownerId !== owner) return fail('NOT_OWNED', 'orders are not visible for that owner');
         return ok([]);
       },
+      eligibility: (ownerId) => {
+        if (ownerId !== owner) return fail('NOT_OWNED', 'eligibility is not visible for that owner');
+        return ok({
+          ownerId,
+          canTrade: !overrides.productUnavailable,
+          canDeposit: true,
+          canWithdraw: true,
+          reasonCodes: [],
+        });
+      },
+      holdings: (ownerId) => {
+        if (ownerId !== owner) return fail('NOT_OWNED', 'holdings are not visible for that owner');
+        return ok([{ assetId: 'SUNREY_COIN', quantityMinorUnits: '10', reservedMinorUnits: '0' }]);
+      },
+      preview: (input) => {
+        if (input.ownerId !== owner) return fail('NOT_OWNED', 'preview is not visible for that owner');
+        return ok({
+          previewId: 'xprv_1',
+          marketId: input.marketId,
+          side: input.side,
+          quantityMinorUnits: input.quantityMinorUnits,
+          estimatedPriceUnits: '100',
+          guaranteedExecutionPrice: false,
+        });
+      },
     },
     custody: {
       wallets(ownerId) {

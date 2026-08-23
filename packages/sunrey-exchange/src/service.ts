@@ -52,6 +52,7 @@ import type {
   OraclePort,
   ProductiveGraphPort,
 } from './ports.ts';
+import { ExchangeProductPlatform } from './product/platform.ts';
 import { ExchangeStore } from './store.ts';
 import { UniversalExchangeEngine } from './universal.ts';
 import {
@@ -115,6 +116,7 @@ export class SunReyExchangeService {
   private readonly informationMarket: InformationMarketPort | null;
   private readonly chain: ChainAnchorPort | null;
   private readonly store = new ExchangeStore();
+  readonly product: ExchangeProductPlatform;
   readonly universal: UniversalExchangeEngine;
   readonly feeSchedule: FeeSchedule = Object.freeze({
     scheduleId: SIMULATION_FEE_SCHEDULE_ID,
@@ -158,6 +160,9 @@ export class SunReyExchangeService {
     this.fiat = input.fiat;
     this.informationMarket = input.informationMarket ?? null;
     this.chain = input.chain ?? null;
+    this.product = new ExchangeProductPlatform({
+      application: { kind: 'APPLICATION_PORT', coin: this.coin, fiat: this.fiat },
+    });
     this.seedSimulationRegistry();
     this.universal = new UniversalExchangeEngine(
       this.store,
@@ -753,6 +758,18 @@ export class SunReyExchangeService {
       this.store.putOrder({ ...incoming, status: 'REJECTED', version: (incoming.version + 1) as DigitalOrder['version'] });
       return;
     }
+    for (const restingId of result.cancelledRestingIds) {
+      const restingOrder = this.store.order(restingId);
+      if (!restingOrder) {
+        continue;
+      }
+      this.releaseHold(restingOrder);
+      this.store.putOrder({
+        ...restingOrder,
+        status: 'CANCELLED',
+        version: (restingOrder.version + 1) as DigitalOrder['version'],
+      });
+    }
     let taker = incoming;
     for (const match of result.matches) {
       const trade = toTrade(
@@ -768,11 +785,47 @@ export class SunReyExchangeService {
         priceLabel: PRICE_LABEL,
         quantity: trade.quantity.scaledUnits.toString(),
       });
+      const seller = match.maker.side === 'SELL' ? match.maker : taker;
+      const buyer = match.maker.side === 'BUY' ? match.maker : taker;
+      const sellerAccount = this.store.account(seller.exchangeAccountId);
+      const buyerAccount = this.store.account(buyer.exchangeAccountId);
+      const recorded = this.product.recordFill({
+        trade,
+        buyerAccountId: buyer.exchangeAccountId,
+        sellerAccountId: seller.exchangeAccountId,
+        buyerParticipantId: buyer.beneficialParticipantId,
+        sellerParticipantId: seller.beneficialParticipantId,
+        buyerCashAccountId: buyerAccount?.cashAccountId ?? buyer.sourceAccountId,
+        sellerCashAccountId: sellerAccount?.cashAccountId ?? seller.sourceAccountId,
+        makerHoldId: match.maker.holdId,
+        takerHoldId: taker.holdId,
+        quoteRail: 'APPLICATION_PORT',
+        baseRail: 'APPLICATION_PORT',
+        at: this.clock.now(),
+      });
       const settled = this.settleTrade(trade, match.maker, taker, actorId, customerId);
       if (settled.outcome !== 'OK') {
+        this.product.attachOutcome({
+          obligationId: recorded.obligation.obligationId,
+          at: this.clock.now(),
+          state: 'FAILED',
+          failureCode: 'LEDGER_FAILURE',
+        });
         this.emit('ExchangeReconciliationMismatch', trade.tradeId, { reason: settled.outcome === 'REJECTED' ? settled.code : 'KERNEL' });
         continue;
       }
+      this.product.attachOutcome({
+        obligationId: recorded.obligation.obligationId,
+        at: this.clock.now(),
+        state: 'SETTLED',
+        refs: {
+          ledger: {
+            cashJournalId: settled.value.cashJournalId,
+            feeJournalId: settled.value.feeJournalId,
+            reservationJournalId: null,
+          },
+        },
+      });
       const makerFilled = applyFill(this.store.order(match.maker.orderId) ?? match.maker, match.quantity);
       taker = applyFill(this.store.order(taker.orderId) ?? taker, match.quantity);
       this.store.putOrder(makerFilled);
