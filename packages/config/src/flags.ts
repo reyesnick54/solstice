@@ -27,6 +27,9 @@ export const LIVE_DATA_MONETIZATION_ENABLED = false as const;
 export const LIVE_HIN_BASED_ISSUANCE_ENABLED = false as const;
 export const LIVE_MOONREY_PRODUCTIVE_ISSUANCE_ENABLED = false as const;
 
+/** External production HSM/KMS remains absent. Software ports may be complete. */
+export const PRODUCTION_HSM_KMS_CONFIGURED = false as const;
+
 export const CAPABILITIES = Object.freeze({
   ENVIRONMENT,
   SIMULATION_MODE,
@@ -41,6 +44,7 @@ export const CAPABILITIES = Object.freeze({
   LIVE_EXCHANGE_ENABLED,
   LIVE_DATA_MARKET_ENABLED,
   LIVE_INVESTMENT_EXECUTION,
+  PRODUCTION_HSM_KMS_CONFIGURED,
   LIVE_INFORMATION_RIGHTS_MARKETPLACE,
   LIVE_DATA_MONETIZATION_ENABLED,
   LIVE_HIN_BASED_ISSUANCE_ENABLED,
