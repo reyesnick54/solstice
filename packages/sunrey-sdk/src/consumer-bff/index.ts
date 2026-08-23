@@ -47,7 +47,6 @@ export type {
   GrowPlan,
   GrowPlanCreateInput,
   GrowPlanStatus,
-  GrowProposal,
   GrowProposalStatus,
   GrowRiskProfile,
   GrowMoney,
@@ -67,6 +66,10 @@ export type {
   ConversationTurn,
   NativeEconomyOverview,
   NativeEconomySupply,
+  ExchangeMarket,
+  ExchangeMarkets,
+  ExchangeOrderPreview,
+  ExchangeOrderSubmit,
 } from './types.ts';
 export {
   SunReyConsumerBffClient,

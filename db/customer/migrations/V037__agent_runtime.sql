@@ -93,3 +93,6 @@ REVOKE ALL ON ALL TABLES IN SCHEMA agent_runtime FROM PUBLIC;
 
 GRANT USAGE ON SCHEMA agent_runtime TO customer_app;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app;
+GRANT USAGE ON SCHEMA agent_runtime TO customer_app;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app;
+REVOKE DELETE, TRUNCATE ON ALL TABLES IN SCHEMA agent_runtime FROM customer_app;

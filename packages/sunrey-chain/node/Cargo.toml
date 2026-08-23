@@ -45,6 +45,7 @@ path = "src/bin/sunrey-exchange-settlement-demo.rs"
 [dependencies]
 clap = { version = "=4.5.23", features = ["derive"] }
 sunrey-native-assets = { path = "../rust/crates/native-assets" }
+sunrey-protocol = { path = "../rust/crates/protocol" }
 ed25519-dalek = { version = "2", features = ["rand_core"] }
 hex = "0.4"
 parking_lot = "0.12"

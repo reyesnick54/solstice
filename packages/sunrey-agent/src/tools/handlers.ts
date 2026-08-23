@@ -119,6 +119,36 @@ export function handleTool(ctx: HandlerContext): Omit<AgentToolResult, 'duration
       return mapPort(ctx.ports.exchange.orders(ctx.session.ownerId), ctx, 'TRANSACTION_STATUS', (orders) => ({
         orders,
       }), ['orders.*.quantityMinorUnits']);
+    case 'getExchangeEligibility':
+      return mapPort(
+        ctx.ports.exchange.eligibility(ctx.session.ownerId, typeof ctx.input.marketId === 'string' ? ctx.input.marketId : undefined),
+        ctx,
+        'TRADE_PROPOSAL',
+        (eligibility) => ({ eligibility }),
+        [],
+      );
+    case 'getExchangeHoldings':
+      return mapPort(ctx.ports.exchange.holdings(ctx.session.ownerId), ctx, 'PORTFOLIO_CARD', (holdings) => ({
+        holdings,
+      }), ['holdings.*.quantityMinorUnits']);
+    case 'previewExchangeOrder':
+      return mapPort(
+        ctx.ports.exchange.preview({
+          ownerId: ctx.session.ownerId,
+          marketId: str(ctx.input.marketId),
+          side: str(ctx.input.side),
+          quantityMinorUnits: str(ctx.input.quantity),
+        }),
+        ctx,
+        'TRADE_PROPOSAL',
+        (preview) => ({ ...preview, guaranteedExecutionPrice: false }),
+        ['quantityMinorUnits', 'estimatedPriceUnits'],
+      );
+    case 'getExchangeOrderStatus':
+      return mapPort(ctx.ports.exchange.orders(ctx.session.ownerId), ctx, 'TRANSACTION_STATUS', (orders) => {
+        const orderId = typeof ctx.input.orderId === 'string' ? ctx.input.orderId : null;
+        return { orders: orderId ? orders.filter((item) => item.orderId === orderId) : orders, fillIsNotSettlement: true };
+      }, ['orders.*.quantityMinorUnits']);
     case 'createExchangeOrderProposal':
       return exchangeProposal(ctx);
     case 'getWallets':

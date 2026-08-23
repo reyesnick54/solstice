@@ -51,6 +51,8 @@ import {
 } from '../../../economic-graph/src/index.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
+import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
+import { createExchangeBffSurface } from './exchange-bff.ts';
 import { createSandboxAgentRuntime, provisionSandboxAgent } from './agent.ts';
 import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
 import type {
@@ -112,9 +114,11 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly agent: AgentBffFacade;
   readonly agentRuntime: AgentConversationRuntime;
   readonly grow: ProductGrowthService;
   readonly conversation: AgentConversationSurface;
+  readonly exchange: ReturnType<typeof createExchangeBffSurface>;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -503,9 +507,11 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    agent: createAgentBffFacade(NOW),
     agentRuntime,
     grow,
     conversation: createAgentConversationSurface(),
+    exchange: createExchangeBffSurface(),
   });
 }
 

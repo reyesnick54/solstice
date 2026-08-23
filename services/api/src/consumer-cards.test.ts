@@ -15,6 +15,7 @@ function call(
     bff: world.bff,
     sessions: world.sessions,
     identity: world.runtime.identity.service,
+    agent: world.agent,
   };
   return handleConsumerBff(runtime, {
     method,

@@ -6,6 +6,7 @@ pub mod devset;
 pub mod economics;
 pub mod lifecycle;
 pub mod power;
+pub mod productization;
 pub mod set;
 pub mod signer;
 pub mod types;
@@ -15,6 +16,10 @@ pub use devset::{four_validator_development_hash, four_validator_development_set
 pub use lifecycle::{assert_consensus_purpose, assert_controller, transition};
 pub use power::{
     has_one_third_plus, has_two_thirds_plus, one_third_power, total_power, two_thirds_power,
+};
+pub use productization::{
+    controlled_transition, product_view, refuse_mainnet_activation, to_operator_lifecycle,
+    OperatorLifecycle, ValidatorProductRecord,
 };
 pub use set::{apply_epoch_boundary, validator_set_hash};
 pub use signer::{

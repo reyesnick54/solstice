@@ -287,6 +287,16 @@ export const GROW_EXECUTION_STATES = [
 ] as const;
 export type GrowExecutionState = (typeof GROW_EXECUTION_STATES)[number];
 
+export type GrowExecutionProposal = {
+  readonly proposalId: string;
+  readonly version: number;
+  readonly state: string;
+  readonly amount: MoneyResource;
+  readonly serverOwned: true;
+  readonly clientInstructionsTrusted: false;
+  readonly productionMoneyMovement: false;
+};
+
 export type GrowExecution = {
   readonly executionId: string;
   readonly state: GrowExecutionState | string;
@@ -357,6 +367,11 @@ export type GrowProposal = {
   readonly guaranteedOutcome: false;
   readonly executionAuthorityId: null;
   readonly serverIssued: true;
+};
+
+export type GrowMoney = {
+  readonly minorUnits: string;
+  readonly currency: string;
 };
 
 export type GrowProfile = {
@@ -492,11 +507,6 @@ export type AgentMessageResponse = {
  * packages/investments. Frontend math is not authoritative.
  * Not a live securities brokerage.
  */
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
-};
-
 export type GrowPortfolio = {
   readonly schema: 'sunrey.grow.portfolio.v1';
   readonly portfolioId: string;
@@ -687,6 +697,36 @@ export type NativeEconomySupply = {
       readonly issuedSupply: string;
     };
   }[];
+export type ExchangeMarket = {
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly baseAssetId: string;
+  readonly quoteAssetId: string;
+  readonly state: string;
+};
+
+export type ExchangeMarkets = {
+  readonly schema: 'sunrey.consumer.exchange.markets.v1';
+  readonly productionTradingEnabled: false;
+  readonly items: readonly ExchangeMarket[];
+  readonly screens?: readonly string[];
+};
+
+export type ExchangeOrderPreview = {
+  readonly previewId: string;
+  readonly marketId: string;
+  readonly instrument: string;
+  readonly side: 'BUY' | 'SELL';
+  readonly quantity: string;
+  readonly estimatedPriceUnits: string | null;
+  readonly guaranteedExecutionPrice: false;
+  readonly productionTradingEnabled: false;
+};
+
+export type ExchangeOrderSubmit = {
+  readonly accepted: true;
+  readonly requiresExecution: true;
+  readonly proposalId: string | null;
 };
 
 export type ActionCenterList = {

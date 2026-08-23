@@ -66,6 +66,10 @@ beneficiary API. It always returns `NOT_ELIGIBLE`.
 | getAsset | Listed asset | `assetId` | asset | READ | READ_FINANCIAL_STATE | read-only | exchange / coin tool | no |
 | getMarketPrice | Last trade, not guaranteed | `marketId` | price units | READ | READ_FINANCIAL_STATE | read-only | SubjectScopedSunReyExchangeTool | no |
 | getOrders | Owner orders | none | orders | READ | READ_FINANCIAL_STATE | read-only | consumer orders | no |
+| getExchangeEligibility | CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW | optional `marketId` | eligibility | READ | READ_FINANCIAL_STATE | read-only | exchange product eligibility | no |
+| getExchangeHoldings | Holdings projection | none | holdings | READ | READ_FINANCIAL_STATE | read-only | exchange product holdings | no |
+| previewExchangeOrder | Order preview, not a guaranteed price | `marketId`, `side`, `quantity` | preview | READ | READ_FINANCIAL_STATE | read-only | exchange product preview | no |
+| getExchangeOrderStatus | Order and clearing status | optional `orderId` | orders | READ | READ_FINANCIAL_STATE | read-only | exchange product clearing | no |
 | createExchangeOrderProposal | Propose a trade | `marketId`, `side`, `quantity`, `assetId` | proposal id | PROPOSAL | PREPARE_EXCHANGE_ORDER | proposal | exchange + ProposalGate | yes |
 
 ## WALLETS / CUSTODY

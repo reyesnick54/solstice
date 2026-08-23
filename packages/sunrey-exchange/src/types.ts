@@ -119,6 +119,14 @@ export type DigitalOrder = {
   readonly coinHoldId: string | null;
   readonly sourceAccountId: string;
   readonly sequence: number;
+  readonly filledQuantity?: AssetQuantity;
+  readonly complianceRef?: string | null;
+  readonly feeContext?: {
+    readonly scheduleId: FeeScheduleId;
+    readonly makerBps: bigint;
+    readonly takerBps: bigint;
+    readonly clientOverrideForbidden: true;
+  };
 };
 
 export type ExchangeHold = {
@@ -179,6 +187,8 @@ export type FeeSchedule = {
   readonly takerFeeMinor: bigint;
   readonly listingFeeMinor: bigint;
   readonly computeFeeMinor: bigint;
+  readonly makerBps?: bigint;
+  readonly takerBps?: bigint;
   readonly commercialPermanence: 'SIMULATION_CONFIGURATION';
 };
 

@@ -552,6 +552,20 @@ describe('versioned SQL migrations', () => {
     assert.match(v036.sql, /perpetual_authorization BOOLEAN NOT NULL CHECK \(perpetual_authorization = FALSE\)/);
     assert.match(v036.sql, /deposits_are_not_performance BOOLEAN NOT NULL CHECK \(deposits_are_not_performance = TRUE\)/);
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v036.sql), false);
+  it('customer V035-V037 keep Phase E/F productization files contiguous', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v035 = files.find((file) => file.version === 35);
+    const v036 = files.find((file) => file.version === 36);
+    const v037 = files.find((file) => file.version === 37);
+    assert.ok(v035);
+    assert.ok(v036);
+    assert.ok(v037);
+    assert.equal(v035.filename, 'V035__growth_opportunities.sql');
+    assert.equal(v036.filename, 'V036__economic_graph_productization.sql');
+    assert.equal(v037.filename, 'V037__agent_runtime.sql');
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v035.sql), false);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v036.sql), false);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
   });
 
   it('customer V033 persists provider runtime control plane without secrets or a ledger', () => {
