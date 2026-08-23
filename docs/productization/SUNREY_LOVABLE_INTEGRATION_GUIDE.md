@@ -353,3 +353,27 @@ SDK: `startAgentConversation`, `sendAgentMessage`, `streamAgentEvents`,
 `modifyAgentAction`, `rejectAgentAction`.
 
 See `docs/productization/PHASE_F_04_CONVERSATIONAL_ACTIONS.md`.
+
+## Wallets, deposits, and withdrawals (Phase G Prompt 5)
+
+Use the Consumer BFF. Lovable never holds server-controlled signing
+material. Production signing stays disabled.
+
+| Screen | Route | Notes |
+| --- | --- | --- |
+| Wallet Home / Assets | `GET /api/v1/wallets` | SunRey Coin and MoonRey Coin wallets for `sandbox.basic_verified` |
+| SunRey Coin / MoonRey Coin | `GET /api/v1/assets/SUNREY_COIN` or `MOONREY_COIN` | Aggregated metadata, balance, eligibility, recent activity |
+| Deposit / Receive / QR | `GET /api/v1/wallets/{id}/deposit-address` | Address is bound to the wallet asset and network |
+| Transaction History | `GET /api/v1/wallets/{id}/transactions` | Client-safe finality: PENDING, BROADCAST, CONFIRMING, FINALIZED, FAILED, REVIEW |
+| Send / Network Fee | `POST /api/v1/wallets/{id}/withdrawal-quote` | Estimates only. Travel Rule is customer-safe |
+| Withdrawal Review | `POST /api/v1/wallets/{id}/withdrawals` | Requires `stepUpSatisfied: true`. Agent sets `originatedFromAgent: true` for a proposal only |
+| Confirmation Progress | `GET /api/v1/wallets/{id}/withdrawals/{withdrawalId}` | Do not treat BROADCAST as final |
+
+SDK: `listWallets`, `getWallet`, `getDepositAddress`,
+`listWalletTransactions`, `quoteWithdrawal`, `createWithdrawal`,
+`getWithdrawal`, `getAssetDetail`.
+
+Do not ask the backend for a private key.
+Do not let the Agent sign or broadcast.
+Do not mark a deposit available before `FINALIZED`.
+See `docs/productization/PHASE_G_05_WALLETS_CUSTODY.md`.

@@ -39,6 +39,14 @@ import type {
   PaymentQuoteInput,
   Recipient,
   RecipientCreateInput,
+  AssetDetail,
+  ConsumerWallet,
+  DepositAddress,
+  WalletTransaction,
+  WithdrawalCreateInput,
+  WithdrawalQuote,
+  WithdrawalQuoteInput,
+  WithdrawalResource,
 } from './types.ts';
 
 export type BffAuthProvider = {
@@ -78,6 +86,54 @@ export class SunReyConsumerBffClient {
       (options.getAccessToken ? { getAccessToken: options.getAccessToken } : undefined);
     this.generateRequestId = options.generateRequestId ?? newRequestId;
     this.fetchImpl = options.fetchImpl ?? fetch;
+  }
+
+  async listWallets(options?: BffRequestOptions): Promise<{ readonly items: readonly ConsumerWallet[] }> {
+    return this.request('GET', '/api/v1/wallets', undefined, options);
+  }
+
+  async getWallet(walletId: string, options?: BffRequestOptions): Promise<ConsumerWallet> {
+    return this.request('GET', `/api/v1/wallets/${encodeURIComponent(walletId)}`, undefined, options);
+  }
+
+  async getDepositAddress(walletId: string, options?: BffRequestOptions): Promise<DepositAddress> {
+    return this.request('GET', `/api/v1/wallets/${encodeURIComponent(walletId)}/deposit-address`, undefined, options);
+  }
+
+  async listWalletTransactions(
+    walletId: string,
+    options?: BffRequestOptions,
+  ): Promise<{ readonly items: readonly WalletTransaction[] }> {
+    return this.request('GET', `/api/v1/wallets/${encodeURIComponent(walletId)}/transactions`, undefined, options);
+  }
+
+  async quoteWithdrawal(
+    walletId: string,
+    input: WithdrawalQuoteInput,
+    options?: BffRequestOptions,
+  ): Promise<WithdrawalQuote> {
+    return this.request('POST', `/api/v1/wallets/${encodeURIComponent(walletId)}/withdrawal-quote`, input, options);
+  }
+
+  async createWithdrawal(
+    walletId: string,
+    input: WithdrawalCreateInput,
+    options?: BffRequestOptions,
+  ): Promise<WithdrawalResource> {
+    return this.request('POST', `/api/v1/wallets/${encodeURIComponent(walletId)}/withdrawals`, input, options);
+  }
+
+  async getWithdrawal(walletId: string, withdrawalId: string, options?: BffRequestOptions): Promise<WithdrawalResource> {
+    return this.request(
+      'GET',
+      `/api/v1/wallets/${encodeURIComponent(walletId)}/withdrawals/${encodeURIComponent(withdrawalId)}`,
+      undefined,
+      options,
+    );
+  }
+
+  async getAssetDetail(assetId: string, options?: BffRequestOptions): Promise<AssetDetail> {
+    return this.request('GET', `/api/v1/assets/${encodeURIComponent(assetId)}`, undefined, options);
   }
 
   async listRecipients(options?: BffRequestOptions): Promise<{ readonly items: readonly Recipient[] }> {

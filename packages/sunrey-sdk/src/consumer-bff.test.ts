@@ -13,6 +13,8 @@ import {
   FINANCIAL_PRODUCT_TYPES,
   GROW_PLAN_STATUSES,
   GROW_PROPOSAL_STATUSES,
+  WALLET_STATUSES,
+  CLIENT_FINALITY_STATES,
 } from './consumer-bff/index.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -175,6 +177,21 @@ describe('consumer BFF payments SDK', () => {
         );
       },
     });
+    const portfolio = await client.getGrowPortfolio();
+    assert.equal(portfolio.frontendMathAuthoritative, false);
+    assert.equal(portfolio.liveState, false);
+    await client.getGrowHoldings();
+    await client.getGrowPerformance();
+    await client.getGrowAllocation();
+    await client.getGrowRisk();
+    assert.deepEqual(calls, [
+      'GET http://example.test/api/v1/grow/portfolio',
+      'GET http://example.test/api/v1/grow/portfolio/holdings',
+      'GET http://example.test/api/v1/grow/portfolio/performance',
+      'GET http://example.test/api/v1/grow/portfolio/allocation',
+      'GET http://example.test/api/v1/grow/portfolio/risk',
+    ]);
+    assert.equal('submitGrowOrder' in client, false);
     const feed = await client.listGrowOpportunities();
     assert.equal(feed.productionMoneyMovement, false);
     const started = await client.startGrowProposal('gop_1');
@@ -272,6 +289,39 @@ describe('consumer BFF grow SDK', () => {
   });
 });
 
+describe('consumer BFF wallets SDK', () => {
+  it('exposes wallet vocabularies and calls wallet routes', async () => {
+    assert.ok(WALLET_STATUSES.includes('ACTIVE'));
+    assert.ok(CLIENT_FINALITY_STATES.includes('FINALIZED'));
+    const urls: string[] = [];
+    const client = createSunReyConsumerBffClient({
+      baseUrl: 'http://example.test',
+      getAccessToken: () => 'sandbox.basic_verified',
+      generateRequestId: () => 'req_wal',
+      fetchImpl: async (input, init) => {
+        const url = typeof input === 'string' ? input : String(input);
+        urls.push(`${init?.method ?? 'GET'} ${url}`);
+        return new Response(
+          JSON.stringify({
+            schema: 'sunrey.consumer.wallet.v1',
+            productionSigningAuthorized: false,
+            items: [],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } },
+        );
+      },
+    });
+    await client.listWallets();
+    await client.getDepositAddress('wal_1');
+    await client.quoteWithdrawal('wal_1', { destination: 'sr1peer', amountMinorUnits: '1' });
+    await client.getAssetDetail('SUNREY_COIN');
+    assert.ok(urls.some((row) => row.includes('/api/v1/wallets')));
+    assert.ok(urls.some((row) => row.includes('/deposit-address')));
+    assert.ok(urls.some((row) => row.includes('/withdrawal-quote')));
+    assert.ok(urls.some((row) => row.includes('/api/v1/assets/SUNREY_COIN')));
+  });
+});
+
 describe('consumer BFF SDK models', () => {
   it('exposes typed account, balance, and activity vocabularies', () => {
     assert.ok(FINANCIAL_ACCOUNT_LIFECYCLES.includes('ACTIVE'));
@@ -333,6 +383,9 @@ describe('consumer BFF SDK browser boundary', () => {
       'createSimulationKeyProvider',
       'AuthorityIssuer',
       'postJournal',
+      'import { ExecutionAuthority',
+      'import type { ExecutionAuthority',
+      'verifyExecutionAuthority',
       'import type { ExecutionAuthority',
       'export type ExecutionAuthority',
     ];

@@ -198,6 +198,10 @@ export {
   GROW_PLAN_STATUSES,
   GROW_PROPOSAL_STATUSES,
   GROW_RISK_PROFILES,
+  WALLET_STATUSES,
+  CUSTODY_MODELS,
+  CLIENT_FINALITY_STATES,
+  TRAVEL_RULE_CUSTOMER_STATES,
 } from './consumer-bff/index.ts';
 export type {
   Recipient,
@@ -211,4 +215,10 @@ export type {
   AgentMessageResponse,
   GrowPlan,
   GrowProposal,
+  ConsumerWallet,
+  DepositAddress,
+  WalletTransaction,
+  WithdrawalQuote,
+  WithdrawalResource,
+  AssetDetail,
 } from './consumer-bff/index.ts';
