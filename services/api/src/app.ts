@@ -36,6 +36,7 @@ export type PlatformApiAppOptions = {
   readonly persistenceProbe?: () => Promise<boolean>;
   readonly extraReadinessChecks?: readonly ReadinessCheck[];
   readonly logSink?: (line: string) => void;
+  readonly internalOperatorToken?: string;
 };
 
 export async function createPlatformApi(options: PlatformApiAppOptions = {}): Promise<RunningPlatformApi> {
@@ -59,6 +60,7 @@ export async function createPlatformApi(options: PlatformApiAppOptions = {}): Pr
     routes: createRoutes({
       config,
       readiness: () => evaluateReadiness(config, checks),
+      internalOperatorToken: options.internalOperatorToken ?? process.env.SUNREY_INTERNAL_OPERATOR_TOKEN,
     }),
     idempotency,
     rateLimit,

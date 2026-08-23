@@ -158,9 +158,9 @@ export function defaultPolicies(perMinute: number): readonly RateLimitPolicy[] {
 }
 
 export function policyForEndpoint(endpointClass: string, perMinute: number): RateLimitPolicy {
-  if (endpointClass === 'sensitive') {
+  if (endpointClass === 'sensitive' || endpointClass === 'internal') {
     return Object.freeze({
-      name: 'sensitive',
+      name: endpointClass,
       dimensions: ['ip', 'user', 'session', 'device', 'client', 'endpointClass'] as const,
       perMinute: Math.max(5, Math.floor(perMinute / 4)),
     });
