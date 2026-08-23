@@ -529,6 +529,17 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v034.sql), false);
   });
 
+  it('customer V037 persists Agent runtime tables and grants customer_app access', () => {
+    const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
+    const v037 = files.find((file) => file.version === 37);
+    assert.ok(v037);
+    assert.equal(v037.filename, 'V037__agent_runtime.sql');
+    assert.match(v037.sql, /CREATE SCHEMA IF NOT EXISTS agent_runtime/);
+    assert.match(v037.sql, /GRANT USAGE ON SCHEMA agent_runtime TO customer_app/);
+    assert.match(v037.sql, /GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA agent_runtime TO customer_app/);
+    assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v037.sql), false);
+  });
+
   it('customer V036 persists Grow execution records without becoming a ledger', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v036 = files.find((file) => file.version === 36);
