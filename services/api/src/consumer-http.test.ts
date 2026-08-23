@@ -13,6 +13,7 @@ describe('Consumer BFF HTTP adapter', () => {
         sessions: world.sessions,
         identity: world.runtime.identity.service,
         payments: world.payments,
+        agent: world.agent,
       },
     });
     try {

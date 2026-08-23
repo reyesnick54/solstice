@@ -43,7 +43,7 @@ function descriptorFor(group: ConsumerResourceGroup): ConsumerResourceDescriptor
     case 'PORTFOLIO':
       return row(group, '/api/v1/portfolio', ['GET'], 'AVAILABLE_SIMULATION', 'services/accounts investments bucket + packages/sunrey-exchange consumer', 'none', 'Class breakdown only; no yield field.');
     case 'AGENT':
-      return row(group, '/api/v1/agent', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate', 'none', 'Recommendations are proposals. BFF cannot execute.');
+      return row(group, '/api/v1/agent', ['GET', 'POST'], 'AVAILABLE_SIMULATION', 'packages/sunrey-agent ProposalGate + Phase F qualification platform', 'EXTERNAL_PROVIDER_REQUIRED for a real model', 'Recommendations are proposals. BFF cannot execute. Human approval and Execution Authority stay outside the Agent.');
     case 'EXCHANGE':
       return row(group, '/api/v1/exchange', ['GET'], 'AVAILABLE_SIMULATION', 'packages/sunrey-exchange consumer APIs', 'none', 'Indicative; not a second ledger.');
     case 'WALLETS':

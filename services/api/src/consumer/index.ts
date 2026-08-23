@@ -27,6 +27,7 @@ export {
   SANDBOX_PERSONA_IDS,
 } from './fixtures.ts';
 export { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './handler.ts';
+export { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
 export type {
   Recipient,
   PaymentQuote,

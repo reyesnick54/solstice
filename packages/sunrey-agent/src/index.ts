@@ -83,3 +83,4 @@ export {
   contentHash,
   mandateIdFor,
 } from './ids.ts';
+export * from './productization/index.ts';

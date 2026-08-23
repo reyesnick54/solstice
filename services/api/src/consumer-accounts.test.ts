@@ -11,7 +11,7 @@ function get(
   query: Record<string, string> = {},
 ) {
   return handleConsumerBff(
-    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service },
+    { bff: world.bff, sessions: world.sessions, identity: world.runtime.identity.service, agent: world.agent },
     {
       method: 'GET',
       path,

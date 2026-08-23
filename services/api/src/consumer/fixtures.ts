@@ -42,6 +42,7 @@ import { createAccountsReadAdapter } from './accounts-adapter.ts';
 import { createFxCommandPort } from './fx-adapter.ts';
 import type { ActionStatusResource } from './action-status.ts';
 import { ConsumerBff, memoryPreferenceStore } from './orchestrator.ts';
+import { createAgentBffFacade, type AgentBffFacade } from './agent-dispatch.ts';
 import type {
   BffPrincipal,
   FeatureCapabilityMap,
@@ -96,6 +97,7 @@ export type SandboxWorld = {
   readonly sessions: SessionDirectory;
   readonly personas: Readonly<Record<SandboxPersonaId, BffPrincipal>>;
   readonly payments: PaymentPlatform;
+  readonly agent: AgentBffFacade;
 };
 
 export function createSandboxWorld(options: { readonly providerDown?: boolean } = {}): SandboxWorld {
@@ -407,6 +409,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     sessions,
     personas: Object.freeze(personas),
     payments,
+    agent: createAgentBffFacade(NOW),
   });
 }
 
