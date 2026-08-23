@@ -39,6 +39,8 @@ import {
 } from '../../../../packages/platform/src/growth/product/index.ts';
 import { toLovableExperience } from '../../../../packages/platform/src/growth/product/lovable-contract.ts';
 
+export { toLovableExperience };
+
 export type GrowBffDeps = {
   readonly peg: EconomicGraphService;
   readonly orchestrator: GrowthOrchestrator;
@@ -734,11 +736,13 @@ export function mapGrowFailure(error: GrowProductFailure, requestId: string): Bf
               ? 'VALIDATION'
               : 'VALIDATION';
   const category =
-    code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED' || code === 'STEP_UP_REQUIRED'
-      ? 'AUTHORIZATION'
-      : code === 'NOT_FOUND'
-        ? 'NOT_FOUND'
-        : 'VALIDATION';
+    code === 'STEP_UP_REQUIRED'
+      ? 'AUTHENTICATION'
+      : code === 'RESOURCE_NOT_OWNED' || code === 'KERNEL_DENIED'
+        ? 'AUTHORIZATION'
+        : code === 'NOT_FOUND'
+          ? 'NOT_FOUND'
+          : 'VALIDATION';
   return bffError({
     errorCode: code,
     category,

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sunrey-platform-public
+  namespace: {{ .Values.namespace }}
+data:
+  platformEnvironment: {{ .Values.platformEnvironment }}
+  environment: simulation
+  productionAuthorized: "false"
+  production_authorized: "false"
+  mainnetEnabled: "false"
+  mainnetActive: "false"
+  liveProviders: "false"
+  liveDataMarketplace: "false"
+  nativeIssuanceEnabled: "false"
+  ENVIRONMENT: simulation
+  imageRepository: {{ .Values.image.repository }}
+  imageDigest: {{ .Values.image.digest }}
+  tlsEnabled: "true"
+  publicPlaintextForbidden: "true"
+  confirmedDns: "false"
+  futureApiDomain: api.sunrey.xyz
+  testnetBound: "true"
+  chainNetworkId: net_sunrey_testnet_1
+  chainChainId: chn_sunrey_testnet_1

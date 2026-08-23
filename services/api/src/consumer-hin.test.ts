@@ -4,6 +4,11 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../../packages/config/src/clock.ts';
 import { asUtcInstant } from '../../../packages/domain/src/time.ts';
 import { createSandboxRightsMarketplace } from '../../../packages/information-market/src/rights-marketplace/index.ts';
+import { CONSUMER_BFF_ROUTES, handleConsumerBff, type ConsumerBffRuntime } from './consumer/handler.ts';
+import { createHinContributionSurface } from './consumer/hin-adapter.ts';
+import type { ConsumerBff } from './consumer/orchestrator.ts';
+import type { BffPrincipal } from './consumer/ports.ts';
+import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
 import { handleConsumerBff, CONSUMER_BFF_ROUTES, type ConsumerBffRuntime } from './consumer/handler.ts';
 import { createHinContributionSurface } from './consumer/hin-adapter.ts';
 import { CONSUMER_RESOURCE_CATALOG } from './consumer/resources.ts';
@@ -11,6 +16,7 @@ import type { ConsumerBff } from './consumer/orchestrator.ts';
 import type { BffPrincipal } from './consumer/ports.ts';
 import type { SessionDirectory } from './consumer/session.ts';
 import { sandboxToken } from './consumer/sandbox-personas.ts';
+import type { SessionDirectory } from './consumer/session.ts';
 
 const NOW = asUtcInstant('2026-08-23T08:00:00.000Z');
 

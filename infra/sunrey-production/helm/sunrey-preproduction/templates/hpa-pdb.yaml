@@ -1,0 +1,33 @@
+{{- range .Values.workloads }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .name }}
+  namespace: sunrey-preproduction
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .name }}
+  minReplicas: {{ .replicas }}
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .name }}
+  namespace: sunrey-preproduction
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: {{ .name }}
+{{- end }}

@@ -810,6 +810,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', '/api/v1/data/agent-access/read', input, options);
   }
 
+  async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
   async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/hin', undefined, options);
   }
@@ -874,16 +875,16 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/economy/hin', undefined, options);
   }
 
-  async getProductiveEconomy(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/economy/productive', undefined, options);
-  }
-
   async observeProductive(kind: string, options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', '/api/v1/economy/productive/observe', { kind }, options);
   }
 
   async createIssuanceBasis(kind: 'HIN' | 'MOONREY', options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('POST', '/api/v1/economy/basis-proposal', { kind }, options);
+  }
+
+  async getProductiveEconomy(options?: BffRequestOptions): Promise<ProductiveEconomyOverview> {
+    return this.request('GET', '/api/v1/economy/productive', undefined, options);
   }
 
   async getProductiveCategories(options?: BffRequestOptions): Promise<{ readonly items: ProductiveEconomyOverview['categories'] }> {
@@ -911,15 +912,15 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/data/vault/categories', undefined, options);
   }
 
-  async listVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
+  async listDataVaultRecords(options?: BffRequestOptions): Promise<VaultRecords> {
     return this.request('GET', '/api/v1/data/vault/records', undefined, options);
   }
 
-  async getVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {
+  async getDataVaultRecord(recordId: string, options?: BffRequestOptions): Promise<VaultRecord> {
     return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}`, undefined, options);
   }
 
-  async getVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<unknown> {
+  async getDataVaultRecordHistory(recordId: string, options?: BffRequestOptions): Promise<unknown> {
     return this.request('GET', `/api/v1/data/vault/records/${encodeURIComponent(recordId)}/history`, undefined, options);
   }
 
@@ -972,10 +973,6 @@ export class SunReyConsumerBffClient {
     return this.request('DELETE', `/api/v1/exchange/orders/${encodeURIComponent(orderId)}`, undefined, options);
   }
 
-  async listExchangeHoldings(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.getExchangeHoldings(options);
-  }
-
   async listHinContributions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/contributions', undefined, options);
   }
@@ -984,16 +981,16 @@ export class SunReyConsumerBffClient {
     return this.request('GET', `/api/v1/hin/contributions/${encodeURIComponent(contributionId)}`, undefined, options);
   }
 
-  async getHinMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/hin/metrics', undefined, options);
-  }
-
   async getHinMySummary(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/me/summary', undefined, options);
   }
 
   async listHinValuationMethodologies(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/hin/valuation-methodologies', undefined, options);
+  }
+
+  async listExchangeHoldings(options?: BffRequestOptions): Promise<{ readonly items: readonly unknown[] }> {
+    return this.request('GET', '/api/v1/exchange/holdings', undefined, options);
   }
 
   async request<T>(

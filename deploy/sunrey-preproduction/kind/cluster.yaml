@@ -1,0 +1,20 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: sunrey-preproduction
+networking:
+  disableDefaultCNI: false
+  apiServerAddress: "127.0.0.1"
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "sunrey.role=edge"
+  - role: worker
+    labels:
+      sunrey.role: data
+  - role: worker
+    labels:
+      sunrey.role: ops

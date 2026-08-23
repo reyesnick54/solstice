@@ -12,6 +12,7 @@ import { InformationRightsMarketplace, type ConsentPort, type NativeAssetTransfe
 import { MARKETPLACE_LEGAL_STATUS, PRODUCTION_ACTIVE } from './taxonomy.ts';
 import { createSandboxRightsMarketplace } from './sandbox.ts';
 import { simulationCompensationPolicyV1, simulationPricingPolicyV1 } from './policy.ts';
+import type { PricingPolicy } from './types.ts';
 
 const NOW = asUtcInstant('2026-08-23T08:00:00.000Z');
 
@@ -400,6 +401,7 @@ describe('Information Rights Marketplace', () => {
     const invalid = instance.registerPricingPolicy({
       ...simulationPricingPolicyV1(),
       auctionEnabled: true,
+    } as unknown as PricingPolicy);
     } as unknown as ReturnType<typeof simulationPricingPolicyV1>);
     assert.equal(invalid.ok, false);
     const fixture = simulationCompensationPolicyV1();

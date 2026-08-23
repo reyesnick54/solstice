@@ -140,15 +140,21 @@ export function checkProductionSafety(root = ROOT) {
     findings.push('packages/config/src/flags.ts: missing capability flags');
   }
 
-  const tfvars = join(root, 'infra/sunrey-production/environments/production.tfvars.json');
-  if (existsSync(tfvars)) {
-    try {
-      const parsed = JSON.parse(readFileSync(tfvars, 'utf8'));
-      if (parsed.production_authorized !== false) {
-        findings.push(`${tfvars.slice(root.length + 1)}: production_authorized default must be false`);
+  for (const rel of [
+    'infra/sunrey-production/environments/production.tfvars.json',
+    'infra/sunrey-production/environments/preproduction.tfvars.json',
+    'infra/sunrey-production/releases/preproduction-release.json',
+  ]) {
+    const tfvars = join(root, rel);
+    if (existsSync(tfvars)) {
+      try {
+        const parsed = JSON.parse(readFileSync(tfvars, 'utf8'));
+        if (parsed.production_authorized !== false && parsed.productionAuthorized !== false) {
+          findings.push(`${rel}: production_authorized default must be false`);
+        }
+      } catch (error) {
+        findings.push(`${rel}: ${error instanceof Error ? error.message : String(error)}`);
       }
-    } catch (error) {
-      findings.push(`infra production tfvars: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 

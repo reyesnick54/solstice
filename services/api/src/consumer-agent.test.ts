@@ -35,20 +35,28 @@ function callProductization(
   path: string,
   personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
   body: unknown = {},
-  query: Record<string, string> = {},
 ) {
   const persona = typeof personaOrBody === 'string' ? personaOrBody : 'agent_enabled';
   const actualBody = typeof personaOrBody === 'string' ? body : personaOrBody;
   return handleConsumerBff(runtime(world), {
     method,
     path,
-    query,
+    query: {},
     body: actualBody,
     authorization: auth(persona),
     requestId: `req_${method}_${path}`,
   });
 }
 
+function callConversation(
+  world: ReturnType<typeof createSandboxWorld>,
+  method: string,
+  path: string,
+  personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
+  body: unknown = {},
+) {
+  return callProductization(world, method, path, personaOrBody, body);
+}
 const callConversation = callProductization;
 
 function call(
@@ -71,6 +79,10 @@ function call(
 describe('Consumer BFF Agent productization', () => {
   it('opens a conversation, prepares a payment card, and refuses cross-user access', () => {
     const world = createSandboxWorld();
+    const opened = callConversation(world, 'POST', '/api/v1/agent/conversations');
+    assert.equal(opened.status, 201);
+    const conversationId = (opened.body as { conversationId: string }).conversationId;
+    const snap = callConversation(world, 'POST', `/api/v1/agent/conversations/${conversationId}/messages`, {
     const opened = callProductization(world, 'POST', '/api/v1/agent/conversations');
     assert.equal(opened.status, 201);
     const conversationId = (opened.body as { conversationId: string }).conversationId;
@@ -79,12 +91,19 @@ describe('Consumer BFF Agent productization', () => {
     });
     assert.equal(snap.status, 200);
     assert.ok(((snap.body as { toolsUsed: string[] }).toolsUsed ?? []).includes('get_financial_snapshot'));
+    const pay = callConversation(world, 'POST', `/api/v1/agent/conversations/${conversationId}/messages`, {
     const pay = callProductization(world, 'POST', `/api/v1/agent/conversations/${conversationId}/messages`, {
       text: 'Send Ahmed 1,000 SAR.',
     });
     assert.equal(pay.status, 200);
     const actionId = (pay.body as { cards: { actionId: string }[] }).cards[0]?.actionId;
     assert.ok(actionId);
+    const revised = callConversation(world, 'POST', `/api/v1/agent/actions/${actionId}/revise`, { amountMinor: '75000' });
+    assert.equal(revised.status, 200);
+    assert.equal((revised.body as { amountMinor: bigint }).amountMinor, 75000n);
+    const approved = callConversation(world, 'POST', `/api/v1/agent/actions/${actionId}/approve`);
+    assert.equal(approved.status, 200);
+    const inject = callConversation(world, 'POST', `/api/v1/agent/conversations/${conversationId}/messages`, {
     const revised = callProductization(world, 'POST', `/api/v1/agent/actions/${actionId}/revise`, { amountMinor: '75000' });
     assert.equal(revised.status, 200);
     assert.equal((revised.body as { amountMinor: bigint }).amountMinor, 75000n);

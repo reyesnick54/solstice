@@ -568,6 +568,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
     vault,
     exchange: createExchangeBffSurface(),
     dataRights,
+    vault,
   });
 }
 

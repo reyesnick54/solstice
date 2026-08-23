@@ -335,6 +335,10 @@ export class InformationRightsMarketplace {
       redistribution: 'PROHIBITED',
       retentionDays: product.retentionDays,
       compensation: Object.freeze({
+        asset: 'FIAT_MONEY' as const,
+        ...(pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat
+          ? { fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat }
+          : {}),
         asset: 'FIAT_MONEY',
         ...(fiat ? { fiat } : {}),
         pricingPolicyId: pricing.policyId,
@@ -525,6 +529,7 @@ export class InformationRightsMarketplace {
       if (!this.nativeAsset) {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
+      this.nativeAsset.mint();
       const minted = this.nativeAsset.mint();
       if ((minted.outcome as string) === 'OK') {
         return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });

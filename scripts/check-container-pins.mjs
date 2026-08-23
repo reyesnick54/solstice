@@ -14,6 +14,7 @@ const dockerfiles = [
   'deploy/sunrey-testnet/docker/sunrey-relayer.Dockerfile',
   'deploy/sunrey-testnet/docker/sunrey-explorer.Dockerfile',
   'deploy/sunrey-testnet/docker/sunrey-faucet.Dockerfile',
+  'deploy/sunrey-preproduction/docker/sunrey-platform.Dockerfile',
 ];
 for (const rel of dockerfiles) {
   const text = readFileSync(join(root, rel), 'utf8');

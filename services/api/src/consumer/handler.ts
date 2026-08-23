@@ -381,6 +381,8 @@ function dispatchAuthenticated(
       return wallets;
     }
   }
+  if (runtime.hin && typeof (runtime.hin as InformationRightsMarketplace).earningsFor === 'function') {
+    const hin = dispatchHin(runtime.hin as InformationRightsMarketplace, request, principal, requestId, headers);
   if (runtime.hin && isRightsMarketplace(runtime.hin)) {
     const hin = dispatchHin(runtime.hin, request, principal, requestId, headers);
     if (hin) {
@@ -1050,6 +1052,13 @@ function dispatchPayments(
     return result(mapPaymentOutcome(platform.getPayment(principal.customerId, id), requestId), headers);
   }
   return null;
+}
+
+function isHinContributionSurface(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is HinContributionSurface {
+  return typeof (hin as HinContributionSurface).list === 'function'
+    && typeof (hin as HinContributionSurface).metrics === 'function';
 }
 
 function isLifecycleExchange(

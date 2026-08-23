@@ -101,12 +101,12 @@ const CAPS = [
   'CLEAN_ROOM_REQUEST',
 ] as const;
 
-const SCHEMA_FOR_KIND: Record<string, { schemaId: string; schemaVersion: string }> = {
+const SCHEMA_FOR_KIND = {
   USER_DECLARED: { schemaId: 'pdsch_preference', schemaVersion: '1' },
   PAYROLL: { schemaId: 'pdsch_payroll', schemaVersion: '1' },
   TRANSACTIONS: { schemaId: 'pdsch_transactions', schemaVersion: '1' },
   RECEIPT: { schemaId: 'pdsch_receipt', schemaVersion: '1' },
-};
+} as const;
 
 function fail(code: string, message: string): PhaseHResult<never> {
   return { ok: false, code, message };
@@ -1020,6 +1020,7 @@ export class PhaseHProductSurface {
     const usage = this.hin.recordUsage({
       rightId: right.rightId,
       requesterId: this.licenseeRequesterId,
+      computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
       computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:${licenseId}:${this.usageCount + 1}`,
@@ -1028,7 +1029,11 @@ export class PhaseHProductSurface {
       return fail(usage.error.code, usage.error.message);
     }
     this.usageCount += 1;
+    if (!bound.hinSubjectId) {
+      return fail('HIN_PARTICIPATION_REQUIRED', 'HIN subject is required');
+    }
     const compensation = this.hin.authorizeCompensation({
+      subjectId: bound.hinSubjectId,
       subjectId: (bound.hinSubjectId ?? '') as HumanInformationSubjectId,
       requesterId: this.licenseeRequesterId,
       asset: 'APPROVED_FIAT',
@@ -1079,6 +1084,7 @@ export class PhaseHProductSurface {
     const future = this.hin.recordUsage({
       rightId: right?.rightId ?? (grantId as never),
       requesterId: this.licenseeRequesterId,
+      computationId: this.hinComputationId ?? ('cmp_missing' as ApprovedComputationId),
       computationId: (this.hinComputationId ?? 'cmp_missing') as ApprovedComputationId,
       outputClass: 'AGGREGATE_STATISTIC',
       settlementRef: `settle:revoked:${licenseId}`,

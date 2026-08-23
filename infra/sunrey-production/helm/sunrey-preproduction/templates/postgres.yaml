@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: postgres
+    sunrey.zone: DATA_PRIVATE
+spec:
+  serviceName: postgres
+  replicas: 2
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        sunrey.zone: DATA_PRIVATE
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+      containers:
+        - name: postgres
+          image: docker.io/library/postgres@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          env:
+            - name: POSTGRES_USER_REF
+              value: secret://sunrey-preproduction/database/migrator
+            - name: PGSSLMODE
+              value: require
+          ports:
+            - containerPort: 5432
+              name: postgres
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "sunrey"]
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+        - name: pgbouncer
+          image: ghcr.io/sunrey/platform@sha256:6f1c2e8a9b0d4c7e5a3f1b8d2c0e4a6b8d1f3c5e7a9b0c2d4e6f8a0b1c3d5e7f
+          command: ["pgbouncer"]
+          ports:
+            - containerPort: 6432
+              name: pooler
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: postgres
+    sunrey.zone: DATA_PRIVATE
+spec:
+  clusterIP: None
+  selector:
+    app: postgres
+  ports:
+    - name: postgres
+      port: 5432
+    - name: pooler
+      port: 6432
