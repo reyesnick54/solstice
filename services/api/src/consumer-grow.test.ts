@@ -82,7 +82,7 @@ describe('Consumer BFF grow plans and proposals', () => {
     });
     const proposalId = (created.body as { primaryProposal: { proposalId: string } }).primaryProposal.proposalId;
     const blocked = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {});
-    assert.equal(blocked.status, 403);
+    assert.equal(blocked.status, 401);
     const approved = call(world, 'POST', `/api/v1/grow/proposals/${proposalId}/approve`, 'basic_verified', {
       stepUpSatisfied: true,
     });
