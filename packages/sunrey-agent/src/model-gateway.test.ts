@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import { FrozenClock } from '../../config/src/clock.ts';
 import { asCustomerId } from '../../domain/src/customer.ts';
 import { asJurisdiction } from '../../domain/src/jurisdiction.ts';
+import { asUtcInstant } from '../../domain/src/time.ts';
 import { DomainEventLog } from '../../events/src/events.ts';
 import { SimulatedIdentityAdapter } from '../../identity/src/simulation.ts';
 import { ModelRegistry } from '../../model-registry/src/registry.ts';
@@ -19,7 +20,7 @@ import {
   refuseRawPublicLlm,
 } from './model-gateway.ts';
 
-const NOW = '2026-08-19T12:00:00.000Z' as const;
+const NOW = asUtcInstant('2026-08-19T12:00:00.000Z');
 
 function operator() {
   const clock = new FrozenClock(NOW);
@@ -69,7 +70,6 @@ describe('Agent Model Gateway port', () => {
       context: [],
       correlationId: 'corr_agent',
     });
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }

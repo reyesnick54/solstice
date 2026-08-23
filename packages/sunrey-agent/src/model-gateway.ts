@@ -23,7 +23,7 @@ export function agentSafeStream(result: AiGatewayResult): readonly AiStreamEvent
   return result.events.filter((event) => event.hiddenReasoning === false);
 }
 
-export function agentModelOutageIsNotFinancial(result: Result<AiGatewayResult, AiProviderFailure>): true {
+export function agentModelOutageIsNotFinancial(result: Result<AiGatewayResult, AiProviderFailure>): boolean {
   if (!result.ok) {
     return true;
   }

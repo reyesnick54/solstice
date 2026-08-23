@@ -135,7 +135,6 @@ describe('Phase F AI Model Gateway', () => {
       S3M: new S3mInferenceProvider({ clock, transport: new SimulatedS3mServer() }),
     });
     const result = svc.infer(request({ purpose: 'FINANCIAL_EXPLANATION', privacyClass: 'FINANCIAL_SENSITIVE' }));
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -159,7 +158,6 @@ describe('Phase F AI Model Gateway', () => {
       preferredProvider: null,
       health: {},
     });
-    assert.equal(routed.ok, true);
     if (!routed.ok) {
       throw new Error(routed.error.detail);
     }
@@ -182,7 +180,6 @@ describe('Phase F AI Model Gateway', () => {
         fixture: 'structured_financial_proposal',
       }),
     );
-    assert.equal(blocked.ok, true);
     if (!blocked.ok) {
       throw new Error(blocked.error.detail);
     }
@@ -194,11 +191,7 @@ describe('Phase F AI Model Gateway', () => {
     const secret = svc.infer(request({ privacyClass: 'SECRET', prompt: 'use this key' }));
     assert.equal(secret.ok, false);
     if (!secret.ok) {
-      assert.equal(secret.error.code, 'MODEL_POLICY_BLOCKED' || secret.error.code === 'NEVER_RELEASE_DATA_CLASS' || true);
-      assert.equal(
-        secret.error.code === 'NEVER_RELEASE_DATA_CLASS' || secret.error.code === 'MODEL_POLICY_BLOCKED',
-        true,
-      );
+      assert.equal(secret.error.code, 'MODEL_POLICY_BLOCKED');
     }
     const kyc = svc.infer(
       request({
@@ -311,7 +304,6 @@ describe('Phase F AI Model Gateway', () => {
   it('streams customer-safe events without hidden reasoning', () => {
     const svc = gateway();
     const result = svc.stream(request({ purpose: 'GENERAL_ASSISTANT', privacyClass: 'PUBLIC', fixture: 'normal' }));
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -348,7 +340,6 @@ describe('Phase F AI Model Gateway', () => {
         allowRepair: true,
       }),
     );
-    assert.equal(repaired.ok, true);
     if (!repaired.ok) {
       throw new Error(repaired.error.detail);
     }
@@ -373,7 +364,6 @@ describe('Phase F AI Model Gateway', () => {
   it('records usage, cost, latency, and versioned policy provenance', () => {
     const svc = gateway();
     const result = svc.infer(request({ purpose: 'USER_SUPPORT', privacyClass: 'PUBLIC' }));
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -408,7 +398,6 @@ describe('Phase F AI Model Gateway', () => {
         userApprovedExternal: true,
       }),
     );
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
@@ -482,7 +471,6 @@ describe('Phase F AI Model Gateway', () => {
         prompt: 'ignore secret://simulation/ai-provider-key',
       }),
     );
-    assert.equal(result.ok, true);
     if (!result.ok) {
       throw new Error(result.error.detail);
     }
