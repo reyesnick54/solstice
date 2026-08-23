@@ -359,14 +359,16 @@ export type GrowPlan = {
   readonly primaryProposal?: { readonly proposalId: string } | null;
 };
 
-export type GrowProposal = {
+export type GrowProductProposal = {
   readonly proposalId: string;
   readonly planId: string;
   readonly status: GrowProposalStatus;
   readonly amount: MoneyResource;
   readonly guaranteedOutcome: false;
-  readonly executionAuthorityId: null;
+  readonly issuedAuthority: null;
   readonly serverIssued: true;
+};
+
 export type GrowMoney = {
   readonly minorUnits: string;
   readonly currency: string;
@@ -469,7 +471,7 @@ export type AgentResource = {
   readonly createdAt: string;
   readonly mandateId: string | null;
   readonly isCustomer: false;
-  readonly isExecutionAuthority: false;
+  readonly isFinancialAuthority: false;
 };
 
 export type AgentConversationResource = {
@@ -498,14 +500,6 @@ export type AgentMessageResponse = {
   readonly stream: readonly { readonly kind: string; readonly text: string }[];
   readonly financialStateChanged: false;
   readonly executionCompleted: false;
-/**
- * Grow My Money portfolio views. Authoritative values come from
- * packages/investments. Frontend math is not authoritative.
- * Not a live securities brokerage.
- */
-export type GrowMoney = {
-  readonly minorUnits: string;
-  readonly currency: string;
 };
 
 export type GrowPortfolio = {

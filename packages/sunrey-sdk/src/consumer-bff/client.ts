@@ -166,6 +166,8 @@ export class SunReyConsumerBffClient {
     options?: BffRequestOptions,
   ): Promise<{ readonly items: readonly AgentMemoryResource[] }> {
     return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/memories`, undefined, options);
+  }
+
   async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/grow', undefined, options);
   }
