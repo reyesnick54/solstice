@@ -456,7 +456,7 @@ function createProposal(
   draft: Omit<CreateProposalInput, 'mandateId' | 'modelRef' | 'networkId'>,
   component: LovableComponentHint,
   extra: Readonly<Record<string, unknown>>,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   const compliance = ctx.ports.compliance.evaluate({
     toolId: ctx.tool.toolId,
     ownerId: ctx.session.ownerId,
@@ -510,7 +510,7 @@ function mapPort<T>(
   component: LovableComponentHint,
   payload: (value: T) => Readonly<Record<string, unknown>>,
   numericPaths: readonly string[],
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   if (!result.ok) {
     return fromPortFailure(ctx, result);
   }
@@ -538,7 +538,7 @@ function success(
   component: LovableComponentHint,
   payload: Readonly<Record<string, unknown>>,
   numericPaths: readonly string[],
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status: 'SUCCESS' as const,
     toolId: ctx.tool.toolId,
@@ -557,7 +557,7 @@ function refuse(
   status: AgentToolResult['status'],
   code: string,
   safeMessage: string,
-) {
+): Omit<AgentToolResult, 'durationMs' | 'correlationId'> {
   return {
     status,
     toolId: ctx.tool.toolId,

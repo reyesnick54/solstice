@@ -117,7 +117,7 @@ describe('Phase H HIN Economic Value Engine', () => {
     if (!anonymous.ok) {
       assert.equal(anonymous.error.code, 'ANONYMOUS_CONTRIBUTION_FORBIDDEN');
     }
-    const noConsent = submit(engine, { sourceReference: 'data.1', category: 'DATA_CONTRIBUTION', consentReference: undefined, rightsReference: 'right.1' });
+    const noConsent = submit(engine, { sourceReference: 'data.1', category: 'DATA_CONTRIBUTION', consentReference: '', rightsReference: 'right.1' });
     assert.equal(noConsent.ok, false);
     if (!noConsent.ok) {
       assert.equal(noConsent.error.code, 'CONSENT_REQUIRED');

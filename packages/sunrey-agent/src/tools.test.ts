@@ -28,7 +28,6 @@ function mandateInput(overrides: Partial<CreateMandateInput> = {}): CreateMandat
         'READ_FINANCIAL_STATE',
         'PREPARE_PAYMENT',
         'PREPARE_EXCHANGE_ORDER',
-        'PREPARE_REBALANCE',
         'REBALANCE_WITHIN_POLICY',
         'REQUEST_HUMAN_APPROVAL',
       ],

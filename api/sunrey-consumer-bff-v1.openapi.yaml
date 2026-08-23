@@ -1566,13 +1566,6 @@ paths:
           description: Methodology metadata
         "401":
           description: Authentication required
-  /api/v1/exchange/markets:
-    get:
-      operationId: listExchangeMarkets
-      summary: List simulation markets
-      responses:
-        "200":
-          description: Markets with productionTradingEnabled=false
   /api/v1/exchange/markets/{instrument}:
     get:
       operationId: getExchangeMarket
@@ -1596,7 +1589,7 @@ paths:
           description: Market
   /api/v1/exchange/markets/{instrument}/ticker:
     get:
-      operationId: getExchangeTicker
+      operationId: getExchangeTickerByInstrument
       summary: Ticker with freshness
       parameters:
         - in: path
@@ -1675,13 +1668,6 @@ paths:
       responses:
         "200":
           description: Candles
-  /api/v1/exchange/eligibility:
-    get:
-      operationId: getExchangeEligibility
-      summary: CAN_TRADE / CAN_DEPOSIT / CAN_WITHDRAW
-      responses:
-        "200":
-          description: Server-controlled eligibility
   /api/v1/exchange/preview:
     post:
       operationId: previewExchangeOrder
@@ -1754,20 +1740,6 @@ paths:
       responses:
         "200":
           description: Order / fill
-  /api/v1/exchange/orders:
-    get:
-      operationId: listExchangeOrders
-      summary: Open orders and history
-      responses:
-        "200":
-          description: Orders
-  /api/v1/exchange/fills:
-    get:
-      operationId: listExchangeFills
-      summary: Fills
-      responses:
-        "200":
-          description: Fills
   /api/v1/exchange/stream:
     get:
       operationId: getExchangeStream
@@ -1957,7 +1929,7 @@ paths:
           description: Not owned
   /api/v1/wallets/{id}/deposit-address:
     get:
-      operationId: getWalletDepositAddress
+      operationId: getWalletDepositAddressById
       summary: Deposit / receive address
       parameters:
         - name: id
@@ -1981,7 +1953,7 @@ paths:
           description: Transactions with client-safe finality
   /api/v1/wallets/{id}/withdrawal-quote:
     post:
-      operationId: quoteWalletWithdrawal
+      operationId: quoteWalletWithdrawalById
       summary: Withdrawal quote
       parameters:
         - name: id

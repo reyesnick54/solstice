@@ -86,7 +86,9 @@ export class SunReyConsumerBffClient {
     this.fetchImpl = options.fetchImpl ?? fetch;
   }
 
-  async listWallets(options?: BffRequestOptions): Promise<{ readonly items: readonly ConsumerWallet[] }> {
+  async listWallets(
+    options?: BffRequestOptions,
+  ): Promise<{ readonly items?: readonly ConsumerWallet[]; readonly schema?: string } & Record<string, unknown>> {
     return this.request('GET', '/api/v1/wallets', undefined, options);
   }
 
@@ -225,10 +227,6 @@ export class SunReyConsumerBffClient {
     options?: BffRequestOptions,
   ): Promise<{ readonly items: readonly AgentMemoryResource[] }> {
     return this.request('GET', `/api/v1/agents/${encodeURIComponent(agentId)}/memories`, undefined, options);
-  }
-
-  async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.request('GET', '/api/v1/grow', undefined, options);
   }
 
   async getGrowHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -581,12 +579,8 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/exchange/stream', undefined, options);
   }
 
-  async getWallet(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async getWalletHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/wallets', undefined, options);
-  }
-
-  async listWallets(options?: BffRequestOptions): Promise<Record<string, unknown>> {
-    return this.getWallet(options);
   }
 
   async getWalletDepositAddress(options?: BffRequestOptions): Promise<Record<string, unknown>> {
@@ -627,7 +621,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', '/api/v1/wallets/withdrawals', input, options);
   }
 
-  async listWalletTransactions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
+  async listWalletHomeTransactions(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/wallets/transactions', undefined, options);
   }
 

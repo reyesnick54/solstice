@@ -28,7 +28,7 @@ describe('HIN issuance basis cannot mint SunRey Coin', () => {
     );
     assert.equal(recorded.ok, true);
     if (!recorded.ok) {
-      throw new Error(recorded.error.message);
+      throw new Error('authorized HIN submit failed');
     }
     const verified = engine.verify(recorded.value.contributionId, { kind: 'AUTHORIZED_VERIFIER', actorId: 'hin.verifier' }, NOW);
     assert.equal(verified.ok, true);
@@ -36,7 +36,7 @@ describe('HIN issuance basis cannot mint SunRey Coin', () => {
     const proposal = engine.proposeIssuanceBasis(recorded.value.contributionId);
     assert.equal(proposal.ok, true);
     if (!proposal.ok) {
-      throw new Error(proposal.error.message);
+      throw new Error('HIN issuance-basis proposal failed');
     }
     const accepted = acceptHinIssuanceBasis(proposal.value);
     assert.equal(accepted.ok, true);

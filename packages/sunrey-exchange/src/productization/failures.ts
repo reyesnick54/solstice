@@ -32,7 +32,7 @@ export type FailureCase = {
 export function runMarketFailure(mode: LifecycleMode, now: UtcInstant): FailureCase {
   const world = new DigitalAssetLifecycle({ now, participantId: `fail_${mode.toLowerCase()}`, mode });
   const before = world.supplyInvariant();
-  let reason = mode;
+  let reason: string = mode;
   if (mode === 'TRAVEL_RULE_PENDING') {
     const quote = world.withdrawalQuote({ assetId: 'SUNREY_COIN', quantity: 1n, destination: 'sr1ex_external' });
     reason = typeof quote.reason === 'string' ? quote.reason : mode;
