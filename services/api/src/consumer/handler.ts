@@ -32,6 +32,15 @@ import type { IdentityService } from '../../../../packages/identity/src/service.
 import type { PaymentPlatform } from '../../../../packages/payments/src/platform/orchestrator.ts';
 import { listPayments, listRecipients, mapPaymentOutcome } from './payments.ts';
 import { createCanonicalToolRegistry } from '../../../../packages/sunrey-agent/src/tools/catalog.ts';
+import {
+  agentError,
+  clientAgent,
+  clientConversation,
+  clientMemory,
+  formatAgentSse,
+} from './agent.ts';
+import type { AgentConversationRuntime } from '../../../../packages/sunrey-agent/src/runtime.ts';
+import { agentConversationReply, FORBIDDEN_PUBLIC_LLM_PATHS } from './agent-conversation.ts';
 import type { GrowBffSurface } from './grow.ts';
 import {
   actorFromPrincipal,
@@ -49,12 +58,14 @@ export type BffRequest = {
   readonly authorization: string | undefined;
   readonly requestId?: string;
   readonly idempotencyKey?: string;
+  readonly accept?: string;
 };
 
 export type BffResponse = {
   readonly status: number;
   readonly body: unknown;
   readonly headers: Readonly<Record<string, string>>;
+  readonly eventStream?: string;
 };
 
 export type ConsumerBffRuntime = {
@@ -63,6 +74,7 @@ export type ConsumerBffRuntime = {
   readonly identity?: IdentityService;
   readonly ingestCardWebhook?: (body: unknown, requestId: string) => unknown;
   readonly payments?: PaymentPlatform;
+  readonly agentRuntime?: AgentConversationRuntime;
   readonly grow?: GrowBffSurface;
 };
 
@@ -282,6 +294,10 @@ function dispatchAuthenticated(
     const id = path.slice('/api/v1/fx/quotes/'.length);
     return result(runtime.bff.getFxQuote(principal, id, requestId), headers);
   }
+  if (runtime.agentRuntime) {
+    const agents = dispatchAgents(runtime.agentRuntime, request, principal, requestId, headers);
+    if (agents) {
+      return agents;
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
@@ -310,6 +326,36 @@ function dispatchAuthenticated(
     );
   }
 
+  if ((FORBIDDEN_PUBLIC_LLM_PATHS as readonly string[]).includes(path)) {
+    return json(
+      404,
+      bffError({
+        errorCode: 'NOT_FOUND',
+        category: 'NOT_FOUND',
+        message: 'raw LLM inference is not a public consumer endpoint; use Agent conversation routes',
+        retryable: false,
+        requestId,
+      }),
+      headers,
+    );
+  }
+
+  if (path.startsWith('/api/v1/agent/conversations/') && path.endsWith('/messages') && method === 'POST') {
+    const conversationId = path.slice('/api/v1/agent/conversations/'.length, -'/messages'.length);
+    const text = typeof rec.text === 'string' ? rec.text : typeof rec.message === 'string' ? rec.message : '';
+    const reply = agentConversationReply({ conversationId, requestId, text });
+    if ((request.accept ?? '').includes('text/event-stream')) {
+      return Object.freeze({
+        status: 200,
+        body: reply.sse,
+        headers: Object.freeze({
+          ...headers,
+          'cache-control': 'no-store, no-cache, private',
+          'content-type': 'text/event-stream; charset=utf-8',
+        }),
+      });
+    }
+    return json(200, reply, { ...headers, 'cache-control': 'no-store, no-cache, private' });
   if (runtime.grow) {
     const grow = dispatchGrow(runtime.grow, request, principal, requestId, headers);
     if (grow) {
@@ -449,6 +495,194 @@ function dispatchAuthenticated(
     }),
     headers,
   );
+}
+
+function dispatchAgents(
+  runtime: AgentConversationRuntime,
+  request: BffRequest,
+  principal: import('./ports.ts').BffPrincipal,
+  requestId: string,
+  headers: Record<string, string>,
+): BffResponse | null {
+  const { method, path, query, body } = request;
+  const rec = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : {};
+  const ownerId = principal.customerId;
+
+  if (path === '/api/v1/agents' && method === 'GET') {
+    return json(200, { items: runtime.listAgents(ownerId).map(clientAgent) }, headers);
+  }
+  const agentMatch = /^\/api\/v1\/agents\/([^/]+)(?:\/(.*))?$/.exec(path);
+  if (!agentMatch) {
+    return null;
+  }
+  const agentId = decodeURIComponent(agentMatch[1] ?? '');
+  const rest = agentMatch[2] ?? '';
+
+  if (rest === '' && method === 'GET') {
+    const owned = runtime.getOwnedAgent(ownerId, agentId);
+    if (!owned.ok) {
+      return result(agentError(owned.error, requestId), headers);
+    }
+    return json(200, clientAgent(owned.value), headers);
+  }
+  if (rest === 'pause' && method === 'POST') {
+    const owned = runtime.getOwnedAgent(ownerId, agentId);
+    if (!owned.ok) {
+      return result(agentError(owned.error, requestId), headers);
+    }
+    const paused = runtime.engine.pauseAgent({ agentId, actorId: principal.actorId });
+    return paused.ok ? json(200, clientAgent(paused.value), headers) : result(agentError(paused.error, requestId), headers);
+  }
+  if (rest === 'revoke' && method === 'POST') {
+    const owned = runtime.getOwnedAgent(ownerId, agentId);
+    if (!owned.ok) {
+      return result(agentError(owned.error, requestId), headers);
+    }
+    const revoked = runtime.engine.revokeAgent({ agentId, actorId: principal.actorId });
+    return revoked.ok ? json(200, clientAgent(revoked.value), headers) : result(agentError(revoked.error, requestId), headers);
+  }
+  if (rest === 'settings' && method === 'GET') {
+    const owned = runtime.getOwnedAgent(ownerId, agentId);
+    if (!owned.ok) {
+      return result(agentError(owned.error, requestId), headers);
+    }
+    return json(200, runtime.personalizationOf(ownerId, owned.value), headers);
+  }
+  if (rest === 'settings' && method === 'PATCH') {
+    const patched = runtime.setPersonalization({
+      ownerId,
+      agentId,
+      ...(typeof rec.verbosity === 'string' ? { verbosity: rec.verbosity as never } : {}),
+      ...(typeof rec.displayCurrency === 'string' ? { displayCurrency: rec.displayCurrency } : {}),
+      ...(typeof rec.language === 'string' ? { language: rec.language } : {}),
+      ...(typeof rec.explanationComplexity === 'string' ? { explanationComplexity: rec.explanationComplexity as never } : {}),
+      ...(typeof rec.personalizationMemoryEnabled === 'boolean'
+        ? { personalizationMemoryEnabled: rec.personalizationMemoryEnabled }
+        : {}),
+    });
+    return patched.ok ? json(200, patched.value, headers) : result(agentError(patched.error, requestId), headers);
+  }
+  if (rest === 'permissions' && method === 'GET') {
+    const owned = runtime.getOwnedAgent(ownerId, agentId);
+    if (!owned.ok) {
+      return result(agentError(owned.error, requestId), headers);
+    }
+    const mandate = owned.value.mandateId ? runtime.engine.getMandate(owned.value.mandateId) : undefined;
+    return json(
+      200,
+      {
+        agentId,
+        assistScopes: mandate?.assistScopes ?? [],
+        actionClasses: mandate?.permissions.actionClasses ?? [],
+        budget: mandate
+          ? {
+              perTransaction: mandate.budget.perTransaction.toString(),
+              perPeriod: mandate.budget.perPeriod.toString(),
+              maxProposalAmount: mandate.budget.maxProposalAmount?.toString() ?? null,
+            }
+          : null,
+        executionPrivileges: Object.freeze([]),
+      },
+      headers,
+    );
+  }
+  if (rest === 'memories' && method === 'GET') {
+    const listed = runtime.listMemories(ownerId, agentId);
+    return listed.ok ? json(200, { items: listed.value.map(clientMemory) }, headers) : result(agentError(listed.error, requestId), headers);
+  }
+  if (rest === 'memories' && method === 'POST') {
+    const created = runtime.createMemory({
+      ownerId,
+      agentId,
+      actorId: principal.actorId,
+      category: (typeof rec.category === 'string' ? rec.category : 'USER_PREFERENCE') as never,
+      content: typeof rec.content === 'string' ? rec.content : '',
+      source: (typeof rec.source === 'string' ? rec.source : 'USER_DECLARED') as never,
+    });
+    return created.ok ? json(201, clientMemory(created.value), headers) : result(agentError(created.error, requestId), headers);
+  }
+  const memoryMatch = /^memories\/([^/]+)$/.exec(rest);
+  if (memoryMatch && method === 'PATCH') {
+    const corrected = runtime.correctMemory({
+      ownerId,
+      agentId,
+      memoryId: decodeURIComponent(memoryMatch[1] ?? ''),
+      content: typeof rec.content === 'string' ? rec.content : '',
+      actorId: principal.actorId,
+    });
+    return corrected.ok ? json(200, clientMemory(corrected.value), headers) : result(agentError(corrected.error, requestId), headers);
+  }
+  if (memoryMatch && method === 'DELETE') {
+    const deleted = runtime.deleteMemory({
+      ownerId,
+      agentId,
+      memoryId: decodeURIComponent(memoryMatch[1] ?? ''),
+      actorId: principal.actorId,
+    });
+    return deleted.ok ? json(200, { deleted: true }, headers) : result(agentError(deleted.error, requestId), headers);
+  }
+  if (rest === 'conversations' && method === 'GET') {
+    const listed = runtime.listConversations(ownerId, agentId);
+    return listed.ok ? json(200, { items: listed.value.map(clientConversation) }, headers) : result(agentError(listed.error, requestId), headers);
+  }
+  if (rest === 'conversations' && method === 'POST') {
+    const created = runtime.createConversation({
+      ownerId,
+      agentId,
+      ...(typeof rec.title === 'string' ? { title: rec.title } : {}),
+    });
+    return created.ok ? json(201, clientConversation(created.value), headers) : result(agentError(created.error, requestId), headers);
+  }
+  const conversationMatch = /^conversations\/([^/]+)(?:\/(.*))?$/.exec(rest);
+  if (!conversationMatch) {
+    return null;
+  }
+  const conversationId = decodeURIComponent(conversationMatch[1] ?? '');
+  const conversationRest = conversationMatch[2] ?? '';
+  if (conversationRest === '' && method === 'GET') {
+    const found = runtime.getConversation(ownerId, agentId, conversationId);
+    if (!found.ok) {
+      return result(agentError(found.error, requestId), headers);
+    }
+    const messages = runtime.engine.store.messagesForConversation(conversationId);
+    return json(200, { ...clientConversation(found.value), messages }, headers);
+  }
+  if (conversationRest === 'messages' && method === 'POST') {
+    const text = typeof rec.text === 'string' ? rec.text : typeof rec.content === 'string' ? rec.content : '';
+    const posted = runtime.postMessage({
+      ownerId,
+      agentId,
+      conversationId,
+      text,
+      actorId: principal.actorId,
+    });
+    if (!posted.ok) {
+      return result(agentError(posted.error, requestId), headers);
+    }
+    const stream = query.stream === '1' || query.stream === 'true';
+    const payload = {
+      conversationId,
+      userMessage: posted.value.userMessage,
+      agentMessage: posted.value.agentMessage,
+      stream: posted.value.chunks,
+      financialStateChanged: false,
+      executionCompleted: false,
+    };
+    if (stream) {
+      return Object.freeze({
+        status: 200,
+        body: payload,
+        headers: Object.freeze({
+          ...headers,
+          'content-type': 'text/event-stream',
+          'cache-control': 'no-cache',
+        }),
+        eventStream: formatAgentSse(posted.value.chunks),
+      });
+    }
+    return json(200, payload, headers);
+  }
+  return null;
 }
 
 function dispatchPayments(
@@ -821,6 +1055,22 @@ export const CONSUMER_BFF_ROUTES = [
   'GET /api/v1/portfolio',
   'GET /api/v1/agent',
   'GET /api/v1/agent/tools',
+  'GET /api/v1/agents',
+  'GET /api/v1/agents/{id}',
+  'POST /api/v1/agents/{id}/pause',
+  'POST /api/v1/agents/{id}/revoke',
+  'GET /api/v1/agents/{id}/settings',
+  'PATCH /api/v1/agents/{id}/settings',
+  'GET /api/v1/agents/{id}/permissions',
+  'GET /api/v1/agents/{id}/memories',
+  'POST /api/v1/agents/{id}/memories',
+  'PATCH /api/v1/agents/{id}/memories/{memoryId}',
+  'DELETE /api/v1/agents/{id}/memories/{memoryId}',
+  'GET /api/v1/agents/{id}/conversations',
+  'POST /api/v1/agents/{id}/conversations',
+  'GET /api/v1/agents/{id}/conversations/{conversationId}',
+  'POST /api/v1/agents/{id}/conversations/{conversationId}/messages',
+  'POST /api/v1/agent/conversations/{id}/messages',
   'GET /api/v1/exchange',
   'GET /api/v1/wallets',
   'GET /api/v1/data',

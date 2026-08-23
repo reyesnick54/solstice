@@ -11,6 +11,10 @@ export type AgentRevocationId = Brand<string, 'AgentRevocationId'>;
 export type AgentReceiptId = Brand<string, 'AgentReceiptId'>;
 export type AgentSafetyEventId = Brand<string, 'AgentSafetyEventId'>;
 export type MandatePolicyVersion = Brand<number, 'MandatePolicyVersion'>;
+export type AgentConversationId = Brand<string, 'AgentConversationId'>;
+export type AgentMessageId = Brand<string, 'AgentMessageId'>;
+export type AgentMemoryId = Brand<string, 'AgentMemoryId'>;
+export type AgentRuntimeEventId = Brand<string, 'AgentRuntimeEventId'>;
 
 function digest(material: string): string {
   return createHash('sha256').update(material).digest('hex');
@@ -72,6 +76,34 @@ export function asAgentSafetyEventId(value: string): AgentSafetyEventId {
   return brandAs<string, 'AgentSafetyEventId'>(value);
 }
 
+export function asAgentConversationId(value: string): AgentConversationId {
+  if (value.length === 0) {
+    throw new TypeError('AgentConversationId must be non-empty');
+  }
+  return brandAs<string, 'AgentConversationId'>(value);
+}
+
+export function asAgentMessageId(value: string): AgentMessageId {
+  if (value.length === 0) {
+    throw new TypeError('AgentMessageId must be non-empty');
+  }
+  return brandAs<string, 'AgentMessageId'>(value);
+}
+
+export function asAgentMemoryId(value: string): AgentMemoryId {
+  if (value.length === 0) {
+    throw new TypeError('AgentMemoryId must be non-empty');
+  }
+  return brandAs<string, 'AgentMemoryId'>(value);
+}
+
+export function asAgentRuntimeEventId(value: string): AgentRuntimeEventId {
+  if (value.length === 0) {
+    throw new TypeError('AgentRuntimeEventId must be non-empty');
+  }
+  return brandAs<string, 'AgentRuntimeEventId'>(value);
+}
+
 export function asMandatePolicyVersion(value: number): MandatePolicyVersion {
   if (!Number.isInteger(value) || value < 1) {
     throw new TypeError('MandatePolicyVersion must be a positive integer');
@@ -109,6 +141,22 @@ export function receiptIdFor(requestId: string, outcome: string): AgentReceiptId
 
 export function safetyEventIdFor(kind: string, mandateId: string, at: string): AgentSafetyEventId {
   return asAgentSafetyEventId(`ase_${digest(`safety:${kind}:${mandateId}:${at}`).slice(0, 24)}`);
+}
+
+export function conversationIdFor(ownerId: string, agentId: string, title: string, at: string): AgentConversationId {
+  return asAgentConversationId(`acv_${digest(`conversation:${ownerId}:${agentId}:${title}:${at}`).slice(0, 24)}`);
+}
+
+export function messageIdFor(conversationId: string, role: string, at: string, content: string): AgentMessageId {
+  return asAgentMessageId(`amg_${digest(`message:${conversationId}:${role}:${at}:${content}`).slice(0, 24)}`);
+}
+
+export function memoryIdFor(agentId: string, ownerId: string, category: string, content: string): AgentMemoryId {
+  return asAgentMemoryId(`amm_${digest(`memory:${agentId}:${ownerId}:${category}:${content}`).slice(0, 24)}`);
+}
+
+export function runtimeEventIdFor(kind: string, targetId: string, at: string): AgentRuntimeEventId {
+  return asAgentRuntimeEventId(`are_${digest(`runtime:${kind}:${targetId}:${at}`).slice(0, 24)}`);
 }
 
 export function contentHash(value: unknown): string {

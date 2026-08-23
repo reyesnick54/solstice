@@ -20,7 +20,11 @@ import {
 import { replayedApproval, signingIntentSummary } from './mobile.ts';
 import { approvalSatisfied, detectPromptInjection, evaluateMandateForProposal } from './policy.ts';
 import { InMemoryAgentMandateStore } from './store.ts';
-import { EXECUTABLE_ACTION_CLASSES, isHighRiskAction } from './taxonomy.ts';
+import { defaultAssistScopesForActions, EXECUTABLE_ACTION_CLASSES, isForbiddenAssistScope, isHighRiskAction } from './taxonomy.ts';
+import { agentMayConverse, transitionAgent } from './lifecycle.ts';
+import { evaluateProposalLimits } from './limits.ts';
+import { recordAgentRuntimeEvent } from './runtime-events.ts';
+import type { AgentAssistScope, AgentLifecycleState, AgentType } from './taxonomy.ts';
 import type {
   AgentActivityReport,
   AgentApprovalRequirement,
@@ -60,6 +64,10 @@ export type CreateMandateInput = {
   readonly delegatedSigningKeyId: string | null;
   readonly createdByActorId: string;
   readonly economicMandateRef?: string;
+  readonly assistScopes?: readonly AgentAssistScope[];
+  readonly agentType?: AgentType;
+  readonly agentName?: string;
+  readonly entitledTools?: readonly string[];
 };
 
 export type CreateProposalInput = {
@@ -98,9 +106,13 @@ export class UserAgentMandateEngine {
   readonly gate: ProposalGate;
   private readonly clock: Clock;
 
-  constructor(input: { readonly clock: Clock; readonly kernel?: KernelSubmitPort | null }) {
+  constructor(input: {
+    readonly clock: Clock;
+    readonly kernel?: KernelSubmitPort | null;
+    readonly store?: InMemoryAgentMandateStore;
+  }) {
     this.clock = input.clock;
-    this.store = new InMemoryAgentMandateStore();
+    this.store = input.store ?? new InMemoryAgentMandateStore();
     this.gate = new ProposalGate(input.kernel ?? null);
   }
 
@@ -110,21 +122,65 @@ export class UserAgentMandateEngine {
     readonly modelRef: string;
     readonly policyRef: string;
     readonly createdByActorId: string;
+    readonly agentType?: AgentType;
+    readonly name?: string;
+    readonly entitledTools?: readonly string[];
+    readonly jurisdiction?: string | null;
+    readonly riskPolicyId?: string;
+    readonly initialStatus?: AgentLifecycleState;
   }): Result<UserAgent, MandateRefusal> {
     if (!input.owner.ownerId || !input.owner.walletId || !input.owner.accountId) {
       return err({ ok: false, code: 'ORPHAN_AGENT', detail: 'every agent must belong to an explicit owner, wallet, and account' });
     }
+    if (input.createdByActorId.startsWith('agent:')) {
+      return err({ ok: false, code: 'SELF_EXPANSION_FORBIDDEN', detail: 'an agent cannot create another agent' });
+    }
+    const existing = this.store.agents.get(agentIdFor(input.owner.ownerId, input.label));
+    if (existing) {
+      return ok(existing);
+    }
     const agent: UserAgent = Object.freeze({
       agentId: agentIdFor(input.owner.ownerId, input.label),
       owner: input.owner,
+      ownerId: input.owner.ownerId,
+      identityKind: 'SUNREY_AGENT',
+      agentType: input.agentType ?? 'PERSONAL_ASSISTANT',
+      name: input.name ?? input.label,
       label: input.label,
       modelRef: input.modelRef,
       policyRef: input.policyRef,
+      modelPolicy: Object.freeze({
+        modelRef: input.modelRef,
+        allowExternalProviders: false,
+        storeHiddenReasoning: false,
+      }),
+      toolPolicy: Object.freeze({
+        entitledTools: Object.freeze([...(input.entitledTools ?? ['READ_FINANCIAL_STATE', 'READ_PERSONAL_ECONOMIC_GRAPH'])]),
+        mutatingFinancialToolsForbidden: true,
+      }),
+      mandateId: null,
+      jurisdiction: input.jurisdiction ?? null,
+      riskPolicy: Object.freeze({
+        riskPolicyId: input.riskPolicyId ?? 'risk:sim',
+        mayAssumeUserAuthority: false,
+        mayBecomeExecutionAuthority: false,
+      }),
       createdAt: this.clock.now(),
-      status: 'ACTIVE',
+      status: input.initialStatus ?? 'CREATED',
       receivesMasterKey: false,
+      isCustomer: false,
+      isExecutionAuthority: false,
     });
     this.store.putAgent(agent);
+    this.store.putRuntimeEvent(
+      recordAgentRuntimeEvent({
+        kind: 'agent.created',
+        at: agent.createdAt,
+        agentId: agent.agentId,
+        ownerId: agent.ownerId,
+        detail: 'agent identity created; not a customer and not Execution Authority',
+      }),
+    );
     this.recordActivity(input.owner, 'MANDATE', `created agent ${agent.agentId}`, [agent.agentId]);
     return ok(agent);
   }
@@ -139,18 +195,33 @@ export class UserAgentMandateEngine {
     if (input.permissions.allowWildcardAssets !== false) {
       return err({ ok: false, code: 'WILDCARD_ASSET_FORBIDDEN', detail: 'wildcard assets require explicit configuration and are refused by default' });
     }
+    if (input.assistScopes?.some((scope) => isForbiddenAssistScope(scope))) {
+      return err({
+        ok: false,
+        code: 'FORBIDDEN_ASSIST_SCOPE',
+        detail: 'DIRECT_LEDGER_WRITE, BYPASS_KERNEL, SELF_APPROVE, and MASTER_SIGNING_KEY are never mandate scopes',
+      });
+    }
     const existing = this.createAgent({
       owner: input.owner,
       label: input.agentLabel,
       modelRef: input.modelRef,
       policyRef: input.policyRef,
       createdByActorId: input.createdByActorId,
+      ...(input.agentType ? { agentType: input.agentType } : {}),
+      ...(input.agentName ? { name: input.agentName } : {}),
+      ...(input.entitledTools ? { entitledTools: input.entitledTools } : {}),
+      jurisdiction: input.jurisdictionPackId,
+      riskPolicyId: input.riskPolicyId,
     });
     if (!existing.ok) {
       return existing;
     }
     const now = this.clock.now();
     const mandateId = mandateIdFor(input.owner.ownerId, existing.value.agentId, 1);
+    const assistScopes = Object.freeze(
+      [...(input.assistScopes ?? defaultAssistScopesForActions(input.permissions.actionClasses))],
+    );
     const draft = {
       mandateId,
       agentId: existing.value.agentId,
@@ -177,6 +248,7 @@ export class UserAgentMandateEngine {
         destinations: Object.freeze([...input.permissions.destinations]),
         allowWildcardAssets: false as const,
       }),
+      assistScopes,
       budget: Object.freeze({
         ...input.budget,
         perAsset: Object.freeze({ ...input.budget.perAsset }),
@@ -193,6 +265,23 @@ export class UserAgentMandateEngine {
     });
     this.store.putMandate(mandate);
     this.store.putUsage(emptyUsage(mandate.mandateId, now));
+    const activated = Object.freeze({
+      ...existing.value,
+      mandateId: mandate.mandateId,
+      jurisdiction: input.jurisdictionPackId,
+      status: existing.value.status === 'CREATED' || existing.value.status === 'ACTIVE' ? 'ACTIVE' : existing.value.status,
+    });
+    this.store.putAgent(activated);
+    this.store.putRuntimeEvent(
+      recordAgentRuntimeEvent({
+        kind: 'mandate.changed',
+        at: now,
+        agentId: activated.agentId,
+        ownerId: activated.ownerId,
+        mandateId: mandate.mandateId,
+        detail: 'mandate created; execution remains Kernel-gated',
+      }),
+    );
     this.recordActivity(input.owner, 'MANDATE', `created mandate ${mandate.mandateId}`, [mandate.mandateId]);
     return ok(mandate);
   }
@@ -256,6 +345,20 @@ export class UserAgentMandateEngine {
     if (!check.ok) {
       this.safety(mandate, proposal, check.code === 'SELF_EXPANSION_FORBIDDEN' ? 'SELF_EXPANSION_ATTEMPT' : 'MANDATE_LIMIT_REJECTION', check.detail);
       return err(check);
+    }
+    const limits = evaluateProposalLimits({
+      budget: mandate.budget,
+      usage,
+      proposal,
+      now,
+      currency: proposal.assetId,
+      assetClass: proposal.assetId,
+      toolName: proposal.intent,
+      jurisdiction: mandate.policy.jurisdictionPackId,
+    });
+    if (!limits.ok) {
+      this.safety(mandate, proposal, 'MANDATE_LIMIT_REJECTION', limits.detail);
+      return err(limits);
     }
     const pending = mandate.policy.approval.class === 'NO_ADDITIONAL_APPROVAL_WITHIN_MANDATE' ? 'APPROVED' : 'PENDING_APPROVAL';
     const stored = Object.freeze({ ...proposal, state: pending as AgentTransactionProposal['state'] });
@@ -461,12 +564,60 @@ export class UserAgentMandateEngine {
     return this.revoke({ scope: 'MANDATE', targetId: input.mandateId, actorId: input.actorId });
   }
 
+  pauseAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    return this.changeLifecycle(input.agentId, 'PAUSED', input.actorId, 'agent.paused', 'owner paused the agent');
+  }
+
+  restrictAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    return this.changeLifecycle(input.agentId, 'RESTRICTED', input.actorId, 'agent.paused', 'compliance restricted the agent');
+  }
+
+  resumeAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    return this.changeLifecycle(input.agentId, 'ACTIVE', input.actorId, 'mandate.changed', 'agent resumed');
+  }
+
+  archiveAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    return this.changeLifecycle(input.agentId, 'ARCHIVED', input.actorId, 'agent.revoked', 'revoked agent archived');
+  }
+
+  activateAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    return this.changeLifecycle(input.agentId, 'ACTIVE', input.actorId, 'mandate.changed', 'agent activated');
+  }
+
+  assertAgentMayConverse(agentId: string): Result<UserAgent, MandateRefusal> {
+    const agent = this.getAgent(agentId);
+    if (!agent) {
+      return err({ ok: false, code: 'ORPHAN_AGENT', detail: 'agent not found' });
+    }
+    const allowed = agentMayConverse(agent.status);
+    if (!allowed.ok) {
+      return err(allowed);
+    }
+    if (agent.isCustomer !== false || agent.isExecutionAuthority !== false || agent.receivesMasterKey !== false) {
+      return err({ ok: false, code: 'IDENTITY_COLLISION', detail: 'agent identity is corrupted' });
+    }
+    return ok(agent);
+  }
+
   revokeAgent(input: { readonly agentId: string; readonly actorId: string }): Result<UserAgent, MandateRefusal> {
+    if (input.actorId.startsWith('agent:')) {
+      return err({ ok: false, code: 'SELF_EXPANSION_FORBIDDEN', detail: 'an agent cannot revoke itself' });
+    }
     const agent = this.getAgent(input.agentId);
     if (!agent) {
       return err({ ok: false, code: 'MANDATE_REVOKED', detail: 'agent not found' });
     }
-    this.store.putAgent(Object.freeze({ ...agent, status: 'REVOKED' }));
+    const nextStatus = agent.status === 'REVOKED' ? 'REVOKED' : 'REVOKED';
+    this.store.putAgent(Object.freeze({ ...agent, status: nextStatus }));
+    this.store.putRuntimeEvent(
+      recordAgentRuntimeEvent({
+        kind: 'agent.revoked',
+        at: this.clock.now(),
+        agentId: agent.agentId,
+        ownerId: agent.ownerId,
+        detail: 'agent revoked; pending proposals ineligible',
+      }),
+    );
     for (const mandate of this.store.mandates.values()) {
       if (mandate.agentId === agent.agentId) {
         this.revokeMandate({ mandateId: mandate.mandateId, actorId: input.actorId });
@@ -603,6 +754,34 @@ export class UserAgentMandateEngine {
 
   audit(): readonly AgentSafetyEvent[] {
     return Object.freeze([...this.store.safety]);
+  }
+
+  private changeLifecycle(
+    agentId: string,
+    next: AgentLifecycleState,
+    actorId: string,
+    kind: 'agent.paused' | 'agent.revoked' | 'mandate.changed',
+    detail: string,
+  ): Result<UserAgent, MandateRefusal> {
+    const agent = this.getAgent(agentId);
+    if (!agent) {
+      return err({ ok: false, code: 'ORPHAN_AGENT', detail: 'agent not found' });
+    }
+    const changed = transitionAgent(agent, next, actorId);
+    if (!changed.ok) {
+      return err(changed);
+    }
+    this.store.putAgent(changed.agent);
+    this.store.putRuntimeEvent(
+      recordAgentRuntimeEvent({
+        kind,
+        at: this.clock.now(),
+        agentId: changed.agent.agentId,
+        ownerId: changed.agent.ownerId,
+        detail,
+      }),
+    );
+    return ok(changed.agent);
   }
 
   private revoke(input: { readonly scope: 'MANDATE'; readonly targetId: string; readonly actorId: string }): Result<UserAgentMandate, MandateRefusal> {

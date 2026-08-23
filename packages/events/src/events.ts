@@ -1136,6 +1136,25 @@ export type RailPaymentReturnedV1 = VersionedEvent<'RailPaymentReturned', 1, Rai
 export type RailProviderDegradedV1 = VersionedEvent<'RailProviderDegraded', 1, RailAuditPayload>;
 export type RailReconciliationMismatchV1 = VersionedEvent<'RailReconciliationMismatch', 1, RailAuditPayload>;
 
+export type AgentRuntimeAuditPayload = {
+  readonly agentId: string | null;
+  readonly ownerId: string | null;
+  readonly conversationId?: string | null;
+  readonly memoryId?: string | null;
+  readonly mandateId?: string | null;
+  readonly containsConversationContent: false;
+};
+
+export type AgentCreatedV1 = VersionedEvent<'AgentCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentPausedV1 = VersionedEvent<'AgentPaused', 1, AgentRuntimeAuditPayload>;
+export type AgentRevokedV1 = VersionedEvent<'AgentRevoked', 1, AgentRuntimeAuditPayload>;
+export type AgentConversationCreatedV1 = VersionedEvent<'AgentConversationCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentMessageReceivedV1 = VersionedEvent<'AgentMessageReceived', 1, AgentRuntimeAuditPayload>;
+export type AgentMessageCompletedV1 = VersionedEvent<'AgentMessageCompleted', 1, AgentRuntimeAuditPayload>;
+export type AgentMemoryCreatedV1 = VersionedEvent<'AgentMemoryCreated', 1, AgentRuntimeAuditPayload>;
+export type AgentMemoryChangedV1 = VersionedEvent<'AgentMemoryChanged', 1, AgentRuntimeAuditPayload>;
+export type AgentMandateChangedV1 = VersionedEvent<'AgentMandateChanged', 1, AgentRuntimeAuditPayload>;
+
 export type DomainEvent =
   | AccountOpenedV1
   | AccountActivatedV1
@@ -1388,7 +1407,16 @@ export type DomainEvent =
   | ProviderWebhookAcceptedV1
   | ProviderWebhookRejectedV1
   | OutboundWebhookDeliveredV1
-  | OutboundWebhookFailedV1;
+  | OutboundWebhookFailedV1
+  | AgentCreatedV1
+  | AgentPausedV1
+  | AgentRevokedV1
+  | AgentConversationCreatedV1
+  | AgentMessageReceivedV1
+  | AgentMessageCompletedV1
+  | AgentMemoryCreatedV1
+  | AgentMemoryChangedV1
+  | AgentMandateChangedV1;
 
 export type SealedDomainEvent = DomainEvent & DurableEventEnvelope<DomainEvent['eventType'], DomainEvent['schemaVersion']>;
 
