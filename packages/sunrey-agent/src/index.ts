@@ -202,6 +202,7 @@ export type {
   GroundedExplanation,
   HumanApprovalRecord,
 } from './conversation/index.ts';
+export {
   AgentToolRuntime,
   createAgentToolRuntime,
   createCanonicalToolRegistry,

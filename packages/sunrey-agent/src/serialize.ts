@@ -72,7 +72,7 @@ export function serializeAgentRuntimeSnapshot(snapshot: AgentRuntimeSnapshot): S
         }),
       ),
     ),
-  });
+  }) as SerializedAgentRuntimeSnapshot;
 }
 
 export function deserializeAgentRuntimeSnapshot(raw: SerializedAgentRuntimeSnapshot): AgentRuntimeSnapshot {
@@ -121,5 +121,5 @@ export function deserializeAgentRuntimeSnapshot(raw: SerializedAgentRuntimeSnaps
         }),
       ),
     ),
-  });
+  }) as AgentRuntimeSnapshot;
 }

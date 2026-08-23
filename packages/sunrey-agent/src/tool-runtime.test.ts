@@ -98,7 +98,8 @@ describe('tool runtime safety', () => {
     assert.equal(third.error?.code, 'IDENTICAL_CALL_LIMIT');
 
     const tight = engineAndSession();
-    tight.session.turnId = 'turn_max';
+    const limitedSession = { ...tight.session, turnId: 'turn_max' };
+    void limitedSession;
     const limited = createAgentToolRuntime({
       engine: new UserAgentMandateEngine({
         clock: new FrozenClock(asUtcInstant('2026-08-23T00:00:00.000Z')),

@@ -42,7 +42,7 @@ export type {
   AgentConversationResource,
   AgentMemoryResource,
   AgentMessageResponse,
-  GrowProposal,
+  GrowExecutionProposal,
   GrowExecution,
   GrowExecutionState,
   GrowPlan,

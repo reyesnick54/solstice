@@ -266,7 +266,7 @@ export function createPhaseEWorld(suffix = 'e1'): PhaseEWorld {
     bff,
     sessions,
     identity: runtime.identity.service,
-    grow: growBff,
+    growSurface: growBff,
   };
   return {
     runtime,

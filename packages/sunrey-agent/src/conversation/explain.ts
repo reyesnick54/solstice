@@ -58,7 +58,7 @@ export function explainActionCard(input: {
       : 'Liquidity is UNKNOWN until a Ledger-backed snapshot is read.',
     timelineEstimate: {
       text: 'Settlement timing is an estimate until the rail reports an outcome.',
-      uncertainty: 'ESTIMATE',
+      uncertainty: 'ESTIMATE' as const,
     },
     alternatives: input.proposal ? Object.freeze(['Modify the amount', 'Reject the proposal', 'Ask a question']) : Object.freeze([]),
     whyApprovalIsRequired:

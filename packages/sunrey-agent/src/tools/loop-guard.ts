@@ -8,7 +8,12 @@ export const DEFAULT_TURN_LIMITS = Object.freeze({
   maxRecursiveProposals: 1,
 });
 
-export type TurnLimits = typeof DEFAULT_TURN_LIMITS;
+export type TurnLimits = {
+  readonly maxToolCalls: number;
+  readonly maxIdenticalCalls: number;
+  readonly maxProposalCreates: number;
+  readonly maxRecursiveProposals: number;
+};
 
 export type LoopGuardFailure = {
   readonly ok: false;

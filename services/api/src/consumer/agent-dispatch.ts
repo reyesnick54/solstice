@@ -38,10 +38,10 @@ export function dispatchAgent(
   headers: Record<string, string>,
 ): AgentHttpResponse | null {
   const { method, path, body } = request;
-  if (!path.startsWith('/api/v1/agent')) {
+  if (!path.startsWith('/api/v1/agent/') || path.startsWith('/api/v1/agents')) {
     return null;
   }
-  if (path === '/api/v1/agent' && method === 'GET') {
+  if (path === '/api/v1/agent/tools') {
     return null;
   }
   const user = facade.platform.authenticateSandboxUser(principal.customerId);
@@ -127,17 +127,7 @@ export function dispatchAgent(
     const id = path.slice('/api/v1/agent/audit/'.length);
     return mapped(facade.platform.exportAudit(user, id), requestId, headers);
   }
-  return json(
-    404,
-    bffError({
-      errorCode: 'NOT_FOUND',
-      category: 'NOT_FOUND',
-      message: 'agent resource not found',
-      retryable: false,
-      requestId,
-    }),
-    headers,
-  );
+  return null;
 }
 
 function mapped(

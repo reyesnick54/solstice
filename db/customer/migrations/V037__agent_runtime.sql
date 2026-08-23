@@ -1,4 +1,4 @@
--- V034 Phase F Prompt 2 — SunRey Agent runtime, conversations, and memory.
+-- V037 Phase F Prompt 2 — SunRey Agent runtime, conversations, and memory.
 -- Conversational state only. Not a ledger, not Execution Authority,
 -- and not a second PEG. Production remains disabled.
 
