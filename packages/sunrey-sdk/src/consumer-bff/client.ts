@@ -810,6 +810,7 @@ export class SunReyConsumerBffClient {
     return this.request('POST', '/api/v1/data/agent-access/read', input, options);
   }
 
+  async getDataHinParticipation(options?: BffRequestOptions): Promise<Record<string, unknown>> {
   async getDataPlaneHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
   async getDataHinHome(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/data/hin', undefined, options);
@@ -871,6 +872,7 @@ export class SunReyConsumerBffClient {
     return this.request('GET', '/api/v1/economy/moonrey', undefined, options);
   }
 
+  async getHinAggregateMetrics(options?: BffRequestOptions): Promise<Record<string, unknown>> {
   async getEconomyHin(options?: BffRequestOptions): Promise<Record<string, unknown>> {
     return this.request('GET', '/api/v1/economy/hin', undefined, options);
   }

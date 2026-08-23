@@ -674,7 +674,10 @@ function dispatchAuthenticated(
     return json(200, { schema: 'sunrey.consumer.productive-economy.v1', ...surface.moonreyInput() }, headers);
   }
 
+  const hinContributions = runtime.hin && !isRightsMarketplace(runtime.hin) ? runtime.hin : undefined;
   if (path === '/api/v1/hin/contributions' && method === 'GET') {
+    const surface = hinContributions;
+    if (!surface) {
     const surface = runtime.hin;
     if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
@@ -682,6 +685,8 @@ function dispatchAuthenticated(
     return json(200, surface.list(principal.customerId), headers);
   }
   if (path.startsWith('/api/v1/hin/contributions/') && method === 'GET') {
+    const surface = hinContributions;
+    if (!surface) {
     const surface = runtime.hin;
     if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
@@ -704,6 +709,8 @@ function dispatchAuthenticated(
     return json(200, item, headers);
   }
   if (path === '/api/v1/hin/metrics' && method === 'GET') {
+    const surface = hinContributions;
+    if (!surface) {
     const surface = runtime.hin;
     if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
@@ -711,6 +718,8 @@ function dispatchAuthenticated(
     return json(200, surface.metrics(), headers);
   }
   if (path === '/api/v1/hin/me/summary' && method === 'GET') {
+    const surface = hinContributions;
+    if (!surface) {
     const surface = runtime.hin;
     if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
@@ -718,6 +727,8 @@ function dispatchAuthenticated(
     return json(200, surface.me(principal.customerId), headers);
   }
   if (path === '/api/v1/hin/valuation-methodologies' && method === 'GET') {
+    const surface = hinContributions;
+    if (!surface) {
     const surface = runtime.hin;
     if (!surface || !isHinContributionSurface(surface)) {
       return json(200, runtime.bff.featureStub('hin', principal), headers);
@@ -1067,6 +1078,12 @@ function isLifecycleExchange(
   return typeof (exchange as ExchangeLifecycleSurface).home === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).createProposal === 'function'
     && typeof (exchange as ExchangeLifecycleSurface).wallets === 'function';
+}
+
+function isRightsMarketplace(
+  hin: InformationRightsMarketplace | HinContributionSurface,
+): hin is InformationRightsMarketplace {
+  return typeof (hin as InformationRightsMarketplace).earningsFor === 'function';
 }
 
 function dispatchExchange(

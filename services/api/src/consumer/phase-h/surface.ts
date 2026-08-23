@@ -108,6 +108,10 @@ const SCHEMA_FOR_KIND = {
   RECEIPT: { schemaId: 'pdsch_receipt', schemaVersion: '1' },
 } as const;
 
+function asHinSubject(id: string): HumanInformationSubjectId {
+  return id as HumanInformationSubjectId;
+}
+
 function fail(code: string, message: string): PhaseHResult<never> {
   return { ok: false, code, message };
 }
@@ -744,9 +748,9 @@ export class PhaseHProductSurface {
 
   hinHome(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const rights = bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : [];
-    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(bound.hinSubjectId) : [];
-    const usage = bound.hinSubjectId ? this.hin.getInformationUsage(bound.hinSubjectId) : [];
+    const rights = bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : [];
+    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(asHinSubject(bound.hinSubjectId)) : [];
+    const usage = bound.hinSubjectId ? this.hin.getInformationUsage(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.v1',
       participating: bound.hinParticipation,
@@ -957,8 +961,8 @@ export class PhaseHProductSurface {
     }
     const preview = this.hin.previewInformationConsent({
       requestId: request.value.requestId,
-      subjectId: bound.hinSubjectId,
-      descriptorId: bound.hinDescriptorId,
+      subjectId: asHinSubject(bound.hinSubjectId),
+      descriptorId: bound.hinDescriptorId as HumanInformationAssetDescriptorId,
     });
     if (!preview.ok) {
       return fail(preview.error.code, preview.error.message);
@@ -983,6 +987,8 @@ export class PhaseHProductSurface {
     }
     const approved = this.hin.approveInformationConsent({
       requestId: licenseId as HumanInformationRequestId,
+      subjectId: asHinSubject(bound.hinSubjectId),
+      descriptorId: bound.hinDescriptorId as HumanInformationAssetDescriptorId,
       subjectId: bound.hinSubjectId,
       descriptorId: bound.hinDescriptorId,
       processingClass: 'CLEAN_ROOM_COMPUTATION',
@@ -1012,7 +1018,7 @@ export class PhaseHProductSurface {
       return fail('NOT_FOUND', 'license request not found');
     }
     const right = bound.hinSubjectId
-      ? this.hin.getInformationRights(bound.hinSubjectId).find((row) => row.status === 'ACTIVE')
+      ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)).find((row) => row.status === 'ACTIVE')
       : undefined;
     if (!right) {
       return fail('LICENSE_NOT_ACTIVE', 'license is not active');
@@ -1033,6 +1039,7 @@ export class PhaseHProductSurface {
       return fail('HIN_PARTICIPATION_REQUIRED', 'HIN subject is required');
     }
     const compensation = this.hin.authorizeCompensation({
+      subjectId: asHinSubject(bound.hinSubjectId ?? ''),
       subjectId: bound.hinSubjectId,
       subjectId: (bound.hinSubjectId ?? '') as HumanInformationSubjectId,
       requesterId: this.licenseeRequesterId,
@@ -1074,7 +1081,7 @@ export class PhaseHProductSurface {
     if (!grant || !grantId) {
       return fail('NOT_FOUND', 'license grant not found');
     }
-    const right = (bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : []).find(
+    const right = (bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : []).find(
       (row) => row.consentGrantId === grant.grantId,
     );
     const revoked = this.hin.revokeInformationConsent({ grantId: grant.grantId });
@@ -1101,7 +1108,7 @@ export class PhaseHProductSurface {
 
   licenses(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const rights = bound.hinSubjectId ? this.hin.getInformationRights(bound.hinSubjectId) : [];
+    const rights = bound.hinSubjectId ? this.hin.getInformationRights(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.licenses.v1',
       items: rights.map((row) => ({ rightId: row.rightId, status: row.status, purpose: row.purpose })),
@@ -1111,7 +1118,7 @@ export class PhaseHProductSurface {
 
   earnings(principal: BffPrincipal) {
     const bound = this.bindPrincipal(principal);
-    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(bound.hinSubjectId) : [];
+    const compensation = bound.hinSubjectId ? this.hin.getInformationCompensation(asHinSubject(bound.hinSubjectId)) : [];
     return {
       schema: 'sunrey.consumer.hin.earnings.v1',
       items: compensation.map((row) => ({

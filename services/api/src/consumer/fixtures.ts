@@ -574,6 +574,7 @@ export function createSandboxWorld(options: { readonly providerDown?: boolean } 
 
 function attachSandboxDataRights(
   runtime: SimulationRuntime,
+  vault: PersonalDataVaultProduct,
   _vault: PersonalDataVaultProduct,
 ): ConsentDataRightsEngine {
   const consent = new ConsentService({
@@ -582,6 +583,7 @@ function attachSandboxDataRights(
     evidence: runtime.evidence,
     events: runtime.events,
   });
+  void vault;
   return new ConsentDataRightsEngine({
     clock: runtime.clock,
     consent,

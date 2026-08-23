@@ -562,11 +562,15 @@ describe('versioned SQL migrations', () => {
     assert.equal(/CREATE TABLE[\s\S]*\bjournal\b/i.test(v038.sql), false);
   });
 
+  it('customer V039 persists Personal Data Vault productization overlays without a second ledger', () => {
   it('customer V039 persists Personal Data Vault productization metadata without a second ledger or raw payload', () => {
     const files = listMigrationFiles(migrationsRoot(REPO_ROOT, 'customer'));
     const v039 = files.find((file) => file.version === 39);
     assert.ok(v039);
     assert.equal(v039.filename, 'V039__personal_data_vault_productization.sql');
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.record_metadata/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.correction/);
+    assert.match(v039.sql, /CREATE TABLE personal_data_vault.export_job/);
     assert.match(v039.sql, /CREATE TABLE personal_data_vault\.record_metadata/);
     assert.match(v039.sql, /CREATE TABLE personal_data_vault\.correction/);
     assert.match(v039.sql, /CREATE TABLE personal_data_vault\.export_job/);

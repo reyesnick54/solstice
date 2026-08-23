@@ -808,7 +808,7 @@ export function publicPlan(plan: ProductGrowthPlan): ProductGrowthPlan {
   return plan;
 }
 
-export function publicProposal(proposal: ProductFinancialProposal): ProductFinancialProposal {
+export function publicProposal(proposal: FinancialProposal): FinancialProposal {
   return proposal;
 }
 

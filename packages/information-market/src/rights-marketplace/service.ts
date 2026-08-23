@@ -17,6 +17,7 @@ import {
   newLicenseRequestId,
   newLicenseSettlementId,
   newUsageEventId,
+  type InformationRightId,
 } from './ids.ts';
 import { enforceAggregation, privacyControlsFor, suppressIfBelowThreshold } from './privacy.ts';
 import { simulationCompensationPolicyV1, simulationPricingPolicyV1, validatePricingPolicy } from './policy.ts';
@@ -195,6 +196,7 @@ export class InformationRightsMarketplace {
     const sensitive = rights.some((right) => (SENSITIVE_CATEGORIES as readonly string[]).includes(right.underlyingCategory));
     const draft = {
       form: input.form,
+      rightIds: input.rightIds as readonly InformationRightId[],
       rightIds: input.rightIds as DataProduct['rightIds'],
       classification: input.classification,
       eligiblePurposes: input.eligiblePurposes,
@@ -531,6 +533,7 @@ export class InformationRightsMarketplace {
       }
       this.nativeAsset.mint();
       const minted = this.nativeAsset.mint();
+      if ((minted as { readonly outcome: string }).outcome === 'OK') {
       if ((minted.outcome as string) === 'OK') {
         return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
       }

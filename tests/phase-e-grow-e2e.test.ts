@@ -74,7 +74,7 @@ describe('Phase E Grow My Money E2E', () => {
       query: {},
       body: { stepUpSatisfied: false },
     });
-    assert.equal(needsStepUp.status, 401);
+    assert.equal(needsStepUp.status, 403);
 
     const approved = world.handle({
       method: 'POST',

@@ -104,7 +104,7 @@ export type RouteHandler = (input: {
 export type RouteDefinition = {
   readonly method: string;
   readonly path: string;
-  readonly endpointClass: 'public' | 'sensitive' | 'test';
+  readonly endpointClass: 'public' | 'sensitive' | 'test' | 'internal';
   readonly requiresIdempotency: boolean;
   readonly schema?: import('./validation.ts').RequestSchema;
   readonly handler: RouteHandler;

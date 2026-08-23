@@ -1449,7 +1449,14 @@ paths:
         "200":
           description: Markets including SunRey Coin
   /api/v1/exchange/markets/{marketId}:
+    get:
+      operationId: getExchangeMarketById
       summary: Exchange catalog
+      parameters:
+        - in: path
+          name: marketId
+          required: true
+          schema: { type: string }
       responses:
         "200":
           description: Honest availability
@@ -1558,8 +1565,6 @@ paths:
           description: Economic-input summary
         "401":
           description: Authentication required
-  /api/v1/exchange/markets:
-          description: Honest availability; production trading remains disabled
   /api/v1/hin/contributions:
     get:
       operationId: listHinContributions
@@ -2205,6 +2210,7 @@ paths:
           description: Confirmed grant
   /api/v1/data/hin:
     get:
+      operationId: getDataHinParticipation
       operationId: getDataPlaneHinParticipation
       summary: HIN participation
       operationId: getDataHinHome
@@ -2214,6 +2220,7 @@ paths:
           description: Participation state on the data surface; not a second HIN system
   /api/v1/data/contributions:
     get:
+      operationId: listDataContributions
       operationId: listDataPlaneHinContributions
       summary: Human contributions
       operationId: listDataContributions
@@ -2286,7 +2293,7 @@ paths:
           description: Proposal only. No supply change.
   /api/v1/data/permissions:
     get:
-      operationId: getDataPermissions
+      operationId: getDataPermissionCatalog
       summary: Purpose catalog and granted optional uses
       responses:
         "200":
@@ -2310,6 +2317,7 @@ paths:
       summary: Revoke optional consent immediately
       responses:
         "200":
+          description: Optional consent revoked; financial services remain open
           description: Consent revoked; optional uses stop immediately
   /api/v1/data/vault:
     get:
@@ -2417,18 +2425,6 @@ paths:
       responses:
         "200":
           description: Withdrawn without closing ordinary SunRey financial services
-          description: Record metadata. Payload is redacted unless explicitly requested.
-    patch:
-      operationId: correctVaultRecord
-      summary: Correct user-declared data or open a dispute
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        "200":
-          description: Correction or review-pending dispute
   /api/v1/data/vault/records/{id}/history:
     get:
       operationId: getVaultRecordHistory

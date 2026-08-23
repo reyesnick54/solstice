@@ -6,6 +6,7 @@ import type { PlatformApiConfig } from './config.ts';
 import { PlatformApiError } from './errors.ts';
 import type { ReadinessReport } from './readiness.ts';
 import type { RouteDefinition } from './http.ts';
+import { createInternalProductionGateRoutes } from './internal-production-gates.ts';
 
 export const FUTURE_NAMESPACES = [
   '/api/v1/auth',
@@ -28,6 +29,7 @@ export const FUTURE_NAMESPACES = [
 export type RouteDependencies = {
   readonly config: PlatformApiConfig;
   readonly readiness: () => Promise<ReadinessReport>;
+  readonly internalOperatorToken?: string | undefined;
 };
 
 export function createRoutes(deps: RouteDependencies): readonly RouteDefinition[] {
@@ -92,6 +94,8 @@ export function createRoutes(deps: RouteDependencies): readonly RouteDefinition[
       handler: async ({ ctx }) => meHandler(ctx),
     },
   ];
+
+  routes.push(...createInternalProductionGateRoutes({ operatorToken: deps.internalOperatorToken }));
 
   if (deps.config.featureFlags.testRoutes) {
     routes.push(

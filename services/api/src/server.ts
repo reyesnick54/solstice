@@ -217,6 +217,8 @@ export async function startPlatformApi(deps: PlatformApiDependencies): Promise<R
         'x-request-id',
         'x-correlation-id',
         'x-sunrey-client',
+        'x-sunrey-operator-role',
+        'x-sunrey-internal-token',
       ]);
       if (matched.route.schema) {
         validateRequest(matched.route.schema, {

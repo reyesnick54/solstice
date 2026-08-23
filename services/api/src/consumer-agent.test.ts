@@ -33,6 +33,8 @@ function callProductization(
   world: ReturnType<typeof createSandboxWorld>,
   method: string,
   path: string,
+  body: Record<string, unknown> = {},
+) {
   personaOrBody: Parameters<typeof sandboxToken>[0] | Record<string, unknown> = 'agent_enabled',
   body: unknown = {},
 ) {
@@ -42,6 +44,8 @@ function callProductization(
     method,
     path,
     query: {},
+    body,
+    authorization: `Bearer ${sandboxToken('agent_enabled')}`,
     body: actualBody,
     authorization: auth(persona),
     requestId: `req_${method}_${path}`,
@@ -98,6 +102,9 @@ describe('Consumer BFF Agent productization', () => {
     assert.equal(pay.status, 200);
     const actionId = (pay.body as { cards: { actionId: string }[] }).cards[0]?.actionId;
     assert.ok(actionId);
+    const revised = callProductization(world, 'POST', `/api/v1/agent/actions/${actionId}/revise`, {
+      amountMinor: '75000',
+    });
     const revised = callConversation(world, 'POST', `/api/v1/agent/actions/${actionId}/revise`, { amountMinor: '75000' });
     assert.equal(revised.status, 200);
     assert.equal((revised.body as { amountMinor: bigint }).amountMinor, 75000n);

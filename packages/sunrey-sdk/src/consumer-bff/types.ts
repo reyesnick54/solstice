@@ -937,6 +937,7 @@ export type ExchangeOrderPreview = {
   readonly estimatedPriceUnits: string | null;
   readonly guaranteedExecutionPrice: false;
   readonly productionTradingEnabled: false;
+  readonly humanReadableIntent?: string;
 };
 
 export type ExchangeOrderSubmit = {
@@ -1001,6 +1002,12 @@ export type HinEarningsActivity = {
 };
 
 export type HinParticipation = {
+  readonly schema: 'sunrey.consumer.hin.participation.v1';
+  readonly status: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN' | 'NOT_ENROLLED' | 'ENROLLED' | 'RESTRICTED';
+  readonly compensationGuaranteed: false;
+  readonly productionActivated: false;
+  readonly financialServicesRemainOpen: true;
+  readonly state?: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
   readonly schema?: 'sunrey.consumer.hin.participation.v1';
   readonly status?: 'ACTIVE' | 'PAUSED' | 'WITHDRAWN';
   readonly state?: 'NOT_ENROLLED' | 'ENROLLED' | 'PAUSED' | 'WITHDRAWN' | 'RESTRICTED';
