@@ -195,7 +195,7 @@ export class InformationRightsMarketplace {
     const sensitive = rights.some((right) => (SENSITIVE_CATEGORIES as readonly string[]).includes(right.underlyingCategory));
     const draft = {
       form: input.form,
-      rightIds: input.rightIds,
+      rightIds: input.rightIds as DataProduct['rightIds'],
       classification: input.classification,
       eligiblePurposes: input.eligiblePurposes,
       sensitiveCategory: sensitive,
@@ -321,6 +321,7 @@ export class InformationRightsMarketplace {
     }
     const now = this.now();
     const expiresAt = addDays(now, request.durationDays);
+    const fiat = pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat;
     const license: InformationLicense = Object.freeze({
       licenseId: newInformationLicenseId(),
       requestId: request.requestId,
@@ -335,7 +336,7 @@ export class InformationRightsMarketplace {
       retentionDays: product.retentionDays,
       compensation: Object.freeze({
         asset: 'FIAT_MONEY',
-        fiat: pricing.fixedFiat ?? pricing.usageUnitFiat ?? pricing.subscriptionFiat ?? pricing.negotiatedFiat,
+        ...(fiat ? { fiat } : {}),
         pricingPolicyId: pricing.policyId,
         compensationPolicyId: policy.policyId,
       }),
@@ -525,7 +526,7 @@ export class InformationRightsMarketplace {
         return err({ code: 'NATIVE_ASSET_PORT_MISSING', message: 'native-asset compensation uses Phase G authority, not marketplace mint' });
       }
       const minted = this.nativeAsset.mint();
-      if (minted.outcome === 'OK') {
+      if ((minted.outcome as string) === 'OK') {
         return err({ code: 'MARKETPLACE_CANNOT_MINT', message: 'marketplace cannot mint native assets' });
       }
       const transfer = this.nativeAsset.transfer({
@@ -544,8 +545,8 @@ export class InformationRightsMarketplace {
       licenseId: license.licenseId,
       usageId: usage.usageId,
       policyVersion: policy.version,
-      revenueFiat: license.compensation.fiat,
-      revenueCoin: license.compensation.coin,
+      ...(license.compensation.fiat ? { revenueFiat: license.compensation.fiat } : {}),
+      ...(license.compensation.coin ? { revenueCoin: license.compensation.coin } : {}),
       allocations: allocated.allocations,
       journalId,
       nativeTransferId,

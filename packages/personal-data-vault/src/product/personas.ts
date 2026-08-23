@@ -52,7 +52,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_preference',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         payload: { key: 'preferred_currency', value: 'USD' },
       },
     ]),
@@ -70,7 +70,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_payroll',
         schemaVersion: '1',
         sourceId: 'pds_sim_payroll',
-        provenanceKind: 'EXTERNAL_CONNECTOR',
+        provenanceKind: 'EXTERNAL_CONNECTOR' as const,
         payload: {
           employer: 'Sandbox Employer Co',
           periodStart: '2026-07-01',
@@ -96,7 +96,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_employment',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         payload: { employer: 'Northwind Labs', title: 'Analyst', startedOn: '2024-03-01' },
       },
       {
@@ -105,7 +105,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_skills',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         payload: { skill: 'financial-analysis', level: 'intermediate' },
       },
     ]),
@@ -123,7 +123,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_payroll',
         schemaVersion: '1',
         sourceId: 'pds_sim_payroll',
-        provenanceKind: 'EXTERNAL_CONNECTOR',
+        provenanceKind: 'EXTERNAL_CONNECTOR' as const,
         payload: {
           employer: 'Multi Source Co',
           periodStart: '2026-07-01',
@@ -140,7 +140,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_receipt',
         schemaVersion: '1',
         sourceId: 'pds_user_upload',
-        provenanceKind: 'USER_UPLOADED',
+        provenanceKind: 'USER_UPLOADED' as const,
         payload: {
           merchant: 'Sandbox Market',
           purchasedAt: '2026-08-09T16:40:00.000Z',
@@ -154,7 +154,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_preference',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         payload: { key: 'savings_goal', value: 'emergency' },
       },
     ]),
@@ -172,7 +172,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_transactions',
         schemaVersion: '1',
         sourceId: 'pds_sim_transactions',
-        provenanceKind: 'EXTERNAL_CONNECTOR',
+        provenanceKind: 'EXTERNAL_CONNECTOR' as const,
         payload: {
           transactions: [
             {
@@ -192,7 +192,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_spending_summary',
         schemaVersion: '1',
         sourceId: 'pds_derived_spending',
-        provenanceKind: 'DERIVED',
+        provenanceKind: 'DERIVED' as const,
         deriveFrom: 'tx',
         payload: {
           windowFrom: '2026-06-01T00:00:00.000Z',
@@ -216,7 +216,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_spending_summary',
         schemaVersion: '1',
         sourceId: 'pds_derived_spending',
-        provenanceKind: 'DERIVED',
+        provenanceKind: 'DERIVED' as const,
         dispute: true,
         payload: {
           windowFrom: '2026-06-01T00:00:00.000Z',
@@ -240,7 +240,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_preference',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         revoke: true,
         payload: { key: 'newsletter', value: 'opt_in' },
       },
@@ -259,7 +259,7 @@ export const VAULT_PERSONA_SEEDS: readonly VaultPersonaSeed[] = Object.freeze([
         schemaId: 'pdsch_preference',
         schemaVersion: '1',
         sourceId: 'pds_user_declared',
-        provenanceKind: 'USER_DECLARED',
+        provenanceKind: 'USER_DECLARED' as const,
         payload: { key: 'agent_access', value: 'denied' },
       },
     ]),

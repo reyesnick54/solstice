@@ -324,10 +324,10 @@ describe('Information Rights Marketplace', () => {
     instance.store.licenses.set(license.licenseId, {
       ...license,
       compensation: {
-        ...license.compensation,
         asset: 'SUNREY_COIN',
         coin: AssetQuantity.fromScaledUnits(1000n, 'SUNREY_COIN'),
-        fiat: undefined,
+        pricingPolicyId: license.compensation.pricingPolicyId,
+        compensationPolicyId: license.compensation.compensationPolicyId,
       },
     });
     const usage = unwrap(
@@ -400,7 +400,7 @@ describe('Information Rights Marketplace', () => {
     const invalid = instance.registerPricingPolicy({
       ...simulationPricingPolicyV1(),
       auctionEnabled: true,
-    });
+    } as unknown as ReturnType<typeof simulationPricingPolicyV1>);
     assert.equal(invalid.ok, false);
     const fixture = simulationCompensationPolicyV1();
     assert.equal(fixture.approvedEconomicPolicy, false);
