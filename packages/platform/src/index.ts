@@ -128,7 +128,7 @@ export {
 } from './growth/product/index.ts';
 export type {
   CreateGrowPlanInput,
-  FinancialProposal,
+  FinancialProposal as ProductFinancialProposal,
   GrowProductFailure,
   GrowthProductActor,
   LovableGrowExperience,
@@ -226,6 +226,7 @@ export type {
   GrowExecutionRecord,
   GrowFailure,
 } from './grow/index.ts';
+export {
   asOpportunityId,
   opportunityIdFor,
   type OpportunityId,
